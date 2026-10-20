@@ -98,3 +98,13 @@ no file is rewritten and original cache freshness decisions are unchanged.
 The actual device server cache's normalized hash remains unobserved. A fifth
 focused test confirms timestamp-only changes match while a row-name change does
 not. No build ran.
+
+## Physical 0.1.14 result
+
+The October20 09:29 Thor export confirms the client-authoritative default works:
+`bodyparts_default:[0,28]` and source-defined count validation complete, while
+`bodyparts_server_cache_status:3` remains advisory. `catalog_boundary:null`; the
+actual next stop is the first ordinary indexed geometry string (part0,bit5864).
+This verifies the default branch on device; no current-server getter/count
+observation is inferred from the missing comparison file. See
+`combined-client/diagnostics/entity-20261020/physical-0.1.14.json`.

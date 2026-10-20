@@ -1,0 +1,279 @@
+{
+  "Android_exit_history": {
+    "bounded_history_cannot_prove_absence_of_all_unretained_deaths": true,
+    "keypath": "$.android_process_exits",
+    "new_LOW_MEMORY_entries": 0,
+    "new_entries_vs_v13": [
+      {
+        "importance": 125,
+        "low_memory": false,
+        "pss_kib": 66308,
+        "reason": 10,
+        "rss_kib": 169696,
+        "status": 0,
+        "timestamp_America_Chicago": "2026-10-20T05:29:36.396000-05:00",
+        "timestamp_utc_ms": 1792492176396
+      }
+    ],
+    "retained_LOW_MEMORY_entries": [
+      {
+        "importance": 100,
+        "low_memory": true,
+        "pss_kib": 0,
+        "reason": 3,
+        "rss_kib": 0,
+        "status": 0,
+        "timestamp_America_Chicago": "2026-10-19T23:08:21.504000-05:00",
+        "timestamp_utc_ms": 1792469301504
+      },
+      {
+        "importance": 100,
+        "low_memory": true,
+        "pss_kib": 80536,
+        "reason": 3,
+        "rss_kib": 184152,
+        "status": 0,
+        "timestamp_America_Chicago": "2026-10-19T23:08:17.925000-05:00",
+        "timestamp_utc_ms": 1792469297925
+      }
+    ],
+    "retained_entry_count": 8
+  },
+  "comparison_baseline": {
+    "fallback": "direct comparison with retained v13 ZIP combined-report.json; no old source receipt fabricated",
+    "requested_previous_receipt_present": false
+  },
+  "current_server": {
+    "cleanup_complete_claimed": false,
+    "keypath": "$.server",
+    "source": "COH-NativeCombined-1792506560259.zip::combined-report.json",
+    "state": {
+      "elapsed_ms": 1153540,
+      "failure_code": "",
+      "guest_exit_code": -1,
+      "last_stage": "server_running_manual_native_client",
+      "owned_process_alive": true,
+      "phase": "ready",
+      "ready": true,
+      "stage_elapsed_ms": 383589
+    }
+  },
+  "current_server_policy": {
+    "admitted": true,
+    "invalid_samples": 0,
+    "keypath": "$.server_memory",
+    "minimum_java_heap_headroom_bytes": 214560840,
+    "minimum_system_headroom_bytes": 7690395648,
+    "pressure_samples": 0,
+    "samples": 1134,
+    "status": "running",
+    "stop_requested": false
+  },
+  "inputs": [
+    {
+      "bytes": 69508,
+      "filename": "COH-NativeCombined-20261020-092910.json",
+      "sha256": "c72d762fbb7cc4ea455acb438851a16f7901cf2aade45b8a3d0f13a1867ccb1c"
+    },
+    {
+      "bytes": 43183,
+      "filename": "COH-NativeCombined-1792506560259.zip",
+      "sha256": "e14724d39a13a3b22a0914424e78ec06bac9557d152e369b46b42afc46764e6d"
+    },
+    {
+      "bytes": 52351,
+      "filename": "COH-NativeCombined-1792491256433.zip",
+      "sha256": "4e5421ddddefd89443f26d2866cc313b1a3a3d5e43ec46b04ce3e6e1d0bb8277"
+    }
+  ],
+  "limits": [
+    "32-row/process limit reached; two Wine metrics unavailable; complete totals are null",
+    "Observed RSS includes repeated shared pages; snapshots are bounded windows, not atomic",
+    "Older complete-snapshot peaks must not be represented as current complete combined totals",
+    "No new reason3 record in bounded history; this does not identify cause of retained Oct19 deaths",
+    "Earlier v14 SERVER_ADMISSION_FAILED at7ms has no policy samples or guest report; no memory-pressure causality established",
+    "Current server ready/alive is not current guest cleanup proof"
+  ],
+  "newly_archived_attempts_vs_v13": {
+    "attempts": [
+      {
+        "guest_report_available": false,
+        "memory_policy": {
+          "admitted": true,
+          "invalid_samples": 0,
+          "minimum_system_headroom_bytes": 6571081728,
+          "pressure_samples": 0,
+          "samples": 1344,
+          "status": "running",
+          "stop_requested": false
+        },
+        "server": {
+          "elapsed_ms": 1377788,
+          "failure_code": "",
+          "guest_exit_code": -1,
+          "last_stage": "server_running_manual_native_client",
+          "owned_process_alive": true,
+          "phase": "ready",
+          "ready": true,
+          "stage_elapsed_ms": 991787
+        },
+        "version": "0.1.13-entity-diagnostic-test"
+      },
+      {
+        "guest_report_available": false,
+        "memory_policy": {
+          "admitted": false,
+          "invalid_samples": 0,
+          "minimum_system_headroom_bytes": null,
+          "pressure_samples": 0,
+          "samples": 0,
+          "status": "not_started",
+          "stop_requested": false
+        },
+        "server": {
+          "elapsed_ms": 7,
+          "failure_code": "SERVER_ADMISSION_FAILED",
+          "guest_exit_code": -1,
+          "last_stage": "guest_starting",
+          "owned_process_alive": false,
+          "phase": "stopped",
+          "ready": false,
+          "stage_elapsed_ms": 7
+        },
+        "version": "0.1.14-entity-diagnostic-test"
+      }
+    ],
+    "keypath": "$.attempts[].app",
+    "source": "COH-NativeCombined-1792506560259.zip::combined-server-previous-attempts.json"
+  },
+  "observations": [
+    {
+      "app": {
+        "android_memory_callbacks": {
+          "callback_is_oom_kill_proof": false,
+          "last_callback_elapsed_ms": 1011332353,
+          "last_trim_level": 15,
+          "low_memory_callbacks": 0,
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 3
+        },
+        "sampled_peak_process_pss_bytes": 90685440,
+        "sampled_peak_process_rss_bytes": 195489792,
+        "sampler_failures": 0,
+        "samples": 9
+      },
+      "keypath": "$.memory_diagnostics",
+      "process_set": {
+        "atomic_snapshot": false,
+        "expected_roles_observed": true,
+        "incomplete_process_metrics": 2,
+        "observed_pss_sum_bytes": 982149120,
+        "observed_rss_sum_bytes": 1260994560,
+        "postgresql_processes": 16,
+        "process_count": 32,
+        "process_limit": 32,
+        "rss_sum_includes_repeated_shared_pages": true,
+        "sample_window_ms": 43,
+        "sampled_peak_total_pss_bytes": 482295808,
+        "sampled_peak_total_rss_bytes": 657846272,
+        "sampled_utc_ms": 1792506546744,
+        "samples": 216,
+        "scan_complete": false,
+        "server_process_expected": true,
+        "snapshot_age_ms": 3960,
+        "total_pss_bytes": null,
+        "total_rss_bytes": null,
+        "wine_processes": 9
+      },
+      "source": "COH-NativeCombined-20261020-092910.json"
+    },
+    {
+      "app": {
+        "android_memory_callbacks": {
+          "callback_is_oom_kill_proof": false,
+          "last_callback_elapsed_ms": 1011332353,
+          "last_trim_level": 15,
+          "low_memory_callbacks": 0,
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 3
+        },
+        "sampled_peak_process_pss_bytes": 109488128,
+        "sampled_peak_process_rss_bytes": 214507520,
+        "sampler_failures": 0,
+        "samples": 12
+      },
+      "keypath": "$.memory_diagnostics",
+      "process_set": {
+        "atomic_snapshot": false,
+        "expected_roles_observed": true,
+        "incomplete_process_metrics": 2,
+        "observed_pss_sum_bytes": 994963456,
+        "observed_rss_sum_bytes": 1274388480,
+        "postgresql_processes": 16,
+        "process_count": 32,
+        "process_limit": 32,
+        "rss_sum_includes_repeated_shared_pages": true,
+        "sample_window_ms": 45,
+        "sampled_peak_total_pss_bytes": 482295808,
+        "sampled_peak_total_rss_bytes": 657846272,
+        "sampled_utc_ms": 1792506551825,
+        "samples": 217,
+        "scan_complete": false,
+        "server_process_expected": true,
+        "snapshot_age_ms": 4676,
+        "total_pss_bytes": null,
+        "total_rss_bytes": null,
+        "wine_processes": 9
+      },
+      "source": "COH-NativeCombined-1792506560259.zip::native-client-report.json"
+    },
+    {
+      "app": {
+        "android_memory_callbacks": {
+          "callback_is_oom_kill_proof": false,
+          "last_callback_elapsed_ms": 1011332353,
+          "last_trim_level": 15,
+          "low_memory_callbacks": 0,
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 3
+        },
+        "sampled_peak_process_pss_bytes": 109488128,
+        "sampled_peak_process_rss_bytes": 214507520,
+        "sampler_failures": 0,
+        "samples": 13
+      },
+      "keypath": "$.memory_diagnostics",
+      "process_set": {
+        "atomic_snapshot": false,
+        "expected_roles_observed": true,
+        "incomplete_process_metrics": 2,
+        "observed_pss_sum_bytes": 946253824,
+        "observed_rss_sum_bytes": 1226821632,
+        "postgresql_processes": 16,
+        "process_count": 32,
+        "process_limit": 32,
+        "rss_sum_includes_repeated_shared_pages": true,
+        "sample_window_ms": 50,
+        "sampled_peak_total_pss_bytes": 482295808,
+        "sampled_peak_total_rss_bytes": 657846272,
+        "sampled_utc_ms": 1792506557517,
+        "samples": 218,
+        "scan_complete": false,
+        "server_process_expected": true,
+        "snapshot_age_ms": 4310,
+        "total_pss_bytes": null,
+        "total_rss_bytes": null,
+        "wine_processes": 9
+      },
+      "source": "COH-NativeCombined-1792506560259.zip::combined-report.json"
+    }
+  ],
+  "previous_session_cleanup": {
+    "belongs_to_current_running_server": false,
+    "cleanup_complete": true,
+    "same_as_v13_previous_session": true,
+    "source": "COH-NativeCombined-1792506560259.zip::previous-session-combined-server-latest-report.json",
+    "status": "stopped"
+  },
+  "schema": "coh-thor-v14-memory-review-v1"
+}

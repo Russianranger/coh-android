@@ -1,17 +1,18 @@
 {
-  "accepted_scope": "source/JNI default-count continuation, real selected-self pose box implementation, bounded process memory observer, Android13 preview/lifecycle/export",
+  "accepted_scope": "actualThor default-count validation and selected-self diagnosticboxdraw/lifecycle; fullcostume/actor/world/ACKpending",
   "authority": {
     "full_character": false,
     "full_update_ACK": false,
     "gates25_27": "OPEN"
   },
   "base_revision": "8170fc0d222ec154b19b0caf2616040004d4b2e7",
-  "blocker": "Delivered13stopped on serverlookupCOH_NOT_FOUND; APK14contains client-authority fix; nextlivecostumefieldunobserved",
+  "blocker": "ordinary indexed geometry string atbit5864; no parts/strings/colors decoded",
   "bodypart_authority_followup": {
     "APK_rebuilt": false,
     "Interop_bytes": 66944,
     "JNI_checks_per_mode": 3494,
     "client_count_authoritative": 28,
+    "client_default_admitted_on_Thor": true,
     "existing_0_1_13_contains_followup": false,
     "fresh_current_Thor_count_observed": false,
     "max_report_bytes": 6902,
@@ -74,10 +75,10 @@
       "complete_combined_peak_claimed": false,
       "complete_totals": null,
       "coverage": "partial",
-      "details": "physical-memory-12-13.json",
+      "details": "physical-memory-0.1.14.json",
       "missing_metrics": 2,
-      "native_ZIP_observed_PSS_sum_bytes": 937546752,
-      "native_ZIP_observed_RSS_sum_bytes": 1232064512,
+      "native_ZIP_observed_PSS_sum_bytes": 994963456,
+      "native_ZIP_observed_RSS_sum_bytes": 1274388480,
       "process_count": 32
     },
     "original_source_frame_sum_bytes": 680,
@@ -102,7 +103,8 @@
     "CI_run": 39408855380,
     "memory_caps_changed": false,
     "native_change": "client count28 isauthoritative; missingservercache advisory only",
-    "physical_Thor_test_passed": false,
+    "physical_Thor_test_passed": true,
+    "physical_scope": "defaultcountboundary and realpose diagnosticboxdraw/lifecycle; no fullcostume/actor/world/ACK",
     "profile": "entity-diagnostic",
     "source_commit": "38c6446830dc6a55204a663de7477db12c6a5536",
     "state": "SIGNED_ARM64_READY_ANDROID13_PASSED",
@@ -110,14 +112,14 @@
     "version_code": 15,
     "version_name": "0.1.14-entity-diagnostic-test"
   },
-  "next_action": "Install APK14 over baseline after clean server stop; one Atlas handoff/export to observe actual costume continuation",
-  "next_source_dependency": "ordinary indexed geometry string dictionary; source fixture stops before its index Pack; actual Thor cursor awaits test",
+  "next_action": "Implement actual verified CLIENT ordinary costume string-slot lookup, then replay a new live handoff",
+  "next_source_dependency": "ordinary indexed geometry string atbit5864; no parts/strings/colors decoded",
   "observed_entity": {
     "actual_Thor_draw_proven": true,
     "code_connected": true,
     "draw_scope": "actual selected-self pose box draw submission on framebuffer0, not independent pixel visibility/fullactor",
-    "physical_box_draws": 1384,
-    "planned_remaining_step": "Diagnostic box draw observed; use APK14 to observe original costume continuation past stage41",
+    "physical_box_draws": 596,
+    "planned_remaining_step": "Crude diagnostic draw already observed; fullcostume geometry still requires dictionary and source model integration",
     "source": "actual selected-self index/raw DBID match and decoded absolute initial pose",
     "visual": "fixed orange 2x6x2 diagnostic box"
   },
@@ -144,10 +146,42 @@
     ],
     "stage41_passed": false
   },
+  "physical_version14": {
+    "APK_sha256": "3968288fc84954ace5b67cc7842df827242a3d05bdede6cca218ff7398a444b4",
+    "GL_errors": 0,
+    "box_draws": 596,
+    "box_draws_after_pause": 599,
+    "client_default_count": 28,
+    "contexts_completed_started": [
+      2,
+      2
+    ],
+    "costume_continuation": [
+      2,
+      3,
+      0,
+      28,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      5864,
+      5864
+    ],
+    "entity_index": 125,
+    "evidence": "physical-0.1.14.json",
+    "memory": "physical-memory-0.1.14.json",
+    "next_blocker": "ordinary indexed geometry string, part0, bit5864",
+    "server_cache_lookup_status": 3,
+    "server_comparison_blocked_client": false,
+    "stage41_passed": true
+  },
   "schema": "coh-local-entity-iteration-v1",
   "stage41": {
-    "actual_Thor_passed": false,
-    "actual_server_common_file_hash_check": "performed locally once before handoff; device observation pending",
+    "actual_Thor_passed": true,
+    "actual_server_common_file_hash_check": "COH_NOT_FOUND advisory; client28 admitted independently",
     "canonical_hash_ignores_only_dependency_timestamp_bytes": [
       60,
       61,
@@ -158,7 +192,7 @@
     "runtime_producer_lease_required": false,
     "source_JNI_tests_passed": true
   },
-  "status": "QUALIFIED_LOCAL_DIAGNOSTIC_PHYSICAL_TEST_PENDING",
+  "status": "QUALIFIED_PHYSICAL_STAGE41_AND_DIAGNOSTIC_DRAW",
   "tests": {
     "Activity_race_bridge": 49,
     "JNI_continuation_per_mode": 2665,
