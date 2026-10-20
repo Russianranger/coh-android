@@ -271,7 +271,7 @@ def main() -> None:
         harness = root / "CaptureStoreControls.java"
         harness.write_text(HARNESS)
         subprocess.run(["java", "-Xmx128m", "com.sun.tools.javac.Main", "--release", "8",
-                        "-d", str(root), str(SOURCE), str(harness)], check=True, timeout=60)
+                        "-d", str(root), str(SOURCE),str(SOURCE.with_name('SceneCapturePng.java')), str(harness)], check=True, timeout=60)
         subprocess.run(["java", "-Xmx64m", "-cp", str(root), "CaptureStoreControls", str(root)],
                        check=True, timeout=60)
         check_outputs(root)

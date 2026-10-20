@@ -27,6 +27,7 @@ public final class SceneFrameCapture {
     private static final byte[] STORE_MAGIC = "COHFC001".getBytes(StandardCharsets.US_ASCII);
     private static final byte[] RAW_MAGIC = "COHFB001".getBytes(StandardCharsets.US_ASCII);
     private static final byte[] RAW_NAME = "scene-capture.rgba".getBytes(StandardCharsets.US_ASCII);
+    private static final byte[] PNG_NAME = "scene-capture.png".getBytes(StandardCharsets.US_ASCII);
     private static final byte[] JSON_NAME = "scene-capture.json".getBytes(StandardCharsets.US_ASCII);
     private static final char[] HEX = "0123456789abcdef".toCharArray();
     private static final int HEADER = 128;
@@ -125,6 +126,17 @@ public final class SceneFrameCapture {
         if (zip == null) throw new IOException("Scene capture ZIP unavailable");
         Capture capture = optional(directory, true, true,large);
         if (capture == null) return false;
+        SceneCapturePng.Info png=large?SceneCapturePng.measure(capture.raw,capture.frame.width,capture.frame.height):null;
+        byte[] json=exportJson(capture,png).getBytes(StandardCharsets.UTF_8);
+        if(large){
+            if(capture.raw.length+png.bytes+json.length+512>2*1024*1024)throw new IOException("Scene ZIP exceeds existing export bound");
+            CRC32 crc=new CRC32();
+            stored(zip,"scene-capture.rgba",capture.raw.length,crc(crc,capture.raw));
+            zip.write(capture.raw);zip.closeEntry();
+            stored(zip,"scene-capture.json",json.length,crc(crc,json));zip.write(json);zip.closeEntry();
+            stored(zip,"scene-capture.png",png.bytes,png.crc);
+            SceneCapturePng.write(capture.raw,capture.frame.width,capture.frame.height,zip);zip.closeEntry();return true;
+        }
         zip.putNextEntry(new ZipEntry("scene-capture.rgba"));
         for (int offset = 0; offset < capture.raw.length; offset += CHUNK)
             zip.write(capture.raw, offset, Math.min(CHUNK, capture.raw.length - offset));
@@ -149,25 +161,47 @@ public final class SceneFrameCapture {
         if (output == null) throw new IOException("Scene capture ZIP unavailable");
         Capture capture = optional(directory, true, true,large);
         if (capture == null) return false;
-        byte[] json = capture.json.getBytes(StandardCharsets.UTF_8);
+        SceneCapturePng.Info png=large?SceneCapturePng.measure(capture.raw,capture.frame.width,capture.frame.height):null;
+        byte[] json = exportJson(capture,png).getBytes(StandardCharsets.UTF_8);
         byte[] header = new byte[46];
         CRC32 crc = new CRC32();
         long rawCrc = crc(crc, capture.raw), jsonCrc = crc(crc, json);
         int jsonOffset = 30 + RAW_NAME.length + capture.raw.length;
-        int centralOffset = jsonOffset + 30 + JSON_NAME.length + json.length;
-        int centralBytes = 46 * 2 + RAW_NAME.length + JSON_NAME.length;
+        int pngOffset = jsonOffset + 30 + JSON_NAME.length + json.length;
+        int centralOffset = pngOffset+(large?30+PNG_NAME.length+png.bytes:0);
+        int entries=large?3:2;
+        int centralBytes = 46 * entries + RAW_NAME.length + JSON_NAME.length+(large?PNG_NAME.length:0);
+        if(large&&centralOffset+centralBytes+22>2*1024*1024)throw new IOException("Scene ZIP exceeds existing export bound");
         local(output, header, RAW_NAME, capture.raw, rawCrc);
         local(output, header, JSON_NAME, json, jsonCrc);
+        if(large){
+            localPrefix(output,header,PNG_NAME,png.bytes,png.crc);
+            SceneCapturePng.write(capture.raw,capture.frame.width,capture.frame.height,output);
+        }
         central(output, header, RAW_NAME, capture.raw.length, rawCrc, 0);
         central(output, header, JSON_NAME, json.length, jsonCrc, jsonOffset);
+        if(large)central(output,header,PNG_NAME,png.bytes,png.crc,pngOffset);
         Arrays.fill(header, (byte) 0);
         put32(header, 0, 0x06054b50);
-        put16(header, 8, 2); put16(header, 10, 2);
+        put16(header, 8, entries); put16(header, 10, entries);
         put32(header, 12, centralBytes); put32(header, 16, centralOffset);
         output.write(header, 0, 22);
         return true;
     }
 
+    private static String exportJson(Capture capture,SceneCapturePng.Info png)throws IOException {
+        if(png==null)return capture.json;
+        String value=capture.json.substring(0,capture.json.length()-1)+",\"image\":{\"file\":\"scene-capture.png\",\"bytes\":"+png.bytes
+                +",\"sha256\":\""+png.sha256+"\",\"format\":\"PNG_RGBA8\",\"origin\":\"top_left\"}}";
+        if(value.length()>MAX_JSON)throw new IOException("Scene PNG metadata exceeds existing bound");return value;
+    }
+    private static void stored(ZipOutputStream out,String name,int size,long crc)throws IOException {
+        ZipEntry entry=new ZipEntry(name);entry.setMethod(ZipEntry.STORED);entry.setSize(size);entry.setCompressedSize(size);entry.setCrc(crc);out.putNextEntry(entry);
+    }
+    private static void localPrefix(OutputStream output,byte[] header,byte[] name,int size,long crc)throws IOException {
+        Arrays.fill(header,(byte)0);put32(header,0,0x04034b50);put16(header,4,20);put16(header,12,33);
+        put32(header,14,crc);put32(header,18,size);put32(header,22,size);put16(header,26,name.length);output.write(header,0,30);output.write(name);
+    }
     private static long crc(CRC32 crc, byte[] bytes) {
         crc.reset();
         for (int offset = 0; offset < bytes.length; offset += CHUNK)

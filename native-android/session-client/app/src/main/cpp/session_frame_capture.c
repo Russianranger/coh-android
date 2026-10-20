@@ -18,7 +18,7 @@ uint32_t coh_frame_capture_reserve_bytes(void){
      * JNI/renderer stack independently of the existing source scene owner. */
     const size_t named=sizeof(CohFrameCapture)+COH_CAPTURE_PIXELS+
         2u*COH_CAPTURE_BYTES+(COH_CAPTURE_HEADER+COH_CAPTURE_BYTES)+
-        4u*COH_CAPTURE_HEADER+2u*16u*1024u+3u*8u*1024u+
+        8u*COH_CAPTURE_HEADER+2u*16u*1024u+4u*8u*1024u+
         2u*(1u+COH_CAPTURE_WIDTH*4u)+128u+64u*1024u;
     _Static_assert(sizeof(CohFrameCapture)+6u*COH_CAPTURE_BYTES+256u*1024u<COH_CAPTURE_SCENE_LIMIT,"Capture source inventory exceeds scene cap");
     return (uint32_t)named;

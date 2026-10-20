@@ -32,8 +32,8 @@ typedef struct {
  * observed RSS/PSS. The fullscreen reserve is derived in the concrete owner:
  * old+candidate records/control, FBO pixels, native JNI temporary +Java JNI
  * array, Java export snapshot, fixed headers, I/O/hash scratch, bounded JSON
- * copies and64KiB charged native stack. It does not enlarge the96MiB ceiling.
- * Historical0.1.16 keeps its192x108/1MiB subpolicy unchanged. */
+ * copies and 64 KiB charged native stack. It does not enlarge the 96 MiB ceiling.
+ * Historical 0.1.16 keeps its 192x108/1MiB subpolicy unchanged. */
 uint32_t coh_frame_capture_reserve_bytes(void);
 CohFrameCapture *coh_frame_capture_create(uint64_t base_charge);
 void coh_frame_capture_destroy(CohFrameCapture **);

@@ -58,7 +58,13 @@ public class FullscreenControlsTest extends Base {
   check(SceneFrameCapture.metadata(dir)==null&&SceneFrameCapture.metadataLarge(dir)!=null);
   boolean refused=false;try{SceneFrameCapture.save(dir,raw,18,"cafe18");}catch(IOException expected){refused=true;}check(refused);
   ByteArrayOutputStream zip=new ByteArrayOutputStream();check(SceneFrameCapture.writeZipLarge(dir,zip)&&zip.size()<2*1024*1024);
-  try(ZipInputStream input=new ZipInputStream(new ByteArrayInputStream(zip.toByteArray()))){check(input.getNextEntry().getName().equals("scene-capture.rgba"));ByteArrayOutputStream actual=new ByteArrayOutputStream();byte[]chunk=new byte[16384];int n;while((n=input.read(chunk))!=-1)actual.write(chunk,0,n);check(Arrays.equals(actual.toByteArray(),raw));check(input.getNextEntry().getName().equals("scene-capture.json"));}
+  try(ZipInputStream input=new ZipInputStream(new ByteArrayInputStream(zip.toByteArray()))){check(input.getNextEntry().getName().equals("scene-capture.rgba"));ByteArrayOutputStream actual=new ByteArrayOutputStream();byte[]chunk=new byte[16384];int n;while((n=input.read(chunk))!=-1)actual.write(chunk,0,n);check(Arrays.equals(actual.toByteArray(),raw));check(input.getNextEntry().getName().equals("scene-capture.json"));check(input.getNextEntry().getName().equals("scene-capture.png"));}
+  try(FileOutputStream exported=new FileOutputStream(new File(args[0],"large-capture.zip"))){zip.writeTo(exported);}
+  ByteArrayOutputStream invalidPng=new ByteArrayOutputStream();boolean pngRefused=false;
+  try{SceneCapturePng.write(raw,641,360,invalidPng);}catch(IOException expected){pngRefused=true;}
+  check(pngRefused&&invalidPng.size()==0);
+  boolean ioFailed=false;try{SceneFrameCapture.writeZipLarge(dir,new OutputStream(){int count;public void write(int b)throws IOException{if(++count>17)throw new IOException("explicit destination failure");}});}catch(IOException expected){ioFailed=true;}
+  check(ioFailed&&new File(dir,"scene-capture.bin").length()==921856);
   ByteArrayOutputStream old=new ByteArrayOutputStream();check(!SceneFrameCapture.writeZip(dir,old)&&old.size()==0);
   byte[]oversize=raw(641,360,121);refused=false;try{SceneFrameCapture.saveLarge(dir,oversize,18,"cafe18");}catch(IOException expected){refused=true;}check(refused);
   check(new File(dir,"scene-capture.bin").length()==921856);
@@ -72,7 +78,7 @@ def main():
     old=load('capture_store_controls',Path(__file__).with_name('check_frame_capture_store.py'))
     methods='\n'.join(extract(ACTIVITY.read_text(),x)for x in ('private void applyFullscreenBars()','private void setSceneFullscreen(boolean enabled)','private void publishCaptureViewport()','@Override public void onBackPressed()'))
     raw='\n'.join(extract(old.HARNESS,x)for x in ('private static ByteBuffer bytes(byte[] raw)','private static byte[] raw(int width, int height, long frame)'))
-    pins={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in (ACTIVITY,STORE,Path(__file__))}
+    pins={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in (ACTIVITY,STORE,STORE.with_name('SceneCapturePng.java'),Path(__file__))}
     with tempfile.TemporaryDirectory(prefix='coh-fullscreen-java-')as temp:
         w=Path(temp)
         sources={
@@ -83,10 +89,21 @@ def main():
         java=[]
         for name,text in sources.items():
             p=w/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text);java.append(p)
-        subprocess.run(['java','-Xmx128m','com.sun.tools.javac.Main','--release','8','-d',str(w),str(STORE),*map(str,java)],check=True,timeout=60)
+        subprocess.run(['java','-Xmx128m','com.sun.tools.javac.Main','--release','8','-d',str(w),str(STORE),str(STORE.with_name('SceneCapturePng.java')),*map(str,java)],check=True,timeout=60)
         r=subprocess.run(['java','-Xmx64m','-cp',str(w),'org.coh.nativecombined.FullscreenControlsTest',str(w)],capture_output=True,text=True,check=True,timeout=60)
         data=json.loads(r.stdout)
-    assert pins=={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in (ACTIVITY,STORE,Path(__file__))}
+        import zipfile
+        from PIL import Image
+        import io
+        with zipfile.ZipFile(w/'large-capture.zip')as z:
+            image=z.read('scene-capture.png');meta=json.loads(z.read('scene-capture.json'));raw_bytes=z.read('scene-capture.rgba')
+            assert meta['image']['sha256']==hashlib.sha256(image).hexdigest() and meta['image']['bytes']==len(image)
+            png=Image.open(io.BytesIO(image));assert png.size==(640,360) and png.mode=='RGBA'
+            actual=png.tobytes();stride=640*4
+            assert actual==b''.join(raw_bytes[128+y*stride:128+(y+1)*stride]for y in range(359,-1,-1))
+            assert all(x.compress_type==zipfile.ZIP_STORED for x in z.infolist())
+            data['PNG_bytes']=len(image);data['PNG_roundtrip_pixels']=640*360
+    assert pins=={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in (ACTIVITY,STORE,STORE.with_name('SceneCapturePng.java'),Path(__file__))}
     print(json.dumps({**data,'source_sha256':pins,'scope':'Exact Activity fullscreen methods with explicit host window/View/native-call doubles, plus real bounded Java store/ZIP; no Android framework or GL execution'}))
 
 if __name__=='__main__':main()
