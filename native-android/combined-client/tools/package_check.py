@@ -19,6 +19,7 @@ BUILD_PROFILES = {
     'catalog-diagnostic': ('13', '0.1.12-catalog-diagnostic-test'),
     'entity-diagnostic': ('15', '0.1.14-entity-diagnostic-test'),
     'neighborhood-diagnostic': ('16', '0.1.15-neighborhood-diagnostic-test'),
+    'capture-diagnostic': ('17', '0.1.16-capture-diagnostic-test'),
 }
 CLIENT_SLOT_ASSET = 'combined/client-slots.bin'
 CLIENT_SLOT_PIN = {'bytes': 641477, 'sha256': '2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81'}
@@ -27,7 +28,7 @@ NEIGHBORHOOD_ASSETS = {'neighborhood-map.bin': {'bytes': 491565, 'sha256': 'fcd3
 
 def neighborhood_assets(archive, receipt, profile):
     """Keep the accepted scene intact and admit the separate source subset."""
-    if profile != 'neighborhood-diagnostic':
+    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic'):
         assert 'neighborhood' not in receipt, 'Neighborhood assets require the neighborhood diagnostic profile'
         return set()
     assert receipt['neighborhood']['assets'] == NEIGHBORHOOD_ASSETS
@@ -43,7 +44,7 @@ def neighborhood_assets(archive, receipt, profile):
 
 def client_slot_assets(archive, receipt, profile):
     """Only the explicit next diagnostic embeds the exact retained slot table."""
-    if profile != 'neighborhood-diagnostic':
+    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic'):
         assert 'client_slots' not in receipt, 'Client slots require the neighborhood diagnostic profile'
         return set()
     metadata = receipt['client_slots']
@@ -79,6 +80,24 @@ def process_memory_jni(raw, readelf):
     return entrypoint
 
 
+def frame_capture_jni(raw, readelf):
+    """Require the current-frame JNI on the actual session DSO in this profile."""
+    if readelf is None or not readelf.is_file():
+        raise ValueError('Capture diagnostic requires pinned --readelf')
+    with tempfile.TemporaryDirectory(prefix='combined-capture-jni-') as directory:
+        library = Path(directory) / 'libcoh_session_client.so'
+        library.write_bytes(raw)
+        symbols = run([readelf, '--dyn-syms', '--wide', library])
+    entrypoint = 'Java_org_coh_sessionclient_SessionNative_frameCapture'
+    exported = set()
+    for line in symbols.splitlines():
+        fields = line.split()
+        if len(fields) >= 8 and fields[0].rstrip(':').isdigit() and fields[6] != 'UND' and fields[4] in ('GLOBAL', 'WEAK') and fields[5] in ('DEFAULT', 'PROTECTED'):
+            exported.add(fields[7].split('@', 1)[0])
+    assert entrypoint in exported, 'Current gameSurface capture JNI absent'
+    return entrypoint
+
+
 def run(command):
     return subprocess.run([str(x) for x in command], check=True, capture_output=True, text=True, timeout=60).stdout
 
@@ -96,7 +115,7 @@ def tool(args, name):
 
 
 def audit(args):
-    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic') and not args.require_interop:
+    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic') and not args.require_interop:
         raise ValueError('Memory diagnostic build must retain the independent interop library audit')
     if args.apk.stat().st_size > 25 << 20:
         raise ValueError('Combined APK exceeds bounded 25MiB small-core policy')
@@ -138,6 +157,7 @@ def audit(args):
         assert asset_bytes < 12 << 20, 'Uncompressed embedded assets exceed bounded scene/metadata scope'
         libraries = {}
         memory_entrypoint = None
+        capture_entrypoint = None
         native_abis = set()
         for i in z.infolist():
             if not i.filename.startswith('lib/') or i.is_dir():
@@ -156,8 +176,10 @@ def audit(args):
                 assert abi == 'arm64-v8a' and pin(data) == receipt['proot_cores'][filename], 'PRoot core changed'
             if filename == 'libcoh_combined_network.so':
                 native_abis.add(abi)
-                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic'):
+                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic'):
                     memory_entrypoint = process_memory_jni(data, args.readelf)
+            if filename == 'libcoh_session_client.so' and args.build_profile == 'capture-diagnostic':
+                capture_entrypoint = frame_capture_jni(data, args.readelf)
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}
         assert 'lib/' + args.abi + '/libcoh_session_client.so' in libraries
@@ -186,7 +208,7 @@ def audit(args):
     dirty = run(['git', '-C', args.source_root, 'status', '--porcelain', '--untracked-files=no'])
     if args.require_clean and dirty.strip():
         raise ValueError('Qualification source has tracked modifications')
-    return {'format': 1, 'status': 'passed', 'apk': {'name': args.apk.name, **pin(args.apk.read_bytes())}, 'package': PACKAGE, 'version_code': identity.group(2), 'version_name': identity.group(3), 'build_profile': args.build_profile if args.require_interop else None, 'process_memory_jni_entrypoint': memory_entrypoint, 'abi': args.abi, 'source_commit': source, 'tracked_source_clean': not bool(dirty.strip()), 'signer_certificate_sha256': certificates[0], 'embedded_asset_bytes': asset_bytes, 'embedded_asset_files': len(actual_assets), 'native_libraries': libraries, 'large_runtime_game_payloads_embedded': False, 'donor_apk_sha256': DONOR_SHA, 'accepted_scene_apk_sha256': SCENE_SHA, 'actual_server_interoperability_verified': False, 'scope': 'Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.'}
+    return {'format': 1, 'status': 'passed', 'apk': {'name': args.apk.name, **pin(args.apk.read_bytes())}, 'package': PACKAGE, 'version_code': identity.group(2), 'version_name': identity.group(3), 'build_profile': args.build_profile if args.require_interop else None, 'process_memory_jni_entrypoint': memory_entrypoint, 'frame_capture_jni_entrypoint': capture_entrypoint, 'abi': args.abi, 'source_commit': source, 'tracked_source_clean': not bool(dirty.strip()), 'signer_certificate_sha256': certificates[0], 'embedded_asset_bytes': asset_bytes, 'embedded_asset_files': len(actual_assets), 'native_libraries': libraries, 'large_runtime_game_payloads_embedded': False, 'donor_apk_sha256': DONOR_SHA, 'accepted_scene_apk_sha256': SCENE_SHA, 'actual_server_interoperability_verified': False, 'scope': 'Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.'}
 
 
 def main():

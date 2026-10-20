@@ -7,9 +7,10 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 from audit_catalog_publication import admit_framework_package
-from package_check import BUILD_PROFILES, check_build_identity, client_slot_assets, CLIENT_SLOT_ASSET, CLIENT_SLOT_PIN, neighborhood_assets, NEIGHBORHOOD_ASSETS
+from package_check import BUILD_PROFILES, check_build_identity, client_slot_assets, CLIENT_SLOT_ASSET, CLIENT_SLOT_PIN, neighborhood_assets, NEIGHBORHOOD_ASSETS, frame_capture_jni
 from interop_package_audit import required_methods
 from upgrade_emulator_check import PREVIOUS_INPUTS, package_receipt, pin, SIGNER, PACKAGE
 
@@ -17,6 +18,20 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class CatalogPackagingTests(unittest.TestCase):
+    def test_capture_package_requires_defined_visible_session_jni(self):
+        entry = 'Java_org_coh_sessionclient_SessionNative_frameCapture'
+        with tempfile.TemporaryDirectory() as directory:
+            readelf = Path(directory) / 'llvm-readelf'
+            readelf.write_text('explicit host symbol-output double')
+            symbol = '  7: 00000001 20 FUNC GLOBAL DEFAULT 12 ' + entry + '\n'
+            with patch('package_check.run', return_value=symbol):
+                self.assertEqual(frame_capture_jni(b'explicit ELF symbol-audit control', readelf), entry)
+            for missing in ('', symbol.replace('DEFAULT', 'HIDDEN'), symbol.replace('12 ', 'UND ')):
+                with patch('package_check.run', return_value=missing), self.assertRaises(AssertionError):
+                    frame_capture_jni(b'explicit ELF symbol-audit control', readelf)
+        with self.assertRaises(ValueError):
+            frame_capture_jni(b'control', None)
+
     def test_preview_uses_additive_neighborhood_pins_without_replacing_historical_manifest(self):
         source = (ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java').read_text()
         self.assertIn('readAsset("combined/build-inputs.json")', source)
@@ -66,6 +81,8 @@ public final class SceneAssetPinTest {
     def test_neighborhood_profile_preserves_historical_identity_and_exports(self):
         self.assertEqual(BUILD_PROFILES['entity-diagnostic'], ('15', '0.1.14-entity-diagnostic-test'))
         self.assertEqual(BUILD_PROFILES['neighborhood-diagnostic'], ('16', '0.1.15-neighborhood-diagnostic-test'))
+        self.assertEqual(BUILD_PROFILES['capture-diagnostic'], ('17', '0.1.16-capture-diagnostic-test'))
+        self.assertEqual(required_methods(capture_diagnostic=True), required_methods(neighborhood_diagnostic=True) | {'exportInitialReplay'})
         self.assertEqual(len(required_methods()), 9)
         self.assertEqual(len(required_methods(entity_diagnostic=True)), 11)
         self.assertEqual(required_methods(neighborhood_diagnostic=True), required_methods(entity_diagnostic=True) | {'configureClientSlots'})

@@ -1252,6 +1252,13 @@ class Check:
         assert current.get('failure') is None and current.get('report_write_failed') is False
         assert native.get('gl_errors') == 0 and native.get('static_renderer', {}).get('tf_mismatches') == 0
         assert current.get('preview_is_server_world') is False
+        if 'capture-diagnostic' in current.get('app', {}).get('version_name', '') or 'frame_capture' in native:
+            frame = native.get('frame_capture', {})
+            assert frame.get('frame') == 0 and frame.get('pose_generation') == 0
+            assert frame.get('source_charge_bytes') == 0 and frame.get('failures') == 0
+            assert frame.get('reserve_bytes') == 1 << 20 and frame.get('startup_witness') is False
+            assert current.get('scene_frame_capture') is None
+            self.record('startup pixel witnesses do not create a real-pose scene capture', actual_observed_entity=False, frame=0)
         self.viewport('initial-preview', native['frames'])
         self.tap('Connect local server')
         unavailable = self.wait_report('native-client-report.json', lambda x: x.get('server_protocol', {}).get('phase') == 'POLICY_UNAVAILABLE', 'native connect refuses missing owned server lease')
