@@ -1,0 +1,45 @@
+{
+  "worker": "D",
+  "milestone": 4,
+  "status": "PARTIAL WITH EXACT BLOCKER",
+  "implementation_commit": "0ed72e74412a1453ac55307aad0899411f85ade9",
+  "tested_tree": "090e9ee2c2f376cd9b43e91387581131e7c41a19",
+  "baseline": "50a80ea29077d16332fb58c6999cc27631448b8d",
+  "ci": {
+    "status": "NOT_RUN_BY_WORKER",
+    "next": "Coordinator dedicated cycle CI"
+  },
+  "test_command": "flock /tmp/coh-cycle-build.lock python native-android/engine/scenecatalog/check_source_material_plan.py --source-root /workspace/scratch/6e619cef67e1/coh-android --work /tmp/coh-cycle-d-material-4 --prepared /tmp/coh-cycle-d-placement --output /tmp/coh-cycle-d-material-4.json",
+  "receipt": "native-android/engine/qualification-cycle-20261020/d-host.json",
+  "receipt_sha256": "1ab87611e1acf363e5f7deb04ac05b36480dbf2b75b1876d1019d84cec12b6e6",
+  "checks_per_mode": {
+    "release": 313744,
+    "asan": 313744,
+    "ubsan": 313744
+  },
+  "accepted_scope": "Actual sealed SOURCE21 partitions associate with14 exact-key immutable historical CLIENT TexOpt table owners;37 raw postprocessed layer strings copied with independent historical identities. No effective material/texture/GPU permission.",
+  "memory": {
+    "unchanged_aggregate_limit": 100663296,
+    "query_named_peak_bytes": 57113279,
+    "previous_seal_transition_named_bytes": 93228133,
+    "query_heap_allocations": 0,
+    "call_reserve": 32768,
+    "reached_native_frame_sums": {
+      "-O0": 9480,
+      "-O1": 9064,
+      "-O2": 8960
+    },
+    "observed_host_peak_RSS_bytes": {
+      "release": 61173760,
+      "asan": 564649984,
+      "ubsan": 62619648
+    },
+    "device_RSS_PSS": null,
+    "rss_scope": "per-mode native host fixture child high-water RSS from a fresh Python wrapper RUSAGE_CHILDREN (one child); separate from source named reservations; not Android or GPU memory"
+  },
+  "blocker": "Effective CLIENT TexBind/Basic ordered namespace, actual finite texture bodies and default identities, current generation association, and concrete GPU publication/lifetime adapter are unavailable; input names/historical cache do not authenticate them.",
+  "next_action": "Hash/acquire only37 raw requests after source-defined filtering; bind finite bodies to an authentic ordered CLIENT namespace/default owner, then preflight actual old/new/borrowed/GPU/scratch lifetimes before publication.",
+  "rollback": "Delete five additive source material plan files and receipts; no shipping caller, APK, data, profiles or runtime was changed.",
+  "world_authority": false,
+  "gates25_27": "OPEN"
+}
