@@ -1,0 +1,136 @@
+{
+  "Android13_fragment": {
+    "Home_Return_cleanup_exercised": true,
+    "archive_bytes": 155868,
+    "archive_sha256": "e6b374a02cadfbdb17648d6a6d06467fec06e2da512de1e9cb9d381ac50e6201",
+    "artifact_id": 12234795470,
+    "checks": 23,
+    "closed_sockets_each_capture": 2,
+    "initial_observation_UNKNOWN_before_owner": true,
+    "opened_sockets_each_capture": 2,
+    "passed": true,
+    "receipt_sha256": "5d3d43a49c92d2c3e553efe0beb924a50db06749c7c95a6160fbb8a4502e0485",
+    "scripted_source_compatible_peer_only": true,
+    "single_and_multi_fragment_INITIAL_OBSERVED_and_cleanup_verified": true,
+    "source_and_APK_match_exact_candidate": true
+  },
+  "Android13_framework": {
+    "actual_recorded_installed_APK": {
+      "bytes": 13237943,
+      "sha256": "ccfbca1fdba7c07e974aa679c2708fafcfe6860110cdef06d4779393c9d9a82a"
+    },
+    "archive_bytes": 2126429,
+    "archive_sha256": "16b65bbca187d1798fb3445927bda5974ef0f19745b727c9d7bf14ec4d09d049",
+    "artifact_id": 12234841192,
+    "checks": 65,
+    "job_id": 118403628263,
+    "passed": true,
+    "receipt_sha256": "f49721c7338f8d773896456fea3ed0d3a24c4196803a7ee0f2c042675cbf33b4",
+    "recorded_installed_APK_equals_exact_x86_package": true,
+    "run_attempt": 2,
+    "source_admission_equals_package": true
+  },
+  "Android13_update_rollback": {
+    "archive_bytes": 7235402,
+    "archive_sha256": "297bd6d7d24ca8dfbf62bd0d480f76342544d0ddfc811069673acc0751ce9f7b",
+    "artifact_id": 12233847809,
+    "checks": 14,
+    "passed": true,
+    "preserved_UID": 10174,
+    "previous_profile": "memory-diagnostic",
+    "previous_version": "0.1.10",
+    "real_game_save_migration_qualified": false,
+    "receipt_sha256": "c424ab72de2e5d42f4a9e92bbf786b405de8616365b11a61e179bbb1dc519a5c",
+    "source_and_APK_match_exact_candidate": true,
+    "synthetic_sentinel_bytes": 69863,
+    "synthetic_sentinel_files": 4,
+    "update_launch_debuggable_rollback_and_reinstall_passed": true
+  },
+  "Java_phase_controls": {
+    "Android_execution_claimed_by_host_controls": false,
+    "checks": 44
+  },
+  "actual_ELF_inspection": {
+    "all_five_native_libraries_ELF64_ARM64": true,
+    "controlState_present": true,
+    "exact_JNI_exports": 9,
+    "interop_library": {
+      "bytes": 5052432,
+      "sha256": "e132c29f331bc7cadac627a68298a1f4713a4688d2cc69f531b0aac436caea7b"
+    },
+    "unexpected_core_exports": false
+  },
+  "actual_apk_v2_signing": {
+    "RSA_PKCS1_SHA256_signed_data_signature_verified": true,
+    "algorithm_id": "0x0103",
+    "certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "chunked_APK_content_digest_recomputed_and_matches": true,
+    "public_key_matches_certificate": true,
+    "retained_certificate_matches": true
+  },
+  "actual_binary_manifest": {
+    "package": "org.coh.nativecombined",
+    "version_code": 12,
+    "version_name": "0.1.11-report-diagnostic-test"
+  },
+  "application_ACK_permitted": false,
+  "arm64_apk": {
+    "bytes": 13934565,
+    "name": "CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk",
+    "sha256": "8492e7475f739a6472c13703b6812878ffa22bca38cf809ecad6ae0da56ad364"
+  },
+  "excluded_failed_framework_attempt": {
+    "archive_bytes": 240021,
+    "archive_sha256": "5cbad77b22226c6ce6f8ee892d70e051367b96ba63b2217634eb6e10b519fe1a",
+    "artifact_id": 12233539473,
+    "conclusion": "failure",
+    "counted_as_pass": false,
+    "job_id": 118401540020,
+    "observed_failure": "Shell uiautomator dump returned 137 with UiAutomation Bad file descriptor; framework receipt absent. Raw failure remains distinct from successful fresh replay.",
+    "partial_checks": 10,
+    "run_attempt": 1
+  },
+  "gates_25_27": "OPEN",
+  "native_regression": {
+    "checks_each_mode": 211,
+    "maximum_report_bytes": 6863,
+    "modes": [
+      "release",
+      "asan",
+      "ubsan"
+    ],
+    "new_native_report_heap_allocations": 0,
+    "production_probe_parsers_and_serializers_with_explicit_controller_JNI_socket_doubles": true,
+    "receipt_sha256": "aaa0a83cd8dc6fa7be999962edda89a0cc6d6c192c6b51cf6ee0813af00b38cc",
+    "report_limit_including_NUL": 7168
+  },
+  "original_server_world_entry_claimed": false,
+  "package_artifact": {
+    "bytes": 18664742,
+    "id": 12234456043,
+    "sha256": "767e98dd382d0a756df4903b16632c13bf0be080f475282c6894e2e7b50e3a63"
+  },
+  "passed": true,
+  "physical_Thor_qualified": false,
+  "qualified_for_Thor_diagnostic_test_delivery": true,
+  "retained_host_suites": 17,
+  "schema": "coh-report-diagnostic-independent-exact-package-review-v1",
+  "scope": "Independent download and byte/receipt inspection of the exact candidate packages and Android 13 x86_64 qualification; no physical Thor or original server-world execution. Public release bytes are a separate coordinator audit.",
+  "source_bindings": {
+    "DSO_reviewed_subset_pins": 284,
+    "all_current_hashes_match": true,
+    "complete_APK_compiler_dependency_closure_claimed": false,
+    "native_compiler_closure_project_pins": 70,
+    "package_and_DSO_revision_match": true,
+    "protected_inputs": 9,
+    "source_admission_pins": 2235
+  },
+  "source_revision": "042a149e6ca00d76e498fae9958bf49e5b795dd6",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/39352586218",
+  "world_authority": false,
+  "x86_64_qualification_apk": {
+    "bytes": 13237943,
+    "name": "CoH-Native-Combined-0.1.11-report-diagnostic-x86_64.apk",
+    "sha256": "ccfbca1fdba7c07e974aa679c2708fafcfe6860110cdef06d4779393c9d9a82a"
+  }
+}

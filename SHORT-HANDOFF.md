@@ -1,8 +1,9 @@
 # CoH native: Thor report regression and Combined 0.1.11 follow-up
 
 Current task starts from `5eef7eae530b60b30b9196ac75fec90dcd1b12d6`,
-`native-android` only. Follow-up qualification/publication is pending until the
-new report, phase, package and Android 13 gates pass. Gates 25–27 remain OPEN.
+`native-android` only. Follow-up 0.1.11/code 12 is qualified and published for
+Thor diagnostic testing from `042a149e6ca00d76e498fae9958bf49e5b795dd6`.
+Physical Thor acceptance remains PENDING. Gates 25–27 remain OPEN.
 
 Physical Thor 0.1.10 regression (user-supplied observations, not a new host test):
 exact APK SHA-256 `7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf`.
@@ -48,6 +49,56 @@ first independently bounded fresh accessibility capture, then inspects every
 issued scroll before enforcing the unchanged ten-scroll cap. This fixes the
 observed 57-second helper-bootstrap/portrait offscreen Sample memory locator
 failure without bypassing the real widget. All 232 driver controls pass.
+
+Final qualification/publication workflow (all five jobs PASS):
+https://github.com/Russianranger/coh-android/actions/runs/39352586218
+Android 13 x86_64: framework/import/preview 65 checks; native JNI, source-layout
+single/multi-fragment INITIAL_OBSERVED, lifecycle and cleanup 23; same-signer
+0.1.10 update/launch/debuggable rollback/reinstall 14. Four synthetic files,
+69,863 B and UID 10174 survived; this is not real game-save migration proof.
+The framework's first attempt failed in external UiAutomation (Bad file
+descriptor/exit 137); its raw artifact is retained and excluded from PASS.
+Only that job was replayed successfully; the APK was not rebuilt. The final
+framework recorded installed APK hash matches the exact x86_64 candidate.
+Retained part-count/additive bounded adapter qualification also PASS:
+https://github.com/Russianranger/coh-android/actions/runs/39351960994
+All compiled inputs for that run match the final candidate. Independent review
+verifies 2,235 raw/committed source pins, 70 native compiler project pins,
+nine protected inputs, actual binary manifest, all five ARM64 ELF libraries,
+nine JNI exports and actual APK v2 signature/content digest.
+
+Delivered ARM64 APK: `CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk`,
+13,934,565 B. Package `org.coh.nativecombined`; version
+`0.1.11-report-diagnostic-test`, code 12. Existing signer SHA-256:
+`9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522`.
+APK SHA-256:
+`8492e7475f739a6472c13703b6812878ffa22bca38cf809ecad6ae0da56ad364`.
+Direct download:
+https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.11-report-diagnostic-test/CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk
+Release, checksum and qualification receipts:
+https://github.com/Russianranger/coh-android/releases/tag/coh-native-combined-v0.1.11-report-diagnostic-test
+Independent review and public-byte audit are retained in
+`native-android/combined-client/diagnostics/report-regression-20261020/`.
+Server binaries, PostgreSQL data, Wine/FEX state, imported assets, saved
+profiles, all existing memory policies and parser limits are unchanged.
+The signed ARM64 package is host/package-qualified; actual Android execution
+uses the separate exact x86_64 APK. Neither establishes genuine server-world
+entry, dictionary generations, ACK permission or world authority.
+
+Thor 0.1.11 procedure (physical acceptance PENDING):
+1. Export the current launcher report, stop the server cleanly and retain the
+   qualified 0.1.10 APK. Install 0.1.11 over Combined; do not uninstall, clear
+   storage or reimport existing data.
+2. Start the same server and wait for ready. Launch native client, tap Test
+   world handoff once and choose the existing character. Export native JSON
+   after capture/first failure. Check the retained actual phase, first failure,
+   GROUPS/REQALLENTS/initial observations and explicit truncation/omissions.
+   Unknown means unknown; the complete report must not become REPORT_LIMIT.
+3. Leave a completed capture open briefly, Home/resume, then Return to launcher.
+   Confirm no auto-reconnect/repeated completed capture; export launcher ZIP.
+   Stop the server cleanly and export another ZIP. Keep JSON/ZIPs with this
+   exact APK hash. Retained debuggable rollback uses `adb install -r -d`;
+   never substitute uninstall/clear when the ordinary installer refuses it.
 
 The qualified 0.1.10 build and earlier integration evidence below remain
 historical acceptance records; they do not qualify the 0.1.11 candidate.

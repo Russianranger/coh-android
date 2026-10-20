@@ -1,0 +1,63 @@
+{
+  "apk": {
+    "bytes": 13934565,
+    "name": "CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk",
+    "sha256": "8492e7475f739a6472c13703b6812878ffa22bca38cf809ecad6ae0da56ad364"
+  },
+  "arm64_only_elf_libraries": [
+    "lib/arm64-v8a/libcoh_combined_interop.so",
+    "lib/arm64-v8a/libcoh_combined_network.so",
+    "lib/arm64-v8a/libcoh_session_client.so",
+    "lib/arm64-v8a/libproot-loader.so",
+    "lib/arm64-v8a/libproot.so"
+  ],
+  "download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.11-report-diagnostic-test/CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk",
+  "gates_25_27_open": true,
+  "passed": true,
+  "physical_Thor_qualified": false,
+  "public_checksum_file_matches": true,
+  "public_package_audit_matches": true,
+  "public_qualification_summary_matches": true,
+  "publication_summary": {
+    "android13_fragment_checks": 23,
+    "android13_framework_checks": 65,
+    "android13_upgrade_checks": 14,
+    "apk": {
+      "bytes": 13934565,
+      "name": "CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk",
+      "sha256": "8492e7475f739a6472c13703b6812878ffa22bca38cf809ecad6ae0da56ad364"
+    },
+    "gates_25_27_open": true,
+    "native_report_qualification": {
+      "checks_each": 211,
+      "max_report_bytes": 6863,
+      "modes": [
+        "asan",
+        "release",
+        "ubsan"
+      ],
+      "new_report_heap_allocations": 0,
+      "report_limit_bytes": 7168,
+      "source_layout_fixture_and_production_probes": true
+    },
+    "package": "org.coh.nativecombined",
+    "passed": true,
+    "phase_controls": 44,
+    "physical_Thor_qualified": false,
+    "previous_build_profile": "memory-diagnostic",
+    "same_signer_update_and_debuggable_rollback_exercised": true,
+    "schema": "coh-report-diagnostic-publication-v1",
+    "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "source_pin_count": 2235,
+    "source_revision": "042a149e6ca00d76e498fae9958bf49e5b795dd6",
+    "version_code": 12,
+    "version_name": "0.1.11-report-diagnostic-test",
+    "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/39352586218",
+    "world_authority": false
+  },
+  "schema": "coh-report-diagnostic-public-download-audit-v1",
+  "source_revision": "042a149e6ca00d76e498fae9958bf49e5b795dd6",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/39352586218",
+  "world_authority": false,
+  "zip_integrity_passed": true
+}
