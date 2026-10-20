@@ -2,30 +2,28 @@
 
 Updated 2026-10-20.
 
-Combined 0.1.14 physically passed stage 41 on Thor and drew a box at the
-selected entity's real Atlas Park pose. It remains the accepted baseline.
+Combined 0.1.14 remains the accepted baseline. Physical 0.1.15 Thor reports
+match the signed APK and confirm original costume_receive completed one body:
+28 parts, 112 strings and 58 colors, ending at bit 11648. The next unconsumed
+outer field is the SupergroupCostume presence bit; no missing table is yet
+established beyond the completed body.
 
-Candidate 0.1.15 passed source and Android 13 CI. Its signed ARM64 test APK
-connects the verified CLIENT ordinary, extra and palette slots to the unchanged
-original costume receiver. Host tests complete stored
-costume lists of up to ten bodies. After those bodies the next unconsumed outer
-field is the SupergroupCostume presence bit; no missing table is established
-there. The actual Thor cursor remains to be observed.
+At the decoded pose [131.453125, 0.25, -114.953125], the Thor report selects
+two authentic sidewalk source instances and draws the diagnostic box with
+zero GLES errors. Source residency peaks at 486030 bytes under 512 KiB.
+No screenshot was supplied to visually confirm ground contact. Full actor
+and world authority remain pending.
 
-The candidate streams original Atlas sidewalk partitions around the real pose.
-Host GLES shows textured ground under the box, with two source instances and
-zero GL errors. Accepted offline preview assets remain separate and unchanged.
-The existing memory caps remain unchanged. Wine and PostgreSQL sampling now
-covers 64 rows, early admission errors retain a specific reason, and owned
-PostgreSQL startup uses smaller settings while preserving source SQL capacity.
+The 64-row sampler still omits 27 same-UID processes, leaving complete live
+RSS/PSS unavailable. Two Wine zero-memory rows are verified zombies. Actual
+PostgreSQL settings were not retained. No new LOW_MEMORY exit is recorded;
+two older entries remain. Server exit 0, Wine/PostgreSQL cleanup, native
+resource release and profile preservation are reported.
 
-1. Validate the candidate on Thor: world and box together, costume body counts,
-   complete live process totals, actual PostgreSQL settings and lifecycle.
-2. Continue the original outer entity receiver from the observed boundary,
-   stopping at the first genuinely unavailable source table.
-3. Resolve and draw one genuine selected-character costume model and material
-   at the same pose, then expand the streamed source neighborhood as needed.
+1. Continue original outer entity receive from the observed boundary.
+2. Resolve and draw one genuine selected-character costume model/material.
+3. Complete process totals and verify actual PostgreSQL memory settings.
 
-Full costume actor, whole-world replication and application ACK are pending;
-Gates 25–27 remain open in their documented full scopes. Update the single
-rolling diagnostic status in place; commit raw output only when a checker pins it.
+Wait for the next user prompt before implementation. Gates 25–27 remain open
+in their documented full scopes. Update the single rolling diagnostic status;
+commit raw output only when a checker pins it.
