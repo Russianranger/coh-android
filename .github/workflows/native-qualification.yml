@@ -225,6 +225,7 @@ jobs:
         python3 native-android/combined-client/tools/check_client_slots_android.py --work /tmp/client-slots-android-ci --output native-android/results/combined-neighborhood-diagnostic/client-slots-android.json
         python3 native-android/engine/entities/check_original_ent_costume.py --work /tmp/original-ent-costume-ci --output native-android/results/combined-neighborhood-diagnostic/original-ent-costume.json
         python3 native-android/engine/entities/check_original_taskforce_receive.py --work /tmp/original-taskforce-ci --output native-android/results/combined-neighborhood-diagnostic/original-taskforce.json
+        python3 native-android/engine/appearance/check_costume_input.py --work /tmp/costume-input-ci --output native-android/results/combined-neighborhood-diagnostic/costume-input.json
         python3 native-android/session-client/tools/check_frame_capture.py --work /tmp/current-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/current-frame-owner.json
         python3 native-android/combined-client/tools/check_frame_capture_store.py
         python3 native-android/combined-client/tools/check_frame_capture_wiring.py

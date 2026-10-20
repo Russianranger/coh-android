@@ -2,32 +2,35 @@
 
 Updated 2026-10-20.
 
-Combined 0.1.14 remains the accepted baseline. Physical 0.1.15 Thor reports
-match the signed APK and confirm original costume_receive completed one body:
-28 parts, 112 strings and 58 colors, ending at bit 11648. The next unconsumed
-outer field is the SupergroupCostume presence bit; no missing table is yet
-established beyond the completed body.
+Combined 0.1.14 passed stage 41 and drew the box at the real pose. Physical
+0.1.15 completed the original costume body at bit 11648: 28 parts, 112 strings
+and 58 colors. Two authentic source sidewalk instances were drawn near
+[131.453125, 0.25, -114.953125]; Thor ground contact still needs the new capture.
 
-At the decoded pose [131.453125, 0.25, -114.953125], the Thor report selects
-two authentic sidewalk source instances and draws the diagnostic box with
-zero GLES errors. Source residency peaks at 486030 bytes under 512 KiB.
-No screenshot was supplied to visually confirm ground contact. Full actor
-and world authority remain pending.
+The 0.1.16 diagnostic adds a bounded game-surface capture and initial-packet
+replay. Host GLES capture shows source roadway and sidewalk with the yellow
+pose box. Original receive now covers the enclosing costume, power, title,
+ragdoll, statistics, vision, target, status, inventory and taskforce branches.
+Nonempty power customization needs the actual BasePower CRC lookup. Empty
+branches reach later very-rare fields, whose implementation remains. The full
+303112-bit physical packet has not been replayed; ACK and READY remain unsent.
 
-The 64-row sampler still omits 27 same-UID processes, leaving complete live
-RSS/PSS unavailable. Two Wine zero-memory rows are verified zombies. Actual
-PostgreSQL settings were not retained. No new LOW_MEMORY exit is recorded;
-two older entries remain. Server exit 0, Wine/PostgreSQL cleanup, native
-resource release and profile preservation are reported.
+The decoded costume snapshot preserves the actual bodytype. Rendering its
+character still needs that body's genuine rig, geometry and textures. The
+archive-backed neighborhood adapter passes two-pose host GLES tests; Android
+archive FD integration and original CLIENT ZIP metadata remain outstanding.
+The diagnostic keeps the existing two-instance source neighborhood.
 
-Development for 0.1.16 has source-tested frame capture, decoded costume
-snapshots, original outer-costume parsing and uncapped category memory sums.
-Application integration, further packet parsing and the diagnostic build are
-in progress. Character rendering and archive-backed world input remain partial.
+Memory export now sums every scanned process by category independently of
+row retention, tries the app UID cgroup first and retains actual PostgreSQL
+SHOW values. New Thor measurements are pending. Existing 8 MiB initial and
+96 MiB scene limits remain. Earlier low-memory exits remain unexplained.
 
-1. Continue original outer entity receive from the observed boundary.
-2. Resolve and draw one genuine selected-character costume model/material.
-3. Complete process totals and verify actual PostgreSQL memory settings.
+1. Collect the Thor capture and initial replay, then finish the actual packet.
+2. Resolve and draw the decoded bodytype using the accepted skinned renderer.
+3. Connect imported archives and verify neighborhood changes without rebuilding.
 
-Gates 25–27 remain open in their documented full scopes. Update the single rolling diagnostic status;
-commit raw output only when a checker pins it.
+Three implementation steps remain to a live world with the real character;
+the diagnostic box and bounded source sidewalks are already physically drawn.
+Gates 25–27 remain open. Update the rolling status; commit raw output only
+when a checker pins it.

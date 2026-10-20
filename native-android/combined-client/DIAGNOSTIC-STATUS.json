@@ -10,9 +10,9 @@
   "blocker": "Thor completed original costume_receive at bit11648 (one body,28 parts). Next unconsumed enclosing field is SupergroupCostume presence; no missing body table remains established.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "Continue original outer entity receive from the observed SupergroupCostume presence bit when requested.",
-    "Resolve and render one genuine selected costume mesh/material at the observed pose.",
-    "Complete simultaneous process-set totals beyond 64 rows and establish actual PostgreSQL GUC readback."
+    "Install0.1.16 in place and collect the Thor surface capture, initial replay and simultaneous memory observation; then finish the actual packet.",
+    "Resolve and draw the selected bodytype using its actual skeleton, geometry and textures.",
+    "Wire imported archive FDs to the qualified runtime neighborhood adapter and verify a different pose without rebuilding."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -479,7 +479,7 @@
     "result": "QUALIFIED physical costume-body continuation and bounded neighborhood report; PARTIAL aggregate memory because 64 rows omit 27 processes; runtime PostgreSQL settings unverified.",
     "next_action": "Wait for next user prompt."
   },
-  "next_action": "Finish application capture/export, original packet continuation and replay, then run focused integrated checks and one diagnostic build.",
+  "next_action": "Dispatch one capture-diagnostic0.1.16/code17 source-qualified ARM64 APK with sequential ABI builds and Android13 lifecycle/update/rollback tests.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -536,31 +536,38 @@
         "tree": "e1612ec3d9adbf60a98662d01daf237bb7175fc2"
       }
     ],
-    "ci": "pending final application integration",
+    "ci": "Pending capture-diagnostic workflow_dispatch; serial source then ARM64/x86 builds and Android13 lifecycle/update/rollback.",
     "next_diagnostic": {
       "version": "0.1.16",
       "version_code": 17,
       "profile": "capture-diagnostic",
       "build_started": false,
-      "scope": "One meaningful frame-capture and original packet-continuation test APK after integrated qualification."
+      "scope": "One meaningful frame-capture and original packet-continuation test APK after integrated qualification.",
+      "physical_thor": "Pending; no new Thor result claimed.",
+      "build_requested": true
     },
     "increments": {
-      "frame_capture": "Bounded 128-byte header plus at most 192x108 RGBA, double-buffer source owner and full-surface GLES helper qualified; application wiring underway. GL driver overhead remains separate from named source charges.",
-      "capture_store": "One bounded historical frame container with hash/session/pose metadata and atomic replacement qualified in Java; export wiring underway.",
-      "packet": "Whole unchanged original entReceiveCostume/rewards/NPC costume receive/translucency wrappers qualified. Power-customization and later original suffix work underway; entity/message completion and ACK remain false.",
+      "frame_capture": "Production current-pose/current-frame draw qualification and off-thread historical frame export integrated; actual host source-neighborhood+box GLES readback passed. Thor capture remains pending.",
+      "capture_store": "Atomic bounded historical raw frame container and stored ZIP export integrated; at most83072 bytes per raw record and4096 bytes metadata.",
+      "packet": "Original outer receive runs SG costumes, FX/NPC, translucency, power customization, titles, ragdoll, basic statistics, vision, target/status, inventory and taskforce. Nonempty customization stops at actual absent BasePower CRC lookup. Empty branches reach later known very-rare fields with explicit implementation-remaining diagnostics. Actual Thor 303112-bit packet has not been replayed; entity/message complete and ACK/READY stay false.",
       "character": "A lossless 48352-byte caller snapshot and original bodytype/changeGeo/texture adapter are qualified across all nine body descriptors. Actual selected bodytype/assets await the next Thor capture; box retained.",
-      "world": "Concrete scene CPU/GPU query integrated for capture. Worker tested archive input and 105 source placements; original CLIENT ZIP ranges and Android import hook are not yet qualified/integrated.",
-      "memory": "All scanned same-UID processes contribute to category and total sums independently of detail retention. A fixture with 75 processes is complete beyond 64 retained and 32 exported rows. Cgroup-first and actual PostgreSQL SHOW retention are underway."
+      "world": "Archive-backed adapter and105 authentic placements integrated as standalone source work with two-pose host GLES; Android imported-archive wiring and original CLIENT ZIP metadata remain unavailable. The next capture APK retains the existing two-instance neighborhood.",
+      "memory": "All scanned same-UID processes contribute to app/Wine/PostgreSQL/other and total sums regardless of detail retention; actual UID cgroup-first observation and five owned PostgreSQL SHOW results retained live and at exit. Physical readback pending."
     },
     "source_tests": {
       "capture_owner": "76 controls each release/ASan/UBSan; explicit allocation balance; LeakSanitizer unsupported by this host procfs",
       "capture_gles": "24 real Mesa controls including surface corners/state restoration",
-      "capture_store": "336 Java controls plus ZIP/hash checks",
-      "outer_costume": "15396 checks each release/ASan/UBSan",
+      "capture_store": "381 Java controls; integrated raw/JSON stored ZIP size/CRC/hash validation",
+      "outer_costume": "16297 controls each release/ASan/UBSan through taskforce; standalone taskforce 3625 per mode. Original signed 1<<31 has a documented isolated shift-sanitizer exclusion on that unchanged source function; bit 31 tested.",
       "costume_snapshot": "26526 checks each release/ASan/UBSan;70613 slot regression checks per mode",
       "appearance": "1481 checks each release/ASan/UBSan;48 source sender/client-oracle cases",
-      "memory_aggregates": "39 sampler,39 worker and8 contract checks",
-      "qualification_scope": "Independent worker source trees; final integrated Android source/build qualification pending."
+      "memory_aggregates": "Integrated sampler57, worker39, diagnostics183, export9, runtime43 tests/2 platform skips at7d8e1243c",
+      "qualification_scope": "Integrated local source checks passed; Android ARM64/x86 builds and Android13 emulator are dispatched next.",
+      "capture_wiring": "50 extracted-source controls per release/ASan/UBSan plus27 source assertions; not Android execution",
+      "live_world": "233 controls each release/ASan/UBSan; actual Mesa draws two nearby source instances at two distant poses with0 GL errors; Android FD integration not claimed",
+      "outer_android": "Final integrated check at 18b95b288 passed 10832249 checks in each release/ASan/UBSan mode,165 body selection/truncation cases, actual BasePower callback, replay bounds/alias/JNI/cleanup. Report peak 6855/7168 bytes.",
+      "initial_replay_store": "82 Java storage/lifecycle/export controls",
+      "integrated_capture": "All checks passed at cbede103272b09d1f1d980a44e09d30a79419dad: wiring50 per mode+27 assertions, packaging11, neighborhood39 per mode and actual Mesa source capture/ZIP"
     },
     "housekeeping": {
       "readme_points_to_roadmap": true,
@@ -578,6 +585,30 @@
       "further_recovery_requests": false,
       "offline_scope": "Original Atlas central directory and two selected payloads retained; original CLIENT central/header/compressed ranges missing. Generated CLIENT format fixture is not original-archive execution proof."
     },
-    "next_action": "Finish application capture/export, original packet continuation and replay, then run focused integrated checks and one diagnostic build."
+    "next_action": "Dispatch one capture-diagnostic0.1.16/code 17 source-qualified ARM64 APK with sequential ABI builds and Android13 lifecycle/update/rollback tests.",
+    "host_scene_capture": {
+      "scope": "Actual host Mesa GLES source neighborhood and observed-pose diagnostic box through the shipped capture/readback/publish and Java ZIP writer; not Android window/JNI/Thor or live authority",
+      "raw_bytes": 46784,
+      "raw_sha256": "b5fc9c7165a59f9a4874a8270984849a9d9bcaf36ea4be8e830c52f8872e37d9",
+      "zip_bytes": 47761,
+      "source_visible_pixels": 5353,
+      "observed_box_changed_pixels": 330,
+      "gl_errors": 0,
+      "zip_sha256": "03d40779cb5c00f2d48b36e207e970ef861386537ac5b75c44ec85614a520fdd",
+      "tested_revision": "cbede103272b09d1f1d980a44e09d30a79419dad"
+    },
+    "memory_source_accounting": {
+      "initial_owner_with_snapshot_and_replay_bytes": 181536,
+      "initial_stack_reserve_bytes": 32768,
+      "initial_aggregate_cap_bytes": 8388608,
+      "scene_transaction_cap_bytes": 100663296,
+      "capture_source_reservation_bytes": 1048576,
+      "runtime_world_named_overlap_bytes": 15186660,
+      "runtime_world_raw_residency_peak_bytes": 486030,
+      "runtime_world_source_cpu_bytes": 1997289,
+      "runtime_world_gpu_payload_bytes": 1867780,
+      "process_rss_pss": "Separate physical measurements; no new physical peak inferred from source sizes.",
+      "initial_observed_host_frames_bytes": 28944
+    }
   }
 }

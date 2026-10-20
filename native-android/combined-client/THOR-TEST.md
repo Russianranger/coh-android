@@ -1,19 +1,23 @@
-## Current candidate: Combined 0.1.15 neighborhood diagnostic
+## Current candidate: Combined 0.1.16 capture diagnostic
 
 Update the existing app with the signed ARM64 APK; keep its data, imports and
 accepted profile. The 0.1.14 package remains the rollback baseline.
 
-1. Start the existing server and select the same saved Atlas Park character.
-2. Open the native view. Capture the box standing on source sidewalk geometry;
-   export the native JSON, including costume continuation and body counts.
+1. Update in place, start the existing server and select the same saved Atlas Park character.
+2. Open the native view and leave the box and nearby world visible for five seconds.
+   The app saves one bounded game-surface capture after twelve real-pose frames.
+   Use **Export scene ZIP** for the saved image and its size, SHA256 and pose metadata;
+   export the native report for the original receiver's exact cursor and next field.
 3. Keep Wine, PostgreSQL and the native client running together for 60–90 seconds.
-   Export the Combined report ZIP. Inspect complete process totals, missing-metric
-   reasons, requested/observed PostgreSQL settings and any admission failure reason.
-4. Home and resume once, then return and stop the server. Export cleanup results.
-   If no ground appears, retain the actual pose, selected instance count and error.
+   Return and export the Combined report ZIP, including the saved frame, bounded
+   initial-packet replay, complete category sums, UID cgroup observation and actual
+   PostgreSQL SHOW values or explicit unavailable reasons.
+4. Home and resume once, then return and stop the server. Export the cleanup ZIP.
+   Keep every first-failure report. Do not clear storage or reimport the profile.
 
-Host GLES proves source geometry at the retained pose. This procedure establishes
-whether the new candidate does so on Thor; it does not assert a full costume actor.
+The box remains until the decoded body's actual rig, geometry and textures are
+available. The archived-world adapter is source tested separately; this APK keeps
+the existing two-instance source neighborhood. A host capture is not Thor evidence.
 
 # Current physical result — Combined 0.1.7 accepted
 
