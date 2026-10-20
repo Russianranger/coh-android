@@ -381,6 +381,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         try {report=new JSONObject(next);}
         catch(Exception invalid) {report=new JSONObject();}
         try {
+            boolean sourceSchema="coh-native-initial-interop-numeric-v1".equals(report.opt("schema"));
             if(!(report.opt("schema") instanceof String))report.put("schema","coh-native-initial-interop-numeric-v1");
             report.put("diagnostic_only",true);
             for(String flag:new String[]{"authserver_authenticated","source_generation_admitted","complete_initial_character",
@@ -393,6 +394,21 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     &&(Boolean.TRUE.equals(report.opt("raw_allents_observed"))
                         ||Boolean.TRUE.equals(report.opt("initial_observation_known"))||handoffState.controlKnown()))
                 handoffState.initial(report.getBoolean("raw_allents_observed"));
+            JSONArray boundary=report.optJSONArray("catalog_boundary");
+            if(boundary!=null&&boundary.length()==7) {
+                long[] values=new long[7];boolean exact=true;
+                for(int i=0;i<values.length;i++) {
+                    Object value=boundary.opt(i);
+                    if(!(value instanceof Integer)&&!(value instanceof Long)){exact=false;break;}
+                    values[i]=((Number)value).longValue();
+                }
+                if(exact)handoffState.catalogBoundary(values,sourceSchema&&Boolean.TRUE.equals(report.opt("raw_allents_observed")));
+            }
+            long[] boundarySaved=handoffState.catalogBoundary();
+            if(boundarySaved!=null) {
+                JSONArray retained=new JSONArray();for(long value:boundarySaved)retained.put(value);
+                report.put("catalog_boundary",retained);
+            }
             JSONObject first=report.optJSONObject("first_failure");
             if(first!=null&&Boolean.TRUE.equals(first.opt("valid"))) {
                 String[] fields={"local_phase","db_phase","map_phase","status","failure"};
@@ -448,6 +464,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             handoffButton.setEnabled(available&&(!active||networkMode!=NetworkMode.WORLD_HANDOFF));
             if(networkMode==NetworkMode.WORLD_HANDOFF) {
                 String detail=handoffState.charactersReady()?"Select an existing disposable-profile character."
+                        : handoffState.catalogDetail()!=null?handoffState.catalogDetail()
                         : Boolean.TRUE.equals(handoffState.initialObserved())?"Raw initial update observed. Complete character decoding remains pending."
                         : "WAIT_GROUPS".equals(phase)||"MAP_CONNECTING".equals(phase)?"Waiting for Map scene data (GROUPS)."
                         : "WAIT_ALLENTS".equals(phase)?"GROUPS received; REQALLENTS queued. Waiting for a raw initial update."

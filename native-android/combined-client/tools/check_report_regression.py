@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Qualify the bounded JNI report with authentic source-layout probe fixtures."""
 import argparse, hashlib, json, os, pathlib, shlex, shutil, subprocess
+from report_diagnostic_contract import separate_catalog_boundary
 ROOT=pathlib.Path(__file__).resolve().parents[3]
 TOOLS=pathlib.Path('native-android/combined-client/tools')
 PROBES=['create','pose','sequence','triggered','aianim','netfx','costume','reward','reward_list','costume_slots','costume_body','appearance','sgcolors','scales','partcount']
@@ -10,6 +11,8 @@ def need(v,msg):
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def check_report(row):
     r=row['report'];need(row['bytes']<7168,'report bound')
+    need('catalog_boundary' in r,'essential catalog projection absent')
+    separate_catalog_boundary(r)
     need(r['phase']!='REPORT_LIMIT' and 'report_core_limit' not in r,'phase lost')
     need(r['report_limit_bytes']==7168 and r['report_invalid_mask']&~r['report_omitted_mask']==0,'metadata')
     omitted=[name for i,name in enumerate(NAMES) if r['report_omitted_mask']&(1<<i)]
@@ -30,7 +33,7 @@ def main():
     flags=[str(cc),'-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-pie','-no-pie','-fstack-usage','-DCOH_INTEROP_REQUEST_TX=1','-I','native-android/combined-client/diagnostics/interop-adapter-20261018/test-include','-I','native-android/engine/initial-capture','-I','native-android/engine/session','-I','native-android/include']
     sources=[TOOLS/'test_report_regression.c',*[pathlib.Path('native-android/engine/initial-capture/coh_initial_'+x+'_probe.c') for x in PROBES],pathlib.Path('native-android/engine/entities/coh_entities.c'),pathlib.Path('native-android/engine/replication/coh_replication.c')]
     dep=subprocess.run([*flags,'-M',*map(str,sources)],cwd=ROOT,capture_output=True,check=True,text=True);need(not dep.stderr,'dependency diagnostics');(out/'dependencies.txt').write_text(dep.stdout)
-    pins={str(TOOLS/'check_report_regression.py'):sha(ROOT/TOOLS/'check_report_regression.py')};system={str(cc):sha(cc)}
+    pins={str(TOOLS/name):sha(ROOT/TOOLS/name) for name in ('check_report_regression.py','report_diagnostic_contract.py')};system={str(cc):sha(cc)}
     for line in dep.stdout.replace('\\\n',' ').splitlines():
         for token in shlex.split(line.split(':',1)[1]):
             f=pathlib.Path(token);f=(f if f.is_absolute() else ROOT/f).resolve()
@@ -53,6 +56,13 @@ def main():
         failure=named['first-failure-retained']['report']['first_failure']
         need(failure['failure']==8 and named['closed-initial-sticky']['report']['first_failure']==failure,'first failure preserved')
         need(named['reward-progress-local-refusal']['report']['report_invalid_mask']&256,'nested local omission')
+        boundary = named['source-layout-initial-observed']['report']['catalog_boundary']
+        need(boundary == named['source-layout-initial-observed']['report']['first_reward_string']['progress'], 'essential boundary exact producer')
+        omitted = named['maximum-width-scalars']['report']
+        need(omitted['catalog_boundary'] == boundary and omitted['report_omitted_mask'] & 128, 'essential boundary lost with optional reward')
+        need(named['catalog-boundary-default']['report']['catalog_boundary'][1] == 41, 'default catalog boundary absent')
+        need(named['catalog-boundary-closed']['report']['catalog_boundary'] == named['catalog-boundary-default']['report']['catalog_boundary'], 'catalog boundary lost at close')
+        need(named['reward-progress-local-refusal']['report']['catalog_boundary'] is None, 'malformed source probe exposed boundary')
         tx=named['maximum-width-scalars']['report']['request_tx']
         for key in ['first_send_attempts','retry_send_attempts','successful_retries','deferred_send_callbacks','failed_send_callbacks']:need(tx[key]==2**32-1,'maximum request count '+key)
         for key in ['queue_offset_ms','first_send_offset_ms','last_send_offset_ms','retirement_offset_ms']:need(tx[key]==2**64-1,'maximum request offset '+key)

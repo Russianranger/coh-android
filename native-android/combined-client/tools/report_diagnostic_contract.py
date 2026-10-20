@@ -43,8 +43,38 @@ def need(ok, message):
         raise ValueError(message)
 
 
+def separate_catalog_boundary(value):
+    """Recognize only validated additive source framing, never a dictionary owner."""
+    if 'catalog_boundary' not in value:
+        return dict(value)
+    boundary = value['catalog_boundary']
+    if boundary is not None:
+        need(value.get('schema') == 'coh-native-initial-interop-numeric-v1', 'catalog boundary schema')
+        need(isinstance(boundary, list) and len(boundary) == 7
+             and all(type(item) is int and item >= 0 for item in boundary), 'catalog boundary numeric shape')
+        status, stage, done0, done1, end, delta, metadata = boundary
+        need(status == 2 and stage in (41, 43) and done0 <= 256 and done1 <= 256
+             and end <= 33554432 and delta <= 33554432 - end and metadata <= 0x1fffffff,
+             'catalog boundary source domains')
+        count, width = (metadata >> 21) & 31, (metadata >> 26) & 7
+        compressed = bool(metadata & (1 << 18))
+        need(delta >= (3272 if compressed else 3265) and metadata & 63 <= 54
+             and (not compressed or (metadata >> 19) & 3 == 0), 'catalog boundary prefix/framing metadata')
+        need((count == width == 0) if stage == 41 else
+             (count <= 30 and width == (5 if compressed else 1 if count < 15 else 2)),
+             'catalog boundary flag/count framing')
+        # Retained Java diagnostics may survive partial serialization. A current
+        # complete native report must still have its genuine positive observation.
+        if value.get('phase') not in ('REPORT_LIMIT', 'REPORT_UNAVAILABLE'):
+            need(value.get('raw_allents_observed') is True, 'catalog boundary without initial observation')
+        reward = value.get('first_reward_string')
+        if isinstance(reward, dict) and 'progress' in reward:
+            need(reward['progress'] == boundary, 'essential/optional source progress mismatch')
+    return {key: item for key, item in value.items() if key != 'catalog_boundary'}
+
+
 def separate_report_extension(value, required=False):
-    value = separate_java_extension(value)
+    value = separate_catalog_boundary(separate_java_extension(value))
     present = REPORT_KEYS.intersection(value)
     need(not present or present == REPORT_KEYS, 'partial bounded report extension')
     need(not required or present == REPORT_KEYS, 'bounded report extension absent')

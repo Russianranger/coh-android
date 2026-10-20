@@ -7,10 +7,11 @@ final class HandoffState {
     private boolean ownerPresent, controlKnown, terminal, initialKnown, initialObserved, charactersReady;
     private String lastPhase="UNKNOWN";
     private long[] firstFailure;
+    private long[] catalogBoundary;
 
     synchronized void begin() {
         ownerPresent=true;controlKnown=false;terminal=false;initialKnown=false;
-        initialObserved=false;charactersReady=false;lastPhase="UNKNOWN";firstFailure=null;
+        initialObserved=false;charactersReady=false;lastPhase="UNKNOWN";firstFailure=null;catalogBoundary=null;
     }
     synchronized void control(int value) {
         if((value&OWNER_PRESENT)==0) {
@@ -46,6 +47,26 @@ final class HandoffState {
     synchronized String lastPhase() {return lastPhase;}
     synchronized void firstFailure(long local,long db,long map,long status,long failure) {
         if(firstFailure==null)firstFailure=new long[]{local,db,map,status,failure};
+    }
+    /** Numeric diagnostic only: never supplies a count or admits a dictionary. */
+    synchronized void catalogBoundary(long[] value,boolean observed) {
+        if(catalogBoundary!=null||!observed||value==null||value.length!=7)return;
+        for(long scalar:value)if(scalar<0)return;
+        if(value[0]!=2||(value[1]!=41&&value[1]!=43)||value[2]>256||value[3]>256
+                ||value[4]>33554432L||value[5]>33554432L-value[4]||value[6]>0x1fffffffL)return;
+        long metadata=value[6], count=(metadata>>21)&31, width=(metadata>>26)&7;
+        boolean compressed=(metadata&(1L<<18))!=0;
+        if(value[5]<(compressed?3272:3265)||(metadata&63)>54
+                ||(compressed&&((metadata>>19)&3)!=0))return;
+        if(value[1]==41?(count!=0||width!=0):(count>30||width==0||width>5
+                ||(compressed?width!=5:width!=(count<15?1:2))))return;
+        catalogBoundary=value.clone();
+    }
+    synchronized long[] catalogBoundary() {return catalogBoundary==null?null:catalogBoundary.clone();}
+    synchronized String catalogDetail() {
+        return catalogBoundary==null?null:catalogBoundary[1]==41
+                ?"Initial update observed; costume stopped at stage 41. The current MapServer BodyPart catalog and generation are required for its default part count."
+                :"Initial update observed; costume stopped at stage 43. Its explicit part count still requires the current MapServer BodyPart catalog and generation.";
     }
     synchronized long[] firstFailure() {return firstFailure==null?null:firstFailure.clone();}
 }

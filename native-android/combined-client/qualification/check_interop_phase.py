@@ -125,13 +125,34 @@ TESTS = r'''
   t.networkForeground=true;t.networkRequested=false;t.networkTick();need(InteropNative.services==services,"stopped request no service/reconnect");
   need(Boolean.FALSE.equals(PhaseMemoryDiagnostics.states((Boolean)null,false).get("world_authority")),"unknown never authority");
   need(Boolean.FALSE.equals(PhaseMemoryDiagnostics.states((Boolean)null,false).get("application_ack_permitted")),"unknown never ACK");
+  long[] boundary={2,41,3,1,2424,3416,262144};
+  s.begin();s.catalogBoundary(boundary,false);need(s.catalogBoundary()==null,"boundary without positive observation refused");
+  for(int i=0;i<7;i++){long[] bad=boundary.clone();bad[i]=-1;s.catalogBoundary(bad,true);need(s.catalogBoundary()==null,"negative scalar refused");}
+  for(long[] bad:new long[][]{null,new long[6],new long[8],{3,41,3,1,2424,3416,262144},{2,40,3,1,2424,3416,262144},{2,41,257,1,2424,3416,262144},{2,41,3,257,2424,3416,262144},{2,41,3,1,33554433L,3416,262144},{2,41,3,1,33554432L,1,262144},{2,41,3,1,2424,3271,262144},{2,41,3,1,2424,3416,Long.MAX_VALUE},{2,41,3,1,2424,3416,2359296},{2,41,3,1,2424,3416,67371008},{2,43,3,1,2424,3416,4L<<26},{2,43,3,1,2424,3416,(2L<<26)|(14L<<21)},{2,41,3,1,2424,3416,262199},{2,41,3,1,2424,3416,786432}}){s.catalogBoundary(bad,true);need(s.catalogBoundary()==null,"malformed framing refused");}
+  s.catalogBoundary(boundary,true);need(s.catalogDetail().contains("stage 41")&&s.catalogDetail().contains("current MapServer"),"precise default refusal");
+  boundary[1]=43;long[] copy=s.catalogBoundary();copy[1]=40;need(s.catalogBoundary()[1]==41,"input and output detached");
+  s.retired();need(s.catalogBoundary()[1]==41,"boundary survives cleanup");s.begin();need(s.catalogBoundary()==null&&s.catalogDetail()==null,"new attempt clears boundary");
+  s.catalogBoundary(new long[]{2,43,3,1,2424,3448, (5L<<26)|(28L<<21)|(1L<<18)},true);need(s.catalogDetail().contains("explicit part count"),"explicit framing separate");
+  t=active();InteropNative.bits=7;
+  InteropNative.text="{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"INITIAL_OBSERVED\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}";
+  t.publishNetwork();t.main.drain();need(t.networkStatus.text.contains("stage 41")&&t.networkStatus.text.contains("default part count"),"actual Activity UI projects boundary");
+  need(new JSONObject(t.interopReport).optJSONArray("catalog_boundary").length()==7,"numeric retained report");
+  InteropNative.text="{\"phase\":\"REPORT_LIMIT\"}";t.publishNetwork();t.main.drain();need(t.networkStatus.text.contains("stage 41"),"partial report preserves boundary UI");
+  need(new JSONObject(t.interopReport).optJSONArray("catalog_boundary").length()==7,"partial report preserves boundary numeric evidence");
+  t.disconnectNetwork();t.updateNetworkUi();need(t.networkStatus.text.contains("stage 41"),"closed same attempt preserves boundary");
+  t.handoffState.begin();need(t.handoffState.catalogBoundary()==null,"fresh attempt does not leak previous boundary");
+  for(String invalid:new String[]{"{\"phase\":\"INITIAL_OBSERVED\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"wrong\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":false,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,\"41\",3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,true,3,1,2424,3416,262144]}"}){t=active();t.storeNetworkReport(invalid);need(t.handoffState.catalogBoundary()==null,"untrusted schema/numeric input refused");}
   System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"exact_activity_methods\":8,\"native_json_android_collaborators_are_doubles\":true,\"android_execution\":false,\"world_authority\":false}");
  }
 }
 final class Handler {final ArrayDeque<Runnable> q=new ArrayDeque<>();void post(Runnable r){q.add(r);}void drain(){while(!q.isEmpty())q.remove().run();}}
-final class Ui {boolean enabled;int removals;void setEnabled(boolean value){enabled=value;}void setText(String text){}void removeAllViews(){removals++;}void setVisibility(int value){}}
+final class Ui {boolean enabled;int removals;String text;void setEnabled(boolean value){enabled=value;}void setText(String text){this.text=text;}void removeAllViews(){removals++;}void setVisibility(int value){}}
 final class SystemClock {static long now;static long elapsedRealtime(){return now;}}
-final class JSONArray {JSONArray(String raw){}}
+final class JSONArray {
+ final List<Object> values=new ArrayList<>();JSONArray(){}JSONArray(String raw){}
+ JSONArray put(Object value){values.add(value);return this;}int length(){return values.size();}Object opt(int i){return i>=0&&i<values.size()?values.get(i):null;}
+ public String toString(){return values.toString();}
+}
 final class InteropNative {
  static int bits,services,reports,suspends,characters;static String text;
  static int controlState(long handle){return bits;}static String report(long handle){reports++;return text;}
@@ -149,6 +170,7 @@ final class JSONObject {
  static final Object NULL=new Object();final Map<String,Object> values=new LinkedHashMap<>();
  JSONObject(){}JSONObject(String raw){Parser p=new Parser(raw);JSONObject parsed=p.object();p.space();if(p.at!=raw.length())throw new IllegalArgumentException();values.putAll(parsed.values);}
  JSONObject put(String key,Object value){values.put(key,value);return this;}Object opt(String key){return values.get(key);}
+ JSONArray optJSONArray(String key){Object value=opt(key);return value instanceof JSONArray?(JSONArray)value:null;}
  JSONObject optJSONObject(String key){Object value=opt(key);return value instanceof JSONObject?(JSONObject)value:null;}
  String optString(String key){return optString(key,"");}String optString(String key,String fallback){Object value=opt(key);return value==null||value==NULL?fallback:String.valueOf(value);}
  String getString(String key){return (String)opt(key);}int getInt(String key){return ((Number)opt(key)).intValue();}
@@ -163,7 +185,7 @@ final class JSONObject {
   void need(char value){space();if(take()!=value)throw new IllegalArgumentException();}
   String string(){need('"');StringBuilder out=new StringBuilder();while(true){char c=take();if(c=='"')return out.toString();if(c=='\\'){c=take();if(c=='n')c='\n';}out.append(c);}}
   JSONObject object(){need('{');JSONObject out=new JSONObject();space();if(at<raw.length()&&raw.charAt(at)=='}'){at++;return out;}while(true){String key=string();need(':');out.put(key,value());space();char c=take();if(c=='}')return out;if(c!=',')throw new IllegalArgumentException();}}
-  Object value(){space();if(at>=raw.length())throw new IllegalArgumentException();char c=raw.charAt(at);if(c=='{')return object();if(c=='"')return string();for(String word:new String[]{"true","false","null"})if(raw.startsWith(word,at)){at+=word.length();return word.equals("null")?NULL:Boolean.valueOf(word);}int start=at;if(c=='-')at++;while(at<raw.length()&&Character.isDigit(raw.charAt(at)))at++;if(start==at)throw new IllegalArgumentException();return Long.valueOf(raw.substring(start,at));}
+  Object value(){space();if(at>=raw.length())throw new IllegalArgumentException();char c=raw.charAt(at);if(c=='{')return object();if(c=='['){at++;JSONArray result=new JSONArray();space();if(raw.charAt(at)==']'){at++;return result;}while(true){result.put(value());space();char sep=take();if(sep==']')return result;if(sep!=',')throw new IllegalArgumentException();}}if(c=='"')return string();for(String word:new String[]{"true","false","null"})if(raw.startsWith(word,at)){at+=word.length();return word.equals("null")?NULL:Boolean.valueOf(word);}int start=at;if(c=='-')at++;while(at<raw.length()&&Character.isDigit(raw.charAt(at)))at++;if(start==at)throw new IllegalArgumentException();return Long.valueOf(raw.substring(start,at));}
  }
 }
 '''

@@ -1,5 +1,7 @@
 plugins { id 'com.android.application' }
 def selectedAbis = providers.gradleProperty('probeAbis').getOrElse('arm64-v8a').split(',') as List
+def candidateProfile = providers.gradleProperty('cohBuildProfile').getOrElse('report-diagnostic')
+if (!(candidateProfile in ['report-diagnostic','catalog-diagnostic'])) throw new GradleException('Unsupported diagnostic profile')
 def cryptoRoot = providers.gradleProperty('cohCryptoRoot').getOrElse('')
 if (selectedAbis.isEmpty() || selectedAbis.any { !(it in ['arm64-v8a','x86_64']) }) throw new GradleException('Unsupported ABI')
 if (cryptoRoot.isEmpty()) throw new GradleException('cohCryptoRoot must name the qualified public crypto output')
@@ -14,6 +16,10 @@ android {
         targetSdk 35
         versionCode 12
         versionName '0.1.11-report-diagnostic-test'
+        if (candidateProfile == 'catalog-diagnostic') {
+            versionCode 13
+            versionName '0.1.12-catalog-diagnostic-test'
+        }
         ndk { abiFilters.addAll(selectedAbis) }
         externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath } }
     }

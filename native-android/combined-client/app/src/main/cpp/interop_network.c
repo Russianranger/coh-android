@@ -390,6 +390,9 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     char first_aianim[COH_INITIAL_AIANIM_REPORT_MAX]="null",first_netfx[COH_INITIAL_NETFX_REPORT_MAX]="null";
     char first_costume[COH_INITIAL_COSTUME_REPORT_MAX]="null";
     char first_reward[COH_INITIAL_REWARD_REPORT_MAX]="null";
+    /* Essential, pointer-free source progress survives optional detail omission.
+     * Only the original composed validator can publish catalog stages41/43. */
+    char catalog_boundary[COH_INITIAL_REWARD_LIST_REPORT_MAX]="null";
     int create_written=coh_initial_create_probe_json(&h->initial_create,first_create,sizeof(first_create));
     if(create_written<=0||(size_t)create_written>=sizeof(first_create)){strcpy(first_create,"null");invalid|=1u<<0;}
     int pose_written=coh_initial_pose_probe_json(&h->initial_pose,first_pose,sizeof(first_pose));
@@ -422,6 +425,9 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
             coh_initial_costume_slots_progress_json(&h->initial_reward_list,&h->initial_costume_slots,progress,sizeof(progress)):
             coh_initial_reward_list_probe_json(&h->initial_reward_list,progress,sizeof(progress));
         if(progress_written>0&&(size_t)progress_written<sizeof(progress)) {
+            if(h->initial_partcount.stage==COH_INITIAL_PARTCOUNT_DEFAULT_CATALOG||
+               h->initial_partcount.stage==COH_INITIAL_PARTCOUNT_CATALOG)
+                memcpy(catalog_boundary,progress,(size_t)progress_written+1);
             size_t at=(size_t)reward_written-1,room=sizeof(first_reward)-at;
             int appended=snprintf(first_reward+at,room,",\"progress\":%s}",progress);
             if(appended<0||(size_t)appended>=room){first_reward[at]='}';first_reward[at+1]=0;invalid|=1u<<8;}
@@ -466,7 +472,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
+        "\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
@@ -480,7 +486,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        request_available?"true":"false",request,receive);
+        catalog_boundary,request_available?"true":"false",request,receive);
     const char *const details[8]={first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward};
     size_t used=written>0?(size_t)written:sizeof(json);
     int complete=written>0&&(size_t)written<sizeof(json)&&report_details(json,&used,details,invalid);

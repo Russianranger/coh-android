@@ -1,0 +1,45 @@
+{
+  "CI": null,
+  "accepted_scope": "Essential validated stage41/43 numeric source progress; bounded human refusal retained within same attempt; no catalog admission",
+  "blocker": "Authentic current MapServer runtime catalog/generation remains unavailable. New exact APK Android13 qualification not yet run.",
+  "commit": "dbbcd8264513e4e9d36f55b2378bd3865c8f6f20",
+  "memory": {
+    "RSS_PSS_or_Android_measured_this_cycle": false,
+    "added_native_stack_buffer_bytes": 128,
+    "java_retained_numeric_payload_bytes": 56,
+    "native_new_heap_allocations": 0,
+    "native_report_limit_bytes": 7168
+  },
+  "milestone": 5,
+  "next": "Coordinator review/integrate accepted five-worker tree; run new candidate qualification once. Positive catalog boundary remains host-only until Thor test; runtime stage41 still refuses.",
+  "packaging_readiness": {
+    "Android13_execution_this_cycle": false,
+    "all_qualification_jobs_required_before_test_prerelease": true,
+    "focused_packaging_tests": 5,
+    "framework_exact_candidate_identity_audited": true,
+    "historical_011_default_and_workflow_preserved": true,
+    "package_assembled_or_published": false,
+    "previous_011_actual_archive_and_x86_receipt_verified": true,
+    "previous_011_artifact": "12234456043",
+    "profile": "catalog-diagnostic",
+    "selected_explicitly_by": "-PcohBuildProfile=catalog-diagnostic",
+    "version_code": 13,
+    "version_name": "0.1.12-catalog-diagnostic-test",
+    "workflow": ".github/workflows/native-combined-catalog-diagnostic.yml"
+  },
+  "schema": "coh-five-milestone-worker-status-v1",
+  "source_implementation_commit": "dbbcd8264513e4e9d36f55b2378bd3865c8f6f20",
+  "state": "QUALIFIED_HOST_ANDROID_PENDING",
+  "tested_tree": "f06111c71ba31677329f09a60871213f3dcd667d",
+  "tests": {
+    "deep_adapter_release_asan_ubsan_checks_each": 12913,
+    "driver_tests": 10,
+    "java_exact_activity_checks": 85,
+    "native_max_report_bytes": 6887,
+    "native_release_asan_ubsan_checks_each": 341,
+    "projection_tests": 6,
+    "protected_inputs": 9,
+    "report_qualification_tests": 5
+  },
+  "worker": "E"
+}
