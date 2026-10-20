@@ -17,7 +17,7 @@ BUILD_PROFILES = {
     'memory-diagnostic': ('11', '0.1.10-memory-diagnostic-test'),
     'report-diagnostic': ('12', '0.1.11-report-diagnostic-test'),
     'catalog-diagnostic': ('13', '0.1.12-catalog-diagnostic-test'),
-    'entity-diagnostic': ('14', '0.1.13-entity-diagnostic-test'),
+    'entity-diagnostic': ('15', '0.1.14-entity-diagnostic-test'),
 }
 
 

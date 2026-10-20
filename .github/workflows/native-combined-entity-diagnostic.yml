@@ -12,7 +12,6 @@ concurrency:
   cancel-in-progress: false
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: '1'
-  REUSE_ENTITY_APKS: ${{ contains(github.event.head_commit.message, '[entity-smoke-reuse]') }}
 jobs:
   diagnostic:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
@@ -32,14 +31,12 @@ jobs:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
       - name: Install the existing pinned build components
-        if: env.REUSE_ENTITY_APKS != 'true'
         run: |
           sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
           python3 -m pip install --disable-pip-version-check Pillow==12.3.0
       - name: Test the changed original receiver, entity bridge and memory sampler
-        if: env.REUSE_ENTITY_APKS != 'true'
         run: |
           python3 native-android/engine/entities/check_original_costume_receive.py --work /tmp/original-costume-ci --output native-android/results/combined-entity-diagnostic/original-costume.json
           python3 native-android/combined-client/tools/check_bodypart_continuation.py --work /tmp/bodypart-continuation-ci --output native-android/results/combined-entity-diagnostic/bodypart-continuation.json
@@ -50,7 +47,6 @@ jobs:
           python3 native-android/combined-client/qualification/check_memory_worker.py
           python3 native-android/combined-client/tools/test_process_set_contract.py
       - name: Reuse pinned crypto and prepare existing scene inputs
-        if: env.REUSE_ENTITY_APKS != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -59,59 +55,17 @@ jobs:
           python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/combined-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-entity-diagnostic/crypto-reuse.json
           python3 native-android/combined-client/tools/prepare.py --evidence native-android/results/combined-entity-diagnostic/build-inputs.json
       - name: Build and inspect the signed ARM64 diagnostic
-        if: env.REUSE_ENTITY_APKS != 'true'
         run: |
           python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohBuildProfile=entity-diagnostic -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
-          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk
-          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk --abi arm64-v8a --require-clean --require-interop --build-profile entity-diagnostic --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-entity-diagnostic/arm64-package.json
-          python3 native-android/combined-client/tools/interop_package_audit.py --entity-diagnostic --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk --abi arm64-v8a --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-entity-diagnostic/arm64-interop-dso.json
-          sha256sum native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk > native-android/results/combined-entity-diagnostic/arm64.sha256
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.14-entity-diagnostic-arm64.apk
+          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.14-entity-diagnostic-arm64.apk --abi arm64-v8a --require-clean --require-interop --build-profile entity-diagnostic --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-entity-diagnostic/arm64-package.json
+          python3 native-android/combined-client/tools/interop_package_audit.py --entity-diagnostic --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.14-entity-diagnostic-arm64.apk --abi arm64-v8a --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-entity-diagnostic/arm64-interop-dso.json
+          sha256sum native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.14-entity-diagnostic-arm64.apk > native-android/results/combined-entity-diagnostic/arm64.sha256
       - name: Build the separate emulator APK sequentially
-        if: env.REUSE_ENTITY_APKS != 'true'
         run: |
           python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PprobeAbis=x86_64 -PcohBuildProfile=entity-diagnostic -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug
-          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-x86_64.apk
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.14-entity-diagnostic-x86_64.apk
           python3 native-android/combined-client/gradle.py --stop
-      - name: Restore the exact existing APKs for the driver-only retest
-        if: env.REUSE_ENTITY_APKS == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
-          python3 -m pip install --disable-pip-version-check Pillow==12.3.0
-          gh api repos/Russianranger/coh-android/actions/artifacts/12241562542 > /tmp/entity-artifact.json
-          gh api repos/Russianranger/coh-android/actions/artifacts/12241562542/zip > /tmp/entity-existing.zip
-          python3 - <<'PY_RESTORE'
-          import hashlib,json,os,subprocess,zipfile
-          from pathlib import Path
-          source='ae8e9240b3211e1e87de845ab370f6f6b229e4df'
-          metadata=json.loads(Path('/tmp/entity-artifact.json').read_text())
-          assert metadata['workflow_run']['head_sha']==source and metadata['id']==12241562542 and not metadata['expired']
-          allowed={'.github/workflows/native-combined-entity-diagnostic.yml','SHORT-HANDOFF.md',
-              'native-android/combined-client/diagnostics/interop-report-adapter-20261020/check_bounded_adapter.py',
-              'native-android/combined-client/qualification/check_interop_phase.py',
-              'native-android/combined-client/qualification/interop-host-compatibility-20261020.json',
-              'native-android/combined-client/tools/check_report_regression.py',
-              'native-android/combined-client/tools/emulator_check.py',
-              'native-android/combined-client/tools/test_absent_policy_driver.py'}
-          changed=set(subprocess.check_output(['git','diff','--name-only',source,'HEAD'],text=True).splitlines())
-          assert changed<=allowed, 'Rebuild required for changed APK inputs: '+repr(sorted(changed-allowed))
-          archive=Path('/tmp/entity-existing.zip')
-          assert archive.stat().st_size==16368540
-          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='1d012405e989d5423d27ef29078b2dc9c93dd962c1e23840cfe4f4825fa38268'
-          out=Path('native-android/results/combined-entity-diagnostic');out.mkdir(parents=True,exist_ok=True)
-          pins={'arm64':'5c709136f80b09b4f737c1b87d6bf7bca47de7497f0b31156a29d1d0e2f7100b','x86_64':'1cec87149764df0526793b668c3000fa7bf0311e40ee674f02daa4a8c0240bc7'}
-          with zipfile.ZipFile(archive) as z:
-              for abi,pin in pins.items():
-                  name=f'CoH-Native-Combined-0.1.13-entity-diagnostic-{abi}.apk'
-                  assert z.getinfo(name).file_size<20*1024*1024
-                  data=z.read(name);assert hashlib.sha256(data).hexdigest()==pin
-                  (out/name).write_bytes(data)
-              for name in ('arm64-package.json','arm64-interop-dso.json','original-costume.json','bodypart-continuation.json','observed-entity.json','observed-session.json','observed-bridge.json','build-inputs.json','crypto-reuse.json'):
-                  assert z.getinfo(name).file_size<1024*1024
-                  (out/name).write_bytes(z.read(name))
-          (out/'emulator-retest-inputs.json').write_text(json.dumps({'APK_source_commit':'ae8e9240b3211e1e87de845ab370f6f6b229e4df','driver_commit':os.environ['GITHUB_SHA'],'artifact_id':12241562542,'APKs_rebuilt':False,'APK_sha256':pins},sort_keys=True,indent=2)+'\n')
-          PY_RESTORE
       - name: Enable emulator acceleration
         run: |
           test -c /dev/kvm
@@ -127,7 +81,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-x86_64.apk --output native-android/results/combined-entity-diagnostic/android13
+          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.14-entity-diagnostic-x86_64.apk --output native-android/results/combined-entity-diagnostic/android13
       - uses: actions/upload-artifact@v4
         if: always()
         with:

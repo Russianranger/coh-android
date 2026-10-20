@@ -20,8 +20,8 @@ android {
             versionCode 13
             versionName '0.1.12-catalog-diagnostic-test'
         } else if (candidateProfile == 'entity-diagnostic') {
-            versionCode 14
-            versionName '0.1.13-entity-diagnostic-test'
+            versionCode 15
+            versionName '0.1.14-entity-diagnostic-test'
         }
         ndk { abiFilters.addAll(selectedAbis) }
         externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath } }

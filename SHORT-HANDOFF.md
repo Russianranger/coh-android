@@ -5,6 +5,34 @@ requirement for this local BodyPart default path. Earlier five-worker cycle and
 0.1.12 evidence remain in commit `8170fc0d222ec154b19b0caf2616040004d4b2e7`.
 Do not restart the MapServer SDK/witness qualification to advance this path.
 
+## New physical version12/13 reports
+
+Exact delivered0.1.13APK confirmed on Thor: real selected-self box index125 at
+[131.453125,0.25,-114.953125],1384 draw submissions,zero GL errors. Afterpause:
+boxinactive,1387 cumulative draws,two contexts completed,held_dirs0,cleanupclean.
+Retained scene instances0 at actualpose/radius96; surrounding prepared subset is
+empty there. This confirms real-pose diagnostic draw submission, not independent
+pixel visibility, a complete actor/costume/world or an application ACK.
+
+BothAPK reports remain stage41. Version13bodyparts_default[3,0] is missing-file
+COH_NOT_FOUND; costume_continuation:null. Latestclient-authority source38fc7d3d7
+removes precisely that admissiondependency. The next live costume field has not
+yet been observed. Same genuine initial37889B/303112bits;GROUPS42889B/508files/33roots;
+one list/selection/handoff and2owned sockets closed. Optional omissionmask96,
+invalidmask0,essentialstate retained. Sanitized evidence:physical-12-13.json.
+
+Version13combinedsampler:32processes(app+9Wine+16Postgres+6other),twoWine metrics
+missing,scan incomplete and complete totalsnull. NativeZIPpartialRSS/PSS sums
+1232064512/937546752B; latercombined snapshot1219072000/924016640B. These are not
+complete combined peaks. App peakRSS/PSS209825792/104468480B,zero samplerfailures.
+New Oct19reason3LOW_MEMORY deaths at23:08:17.925/23:08:21.504 America/Chicago are
+additional toOct15; cause unknown. Current452policy samples show0pressure stops,
+minheadroom7595450368B. Two trimcallbacks(last15),zero onLowMemory callbacks.
+The interrupted earlier startup has no concurrent guest-memory observation.
+
+NextAPK0.1.14/code15 is being built from the actual client-authority correction;
+no source grammar, owner layer, memory cap or server runtime change is added.
+
 ## Default count and next field
 
 The original `.bp` and retained real CLIENT BodyParts.bin match: 28 entries,

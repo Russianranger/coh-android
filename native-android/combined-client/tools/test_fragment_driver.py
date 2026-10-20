@@ -188,6 +188,11 @@ class FragmentDriver(unittest.TestCase):
     def test_explicit_memory_profile_preserves_exact_historical_default(self):
         self.assertEqual(BUILD_PROFILES['original-fragment'], ('10', '0.1.9-gates25-27-test'))
         self.assertEqual(BUILD_PROFILES['memory-diagnostic'], ('11', '0.1.10-memory-diagnostic-test'))
+        self.assertEqual(BUILD_PROFILES['report-diagnostic'], ('12', '0.1.11-report-diagnostic-test'))
+        self.assertEqual(BUILD_PROFILES['catalog-diagnostic'], ('13', '0.1.12-catalog-diagnostic-test'))
+        self.assertEqual(BUILD_PROFILES['entity-diagnostic'], ('15', '0.1.14-entity-diagnostic-test'))
+        with self.assertRaises(AssertionError):
+            check_build_identity('14', '0.1.13-entity-diagnostic-test', 'entity-diagnostic')
         for profile, identity in BUILD_PROFILES.items():
             check_build_identity(*identity, profile)
             for rejected in (('10', '0.1.10-memory-diagnostic-test'), ('11', '0.1.9-gates25-27-test'), (str(int(identity[0]) + 1), identity[1])):

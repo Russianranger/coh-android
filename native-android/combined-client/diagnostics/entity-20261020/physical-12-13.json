@@ -1,0 +1,383 @@
+{
+  "APK14_build_state": "PREPARING",
+  "accepted": "0.1.13 actual observed-box GLES draw submissions at selected-self pose, with later pause/cleanup",
+  "independent_pixel_visibility_or_complete_actor_claimed": false,
+  "next_live_costume_field_observed": false,
+  "reports": [
+    {
+      "app": {
+        "installed_apk": {
+          "bytes": 13936213,
+          "sha256": "0fbe39effa0a608e683eed5ee788daf856099be46ad108d6ccc8bbafb75ad849"
+        },
+        "package": "org.coh.nativecombined",
+        "version_code": 13,
+        "version_name": "0.1.12-catalog-diagnostic-test"
+      },
+      "connection_mode": "WORLD_HANDOFF",
+      "file_bytes": 47915,
+      "file_sha256": "4850410068bb21acd1d746da085234306532af084d520eb6558ce39852be1018",
+      "input": "COH-NativeCombined-1792469730439.zip::native-client-report.json",
+      "memory": {
+        "android_memory_callbacks": null,
+        "minimum_observed_system_headroom_bytes": 8558845952,
+        "sampled_peak_process_pss_bytes": 127669248,
+        "sampled_peak_process_rss_bytes": 232550400,
+        "sampler_failures": 0,
+        "samples": 8
+      },
+      "native": {
+        "contexts_completed": 2,
+        "contexts_started": 2,
+        "frames": 1469,
+        "gl_errors": 0,
+        "held_dirs": 0
+      },
+      "observed_entity_box_requested": null,
+      "observed_server_entity": null,
+      "resumed": false,
+      "same_uid_process_set": null,
+      "scene_selected_instances": 6,
+      "updated_at": "2026-10-19T23:15:29.248-05:00",
+      "world_handoff": {
+        "bodyparts_default": null,
+        "catalog_boundary": [
+          2,
+          41,
+          3,
+          1,
+          2424,
+          3416,
+          262144
+        ],
+        "character_choices": 1,
+        "character_lists": 1,
+        "cleanup_verified": true,
+        "closed_sockets": 2,
+        "costume_continuation": null,
+        "groups_bits": 343112,
+        "groups_bytes": 42889,
+        "groups_present_files": 508,
+        "groups_roots": 33,
+        "initial_bits": 303112,
+        "initial_bytes": 37889,
+        "initial_observed": true,
+        "map_handoffs": 1,
+        "opened_sockets": 2,
+        "phase": "SUSPENDED",
+        "report_invalid_mask": 0,
+        "report_omitted_mask": 96,
+        "report_truncated": true
+      }
+    },
+    {
+      "app": {
+        "installed_apk": {
+          "bytes": 13954697,
+          "sha256": "5c709136f80b09b4f737c1b87d6bf7bca47de7497f0b31156a29d1d0e2f7100b"
+        },
+        "package": "org.coh.nativecombined",
+        "version_code": 14,
+        "version_name": "0.1.13-entity-diagnostic-test"
+      },
+      "connection_mode": "WORLD_HANDOFF",
+      "file_bytes": 52351,
+      "file_sha256": "4e5421ddddefd89443f26d2866cc313b1a3a3d5e43ec46b04ce3e6e1d0bb8277",
+      "input": "COH-NativeCombined-1792491256433.zip::native-client-report.json",
+      "memory": {
+        "android_memory_callbacks": {
+          "callback_is_oom_kill_proof": false,
+          "last_callback_elapsed_ms": 996719338,
+          "last_trim_level": 15,
+          "low_memory_callbacks": 0,
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 2
+        },
+        "minimum_observed_system_headroom_bytes": 7595515904,
+        "sampled_peak_process_pss_bytes": 104468480,
+        "sampled_peak_process_rss_bytes": 209825792,
+        "sampler_failures": 0,
+        "samples": 10
+      },
+      "native": {
+        "contexts_completed": 2,
+        "contexts_started": 2,
+        "frames": 3328,
+        "gl_errors": 0,
+        "held_dirs": 0
+      },
+      "observed_entity_box_requested": false,
+      "observed_server_entity": {
+        "active": false,
+        "application_ack": false,
+        "box_draws": 1387,
+        "complete_actor": false,
+        "entity_index": 0,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "updates": 1,
+        "visual": "orange diagnostic box at decoded server coordinate"
+      },
+      "resumed": false,
+      "same_uid_process_set": {
+        "atomic_snapshot": false,
+        "begin_elapsed_ms": 997167884,
+        "deduplication": "one row per PID/start_ticks; native client and launcher share the Android app row",
+        "end_elapsed_ms": 997167926,
+        "expected_roles_observed": true,
+        "incomplete_process_metrics": 2,
+        "observed_pss_sum_bytes": 937546752,
+        "observed_rss_sum_bytes": 1232064512,
+        "postgresql_processes": 16,
+        "process_count": 32,
+        "process_limit": 32,
+        "pss_is_proportional": true,
+        "rss_sum_includes_repeated_shared_pages": true,
+        "sample_window_ms": 42,
+        "sampled_peak_total_pss_bytes": 482178048,
+        "sampled_peak_total_rss_bytes": 658341888,
+        "sampled_utc_ms": 1792491251140,
+        "samples": 89,
+        "scan_complete": false,
+        "schema": "coh-same-uid-process-memory-v1",
+        "scope": "observed same-Android-UID processes; Wine/PostgreSQL identified by bounded kernel comm/argv; unavailable values are null; no GPU or whole-device total",
+        "self_pid": 4801,
+        "server_process_expected": true,
+        "snapshot_age_ms": 3653,
+        "source": "proc PID status/stat/smaps_rollup; no full smaps scan",
+        "total_pss_bytes": null,
+        "total_rss_bytes": null,
+        "uid": 10315,
+        "unreadable_status_count": 0,
+        "wine_processes": 9
+      },
+      "scene_selected_instances": 11,
+      "updated_at": "2026-10-20T05:14:14.835-05:00",
+      "world_handoff": {
+        "bodyparts_default": [
+          3,
+          0
+        ],
+        "catalog_boundary": [
+          2,
+          41,
+          3,
+          1,
+          2424,
+          3416,
+          262144
+        ],
+        "character_choices": 1,
+        "character_lists": 1,
+        "cleanup_verified": true,
+        "closed_sockets": 2,
+        "costume_continuation": null,
+        "groups_bits": 343112,
+        "groups_bytes": 42889,
+        "groups_present_files": 508,
+        "groups_roots": 33,
+        "initial_bits": 303112,
+        "initial_bytes": 37889,
+        "initial_observed": true,
+        "map_handoffs": 1,
+        "opened_sockets": 2,
+        "phase": "SUSPENDED",
+        "report_invalid_mask": 0,
+        "report_omitted_mask": 96,
+        "report_truncated": true
+      }
+    },
+    {
+      "app": {
+        "installed_apk": {
+          "bytes": 13936213,
+          "sha256": "0fbe39effa0a608e683eed5ee788daf856099be46ad108d6ccc8bbafb75ad849"
+        },
+        "package": "org.coh.nativecombined",
+        "version_code": 13,
+        "version_name": "0.1.12-catalog-diagnostic-test"
+      },
+      "connection_mode": "WORLD_HANDOFF",
+      "file_bytes": 50714,
+      "file_sha256": "b253b66df8424307bb31d92c57851518474bdb0b70a462c09aa2b1b5c292ec6d",
+      "input": "COH-NativeCombined-20261019-231522.json",
+      "memory": {
+        "android_memory_callbacks": null,
+        "minimum_observed_system_headroom_bytes": 8657833984,
+        "sampled_peak_process_pss_bytes": 121199616,
+        "sampled_peak_process_rss_bytes": 224874496,
+        "sampler_failures": 0,
+        "samples": 5
+      },
+      "native": {
+        "contexts_completed": 0,
+        "contexts_started": 1,
+        "frames": 1166,
+        "gl_errors": 0,
+        "held_dirs": 0
+      },
+      "observed_entity_box_requested": null,
+      "observed_server_entity": null,
+      "resumed": true,
+      "same_uid_process_set": null,
+      "scene_selected_instances": 6,
+      "updated_at": "2026-10-19T23:15:22.553-05:00",
+      "world_handoff": {
+        "bodyparts_default": null,
+        "catalog_boundary": [
+          2,
+          41,
+          3,
+          1,
+          2424,
+          3416,
+          262144
+        ],
+        "character_choices": 1,
+        "character_lists": 1,
+        "cleanup_verified": true,
+        "closed_sockets": 2,
+        "costume_continuation": null,
+        "groups_bits": 343112,
+        "groups_bytes": 42889,
+        "groups_present_files": 508,
+        "groups_roots": 33,
+        "initial_bits": 303112,
+        "initial_bytes": 37889,
+        "initial_observed": true,
+        "map_handoffs": 1,
+        "opened_sockets": 2,
+        "phase": "INITIAL_OBSERVED",
+        "report_invalid_mask": 0,
+        "report_omitted_mask": 96,
+        "report_truncated": true
+      }
+    },
+    {
+      "app": {
+        "installed_apk": {
+          "bytes": 13954697,
+          "sha256": "5c709136f80b09b4f737c1b87d6bf7bca47de7497f0b31156a29d1d0e2f7100b"
+        },
+        "package": "org.coh.nativecombined",
+        "version_code": 14,
+        "version_name": "0.1.13-entity-diagnostic-test"
+      },
+      "connection_mode": "WORLD_HANDOFF",
+      "file_bytes": 75901,
+      "file_sha256": "7f621412969dee4492a574957e656b79d802a64a18ca74cbb5070f701c264dd5",
+      "input": "COH-NativeCombined-20261020-051405.json",
+      "memory": {
+        "android_memory_callbacks": {
+          "callback_is_oom_kill_proof": false,
+          "last_callback_elapsed_ms": 996719338,
+          "last_trim_level": 15,
+          "low_memory_callbacks": 0,
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 2
+        },
+        "minimum_observed_system_headroom_bytes": 7595515904,
+        "sampled_peak_process_pss_bytes": 104468480,
+        "sampled_peak_process_rss_bytes": 209723392,
+        "sampler_failures": 0,
+        "samples": 7
+      },
+      "native": {
+        "contexts_completed": 0,
+        "contexts_started": 1,
+        "frames": 2901,
+        "gl_errors": 0,
+        "held_dirs": 0
+      },
+      "observed_entity_box_requested": true,
+      "observed_server_entity": {
+        "active": true,
+        "application_ack": false,
+        "box_draws": 1384,
+        "complete_actor": false,
+        "entity_index": 125,
+        "position": [
+          131.453125,
+          0.25,
+          -114.953125
+        ],
+        "updates": 1,
+        "visual": "orange diagnostic box at decoded server coordinate"
+      },
+      "resumed": true,
+      "same_uid_process_set": {
+        "atomic_snapshot": false,
+        "begin_elapsed_ms": 997161834,
+        "deduplication": "one row per PID/start_ticks; native client and launcher share the Android app row",
+        "end_elapsed_ms": 997161879,
+        "expected_roles_observed": true,
+        "incomplete_process_metrics": 2,
+        "observed_pss_sum_bytes": 925424640,
+        "observed_rss_sum_bytes": 1218777088,
+        "postgresql_processes": 16,
+        "process_count": 32,
+        "process_limit": 32,
+        "pss_is_proportional": true,
+        "rss_sum_includes_repeated_shared_pages": true,
+        "sample_window_ms": 45,
+        "sampled_peak_total_pss_bytes": 482178048,
+        "sampled_peak_total_rss_bytes": 658341888,
+        "sampled_utc_ms": 1792491245091,
+        "samples": 88,
+        "scan_complete": false,
+        "schema": "coh-same-uid-process-memory-v1",
+        "scope": "observed same-Android-UID processes; Wine/PostgreSQL identified by bounded kernel comm/argv; unavailable values are null; no GPU or whole-device total",
+        "self_pid": 4801,
+        "server_process_expected": true,
+        "snapshot_age_ms": 852,
+        "source": "proc PID status/stat/smaps_rollup; no full smaps scan",
+        "total_pss_bytes": null,
+        "total_rss_bytes": null,
+        "uid": 10315,
+        "unreadable_status_count": 0,
+        "wine_processes": 9
+      },
+      "scene_selected_instances": 0,
+      "updated_at": "2026-10-20T05:14:05.986-05:00",
+      "world_handoff": {
+        "bodyparts_default": [
+          3,
+          0
+        ],
+        "catalog_boundary": [
+          2,
+          41,
+          3,
+          1,
+          2424,
+          3416,
+          262144
+        ],
+        "character_choices": 1,
+        "character_lists": 1,
+        "cleanup_verified": true,
+        "closed_sockets": 2,
+        "costume_continuation": null,
+        "groups_bits": 343112,
+        "groups_bytes": 42889,
+        "groups_present_files": 508,
+        "groups_roots": 33,
+        "initial_bits": 303112,
+        "initial_bytes": 37889,
+        "initial_observed": true,
+        "map_handoffs": 1,
+        "opened_sockets": 2,
+        "phase": "INITIAL_OBSERVED",
+        "report_invalid_mask": 0,
+        "report_omitted_mask": 96,
+        "report_truncated": true
+      }
+    }
+  ],
+  "schema": "coh-thor-12-13-physical-comparison-v1",
+  "source_fix_ready": "38fc7d3d7d2c86c603833f70edfce2a41068f2e7 uses verified client28 without serverhash admission",
+  "stage41_passed_in_delivered_APKs": false
+}
