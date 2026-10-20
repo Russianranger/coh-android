@@ -1,0 +1,75 @@
+{
+  "schema": "coh-body-target-raw-artifact-audit-v1",
+  "passed": true,
+  "scope": "Raw nonshipping actual compile candidate retention/source/ABI integrity only; target SDK qualification remains refused.",
+  "run_id": 39365299854,
+  "job_id": 118440663580,
+  "artifact_id": 12239377919,
+  "source_revision": "31ca0a9e36025c8371c62d6632dfbddcdbdd5335",
+  "archive": {
+    "bytes": 3265351,
+    "sha256": "a5bbcbfa859e0cd66cd7a70c0759c3c9fb505fd31f36f40d0ac5555943c2f037"
+  },
+  "actual_PE32_i386": {
+    "bytes": 7472640,
+    "sha256": "fe244f0256b2a45f07050c576f837c9bc69f36b39339db685f1ba32fa21b8df6"
+  },
+  "member_pins": {
+    "logs/build.log": {
+      "bytes": 29458,
+      "sha256": "90f8f608c0296106acc1b59747de2e2fe560576608c24dd0aba3c0a36758573f"
+    },
+    "logs/configure.log": {
+      "bytes": 13956,
+      "sha256": "f46e0ef4726a02f6283ef357486a8bb74b718155040faa096dd198c1723cbf1a"
+    },
+    "raw-unqualified/body-witness-target-stage.json": {
+      "bytes": 50778,
+      "sha256": "c218bf5ce66354533f5e6a19810036593a9d3f233940effe8bb34f733b77008f"
+    },
+    "raw-unqualified/CMakeCache.txt": {
+      "bytes": 37004,
+      "sha256": "0d348783078845102ac47fa0dde65aa9d312e4d0d89a0a1ecd67fc3f8159f7cc"
+    },
+    "raw-unqualified/CMakeCCompiler.cmake": {
+      "bytes": 3352,
+      "sha256": "36195aa86de91307d8f7c1dc84e3ee4ea91d5a785606f5f7d58fa253e311cce2"
+    },
+    "raw-unqualified/CMakeCXXCompiler.cmake": {
+      "bytes": 6573,
+      "sha256": "1e886801b74c7f4d132370d7b1adfdb82b539c897796e9323fcca94b0d91bff3"
+    },
+    "raw-unqualified/MapServer.exe": {
+      "bytes": 7472640,
+      "sha256": "fe244f0256b2a45f07050c576f837c9bc69f36b39339db685f1ba32fa21b8df6"
+    },
+    "raw-unqualified/MapServer.vcxproj": {
+      "bytes": 107629,
+      "sha256": "88e1eac8d19c478fdc35de27f3e34bc37762752d9fa7db6c21a58748354759a6"
+    }
+  },
+  "original_source_overlay_rerendered": true,
+  "generated_project_SDK": "10.0.26100.0",
+  "generated_compiler_information": {
+    "C": {
+      "declared_path": "C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/cl.exe",
+      "generated_info_sha256": "36195aa86de91307d8f7c1dc84e3ee4ea91d5a785606f5f7d58fa253e311cce2"
+    },
+    "CXX": {
+      "declared_path": "C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/cl.exe",
+      "generated_info_sha256": "1e886801b74c7f4d132370d7b1adfdb82b539c897796e9323fcca94b0d91bff3"
+    }
+  },
+  "actual_MapServer_target_compile_passed": true,
+  "SDK_evaluated_properties_authenticated": false,
+  "target_qualified_receipt_present": false,
+  "qualified_artifact_present": false,
+  "raw_candidate_preserved": true,
+  "actual_runtime_executed": false,
+  "loaded_rows_observed": false,
+  "current_Map_generation_admitted": false,
+  "dictionary_admitted": false,
+  "actor_or_ACK_authority": false,
+  "exact_blocker": "TARGET_EVALUATED_SDK_MISMATCH: the original evaluated WindowsTargetPlatformVersion/UCRTVersion values were not retained, so which operand differed and the actual UCRT selection cannot be established. The generated project declares SDK10.0.26100.0; this is not proof of all effective SDK/UCRT inputs.",
+  "next_action": "Use new query-retained operation on an authenticated raw artifact in a compatible Windows environment; preserve actual current IncludePath/LibraryPath/SDK/UCRT values. This fresh-host query cannot reestablish the old compile provenance. Do not perform a third full build this cycle."
+}

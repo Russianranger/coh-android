@@ -281,19 +281,40 @@ def msbuild_identity(cache_fields, compiler_files):
             'resolution': 'explicit_cmake_tool' if configured else 'selected_cmake_vs_instance'}
 
 
-def toolchain_manifest(project, cache_fields, selected_sdk, compiler_files):
-    """Evaluate this actual generated target, then hash selected SDK/tool inputs."""
-    require(os.name == 'nt', 'TARGET_WINDOWS_TOOLCHAIN_REQUIRED')
+def query_toolchain(project, cache_fields, selected_sdk, compiler_files, query_output):
+    """Retain bounded actual evaluated values before any identity admission.
+
+    A fresh-host query does not attest an older compile's SDK. Keeping these
+    observations makes a refusal diagnosable without another target rebuild.
+    """
+    require(sys.platform == 'win32', 'TARGET_WINDOWS_TOOLCHAIN_REQUIRED')
     build_tool = msbuild_identity(cache_fields, compiler_files)
-    name = build_tool['path']
-    command = [name, str(project), '-nologo', '-verbosity:quiet',
+    command = [build_tool['path'], str(project), '-nologo', '-verbosity:quiet', '-nr:false',
         '-p:Configuration=OptDebug', '-p:Platform=Win32',
-        '-getProperty:WindowsSdkDir,WindowsTargetPlatformVersion,VCToolsInstallDir,UniversalCRTSdkDir,UCRTVersion,PlatformToolset']
+        '-getProperty:WindowsSdkDir,WindowsTargetPlatformVersion,VCToolsInstallDir,UniversalCRTSdkDir,UCRTVersion,PlatformToolset,IncludePath,LibraryPath']
     run = subprocess.run(command, check=True, capture_output=True, timeout=60)
     require(len(run.stdout) <= 16384 and len(run.stderr) <= 16384, 'TARGET_TOOLCHAIN_QUERY_BOUND')
-    value = decode(run.stdout)['Properties']
+    decoded = decode(run.stdout)
+    require(type(decoded.get('Properties')) is dict, 'TARGET_TOOLCHAIN_PROPERTIES')
+    value = decoded['Properties']
+    observation = {'schema': 'coh-body-target-toolchain-query-v1',
+        'generated_project': pin(project), 'generated_project_sdk': selected_sdk,
+        'evaluated_properties': value, 'msbuild': build_tool, 'query_command': command,
+        'target_sdk_qualified': False, 'older_compile_provenance_reestablished': False,
+        'runtime_executed': False, 'runtime_generation_admitted': False}
+    if query_output is not None:
+        query_output = safe(query_output)
+        require(query_output.parent.is_dir() and not query_output.exists(), 'TARGET_TOOLCHAIN_QUERY_OUTPUT_EXISTS')
+        with query_output.open('xb') as stream: stream.write(encoded(observation))
+    return value, build_tool, command
+
+
+def toolchain_manifest(project, cache_fields, selected_sdk, compiler_files, query_output=None):
+    """Evaluate this actual generated target, then hash selected SDK/tool inputs."""
+    require(os.name == 'nt', 'TARGET_WINDOWS_TOOLCHAIN_REQUIRED')
+    value, build_tool, command = query_toolchain(project, cache_fields, selected_sdk, compiler_files, query_output)
     require(set(value) == {'WindowsSdkDir', 'WindowsTargetPlatformVersion', 'VCToolsInstallDir',
-        'UniversalCRTSdkDir', 'UCRTVersion', 'PlatformToolset'}, 'TARGET_TOOLCHAIN_PROPERTIES')
+        'UniversalCRTSdkDir', 'UCRTVersion', 'PlatformToolset', 'IncludePath', 'LibraryPath'}, 'TARGET_TOOLCHAIN_PROPERTIES')
     require(value['WindowsTargetPlatformVersion'] == selected_sdk and value['UCRTVersion'] == selected_sdk,
             'TARGET_EVALUATED_SDK_MISMATCH')
     roots = {'sdk/include': safe(value['WindowsSdkDir']) / 'Include' / selected_sdk,
@@ -344,7 +365,8 @@ def record(root, staged, input_dir, output):
     sdk_versions = sorted(set(v.decode() for v in re.findall(rb'<WindowsTargetPlatformVersion>([^<]+)</WindowsTargetPlatformVersion>', project)))
     require(len(sdk_versions) == 1 and re.fullmatch(r'10\.[0-9.]+', sdk_versions[0]), 'TARGET_WINDOWS_SDK_SELECTION')
     dependencies = dependency_manifest(staged)
-    toolchain = toolchain_manifest(projects[0], cache_fields, sdk_versions[0], compiler_files)
+    query_output = output.parent / (output.name + '-toolchain-query.json')
+    toolchain = toolchain_manifest(projects[0], cache_fields, sdk_versions[0], compiler_files, query_output)
     files = {'MapServer.exe': binary, 'CMakeCache.txt': cache, STAGE: staged / STAGE,
         'map-startup-inputs.json': safe(input_dir) / 'map-startup-inputs.json',
         'map-startup-build-input.json': staged / 'map-startup-build-input.json'}
@@ -384,9 +406,42 @@ def record(root, staged, input_dir, output):
     return result
 
 
+def query_retained(root, directory, output):
+    """Lightweight fresh-host diagnostic over authenticated retained raw inputs.
+
+    Caller must authenticate the artifact/run separately. No target build or
+    previous compiler/SDK provenance is admitted by these input file claims.
+    """
+    root, directory = paths(root, directory)
+    require(HERE == root / 'native-android/engine/costume-export', 'TARGET_OWN_CHECKOUT')
+    stage_receipt = decode(read(directory / STAGE))
+    require(stage_receipt.get('schema') == 'coh-body-witness-target-stage-v1' and
+            stage_receipt.get('build_role') == ROLE, 'TARGET_RETAINED_STAGE_SCHEMA')
+    fields = {}
+    for line in read(directory / 'CMakeCache.txt').decode().splitlines():
+        if '=' not in line or line.startswith(('#', '//')): continue
+        key, value = line.split('=', 1)
+        require(key not in fields, 'TARGET_RETAINED_CACHE_DUPLICATE')
+        fields[key] = value
+    require(fields.get('CMAKE_GENERATOR:INTERNAL') == 'Visual Studio 18 2026' and
+            fields.get('CMAKE_GENERATOR_PLATFORM:INTERNAL') == 'Win32', 'TARGET_RETAINED_GENERATOR')
+    compiler_files = {}
+    for language in ('C', 'CXX'):
+        raw = read(directory / ('CMake' + language + 'Compiler.cmake'))
+        matches = re.findall(rb'^set\(CMAKE_' + language.encode() + rb'_COMPILER "([^"\r\n]+)"\)', raw, re.M)
+        require(len(matches) == 1, 'TARGET_RETAINED_COMPILER')
+        name = matches[0].decode(); compiler_files[language] = {'path': name, **pin(safe(name))}
+    project = directory / 'MapServer.vcxproj'
+    versions = set(v.decode() for v in re.findall(rb'<WindowsTargetPlatformVersion>([^<]+)</WindowsTargetPlatformVersion>', read(project)))
+    require(len(versions) == 1, 'TARGET_RETAINED_SDK_SELECTION')
+    values, _, _ = query_toolchain(project, fields, next(iter(versions)), compiler_files, output)
+    return {'build_role': ROLE, 'target_compiled': False, 'retained_compile_source_claim': stage_receipt['source_revision'],
+            'current_evaluated_properties_observed': bool(values), 'older_compile_provenance_reestablished': False}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('operation', choices=('stage', 'verify', 'record'))
+    parser.add_argument('operation', choices=('stage', 'verify', 'record', 'query-retained'))
     parser.add_argument('--source-root', type=Path, required=True)
     parser.add_argument('--already-staged', type=Path, required=True)
     parser.add_argument('--metadata', type=Path)
@@ -399,6 +454,9 @@ def main():
     elif args.operation == 'verify':
         require(not any((args.metadata, args.inputs, args.output)), 'TARGET_VERIFY_ARGS')
         value, _ = verify(args.source_root, args.already_staged)
+    elif args.operation == 'query-retained':
+        require(args.output and not args.metadata and not args.inputs, 'TARGET_QUERY_ARGS')
+        value = query_retained(args.source_root, args.already_staged, args.output)
     else:
         require(args.inputs and args.output and not args.metadata, 'TARGET_RECORD_ARGS')
         value = record(args.source_root, args.already_staged, args.inputs, args.output)

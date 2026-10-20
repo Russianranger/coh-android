@@ -6,14 +6,14 @@
   "implementation_commit": "c9a15309ba6633c9a21d83d68f1abb1804395062",
   "baseline": "50a80ea29077d16332fb58c6999cc27631448b8d",
   "tested_source_sha256": {
-    ".github/workflows/native-body-runtime-target.yml": "7628510c30f64f66f9e76713241513d19f16488754a7e11fd2310397a12c2f85",
-    "native-android/engine/costume-export/body_witness_target.py": "2be823710f79679e8950d4378a25d9709523c42704bb88311a952f45e1d0b70b",
-    "native-android/engine/costume-export/test_body_witness_target.py": "6271629a1a2b94c892dadc1bf39d947baf5a752645510151751d80418045de2e",
-    "native-android/engine/costume-export/BODY_RUNTIME_TARGET.md": "71350024b2b3bd374424db5ad31257df568b1d4db5309f33f02de237b73ef6a4"
+    ".github/workflows/native-body-runtime-target.yml": "ab190d899b88bb67ac78a0f8501fdd9708ac6bff5a0747f30a7a6f4dddb058d8",
+    "native-android/engine/costume-export/body_witness_target.py": "4c14e5a6fb25ed949aa48e0207c4882417247d824424a2ebd22402ef64a0c7c7",
+    "native-android/engine/costume-export/test_body_witness_target.py": "988c632e4a77f2a39c6ca9b8e3a4151c59d529fe66504ffe572c9a7ee922c6a3",
+    "native-android/engine/costume-export/BODY_RUNTIME_TARGET.md": "efb4109475303b32675c18180d6345912719f8a2b0050a49e5119778c1f657dd"
   },
-  "accepted_scope": "Source-authentic disabled-witness target composition, reversible inherited startup preservation, strict original-loader and target preflight; compile-only hosted recipe prepared.",
+  "accepted_scope": "Actual original MapServer target compilation passed twice; independently verified raw PE32/i386 source/artifact integrity. Full target SDK qualification refused; runtime not executed. Bounded future query-sidecar retention and source-only rebuild guard tested.",
   "focused_tests": {
-    "python_preflight_cases": 8,
+    "python_preflight_cases": 10,
     "workflow_yaml": "PASS",
     "producer": {
       "release": {
@@ -41,10 +41,12 @@
     "flock /tmp/coh-cycle-build.lock python native-android/engine/costume-export/check_body_witness.py --output /tmp/body-target-host-20261020.json --work /tmp/body-target-host-20261020"
   ],
   "ci": {
-    "state": "PENDING",
-    "workflow": ".github/workflows/native-body-runtime-target.yml"
+    "state": "PARTIAL",
+    "target_compile_steps": "PASS/PASS",
+    "target_qualified_receipt": "REFUSED",
+    "raw_artifact": 12239377919
   },
-  "actual_original_MapServer_target_compiled": false,
+  "actual_original_MapServer_target_compiled": true,
   "actual_runtime_executed": false,
   "runtime_catalog_admitted": false,
   "dictionary_generation_admitted": false,
@@ -63,5 +65,9 @@
     "host_RSS_peak_observed": null,
     "device_RSS_PSS_observed": null
   },
-  "next_action": "Coordinator publishes implementation commit to native-android; inspect actual target build artifact/receipt, fixing only qualified compile/recorder failures. Runtime observation remains a separate future admission."
+  "next_action": "Use new query-retained operation on an authenticated raw artifact in a compatible Windows environment; preserve actual current IncludePath/LibraryPath/SDK/UCRT values. This fresh-host query cannot reestablish the old compile provenance. Do not perform a third full build this cycle.",
+  "published_source_commit": "31ca0a9e36025c8371c62d6632dfbddcdbdd5335",
+  "target_executable_qualified": false,
+  "target_blocker": "TARGET_EVALUATED_SDK_MISMATCH: the original evaluated WindowsTargetPlatformVersion/UCRTVersion values were not retained, so which operand differed and the actual UCRT selection cannot be established. The generated project declares SDK10.0.26100.0; this is not proof of all effective SDK/UCRT inputs.",
+  "tested_source_note": "Current preflight Python/YAML/document bytes in this receipt commit; existing C producer sanitizer scope remains separately pinned in b-host-producer-summary.json and passing CI39365299803."
 }

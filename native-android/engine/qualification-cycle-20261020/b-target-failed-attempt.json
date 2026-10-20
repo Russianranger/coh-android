@@ -1,0 +1,24 @@
+{
+  "schema": "coh-body-target-failed-attempt-v1",
+  "run_id": 39363378870,
+  "job_id": 118434465798,
+  "source_commit": "c66071fd35a6f2bd76a43476b106c7f2e91e16bc",
+  "original_source_composition_preflight": "PASS",
+  "original_MapServer_target_build": "PASS",
+  "actual_executable_qualification": "REFUSED",
+  "receipt_failure": "TARGET_MSBUILD_IDENTITY: VS generator did not cache CMAKE_MAKE_PROGRAM",
+  "artifact_failure": "Mixed C:/bwsrc and D:/a/_temp search paths had no valid common upload root",
+  "artifact_created": false,
+  "runtime_executed": false,
+  "catalog_or_generation_admitted": false,
+  "qualified_receipt_created": false,
+  "followup_source_commit": "f841d61d2",
+  "fix_scope": "Resolve query MSBuild from configured CMake tool or actual selected CMAKE_GENERATOR_INSTANCE; require same compiler instance. Retain raw candidate/stage/cache/generated project/compiler info/logs under a single runner-temp root.",
+  "tests": {
+    "python_preflight_cases": 9,
+    "yaml_single_evidence_root": "PASS"
+  },
+  "source_executable_link_line": "2026-10-20T03:31:13.4292037Z MapServer.vcxproj -> C:/bwsrc/out/build/vs2026/bin/OptDebug/MapServer.exe",
+  "failure_log_url": "https://github.com/Russianranger/coh-android/actions/runs/39363378870/job/118434465798",
+  "next_action": "Actual corrected hosted rerun; accept target qualification only after exact binary/source/input/compiler/SDK receipt and artifact audit."
+}

@@ -118,6 +118,23 @@ class TargetControls(unittest.TestCase):
         build.unlink()
         self.refuses('TARGET_MSBUILD_IDENTITY', lambda: target.msbuild_identity(fields, compiler))
 
+    def test_actual_query_values_are_retained_before_identity_admission(self):
+        project = self.directory / 'MapServer.vcxproj'; project.write_bytes(b'Explicit synthetic preflight project')
+        observed = {'WindowsTargetPlatformVersion': '10.0.26100.0', 'UCRTVersion': '',
+                    'IncludePath': 'explicit synthetic unmatched input', 'LibraryPath': 'explicit synthetic input'}
+        response = type('Query', (), {'stdout': json.dumps({'Properties': observed}).encode(), 'stderr': b''})()
+        tool = {'path': 'explicit synthetic unused MSBuild', 'sha256': '1' * 64, 'bytes': 1}
+        output = self.directory / 'query.json'
+        with patch.object(target.sys, 'platform', 'win32'), patch.object(target, 'msbuild_identity', return_value=tool), patch.object(target.subprocess, 'run', return_value=response):
+            values, build, command = target.query_toolchain(project, {}, '10.0.26100.0', {}, output)
+            self.assertEqual(values, observed)
+            retained = json.loads(output.read_bytes())
+            self.assertEqual(retained['evaluated_properties'], observed)
+            self.assertFalse(retained['target_sdk_qualified'])
+            self.assertFalse(retained['older_compile_provenance_reestablished'])
+            self.assertIn('-nr:false', command)
+            self.refuses('TARGET_TOOLCHAIN_QUERY_OUTPUT_EXISTS', lambda: target.query_toolchain(project, {}, '10.0.26100.0', {}, output))
+
     def test_workflow_never_invokes_a_server(self):
         text = (ROOT / '.github/workflows/native-body-runtime-target.yml').read_text()
         self.assertIn('--parallel 2 --target MapServer', text)
@@ -126,6 +143,7 @@ class TargetControls(unittest.TestCase):
         self.assertNotIn('./MapServer', text)
         self.assertIn('contents: read', text)
         self.assertIn('cancel-in-progress: false', text)
+        self.assertIn('[body-target-preflight-only]', text)
         self.assertIn('$evidence/raw-unqualified', text)
         self.assertIn('path: ${{ runner.temp }}/body-target-evidence/', text)
         self.assertNotIn('C:/bwsrc/body-witness-target-stage.json\n', text)
