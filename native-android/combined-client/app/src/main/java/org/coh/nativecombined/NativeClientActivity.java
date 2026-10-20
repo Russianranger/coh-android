@@ -55,6 +55,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private final AtomicBoolean captureQueued = new AtomicBoolean();
     private volatile long captureSavedFrame;
     private volatile String captureMetadata,captureFailure;
+    private volatile String initialReplayMetadata,initialReplayFailure;
+    // Only networkWorker reads/writes these transport-attempt flags.
+    private boolean initialReplayAttempted,initialReplayStorageReady;
     private final Handler main = new Handler(Looper.getMainLooper());
     private final ExecutorService renderWorker = Executors.newSingleThreadExecutor();
     private final ExecutorService reportWorker = Executors.newSingleThreadExecutor();
@@ -312,6 +315,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             try {
                 if(!networkForeground||!networkRequested||attempt!=networkAttempt)return;
                 retireNetworkOwner();networkMode=mode;charactersPublished=false;
+                if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC){
+                    initialReplayMetadata=null;initialReplayFailure=null;initialReplayAttempted=false;initialReplayStorageReady=false;
+                    try{InitialReplayStore.clear(getFilesDir());initialReplayStorageReady=true;}
+                    catch(Exception unavailable){initialReplayFailure="INITIAL replay storage unavailable";}
+                }
                 JSONObject policy=localPolicy();
                 if(!networkForeground||!networkRequested||attempt!=networkAttempt)return;
                 networkPolicy=policy;
@@ -356,11 +364,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     }
     // Every handle operation runs on networkWorker, including mode switches.
     private void disconnectNetwork() {
-        if(networkMode==NetworkMode.WORLD_HANDOFF){InteropNative.disconnect(networkHandle);handoffState.stopped();}
+        if(networkMode==NetworkMode.WORLD_HANDOFF){saveInitialReplay();InteropNative.disconnect(networkHandle);handoffState.stopped();}
         else LocalNative.disconnect(networkHandle);
     }
     private void suspendNetwork() {
-        if(networkMode==NetworkMode.WORLD_HANDOFF){InteropNative.suspend(networkHandle);handoffState.stopped();}
+        if(networkMode==NetworkMode.WORLD_HANDOFF){saveInitialReplay();InteropNative.suspend(networkHandle);handoffState.stopped();}
         else LocalNative.suspend(networkHandle);
     }
     private void retireNetworkOwner() {
@@ -501,11 +509,31 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(networkMode==NetworkMode.WORLD_HANDOFF){next=checkedHandoffReport(next);interopReport=next;}else localNetworkReport=next;
         networkReport=next;
     }
+    // Runs only on the serialized network owner before suspend/disconnect/close.
+    // Optional replay failures never change transport or character admission.
+    private void saveInitialReplay(){
+        if(!BuildConfig.FRAME_CAPTURE_DIAGNOSTIC||!initialReplayStorageReady||initialReplayAttempted
+                ||networkMode!=NetworkMode.WORLD_HANDOFF||networkHandle==0)return;
+        byte[] raw=null;
+        try{
+            handoffState.control(InteropNative.controlState(networkHandle));
+            if(!Boolean.TRUE.equals(handoffState.initialObserved()))return;
+            initialReplayAttempted=true;
+            raw=InteropNative.exportInitialReplay(networkHandle);
+            if(raw==null){initialReplayFailure="INITIAL replay omitted";return;}
+            initialReplayMetadata=InitialReplayStore.save(getFilesDir(),raw,
+                    getPackageManager().getPackageInfo(getPackageName(),0).versionCode,Long.toHexString(sessionStarted));
+            initialReplayFailure=null;
+        }catch(Exception unavailable){initialReplayFailure=unavailable.getClass().getSimpleName();}
+        catch(OutOfMemoryError optionalReplay){initialReplayFailure="INITIAL replay memory unavailable";}
+        finally{if(raw!=null)java.util.Arrays.fill(raw,(byte)0);}
+    }
     private void publishNetwork() {
         if(networkHandle==0)return;
         if(networkMode==NetworkMode.WORLD_HANDOFF)handoffState.control(InteropNative.controlState(networkHandle));
         String next=networkMode==NetworkMode.WORLD_HANDOFF?InteropNative.report(networkHandle):LocalNative.report(networkHandle);
         String previous=networkReport;storeNetworkReport(next);
+        saveInitialReplay();
         if(!networkReport.equals(previous)) {
             if(networkMode==NetworkMode.WORLD_HANDOFF&&Boolean.TRUE.equals(handoffState.initialObserved())&&!captureTelemetryPublished) {
                 captureTelemetryPublished=true;MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.DIAGNOSTIC);
@@ -739,7 +767,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     .put("maximum_dimension",16384).put("host_width",scene==null?0:scene.getWidth())
                     .put("host_height",scene==null?0:scene.getHeight()));
         if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC)j.put("scene_frame_capture",captureMetadata==null?JSONObject.NULL:new JSONObject(captureMetadata))
-                .put("scene_frame_capture_error",captureFailure==null?JSONObject.NULL:captureFailure);
+                .put("scene_frame_capture_error",captureFailure==null?JSONObject.NULL:captureFailure)
+                .put("initial_replay",initialReplayMetadata==null?JSONObject.NULL:new JSONObject(initialReplayMetadata))
+                .put("initial_replay_error",initialReplayFailure==null?JSONObject.NULL:initialReplayFailure);
         if(handle!=0)j.put("native",new JSONObject(SessionNative.snapshot(handle)));
         if(view!=null) {
             int[] location=new int[2];view.getLocationOnScreen(location);

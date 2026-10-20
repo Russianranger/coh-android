@@ -83,6 +83,7 @@ public final class MainActivity extends Activity {
                 JSONObject combined=currentService!=null?currentService.snapshot():ServerService.readJson(new File(getFilesDir(),"combined-report.json"),2*1024*1024);
                 if(combined==null)throw new IOException("Launcher report unavailable");
                 zip.putNextEntry(new ZipEntry("combined-report.json"));zip.write(combined.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
+                String replaySha=null;
                 for(String path:new String[]{"native-client-report.json","combined-server/latest-report.json","combined-server/previous-attempts.json"}){
                     File f=new File(getFilesDir(),path);if(!f.isFile()||f.length()>2*1024*1024)continue;
                     JSONObject report=ServerService.readJson(f,2*1024*1024);if(report==null)continue;
@@ -90,6 +91,9 @@ public final class MainActivity extends Activity {
                     String name=path.replace('/','-');
                     if(path.equals("native-client-report.json")){
                         JSONObject app=report.optJSONObject("app");
+                        JSONObject replay=report.optJSONObject("initial_replay");
+                        if(replay!=null&&app!=null&&replay.optString("activity_session").equals(report.optString("session_id"))
+                                &&replay.optLong("app_version",-1)==app.optLong("version_code",-2))replaySha=replay.optString("sha256");
                         if(app==null||!ApkReportIdentity.sameAppReport(getPackageName(),combined.optLong("version_code"),app.opt("package"),app.opt("version_code")))
                             name="previous-app-"+name;
                     }
@@ -101,6 +105,7 @@ public final class MainActivity extends Activity {
                     zip.putNextEntry(new ZipEntry(name));zip.write(report.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
                 }
                 SceneFrameCapture.append(getFilesDir(),zip);
+                InitialReplayStore.append(getFilesDir(),zip,replaySha);
                 }catch(Exception e){main.post(()->Toast.makeText(this,"Report export failed",Toast.LENGTH_LONG).show());return;}main.post(()->Toast.makeText(this,"Report exported",Toast.LENGTH_LONG).show());});
         }
     }

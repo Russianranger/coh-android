@@ -108,6 +108,22 @@ public final class InitialReplayStore {
         try {output.putNextEntry(new ZipEntry(NAME));output.write(frame);output.closeEntry();return true;}
         finally {Arrays.fill(frame,(byte)0);}
     }
+    /** Match the report's exact frame before mutating the ZIP. Invalid optional
+     * source data is omitted; actual ZIP destination errors still propagate. */
+    public static synchronized boolean append(File base,ZipOutputStream output,String expectedFrameSha256) throws IOException {
+        if(base==null||output==null||expectedFrameSha256==null||expectedFrameSha256.length()!=64)return false;
+        for(int i=0;i<64;i++){
+            char c=expectedFrameSha256.charAt(i);
+            if(!((c>='0'&&c<='9')||(c>='a'&&c<='f')))return false;
+        }
+        byte[] frame;
+        try{frame=read(base.toPath().toAbsolutePath().resolve(NAME));}
+        catch(IOException invalidOptionalReplay){return false;}
+        try{
+            if(!expectedFrameSha256.equals(hex(hash().digest(frame))))return false;
+            output.putNextEntry(new ZipEntry(NAME));output.write(frame);output.closeEntry();return true;
+        }finally{Arrays.fill(frame,(byte)0);}
+    }
     /** A new attempt has no replay until its own INITIAL is captured. */
     public static synchronized void clear(File base) throws IOException {
         if(base==null)return;

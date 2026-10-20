@@ -224,9 +224,12 @@ jobs:
         python3 native-android/engine/entities/check_client_costume_slots.py --work /tmp/client-costume-slots-ci --output native-android/results/combined-neighborhood-diagnostic/client-costume-slots.json
         python3 native-android/combined-client/tools/check_client_slots_android.py --work /tmp/client-slots-android-ci --output native-android/results/combined-neighborhood-diagnostic/client-slots-android.json
         python3 native-android/engine/entities/check_original_ent_costume.py --work /tmp/original-ent-costume-ci --output native-android/results/combined-neighborhood-diagnostic/original-ent-costume.json
+        python3 native-android/engine/entities/check_original_taskforce_receive.py --work /tmp/original-taskforce-ci --output native-android/results/combined-neighborhood-diagnostic/original-taskforce.json
         python3 native-android/session-client/tools/check_frame_capture.py --work /tmp/current-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/current-frame-owner.json
         python3 native-android/combined-client/tools/check_frame_capture_store.py
         python3 native-android/combined-client/tools/check_frame_capture_wiring.py
+        python3 native-android/combined-client/tools/check_outer_costume_android.py --work /tmp/outer-costume-android-ci --output native-android/results/combined-neighborhood-diagnostic/outer-costume-android.json
+        python3 native-android/combined-client/tools/check_initial_replay_store.py --work /tmp/initial-replay-store-ci --output native-android/results/combined-neighborhood-diagnostic/initial-replay-store.json
         python3 native-android/combined-client/qualification/check_diagnostics.py
         COH_COMBINED_GUEST="$PWD/android/guest" python3 native-android/combined-client/runtime/test_runtime.py
     - uses: actions/upload-artifact@v4
