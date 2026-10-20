@@ -51,3 +51,27 @@ mode/path/callback association, set/power/category joins, complete class-power
 semantics and current server generation. No actor, world, rendering or ACK
 permission is produced. OpenSSL is a host-test digest provider; its stack and
 whole dependency sanitizer closure are outside the native stack receipt.
+
+## Offline source-text labels
+
+`power_text_map.py --source-root <checkout> --output /tmp/power-text.sqlite
+--crc 0x80443357` creates an optional offline CRC label index. It executes the
+original `TokenizerPeek/Get`, `powerdict_GetCRCOfBasePower` and
+`Crc32cLowerStringHash` bodies with thin POSIX file adapters. `FullName` is the
+original `ParseBasePower` struct parameter; filenames do not supply names.
+Git tree byte path order and token order define this offline index's first CRC
+winner. That ordering does not claim the running server's loader order.
+
+Files are streamed individually, checked against their Git blobs, SHA-256
+recorded, and checked for mutation before atomic publication. The SQLite index
+uses a 1 MiB page cache and disk temporary storage. Explicit transfer buffers are
+12,001 token bytes and 16 KiB hashing bytes; the original tokenizer owner size is
+reported separately. Python, SQLite and provider overhead require measurement.
+No full power object graph or entire text corpus is retained. Includes/define
+owners and powerset-generated aliases are not synthesized. This labels direct
+text declarations without supplying a receiver dictionary or runtime generation.
+
+Run `python3 test_power_text_map.py` for focused original-body release/ASan/UBSan,
+normalization, token refill, duplicate-first-winner, mutation and cleanup tests.
+The scripts acquire `/tmp/coh-next-build.lock` around each compiler themselves;
+do not wrap the entire invocation in that same lock.
