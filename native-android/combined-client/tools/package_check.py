@@ -18,7 +18,25 @@ BUILD_PROFILES = {
     'report-diagnostic': ('12', '0.1.11-report-diagnostic-test'),
     'catalog-diagnostic': ('13', '0.1.12-catalog-diagnostic-test'),
     'entity-diagnostic': ('15', '0.1.14-entity-diagnostic-test'),
+    'neighborhood-diagnostic': ('16', '0.1.15-neighborhood-diagnostic-test'),
 }
+CLIENT_SLOT_ASSET = 'combined/client-slots.bin'
+CLIENT_SLOT_PIN = {'bytes': 641477, 'sha256': '2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81'}
+
+
+def client_slot_assets(archive, receipt, profile):
+    """Only the explicit next diagnostic embeds the exact retained slot table."""
+    if profile != 'neighborhood-diagnostic':
+        assert 'client_slots' not in receipt, 'Client slots require the neighborhood diagnostic profile'
+        return set()
+    metadata = receipt['client_slots']
+    assert metadata['asset'] == CLIENT_SLOT_ASSET
+    assert {key: metadata[key] for key in CLIENT_SLOT_PIN} == CLIENT_SLOT_PIN
+    name = 'assets/' + CLIENT_SLOT_ASSET
+    info = archive.getinfo(name)
+    assert info.file_size == CLIENT_SLOT_PIN['bytes'] and info.compress_type == zipfile.ZIP_STORED, 'Client slots must retain their bounded directly mapped bytes'
+    assert pin(archive.read(name)) == CLIENT_SLOT_PIN, 'CLIENT slot dictionary bytes differ from the retained source'
+    return {name}
 
 
 def check_build_identity(version_code, version_name, profile):
@@ -61,7 +79,7 @@ def tool(args, name):
 
 
 def audit(args):
-    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic') and not args.require_interop:
+    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic') and not args.require_interop:
         raise ValueError('Memory diagnostic build must retain the independent interop library audit')
     if args.apk.stat().st_size > 25 << 20:
         raise ValueError('Combined APK exceeds bounded 25MiB small-core policy')
@@ -77,6 +95,7 @@ def audit(args):
         assert contract['donor_apk'] == receipt['donor_apk']
         assert pin(z.read('assets/combined/import-contract.json')) == receipt['import_contract']
         expected_assets = {'assets/combined/import-contract.json', 'assets/combined/build-inputs.json', 'assets/atlas/atlas-import.properties'}
+        expected_assets.update(client_slot_assets(z, receipt, args.build_profile))
         assert pin(z.read('assets/combined/OPENSSL-LICENSE.txt')) == receipt['public_crypto']['license']
         assert receipt['public_crypto']['license']['sha256'] == '7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a'
         expected_assets.add('assets/combined/OPENSSL-LICENSE.txt')
@@ -119,7 +138,7 @@ def audit(args):
                 assert abi == 'arm64-v8a' and pin(data) == receipt['proot_cores'][filename], 'PRoot core changed'
             if filename == 'libcoh_combined_network.so':
                 native_abis.add(abi)
-                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'):
+                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic'):
                     memory_entrypoint = process_memory_jni(data, args.readelf)
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}

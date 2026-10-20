@@ -1,16 +1,48 @@
 """Candidate identity, prior-package and qualification routing controls."""
 import copy
+import gzip
+import io
 import json
 from pathlib import Path
 import unittest
+import zipfile
 from audit_catalog_publication import admit_framework_package
-from package_check import BUILD_PROFILES, check_build_identity
+from package_check import BUILD_PROFILES, check_build_identity, client_slot_assets, CLIENT_SLOT_ASSET, CLIENT_SLOT_PIN
+from interop_package_audit import required_methods
 from upgrade_emulator_check import PREVIOUS_INPUTS, package_receipt, pin, SIGNER, PACKAGE
 
 ROOT = Path(__file__).resolve().parents[3]
 
 
 class CatalogPackagingTests(unittest.TestCase):
+    def test_neighborhood_profile_preserves_historical_identity_and_exports(self):
+        self.assertEqual(BUILD_PROFILES['entity-diagnostic'], ('15', '0.1.14-entity-diagnostic-test'))
+        self.assertEqual(BUILD_PROFILES['neighborhood-diagnostic'], ('16', '0.1.15-neighborhood-diagnostic-test'))
+        self.assertEqual(len(required_methods()), 9)
+        self.assertEqual(len(required_methods(entity_diagnostic=True)), 11)
+        self.assertEqual(required_methods(neighborhood_diagnostic=True), required_methods(entity_diagnostic=True) | {'configureClientSlots'})
+
+    def test_neighborhood_slots_require_exact_uncompressed_source_bytes(self):
+        source = ROOT / 'native-android/engine/entities/qualification/costume-builder-20261017/offline-primary-slots.bin.gz'
+        raw = gzip.decompress(source.read_bytes())
+        receipt = {'client_slots': dict(CLIENT_SLOT_PIN, asset=CLIENT_SLOT_ASSET, source=str(source.relative_to(ROOT)))}
+        member = 'assets/' + CLIENT_SLOT_ASSET
+        def archive(payload, compression=zipfile.ZIP_STORED):
+            result = io.BytesIO()
+            with zipfile.ZipFile(result, 'w', compression=compression) as output:
+                output.writestr(member, payload)
+            result.seek(0)
+            return zipfile.ZipFile(result)
+        with archive(raw) as zipped:
+            self.assertEqual(client_slot_assets(zipped, receipt, 'neighborhood-diagnostic'), {member})
+            with self.assertRaises(AssertionError):
+                client_slot_assets(zipped, receipt, 'entity-diagnostic')
+            with self.assertRaises(KeyError):
+                client_slot_assets(zipped, {}, 'neighborhood-diagnostic')
+        for payload, compression in [(raw[:-1], zipfile.ZIP_STORED), (b'X' + raw[1:], zipfile.ZIP_STORED), (raw, zipfile.ZIP_DEFLATED)]:
+            with archive(payload, compression) as zipped, self.assertRaises(AssertionError):
+                client_slot_assets(zipped, receipt, 'neighborhood-diagnostic')
+
     def test_additive_candidate_identity_and_separate_build_selection(self):
         self.assertEqual(BUILD_PROFILES['catalog-diagnostic'], ('13', '0.1.12-catalog-diagnostic-test'))
         check_build_identity('13', '0.1.12-catalog-diagnostic-test', 'catalog-diagnostic')

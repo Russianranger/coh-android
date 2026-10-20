@@ -191,6 +191,7 @@ class FragmentDriver(unittest.TestCase):
         self.assertEqual(BUILD_PROFILES['report-diagnostic'], ('12', '0.1.11-report-diagnostic-test'))
         self.assertEqual(BUILD_PROFILES['catalog-diagnostic'], ('13', '0.1.12-catalog-diagnostic-test'))
         self.assertEqual(BUILD_PROFILES['entity-diagnostic'], ('15', '0.1.14-entity-diagnostic-test'))
+        self.assertEqual(BUILD_PROFILES['neighborhood-diagnostic'], ('16', '0.1.15-neighborhood-diagnostic-test'))
         with self.assertRaises(AssertionError):
             check_build_identity('14', '0.1.13-entity-diagnostic-test', 'entity-diagnostic')
         for profile, identity in BUILD_PROFILES.items():

@@ -13,6 +13,15 @@ JNI = 'Java_org_coh_nativecombined_InteropNative_'
 METHODS = {'begin', 'service', 'choose', 'characters', 'report', 'controlState', 'suspend', 'disconnect', 'close'}
 
 
+def required_methods(entity_diagnostic=False, neighborhood_diagnostic=False):
+    methods = set(METHODS)
+    if entity_diagnostic or neighborhood_diagnostic:
+        methods.update(('configureBodyPartsCache', 'observedSelfPose'))
+    if neighborhood_diagnostic:
+        methods.add('configureClientSlots')
+    return methods
+
+
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
@@ -38,7 +47,7 @@ def audit(args):
             fields = line.split()
             if len(fields) >= 8 and fields[0].rstrip(':').isdigit() and fields[6] != 'UND' and fields[4] in ('GLOBAL', 'WEAK') and fields[5] in ('DEFAULT', 'PROTECTED'):
                 exported.add(fields[7].split('@', 1)[0])
-    methods=METHODS|{'configureBodyPartsCache','observedSelfPose'} if args.entity_diagnostic else METHODS
+    methods = required_methods(args.entity_diagnostic, args.neighborhood_diagnostic)
     expected = {JNI + name for name in methods}
     assert expected <= exported, 'Missing JNI entrypoint'
     assert not {name for name in exported if name.startswith('coh_')}, 'Core symbols could interpose the default client'
@@ -78,6 +87,7 @@ def main():
     parser.add_argument('--apk', type=Path, required=True)
     parser.add_argument('--abi', choices=('arm64-v8a', 'x86_64'), required=True)
     parser.add_argument('--entity-diagnostic', action='store_true', help='Include the two local-catalog/pose JNI methods; preserve historical nine-method audits')
+    parser.add_argument('--neighborhood-diagnostic', action='store_true', help='Require the client-slot JNI entrypoint in addition to the eleven entity methods')
     parser.add_argument('--readelf', type=Path, required=True)
     parser.add_argument('--source-root', type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument('--output', type=Path, required=True)

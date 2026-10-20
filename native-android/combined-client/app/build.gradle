@@ -1,7 +1,7 @@
 plugins { id 'com.android.application' }
 def selectedAbis = providers.gradleProperty('probeAbis').getOrElse('arm64-v8a').split(',') as List
 def candidateProfile = providers.gradleProperty('cohBuildProfile').getOrElse('report-diagnostic')
-if (!(candidateProfile in ['report-diagnostic','catalog-diagnostic','entity-diagnostic'])) throw new GradleException('Unsupported diagnostic profile')
+if (!(candidateProfile in ['report-diagnostic','catalog-diagnostic','entity-diagnostic','neighborhood-diagnostic'])) throw new GradleException('Unsupported diagnostic profile')
 def cryptoRoot = providers.gradleProperty('cohCryptoRoot').getOrElse('')
 if (selectedAbis.isEmpty() || selectedAbis.any { !(it in ['arm64-v8a','x86_64']) }) throw new GradleException('Unsupported ABI')
 if (cryptoRoot.isEmpty()) throw new GradleException('cohCryptoRoot must name the qualified public crypto output')
@@ -22,10 +22,17 @@ android {
         } else if (candidateProfile == 'entity-diagnostic') {
             versionCode 15
             versionName '0.1.14-entity-diagnostic-test'
+        } else if (candidateProfile == 'neighborhood-diagnostic') {
+            versionCode 16
+            versionName '0.1.15-neighborhood-diagnostic-test'
         }
+        buildConfigField 'boolean', 'NEIGHBORHOOD_DIAGNOSTIC', (candidateProfile == 'neighborhood-diagnostic').toString()
+        buildConfigField 'boolean', 'CLIENT_SLOT_DICTIONARY', (candidateProfile == 'neighborhood-diagnostic').toString()
         ndk { abiFilters.addAll(selectedAbis) }
-        externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath } }
+        externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath,
+                '-DCOH_CLIENT_SLOT_DICTIONARY=' + (candidateProfile == 'neighborhood-diagnostic' ? 'ON' : 'OFF') } }
     }
+    buildFeatures { buildConfig true }
     sourceSets.main.java {
         srcDirs 'src/main/java', '../imports/src', '../../session-client/app/src/main/java', '../../systems-probe/app/src/main/java', '../../../android/app/src/main/java', '../../../android/atlas/src/main/java'
         include 'org/coh/nativecombined/**', 'org/coh/sessionclient/SessionNative.java', 'org/coh/systemsprobe/InputAdapter.java'
