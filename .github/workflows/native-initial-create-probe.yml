@@ -11,6 +11,7 @@ on:
       - native-android/combined-client/app/src/main/cpp/interop_network.c
       - native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py
       - native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c
+      - native-android/combined-client/diagnostics/interop-report-adapter-20261020/**
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -33,8 +34,8 @@ jobs:
         run: |
           python3 native-android/engine/initial-capture/check_initial_partcount_probe.py --sanitize --output "$RUNNER_TEMP/partcount-host.json" --fixture-output "$RUNNER_TEMP/partcount-jni-fixture.h"
           cmp "$RUNNER_TEMP/partcount-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-partcount-20261019/jni-fixture.h
-      - name: Qualify affected JNI observation and cleanup
-        run: python3 native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py --source-root . --output "$RUNNER_TEMP/partcount-adapter"
+      - name: Qualify bounded shipping JSON and unchanged deep JNI assertions
+        run: python3 native-android/combined-client/diagnostics/interop-report-adapter-20261020/check_bounded_adapter.py --source-root . --output "$RUNNER_TEMP/partcount-adapter"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

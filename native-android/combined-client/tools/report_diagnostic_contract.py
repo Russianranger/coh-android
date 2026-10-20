@@ -6,6 +6,36 @@ OMISSION_FIELDS = ('first_create', 'first_record_pose', 'first_record_sequence',
 REPORT_KEYS = {'owner_present', 'owner_terminal', 'initial_observation_known',
     'initial_observed', 'groups_present_files', 'groups_roots', 'report_limit_bytes',
     'report_truncated', 'report_omitted_mask', 'report_invalid_mask', 'report_omitted_fields'}
+JAVA_REPORT_KEYS = {'last_observed_phase', 'control_observation', 'report_serialization_unknown'}
+JAVA_PHASES = {'UNKNOWN', 'IDLE', 'DB_CONNECTING', 'CHARACTERS_READY', 'MAP_CONNECTING',
+    'SCENE_INCOMPLETE', 'WAIT_GROUPS', 'WAIT_ALLENTS', 'INITIAL_OBSERVED', 'TIMED_OUT', 'SUSPENDED',
+    'CANCELLED', 'CLOSED', 'FAILED', 'UNSUPPORTED', 'OWNER_BUSY', 'POLICY_UNAVAILABLE'}
+
+
+def separate_java_extension(value):
+    present = JAVA_REPORT_KEYS.intersection(value)
+    need(not present or present == JAVA_REPORT_KEYS, 'partial Java report extension')
+    if not present:
+        return dict(value)
+    need(type(value['last_observed_phase']) is str and value['last_observed_phase'] in JAVA_PHASES,
+         'invalid retained Java protocol phase')
+    need(type(value['report_serialization_unknown']) is bool
+         and value['report_serialization_unknown'] == (value['phase'] in ('REPORT_LIMIT', 'REPORT_UNAVAILABLE')),
+         'invalid Java report serialization status')
+    control = value['control_observation']
+    need(isinstance(control, dict) and set(control) == {'source', 'owner_present', 'known', 'owner_terminal', 'initial_observed'},
+         'unexpected Java control observation keys')
+    need(control['source'] == 'native_scalar_control_state', 'invalid Java control source')
+    need(all(type(control[key]) is bool for key in ('owner_present', 'known', 'owner_terminal')),
+         'invalid Java control Boolean')
+    need(control['initial_observed'] is None or type(control['initial_observed']) is bool,
+         'invalid Java initial observation')
+    need(control['known'] or control['initial_observed'] is not False,
+         'unknown Java scalar control fabricated a negative initial observation')
+    if control['initial_observed'] is True:
+        need(control['owner_terminal'], 'positive Java initial observation lost terminal state')
+    return {key: item for key, item in value.items() if key not in JAVA_REPORT_KEYS}
+
 
 
 def need(ok, message):
@@ -14,6 +44,7 @@ def need(ok, message):
 
 
 def separate_report_extension(value, required=False):
+    value = separate_java_extension(value)
     present = REPORT_KEYS.intersection(value)
     need(not present or present == REPORT_KEYS, 'partial bounded report extension')
     need(not required or present == REPORT_KEYS, 'bounded report extension absent')

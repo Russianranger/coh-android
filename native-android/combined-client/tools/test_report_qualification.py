@@ -3,7 +3,7 @@ import copy
 import unittest
 from pathlib import Path
 from package_check import BUILD_PROFILES, check_build_identity
-from report_diagnostic_contract import REPORT_KEYS, separate_report_extension
+from report_diagnostic_contract import REPORT_KEYS, JAVA_REPORT_KEYS, separate_report_extension
 from test_fragment_driver import sample
 from interop_probe_contract import PROBE_KEYS
 from fragment_interop_emulator_check import current_snapshot
@@ -58,6 +58,59 @@ class ReportQualification(unittest.TestCase):
         changed = dict(value, private_character='sensitive')
         with self.assertRaises(ValueError):
             current_snapshot(changed)
+
+    def test_actual_java_wrapped_report_reaches_unchanged_strict_native_core(self):
+        value = report()
+        value.update(last_observed_phase=value['phase'], report_serialization_unknown=False,
+            control_observation=dict(source='native_scalar_control_state', owner_present=True,
+                known=True, owner_terminal=True, initial_observed=value['initial_observed']))
+        self.assertIs(current_snapshot(value, True, True), value)
+        core = separate_report_extension(value, required=True)
+        self.assertEqual(set(value) - set(core), REPORT_KEYS | JAVA_REPORT_KEYS)
+        value.update(first_create=None, report_truncated=True, report_omitted_mask=1,
+                     report_invalid_mask=0, report_omitted_fields=['first_create'])
+        self.assertIs(current_snapshot(value, True, True), value)
+        for key in JAVA_REPORT_KEYS:
+            changed = copy.deepcopy(value)
+            del changed[key]
+            with self.subTest(missing=key), self.assertRaises(ValueError):
+                current_snapshot(changed, True, True)
+        for key, bad in [('last_observed_phase', 'PRIVATE_CHARACTER'),
+                         ('last_observed_phase', 7), ('report_serialization_unknown', 0),
+                         ('report_serialization_unknown', True), ('control_observation', None)]:
+            changed = copy.deepcopy(value)
+            changed[key] = bad
+            with self.subTest(key=key, bad=bad), self.assertRaises(ValueError):
+                current_snapshot(changed, True, True)
+        for key, bad in [('source', 'private'), ('owner_present', 1), ('known', None),
+                         ('owner_terminal', 'true'), ('initial_observed', 'private'),
+                         ('packet_bytes', [1, 2, 3]), ('world_authority', True)]:
+            changed = copy.deepcopy(value)
+            changed['control_observation'][key] = bad
+            with self.subTest(control=key), self.assertRaises(ValueError):
+                current_snapshot(changed, True, True)
+        for key in value['control_observation']:
+            changed = copy.deepcopy(value)
+            del changed['control_observation'][key]
+            with self.subTest(missing_control=key), self.assertRaises(ValueError):
+                current_snapshot(changed, True, True)
+        changed = copy.deepcopy(value)
+        changed['control_observation'].update(initial_observed=True, owner_terminal=False)
+        with self.assertRaises(ValueError):
+            current_snapshot(changed, True, True)
+        # Unknown scalar state can retain a prior positive capture, while a
+        # nullable initial observation never becomes a fabricated negative.
+        changed = copy.deepcopy(value)
+        changed['control_observation'].update(known=False, initial_observed=None)
+        self.assertIs(current_snapshot(changed, True, True), changed)
+        changed['control_observation'].update(initial_observed=False)
+        with self.assertRaises(ValueError):
+            current_snapshot(changed, True, True)
+        changed['control_observation'].update(initial_observed=True)
+        self.assertIs(current_snapshot(changed, True, True), changed)
+        changed['private_character'] = 'private'
+        with self.assertRaises(ValueError):
+            current_snapshot(changed, True, True)
 
     def test_unknown_observation_is_nullable_and_cannot_be_mislabeled_known_false(self):
         value = report()

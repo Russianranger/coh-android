@@ -36,6 +36,14 @@ worker: 34 checks/9,000 requests/two injected failures. Busy/unavailable and
 server-only initial observation now stays UNKNOWN; a positive observation is
 sticky through cleanup. These host tests do not qualify Android or Thor.
 
+The historical adapter expected every optional object and eight JNI methods.
+Its source stays immutable. The additive `interop-report-adapter-20261020`
+role verifies exact bounded shipping JSON before a clearly marked host-only
+detail projection runs every old deep assertion: release/ASan/UBSan each
+12,913 checks/131 scenarios, 248 shipping reports, maximum 6,774 bytes. The
+Android driver also strictly validates the three new Java control metadata
+fields before applying the unchanged numeric/privacy contract.
+
 The qualified 0.1.10 build and earlier integration evidence below remain
 historical acceptance records; they do not qualify the 0.1.11 candidate.
 
