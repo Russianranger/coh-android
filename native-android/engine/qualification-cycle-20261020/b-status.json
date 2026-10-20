@@ -1,0 +1,67 @@
+{
+  "schema": "coh-five-milestone-worker-status-v1",
+  "worker": "B",
+  "milestone": 2,
+  "status": "PARTIAL WITH EXACT BLOCKER",
+  "implementation_commit": "c9a15309ba6633c9a21d83d68f1abb1804395062",
+  "baseline": "50a80ea29077d16332fb58c6999cc27631448b8d",
+  "tested_source_sha256": {
+    ".github/workflows/native-body-runtime-target.yml": "7628510c30f64f66f9e76713241513d19f16488754a7e11fd2310397a12c2f85",
+    "native-android/engine/costume-export/body_witness_target.py": "2be823710f79679e8950d4378a25d9709523c42704bb88311a952f45e1d0b70b",
+    "native-android/engine/costume-export/test_body_witness_target.py": "6271629a1a2b94c892dadc1bf39d947baf5a752645510151751d80418045de2e",
+    "native-android/engine/costume-export/BODY_RUNTIME_TARGET.md": "71350024b2b3bd374424db5ad31257df568b1d4db5309f33f02de237b73ef6a4"
+  },
+  "accepted_scope": "Source-authentic disabled-witness target composition, reversible inherited startup preservation, strict original-loader and target preflight; compile-only hosted recipe prepared.",
+  "focused_tests": {
+    "python_preflight_cases": 8,
+    "workflow_yaml": "PASS",
+    "producer": {
+      "release": {
+        "checks": 2542,
+        "source_load_transactions": 291,
+        "repeated_create_destroy": 256,
+        "owned_static_bytes": 65860
+      },
+      "asan": {
+        "checks": 2542,
+        "source_load_transactions": 291,
+        "repeated_create_destroy": 256,
+        "owned_static_bytes": 65860
+      },
+      "ubsan": {
+        "checks": 2542,
+        "source_load_transactions": 291,
+        "repeated_create_destroy": 256,
+        "owned_static_bytes": 65860
+      }
+    }
+  },
+  "commands": [
+    "python native-android/engine/costume-export/test_body_witness_target.py",
+    "flock /tmp/coh-cycle-build.lock python native-android/engine/costume-export/check_body_witness.py --output /tmp/body-target-host-20261020.json --work /tmp/body-target-host-20261020"
+  ],
+  "ci": {
+    "state": "PENDING",
+    "workflow": ".github/workflows/native-body-runtime-target.yml"
+  },
+  "actual_original_MapServer_target_compiled": false,
+  "actual_runtime_executed": false,
+  "runtime_catalog_admitted": false,
+  "dictionary_generation_admitted": false,
+  "exact_local_blocker": "Linux build host has GCC; VS2026 MSVC Win32, Windows SDK, CMake and Wine/qualified target executable are absent. Hosted target compile must actually pass before target qualification.",
+  "runtime_blocker": "No isolated disposable runtime/database or independently established coherent selected Map/session/load-generation owner and exact selected cache/shared-segment provenance is available.",
+  "memory": {
+    "unchanged_producer_host_x64_static_bytes": 65860,
+    "producer_new_heap_allocations": 0,
+    "producer_payload_cap_bytes": 65536,
+    "observer_stack_reservation_bytes": 4096,
+    "manifest_entry_cap": 20000,
+    "manifest_named_input_byte_cap": 805306368,
+    "individual_file_cap_bytes": 33554432,
+    "compiler_workers": 2,
+    "msvc_per_compiler_workers": 1,
+    "host_RSS_peak_observed": null,
+    "device_RSS_PSS_observed": null
+  },
+  "next_action": "Coordinator publishes implementation commit to native-android; inspect actual target build artifact/receipt, fixing only qualified compile/recorder failures. Runtime observation remains a separate future admission."
+}

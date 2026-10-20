@@ -1,0 +1,45 @@
+{
+  "schema": "coh-body-target-producer-host-summary-v1",
+  "producer_scope": "Host new read-only producer, exact original BodyPart/BoneId declarations + getter + staged entry, fixture loader routing and POSIX sink. Prepared original Map overlay is NOT target compiled/executed.",
+  "native": {
+    "release": {
+      "checks": 2542,
+      "source_load_transactions": 291,
+      "repeated_create_destroy": 256,
+      "owned_static_bytes": 65860
+    },
+    "asan": {
+      "checks": 2542,
+      "source_load_transactions": 291,
+      "repeated_create_destroy": 256,
+      "owned_static_bytes": 65860
+    },
+    "ubsan": {
+      "checks": 2542,
+      "source_load_transactions": 291,
+      "repeated_create_destroy": 256,
+      "owned_static_bytes": 65860
+    }
+  },
+  "input_sha256": {
+    "native-android/engine/costume-export/test_body_witness.c": "736ccef64daab633a402f3b469930e30efa18d249155b10098b60a69039e86c5",
+    "native-android/engine/costume-export/source_body_witness_sink.inc": "99d88ecaaa9f5e7c4dbc903cbe13e77d42282a6d22731930f355aae98bbb4a2e",
+    "native-android/engine/costume-export/source_body_witness.inc": "8d1b2f55b149f720451ec5136ecdc8e43f2f03672c771fdebaaea6ba9818e44d",
+    "native-android/engine/costume-export/check_body_witness.py": "4cfeca9cd2f5fc385dd96c6837ca7cc1fe6a04a1ec2f71a0753eb6922582ef50",
+    "native-android/engine/costume-export/test_body_witness_target.py": "6271629a1a2b94c892dadc1bf39d947baf5a752645510151751d80418045de2e",
+    "native-android/engine/costume-export/stage_body_witness.py": "133ca9877e554f5c2d135458708c8b8c7c9906aad2f097780ba55350f158a99e",
+    "native-android/engine/costume-export/body_witness_target.py": "b4394c7ec4132063f4f090195e173f25414deaf2252326a08fc61f862a57cfda",
+    "native-android/engine/costume-export/BODY_RUNTIME_WITNESS.md": "44796f7fc0a9a4c20629d571566eab9c69565879834c9a7c0b4d87eb0ac39806",
+    ".github/workflows/native-body-provenance-witness.yml": "235fcddfaff4c40711465cd8e362787e82edbc2d462533fb8e73d3097928e9b5",
+    "native-android/engine/costume-export/stage.py": "66d5f63da01ddc551aa73128f06316efa440e36c9f31d0eda35bd74cc804adbd",
+    "native-android/engine/costume-export/source-pins.json": "cad5176eb14c4753db7cf670be1f48ef26c524b44ca4f2783074d932b2fa29b4",
+    "native-android/engine/costume-export/../body-catalog/struct-clear-source-pins.json": "1613722d1f313ce9e1de5a19a4182ce90e75ea7c986fbebec5eb9f2dafdbc87c",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17"
+  },
+  "source_stable_before_after": true,
+  "actual_Map_target_compiled": false,
+  "actual_Map_runtime_executed": false,
+  "runtime_body_catalog_admitted": false,
+  "qualification_note": "Retains focused unchanged C producer sanitizer evidence. Python target staging/preflight is tested separately; this does not qualify a Windows target."
+}
