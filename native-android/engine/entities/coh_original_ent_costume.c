@@ -18,7 +18,7 @@ typedef struct{char *originalNPCName;CustomNPCCostumePart **parts;Color skinColo
 typedef struct{const char *pchFullName;} BasePower;
 typedef struct{const BasePower *power;const char *powerFullName;struct{Color primary,secondary;}customTint;const char *token;unsigned padding[5];}PowerCustomization;
 typedef struct{PowerCustomization **powerCustomizations;unsigned padding[5];}PowerCustomizationList;
-typedef struct{CohEntCharacterStats stats;}Character;
+typedef struct{CohEntCharacterStats stats;uint32_t iCombatModShift;}Character;
 typedef struct{
  int titleThe,titleColors[2],titleBadge,glowieUnlocked,attachArticle,respecTokens,lastTurnstileEventID,lastTurnstileMissionID,helperStatus;char titleTheText[10],titleCommon[32],titleOrigin[32],titleSpecial[128];
  int current_costume,num_costume_slots,pendingCostumeIgnoreTime,num_costumes_stored,
@@ -26,7 +26,7 @@ typedef struct{
  Costume *costume[10],*pendingCostume,*superCostume;char costumeFxSpecial[260];PowerCustomizationList *powerCustomizationLists[10];
 } Player;
 typedef struct{
- Player *pl;SeqInst *seq;Character *pchar;uint32_t pkt_id_basicAttrDef;char name[128];int gender,name_gender;const Costume *costume;Costume *ownedCostume;
+ Player *pl;SeqInst *seq;Character *pchar;uint32_t pkt_id_basicAttrDef,pkt_id_targetting,pkt_id_status_effects,bitfieldVisionPhases,exclusiveVisionPhase,shouldIConYellow;char name[128];int gender,name_gender;const Costume *costume;Costume *ownedCostume;
  CustomNPCCostume *customNPC_costume;char *costumeWorldGroup;
  int npcIndex,costumeIndex,randSeed,next_move_idx,next_move_bits;float xlucency;PowerCustomizationList *ownedPowerCustomizationList,*powerCust;
 } Entity;
@@ -34,7 +34,7 @@ typedef struct{
  CohRepReader reader;CohOriginalEntCostumeReport report;jmp_buf trap;
  const CohClientCostumeSlots *slots;CohOriginalCostumeWorkspace *workspace;
  CohOriginalCostumeSnapshot *capture;uint32_t body_parts,selected_index;
- Entity entity;Player player;Character character;Costume dummy;unsigned initial,pchar_things;
+ union{CohEntTarget target;CohEntStatusEffects status;CohEntInventorySizes inventory;}suffix;Entity entity;Player player;Character character;Costume dummy;unsigned initial,pchar_things;
  CustomNPCCostume custom;CustomNPCCostumePart npc_parts[63];
  CustomNPCCostumePart *npc_pointers[63];unsigned npc_count;
  int hasDebugInfo;PowerCustomizationList power_list;PowerCustomization power_entry;PowerCustomization *power_pointers[1];
@@ -45,6 +45,8 @@ static const Table ordinary={1};
 #define costume_HashTable (&ordinary)
 #define TEST_CLIENT 1
 #define SERVER 0
+#define IS_OOP(id) ((void)(id),1)
+#define UPDATE_PACKET_ID(id) ((void)(id))
 #define MAX_NAME_LEN 128
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 #define NUM_BITS_PER_RAGDOLL_QUAT_ELEM 10
@@ -115,6 +117,9 @@ static void source_copy(char *d,size_t n,const char*s){size_t k=s?strlen(s):0;if
 static void source_field(Packet *pak,const char *name){
  if(!strcmp(name,"FullCostume")){if(pak->in_power){pak->report.field=COH_ENT_COSTUME_POWER_LIST;pak->power_prefix=1;}else{pak->report.field=COH_ENT_COSTUME_REWARDS;pak->prefix_step=1;}}
  else if(!strcmp(name,"SupergroupCostume")){pak->in_sg=1;pak->report.field=COH_ENT_COSTUME_SG_BODY;}
+ else if(!strcmp(name,"entReceiveTargetUpdate"))pak->report.field=COH_ENT_COSTUME_TARGET;
+ else if(!strcmp(name,"entReceiveStatusEffects"))pak->report.field=COH_ENT_COSTUME_STATUS;
+ else if(!strcmp(name,"character_ReceiveInventorySizes"))pak->report.field=COH_ENT_COSTUME_INVENTORY;
  else if(!strcmp(name,"NpcCostume")){pak->report.field=COH_ENT_COSTUME_NPC_FIELDS;pak->npc_field=0;}
 }
 static U32 pktGetBits(Packet *pak,int n){
@@ -174,6 +179,16 @@ static int costume_receive(Packet *pak,Costume *costume){
  return 1;
 }
 static void source_stats(Packet *pak,Character *c){CohEntFailure failure={0};CohStatus s=coh_ent_character_stats(&pak->reader,1,0,&c->stats,&failure);if(s!=COH_OK){pak->reader.cursor=failure.bit;fail(pak,s);}}
+static int entReceiveTargetUpdate(Packet *pak,Entity *e,int oo,int self){CohEntFailure f={0};(void)e;(void)oo;memset(&pak->suffix,0,sizeof(pak->suffix));CohStatus s=coh_ent_target(&pak->reader,1,(uint32_t)self,&pak->suffix.target,&f);if(s!=COH_OK){pak->reader.cursor=f.bit;fail(pak,s);}return 1;}
+static void character_ReceiveStatusEffects(Packet *pak,Character *c,int oo){CohEntFailure f={0};(void)c;(void)oo;memset(&pak->suffix,0,sizeof(pak->suffix));CohStatus s=coh_ent_status_effects(&pak->reader,1,&pak->suffix.status,&f);if(s!=COH_OK){pak->reader.cursor=f.bit;fail(pak,s);}}
+static int entReceiveStatusEffects(Packet *,Entity *,bool);
+static void character_ReceiveInventorySizes(Character *c,Packet *pak){CohEntFailure f={0};(void)c;memset(&pak->suffix,0,sizeof(pak->suffix));CohStatus s=coh_ent_inventory_sizes(&pak->reader,&pak->suffix.inventory,&f);if(s!=COH_OK){pak->reader.cursor=f.bit;fail(pak,s);}}
+static void receive_vision(Packet *pak){Entity *e=&pak->entity;unsigned pchar_things=pak->pchar_things,isSelf=1;
+#define COH_ORIGINAL_ENT_INITIAL_FIELDS
+#include "original_ent_costume_receive.inc"
+#undef COH_ORIGINAL_ENT_INITIAL_FIELDS
+ pak->report.vision_complete=1;pak->report.field=COH_ENT_COSTUME_TASKFORCE;
+}
 static void observed_rewards(Packet *,Entity *);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
@@ -185,7 +200,7 @@ static void observed_rewards(Packet *,Entity *);
 #pragma GCC diagnostic pop
 #undef ent_ReceiveCostumeRewards
 static void observed_rewards(Packet *pak,Entity *e){pak->in_rewards=1;pak->report.field=COH_ENT_COSTUME_REWARDS;ent_ReceiveCostumeRewards(pak,e);pak->in_rewards=0;pak->prefix_step=2;pak->report.field=COH_ENT_COSTUME_BODY;}
-static void run(Packet *volatile pak){if(!setjmp(pak->trap)){if(!entReceiveCostume(pak,&pak->entity,1))fail(pak,COH_UNSUPPORTED);pak->report.appearance_complete=1;pak->report.appearance_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_XLUCENCY;(void)entReceiveXlucency(pak,&pak->entity,1);pak->report.xlucency_complete=1;pak->report.field=COH_ENT_COSTUME_POWER_SELECTOR;pak->report.power_begin_bit=pak->reader.cursor;pak->in_power=1;(void)entReceivePowerCust(pak,&pak->entity,1);pak->report.power_complete=1;pak->report.power_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_TITLES;if(pak->initial){pak->in_power=0;(void)entReceiveTitles(pak,&pak->entity,1);pak->report.titles_complete=1;pak->report.field=COH_ENT_COSTUME_RAGDOLL;(void)entGetRagdollIgnore(pak,&pak->entity);pak->report.ragdoll_complete=1;pak->report.field=COH_ENT_COSTUME_BASIC_STATS;if(pak->pchar_things)(void)entReceiveCharacterStats(pak,&pak->entity,1);pak->report.basic_stats_complete=1;pak->report.field=COH_ENT_COSTUME_VISION;}}}
+static void run(Packet *volatile pak){if(!setjmp(pak->trap)){if(!entReceiveCostume(pak,&pak->entity,1))fail(pak,COH_UNSUPPORTED);pak->report.appearance_complete=1;pak->report.appearance_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_XLUCENCY;(void)entReceiveXlucency(pak,&pak->entity,1);pak->report.xlucency_complete=1;pak->report.field=COH_ENT_COSTUME_POWER_SELECTOR;pak->report.power_begin_bit=pak->reader.cursor;pak->in_power=1;(void)entReceivePowerCust(pak,&pak->entity,1);pak->report.power_complete=1;pak->report.power_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_TITLES;if(pak->initial){pak->in_power=0;(void)entReceiveTitles(pak,&pak->entity,1);pak->report.titles_complete=1;pak->report.field=COH_ENT_COSTUME_RAGDOLL;(void)entGetRagdollIgnore(pak,&pak->entity);pak->report.ragdoll_complete=1;pak->report.field=COH_ENT_COSTUME_BASIC_STATS;if(pak->pchar_things)(void)entReceiveCharacterStats(pak,&pak->entity,1);pak->report.basic_stats_complete=1;pak->report.field=COH_ENT_COSTUME_VISION;receive_vision(pak);}}}
 static int span(const void*p,size_t n){return p&&(uintptr_t)p<=UINTPTR_MAX-n;}
 static int apart(const void*a,size_t an,const void*b,size_t bn){return(uintptr_t)a+an<=(uintptr_t)b||(uintptr_t)b+bn<=(uintptr_t)a;}
 static CohStatus receive_component(const CohRepReader *reader,uint32_t parts,uint32_t selected,uint32_t initial,uint32_t pchar_things,const CohClientCostumeSlots *slots,CohOriginalCostumeWorkspace *workspace,CohOriginalCostumeSnapshot *capture,CohOriginalEntCostumeReport *out){
@@ -205,4 +220,4 @@ static CohStatus receive_component(const CohRepReader *reader,uint32_t parts,uin
 
 CohStatus coh_original_ent_costume_receive(const CohRepReader *r,uint32_t n,uint32_t selected,const CohClientCostumeSlots*s,CohOriginalCostumeWorkspace*w,CohOriginalCostumeSnapshot*c,CohOriginalEntCostumeReport*out){return receive_component(r,n,selected,0,0,s,w,c,out);}
 CohStatus coh_original_ent_costume_receive_initial(const CohRepReader*r,uint32_t n,uint32_t selected,uint32_t pchar,const CohClientCostumeSlots*s,CohOriginalCostumeWorkspace*w,CohOriginalCostumeSnapshot*c,CohOriginalEntCostumeReport*out){return receive_component(r,n,selected,1,pchar,s,w,c,out);}
-const char *coh_original_ent_costume_field_name(uint32_t n){static const char *const names[]={"none","appearance selector","costume rewards","main costume body","Supergroup costume presence","Supergroup costume body","Supergroup mode","Supergroup emblem","costume FX presence","costume FX string","NPC costume fallthrough","NPC costume fields","custom NPC costume","appearance end","translucency","entity suffix","NPC definitions","power customization selector","power customization list","BasePower CRC lookup","titles","ragdoll","basic character statistics","vision phases"};return n<sizeof(names)/sizeof(names[0])?names[n]:"unknown source field";}
+const char *coh_original_ent_costume_field_name(uint32_t n){static const char *const names[]={"none","appearance selector","costume rewards","main costume body","Supergroup costume presence","Supergroup costume body","Supergroup mode","Supergroup emblem","costume FX presence","costume FX string","NPC costume fallthrough","NPC costume fields","custom NPC costume","appearance end","translucency","entity suffix","NPC definitions","power customization selector","power customization list","BasePower CRC lookup","titles","ragdoll","basic character statistics","vision phases","target update","status effects","inventory sizes","taskforce parameters"};return n<sizeof(names)/sizeof(names[0])?names[n]:"unknown source field";}

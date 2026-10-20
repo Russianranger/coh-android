@@ -9,15 +9,19 @@ static uint32_t indices[COH_CLIENT_COSTUME_INDEX_COUNT];static CohClientCostumeS
 static CohOriginalCostumeSnapshot capture;static CohOriginalEntCostumeReport outer;
 static CohStatus digest(void*c,CohBytes b,uint8_t o[32]){(void)c;return SHA256(b.data,b.size,o)?COH_OK:COH_IO;}
 static void append(unsigned mode,size_t *at,unsigned n,uint32_t v){if(mode)n=(n+7)&~7u;for(unsigned i=0;i<n;i++){uint8_t mask=(uint8_t)(1u<<(*at%8));packet[*at/8]=(uint8_t)((packet[*at/8]&~mask)|(((v>>i)&1u)?mask:0));(*at)++;}}
+static void append_fixture(size_t *at,const uint8_t *bytes,size_t count){for(size_t i=0;i<count;i++)append(0,at,1,(bytes[i/8]>>(i%8))&1u);}
+static void automatic(unsigned mode,size_t *at,uint32_t v){unsigned bin=0;const unsigned widths[]={2,10,24,32};while(bin<3&&v>=(1u<<widths[bin]))bin++;append(mode,at,2,bin);append(mode,at,widths[bin],v);}
 static void initial_suffix(CohRepReader base,size_t end){
  for(unsigned pchar=0;pchar<2;pchar++){
   size_t at=end;append(base.compressed,&at,1,0);append(base.compressed,&at,1,0);/* absent titles and original non-ragdoll branch */
   if(pchar){append(base.compressed,&at,1,1);append(base.compressed,&at,1,1);const uint8_t *stats=base.compressed?stats_0_1:stats_0_0;size_t count=base.compressed?stats_0_1_bits:stats_0_0_bits;for(size_t i=0;i<count;i++)append(0,&at,1,(stats[i/8]>>(i%8))&1u);}
+  for(unsigned i=0;i<3;i++)automatic(base.compressed,&at,0);
+  if(pchar){automatic(base.compressed,&at,0);append_fixture(&at,base.compressed?target_0_1:target_0_0,base.compressed?target_0_1_bits:target_0_0_bits);append(base.compressed,&at,1,1);append_fixture(&at,base.compressed?status1:status0,base.compressed?status1_bits:status0_bits);append_fixture(&at,base.compressed?inventory_0_1:inventory_0_0,base.compressed?inventory_0_1_bits:inventory_0_0_bits);}
   size_t suffix_end=at;append(base.compressed,&at,32,0xdeadbeef);base.bytes.size=(at+7)/8;base.bits=at;
   CHECK(coh_original_ent_costume_receive_initial(&base,28,0,pchar,&slots,&workspace,&capture,&outer)==COH_OK);
-  CHECK(outer.appearance_complete&&outer.power_complete&&outer.titles_complete&&outer.ragdoll_complete&&outer.basic_stats_complete&&outer.end_bit==suffix_end&&outer.packet_bits==at&&outer.field==COH_ENT_COSTUME_VISION&&!outer.entity_complete&&!outer.message_complete);
-  CHECK(!strcmp(coh_original_ent_costume_field_name(outer.field),"vision phases"));
-  base.bits=suffix_end-1;CHECK(coh_original_ent_costume_receive_initial(&base,28,0,pchar,&slots,&workspace,&capture,&outer)!=COH_OK);CHECK(!outer.basic_stats_complete&&!outer.entity_complete&&!outer.message_complete&&!memcmp(&workspace,&zero_workspace,sizeof(workspace)));
+  CHECK(outer.appearance_complete&&outer.power_complete&&outer.titles_complete&&outer.ragdoll_complete&&outer.basic_stats_complete&&outer.end_bit==suffix_end&&outer.packet_bits==at&&outer.vision_complete&&outer.field==COH_ENT_COSTUME_TASKFORCE&&!outer.entity_complete&&!outer.message_complete);
+  CHECK(!strcmp(coh_original_ent_costume_field_name(outer.field),"taskforce parameters"));
+  base.bits=suffix_end-1;CHECK(coh_original_ent_costume_receive_initial(&base,28,0,pchar,&slots,&workspace,&capture,&outer)!=COH_OK);CHECK(!outer.vision_complete&&!outer.entity_complete&&!outer.message_complete&&!memcmp(&workspace,&zero_workspace,sizeof(workspace)));
  }
 }
 static void fixtures(const char *path){FILE*f=fopen(path,"rb");CHECK(f);unsigned count=word(f);
@@ -57,4 +61,4 @@ static void invalids(void){uint8_t tiny[32]={0};CohRepReader r={{tiny,sizeof(tin
   memset(&w,0,sizeof(w));w.mode=mode;bits(&w,1,1);pack(&w,2,1);bits(&w,1,1);bits(&w,32,257);r=(CohRepReader){{w.bytes,(w.bit+7)/8},w.bit,0,mode,COH_REP_BOUNDED_MESSAGE_MAX};CHECK(coh_original_ent_costume_receive(&r,28,0,&slots,&workspace,&capture,&outer)==COH_LIMIT);
  }
 }
-int main(int argc,char**argv){CHECK(argc==3);FILE*f=fopen(argv[1],"rb");CHECK(f);CHECK(fread(raw_slots,1,sizeof(raw_slots),f)==sizeof(raw_slots));CHECK(fgetc(f)==EOF);CHECK(!fclose(f));CohCostumeImportDigest d={digest,NULL,0,4096};CHECK(coh_client_costume_slots_prepare((CohBytes){raw_slots,sizeof(raw_slots)},indices,COH_CLIENT_COSTUME_INDEX_COUNT,&d,&slots,8u<<20,sizeof(capture)+sizeof(workspace)+8192)==COH_OK);fixtures(argv[2]);invalids();printf("{\"passed\":true,\"checks\":%u,\"whole_appearance_and_xlucency\":true,\"heap_allocations\":0,\"entity_or_message_complete\":false,\"physical_packet_replayed\":false}\n",checks);return 0;}
+int main(int argc,char**argv){CHECK(argc==3);FILE*f=fopen(argv[1],"rb");CHECK(f);CHECK(fread(raw_slots,1,sizeof(raw_slots),f)==sizeof(raw_slots));CHECK(fgetc(f)==EOF);CHECK(!fclose(f));CohCostumeImportDigest d={digest,NULL,0,4096};CHECK(coh_client_costume_slots_prepare((CohBytes){raw_slots,sizeof(raw_slots)},indices,COH_CLIENT_COSTUME_INDEX_COUNT,&d,&slots,8u<<20,sizeof(capture)+sizeof(workspace)+32768)==COH_OK);fixtures(argv[2]);invalids();printf("{\"passed\":true,\"checks\":%u,\"whole_appearance_and_xlucency\":true,\"heap_allocations\":0,\"entity_or_message_complete\":false,\"physical_packet_replayed\":false}\n",checks);return 0;}

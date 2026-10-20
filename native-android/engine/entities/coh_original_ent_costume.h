@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE 8192u
+#define COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE 32768u
 enum {COH_ENT_COSTUME_SELECTOR=1,COH_ENT_COSTUME_REWARDS=2,
  COH_ENT_COSTUME_BODY=3,COH_ENT_COSTUME_SG_FLAG=4,COH_ENT_COSTUME_SG_BODY=5,
  COH_ENT_COSTUME_SG_MODE=6,COH_ENT_COSTUME_SG_HIDE=7,
@@ -15,7 +15,8 @@ enum {COH_ENT_COSTUME_SELECTOR=1,COH_ENT_COSTUME_REWARDS=2,
  COH_ENT_COSTUME_NPC_DEFINITIONS=16,COH_ENT_COSTUME_POWER_SELECTOR=17,
  COH_ENT_COSTUME_POWER_LIST=18,COH_ENT_COSTUME_POWER_CRC=19,
  COH_ENT_COSTUME_TITLES=20,COH_ENT_COSTUME_RAGDOLL=21,
- COH_ENT_COSTUME_BASIC_STATS=22,COH_ENT_COSTUME_VISION=23};
+ COH_ENT_COSTUME_BASIC_STATS=22,COH_ENT_COSTUME_VISION=23,COH_ENT_COSTUME_TARGET=24,
+ COH_ENT_COSTUME_STATUS=25,COH_ENT_COSTUME_INVENTORY=26,COH_ENT_COSTUME_TASKFORCE=27};
 typedef struct {
  CohStatus status;size_t begin_bit,end_bit,failure_bit,packet_bits,appearance_end_bit,main_body_end_bit,selected_body_end_bit,power_begin_bit,power_end_bit;
  uint32_t field,selector,bodies_expected,bodies_read,selected_body,
@@ -23,7 +24,7 @@ typedef struct {
   hide_emblem,fx_present,fx_bytes,npc_fallthrough,npc_index,npc_costume_index,
   appearance_complete,xlucency_complete,entity_complete,message_complete,
   power_selector,power_complete,power_lists_read,power_entry_count,power_crc,required_table,
-  titles_complete,ragdoll_complete,basic_stats_complete;
+  titles_complete,ragdoll_complete,basic_stats_complete,vision_complete;
  CohOriginalCostumeReport body;
 } CohOriginalEntCostumeReport;
 /* Entry is the actual original appearance-selector cursor in the same decoded

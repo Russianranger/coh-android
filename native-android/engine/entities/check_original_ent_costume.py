@@ -37,7 +37,7 @@ def main():
  for row in records:data+=struct.pack('<12I',*row[:-1])+row[-1]
  fixture.write_bytes(data)
  retained=HERE/'qualification/character-stats-20261016/fixtures.h';retained_text=retained.read_text();assert hashlib.sha256(retained.read_bytes()).hexdigest()==json.loads(retained.with_name('host.json').read_text())['fixtures_sha256']
- selected=''.join(re.search(r'static const unsigned char stats_0_'+str(mode)+r'\[\]=\{[^}]*\};',retained_text)[0]+'\n'+re.search(r'#define stats_0_'+str(mode)+r'_bits \d+u',retained_text)[0]+'\n'for mode in(0,1));(w/'initial-stats-fixtures.h').write_text(selected)
+ selected=''.join(re.search(r'static const unsigned char '+name+r'\[\]=\{[^}]*\};',retained_text)[0]+'\n'+re.search(r'#define '+name+r'_bits \d+u',retained_text)[0]+'\n'for mode in(0,1)for name in('stats_0_'+str(mode),'target_0_'+str(mode),'status'+str(mode),'inventory_0_'+str(mode)));(w/'initial-stats-fixtures.h').write_text(selected)
  result={'passed':True,'source':proof,'sender_sha256':hashlib.sha256(code.encode()).hexdigest(),'fixture_sha256':hashlib.sha256(data).hexdigest(),'modes':{}}
  flags=['cc','-std=c99','-Wall','-Wextra','-Werror','-pedantic','-fno-pie','-no-pie','-fstack-usage','-I'+str(w)];sources=[HERE/'coh_original_ent_costume.c',HERE/'coh_original_costume_receive.c',HERE/'coh_entities.c',HERE/'coh_costume.c',HERE/'coh_taskforce.c',HERE/'../replication/coh_replication.c',HERE/'test_original_ent_costume.c']
  for mode,opts in [('release',['-O2']),('asan',['-O1','-g','-fsanitize=address']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
@@ -47,6 +47,6 @@ def main():
   for line in path.read_text().splitlines():
    name,size,kind=line.split('\t')
    if 'test_original_'not in name:frames.append((name,int(size),kind))
- frames=[f for f in frames if 'ent_costume'in f[0]or'original_costume'in f[0]or f[0].rsplit(':',1)[-1]in('valid','coh_rep_read','coh_rep_pack','stats_leaf','character_stats','coh_ent_character_stats','fail','check_reader')];total=sum(f[1]for f in frames);assert total<=8192
- result['memory']={'frame_sum':total,'stack_reserve':8192,'frames':frames,'body_workspace':65536,'snapshot':48352,'raw_and_index':775621,'aggregate_limit':8388608,'RSS_PSS':None};a.output.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'passed':True,'modes':result['modes'],'stack_frame_sum':total}))
+ frames=[f for f in frames if 'ent_costume'in f[0]or'original_costume'in f[0]or f[0].rsplit(':',1)[-1]in('valid','coh_rep_read','coh_rep_pack','stats_leaf','character_stats','coh_ent_character_stats','fail','check_reader','coh_ent_target','target','coh_ent_status_effects','status_effects','coh_ent_inventory_sizes','inventory_sizes')];total=sum(f[1]for f in frames);assert total<=32768
+ result['memory']={'frame_sum':total,'stack_reserve':32768,'frames':frames,'body_workspace':65536,'snapshot':48352,'raw_and_index':775621,'aggregate_limit':8388608,'RSS_PSS':None};a.output.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'passed':True,'modes':result['modes'],'stack_frame_sum':total}))
 if __name__=='__main__':main()

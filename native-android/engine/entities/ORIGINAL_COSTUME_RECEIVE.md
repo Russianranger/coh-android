@@ -104,7 +104,7 @@ release, ASan and UBSan tests, including stored counts 1/2/10, SG, FX, NPC custo
 parts 0/2/63, both wire modes, truncation, alias/overflow and unknown-tail retention.
 No actual Thor ALLENTS bytes are available in this qualification. The caller must
 charge its complete old/candidate owner, immutable raw/index spans, 65,536-byte body
-workspace, optional 48,352-byte snapshot and 8,192-byte stack reserve inside the
+workspace, optional 48,352-byte snapshot and 32,768-byte stack reserve inside the
 existing 8 MiB aggregate; no heap allocation occurs in the adapter. Source payload
 and compiler stack measurements are separate from device RSS/PSS observations.
 
@@ -120,6 +120,8 @@ The additive `_initial` entry accepts the actual earlier `pchar_things` flag in
 the already validated selected-self/all-rare initial profile. Empty power paths
 continue through whole original titles, ragdoll-ignore and character-stat receive
 functions, reusing the existing source-qualified `SendBasicCharacter` parser.
-Current bounded source implementation then leaves vision phases unread. That is
-remaining implementation work, not a claim that their table is unavailable.
+The original unchanged vision/target/status/inventory statement block now runs
+next, reusing existing qualified scalar/reference/status/inventory parsers. The
+current bounded source implementation then leaves taskforce data unread. This
+is implementation work, not a claim that its table is unavailable.
 No live receipt establishes which power branch the Thor packet will take.
