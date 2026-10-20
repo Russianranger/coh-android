@@ -1,7 +1,8 @@
 #include "session_stream_world.h"
 #include "session_stream_qualify.h"
 #include "coh_asset_render.h"
-#include "coh_world_stream.h"
+#include "coh_world_live.h"
+#include "coh_asset_zip.h"
 #include "coh_renderer_gles.h"
 #include "coh_debug_entity.h"
 #include <GLES3/gl3.h>
@@ -11,9 +12,18 @@
 #include <string.h>
 #define STREAM_DRAWS 64u
 #define STREAM_BUDGET (512u*1024u)
+#define SCENE_CAP (96ull*1024u*1024u)
+/* Loader4MiB +bridge4MiB +liveRGBA GPU<=bridge4MiB; fixed CPU/ZIP/
+ * query/readback controls<1MiB, persistent+qualification GLES buffers/FBOs
+ * <2MiB, charged native call stack64KiB.
+ * Parent includes its capture reservation and old scene during replacement. */
+#define LIVE_RESERVE (15ull*1024u*1024u+65536u)
 struct CohSessionWorld {
     CohWorldBundle bundle;
     CohWorldMap *map;
+    CohWorldLive *live;
+    CohAssetZip *archives[2];
+    uint64_t parent_retained_bytes;
     CohAssetLoader *loader;
     CohAssetRenderBridge *bridge;
     CohWorldSelection selection;
@@ -21,7 +31,7 @@ struct CohSessionWorld {
     CohRenderer *renderer;
     CohGlesRenderer *gles;
     CohRenderDraw draws[STREAM_DRAWS];
-    uint32_t draw_count,debug_white;
+    uint32_t draw_count,debug_white,live_selection;
     float last_center[3],last_radius;
     CohSessionWorldStats stats;
 };
@@ -88,27 +98,44 @@ static void publish(CohSessionWorld *w,CohSessionWorldStats *out) {
     w->stats.owned_cpu_bytes=b.allocated_bytes;w->stats.selected_instances=w->selection.count;
     if(out)*out=w->stats;
 }
-int coh_session_world_create(const void *data,size_t bytes,CohSessionWorld **out,char *error,size_t cap) {
+static int create_world(const void *data,size_t bytes,const CohSessionWorldSources *sources,CohSessionWorld **out,char *error,size_t cap) {
     if(!data||!out)return problem(NULL,error,cap,"Missing indexed map bytes",COH_INVALID);
+    if(*out)return problem(NULL,error,cap,"Existing world output",COH_STATE);
+    if(sources&&sources->parent_retained_bytes>SCENE_CAP-LIVE_RESERVE)return problem(NULL,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
     CohSessionWorld *w=calloc(1,sizeof *w);if(!w)return problem(NULL,error,cap,"Indexed world allocation",COH_LIMIT);
     CohStatus status=coh_world_bundle_open((CohBytes){data,bytes},&w->bundle);
     if(status!=COH_OK)goto failed;
     CohAssetLimits limits={4u<<20,STREAM_BUDGET,1u<<20,1u<<20,128,64,32};
     status=coh_asset_create(&limits,&w->loader);if(status!=COH_OK)goto failed;
-    status=coh_world_bundle_mount(&w->bundle,w->loader,(CohCancel){0});if(status!=COH_OK)goto failed;
+    if(!sources){status=coh_world_bundle_mount(&w->bundle,w->loader,(CohCancel){0});if(status!=COH_OK)goto failed;}
+    else {
+        if(w->bundle.count!=11){status=COH_INVALID;goto failed;}
+        /* The callbacks must point into the retained world bundle, not this
+         * temporary descriptor. Limit count on the actual owner while mounting. */
+        w->bundle.count=8;status=coh_world_bundle_mount(&w->bundle,w->loader,(CohCancel){0});w->bundle.count=11;
+        if(status!=COH_OK)goto failed;
+        CohAssetZipMember atlas[2],client[1];
+        for(unsigned i=0;i<2;i++)atlas[i]=(CohAssetZipMember){w->bundle.entries[8+i].id.path,(uint32_t)w->bundle.entries[8+i].bytes.size};
+        client[0]=(CohAssetZipMember){w->bundle.entries[10].id.path,(uint32_t)w->bundle.entries[10].bytes.size};
+        status=coh_asset_zip_open(sources->atlas_zip,atlas,2,(CohCancel){0},&w->archives[0]);if(status!=COH_OK)goto failed;
+        status=coh_asset_zip_open(sources->client_zip,client,1,(CohCancel){0},&w->archives[1]);if(status!=COH_OK)goto failed;
+        for(unsigned i=0;i<2;i++){status=coh_asset_zip_mount(w->archives[i],w->loader);if(status!=COH_OK)goto failed;}
+        w->parent_retained_bytes=sources->parent_retained_bytes;
+    }
     status=coh_world_map_create(w->bundle.index,&w->map);if(status!=COH_OK)goto failed;
     CohBridgeLimits bridge=coh_bridge_default_limits();bridge.total_bytes=4u<<20;
     bridge.meshes=16;bridge.textures=16;bridge.max_vertices=8192;bridge.max_triangles=8192;
     CohBridgeTextureBackend backend={upload,texture_release,w};
     status=coh_bridge_create(w->loader,&bridge,&backend,&w->bridge);if(status!=COH_OK)goto failed;
     CohWorldStats catalog=coh_world_map_stats(w->map);
+    if(sources){status=coh_world_live_open(sources->placements,catalog.endpoints,(CohCancel){0},&w->live);if(status!=COH_OK)goto failed;}
     for(uint32_t i=0;i<catalog.nodes;i++) {
         CohWorldNode node;status=coh_world_node(w->map,i,&node);if(status!=COH_OK)goto failed;
         if(node.endpoint<catalog.endpoints)w->stats.catalog_instances++;
     }
     /* Explicit admission/prewarm, before any frame loop. All permitted model
      * and material endpoints are validated once; per-frame selection is cached. */
-    for(uint32_t i=0;i<catalog.endpoints;i++) {
+    for(uint32_t i=0;!sources&&i<catalog.endpoints;i++) {
         CohWorldEndpoint endpoint;const CohBridgeMesh *mesh=NULL;uint32_t part_mask=0;
         status=coh_world_endpoint(w->map,i,&endpoint);if(status!=COH_OK)goto failed;
         status=coh_world_endpoint_part_mask(w->map,i,&part_mask);if(status!=COH_OK)goto failed;
@@ -116,24 +143,63 @@ int coh_session_world_create(const void *data,size_t bytes,CohSessionWorld **out
         if(status!=COH_OK)goto failed;
         coh_bridge_release(w->bridge,mesh);
     }
+    if(w->live)w->stats.catalog_instances=11u+coh_world_live_stats(w->live).rows;
     publish(w,NULL);*out=w;return 1;
 failed:
     problem(w,error,cap,"Source map/geometry/material admission",status);
     coh_session_world_destroy(&w);return 0;
+}
+int coh_session_world_create(const void *data,size_t bytes,CohSessionWorld **out,char *error,size_t cap){return create_world(data,bytes,NULL,out,error,cap);}
+int coh_session_world_create_archives(const void *data,size_t bytes,const CohSessionWorldSources *sources,CohSessionWorld **out,char *error,size_t cap){
+    if(!sources)return problem(NULL,error,cap,"Missing imported world sources",COH_INVALID);
+    return create_world(data,bytes,sources,out,error,cap);
+}
+int coh_session_world_parent_bytes(CohSessionWorld *w,uint64_t bytes,char *error,size_t cap){
+    if(!w||!w->live)return problem(w,error,cap,"Runtime world owner",COH_STATE);
+    if(bytes>SCENE_CAP-LIVE_RESERVE)return problem(w,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
+    w->parent_retained_bytes=bytes;return 1;
 }
 static void release_meshes(CohSessionWorld *w) {
     for(uint32_t i=0;i<COH_WORLD_MAX_INSTANCES;i++)if(w->meshes[i]){
         coh_bridge_release(w->bridge,w->meshes[i]);w->meshes[i]=NULL;
     }
 }
+static int select_live(CohSessionWorld *w,const float center[3],float radius,char *error,size_t cap){
+    if(w->parent_retained_bytes>SCENE_CAP-LIVE_RESERVE)return problem(w,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
+    if(w->renderer&&coh_renderer_stats(w->renderer).queued)return problem(w,error,cap,"Previous frame still borrows geometry",COH_STATE);
+    float distance=0;
+    for(unsigned i=0;i<3;i++){float delta=center[i]-w->last_center[i];if(!isfinite(delta))return problem(w,error,cap,"Invalid runtime source center",COH_INVALID);distance+=delta*delta;}
+    if(w->live_selection&&radius==w->last_radius&&distance<16)return 1;
+    CohWorldInstance instances[COH_WORLD_MAX_INSTANCES];uint32_t count=0;
+    CohStatus status=coh_world_live_query(w->live,center,radius,instances,COH_WORLD_MAX_INSTANCES,&count,(CohCancel){0});
+    if(status!=COH_OK)return problem(w,error,cap,"Runtime source placement query",status);
+    int same=count==w->selection.count;
+    for(uint32_t i=0;same&&i<count;i++)same=instances[i].node==w->selection.instances[i].node&&instances[i].endpoint==w->selection.instances[i].endpoint&&!memcmp(instances[i].world,w->selection.instances[i].world,sizeof instances[i].world);
+    if(!same){
+        CohWorldSelection next={0};const CohBridgeMesh *meshes[COH_WORLD_MAX_INSTANCES]={0};
+        status=coh_world_select_instances(w->map,w->loader,instances,count,STREAM_BUDGET,(CohCancel){0},&next);
+        for(uint32_t i=0;status==COH_OK&&i<count;i++){
+            CohWorldEndpoint endpoint;uint32_t mask=0;status=coh_world_endpoint(w->map,instances[i].endpoint,&endpoint);
+            if(status==COH_OK)status=coh_world_endpoint_part_mask(w->map,instances[i].endpoint,&mask);
+            if(status==COH_OK)status=coh_bridge_acquire_parts(w->bridge,endpoint.geometry,endpoint.model,1,mask,material,w,(CohCancel){0},&meshes[i]);
+        }
+        if(status!=COH_OK){for(uint32_t i=0;i<count;i++)if(meshes[i])coh_bridge_release(w->bridge,meshes[i]);coh_world_release(&next);return problem(w,error,cap,"Runtime source dependencies",status);}
+        release_meshes(w);coh_world_release(&w->selection);w->selection=next;memcpy(w->meshes,meshes,sizeof meshes);
+        /* Renderer flush has released all borrowed spans. Retire obsolete raw,
+         * decoded and uploaded resources only after their final mesh consumer. */
+        coh_bridge_trim(w->bridge,1);coh_asset_trim(w->loader);w->stats.selection_updates++;
+    }
+    memcpy(w->last_center,center,sizeof w->last_center);w->last_radius=radius;w->stats.view_radius=radius;w->live_selection=1;return 1;
+}
 static int select_world(CohSessionWorld *w,const float center[3],float radius,int allow_empty,char *error,size_t cap) {
     if(!isfinite(radius)||(radius!=24&&radius!=96))return problem(w,error,cap,"Invalid view distance",COH_INVALID);
+    if(w->live&&allow_empty)return select_live(w,center,radius,error,cap);
     float d=0;for(unsigned i=0;i<3;i++){float v=center[i]-w->last_center[i];if(!isfinite(v))return problem(w,error,cap,"Invalid query center",COH_INVALID);d+=v*v;}
-    if(w->selection.count&&radius==w->last_radius&&d<16)return 1;
+    if(!w->live_selection&&w->selection.count&&radius==w->last_radius&&d<16)return 1;
     uint32_t nodes[COH_WORLD_MAX_INSTANCES],count=0;
     CohStatus status=coh_world_query(w->map,center,radius,nodes,COH_WORLD_MAX_INSTANCES,&count);
     if(status!=COH_OK||(!count&&!allow_empty))return problem(w,error,cap,"Source map radius selection",status==COH_OK?COH_NOT_FOUND:status);
-    if(!count){release_meshes(w);coh_world_release(&w->selection);memcpy(w->last_center,center,sizeof w->last_center);w->last_radius=radius;w->stats.view_radius=radius;w->stats.selection_updates++;return 1;}
+    if(!count){release_meshes(w);coh_world_release(&w->selection);memcpy(w->last_center,center,sizeof w->last_center);w->last_radius=radius;w->stats.view_radius=radius;w->stats.selection_updates++;w->live_selection=0;return 1;}
     int same=count==w->selection.count;
     for(uint32_t i=0;same&&i<count;i++)same=nodes[i]==w->selection.instances[i].node;
     if(!same||radius!=w->last_radius) {
@@ -150,7 +216,7 @@ static int select_world(CohSessionWorld *w,const float center[3],float radius,in
         }
         w->stats.selection_updates++;
     }
-    memcpy(w->last_center,center,sizeof w->last_center);w->last_radius=radius;w->stats.view_radius=radius;return 1;
+    memcpy(w->last_center,center,sizeof w->last_center);w->last_radius=radius;w->stats.view_radius=radius;w->live_selection=0;return 1;
 }
 static void multiply_source(const float a[12],const float b[12],float out[12]) {
     for(unsigned col=0;col<4;col++)for(unsigned row=0;row<3;row++) {
@@ -258,6 +324,7 @@ void coh_session_world_destroy(CohSessionWorld **pointer) {
     if(w->bridge)(void)coh_bridge_destroy(&w->bridge,0);
     if(w->map)(void)coh_world_map_destroy(&w->map);
     if(w->loader)(void)coh_asset_destroy(&w->loader);
+    coh_world_live_free(w->live);for(unsigned i=0;i<2;i++)coh_asset_zip_free(w->archives[i]);
     free(w);*pointer=NULL;
 }
 
@@ -269,7 +336,8 @@ int coh_session_world_owned_bytes(const CohSessionWorld *w,uint64_t *cpu,uint64_
        (a<b+sizeof *gpu&&b<a+sizeof *cpu))return 0;
     uint64_t c=sizeof *w+coh_world_map_stats(w->map).allocated_bytes+
         coh_asset_stats(w->loader).allocated_bytes+coh_bridge_stats(w->bridge).allocated_bytes+
-        coh_renderer_stats(w->renderer).owned_bytes+coh_renderer_gles_owned_bytes(w->gles);
+        coh_renderer_stats(w->renderer).owned_bytes+coh_renderer_gles_owned_bytes(w->gles)+
+        coh_world_live_stats(w->live).owned_bytes+coh_asset_zip_stats(w->archives[0]).owned_bytes+coh_asset_zip_stats(w->archives[1]).owned_bytes;
     uint64_t g=coh_renderer_gles_buffer_bytes(w->gles)+coh_bridge_gpu_bytes(w->bridge)+(w->debug_white?4u:0u);
     *cpu=c;*gpu=g;return 1;
 }

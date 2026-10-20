@@ -139,7 +139,7 @@ def main():
         if path.endswith('/road_4lane.geo'): road = bundle[offset:offset + size]
     assert road is not None
     expected = original_packet(road, a.source_root, a.work)
-    core = [NATIVE / n for n in ['engine/world/coh_world_stream.c', 'engine/bridge/coh_asset_render.c', 'engine/assets/coh_asset_loader.c', 'engine/assets/coh_asset_geo.c', 'engine/renderer/coh_renderer.c', 'src/coh_assets.c', 'src/coh_dds.c']]
+    core = [NATIVE / n for n in ['engine/world/coh_world_live.c', 'engine/assets/coh_asset_zip.c', 'engine/world/coh_world_stream.c', 'engine/bridge/coh_asset_render.c', 'engine/assets/coh_asset_loader.c', 'engine/assets/coh_asset_geo.c', 'engine/renderer/coh_renderer.c', 'src/coh_assets.c', 'src/coh_dds.c']]
     flags = ['-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic', '-ffp-contract=off', '-I', NATIVE / 'include']
     modes = {}
     for mode, extra in [('release', ['-O2']), ('asan', ['-O1', '-g', '-fsanitize=address', '-no-pie']), ('ubsan', ['-O1', '-g', '-fsanitize=undefined', '-fno-sanitize-recover=all'])]:
@@ -154,7 +154,7 @@ def main():
     camera = a.work / 'camera.o'; run(['cc', '-std=c11', '-O2', '-fPIC', '-ffp-contract=off', '-I', NATIVE / 'include', '-c', NATIVE / 'world/coh_world.c', '-o', camera])
     library = a.work / 'stream.so'
     source = [NATIVE / n for n in ['session-client/tools/stream_gpu_fixture.c', 'session-client/app/src/main/cpp/session_stream_qualify.c', 'engine/renderer/coh_debug_entity.c', 'engine/renderer/coh_renderer_gles.c']]
-    run(['cc', *flags, '-O2', '-fPIC', '-shared', '-I', includes, '-I', NATIVE / 'engine/world', '-I', NATIVE / 'engine/bridge', '-I', NATIVE / 'engine/renderer', *source, *core, camera, '-l:libGL.so.1', '-lz', '-lm', '-o', library])
+    run(['cc', *flags, '-O2', '-fPIC', '-shared', '-I', includes, '-I', NATIVE / 'engine/assets', '-I', NATIVE / 'engine/world', '-I', NATIVE / 'engine/bridge', '-I', NATIVE / 'engine/renderer', *source, *core, camera, '-l:libGL.so.1', '-lz', '-lm', '-o', library])
     result = {'passed': True, 'modes': modes, 'original_source_packet_sha256': hashlib.sha256(expected).hexdigest(), 'gpu': render(library, bundle, a.world_bin, a.work), 'source_sha256': {str(x.relative_to(NATIVE)): sha(x) for x in [*core, *source, Path(__file__), NATIVE / 'engine/world/test_neighborhood.c', NATIVE / 'session-client/app/src/main/cpp/session_stream_world.c']}}
     a.output.parent.mkdir(parents=True, exist_ok=True); a.output.write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps({k: v for k, v in result.items() if k != 'source_sha256'}, indent=2))

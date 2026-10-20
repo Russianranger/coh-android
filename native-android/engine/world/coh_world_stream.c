@@ -1,4 +1,4 @@
-#include "coh_world_stream.h"
+#include "coh_world_live.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -132,3 +132,31 @@ CohStatus coh_world_bundle_open(CohBytes b,CohWorldBundle *out){
 CohStatus coh_world_bundle_mount(CohWorldBundle *bundle,CohAssetLoader *loader,CohCancel cancel){if(!bundle||!loader||!bundle->count||bundle->count>COH_WORLD_MAX_ASSETS)return COH_INVALID;for(uint32_t i=0;i<bundle->count;i++){if(cancelled(cancel))return COH_CANCELLED;CohWorldBundleEntry *e=&bundle->entries[i];CohAssetSource source={bundle_read,e,e->bytes.size,e->id.generation};CohStatus s=coh_asset_mount_file(loader,e->id.path,source);if(s!=COH_OK)return s;}return COH_OK;}
 
 CohStatus coh_world_material(const CohWorldBundle *b,const char *name,CohWorldMaterial *out){if(!b||!name||!out)return COH_INVALID;for(uint32_t i=0;i<b->material_count;i++)if(same_name(name,b->materials[i].name)){*out=b->materials[i];return COH_OK;}return COH_NOT_FOUND;}
+
+static int live_separate(const void *a,size_t an,const void *b,size_t bn){uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;return x<=UINTPTR_MAX-an&&y<=UINTPTR_MAX-bn&&(x>=y+bn||y>=x+an);}
+CohStatus coh_world_select_instances(CohWorldMap *map,CohAssetLoader *loader,const CohWorldInstance *instances,uint32_t count,size_t budget,CohCancel cancel,CohWorldSelection *out){
+    if(!map||!loader||!out||(!instances&&count)||count>COH_WORLD_MAX_INSTANCES||!budget)return COH_INVALID;
+    if(out->owner&&(out->owner!=map||out->loader!=loader))return COH_STATE;
+    if(!live_separate(out,sizeof *out,instances,(size_t)count*sizeof *instances)||!live_separate(map,sizeof *map,out,sizeof *out)||!live_separate(map,sizeof *map,instances,(size_t)count*sizeof *instances))return COH_INVALID;
+    CohWorldStats stats=coh_world_map_stats(map);CohAssetId assets[COH_WORLD_MAX_ASSETS];uint32_t used=0;CohWorldSelection next={0};CohStatus status=COH_OK;
+    for(uint32_t i=0;i<count;i++){
+        if(cancelled(cancel)){status=COH_CANCELLED;goto failed;}
+        const CohWorldInstance *instance=&instances[i];if(instance->endpoint>=stats.endpoints){status=COH_INVALID;goto failed;}
+        for(uint32_t j=0;j<i;j++)if(instances[j].node==instance->node){status=COH_INVALID;goto failed;}
+        for(unsigned j=0;j<12;j++)if(!isfinite(instance->world[j])||fabsf(instance->world[j])>10000000){status=COH_INVALID;goto failed;}
+        for(unsigned j=0;j<6;j++)if(!isfinite(instance->tint[j])||instance->tint[j]<0||instance->tint[j]>1){status=COH_INVALID;goto failed;}
+        next.instances[next.count++]=*instance;CohWorldEndpoint endpoint;status=coh_world_endpoint(map,instance->endpoint,&endpoint);if(status!=COH_OK)goto failed;
+        for(uint32_t j=0;j<endpoint.dependency_count;j++){
+            CohAssetId id;status=coh_world_dependency(map,instance->endpoint,j,&id);if(status!=COH_OK)goto failed;
+            uint32_t k=0;for(;k<used;k++)if(assets[k].generation==id.generation&&!strcmp(assets[k].path,id.path))break;
+            if(k==used){if(used==COH_WORLD_MAX_ASSETS){status=COH_LIMIT;goto failed;}assets[used++]=id;}
+        }
+    }
+    for(uint32_t i=0;i<used;i++){CohAssetInfo info;status=coh_asset_lookup(loader,assets[i],&info);if(status!=COH_OK)goto failed;if(info.decoded_bytes>budget-next.resident_bytes){status=COH_LIMIT;goto failed;}next.resident_bytes+=info.decoded_bytes;}
+    for(uint32_t i=0;i<used;i++){const CohAssetBlob *pin=NULL;status=coh_asset_acquire(loader,assets[i],cancel,&pin);if(status!=COH_OK)goto failed;next.pins[next.pin_count++]=pin;}
+    if(cancelled(cancel)){status=COH_CANCELLED;goto failed;}
+    /* Reuse the existing map's selection owner accounting rather than creating
+     * a second lifetime protocol for runtime source rows. */
+    coh_world_release(out);next.owner=map;next.loader=loader;map->live++;map->selections++;*out=next;return COH_OK;
+failed:for(uint32_t i=0;i<next.pin_count;i++)coh_asset_release(loader,next.pins[i]);return status;
+}
