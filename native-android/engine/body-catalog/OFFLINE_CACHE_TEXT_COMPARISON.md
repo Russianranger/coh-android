@@ -35,6 +35,11 @@ The source follow-up makes the client count independent of optional server-cache
 comparison. The previously delivered 0.1.13 APK still contains its earlier
 server-hash admission check; it has not been rebuilt for this confirmation.
 Its existing package/CI receipts retain that original APK's scope and identity.
+The subsequent physical 0.1.13 report confirms `[3,0]` / missing lookup file
+blocked admission. Signed 0.1.14 now includes the client-authority correction
+(source `38c6446830dc6a55204a663de7477db12c6a5536`, CI `39408855380` passed).
+The 0.1.14 live stage/count/costume result awaits Thor testing; server comparison
+remains advisory. Physical box draw submission was already observed in 0.1.13.
 The correction passes 3,494 JNI checks and 397 report regression checks per mode
 (release/ASan/UBSan), with all 76 current compiler input pins matching. Maximum
 report 6,902/7,168 bytes; Interop allocation unchanged at 66,944 bytes. Default

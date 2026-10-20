@@ -6,7 +6,7 @@
     "gates25_27": "OPEN"
   },
   "base_revision": "8170fc0d222ec154b19b0caf2616040004d4b2e7",
-  "blocker": "actual Thor cache match and live parser/draw observation pending; first source-fixture unknown is indexed geometry string dictionary",
+  "blocker": "Delivered13stopped on serverlookupCOH_NOT_FOUND; APK14contains client-authority fix; nextlivecostumefieldunobserved",
   "bodypart_authority_followup": {
     "APK_rebuilt": false,
     "Interop_bytes": 66944,
@@ -38,6 +38,7 @@
     "driver_retest_run": 39372366963,
     "driver_source_commit": "8c1ace1a39a5134ceec3c9634342bdceeb51bac6",
     "physical_app_update_pending": true,
+    "preserved_version13_source": "ae8e9240b3211e1e87de845ab370f6f6b229e4df",
     "producer_attempt": 2,
     "producer_result": "ARM64 and x86 builds/package audits passed; Android13 late harness assumption failed",
     "producer_run": 39370468578,
@@ -67,7 +68,18 @@
     "box_static_bytes": 592,
     "legacy_native_report_regression_max_bytes": 6889,
     "native_report_cap_bytes": 7168,
-    "new_Android_Thor_group_measurement": null,
+    "new_Android_Thor_group_measurement": {
+      "PostgreSQL_processes": 16,
+      "Wine_processes": 9,
+      "complete_combined_peak_claimed": false,
+      "complete_totals": null,
+      "coverage": "partial",
+      "details": "physical-memory-12-13.json",
+      "missing_metrics": 2,
+      "native_ZIP_observed_PSS_sum_bytes": 937546752,
+      "native_ZIP_observed_RSS_sum_bytes": 1232064512,
+      "process_count": 32
+    },
     "original_source_frame_sum_bytes": 680,
     "original_stack_reserve_bytes": 4096,
     "process_cap": 32,
@@ -77,14 +89,60 @@
     "typed_original_workspace_bytes": 65536,
     "white_texture_payload_bytes": 4
   },
-  "next_action": "Install signed APK over baseline and perform one Thor Atlas handoff/export",
+  "next_APK14": {
+    "APK": {
+      "bytes": 13954641,
+      "name": "CoH-Native-Combined-0.1.14-entity-diagnostic-arm64.apk",
+      "sha256": "3968288fc84954ace5b67cc7842df827242a3d05bdede6cca218ff7398a444b4"
+    },
+    "Android13_checks": 32,
+    "CI_artifact_id": 12259140776,
+    "CI_artifact_sha256": "cea4a2c3ff82f469ec016b2ef08dee640e32f2b041e8f4d0b6862bdd3050858e",
+    "CI_result": "success",
+    "CI_run": 39408855380,
+    "memory_caps_changed": false,
+    "native_change": "client count28 isauthoritative; missingservercache advisory only",
+    "physical_Thor_test_passed": false,
+    "profile": "entity-diagnostic",
+    "source_commit": "38c6446830dc6a55204a663de7477db12c6a5536",
+    "state": "SIGNED_ARM64_READY_ANDROID13_PASSED",
+    "update_signer_preserved": true,
+    "version_code": 15,
+    "version_name": "0.1.14-entity-diagnostic-test"
+  },
+  "next_action": "Install APK14 over baseline after clean server stop; one Atlas handoff/export to observe actual costume continuation",
   "next_source_dependency": "ordinary indexed geometry string dictionary; source fixture stops before its index Pack; actual Thor cursor awaits test",
   "observed_entity": {
-    "actual_Thor_draw_proven": false,
+    "actual_Thor_draw_proven": true,
     "code_connected": true,
-    "planned_remaining_step": "Install/run signed diagnostic on Thor and inspect active/box_draws",
+    "draw_scope": "actual selected-self pose box draw submission on framebuffer0, not independent pixel visibility/fullactor",
+    "physical_box_draws": 1384,
+    "planned_remaining_step": "Diagnostic box draw observed; use APK14 to observe original costume continuation past stage41",
     "source": "actual selected-self index/raw DBID match and decoded absolute initial pose",
     "visual": "fixed orange 2x6x2 diagnostic box"
+  },
+  "physical_version13": {
+    "APK_sha256": "5c709136f80b09b4f737c1b87d6bf7bca47de7497f0b31156a29d1d0e2f7100b",
+    "GL_errors": 0,
+    "bodyparts_default": [
+      3,
+      0
+    ],
+    "box_draw_submissions": 1384,
+    "costume_continuation": null,
+    "entity_index": 125,
+    "full_actor_or_ACK": false,
+    "memory_evidence": "physical-memory-12-13.json",
+    "pause_box_cleared": true,
+    "pause_total_draws": 1387,
+    "physical_evidence": "physical-12-13.json",
+    "pixel_visibility_independently_verified": false,
+    "position": [
+      131.453125,
+      0.25,
+      -114.953125
+    ],
+    "stage41_passed": false
   },
   "schema": "coh-local-entity-iteration-v1",
   "stage41": {

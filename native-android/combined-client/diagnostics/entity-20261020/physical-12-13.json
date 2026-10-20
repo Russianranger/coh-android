@@ -1,7 +1,17 @@
 {
-  "APK14_build_state": "PREPARING",
+  "APK14": {
+    "bytes": 13954641,
+    "name": "CoH-Native-Combined-0.1.14-entity-diagnostic-arm64.apk",
+    "sha256": "3968288fc84954ace5b67cc7842df827242a3d05bdede6cca218ff7398a444b4"
+  },
+  "APK14_Android13_checks": 32,
+  "APK14_CI_run": 39408855380,
+  "APK14_build_state": "SIGNED_ARM64_READY_ANDROID13_PASSED",
+  "APK14_physical_Thor_test_passed": false,
+  "APK14_source": "38c6446830dc6a55204a663de7477db12c6a5536",
   "accepted": "0.1.13 actual observed-box GLES draw submissions at selected-self pose, with later pause/cleanup",
   "independent_pixel_visibility_or_complete_actor_claimed": false,
+  "memory_details": "physical-memory-12-13.json",
   "next_live_costume_field_observed": false,
   "reports": [
     {

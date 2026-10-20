@@ -1,6 +1,7 @@
 # One observed Atlas entity — Thor test
 
-1. Install the signed 0.1.14 entity diagnostic over 0.1.11/0.1.12. Do not uninstall,
+1. Export the current diagnostics and stop the server normally. Install the
+   signed 0.1.14 entity diagnostic over the existing app. Do not uninstall,
    clear data, change imports or replace the running server.
 2. Start the existing server normally, launch the native client, choose **Test
    world handoff**, and select the same Atlas Park character once.

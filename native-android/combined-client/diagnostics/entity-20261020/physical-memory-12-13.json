@@ -1,0 +1,442 @@
+{
+  "input_files": {
+    "COH-NativeCombined-1792469730439.zip": {
+      "bytes": 47915,
+      "sha256": "4850410068bb21acd1d746da085234306532af084d520eb6558ce39852be1018"
+    },
+    "COH-NativeCombined-1792491256433.zip": {
+      "bytes": 52351,
+      "sha256": "4e5421ddddefd89443f26d2866cc313b1a3a3d5e43ec46b04ce3e6e1d0bb8277"
+    },
+    "COH-NativeCombined-20261019-231522.json": {
+      "bytes": 50714,
+      "sha256": "b253b66df8424307bb31d92c57851518474bdb0b70a462c09aa2b1b5c292ec6d"
+    },
+    "COH-NativeCombined-20261020-051405.json": {
+      "bytes": 75901,
+      "sha256": "7f621412969dee4492a574957e656b79d802a64a18ca74cbb5070f701c264dd5"
+    }
+  },
+  "interpretation_limits": [
+    "Snapshots are separate points in time; standalone exports precede ZIP captures.",
+    "0.1.13 scan hits32-process limit and has2 Wine rows with unavailable metrics; observed sums are partial and complete totals correctly remain null.",
+    "sampled_peak_total_* refer to earlier complete observations, not a peak of later incomplete combined process sets.",
+    "Summed RSS repeats shared pages; PSS is proportional. No GPU or whole-device total is established.",
+    "No current-run OOM is shown. Retained Oct19 reason3 events do not establish their cause; later system headroom does not disprove them.",
+    "No source code, caps, server state, imported data or uploaded files were changed."
+  ],
+  "observations": {
+    "COH-NativeCombined-1792469730439.zip": {
+      "combined-report.json": {
+        "app_process": {
+          "minimum_observed_system_headroom_bytes": 8549376000,
+          "sampled_peak_process_pss_bytes": 127669248,
+          "sampled_peak_process_rss_bytes": 232550400,
+          "sampler_failures": 0,
+          "samples": 9
+        },
+        "current_server": {
+          "elapsed_ms": 417716,
+          "failure_code": "",
+          "guest_exit_code": -1,
+          "keypath": "$.server",
+          "last_stage": "server_running_manual_native_client",
+          "owned_process_alive": true,
+          "phase": "ready",
+          "ready": true,
+          "session_id": "b92b84f71f2648c3afe0d747de768c98"
+        },
+        "keypath": "$.memory_diagnostics",
+        "server_policy": {
+          "admitted": true,
+          "invalid_samples": 0,
+          "keypath": "$.server_memory",
+          "minimum_system_headroom_bytes": 8394297344,
+          "pressure_samples": 0,
+          "samples": 413,
+          "status": "running",
+          "stop_requested": false
+        }
+      },
+      "interrupted_v12_attempt": {
+        "JSONPath": "$.attempts[?(@.session_id==\"5a4de0d678a64dfc899684d3bc470b1a\")]",
+        "app_busy": true,
+        "app_memory": {
+          "latest_sample_age_ms": 13268,
+          "minimum_observed_system_headroom_bytes": 9185681408,
+          "sampled_peak_process_pss_bytes": 20431872,
+          "sampled_peak_process_rss_bytes": 101937152,
+          "sampler_failures": 0,
+          "samples": 1
+        },
+        "association_limits": "An interrupted startup record is retained near the Oct19 LOW_MEMORY history. No PID/time binding or concurrent guest-memory trace establishes that this attempt caused those deaths; no causal OOM claim.",
+        "guest_report_present": false,
+        "member": "combined-server-previous-attempts.json",
+        "policy": {
+          "invalid_samples": 0,
+          "minimum_system_headroom_bytes": 9156964352,
+          "pressure_samples": 0,
+          "samples": 12
+        },
+        "server": {
+          "elapsed_ms": 10380,
+          "last_stage": "persistent_server_profile",
+          "owned_process_alive": true,
+          "phase": "starting",
+          "ready": false,
+          "stage_elapsed_ms": 0
+        },
+        "session_id": "5a4de0d678a64dfc899684d3bc470b1a",
+        "updated_elapsed_ms": 975212076,
+        "version_name": "0.1.12-catalog-diagnostic-test"
+      },
+      "native-client-report.json": {
+        "app_process": {
+          "minimum_observed_system_headroom_bytes": 8558845952,
+          "sampled_peak_process_pss_bytes": 127669248,
+          "sampled_peak_process_rss_bytes": 232550400,
+          "sampler_failures": 0,
+          "samples": 8
+        },
+        "keypath": "$.memory_diagnostics"
+      },
+      "new_Oct19_low_memory_events": {
+        "events": [
+          {
+            "America_Chicago": "2026-10-19T23:08:21.504000-05:00",
+            "importance": 100,
+            "low_memory": true,
+            "pss_kib": 0,
+            "reason": 3,
+            "rss_kib": 0,
+            "status": 0,
+            "timestamp_utc_ms": 1792469301504
+          },
+          {
+            "America_Chicago": "2026-10-19T23:08:17.925000-05:00",
+            "importance": 100,
+            "low_memory": true,
+            "pss_kib": 80536,
+            "reason": 3,
+            "rss_kib": 184152,
+            "status": 0,
+            "timestamp_utc_ms": 1792469297925
+          }
+        ],
+        "keypath": "$.android_process_exits",
+        "member": "combined-report.json"
+      },
+      "previous_session_cleanup": {
+        "cleanup": {
+          "owned_processes_reaped": true,
+          "postgres_graceful": true,
+          "presentation_socket_removed": true,
+          "wine_prefix_stopped": true
+        },
+        "cleanup_complete": true,
+        "keypaths": [
+          "$.session_id",
+          "$.status",
+          "$.cleanup_complete",
+          "$.cleanup"
+        ],
+        "member": "previous-session-combined-server-latest-report.json",
+        "session_id": "e55cbad8bf6c4a71b9a43f2c1c187a1e",
+        "status": "stopped"
+      }
+    },
+    "COH-NativeCombined-1792491256433.zip": {
+      "combined-report.json": {
+        "android_memory_callbacks": {
+          "callback_is_oom_kill_proof": false,
+          "keypath": "$.memory_diagnostics.android_memory_callbacks",
+          "last_callback_elapsed_ms": 996719338,
+          "last_trim_level": 15,
+          "low_memory_callbacks": 0,
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 2
+        },
+        "app_process": {
+          "minimum_observed_system_headroom_bytes": 7595515904,
+          "sampled_peak_process_pss_bytes": 104468480,
+          "sampled_peak_process_rss_bytes": 209825792,
+          "sampler_failures": 0,
+          "samples": 11
+        },
+        "current_server": {
+          "elapsed_ms": 459962,
+          "failure_code": "",
+          "guest_exit_code": -1,
+          "keypath": "$.server",
+          "last_stage": "server_running_manual_native_client",
+          "owned_process_alive": true,
+          "phase": "ready",
+          "ready": true,
+          "session_id": "28a5dc3774ae41e185e67639cf0b5d9c"
+        },
+        "keypath": "$.memory_diagnostics",
+        "same_uid_process_set": {
+          "atomic_snapshot": false,
+          "expected_roles_observed": true,
+          "incomplete_process_metrics": 2,
+          "keypath": "$.memory_diagnostics.same_uid_process_set",
+          "observed_pss_sum_bytes": 924016640,
+          "observed_role_sums": {
+            "ANDROID_APP_AND_NATIVE_CLIENT": {
+              "missing_metric_rows": 0,
+              "observed_pss_sum_bytes": 72211456,
+              "observed_rss_sum_bytes": 177369088,
+              "process_count": 1
+            },
+            "OTHER_APP_UID": {
+              "missing_metric_rows": 0,
+              "observed_pss_sum_bytes": 225792000,
+              "observed_rss_sum_bytes": 242831360,
+              "process_count": 6
+            },
+            "POSTGRESQL": {
+              "missing_metric_rows": 0,
+              "observed_pss_sum_bytes": 33917952,
+              "observed_rss_sum_bytes": 179593216,
+              "process_count": 16
+            },
+            "WINE_SERVERS": {
+              "missing_metric_rows": 2,
+              "observed_pss_sum_bytes": 592095232,
+              "observed_rss_sum_bytes": 619278336,
+              "process_count": 9
+            }
+          },
+          "observed_rss_sum_bytes": 1219072000,
+          "postgresql_processes": 16,
+          "process_count": 32,
+          "process_limit": 32,
+          "pss_is_proportional": true,
+          "rss_sum_includes_repeated_shared_pages": true,
+          "sample_window_ms": 45,
+          "sampled_peak_total_pss_bytes": 482178048,
+          "sampled_peak_total_rss_bytes": 658341888,
+          "sampled_utc_ms": 1792491257186,
+          "samples": 90,
+          "scan_complete": false,
+          "server_process_expected": true,
+          "total_pss_bytes": null,
+          "total_rss_bytes": null,
+          "wine_processes": 9
+        },
+        "server_policy": {
+          "admitted": true,
+          "invalid_samples": 0,
+          "keypath": "$.server_memory",
+          "minimum_system_headroom_bytes": 7595450368,
+          "pressure_samples": 0,
+          "samples": 452,
+          "status": "running",
+          "stop_requested": false
+        }
+      },
+      "interrupted_v12_attempt": {
+        "JSONPath": "$.attempts[?(@.session_id==\"5a4de0d678a64dfc899684d3bc470b1a\")]",
+        "app_busy": true,
+        "app_memory": {
+          "latest_sample_age_ms": 13268,
+          "minimum_observed_system_headroom_bytes": 9185681408,
+          "sampled_peak_process_pss_bytes": 20431872,
+          "sampled_peak_process_rss_bytes": 101937152,
+          "sampler_failures": 0,
+          "samples": 1
+        },
+        "association_limits": "An interrupted startup record is retained near the Oct19 LOW_MEMORY history. No PID/time binding or concurrent guest-memory trace establishes that this attempt caused those deaths; no causal OOM claim.",
+        "guest_report_present": false,
+        "member": "combined-server-previous-attempts.json",
+        "policy": {
+          "invalid_samples": 0,
+          "minimum_system_headroom_bytes": 9156964352,
+          "pressure_samples": 0,
+          "samples": 12
+        },
+        "server": {
+          "elapsed_ms": 10380,
+          "last_stage": "persistent_server_profile",
+          "owned_process_alive": true,
+          "phase": "starting",
+          "ready": false,
+          "stage_elapsed_ms": 0
+        },
+        "session_id": "5a4de0d678a64dfc899684d3bc470b1a",
+        "updated_elapsed_ms": 975212076,
+        "version_name": "0.1.12-catalog-diagnostic-test"
+      },
+      "native-client-report.json": {
+        "android_memory_callbacks": {
+          "callback_is_oom_kill_proof": false,
+          "keypath": "$.memory_diagnostics.android_memory_callbacks",
+          "last_callback_elapsed_ms": 996719338,
+          "last_trim_level": 15,
+          "low_memory_callbacks": 0,
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 2
+        },
+        "app_process": {
+          "minimum_observed_system_headroom_bytes": 7595515904,
+          "sampled_peak_process_pss_bytes": 104468480,
+          "sampled_peak_process_rss_bytes": 209825792,
+          "sampler_failures": 0,
+          "samples": 10
+        },
+        "keypath": "$.memory_diagnostics",
+        "same_uid_process_set": {
+          "atomic_snapshot": false,
+          "expected_roles_observed": true,
+          "incomplete_process_metrics": 2,
+          "keypath": "$.memory_diagnostics.same_uid_process_set",
+          "observed_pss_sum_bytes": 937546752,
+          "observed_role_sums": {
+            "ANDROID_APP_AND_NATIVE_CLIENT": {
+              "missing_metric_rows": 0,
+              "observed_pss_sum_bytes": 85741568,
+              "observed_rss_sum_bytes": 190361600,
+              "process_count": 1
+            },
+            "OTHER_APP_UID": {
+              "missing_metric_rows": 0,
+              "observed_pss_sum_bytes": 225792000,
+              "observed_rss_sum_bytes": 242831360,
+              "process_count": 6
+            },
+            "POSTGRESQL": {
+              "missing_metric_rows": 0,
+              "observed_pss_sum_bytes": 33917952,
+              "observed_rss_sum_bytes": 179593216,
+              "process_count": 16
+            },
+            "WINE_SERVERS": {
+              "missing_metric_rows": 2,
+              "observed_pss_sum_bytes": 592095232,
+              "observed_rss_sum_bytes": 619278336,
+              "process_count": 9
+            }
+          },
+          "observed_rss_sum_bytes": 1232064512,
+          "postgresql_processes": 16,
+          "process_count": 32,
+          "process_limit": 32,
+          "pss_is_proportional": true,
+          "rss_sum_includes_repeated_shared_pages": true,
+          "sample_window_ms": 42,
+          "sampled_peak_total_pss_bytes": 482178048,
+          "sampled_peak_total_rss_bytes": 658341888,
+          "sampled_utc_ms": 1792491251140,
+          "samples": 89,
+          "scan_complete": false,
+          "server_process_expected": true,
+          "total_pss_bytes": null,
+          "total_rss_bytes": null,
+          "wine_processes": 9
+        }
+      },
+      "new_Oct19_low_memory_events": {
+        "events": [
+          {
+            "America_Chicago": "2026-10-19T23:08:21.504000-05:00",
+            "importance": 100,
+            "low_memory": true,
+            "pid": 24597,
+            "pss_kib": 0,
+            "reason": 3,
+            "rss_kib": 0,
+            "status": 0,
+            "timestamp_utc_ms": 1792469301504
+          },
+          {
+            "America_Chicago": "2026-10-19T23:08:17.925000-05:00",
+            "importance": 100,
+            "low_memory": true,
+            "pid": 23853,
+            "pss_kib": 80536,
+            "reason": 3,
+            "rss_kib": 184152,
+            "status": 0,
+            "timestamp_utc_ms": 1792469297925
+          }
+        ],
+        "keypath": "$.android_process_exits",
+        "member": "combined-report.json"
+      },
+      "previous_session_cleanup": {
+        "cleanup": {
+          "owned_processes_reaped": true,
+          "postgres_graceful": true,
+          "presentation_socket_removed": true,
+          "wine_prefix_stopped": true
+        },
+        "cleanup_complete": true,
+        "keypaths": [
+          "$.session_id",
+          "$.status",
+          "$.cleanup_complete",
+          "$.cleanup"
+        ],
+        "member": "previous-session-combined-server-latest-report.json",
+        "session_id": "b92b84f71f2648c3afe0d747de768c98",
+        "status": "stopped"
+      }
+    },
+    "COH-NativeCombined-20261019-231522.json": {
+      "app_process": {
+        "minimum_observed_system_headroom_bytes": 8657833984,
+        "sampled_peak_process_pss_bytes": 121199616,
+        "sampled_peak_process_rss_bytes": 224874496,
+        "sampler_failures": 0,
+        "samples": 5
+      },
+      "keypath": "$.memory_diagnostics",
+      "updated_at": "2026-10-19T23:15:22.553-05:00",
+      "version_name": "0.1.12-catalog-diagnostic-test"
+    },
+    "COH-NativeCombined-20261020-051405.json": {
+      "app_process": {
+        "minimum_observed_system_headroom_bytes": 7595515904,
+        "sampled_peak_process_pss_bytes": 104468480,
+        "sampled_peak_process_rss_bytes": 209723392,
+        "sampler_failures": 0,
+        "samples": 7
+      },
+      "keypath": "$.memory_diagnostics",
+      "same_uid_process_set": {
+        "atomic_snapshot": false,
+        "expected_roles_observed": true,
+        "incomplete_process_metrics": 2,
+        "keypath": "$.memory_diagnostics.same_uid_process_set",
+        "observed_pss_sum_bytes": 925424640,
+        "observed_rss_sum_bytes": 1218777088,
+        "postgresql_processes": 16,
+        "process_count": 32,
+        "process_limit": 32,
+        "pss_is_proportional": true,
+        "rss_sum_includes_repeated_shared_pages": true,
+        "sample_window_ms": 45,
+        "sampled_peak_total_pss_bytes": 482178048,
+        "sampled_peak_total_rss_bytes": 658341888,
+        "sampled_utc_ms": 1792491245091,
+        "samples": 88,
+        "scan_complete": false,
+        "server_process_expected": true,
+        "total_pss_bytes": null,
+        "total_rss_bytes": null,
+        "wine_processes": 9
+      },
+      "updated_at": "2026-10-20T05:14:05.986-05:00",
+      "version_name": "0.1.13-entity-diagnostic-test"
+    }
+  },
+  "physical_Thor_reports": true,
+  "schema": "coh-thor-0.1.12-0.1.13-memory-observations-v1",
+  "source_label_review": {
+    "logic": "total_rss_bytes/total_pss_bytes become null when incomplete or expected roles absent; sampled_peak_total fields update only when that metric total is nonnull, so older complete-snapshot peaks remain visible during later partial scans.",
+    "path": "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ProcessSetMemory.java",
+    "report_label_risk": "A consumer displaying sampled_peak_total alone could misread it as peak of the currently incomplete process set. Current scan_complete=false, incomplete_process_metrics=2 and total fields null are explicit; interpret alongside these fields. Observed sums are partial and do not update complete peaks.",
+    "sha256": "b45451f5ec87bae8a4cbb685c873ee566f1b74187bf487a680e32b25945acdb7",
+    "source_or_caps_changed": false
+  }
+}

@@ -30,8 +30,15 @@ additional toOct15; cause unknown. Current452policy samples show0pressure stops,
 minheadroom7595450368B. Two trimcallbacks(last15),zero onLowMemory callbacks.
 The interrupted earlier startup has no concurrent guest-memory observation.
 
-NextAPK0.1.14/code15 is being built from the actual client-authority correction;
-no source grammar, owner layer, memory cap or server runtime change is added.
+Signed0.1.14/code15 is ready,13954641B,SHA-256
+3968288fc84954ace5b67cc7842df827242a3d05bdede6cca218ff7398a444b4.
+Producer/source38c6446830dc6a55204a663de7477db12c6a5536,CI39408855380 PASS:
+changed-code host tests,ARM64 build/lint/package+11JNI export audit,x86build,
+32Android13 GLES/lifecycle/export proofs. Same accepted update signer.
+Artifact12259140776 ZIPdigestcea4a2c3ff82f469ec016b2ef08dee640e32f2b041e8f4d0b6862bdd3050858e.
+No source grammar, owner layer, memory cap or server runtime change is added.
+Package/API33 receipts have0.1.14 filenames; old0.1.13 receipts remain preserved.
+No physical0.1.14 stage41/default/costume result is claimed yet.
 
 ## Default count and next field
 
@@ -94,7 +101,7 @@ Caps unchanged:4MiB decoded, 16KiB ordinary transport,8MiB initial aggregate,
 reserve; zero new codec heap. Marker static 592B plus 4B white texture payload;
 these are component payloads, not total process/GPU or Thor measurements.
 
-## Tests, APK and next action
+## Preserved 0.1.13 qualification
 
 Release/ASan/UBSan: original receiver 27587 checks/mode; actualJNI continuation 2665
 checks/mode, 32 captures, 40 opens/40 closes, stressed JNI report 6726B; legacy report regression maximum 6889B; pose/box 15282 and
@@ -117,15 +124,17 @@ Initial-framing CI39371500290, portable core39371500197, scene/catalog3937046857
 Atlas/static renderer39370468585 and primary-continuation39370468468 passed.
 Historical 0.1.11 package/signing/imports/server remain preserved; no release/main.
 
+## Current Thor procedure and next tasks
+
 Thor procedure: `native-android/combined-client/diagnostics/entity-20261020/THOR-TEST.md`.
-Install over 0.1.11/0.1.12 without clearing data; same server/Atlas character, handoff
+Stop server normally,install0.1.14 without clearing data; same server/Atlas character,handoff
 once, look for orange box and export JSON/ZIP after 15s with all processes running. Check
 bodyparts_default/costume_continuation, observed_server_entity.box_draws and
 memory_diagnostics.same_uid_process_set; then Home/resume/Return/normal server stop.
 
 Next five tasks (continue from this code; no restart of accepted work):
-1. Run this APK once on Thor: actual cache hash/costume cursor, orange-box draws,
-   and concurrent Wine/Postgres/client memory export.
+1. Run0.1.14 once on Thor: client[0,28], costume count_validated/nextactualfield,
+   continued real-pose box draws and Wine/Postgres/client memory coverage export.
 2. Connect the original indexed-string shim to the existing actual local costume
    string slots; use the device cursor to choose the first required table.
 3. Add the original supergroup color/extra string lookups when encountered, using
