@@ -7,12 +7,12 @@
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
   "rendered": "Physical Thor framebuffer: source roadway/pavement and yellow real-pose box in the existing two-instance neighborhood; no genuine costume model yet.",
-  "blocker": "No framing blocker for the saved301656-bit packet. Original ACK/READY and the signed0.1.17 Android diagnostic pass focused CI; live Thor sends, response counts and position observations remain unmeasured. Matching Huge rig/GEO/texture loading remains unfinished.",
+  "blocker": "Saved initial packet has no framing blocker. Immutable signed0.1.17 is qualified; live Thor ACK/READY and server responses are unmeasured. Host Huge inspection draws10 of13 visible meshes; three GEOs, complete texture selection and authored morphology remain missing.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "Install the qualified0.1.17 diagnostic and record actual ACK/READY traffic and position observations.",
-    "Draw the decoded Huge costume through the existing skinned path using genuine matching rig, GEO and textures.",
-    "Verify imported archive streaming at a different real pose without rebuilding."
+    "Install unchanged0.1.17 over0.1.16, same character and one handoff; wait30seconds, export CombinedZIP with640x360PNG.",
+    "Finish three genuine Huge GEOs, complete SH texture lookup and authored morphology; integrate host path into a later APK with box fallback.",
+    "Verify imported archive streaming at another real pose on Thor without rebuilding."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -2822,13 +2822,13 @@
         "data/player_library/huge_waist.geo"
       ],
       "absence_on_thor_established": false,
-      "new_character_payloads_acquired": false,
+      "new_character_payloads_acquired": true,
       "real_character_rendered": false,
       "base_skeleton_source_path": "player_library/animations/huge/skel_ready.anim",
       "base_skeleton_source_bytes": 6171,
       "base_skeleton_source_sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
-      "texture_resolution": "Candidate basename inventory only; actual archive existence lookup and matching textures still needed. No synthetic textures or bodytype substitution.",
-      "rendering_scope": "13 source-resolved visible records, not GPU draws. Matching Huge asset loading and skinned rendering remain unfinished; live keeps the box.",
+      "texture_resolution": "Six genuine DXT1/DXT5 candidates decoded byte-exact against Pillow. Explicit Chest_Stripe_1 secondary appears on source UVs; primary remains missing, complete SH override lookup unavailable.",
+      "rendering_scope": "Host-only partial original Huge mesh/rig inspection; live box preserved.10 genuine models from8 GEO bodies;13 visible records,11 CLEAR; no full material or authored morphology claim.",
       "clear_draw_records": 11,
       "count_correction": {
         "previous_visible_count": 14,
@@ -2836,6 +2836,98 @@
         "clear_records": 11,
         "total_records": 24,
         "scope": "Replayed the same retained snapshot through the original saved appearance plan binary;13 flags-zero records and11 CLEAR records. No new body type or geometry authority inferred."
+      },
+      "host_partial_character_rendered": true,
+      "host_converted_visible_records": 10,
+      "host_source_inputs": {
+        "acquisition": "Existing pinned source-manifest records; exact HTTP206 stored ranges only, pinned ETag and compressed/decoded SHA; no complete or sparse archive acquisition.",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1.pigg",
+        "source_archive_bytes": 87459151,
+        "source_etag": "a600c69a37213e53b6a909d4c36a3c16",
+        "compressed_bytes": 2135471,
+        "decoded_bytes": 3272913,
+        "largest_body_bytes": 1516214,
+        "files": {
+          "data/texture_library/players/avatar/male/hips/tights/hips_pants.texture": {
+            "bytes": 87759,
+            "sha256": "0d0658a7b4113d97dce8097db372c60187602fc26d0e8f52049916a421ee4cf1"
+          },
+          "data/texture_library/players/avatar/super_shared/belts/belt_tail_01a.texture": {
+            "bytes": 175124,
+            "sha256": "732ca8b33d344a0e7a2b6c992dbcdba8c17c2ac2049c967c0934bd1d08a50c67"
+          },
+          "data/texture_library/players/avatar/super_shared/belts/belt_tail_01b.texture": {
+            "bytes": 87684,
+            "sha256": "9cd63fa6c5ea670b7ec38dc3e407e2742b3a935dc2e88a0dcccdbd2e750087d5"
+          },
+          "data/texture_library/players/avatar/super_shared/boots/boot_pants.texture": {
+            "bytes": 87761,
+            "sha256": "b355976e4c093c8099cacc8647ccfa97f1969fe416d1a58a7008cb6e8307a710"
+          },
+          "data/texture_library/players/avatar/super_shared/emblem/emblem_base.texture": {
+            "bytes": 1747,
+            "sha256": "9f6a8aa254a9a7cfebe412cba46dc5127a858a63473e07242c0dd93129bfbb3a"
+          },
+          "data/player_library/huge_belt.geo": {
+            "bytes": 181230,
+            "sha256": "2ecb817322126bbba69ce61adc76abe1043547ffb202ac4bc4cce719bf27c28b"
+          },
+          "data/player_library/huge_boot.geo": {
+            "bytes": 158342,
+            "sha256": "9d4234519e0a6789f854b97865bf7c2152780019e5d87f6f257af019d6493a70"
+          },
+          "data/player_library/huge_glove.geo": {
+            "bytes": 308902,
+            "sha256": "c05f4a5a3f23c2734cc04e6883937b0716bcfc5c78fe7c3b93882faf4ee43083"
+          },
+          "data/player_library/huge_hair.geo": {
+            "bytes": 383023,
+            "sha256": "9c660902a14f921697f7c3d216e1d3032a854b262632189858a3fd89f38cd190"
+          },
+          "data/player_library/huge_head.geo": {
+            "bytes": 57356,
+            "sha256": "784ae6ffd0860c49920be138687b137bfe3d9573fd7220c00173b3ffb3da71df"
+          },
+          "data/player_library/huge_pants.geo": {
+            "bytes": 119625,
+            "sha256": "579f8e31c4e2d9a1ca89e120634f7b58dc520b2a7a114a9557c3607c6cc6509b"
+          },
+          "data/player_library/huge_shirt.geo": {
+            "bytes": 85988,
+            "sha256": "61cf0ee10600d9d6c60068bc940ac26696ab9e0289dfa23000d61b3bb75667c1"
+          },
+          "data/player_library/v_huge_spadr.geo": {
+            "bytes": 1516214,
+            "sha256": "f3e94c9d70c3c9ad582bfd5259628a9c9b06bd796d27301bf68b8152a8b186b4"
+          },
+          "data/texture_library/players/avatar/super_shared/patterns/chest/chest_stripe_1.texture": {
+            "bytes": 22158,
+            "sha256": "44379cdf8f1a01f01574f25ad5aa161d66f0e5344acc15b0d29d01283f28ad2e"
+          }
+        },
+        "complete_CLIENT_archive_inspected": false,
+        "three_GEO_absent_on_Thor_proved": false
+      },
+      "host_capture": {
+        "name": "CoH-Huge-Partial-Host.png",
+        "width": 512,
+        "height": 640,
+        "bytes": 91348,
+        "sha256": "5469938042425e79b4cdcacb788255bb788fc38419f77cf6dad2d5504554874b",
+        "visible_pixels": 96069,
+        "vertices": 1547,
+        "indices": 4650,
+        "source_native_and_stack_peak_bytes": 2736926,
+        "gpu_target_buffer_readback_bytes": 3472768,
+        "combined_explicit_payload_bytes": 6209694,
+        "scene_cap_bytes": 100663296,
+        "actual_host_process_peak_rss_kib": 103168,
+        "actual_Thor_RSS_or_PSS": false,
+        "contexts_recreated": 2,
+        "images_identical_after_context_recreation": true,
+        "authored_scales_applied": false,
+        "complete_costume_material": false,
+        "source_UV_layer": "Explicit original !Chest_Stripe_1 secondary inspection only; missing primary CHEST_Tech_Steampunk not synthesized."
       }
     },
     "offline_power_names": {
@@ -3175,7 +3267,159 @@
         "Wine_executable_and_redacted_command_line": true,
         "Huge_source_rendering": true
       },
-      "source_work": "Next-APK implementation is isolated from the immutable signed0.1.17 package. No new cleanup or receipts."
+      "source_work": "Next-APK implementation is isolated from the immutable signed0.1.17 package. No new cleanup or receipts.",
+      "next_APK_source": {
+        "candidate_0_1_17_changed": false,
+        "new_APK_built": false,
+        "continuation": {
+          "worker_commit": "f10805313604ed7849f2b6da80b985ca17c6292a",
+          "worker_tested_tree": "a82f36142d020e60844a71df278efac379a53cb6",
+          "retry_test_commit": "fc720e13c460932789211527a88b16bde024bb55",
+          "CMake_option": "COH_BOUNDED_CONTINUATION_DIAGNOSTIC",
+          "default": "OFF; requires existing frame capture option; no profile/version/workflow change",
+          "timeout_ms": 20000,
+          "deadline_anchor": "ACK queue; checked before UDP service, including previously deferred sends",
+          "max_accepted_retransmissions_per_ACK_READY_TxID": 1,
+          "application_requeues": 0,
+          "timing": "Owner monotonic queue/first accepted/last accepted send times; payload bits/bytes, accepted wire bytes, deferred/failure counters; accepted callback is not proof of peer receipt.",
+          "post_messages": "All observed application totals including before/between sends; normalized first-command kind/count/sizes;16 rows plus overflow bytes/bits,128message bound, no raw payloads.",
+          "abort": "Deadline, cancellation, disconnect, retry exhaustion, transport/parse errors; closes owned sockets.",
+          "checks_per_mode": {
+            "bounded_localhost_UDP": 6269,
+            "legacy_localhost_UDP": 3559,
+            "retry_API": 744,
+            "synthetic_JNI": 10833959,
+            "authentic_replay": 446
+          },
+          "qualified_modes": [
+            "release",
+            "asan",
+            "ubsan"
+          ],
+          "actual_replay_end_bits": 301656,
+          "unresolved_power_CRCs": 343,
+          "source_aggregate_peak_bytes": 7533927,
+          "initial_aggregate_cap_bytes": 8388608,
+          "continuation_owner_bytes": 1660,
+          "report_peak_bytes": 6886,
+          "report_cap_bytes": 7168,
+          "live_Thor_observation": false
+        },
+        "process_identity": {
+          "worker_commit": "69f706412495772a425868e5f14787eebc3b4f71",
+          "worker_tested_tree": "6fb8b9db630ff6fc66953d164b5ca54eb5069ef4",
+          "details": "Up to4 PID/start_ticks-joined comm,exe,redacted argv rows; preserve observed MapServer/DbServer and largest Wine PSS/RSS across64retained/32exported detail caps. Explicit truncation/permission/PID-reuse reasons; no environment or tuning.",
+          "aggregate_scope": "All scanned UID process rows and category sums retained independently of optional details.",
+          "memory_export_cap_bytes": 24576,
+          "maximum_metadata_fixture_bytes": 23407,
+          "maximum_string_fixture_bytes": 24214,
+          "optional_rows_in_maximum_metadata_case": 5,
+          "checks": {
+            "sampler": 90,
+            "worker": 39,
+            "phases": 2899,
+            "export_contracts": 10,
+            "reports": 5
+          },
+          "old_1828321280_byte_PSS_process_identified": false,
+          "next_device_export_required": true
+        }
+      },
+      "bounded_worker_commits": {
+        "source_provider": {
+          "commits": [
+            "10c6f9199",
+            "5138a8144",
+            "e79582ae78e0ca21079066cd7d66331160604510"
+          ],
+          "tested_tree": "c7434777c55f41e59dc8df71b36bf634371e8621",
+          "checks": {
+            "rig_recovery": 19,
+            "archive_FD": 79,
+            "manifest_selection": 8,
+            "offline_HTTP": 11
+          },
+          "Python_traced_source_peak_bytes": 1659988,
+          "host_manifest_peak_RSS_bytes": 40841216,
+          "blocker": "Complete CLIENT inventory and3 selected GEO records unavailable; subset absence is not device absence.",
+          "CI": "Focused local checks pass; next-source CI not dispatched.",
+          "next_action": "Use the complete actual imported descriptor in the next Android integration."
+        },
+        "Huge_host": {
+          "commits": [
+            "9a9b172b9",
+            "cd360720ab9a4d845a8d20c05130af9c79937be1"
+          ],
+          "tested_tree": "1d7e5c6c5574ee2c6bad6746d7b3e1e6c185b97a",
+          "qualified_modes": [
+            "release",
+            "asan",
+            "ubsan"
+          ],
+          "accepted_scope": "Actual saved snapshot, original Huge hierarchy/CPU skinning,10 original meshes,6 original DDS decodes and explicit secondary-layer UV inspection in2 recreated GLES contexts.",
+          "blocker": "huge_emblem.geo,huge_uarmr.geo,huge_waist.geo; complete texture/SH selection; authored body scales.",
+          "CI": "Focused local checks pass; next-source CI not dispatched.",
+          "next_action": "Preserve live box; finish actual assets/material/morphology before later APK."
+        }
+      },
+      "integration": {
+        "local_source_commit_before_status": "4271f8d54fadafe488311adf02cb48f07ce26808",
+        "tested_combined_source_tree": "229f0e9ed7a284c2b8b09051adc7d66b9ea4b60b",
+        "root_rechecks": "Rig19,archive79,manifest8,HTTP11,Huge release/ASan/UBSan incl6Pillow oracles and2context captures; sampler90+complete emitter cap; retry744/mode,bounded localhostUDP6269/mode.",
+        "CI": "Signed0.1.17 exact-APK qualification green39503076641; next-source integration has focused host tests only;0 new CI dispatches.",
+        "protected_candidate_bytes_reverified": true,
+        "cleanup_performed": false,
+        "new_per_step_receipts": false,
+        "published_source_commits": [
+          {
+            "local": "a09663ef8c9330725c8e23d235118f6230fbebda",
+            "sha": "bebbba0e7529f61020c4bbe5b61b12b1d057ce54",
+            "tree": "30f90fefa47b1e70e910f10302434de2a3a7eee7"
+          },
+          {
+            "local": "d2c4f4c59f3119ea5f85197c549db3a43fe20e6f",
+            "sha": "4c91f63a22b4124917024ed7cbe61da270f892c0",
+            "tree": "e7aecde5e2617945affbc54786d4b7c030056b58"
+          },
+          {
+            "local": "434d77a76aa0505544933ab3c23934319ec45efb",
+            "sha": "898750c9898d906caf169bb7a97d17cea0bc09b7",
+            "tree": "d129c052fd3e6022e62e048cf7d39b7c01c21fe8"
+          },
+          {
+            "local": "5149a5d37a29a270de64547e556e491eb48075d2",
+            "sha": "514f1bd05d9e631bd5535ed409a1901bcc9ea54c",
+            "tree": "97a74ebd078945725ef3a5eb536fa24764368c4a"
+          },
+          {
+            "local": "340ee476b021448548c86a89839c335e95d4a7d4",
+            "sha": "1aaf84a98e374e21d291055ca4fca12093b52060",
+            "tree": "3aaded0b61fd095d6a0f61a4577af23a1df17a2c"
+          },
+          {
+            "local": "f792ca5f545c8abe0b2bc6f1e265c66a6b401883",
+            "sha": "0a42a9ccf0a1435698681119977ba34ad6c7bc98",
+            "tree": "4bb5b905e047dc8973cedb3cf5e460163e0bba59"
+          },
+          {
+            "local": "3a4654b0f0b409f08c87454c0f805377ac9cc83d",
+            "sha": "a6b80fff4c4d338d3d1c49e2cef7c38b6527a755",
+            "tree": "691c8ada5c57620bcafe19092ebb2b36b82cbbd2"
+          },
+          {
+            "local": "7b5ef72dfcbda347408c2126cc34d5b472e4000c",
+            "sha": "25633dc99bc794577bd67bad12c9d49089934a49",
+            "tree": "57e107c58d61d8be3600ae253e1c621f13752793"
+          },
+          {
+            "local": "4271f8d54fadafe488311adf02cb48f07ce26808",
+            "sha": "fe41f6bca42bd18f3bf302e7e0f24aa071ee7b93",
+            "tree": "229f0e9ed7a284c2b8b09051adc7d66b9ea4b60b"
+          }
+        ],
+        "published_source_head": "fe41f6bca42bd18f3bf302e7e0f24aa071ee7b93",
+        "focused_integrated_checks": "PASS: Huge all modes10 genuine meshes+6 texture decodes,2 recreated capture contexts; rig19,archive79,manifest8,HTTP11; process sampler90 with bounded full emitter; retry744/mode; bounded local UDP6269/mode."
+      }
     }
   },
   "ci_history": [
