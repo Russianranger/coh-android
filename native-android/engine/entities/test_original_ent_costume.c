@@ -17,11 +17,12 @@ static void initial_suffix(CohRepReader base,size_t end){
   if(pchar){append(base.compressed,&at,1,1);append(base.compressed,&at,1,1);const uint8_t *stats=base.compressed?stats_0_1:stats_0_0;size_t count=base.compressed?stats_0_1_bits:stats_0_0_bits;for(size_t i=0;i<count;i++)append(0,&at,1,(stats[i/8]>>(i%8))&1u);}
   for(unsigned i=0;i<3;i++)automatic(base.compressed,&at,0);
   if(pchar){automatic(base.compressed,&at,0);append_fixture(&at,base.compressed?target_0_1:target_0_0,base.compressed?target_0_1_bits:target_0_0_bits);append(base.compressed,&at,1,1);append_fixture(&at,base.compressed?status1:status0,base.compressed?status1_bits:status0_bits);append_fixture(&at,base.compressed?inventory_0_1:inventory_0_0,base.compressed?inventory_0_1_bits:inventory_0_0_bits);}
+  append(base.compressed,&at,1,0);append(base.compressed,&at,base.compressed?32:1,0);append(base.compressed,&at,1,0);/* Original architect absent, flashback0 and parameter absent source branches. */
   size_t suffix_end=at;append(base.compressed,&at,32,0xdeadbeef);base.bytes.size=(at+7)/8;base.bits=at;
   CHECK(coh_original_ent_costume_receive_initial(&base,28,0,pchar,&slots,&workspace,&capture,&outer)==COH_OK);
-  CHECK(outer.appearance_complete&&outer.power_complete&&outer.titles_complete&&outer.ragdoll_complete&&outer.basic_stats_complete&&outer.end_bit==suffix_end&&outer.packet_bits==at&&outer.vision_complete&&outer.field==COH_ENT_COSTUME_TASKFORCE&&!outer.entity_complete&&!outer.message_complete);
-  CHECK(!strcmp(coh_original_ent_costume_field_name(outer.field),"taskforce parameters"));
-  base.bits=suffix_end-1;CHECK(coh_original_ent_costume_receive_initial(&base,28,0,pchar,&slots,&workspace,&capture,&outer)!=COH_OK);CHECK(!outer.vision_complete&&!outer.entity_complete&&!outer.message_complete&&!memcmp(&workspace,&zero_workspace,sizeof(workspace)));
+  CHECK(outer.appearance_complete&&outer.power_complete&&outer.titles_complete&&outer.ragdoll_complete&&outer.basic_stats_complete&&outer.end_bit==suffix_end&&outer.packet_bits==at&&outer.vision_complete&&outer.taskforce_complete&&outer.taskforce.complete&&outer.field==COH_ENT_COSTUME_RARE_PREFIX&&!outer.entity_complete&&!outer.message_complete);
+  CHECK(!strcmp(coh_original_ent_costume_field_name(outer.field),"later very-rare entity fields"));
+  base.bits=suffix_end-1;CHECK(coh_original_ent_costume_receive_initial(&base,28,0,pchar,&slots,&workspace,&capture,&outer)!=COH_OK);CHECK(!outer.taskforce_complete&&!outer.entity_complete&&!outer.message_complete&&!memcmp(&workspace,&zero_workspace,sizeof(workspace)));
  }
 }
 static void fixtures(const char *path){FILE*f=fopen(path,"rb");CHECK(f);unsigned count=word(f);

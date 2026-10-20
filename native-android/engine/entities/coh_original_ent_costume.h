@@ -1,6 +1,7 @@
 #ifndef COH_ORIGINAL_ENT_COSTUME_H
 #define COH_ORIGINAL_ENT_COSTUME_H
 #include "coh_original_costume_receive.h"
+#include "coh_original_taskforce_receive.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,7 +17,7 @@ enum {COH_ENT_COSTUME_SELECTOR=1,COH_ENT_COSTUME_REWARDS=2,
  COH_ENT_COSTUME_POWER_LIST=18,COH_ENT_COSTUME_POWER_CRC=19,
  COH_ENT_COSTUME_TITLES=20,COH_ENT_COSTUME_RAGDOLL=21,
  COH_ENT_COSTUME_BASIC_STATS=22,COH_ENT_COSTUME_VISION=23,COH_ENT_COSTUME_TARGET=24,
- COH_ENT_COSTUME_STATUS=25,COH_ENT_COSTUME_INVENTORY=26,COH_ENT_COSTUME_TASKFORCE=27};
+ COH_ENT_COSTUME_STATUS=25,COH_ENT_COSTUME_INVENTORY=26,COH_ENT_COSTUME_TASKFORCE=27,COH_ENT_COSTUME_RARE_PREFIX=28};
 typedef struct {
  CohStatus status;size_t begin_bit,end_bit,failure_bit,packet_bits,appearance_end_bit,main_body_end_bit,selected_body_end_bit,power_begin_bit,power_end_bit;
  uint32_t field,selector,bodies_expected,bodies_read,selected_body,
@@ -24,8 +25,8 @@ typedef struct {
   hide_emblem,fx_present,fx_bytes,npc_fallthrough,npc_index,npc_costume_index,
   appearance_complete,xlucency_complete,entity_complete,message_complete,
   power_selector,power_complete,power_lists_read,power_entry_count,power_crc,required_table,
-  titles_complete,ragdoll_complete,basic_stats_complete,vision_complete;
- CohOriginalCostumeReport body;
+  titles_complete,ragdoll_complete,basic_stats_complete,vision_complete,taskforce_complete;
+ CohOriginalCostumeReport body;CohOriginalTaskforceReport taskforce;
 } CohOriginalEntCostumeReport;
 /* Entry is the actual original appearance-selector cursor in the same decoded
  * ALLENTS reader. Run the whole unchanged entReceiveCostume, original

@@ -95,8 +95,7 @@ mode/emblem, literal FX, optional NPC identifiers/custom colors, then translucen
 The original discard/out-of-order profile suppresses cosmetic/UI actor mutation;
 this does not authenticate a selected NPC model or publish an actor. Capture is
 only the selected completed main body. A component COH_OK leaves entity/message
-completion false: the next unread initial-profile field is the original
-`entReceivePowerCust` selector. It never sends ACK, READY or RECEIVED_CHARACTER.
+completion false; it never sends ACK, READY or RECEIVED_CHARACTER.
 
 `check_original_ent_costume.py --work <new-scratch-dir> --output <scratch-json>`
 compiles unchanged original entity/body senders as independent fixtures and runs
@@ -122,6 +121,12 @@ continue through whole original titles, ragdoll-ignore and character-stat receiv
 functions, reusing the existing source-qualified `SendBasicCharacter` parser.
 The original unchanged vision/target/status/inventory statement block now runs
 next, reusing existing qualified scalar/reference/status/inventory parsers. The
-current bounded source implementation then leaves taskforce data unread. This
-is implementation work, not a claim that its table is unavailable.
+two whole original taskforce functions now run with the same CLIENT slots for
+any contact costume, preserving the selected main-body capture. The source
+closure then leaves later very-rare entity fields (`entReceiveSendOnOddSend`
+onward) unread: this is remaining implementation, not a missing table claim.
+No entity or message completion is asserted. The original taskforce parameter
+function alone retains a narrowly scoped shift-sanitizer exclusion for its
+existing signed `1 << 31`; all adapter reads remain instrumented, and bit31 is
+covered by the independent original-sender fixture.
 No live receipt establishes which power branch the Thor packet will take.
