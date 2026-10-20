@@ -3,7 +3,7 @@
  * composes the retained original sender header to isolate owner integration. */
 #define COH_CLIENT_SLOTS_TEST_MAIN retained_client_slot_suite_not_executed
 #include "test_client_slots_android.c"
-static unsigned outer_cases;static size_t last_power_begin;
+static unsigned outer_cases;static size_t last_power_begin,last_full_bits;
 static const char *outer_report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"ack_permitted\":false"));return report_text;}
 static unsigned char replay_output[COH_INITIAL_REPLAY_BYTES+COH_INITIAL_REPLAY_HEADER_BYTES];
 static jsize replay_output_bytes;static unsigned replay_fault,replay_sets,replay_deletes;
@@ -55,7 +55,7 @@ static void outer_capture(const char *path,unsigned bodies,unsigned selected,uns
  if(pchar)for(unsigned i=0;i<3;i++)set_bits(multi_packet,multi_bits++,1,0);
  /* Original architect absent, flashback Pack1 zero, parameters absent. */
  for(unsigned i=0;i<3;i++)set_bits(multi_packet,multi_bits++,1,0);
- if(truncate)multi_bits-=truncate;
+ last_full_bits=multi_bits;if(truncate)multi_bits-=truncate;
  slot_begin();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);
  active->busy=1;CHECK(coh_initial_capture_service(active->capture,104,(CohCancel){0},multi_observe,active,sizeof(*active))==COH_UNSUPPORTED);active->busy=0;
  const CohOriginalEntCostumeReport *r=&active->initial_outer;outer_cases++;
@@ -90,27 +90,36 @@ static void replay_bounds(const char *path){
  }
  alias_source=0;
 }
-static void missing_power(const char *path){
- fixture();CHECK(slots_configure(path)==COH_OK);partcount_fixture=1;size_t at=last_power_begin;
- /* Source full self PowerCust selector, one nonempty customization list. The
-  * actual original receiver must stop on its BasePower callback after CRC. */
+static void test_auto(size_t *at,uint32_t value){const unsigned widths[]={2,10,24,32};unsigned bin=0;while(bin<3&&value>=(1u<<widths[bin]))bin++;set_bits(multi_packet,*at,2,bin);*at+=2;set_bits(multi_packet,*at,widths[bin],value);*at+=widths[bin];}
+static void unresolved_power(const char *path,unsigned count){
+ fixture();CHECK(slots_configure(path)==COH_OK);partcount_fixture=1;
+ uint8_t tail[128]={0};size_t tail_bits=last_full_bits-last_power_begin-1;CHECK(tail_bits<=sizeof(tail)*8);
+ for(size_t bit=0;bit<tail_bits;bit++)set_bits(tail,bit,1,(multi_packet[(last_power_begin+1+bit)/8]>>((last_power_begin+1+bit)%8))&1u);
+ size_t at=last_power_begin;
+ /* Whole original source tolerates NULL BasePower: CRC, tint, tint and token
+  * still consume their original framing. No dictionary is required to drain. */
  set_bits(multi_packet,at++,1,1);set_bits(multi_packet,at,2,1);at+=2;set_bits(multi_packet,at++,1,1);
- set_bits(multi_packet,at,8,0);at+=8;set_bits(multi_packet,at,8,1);at+=8;set_bits(multi_packet,at++,1,0);set_bits(multi_packet,at++,1,1);
- set_bits(multi_packet,at,4,4);at+=4;set_bits(multi_packet,at,2,3);at+=2;set_bits(multi_packet,at,32,0x12345678u);at+=32;size_t boundary=at;
- set_bits(multi_packet,at,16,0);multi_bits=at+16;
+ set_bits(multi_packet,at,8,0);at+=8;set_bits(multi_packet,at,8,1);at+=8;set_bits(multi_packet,at++,1,0);set_bits(multi_packet,at++,1,1);test_auto(&at,count);
+ for(unsigned i=0;i<count;i++){test_auto(&at,0x80443357u+i);test_auto(&at,i);test_auto(&at,i+1);set_bits(multi_packet,at,8,0);at+=8;}
+ size_t power_end=at;
+ for(size_t bit=0;bit<tail_bits;bit++)set_bits(multi_packet,at++,1,(tail[bit/8]>>(bit%8))&1u);
+ multi_bits=at;CHECK(multi_bits<=sizeof(multi_packet)*8);
  slot_begin();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);
  active->busy=1;CHECK(coh_initial_capture_service(active->capture,104,(CohCancel){0},multi_observe,active,sizeof(*active))==COH_UNSUPPORTED);active->busy=0;
- CHECK(active->initial_outer.status==COH_UNSUPPORTED&&active->initial_outer.field==COH_ENT_COSTUME_POWER_CRC&&active->initial_outer.required_table==1&&active->initial_outer.power_crc==0x12345678u);
- CHECK(active->initial_outer.end_bit==boundary&&active->initial_outer.failure_bit==boundary&&boundary<multi_bits&&active->initial_outer.selected_complete);
- CHECK(strstr(outer_report(),"\"costume_next\":\"BasePower CRC lookup\"")&&strstr(report_text,"\"power_customization\":[1,0,1,1,1,305419896,"));
- CHECK(strstr(report_text,"\"costume_next_kind\":\"required table\""));
+ CHECK(active->initial_outer.status==COH_OK&&active->initial_outer.field==COH_ENT_COSTUME_RARE_PREFIX&&!active->initial_outer.required_table);
+ CHECK(active->initial_outer.power_complete&&active->initial_outer.power_entries_read==count&&active->initial_outer.power_unresolved_count==count);
+ CHECK(active->initial_outer.power_first_unresolved_crc==0x80443357u&&active->initial_outer.power_last_unresolved_crc==0x80443357u+count-1);
+ CHECK(active->initial_outer.power_end_bit==power_end&&active->initial_outer.end_bit==multi_bits&&active->initial_outer.selected_complete);
+ CHECK(active->initial_outer.power_scratch_bytes>0&&active->initial_outer.power_scratch_bytes<=COH_ORIGINAL_COSTUME_WORKSPACE_BYTES);
+ CHECK(strstr(outer_report(),"\"costume_next_kind\":\"implementation remaining\"")&&strstr(report_text,"\"power_unresolved\":["));
  check_replay();finish();CHECK(!map_live&&!live);
 }
+
 int main(int argc,char **argv){
  CHECK(argc==3);
  for(unsigned bodies=1;bodies<=10;bodies++)for(unsigned selected=0;selected<bodies;selected++)for(unsigned truncate=0;truncate<3;truncate++)outer_capture(argv[1],bodies,selected,truncate);
  replay_bounds(argv[1]);
- missing_power(argv[1]);
+ unresolved_power(argv[1],343);
  CHECK(opens==closed_files&&asset_opens==asset_closes&&maps==unmaps&&!map_live&&!live&&freed==wiped);
  printf("{\"passed\":true,\"checks\":%u,\"outer_cases\":%u,\"interop_owner_bytes\":%zu,\"snapshot_bytes\":%zu,\"report_peak_bytes\":%zu,\"stack_reserve\":%u,\"initial_limit\":8388608,\"physical_packet_replayed\":false,\"entity_or_message_complete\":false}\n",checks,outer_cases,sizeof(Interop),sizeof(CohOriginalCostumeSnapshot),max_report_bytes,COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE);return 0;
 }

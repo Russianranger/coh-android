@@ -93,6 +93,14 @@ def separate_catalog_boundary(value):
 
 def separate_report_extension(value, required=False):
     value = separate_catalog_boundary(separate_java_extension(value))
+    if 'power_unresolved' in value:
+        unresolved = value['power_unresolved']
+        need('power_customization' in value and isinstance(unresolved, list) and len(unresolved) == 5
+             and all(type(item) is int and item >= 0 for item in unresolved), 'unresolved power source shape')
+        entries, count, first, last, scratch = unresolved
+        need(count <= entries <= 0x7fffffff and first <= 0xffffffff and last <= 0xffffffff
+             and scratch <= 65536 and (count or first == last == 0), 'unresolved power source domains')
+        value = {key: item for key, item in value.items() if key != 'power_unresolved'}
     if 'initial_replay' in value:
         replay = value['initial_replay']
         need(isinstance(replay, list) and len(replay) == 2
