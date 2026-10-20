@@ -3,7 +3,7 @@
 
 No Android, transport, live server, decoded game input or authority is simulated.
 """
-import importlib.util,json,subprocess,tempfile
+import importlib.util,json,subprocess,tempfile,os
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
 JAVA=r'''
@@ -26,6 +26,37 @@ public static void main(String[]args){
 }'''
 JSON=r'''package org.json;import java.util.*;public class JSONObject {Map<String,Object>v=new HashMap<>();public JSONObject put(String k,Object o){v.put(k,o);return this;}public boolean has(String k){return v.containsKey(k);}public Object opt(String k){return v.get(k);}public JSONArray optJSONArray(String k){Object o=v.get(k);return o instanceof JSONArray?(JSONArray)o:null;}public String optString(String k,String d){Object o=v.get(k);return o instanceof String?(String)o:d;}}'''
 ARRAY=r'''package org.json;public class JSONArray {long[]v;public JSONArray(long...x){v=x;}public int length(){return v.length;}public long optLong(int i){return optLong(i,0);}public long optLong(int i,long d){return i>=0&&i<v.length?v[i]:d;}public int optInt(int i,int d){return(int)optLong(i,d);}}'''
+def renderer_controls(extract,work):
+ source=(ROOT/'native-android/session-client/app/src/main/cpp/session_renderer.c').read_text()
+ begin=source.index('        jappend(&j,",\\"observed_server_entity')
+ end=source.index('        const CohSessionWorldStats *t=',begin)
+ helper=extract(source,'static void jappend(Json *j,const char *format,...) {')
+ harness=r"""
+#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdarg.h>
+#include <string.h>
+#include <inttypes.h>
+#define JSON_CAP 2048
+typedef struct {char*p;size_t n;int ok;}Json;
+typedef struct {uint32_t observed_entity_index;float observed_entity_position[3];uint64_t observed_entity_updates,observed_entity_draws;}Session;
+/*HELPER*/
+int main(void){Session data={7,{1,2,3},4,12};Session*s=&data;char output[JSON_CAP]="{\"scope\":0";Json j={output,strlen(output),1};
+/*BODY*/
+jappend(&j,"}");if(!j.ok)return 1;puts(output);return 0;}
+""".replace('/*HELPER*/',helper).replace('/*BODY*/',source[begin:end])
+ path=work/'renderer-scope.c';path.write_text(harness);controls=0
+ for mode,flags in [('release',['-O2']),('asan',['-O1','-fsanitize=address','-no-pie']),('ubsan',['-O1','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
+  for profile in (0,1):
+   binary=work/('renderer-'+mode+str(profile));subprocess.run(['cc','-std=c11','-Wall','-Wextra','-Werror','-pedantic','-DCOH_FULLSCREEN_DIAGNOSTIC='+str(profile),*flags,str(path),'-o',str(binary)],check=True,timeout=60)
+   result=subprocess.run([str(binary)],check=True,capture_output=True,text=True,timeout=30,env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1'))
+   observed=json.loads(result.stdout)['observed_server_entity'];assert observed['complete_actor']is False and observed['box_draws']==12
+   if profile:assert 'application_ack'not in observed and observed['renderer_sends_application_ack']is False and observed['transport_send_facts']=='server_protocol.initial_continuation'
+   else:assert observed['application_ack']is False and 'renderer_sends_application_ack'not in observed and 'transport_send_facts'not in observed
+   controls+=1
+ return controls
+
 def main():
  spec=importlib.util.spec_from_file_location('initial_text_extract',ROOT/'native-android/session-client/tools/lifecycle_host_check.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
  source=(ROOT/'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java').read_text();method=m.method(source,'private static String initialContinuationDetail(')
@@ -36,5 +67,5 @@ def main():
   for name,text in [('org/json/JSONObject.java',JSON),('org/json/JSONArray.java',ARRAY),('InitialContinuationTextTest.java',JAVA.replace('/*METHOD*/',method))]:
    p=w/name;p.write_text(text);files.append(str(p))
   subprocess.run(['java','-Xmx128m','com.sun.tools.javac.Main','--release','8','-d',str(w),*files],check=True,timeout=60)
-  r=subprocess.run(['java','-Xmx64m','-cp',str(w),'InitialContinuationTextTest'],check=True,capture_output=True,text=True,timeout=30);print(json.dumps(json.loads(r.stdout)))
+  r=subprocess.run(['java','-Xmx64m','-cp',str(w),'InitialContinuationTextTest'],check=True,capture_output=True,text=True,timeout=30);value=json.loads(r.stdout);value['renderer_schema_controls']=renderer_controls(m.method,w);print(json.dumps(value))
 if __name__=='__main__':main()
