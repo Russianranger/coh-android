@@ -79,144 +79,44 @@
     }
   },
   "validation": {
-    "integrated_source_checks": "passed: receiver, JNI, report ceiling, neighborhood release/ASan/UBSan and actual Mesa GLES, packaging",
+    "integrated_source_checks": "Passed final source qualification at f311bebfa9bdf33916fefcaaacd546282e17b534, including original receiver, actual host GLES capture/ZIP, report cap, JNI/replay ownership, memory and source input checks.",
     "integrated_memory_checks": "passed: sampler, worker, export, diagnostics and runtime; two existing platform skips",
-    "android_build_and_emulator": "passed: signed ARM64 build/lint/package + 12 JNI exports, signed x86 package + 12 JNI exports, Android 13 emulator 33 checks and update/rollback/profile preservation 14 checks. No ARM64 guest execution or physical Thor result inferred.",
+    "android_build_and_emulator": "Passed signed ARM64 build/lint/package/13 Interop JNI and Session frameCapture audit; signed x86 build/audits; Android 13 framework 34 checks and update/rollback/profile 14 checks. No new physical Thor or ARM64 guest run inferred.",
     "physical_thor": "Recorded one matching signed 0.1.15 session: original costume body complete, selected near-pose source neighborhood, orderly transport/render/server cleanup. Complete live process totals and actual PostgreSQL GUC values remain unavailable."
   },
   "ci": {
     "workflow": ".github/workflows/native-qualification.yml",
     "purpose": "combined-diagnostic",
+    "profile": "capture-diagnostic",
+    "run_id": 39474180919,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/39474180919",
+    "qualified_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+    "qualified_tree": "8eced0a5891778283d24be159ce4e8a531467625",
+    "source": "passed",
+    "host_gles_capture": "passed using actual pinned NDK graphics headers",
+    "signed_arm64_build_lint_package": "passed",
+    "signed_x86_build_package": "passed",
+    "android13": "34 checks passed;14 update/rollback/profile preservation checks passed",
     "status": "passed",
     "publishes_release": false,
-    "attempts": [
-      {
-        "run_id": 39455548802,
-        "qualified_commit": "38eda7f9a859302cfefb58932e4e66e95dbb258f",
-        "source": "passed",
-        "signed_arm64_and_x86_builds": "passed",
-        "upgrade_rollback_profiles": "passed",
-        "emulator": "failed before native createSession: neighborhood-map.bin pin was looked up in historical asset-manifest instead of existing combined/build-inputs metadata",
-        "artifact_id": 12281157374,
-        "artifact_sha256": "c08b9c7f9a58043255a519a0517895ef334acc373b5fccffd02b63bbfcf60092",
-        "delivered": false
-      },
-      {
-        "run_id": 39458357172,
-        "qualified_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
-        "status": "passed",
-        "android13_checks": 33,
-        "android13_upgrade_rollback_checks": 14,
-        "artifact_id": 12281882751
-      }
-    ],
-    "event": "workflow_dispatch",
-    "run_id": 39458357172,
-    "url": "https://github.com/Russianranger/coh-android/actions/runs/39458357172",
-    "qualified_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
-    "qualified_tree": "02a8cee650ec58725b38babdbcb5cf8c20449d58",
-    "artifact_id": 12281882751,
-    "artifact_bytes": 24794957,
-    "artifact_sha256": "11f065c1f5ff8611f1dada84b30f9887666bf53f9e3e28bdfde5992f37e1949f",
-    "source_artifact_id": 12281073935,
-    "source_artifact_sha256": "40c2f525413599f5ffabc53474f5efc4b92938c986a5dce311c498eaac8df072",
-    "routing": {
-      "legacy_push_run": 39457970021,
-      "legacy_push_status": "cancelled",
-      "corrected_dispatch_push_run": 39458341805,
-      "corrected_dispatch_status": "passed",
-      "legacy_candidate_published": false,
-      "fix": "Dedicated marker excludes legacy report builder and requires native-contracts-only on bootstrap."
-    }
+    "artifact_id": 12289656309,
+    "artifact_bytes": 24919187,
+    "artifact_sha256": "db4151cd32c6140b9e116b3ee6479d1e14d4dda6a097f8a46f400887a86f9814",
+    "source_artifact_id": 12288337237,
+    "source_artifact_bytes": 43825,
+    "source_artifact_sha256": "f23005abafe239ba892f5ace59a6aad9a0eeae33131844e0f24be3c4d5baa9f6",
+    "workflow_dispatch_runs": 3,
+    "completed_arm64_candidate_builds": 1,
+    "physical_thor": "Not executed; no ARM64 guest execution inferred from x86 emulator."
   },
   "candidate": {
-    "version": "0.1.15",
-    "version_code": 16,
-    "profile": "neighborhood-diagnostic",
-    "state": "Physical Thor results recorded: costume body complete and neighborhood selected/drawing; aggregate memory remains partial.",
-    "receiver": {
-      "original_receiver_unchanged": true,
-      "raw_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
-      "raw_bytes": 641477,
-      "index_bytes": 134144,
-      "tables": [
-        "ordinary strings",
-        "extra strings",
-        "palette"
-      ],
-      "stored_bodies_tested": [
-        1,
-        10
-      ],
-      "source_checks_per_mode": 70613,
-      "jni_checks_per_mode": 1473,
-      "next_unconsumed_outer_field": "SupergroupCostume presence bit",
-      "next_required_table": null,
-      "physical_packet_replayed": false,
-      "physical_receive_observed": true,
-      "physical_bodies_read": 1,
-      "physical_parts_read": 28,
-      "physical_end_bit": 11648
-    },
-    "world": {
-      "asset": "neighborhood-map.bin",
-      "asset_bytes": 491565,
-      "asset_sha256": "fcd3a97f8a84165316c6784016d1ab38402602fdfadeca1ed31fb3329426a1a7",
-      "pose": [
-        131.453125,
-        0.25,
-        -114.953125
-      ],
-      "source": "Atlas road_4lane original sidewalk material partitions",
-      "source_instances_at_pose": 2,
-      "ground_triangles_under_pose": 1,
-      "host_gles_world_pixels": 28844,
-      "host_gles_box_changed_pixels": 2028,
-      "host_gles_errors": 0,
-      "raw_transition_peak_bytes": 486030,
-      "raw_stream_cap_bytes": 524288,
-      "named_child_source_peak_bytes": 2633629,
-      "gpu_buffer_bytes": 557060,
-      "memory_scope": "Conservative named source inventory includes old and candidate retained source, JNI arrays and readbacks, CPU geometry and owners, bridge scratch, textures/GPU buffers/FBO, charged 64KiB stack per owner, and two existing 8MiB initial observer budgets. Actual driver/process RSS/PSS remains separate and unmeasured on Thor.",
-      "thor_confirmed": true,
-      "parent_candidate_named_peak_bytes": 29491460,
-      "parent_old_plus_candidate_named_peak_bytes": 58982920,
-      "parent_including_two_initial_budgets_bytes": 75760136,
-      "parent_scene_cap_bytes": 100663296,
-      "thor_confirmation_scope": "Physical report confirms two source instances selected near the decoded pose and active box/source draws. Startup pixel witnesses are not a screenshot of ground contact at that pose; full live-world authority remains false.",
-      "ground_contact_visually_confirmed": false
-    },
-    "memory": {
-      "process_rows_max": 64,
-      "compact_export_ceiling": 24576,
-      "worst_tested_export_bytes": 23097,
-      "native_report_ceiling": 7168,
-      "jni_report_peak_bytes": 6740,
-      "specific_admission_reason": true,
-      "postgresql_requested": {
-        "max_connections": 72,
-        "superuser_reserved_connections": 3,
-        "shared_buffers": "16MB",
-        "work_mem": "1MB",
-        "maintenance_work_mem": "16MB"
-      },
-      "source_sql_connections": 65,
-      "ordinary_spare_connections": 4,
-      "new_thor_measurements": {
-        "result_path": "latest_physical_results.memory",
-        "complete_live_totals": false,
-        "omitted_same_uid_processes": 27,
-        "runtime_postgresql_settings_verified": false
-      },
-      "old_missing_wine_metrics_cause": "Current Wine PIDs13367/13439 are explicitly verified zero-address-space zombies. This does not retroactively identify the older PIDs or Android kill trigger.",
-      "android13_x86_emulator": {
-        "samples": 27,
-        "sampled_peak_process_rss_bytes": 133447680,
-        "sampled_peak_process_pss_bytes": 62913536,
-        "minimum_observed_system_headroom_bytes": 532905984,
-        "scope": "Actual emulator native-client report; Wine/PostgreSQL guest was not running. These are not Thor or ARM64 combined-server observations."
-      }
-    },
+    "version": "0.1.16",
+    "version_code": 17,
+    "profile": "capture-diagnostic",
+    "state": "CI-qualified signed test APK; physical Thor pending.",
+    "receiver": "Original outer receive runs SG costumes, FX/NPC, translucency, power customization, titles, ragdoll, basic statistics, vision, target/status, inventory and taskforce. Nonempty customization stops at actual absent BasePower CRC lookup. Empty branches reach later known very-rare fields with explicit implementation-remaining diagnostics. Actual Thor 303112-bit packet has not been replayed; entity/message complete and ACK/READY stay false.",
+    "world": "Existing two-instance source neighborhood with diagnostic box; runtime archive adapter remains separate partial source work.",
+    "memory": "All scanned same-UID processes contribute to app/Wine/PostgreSQL/other and total sums regardless of detail retention; actual UID cgroup-first observation and five owned PostgreSQL SHOW results retained live and at exit. Physical readback pending.",
     "limits": {
       "decoded_message": 4194304,
       "ordinary_semantic_message": 16384,
@@ -225,14 +125,13 @@
     },
     "thor_procedure": "native-android/combined-client/THOR-TEST.md",
     "apk": {
-      "name": "CoH-Native-Combined-0.1.15-neighborhood-diagnostic-arm64.apk",
-      "bytes": 15101128,
-      "sha256": "9b15b3139a5d3a5dc9d4aada5d9766cffdc2138f423fb3bc6fd70cb821f4e349",
-      "abi": "arm64-v8a",
-      "package": "org.coh.nativecombined",
+      "name": "CoH-Native-Combined-0.1.16-capture-diagnostic-arm64.apk",
+      "bytes": 15150348,
+      "sha256": "3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94",
       "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
-      "build_source_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
-      "update_from_accepted_baseline": "same application id and public test signer; version code16 replaces15 with data preserved"
+      "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+      "ci_run_id": 39474180919,
+      "artifact_id": 12289656309
     }
   },
   "latest_physical_version": "0.1.15",
@@ -479,11 +378,11 @@
     "result": "QUALIFIED physical costume-body continuation and bounded neighborhood report; PARTIAL aggregate memory because 64 rows omit 27 processes; runtime PostgreSQL settings unverified.",
     "next_action": "Wait for next user prompt."
   },
-  "next_action": "Dispatch one capture-diagnostic0.1.16/code17 source-qualified ARM64 APK with sequential ABI builds and Android13 lifecycle/update/rollback tests.",
+  "next_action": "Update in place to 0.1.16, collect the game-surface ZIP, native report, initial replay and simultaneous Wine/PostgreSQL/app memory observations, then finish the actual packet and genuine costume/archive integration.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
-    "state": "active implementation; first independently tested source increments integrated",
+    "state": "Qualified diagnostic delivery; packet completion, real costume rendering and Android archive streaming remain partial.",
     "source_commits": [
       {
         "local": "4a12f6c92426cc0e2249330ee69ffa6e6c8ef61b",
@@ -536,19 +435,53 @@
         "tree": "e1612ec3d9adbf60a98662d01daf237bb7175fc2"
       }
     ],
-    "ci": "Complete source qualification passed; host-only header isolation repaired, rerunning before the single Android APK build.",
+    "ci": {
+      "workflow": ".github/workflows/native-qualification.yml",
+      "purpose": "combined-diagnostic",
+      "profile": "capture-diagnostic",
+      "run_id": 39474180919,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39474180919",
+      "qualified_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+      "qualified_tree": "8eced0a5891778283d24be159ce4e8a531467625",
+      "source": "passed",
+      "host_gles_capture": "passed using actual pinned NDK graphics headers",
+      "signed_arm64_build_lint_package": "passed",
+      "signed_x86_build_package": "passed",
+      "android13": "34 checks passed;14 update/rollback/profile preservation checks passed",
+      "status": "passed",
+      "publishes_release": false,
+      "artifact_id": 12289656309,
+      "artifact_bytes": 24919187,
+      "artifact_sha256": "db4151cd32c6140b9e116b3ee6479d1e14d4dda6a097f8a46f400887a86f9814",
+      "source_artifact_id": 12288337237,
+      "source_artifact_bytes": 43825,
+      "source_artifact_sha256": "f23005abafe239ba892f5ace59a6aad9a0eeae33131844e0f24be3c4d5baa9f6",
+      "workflow_dispatch_runs": 3,
+      "completed_arm64_candidate_builds": 1,
+      "physical_thor": "Not executed; no ARM64 guest execution inferred from x86 emulator."
+    },
     "next_diagnostic": {
       "version": "0.1.16",
       "version_code": 17,
       "profile": "capture-diagnostic",
-      "build_started": false,
+      "build_started": true,
       "scope": "One meaningful frame-capture and original packet-continuation test APK after integrated qualification.",
       "physical_thor": "Pending; no new Thor result claimed.",
-      "build_requested": true
+      "build_requested": true,
+      "state": "Signed ARM64 APK qualified and available; Thor test pending.",
+      "apk": {
+        "name": "CoH-Native-Combined-0.1.16-capture-diagnostic-arm64.apk",
+        "bytes": 15150348,
+        "sha256": "3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94",
+        "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+        "ci_run_id": 39474180919,
+        "artifact_id": 12289656309
+      }
     },
     "increments": {
       "frame_capture": "Production current-pose/current-frame draw qualification and off-thread historical frame export integrated; actual host source-neighborhood+box GLES readback passed. Thor capture remains pending.",
-      "capture_store": "Atomic bounded historical raw frame container and stored ZIP export integrated; at most83072 bytes per raw record and4096 bytes metadata.",
+      "capture_store": "Atomic historical raw capture with size/SHA256/appVersion/activitySession, stored ZIP export and report identity binding qualified. Optional absent/stale/corrupt files are omitted before ZIP mutation; essential reports remain available.",
       "packet": "Original outer receive runs SG costumes, FX/NPC, translucency, power customization, titles, ragdoll, basic statistics, vision, target/status, inventory and taskforce. Nonempty customization stops at actual absent BasePower CRC lookup. Empty branches reach later known very-rare fields with explicit implementation-remaining diagnostics. Actual Thor 303112-bit packet has not been replayed; entity/message complete and ACK/READY stay false.",
       "character": "A lossless 48352-byte caller snapshot and original bodytype/changeGeo/texture adapter are qualified across all nine body descriptors. Actual selected bodytype/assets await the next Thor capture; box retained.",
       "world": "Archive-backed adapter and105 authentic placements integrated as standalone source work with two-pose host GLES; Android imported-archive wiring and original CLIENT ZIP metadata remain unavailable. The next capture APK retains the existing two-instance neighborhood.",
@@ -562,7 +495,7 @@
       "costume_snapshot": "26526 checks each release/ASan/UBSan;70613 slot regression checks per mode",
       "appearance": "1481 checks each release/ASan/UBSan;48 source sender/client-oracle cases",
       "memory_aggregates": "Integrated sampler57, worker39, diagnostics183, export9, runtime43 tests/2 platform skips at7d8e1243c",
-      "qualification_scope": "Integrated local source checks passed; Android ARM64/x86 builds and Android13 emulator are dispatched next.",
+      "qualification_scope": "Integrated release/ASan/UBSan source checks passed; signed ARM64 build/lint/audits, signed x86 build/audits and Android13 framework/update/rollback checks passed at exact qualified source/tree above.",
       "capture_wiring": "50 extracted-source controls per release/ASan/UBSan plus27 source assertions; not Android execution",
       "live_world": "233 controls each release/ASan/UBSan; actual Mesa draws two nearby source instances at two distant poses with0 GL errors; Android FD integration not claimed",
       "outer_android": "Final integrated check at 18b95b288 passed 10832249 checks in each release/ASan/UBSan mode,165 body selection/truncation cases, actual BasePower callback, replay bounds/alias/JNI/cleanup. Report peak 6855/7168 bytes.",
@@ -587,7 +520,7 @@
       "further_recovery_requests": false,
       "offline_scope": "Original Atlas central directory and two selected payloads retained; original CLIENT central/header/compressed ranges missing. Generated CLIENT format fixture is not original-archive execution proof."
     },
-    "next_action": "Dispatch one capture-diagnostic0.1.16/code 17 source-qualified ARM64 APK with sequential ABI builds and Android13 lifecycle/update/rollback tests.",
+    "next_action": "Update in place to 0.1.16, collect the game-surface ZIP, native report, initial replay and simultaneous Wine/PostgreSQL/app memory observations, then finish the actual packet and genuine costume/archive integration.",
     "host_scene_capture": {
       "scope": "Actual host Mesa GLES source neighborhood and observed-pose diagnostic box through the shipped capture/readback/publish and Java ZIP writer; not Android window/JNI/Thor or live authority",
       "raw_bytes": 46784,
@@ -610,7 +543,10 @@
       "runtime_world_source_cpu_bytes": 1997289,
       "runtime_world_gpu_payload_bytes": 1867780,
       "process_rss_pss": "Separate physical measurements; no new physical peak inferred from source sizes.",
-      "initial_observed_host_frames_bytes": 28944
+      "initial_observed_host_frames_bytes": 28944,
+      "legacy_capture_test_cpu_bytes": 2237452,
+      "legacy_capture_test_gpu_payload_bytes": 1867780,
+      "legacy_borrowed_source_bundle_bytes": 491565
     },
     "ci_attempts": [
       {
@@ -643,6 +579,167 @@
       "sha256": "25641e747c60e066016fcc7d2ce0a2e72f57d7d3953f7b1ff4b18b69e2d49c6d",
       "retained_exact_client_zip": "Contains BodyParts.bin, costume.bin and supergroupColors.bin only; no powers.bin or compact CRC/name mapping found in current retained inputs.",
       "effect": "A genuine nonempty power customization stops at its actual CRC callback. Known very-rare and subsequent entity/global integration also remains before exact message completion."
+    },
+    "accepted_scope": [
+      "Real-pose/current-frame bounded framebuffer capture and genuine INITIAL-only replay export.",
+      "Original receiver continuation through source-supported branches; actual missing BasePower lookup and known implementation tail separately identified.",
+      "Lossless selected-body snapshot and appearance-selection adapter; no live character-model substitution.",
+      "Archive-backed two-pose source adapter with explicit partial Android/archive prerequisites.",
+      "All-process category sums, actual UID cgroup-first observation and retained owned PostgreSQL SHOW telemetry."
+    ],
+    "blocker": "Actual 303112-bit Thor payload has not yet been replayed. Full CLIENT powers.bin is absent; later very-rare/subsequent entity and global-tail integration remains. Real bodytype/rig/GEO/texture selection and Android archive FD hookup await input/integration."
+  },
+  "candidate_history": [
+    {
+      "version": "0.1.15",
+      "version_code": 16,
+      "profile": "neighborhood-diagnostic",
+      "state": "Physical Thor results recorded: costume body complete and neighborhood selected/drawing; aggregate memory remains partial.",
+      "receiver": {
+        "original_receiver_unchanged": true,
+        "raw_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+        "raw_bytes": 641477,
+        "index_bytes": 134144,
+        "tables": [
+          "ordinary strings",
+          "extra strings",
+          "palette"
+        ],
+        "stored_bodies_tested": [
+          1,
+          10
+        ],
+        "source_checks_per_mode": 70613,
+        "jni_checks_per_mode": 1473,
+        "next_unconsumed_outer_field": "SupergroupCostume presence bit",
+        "next_required_table": null,
+        "physical_packet_replayed": false,
+        "physical_receive_observed": true,
+        "physical_bodies_read": 1,
+        "physical_parts_read": 28,
+        "physical_end_bit": 11648
+      },
+      "world": {
+        "asset": "neighborhood-map.bin",
+        "asset_bytes": 491565,
+        "asset_sha256": "fcd3a97f8a84165316c6784016d1ab38402602fdfadeca1ed31fb3329426a1a7",
+        "pose": [
+          131.453125,
+          0.25,
+          -114.953125
+        ],
+        "source": "Atlas road_4lane original sidewalk material partitions",
+        "source_instances_at_pose": 2,
+        "ground_triangles_under_pose": 1,
+        "host_gles_world_pixels": 28844,
+        "host_gles_box_changed_pixels": 2028,
+        "host_gles_errors": 0,
+        "raw_transition_peak_bytes": 486030,
+        "raw_stream_cap_bytes": 524288,
+        "named_child_source_peak_bytes": 2633629,
+        "gpu_buffer_bytes": 557060,
+        "memory_scope": "Conservative named source inventory includes old and candidate retained source, JNI arrays and readbacks, CPU geometry and owners, bridge scratch, textures/GPU buffers/FBO, charged 64KiB stack per owner, and two existing 8MiB initial observer budgets. Actual driver/process RSS/PSS remains separate and unmeasured on Thor.",
+        "thor_confirmed": true,
+        "parent_candidate_named_peak_bytes": 29491460,
+        "parent_old_plus_candidate_named_peak_bytes": 58982920,
+        "parent_including_two_initial_budgets_bytes": 75760136,
+        "parent_scene_cap_bytes": 100663296,
+        "thor_confirmation_scope": "Physical report confirms two source instances selected near the decoded pose and active box/source draws. Startup pixel witnesses are not a screenshot of ground contact at that pose; full live-world authority remains false.",
+        "ground_contact_visually_confirmed": false
+      },
+      "memory": {
+        "process_rows_max": 64,
+        "compact_export_ceiling": 24576,
+        "worst_tested_export_bytes": 23097,
+        "native_report_ceiling": 7168,
+        "jni_report_peak_bytes": 6740,
+        "specific_admission_reason": true,
+        "postgresql_requested": {
+          "max_connections": 72,
+          "superuser_reserved_connections": 3,
+          "shared_buffers": "16MB",
+          "work_mem": "1MB",
+          "maintenance_work_mem": "16MB"
+        },
+        "source_sql_connections": 65,
+        "ordinary_spare_connections": 4,
+        "new_thor_measurements": {
+          "result_path": "latest_physical_results.memory",
+          "complete_live_totals": false,
+          "omitted_same_uid_processes": 27,
+          "runtime_postgresql_settings_verified": false
+        },
+        "old_missing_wine_metrics_cause": "Current Wine PIDs13367/13439 are explicitly verified zero-address-space zombies. This does not retroactively identify the older PIDs or Android kill trigger.",
+        "android13_x86_emulator": {
+          "samples": 27,
+          "sampled_peak_process_rss_bytes": 133447680,
+          "sampled_peak_process_pss_bytes": 62913536,
+          "minimum_observed_system_headroom_bytes": 532905984,
+          "scope": "Actual emulator native-client report; Wine/PostgreSQL guest was not running. These are not Thor or ARM64 combined-server observations."
+        }
+      },
+      "limits": {
+        "decoded_message": 4194304,
+        "ordinary_semantic_message": 16384,
+        "initial_observer_aggregate": 8388608,
+        "scene_transaction": 100663296
+      },
+      "thor_procedure": "native-android/combined-client/THOR-TEST.md",
+      "apk": {
+        "name": "CoH-Native-Combined-0.1.15-neighborhood-diagnostic-arm64.apk",
+        "bytes": 15101128,
+        "sha256": "9b15b3139a5d3a5dc9d4aada5d9766cffdc2138f423fb3bc6fd70cb821f4e349",
+        "abi": "arm64-v8a",
+        "package": "org.coh.nativecombined",
+        "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "build_source_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
+        "update_from_accepted_baseline": "same application id and public test signer; version code16 replaces15 with data preserved"
+      }
+    }
+  ],
+  "previous_ci": {
+    "workflow": ".github/workflows/native-qualification.yml",
+    "purpose": "combined-diagnostic",
+    "status": "passed",
+    "publishes_release": false,
+    "attempts": [
+      {
+        "run_id": 39455548802,
+        "qualified_commit": "38eda7f9a859302cfefb58932e4e66e95dbb258f",
+        "source": "passed",
+        "signed_arm64_and_x86_builds": "passed",
+        "upgrade_rollback_profiles": "passed",
+        "emulator": "failed before native createSession: neighborhood-map.bin pin was looked up in historical asset-manifest instead of existing combined/build-inputs metadata",
+        "artifact_id": 12281157374,
+        "artifact_sha256": "c08b9c7f9a58043255a519a0517895ef334acc373b5fccffd02b63bbfcf60092",
+        "delivered": false
+      },
+      {
+        "run_id": 39458357172,
+        "qualified_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
+        "status": "passed",
+        "android13_checks": 33,
+        "android13_upgrade_rollback_checks": 14,
+        "artifact_id": 12281882751
+      }
+    ],
+    "event": "workflow_dispatch",
+    "run_id": 39458357172,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/39458357172",
+    "qualified_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
+    "qualified_tree": "02a8cee650ec58725b38babdbcb5cf8c20449d58",
+    "artifact_id": 12281882751,
+    "artifact_bytes": 24794957,
+    "artifact_sha256": "11f065c1f5ff8611f1dada84b30f9887666bf53f9e3e28bdfde5992f37e1949f",
+    "source_artifact_id": 12281073935,
+    "source_artifact_sha256": "40c2f525413599f5ffabc53474f5efc4b92938c986a5dce311c498eaac8df072",
+    "routing": {
+      "legacy_push_run": 39457970021,
+      "legacy_push_status": "cancelled",
+      "corrected_dispatch_push_run": 39458341805,
+      "corrected_dispatch_status": "passed",
+      "legacy_candidate_published": false,
+      "fix": "Dedicated marker excludes legacy report builder and requires native-contracts-only on bootstrap."
     }
   }
 }

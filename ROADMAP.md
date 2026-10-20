@@ -8,7 +8,8 @@ and 58 colors. Two authentic source sidewalk instances were drawn near
 [131.453125, 0.25, -114.953125]; Thor ground contact still needs the new capture.
 
 The 0.1.16 diagnostic adds a bounded game-surface capture and initial-packet
-replay. Host GLES capture shows source roadway and sidewalk with the yellow
+replay. ARM64/x86 builds and Android 13 CI pass; Thor 0.1.16 remains untested.
+Host GLES capture shows source roadway and sidewalk with the yellow
 pose box. Original receive now covers the enclosing costume, power, title,
 ragdoll, statistics, vision, target, status, inventory and taskforce branches.
 Nonempty power customization needs the actual BasePower CRC lookup. Empty

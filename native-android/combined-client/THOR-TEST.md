@@ -3,6 +3,10 @@
 Update the existing app with the signed ARM64 APK; keep its data, imports and
 accepted profile. The 0.1.14 package remains the rollback baseline.
 
+Signed ARM64: 15,150,348 bytes, SHA256
+`3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94`.
+[Passing CI](https://github.com/Russianranger/coh-android/actions/runs/39474180919).
+
 1. Update in place, start the existing server and select the same saved Atlas Park character.
 2. Open the native view and leave the box and nearby world visible for five seconds.
    The app saves one bounded game-surface capture after twelve real-pose frames.
