@@ -107,6 +107,9 @@ void coh_initial_capture_diagnostics(const CohInitialCapture*x,CohInitialCapture
 }
 void coh_initial_capture_timeout(CohInitialCapture*x){if(x&&!x->busy&&x->begun&&x->d.phase>=COH_INITIAL_CAPTURE_CONNECTING&&x->d.phase<=COH_INITIAL_CAPTURE_WAIT_ALLENTS)il_stop(x,COH_STATE,COH_INITIAL_CAPTURE_FAILURE_TIMEOUT);}
 void coh_initial_capture_cancel(CohInitialCapture*x){if(x&&!x->busy){
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+coh_initial_map_abort_reason(x->map,COH_INITIAL_ABORT_CANCELLED);
+#endif
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
 coh_initial_map_forget_ready(x->map);coh_db_wipe(x->local_password_md5,16);x->local_password_set=0;
 #endif

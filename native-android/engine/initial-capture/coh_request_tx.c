@@ -81,7 +81,7 @@ void coh_request_tx_hook_send_begin(const void*net,uint32_t id,int sent,uint64_t
 }
 void coh_request_tx_hook_send(const void*net,uint32_t id,int sent,CohStatus status,uint64_t now){
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
- coh_initial_tx_send(net,id,status);
+ coh_initial_tx_send(net,id,sent,status,now);
 #endif
  CohRequestTxWitness*w=live();if(!w||!w->d.queue_succeeded||net!=w->net||id!=w->id)return;
  if(!w->inflight||sent!=(int)w->inflight_sent){refuse(w,COH_REQUEST_TX_STATE);return;}
@@ -95,6 +95,13 @@ void coh_request_tx_hook_send(const void*net,uint32_t id,int sent,CohStatus stat
  if(status==COH_OK){if(sent)w->d.successful_retries++;else{w->d.first_send_accepted=1;w->d.first_send_offset_ms=now-w->start_ms;}}
  else if(status==COH_NOT_FOUND)w->d.deferred_send_callbacks++;else w->d.failed_send_callbacks++;
  if(w->d.retirement!=COH_REQUEST_TX_PENDING){w->net=w->udp=NULL;w->id=0;}
+}
+void coh_request_tx_hook_frame(const void*net,uint32_t id,size_t bytes){
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ coh_initial_tx_frame(net,id,bytes);
+#else
+ (void)net;(void)id;(void)bytes;
+#endif
 }
 void coh_request_tx_hook_ack(const void*net,uint32_t id,uint64_t now){
  CohRequestTxWitness*w=live();if(!w||!w->d.queue_succeeded||net!=w->net||id!=w->id)return;

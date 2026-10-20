@@ -113,6 +113,11 @@ CohStatus coh_net_set_key_exchange(CohNet *, CohNetKeyExchange, void *context,
 CohStatus coh_net_begin(CohNet *, uint32_t connect_id, uint64_t now_ms);
 CohStatus coh_net_queue(CohNet *, CohBytes payload, uint32_t bits,
     int reliable, int ordered, int compressed, uint64_t now_ms);
+/* Same queue, packet IDs and original retry timing. A caller may reduce the
+ * accepted retransmissions for this payload only (0..configured max_retries).
+ * Existing queued packets and the link's configured policy are unchanged. */
+CohStatus coh_net_queue_retries(CohNet *, CohBytes, uint32_t bits,
+    int reliable, int ordered, int compressed, unsigned max_retries,uint64_t now_ms);
 CohStatus coh_net_pump(CohNet *, uint64_t now_ms, CohNetSend, void *, CohCancel);
 CohStatus coh_net_receive(CohNet *, CohBytes frame, uint64_t now_ms);
 /* Output unchanged when no message. Decompression happens after sibling

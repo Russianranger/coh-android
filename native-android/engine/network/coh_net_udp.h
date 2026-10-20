@@ -47,6 +47,8 @@ CohStatus coh_net_udp_begin(CohNetUdp *, uint32_t connect_id, uint64_t now_ms);
 CohStatus coh_net_udp_service(CohNetUdp *, uint64_t now_ms, CohCancel);
 CohStatus coh_net_udp_queue(CohNetUdp *, CohBytes, uint32_t bits,
     int reliable, int ordered, int compressed, uint64_t now_ms);
+CohStatus coh_net_udp_queue_retries(CohNetUdp *, CohBytes, uint32_t bits,
+    int reliable, int ordered, int compressed,unsigned max_retries,uint64_t now_ms);
 CohStatus coh_net_udp_next(CohNetUdp *, CohNetMessage *);
 CohStatus coh_net_udp_next_owned(CohNetUdp *, CohNetOwnedMessage *);
 CohStatus coh_net_udp_owned_release(CohNetUdp *, CohNetOwnedMessage *);

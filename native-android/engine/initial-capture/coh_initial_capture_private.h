@@ -17,6 +17,9 @@ CohInitialMapFailurePhase coh_initial_map_failure_phase(const CohInitialMap *);
 CohStatus coh_initial_map_local_password_digest(CohInitialMap *,const uint8_t[16]);
 CohStatus coh_initial_map_finish_initial(CohInitialMap *,const CohInitialCaptureEvent *,size_t);
 void coh_initial_map_forget_ready(CohInitialMap *);
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+void coh_initial_map_abort_reason(CohInitialMap *,CohInitialAbort);
+#endif
 size_t coh_initial_map_continuation_bytes(void);
 #endif
 #endif

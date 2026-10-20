@@ -17,7 +17,7 @@ def extract(text, name):
     return text[match.start():end] + '\n'
 
 
-def prepare(root, work, replay):
+def prepare(root, work, replay, bounded=False):
     raw = replay.read_bytes()
     assert len(raw) == 37795 and hashlib.sha256(raw).hexdigest() == '148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba'
     assert hashlib.sha256(raw[88:]).digest() == raw[56:88]
@@ -61,6 +61,7 @@ static void*add(CmdShortcut**p,size_t n,int*count,int*maximum,int amount){assert
     measurement.write_text('#include "coh_initial_local.c"\n#include <stdio.h>\nstatic CohInitialCapture owner;int main(void){printf("%zu\\n",coh_initial_capture_continuation_bytes(&owner));return 0;}\n')
     engine = root / 'native-android/engine/initial-capture'
     subprocess.run(['cc', '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror', '-DCOH_FRAME_CAPTURE_DIAGNOSTIC=1',
+                    *(['-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=1'] if bounded else []),
                     '-ffunction-sections', '-fdata-sections', '-I', engine, '-I', root / 'native-android/include',
                     measurement, engine / 'coh_initial_map.c', '-Wl,--gc-sections', '-o', work / 'continuation-size'], check=True, capture_output=True)
     charged = int(subprocess.check_output([work / 'continuation-size'], text=True))

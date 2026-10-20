@@ -57,6 +57,7 @@ def main():
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--replay', type=Path, help='Optional retained physical INITIAL replay; no network I/O')
+    parser.add_argument('--bounded', action='store_true', help='Compile next diagnostic delivery/accounting opt-in.')
     args = parser.parse_args()
     work = args.work.resolve()
     work.mkdir(parents=True, exist_ok=False)
@@ -68,7 +69,7 @@ def main():
     actual_source = None
     if args.replay:
         from actual_initial_fixture import prepare
-        actual_source, actual_inputs = prepare(ROOT, work, args.replay.resolve())
+        actual_source, actual_inputs = prepare(ROOT, work, args.replay.resolve(), args.bounded)
         suffix, suffix_source = args.replay.resolve(), {'scope': 'Rare suffix is present in the authentic retained INITIAL replay.'}
     else:
         suffix, suffix_source = rare_fixture(work)
@@ -77,6 +78,8 @@ def main():
              '-I', str(TOOLS / 'test-include'), '-I', 'native-android/combined-client/diagnostics/interop-adapter-20261018/test-include',
              '-I', 'native-android/engine/initial-capture', '-I', 'native-android/engine/entities',
              '-I', 'native-android/engine/session', '-I', 'native-android/include']
+    if args.bounded:
+        flags += ['-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=1']
     sources = [TOOLS / ('test_actual_initial_android.c' if args.replay else 'test_outer_costume_android.c'),
                *[Path('native-android/engine/initial-capture/coh_initial_' + name + '_probe.c') for name in PROBES],
                Path('native-android/engine/initial-capture/coh_local_bodypart_default.c'),
@@ -107,7 +110,7 @@ def main():
             if path.is_relative_to(ROOT):
                 frozen.add(path)
     pins = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(frozen)}
-    result = {'passed': True, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
+    result = {'passed': True, 'bounded_next_diagnostic': args.bounded, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
               'scope': ('Authentic saved Thor packet through shipping JNI observer/owner with original source-static shortcuts, test-owned selection and transport/JNI/Android asset doubles; no live authentication, actual network sends or Android ABI claim.' if args.replay else 'Shipping new-profile JNI observer, with Android asset/JNI/transport doubles and source-layout sender header composition; no physical packet, Android ABI, actor or ACK claim.')}
     if args.replay:
         result['actual_source_fixture'] = actual_source
@@ -191,6 +194,30 @@ def main():
             pass
         else:
             raise AssertionError('Malformed initial suffix progress accepted')
+    if args.bounded:
+        bounded = {'initial_command_tail': [0, 10, 10, 11, 1, 1, 0], 'initial_packet_complete': True,
+                   'initial_continuation': [1, 1, 1, 1, 1, 1, 0, 2, 1, 1], 'completion_status': 0,
+                   'post_position': [0, 0, 0, 0, 0, 0, 0], 'initial_next': 'post-update window complete',
+                   'post_commands': [[2, 1, 10, 80, 10, 10]], 'continuation_policy': [20000, 1],
+                   'continuation_time_basis': 'owner_monotonic_ms', 'continuation_abort': '20-second deadline',
+                   'post_totals': [2, 20, 160, 0, 1, 10, 80, 119, 120, 0, 1, 118, 20117],
+                   'ack_delivery': [117, 118, 500, 16, 128, 3, 2, 1, 1, 0, 64, 0, 0],
+                   'ready_delivery': [117, 120, 120, 16, 128, 2, 1, 0, 1, 0, 32, 0, 0]}
+        assert separate_report_extension(bounded) == {}
+        assert separate_report_extension({**bounded, 'ack_delivery': [117, 118, 500, 16, 128, 4294967295, 2, 1, 4294967295, 0, 64, 0, 1]}) == {}
+        assert separate_report_extension({key: value for key, value in bounded.items() if key not in
+               {'continuation_policy', 'continuation_time_basis', 'continuation_abort', 'post_totals', 'ack_delivery', 'ready_delivery'}}) == {}
+        for field, bad in [('post_totals', [2, 19, 160, 0, 1, 10, 80, 119, 120, 0, 1, 118, 20117]),
+                           ('post_totals', [2, 20, 160, 0, 1, 10, 80, 119, 120, 0, 1, 119, 20117]),
+                           ('ack_delivery', [117, 118, 500, 16, 128, 4, 3, 2, 1, 0, 96, 0, 0]),
+                           ('ready_delivery', [117, 120, 120, 16, 128, 2, 0, 0, 1, 0, 32, 0, 0]),
+                           ('continuation_abort', 'success'), ('continuation_policy', [10000, 8])]:
+            try:
+                separate_report_extension({**bounded, field: bad})
+            except ValueError:
+                pass
+            else:
+                raise AssertionError('Malformed bounded continuation metadata accepted')
     assert pins == {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(frozen)}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + '\n')

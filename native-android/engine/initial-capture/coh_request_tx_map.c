@@ -5,7 +5,11 @@
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
 #include "coh_initial_send.h"
 typedef struct{uint32_t cookie,pending_id;uint8_t password_md5[16];unsigned password_set,pending;}CohInitialReadyState;
-typedef struct{const void *net;uint32_t ack_id,ready_id,queue_kind;}CohInitialTxState;
+typedef struct{const void *net;uint32_t ack_id,ready_id,queue_kind;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ uint32_t frame_id,frame_valid;size_t frame_bytes;
+#endif
+}CohInitialTxState;
 #endif
 struct CohInitialMap {
  CohMapClient *map;CohDbHandoffMetadata bound;
@@ -29,7 +33,27 @@ static CohStatus ic_observe(CohInitialMap*,CohInitialCaptureKind);
 static _Thread_local CohInitialMap *ic_tx_owner;
 void coh_initial_tx_link(const void*udp,const void*net){CohInitialMap*x=ic_tx_owner;if(x&&x->tx.queue_kind&&udp==x->map->udp)x->tx.net=net;}
 void coh_initial_tx_queue(const void*net,uint32_t id,unsigned parts,int reliable,int ordered,int compressed,int connect,int sent){CohInitialMap*x=ic_tx_owner;if(!x||!x->tx.queue_kind||net!=x->tx.net||!id||parts!=1||!reliable||ordered||compressed||connect||sent)return;if(x->tx.queue_kind==1)x->tx.ack_id=id;else if(x->tx.queue_kind==2)x->tx.ready_id=id;}
-void coh_initial_tx_send(const void*net,uint32_t id,CohStatus status){CohInitialMap*x=ic_tx_owner;if(!x||net!=x->tx.net||status!=COH_OK)return;if(id==x->tx.ack_id)x->d.continuation.full_update_ack_sent=1;if(id==x->tx.ready_id)x->d.continuation.client_ready_sent=1;}
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+static void increment(uint32_t*n,uint32_t*overflow){if(*n==UINT32_MAX)*overflow=1;else(*n)++;}
+void coh_initial_tx_frame(const void*net,uint32_t id,size_t bytes){CohInitialMap*x=ic_tx_owner;if(!x||net!=x->tx.net||(id!=x->tx.ack_id&&id!=x->tx.ready_id))return;x->tx.frame_id=id;x->tx.frame_bytes=bytes;x->tx.frame_valid=1;}
+#endif
+void coh_initial_tx_send(const void*net,uint32_t id,int sent,CohStatus status,uint64_t now){
+ CohInitialMap*x=ic_tx_owner;if(!x||net!=x->tx.net||(id!=x->tx.ack_id&&id!=x->tx.ready_id))return;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ CohInitialContinuation*c=&x->d.continuation;CohInitialDelivery*d=id==x->tx.ack_id?&c->ack_delivery:&c->ready_delivery;
+ increment(&d->attempts,&d->counter_overflow);d->last_status=(unsigned)status<=COH_STATE?(uint32_t)status:COH_INVALID;
+ if(status==COH_OK){
+  if(!c->full_update_ack_sent&&!c->client_ready_sent)c->post_begin_ms=now;
+  if(!d->accepted){d->first_sent_ms=now;}d->last_sent_ms=now;increment(&d->accepted,&d->counter_overflow);
+  if(sent)increment(&d->accepted_retries,&d->counter_overflow);
+  if(x->tx.frame_valid&&x->tx.frame_id==id&&x->tx.frame_bytes<=UINT64_MAX-d->accepted_wire_bytes)d->accepted_wire_bytes+=x->tx.frame_bytes;else d->counter_overflow=1;
+ }else if(status==COH_NOT_FOUND)increment(&d->deferred,&d->counter_overflow);else increment(&d->failures,&d->counter_overflow);
+ x->tx.frame_valid=0;
+#else
+ (void)sent;(void)now;
+#endif
+ if(status!=COH_OK){return;}if(id==x->tx.ack_id)x->d.continuation.full_update_ack_sent=1;if(id==x->tx.ready_id)x->d.continuation.client_ready_sent=1;
+}
 #endif
 static int ic_span(const void *p,size_t n){return p&&n&&n<=UINTPTR_MAX-(uintptr_t)p;}
 static int ic_disjoint(const void *a,size_t an,const void *b,size_t bn){return scene_disjoint(a,an,b,bn);}
@@ -73,6 +97,10 @@ CohInitialMap *coh_initial_map_create(CohMapClient*m){
 }
 void coh_initial_map_destroy(CohInitialMap*x){if(x&&!x->busy){wipe(x,sizeof(*x));free(x);}}
 static CohStatus ic_fail(CohInitialMap*x,CohStatus s,CohInitialCaptureFailure why){
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ if(!x->d.continuation.abort_reason){CohInitialAbort reason=COH_INITIAL_ABORT_MESSAGE;switch(why){case COH_INITIAL_CAPTURE_FAILURE_TIMEOUT:reason=COH_INITIAL_ABORT_TRANSPORT_TIMEOUT;break;case COH_INITIAL_CAPTURE_FAILURE_CANCELLED:reason=COH_INITIAL_ABORT_CANCELLED;break;case COH_INITIAL_CAPTURE_FAILURE_OBSERVER:reason=COH_INITIAL_ABORT_OBSERVER;break;case COH_INITIAL_CAPTURE_FAILURE_RELEASE:reason=COH_INITIAL_ABORT_RELEASE;break;case COH_INITIAL_CAPTURE_FAILURE_OWNER:reason=COH_INITIAL_ABORT_OWNER;break;default:break;}x->d.continuation.abort_reason=reason;}
+ if(x->d.continuation.full_update_ack_queued)x->d.continuation.post_end_ms=x->map->last_ms;
+#endif
  if(!x->command_refusal_latched){x->d.refused_command_valid=x->command_valid;x->d.refused_command_kind=x->command_kind;x->command_refusal_latched=1;}
  if(!x->first_failure_phase.valid)x->first_failure_phase=(CohInitialMapFailurePhase){1,x->map->diag.phase};
  x->d.status=s;x->d.failure=why;x->d.phase=s==COH_CANCELLED?COH_INITIAL_CAPTURE_CANCELLED:COH_INITIAL_CAPTURE_FAILED;
@@ -83,7 +111,14 @@ static CohStatus ic_fail(CohInitialMap*x,CohStatus s,CohInitialCaptureFailure wh
 }
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
 size_t coh_initial_map_continuation_bytes(void){return sizeof(CohInitialMap)-offsetof(CohInitialMap,ready)+2*sizeof(CohInitialContinuation);}
-void coh_initial_map_forget_ready(CohInitialMap*x){if(x){wipe(&x->ready,sizeof(x->ready));wipe(&x->tx,sizeof(x->tx));}}
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+void coh_initial_map_abort_reason(CohInitialMap*x,CohInitialAbort reason){if(x&&x->d.continuation.full_update_ack_queued&&!x->d.continuation.abort_reason){x->d.continuation.abort_reason=reason;x->d.continuation.post_end_ms=x->map->last_ms;}}
+#endif
+void coh_initial_map_forget_ready(CohInitialMap*x){if(x){
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ if(x->d.continuation.full_update_ack_queued&&!x->d.continuation.abort_reason){x->d.continuation.abort_reason=COH_INITIAL_ABORT_CLIENT_CLOSED;x->d.continuation.post_end_ms=x->map->last_ms;}
+#endif
+ wipe(&x->ready,sizeof(x->ready));wipe(&x->tx,sizeof(x->tx));}}
 CohStatus coh_initial_map_local_password_digest(CohInitialMap*x,const uint8_t digest[16]){
  if(!x||!ic_span(digest,16)||!ic_disjoint(digest,16,x,sizeof(*x)))return COH_INVALID;
  if(x->busy||x->ready.password_set||x->d.reqallents_sent)return COH_STATE;
@@ -99,32 +134,70 @@ CohStatus coh_initial_map_finish_initial(CohInitialMap*x,const CohInitialCapture
 static CohStatus ic_ack_ready(CohInitialMap*x,uint64_t now){
  CohMapClient*m=x->map;CohMapPacket packet;CohMapProfile profile={x->version<4,0};CohInitialContinuation*c=&x->d.continuation;
  CohStatus s=coh_initial_input_serialize(profile,x->ready.pending_id,0,&packet);
- x->tx.queue_kind=1;if(s==COH_OK)s=coh_net_udp_queue(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,now);x->tx.queue_kind=0;
+ x->tx.queue_kind=1;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ c->abort_reason=COH_INITIAL_ABORT_QUEUE;c->ack_delivery.last_status=c->ready_delivery.last_status=COH_NOT_FOUND;
+ if(s==COH_OK)s=coh_net_udp_queue_retries(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,1,now);
+ if(s==COH_OK){c->ack_delivery.queued_ms=now;c->ack_delivery.payload_bits=packet.bits;c->ack_delivery.payload_bytes=(packet.bits+7)/8;}
+#else
+ if(s==COH_OK)s=coh_net_udp_queue(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,now);
+#endif
+ x->tx.queue_kind=0;
  coh_map_packet_wipe(&packet);if(s!=COH_OK)return s;c->full_update_ack_queued=1;
  CohMapFields fields={x->ready.cookie,0,0,1,x->ready.password_md5};
  s=coh_map_serialize(COH_MAP_READY,profile,&fields,&packet);
- x->tx.queue_kind=2;if(s==COH_OK)s=coh_net_udp_queue(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,now);x->tx.queue_kind=0;
+ x->tx.queue_kind=2;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ if(s==COH_OK)s=coh_net_udp_queue_retries(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,1,now);
+ if(s==COH_OK){c->ready_delivery.queued_ms=now;c->ready_delivery.payload_bits=packet.bits;c->ready_delivery.payload_bytes=(packet.bits+7)/8;}
+#else
+ if(s==COH_OK)s=coh_net_udp_queue(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,now);
+#endif
+ x->tx.queue_kind=0;
  coh_map_packet_wipe(&packet);wipe(&fields,sizeof(fields));wipe(&x->ready,sizeof(x->ready));
  if(s!=COH_OK)return s;
- c->client_ready_queued=1;c->waiting_for_full_update=1;c->initial_complete=1;c->post_begin_ms=now;
+ c->client_ready_queued=1;c->waiting_for_full_update=1;c->initial_complete=1;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ c->abort_reason=COH_INITIAL_ABORT_NONE;
+#else
+ c->post_begin_ms=now;
+#endif
  x->d.complete_initial_character=1;x->d.ack_permitted=1;x->d.phase=COH_INITIAL_CAPTURE_WAIT_UPDATES;x->d.status=COH_OK;return COH_OK;
 }
-static void ic_post_count(CohInitialMap*x,const CohNetOwnedMessage*n){
+static void ic_post_count(CohInitialMap*x,const CohNetOwnedMessage*n,uint64_t now){
  CohInitialContinuation*c=&x->d.continuation;unsigned row;
  c->post_messages++;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ c->post_total_bytes+=n->payload_bytes;c->post_total_bits+=n->payload_bits;if(c->post_messages==1)c->post_first_ms=now;c->post_last_ms=now;
+ if(!c->full_update_ack_sent&&!c->client_ready_sent)c->post_before_send++;else if(!c->full_update_ack_sent||!c->client_ready_sent)c->post_between_sends++;
+#else
+ (void)now;
+#endif
  for(row=0;row<c->post_rows;row++)if(c->post[row].kind==x->command_kind)break;
- if(row==c->post_rows){if(row==COH_INITIAL_POST_COMMAND_ROWS){c->post_row_overflow++;return;}c->post_rows++;c->post[row].kind=x->command_kind;c->post[row].min_bytes=(uint32_t)n->payload_bytes;}
+ if(row==c->post_rows){if(row==COH_INITIAL_POST_COMMAND_ROWS){c->post_row_overflow++;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ c->post_overflow_bytes+=n->payload_bytes;c->post_overflow_bits+=n->payload_bits;
+#endif
+ return;}c->post_rows++;c->post[row].kind=x->command_kind;c->post[row].min_bytes=(uint32_t)n->payload_bytes;}
  CohInitialPostCommand*p=&c->post[row];p->count++;if(n->payload_bytes<p->min_bytes)p->min_bytes=(uint32_t)n->payload_bytes;if(n->payload_bytes>p->max_bytes)p->max_bytes=(uint32_t)n->payload_bytes;p->total_bytes+=n->payload_bytes;p->total_bits+=n->payload_bits;
 }
-static CohStatus ic_post(CohInitialMap*x,const CohNetOwnedMessage*n){
+static CohStatus ic_post(CohInitialMap*x,const CohNetOwnedMessage*n,uint64_t now){
  CohRepReader reader;uint32_t command;CohStatus s=coh_rep_reader_bounded(&reader,(CohBytes){n->payload,n->payload_bytes},n->payload_bits,n->compressed,COH_NET_DECODED_MAX);
  if(s==COH_OK)s=coh_rep_pack(&reader,1,&command);
  if(s==COH_OK&&x->version<4){if(command<7)s=COH_UNSUPPORTED;else command-=5;}
- if(s!=COH_OK)return s;
- ic_command_decoded(x,command);x->d.last_command=command;ic_post_count(x,n);
+ if(s!=COH_OK){
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ x->command_kind=COH_INITIAL_CAPTURE_COMMAND_UNKNOWN;x->d.continuation.post_unclassified++;ic_post_count(x,n,now);
+#endif
+ return s;}
+ ic_command_decoded(x,command);x->d.last_command=command;ic_post_count(x,n,now);
  if(command!=COH_REP_UPDATE&&command!=COH_REP_ALLENTS)return COH_OK;
  x->reader=reader;s=coh_rep_update_prefix(&reader,&x->map->schema,command,&x->update);
- if(s==COH_OK)s=ic_observe(x,COH_INITIAL_CAPTURE_UPDATE);
+ if(s==COH_OK){s=ic_observe(x,COH_INITIAL_CAPTURE_UPDATE);
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+  if(s!=COH_OK)x->d.continuation.abort_reason=COH_INITIAL_ABORT_OBSERVER;
+#endif
+ }
  memset(&x->reader,0,sizeof(x->reader));memset(&x->update,0,sizeof(x->update));return s;
 }
 #endif
@@ -215,12 +288,22 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
  CohStatus result=COH_OK;CohInitialCaptureFailure why=COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;
  if(ic_cancel(cancel)){result=COH_CANCELLED;why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;goto done;}
  if(ic_owner(x)!=COH_OK){result=COH_STATE;why=COH_INITIAL_CAPTURE_FAILURE_OWNER;goto done;}
- m->last_ms=now;result=coh_net_udp_service(m->udp,now,cancel);CohNetUdpDiagnostics udp;coh_net_udp_diagnostics(m->udp,&udp);
- if(result!=COH_OK||udp.state!=COH_UDP_ACTIVE){if(result==COH_OK)result=COH_STATE;if(result==COH_CANCELLED)why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;else if(udp.state==COH_UDP_TIMED_OUT)why=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;goto done;}
+ m->last_ms=now;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ /* Expire before UDP service can accept a previously deferred send or retry. */
+ if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES&&now-x->d.continuation.ack_delivery.queued_ms>=COH_INITIAL_POST_DURATION_MS){x->d.continuation.post_window_complete=1;x->d.continuation.post_end_ms=now;x->d.continuation.abort_reason=COH_INITIAL_ABORT_DEADLINE;result=COH_STATE;why=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;goto done;}
+#endif
+ result=coh_net_udp_service(m->udp,now,cancel);CohNetUdpDiagnostics udp;coh_net_udp_diagnostics(m->udp,&udp);
+ if(result!=COH_OK||udp.state!=COH_UDP_ACTIVE){if(result==COH_OK)result=COH_STATE;if(result==COH_CANCELLED)why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;else if(udp.state==COH_UDP_TIMED_OUT)why=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+  if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES)x->d.continuation.abort_reason=result==COH_CANCELLED?COH_INITIAL_ABORT_CANCELLED:udp.state==COH_UDP_TIMED_OUT?COH_INITIAL_ABORT_TRANSPORT_TIMEOUT:udp.link_state==COH_NET_CLOSED?COH_INITIAL_ABORT_PEER_CLOSED:COH_INITIAL_ABORT_TRANSPORT_IO;
+#endif
+  goto done;}
  if(m->diag.phase==COH_MAP_NET_CONNECTING&&udp.link_state==COH_NET_CONNECTED){m->diag.stage=COH_MAP_STAGE_SEND_COMMAND;result=send_command(m,COH_MAP_CONNECT,now);m->cookie=0;if(result!=COH_OK)goto done;m->diag.phase=COH_MAP_WAIT_CONNECT;m->phase_ms=now;}
-#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+#if defined(COH_FRAME_CAPTURE_DIAGNOSTIC) && !defined(COH_BOUNDED_CONTINUATION_DIAGNOSTIC)
  if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES&&(now-x->d.continuation.post_begin_ms>=COH_INITIAL_POST_DURATION_MS||x->d.continuation.post_messages>=COH_INITIAL_POST_MESSAGES_MAX)){
-  x->d.continuation.post_window_complete=1;x->d.continuation.post_end_ms=now;x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;goto done;
+  x->d.continuation.post_window_complete=1;x->d.continuation.post_end_ms=now;
+  x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;goto done;
  }
 #endif
  for(unsigned i=0;i<m->config.message_budget;i++){
@@ -229,9 +312,13 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
   IcPost post={0};
   CohNetOwnedMessage n;result=coh_net_udp_next_owned(m->udp,&n);if(result==COH_NOT_FOUND){result=COH_OK;break;}if(result!=COH_OK)goto done;
   x->message=&n;ic_message_diag(x,&n);x->observer_status=COH_OK;
-  if(ic_cancel(cancel)){result=COH_CANCELLED;why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;}
+  if(ic_cancel(cancel)){
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+   if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES){x->command_kind=COH_INITIAL_CAPTURE_COMMAND_UNKNOWN;x->d.continuation.post_unclassified++;ic_post_count(x,&n,now);}
+#endif
+   result=COH_CANCELLED;why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;}
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
-  else if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES){result=ic_post(x,&n);why=COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;}
+  else if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES){result=ic_post(x,&n,now);why=COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;}
 #endif
   else if(x->d.reqallents_sent){result=ic_initial(x,&n,cancel,&post);why=x->d.failure;}
   else {result=inspect(m,&n,now,ic_groups,x);x->d.last_command=m->diag.last_command;if(m->diag.last_command_valid)ic_command_decoded(x,m->diag.last_command);
@@ -250,7 +337,11 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
 #endif
    x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;m->diag.last_status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;why=COH_INITIAL_CAPTURE_FAILURE_NONE;goto done;}
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
-  if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES){if(x->d.continuation.post_messages>=COH_INITIAL_POST_MESSAGES_MAX){x->d.continuation.post_window_complete=1;x->d.continuation.post_end_ms=now;x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;goto done;}continue;}
+  if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES){if(x->d.continuation.post_messages>=COH_INITIAL_POST_MESSAGES_MAX){x->d.continuation.post_window_complete=1;x->d.continuation.post_end_ms=now;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+   x->d.continuation.abort_reason=COH_INITIAL_ABORT_MESSAGE_LIMIT;coh_initial_map_forget_ready(x);
+#endif
+   x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;goto done;}continue;}
 #endif
   if(x->d.groups_observed){
    if(ic_owner(x)!=COH_OK||m->diag.scene_structures!=1){result=COH_STATE;why=COH_INITIAL_CAPTURE_FAILURE_OWNER;goto done;}

@@ -95,6 +95,23 @@ static void replay_bounds(const char *path){
  alias_source=0;
 }
 static void test_auto(size_t *at,uint32_t value){const unsigned widths[]={2,10,24,32};unsigned bin=0;while(bin<3&&value>=(1u<<widths[bin]))bin++;set_bits(multi_packet,*at,2,bin);*at+=2;set_bits(multi_packet,*at,widths[bin],value);*at+=widths[bin];}
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+/* Maximum-width projection only: this explicit transport double does not send. */
+static void bounded_report_stress(void){
+ CohInitialContinuation saved=capture.d.continuation,*c=&capture.d.continuation;memset(c,0,sizeof(*c));
+ c->full_update_ack_queued=c->client_ready_queued=c->full_update_ack_sent=c->client_ready_sent=c->waiting_for_full_update=1;
+ c->post_messages=128;c->post_rows=16;c->post_row_overflow=16;c->post_window_complete=1;c->abort_reason=COH_INITIAL_ABORT_MESSAGE_LIMIT;
+ c->post_begin_ms=UINT64_MAX-20000;c->post_end_ms=UINT64_MAX;c->post_first_ms=UINT64_MAX-19999;c->post_last_ms=UINT64_MAX;c->post_between_sends=1;
+ for(unsigned i=0;i<16;i++){CohInitialPostCommand*r=&c->post[i];r->kind=(CohInitialCaptureCommandKind)(i+2);r->count=7;r->min_bytes=r->max_bytes=4194304;r->total_bytes=UINT64_C(7)*4194304;r->total_bits=r->total_bytes*8;c->post_total_bytes+=r->total_bytes;c->post_total_bits+=r->total_bits;}
+ c->post_overflow_bytes=UINT64_C(16)*4194304;c->post_overflow_bits=c->post_overflow_bytes*8;c->post_total_bytes+=c->post_overflow_bytes;c->post_total_bits+=c->post_overflow_bits;
+ c->ack_delivery=(CohInitialDelivery){UINT64_MAX-20001,UINT64_MAX-20000,UINT64_MAX-19000,65536,16384,131072,3,2,1,1,0,COH_OK,0};c->ready_delivery=c->ack_delivery;c->ready_delivery.first_sent_ms++;
+ #define BOUNDED_STRESS(name,value) active->receive.name=COH_RECEIVE_COUNT_MAX;
+ COH_RECEIVE_FIELDS(BOUNDED_STRESS)
+ #undef BOUNDED_STRESS
+ stress_request=1;CHECK(JNI(report)(&env,NULL,current)&&strlen(report_text)<7168&&!strstr(report_text,"REPORT_LIMIT")&&!strstr(report_text,"REPORT_UNAVAILABLE")&&!strstr(report_text,"report_core_limit"));
+ CHECK(strstr(report_text,"\"initial_observed\":true")&&strstr(report_text,"\"power_unresolved\":[343,343,")&&strstr(report_text,"\"post_totals\":[128,536870912,4294967296,")&&strstr(report_text,"\"ack_delivery\":[")&&strstr(report_text,"\"ready_delivery\":[")&&strstr(report_text,"\"continuation_abort\":\"message limit\""));stress_request=0;capture.d.continuation=saved;
+}
+#endif
 static void unresolved_power(const char *path,unsigned count){
  fixture();CHECK(slots_configure(path)==COH_OK);partcount_fixture=1;
  uint8_t tail[128]={0};size_t tail_bits=last_full_bits-last_power_begin-1;CHECK(tail_bits<=sizeof(tail)*8);
@@ -117,6 +134,9 @@ static void unresolved_power(const char *path,unsigned count){
  CHECK(active->initial_outer.power_scratch_bytes>0&&active->initial_outer.power_scratch_bytes<=COH_ORIGINAL_COSTUME_WORKSPACE_BYTES);
  last_inventory_begin=active->initial_outer.inventory_begin_bit;last_inventory_end=active->initial_outer.inventory_end_bit;
  CHECK(strstr(outer_report(),"\"costume_next_kind\":\"implementation remaining\"")&&strstr(report_text,"\"power_unresolved\":["));
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ bounded_report_stress();
+#endif
  check_replay();finish();CHECK(!map_live&&!live);
 }
 static void test_pack(size_t *at,unsigned width,uint32_t value){while(width<32&&value>=(UINT32_C(1)<<width)-1u){uint32_t step=(UINT32_C(1)<<width)-1u;set_bits(multi_packet,*at,width,step);*at+=width;value-=step;width=width>16?32:width*2;}set_bits(multi_packet,*at,width,value);*at+=width;}

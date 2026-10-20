@@ -680,13 +680,28 @@ static int append_string(char *out,size_t capacity,size_t *used,const char *text
     return i<maximum&&append(out,capacity,used,"\"");
 }
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+static int delivery_json(char*out,size_t capacity,size_t*used,const char*name,const CohInitialDelivery*d){
+ char row[384];int n=snprintf(row,sizeof(row),",\"%s\":[%llu,%llu,%llu,%u,%u,%u,%u,%u,%u,%u,%llu,%u,%u]",name,(unsigned long long)d->queued_ms,(unsigned long long)d->first_sent_ms,(unsigned long long)d->last_sent_ms,d->payload_bytes,d->payload_bits,d->attempts,d->accepted,d->accepted_retries,d->deferred,d->failures,(unsigned long long)d->accepted_wire_bytes,d->last_status,d->counter_overflow);
+ return n>0&&(size_t)n<sizeof(row)&&append(out,capacity,used,row);
+}
+#endif
 static int initial_flow_json(char*out,size_t capacity,const Interop*h,const CohInitialCaptureDiagnostics*d){
  const CohOriginalCommandTailReport*r=&h->initial_commands;const CohInitialContinuation*c=&d->continuation;
- const char*next=c->post_window_complete?"post-update window complete":c->client_ready_queued?"waiting for next full entity transaction":initial_complete(h)?"packet EOF":h->initial_packet_tail.source_tail_complete?"application command tail":h->initial_packet_tail.stage?coh_original_initial_field_name(h->initial_packet_tail.stage):rare_next(&h->initial_rare);
+ const char*next=
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ c->abort_reason?coh_initial_abort_name(c->abort_reason):
+#endif
+ c->post_window_complete?"post-update window complete":c->client_ready_queued?"waiting for next full entity transaction":initial_complete(h)?"packet EOF":h->initial_packet_tail.source_tail_complete?"application command tail":h->initial_packet_tail.stage?coh_original_initial_field_name(h->initial_packet_tail.stage):rare_next(&h->initial_rare);
  int n=snprintf(out,capacity,",\"initial_command_tail\":[%u,%llu,%llu,%u,%u,%u,%u],\"initial_packet_complete\":%s,\"initial_continuation\":[%u,%u,%u,%u,%u,%u,%u,%u,%u,%u],\"completion_status\":%u,\"post_position\":[%u,%u,%u,%u,%u,%u,%u],\"initial_next\":\"%s\",\"post_commands\":[",status_number(r->status),(unsigned long long)r->begin_bit,(unsigned long long)r->end_bit,r->commands_read,r->terminator,r->tail_complete,r->active_command,initial_complete(h)?"true":"false",c->initial_complete,c->full_update_ack_queued,c->client_ready_queued,c->full_update_ack_sent,c->client_ready_sent,c->waiting_for_full_update,c->received_character_queued,c->post_messages,c->post_window_complete,c->post_row_overflow,status_number(h->completion_status),h->post_position_packets,h->post_position_fields,h->post_position_changes,h->post_position_stationary,h->post_position_absent,h->post_position_unsupported,status_number(h->post_position_status),next);
  if(n<=0||(size_t)n>=capacity){return 0;}size_t used=(size_t)n;
  for(unsigned i=0;i<c->post_rows&&i<COH_INITIAL_POST_COMMAND_ROWS;i++){const CohInitialPostCommand*p=&c->post[i];char row[128];n=snprintf(row,sizeof(row),"%s[%u,%u,%llu,%llu,%u,%u]",i?",":"",(unsigned)p->kind,p->count,(unsigned long long)p->total_bytes,(unsigned long long)p->total_bits,p->min_bytes,p->max_bytes);if(n<=0||(size_t)n>=sizeof(row)||!append(out,capacity,&used,row))return 0;}
- return append(out,capacity,&used,"]");
+ if(!append(out,capacity,&used,"]"))return 0;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ char totals[512];n=snprintf(totals,sizeof(totals),",\"continuation_policy\":[%u,1],\"continuation_time_basis\":\"owner_monotonic_ms\",\"continuation_abort\":\"%s\",\"post_totals\":[%u,%llu,%llu,%u,%u,%llu,%llu,%llu,%llu,%u,%u,%llu,%llu]",COH_INITIAL_POST_DURATION_MS,coh_initial_abort_name(c->abort_reason),c->post_messages,(unsigned long long)c->post_total_bytes,(unsigned long long)c->post_total_bits,c->post_unclassified,c->post_row_overflow,(unsigned long long)c->post_overflow_bytes,(unsigned long long)c->post_overflow_bits,(unsigned long long)c->post_first_ms,(unsigned long long)c->post_last_ms,c->post_before_send,c->post_between_sends,(unsigned long long)c->post_begin_ms,(unsigned long long)c->post_end_ms);
+ if(n<=0||(size_t)n>=sizeof(totals)||!append(out,capacity,&used,totals)||!delivery_json(out,capacity,&used,"ack_delivery",&c->ack_delivery)||!delivery_json(out,capacity,&used,"ready_delivery",&c->ready_delivery))return 0;
+#endif
+ return 1;
 }
 #endif
 /* An actual selected-self wire pose already parsed from this one ALLENTS loan.
@@ -757,7 +772,12 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     if(h->busy)return (*env)->NewStringUTF(env,"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"OWNER_BUSY\",\"owner_present\":true,\"initial_observation_known\":false,\"initial_observed\":null,\"report_truncated\":true,\"packet_copy_retained\":false,\"world_authority\":false}");
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
-    char initial_flow[2048];if(!initial_flow_json(initial_flow,sizeof(initial_flow),h,&d))return (*env)->NewStringUTF(env,"{\"phase\":\"REPORT_UNAVAILABLE\",\"initial_observation_known\":false}");
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+    char initial_flow[3072];
+#else
+    char initial_flow[2048];
+#endif
+    if(!initial_flow_json(initial_flow,sizeof(initial_flow),h,&d))return (*env)->NewStringUTF(env,"{\"phase\":\"REPORT_UNAVAILABLE\",\"initial_observation_known\":false}");
 #endif
     const CohLocalDiagnostics *local=&d.local;const CohMapDiagnostics *map=&local->map_protocol;
     const CohNetUdpDiagnostics *udp=&map->udp;

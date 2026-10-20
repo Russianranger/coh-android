@@ -91,6 +91,13 @@ target_link_options(coh_combined_interop PRIVATE -Wl,--no-undefined -Wl,-z,defs
     -Wl,--exclude-libs,ALL)
 target_link_libraries(coh_combined_interop PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcrypto.a" z dl m)
 
+option(COH_BOUNDED_CONTINUATION_DIAGNOSTIC "Next diagnostic:20-second window and one accepted retry per ACK/READY" OFF)
+if(COH_BOUNDED_CONTINUATION_DIAGNOSTIC)
+    if(NOT COH_FRAME_CAPTURE_DIAGNOSTIC)
+        message(FATAL_ERROR "Bounded continuation requires the complete-source capture diagnostic")
+    endif()
+    target_compile_definitions(coh_combined_interop PRIVATE COH_BOUNDED_CONTINUATION_DIAGNOSTIC=1)
+endif()
 if(COH_FRAME_CAPTURE_DIAGNOSTIC)
     target_sources(coh_combined_interop PRIVATE "${ENGINE}/entities/coh_original_ent_costume.c"
         "${ENGINE}/entities/coh_original_taskforce_receive.c"

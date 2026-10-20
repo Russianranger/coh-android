@@ -15,7 +15,11 @@ typedef enum { COH_INITIAL_CAPTURE_NONE,COH_INITIAL_CAPTURE_GROUPS,
  COH_INITIAL_CAPTURE_ALLENTS,COH_INITIAL_CAPTURE_UPDATE } CohInitialCaptureKind;
 #define COH_INITIAL_POST_COMMAND_ROWS 16u
 #define COH_INITIAL_POST_MESSAGES_MAX 128u
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+#define COH_INITIAL_POST_DURATION_MS 20000u
+#else
 #define COH_INITIAL_POST_DURATION_MS 10000u
+#endif
 /* Explicit diagnostic domain, not limits asserted by the original sender. */
 #define COH_INITIAL_EDIT_MESSAGE_BYTES_MAX 16384u /* includes terminating NUL */
 #define COH_INITIAL_EDIT_MESSAGES_MAX 16u
@@ -39,12 +43,39 @@ typedef enum { COH_INITIAL_CAPTURE_COMMAND_NONE,COH_INITIAL_CAPTURE_COMMAND_UNKN
 } CohInitialCaptureCommandKind;
 const char *coh_initial_capture_command_name(CohInitialCaptureCommandKind);
 typedef struct {CohInitialCaptureCommandKind kind;uint32_t count,min_bytes,max_bytes;uint64_t total_bytes,total_bits;} CohInitialPostCommand;
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+typedef enum {COH_INITIAL_ABORT_NONE,COH_INITIAL_ABORT_DEADLINE,
+ COH_INITIAL_ABORT_MESSAGE_LIMIT,COH_INITIAL_ABORT_PEER_CLOSED,
+ COH_INITIAL_ABORT_TRANSPORT_TIMEOUT,COH_INITIAL_ABORT_TRANSPORT_IO,
+ COH_INITIAL_ABORT_MESSAGE,COH_INITIAL_ABORT_CANCELLED,
+ COH_INITIAL_ABORT_OBSERVER,COH_INITIAL_ABORT_RELEASE,COH_INITIAL_ABORT_OWNER,
+ COH_INITIAL_ABORT_QUEUE,COH_INITIAL_ABORT_CLIENT_CLOSED}CohInitialAbort;
+/* Callback acceptance is an OS UDP send, not peer delivery. Retries retain
+ * their original reliable Tx ID. All times use the owner monotonic clock. */
+typedef struct{
+ uint64_t queued_ms,first_sent_ms,last_sent_ms,accepted_wire_bytes;
+ uint32_t payload_bytes,payload_bits,attempts,accepted,accepted_retries,
+  deferred,failures,last_status,counter_overflow;
+}CohInitialDelivery;
+static inline const char *coh_initial_abort_name(CohInitialAbort reason){static const char*const names[]={"none","20-second deadline","message limit","peer disconnected","transport retry timeout","transport I/O failure","invalid message","cancelled","observer failure","payload release failure","owner failure","queue failure","client closed"};return (unsigned)reason<sizeof(names)/sizeof(names[0])?names[reason]:"unknown abort";}
+#endif
 typedef struct {
  uint32_t initial_complete,full_update_ack_queued,client_ready_queued,
   waiting_for_full_update,received_character_queued,post_messages,post_rows,
   post_row_overflow,post_window_complete,full_update_ack_sent,client_ready_sent;
  uint64_t post_begin_ms,post_end_ms;
  CohInitialPostCommand post[COH_INITIAL_POST_COMMAND_ROWS];
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+ /* The hard deadline starts at ACK queueing; post_begin_ms records the
+  * earliest accepted ACK or READY. Totals include every owned application
+  * message, including before/between sends and category overflow. The category
+  * is only the first normalized command; UDP control traffic has UDP counters. */
+ CohInitialDelivery ack_delivery,ready_delivery;
+ uint64_t post_total_bytes,post_total_bits,post_overflow_bytes,post_overflow_bits,
+  post_first_ms,post_last_ms;
+ uint32_t post_unclassified,post_before_send,post_between_sends;
+ CohInitialAbort abort_reason;
+#endif
 } CohInitialContinuation;
 /* Exact event ADDRESS is a synchronous loan key, not caller-populated labels.
  * No pointer inside this value grants ownership or durable session authority. */

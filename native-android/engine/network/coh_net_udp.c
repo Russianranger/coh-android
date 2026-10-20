@@ -152,6 +152,13 @@ CohStatus coh_net_udp_queue(CohNetUdp *u,CohBytes data,uint32_t bits,int reliabl
     if(s==COH_OK)u->clock_ms=now;
     return s;
 }
+CohStatus coh_net_udp_queue_retries(CohNetUdp*u,CohBytes data,uint32_t bits,int reliable,int ordered,int compressed,unsigned retries,uint64_t now){
+    if(!u||u->diagnostics.state!=COH_UDP_ACTIVE)return COH_STATE;
+    if(now<u->clock_ms)return COH_INVALID;
+    CohStatus s=coh_net_queue_retries(u->link,data,bits,reliable,ordered,compressed,retries,now);
+    if(s==COH_OK)u->clock_ms=now;
+    return s;
+}
 CohStatus coh_net_udp_next(CohNetUdp *u,CohNetMessage *out) {
     if(!u||!out)return COH_INVALID;
     if(u->diagnostics.state!=COH_UDP_ACTIVE)return COH_STATE;

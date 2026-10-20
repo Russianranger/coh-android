@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct { CohNetPacket packet;uint64_t last_ms;unsigned retries;uint8_t used,sent,reliable; } Tx;
+typedef struct { CohNetPacket packet;uint64_t last_ms;unsigned retries;uint8_t used,sent,reliable,retry_limit; } Tx;
 typedef struct { CohNetMessage message;uint8_t used; } Rx;
 typedef struct {
     CohNetPacket parts[COH_NET_FRAGMENT_MAX];uint64_t start_ms;
@@ -63,10 +63,10 @@ CohStatus coh_net_set_key_exchange(CohNet *n,CohNetKeyExchange exchange,void *co
     n->key_exchange=exchange;n->key_context=context;n->require_encryption=(uint8_t)required;return COH_OK;
 }
 static unsigned tx_free(const CohNet *n) { unsigned c=0;for(unsigned i=0;i<COH_NET_TX_MAX;i++)c+=!n->tx[i].used;return c; }
-static CohStatus queue_raw(CohNet *n,CohBytes data,uint32_t bits,int reliable,int ordered,int compressed,int connect,uint64_t now) {
+static CohStatus queue_raw(CohNet *n,CohBytes data,uint32_t bits,int reliable,int ordered,int compressed,int connect,unsigned retry_limit,uint64_t now) {
     if(!data.data||!bits||bits>COH_NET_MESSAGE_MAX*8||data.size<((size_t)bits+7)/8||
        (reliable!=0&&reliable!=1)||(ordered!=0&&ordered!=1)||(compressed!=0&&compressed!=1)||
-       (ordered&&(!reliable||n->config.version<5))||(compressed&&(!n->config.version||(bits&7))))return COH_INVALID;
+       retry_limit>n->config.max_retries||(ordered&&(!reliable||n->config.version<5))||(compressed&&(!n->config.version||(bits&7))))return COH_INVALID;
     size_t size=((size_t)bits+7)/8;
     /* Conservatively reserve for the uncompressed maximum before advancing a
      * streaming zlib dictionary. Compression can only reduce this reservation. */
@@ -84,7 +84,7 @@ static CohStatus queue_raw(CohNet *n,CohBytes data,uint32_t bits,int reliable,in
     uint32_t sibling=count>1?++n->next_sibling:0,order=ordered?++n->next_ordered:0;
     for(unsigned part=0;part<count;part++) {
         unsigned slot=0;while(n->tx[slot].used)slot++;
-        Tx *t=&n->tx[slot];memset(t,0,sizeof(*t));t->used=1;t->reliable=(uint8_t)reliable;t->last_ms=now;
+        Tx *t=&n->tx[slot];memset(t,0,sizeof(*t));t->used=1;t->reliable=(uint8_t)reliable;t->retry_limit=(uint8_t)retry_limit;t->last_ms=now;
         CohNetPacket *p=&t->packet;p->id=++n->next_id;p->sibling_id=sibling;
         p->sibling_count=count>1?count:0;p->sibling_part=count>1?part:0;
         p->ordered=(uint8_t)ordered;p->ordered_id=order;p->compressed=(uint8_t)compressed;p->connect=(uint8_t)connect;
@@ -101,20 +101,25 @@ static CohStatus control(CohNet *n,uint32_t cmd,int has_value,uint32_t value,uin
         if(cmd)(void)coh_protocol_write_pack(&b,1,cmd);
     }else(void)coh_protocol_write_pack(&b,1,cmd);
     if(has_value)(void)coh_protocol_write_pack(&b,1,value);
-    return queue_raw(n,(CohBytes){data,(b.bit_length+7)/8},(uint32_t)b.bit_length,cmd!=0&&cmd!=6,0,0,cmd==1,now);
+    return queue_raw(n,(CohBytes){data,(b.bit_length+7)/8},(uint32_t)b.bit_length,cmd!=0&&cmd!=6,0,0,cmd==1,n->config.max_retries,now);
 }
 CohStatus coh_net_begin(CohNet *n,uint32_t connect_id,uint64_t now) {
     if(!n||n->state!=COH_NET_IDLE)return COH_STATE;
     uint8_t data[40]={0};CohProtocolBits b;(void)coh_protocol_bits_init(&b,data,sizeof(data),0,1);
     (void)coh_protocol_write_pack(&b,1,1);(void)coh_protocol_write_pack(&b,1,connect_id);
     (void)coh_protocol_write_pack(&b,1,n->config.version);
-    CohStatus s=queue_raw(n,(CohBytes){data,(b.bit_length+7)/8},(uint32_t)b.bit_length,1,0,0,1,now);
+    CohStatus s=queue_raw(n,(CohBytes){data,(b.bit_length+7)/8},(uint32_t)b.bit_length,1,0,0,1,n->config.max_retries,now);
     if(s==COH_OK){n->state=COH_NET_CONNECTING;n->start_ms=n->last_rx_ms=n->last_clock_ms=now;}return s;
 }
 CohStatus coh_net_queue(CohNet *n,CohBytes data,uint32_t bits,int reliable,int ordered,int compressed,uint64_t now) {
     if(!n||n->state!=COH_NET_CONNECTED)return COH_STATE;
     if(now<n->last_clock_ms)return COH_INVALID;
-    return queue_raw(n,data,bits,reliable,ordered,compressed,0,now);
+    return queue_raw(n,data,bits,reliable,ordered,compressed,0,n->config.max_retries,now);
+}
+CohStatus coh_net_queue_retries(CohNet*n,CohBytes data,uint32_t bits,int reliable,int ordered,int compressed,unsigned retries,uint64_t now){
+    if(!n||n->state!=COH_NET_CONNECTED)return COH_STATE;
+    if(now<n->last_clock_ms||retries>n->config.max_retries)return COH_INVALID;
+    return queue_raw(n,data,bits,reliable,ordered,compressed,0,retries,now);
 }
 static void clear_queues(CohNet *n) {
     free_owned(n);
@@ -159,7 +164,7 @@ CohStatus coh_net_pump(CohNet *n,uint64_t now,CohNetSend send,void *context,CohC
         if(!t)break;
         previous=t->packet.id;
         if(t->sent&&now-t->last_ms<coh_net_retry_ms(t->retries,n->config.ping_ms,0))continue;
-        if(t->sent&&t->retries>=n->config.max_retries)return timeout(n);
+        if(t->sent&&t->retries>=t->retry_limit)return timeout(n);
         if(cancel.poll&&cancel.poll(cancel.context)){coh_net_cancel(n);return COH_CANCELLED;}
         CohNetPacket p=t->packet;
         /* Keep the original non-debug 28-byte header allowance. pktWrap
@@ -224,7 +229,7 @@ static CohStatus process_control(CohNet *n,const CohNetMessage *m,uint64_t now,i
             (void)coh_protocol_write_pack(&reply,1,3);(void)coh_protocol_write_pack(&reply,1,1);
             size_t key_at=(reply.cursor+7)&~(size_t)7;memcpy(ack+key_at/8,own,sizeof(own));
             uint32_t bits=(uint32_t)(key_at+512);
-            s=queue_raw(n,(CohBytes){ack,(bits+7)/8},bits,1,0,0,0,now);
+            s=queue_raw(n,(CohBytes){ack,(bits+7)/8},bits,1,0,0,0,n->config.max_retries,now);
             if(s==COH_OK){n->key=key;n->decrypt_on=1;n->state=COH_NET_WAIT_FINAL;}
             erase(&key,sizeof(key));return s;
         }

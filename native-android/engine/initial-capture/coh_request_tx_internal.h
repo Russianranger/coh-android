@@ -8,6 +8,7 @@ void coh_request_tx_hook_link(const void *udp,const void *net);
 void coh_request_tx_hook_queue(const void *net,uint32_t id,unsigned parts,
  int reliable,int ordered,int compressed,int connect,int sent,uint64_t);
 void coh_request_tx_hook_send_begin(const void *net,uint32_t id,int sent,uint64_t);
+void coh_request_tx_hook_frame(const void *net,uint32_t id,size_t wire_bytes);
 void coh_request_tx_hook_send(const void *net,uint32_t id,int sent,CohStatus,uint64_t);
 void coh_request_tx_hook_ack(const void *net,uint32_t id,uint64_t);
 void coh_request_tx_hook_retire(const void *net,CohRequestTxRetirement);
@@ -15,6 +16,9 @@ void coh_request_tx_hook_retire(const void *net,CohRequestTxRetirement);
 /* Scalar observers for the two concrete continuation Tx IDs. */
 void coh_initial_tx_link(const void *udp,const void *net);
 void coh_initial_tx_queue(const void *net,uint32_t id,unsigned parts,int reliable,int ordered,int compressed,int connect,int sent);
-void coh_initial_tx_send(const void *net,uint32_t id,CohStatus);
+void coh_initial_tx_send(const void *net,uint32_t id,int sent,CohStatus,uint64_t);
+#ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+void coh_initial_tx_frame(const void *net,uint32_t id,size_t wire_bytes);
+#endif
 #endif
 #endif

@@ -119,6 +119,40 @@ def separate_report_extension(value, required=False):
                  and row[2] <= 536870912 and row[3] <= 4294967296, 'post command metadata domains')
             kinds.add(row[0])
         need(sum(row[1] for row in rows) + flow[9] == flow[7], 'post command aggregate count')
+        bounded_keys = {'continuation_policy', 'continuation_time_basis', 'continuation_abort',
+                        'post_totals', 'ack_delivery', 'ready_delivery'}
+        if bounded_keys.intersection(value):
+            need(bounded_keys <= value.keys(), 'partial bounded continuation metadata')
+            need(value['continuation_policy'] == [20000, 1]
+                 and value['continuation_time_basis'] == 'owner_monotonic_ms', 'bounded continuation policy')
+            need(value['continuation_abort'] in ('none', '20-second deadline', 'message limit',
+                 'peer disconnected', 'transport retry timeout', 'transport I/O failure', 'invalid message',
+                 'cancelled', 'observer failure', 'payload release failure', 'owner failure',
+                 'queue failure', 'client closed'), 'bounded continuation end reason')
+            totals = value['post_totals']
+            need(isinstance(totals, list) and len(totals) == 13
+                 and all(type(item) is int and 0 <= item <= 0xffffffffffffffff for item in totals), 'bounded message totals shape')
+            need(totals[0] == flow[7] and totals[4] == flow[9]
+                 and totals[1] == sum(row[2] for row in rows) + totals[5]
+                 and totals[2] == sum(row[3] for row in rows) + totals[6]
+                 and totals[1] <= 536870912 and totals[2] <= 4294967296
+                 and totals[3] <= totals[0] and totals[9] + totals[10] <= totals[0]
+                 and (not totals[0] or totals[7] <= totals[8]), 'bounded all-message accounting')
+            accepted_times = []
+            for key, queued, sent in (('ack_delivery', flow[1], flow[3]), ('ready_delivery', flow[2], flow[4])):
+                row = value[key]
+                need(isinstance(row, list) and len(row) == 13
+                     and all(type(item) is int and 0 <= item <= 0xffffffffffffffff for item in row), 'bounded delivery shape')
+                need(row[6] <= 2 and row[7] <= 1 and row[12] <= 1 and row[11] <= 7
+                     and (row[12] or row[6] + row[8] + row[9] == row[5])
+                     and row[7] <= row[6] and bool(row[6]) == bool(sent)
+                     and (not row[6] or queued and row[0] <= row[1] <= row[2])
+                     and row[3] == (row[4] + 7) // 8 and row[4] <= 16384 * 8,
+                     'bounded accepted/deferred delivery domains')
+                if row[6]:
+                    accepted_times.append(row[1])
+            need(not accepted_times or totals[11] == min(accepted_times), 'response window actual-send anchor')
+            flow_keys |= bounded_keys
         value = {key: item for key, item in value.items() if key not in flow_keys}
     if 'initial_packet_tail' in value or 'initial_packet_next' in value:
         tail = value.get('initial_packet_tail')
