@@ -90,6 +90,8 @@ CohStatus coh_bridge_surface_lost(CohAssetRenderBridge *,uint32_t generation,
                                   int context_alive);
 void coh_bridge_trim(CohAssetRenderBridge *,int context_alive);
 CohBridgeStats coh_bridge_stats(const CohAssetRenderBridge *);
+/* Actual live uploaded RGBA payloads; driver allocation overhead is separate. */
+size_t coh_bridge_gpu_bytes(const CohAssetRenderBridge *);
 #ifdef __cplusplus
 }
 #endif

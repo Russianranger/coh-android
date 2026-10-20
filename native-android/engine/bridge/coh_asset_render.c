@@ -435,3 +435,9 @@ void coh_bridge_trim(CohAssetRenderBridge *b,int alive) {
 CohBridgeStats coh_bridge_stats(const CohAssetRenderBridge *b) {
     CohBridgeStats s;memset(&s,0,sizeof(s));return b?b->stats:s;
 }
+
+size_t coh_bridge_gpu_bytes(const CohAssetRenderBridge *b) {
+    size_t bytes=0;if(b)for(uint32_t i=0;i<b->limits.textures;i++)
+        if(b->textures[i].handle)bytes+=b->textures[i].bytes;
+    return bytes;
+}

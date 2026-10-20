@@ -15,6 +15,10 @@ typedef struct {
 } CohSessionWorldStats;
 int coh_session_world_create(const void *,size_t,CohSessionWorld **,char *,size_t);
 void coh_session_world_destroy(CohSessionWorld **);
+/* Query on the render owner thread between draws. CPU includes concrete owned
+ * allocations; input bundle bytes borrow Session assets and are counted by the
+ * parent. GPU counts live buffer/texture payloads, not unknown driver overhead. */
+int coh_session_world_owned_bytes(const CohSessionWorld *,uint64_t *cpu,uint64_t *gpu);
 int coh_session_world_surface(CohSessionWorld *,const float view[12],
                               const float projection[16],const float center[3],
                               float radius,CohSessionWorldStats *,char *,size_t);

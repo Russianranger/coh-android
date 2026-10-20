@@ -22,6 +22,7 @@ CohStatus coh_renderer_gles_recreate(CohGlesRenderer *,
 void coh_renderer_gles_destroy(CohGlesRenderer *, int context_alive);
 const char *coh_renderer_gles_shader_log(const CohGlesRenderer *);
 size_t coh_renderer_gles_buffer_bytes(const CohGlesRenderer *);
+size_t coh_renderer_gles_owned_bytes(const CohGlesRenderer *);
 #ifdef __cplusplus
 }
 #endif

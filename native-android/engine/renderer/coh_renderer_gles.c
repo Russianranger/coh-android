@@ -314,3 +314,5 @@ const char *coh_renderer_gles_shader_log(const CohGlesRenderer *g) {
 size_t coh_renderer_gles_buffer_bytes(const CohGlesRenderer *g) {
   return g ? g->bytes : 0;
 }
+
+size_t coh_renderer_gles_owned_bytes(const CohGlesRenderer *g) {return g?sizeof *g:0;}

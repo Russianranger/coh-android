@@ -260,3 +260,16 @@ void coh_session_world_destroy(CohSessionWorld **pointer) {
     if(w->loader)(void)coh_asset_destroy(&w->loader);
     free(w);*pointer=NULL;
 }
+
+int coh_session_world_owned_bytes(const CohSessionWorld *w,uint64_t *cpu,uint64_t *gpu) {
+    if(!w||!cpu||!gpu||cpu==gpu)return 0;
+    uintptr_t lo=(uintptr_t)w,hi=lo+sizeof *w,a=(uintptr_t)cpu,b=(uintptr_t)gpu;
+    if(hi<lo||a>UINTPTR_MAX-sizeof *cpu||b>UINTPTR_MAX-sizeof *gpu||
+       (a<hi&&lo<a+sizeof *cpu)||(b<hi&&lo<b+sizeof *gpu)||
+       (a<b+sizeof *gpu&&b<a+sizeof *cpu))return 0;
+    uint64_t c=sizeof *w+coh_world_map_stats(w->map).allocated_bytes+
+        coh_asset_stats(w->loader).allocated_bytes+coh_bridge_stats(w->bridge).allocated_bytes+
+        coh_renderer_stats(w->renderer).owned_bytes+coh_renderer_gles_owned_bytes(w->gles);
+    uint64_t g=coh_renderer_gles_buffer_bytes(w->gles)+coh_bridge_gpu_bytes(w->bridge)+(w->debug_white?4u:0u);
+    *cpu=c;*gpu=g;return 1;
+}

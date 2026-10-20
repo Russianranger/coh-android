@@ -55,6 +55,7 @@ def render(library, bundle, world_bin, work):
         e.gf(name, result, args)
     lib.coh_session_world_create.argtypes = [C.c_void_p, Z, C.POINTER(C.c_void_p), C.c_void_p, Z]
     lib.coh_session_world_destroy.argtypes = [C.POINTER(C.c_void_p)]
+    lib.coh_session_world_owned_bytes.argtypes = [C.c_void_p, C.POINTER(Q), C.POINTER(Q)]
     for name in ('coh_session_world_surface', 'coh_session_world_draw_observed'):
         getattr(lib, name).argtypes = [C.c_void_p, C.POINTER(F), C.POINTER(F), C.POINTER(F), F, C.POINTER(gpu.WorldStats), C.c_void_p, Z]
     lib.coh_session_world_observed_entity.argtypes = [C.c_void_p, C.POINTER(F), C.POINTER(F), U, C.POINTER(F), C.POINTER(gpu.WorldStats), C.c_void_p, Z]
@@ -100,12 +101,21 @@ def render(library, bundle, world_bin, work):
         combined = read(); changed = sum(floor[i:i + 4] != combined[i:i + 4] for i in range(0, len(floor), 4)); assert changed > 4, changed
         from PIL import Image
         Image.frombytes('RGBA', (256, 256), combined).transpose(Image.Transpose.FLIP_TOP_BOTTOM).save(work / 'world-and-box.png')
+        cpu, gpu_bytes = Q(), Q()
+        assert not lib.coh_session_world_owned_bytes(None, C.byref(cpu), C.byref(gpu_bytes))
+        assert not lib.coh_session_world_owned_bytes(world, C.byref(cpu), C.byref(cpu))
+        assert lib.coh_session_world_owned_bytes(world, C.byref(cpu), C.byref(gpu_bytes))
+        assert cpu.value > stats.owned_cpu_bytes and gpu_bytes.value == stats.gpu_bytes + 1310720
+        concrete = {'owned_cpu_bytes': cpu.value, 'owned_gpu_payload_bytes': gpu_bytes.value, 'borrowed_bundle_bytes_counted_by_parent': len(bundle)}
         baseline = gpu.values(lib.coh_stream_test_bridge_stats(world))
         for _ in range(32): invoke('coh_session_world_draw_observed')
         after = gpu.values(lib.coh_stream_test_bridge_stats(world)); assert after == baseline
-        lib.coh_session_world_surface_lost(world, 0, C.byref(stats)); e.recreate_context(); target(); invoke('coh_session_world_surface')
+        lib.coh_session_world_surface_lost(world, 0, C.byref(stats))
+        assert lib.coh_session_world_owned_bytes(world, C.byref(cpu), C.byref(gpu_bytes)) and gpu_bytes.value == 0
+        assert cpu.value < concrete['owned_cpu_bytes']
+        e.recreate_context(); target(); invoke('coh_session_world_surface')
         recreated = gpu.values(lib.coh_stream_test_bridge_stats(world)); assert recreated['allocated_bytes'] == baseline['allocated_bytes'] and recreated['mesh_loads'] == baseline['mesh_loads']
-        return {'passed': True, 'scope': 'actual Mesa host GLES, not Thor', 'identity': e.identity, 'selected_instances': stats.selected_instances, 'world_draw_packets': stats.draw_packets, 'visible_world_pixels': visible, 'box_changed_pixels': changed, 'gl_errors': 0, 'context_recreate': True, 'unchanged_cpu_owner_over_32_draws': True, 'asset_owner': gpu.values(lib.coh_stream_test_asset_stats(world)), 'bridge_owner': recreated, 'gpu_buffer_bytes': stats.gpu_bytes, 'image': str(work / 'world-and-box.png')}
+        return {'passed': True, 'scope': 'actual Mesa host GLES, not Thor', 'identity': e.identity, 'selected_instances': stats.selected_instances, 'world_draw_packets': stats.draw_packets, 'visible_world_pixels': visible, 'box_changed_pixels': changed, 'gl_errors': 0, 'context_recreate': True, 'unchanged_cpu_owner_over_32_draws': True, 'asset_owner': gpu.values(lib.coh_stream_test_asset_stats(world)), 'bridge_owner': recreated, 'gpu_buffer_bytes': stats.gpu_bytes, 'concrete_owner': concrete, 'image': str(work / 'world-and-box.png')}
     finally:
         if world:
             lib.coh_session_world_surface_lost(world, 1, C.byref(stats)); lib.coh_session_world_destroy(C.byref(world)); assert not world.value
