@@ -88,7 +88,7 @@ public final class ServerService extends Service {
                 .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states((Boolean)null,(String)serverMemory.snapshot().get("reason"))))
                 .put("imports",importStatus).put("message",message).put("progress_done",progressDone).put("progress_total",progressTotal)
                 .put("server",new JSONObject().put("phase",phase).put("ready",ready).put("session_id",session).put("guest_exit_code",guestExit).put("owned_process_alive",guest!=null&&guest.isAlive())
-                    .put("failure_code",d.failure).put("last_stage",d.stage).put("elapsed_ms",d.elapsedMs).put("stage_elapsed_ms",d.stageElapsedMs).put("stages",stages))
+                    .put("failure_code",d.failure).put("failure_reason",d.failureReason).put("last_stage",d.stage).put("elapsed_ms",d.elapsedMs).put("stage_elapsed_ms",d.stageElapsedMs).put("stages",stages))
                 .put("local_development_auth",true).put("real_authserver_login_verified",false).put("native_live_world_verified",false)
                 .put("old_application_modified",false).put("updated_elapsed_ms",SystemClock.elapsedRealtime());
             synchronized(events){out.put("events",new JSONArray(events.toString()));}
@@ -105,8 +105,8 @@ public final class ServerService extends Service {
         final JSONObject prior=name.equals("starting")?snapshot():null;
         busy=true;ready=false;phase=name;stopRequested=false;progressDone=progressTotal=0;control=new ImportContract.Control();final ImportContract.Control operationControl=control;revoke();event(name);foreground();save();
         owner.execute(()->{
-            try{initialize();if(prior!=null)archiveAttempt(prior);operation.run(operationControl);if(!name.equals("starting")){phase="stopped";message="Operation complete. Start the server when ready.";}}
-            catch(Exception e){if(name.equals("starting"))diagnostics.failure(session,"SERVER_ADMISSION_FAILED");fail(e);}finally{if(name.equals("starting")){diagnostics.finish(SystemClock.elapsedRealtime());if(guest==null||!guest.isAlive())MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.SERVER_STOPPED);}ready=false;revoke();try{refresh();}catch(Exception ignored){}releaseWake();synchronized(this){if(control==operationControl)control=null;busy=false;}save();}
+            try{if(prior!=null){beginServerAttempt();diagnostics.stage(session,"initialize_server_inputs",SystemClock.elapsedRealtime());}initialize();if(prior!=null){diagnostics.stage(session,"archive_previous_server_attempt",SystemClock.elapsedRealtime());archiveAttempt(prior);}operation.run(operationControl);if(!name.equals("starting")){phase="stopped";message="Operation complete. Start the server when ready.";}}
+            catch(Exception e){if(name.equals("starting")){diagnostics.failure(session,"SERVER_ADMISSION_FAILED",e);android.util.Log.w("CoHNativeCombined","SERVER_ADMISSION_FAILED stage="+diagnostics.snapshot(SystemClock.elapsedRealtime()).stage+" reason="+GuestDiagnostics.failureDetail(e));}fail(e);}finally{if(name.equals("starting")){diagnostics.finish(SystemClock.elapsedRealtime());if(guest==null||!guest.isAlive())MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.SERVER_STOPPED);}ready=false;revoke();try{refresh();}catch(Exception ignored){}releaseWake();synchronized(this){if(control==operationControl)control=null;busy=false;}save();}
         });
     }
     public void importDocuments(String kind,List<Uri> documents){
@@ -127,11 +127,14 @@ public final class ServerService extends Service {
         try{write(new File(stateDir,"stop-request"),"stop\n".getBytes(StandardCharsets.US_ASCII));}catch(IOException ignored){}
         message="Stopping owned work and preserving the test profile…";event("stop_requested");save();
     }
-    private void runServer(ImportContract.Control cancellation)throws Exception {
+    private void beginServerAttempt(){
         session=UUID.randomUUID().toString().replace("-","");generation="";guestExit=-1;
         synchronized(resourcesLock){guestResources=new JSONArray();}
         serverMemory=new ServerMemoryPolicy();
         diagnostics.start(session,SystemClock.elapsedRealtime());
+    }
+    private void runServer(ImportContract.Control cancellation)throws Exception {
+        diagnostics.stage(session,"server_input_admission",SystemClock.elapsedRealtime());
         startFreeBytes=getFilesDir().getUsableSpace();
         message="Checking local server inputs…";
         if(!Arrays.asList(Build.SUPPORTED_ABIS).contains("arm64-v8a"))throw new IOException("The server runtime requires an ARM64 Android device");

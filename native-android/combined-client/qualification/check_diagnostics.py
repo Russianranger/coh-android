@@ -53,6 +53,15 @@ public final class DiagnosticsTest {
   need(!GuestDiagnostics.cleanupProved(true,false,true));
   for(Object invalid:new Object[]{false,"true",1,null})need(!GuestDiagnostics.cleanupProved(true,true,invalid));
   d.start(id,0);d.finish(0);need(d.snapshot(1000).elapsedMs==0);
+  GuestDiagnostics early=new GuestDiagnostics();early.start(id,100);early.stage(id,"initialize_server_inputs",100);
+  early.failure(id,"SERVER_ADMISSION_FAILED",new java.io.IOException("Import all verified parts"));early.finish(107);
+  need(early.snapshot(200).elapsedMs==7&&early.snapshot(200).failureReason.equals("IOException: Import all verified parts"));
+  early.failure(id,"SERVER_ADMISSION_FAILED",new IllegalArgumentException("replacement"));need(early.snapshot(200).failureReason.contains("Import all verified parts"));
+  need(GuestDiagnostics.failureDetail(new Exception("private\nline\t\0tail")).equals("Exception: private line  tail"));
+  need(GuestDiagnostics.failureDetail(new Exception("x".repeat(1000))).length()==240);
+  need(GuestDiagnostics.failureDetail(new java.io.IOException()).equals("IOException"));
+  early.start(foreign,300);need(early.snapshot(300).failureReason.isEmpty());
+  early.failure(id,"SERVER_ADMISSION_FAILED",new Exception("stale"));need(early.snapshot(300).failureReason.isEmpty());
   need(Long.valueOf(0).equals(GuestDiagnostics.numericMetric(0)));
   need(Long.valueOf(1L<<50).equals(GuestDiagnostics.numericMetric(1L<<50)));
   for(Object invalid:new Object[]{null,true,"123",1.0,-1,-1L,Long.MAX_VALUE})need(GuestDiagnostics.numericMetric(invalid)==null);
