@@ -1772,10 +1772,14 @@
       "increased": false
     },
     "thor_procedure": [
-      "Install0.1.17 as an update; keep app data, imports, profile and saved character.",
-      "Start the existing local server profile, select the same character, dismiss the Android first-use full-screen hint if shown, and allow at least 15 seconds after pose lock.",
-      "Use the corner button, export the Combined ZIP containing PNG, initial continuation metadata and memory report, then stop the server normally.",
-      "If an existing character/map handoff supplies a different genuine Atlas pose, export that too without rebuilding; do not inject or invent a pose."
+      "Install0.1.17 over0.1.16 without clearing app data; preserve the existing profile and imports.",
+      "Start the existing local server, select the same character and perform the Map handoff once.",
+      "Use Full screen if it does not open automatically; dismiss Android's Got it hint if shown.",
+      "The corner Return to controls button or Android Back exits full screen; Full screen enters again.",
+      "Wait30seconds after the handoff before exporting; do not repeat the handoff during that wait.",
+      "Use the corner return, then Back to the Combined launcher; tap Export report and save the Combined ZIP.",
+      "Check the ZIP includes scene-capture.png at640x360, scene-capture.json and native-client-report.json.",
+      "Stop the local server normally after export; retain the ZIP even if a disconnect or timeout is reported."
     ],
     "apk": {
       "name": "CoH-Native-Combined-0.1.17-fullscreen-diagnostic-arm64.apk",
@@ -3055,6 +3059,115 @@
       "artifact_id": 12298379427,
       "physical_thor_tested": false,
       "production_release": false
+    },
+    "delivery_recovery": {
+      "date": "2026-10-20",
+      "candidate_immutable": true,
+      "new_dispatches_this_recovery": 0,
+      "redispatch_limit": 2,
+      "native_qualification_runs": [
+        {
+          "source_commit": "d7d79bc3221059a42dd5372ddbd93908a8af5cf4",
+          "runs": [
+            {
+              "id": 39497285458,
+              "event": "push",
+              "status": "passed",
+              "scope": "Bootstrap only; dispatched purpose=combined-diagnostic, profile=fullscreen-diagnostic."
+            },
+            {
+              "id": 39497301477,
+              "event": "workflow_dispatch",
+              "purpose": "combined-diagnostic",
+              "status": "failed",
+              "failed_job": "combined-source",
+              "failed_step": "Verify protected inputs and sequential receiver/scene dependencies",
+              "error": "ObservedBridgeTest.java:76: cannot find symbol BuildConfig; cannot find symbol setSceneFullscreen(boolean).",
+              "combined_diagnostic_job": "skipped because combined-source failed",
+              "dispatch_occurred": true,
+              "APK_built": false
+            }
+          ]
+        },
+        {
+          "source_commit": "81a47f8ccef15c26e02b5cbf2feb4b99ac465139",
+          "runs": [
+            {
+              "id": 39498976537,
+              "event": "push",
+              "status": "passed",
+              "scope": "Bootstrap only; dispatched purpose=combined-diagnostic, profile=fullscreen-diagnostic."
+            },
+            {
+              "id": 39498990230,
+              "event": "workflow_dispatch",
+              "purpose": "combined-diagnostic",
+              "status": "failed",
+              "combined_source_job": "passed",
+              "combined_diagnostic_job": "ran; ARM64/x86 builds, lint and package/DSO audits passed",
+              "failed_step": "Exercise Android 13 update, retained profile, preview and lifecycle cleanup",
+              "error": "AssertionError: Renderer retained a stale EGL viewport",
+              "cause": "Fullscreen readiness accepted new Java Surface dimensions before matching EGL dimensions; corrected driver requires coherent epoch and additional fresh frames.",
+              "APK_built": true,
+              "APK_artifact_id": 12298379427
+            }
+          ]
+        }
+      ],
+      "exact_APK_framework_redispatches": [
+        {
+          "id": 39501609996,
+          "source_commit": "d04d8b046033167b7a18634c14015b76eb8d7494",
+          "status": "failed",
+          "failed_step": "Requalify the exact APK on Android 13 without rebuilding",
+          "error": "AssertionError at fullscreen_preview: Return to controls node was obscured by Android first-use immersive education.",
+          "coherent_fullscreen_passed": true,
+          "APK_rebuilt": false
+        },
+        {
+          "id": 39503076641,
+          "source_commit": "aa110867ac2dc512e3daac55b754e170c8558d0e",
+          "status": "passed",
+          "framework_checks": 45,
+          "upgrade_rollback_checks": 14,
+          "APK_rebuilt": false
+        }
+      ],
+      "delivered_APK": {
+        "name": "CoH-Native-Combined-0.1.17-fullscreen-diagnostic-arm64.apk",
+        "bytes": 15219799,
+        "sha256": "7167f6268e9c73e182535edd53717cd576fb8708fff1e79d8bb21118c3a47bc0",
+        "abi": "arm64-v8a",
+        "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "source_commit": "81a47f8ccef15c26e02b5cbf2feb4b99ac465139",
+        "source_tree": "c2f7bb34cfcbbcb98f91d4b2653dacc24c577b0c",
+        "ci_run_id": 39503076641,
+        "build_ci_run_id": 39498990230,
+        "qualification_ci_run_id": 39503076641,
+        "artifact_id": 12298379427,
+        "physical_thor_tested": false,
+        "production_release": false
+      },
+      "baseline_reporting_limits": {
+        "response_window_ms": 10000,
+        "decoded_message_limit": 128,
+        "command_kind_rows": 16,
+        "actual_sent_flags": true,
+        "per_send_timestamps_and_bytes": false,
+        "default_reliable_transport_max_retries": 8,
+        "live_Thor_ACK_or_response_observed": false
+      },
+      "next_APK_requirements": {
+        "response_timeout_ms": 20000,
+        "ACK_READY_max_transport_retries": 1,
+        "fresh_handoff_retries": 0,
+        "per_send_timestamps_and_payload_wire_bytes": true,
+        "bounded_all_observed_message_totals_and_overflow_bytes": true,
+        "clean_disconnect_abort": true,
+        "Wine_executable_and_redacted_command_line": true,
+        "Huge_source_rendering": true
+      },
+      "source_work": "Next-APK implementation is isolated from the immutable signed0.1.17 package. No new cleanup or receipts."
     }
   },
   "ci_history": [
