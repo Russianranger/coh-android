@@ -86,11 +86,12 @@ name: Native source qualification
   workflow_dispatch:
     inputs:
       purpose:
-        description: Source qualification purpose; never publishes an APK
+        description: Source qualification or signed diagnostic build; never publishes a release
         type: choice
         options:
         - body-catalog
         - combined-source
+        - combined-diagnostic
         default: body-catalog
       qualifier:
         description: BodyPart qualifier; ignored for combined-source
@@ -116,7 +117,8 @@ env:
 jobs:
   dispatch-cleanup-source:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
-      == 'push' && contains(github.event.head_commit.message, '[cleanup-source-dispatch]') && github.run_attempt == '1'
+      == 'push' && contains(github.event.head_commit.message, '[cleanup-source-dispatch]') && github.run_attempt
+      == '1'
     permissions:
       contents: read
       actions: write
@@ -134,7 +136,7 @@ jobs:
   body-plan:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && ((github.event_name
       == 'workflow_dispatch' && inputs.purpose == 'body-catalog') || (github.event_name == 'push' && !contains(github.event.head_commit.message,
-      '[cleanup-source-dispatch]')))
+      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
@@ -182,7 +184,7 @@ jobs:
         retention-days: 90
   combined-source:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
-      == 'workflow_dispatch' && inputs.purpose == 'combined-source'
+      == 'workflow_dispatch' && (inputs.purpose == 'combined-source' || inputs.purpose == 'combined-diagnostic')
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -196,7 +198,7 @@ jobs:
         java-version: '17'
     - name: Install existing host headers
       run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
-    - name: Verify protected inputs and run unchanged 0.1.14 source qualification
+    - name: Verify protected inputs and run sequential source qualification
       run: |
         test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
         test -z "$(git status --porcelain --untracked-files=no)"
@@ -209,6 +211,13 @@ jobs:
         python3 native-android/combined-client/qualification/check_process_set_memory.py
         python3 native-android/combined-client/qualification/check_memory_worker.py
         python3 native-android/combined-client/tools/test_process_set_contract.py
+        python3 native-android/combined-client/tools/test_catalog_packaging.py
+    - name: Qualify indexed CLIENT slots, Android ownership and memory diagnostics
+      run: |
+        python3 native-android/engine/entities/check_client_costume_slots.py --work /tmp/client-costume-slots-ci --output native-android/results/combined-neighborhood-diagnostic/client-costume-slots.json
+        python3 native-android/combined-client/tools/check_client_slots_android.py --work /tmp/client-slots-android-ci --output native-android/results/combined-neighborhood-diagnostic/client-slots-android.json
+        python3 native-android/combined-client/qualification/check_diagnostics.py
+        COH_COMBINED_GUEST="$PWD/android/guest" python3 native-android/combined-client/runtime/test_runtime.py
     - uses: actions/upload-artifact@v4
       if: always()
       with:
@@ -216,5 +225,135 @@ jobs:
         path: |
           ${{ runner.temp }}/protected-inputs.json
           native-android/results/combined-entity-diagnostic/
+          native-android/results/combined-neighborhood-diagnostic/
         if-no-files-found: error
         retention-days: 90
+  dispatch-neighborhood-diagnostic:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
+      == 'push' && contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && github.run_attempt
+      == '1'
+    permissions:
+      contents: read
+      actions: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+    - name: Dispatch the integrated neighborhood diagnostic once
+      env:
+        GH_TOKEN: ${{ github.token }}
+        EXPECTED_SHA: ${{ github.sha }}
+      run: |
+        test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
+        gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
+          -f ref=native-android -f inputs[purpose]=combined-diagnostic -f inputs[qualifier]=all
+  combined-diagnostic:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
+      == 'workflow_dispatch' && inputs.purpose == 'combined-diagnostic'
+    needs: combined-source
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Install the existing pinned build components
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev libegl1 libgl1 libgl1-mesa-dri
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+    - name: Reuse pinned crypto, accepted scene, dictionary and neighborhood inputs
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        mkdir -p native-android/results/combined-neighborhood-diagnostic
+        gh api repos/Russianranger/coh-android/actions/artifacts/11980774730/zip > /tmp/combined-crypto.zip
+        python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/combined-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-neighborhood-diagnostic/crypto-reuse.json
+        python3 native-android/combined-client/tools/prepare.py --client-slots --evidence native-android/results/combined-neighborhood-diagnostic/build-inputs.json
+        python3 native-android/combined-client/tools/prepare_neighborhood.py --source-root . --assets native-android/combined-client/app/src/main/assets --cache /tmp/combined-neighborhood-inputs --output native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json
+        python3 - <<'PYASSETS'
+        import json, pathlib
+        folder = pathlib.Path('native-android/results/combined-neighborhood-diagnostic')
+        embedded = pathlib.Path('native-android/combined-client/app/src/main/assets/combined/build-inputs.json')
+        receipt = json.loads(embedded.read_bytes())
+        scene_files = receipt['scene_files'].copy()
+        neighborhood = json.loads((folder / 'neighborhood-inputs.json').read_bytes())
+        receipt['neighborhood'] = {key: value for key, value in neighborhood.items() if key not in ('fixture', 'instances')}
+        assert receipt['scene_files'] == scene_files
+        raw = json.dumps(receipt, indent=2, sort_keys=True) + '\n'
+        embedded.write_text(raw)
+        (folder / 'build-inputs.json').write_text(raw)
+        PYASSETS
+        gh api repos/Russianranger/coh-android/actions/artifacts/12259140776/zip > /tmp/combined-previous014.zip
+        python3 - <<'PYPREV'
+        import pathlib, sys
+        sys.path.insert(0, 'native-android/combined-client/tools')
+        from upgrade_emulator_check import previous_inputs
+        output = pathlib.Path('/tmp/combined-previous014-preflight')
+        output.mkdir()
+        previous_inputs(pathlib.Path('/tmp/combined-previous014.zip'), output, 'entity-diagnostic')
+        PYPREV
+    - name: Qualify authentic near-pose geometry and concrete source/GPU ownership before packaging
+      env:
+        LIBGL_ALWAYS_SOFTWARE: '1'
+        EGL_PLATFORM: surfaceless
+        LP_NUM_THREADS: '2'
+      run: |
+        python3 native-android/session-client/tools/check_neighborhood.py --assets native-android/combined-client/app/src/main/assets --metadata native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json --world-bin native-android/combined-client/app/src/main/assets/world.bin --source-root . --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/neighborhood-check" --output native-android/results/combined-neighborhood-diagnostic/neighborhood-host.json
+        cp "$RUNNER_TEMP/neighborhood-check/world-and-box.png" native-android/results/combined-neighborhood-diagnostic/host-world-and-box.png
+    - name: Build and inspect the signed ARM64 diagnostic
+      run: |
+        python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohBuildProfile=neighborhood-diagnostic -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
+        cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-arm64.apk
+        python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-arm64.apk --abi arm64-v8a --require-clean --require-interop --build-profile neighborhood-diagnostic --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-neighborhood-diagnostic/arm64-package.json
+        python3 native-android/combined-client/tools/interop_package_audit.py --neighborhood-diagnostic --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-arm64.apk --abi arm64-v8a --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-neighborhood-diagnostic/arm64-interop-dso.json
+        sha256sum native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-arm64.apk > native-android/results/combined-neighborhood-diagnostic/arm64.sha256
+    - name: Build the separate emulator APK sequentially
+      run: |
+        python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PprobeAbis=x86_64 -PcohBuildProfile=neighborhood-diagnostic -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug
+        cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-x86_64.apk
+        python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-x86_64.apk --abi x86_64 --require-clean --require-interop --build-profile neighborhood-diagnostic --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-neighborhood-diagnostic/x86_64-package.json
+        python3 native-android/combined-client/tools/interop_package_audit.py --neighborhood-diagnostic --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-x86_64.apk --abi x86_64 --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-neighborhood-diagnostic/x86_64-interop-dso.json
+        python3 native-android/combined-client/gradle.py --stop
+    - name: Enable emulator acceleration
+      run: |
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Exercise Android 13 update, retained profile, preview and lifecycle cleanup
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front
+          none
+        disable-animations: true
+        script: |
+          python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-x86_64.apk --package-receipt native-android/results/combined-neighborhood-diagnostic/x86_64-package.json --previous-archive /tmp/combined-previous014.zip --previous-profile entity-diagnostic --build-profile neighborhood-diagnostic --exercise-debuggable-downgrade --output native-android/results/combined-neighborhood-diagnostic/android13-update
+          "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 uninstall org.coh.nativecombined
+          python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-0.1.15-neighborhood-diagnostic-x86_64.apk --output native-android/results/combined-neighborhood-diagnostic/android13
+          "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell am force-stop org.coh.nativecombined
+          "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 uninstall org.coh.nativecombined
+          test -z "$("$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell pm list packages org.coh.nativecombined | tr -d '\r')"
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-neighborhood-diagnostic-${{ github.sha }}
+        path: native-android/results/combined-neighborhood-diagnostic/
+        retention-days: 14
+        if-no-files-found: error

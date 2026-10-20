@@ -22,6 +22,23 @@ BUILD_PROFILES = {
 }
 CLIENT_SLOT_ASSET = 'combined/client-slots.bin'
 CLIENT_SLOT_PIN = {'bytes': 641477, 'sha256': '2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81'}
+NEIGHBORHOOD_ASSETS = {'neighborhood-map.bin': {'bytes': 491565, 'sha256': 'fcd3a97f8a84165316c6784016d1ab38402602fdfadeca1ed31fb3329426a1a7'}}
+
+
+def neighborhood_assets(archive, receipt, profile):
+    """Keep the accepted scene intact and admit the separate source subset."""
+    if profile != 'neighborhood-diagnostic':
+        assert 'neighborhood' not in receipt, 'Neighborhood assets require the neighborhood diagnostic profile'
+        return set()
+    assert receipt['neighborhood']['assets'] == NEIGHBORHOOD_ASSETS
+    result = set()
+    for name, expected in NEIGHBORHOOD_ASSETS.items():
+        member = 'assets/' + name
+        info = archive.getinfo(member)
+        assert info.file_size == expected['bytes'] and info.compress_type == zipfile.ZIP_STORED, 'Neighborhood source bundle must remain directly mapped'
+        assert pin(archive.read(member)) == expected, 'Neighborhood bytes differ from the qualified source subset'
+        result.add(member)
+    return result
 
 
 def client_slot_assets(archive, receipt, profile):
@@ -96,6 +113,7 @@ def audit(args):
         assert pin(z.read('assets/combined/import-contract.json')) == receipt['import_contract']
         expected_assets = {'assets/combined/import-contract.json', 'assets/combined/build-inputs.json', 'assets/atlas/atlas-import.properties'}
         expected_assets.update(client_slot_assets(z, receipt, args.build_profile))
+        expected_assets.update(neighborhood_assets(z, receipt, args.build_profile))
         assert pin(z.read('assets/combined/OPENSSL-LICENSE.txt')) == receipt['public_crypto']['license']
         assert receipt['public_crypto']['license']['sha256'] == '7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a'
         expected_assets.add('assets/combined/OPENSSL-LICENSE.txt')

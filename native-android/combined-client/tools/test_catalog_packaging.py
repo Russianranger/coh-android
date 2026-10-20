@@ -7,7 +7,7 @@ from pathlib import Path
 import unittest
 import zipfile
 from audit_catalog_publication import admit_framework_package
-from package_check import BUILD_PROFILES, check_build_identity, client_slot_assets, CLIENT_SLOT_ASSET, CLIENT_SLOT_PIN
+from package_check import BUILD_PROFILES, check_build_identity, client_slot_assets, CLIENT_SLOT_ASSET, CLIENT_SLOT_PIN, neighborhood_assets, NEIGHBORHOOD_ASSETS
 from interop_package_audit import required_methods
 from upgrade_emulator_check import PREVIOUS_INPUTS, package_receipt, pin, SIGNER, PACKAGE
 
@@ -53,6 +53,21 @@ class CatalogPackagingTests(unittest.TestCase):
         for payload, compression in [(raw[:-1], zipfile.ZIP_STORED), (b'X' + raw[1:], zipfile.ZIP_STORED), (raw, zipfile.ZIP_DEFLATED)]:
             with archive(payload, compression) as zipped, self.assertRaises(AssertionError):
                 client_slot_assets(zipped, receipt, 'neighborhood-diagnostic')
+
+    def test_neighborhood_asset_admission_keeps_historical_scene_separate(self):
+        result = io.BytesIO()
+        with zipfile.ZipFile(result, 'w') as output:
+            output.writestr('assets/neighborhood-map.bin', b'incomplete source bundle')
+        result.seek(0)
+        receipt = {'neighborhood': {'assets': copy.deepcopy(NEIGHBORHOOD_ASSETS)}}
+        with zipfile.ZipFile(result) as zipped:
+            self.assertEqual(neighborhood_assets(zipped, {}, 'entity-diagnostic'), set())
+            with self.assertRaises(AssertionError):
+                neighborhood_assets(zipped, receipt, 'entity-diagnostic')
+            with self.assertRaises(KeyError):
+                neighborhood_assets(zipped, {}, 'neighborhood-diagnostic')
+            with self.assertRaises(AssertionError):
+                neighborhood_assets(zipped, receipt, 'neighborhood-diagnostic')
 
     def test_additive_candidate_identity_and_separate_build_selection(self):
         self.assertEqual(BUILD_PROFILES['catalog-diagnostic'], ('13', '0.1.12-catalog-diagnostic-test'))

@@ -55,6 +55,7 @@ def audit(args):
     # This reviewed subset records new integration and reused protocol inputs.
     # It is not claimed as the complete compiler/header/tool dependency closure.
     scopes = ['native-android/combined-client', 'native-android/engine/initial-capture',
+              'native-android/engine/entities', 'native-android/engine/character-dictionary',
               'native-android/engine/network', 'native-android/engine/dbclient',
               'native-android/engine/mapclient', 'native-android/engine/local',
               'native-android/engine/auth', 'native-android/engine/session',
