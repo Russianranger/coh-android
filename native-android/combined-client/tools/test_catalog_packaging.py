@@ -22,6 +22,17 @@ class CatalogPackagingTests(unittest.TestCase):
         self.assertEqual(len(required_methods(entity_diagnostic=True)), 11)
         self.assertEqual(required_methods(neighborhood_diagnostic=True), required_methods(entity_diagnostic=True) | {'configureClientSlots'})
 
+    def test_entity_update_predecessor_uses_the_accepted_artifact_and_executed_apk(self):
+        folder = ROOT / 'native-android/combined-client/diagnostics/entity-20261020'
+        accepted = json.loads((folder / 'iteration.json').read_bytes())['next_APK14']
+        executed = json.loads((folder / 'android13-0.1.14-receipt.json').read_bytes())['checks'][1]
+        previous = PREVIOUS_INPUTS['entity-diagnostic']
+        self.assertEqual(previous['artifact'], str(accepted['CI_artifact_id']))
+        self.assertEqual(previous['archive_sha256'], accepted['CI_artifact_sha256'])
+        self.assertEqual(previous['revision'], accepted['source_commit'])
+        self.assertEqual(previous['apk_bytes'], executed['installed_apk_bytes'])
+        self.assertEqual(previous['apk_sha256'], executed['installed_apk_sha256'])
+
     def test_neighborhood_slots_require_exact_uncompressed_source_bytes(self):
         source = ROOT / 'native-android/engine/entities/qualification/costume-builder-20261017/offline-primary-slots.bin.gz'
         raw = gzip.decompress(source.read_bytes())

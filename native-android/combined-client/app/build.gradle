@@ -30,7 +30,8 @@ android {
         buildConfigField 'boolean', 'CLIENT_SLOT_DICTIONARY', (candidateProfile == 'neighborhood-diagnostic').toString()
         ndk { abiFilters.addAll(selectedAbis) }
         externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath,
-                '-DCOH_CLIENT_SLOT_DICTIONARY=' + (candidateProfile == 'neighborhood-diagnostic' ? 'ON' : 'OFF') } }
+                '-DCOH_CLIENT_SLOT_DICTIONARY=' + (candidateProfile == 'neighborhood-diagnostic' ? 'ON' : 'OFF'),
+                '-DCOH_NEIGHBORHOOD_DIAGNOSTIC=' + (candidateProfile == 'neighborhood-diagnostic' ? 'ON' : 'OFF') } }
     }
     buildFeatures { buildConfig true }
     sourceSets.main.java {

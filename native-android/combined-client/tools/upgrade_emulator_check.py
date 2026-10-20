@@ -42,6 +42,11 @@ PREVIOUS_INPUTS = {
         archive_sha256='0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04',
         apk='CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk', apk_bytes=13233003,
         apk_sha256='4cba32800790112c22146f6f6f8f773436a816de44c3e83d1c9503b0e9ec4d49'),
+    'entity-diagnostic': dict(revision='38c6446830dc6a55204a663de7477db12c6a5536', artifact='12259140776',
+        run='39408855380', archive_bytes=16266666,
+        archive_sha256='cea4a2c3ff82f469ec016b2ef08dee640e32f2b041e8f4d0b6862bdd3050858e',
+        apk='CoH-Native-Combined-0.1.14-entity-diagnostic-x86_64.apk', apk_bytes=13257323,
+        apk_sha256='a1260501d5cc6f2074eba02617fe53eb011f456ada27092620955f8d9e30de2b'),
 }
 
 
@@ -63,11 +68,24 @@ def previous_inputs(archive_path, output, profile='original-fragment'):
         safe_zip(archive)
         need(len(archive.infolist()) <= 4096, 'previous artifact member count exceeds bound')
         need(archive.getinfo(expected['apk']).file_size == expected['apk_bytes'], 'previous APK member size differs')
-        need(archive.getinfo('x86_64-package.json').file_size <= 256 * 1024, 'previous receipt exceeds bound')
         raw = archive.read(expected['apk'])
-        receipt = json.loads(archive.read('x86_64-package.json'))
+        if profile == 'entity-diagnostic':
+            # 0.1.14 retained its executed x86 APK pin and an ARM64 package audit,
+            # rather than an x86 package receipt. Verify those actual records;
+            # return only expected installed metadata for the storage exercise.
+            need(archive.getinfo('arm64-package.json').file_size <= 256 * 1024, 'previous ARM64 receipt exceeds bound')
+            arm = json.loads(archive.read('arm64-package.json'))
+            accepted = json.loads((ROOT / 'native-android/combined-client/diagnostics/entity-20261020/arm64-0.1.14-package.json').read_bytes())
+            need(arm == accepted, 'accepted 0.1.14 package audit differs')
+            need(arm['source_commit'] == expected['revision'] and arm['signer_certificate_sha256'] == SIGNER, 'accepted 0.1.14 source or signer differs')
+            check_build_identity(arm['version_code'], arm['version_name'], profile)
+            receipt = {'version_code': arm['version_code'], 'version_name': arm['version_name'], 'apk': pin(raw)}
+        else:
+            need(archive.getinfo('x86_64-package.json').file_size <= 256 * 1024, 'previous receipt exceeds bound')
+            receipt = json.loads(archive.read('x86_64-package.json'))
     need(pin(raw) == {'bytes': expected['apk_bytes'], 'sha256': expected['apk_sha256']}, 'previous APK pin differs')
-    package_receipt(receipt, raw, profile, expected['revision'])
+    if profile != 'entity-diagnostic':
+        package_receipt(receipt, raw, profile, expected['revision'])
     target = output / expected['apk']
     with target.open('xb') as stream:
         stream.write(raw)
