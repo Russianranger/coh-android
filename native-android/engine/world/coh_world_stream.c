@@ -5,7 +5,7 @@
 #define STRINGS_MAX 32768u
 #define DEPS_MAX 256u
 typedef struct {uint32_t parent,endpoint,name;float world[12],tint[6];} Node;
-typedef struct {uint32_t geo,model,first,count;float center[3],radius;} Endpoint;
+typedef struct {uint32_t geo,model,first,count;float center[3],radius;uint32_t part_mask;} Endpoint;
 struct CohWorldMap {
     uint32_t nodes,endpoints,assets,deps,live; uint64_t selections,cancellations,rejections;
     Node node[COH_WORLD_MAX_NODES]; Endpoint endpoint[COH_WORLD_MAX_ENDPOINTS];
@@ -37,14 +37,16 @@ CohStatus coh_world_map_create(CohBytes raw,CohWorldMap **out){
     if(!out||!raw.data||raw.size<64||raw.size>1048576||memcmp(raw.data,"COHMAP01",8))return COH_INVALID;
     const uint8_t *p=raw.data;uint32_t n=u32(p+20),e=u32(p+24),a=u32(p+28),d=u32(p+32),ss=u32(p+36);
     uint32_t no=u32(p+40),eo=u32(p+44),ao=u32(p+48),dd=u32(p+52),so=u32(p+56);
-    if(u32(p+8)!=1||u32(p+12)!=64||u32(p+16)!=raw.size||u32(p+60)||!n||n>COH_WORLD_MAX_NODES||!e||e>COH_WORLD_MAX_ENDPOINTS||!a||a>COH_WORLD_MAX_ASSETS||!d||d>DEPS_MAX||!ss||ss>STRINGS_MAX||no!=64||eo!=no+n*64||ao!=eo+e*40||dd!=ao+a*8||so!=dd+d*4||(uint64_t)so+ss!=raw.size)return COH_INVALID;
+    uint32_t version=u32(p+8);
+    if((version!=1&&version!=2)||u32(p+12)!=64||u32(p+16)!=raw.size||u32(p+60)||!n||n>COH_WORLD_MAX_NODES||!e||e>COH_WORLD_MAX_ENDPOINTS||!a||a>COH_WORLD_MAX_ASSETS||!d||d>DEPS_MAX||!ss||ss>STRINGS_MAX||no!=64||eo!=no+n*64||ao!=eo+e*40||dd!=ao+a*8||so!=dd+d*4||(uint64_t)so+ss!=raw.size)return COH_INVALID;
     CohWorldMap *w=(CohWorldMap*)calloc(1,sizeof *w);if(!w)return COH_LIMIT;
     w->nodes=n;w->endpoints=e;w->assets=a;w->deps=d;w->strings_size=ss;memcpy(w->strings,p+so,ss);
     for(uint32_t i=0;i<a;i++){const uint8_t *r=p+ao+i*8;w->asset[i].path=u32(r);w->asset[i].generation=u32(r+4);if(!name_ok(w,w->asset[i].path)||!path_ok(w->strings+w->asset[i].path))goto bad;for(uint32_t j=0;j<i;j++)if(w->asset[i].generation==w->asset[j].generation&&same_name(w->strings+w->asset[i].path,w->strings+w->asset[j].path))goto bad;}
     for(uint32_t i=0;i<d;i++){w->dep[i]=u32(p+dd+i*4);if(w->dep[i]>=a)goto bad;}
     for(uint32_t i=0;i<e;i++){
         const uint8_t *r=p+eo+i*40;Endpoint *x=&w->endpoint[i];x->geo=u32(r);x->model=u32(r+4);x->first=u32(r+8);x->count=u32(r+12);for(int j=0;j<3;j++)x->center[j]=f32(r+16+j*4);x->radius=f32(r+28);
-        if(x->geo>=a||!name_ok(w,x->model)||!x->count||x->first>d||x->count>d-x->first||!isfinite(x->radius)||x->radius<0||x->radius>1000000||u32(r+32)||u32(r+36))goto bad;
+        if(x->geo>=a||!name_ok(w,x->model)||!x->count||x->first>d||x->count>d-x->first||!isfinite(x->radius)||x->radius<0||x->radius>1000000||(version==1&&u32(r+32))||u32(r+36))goto bad;
+        x->part_mask=u32(r+32)?u32(r+32):UINT32_MAX;
         int has_geo=0;for(uint32_t j=0;j<x->count;j++){if(w->dep[x->first+j]==x->geo)has_geo=1;for(uint32_t k=0;k<j;k++)if(w->dep[x->first+k]==w->dep[x->first+j])goto bad;}if(!has_geo)goto bad;
         for(int j=0;j<3;j++)if(!isfinite(x->center[j])||fabsf(x->center[j])>1000000)goto bad;
     }
@@ -63,6 +65,13 @@ CohStatus coh_world_map_destroy(CohWorldMap **p){if(!p||!*p)return COH_OK;if((*p
 CohWorldStats coh_world_map_stats(const CohWorldMap *w){CohWorldStats s={0};if(w){s.nodes=w->nodes;s.endpoints=w->endpoints;s.assets=w->assets;s.live_selections=w->live;s.allocated_bytes=sizeof *w;s.selections=w->selections;s.cancellations=w->cancellations;s.rejections=w->rejections;}return s;}
 CohStatus coh_world_node(const CohWorldMap *w,uint32_t i,CohWorldNode *out){if(!w||!out||i>=w->nodes)return COH_INVALID;const Node *n=&w->node[i];CohWorldNode x={n->parent,n->endpoint,w->strings+n->name,{0},{0}};memcpy(x.world,n->world,48);memcpy(x.tint,n->tint,24);*out=x;return COH_OK;}
 CohStatus coh_world_endpoint(const CohWorldMap *w,uint32_t i,CohWorldEndpoint *out){if(!w||!out||i>=w->endpoints)return COH_INVALID;const Endpoint *e=&w->endpoint[i];CohWorldEndpoint x={{w->strings+w->asset[e->geo].path,w->asset[e->geo].generation},w->strings+e->model,{0},e->radius,e->count};memcpy(x.center,e->center,12);*out=x;return COH_OK;}
+CohStatus coh_world_endpoint_part_mask(const CohWorldMap *w,uint32_t i,uint32_t *out){
+    if(!w||!out)return COH_INVALID;
+    uintptr_t source=(uintptr_t)w,destination=(uintptr_t)out;
+    if(source>UINTPTR_MAX-sizeof *w||destination>UINTPTR_MAX-sizeof *out||
+       (destination<source+sizeof *w&&source<destination+sizeof *out)||i>=w->endpoints)return COH_INVALID;
+    *out=w->endpoint[i].part_mask;return COH_OK;
+}
 CohStatus coh_world_dependency(const CohWorldMap *w,uint32_t e,uint32_t i,CohAssetId *out){if(!w||!out||e>=w->endpoints||i>=w->endpoint[e].count)return COH_INVALID;uint32_t a=w->dep[w->endpoint[e].first+i];*out=(CohAssetId){w->strings+w->asset[a].path,w->asset[a].generation};return COH_OK;}
 void coh_world_release(CohWorldSelection *s){if(!s)return;if(s->owner){for(uint32_t i=0;i<s->pin_count;i++)coh_asset_release(s->loader,s->pins[i]);s->owner->live--;}memset(s,0,sizeof *s);}
 CohStatus coh_world_select(CohWorldMap *w,CohAssetLoader *loader,const uint32_t *nodes,uint32_t count,size_t budget,CohCancel cancel,CohWorldSelection *out){

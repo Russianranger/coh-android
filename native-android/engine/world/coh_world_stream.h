@@ -57,6 +57,9 @@ CohStatus coh_world_map_destroy(CohWorldMap **); /* refuses live selections */
 CohWorldStats coh_world_map_stats(const CohWorldMap *);
 CohStatus coh_world_node(const CohWorldMap *,uint32_t,CohWorldNode *);
 CohStatus coh_world_endpoint(const CohWorldMap *,uint32_t,CohWorldEndpoint *);
+/* Version-1 indices retain all original parts. Version 2 can explicitly select
+ * a bounded subset without changing the original model identity or vertices. */
+CohStatus coh_world_endpoint_part_mask(const CohWorldMap *,uint32_t,uint32_t *);
 CohStatus coh_world_dependency(const CohWorldMap *,uint32_t endpoint,uint32_t,CohAssetId *);
 /* Explicit, bounded instance selection. Duplicate node IDs are rejected. Radius
  * helper produces IDs; caller may retain/pin a support region independently.

@@ -109,9 +109,10 @@ int coh_session_world_create(const void *data,size_t bytes,CohSessionWorld **out
     /* Explicit admission/prewarm, before any frame loop. All permitted model
      * and material endpoints are validated once; per-frame selection is cached. */
     for(uint32_t i=0;i<catalog.endpoints;i++) {
-        CohWorldEndpoint endpoint;const CohBridgeMesh *mesh=NULL;
+        CohWorldEndpoint endpoint;const CohBridgeMesh *mesh=NULL;uint32_t part_mask=0;
         status=coh_world_endpoint(w->map,i,&endpoint);if(status!=COH_OK)goto failed;
-        status=coh_bridge_acquire(w->bridge,endpoint.geometry,endpoint.model,1,material,w,(CohCancel){0},&mesh);
+        status=coh_world_endpoint_part_mask(w->map,i,&part_mask);if(status!=COH_OK)goto failed;
+        status=coh_bridge_acquire_parts(w->bridge,endpoint.geometry,endpoint.model,1,part_mask,material,w,(CohCancel){0},&mesh);
         if(status!=COH_OK)goto failed;
         coh_bridge_release(w->bridge,mesh);
     }
@@ -140,9 +141,11 @@ static int select_world(CohSessionWorld *w,const float center[3],float radius,in
         if(status!=COH_OK)return problem(w,error,cap,"Bounded map dependency selection",status);
         release_meshes(w);
         for(uint32_t i=0;i<count;i++) {
-            CohWorldEndpoint endpoint;status=coh_world_endpoint(w->map,w->selection.instances[i].endpoint,&endpoint);
+            CohWorldEndpoint endpoint;uint32_t part_mask=0;status=coh_world_endpoint(w->map,w->selection.instances[i].endpoint,&endpoint);
             if(status!=COH_OK)return problem(w,error,cap,"Selected endpoint",status);
-            status=coh_bridge_acquire(w->bridge,endpoint.geometry,endpoint.model,1,material,w,(CohCancel){0},&w->meshes[i]);
+            status=coh_world_endpoint_part_mask(w->map,w->selection.instances[i].endpoint,&part_mask);
+            if(status!=COH_OK)return problem(w,error,cap,"Selected source partition",status);
+            status=coh_bridge_acquire_parts(w->bridge,endpoint.geometry,endpoint.model,1,part_mask,material,w,(CohCancel){0},&w->meshes[i]);
             if(status!=COH_OK)return problem(w,error,cap,"Selected cached source mesh",status);
         }
         w->stats.selection_updates++;
