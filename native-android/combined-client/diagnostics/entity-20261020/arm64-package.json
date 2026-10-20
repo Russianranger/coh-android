@@ -1,0 +1,47 @@
+{
+  "abi": "arm64-v8a",
+  "accepted_scene_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "actual_server_interoperability_verified": false,
+  "apk": {
+    "bytes": 13954697,
+    "name": "CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk",
+    "sha256": "5c709136f80b09b4f737c1b87d6bf7bca47de7497f0b31156a29d1d0e2f7100b"
+  },
+  "build_profile": "entity-diagnostic",
+  "donor_apk_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+  "embedded_asset_bytes": 9540457,
+  "embedded_asset_files": 74,
+  "format": 1,
+  "large_runtime_game_payloads_embedded": false,
+  "native_libraries": {
+    "lib/arm64-v8a/libcoh_combined_interop.so": {
+      "bytes": 5065408,
+      "sha256": "7d42545d1b901f72e748b1aa88176d7ee1b45f8abd1dfd1e75c5583d1beff9e4"
+    },
+    "lib/arm64-v8a/libcoh_combined_network.so": {
+      "bytes": 5521240,
+      "sha256": "a1e40ec737fc25e48936dca0d0c9ab9f739b6daf854327a60d4d8036fdaff208"
+    },
+    "lib/arm64-v8a/libcoh_session_client.so": {
+      "bytes": 375712,
+      "sha256": "4f606ac677dd1d4ea22d0289fbbaa891ce044b61110efaa88103a575493aede1"
+    },
+    "lib/arm64-v8a/libproot-loader.so": {
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    "lib/arm64-v8a/libproot.so": {
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    }
+  },
+  "package": "org.coh.nativecombined",
+  "process_memory_jni_entrypoint": "Java_org_coh_nativecombined_LocalNative_processMemory",
+  "scope": "Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.",
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "source_commit": "ae8e9240b3211e1e87de845ab370f6f6b229e4df",
+  "status": "passed",
+  "tracked_source_clean": true,
+  "version_code": "14",
+  "version_name": "0.1.13-entity-diagnostic-test"
+}

@@ -1,0 +1,10 @@
+{
+  "APK_sha256": {
+    "arm64": "5c709136f80b09b4f737c1b87d6bf7bca47de7497f0b31156a29d1d0e2f7100b",
+    "x86_64": "1cec87149764df0526793b668c3000fa7bf0311e40ee674f02daa4a8c0240bc7"
+  },
+  "APK_source_commit": "ae8e9240b3211e1e87de845ab370f6f6b229e4df",
+  "APKs_rebuilt": false,
+  "artifact_id": 12241562542,
+  "driver_commit": "8c1ace1a39a5134ceec3c9634342bdceeb51bac6"
+}

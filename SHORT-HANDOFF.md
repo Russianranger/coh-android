@@ -58,10 +58,21 @@ checks/mode, 32 captures, 40 opens/40 closes, stressed JNI report 6726B; legacy 
 exactSession-body 135/mode. Combined process observer 24 checks, memory worker 39/9000
 requests, existing phase 2899. Host fixtures are labeled synthetic, not live Thor.
 
-One sequential CI workflow builds signed entity-diagnostic 0.1.13/code 14 ARM64 and
-x86 APKs, then runs existing Android 13 preview/lifecycle checks. Historical 0.1.11
-profile/signing/imports/server remain preserved. Build/result status will be
-recorded here after CI; no production release or main merge is authorized.
+Signed entity-diagnostic 0.1.13/code14 ARM64 APK:13954697B, SHA-256
+5c709136f80b09b4f737c1b87d6bf7bca47de7497f0b31156a29d1d0e2f7100b.
+APK producer/source ae8e9240b3211e1e87de845ab370f6f6b229e4df, run39370468578
+attempt2: ARM64 build/lint/package+DSO audit and separate x86 build passed. The
+late Android13 missing-policy harness assumption was fixed without changing APK
+inputs. Exact same APK retest run39372366963, driver8c1ace1a, PASSED all33 Android13
+checks: GLES preview, Surface recreation, Home/resume, Return, SAF JSON+ZIP and
+no app crash/ANR. This does not execute an ARM64 server or real live entity.
+Retest artifact12241797277 preserves both original APK hashes. Actual API33
+no-guest sample:13 samples, one process, peak RSS121794560B/PSS63627264B;
+Wine/Postgres totals and physical app update/live draw remain Thor results.
+Producer/signature receipts and machine ledger live in diagnostics/entity-20261020.
+Initial-framing CI39371500290, portable core39371500197, scene/catalog39370468570,
+Atlas/static renderer39370468585 and primary-continuation39370468468 passed.
+Historical 0.1.11 package/signing/imports/server remain preserved; no release/main.
 
 Thor procedure: `native-android/combined-client/diagnostics/entity-20261020/THOR-TEST.md`.
 Install over 0.1.11/0.1.12 without clearing data; same server/Atlas character, handoff
@@ -69,7 +80,15 @@ once, look for orange box and export JSON/ZIP after 15s with all processes runni
 bodyparts_default/costume_continuation, observed_server_entity.box_draws and
 memory_diagnostics.same_uid_process_set; then Home/resume/Return/normal server stop.
 
-Next work after physical result: thin lookup adapters for actual local costume/
-supergroupcolor dictionary inputs, then original entity-receive suffix/updates.
-Existing source-built complete slots are reusable; do not build another ownership
+Next five tasks (continue from this code; no restart of accepted work):
+1. Run this APK once on Thor: actual cache hash/costume cursor, orange-box draws,
+   and concurrent Wine/Postgres/client memory export.
+2. Connect the original indexed-string shim to the existing actual local costume
+   string slots; use the device cursor to choose the first required table.
+3. Add the original supergroup color/extra string lookups when encountered, using
+   retained original source tables rather than skipped fields.
+4. Compile the next original entity-receive suffix/update code with thin shims.
+5. Replace the box with one genuine source model/material at that observed pose,
+   reusing the bounded Atlas renderer and measuring actual device memory.
+Existing complete source-built slots are reusable; do not build another ownership
 layer or qualification-gate chain. Gates 25–27 remain OPEN in their full scopes.
