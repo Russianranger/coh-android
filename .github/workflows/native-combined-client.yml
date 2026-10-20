@@ -29,5 +29,5 @@ jobs:
     permissions:
       contents: write
       actions: read
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]') && !contains(github.event.head_commit.message, '[combined-017-requalify]') && !contains(github.event.head_commit.message, '[native-contracts-only]')
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]') && !contains(github.event.head_commit.message, '[combined-017-requalify]') && !contains(github.event.head_commit.message, '[native-contracts-only]') && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]')
     uses: ./.github/workflows/native-combined-report-diagnostic.yml

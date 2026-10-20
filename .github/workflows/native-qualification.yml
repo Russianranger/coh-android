@@ -230,7 +230,7 @@ jobs:
         retention-days: 90
   dispatch-neighborhood-diagnostic:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
-      == 'push' && contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && github.run_attempt
+      == 'push' && contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && contains(github.event.head_commit.message, '[native-contracts-only]') && github.run_attempt
       == '1'
     permissions:
       contents: read
