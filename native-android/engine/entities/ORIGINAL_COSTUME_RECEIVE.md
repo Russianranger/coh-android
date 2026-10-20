@@ -85,3 +85,25 @@ flock /tmp/coh-cycle-build.lock python3 \
   --source-root . --work /tmp/fresh-original-costume \
   --output /tmp/original-costume.json
 ```
+
+The bounded outer adapter (`coh_original_ent_costume_receive`) compiles whole
+unchanged `entReceiveCostume`, `entReceiveXlucency`, reward and custom NPC receive
+functions from the pinned original sources. It replays from the actual appearance
+selector, using the same verified CLIENT ordinary, extra and palette tables and
+original body receiver for each stored and Supergroup costume. It consumes SG
+mode/emblem, literal FX, optional NPC identifiers/custom colors, then translucency.
+The original discard/out-of-order profile suppresses cosmetic/UI actor mutation;
+this does not authenticate a selected NPC model or publish an actor. Capture is
+only the selected completed main body. A component COH_OK leaves entity/message
+completion false: the next unread initial-profile field is the original
+`entReceivePowerCust` selector. It never sends ACK, READY or RECEIVED_CHARACTER.
+
+`check_original_ent_costume.py --work <new-scratch-dir> --output <scratch-json>`
+compiles unchanged original entity/body senders as independent fixtures and runs
+release, ASan and UBSan tests, including stored counts 1/2/10, SG, FX, NPC custom
+parts 0/2/63, both wire modes, truncation, alias/overflow and unknown-tail retention.
+No actual Thor ALLENTS bytes are available in this qualification. The caller must
+charge its complete old/candidate owner, immutable raw/index spans, 65,536-byte body
+workspace, optional 48,352-byte snapshot and 8,192-byte stack reserve inside the
+existing 8 MiB aggregate; no heap allocation occurs in the adapter. Source payload
+and compiler stack measurements are separate from device RSS/PSS observations.
