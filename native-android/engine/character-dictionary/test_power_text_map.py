@@ -60,6 +60,15 @@ Power "Cat.Set.Quoted" { Name "{" }
         raw=b'#'+b' comment'*2000+b'\n'+b'Power Cat.Set.Refill {\n'+(b' Name x\n'*6000)+b'}\n'
         self.assertEqual([p[0] for p in mapping.definitions(self.text(raw))],[b'Cat.Set.Refill'])
         self.assertLess(self.original.lib.ptm_owner_bytes(),49*1024)
+    def test_overlapping_token_owners_and_early_close_release_resources(self):
+        first=self.text(b'Power Cat.Set.First { }\n');next(first)
+        second=self.text(b'Power Cat.Set.Second { }\n')
+        try:
+            with self.assertRaises(ValueError):next(second)
+        finally:first.close();second.close()
+        self.assertEqual([r[0] for r in mapping.definitions(self.text(b'Power Cat.Set.Third { }\n'))],[b'Cat.Set.Third'])
+        self.assertGreater(self.original.lib.ptm_include_context_bytes(),0)
+
     def test_ordered_first_winner_and_pinned_input_inventory(self):
         with tempfile.TemporaryDirectory() as t:
             root=Path(t)/'repo';out=Path(t)/'map.sqlite'
@@ -89,13 +98,36 @@ Power "Cat.Set.Quoted" { Name "{" }
                     path.write_bytes(b'Power Cat.Set.First {\n');subprocess.run(['git','-C',str(root),'add','.'],check=True);subprocess.run(['git','-C',str(root),'-c','user.name=T','-c','user.email=t@example.invalid','commit','-qm','Truncate'],check=True)
                 class Changing:
                     lib=self.original.lib;crc=self.original.crc
-                    def tokens(_,fd):
-                        yield from self.original.tokens(fd)
+                    def tokens(_,fd,*args):
+                        yield from self.original.tokens(fd,*args)
                         if change=='churn':
                             with path.open('ab') as f:f.write(b' ')
                 with mock.patch.object(mapping,'POWER_LIMIT',0 if change=='overflow' else mapping.POWER_LIMIT):
                     with self.assertRaises(ValueError):mapping.build_map(root,out,Changing(),self.provenance)
                 self.assertFalse(out.exists());self.assertEqual(list(Path(t).glob('.power-text-*')),[])
+    def test_source_pinned_include_owners_origins_and_nested_cleanup(self):
+        for cycle in (False,True):
+            with self.subTest(cycle=cycle),tempfile.TemporaryDirectory() as t:
+                root=Path(t)/'repo';out=Path(t)/'map.sqlite'
+                self.fixture(root,{'a.powers':b'include menu/Powers/AnimFX/Real.pfx\nPower Cat.Set.Parent {\n include menu/Powers/AnimFX/Fields.PFX.\n}\n'})
+                directory=root/'upstream/i24/data/menu/powers/animfx';directory.mkdir(parents=True)
+                (directory/'real.pfx').write_bytes(b'include menu/Powers/AnimFX/Real.pfx\n' if cycle else b'Power Cat.Set.Included { Name Different }\n')
+                (directory/'fields.pfx').write_bytes(b'DisplayName "Power Fake.Set.Name { }"\n')
+                subprocess.run(['git','-C',str(root),'add','upstream'],check=True)
+                subprocess.run(['git','-C',str(root),'-c','user.name=T','-c','user.email=t@example.invalid','commit','-qm','Include fixtures'],check=True)
+                if cycle:
+                    with self.assertRaises(ValueError):mapping.build_map(root,out,self.original,self.provenance)
+                    self.assertFalse(out.exists());self.assertEqual(list(Path(t).glob('.power-text-*')),[])
+                else:
+                    summary=mapping.build_map(root,out,self.original,self.provenance)
+                    self.assertEqual((summary['include_calls'],summary['unique_include_files'],summary['declarations']),(2,2,2))
+                    included=mapping.lookup(out,self.original.crc(b'Cat.Set.Included'))
+                    self.assertEqual(included['path'],'upstream/i24/data/menu/powers/animfx/real.pfx')
+                    self.assertEqual(included['line'],1)
+                    con=sqlite3.connect(out)
+                    try:self.assertEqual(con.execute('SELECT count(*) FROM includes WHERE length(sha256)=64').fetchone()[0],2)
+                    finally:con.close()
+
     def test_nul_source_and_output_alias_are_not_published(self):
         with tempfile.TemporaryDirectory() as t:
             root=Path(t)/'repo';self.fixture(root,{'a.powers':b'Power Cat.Set.First { }\0'})
@@ -111,9 +143,14 @@ int main(void){
  char large[261];memset(large,'x',260);large[260]=0;assert(ptm_crc(large)==0);
  for(unsigned i=0;i<100;i++){
   FILE*f=tmpfile();assert(f);const char*s="Power Cat.Set.Real { Name \"}\" }\n";assert(fwrite(s,1,strlen(s),f)==strlen(s));fflush(f);
-  void*t=ptm_open(fileno(f));assert(t);char token[12001];int line,quoted,n=0,r;
+  void*t=ptm_open(fileno(f),"fixture.powers");assert(t);char token[12001];int line,quoted,n=0,r;
   while((r=ptm_next(t,token,sizeof(token),&line,&quoted))>0)n++;
   assert(r==0&&n==6);ptm_close(t);fclose(f);
+ }
+ for(unsigned i=0;i<2;i++){
+  FILE*f=tmpfile();assert(f);const char*s=i?"Power Cat.Set.Bad { Name \"unterminated\\n}":"include missing.pfx\\n";
+  assert(fwrite(s,1,strlen(s),f)==strlen(s));fflush(f);void*t=ptm_open(fileno(f),"bad.powers");assert(t);
+  char token[12001];int line,quoted,r;while((r=ptm_next(t,token,sizeof(token),&line,&quoted))>0){}assert(r<0);ptm_close(t);fclose(f);
  }
  puts("original tokenizer/hash100 cleanup loops passed");return 0;
 }

@@ -67,8 +67,13 @@ recorded, and checked for mutation before atomic publication. The SQLite index
 uses a 1 MiB page cache and disk temporary storage. Explicit transfer buffers are
 12,001 token bytes and 16 KiB hashing bytes; the original tokenizer owner size is
 reported separately. Python, SQLite and provider overhead require measurement.
-No full power object graph or entire text corpus is retained. Includes/define
-owners and powerset-generated aliases are not synthesized. This labels direct
+No full power object graph or entire text corpus is retained. Referenced
+`menu/powers` includes are read from genuine Git blobs through a bounded
+streaming provider; their exact paths and SHA-256 values are recorded. The original Windows `_fsopen` backend
+uses slash/case matching and ignores terminal component dots/spaces; this
+resolves the genuine `.PFX.` spelling without inventing a file or a power name. Nested contexts are limited
+to16 and closed on failure. Define owners and powerset-generated aliases are
+not synthesized. This labels direct
 text declarations without supplying a receiver dictionary or runtime generation.
 
 Run `python3 test_power_text_map.py` for focused original-body release/ASan/UBSan,

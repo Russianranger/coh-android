@@ -22,15 +22,15 @@ def definitions(tokens):
     def take():
         try:return next(tokens)
         except StopIteration as exc:raise ValueError('truncated Power record') from exc
-    for keyword,line,quoted in tokens:
+    for keyword,line,quoted,origin in tokens:
         if quoted or keyword.lower()!=b'power':raise ValueError('unexpected PowerDictionary token')
-        name,_,_=take()
+        name,_,_,origin_name=take()
         if name in (b'{',b'}') or not name:raise ValueError('missing FullName struct parameter')
-        opening,_,opening_quoted=take()
+        opening,_,opening_quoted,_=take()
         if opening!=b'{' or opening_quoted:raise ValueError('missing ParseBasePower start')
         depth=1;field_line=None
         while depth:
-            token,current,was_quoted=take()
+            token,current,was_quoted,_=take()
             if not was_quoted and token==b'{':
                 depth+=1
                 if depth>64:raise ValueError('nested Power record limit')
@@ -38,9 +38,9 @@ def definitions(tokens):
             elif depth==1:
                 first_on_line=field_line!=current;field_line=current
                 if first_on_line and not was_quoted and token.lower()==b'fullname':
-                    name,_,_=take()
+                    name,_,_,origin_name=take()
                     if not name or name in (b'{',b'}'):raise ValueError('invalid explicit FullName')
-        yield name,line
+        yield name,line,origin_name or origin
 
 
 def nul_records(stream):
@@ -58,13 +58,13 @@ def nul_records(stream):
         if len(pending)>1024:raise ValueError('source path limit')
 
 
-def tracked_inputs(root):
+def tracked_inputs(root,subtree=TEXT_ROOT,suffix=b'.powers'):
     """Git byte path order is explicit offline order, not a runtime load claim."""
-    process=subprocess.Popen(['git','-C',str(root),'ls-tree','-rz','--long','HEAD','--',TEXT_ROOT],stdout=subprocess.PIPE)
+    process=subprocess.Popen(['git','-C',str(root),'ls-tree','-rz','--long','HEAD','--',subtree],stdout=subprocess.PIPE)
     try:
         for record in nul_records(process.stdout):
             meta,path=record.split(b'\t',1)
-            if not path.endswith(b'.powers'):continue
+            if suffix is not None and not path.endswith(suffix):continue
             mode,kind,blob,size=meta.split()
             if mode!=b'100644' or kind!=b'blob':raise ValueError('nonordinary source definition')
             yield path.decode('ascii'),blob.decode('ascii'),int(size)
@@ -101,13 +101,67 @@ def source_file(root,path,size,blob):
     except BaseException:os.close(fd);raise
 
 
+class IncludeProvider:
+    """Read only referenced authentic Git blobs; never copy the data tree."""
+    def __init__(self,root,database,stats):
+        self.root,self.database,self.stats=root,database,stats;self.batch=None;self.indexed=False
+        database.execute('CREATE TABLE include_sources(folded TEXT PRIMARY KEY,path TEXT NOT NULL,blob TEXT NOT NULL,bytes INTEGER NOT NULL)')
+        database.execute('CREATE TABLE includes(path TEXT PRIMARY KEY,bytes INTEGER NOT NULL,git_blob TEXT NOT NULL,sha256 TEXT NOT NULL)')
+    def open(self,request):
+        normalized=request.replace('\\','/').lower()
+        if normalized.startswith('/') or any(p in ('','.', '..') for p in normalized.split('/')):raise ValueError('include path alias')
+        # The original Windows file.c backend uses _fsopen. Its ordinary Win32
+        # path components ignore terminal dots/spaces; retain the real Git path.
+        normalized='/'.join(p.rstrip(' .') for p in normalized.split('/'))
+        if any(not p for p in normalized.split('/')):raise ValueError('empty Win32 include component')
+        if not self.indexed:
+            count=0
+            # This offline profile supplies the genuine text PowerFX includes.
+            # No world geometry, textures or runtime dictionary is loaded.
+            for path,blob,size in tracked_inputs(self.root,'upstream/i24/data/menu/powers',None):
+                count+=1
+                if count>32768:raise ValueError('include index bound')
+                key=path.removeprefix('upstream/i24/data/').lower()
+                self.database.execute('INSERT INTO include_sources VALUES(?,?,?,?)',(key,path,blob,size))
+            self.indexed=True
+        row=self.database.execute('SELECT path,blob,bytes FROM include_sources WHERE folded=?',(normalized,)).fetchone()
+        if row is None:raise ValueError('source-pinned include absent: '+request)
+        path,blob,size=row
+        if not 0<size<=FILE_LIMIT:raise ValueError('include file bound')
+        self.stats['include_calls']+=1
+        if self.stats['include_calls']>131072:raise ValueError('include call bound')
+        if self.batch is None:self.batch=subprocess.Popen(['git','-C',str(self.root),'cat-file','--batch'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        self.batch.stdin.write(blob.encode()+b'\n');self.batch.stdin.flush()
+        header=self.batch.stdout.readline(128).split()
+        if header!=[blob.encode(),b'blob',str(size).encode()]:raise ValueError('include Git object identity')
+        with tempfile.TemporaryFile() as content:
+            digest=hashlib.sha256();git=hashlib.sha1(b'blob '+str(size).encode()+b'\0');remaining=size
+            while remaining:
+                data=self.batch.stdout.read(min(remaining,READ_BYTES))
+                if not data or b'\0' in data:raise ValueError('include source truncated or NUL')
+                content.write(data);digest.update(data);git.update(data);remaining-=len(data)
+            if self.batch.stdout.read(1)!=b'\n' or git.hexdigest()!=blob:raise ValueError('include Git hash')
+            prior=self.database.execute('SELECT sha256 FROM includes WHERE path=?',(path,)).fetchone()
+            if prior is None:
+                self.database.execute('INSERT INTO includes VALUES(?,?,?,?)',(path,size,blob,digest.hexdigest()))
+                self.stats['unique_include_files']+=1;self.stats['include_bytes']+=size
+            elif prior[0]!=digest.hexdigest():raise ValueError('include source changed')
+            content.flush();content.seek(0);return os.dup(content.fileno()),path
+    def close(self):
+        if self.batch is not None:
+            self.batch.stdin.close();self.batch.stdout.close()
+            try:self.batch.wait(timeout=5)
+            except subprocess.TimeoutExpired:self.batch.kill();self.batch.wait()
+            self.batch=None
+
+
 def build_map(root,output,original,provenance):
     root=Path(root).resolve();output=Path(output).absolute()
     if output.exists() or output.is_symlink():raise ValueError('output already exists')
     if (root/'upstream').resolve() in output.resolve().parents:raise ValueError('output overlaps upstream')
     output.parent.mkdir(parents=True,exist_ok=True)
     fd,temporary=tempfile.mkstemp(prefix='.power-text-',suffix='.sqlite',dir=output.parent);os.close(fd)
-    temporary=Path(temporary);database=None
+    temporary=Path(temporary);database=None;provider=None
     try:
         database=sqlite3.connect(temporary)
         database.execute('PRAGMA cache_size=-1024');database.execute('PRAGMA temp_store=FILE');database.execute('PRAGMA mmap_size=0')
@@ -118,29 +172,34 @@ def build_map(root,output,original,provenance):
                'input_files':0,'input_bytes':0,'declarations':0,'unique_crc':0,'duplicate_crc':0,'distinct_normalized_crc_collisions':0,
                'input_order':'Git tree byte path order, then source token order; first CRC winner',
                'scope':'direct source-text FullName labels only; not a loaded dictionary or generation',
+               'include_calls':0,'unique_include_files':0,'include_bytes':0,
                'runtime_dictionary_supplied':False,'original':provenance,
-               'explicit_buffers':{'original_tokenizer_owner_bytes':original.lib.ptm_owner_bytes(),'token_transfer_bytes':12001,'hash_read_bytes':READ_BYTES,'sqlite_cache_kib':1024,'sqlite_mmap_bytes':0},
+               'explicit_buffers':{'original_tokenizer_owner_bytes':original.lib.ptm_owner_bytes(),'maximum_extra_include_contexts':16,'extra_include_context_bytes':16*original.lib.ptm_include_context_bytes(),'token_transfer_bytes':12001,'hash_read_bytes':READ_BYTES,'sqlite_cache_kib':1024,'sqlite_mmap_bytes':0},
                'Python_SQLite_allocator_and_file_cache_overhead_included':False}
+        provider=IncludeProvider(root,database,stats)
         for path,blob,size in tracked_inputs(root):
             stats['input_files']+=1
             if stats['input_files']>FILE_COUNT_LIMIT:raise ValueError('source file count bound')
             fd,before,sha=source_file(root,path,size,blob)
-            token_stream=original.tokens(fd)
+            token_stream=original.tokens(fd,path,provider.open)
             try:
-                for full,line in definitions(token_stream):
+                for full,line,origin in definitions(token_stream):
                     stats['declarations']+=1
                     if stats['declarations']>POWER_LIMIT:raise ValueError('power record bound')
                     crc=original.crc(full);name=full.decode('ascii')
                     prior=database.execute('SELECT full_name FROM powers WHERE crc=?',(crc,)).fetchone()
                     if prior is None:
-                        database.execute('INSERT INTO powers VALUES(?,?,?,?,?)',(crc,name,path,line,stats['declarations']));stats['unique_crc']+=1
+                        database.execute('INSERT INTO powers VALUES(?,?,?,?,?)',(crc,name,origin,line,stats['declarations']));stats['unique_crc']+=1
                     else:
                         stats['duplicate_crc']+=1
                         normalize=lambda s:s.lower().replace('\\','/')
                         if normalize(prior[0])!=normalize(name):stats['distinct_normalized_crc_collisions']+=1
                 if identity(os.fstat(fd))!=before:raise ValueError('source changed during tokenization')
+            except ValueError as exc:
+                raise ValueError(path+': '+str(exc)) from exc
             finally:token_stream.close();os.close(fd)
             database.execute('INSERT INTO inputs VALUES(?,?,?,?)',(path,size,blob,sha));stats['input_bytes']+=size
+        provider.close();provider=None
         if not stats['input_files']:raise ValueError('no tracked power definitions')
         database.execute('INSERT INTO metadata VALUES(?,?)',('summary',json.dumps(stats,separators=(',',':'))))
         database.commit();database.close();database=None
@@ -149,6 +208,7 @@ def build_map(root,output,original,provenance):
         os.link(temporary,output);temporary.unlink()
         return stats
     finally:
+        if provider is not None:provider.close()
         if database is not None:database.close()
         temporary.unlink(missing_ok=True);Path(str(temporary)+'-journal').unlink(missing_ok=True)
 
