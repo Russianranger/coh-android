@@ -1,6 +1,7 @@
 #ifndef COH_ORIGINAL_COSTUME_RECEIVE_H
 #define COH_ORIGINAL_COSTUME_RECEIVE_H
 #include "../replication/coh_replication.h"
+#include "coh_client_costume_slots.h"
 #include <setjmp.h>
 #ifdef __cplusplus
 extern "C" {
@@ -38,10 +39,11 @@ typedef struct{CohOriginalCostumeAppearance appearance;CohOriginalCostumePart *p
 typedef struct{
  CohOriginalCostumeObject costume;CohOriginalCostumePart parts[30];const char *strings[120];int colors[120];
  int string_count,string_order,color_count,color_order;
- char literals[182][260];unsigned literal_count,part_strings,extra_strings,header_flags,after_count;
+ char literals[182][260];unsigned literal_count,wire_literal_count,part_strings,extra_strings,header_flags,after_count;
 } CohOriginalCostumeScratch;
 typedef struct{
  CohRepReader reader;CohOriginalCostumeReport report;CohOriginalCostumeScratch scratch;jmp_buf trap;
+ const CohClientCostumeSlots *client_slots;
  uint32_t body_parts;int hasDebugInfo;unsigned cache_mode,cache_first,cache_index,cache_count;
 } CohOriginalCostumeState;
 typedef union{
@@ -64,6 +66,14 @@ typedef union{
  * no heap allocation or external global cache. All caller spans are disjoint.
  * Caller charges actual64KiB workspace, packet, report,4KiB stack reserve and
  * all retained resources to the unchanged8MiB initial aggregate budget. */
+/* Same unchanged source receiver, with the verified CLIENT primary-slot view.
+ * Indexed strings use existing scratch storage; no decoded pointers escape the
+ * call. Missing tables still stop before their index Pack. Supplied slots are
+ * immutable and live through this call; caller charges raw+index+view alongside
+ * packet, workspace, all retained owners and stack in the8MiB aggregate. */
+CohStatus coh_original_costume_receive_slots(const CohRepReader *at_costume_begin,
+ uint32_t body_parts,const CohClientCostumeSlots *,CohOriginalCostumeWorkspace *,
+ CohOriginalCostumeReport *);
 CohStatus coh_original_costume_receive(const CohRepReader *at_costume_begin,
  uint32_t body_parts,CohOriginalCostumeWorkspace *,CohOriginalCostumeReport *);
 #ifdef __cplusplus
