@@ -7,11 +7,11 @@
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
   "rendered": "Physical Thor framebuffer: source roadway/pavement and yellow real-pose box in the existing two-instance neighborhood; no genuine costume model yet.",
-  "blocker": "Actual 301656-bit ALLENTS stops at bit 11832 at BasePower CRC 0x80443357 (first of 343 customization entries). CLIENT powers.bin mapping is absent; no application ACK/READY.",
+  "blocker": "Host replay consumes all 343 power customizations with 343 unresolved CRCs; original signed inventory receiver reaches bit 41312/301656. Remaining original entity/global/character integration is in progress, with no missing BasePower table required for customization framing.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "Supply the source-pinned CLIENT BasePower mapping and continue the retained actual packet to the next real boundary.",
-    "Connect the decoded Huge costume to its genuine rig, GEO and textures.",
+    "Finish original initial-packet receive, then source-authentic ACK/READY and bounded post-ACK command/position observations.",
+    "Resolve and draw the decoded Huge costume with its actual rig, GEO and textures.",
     "Connect original archive imports to the runtime neighborhood adapter and verify a different pose without rebuilding."
   ],
   "working_rules": [
@@ -76,6 +76,1533 @@
       },
       "corpus": "Five exact authentic supported-format assets, pinned codecs, audio fixture and accepted world.bin. A broad-corpus ARGB8888 texture failure was observed before cleanup; uncompressed DDS is documented unsupported. Its source bytes were preserved outside the admitted test subset.",
       "android_or_device_retest": "Not required for cleanup; no app code, APK or runtime inputs changed."
+    },
+    "bundles_20261020": {
+      "before_files": 70,
+      "before_bytes": 44564428,
+      "removed_files": 4,
+      "removed_bytes": 196969,
+      "retained_files": 66,
+      "retained_bytes": 44367459,
+      "reference_policy": "Keep any checker, workflow, lock, accepted receipt or documentation reference. None of these bundles is pinned directly by a checker or workflow; 66 remain referenced by receipts or documentation. Git history retains all four removed payloads. No other cleanup.",
+      "inventory": [
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-account-controls-owner-reason-history.bundle",
+          "size": 718108,
+          "sha256": "b9712307d49716b17fdc9da6734ec129dfaa8f8d08a0139e664a54f2a4ee59c7",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-account-controls-owner-reason-history.json",
+            "line": 30,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-account-controls-owner-reason-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-base-defaults-verifier-history.bundle",
+          "size": 695334,
+          "sha256": "3175412388f65102673c79e567c886095a1dc52ee8fc81cc4a3dbb02a2bfdf93",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-base-defaults-verifier-history.json",
+            "line": 3,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-base-defaults-verifier-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-creation-status-windows-model-history.bundle",
+          "size": 260902,
+          "sha256": "dde8e775f26dcbbcb4daf2a6ef2ac0be6144b5baa8dfdb2a8558f584c22d5617",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-creation-status-windows-model-history.json",
+            "line": 3,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-creation-status-windows-model-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-db-diagnostic-history.bundle",
+          "size": 9968,
+          "sha256": "2a25199633c6dbd9586026a1b16e84682cc59ccf89ca8d3a6387c362e14e0d7f",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-next-witness-history.json",
+            "line": 17,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-db-diagnostic-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-db-received-prefix-history.bundle",
+          "size": 355694,
+          "sha256": "111b223e50fd4e51763dc9568c673ba7a48c9af1151a25694581cfda31df06b2",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-db-received-prefix-history.json",
+            "line": 20,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-db-received-prefix-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-development-driver-history.bundle",
+          "size": 391346,
+          "sha256": "6fb7ed0b64817325a539bbb912c51bf0af53849cf4b925cb924dd2d9a3b615e4",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-development-driver-history.json",
+            "line": 35,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-development-driver-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-editmsg-scene-history.bundle",
+          "size": 710395,
+          "sha256": "67b471b0c59380a4c5648a78bec9aa41f430ac71c5ffedc10ef88bf8f3852144",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-editmsg-scene-history.json",
+            "line": 25,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-editmsg-scene-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-failure-closure-history.bundle",
+          "size": 1634062,
+          "sha256": "798ad36d8b564b625b9af77da9ffb2e4a95448531b24ca3b4f9082c2b6455a6b",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-failure-closure-history.json",
+            "line": 40,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-failure-closure-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-fixture-fix-history.bundle",
+          "size": 34593,
+          "sha256": "18096f53f48ae1a3fd7fc53abb8178f7d1dea233b3f515f4b5fc66c293613e24",
+          "decision": "DELETE_UNREFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": null,
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "git:199eab6ad61645308b819253d7181030a73af65c:native-android/combined-client/diagnostics/primary-authority-20261017/worker-fixture-fix-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-followup-history.bundle",
+          "size": 127681,
+          "sha256": "821a41d787a8faa438253b1c92dc3b03eacd4be9911cbe528afc37c1c5725b58",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-next-witness-history.json",
+            "line": 16,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md",
+            "line": 961,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-followup-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-fresh-observer-auth-history.bundle",
+          "size": 756099,
+          "sha256": "caf4e73dc7169c1fdfb0e17ead5deca334a01065eb010f0d5ebdacd679bb673c",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-fresh-observer-auth-history.json",
+            "line": 35,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-fresh-observer-auth-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-history.bundle",
+          "size": 154968,
+          "sha256": "6414a4019ba022fe3547ca89137e01b7277d77a026bb9fcff4f24cdb80aa057b",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/continuation-f-20261017/bundle-recovery.json",
+            "line": 91,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/continuation-f-20261017/HANDOFF.md",
+            "line": 45,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-observation-history.bundle",
+          "size": 575626,
+          "sha256": "65b77ce0772730e797ff4f50df351cceb1d2d76b9f83a06a829ad16a3dbe59a2",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-observation-history.json",
+            "line": 35,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-observation-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-owner-source-history.bundle",
+          "size": 49030,
+          "sha256": "6288cd796005a7bf2146a9348e62f8abcb7ec2bdb51dd017d2e61d6c8aec25a5",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-owner-source-history.json",
+            "line": 36,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md",
+            "line": 215,
+            "match": [
+              "sha256"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-owner-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-modal-observer-history.bundle",
+          "size": 31684,
+          "sha256": "399d363fe4aa9882c3d2d3bf3ef9669e592d5d960cfe7ed1eb58ff4297c8ad05",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-modal-observer-history.json",
+            "line": 7,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md",
+            "line": 1104,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-modal-observer-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-next-witness-history.bundle",
+          "size": 80532,
+          "sha256": "35e4fa0ae2cf4020a15954ba2f9ccef0597484d54c8f14c6d9817a179d2dccf3",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-next-witness-history.json",
+            "line": 3,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-next-witness-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-observed-android-history.bundle",
+          "size": 369099,
+          "sha256": "d262b4f9d536e0b614c2dff508ac71e053acf351a3d42ebf6a841fb46415c965",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-observed-android-history.json",
+            "line": 30,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-observed-android-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-owner-scene-inventory-history.bundle",
+          "size": 87331,
+          "sha256": "1bccea5bb89f599cc9c58da54d37111a665329d3f84486e29ff11da96e445f31",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-owner-scene-inventory-history.json",
+            "line": 31,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md",
+            "line": 241,
+            "match": [
+              "sha256"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-owner-scene-inventory-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-qualified-scene-live-history.bundle",
+          "size": 7261660,
+          "sha256": "cacfb86e20cc66223e9ca07209e50c92459cfb2d5a2330de7e911d48660356f8",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/recovery-20261018-continuation/recovery.json",
+            "line": 10,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-qualified-scene-live-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-runtime-evidence-history.bundle",
+          "size": 3152734,
+          "sha256": "632161a688d5e3f1c82c7c04023797d4cea06bd1a28b8d8cc7467bcb9b804d96",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-runtime-evidence-history.json",
+            "line": 35,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-runtime-evidence-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-salvage-inventory-preflight-history.bundle",
+          "size": 13830,
+          "sha256": "403e453cd5d45cf4528c585c31a351cf4d45bfd872ffe4f5fac626f1d7680dc7",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-salvage-inventory-preflight-history.json",
+            "line": 26,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-salvage-inventory-preflight-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-shared-layout-history.bundle",
+          "size": 30719,
+          "sha256": "26f213c43cd4c8a9fb2e018f6d008b334f58d963310b7a5df38ac10c52b5c8bf",
+          "decision": "DELETE_UNREFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": null,
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "git:199eab6ad61645308b819253d7181030a73af65c:native-android/combined-client/diagnostics/primary-authority-20261017/worker-shared-layout-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-constructors-history.bundle",
+          "size": 119127,
+          "sha256": "d5490095359a2da2a50452434fc45e37bf5c3ef90d59a51e87a8f2d38500f3ac",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-constructors-history.json",
+            "line": 25,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md",
+            "line": 1337,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-constructors-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-selection-history.bundle",
+          "size": 100129,
+          "sha256": "cf0c1f6860e58049779b9e8b4f6af94a4e9e1568186a4726231cd592454d497e",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-selection-history.json",
+            "line": 30,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md",
+            "line": 1152,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-selection-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-snapshot-history.bundle",
+          "size": 920648,
+          "sha256": "f2f0a29c68a7ac038e942745f56b2605ab992a466527d92284119068e2a8dbf7",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-snapshot-history.json",
+            "line": 30,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-source-snapshot-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-typed-recovery-history.bundle",
+          "size": 254966,
+          "sha256": "dd627149e51c268e28519fa96e2829c3daa87f9698e5367e6dd5cefa31da06aa",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-typed-recovery-history.json",
+            "line": 40,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-typed-recovery-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-windows-canonical-history.bundle",
+          "size": 21713,
+          "sha256": "849ead49b730e8590d687917a61bf446d47c3513969db7fb36fa2d4508e27600",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-windows-canonical-history.json",
+            "line": 20,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-windows-canonical-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-baseline-history.bundle",
+          "size": 38555,
+          "sha256": "a9f24355c7f098b96f573bdf2cb58b670e9c7d628a71b6539b9ffbcf88436f21",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-baseline-source-history.json",
+            "line": 13,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-baseline-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-recovery-history.bundle",
+          "size": 35575,
+          "sha256": "808e166571c0c0c019c5658fcb556ed2c19f41de9617f38caefd3ead1a8ba7a5",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-recovery-source-history.json",
+            "line": 7,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-recovery-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.bundle",
+          "size": 155490,
+          "sha256": "f86966aadfd4fe5cdcd3bc83077a477b187cf8abede3fe3255a7b158ef42a056",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.json",
+            "line": 3,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/HANDOFF.md",
+            "line": 625,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-history.bundle",
+          "size": 96401,
+          "sha256": "63a10ad44931edf1350fe0d9169977d6ab153773e12644487bf913bb618b2c1b",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-history.json",
+            "line": 17,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-followup-history.bundle",
+          "size": 10625,
+          "sha256": "460999675a10aee4ae987e13775009dc6e54f780a23ce12ea3c02ac24c6ab99a",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/followup-source-history.json",
+            "line": 6,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/HANDOFF.md",
+            "line": 309,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-followup-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-next-history.bundle",
+          "size": 297118,
+          "sha256": "9ec460f80f9d51aae85bff317877d5103d472d3eb15ce5920745d265d3a100c9",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/source-history.json",
+            "line": 13,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/HANDOFF.md",
+            "line": 258,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-next-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/six-source-history.bundle",
+          "size": 658496,
+          "sha256": "32da5c492d67c84dd9dc45f002f9244abdebdbf47647224ba14eab791f2a727b",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/recovery.json",
+            "line": 11,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/HANDOFF.md",
+            "line": 371,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/six-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-control-history.bundle",
+          "size": 168450,
+          "sha256": "b14e7e9beef2a621c6f61a55c629e19390c2f9e99a7ed2396dc9f77a2c8c556b",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-control-history.json",
+            "line": 20,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-control-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-deployment-history.bundle",
+          "size": 89145,
+          "sha256": "092160212f481cb2f98314fc8d67c67d68c173eb53a5f8cde260a145aeaa959f",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-deployment-history.json",
+            "line": 18,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-deployment-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-expanded-contract-history.bundle",
+          "size": 210494,
+          "sha256": "8998247915ff8d8a66a41326b637196a5b84875df502537469a7537a5adcb029",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-expanded-contract-history.json",
+            "line": 20,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-expanded-contract-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-followup-history.bundle",
+          "size": 215346,
+          "sha256": "0589fe44266c245896418f78a163bfa1f703fb6fd09aa22847d488656c97f096",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-next-witness-history.json",
+            "line": 16,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md",
+            "line": 961,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-followup-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-history.bundle",
+          "size": 179282,
+          "sha256": "ebe728f3018caa60a0f1a32250f18dd574414946a0d9f22ea47ee99d2125ed32",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/diagnostics/continuation-f-20261017/bundle-recovery.json",
+            "line": 85,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/diagnostics/continuation-f-20261017/HANDOFF.md",
+            "line": 45,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-memory-history.bundle",
+          "size": 8186,
+          "sha256": "ae195500099fcce4d07beb266bd6fb1c5486ec4e4e1f0a731381d1ec209d02c4",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-memory-history.json",
+            "line": 8,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-memory-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-stream-history.bundle",
+          "size": 154757,
+          "sha256": "dffae8a14c7fb87abde91695943f7c7f82d99b56f98b3cd39dca96927a0324cc",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-stream-history.json",
+            "line": 4,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-stream-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-taskforce-history.bundle",
+          "size": 60676,
+          "sha256": "bb1ca5a2ff0beb6c4bcfe7922ac455b0dfaa294c695b4870131e658ee89b4b88",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-taskforce-history.json",
+            "line": 14,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-taskforce-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-primary/final-qualification-worker-history.bundle",
+          "size": 30810,
+          "sha256": "56db8ba0417506d17d9ec4e04150179c22505cd1aac75de663fb9e8e7040d1d0",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-primary/final-qualification-worker-history.json",
+            "line": 19,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-primary/final-qualification-worker-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-primary/recovered-and-worker-history.bundle",
+          "size": 5923539,
+          "sha256": "d40a39581c8a8649b355a436df728c1dd9aeb54166412d4438c0b1761bce9518",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-primary/wire-and-candidate-service-history.json",
+            "line": 21,
+            "match": [
+              "basename"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-primary/recovered-and-worker-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-primary/wire-and-candidate-service-history.bundle",
+          "size": 72303,
+          "sha256": "1f27f34f9cd8efca2a25e90df47f105eaecb22cb372464d5f2592f42c0549149",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-primary/wire-and-candidate-service-history.json",
+            "line": 19,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-primary/HANDOFF.md",
+            "line": 221,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-primary/wire-and-candidate-service-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone10-source-history.bundle",
+          "size": 359737,
+          "sha256": "d7bfab261643717e07b400e879bbbb871f4060fd13a218506f3fb9cee71742a4",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone10-source-history.json",
+            "line": 81,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE10.md",
+            "line": 95,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone10-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone11-renderer-planner-recovery.bundle",
+          "size": 5194,
+          "sha256": "7b70c7b74e47aac9d070d6cced567e3d30c6534230e3a7b69e5e8d4a148016de",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone11-renderer-planner-recovery.json",
+            "line": 86,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE11.md",
+            "line": 199,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone11-renderer-planner-recovery.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone11-source-history.bundle",
+          "size": 286577,
+          "sha256": "ee90cbb797c94f909a3d3e4f011028e93353efd9b056c07a58cab642f617bf38",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone11-source-history.json",
+            "line": 87,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE11.md",
+            "line": 159,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone11-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone12-power-stream-recovery.bundle",
+          "size": 6911,
+          "sha256": "459a5389e562256a73b1e045a5277382333b22c9f9dd4c8fc8420f1e83670825",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone12-power-stream-recovery.json",
+            "line": 93,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE12.md",
+            "line": 172,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone12-power-stream-recovery.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone12-source-history.bundle",
+          "size": 158143,
+          "sha256": "70a02cd2f0810c9b774f4fdd5e2dfd74905c3bb366ad7539a6d99b4892875b3e",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone12-source-history.json",
+            "line": 94,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE12.md",
+            "line": 116,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone12-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone13-doc-append.bundle",
+          "size": 869,
+          "sha256": "c4e1bb54dd6e8708a0f86500e69571351a8101d2052f3bec4e87a778c5259602",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone13-doc-append.json",
+            "line": 5,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone13-doc-append.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone13-source-history.bundle",
+          "size": 50997,
+          "sha256": "6d8a98b1c5650deb33129229bf8083dcd3e4b5af968353a0efecc5c9ca1b2d03",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone13-source-history.json",
+            "line": 97,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE13.md",
+            "line": 43,
+            "match": [
+              "basename",
+              "sha256"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone13-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone14-integration-append.bundle",
+          "size": 296863,
+          "sha256": "d026c6a5a34b06a87579190edabc646dc0758755af6a3742b1f0bb7119486347",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone14-integration-append.json",
+            "line": 108,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE14.md",
+            "line": 71,
+            "match": [
+              "sha256"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone14-integration-append.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone14-source-history.bundle",
+          "size": 387766,
+          "sha256": "ad02c884b0d512cd48da9a05e0d4ca5c0facc71b8f822c802474ca0c4ecf8083",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone14-source-history.json",
+            "line": 104,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE14.md",
+            "line": 69,
+            "match": [
+              "sha256"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone14-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone2-source-history.bundle",
+          "size": 1509612,
+          "sha256": "a1b9f1e1d4884de3fe1e68796a85a8bf074f1a70cd7c9c1c4b44c0d52c134aaa",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone2-source-history.json",
+            "line": 14,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone2-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone3-source-history.bundle",
+          "size": 153088,
+          "sha256": "4972b3b7e6ff9a97dfd28e95a58048efa20134ba9165c96eb7f76aa10d6b5c94",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone3-source-history.json",
+            "line": 22,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone3-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone4-source-appendix.bundle",
+          "size": 101524,
+          "sha256": "4278ddd217978bc2771021a3530609e060e08145b6a36f470096246106e9fbb2",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone4-source-appendix.json",
+            "line": 19,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone4-source-appendix.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone4-source-history.bundle",
+          "size": 1796343,
+          "sha256": "5784ac663d54e907b59617e0dc8f429a8e963241ab9bd2bca4d16c52fe944247",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone4-source-history.json",
+            "line": 22,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/ACTIVE_CONTINUATION.md",
+            "line": 342,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone4-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-appendix.bundle",
+          "size": 57375,
+          "sha256": "2eaf084fa986b7e473a77bbcfde021c5683087de6f4f27318b9e4b0f6c59c59b",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-appendix.json",
+            "line": 24,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-appendix.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-history.bundle",
+          "size": 1216074,
+          "sha256": "b771520763b3c6497bf10fd10d5b975d7ef29a1afa617335b16d1d4b686fc1bb",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-history.json",
+            "line": 29,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/ACTIVE_CONTINUATION.md",
+            "line": 357,
+            "match": [
+              "basename",
+              "sha256"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-texture-source-history.bundle",
+          "size": 620018,
+          "sha256": "aa9c9b8e5a54120f1f2c00d3754c8726251f46958bdacd9692a1a836cb8c94c4",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-texture-source-history.json",
+            "line": 27,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone5-texture-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone6-source-history.bundle",
+          "size": 392592,
+          "sha256": "c097ecc68b2e68d4f1e70e89a992a7bc3a165674245c2027fb014489d989edbe",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone6-source-history.json",
+            "line": 35,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE6.md",
+            "line": 3,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone6-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone7-source-history.bundle",
+          "size": 629146,
+          "sha256": "e73a9d126cdf00ace046c1b3fd7f2027bbbc3b654ee39fa5fa577181a00d2e79",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone7-source-history.json",
+            "line": 62,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE7.md",
+            "line": 38,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone7-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone8-source-history.bundle",
+          "size": 4472454,
+          "sha256": "d43fb30dafd9c6610b05f40aa88250623f6cad180aca45c3611ad3defaf39803",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone8-source-history.json",
+            "line": 72,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE8.md",
+            "line": 50,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone8-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone9-source-history.bundle",
+          "size": 2873783,
+          "sha256": "b566105bd09dbd2d63ac65a390caf988047261e37055c18f6e332412f8598b82",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone9-source-history.json",
+            "line": 75,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/MILESTONE9.md",
+            "line": 74,
+            "match": [
+              "basename"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/milestone9-source-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/six-worker-history.bundle",
+          "size": 229822,
+          "sha256": "911f6f19312b9370f69e5f3e55da5dbe591ddf9293dfa39d140773476363e781",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/six-worker-history.json",
+            "line": 12,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/six-worker-history.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/worker-c-dictionary-identity-41f6e7167.bundle",
+          "size": 211046,
+          "sha256": "78931a68f67541a2ad8f7fce6afd0b3fe513e6d415434047fa813ef217949530",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": null,
+          "documentation_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/ACTIVE_CONTINUATION.md",
+            "line": 342,
+            "match": [
+              "basename",
+              "sha256"
+            ],
+            "kind": "documentation"
+          },
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/worker-c-dictionary-identity-41f6e7167.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/worker-c-global-tail-99f70f4c4.bundle",
+          "size": 78738,
+          "sha256": "696c17a93131fed1acef02f88fe8318f0d08cbe1886a59924fce0621b9eb31b0",
+          "decision": "DELETE_UNREFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": null,
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "git:199eab6ad61645308b819253d7181030a73af65c:native-android/combined-client/evidence/20261017/emergency-recovery/worker-c-global-tail-99f70f4c4.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/worker-c-initial-suffix-9a47380c3.bundle",
+          "size": 52919,
+          "sha256": "b8bd92bbdf1e1cb896356d0ef5103b2a6ff5cb1ef458f4de0e93e30dc3e2206b",
+          "decision": "DELETE_UNREFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": null,
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "git:199eab6ad61645308b819253d7181030a73af65c:native-android/combined-client/evidence/20261017/emergency-recovery/worker-c-initial-suffix-9a47380c3.bundle"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261017/emergency-recovery/world-continuation-source-history.bundle",
+          "size": 1293611,
+          "sha256": "1e1dff44d9cb84103bc856b32698c3a2aac015447cae03eb40c6694a01a7107c",
+          "decision": "KEEP_REFERENCED",
+          "checker_pin": null,
+          "workflow_pin": null,
+          "receipt_pin": {
+            "file": "native-android/combined-client/evidence/20261017/emergency-recovery/world-continuation-source-history.json",
+            "line": 14,
+            "match": [
+              "sha256"
+            ],
+            "kind": "receipt"
+          },
+          "documentation_pin": null,
+          "lock_pin": null,
+          "location": "native-android/combined-client/evidence/20261017/emergency-recovery/world-continuation-source-history.bundle"
+        }
+      ],
+      "validation": {
+        "serial_check_all_before": {
+          "module_passes": 6,
+          "aggregate_passed": false,
+          "combined_host_failure": "Existing GCC maybe-uninitialized -Werror at protocol/coh_protocol.c:9/97."
+        },
+        "serial_check_all_after": {
+          "module_passes": 6,
+          "aggregate_passed": false,
+          "combined_host_failure": "Identical preexisting GCC maybe-uninitialized -Werror."
+        },
+        "affected_bundle_checkers": [],
+        "unchanged_retained_bundle_hashes": 66,
+        "unchanged_protected_file_hashes": 194
+      }
     }
   },
   "validation": {
@@ -401,11 +1928,11 @@
     "result": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete.",
     "next_action": "Development paused at user request after recording these reports."
   },
-  "next_action": "Development paused at user request after recording these reports.",
+  "next_action": "Finish the source-authentic saved-packet replay and package the qualified full-screen diagnostic.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
-    "state": "Physical 0.1.16 results recorded; development paused at user request.",
+    "state": "Development resumed: original NULL-tolerant power customization receive qualified; final packet continuation and full-screen APK integration in progress.",
     "source_commits": [
       {
         "local": "4a12f6c92426cc0e2249330ee69ffa6e6c8ef61b",
