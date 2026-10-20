@@ -93,7 +93,10 @@ target_link_libraries(coh_combined_interop PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcr
 
 if(COH_FRAME_CAPTURE_DIAGNOSTIC)
     target_sources(coh_combined_interop PRIVATE "${ENGINE}/entities/coh_original_ent_costume.c"
-        "${ENGINE}/entities/coh_original_taskforce_receive.c")
+        "${ENGINE}/entities/coh_original_taskforce_receive.c"
+        "${ENGINE}/entities/coh_original_rare_receive.c"
+        "${ENGINE}/entities/coh_very_rare_tail.c"
+        "${ENGINE}/entities/coh_teammate_buffs.c")
     target_compile_definitions(coh_combined_interop PRIVATE COH_FRAME_CAPTURE_DIAGNOSTIC=1)
 endif()
 

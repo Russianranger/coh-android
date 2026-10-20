@@ -3,7 +3,7 @@
  * composes the retained original sender header to isolate owner integration. */
 #define COH_CLIENT_SLOTS_TEST_MAIN retained_client_slot_suite_not_executed
 #include "test_client_slots_android.c"
-static unsigned outer_cases;static size_t last_power_begin,last_full_bits;
+static unsigned outer_cases;static size_t last_power_begin,last_full_bits,last_inventory_begin,last_inventory_end;
 static const char *outer_report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"ack_permitted\":false"));return report_text;}
 static unsigned char replay_output[COH_INITIAL_REPLAY_BYTES+COH_INITIAL_REPLAY_HEADER_BYTES];
 static jsize replay_output_bytes;static unsigned replay_fault,replay_sets,replay_deletes;
@@ -111,8 +111,32 @@ static void unresolved_power(const char *path,unsigned count){
  CHECK(active->initial_outer.power_first_unresolved_crc==0x80443357u&&active->initial_outer.power_last_unresolved_crc==0x80443357u+count-1);
  CHECK(active->initial_outer.power_end_bit==power_end&&active->initial_outer.end_bit==multi_bits&&active->initial_outer.selected_complete);
  CHECK(active->initial_outer.power_scratch_bytes>0&&active->initial_outer.power_scratch_bytes<=COH_ORIGINAL_COSTUME_WORKSPACE_BYTES);
+ last_inventory_begin=active->initial_outer.inventory_begin_bit;last_inventory_end=active->initial_outer.inventory_end_bit;
  CHECK(strstr(outer_report(),"\"costume_next_kind\":\"implementation remaining\"")&&strstr(report_text,"\"power_unresolved\":["));
  check_replay();finish();CHECK(!map_live&&!live);
+}
+static void test_pack(size_t *at,unsigned width,uint32_t value){while(width<32&&value>=(UINT32_C(1)<<width)-1u){uint32_t step=(UINT32_C(1)<<width)-1u;set_bits(multi_packet,*at,width,step);*at+=width;value-=step;width=width>16?32:width*2;}set_bits(multi_packet,*at,width,value);*at+=width;}
+static void inventory_and_rare(const char *path,const char *suffix){
+ static uint8_t original[sizeof(multi_packet)],source[sizeof(multi_packet)];uint8_t header[4];
+ FILE *file=fopen(suffix,"rb");CHECK(file&&fread(header,1,4,file)==4);size_t source_bits=load32(header),source_bytes=(source_bits+7)/8;
+ CHECK(source_bits&&source_bytes<=sizeof(source)&&fread(source,1,source_bytes,file)==source_bytes&&fgetc(file)==EOF&&!fclose(file));
+ CHECK(last_inventory_begin&&last_inventory_end==last_inventory_begin+1);memcpy(original,multi_packet,sizeof(original));size_t old_end=multi_bits;
+ size_t at=last_inventory_begin;test_pack(&at,1,1);test_pack(&at,3,1);test_pack(&at,8,UINT32_MAX);test_pack(&at,8,10);test_pack(&at,8,20);test_pack(&at,8,30);size_t inventory_end=at;
+ for(size_t bit=last_inventory_end;bit<old_end;bit++)set_bits(multi_packet,at++,1,(original[bit/8]>>(bit%8))&1u);
+ size_t rare_begin=at;for(size_t bit=0;bit<source_bits;bit++)set_bits(multi_packet,at++,1,(source[bit/8]>>(bit%8))&1u);CHECK(at<=sizeof(multi_packet)*8);
+ for(unsigned trim=0;trim<3;trim++){
+  multi_bits=at-(trim==2?8:trim);fixture();CHECK(slots_configure(path)==COH_OK);partcount_fixture=1;slot_begin();
+  CHECK(JNI(service)(&env,NULL,current,101)==COH_OK&&JNI(choose)(&env,NULL,current,2,102)==COH_OK&&JNI(service)(&env,NULL,current,103)==COH_OK);
+  active->busy=1;CHECK(coh_initial_capture_service(active->capture,104,(CohCancel){0},multi_observe,active,sizeof(*active))==COH_UNSUPPORTED);active->busy=0;
+  CHECK(active->initial_outer.status==COH_OK&&active->initial_outer.inventory_begin_bit==last_inventory_begin&&active->initial_outer.inventory_end_bit==inventory_end);
+  CHECK(active->initial_outer.inventory_count==1&&active->initial_outer.inventory_values_read==4&&active->initial_outer.inventory_negative_words==1);
+  CHECK(active->initial_rare.begin_bit==rare_begin&&active->initial_rare.end_bit<=multi_bits&&!active->initial_outer.entity_complete&&!active->initial_outer.message_complete);
+  CHECK(active->initial_rare.status==(trim?COH_INVALID:COH_OK)&&active->initial_rare.entity_suffix_complete==!trim);
+  if(!trim)CHECK(active->initial_rare.end_bit==at&&active->initial_rare.stage==COH_ORIGINAL_RARE_COMPLETE&&strstr(outer_report(),"\"initial_suffix_next\":\"entity list sentinel\""));
+  static const CohOriginalRareWorkspace zero;CHECK(!memcmp(&active->rare_workspace,&zero,sizeof(zero)));
+  CHECK(strstr(outer_report(),"\"initial_observed\":true")&&strstr(report_text,"\"inventory_words\":[")&&strstr(report_text,"\"rare_suffix\":[")&&!strstr(report_text,"REPORT_LIMIT"));
+  check_replay();finish();CHECK(!map_live&&!live);
+ }
 }
 
 int main(int argc,char **argv){
@@ -120,6 +144,7 @@ int main(int argc,char **argv){
  for(unsigned bodies=1;bodies<=10;bodies++)for(unsigned selected=0;selected<bodies;selected++)for(unsigned truncate=0;truncate<3;truncate++)outer_capture(argv[1],bodies,selected,truncate);
  replay_bounds(argv[1]);
  unresolved_power(argv[1],343);
+ inventory_and_rare(argv[1],argv[2]);
  CHECK(opens==closed_files&&asset_opens==asset_closes&&maps==unmaps&&!map_live&&!live&&freed==wiped);
  printf("{\"passed\":true,\"checks\":%u,\"outer_cases\":%u,\"interop_owner_bytes\":%zu,\"snapshot_bytes\":%zu,\"report_peak_bytes\":%zu,\"stack_reserve\":%u,\"initial_limit\":8388608,\"physical_packet_replayed\":false,\"entity_or_message_complete\":false}\n",checks,outer_cases,sizeof(Interop),sizeof(CohOriginalCostumeSnapshot),max_report_bytes,COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE);return 0;
 }

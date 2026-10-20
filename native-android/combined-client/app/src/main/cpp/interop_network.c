@@ -39,6 +39,7 @@
 #include "coh_original_costume_receive.h"
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
 #include "coh_original_ent_costume.h"
+#include "coh_original_rare_receive.h"
 #endif
 #include "coh_client_costume_slots.h"
 #include "interop_network.h"
@@ -81,6 +82,8 @@ typedef struct {
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
     CohOriginalCostumeSnapshot selected_costume;
     CohOriginalEntCostumeReport initial_outer;
+    CohOriginalRareWorkspace rare_workspace;
+    CohOriginalRareReport initial_rare;
     uint32_t replay_bytes,replay_compressed,replay_omitted;
     uint8_t initial_replay[COH_INITIAL_REPLAY_BYTES];
 #endif
@@ -128,7 +131,7 @@ static void client_slots_release(ClientSlotsOwner *slots) {
 #define CLIENT_SLOTS_ARGS(h)
 #endif
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
-#define OUTER_COSTUME_FORMAT ",\"costume_outer\":[%u,%u,%llu,%llu,%llu,%llu,%u,%u,%u,%u],\"selected_costume\":[%u,%u,%u,%u,%llu],\"costume_next\":\"%s\",\"costume_next_kind\":\"%s\",\"power_customization\":[%u,%u,%u,%u,%u,%u,%llu,%llu],\"initial_tail\":[%u,%u,%u],\"power_unresolved\":[%u,%u,%u,%u,%llu]"
+#define OUTER_COSTUME_FORMAT ",\"costume_outer\":[%u,%u,%llu,%llu,%llu,%llu,%u,%u,%u,%u],\"selected_costume\":[%u,%u,%u,%u,%llu],\"costume_next\":\"%s\",\"costume_next_kind\":\"%s\",\"power_customization\":[%u,%u,%u,%u,%u,%u,%llu,%llu],\"initial_tail\":[%u,%u,%u],\"power_unresolved\":[%u,%u,%u,%u,%llu],\"inventory_words\":[%llu,%llu,%u,%u,%u],\"rare_suffix\":[%u,%u,%llu,%llu,%llu,%u,%u],\"initial_suffix_next\":\"%s\""
 #define OUTER_COSTUME_ARGS(h) ,status_number((h)->initial_outer.status),(h)->initial_outer.field, \
     (unsigned long long)(h)->initial_outer.begin_bit,(unsigned long long)(h)->initial_outer.end_bit, \
     (unsigned long long)(h)->initial_outer.failure_bit,(unsigned long long)(h)->initial_outer.appearance_end_bit, \
@@ -144,7 +147,16 @@ static void client_slots_release(ClientSlotsOwner *slots) {
     (h)->initial_outer.titles_complete,(h)->initial_outer.ragdoll_complete,(h)->initial_outer.basic_stats_complete, \
     (h)->initial_outer.power_entries_read,(h)->initial_outer.power_unresolved_count, \
     (h)->initial_outer.power_first_unresolved_crc,(h)->initial_outer.power_last_unresolved_crc, \
-    (unsigned long long)(h)->initial_outer.power_scratch_bytes
+    (unsigned long long)(h)->initial_outer.power_scratch_bytes, \
+    (unsigned long long)(h)->initial_outer.inventory_begin_bit,(unsigned long long)(h)->initial_outer.inventory_end_bit, \
+    (h)->initial_outer.inventory_count,(h)->initial_outer.inventory_values_read,(h)->initial_outer.inventory_negative_words, \
+    status_number((h)->initial_rare.status),(h)->initial_rare.stage,(unsigned long long)(h)->initial_rare.begin_bit, \
+    (unsigned long long)(h)->initial_rare.end_bit,(unsigned long long)(h)->initial_rare.failure_bit, \
+    (h)->initial_rare.failure_cursor_exact,(h)->initial_rare.entity_suffix_complete,rare_next(&(h)->initial_rare)
+static const char *rare_next(const CohOriginalRareReport *r){
+    static const char *const names[]={"not observed","very-rare prefix","very-rare tail","teammate buffs","entity list sentinel"};
+    return r->stage<sizeof(names)/sizeof(names[0])?names[r->stage]:"unknown source field";
+}
 static const char *outer_next_kind(const CohOriginalEntCostumeReport *r){
     if(!r->field)return "not observed";
     if(r->required_table||r->body.dictionary_required)return "required table";
@@ -438,6 +450,18 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                                             &h->selected_costume,&h->initial_outer);
                                                                         h->initial_costume_continuation=h->initial_outer.body;
                                                                         h->costume_bodies_expected=h->initial_outer.bodies_expected;h->costume_bodies_read=h->initial_outer.bodies_read;
+                                                                        if(h->initial_outer.status==COH_OK&&h->initial_outer.field==COH_ENT_COSTUME_RARE_PREFIX) {
+                                                                            /* The pose parser already proved all three rare
+                                                                             * flags for this fresh selected-self create.
+                                                                             * The preceding original receiver has returned;
+                                                                             * its stack is no longer live. The helper charges
+                                                                             * its own workspace/report/reader/packet/stack;
+                                                                             * retained names every other fixed/borrowed owner. */
+                                                                            original.cursor=h->initial_outer.end_bit;
+                                                                            size_t retained=sizeof(*h)-sizeof(h->rare_workspace)-sizeof(h->initial_rare)+sizeof(lease)+client_slots_owned(&h->client_slots)
+                                                                                +COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE-COH_ORIGINAL_RARE_STACK_RESERVE;
+                                                                            (void)coh_original_rare_receive(&original,&h->rare_workspace,&h->initial_rare,8u*1024u*1024u,retained);
+                                                                        }
                                                                     } else {
                                                                         h->initial_outer=(CohOriginalEntCostumeReport){.status=COH_LIMIT,.begin_bit=original.cursor,.end_bit=original.cursor,.failure_bit=original.cursor,.packet_bits=original.bits};
                                                                         h->initial_costume_continuation=(CohOriginalCostumeReport){.status=COH_LIMIT,.begin_bit=original.cursor,.failure_bit=original.cursor};

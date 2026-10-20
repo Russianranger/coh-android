@@ -93,6 +93,25 @@ def separate_catalog_boundary(value):
 
 def separate_report_extension(value, required=False):
     value = separate_catalog_boundary(separate_java_extension(value))
+    if 'rare_suffix' in value or 'initial_suffix_next' in value:
+        rare = value.get('rare_suffix')
+        need('costume_outer' in value and isinstance(rare, list) and len(rare) == 7
+             and all(type(item) is int and item >= 0 for item in rare), 'rare suffix source shape')
+        status, stage, begin, end, failure, exact, complete = rare
+        names = ('not observed', 'very-rare prefix', 'very-rare tail', 'teammate buffs', 'entity list sentinel')
+        need(status <= 7 and stage < len(names) and begin <= end <= 33554432
+             and failure <= 33554432 and exact <= 1 and complete <= 1
+             and (not complete or status == 0 and stage == 4 and exact == 1), 'rare suffix source domains')
+        need(value.get('initial_suffix_next') == names[stage], 'rare suffix source next field')
+        value = {key: item for key, item in value.items() if key not in ('rare_suffix', 'initial_suffix_next')}
+    if 'inventory_words' in value:
+        inventory = value['inventory_words']
+        need('costume_outer' in value and isinstance(inventory, list) and len(inventory) == 5
+             and all(type(item) is int and item >= 0 for item in inventory), 'inventory source shape')
+        begin, end, count, words, negative = inventory
+        need(begin <= end <= 33554432 and count <= 0x7fffffff and words <= 33554432
+             and negative <= words, 'inventory source domains')
+        value = {key: item for key, item in value.items() if key != 'inventory_words'}
     if 'power_unresolved' in value:
         unresolved = value['power_unresolved']
         need('power_customization' in value and isinstance(unresolved, list) and len(unresolved) == 5
