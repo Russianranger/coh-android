@@ -24,6 +24,8 @@
 #include "coh_initial_sgcolors_probe.h"
 #include "coh_initial_scales_probe.h"
 #include "coh_initial_partcount_probe.h"
+#include "coh_local_bodypart_default.h"
+#include "coh_original_costume_receive.h"
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
@@ -38,6 +40,7 @@ typedef struct {
     size_t groups_bytes,groups_bits,initial_bytes,initial_bits,initial_cursor;
     CohInitialCreateProbe initial_create;
     CohInitialPoseProbe initial_pose;
+    CohInitialPoseSample initial_pose_sample;
     CohInitialSequenceProbe initial_sequence;
     CohInitialTriggeredProbe initial_triggered;
     CohInitialAiAnimProbe initial_aianim;
@@ -51,6 +54,10 @@ typedef struct {
     CohInitialSgcolorsProbe initial_sgcolors;
     CohInitialScalesProbe initial_scales;
     CohInitialPartcountProbe initial_partcount;
+    uint32_t pinned_bodyparts;CohStatus bodyparts_cache_status;
+    CohOriginalCostumeWorkspace costume_workspace;
+    CohOriginalCostumeReport initial_costume_continuation;
+    unsigned costume_continuation_attempted;
     CohReceiveProjection receive;
 #ifdef COH_INTEROP_REQUEST_TX
     CohRequestTxWitness *request;
@@ -59,6 +66,8 @@ typedef struct {
 } Interop;
 static Interop *active;
 static uint64_t next_token=1;
+static uint32_t configured_bodyparts;
+static CohStatus configured_bodyparts_status=COH_NOT_FOUND;
 static void sample_receive(Interop*h){
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
     coh_receive_sample(&h->receive,&d.local.map_protocol.udp);coh_db_wipe(&d,sizeof(d));
@@ -120,6 +129,20 @@ static int account_copy(JNIEnv *env,jstring input,char out[15]) {
     (*env)->ReleaseStringChars(env,input,chars);out[length]=0;
     return valid&&!(*env)->ExceptionCheck(env);
 }
+JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_configureBodyPartsCache(JNIEnv *env,jclass cls,jstring input) {
+    (void)cls;if(active)return COH_STATE;
+    configured_bodyparts=0;configured_bodyparts_status=COH_INVALID;
+    if(!input)return COH_INVALID;
+    jsize length=(*env)->GetStringLength(env,input);
+    if((*env)->ExceptionCheck(env)||length<1||length>=1024)return COH_INVALID;
+    const jchar *chars=(*env)->GetStringChars(env,input,NULL);
+    if(!chars)return COH_INVALID;
+    char path[1024];int valid=1;
+    for(jsize i=0;i<length;i++){if(chars[i]<32||chars[i]>126){valid=0;break;}path[i]=(char)chars[i];}
+    path[length]=0;(*env)->ReleaseStringChars(env,input,chars);
+    if(valid&&!(*env)->ExceptionCheck(env))configured_bodyparts_status=coh_local_bodypart_default_file(path,&configured_bodyparts);
+    coh_db_wipe(path,sizeof(path));return configured_bodyparts_status;
+}
 JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_begin(JNIEnv *env,jclass cls,
     jint port,jstring account,jint version,jboolean required,jboolean compressed,jlong now) {
     (void)cls;
@@ -129,6 +152,8 @@ JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_begin(JNIEnv *
     CohLocalConfig config;memset(&config,0,sizeof(config));Interop *h=NULL;
     if(!account_copy(env,account,name))goto failed;
     h=calloc(1,sizeof(*h));if(!h)goto failed;
+    h->pinned_bodyparts=configured_bodyparts;h->bodyparts_cache_status=configured_bodyparts_status;
+    configured_bodyparts=0;configured_bodyparts_status=COH_NOT_FOUND;
     config=coh_local_default_config();config.local_development_enabled=1;
     config.db.transport.peer=(CohNetEndpoint){{127,0,0,1},(uint16_t)port};
     config.db.transport.link.version=config.map.udp.link.version=(unsigned)version;
@@ -178,7 +203,7 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
         (void)coh_initial_create_probe(&lease.reader,&lease.schema,lease.selected_dbid,&h->initial_create);
         if(h->initial_create.create_validated&&h->initial_create.stage==COH_INITIAL_PROBE_RECORD_BODY) {
             CohRepReader body=lease.reader;body.cursor=h->initial_create.create_end_bit;
-            if(lease.message_id)(void)coh_initial_pose_probe(&body,lease.message_id,&h->initial_pose);
+            if(lease.message_id)(void)coh_initial_pose_probe_with_sample(&body,lease.message_id,&h->initial_pose,&h->initial_pose_sample);
             else h->initial_pose=(CohInitialPoseProbe){.status=COH_STATE,.stage=COH_INITIAL_POSE_INPUT,
                 .begin_bit=body.cursor,.failure_bit=body.cursor};
             coh_db_wipe(&body,sizeof(body));
@@ -236,6 +261,18 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                                 CohRepReader partcount=lease.reader;partcount.cursor=h->initial_scales.end_bit;
                                                                 (void)coh_initial_partcount_probe(&partcount,&h->initial_partcount);
                                                                 coh_db_wipe(&partcount,sizeof(partcount));
+                                                                if(h->pinned_bodyparts&&h->initial_partcount.framing_validated) {
+                                                                    CohRepReader original=lease.reader;original.cursor=h->initial_costume_slots.end_bit;
+                                                                    h->costume_continuation_attempted=1;
+                                                                    /* Actual fixed owner storage + borrowed decoded message +
+                                                                     * native call/lease reserve under the existing8MiB initial
+                                                                     * domain. This is not a claim about guest/process RSS. */
+                                                                    size_t named=sizeof(*h)+sizeof(lease)+COH_ORIGINAL_COSTUME_STACK_RESERVE;
+                                                                    if(named<=8u*1024u*1024u&&lease.reader.bytes.size<=8u*1024u*1024u-named)
+                                                                        (void)coh_original_costume_receive(&original,h->pinned_bodyparts,&h->costume_workspace,&h->initial_costume_continuation);
+                                                                    else h->initial_costume_continuation=(CohOriginalCostumeReport){.status=COH_LIMIT,.begin_bit=original.cursor,.failure_bit=original.cursor};
+                                                                    coh_db_wipe(&original,sizeof(original));
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -347,6 +384,19 @@ static int append_string(char *out,size_t capacity,size_t *used,const char *text
     }
     return i<maximum&&append(out,capacity,used,"\"");
 }
+/* An actual selected-self wire pose already parsed from this one ALLENTS loan.
+ * This diagnostic marker does not wait for unrelated later costume fields. */
+JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_observedSelfPose(JNIEnv *env,jclass cls,jlong token) {
+    (void)cls;Interop *h=owner(token);
+    if(!h||h->busy||!h->initial_create.create_validated||!h->initial_create.is_self||
+       !h->initial_create.self_dbid_matches_handoff||!h->initial_pose_sample.valid)return NULL;
+    uint32_t values[4]={h->initial_create.entity_index,0,0,0};jbyte bytes[16];
+    memcpy(&values[1],&h->initial_pose_sample.position.x,4);memcpy(&values[2],&h->initial_pose_sample.position.y,4);memcpy(&values[3],&h->initial_pose_sample.position.z,4);
+    for(unsigned i=0;i<4;i++)for(unsigned j=0;j<4;j++)bytes[i*4+j]=(jbyte)(values[i]>>(j*8));
+    jbyteArray result=(*env)->NewByteArray(env,16);
+    if(result)(*env)->SetByteArrayRegion(env,result,0,16,bytes);
+    coh_db_wipe(values,sizeof(values));coh_db_wipe(bytes,sizeof(bytes));return result;
+}
 JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_characters(JNIEnv *env,jclass cls,jlong token) {
     (void)cls;Interop *h=owner(token);if(!h||h->busy||h->suspended||h->disconnected||h->terminal)return NULL;
     CohLocalCharacters *list=calloc(1,sizeof(*list));char *json=calloc(1,65536);jbyteArray result=NULL;
@@ -393,6 +443,14 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     /* Essential, pointer-free source progress survives optional detail omission.
      * Only the original composed validator can publish catalog stages41/43. */
     char catalog_boundary[COH_INITIAL_REWARD_LIST_REPORT_MAX]="null";
+    char continuation[192]="null";
+    if(h->costume_continuation_attempted) {
+        const CohOriginalCostumeReport *c=&h->initial_costume_continuation;
+        int n=snprintf(continuation,sizeof(continuation),"[%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%llu,%llu]",
+            status_number(c->status),c->field,c->part,c->part_count,c->parts_read,c->strings_read,c->colors_read,
+            c->dictionary_required,c->count_validated,c->costume_complete,(unsigned long long)c->end_bit,(unsigned long long)c->failure_bit);
+        if(n<0||(size_t)n>=sizeof(continuation))strcpy(continuation,"null");
+    }
     int create_written=coh_initial_create_probe_json(&h->initial_create,first_create,sizeof(first_create));
     if(create_written<=0||(size_t)create_written>=sizeof(first_create)){strcpy(first_create,"null");invalid|=1u<<0;}
     int pose_written=coh_initial_pose_probe_json(&h->initial_pose,first_pose,sizeof(first_pose));
@@ -425,8 +483,8 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
             coh_initial_costume_slots_progress_json(&h->initial_reward_list,&h->initial_costume_slots,progress,sizeof(progress)):
             coh_initial_reward_list_probe_json(&h->initial_reward_list,progress,sizeof(progress));
         if(progress_written>0&&(size_t)progress_written<sizeof(progress)) {
-            if(h->initial_partcount.stage==COH_INITIAL_PARTCOUNT_DEFAULT_CATALOG||
-               h->initial_partcount.stage==COH_INITIAL_PARTCOUNT_CATALOG)
+            if(!h->initial_costume_continuation.count_validated&&(h->initial_partcount.stage==COH_INITIAL_PARTCOUNT_DEFAULT_CATALOG||
+               h->initial_partcount.stage==COH_INITIAL_PARTCOUNT_CATALOG))
                 memcpy(catalog_boundary,progress,(size_t)progress_written+1);
             size_t at=(size_t)reward_written-1,room=sizeof(first_reward)-at;
             int appended=snprintf(first_reward+at,room,",\"progress\":%s}",progress);
@@ -472,7 +530,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
+        "\"bodyparts_default\":[%u,%u],\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
@@ -486,7 +544,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        catalog_boundary,request_available?"true":"false",request,receive);
+        status_number(h->bodyparts_cache_status),h->pinned_bodyparts,continuation,catalog_boundary,request_available?"true":"false",request,receive);
     const char *const details[8]={first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward};
     size_t used=written>0?(size_t)written:sizeof(json);
     int complete=written>0&&(size_t)written<sizeof(json)&&report_details(json,&used,details,invalid);

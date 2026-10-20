@@ -1,0 +1,42 @@
+{
+  "schema": "coh-local-continuation-worker-status-v1",
+  "worker": "A",
+  "status": "QUALIFIED_HOST_DEVICE_TEST_PENDING",
+  "baseline": "8170fc0d222ec154b19b0caf2616040004d4b2e7",
+  "implementation_commit": "fbfd87da170bee2f153f6eaea72112f18516c333",
+  "qualification_commit": "4713d5c18913a13c5be443fd6071818ef80c516c",
+  "tested_source_composite_tree": "e287f6b8113bd1b6093acd57cae3fabf7e130ff5",
+  "dependencies": {
+    "original_receiver": "f320c3e6c",
+    "pose_sample": "5f8099ff4",
+    "cache_source_comparison": "47fd09b3a",
+    "timestamp_word_comparison": "6a13bc92e"
+  },
+  "source_hashes_match_composite_tree": true,
+  "qualification": "native-android/combined-client/diagnostics/local-bodypart-continuation-20261020/native-host.json",
+  "test_command": "flock /tmp/coh-cycle-build.lock python3 native-android/combined-client/tools/check_bodypart_continuation.py --output /tmp/local-bodyparts.json --work /tmp/local-bodyparts-work",
+  "tests": {
+    "release": 2665,
+    "ASan": 2665,
+    "UBSan": 2665,
+    "JNI_capture_cycles_per_mode": 32,
+    "file_opens_per_mode": 40,
+    "file_closes_per_mode": 40,
+    "report_peak_bytes": 6726,
+    "report_ceiling": 7168
+  },
+  "memory": {
+    "actual_Interop_allocation_bytes": 66944,
+    "included_original_receiver_workspace_bytes": 65536,
+    "cache_input_stack_bytes": 2584,
+    "decoded_message_bound": 4194304,
+    "initial_domain_bound": 8388608,
+    "device_RSS_PSS": null
+  },
+  "shipping_change": "Actual local common BodyParts file content pin supplies28 (only exact Files1mtime word may vary); whole original costume_receive continues beyond default/explicit count to actual unknown dictionary before index Pack. Actual selected-self raw pose getter is independent of costume completion.",
+  "next_action": "Integrate A with C/D/B, qualify Android candidate, then physical Thor test confirms actual cache pin and real next costume field; render actual observed entity box through D/root bridge.",
+  "exact_pending_evidence": "No raw physical ALLENTS packet retained; actual device server file hash and post41 continuation are not yet tested.",
+  "CI": "pending coordinator integrated build",
+  "production_ACK": false,
+  "complete_entity_authority": false
+}

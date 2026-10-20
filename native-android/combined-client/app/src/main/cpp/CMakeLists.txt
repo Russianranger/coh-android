@@ -61,6 +61,8 @@ add_library(coh_combined_interop SHARED interop_network.c
     "${ENGINE}/initial-capture/coh_initial_sgcolors_probe.c"
     "${ENGINE}/initial-capture/coh_initial_scales_probe.c"
     "${ENGINE}/initial-capture/coh_initial_partcount_probe.c"
+    "${ENGINE}/initial-capture/coh_local_bodypart_default.c"
+    "${ENGINE}/entities/coh_original_costume_receive.c"
     "${ENGINE}/entities/coh_entities.c"
     "${ENGINE}/initial-capture/coh_initial_local.c"
     "${ENGINE}/initial-capture/coh_request_tx_map.c"
@@ -76,7 +78,7 @@ add_library(coh_combined_interop SHARED interop_network.c
     "${ENGINE}/session/coh_session_crypto.c"
     "${NATIVE_ROOT}/protocol/coh_protocol.c" "${NATIVE_ROOT}/src/coh_blowfish.c")
 set_target_properties(coh_combined_interop PROPERTIES C_VISIBILITY_PRESET hidden)
-target_include_directories(coh_combined_interop PRIVATE "${ENGINE}/initial-capture"
+target_include_directories(coh_combined_interop PRIVATE "${ENGINE}/initial-capture" "${ENGINE}/entities"
     "${ENGINE}/session" "${NATIVE_ROOT}/include" "${CRYPTO_ABI_ROOT}/include")
 target_compile_features(coh_combined_interop PRIVATE c_std_11)
 target_compile_definitions(coh_combined_interop PRIVATE COH_INTEROP_REQUEST_TX=1)

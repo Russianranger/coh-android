@@ -8,12 +8,16 @@ package org.coh.nativecombined;
 public final class InteropNative {
     static { System.loadLibrary("coh_combined_interop"); }
     private InteropNative() { }
+    /** Verify the actual local server common BodyParts cache before this attempt. */
+    public static native int configureBodyPartsCache(String absolutePath);
     public static native long begin(int dbPort, String account, int networkVersion,
             boolean encryptionRequired, boolean outboundCompressed, long nowMs);
     public static native int service(long handle, long nowMs);
     public static native byte[] characters(long handle);
     public static native int choose(long handle, int wireSlot, long nowMs);
     public static native String report(long handle);
+    /** Actual first selected-self wire observation: 16 little-endian bytes: int index,3 floats. */
+    public static native byte[] observedSelfPose(long handle);
     /** Scalar owner state independent of bounded report serialization.
      * Bits: owner present=1, terminal=2, raw initial observed=4, characters ready=8. */
     public static native int controlState(long handle);
