@@ -36,9 +36,15 @@
     "behavior_changes": false,
     "commits": {
       "archive": "4e89b54804505ca1ed5c61b16ffdefcedad85f1b",
-      "workflow": "76d6e5a057df33757a8315f5b13ebef6db375480"
+      "workflow": "76d6e5a057df33757a8315f5b13ebef6db375480",
+      "roadmap": "5a2a3adcf300b1378def7a0a543e2f2d7da8e195"
     },
-    "tracked_bytes_before": 2525536910
+    "tracked_bytes_before": 2525536910,
+    "tracked_files_after": 172542,
+    "tracked_bytes_after": 2525045946,
+    "size_scope": "Sum of tracked regular-file bytes. Git history remains intact on the integration and archive branches.",
+    "retained_protected_raw_files": 1723,
+    "retained_referenced_failed_copy_files": 311
   },
   "validation": {
     "before": {
@@ -61,7 +67,15 @@
   "ci": {
     "workflow": ".github/workflows/native-qualification.yml",
     "purpose": "combined-source",
-    "status": "pending one workflow_dispatch after publication",
+    "event": "workflow_dispatch",
+    "dispatch_count": 1,
+    "run_id": 39447419461,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/39447419461",
+    "status": "passed",
+    "qualified_commit": "5a2a3adcf300b1378def7a0a543e2f2d7da8e195",
+    "qualified_tree": "19e3ae1fbd4da9aaee7afd4873778447f8fe70cf",
+    "artifact_id": 12276303104,
+    "artifact_sha256": "6c8e57c03540852196cf3cade848ad7be6175532605b5fd943e2f42512f1ad29",
     "publishes_apk_or_release": false
   }
 }
