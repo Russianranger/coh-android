@@ -24,6 +24,5 @@ resource release and profile preservation are reported.
 2. Resolve and draw one genuine selected-character costume model/material.
 3. Complete process totals and verify actual PostgreSQL memory settings.
 
-Wait for the next user prompt before implementation. Gates 25–27 remain open
-in their documented full scopes. Update the single rolling diagnostic status;
+Gates 25–27 remain open in their documented full scopes. Update the single rolling diagnostic status;
 commit raw output only when a checker pins it.
