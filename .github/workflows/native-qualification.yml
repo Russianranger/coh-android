@@ -1,0 +1,220 @@
+name: Native source qualification
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-qualification.yml
+    - native-android/engine/body-catalog/persist_newer_provider.py
+    - native-android/engine/body-catalog/persist-newer-source-pins.json
+    - native-android/engine/body-catalog/test_persist_newer.c
+    - native-android/engine/body-catalog/check_persist_newer.py
+    - native-android/engine/body-catalog/schema_crc_provider.py
+    - native-android/engine/body-catalog/schema-crc-source-pins.json
+    - native-android/engine/body-catalog/cryptopp_adler_source.py
+    - native-android/engine/body-catalog/binary_read_open_provider.py
+    - native-android/engine/body-catalog/binary-read-open-source-pins.json
+    - native-android/engine/coh_contracts.h
+    - native-android/engine/costume-import/coh_costume_import.h
+    - native-android/engine/body-catalog/check_schema_crc.py
+    - native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.*
+    - native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
+    - upstream/ouroboros/libs/UtilitiesLib/**
+    - upstream/ouroboros/Common/gameData/BodyPart.*
+    - upstream/ouroboros/cmake/dependencies/CryptoPP.cmake
+    - native-android/engine/body-catalog/cache_hit_loader_provider.py
+    - native-android/engine/body-catalog/cache-hit-loader-source-pins.json
+    - native-android/engine/body-catalog/test_cache_hit_loader.c
+    - native-android/engine/body-catalog/check_cache_hit_loader.py
+    - native-android/engine/body-catalog/body_part_loader_provider.py
+    - native-android/engine/body-catalog/body-part-loader-source-pins.json
+    - native-android/engine/body-catalog/unopened_binary_provider.py
+    - native-android/engine/body-catalog/unopened-binary-source-pins.json
+    - native-android/engine/body-catalog/body_read_provider.py
+    - native-android/engine/body-catalog/body-read-source-pins.json
+    - native-android/engine/body-catalog/file_list_read_provider.py
+    - native-android/engine/body-catalog/file-list-read-source-pins.json
+    - native-android/engine/body-catalog/check_unopened_binary.py
+    - native-android/engine/entities/coh_costume.h
+    - native-android/engine/entities/coh_entities.h
+    - native-android/engine/replication/coh_replication.h
+    - native-android/engine/costume-inputs/**
+    - native-android/engine/body-catalog/file_list_compare_provider.py
+    - native-android/engine/body-catalog/file-list-compare-source-pins.json
+    - native-android/engine/body-catalog/test_file_list_compare.c
+    - native-android/engine/body-catalog/check_file_list_compare.py
+    - native-android/engine/body-catalog/file_list_ops_provider.py
+    - native-android/engine/body-catalog/file-list-ops-source-pins.json
+    - native-android/engine/body-catalog/file_list_foreach_provider.py
+    - native-android/engine/body-catalog/file-list-foreach-source-pins.json
+    - native-android/engine/body-catalog/test_file_list_foreach.c
+    - native-android/engine/body-catalog/check_file_list_foreach.py
+    - native-android/engine/body-catalog/file_list_lifecycle_provider.py
+    - native-android/engine/body-catalog/file-list-lifecycle-source-pins.json
+    - native-android/engine/body-catalog/test_file_list_lifecycle.c
+    - native-android/engine/body-catalog/check_file_list_lifecycle.py
+    - native-android/engine/body-catalog/test_file_list_ops.c
+    - native-android/engine/body-catalog/check_file_list_ops.py
+    - native-android/engine/body-catalog/check_struct_clear.py
+    - native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.json
+    - native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.zip
+    - native-android/engine/body-catalog/struct-clear-source-pins.json
+    - native-android/engine/body-catalog/struct_clear_provider.py
+    - native-android/engine/body-catalog/test_struct_clear.c
+    - upstream/ouroboros/Common/entity/costume.h
+    - upstream/ouroboros/Common/gameData/BodyPart.c
+    - upstream/ouroboros/Common/gameData/BodyPart.h
+    - upstream/ouroboros/Common/seq/bones.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/SharedMemory.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/crypt.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structoldnames.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser_types.h
+    - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h
+    - upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp
+    - upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c
+    - upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c
+    - upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c
+    - upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c
+    - native-android/engine/body-catalog/test_unopened_binary.c
+    - native-android/engine/body-catalog/check_body_read.py
+    - native-android/engine/body-catalog/check_file_list_read.py
+  workflow_dispatch:
+    inputs:
+      purpose:
+        description: Source qualification purpose; never publishes an APK
+        type: choice
+        options:
+        - body-catalog
+        - combined-source
+        default: body-catalog
+      qualifier:
+        description: BodyPart qualifier; ignored for combined-source
+        type: choice
+        options:
+        - all
+        - persist-newer
+        - cache-hit-loader
+        - file-list-compare
+        - file-list-foreach
+        - file-list-lifecycle
+        - file-list-ops
+        - struct-clear
+        - unopened-binary
+        default: all
+permissions:
+  contents: read
+concurrency:
+  group: native-qualification-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: '1'
+jobs:
+  dispatch-cleanup-source:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
+      == 'push' && contains(github.event.head_commit.message, '[cleanup-source-dispatch]') && github.run_attempt == '1'
+    permissions:
+      contents: read
+      actions: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+    - name: Dispatch this exact source qualification once
+      env:
+        GH_TOKEN: ${{ github.token }}
+        EXPECTED_SHA: ${{ github.sha }}
+      run: |
+        test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
+        gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
+          -f ref=native-android -f inputs[purpose]=combined-source -f inputs[qualifier]=all
+  body-plan:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && ((github.event_name
+      == 'workflow_dispatch' && inputs.purpose == 'body-catalog') || (github.event_name == 'push' && !contains(github.event.head_commit.message,
+      '[cleanup-source-dispatch]')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+    - id: matrix
+      env:
+        QUALIFIER: ${{ inputs.qualifier }}
+      run: |
+        python3 - <<'PY'
+        import json, os
+        profiles = [{'profile': 'persist-newer', 'checker': 'persist_newer'}, {'profile': 'cache-hit-loader', 'checker': 'cache_hit_loader'}, {'profile': 'file-list-compare', 'checker': 'file_list_compare'}, {'profile': 'file-list-foreach', 'checker': 'file_list_foreach'}, {'profile': 'file-list-lifecycle', 'checker': 'file_list_lifecycle'}, {'profile': 'file-list-ops', 'checker': 'file_list_ops'}, {'profile': 'struct-clear', 'checker': 'struct_clear'}, {'profile': 'unopened-binary', 'checker': 'unopened_binary'}]
+        selected = os.environ['QUALIFIER'] or 'all'
+        assert selected == 'all' or any(p['profile'] == selected for p in profiles)
+        chosen = profiles if selected == 'all' else [p for p in profiles if p['profile'] == selected]
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+            stream.write('matrix=' + json.dumps({'include': chosen}, separators=(',', ':')) + '\n')
+        PY
+  body-catalog:
+    needs: body-plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.body-plan.outputs.matrix) }}
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 1
+    - name: Install focused qualifier digest headers
+      run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
+    - name: Qualify original ${{ matrix.profile }}
+      run: |
+        python3 native-android/engine/body-catalog/check_${{ matrix.checker }}.py --sanitize --output "$RUNNER_TEMP/${{ matrix.profile }}-host.json" --evidence-directory "$RUNNER_TEMP/${{ matrix.profile }}-evidence"
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: native-${{ matrix.profile }}-${{ github.sha }}
+        path: |
+          ${{ runner.temp }}/${{ matrix.profile }}-host.json
+          ${{ runner.temp }}/${{ matrix.profile }}-evidence/
+        if-no-files-found: error
+        retention-days: 90
+  combined-source:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
+      == 'workflow_dispatch' && inputs.purpose == 'combined-source'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - name: Install existing host headers
+      run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+    - name: Verify protected inputs and run unchanged 0.1.14 source qualification
+      run: |
+        test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+        test -z "$(git status --porcelain --untracked-files=no)"
+        python3 native-android/combined-client/tools/audit_report_inputs.py --output "$RUNNER_TEMP/protected-inputs.json"
+        python3 native-android/engine/entities/check_original_costume_receive.py --work /tmp/original-costume-ci --output native-android/results/combined-entity-diagnostic/original-costume.json
+        python3 native-android/combined-client/tools/check_bodypart_continuation.py --work /tmp/bodypart-continuation-ci --output native-android/results/combined-entity-diagnostic/bodypart-continuation.json
+        python3 native-android/engine/renderer/check_debug_entity.py --source-root . --work /tmp/observed-entity-ci --output native-android/results/combined-entity-diagnostic/observed-entity.json
+        python3 native-android/session-client/tools/check_observed_entity.py --fixtures /tmp/observed-entity-ci/fixtures.bin --work /tmp/observed-session-ci --output native-android/results/combined-entity-diagnostic/observed-session.json
+        python3 native-android/combined-client/tools/check_observed_bridge.py --source-root . --work /tmp/observed-bridge-ci --output native-android/results/combined-entity-diagnostic/observed-bridge.json
+        python3 native-android/combined-client/qualification/check_process_set_memory.py
+        python3 native-android/combined-client/qualification/check_memory_worker.py
+        python3 native-android/combined-client/tools/test_process_set_contract.py
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: native-combined-source-${{ github.sha }}
+        path: |
+          ${{ runner.temp }}/protected-inputs.json
+          native-android/results/combined-entity-diagnostic/
+        if-no-files-found: error
+        retention-days: 90

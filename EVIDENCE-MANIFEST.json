@@ -1318,6 +1318,66 @@
       "size": 2228,
       "sha256": "01c024d94e7a249a8356d8e6216187401affff67de6f746ead5512f240a8343d",
       "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/evidence/session-continuation-20261015/network.log"
+    },
+    {
+      "path": ".github/workflows/native-body-catalog-prerequisite.yml",
+      "size": 2577,
+      "sha256": "5dcf09cf9b4150bdcf2f19048c5d16dc15017b6cc393e73877122eafaefa2f33",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-body-catalog-prerequisite.yml"
+    },
+    {
+      "path": ".github/workflows/native-cache-hit-loader.yml",
+      "size": 3591,
+      "sha256": "22eae1940c1ed417bc02ca5bd1fa12d21e4e98900cb4c6d8edf026734cf63bb0",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-cache-hit-loader.yml"
+    },
+    {
+      "path": ".github/workflows/native-file-list-compare.yml",
+      "size": 2169,
+      "sha256": "f7f1a5f692237582c66f71c0d26f4fd46a88b43bfaddd0ce3ea430075098bf3b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-file-list-compare.yml"
+    },
+    {
+      "path": ".github/workflows/native-file-list-foreach.yml",
+      "size": 2172,
+      "sha256": "c9dd725882e91727b25e0cebac4809a7c3e8e55b2b389989a73a82341d447c34",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-file-list-foreach.yml"
+    },
+    {
+      "path": ".github/workflows/native-file-list-lifecycle.yml",
+      "size": 2196,
+      "sha256": "d4cf20fa078361bb8217c0ef80306323a06e06a7f1d0cd8343819fe03cabdeec",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-file-list-lifecycle.yml"
+    },
+    {
+      "path": ".github/workflows/native-file-list-ops.yml",
+      "size": 1803,
+      "sha256": "aae627becbe2d8f98e6cfbf084fc17bdf6d7ea47560456d37316724188c8ba92",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-file-list-ops.yml"
+    },
+    {
+      "path": ".github/workflows/native-struct-clear.yml",
+      "size": 4686,
+      "sha256": "1ceddc1363d48f8b4a5fadaf29a294d021463158242274f9b17a1f2cd8c774ea",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-struct-clear.yml"
+    },
+    {
+      "path": ".github/workflows/native-unopened-binary.yml",
+      "size": 2984,
+      "sha256": "14fd9767296df0d8fd5d1ae8bf8767ea627408def31764564ab6841a3194f9f8",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-unopened-binary.yml"
+    },
+    {
+      "path": ".github/workflows/android-game-evidence.yml",
+      "size": 3615,
+      "sha256": "2234b2482b0aa1726e0fa47364947a06c64777985cb36be88b463bf3fe56595f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/android-game-evidence.yml"
+    },
+    {
+      "path": ".github/workflows/native-owned-633-cleanup.yml",
+      "size": 2670,
+      "sha256": "71a4695fe894bb774ca387431d0aec97768168759dbd838e194ddfc69638e528",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/.github/workflows/native-owned-633-cleanup.yml"
     }
   ]
 }
