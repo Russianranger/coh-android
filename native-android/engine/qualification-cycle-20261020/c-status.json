@@ -1,0 +1,36 @@
+{
+  "schema": "coh-five-milestone-status-v1",
+  "worker": "C",
+  "milestone": 3,
+  "status": "PARTIAL WITH EXACT BLOCKER",
+  "qualified_commit": "52574b93cfb0b6201dcc82c60def8fde9ee2422c",
+  "tested_tree": "03d45611dc1a7023ed3cbc2bae0c3c725580128e",
+  "ci": {
+    "status": "not_run_locally",
+    "next": "root cycle CI runs focused checker"
+  },
+  "tests": {
+    "release": 18195,
+    "asan": 18195,
+    "ubsan": 18195
+  },
+  "command": "flock /tmp/coh-cycle-build.lock python3 native-android/engine/character-dictionary/check_costume_owner.py --source-root <source-root> --work <fresh-work> --output <receipt>",
+  "accepted_scope": "Complete immutable candidate COHCDI1 slot/COHBW1 row integrity, exact pinned original bodytype definitions, fixed offline data leases, retire/replacement/cleanup and stage41 output-overlap/query refusal contract. No active owner constructor.",
+  "blocker": "No independently authenticated actual source-executable/profile/run/load-generation/Map+packet lease; complete loaded rows-to-dictionary-slot association cannot be established from COHBW1 or historical donor bytes.",
+  "next": "Integrate real A+C refusal fixture; B target compile is preflight only. Build source runtime producer lease before adding any live owner constructor.",
+  "memory": {
+    "fixture_owned_bytes": 1365,
+    "fixture_named_peak_bytes": 4249484,
+    "import_budget_max": 8388608,
+    "wrapper_stack_reserve": 16384,
+    "importer_stack_reserve": 16384,
+    "conservative_wrapper_frame_sum": 1304,
+    "actual_RSS_PSS": null,
+    "all_supported_lease_token_and_view_reservation_bytes": 1152
+  },
+  "runtime_catalog_admitted": false,
+  "dictionary_generation_admitted": false,
+  "application_ACK": false,
+  "evidence_sha256": "306e3bbf16754c22bf2f187116456ab7c839ea3a08c99fca5dca34419e95970c",
+  "review": "Independent source review identified active token copy and partial control-span alias hazards. Actual token address identity and active span overlap guards now enforce final-consumer retirement; final release/ASan/UBSan passed."
+}

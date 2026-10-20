@@ -1,0 +1,159 @@
+{
+  "schema": "coh-costume-owner-candidate-v1",
+  "source_head": "52574b93cfb0b6201dcc82c60def8fde9ee2422c",
+  "source_provenance": {
+    "sha256_lf": {
+      "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8"
+    },
+    "source_id": "0b89c2c527fd801f9c2c0f0af0b079e10842164011af2a3e90d0214f423450d8"
+  },
+  "bodytype_definition_sha256": "6dab95233ede2bae720fceb4039da31bcc1c02aecab20f9500b10a4c2706451e",
+  "original_bodytype_count": 9,
+  "input_sha256": {
+    "native-android/engine/character-dictionary/coh_costume_owner.c": "bef04f3b483c8d3bf71684961253b28252562b0523375a8cc2201096bfeec027",
+    "native-android/engine/costume-import/coh_costume_import.c": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/character-dictionary/coh_costume_owner.h": "4ac9e144a0ef782b73c53f023a997c4a43ee36829366ad82dc8188baf1c8b835",
+    "native-android/engine/character-dictionary/test_costume_owner.c": "ddd1b73db17db21a4dc229e029f26b665c69840eda1249cfbf8e7efc61185c19",
+    "native-android/engine/character-dictionary/costume_owner_bodytypes.inc": "2f78f65012464758a153d434607dc018fcda26e92e982100a08dbf90ec6c5bfd",
+    "native-android/engine/character-dictionary/check_costume_owner.py": "247324a1aa12f230e5849934b7aa4a0de8a382d17c74e3d767e116eebbbb180f",
+    "native-android/engine/costume-import/source-pins.json": "74ccac29b928ca151b23013e3db222a59c1e00fc0bf10ee367dd2a9d0998b148",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-import/source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-export/source_body_witness.inc": "8d1b2f55b149f720451ec5136ecdc8e43f2f03672c771fdebaaea6ba9818e44d"
+  },
+  "native": {
+    "release": {
+      "passed": true,
+      "checks": 18195,
+      "cycles": 128,
+      "body_rows": 2,
+      "maximum_body_rows": 29,
+      "body_witness_bytes": 313,
+      "owned_bytes": 1365,
+      "named_peak_bytes": 4249484,
+      "calloc_calls": 1090,
+      "free_calls": 1087,
+      "injected_allocation_failures": 3,
+      "runtime_admitted": false,
+      "application_ack": false,
+      "binary_sha256": "8c277539c481c00d08b86614b3f18de961721c2137e26c3ab3df431b8914d9f3"
+    },
+    "asan": {
+      "passed": true,
+      "checks": 18195,
+      "cycles": 128,
+      "body_rows": 2,
+      "maximum_body_rows": 29,
+      "body_witness_bytes": 313,
+      "owned_bytes": 1365,
+      "named_peak_bytes": 4249484,
+      "calloc_calls": 1090,
+      "free_calls": 1087,
+      "injected_allocation_failures": 3,
+      "runtime_admitted": false,
+      "application_ack": false,
+      "binary_sha256": "03715979092cedaec46a2243a0d61ae151dc5f2a762509fc2e7b5849d9cb2472"
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 18195,
+      "cycles": 128,
+      "body_rows": 2,
+      "maximum_body_rows": 29,
+      "body_witness_bytes": 313,
+      "owned_bytes": 1365,
+      "named_peak_bytes": 4249484,
+      "calloc_calls": 1090,
+      "free_calls": 1087,
+      "injected_allocation_failures": 3,
+      "runtime_admitted": false,
+      "application_ack": false,
+      "binary_sha256": "1693b68ef061405605c8382dfa3dfd290c6543abb865ff2d79a6638090cc02d9"
+    }
+  },
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "memory": {
+    "owner_frame_conservative_sum": 1304,
+    "wrapper_stack_reserve": 16384,
+    "frames": [
+      {
+        "function": "string",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_candidate",
+        "bytes": 688,
+        "kind": "dynamic,bounded"
+      },
+      {
+        "function": "coh_costume_owner_bytes",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_output_disjoint",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_borrow",
+        "bytes": 112,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_release",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_retire",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_destroy",
+        "bytes": 32,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_replace",
+        "bytes": 192,
+        "kind": "static"
+      },
+      {
+        "function": "coh_costume_owner_query",
+        "bytes": 144,
+        "kind": "static"
+      }
+    ],
+    "importer_stack_reserve_separate": 16384,
+    "ceiling_bytes": 8388608,
+    "whole_process_RSS_PSS": null,
+    "borrowed_source_or_runtime_owner": "unavailable; not admitted",
+    "external_crypto_sanitizer_stack_closure": false,
+    "leak_sanitizer_executed": false,
+    "actual_owned_allocations_balanced_excluding_injected_failures": true
+  },
+  "passed": true,
+  "source_stable_before_after": true,
+  "authentic_runtime_lease_available": false,
+  "current_server_catalog_admitted": false,
+  "actual_rows_dictionary_generation_relation_verified": false,
+  "android_executed": false,
+  "application_ACK": false,
+  "scope": "Complete immutable candidate bytes/slot integrity and explicit data leases only; production query always refuses without authentic producer lease."
+}
