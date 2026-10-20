@@ -13,11 +13,6 @@
 #define STREAM_DRAWS 64u
 #define STREAM_BUDGET (512u*1024u)
 #define SCENE_CAP (96ull*1024u*1024u)
-/* Loader4MiB +bridge4MiB +liveRGBA GPU<=bridge4MiB; fixed CPU/ZIP/
- * query/readback controls<1MiB, persistent+qualification GLES buffers/FBOs
- * <2MiB, charged native call stack64KiB.
- * Parent includes its capture reservation and old scene during replacement. */
-#define LIVE_RESERVE (15ull*1024u*1024u+65536u)
 struct CohSessionWorld {
     CohWorldBundle bundle;
     CohWorldMap *map;
@@ -35,6 +30,33 @@ struct CohSessionWorld {
     float last_center[3],last_radius;
     CohSessionWorldStats stats;
 };
+uint64_t coh_session_world_live_reservation_bytes(void){
+    /* Actual target-ABI control allocations, not duplicated source catalogs.
+     * ZIP owners include both 65,568-byte inflate arenas and 8KiB input/output
+     * buffers; the source placement index stays on its borrowed immutable FD. */
+    uint64_t controls=sizeof(CohSessionWorld)+coh_world_map_allocation_bytes()+
+        coh_world_live_allocation_bytes()+coh_asset_zip_allocation_bytes(2)+
+        coh_asset_zip_allocation_bytes(1)+coh_renderer_allocation_bytes(STREAM_DRAWS,2)+
+        coh_renderer_gles_allocation_bytes();
+    /* Each ceiling covers that module's simultaneous old+candidate allocations:
+     * loader4MiB includes its one512KiB old+next raw cache and decode scratch;
+     * bridge4MiB includes old+next geometry, retained RGBA and bridge workspace.
+     * Every old/new uploaded texture still owns its RGBA inside the same bridge,
+     * so their overlapping GPU payloads are bounded by that single4MiB ceiling.
+     * Borrowed draw spans duplicate no bytes; queued consumers block retirement. */
+    uint64_t overlapping_owners=3ull*(4u<<20);
+    /* Persistent VBO/IBO+white and the maximum existing source qualification
+     * VBO+13-float TF stream+256x256RGBA8/depth24(aligned32) FBO. Readback CPU
+     * pixels are separately charged; all dimensions match the existing code. */
+    uint64_t gpu=(uint64_t)8192*sizeof(CohRenderVertex)+(uint64_t)24576*sizeof(uint32_t)+4u+
+        (uint64_t)8192*(sizeof(CohRenderVertex)+13u*sizeof(float))+256u*256u*8u;
+    uint64_t readback=256u*256u*4u;
+    /* Both query/next selections, dependency IDs, parser/callback frames and
+     * rollback arrays use this charged64KiB call reserve. The parent supplies
+     * its retained bundle bytes, FD contexts, old whole-world owner and capture
+     * reservation. Driver allocations and actual RSS/PSS remain separate. */
+    return controls+overlapping_owners+gpu+readback+65536u;
+}
 static int problem(CohSessionWorld *w,char *error,size_t cap,const char *stage,CohStatus status) {
     if(w)w->stats.errors++;
     if(error&&cap)snprintf(error,cap,"%s (status %d)",stage,(int)status);
@@ -101,7 +123,7 @@ static void publish(CohSessionWorld *w,CohSessionWorldStats *out) {
 static int create_world(const void *data,size_t bytes,const CohSessionWorldSources *sources,CohSessionWorld **out,char *error,size_t cap) {
     if(!data||!out)return problem(NULL,error,cap,"Missing indexed map bytes",COH_INVALID);
     if(*out)return problem(NULL,error,cap,"Existing world output",COH_STATE);
-    if(sources&&sources->parent_retained_bytes>SCENE_CAP-LIVE_RESERVE)return problem(NULL,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
+    if(sources&&sources->parent_retained_bytes>SCENE_CAP-coh_session_world_live_reservation_bytes())return problem(NULL,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
     CohSessionWorld *w=calloc(1,sizeof *w);if(!w)return problem(NULL,error,cap,"Indexed world allocation",COH_LIMIT);
     CohStatus status=coh_world_bundle_open((CohBytes){data,bytes},&w->bundle);
     if(status!=COH_OK)goto failed;
@@ -156,7 +178,7 @@ int coh_session_world_create_archives(const void *data,size_t bytes,const CohSes
 }
 int coh_session_world_parent_bytes(CohSessionWorld *w,uint64_t bytes,char *error,size_t cap){
     if(!w||!w->live)return problem(w,error,cap,"Runtime world owner",COH_STATE);
-    if(bytes>SCENE_CAP-LIVE_RESERVE)return problem(w,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
+    if(bytes>SCENE_CAP-coh_session_world_live_reservation_bytes())return problem(w,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
     w->parent_retained_bytes=bytes;return 1;
 }
 static void release_meshes(CohSessionWorld *w) {
@@ -165,7 +187,7 @@ static void release_meshes(CohSessionWorld *w) {
     }
 }
 static int select_live(CohSessionWorld *w,const float center[3],float radius,char *error,size_t cap){
-    if(w->parent_retained_bytes>SCENE_CAP-LIVE_RESERVE)return problem(w,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
+    if(w->parent_retained_bytes>SCENE_CAP-coh_session_world_live_reservation_bytes())return problem(w,error,cap,"Parent scene/capture aggregate memory",COH_LIMIT);
     if(w->renderer&&coh_renderer_stats(w->renderer).queued)return problem(w,error,cap,"Previous frame still borrows geometry",COH_STATE);
     float distance=0;
     for(unsigned i=0;i<3;i++){float delta=center[i]-w->last_center[i];if(!isfinite(delta))return problem(w,error,cap,"Invalid runtime source center",COH_INVALID);distance+=delta*delta;}

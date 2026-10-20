@@ -44,3 +44,5 @@ CohStatus coh_world_live_query(CohWorldLive *live,const float center[3],float ra
 }
 CohWorldLiveStats coh_world_live_stats(const CohWorldLive *live){CohWorldLiveStats s={0};return live?live->stats:s;}
 void coh_world_live_free(CohWorldLive *live){free(live);}
+
+size_t coh_world_live_allocation_bytes(void){return sizeof(CohWorldLive);}

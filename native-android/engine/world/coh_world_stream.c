@@ -160,3 +160,5 @@ CohStatus coh_world_select_instances(CohWorldMap *map,CohAssetLoader *loader,con
     coh_world_release(out);next.owner=map;next.loader=loader;map->live++;map->selections++;*out=next;return COH_OK;
 failed:for(uint32_t i=0;i<next.pin_count;i++)coh_asset_release(loader,next.pins[i]);return status;
 }
+
+size_t coh_world_map_allocation_bytes(void){return sizeof(CohWorldMap);}

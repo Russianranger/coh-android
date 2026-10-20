@@ -12,6 +12,7 @@ CohStatus coh_world_live_open(CohAssetSource,uint32_t endpoint_count,CohCancel,C
 CohStatus coh_world_live_query(CohWorldLive *,const float center[3],float radius,
     CohWorldInstance *,uint32_t capacity,uint32_t *count,CohCancel);
 CohWorldLiveStats coh_world_live_stats(const CohWorldLive *);
+size_t coh_world_live_allocation_bytes(void);
 void coh_world_live_free(CohWorldLive *);
 /* The exact original hierarchy matrices/tints have already been decoded by
  * live_query; retain normal dependency/cache pinning and atomic replacement. */

@@ -481,3 +481,8 @@ const char *coh_renderer_fragment_shader_precise(CohMaterialFamily f) {
     return NULL;
   }
 }
+
+size_t coh_renderer_allocation_bytes(size_t draws,size_t shaders){
+  size_t d,s;if(!draws||!shaders||shaders>3||!mul_size(draws,sizeof(CohRenderDraw),&d)||!mul_size(shaders,sizeof(Shader),&s)||d>SIZE_MAX-s-sizeof(CohRenderer))return 0;
+  return sizeof(CohRenderer)+d+s;
+}

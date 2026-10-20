@@ -13,4 +13,6 @@ CohStatus coh_asset_zip_open(CohAssetSource,const CohAssetZipMember *,uint32_t,C
 CohStatus coh_asset_zip_mount(CohAssetZip *,CohAssetLoader *);
 void coh_asset_zip_free(CohAssetZip *); /* destroy the borrowing loader first */
 CohAssetZipStats coh_asset_zip_stats(const CohAssetZip *);
+/* Exact nonallocating factory charge, including read buffers and zlib arena. */
+size_t coh_asset_zip_allocation_bytes(uint32_t members);
 #endif

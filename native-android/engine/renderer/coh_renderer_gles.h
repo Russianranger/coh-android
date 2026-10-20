@@ -23,6 +23,7 @@ void coh_renderer_gles_destroy(CohGlesRenderer *, int context_alive);
 const char *coh_renderer_gles_shader_log(const CohGlesRenderer *);
 size_t coh_renderer_gles_buffer_bytes(const CohGlesRenderer *);
 size_t coh_renderer_gles_owned_bytes(const CohGlesRenderer *);
+size_t coh_renderer_gles_allocation_bytes(void);
 #ifdef __cplusplus
 }
 #endif

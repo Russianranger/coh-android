@@ -109,6 +109,8 @@ CohStatus coh_renderer_flush(CohRenderer *, CohCancel);
 void coh_renderer_surface_lost(CohRenderer *, uint32_t new_generation,
                                int context_alive);
 CohRendererStats coh_renderer_stats(const CohRenderer *);
+/* Exact control/draw/shader heap requested by create; zero for invalid sizes. */
+size_t coh_renderer_allocation_bytes(size_t max_draws,size_t shader_capacity);
 /* Public scalar source-contract evaluators. Output unchanged on malformed
  * input. Fragment samples are already sampled RGBA; glow mask is the red sample
  * at floor(uv0)/128 + glow_params.yw (caller controls the sampler). */

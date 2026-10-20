@@ -55,6 +55,7 @@ typedef struct {
 CohStatus coh_world_map_create(CohBytes,CohWorldMap **out);
 CohStatus coh_world_map_destroy(CohWorldMap **); /* refuses live selections */
 CohWorldStats coh_world_map_stats(const CohWorldMap *);
+size_t coh_world_map_allocation_bytes(void);
 CohStatus coh_world_node(const CohWorldMap *,uint32_t,CohWorldNode *);
 CohStatus coh_world_endpoint(const CohWorldMap *,uint32_t,CohWorldEndpoint *);
 /* Version-1 indices retain all original parts. Version 2 can explicitly select

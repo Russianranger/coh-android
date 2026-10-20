@@ -52,6 +52,7 @@ def render_runtime(library, bundle, index, world_bin, live, archives, work):
     sources = Sources(source(index), source(archives / 'atlas.sparse.zip'), source(archives / 'client.sparse.zip'), 64 << 20)
     e = gpu.EGL(); g = e.g; lib = C.CDLL(str(library)); world = C.c_void_p(); stats = gpu.WorldStats(); error = C.create_string_buffer(1024)
     lib.coh_session_world_create_archives.argtypes = [C.c_void_p, Z, C.POINTER(Sources), C.POINTER(C.c_void_p), C.c_void_p, Z]
+    lib.coh_session_world_live_reservation_bytes.restype = Q
     lib.coh_session_world_parent_bytes.argtypes = [C.c_void_p, Q, C.c_void_p, Z]
     lib.coh_session_world_owned_bytes.argtypes = [C.c_void_p, C.POINTER(Q), C.POINTER(Q)]
     lib.coh_session_world_destroy.argtypes = [C.POINTER(C.c_void_p)]
@@ -109,7 +110,9 @@ def render_runtime(library, bundle, index, world_bin, live, archives, work):
         from PIL import Image
         Image.frombytes('RGBA', (256, 256), image).transpose(Image.Transpose.FLIP_TOP_BOTTOM).save(work / 'runtime-second-pose.png')
         cpu, gpu_bytes = Q(), Q(); assert lib.coh_session_world_owned_bytes(world, C.byref(cpu), C.byref(gpu_bytes)); owned = {'cpu': cpu.value, 'gpu_payload': gpu_bytes.value}
-        limit = (96 << 20) - (15 << 20) - 65536
+        reservation = lib.coh_session_world_live_reservation_bytes()
+        assert reservation < 16 << 20
+        limit = (96 << 20) - reservation
         assert lib.coh_session_world_parent_bytes(world, limit, error, len(error))
         assert not lib.coh_session_world_parent_bytes(world, limit + 1, error, len(error))
         expected_errors[0] += 1
@@ -120,7 +123,7 @@ def render_runtime(library, bundle, index, world_bin, live, archives, work):
         assert lib.coh_session_world_owned_bytes(world, C.byref(cpu), C.byref(gpu_bytes)) and gpu_bytes.value == stats.gpu_bytes
         visible_revisit, _ = draw(second); assert visible_revisit > 64 and reads[0] > before and stats.selected_instances == second_count
         for _ in range(16): draw(first); draw(second)
-        return {'passed': True, 'scope': 'Actual host Mesa GLES, not Thor; same index reused at changed pose', 'first_pose': first, 'first_pose_visible_pixels': visible_first, 'second_pose': second, 'second_pose_instances': second_count, 'second_pose_visible_pixels': visible_second, 'stationary_32_frames_no_io': True, 'empty_window_evicted_raw_meshes_textures': True, 'revisit_archive_reload': True, 'owned_scene': owned, 'peak_resident_bytes': stats.peak_resident_bytes, 'gl_errors': 0, 'source_reads_bytes': reads[0], 'identity': e.identity}
+        return {'passed': True, 'scope': 'Actual host Mesa GLES, not Thor; same index reused at changed pose', 'first_pose': first, 'first_pose_visible_pixels': visible_first, 'second_pose': second, 'second_pose_instances': second_count, 'second_pose_visible_pixels': visible_second, 'stationary_32_frames_no_io': True, 'empty_window_evicted_raw_meshes_textures': True, 'revisit_archive_reload': True, 'owned_scene': owned, 'named_old_candidate_reservation_bytes': reservation, 'peak_resident_bytes': stats.peak_resident_bytes, 'gl_errors': 0, 'source_reads_bytes': reads[0], 'identity': e.identity}
     finally:
         if world: lib.coh_session_world_surface_lost(world, 1, C.byref(stats)); lib.coh_session_world_destroy(C.byref(world)); assert not world.value
         g.glDeleteFramebuffers(1, C.byref(fbo)); g.glDeleteTextures(1, C.byref(texture)); e.close()

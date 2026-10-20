@@ -25,6 +25,7 @@ typedef struct {
 } CohSessionWorldSources;
 int coh_session_world_create_archives(const void *,size_t,const CohSessionWorldSources *,CohSessionWorld **,char *,size_t);
 int coh_session_world_parent_bytes(CohSessionWorld *,uint64_t,char *,size_t);
+uint64_t coh_session_world_live_reservation_bytes(void);
 void coh_session_world_destroy(CohSessionWorld **);
 /* Query on the render owner thread between draws. CPU includes concrete owned
  * allocations; input bundle bytes borrow Session assets and are counted by the

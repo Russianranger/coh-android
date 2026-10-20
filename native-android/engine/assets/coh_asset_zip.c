@@ -45,7 +45,7 @@ CohStatus coh_asset_zip_open(CohAssetSource source,const CohAssetZipMember *want
     if(!out||!source.read_at||source.size<22||source.size>UINT32_MAX||!want||!count||count>ZIP_MEMBERS||!source.generation)return COH_INVALID;
     uintptr_t output=(uintptr_t)out,input=(uintptr_t)want;size_t input_bytes=(size_t)count*sizeof *want;
     if(output>UINTPTR_MAX-sizeof *out||input>UINTPTR_MAX-input_bytes||(output<input+input_bytes&&input<output+sizeof *out))return COH_INVALID;
-    size_t bytes=sizeof(CohAssetZip)+(size_t)count*sizeof(Member);CohAssetZip *z=calloc(1,bytes);if(!z)return COH_LIMIT;z->source=source;z->stats.owned_bytes=bytes;z->stats.members=count;CohStatus status=COH_INVALID;
+    size_t bytes=coh_asset_zip_allocation_bytes(count);CohAssetZip *z=calloc(1,bytes);if(!z)return COH_LIMIT;z->source=source;z->stats.owned_bytes=bytes;z->stats.members=count;CohStatus status=COH_INVALID;
     for(uint32_t i=0;i<count;i++){if(!valid_path(want[i].path)||!want[i].bytes||want[i].bytes>ZIP_ASSET_MAX)goto failed;uintptr_t path=(uintptr_t)want[i].path;size_t length=strlen(want[i].path)+1;if(output<path+length&&path<output+sizeof *out)goto failed;for(uint32_t j=0;j<i;j++)if(!strcmp(want[i].path,want[j].path))goto failed;z->member[i].owner=z;z->member[i].bytes=want[i].bytes;memcpy(z->member[i].path,want[i].path,strlen(want[i].path)+1);}
     if(cancelled(cancel)){status=COH_CANCELLED;goto failed;}
     size_t tail=source.size<65557u?(size_t)source.size:65557u;uint64_t base=source.size-tail;status=read_zip(z,base,z->workspace,tail);if(status!=COH_OK)goto failed;status=COH_INVALID;
@@ -79,3 +79,5 @@ failed:free(z);return status;
 CohStatus coh_asset_zip_mount(CohAssetZip *z,CohAssetLoader *loader){if(!z||!loader)return COH_INVALID;for(uint32_t i=0;i<z->stats.members;i++){Member *m=&z->member[i];CohAssetSource source={member_read,m,m->bytes,z->source.generation};CohStatus s=coh_asset_mount_file(loader,m->path,source);if(s!=COH_OK)return s;}return COH_OK;}
 void coh_asset_zip_free(CohAssetZip *z){free(z);}
 CohAssetZipStats coh_asset_zip_stats(const CohAssetZip *z){CohAssetZipStats s={0};return z?z->stats:s;}
+
+size_t coh_asset_zip_allocation_bytes(uint32_t count){return count&&count<=ZIP_MEMBERS?sizeof(CohAssetZip)+(size_t)count*sizeof(Member):0;}
