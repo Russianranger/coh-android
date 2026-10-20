@@ -1,5 +1,9 @@
 # City of Heroes Android
 
+Current status and next steps are tracked in [ROADMAP.md](ROADMAP.md).
+
+**Historical 0.8.1 / 0.9.0 checkpoint.** The opening status below is retained as historical context.
+
 **COH Local Login 0.8.1 passed on AYN Thor. Graphical character creation and saving is the next milestone.**
 
 The supplied October 1 report proves local authentication, delivery of the
