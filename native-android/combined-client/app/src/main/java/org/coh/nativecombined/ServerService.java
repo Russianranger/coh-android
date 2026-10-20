@@ -83,6 +83,7 @@ public final class ServerService extends Service {
                 .put("guest_resources",guestResources)
                 .put("storage_available_bytes",getFilesDir().getUsableSpace()).put("server_start_available_bytes",startFreeBytes)
                 .put("server_memory",new JSONObject(serverMemory.snapshot())).put("android_process_exits",processExits).put("android_exit_history_status",exitHistoryStatus)
+                .put("android_exit_history_scope","ApplicationExitInfo for this package; explicit LOW_MEMORY reason is OS evidence; SIGKILL alone has no established cause")
                 .put("memory_diagnostics",MemoryTelemetry.snapshot())
                 .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states((Boolean)null,(String)serverMemory.snapshot().get("reason"))))
                 .put("imports",importStatus).put("message",message).put("progress_done",progressDone).put("progress_total",progressTotal)
@@ -176,10 +177,11 @@ public final class ServerService extends Service {
         PowerManager manager=(PowerManager)getSystemService(POWER_SERVICE);wake=manager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"coh:native-server");wake.acquire(6*60*60*1000L);
         long cleanupDeadline=0;
         try {
-            guest=builder.start();event("server_process_started");
+            guest=builder.start();MemoryTelemetry.requestProcessSet(this,true);event("server_process_started");
             final java.lang.Process process=guest;
             Thread output=new Thread(()->readOutput(process),"coh-server-output");output.start();
             while(!process.waitFor(1,TimeUnit.SECONDS)){
+                MemoryTelemetry.requestProcessSet(this,true);
                 if(!stopRequested&&!cancellation.isCancelled()&&serverMemory.observe(memorySample(),SystemClock.elapsedRealtime())){
                     diagnostics.failure(session,"SERVER_MEMORY_SAFETY_STOP");ready=false;revoke();stopRequested=true;
                     message="Server memory check requested cleanup; stopping the server and preserving the test profile.";event("server_memory_safety_stop");
@@ -191,7 +193,7 @@ public final class ServerService extends Service {
                 save();
             }
             if(process.isAlive())throw new IOException("Owned runtime did not exit; force-stop this test app and export the report");
-            guestExit=process.exitValue();output.join(3000);ready=false;revoke();
+            guestExit=process.exitValue();MemoryTelemetry.requestProcessSet(this,false);output.join(3000);ready=false;revoke();
             JSONObject result=readJson(new File(stateDir,"latest-report.json"),256*1024);
             boolean current=result!=null&&GuestDiagnostics.currentReport(session,result.optString("session_id"),result.opt("format"),result.optString("app_id"));
             if(current){
@@ -222,7 +224,7 @@ public final class ServerService extends Service {
             ActivityManager manager=(ActivityManager)getSystemService(ACTIVITY_SERVICE);
             for(ApplicationExitInfo item:manager.getHistoricalProcessExitReasons(getPackageName(),0,8)){
                 // Numeric OS evidence only: no process command, description or trace.
-                records.put(new JSONObject().put("reason",item.getReason()).put("status",item.getStatus()).put("timestamp_utc_ms",item.getTimestamp())
+                records.put(new JSONObject().put("pid",item.getPid()).put("reason",item.getReason()).put("status",item.getStatus()).put("timestamp_utc_ms",item.getTimestamp())
                     .put("importance",item.getImportance()).put("pss_kib",item.getPss()).put("rss_kib",item.getRss()).put("low_memory",item.getReason()==ApplicationExitInfo.REASON_LOW_MEMORY));
                 if(records.length()==8)break;
             }
@@ -337,5 +339,7 @@ public final class ServerService extends Service {
     static byte[] bounded(InputStream in,int limit)throws IOException {ByteArrayOutputStream out=new ByteArrayOutputStream();byte[] buf=new byte[8192];int n;while((n=in.read(buf))!=-1){if(n==0||out.size()+n>limit)throw new IOException("Input exceeds its bound");out.write(buf,0,n);}return out.toByteArray();}
     static synchronized void write(File file,byte[] bytes)throws IOException {file.getParentFile().mkdirs();AtomicFile atomic=new AtomicFile(file);FileOutputStream out=atomic.startWrite();try{out.write(bytes);out.getFD().sync();atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);throw e;}}
     @Override public void onTaskRemoved(Intent rootIntent){stopOperation();if(!busy)stopSelf();}
+    @Override public void onTrimMemory(int level) {super.onTrimMemory(level);MemoryTelemetry.memoryPressure(this,level,false);}
+    @Override public void onLowMemory() {super.onLowMemory();MemoryTelemetry.memoryPressure(this,-1,true);}
     @Override public void onDestroy(){stopOperation();main.removeCallbacks(ticker);owner.shutdown();super.onDestroy();}
 }

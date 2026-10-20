@@ -325,7 +325,8 @@ def memory_report_contract(value):
     assert isinstance(exits, list) and len(exits) <= 8, 'Android exit history exceeds its public bound'
     exit_numbers = ('reason', 'status', 'timestamp_utc_ms', 'importance', 'pss_kib', 'rss_kib')
     for item in exits:
-        assert isinstance(item, dict) and set(item) == set(exit_numbers + ('low_memory',)), 'Unexpected Android exit metadata; descriptions and traces must stay private'
+        assert isinstance(item, dict) and set(item) in (set(exit_numbers + ('low_memory',)), set(exit_numbers + ('low_memory', 'pid'))), 'Unexpected Android exit metadata; descriptions and traces must stay private'
+        assert 'pid' not in item or type(item['pid']) is int and item['pid'] >= 0, 'Invalid Android exit PID'
         assert all(type(item[k]) is int for k in exit_numbers)
         assert all(item[k] >= 0 for k in ('timestamp_utc_ms', 'pss_kib', 'rss_kib'))
         assert type(item['low_memory']) is bool

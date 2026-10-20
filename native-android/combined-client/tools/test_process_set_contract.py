@@ -1,0 +1,50 @@
+"""Export and missing-process behavior for measured combined process samples."""
+import copy,json,unittest
+from fragment_interop_emulator_check import process_set_snapshot
+
+
+def sample():
+    rows=[dict(pid=10,start_ticks=1000,role='ANDROID_APP_AND_NATIVE_CLIENT',rss_bytes=4096,pss_bytes=2048,identity_stable=True),
+          dict(pid=20,start_ticks=2000,role='WINE_SERVERS',rss_bytes=8192,pss_bytes=4096,identity_stable=True),
+          dict(pid=30,start_ticks=3000,role='POSTGRESQL',rss_bytes=12288,pss_bytes=6144,identity_stable=True)]
+    return dict(schema='coh-same-uid-process-memory-v1',begin_elapsed_ms=1,end_elapsed_ms=10,sample_window_ms=9,
+        uid=1000,self_pid=10,process_limit=32,process_count=3,wine_processes=1,postgresql_processes=1,
+        incomplete_process_metrics=0,unreadable_status_count=0,samples=1,scan_complete=True,expected_roles_observed=True,
+        server_process_expected=True,processes=rows,observed_rss_sum_bytes=24576,observed_pss_sum_bytes=12288,
+        total_rss_bytes=24576,total_pss_bytes=12288,sampled_peak_total_rss_bytes=24576,sampled_peak_total_pss_bytes=12288,
+        atomic_snapshot=False,rss_sum_includes_repeated_shared_pages=True,pss_is_proportional=True)
+
+
+class ProcessSetContract(unittest.TestCase):
+    def test_known_group_and_unknown_before_observation(self):
+        value=sample();self.assertIs(process_set_snapshot(value),value)
+        process_set_snapshot(dict(schema=value['schema'],status='not_sampled',total_rss_bytes=None,total_pss_bytes=None))
+
+    def test_partial_pss_stays_null_and_peak_remains_historical(self):
+        value=sample();value['processes'][1]['pss_bytes']=None;value.update(observed_pss_sum_bytes=8192,total_pss_bytes=None,incomplete_process_metrics=1)
+        process_set_snapshot(value)
+        value['total_pss_bytes']=8192
+        with self.assertRaises(ValueError):process_set_snapshot(value)
+
+    def test_duplicates_stale_private_data_and_invented_totals_refuse(self):
+        for change in ('duplicate','stale','private','wrong_sum','false_complete','false_scope','negative','fractional'):
+            value=sample()
+            if change=='duplicate':value['processes'][1]['pid']=10
+            if change=='stale':value['processes'][1]['identity_stable']=False
+            if change=='private':value['processes'][1]['cmdline']='private'
+            if change=='wrong_sum':value['total_pss_bytes']+=1
+            if change=='false_complete':value['scan_complete']=False
+            if change=='false_scope':value['rss_sum_includes_repeated_shared_pages']=False
+            if change=='negative':value['processes'][1]['pss_bytes']=-1
+            if change=='fractional':value['processes'][1]['pss_bytes']=4.0
+            with self.subTest(change=change),self.assertRaises(ValueError):process_set_snapshot(value)
+
+    def test_bounded_large_export_is_below_existing_phase_reader_limit(self):
+        value=sample();value['processes']=[dict(value['processes'][0],pid=i+1,role='OTHER_APP_UID',rss_bytes=1<<50,pss_bytes=1<<50) for i in range(32)]
+        value['processes'][9]['role']='ANDROID_APP_AND_NATIVE_CLIENT';value.update(process_count=32,wine_processes=0,postgresql_processes=0,expected_roles_observed=True,server_process_expected=False)
+        for metric in ('rss','pss'):
+            value['observed_'+metric+'_sum_bytes']=32<<50;value['total_'+metric+'_bytes']=32<<50;value['sampled_peak_total_'+metric+'_bytes']=32<<50
+        process_set_snapshot(value);self.assertLess(len(json.dumps(value,indent=2).encode()),12*1024)
+
+
+if __name__=='__main__':unittest.main()

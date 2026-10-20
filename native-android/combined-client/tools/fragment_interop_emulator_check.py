@@ -39,6 +39,55 @@ def admit_runtime_revision(head, candidate, proof_path):
     return candidate, sha(raw)
 
 
+def process_set_snapshot(value):
+    need(isinstance(value, dict) and value.get('schema') == 'coh-same-uid-process-memory-v1', 'process-set schema')
+    if value.get('status') == 'not_sampled':
+        need(value.get('total_rss_bytes') is None and value.get('total_pss_bytes') is None, 'unobserved process total fabricated')
+        return value
+    rows = value.get('processes')
+    need(isinstance(rows, list) and 1 <= len(rows) <= 32 and value.get('process_limit') == 32
+         and value.get('process_count') == len(rows), 'process-set bound')
+    need(all(type(value.get(k)) is int and value[k] >= 0 for k in
+             ('begin_elapsed_ms', 'end_elapsed_ms', 'sample_window_ms', 'uid', 'self_pid', 'process_count',
+              'wine_processes', 'postgresql_processes', 'incomplete_process_metrics', 'unreadable_status_count', 'samples')),
+         'process-set scalar type')
+    need(value['end_elapsed_ms'] >= value['begin_elapsed_ms']
+         and value['sample_window_ms'] == value['end_elapsed_ms'] - value['begin_elapsed_ms'], 'process-set sample window')
+    need(type(value.get('scan_complete')) is bool and type(value.get('expected_roles_observed')) is bool
+         and type(value.get('server_process_expected')) is bool, 'process-set boolean')
+    pids = set()
+    for row in rows:
+        need(isinstance(row, dict) and set(row) == {'pid', 'start_ticks', 'role', 'rss_bytes', 'pss_bytes', 'identity_stable'}, 'process-set private/unknown fields')
+        need(type(row['pid']) is int and 0 < row['pid'] <= 0x7fffffff and row['pid'] not in pids, 'process-set PID duplicate/domain')
+        pids.add(row['pid'])
+        need(row['role'] in ('ANDROID_APP_AND_NATIVE_CLIENT', 'WINE_SERVERS', 'POSTGRESQL', 'OTHER_APP_UID')
+             and type(row['identity_stable']) is bool, 'process-set role/identity')
+        need(all(row[k] is None or type(row[k]) is int and 0 <= row[k] <= 1 << 50
+                 for k in ('start_ticks', 'rss_bytes', 'pss_bytes')), 'process-set metric domain')
+        if not row['identity_stable']:
+            need(all(row[k] is None for k in ('start_ticks', 'rss_bytes', 'pss_bytes')), 'unstable process supplied old metrics')
+        else:
+            need(row['start_ticks'] is not None, 'stable process missing lifetime identity')
+    need(sum(row['role'] == 'ANDROID_APP_AND_NATIVE_CLIENT' and row['pid'] == value['self_pid'] for row in rows) == 1,
+         'app/native-client overlap was double-counted or lost')
+    need(value['wine_processes'] == sum(row['role'] == 'WINE_SERVERS' for row in rows)
+         and value['postgresql_processes'] == sum(row['role'] == 'POSTGRESQL' for row in rows), 'role counts differ')
+    for metric in ('rss', 'pss'):
+        known = [row[metric + '_bytes'] for row in rows if row[metric + '_bytes'] is not None]
+        need(value.get('observed_' + metric + '_sum_bytes') == sum(known), 'observed process sum differs')
+        total = value.get('total_' + metric + '_bytes')
+        if value['scan_complete'] and value['expected_roles_observed'] and len(known) == len(rows):
+            need(type(total) is int and total == sum(known), 'complete process sum differs')
+        else:
+            need(total is None, 'partial process set fabricated complete total')
+        peak = value.get('sampled_peak_total_' + metric + '_bytes')
+        need(peak is None or type(peak) is int and 0 <= peak <= 32 << 50, 'process-set peak domain')
+        need(total is None or peak is not None and peak >= total, 'sampled process peak lost')
+    need(value.get('atomic_snapshot') is False and value.get('rss_sum_includes_repeated_shared_pages') is True
+         and value.get('pss_is_proportional') is True, 'process memory scope mislabeled')
+    return value
+
+
 def memory_snapshot(report):
     value = report.get('memory_diagnostics')
     need(isinstance(value, dict) and value.get('schema') == 'coh-combined-phase-memory-v1', 'phase memory schema absent')
@@ -48,6 +97,8 @@ def memory_snapshot(report):
     need(type(value.get('sampler_failures')) is int and 0 <= value['sampler_failures'] <= (1 << 63) - 1, 'sampler failure counter absent or invalid')
     need(type(value.get('snapshot_elapsed_ms')) is int and type(value.get('latest_sample_elapsed_ms')) is int and 0 <= value['latest_sample_elapsed_ms'] <= value['snapshot_elapsed_ms'], 'sample timestamp absent/stale ordering')
     need(value.get('latest_sample_age_ms') == value['snapshot_elapsed_ms'] - value['latest_sample_elapsed_ms'], 'sample age differs')
+    if 'same_uid_process_set' in value:
+        process_set_snapshot(value['same_uid_process_set'])
     rows = value.get('phases')
     need(isinstance(rows, list) and 0 < len(rows) <= 9 and len({x.get('phase') for x in rows}) == len(rows), 'unbounded or duplicate phase rows')
     for row in rows:
@@ -101,19 +152,19 @@ class FragmentCheck(InteropCheck):
     def world(self, phase, label, seconds=60):
         report = self.wait_report('native-client-report.json', lambda x: x.get('connection_mode') == 'WORLD_HANDOFF' and x.get('world_handoff', {}).get('phase') in phase, label, seconds=seconds)
         need(report.get('preview_is_server_world') is False, 'preview became authoritative')
-        current_snapshot(report['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'), self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic'))
-        if self.args.build_profile == 'catalog-diagnostic':
+        current_snapshot(report['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'), self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'))
+        if self.args.build_profile in ('catalog-diagnostic', 'entity-diagnostic'):
             observation = report['world_handoff']
             need('catalog_boundary' in observation and observation['catalog_boundary'] is None,
                  'synthetic early-boundary fixture fabricated or lost catalog observation')
-        if self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic'):
+        if self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'):
             observation = report['world_handoff']
             expected = ('INITIAL_PACKET_OBSERVED' if observation['initial_observed'] else 'NOT_OBSERVED') if observation['initial_observation_known'] else 'UNKNOWN'
             need(report.get('diagnostic_states', {}).get('initial_packet') == expected, 'Android initial packet observation differs from independent native control')
         return report
 
     def record_snapshot(self, label, report):
-        value = current_snapshot(report['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'), self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic'))
+        value = current_snapshot(report['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'), self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'))
         (self.args.output / (label + '-world-handoff.json')).write_text(json.dumps(value, indent=2) + '\n')
         return value
 
@@ -136,10 +187,10 @@ class FragmentCheck(InteropCheck):
         self.tap('Launch native client')
         native = self.wait_report('native-client-report.json', lambda x: x.get('assets_verified') is True and x.get('native', {}).get('frames', 0) >= 30, 'native Activity available')
         need(native['world_handoff'] == IDLE_REPORT, 'handoff began without explicit action')
-        if self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic'):
+        if self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'):
             need(native.get('diagnostic_states', {}).get('initial_packet') == 'UNKNOWN', 'idle owner fabricated a negative initial packet observation')
             self.record('initial packet observation remains unknown before the first owner begins', initial_packet='UNKNOWN')
-        if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'):
+        if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'):
             before = max((row.get('sequence', 0) for row in native.get('memory_diagnostics', {}).get('phases', [])), default=0)
             self.tap('Sample memory')
             sampled, row = self.memory_phase('DIAGNOSTIC', before)
@@ -159,9 +210,9 @@ class FragmentCheck(InteropCheck):
                 if label == 'fragment-multi':
                     self.export_native()
                     exported = json.loads((self.args.output / 'exported-native-report.json').read_bytes())
-                    current_snapshot(exported['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'), self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic'))
+                    current_snapshot(exported['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'), self.args.build_profile in ('report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'))
                     unchanged_observations(captured['world_handoff'], exported['world_handoff'])
-                    if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'):
+                    if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'):
                         memory_snapshot(exported)
                     need(exported['world_handoff']['receive_diagnostics'] == receive, 'SAF export changed new receive observation')
                     self.record('new receive projection survives actual SAF export', numeric_only=True, world_authority=False)
@@ -170,7 +221,7 @@ class FragmentCheck(InteropCheck):
                 unchanged_observations(captured['world_handoff'], closed['world_handoff'])
                 need(closed['world_handoff']['cleanup_verified'] is True, 'new fragment owner left transport open')
             self.fragment_receipt(label, expected)
-        if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'):
+        if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'):
             connected, connection = self.memory_phase('NATIVE_CONNECTION')
             session = connected['session_id']
             before = connected['memory_diagnostics']['samples']
@@ -194,7 +245,7 @@ class FragmentCheck(InteropCheck):
             'original_Auth_Db_Map_service_execution': False, 'whole_original_ALLENTS_producer': False,
             'normal_version_checksum_policy_qualified': False, 'complete_initial_character': False, 'actor_publication': False,
             'ACK_authority': False, 'world_authority': False, 'physical_Thor_qualified': False,
-            'whole_process_memory_measured': False, 'app_self_process_memory_observer_executed': self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'), 'old_framework_suite_executed': False}
+            'whole_process_memory_measured': False, 'app_self_process_memory_observer_executed': self.args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'), 'old_framework_suite_executed': False}
         (self.args.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
 
 
@@ -220,7 +271,7 @@ def main():
     package = json.loads(args.package_receipt.read_bytes())
     need(package['status'] == 'passed' and package['abi'] == 'x86_64' and package['package'] == PACKAGE and package['source_commit'] == runtime_revision, 'new APK identity differs')
     check_build_identity(package['version_code'], package['version_name'], args.build_profile)
-    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic'):
+    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic'):
         need(package.get('build_profile') == args.build_profile and package.get('process_memory_jni_entrypoint') == 'Java_org_coh_nativecombined_LocalNative_processMemory', 'memory diagnostic package audit absent')
     need(package['apk']['bytes'] == args.apk.stat().st_size and package['apk']['sha256'] == sha(args.apk.read_bytes()), 'APK receipt differs')
     need(package['signer_certificate_sha256'] == '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522', 'accepted signer changed')

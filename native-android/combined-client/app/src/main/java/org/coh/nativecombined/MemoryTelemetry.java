@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.SystemClock;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.LinkedHashMap;
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +18,13 @@ final class MemoryTelemetry {
     private static final ScheduledExecutorService worker=Executors.newSingleThreadScheduledExecutor(r->new Thread(r,"coh-memory-observer"));
     private static final EnumMap<PhaseMemoryDiagnostics.Phase,Long> pending=new EnumMap<>(PhaseMemoryDiagnostics.Phase.class);
     private static boolean scheduled;
+    private static final ProcessSetMemory processSet=new ProcessSetMemory();
+    private static boolean processSetPending,serverProcessExpected;
+    private static long nextProcessSet;
     private static long nextSample, sampleFailures;
+    private static long trimCallbacks, lowMemoryCallbacks;
+    private static Integer lastTrimLevel;
+    private static Long lastPressureElapsed;
     private MemoryTelemetry() { }
 
     static ServerMemoryPolicy.Sample systemSample(Context context) {
@@ -31,10 +39,19 @@ final class MemoryTelemetry {
     static synchronized void request(Context context,PhaseMemoryDiagnostics.Phase phase) {
         if(phase==null)return;
         try {
-            pending.put(phase,SystemClock.elapsedRealtime());
+            long now=SystemClock.elapsedRealtime();
+            pending.put(phase,now);
+            if(now>=nextProcessSet)processSetPending=true;
             if(scheduled)return;
             schedule(context.getApplicationContext());
         }catch(RuntimeException unavailable){failed();}
+    }
+    /** Reuses the same observer worker; never forks another guest or changes admission. */
+    static synchronized void requestProcessSet(Context context,boolean serverExpected) {
+        boolean changed=serverProcessExpected!=serverExpected;serverProcessExpected=serverExpected;
+        if(!changed&&SystemClock.elapsedRealtime()<nextProcessSet)return;
+        processSetPending=true;
+        if(!scheduled)try{schedule(context.getApplicationContext());}catch(RuntimeException unavailable){failed();}
     }
     private static void failed(){if(sampleFailures<Long.MAX_VALUE)sampleFailures++;}
     /** Caller holds the class monitor. Refusal must never leave a phantom queued task. */
@@ -46,8 +63,8 @@ final class MemoryTelemetry {
     }
     private static void sample(Context context) {
         try {
-            EnumMap<PhaseMemoryDiagnostics.Phase,Long> requested;
-            synchronized(MemoryTelemetry.class){requested=new EnumMap<>(pending);pending.clear();}
+            EnumMap<PhaseMemoryDiagnostics.Phase,Long> requested;boolean collectProcessSet,expectServer;
+            synchronized(MemoryTelemetry.class){requested=new EnumMap<>(pending);pending.clear();collectProcessSet=processSetPending;processSetPending=false;expectServer=serverProcessExpected;}
             ServerMemoryPolicy.Sample system=systemSample(context);
             PhaseMemoryDiagnostics.ProcessSample process=null;
             try {
@@ -58,6 +75,11 @@ final class MemoryTelemetry {
                     process=new PhaseMemoryDiagnostics.ProcessSample(rss.getBoolean("known")?rss.getLong("bytes"):null,
                             pss.getBoolean("known")?pss.getLong("bytes"):null,rss.getString("source"),pss.getString("source"));}
             }catch(Exception|LinkageError unavailable){/* Optional /proc observation never weakens server admission. */}
+            if(collectProcessSet) {
+                processSet.sample(Paths.get("/proc"),android.os.Process.myUid(),android.os.Process.myPid(),expectServer,
+                        SystemClock::elapsedRealtime,System.currentTimeMillis());
+                synchronized(MemoryTelemetry.class){long now=SystemClock.elapsedRealtime();nextProcessSet=now>Long.MAX_VALUE-ProcessSetMemory.INTERVAL_MS?Long.MAX_VALUE:now+ProcessSetMemory.INTERVAL_MS;}
+            }
             long sampled=SystemClock.elapsedRealtime();
             for(Map.Entry<PhaseMemoryDiagnostics.Phase,Long> row:requested.entrySet())
                 observations.record(row.getKey(),row.getValue(),sampled,system,process);
@@ -68,16 +90,33 @@ final class MemoryTelemetry {
                 try {
                     long now=SystemClock.elapsedRealtime();
                     nextSample=now>Long.MAX_VALUE-1000?Long.MAX_VALUE:now+1000;
-                    if(!pending.isEmpty())schedule(context);
+                    if(!pending.isEmpty()||processSetPending)schedule(context);
                 }catch(RuntimeException unavailable){failed();}
             }
         }
+    }
+    static synchronized void memoryPressure(Context context,int level,boolean lowMemory) {
+        if(lowMemory){if(lowMemoryCallbacks<Long.MAX_VALUE)lowMemoryCallbacks++;}
+        else if(level>=0&&level<=100){if(trimCallbacks<Long.MAX_VALUE)trimCallbacks++;lastTrimLevel=level;}
+        else return;
+        lastPressureElapsed=SystemClock.elapsedRealtime();
+        request(context,PhaseMemoryDiagnostics.Phase.DIAGNOSTIC);
+    }
+    private static synchronized Map<String,Object> pressureSnapshot(){
+        Map<String,Object> row=new LinkedHashMap<>();
+        row.put("source","Android onTrimMemory/onLowMemory callbacks");row.put("trim_callbacks",trimCallbacks);
+        row.put("low_memory_callbacks",lowMemoryCallbacks);row.put("last_trim_level",lastTrimLevel);
+        row.put("last_callback_elapsed_ms",lastPressureElapsed);row.put("callback_is_oom_kill_proof",false);return row;
     }
     static JSONObject snapshot(){
         Map<String,Object> snapshot=observations.snapshot();long now=SystemClock.elapsedRealtime();
         Long latest=(Long)snapshot.get("latest_sample_elapsed_ms");
         snapshot.put("snapshot_elapsed_ms",now);snapshot.put("latest_sample_age_ms",latest==null||latest>now?null:now-latest);
         synchronized(MemoryTelemetry.class){snapshot.put("sampler_failures",sampleFailures);}
+        snapshot.put("android_memory_callbacks",pressureSnapshot());
+        Map<String,Object> group=processSet.snapshot();Object end=group.get("end_elapsed_ms");
+        group.put("snapshot_age_ms",end instanceof Long&&((Long)end)<=now?now-((Long)end):null);
+        snapshot.put("same_uid_process_set",group);
         return new JSONObject(snapshot);
     }
 }

@@ -19,6 +19,7 @@ public class ActivityManager {public static volatile boolean unavailable=true;
  public void getMemoryInfo(MemoryInfo x){if(unavailable)throw new SecurityException("unavailable fixture");
  x.availMem=8L<<30;x.totalMem=16L<<30;x.threshold=256L<<20;}}
 ''',
+    'android/os/Process.java': 'package android.os; public class Process {public static int myUid(){return 1000;} public static int myPid(){return 1;}}',
     'android/os/SystemClock.java': '''package android.os;
 public class SystemClock {private static final long start=System.nanoTime();
  public static final java.util.concurrent.atomic.AtomicBoolean failWorkerOnce=new java.util.concurrent.atomic.AtomicBoolean();
@@ -60,7 +61,7 @@ public final class MemoryWorkerTest {
  @SuppressWarnings("unchecked") static List<Map<String,Object>> rows(){return (List<Map<String,Object>>)snapshot().get("phases");}
  static void await(java.util.function.BooleanSupplier ready)throws Exception{long stop=System.nanoTime()+TimeUnit.SECONDS.toNanos(10);while(!ready.getAsBoolean()){if(System.nanoTime()>stop)throw new AssertionError("worker did not recover: "+snapshot());Thread.sleep(10);}}
  static boolean idle(){try{synchronized(MemoryTelemetry.class){return !(Boolean)field("scheduled");}}catch(Exception e){throw new IllegalStateException(e);}}
- public static void main(String[] args)throws Exception{
+ @SuppressWarnings("unchecked") public static void main(String[] args)throws Exception{
   ScheduledExecutorService worker=(ScheduledExecutorService)field("worker");android.content.Context context=new android.content.Context();
   try {
    // First-ever system and process sources unavailable; no measured-zero seed.
@@ -96,6 +97,16 @@ public final class MemoryWorkerTest {
    await(()->number(snapshot(),"samples")==12&&idle());
    need(rows().get(PhaseMemoryDiagnostics.Phase.RESUME.ordinal()).get("system_sample_valid").equals(true));
    need(number(snapshot(),"sampler_failures")==2);
+   Map<String,Object> pressure=(Map<String,Object>)snapshot().get("android_memory_callbacks");
+   need(pressure.get("last_trim_level")==null&&pressure.get("last_callback_elapsed_ms")==null);
+   MemoryTelemetry.memoryPressure(context,-2,false);
+   need(((Number)((Map<?,?>)snapshot().get("android_memory_callbacks")).get("trim_callbacks")).longValue()==0);
+   MemoryTelemetry.memoryPressure(context,80,false);MemoryTelemetry.memoryPressure(context,-1,true);
+   await(()->number(snapshot(),"samples")==13&&idle());
+   pressure=(Map<String,Object>)snapshot().get("android_memory_callbacks");
+   need(((Number)pressure.get("trim_callbacks")).longValue()==1&&((Number)pressure.get("low_memory_callbacks")).longValue()==1);
+   need(Integer.valueOf(80).equals(pressure.get("last_trim_level"))&&pressure.get("last_callback_elapsed_ms") instanceof Long);
+   need(Boolean.FALSE.equals(pressure.get("callback_is_oom_kill_proof")));
    System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"queued_phase_requests\":9000,\"nonfatal_failures_recovered\":2,\"fresh_first_unavailable\":true,\"Android_stubs_only\":true}");
   }finally{worker.shutdownNow();worker.awaitTermination(10,TimeUnit.SECONDS);}
  }
@@ -113,7 +124,7 @@ def main():
             sources.append(path)
         test = root / 'org/coh/nativecombined/MemoryWorkerTest.java'
         test.write_text(HARNESS)
-        sources += [test, *(SOURCE / name for name in ('ServerMemoryPolicy.java', 'PhaseMemoryDiagnostics.java', 'MemoryTelemetry.java'))]
+        sources += [test, *(SOURCE / name for name in ('ServerMemoryPolicy.java', 'PhaseMemoryDiagnostics.java', 'ProcessSetMemory.java', 'MemoryTelemetry.java'))]
         build = subprocess.run(['java', 'com.sun.tools.javac.Main', '-d', str(root), *map(str, sources)], capture_output=True, text=True)
         if build.returncode:
             raise RuntimeError(build.stderr)

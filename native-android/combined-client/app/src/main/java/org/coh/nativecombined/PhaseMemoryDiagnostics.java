@@ -98,12 +98,12 @@ final class PhaseMemoryDiagnostics {
     }
     synchronized Map<String,Object> snapshot() {
         Map<String,Object> out=new LinkedHashMap<>();
-        out.put("schema","coh-combined-phase-memory-v1");out.put("scope","current Android app process lifetime; bounded phase observations, not total device or guest memory");
+        out.put("schema","coh-combined-phase-memory-v1");out.put("scope","current Android app phase observations; additional same-UID process-set measurements are separate from whole-device RAM");
         out.put("phase_limit",Phase.values().length);out.put("samples",samples);
         out.put("sample_interval_ms",1000);out.put("latest_sample_elapsed_ms",lastSample<0?null:lastSample);
         out.put("sampled_peak_process_rss_bytes",peakRss);out.put("sampled_peak_process_pss_bytes",peakPss);
         out.put("minimum_observed_system_headroom_bytes",minimumSystem);out.put("minimum_observed_java_heap_headroom_bytes",minimumHeap);
-        out.put("owned_guest_process_memory","unavailable: no installed verified process-owner adapter; shared RSS is never summed");
+        out.put("owned_guest_process_memory","unavailable as isolated guest allocations; measured combined app/Wine/PostgreSQL observations are in same_uid_process_set");
         out.put("native_owner_memory","unavailable as an aggregate; existing native module ownership receipts remain separate");
         out.put("graphics_memory","unavailable as a process total; accepted renderer allocation estimates remain in native snapshot");
         out.put("admission_authority",false);out.put("server_policy_thresholds_changed",false);
