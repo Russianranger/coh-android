@@ -50,6 +50,11 @@ import java.util.concurrent.atomic.AtomicReference;
  * A position box does not complete costume or world replication. */
 public final class NativeClientActivity extends Activity implements SurfaceHolder.Callback {
     private static final int EXPORT = 18;
+    private static final int EXPORT_CAPTURE = 19;
+    private final Object captureLife = new Object();
+    private final AtomicBoolean captureQueued = new AtomicBoolean();
+    private volatile long captureSavedFrame;
+    private volatile String captureMetadata,captureFailure;
     private final Handler main = new Handler(Looper.getMainLooper());
     private final ExecutorService renderWorker = Executors.newSingleThreadExecutor();
     private final ExecutorService reportWorker = Executors.newSingleThreadExecutor();
@@ -162,6 +167,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         buttons.addView(recreate);
         Button export = new Button(this); export.setText("Export report");
         export.setOnClickListener(v -> exportReport()); buttons.addView(export);
+        if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC){
+            Button capture=new Button(this);capture.setText("Export scene ZIP");
+            capture.setOnClickListener(v->exportSceneCapture());controlsLayout.addView(capture);
+            reportWorker.execute(()->captureMetadata=SceneFrameCapture.metadata(getFilesDir()));
+        }
         Button distance = new Button(this); distance.setText("View distance");
         distance.setOnClickListener(v -> {
             if (handle != 0) SessionNative.viewDistance(handle);
@@ -728,6 +738,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     .put("maximum_controls_percent",60).put("minimum_aspect",0.25).put("maximum_aspect",8)
                     .put("maximum_dimension",16384).put("host_width",scene==null?0:scene.getWidth())
                     .put("host_height",scene==null?0:scene.getHeight()));
+        if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC)j.put("scene_frame_capture",captureMetadata==null?JSONObject.NULL:new JSONObject(captureMetadata))
+                .put("scene_frame_capture_error",captureFailure==null?JSONObject.NULL:captureFailure);
         if(handle!=0)j.put("native",new JSONObject(SessionNative.snapshot(handle)));
         if(view!=null) {
             int[] location=new int[2];view.getLocationOnScreen(location);
@@ -743,7 +755,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private void saveReport() {
         if(destroying)return;
         try {
-            JSONObject j=report(); pendingReport.set(j.toString(2).getBytes(StandardCharsets.UTF_8)); queueWriter();
+            JSONObject j=report(); pendingReport.set(j.toString(2).getBytes(StandardCharsets.UTF_8)); queueWriter(); queueSceneCapture(j);
             JSONObject memory=j.getJSONObject("memory_diagnostics");JSONArray phases=memory.getJSONArray("phases");JSONObject latest=null;
             for(int i=0;i<phases.length();i++){JSONObject row=phases.getJSONObject(i);if(latest==null||row.getLong("sequence")>latest.getLong("sequence"))latest=row;}
             memoryStatus.setText(latest==null?"Memory observation pending":"Memory • system headroom "+memoryMiB(latest,"system_headroom_bytes")
@@ -759,6 +771,30 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                         + " • " + stream.optLong("selected_instances") + "/" + stream.optLong("catalog_instances") + " objects")
                     + (writeFailed ? " • report save failed" : " • report ready"));
         } catch(Exception ex) { failure=ex.toString(); status.setText(failure); }
+    }
+    private void queueSceneCapture(JSONObject report) {
+        if(!BuildConfig.FRAME_CAPTURE_DIAGNOSTIC||destroying||!assetsVerified||reportWorker.isShutdown())return;
+        JSONObject nativeState=report.optJSONObject("native");
+        JSONObject frame=nativeState==null?null:nativeState.optJSONObject("frame_capture");
+        if(frame==null||frame.optLong("frame")<=captureSavedFrame||!captureQueued.compareAndSet(false,true))return;
+        try{reportWorker.execute(()->{
+            try{
+                byte[] raw;
+                synchronized(captureLife){if(destroying||handle==0)return;raw=SessionNative.frameCapture(handle,captureSavedFrame);}
+                if(raw==null)return;
+                String saved=SceneFrameCapture.save(getFilesDir(),raw,getPackageManager().getPackageInfo(getPackageName(),0).versionCode,Long.toHexString(sessionStarted));
+                JSONObject metadata=new JSONObject(saved);captureSavedFrame=metadata.getLong("frame");captureMetadata=saved;captureFailure=null;
+            }catch(Exception ex){captureFailure=ex.getClass().getSimpleName();}
+            catch(OutOfMemoryError optionalCapture){captureFailure="Capture memory unavailable";}
+            finally{captureQueued.set(false);}
+        });}catch(RejectedExecutionException retired){captureQueued.set(false);}
+    }
+    private void exportSceneCapture(){
+        if(destroying||exporting)return;
+        exporting=true;
+        Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("application/zip");
+        intent.putExtra(Intent.EXTRA_TITLE,"COH-ObservedScene-"+System.currentTimeMillis()+".zip");
+        startActivityForResult(intent,EXPORT_CAPTURE);
     }
     private void queueWriter() {
         if(reportWorker.isShutdown() || !writerQueued.compareAndSet(false,true))return;
@@ -785,6 +821,17 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     }
     @Override protected void onActivityResult(int request,int result,Intent data) {
         super.onActivityResult(request,result,data);
+        if(request==EXPORT_CAPTURE){
+            exporting=false;if(destroying)return;
+            if(result!=RESULT_OK||data==null||data.getData()==null){event("capture_export_cancelled");return;}
+            reportWorker.execute(()->{
+                String error=null;
+                try(OutputStream output=getContentResolver().openOutputStream(data.getData(),"wt")){
+                    if(output==null||!SceneFrameCapture.writeZip(getFilesDir(),output))error="No saved real-pose game frame";
+                }catch(Exception ex){error=ex.getClass().getSimpleName();}
+                final String problem=error;main.post(()->{if(destroying)return;captureFailure=problem;event(problem==null?"capture_export_complete":"capture_export_failed");saveReport();});
+            });return;
+        }
         if(request!=EXPORT)return;
         if(destroying)return;
         final byte[] bytes=frozenExport; frozenExport=null; exporting=false;
@@ -828,7 +875,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         currentHolder=null;currentSurface=null;
         if(adapter!=null)adapter.clear();if(inputManager!=null)inputManager.unregisterInputDeviceListener(adapter);
         if(handle!=0)SessionNative.state(handle,epoch,false);
-        renderWorker.execute(() -> {long previous=handle;handle=0;if(previous!=0)SessionNative.destroy(previous);rendererRetired.set(true);sampleFinalCleanup();});
+        renderWorker.execute(() -> {synchronized(captureLife){long previous=handle;handle=0;if(previous!=0)SessionNative.destroy(previous);}rendererRetired.set(true);sampleFinalCleanup();});
         renderWorker.shutdown();reportWorker.shutdown();super.onDestroy();
     }
     private void sampleFinalCleanup(){if(networkRetired.get()&&rendererRetired.get())MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.FINAL_CLEANUP);}

@@ -2,6 +2,7 @@
 #define COH_WALK_H
 #include "../motion/coh_motion.h"
 #include <stdint.h>
+#include <stddef.h>
 enum { COH_WALK_MAX_TRIANGLES=8192, COH_WALK_NORMALTRI=1u<<11,
        COH_WALK_NOTSELECTABLE=1u<<19, COH_WALK_SLICK=1u<<20,
        COH_WALK_ICY=1u<<21, COH_WALK_BOUNCY=1u<<22 };
@@ -40,6 +41,7 @@ typedef struct { uint32_t checks, failed, source_cases, collision_cases;
 int coh_walk_world_init(CohWalkWorld *world,const CohWalkTriangle *triangles,
     uint32_t count,const float bounds_min[3],const float bounds_max[3]);
 void coh_walk_world_destroy(CohWalkWorld *world);
+size_t coh_walk_world_owned_bytes(const CohWalkWorld *world);
 /* Initial spawn must have actual traversable ground within source 2.5-unit
  * feet query; unsupported/no-ground scenes fail, never invent a floor. */
 int coh_walk_init(CohWalkState *state,const CohWalkWorld *world,

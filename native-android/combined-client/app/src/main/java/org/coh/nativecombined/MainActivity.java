@@ -100,6 +100,7 @@ public final class MainActivity extends Activity {
                     }
                     zip.putNextEntry(new ZipEntry(name));zip.write(report.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
                 }
+                SceneFrameCapture.append(getFilesDir(),zip);
                 }catch(Exception e){main.post(()->Toast.makeText(this,"Report export failed",Toast.LENGTH_LONG).show());return;}main.post(()->Toast.makeText(this,"Report exported",Toast.LENGTH_LONG).show());});
         }
     }

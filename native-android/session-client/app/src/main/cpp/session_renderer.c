@@ -27,7 +27,12 @@
 #include "coh_walkable_scene.h"
 #include "world_shader_sources.h"
 #include "session_stream_world.h"
+#include "session_frame_capture.h"
+#include "session_frame_capture_gl.h"
 
+#ifndef COH_FRAME_CAPTURE_DIAGNOSTIC
+#define COH_FRAME_CAPTURE_DIAGNOSTIC 0
+#endif
 #define MAX_ASSET (16u*1024u*1024u)
 #define SIZE 512
 #define PI 3.14159265358979323846f
@@ -60,6 +65,8 @@ typedef struct {
     float forward,strafe,accumulator,spawn[3],camera_target_height;
     uint32_t observed_entity_index;float observed_entity_position[3];
     uint64_t observed_entity_updates,observed_entity_draws;
+    CohFrameCapture *frame_capture;
+    uint64_t capture_lock_frame,capture_draws,capture_frame,capture_generation,capture_failures,capture_charge;
     uint32_t held_dirs,direction_mask;
     uint64_t frames,world_draws,actor_draws,skin_samples,contexts_started,contexts_completed;
     uint64_t tf_components,tf_mismatches,depth_order_mismatches,world_visible_pixels,actor_visible_pixels;
@@ -81,6 +88,7 @@ typedef struct { EGLDisplay display; EGLSurface surface; EGLContext context;
     GLuint walkable_textures[COH_WALKABLE_TEXTURES];
     GLuint actor_textures[COH_SCENE_TEXTURES],tf,fbo,color,depth;
     GLuint depth_program,depth_vao,pixel_fbo,pixel_color;GLint depth_sampler,depth_pixel;
+    size_t tf_bytes;
     int initialized,context_current;
 } Graphics;
 static uint64_t now_ms(void) { struct timespec t; clock_gettime(CLOCK_MONOTONIC,&t);
@@ -142,7 +150,7 @@ static int copy_asset(JNIEnv *e,jbyteArray a,Bytes *out) {
     out->p=malloc((size_t)n);out->n=(size_t)n;if(!out->p)return 0;
     (*e)->GetByteArrayRegion(e,a,0,n,(jbyte*)out->p);return !(*e)->ExceptionCheck(e);
 }
-static void session_free(Session *s) {if(!s)return;coh_session_world_destroy(&s->stream_world);for(unsigned i=0;i<7;i++)free(s->assets[i].p);
+static void session_free(Session *s) {if(!s)return;coh_frame_capture_destroy(&s->frame_capture);coh_session_world_destroy(&s->stream_world);for(unsigned i=0;i<7;i++)free(s->assets[i].p);
     coh_walk_world_destroy(&s->walk_world);for(unsigned i=0;i<COH_WALKABLE_PARTS;i++)geometry_free(&s->walkable_geometry[i]);
     for(unsigned i=0;i<COH_WORLD_PARTS;i++)geometry_free(&s->world_geometry[i]);
     for(unsigned i=0;i<COH_SCENE_PARTS;i++)geometry_free(&s->actor_geometry[i]);pthread_mutex_destroy(&s->mutex);free(s); }
@@ -296,7 +304,7 @@ static int transform_check(Session *s,Graphics *g) {
     for(unsigned kind=0;kind<2;kind++)for(unsigned i=0;i<(kind?s->actor.part_count:s->world.part_count);i++) {
         Geometry *geo=kind?&s->actor_geometry[i]:&s->world_geometry[i];const float *world=kind?model:s->world_matrix[s->world.parts[i].node],*mv=kind?actor_eye:eye[s->world.parts[i].node];
         const float white[4]={1,1,1,1};uniforms(&g->program,world,mv,projection,1,white,white,0,1,0,kind?g->actor_textures[0]:g->world_textures[0],kind?g->actor_textures[0]:g->world_textures[0],kind);
-        size_t bytes=(size_t)geo->count*13*sizeof(float);glBindVertexArray(geo->vao);glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER,g->tf);glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER,(GLsizeiptr)bytes,NULL,GL_DYNAMIC_READ);glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,0,g->tf);glEnable(GL_RASTERIZER_DISCARD);glBeginTransformFeedback(GL_POINTS);glDrawArrays(GL_POINTS,0,(GLsizei)geo->count);glEndTransformFeedback();glDisable(GL_RASTERIZER_DISCARD);
+        size_t bytes=(size_t)geo->count*13*sizeof(float);g->tf_bytes=bytes;glBindVertexArray(geo->vao);glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER,g->tf);glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER,(GLsizeiptr)bytes,NULL,GL_DYNAMIC_READ);glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,0,g->tf);glEnable(GL_RASTERIZER_DISCARD);glBeginTransformFeedback(GL_POINTS);glDrawArrays(GL_POINTS,0,(GLsizei)geo->count);glEndTransformFeedback();glDisable(GL_RASTERIZER_DISCARD);
         if(!glcheck(s,"Integrated transform feedback failed"))return 0;const float *actual=glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER,0,(GLsizeiptr)bytes,GL_MAP_READ_BIT);if(!actual)return fail(s,"Integrated transform feedback map failed");
         for(unsigned j=0;j<geo->count;j++){float expected[13];if(coh_world_vertex(world,mv,projection,geo->vertices[j].position,geo->vertices[j].normal,expected)){glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);return fail(s,"Source CPU transform failed");}
             for(unsigned k=0;k<13;k++){float error=fabsf(actual[j*13+k]-expected[k]);s->tf_components++;if(isfinite(error)&&error>s->tf_max_error)s->tf_max_error=error;if(!isfinite(error)||error>.0001f)s->tf_mismatches++;}
@@ -312,7 +320,7 @@ static int walkable_transform_check(Session *s,Graphics *g) {
     for(unsigned i=0;i<s->walkable.part_count;i++) {
         Geometry *geo=&s->walkable_geometry[i];
         uniforms(&g->program,identity,view,projection,1,white,white,0,1,0,g->walkable_textures[0],g->walkable_textures[0],0);
-        size_t bytes=(size_t)geo->count*13*sizeof(float);glBindVertexArray(geo->vao);glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER,g->tf);glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER,(GLsizeiptr)bytes,NULL,GL_DYNAMIC_READ);glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,0,g->tf);glEnable(GL_RASTERIZER_DISCARD);glBeginTransformFeedback(GL_POINTS);glDrawArrays(GL_POINTS,0,(GLsizei)geo->count);glEndTransformFeedback();glDisable(GL_RASTERIZER_DISCARD);
+        size_t bytes=(size_t)geo->count*13*sizeof(float);g->tf_bytes=bytes;glBindVertexArray(geo->vao);glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER,g->tf);glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER,(GLsizeiptr)bytes,NULL,GL_DYNAMIC_READ);glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,0,g->tf);glEnable(GL_RASTERIZER_DISCARD);glBeginTransformFeedback(GL_POINTS);glDrawArrays(GL_POINTS,0,(GLsizei)geo->count);glEndTransformFeedback();glDisable(GL_RASTERIZER_DISCARD);
         if(!glcheck(s,"Authored walkable transform feedback failed"))return 0;
         const float *actual=glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER,0,(GLsizeiptr)bytes,GL_MAP_READ_BIT);if(!actual)return fail(s,"Authored walkable feedback map failed");
         for(unsigned j=0;j<geo->count;j++){float expected[13];if(coh_world_vertex(identity,view,projection,geo->vertices[j].position,geo->vertices[j].normal,expected)){glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);return fail(s,"Authored world-space CPU transform failed");}
@@ -470,6 +478,30 @@ static void startup_commit(Session *s,const Session *copy) {
     s->expected_cancel_surface_errors=copy->expected_cancel_surface_errors;s->expected_cancel_egl_error=copy->expected_cancel_egl_error;
     s->cleanup_gl_errors=copy->cleanup_gl_errors;s->cleanup_egl_errors=copy->cleanup_egl_errors;s->cleanup_egl_error=copy->cleanup_egl_error;
 }
+/* Source-level allocations and GPU payloads, not driver RSS/PSS. Call only
+ * between draws on the single render owner; no candidate is active here. */
+static int capture_add(uint64_t *sum,uint64_t bytes){if(*sum>COH_CAPTURE_SCENE_LIMIT||bytes>COH_CAPTURE_SCENE_LIMIT-*sum)return 0;*sum+=bytes;return 1;}
+static int capture_scene_charge(const Session*s,const Graphics*g,uint64_t*out){
+    uint64_t cpu=0,gpu=0,total=0;
+    if(!coh_session_world_owned_bytes(s->stream_world,&cpu,&gpu)||
+       !capture_add(&total,cpu)||!capture_add(&total,gpu)||
+       !capture_add(&total,2u*sizeof(Session)+sizeof(Graphics))||
+       !capture_add(&total,coh_walk_world_owned_bytes(&s->walk_world)))return 0;
+    for(unsigned i=0;i<7;i++)if(!capture_add(&total,s->assets[i].n))return 0;
+    const Geometry *sets[]={s->world_geometry,s->actor_geometry,s->walkable_geometry};
+    const unsigned counts[]={s->world.part_count,s->actor.part_count,s->walkable.part_count};
+    for(unsigned set=0;set<3;set++)for(unsigned i=0;i<counts[set];i++){
+        const Geometry*m=sets[set]+i;
+        uint64_t vertices=(uint64_t)m->count*sizeof(Vertex),indices=(uint64_t)m->index_count*4u;
+        if(!capture_add(&total,vertices+(uint64_t)m->count*sizeof(CohMeshVertex)+indices)||
+           !capture_add(&total,vertices+indices))return 0;
+    }
+    for(unsigned i=0;i<s->world.texture_count;i++)if(!capture_add(&total,s->world.textures[i].bytes))return 0;
+    for(unsigned i=0;i<s->actor.texture_count;i++)if(!capture_add(&total,s->actor.textures[i].bytes))return 0;
+    for(unsigned i=0;i<s->walkable.texture_count;i++)if(!capture_add(&total,s->walkable.textures[i].bytes))return 0;
+    if(!capture_add(&total,(uint64_t)SIZE*SIZE*8u+4u+g->tf_bytes))return 0;
+    *out=total;return total<=COH_CAPTURE_SCENE_LIMIT-COH_CAPTURE_RESERVE;
+}
 static int cancelled_surface_error(unsigned code){return code==EGL_BAD_NATIVE_WINDOW||code==EGL_BAD_SURFACE;}
 JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e,jclass klass,jlong handle,jobject surface,jlong epoch) {
     (void)klass;Session *s=(Session*)(intptr_t)handle;if(!s||!surface)return -1;Graphics g={.display=EGL_NO_DISPLAY,.surface=EGL_NO_SURFACE,.context=EGL_NO_CONTEXT};uint64_t started=now_ms(),previous=started;
@@ -503,13 +535,48 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
         *startup=*s;pthread_mutex_unlock(&s->mutex);
         /* No shared session mutex is held by any driver call, including swap,
          * readbacks or context teardown. Main-thread focus/tickets stay live. */
-        int surface_failed=0;
+        int surface_failed=0,capture_pending=0,capture_read=0,capture_presented=0;
         if(!startup->failed){for(unsigned i=0;!startup->observed_entity_index&&i<startup->actor.part_count;i++)geometry_upload(&startup->actor_geometry[i],0);EGLint width=0,height=0;
             if(!eglQuerySurface(g.display,g.surface,EGL_WIDTH,&width)||!eglQuerySurface(g.display,g.surface,EGL_HEIGHT,&height)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}
             else if(width<=0||height<=0||width>16384||height>16384)surface_failed=1;
-            else {startup->width=width;startup->height=height;if(scene_draw(startup,&g,0,width,height,0,0,NULL)){if(!eglSwapBuffers(g.display,g.surface)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}else startup->frames++;}}
+            else {startup->width=width;startup->height=height;
+                uint64_t packets_before=startup->stream_stats.draw_packets,entity_before=startup->observed_entity_draws;
+                if(scene_draw(startup,&g,0,width,height,0,0,NULL)){
+                    uint64_t packets=startup->stream_stats.draw_packets>=packets_before?startup->stream_stats.draw_packets-packets_before:0;
+                    uint64_t entities=startup->observed_entity_draws>=entity_before?startup->observed_entity_draws-entity_before:0;
+                    if(COH_FRAME_CAPTURE_DIAGNOSTIC&&startup->observed_entity_index&&packets&&entities&&++startup->capture_draws==COH_CAPTURE_WAIT){
+                        uint64_t charge=0;
+                        if(capture_scene_charge(startup,&g,&charge)){
+                            if(!startup->frame_capture)startup->frame_capture=coh_frame_capture_create(charge);
+                            CohFrameCaptureInfo info={(uint32_t)width,(uint32_t)height,startup->observed_entity_index,
+                                startup->frames+1,startup->epoch,startup->observed_entity_updates,startup->capture_lock_frame,
+                                packets,entities,charge,{startup->observed_entity_position[0],startup->observed_entity_position[1],startup->observed_entity_position[2]}};
+                            uint8_t*pixels=NULL;uint32_t cw=0,ch=0;
+                            if(coh_frame_capture_begin(startup->frame_capture,&info,&pixels,&cw,&ch)){
+                                capture_pending=1;capture_read=coh_frame_capture_readback((uint32_t)width,(uint32_t)height,cw,ch,pixels);
+                                startup->capture_charge=charge+COH_CAPTURE_RESERVE;
+                            }
+                        }
+                        if(!capture_pending)startup->capture_failures++;
+                    }
+                    if(!eglSwapBuffers(g.display,g.surface)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}
+                    else {startup->frames++;capture_presented=1;}
+                }
+            }
         }
-        pthread_mutex_lock(&s->mutex);if(surface_failed){
+        pthread_mutex_lock(&s->mutex);
+        if(!s->frame_capture)s->frame_capture=startup->frame_capture;
+        if(s->observed_entity_updates==startup->observed_entity_updates&&s->observed_entity_index==startup->observed_entity_index){
+            s->capture_draws=startup->capture_draws;s->capture_failures=startup->capture_failures;
+        }
+        if(capture_pending){
+            int publish=capture_read&&capture_presented&&!s->cancel&&s->epoch==(uint64_t)epoch&&
+                s->observed_entity_updates==startup->observed_entity_updates&&s->observed_entity_index==startup->observed_entity_index;
+            coh_frame_capture_publish(startup->frame_capture,publish);
+            if(publish){s->capture_frame=startup->frames;s->capture_generation=startup->observed_entity_updates;s->capture_charge=startup->capture_charge;}
+            else s->capture_failures++;
+        }
+        if(surface_failed){
             if((s->cancel||s->epoch!=(uint64_t)epoch)&&cancelled_surface_error(startup->egl_error)){startup->expected_cancel_surface_errors++;startup->expected_cancel_egl_error=startup->egl_error;startup->egl_error=0;}
             else fail(startup,"Session live Surface query/swap failed");
         }
@@ -547,11 +614,21 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_observedEntity(J
     if(!s||index<=0||index>10239||!isfinite(x)||!isfinite(y)||!isfinite(z))return;
     pthread_mutex_lock(&s->mutex);clear_input(s);s->observed_entity_index=(uint32_t)index;
     s->observed_entity_position[0]=x;s->observed_entity_position[1]=y;s->observed_entity_position[2]=z;
-    s->observed_entity_updates++;s->accumulator=0;pthread_mutex_unlock(&s->mutex);
+    s->observed_entity_updates++;s->capture_lock_frame=s->frames;s->capture_draws=0;s->accumulator=0;pthread_mutex_unlock(&s->mutex);
 }
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_clearObservedEntity(JNIEnv*e,jclass c,jlong handle){
     (void)e;(void)c;Session*s=(Session*)(intptr_t)handle;if(!s)return;
     pthread_mutex_lock(&s->mutex);s->observed_entity_index=0;memset(s->observed_entity_position,0,sizeof s->observed_entity_position);clear_input(s);pthread_mutex_unlock(&s->mutex);
+}
+JNIEXPORT jbyteArray JNICALL Java_org_coh_sessionclient_SessionNative_frameCapture(JNIEnv*e,jclass c,jlong handle,jlong after){
+    (void)c;Session*s=(Session*)(intptr_t)handle;if(!s||after<0)return NULL;
+    uint8_t*copy=malloc(COH_CAPTURE_BYTES);if(!copy)return NULL;size_t size=0;
+    pthread_mutex_lock(&s->mutex);const uint8_t*raw=coh_frame_capture_data(s->frame_capture,&size,(uint64_t)after);
+    if(raw&&size<=COH_CAPTURE_BYTES)memcpy(copy,raw,size);else size=0;
+    pthread_mutex_unlock(&s->mutex);
+    jbyteArray out=size?(*e)->NewByteArray(e,(jsize)size):NULL;
+    if(out)(*e)->SetByteArrayRegion(e,out,0,(jsize)size,(const jbyte*)copy);
+    free(copy);return out;
 }
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_viewDistance(JNIEnv *e,jclass c,jlong handle) {
     (void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;
@@ -589,7 +666,9 @@ JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIE
         jappend(&j,",\"source_assets\":{\"geo_loads\":%"PRIu64",\"texture_loads\":%"PRIu64",\"errors\":%"PRIu64"},\"static_renderer\":{\"draw_packets\":%"PRIu64",\"tf_components\":%"PRIu64",\"tf_mismatches\":%"PRIu64",\"visible_pixels\":%"PRIu64",\"material_mode_mask\":%u,\"owned_cpu_bytes\":%"PRIu64",\"gpu_bytes\":%"PRIu64",\"tf_max_error\":%.9g}",t->geo_loads,t->texture_loads,t->errors,t->draw_packets,t->tf_components,t->tf_mismatches,t->visible_pixels,t->material_mode_mask,t->owned_cpu_bytes,t->gpu_bytes,t->tf_max_error);
         jappend(&j,",\"depth_sampler_controls_passed\":%s,\"depth_codec_float_precision\":%d,\"raw_changed_pixels\":%"PRIu64",\"qualified_equal_depth_ties\":%"PRIu64",\"non_tie_mismatches\":%"PRIu64",\"depth_sampler_controls\":{\"clear\":",s->depth_sampler_controls_passed?"true":"false",s->depth_codec_float_precision,s->depth_order_color_differences,s->depth_order_ties,s->depth_order_mismatches);
         depth_json(&j,&s->clear_control,0);jappend(&j,",\"world_front\":");depth_json(&j,&s->world_front_control,0);jappend(&j,",\"actor_front\":");depth_json(&j,&s->actor_front_control,0);jappend(&j,"},\"depth_tie_diagnostics\":[");
-        for(unsigned i=0;i<s->depth_diagnostics_count;i++){if(i)jappend(&j,",");depth_json(&j,&s->depth_diagnostics[i],1);}jappend(&j,"]}");n=j.ok?(int)j.n:-1;
+        for(unsigned i=0;i<s->depth_diagnostics_count;i++){if(i)jappend(&j,",");depth_json(&j,&s->depth_diagnostics[i],1);}jappend(&j,"]");
+        if(COH_FRAME_CAPTURE_DIAGNOSTIC)jappend(&j,",\"frame_capture\":{\"frame\":%"PRIu64",\"pose_generation\":%"PRIu64",\"source_charge_bytes\":%"PRIu64",\"reserve_bytes\":%u,\"failures\":%"PRIu64",\"startup_witness\":false}",s->capture_frame,s->capture_generation,s->capture_charge,COH_CAPTURE_RESERVE,s->capture_failures);
+        jappend(&j,"}");n=j.ok?(int)j.n:-1;
     }
     pthread_mutex_unlock(&s->mutex);if(n<0||(size_t)n>=sizeof json)return (*e)->NewStringUTF(e,"{\"valid\":false,\"failure\":\"Native snapshot capacity exceeded\"}");return (*e)->NewStringUTF(e,json);
 }

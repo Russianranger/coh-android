@@ -23,7 +23,7 @@ HARNESS=r'''
 #define JNIEXPORT
 #define JNICALL
 typedef void JNIEnv;typedef void*jclass;typedef int64_t jlong;typedef int32_t jint;typedef float jfloat;typedef unsigned GLuint;
-typedef struct {pthread_mutex_t mutex;struct{CohWorldInputs inputs;}world;struct{float position[3],body_yaw;}motion;float camera_yaw,camera_pitch,camera_target_height,camera_position[3],view_radius,accumulator;uint32_t observed_entity_index;float observed_entity_position[3];uint64_t observed_entity_updates,observed_entity_draws;CohSessionWorld*stream_world;CohSessionWorldStats stream_stats;char failure[512];int failed;}Session;
+typedef struct {pthread_mutex_t mutex;struct{CohWorldInputs inputs;}world;struct{float position[3],body_yaw;}motion;float camera_yaw,camera_pitch,camera_target_height,camera_position[3],view_radius,accumulator;uint32_t observed_entity_index;float observed_entity_position[3];uint64_t observed_entity_updates,observed_entity_draws,capture_lock_frame,capture_draws,frames;CohSessionWorld*stream_world;CohSessionWorldStats stream_stats;char failure[512];int failed;}Session;
 typedef struct{int unused;}Graphics;
 static unsigned checks,actor_calls,observed_queries,offline_queries,marker_calls,input_clears;
 static float queried[3];static uint32_t drawn_index;

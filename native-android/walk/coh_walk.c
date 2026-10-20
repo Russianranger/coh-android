@@ -44,6 +44,7 @@ int coh_walk_world_init(CohWalkWorld *world,const CohWalkTriangle *triangles,uin
     }
     if(!next.collision_count){free(p);return 0;}next.prepared=p;next.triangle_count=count;copyVec3(lo,next.bounds_min);copyVec3(hi,next.bounds_max);*world=next;return 1;
 }
+size_t coh_walk_world_owned_bytes(const CohWalkWorld *world){const PreparedWorld*p=valid_world(world);return p?sizeof(*p)+(size_t)p->count*sizeof(p->triangle[0]):0;}
 void coh_walk_world_destroy(CohWalkWorld *world){if(!world)return;if(world->prepared){PreparedWorld *p=world->prepared;if(p->magic==WORLD_MAGIC){p->magic=0;free(p);}}memset(world,0,sizeof(*world));}
 /* Bounded broadphase replaces tracker/grid traversal; triangle creation,
  * radius query, cylinder caps and closest-start law are original source.

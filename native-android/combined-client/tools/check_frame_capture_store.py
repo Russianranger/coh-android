@@ -4,7 +4,6 @@
 Compiles only the pure Java helper at source level 8. All classes, generated raw
 frames and ZIPs stay in a temporary directory; no Android build or receipt input.
 """
-import fcntl
 import hashlib
 import json
 from pathlib import Path
@@ -266,17 +265,16 @@ def check_outputs(root: Path) -> None:
 
 
 def main() -> None:
-    with open("/tmp/coh-next-build.lock", "a") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
-        with tempfile.TemporaryDirectory(prefix="coh-frame-capture-") as directory:
-            root = Path(directory)
-            harness = root / "CaptureStoreControls.java"
-            harness.write_text(HARNESS)
-            subprocess.run(["java", "-Xmx128m", "com.sun.tools.javac.Main", "--release", "8",
-                            "-d", str(root), str(SOURCE), str(harness)], check=True, timeout=60)
-            subprocess.run(["java", "-Xmx64m", "-cp", str(root), "CaptureStoreControls", str(root)],
-                           check=True, timeout=60)
-            check_outputs(root)
+    # Serialize externally with: flock /tmp/coh-next-build.lock python3 <this file>
+    with tempfile.TemporaryDirectory(prefix="coh-frame-capture-") as directory:
+        root = Path(directory)
+        harness = root / "CaptureStoreControls.java"
+        harness.write_text(HARNESS)
+        subprocess.run(["java", "-Xmx128m", "com.sun.tools.javac.Main", "--release", "8",
+                        "-d", str(root), str(SOURCE), str(harness)], check=True, timeout=60)
+        subprocess.run(["java", "-Xmx64m", "-cp", str(root), "CaptureStoreControls", str(root)],
+                       check=True, timeout=60)
+        check_outputs(root)
     print("Verified raw/JSON ZIP bytes and SHA-256; absent/invalid captures preserve essential export.")
 
 
