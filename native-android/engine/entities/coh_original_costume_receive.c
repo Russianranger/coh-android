@@ -176,8 +176,39 @@ static void run_source(Packet *volatile pak){
  }
 }
 static void wipe(void *p,size_t n){volatile unsigned char *v=p;while(n--)*v++=0;}
-CohStatus coh_original_costume_receive_slots(const CohRepReader *reader,uint32_t parts,const CohClientCostumeSlots *slots,CohOriginalCostumeWorkspace *workspace,CohOriginalCostumeReport *out){
- Span s[7];unsigned i,j;Packet *pak;CohOriginalCostumeReport result;
+static int snapshot_text_valid(const char *s){unsigned i;if(!s)return 1;for(i=0;i<260;i++)if(!s[i])return 1;return 0;}
+static void snapshot_text(char out[260],const char *s){unsigned i=0;if(s){while(s[i]){out[i]=s[i];i++;}}out[i]=0;}
+static CohStatus snapshot_copy(const CohOriginalCostumeObject *body,CohOriginalCostumeSnapshot *out){
+ const CohOriginalCostumeAppearance *a=&body->appearance;unsigned i,j;
+ if(a->bodytype<0||a->bodytype>=9||a->iNumParts<0||a->iNumParts>30||!snapshot_text_valid(a->entTypeFile)||!snapshot_text_valid(a->costumeFilePrefix))return COH_INVALID;
+ for(i=0;i<(unsigned)a->iNumParts;i++){
+  const CohOriginalCostumePart *p=body->parts[i];const char *names[6];
+  if(!p)return COH_INVALID;
+  names[0]=p->pchGeom;names[1]=p->pchTex1;names[2]=p->pchTex2;names[3]=p->pchFxName;names[4]=p->regionName;names[5]=p->bodySetName;
+  for(j=0;j<6;j++)if(!snapshot_text_valid(names[j]))return COH_INVALID;
+ }
+ /* Everything that can fail is checked before publishing into the caller's
+  * fixed off-stack object. No received pointer escapes this function. */
+ memset(out,0,sizeof(*out));out->bodytype=(uint32_t)a->bodytype;out->part_count=(uint32_t)a->iNumParts;
+ out->header_present=(a->entTypeFile?1u:0u)|(a->costumeFilePrefix?2u:0u);
+ out->color_skin=a->colorSkin.integer;out->converted_scale=a->convertedScale;out->current_super_color=a->currentSuperColorSet;
+ memcpy(out->scales,a->fScales,sizeof(out->scales));
+ memcpy(out->super_colors[0],a->superColorsPrimaryU,sizeof(out->super_colors[0]));
+ memcpy(out->super_colors[1],a->superColorsSecondaryU,sizeof(out->super_colors[1]));
+ memcpy(out->super_colors[2],a->superColorsPrimary2U,sizeof(out->super_colors[2]));
+ memcpy(out->super_colors[3],a->superColorsSecondary2U,sizeof(out->super_colors[3]));
+ memcpy(out->super_colors[4],a->superColorsTertiaryU,sizeof(out->super_colors[4]));
+ memcpy(out->super_colors[5],a->superColorsQuaternaryU,sizeof(out->super_colors[5]));
+ snapshot_text(out->ent_type,a->entTypeFile);snapshot_text(out->geometry_prefix,a->costumeFilePrefix);
+ for(i=0;i<out->part_count;i++){
+  const CohOriginalCostumePart *p=body->parts[i];const char *names[6]={p->pchGeom,p->pchTex1,p->pchTex2,p->pchFxName,p->regionName,p->bodySetName};
+  for(j=0;j<6;j++){if(names[j])out->parts[i].present_mask|=1u<<j;snapshot_text(out->parts[i].strings[j],names[j]);}
+  for(j=0;j<4;j++)out->parts[i].colors[j]=p->color[j].integer;
+ }
+ return COH_OK;
+}
+CohStatus coh_original_costume_receive_slots_capture(const CohRepReader *reader,uint32_t parts,const CohClientCostumeSlots *slots,CohOriginalCostumeWorkspace *workspace,CohOriginalCostumeReport *out,CohOriginalCostumeSnapshot *capture){
+ Span s[8];unsigned i,j;Packet *pak;CohOriginalCostumeReport result;
  if(!reader||!workspace||!out)return COH_INVALID;
  s[0]=(Span){reader,sizeof(*reader)};s[1]=(Span){workspace,sizeof(*workspace)};s[2]=(Span){out,sizeof(*out)};
  for(i=0;i<3;i++){if(!span_valid(s[i]))return COH_INVALID;for(j=0;j<i;j++)if(!disjoint(s[i],s[j]))return COH_INVALID;}
@@ -192,6 +223,11 @@ CohStatus coh_original_costume_receive_slots(const CohRepReader *reader,uint32_t
   s[5]=(Span){slots->raw.data,slots->raw.size};s[6]=(Span){slots->index,COH_CLIENT_COSTUME_INDEX_BYTES};
   for(i=5;i<7;i++){if(!span_valid(s[i]))return COH_INVALID;for(j=0;j<i;j++)if(!disjoint(s[i],s[j]))return COH_INVALID;}
  }
+ if(capture){
+  if((uintptr_t)capture%sizeof(uint32_t))return COH_INVALID;
+  s[7]=(Span){capture,sizeof(*capture)};if(!span_valid(s[7]))return COH_INVALID;
+  for(i=0;i<(slots?7u:4u);i++)if(!disjoint(s[i],s[7]))return COH_INVALID;
+ }
  pak=&workspace->state;memset(workspace,0,sizeof(*workspace));pak->reader=*reader;pak->body_parts=parts;pak->client_slots=slots;pak->report.begin_bit=reader->cursor;pak->report.status=COH_OK;
  run_source(pak);
  pak->report.end_bit=pak->reader.cursor;pak->report.failure_bit=pak->reader.cursor;
@@ -200,7 +236,16 @@ CohStatus coh_original_costume_receive_slots(const CohRepReader *reader,uint32_t
   pak->report.count_validated=pak->report.bodytype_validated&&pak->report.part_count<=parts;
  }
  pak->report.literal_strings=pak->scratch.wire_literal_count;pak->report.string_cache_entries=(uint32_t)pak->scratch.string_count;pak->report.color_cache_entries=(uint32_t)pak->scratch.color_count;
- result=pak->report;wipe(workspace,sizeof(*workspace));*out=result;return result.status;
+ result=pak->report;
+ if(capture&&result.status==COH_OK&&result.costume_complete){
+  CohStatus copied=snapshot_copy(&pak->scratch.costume,capture);
+  if(copied!=COH_OK){result.status=copied;result.costume_complete=0;}
+ }
+ wipe(workspace,sizeof(*workspace));*out=result;return result.status;
+}
+
+CohStatus coh_original_costume_receive_slots(const CohRepReader *reader,uint32_t parts,const CohClientCostumeSlots *slots,CohOriginalCostumeWorkspace *workspace,CohOriginalCostumeReport *out){
+ return coh_original_costume_receive_slots_capture(reader,parts,slots,workspace,out,NULL);
 }
 
 CohStatus coh_original_costume_receive(const CohRepReader *reader,uint32_t parts,CohOriginalCostumeWorkspace *workspace,CohOriginalCostumeReport *out){

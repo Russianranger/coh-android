@@ -36,6 +36,24 @@ typedef struct{
  const char *pchGeom,*pchTex1,*pchTex2,*pchFxName,*displayName,*regionName,*bodySetName;CohOriginalCostumeColor color[4];
 } CohOriginalCostumePart;
 typedef struct{CohOriginalCostumeAppearance appearance;CohOriginalCostumePart *parts[30];} CohOriginalCostumeObject;
+enum {COH_ORIGINAL_SNAPSHOT_GEOM=0,COH_ORIGINAL_SNAPSHOT_TEX1=1,
+ COH_ORIGINAL_SNAPSHOT_TEX2=2,COH_ORIGINAL_SNAPSHOT_FX=3,
+ COH_ORIGINAL_SNAPSHOT_REGION=4,COH_ORIGINAL_SNAPSHOT_BODYSET=5};
+typedef struct{
+ uint32_t present_mask,colors[4];char strings[6][260];
+} CohOriginalCostumeSnapshotPart;
+/* A lossless, pointer-free copy of one successfully received costume body.
+ * Null and empty strings remain distinct through presence bits. BodyType is
+ * the original packet value (0..8), never a renderer-selected substitute.
+ * super_colors order: primary, secondary, primary2, secondary2, tertiary,
+ * quaternary; each retains the six original low/high slot pairs. */
+typedef struct{
+ uint32_t bodytype,part_count,header_present,color_skin;
+ int32_t converted_scale,current_super_color;float scales[30];
+ CohOriginalCostumeSGColor super_colors[6][6];
+ char ent_type[260],geometry_prefix[260];
+ CohOriginalCostumeSnapshotPart parts[30];
+} CohOriginalCostumeSnapshot;
 typedef struct{
  CohOriginalCostumeObject costume;CohOriginalCostumePart parts[30];const char *strings[120];int colors[120];
  int string_count,string_order,color_count,color_order;
@@ -74,6 +92,15 @@ typedef union{
 CohStatus coh_original_costume_receive_slots(const CohRepReader *at_costume_begin,
  uint32_t body_parts,const CohClientCostumeSlots *,CohOriginalCostumeWorkspace *,
  CohOriginalCostumeReport *);
+/* Optional caller-owned capture publishes only for COH_OK/complete body, before
+ * the original scratch is wiped. Failure preserves the previous capture.
+ * The complete snapshot span must be disjoint from every other caller span;
+ * caller charges sizeof(*capture) once alongside packet/workspace/source slots
+ * and native stack under the existing 8 MiB initial aggregate. No extra heap
+ * or snapshot-sized stack temporary is used. This grants no actor authority. */
+CohStatus coh_original_costume_receive_slots_capture(const CohRepReader *,
+ uint32_t body_parts,const CohClientCostumeSlots *,CohOriginalCostumeWorkspace *,
+ CohOriginalCostumeReport *,CohOriginalCostumeSnapshot *capture);
 CohStatus coh_original_costume_receive(const CohRepReader *at_costume_begin,
  uint32_t body_parts,CohOriginalCostumeWorkspace *,CohOriginalCostumeReport *);
 #ifdef __cplusplus
