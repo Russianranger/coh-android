@@ -220,13 +220,16 @@ jobs:
         python3 native-android/combined-client/qualification/check_memory_worker.py
         python3 native-android/combined-client/tools/test_process_set_contract.py
         python3 native-android/combined-client/tools/test_catalog_packaging.py
-    - name: Qualify indexed CLIENT slots, Android ownership and memory diagnostics
+    - name: Qualify original-source packet fixtures, actual send callbacks and Android ownership
       run: |
         python3 native-android/engine/entities/check_client_costume_slots.py --work /tmp/client-costume-slots-ci --output native-android/results/combined-neighborhood-diagnostic/client-costume-slots.json
         python3 native-android/combined-client/tools/check_client_slots_android.py --work /tmp/client-slots-android-ci --output native-android/results/combined-neighborhood-diagnostic/client-slots-android.json
         python3 native-android/engine/entities/check_original_ent_costume.py --work /tmp/original-ent-costume-ci --output native-android/results/combined-neighborhood-diagnostic/original-ent-costume.json
         python3 native-android/engine/entities/check_original_taskforce_receive.py --work /tmp/original-taskforce-ci --output native-android/results/combined-neighborhood-diagnostic/original-taskforce.json
         python3 native-android/engine/entities/check_original_initial_tail.py --work /tmp/original-initial-tail-ci --output native-android/results/combined-neighborhood-diagnostic/original-initial-tail.json
+        # CI exercises original-source sender fixtures. The private retained Thor
+        # replay is qualified locally; it is neither uploaded nor assumed here.
+        python3 native-android/engine/entities/check_original_command_tail.py --work /tmp/original-command-tail-ci --output native-android/results/combined-neighborhood-diagnostic/original-command-tail.json
         python3 native-android/engine/appearance/check_costume_input.py --work /tmp/costume-input-ci --output native-android/results/combined-neighborhood-diagnostic/costume-input.json
         python3 native-android/session-client/tools/check_frame_capture.py --work /tmp/current-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/current-frame-owner.json
         python3 native-android/combined-client/tools/check_frame_capture_store.py
@@ -237,6 +240,11 @@ jobs:
         python3 native-android/combined-client/imports/tests/check_runtime_world_inputs.py --work /tmp/runtime-world-inputs-ci --output native-android/results/combined-neighborhood-diagnostic/runtime-world-inputs.json
         python3 native-android/combined-client/tools/check_outer_costume_android.py --work /tmp/outer-costume-android-ci --output native-android/results/combined-neighborhood-diagnostic/outer-costume-android.json
         python3 native-android/combined-client/tools/check_initial_replay_store.py --work /tmp/initial-replay-store-ci --output native-android/results/combined-neighborhood-diagnostic/initial-replay-store.json
+        # Send/continuation use original sender fixtures and synthetic local UDP;
+        # these tests do not claim live authentication or a physical Thor ACK.
+        python3 native-android/engine/initial-capture/check_initial_send.py --source-root . --sanitize
+        python3 native-android/engine/initial-capture/check_initial_continuation.py --work /tmp/initial-continuation-ci --output native-android/results/combined-neighborhood-diagnostic/initial-continuation.json
+        python3 native-android/combined-client/tools/check_initial_continuation_text.py
         python3 native-android/combined-client/qualification/check_diagnostics.py
         COH_COMBINED_GUEST="$PWD/android/guest" python3 native-android/combined-client/runtime/test_runtime.py
     - uses: actions/upload-artifact@v4
