@@ -7,12 +7,12 @@
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
   "rendered": "diagnostic box at selected entity real pose",
-  "blocker": "first ordinary indexed geometry string, part 0, bit 5864; index not yet read",
+  "blocker": "Candidate completes original costume bodies in host tests; actual Thor end cursor and next outer entity branch await the test. Next unconsumed outer field is SupergroupCostume presence, not an established missing table.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "Bind retained original CLIENT ordinary, extra and palette slots and continue original receivers.",
-    "Resolve and render one genuine costume model and materials at the observed pose.",
-    "Render bounded authentic Atlas Park geometry/materials at that pose and validate on Thor."
+    "Validate candidate world plus real-pose box, costume list and simultaneous process memory on Thor.",
+    "Continue original outer entity receive from the observed boundary without guessing unavailable tables.",
+    "Resolve and render one genuine selected costume mesh/material at the observed pose."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -44,38 +44,123 @@
     "tracked_bytes_after": 2525045946,
     "size_scope": "Sum of tracked regular-file bytes. Git history remains intact on the integration and archive branches.",
     "retained_protected_raw_files": 1723,
-    "retained_referenced_failed_copy_files": 311
+    "retained_referenced_failed_copy_files": 311,
+    "ci": {
+      "workflow": ".github/workflows/native-qualification.yml",
+      "purpose": "combined-source",
+      "event": "workflow_dispatch",
+      "dispatch_count": 1,
+      "run_id": 39447419461,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39447419461",
+      "status": "passed",
+      "qualified_commit": "5a2a3adcf300b1378def7a0a543e2f2d7da8e195",
+      "qualified_tree": "19e3ae1fbd4da9aaee7afd4873778447f8fe70cf",
+      "artifact_id": 12276303104,
+      "artifact_sha256": "6c8e57c03540852196cf3cade848ad7be6175532605b5fd943e2f42512f1ad29",
+      "publishes_apk_or_release": false
+    },
+    "validation": {
+      "before": {
+        "check_all": "passed with sanitizers and combined host build",
+        "body_catalog_checkers": 8,
+        "combined_source_checkers": 9
+      },
+      "after": {
+        "check_all": "passed with sanitizers and combined host build",
+        "body_catalog_checkers": 8,
+        "combined_source_checkers": 9,
+        "workflow_contract_and_selectors": "passed",
+        "archive_byte_identity": "228 original files verified",
+        "protected_inputs": "unchanged",
+        "locally_tested_tree": "cf7303afddb85ca85e3562e1e0f10ae37b6bcd64"
+      },
+      "corpus": "Five exact authentic supported-format assets, pinned codecs, audio fixture and accepted world.bin. A broad-corpus ARGB8888 texture failure was observed before cleanup; uncompressed DDS is documented unsupported. Its source bytes were preserved outside the admitted test subset.",
+      "android_or_device_retest": "Not required for cleanup; no app code, APK or runtime inputs changed."
+    }
   },
   "validation": {
-    "before": {
-      "check_all": "passed with sanitizers and combined host build",
-      "body_catalog_checkers": 8,
-      "combined_source_checkers": 9
-    },
-    "after": {
-      "check_all": "passed with sanitizers and combined host build",
-      "body_catalog_checkers": 8,
-      "combined_source_checkers": 9,
-      "workflow_contract_and_selectors": "passed",
-      "archive_byte_identity": "228 original files verified",
-      "protected_inputs": "unchanged",
-      "locally_tested_tree": "cf7303afddb85ca85e3562e1e0f10ae37b6bcd64"
-    },
-    "corpus": "Five exact authentic supported-format assets, pinned codecs, audio fixture and accepted world.bin. A broad-corpus ARGB8888 texture failure was observed before cleanup; uncompressed DDS is documented unsupported. Its source bytes were preserved outside the admitted test subset.",
-    "android_or_device_retest": "Not required for cleanup; no app code, APK or runtime inputs changed."
+    "integrated_source_checks": "passed: receiver, JNI, report ceiling, neighborhood release/ASan/UBSan and actual Mesa GLES, packaging",
+    "integrated_memory_checks": "passed: sampler, worker, export, diagnostics and runtime; two existing platform skips",
+    "android_build_and_emulator": "pending"
   },
   "ci": {
     "workflow": ".github/workflows/native-qualification.yml",
-    "purpose": "combined-source",
-    "event": "workflow_dispatch",
-    "dispatch_count": 1,
-    "run_id": 39447419461,
-    "url": "https://github.com/Russianranger/coh-android/actions/runs/39447419461",
-    "status": "passed",
-    "qualified_commit": "5a2a3adcf300b1378def7a0a543e2f2d7da8e195",
-    "qualified_tree": "19e3ae1fbd4da9aaee7afd4873778447f8fe70cf",
-    "artifact_id": 12276303104,
-    "artifact_sha256": "6c8e57c03540852196cf3cade848ad7be6175532605b5fd943e2f42512f1ad29",
-    "publishes_apk_or_release": false
+    "purpose": "combined-diagnostic",
+    "status": "pending",
+    "publishes_release": false
+  },
+  "candidate": {
+    "version": "0.1.15",
+    "version_code": 16,
+    "profile": "neighborhood-diagnostic",
+    "state": "source qualified; Android build pending",
+    "receiver": {
+      "original_receiver_unchanged": true,
+      "raw_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+      "raw_bytes": 641477,
+      "index_bytes": 134144,
+      "tables": [
+        "ordinary strings",
+        "extra strings",
+        "palette"
+      ],
+      "stored_bodies_tested": [
+        1,
+        10
+      ],
+      "source_checks_per_mode": 70613,
+      "jni_checks_per_mode": 1473,
+      "next_unconsumed_outer_field": "SupergroupCostume presence bit",
+      "next_required_table": null,
+      "physical_packet_replayed": false
+    },
+    "world": {
+      "asset": "neighborhood-map.bin",
+      "asset_bytes": 491565,
+      "asset_sha256": "fcd3a97f8a84165316c6784016d1ab38402602fdfadeca1ed31fb3329426a1a7",
+      "pose": [
+        131.453125,
+        0.25,
+        -114.953125
+      ],
+      "source": "Atlas road_4lane original sidewalk material partitions",
+      "source_instances_at_pose": 2,
+      "ground_triangles_under_pose": 1,
+      "host_gles_world_pixels": 28844,
+      "host_gles_box_changed_pixels": 2028,
+      "host_gles_errors": 0,
+      "raw_transition_peak_bytes": 486030,
+      "raw_stream_cap_bytes": 524288,
+      "named_child_source_peak_bytes": 2633629,
+      "gpu_buffer_bytes": 557060,
+      "memory_scope": "Child source/bridge/map/stack accounting; parent session and driver/process RSS/PSS remain separate.",
+      "thor_confirmed": false
+    },
+    "memory": {
+      "process_rows_max": 64,
+      "compact_export_ceiling": 24576,
+      "worst_tested_export_bytes": 23097,
+      "native_report_ceiling": 7168,
+      "jni_report_peak_bytes": 6740,
+      "specific_admission_reason": true,
+      "postgresql_requested": {
+        "max_connections": 72,
+        "superuser_reserved_connections": 3,
+        "shared_buffers": "16MB",
+        "work_mem": "1MB",
+        "maintenance_work_mem": "16MB"
+      },
+      "source_sql_connections": 65,
+      "ordinary_spare_connections": 4,
+      "new_thor_measurements": null,
+      "old_missing_wine_metrics_cause": "Not established; retained reports lack kernel state."
+    },
+    "limits": {
+      "decoded_message": 4194304,
+      "ordinary_semantic_message": 16384,
+      "initial_observer_aggregate": 8388608,
+      "scene_transaction": 100663296
+    },
+    "thor_procedure": "native-android/combined-client/THOR-TEST.md"
   }
 }
