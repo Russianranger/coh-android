@@ -30,6 +30,7 @@ public final class ServerService extends Service {
     private volatile long progressDone,progressTotal;
     private volatile int guestExit=-1;
     private final GuestDiagnostics diagnostics=new GuestDiagnostics();
+    private final PostgresMemoryObservation postgresqlMemory=new PostgresMemoryObservation();
     private String appVersion="unknown";
     private long appVersionCode;
     private volatile long startFreeBytes;
@@ -80,7 +81,7 @@ public final class ServerService extends Service {
             out.put("schema","coh-native-combined-app-v1").put("package",getPackageName()).put("busy",busy).put("runtime_ready",runtimeReady)
                 .put("version_name",appVersion).put("version_code",appVersionCode).put("android_sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                 .put("installed_apk_status",apkStatus).put("installed_apk",apk==null?JSONObject.NULL:new JSONObject().put("bytes",apk.bytes).put("sha256",apk.sha256))
-                .put("guest_resources",guestResources)
+                .put("guest_resources",guestResources).put("postgresql_memory_settings",new JSONObject(postgresqlMemory.snapshot()))
                 .put("storage_available_bytes",getFilesDir().getUsableSpace()).put("server_start_available_bytes",startFreeBytes)
                 .put("server_memory",new JSONObject(serverMemory.snapshot())).put("android_process_exits",processExits).put("android_exit_history_status",exitHistoryStatus)
                 .put("android_exit_history_scope","ApplicationExitInfo for this package; explicit LOW_MEMORY reason is OS evidence; SIGKILL alone has no established cause")
@@ -131,6 +132,7 @@ public final class ServerService extends Service {
         session=UUID.randomUUID().toString().replace("-","");generation="";guestExit=-1;
         synchronized(resourcesLock){guestResources=new JSONArray();}
         serverMemory=new ServerMemoryPolicy();
+        postgresqlMemory.start(session);
         diagnostics.start(session,SystemClock.elapsedRealtime());
     }
     private void runServer(ImportContract.Control cancellation)throws Exception {
@@ -290,6 +292,9 @@ public final class ServerService extends Service {
             if(!GuestDiagnostics.sameSession(session,id))return;
             if(e.optString("type").equals("guest_resources")){
                 captureGuestResources(id,e);
+            }else if(e.optString("type").equals("postgresql_memory_settings")){
+                if(postgresqlMemory.capture(id,e.optString("source"),e.optString("observation_status"),e.optString("reason"),
+                        postgresValues(e.optJSONObject("requested")),postgresValues(e.optJSONObject("observed"))))save();
             }else if(e.optString("type").equals("stage")){
                 String stage=e.optString("stage");if(diagnostics.stage(id,stage,SystemClock.elapsedRealtime()))message="Preparing server: "+stage.replace('_',' ');
             }else if(e.optString("type").equals("server_stopped")){
@@ -298,6 +303,12 @@ public final class ServerService extends Service {
                 // remains the cleanup authority after the process has exited.
             }
         }catch(JSONException ignored){}
+    }
+    private static Map<String,String> postgresValues(JSONObject source){
+        if(source==null||source.length()!=PostgresMemoryObservation.KEYS.length)return null;
+        Map<String,String> values=new LinkedHashMap<>();
+        for(String key:PostgresMemoryObservation.KEYS){Object value=source.opt(key);if(!(value instanceof String))return null;values.put(key,(String)value);}
+        return values;
     }
     private void captureGuestResources(String id,JSONObject source)throws JSONException{
         synchronized(resourcesLock){

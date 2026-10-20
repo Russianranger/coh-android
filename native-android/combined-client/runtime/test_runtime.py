@@ -45,17 +45,72 @@ class PostgresMemoryTests(unittest.TestCase):
         self.assertEqual(runtime.postgres_memory_argv('postgres_native_combined',actual),actual)
         self.assertIs(runtime.postgres_memory_argv('other_child',original),original)
 
-    def test_readback_is_observation_and_unavailable_never_fails_startup(self):
-        sql=mock.Mock(return_value='72|3|16MB|1MB|16MB')
+    def test_readback_is_actual_SHOW_and_unavailable_never_fails_startup(self):
+        sql=mock.Mock(return_value='72\n3\n16MB\n1MB\n16MB')
         observed=runtime.postgres_memory_observation(sql)
         self.assertEqual(observed['observation_status'],'observed')
         self.assertEqual(observed['observed'],runtime.POSTGRES_MEMORY_SETTINGS)
+        self.assertEqual(observed['source'],'owned_postgresql_SHOW')
         self.assertFalse(observed['rss_pss_change_measured'])
-        self.assertEqual(sql.call_count,1)
-        for value in (None,42,'','private account text','1|'*1000,'72|3|16MB|1MB'):
-            self.assertEqual(runtime.postgres_memory_observation(lambda query:value)['observation_status'],'unavailable')
-        def failed(query):raise RuntimeError('readback unavailable')
-        self.assertEqual(runtime.postgres_memory_observation(failed)['observation_status'],'unavailable')
+        sql.assert_called_once_with('SHOW max_connections;\nSHOW superuser_reserved_connections;\nSHOW shared_buffers;\nSHOW work_mem;\nSHOW maintenance_work_mem;')
+        # A different SHOW value is observed as received, never replaced by argv.
+        actual=runtime.postgres_memory_observation(lambda query:'71\n3\n32MB\n2MB\n8MB')
+        self.assertEqual(actual['observed']['max_connections'],'71')
+        self.assertEqual(actual['requested']['max_connections'],'72')
+        for value in (None,42,'','private account text','1\n'*1000,'72|3|16MB|1MB|16MB',
+                      '72\n3\n16MB\n1MB','72MB\n3\n16MB\n1MB\n16MB',
+                      '72\n3\n16MB\n1MB\n16MB\nprivate','9'*11+'\n3\n16MB\n1MB\n16MB'):
+            with self.subTest(value=str(value)[:40]):
+                self.assertEqual(runtime.postgres_memory_observation(lambda query:value)['reason'],'POSTGRES_SHOW_RESULT_INVALID')
+        def failed(query):raise RuntimeError('password=never-retain-this')
+        failure=runtime.postgres_memory_observation(failed)
+        self.assertEqual(failure['observation_status'],'unavailable')
+        self.assertEqual(failure['reason'],'POSTGRES_SHOW_FAILED')
+        self.assertNotIn('never-retain-this',json.dumps(failure))
+
+    def test_actual_main_retains_current_owned_SHOW_event_and_final_report(self):
+        class Stopped(Exception):pass
+        class Context:
+            def __init__(self,args):
+                self.session_id=args.session_id;self.stage_name='owned_profile'
+                self.report={'processes':[],'stages':[]};self.stage_started_monotonic=None
+                self.children=[];self.owned_start_attempts=0
+        class Owner:
+            def __init__(self,args,context):
+                self.context=context;self.ready_path=args.state/'server-ready.json'
+                self.cleanup_status={'owned_processes_reaped':True}
+                self.server=SimpleNamespace(creation_report={});self.ready_receipt=None
+            def execute(self):
+                runtime.retain_postgres_memory_observation(self.context,lambda query:'71\n3\n32MB\n2MB\n8MB')
+                raise Stopped()
+            def cleanup(self):return []
+        with tempfile.TemporaryDirectory() as tmp:
+            output=io.StringIO();state=Path(tmp)/'state'
+            with mock.patch.object(runtime,'validate_arguments'),mock.patch.object(runtime,'load_guest_modules'), \
+                    mock.patch.object(runtime,'runtime_classes',return_value=(Context,Owner)), \
+                    mock.patch.object(runtime,'base',SimpleNamespace(Cancelled=Stopped)), \
+                    mock.patch.object(runtime.signal,'signal'),contextlib.redirect_stdout(output):
+                code=runtime.main(['--state',str(state),'--session-id','a'*32,
+                                   '--import-generation','generation-'+'b'*32])
+            self.assertEqual(code,0)
+            report=json.loads((state/'latest-report.json').read_text())
+            observation=report['postgresql_memory_settings']
+            self.assertEqual(observation['observed']['max_connections'],'71')
+            self.assertEqual(observation['requested']['max_connections'],'72')
+            self.assertTrue(report['cleanup_complete'])
+            self.assertTrue(report['profile_preserved'])
+            events=[json.loads(line) for line in output.getvalue().splitlines()]
+            self.assertEqual(events[0]['type'],'postgresql_memory_settings')
+            self.assertEqual(events[0]['session_id'],'a'*32)
+            self.assertEqual({k:v for k,v in events[0].items() if k not in ('type','session_id')},observation)
+            self.assertTrue(events[-1]['report_written'])
+            self.assertLess(len(json.dumps(events[0])),1024)
+
+    def test_owned_profile_invokes_the_readback_after_actual_start(self):
+        source=inspect.getsource(runtime.runtime_classes)
+        start=source.index("d.start_postgres('postgres_native_combined')")
+        readback=source.index('retain_postgres_memory_observation(self.ctx, d.sql)')
+        self.assertLess(start,readback)
 
 
 class AdmissionTests(unittest.TestCase):

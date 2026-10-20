@@ -432,22 +432,34 @@ def postgres_memory_argv(label, argv):
 
 
 def postgres_memory_observation(sql):
-    """Observe configured GUCs in the existing report, without startup refusal."""
+    """Read actual owned-instance GUCs; optional telemetry cannot refuse startup."""
     result = {'requested': dict(POSTGRES_MEMORY_SETTINGS),
               'source_dbserver_connections': 65, 'ordinary_spare_connections': 4,
-              'observation_status': 'unavailable', 'rss_pss_change_measured': False}
+              'source': 'owned_postgresql_SHOW', 'observation_status': 'unavailable',
+              'reason': 'POSTGRES_SHOW_RESULT_INVALID', 'rss_pss_change_measured': False}
     keys = list(POSTGRES_MEMORY_SETTINGS)
-    query = "SELECT " + " || '|' || ".join("current_setting('" + key + "')" for key in keys) + ";"
     try:
-        raw = sql(query)
-        if type(raw) is str and len(raw) <= 128:
-            values = raw.strip().split('|')
-            if len(values) == len(keys) and all(re.fullmatch(r'[0-9]+(?:kB|MB|GB)?', value) for value in values):
-                result.update(observation_status='observed', observed=dict(zip(keys, values)))
+        raw = sql('\n'.join('SHOW ' + key + ';' for key in keys))
+        if type(raw) is str and len(raw) <= 256:
+            values = raw.strip().splitlines()
+            if (len(values) == len(keys)
+                    and all(re.fullmatch(r'[0-9]{1,10}', value) for value in values[:2])
+                    and all(re.fullmatch(r'[0-9]{1,15}(?:kB|MB|GB)?', value) for value in values[2:])):
+                result.update(observation_status='observed', reason='', observed=dict(zip(keys, values)))
     except Exception:
-        # Optional readback never changes readiness, durability or the database.
-        pass
+        # Never retain SQL output, private exception details or credentials.
+        result['reason'] = 'POSTGRES_SHOW_FAILED'
     return result
+
+
+def retain_postgres_memory_observation(context, sql):
+    observation = postgres_memory_observation(sql)
+    context.report['postgresql_memory_settings'] = observation
+    # This explicit event survives Context.event's intentional SQL-output filter.
+    # Five validated GUC values are telemetry only; readiness is unchanged.
+    print(json.dumps({'type': 'postgresql_memory_settings', 'session_id': context.session_id,
+                      **observation}, separators=(',', ':')), flush=True)
+    return observation
 
 
 def runtime_classes():
@@ -618,7 +630,7 @@ def runtime_classes():
             d.database_created = False  # Persistent profile is never fixture cleanup.
             self.report.update(profile_reused=reused, database_preserved_by_policy=True)
             d.start_postgres('postgres_native_combined')
-            self.ctx.report['postgresql_memory_settings'] = postgres_memory_observation(d.sql)
+            retain_postgres_memory_observation(self.ctx, d.sql)
             names = self.sql("SELECT datname FROM pg_database WHERE datname NOT IN ('postgres','template0','template1') ORDER BY datname;")
             require(names in ('', login.DATABASE), 'UNEXPECTED_PRIVATE_DATABASE')
             role = self.sql("SELECT count(*) FROM pg_roles WHERE rolname='cohtest';")
@@ -1084,6 +1096,8 @@ def main(argv=None):
         if context is not None:
             result['last_stage'] = context.stage_name
             result['processes'] = context.report['processes']
+            if 'postgresql_memory_settings' in context.report:
+                result['postgresql_memory_settings'] = context.report['postgresql_memory_settings']
             if 'geometry_preparation' in context.report:
                 result['geometry_preparation'] = context.report['geometry_preparation']
             if 'presentation_endpoint' in context.report:

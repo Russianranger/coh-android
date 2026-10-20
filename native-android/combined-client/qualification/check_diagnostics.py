@@ -65,6 +65,34 @@ public final class DiagnosticsTest {
   need(Long.valueOf(0).equals(GuestDiagnostics.numericMetric(0)));
   need(Long.valueOf(1L<<50).equals(GuestDiagnostics.numericMetric(1L<<50)));
   for(Object invalid:new Object[]{null,true,"123",1.0,-1,-1L,Long.MAX_VALUE})need(GuestDiagnostics.numericMetric(invalid)==null);
+  java.util.Map<String,String> requested=new java.util.LinkedHashMap<>();
+  String[] values={"72","3","16MB","1MB","16MB"};
+  for(int i=0;i<values.length;i++)requested.put(PostgresMemoryObservation.KEYS[i],values[i]);
+  java.util.Map<String,String> actual=new java.util.LinkedHashMap<>(requested);actual.put("max_connections","71");
+  PostgresMemoryObservation pg=new PostgresMemoryObservation();pg.start(id);
+  need(pg.snapshot().get("observation_status").equals("not_observed"));
+  need(!pg.capture(foreign,"owned_postgresql_SHOW","observed","",requested,actual));
+  need(!pg.capture(id,"configured_argv","observed","",requested,actual));
+  need(!pg.capture(id,"owned_postgresql_SHOW","observed","",requested,null));
+  need(!pg.capture(id,"owned_postgresql_SHOW","observed","private",requested,actual));
+  need(!pg.capture(id,"owned_postgresql_SHOW","unavailable","POSTGRES_SHOW_FAILED",requested,actual));
+  need(!pg.capture(id,"owned_postgresql_SHOW","unavailable","private",requested,null));
+  need(pg.capture(id,"owned_postgresql_SHOW","observed","",requested,actual));
+  actual.put("max_connections","99");requested.put("work_mem","99MB");
+  need(((java.util.Map<?,?>)pg.snapshot().get("observed")).get("max_connections").equals("71"));
+  need(((java.util.Map<?,?>)pg.snapshot().get("requested")).get("work_mem").equals("1MB"));
+  ((java.util.Map<?,?>)pg.snapshot().get("observed")).clear();need(((java.util.Map<?,?>)pg.snapshot().get("observed")).size()==5);
+  for(String invalid:new String[]{"-1","1.5","1 MB","1TB","9".repeat(16),"private\nvalue"}){
+   java.util.Map<String,String> bad=new java.util.LinkedHashMap<>(requested);bad.put("work_mem",invalid);
+   need(!pg.capture(id,"owned_postgresql_SHOW","observed","",requested,bad));
+  }
+  java.util.Map<String,String> badCount=new java.util.LinkedHashMap<>(requested);badCount.put("max_connections","72MB");
+  need(!pg.capture(id,"owned_postgresql_SHOW","observed","",badCount,actual));
+  need(pg.capture(id,"owned_postgresql_SHOW","unavailable","POSTGRES_SHOW_FAILED",requested,null));
+  need(!pg.snapshot().containsKey("observed"));need(pg.snapshot().get("reason").equals("POSTGRES_SHOW_FAILED"));
+  pg.start(foreign);need(pg.snapshot().get("observation_status").equals("not_observed"));
+  need(!pg.snapshot().containsKey("observed")&&!pg.snapshot().containsKey("requested"));
+  need(!pg.capture(id,"owned_postgresql_SHOW","observed","",requested,actual));
   System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"actual_server_interoperability_verified\":false}");
  }
 }
@@ -76,7 +104,7 @@ def main():
         root = Path(tmp)
         test = root / 'DiagnosticsTest.java'
         test.write_text(HARNESS)
-        subprocess.run(['java', 'com.sun.tools.javac.Main', '-d', str(root), str(SOURCE), str(test)],
+        subprocess.run(['java', 'com.sun.tools.javac.Main', '-d', str(root), str(SOURCE), str(SOURCE.with_name('PostgresMemoryObservation.java')), str(test)],
                        check=True, capture_output=True, text=True)
         result = subprocess.run(['java', '-cp', str(root), 'org.coh.nativecombined.DiagnosticsTest'],
                                 check=True, capture_output=True, text=True)
