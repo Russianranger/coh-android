@@ -327,7 +327,7 @@ jobs:
         output.mkdir()
         previous_inputs(pathlib.Path('/tmp/combined-previous014.zip'), output, 'entity-diagnostic')
         PYPREV
-    - name: Qualify authentic near-pose geometry and concrete source/GPU ownership before packaging
+    - name: Qualify authentic near-pose geometry and frame capture with isolated host GLES headers
       env:
         LIBGL_ALWAYS_SOFTWARE: '1'
         EGL_PLATFORM: surfaceless

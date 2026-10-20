@@ -5,8 +5,12 @@ from pathlib import Path
 HERE=Path(__file__).resolve().parent;NATIVE=HERE.parents[1];CPP=HERE.parent/'app/src/main/cpp'
 sys.path.insert(0,str(NATIVE/'engine/renderer/tests'));from gpu_check import EGL
 p=argparse.ArgumentParser();p.add_argument('--gles-headers',type=Path,required=True);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.work.mkdir(parents=True,exist_ok=False)
+# Host libc remains authoritative: import only graphics declarations from NDK.
+includes=a.work/'include';includes.mkdir()
+for sub in ('GLES3','KHR'):
+ (includes/sub).symlink_to((a.gles_headers/sub).resolve(),target_is_directory=True)
 sources=[CPP/'session_frame_capture_gl.c',CPP/'session_frame_capture_gl.h',CPP/'session_frame_capture.h'];pins={str(s):hashlib.sha256(s.read_bytes()).hexdigest()for s in sources}
-libpath=a.work/'capture-gl.so';r=subprocess.run(['cc','-std=c11','-Wall','-Wextra','-Werror','-pedantic','-O2','-fstack-usage','-shared','-fPIC','-I',str(a.gles_headers),str(sources[0]),'-l:libGL.so.1','-o',str(libpath)],capture_output=True,text=True,timeout=180)
+libpath=a.work/'capture-gl.so';r=subprocess.run(['cc','-std=c11','-Wall','-Wextra','-Werror','-pedantic','-O2','-fstack-usage','-shared','-fPIC','-I',str(includes),str(sources[0]),'-l:libGL.so.1','-o',str(libpath)],capture_output=True,text=True,timeout=180)
 if r.returncode:raise RuntimeError(r.stderr)
 lib=C.CDLL(str(libpath));lib.coh_frame_capture_readback.argtypes=[C.c_uint]*4+[C.c_void_p]
 e=EGL();g=e.g;U=C.c_uint

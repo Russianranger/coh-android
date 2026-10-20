@@ -42,12 +42,16 @@ def main():
     bundle = (a.assets / 'neighborhood-map.bin').read_bytes()
     assert pin(bundle) == {'bytes': 491565, 'sha256': 'fcd3a97f8a84165316c6784016d1ab38402602fdfadeca1ed31fb3329426a1a7'}
     library = a.work / 'capture.so'
+    # Host libc remains authoritative; do not import Bionic standard headers.
+    includes = a.work / 'include'; includes.mkdir()
+    for sub in ('GLES3', 'KHR'):
+        (includes / sub).symlink_to((a.gles_headers / sub).resolve(), target_is_directory=True)
     sources = [CPP / 'session_frame_capture.c', CPP / 'session_frame_capture.h',
                CPP / 'session_frame_capture_gl.c', CPP / 'session_frame_capture_gl.h',
                CPP / 'session_renderer.c']
     pins = {str(x): pin(x.read_bytes()) for x in sources}
     run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic', '-O2',
-         '-shared', '-fPIC', '-I', a.gles_headers, sources[0], sources[2],
+         '-shared', '-fPIC', '-I', includes, sources[0], sources[2],
          '-l:libGL.so.1', '-lm', '-o', library])
     cap, lib = C.CDLL(str(library)), C.CDLL(str(a.stream_library))
     cap.coh_frame_capture_create.argtypes = [Q]; cap.coh_frame_capture_create.restype = C.c_void_p
