@@ -7,7 +7,7 @@
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
   "rendered": "Physical Thor framebuffer: source roadway/pavement and yellow real-pose box in the existing two-instance neighborhood; no genuine costume model yet.",
-  "blocker": "Host replay consumes all 343 power customizations with 343 unresolved CRCs; original signed inventory receiver reaches bit 41312/301656. Remaining original entity/global/character integration is in progress, with no missing BasePower table required for customization framing.",
+  "blocker": "The retained301656-bit packet reaches its exact original zero-command terminator in release/ASan/UBSan. No missing BasePower table remains for framing. Android original ACK/READY/post-update integration and physical0.1.17 validation are in progress; real Huge resources are not yet rendered.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
     "Finish original initial-packet receive, then source-authentic ACK/READY and bounded post-ACK command/position observations.",
@@ -1928,11 +1928,11 @@
     "result": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete.",
     "next_action": "Development paused at user request after recording these reports."
   },
-  "next_action": "Finish the source-authentic saved-packet replay and package the qualified full-screen diagnostic.",
+  "next_action": "Finish exact-source Android continuation/send tests, then build one0.1.17 fullscreen diagnostic and collect the Thor export.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
-    "state": "Development resumed: original NULL-tolerant power customization receive qualified; final packet continuation and full-screen APK integration in progress.",
+    "state": "Source full replay qualified; Android exact-end send and full-screen packaging integration in progress.",
     "source_commits": [
       {
         "local": "4a12f6c92426cc0e2249330ee69ffa6e6c8ef61b",
@@ -2536,5 +2536,144 @@
       "result": "QUALIFIED physical costume-body continuation and bounded neighborhood report; PARTIAL aggregate memory because 64 rows omit 27 processes; runtime PostgreSQL settings unverified.",
       "next_action": "Wait for next user prompt."
     }
-  ]
+  ],
+  "cycle_0_1_17": {
+    "base_commit": "199eab6ad61645308b819253d7181030a73af65c",
+    "published_checkpoint": "c477facb2a142cabd29bdad74b1ce200684a5699",
+    "profile": "fullscreen-diagnostic",
+    "version_name": "0.1.17-fullscreen-diagnostic-test",
+    "version_code": 18,
+    "state": "integration_in_progress",
+    "packet": {
+      "input_bytes": 37795,
+      "payload_bytes": 37707,
+      "input_sha256": "148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba",
+      "payload_sha256": "a60221590f4ad8694c0edc5a3643fe880ae27498642548f0bd1d857d74af9dc5",
+      "qualified_modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "results": {
+        "status": 0,
+        "end_bit": 301656,
+        "packet_bits": 301656,
+        "body_end": 11648,
+        "appearance_end": 11672,
+        "power_begin": 11680,
+        "power_end": 39216,
+        "power_entry_count": 343,
+        "power_entries_read": 343,
+        "power_unresolved_count": 343,
+        "first_crc": 2151953239,
+        "last_crc": 2124314729,
+        "required_table": 0,
+        "power_complete": 1,
+        "taskforce_complete": 1,
+        "outer_end_bit": 41312,
+        "entity_end_bit": 41696,
+        "source_tail_end_bit": 298736,
+        "character_complete": 1,
+        "commands_read": 11,
+        "command_tail_complete": 1,
+        "source_command_terminator": 1,
+        "exact_saved_end": 1,
+        "retained_static_owners": 1428245,
+        "peak_aggregate_bytes": 7490373,
+        "accepted_prefix_end_bit": 1536,
+        "derived_appearance_begin_bit": 1848,
+        "actual_pchar_things": 1
+      },
+      "prefix_scope": "Previously accepted physical header/self-create; existing source leaves derive every subsequent cursor and actual pchar flag. No shortcut schema or DBID invented.",
+      "new_scope": "Same-reader pose/sequence/trigger/AI/NetFX to header appearance cursor, then original costume/rare/character/globals/application commands and exact original zero terminator. No ACK or gameplay publication.",
+      "original_client_shared_count": 26,
+      "shared_source_input_sha256": "649b85493dcd6bdc0ebd7669eed9ce61536d8788755075265b17a0905a83bd11",
+      "application_ack_sent_to_user_server_here": false,
+      "ready_sent_to_user_server_here": false
+    },
+    "capture": {
+      "scope": "Explicit host retained-pose source-scene fixture; not a new Thor screenshot.",
+      "width": 640,
+      "height": 360,
+      "png_bytes": 928131,
+      "png_sha256": "b004449417fd10ea84fca4a46e1e82cf3d28c41df74501724435a087c1a3d7c8",
+      "fresh_raw_bytes": 921728,
+      "fresh_raw_sha256": "a5423c2497486187a369e68c30dbfd80d671efae7ffdd8492216e265dcf757a7",
+      "fresh_zip_bytes": 1851118,
+      "fresh_zip_sha256": "ffb4a9c7e64dcac6a8cd4070b76ed6841ebec21056f3396459d8e6ca6768c6cb",
+      "visible_source_pixels": 103867,
+      "box_pixels": 4015,
+      "gl_errors": 0,
+      "concrete_capture_reservation_bytes": 5667858,
+      "scene_cap_bytes": 100663296,
+      "pixels_show": "Textured pavement and yellow diagnostic box; no real Huge character or skyline."
+    },
+    "runtime_world": {
+      "native_fd_controls_per_mode": 163,
+      "native_source_controls_per_mode": 233,
+      "java_controls": 94,
+      "fixture_generator_controls": 18,
+      "source_index_bytes": 10144,
+      "source_index_sha256": "585cd024ec0438bcbece6bd59b64cc12d89557e35d271c3a73900358c04fb6af",
+      "source_placements": 105,
+      "candidate_source_envelope_bytes": 15187220,
+      "fd_owner_bytes": 552,
+      "different_pose_host_gles": true,
+      "different_pose_thor": false,
+      "original_client_archive_header_directory_proof": false,
+      "generated_zip_fixture_is_original_archive_proof": false,
+      "actual_android_hook": "Existing accepted imported read-only archive descriptors plus actual APK index span. Atomic candidate publication and explicit fixture fallback. Review fixed unpublished Session exceptional cleanup and copied render-owner counters."
+    },
+    "huge": {
+      "packet_bodytype": 4,
+      "source_ent_type": "huge",
+      "source_draw_records": 24,
+      "visible_draw_records": 14,
+      "distinct_geo_files": 11,
+      "geo_files_in_retained_package_manifests": 8,
+      "geo_files_not_in_checked_manifests": [
+        "data/player_library/huge_emblem.geo",
+        "data/player_library/huge_uarmr.geo",
+        "data/player_library/huge_waist.geo"
+      ],
+      "absence_on_thor_established": false,
+      "new_character_payloads_acquired": false,
+      "real_character_rendered": false,
+      "base_skeleton_source_path": "player_library/animations/huge/skel_ready.anim",
+      "base_skeleton_source_bytes": 6171,
+      "base_skeleton_source_sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
+      "texture_resolution": "Candidate basename inventory only; actual archive existence lookup and matching textures still needed. No synthetic textures or bodytype substitution."
+    },
+    "offline_power_names": {
+      "source_commit": "578f1d147a5ee6c620cd638c56a43faa484e0543",
+      "tests": "10 PASS; original C bodies release/ASan/UBSan; no Win32 runtime claim",
+      "input_files": 6527,
+      "input_bytes": 90512996,
+      "declarations": 20241,
+      "unique_crcs": 20241,
+      "duplicate_crc": 0,
+      "normalized_crc_collisions": 0,
+      "first_crc": "0x80443357",
+      "first_full_name": "Incarnate.Hybrid.Support_Genome_4",
+      "source_path": "upstream/i24/data/defs/powers/incarnate_hybrid.powers",
+      "source_line": 11317,
+      "source_file_sha256": "5fcdc9a9256972bf9fbf4d4cd1ad93216e3d8d2f71fa6e10d35f57a2c12574e4",
+      "runtime_dictionary_supplied": false,
+      "generated_map_committed": false
+    },
+    "memory_findings": {
+      "scope": "Read-only analysis of retained physical0.1.16 logs; PostgreSQL settings unchanged.",
+      "wine_pss_bytes": 2421953536,
+      "omitted_wine_process_pss_bytes": 1828321280,
+      "omitted_process_executable_identified": false,
+      "mapserver_startup_ms": 279382,
+      "dbserver_startup_ms": 67021,
+      "world_collision_allocation_breakdown_available": false,
+      "pg_tuning_performed": false,
+      "source_and_observed_process_memory_kept_separate": true
+    },
+    "ci": {
+      "state": "not_dispatched"
+    }
+  }
 }

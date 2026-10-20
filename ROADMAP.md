@@ -1,34 +1,37 @@
 # Native Android roadmap
 
-Updated 2026-10-20. Physical 0.1.16 reports are recorded; development has resumed.
+Updated 2026-10-20. Physical 0.1.16 is recorded; 0.1.17 integration is active.
 
-Combined 0.1.14 passed stage 41. Physical 0.1.16 confirms bodytype 4, Huge,
+Combined 0.1.14 passed stage 41. Physical 0.1.16 carries bodytype 4, Huge,
 28 costume parts, 112 strings and 58 colors. The body ends at bit 11648 and
-appearance at 11672. Host replay now consumes all 343 power customizations
-through bit 39216, recording 343 unresolved CRCs through the original NULL
-path. Their names do not affect wire length. Original signed inventory receive
-reaches bit 41312 of 301656; remaining original receive integration is active.
-The earlier 303112-bit packet is distinct. ACK and READY remain unsent.
+appearance at 11672. Host replay now consumes all 343 power customizations,
+recording 343 unresolved CRCs through the original NULL path, then character,
+globals and original commands through the exact 301656-bit packet terminator.
+Release, ASan and UBSan pass. The independently pinned CLIENT shared count is
+26. The earlier 303112-bit packet is distinct. No further framing table is
+missing for this saved packet; original Android ACK/READY integration is next.
 
-Two physical captures show textured source pavement and the yellow box at
-[131.453125, 0.25, -114.953125]. They are 192 by 41 pixels. The next diagnostic
-adds full-screen controls and bounded 640 by 360 capture after viewport resize.
-The actual Huge costume resolves through the existing appearance adapter;
-its first required model is huge_PANTS.geo / GEO_HIPS_Tight. Genuine matching
-rig, geometry and textures must be present before replacing the box.
+Two physical captures show textured pavement and the box at
+[131.453125, 0.25, -114.953125]. The new host source-scene capture is 640 by
+360 with a viewable PNG, full-screen controls and a corner return button.
+This is host evidence; a new Thor export remains necessary. The real Huge
+costume resolves to 14 visible draws in 11 GEO files. Eight are package-pinned;
+huge_emblem.geo, huge_uarmr.geo and huge_waist.geo are not in checked manifests.
+Their absence on Thor is not established. Actual texture and rig loading still
+need integration; the box remains the fallback.
 
-Wine accounts for about 2.42 GB of PSS. One omitted detail row contributes
-1.83 GB, but its executable identity is not retained, so MapServer attribution
-is unproved. No world or collision allocation breakdown was captured.
-PostgreSQL stays unchanged. Recorded process peaks are 4021653504 RSS bytes
-and 2925635584 PSS bytes; source payload charges remain separate.
+Wine accounts for about 2.42 GB PSS. One omitted detail row contributes
+1.83 GB without an executable label; MapServer attribution is unproved.
+Map and DB startup took about 279 and 67 seconds, without a world or collision
+allocation breakdown. PostgreSQL stays unchanged. Recorded physical peaks are
+4021653504 RSS bytes and 2925635584 PSS bytes, separate from source charges.
 
-1. Finish the saved packet; use original ACK/READY and observe subsequent traffic.
-2. Draw the decoded Huge costume using its actual rig, GEO and textures.
-3. Stream imported archives at a different pose without rebuilding the APK.
+1. Qualify original ACK/READY, then record Thor traffic and position observations.
+2. Draw the decoded Huge costume with its actual rig, GEO and textures.
+3. Verify imported archive streaming at a different pose without rebuilding.
 
-These three bounded steps remain before the requested live world with a real
-character is demonstrated. The 8 MiB initial and 96 MiB scene caps remain.
-Gates 25–27 stay open. Update the rolling status; commit raw output only when
-a checker pins it. Four unreferenced bundles were removed; all 70 are listed
-with their pins and hashes in the rolling status. Referenced bundles remain.
+These three steps remain before the requested real character and live world
+are demonstrated. Replay charges peak at 7490373 bytes under 8 MiB; scene cap
+remains 96 MiB. Gates 25–27 stay open. Keep the rolling status and pinned raw
+outputs only. All 70 bundles are inventoried there; four unreferenced ones were
+removed, while the 66 receipt or documentation references remain.
