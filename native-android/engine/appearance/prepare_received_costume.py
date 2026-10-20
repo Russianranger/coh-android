@@ -88,6 +88,8 @@ def definitions(root):
 
 def configure(lib):
     api.configure(lib); bridge.animation.configure(lib)
+    lib.coh_asset_texture.argtypes = [api.asset.Bytes, C.POINTER(api.asset.Texture)]
+    lib.coh_asset_texture_rgba.argtypes = [C.POINTER(api.asset.Texture), U, C.c_void_p, Z]
     lib.coh_appearance_costume_assemble.argtypes = [C.POINTER(Snapshot), C.POINTER(Inputs), C.POINTER(Workspace), C.POINTER(a.Draw), Z, C.POINTER(Z), C.POINTER(Diagnostics)]
     lib.coh_appearance_geo_model.argtypes = [C.POINTER(api.asset.Geo), C.POINTER(a.Draw), U, C.POINTER(U), C.POINTER(api.asset.Model)]
     lib.coh_renderer_default_material.argtypes = [C.c_int]
@@ -115,7 +117,9 @@ def select(lib, snapshot, defs, archive):
 def source_pins(extra=None):
     pins = {row['name'].casefold(): {'bytes': row['size'], 'sha256': row['sha256']} for row in json.loads((HERE / 'corpus-pins.json').read_text())['records']}
     if extra:
-        for name, pin in json.loads(extra.read_text()).items():
+        supplied = json.loads(extra.read_text())
+        supplied = supplied.get('files', supplied)
+        for name, pin in supplied.items():
             if name.casefold() in pins and pins[name.casefold()] != pin: raise ValueError('Source pin overrides an existing identity')
             pins[name.casefold()] = pin
     return pins
@@ -135,7 +139,7 @@ def prepare(library, archive, snapshot_raw, rig_raw, root, output, pins):
     visible = [draw for draw in draws[:count] if not draw.flags & 1]
     for index, draw in enumerate(visible):
         path = text(draw.geometry_path); matches = archive.lookup(paths=[path])
-        row = {'definition': draw.definition, 'socket': draw.socket, 'path': path, 'model': text(draw.model_name), 'textures': [text(value) for value in draw.texture], 'colors': [list(value) for value in draw.color]}
+        row = {'definition': draw.definition, 'socket': draw.socket, 'path': path, 'model': text(draw.model_name), 'textures': [text(value) for value in draw.texture], 'colors': [list(value) for value in draw.color], 'texture_explicit': [text(snapshot.parts[draw.definition].strings[i + 1]).startswith('!') for i in range(2)], 'geometry_id': index + 1}
         parts.append(row)
         if not matches:
             missing.append({'kind': 'geometry', 'path': path, 'model': row['model']}); continue
@@ -178,10 +182,55 @@ def prepare(library, archive, snapshot_raw, rig_raw, root, output, pins):
         row.update(canonical=filename, canonical_sha256=sha(memoryview(canonical)), source_sha256=sha(raw), vertices=mesh.vertices, indices=mesh.indices, materials=requirement.materials)
         packets.append((packet, vertices, indices)); retained += vertex_bytes + index_bytes + C.sizeof(packet)
         del resource, binding, actor, model, model_index, body, raw, header, geo, scratch, canonical, mesh
+    texture_sources, layers, texture_peak = decode_textures(lib, archive, pins, parts, output, fixed + retained)
+    peak = max(peak, texture_peak)
+    for row in parts:
         for name in row['textures']:
-            if name.casefold() != 'none' and not archive.lookup(texture_names=[name + '.tga']): missing.append({'kind': 'texture', 'name': name})
-    result = {'snapshot_sha256': sha(snapshot_raw), 'bodytype': snapshot.body, 'records': count, 'visible_parts': len(visible), 'converted_parts': len(packets), 'parts': parts, 'missing': missing, 'rig_sha256': sha(rig_raw), 'scales': list(snapshot.scales), 'authored_scales_applied': False, 'skinning_scope': 'authentic Huge hierarchy; neutral inspection only; no Wretch morphology', 'source_payload_peak_bytes': peak, 'source_payload_limit_bytes': SCENE_LIMIT, 'measurement_scope': 'explicit source/native buffers and stack reserve; Python allocator/RSS not measured', 'live_actor_published': False}
-    return result, packets
+            if name.casefold() != 'none' and name.casefold() not in texture_sources:
+                missing.append({'kind': 'texture', 'name': name})
+    result = {'snapshot_sha256': sha(snapshot_raw), 'bodytype': snapshot.body, 'records': count, 'visible_parts': len(visible), 'converted_parts': len(packets), 'parts': parts, 'missing': missing, 'rig_sha256': sha(rig_raw), 'scales': list(snapshot.scales), 'available_texture_sources': {name: value['metadata'] for name, value in texture_sources.items()}, 'authored_scales_applied': False, 'skinning_scope': 'authentic Huge hierarchy; neutral inspection only; no Wretch morphology', 'source_payload_peak_bytes': peak, 'source_payload_limit_bytes': SCENE_LIMIT, 'measurement_scope': 'explicit source/native buffers and stack reserve; Python allocator/RSS not measured', 'source_inventory_scope': 'supplied archive only; subset absence does not prove absence from complete CLIENT', 'texture_selection_complete': False, 'live_actor_published': False}
+    return result, packets, layers
+
+def decode_textures(lib, archive, pins, parts, output, retained_bytes):
+    sources, layers, peak = {}, {}, retained_bytes
+    names = list(dict.fromkeys(name.casefold() for row in parts for name in row['textures'] if name.casefold() != 'none'))
+    for name in names:
+        matches = archive.lookup(texture_names=[name + '.tga'])
+        if not matches: continue
+        # A basename can genuinely occur in multiple source directories. Do not
+        # invent an ordering beyond this archive's original member order.
+        if len(matches) != 1:
+            sources[name] = {'metadata': {'ambiguous_paths': [match.name for match in matches]}}
+            continue
+        match = matches[0]; pin = pins.get(match.name.casefold())
+        if pin is None:
+            sources[name] = {'metadata': {'missing_source_hash': match.name}}
+            continue
+        raw = archive.read_body(match, pin); body = (C.c_uint8 * len(raw)).from_buffer(raw)
+        view = api.asset.Texture()
+        status = lib.coh_asset_texture(api.asset.Bytes(C.addressof(body), len(raw)), C.byref(view))
+        if status: raise ValueError('First unavailable selected texture format: ' + match.name + ' status=' + str(status))
+        size = view.width * view.height * 4
+        layer_bytes = sum(C.sizeof(value['pixels']) for value in layers.values())
+        candidate_bytes = retained_bytes + layer_bytes + len(raw) + size + (128 << 10)
+        if candidate_bytes > SCENE_LIMIT: raise ValueError('Texture preflight exceeds existing scene cap')
+        peak = max(peak, candidate_bytes)
+        pixels = C.create_string_buffer(size)
+        if lib.coh_asset_texture_rgba(C.byref(view), 0, pixels, len(pixels)): raise ValueError('Original selected texture cannot decode: ' + match.name)
+        dds = C.string_at(view.dds.data, min(view.dds.size, 128))
+        metadata = {'path': match.name, 'source_sha256': sha(raw), 'width': view.width, 'height': view.height, 'format': dds[84:88].decode('ascii'), 'rgba_sha256': sha(memoryview(pixels)), 'rgba_file': name + '.rgba'}
+        (output / metadata['rgba_file']).write_bytes(memoryview(pixels))
+        sources[name] = {'metadata': metadata}
+        # Only explicit original !names can be shown without a complete CLIENT
+        # prefix inventory. A secondary-only layer is a UV inspection, not a
+        # fabricated primary/secondary game material pair.
+        for row in parts:
+            if 'canonical' not in row: continue
+            for slot in range(2):
+                if row['texture_explicit'][slot] and row['textures'][slot].casefold() == name:
+                    layers[row['geometry_id']] = {'pixels': pixels, 'metadata': metadata, 'slot': slot}
+        del body, raw, view, pixels
+    return sources, layers, peak
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -189,6 +238,7 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--source-root', type=Path, default=HERE.parents[2])
     parser.add_argument('--source-pins', type=Path)
+    parser.add_argument('--capture', action='store_true', help='Host-only untextured mesh inspection; no live actor publication')
     args = parser.parse_args()
     provider = module('received_imported_archive', HERE / 'imported_archive.py')
     if args.output.exists() or args.output.is_symlink():
@@ -199,7 +249,10 @@ def main():
         with tempfile.TemporaryDirectory(prefix='coh-received-source-', dir=args.output.parent) as temporary:
             stage = Path(temporary)
             with provider.ImportedArchive(descriptor) as archive:
-                result, _ = prepare(args.library, archive, args.snapshot.read_bytes(), args.rig.read_bytes(), args.source_root, stage, source_pins(args.source_pins))
+                result, packets, layers = prepare(args.library, archive, args.snapshot.read_bytes(), args.rig.read_bytes(), args.source_root, stage, source_pins(args.source_pins))
+            if args.capture:
+                inspector = module('received_costume_capture', HERE / 'capture_received_costume.py')
+                result['host_capture'] = inspector.capture(packets, stage, result['source_payload_peak_bytes'], layers)
             (stage / 'costume.json').write_text(json.dumps(result, indent=2) + '\n')
             os.rename(stage, args.output)
         print(json.dumps({key: result[key] for key in ('visible_parts', 'converted_parts', 'missing', 'source_payload_peak_bytes')}))

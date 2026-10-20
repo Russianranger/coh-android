@@ -153,3 +153,30 @@ python native-android/engine/appearance/check_render.py \
   --sanitize --gpu --ndk /path/to/android-ndk-r28c \
   --output /path/to/render-bridge.json
 ```
+
+## Received Huge host inspection
+
+`prepare_received_costume.py` consumes a lossless original-receiver snapshot,
+an available CLIENT archive FD, verified source member hashes, and the recovered
+original Huge rig. It resolves the original ordered BodyParts and archive texture
+existence probes, converts only selected genuine models, and CPU skins those
+models with the established hierarchy/palette implementation. Missing files and
+models remain explicit. A subset archive cannot prove absence from the complete
+CLIENT archive. No live actor or costume material is published.
+
+`--capture` preserves a host GLES image with an untextured normal shader and,
+when an explicit original `!name` texture is available, a separate source-UV
+layer inspection. It does not invent a missing primary/secondary material.
+Available pinned texture bodies decode through the existing native DDS path.
+Packet body scales remain in the output metadata and are not applied. This is selected mesh
+and socket inspection; it does not substitute NPC morphology or replacement game textures.
+The fixed 96 MiB source-buffer policy includes old/candidate upload storage,
+source decode scratch, retained vertices, targets, readback, and a stack reserve.
+Python/Mesa process peak RSS is reported separately from those buffer counts.
+
+Run `python native-android/engine/appearance/check_received_costume.py --mode all`
+under the shared build lock. To exercise genuine retained inputs, also supply
+`--archive`, `--snapshot`, `--rig`, and `--source-pins`; `--capture` tests two host
+contexts in release mode. The supplied source-pins JSON can be a path-to-pin map
+or an object containing that map in `files`. Raw inputs and generated outputs
+remain outside git.
