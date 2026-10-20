@@ -1,0 +1,382 @@
+name: Native Combined 0.1.11 report diagnostic candidate
+'on':
+  workflow_call: null
+  workflow_dispatch: null
+permissions:
+  contents: read
+  actions: read
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: '1'
+jobs:
+  package:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - name: Admit exact current candidate raw and committed qualification inputs
+      run: |
+        python3 - <<'PYADMIT'
+        import hashlib,json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        assert head==os.environ['GITHUB_SHA']
+        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        root=pathlib.Path.cwd().resolve();pins={}
+        scopes=['native-android/combined-client','native-android/engine','native-android/protocol','native-android/src','native-android/include','.github/workflows/native-combined-client.yml','.github/workflows/native-combined-memory-diagnostic.yml','.github/workflows/native-combined-report-diagnostic.yml']
+        for name in subprocess.check_output(['git','ls-files','-z','--',*scopes]).decode().split('\0'):
+            if not name or any(part in ('diagnostics','qualification','evidence') for part in pathlib.Path(name).parts):continue
+            path=root/name
+            assert path.resolve()==path and path.is_file() and not path.is_symlink()
+            raw=path.read_bytes()
+            assert subprocess.check_output(['git','show',head+':'+name])==raw
+            pins[name]=hashlib.sha256(raw).hexdigest()
+        assert pins and subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head
+        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-memory-source-admission.json'
+        with output.open('x') as stream:
+            json.dump({'schema':'coh-combined-memory-candidate-source-v1','passed':True,'source_revision':head,'reviewed_raw_and_committed_source_sha256':pins,'complete_compiler_dependency_closure_claimed':False,'historical_qualifier_mains_replayed':False,'APK_executed':False,'world_authority':False},stream,indent=2,sort_keys=True)
+            stream.write('\n')
+        PYADMIT
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Install the existing pinned Android build components
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+    - name: Reuse qualified crypto and exact accepted scene/runtime metadata
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        mkdir -p native-android/results/combined-report-diagnostic
+        gh api repos/Russianranger/coh-android/actions/artifacts/11980774730/zip > /tmp/combined-crypto.zip
+        python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/combined-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-report-diagnostic/crypto-reuse.json
+        python3 native-android/combined-client/tools/prepare.py --evidence native-android/results/combined-report-diagnostic/build-inputs.json
+        cp "$RUNNER_TEMP/combined-memory-source-admission.json" native-android/results/combined-report-diagnostic/source-admission.json
+    - name: Preserve exact protected runtime and memory inputs
+      run: python3 native-android/combined-client/tools/audit_report_inputs.py --output native-android/results/combined-report-diagnostic/protected-inputs.json
+    - name: Run retained host contracts and focused report regression qualification
+      run: |
+        python3 native-android/combined-client/tools/host_check.py --output native-android/results/combined-report-diagnostic/host
+        python3 native-android/combined-client/tools/test_fragment_driver.py
+        python3 native-android/combined-client/tools/test_upgrade_driver.py
+        python3 native-android/combined-client/tools/test_report_qualification.py
+        python3 native-android/combined-client/tools/check_report_regression.py --output native-android/results/combined-report-diagnostic/report-regression
+        python3 native-android/combined-client/qualification/check_interop_phase.py > native-android/results/combined-report-diagnostic/phase-regression.json
+    - name: Build, lint and audit the ARM64 Thor test APK
+      run: |
+        python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
+        cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk
+        python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk --abi arm64-v8a --require-clean --require-interop --build-profile report-diagnostic --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-report-diagnostic/arm64-package.json
+        python3 native-android/combined-client/tools/interop_package_audit.py --apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk --abi arm64-v8a --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-report-diagnostic/arm64-interop-dso.json
+    - name: Build and audit the separate Android 13 emulator APK and peer
+      run: |
+        python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PprobeAbis=x86_64 -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
+        cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-x86_64.apk
+        python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-x86_64.apk --abi x86_64 --require-clean --require-interop --build-profile report-diagnostic --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-report-diagnostic/x86_64-package.json
+        python3 native-android/combined-client/tools/interop_package_audit.py --apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-x86_64.apk --abi x86_64 --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-report-diagnostic/x86_64-interop-dso.json
+        python3 native-android/combined-client/tools/build_interop_peer.py --fragment-compat --ndk "$ANDROID_HOME/ndk/28.2.13676358" --crypto-root /tmp/combined-crypto/x86_64 --output native-android/results/combined-report-diagnostic/interop-peer
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-report-diagnostic-packages-${{ github.sha }}
+        path: native-android/results/combined-report-diagnostic/
+        if-no-files-found: error
+        retention-days: 90
+  android13-framework:
+    needs: package
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - name: Bind framework qualification to the exact candidate revision
+      run: |
+        python3 - <<'PYADMIT'
+        import hashlib,json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        assert head==os.environ['GITHUB_SHA']
+        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        root=pathlib.Path.cwd().resolve();pins={}
+        scopes=['native-android/combined-client','native-android/engine','native-android/protocol','native-android/src','native-android/include','.github/workflows/native-combined-client.yml','.github/workflows/native-combined-memory-diagnostic.yml','.github/workflows/native-combined-report-diagnostic.yml']
+        for name in subprocess.check_output(['git','ls-files','-z','--',*scopes]).decode().split('\0'):
+            if not name or any(part in ('diagnostics','qualification','evidence') for part in pathlib.Path(name).parts):continue
+            path=root/name
+            assert path.resolve()==path and path.is_file() and not path.is_symlink()
+            raw=path.read_bytes()
+            assert subprocess.check_output(['git','show',head+':'+name])==raw
+            pins[name]=hashlib.sha256(raw).hexdigest()
+        assert pins and subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head
+        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-memory-source-admission.json'
+        with output.open('x') as stream:
+            json.dump({'schema':'coh-combined-memory-candidate-source-v1','passed':True,'source_revision':head,'reviewed_raw_and_committed_source_sha256':pins,'complete_compiler_dependency_closure_claimed':False,'historical_qualifier_mains_replayed':False,'APK_executed':False,'world_authority':False},stream,indent=2,sort_keys=True)
+            stream.write('\n')
+        PYADMIT
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-report-diagnostic-packages-${{ github.sha }}
+        path: native-android/results/combined-report-diagnostic
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Install pinned SDK tools for the separate UI capture test helper
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+    - name: Fetch the exact external donor for Android SAF import qualification
+      run: |
+        curl --fail --silent --show-error --location --retry 2 --output /tmp/combined-donor.apk https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk
+        echo '14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f  /tmp/combined-donor.apk' | sha256sum -c -
+    - name: Enable hosted Android emulator acceleration
+      run: |
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Qualify actual import picker, admission and native preview boundaries
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front
+          none
+        disable-animations: true
+        script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial
+          emulator-5554 --apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-x86_64.apk
+          --output native-android/results/combined-report-diagnostic/android13-framework --donor-apk /tmp/combined-donor.apk
+          --ui-peer-binary native-android/results/combined-report-diagnostic/host/local-android/coh-local-peer-x86_64 --protocol-binary
+          native-android/results/combined-report-diagnostic/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-report-diagnostic/host/local-android/android-build.json
+    - name: Bind framework result to exact candidate source admission
+      run: cp "$RUNNER_TEMP/combined-memory-source-admission.json" native-android/results/combined-report-diagnostic/android13-framework/source-admission.json
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-report-diagnostic-android13-framework-${{ github.sha }}
+        path: native-android/results/combined-report-diagnostic/android13-framework/
+        if-no-files-found: error
+        retention-days: 90
+  android13-fragment-interop:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 1
+    - name: Bind fragment qualification to the exact candidate revision
+      run: |
+        python3 - <<'PYADMIT'
+        import hashlib,json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        assert head==os.environ['GITHUB_SHA']
+        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        root=pathlib.Path.cwd().resolve();pins={}
+        scopes=['native-android/combined-client','native-android/engine','native-android/protocol','native-android/src','native-android/include','.github/workflows/native-combined-client.yml','.github/workflows/native-combined-memory-diagnostic.yml','.github/workflows/native-combined-report-diagnostic.yml']
+        for name in subprocess.check_output(['git','ls-files','-z','--',*scopes]).decode().split('\0'):
+            if not name or any(part in ('diagnostics','qualification','evidence') for part in pathlib.Path(name).parts):continue
+            path=root/name
+            assert path.resolve()==path and path.is_file() and not path.is_symlink()
+            raw=path.read_bytes()
+            assert subprocess.check_output(['git','show',head+':'+name])==raw
+            pins[name]=hashlib.sha256(raw).hexdigest()
+        assert pins and subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head
+        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-memory-source-admission.json'
+        with output.open('x') as stream:
+            json.dump({'schema':'coh-combined-memory-candidate-source-v1','passed':True,'source_revision':head,'reviewed_raw_and_committed_source_sha256':pins,'complete_compiler_dependency_closure_claimed':False,'historical_qualifier_mains_replayed':False,'APK_executed':False,'world_authority':False},stream,indent=2,sort_keys=True)
+            stream.write('\n')
+        PYADMIT
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-report-diagnostic-packages-${{ github.sha }}
+        path: native-android/results/combined-report-diagnostic
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Prepare the focused framework test
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Test new diagnostic JNI, sockets, report and lifecycle on Android 13
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front
+          none
+        disable-animations: true
+        script: python3 native-android/combined-client/tools/fragment_interop_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb"
+          --serial emulator-5554 --apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-x86_64.apk
+          --package-receipt native-android/results/combined-report-diagnostic/x86_64-package.json --peer native-android/results/combined-report-diagnostic/interop-peer/coh-initial-interop-peer-x86_64
+          --peer-receipt native-android/results/combined-report-diagnostic/interop-peer/build.json --build-profile report-diagnostic
+          --output native-android/results/combined-report-diagnostic/android13-fragment-interop
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-report-diagnostic-android13-fragment-interop-${{ github.sha }}
+        path: native-android/results/combined-report-diagnostic/android13-fragment-interop/
+        if-no-files-found: error
+        retention-days: 90
+  android13-package-upgrade:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 1
+    - name: Bind fragment qualification to the exact candidate revision
+      run: |
+        python3 - <<'PYADMIT'
+        import hashlib,json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        assert head==os.environ['GITHUB_SHA']
+        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        root=pathlib.Path.cwd().resolve();pins={}
+        scopes=['native-android/combined-client','native-android/engine','native-android/protocol','native-android/src','native-android/include','.github/workflows/native-combined-client.yml','.github/workflows/native-combined-memory-diagnostic.yml','.github/workflows/native-combined-report-diagnostic.yml']
+        for name in subprocess.check_output(['git','ls-files','-z','--',*scopes]).decode().split('\0'):
+            if not name or any(part in ('diagnostics','qualification','evidence') for part in pathlib.Path(name).parts):continue
+            path=root/name
+            assert path.resolve()==path and path.is_file() and not path.is_symlink()
+            raw=path.read_bytes()
+            assert subprocess.check_output(['git','show',head+':'+name])==raw
+            pins[name]=hashlib.sha256(raw).hexdigest()
+        assert pins and subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head
+        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-memory-source-admission.json'
+        with output.open('x') as stream:
+            json.dump({'schema':'coh-combined-memory-candidate-source-v1','passed':True,'source_revision':head,'reviewed_raw_and_committed_source_sha256':pins,'complete_compiler_dependency_closure_claimed':False,'historical_qualifier_mains_replayed':False,'APK_executed':False,'world_authority':False},stream,indent=2,sort_keys=True)
+            stream.write('\n')
+        PYADMIT
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-report-diagnostic-packages-${{ github.sha }}
+        path: native-android/results/combined-report-diagnostic
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Fetch the exact previous qualified x86_64 package archive and enable KVM
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        gh api repos/Russianranger/coh-android/actions/artifacts/12226012507/zip > /tmp/combined-previous010.zip
+        python3 - <<'PYPIN'
+        import hashlib,pathlib
+        p=pathlib.Path('/tmp/combined-previous010.zip')
+        assert p.stat().st_size==17868604
+        assert hashlib.sha256(p.read_bytes()).hexdigest()=='0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04'
+        PYPIN
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Qualify exact 0.1.10 update, debuggable rollback and synthetic private data preservation
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front
+          none
+        disable-animations: true
+        script: python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb"
+          --serial emulator-5554 --apk native-android/results/combined-report-diagnostic/CoH-Native-Combined-0.1.11-report-diagnostic-x86_64.apk
+          --package-receipt native-android/results/combined-report-diagnostic/x86_64-package.json --previous-archive /tmp/combined-previous010.zip
+          --build-profile report-diagnostic --previous-profile memory-diagnostic --exercise-debuggable-downgrade --output native-android/results/combined-report-diagnostic/android13-package-upgrade
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-report-diagnostic-android13-package-upgrade-${{ github.sha }}
+        path: native-android/results/combined-report-diagnostic/android13-package-upgrade/
+        if-no-files-found: error
+        retention-days: 90
+  publish-test:
+    needs: [package, android13-framework, android13-fragment-interop, android13-package-upgrade]
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 1
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-report-diagnostic-packages-${{ github.sha }}
+        path: package
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-report-diagnostic-android13-framework-${{ github.sha }}
+        path: framework
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-report-diagnostic-android13-fragment-interop-${{ github.sha }}
+        path: fragment
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-report-diagnostic-android13-package-upgrade-${{ github.sha }}
+        path: upgrade
+    - name: Independently admit the exact package and every completed qualification receipt
+      run: >-
+        python3 native-android/combined-client/tools/audit_report_publication.py
+        --package-root package --framework-root framework --fragment-root fragment --upgrade-root upgrade
+        --notes native-android/combined-client/diagnostics/report-regression-20261020/RELEASE-NOTES.md
+        --output qualified-release
+    - name: Publish only the qualified ARM64 diagnostic update
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release create coh-native-combined-v0.1.11-report-diagnostic-test --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title 'CoH Native Combined 0.1.11 — Thor Report Diagnostic' --notes-file qualified-release/RELEASE-NOTES.md qualified-release/CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk qualified-release/CoH-Native-Combined-0.1.11-report-diagnostic-arm64.apk.sha256 qualified-release/arm64-package.json qualified-release/arm64-interop-dso.json qualified-release/qualification-summary.json
+    - uses: actions/upload-artifact@v4
+      with:
+        name: combined-report-diagnostic-qualified-release-${{ github.sha }}
+        path: qualified-release/
+        if-no-files-found: error
+        retention-days: 90

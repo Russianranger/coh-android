@@ -10,7 +10,7 @@ import tempfile
 import zipfile
 
 JNI = 'Java_org_coh_nativecombined_InteropNative_'
-METHODS = {'begin', 'service', 'choose', 'characters', 'report', 'suspend', 'disconnect', 'close'}
+METHODS = {'begin', 'service', 'choose', 'characters', 'report', 'controlState', 'suspend', 'disconnect', 'close'}
 
 
 def sha(raw):

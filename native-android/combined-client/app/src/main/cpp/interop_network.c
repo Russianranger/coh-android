@@ -281,6 +281,60 @@ static int append(char *out,size_t capacity,size_t *used,const char *text) {
     size_t bytes=strlen(text);if(*used>=capacity||bytes>=capacity-*used)return 0;
     memcpy(out+*used,text,bytes);*used+=bytes;out[*used]=0;return 1;
 }
+/* The control plane never depends on JSON fitting. Bits are shared with Java:
+ * PRESENT=1, TERMINAL=2, INITIAL_OBSERVED=4, CHARACTERS_READY=8. No token or
+ * pointer is exported. The executor remains the single owner of JNI calls. */
+JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_controlState(JNIEnv *env,jclass cls,jlong token) {
+    (void)env;(void)cls;Interop *h=owner(token);if(!h)return 0;
+    unsigned state=1,terminal=h->terminal||h->suspended||h->disconnected;
+    if(h->allents_callbacks==1)state|=4;
+    if(h->busy)return 0; /* unavailable sample, never a negative observation */
+    CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
+    terminal|=d.phase>=COH_INITIAL_CAPTURED;
+    if(terminal)state|=2;
+    if(!terminal&&d.local.phase==COH_LOCAL_CHARACTERS_READY)state|=8;
+    coh_db_wipe(&d,sizeof(d));return (jint)state;
+}
+/* Stable omission bit order; a null from an unobserved probe is not omission.
+ * Core observations, request and receive counters precede these optional
+ * projections. Reserve includes every null field and the worst metadata tail.
+ * Serialization allocates no heap and retains the established 7,168 B cap. */
+#define INTEROP_REPORT_BYTES 7168u
+#define INTEROP_REPORT_TAIL_RESERVE 512u
+static const char *const report_detail_names[]={"first_create","first_record_pose","first_record_sequence",
+    "first_record_triggered_moves","first_record_ai_animation","first_record_netfx",
+    "first_record_costume_prefix","first_reward_string","first_reward_progress"};
+static int report_details(char *json,size_t *used,const char *const values[8],unsigned invalid) {
+    size_t minimum=INTEROP_REPORT_TAIL_RESERVE;
+    for(unsigned i=0;i<8;i++)minimum+=strlen(report_detail_names[i])+8; /* ,\"key\":null */
+    unsigned omitted=invalid;
+    if(*used>=INTEROP_REPORT_BYTES||minimum>=INTEROP_REPORT_BYTES-*used)return 0;
+    for(unsigned i=0;i<8;i++) {
+        const char *value=values[i];size_t key=strlen(report_detail_names[i])+4;
+        minimum-=key+4;
+        size_t bytes=strlen(value);
+        if((invalid&(1u<<i))||key+bytes>=INTEROP_REPORT_BYTES-*used-minimum) {
+            if(strcmp(value,"null")||(invalid&(1u<<i)))omitted|=1u<<i;
+            value="null";
+        }
+        if(!append(json,INTEROP_REPORT_BYTES,used,",\"")||
+           !append(json,INTEROP_REPORT_BYTES,used,report_detail_names[i])||
+           !append(json,INTEROP_REPORT_BYTES,used,"\":")||
+           !append(json,INTEROP_REPORT_BYTES,used,value))return 0;
+    }
+    char suffix[192];int n=snprintf(suffix,sizeof(suffix),
+        ",\"report_limit_bytes\":7168,\"report_truncated\":%s,\"report_omitted_mask\":%u,\"report_invalid_mask\":%u,\"report_omitted_fields\":[",
+        omitted?"true":"false",omitted,invalid);
+    if(n<=0||(size_t)n>=sizeof(suffix)||!append(json,INTEROP_REPORT_BYTES,used,suffix))return 0;
+    unsigned count=0;
+    for(unsigned i=0;i<9;i++)if(omitted&(1u<<i)) {
+        if((count++&&!append(json,INTEROP_REPORT_BYTES,used,","))||
+           !append(json,INTEROP_REPORT_BYTES,used,"\"")||
+           !append(json,INTEROP_REPORT_BYTES,used,report_detail_names[i])||
+           !append(json,INTEROP_REPORT_BYTES,used,"\""))return 0;
+    }
+    return append(json,INTEROP_REPORT_BYTES,used,"]}");
+}
 static int append_string(char *out,size_t capacity,size_t *used,const char *text,size_t maximum) {
     if(!append(out,capacity,used,"\""))return 0;
     size_t i;
@@ -319,7 +373,8 @@ done:
 }
 JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEnv *env,jclass cls,jlong token) {
     (void)cls;Interop *h=owner(token);
-    if(!h||h->busy)return (*env)->NewStringUTF(env,"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"CLOSED\",\"diagnostic_only\":true,\"authserver_authenticated\":false,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false}");
+    if(!h)return (*env)->NewStringUTF(env,"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"CLOSED\",\"owner_present\":false,\"owner_terminal\":true,\"initial_observation_known\":false,\"initial_observed\":null,\"diagnostic_only\":true,\"authserver_authenticated\":false,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false}");
+    if(h->busy)return (*env)->NewStringUTF(env,"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"OWNER_BUSY\",\"owner_present\":true,\"initial_observation_known\":false,\"initial_observed\":null,\"report_truncated\":true,\"packet_copy_retained\":false,\"world_authority\":false}");
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
     const CohLocalDiagnostics *local=&d.local;const CohMapDiagnostics *map=&local->map_protocol;
     const CohNetUdpDiagnostics *udp=&map->udp;
@@ -327,8 +382,8 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     CohInitialCaptureFailure failure=first->valid?first->failure:d.failure;
     unsigned terminal=h->suspended||h->disconnected||d.phase>=COH_INITIAL_CAPTURED;
     unsigned cleanup=terminal&&local->opened_sockets==local->closed_sockets;
-    char json[7168],request[1536]="null",receive[COH_RECEIVE_REPORT_MAX]="null";
-    char first_create[COH_INITIAL_PROBE_REPORT_MAX]="null";unsigned request_available=0;
+    char json[INTEROP_REPORT_BYTES],request[1536]="null",receive[COH_RECEIVE_REPORT_MAX]="null";
+    char first_create[COH_INITIAL_PROBE_REPORT_MAX]="null";unsigned request_available=0,invalid=0;
     char first_pose[COH_INITIAL_POSE_REPORT_MAX]="null";
     char first_sequence[COH_INITIAL_SEQUENCE_REPORT_MAX]="null";
     char first_triggered[COH_INITIAL_TRIGGERED_REPORT_MAX]="null";
@@ -336,21 +391,21 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     char first_costume[COH_INITIAL_COSTUME_REPORT_MAX]="null";
     char first_reward[COH_INITIAL_REWARD_REPORT_MAX]="null";
     int create_written=coh_initial_create_probe_json(&h->initial_create,first_create,sizeof(first_create));
-    if(create_written<=0||(size_t)create_written>=sizeof(first_create))strcpy(first_create,"null");
+    if(create_written<=0||(size_t)create_written>=sizeof(first_create)){strcpy(first_create,"null");invalid|=1u<<0;}
     int pose_written=coh_initial_pose_probe_json(&h->initial_pose,first_pose,sizeof(first_pose));
-    if(pose_written<=0||(size_t)pose_written>=sizeof(first_pose))strcpy(first_pose,"null");
+    if(pose_written<=0||(size_t)pose_written>=sizeof(first_pose)){strcpy(first_pose,"null");invalid|=1u<<1;}
     int sequence_written=coh_initial_sequence_probe_json(&h->initial_sequence,first_sequence,sizeof(first_sequence));
-    if(sequence_written<=0||(size_t)sequence_written>=sizeof(first_sequence))strcpy(first_sequence,"null");
+    if(sequence_written<=0||(size_t)sequence_written>=sizeof(first_sequence)){strcpy(first_sequence,"null");invalid|=1u<<2;}
     int triggered_written=coh_initial_triggered_probe_json(&h->initial_triggered,first_triggered,sizeof(first_triggered));
-    if(triggered_written<=0||(size_t)triggered_written>=sizeof(first_triggered))strcpy(first_triggered,"null");
+    if(triggered_written<=0||(size_t)triggered_written>=sizeof(first_triggered)){strcpy(first_triggered,"null");invalid|=1u<<3;}
     int ai_written=coh_initial_aianim_probe_json(&h->initial_aianim,first_aianim,sizeof(first_aianim));
-    if(ai_written<=0||(size_t)ai_written>=sizeof(first_aianim))strcpy(first_aianim,"null");
+    if(ai_written<=0||(size_t)ai_written>=sizeof(first_aianim)){strcpy(first_aianim,"null");invalid|=1u<<4;}
     int fx_written=coh_initial_netfx_probe_json(&h->initial_netfx,first_netfx,sizeof(first_netfx));
-    if(fx_written<=0||(size_t)fx_written>=sizeof(first_netfx))strcpy(first_netfx,"null");
+    if(fx_written<=0||(size_t)fx_written>=sizeof(first_netfx)){strcpy(first_netfx,"null");invalid|=1u<<5;}
     int costume_written=coh_initial_costume_probe_json(&h->initial_costume,first_costume,sizeof(first_costume));
-    if(costume_written<=0||(size_t)costume_written>=sizeof(first_costume))strcpy(first_costume,"null");
+    if(costume_written<=0||(size_t)costume_written>=sizeof(first_costume)){strcpy(first_costume,"null");invalid|=1u<<6;}
     int reward_written=coh_initial_reward_probe_json(&h->initial_reward,first_reward,sizeof(first_reward));
-    if(reward_written<=0||(size_t)reward_written>=sizeof(first_reward))strcpy(first_reward,"null");
+    if(reward_written<=0||(size_t)reward_written>=sizeof(first_reward)){strcpy(first_reward,"null");invalid|=1u<<7;}
     if(h->initial_reward_list.stage&&reward_written>1&&(size_t)reward_written<sizeof(first_reward)&&first_reward[reward_written-1]=='}') {
         char progress[COH_INITIAL_REWARD_LIST_REPORT_MAX];
         int progress_written=h->initial_partcount.stage?
@@ -369,8 +424,8 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         if(progress_written>0&&(size_t)progress_written<sizeof(progress)) {
             size_t at=(size_t)reward_written-1,room=sizeof(first_reward)-at;
             int appended=snprintf(first_reward+at,room,",\"progress\":%s}",progress);
-            if(appended<0||(size_t)appended>=room){first_reward[at]='}';first_reward[at+1]=0;}
-        }
+            if(appended<0||(size_t)appended>=room){first_reward[at]='}';first_reward[at+1]=0;invalid|=1u<<8;}
+        } else invalid|=1u<<8;
     }
     int receive_written=coh_receive_json(&h->receive,terminal,cleanup,receive,sizeof(receive));
     if(receive_written<=0||(size_t)receive_written>=sizeof(receive))strcpy(receive,"null");
@@ -394,10 +449,11 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
 #define U64(value) (unsigned long long)(value)
     int written=snprintf(json,sizeof(json),"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"diagnostic_only\":true,\"phase\":\"%s\","
         "\"capture_phase\":%u,\"status\":%u,\"last_status\":%u,\"failure_code\":\"%s\",\"failure\":%u,"
+        "\"owner_present\":true,\"owner_terminal\":%s,\"initial_observation_known\":true,\"initial_observed\":%s,"
         "\"local_development_auth\":%s,\"server_identity_bound\":%s,\"selected_owner_bound\":%s,"
         "\"groups_observed\":%s,\"raw_allents_observed\":%s,\"groups_observations\":%u,\"allents_observations\":%u,\"reqallents_sent\":%u,"
         "\"groups_lease_callbacks\":%u,\"initial_lease_callbacks\":%u,\"observer_status\":%u,"
-        "\"groups_bytes\":%llu,\"groups_bits\":%llu,\"initial_bytes\":%llu,\"initial_bits\":%llu,\"initial_post_command_cursor\":%llu,"
+        "\"groups_present_files\":%u,\"groups_roots\":%u,\"groups_bytes\":%llu,\"groups_bits\":%llu,\"initial_bytes\":%llu,\"initial_bits\":%llu,\"initial_post_command_cursor\":%llu,"
         "\"db_phase\":%u,\"map_phase\":%u,\"attempts\":%llu,\"character_lists\":%llu,\"character_choices\":%llu,\"map_handoffs\":%llu,"
         "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"cleanup_verified\":%s,\"cleanup_scope\":\"owned_transport_counters\","
         "\"suspend_requested\":%s,\"disconnect_requested\":%s,\"packet_copy_retained\":false,"
@@ -410,12 +466,13 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s,\"first_create\":%s,\"first_record_pose\":%s,\"first_record_sequence\":%s,\"first_record_triggered_moves\":%s,\"first_record_ai_animation\":%s,\"first_record_netfx\":%s,\"first_record_costume_prefix\":%s,\"first_reward_string\":%s}",
+        "\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
+        terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
         d.groups_observed&&h->groups_callbacks==1?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         d.groups_observations,d.allents_observations,d.reqallents_sent,h->groups_callbacks,h->allents_callbacks,status_number(h->observer_status),
-        U64(h->groups_bytes),U64(h->groups_bits),U64(h->initial_bytes),U64(h->initial_bits),U64(h->initial_cursor),
+        d.groups.present_files,d.groups.roots,U64(h->groups_bytes),U64(h->groups_bits),U64(h->initial_bytes),U64(h->initial_bits),U64(h->initial_cursor),
         (unsigned)local->db_phase,(unsigned)local->map_phase,U64(local->attempts),U64(local->character_lists),U64(local->character_choices),U64(local->map_handoffs),
         U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",h->suspended?"true":"false",h->disconnected?"true":"false",
         first->valid?"true":"false",(unsigned)first->local_phase,(unsigned)first->db_phase,(unsigned)first->map_phase,status_number(first->status),(unsigned)first->failure,
@@ -423,11 +480,29 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        request_available?"true":"false",request,receive,first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward);
+        request_available?"true":"false",request,receive);
+    const char *const details[8]={first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward};
+    size_t used=written>0?(size_t)written:sizeof(json);
+    int complete=written>0&&(size_t)written<sizeof(json)&&report_details(json,&used,details,invalid);
+    /* This emergency core is unreachable for supported numeric widths (covered
+     * by the maximum-width regression); retain actual state if a future core
+     * extension violates its reservation instead of replacing it with a phase. */
+    if(!complete)snprintf(json,sizeof(json),
+        "{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"diagnostic_only\":true,\"phase\":\"%s\","
+        "\"capture_phase\":%u,\"owner_present\":true,\"owner_terminal\":%s,\"initial_observation_known\":true,\"initial_observed\":%s,"
+        "\"groups_observed\":%s,\"groups_present_files\":%u,\"groups_roots\":%u,\"groups_bytes\":%llu,\"groups_bits\":%llu,"
+        "\"reqallents_sent\":%u,\"raw_allents_observed\":%s,\"initial_bytes\":%llu,\"initial_bits\":%llu,\"initial_post_command_cursor\":%llu,"
+        "\"status\":%u,\"failure\":%u,\"failure_code\":\"%s\",\"first_failure\":{\"valid\":%s,\"local_phase\":%u,\"db_phase\":%u,\"map_phase\":%u,\"status\":%u,\"failure\":%u},"
+        "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"cleanup_verified\":%s,\"packet_copy_retained\":false,"
+        "\"report_limit_bytes\":7168,\"report_truncated\":true,\"report_core_limit\":true,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false}",
+        phase_name(h,&d),(unsigned)d.phase,terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
+        d.groups_observed?"true":"false",d.groups.present_files,d.groups.roots,U64(h->groups_bytes),U64(h->groups_bits),d.reqallents_sent,
+        d.raw_allents_observed?"true":"false",U64(h->initial_bytes),U64(h->initial_bits),U64(h->initial_cursor),
+        status_number(first->valid?first->status:d.status),(unsigned)failure,failure_name(failure),first->valid?"true":"false",
+        (unsigned)first->local_phase,(unsigned)first->db_phase,(unsigned)first->map_phase,status_number(first->status),(unsigned)first->failure,
+        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false");
 #undef U64
-    coh_db_wipe(&d,sizeof(d));
-    if(written<0||(size_t)written>=sizeof(json))return (*env)->NewStringUTF(env,"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"REPORT_LIMIT\",\"world_authority\":false}");
-    return (*env)->NewStringUTF(env,json);
+    coh_db_wipe(&d,sizeof(d));return (*env)->NewStringUTF(env,json);
 }
 JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_suspend(JNIEnv *env,jclass cls,jlong token) {
     (void)env;(void)cls;Interop *h=owner(token);if(!h||h->busy||h->disconnected||h->suspended)return;

@@ -15,6 +15,7 @@ from interop_emulator_check import InteropCheck, numeric_snapshot, unchanged_obs
 from emulator_check import PACKAGE, MAIN, installed_apk_contract
 from package_check import BUILD_PROFILES, check_build_identity
 from interop_probe_contract import separate_current_probes
+from report_diagnostic_contract import separate_report_extension
 
 COUNTERS = ('udp_datagrams_received udp_peer_rejects udp_truncated udp_empty udp_malformed udp_unsupported '
             'udp_receive_budget_exhausted link_received link_duplicates link_malformed link_unsupported '
@@ -67,9 +68,9 @@ def memory_snapshot(report):
     return {row['phase']: row for row in rows}
 
 
-def current_snapshot(value, require_current_probes=False):
+def current_snapshot(value, require_current_probes=False, require_report_extension=False):
     need(isinstance(value, dict) and 'receive_diagnostics' in value, 'new receive observation absent')
-    legacy = dict(value)
+    legacy = separate_report_extension(value, required=require_report_extension)
     receive = legacy.pop('receive_diagnostics')
     legacy = separate_current_probes(legacy, required=require_current_probes)
     numeric_snapshot(legacy)
@@ -100,11 +101,15 @@ class FragmentCheck(InteropCheck):
     def world(self, phase, label, seconds=60):
         report = self.wait_report('native-client-report.json', lambda x: x.get('connection_mode') == 'WORLD_HANDOFF' and x.get('world_handoff', {}).get('phase') in phase, label, seconds=seconds)
         need(report.get('preview_is_server_world') is False, 'preview became authoritative')
-        current_snapshot(report['world_handoff'], self.args.build_profile == 'memory-diagnostic')
+        current_snapshot(report['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic'), self.args.build_profile == 'report-diagnostic')
+        if self.args.build_profile == 'report-diagnostic':
+            observation = report['world_handoff']
+            expected = ('INITIAL_PACKET_OBSERVED' if observation['initial_observed'] else 'NOT_OBSERVED') if observation['initial_observation_known'] else 'UNKNOWN'
+            need(report.get('diagnostic_states', {}).get('initial_packet') == expected, 'Android initial packet observation differs from independent native control')
         return report
 
     def record_snapshot(self, label, report):
-        value = current_snapshot(report['world_handoff'], self.args.build_profile == 'memory-diagnostic')
+        value = current_snapshot(report['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic'), self.args.build_profile == 'report-diagnostic')
         (self.args.output / (label + '-world-handoff.json')).write_text(json.dumps(value, indent=2) + '\n')
         return value
 
@@ -127,7 +132,10 @@ class FragmentCheck(InteropCheck):
         self.tap('Launch native client')
         native = self.wait_report('native-client-report.json', lambda x: x.get('assets_verified') is True and x.get('native', {}).get('frames', 0) >= 30, 'native Activity available')
         need(native['world_handoff'] == IDLE_REPORT, 'handoff began without explicit action')
-        if self.args.build_profile == 'memory-diagnostic':
+        if self.args.build_profile == 'report-diagnostic':
+            need(native.get('diagnostic_states', {}).get('initial_packet') == 'UNKNOWN', 'idle owner fabricated a negative initial packet observation')
+            self.record('initial packet observation remains unknown before the first owner begins', initial_packet='UNKNOWN')
+        if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic'):
             before = max((row.get('sequence', 0) for row in native.get('memory_diagnostics', {}).get('phases', [])), default=0)
             self.tap('Sample memory')
             sampled, row = self.memory_phase('DIAGNOSTIC', before)
@@ -147,9 +155,9 @@ class FragmentCheck(InteropCheck):
                 if label == 'fragment-multi':
                     self.export_native()
                     exported = json.loads((self.args.output / 'exported-native-report.json').read_bytes())
-                    current_snapshot(exported['world_handoff'], self.args.build_profile == 'memory-diagnostic')
+                    current_snapshot(exported['world_handoff'], self.args.build_profile in ('memory-diagnostic', 'report-diagnostic'), self.args.build_profile == 'report-diagnostic')
                     unchanged_observations(captured['world_handoff'], exported['world_handoff'])
-                    if self.args.build_profile == 'memory-diagnostic':
+                    if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic'):
                         memory_snapshot(exported)
                     need(exported['world_handoff']['receive_diagnostics'] == receive, 'SAF export changed new receive observation')
                     self.record('new receive projection survives actual SAF export', numeric_only=True, world_authority=False)
@@ -158,7 +166,7 @@ class FragmentCheck(InteropCheck):
                 unchanged_observations(captured['world_handoff'], closed['world_handoff'])
                 need(closed['world_handoff']['cleanup_verified'] is True, 'new fragment owner left transport open')
             self.fragment_receipt(label, expected)
-        if self.args.build_profile == 'memory-diagnostic':
+        if self.args.build_profile in ('memory-diagnostic', 'report-diagnostic'):
             connected, connection = self.memory_phase('NATIVE_CONNECTION')
             session = connected['session_id']
             before = connected['memory_diagnostics']['samples']
@@ -182,7 +190,7 @@ class FragmentCheck(InteropCheck):
             'original_Auth_Db_Map_service_execution': False, 'whole_original_ALLENTS_producer': False,
             'normal_version_checksum_policy_qualified': False, 'complete_initial_character': False, 'actor_publication': False,
             'ACK_authority': False, 'world_authority': False, 'physical_Thor_qualified': False,
-            'whole_process_memory_measured': False, 'app_self_process_memory_observer_executed': self.args.build_profile == 'memory-diagnostic', 'old_framework_suite_executed': False}
+            'whole_process_memory_measured': False, 'app_self_process_memory_observer_executed': self.args.build_profile in ('memory-diagnostic', 'report-diagnostic'), 'old_framework_suite_executed': False}
         (self.args.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
 
 
@@ -208,7 +216,7 @@ def main():
     package = json.loads(args.package_receipt.read_bytes())
     need(package['status'] == 'passed' and package['abi'] == 'x86_64' and package['package'] == PACKAGE and package['source_commit'] == runtime_revision, 'new APK identity differs')
     check_build_identity(package['version_code'], package['version_name'], args.build_profile)
-    if args.build_profile == 'memory-diagnostic':
+    if args.build_profile in ('memory-diagnostic', 'report-diagnostic'):
         need(package.get('build_profile') == args.build_profile and package.get('process_memory_jni_entrypoint') == 'Java_org_coh_nativecombined_LocalNative_processMemory', 'memory diagnostic package audit absent')
     need(package['apk']['bytes'] == args.apk.stat().st_size and package['apk']['sha256'] == sha(args.apk.read_bytes()), 'APK receipt differs')
     need(package['signer_certificate_sha256'] == '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522', 'accepted signer changed')

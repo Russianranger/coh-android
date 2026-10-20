@@ -14,6 +14,9 @@ public final class InteropNative {
     public static native byte[] characters(long handle);
     public static native int choose(long handle, int wireSlot, long nowMs);
     public static native String report(long handle);
+    /** Scalar owner state independent of bounded report serialization.
+     * Bits: owner present=1, terminal=2, raw initial observed=4, characters ready=8. */
+    public static native int controlState(long handle);
     public static native void disconnect(long handle);
     public static native void suspend(long handle);
     public static native void close(long handle);

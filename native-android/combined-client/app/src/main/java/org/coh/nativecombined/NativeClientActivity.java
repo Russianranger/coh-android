@@ -82,6 +82,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private volatile String networkReport = "{\"phase\":\"IDLE\"}";
     private volatile String localNetworkReport = networkReport;
     private volatile String interopReport = "{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"IDLE\",\"world_authority\":false}";
+    private final HandoffState handoffState=new HandoffState();
+    private boolean captureTelemetryPublished;
     private volatile boolean networkForeground, networkConnecting, networkRequested;
     private volatile long networkAttempt;
     // Transport handle and policy identity are owned exclusively by networkWorker.
@@ -276,6 +278,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     }
     private void connectLocalServer(NetworkMode mode) {
         if(destroying||returningToLauncher||networkConnecting||!networkForeground)return;
+        if(mode==NetworkMode.WORLD_HANDOFF&&networkMode==mode&&handoffState.blocksNewAttempt())return;
         final long attempt=++networkAttempt;networkRequested=true;
         MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.NATIVE_CONNECTION);
         networkConnecting=true;connectButton.setEnabled(false);handoffButton.setEnabled(false);
@@ -298,6 +301,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                         : LocalNative.begin(policy.getInt("db_port"),policy.getString("account"),policy.getInt("net_version"),
                             policy.getBoolean("encryption_required"),policy.getBoolean("outbound_compressed"),policyCheckedAt);
                 if(networkHandle==0)throw new IllegalStateException("Local owner rejected policy");
+                if(mode==NetworkMode.WORLD_HANDOFF){handoffState.begin();captureTelemetryPublished=false;}
                 publishNetwork();
             } catch(Exception problem) {
                 storeNetworkReport("{\"phase\":\"POLICY_UNAVAILABLE\",\"live_world_rendered\":false,\"authserver_authenticated\":false,\"world_authority\":false}");
@@ -317,11 +321,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     }
     // Every handle operation runs on networkWorker, including mode switches.
     private void disconnectNetwork() {
-        if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.disconnect(networkHandle);
+        if(networkMode==NetworkMode.WORLD_HANDOFF){InteropNative.disconnect(networkHandle);handoffState.stopped();}
         else LocalNative.disconnect(networkHandle);
     }
     private void suspendNetwork() {
-        if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.suspend(networkHandle);
+        if(networkMode==NetworkMode.WORLD_HANDOFF){InteropNative.suspend(networkHandle);handoffState.stopped();}
         else LocalNative.suspend(networkHandle);
     }
     private void retireNetworkOwner() {
@@ -333,25 +337,32 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 if(mode==NetworkMode.WORLD_HANDOFF)InteropNative.close(retiring);
                 else LocalNative.close(retiring);
             }
-        } finally {networkHandle=0;networkPolicy=null;}
+        } finally {networkHandle=0;networkPolicy=null;if(mode==NetworkMode.WORLD_HANDOFF)handoffState.retired();}
     }
     private void networkTick() {
         if(destroying||!networkForeground||!networkRequested||networkHandle==0)return;
         try {
+            // JSON is diagnostic output. Completion and ownership come from the
+            // same serialized native executor even if a report is unavailable.
+            if(networkMode==NetworkMode.WORLD_HANDOFF) {
+                handoffState.control(InteropNative.controlState(networkHandle));
+                if(!handoffState.shouldService())return;
+            }
             long now=SystemClock.elapsedRealtime();
             if(now-policyCheckedAt>=1000) {
                 JSONObject policy=localPolicy();
                 if(!sameNetworkPolicy(policy))throw new IllegalStateException("Server policy replaced");
                 policyCheckedAt=now;
             }
-            String phase=new JSONObject(networkReport).optString("phase","IDLE");
-            if("SUSPENDED".equals(phase)||"CLOSED".equals(phase)||"CANCELLED".equals(phase)
+            String phase=new JSONObject(networkReport).optString("phase","UNKNOWN");
+            if(networkMode!=NetworkMode.WORLD_HANDOFF&&("SUSPENDED".equals(phase)||"CLOSED".equals(phase)||"CANCELLED".equals(phase)
                     ||"FAILED".equals(phase)||"TIMED_OUT".equals(phase)||"UNSUPPORTED".equals(phase)
-                    ||"INITIAL_OBSERVED".equals(phase)||"POLICY_UNAVAILABLE".equals(phase))return;
+                    ||"INITIAL_OBSERVED".equals(phase)||"POLICY_UNAVAILABLE".equals(phase)))return;
             if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.service(networkHandle,now);
             else LocalNative.service(networkHandle,now);
             publishNetwork();
-            if(!charactersPublished&&"CHARACTERS_READY".equals(new JSONObject(networkReport).optString("phase"))) {
+            if(!charactersPublished&&(networkMode==NetworkMode.WORLD_HANDOFF?handoffState.charactersReady():
+                    "CHARACTERS_READY".equals(new JSONObject(networkReport).optString("phase")))) {
                 byte[] list=networkMode==NetworkMode.WORLD_HANDOFF?InteropNative.characters(networkHandle):LocalNative.characters(networkHandle);
                 if(list!=null) {
                     JSONArray characters=new JSONArray(new String(list,StandardCharsets.UTF_8));
@@ -365,30 +376,79 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             main.post(() -> {if(!destroying)networkStatus.setText("Client suspended • Start/verify the local server, then connect again.");});
         }
     }
+    private String checkedHandoffReport(String next) {
+        JSONObject report;
+        try {report=new JSONObject(next);}
+        catch(Exception invalid) {report=new JSONObject();}
+        try {
+            if(!(report.opt("schema") instanceof String))report.put("schema","coh-native-initial-interop-numeric-v1");
+            report.put("diagnostic_only",true);
+            for(String flag:new String[]{"authserver_authenticated","source_generation_admitted","complete_initial_character",
+                    "actor_publication","ack_permitted","world_authority","live_world_rendered"})
+                if(!(report.opt(flag) instanceof Boolean))report.put(flag,false);
+            String phase=report.optString("phase","REPORT_UNAVAILABLE");
+            handoffState.phase(phase);
+            if(report.opt("raw_allents_observed") instanceof Boolean
+                    &&!Boolean.FALSE.equals(report.opt("initial_observation_known"))
+                    &&(Boolean.TRUE.equals(report.opt("raw_allents_observed"))
+                        ||Boolean.TRUE.equals(report.opt("initial_observation_known"))||handoffState.controlKnown()))
+                handoffState.initial(report.getBoolean("raw_allents_observed"));
+            JSONObject first=report.optJSONObject("first_failure");
+            if(first!=null&&Boolean.TRUE.equals(first.opt("valid"))) {
+                String[] fields={"local_phase","db_phase","map_phase","status","failure"};
+                long[] values=new long[fields.length];boolean numeric=true;
+                for(int i=0;i<fields.length;i++) {
+                    Object value=first.opt(fields[i]);
+                    if(!(value instanceof Number)||((Number)value).longValue()<0){numeric=false;break;}
+                    values[i]=((Number)value).longValue();
+                }
+                if(numeric)handoffState.firstFailure(values[0],values[1],values[2],values[3],values[4]);
+            }
+            long[] saved=handoffState.firstFailure();
+            if(saved!=null)report.put("first_failure",new JSONObject().put("valid",true)
+                    .put("local_phase",saved[0]).put("db_phase",saved[1]).put("map_phase",saved[2])
+                    .put("status",saved[3]).put("failure",saved[4]));
+            report.put("phase",phase).put("last_observed_phase",handoffState.lastPhase())
+                    .put("control_observation",new JSONObject().put("source","native_scalar_control_state")
+                        .put("owner_present",handoffState.ownerPresent()).put("known",handoffState.controlKnown())
+                        .put("owner_terminal",handoffState.terminal())
+                        .put("initial_observed",handoffState.initialObserved()==null?JSONObject.NULL:handoffState.initialObserved()))
+                    .put("report_serialization_unknown","REPORT_LIMIT".equals(phase)||"REPORT_UNAVAILABLE".equals(phase));
+            return report.toString();
+        } catch(Exception unavailable) {
+            // Fixed fallback retains no identity/packet or exception text. The
+            // independent control state and first failure remain in memory.
+            return "{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"diagnostic_only\":true,\"phase\":\"REPORT_UNAVAILABLE\",\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false}";
+        }
+    }
     private void storeNetworkReport(String next) {
-        if(networkMode==NetworkMode.WORLD_HANDOFF)interopReport=next;else localNetworkReport=next;
+        if(networkMode==NetworkMode.WORLD_HANDOFF){next=checkedHandoffReport(next);interopReport=next;}else localNetworkReport=next;
         networkReport=next;
     }
     private void publishNetwork() {
         if(networkHandle==0)return;
+        if(networkMode==NetworkMode.WORLD_HANDOFF)handoffState.control(InteropNative.controlState(networkHandle));
         String next=networkMode==NetworkMode.WORLD_HANDOFF?InteropNative.report(networkHandle):LocalNative.report(networkHandle);
-        if(!next.equals(networkReport)) {
-            storeNetworkReport(next);
-            if(next.contains("\"phase\":\"INITIAL_OBSERVED\""))MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.DIAGNOSTIC);
+        String previous=networkReport;storeNetworkReport(next);
+        if(!networkReport.equals(previous)) {
+            if(networkMode==NetworkMode.WORLD_HANDOFF&&Boolean.TRUE.equals(handoffState.initialObserved())&&!captureTelemetryPublished) {
+                captureTelemetryPublished=true;MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.DIAGNOSTIC);
+            }
             main.post(() -> {if(!destroying)updateNetworkUi();});
         }
     }
     private void updateNetworkUi() {
         try {
-            JSONObject report=new JSONObject(networkReport);String phase=report.optString("phase","IDLE");
-            boolean active="DB_CONNECTING".equals(phase)||"CHARACTERS_READY".equals(phase)
+            JSONObject report=new JSONObject(networkReport);String phase=report.optString("phase","UNKNOWN");
+            boolean active=networkMode==NetworkMode.WORLD_HANDOFF?handoffState.blocksNewAttempt():"DB_CONNECTING".equals(phase)||"CHARACTERS_READY".equals(phase)
                     ||"MAP_CONNECTING".equals(phase)||"SCENE_INCOMPLETE".equals(phase)
                     ||"WAIT_GROUPS".equals(phase)||"WAIT_ALLENTS".equals(phase);
             boolean available=networkForeground&&!networkConnecting&&!returningToLauncher;
             connectButton.setEnabled(available&&(!active||networkMode!=NetworkMode.LOCAL));
             handoffButton.setEnabled(available&&(!active||networkMode!=NetworkMode.WORLD_HANDOFF));
             if(networkMode==NetworkMode.WORLD_HANDOFF) {
-                String detail="CHARACTERS_READY".equals(phase)?"Select an existing disposable-profile character."
+                String detail=handoffState.charactersReady()?"Select an existing disposable-profile character."
+                        : Boolean.TRUE.equals(handoffState.initialObserved())?"Raw initial update observed. Complete character decoding remains pending."
                         : "WAIT_GROUPS".equals(phase)||"MAP_CONNECTING".equals(phase)?"Waiting for Map scene data (GROUPS)."
                         : "WAIT_ALLENTS".equals(phase)?"GROUPS received; REQALLENTS queued. Waiting for a raw initial update."
                         : "INITIAL_OBSERVED".equals(phase)?"Raw initial update observed. Complete character decoding remains pending."
@@ -400,7 +460,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                         : "Real DB/Map diagnostic progress only.";
                 networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nWorld authority: false. The scene remains a local preview."
                         +("INITIAL_OBSERVED".equals(phase)?"\nMISSING_CATALOG_GENERATION • INCOMPLETE_CHARACTER_DATA • UNRESOLVED_RESOURCE_IDENTITY":""));
-                if(!"CHARACTERS_READY".equals(phase)){characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);}
+                if(!handoffState.charactersReady()){characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);}
                 return;
             }
             String detail="SCENE_INCOMPLETE".equals(phase)
@@ -439,7 +499,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         } catch(Exception impossible) {networkStatus.setText("Server protocol report unavailable");}
     }
     private void showCharacters(JSONArray characters,long attempt) {
-        try {if(!"CHARACTERS_READY".equals(new JSONObject(networkReport).optString("phase")))return;}
+        try {if(networkMode==NetworkMode.WORLD_HANDOFF?!handoffState.charactersReady():
+                !"CHARACTERS_READY".equals(new JSONObject(networkReport).optString("phase")))return;}
         catch(Exception invalid){return;}
         characterButtons.removeAllViews();
         for(int i=0;i<characters.length();i++) {
@@ -562,7 +623,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
                 .put("server_protocol",new JSONObject(localNetworkReport)).put("world_handoff",new JSONObject(interopReport))
                 .put("memory_diagnostics",MemoryTelemetry.snapshot())
-                .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(new JSONObject(interopReport).optBoolean("raw_allents_observed"),false)))
+                .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(handoffState.initialObserved(),false)))
                 .put("connection_mode",networkMode.name()).put("preview_is_server_world",false)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)

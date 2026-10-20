@@ -1,4 +1,43 @@
-# CoH native: bounded integration and Combined 0.1.10 diagnostic
+# CoH native: Thor report regression and Combined 0.1.11 follow-up
+
+Current task starts from `5eef7eae530b60b30b9196ac75fec90dcd1b12d6`,
+`native-android` only. Follow-up qualification/publication is pending until the
+new report, phase, package and Android 13 gates pass. Gates 25–27 remain OPEN.
+
+Physical Thor 0.1.10 regression (user-supplied observations, not a new host test):
+exact APK SHA-256 `7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf`.
+Server ready ~395 s; separate local protocol accepted one character list,
+choice and Map handoff, with two sockets opened/two closed. Normal GROUPS:
+42,889 bytes, 508 present files, 33 roots, 343,112 bits. World-handoff report
+became `REPORT_LIMIT` when the fixed 7,168-byte JSON formatter overflowed.
+The fallback erased capture/first-failure evidence; derived `initial_packet:
+NOT_OBSERVED` is inconclusive. It does not disprove initial packet receipt.
+Sampled peak app RSS ~198.2 MiB/PSS ~93.3 MiB; minimum system headroom ~7.16 GiB;
+zero sampler failures/sustained memory-pressure stops. Two native EGL contexts
+completed with clean object release. These observations do not establish
+genuine server-world entry or complete character/catalog/ACK authority.
+
+Fix: bounded essential-first numeric report, deterministic optional omission,
+explicit truncation metadata, and a separate native owner/control-state query.
+Android must preserve owner activity, completed capture and first failure even
+when report serialization is partial; unknown observation is not NOT_OBSERVED.
+No auto-reconnect or application ACK is added. Existing report/parser/memory
+limits, game data, assets, server runtime and signer stay preserved.
+
+Focused host qualification: release/ASan/UBSan each 211 checks over the complete
+retained source-layout probe chain, maximum supported request/receive counters,
+full-width scalar stress, explicit progress omission and INITIAL_OBSERVED/CLOSED
+cleanup. The original formatter requires 7,355 bytes in the supported maximum
+fixture, exceeding 7,168; corrected maximum output is 6,863 bytes. All 70 source
+closure pins match; no new report heap allocation. LeakSanitizer is unavailable
+under host ptrace restrictions; owned zero-wipe/allocation controls pass, without
+a leak-proof claim. Java phase controls: 44; phase-memory checks: 2,899; memory
+worker: 34 checks/9,000 requests/two injected failures. Busy/unavailable and
+server-only initial observation now stays UNKNOWN; a positive observation is
+sticky through cleanup. These host tests do not qualify Android or Thor.
+
+The qualified 0.1.10 build and earlier integration evidence below remain
+historical acceptance records; they do not qualify the 0.1.11 candidate.
 
 Use `native-android` only. Recovered `7030870e`; three independent worktrees and
 sequential expected-parent, non-force publication. Gates 1–24 remain accepted

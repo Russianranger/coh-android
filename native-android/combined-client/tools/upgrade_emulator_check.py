@@ -14,7 +14,7 @@ import subprocess
 import time
 import zipfile
 from prepare import safe_zip
-from package_check import PACKAGE, check_build_identity
+from package_check import PACKAGE, BUILD_PROFILES, check_build_identity
 
 ROOT = Path(__file__).resolve().parents[3]
 PREVIOUS_REVISION = 'd439f56ba05c3051e50c630c40afe796a9c2ec4e'
@@ -26,6 +26,19 @@ PREVIOUS_APK = 'CoH-Native-Combined-0.1.9-gates25-27-x86_64.apk'
 PREVIOUS_APK_BYTES = 13182827
 PREVIOUS_APK_SHA = '17fdc39f01dd282ea2787b4f4f0fbc7e3f2c981f92ebe2cabe1c2afed782f6f4'
 SIGNER = '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
+# Historical pins remain the default. The report regression must additionally
+# exercise the exact installed 0.1.10 donor, not infer that path from 0.1.9.
+PREVIOUS_INPUTS = {
+    'original-fragment': dict(revision=PREVIOUS_REVISION, artifact=PREVIOUS_ARTIFACT,
+        run=PREVIOUS_RUN, archive_bytes=PREVIOUS_ARCHIVE_BYTES, archive_sha256=PREVIOUS_ARCHIVE_SHA,
+        apk=PREVIOUS_APK, apk_bytes=PREVIOUS_APK_BYTES, apk_sha256=PREVIOUS_APK_SHA),
+    'memory-diagnostic': dict(revision='ae5a11d0c0be5098d0aec66370dda99c055167ee', artifact='12226012507',
+        run='39334606957', archive_bytes=17868604,
+        archive_sha256='0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04',
+        apk='CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk', apk_bytes=13233003,
+        apk_sha256='4cba32800790112c22146f6f6f8f773436a816de44c3e83d1c9503b0e9ec4d49'),
+}
+
 
 
 def need(ok, message):
@@ -37,19 +50,20 @@ def pin(raw):
     return {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
 
 
-def previous_inputs(archive_path, output):
-    need(archive_path.stat().st_size == PREVIOUS_ARCHIVE_BYTES, 'previous artifact byte length differs')
-    need(hashlib.sha256(archive_path.read_bytes()).hexdigest() == PREVIOUS_ARCHIVE_SHA, 'previous artifact SHA256 differs')
+def previous_inputs(archive_path, output, profile='original-fragment'):
+    expected = PREVIOUS_INPUTS[profile]
+    need(archive_path.stat().st_size == expected['archive_bytes'], 'previous artifact byte length differs')
+    need(hashlib.sha256(archive_path.read_bytes()).hexdigest() == expected['archive_sha256'], 'previous artifact SHA256 differs')
     with zipfile.ZipFile(archive_path) as archive:
         safe_zip(archive)
         need(len(archive.infolist()) <= 4096, 'previous artifact member count exceeds bound')
-        need(archive.getinfo(PREVIOUS_APK).file_size == PREVIOUS_APK_BYTES, 'previous APK member size differs')
+        need(archive.getinfo(expected['apk']).file_size == expected['apk_bytes'], 'previous APK member size differs')
         need(archive.getinfo('x86_64-package.json').file_size <= 256 * 1024, 'previous receipt exceeds bound')
-        raw = archive.read(PREVIOUS_APK)
+        raw = archive.read(expected['apk'])
         receipt = json.loads(archive.read('x86_64-package.json'))
-    need(pin(raw) == {'bytes': PREVIOUS_APK_BYTES, 'sha256': PREVIOUS_APK_SHA}, 'previous APK pin differs')
-    package_receipt(receipt, raw, 'original-fragment', PREVIOUS_REVISION)
-    target = output / PREVIOUS_APK
+    need(pin(raw) == {'bytes': expected['apk_bytes'], 'sha256': expected['apk_sha256']}, 'previous APK pin differs')
+    package_receipt(receipt, raw, profile, expected['revision'])
+    target = output / expected['apk']
     with target.open('xb') as stream:
         stream.write(raw)
     return target, receipt
@@ -205,7 +219,7 @@ class UpgradeCheck:
     def run(self):
         need(self.text('shell', 'getprop', 'ro.boot.qemu').strip() == '1' and self.text('shell', 'getprop', 'ro.product.cpu.abi').strip() == 'x86_64' and self.text('shell', 'getprop', 'ro.build.version.sdk').strip() == '33', 'disposable Android13 x86_64 emulator required')
         need(not self.text('shell', 'pm', 'list', 'packages', '--user', '0', PACKAGE).strip(), 'refuse an emulator with an existing app')
-        previous, old_receipt = previous_inputs(self.args.previous_archive, self.args.output)
+        previous, old_receipt = previous_inputs(self.args.previous_archive, self.args.output, self.args.previous_profile)
         head = subprocess.check_output(['git', '-C', ROOT, 'rev-parse', 'HEAD'], text=True).strip()
         need(not os.environ.get('GITHUB_SHA') or head == os.environ['GITHUB_SHA'], 'workflow revision differs')
         candidate = json.loads(self.args.package_receipt.read_bytes())
@@ -215,7 +229,7 @@ class UpgradeCheck:
             admission = json.loads(self.args.source_admission.read_bytes())
             need(admission['schema'] == 'coh-combined-exact-apk-requalification-v1' and admission['passed'] is True and admission['candidate_source_revision'] == candidate_revision and admission['qualification_source_revision'] == head and admission['runtime_and_build_inputs_unchanged'] is True, 'current source is not admitted for the exact candidate APK')
             need(admission['candidate_apks']['x86_64'] == pin(self.args.apk.read_bytes()), 'admitted candidate APK bytes differ')
-        package_receipt(candidate, self.args.apk.read_bytes(), 'memory-diagnostic', candidate_revision)
+        package_receipt(candidate, self.args.apk.read_bytes(), self.args.build_profile, candidate_revision)
         self.install(previous, 'previous')
         uid = self.identity(previous, old_receipt, 'previous-installed')
         self.launch_and_quiesce(old_receipt, 'previous-launch')
@@ -236,7 +250,7 @@ class UpgradeCheck:
             self.launch_and_quiesce(candidate, 'candidate-reinstall-launch')
             self.preserved('after-candidate-reinstall')
         receipt = {'schema': 'coh-android-package-update-storage-v1', 'passed': True, 'source_revision': head,
-            'previous': {'run_id': PREVIOUS_RUN, 'artifact_id': PREVIOUS_ARTIFACT, 'source_revision': PREVIOUS_REVISION, 'archive_bytes': PREVIOUS_ARCHIVE_BYTES, 'archive_sha256': PREVIOUS_ARCHIVE_SHA, 'apk_bytes': PREVIOUS_APK_BYTES, 'apk_sha256': PREVIOUS_APK_SHA},
+            'previous': dict(PREVIOUS_INPUTS[self.args.previous_profile], build_profile=self.args.previous_profile),
             'candidate_apk': candidate['apk'], 'candidate_source_revision': candidate_revision,
             'source_admission_sha256': hashlib.sha256(self.args.source_admission.read_bytes()).hexdigest() if self.args.source_admission else None,
             'checks': self.proofs, 'synthetic_sentinel_bytes': sum(map(len, sentinels().values())),
@@ -255,6 +269,8 @@ def main():
     parser.add_argument('--serial', required=True)
     for name in ('apk', 'package-receipt', 'previous-archive', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--build-profile', choices=BUILD_PROFILES, default='memory-diagnostic')
+    parser.add_argument('--previous-profile', choices=PREVIOUS_INPUTS, default='original-fragment')
     parser.add_argument('--exercise-debuggable-downgrade', action='store_true')
     parser.add_argument('--candidate-source-revision', help='Exact reused APK revision; requires an independent current-source admission when different from HEAD')
     parser.add_argument('--source-admission', type=Path)

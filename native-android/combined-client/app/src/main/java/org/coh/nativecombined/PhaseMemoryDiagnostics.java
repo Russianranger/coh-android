@@ -35,12 +35,22 @@ final class PhaseMemoryDiagnostics {
         out.put("world_authority",false); out.put("application_ack_permitted",false);
         return out;
     }
+    static Map<String,Object> states(Boolean initialObserved, boolean pressureRefusal) {
+        Map<String,Object> out=states(Boolean.TRUE.equals(initialObserved),pressureRefusal);
+        if(initialObserved==null)out.put("initial_packet","UNKNOWN");
+        return out;
+    }
     static Map<String,Object> states(boolean initialObserved,String memoryReason) {
         boolean pressure="ANDROID_LOW_MEMORY".equals(memoryReason)||"SERVER_START_SYSTEM_MEMORY_PRESSURE".equals(memoryReason)
                 ||"SERVER_START_JAVA_HEAP_PRESSURE".equals(memoryReason)||"SERVER_SUSTAINED_MEMORY_PRESSURE".equals(memoryReason);
         Map<String,Object> out=states(initialObserved,pressure);
         if("SERVER_MEMORY_TELEMETRY_UNAVAILABLE".equals(memoryReason)||"SERVER_MEMORY_NOT_ADMITTED".equals(memoryReason))
             out.put("memory",State.MEMORY_TELEMETRY_UNAVAILABLE.name());
+        return out;
+    }
+    static Map<String,Object> states(Boolean initialObserved,String memoryReason) {
+        Map<String,Object> out=states(Boolean.TRUE.equals(initialObserved),memoryReason);
+        if(initialObserved==null)out.put("initial_packet","UNKNOWN");
         return out;
     }
     private static Long known(Long value) { return value!=null&&value>=0?value:null; }

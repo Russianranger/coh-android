@@ -84,7 +84,7 @@ public final class ServerService extends Service {
                 .put("storage_available_bytes",getFilesDir().getUsableSpace()).put("server_start_available_bytes",startFreeBytes)
                 .put("server_memory",new JSONObject(serverMemory.snapshot())).put("android_process_exits",processExits).put("android_exit_history_status",exitHistoryStatus)
                 .put("memory_diagnostics",MemoryTelemetry.snapshot())
-                .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(false,(String)serverMemory.snapshot().get("reason"))))
+                .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states((Boolean)null,(String)serverMemory.snapshot().get("reason"))))
                 .put("imports",importStatus).put("message",message).put("progress_done",progressDone).put("progress_total",progressTotal)
                 .put("server",new JSONObject().put("phase",phase).put("ready",ready).put("session_id",session).put("guest_exit_code",guestExit).put("owned_process_alive",guest!=null&&guest.isAlive())
                     .put("failure_code",d.failure).put("last_stage",d.stage).put("elapsed_ms",d.elapsedMs).put("stage_elapsed_ms",d.stageElapsedMs).put("stages",stages))

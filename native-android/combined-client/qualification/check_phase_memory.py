@@ -69,6 +69,10 @@ public final class PhaseMemoryTest {
   need(number(p.snapshot(),"latest_sample_elapsed_ms")==Long.MAX_VALUE);need(number(p.snapshot(),"sampled_peak_process_rss_bytes")==Long.MAX_VALUE);
   Map<String,Object>s=PhaseMemoryDiagnostics.states(true,false);need(s.get("catalog").equals("MISSING_CATALOG_GENERATION"));need(s.get("character").equals("INCOMPLETE_CHARACTER_DATA"));need(s.get("world_resource").equals("UNRESOLVED_RESOURCE_IDENTITY"));need(s.get("initial_packet").equals("INITIAL_PACKET_OBSERVED"));need(s.get("world_authority").equals(false));need(s.get("application_ack_permitted").equals(false));
   need(PhaseMemoryDiagnostics.states(false,true).get("memory").equals("MEMORY_PRESSURE_REFUSAL"));
+  need(PhaseMemoryDiagnostics.states((Boolean)null,false).get("initial_packet").equals("UNKNOWN"));
+  need(PhaseMemoryDiagnostics.states((Boolean)null,"SERVER_MEMORY_TELEMETRY_UNAVAILABLE").get("initial_packet").equals("UNKNOWN"));
+  need(PhaseMemoryDiagnostics.states((Boolean)null,"SERVER_MEMORY_TELEMETRY_UNAVAILABLE").get("memory").equals("MEMORY_TELEMETRY_UNAVAILABLE"));
+  need(PhaseMemoryDiagnostics.states((Boolean)null,"ANDROID_LOW_MEMORY").get("memory").equals("MEMORY_PRESSURE_REFUSAL"));
   for(String reason:new String[]{"SERVER_MEMORY_TELEMETRY_UNAVAILABLE","SERVER_MEMORY_NOT_ADMITTED"})need(PhaseMemoryDiagnostics.states(false,reason).get("memory").equals("MEMORY_TELEMETRY_UNAVAILABLE"));
   for(String reason:new String[]{"ANDROID_LOW_MEMORY","SERVER_START_SYSTEM_MEMORY_PRESSURE","SERVER_START_JAVA_HEAP_PRESSURE","SERVER_SUSTAINED_MEMORY_PRESSURE"})need(PhaseMemoryDiagnostics.states(false,reason).get("memory").equals("MEMORY_PRESSURE_REFUSAL"));
   need(p.snapshot().get("owned_guest_process_memory").toString().contains("unavailable"));need(p.snapshot().get("admission_authority").equals(false));need(p.snapshot().get("server_policy_thresholds_changed").equals(false));

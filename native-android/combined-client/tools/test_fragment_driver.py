@@ -178,7 +178,7 @@ class FragmentDriver(unittest.TestCase):
     def test_exact_upgrade_identity_source(self):
         source = (ROOT / 'native-android/combined-client/app/build.gradle').read_text()
         self.assertIn("applicationId 'org.coh.nativecombined'", source)
-        code, name = BUILD_PROFILES['memory-diagnostic']
+        code, name = BUILD_PROFILES['report-diagnostic']
         self.assertIn('versionCode ' + code, source)
         self.assertIn("versionName '" + name + "'", source)
         self.assertIn("storeFile file('../../session-client/app/test-signing/session-test.p12')", source)
@@ -190,7 +190,7 @@ class FragmentDriver(unittest.TestCase):
         self.assertEqual(BUILD_PROFILES['memory-diagnostic'], ('11', '0.1.10-memory-diagnostic-test'))
         for profile, identity in BUILD_PROFILES.items():
             check_build_identity(*identity, profile)
-            for rejected in (('10', '0.1.10-memory-diagnostic-test'), ('11', '0.1.9-gates25-27-test'), ('12', identity[1])):
+            for rejected in (('10', '0.1.10-memory-diagnostic-test'), ('11', '0.1.9-gates25-27-test'), (str(int(identity[0]) + 1), identity[1])):
                 with self.subTest(profile=profile, rejected=rejected), self.assertRaises(AssertionError):
                     check_build_identity(*rejected, profile)
         old_code, old_name = BUILD_PROFILES['original-fragment']

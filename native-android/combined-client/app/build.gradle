@@ -12,8 +12,8 @@ android {
         applicationId 'org.coh.nativecombined'
         minSdk 26
         targetSdk 35
-        versionCode 11
-        versionName '0.1.10-memory-diagnostic-test'
+        versionCode 12
+        versionName '0.1.11-report-diagnostic-test'
         ndk { abiFilters.addAll(selectedAbis) }
         externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath } }
     }

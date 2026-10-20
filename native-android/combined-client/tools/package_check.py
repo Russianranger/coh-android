@@ -15,6 +15,7 @@ PACKAGE = 'org.coh.nativecombined'
 BUILD_PROFILES = {
     'original-fragment': ('10', '0.1.9-gates25-27-test'),
     'memory-diagnostic': ('11', '0.1.10-memory-diagnostic-test'),
+    'report-diagnostic': ('12', '0.1.11-report-diagnostic-test'),
 }
 
 
@@ -58,7 +59,7 @@ def tool(args, name):
 
 
 def audit(args):
-    if args.build_profile == 'memory-diagnostic' and not args.require_interop:
+    if args.build_profile in ('memory-diagnostic', 'report-diagnostic') and not args.require_interop:
         raise ValueError('Memory diagnostic build must retain the independent interop library audit')
     if args.apk.stat().st_size > 25 << 20:
         raise ValueError('Combined APK exceeds bounded 25MiB small-core policy')
@@ -116,7 +117,7 @@ def audit(args):
                 assert abi == 'arm64-v8a' and pin(data) == receipt['proot_cores'][filename], 'PRoot core changed'
             if filename == 'libcoh_combined_network.so':
                 native_abis.add(abi)
-                if args.build_profile == 'memory-diagnostic':
+                if args.build_profile in ('memory-diagnostic', 'report-diagnostic'):
                     memory_entrypoint = process_memory_jni(data, args.readelf)
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}
