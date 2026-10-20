@@ -2064,7 +2064,7 @@
     "result": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete.",
     "next_action": "Development paused at user request after recording these reports."
   },
-  "next_action": "Install the signed0.1.17 ARM64 update, retain profile/imports, allow at least15seconds after pose lock, export the Combined ZIP, then stop normally.",
+  "next_action": "Install the unchanged signed 0.1.17 ARM64 update over 0.1.16, preserve data/profile/imports, hand off the same character once, wait 30 seconds after handoff, then export the Combined ZIP and stop normally.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -2813,7 +2813,7 @@
       "packet_bodytype": 4,
       "source_ent_type": "huge",
       "source_draw_records": 24,
-      "visible_draw_records": 14,
+      "visible_draw_records": 13,
       "distinct_geo_files": 11,
       "geo_files_in_retained_package_manifests": 8,
       "geo_files_not_in_checked_manifests": [
@@ -2828,7 +2828,15 @@
       "base_skeleton_source_bytes": 6171,
       "base_skeleton_source_sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
       "texture_resolution": "Candidate basename inventory only; actual archive existence lookup and matching textures still needed. No synthetic textures or bodytype substitution.",
-      "rendering_scope": "14 source-resolved visible draw records, not GPU draws. Actual matching Huge asset loading and skinned rendering remain unfinished; the box stays."
+      "rendering_scope": "13 source-resolved visible records, not GPU draws. Matching Huge asset loading and skinned rendering remain unfinished; live keeps the box.",
+      "clear_draw_records": 11,
+      "count_correction": {
+        "previous_visible_count": 14,
+        "actual_visible_count": 13,
+        "clear_records": 11,
+        "total_records": 24,
+        "scope": "Replayed the same retained snapshot through the original saved appearance plan binary;13 flags-zero records and11 CLEAR records. No new body type or geometry authority inferred."
+      }
     },
     "offline_power_names": {
       "source_commit": "578f1d147a5ee6c620cd638c56a43faa484e0543",
