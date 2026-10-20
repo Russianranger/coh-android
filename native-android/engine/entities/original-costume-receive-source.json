@@ -1,0 +1,21 @@
+{
+  "schema": "coh-original-costume-receiver-source-v1",
+  "source_sha256_lf": {
+    "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+    "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+  },
+  "unchanged_whole_functions_sha256_lf": {
+    "pktGetF": "466b27d9835bba9ebadd39151d5a0cbb6e98da2e7905f63dd606a46c3287a88c",
+    "pktGetIndexedString": "0da5abf7f138749c5018898b1044d40f1fe7b437be958dfd590efc6d9e760643",
+    "pktGetIndexedGeneric": "708c12ebce8951ce84c4f4c8c73e9edb0944af8ebd350ca6e39c1bfaa6a266a5",
+    "getCachedIndexedString": "a380e8ac86c4046beabed1bb04d95f86ecd342eefbf66d02556a873fb47021dd",
+    "getCachedIndexedColor": "e1bce822b65a9e18e6674e2270fa28de065b736b64e06960693a041f40f594ea",
+    "costume_receive": "b95b51d167699363b3f8548df9d9de5c305666400a08e2951618cbc4ab4c504d",
+    "getBodyTypeCount": "dde77b905a38c10452542457a5ccc4ad98337bdf1366c5395bfb340b157d1746"
+  },
+  "bodytype_definitions_sha256_lf": "e3692fa55e7d88fcda157e8325db3fd6dcd6804d663e19a0f77ea7c295b727f4",
+  "generated_sha256": "9e363c889547ae6b7aa61bd0e4e3439a08316bb9c713e14266365df8eed93fc4",
+  "wire_consumer": "whole unchanged costume_receive, not a source-order field rewrite",
+  "dictionary_capacity_or_slot_content_supplied": false
+}

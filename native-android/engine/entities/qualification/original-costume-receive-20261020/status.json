@@ -1,0 +1,104 @@
+{
+  "schema": "coh-original-costume-receiver-status-v1",
+  "worker": "C",
+  "status": "QUALIFIED bounded original receiver reuse",
+  "source_commit": "f320c3e6c1f626967ce1ff4fa4d1462b4ab8e7d8",
+  "tested_tree": "f13c72705f9f01b81c9ae11f9baf07c1ef2d596b",
+  "tests": {
+    "release": 27587,
+    "asan": 27587,
+    "ubsan": 27587
+  },
+  "original_sender_cases": 64,
+  "source_grammar": "Whole unchanged original costume_receive/cache/indexed/F/bodytype source; bounded primitive/member adapters only. No fields rewritten.",
+  "source_default": "Caller verified local BodyParts count; A uses B independently compared28. Native capacity30 never supplies default.",
+  "accepted_scope": "Complete literal/cache costume bodies can finish through all28 parts; stops at first original indexed dictionary capacity lookup BEFORE its index Pack. Bodytype/count validation source order retained. No new runtime gate or lease.",
+  "memory": {
+    "workspace_bytes": 65536,
+    "native_frame_sum": 680,
+    "call_stack_reserve": 4096,
+    "frames": [
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/../replication/coh_replication.c:8:12:valid",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/../replication/coh_replication.c:29:11:coh_rep_read",
+        "bytes": 24,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/../replication/coh_replication.c:38:11:coh_rep_pack",
+        "bytes": 144,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/coh_original_costume_receive.c:32:13:fail",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/coh_original_costume_receive.c:33:12:pktGetBits",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/coh_original_costume_receive.c:46:14:pktGetString",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/original_costume_receive.inc:35:5:coh_original_bodytype_count",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/original_costume_receive.inc:41:5:pktGetF",
+        "bytes": 32,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/original_costume_receive.inc:46:13:pktGetIndexedString",
+        "bytes": 32,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/coh_original_costume_receive.c:82:20:observed_cached_string",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/original_costume_receive.inc:87:5:pktGetIndexedGeneric",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/original_costume_receive.inc:160:5:source_costume_receive",
+        "bytes": 96,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/coh_original_costume_receive.c:92:13:run_source",
+        "bytes": 32,
+        "kind": "static"
+      },
+      {
+        "name": "/workspace/scratch/1959d9606401/worker-c-original/native-android/engine/entities/coh_original_costume_receive.c:99:11:coh_original_costume_receive",
+        "bytes": 128,
+        "kind": "static"
+      }
+    ],
+    "heap_allocations": 0,
+    "RSS_PSS": null,
+    "caller_initial_aggregate_ceiling": 8388608,
+    "workspace_must_be_charged_by_caller": true,
+    "leak_sanitizer_executed": false
+  },
+  "ci": "coordinator integration pending; focused local release/ASan/UBSan passed",
+  "physical_packet_replayed": false,
+  "world_or_ack_accepted": false,
+  "next_unknown": "Actual indexed ordinary/extra string or palette table capacity/content; same cursor/field/table kind reported. Complete existing raw slot projection reusable after direct local costume/supergroup-color input comparison.",
+  "next_action": "Integrate A shipping local28 path and run Thor to record actual next index boundary; add thin lookups against existing dictionary data when needed, without a new owner layer.",
+  "command": "flock /tmp/coh-cycle-build.lock python3 native-android/engine/entities/check_original_costume_receive.py --source-root <source-root> --work <fresh-work> --output <receipt>"
+}
