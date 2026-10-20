@@ -67,6 +67,18 @@ public final class CaptureStoreControls {
     private static void absent(File directory, File zip) throws Exception {
         require(SceneFrameCapture.metadata(directory) == null, "invalid metadata published");
         zip(directory, zip, false);
+        ByteArrayOutputStream untouched = new ByteArrayOutputStream();
+        require(!SceneFrameCapture.writeZip(directory, untouched), "invalid standalone ZIP accepted");
+        require(untouched.size() == 0, "invalid standalone ZIP touched output");
+    }
+    private static void directZip(File directory, File result) throws Exception {
+        final boolean[] closed = {false};
+        try (OutputStream output = new FilterOutputStream(new FileOutputStream(result)) {
+            public void close() throws IOException { closed[0] = true; super.close(); }
+        }) {
+            require(SceneFrameCapture.writeZip(directory, output), "standalone ZIP absent");
+            require(!closed[0], "standalone ZIP closed caller output");
+        }
     }
     public static void main(String[] args) throws Exception {
         File root = new File(args[0]), valid = new File(root, "valid");
@@ -78,6 +90,7 @@ public final class CaptureStoreControls {
         Files.write(new File(root, "expected.rgba").toPath(), first);
         Files.write(new File(root, "metadata.json").toPath(), metadata.getBytes("UTF-8"));
         zip(valid, new File(root, "valid.zip"), true);
+        directZip(valid, new File(root, "direct-valid.zip"));
         byte[] previous = Files.readAllBytes(store(valid).toPath());
 
         rejected(valid, null, 17, "abc9", previous, "null raw");
@@ -147,6 +160,7 @@ public final class CaptureStoreControls {
         require(maxMetadata.getBytes("UTF-8").length <= 4096, "metadata bound");
         Files.write(new File(root, "maximum.json").toPath(), maxMetadata.getBytes("UTF-8"));
         zip(maximum, new File(root, "maximum.zip"), true);
+        directZip(maximum, new File(root, "direct-maximum.zip"));
 
         File corrupt = new File(root, "corrupt"); require(corrupt.mkdir(), "corrupt directory");
         byte[] original = Files.readAllBytes(store(maximum).toPath());
@@ -186,6 +200,13 @@ public final class CaptureStoreControls {
         try { SceneFrameCapture.append(maximum, broken); }
         catch (IOException expected) { failed = true; }
         require(failed, "ZIP sink failure hidden");
+        failed = false;
+        try {
+            SceneFrameCapture.writeZip(maximum, new OutputStream() {
+                public void write(int value) throws IOException { throw new IOException("intentional sink failure"); }
+            });
+        } catch (IOException expected) { failed = true; }
+        require(failed, "standalone ZIP sink failure hidden");
         System.out.println("Scene frame capture controls passed: " + checks);
     }
 }
@@ -215,18 +236,27 @@ def check_outputs(root: Path) -> None:
     for archive in root.glob("*.zip"):
         with zipfile.ZipFile(archive) as result:
             names = result.namelist()
-            assert result.read("essential.txt") == b"\x07"
-            assert result.read("after.txt") == b"\x09"
-            if archive.name in {"valid.zip", "maximum.zip"}:
-                assert names == ["essential.txt", "scene-capture.rgba", "scene-capture.json", "after.txt"]
+            direct = archive.name.startswith("direct-")
+            if not direct:
+                assert result.read("essential.txt") == b"\x07"
+                assert result.read("after.txt") == b"\x09"
+            if archive.name in {"valid.zip", "maximum.zip", "direct-valid.zip", "direct-maximum.zip"}:
+                expected_names = ["scene-capture.rgba", "scene-capture.json"]
+                assert names == (expected_names if direct else ["essential.txt"] + expected_names + ["after.txt"])
                 raw = result.read("scene-capture.rgba")
                 info = json.loads(result.read("scene-capture.json"))
                 assert len(raw) <= 83072 and len(result.read("scene-capture.json")) <= 4096
                 assert info["size_bytes"] == len(raw)
                 assert info["sha256"] == hashlib.sha256(raw).hexdigest()
                 assert raw[:8] == b"COHFB001"
-                if archive.name == "valid.zip":
+                if archive.name in {"valid.zip", "direct-valid.zip"}:
                     assert raw == expected and info == metadata
+                if direct:
+                    assert result.testzip() is None
+                    assert all(entry.compress_type == zipfile.ZIP_STORED for entry in result.infolist())
+                    expected_bytes = len(raw) + len(result.read("scene-capture.json")) + 30*2 + 46*2 + 22
+                    expected_bytes += 2 * sum(len(name) for name in expected_names)
+                    assert archive.stat().st_size == expected_bytes
             else:
                 assert names == ["essential.txt", "after.txt"], archive
     maximum = json.loads((root / "maximum.json").read_text())

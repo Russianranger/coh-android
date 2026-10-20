@@ -4,13 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -23,6 +26,8 @@ public final class SceneFrameCapture {
     private static final String TEMP = "scene-capture.tmp";
     private static final byte[] STORE_MAGIC = "COHFC001".getBytes(StandardCharsets.US_ASCII);
     private static final byte[] RAW_MAGIC = "COHFB001".getBytes(StandardCharsets.US_ASCII);
+    private static final byte[] RAW_NAME = "scene-capture.rgba".getBytes(StandardCharsets.US_ASCII);
+    private static final byte[] JSON_NAME = "scene-capture.json".getBytes(StandardCharsets.US_ASCII);
     private static final char[] HEX = "0123456789abcdef".toCharArray();
     private static final int HEADER = 128;
     private static final int MAX_RAW = HEADER + 192 * 108 * 4;
@@ -44,7 +49,7 @@ public final class SceneFrameCapture {
         String session = session(activitySession);
         if (frame == null || appVersion <= 0 || session == null || directory == null)
             throw new IOException("Scene capture input rejected");
-        Capture previous = optional(directory, false);
+        Capture previous = optional(directory, false, false);
         if (previous != null && previous.session.equals(session)
                 && frame.frame <= previous.frame.frame)
             throw new IOException("Scene capture frame already stored");
@@ -90,7 +95,7 @@ public final class SceneFrameCapture {
 
     /** Return metadata for a complete validated historical record, or null. */
     public static synchronized String metadata(File directory) {
-        Capture capture = optional(directory, false);
+        Capture capture = optional(directory, false, true);
         return capture == null ? null : capture.json;
     }
 
@@ -101,7 +106,7 @@ public final class SceneFrameCapture {
     public static synchronized boolean append(File directory, ZipOutputStream zip)
             throws IOException {
         if (zip == null) throw new IOException("Scene capture ZIP unavailable");
-        Capture capture = optional(directory, true);
+        Capture capture = optional(directory, true, true);
         if (capture == null) return false;
         zip.putNextEntry(new ZipEntry("scene-capture.rgba"));
         for (int offset = 0; offset < capture.raw.length; offset += CHUNK)
@@ -113,16 +118,71 @@ public final class SceneFrameCapture {
         return true;
     }
 
-    private static Capture optional(File directory, boolean retainRaw) {
+    /** Standalone ZIP with exactly two uncompressed entries. This does not
+     * construct a Deflater or close the caller's output. Invalid storage returns
+     * false before writing; actual output failures propagate to the caller.
+     */
+    public static synchronized boolean writeZip(File directory, OutputStream output)
+            throws IOException {
+        if (output == null) throw new IOException("Scene capture ZIP unavailable");
+        Capture capture = optional(directory, true, true);
+        if (capture == null) return false;
+        byte[] json = capture.json.getBytes(StandardCharsets.UTF_8);
+        byte[] header = new byte[46];
+        CRC32 crc = new CRC32();
+        long rawCrc = crc(crc, capture.raw), jsonCrc = crc(crc, json);
+        int jsonOffset = 30 + RAW_NAME.length + capture.raw.length;
+        int centralOffset = jsonOffset + 30 + JSON_NAME.length + json.length;
+        int centralBytes = 46 * 2 + RAW_NAME.length + JSON_NAME.length;
+        local(output, header, RAW_NAME, capture.raw, rawCrc);
+        local(output, header, JSON_NAME, json, jsonCrc);
+        central(output, header, RAW_NAME, capture.raw.length, rawCrc, 0);
+        central(output, header, JSON_NAME, json.length, jsonCrc, jsonOffset);
+        Arrays.fill(header, (byte) 0);
+        put32(header, 0, 0x06054b50);
+        put16(header, 8, 2); put16(header, 10, 2);
+        put32(header, 12, centralBytes); put32(header, 16, centralOffset);
+        output.write(header, 0, 22);
+        return true;
+    }
+
+    private static long crc(CRC32 crc, byte[] bytes) {
+        crc.reset();
+        for (int offset = 0; offset < bytes.length; offset += CHUNK)
+            crc.update(bytes, offset, Math.min(CHUNK, bytes.length - offset));
+        return crc.getValue();
+    }
+
+    private static void local(OutputStream output, byte[] header, byte[] name,
+            byte[] content, long crc) throws IOException {
+        Arrays.fill(header, (byte) 0);
+        put32(header, 0, 0x04034b50); put16(header, 4, 20); put16(header, 12, 33);
+        put32(header, 14, crc); put32(header, 18, content.length); put32(header, 22, content.length);
+        put16(header, 26, name.length);
+        output.write(header, 0, 30); output.write(name);
+        for (int offset = 0; offset < content.length; offset += CHUNK)
+            output.write(content, offset, Math.min(CHUNK, content.length - offset));
+    }
+
+    private static void central(OutputStream output, byte[] header, byte[] name,
+            int size, long crc, int offset) throws IOException {
+        Arrays.fill(header, (byte) 0);
+        put32(header, 0, 0x02014b50); put16(header, 4, 20); put16(header, 6, 20);
+        put16(header, 14, 33); put32(header, 16, crc); put32(header, 20, size); put32(header, 24, size);
+        put16(header, 28, name.length); put32(header, 42, offset);
+        output.write(header, 0, 46); output.write(name);
+    }
+
+    private static Capture optional(File directory, boolean retainRaw, boolean makeJson) {
         if (directory == null) return null;
         try {
-            return read(new File(directory, STORE), retainRaw);
+            return read(new File(directory, STORE), retainRaw, makeJson);
         } catch (IOException | SecurityException invalid) {
             return null;
         }
     }
 
-    private static Capture read(File file, boolean retainRaw) throws IOException {
+    private static Capture read(File file, boolean retainRaw, boolean makeJson) throws IOException {
         long bytes = file.length(), modified = file.lastModified();
         if (!file.isFile() || bytes < HEADER * 2 + 4 || bytes > MAX_STORE) return null;
         try (FileInputStream input = new FileInputStream(file)) {
@@ -164,7 +224,8 @@ public final class SceneFrameCapture {
                     || file.length() != bytes || file.lastModified() != modified) return null;
             byte[] rawHash = rawDigest.digest(), storeHash = storeDigest.digest();
             if (!same(wrapper, 64, rawHash) || !same(wrapper, 96, storeHash)) return null;
-            return new Capture(frame, session, json(frame, version, session, (int) length, rawHash), raw);
+            return new Capture(frame, session,
+                    makeJson ? json(frame, version, session, (int) length, rawHash) : null, raw);
         }
     }
 
@@ -206,23 +267,29 @@ public final class SceneFrameCapture {
 
     private static String json(Frame f, long version, String session, int bytes, byte[] rawHash)
             throws IOException {
-        String value = "{\"format\":\"coh-game-surface-rgba8-v1\",\"artifact\":\"scene-capture.rgba\","
-                + "\"capture_state\":\"historical_saved_frame\",\"startup_witness\":false,"
-                + "\"current_world_authority\":false,\"whole_game_surface\":true,"
-                + "\"pixel_format\":\"RGBA8\",\"origin\":\"bottom-left\",\"raw_header_bytes\":128,"
-                + "\"size_bytes\":" + bytes + ",\"sha256\":\"" + hex(rawHash) + "\","
-                + "\"frame\":" + f.frame + ",\"epoch\":" + f.epoch + ",\"pose_generation\":" + f.pose
-                + ",\"pose_lock_frame\":" + f.lock + ",\"pose\":[" + (double) f.x + ","
-                + (double) f.y + "," + (double) f.z + "]"
-                + ",\"selected_entity_index\":" + f.index
-                + ",\"viewport\":{\"width\":" + f.viewportWidth + ",\"height\":" + f.viewportHeight + "}"
-                + ",\"dimensions\":{\"width\":" + f.width + ",\"height\":" + f.height + "}"
-                + ",\"world_packets\":" + f.packets + ",\"entity_draws\":" + f.draws
-                + ",\"charged_scene_bytes\":" + f.charged + ",\"memory_cap_bytes\":" + SCENE_CAP
-                + ",\"settled_frame_wait\":12,\"source_app_version\":" + version
-                + ",\"activity_session\":\"" + session + "\"}";
+        // Fixed initial capacity avoids capacity growth. Every variable below is
+        // a bounded numeric value or <=32 ASCII hex characters, never JSON input.
+        StringBuilder value = new StringBuilder(MAX_JSON);
+        value.append("{\"format\":\"coh-game-surface-rgba8-v1\",\"artifact\":\"scene-capture.rgba\",")
+                .append("\"capture_state\":\"historical_saved_frame\",\"startup_witness\":false,")
+                .append("\"current_world_authority\":false,\"whole_game_surface\":true,")
+                .append("\"pixel_format\":\"RGBA8\",\"origin\":\"bottom-left\",\"raw_header_bytes\":128,")
+                .append("\"size_bytes\":").append(bytes).append(",\"sha256\":\"").append(hex(rawHash)).append("\",")
+                .append("\"frame\":").append(f.frame).append(",\"epoch\":").append(f.epoch)
+                .append(",\"pose_generation\":").append(f.pose).append(",\"pose_lock_frame\":").append(f.lock)
+                .append(",\"pose\":[").append((double) f.x).append(',').append((double) f.y)
+                .append(',').append((double) f.z).append(']')
+                .append(",\"selected_entity_index\":").append(f.index)
+                .append(",\"viewport\":{\"width\":").append(f.viewportWidth)
+                .append(",\"height\":").append(f.viewportHeight).append('}')
+                .append(",\"dimensions\":{\"width\":").append(f.width)
+                .append(",\"height\":").append(f.height).append('}')
+                .append(",\"world_packets\":").append(f.packets).append(",\"entity_draws\":").append(f.draws)
+                .append(",\"charged_scene_bytes\":").append(f.charged).append(",\"memory_cap_bytes\":").append(SCENE_CAP)
+                .append(",\"settled_frame_wait\":12,\"source_app_version\":").append(version)
+                .append(",\"activity_session\":\"").append(session).append("\"}");
         if (value.length() > MAX_JSON) throw new IOException("Scene capture metadata rejected");
-        return value; // All dynamic text is numeric or ASCII hex, so UTF-8 bytes == characters.
+        return value.toString(); // ASCII only, so UTF-8 bytes == characters.
     }
 
     private static String session(String value) {
@@ -284,6 +351,11 @@ public final class SceneFrameCapture {
 
     private static void put32(byte[] bytes, int offset, long value) {
         for (int i = 0; i < 4; i++) bytes[offset + i] = (byte) (value >>> (8 * i));
+    }
+
+    private static void put16(byte[] bytes, int offset, int value) {
+        bytes[offset] = (byte) value;
+        bytes[offset + 1] = (byte) (value >>> 8);
     }
 
     private static void put64(byte[] bytes, int offset, long value) {
