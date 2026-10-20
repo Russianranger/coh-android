@@ -73,5 +73,64 @@ class ProcessSetContract(unittest.TestCase):
             if change=='zombie':invalid['processes'][0][7]=True
             with self.subTest(change=change),self.assertRaises(ValueError):process_set_snapshot(invalid)
 
+    def aggregated(self):
+        value=sample();value['process_limit']=64
+        roles=('ANDROID_APP_AND_NATIVE_CLIENT','WINE_SERVERS','POSTGRESQL','OTHER_APP_UID')
+        counts=(1,9,80,1);units=(4096,8192,12288,4096)
+        categories={}
+        for role,count,rss in zip(roles,counts,units):
+            categories[role]=dict(process_count=count,observed_rss_bytes=count*rss,observed_pss_bytes=count*rss//2,
+                rss_bytes=count*rss,pss_bytes=count*rss//2,rss_complete=True,pss_complete=True,
+                missing_rss_processes=0,missing_pss_processes=0,zombie_processes=0,reason_flags=0)
+        total=dict(categories[roles[0]])
+        for key in ('process_count','observed_rss_bytes','observed_pss_bytes','rss_bytes','pss_bytes'):
+            total[key]=sum(v[key] for v in categories.values())
+        value['aggregation']=dict(scope='all_scanned_same_uid_processes',directory_entry_limit=8192,directory_entries_scanned=93,
+            role_unclassified_processes=0,total=total,categories=categories)
+        value['detail_rows_omitted']=value['omitted_same_uid_processes']=88
+        for metric in ('rss','pss'):
+            value['observed_'+metric+'_sum_bytes']=total['observed_'+metric+'_bytes']
+            value['total_'+metric+'_bytes']=value['sampled_peak_total_'+metric+'_bytes']=total[metric+'_bytes']
+        return value
+
+    def test_streaming_totals_are_independent_of_optional_detail(self):
+        value=self.aggregated();process_set_snapshot(value)
+        self.assertGreater(value['total_pss_bytes'],sum(row['pss_bytes'] for row in value['processes']))
+        legacy=copy.deepcopy(value);del legacy['aggregation']
+        with self.assertRaises(ValueError):process_set_snapshot(legacy)
+        for change in ('omission','partition','complete','sum','reason'):
+            invalid=copy.deepcopy(value)
+            if change=='omission':invalid['detail_rows_omitted']=0
+            if change=='partition':invalid['aggregation']['total']['process_count']-=1
+            if change=='complete':invalid['aggregation']['total']['rss_complete']=False
+            if change=='sum':invalid['observed_pss_sum_bytes']-=1
+            if change=='reason':invalid['aggregation']['total']['reason_flags']=1
+            with self.subTest(change=change),self.assertRaises(ValueError):process_set_snapshot(invalid)
+
+    def test_missing_metric_outside_details_and_scan_churn_are_explicit(self):
+        value=self.aggregated();aggregate=value['aggregation'];other=aggregate['categories']['OTHER_APP_UID'];total=aggregate['total']
+        missing=other['observed_rss_bytes'];other.update(observed_rss_bytes=0,rss_bytes=None,rss_complete=False,missing_rss_processes=1,reason_flags=2)
+        total.update(observed_rss_bytes=total['observed_rss_bytes']-missing,rss_bytes=None,rss_complete=False,missing_rss_processes=1,reason_flags=2)
+        value['observed_rss_sum_bytes']=total['observed_rss_bytes'];value['total_rss_bytes']=None
+        process_set_snapshot(value)
+        churn=self.aggregated();churn['scan_complete']=False
+        for summary in [churn['aggregation']['total']]+list(churn['aggregation']['categories'].values()):
+            summary.update(rss_bytes=None,pss_bytes=None,rss_complete=False,pss_complete=False,reason_flags=1)
+        churn['total_rss_bytes']=churn['total_pss_bytes']=None;process_set_snapshot(churn)
+
+    def test_large_aggregate_does_not_require_an_unbounded_process_list(self):
+        value=self.aggregated();value['aggregation']['directory_entries_scanned']=8192
+        category=value['aggregation']['categories']['POSTGRESQL'];category.update(process_count=8000,
+            observed_rss_bytes=8000*12288,observed_pss_bytes=8000*6144,rss_bytes=8000*12288,pss_bytes=8000*6144)
+        total=value['aggregation']['total']
+        for key in ('process_count','observed_rss_bytes','observed_pss_bytes','rss_bytes','pss_bytes'):
+            total[key]=sum(c[key] for c in value['aggregation']['categories'].values())
+        value['detail_rows_omitted']=value['omitted_same_uid_processes']=total['process_count']-len(value['processes'])
+        for metric in ('rss','pss'):
+            value['observed_'+metric+'_sum_bytes']=total['observed_'+metric+'_bytes']
+            value['total_'+metric+'_bytes']=value['sampled_peak_total_'+metric+'_bytes']=total[metric+'_bytes']
+        process_set_snapshot(value);self.assertEqual(len(value['processes']),3)
+        self.assertLess(len(json.dumps(value,indent=2).encode()),8*1024)
+
 
 if __name__=='__main__':unittest.main()

@@ -39,6 +39,57 @@ def admit_runtime_revision(head, candidate, proof_path):
     return candidate, sha(raw)
 
 
+def process_aggregation(value, rows):
+    aggregate=value.get('aggregation')
+    need(isinstance(aggregate,dict) and aggregate.get('scope')=='all_scanned_same_uid_processes', 'process aggregation scope')
+    need(aggregate.get('directory_entry_limit')==8192 and type(aggregate.get('directory_entries_scanned')) is int
+         and 0 <= aggregate['directory_entries_scanned'] <= 8192, 'process scan bound')
+    categories=aggregate.get('categories');roles=('ANDROID_APP_AND_NATIVE_CLIENT','WINE_SERVERS','POSTGRESQL','OTHER_APP_UID')
+    need(isinstance(categories,dict) and set(categories)==set(roles), 'process categories')
+    unclassified=aggregate.get('role_unclassified_processes')
+    need(type(unclassified) is int and 0 <= unclassified <= 8193, 'process role completeness')
+    total=aggregate.get('total')
+    for name,summary in [('total',total)]+list(categories.items()):
+        need(isinstance(summary,dict), 'process summary')
+        need(all(type(summary.get(k)) is int and 0 <= summary[k] <= 8193 for k in
+                 ('process_count','missing_rss_processes','missing_pss_processes','zombie_processes')), 'process category count domain')
+        count=summary['process_count'];flags=summary.get('reason_flags')
+        need(type(flags) is int and 0 <= flags <= 127, 'process category reason flags')
+        need(all(summary[k] <= count for k in ('missing_rss_processes','missing_pss_processes','zombie_processes')), 'process category missing count')
+        for metric,bit in [('rss',2),('pss',4)]:
+            observed=summary.get('observed_'+metric+'_bytes');measured=summary.get(metric+'_bytes');complete=summary.get(metric+'_complete')
+            need(observed is None or type(observed) is int and 0 <= observed < 1<<63, 'process aggregate sum domain')
+            known_count=count-summary['missing_'+metric+'_processes']
+            need(known_count>=8192 if observed is None else observed<=known_count*(1<<50), 'aggregate exceeds measured process domains')
+            expected=(value['scan_complete'] and value['expected_roles_observed'] and summary['missing_'+metric+'_processes']==0
+                      and observed is not None and (name=='total' or unclassified==0))
+            need(type(complete) is bool and complete==expected, 'process aggregate completeness')
+            need((type(measured) is int and measured==observed) if complete else measured is None, 'process aggregate total')
+            need(bool(flags&bit)==(summary['missing_'+metric+'_processes']>0), 'process metric absence reason')
+        need(bool(flags&1)==(not value['scan_complete']) and bool(flags&64)==(not value['expected_roles_observed'])
+             and bool(flags&32)==(name!='total' and unclassified>0)
+             and bool(flags&8)==(summary['observed_rss_bytes'] is None or summary['observed_pss_bytes'] is None), 'process completeness reason')
+    need(total['process_count']==sum(c['process_count'] for c in categories.values()) and unclassified<=total['process_count'], 'process category partition')
+    need(value.get('detail_rows_omitted')==total['process_count']-len(rows)
+         and value.get('omitted_same_uid_processes')==value['detail_rows_omitted'], 'detail omission accounting')
+    need(value['expected_roles_observed']==(not value['server_process_expected'] or categories['WINE_SERVERS']['process_count']>0 and categories['POSTGRESQL']['process_count']>0), 'aggregate expected roles')
+    for role in roles:
+        detail=[row for row in rows if row['role']==role];category=categories[role]
+        need(category['process_count']>=len(detail), 'detail exceeds category')
+        for metric in ('rss','pss'):
+            known=[row[metric+'_bytes'] for row in detail if row[metric+'_bytes'] is not None]
+            need(category['missing_'+metric+'_processes']>=len(detail)-len(known), 'detail unknown absent from aggregate')
+            observed=category['observed_'+metric+'_bytes']
+            need(observed is None or observed>=sum(known), 'aggregate loses retained measurement')
+    for metric in ('rss','pss'):
+        sums=[c['observed_'+metric+'_bytes'] for c in categories.values()]
+        result=None if any(x is None for x in sums) or sum(sums)>=1<<63 else sum(sums)
+        need(total['observed_'+metric+'_bytes']==result and value.get('observed_'+metric+'_sum_bytes')==result, 'streaming aggregate conservation')
+        need(value.get('total_'+metric+'_bytes')==total[metric+'_bytes'], 'top-level aggregate total differs')
+        need(total['missing_'+metric+'_processes']==sum(c['missing_'+metric+'_processes'] for c in categories.values()), 'aggregate missing metrics')
+    return aggregate
+
+
 def process_set_snapshot(value):
     need(isinstance(value, dict) and value.get('schema') == 'coh-same-uid-process-memory-v1', 'process-set schema')
     if value.get('status') == 'not_sampled':
@@ -51,7 +102,7 @@ def process_set_snapshot(value):
              and isinstance(rows, list) and all(isinstance(row, list) and len(row) == len(fields) for row in rows), 'compact process row shape')
         rows = [dict(zip(fields, row)) for row in rows]
         for row in rows:
-            need(type(row['unavailable']) is int and 0 <= row['unavailable'] <= 31
+            need(type(row['unavailable']) is int and 0 <= row['unavailable'] <= 63
                  and type(row['zombie_no_address_space']) is bool, 'compact process status type')
             if row['unavailable'] == 0:
                 del row['unavailable']
@@ -77,9 +128,9 @@ def process_set_snapshot(value):
         need(all(row[k] is None or type(row[k]) is int and 0 <= row[k] <= 1 << 50
                  for k in ('start_ticks', 'rss_bytes', 'pss_bytes')), 'process-set metric domain')
         if 'unavailable' in row:
-            need(type(row['unavailable']) is int and 1 <= row['unavailable'] <= 31, 'process metric failure reason')
+            need(type(row['unavailable']) is int and 1 <= row['unavailable'] <= 63, 'process metric failure reason')
         if 'zombie_no_address_space' in row:
-            need(row['zombie_no_address_space'] is True and row['identity_stable'] and row['rss_bytes'] == 0 and row['pss_bytes'] == 0 and 'unavailable' not in row, 'zombie zero is not source-state derived')
+            need(row['zombie_no_address_space'] is True and row['identity_stable'] and row['rss_bytes'] == 0 and row['pss_bytes'] == 0 and row.get('unavailable', 0) in (0, 32), 'zombie zero is not source-state derived')
         if not row['identity_stable']:
             need(all(row[k] is None for k in ('start_ticks', 'rss_bytes', 'pss_bytes')), 'unstable process supplied old metrics')
         else:
@@ -88,16 +139,19 @@ def process_set_snapshot(value):
          'app/native-client overlap was double-counted or lost')
     need(value['wine_processes'] == sum(row['role'] == 'WINE_SERVERS' for row in rows)
          and value['postgresql_processes'] == sum(row['role'] == 'POSTGRESQL' for row in rows), 'role counts differ')
+    aggregate=process_aggregation(value,rows) if 'aggregation' in value else None
     for metric in ('rss', 'pss'):
-        known = [row[metric + '_bytes'] for row in rows if row[metric + '_bytes'] is not None]
-        need(value.get('observed_' + metric + '_sum_bytes') == sum(known), 'observed process sum differs')
-        total = value.get('total_' + metric + '_bytes')
-        if value['scan_complete'] and value['expected_roles_observed'] and len(known) == len(rows):
-            need(type(total) is int and total == sum(known), 'complete process sum differs')
-        else:
-            need(total is None, 'partial process set fabricated complete total')
-        peak = value.get('sampled_peak_total_' + metric + '_bytes')
-        need(peak is None or type(peak) is int and 0 <= peak <= value['process_limit'] << 50, 'process-set peak domain')
+        if aggregate is None:
+            known = [row[metric + '_bytes'] for row in rows if row[metric + '_bytes'] is not None]
+            need(value.get('observed_' + metric + '_sum_bytes') == sum(known), 'observed process sum differs')
+            total = value.get('total_' + metric + '_bytes')
+            if value['scan_complete'] and value['expected_roles_observed'] and len(known) == len(rows):
+                need(type(total) is int and total == sum(known), 'complete process sum differs')
+            else:
+                need(total is None, 'partial process set fabricated complete total')
+        total=value.get('total_'+metric+'_bytes');peak=value.get('sampled_peak_total_'+metric+'_bytes')
+        maximum=(1<<63)-1 if aggregate is not None else value['process_limit']<<50
+        need(peak is None or type(peak) is int and 0 <= peak <= maximum, 'process-set peak domain')
         need(total is None or peak is not None and peak >= total, 'sampled process peak lost')
     need(value.get('atomic_snapshot') is False and value.get('rss_sum_includes_repeated_shared_pages') is True
          and value.get('pss_is_proportional') is True, 'process memory scope mislabeled')

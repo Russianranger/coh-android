@@ -72,7 +72,7 @@ final class ProcessSetMemory {
     }
     private static Map<String,Object> unknown(long pid,String role) {
         Map<String,Object> row=new LinkedHashMap<>();row.put("pid",pid);row.put("start_ticks",null);row.put("role",role);
-        row.put("rss_bytes",null);row.put("pss_bytes",null);row.put("identity_stable",false);row.put("unavailable",8);return row;
+        row.put("rss_bytes",null);row.put("pss_bytes",null);row.put("identity_stable",false);row.put("unavailable","OTHER_APP_UID".equals(role)?40:8);return row;
     }
     private static boolean emptyZombie(String raw,long pid) {
         if(startTicks(raw,pid)==null)return false;
@@ -90,7 +90,8 @@ final class ProcessSetMemory {
         try {
             String beforeRaw=read(dir.resolve("stat"),FILE_LIMIT);Long before=startTicks(beforeRaw,pid);if(before==null)return row;
             Values stable=status(read(dir.resolve("status"),FILE_LIMIT));if(stable.uid!=info.uid)return row;
-            String role=role(stable.name,command(dir),self);Long pss=null;int unavailable=stable.rss==null?1:0;
+            String command=command(dir),role=role(stable.name,command,self);Long pss=null;int unavailable=stable.rss==null?1:0;
+            if(!self&&namedRole(stable.name)==null&&(command==null||command.isEmpty()))unavailable|=32;
             boolean zombie=emptyZombie(beforeRaw,pid);
             if(!zombie)try{pss=kib(read(dir.resolve("smaps_rollup"),FILE_LIMIT),"Pss:");if(pss==null)unavailable|=2;}
             catch(IOException missing){unavailable|=4;}
@@ -100,66 +101,94 @@ final class ProcessSetMemory {
             if(!zombie&&pss==null&&(unavailable&6)==0)unavailable|=2;
             row.put("start_ticks",before);row.put("role",role);row.put("rss_bytes",zombie?Long.valueOf(0):stable.rss);row.put("pss_bytes",zombie?Long.valueOf(0):pss);row.put("identity_stable",true);
             row.remove("unavailable");
-            if(zombie)row.put("zombie_no_address_space",true);
+            if(zombie){row.put("zombie_no_address_space",true);if((unavailable&32)!=0)row.put("unavailable",32);}
             else if(unavailable!=0)row.put("unavailable",unavailable);
-        }catch(IOException|RuntimeException unavailable){row.put("unavailable",24);}
+        }catch(IOException|RuntimeException unavailable){row.put("unavailable",self?24:56);}
         return row;
     }
-    private static Map<String,String> unavailableCodes(List<Map<String,Object>> rows) {
-        int flags=0;for(Map<String,Object> row:rows)if(row.get("unavailable") instanceof Integer)flags|=(Integer)row.get("unavailable");
+    private static Map<String,String> unavailableCodes(int flags) {
         Map<String,String> codes=new LinkedHashMap<>();
-        for(int i=0;i<5;i++)if((flags&(1<<i))!=0)codes.put(Integer.toString(1<<i),new String[]{"RSS_FIELD_UNAVAILABLE","PSS_FIELD_UNAVAILABLE","PSS_READ_FAILED","PROCESS_IDENTITY_UNAVAILABLE","PROCESS_READ_FAILED"}[i]);
+        for(int i=0;i<6;i++)if((flags&(1<<i))!=0)codes.put(Integer.toString(1<<i),new String[]{"RSS_FIELD_UNAVAILABLE","PSS_FIELD_UNAVAILABLE","PSS_READ_FAILED","PROCESS_IDENTITY_UNAVAILABLE","PROCESS_READ_FAILED","PROCESS_ROLE_UNAVAILABLE"}[i]);
         return codes;
     }
     private static Long add(Long sum,Long value){return sum==null||value==null||value>Long.MAX_VALUE-sum?null:sum+value;}
+    private static final String[] ROLES={"ANDROID_APP_AND_NATIVE_CLIENT","WINE_SERVERS","POSTGRESQL","OTHER_APP_UID"};
+    private static int roleIndex(Map<String,Object> row){for(int i=0;i<ROLES.length;i++)if(ROLES[i].equals(row.get("role")))return i;return 3;}
+    static final class Aggregate {
+        long count,missingRss,missingPss,zombies,unstable,unclassified;Long rss=0L,pss=0L;
+        void accept(Map<String,Object> row){
+            count++;Long r=(Long)row.get("rss_bytes"),p=(Long)row.get("pss_bytes");
+            if(r==null)missingRss++;else rss=add(rss,r);
+            if(p==null)missingPss++;else pss=add(pss,p);
+            if(Boolean.TRUE.equals(row.get("zombie_no_address_space")))zombies++;
+            if(!Boolean.TRUE.equals(row.get("identity_stable")))unstable++;
+            if(row.get("unavailable") instanceof Integer&&(((Integer)row.get("unavailable"))&32)!=0)unclassified++;
+        }
+        Map<String,Object> snapshot(boolean scan,boolean classified,boolean expected){
+            boolean r=scan&&classified&&expected&&missingRss==0&&rss!=null;
+            boolean p=scan&&classified&&expected&&missingPss==0&&pss!=null;
+            int reasons=(!scan?1:0)|(missingRss>0?2:0)|(missingPss>0?4:0)|(rss==null||pss==null?8:0)
+                    |(unstable>0?16:0)|(!classified?32:0)|(!expected?64:0);
+            Map<String,Object> out=new LinkedHashMap<>();out.put("process_count",count);out.put("observed_rss_bytes",rss);out.put("observed_pss_bytes",pss);
+            out.put("rss_bytes",r?rss:null);out.put("pss_bytes",p?pss:null);out.put("rss_complete",r);out.put("pss_complete",p);
+            out.put("missing_rss_processes",missingRss);out.put("missing_pss_processes",missingPss);out.put("zombie_processes",zombies);out.put("reason_flags",reasons);return out;
+        }
+    }
+    private static Map<String,Object> aggregation(Aggregate total,Aggregate[] groups,boolean scan,boolean expected,long scanned){
+        Map<String,Object> out=new LinkedHashMap<>(),categories=new LinkedHashMap<>();
+        out.put("scope","all_scanned_same_uid_processes");out.put("directory_entry_limit",DIRECTORY_LIMIT);out.put("directory_entries_scanned",scanned);
+        out.put("role_unclassified_processes",total.unclassified);out.put("total",total.snapshot(scan,true,expected));
+        for(int i=0;i<groups.length;i++)categories.put(ROLES[i],groups[i].snapshot(scan,total.unclassified==0,expected));
+        out.put("categories",categories);
+        Map<String,String> reasons=new LinkedHashMap<>();String[] codes={"SCAN_INCOMPLETE","RSS_UNAVAILABLE","PSS_UNAVAILABLE","SUM_OVERFLOW","IDENTITY_UNSTABLE","ROLE_UNCLASSIFIED","EXPECTED_ROLES_NOT_OBSERVED"};
+        for(int i=0;i<codes.length;i++)reasons.put(Integer.toString(1<<i),codes[i]);out.put("reason_codes",reasons);return out;
+    }
     void sample(Path root,long uid,long self,boolean expectServer,LongSupplier clock,long utc) {
-        long begin=clock.getAsLong(),unreadable=0,scanned=0,omitted=0;boolean complete=true;
+        long begin=clock.getAsLong(),unreadable=0,scanned=0,omitted=0;boolean complete=true;int unavailableFlags=0;
+        Aggregate total=new Aggregate();Aggregate[] groups={new Aggregate(),new Aggregate(),new Aggregate(),new Aggregate()};
         List<Map<String,Object>> rows=new ArrayList<>();Set<Long> seen=new HashSet<>();
         Map<String,Object> selfRow=unknown(self,"ANDROID_APP_AND_NATIVE_CLIENT");
         try{Values values=status(read(root.resolve(Long.toString(self)).resolve("status"),FILE_LIMIT));
             if(values.uid==uid)selfRow=process(root,self,values,true);else complete=false;
         }catch(IOException|RuntimeException unavailable){complete=false;}
-        rows.add(selfRow);seen.add(self);
+        rows.add(selfRow);seen.add(self);total.accept(selfRow);groups[0].accept(selfRow);if(selfRow.get("unavailable") instanceof Integer)unavailableFlags|=(Integer)selfRow.get("unavailable");
         try(DirectoryStream<Path> paths=Files.newDirectoryStream(root)) {
             for(Path path:paths){
                 if(++scanned>DIRECTORY_LIMIT||clock.getAsLong()-begin>WINDOW_LIMIT_MS){complete=false;break;}
                 String name=path.getFileName().toString();if(!name.matches("[0-9]{1,10}"))continue;
-                Long pid=number(name);if(pid==null||pid==0||seen.contains(pid))continue;
+                Long pid=number(name);if(pid==null||pid==0||!Long.toString(pid).equals(name)||seen.contains(pid))continue;
+                if(Files.isSymbolicLink(path)){unreadable++;complete=false;continue;}
                 Values values;
                 try{values=status(read(path.resolve("status"),FILE_LIMIT));}catch(IOException|RuntimeException unavailable){unreadable++;complete=false;continue;}
                 if(values.uid<0){unreadable++;complete=false;continue;}if(values.uid!=uid)continue;
-                seen.add(pid);
+                seen.add(pid);Map<String,Object> measured=process(root,pid,values,false);
+                total.accept(measured);groups[roleIndex(measured)].accept(measured);
+                if(measured.get("unavailable") instanceof Integer)unavailableFlags|=(Integer)measured.get("unavailable");
                 if(rows.size()==PROCESS_LIMIT){
-                    complete=false;omitted++;
-                    // Keep scanning within the same directory/time bounds so
-                    // late Wine/PostgreSQL children displace unrelated helpers.
-                    if(!"OTHER_APP_UID".equals(role(values.name,command(path),false))) {
-                        for(int i=rows.size()-1;i>0;i--)if("OTHER_APP_UID".equals(rows.get(i).get("role"))){rows.set(i,process(root,pid,values,false));break;}
-                    }
-                    continue;
-                }
-                rows.add(process(root,pid,values,false));
+                    omitted++;
+                    // Detail retention is independent of streaming accounting.
+                    if(roleIndex(measured)!=3)for(int i=rows.size()-1;i>0;i--)if(roleIndex(rows.get(i))==3){rows.set(i,measured);break;}
+                }else rows.add(measured);
             }
         }catch(IOException|RuntimeException unavailable){complete=false;}
         long end=clock.getAsLong();if(end<begin||end-begin>WINDOW_LIMIT_MS)complete=false;
-        Long rss=0L,pss=0L,observedRss=0L,observedPss=0L;int wine=0,postgres=0,missing=0;
+        int wine=0,postgres=0,missing=0;
         for(Map<String,Object> row:rows){
-            Long r=(Long)row.get("rss_bytes"),p=(Long)row.get("pss_bytes");rss=add(rss,r);pss=add(pss,p);
-            if(r!=null)observedRss=add(observedRss,r);if(p!=null)observedPss=add(observedPss,p);
-            if(!Boolean.TRUE.equals(row.get("identity_stable"))||r==null||p==null)missing++;
-            if("WINE_SERVERS".equals(row.get("role")))wine++;
-            if("POSTGRESQL".equals(row.get("role")))postgres++;
+            if(!Boolean.TRUE.equals(row.get("identity_stable"))||row.get("rss_bytes")==null||row.get("pss_bytes")==null)missing++;
+            if("WINE_SERVERS".equals(row.get("role")))wine++;if("POSTGRESQL".equals(row.get("role")))postgres++;
         }
-        boolean roles=!expectServer||(wine>0&&postgres>0);
-        if(!complete||!roles){rss=null;pss=null;}
+        boolean roles=!expectServer||(groups[1].count>0&&groups[2].count>0);
+        Map<String,Object> aggregate=aggregation(total,groups,complete,roles,Math.min(scanned,DIRECTORY_LIMIT));
+        @SuppressWarnings("unchecked") Map<String,Object> overall=(Map<String,Object>)aggregate.get("total");
+        Long rss=(Long)overall.get("rss_bytes"),pss=(Long)overall.get("pss_bytes");
         Map<String,Object> out=new LinkedHashMap<>();
         out.put("schema","coh-same-uid-process-memory-v1");out.put("sampled_utc_ms",utc);
         out.put("begin_elapsed_ms",begin);out.put("end_elapsed_ms",end);out.put("sample_window_ms",Math.max(0,end-begin));
         out.put("uid",uid);out.put("self_pid",self);out.put("server_process_expected",expectServer);
         out.put("scan_complete",complete);out.put("expected_roles_observed",roles);out.put("unreadable_status_count",unreadable);
-        out.put("omitted_same_uid_processes",omitted);out.put("unavailable_codes",unavailableCodes(rows));
+        out.put("omitted_same_uid_processes",omitted);out.put("detail_rows_omitted",omitted);out.put("unavailable_codes",unavailableCodes(unavailableFlags));out.put("aggregation",aggregate);
         out.put("process_limit",PROCESS_LIMIT);out.put("process_count",rows.size());out.put("wine_processes",wine);out.put("postgresql_processes",postgres);out.put("incomplete_process_metrics",missing);
-        out.put("observed_rss_sum_bytes",observedRss);out.put("observed_pss_sum_bytes",observedPss);
+        out.put("observed_rss_sum_bytes",total.rss);out.put("observed_pss_sum_bytes",total.pss);
         out.put("total_rss_bytes",rss);out.put("total_pss_bytes",pss);
         out.put("rss_sum_includes_repeated_shared_pages",true);out.put("pss_is_proportional",true);
         out.put("atomic_snapshot",false);out.put("deduplication","PID/start_ticks; app and native client share one row");
@@ -175,20 +204,33 @@ final class ProcessSetMemory {
     Map<String,Object> exportSnapshot() {
         Map<String,Object> copy=snapshot();
         @SuppressWarnings("unchecked") List<Map<String,Object>> rows=(List<Map<String,Object>>)copy.get("processes");
-        if(rows==null||rows.size()<=32)return copy;
+        if(rows==null)return copy;
+        // Aggregates preserve every measurement; optional PID detail is bounded
+        // separately so category and cgroup metadata fit the unchanged reader.
+        List<Map<String,Object>> detail=new ArrayList<>();for(int category=0;category<ROLES.length;category++)for(Map<String,Object> row:rows)if(roleIndex(row)==category&&detail.size()<32)detail.add(row);
+        int limit=detail.size(),wine=0,postgres=0,missing=0;
         List<String> fields=Arrays.asList("pid","start_ticks","role","rss_bytes","pss_bytes","identity_stable","unavailable","zombie_no_address_space");
         List<List<Object>> compact=new ArrayList<>();
-        for(Map<String,Object> row:rows){List<Object> values=new ArrayList<>();for(String field:fields){
+        for(int i=0;i<limit;i++){Map<String,Object> row=detail.get(i);List<Object> values=new ArrayList<>();for(String field:fields){
             Object value=row.get(field);if(field.equals("unavailable")&&value==null)value=0;if(field.equals("zombie_no_address_space")&&value==null)value=false;values.add(value);
-        }compact.add(values);}
-        // Preserve every measured row while fitting the existing 24 KiB phase
-        // export reader. No truncation, guessed totals or larger report limit.
+        }compact.add(values);if(roleIndex(row)==1)wine++;if(roleIndex(row)==2)postgres++;
+            if(!Boolean.TRUE.equals(row.get("identity_stable"))||row.get("rss_bytes")==null||row.get("pss_bytes")==null)missing++;
+        }
+        @SuppressWarnings("unchecked") Map<String,Object> aggregate=(Map<String,Object>)copy.get("aggregation");
+        @SuppressWarnings("unchecked") Map<String,Object> total=(Map<String,Object>)aggregate.get("total");
+        long omitted=((Number)total.get("process_count")).longValue()-limit;
+        copy.put("detail_selection","app_then_wine_then_postgresql_then_other");copy.put("detail_export_limit",32);copy.put("detail_rows_omitted",omitted);copy.put("omitted_same_uid_processes",omitted);
+        copy.put("process_count",limit);copy.put("wine_processes",wine);copy.put("postgresql_processes",postgres);copy.put("incomplete_process_metrics",missing);
         copy.put("process_row_fields",fields);copy.put("processes",compact);return copy;
     }
-    synchronized Map<String,Object> snapshot() {
+    private static Object detached(Object value){
+        if(value instanceof Map){Map<String,Object> copy=new LinkedHashMap<>();for(Object entry:((Map<?,?>)value).entrySet()){
+            Map.Entry<?,?> e=(Map.Entry<?,?>)entry;copy.put((String)e.getKey(),detached(e.getValue()));}return copy;}
+        if(value instanceof List){List<Object> copy=new ArrayList<>();for(Object item:(List<?>)value)copy.add(detached(item));return copy;}
+        return value;
+    }
+    @SuppressWarnings("unchecked") synchronized Map<String,Object> snapshot() {
         if(latest==null){Map<String,Object> unknown=new LinkedHashMap<>();unknown.put("schema","coh-same-uid-process-memory-v1");unknown.put("status","not_sampled");unknown.put("total_rss_bytes",null);unknown.put("total_pss_bytes",null);return unknown;}
-        Map<String,Object> copy=new LinkedHashMap<>(latest);List<Map<String,Object>> rows=new ArrayList<>();
-        @SuppressWarnings("unchecked") List<Map<String,Object>> source=(List<Map<String,Object>>)latest.get("processes");
-        for(Map<String,Object> row:source)rows.add(new LinkedHashMap<>(row));copy.put("processes",rows);return copy;
+        return (Map<String,Object>)detached(latest);
     }
 }

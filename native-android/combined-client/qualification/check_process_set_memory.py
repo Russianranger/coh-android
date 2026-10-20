@@ -16,6 +16,8 @@ public final class ProcessSetMemoryTest {
  }
  @SuppressWarnings("unchecked") static List<Map<String,Object>> rows(Map<String,Object> v){return (List<Map<String,Object>>)v.get("processes");}
  static long n(Map<String,Object> v,String key){return ((Number)v.get(key)).longValue();}
+ @SuppressWarnings("unchecked") static Map<String,Object> aggregate(Map<String,Object> v){return (Map<String,Object>)v.get("aggregation");}
+ @SuppressWarnings("unchecked") static Map<String,Object> total(Map<String,Object> v){return (Map<String,Object>)aggregate(v).get("total");}
  static Map<String,Object> sample(ProcessSetMemory observer,Path root,boolean server){observer.sample(root,1000,10,server,()->100L,123456L);return observer.snapshot();}
  public static void main(String[] args)throws Exception{
   Path root=Paths.get(args[0]);process(root,10,1000,"coh.nativecombined","app_process",4,2);
@@ -62,12 +64,26 @@ public final class ProcessSetMemoryTest {
   Map<String,Object> expanded=sample(observer,root,true);need(n(expanded,"process_count")==37&&Boolean.TRUE.equals(expanded.get("scan_complete"))&&expanded.get("total_pss_bytes")!=null);
   for(int i=84;i<122;i++)process(root,i,1000,"helper","helper",1,1);
   process(root,120,1000,"MapServer.exe","wine\0MapServer.exe",2,1);process(root,121,1000,"postgres","postgres",2,1);
-  Map<String,Object> bounded=sample(observer,root,true);need(n(bounded,"process_count")==64&&!Boolean.TRUE.equals(bounded.get("scan_complete"))&&bounded.get("total_pss_bytes")==null);
+  Map<String,Object> bounded=sample(observer,root,true);need(n(bounded,"process_count")==64&&Boolean.TRUE.equals(bounded.get("scan_complete"))&&n(bounded,"total_pss_bytes")==86016);
   need(n(bounded,"omitted_same_uid_processes")>0&&n(bounded,"wine_processes")>=1&&n(bounded,"postgresql_processes")>=1);
   need(rows(bounded).stream().anyMatch(r->Long.valueOf(120).equals(r.get("pid")))&&rows(bounded).stream().anyMatch(r->Long.valueOf(121).equals(r.get("pid"))));
   need(rows(bounded).size()==64&&rows(bounded).get(0).get("pid").equals(10L));
-  Map<String,Object> exported=observer.exportSnapshot();need(((List<?>)exported.get("process_row_fields")).size()==8&&((List<?>)exported.get("processes")).size()==64);
+  Map<String,Object> exported=observer.exportSnapshot();need(((List<?>)exported.get("process_row_fields")).size()==8&&((List<?>)exported.get("processes")).size()==32);
   need(((List<?>)((List<?>)exported.get("processes")).get(0)).get(0).equals(10L));
+  need(n(total(bounded),"process_count")==75&&n(total(bounded),"rss_bytes")==100352&&Boolean.TRUE.equals(total(bounded).get("rss_complete")));
+  need(n(exported,"detail_rows_omitted")==43&&n(exported,"process_count")==32&&n(total(exported),"process_count")==75);
+  total(exported).put("rss_bytes",-1L);need(n(total(observer.snapshot()),"rss_bytes")==100352);
+  // A lost metric outside the optional detail rows still affects the aggregate.
+  Files.delete(root.resolve("119/smaps_rollup"));Map<String,Object> allPartial=sample(observer,root,true);
+  need(allPartial.get("total_pss_bytes")==null&&n(allPartial,"total_rss_bytes")==100352&&n(total(allPartial),"missing_pss_processes")==1);
+  write(root.resolve("119/smaps_rollup"),"Pss:\t1 kB\n");
+  Files.createSymbolicLink(root.resolve("999"),root.resolve("20"));Map<String,Object> alias=sample(observer,root,true);
+  need(!Boolean.TRUE.equals(alias.get("scan_complete"))&&alias.get("total_pss_bytes")==null&&n(total(alias),"process_count")==75);Files.delete(root.resolve("999"));
+  Files.createDirectory(root.resolve("00020"));need(n(total(sample(observer,root,true)),"process_count")==75);Files.delete(root.resolve("00020"));
+  ProcessSetMemory.Aggregate overflow=new ProcessSetMemory.Aggregate();Map<String,Object> huge=new LinkedHashMap<>();huge.put("rss_bytes",1L<<50);huge.put("pss_bytes",1L<<50);huge.put("identity_stable",true);
+  for(int i=0;i<8192;i++)overflow.accept(huge);Map<String,Object> sum=overflow.snapshot(true,true,true);
+  need(sum.get("rss_bytes")==null&&sum.get("pss_bytes")==null&&(((Integer)sum.get("reason_flags"))&8)!=0);
+
   AtomicInteger clock=new AtomicInteger();observer.sample(root,1000,10,true,()->clock.getAndAdd(2000),123456L);need(!Boolean.TRUE.equals(observer.snapshot().get("scan_complete")));
   ProcessSetMemory missing=new ProcessSetMemory();Map<String,Object> absent=sample(missing,root.resolve("absent"),true);need(absent.get("total_pss_bytes")==null&&absent.get("total_rss_bytes")==null);
   // Actual host proc read validates deployed parser/UID handling, not Android visibility.
