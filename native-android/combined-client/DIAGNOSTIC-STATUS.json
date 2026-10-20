@@ -1772,13 +1772,13 @@
       "increased": false
     },
     "thor_procedure": [
-      "Install0.1.17 over0.1.16 without clearing app data; preserve the existing profile and imports.",
+      "Install 0.1.17 over 0.1.16 without clearing app data; preserve the existing profile and imports.",
       "Start the existing local server, select the same character and perform the Map handoff once.",
       "Use Full screen if it does not open automatically; dismiss Android's Got it hint if shown.",
       "The corner Return to controls button or Android Back exits full screen; Full screen enters again.",
-      "Wait30seconds after the handoff before exporting; do not repeat the handoff during that wait.",
+      "Wait 30 seconds after the handoff before exporting; do not repeat the handoff during that wait.",
       "Use the corner return, then Back to the Combined launcher; tap Export report and save the Combined ZIP.",
-      "Check the ZIP includes scene-capture.png at640x360, scene-capture.json and native-client-report.json.",
+      "Check the ZIP includes scene-capture.png at 640x360, scene-capture.json and native-client-report.json.",
       "Stop the local server normally after export; retain the ZIP even if a disconnect or timeout is reported."
     ],
     "apk": {
