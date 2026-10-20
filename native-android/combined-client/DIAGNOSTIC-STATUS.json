@@ -6,13 +6,13 @@
   "accepted_version": "0.1.14",
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
-  "rendered": "Physical Thor report: real-pose diagnostic box with two nearby source-world instances selected and source draw calls; no ground-contact screenshot supplied.",
-  "blocker": "Thor completed original costume_receive at bit11648 (one body,28 parts). Next unconsumed enclosing field is SupergroupCostume presence; no missing body table remains established.",
+  "rendered": "Physical Thor framebuffer: source roadway/pavement and yellow real-pose box in the existing two-instance neighborhood; no genuine costume model yet.",
+  "blocker": "Actual 301656-bit ALLENTS stops at bit 11832 at BasePower CRC 0x80443357 (first of 343 customization entries). CLIENT powers.bin mapping is absent; no application ACK/READY.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "Install0.1.16 in place and collect the Thor surface capture, initial replay and simultaneous memory observation; then finish the actual packet.",
-    "Resolve and draw the selected bodytype using its actual skeleton, geometry and textures.",
-    "Wire imported archive FDs to the qualified runtime neighborhood adapter and verify a different pose without rebuilding."
+    "Supply the source-pinned CLIENT BasePower mapping and continue the retained actual packet to the next real boundary.",
+    "Connect the decoded Huge costume to its genuine rig, GEO and textures.",
+    "Connect original archive imports to the runtime neighborhood adapter and verify a different pose without rebuilding."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -82,7 +82,7 @@
     "integrated_source_checks": "Passed final source qualification at f311bebfa9bdf33916fefcaaacd546282e17b534, including original receiver, actual host GLES capture/ZIP, report cap, JNI/replay ownership, memory and source input checks.",
     "integrated_memory_checks": "passed: sampler, worker, export, diagnostics and runtime; two existing platform skips",
     "android_build_and_emulator": "Passed signed ARM64 build/lint/package/13 Interop JNI and Session frameCapture audit; signed x86 build/audits; Android 13 framework 34 checks and update/rollback/profile 14 checks. No new physical Thor or ARM64 guest run inferred.",
-    "physical_thor": "Recorded one matching signed 0.1.15 session: original costume body complete, selected near-pose source neighborhood, orderly transport/render/server cleanup. Complete live process totals and actual PostgreSQL GUC values remain unavailable."
+    "physical_thor": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete."
   },
   "ci": {
     "workflow": ".github/workflows/native-qualification.yml",
@@ -107,16 +107,16 @@
     "source_artifact_sha256": "f23005abafe239ba892f5ace59a6aad9a0eeae33131844e0f24be3c4d5baa9f6",
     "workflow_dispatch_runs": 3,
     "completed_arm64_candidate_builds": 1,
-    "physical_thor": "Not executed; no ARM64 guest execution inferred from x86 emulator."
+    "physical_thor": "Matching physical 0.1.16 observations verified separately: Adreno 740 capture/replay, actual Huge body and BasePower lookup boundary, complete memory totals/SHOW and orderly cleanup."
   },
   "candidate": {
     "version": "0.1.16",
     "version_code": 17,
     "profile": "capture-diagnostic",
-    "state": "CI-qualified signed test APK; physical Thor pending.",
-    "receiver": "Original outer receive runs SG costumes, FX/NPC, translucency, power customization, titles, ragdoll, basic statistics, vision, target/status, inventory and taskforce. Nonempty customization stops at actual absent BasePower CRC lookup. Empty branches reach later known very-rare fields with explicit implementation-remaining diagnostics. Actual Thor 303112-bit packet has not been replayed; entity/message complete and ACK/READY stay false.",
-    "world": "Existing two-instance source neighborhood with diagnostic box; runtime archive adapter remains separate partial source work.",
-    "memory": "All scanned same-UID processes contribute to app/Wine/PostgreSQL/other and total sums regardless of detail retention; actual UID cgroup-first observation and five owned PostgreSQL SHOW results retained live and at exit. Physical readback pending.",
+    "state": "Matching physical 0.1.16 observations recorded: capture/replay, costume-to-BasePower boundary, complete memory totals and cleanup; full character/gameplay remains pending.",
+    "receiver": "Physical packet: Huge body 4, 28 parts complete at bit 11648; enclosing appearance ends 11672; genuine BasePower CRC 0x80443357 stops at 11832 of 301656 bits. No ACK/READY.",
+    "world": "Physical framebuffer confirms textured pavement and yellow real-pose box from the existing two-instance fixture. Real costume and Android runtime archive stream remain incomplete.",
+    "memory": "Complete 91-process category/RSS/PSS totals despite 59 omitted detail rows; actual PostgreSQL SHOW values retained. App UID cgroup charge remains unavailable.",
     "limits": {
       "decoded_message": 4194304,
       "ordinary_semantic_message": 16384,
@@ -134,255 +134,278 @@
       "artifact_id": 12289656309
     }
   },
-  "latest_physical_version": "0.1.15",
+  "latest_physical_version": "0.1.16",
   "latest_physical_results": {
     "recorded_date": "2026-10-20",
-    "version": "0.1.15",
-    "source_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
-    "apk_sha256": "9b15b3139a5d3a5dc9d4aada5d9766cffdc2138f423fb3bc6fd70cb821f4e349",
+    "version": "0.1.16",
+    "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+    "apk_sha256": "3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94",
+    "apk_bytes": 15150348,
     "inputs": [
       {
-        "name": "COH-NativeCombined-1792515332823.zip",
-        "bytes": 52011,
-        "sha256": "66672d24b2674d2b156cb54658bbffdbe809419d7da06f3507f91d0468d009b0"
+        "file": "COH-NativeCombined-20261020-134738.json",
+        "bytes": 180199,
+        "sha256": "d89fb31b469bbc402d1d3ea6911389a27a7b129722e717af47300d56c5630267"
       },
       {
-        "name": "COH-NativeCombined-1792515352398.zip",
-        "bytes": 50745,
-        "sha256": "3bc0f2920a7a2a3ce3ca366d539ceeb75d17652bfd5578c9e735cf0c0fe54178"
+        "file": "COH-ObservedScene-1792522037283.zip",
+        "bytes": 32602,
+        "sha256": "bbec2eafbd333796696c57c1ab999a0aecb2582606d48ed7a1233ffb0b46ed44"
       },
       {
-        "name": "COH-NativeCombined-20261020-115526.json",
-        "bytes": 87615,
-        "sha256": "b6fc1b306a59b448dc2ae6e3887e8358e515009304ef6e26840c6a352e291720"
+        "file": "COH-NativeCombined-1792522077694.zip",
+        "bytes": 72082,
+        "sha256": "ee7cf8fce146b3e0db5dfea3651d23710472f097bfaa605f2027dc76deeba08f"
       }
     ],
     "raw_outputs_committed": false,
     "independent_runs": 1,
-    "client_session": "1a15a3cc444",
-    "server_session": "5c4aecaef5f64da59140f193947e8151",
-    "active_report_time": "2026-10-20T11:55:26.134-05:00",
-    "paused_report_time": "2026-10-20T11:55:31.034-05:00",
-    "archives_share_identical_native_report_sha256": "fc256804eb69521616dfba2907359f81a15fd343368eda684a4e39482e5254d8",
-    "scope": "One physical Thor session: active native JSON, running-server ZIP and later stopped-server ZIP. Shared archived native reports are not independent tests. Existing accepted 0.1.14 evidence remains unchanged.",
+    "client_session": "1a15aa36556",
+    "server_session": "b44f459062d3487da66bfe6ded2eb624",
+    "active_report_time": "2026-10-20T13:47:38.660-05:00",
+    "paused_report_time": "2026-10-20T13:47:47.343-05:00",
+    "native_zip_report_sha256": "62cc9d1c7caf7260b6acfb4918767f25c0ac3007888e7cf45b189c706e9d709b",
+    "scope": "One matching physical AYN Thor/Android13 client activity and owned server run, including two recorded pose generations/captures. Scene ZIP retains the first capture; standalone JSON and Combined ZIP identify the second. Not three independent tests. No continuation replay or development performed during this review.",
     "costume": {
-      "status": "COH_OK",
+      "stage41_passed": true,
       "bodies_expected": 1,
-      "bodies_complete": 1,
-      "default_part_count": 28,
-      "parts_read": 28,
-      "strings_read": 112,
-      "colors_read": 58,
-      "dictionary_required": 0,
-      "count_validated": true,
-      "costume_complete": true,
-      "end_bit": 11648,
-      "next_unconsumed_outer_field": "SupergroupCostume presence bit",
-      "next_required_table": null,
-      "lower_probe_snapshot": "first_reward_string.progress retains old stage41 partcount probe; catalog_boundary=null and successful complete continuation supersede that lower probe.",
-      "selected_entity_index": 125,
-      "self_dbid_matches_handoff": true
+      "bodies_read": 1,
+      "selected_index": 0,
+      "bodytype": 4,
+      "bodytype_name": "Huge",
+      "bodytype_source": "upstream/ouroboros/Common/entity/costume.h: kBodyType_Huge=4; actual decoded snapshot, not a forced renderer choice",
+      "parts": 28,
+      "strings": 112,
+      "colors": 58,
+      "body_end_bit": 11648,
+      "appearance_end_bit": 11672,
+      "receiver_stop_bit": 11832,
+      "next_field": "BasePower CRC lookup",
+      "next_kind": "required table",
+      "required_table": true,
+      "requested_power_crc_u32": 2151953239,
+      "requested_power_crc_hex": "0x80443357",
+      "power_customizations_advertised": 343,
+      "first_customization_tint_or_token_consumed": false,
+      "entity_complete": false,
+      "message_complete": false
     },
+    "replay": {
+      "file": "initial-replay.bin",
+      "bytes": 37795,
+      "sha256": "148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba",
+      "payload_sha256": "a60221590f4ad8694c0edc5a3643fe880ae27498642548f0bd1d857d74af9dc5",
+      "logical_bits": 301656,
+      "post_command_cursor": 32,
+      "appearance_cursor": 1848,
+      "byte_aligned_mode": 1,
+      "selected_costume_index": 0,
+      "app_version": 17,
+      "activity_session": "1a15aa36556",
+      "header_bytes": 88,
+      "payload_bytes": 37707,
+      "hashes_verified": true,
+      "continuation_replayed": false,
+      "scope": "Framing/header/hash inspection only; no additional entity fields parsed."
+    },
+    "first_actual_unknown_input": "The current genuine packet requests the original BasePower CRC/name mapping. Its known CLIENT powers.bin source is absent locally/from the current package; schema is already qualified. Later known rare/global integration also remains before message completion.",
+    "qualification_only_later_suffix": "Source tests cover empty-power paths through taskforce; these later fields were not reached by this live nonempty-power packet.",
     "transport": {
+      "active_phase": "INITIAL_OBSERVED",
+      "final_phase": "CLOSED",
       "initial_observed": true,
-      "initial_bytes": 37889,
-      "initial_bits": 303112,
+      "initial_bytes": 37707,
+      "initial_bits": 301656,
+      "prior_303112_bit_packet_is_distinct": true,
+      "post_command_cursor": 32,
       "groups_present_files": 508,
       "groups_roots": 33,
       "groups_bytes": 42889,
       "opened_sockets": 2,
       "closed_sockets": 2,
       "cleanup_verified": true,
-      "packet_copy_retained": false
+      "ack_sent": false,
+      "ready_sent": false,
+      "received_character_sent": false,
+      "post_ack_messages": "Not applicable: no application ACK was sent."
     },
     "world": {
-      "entity_index": 125,
       "pose": [
         131.453125,
         0.25,
         -114.953125
       ],
-      "selected_instances": 2,
-      "catalog_instances": 13,
-      "view_radius": 24,
-      "resident_bytes": 486030,
-      "peak_resident_bytes": 486030,
-      "stream_budget_bytes": 524288,
-      "box_draws": 1432,
-      "cumulative_source_draw_packets": 8468,
-      "gl_errors": 0,
-      "source_asset_errors": 0,
-      "renderer": "Adreno (TM) 740",
-      "screenshot_provided": false,
-      "ground_contact_visually_confirmed": false,
-      "scope": "Physical report confirms two source instances selected near the decoded pose and active box/source draws. Startup pixel witnesses are not a screenshot of ground contact at that pose; full live-world authority remains false."
-    },
-    "memory": {
-      "live_same_uid_process_set": {
-        "samples": 86,
-        "sampled_utc_ms": 1792515329143,
-        "sample_window_ms": 78,
-        "scan_complete": false,
-        "expected_roles_observed": true,
-        "process_limit": 64,
-        "process_count": 64,
-        "wine_processes": 9,
-        "postgresql_processes": 54,
-        "unreadable_status_count": 0,
-        "omitted_same_uid_processes": 27,
-        "incomplete_process_metrics": 0,
-        "observed_rss_sum_bytes": 1676398592,
-        "observed_pss_sum_bytes": 862385152,
-        "total_rss_bytes": null,
-        "total_pss_bytes": null,
-        "sampled_peak_total_rss_bytes": 974815232,
-        "sampled_peak_total_pss_bytes": 582538240
-      },
-      "live_totals_complete": false,
-      "live_peak_scope": "Reported total peaks come only from earlier complete samples; the larger capped live partial sums prove they are not a complete session peak. RSS includes repeated shared pages.",
-      "verified_zero_memory_wine_zombies": [
+      "capture_observation": "Both decoded physical framebuffer captures visibly show textured source roadway/pavement and a yellow diagnostic box. This closes the previous empty-space/screenshot evidence gap for the existing bounded fixture; no full city or real character model is shown. Precise foot contact is not a collision or depth-contact proof from this 192x41 image.",
+      "captures": [
         {
-          "pid": 13367,
-          "role": "WINE_SERVERS",
-          "zombie_no_address_space": true,
-          "rss_bytes": 0,
-          "pss_bytes": 0
+          "source": "ObservedScene ZIP",
+          "size_bytes": 31616,
+          "sha256": "b2cadedc67df270e9bddf72cca76a4d0bb77929f2c3cf44aebb63632003684ae",
+          "frame": 663,
+          "epoch": 3,
+          "pose_generation": 1,
+          "pose_lock_frame": 650,
+          "selected_entity_index": 125
         },
         {
-          "pid": 13439,
-          "role": "WINE_SERVERS",
-          "zombie_no_address_space": true,
-          "rss_bytes": 0,
-          "pss_bytes": 0
+          "source": "Combined ZIP",
+          "size_bytes": 31616,
+          "sha256": "9dc1b9bc1df15f4b0a6ce6b22eeb9a1f6a77a7a343e40e1a4e090877f252d9a1",
+          "frame": 1990,
+          "epoch": 7,
+          "pose_generation": 2,
+          "pose_lock_frame": 1978,
+          "selected_entity_index": 127
         }
       ],
-      "app_sampled_peak_rss_bytes": 257900544,
-      "app_sampled_peak_pss_bytes": 152164352,
-      "stopped_same_uid_process_set": {
-        "samples": 90,
-        "scan_complete": true,
-        "process_count": 1,
-        "wine_processes": 0,
-        "postgresql_processes": 0,
-        "omitted_same_uid_processes": 0,
-        "incomplete_process_metrics": 0,
-        "total_rss_bytes": 250712064,
-        "total_pss_bytes": 143808512
+      "capture_hashes_verified": true,
+      "standalone_matches_second_capture": true,
+      "capture_frame_delays": [
+        13,
+        12
+      ],
+      "capture_delay_scope": "Twelve eligible world+box draw frames; elapsed frame counters are 13 and 12 respectively.",
+      "selected_instances": 6,
+      "resident_bytes": 486030,
+      "peak_resident_bytes": 486030,
+      "source_residency_cap_bytes": 524288,
+      "gl_renderer": "Adreno (TM) 740",
+      "gl_errors": 0,
+      "scene_charged_bytes": 19458482,
+      "scene_cap_bytes": 100663296,
+      "runtime_archive_streaming_verified": false,
+      "real_costume_rendered": false,
+      "capture_format": "coh-game-surface-rgba8-v1; RGBA8, bottom-left origin,128-byte header",
+      "viewport": {
+        "width": 1920,
+        "height": 410
       },
-      "policy": {
-        "samples": 440,
-        "invalid_samples": 0,
-        "pressure_samples": 0,
-        "minimum_system_headroom_bytes": 7667240960,
-        "minimum_java_heap_headroom_bytes": 164946224,
-        "stop_requested": false
+      "dimensions": {
+        "width": 192,
+        "height": 41
       },
-      "android_callbacks": {
-        "source": "Android onTrimMemory/onLowMemory callbacks",
-        "trim_callbacks": 4,
-        "low_memory_callbacks": 0,
-        "last_trim_level": 15,
-        "last_callback_elapsed_ms": 1020819512,
-        "callback_is_oom_kill_proof": false
+      "capture_world_packets": 2,
+      "capture_entity_draws": 1
+    },
+    "memory": {
+      "scope": "Same-UID non-atomic process RSS/PSS observation; source-level scene charges and GPU/driver memory are separate.",
+      "running_sample_window_ms": 101,
+      "running_total": {
+        "process_count": 91,
+        "rss_bytes": 3992182784,
+        "pss_bytes": 2894646272,
+        "rss_complete": true,
+        "pss_complete": true,
+        "missing_rss_processes": 0,
+        "missing_pss_processes": 0,
+        "zombie_processes": 2
       },
-      "actual_postgresql_settings": null,
-      "postgresql_settings_readback_present": false,
-      "admission": {
-        "current_start_succeeded": true,
-        "current_failure_code": "",
-        "current_failure_reason": "",
-        "new_failed_admission_exercised": false,
-        "historical_7ms_failure": "Only retained in archived 0.1.14 attempt; no reason was retained. This successful run does not establish that historical reason."
-      },
-      "android_exit_history": {
-        "latest": {
-          "pid": 18702,
-          "reason": 10,
-          "status": 0,
-          "timestamp_utc_ms": 1792507789232,
-          "importance": 125,
-          "pss_kib": 76705,
-          "rss_kib": 181276,
-          "low_memory": false
+      "running_categories": {
+        "ANDROID_APP_AND_NATIVE_CLIENT": {
+          "process_count": 1,
+          "rss_bytes": 204398592,
+          "pss_bytes": 99095552
         },
-        "new_low_memory_entries_vs_accepted014": 0,
-        "retained_old_low_memory_entries": [
-          {
-            "pid": 24597,
-            "reason": 3,
-            "status": 0,
-            "timestamp_utc_ms": 1792469301504,
-            "importance": 100,
-            "pss_kib": 0,
-            "rss_kib": 0,
-            "low_memory": true
-          },
-          {
-            "pid": 23853,
-            "reason": 3,
-            "status": 0,
-            "timestamp_utc_ms": 1792469297925,
-            "importance": 100,
-            "pss_kib": 80536,
-            "rss_kib": 184152,
-            "low_memory": true
-          }
-        ],
-        "interpretation": "Two historical Android LOW_MEMORY entries remain at Oct19 23:08 Chicago. No new such entry is retained for this run; the older trigger and aggregate memory at death remain unavailable."
-      }
+        "WINE_SERVERS": {
+          "process_count": 10,
+          "rss_bytes": 2456440832,
+          "pss_bytes": 2421953536
+        },
+        "POSTGRESQL": {
+          "process_count": 74,
+          "rss_bytes": 1089802240,
+          "pss_bytes": 149147648
+        },
+        "OTHER_APP_UID": {
+          "process_count": 6,
+          "rss_bytes": 241541120,
+          "pss_bytes": 224449536
+        }
+      },
+      "unclassified": 0,
+      "exported_detail_rows": 32,
+      "detail_rows_omitted": 59,
+      "sampled_peak_total_rss_bytes": 4021653504,
+      "sampled_peak_total_pss_bytes": 2925635584,
+      "app_uid_cgroup": {
+        "status": "unavailable",
+        "reason": "CGROUP_SOURCE_INVALID_OR_UNREADABLE",
+        "uid": 10315,
+        "charge_bytes": null,
+        "scope": "kernel UID-named cgroup charge; not same-UID RSS/PSS or whole-device RAM",
+        "source": "proc/self/cgroup and proc/self/mountinfo"
+      },
+      "postgresql_SHOW": {
+        "observation_status": "observed",
+        "reason": "",
+        "source": "owned_postgresql_SHOW",
+        "session_id": "b44f459062d3487da66bfe6ded2eb624",
+        "rss_pss_change_measured": false,
+        "source_dbserver_connections": 65,
+        "ordinary_spare_connections": 4,
+        "requested": {
+          "max_connections": "72",
+          "superuser_reserved_connections": "3",
+          "shared_buffers": "16MB",
+          "work_mem": "1MB",
+          "maintenance_work_mem": "16MB"
+        },
+        "observed": {
+          "max_connections": "72",
+          "superuser_reserved_connections": "3",
+          "shared_buffers": "16MB",
+          "work_mem": "1MB",
+          "maintenance_work_mem": "16MB"
+        }
+      },
+      "minimum_system_headroom_bytes": 8112177152,
+      "new_low_memory_exit_observed": false,
+      "earlier_low_memory_cause_established": false,
+      "older_7ms_admission_failure_cause_established": false,
+      "finding": "All 91 process/category sums are complete despite 59 omitted detail rows; Wine dominates PSS. Actual SHOW values match requested settings. No claim of measured configuration savings or resolution of historical exits."
     },
     "cleanup": {
-      "server_exit_code": 0,
-      "server_owned_process_alive": false,
-      "guest_cleanup_complete": true,
-      "guest_cleanup": {
-        "postgres_graceful": true,
-        "wine_prefix_stopped": true,
-        "owned_processes_reaped": true,
-        "presentation_socket_removed": true
-      },
+      "guest_exit_code": 0,
+      "server_status": "stopped",
+      "cleanup_complete": true,
       "profile_preserved": true,
-      "native": {
-        "running": false,
-        "foreground": false,
-        "contexts_started": 2,
-        "contexts_completed": 2,
-        "objects_released": true,
-        "gl_errors": 0,
-        "cleanup_gl_errors": 0,
-        "cleanup_egl_errors": 0,
-        "held_dirs": 0,
-        "input_pending_edges": 0
+      "original_profile_modified": false,
+      "render_contexts_started": 3,
+      "render_contexts_completed": 3,
+      "render_objects_released": true,
+      "source_gpu_payload_bytes": 0,
+      "cleanup_gl_errors": 0,
+      "cleanup_egl_errors": 0,
+      "remaining_total": {
+        "process_count": 1,
+        "rss_bytes": 180715520,
+        "pss_bytes": 75064320,
+        "rss_complete": true,
+        "pss_complete": true
       },
-      "released_dictionary_owner_report": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "gpu_bytes_after_pause": 0
+      "server_memory_monitor_last_sample_status": "running",
+      "monitor_scope": "Monitor retains its last running sample; stopped server report, guest exit0 and zero Wine/PostgreSQL processes establish cleanup.",
+      "remaining_category_counts": {
+        "ANDROID_APP_AND_NATIVE_CLIENT": 1,
+        "WINE_SERVERS": 0,
+        "POSTGRESQL": 0,
+        "OTHER_APP_UID": 0
+      }
     },
     "diagnostics": {
-      "optional_omissions": [
-        "first_record_netfx",
-        "first_record_costume_prefix"
-      ],
-      "invalid_mask": 0,
-      "native_ceiling_bytes": 7168,
-      "essential_continuation_retained": true,
-      "complete_initial_character": false,
-      "actor_publication": false,
-      "application_ack_permitted": false,
-      "live_world_authority": false
+      "capture_error": null,
+      "replay_error": null,
+      "renderer_failure": null,
+      "gates25_to27": "OPEN in their documented full scopes"
     },
-    "result": "QUALIFIED physical costume-body continuation and bounded neighborhood report; PARTIAL aggregate memory because 64 rows omit 27 processes; runtime PostgreSQL settings unverified.",
-    "next_action": "Wait for next user prompt."
+    "result": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete.",
+    "next_action": "Development paused at user request after recording these reports."
   },
-  "next_action": "Update in place to 0.1.16, collect the game-surface ZIP, native report, initial replay and simultaneous Wine/PostgreSQL/app memory observations, then finish the actual packet and genuine costume/archive integration.",
+  "next_action": "Development paused at user request after recording these reports.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
-    "state": "Qualified diagnostic delivery; packet completion, real costume rendering and Android archive streaming remain partial.",
+    "state": "Physical 0.1.16 results recorded; development paused at user request.",
     "source_commits": [
       {
         "local": "4a12f6c92426cc0e2249330ee69ffa6e6c8ef61b",
@@ -458,7 +481,7 @@
       "source_artifact_sha256": "f23005abafe239ba892f5ace59a6aad9a0eeae33131844e0f24be3c4d5baa9f6",
       "workflow_dispatch_runs": 3,
       "completed_arm64_candidate_builds": 1,
-      "physical_thor": "Not executed; no ARM64 guest execution inferred from x86 emulator."
+      "physical_thor": "Matching physical 0.1.16 observations verified separately: Adreno 740 capture/replay, actual Huge body and BasePower lookup boundary, complete memory totals/SHOW and orderly cleanup."
     },
     "next_diagnostic": {
       "version": "0.1.16",
@@ -466,9 +489,9 @@
       "profile": "capture-diagnostic",
       "build_started": true,
       "scope": "One meaningful frame-capture and original packet-continuation test APK after integrated qualification.",
-      "physical_thor": "Pending; no new Thor result claimed.",
+      "physical_thor": "Matching APK physically observed on Adreno740/Android13; current receiver stops at genuine BasePower lookup.",
       "build_requested": true,
-      "state": "Signed ARM64 APK qualified and available; Thor test pending.",
+      "state": "Matching signed APK physically observed; requested report review complete; further development paused.",
       "apk": {
         "name": "CoH-Native-Combined-0.1.16-capture-diagnostic-arm64.apk",
         "bytes": 15150348,
@@ -480,12 +503,12 @@
       }
     },
     "increments": {
-      "frame_capture": "Production current-pose/current-frame draw qualification and off-thread historical frame export integrated; actual host source-neighborhood+box GLES readback passed. Thor capture remains pending.",
+      "frame_capture": "Physical Thor framebuffer hashes/headers verified for two pose generations at the same decoded coordinate; textured pavement and yellow diagnostic box are visible.",
       "capture_store": "Atomic historical raw capture with size/SHA256/appVersion/activitySession, stored ZIP export and report identity binding qualified. Optional absent/stale/corrupt files are omitted before ZIP mutation; essential reports remain available.",
       "packet": "Original outer receive runs SG costumes, FX/NPC, translucency, power customization, titles, ragdoll, basic statistics, vision, target/status, inventory and taskforce. Nonempty customization stops at actual absent BasePower CRC lookup. Empty branches reach later known very-rare fields with explicit implementation-remaining diagnostics. Actual Thor 303112-bit packet has not been replayed; entity/message complete and ACK/READY stay false.",
-      "character": "A lossless 48352-byte caller snapshot and original bodytype/changeGeo/texture adapter are qualified across all nine body descriptors. Actual selected bodytype/assets await the next Thor capture; box retained.",
+      "character": "Actual wire bodytype4/Huge confirmed, with28 parts/112 strings/58 colors; diagnostic box retained.",
       "world": "Archive-backed adapter and105 authentic placements integrated as standalone source work with two-pose host GLES; Android imported-archive wiring and original CLIENT ZIP metadata remain unavailable. The next capture APK retains the existing two-instance neighborhood.",
-      "memory": "All scanned same-UID processes contribute to app/Wine/PostgreSQL/other and total sums regardless of detail retention; actual UID cgroup-first observation and five owned PostgreSQL SHOW results retained live and at exit. Physical readback pending."
+      "memory": "Physical91-process category/total observations complete despite59 omitted detail rows. Actual PostgreSQL SHOW values retained; app cgroup charge unavailable. Server and native cleanup verified."
     },
     "source_tests": {
       "capture_owner": "76 controls each release/ASan/UBSan; explicit allocation balance; LeakSanitizer unsupported by this host procfs",
@@ -520,7 +543,7 @@
       "further_recovery_requests": false,
       "offline_scope": "Original Atlas central directory and two selected payloads retained; original CLIENT central/header/compressed ranges missing. Generated CLIENT format fixture is not original-archive execution proof."
     },
-    "next_action": "Update in place to 0.1.16, collect the game-surface ZIP, native report, initial replay and simultaneous Wine/PostgreSQL/app memory observations, then finish the actual packet and genuine costume/archive integration.",
+    "next_action": "Development paused at user request after recording these reports.",
     "host_scene_capture": {
       "scope": "Actual host Mesa GLES source neighborhood and observed-pose diagnostic box through the shipped capture/readback/publish and Java ZIP writer; not Android window/JNI/Thor or live authority",
       "raw_bytes": 46784,
@@ -587,7 +610,7 @@
       "Archive-backed two-pose source adapter with explicit partial Android/archive prerequisites.",
       "All-process category sums, actual UID cgroup-first observation and retained owned PostgreSQL SHOW telemetry."
     ],
-    "blocker": "Actual 303112-bit Thor payload has not yet been replayed. Full CLIENT powers.bin is absent; later very-rare/subsequent entity and global-tail integration remains. Real bodytype/rig/GEO/texture selection and Android archive FD hookup await input/integration."
+    "blocker": "Actual 301656-bit ALLENTS stops at bit 11832 at BasePower CRC 0x80443357 (first of 343 customization entries). CLIENT powers.bin mapping is absent; no application ACK/READY."
   },
   "candidate_history": [
     {
@@ -741,5 +764,250 @@
       "legacy_candidate_published": false,
       "fix": "Dedicated marker excludes legacy report builder and requires native-contracts-only on bootstrap."
     }
-  }
+  },
+  "physical_history": [
+    {
+      "recorded_date": "2026-10-20",
+      "version": "0.1.15",
+      "source_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
+      "apk_sha256": "9b15b3139a5d3a5dc9d4aada5d9766cffdc2138f423fb3bc6fd70cb821f4e349",
+      "inputs": [
+        {
+          "name": "COH-NativeCombined-1792515332823.zip",
+          "bytes": 52011,
+          "sha256": "66672d24b2674d2b156cb54658bbffdbe809419d7da06f3507f91d0468d009b0"
+        },
+        {
+          "name": "COH-NativeCombined-1792515352398.zip",
+          "bytes": 50745,
+          "sha256": "3bc0f2920a7a2a3ce3ca366d539ceeb75d17652bfd5578c9e735cf0c0fe54178"
+        },
+        {
+          "name": "COH-NativeCombined-20261020-115526.json",
+          "bytes": 87615,
+          "sha256": "b6fc1b306a59b448dc2ae6e3887e8358e515009304ef6e26840c6a352e291720"
+        }
+      ],
+      "raw_outputs_committed": false,
+      "independent_runs": 1,
+      "client_session": "1a15a3cc444",
+      "server_session": "5c4aecaef5f64da59140f193947e8151",
+      "active_report_time": "2026-10-20T11:55:26.134-05:00",
+      "paused_report_time": "2026-10-20T11:55:31.034-05:00",
+      "archives_share_identical_native_report_sha256": "fc256804eb69521616dfba2907359f81a15fd343368eda684a4e39482e5254d8",
+      "scope": "One physical Thor session: active native JSON, running-server ZIP and later stopped-server ZIP. Shared archived native reports are not independent tests. Existing accepted 0.1.14 evidence remains unchanged.",
+      "costume": {
+        "status": "COH_OK",
+        "bodies_expected": 1,
+        "bodies_complete": 1,
+        "default_part_count": 28,
+        "parts_read": 28,
+        "strings_read": 112,
+        "colors_read": 58,
+        "dictionary_required": 0,
+        "count_validated": true,
+        "costume_complete": true,
+        "end_bit": 11648,
+        "next_unconsumed_outer_field": "SupergroupCostume presence bit",
+        "next_required_table": null,
+        "lower_probe_snapshot": "first_reward_string.progress retains old stage41 partcount probe; catalog_boundary=null and successful complete continuation supersede that lower probe.",
+        "selected_entity_index": 125,
+        "self_dbid_matches_handoff": true
+      },
+      "transport": {
+        "initial_observed": true,
+        "initial_bytes": 37889,
+        "initial_bits": 303112,
+        "groups_present_files": 508,
+        "groups_roots": 33,
+        "groups_bytes": 42889,
+        "opened_sockets": 2,
+        "closed_sockets": 2,
+        "cleanup_verified": true,
+        "packet_copy_retained": false
+      },
+      "world": {
+        "entity_index": 125,
+        "pose": [
+          131.453125,
+          0.25,
+          -114.953125
+        ],
+        "selected_instances": 2,
+        "catalog_instances": 13,
+        "view_radius": 24,
+        "resident_bytes": 486030,
+        "peak_resident_bytes": 486030,
+        "stream_budget_bytes": 524288,
+        "box_draws": 1432,
+        "cumulative_source_draw_packets": 8468,
+        "gl_errors": 0,
+        "source_asset_errors": 0,
+        "renderer": "Adreno (TM) 740",
+        "screenshot_provided": false,
+        "ground_contact_visually_confirmed": false,
+        "scope": "Physical report confirms two source instances selected near the decoded pose and active box/source draws. Startup pixel witnesses are not a screenshot of ground contact at that pose; full live-world authority remains false."
+      },
+      "memory": {
+        "live_same_uid_process_set": {
+          "samples": 86,
+          "sampled_utc_ms": 1792515329143,
+          "sample_window_ms": 78,
+          "scan_complete": false,
+          "expected_roles_observed": true,
+          "process_limit": 64,
+          "process_count": 64,
+          "wine_processes": 9,
+          "postgresql_processes": 54,
+          "unreadable_status_count": 0,
+          "omitted_same_uid_processes": 27,
+          "incomplete_process_metrics": 0,
+          "observed_rss_sum_bytes": 1676398592,
+          "observed_pss_sum_bytes": 862385152,
+          "total_rss_bytes": null,
+          "total_pss_bytes": null,
+          "sampled_peak_total_rss_bytes": 974815232,
+          "sampled_peak_total_pss_bytes": 582538240
+        },
+        "live_totals_complete": false,
+        "live_peak_scope": "Reported total peaks come only from earlier complete samples; the larger capped live partial sums prove they are not a complete session peak. RSS includes repeated shared pages.",
+        "verified_zero_memory_wine_zombies": [
+          {
+            "pid": 13367,
+            "role": "WINE_SERVERS",
+            "zombie_no_address_space": true,
+            "rss_bytes": 0,
+            "pss_bytes": 0
+          },
+          {
+            "pid": 13439,
+            "role": "WINE_SERVERS",
+            "zombie_no_address_space": true,
+            "rss_bytes": 0,
+            "pss_bytes": 0
+          }
+        ],
+        "app_sampled_peak_rss_bytes": 257900544,
+        "app_sampled_peak_pss_bytes": 152164352,
+        "stopped_same_uid_process_set": {
+          "samples": 90,
+          "scan_complete": true,
+          "process_count": 1,
+          "wine_processes": 0,
+          "postgresql_processes": 0,
+          "omitted_same_uid_processes": 0,
+          "incomplete_process_metrics": 0,
+          "total_rss_bytes": 250712064,
+          "total_pss_bytes": 143808512
+        },
+        "policy": {
+          "samples": 440,
+          "invalid_samples": 0,
+          "pressure_samples": 0,
+          "minimum_system_headroom_bytes": 7667240960,
+          "minimum_java_heap_headroom_bytes": 164946224,
+          "stop_requested": false
+        },
+        "android_callbacks": {
+          "source": "Android onTrimMemory/onLowMemory callbacks",
+          "trim_callbacks": 4,
+          "low_memory_callbacks": 0,
+          "last_trim_level": 15,
+          "last_callback_elapsed_ms": 1020819512,
+          "callback_is_oom_kill_proof": false
+        },
+        "actual_postgresql_settings": null,
+        "postgresql_settings_readback_present": false,
+        "admission": {
+          "current_start_succeeded": true,
+          "current_failure_code": "",
+          "current_failure_reason": "",
+          "new_failed_admission_exercised": false,
+          "historical_7ms_failure": "Only retained in archived 0.1.14 attempt; no reason was retained. This successful run does not establish that historical reason."
+        },
+        "android_exit_history": {
+          "latest": {
+            "pid": 18702,
+            "reason": 10,
+            "status": 0,
+            "timestamp_utc_ms": 1792507789232,
+            "importance": 125,
+            "pss_kib": 76705,
+            "rss_kib": 181276,
+            "low_memory": false
+          },
+          "new_low_memory_entries_vs_accepted014": 0,
+          "retained_old_low_memory_entries": [
+            {
+              "pid": 24597,
+              "reason": 3,
+              "status": 0,
+              "timestamp_utc_ms": 1792469301504,
+              "importance": 100,
+              "pss_kib": 0,
+              "rss_kib": 0,
+              "low_memory": true
+            },
+            {
+              "pid": 23853,
+              "reason": 3,
+              "status": 0,
+              "timestamp_utc_ms": 1792469297925,
+              "importance": 100,
+              "pss_kib": 80536,
+              "rss_kib": 184152,
+              "low_memory": true
+            }
+          ],
+          "interpretation": "Two historical Android LOW_MEMORY entries remain at Oct19 23:08 Chicago. No new such entry is retained for this run; the older trigger and aggregate memory at death remain unavailable."
+        }
+      },
+      "cleanup": {
+        "server_exit_code": 0,
+        "server_owned_process_alive": false,
+        "guest_cleanup_complete": true,
+        "guest_cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true,
+          "presentation_socket_removed": true
+        },
+        "profile_preserved": true,
+        "native": {
+          "running": false,
+          "foreground": false,
+          "contexts_started": 2,
+          "contexts_completed": 2,
+          "objects_released": true,
+          "gl_errors": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "held_dirs": 0,
+          "input_pending_edges": 0
+        },
+        "released_dictionary_owner_report": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "gpu_bytes_after_pause": 0
+      },
+      "diagnostics": {
+        "optional_omissions": [
+          "first_record_netfx",
+          "first_record_costume_prefix"
+        ],
+        "invalid_mask": 0,
+        "native_ceiling_bytes": 7168,
+        "essential_continuation_retained": true,
+        "complete_initial_character": false,
+        "actor_publication": false,
+        "application_ack_permitted": false,
+        "live_world_authority": false
+      },
+      "result": "QUALIFIED physical costume-body continuation and bounded neighborhood report; PARTIAL aggregate memory because 64 rows omit 27 processes; runtime PostgreSQL settings unverified.",
+      "next_action": "Wait for next user prompt."
+    }
+  ]
 }
