@@ -218,6 +218,37 @@ def map_report_contract(value):
             'numeric_privacy_bounds_verified': True}
 
 
+def absent_policy_report_contract(value):
+    """The exact Java missing-policy projection; no native counters are published."""
+    assert isinstance(value, dict) and set(value) == {'phase', 'live_world_rendered',
+        'authserver_authenticated', 'world_authority'}, 'Unexpected absent-policy report fields'
+    assert value['phase'] == 'POLICY_UNAVAILABLE'
+    assert all(value[key] is False for key in ('live_world_rendered', 'authserver_authenticated', 'world_authority'))
+
+
+def returned_local_report_contract(before, returned, service):
+    """Keep absent-policy refusal separate from full native-owner cleanup proof."""
+    protocol = returned['server_protocol']
+    assert isinstance(protocol, dict)
+    if protocol.get('phase') == 'POLICY_UNAVAILABLE' and 'schema' not in protocol:
+        absent_policy_report_contract(protocol)
+        absent_policy_report_contract(before['server_protocol'])
+        assert before.get('connection_mode') == returned.get('connection_mode') == 'LOCAL'
+        assert isinstance(before.get('session_id'), str) and before['session_id'] == returned.get('session_id')
+        server = service['server']
+        assert server.get('phase') == 'stopped' and server.get('ready') is False and server.get('owned_process_alive') is False
+        return {'native_network_phase': protocol['phase'], 'opened_sockets': None, 'closed_sockets': None,
+                'native_owner_report_published': False,
+                'transport_counter_scope': 'not published for the missing-policy projection; no transport cleanup claim'}
+    # A full owner report must pass every original numeric/privacy assertion.
+    # Malformed owner reports never fall back to the missing-policy branch.
+    map_report_contract(protocol)
+    assert protocol['phase'] == 'SUSPENDED' and protocol['opened_sockets'] == protocol['closed_sockets']
+    return {'native_network_phase': protocol['phase'], 'opened_sockets': protocol['opened_sockets'],
+            'closed_sockets': protocol['closed_sockets'], 'native_owner_report_published': True,
+            'transport_counter_scope': 'complete native numeric owner report with matching owned socket counters'}
+
+
 def idle_preview_contract(value):
     """Before explicit Connect no native network controller has been created."""
     assert isinstance(value, dict) and value == {'phase':'IDLE'}
@@ -686,8 +717,7 @@ class Check:
             x.get('session_id') == before['session_id'] and x.get('resumed') is False
             and any(e.get('type') == 'return_to_launcher_ready' for e in x.get('events',[])),
             label+' completed explicit return capture')
-        protocol = returned['server_protocol'];map_report_contract(protocol)
-        assert protocol['phase'] == 'SUSPENDED' and protocol['opened_sockets'] == protocol['closed_sockets']
+        protocol_proof = returned_local_report_contract(before, returned, service)
         assert returned['native']['held_dirs'] == 0
         assert returned['input_adapter']['external_android']['focus_clear'] > before['input_adapter']['external_android']['focus_clear']
         deadline = time.monotonic()+20
@@ -707,11 +737,10 @@ class Check:
         (self.args.output/(label+'-return-native-report.json')).write_text(json.dumps(returned,indent=2)+'\n')
         self.record('explicit Return to launcher: '+label, same_app_process=True,
             retained_main_activity=True, active_main_instances=1, active_native_instances=0,
-            native_network_phase=protocol['phase'], opened_sockets=protocol['opened_sockets'],
-            closed_sockets=protocol['closed_sockets'], source_held_input_cleared=True,
+            **protocol_proof, source_held_input_cleared=True,
             actual_framework_held_key_across_click=held_input,
             service_state_unchanged=True, actual_arm64_server_liveness_qualified=False,
-            scope='Actual existing launcher/task/process and client suspend/report capture; post-destruction render teardown and ARM64 guest server execution are not established by this report.')
+            scope='Actual existing launcher/task/process and Return report; transport counters are reported only when present. Post-destruction render teardown and ARM64 guest server execution are not established by this report.')
         return returned
 
     def scripted_character_picker(self, return_from_picker=False):
@@ -1225,7 +1254,8 @@ class Check:
         assert current.get('preview_is_server_world') is False
         self.viewport('initial-preview', native['frames'])
         self.tap('Connect local server')
-        self.wait_report('native-client-report.json', lambda x: x.get('server_protocol', {}).get('phase') == 'POLICY_UNAVAILABLE', 'native connect refuses missing owned server lease')
+        unavailable = self.wait_report('native-client-report.json', lambda x: x.get('server_protocol', {}).get('phase') == 'POLICY_UNAVAILABLE', 'native connect refuses missing owned server lease')
+        absent_policy_report_contract(unavailable['server_protocol'])
         self.record('native connection refuses absent server lease', actual_server_interoperability_verified=False)
         self.record('native preview actual GLES frames', frames=native['frames'], gl_errors=native['gl_errors'])
         self.adb('shell','settings','put','system','accelerometer_rotation','0')

@@ -54,7 +54,7 @@ these are component payloads, not total process/GPU or Thor measurements.
 ## Tests, APK and next action
 
 Release/ASan/UBSan: original receiver 27587 checks/mode; actualJNI continuation 2665
-checks/mode, 32 captures, 40 opens/40 closes, stressed report 6726B; pose/box 15282 and
+checks/mode, 32 captures, 40 opens/40 closes, stressed JNI report 6726B; legacy report regression maximum 6889B; pose/box 15282 and
 exactSession-body 135/mode. Combined process observer 24 checks, memory worker 39/9000
 requests, existing phase 2899. Host fixtures are labeled synthetic, not live Thor.
 
