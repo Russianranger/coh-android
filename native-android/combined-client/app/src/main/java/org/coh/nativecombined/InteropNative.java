@@ -10,6 +10,8 @@ public final class InteropNative {
     private InteropNative() { }
     /** Verify the actual local server common BodyParts cache before this attempt. */
     public static native int configureBodyPartsCache(String absolutePath);
+    /** Map the exact bundled CLIENT strings/palette for the next handoff owner. */
+    public static native int configureClientSlots(android.content.res.AssetManager assets);
     public static native long begin(int dbPort, String account, int networkVersion,
             boolean encryptionRequired, boolean outboundCompressed, long nowMs);
     public static native int service(long handle, long nowMs);

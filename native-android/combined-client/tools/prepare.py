@@ -14,6 +14,7 @@ import stat
 import subprocess
 import urllib.request
 import zipfile
+from client_slots_input import prepare_client_slots
 
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parent
@@ -110,6 +111,7 @@ def prepare(args):
     # These generated directories are exclusively owned by this preparer.
     for name in ('runtime', 'combined', 'atlas'):
         shutil.rmtree(assets / name, ignore_errors=True)
+    (assets / 'neighborhood-map.bin').unlink(missing_ok=True)
     bundled = {}
     donor_files = {}
     receipt = {'format': 1, 'donor_apk': {'name': DONOR_NAME, **pin(donor.read_bytes())}, 'scene_apk': {'name': SCENE_NAME, **pin(scene.read_bytes())}, 'large_runtime_payloads_bundled': False, 'actual_server_interoperability_verified': False}
@@ -158,6 +160,8 @@ def prepare(args):
     write(assets / 'combined/OPENSSL-LICENSE.txt', crypto_license)
     receipt['public_crypto'] = {'version': crypto_pin['version'], 'source_url': crypto_pin['url'],
                                'source_sha256': crypto_pin['sha256'], 'license': pin(crypto_license)}
+    if getattr(args, 'client_slots', False):
+        receipt['client_slots'] = prepare_client_slots(assets)
     contract = {'format': 1, 'donor_apk': receipt['donor_apk'], 'donor_files': donor_files, 'bundled_files': bundled}
     write(assets / 'combined/import-contract.json', (json.dumps(contract, sort_keys=True, indent=2) + '\n').encode())
     with zipfile.ZipFile(scene) as z:
@@ -188,6 +192,7 @@ def main():
     p.add_argument('--cache', type=Path, default=PROJECT / '.inputs')
     p.add_argument('--output', type=Path, default=PROJECT / 'app/src/main')
     p.add_argument('--guest-override', type=Path, action='append', default=[])
+    p.add_argument('--client-slots', action='store_true', help='Bundle the exact retained CLIENT slot image for the next diagnostic')
     p.add_argument('--evidence', type=Path, default=ROOT / 'native-android/results/combined-client/build-inputs.json')
     prepare(p.parse_args())
 

@@ -82,6 +82,10 @@ target_include_directories(coh_combined_interop PRIVATE "${ENGINE}/initial-captu
     "${ENGINE}/session" "${NATIVE_ROOT}/include" "${CRYPTO_ABI_ROOT}/include")
 target_compile_features(coh_combined_interop PRIVATE c_std_11)
 target_compile_definitions(coh_combined_interop PRIVATE COH_INTEROP_REQUEST_TX=1)
+if(COH_CLIENT_SLOT_DICTIONARY)
+    target_compile_definitions(coh_combined_interop PRIVATE COH_INTEROP_CLIENT_SLOTS=1)
+    target_link_libraries(coh_combined_interop PRIVATE android)
+endif()
 target_compile_options(coh_combined_interop PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
 target_link_options(coh_combined_interop PRIVATE -Wl,--no-undefined -Wl,-z,defs
     -Wl,--exclude-libs,ALL)

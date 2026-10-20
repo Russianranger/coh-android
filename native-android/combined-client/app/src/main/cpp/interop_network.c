@@ -7,7 +7,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <unistd.h>
+/* Low-level SHA256 uses a fixed caller-owned context, avoiding EVP/provider
+ * allocation during the bounded dictionary preparation callback. */
+#define OPENSSL_SUPPRESS_DEPRECATED
 #include <openssl/rand.h>
+#include <openssl/sha.h>
+#ifdef COH_INTEROP_CLIENT_SLOTS
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+#endif
 #include "coh_initial_capture.h"
 #include "coh_initial_create_probe.h"
 #include "coh_initial_pose_probe.h"
@@ -26,12 +36,16 @@
 #include "coh_initial_partcount_probe.h"
 #include "coh_local_bodypart_default.h"
 #include "coh_original_costume_receive.h"
+#include "coh_client_costume_slots.h"
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
 #include "coh_request_tx.h"
 #endif
 
+typedef struct {
+    void *mapping;size_t mapped_bytes;uint32_t *index;CohClientCostumeSlots view;
+} ClientSlotsOwner;
 typedef struct {
     CohInitialCapture *capture;
     uint64_t token,groups_generation;
@@ -58,6 +72,8 @@ typedef struct {
     CohOriginalCostumeWorkspace costume_workspace;
     CohOriginalCostumeReport initial_costume_continuation;
     unsigned costume_continuation_attempted;
+    unsigned costume_bodies_expected,costume_bodies_read;
+    ClientSlotsOwner client_slots;CohStatus client_slots_status;
     CohReceiveProjection receive;
 #ifdef COH_INTEROP_REQUEST_TX
     CohRequestTxWitness *request;
@@ -67,6 +83,27 @@ typedef struct {
 static Interop *active;
 static uint64_t next_token=1;
 static CohStatus configured_bodyparts_status=COH_NOT_FOUND;
+static ClientSlotsOwner configured_client_slots;
+static CohStatus configured_client_slots_status=COH_NOT_FOUND;
+static size_t client_slots_owned(const ClientSlotsOwner *slots) {
+    return slots->mapped_bytes+(slots->index?COH_CLIENT_COSTUME_INDEX_BYTES:0);
+}
+static void client_slots_release(ClientSlotsOwner *slots) {
+    if(slots->index){coh_db_wipe(slots->index,COH_CLIENT_COSTUME_INDEX_BYTES);free(slots->index);}
+    if(slots->mapping)munmap(slots->mapping,slots->mapped_bytes);
+    memset(slots,0,sizeof(*slots));
+}
+#ifdef COH_INTEROP_CLIENT_SLOTS
+#define CLIENT_SLOTS_FORMAT ",\"client_slots\":[%u,%llu,%llu,%llu],\"costume_bodies\":[%u,%u]"
+#define CLIENT_SLOTS_ARGS(h) ,status_number((h)->client_slots_status), \
+    (unsigned long long)(h)->client_slots.view.raw.size, \
+    (unsigned long long)((h)->client_slots.index?COH_CLIENT_COSTUME_INDEX_BYTES:0), \
+    (unsigned long long)(h)->client_slots.mapped_bytes, \
+    (h)->costume_bodies_expected,(h)->costume_bodies_read
+#else
+#define CLIENT_SLOTS_FORMAT ""
+#define CLIENT_SLOTS_ARGS(h)
+#endif
 static void sample_receive(Interop*h){
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
     coh_receive_sample(&h->receive,&d.local.map_protocol.udp);coh_db_wipe(&d,sizeof(d));
@@ -88,6 +125,7 @@ static void close_capture(Interop *h) {
 #endif
     retire_request(h);
     sample_receive(h);
+    client_slots_release(&h->client_slots);
 }
 static Interop *owner(jlong value) {
     return value>0&&active&&active->token==(uint64_t)value?active:NULL;
@@ -128,6 +166,54 @@ static int account_copy(JNIEnv *env,jstring input,char out[15]) {
     (*env)->ReleaseStringChars(env,input,chars);out[length]=0;
     return valid&&!(*env)->ExceptionCheck(env);
 }
+#ifdef COH_INTEROP_CLIENT_SLOTS
+static CohStatus client_slots_digest(void *context,CohBytes raw,uint8_t out[32]) {
+    (void)context;SHA256_CTX state;
+    int valid=SHA256_Init(&state)&&SHA256_Update(&state,raw.data,raw.size)&&SHA256_Final(out,&state);
+    coh_db_wipe(&state,sizeof(state));return valid?COH_OK:COH_INVALID;
+}
+JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_configureClientSlots(JNIEnv *env,jclass cls,jobject input) {
+    (void)cls;if(active)return COH_STATE;
+    ClientSlotsOwner candidate={0};CohStatus status=COH_NOT_FOUND;
+    AAsset *asset=NULL;int fd=-1;off_t start=0,length=0;
+    if(!input){status=COH_INVALID;goto done;}
+    AAssetManager *manager=AAssetManager_fromJava(env,input);
+    if(!manager||(*env)->ExceptionCheck(env)){status=COH_INVALID;goto done;}
+    asset=AAssetManager_open(manager,"combined/client-slots.bin",AASSET_MODE_RANDOM);
+    if(!asset)goto done;
+    fd=AAsset_openFileDescriptor(asset,&start,&length);
+    if(fd<0)goto done; /* The profile requires a stored/noCompress asset. */
+    if(start<0||length!=(off_t)COH_CLIENT_COSTUME_RAW_BYTES){status=COH_INVALID;goto done;}
+    long page=sysconf(_SC_PAGESIZE);
+    if(page<=0||(unsigned long)page>1024u*1024u){status=COH_INVALID;goto done;}
+    size_t prefix=(size_t)(start%(off_t)page),span=prefix+COH_CLIENT_COSTUME_RAW_BYTES;
+    size_t rounded=(span+(size_t)page-1)/(size_t)page*(size_t)page;
+    /* Concrete initial-observer domain, not complete process RSS: old pending
+     * owner + candidate mapping (including page edges), index, future Interop,
+     * preparation output/provider and native/digest call reserves. */
+    size_t retained=sizeof(Interop)+sizeof(candidate)+client_slots_owned(&configured_client_slots)+
+        rounded-COH_CLIENT_COSTUME_RAW_BYTES+COH_ORIGINAL_COSTUME_STACK_RESERVE;
+    size_t required=retained+COH_CLIENT_COSTUME_RAW_BYTES+COH_CLIENT_COSTUME_INDEX_BYTES+
+        sizeof(CohClientCostumeSlots)+sizeof(CohCostumeImportDigest)+COH_CLIENT_COSTUME_PREPARE_STACK_RESERVE+4096u;
+    if(required>8u*1024u*1024u){status=COH_LIMIT;goto done;}
+    void *mapping=mmap(NULL,rounded,PROT_READ,MAP_PRIVATE,fd,start-(off_t)prefix);
+    if(mapping==MAP_FAILED){status=COH_LIMIT;goto done;}
+    candidate.mapping=mapping;candidate.mapped_bytes=rounded;
+    close(fd);fd=-1;AAsset_close(asset);asset=NULL;
+    candidate.index=calloc(COH_CLIENT_COSTUME_INDEX_COUNT,sizeof(*candidate.index));
+    if(!candidate.index){status=COH_LIMIT;goto done;}
+    CohCostumeImportDigest digest={client_slots_digest,NULL,0,4096u};
+    status=coh_client_costume_slots_prepare((CohBytes){(const uint8_t*)mapping+prefix,COH_CLIENT_COSTUME_RAW_BYTES},
+        candidate.index,COH_CLIENT_COSTUME_INDEX_COUNT,&digest,&candidate.view,8u*1024u*1024u,retained);
+done:
+    if(fd>=0)close(fd);
+    if(asset)AAsset_close(asset);
+    if(status!=COH_OK)client_slots_release(&candidate);
+    client_slots_release(&configured_client_slots);
+    configured_client_slots=candidate;configured_client_slots_status=status;
+    return status;
+}
+#endif
 JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_configureBodyPartsCache(JNIEnv *env,jclass cls,jstring input) {
     (void)cls;if(active)return COH_STATE;
     configured_bodyparts_status=COH_INVALID;uint32_t consistency_count=0;
@@ -145,12 +231,17 @@ JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_configureBodyPa
 JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_begin(JNIEnv *env,jclass cls,
     jint port,jstring account,jint version,jboolean required,jboolean compressed,jlong now) {
     (void)cls;
-    if(active||!next_token||next_token>INT64_MAX||port<1||port>65535||version<0||version>5||
-       (required!=JNI_FALSE&&required!=JNI_TRUE)||(compressed!=JNI_FALSE&&compressed!=JNI_TRUE)||now<0)return 0;
+    if(active)return 0;
+    if(!next_token||next_token>INT64_MAX||port<1||port>65535||version<0||version>5||
+       (required!=JNI_FALSE&&required!=JNI_TRUE)||(compressed!=JNI_FALSE&&compressed!=JNI_TRUE)||now<0) {
+        client_slots_release(&configured_client_slots);configured_client_slots_status=COH_NOT_FOUND;return 0;
+    }
     char name[15]={0};uint32_t ids[2]={0};CohDbLogin policy={0};
     CohLocalConfig config;memset(&config,0,sizeof(config));Interop *h=NULL;
     if(!account_copy(env,account,name))goto failed;
     h=calloc(1,sizeof(*h));if(!h)goto failed;
+    h->client_slots=configured_client_slots;h->client_slots_status=configured_client_slots_status;
+    memset(&configured_client_slots,0,sizeof(configured_client_slots));configured_client_slots_status=COH_NOT_FOUND;
     /* The pinned CLIENT ParseBodyPart catalog defines GetBodyPartCount().
      * An optional server-cache comparison never controls client admission. */
     h->pinned_bodyparts=COH_LOCAL_BODYPART_COUNT;h->bodyparts_cache_status=configured_bodyparts_status;
@@ -175,7 +266,8 @@ JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_begin(JNIEnv *
     coh_db_wipe(name,sizeof(name));coh_db_wipe(ids,sizeof(ids));
     coh_db_wipe(&policy,sizeof(policy));coh_db_wipe(&config,sizeof(config));return (jlong)h->token;
 failed:
-    if(h){coh_initial_capture_close(h->capture);coh_initial_capture_destroy(h->capture);coh_db_wipe(h,sizeof(*h));free(h);}
+    client_slots_release(&configured_client_slots);configured_client_slots_status=COH_NOT_FOUND;
+    if(h){client_slots_release(&h->client_slots);coh_initial_capture_close(h->capture);coh_initial_capture_destroy(h->capture);coh_db_wipe(h,sizeof(*h));free(h);}
     coh_db_wipe(name,sizeof(name));coh_db_wipe(ids,sizeof(ids));
     coh_db_wipe(&policy,sizeof(policy));coh_db_wipe(&config,sizeof(config));return 0;
 }
@@ -265,12 +357,26 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                                 if(h->pinned_bodyparts&&h->initial_partcount.framing_validated) {
                                                                     CohRepReader original=lease.reader;original.cursor=h->initial_costume_slots.end_bit;
                                                                     h->costume_continuation_attempted=1;
+                                                                    h->costume_bodies_expected=h->initial_costume_slots.body_count;
                                                                     /* Actual fixed owner storage + borrowed decoded message +
                                                                      * native call/lease reserve under the existing8MiB initial
                                                                      * domain. This is not a claim about guest/process RSS. */
-                                                                    size_t named=sizeof(*h)+sizeof(lease)+COH_ORIGINAL_COSTUME_STACK_RESERVE;
-                                                                    if(named<=8u*1024u*1024u&&lease.reader.bytes.size<=8u*1024u*1024u-named)
-                                                                        (void)coh_original_costume_receive(&original,h->pinned_bodyparts,&h->costume_workspace,&h->initial_costume_continuation);
+                                                                    size_t named=sizeof(*h)+sizeof(lease)+COH_ORIGINAL_COSTUME_STACK_RESERVE+client_slots_owned(&h->client_slots);
+                                                                    if(named<=8u*1024u*1024u&&lease.reader.bytes.size<=8u*1024u*1024u-named) {
+                                                                        /* Original entReceiveCostume loops this validated
+                                                                         * count (1..10) with one costume_receive per body.
+                                                                         * Reuse the same workspace and source tables. */
+                                                                        for(unsigned body=0;body<h->costume_bodies_expected;body++) {
+                                                                            CohStatus received=h->client_slots.view.raw.data
+                                                                                ?coh_original_costume_receive_slots(&original,h->pinned_bodyparts,&h->client_slots.view,&h->costume_workspace,&h->initial_costume_continuation)
+                                                                                :coh_original_costume_receive(&original,h->pinned_bodyparts,&h->costume_workspace,&h->initial_costume_continuation);
+                                                                            if(received!=COH_OK||!h->initial_costume_continuation.costume_complete) {
+                                                                                if(received!=h->initial_costume_continuation.status)h->initial_costume_continuation=(CohOriginalCostumeReport){.status=received,.begin_bit=original.cursor,.failure_bit=original.cursor};
+                                                                                break;
+                                                                            }
+                                                                            h->costume_bodies_read++;original.cursor=h->initial_costume_continuation.end_bit;
+                                                                        }
+                                                                    }
                                                                     else h->initial_costume_continuation=(CohOriginalCostumeReport){.status=COH_LIMIT,.begin_bit=original.cursor,.failure_bit=original.cursor};
                                                                     coh_db_wipe(&original,sizeof(original));
                                                                 }
@@ -531,7 +637,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"bodyparts_default\":[%u,%u],\"bodyparts_server_cache_status\":%u,\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
+        "\"bodyparts_default\":[%u,%u],\"bodyparts_server_cache_status\":%u,\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s" CLIENT_SLOTS_FORMAT,
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
@@ -545,7 +651,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        status_number(COH_OK),h->pinned_bodyparts,status_number(h->bodyparts_cache_status),continuation,catalog_boundary,request_available?"true":"false",request,receive);
+        status_number(COH_OK),h->pinned_bodyparts,status_number(h->bodyparts_cache_status),continuation,catalog_boundary,request_available?"true":"false",request,receive CLIENT_SLOTS_ARGS(h));
     const char *const details[8]={first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward};
     size_t used=written>0?(size_t)written:sizeof(json);
     int complete=written>0&&(size_t)written<sizeof(json)&&report_details(json,&used,details,invalid);
@@ -559,13 +665,13 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"reqallents_sent\":%u,\"raw_allents_observed\":%s,\"initial_bytes\":%llu,\"initial_bits\":%llu,\"initial_post_command_cursor\":%llu,"
         "\"status\":%u,\"failure\":%u,\"failure_code\":\"%s\",\"first_failure\":{\"valid\":%s,\"local_phase\":%u,\"db_phase\":%u,\"map_phase\":%u,\"status\":%u,\"failure\":%u},"
         "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"cleanup_verified\":%s,\"packet_copy_retained\":false,"
-        "\"report_limit_bytes\":7168,\"report_truncated\":true,\"report_core_limit\":true,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false}",
+        "\"costume_continuation\":%s,\"catalog_boundary\":%s,\"report_limit_bytes\":7168,\"report_truncated\":true,\"report_core_limit\":true,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false" CLIENT_SLOTS_FORMAT "}",
         phase_name(h,&d),(unsigned)d.phase,terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         d.groups_observed?"true":"false",d.groups.present_files,d.groups.roots,U64(h->groups_bytes),U64(h->groups_bits),d.reqallents_sent,
         d.raw_allents_observed?"true":"false",U64(h->initial_bytes),U64(h->initial_bits),U64(h->initial_cursor),
         status_number(first->valid?first->status:d.status),(unsigned)failure,failure_name(failure),first->valid?"true":"false",
         (unsigned)first->local_phase,(unsigned)first->db_phase,(unsigned)first->map_phase,status_number(first->status),(unsigned)first->failure,
-        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false");
+        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",continuation,catalog_boundary CLIENT_SLOTS_ARGS(h));
 #undef U64
     coh_db_wipe(&d,sizeof(d));return (*env)->NewStringUTF(env,json);
 }
@@ -578,7 +684,7 @@ JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_suspend(JNIEnv 
 #else
     coh_initial_capture_cancel(h->capture);
 #endif
-    retire_request(h);h->terminal=1;h->busy=0;
+    retire_request(h);client_slots_release(&h->client_slots);h->terminal=1;h->busy=0;
     sample_receive(h);
 }
 JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_disconnect(JNIEnv *env,jclass cls,jlong token) {

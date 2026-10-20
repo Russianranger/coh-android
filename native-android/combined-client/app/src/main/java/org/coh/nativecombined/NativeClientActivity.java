@@ -210,7 +210,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             try {
                 JSONObject manifest = new JSONObject(new String(readAsset("asset-manifest.json"), StandardCharsets.UTF_8));
                 JSONObject records = manifest.getJSONObject("assets");
-                String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin", "walkable.bin", "map.bin"};
+                String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin", "walkable.bin",
+                        BuildConfig.NEIGHBORHOOD_DIAGNOSTIC?"neighborhood-map.bin":"map.bin"};
                 byte[][] bytes = new byte[names.length][];
                 for (int i=0; i<names.length; i++) {
                     bytes[i] = readAsset(names[i]); JSONObject pin = records.getJSONObject(names[i]);
@@ -309,6 +310,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                         if(data!=null)cachePath=new File(data,"bin/BodyParts.bin").getCanonicalPath();
                     } catch(Exception unavailable) { /* A missing cache does not prevent pose observation. */ }
                     InteropNative.configureBodyPartsCache(cachePath);
+                    if(BuildConfig.CLIENT_SLOT_DICTIONARY)InteropNative.configureClientSlots(getAssets());
                 }
                 networkHandle=mode==NetworkMode.WORLD_HANDOFF
                         ? InteropNative.begin(policy.getInt("db_port"),policy.getString("account"),policy.getInt("net_version"),
@@ -322,7 +324,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             } catch(Exception problem) {
                 storeNetworkReport("{\"phase\":\"POLICY_UNAVAILABLE\",\"live_world_rendered\":false,\"authserver_authenticated\":false,\"world_authority\":false}");
                 main.post(() -> {if(!destroying)updateNetworkUi();});
-            } finally {networkConnecting=false;main.post(() -> {if(!destroying)updateNetworkUi();});}
+            } finally {
+                if(mode==NetworkMode.WORLD_HANDOFF&&BuildConfig.CLIENT_SLOT_DICTIONARY&&networkHandle==0)
+                    InteropNative.configureClientSlots(null);
+                networkConnecting=false;main.post(() -> {if(!destroying)updateNetworkUi();});
+            }
         });
     }
     private boolean sameNetworkPolicy(JSONObject policy) throws Exception {
@@ -526,9 +532,21 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     String fieldName=field==3?"geometry":field==4?"first texture":field==5?"second texture"
                             :field==6?"FX":field==7?"color":field==8?"region":field==9?"body set":"header";
                     String dependency=dictionary==3?"the costume palette":dictionary==2?"the extra costume strings":"the costume strings";
-                    detail=continuation.optInt(9,0)==1?"Original costume body decoded."
+                    detail=continuation.optInt(9,0)==1?"Original costume body decoded ("+continuation.optInt(4,0)
+                              +" parts, "+continuation.optInt(5,0)+" strings, "+continuation.optInt(6,0)+" colors)."
                             : "BodyPart count verified; costume "+fieldName
                               +(dictionary!=0?" requires "+dependency:" remains incomplete")+".";
+                    JSONArray slots=report.optJSONArray("client_slots");
+                    if(slots!=null&&slots.length()==4&&slots.optInt(0,0)!=0&&dictionary!=0)
+                        detail="Bundled CLIENT slots unavailable (native status "+slots.optInt(0,0)
+                                +"); original costume receiver stopped at "+fieldName+".";
+                    JSONArray bodies=report.optJSONArray("costume_bodies");
+                    if(bodies!=null&&bodies.length()==2&&bodies.optInt(0,0)>0) {
+                        int expected=bodies.optInt(0),decoded=bodies.optInt(1);
+                        detail=decoded==expected?"Decoded "+decoded+"/"+expected
+                                +" original costume bodies. Next entity field: SupergroupCostume presence."
+                                :"Decoded "+decoded+"/"+expected+" original costume bodies. "+detail;
+                    }
                 }
                 if(observedEntityAttempt==networkAttempt)detail+=" Box requested for observed server entity #"+observedEntityIndex+".";
                 networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nFull character/world decoding remains pending.");

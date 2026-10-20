@@ -75,6 +75,23 @@ def separate_catalog_boundary(value):
 
 def separate_report_extension(value, required=False):
     value = separate_catalog_boundary(separate_java_extension(value))
+    if 'costume_bodies' in value:
+        bodies = value['costume_bodies']
+        need(isinstance(bodies, list) and len(bodies) == 2
+             and all(type(item) is int and item >= 0 for item in bodies)
+             and bodies[1] <= bodies[0] <= 10, 'original costume body count shape')
+        value = {key: item for key, item in value.items() if key != 'costume_bodies'}
+    if 'client_slots' in value:
+        slots = value['client_slots']
+        need(isinstance(slots, list) and len(slots) == 4
+             and all(type(item) is int and item >= 0 for item in slots), 'CLIENT slot resource shape')
+        status, raw, index, mapped = slots
+        need(status <= 7 and raw in (0, 641477) and index in (0, 134144)
+             and mapped <= 8388608, 'CLIENT slot resource domains')
+        need((raw == index == mapped == 0) or
+             (status == 0 and raw == 641477 and index == 134144 and mapped >= raw),
+             'CLIENT slot ownership mismatch')
+        value = {key: item for key, item in value.items() if key != 'client_slots'}
     present = REPORT_KEYS.intersection(value)
     need(not present or present == REPORT_KEYS, 'partial bounded report extension')
     need(not required or present == REPORT_KEYS, 'bounded report extension absent')

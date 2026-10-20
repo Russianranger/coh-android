@@ -63,7 +63,10 @@ static void run_capture(unsigned explicit_count,const char*path,CohStatus consis
  CHECK(strlen(report())<7168&&!strstr(report_text,"REPORT_LIMIT"));if(strlen(report_text)>report_peak)report_peak=(unsigned)strlen(report_text);stress_request=0;
  JNI(disconnect)(&env,NULL,current);CHECK(JNI(observedSelfPose)(&env,NULL,current));finish();CHECK(!JNI(observedSelfPose)(&env,NULL,current));
 }
-int main(int argc,char**argv){
+#ifndef COH_BODYPART_TEST_MAIN
+#define COH_BODYPART_TEST_MAIN main
+#endif
+int COH_BODYPART_TEST_MAIN(int argc,char**argv){
  CHECK(argc==6);uint32_t count=99;
  CHECK(coh_local_bodypart_default_file(argv[1],&count)==COH_OK&&count==28);
  count=99;CHECK(coh_local_bodypart_default_file(argv[5],&count)==COH_OK&&count==28);
