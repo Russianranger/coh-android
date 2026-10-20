@@ -1,0 +1,91 @@
+{
+  "schema": "coh-offline-bodypart-input-search-v1",
+  "baseline": "8170fc0d222ec154b19b0caf2616040004d4b2e7",
+  "retained_server_artifact": {
+    "run": 37116009802,
+    "artifact": 11270589574,
+    "source_commit": "1fcabfa28f1f32a8c78de2cac496d6647fd376a9",
+    "bytes": 32309919,
+    "sha256": "729f04963162ec128b5459647fb7fda1c40dbce5f47ce00917354990b17667ed"
+  },
+  "server_cache_archive": {
+    "bytes": 29825263,
+    "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17",
+    "role": "actual_server_generated_caches",
+    "files": 93,
+    "BodyParts_bin_present": false
+  },
+  "original_loader": {
+    "function": "bpReadBodyPartFiles",
+    "flags": 0,
+    "shared_name": "SM_BodyParts.bin",
+    "cache": "bin/BodyParts.bin",
+    "runtime_common_path": "data/bin/BodyParts.bin",
+    "text_directory": "Defs/UI",
+    "text_mask": ".bp",
+    "server_only_bin_path_used": false
+  },
+  "retained_actual_server_read": {
+    "trace_member": "evidence/consumption/trace.4703",
+    "requested_bytes": 2584,
+    "read_bytes": 2584,
+    "retained_prefix_bytes": 128,
+    "raw_array_count": 28,
+    "complete_body_bytes_retained": false,
+    "trace_line": "read(15</home/runner/work/coh-android/coh-android/out/server-cache-work/imported/generation-a8bcef5e80ed4ca88788f7a1159a1b0c/data/bin/BodyParts.bin>, \"CrypticS\\243\\253'\\317\\6\\0Parse6\\6\\0Files1 \\0\\0\\0\\1\\0\\0\\0\\24\\0Defs/UI/bodyparts.bp\\0\\0\\0\\271Ui\\324\\t\\0\\0\\34\\0\\0\\0T\\0\\0\\0\\5\\0Pants\\0\\24\\0DEFS/UI/BODYPARTS.BP\\0\\0\\1\\0\\0\\0\\0\\0\\0\\0\\4\\0HIPS\\0\\0\\4\\0HI\"..., 2584) = 2584",
+    "dependencies": [
+      [
+        "Defs/UI/bodyparts.bp",
+        1767225600
+      ]
+    ],
+    "prefix_matches_retained_CLIENT_cache": true
+  },
+  "offline_comparison": {
+    "origin": "retained CLIENT bin, not relabeled SERVER",
+    "count": 28,
+    "ordered_names_match": true,
+    "all_text_fields_match": true,
+    "client_bin_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+    "source_bp_sha256": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d"
+  },
+  "source_pins": {
+    "upstream/ouroboros/Common/gameData/BodyPart.c": {
+      "bytes": 4246,
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24"
+    },
+    "upstream/ouroboros/Common/gameComm/initCommon.c": {
+      "bytes": 4013,
+      "sha256": "96b7796fa49be78144b6ff5014422dc8067c9931dcf7717e39d8d1a7008f04a8"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": {
+      "bytes": 264080,
+      "sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+    },
+    "upstream/i24/data/defs/ui/bodyparts.bp": {
+      "bytes": 5218,
+      "sha256": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d"
+    }
+  },
+  "tests": {
+    "python_cases": 5,
+    "result": "PASS"
+  },
+  "server_started": false,
+  "native_build_performed": false,
+  "next": "Compare the actual imported server data/bin/BodyParts.bin hash to the retained bin once on device. Exact SHA match reuses the verified28-row ordered source data; otherwise run this existing-reader comparison against the actual file. No server/witness/lease is needed.",
+  "cache_timestamp_comparison": {
+    "raw_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+    "timestamp_zeroed_sha256": "965964f4e58eb24dbb8b85672fb0bdb9631bfc98d938d3d4444aa09a44c67c83",
+    "normalization": "Zero only the original Files1 dependency timestamp words; preserve every other byte",
+    "dependency_timestamps": [
+      {
+        "path": "Defs/UI/bodyparts.bp",
+        "offset": 60,
+        "bytes": 4,
+        "raw_timestamp": 1767225600
+      }
+    ],
+    "actual_server_normalized_hash_observed": false
+  }
+}

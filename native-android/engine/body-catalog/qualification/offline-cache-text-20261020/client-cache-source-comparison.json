@@ -1,0 +1,75 @@
+{
+  "schema": "coh-bodypart-cache-text-offline-comparison-v1",
+  "origin": "retained-CLIENT-cache-not-server-bin",
+  "cache": {
+    "bytes": 2584,
+    "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+  },
+  "bodyparts_bp": {
+    "bytes": 5218,
+    "sha256": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d"
+  },
+  "cache_count": 28,
+  "source_count": 28,
+  "ordered_names_match": true,
+  "all_source_fields_match": true,
+  "differences": [],
+  "ordered_names": [
+    "Pants",
+    "Chest",
+    "Head",
+    "Gloves",
+    "Boots",
+    "Belt",
+    "Hair",
+    "Face",
+    "EyeDetail",
+    "ChestDetail",
+    "Shoulders",
+    "Back",
+    "WepR",
+    "Neck",
+    "UarmR",
+    "Collar",
+    "Broach",
+    "Cape",
+    "Aura",
+    "Skirt",
+    "Top",
+    "Sleeves",
+    "Cranium",
+    "Jaw",
+    "WepL",
+    "WepL_2",
+    "WepR_2",
+    "Tail"
+  ],
+  "cache_dependencies": [
+    {
+      "path": "Defs/UI/bodyparts.bp",
+      "raw_time": 1767225600
+    }
+  ],
+  "reader": {
+    "path": "native-android/engine/body-catalog/check_body_part_loader.py",
+    "sha256": "32d09949be273e481277ebbd58ff9dd2e0bb87c36c15d952468784025fdae7ba"
+  },
+  "server_started": false,
+  "cache_generated": false,
+  "source_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_bp_git_path": "upstream/i24/data/defs/ui/bodyparts.bp",
+  "actual_server_bin_full_bytes_available_on_host": false,
+  "dependency_timestamp_identity": {
+    "raw_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+    "timestamp_zeroed_sha256": "965964f4e58eb24dbb8b85672fb0bdb9631bfc98d938d3d4444aa09a44c67c83",
+    "normalization": "Zero only the original Files1 dependency timestamp words; preserve every other byte",
+    "dependency_timestamps": [
+      {
+        "path": "Defs/UI/bodyparts.bp",
+        "offset": 60,
+        "bytes": 4,
+        "raw_timestamp": 1767225600
+      }
+    ]
+  }
+}
