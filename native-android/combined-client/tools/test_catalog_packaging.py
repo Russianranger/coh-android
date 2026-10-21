@@ -90,7 +90,7 @@ public final class SceneAssetPinTest {
         self.assertEqual(BUILD_PROFILES['fullscreen-diagnostic'], ('18', '0.1.17-fullscreen-diagnostic-test'))
         self.assertEqual(BUILD_PROFILES['continuation-diagnostic'], ('19', '0.1.18-continuation-diagnostic-test'))
         self.assertEqual(required_methods(fullscreen_diagnostic=True), required_methods(capture_diagnostic=True))
-        self.assertEqual(required_methods(continuation_diagnostic=True), required_methods(fullscreen_diagnostic=True) | {'observedSelfCostume'})
+        self.assertEqual(required_methods(continuation_diagnostic=True), required_methods(fullscreen_diagnostic=True) | {'observedSelfCostume', 'observedSelfCostumeSourceBytes'})
         self.assertEqual(required_methods(capture_diagnostic=True), required_methods(neighborhood_diagnostic=True) | {'exportInitialReplay'})
         self.assertEqual(len(required_methods()), 9)
         self.assertEqual(len(required_methods(entity_diagnostic=True)), 11)

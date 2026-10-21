@@ -199,7 +199,7 @@ def audit(args):
                 if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
                     memory_entrypoint = process_memory_jni(data, args.readelf)
             if filename == 'libcoh_session_client.so' and args.build_profile in ('capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
-                capture_entrypoint = frame_capture_jni(data, args.readelf, args.build_profile == 'fullscreen-diagnostic')
+                capture_entrypoint = frame_capture_jni(data, args.readelf, args.build_profile in ('fullscreen-diagnostic', 'continuation-diagnostic'))
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}
         assert 'lib/' + args.abi + '/libcoh_session_client.so' in libraries

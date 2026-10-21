@@ -23,7 +23,7 @@ def required_methods(entity_diagnostic=False, neighborhood_diagnostic=False, cap
     if capture_diagnostic:
         methods.add('exportInitialReplay')
     if continuation_diagnostic:
-        methods.add('observedSelfCostume')
+        methods.update(('observedSelfCostume', 'observedSelfCostumeSourceBytes'))
     return methods
 
 

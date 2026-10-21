@@ -36,6 +36,7 @@ android {
             versionCode 19
             versionName '0.1.18-continuation-diagnostic-test'
         }
+        buildConfigField 'boolean', 'CONTINUATION_DIAGNOSTIC', (candidateProfile == 'continuation-diagnostic').toString()
         buildConfigField 'boolean', 'NEIGHBORHOOD_DIAGNOSTIC', neighborhoodEnabled.toString()
         buildConfigField 'boolean', 'CLIENT_SLOT_DICTIONARY', neighborhoodEnabled.toString()
         buildConfigField 'boolean', 'FRAME_CAPTURE_DIAGNOSTIC', (candidateProfile in ['capture-diagnostic','fullscreen-diagnostic','continuation-diagnostic']).toString()
@@ -46,6 +47,7 @@ android {
                 '-DCOH_NEIGHBORHOOD_DIAGNOSTIC=' + (neighborhoodEnabled ? 'ON' : 'OFF'),
                 '-DCOH_FRAME_CAPTURE_DIAGNOSTIC=' + (candidateProfile in ['capture-diagnostic','fullscreen-diagnostic','continuation-diagnostic'] ? 'ON' : 'OFF'),
                 '-DCOH_FULLSCREEN_DIAGNOSTIC=' + (candidateProfile in ['fullscreen-diagnostic','continuation-diagnostic'] ? 'ON' : 'OFF'),
+                '-DCOH_LIVE_COSTUME_DIAGNOSTIC=' + (candidateProfile == 'continuation-diagnostic' ? 'ON' : 'OFF'),
                 '-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=' + (candidateProfile == 'continuation-diagnostic' ? 'ON' : 'OFF'),
                 '-DCOH_INITIAL_ACK_FALLBACK_DIAGNOSTIC=' + (candidateProfile == 'continuation-diagnostic' ? 'ON' : 'OFF') } }
     }

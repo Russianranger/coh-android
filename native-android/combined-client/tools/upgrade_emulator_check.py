@@ -29,6 +29,11 @@ SIGNER = '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
 # Historical pins remain the default. The report regression must additionally
 # exercise the exact installed 0.1.10 donor, not infer that path from 0.1.9.
 PREVIOUS_INPUTS = {
+    'fullscreen-diagnostic': dict(revision='81a47f8ccef15c26e02b5cbf2feb4b99ac465139', artifact='12298379427',
+        run='39498990230', archive_bytes=25677911,
+        archive_sha256='794c6c45ee0bde9002d7dcc5d02956137bc427171f3a6496f879f4b3a02c7d6d',
+        apk='CoH-Native-Combined-0.1.17-fullscreen-diagnostic-x86_64.apk', apk_bytes=14519689,
+        apk_sha256='e53ea539d718c85ae4c2046119da9a7cf07f83f9945e2fed97611b6f18739846'),
     'capture-diagnostic': dict(revision='f311bebfa9bdf33916fefcaaacd546282e17b534',artifact='12289656309',
         run='39474180919',archive_bytes=24919187,
         archive_sha256='db4151cd32c6140b9e116b3ee6479d1e14d4dda6a097f8a46f400887a86f9814',
