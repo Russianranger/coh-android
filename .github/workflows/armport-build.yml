@@ -133,6 +133,9 @@ jobs:
             /armport/
             /upstream/ouroboros/
             !/upstream/ouroboros/data/
+            /upstream/i24/data/
+            !/upstream/i24/data/maps/
+            /android/runtime-lock.json
             /.github/
           sparse-checkout-cone-mode: false
           lfs: false
@@ -171,6 +174,23 @@ jobs:
             echo "::notice title=ArmPort M2 client linked::$info"
           fi
           exit $rc
+
+      - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
+        run: |
+          url=$(python3 -c "import json;print(json.load(open('android/runtime-lock.json'))['wine']['url'])")
+          sha=$(python3 -c "import json;print(json.load(open('android/runtime-lock.json'))['wine']['sha256'])")
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/wine.tar.gz" "$url"
+          echo "$sha  $RUNNER_TEMP/wine.tar.gz" | sha256sum -c -
+          sudo mkdir -p /opt/wine
+          sudo tar -xzf "$RUNNER_TEMP/wine.tar.gz" -C /opt/wine
+          sudo apt-get install -y --no-install-recommends xvfb x11-utils \
+            libfreetype6 libfontconfig1 libx11-6 libxext6 libxrender1 libxrandr2 libxi6 \
+            libxfixes3 libxcursor1 libxinerama1 libxxf86vm1 libgnutls30t64 libunwind8 \
+            libgl1 libglx-mesa0 libgl1-mesa-dri
+          echo "WINEPREFIX=$RUNNER_TEMP/wineprefix" >> "$GITHUB_ENV"
+
+      - name: Smoke run CityOfHeroes.exe under ARM64 Wine
+        run: python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/armport/build" --data upstream/i24/data --runtime "$RUNNER_TEMP/runtime" --llvm-mingw /opt/llvm-mingw --wine /opt/wine/bin
 
       - name: Report build errors
         if: failure()
