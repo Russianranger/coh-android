@@ -51,7 +51,14 @@ static int query_match(const char *path,const CohAssetZipQuery*q){
   * Original texLoadHeaderProcessor scans texture_library in all data dirs;
   * texFind uses a case-insensitive basename, not one archive/path prefix. */
  const char *prefixes[]={"texture_library/","data/texture_library/","assets/texture_library/"};int root=0;
- for(unsigned r=0;r<3;r++){size_t i=0;for(;prefixes[r][i]&&path[i]&&lower((unsigned char)path[i])==(unsigned char)prefixes[r][i];i++);if(!prefixes[r][i])root=1;}
+ for (unsigned r=0;r<3;r++) {
+  size_t i=0;
+  while (prefixes[r][i] && path[i] &&
+         lower((unsigned char)path[i])==(unsigned char)prefixes[r][i]) {
+   i++;
+  }
+  if (!prefixes[r][i]) root=1;
+ }
  if(!root)return 0;
  base++;
  size_t n=strlen(base),wanted=strlen(q->name);if(n!=wanted+8u||!same(base+wanted,".texture"))return 0;
