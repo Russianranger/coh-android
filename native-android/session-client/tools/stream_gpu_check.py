@@ -152,6 +152,8 @@ def main():
    env={**os.environ,'MESA_GLES_VERSION_OVERRIDE':version};q=t/f'qualify-{version}.json';run([sys.executable,HERE/'stream_qualify_check.py','--library',library,'--accepted-assets',accepted,'--output',q],env=env)
    result['profiles'].append({'gles_version':version,'diagnostics':json.loads(q.read_text())})
   result['world']=wrapper(library,a.prepared,a.accepted_assets)
-  android_sources=[NATIVE/'session-client/app/src/main/cpp/session_stream_world.c',*source[1:-1]];arm=t/'stream-arm64.so';camera_arm=t/'camera-arm64.o';run([tool/'bin/aarch64-linux-android26-clang',*[f for f in flags if f not in ('-pedantic','-shared')],'-c',source[-1],'-o',camera_arm]);run([tool/'bin/aarch64-linux-android26-clang',*flags,*includes,*android_sources,camera_arm,'-lGLESv3','-lz','-lm','-Wl,--no-undefined','-o',arm]);result['android_arm64_link']={'passed':True,'execution':False,'bytes':arm.stat().st_size,'sha256':sha(arm),'elf':run(['file',arm]).strip()}
+  # stream_gpu_fixture.c already includes session_stream_world.c; retain its
+  # session_world_imports.c dependency and compile that implementation once.
+  android_sources=source[:-1];arm=t/'stream-arm64.so';camera_arm=t/'camera-arm64.o';run([tool/'bin/aarch64-linux-android26-clang',*[f for f in flags if f not in ('-pedantic','-shared')],'-c',source[-1],'-o',camera_arm]);run([tool/'bin/aarch64-linux-android26-clang',*flags,*includes,*android_sources,camera_arm,'-lGLESv3','-lz','-lm','-Wl,--no-undefined','-o',arm]);result['android_arm64_link']={'passed':True,'execution':False,'bytes':arm.stat().st_size,'sha256':sha(arm),'elf':run(['file',arm]).strip()}
  a.output.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'passed':True,'world':{k:result['world'][k] for k in ['selection','bounded_cache','context_recreate','near_render','far_render']},'android_arm64_link':result['android_arm64_link']},indent=2))
 if __name__=='__main__':main()
