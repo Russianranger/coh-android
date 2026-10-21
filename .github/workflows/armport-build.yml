@@ -179,7 +179,7 @@ jobs:
             [ -f "$RUNNER_TEMP/$log" ] || continue
             {
               grep -A1 "^FAILED:" "$RUNNER_TEMP/$log" | cut -c1-300 | head -20
-              grep -E "CMake Error|error:|undefined (reference|symbol)|>>> referenced by" "$RUNNER_TEMP/$log" \
+              grep -E "CMake Error|error:|undefined (reference|symbol)|>>> referenced by|>>> defined at" "$RUNNER_TEMP/$log" \
                 | sed 's#.*/armport/src/##' | sort | uniq -c | sort -rn | head -60
             } > "$log.errors.txt" || true
           done

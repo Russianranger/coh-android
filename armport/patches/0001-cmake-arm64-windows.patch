@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 164aa6a..454a5fe 100644
+index 164aa6a..93d399a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -36,6 +36,18 @@ if(MSVC)
+@@ -36,6 +36,20 @@ if(MSVC)
  		$<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:/fp:precise>)
  endif()
  
@@ -10,18 +10,20 @@ index 164aa6a..454a5fe 100644
 +	# The engine relies on Microsoft C extensions and on aliasing through typed
 +	# pointers. -fno-autolink drops #pragma comment(lib) directives: CMake links
 +	# the same libraries by their lowercase names, and the Linux host's
-+	# case-sensitive file system cannot find "Ws2_32.lib" style spellings. clang rejects several constructs MSVC accepts; downgrade those
++	# case-sensitive file system cannot find "Ws2_32.lib" style spellings.
++	# -fcommon (C): merge tentative definitions such as "F32 server_time;" in
++	# several files, as MSVC does; clang 11+ rejects them by default. clang rejects several constructs MSVC accepts; downgrade those
 +	# to warnings rather than editing the code.
 +	add_compile_options(
 +		"$<$<COMPILE_LANGUAGE:C,CXX>:-fms-extensions;-fno-strict-aliasing;-ffp-contract=off;-fno-autolink>"
 +		"$<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=incompatible-function-pointer-types;-Wno-error=incompatible-pointer-types;-Wno-error=int-conversion;-Wno-error=return-type>"
-+		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>")
++		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration;-fcommon>")
 +endif()
 +
  # Run this mandatory check before other targets, even with testing disabled.
  add_executable(cox_precise_floating_point_test EXCLUDE_FROM_ALL
  	cmake/tests/precise_floating_point.cpp)
-@@ -44,16 +56,23 @@ if(MINGW)
+@@ -44,16 +58,23 @@ if(MINGW)
  	# Keep the check runnable without compiler runtime DLL copies.
  	target_link_options(cox_precise_floating_point_test PRIVATE -static)
  endif()
