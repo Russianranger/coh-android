@@ -1,8 +1,8 @@
 plugins { id 'com.android.application' }
 def selectedAbis = providers.gradleProperty('probeAbis').getOrElse('arm64-v8a').split(',') as List
 def candidateProfile = providers.gradleProperty('cohBuildProfile').getOrElse('report-diagnostic')
-if (!(candidateProfile in ['report-diagnostic','catalog-diagnostic','entity-diagnostic','neighborhood-diagnostic','capture-diagnostic','fullscreen-diagnostic'])) throw new GradleException('Unsupported diagnostic profile')
-def neighborhoodEnabled = candidateProfile in ['neighborhood-diagnostic','capture-diagnostic','fullscreen-diagnostic']
+if (!(candidateProfile in ['report-diagnostic','catalog-diagnostic','entity-diagnostic','neighborhood-diagnostic','capture-diagnostic','fullscreen-diagnostic','continuation-diagnostic'])) throw new GradleException('Unsupported diagnostic profile')
+def neighborhoodEnabled = candidateProfile in ['neighborhood-diagnostic','capture-diagnostic','fullscreen-diagnostic','continuation-diagnostic']
 def cryptoRoot = providers.gradleProperty('cohCryptoRoot').getOrElse('')
 if (selectedAbis.isEmpty() || selectedAbis.any { !(it in ['arm64-v8a','x86_64']) }) throw new GradleException('Unsupported ABI')
 if (cryptoRoot.isEmpty()) throw new GradleException('cohCryptoRoot must name the qualified public crypto output')
@@ -32,17 +32,22 @@ android {
         } else if (candidateProfile == 'fullscreen-diagnostic') {
             versionCode 18
             versionName '0.1.17-fullscreen-diagnostic-test'
+        } else if (candidateProfile == 'continuation-diagnostic') {
+            versionCode 19
+            versionName '0.1.18-continuation-diagnostic-test'
         }
         buildConfigField 'boolean', 'NEIGHBORHOOD_DIAGNOSTIC', neighborhoodEnabled.toString()
         buildConfigField 'boolean', 'CLIENT_SLOT_DICTIONARY', neighborhoodEnabled.toString()
-        buildConfigField 'boolean', 'FRAME_CAPTURE_DIAGNOSTIC', (candidateProfile in ['capture-diagnostic','fullscreen-diagnostic']).toString()
-        buildConfigField 'boolean', 'FULLSCREEN_DIAGNOSTIC', (candidateProfile == 'fullscreen-diagnostic').toString()
+        buildConfigField 'boolean', 'FRAME_CAPTURE_DIAGNOSTIC', (candidateProfile in ['capture-diagnostic','fullscreen-diagnostic','continuation-diagnostic']).toString()
+        buildConfigField 'boolean', 'FULLSCREEN_DIAGNOSTIC', (candidateProfile in ['fullscreen-diagnostic','continuation-diagnostic']).toString()
         ndk { abiFilters.addAll(selectedAbis) }
         externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath,
                 '-DCOH_CLIENT_SLOT_DICTIONARY=' + (neighborhoodEnabled ? 'ON' : 'OFF'),
                 '-DCOH_NEIGHBORHOOD_DIAGNOSTIC=' + (neighborhoodEnabled ? 'ON' : 'OFF'),
-                '-DCOH_FRAME_CAPTURE_DIAGNOSTIC=' + (candidateProfile in ['capture-diagnostic','fullscreen-diagnostic'] ? 'ON' : 'OFF'),
-                '-DCOH_FULLSCREEN_DIAGNOSTIC=' + (candidateProfile == 'fullscreen-diagnostic' ? 'ON' : 'OFF') } }
+                '-DCOH_FRAME_CAPTURE_DIAGNOSTIC=' + (candidateProfile in ['capture-diagnostic','fullscreen-diagnostic','continuation-diagnostic'] ? 'ON' : 'OFF'),
+                '-DCOH_FULLSCREEN_DIAGNOSTIC=' + (candidateProfile in ['fullscreen-diagnostic','continuation-diagnostic'] ? 'ON' : 'OFF'),
+                '-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=' + (candidateProfile == 'continuation-diagnostic' ? 'ON' : 'OFF'),
+                '-DCOH_INITIAL_ACK_FALLBACK_DIAGNOSTIC=' + (candidateProfile == 'continuation-diagnostic' ? 'ON' : 'OFF') } }
     }
     buildFeatures { buildConfig true }
     sourceSets.main.java {

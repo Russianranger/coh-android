@@ -1362,12 +1362,12 @@ class Check:
             frame = native.get('frame_capture', {})
             assert frame.get('frame') == 0 and frame.get('pose_generation') == 0
             assert frame.get('source_charge_bytes') == 0 and frame.get('failures') == 0
-            expected_reserve=5667858 if 'fullscreen-diagnostic' in current.get('app',{}).get('version_name','') else 1<<20
+            expected_reserve=5667858 if any(profile in current.get('app',{}).get('version_name','') for profile in ('fullscreen-diagnostic','continuation-diagnostic')) else 1<<20
             assert frame.get('reserve_bytes') == expected_reserve and frame.get('startup_witness') is False
             assert current.get('scene_frame_capture') is None
             self.record('startup pixel witnesses do not create a real-pose scene capture', actual_observed_entity=False, frame=0)
         self.viewport('initial-preview', native['frames'])
-        if 'fullscreen-diagnostic' in current.get('app',{}).get('version_name',''):
+        if any(profile in current.get('app',{}).get('version_name','') for profile in ('fullscreen-diagnostic','continuation-diagnostic')):
             current=self.fullscreen_preview(current);native=current['native']
         self.tap('Connect local server')
         unavailable = self.wait_report('native-client-report.json', lambda x: x.get('server_protocol', {}).get('phase') == 'POLICY_UNAVAILABLE', 'native connect refuses missing owned server lease')

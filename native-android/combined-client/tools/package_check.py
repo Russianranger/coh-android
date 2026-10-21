@@ -21,6 +21,7 @@ BUILD_PROFILES = {
     'neighborhood-diagnostic': ('16', '0.1.15-neighborhood-diagnostic-test'),
     'capture-diagnostic': ('17', '0.1.16-capture-diagnostic-test'),
     'fullscreen-diagnostic': ('18', '0.1.17-fullscreen-diagnostic-test'),
+    'continuation-diagnostic': ('19', '0.1.18-continuation-diagnostic-test'),
 }
 CLIENT_SLOT_ASSET = 'combined/client-slots.bin'
 CLIENT_SLOT_PIN = {'bytes': 641477, 'sha256': '2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81'}
@@ -29,7 +30,7 @@ NEIGHBORHOOD_ASSETS = {'neighborhood-map.bin': {'bytes': 491565, 'sha256': 'fcd3
 
 def neighborhood_assets(archive, receipt, profile):
     """Keep the accepted scene intact and admit the separate source subset."""
-    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic'):
+    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
         assert 'neighborhood' not in receipt, 'Neighborhood assets require the neighborhood diagnostic profile'
         return set()
     assert receipt['neighborhood']['assets'] == NEIGHBORHOOD_ASSETS
@@ -46,7 +47,7 @@ def neighborhood_assets(archive, receipt, profile):
 LIVE_WORLD_ASSETS = {'live-world.bin': {'bytes': 10144, 'sha256': '585cd024ec0438bcbece6bd59b64cc12d89557e35d271c3a73900358c04fb6af'}}
 
 def live_world_assets(archive, receipt, profile):
-    if profile != 'fullscreen-diagnostic':
+    if profile not in ('fullscreen-diagnostic', 'continuation-diagnostic'):
         assert 'live_world' not in receipt, 'Live source index requires the fullscreen diagnostic profile'
         return set()
     assert receipt['live_world']['assets'] == LIVE_WORLD_ASSETS
@@ -59,7 +60,7 @@ def live_world_assets(archive, receipt, profile):
 
 def client_slot_assets(archive, receipt, profile):
     """Only the explicit next diagnostic embeds the exact retained slot table."""
-    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic'):
+    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
         assert 'client_slots' not in receipt, 'Client slots require the neighborhood diagnostic profile'
         return set()
     metadata = receipt['client_slots']
@@ -133,7 +134,7 @@ def tool(args, name):
 
 
 def audit(args):
-    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic') and not args.require_interop:
+    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic') and not args.require_interop:
         raise ValueError('Memory diagnostic build must retain the independent interop library audit')
     if args.apk.stat().st_size > 25 << 20:
         raise ValueError('Combined APK exceeds bounded 25MiB small-core policy')
@@ -195,9 +196,9 @@ def audit(args):
                 assert abi == 'arm64-v8a' and pin(data) == receipt['proot_cores'][filename], 'PRoot core changed'
             if filename == 'libcoh_combined_network.so':
                 native_abis.add(abi)
-                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic'):
+                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
                     memory_entrypoint = process_memory_jni(data, args.readelf)
-            if filename == 'libcoh_session_client.so' and args.build_profile in ('capture-diagnostic', 'fullscreen-diagnostic'):
+            if filename == 'libcoh_session_client.so' and args.build_profile in ('capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
                 capture_entrypoint = frame_capture_jni(data, args.readelf, args.build_profile == 'fullscreen-diagnostic')
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}

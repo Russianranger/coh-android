@@ -98,6 +98,13 @@ if(COH_BOUNDED_CONTINUATION_DIAGNOSTIC)
     endif()
     target_compile_definitions(coh_combined_interop PRIVATE COH_BOUNDED_CONTINUATION_DIAGNOSTIC=1)
 endif()
+option(COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC "Diagnostic original ACK/READY after complete entity update with unsupported command tail" OFF)
+if(COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC)
+    if(NOT COH_FRAME_CAPTURE_DIAGNOSTIC OR NOT COH_BOUNDED_CONTINUATION_DIAGNOSTIC)
+        message(FATAL_ERROR "Partial-tail continuation requires capture and bounded continuation")
+    endif()
+    target_compile_definitions(coh_combined_interop PRIVATE COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC=1)
+endif()
 if(COH_FRAME_CAPTURE_DIAGNOSTIC)
     target_sources(coh_combined_interop PRIVATE "${ENGINE}/entities/coh_original_ent_costume.c"
         "${ENGINE}/entities/coh_original_taskforce_receive.c"
