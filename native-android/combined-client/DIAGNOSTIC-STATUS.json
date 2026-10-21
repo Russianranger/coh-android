@@ -4319,7 +4319,7 @@
     },
     "other_workflow_harness_followup": {
       "scope": "Test harnesses only; qualified 0.1.18 production sources and signed APK remain unchanged.",
-      "correction_round": 1,
+      "correction_round": 2,
       "max_correction_rounds": 2,
       "bounded_adapter": {
         "original_run": 39528632027,
@@ -4327,7 +4327,7 @@
         "original_status": "failed",
         "step": "Qualify bounded shipping JSON and unchanged deep JNI assertions",
         "error": "ValueError: Java API shape; obsolete hardcoded 11-method list disagrees with canonical 15-method continuation diagnostic API.",
-        "fix_local_commit": "d7fca71ef",
+        "fix_local_commit": "d7fca71ef8213a9fd6182fbb2565ef2a90a7513b",
         "local_status": "passed",
         "local_modes": [
           "release",
@@ -4336,7 +4336,10 @@
         ],
         "checks_each": 12637,
         "scenarios_each": 131,
-        "CI_status": "awaiting source push"
+        "CI_status": "passed",
+        "CI_run": 39531084927,
+        "CI_head": "3ef0ab2b9405983ff29f704d0f53d40503298a42",
+        "fix_commit": "d6b1ba1a1022bb3b67728284713b7124b6c5369c"
       },
       "stream_GPU": {
         "original_run": 39528631928,
@@ -4347,7 +4350,35 @@
         "fix_local_commit": "c691f4cabc3f3cb94645de5a2f34c14e04dccdab",
         "local_status": "Python syntax and explicit-double command construction passed; unchanged host commands and 14 unique Android translation units verified.",
         "local_NDK_link": "not executed; no pinned local NDK available",
-        "CI_status": "awaiting source push"
+        "CI_status": "actual ARM64 NDK link step passed; later legacy snapshot harness step failed",
+        "fix_commit": "32790be8682fc4870725360c426cca8204029975",
+        "CI_run": 39531084940,
+        "CI_head": "3ef0ab2b9405983ff29f704d0f53d40503298a42",
+        "ARM64_NDK_link_step": "passed; actual integrated static GPU path and recreated source cache",
+        "ARM64_link_output": {
+          "bytes": 156360,
+          "sha256": "1a19fa45c17d4d835f8e3f2ead14e42bef940e002b0b0d234928d462e900e99e",
+          "ELF": "AArch64 shared object",
+          "execution": false
+        }
+      },
+      "snapshot_harness": {
+        "original_run": 39531084940,
+        "original_job": 118996865727,
+        "original_status": "failed",
+        "step": "Qualify preserved selectors and expanded snapshots",
+        "error": "snapshot_check.py exact-source extraction omits transitive asset-loader/frame-capture headers and source-default diagnostic macros; compiler failure, no failing runtime assertion.",
+        "status": "local ASan and UBSan passed; final corrective CI run awaiting source push",
+        "production_or_APK_change": false,
+        "fix_local_commit": "476c5e9cf3336f6d8368d7a264e22eb8f42c646c",
+        "local_checks": {
+          "JSON_cases": 3,
+          "directional_counters": 12,
+          "depth_rows": 16,
+          "report_bytes_max": 9511,
+          "report_limit": 16384
+        },
+        "fix": "Genuine engine/assets include path, original session_frame_capture.h and exact original source default COH_FRAME_CAPTURE_DIAGNOSTIC=0; assertions unchanged."
       }
     }
   }
