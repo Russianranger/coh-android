@@ -1,0 +1,4742 @@
+{
+ "target": "win-arm64",
+ "permissive": false,
+ "warn64": false,
+ "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+ "started": "2026-10-21T13:51:12-0500",
+ "targets": {
+  "UtilitiesLib": {
+   "warn64_total": 0,
+   "warn64_files": 0,
+   "warn64_top_files": {},
+   "warn64_examples": [],
+   "structparser": {
+    "returncode": 0,
+    "stdout_tail": "",
+    "stderr_tail": ""
+   },
+   "files": 165,
+   "files_clean": 157,
+   "errors_total": 204,
+   "errors_by_category": {
+    "x86-intrinsics": 130,
+    "cxx-language": 52,
+    "other": 19,
+    "missing-header": 3
+   },
+   "first_error_by_category": {
+    "missing-header": 3,
+    "x86-intrinsics": 3,
+    "other": 2
+   },
+   "missing_headers": {
+    "cryptlib.h": 1,
+    "crashrpt/Stackwalk.h": 1,
+    "crashrpt/CrashRpt.h": 1
+   },
+   "examples": {
+    "missing-header": [
+     "libs/UtilitiesLib/src/network/crypt.cpp:7:10: fatal error: 'cryptlib.h' file not found",
+     "libs/UtilitiesLib/src/utils/Stackdump.c:1:10: fatal error: 'crashrpt/Stackwalk.h' file not found",
+     "libs/UtilitiesLib/src/utils/SuperAssert.c:15:10: fatal error: 'crashrpt/CrashRpt.h' file not found"
+    ],
+    "x86-intrinsics": [
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:82:13: error: use of undeclared identifier '_mm_pause'",
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:92:13: error: use of undeclared identifier '_mm_pause'",
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:114:13: error: use of undeclared identifier '_mm_pause'",
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:135:13: error: use of undeclared identifier '_mm_pause'",
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:82:13: error: use of undeclared identifier '_mm_pause'",
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:92:13: error: use of undeclared identifier '_mm_pause'",
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:114:13: error: use of undeclared identifier '_mm_pause'",
+     "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:135:13: error: use of undeclared identifier '_mm_pause'"
+    ],
+    "other": [
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:92:5: error: no member named 'Dr0' in '_CONTEXT'",
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:93:5: error: no member named 'Dr1' in '_CONTEXT'",
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:94:5: error: no member named 'Dr2' in '_CONTEXT'",
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:95:5: error: no member named 'Dr3' in '_CONTEXT'",
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:125:55: error: no member named 'Dr7' in 'struct _CONTEXT'",
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:126:53: error: no member named 'Dr6' in 'struct _CONTEXT'",
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:149:55: error: no member named 'Dr7' in 'struct _CONTEXT'",
+     "libs/UtilitiesLib/src/utils/Breakpoint.c:150:53: error: no member named 'Dr6' in 'struct _CONTEXT'"
+    ],
+    "cxx-language": [
+     "<clang>/include/mmintrin.h:56:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:135:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:165:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:195:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:222:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:245:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:266:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:293:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size"
+    ]
+   },
+   "worst_files": [
+    {
+     "file": "libs/UtilitiesLib/src/utils/ssemath.c",
+     "errors": 176
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Breakpoint.c",
+     "errors": 10
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/cpu_count.c",
+     "errors": 7
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp",
+     "errors": 4
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp",
+     "errors": 4
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/crypt.cpp",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Stackdump.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/SuperAssert.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/ArrayOld.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AssociationList.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AutoStructSupport.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BinarySearchTree.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitArray.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/bitfield.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitStream.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BloomFilter.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datalist.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datapool.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/earray.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/EString.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/FilespecMap.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Frustum.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/genericlist.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericMesh.c",
+     "errors": 0
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericPoly.c",
+     "errors": 0
+    }
+   ],
+   "per_file": [
+    {
+     "file": "libs/UtilitiesLib/src/components/ArrayOld.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AssociationList.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AutoStructSupport.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BinarySearchTree.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitArray.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/bitfield.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitStream.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BloomFilter.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datalist.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datapool.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/earray.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/EString.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/FilespecMap.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Frustum.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/genericlist.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericMesh.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericPoly.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/gridpoly.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/HashFunctions.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/HashTableStack.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/mailbox.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemAlloc.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemoryBank.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemoryPool.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemRef.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/metadictionary.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MRUList.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MultiVal.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/NamedBitArray.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Octree.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/PerformanceCounter.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Queue.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/ReferenceList.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/ReferenceSystem.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/RingBuffer.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SharedHeap.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/sharedmalloc.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SharedMemory.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SharedQueue.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SimpleSet.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/StashTable.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/StringCache.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/StringTable.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/TriCube/fpcube.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/TriCube/pcube.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/WorkerThread.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/AppLocale.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/MessageStore.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/MessageStoreUtil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/MultiMessageStore.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/bignum.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/bindiff.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/blowfish.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/crc32c.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/crypt.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/src/network/crypt.cpp:7:10: fatal error: 'cryptlib.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/fingerprint.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/ftpclient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netcomp.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_core.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_receive.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_send.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_stats.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/NetworkSpecifier.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_link.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_linklist.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_masterlist.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_masterlistref.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_packet.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_packetutil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_profile.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_socket.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_version.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/rsa.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/sock.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utilitiesLib.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp",
+     "ok": false,
+     "errors": 4,
+     "first": "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:82:13: error: use of undeclared identifier '_mm_pause'"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp",
+     "ok": false,
+     "errors": 4,
+     "first": "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp:82:13: error: use of undeclared identifier '_mm_pause'"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/array.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/Bits.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/hashfunctions/lookup3.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/lock.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/meta.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ncHash.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ncstd.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ncutils.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ntapiext.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/profiler.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/Str.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/Stream.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/timer.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Breakpoint.c",
+     "ok": false,
+     "errors": 10,
+     "first": "libs/UtilitiesLib/src/utils/Breakpoint.c:92:5: error: no member named 'Dr0' in '_CONTEXT'"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/buildVersion.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/cmdoldparse.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Color.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/CommandFileParser.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ConsoleDebug.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/contextQsort.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ConvertUtf.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/cpu_count.c",
+     "ok": false,
+     "errors": 7,
+     "first": "<clang>/include/cpuid.h:14:2: error: this header is for x86 only"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/dds.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/DebugState.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/DirMonitor.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/dobbs_hash.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/endian.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/error.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/eval.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/file.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/fileutil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/fileWatch.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/FolderCache.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/FolderCacheNode.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/genericDialog.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/hoglib.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/hogutil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/LineDist.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ListView.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/log.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/mathutil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/memcheck.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/memlog.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/MemoryHeap.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/MemoryMonitor.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/memtrack.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/mutex.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/osdependent.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/PigDir.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/PigFileWrapper.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/piglib.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/process_util.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/qsortG.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Quat.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/quick_sprintf.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/rand.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/RegistryReader.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/rgb_hsv.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/scriptvars.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/serialize.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/SimpleParser.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ssemath.c",
+     "ok": false,
+     "errors": 176,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Stackdump.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/src/utils/Stackdump.c:1:10: fatal error: 'crashrpt/Stackwalk.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/strings_opt.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/StringUtil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structDefines.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structHist.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structInternals.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structNet.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structTokenizer.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/SuperAssert.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/src/utils/SuperAssert.c:15:10: fatal error: 'crashrpt/CrashRpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/sysutil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/textparser.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/textparserReg.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/textparserUtils.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/tga.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/threadedFileCopy.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/tiff.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/timing.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/tokenstore.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/UnitSpec.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/utils.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/utils_opt.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/winfiletime.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/WinTabUtil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/winutil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/version/AppRegCache.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/version/AppVersion.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    }
+   ]
+  },
+  "Game": {
+   "warn64_total": 0,
+   "warn64_files": 0,
+   "warn64_top_files": {},
+   "warn64_examples": [],
+   "structparser": {
+    "returncode": 0,
+    "stdout_tail": "",
+    "stderr_tail": ""
+   },
+   "files": 558,
+   "files_clean": 295,
+   "errors_total": 6955,
+   "errors_by_category": {
+    "x86-intrinsics": 4165,
+    "cxx-language": 1872,
+    "other": 704,
+    "redefinition": 105,
+    "undeclared-identifier": 62,
+    "inline-asm": 30,
+    "implicit-function": 10,
+    "missing-header": 7
+   },
+   "first_error_by_category": {
+    "other": 131,
+    "redefinition": 99,
+    "x86-intrinsics": 22,
+    "missing-header": 7,
+    "implicit-function": 3,
+    "undeclared-identifier": 1
+   },
+   "missing_headers": {
+    "alloca.h": 5,
+    "autogen/groupMetaMinimap_h_ast.c": 1,
+    "jpgd.h": 1
+   },
+   "examples": {
+    "other": [
+     "Common/auction/Auction.c:136:29: error: 'g_AuctionConfig' causes a section type conflict with a prior #pragma section",
+     "Common/bases/basedata.c:173:26: error: 'g_DetailDict' causes a section type conflict with a prior #pragma section",
+     "Common/bases/basedata.c:201:34: error: 'g_DetailCategoryDict' causes a section type conflict with a prior #pragma section",
+     "Common/bases/basedata.c:224:32: error: 'g_RoomCategoryDict' causes a section type conflict with a prior #pragma section",
+     "Common/bases/basedata.c:266:32: error: 'g_RoomTemplateDict' causes a section type conflict with a prior #pragma section",
+     "Common/bases/basedata.c:298:28: error: 'g_BasePlotDict' causes a section type conflict with a prior #pragma section",
+     "Common/bases/basetogroup.c:40:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]",
+     "Common/bases/baseupkeep.c:51:26: error: 'g_baseUpkeep' causes a section type conflict with a prior #pragma section"
+    ],
+    "redefinition": [
+     "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')",
+     "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')",
+     "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')",
+     "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')",
+     "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')",
+     "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')",
+     "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')",
+     "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    ],
+    "implicit-function": [
+     "Common/entity/entworldcoll.c:321:25: error: call to undeclared function 'min'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]",
+     "Common/entity/entworldcoll.c:859:34: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]",
+     "Common/entity/entworldcoll.c:872:38: error: call to undeclared function 'min'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]",
+     "Game/src/formatter/smf_select.c:343:44: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]",
+     "Game/src/formatter/smf_select.c:349:44: error: call to undeclared function 'min'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]",
+     "Game/src/formatter/smf_select.c:358:43: error: call to undeclared function 'min'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]",
+     "Game/src/formatter/smf_select.c:364:43: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]",
+     "Game/src/graphics/frustum_c.c:137:13: error: call to undeclared function '__nop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]"
+    ],
+    "x86-intrinsics": [
+     "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\"",
+     "<clang>/include/xmmintrin.h:224:10: error: invalid conversion between vector type '__m128' (vector of 4 'float' values) and integer type 'int' of different size",
+     "<clang>/include/xmmintrin.h:241:10: error: returning 'int' from a function with incompatible result type '__m128' (vector of 4 'float' values)",
+     "<clang>/include/xmmintrin.h:259:10: error: invalid conversion between vector type '__m128' (vector of 4 'float' values) and integer type 'int' of different size",
+     "<clang>/include/xmmintrin.h:276:10: error: invalid conversion between vector type '__m128' (vector of 4 'float' values) and integer type 'int' of different size",
+     "<clang>/include/xmmintrin.h:295:10: error: returning 'int' from a function with incompatible result type '__m128' (vector of 4 'float' values)",
+     "<clang>/include/xmmintrin.h:312:10: error: returning 'int' from a function with incompatible result type '__m128' (vector of 4 'float' values)",
+     "<clang>/include/xmmintrin.h:335:10: error: returning 'int' from a function with incompatible result type '__m128' (vector of 4 'float' values)"
+    ],
+    "cxx-language": [
+     "<clang>/include/mmintrin.h:56:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:135:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:165:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:195:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:222:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:245:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:266:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size",
+     "<clang>/include/mmintrin.h:293:12: error: invalid conversion between vector type '__m64' (vector of 1 'long long' value) and integer type 'int' of different size"
+    ],
+    "missing-header": [
+     "Common/group/groupMetaMinimap.c:947:10: fatal error: 'autogen/groupMetaMinimap_h_ast.c' file not found",
+     "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found",
+     "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found",
+     "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found",
+     "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found",
+     "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found",
+     "Game/src/graphics/jpeg.cpp:4:10: fatal error: 'jpgd.h' file not found"
+    ],
+    "inline-asm": [
+     "libs/UtilitiesLib/include/utilitieslib/utils/prefetch.h:30:5: error: unsupported architecture 'aarch64' for MS-style inline assembly",
+     "libs/UtilitiesLib/include/utilitieslib/utils/prefetch.h:40:5: error: unsupported architecture 'aarch64' for MS-style inline assembly",
+     "Game/src/render/texWords.c:1614:25: error: unsupported architecture 'aarch64' for MS-style inline assembly",
+     "Game/src/render/texWords.c:1634:25: error: unsupported architecture 'aarch64' for MS-style inline assembly",
+     "Game/src/render/texWords.c:1634:25: error: unsupported architecture 'aarch64' for MS-style inline assembly",
+     "Game/src/render/texWords.c:1634:25: error: unsupported architecture 'aarch64' for MS-style inline assembly",
+     "Game/src/render/texWords.c:1634:25: error: unsupported architecture 'aarch64' for MS-style inline assembly",
+     "Game/src/render/texWords.c:1634:25: error: unsupported architecture 'aarch64' for MS-style inline assembly"
+    ],
+    "undeclared-identifier": [
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:114:61: error: unknown type name 'HDC'",
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:114:70: error: unknown type name 'UINT'",
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:138:62: error: unknown type name 'HGLRC'",
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:139:64: error: unknown type name 'UINT'",
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:140:71: error: unknown type name 'UINT'",
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:145:58: error: unknown type name 'INT'",
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:172:60: error: unknown type name 'HDC'",
+     "<toolchain>/deps/glew-cmake/include/GL/wglew.h:209:61: error: unknown type name 'HDC'"
+    ]
+   },
+   "worst_files": [
+    {
+     "file": "Game/src/graphics/frustum_c.c",
+     "errors": 209
+    },
+    {
+     "file": "Game/src/edit/MapGenerator.c",
+     "errors": 181
+    },
+    {
+     "file": "Game/src/entity/entDebug.c",
+     "errors": 181
+    },
+    {
+     "file": "Game/src/graphics/zOcclusionClip.c",
+     "errors": 179
+    },
+    {
+     "file": "Game/src/game.c",
+     "errors": 178
+    },
+    {
+     "file": "Game/src/graphics/gfx.c",
+     "errors": 178
+    },
+    {
+     "file": "Game/src/graphics/groupThumbnail.c",
+     "errors": 177
+    },
+    {
+     "file": "Game/src/render/rendershadowmap.c",
+     "errors": 177
+    },
+    {
+     "file": "Game/src/render/renderUtil.c",
+     "errors": 177
+    },
+    {
+     "file": "Common/entity/motion.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/entity/entclient.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/graphics/FX/fx.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/graphics/gfxDebug.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/graphics/groupdrawinline.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/graphics/groupdrawutil.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/graphics/groupMiniTrackers.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/graphics/light.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/graphics/sun.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/render/rendershadow.c",
+     "errors": 176
+    },
+    {
+     "file": "Game/src/render/rendertree.c",
+     "errors": 176
+    },
+    {
+     "file": "Common/group/groupfileload.c",
+     "errors": 175
+    },
+    {
+     "file": "Common/group/groupgrid.c",
+     "errors": 175
+    },
+    {
+     "file": "Common/seq/anim.c",
+     "errors": 175
+    },
+    {
+     "file": "Common/seq/modelReload.c",
+     "errors": 175
+    },
+    {
+     "file": "Game/src/bases/basedraw.c",
+     "errors": 175
+    }
+   ],
+   "per_file": [
+    {
+     "file": "Common/account/AccountCatalog.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/account/AccountData.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/account/AccountInventory.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/account/AccountTypes.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/auction/Auction.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/auction/Auction.c:136:29: error: 'g_AuctionConfig' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/auction/AuctionData.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/auction/Xact.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/auth/auth.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/auth/authUserData.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/basedata.c",
+     "ok": false,
+     "errors": 5,
+     "first": "Common/bases/basedata.c:173:26: error: 'g_DetailDict' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/bases/BaseEntry.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/basefromgroup.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/baseinv.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/baselegal.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/baseparse.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/baseRaid.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/bases.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/basesend.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/basestorage.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/bases/basesystems.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/basetogroup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/bases/basetogroup.c:40:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Common/bases/basetrim.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/bases/baseupkeep.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/bases/baseupkeep.c:51:26: error: 'g_baseUpkeep' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/bases/DetailRecipe.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/cmdparse/AppServerCmd.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/cmdparse/cmdaccountserver.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/cmdparse/cmdcommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/container/container_store.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/container/container_util.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/container/dbcontainerpack.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/DoorStrings.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/attrib_description.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/attrib_names.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/attrib_names.c:13:27: error: 'g_AttribNames' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/entity/attrib_net.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/boost.c",
+     "ok": false,
+     "errors": 74,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/boostset.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/buddy.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/character_attribs.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/character_base.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/character_combat_eval.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/character_eval.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/character_inventory.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/character_level.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/character_net.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/character_target.c",
+     "ok": false,
+     "errors": 13,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/character_workshop.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/chatSettings.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/classes.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Common/entity/classes.c:63:22: error: cannot take the address of an rvalue of type 'CharacterAttributes **' (aka 'struct CharacterAttributes **')"
+    },
+    {
+     "file": "Common/entity/Concept.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/costume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/CustomVillainGroup.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/entity.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/entity.c:179:12: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Common/entity/entityRef.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/entStrings.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/entworldcoll.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/entworldcoll.c:321:25: error: call to undeclared function 'min'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]"
+    },
+    {
+     "file": "Common/entity/friendCommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/incarnate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/Invention.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/LoadDefCommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/load_def.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/motion.c",
+     "ok": false,
+     "errors": 176,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/origins.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/origins.c:14:32: error: 'g_CharacterOrigins' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/entity/PCC_Critter.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/PowerInfo.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/powers.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/entity/powers_load.c",
+     "ok": false,
+     "errors": 21,
+     "first": "Common/entity/powers_load.c:292:19: error: cannot take the address of an rvalue of type 'PowerVar **' (aka 'struct PowerVar **')"
+    },
+    {
+     "file": "Common/entity/power_customization.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/power_system.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/Proficiency.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/entity/ragdoll.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/RewardItemType.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/RewardSlot.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/RewardToken.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/salvage.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/salvage.c:35:33: error: 'g_SalvageDict' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/entity/SgrpBasePermissions.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/Supergroup.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/supergroup_eval.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/TaskforceParams.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/entity/teamup.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/filter/profanity.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/filter/titles.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/filter/validate_name.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/fxbhvr.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/fxinfo.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gameComm/dooranimcommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gameComm/initCommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gameComm/NPC.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/gameComm/trayCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/gameComm/VillainDef.c",
+     "ok": false,
+     "errors": 16,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/gameComm/wdwbase.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gameData/arenastruct.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gameData/BodyPart.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/gameData/BodyPart.c:16:28: error: 'bodyPartList' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/gameData/costume_data.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/gameData/costume_data.c:944:57: error: cannot take the address of an rvalue of type 'char *'"
+    },
+    {
+     "file": "Common/gameData/raidstruct.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gameData/store.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/gameData/store_data.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/gameData/store_data.c:510:67: error: incompatible function pointer types passing 'void *(SharedMemoryHandle *, size_t)' (aka 'void *(struct SharedMemoryHandle *, unsigned long long)') to parameter of type 'CustomMemoryAllocator' (aka"
+    },
+    {
+     "file": "Common/gridcoll/ctri.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gridcoll/grid.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gridcoll/gridcache.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gridcoll/gridcoll.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gridcoll/gridcollobj.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gridcoll/gridfind.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gridcoll/gridstats.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/gridcoll/tritri_isectline.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/group/group.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/group/group.c:1721:12: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Common/group/groupdyn.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/group/groupfilelib.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/group/groupfilelib.c:545:99: error: incompatible function pointer types passing 'void *(SharedMemoryHandle *, size_t)' (aka 'void *(struct SharedMemoryHandle *, unsigned long long)') to parameter of type 'CustomMemoryAllocator' (aka "
+    },
+    {
+     "file": "Common/group/groupfileload.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Common/group/groupfileloadutil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/group/groupfilesave.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/group/groupfilesave.c:62:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Common/group/groupgrid.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Common/group/groupMetaMinimap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/group/groupMetaMinimap.c:947:10: fatal error: 'autogen/groupMetaMinimap_h_ast.c' file not found"
+    },
+    {
+     "file": "Common/group/groupnovodex.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/group/groupProperties.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/group/groupscene.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/group/groupscene.c:104:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Common/group/grouptrack.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/group/grouputil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/imageServer.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/language/commonLangUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Common/LWC_common.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/MissionControl.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/MissionControl.c:503:15: error: cannot take the address of an rvalue of type 'void **'"
+    },
+    {
+     "file": "Common/mission/MissionSearch.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/mission/missionserver_meta.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/NovodeX/NwCoreDump.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found"
+    },
+    {
+     "file": "Common/NovodeX/NwRagdoll.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found"
+    },
+    {
+     "file": "Common/NovodeX/NwSharedStream.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found"
+    },
+    {
+     "file": "Common/NovodeX/NwStream.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found"
+    },
+    {
+     "file": "Common/NovodeX/NwWrapper.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/Nx.h:268:11: fatal error: 'alloca.h' file not found"
+    },
+    {
+     "file": "Common/player/badges.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/player/badges.c:189:25: error: 'g_BadgeDefs' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/player/pmotion.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/player/pophelp.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/Properties.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/anim.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Common/seq/AnimBitList.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/animtrack.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/animtrackanimate.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/AutoLOD.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/bones.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/gfxtree.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/modelReload.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Common/seq/seq.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Common/seq/seqanimate.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/seqload.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/seqregistration.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/seq/seqregistration.c:286:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Common/seq/seqsequence.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Common/seq/seqskeleton.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Common/seq/seqstate.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/seqtype.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/seq/tricks.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/storyarc/contactCommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/storyarc/missiongeoCommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/storyarc/missionMapCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/storyarc/missionMapCommon.c:112:30: error: 'g_missionmaplist' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/storyarc/playerCreatedStoryarc.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/storyarc/playerCreatedStoryarcValidate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/storyarc/playerCreatedStoryarcValidate.c:3025:33: error: conflicting types for 'playerCreatedStoryarc_GetValid'"
+    },
+    {
+     "file": "Common/storyarc/pnpcCommon.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/storyarc/pnpcCommon.c:71:27: error: 'g_pnpcdeflist' causes a section type conflict with a prior #pragma section"
+    },
+    {
+     "file": "Common/storyarc/storyarcCommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/storyarc/zowieCommon.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/testClient/testLevelup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Common/utils/debugUtils.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/utils/EVAL.C",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/utils/Position.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/varutils.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/arena/arenagame.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/bases/baseclientrecv.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/bases/baseclientsend.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/bases/baseclientsend.c:21:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/bases/basedrag.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/bases/basedraw.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/bases/baseedit.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/clientcomm/authclient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/clientcomm/autoResumeInfo.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Game/src/clientcomm/autoResumeInfo.c:23:47: error: initializer element is not a compile-time constant"
+    },
+    {
+     "file": "Game/src/clientcomm/clientcomm.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/clientcomm/clientcommreceive.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/clientcomm/dbclient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/clientcomm/Des.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/clientError.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/Cloth.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/Cloth/ClothBuild.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/ClothCollide.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/ClothConstraint.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/ClothMesh.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/ClothMeshPrimitive.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/ClothObject.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/ClothParse.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/Cloth/Wind.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/cmdparse/cmdDebug.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/cmdparse/cmdgame.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/demo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/editorUI.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/ClickToSource.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/DebugLocation.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/EditListView.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_cmd.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_adjust.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_file.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_group.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_select.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/edit/edit_context_menu.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_cubemap.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_drawlines.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_errcheck.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_info.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/edit/edit_library.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_lods.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_net.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_pickcolor.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/edit/edit_select.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/edit/edit_transformToolbar.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/edit_uiscroll.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/MapGenerator.c",
+     "ok": false,
+     "errors": 181,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/edit/Menu.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/edit/UI.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/entity/character_animfx_client.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/entity/character_net_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/entity/costume_client.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/entity/CustomVillainGroup_Client.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/entity/entclient.c",
+     "ok": false,
+     "errors": 176,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/entity/entDebug.c",
+     "ok": false,
+     "errors": 181,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/entity/entity_power_client.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/entity/entrecv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/entity/PCC_Critter_Client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/entity/power_customization_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/entity/scriptDebugClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/formatter/smf_format.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/formatter/smf_interact.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/formatter/smf_interact.c:233:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/formatter/smf_main.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/formatter/smf_parse.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/formatter/smf_render.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/formatter/smf_select.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Game/src/formatter/smf_select.c:343:44: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]"
+    },
+    {
+     "file": "Game/src/formatter/smf_util.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/formatter/smf_util.c:1126:46: error: incompatible function pointer types passing 'int (SMFBlock *, void *)' (aka 'int (struct SMFBlock *, void *)') to parameter of type 'LostFocusFunction' (aka 'int (*)(void *, void *)') [-Wincompa"
+    },
+    {
+     "file": "Game/src/game.c",
+     "ok": false,
+     "errors": 178,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/gameComm/chatClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/gameComm/dooranimclient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/gameComm/initClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/gameComm/itemselect.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/gameData/costume_critter.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/gameData/costume_diff.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/gameData/menudef.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/gameData/randomCharCreate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/gameData/randomName.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/gameData/sgraidClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/gameData/sgraidClient.c:213:29: error: incompatible function pointer types passing 'void (SupergroupRaidInfo *)' (aka 'void (struct SupergroupRaidInfo *)') to parameter of type 'EArrayItemDestructor' (aka 'void (*)(void *)') [-Winc"
+    },
+    {
+     "file": "Game/src/graphics/camera.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/camera_detached.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/clothnode.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/failtext.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/fog.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/font.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/fontdata.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/frustum_c.c",
+     "ok": false,
+     "errors": 209,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/FX/fx.c",
+     "ok": false,
+     "errors": 176,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/FX/fxcapes.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/FX/fxdebris.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/FX/fxfluid.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/FX/fxgeo.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/FX/fxlists.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/FX/fxutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/graphics/FX/fxutil.c:189:12: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]"
+    },
+    {
+     "file": "Game/src/graphics/FX/particle.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/gfx.c",
+     "ok": false,
+     "errors": 178,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/gfxDebug.c",
+     "ok": false,
+     "errors": 176,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/gfxDevHUD.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/gfxLoadScreens.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/gfxSettings.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/gfxwindow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/groupdraw.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/groupdrawinline.c",
+     "ok": false,
+     "errors": 176,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/groupdrawutil.c",
+     "ok": false,
+     "errors": 176,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/groupMiniTrackers.c",
+     "ok": false,
+     "errors": 176,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/groupThumbnail.c",
+     "ok": false,
+     "errors": 177,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/imageCapture.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/jpeg.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/graphics/jpeg.cpp:4:10: fatal error: 'jpgd.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/light.c",
+     "ok": false,
+     "errors": 176,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/seqgraphics.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/splat.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/sun.c",
+     "ok": false,
+     "errors": 176,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/graphics/textureatlas.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttAppleMapping.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttDebug.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontBitmap.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontCore.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontDraw.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontManager.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/ttFont.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/ttFontUtil.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/graphics/ttFontUtil.c:49:41: error: incompatible function pointer types passing 'void (FormattedLine *)' to parameter of type 'Destructor' (aka 'void (*)(void *)') [-Wincompatible-function-pointer-types]"
+    },
+    {
+     "file": "Game/src/graphics/viewport.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/view_cache.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/vistray.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/vistraygrid.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/graphics/zOcclusion.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/graphics/zOcclusionClip.c",
+     "ok": false,
+     "errors": 179,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/group/groupdynrecv.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/group/groupnetrecv.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/language/langClientUtil.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Game/src/language/langClientUtil.c:144:36: error: incompatible function pointer types passing 'void (char *)' to parameter of type 'EArrayItemDestructor' (aka 'void (*)(void *)') [-Wincompatible-function-pointer-types]"
+    },
+    {
+     "file": "Game/src/LWC.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/main.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/player/badges_client.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/player/inventory_client.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/player/player.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/player/playerState.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/player/playerSticky.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/bump.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/cubemap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/cubemap_filter.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/dxtlibwrapper.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/model.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/model_cache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/pbuffer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/perfcounter.c",
+     "ok": false,
+     "errors": 117,
+     "first": "<toolchain>/deps/glew-cmake/include/GL/wglew.h:114:61: error: unknown type name 'HDC'"
+    },
+    {
+     "file": "Game/src/render/renderbonedmodel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/rendercloth.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/renderEffects.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/renderfont.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/rendermodel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/renderparticles.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/renderperf.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/renderprim.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/rendershadow.c",
+     "ok": false,
+     "errors": 176,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/rendershadowmap.c",
+     "ok": false,
+     "errors": 177,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/renderssao.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/renderstats.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/rendertree.c",
+     "ok": false,
+     "errors": 176,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/rendertricks.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/renderUtil.c",
+     "ok": false,
+     "errors": 177,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/renderWater.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/rotoZoom.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/sprite.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/tex.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/texUnload.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/texWords.c",
+     "ok": false,
+     "errors": 29,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/texWordsEdit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/tex_gen.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/thread/glext.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/mipmap.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/thread/rt_bonedmodel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cgfx.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cgfx_statemgmt.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cloth.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cubemap.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cursor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_effects.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_filter.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_font.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_graphfps.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_model.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_model_cache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_particles.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_pbuffer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_perf.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_prim.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_queue.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_report.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/thread/rt_shaderMgr.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_shadow.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_shadowmap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_sprite.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_ssao.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_state.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_stats.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/thread/rt_tex.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_tricks.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_tune.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/thread/rt_util.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_water.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/rt_win_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/shadersATI.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/shadersTexEnv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/thread/wcw_statemgmt.c",
+     "ok": false,
+     "errors": 59,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/render/videoMemory.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/sound/ogg_decode.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/sound/sound.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/sound/sound_ambient.c",
+     "ok": false,
+     "errors": 175,
+     "first": "<clang>/include/xmmintrin.h:14:2: error: \"This header is only meant to be used on x86 and x64 architecture\""
+    },
+    {
+     "file": "Game/src/sound/sound_sys.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/storyarc/contactClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/storyarc/missionClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/storyarc/playerCreatedStoryarcClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/storyarc/storyarcClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/storyarc/zowieClient.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/uiLevelingpact.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/uiTextLink.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiArchetype.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiBody.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiCostumes.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiHybridMenu.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiLoyaltyTree.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiLoyaltyTreeAccess.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiLWC.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiOrigin.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiPlaystyle.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiPower.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiRedirect.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiRegister.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiWebStoreFrame.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_base.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_debug.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_font.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_list.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_text.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiAmountSlider.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiArena.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiArenaGladiator.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiArenaGladiator.c:62:16: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/UI/uiArenaJoin.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiArenaList.c",
+     "ok": false,
+     "errors": 9,
+     "first": "Game/src/UI/uiArenaList.c:189:58: error: incompatible function pointer types passing 'int (const ArenaEvent **, const ArenaEvent **)' (aka 'int (const struct ArenaEvent **, const struct ArenaEvent **)') to parameter of type 'UIListViewItemC"
+    },
+    {
+     "file": "Game/src/UI/uiArenaResult.c",
+     "ok": false,
+     "errors": 20,
+     "first": "Game/src/UI/uiArenaResult.c:103:62: error: incompatible function pointer types passing 'int (const ArenaRankingTableEntry **, const ArenaRankingTableEntry **)' (aka 'int (const struct ArenaRankingTableEntry **, const struct ArenaRankingTabl"
+    },
+    {
+     "file": "Game/src/UI/uiAuction.c",
+     "ok": false,
+     "errors": 9,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiAutomap.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/UI/uiAutomapFog.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiAvatar.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBadges.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBaseInput.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBaseInventory.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBaseLog.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBaseProps.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBaseRoom.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBaseStorage.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiBox.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBrowser.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiBuff.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiChannel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiChannel.c:872:61: error: incompatible function pointer types passing 'int (const ChatUser **, const ChatUser **)' (aka 'int (const struct ChatUser **, const struct ChatUser **)') to parameter of type 'UIListViewItemCompare' (a"
+    },
+    {
+     "file": "Game/src/UI/uiChannelSearch.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Game/src/UI/uiChannelSearch.c:368:58: error: incompatible function pointer types passing 'int (const ChannelLine **, const ChannelLine **)' (aka 'int (const struct ChannelLine **, const struct ChannelLine **)') to parameter of type 'UIListV"
+    },
+    {
+     "file": "Game/src/UI/uiChat.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiChatOptions.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiChatUtil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiClipper.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiClue.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiColorPicker.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiCombatMonitor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiCombatNumbers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiCombineSpec.c",
+     "ok": false,
+     "errors": 50,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiComboBox.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiComment.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiCompass.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiConceptInv.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiConsole.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/UI/uiContact.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiContactDialog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiContactDialog.c:762:15: error: assignment to cast is illegal, lvalue casts are not supported"
+    },
+    {
+     "file": "Game/src/UI/uiContactFinder.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiContextMenu.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiConvertEnhancement.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiCostume.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiCostumeSelect.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiCostumeSelect.c:147:12: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/UI/uiCursor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiCustomVillainGroupWindow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiCustomWindow.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiDeath.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiDialog.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiDock.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/UIEdit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/UIEdit.c:2166:33: error: incompatible function pointer types passing 'int (UIEdit *, void *)' (aka 'int (struct UIEdit *, void *)') to parameter of type 'LostFocusFunction' (aka 'int (*)(void *, void *)') [-Wincompatible-functio"
+    },
+    {
+     "file": "Game/src/UI/uiEditText.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/UI/uiEditText.c:651:38: error: incompatible function pointer types passing 'void (FormattedText *)' to parameter of type 'Destructor' (aka 'void (*)(void *)') [-Wincompatible-function-pointer-types]"
+    },
+    {
+     "file": "Game/src/UI/uiEmail.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiEmote.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiEnhancement.c",
+     "ok": false,
+     "errors": 8,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiFocus.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiFriend.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Game/src/UI/uiFriend.c:461:69: error: incompatible function pointer types passing 'int (const Friend **, const Friend **)' (aka 'int (const struct Friend **, const struct Friend **)') to parameter of type 'UIListViewItemCompare' (aka 'int ("
+    },
+    {
+     "file": "Game/src/UI/uiFx.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiFx.c:321:12: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/UI/uiGame.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiGender.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiGift.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiGroupWindow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiGrowBig.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiHelp.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiHelp.c:323:12: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/UI/uiHelpButton.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiIME.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiIncarnate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiInfo.c",
+     "ok": false,
+     "errors": 8,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiInput.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiInspiration.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiInvent.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiKeybind.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiKeymapping.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiLeague.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiLevelPower.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiLevelSpec.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiLfg.c",
+     "ok": false,
+     "errors": 7,
+     "first": "Game/src/UI/uiLfg.c:446:58: error: incompatible function pointer types passing 'int (const Lfg **, const Lfg **)' (aka 'int (const struct Lfg **, const struct Lfg **)') to parameter of type 'UIListViewItemCompare' (aka 'int (*)(const void *"
+    },
+    {
+     "file": "Game/src/UI/uiListView.c",
+     "ok": false,
+     "errors": 6,
+     "first": "Game/src/UI/uiListView.c:753:37: error: cannot take the address of an rvalue of type 'void **'"
+    },
+    {
+     "file": "Game/src/UI/uiLoadCostume.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiLoadingTip.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiLoadPowerCust.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiLogin.c",
+     "ok": false,
+     "errors": 4,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiMapSelect.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiMission.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiMission.c:140:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/UI/uiMissionComment.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiMissionMaker.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiMissionMakerScrollSet.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiMissionReview.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiMissionSearch.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiMissionSummary.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiMMMapViewer.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiNet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiNewFeatures.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiNPCCostume.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiNPCCreationNLM.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiNPCProfile.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiOptions.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/UI/uiPCCCreationNLM.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiPCCPowers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiPCCProfile.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiPCCRank.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiPet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiPetition.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiPictureBrowser.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiPlaque.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiPlayerNote.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiPopHelp.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiPowerCust.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiPowerInfo.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiPowerInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiPowers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiQuit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiQuit.c:120:33: error: incompatible function pointer types passing 'void (SupergroupRaidInfo *)' (aka 'void (struct SupergroupRaidInfo *)') to parameter of type 'EArrayItemDestructor' (aka 'void (*)(void *)') [-Wincompatible-fu"
+    },
+    {
+     "file": "Game/src/UI/uiRaidResult.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiRecentTeam.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiRecipeInv.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiRecipeInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiRenderStats.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiReSpec.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiReticle.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiRewardChoice.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiSalvage.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiSalvageOpen.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiSaveCostume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiScript.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiScrollBar.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiScrollSelector.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiScrollSet.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiServerTransfer.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Game/src/UI/uiServerTransfer.c:442:90: error: incompatible function pointer types passing 'int (const DestinationShard **, const DestinationShard **)' (aka 'int (const struct DestinationShard **, const struct DestinationShard **)') to param"
+    },
+    {
+     "file": "Game/src/UI/uiSGList.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Game/src/UI/uiSGList.c:257:54: error: incompatible function pointer types passing 'int (const SupergroupLine **, const SupergroupLine **)' (aka 'int (const struct SupergroupLine **, const struct SupergroupLine **)') to parameter of type 'UI"
+    },
+    {
+     "file": "Game/src/UI/uiSGRaidList.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiSlider.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiSMFView.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiStatus.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiStore.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiStoredSalvage.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiSupercostume.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiSupergroup.c",
+     "ok": false,
+     "errors": 9,
+     "first": "Game/src/UI/uiSupergroup.c:1301:62: error: incompatible function pointer types passing 'int (const SupergroupStats **, const SupergroupStats **)' (aka 'int (const struct SupergroupStats **, const struct SupergroupStats **)') to parameter of"
+    },
+    {
+     "file": "Game/src/UI/uiSuperRegistration.c",
+     "ok": false,
+     "errors": 2,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/UI/uiTabControl.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiTailor.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiTarget.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiTeam.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiTitleSelect.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiToolTip.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiTrade.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiTradeLogic.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiTray.c",
+     "ok": false,
+     "errors": 3,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiTraySingle.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/character_base.h:37:13: error: typedef redefinition with different types ('int' vs 'enum PowerMode')"
+    },
+    {
+     "file": "Game/src/UI/uiTree.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiTrialReminder.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiTurnstile.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiUtil.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiUtilGame.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/UI/uiUtilGame.c:660:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]"
+    },
+    {
+     "file": "Game/src/UI/uiUtilMenu.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiWindows.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiWindows_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Common/entity/powers.h:41:3: error: typedef redefinition with different types ('enum PowerMode' vs 'int')"
+    },
+    {
+     "file": "Game/src/validateFiles.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/win/hwlight.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/win/input.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/win/win_cursor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    },
+    {
+     "file": "Game/src/win/win_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/renderUtil.h:73:29: error: a parameter list without types is only allowed in a function definition"
+    }
+   ]
+  }
+ },
+ "finished": "2026-10-21T13:53:02-0500",
+ "label": "baseline: unmodified source, default clang errors"
+}

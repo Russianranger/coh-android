@@ -1,0 +1,45 @@
+name: ArmPort shader precompile
+
+# M0 check for COH-ArmPort: compile the client's Cg shaders to ARB assembly
+# with the original cgc.exe, so the ARM64 client does not need the x86 Cg runtime.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['armport/**', 'COH-ArmPort']
+    paths:
+      - 'armport/shaders/**'
+      - '.github/workflows/armport-shaders.yml'
+  pull_request:
+    branches: ['COH-ArmPort']
+    paths:
+      - 'armport/shaders/**'
+      - '.github/workflows/armport-shaders.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  cgc:
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            armport/shaders
+            upstream/ouroboros/3rdparty/cg
+            upstream/i24/data/shaders
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Compile shaders
+        shell: pwsh
+        run: |
+          python armport/shaders/compile_all.py `
+            --cgc upstream/ouroboros/3rdparty/cg/bin/cgc.exe `
+            --shaders upstream/i24/data/shaders `
+            --out shader-out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-shaders-arb
+          path: shader-out
+          retention-days: 30
