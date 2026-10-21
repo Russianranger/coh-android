@@ -59,7 +59,14 @@ def main():
     parser.add_argument('--replay', type=Path, help='Optional retained physical INITIAL replay; no network I/O')
     parser.add_argument('--bounded', action='store_true', help='Compile next diagnostic delivery/accounting opt-in.')
     parser.add_argument('--fallback', action='store_true', help='Compile diagnostic known-handler partial-tail ACK and 30s observation opt-in.')
+    parser.add_argument('--release-only', action='store_true', help='Run only the focused release fixture; default also qualifies ASan/UBSan.')
+    parser.add_argument('--costume-frame-output', type=Path, help='Optional exclusive private output of the exact checked COHCST01 getter copy; requires --replay --fallback.')
     args = parser.parse_args()
+    if args.costume_frame_output and not (args.replay and args.fallback):
+        parser.error('--costume-frame-output requires --replay --fallback')
+    if args.costume_frame_output:
+        args.costume_frame_output = args.costume_frame_output.resolve()
+        assert not args.costume_frame_output.exists(), 'costume output already exists'
     args.bounded = args.bounded or args.fallback
     work = args.work.resolve()
     work.mkdir(parents=True, exist_ok=False)
@@ -114,12 +121,16 @@ def main():
             if path.is_relative_to(ROOT):
                 frozen.add(path)
     pins = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(frozen)}
-    result = {'passed': True, 'bounded_next_diagnostic': args.bounded, 'partial_tail_diagnostic': args.fallback, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
+    result = {'passed': True, 'bounded_next_diagnostic': args.bounded, 'partial_tail_diagnostic': args.fallback, 'release_only': args.release_only, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
               'scope': ('Authentic saved Thor packet through shipping JNI observer/owner with original source-static shortcuts, test-owned selection and transport/JNI/Android asset doubles; no live authentication, actual network sends or Android ABI claim.' if args.replay else 'Shipping new-profile JNI observer, with Android asset/JNI/transport doubles and source-layout sender header composition; no physical packet, Android ABI, actor or ACK claim.')}
     if args.replay:
         result['actual_source_fixture'] = actual_source
     env = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1:print_stacktrace=1'}
-    for mode, options in [('release', ['-O2']), ('asan', ['-O1', '-g', '-fsanitize=address']), ('ubsan', ['-O1', '-g', '-fsanitize=undefined', '-fno-sanitize-recover=all'])]:
+    env.pop('COH_TEST_COSTUME_FRAME_OUTPUT', None)
+    modes = [('release', ['-O2'])]
+    if not args.release_only:
+        modes += [('asan', ['-O1', '-g', '-fsanitize=address']), ('ubsan', ['-O1', '-g', '-fsanitize=undefined', '-fno-sanitize-recover=all'])]
+    for mode, options in modes:
         binary = work / mode
         wrap = '-Wl,--wrap=calloc,--wrap=free,--wrap=open,--wrap=close,--wrap=read,--wrap=__read_chk,--wrap=mmap,--wrap=munmap'
         if args.replay:
@@ -127,11 +138,23 @@ def main():
         command = [*flags, *options, *map(str, sources), wrap, '-lcrypto', '-lm', '-lz', '-o', str(binary)]
         with (work / (mode + '-compile.log')).open('wb') as log:
             subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
-        execution = subprocess.run([binary, original, suffix], cwd=ROOT, env=env, capture_output=True, text=True, timeout=90)
+        execution_env = {**env}
+        if args.costume_frame_output and mode == 'release':
+            execution_env['COH_TEST_COSTUME_FRAME_OUTPUT'] = str(args.costume_frame_output)
+        execution = subprocess.run([binary, original, suffix], cwd=ROOT, env=execution_env, capture_output=True, text=True, timeout=90)
         (work / (mode + '-run.log')).write_text(execution.stdout + execution.stderr)
         if execution.returncode:
             raise RuntimeError(mode + ' execution failed; see ' + str(work / (mode + '-run.log')))
         result['modes'][mode] = json.loads(execution.stdout)
+        if args.costume_frame_output and mode == 'release':
+            frame = args.costume_frame_output.read_bytes()
+            assert len(frame) == 48384 and frame[:8] == b'COHCST01'
+            assert struct.unpack_from('<II', frame, 8) == (32, 48352)
+            assert struct.unpack_from('<QII', frame, 16)[0] > 0 and struct.unpack_from('<I', frame, 28)[0] == 0
+            result['costume_frame_export'] = {'frame_bytes': len(frame), 'snapshot_bytes': len(frame) - 32,
+                                             'frame_sha256': hashlib.sha256(frame).hexdigest(),
+                                             'snapshot_sha256': hashlib.sha256(frame[32:]).hexdigest(),
+                                             'scope': 'Exact checked JNI getter copy; epoch belongs to explicit host selection fixture, not a live session.'}
     assert len({json.dumps(row, sort_keys=True) for row in result['modes'].values()}) == 1
     frames = []
     rare_frames = []

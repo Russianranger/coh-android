@@ -41,6 +41,10 @@ int main(int argc,char**argv){
    CHECK(status==COH_UNSUPPORTED&&active->initial_create.header_validated&&active->initial_create.create_validated&&active->initial_create.is_self&&active->initial_create.self_dbid_matches_handoff);CHECK(active->initial_create.header_end_bit==880&&active->initial_create.create_end_bit==1536&&active->initial_costume.begin_bit==replay_word64(header+32));CHECK(active->initial_outer.power_entries_read==343&&active->initial_outer.power_unresolved_count==343&&!active->initial_outer.required_table);CHECK(active->initial_commands.tail_complete&&active->initial_commands.terminator&&active->initial_commands.end_bit==actual_bits&&initial_complete(active));CHECK(active->completion_status==COH_OK&&observer_finish_calls==before+1);CHECK(active->initial_packet_tail.peak_aggregate_bytes<8388608&&active->initial_packet_tail.peak_mapped_bytes==5996544);max_aggregate=active->initial_packet_tail.peak_aggregate_bytes;source_update_end=active->initial_packet_tail.end_bit;complete_cases++;
 #ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
    check_costume_snapshot();check_partial_predicate();
+   /* Optional private host fixture export: exactly the checked JNI copy,
+    * including its explicit test-owner epoch. Never a production file path. */
+   const char*costume_path=getenv("COH_TEST_COSTUME_FRAME_OUTPUT");
+   if(costume_path&&costume_path[0]){CHECK(costume_export()==replay_output&&replay_output_bytes==48384&&!memcmp(replay_output+32,&active->selected_costume,48352));int fd=__real_open(costume_path,O_WRONLY|O_CREAT|O_EXCL,0600);CHECK(fd>=0);ssize_t written=write(fd,replay_output,(size_t)replay_output_bytes);int closed=__real_close(fd);CHECK(written==replay_output_bytes&&!closed);}
 #endif
 
   }else{CHECK(observer_finish_calls==before&&!initial_complete(active));if(actual_variant==1)CHECK(!active->initial_create.self_dbid_matches_handoff);if(actual_variant>=2&&actual_variant<=4)CHECK(status==COH_STATE);if(actual_variant==5)CHECK(active->initial_commands.status!=COH_OK&&!active->initial_commands.tail_complete);
