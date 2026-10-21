@@ -22,3 +22,4 @@
 0022-cmake-nvparse-arm64.patch
 0023-cmake-cubemapgen-arm64.patch
 0024-game-texwords-explicit-comparison.patch
+0025-common-file-local-static-names.patch
