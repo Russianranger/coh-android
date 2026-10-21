@@ -1716,7 +1716,7 @@
     "version": "0.1.19",
     "version_code": 20,
     "profile": "freeze-diagnostic",
-    "state": "strict_Clang_fix_qualified_final_corrective_dispatch_requested",
+    "state": "exact_APK_framework_only_dispatch_requested",
     "limits": {
       "decoded_message_bytes": 4194304,
       "ordinary_transport_bytes": 16384,
@@ -1733,23 +1733,41 @@
       "Keep initial-replay.bin, post-ready-replay.bin/.json and the fresh 640x360 PNG, or its omission reason.",
       "Stop normally and return the ZIP; do not change the database or repeat the handoff."
     ],
-    "apk": null,
+    "apk": {
+      "bytes": 15288279,
+      "name": "CoH-Native-Combined-0.1.19-freeze-diagnostic-arm64.apk",
+      "sha256": "9383ebd105c3bc75d3df7184c85baf2c55682d43b288fca83525b59a17d0a98a",
+      "version_code": 20,
+      "version_name": "0.1.19-freeze-diagnostic-test",
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+      "qualified_source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "qualified_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+      "rebuild_after_build_audit": false,
+      "physical_Thor_tested": false,
+      "framework_qualification": "pending exact-APK reuse"
+    },
     "physical_Thor_tested": false,
     "CI": {
-      "run_id": 39540921554,
-      "url": "https://github.com/Russianranger/coh-android/actions/runs/39540921554",
-      "source_commit": "b46eafb373743ba622d20a619bbbc212b571f8b9",
-      "source_tree": "f8c7193a9988d87ba23ab5c90361a9a5b6fe0db8",
+      "run_id": 39542047531,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39542047531",
+      "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
       "purpose": "combined-diagnostic",
       "diagnostic_profile": "freeze-diagnostic",
-      "status": "failed_before_APK",
+      "status": "failed_framework_harness",
       "initial_diagnostic_dispatches": 1,
-      "corrective_diagnostic_dispatches": 1,
+      "corrective_diagnostic_dispatches": 2,
       "release_published": false,
-      "corrective_dispatches_requested": 2
+      "combined_source": "passed",
+      "build_lint_packages_DSO_audits": "passed",
+      "Android13_update": "passed",
+      "Android13_framework": "failed: uiautomator exit137 after dump-success diagnostic; no final framework receipt",
+      "artifact_id": 12319729985,
+      "artifact_bytes": 25595713,
+      "artifact_sha256": "a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a"
     },
-    "source_commit": "b46eafb373743ba622d20a619bbbc212b571f8b9",
-    "source_tree": "f8c7193a9988d87ba23ab5c90361a9a5b6fe0db8"
+    "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+    "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0"
   },
   "latest_physical_version": "0.1.18",
   "latest_physical_results": {
@@ -4856,8 +4874,8 @@
     "profile": "freeze-diagnostic",
     "version_name": "0.1.19-freeze-diagnostic-test",
     "version_code": 20,
-    "state": "strict_Clang_fix_qualified_final_corrective_dispatch_requested",
-    "APK_builds": 0,
+    "state": "exact_APK_framework_only_dispatch_requested",
+    "APK_builds": 1,
     "max_APK_candidate_builds": 1,
     "workers": {
       "updates": "work/coh019-updates",
@@ -4967,17 +4985,23 @@
       "correction": "Include the existing rolling status path in native-qualification push filter; one diagnostic dispatch still requested."
     },
     "CI": {
-      "run_id": 39540921554,
-      "url": "https://github.com/Russianranger/coh-android/actions/runs/39540921554",
-      "source_commit": "b46eafb373743ba622d20a619bbbc212b571f8b9",
-      "source_tree": "f8c7193a9988d87ba23ab5c90361a9a5b6fe0db8",
+      "run_id": 39542047531,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39542047531",
+      "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
       "purpose": "combined-diagnostic",
       "diagnostic_profile": "freeze-diagnostic",
-      "status": "failed_before_APK",
+      "status": "failed_framework_harness",
       "initial_diagnostic_dispatches": 1,
-      "corrective_diagnostic_dispatches": 1,
+      "corrective_diagnostic_dispatches": 2,
       "release_published": false,
-      "corrective_dispatches_requested": 2
+      "combined_source": "passed",
+      "build_lint_packages_DSO_audits": "passed",
+      "Android13_update": "passed",
+      "Android13_framework": "failed: uiautomator exit137 after dump-success diagnostic; no final framework receipt",
+      "artifact_id": 12319729985,
+      "artifact_bytes": 25595713,
+      "artifact_sha256": "a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a"
     },
     "failed_CI_attempts": [
       {
@@ -5009,6 +5033,72 @@
         "artifact_sha256": "7e13b4f5db07b2de21ee37b6a7102878df583142d0bcb8ecaf48e88764f0ae7f"
       }
     ],
-    "APK_build_attempts": 2
+    "APK_build_attempts": 3,
+    "ancillary_auto_CI": [
+      {
+        "run_id": 39542039041,
+        "purpose": "Existing world-session asset-path workflow triggered by the strict-Clang source correction",
+        "ships_combined_candidate": false,
+        "release_published": false,
+        "conclusion": "success"
+      },
+      {
+        "run_id": 39542039090,
+        "purpose": "Existing portable core source/Android qualification",
+        "conclusion": "success"
+      }
+    ],
+    "ARM64_signed_candidates_produced": 1,
+    "x86_64_qualification_APKs_produced": 1,
+    "source_frozen_after_candidate_build": true,
+    "apk": {
+      "bytes": 15288279,
+      "name": "CoH-Native-Combined-0.1.19-freeze-diagnostic-arm64.apk",
+      "sha256": "9383ebd105c3bc75d3df7184c85baf2c55682d43b288fca83525b59a17d0a98a",
+      "version_code": 20,
+      "version_name": "0.1.19-freeze-diagnostic-test",
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+      "qualified_source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "qualified_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+      "rebuild_after_build_audit": false,
+      "physical_Thor_tested": false,
+      "framework_qualification": "pending exact-APK reuse"
+    },
+    "framework_harness_blocker": {
+      "step": "Exercise Android 13 update, retained profile, preview and lifecycle cleanup",
+      "error": "RuntimeError: UI capture failed; ui-capture-4-attempt-1; returncode=137; diagnostic=UI hierchary dumped to: /data/local/tmp/combined-ui.xml",
+      "candidate_rebuild_allowed": false,
+      "next_action": "Bounded fresh-dump retry in nonshipping driver; existing framework-only job must reuse exact signed APKs and prove all shipping/build bytes unchanged."
+    },
+    "framework_harness_correction": {
+      "scope": "Nonshipping UI driver only; no APK or build-input changes.",
+      "strict_killed_dumper_retry": "Exit137 with exact expected-path success marker and empty stderr; never read nonzero XML.",
+      "maximum_attempts": 3,
+      "native_faults_remain_fatal": true,
+      "controls_passed": 242,
+      "capture_controls": 51,
+      "APK_rebuilt": false
+    },
+    "framework_requalification": {
+      "state": "requested_once",
+      "purpose": "combined-framework",
+      "profile": "freeze-diagnostic",
+      "APK_rebuilt": false,
+      "candidate_source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "candidate_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+      "candidate_artifact_id": 12319729985,
+      "candidate_artifact_bytes": 25595713,
+      "candidate_artifact_sha256": "a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a",
+      "six_member_pins_verified": true,
+      "shipping_build_tree_unchanged": {
+        "files": 172676,
+        "sha256": "2c3ebc1b2b3c8b794ed8bd631d09174978d09b25843b9d8d0e0d99dfa73bd073"
+      },
+      "host_controls": {
+        "driver": 242,
+        "framework_pin_tests": 5,
+        "fullscreen_readiness_tests": 10
+      }
+    }
   }
 }

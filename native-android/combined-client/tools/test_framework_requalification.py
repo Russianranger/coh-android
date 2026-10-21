@@ -12,9 +12,10 @@ def admission_code():
     return textwrap.dedent(text.split("python3 - <<'PYFRAMEWORK'\n",1)[1].split('        PYFRAMEWORK\n',1)[0])
 
 
-def module():
+def module(profile='fullscreen-diagnostic'):
     namespace={'__name__':'bounded_framework_controls'}
-    exec(compile(admission_code(),str(WORKFLOW),'exec'),namespace)
+    with patch.dict(os.environ,{'FRAMEWORK_PROFILE':profile}):
+        exec(compile(admission_code(),str(WORKFLOW),'exec'),namespace)
     return namespace
 
 
@@ -28,11 +29,14 @@ class FrameworkRequalification(unittest.TestCase):
         self.assertEqual(bootstrap.count('--method POST'),1)
         self.assertIn('branches/native-android --jq .commit.sha',bootstrap)
         self.assertIn('inputs[purpose]=combined-framework',bootstrap)
+        self.assertIn('[freeze-framework-dispatch]',bootstrap)
+        self.assertIn('inputs[diagnostic_profile]="$FRAMEWORK_PROFILE"',bootstrap)
+        self.assertIn("'freeze-diagnostic' || 'fullscreen-diagnostic'",bootstrap)
         self.assertIn("!contains(github.event.head_commit.message, '[fullscreen-framework-dispatch]')",text.split('  body-catalog:',1)[0])
         self.assertIn("inputs.purpose == 'combined-framework'",job)
         for forbidden in ('gradle.py','assembleDebug','lintDebug','prepare.py --','package_check.py --','gh release','contents: write'):
             self.assertNotIn(forbidden,job)
-        for required in ('artifacts/12298379427/zip','artifacts/12289656309/zip','--candidate-source-revision 81a47f8ccef15c26e02b5cbf2feb4b99ac465139','--source-admission','--exercise-debuggable-downgrade','--previous-profile capture-diagnostic','api-level: 33','emulator_check.py --adb',"if: always()",'!native-android/results/combined-framework-requalification/**/*.apk'):
+        for required in ('FRAMEWORK_CANDIDATE_ARTIFACT','FRAMEWORK_PREVIOUS_ARTIFACT','--candidate-source-revision "$FRAMEWORK_SOURCE"','--source-admission','--exercise-debuggable-downgrade','--previous-profile "$FRAMEWORK_PREVIOUS_PROFILE"','api-level: 33','emulator_check.py --adb',"if: always()",'!native-android/results/combined-framework-requalification/**/*.apk'):
             self.assertIn(required,job)
 
     def test_source_changes_are_limited_to_named_nonshipping_files(self):
@@ -65,13 +69,34 @@ class FrameworkRequalification(unittest.TestCase):
             with self.assertRaises(ValueError):ns['restore_candidate'](archive,root/'out')
             self.assertFalse((root/'out').exists())
 
+    def test_freeze_profile_keeps_its_own_candidate_and_previous_pins(self):
+        ns=module('freeze-diagnostic')
+        self.assertEqual((ns['VERSION'],ns['CODE']),('0.1.19','20'))
+        self.assertEqual(ns['BASE'],'86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981')
+        self.assertEqual(ns['TREE'],'40d565eb12ea9540aa0e2871e42a58d0e7ef30b0')
+        self.assertEqual((ns['ARTIFACT'],ns['RUN']),('12319729985','39542047531'))
+        self.assertEqual((ns['PREVIOUS_ARTIFACT'],ns['PREVIOUS_PROFILE']),('12314108293','continuation-diagnostic'))
+        self.assertEqual(ns['ARCHIVE_BYTES'],25595713)
+        self.assertEqual(ns['ARCHIVE_SHA'],'a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a')
+        self.assertEqual(len(ns['PINS']),6)
+        self.assertEqual(ns['PINS']['CoH-Native-Combined-0.1.19-freeze-diagnostic-arm64.apk'],(15288279,'9383ebd105c3bc75d3df7184c85baf2c55682d43b288fca83525b59a17d0a98a'))
+        self.assertIn('native-android/combined-client/tools/driver_controls.py',ns['ALLOWED'])
+        self.assertNotIn('native-android/combined-client/tools/driver_controls.py',module()['ALLOWED'])
+        for name in ns['ALLOWED']:
+            self.assertFalse('/app/' in name or name.endswith('build.gradle'))
+        with self.assertRaises(ValueError):module('report-diagnostic')
+
     def test_verified_archive_members_are_atomic_and_unchanged(self):
-        ns=module();pins=ns['PINS'];contents={}
+        for profile in ('fullscreen-diagnostic','freeze-diagnostic'):
+            with self.subTest(profile=profile):self.verify_archive_profile(profile)
+
+    def verify_archive_profile(self,profile):
+        ns=module(profile);contents={}
         for abi,label in [('arm64-v8a','arm64'),('x86_64','x86_64')]:
-            name='CoH-Native-Combined-0.1.17-fullscreen-diagnostic-'+label+'.apk'
+            name='CoH-Native-Combined-'+ns['VERSION']+'-'+profile+'-'+label+'.apk'
             raw=b'explicit synthetic package identity control '+abi.encode();contents[name]=raw
             identity={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
-            receipt=dict(status='passed',package='org.coh.nativecombined',build_profile='fullscreen-diagnostic',source_commit=ns['BASE'],tracked_source_clean=True,abi=abi,version_code='18',version_name='0.1.17-fullscreen-diagnostic-test',apk=dict(name=name,**identity),signer_certificate_sha256=ns['SIGNER'])
+            receipt=dict(status='passed',package='org.coh.nativecombined',build_profile=profile,source_commit=ns['BASE'],tracked_source_clean=True,abi=abi,version_code=ns['CODE'],version_name=ns['VERSION']+'-'+profile+'-test',apk=dict(name=name,**identity),signer_certificate_sha256=ns['SIGNER'])
             audit=dict(passed=True,source_revision=ns['BASE'],abi=abi,apk=identity,internal_core_and_static_archive_exports_hidden=True,world_authority=False)
             contents[label+'-package.json']=json.dumps(receipt).encode();contents[label+'-interop-dso.json']=json.dumps(audit).encode()
         fixture_pins={name:(len(raw),hashlib.sha256(raw).hexdigest()) for name,raw in contents.items()}
@@ -86,6 +111,17 @@ class FrameworkRequalification(unittest.TestCase):
             bad=dict(fixture_pins);name=next(iter(bad));bad[name]=(bad[name][0],'0'*64);ns['PINS']=bad
             with self.assertRaises(ValueError):ns['restore_candidate'](archive,root/'rejected')
             self.assertFalse((root/'rejected').exists())
+            # Even internally consistent archive/member hashes cannot admit the
+            # other diagnostic profile, a different source or a changed version.
+            for field,value in [('build_profile','continuation-diagnostic'),('source_commit','0'*40),('version_code','999')]:
+                bad_contents=dict(contents);receipt=json.loads(bad_contents['arm64-package.json']);receipt[field]=value;bad_contents['arm64-package.json']=json.dumps(receipt).encode()
+                bad_archive=root/(field+'.zip')
+                with zipfile.ZipFile(bad_archive,'w') as z:
+                    for name,raw in bad_contents.items():z.writestr(name,raw)
+                ns.update(PINS={name:(len(raw),hashlib.sha256(raw).hexdigest())for name,raw in bad_contents.items()},ARCHIVE_BYTES=bad_archive.stat().st_size,ARCHIVE_SHA=hashlib.sha256(bad_archive.read_bytes()).hexdigest())
+                refused=root/(field+'-refused')
+                with self.assertRaises(ValueError):ns['restore_candidate'](bad_archive,refused)
+                self.assertFalse(refused.exists())
 
 
 if __name__=='__main__':unittest.main()

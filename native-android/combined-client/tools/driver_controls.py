@@ -107,6 +107,7 @@ def capture_controls(path):
     idle=(1,b'ERROR: could not get idle state.',b'',b'<hierarchy><node text="stale"/></hierarchy>')
     null=(0,b'',b'ERROR: null root node returned by UiTestAutomationBridge.',None)
     good=(0,b'UI hierchary dumped to: /data/local/tmp/combined-ui.xml',b'',fresh)
+    killed=(137,good[1],b'',b'<hierarchy><node text="untrusted-killed-dump"/></hierarchy>')
     count=0
     def driver(name, frames, **kwargs):
         return CaptureDriver(path/name,frames,**kwargs)
@@ -116,15 +117,27 @@ def capture_controls(path):
         except exception:count+=1;return
         raise AssertionError('Failed capture was admitted')
     with patch('emulator_check.time.sleep'):
-        for index,failure in enumerate((idle,null)):
+        for index,failure in enumerate((idle,null,killed)):
             value=driver('retry-'+str(index),[failure,good]);raw,root=value.capture_ui()
             assert raw==fresh and root.find('node').get('text')=='fresh'
             assert (value.dump_count,value.clear_count,value.read_count)==(2,2,1)
             assert value.proofs[0]['stale_xml_used'] is False
+            assert value.proofs[0]['capture_process_kill_retries']==int(failure is killed)
+            assert not getattr(value,'_capture_idle_starvation_verified',False)
             count+=1
         exhausted=driver('exhausted',[idle]*3);rejected(exhausted)
         assert exhausted.dump_count==3 and exhausted.clear_count==3 and exhausted.read_count==0
         assert len(list(exhausted.args.output.glob('*-dump.stdout')))==3
+        killed_exhausted=driver('killed-exhausted',[killed]*3);rejected(killed_exhausted)
+        assert (killed_exhausted.dump_count,killed_exhausted.clear_count,killed_exhausted.read_count)==(3,3,0)
+        assert len(list(killed_exhausted.args.output.glob('*-dump.stdout')))==3
+        assert not getattr(killed_exhausted,'_capture_idle_starvation_verified',False) and killed_exhausted.helper_count==0
+        mixed=driver('killed-then-idle',[killed,idle,idle]);rejected(mixed)
+        assert mixed.dump_count==3 and mixed.read_count==0 and mixed.helper_count==0
+        assert not getattr(mixed,'_capture_idle_starvation_verified',False)
+        for name,code,stdout,stderr in [('other-exit',1,good[1],b''),('kill-wrong-path',137,b'UI hierchary dumped to: /data/local/tmp/old.xml',b''),('kill-error',137,good[1],b'Permission denied')]:
+            value=driver(name,[(code,stdout,stderr,fresh),good]);rejected(value)
+            assert value.dump_count==1 and value.clear_count==1 and value.read_count==0
         for name,stdout,stderr in [('unknown',b'unknown failure',b''),('empty',b'',b''),('permission',b'',b'Permission denied')]:
             value=driver(name,[(1,stdout,stderr,fresh),good]);rejected(value)
             assert value.dump_count==1 and value.read_count==0
@@ -135,6 +148,11 @@ def capture_controls(path):
                             ('native-crash',{'crashes':'Process: '+PACKAGE})]:
             value=driver(name,[idle,good],**kwargs);rejected(value)
             assert value.dump_count==1 and value.read_count==0
+        for name,kwargs in [('killed-native-anr',{'lastanr':'ANR in '+PACKAGE}),
+                            ('killed-native-event',{'events':'am_crash: [0,123,'+PACKAGE+',1]'}),
+                            ('killed-native-crash',{'crashes':'Process: '+PACKAGE})]:
+            value=driver(name,[killed,good],**kwargs);rejected(value)
+            assert value.dump_count==1 and value.clear_count==1 and value.read_count==0 and not value.proofs
         value=driver('late-crash',[idle,good]);value.crashes=lambda:'Process: '+PACKAGE if value.dump_count>1 else ''
         rejected(value);assert value.dump_count==2 and not value.proofs
         value=driver('clear-failure',[good],clear_code=1);rejected(value)
@@ -143,6 +161,8 @@ def capture_controls(path):
         assert value.read_count==1
         value=driver('malformed-fresh-file',[(0,b'',b'',b'<broken')]);rejected(value,ET.ParseError)
         assert value.dump_count==1
+        value=driver('killed-then-malformed',[killed,(0,good[1],b'',b'<broken')]);rejected(value,ET.ParseError)
+        assert value.dump_count==2 and value.clear_count==2 and value.read_count==1 and not value.proofs
         nonce='a'*32
         raw=('<hierarchy rotation="0" capture-nonce="'+nonce+'" capture-method="fresh-ui-automation-active-root-without-global-idle" capture-root-attempts="2" capture-root-wait-ms="50" capture-snapshot-attempts="2" capture-discarded-partial-trees="1"><node text="fresh"/></hierarchy>').encode()
         fields={'status':'passed','nonce':nonce,'file':'snapshot-'+nonce+'.xml','sha256':hashlib.sha256(raw).hexdigest(),
