@@ -19,10 +19,14 @@ Why this route rather than a Linux or Bionic build:
   size problem does not arise. Pointers are still 64-bit (see below).
 - The display, input and audio path the Wine client already uses on the Thor
   (Wine → Mesa Zink/Turnip → Xtigervnc → the app's VNC view) is reused.
-- A Linux aarch64 build fails almost everywhere: 6 of 558 Game files and 5 of
-  165 UtilitiesLib files compile, the rest stop on MSVC CRT headers
-  (`crtdbg.h`, `excpt.h`, `io.h`). That route needs a Windows layer under
-  nearly every file.
+- A Linux aarch64 build stops in the engine's own base headers: 6 of 558
+  Game files and 5 of 165 UtilitiesLib files compile. Even with the Windows
+  configuration macros removed (`WIN32`, `_WINDOWS`, `_MBCS`, CRT warning
+  macros), 490 Game files stop first on `crtdbg.h` via UtilitiesLib's
+  `crt.h`, 40 on `excpt.h` via `SuperAssert.h`, and 17 on `io.h`. This only
+  shows where compilation stops first; it does not measure how much Windows
+  API each file uses. It does show that a Linux build needs non-Windows
+  versions of the base headers before anything else can be measured.
 
 A native Android library with a direct Surface remains a possible later step
 for speed and other devices; it is not needed to reach a playable port.
@@ -74,12 +78,21 @@ replacements for `_mm_pause` and `cpuid`, and the x86 debug registers in
 ## Shaders
 
 The original `cgc.exe` 2.2.0017 compiled 29 of 30 client shader files to ARB
-assembly (`arbfp1`/`arbvp1`). The failure, `debugfp.cg`, is a debug shader
-whose include `utilsfp.cgh` is not in the game data. The client also has a
-prebaked-shader cache (`rt_shaderMgr.c`: `storePreBakedShader` /
-`getPreBakedShaderText`) keyed by source path, content MD5 and build
-options, so per-variant ARB text can be cached instead of calling Cg at run
-time.
+assembly (`arbfp1`/`arbvp1`), with no variant defines. The failure,
+`debugfp.cg`, is a debug shader whose include `utilsfp.cgh` is not in the game
+data. The client also has a prebaked-shader cache (`rt_shaderMgr.c`:
+`storePreBakedShader` / `getPreBakedShaderText`) keyed by source path, content
+MD5 and build options, so per-variant ARB text can be cached instead of
+compiled at run time.
+
+This does not remove the Cg runtime. The client calls 81 distinct Cg / CgGL
+functions at 231 call sites in 8 render-thread files, mostly for CgFX
+effects (`cgGetNamedEffectParameter`, `cgGLSetupSampler`; SSAO, filters,
+water) and for binding programs and parameters (`cgGLBindProgram`,
+`cgGLSetParameter*`). Options for M2: an ARM64 stand-in for that subset of the
+Cg runtime over ARB programs, or the client's non-Cg ARB mode
+(`rt_cgGetCgShaderMode`) with ARB programs generated from the Cg output and
+the CgFX effects turned off. This is the largest open renderer risk.
 
 ## Dependencies
 
