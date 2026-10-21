@@ -36,7 +36,7 @@ def main():
     hashes = {path.resolve(): digest(path.read_bytes()) for path in paths}
     result = {'passed': True, 'source': source, 'modes': {},
         'scope': 'Original source handlers and actual command termination; no actor/UI/filesystem publication or READY/ACK.',
-        'source_safety_shims': 'Pinned original call lines guard unchecked contact/task indices and signed size+1; whole function bodies remain unchanged.'}
+        'source_safety_shims': 'Pinned original call lines guard unchecked contact/task indices, signed size+1 and Karma StatsSent[9]; whole function bodies remain unchanged. Private fixed UI sinks discard presentation/outbound window callbacks.'}
     flags = ['cc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-pedantic',
              '-fno-pie', '-no-pie', '-fstack-usage']
     sources = [HERE / name for name in ('test_original_command_tail.c', 'coh_original_command_tail.c',

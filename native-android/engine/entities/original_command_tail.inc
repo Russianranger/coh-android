@@ -1,6 +1,7 @@
 /* Unchanged source functions; bounded typed staging and no-I/O shims. */
 #ifdef COH_ORIGINAL_COMMAND_TYPES
 #define COMM_MAX_CMD 2
+#define MAX_COMBAT_STATS 10
 #define COMMAND_CONTACT_INDEX_LINE 220
 #define COMMAND_CONTACT_SIZE_LINE 180
 #define COMMAND_TASK_INDEX_LINE 511
@@ -525,8 +526,8 @@ COH_COMMAND_DISPATCH(SERVER_CONTACT_DIALOG_OK, receiveContactDialogOk, 0)
 COH_COMMAND_DISPATCH(SERVER_CONTACT_DIALOG_YESNO, receiveContactDialogYesNo, 0)
 COH_COMMAND_DISPATCH(SERVER_CONTACT_STATUS, ContactStatusListReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_ACCESSIBLE_CONTACT_STATUS, ContactStatusAccessibleListReceive, 1)
-COH_COMMAND_DISPATCH(SERVER_CONTACT_SELECT, ContactSelectReceive, 0)
-COH_COMMAND_DISPATCH(SERVER_TASK_SELECT, TaskSelectReceive, 0)
+COH_COMMAND_DISPATCH(SERVER_CONTACT_SELECT, ContactSelectReceive, 1)
+COH_COMMAND_DISPATCH(SERVER_TASK_SELECT, TaskSelectReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_TASK_STATUS, TaskStatusListReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_TASK_REMOVE_TEAMMATE_TASKS, TaskStatusListRemoveTeammates, 0)
 COH_COMMAND_DISPATCH(SERVER_MISSION_ENTRY, receiveMissionEntryText, 0)
@@ -539,7 +540,7 @@ COH_COMMAND_DISPATCH(SERVER_KEYCLUE_UPDATE, KeyClueListReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_SOUVENIRCLUE_UPDATE, scReceiveAllHeaders, 1)
 COH_COMMAND_DISPATCH(SERVER_SOUVENIRCLUE_DETAIL, scReceiveDetails, 0)
 COH_COMMAND_DISPATCH(SERVER_SEND_PLAYER_INFO, receiveEntityInfo, 0)
-COH_COMMAND_DISPATCH(SERVER_SEND_COMBAT_STATS, receiveClientCombatStats, 0)
+COH_COMMAND_DISPATCH(SERVER_SEND_COMBAT_STATS, receiveClientCombatStats, 1)
 COH_COMMAND_DISPATCH(SERVER_MISSION_OBJECTIVE_TIMER_UPDATE, MissionReceiveObjectiveTimer, 0)
 COH_COMMAND_DISPATCH(SERVER_TASK_DETAIL, TaskDetailReceive, 0)
 COH_COMMAND_DISPATCH(SERVER_BROWSER_TEXT, browserReceiveText, 0)
@@ -548,13 +549,13 @@ COH_COMMAND_DISPATCH(SERVER_STORE_OPEN, storeReceiveOpen, 0)
 COH_COMMAND_DISPATCH(SERVER_STORE_CLOSE, storeReceiveClose, 0)
 COH_COMMAND_DISPATCH(SERVER_DEAD_NOGURNEY, receiveDeadNoGurney, 0)
 COH_COMMAND_DISPATCH(SERVER_DOORANIM, DoorAnimReceiveStart, 0)
-COH_COMMAND_DISPATCH(SERVER_DOOREXIT, DoorAnimReceiveExit, 0)
+COH_COMMAND_DISPATCH(SERVER_DOOREXIT, DoorAnimReceiveExit, 1)
 COH_COMMAND_DISPATCH(SERVER_FACE_ENTITY, receiveFaceEntity, 0)
 COH_COMMAND_DISPATCH(SERVER_FACE_LOCATION, receiveFaceLocation, 0)
 COH_COMMAND_DISPATCH(SERVER_SEND_FLOATING_INFO, receiveFloatingInfo, 0)
 COH_COMMAND_DISPATCH(SERVER_SEND_PLAY_SOUND, receivePlaySound, 0)
 COH_COMMAND_DISPATCH(SERVER_SEND_FADE_SOUND, receiveFadeSound, 0)
-COH_COMMAND_DISPATCH(SERVER_SEND_DESATURATE_INFO, receiveDesaturateInfo, 0)
+COH_COMMAND_DISPATCH(SERVER_SEND_DESATURATE_INFO, receiveDesaturateInfo, 1)
 COH_COMMAND_DISPATCH(SERVER_SET_STANCE, entity_StanceReceive, 0)
 COH_COMMAND_DISPATCH(SERVER_MAP_XFER_LIST, mapSelectReceiveText, 0)
 COH_COMMAND_DISPATCH(SERVER_MAP_XFER_LIST_INIT, mapSelectReceiveInit, 0)
@@ -621,7 +622,7 @@ COH_COMMAND_DISPATCH(SERVER_AUCTION_OPEN, receiveAuctionOpen, 0)
 COH_COMMAND_DISPATCH(SERVER_SEARCH_RESULTS, receiveSearchResults, 0)
 COH_COMMAND_DISPATCH(SERVER_SCRIPT_DEBUGINFO, receiveScriptDebugInfo, 0)
 COH_COMMAND_DISPATCH(SERVER_SHARDCOMM, receiveShardComm, 0)
-COH_COMMAND_DISPATCH(SERVER_SEND_REWARD_CHOICE, receiveRewardChoice, 0)
+COH_COMMAND_DISPATCH(SERVER_SEND_REWARD_CHOICE, receiveRewardChoice, 1)
 COH_COMMAND_DISPATCH(SERVER_VALIDATE_RESPEC, respec_validate, 0)
 COH_COMMAND_DISPATCH(SERVER_ARENA_UPDATE_PLAYER, handleClientArenaPlayerUpdate, 0)
 COH_COMMAND_DISPATCH(SERVER_ARENA_REQRESULTS, receiveArenaResults, 0)
@@ -684,7 +685,7 @@ COH_COMMAND_DISPATCH(SERVER_SEND_TOKEN, receiveRewardToken, 0)
 COH_COMMAND_DISPATCH(SERVER_SG_PERMISSIONS, srHandlePermissionsSetBit, 0)
 COH_COMMAND_DISABLED(SERVER_ENABLE_ASSERT_ON_BS_ERRORS, receiveBSErrorsFlag, 0)
 COH_COMMAND_DISPATCH(SERVER_BEGIN_BYTE_ALIGNED_DATA, receiveByteAlignmentTag, 1)
-COH_COMMAND_DISPATCH(SERVER_SEND_MORAL_CHOICE, receiveMoralChoice, 0)
+COH_COMMAND_DISPATCH(SERVER_SEND_MORAL_CHOICE, receiveMoralChoice, 1)
 COH_COMMAND_DISPATCH(SERVER_SEND_ITEMLOCATIONS, receiveItemLocations, 0)
 COH_COMMAND_DISPATCH(SERVER_SEND_CRITTERLOCATIONS, receiveCritterLocations, 0)
 COH_COMMAND_DISPATCH(SERVER_DETACH_SCRIPT_UI, scriptUIReceiveDetach, 0)
@@ -701,7 +702,7 @@ COH_COMMAND_DISPATCH(SERVER_EVENT_STATUS, turnstileGame_handleEventStatus, 0)
 COH_COMMAND_DISPATCH(SERVER_EVENT_JOIN_LEADER, turnstileGame_handleJoinLeader, 0)
 COH_COMMAND_DISPATCH(SERVER_GOINGROGUE_NAG, receiveGoingRogueNag, 0)
 COH_COMMAND_DISPATCH(SERVER_INCARNATE_TRIAL_STATUS, receiveIncarnateTrialStatus, 1)
-COH_COMMAND_DISPATCH(SERVER_POPHELP_EVENT_HAPPENED_BY_TAG, receivePopHelpEventHappenedByTag, 0)
+COH_COMMAND_DISPATCH(SERVER_POPHELP_EVENT_HAPPENED_BY_TAG, receivePopHelpEventHappenedByTag, 1)
 COH_COMMAND_DISPATCH(SERVER_CHANGE_WINDOW_COLORS, receiveChangeWindowColors, 1)
 COH_COMMAND_DISPATCH(SERVER_VISITOR_SHARD_XFER_DATA, receiveShardVisitorData, 0)
 COH_COMMAND_DISPATCH(SERVER_VISITOR_SHARD_XFER_JUMP, receiveShardVisitorJump, 0)
@@ -812,6 +813,53 @@ void sendIncarnateTrialStatus(Entity *e, TrialStatus status)
     START_PACKET(pak, e, SERVER_INCARNATE_TRIAL_STATUS);
     pktSendBitsAuto(pak, status);
     END_PACKET
+}
+#line 122 "MapServer/src/storyarc/storySend.c"
+static void SendSelectContact(Entity* e, int sel)
+{
+    if (sel >= 0)
+    {
+        START_PACKET(pak, e, SERVER_CONTACT_SELECT);
+        pktSendBitsAuto(pak, sel + 1);                // have to send +1 because of empty mission contact
+        END_PACKET
+    }
+}
+#line 132 "MapServer/src/storyarc/storySend.c"
+void SendSelectTask(Entity* e, int sel)
+{
+    if (sel >= 0)
+    {
+        character_InterruptMissionTeleport(e->pchar);
+        START_PACKET(pak, e, SERVER_TASK_SELECT);
+        pktSendBitsAuto(pak, sel + 1);                // have to send +1 because of empty mission contact
+        END_PACKET
+    }
+}
+#line 682 "MapServer/src/entity/entGameActions.c"
+void serveDesaturateInformation(Entity *e, float fDelay, float fCurrentValue, float fTargetValue, float fFadeTime)
+{
+    if (e 
+        && ENTTYPE(e)==ENTTYPE_PLAYER
+        && e->client)
+    {
+        START_PACKET(pak1, e, SERVER_SEND_DESATURATE_INFO);
+
+        pktSendF32(pak1, fDelay);
+        pktSendF32(pak1, fCurrentValue);
+        pktSendF32(pak1, fTargetValue);
+        pktSendF32(pak1, fFadeTime);
+        END_PACKET
+    }
+}
+#line 954 "Common/entity/attrib_description.c"
+void sendCombatMonitorStats( Entity *e, Packet *pak)
+{
+    int i;
+    for( i = 0; i < MAX_COMBAT_STATS; i++ )
+    {
+        pktSendIfSetBitsPack(pak, 8, e->pl->combatMonitorStats[i].iKey );
+        pktSendIfSetBits(pak, 4, e->pl->combatMonitorStats[i].iOrder );
+    }
 }
 
 void original_window_colors_send(Entity *e,U32 oldColor,U32 newColor){START_PACKET(pak, e, SERVER_CHANGE_WINDOW_COLORS);
@@ -1542,5 +1590,148 @@ void turnstileGame_HandleEventStartStatus(Packet *pak)
             dialogStd(DIALOG_OK, "EventFailedStartReadded", NULL, NULL, NULL, NULL, 0);
         }
     }
+}
+#line 722 "Game/src/storyarc/contactClient.c"
+void ContactSelectReceive(Packet* pak)
+{
+    int index = pktGetBitsAuto(pak);
+    ContactSelect(index, 0);
+}
+#line 729 "Game/src/storyarc/contactClient.c"
+void TaskSelectReceive(Packet* pak)
+{
+    int index = pktGetBitsAuto(pak);
+    TaskStatus** tasks = TaskStatusGetPlayerTasks();
+    int n = eaSize(&tasks);
+    if (index >= 0 && index < n && tasks[index]->description[0])
+        compass_SetTaskDestination(&waypointDest, tasks[index]);
+}
+#line 777 "Game/src/clientcomm/clientcommreceive.c"
+void receiveDesaturateInfo( Packet *pak )
+{
+    game_state.desaturateDelay = pktGetF32(pak);
+    game_state.desaturateWeight = pktGetF32(pak);
+    game_state.desaturateWeightTarget = pktGetF32(pak);
+    game_state.desaturateFadeTime = pktGetF32(pak);
+}
+#line 732 "Game/src/UI/uiNet.c"
+void receivePopHelpEventHappenedByTag(Packet *pak)
+{
+    char *tag = pktGetString(pak);
+
+#ifndef TEST_CLIENT
+    popHelpEventHappenedByTag(tag);
+#endif
+}
+#line 2643 "Game/src/UI/uiNet.c"
+void receiveRewardChoice(Packet *pak)
+{
+    int i, count;
+
+    clearRewardChoices();
+     setRewardDesc( pktGetString(pak) );
+    setRewardDisableChooseNothing( pktGetBits(pak,1) );
+
+    count = pktGetBitsPack(pak, 3);
+    if(!count)
+    {
+        clearRewardChoices();
+        window_setMode(WDW_REWARD_CHOICE,WINDOW_SHRINKING);
+        return;
+    }
+
+    for( i = 0; i < count; i++ )
+    {
+        int visible = pktGetBits(pak,1);
+        if( visible )
+        {
+            int disabled = pktGetBits(pak,1);
+            addRewardChoice(1,disabled,pktGetString(pak));
+        }
+        else
+            addRewardChoice(0,0,0);
+    }
+
+    window_setMode( WDW_REWARD_CHOICE, WINDOW_GROWING );
+}
+#line 680 "Game/src/UI/uiNet.c"
+void receiveMoralChoice(Packet *pak_in)
+{
+    int llen, rlen;
+
+    if (s_moralChoice_leftText) free(s_moralChoice_leftText);
+    if (s_moralChoice_rightText) free(s_moralChoice_rightText);
+    if (s_moralChoice_leftWatermark) free(s_moralChoice_leftWatermark);
+    if (s_moralChoice_rightWatermark) free(s_moralChoice_rightWatermark);
+
+    s_moralChoice_leftText = strdup(pktGetStringAndLength(pak_in, &llen));
+    s_moralChoice_rightText = strdup(pktGetStringAndLength(pak_in, &rlen));
+    s_moralChoice_leftWatermark = strdup(pktGetString(pak_in));
+    s_moralChoice_rightWatermark = strdup(pktGetString(pak_in));
+    s_moralChoice_requireConfirmation = pktGetBitsAuto(pak_in);
+
+    dialogClearQueue( 0 );
+    moralChoiceDisplayChoice(0);
+}
+#line 104 "Game/src/gameComm/dooranimclient.c"
+void DoorAnimReceiveExit(Packet *pak)
+{
+    Entity* player = playerPtr();
+    int sentNewLocation = 0;
+    int wasFadedOut;
+
+    if (pak) {
+        sentNewLocation = pktGetBits(pak, 1);
+        if (sentNewLocation && pak->id <= last_forced_move_pakid) {
+            // We seem to have already received the forced move!  Just start to fade in
+            sentNewLocation = 0;
+        }
+    }
+    doneWaitForDoorMode();
+    wasFadedOut = DoorAnimIsFadedOut();
+    if (wasFadedOut) {
+        if (sentNewLocation) {
+            verbose_printf("Exiting door, waiting for force move...");
+            // The character has warped to a new location, wait for the position resync and load textures!
+            dooranim_fadePercent = 100.0;
+            dooranim_loadingtextures = DALT_WAITINGFORMOVE;
+        } else {
+            verbose_printf("Force exiting door...\n");
+            // We just want to exit, no questions asked
+            dooranim_loadingtextures = DALT_NONE;
+            DoorAnimFadeIn(FADEIN_TIME);
+        }
+    }
+
+     if(player )
+    {
+        if (okayToChangeGameMode() || wasFadedOut) {
+            //start_menu( MENU_GAME );
+            toggle_3d_game_modes( SHOW_GAME );
+        }
+
+        if (player->pl->door_anim)
+        {
+            if (player->pl->door_anim->animation)
+                free(player->pl->door_anim->animation);
+            free(player->pl->door_anim);
+            player->pl->door_anim = NULL;
+        }
+    }
+}
+#line 964 "Common/entity/attrib_description.c"
+void receiveCombatMonitorStats(Entity *e, Packet *pak)
+{
+    int i;
+    for( i = 0; i < MAX_COMBAT_STATS; i++ )
+    {
+        e->pl->combatMonitorStats[i].iKey = pktGetIfSetBitsPack(pak, 8);
+        e->pl->combatMonitorStats[i].iOrder = pktGetIfSetBits(pak, 4);
+    }
+}
+#line 2069 "Game/src/UI/uiNet.c"
+void receiveClientCombatStats( Packet *pak )
+{
+    receiveCombatMonitorStats( playerPtr(), pak );
 }
 #endif

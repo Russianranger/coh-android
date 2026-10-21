@@ -14,14 +14,16 @@ typedef uint32_t U32;
 typedef struct{unsigned unused;}VisitedStaticMap;
 typedef struct{int type,uniqueID;char**varList;}ScriptUIClientWidget;
 typedef struct{struct{U32 color;}loc;}CommandWindow;
-typedef struct Entity{int id;}Entity;
+typedef struct{char*animation;}CommandDoorAnim;
+typedef struct{CommandDoorAnim*door_anim;struct{U32 iKey,iOrder;}combatMonitorStats[MAX_COMBAT_STATS];}CommandPlayer;
+typedef struct Entity{int id;CommandPlayer*pl;}Entity;
 typedef struct {int type,handle,id,dbid,context,subhandle,iconBInCompass,contactType;void*iconB;float angle;void *icon,*destPNPC;Entity *destEntity;float world_location[4][3];char mapName[512],name[256];} Destination;
 typedef struct {char *name,*locationDescription,*filename,*callOverride,*askAboutOverride,*leaveOverride,*imageOverride;int npcNum,handle,taskcontext,tasksubhandle,notifyPlayer,hasTask,canUseCell,isNewspaper,onStoryArc,onMiniArc,wontInteract,metaContact,currentCP,friendCP,confidantCP,completeCP,heistCP,alliance,hasLocation;unsigned tipType,currentOverheadIconState;Destination location;}ContactStatus;
 typedef struct {int levelAdjust,teamSize,dontReduceBoss,alwaysAV;}StoryDifficulty;
 typedef struct {int ownerDbid,context,subhandle,level,alliance;StoryDifficulty difficulty;char description[256],owner[129],state[256],detail[20001],intro[256],filename[256];int isComplete,isMission,hasRunningMission,isSGMission,hasLocation,detailInvalid,zoneTransfer,teleportOnComplete,enforceTimeLimit,isAbandonable,isZowie;Destination location;U32 timeout,timezero,timerType,failOnTimeout,zinfo,zseed;int zmap_id;char ztype[128],zname[128];int zpoolSize[8];}TaskStatus;
 typedef struct {char *name,*filename,*displayname,*detailtext,*iconfile;}StoryClue;
 typedef struct {U32 uid;char*filename,*displayName,*icon;}SouvenirClue;
-typedef struct{CohRepReader reader;CohOriginalCommandTailReport report;jmp_buf trap;VisitedStaticMap map;ContactStatus row[32],*rows[32],**list;ContactStatus*accessible_rows[32],**accessible;unsigned allocated,count,accessible_count;char strings[65536];size_t string_used;char text[4096];U32 times[5],earned[5],hero,vigilante,villain,rogue;int dirty;TaskStatus task[4],*task_rows[4],**tasks;unsigned task_alloc,task_count;void**visits,**clues,**keys;StoryClue clue;SouvenirClue souvenir;unsigned tokens;char*token_cursor;ScriptUIClientWidget karma_widget;char*karma_vars[2];ScriptUIClientWidget**karma_list;unsigned karma_var_count;CommandWindow windows[MAX_WINDOW_COUNT];struct{int pendingTSMapXfer;}game;TrialStatus trial_status;}Packet;
+typedef struct{CohRepReader reader;CohOriginalCommandTailReport report;jmp_buf trap;VisitedStaticMap map;ContactStatus row[32],*rows[32],**list;ContactStatus*accessible_rows[32],**accessible;unsigned allocated,count,accessible_count;char strings[65536];size_t string_used;char text[4096];U32 times[5],earned[5],hero,vigilante,villain,rogue;int dirty;TaskStatus task[4],*task_rows[4],**tasks;unsigned task_alloc,task_count;void**visits,**clues,**keys;StoryClue clue;SouvenirClue souvenir;unsigned tokens;char*token_cursor;ScriptUIClientWidget karma_widget;char*karma_vars[2];ScriptUIClientWidget**karma_list;unsigned karma_var_count;CommandWindow windows[MAX_WINDOW_COUNT];struct{int pendingTSMapXfer;float desaturateDelay,desaturateWeight,desaturateWeightTarget,desaturateFadeTime;}game;TrialStatus trial_status;U32 id,last_forced_move_pakid;CommandPlayer player_data;Entity player;char*moral_left,*moral_right,*moral_leftmark,*moral_rightmark;U32 moral_confirm;float door_fade;int door_loading;}Packet;
 typedef char StateFitsWorkspace[(sizeof(Packet)<=sizeof(CohOriginalCommandTailWorkspace))?1:-1];
 static void fail(Packet*p,CohStatus s){p->report.status=s;longjmp(p->trap,1);}
 static U32 pktGetBits(Packet*p,int n){U32 v=0;CohStatus s=coh_rep_read(&p->reader,(unsigned)n,&v);if(s!=COH_OK)fail(p,s);if(n<32&&v>=(1u<<(unsigned)n))fail(p,COH_INVALID);return v;}
@@ -33,6 +35,9 @@ static U32 command_auto_line(Packet*p,int line){U32 v=pktGetBitsAuto(p);if(line=
 static U32 command_pack_line(Packet*p,int n,int line){U32 v=raw_pack(p,n);if(line==COMMAND_TASK_INDEX_LINE&&v>=p->task_count)fail(p,COH_INVALID);if(line==COMMAND_TASK_SIZE_LINE&&v==0x7fffffffu)fail(p,COH_INVALID);return v;}
 static float pktGetF32(Packet*p){U32 v=pktGetBits(p,32);float f;memcpy(&f,&v,4);return f;}
 static char *pktGetString(Packet*p){for(size_t i=0;i<sizeof(p->text);i++){p->text[i]=(char)pktGetBits(p,8);if(!p->text[i])return p->text;}fail(p,COH_LIMIT);return NULL;}
+static char *pktGetStringAndLength(Packet*p,int*n){char*s=pktGetString(p);*n=(int)strlen(s);return s;}
+static U32 pktGetIfSetBitsPack(Packet*p,int n){return pktGetBits(p,1)?raw_pack(p,n):0;}
+static U32 pktGetIfSetBits(Packet*p,int n){return pktGetBits(p,1)?pktGetBits(p,n):0;}
 static char *duplicate(Packet*p,const char*s){size_t n=strlen(s)+1;if(n>sizeof(p->strings)-p->string_used)fail(p,COH_LIMIT);char*d=p->strings+p->string_used;memcpy(d,s,n);p->string_used+=n;return d;}
 static char *copy_text(Packet*p,char*d,const char*s,size_t n){size_t l=strlen(s);if(l>=n)fail(p,COH_LIMIT);memcpy(d,s,l+1);return d;}
 /* Earray storage uses byte copies: typed pointer rows never alias void**.
@@ -56,6 +61,34 @@ static void add_map(Packet*p,VisitedStaticMap*m,int db,int map,int fog,int words
  * publishes or queues outbound input; staging is retired with the workspace. */
 static ScriptUIClientWidget *karma_widget(Packet*p,int index){if(index<0||index>=CKR_COUNT+5)fail(p,COH_INVALID);p->karma_widget.varList=p->karma_vars;p->karma_vars[0]=p->karma_vars[1]=p->strings;p->karma_var_count=2;return &p->karma_widget;}
 static void *ui_malloc(Packet*p,size_t n){(void)n;fail(p,COH_STATE);return NULL;}
+#define ContactSelect(index,unused) ((void)(index),(void)(unused))
+#define TaskStatusGetPlayerTasks() ((TaskStatus**)0)
+#define clearRewardChoices() ((void)0)
+#define setRewardDesc(s) ((void)(s))
+#define setRewardDisableChooseNothing(n) ((void)(n))
+#define addRewardChoice(a,b,c) ((void)(a),(void)(b),(void)(c))
+#define WINDOW_GROWING 1
+#define s_moralChoice_leftText pak_in->moral_left
+#define s_moralChoice_rightText pak_in->moral_right
+#define s_moralChoice_leftWatermark pak_in->moral_leftmark
+#define s_moralChoice_rightWatermark pak_in->moral_rightmark
+#define s_moralChoice_requireConfirmation pak_in->moral_confirm
+#define dialogClearQueue(n) ((void)(n))
+#define moralChoiceDisplayChoice(n) ((void)(n))
+#define playerPtr() (pak->player.pl=&pak->player_data,&pak->player)
+#define last_forced_move_pakid pak->last_forced_move_pakid
+#define doneWaitForDoorMode() ((void)0)
+#define DoorAnimIsFadedOut() 0
+#define verbose_printf(s) ((void)(s))
+#define dooranim_fadePercent pak->door_fade
+#define dooranim_loadingtextures pak->door_loading
+#define DALT_WAITINGFORMOVE 1
+#define DALT_NONE 0
+#define FADEIN_TIME 1
+#define DoorAnimFadeIn(t) ((void)(t))
+#define okayToChangeGameMode() 0
+#define SHOW_GAME 1
+#define toggle_3d_game_modes(n) ((void)(n))
 #define scriptUIKarmaWidgetList pak->karma_list
 #define ScriptUIClientWidgetFromId(list,i) ((void)(list),karma_widget(pak,i))
 #define ScriptUIDestroyWidget(w) ((void)(w))
@@ -135,7 +168,7 @@ static void *ui_malloc(Packet*p,size_t n){(void)n;fail(p,COH_STATE);return NULL;
 #define eaRemove(pp,i) list_remove(pak,(const void*)(pp),(unsigned)(i))
 #define ContactStatusCreate() contact_create(pak)
 #define ContactStatusDestroy(s) ((void)(s))
-#define strdup(s) duplicate(pak,s)
+#define strdup(s) duplicate(command_packet_context,s)
 #define strcpy(d,s) copy_text(pak,d,s,sizeof(d))
 #define TaskUpdateDestination(d) ((void)0)
 #define assignContactIcon(s) ((void)(s))
@@ -155,6 +188,9 @@ static void *ui_malloc(Packet*p,size_t n){(void)n;fail(p,COH_STATE);return NULL;
 #define ClueListReceive command_original_ClueListReceive
 #define KeyClueListReceive command_original_KeyClueListReceive
 #define scReceiveAllHeaders command_original_scReceiveAllHeaders
+#define pak_in pak
+#define command_packet_context pak
+#define receiveMoralChoice command_original_receiveMoralChoice
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #include "original_command_tail.inc"
@@ -168,7 +204,7 @@ static int known_dispatch(U32 command){switch(command){
 #undef COH_COMMAND_DISPATCH
 #undef COH_ORIGINAL_COMMAND_DISPATCH
  default:return 0;}}
-static void run(Packet *volatile p){if(!setjmp(p->trap)){for(;;){p->report.command_begin_bit=p->reader.cursor;U32 cmd=pktGetBitsPack(p,1);p->report.active_command=cmd;if(!cmd){p->report.terminator=1;p->report.tail_complete=p->reader.cursor==p->reader.bits;if(!p->report.tail_complete)fail(p,COH_UNSUPPORTED);break;}p->report.commands_read++;if(p->report.trace_count<16)p->report.command_ids[p->report.trace_count++]=cmd;else p->report.trace_omitted++;switch(cmd){case SERVER_BEGIN_BYTE_ALIGNED_DATA:receiveByteAlignmentTag(p);p->report.alignment_markers++;break;case SERVER_TASK_VISITLOCATION_UPDATE:receiveVisitLocations(p);break;case SERVER_TASK_STATUS:TaskStatusListReceive(p);break;case SERVER_CLUE_UPDATE:ClueListReceive(p);break;case SERVER_KEYCLUE_UPDATE:KeyClueListReceive(p);break;case SERVER_SOUVENIRCLUE_UPDATE:scReceiveAllHeaders(p);break;case SERVER_ACCESSIBLE_CONTACT_STATUS:ContactStatusAccessibleListReceive(p);break;case SERVER_CONTACT_STATUS:command_original_ContactStatusListReceive(p);p->report.contact_messages++;p->report.contact_rows=p->count;break;case SERVER_GAME_CMDS:p->report.game_markers++;break;case SERVER_SEND_KARMA_STATS:receiveKarmaStats(p);p->report.karma_messages++;break;case SERVER_EVENT_START_STATUS:turnstileGame_HandleEventStartStatus(p);p->report.event_start_messages++;break;case SERVER_INCARNATE_TRIAL_STATUS:receiveIncarnateTrialStatus(p);p->report.trial_status_messages++;break;case SERVER_CHANGE_WINDOW_COLORS:receiveChangeWindowColors(p);p->report.window_color_messages++;break;case SERVER_ALL_STATIC_MAP_CELLS:command_original_receiveStaticMapCells(p);p->report.static_map_messages++;break;default:p->report.unimplemented_handler=known_dispatch(cmd);p->report.unknown_command=!p->report.unimplemented_handler;fail(p,COH_UNSUPPORTED);}}}}
+static void run(Packet *volatile p){if(!setjmp(p->trap)){for(;;){p->report.command_begin_bit=p->reader.cursor;U32 cmd=pktGetBitsPack(p,1);p->report.active_command=cmd;if(!cmd){p->report.terminator=1;p->report.tail_complete=p->reader.cursor==p->reader.bits;if(!p->report.tail_complete)fail(p,COH_UNSUPPORTED);break;}p->report.commands_read++;if(p->report.trace_count<16)p->report.command_ids[p->report.trace_count++]=cmd;else p->report.trace_omitted++;switch(cmd){case SERVER_BEGIN_BYTE_ALIGNED_DATA:receiveByteAlignmentTag(p);p->report.alignment_markers++;break;case SERVER_TASK_VISITLOCATION_UPDATE:receiveVisitLocations(p);break;case SERVER_TASK_STATUS:TaskStatusListReceive(p);break;case SERVER_CLUE_UPDATE:ClueListReceive(p);break;case SERVER_KEYCLUE_UPDATE:KeyClueListReceive(p);break;case SERVER_SOUVENIRCLUE_UPDATE:scReceiveAllHeaders(p);break;case SERVER_ACCESSIBLE_CONTACT_STATUS:ContactStatusAccessibleListReceive(p);break;case SERVER_CONTACT_STATUS:command_original_ContactStatusListReceive(p);p->report.contact_messages++;p->report.contact_rows=p->count;break;case SERVER_GAME_CMDS:p->report.game_markers++;break;case SERVER_CONTACT_SELECT:ContactSelectReceive(p);break;case SERVER_TASK_SELECT:TaskSelectReceive(p);break;case SERVER_SEND_DESATURATE_INFO:receiveDesaturateInfo(p);break;case SERVER_POPHELP_EVENT_HAPPENED_BY_TAG:receivePopHelpEventHappenedByTag(p);break;case SERVER_SEND_REWARD_CHOICE:receiveRewardChoice(p);break;case SERVER_SEND_MORAL_CHOICE:command_original_receiveMoralChoice(p);break;case SERVER_DOOREXIT:DoorAnimReceiveExit(p);break;case SERVER_SEND_COMBAT_STATS:receiveClientCombatStats(p);break;case SERVER_SEND_KARMA_STATS:receiveKarmaStats(p);p->report.karma_messages++;break;case SERVER_EVENT_START_STATUS:turnstileGame_HandleEventStartStatus(p);p->report.event_start_messages++;break;case SERVER_INCARNATE_TRIAL_STATUS:receiveIncarnateTrialStatus(p);p->report.trial_status_messages++;break;case SERVER_CHANGE_WINDOW_COLORS:receiveChangeWindowColors(p);p->report.window_color_messages++;break;case SERVER_ALL_STATIC_MAP_CELLS:command_original_receiveStaticMapCells(p);p->report.static_map_messages++;break;default:p->report.unimplemented_handler=known_dispatch(cmd);p->report.unknown_command=!p->report.unimplemented_handler;fail(p,COH_UNSUPPORTED);}}}}
 static int span(const void*p,size_t n){return p&&(uintptr_t)p<=UINTPTR_MAX-n;}
 static int apart(const void*a,size_t an,const void*b,size_t bn){return(uintptr_t)a+an<=(uintptr_t)b||(uintptr_t)b+bn<=(uintptr_t)a;}
 #define ALIGN(T) offsetof(struct{char c;T v;},v)

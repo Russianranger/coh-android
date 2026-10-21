@@ -27,7 +27,9 @@ def generate(root):
              'Common/storyarc/ScriptUIEnum.h', 'Common/gameComm/wdwbase.h',
              'Common/entity/character_karma.c', 'Common/entity/character_karma.h',
              'MapServer/src/gameComm/sendToClient.c', 'MapServer/src/entity/entserver.c',
-             'MapServer/src/player/parseClientInput.c', 'MapServer/src/gameSys/EndGameRaid.c']
+             'MapServer/src/player/parseClientInput.c', 'MapServer/src/gameSys/EndGameRaid.c',
+             'Game/src/gameComm/dooranimclient.c', 'Common/entity/attrib_description.c',
+             'Common/entity/attrib_description.h', 'MapServer/src/entity/entGameActions.c']
     texts = {path: source(root, path) for path in paths}
     assert re.search(r'COMM_MAX_CMD\s*=\s*2\b', texts[paths[5]])
     assert re.search(r'#define\s+MAX_MAPVISIT_CELLS\s+\(32\*32\*8\)', texts[paths[4]])
@@ -48,14 +50,22 @@ def generate(root):
         (paths[6], 'StoryClueDestroyAdapter'), (paths[6], 'ClueListReceive'),
         (paths[6], 'KeyClueListReceive'), (paths[6], 'scReceiveHeader'), (paths[6], 'scReceiveAllHeaders'), (paths[11], 'receiveKarmaStats'),
         (paths[11], 'receiveIncarnateTrialStatus'), (paths[11], 'receiveChangeWindowColors'),
-        (paths[12], 'turnstileGame_HandleEventStartStatus')]
+        (paths[12], 'turnstileGame_HandleEventStartStatus'),
+        (paths[2], 'ContactSelectReceive'), (paths[2], 'TaskSelectReceive'),
+        (paths[1], 'receiveDesaturateInfo'), (paths[11], 'receivePopHelpEventHappenedByTag'),
+        (paths[11], 'receiveRewardChoice'), (paths[11], 'receiveMoralChoice'),
+        (paths[21], 'DoorAnimReceiveExit'), (paths[22], 'receiveCombatMonitorStats'),
+        (paths[11], 'receiveClientCombatStats')]
     senders = [(paths[7], 'ContactStatusSendEmpty'), (paths[7], 'ClueSend'),
-        (paths[15], 'CharacterKarmaStatsSend'), (paths[17], 'sendIncarnateTrialStatus')]
+        (paths[15], 'CharacterKarmaStatsSend'), (paths[17], 'sendIncarnateTrialStatus'),
+        (paths[7], 'SendSelectContact'), (paths[7], 'SendSelectTask'),
+        (paths[24], 'serveDesaturateInformation'), (paths[22], 'sendCombatMonitorStats')]
     guards = {key: texts[paths[2]][:texts[paths[2]].index(needle)].count('\n') + 1
         for key, needle in {'CONTACT_INDEX': 'contactNumber = pktGetBitsAuto(pak);',
             'CONTACT_SIZE': 'contactSize = pktGetBitsAuto(pak);',
             'TASK_INDEX': 'taskIndex = pktGetBitsPack(pak, 1);',
             'TASK_SIZE': 'taskSize = pktGetBitsPack(pak, 1);'}.items()}
+    assert re.search(r'#define\s+MAX_COMBAT_STATS\s+10\b', texts[paths[23]])
     guards['KARMA_COUNT'] = texts[paths[11]][:texts[paths[11]].index('count = pktGetBitsAuto(pak);', texts[paths[11]].index('void receiveKarmaStats'))].count('\n') + 1
     def original_enum(path, name):
         text = texts[path]
@@ -84,7 +94,7 @@ def generate(root):
             result += '#line ' + str(line) + ' "' + path + '"\n' + body
         return result
     output = ('/* Unchanged source functions; bounded typed staging and no-I/O shims. */\n'
-        '#ifdef COH_ORIGINAL_COMMAND_TYPES\n#define COMM_MAX_CMD 2\n' +
+        '#ifdef COH_ORIGINAL_COMMAND_TYPES\n#define COMM_MAX_CMD 2\n#define MAX_COMBAT_STATS 10\n' +
         ''.join('#define COMMAND_' + key + '_LINE ' + str(value) + '\n' for key, value in guards.items()) +
         enum + '\n' + extra_types + '\n#elif defined(COH_ORIGINAL_COMMAND_SENDERS)\n' + whole(senders) + fixture_senders +
         '#else\n' + whole(functions) + '#endif\n')
@@ -98,7 +108,12 @@ def generate(root):
         'SERVER_SEND_KARMA_STATS': 'receiveKarmaStats',
         'SERVER_EVENT_START_STATUS': 'turnstileGame_HandleEventStartStatus',
         'SERVER_INCARNATE_TRIAL_STATUS': 'receiveIncarnateTrialStatus',
-        'SERVER_CHANGE_WINDOW_COLORS': 'receiveChangeWindowColors'}
+        'SERVER_CHANGE_WINDOW_COLORS': 'receiveChangeWindowColors',
+        'SERVER_CONTACT_SELECT': 'ContactSelectReceive', 'SERVER_TASK_SELECT': 'TaskSelectReceive',
+        'SERVER_SEND_DESATURATE_INFO': 'receiveDesaturateInfo',
+        'SERVER_POPHELP_EVENT_HAPPENED_BY_TAG': 'receivePopHelpEventHappenedByTag',
+        'SERVER_SEND_REWARD_CHOICE': 'receiveRewardChoice', 'SERVER_SEND_MORAL_CHOICE': 'receiveMoralChoice',
+        'SERVER_DOOREXIT': 'DoorAnimReceiveExit', 'SERVER_SEND_COMBAT_STATS': 'receiveClientCombatStats'}
     for command, name in expected_dispatch.items():
         assert re.search(r'_Ch\(\s*' + command + r'\s*,\s*' + name + r'\s*\)', texts[paths[0]])
     dispatch_text = ''.join(('COH_COMMAND_DISPATCH' if row['enabled'] else 'COH_COMMAND_DISABLED') + '(' + row['command'] + ', ' + row['handler'] + ', ' + str(int(row['command'] in expected_dispatch)) + ')\n' for row in dispatch)
