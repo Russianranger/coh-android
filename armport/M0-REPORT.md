@@ -68,7 +68,8 @@ replacements for `_mm_pause` and `cpuid`, and the x86 debug registers in
 
 - SSE intrinsics: 68 uses in 9 files. The sse2neon shims cleared all but 8
   UtilitiesLib and 30 Game errors in the experiment.
-- Inline assembly: 39 lines in 12 files (prefetch, timing, cpu count, texWords).
+- Inline assembly: 39 MSVC-style `__asm` lines in 10 files (12 files counting
+  GCC-style `__asm__`): prefetch, timing, CPU count, profiler, texWords.
 
 ## Shaders
 
