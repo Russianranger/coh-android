@@ -60,6 +60,22 @@ def main():
     print(f"compiled {len(compiled)} of {len(results)} shader files")
     for x in report['failed']:
         print('FAILED', x['file'], x['profile'], ' | '.join(x['messages'][:2]))
+    # GitHub annotations: readable through the checks API without artifact access.
+    if os.environ.get('GITHUB_ACTIONS'):
+        def esc(t):
+            return t.replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+        print(f"::notice title=ArmPort shaders::compiled {len(compiled)} of {len(results)}; "
+              f"failed {len(report['failed'])}; skipped {len(report['skipped'])}; "
+              f"cgc {esc(' '.join(report['cgc_version'])[:120])}")
+        lines = [f"{x['file']} {x['profile']}: {' | '.join(x['messages'][:2])[:160]}"
+                 for x in report['failed']]
+        for i in range(0, len(lines), 6):
+            print('::warning title=ArmPort shader failures ' + str(i // 6 + 1) + '::' +
+                  esc('\n'.join(lines[i:i + 6])))
+        ok = [f"{x['file']} {x['profile']} {x['instructions']} instr" for x in compiled]
+        for i in range(0, len(ok), 12):
+            print('::notice title=ArmPort shaders compiled ' + str(i // 12 + 1) + '::' +
+                  esc('\n'.join(ok[i:i + 12])))
 
 
 if __name__ == '__main__':
