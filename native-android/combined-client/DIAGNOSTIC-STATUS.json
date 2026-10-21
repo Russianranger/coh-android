@@ -1781,7 +1781,7 @@
       "ARM64_interop_DSO": "passed;15 JNI entrypoints in this isolated profile",
       "android13_framework_checks": 46,
       "android13_update_checks": 14,
-      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17\u21920.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
+      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17→0.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
       "artifact_id": 12314108293,
       "artifact_bytes": 26577860,
       "artifact_sha256": "097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f",
@@ -4164,7 +4164,7 @@
       "ARM64_interop_DSO": "passed;15 JNI entrypoints in this isolated profile",
       "android13_framework_checks": 46,
       "android13_update_checks": 14,
-      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17\u21920.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
+      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17→0.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
       "artifact_id": 12314108293,
       "artifact_bytes": 26577860,
       "artifact_sha256": "097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f",
@@ -4316,6 +4316,39 @@
       "actual_server_after_READY": null,
       "actual_positions_over_time": null,
       "scope": "No physical0.1.18 evidence yet. Test fixtures and host replay are not live server observations."
+    },
+    "other_workflow_harness_followup": {
+      "scope": "Test harnesses only; qualified 0.1.18 production sources and signed APK remain unchanged.",
+      "correction_round": 1,
+      "max_correction_rounds": 2,
+      "bounded_adapter": {
+        "original_run": 39528632027,
+        "original_job": 118989103780,
+        "original_status": "failed",
+        "step": "Qualify bounded shipping JSON and unchanged deep JNI assertions",
+        "error": "ValueError: Java API shape; obsolete hardcoded 11-method list disagrees with canonical 15-method continuation diagnostic API.",
+        "fix_local_commit": "d7fca71ef",
+        "local_status": "passed",
+        "local_modes": [
+          "release",
+          "asan",
+          "ubsan"
+        ],
+        "checks_each": 12637,
+        "scenarios_each": 131,
+        "CI_status": "awaiting source push"
+      },
+      "stream_GPU": {
+        "original_run": 39528631928,
+        "original_job": 118989103135,
+        "original_status": "failed",
+        "step": "Qualify the actual integrated static GPU path and recreated source cache",
+        "error": "Duplicate coh_session_world_* symbols: harness separately compiled an implementation already included by the fixture, and omitted session_world_imports.c.",
+        "fix_local_commit": "c691f4cabc3f3cb94645de5a2f34c14e04dccdab",
+        "local_status": "Python syntax and explicit-double command construction passed; unchanged host commands and 14 unique Android translation units verified.",
+        "local_NDK_link": "not executed; no pinned local NDK available",
+        "CI_status": "awaiting source push"
+      }
     }
   }
 }
