@@ -1716,7 +1716,7 @@
     "version": "0.1.19",
     "version_code": 20,
     "profile": "freeze-diagnostic",
-    "state": "single_CI_dispatch_requested",
+    "state": "compile_name_fix_qualified_corrective_dispatch_requested",
     "limits": {
       "decoded_message_bytes": 4194304,
       "ordinary_transport_bytes": 16384,
@@ -1734,7 +1734,21 @@
       "Stop normally and return the ZIP; do not change the database or repeat the handoff."
     ],
     "apk": null,
-    "physical_Thor_tested": false
+    "physical_Thor_tested": false,
+    "CI": {
+      "run_id": 39539838767,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39539838767",
+      "source_commit": "a6b21245d138db6ac781e8f2a9c9a677042396e2",
+      "source_tree": "692bea00f4d03f2c7e41aa43f7ec2e7b2fac7421",
+      "purpose": "combined-diagnostic",
+      "diagnostic_profile": "freeze-diagnostic",
+      "status": "failed_before_APK",
+      "diagnostic_dispatches": 1,
+      "release_published": false,
+      "corrective_dispatches_requested": 1
+    },
+    "source_commit": "a6b21245d138db6ac781e8f2a9c9a677042396e2",
+    "source_tree": "692bea00f4d03f2c7e41aa43f7ec2e7b2fac7421"
   },
   "latest_physical_version": "0.1.18",
   "latest_physical_results": {
@@ -4841,7 +4855,7 @@
     "profile": "freeze-diagnostic",
     "version_name": "0.1.19-freeze-diagnostic-test",
     "version_code": 20,
-    "state": "one_diagnostic_dispatch_requested",
+    "state": "compile_name_fix_qualified_corrective_dispatch_requested",
     "APK_builds": 0,
     "max_APK_candidate_builds": 1,
     "workers": {
@@ -4881,9 +4895,10 @@
       "shipping_post_ready_checks_per_mode": 16,
       "Java_raw_ZIP_checks": 61,
       "activity_export_checks": 78,
-      "current_capture_export_checks": 46,
+      "current_capture_export_checks": 52,
       "bridge_checks": 794,
-      "raw_bodies_newly_decoded": false
+      "raw_bodies_newly_decoded": false,
+      "exact_onCreate_capture_scope_and_negative_javac": true
     },
     "Huge_host": {
       "draws": 13,
@@ -4925,6 +4940,35 @@
       "diagnostic_runs": 0,
       "APK_builds": 0,
       "correction": "Include the existing rolling status path in native-qualification push filter; one diagnostic dispatch still requested."
-    }
+    },
+    "CI": {
+      "run_id": 39539838767,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39539838767",
+      "source_commit": "a6b21245d138db6ac781e8f2a9c9a677042396e2",
+      "source_tree": "692bea00f4d03f2c7e41aa43f7ec2e7b2fac7421",
+      "purpose": "combined-diagnostic",
+      "diagnostic_profile": "freeze-diagnostic",
+      "status": "failed_before_APK",
+      "diagnostic_dispatches": 1,
+      "release_published": false,
+      "corrective_dispatches_requested": 1
+    },
+    "failed_CI_attempts": [
+      {
+        "run_id": 39539838767,
+        "source_commit": "a6b21245d138db6ac781e8f2a9c9a677042396e2",
+        "combined_source": "passed",
+        "combined_diagnostic": "failed",
+        "step": "Build and inspect the signed ARM64 diagnostic",
+        "task": ":app:compileDebugJavaWithJavac",
+        "error": "NativeClientActivity.java:195: variable capture is already defined in method onCreate(Bundle)",
+        "fix": "Rename nested Selection to selectedCapture; no behavior change.",
+        "signed_APKs_produced": 0,
+        "artifact_id": 12319756270,
+        "artifact_bytes": 765963,
+        "artifact_sha256": "f6a5b33f6aca608f082f4b69da48f0a06b9e1433243889f82afe797073649f9e"
+      }
+    ],
+    "APK_build_attempts": 1
   }
 }

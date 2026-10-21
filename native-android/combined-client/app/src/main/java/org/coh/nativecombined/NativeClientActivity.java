@@ -192,9 +192,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             Button capture=new Button(this);capture.setText("Export scene ZIP");
             capture.setOnClickListener(v->exportSceneCapture());controlsLayout.addView(capture);
             reportWorker.execute(()->{
-                SceneFrameCapture.Selection capture=SceneFrameCapture.inspectCurrent(getFilesDir(),captureAppVersion(),
+                SceneFrameCapture.Selection selectedCapture=SceneFrameCapture.inspectCurrent(getFilesDir(),captureAppVersion(),
                         Long.toHexString(sessionStarted),BuildConfig.FULLSCREEN_DIAGNOSTIC);
-                captureMetadata=capture.metadata();captureFailure=capture.omissionReason();
+                captureMetadata=selectedCapture.metadata();captureFailure=selectedCapture.omissionReason();
             });
         }
         Button distance = new Button(this); distance.setText("View distance");
