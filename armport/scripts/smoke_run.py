@@ -35,6 +35,13 @@ def imports(exe, llvm):
 
 
 def screenshot_summary(display, path):
+    try:
+        return _screenshot_summary(display, path)
+    except Exception as e:  # observational only
+        return f'screenshot failed: {e!r}'
+
+
+def _screenshot_summary(display, path):
     r = subprocess.run(['xwd', '-root', '-silent', '-display', display, '-out', str(path)],
                        capture_output=True)
     if r.returncode or not path.exists():
@@ -87,7 +94,11 @@ def main():
     env = dict(os.environ, DISPLAY=display, WINEDEBUG='err+all,fixme-all,+seh',
                WINEDLLOVERRIDES='mscoree,mshtml=')
     wine = str(a.wine / 'wine')
-    subprocess.run([wine, 'wineboot', '-i'], env=env, capture_output=True, timeout=300)
+    try:
+        boot = subprocess.run([wine, 'wineboot', '-i'], env=env, capture_output=True, timeout=300)
+        note('notice', 'ArmPort M2 smoke wineboot', f'exit {boot.returncode}')
+    except subprocess.TimeoutExpired:
+        note('warning', 'ArmPort M2 smoke wineboot', 'timed out after 300s')
     before = {p for p in rt.rglob('*') if not str(p).startswith(str(rt / 'data'))}
 
     log = rt.parent / 'smoke-output.txt'
@@ -142,4 +153,9 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception:
+        import traceback
+        note('error', 'ArmPort M2 smoke script failed', traceback.format_exc())
+        raise
