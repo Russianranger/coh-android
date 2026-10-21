@@ -96,7 +96,7 @@ def process_memory_jni(raw, readelf):
     return entrypoint
 
 
-def frame_capture_jni(raw, readelf, fullscreen=False):
+def frame_capture_jni(raw, readelf, fullscreen=False, continuation=False):
     """Require the current-frame JNI on the actual session DSO in this profile."""
     if readelf is None or not readelf.is_file():
         raise ValueError('Capture diagnostic requires pinned --readelf')
@@ -113,6 +113,8 @@ def frame_capture_jni(raw, readelf, fullscreen=False):
     required = {entrypoint}
     if fullscreen:
         required.update('Java_org_coh_sessionclient_SessionNative_' + name for name in ('captureViewport', 'runtimeWorld'))
+    if continuation:
+        required.add('Java_org_coh_sessionclient_SessionNative_observedCostume')
     assert required <= exported, 'Current gameSurface capture or runtime source JNI absent'
     return entrypoint
 
@@ -199,7 +201,7 @@ def audit(args):
                 if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
                     memory_entrypoint = process_memory_jni(data, args.readelf)
             if filename == 'libcoh_session_client.so' and args.build_profile in ('capture-diagnostic', 'fullscreen-diagnostic', 'continuation-diagnostic'):
-                capture_entrypoint = frame_capture_jni(data, args.readelf, args.build_profile in ('fullscreen-diagnostic', 'continuation-diagnostic'))
+                capture_entrypoint = frame_capture_jni(data, args.readelf, args.build_profile in ('fullscreen-diagnostic', 'continuation-diagnostic'), args.build_profile == 'continuation-diagnostic')
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}
         assert 'lib/' + args.abi + '/libcoh_session_client.so' in libraries

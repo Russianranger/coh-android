@@ -103,8 +103,14 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private volatile long networkOwnerAttempt=-1;
     private volatile long observedEntityAttempt=-1;
     private volatile int observedEntityIndex=-1;
+    private volatile long costumeReadAttempt=-1;
+    private long actorPreparationSequence;
+    private boolean actorPreparing;
+    private ImportContract.Control actorControl;
+    private String runtimeActorFailure="";
     // Transport handle and policy identity are owned exclusively by networkWorker.
-    private long networkHandle, policyCheckedAt;
+    private volatile long networkHandle;
+    private long policyCheckedAt;
     private JSONObject networkPolicy;
     private boolean charactersPublished;
     private TextView networkStatus;
@@ -452,6 +458,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         }
     }
     private void publishObservedSelf(final long sourceHandle,final long attempt) {
+        if(BuildConfig.CONTINUATION_DIAGNOSTIC)publishObservedCostume(sourceHandle,attempt);
         if(sourceHandle!=networkHandle||attempt!=networkAttempt||attempt!=networkOwnerAttempt
                 ||observedEntityAttempt==attempt)return;
         byte[] raw=InteropNative.observedSelfPose(sourceHandle);
@@ -471,8 +478,58 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         });
     }
     private void clearObservedBox() {
+        actorPreparationSequence++;actorPreparing=false;costumeReadAttempt=-1;
+        if(actorControl!=null){actorControl.cancel();actorControl=null;}
+        runtimeActorFailure="";
         observedEntityAttempt=-1;observedEntityIndex=-1;
         if(handle!=0)SessionNative.clearObservedEntity(handle);
+    }
+    // Called only by networkWorker. Getter and source accounting refer to the
+    // same serialized transport owner; no live transport pointer crosses JNI.
+    private void publishObservedCostume(final long sourceHandle,final long attempt) {
+        if(sourceHandle!=networkHandle||attempt!=networkAttempt||attempt!=networkOwnerAttempt
+                ||networkMode!=NetworkMode.WORLD_HANDOFF||observedEntityAttempt!=attempt||costumeReadAttempt==attempt)return;
+        final byte[] frame=InteropNative.observedSelfCostume(sourceHandle);
+        if(frame==null)return;
+        final long sourceBytes=InteropNative.observedSelfCostumeSourceBytes(sourceHandle);
+        if(sourceBytes<0)return;
+        costumeReadAttempt=attempt;
+        main.post(()->{
+            if(destroying||!networkRequested||!networkForeground||attempt!=networkAttempt
+                    ||sourceHandle!=networkHandle||attempt!=networkOwnerAttempt
+                    ||networkMode!=NetworkMode.WORLD_HANDOFF||observedEntityAttempt!=attempt||handle==0)return;
+            final long renderer=handle,preparation=++actorPreparationSequence;
+            final ImportContract.Control control=new ImportContract.Control();actorControl=control;
+            actorPreparing=true;runtimeActorFailure="";
+            // End the current EGL loop before CPU preparation; this same worker
+            // serializes rendering, archive reads, candidate publication and destroy.
+            epoch++;SessionNative.state(renderer,epoch,false);
+            renderWorker.execute(()->{
+                int admitted=-1;String problem=null;
+                try(RuntimeActorInputs inputs=RuntimeActorInputs.open(new ImportStore(this,(phase,done,total)->{}),control)) {
+                    control.check();
+                    if(!destroying&&networkRequested&&networkForeground&&renderer==handle&&attempt==networkAttempt
+                            &&sourceHandle==networkHandle&&attempt==networkOwnerAttempt
+                            &&networkMode==NetworkMode.WORLD_HANDOFF&&observedEntityAttempt==attempt)
+                        admitted=SessionNative.observedCostume(renderer,frame,inputs.fds,inputs.offsets,inputs.lengths,
+                                Math.addExact(frame.length,inputs.stagingPayloadBytes()),sourceBytes);
+                }catch(Exception optional){problem=optional.getClass().getSimpleName()+": "+optional.getMessage();}
+                final int result=admitted;final String error=problem;
+                main.post(()->{
+                    if(preparation!=actorPreparationSequence||destroying||renderer!=handle)return;
+                    actorPreparing=false;actorControl=null;
+                    if(attempt!=networkAttempt||sourceHandle!=networkHandle||attempt!=networkOwnerAttempt
+                            ||networkMode!=NetworkMode.WORLD_HANDOFF||!networkRequested||!networkForeground
+                            ||observedEntityAttempt!=attempt)return;
+                    runtimeActorFailure=error==null?(result==0?"":"Native costume preparation status "+result):error;
+                    if(runtimeActorFailure.length()>160)runtimeActorFailure=runtimeActorFailure.substring(0,160);
+                    if(result==5||result==7)costumeReadAttempt=-1; // lifecycle interruption may be retried
+                    SessionNative.state(renderer,epoch,resumed);
+                    event(result==0?"observed_costume_published":"observed_costume_box_fallback");
+                    requestRender();saveReport();
+                });
+            });
+        });
     }
     private String checkedHandoffReport(String next) {
         JSONObject report;
@@ -706,6 +763,10 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         JSONArray tail=report.optJSONArray("initial_command_tail");
         String detail=complete?"Initial packet reached exact EOF"
                 +(tail!=null&&tail.length()==7&&tail.optLong(2,-1)>=0?" at bit "+tail.optLong(2):"")+".":"Initial packet remains incomplete.";
+        JSONArray partial=report.optJSONArray("initial_partial_tail");
+        if(!complete&&partial!=null&&partial.length()==10&&partial.optInt(3,0)==1)
+            detail="Entity section complete; diagnostic partial-tail skipped command "+partial.optLong(4)
+                    +" with "+partial.optLong(8)+" bits discarded. Whole packet remains incomplete.";
         if(!complete){String next=report.optString("initial_next","");
             if(next.matches("[A-Za-z0-9_ .:-]{1,120}"))detail+=" Next: "+next+".";}
         JSONArray power=report.optJSONArray("power_unresolved");
@@ -784,7 +845,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         scene.addView(view,new FrameLayout.LayoutParams(-1,-1,Gravity.CENTER));
     }
     private void requestRender() {
-        if (destroying || !resumed || handle==0 || renderQueued || currentSurface==null || !currentSurface.isValid()) return;
+        if (destroying || !resumed || handle==0 || renderQueued || actorPreparing || currentSurface==null || !currentSurface.isValid()) return;
         final long ticket=epoch, h=handle; final Surface surface=currentSurface;
         renderQueued=true;
         renderWorker.execute(() -> {
@@ -850,8 +911,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("version_code",getPackageManager().getPackageInfo(getPackageName(),0).versionCode).put("installed_apk",apkIdentity);
         JSONObject j=new JSONObject().put("schema","coh-native-combined-client-v1")
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
-                .put("scope","Local DB/Map progress and Atlas preview with a crude box at the observed selected-self server pose. No full costume, complete entity replication or application ACK")
-                .put("app",app).put("device",d).put("runtime_world_optional_failure",runtimeWorldFailure).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
+                .put("scope","Local DB/Map handoff and bounded source scene at the decoded selected-self pose; optional received costume with box fallback. Numeric packet, ACK/READY and observation fields state actual progress.")
+                .put("app",app).put("device",d).put("runtime_world_optional_failure",runtimeWorldFailure).put("runtime_actor_optional_failure",runtimeActorFailure).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
                 .put("server_protocol",new JSONObject(localNetworkReport)).put("world_handoff",new JSONObject(interopReport))
                 .put("memory_diagnostics",MemoryTelemetry.snapshot())
                 .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(handoffState.initialObserved(),false)))
@@ -1000,6 +1061,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     @Override public void onTrimMemory(int level) {super.onTrimMemory(level);MemoryTelemetry.memoryPressure(this,level,false);}
     @Override public void onLowMemory() {super.onLowMemory();MemoryTelemetry.memoryPressure(this,-1,true);}
     @Override protected void onDestroy() {
+        if(actorControl!=null)actorControl.cancel();actorPreparationSequence++;
         networkForeground=false;networkRequested=false;networkAttempt++;
         networkWorker.execute(()->{retireNetworkOwner();networkRetired.set(true);sampleFinalCleanup();});
         networkWorker.shutdown();

@@ -54,7 +54,7 @@ public final class RuntimeWorldInputs implements AutoCloseable {
         } catch(Throwable problem) {try{out.close();}catch(Throwable cleanup){problem.addSuppressed(cleanup);}if(problem instanceof Exception)throw (Exception)problem;if(problem instanceof Error)throw (Error)problem;throw new IOException(problem);}
     }
 
-    private static ParcelFileDescriptor openArchive(File path,ImportContract.Pin pin)throws Exception {
+    static ParcelFileDescriptor openArchive(File path,ImportContract.Pin pin)throws Exception {
         if(pin.bytes<22||pin.bytes>0xffffffffL)throw new IOException("Runtime source archive is outside ZIP32 bounds");
         StructStat before=ImportStore.immutableStat(path.toPath(),pin);
         if((before.st_mode&0222)!=0)throw new IOException("Runtime source archive is not an immutable imported object");

@@ -29,6 +29,11 @@ class CatalogPackagingTests(unittest.TestCase):
             all_symbols=symbol+''.join(symbol.replace(entry,'Java_org_coh_sessionclient_SessionNative_'+name) for name in ('captureViewport','runtimeWorld'))
             with patch('package_check.run',return_value=all_symbols):
                 self.assertEqual(frame_capture_jni(b'host symbol control',readelf,True),entry)
+                with self.assertRaises(AssertionError):
+                    frame_capture_jni(b'host symbol control',readelf,True,True)
+            actor_symbols=all_symbols+symbol.replace(entry,'Java_org_coh_sessionclient_SessionNative_observedCostume')
+            with patch('package_check.run',return_value=actor_symbols):
+                self.assertEqual(frame_capture_jni(b'host symbol control',readelf,True,True),entry)
             with patch('package_check.run',return_value=symbol),self.assertRaises(AssertionError):
                 frame_capture_jni(b'host symbol control',readelf,True)
             for missing in ('', symbol.replace('DEFAULT', 'HIDDEN'), symbol.replace('12 ', 'UND ')):
