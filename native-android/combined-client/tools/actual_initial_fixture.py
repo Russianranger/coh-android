@@ -17,9 +17,11 @@ def extract(text, name):
     return text[match.start():end] + '\n'
 
 
-def prepare(root, work, replay, bounded=False):
+def prepare(root, work, replay, bounded=False, fallback=False):
     raw = replay.read_bytes()
-    assert len(raw) == 37795 and hashlib.sha256(raw).hexdigest() == '148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba'
+    assert (len(raw), hashlib.sha256(raw).hexdigest()) in (
+        (37795, '148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba'),
+        (37977, '74d85be47f23fe674e32178296aaa0f93f8830bb9ec4a08e166ee6f4f4e1a234'))
     assert hashlib.sha256(raw[88:]).digest() == raw[56:88]
     paths = ['Common/cmdparse/cmdcommon.c', 'MapServer/src/cmdparse/cmdserver.c',
              'libs/UtilitiesLib/src/utils/cmdoldparse.c']
@@ -62,6 +64,7 @@ static void*add(CmdShortcut**p,size_t n,int*count,int*maximum,int amount){assert
     engine = root / 'native-android/engine/initial-capture'
     subprocess.run(['cc', '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror', '-DCOH_FRAME_CAPTURE_DIAGNOSTIC=1',
                     *(['-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=1'] if bounded else []),
+                    *(['-DCOH_INITIAL_ACK_FALLBACK_DIAGNOSTIC=1'] if fallback else []),
                     '-ffunction-sections', '-fdata-sections', '-I', engine, '-I', root / 'native-android/include',
                     measurement, engine / 'coh_initial_map.c', '-Wl,--gc-sections', '-o', work / 'continuation-size'], check=True, capture_output=True)
     charged = int(subprocess.check_output([work / 'continuation-size'], text=True))

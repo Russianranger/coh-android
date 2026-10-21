@@ -128,7 +128,7 @@ def separate_report_extension(value, required=False):
             need(value['continuation_abort'] in ('none', '20-second deadline', 'message limit',
                  'peer disconnected', 'transport retry timeout', 'transport I/O failure', 'invalid message',
                  'cancelled', 'observer failure', 'payload release failure', 'owner failure',
-                 'queue failure', 'client closed'), 'bounded continuation end reason')
+                 'queue failure', 'client closed', '30-second observation complete'), 'bounded continuation end reason')
             totals = value['post_totals']
             need(isinstance(totals, list) and len(totals) == 13
                  and all(type(item) is int and 0 <= item <= 0xffffffffffffffff for item in totals), 'bounded message totals shape')
@@ -152,6 +152,38 @@ def separate_report_extension(value, required=False):
                 if row[6]:
                     accepted_times.append(row[1])
             need(not accepted_times or totals[11] == min(accepted_times), 'response window actual-send anchor')
+            partial_keys = {'initial_partial_tail', 'post_observation'}
+            if partial_keys.intersection(value):
+                need(partial_keys <= value.keys(), 'partial diagnostic fallback metadata')
+                partial, observation = value['initial_partial_tail'], value['post_observation']
+                need(isinstance(partial, list) and len(partial) == 10
+                     and all(type(item) is int and 0 <= item <= 0xffffffff for item in partial)
+                     and all(partial[i] <= 1 for i in (0, 1, 2, 3, 9))
+                     and all(partial[i] <= 33554432 for i in (5, 6, 7, 8)), 'diagnostic partial-tail shape')
+                need(not partial[3] or partial[0:4] == [1, 1, 0, 1]
+                     and command[0] == 2 and not command[4] and not command[5]
+                     and partial[4] == command[6] and partial[4] != 0
+                     and partial[5] <= partial[6] < partial[7] == command[2]
+                     and partial[8] > 0 and partial[9] == 1 and not complete and not flow[0]
+                     and value.get('ack_permitted', False) is False
+                     and ('initial_bits' not in value or partial[7] + partial[8] == value['initial_bits']),
+                     'diagnostic fallback claimed complete authority or wrong command boundary')
+                need(partial[3] or all(partial[i] == 0 for i in range(4, 10)),
+                     'absent partial fallback fabricated intent')
+                need(isinstance(observation, list) and len(observation) == 4
+                     and all(type(item) is int and 0 <= item <= 0xffffffffffffffff for item in observation)
+                     and observation[0] == 30000 and observation[2] <= flow[7] and observation[3] <= 1
+                     and (observation[2] == 0 or flow[4] and observation[1] >= value['ready_delivery'][1])
+                     and (not observation[3] or observation[2] and flow[8]
+                          and value['continuation_abort'] == '30-second observation complete'
+                          and totals[12] >= observation[1] and totals[12] - observation[1] >= 30000),
+                     'post-READY observation duration/completeness')
+                need(value['continuation_abort'] != '30-second observation complete' or observation[3] == 1,
+                     'observation completion reason without elapsed window')
+                flow_keys |= partial_keys
+            else:
+                need(value['continuation_abort'] != '30-second observation complete',
+                     'observation completion without diagnostic metadata')
             flow_keys |= bounded_keys
         value = {key: item for key, item in value.items() if key not in flow_keys}
     if 'initial_packet_tail' in value or 'initial_packet_next' in value:

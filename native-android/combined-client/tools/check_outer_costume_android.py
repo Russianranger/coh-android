@@ -58,7 +58,9 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--replay', type=Path, help='Optional retained physical INITIAL replay; no network I/O')
     parser.add_argument('--bounded', action='store_true', help='Compile next diagnostic delivery/accounting opt-in.')
+    parser.add_argument('--fallback', action='store_true', help='Compile diagnostic known-handler partial-tail ACK and 30s observation opt-in.')
     args = parser.parse_args()
+    args.bounded = args.bounded or args.fallback
     work = args.work.resolve()
     work.mkdir(parents=True, exist_ok=False)
     metadata = prepare_client_slots(work / 'assets')
@@ -69,7 +71,7 @@ def main():
     actual_source = None
     if args.replay:
         from actual_initial_fixture import prepare
-        actual_source, actual_inputs = prepare(ROOT, work, args.replay.resolve(), args.bounded)
+        actual_source, actual_inputs = prepare(ROOT, work, args.replay.resolve(), args.bounded, args.fallback)
         suffix, suffix_source = args.replay.resolve(), {'scope': 'Rare suffix is present in the authentic retained INITIAL replay.'}
     else:
         suffix, suffix_source = rare_fixture(work)
@@ -80,6 +82,8 @@ def main():
              '-I', 'native-android/engine/session', '-I', 'native-android/include']
     if args.bounded:
         flags += ['-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=1']
+    if args.fallback:
+        flags += ['-DCOH_INITIAL_ACK_FALLBACK_DIAGNOSTIC=1']
     sources = [TOOLS / ('test_actual_initial_android.c' if args.replay else 'test_outer_costume_android.c'),
                *[Path('native-android/engine/initial-capture/coh_initial_' + name + '_probe.c') for name in PROBES],
                Path('native-android/engine/initial-capture/coh_local_bodypart_default.c'),
@@ -110,7 +114,7 @@ def main():
             if path.is_relative_to(ROOT):
                 frozen.add(path)
     pins = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(frozen)}
-    result = {'passed': True, 'bounded_next_diagnostic': args.bounded, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
+    result = {'passed': True, 'bounded_next_diagnostic': args.bounded, 'partial_tail_diagnostic': args.fallback, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
               'scope': ('Authentic saved Thor packet through shipping JNI observer/owner with original source-static shortcuts, test-owned selection and transport/JNI/Android asset doubles; no live authentication, actual network sends or Android ABI claim.' if args.replay else 'Shipping new-profile JNI observer, with Android asset/JNI/transport doubles and source-layout sender header composition; no physical packet, Android ABI, actor or ACK claim.')}
     if args.replay:
         result['actual_source_fixture'] = actual_source
@@ -218,6 +222,34 @@ def main():
                 pass
             else:
                 raise AssertionError('Malformed bounded continuation metadata accepted')
+    if args.fallback:
+        partial = {**bounded, 'initial_command_tail': [2, 10, 20, 1, 0, 0, 343],
+                   'initial_packet_complete': False, 'initial_bits': 30,
+                   'initial_continuation': [0, 1, 1, 1, 1, 1, 0, 2, 1, 1],
+                   'ack_permitted': False, 'initial_partial_tail': [1, 1, 0, 1, 343, 10, 11, 20, 10, 1],
+                   'post_observation': [30000, 120, 1, 0]}
+        assert separate_report_extension(partial) == {'initial_bits': 30, 'ack_permitted': False}
+        observed = {**partial, 'continuation_abort': '30-second observation complete',
+                    'post_observation': [30000, 120, 1, 1],
+                    'post_totals': [2, 20, 160, 0, 1, 10, 80, 119, 120, 0, 1, 118, 30120]}
+        assert separate_report_extension(observed) == {'initial_bits': 30, 'ack_permitted': False}
+        for field, bad in [('initial_partial_tail', [1, 1, 1, 1, 343, 10, 11, 20, 10, 1]),
+                           ('initial_partial_tail', [1, 0, 0, 1, 343, 10, 11, 20, 10, 1]),
+                           ('initial_partial_tail', [0, 1, 0, 1, 343, 10, 11, 20, 10, 1]),
+                           ('initial_partial_tail', [1, 1, 0, 1, 342, 10, 11, 20, 10, 1]),
+                           ('initial_partial_tail', [1, 1, 0, 1, 343, 12, 11, 20, 10, 1]),
+                           ('initial_partial_tail', [1, 1, 0, 1, 343, 10, 11, 20, 9, 1]),
+                           ('initial_packet_complete', True), ('ack_permitted', True),
+                           ('initial_continuation', [1, 1, 1, 1, 1, 1, 0, 2, 1, 1]),
+                           ('post_observation', [30000, 120, 1, 1]),
+                           ('post_observation', [30000, 119, 1, 0]),
+                           ('post_observation', [30000, 120, 3, 0])]:
+            try:
+                separate_report_extension({**partial, field: bad})
+            except ValueError:
+                pass
+            else:
+                raise AssertionError('Malformed diagnostic fallback metadata accepted')
     assert pins == {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(frozen)}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + '\n')

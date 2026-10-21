@@ -129,6 +129,15 @@ static unsigned capture_terminal(CohInitialCapturePhase phase){return phase>=COH
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
 static size_t initial_retained(const Interop*h){return sizeof(*h)+client_slots_owned(&h->client_slots)+coh_initial_capture_continuation_bytes(h->capture);}
 static unsigned initial_complete(const Interop*h){return h->initial_outer.selected_complete&&h->initial_packet_tail.source_tail_complete&&h->initial_commands.status==COH_OK&&h->initial_commands.terminator&&h->initial_commands.tail_complete&&h->initial_commands.end_bit==h->initial_bits;}
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+static unsigned initial_partial_eligible(const Interop*h){
+ const CohOriginalCommandTailReport*r=&h->initial_commands;
+ return h->initial_outer.selected_complete&&h->initial_rare.entity_suffix_complete&&h->initial_packet_tail.source_tail_complete&&
+  r->status==COH_UNSUPPORTED&&r->unimplemented_handler==1&&!r->unknown_command&&r->active_command&&
+  !r->terminator&&!r->tail_complete&&h->initial_packet_tail.end_bit<=r->command_begin_bit&&
+  r->command_begin_bit<r->end_bit&&r->end_bit<h->initial_bits;
+}
+#endif
 #endif
 static void client_slots_release(ClientSlotsOwner *slots) {
     if(slots->index){coh_db_wipe(slots->index,COH_CLIENT_COSTUME_INDEX_BYTES);free(slots->index);}
@@ -512,6 +521,9 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                                                     original.cursor=h->initial_packet_tail.end_bit;retained=initial_retained(h)-sizeof(h->command_workspace)-sizeof(h->initial_commands)+sizeof(lease)+COH_ORIGINAL_INITIAL_STACK_RESERVE-COH_ORIGINAL_COMMAND_STACK_RESERVE;
                                                                                     (void)coh_original_command_tail_receive(&original,&h->command_workspace,&h->initial_commands,8u*1024u*1024u,retained);
                                                                                     if(initial_complete(h))h->completion_status=coh_initial_capture_finish_initial(capture,event,h->initial_commands.end_bit);
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+                                                                                    else if(initial_partial_eligible(h))h->completion_status=coh_initial_capture_finish_partial_tail(capture,event,h->initial_packet_tail.end_bit,h->initial_commands.command_begin_bit,h->initial_commands.end_bit,h->initial_commands.active_command);
+#endif
                                                                                 }
                                                                             }
                                                                         }
@@ -700,6 +712,10 @@ static int initial_flow_json(char*out,size_t capacity,const Interop*h,const CohI
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
  char totals[512];n=snprintf(totals,sizeof(totals),",\"continuation_policy\":[%u,1],\"continuation_time_basis\":\"owner_monotonic_ms\",\"continuation_abort\":\"%s\",\"post_totals\":[%u,%llu,%llu,%u,%u,%llu,%llu,%llu,%llu,%u,%u,%llu,%llu]",COH_INITIAL_POST_DURATION_MS,coh_initial_abort_name(c->abort_reason),c->post_messages,(unsigned long long)c->post_total_bytes,(unsigned long long)c->post_total_bits,c->post_unclassified,c->post_row_overflow,(unsigned long long)c->post_overflow_bytes,(unsigned long long)c->post_overflow_bits,(unsigned long long)c->post_first_ms,(unsigned long long)c->post_last_ms,c->post_before_send,c->post_between_sends,(unsigned long long)c->post_begin_ms,(unsigned long long)c->post_end_ms);
  if(n<=0||(size_t)n>=sizeof(totals)||!append(out,capacity,&used,totals)||!delivery_json(out,capacity,&used,"ack_delivery",&c->ack_delivery)||!delivery_json(out,capacity,&used,"ready_delivery",&c->ready_delivery))return 0;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ char partial[384];n=snprintf(partial,sizeof(partial),",\"initial_partial_tail\":[%u,%u,%u,%u,%u,%llu,%llu,%llu,%llu,%u],\"post_observation\":[%u,%llu,%u,%u]",h->initial_packet_tail.source_tail_complete,r->unimplemented_handler,r->unknown_command,c->partial_tail,c->skipped_tail_command,(unsigned long long)c->source_update_end_bit,(unsigned long long)c->tail_command_begin_bit,(unsigned long long)c->tail_body_begin_bit,(unsigned long long)c->tail_remaining_bits,c->diagnostic_ack_intent,COH_INITIAL_POST_OBSERVE_MS,(unsigned long long)c->post_response_begin_ms,c->post_ready_messages,c->post_observation_complete);
+ if(n<=0||(size_t)n>=sizeof(partial)||!append(out,capacity,&used,partial))return 0;
+#endif
 #endif
  return 1;
 }
@@ -720,6 +736,42 @@ JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_observedS
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
 static void replay_u32(uint8_t *out,uint32_t value){for(unsigned i=0;i<4;i++)out[i]=(uint8_t)(value>>(i*8));}
 static void replay_u64(uint8_t *out,uint64_t value){for(unsigned i=0;i<8;i++)out[i]=(uint8_t)(value>>(i*8));}
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+_Static_assert(sizeof(CohOriginalCostumeSnapshot)==48352,"COHCST01 source snapshot layout");
+static int costume_source_bytes(const Interop*h,size_t*out){
+ size_t n=sizeof(*h),slots=h->client_slots.mapped_bytes,index=h->client_slots.index?COH_CLIENT_COSTUME_INDEX_BYTES:0;
+ if(index>SIZE_MAX-slots)return 0;
+ slots+=index;if(slots>SIZE_MAX-n)return 0;
+ n+=slots;size_t continuation=coh_initial_capture_continuation_bytes(h->capture);
+ if(continuation>SIZE_MAX-n)return 0;
+ *out=n+continuation;return 1;
+}
+/* Current concrete receiver-source span only. Transport fixed/codec/queued
+ * storage, Java/driver allocation overhead and process RSS/PSS remain separate. */
+JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_observedSelfCostumeSourceBytes(JNIEnv *env,jclass cls,jlong token){
+ (void)env;(void)cls;Interop*h=owner(token);if(!h||h->busy||h->suspended||h->disconnected||!h->capture)return -1;
+ size_t n;if(!costume_source_bytes(h,&n))return -1;
+ return n>(size_t)INT64_MAX?-1:(jlong)n;
+}
+/*32B little-endian owner/slot framing plus the lossless pointer-free snapshot.
+ * Old native snapshot/workspaces are already in initial_retained. Preflight
+ * the candidate Java copy and header before mutation; no model/rig substitution. */
+JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_observedSelfCostume(JNIEnv *env,jclass cls,jlong token){
+ (void)cls;Interop*h=owner(token);uint8_t header[32]={0};
+ if(!h||h->busy||h->suspended||h->disconnected||!h->capture||(*env)->ExceptionCheck(env)||
+    !h->initial_create.create_validated||!h->initial_create.is_self||!h->initial_create.self_dbid_matches_handoff||!h->initial_outer.selected_complete)return NULL;
+ size_t bytes=sizeof(header)+sizeof(h->selected_costume),retained;if(!costume_source_bytes(h,&retained))return NULL;
+ if(retained>8u*1024u*1024u||sizeof(header)+COH_ORIGINAL_INITIAL_STACK_RESERVE>8u*1024u*1024u-retained)return NULL;
+ retained+=sizeof(header)+COH_ORIGINAL_INITIAL_STACK_RESERVE;if(bytes>8u*1024u*1024u-retained)return NULL;
+ memcpy(header,"COHCST01",8);replay_u32(header+8,sizeof(header));replay_u32(header+12,sizeof(h->selected_costume));
+ replay_u64(header+16,(uint64_t)token);replay_u32(header+24,h->initial_create.entity_index);
+ jbyteArray result=(*env)->NewByteArray(env,(jsize)bytes);if(!result){coh_db_wipe(header,sizeof(header));return NULL;}
+ if((*env)->ExceptionCheck(env)){coh_db_wipe(header,sizeof(header));(*env)->DeleteLocalRef(env,result);return NULL;}
+ (*env)->SetByteArrayRegion(env,result,0,sizeof(header),(const jbyte*)header);
+ if(!(*env)->ExceptionCheck(env))(*env)->SetByteArrayRegion(env,result,sizeof(header),sizeof(h->selected_costume),(const jbyte*)&h->selected_costume);
+ coh_db_wipe(header,sizeof(header));if((*env)->ExceptionCheck(env)){(*env)->DeleteLocalRef(env,result);return NULL;}return result;
+}
+#endif
 JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_exportInitialReplay(JNIEnv *env,jclass cls,jlong token) {
     (void)cls;Interop *h=owner(token);uint8_t header[COH_INITIAL_REPLAY_HEADER_BYTES]={0};SHA256_CTX digest;jbyteArray result=NULL;
     if(!h||h->busy||!h->replay_bytes||h->suspended||h->disconnected||(*env)->ExceptionCheck(env))return NULL;

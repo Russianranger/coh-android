@@ -7,6 +7,10 @@ CohStatus coh_initial_capture_local_password_digest(CohInitialCapture*owner,cons
 static size_t observer_continuation_charge;static unsigned observer_finish_calls;
 size_t coh_initial_capture_continuation_bytes(const CohInitialCapture*owner){CHECK(owner);return observer_continuation_charge;/* Optional replay charges the measured real product owner. */}
 CohStatus coh_initial_capture_finish_initial(const CohInitialCapture*owner,const CohInitialCaptureEvent*event,size_t bits){CHECK(owner&&event&&event->kind==COH_INITIAL_CAPTURE_ALLENTS&&bits==loan.reader.bits);observer_finish_calls++;return COH_OK;}
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+static unsigned observer_partial_calls;
+CohStatus coh_initial_capture_finish_partial_tail(const CohInitialCapture*owner,const CohInitialCaptureEvent*event,size_t update,size_t begin,size_t body,uint32_t command){CHECK(owner&&event&&event->kind==COH_INITIAL_CAPTURE_ALLENTS&&update<=begin&&begin<body&&body<loan.reader.bits&&command);observer_partial_calls++;return COH_OK;}
+#endif
 static unsigned outer_cases;static size_t last_power_begin,last_full_bits,last_inventory_begin,last_inventory_end;
 static const char *outer_report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"ack_permitted\":false"));return report_text;}
 static unsigned char replay_output[COH_INITIAL_REPLAY_BYTES+COH_INITIAL_REPLAY_HEADER_BYTES];
@@ -16,6 +20,38 @@ static void replay_set(JNIEnv *e,jbyteArray target,jsize at,jsize count,const jb
 static void replay_delete(JNIEnv *e,jobject value){(void)e;CHECK(value==replay_output);replay_deletes++;}
 static jbyteArray replay_export(void){struct JNINativeInterface_ table=methods;table.NewByteArray=replay_new;table.SetByteArrayRegion=replay_set;table.DeleteLocalRef=replay_delete;JNIEnv capture_env=&table;replay_sets=0;return JNI(exportInitialReplay)(&capture_env,NULL,current);}
 static uint64_t replay_word64(const uint8_t *p){uint64_t value=0;for(unsigned i=0;i<8;i++)value|=(uint64_t)p[i]<<(8*i);return value;}
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+static jbyteArray costume_export(void){struct JNINativeInterface_ table=methods;table.NewByteArray=replay_new;table.SetByteArrayRegion=replay_set;table.DeleteLocalRef=replay_delete;JNIEnv capture_env=&table;replay_sets=0;return JNI(observedSelfCostume)(&capture_env,NULL,current);}
+static void check_costume_snapshot(void){
+ const size_t bytes=32+sizeof(active->selected_costume);size_t retained=initial_retained(active),saved_charge=observer_continuation_charge;
+ CHECK(bytes==48384&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==(jlong)retained);
+ CHECK(costume_export()==replay_output&&replay_output_bytes==(jsize)bytes&&replay_sets==2);
+ CHECK(!memcmp(replay_output,"COHCST01",8)&&load32(replay_output+8)==32&&load32(replay_output+12)==48352&&replay_word64(replay_output+16)==(uint64_t)current&&load32(replay_output+24)==active->initial_create.entity_index&&!load32(replay_output+28));
+ CHECK(!memcmp(replay_output+32,&active->selected_costume,sizeof(active->selected_costume)));replay_output[32]^=1;CHECK(memcmp(replay_output+32,&active->selected_costume,sizeof(active->selected_costume)));
+ for(replay_fault=1;replay_fault<=3;replay_fault++){unsigned deleted=replay_deletes;CHECK(!costume_export()&&exception_pending);CHECK(replay_deletes==deleted+(replay_fault!=1));exception_pending=0;}replay_fault=0;
+ active->busy=1;CHECK(!costume_export()&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==-1);active->busy=0;
+ active->suspended=1;CHECK(!costume_export()&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==-1);active->suspended=0;
+ active->disconnected=1;CHECK(!costume_export()&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==-1);active->disconnected=0;
+ exception_pending=1;CHECK(!costume_export());exception_pending=0;
+ uint32_t selected=active->initial_outer.selected_complete;active->initial_outer.selected_complete=0;CHECK(!costume_export());active->initial_outer.selected_complete=selected;
+ uint32_t matched=active->initial_create.self_dbid_matches_handoff;active->initial_create.self_dbid_matches_handoff=0;CHECK(!costume_export());active->initial_create.self_dbid_matches_handoff=matched;
+ jlong saved_token=current;current++;CHECK(!costume_export()&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==-1);current=saved_token;
+ observer_continuation_charge=8u*1024u*1024u;CHECK(!costume_export());observer_continuation_charge=SIZE_MAX;CHECK(!costume_export()&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==-1);observer_continuation_charge=saved_charge;
+ size_t saved_mapped=active->client_slots.mapped_bytes;active->client_slots.mapped_bytes=SIZE_MAX;CHECK(!costume_export()&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==-1);active->client_slots.mapped_bytes=saved_mapped;
+ CHECK(costume_export()==replay_output&&JNI(observedSelfCostumeSourceBytes)(&env,NULL,current)==(jlong)retained);
+}
+static void check_partial_predicate(void){
+ CohOriginalEntCostumeReport saved_outer=active->initial_outer;CohOriginalRareReport saved_rare=active->initial_rare;CohOriginalInitialTailReport saved_tail=active->initial_packet_tail;CohOriginalCommandTailReport saved_command=active->initial_commands;size_t saved_bits=active->initial_bits;
+ active->initial_outer.selected_complete=active->initial_rare.entity_suffix_complete=active->initial_packet_tail.source_tail_complete=1;active->initial_packet_tail.end_bit=100;active->initial_bits=200;
+ active->initial_commands=(CohOriginalCommandTailReport){0};CohOriginalCommandTailReport*r=&active->initial_commands;r->status=COH_UNSUPPORTED;r->unimplemented_handler=1;r->active_command=4;r->command_begin_bit=101;r->end_bit=110;CHECK(initial_partial_eligible(active));
+ r->unknown_command=1;CHECK(!initial_partial_eligible(active));r->unknown_command=0;r->unimplemented_handler=0;CHECK(!initial_partial_eligible(active));r->unimplemented_handler=1;
+ for(unsigned status=0;status<=7;status++){r->status=(CohStatus)status;CHECK(initial_partial_eligible(active)==(status==COH_UNSUPPORTED));}r->status=COH_UNSUPPORTED;
+ r->terminator=1;CHECK(!initial_partial_eligible(active));r->terminator=0;r->tail_complete=1;CHECK(!initial_partial_eligible(active));r->tail_complete=0;
+ r->active_command=0;CHECK(!initial_partial_eligible(active));r->active_command=4;r->command_begin_bit=99;CHECK(!initial_partial_eligible(active));r->command_begin_bit=110;CHECK(!initial_partial_eligible(active));r->command_begin_bit=101;r->end_bit=200;CHECK(!initial_partial_eligible(active));r->end_bit=110;
+ active->initial_outer.selected_complete=0;CHECK(!initial_partial_eligible(active));active->initial_outer.selected_complete=1;active->initial_rare.entity_suffix_complete=0;CHECK(!initial_partial_eligible(active));active->initial_rare.entity_suffix_complete=1;active->initial_packet_tail.source_tail_complete=0;CHECK(!initial_partial_eligible(active));
+ active->initial_outer=saved_outer;active->initial_rare=saved_rare;active->initial_packet_tail=saved_tail;active->initial_commands=saved_command;active->initial_bits=saved_bits;
+}
+#endif
 static unsigned char sized_packet[COH_INITIAL_REPLAY_BYTES+1];static size_t sized_bytes;static unsigned alias_source;
 static CohStatus sized_observe(void *context,const CohInitialCapture *c,const CohInitialCaptureEvent *event){
  CHECK(event->kind==COH_INITIAL_CAPTURE_ALLENTS);Interop *h=context;
@@ -73,6 +109,9 @@ static void outer_capture(const char *path,unsigned bodies,unsigned selected,uns
  CHECK(strstr(report_text,"\"initial_observed\":true")&&strstr(report_text,"\"ack_permitted\":false")&&!strstr(report_text,"REPORT_LIMIT"));
  if(!truncate)CHECK(strstr(report_text,"\"costume_next\":\"later very-rare entity fields\"")&&strstr(report_text,"\"costume_next_kind\":\"implementation remaining\"")&&r->titles_complete&&r->ragdoll_complete&&r->basic_stats_complete&&r->vision_complete&&r->taskforce_complete&&r->end_bit==multi_bits);
  check_replay();CHECK(strstr(outer_report(),"\"packet_copy_retained\":true")&&strstr(report_text,"\"initial_replay\":[8192,0]"));
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ if(outer_cases==1){check_costume_snapshot();check_partial_predicate();}
+#endif
  #define RECEIVE_MAX(name,value) active->receive.name=COH_RECEIVE_COUNT_MAX;
  COH_RECEIVE_FIELDS(RECEIVE_MAX)
  #undef RECEIVE_MAX
@@ -99,17 +138,28 @@ static void test_auto(size_t *at,uint32_t value){const unsigned widths[]={2,10,2
 /* Maximum-width projection only: this explicit transport double does not send. */
 static void bounded_report_stress(void){
  CohInitialContinuation saved=capture.d.continuation,*c=&capture.d.continuation;memset(c,0,sizeof(*c));
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ CohOriginalInitialTailReport saved_tail=active->initial_packet_tail;CohOriginalCommandTailReport saved_command=active->initial_commands;uint64_t saved_bits=active->initial_bits;
+#endif
  c->full_update_ack_queued=c->client_ready_queued=c->full_update_ack_sent=c->client_ready_sent=c->waiting_for_full_update=1;
  c->post_messages=128;c->post_rows=16;c->post_row_overflow=16;c->post_window_complete=1;c->abort_reason=COH_INITIAL_ABORT_MESSAGE_LIMIT;
  c->post_begin_ms=UINT64_MAX-20000;c->post_end_ms=UINT64_MAX;c->post_first_ms=UINT64_MAX-19999;c->post_last_ms=UINT64_MAX;c->post_between_sends=1;
  for(unsigned i=0;i<16;i++){CohInitialPostCommand*r=&c->post[i];r->kind=(CohInitialCaptureCommandKind)(i+2);r->count=7;r->min_bytes=r->max_bytes=4194304;r->total_bytes=UINT64_C(7)*4194304;r->total_bits=r->total_bytes*8;c->post_total_bytes+=r->total_bytes;c->post_total_bits+=r->total_bits;}
  c->post_overflow_bytes=UINT64_C(16)*4194304;c->post_overflow_bits=c->post_overflow_bytes*8;c->post_total_bytes+=c->post_overflow_bytes;c->post_total_bits+=c->post_overflow_bits;
  c->ack_delivery=(CohInitialDelivery){UINT64_MAX-20001,UINT64_MAX-20000,UINT64_MAX-19000,65536,16384,131072,3,2,1,1,0,COH_OK,0};c->ready_delivery=c->ack_delivery;c->ready_delivery.first_sent_ms++;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ c->post_response_begin_ms=UINT64_MAX-19999;c->post_ready_messages=126;
+ c->source_entity_update_complete=c->partial_tail=c->diagnostic_ack_intent=1;c->skipped_tail_command=UINT32_MAX;c->source_update_end_bit=33554400;c->tail_command_begin_bit=33554401;c->tail_body_begin_bit=33554403;c->tail_remaining_bits=29;
+ active->initial_packet_tail.source_tail_complete=1;active->initial_bits=33554432;active->initial_commands=(CohOriginalCommandTailReport){.status=COH_UNSUPPORTED,.begin_bit=33554400,.command_begin_bit=33554401,.end_bit=33554403,.active_command=UINT32_MAX,.commands_read=UINT32_MAX,.unimplemented_handler=1};
+#endif
  #define BOUNDED_STRESS(name,value) active->receive.name=COH_RECEIVE_COUNT_MAX;
  COH_RECEIVE_FIELDS(BOUNDED_STRESS)
  #undef BOUNDED_STRESS
  stress_request=1;CHECK(JNI(report)(&env,NULL,current)&&strlen(report_text)<7168&&!strstr(report_text,"REPORT_LIMIT")&&!strstr(report_text,"REPORT_UNAVAILABLE")&&!strstr(report_text,"report_core_limit"));
  CHECK(strstr(report_text,"\"initial_observed\":true")&&strstr(report_text,"\"power_unresolved\":[343,343,")&&strstr(report_text,"\"post_totals\":[128,536870912,4294967296,")&&strstr(report_text,"\"ack_delivery\":[")&&strstr(report_text,"\"ready_delivery\":[")&&strstr(report_text,"\"continuation_abort\":\"message limit\""));stress_request=0;capture.d.continuation=saved;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ CHECK(strstr(report_text,"\"initial_packet_complete\":false")&&strstr(report_text,"\"initial_partial_tail\":[1,1,0,1,4294967295,33554400,33554401,33554403,29,1]")&&strstr(report_text,"\"sends_ready\":true")&&strstr(report_text,"\"ack_permitted\":false"));active->initial_packet_tail=saved_tail;active->initial_commands=saved_command;active->initial_bits=saved_bits;
+#endif
 }
 #endif
 static void unresolved_power(const char *path,unsigned count){

@@ -3,8 +3,9 @@ package org.coh.nativecombined;
 /** Explicit local world-handoff diagnostic, owned by one executor.
  * Character byte[] is transient private picker content. report() contains only
  * bounded scalar observations. Raw reception alone permits no gameplay or ACK;
- * the capture diagnostic can ACK/READY only after the whole original receiver
- * reaches exact logical end. A fresh begin is needed
+ * the capture diagnostic can ACK/READY after exact logical end, or its explicit
+ * partial-tail diagnostic after the complete source entity update returns.
+ * A partial tail never claims complete INITIAL or character authority. A fresh begin is needed
  * after suspend/disconnect; handles are opaque tokens, never exported. */
 public final class InteropNative {
     static { System.loadLibrary("coh_combined_interop"); }
@@ -21,6 +22,15 @@ public final class InteropNative {
     public static native String report(long handle);
     /** Actual first selected-self wire observation: 16 little-endian bytes: int index,3 floats. */
     public static native byte[] observedSelfPose(long handle);
+    /** Continuation diagnostic only: COHCST01,32-byte LE header then48352-byte
+     * pointer-free decoded selected costume. Header: magic8,u32 header bytes,
+     * u32 snapshot bytes,u64 local owner epoch,u32 entity index,u32 reserved0.
+     * Copy only; unavailable/stale/suspended owners return null. */
+    public static native byte[] observedSelfCostume(long handle);
+    /** Exact current Interop struct, slots mmap/index and added continuation
+     * owner bytes; excludes returned Java array and baseline transport owners.
+     * Source reservation only, never process RAM. Returns -1 if unavailable. */
+    public static native long observedSelfCostumeSourceBytes(long handle);
     /** Capture profile only: bounded framed INITIAL bytes; query on the network owner before close. */
     public static native byte[] exportInitialReplay(long handle);
     /** Scalar owner state independent of bounded report serialization.
