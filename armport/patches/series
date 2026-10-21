@@ -20,3 +20,4 @@
 0020-game-autoresume-parse-table-64bit-addresses.patch
 0021-game-cmake-arm64-standins.patch
 0022-cmake-nvparse-arm64.patch
+0023-cmake-cubemapgen-arm64.patch
