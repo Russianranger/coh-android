@@ -11,7 +11,8 @@ typedef struct {
  CohStatus status;size_t begin_bit,end_bit,failure_bit,packet_bits,command_begin_bit;
  uint32_t active_command,commands_read,terminator,tail_complete,trace_count,
   trace_omitted,command_ids[16],alignment_markers,game_markers,static_map_messages,
-  static_map_rows,static_map_cells,static_map_words,static_map_dbid,static_map_checksum,contact_messages,contact_updates,contact_rows;
+  static_map_rows,static_map_cells,static_map_words,static_map_dbid,static_map_checksum,contact_messages,contact_updates,contact_rows,unimplemented_handler,unknown_command,
+  karma_messages,karma_values,event_start_messages,trial_status_messages,window_color_messages;
 }CohOriginalCommandTailReport;
 /* Original application command order from actual post-global cursor; only wire
  * staging, never UI/filesystem mutation, actor publication, READY or ACK. Reader
