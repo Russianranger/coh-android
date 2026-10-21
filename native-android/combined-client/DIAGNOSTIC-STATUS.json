@@ -1,18 +1,18 @@
 {
   "schema": 1,
   "series": "Combined Android diagnostic",
-  "updated_date": "2026-10-20",
+  "updated_date": "2026-10-21",
   "integration_branch": "native-android",
   "accepted_version": "0.1.14",
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
   "rendered": "Physical Thor0.1.17 full-screen640x360 PNG: textured pavement with yellow real-pose box;2 world packets,1 entity draw. No real costume; another pose remains unverified.",
-  "blocker": "Latest Thor0.1.17 packet is303112bits, distinct from completed301656-bit host fixture. Source update ends300152; application tail stops at command205 SERVER_SEND_KARMA_STATS at300248,2864bits remain. ACK/READY correctly unsent; real Huge actor remains unfinished.",
+  "blocker": "Both saved initial packets now reach exact original zero terminators on the host. Next physical evidence needed: original ACK/READY delivery and bounded post-READY server behavior; received Huge actor integration is in progress.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "On future instruction, consume original SERVER_SEND_KARMA_STATS and continue saved303112-bit packet to exact EOF or next real unknown before ACK/READY.",
-    "Finish genuine Huge assets, full material selection and authored morphology for a later APK; preserve box fallback.",
-    "Verify imported archive streaming at another real pose without rebuilding; retain caps and process identity export."
+    "Deliver 0.1.18 with both saved packets completed, diagnostic partial-tail fallback and live ACK/READY observation.",
+    "Draw all 13 genuine Huge meshes with received colors, source material fallback and authored scales; keep the box when a required input is unavailable.",
+    "After physical validation, verify another server-sent Atlas pose without rebuilding; no database mutation is scheduled."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -2168,7 +2168,7 @@
     "result": "PARTIAL WITH EXACT BLOCKER: physical full-screen640x360 capture and source pavement/box qualified; Huge28 plus343 unresolved power entries consumed; new303112-bit packet stops at command205/bit300248. No application ACK/READY or later position observation.",
     "next_action": "Wait for the next user prompt; no continued development authorized in this evidence-only update."
   },
-  "next_action": "Results recorded; wait for the next user prompt before development. No new APK, CI, replay or cleanup in this update.",
+  "next_action": "Finish native Huge owner and Android bridge qualification, then dispatch isolated 0.1.18 once. No new raw outputs or receipt files.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -3838,5 +3838,133 @@
       "completed_arm64_candidate_builds": 1,
       "physical_thor": "Matching physical 0.1.16 observations verified separately: Adreno 740 capture/replay, actual Huge body and BasePower lookup boundary, complete memory totals/SHOW and orderly cleanup."
     }
-  ]
+  ],
+  "cycle_0_1_18": {
+    "baseline_commit": "d6327cded4495ed2e826434f60422e368043522e",
+    "state": "both_saved_packets_exact_EOF_on_integrated_JNI_host_actor_integration_active",
+    "profile": "continuation-diagnostic",
+    "version_name": "0.1.18-continuation-diagnostic-test",
+    "version_code": 19,
+    "APK_built": false,
+    "source_caps_increased": false,
+    "new_receipt_files": false,
+    "cleanup_performed": false,
+    "workers": {
+      "tail": {
+        "worktree": "ack-observability-work",
+        "branch": "work/coh018-tail",
+        "commit": "082b79a6e2205690965b5fdd77456f18cf5c6a90",
+        "tested_tree": "167adffab2c4d115c4744758a57cc077bcb45b50",
+        "CI": "43,798 checks per mode for EACH actual leaf replay; release/ASan/UBSan pass. Both integrated JNI replays also pass.",
+        "accepted_scope": "34 active _Ch handlers plus inline Friends51 and GAME marker; 213 textual table entries, 212 active. Entry source graph: 97 sites/69 kinds =35 covered bodies,21 conditional unsupported,13 outer/framing;33 dynamic boundaries.",
+        "blocker": null,
+        "next_action": "Qualify batched source fixtures in CI; observe actual server messages after READY on Thor.",
+        "integrated_commit": "ab0dd4060"
+      },
+      "source_assets": {
+        "worktree": "huge-asset-provider-work",
+        "branch": "work/coh018-assets",
+        "commit": "ee88a19d9630b5c98bacb941ed86e82d14c445f0",
+        "tested_tree": "2fd3289ed43b94ab60d7e40ce11c5cc0b41134b1",
+        "CI": "Root provider controls20 pass; 40 genuine selected bodies recovered and decoded hashes checked;27 original texture cached keys match names.",
+        "accepted_scope": "All three formerly missing Huge GEOs are present in the zones supplement. Existing accepted 0.1.17 import set includes that supplement. 11 geometry source files yield13 visible models,2 authored scale GEOs,27 Basic texture bodies.",
+        "blocker": null,
+        "next_action": "Feed existing immutable CLIENT/zones descriptors to the live actor; no full archive or catalog copy.",
+        "integrated_commit": "5070a99a8",
+        "selected_host_transport": {
+          "bytes": 4798668,
+          "sha256": "104eacd2c5db968e71c12b91034d81efd52346c832ce6eeae4cb4f49b0589da5",
+          "decoded_body_bytes": 4790228,
+          "body_count": 40,
+          "original_archive_proof": false,
+          "scope": "Generated host transport around independently checked original bodies, not a device import or complete archive identity."
+        }
+      },
+      "Huge_actor": {
+        "worktree": "huge-appearance-work",
+        "branch": "work/coh018-actor",
+        "commit": "800cead332d11da931759f8dc5f336ea1ed47ccc",
+        "tested_tree": null,
+        "CI": "OriginalHuge-scaleoracle4023checks/mode,73scalevectors release/ASan/UBSan pass",
+        "accepted_scope": "GenuineHugefat/skinnyBoneIdmodel scale mapping andoriginaltypescaledata; noWretchmorphology",
+        "blocker": "RuntimeFDpreparedactor andfullmaterials/scalesources inprogress",
+        "next_action": "atomic source-scaleadapter,13meshhostcapture,liveimportedFDloadingwithboxfallback"
+      },
+      "continuation": {
+        "worktree": "coh018-continuation-work",
+        "branch": "work/coh018-continuation",
+        "commit": "bf4270d694a58cfca0a47a2f142c4fea844948d7",
+        "tested_tree": "8a5b60e1f3e7e80901b2ce1cba2bd91ea0da5d7f",
+        "CI": "Original transport fallback9832/15cases, bounded6270/11 and legacy3560/5 checks pass each mode; generated JNI10,834,027 checks/165 cases per mode pass. Both actual integrated replays922/10 cases per mode pass.",
+        "accepted_scope": "Known unimplemented handler only after source entity-update completion permits diagnostic partial-tail original ACK/READY. Unknown commands, truncation and trailing bits refuse.20s first-response bound, one accepted same-ID retry,30s observation after first READY response; unchanged128-message/16-kind caps.",
+        "blocker": null,
+        "next_action": "Ship isolated diagnostic and collect physical send timing, command counts/sizes, positions and process identities.",
+        "integrated_commit": "1e74e19a3"
+      },
+      "packaging_coordinator": {
+        "worktree": "coh-cleanup",
+        "commit": "845caa8c41a93f49498a0877a89009e107f741c4",
+        "tested_tree": "456680c8bec884a06c5590588cbbc9e16920bb84",
+        "CI": "Package identity/ABI/upgrade controls12 and protected framework controls4 pass; protected input audit9 passes. No APK built or dispatched yet.",
+        "accepted_scope": "newisolatedcode19profile withbounded/fallback andlivecostumeflags;15JNIcontractonlynewprofile; old0.1.17 profile preserved",
+        "blocker": "Native Huge owner and final Android bridge qualification in progress.",
+        "next_action": "Integrate frozen actor, qualify exact owner/cleanup and build one signed ARM64 diagnostic through CI."
+      }
+    },
+    "host_replay_qualification": {
+      "tested_commit": "1e74e19a31f462a1dcf9744faaf6993fcb2e2d2d",
+      "tested_tree": "4ed52c05794136b6e92965b548af95ef072378ca",
+      "modes": [
+        "release",
+        "ASan",
+        "UBSan"
+      ],
+      "packets": [
+        {
+          "physical_version": "0.1.16",
+          "replay_sha256": "148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba",
+          "exact_end_bits": 301656,
+          "checks_per_mode": 922,
+          "cases_per_mode": 10,
+          "unresolved_power_CRCS": 343,
+          "report_peak_bytes": 6864,
+          "initial_aggregate_peak_bytes": 7534087,
+          "completion_callbacks": 1
+        },
+        {
+          "physical_version": "0.1.17",
+          "replay_sha256": "74d85be47f23fe674e32178296aaa0f93f8830bb9ec4a08e166ee6f4f4e1a234",
+          "exact_end_bits": 303112,
+          "checks_per_mode": 922,
+          "cases_per_mode": 10,
+          "unresolved_power_CRCS": 343,
+          "report_peak_bytes": 6864,
+          "initial_aggregate_peak_bytes": 7534269,
+          "completion_callbacks": 1
+        }
+      ],
+      "network_sends": 0,
+      "live_server_behavior_observed": false,
+      "scope": "Saved physical packets through shipping JNI source receiver with test-owned selection and Android/JNI/transport doubles; exact EOF is established, live authority is not."
+    },
+    "costume_snapshot": {
+      "physical_version": "0.1.17",
+      "snapshot_bytes": 48352,
+      "snapshot_sha256": "02f4666ee841c6243926b75e947ed1ff635a511454ac3fd694c5c043c6b83831",
+      "identical_to_0_1_16": true,
+      "differing_bytes": 0,
+      "scope": "Exact checked COHCST01 JNI getter frame, not a reconstructed costume."
+    },
+    "memory": {
+      "initial_limit_bytes": 8388608,
+      "scene_limit_bytes": 100663296,
+      "native_report_limit_bytes": 7168,
+      "generated_JNI_report_peak_bytes": 6932,
+      "new_packet_initial_aggregate_peak_bytes": 7534269,
+      "old_packet_initial_aggregate_peak_bytes": 7534087,
+      "accounted_initial_stack_reserve_bytes": 65536,
+      "process_RSS_PSS": "No new device observation; retained physical0.1.17 values stay separate.",
+      "postgres_tuned": false
+    }
+  }
 }
