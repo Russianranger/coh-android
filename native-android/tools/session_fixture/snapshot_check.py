@@ -34,6 +34,10 @@ PREAMBLE = r'''
 #include "coh_walk.h"
 #include "coh_walkable_scene.h"
 #include "session_stream_world.h"
+#include "session_frame_capture.h"
+#ifndef COH_FRAME_CAPTURE_DIAGNOSTIC
+#define COH_FRAME_CAPTURE_DIAGNOSTIC 0
+#endif
 typedef unsigned GLuint;
 typedef intptr_t jlong;
 typedef void *jclass;
@@ -129,7 +133,8 @@ def main():
     include_paths = [core / 'world-probe/app/src/main/cpp',
                      core / 'character-probe/app/src/main/cpp',
                      core / 'material-probe/app/src/main/cpp',
-                     core / 'session-client/app/src/main/cpp', core / 'world', core / 'animation', core / 'character',
+                     core / 'session-client/app/src/main/cpp', core / 'engine/assets',
+                     core / 'world', core / 'animation', core / 'character',
                      core / 'motion', core / 'locomotion', core / 'walk', core / 'walkable']
     with tempfile.TemporaryDirectory(prefix='coh-snapshot-') as directory:
         code = Path(directory) / 'snapshot.c'
