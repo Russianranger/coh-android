@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 164aa6a..cffe58e 100644
+index 164aa6a..454a5fe 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -36,6 +36,18 @@ if(MSVC)
@@ -21,14 +21,15 @@ index 164aa6a..cffe58e 100644
  # Run this mandatory check before other targets, even with testing disabled.
  add_executable(cox_precise_floating_point_test EXCLUDE_FROM_ALL
  	cmake/tests/precise_floating_point.cpp)
-@@ -44,16 +56,22 @@ if(MINGW)
+@@ -44,16 +56,23 @@ if(MINGW)
  	# Keep the check runnable without compiler runtime DLL copies.
  	target_link_options(cox_precise_floating_point_test PRIVATE -static)
  endif()
 +option(COX_ARMPORT_COMPILE_ONLY "Compile-only ARM64 build without a runnable toolchain" OFF)
 +if(COX_ARMPORT_COMPILE_ONLY)
 +	add_custom_target(verify_precise_floating_point
-+		COMMAND "${CMAKE_COMMAND}" -E echo "precise floating-point check skipped (compile-only)")
++		COMMAND "${CMAKE_COMMAND}" -E echo "precise floating-point check skipped: compile-only build"
++		VERBATIM)
 +else()
  add_custom_target(verify_precise_floating_point ALL
  	COMMAND cox_precise_floating_point_test

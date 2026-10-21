@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cffe58e..ce1b627 100644
+index 454a5fe..c14c875 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -48,6 +48,13 @@ if(COX_ARM64_WINDOWS)
@@ -16,7 +16,7 @@ index cffe58e..ce1b627 100644
  # Run this mandatory check before other targets, even with testing disabled.
  add_executable(cox_precise_floating_point_test EXCLUDE_FROM_ALL
  	cmake/tests/precise_floating_point.cpp)
-@@ -161,4 +168,10 @@ function(cox_require_precise_floating_point directory)
+@@ -162,4 +169,10 @@ function(cox_require_precise_floating_point directory)
  	endforeach()
  endfunction()
  
