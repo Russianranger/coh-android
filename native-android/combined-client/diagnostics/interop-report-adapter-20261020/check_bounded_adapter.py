@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run unchanged legacy deep assertions on an explicit test-only view, and independently qualify every exact bounded shipping report."""
 from pathlib import Path
-import argparse,hashlib,json,os,re,shlex,shutil,subprocess,gzip
+import argparse,hashlib,json,os,re,shlex,shutil,subprocess,gzip,sys
 BASE=Path('native-android/combined-client/diagnostics/interop-adapter-20261018')
 SOURCE=Path('native-android/combined-client/app/src/main/cpp/interop_network.c')
 ROLE=Path('native-android/combined-client/diagnostics/interop-report-adapter-20261020')
@@ -16,7 +16,7 @@ def main():
  compiler=Path(shutil.which(os.environ.get('CC','cc'))).resolve();flags=[str(compiler),'-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-pie','-no-pie','-fstack-usage','-DCOH_INTEROP_REQUEST_TX=1',
   '-I',str(BASE/'test-include'),'-I','native-android/engine/initial-capture','-I','native-android/engine/entities','-I','native-android/engine/session','-I','native-android/include']
  sources=[ROLE/'test_bounded_adapter.c',Path('native-android/engine/initial-capture/coh_initial_create_probe.c'),Path('native-android/engine/initial-capture/coh_initial_pose_probe.c'),Path('native-android/engine/initial-capture/coh_initial_sequence_probe.c'),Path('native-android/engine/initial-capture/coh_initial_triggered_probe.c'),Path('native-android/engine/initial-capture/coh_initial_aianim_probe.c'),Path('native-android/engine/initial-capture/coh_initial_netfx_probe.c'),Path('native-android/engine/initial-capture/coh_initial_costume_probe.c'),Path('native-android/engine/initial-capture/coh_initial_reward_probe.c'),Path('native-android/engine/initial-capture/coh_initial_reward_list_probe.c'),Path('native-android/engine/initial-capture/coh_initial_costume_slots_probe.c'),Path('native-android/engine/initial-capture/coh_initial_costume_body_probe.c'),Path('native-android/engine/initial-capture/coh_initial_appearance_probe.c'),Path('native-android/engine/initial-capture/coh_initial_sgcolors_probe.c'),Path('native-android/engine/initial-capture/coh_initial_scales_probe.c'),Path('native-android/engine/initial-capture/coh_initial_partcount_probe.c'),Path('native-android/engine/initial-capture/coh_local_bodypart_default.c'),Path('native-android/engine/entities/coh_original_costume_receive.c'),Path('native-android/engine/entities/coh_entities.c'),Path('native-android/engine/replication/coh_replication.c')];dep=run([*flags,'-M',*sources],root);(out/'dependencies.stdout').write_bytes(dep.stdout);(out/'dependencies.stderr').write_bytes(dep.stderr);need(dep.returncode==0 and not dep.stderr,'dependencies refused')
- project={BASE/'check_adapter.py',BASE/'test_interop_adapter.c',ROLE/'check_bounded_adapter.py',JAVA};system={compiler}
+ project={BASE/'check_adapter.py',BASE/'test_interop_adapter.c',ROLE/'check_bounded_adapter.py',JAVA,Path('native-android/combined-client/tools/interop_package_audit.py')};system={compiler}
  for line in dep.stdout.decode().replace('\\\n',' ').splitlines():
   for token in shlex.split(line.split(':',1)[1]):
    p=Path(token);p=(p if p.is_absolute()else root/p).resolve();need(p.is_file(),'nonregular dependency')
@@ -64,7 +64,10 @@ def main():
  (out/'source-after.json').write_text(json.dumps({str(p):sha(root/p)for p in sorted(project)},indent=2,sort_keys=True)+'\n')
  need(before=={str(p):sha(root/p)for p in sorted(project)},'source changed');need(sysbefore=={str(p):sha(p)for p in sorted(system)},'compiler/header changed')
  need(all(sha(out/('adapter-'+m))==v['sha256']for m,v in binaries.items()),'binary changed');need(all(sha(Path(p))==v for p,v in libraries.items()),'linked dependency changed')
- methods=re.findall(r'public static native ([^;]+);',(root/JAVA).read_text());need(len(methods)==11 and {'int controlState(long handle)','int configureBodyPartsCache(String absolutePath)','byte[] observedSelfPose(long handle)'}.issubset(methods),'Java API shape');need('System.loadLibrary("coh_combined_interop")'in(root/JAVA).read_text(),'DSO name')
+ sys.path.insert(0,str(root/'native-android/combined-client/tools'))
+ from interop_package_audit import required_methods
+ methods=re.findall(r'public static native ([^;]+);',(root/JAVA).read_text());names=[re.search(r'\b(\w+)\s*\(',method).group(1)for method in methods]
+ need(len(names)==len(set(names)) and set(names)==required_methods(continuation_diagnostic=True) and {'int controlState(long handle)','int configureBodyPartsCache(String absolutePath)','byte[] observedSelfPose(long handle)'}.issubset(methods),'Java API shape');need('System.loadLibrary("coh_combined_interop")'in(root/JAVA).read_text(),'DSO name')
  projection_bound={'shipping_report_limit_including_nul':7168,'full_detail_view_is_TEST_ONLY':True,'every_original_deep_assertion_executed':True,'shipping_JSON_never_enriched':True}
  receipt={'schema':'coh-bounded-shipping-and-test-only-deep-adapter-qualification-v1','passed':True,'head_read':head,'project_source_sha256':before,'compiler_and_headers_sha256':sysbefore,'ldd_resolved_dependency_sha256':libraries,'commands':commands,'results':results,'executables':binaries,'host_stack_frames':stacks,'Java_native_declarations':methods,
   'JNI_initial_controller_crypto_provider_and_request_witness_explicit_doubles':True,'historical_adapter_assertions_executed_unchanged_on_explicit_TEST_ONLY_view':True,'original_fixture_and_checker_preserved':True,'shipping_report_independently_qualified_before_test_only_view':True,'Android_NDK_JNI_ABI_or_Thor_execution':False,'actual_socket_or_original_server_transaction':False,'packet_copy_or_private_identity_export':False,'global_memory_or_RSS_fit':False,'LeakSanitizer_enabled':False,'reward_slot_body_appearance_sg_scales_partcount_projection_bound':projection_bound,'world_authority':False}
