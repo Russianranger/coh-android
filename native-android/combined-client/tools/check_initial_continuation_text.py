@@ -29,7 +29,7 @@ JSON=r'''package org.json;import java.util.*;public class JSONObject {Map<String
 ARRAY=r'''package org.json;public class JSONArray {long[]v;public JSONArray(long...x){v=x;}public int length(){return v.length;}public long optLong(int i){return optLong(i,0);}public long optLong(int i,long d){return i>=0&&i<v.length?v[i]:d;}public int optInt(int i,int d){return(int)optLong(i,d);}}'''
 def renderer_controls(extract,work):
  source=(ROOT/'native-android/session-client/app/src/main/cpp/session_renderer.c').read_text()
- begin=source.index('        jappend(&j,",\\"observed_server_entity')
+ begin=source.index('        uint64_t box_draws=s->observed_entity_draws;')
  end=source.index('        const CohSessionWorldStats *t=',begin)
  helper=extract(source,'static void jappend(Json *j,const char *format,...) {')
  harness=r"""
@@ -41,18 +41,18 @@ def renderer_controls(extract,work):
 #include <inttypes.h>
 #define JSON_CAP 2048
 typedef struct {char*p;size_t n;int ok;}Json;
-typedef struct {uint32_t observed_entity_index;float observed_entity_position[3];uint64_t observed_entity_updates,observed_entity_draws;}Session;
+typedef struct {uint32_t observed_entity_index;float observed_entity_position[3];uint64_t observed_entity_updates,observed_entity_draws,received_frames;}Session;
 /*HELPER*/
-int main(void){Session data={7,{1,2,3},4,12};Session*s=&data;char output[JSON_CAP]="{\"scope\":0";Json j={output,strlen(output),1};
+int main(void){Session data={7,{1,2,3},4,12,5};Session*s=&data;char output[JSON_CAP]="{\"scope\":0";Json j={output,strlen(output),1};
 /*BODY*/
 jappend(&j,"}");if(!j.ok)return 1;puts(output);return 0;}
 """.replace('/*HELPER*/',helper).replace('/*BODY*/',source[begin:end])
  path=work/'renderer-scope.c';path.write_text(harness);controls=0
  for mode,flags in [('release',['-O2']),('asan',['-O1','-fsanitize=address','-no-pie']),('ubsan',['-O1','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
-  for profile in (0,1):
-   binary=work/('renderer-'+mode+str(profile));subprocess.run(['cc','-std=c11','-Wall','-Wextra','-Werror','-pedantic','-DCOH_FULLSCREEN_DIAGNOSTIC='+str(profile),*flags,str(path),'-o',str(binary)],check=True,timeout=60)
+  for profile,actor in ((0,0),(1,0),(1,1)):
+   binary=work/('renderer-'+mode+str(profile)+str(actor));subprocess.run(['cc','-std=c11','-Wall','-Wextra','-Werror','-pedantic','-DCOH_FULLSCREEN_DIAGNOSTIC='+str(profile),'-DCOH_LIVE_COSTUME_DIAGNOSTIC='+str(actor),*flags,str(path),'-o',str(binary)],check=True,timeout=60)
    result=subprocess.run([str(binary)],check=True,capture_output=True,text=True,timeout=30,env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1'))
-   observed=json.loads(result.stdout)['observed_server_entity'];assert observed['complete_actor']is False and observed['box_draws']==12
+   observed=json.loads(result.stdout)['observed_server_entity'];assert observed['complete_actor']is False and observed['box_draws']==(7 if actor else 12)
    if profile:assert 'application_ack'not in observed and observed['renderer_sends_application_ack']is False and observed['transport_send_facts']=='server_protocol.initial_continuation'
    else:assert observed['application_ack']is False and 'renderer_sends_application_ack'not in observed and 'transport_send_facts'not in observed
    controls+=1

@@ -212,7 +212,7 @@ def source_checks(sources, method):
     assert "capture_read&&capture_presented&&!s->cancel&&s->epoch==(uint64_t)epoch&&s->observed_entity_updates==startup->observed_entity_updates&&s->observed_entity_index==startup->observed_entity_index" in render
     assert "startup->capture_charge=charge+COH_CAPTURE_RESERVE" in render
     pose = compact(method(renderer, "JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_observedEntity("))
-    assert "s->observed_entity_updates++;s->capture_lock_frame=s->frames;s->capture_draws=0" in pose
+    assert pose.index("s->observed_entity_updates++;") < pose.index("s->capture_lock_frame=s->frames;") < pose.index("s->capture_draws=0")
     assert '\\"startup_witness\\":false' in renderer
     assert "#define COH_CAPTURE_WAIT 12u" in sources["header"]
     assert "#define COH_CAPTURE_RESERVE (1024u*1024u)" in sources["header"]

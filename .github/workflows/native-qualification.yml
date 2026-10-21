@@ -405,9 +405,43 @@ jobs:
         python3 native-android/session-client/tools/check_runtime_zip_fixtures.py --cache /tmp/combined-neighborhood-inputs
         python3 native-android/session-client/tools/prepare_runtime_zip_fixtures.py --cache /tmp/combined-neighborhood-inputs --output "$RUNNER_TEMP/runtime-format-fixtures"
         python3 native-android/session-client/tools/check_live_world.py --assets native-android/combined-client/app/src/main/assets --metadata native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json --live-assets native-android/combined-client/app/src/main/assets --live-metadata native-android/results/combined-neighborhood-diagnostic/live-world-inputs.json --archives "$RUNNER_TEMP/runtime-format-fixtures" --world-bin native-android/combined-client/app/src/main/assets/world.bin --source-root . --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/runtime-world-check" --output native-android/results/combined-neighborhood-diagnostic/runtime-world-host.json
+    - name: Qualify received Huge ownership and selected original source identities
+      if: inputs.diagnostic_profile == 'continuation-diagnostic'
+      env:
+        LIBGL_ALWAYS_SOFTWARE: '1'
+        EGL_PLATFORM: surfaceless
+        LP_NUM_THREADS: '2'
+      run: |
+        python3 native-android/engine/appearance/recover_costume_sources.py --source-root . --resource-plan native-android/engine/appearance/received_huge_source_requests.json --cache "$RUNNER_TEMP/huge-source-cache" --output "$RUNNER_TEMP/huge-selected-source"
+        python3 native-android/engine/appearance/recover_huge_rig.py --rig native-android/combined-client/app/src/main/assets/rig.bin --output "$RUNNER_TEMP/huge-original-rig"
+        python3 native-android/engine/appearance/check_recover_costume_sources.py --source-root . --base "$RUNNER_TEMP/huge-original-rig/base.anim" --inventory-cache "$RUNNER_TEMP/huge-source-cache" > native-android/results/combined-neighborhood-diagnostic/huge-source-controls.json
+        python3 native-android/engine/appearance/check_huge_scales.py > native-android/results/combined-neighborhood-diagnostic/huge-source-scales.json
+        python3 native-android/engine/appearance/check_huge_materials.py --mode all > native-android/results/combined-neighborhood-diagnostic/huge-source-materials.json
+        # The genuine private costume replay and all13-mesh capture are qualified
+        # locally; this CI run does not upload or invent a physical snapshot.
+        python3 native-android/engine/appearance/check_received_owner.py --mode all --headers "$RUNNER_TEMP/neighborhood-check/include" > native-android/results/combined-neighborhood-diagnostic/received-owner-controls.json
+        python3 native-android/engine/appearance/check_session_received.py --mode all --headers "$RUNNER_TEMP/neighborhood-check/include" --work "$RUNNER_TEMP/received-session-controls" --output native-android/results/combined-neighborhood-diagnostic/received-session-controls.json
     - name: Build and inspect the signed ARM64 diagnostic
       run: |
         python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohBuildProfile="$DIAGNOSTIC_PROFILE" -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
+        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then
+          python3 - <<'PYSTACK'
+        import json, pathlib
+        rows = []
+        for path in pathlib.Path('native-android/combined-client/app/.cxx').rglob('*.su'):
+            if 'arm64-v8a' not in path.parts:
+                continue
+            for line in path.read_text().splitlines():
+                fields = line.split('\t')
+                if len(fields) == 3 and fields[1].isdigit():
+                    rows.append(dict(function=fields[0].rsplit(':', 1)[-1], bytes=int(fields[1]), kind=fields[2]))
+        path = pathlib.Path('native-android/results/combined-neighborhood-diagnostic/received-owner-controls.json')
+        result = json.loads(path.read_text())
+        result['Android_ARM64_debug_stack_frames'] = dict(available=bool(rows), count=len(rows), largest=sorted(rows, key=lambda row: row['bytes'], reverse=True)[:12], scope='Individual Clang frames; host call-chain qualification and explicit reserves are separate.')
+        path.write_text(json.dumps(result, indent=2) + '\n')
+        print(json.dumps(result['Android_ARM64_debug_stack_frames']))
+        PYSTACK
+        fi
         cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-${DIAGNOSTIC_VERSION}-${DIAGNOSTIC_PROFILE}-arm64.apk
         python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-${DIAGNOSTIC_VERSION}-${DIAGNOSTIC_PROFILE}-arm64.apk --abi arm64-v8a --require-clean --require-interop --build-profile "$DIAGNOSTIC_PROFILE" --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-neighborhood-diagnostic/arm64-package.json
         python3 native-android/combined-client/tools/interop_package_audit.py --"$DIAGNOSTIC_PROFILE" --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-${DIAGNOSTIC_VERSION}-${DIAGNOSTIC_PROFILE}-arm64.apk --abi arm64-v8a --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-neighborhood-diagnostic/arm64-interop-dso.json

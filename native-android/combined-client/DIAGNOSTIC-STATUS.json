@@ -2168,7 +2168,7 @@
     "result": "PARTIAL WITH EXACT BLOCKER: physical full-screen640x360 capture and source pavement/box qualified; Huge28 plus343 unresolved power entries consumed; new303112-bit packet stops at command205/bit300248. No application ACK/READY or later position observation.",
     "next_action": "Wait for the next user prompt; no continued development authorized in this evidence-only update."
   },
-  "next_action": "Finish native Huge owner and Android bridge qualification, then dispatch isolated 0.1.18 once. No new raw outputs or receipt files.",
+  "next_action": "Run one signed0.1.18 diagnostic qualification and deliver its exact APK/hash plus the short Thor procedure. No live ACK/server behavior or Thor Huge rendering is claimed before the next export.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -3841,7 +3841,7 @@
   ],
   "cycle_0_1_18": {
     "baseline_commit": "d6327cded4495ed2e826434f60422e368043522e",
-    "state": "both_saved_packets_exact_EOF_on_integrated_JNI_host_actor_integration_active",
+    "state": "qualified_host_source_ready_for_one_CI_diagnostic_dispatch",
     "profile": "continuation-diagnostic",
     "version_name": "0.1.18-continuation-diagnostic-test",
     "version_code": 19,
@@ -3883,12 +3883,18 @@
       "Huge_actor": {
         "worktree": "huge-appearance-work",
         "branch": "work/coh018-actor",
-        "commit": "800cead332d11da931759f8dc5f336ea1ed47ccc",
-        "tested_tree": null,
-        "CI": "OriginalHuge-scaleoracle4023checks/mode,73scalevectors release/ASan/UBSan pass",
-        "accepted_scope": "GenuineHugefat/skinnyBoneIdmodel scale mapping andoriginaltypescaledata; noWretchmorphology",
-        "blocker": "RuntimeFDpreparedactor andfullmaterials/scalesources inprogress",
-        "next_action": "atomic source-scaleadapter,13meshhostcapture,liveimportedFDloadingwithboxfallback"
+        "commit": "6de43d3ff1182be0fd45b304bc8de380ef8e7062",
+        "tested_tree": "d1e68919b27af39ebb2bb3c00e5e86f0a494d491",
+        "CI": "Local actual owner13 parts/69 allocation failures and FD mutation/alias cleanup pass each release/ASan/UBSan;4023 scale and186 material oracle checks per mode. Exact native Session setter601 checks/mode;46 source/header pins unchanged. Old/new renderer macro strict syntax passes.",
+        "accepted_scope": "All13 genuine Huge meshes with byte-exact retained Huge rig, packet RGB and authored morphology. Original no-MULTI/no-BUMP fallback, limited LINEAR/REPEAT/noMip sampler and opaque Ready/base inspection; no animation/fade or complete effective material equivalence claim.",
+        "blocker": "Actual Android ABI/build and Thor evidence pending.",
+        "next_action": "One diagnostic CI build, Android13 update/lifecycle qualification, then physical send/actor/capture validation.",
+        "source_owner_commit": "cd096abbdd977daee4e73651d976ab0ccdab517f",
+        "integrated_commits": [
+          "c4da0fb2a",
+          "a6b0a7dd2",
+          "9950f7990"
+        ]
       },
       "continuation": {
         "worktree": "coh018-continuation-work",
@@ -3905,10 +3911,10 @@
         "worktree": "coh-cleanup",
         "commit": "845caa8c41a93f49498a0877a89009e107f741c4",
         "tested_tree": "456680c8bec884a06c5590588cbbc9e16920bb84",
-        "CI": "Package identity/ABI/upgrade controls12 and protected framework controls4 pass; protected input audit9 passes. No APK built or dispatched yet.",
+        "CI": "Local package12/framework4, protected-input9, Java bridge684, continuation text9/renderer schema9, capture wiring58permode/30source assertions and runtime wiring24permode pass. Both private JNI replay source closures and46 Session helper pins still match integrated files.",
         "accepted_scope": "newisolatedcode19profile withbounded/fallback andlivecostumeflags;15JNIcontractonlynewprofile; old0.1.17 profile preserved",
-        "blocker": "Native Huge owner and final Android bridge qualification in progress.",
-        "next_action": "Integrate frozen actor, qualify exact owner/cleanup and build one signed ARM64 diagnostic through CI."
+        "blocker": "CI not yet dispatched; no APK built.",
+        "next_action": "Publish ordered compatible commits with expected parent, dispatch continuation-diagnostic once, stop after at most two corrective redispatches."
       }
     },
     "host_replay_qualification": {
@@ -3964,7 +3970,53 @@
       "old_packet_initial_aggregate_peak_bytes": 7534087,
       "accounted_initial_stack_reserve_bytes": 65536,
       "process_RSS_PSS": "No new device observation; retained physical0.1.17 values stay separate.",
-      "postgres_tuned": false
-    }
+      "postgres_tuned": false,
+      "Huge_retained_CPU_bytes": 5168180,
+      "Huge_texture_RGBA_bytes": 4497412,
+      "Huge_GPU_reserved_bytes": 4775540,
+      "Huge_backend_CPU_reserved_bytes": 50616,
+      "Huge_prepare_module_peak_bytes": 12228910,
+      "Huge_module_stack_reserve_bytes": 32768,
+      "Huge_JNI_stack_reserve_bytes": 32768,
+      "Huge_host_conservative_stack_bound_bytes": 26704,
+      "scope": "Huge module peak excludes parent scene/old owners/interop sources; the Session adapter adds actual parent/old/candidate/borrowed/scratch/capture charges before publication. Android ARM64 Clang frames are collected by CI, device RSS/PSS by the next export."
+    },
+    "Huge_host": {
+      "parts": 13,
+      "vertices": 2068,
+      "indices": 5814,
+      "textures_uploaded": 21,
+      "automatic_material_fallbacks": 4,
+      "contexts": 2,
+      "visible_pixels_each": 38554,
+      "rgba_sha256": "16edc648911180f819284a2aaf1b1a0e2f8c365e89d3e5d6c22610b3e39515fa",
+      "PNG": {
+        "bytes": 101586,
+        "width": 512,
+        "height": 640,
+        "sha256": "80d2424d2f882d107e2194cbc207ea7652487bcc5af613c8a032f1665eecb6fc"
+      },
+      "driver": "Mesa llvmpipe OpenGL ES3.2",
+      "actual_Thor_actor_observed": false,
+      "source_material_scope": "27 recovered Basic bodies cover selected ordinary and MULTI leaves;8 ordinary names also have source bump overrides intentionally outside the declared no-BUMP feature profile."
+    },
+    "ci": {
+      "status": "never_dispatched_yet",
+      "purpose": "combined-diagnostic",
+      "diagnostic_profile": "continuation-diagnostic",
+      "initial_dispatches": 0,
+      "corrective_redispatches": 0,
+      "max_corrective_redispatches": 2,
+      "release_published": false
+    },
+    "Thor_procedure": [
+      "Install0.1.18 over0.1.17 without clearing data; retain same imports/profile.",
+      "Start existing server, select same character and handoff once.",
+      "Full screen enters; corner Return to controls or Back exits.",
+      "Wait35seconds after ACK and READY show sent; export anyway after timeout/disconnect.",
+      "Return to controls, then Back to Combined launcher; Export report and save ZIP.",
+      "Keep640x360 scene-capture.png, initial replay, send timing and memory JSON.",
+      "Stop normally; do not repeat handoff or change the database."
+    ]
   }
 }

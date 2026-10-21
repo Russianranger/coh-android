@@ -51,6 +51,7 @@ endif()
 option(COH_LIVE_COSTUME_DIAGNOSTIC "Draw received costume from selected imported source members with box fallback" OFF)
 if(COH_LIVE_COSTUME_DIAGNOSTIC)
     target_compile_definitions(coh_session_client PRIVATE COH_LIVE_COSTUME_DIAGNOSTIC=1)
+    target_compile_options(coh_session_client PRIVATE -fstack-usage)
     target_include_directories(coh_session_client PRIVATE "${CORE_ROOT}/engine/appearance")
     target_sources(coh_session_client PRIVATE
         "${CORE_ROOT}/engine/appearance/coh_appearance.c"
@@ -61,5 +62,6 @@ if(COH_LIVE_COSTUME_DIAGNOSTIC)
         "${CORE_ROOT}/engine/appearance/coh_appearance_actor.c"
         "${CORE_ROOT}/engine/appearance/coh_appearance_scales.c"
         "${CORE_ROOT}/engine/appearance/coh_appearance_material.c"
-        "${CORE_ROOT}/engine/appearance/coh_received_costume.c")
+        "${CORE_ROOT}/engine/appearance/coh_received_costume.c"
+        "${CORE_ROOT}/engine/appearance/coh_received_costume_fd.c")
 endif()
