@@ -7,13 +7,9 @@
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
   "rendered": "Physical0.1.18 uses box fallback: reported missing asset Face_V_Helmet_Robotic_01. Its exported image is the byte-identical retained017 pavement/box frame, not a new018 capture. Host13-Huge-mesh result remains host-only.",
-  "blocker": "Initial303112-bit packet now completes physically and ACK/READY are sent. Remaining observed issues: Face_V_Helmet_Robotic_01 asset resolution, no fresh018 capture, and115 unsupported post-READY position observations.",
+  "blocker": "No pending development in this cycle. Thor validation of the fresh capture, post-READY replay completeness and Huge appearance remains unobserved.",
   "planned_steps_to_source_world_with_entity": 1,
-  "next_steps": [
-    "Bounded raw post-READY full snapshot and UPDATE fixture export; no new update decoding.",
-    "Current app version and activity session required for capture export; refresh capture viewport after actor epoch changes.",
-    "Case-insensitive texture basename lookup across loaded verified archive descriptors, including reference textures; box fallback."
-  ],
+  "next_steps": [],
   "working_rules": [
     "Update this diagnostic series status in place.",
     "Commit raw outputs only when a checker pins them.",
@@ -1606,117 +1602,58 @@
     }
   },
   "validation": {
-    "integrated_source_checks": "Passed combined source qualification at 81a47f8ccef15c26e02b5cbf2feb4b99ac465139 (run39498990230). Actual private saved-packet replay separately passed production observer release/ASan/UBSan locally, with no network sends.",
-    "integrated_memory_checks": "passed: sampler, worker, export, diagnostics and runtime; two existing platform skips",
-    "android_build_and_emulator": "SignedARM64 build/lint/package/ELF/JNI and separatex86 build/audits passed at39498990230. The same exact packages passed Android13 framework and update/rollback/profile/import/preview/lifecycle validation at 39503076641. No new physicalThor or ARM64guest run inferred.",
-    "physical_thor": "0.1.18 accepted: full 303,112-bit packet, ACK/READY and 114 UPDATE messages without disconnect. 0.1.19 changes are host-qualified and await one physical export."
+    "integrated_source_checks": "Passed source qualification in39542047531; three actual saved initial packets reach exact EOF locally in release/ASan/UBSan. Shipping raw tap, hash/ZIP controls and genuine13-mesh host draw pass.",
+    "integrated_memory_checks": "Caps unchanged. Initial source aggregate peak7534461bytes; raw writer streams without a payload queue. Actor module peak12229022bytes before parent charges. Actual Android RSS/PSS remains the separately recorded0.1.18 physical observation.",
+    "android_build_and_emulator": "SignedARM64/x86_64 build, lint, package and ELF/JNI audits passed39542047531. Exact same APKs passed Android13 framework45checks and update/rollback/profile/import/lifecycle14checks in39543941512. No APK rebuild for framework recovery.",
+    "physical_thor": "Latest physical evidence remains0.1.18: full303112-bit initial packet, ACK/READY accepted and114UPDATEs without disconnect. No0.1.19 physical capture or Huge draw is claimed."
   },
   "ci": {
     "state": "passed",
+    "status": "passed",
     "workflow": "native-qualification.yml",
-    "purpose": "combined-diagnostic",
-    "profile": "fullscreen-diagnostic",
-    "run_id": 39503076641,
-    "url": "https://github.com/Russianranger/coh-android/actions/runs/39503076641",
-    "source_commit": "81a47f8ccef15c26e02b5cbf2feb4b99ac465139",
-    "source_tree": "c2f7bb34cfcbbcb98f91d4b2653dacc24c577b0c",
-    "source_and_build_run_id": 39498990230,
-    "qualification_source_commit": "aa110867ac2dc512e3daac55b754e170c8558d0e",
-    "qualification_source_tree": "84b288a58047692d46ad4a8c6330d0ea2e600a58",
-    "qualification_artifact_id": 12301713597,
-    "qualification_artifact_bytes": 1416334,
-    "qualification_artifact_sha256": "33e9b4dd53426ef02fe84e56eaf0561308a4f9aeb1aee9e924b1b010cf823e33",
-    "exact_APKs_rebuilt_for_framework_retry": false,
-    "exact_package_reuse": {
-      "passed": true,
-      "shipping_tree": {
-        "files": 172627,
-        "sha256": "8fbaab3daeb1e20bf876304a3f34bdd013dcf23bd3ddad3c7426762aa5dd5024"
-      },
-      "proof_artifact_path": "current-source-admission.json",
-      "proof_bytes": 2855,
-      "proof_sha256": "0259b1c49237539cd6bfe0376be23e893ff6bdf6e4fae50286469e9109fcb224"
+    "purpose": "combined-framework",
+    "profile": "freeze-diagnostic",
+    "run_id": 39543941512,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/39543941512",
+    "source_and_build_run_id": 39542047531,
+    "source_and_build_checks": "passed; original run later stopped on UI dumper exit137",
+    "candidate_source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+    "candidate_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+    "qualification_source_commit": "91a0b4b1de04e33390fcfd808475ebcc39ad7a9f",
+    "qualification_source_tree": "7c3b2e4495ea14351b2242c69e93058795d55084",
+    "artifact_id": 12321156351,
+    "artifact_bytes": 1427062,
+    "artifact_sha256": "de631e6f63bd965f193520f78c658a2cc7d0642c492ec26381f9daf3cfc057a1",
+    "exact_APKs_reused": true,
+    "APK_rebuilt_for_framework_recovery": false,
+    "source_admission": {
+      "bytes": 3082,
+      "sha256": "bffbc9e88ddaddef8955cdc496237e2b619577297cd75fc3b569a6bdee9612f5"
     },
-    "artifact_id": 12298379427,
-    "artifact_bytes": 25677911,
-    "artifact_sha256": "794c6c45ee0bde9002d7dcc5d02956137bc427171f3a6496f879f4b3a02c7d6d",
-    "jobs": [
-      {
-        "id": 118905155685,
-        "name": "combined-framework",
-        "status": "completed",
-        "conclusion": "success"
+    "shipping_build_tree_unchanged": {
+      "files": 172676,
+      "sha256": "2c3ebc1b2b3c8b794ed8bd631d09174978d09b25843b9d8d0e0d99dfa73bd073"
+    },
+    "Android13": {
+      "android13/receipt.json": {
+        "status": "passed",
+        "passed": null,
+        "checks": 45
+      },
+      "android13-update/receipt.json": {
+        "status": null,
+        "passed": true,
+        "checks": 14
       }
-    ],
+    },
     "publishes_release": false,
-    "physical_thor": false,
-    "failed_source_attempts": [
-      {
-        "run_id": 39497301477,
-        "source_commit": "d7d79bc3221059a42dd5372ddbd93908a8af5cf4",
-        "reason": "Observed bridge host doubles lacked the new fullscreen collaborators; no APK built."
-      },
-      {
-        "run_id": 39498471777,
-        "source_commit": "d1688871132d3852a0bcd8c5a98ce29812fba4dd",
-        "reason": "Source runner lacked Pillow for the independent PNG decode test; no APK built."
-      }
-    ],
-    "first_framework_failure": {
-      "run_id": 39498990230,
-      "candidate_APKs_built_and_audited": true,
-      "reason": "Fullscreen test readiness returned before Surface/EGL dimensions agreed. The exact APKs were reused for the corrected independent frame/viewport assertions."
-    },
-    "framework_retry_failure": {
-      "run_id": 39501609996,
-      "qualification_source_commit": "d04d8b046033167b7a18634c14015b76eb8d7494",
-      "artifact_id": 12301346882,
-      "artifact_bytes": 764490,
-      "artifact_sha256": "20fa392b99a447efa27713251f7fc08e6f9e36ee3c57828ae421f353e09c7b92",
-      "reason": "Coherent1920x1080 EGL viewport passed; Android first-use immersive education covered the app corner-button assertion. Corrected driver dismisses only that identified system hint and still verifies the real corner control.",
-      "APK_rebuilt": false
-    },
-    "host_harness_fixes": {
-      "original_commits": [
-        "5ae57ef8a",
-        "db801095c"
-      ],
-      "observed_bridge_controls": 120,
-      "interop_phase_controls": 97,
-      "legacy_and_fullscreen_exercised": true,
-      "assertions_removed": false,
-      "image_oracle": "Pillow==12.3.0, matching the existing APK job pin",
-      "viewport_and_education_commits": [
-        "738bc7a59",
-        "925c0015c"
-      ],
-      "fullscreen_regression_tests": 10,
-      "existing_driver_controls": 232,
-      "existing_upgrade_controls": 4
-    },
-    "android13_framework": {
-      "status": "passed",
-      "checks": 45,
-      "artifact_path": "android13/receipt.json",
-      "bytes": 28035,
-      "sha256": "9e532f8ea88dfa7dfe310dc4e8233af269d92d6787bcd2cc99c012ce46c27cbe"
-    },
-    "android13_update_and_rollback": {
-      "status": "passed",
-      "checks": 14,
-      "artifact_path": "android13-update/receipt.json",
-      "bytes": 9056,
-      "sha256": "8591c53a46aef7b6b651c040682761828a2ffd45e8c2dec192eb16fac2dd70f9",
-      "previous_profile": "capture-diagnostic",
-      "previous_apk_sha256": "b02a302a0754d9c40841992a83ce500d74f930fecd043c3bcd509cdc07a97109"
-    },
-    "scope": "Original-source receiver/sender fixtures and ARM64/x86 package/lint/ELF/JNI at build run39498990230; exact unchanged APKs passed the corrected Android13 framework test in the linked validation run. Actual saved Thor replay was qualified locally, not uploaded to CI. No live Thor ACK, server response, real Huge draw or alternate Thor pose inferred."
+    "physical_Thor": false
   },
   "candidate": {
     "version": "0.1.19",
     "version_code": 20,
     "profile": "freeze-diagnostic",
-    "state": "exact_APK_framework_only_dispatch_requested",
+    "state": "qualified_single_signed_ARM64_candidate_delivered_native_development_frozen",
     "limits": {
       "decoded_message_bytes": 4194304,
       "ordinary_transport_bytes": 16384,
@@ -1744,30 +1681,58 @@
       "qualified_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
       "rebuild_after_build_audit": false,
       "physical_Thor_tested": false,
-      "framework_qualification": "pending exact-APK reuse"
+      "framework_qualification": "passed with exact original APK bytes",
+      "qualified_framework_run_id": 39543941512,
+      "rebuild_after_qualification": false
     },
     "physical_Thor_tested": false,
     "CI": {
-      "run_id": 39542047531,
-      "url": "https://github.com/Russianranger/coh-android/actions/runs/39542047531",
-      "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
-      "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
-      "purpose": "combined-diagnostic",
-      "diagnostic_profile": "freeze-diagnostic",
-      "status": "failed_framework_harness",
-      "initial_diagnostic_dispatches": 1,
-      "corrective_diagnostic_dispatches": 2,
-      "release_published": false,
-      "combined_source": "passed",
-      "build_lint_packages_DSO_audits": "passed",
-      "Android13_update": "passed",
-      "Android13_framework": "failed: uiautomator exit137 after dump-success diagnostic; no final framework receipt",
-      "artifact_id": 12319729985,
-      "artifact_bytes": 25595713,
-      "artifact_sha256": "a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a"
+      "state": "passed",
+      "status": "passed",
+      "workflow": "native-qualification.yml",
+      "purpose": "combined-framework",
+      "profile": "freeze-diagnostic",
+      "run_id": 39543941512,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39543941512",
+      "source_and_build_run_id": 39542047531,
+      "source_and_build_checks": "passed; original run later stopped on UI dumper exit137",
+      "candidate_source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "candidate_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+      "qualification_source_commit": "91a0b4b1de04e33390fcfd808475ebcc39ad7a9f",
+      "qualification_source_tree": "7c3b2e4495ea14351b2242c69e93058795d55084",
+      "artifact_id": 12321156351,
+      "artifact_bytes": 1427062,
+      "artifact_sha256": "de631e6f63bd965f193520f78c658a2cc7d0642c492ec26381f9daf3cfc057a1",
+      "exact_APKs_reused": true,
+      "APK_rebuilt_for_framework_recovery": false,
+      "source_admission": {
+        "bytes": 3082,
+        "sha256": "bffbc9e88ddaddef8955cdc496237e2b619577297cd75fc3b569a6bdee9612f5"
+      },
+      "shipping_build_tree_unchanged": {
+        "files": 172676,
+        "sha256": "2c3ebc1b2b3c8b794ed8bd631d09174978d09b25843b9d8d0e0d99dfa73bd073"
+      },
+      "Android13": {
+        "android13/receipt.json": {
+          "status": "passed",
+          "passed": null,
+          "checks": 45
+        },
+        "android13-update/receipt.json": {
+          "status": null,
+          "passed": true,
+          "checks": 14
+        }
+      },
+      "publishes_release": false,
+      "physical_Thor": false
     },
     "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
-    "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0"
+    "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+    "actor": "Host 13/13 genuine Huge meshes with case-insensitive cross-archive textures; 0.1.19 Thor rendering remains untested; box fallback retained.",
+    "capture": "Current installed version and activity session required; fresh continuation viewport; 640x360 PNG or explicit omission reason.",
+    "post_ready": "Opaque logical messages streamed to bounded hashed replay; no new body decoding."
   },
   "latest_physical_version": "0.1.18",
   "latest_physical_results": {
@@ -2160,7 +2125,7 @@
     ],
     "development_continued": false
   },
-  "next_action": "Deliver the single qualified 0.1.19 diagnostic, then freeze native-android except fixes explicitly requested by the user.",
+  "next_action": "Native Android development is frozen after 0.1.19 delivery; await explicit user instructions.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -4361,6 +4326,107 @@
       "workflow_dispatch_runs": 3,
       "completed_arm64_candidate_builds": 1,
       "physical_thor": "Matching physical 0.1.16 observations verified separately: Adreno 740 capture/replay, actual Huge body and BasePower lookup boundary, complete memory totals/SHOW and orderly cleanup."
+    },
+    {
+      "state": "passed",
+      "workflow": "native-qualification.yml",
+      "purpose": "combined-diagnostic",
+      "profile": "fullscreen-diagnostic",
+      "run_id": 39503076641,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39503076641",
+      "source_commit": "81a47f8ccef15c26e02b5cbf2feb4b99ac465139",
+      "source_tree": "c2f7bb34cfcbbcb98f91d4b2653dacc24c577b0c",
+      "source_and_build_run_id": 39498990230,
+      "qualification_source_commit": "aa110867ac2dc512e3daac55b754e170c8558d0e",
+      "qualification_source_tree": "84b288a58047692d46ad4a8c6330d0ea2e600a58",
+      "qualification_artifact_id": 12301713597,
+      "qualification_artifact_bytes": 1416334,
+      "qualification_artifact_sha256": "33e9b4dd53426ef02fe84e56eaf0561308a4f9aeb1aee9e924b1b010cf823e33",
+      "exact_APKs_rebuilt_for_framework_retry": false,
+      "exact_package_reuse": {
+        "passed": true,
+        "shipping_tree": {
+          "files": 172627,
+          "sha256": "8fbaab3daeb1e20bf876304a3f34bdd013dcf23bd3ddad3c7426762aa5dd5024"
+        },
+        "proof_artifact_path": "current-source-admission.json",
+        "proof_bytes": 2855,
+        "proof_sha256": "0259b1c49237539cd6bfe0376be23e893ff6bdf6e4fae50286469e9109fcb224"
+      },
+      "artifact_id": 12298379427,
+      "artifact_bytes": 25677911,
+      "artifact_sha256": "794c6c45ee0bde9002d7dcc5d02956137bc427171f3a6496f879f4b3a02c7d6d",
+      "jobs": [
+        {
+          "id": 118905155685,
+          "name": "combined-framework",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "publishes_release": false,
+      "physical_thor": false,
+      "failed_source_attempts": [
+        {
+          "run_id": 39497301477,
+          "source_commit": "d7d79bc3221059a42dd5372ddbd93908a8af5cf4",
+          "reason": "Observed bridge host doubles lacked the new fullscreen collaborators; no APK built."
+        },
+        {
+          "run_id": 39498471777,
+          "source_commit": "d1688871132d3852a0bcd8c5a98ce29812fba4dd",
+          "reason": "Source runner lacked Pillow for the independent PNG decode test; no APK built."
+        }
+      ],
+      "first_framework_failure": {
+        "run_id": 39498990230,
+        "candidate_APKs_built_and_audited": true,
+        "reason": "Fullscreen test readiness returned before Surface/EGL dimensions agreed. The exact APKs were reused for the corrected independent frame/viewport assertions."
+      },
+      "framework_retry_failure": {
+        "run_id": 39501609996,
+        "qualification_source_commit": "d04d8b046033167b7a18634c14015b76eb8d7494",
+        "artifact_id": 12301346882,
+        "artifact_bytes": 764490,
+        "artifact_sha256": "20fa392b99a447efa27713251f7fc08e6f9e36ee3c57828ae421f353e09c7b92",
+        "reason": "Coherent1920x1080 EGL viewport passed; Android first-use immersive education covered the app corner-button assertion. Corrected driver dismisses only that identified system hint and still verifies the real corner control.",
+        "APK_rebuilt": false
+      },
+      "host_harness_fixes": {
+        "original_commits": [
+          "5ae57ef8a",
+          "db801095c"
+        ],
+        "observed_bridge_controls": 120,
+        "interop_phase_controls": 97,
+        "legacy_and_fullscreen_exercised": true,
+        "assertions_removed": false,
+        "image_oracle": "Pillow==12.3.0, matching the existing APK job pin",
+        "viewport_and_education_commits": [
+          "738bc7a59",
+          "925c0015c"
+        ],
+        "fullscreen_regression_tests": 10,
+        "existing_driver_controls": 232,
+        "existing_upgrade_controls": 4
+      },
+      "android13_framework": {
+        "status": "passed",
+        "checks": 45,
+        "artifact_path": "android13/receipt.json",
+        "bytes": 28035,
+        "sha256": "9e532f8ea88dfa7dfe310dc4e8233af269d92d6787bcd2cc99c012ce46c27cbe"
+      },
+      "android13_update_and_rollback": {
+        "status": "passed",
+        "checks": 14,
+        "artifact_path": "android13-update/receipt.json",
+        "bytes": 9056,
+        "sha256": "8591c53a46aef7b6b651c040682761828a2ffd45e8c2dec192eb16fac2dd70f9",
+        "previous_profile": "capture-diagnostic",
+        "previous_apk_sha256": "b02a302a0754d9c40841992a83ce500d74f930fecd043c3bcd509cdc07a97109"
+      },
+      "scope": "Original-source receiver/sender fixtures and ARM64/x86 package/lint/ELF/JNI at build run39498990230; exact unchanged APKs passed the corrected Android13 framework test in the linked validation run. Actual saved Thor replay was qualified locally, not uploaded to CI. No live Thor ACK, server response, real Huge draw or alternate Thor pose inferred."
     }
   ],
   "cycle_0_1_18": {
@@ -4874,7 +4940,7 @@
     "profile": "freeze-diagnostic",
     "version_name": "0.1.19-freeze-diagnostic-test",
     "version_code": 20,
-    "state": "exact_APK_framework_only_dispatch_requested",
+    "state": "qualified_single_signed_ARM64_candidate_delivered_native_development_frozen",
     "APK_builds": 1,
     "max_APK_candidate_builds": 1,
     "workers": {
@@ -4973,8 +5039,8 @@
       "raw": "Explicit partial window, capacity, write and unobserved-message flags; no claim of complete recording on failure.",
       "actor": "Original first basename duplicate wins; case-insensitive query across all verified imported archives; box fallback."
     },
-    "qualified_source_commit": "1caaf471afe1d725804e69d342a5b0d716c3f4e4",
-    "qualified_source_tree": "ff42137b8afee7640d08698b5dd5ae946c4420e8",
+    "qualified_source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+    "qualified_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
     "CI_dispatches_requested": 1,
     "local_qualified_history_branch": "recovery/coh019-qualified-before-api",
     "CI_bootstrap": {
@@ -4985,23 +5051,46 @@
       "correction": "Include the existing rolling status path in native-qualification push filter; one diagnostic dispatch still requested."
     },
     "CI": {
-      "run_id": 39542047531,
-      "url": "https://github.com/Russianranger/coh-android/actions/runs/39542047531",
-      "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
-      "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
-      "purpose": "combined-diagnostic",
-      "diagnostic_profile": "freeze-diagnostic",
-      "status": "failed_framework_harness",
-      "initial_diagnostic_dispatches": 1,
-      "corrective_diagnostic_dispatches": 2,
-      "release_published": false,
-      "combined_source": "passed",
-      "build_lint_packages_DSO_audits": "passed",
-      "Android13_update": "passed",
-      "Android13_framework": "failed: uiautomator exit137 after dump-success diagnostic; no final framework receipt",
-      "artifact_id": 12319729985,
-      "artifact_bytes": 25595713,
-      "artifact_sha256": "a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a"
+      "state": "passed",
+      "status": "passed",
+      "workflow": "native-qualification.yml",
+      "purpose": "combined-framework",
+      "profile": "freeze-diagnostic",
+      "run_id": 39543941512,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39543941512",
+      "source_and_build_run_id": 39542047531,
+      "source_and_build_checks": "passed; original run later stopped on UI dumper exit137",
+      "candidate_source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "candidate_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+      "qualification_source_commit": "91a0b4b1de04e33390fcfd808475ebcc39ad7a9f",
+      "qualification_source_tree": "7c3b2e4495ea14351b2242c69e93058795d55084",
+      "artifact_id": 12321156351,
+      "artifact_bytes": 1427062,
+      "artifact_sha256": "de631e6f63bd965f193520f78c658a2cc7d0642c492ec26381f9daf3cfc057a1",
+      "exact_APKs_reused": true,
+      "APK_rebuilt_for_framework_recovery": false,
+      "source_admission": {
+        "bytes": 3082,
+        "sha256": "bffbc9e88ddaddef8955cdc496237e2b619577297cd75fc3b569a6bdee9612f5"
+      },
+      "shipping_build_tree_unchanged": {
+        "files": 172676,
+        "sha256": "2c3ebc1b2b3c8b794ed8bd631d09174978d09b25843b9d8d0e0d99dfa73bd073"
+      },
+      "Android13": {
+        "android13/receipt.json": {
+          "status": "passed",
+          "passed": null,
+          "checks": 45
+        },
+        "android13-update/receipt.json": {
+          "status": null,
+          "passed": true,
+          "checks": 14
+        }
+      },
+      "publishes_release": false,
+      "physical_Thor": false
     },
     "failed_CI_attempts": [
       {
@@ -5062,7 +5151,9 @@
       "qualified_source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
       "rebuild_after_build_audit": false,
       "physical_Thor_tested": false,
-      "framework_qualification": "pending exact-APK reuse"
+      "framework_qualification": "passed with exact original APK bytes",
+      "qualified_framework_run_id": 39543941512,
+      "rebuild_after_qualification": false
     },
     "framework_harness_blocker": {
       "step": "Exercise Android 13 update, retained profile, preview and lifecycle cleanup",
@@ -5080,7 +5171,7 @@
       "APK_rebuilt": false
     },
     "framework_requalification": {
-      "state": "requested_once",
+      "state": "passed",
       "purpose": "combined-framework",
       "profile": "freeze-diagnostic",
       "APK_rebuilt": false,
@@ -5098,7 +5189,54 @@
         "driver": 242,
         "framework_pin_tests": 5,
         "fullscreen_readiness_tests": 10
+      },
+      "run_id": 39543941512,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39543941512",
+      "qualification_source_commit": "91a0b4b1de04e33390fcfd808475ebcc39ad7a9f",
+      "qualification_source_tree": "7c3b2e4495ea14351b2242c69e93058795d55084",
+      "artifact_id": 12321156351,
+      "artifact_bytes": 1427062,
+      "artifact_sha256": "de631e6f63bd965f193520f78c658a2cc7d0642c492ec26381f9daf3cfc057a1",
+      "source_admission": {
+        "bytes": 3082,
+        "sha256": "bffbc9e88ddaddef8955cdc496237e2b619577297cd75fc3b569a6bdee9612f5"
+      },
+      "Android13": {
+        "android13/receipt.json": {
+          "status": "passed",
+          "passed": null,
+          "checks": 45
+        },
+        "android13-update/receipt.json": {
+          "status": null,
+          "passed": true,
+          "checks": 14
+        }
       }
-    }
-  }
+    },
+    "build_CI": {
+      "run_id": 39542047531,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39542047531",
+      "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+      "source_tree": "40d565eb12ea9540aa0e2871e42a58d0e7ef30b0",
+      "purpose": "combined-diagnostic",
+      "diagnostic_profile": "freeze-diagnostic",
+      "status": "failed_framework_harness",
+      "initial_diagnostic_dispatches": 1,
+      "corrective_diagnostic_dispatches": 2,
+      "release_published": false,
+      "combined_source": "passed",
+      "build_lint_packages_DSO_audits": "passed",
+      "Android13_update": "passed",
+      "Android13_framework": "failed: uiautomator exit137 after dump-success diagnostic; no final framework receipt",
+      "artifact_id": 12319729985,
+      "artifact_bytes": 25595713,
+      "artifact_sha256": "a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a"
+    },
+    "APK_rebuilt_after_qualification": false,
+    "native_development_frozen": true,
+    "freeze_exceptions": "Only fixes explicitly requested by the user."
+  },
+  "native_development_frozen": true,
+  "freeze_exceptions": "Only fixes explicitly requested by the user."
 }
