@@ -120,7 +120,7 @@ return COH_OK;
     return COH_INVALID;
 
 }
-CohStatus coh_asset_geo_model(const CohAssetGeo *g,uint32_t index,CohAssetGeoModel *out){
+static CohStatus model_read(const CohAssetGeo *g,uint32_t index,CohAssetGeoModel *out,int scale_only){
     if(!out)return COH_INVALID;
 CohBytes rec;
 CohStatus s=record_at(g,index,&rec);
@@ -153,7 +153,9 @@ nameoff=old.version>=8?64:60;
 scaleoff=old.version>=8?72:68;
 packoff=old.version>=8?108:104;
 }
-    if(!m.vertex_count||!m.triangle_count||m.vertex_count>INT32_MAX||m.triangle_count>INT32_MAX||!m.material_count||!span(g->material_ids.size,m.material_offset,(size_t)m.material_count*4))return COH_INVALID;
+    int metadata_only=scale_only&&g->version==0&&!m.vertex_count&&!m.triangle_count&&!m.material_count;
+if(!metadata_only&&(!m.vertex_count||!m.triangle_count||!m.material_count))return COH_INVALID;
+if(m.vertex_count>INT32_MAX||m.triangle_count>INT32_MAX||!span(g->material_ids.size,m.material_offset,(size_t)m.material_count*4))return COH_INVALID;
 
     m.name=name(g->model_names,u32(p+nameoff));
 if(!m.name)return COH_INVALID;
@@ -169,7 +171,7 @@ m.packs[j]=(CohPack32){u32(q),u32(q+4),u32(q+8)};
 m.packs[i]=(CohPack32){u32(q),u32(q+4),u32(q+8)};
 }}
     for(uint32_t i=0;i<m.pack_count;i++){CohPack32 a=m.packs[i];
-if((a.packed_bytes&&!a.unpacked_bytes)||!span(g->payload.size,a.offset,a.packed_bytes?a.packed_bytes:a.unpacked_bytes))return COH_INVALID;
+if((!metadata_only&&a.packed_bytes&&!a.unpacked_bytes)||!span(g->payload.size,a.offset,a.packed_bytes?a.packed_bytes:a.unpacked_bytes))return COH_INVALID;
 }
     uint64_t triangles=0;
 for(uint32_t i=0;i<m.material_count;i++){const uint8_t *q=g->material_ids.data+m.material_offset+i*4;
@@ -181,7 +183,9 @@ triangles+=u16(q+2);
 return COH_OK;
 
 }
-CohStatus coh_asset_geo_open(CohBytes b,uint8_t *workspace,size_t cap,uint32_t maxmodels,CohAssetGeo *out){
+CohStatus coh_asset_geo_model(const CohAssetGeo*g,uint32_t i,CohAssetGeoModel*out){return model_read(g,i,out,0);}
+CohStatus coh_asset_geo_scale_model(const CohAssetGeo*g,uint32_t i,CohAssetGeoModel*out){return model_read(g,i,out,1);}
+static CohStatus geo_open(CohBytes b,uint8_t *workspace,size_t cap,uint32_t maxmodels,CohAssetGeo *out,int scale_only){
     if(!workspace||!out||!maxmodels||maxmodels>(1u<<20))return COH_INVALID;
 uint32_t v;
 size_t o,p,n,d;
@@ -231,7 +235,7 @@ if(!span(g.texture_names.size,base,off)||!name(g.texture_names,base+off))return 
     for(uint32_t i=0;i<g.model_count;i++){
         CohAssetGeo one=g; one.records_offset=cursor; one.model_count=1;
         CohAssetGeoModel model; CohBytes record;
-        s=coh_asset_geo_model(&one,0,&model);
+        s=model_read(&one,0,&model,scale_only);
         if(s!=COH_OK)return s;
         s=record_at(&one,0,&record);
         if(s!=COH_OK)return s;
@@ -242,6 +246,8 @@ if(!span(g.texture_names.size,base,off)||!name(g.texture_names,base+off))return 
 return COH_OK;
 
 }
+CohStatus coh_asset_geo_open(CohBytes b,uint8_t*w,size_t n,uint32_t max,CohAssetGeo*out){return geo_open(b,w,n,max,out,0);}
+CohStatus coh_asset_geo_open_scales(CohBytes b,uint8_t*w,size_t n,uint32_t max,CohAssetGeo*out){return geo_open(b,w,n,max,out,1);}
 CohStatus coh_asset_geo_material(const CohAssetGeo *g,const CohAssetGeoModel *m,uint32_t index,CohAssetGeoMaterial *out){
     if(!g||!m||!out||index>=m->material_count||!span(g->material_ids.size,m->material_offset,(size_t)m->material_count*4))return COH_INVALID;
 

@@ -14,7 +14,7 @@ static CohStatus endpoints(const CohAssetGeo *g,float out[99][3],uint32_t *model
  for(unsigned i=0;i<99;i++)for(unsigned j=0;j<3;j++)out[i][j]=1.f;
  *models=0;
  for(uint32_t i=0;i<g->model_count;i++){
-  CohAssetGeoModel m;CohStatus status=coh_asset_geo_model(g,i,&m);if(status)return status;
+  CohAssetGeoModel m;CohStatus status=coh_asset_geo_scale_model(g,i,&m);if(status)return status;
   for(unsigned bone=0;bone<99;bone++)if(same(m.name,bones[bone])){
    if(found[bone])break; /* animFindBoneInHeader returns its first match. */
    for(unsigned j=0;j<3;j++)if(!isfinite(m.scale[j])||m.scale[j]<=0.f||m.scale[j]>16.f)return COH_INVALID;

@@ -22,6 +22,11 @@ typedef struct { const char *texture_name; uint32_t texture_id,first_triangle,tr
 CohStatus coh_asset_geo_workspace(CohBytes,size_t *required);
 CohStatus coh_asset_geo_open(CohBytes,uint8_t *workspace,size_t capacity,
                              uint32_t maximum_models,CohAssetGeo *out);
+/* Original v0 bone-scale GEOs contain legitimate zero-geometry records. This
+ * explicit metadata view admits those records without weakening mesh admission.
+ * Material IDs, record/string/pack spans and exact header end remain validated. */
+CohStatus coh_asset_geo_open_scales(CohBytes,uint8_t *,size_t,uint32_t,CohAssetGeo *);
+CohStatus coh_asset_geo_scale_model(const CohAssetGeo *,uint32_t,CohAssetGeoModel *);
 CohStatus coh_asset_geo_model(const CohAssetGeo *,uint32_t index,CohAssetGeoModel *);
 CohStatus coh_asset_geo_material(const CohAssetGeo *,const CohAssetGeoModel *,uint32_t index,CohAssetGeoMaterial *);
 /* Caller supplies decoded stream and scratch; no heap allocations. Empty packs

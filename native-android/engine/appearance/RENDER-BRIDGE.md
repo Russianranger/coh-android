@@ -180,3 +180,42 @@ under the shared build lock. To exercise genuine retained inputs, also supply
 contexts in release mode. The supplied source-pins JSON can be a path-to-pin map
 or an object containing that map in `files`. Raw inputs and generated outputs
 remain outside git.
+
+
+## Received Huge actor owner
+
+`coh_received_costume` extends the earlier mesh inspection with a bounded
+selected-self owner. The original receiver's current snapshot supplies the
+actual bodytype, source selectors, RGB tints and authored scales. It streams
+only requested members from authenticated immutable CLIENT/zones archive FDs;
+missing bodies or ambiguous Basic basenames remain named failures. The original
+Huge rig is borrowed, and original Huge L/S metadata supplies the source bone
+scale endpoints. A separate scale-only GEO view admits original v0 records with
+zero renderable triangles; ordinary mesh admission stays unchanged.
+
+The three selected X_ materials use the original `tex.c` automatic fallback
+when MULTITEX and BUMPMAPS are unavailable: Base1 + DualColor1, original
+Swappable/white behavior, and 0.5 ambient/diffuse scaling. Gear's fixed mask
+survives the packet's None generic, while the glove's Swappable generic becomes
+the original built-in white. This profile uses diagnostic LINEAR/REPEAT/base-level
+sampling, neutral inspection lighting/no fog, and original base-pose skinning.
+It does not claim full MULTI/chrome/bump, effective sampler cache, network motion,
+entity fade or original environment lighting equivalence. Original boned draw
+alpha comes from the node rather than the unused high byte of a packet RGB
+word; this inspection uses the original default node opacity255.
+
+Preparation accounts for concrete control/ZIP owners, retained source and old
+state, candidate meshes, decoded RGBA, source/header/inflate scratch, planned
+GPU/backend storage and a32KiB native stack reserve before allocation. The
+Android parent also charges Java/JNI snapshot copies and the retained observer
+source, then reserves the actor with the same96MiB world owner before atomic
+publication. It never treats that payload inventory as process RSS/PSS.
+
+`check_received_owner.py --mode all --headers /path/to/GLES/headers` exercises
+budget, source-only metadata, duplicate-FD identity/mutation, alias and cleanup
+controls. Optional `--archive --source-pins --snapshot --rig` verifies genuine
+body hashes and replays the complete selected actor through this same native
+owner; `--capture /scratch/output` draws its packets through the production GLES
+backend in two fresh contexts. Every actual allocation failure is injected and
+cleaned. Raw snapshots, archives, stack-usage files and images stay outside git.
+The coarse host capture is13 genuine socket draws, not a physical Thor result.
