@@ -143,6 +143,11 @@ PERMISSIVE = ['-Wno-error=incompatible-function-pointer-types', '-Wno-error=impl
 
 COMMON_DEFINES = ['WIN32', '_CRT_SECURE_NO_WARNINGS', '_CRT_NONSTDC_NO_DEPRECATE',
                   '_WINSOCK_DEPRECATED_NO_WARNINGS', 'FINAL', 'NDEBUG']
+# Windows-only configuration macros; not defined for the linux-arm64 target so
+# the sources take whatever non-Windows paths they have.
+WINDOWS_ONLY_DEFINES = {'WIN32', '_WINDOWS', '_MBCS', '_CRT_SECURE_NO_WARNINGS',
+                        '_CRT_NONSTDC_NO_DEPRECATE', '_WINSOCK_DEPRECATED_NO_WARNINGS',
+                        '_CRT_SECURE_NO_DEPRECATE'}
 
 CATEGORIES = [
     ('missing-header', re.compile(r"fatal error: '([^']+)' file not found")),
@@ -190,7 +195,8 @@ def main():
     ap.add_argument('--target', choices=['win-arm64', 'linux-arm64'], required=True)
     ap.add_argument('--work', required=True)
     ap.add_argument('--out', required=True)
-    ap.add_argument('--jobs', type=int, default=os.cpu_count() or 2)
+    # Two compiler processes by default, matching the bounded build-host rule.
+    ap.add_argument('--jobs', type=int, default=2)
     ap.add_argument('--limit', type=int, default=0, help='compile only N files per target (debug)')
     ap.add_argument('--permissive', action='store_true',
                     help='downgrade clang strictness errors that MSVC accepts (flags only, no patches)')
@@ -230,7 +236,8 @@ def main():
         flags = tflags + ['-fms-extensions', '-fno-strict-aliasing', '-ferror-limit=0',
                           '-fno-color-diagnostics'] + warn + (PERMISSIVE if a.permissive else []) + \
             ['-D' + d for d in COMMON_DEFINES + t['defines'] +
-             (['DISABLE_SHARED_MEMORY_SEGMENT'] if a.patched else [])] + \
+             (['DISABLE_SHARED_MEMORY_SEGMENT'] if a.patched else [])
+             if a.target == 'win-arm64' or d not in WINDOWS_ONLY_DEFINES] + \
             (['-isystem', os.path.join(a.toolchain, 'deps', 'sse2neon')] if a.patched else []) + \
             [x for p in inc if os.path.isdir(p) for x in ('-I', p)]
         jobs = []

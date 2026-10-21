@@ -28,7 +28,9 @@ python3 armport/survey/survey.py ... --work /tmp/exp --permissive --warn64 \
     --overlay /tmp/exp/overlay --out win-arm64-experiment.json
 ```
 
-Tested with Ubuntu clang 18.1.3 on x86_64. A full run takes about 2 minutes on 2 CPUs.
+Tested with Ubuntu clang 18.1.3 on x86_64. The survey runs two compiler processes
+by default (`--jobs 2`); a full run takes about 2 minutes on 2 CPUs.
+For `linux-arm64` the Windows configuration macros are not defined.
 
 Targets: `win-arm64` is ARM64 Windows (aarch64-w64-mingw32, LLP64), which the
 app's Wine 10 runs natively. `linux-arm64` (aarch64 glibc) is for comparison.
