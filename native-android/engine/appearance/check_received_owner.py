@@ -11,7 +11,7 @@ spec=importlib.util.spec_from_file_location('received_owner_prepare',HERE/'prepa
 U=C.c_uint32;Q=C.c_uint64;Z=C.c_size_t
 Read=C.CFUNCTYPE(C.c_int,C.c_void_p,Q,C.c_void_p,Z)
 class Source(C.Structure):_fields_=[('read',Read),('context',C.c_void_p),('size',Q),('generation',U)]
-class Inputs(C.Structure):_fields_=[('snapshot',C.POINTER(p.Snapshot)),('rig',C.POINTER(p.bridge.animation.Rig)),('archives',Source*2),('parent',Q),('epoch',Q),('entity',U),('cancel',p.a.Cancel)]
+class Inputs(C.Structure):_fields_=[('snapshot',C.POINTER(p.Snapshot)),('rig',C.POINTER(p.bridge.animation.Rig)),('archives',Source*16),('parent',Q),('epoch',Q),('entity',U),('cancel',p.a.Cancel)]
 class ArchiveFd(C.Structure):_fields_=[('fd',C.c_int),('offset',Q),('bytes',Q)]
 class Stats(C.Structure):_fields_=[(n,Q) for n in ('cpu','texture','gpu','renderer','peak','reads','read_bytes','frames','draws','epoch')]+[(n,U) for n in ('entity','body','parts','vertices','indices','textures','fallbacks')]+[('height',C.c_float),('missing',C.c_char*256)]
 def build(work,mode,headers):
@@ -50,18 +50,18 @@ def checks(args):
  lib.coh_received_costume_bind.argtypes=[C.c_void_p,U,C.POINTER(U),U]
  lib.coh_received_costume_texture.argtypes=[C.c_void_p,U,C.POINTER(p.api.asset.Bytes),C.POINTER(U),C.POINTER(U),C.POINTER(C.c_char_p)]
  lib.coh_received_costume_draws.argtypes=[C.c_void_p,C.POINTER(C.c_float),C.POINTER(C.c_float),C.POINTER(C.c_float),C.POINTER(C.POINTER(p.bridge.renderer.Draw)),C.POINTER(Z)]
- lib.coh_received_costume_fds_open.argtypes=[C.POINTER(ArchiveFd),C.POINTER(C.c_void_p)]
+ lib.coh_received_costume_fds_open.argtypes=[C.POINTER(ArchiveFd),U,C.POINTER(C.c_void_p)]
  lib.coh_received_costume_fds_sources.argtypes=[C.c_void_p,C.POINTER(Source)]
  lib.coh_received_costume_fds_destroy.argtypes=[C.POINTER(C.c_void_p)]
  lib.test_failure.argtypes=[Z];lib.test_calls.restype=lib.test_live.restype=Z
  snapshot=p.Snapshot();snapshot.body=4;snapshot.count=28;rig=p.bridge.animation.Rig();reads=[];fd=-1
  def read(_,offset,dst,count):
   reads.append(count)
-  try:raw=os.pread(fd,count,offset)
+  try:raw=os.pread(fd if not _ else int(_)-1,count,offset)
   except OSError:return 6
   if len(raw)!=count:return 6
   C.memmove(dst,raw,count);return 0
- callback=Read(read);empty=(Source*2)(Source(callback,None,22,1),Source())
+ callback=Read(read);empty=(Source*16)(Source(callback,None,22,1),Source())
  input=Inputs(C.pointer(snapshot),C.pointer(rig),empty,0,1,125,p.a.Cancel());owner=C.c_void_p();stats=Stats()
  assert lib.test_scale_metadata()==0
  lib.test_failure(0);assert lib.coh_received_costume_prepare(C.byref(input),C.byref(owner),C.byref(stats))!=0 and not owner.value and lib.test_live()==0
@@ -74,10 +74,12 @@ def checks(args):
   archive_path=Path(temp)/'archive.zip'
   with zipfile.ZipFile(archive_path,'w') as z:z.writestr('test',b'body')
   d=os.open(archive_path,os.O_RDONLY|os.O_CLOEXEC);size=os.fstat(d).st_size
-  descriptors=(ArchiveFd*2)(ArchiveFd(d,0,size),ArchiveFd(d,0,size));fd_owner=C.c_void_p();sources=(Source*2)()
-  assert lib.coh_received_costume_fds_open(descriptors,C.byref(fd_owner))==7 and not fd_owner.value and lib.test_live()==0
+  descriptors=(ArchiveFd*2)(ArchiveFd(d,0,size),ArchiveFd(d,0,size));fd_owner=C.c_void_p();sources=(Source*16)()
+  assert lib.coh_received_costume_fds_open(descriptors,0,C.byref(fd_owner))==1 and not fd_owner.value
+  assert lib.coh_received_costume_fds_open(descriptors,17,C.byref(fd_owner))==1 and not fd_owner.value
+  assert lib.coh_received_costume_fds_open(descriptors,2,C.byref(fd_owner))==7 and not fd_owner.value and lib.test_live()==0
   os.chmod(archive_path,0o400);before=len(os.listdir('/proc/self/fd'))
-  assert lib.coh_received_costume_fds_open(descriptors,C.byref(fd_owner))==0
+  assert lib.coh_received_costume_fds_open(descriptors,2,C.byref(fd_owner))==0
   assert lib.coh_received_costume_fds_sources(fd_owner,sources)==0
   assert lib.coh_received_costume_fds_sources(fd_owner,C.cast(fd_owner,C.POINTER(Source)))==1
   os.close(d);d=-1;buf=C.create_string_buffer(4);assert sources[0].read(sources[0].context,0,buf,4)==0 and buf.raw==b'PK\x03\x04'
@@ -88,16 +90,27 @@ def checks(args):
  raw=args.snapshot.read_bytes();snapshot=p.checked_snapshot(raw);rig_raw=args.rig.read_bytes();p.module('received_owner_rig_identity',HERE/'recover_huge_rig.py').recover(rig_raw)
  rig_bytes=(C.c_uint8*len(rig_raw)).from_buffer_copy(rig_raw);assert lib.coh_animation_parse(rig_bytes,len(rig_raw),C.byref(rig))==0
  pins=p.source_pins(args.source_pins)
- with zipfile.ZipFile(args.archive) as archive:
-  for entry in archive.infolist():
-   if entry.is_dir():continue
-   pin=pins[entry.filename.casefold()]
-   assert entry.file_size==pin['bytes'];digest=hashlib.sha256()
-   with archive.open(entry) as stream:
-    while chunk:=stream.read(65536):digest.update(chunk)
-   assert digest.hexdigest()==pin['sha256']
- fd=os.open(args.archive,os.O_RDONLY|os.O_CLOEXEC)
+ for selected_archive in [args.archive]+([args.extra_archive] if args.extra_archive else []):
+  with zipfile.ZipFile(selected_archive) as archive:
+   for entry in archive.infolist():
+    if entry.is_dir():continue
+    pin=pins.get(entry.filename.casefold()) or pins['data/'+entry.filename.casefold()]
+    assert entry.file_size==pin['bytes'];digest=hashlib.sha256()
+    with archive.open(entry) as stream:
+     while chunk:=stream.read(65536):digest.update(chunk)
+    assert digest.hexdigest()==pin['sha256']
+ fd=os.open(args.archive,os.O_RDONLY|os.O_CLOEXEC);extra_fd=-1
  try:
+  if args.extra_archive:
+   extra_fd=os.open(args.extra_archive,os.O_RDONLY|os.O_CLOEXEC)
+   input.archives[2]=Source(callback,extra_fd+1,os.fstat(extra_fd).st_size,1)
+   provider=p.module('received_reference_lookup',HERE/'imported_archive.py')
+   with provider.ImportedArchive(extra_fd) as reference:
+    found=reference.lookup(texture_names=['FACE_V_HELMET_ROBOTIC_01.tga'])
+    assert len(found)==1 and found[0].name.startswith('texture_library/')
+    pin=pins.get(found[0].name.casefold()) or pins['data/'+found[0].name.casefold()]
+    assert len(reference.read_body(found[0],pin))==87776
+   result['reference_casefold_basename_lookup']=True
   input.snapshot=C.pointer(snapshot);input.rig=C.pointer(rig);input.archives[0].size=os.fstat(fd).st_size
   polls=[0,False]
   def poll(_):polls[0]+=1;return int(polls[1])
@@ -136,6 +149,7 @@ def checks(args):
  finally:
   if owner.value:lib.coh_received_costume_destroy(C.byref(owner))
   os.close(fd)
+  if extra_fd>=0:os.close(extra_fd)
  return result
 
 def capture(lib,owner,stats,packets,output):
@@ -179,7 +193,7 @@ def capture(lib,owner,stats,packets,output):
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--mode',choices=['release','asan','ubsan','all'],default='all');parser.add_argument('--headers',type=Path,default=Path('/usr/include'));parser.add_argument('--library',type=Path)
- for n in ('archive','snapshot','rig','source-pins','capture'):parser.add_argument('--'+n,type=Path)
+ for n in ('archive','extra-archive','snapshot','rig','source-pins','capture'):parser.add_argument('--'+n,type=Path)
  args=parser.parse_args()
  if args.library:print(json.dumps(checks(args)));return
  result={}
@@ -187,7 +201,7 @@ def main():
   for mode in ['release','asan','ubsan'] if args.mode=='all' else [args.mode]:
    library=build(Path(temp),mode,args.headers);command=[sys.executable,str(Path(__file__).resolve()),'--library',str(library)];env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')
    if mode=='asan':env['LD_PRELOAD']=subprocess.check_output(['cc','-print-file-name=libasan.so'],text=True).strip()
-   for n in ('archive','snapshot','rig','source_pins','capture'):
+   for n in ('archive','extra_archive','snapshot','rig','source_pins','capture'):
     v=getattr(args,n)
     if v and (n!='capture' or mode=='release'):command+=['--'+n.replace('_','-'),str(v)]
    result[mode]=json.loads(subprocess.check_output(command,env=env,text=True))

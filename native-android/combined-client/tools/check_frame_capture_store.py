@@ -91,6 +91,42 @@ public final class CaptureStoreControls {
         zip(valid, new File(root, "valid.zip"), true);
         directZip(valid, new File(root, "direct-valid.zip"));
         byte[] previous = Files.readAllBytes(store(valid).toPath());
+        SceneFrameCapture.Selection sameRun=SceneFrameCapture.current(valid,17,"ABC9",false);
+        require(sameRun.omissionReason()==null&&metadata.equals(sameRun.metadata()),"exact current run accepted");
+        for(int mismatch=0;mismatch<4;mismatch++){
+            SceneFrameCapture.Selection stale=SceneFrameCapture.current(valid,mismatch==0?18:17,
+                    mismatch==1?"f00d":mismatch==2?null:"abc9",mismatch==3);
+            String expected=mismatch==0?"CAPTURE_APP_VERSION_MISMATCH":mismatch==1?"CAPTURE_ACTIVITY_SESSION_MISMATCH":mismatch==2?"CAPTURE_CURRENT_RUN_UNAVAILABLE":null;
+            if(mismatch==3){require(stale.omissionReason()==null,"large profile accepts bounded prior small frame in same run");continue;}
+            require(expected.equals(stale.omissionReason())&&stale.metadata()==null,"stale capture reason "+mismatch);
+            ByteArrayOutputStream omitted=new ByteArrayOutputStream();
+            require(!stale.writeZip(omitted)&&omitted.size()==0,"stale standalone emits no capture bytes "+mismatch);
+            try(ZipOutputStream combined=new ZipOutputStream(omitted)){
+                combined.putNextEntry(new ZipEntry("essential.json"));combined.write(7);combined.closeEntry();
+                int before=omitted.size();require(!stale.append(combined)&&before==omitted.size(),"stale combined emits no capture entries "+mismatch);
+            }
+            try(ZipInputStream zip=new ZipInputStream(new ByteArrayInputStream(omitted.toByteArray()))){
+                require(zip.getNextEntry().getName().equals("essential.json"),"essential report retained "+mismatch);
+                require(zip.getNextEntry()==null,"all stale capture entries absent "+mismatch);
+            }
+        }
+        File run=new File(root,"current-run");SceneFrameCapture.save(run,first,19,"cafe19");
+        SceneFrameCapture.Selection frozen=SceneFrameCapture.current(run,19,"cafe19",false);
+        Files.write(new File(run,"user-profile-sentinel").toPath(),new byte[]{1,2,3});
+        SceneFrameCapture.clear(run);
+        require(new File(run,"user-profile-sentinel").length()==3&&!store(run).exists(),"capture clear preserves unrelated profile");
+        require("CAPTURE_MISSING_OR_INVALID".equals(SceneFrameCapture.current(run,19,"cafe19",false).omissionReason()),"cleared run cannot reuse storage");
+        ByteArrayOutputStream immutable=new ByteArrayOutputStream();require(frozen.writeZip(immutable),"selected current snapshot survives backing-store change");
+        try(ZipInputStream zip=new ZipInputStream(new ByteArrayInputStream(immutable.toByteArray()))){
+            require(zip.getNextEntry().getName().equals("scene-capture.rgba"),"selected raw capture retained");
+            ByteArrayOutputStream pixels=new ByteArrayOutputStream();byte[] chunk=new byte[512];int read;
+            while((read=zip.read(chunk))!=-1)pixels.write(chunk,0,read);
+            require(Arrays.equals(first,pixels.toByteArray()),"selected raw bytes immutable");
+        }
+        SceneFrameCapture.saveLarge(run,raw(640,360,38),20,"cafe20");
+        require("CAPTURE_APP_VERSION_MISMATCH".equals(SceneFrameCapture.current(run,21,"cafe20",true).omissionReason()),"full-size stale app rejected");
+        require("CAPTURE_ACTIVITY_SESSION_MISMATCH".equals(SceneFrameCapture.current(run,20,"cafe21",true).omissionReason()),"full-size stale activity rejected");
+        require(SceneFrameCapture.current(run,20,"cafe20",true).metadata()!=null,"fresh full-size current capture accepted");
 
         rejected(valid, null, 17, "abc9", previous, "null raw");
         rejected(valid, new byte[127], 17, "abc9", previous, "short header");

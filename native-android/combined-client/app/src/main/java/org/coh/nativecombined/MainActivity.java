@@ -82,11 +82,14 @@ public final class MainActivity extends Activity {
             final Uri output=data.getData();final ServerService currentService=service;exports.execute(()->{try(OutputStream stream=getContentResolver().openOutputStream(output);ZipOutputStream zip=new ZipOutputStream(Objects.requireNonNull(stream))){
                 JSONObject combined=currentService!=null?currentService.snapshot():ServerService.readJson(new File(getFilesDir(),"combined-report.json"),2*1024*1024);
                 if(combined==null)throw new IOException("Launcher report unavailable");
-                zip.putNextEntry(new ZipEntry("combined-report.json"));zip.write(combined.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
+                JSONObject captureReport=ServerService.readJson(new File(getFilesDir(),"native-client-report.json"),2*1024*1024);
+                SceneFrameCapture.Selection capture=currentSceneCapture(captureReport);
+                combined.put("scene_capture_export",new JSONObject().put("included",capture.omissionReason()==null)
+                        .put("omission_reason",capture.omissionReason()==null?JSONObject.NULL:capture.omissionReason()));
                 String replaySha=null;
                 for(String path:new String[]{"native-client-report.json","combined-server/latest-report.json","combined-server/previous-attempts.json"}){
                     File f=new File(getFilesDir(),path);if(!f.isFile()||f.length()>2*1024*1024)continue;
-                    JSONObject report=ServerService.readJson(f,2*1024*1024);if(report==null)continue;
+                    JSONObject report=path.equals("native-client-report.json")?captureReport:ServerService.readJson(f,2*1024*1024);if(report==null)continue;
                     if(report.optJSONObject("server_readiness")!=null)report.getJSONObject("server_readiness").remove("account");
                     String name=path.replace('/','-');
                     if(path.equals("native-client-report.json")){
@@ -104,11 +107,49 @@ public final class MainActivity extends Activity {
                     }
                     zip.putNextEntry(new ZipEntry(name));zip.write(report.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
                 }
-                if(BuildConfig.FULLSCREEN_DIAGNOSTIC)SceneFrameCapture.appendLarge(getFilesDir(),zip);
-                else SceneFrameCapture.append(getFilesDir(),zip);
+                capture.append(zip);
                 InitialReplayStore.append(getFilesDir(),zip,replaySha);
+                if(BuildConfig.POST_READY_REPLAY_DIAGNOSTIC) {
+                    String reason=postReadyReplayContextFailure(captureReport);
+                    if(reason==null) {
+                        JSONObject replay=captureReport.getJSONObject("post_ready_replay");
+                        if(!PostReadyReplayStore.append(getFilesDir(),zip,replay.optString("sha256"),BuildConfig.VERSION_CODE,captureReport.optString("session_id")))
+                            reason="POST_READY_REPLAY_FILE_UNAVAILABLE_OR_MISMATCH";
+                    }
+                    combined.put("post_ready_replay_export",new JSONObject().put("included",reason==null)
+                            .put("omission_reason",reason==null?JSONObject.NULL:reason));
+                }
+                zip.putNextEntry(new ZipEntry("combined-report.json"));zip.write(combined.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
                 }catch(Exception e){main.post(()->Toast.makeText(this,"Report export failed",Toast.LENGTH_LONG).show());return;}main.post(()->Toast.makeText(this,"Report exported",Toast.LENGTH_LONG).show());});
         }
+    }
+    private String postReadyReplayContextFailure(JSONObject report){
+        if(report==null)return "POST_READY_REPLAY_REPORT_UNAVAILABLE";
+        JSONObject app=report.optJSONObject("app"),metadata=report.optJSONObject("post_ready_replay");
+        if(app==null||!ApkReportIdentity.sameAppReport(getPackageName(),BuildConfig.VERSION_CODE,app.opt("package"),app.opt("version_code")))
+            return "POST_READY_REPLAY_APP_VERSION_MISMATCH";
+        if(metadata==null){String reason=report.optString("post_ready_replay_error","");
+            return reason.isEmpty()||"null".equals(reason)?"POST_READY_REPLAY_UNAVAILABLE":reason;}
+        if(metadata.optLong("app_version",-1)!=BuildConfig.VERSION_CODE)return "POST_READY_REPLAY_APP_VERSION_MISMATCH";
+        String session=report.optString("session_id");
+        if(!session.matches("[0-9a-f]{1,16}")||!metadata.optString("activity_session").equals(session))
+            return "POST_READY_REPLAY_ACTIVITY_SESSION_MISMATCH";
+        return metadata.optString("sha256").matches("[0-9a-f]{64}")?null:"POST_READY_REPLAY_HASH_UNAVAILABLE";
+    }
+    private SceneFrameCapture.Selection currentSceneCapture(JSONObject report){
+        // This is the installed APK's immutable build version, including when no
+        // service is bound and combined-report.json belongs to an older APK.
+        final long version=BuildConfig.VERSION_CODE;
+        String session=report==null?null:report.optString("session_id");
+        SceneFrameCapture.Selection capture=SceneFrameCapture.current(getFilesDir(),version,session,BuildConfig.FULLSCREEN_DIAGNOSTIC);
+        if(capture.omissionReason()!=null)return capture;
+        JSONObject app=report==null?null:report.optJSONObject("app");
+        JSONObject metadata=report==null?null:report.optJSONObject("scene_frame_capture");
+        boolean current=app!=null&&metadata!=null
+                &&ApkReportIdentity.sameAppReport(getPackageName(),version,app.opt("package"),app.opt("version_code"))
+                &&metadata.optLong("source_app_version",-1)==version
+                &&metadata.optString("activity_session").equals(session);
+        return current?capture:SceneFrameCapture.current(getFilesDir(),-1,null,BuildConfig.FULLSCREEN_DIAGNOSTIC);
     }
     @Override protected void onSaveInstanceState(Bundle out){out.putString("pending_kind",pendingKind);super.onSaveInstanceState(out);}
     @Override protected void onResume(){super.onResume();active=true;main.post(poll);}

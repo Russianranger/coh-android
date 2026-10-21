@@ -9,11 +9,12 @@ extern "C" {
 #define COH_RECEIVED_COSTUME_LIMIT (96u<<20)
 #define COH_RECEIVED_COSTUME_STACK (32u<<10)
 #define COH_RECEIVED_COSTUME_TEXTURES 64u
+#define COH_RECEIVED_COSTUME_ARCHIVES 16u
 typedef struct CohReceivedCostume CohReceivedCostume;
 typedef struct {
  const CohOriginalCostumeSnapshot *snapshot;
  const CohAnimationRig *rig; /* authentic Huge hierarchy; immutable lifetime */
- CohAssetSource archives[2]; /* actual CLIENT, optional zones supplement */
+ CohAssetSource archives[COH_RECEIVED_COSTUME_ARCHIVES]; /* loaded imported archives in source precedence */
  uint64_t parent_bytes,source_epoch;uint32_t entity_index;CohCancel cancel;
 } CohReceivedCostumeInputs;
 typedef struct {

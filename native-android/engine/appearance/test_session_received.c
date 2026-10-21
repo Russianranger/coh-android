@@ -92,14 +92,14 @@ static void mutate(void){
  else if(action==5){active->received_invalidations++;}
  else if(action==6)Java_org_coh_sessionclient_SessionNative_cancel(&env,NULL,(jlong)(intptr_t)active);
 }
-static unsigned char frame_data[48384];static jint fd_values[2];static jlong zeros[2],fd_sizes[2];
+static unsigned char frame_data[48384];static jint fd_values[COH_RECEIVED_COSTUME_ARCHIVES];static jlong zeros[COH_RECEIVED_COSTUME_ARCHIVES],fd_sizes[COH_RECEIVED_COSTUME_ARCHIVES];
 static Array frame={48384,frame_data},fds={2,fd_values},offsets={2,zeros},sizes={2,fd_sizes};
 static void put32(unsigned char*p,uint32_t n){for(unsigned i=0;i<4;i++)p[i]=(unsigned char)(n>>(i*8));}
 static void reset_input(Session*s){
  s->failed=0;s->cancel=0;s->running=0;s->epoch=7;s->foreground=1;s->observed_entity_index=125;s->observed_entity_updates=3;s->received_invalidations=2;
  action=action_at=exception_flag=parent_fail=prepare_fail=gpu_fail=0;expected_epoch=99;
  memset(frame_data,0,sizeof frame_data);memcpy(frame_data,"COHCST01",8);put32(frame_data+8,32);put32(frame_data+12,sizeof(CohOriginalCostumeSnapshot));put32(frame_data+16,99);put32(frame_data+24,125);
- frame.size=48384;fds.size=offsets.size=sizes.size=2;zeros[0]=zeros[1]=0;fd_values[1]=fd_values[0];fd_sizes[1]=fd_sizes[0];
+ frame.size=48384;fds.size=offsets.size=sizes.size=2;for(unsigned i=0;i<COH_RECEIVED_COSTUME_ARCHIVES;i++){zeros[i]=0;fd_values[i]=fd_values[0];fd_sizes[i]=fd_sizes[0];}
 }
 static jint call(Session*s,jlong jbytes,jlong source){return Java_org_coh_sessionclient_SessionNative_observedCostume(&env,NULL,(jlong)(intptr_t)s,&frame,&fds,&offsets,&sizes,jbytes,source);}
 static void unchanged(Session*s,CohReceivedCostume*old,uint64_t parent,size_t live){CHECK(s->received_actor==old);CHECK(world_parent==parent);CHECK(!s->received_preparing);CHECK(alloc_live==live);CHECK(fds_open()==initial_fds);CHECK(!exception_flag||action_at==3);}
@@ -107,7 +107,11 @@ static void check_json(Session*s,const char*kind){Java_org_coh_sessionclient_Ses
 int main(void){
  Session session;memset(&session,0,sizeof session);CHECK(!pthread_mutex_init(&session.mutex,NULL));active=&session;session.stream_world=(CohSessionWorld*)(uintptr_t)1;session.runtime_world_status=1;
  char path[]="/tmp/coh-setter-XXXXXX";int fd=mkstemp(path);CHECK(fd>=0);unsigned char body[32]={0};CHECK(write(fd,body,sizeof body)==(ssize_t)sizeof body);CHECK(!fchmod(fd,0400));close(fd);fd=open(path,O_RDONLY|O_CLOEXEC);CHECK(fd>=0);unlink(path);fd_values[0]=fd;fd_sizes[0]=32;
- initial_fds=fds_open();reset_input(&session);CHECK(call(&session,48384,775621)==COH_OK);const uint64_t initial_parent=captured_parent;CHECK(session.received_actor&&session.received_stats.parts==13);CHECK(mutex_was_held);CHECK(!session.received_preparing);CHECK(alloc_live==1);CHECK(fd_reads==1);CHECK(fcntl(fd,F_GETFD)>=0);
+ initial_fds=fds_open();
+ for(unsigned n=1;n<=COH_RECEIVED_COSTUME_ARCHIVES;n+=COH_RECEIVED_COSTUME_ARCHIVES-1){reset_input(&session);fds.size=offsets.size=sizes.size=(jsize)n;CHECK(call(&session,48384,775621)==COH_OK);coh_received_costume_destroy(&session.received_actor);CHECK(alloc_live==0&&fds_open()==initial_fds);}
+ reset_input(&session);fds.size=offsets.size=sizes.size=0;CHECK(call(&session,48384,775621)==COH_INVALID);
+ reset_input(&session);fds.size=offsets.size=sizes.size=COH_RECEIVED_COSTUME_ARCHIVES+1;CHECK(call(&session,48384,775621)==COH_INVALID);
+ fd_reads=0;reset_input(&session);CHECK(call(&session,48384,775621)==COH_OK);const uint64_t initial_parent=captured_parent;CHECK(session.received_actor&&session.received_stats.parts==13);CHECK(mutex_was_held);CHECK(!session.received_preparing);CHECK(alloc_live==1);CHECK(fd_reads==1);CHECK(fcntl(fd,F_GETFD)>=0);
  CHECK(captured_parent>=775621+48384+sizeof(CohOriginalCostumeSnapshot)+coh_received_costume_fds_allocation_bytes()+COH_RECEIVED_COSTUME_STACK+COH_CAPTURE_RESERVE);
  check_json(&session,"\"kind\":\"box\"");Graphics graphics={0};float view[12]={0},projection[16]={0};CHECK(received_draw(&session,&graphics,view,projection)==1);CHECK(gpu_draws==13&&session.received_last_draw);session.observed_entity_draws=1;check_json(&session,"\"kind\":\"received_huge\"");CHECK(strstr(json,"\"box_draws\":0")!=NULL);received_surface_delete(&graphics,0);
  CohReceivedCostume*old=session.received_actor;uint64_t old_parent=world_parent;size_t live=alloc_live;

@@ -513,6 +513,7 @@ class Check:
             assert getattr(self, '_capture_idle_starvation_verified', False)
             return self.capture_active_root('ui-capture-' + str(self.capture_id) + '-direct')
         remote = '/data/local/tmp/combined-ui.xml'
+        killed_retries = 0
         for attempt in range(1, 4):
             prefix = 'ui-capture-' + str(self.capture_id) + '-attempt-' + str(attempt)
             cleared = self.capture_command(prefix, 'clear', 'shell', 'rm', '-f', remote)
@@ -522,12 +523,18 @@ class Check:
             result = self.capture_command(prefix, 'dump', 'shell', 'uiautomator', 'dump', remote)
             diagnostic = (result.stdout + b'\n' + result.stderr).decode(errors='replace').strip()
             transient = diagnostic in CAPTURE_TRANSIENTS
+            # The disposable dumper can be killed after writing its success
+            # marker. Its XML is still untrusted: retry only this exact result,
+            # clearing the file again, and never consume a nonzero-exit dump.
+            killed_dump = (result.returncode == 137 and not result.stderr.strip()
+                and result.stdout.strip() == ('UI hierchary dumped to: ' + remote).encode())
             if result.returncode or transient:
                 self.native_fault_evidence(prefix)
-                if transient and attempt < 3:
+                if (transient or killed_dump) and attempt < 3:
+                    killed_retries += int(killed_dump)
                     time.sleep(.5)
                     continue
-                if diagnostic == 'ERROR: could not get idle state.':
+                if diagnostic == 'ERROR: could not get idle state.' and not killed_retries:
                     self._capture_idle_starvation_verified = True
                     raw, root = self.capture_active_root(prefix)
                     self._capture_helper_preferred = True
@@ -543,8 +550,9 @@ class Check:
             root = ET.fromstring(raw)
             if attempt > 1:
                 self.native_fault_evidence(prefix)
-                self.record('fresh UI capture after bounded framework idle retry', attempts=attempt,
-                            maximum_attempts=3, raw_command_results_preserved=True, stale_xml_used=False)
+                self.record('fresh UI capture after bounded framework capture retry', attempts=attempt,
+                            maximum_attempts=3, capture_process_kill_retries=killed_retries,
+                            raw_command_results_preserved=True, stale_xml_used=False)
             (self.args.output / 'last-ui.xml').write_bytes(raw)
             return raw, root
         raise RuntimeError('UI capture retry bound exhausted')
@@ -1362,12 +1370,12 @@ class Check:
             frame = native.get('frame_capture', {})
             assert frame.get('frame') == 0 and frame.get('pose_generation') == 0
             assert frame.get('source_charge_bytes') == 0 and frame.get('failures') == 0
-            expected_reserve=5667858 if any(profile in current.get('app',{}).get('version_name','') for profile in ('fullscreen-diagnostic','continuation-diagnostic')) else 1<<20
+            expected_reserve=5667858 if any(profile in current.get('app',{}).get('version_name','') for profile in ('fullscreen-diagnostic','continuation-diagnostic','freeze-diagnostic')) else 1<<20
             assert frame.get('reserve_bytes') == expected_reserve and frame.get('startup_witness') is False
             assert current.get('scene_frame_capture') is None
             self.record('startup pixel witnesses do not create a real-pose scene capture', actual_observed_entity=False, frame=0)
         self.viewport('initial-preview', native['frames'])
-        if any(profile in current.get('app',{}).get('version_name','') for profile in ('fullscreen-diagnostic','continuation-diagnostic')):
+        if any(profile in current.get('app',{}).get('version_name','') for profile in ('fullscreen-diagnostic','continuation-diagnostic','freeze-diagnostic')):
             current=self.fullscreen_preview(current);native=current['native']
         self.tap('Connect local server')
         unavailable = self.wait_report('native-client-report.json', lambda x: x.get('server_protocol', {}).get('phase') == 'POLICY_UNAVAILABLE', 'native connect refuses missing owned server lease')

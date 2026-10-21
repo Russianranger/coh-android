@@ -13,7 +13,8 @@ JNI = 'Java_org_coh_nativecombined_InteropNative_'
 METHODS = {'begin', 'service', 'choose', 'characters', 'report', 'controlState', 'suspend', 'disconnect', 'close'}
 
 
-def required_methods(entity_diagnostic=False, neighborhood_diagnostic=False, capture_diagnostic=False, fullscreen_diagnostic=False, continuation_diagnostic=False):
+def required_methods(entity_diagnostic=False, neighborhood_diagnostic=False, capture_diagnostic=False, fullscreen_diagnostic=False, continuation_diagnostic=False, freeze_diagnostic=False):
+    continuation_diagnostic = continuation_diagnostic or freeze_diagnostic
     capture_diagnostic = capture_diagnostic or fullscreen_diagnostic or continuation_diagnostic
     methods = set(METHODS)
     if entity_diagnostic or neighborhood_diagnostic or capture_diagnostic:
@@ -24,6 +25,8 @@ def required_methods(entity_diagnostic=False, neighborhood_diagnostic=False, cap
         methods.add('exportInitialReplay')
     if continuation_diagnostic:
         methods.update(('observedSelfCostume', 'observedSelfCostumeSourceBytes'))
+    if freeze_diagnostic:
+        methods.add('configurePostReadyReplay')
     return methods
 
 
@@ -52,7 +55,7 @@ def audit(args):
             fields = line.split()
             if len(fields) >= 8 and fields[0].rstrip(':').isdigit() and fields[6] != 'UND' and fields[4] in ('GLOBAL', 'WEAK') and fields[5] in ('DEFAULT', 'PROTECTED'):
                 exported.add(fields[7].split('@', 1)[0])
-    methods = required_methods(args.entity_diagnostic, args.neighborhood_diagnostic, args.capture_diagnostic, args.fullscreen_diagnostic, getattr(args, 'continuation_diagnostic', False))
+    methods = required_methods(args.entity_diagnostic, args.neighborhood_diagnostic, args.capture_diagnostic, args.fullscreen_diagnostic, getattr(args, 'continuation_diagnostic', False), getattr(args, 'freeze_diagnostic', False))
     expected = {JNI + name for name in methods}
     assert expected <= exported, 'Missing JNI entrypoint'
     assert not {name for name in exported if name.startswith('coh_')}, 'Core symbols could interpose the default client'
@@ -96,6 +99,7 @@ def main():
     parser.add_argument('--neighborhood-diagnostic', action='store_true', help='Require the client-slot JNI entrypoint in addition to the eleven entity methods')
     parser.add_argument('--capture-diagnostic', action='store_true', help='Require the thirteen JNI methods including bounded INITIAL replay export')
     parser.add_argument('--continuation-diagnostic', action='store_true', help='Require captured costume snapshot export in addition to the thirteen fullscreen JNI methods')
+    parser.add_argument('--freeze-diagnostic', action='store_true', help='Require the bounded raw post-READY stream JNI entrypoint in addition to continuation methods')
     parser.add_argument('--fullscreen-diagnostic', action='store_true', help='Require the same thirteen source receiver/replay JNI methods in the fullscreen profile')
     parser.add_argument('--readelf', type=Path, required=True)
     parser.add_argument('--source-root', type=Path, default=Path(__file__).resolve().parents[3])

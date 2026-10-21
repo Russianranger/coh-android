@@ -8,6 +8,9 @@
 #pragma GCC diagnostic pop
 #include "coh_initial_send.h"
 static unsigned completion_mode,release_failure,post_callbacks;
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+static unsigned raw_post_callbacks;
+#endif
 #ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
 static size_t fallback_update_end,fallback_command_begin,fallback_body_begin;
 #endif
@@ -31,6 +34,13 @@ CohStatus __real_coh_net_udp_owned_release(CohNetUdp*,CohNetOwnedMessage*);
 CohStatus __wrap_coh_net_udp_owned_release(CohNetUdp*u,CohNetOwnedMessage*n){CohStatus s=__real_coh_net_udp_owned_release(u,n);if(release_failure){release_failure=0;CHECK(s==COH_OK);return COH_IO;}return s;}
 static CohStatus completed(void*context,const CohInitialCapture*owner,const CohInitialCaptureEvent*event){
  Observation*o=context;CohInitialCaptureLease loan;CHECK(coh_initial_capture_lease(owner,event,&loan)==COH_OK);
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+ if(event->kind==COH_INITIAL_CAPTURE_RAW_POST){
+  CHECK(loan.kind==COH_INITIAL_CAPTURE_RAW_POST&&loan.reader.bytes.data&&loan.reader.bytes.size&&loan.reader.bits<=loan.reader.bytes.size*8&&loan.reader.cursor<=loan.reader.bits);
+  CHECK(!loan.source_generation_admitted&&!loan.complete_initial_character&&!loan.actor_publication&&!loan.ack_permitted&&!loan.world_authority);
+  raw_post_callbacks++;return COH_OK;
+ }
+#endif
  if(event->kind==COH_INITIAL_CAPTURE_UPDATE){post_callbacks++;return COH_OK;}
  CHECK(event->kind==COH_INITIAL_CAPTURE_ALLENTS);CHECK(observe(context,owner,event)==COH_OK);
 #ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
@@ -144,4 +154,8 @@ int main(void){unsigned fds=descriptors();unsigned modes=5;
 #ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
  modes=15;
 #endif
- for(unsigned i=0;i<modes;i++){scenario_complete(i);}CHECK(fds==descriptors()&&!post_callbacks);printf("{\"passed\":true,\"checks\":%u,\"scenarios\":%u,\"synthetic_completion_double\":true,\"real_server\":false,\"post_message_bound\":128,\"post_duration_ms\":%u,\"whole_source_packet_qualification_claim\":false}\n",checks,scenarios,COH_INITIAL_POST_DURATION_MS);return 0;}
+ for(unsigned i=0;i<modes;i++){scenario_complete(i);}
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+ CHECK(raw_post_callbacks>0);
+#endif
+ CHECK(fds==descriptors()&&!post_callbacks);printf("{\"passed\":true,\"checks\":%u,\"scenarios\":%u,\"synthetic_completion_double\":true,\"real_server\":false,\"post_message_bound\":128,\"post_duration_ms\":%u,\"whole_source_packet_qualification_claim\":false}\n",checks,scenarios,COH_INITIAL_POST_DURATION_MS);return 0;}

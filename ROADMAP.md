@@ -1,40 +1,39 @@
 # Native Android roadmap
 
-Updated 2026-10-21 UTC. Physical Thor 0.1.17 shows textured Atlas pavement and
-an observed-pose box in its exported 640x360 full-screen frame.
-0.1.18 is signed and CI-qualified; stage 41 remains passed. Thor results are pending.
+Updated 2026-10-21 America/Chicago. Development remains frozen.
+Thor 0.1.19 completed its 303,248-bit initial packet and exact terminator.
+ACK and READY were each sent once, with no retry or observed disconnect.
+The complete 30-second window contained one full snapshot and 115 UPDATEs.
 
-Both saved packets now reach their exact original zero terminators on the host:
-301656 and 303112 bits, through shipping JNI in release, ASan and UBSan.
-The tail covers 34 active original handlers plus inline Friends; the source table
-has 213 textual entries, 212 active. All 343 unmapped power CRCs are tolerated.
-The original ACK/READY send path is wired with a 20-second first-response timeout,
-one accepted same-ID retry, clean disconnect and 30 seconds of response observation.
-Diagnostic partial-tail fallback is explicit; an incomplete tail stays incomplete.
-The 128-message cap can shorten observation; a short window is reported incomplete.
-Actual post-READY server behavior awaits Thor. Counts/sizes replace raw payloads.
+The 74,416-byte post-ready replay retains all 116 messages without omissions.
+All payload, prefix and file hashes independently verify. Bodies were not decoded.
+The initial replay is retained too; raw reports are not committed to git.
 
-The host draws all 13 genuine Huge meshes with the original rig, decoded RGB and
-authored scales. This is static Ready/base inspection, using the original coarse
-no-MULTI/no-BUMP material fallback and a limited texture sampler. Live retains the
-box on a missing asset or failed owner/upload. The zones supplement is in the
-accepted import set. A different real pose remains unverified without rebuilding.
+Capture matches installed version 20, current activity session and native frame
+521, twelve frames after pose lock. The 640x360 PNG is 928,131 bytes.
+Its pixels match the older image: a yellow box, pavement and dark background.
+The current raw header/session/frame correct the prior stale-version mismatch;
+this image does not conclusively demonstrate ground contact.
 
-Next 3 steps: validate 0.1.18 ACK/server traffic and Huge world capture on Thor;
-finish any real post-READY update limitation; verify another server-sent Atlas pose.
-One physical validation remains to establish the received Huge in the live world.
-No database position change or cleanup is scheduled. Gates 25–27 remain open.
+Huge remains a box fallback: zero costume parts/draws, with the reported blocker
+loaded archive directories. Device helmet lookup success remains unproven.
+The separate host qualification still draws all 13 Huge meshes.
+The bounded world stream selected six instances; source-asset errors and GL errors
+are zero. A different server-sent pose remains unverified.
 
-Thor procedure for 0.1.18:
-1. Install over 0.1.17 without clearing data; retain the same imports and profile.
-2. Start the existing server, select the same character and hand off once.
-3. Full screen enters the scene; corner Return to controls or Back exits it.
-4. Wait 35 seconds after ACK and READY show sent; on timeout/disconnect export anyway.
-5. Return to controls, then Back to Combined launcher; tap Export report and save ZIP.
-6. Keep the 640x360 scene-capture.png, initial replay, send timing and memory JSON.
-7. Stop normally. Do not repeat handoff or change the database for this test.
+All 91 same-UID processes are included despite 59 omitted detail rows.
+Combined export PSS is 2,941,022,208 bytes; sampled peak is 2,998,076,416 bytes.
+Wine PSS is 2,471,909,376 bytes and PostgreSQL PSS is 149,016,576 bytes.
+There were 438 server-policy samples, zero pressure samples and no new reported
+low-memory exit. One trim callback alone does not establish an OOM kill.
+Source scene/actor accounting remains separate from these process measurements.
+Caps remain 4 MiB decoded, 16 KiB ordinary, 8 MiB initial, 96 MiB scene and
+7168 B for the native report. No caps, runtime settings or database were changed.
 
-Caps remain 4 MiB decoded, 16 KiB ordinary, 8 MiB initial, 96 MiB scene, 7168 B report.
-Host initial peak is 7534269 B; Huge preparation module peak is 12228910 B.
-These source charges are separate from physical 0.1.17 peak PSS 2930128896 B.
-Wine identities are included in the next export; PostgreSQL is unchanged.
+The installed APK matches the delivered 15,288,279-byte ARM64 package:
+9383ebd105c3bc75d3df7184c85baf2c55682d43b288fca83525b59a17d0a98a
+Build/audits passed in 39542047531; exact-APK Android 13 qualification passed
+in 39543941512. No rebuild or new CI run was performed for this report update.
+
+The rolling diagnostic status holds input hashes and physical results.
+No further development is authorized. Stand by for explicit user instructions.

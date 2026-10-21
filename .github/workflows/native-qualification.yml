@@ -5,6 +5,7 @@ name: Native source qualification
     - native-android
     paths:
     - .github/workflows/native-qualification.yml
+    - native-android/combined-client/DIAGNOSTIC-STATUS.json
     - native-android/combined-client/tools/check_observed_bridge.py
     - native-android/combined-client/qualification/check_interop_phase.py
     - native-android/combined-client/tools/emulator_check.py
@@ -107,6 +108,7 @@ name: Native source qualification
         - capture-diagnostic
         - fullscreen-diagnostic
         - continuation-diagnostic
+        - freeze-diagnostic
         default: neighborhood-diagnostic
       qualifier:
         description: BodyPart qualifier; ignored for combined-source
@@ -160,14 +162,15 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         EXPECTED_SHA: ${{ github.sha }}
+        FRAMEWORK_PROFILE: ${{ contains(github.event.head_commit.message, '[freeze-framework-dispatch]') && 'freeze-diagnostic' || 'fullscreen-diagnostic' }}
       run: |
         test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
         gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
-          -f ref=native-android -f inputs[purpose]=combined-framework
+          -f ref=native-android -f inputs[purpose]=combined-framework -f inputs[diagnostic_profile]="$FRAMEWORK_PROFILE"
   body-plan:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && ((github.event_name
       == 'workflow_dispatch' && inputs.purpose == 'body-catalog') || (github.event_name == 'push' && !contains(github.event.head_commit.message,
-      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-framework-dispatch]') && !contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]')
+      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-framework-dispatch]') && !(contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]'))
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
@@ -258,13 +261,18 @@ jobs:
         python3 native-android/engine/appearance/check_costume_input.py --work /tmp/costume-input-ci --output native-android/results/combined-neighborhood-diagnostic/costume-input.json
         python3 native-android/session-client/tools/check_frame_capture.py --work /tmp/current-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/current-frame-owner.json
         python3 native-android/combined-client/tools/check_frame_capture_store.py
+        python3 native-android/combined-client/tools/check_current_capture_export.py
+        python3 native-android/combined-client/tools/check_post_ready_activity.py
+        python3 native-android/combined-client/tools/check_post_ready_replay.py --output "$RUNNER_TEMP/post-ready-replay-controls"
+        cp "$RUNNER_TEMP/post-ready-replay-controls/result.json" native-android/results/combined-neighborhood-diagnostic/post-ready-replay-controls.json
         python3 native-android/combined-client/tools/check_frame_capture_wiring.py
         python3 native-android/session-client/tools/check_frame_capture.py --fullscreen --work /tmp/fullscreen-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/fullscreen-frame-owner.json
         python3 native-android/combined-client/tools/check_fullscreen_capture.py
         python3 native-android/combined-client/tools/check_runtime_world_wiring.py
         python3 native-android/combined-client/imports/tests/check_runtime_world_inputs.py --work /tmp/runtime-world-inputs-ci --output native-android/results/combined-neighborhood-diagnostic/runtime-world-inputs.json
         CONTINUATION_FLAGS=
-        if test "${{ inputs.diagnostic_profile }}" = continuation-diagnostic; then CONTINUATION_FLAGS=--fallback; fi
+        if test "${{ inputs.diagnostic_profile }}" = continuation-diagnostic || test "${{ inputs.diagnostic_profile }}" = freeze-diagnostic; then CONTINUATION_FLAGS=--fallback; fi
+        if test "${{ inputs.diagnostic_profile }}" = freeze-diagnostic; then CONTINUATION_FLAGS="$CONTINUATION_FLAGS --post-replay"; fi
         python3 native-android/combined-client/tools/check_outer_costume_android.py $CONTINUATION_FLAGS --work /tmp/outer-costume-android-ci --output native-android/results/combined-neighborhood-diagnostic/outer-costume-android.json
         python3 native-android/combined-client/tools/check_initial_replay_store.py --work /tmp/initial-replay-store-ci --output native-android/results/combined-neighborhood-diagnostic/initial-replay-store.json
         # Send/continuation use original sender fixtures and synthetic local UDP;
@@ -286,7 +294,7 @@ jobs:
         retention-days: 90
   dispatch-neighborhood-diagnostic:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
-      == 'push' && (contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]')) && contains(github.event.head_commit.message, '[native-contracts-only]') && github.run_attempt
+      == 'push' && (contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') || (contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]'))) && contains(github.event.head_commit.message, '[native-contracts-only]') && github.run_attempt
       == '1'
     permissions:
       contents: read
@@ -298,7 +306,7 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         EXPECTED_SHA: ${{ github.sha }}
-        DIAGNOSTIC_PROFILE: ${{ contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') && 'continuation-diagnostic' || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && 'fullscreen-diagnostic' || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && 'capture-diagnostic' || 'neighborhood-diagnostic' }}
+        DIAGNOSTIC_PROFILE: ${{ contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]') && 'freeze-diagnostic' || (contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]')) && 'continuation-diagnostic' || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && 'fullscreen-diagnostic' || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && 'capture-diagnostic' || 'neighborhood-diagnostic' }}
       run: |
         test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
         gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
@@ -314,7 +322,8 @@ jobs:
     timeout-minutes: 60
     env:
       DIAGNOSTIC_PROFILE: ${{ inputs.diagnostic_profile || 'neighborhood-diagnostic' }}
-      DIAGNOSTIC_VERSION: ${{ inputs.diagnostic_profile == 'continuation-diagnostic' && '0.1.18' || inputs.diagnostic_profile == 'fullscreen-diagnostic' && '0.1.17' || inputs.diagnostic_profile == 'capture-diagnostic' && '0.1.16' || '0.1.15' }}
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      DIAGNOSTIC_VERSION: ${{ inputs.diagnostic_profile == 'freeze-diagnostic' && '0.1.19' || inputs.diagnostic_profile == 'continuation-diagnostic' && '0.1.18' || inputs.diagnostic_profile == 'fullscreen-diagnostic' && '0.1.17' || inputs.diagnostic_profile == 'capture-diagnostic' && '0.1.16' || '0.1.15' }}
     steps:
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
@@ -336,7 +345,7 @@ jobs:
         python3 -m pip install --disable-pip-version-check Pillow==12.3.0
     - name: Check the selected bounded diagnostic profile
       run: |
-        case "$DIAGNOSTIC_PROFILE" in neighborhood-diagnostic|capture-diagnostic|fullscreen-diagnostic|continuation-diagnostic) ;; *) exit 1 ;; esac
+        case "$DIAGNOSTIC_PROFILE" in neighborhood-diagnostic|capture-diagnostic|fullscreen-diagnostic|continuation-diagnostic|freeze-diagnostic) ;; *) exit 1 ;; esac
     - name: Reuse pinned crypto, accepted scene, dictionary and neighborhood inputs
       env:
         GH_TOKEN: ${{ github.token }}
@@ -346,7 +355,7 @@ jobs:
         python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/combined-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-neighborhood-diagnostic/crypto-reuse.json
         python3 native-android/combined-client/tools/prepare.py --client-slots --evidence native-android/results/combined-neighborhood-diagnostic/build-inputs.json
         python3 native-android/combined-client/tools/prepare_neighborhood.py --source-root . --assets native-android/combined-client/app/src/main/assets --cache /tmp/combined-neighborhood-inputs --output native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json
-        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then
+        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then
           python3 native-android/combined-client/tools/prepare_live_world.py --source-root . --assets native-android/combined-client/app/src/main/assets --cache /tmp/combined-neighborhood-inputs --output native-android/results/combined-neighborhood-diagnostic/live-world-inputs.json
         fi
         python3 - <<'PYASSETS'
@@ -357,7 +366,7 @@ jobs:
         scene_files = receipt['scene_files'].copy()
         neighborhood = json.loads((folder / 'neighborhood-inputs.json').read_bytes())
         receipt['neighborhood'] = {key: value for key, value in neighborhood.items() if key not in ('fixture', 'instances')}
-        if os.environ['DIAGNOSTIC_PROFILE'] in ('fullscreen-diagnostic', 'continuation-diagnostic'):
+        if os.environ['DIAGNOSTIC_PROFILE'] in ('fullscreen-diagnostic', 'continuation-diagnostic', 'freeze-diagnostic'):
             live = json.loads((folder / 'live-world-inputs.json').read_bytes())
             receipt['live_world'] = {key: value for key, value in live.items() if key != 'instances'}
         assert receipt['scene_files'] == scene_files
@@ -366,8 +375,9 @@ jobs:
         (folder / 'build-inputs.json').write_text(raw)
         PYASSETS
         PREVIOUS_ARTIFACT=12259140776; PREVIOUS_PROFILE=entity-diagnostic
-        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then PREVIOUS_ARTIFACT=12289656309; PREVIOUS_PROFILE=capture-diagnostic; fi
-        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then PREVIOUS_ARTIFACT=12298379427; PREVIOUS_PROFILE=fullscreen-diagnostic; fi
+        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then PREVIOUS_ARTIFACT=12289656309; PREVIOUS_PROFILE=capture-diagnostic; fi
+        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then PREVIOUS_ARTIFACT=12298379427; PREVIOUS_PROFILE=fullscreen-diagnostic; fi
+        if test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then PREVIOUS_ARTIFACT=12314108293; PREVIOUS_PROFILE=continuation-diagnostic; fi
         export PREVIOUS_PROFILE
         echo "PREVIOUS_PROFILE=$PREVIOUS_PROFILE" >> "$GITHUB_ENV"
         gh api repos/Russianranger/coh-android/actions/artifacts/$PREVIOUS_ARTIFACT/zip > /tmp/combined-previous.zip
@@ -389,14 +399,14 @@ jobs:
         cp "$RUNNER_TEMP/neighborhood-check/world-and-box.png" native-android/results/combined-neighborhood-diagnostic/host-world-and-box.png
         if test "$DIAGNOSTIC_PROFILE" != neighborhood-diagnostic; then
           CAPTURE_FLAGS=
-          if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then CAPTURE_FLAGS=--fullscreen; fi
+          if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then CAPTURE_FLAGS=--fullscreen; fi
           python3 native-android/session-client/tools/check_frame_capture_gl.py $CAPTURE_FLAGS --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-gl" --output native-android/results/combined-neighborhood-diagnostic/current-frame-gl.json
           python3 native-android/session-client/tools/check_frame_capture_scene.py $CAPTURE_FLAGS --stream-library "$RUNNER_TEMP/neighborhood-check/stream.so" --assets native-android/combined-client/app/src/main/assets --world-bin native-android/combined-client/app/src/main/assets/world.bin --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-scene" --output native-android/results/combined-neighborhood-diagnostic/current-frame-scene.json
           cp "$RUNNER_TEMP/current-frame-scene/captured-world-and-box.png" native-android/results/combined-neighborhood-diagnostic/captured-world-and-box.png
           cp "$RUNNER_TEMP/current-frame-scene/scene-capture.zip" native-android/results/combined-neighborhood-diagnostic/host-scene-capture.zip
         fi
     - name: Qualify imported-archive streaming with explicitly generated ZIP format fixtures
-      if: inputs.diagnostic_profile == 'fullscreen-diagnostic' || inputs.diagnostic_profile == 'continuation-diagnostic'
+      if: inputs.diagnostic_profile == 'fullscreen-diagnostic' || (inputs.diagnostic_profile == 'continuation-diagnostic' || inputs.diagnostic_profile == 'freeze-diagnostic')
       env:
         LIBGL_ALWAYS_SOFTWARE: '1'
         EGL_PLATFORM: surfaceless
@@ -406,7 +416,7 @@ jobs:
         python3 native-android/session-client/tools/prepare_runtime_zip_fixtures.py --cache /tmp/combined-neighborhood-inputs --output "$RUNNER_TEMP/runtime-format-fixtures"
         python3 native-android/session-client/tools/check_live_world.py --assets native-android/combined-client/app/src/main/assets --metadata native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json --live-assets native-android/combined-client/app/src/main/assets --live-metadata native-android/results/combined-neighborhood-diagnostic/live-world-inputs.json --archives "$RUNNER_TEMP/runtime-format-fixtures" --world-bin native-android/combined-client/app/src/main/assets/world.bin --source-root . --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/runtime-world-check" --output native-android/results/combined-neighborhood-diagnostic/runtime-world-host.json
     - name: Qualify received Huge ownership and selected original source identities
-      if: inputs.diagnostic_profile == 'continuation-diagnostic'
+      if: (inputs.diagnostic_profile == 'continuation-diagnostic' || inputs.diagnostic_profile == 'freeze-diagnostic')
       env:
         LIBGL_ALWAYS_SOFTWARE: '1'
         EGL_PLATFORM: surfaceless
@@ -415,6 +425,7 @@ jobs:
         python3 native-android/engine/appearance/recover_costume_sources.py --source-root . --resource-plan native-android/engine/appearance/received_huge_source_requests.json --cache "$RUNNER_TEMP/huge-source-cache" --output "$RUNNER_TEMP/huge-selected-source"
         python3 native-android/engine/appearance/recover_huge_rig.py --rig native-android/combined-client/app/src/main/assets/rig.bin --output "$RUNNER_TEMP/huge-original-rig"
         python3 native-android/engine/appearance/check_recover_costume_sources.py --source-root . --base "$RUNNER_TEMP/huge-original-rig/base.anim" --inventory-cache "$RUNNER_TEMP/huge-source-cache" > native-android/results/combined-neighborhood-diagnostic/huge-source-controls.json
+        python3 native-android/engine/appearance/check_archive_queries.py --mode all > native-android/results/combined-neighborhood-diagnostic/texture-query-controls.json
         python3 native-android/engine/appearance/check_huge_scales.py > native-android/results/combined-neighborhood-diagnostic/huge-source-scales.json
         python3 native-android/engine/appearance/check_huge_materials.py --mode all > native-android/results/combined-neighborhood-diagnostic/huge-source-materials.json
         # The genuine private costume replay and all13-mesh capture are qualified
@@ -424,7 +435,7 @@ jobs:
     - name: Build and inspect the signed ARM64 diagnostic
       run: |
         python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohBuildProfile="$DIAGNOSTIC_PROFILE" -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
-        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then
+        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then
           python3 - <<'PYSTACK'
         import json, pathlib
         rows = []
@@ -491,6 +502,9 @@ jobs:
       actions: read
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+    env:
+      FRAMEWORK_PROFILE: ${{ inputs.diagnostic_profile == 'freeze-diagnostic' && 'freeze-diagnostic' || 'fullscreen-diagnostic' }}
+      FRAMEWORK_CANDIDATE_ARTIFACT: ${{ inputs.diagnostic_profile == 'freeze-diagnostic' && '12319729985' || '12298379427' }}
     steps:
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
@@ -513,14 +527,17 @@ jobs:
       run: |
         sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
         python3 -m pip install --disable-pip-version-check Pillow==12.3.0
-    - name: Fetch the exact original fullscreen packages
+    - name: Fetch the exact original diagnostic packages
       env:
         GH_TOKEN: ${{ github.token }}
-      run: gh api repos/Russianranger/coh-android/actions/artifacts/12298379427/zip > "$RUNNER_TEMP/combined-fullscreen-candidate.zip"
+      run: gh api "repos/Russianranger/coh-android/actions/artifacts/$FRAMEWORK_CANDIDATE_ARTIFACT/zip" > "$RUNNER_TEMP/combined-framework-candidate.zip"
     - name: Admit exact APK bytes and unchanged shipping source
       run: |
         python3 - <<'PYFRAMEWORK'
         import hashlib,json,os,pathlib,re,stat,subprocess,zipfile
+        PROFILE=os.environ.get('FRAMEWORK_PROFILE','fullscreen-diagnostic')
+        if PROFILE not in ('fullscreen-diagnostic','freeze-diagnostic'):raise ValueError('framework profile differs')
+        VERSION,CODE,ARTIFACT,RUN,PREVIOUS_ARTIFACT,PREVIOUS_PROFILE='0.1.17','18','12298379427','39498990230','12289656309','capture-diagnostic'
         BASE='81a47f8ccef15c26e02b5cbf2feb4b99ac465139'
         TREE='c2f7bb34cfcbbcb98f91d4b2653dacc24c577b0c'
         ARCHIVE_BYTES=25677911
@@ -537,6 +554,20 @@ jobs:
          'x86_64-package.json':(1814,'6356aaa9174c98dc456dcf80d224db2b9df781fd00de840dde2a3ca3d17f07a2'),
          'arm64-interop-dso.json':(78829,'4ae91509530a62b9c3e3240820501ee88b14f092e4ab248705a5cc768af01a3a'),
          'x86_64-interop-dso.json':(78826,'ab9cb3f9ea5b8826c376afe28a5daab6df2400627e3106eee5dead05554d00ea')}
+        if PROFILE=='freeze-diagnostic':
+         BASE='86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981'
+         TREE='40d565eb12ea9540aa0e2871e42a58d0e7ef30b0'
+         VERSION,CODE,ARTIFACT,RUN,PREVIOUS_ARTIFACT,PREVIOUS_PROFILE='0.1.19','20','12319729985','39542047531','12314108293','continuation-diagnostic'
+         ARCHIVE_BYTES=25595713
+         ARCHIVE_SHA='a8171868038c932825d787400f53b313b41642cd802fd6dbf8413200ed6c147a'
+         ALLOWED=ALLOWED|{'native-android/combined-client/tools/driver_controls.py'}
+         PINS={
+          'CoH-Native-Combined-0.1.19-freeze-diagnostic-arm64.apk':(15288279,'9383ebd105c3bc75d3df7184c85baf2c55682d43b288fca83525b59a17d0a98a'),
+          'CoH-Native-Combined-0.1.19-freeze-diagnostic-x86_64.apk':(14586853,'961e3cf8e4dcc83cc546ac679a3f5947401e0d3b6f4ff60afb0690166c3d45be'),
+          'arm64-package.json':(2115,'a2be4726c04829b1efa6cc721bf3a790f2e759fd492e2861dd32cbe7aa6276e6'),
+          'x86_64-package.json':(1802,'727f0c94796c37effbdd24e91fbe05b19adb1baa0b9e74c180e6a4716cd75579'),
+          'arm64-interop-dso.json':(81056,'777bc8886da5bb75b0ecb8fb6ba10542abe0444a444c94fdf69d9f8096bf91f9'),
+          'x86_64-interop-dso.json':(81053,'c530406c81fe7bc342fd1d72fd18e58ed8733a4b275f4d6a669a76bd230239d5')}
         SIGNER='9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
 
         def need(ok,why):
@@ -586,12 +617,12 @@ jobs:
            selected[name]=raw
          apks={}
          for abi,label in [('arm64-v8a','arm64'),('x86_64','x86_64')]:
-          name='CoH-Native-Combined-0.1.17-fullscreen-diagnostic-'+label+'.apk'
+          name='CoH-Native-Combined-'+VERSION+'-'+PROFILE+'-'+label+'.apk'
           receipt=json.loads(selected[label+'-package.json']);audit=json.loads(selected[label+'-interop-dso.json'])
           expected={'bytes':PINS[name][0],'sha256':PINS[name][1]}
-          need(receipt['status']=='passed' and receipt['package']=='org.coh.nativecombined' and receipt['build_profile']=='fullscreen-diagnostic','candidate package identity/status differs')
+          need(receipt['status']=='passed' and receipt['package']=='org.coh.nativecombined' and receipt['build_profile']==PROFILE,'candidate package identity/status differs')
           need(receipt['source_commit']==audit['source_revision']==BASE and receipt['tracked_source_clean'] is True,'candidate source identity differs')
-          need(receipt['abi']==audit['abi']==abi and (receipt['version_code'],receipt['version_name'])==('18','0.1.17-fullscreen-diagnostic-test'),'candidate ABI/version differs')
+          need(receipt['abi']==audit['abi']==abi and (receipt['version_code'],receipt['version_name'])==(CODE,VERSION+'-'+PROFILE+'-test'),'candidate ABI/version differs')
           need(receipt['apk']==dict(name=name,**expected) and audit['apk']==expected and receipt['signer_certificate_sha256']==SIGNER,'candidate APK/certificate identity differs')
           need(audit['passed'] is True and audit['internal_core_and_static_archive_exports_hidden'] is True and audit['world_authority'] is False,'original DSO audit differs')
           apks[abi]=expected
@@ -605,18 +636,21 @@ jobs:
          root=pathlib.Path.cwd().resolve()
          head,changes,manifest=source_equivalence(root)
          out=root/'native-android/results/combined-framework-requalification'
-         apks=restore_candidate(pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-fullscreen-candidate.zip',out)
+         apks=restore_candidate(pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-framework-candidate.zip',out)
          # Preserve the original package/audit source and bytes; only this new CI proof
          # associates them with the current nonshipping framework driver.
          proof={'schema':'coh-combined-exact-apk-requalification-v1','passed':True,
           'candidate_source_revision':BASE,'candidate_source_tree':TREE,'qualification_source_revision':head,
           'runtime_and_build_inputs_unchanged':True,'unchanged_runtime_build_tree':manifest,
           'reviewed_driver_or_document_changes':changes,'nonshipping_allowlist':sorted(ALLOWED),
-          'candidate_archive':{'artifact_id':'12298379427','run_id':'39498990230','bytes':ARCHIVE_BYTES,'sha256':ARCHIVE_SHA},
+          'candidate_archive':{'artifact_id':ARTIFACT,'run_id':RUN,'bytes':ARCHIVE_BYTES,'sha256':ARCHIVE_SHA},
           'candidate_apks':apks,'original_package_audit_files':{n:{'bytes':v[0],'sha256':v[1]} for n,v in PINS.items() if n.endswith('.json')},
           'APK_rebuilt':False,'Android_executed_by_admission':False,'physical_Thor_qualified':False,'world_authority':False}
          raw=json.dumps(proof,indent=2,sort_keys=True)+'\n';need(len(raw.encode())<=128*1024,'source proof bound')
          (out/'current-source-admission.json').write_text(raw)
+         if os.environ.get('GITHUB_ENV'):
+          with open(os.environ['GITHUB_ENV'],'a') as env:
+           for key,value in {'FRAMEWORK_SOURCE':BASE,'FRAMEWORK_APK':'CoH-Native-Combined-'+VERSION+'-'+PROFILE+'-x86_64.apk','FRAMEWORK_PREVIOUS_ARTIFACT':PREVIOUS_ARTIFACT,'FRAMEWORK_PREVIOUS_PROFILE':PREVIOUS_PROFILE}.items():env.write(key+'='+value+'\n')
          print(json.dumps({'exact_candidate_APKs_reused':True,'candidate_source_revision':BASE,'qualification_source_revision':head,'APK_rebuilt':False}))
         if __name__=='__main__':main()
         PYFRAMEWORK
@@ -625,18 +659,18 @@ jobs:
         python3 native-android/combined-client/tools/test_fullscreen_readiness.py
         python3 native-android/combined-client/tools/test_framework_requalification.py
         python3 native-android/combined-client/tools/driver_controls.py
-    - name: Preserve the exact 0.1.16 donor and enable emulator acceleration
+    - name: Preserve the exact preceding diagnostic donor and enable emulator acceleration
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        gh api repos/Russianranger/coh-android/actions/artifacts/12289656309/zip > "$RUNNER_TEMP/combined-fullscreen-previous.zip"
+        gh api "repos/Russianranger/coh-android/actions/artifacts/$FRAMEWORK_PREVIOUS_ARTIFACT/zip" > "$RUNNER_TEMP/combined-framework-previous.zip"
         python3 - <<'PYPREV'
         import os,pathlib,sys
         sys.path.insert(0,'native-android/combined-client/tools')
         from upgrade_emulator_check import previous_inputs
-        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-fullscreen-previous-preflight'
+        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-framework-previous-preflight'
         output.mkdir()
-        previous_inputs(pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-fullscreen-previous.zip',output,'capture-diagnostic')
+        previous_inputs(pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-framework-previous.zip',output,os.environ['FRAMEWORK_PREVIOUS_PROFILE'])
         PYPREV
         test -c /dev/kvm
         sudo chmod 666 /dev/kvm
@@ -652,16 +686,16 @@ jobs:
         emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
         disable-animations: true
         script: |
-          python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-framework-requalification/CoH-Native-Combined-0.1.17-fullscreen-diagnostic-x86_64.apk --package-receipt native-android/results/combined-framework-requalification/x86_64-package.json --previous-archive "$RUNNER_TEMP/combined-fullscreen-previous.zip" --previous-profile capture-diagnostic --build-profile fullscreen-diagnostic --exercise-debuggable-downgrade --candidate-source-revision 81a47f8ccef15c26e02b5cbf2feb4b99ac465139 --source-admission native-android/results/combined-framework-requalification/current-source-admission.json --output native-android/results/combined-framework-requalification/android13-update
+          python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk "native-android/results/combined-framework-requalification/$FRAMEWORK_APK" --package-receipt native-android/results/combined-framework-requalification/x86_64-package.json --previous-archive "$RUNNER_TEMP/combined-framework-previous.zip" --previous-profile "$FRAMEWORK_PREVIOUS_PROFILE" --build-profile "$FRAMEWORK_PROFILE" --exercise-debuggable-downgrade --candidate-source-revision "$FRAMEWORK_SOURCE" --source-admission native-android/results/combined-framework-requalification/current-source-admission.json --output native-android/results/combined-framework-requalification/android13-update
           "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 uninstall org.coh.nativecombined
-          python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-framework-requalification/CoH-Native-Combined-0.1.17-fullscreen-diagnostic-x86_64.apk --output native-android/results/combined-framework-requalification/android13
+          python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk "native-android/results/combined-framework-requalification/$FRAMEWORK_APK" --output native-android/results/combined-framework-requalification/android13
           "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell am force-stop org.coh.nativecombined
           "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 uninstall org.coh.nativecombined
           test -z "$("$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell pm list packages org.coh.nativecombined | tr -d '\r')"
     - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: combined-framework-fullscreen-${{ github.sha }}
+        name: combined-framework-${{ env.FRAMEWORK_PROFILE }}-${{ github.sha }}
         path: |
           native-android/results/combined-framework-requalification/android13/
           native-android/results/combined-framework-requalification/android13-update/*.json

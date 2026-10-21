@@ -102,6 +102,45 @@ public final class SceneFrameCapture {
         return json;
     }
 
+    /** A validated snapshot for one exact installed app/activity run. Retained
+     * bytes cannot change if a subsequent capture replaces the backing file. */
+    public static final class Selection {
+        private final Capture capture;
+        private final boolean large;
+        private final String reason;
+        private Selection(Capture capture, boolean large, String reason) {
+            this.capture=capture;this.large=large;this.reason=reason;
+        }
+        public String metadata(){return capture==null?null:capture.json;}
+        public String omissionReason(){return reason;}
+        public boolean append(ZipOutputStream zip)throws IOException {
+            return capture!=null&&SceneFrameCapture.append(capture,zip,large);
+        }
+        public boolean writeZip(OutputStream output)throws IOException {
+            return capture!=null&&SceneFrameCapture.writeZip(capture,output,large);
+        }
+    }
+    public static synchronized Selection current(File directory,long appVersion,String activitySession,boolean large) {
+        return current(directory,appVersion,activitySession,large,true);
+    }
+    public static synchronized Selection inspectCurrent(File directory,long appVersion,String activitySession,boolean large) {
+        return current(directory,appVersion,activitySession,large,false);
+    }
+    private static Selection current(File directory,long appVersion,String activitySession,boolean large,boolean retain) {
+        String expected=session(activitySession);
+        if(appVersion<=0||expected==null)return new Selection(null,large,"CAPTURE_CURRENT_RUN_UNAVAILABLE");
+        Capture capture=optional(directory,retain,true,large);
+        if(capture==null)return new Selection(null,large,"CAPTURE_MISSING_OR_INVALID");
+        if(capture.version!=appVersion)return new Selection(null,large,"CAPTURE_APP_VERSION_MISMATCH");
+        if(!capture.session.equals(expected))return new Selection(null,large,"CAPTURE_ACTIVITY_SESSION_MISMATCH");
+        return new Selection(capture,large,null);
+    }
+    public static synchronized void clear(File directory)throws IOException {
+        if(directory==null)throw new IOException("Capture directory unavailable");
+        Files.deleteIfExists(new File(directory,TEMP).toPath());
+        Files.deleteIfExists(new File(directory,STORE).toPath());
+    }
+
     /** Return metadata for a complete validated historical record, or null. */
     public static synchronized String metadata(File directory) {
         Capture capture = optional(directory, false, true,false);
@@ -126,6 +165,10 @@ public final class SceneFrameCapture {
         if (zip == null) throw new IOException("Scene capture ZIP unavailable");
         Capture capture = optional(directory, true, true,large);
         if (capture == null) return false;
+        return append(capture,zip,large);
+    }
+    private static boolean append(Capture capture,ZipOutputStream zip,boolean large)throws IOException {
+        if(zip==null||capture.raw==null)throw new IOException("Capture ZIP snapshot unavailable");
         SceneCapturePng.Info png=large?SceneCapturePng.measure(capture.raw,capture.frame.width,capture.frame.height):null;
         byte[] json=exportJson(capture,png).getBytes(StandardCharsets.UTF_8);
         if(large){
@@ -161,6 +204,10 @@ public final class SceneFrameCapture {
         if (output == null) throw new IOException("Scene capture ZIP unavailable");
         Capture capture = optional(directory, true, true,large);
         if (capture == null) return false;
+        return writeZip(capture,output,large);
+    }
+    private static boolean writeZip(Capture capture,OutputStream output,boolean large)throws IOException {
+        if(output==null||capture.raw==null)throw new IOException("Capture ZIP snapshot unavailable");
         SceneCapturePng.Info png=large?SceneCapturePng.measure(capture.raw,capture.frame.width,capture.frame.height):null;
         byte[] json = exportJson(capture,png).getBytes(StandardCharsets.UTF_8);
         byte[] header = new byte[46];
@@ -280,7 +327,7 @@ public final class SceneFrameCapture {
                     || file.length() != bytes || file.lastModified() != modified) return null;
             byte[] rawHash = rawDigest.digest(), storeHash = storeDigest.digest();
             if (!same(wrapper, 64, rawHash) || !same(wrapper, 96, storeHash)) return null;
-            return new Capture(frame, session,
+            return new Capture(frame, version, session,
                     makeJson ? json(frame, version, session, (int) length, rawHash) : null, raw);
         }
     }
@@ -420,10 +467,11 @@ public final class SceneFrameCapture {
 
     private static final class Capture {
         final Frame frame;
+        final long version;
         final String session, json;
         final byte[] raw;
-        Capture(Frame frame, String session, String json, byte[] raw) {
-            this.frame = frame; this.session = session; this.json = json; this.raw = raw;
+        Capture(Frame frame, long version, String session, String json, byte[] raw) {
+            this.version=version;this.frame = frame; this.session = session; this.json = json; this.raw = raw;
         }
     }
 

@@ -124,7 +124,7 @@ class ImportedArchive:
                 except UnicodeDecodeError:
                     name = ''
                 low = name.casefold()
-                texture = (low.startswith(('data/texture_library/', 'assets/texture_library/'))
+                texture = (low.startswith(('texture_library/', 'data/texture_library/', 'assets/texture_library/'))
                            and low.endswith('.texture') and PurePosixPath(low).stem in textures)
                 if low in wanted or texture:
                     if not safe_path(name) or low in selected or len(found) >= REQUEST_LIMIT:

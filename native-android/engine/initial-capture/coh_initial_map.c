@@ -203,9 +203,25 @@ static void ic_post_count(CohInitialMap*x,const CohNetOwnedMessage*n,uint64_t no
  CohInitialPostCommand*p=&c->post[row];p->count++;if(n->payload_bytes<p->min_bytes)p->min_bytes=(uint32_t)n->payload_bytes;if(n->payload_bytes>p->max_bytes)p->max_bytes=(uint32_t)n->payload_bytes;p->total_bytes+=n->payload_bytes;p->total_bits+=n->payload_bits;
 }
 static CohStatus ic_post(CohInitialMap*x,const CohNetOwnedMessage*n,uint64_t now){
- CohRepReader reader;uint32_t command;CohStatus s=coh_rep_reader_bounded(&reader,(CohBytes){n->payload,n->payload_bytes},n->payload_bits,n->compressed,COH_NET_DECODED_MAX);
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+ CohRepReader reader={0};uint32_t command=UINT32_MAX;
+#else
+ CohRepReader reader;uint32_t command;
+#endif
+CohStatus s=coh_rep_reader_bounded(&reader,(CohBytes){n->payload,n->payload_bytes},n->payload_bits,n->compressed,COH_NET_DECODED_MAX);
  if(s==COH_OK)s=coh_rep_pack(&reader,1,&command);
  if(s==COH_OK&&x->version<4){if(command<7)s=COH_UNSUPPORTED;else command-=5;}
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+ /* Optional byte-only tap precedes every existing prefix/body read, including
+  * a failed command header when the bounded reader itself is available. The
+  * original status and normal observer behavior are deliberately unchanged. */
+ if(x->d.continuation.client_ready_sent&&reader.bytes.data==n->payload&&reader.bytes.size==n->payload_bytes&&
+    reader.bits==n->payload_bits&&reader.cursor<=reader.bits&&reader.max_bytes==COH_NET_DECODED_MAX){
+  x->reader=reader;memset(&x->update,0,sizeof(x->update));x->update.command=s==COH_OK?command:UINT32_MAX;
+  (void)ic_observe(x,COH_INITIAL_CAPTURE_RAW_POST);
+  memset(&x->reader,0,sizeof(x->reader));memset(&x->update,0,sizeof(x->update));
+ }
+#endif
  if(s!=COH_OK){
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
  x->command_kind=COH_INITIAL_CAPTURE_COMMAND_UNKNOWN;x->d.continuation.post_unclassified++;ic_post_count(x,n,now);
@@ -251,7 +267,11 @@ CohStatus coh_initial_map_lease(const CohInitialMap*x,const CohInitialCaptureEve
  if(!ic_span(out,sizeof(*out))||!ic_disjoint(out,sizeof(*out),x,sizeof(*x))||!ic_disjoint(out,sizeof(*out),m,sizeof(*m))||!ic_disjoint(out,sizeof(*out),x->owner,x->owner_bytes)||!ic_disjoint(out,sizeof(*out),event,sizeof(*event))||!ic_disjoint(out,sizeof(*out),n,sizeof(*n))||!ic_disjoint(out,sizeof(*out),n->payload,n->payload_bytes))return COH_INVALID;
  CohRepReader reader=x->reader;
  if(event->kind==COH_INITIAL_CAPTURE_GROUPS){CohMapSceneLease scene;CohStatus s=coh_map_client_scene_lease(m,x->scene,&scene);if(s!=COH_OK)return s;if(scene.message_generation!=n->generation)return COH_STATE;reader=scene.reader;}
- else if(event->kind==COH_INITIAL_CAPTURE_ALLENTS||event->kind==COH_INITIAL_CAPTURE_UPDATE){if(ic_owner(x)!=COH_OK||x->d.reqallents_sent!=1||!x->d.groups_observed||n->generation<=x->d.groups_message_generation)return COH_STATE;}
+ else if(event->kind==COH_INITIAL_CAPTURE_ALLENTS||event->kind==COH_INITIAL_CAPTURE_UPDATE
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+ ||event->kind==COH_INITIAL_CAPTURE_RAW_POST
+#endif
+ ){if(ic_owner(x)!=COH_OK||x->d.reqallents_sent!=1||!x->d.groups_observed||n->generation<=x->d.groups_message_generation)return COH_STATE;}
  else return COH_STATE;
  if(!n->generation||reader.bytes.data!=n->payload||reader.bytes.size!=n->payload_bytes||reader.bits!=n->payload_bits||reader.compressed!=n->compressed||reader.cursor>reader.bits||reader.max_bytes!=COH_NET_DECODED_MAX)return COH_STATE;
  CohInitialCaptureLease v;memset(&v,0,sizeof(v));v.kind=event->kind;v.reader=reader;v.schema=m->schema;v.groups=x->d.groups;v.update=x->update;v.message_generation=n->generation;v.groups_message_generation=x->d.groups_message_generation;v.message_id=n->id;v.ordered_id=n->ordered_id;v.ordered=n->ordered;v.connection_id=x->connection_id;v.transport_version=x->version;v.map_generation=x->d.map_generation;v.selection_generation=x->d.selection_generation;v.selected_slot=x->d.selected_slot;v.selected_dbid=x->d.selected_dbid;v.map_id=x->d.map_id;v.map_link_id=x->d.map_link_id;v.db_session_generation=x->d.db_session_generation;v.db_receipt_generation=x->d.db_receipt_generation;v.local_development_authorized=1;v.selected_dbid_owner_bound=1;*out=v;return COH_OK;
