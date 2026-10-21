@@ -6,3 +6,17 @@
 0006-cmake-arm64-ordinary-shared-memory-data.patch
 0007-cmake-arm64-portable-cryptopp.patch
 0008-utilitieslib-arm64-cpu-counter.patch
+0009-game-fix-rdrExamineDriversEarly-prototype.patch
+0010-common-powermode-single-typedef.patch
+0011-common-physx-off-on-arm64.patch
+0012-common-game-standard-c-lvalue-casts.patch
+0013-game-texwords-arm64-c-path.patch
+0014-common-game-consistent-declarations.patch
+0015-common-autogen-include-case.patch
+0016-game-rt-model-static-inline.patch
+0017-game-perfcounter-windows-types-first.patch
+0018-utilitieslib-arm64-prefetch.patch
+0019-game-frustum-m128-lanes.patch
+0020-game-autoresume-parse-table-64bit-addresses.patch
+0021-game-cmake-arm64-standins.patch
+0022-cmake-nvparse-arm64.patch

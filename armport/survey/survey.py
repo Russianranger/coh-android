@@ -43,7 +43,12 @@ def cmake_list(path, var, append_too=True):
         for m in re.finditer(pat, text, re.S):
             for tok in re.findall(r'"[^"]*"|\S+', m.group(1)):
                 items.append(tok.strip('"'))
-    return items
+    # The survey targets ARM64, so honor list(REMOVE_ITEM VAR ...) as well
+    # (the ArmPort patches use it only inside if(COX_ARM64_WINDOWS)).
+    removed = set()
+    for m in re.finditer(r'list\(\s*REMOVE_ITEM\s+' + var + r'\s+(.*?)\)', text, re.S):
+        removed.update(t.strip('"') for t in re.findall(r'"[^"]*"|\S+', m.group(1)))
+    return [i for i in items if i not in removed]
 
 
 def targets(src):
@@ -120,7 +125,8 @@ def dep_includes(src, tc):
            os.path.join(d, 'glew-cmake', 'include'),
            os.path.join(d, 'vorbis', 'include'), os.path.join(d, 'ogg', 'include'),
            os.path.join(d, 'libjpeg-turbo', 'src'), os.path.join(d, 'libjpeg-turbo'),
-           os.path.join(d, 'jpgd'), os.path.join(d, 'sparsehash', 'src'),
+           os.path.join(d, 'jpgd'), os.path.join(d, 'jpgd', 'include'),
+           os.path.join(d, 'sparsehash', 'src'),
            os.path.join(third, 'cg', 'include'), os.path.join(third, 'nvdxt'),
            os.path.join(third, 'nvparse', 'include', 'nvparse'),
            os.path.join(third, 'nvparse', 'include'),
@@ -198,6 +204,8 @@ def main():
     # Two compiler processes by default, matching the bounded build-host rule.
     ap.add_argument('--jobs', type=int, default=2)
     ap.add_argument('--limit', type=int, default=0, help='compile only N files per target (debug)')
+    ap.add_argument('--all-errors', action='store_true',
+                    help='keep every error line per failing file (default: first only)')
     ap.add_argument('--permissive', action='store_true',
                     help='downgrade clang strictness errors that MSVC accepts (flags only, no patches)')
     ap.add_argument('--patched', action='store_true',
@@ -290,7 +298,9 @@ def main():
                          for r in sorted(results, key=lambda r: -len(r['errors']))[:25]],
             per_file=[dict(file=r['file'], ok=r['ok'], errors=len(r['errors']),
                            first=(r['errors'][0].split(src + '/', 1)[-1][:240]
-                                  if r['errors'] else ''))
+                                  if r['errors'] else ''),
+                           **({'all': [e.split(src + '/', 1)[-1][:300] for e in r['errors']]}
+                              if a.all_errors and r['errors'] else {}))
                       for r in results])
     report['finished'] = time.strftime('%Y-%m-%dT%H:%M:%S%z')
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)

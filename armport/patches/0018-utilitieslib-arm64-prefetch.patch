@@ -1,0 +1,25 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/prefetch.h b/libs/UtilitiesLib/include/utilitieslib/utils/prefetch.h
+index d47e427..5a8f48b 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/prefetch.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/prefetch.h
+@@ -20,6 +20,20 @@ static COH_FORCEINLINE void PrefetchNTA(const void* mem)
+     _mm_prefetch(mem, _MM_HINT_NTA);
+ }
+ 
++#elif defined(__aarch64__)
++
++// ArmPort: ARM64 prefetch (PRFM) through the compiler builtin.
++static COH_FORCEINLINE void Prefetch(const void* mem)
++{
++    __builtin_prefetch(mem, 0, 3);
++}
++
++// Non-temporal: low temporal locality.
++static COH_FORCEINLINE void PrefetchNTA(const void* mem)
++{
++    __builtin_prefetch(mem, 0, 0);
++}
++
+ #else
+ 
+ // NOTE: These are for X86 only

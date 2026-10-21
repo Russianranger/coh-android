@@ -1,0 +1,13 @@
+diff --git a/Common/entity/character_base.h b/Common/entity/character_base.h
+index dd701b5..e686860 100644
+--- a/Common/entity/character_base.h
++++ b/Common/entity/character_base.h
+@@ -34,7 +34,7 @@ typedef struct PowerListItem *PowerList;
+ typedef struct CharacterOrigin CharacterOrigin;
+ typedef struct Packet Packet;
+ typedef struct Boost Boost;
+-typedef int PowerMode;
++typedef enum PowerMode PowerMode; // ArmPort: matches powers.h (was int)
+ typedef struct SalvageInventoryItem SalvageInventoryItem;
+ typedef struct ConceptInventoryItem ConceptInventoryItem;
+ typedef struct RecipeInventoryItem RecipeInventoryItem;

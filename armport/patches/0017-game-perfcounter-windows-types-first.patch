@@ -1,0 +1,12 @@
+diff --git a/Game/src/render/perfcounter.c b/Game/src/render/perfcounter.c
+index 394e0d6..be11913 100644
+--- a/Game/src/render/perfcounter.c
++++ b/Game/src/render/perfcounter.c
+@@ -1,5 +1,7 @@
+ #include <utilitieslib/stdtypes.h>
+ #include "render/perfcounter.h"
++// ArmPort: wglew.h needs the Windows types (HDC, UINT) declared first.
++#include <utilitieslib/utils/wininclude.h>
+ #include <GL/glew.h>
+ #include <GL/wglew.h>
+ 

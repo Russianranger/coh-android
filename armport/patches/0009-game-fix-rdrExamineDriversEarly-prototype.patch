@@ -1,0 +1,13 @@
+diff --git a/Game/src/render/renderUtil.h b/Game/src/render/renderUtil.h
+index 0bc2db5..4c3b5c9 100644
+--- a/Game/src/render/renderUtil.h
++++ b/Game/src/render/renderUtil.h
+@@ -70,7 +70,7 @@ enum {
+     SHADERTEST_BLENDMAT_ONLY,
+ };
+ 
+-void rdrExamineDriversEarly(oivd);
++void rdrExamineDriversEarly(SystemSpecs * systemSpecs);
+ void rdrInit(void);
+ void getGlState();
+ void checkgl(char *fname,int line);

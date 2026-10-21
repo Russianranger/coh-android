@@ -1,0 +1,10 @@
+diff --git a/Common/group/groupMetaMinimap.c b/Common/group/groupMetaMinimap.c
+index 0d8ed13..686875f 100644
+--- a/Common/group/groupMetaMinimap.c
++++ b/Common/group/groupMetaMinimap.c
+@@ -944,4 +944,4 @@ void minimap_saveHeader(char *filename)
+     s_freeHeader(header);
+ }
+ 
+-#include "autogen/groupMetaMinimap_h_ast.c"
++#include "AutoGen/groupMetaMinimap_h_ast.c" // ArmPort: exact case for case-sensitive hosts

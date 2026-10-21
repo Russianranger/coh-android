@@ -1,0 +1,482 @@
+diff --git a/Common/MissionControl.c b/Common/MissionControl.c
+index d3adc9b..5f8f305 100644
+--- a/Common/MissionControl.c
++++ b/Common/MissionControl.c
+@@ -500,7 +500,7 @@ void MissionControlHandleResponse(Packet * pak) {
+     }
+     for (i=0;i<eaSize(&routes);i++)
+         eaClearEx(&routes[i]->route,NULL);
+-    eaDestroy(&(void **)routes);
++    eaDestroy((void ***)&(routes));
+     routes=NULL;
+ }
+ 
+diff --git a/Common/entity/PowerInfo.c b/Common/entity/PowerInfo.c
+index d915cd2..ec1fd98 100644
+--- a/Common/entity/PowerInfo.c
++++ b/Common/entity/PowerInfo.c
+@@ -220,7 +220,7 @@ int powerInfo_PowerIsActive(PowerInfo* info, PowerRef ppowRef)
+ 
+ PowerRechargeTimer* powerInfo_PowerGetRechargeTimer(PowerInfo* info, PowerRef ppowRef)
+ {
+-    return (PowerRechargeTimer*)powerInfo_FindPower(&(PowerRef**)info->rechargeTimers, ppowRef);
++    return (PowerRechargeTimer*)powerInfo_FindPower((PowerRef***)&(info->rechargeTimers), ppowRef);
+ }
+ 
+ PowerRef* powerInfo_FindPower(PowerRef ***powerRefArray, PowerRef ppowRef)
+diff --git a/Common/entity/boost.c b/Common/entity/boost.c
+index ac348e4..3e9d052 100644
+--- a/Common/entity/boost.c
++++ b/Common/entity/boost.c
+@@ -331,7 +331,7 @@ bool boost_IsOriginSpecific(const BasePower *ppowBase)
+     assert(eaSize(&g_CharacterOrigins.ppOrigins) == ORIGIN_COUNT);
+     assert(ppowBase != NULL);
+ 
+-    for (i = eaiSize(&(int *) ppowBase->pBoostsAllowed) - 1; i >= 0; i--)
++    for (i = eaiSize((int **)&(ppowBase->pBoostsAllowed)) - 1; i >= 0; i--)
+     {
+         if (ppowBase->pBoostsAllowed[i] < ORIGIN_COUNT)
+         {
+@@ -361,7 +361,7 @@ bool power_IsValidBoostMod(const Power *ppow, const AttribModTemplate *mod)
+     if(!mod->boostModAllowed)
+         return true;
+ 
+-    for(i=eaiSize(&(int *)ppow->ppowBase->pBoostsAllowed)-1; i>=0; i--)
++    for(i=eaiSize((int **)&(ppow->ppowBase->pBoostsAllowed))-1; i>=0; i--)
+     {
+         if(ppow->ppowBase->pBoostsAllowed[i] == mod->boostModAllowed)
+             return true;
+@@ -400,9 +400,9 @@ bool power_IsValidBoost(const Power *ppow, const Boost *pboost)
+         }
+     }
+ 
+-    for(i=eaiSize(&(int *)ppow->ppowBase->pBoostsAllowed)-1; i>=0; i--)
++    for(i=eaiSize((int **)&(ppow->ppowBase->pBoostsAllowed))-1; i>=0; i--)
+     {
+-        for(j=eaiSize(&(int *)pboost->ppowBase->pBoostsAllowed)-1; j>=0; j--)
++        for(j=eaiSize((int **)&(pboost->ppowBase->pBoostsAllowed))-1; j>=0; j--)
+         {
+             if(pboost->ppowBase->pBoostsAllowed[j]<eaSize(&g_CharacterOrigins.ppOrigins))
+             {
+@@ -438,9 +438,9 @@ bool power_IsValidBoostIgnoreOrigin(const Power *ppow, const Boost *pboost)
+     assert(ppow!=NULL);
+     assert(pboost!=NULL);
+ 
+-    for(i=eaiSize(&(int *)ppow->ppowBase->pBoostsAllowed)-1; i>=0; i--)
++    for(i=eaiSize((int **)&(ppow->ppowBase->pBoostsAllowed))-1; i>=0; i--)
+     {
+-        for(j=eaiSize(&(int *)pboost->ppowBase->pBoostsAllowed)-1; j>=0; j--)
++        for(j=eaiSize((int **)&(pboost->ppowBase->pBoostsAllowed))-1; j>=0; j--)
+         {
+             if(pboost->ppowBase->pBoostsAllowed[j]>=eaSize(&g_CharacterOrigins.ppOrigins))
+             {
+@@ -471,7 +471,7 @@ bool boost_IsValidBoostForOrigin(const Boost *pboost, const BasePower *ppowBase,
+         ppowBase = pboost->ppowBase;
+     }
+ 
+-    for(j=eaiSize(&(int *)ppowBase->pBoostsAllowed)-1; j>=0; j--)
++    for(j=eaiSize((int **)&(ppowBase->pBoostsAllowed))-1; j>=0; j--)
+     {
+         if(ppowBase->pBoostsAllowed[j]<eaSize(&g_CharacterOrigins.ppOrigins))
+         {
+@@ -640,18 +640,18 @@ bool boost_IsValidCombination(const Boost *pboostA, const Boost *pboostB)
+ 
+     // first make sure one origin matches and that A and B have the same number
+     // of origins
+-    for(j=eaiSize(&(int *)pboostB->ppowBase->pBoostsAllowed)-1; j>=0; j--)
++    for(j=eaiSize((int **)&(pboostB->ppowBase->pBoostsAllowed))-1; j>=0; j--)
+     {
+         if(pboostB->ppowBase->pBoostsAllowed[j] < iNumOrigins)
+             iCntB++;
+     }
+-    for(i=eaiSize(&(int *)pboostA->ppowBase->pBoostsAllowed)-1; i>=0; i--)
++    for(i=eaiSize((int **)&(pboostA->ppowBase->pBoostsAllowed))-1; i>=0; i--)
+     {
+         if(pboostA->ppowBase->pBoostsAllowed[i] < iNumOrigins)
+         {
+             iCntA++;
+ 
+-            for(j=eaiSize(&(int *)pboostB->ppowBase->pBoostsAllowed)-1; j>=0; j--)
++            for(j=eaiSize((int **)&(pboostB->ppowBase->pBoostsAllowed))-1; j>=0; j--)
+             {
+                 if(pboostA->ppowBase->pBoostsAllowed[i] == pboostB->ppowBase->pBoostsAllowed[j]
+                     && pboostB->ppowBase->pBoostsAllowed[j] < iNumOrigins)
+@@ -668,8 +668,8 @@ bool boost_IsValidCombination(const Boost *pboostA, const Boost *pboostB)
+     // All of the non-origin-related BoostsAllowed have to be exactly the same
+     //    for both boosts to match. They may have variant origin requirements.
+     // BoostsAllowed is sorted numerically, and this code takes advantage of that.
+-    i = eaiSize(&(int *)pboostA->ppowBase->pBoostsAllowed)-1;
+-    j = eaiSize(&(int *)pboostB->ppowBase->pBoostsAllowed)-1;
++    i = eaiSize((int **)&(pboostA->ppowBase->pBoostsAllowed))-1;
++    j = eaiSize((int **)&(pboostB->ppowBase->pBoostsAllowed))-1;
+     while(i>=0 && j>=0)
+     {
+         if(pboostA->ppowBase->pBoostsAllowed[i] < iNumOrigins)
+diff --git a/Common/entity/character_target.c b/Common/entity/character_target.c
+index ae570e5..0f461cf 100644
+--- a/Common/entity/character_target.c
++++ b/Common/entity/character_target.c
+@@ -816,7 +816,7 @@ bool MatchesTypeList(Character *pSrc, Character *pTarget, const TargetType *pTyp
+ 
+     PERFINFO_AUTO_START("MatchesTypeList", 1);
+ 
+-    for(i=eaiSize(&(int *)pTypes)-1; i>=0; i--)
++    for(i=eaiSize((int **)&(pTypes))-1; i>=0; i--)
+     {
+         if(character_TargetMatchesType(pSrc, pTarget, pTypes[i], targetsThroughVisionPhase))
+         {
+@@ -839,7 +839,7 @@ bool power_AffectsType(Power *ppow, TargetType type)
+ 
+     PERFINFO_AUTO_START("power_AffectsType", 1);
+ 
+-    for(i=eaiSize(&(int *)ppow->ppowBase->pAffected)-1; i>=0; i--)
++    for(i=eaiSize((int **)&(ppow->ppowBase->pAffected))-1; i>=0; i--)
+     {
+         if(type == ppow->ppowBase->pAffected[i])
+         {
+diff --git a/Common/entity/classes.c b/Common/entity/classes.c
+index 072c55f..321f8e1 100644
+--- a/Common/entity/classes.c
++++ b/Common/entity/classes.c
+@@ -60,7 +60,7 @@ void classes_Repack(CharacterClasses *pclasses, const PowerDictionary *pdict)
+         // were specified, make them up.
+         if(pclass->ppattrStrengthMin==NULL)
+         {
+-            eaCreate(&cpp_const_cast(CharacterAttributes**)(pclass->ppattrStrengthMin));
++            eaCreate(cpp_const_cast(CharacterAttributes***)(&(pclass->ppattrStrengthMin)));
+             eaPushConst(&pclass->ppattrStrengthMin, ParserAllocStruct(sizeof(CharacterAttributes)));
+         }
+ 
+@@ -71,7 +71,7 @@ void classes_Repack(CharacterClasses *pclasses, const PowerDictionary *pdict)
+         {
+             float *pf = ParserAllocStruct(sizeof(CharacterAttributes));
+ 
+-            eaCreate(&cpp_const_cast(CharacterAttributes**)(pclass->ppattrResistanceMin));
++            eaCreate(cpp_const_cast(CharacterAttributes***)(&(pclass->ppattrResistanceMin)));
+             eaPushConst(&pclass->ppattrResistanceMin, pf);
+ 
+             for(j=0; j<sizeof(CharacterAttributes)/sizeof(float); j++)
+diff --git a/Common/entity/powers_load.c b/Common/entity/powers_load.c
+index 8570d99..8e27240 100644
+--- a/Common/entity/powers_load.c
++++ b/Common/entity/powers_load.c
+@@ -289,7 +289,7 @@ static void power_FixupForBin(BasePower *ppow, int **crcFullNameList)
+     if(iSizeVars > POWER_VAR_MAX_COUNT)
+     {
+         ErrorFilenamef(ppow->pchSourceFile, "Too many vars defined for power (%s).\n",ppow->pchFullName);
+-        eaSetSize(&cpp_const_cast(PowerVar**)(ppow->ppVars), POWER_VAR_MAX_COUNT);
++        eaSetSize(cpp_const_cast(PowerVar***)(&(ppow->ppVars)), POWER_VAR_MAX_COUNT);
+     }
+     for(imod = 0; imod<iSizeVars; imod++)
+     {
+@@ -306,7 +306,7 @@ static void power_FixupForBin(BasePower *ppow, int **crcFullNameList)
+         power_FixupForBinFX(ppow, cpp_const_cast(PowerFX*)(&ppow->customfx[ifx]->fx));
+ 
+     // Sort BoostsAllowed so it's easier to compare them.
+-    qsort(cpp_const_cast(BoostType*)(ppow->pBoostsAllowed), eaiSize(&(int *)ppow->pBoostsAllowed), sizeof(int), less);
++    qsort(cpp_const_cast(BoostType*)(ppow->pBoostsAllowed), eaiSize((int **)&(ppow->pBoostsAllowed)), sizeof(int), less);
+ 
+     //
+     // Validate the power requires.
+@@ -377,7 +377,7 @@ static void power_FixupForBin(BasePower *ppow, int **crcFullNameList)
+     // (Search for "ShowBuffIcon" for more fixups below)
+     if(ppow->bShowBuffIcon == -1)
+     {
+-        if(eaiSize(&(int*)ppow->pAffected) == 1
++        if(eaiSize((int**)&(ppow->pAffected)) == 1
+             && ppow->pAffected[0] == kTargetType_Caster)
+         {
+             ppow->bShowBuffIcon = true;
+@@ -734,7 +734,7 @@ void powerdict_SetForwardPointers(PowerDictionary *pdict)
+         PowerCategory *pcat = (PowerCategory*)pdict->ppPowerCategories[icat];
+         int iSizeSets = eaSize(&pcat->ppPowerSetNames);
+ 
+-        eaSetSizeConst(&cpp_const_cast(BasePowerSet**)(pcat->ppPowerSets),0);
++        eaSetSizeConst(cpp_const_cast(BasePowerSet***)(&(pcat->ppPowerSets)),0);
+ 
+         for(iset=0; iset<iSizeSets; iset++)
+         {
+@@ -1074,7 +1074,7 @@ void powerdict_FinalizePower(BasePower *ppow, PowerDictionary *pdict)
+                 ErrorFilenamef(ppow->pchSourceFile, "Power (%s) cannot have a %s attrib mod that doesn't target the caster!", ppow->pchFullName, ppowApplicationTypeString);
+             }
+ 
+-            for (j = 0; j < eaiSize(&(int*)ppow->pAutoHit); j++)
++            for (j = 0; j < eaiSize((int**)&(ppow->pAutoHit)); j++)
+             {
+                 if (ppow->pAutoHit[j] == kTargetType_Caster)
+                 {
+diff --git a/Common/gameComm/VillainDef.c b/Common/gameComm/VillainDef.c
+index cd85682..df5d80f 100644
+--- a/Common/gameComm/VillainDef.c
++++ b/Common/gameComm/VillainDef.c
+@@ -362,7 +362,7 @@ static bool villainDefsPreProcessAll(ParseTable* pti, void* structptr)
+     int i;
+     bool ret = true; // assume successful
+ 
+-    eaQSort(cpp_const_cast(VillainDef**)(vlist->villainDefs), compareVillainDefNames);
++    eaQSort(*cpp_const_cast(VillainDef***)(&(vlist->villainDefs)), compareVillainDefNames);
+ 
+     for(i = eaSize(&vlist->villainDefs)-1; i >= 0; i--)
+     {
+@@ -377,7 +377,7 @@ static int villainDefsPreProcessModified(VillainDefList* vlist)
+     int i;
+     int ret = 1; // assume successful
+ 
+-    eaQSort(cpp_const_cast(VillainDef**)(vlist->villainDefs), compareVillainDefNames);
++    eaQSort(*cpp_const_cast(VillainDef***)(&(vlist->villainDefs)), compareVillainDefNames);
+ 
+     for(i = eaSize(&vlist->villainDefs)-1; i >= 0; i--)
+     {
+diff --git a/Common/gameData/costume_data.c b/Common/gameData/costume_data.c
+index 1fc77e9..606ad4b 100644
+--- a/Common/gameData/costume_data.c
++++ b/Common/gameData/costume_data.c
+@@ -941,7 +941,7 @@ static bool costume_preprocess(ParseTable* pti, void* structptr)
+                                 if (c = strchr(texSet->texName1, '.'))
+                                     *c=0;
+                                 if(stricmp(texSet->texName1, "!none")==0)
+-                                    StructReallocString(&cpp_const_cast(char*)(texSet->texName1), "none");
++                                    StructReallocString(cpp_const_cast(char**)(&(texSet->texName1)), "none");
+                             }
+ 
+                             if( texSet->texName2 )
+@@ -949,7 +949,7 @@ static bool costume_preprocess(ParseTable* pti, void* structptr)
+                                 if (c = strchr(texSet->texName2, '.'))
+                                     *c=0;
+                                 if(stricmp(texSet->texName2, "!none")==0)
+-                                    StructReallocString(&cpp_const_cast(char*)(texSet->texName2), "none");
++                                    StructReallocString(cpp_const_cast(char**)(&(texSet->texName2)), "none");
+                             }
+                         }
+                     }
+diff --git a/Game/src/UI/uiAuction.c b/Game/src/UI/uiAuction.c
+index 5e9ef59..b975b6d 100644
+--- a/Game/src/UI/uiAuction.c
++++ b/Game/src/UI/uiAuction.c
+@@ -3082,7 +3082,7 @@ static void AddAuctionItemToAuctionHouseStashTable(AuctionItem *pItem)
+                     char **effectNodeNames=0;
+ 
+                     int iSizeOrigins = eaSize(&g_CharacterOrigins.ppOrigins);
+-                    int iSize = eaiSize(&(int *)ppow->pBoostsAllowed);
++                    int iSize = eaiSize((int **)&(ppow->pBoostsAllowed));
+ 
+ 
+                     for(j = 0; j < iSize; j++)
+diff --git a/Game/src/UI/uiCombineSpec.c b/Game/src/UI/uiCombineSpec.c
+index b713bec..78393e7 100644
+--- a/Game/src/UI/uiCombineSpec.c
++++ b/Game/src/UI/uiCombineSpec.c
+@@ -226,7 +226,7 @@ AtlasTex *drawEnhancementOriginLevelEx( const BasePower *ppowBase, int level, in
+         frameL = atlasLoadTexture( "E_origin_recipe_schematic.tga" );
+         frameR = NULL;
+ 
+-        while( !pog && i < eaiSize(&(int *)ppowBase->pBoostsAllowed) )
++        while( !pog && i < eaiSize((int **)&(ppowBase->pBoostsAllowed)) )
+         {
+             if( ppowBase->pBoostsAllowed[i] >= eaSize(&g_CharacterOrigins.ppOrigins) )
+             {
+@@ -241,7 +241,7 @@ AtlasTex *drawEnhancementOriginLevelEx( const BasePower *ppowBase, int level, in
+         frameL = atlasLoadTexture( "E_orgin_generic_L.tga" );
+         frameR = atlasLoadTexture( "E_orgin_generic_R.tga" );
+ 
+-        while( !pog && i < eaiSize(&(int *)ppowBase->pBoostsAllowed) )
++        while( !pog && i < eaiSize((int **)&(ppowBase->pBoostsAllowed)) )
+         {
+             if( ppowBase->pBoostsAllowed[i] >= eaSize(&g_CharacterOrigins.ppOrigins) )
+             {
+@@ -256,7 +256,7 @@ AtlasTex *drawEnhancementOriginLevelEx( const BasePower *ppowBase, int level, in
+         frameL = atlasLoadTexture( "E_orgin_invention_L.tga" );
+         frameR = atlasLoadTexture( "E_orgin_invention_R.tga" );
+ 
+-        while( !pog && i < eaiSize(&(int *)ppowBase->pBoostsAllowed) )
++        while( !pog && i < eaiSize((int **)&(ppowBase->pBoostsAllowed)) )
+         {
+             if( ppowBase->pBoostsAllowed[i] >= eaSize(&g_CharacterOrigins.ppOrigins) )
+             {
+@@ -271,7 +271,7 @@ AtlasTex *drawEnhancementOriginLevelEx( const BasePower *ppowBase, int level, in
+         frameL = atlasLoadTexture( "E_origin_superiorattune_L.tga" );
+         frameR = atlasLoadTexture( "E_origin_superiorattune_R.tga" );
+ 
+-        while( !pog && i < eaiSize(&(int *)ppowBase->pBoostsAllowed) )
++        while( !pog && i < eaiSize((int **)&(ppowBase->pBoostsAllowed)) )
+         {
+             if( ppowBase->pBoostsAllowed[i] >= eaSize(&g_CharacterOrigins.ppOrigins) )
+             {
+@@ -286,7 +286,7 @@ AtlasTex *drawEnhancementOriginLevelEx( const BasePower *ppowBase, int level, in
+         frameL = atlasLoadTexture( "E_origin_attune_L.tga" );
+         frameR = atlasLoadTexture( "E_origin_attune_R.tga" );
+ 
+-        while( !pog && i < eaiSize(&(int *)ppowBase->pBoostsAllowed) )
++        while( !pog && i < eaiSize((int **)&(ppowBase->pBoostsAllowed)) )
+         {
+             if( ppowBase->pBoostsAllowed[i] >= eaSize(&g_CharacterOrigins.ppOrigins) )
+             {
+@@ -303,7 +303,7 @@ AtlasTex *drawEnhancementOriginLevelEx( const BasePower *ppowBase, int level, in
+         frameL = atlasLoadTexture( "E_orgin_uber_L.tga" );
+         frameR = atlasLoadTexture( "E_orgin_uber_R.tga" );
+ 
+-        while( !pog && i < eaiSize(&(int *)ppowBase->pBoostsAllowed) )
++        while( !pog && i < eaiSize((int **)&(ppowBase->pBoostsAllowed)) )
+         {
+             if( ppowBase->pBoostsAllowed[i] >= eaSize(&g_CharacterOrigins.ppOrigins) )
+             {
+@@ -316,7 +316,7 @@ AtlasTex *drawEnhancementOriginLevelEx( const BasePower *ppowBase, int level, in
+     else
+     {
+         int iSizeOrigins = eaSize(&g_CharacterOrigins.ppOrigins);
+-        int iSize = eaiSize(&(int *)ppowBase->pBoostsAllowed);
++        int iSize = eaiSize((int **)&(ppowBase->pBoostsAllowed));
+         for( i = 0; i < iSize; i++ )
+         {
+             num = ppowBase->pBoostsAllowed[i];
+@@ -1371,7 +1371,7 @@ int drawPowerAndSpecializations( Character *pchar, Power * pow, int x, int y, in
+ 
+         // Enhancements Allowed
+         estrConcatf(&pTip, "%s:<br><color InfoBlue>", textStd("AllowedEnhancements"));
+-        for(i=0;i<eaiSize(&(int *)pow->ppowBase->pBoostsAllowed);i++)
++        for(i=0;i<eaiSize((int **)&(pow->ppowBase->pBoostsAllowed));i++)
+         {
+             int j;
+             if(i>0)
+diff --git a/Game/src/UI/uiContactDialog.c b/Game/src/UI/uiContactDialog.c
+index a7e8596..1dfd45f 100644
+--- a/Game/src/UI/uiContactDialog.c
++++ b/Game/src/UI/uiContactDialog.c
+@@ -759,7 +759,7 @@ static void flashbackTreeAdd(uiTreeNode *pNode, StoryarcFlashbackHeader *pHeader
+ 
+ void flashbackTreeBucketFreeCallback(uiTreeNode *pNode)
+ {
+-    SAFE_FREE((char *) pNode->pData)
++    SAFE_FREE(*(char **)&(pNode->pData))
+ }
+ 
+ static void contactWindowCreateFlashbackTree(int isHero)
+diff --git a/Game/src/UI/uiEnhancement.c b/Game/src/UI/uiEnhancement.c
+index c5c8803..9de3ba7 100644
+--- a/Game/src/UI/uiEnhancement.c
++++ b/Game/src/UI/uiEnhancement.c
+@@ -599,7 +599,7 @@ AtlasTex *uiEnhancementGetPog(uiEnhancement *pEnh)
+     AtlasTex *pog = NULL;
+     int i = 0;
+ 
+-    while( !pog && i < eaiSize(&(int *)pEnh->pBoostBase->pBoostsAllowed) )
++    while( !pog && i < eaiSize((int **)&(pEnh->pBoostBase->pBoostsAllowed)) )
+     {
+         if( pEnh->pBoostBase->pBoostsAllowed[i] >= eaSize(&g_CharacterOrigins.ppOrigins) )
+         {
+diff --git a/Game/src/UI/uiInfo.c b/Game/src/UI/uiInfo.c
+index 8205f36..0ad6e31 100644
+--- a/Game/src/UI/uiInfo.c
++++ b/Game/src/UI/uiInfo.c
+@@ -1079,7 +1079,7 @@ void info_CombineSpecAllowed( Power *pow )
+     // Enhancements
+     addStringToStuffBuff(&info.stuffbuff, "%s", textStd("AllowedEnhancements"));
+     addStringToStuffBuff(&info.stuffbuff, ":<br><color InfoBlue>");
+-    for(i=0;i<eaiSize(&(int *)pBase->pBoostsAllowed);i++)
++    for(i=0;i<eaiSize((int **)&(pBase->pBoostsAllowed));i++)
+     {
+         int j;
+         if(i>0)
+diff --git a/Game/src/UI/uiListView.c b/Game/src/UI/uiListView.c
+index 3ad82ae..294704e 100644
+--- a/Game/src/UI/uiListView.c
++++ b/Game/src/UI/uiListView.c
+@@ -750,7 +750,7 @@ void uiLVHandleInput(UIListView* list, PointFloatXYZ origin)
+                 UIListViewItemCompare itemCompare;
+ 
+                 // Can this column be selected/sorted?
+-                itemCompare = eaGet(&(void**)list->compareItem, iterator.columnIndex);
++                itemCompare = eaGet((void***)&(list->compareItem), iterator.columnIndex);
+                 if(!itemCompare)
+                     break;
+                 
+@@ -888,7 +888,7 @@ int uiLVDisplaySortArrow(UIListView* list, PointFloatXYZ origin)
+     arrows[1] = atlasLoadTexture("Jelly_arrow_down.tga");
+ 
+     // If an invalid column is selected or if the column cannot be sorted, don't do anything.
+-    if(list->header->selectedColumn < 0 || list->header->selectedColumn >= eaSize(&list->header->columns) || !eaGet(&(void**)list->compareItem, list->header->selectedColumn))
++    if(list->header->selectedColumn < 0 || list->header->selectedColumn >= eaSize(&list->header->columns) || !eaGet((void***)&(list->compareItem), list->header->selectedColumn))
+     {
+         return max(arrows[0]->height, arrows[1]->height);
+     }
+@@ -1230,7 +1230,7 @@ int uiLVSortBySelectedColumn(UIListView* list)
+     if(!list)
+         return 0;
+ 
+-    itemCompare = eaGet(&(void**)list->compareItem, list->header->selectedColumn);
++    itemCompare = eaGet((void***)&(list->compareItem), list->header->selectedColumn);
+     if(!itemCompare)
+         return 0;
+ 
+@@ -1253,11 +1253,11 @@ int uiLVBindCompareFunction(UIListView* list, char* columnName, UIListViewItemCo
+ 
+     if(!list->compareItem)
+     {
+-        eaCreate(&(void**)list->compareItem);
++        eaCreate((void***)&(list->compareItem));
+         list->header->selectedColumn = columnIndex;
+     }
+-    eaSetSize(&(void**)list->compareItem, columnIndex+1);
+-    eaSet(&(void**)list->compareItem, itemCompare, columnIndex);
++    eaSetSize((void***)&(list->compareItem), columnIndex+1);
++    eaSet((void***)&(list->compareItem), itemCompare, columnIndex);
+     return 1;
+ }
+ 
+diff --git a/Game/src/edit/MapGenerator.c b/Game/src/edit/MapGenerator.c
+index 529724a..7f55cec 100644
+--- a/Game/src/edit/MapGenerator.c
++++ b/Game/src/edit/MapGenerator.c
+@@ -503,7 +503,7 @@ void findConvexHull(DefTracker * tracker,Vec2 *** v) {
+         if ((*(allPoints[i]))[1]<grahamCenterPoint[1])
+             copyVec2((*(allPoints[i])),grahamCenterPoint);
+     }
+-    eaQSort((F32 **)allPoints,grahamScanComparator);
++    eaQSort(*(F32 ***)&(allPoints),grahamScanComparator);
+     //march i and j through the array, when one is strictly better than the other, copy
+     //it to where k is.  this will take out redundancies in allPoints
+     for (i=0,j=1,k=0;j<eaSize((F32 ***)&allPoints)-1;) {
+diff --git a/Game/src/render/thread/rt_cgfx.c b/Game/src/render/thread/rt_cgfx.c
+index cebcc39..c617750 100644
+--- a/Game/src/render/thread/rt_cgfx.c
++++ b/Game/src/render/thread/rt_cgfx.c
+@@ -2483,7 +2483,7 @@ static void ComboShaderHandleState_ResizeParamList( tComboShaderHandleState* pHa
+ {
+     static const int kGrowSz = 4;
+     StructList_Resize( 
+-                &(void*)pHandleState->pParamList,
++                (void**)&(pHandleState->pParamList),
+                 sizeof(tCgParamCacheSpec),
+                 &pHandleState->nParamListArraySz,
+                 nNewSize,
+@@ -2527,7 +2527,7 @@ static void CgProgramTable_ResizeFragmentShaderCombos( GLuint nNewSize )
+ {
+     static const int kGrowSz = 4;
+     StructList_Resize( 
+-                &(void*)sCGProgramTable.fragmentShaderVertCombos,
++                (void**)&(sCGProgramTable.fragmentShaderVertCombos),
+                 sizeof(tFragmentShaderVertCombos),
+                 &sCGProgramTable.fragmentShaderVertCombosArrSz,
+                 nNewSize,
+@@ -2562,7 +2562,7 @@ static void CgParamCacheSpec_ParamHdlList_Resize( tCgParamCacheSpec* pSpec, GLui
+ {
+     static const int kGrowSz = 4;
+     StructList_Resize( 
+-                &(void*)pSpec->paramHdlList,
++                (void**)&(pSpec->paramHdlList),
+                 sizeof(CGparameter),
+                 &pSpec->nParamHdlArraySz,
+                 nNewSize,
+diff --git a/Game/src/render/thread/rt_cubemap.c b/Game/src/render/thread/rt_cubemap.c
+index dbf8d6b..2e2a693 100644
+--- a/Game/src/render/thread/rt_cubemap.c
++++ b/Game/src/render/thread/rt_cubemap.c
+@@ -268,7 +268,7 @@ void rt_initCubeMapMenu()
+     tuneBit("Render Particles", &game_state.cubemap_flags,  kCubemapStaticGen_RenderParticles, NULL);
+     tunePopMenu();
+ 
+-    tuneEnum("Dynamic Mode", &((int)game_state.cubemapMode), cubemapModeValues, cubemapModeNames, NULL);
++    tuneEnum("Dynamic Mode", (int*)&(game_state.cubemapMode), cubemapModeValues, cubemapModeNames, NULL);
+     tuneInteger("Dynamic texture size", &game_state.cubemap_size, 128, 128, 1024, NULL);
+     tuneEnum("Render single face", &game_state.forceCubeFace, cubemapForceFaceValues, cubemapForceFaceNames, NULL);
+     tuneInteger("Display face", &game_state.display_cubeface, 1, 0, 6, NULL);

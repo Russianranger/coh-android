@@ -1,0 +1,35 @@
+diff --git a/Common/storyarc/playerCreatedStoryarcValidate.h b/Common/storyarc/playerCreatedStoryarcValidate.h
+index 0718108..dcb49d3 100644
+--- a/Common/storyarc/playerCreatedStoryarcValidate.h
++++ b/Common/storyarc/playerCreatedStoryarcValidate.h
+@@ -430,7 +430,8 @@ extern MMRewards gMMRewards;
+ 
+ void playerCreatedStoryArc_GenerateData(void);
+ void playerCreatedStoryarc_LoadData(int create_bins);
+-PlayerCreatedDetailType playerCreatedStoryarc_GetValid( PlayerCreatedStoryArc * pArc, char * src, char **error, char **errors2, Entity *creator, int fixup );
++// ArmPort: return type matches the definition (was PlayerCreatedDetailType).
++PlayerCreatedStoryarcValidation playerCreatedStoryarc_GetValid( PlayerCreatedStoryArc * pArc, char * src, char **error, char **errors2, Entity *creator, int fixup );
+ 
+ 
+ char *playerCreatedStoryarc_getMapSetDisplayName( const char * pchMapSet );
+diff --git a/Game/src/UI/uiPowerInfo.c b/Game/src/UI/uiPowerInfo.c
+index c842f08..690c2d7 100644
+--- a/Game/src/UI/uiPowerInfo.c
++++ b/Game/src/UI/uiPowerInfo.c
+@@ -665,12 +665,14 @@ static void getTotalDamage( const BasePower * ppow, const CharacterAttributes *p
+ 
+ }
+ 
+-typedef enum GroupType
++// ArmPort: powers.h already declares "typedef int GroupType"; keep the
++// enumerators without redefining the typedef.
++enum GroupTypeValues
+ {
+     kGroupType_Damage,
+     kGroupType_Defense,
+     kGroupType_Count,
+-}GroupType;
++};
+ 
+ 
+ static F32 equalForAllTypes[kModTarget_Count][kGroupType_Count][kAttribType_Count];

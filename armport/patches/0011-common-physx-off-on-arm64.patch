@@ -1,0 +1,17 @@
+diff --git a/Common/NovodeX/NwWrapper.h b/Common/NovodeX/NwWrapper.h
+index e9e4ada..2b39bb0 100644
+--- a/Common/NovodeX/NwWrapper.h
++++ b/Common/NovodeX/NwWrapper.h
+@@ -6,8 +6,12 @@
+ #define INCLUDED_NW_WRAPPER_H
+ 
+ #if !BEACONIZER
++// ArmPort: PhysX (NovodeX) is an x86-only binary SDK; off on ARM64. Leave
++// NOVODEX undefined there: the code tests it with both #if and #ifdef.
++#if !defined(__aarch64__)
+ #define NOVODEX 1
+ #endif
++#endif
+ 
+ #if NOVODEX
+ 

@@ -118,3 +118,70 @@ jobs:
             echo "::warning title=ArmPort build errors $i::$chunk"
             i=$((i+1))
           done < <(awk 'NR%6==1{if(buf)print buf;buf=$0;next}{buf=buf"%0A"$0}END{if(buf)print buf}' errors.txt | head -8)
+
+  client:
+    # M2: compile and link CityOfHeroes.exe for ARM64 Windows.
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /armport/
+            /upstream/ouroboros/
+            !/upstream/ouroboros/data/
+            /.github/
+          sparse-checkout-cone-mode: false
+          lfs: false
+
+      - name: Install llvm-mingw (aarch64 host)
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/llvm-mingw
+          sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
+          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ninja-build
+
+      - name: Prepare patched source
+        run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/armport"
+
+      - name: Configure
+        env:
+          COH_LLVM_MINGW: /opt/llvm-mingw
+        run: |
+          cmake -S "$RUNNER_TEMP/armport/src" -B "$RUNNER_TEMP/armport/build" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/aarch64-w64-mingw32.cmake" \
+            -DCOX_BUILD_COMMON=ON -DCOX_BUILD_GAME=ON \
+            -DCOX_ARMPORT_COMPILE_ONLY=ON \
+            -DCOX_ARMPORT_DIR="$GITHUB_WORKSPACE/armport" 2>&1 | tee "$RUNNER_TEMP/configure.log" | tail -40
+          test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Build CityOfHeroes.exe
+        run: |
+          cmake --build "$RUNNER_TEMP/armport/build" --target Game -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
+          rc=${PIPESTATUS[0]}
+          exe=$(find "$RUNNER_TEMP/armport/build" -name 'CityOfHeroes.exe' | head -1)
+          if [ -n "$exe" ]; then
+            info="$(file "$exe" | cut -d: -f2) size $(stat -c %s "$exe")"
+            echo "::notice title=ArmPort M2 client linked::$info"
+          fi
+          exit $rc
+
+      - name: Report build errors
+        if: failure()
+        run: |
+          for log in configure.log build.log; do
+            [ -f "$RUNNER_TEMP/$log" ] || continue
+            grep -E "CMake Error|error:|undefined (reference|symbol)|>>> referenced by" "$RUNNER_TEMP/$log" \
+              | sed 's#.*/armport/src/##' | sort | uniq -c | sort -rn | head -60 > "$log.errors.txt" || true
+          done
+          cat ./*.errors.txt 2>/dev/null | head -80
+          cat ./*.errors.txt 2>/dev/null > errors.txt || true
+          echo "::notice title=ArmPort M2 error lines::$(wc -l < errors.txt) distinct"
+          i=0
+          while IFS= read -r chunk; do
+            echo "::warning title=ArmPort client errors $i::$chunk"
+            i=$((i+1))
+          done < <(awk 'NR%6==1{if(buf)print buf;buf=$0;next}{buf=buf"%0A"$0}END{if(buf)print buf}' errors.txt | head -10)
