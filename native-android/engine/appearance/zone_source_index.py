@@ -13,6 +13,7 @@ from imported_archive import safe_path
 MANIFEST_PIN = {'bytes': 4237139, 'sha256': 'f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74'}
 ARCHIVE_PIN = {'filename': 'zones-world-supplement.zip', 'bytes': 1663681523,
                'sha256': 'f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3'}
+PROVENANCE_PIN = {'bytes': 29961724, 'sha256': '6b49594e9136925644a88246b53110f42c78f383a4c525ed0059622cc2987464'}
 
 
 def pinned_chunks(path, pin):
@@ -99,3 +100,36 @@ def zone_records(path, paths=(), texture_names=(), metadata_archives=()):
         raise ValueError('Supplement source structure differs')
     return {'files': found, 'metadata_archives': identities, 'archive': dict(ARCHIVE_PIN),
             'scope': 'Selected supplement pins only; earlier imported sources remain separate'}
+
+
+def selected_provenance(chunks, paths):
+    """Consume hash-verifying chunks; only return after their complete EOF proof."""
+    requested = {name.casefold() for name in paths}
+    if not 0 < len(requested) <= 64 or any(not safe_path(name) for name in requested):
+        raise ValueError('Selected provenance request differs')
+    source = _JSONStream(chunks)
+    found, seen = {}, False
+
+    def entry(name):
+        if name.casefold() in requested:
+            if name in found:
+                raise ValueError('Duplicate selected provenance path')
+            found[name] = source.record()
+        else:
+            source.value()
+
+    def root(key):
+        nonlocal seen
+        if key == 'entries':
+            if seen:
+                raise ValueError('Duplicate provenance entries')
+            seen = True
+            source.object(entry)
+        else:
+            source.value()
+
+    source.object(root)
+    source.whitespace()
+    if source.peek() is not None or not seen or set(found) != requested:
+        raise ValueError('Selected original provenance is incomplete')
+    return found

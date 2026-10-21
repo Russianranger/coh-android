@@ -1,0 +1,167 @@
+{
+  "schema": "coh-huge-source-query-v1",
+  "bodytype": 4,
+  "texture_prefix": "SH",
+  "parts": [
+    {
+      "path": "data/player_library/huge_PANTS.geo",
+      "model": "GEO_HIPS_Tight",
+      "textures": [
+        "HIPS_Pants",
+        "HIPS_Celtic"
+      ],
+      "texture_explicit": [
+        false,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_SHIRT.geo",
+      "model": "GEO_CHEST_Both_Amp",
+      "textures": [
+        "CHEST_Tech_Steampunk",
+        "Chest_Stripe_1"
+      ],
+      "texture_explicit": [
+        false,
+        true
+      ]
+    },
+    {
+      "path": "data/player_library/huge_HEAD.geo",
+      "model": "GEO_HEAD_Helmet",
+      "textures": [
+        "X_FullHelm_Robot_01",
+        "face_v_helmet_robotic_01_dual"
+      ],
+      "texture_explicit": [
+        true,
+        true
+      ]
+    },
+    {
+      "path": "data/player_library/huge_GLOVE.geo",
+      "model": "GEO_LARMR_Folded",
+      "textures": [
+        "X_Enforcer_Glove_01_Mask",
+        "none"
+      ],
+      "texture_explicit": [
+        true,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_GLOVE.geo",
+      "model": "GEO_LARML_Folded",
+      "textures": [
+        "X_Enforcer_Glove_01_Mask",
+        "none"
+      ],
+      "texture_explicit": [
+        true,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_BOOT.geo",
+      "model": "GEO_LLEGR_Smooth",
+      "textures": [
+        "BOOT_Pants",
+        "BOOT_Circuitry"
+      ],
+      "texture_explicit": [
+        false,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_BOOT.geo",
+      "model": "GEO_LLEGL_Smooth",
+      "textures": [
+        "BOOT_Pants",
+        "BOOT_Circuitry"
+      ],
+      "texture_explicit": [
+        false,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_BELT.geo",
+      "model": "GEO_BELT_Tactical_03",
+      "textures": [
+        "BELT_tactical_03a",
+        "BELT_tactical_03b"
+      ],
+      "texture_explicit": [
+        false,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_HAIR.geo",
+      "model": "GEO_HAIR_HD_Crest_02",
+      "textures": [
+        "HAIR_Detail_Base_01",
+        "HAIR_Detail_Base_01b"
+      ],
+      "texture_explicit": [
+        false,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_EMBLEM.geo",
+      "model": "GEO_EMBLEM_Tight",
+      "textures": [
+        "EMBLEM_base",
+        "EMBLEM_Club"
+      ],
+      "texture_explicit": [
+        false,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/V_HUGE_SPADR.geo",
+      "model": "GEO_SpadR_Gears_02",
+      "textures": [
+        "X_Gear_Pads",
+        "none"
+      ],
+      "texture_explicit": [
+        true,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/huge_UarmR.geo",
+      "model": "GEO_UarmR_Robotic_Both_03",
+      "textures": [
+        "GLOVE_Robotic_Clean",
+        "none"
+      ],
+      "texture_explicit": [
+        false,
+        false
+      ]
+    },
+    {
+      "path": "data/player_library/HUGE_WAIST.geo",
+      "model": "GEO_Waist_Tail_05",
+      "textures": [
+        "Belt_Tail_01a",
+        "Belt_Tail_01b"
+      ],
+      "texture_explicit": [
+        true,
+        true
+      ]
+    }
+  ],
+  "morph_paths": [
+    "data/player_library/huge_bones_scale_l.geo",
+    "data/player_library/huge_bones_scale_s.geo"
+  ]
+}
