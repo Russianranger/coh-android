@@ -4,3 +4,4 @@
 0004-utilitieslib-arm64-cpu-count.patch
 0005-cmake-arm64-sse2neon-and-tests.patch
 0006-cmake-arm64-ordinary-shared-memory-data.patch
+0007-cmake-arm64-portable-cryptopp.patch

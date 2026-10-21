@@ -1,0 +1,24 @@
+diff --git a/cmake/armport-include/Windows.h b/cmake/armport-include/Windows.h
+new file mode 100644
+index 0000000..bba705c
+--- /dev/null
++++ b/cmake/armport-include/Windows.h
+@@ -0,0 +1,3 @@
++/* ArmPort: some dependencies include <Windows.h>; mingw-w64 ships windows.h and
++ * the Linux build host is case-sensitive. */
++#include_next <windows.h>
+diff --git a/cmake/dependencies/CryptoPP.cmake b/cmake/dependencies/CryptoPP.cmake
+index eea105d..9436b70 100644
+--- a/cmake/dependencies/CryptoPP.cmake
++++ b/cmake/dependencies/CryptoPP.cmake
+@@ -8,3 +8,10 @@ CPMAddPackage(
+ 	GIT_TAG b5242667a24e3db8e4600e77b2e502ef204e5280
+ 	PATCHES "${CMAKE_CURRENT_LIST_DIR}/../patches/cryptopp-cmake.patch"
+ )
++
++if(COX_ARM64_WINDOWS)
++	# ArmPort: Crypto++'s CPU-feature probes for ARM64 assume Unix signals
++	# (SIGILL / sigset_t). Build the portable C++ implementation instead; the
++	# definition is PUBLIC so every user sees the same configuration.
++	target_compile_definitions(cryptopp PUBLIC CRYPTOPP_DISABLE_ASM)
++endif()
