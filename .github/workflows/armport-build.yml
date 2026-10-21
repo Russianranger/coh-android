@@ -177,9 +177,14 @@ jobs:
         run: |
           for log in configure.log build.log; do
             [ -f "$RUNNER_TEMP/$log" ] || continue
-            grep -E "CMake Error|error:|undefined (reference|symbol)|>>> referenced by" "$RUNNER_TEMP/$log" \
-              | sed 's#.*/armport/src/##' | sort | uniq -c | sort -rn | head -60 > "$log.errors.txt" || true
+            {
+              grep -A1 "^FAILED:" "$RUNNER_TEMP/$log" | cut -c1-300 | head -20
+              grep -E "CMake Error|error:|undefined (reference|symbol)|>>> referenced by" "$RUNNER_TEMP/$log" \
+                | sed 's#.*/armport/src/##' | sort | uniq -c | sort -rn | head -60
+            } > "$log.errors.txt" || true
           done
+          progress=$(grep -oE "^\[[0-9]+/[0-9]+\]" "$RUNNER_TEMP/build.log" 2>/dev/null | tail -1)
+          echo "::notice title=ArmPort M2 build progress::last step $progress"
           cat ./*.errors.txt 2>/dev/null | head -80
           cat ./*.errors.txt 2>/dev/null > errors.txt || true
           echo "::notice title=ArmPort M2 error lines::$(wc -l < errors.txt) distinct"
