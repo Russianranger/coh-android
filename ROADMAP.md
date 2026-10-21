@@ -2,7 +2,7 @@
 
 Updated 2026-10-21 UTC. Physical Thor 0.1.17 shows textured Atlas pavement and
 an observed-pose box in its exported 640x360 full-screen frame.
-Stage 41 remains passed. The last physical build stopped at tail command 205.
+0.1.18 is signed and CI-qualified; stage 41 remains passed. Thor results are pending.
 
 Both saved packets now reach their exact original zero terminators on the host:
 301656 and 303112 bits, through shipping JNI in release, ASan and UBSan.
@@ -11,6 +11,7 @@ has 213 textual entries, 212 active. All 343 unmapped power CRCs are tolerated.
 The original ACK/READY send path is wired with a 20-second first-response timeout,
 one accepted same-ID retry, clean disconnect and 30 seconds of response observation.
 Diagnostic partial-tail fallback is explicit; an incomplete tail stays incomplete.
+The 128-message cap can shorten observation; a short window is reported incomplete.
 Actual post-READY server behavior awaits Thor. Counts/sizes replace raw payloads.
 
 The host draws all 13 genuine Huge meshes with the original rig, decoded RGB and

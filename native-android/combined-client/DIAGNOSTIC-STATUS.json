@@ -6,9 +6,9 @@
   "accepted_version": "0.1.14",
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
-  "rendered": "Physical Thor0.1.17 full-screen640x360 PNG: textured pavement with yellow real-pose box;2 world packets,1 entity draw. No real costume; another pose remains unverified.",
-  "blocker": "Both saved initial packets now reach exact original zero terminators on the host. Next physical evidence needed: original ACK/READY delivery and bounded post-READY server behavior; received Huge actor integration is in progress.",
-  "planned_steps_to_source_world_with_entity": 3,
+  "rendered": "Physical0.1.17 Atlas pavement and real-pose box retained; host0.1.18 draws13 genuine Huge meshes with original rig and decoded morphology/colors. Native0.1.18 is signed/qualified; no Thor actor claim yet.",
+  "blocker": "Physical0.1.18 validation pending: original ACK/READY send timing, post-READY kinds/counts/sizes and position changes, plus the received Huge in the real-pose world capture. Both saved host packets reach exact EOF; no missing tail field remains in those samples.",
+  "planned_steps_to_source_world_with_entity": 1,
   "next_steps": [
     "Deliver 0.1.18 with both saved packets completed, diagnostic partial-tail fallback and live ACK/READY observation.",
     "Draw all 13 genuine Huge meshes with received colors, source material fallback and authored scales; keep the box when a required input is unavailable.",
@@ -1713,88 +1713,80 @@
     "scope": "Original-source receiver/sender fixtures and ARM64/x86 package/lint/ELF/JNI at build run39498990230; exact unchanged APKs passed the corrected Android13 framework test in the linked validation run. Actual saved Thor replay was qualified locally, not uploaded to CI. No live Thor ACK, server response, real Huge draw or alternate Thor pose inferred."
   },
   "candidate": {
-    "version": "0.1.17",
-    "version_code": 18,
-    "profile": "fullscreen-diagnostic",
-    "state": "signed_ci_qualified_waiting_for_thor_export",
+    "version": "0.1.18",
+    "version_code": 19,
+    "profile": "continuation-diagnostic",
+    "state": "signed_APK_ready_for_Thor",
+    "source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+    "source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
     "receiver": {
-      "commit": "1f57642bf5941fb4180784e691b22e3d32a3b4a3",
-      "tested_tree": "c90bac85dc9361ee6173ff0f583771055af5e6e6",
-      "modes": [
-        "release",
-        "asan",
-        "ubsan"
+      "host_exact_EOF_bits": [
+        301656,
+        303112
       ],
-      "checks_per_mode": 446,
-      "cases": 6,
-      "full_original_header_parsed": true,
-      "shortcut_schema": "Whole original25control+10server-visible shortcut initializers; explicit test-owned selected context, no new live authority.",
-      "end_bit": 301656,
-      "bits": 301656,
-      "unresolved_crcs": 343,
-      "source_peak_bytes": 7533495,
-      "owner_bytes": 653872,
-      "new_continuation_owner_bytes": 1228,
-      "actual_report_peak_bytes": 6853,
-      "stress_report_peak_bytes": 6882,
-      "socket_or_send_calls": 0,
-      "wrong_identity_stale_context_truncation_complete": false,
-      "command": "flock /tmp/coh-next-build.lock python3 native-android/combined-client/tools/check_outer_costume_android.py --work <fresh> --output <scratch.json> --replay <saved-initial-replay.bin>"
+      "active_Ch_handlers": 34,
+      "active_Ch_table_entries": 212,
+      "textual_Ch_entries": 213,
+      "inline_Friends_handler": true,
+      "unresolved_power_CRCS_tolerated": 343,
+      "live_ACK_READY_observed": false
     },
-    "world": {
-      "native_fd_controls_per_mode": 163,
-      "native_source_controls_per_mode": 233,
-      "java_controls": 94,
-      "fixture_generator_controls": 18,
-      "source_index_bytes": 10144,
-      "source_index_sha256": "585cd024ec0438bcbece6bd59b64cc12d89557e35d271c3a73900358c04fb6af",
-      "source_placements": 105,
-      "candidate_source_envelope_bytes": 15187220,
-      "fd_owner_bytes": 552,
-      "different_pose_host_gles": true,
-      "different_pose_thor": false,
-      "original_client_archive_header_directory_proof": false,
-      "generated_zip_fixture_is_original_archive_proof": false,
-      "actual_android_hook": "Existing accepted imported read-only archive descriptors plus actual APK index span. Atomic candidate publication and explicit fixture fallback. Review fixed unpublished Session exceptional cleanup and copied render-owner counters."
-    },
-    "memory": {
-      "source_peak_bytes": 7533495,
-      "scene_capture_reserve_bytes": 5667858,
-      "physical_metrics": "Only earlier0.1.16 measurements; Wine dominates, no PostgreSQL tuning."
-    },
+    "world": "Retained physically observed Atlas pavement at real pose; another server-sent pose is unverified.",
+    "actor": "Host13/13 genuine Huge meshes, original rig/scales and declared coarse material fallback; Thor drawing pending.",
+    "memory": "Source budgets unchanged; process identities export included, no PostgreSQL tuning and no new device RSS/PSS measurements.",
     "limits": {
-      "decoded_message": 4194304,
-      "ordinary_semantic_transport": 16384,
-      "initial_aggregate": 8388608,
-      "scene_transaction": 100663296,
-      "interop_report": 7168,
-      "memory_export": 24576,
-      "increased": false
+      "decoded_message_bytes": 4194304,
+      "ordinary_transport_bytes": 16384,
+      "initial_aggregate_bytes": 8388608,
+      "scene_transaction_bytes": 100663296,
+      "native_report_bytes": 7168
     },
     "thor_procedure": [
-      "Install 0.1.17 over 0.1.16 without clearing app data; preserve the existing profile and imports.",
-      "Start the existing local server, select the same character and perform the Map handoff once.",
-      "Use Full screen if it does not open automatically; dismiss Android's Got it hint if shown.",
-      "The corner Return to controls button or Android Back exits full screen; Full screen enters again.",
-      "Wait 30 seconds after the handoff before exporting; do not repeat the handoff during that wait.",
-      "Use the corner return, then Back to the Combined launcher; tap Export report and save the Combined ZIP.",
-      "Check the ZIP includes scene-capture.png at 640x360, scene-capture.json and native-client-report.json.",
-      "Stop the local server normally after export; retain the ZIP even if a disconnect or timeout is reported."
+      "Install0.1.18 over0.1.17 without clearing data; retain same imports/profile.",
+      "Start existing server, select same character and handoff once.",
+      "Full screen enters; corner Return to controls or Back exits.",
+      "Wait35seconds after ACK and READY show sent; export anyway after timeout/disconnect.",
+      "Return to controls, then Back to Combined launcher; Export report and save ZIP.",
+      "Keep640x360 scene-capture.png, initial replay, send timing and memory JSON.",
+      "Stop normally; do not repeat handoff or change the database."
     ],
     "apk": {
-      "name": "CoH-Native-Combined-0.1.17-fullscreen-diagnostic-arm64.apk",
-      "bytes": 15219799,
-      "sha256": "7167f6268e9c73e182535edd53717cd576fb8708fff1e79d8bb21118c3a47bc0",
-      "abi": "arm64-v8a",
+      "bytes": 15275431,
+      "name": "CoH-Native-Combined-0.1.18-continuation-diagnostic-arm64.apk",
+      "sha256": "dcf9c5074dcde620dc2aa117bc949bf63a2ce217e43ea1909555bc77ac345439",
+      "version_code": 19,
+      "version_name": "0.1.18-continuation-diagnostic-test",
       "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
-      "source_commit": "81a47f8ccef15c26e02b5cbf2feb4b99ac465139",
-      "source_tree": "c2f7bb34cfcbbcb98f91d4b2653dacc24c577b0c",
-      "ci_run_id": 39503076641,
-      "build_ci_run_id": 39498990230,
-      "qualification_ci_run_id": 39503076641,
-      "artifact_id": 12298379427,
-      "physical_thor_tested": false,
-      "production_release": false
+      "qualified_source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+      "qualified_source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
+      "rebuild_after_qualification": false,
+      "physical_Thor_tested": false
+    },
+    "CI": {
+      "status": "passed",
+      "purpose": "combined-diagnostic",
+      "diagnostic_profile": "continuation-diagnostic",
+      "initial_dispatches": 1,
+      "corrective_redispatches": 0,
+      "max_corrective_redispatches": 2,
+      "release_published": false,
+      "run_id": 39528643541,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39528643541",
+      "head_sha": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+      "current_job": null,
+      "current_step": null,
+      "source_job": "passed",
+      "diagnostic_job": "passed",
+      "ARM64_package": "passed",
+      "ARM64_interop_DSO": "passed;15 JNI entrypoints in this isolated profile",
+      "android13_framework_checks": 46,
+      "android13_update_checks": 14,
+      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17\u21920.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
+      "artifact_id": 12314108293,
+      "artifact_bytes": 26577860,
+      "artifact_sha256": "097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f",
+      "source_artifact_id": 12314196667,
+      "source_artifact_sha256": "1e27923f649fc01506eb16c98ff9b2731df46b49dee4d6e98554d98d98b2bd28"
     }
   },
   "latest_physical_version": "0.1.17",
@@ -2168,7 +2160,7 @@
     "result": "PARTIAL WITH EXACT BLOCKER: physical full-screen640x360 capture and source pavement/box qualified; Huge28 plus343 unresolved power entries consumed; new303112-bit packet stops at command205/bit300248. No application ACK/READY or later position observation.",
     "next_action": "Wait for the next user prompt; no continued development authorized in this evidence-only update."
   },
-  "next_action": "Run one signed0.1.18 diagnostic qualification and deliver its exact APK/hash plus the short Thor procedure. No live ACK/server behavior or Thor Huge rendering is claimed before the next export.",
+  "next_action": "Install0.1.18 over0.1.17 without clearing data. Same character, handoff once; wait35seconds after ACK/READY show sent, export Combined ZIP. Inspect actual traffic/position/actor/process identities before further development.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -2509,6 +2501,91 @@
         "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
         "ci_run_id": 39474180919,
         "artifact_id": 12289656309
+      }
+    },
+    {
+      "version": "0.1.17",
+      "version_code": 18,
+      "profile": "fullscreen-diagnostic",
+      "state": "signed_ci_qualified_waiting_for_thor_export",
+      "receiver": {
+        "commit": "1f57642bf5941fb4180784e691b22e3d32a3b4a3",
+        "tested_tree": "c90bac85dc9361ee6173ff0f583771055af5e6e6",
+        "modes": [
+          "release",
+          "asan",
+          "ubsan"
+        ],
+        "checks_per_mode": 446,
+        "cases": 6,
+        "full_original_header_parsed": true,
+        "shortcut_schema": "Whole original25control+10server-visible shortcut initializers; explicit test-owned selected context, no new live authority.",
+        "end_bit": 301656,
+        "bits": 301656,
+        "unresolved_crcs": 343,
+        "source_peak_bytes": 7533495,
+        "owner_bytes": 653872,
+        "new_continuation_owner_bytes": 1228,
+        "actual_report_peak_bytes": 6853,
+        "stress_report_peak_bytes": 6882,
+        "socket_or_send_calls": 0,
+        "wrong_identity_stale_context_truncation_complete": false,
+        "command": "flock /tmp/coh-next-build.lock python3 native-android/combined-client/tools/check_outer_costume_android.py --work <fresh> --output <scratch.json> --replay <saved-initial-replay.bin>"
+      },
+      "world": {
+        "native_fd_controls_per_mode": 163,
+        "native_source_controls_per_mode": 233,
+        "java_controls": 94,
+        "fixture_generator_controls": 18,
+        "source_index_bytes": 10144,
+        "source_index_sha256": "585cd024ec0438bcbece6bd59b64cc12d89557e35d271c3a73900358c04fb6af",
+        "source_placements": 105,
+        "candidate_source_envelope_bytes": 15187220,
+        "fd_owner_bytes": 552,
+        "different_pose_host_gles": true,
+        "different_pose_thor": false,
+        "original_client_archive_header_directory_proof": false,
+        "generated_zip_fixture_is_original_archive_proof": false,
+        "actual_android_hook": "Existing accepted imported read-only archive descriptors plus actual APK index span. Atomic candidate publication and explicit fixture fallback. Review fixed unpublished Session exceptional cleanup and copied render-owner counters."
+      },
+      "memory": {
+        "source_peak_bytes": 7533495,
+        "scene_capture_reserve_bytes": 5667858,
+        "physical_metrics": "Only earlier0.1.16 measurements; Wine dominates, no PostgreSQL tuning."
+      },
+      "limits": {
+        "decoded_message": 4194304,
+        "ordinary_semantic_transport": 16384,
+        "initial_aggregate": 8388608,
+        "scene_transaction": 100663296,
+        "interop_report": 7168,
+        "memory_export": 24576,
+        "increased": false
+      },
+      "thor_procedure": [
+        "Install 0.1.17 over 0.1.16 without clearing app data; preserve the existing profile and imports.",
+        "Start the existing local server, select the same character and perform the Map handoff once.",
+        "Use Full screen if it does not open automatically; dismiss Android's Got it hint if shown.",
+        "The corner Return to controls button or Android Back exits full screen; Full screen enters again.",
+        "Wait 30 seconds after the handoff before exporting; do not repeat the handoff during that wait.",
+        "Use the corner return, then Back to the Combined launcher; tap Export report and save the Combined ZIP.",
+        "Check the ZIP includes scene-capture.png at 640x360, scene-capture.json and native-client-report.json.",
+        "Stop the local server normally after export; retain the ZIP even if a disconnect or timeout is reported."
+      ],
+      "apk": {
+        "name": "CoH-Native-Combined-0.1.17-fullscreen-diagnostic-arm64.apk",
+        "bytes": 15219799,
+        "sha256": "7167f6268e9c73e182535edd53717cd576fb8708fff1e79d8bb21118c3a47bc0",
+        "abi": "arm64-v8a",
+        "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "source_commit": "81a47f8ccef15c26e02b5cbf2feb4b99ac465139",
+        "source_tree": "c2f7bb34cfcbbcb98f91d4b2653dacc24c577b0c",
+        "ci_run_id": 39503076641,
+        "build_ci_run_id": 39498990230,
+        "qualification_ci_run_id": 39503076641,
+        "artifact_id": 12298379427,
+        "physical_thor_tested": false,
+        "production_release": false
       }
     }
   ],
@@ -3841,11 +3918,11 @@
   ],
   "cycle_0_1_18": {
     "baseline_commit": "d6327cded4495ed2e826434f60422e368043522e",
-    "state": "qualified_host_source_ready_for_one_CI_diagnostic_dispatch",
+    "state": "signed_APK_ready_for_Thor",
     "profile": "continuation-diagnostic",
     "version_name": "0.1.18-continuation-diagnostic-test",
     "version_code": 19,
-    "APK_built": false,
+    "APK_built": true,
     "source_caps_increased": false,
     "new_receipt_files": false,
     "cleanup_performed": false,
@@ -3909,12 +3986,12 @@
       },
       "packaging_coordinator": {
         "worktree": "coh-cleanup",
-        "commit": "845caa8c41a93f49498a0877a89009e107f741c4",
-        "tested_tree": "456680c8bec884a06c5590588cbbc9e16920bb84",
-        "CI": "Local package12/framework4, protected-input9, Java bridge684, continuation text9/renderer schema9, capture wiring58permode/30source assertions and runtime wiring24permode pass. Both private JNI replay source closures and46 Session helper pins still match integrated files.",
+        "commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+        "tested_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
+        "CI": "Native qualification39528643541 green on first dispatch; both source and diagnostic jobs pass. ARM64 signed package and JNI audit pass; Android13 framework46 and update14 checks pass.",
         "accepted_scope": "newisolatedcode19profile withbounded/fallback andlivecostumeflags;15JNIcontractonlynewprofile; old0.1.17 profile preserved",
-        "blocker": "CI not yet dispatched; no APK built.",
-        "next_action": "Publish ordered compatible commits with expected parent, dispatch continuation-diagnostic once, stop after at most two corrective redispatches."
+        "blocker": null,
+        "next_action": "Deliver exact signed APK and seven-line Thor procedure, then inspect the next physical export before further development."
       }
     },
     "host_replay_qualification": {
@@ -3979,7 +4056,75 @@
       "Huge_module_stack_reserve_bytes": 32768,
       "Huge_JNI_stack_reserve_bytes": 32768,
       "Huge_host_conservative_stack_bound_bytes": 26704,
-      "scope": "Huge module peak excludes parent scene/old owners/interop sources; the Session adapter adds actual parent/old/candidate/borrowed/scratch/capture charges before publication. Android ARM64 Clang frames are collected by CI, device RSS/PSS by the next export."
+      "scope": "Huge module peak excludes parent scene/old owners/interop sources; the Session adapter adds actual parent/old/candidate/borrowed/scratch/capture charges before publication. Android ARM64 Clang frames are collected by CI, device RSS/PSS by the next export.",
+      "Android_ARM64_debug_stack_frames": {
+        "available": true,
+        "count": 600,
+        "largest": [
+          {
+            "function": "coh_locomotion_parse",
+            "bytes": 155632,
+            "kind": "static"
+          },
+          {
+            "function": "Java_org_coh_sessionclient_SessionNative_snapshot",
+            "bytes": 19600,
+            "kind": "static"
+          },
+          {
+            "function": "coh_locomotion_sample_directional",
+            "bytes": 15616,
+            "kind": "static"
+          },
+          {
+            "function": "coh_animation_parse",
+            "bytes": 12240,
+            "kind": "static"
+          },
+          {
+            "function": "select_live",
+            "bytes": 11840,
+            "kind": "static"
+          },
+          {
+            "function": "graphics_create",
+            "bytes": 8960,
+            "kind": "static"
+          },
+          {
+            "function": "skin",
+            "bytes": 8464,
+            "kind": "static"
+          },
+          {
+            "function": "coh_character_sample",
+            "bytes": 7824,
+            "kind": "static"
+          },
+          {
+            "function": "coh_animation_sample",
+            "bytes": 7792,
+            "kind": "static"
+          },
+          {
+            "function": "coh_locomotion_sample",
+            "bytes": 7664,
+            "kind": "static"
+          },
+          {
+            "function": "coh_world_select_instances",
+            "bytes": 7040,
+            "kind": "static"
+          },
+          {
+            "function": "coh_received_costume_prepare",
+            "bytes": 6704,
+            "kind": "static"
+          }
+        ],
+        "scope": "Individual Clang frames; host call-chain qualification and explicit reserves are separate."
+      },
+      "stack_measurement_scope": "Clang target frame sizes are source diagnostics. The pre-existing startup locomotion parser has155632B frame; received prepare6704B, character sample7824B, animation sample7792B. Module/JNI reserves are separate; no new process RSS/PSS or cause of earlier exits inferred."
     },
     "Huge_host": {
       "parts": 13,
@@ -4001,13 +4146,30 @@
       "source_material_scope": "27 recovered Basic bodies cover selected ordinary and MULTI leaves;8 ordinary names also have source bump overrides intentionally outside the declared no-BUMP feature profile."
     },
     "ci": {
-      "status": "never_dispatched_yet",
+      "status": "passed",
       "purpose": "combined-diagnostic",
       "diagnostic_profile": "continuation-diagnostic",
-      "initial_dispatches": 0,
+      "initial_dispatches": 1,
       "corrective_redispatches": 0,
       "max_corrective_redispatches": 2,
-      "release_published": false
+      "release_published": false,
+      "run_id": 39528643541,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39528643541",
+      "head_sha": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+      "current_job": null,
+      "current_step": null,
+      "source_job": "passed",
+      "diagnostic_job": "passed",
+      "ARM64_package": "passed",
+      "ARM64_interop_DSO": "passed;15 JNI entrypoints in this isolated profile",
+      "android13_framework_checks": 46,
+      "android13_update_checks": 14,
+      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17\u21920.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
+      "artifact_id": 12314108293,
+      "artifact_bytes": 26577860,
+      "artifact_sha256": "097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f",
+      "source_artifact_id": 12314196667,
+      "source_artifact_sha256": "1e27923f649fc01506eb16c98ff9b2731df46b49dee4d6e98554d98d98b2bd28"
     },
     "Thor_procedure": [
       "Install0.1.18 over0.1.17 without clearing data; retain same imports/profile.",
@@ -4017,6 +4179,143 @@
       "Return to controls, then Back to Combined launcher; Export report and save ZIP.",
       "Keep640x360 scene-capture.png, initial replay, send timing and memory JSON.",
       "Stop normally; do not repeat handoff or change the database."
-    ]
+    ],
+    "qualified_source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+    "qualified_source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
+    "local_qualified_history_branch": "work/coh018-qualified-local-20261021",
+    "published_commits": [
+      {
+        "local": "12672f245370bc80b7998b754fd935d990f3ced1",
+        "remote": "97e95e79e2302d0da75bf418da7c71b1c7ffa6b2",
+        "tree": "6c47163b258e14475b7d6fc972d218682527856a"
+      },
+      {
+        "local": "b74279d7e1bd39f75b6ae3cf0152e353d4d59963",
+        "remote": "dee2681c07c7e1340a638076454b9f791524068b",
+        "tree": "5ac3a76ea536d3d2cea6cab0bd8a2f975a9768e0"
+      },
+      {
+        "local": "0f43098c88f6f4c26b561a6f77d82b5bd9e35554",
+        "remote": "2d1e04af58200d04eb7ce124c6708c458cd7c950",
+        "tree": "174c086ada884813a158c0f0b49afb92298b189b"
+      },
+      {
+        "local": "51d81607b2f27f621d77b4d2782150d44d8802c4",
+        "remote": "305022fa7a4bcc03b00fed34266d05cb5e58807c",
+        "tree": "70df8b1a31f03bb42e7b5216c15c685c8af981e8"
+      },
+      {
+        "local": "ac711a1cca8efb52d5e2369a0a8bfae04ff9b67f",
+        "remote": "b15f6e7d058be1b84a8002627a694afac6421b76",
+        "tree": "b070e16f5871364d2fd9a4150b3b1cf994850630"
+      },
+      {
+        "local": "a4bc47169845676461a4919431c98193a7935f32",
+        "remote": "f270dc836694e1071015c5bf29cf6eba89b02205",
+        "tree": "661f7b84ee25b7bacfc2ad70e862b4e69802cb3c"
+      },
+      {
+        "local": "d487c330b0636869711a7067d5b36f1086abfed6",
+        "remote": "ecdfd473d4cc50485cc9e70e67d1d6190fb36fbb",
+        "tree": "245751c4678b069317e0f78c61014dce937d3785"
+      },
+      {
+        "local": "845dfd7e468717325aa0d87bfb95618de4752e17",
+        "remote": "b46e2c07e636e81340ba5c8db5e31c7fc92eec54",
+        "tree": "ee2075de7b4f20ebe785624a4582e8fb7283aa3e"
+      },
+      {
+        "local": "151aa20d9d3a8bdb14bc0e805d09c061d7adbe66",
+        "remote": "cfe7e0853b10655e582b2049f5fba59b8f89a8a1",
+        "tree": "9340f2f702ccdc8f3b82c4f01b3b812cb6dddb53"
+      },
+      {
+        "local": "5070a99a804fbac1b7e3598da629ba8c8b583e23",
+        "remote": "3146bf310a9b195a43f4db1746086d27aaa27b2d",
+        "tree": "8955f69e8e3c8b8fbcb1b8a2087460ee4080e914"
+      },
+      {
+        "local": "ab0dd4060c83129b95c3c1212700c6b8f652cf55",
+        "remote": "276a196524b9a4c988a740675b89a3835e1c3177",
+        "tree": "6a5542d7d5dd01dba7dd495cf2808d57fd0af535"
+      },
+      {
+        "local": "1e74e19a31f462a1dcf9744faaf6993fcb2e2d2d",
+        "remote": "09cca0cf19a66bc863c75a4adfdea03cc8dfa5b2",
+        "tree": "4ed52c05794136b6e92965b548af95ef072378ca"
+      },
+      {
+        "local": "845caa8c41a93f49498a0877a89009e107f741c4",
+        "remote": "f92c858e833716b0641cb92882aaf4775062b3a1",
+        "tree": "456680c8bec884a06c5590588cbbc9e16920bb84"
+      },
+      {
+        "local": "c44eb5fbd1343530100f71e0046e0c88637305f6",
+        "remote": "b4fe7502d37d5f3233250138b68bf1cebe6f31fb",
+        "tree": "e21a307e7dcaa9a988fb53d67f28610bccb8ce97"
+      },
+      {
+        "local": "2f6e2c00ebd63899316c91c13b83b8eaedec0a06",
+        "remote": "2f7ed7b6f8b1940e7d4f8464b7f45d06f88c8e45",
+        "tree": "6f8f4a4f4e796b9860ad3c200adcb61010643dbe"
+      },
+      {
+        "local": "0de9c9d96ddaa80b0486cef2d27cdb793c59729f",
+        "remote": "10a3ce7467908c6d27fdc97ed6d259a408cc8269",
+        "tree": "0eb360db60aa039dd2483f853f70894e3f150638"
+      },
+      {
+        "local": "a2470329af536d31d5bf13c19e1eea09afc90a74",
+        "remote": "63e6619a952e04d2353de9d5c00113a7e46fcc8e",
+        "tree": "91186bfcd177b32e9357238e6e7fe69497c31039"
+      },
+      {
+        "local": "c4da0fb2a8b33433343d1d9b4e728beb0e831730",
+        "remote": "97a9cc71fe55e8150cdd32b5a20003bf9d5de287",
+        "tree": "1151916ae0220c8ad1f15abe48c2e9cc2efa9f44"
+      },
+      {
+        "local": "a6b0a7dd2fbe51a7da8b107d03b8ffed959fecc9",
+        "remote": "a7fb71dcfb2a1e9d4c07e1c67fbd087b4cb34193",
+        "tree": "85b68de3ed15ca6c1fadfd41f5ebfe16d801dd7c"
+      },
+      {
+        "local": "9950f79906bbbdec8c75d79f3ebead22c8f5ae77",
+        "remote": "9e5d55455d4b2aea6bfbcdca87872f2a2d1d4fcd",
+        "tree": "06aa762be65fd3a3c4dd13c2b88776039b949dc4"
+      },
+      {
+        "local": "6a8bef43ef374104f2c827fba1fc9a11d1c2baab",
+        "remote": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+        "tree": "fe359eb340c60f20a50c12b2fcef235873180a0c"
+      }
+    ],
+    "apk": {
+      "bytes": 15275431,
+      "name": "CoH-Native-Combined-0.1.18-continuation-diagnostic-arm64.apk",
+      "sha256": "dcf9c5074dcde620dc2aa117bc949bf63a2ce217e43ea1909555bc77ac345439",
+      "version_code": 19,
+      "version_name": "0.1.18-continuation-diagnostic-test",
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+      "qualified_source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+      "qualified_source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
+      "rebuild_after_qualification": false,
+      "physical_Thor_tested": false
+    },
+    "live_ACK_READY": {
+      "original_send_path": true,
+      "diagnostic_partial_tail_fallback_enabled": true,
+      "complete_parse_claim_required_unless_explicit_partial_tail": true,
+      "first_response_timeout_ms": 20000,
+      "max_accepted_same_id_retry": 1,
+      "observation_window_ms_after_first_READY_response": 30000,
+      "message_cap": 128,
+      "kind_rows": 16,
+      "early_cap_or_disconnect_marks_window_incomplete": true,
+      "actual_Thor_sent": null,
+      "actual_server_after_READY": null,
+      "actual_positions_over_time": null,
+      "scope": "No physical0.1.18 evidence yet. Test fixtures and host replay are not live server observations."
+    }
   }
 }
