@@ -1,0 +1,19 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e7da5c6..f8bc34a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -46,6 +46,14 @@ if(COX_ARM64_WINDOWS)
+ 		$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>)
+ endif()
+ 
++if(COX_ARM64_WINDOWS)
++	# SHARED_MEMORY data is written at load time. MSVC places it in a read/write
++	# named section (#pragma section); with clang that section conflicts with
++	# its const objects, and the section is not shared anyway. Use the existing
++	# switch to keep it in ordinary data sections.
++	add_compile_definitions(DISABLE_SHARED_MEMORY_SEGMENT)
++endif()
++
+ if(COX_ARM64_WINDOWS)
+ 	# x86 SSE headers resolve to shims that use sse2neon on ARM64.
+ 	include(dependencies/Sse2Neon)

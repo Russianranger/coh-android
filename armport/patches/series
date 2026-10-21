@@ -1,0 +1,6 @@
+0001-cmake-arm64-windows.patch
+0002-utilitieslib-arm64-spin-pause.patch
+0003-utilitieslib-arm64-data-breakpoints.patch
+0004-utilitieslib-arm64-cpu-count.patch
+0005-cmake-arm64-sse2neon-and-tests.patch
+0006-cmake-arm64-ordinary-shared-memory-data.patch

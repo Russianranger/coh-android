@@ -1,0 +1,117 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cbcbeea..e7da5c6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -46,6 +46,13 @@ if(COX_ARM64_WINDOWS)
+ 		$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>)
+ endif()
+ 
++if(COX_ARM64_WINDOWS)
++	# x86 SSE headers resolve to shims that use sse2neon on ARM64.
++	include(dependencies/Sse2Neon)
++	include_directories(BEFORE SYSTEM
++		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/armport-include" "${sse2neon_SOURCE_DIR}")
++endif()
++
+ # Run this mandatory check before other targets, even with testing disabled.
+ add_executable(cox_precise_floating_point_test EXCLUDE_FROM_ALL
+ 	cmake/tests/precise_floating_point.cpp)
+@@ -159,4 +166,10 @@ function(cox_require_precise_floating_point directory)
+ 	endforeach()
+ endfunction()
+ 
++# ArmPort: optional test programs kept outside this source tree.
++set(COX_ARMPORT_TESTS_DIR "" CACHE PATH "armport/tests directory to build (ARM64 only)")
++if(COX_ARM64_WINDOWS AND COX_ARMPORT_TESTS_DIR)
++	add_subdirectory("${COX_ARMPORT_TESTS_DIR}" armport-tests)
++endif()
++
+ cox_require_precise_floating_point("${CMAKE_CURRENT_SOURCE_DIR}")
+diff --git a/cmake/armport-include/emmintrin.h b/cmake/armport-include/emmintrin.h
+new file mode 100644
+index 0000000..f25e64c
+--- /dev/null
++++ b/cmake/armport-include/emmintrin.h
+@@ -0,0 +1,6 @@
++/* ArmPort: x86 SSE header. On ARM64, translate SSE intrinsics to NEON with sse2neon. */
++#if defined(__aarch64__)
++#include <sse2neon.h>
++#else
++#include_next <emmintrin.h>
++#endif
+diff --git a/cmake/armport-include/mmintrin.h b/cmake/armport-include/mmintrin.h
+new file mode 100644
+index 0000000..a55992c
+--- /dev/null
++++ b/cmake/armport-include/mmintrin.h
+@@ -0,0 +1,6 @@
++/* ArmPort: x86 SSE header. On ARM64, translate SSE intrinsics to NEON with sse2neon. */
++#if defined(__aarch64__)
++#include <sse2neon.h>
++#else
++#include_next <mmintrin.h>
++#endif
+diff --git a/cmake/armport-include/pmmintrin.h b/cmake/armport-include/pmmintrin.h
+new file mode 100644
+index 0000000..47ee4c2
+--- /dev/null
++++ b/cmake/armport-include/pmmintrin.h
+@@ -0,0 +1,6 @@
++/* ArmPort: x86 SSE header. On ARM64, translate SSE intrinsics to NEON with sse2neon. */
++#if defined(__aarch64__)
++#include <sse2neon.h>
++#else
++#include_next <pmmintrin.h>
++#endif
+diff --git a/cmake/armport-include/smmintrin.h b/cmake/armport-include/smmintrin.h
+new file mode 100644
+index 0000000..6f8676d
+--- /dev/null
++++ b/cmake/armport-include/smmintrin.h
+@@ -0,0 +1,6 @@
++/* ArmPort: x86 SSE header. On ARM64, translate SSE intrinsics to NEON with sse2neon. */
++#if defined(__aarch64__)
++#include <sse2neon.h>
++#else
++#include_next <smmintrin.h>
++#endif
+diff --git a/cmake/armport-include/tmmintrin.h b/cmake/armport-include/tmmintrin.h
+new file mode 100644
+index 0000000..205686b
+--- /dev/null
++++ b/cmake/armport-include/tmmintrin.h
+@@ -0,0 +1,6 @@
++/* ArmPort: x86 SSE header. On ARM64, translate SSE intrinsics to NEON with sse2neon. */
++#if defined(__aarch64__)
++#include <sse2neon.h>
++#else
++#include_next <tmmintrin.h>
++#endif
+diff --git a/cmake/armport-include/xmmintrin.h b/cmake/armport-include/xmmintrin.h
+new file mode 100644
+index 0000000..b3891b6
+--- /dev/null
++++ b/cmake/armport-include/xmmintrin.h
+@@ -0,0 +1,6 @@
++/* ArmPort: x86 SSE header. On ARM64, translate SSE intrinsics to NEON with sse2neon. */
++#if defined(__aarch64__)
++#include <sse2neon.h>
++#else
++#include_next <xmmintrin.h>
++#endif
+diff --git a/cmake/dependencies/Sse2Neon.cmake b/cmake/dependencies/Sse2Neon.cmake
+new file mode 100644
+index 0000000..809d189
+--- /dev/null
++++ b/cmake/dependencies/Sse2Neon.cmake
+@@ -0,0 +1,10 @@
++include_guard(GLOBAL)
++include(CPM)
++
++# ArmPort: header-only SSE-to-NEON translation for the ARM64 Windows build.
++CPMAddPackage(
++	NAME sse2neon
++	GIT_REPOSITORY "https://github.com/DLTcollab/sse2neon"
++	GIT_TAG 3cf69760cc6fdc45a5d70f0d42a8f079489f9867 # v1.8.0
++	DOWNLOAD_ONLY YES
++)

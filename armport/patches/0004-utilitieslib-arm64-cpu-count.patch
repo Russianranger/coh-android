@@ -1,0 +1,28 @@
+diff --git a/libs/UtilitiesLib/src/utils/cpu_count.c b/libs/UtilitiesLib/src/utils/cpu_count.c
+index a986184..69e8e31 100644
+--- a/libs/UtilitiesLib/src/utils/cpu_count.c
++++ b/libs/UtilitiesLib/src/utils/cpu_count.c
+@@ -4,6 +4,14 @@
+ #include "excpt.h"
+ #include "utilitieslib/utils/wininclude.h"
+ #include "utilitieslib/utils/SuperAssert.h"
++// ArmPort: the CPUID-based Hyper-Threading probe is x86 only. ARM64 cores
++// have no SMT, so report it disabled and keep the affinity-mask CPU count.
++#if defined(__aarch64__)
++int HyperThreadingEnabled(void)
++{
++    return 0;
++}
++#else
+ #ifdef __GNUC__
+ #include <cpuid.h>
+ #undef __cpuid
+@@ -187,6 +195,8 @@ else {
+ }
+ }
+ 
++#endif // !__aarch64__
++
+ int getNumVirtualCpus(void)
+ {
+     static int        cpu_count;
