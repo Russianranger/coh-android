@@ -76,9 +76,12 @@ def main():
     ap.add_argument('--build', required=True, type=Path)
     ap.add_argument('--data', required=True, type=Path)
     ap.add_argument('--runtime', required=True, type=Path)
-    ap.add_argument('--llvm-mingw', required=True, type=Path)
+    ap.add_argument('--llvm-mingw', type=Path, help='for the import list and runtime DLLs')
     ap.add_argument('--wine', required=True, type=Path, help='directory with wine, wineserver')
     ap.add_argument('--seconds', type=int, default=180)
+    ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win')
+    ap.add_argument('--cg-dir', type=Path, help='precompiled <key>.arb files for the Cg stand-in')
+    ap.add_argument('--requests-out', type=Path, help='copy recorded Cg requests here')
     ap.add_argument('args', nargs='*')
     a = ap.parse_args()
 
@@ -90,22 +93,33 @@ def main():
     rt = a.runtime
     rt.mkdir(parents=True, exist_ok=False)
     shutil.copy2(exe, rt / exe.name)
-    dlls = imports(exe, a.llvm_mingw)
-    sysroot_bin = a.llvm_mingw / 'aarch64-w64-mingw32' / 'bin'
     copied = []
-    for d in dlls:
-        src = sysroot_bin / d
-        if src.exists():
-            shutil.copy2(src, rt / d)
-            copied.append(d)
+    for dll in exe.parent.glob('*.dll'):  # runtime DLLs shipped next to the exe
+        shutil.copy2(dll, rt / dll.name)
+        copied.append(dll.name)
+    if a.llvm_mingw:
+        dlls = imports(exe, a.llvm_mingw)
+        sysroot_bin = a.llvm_mingw / 'aarch64-w64-mingw32' / 'bin'
+        for d in dlls:
+            if d not in copied and (sysroot_bin / d).exists():
+                shutil.copy2(sysroot_bin / d, rt / d)
+                copied.append(d)
+        note('notice', 'ArmPort M2 smoke imports', ', '.join(dlls))
+    note('notice', 'ArmPort M2 smoke runtime DLLs', ', '.join(copied) or 'none')
     (rt / 'data').symlink_to(a.data.resolve(), target_is_directory=True)
+    cg = rt / 'armport_cg'
+    cg.mkdir()
+    arb = sorted(a.cg_dir.glob('*.arb')) if a.cg_dir and a.cg_dir.is_dir() else []
+    for f in arb:
+        shutil.copy2(f, cg / f.name)
+    note('notice', 'ArmPort M2 smoke Cg programs', f'{len(arb)} precompiled ARB programs staged')
     note('notice', 'ArmPort M2 smoke imports', f'{", ".join(dlls)}\ncopied from llvm-mingw: {", ".join(copied) or "none"}')
 
     display = ':99'
     xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x800x24', '-nolisten', 'tcp'],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(2)
-    env = dict(os.environ, DISPLAY=display, WINEDEBUG='err+all,fixme-all,+dialog',
+    env = dict(os.environ, DISPLAY=display, WINEDEBUG=a.winedebug,
                WINEDLLOVERRIDES='mscoree,mshtml=')
     wine = str(a.wine / 'wine')
     try:
@@ -156,6 +170,10 @@ def main():
     dialog = [l[:300] for l in lines if 'trace:dialog' in l and ('L"' in l or '"' in l)]
     if dialog:
         note('notice', 'ArmPort M2 smoke dialog text', '\n'.join(dialog[:40]))
+    win = [l[:300] for l in lines if ('trace:win:' in l or 'trace:class:' in l or 'warn:win' in l or 'warn:class' in l)
+           and ('Cryptic' in l or 'CreateWindow' in l or 'NCCREATE' in l or 'returning' in l or 'abort' in l.lower() or 'fail' in l.lower())]
+    if win:
+        note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:45]))
     exc = [l for l in lines if 'exception' in l.lower() or 'unhandled' in l.lower() or 'err:' in l][:40]
     if exc:
         note('warning', 'ArmPort M2 smoke exceptions', '\n'.join(exc[:30]))
@@ -168,6 +186,12 @@ def main():
     for p in new[:6]:
         t = p.read_text(errors='replace').splitlines()[-30:]
         note('notice', f'ArmPort M2 smoke log {p.relative_to(rt)}', '\n'.join(l[:300] for l in t))
+    reqs = sorted((cg / 'requests').glob('*.req')) if (cg / 'requests').is_dir() else []
+    note('notice', 'ArmPort M2 smoke Cg requests', f'{len(reqs)} programs had no precompiled ARB assembly')
+    if a.requests_out:
+        a.requests_out.mkdir(parents=True, exist_ok=True)
+        for f in reqs:
+            shutil.copy2(f, a.requests_out / f.name)
     print('\n'.join(lines[-200:]))
     return 0
 
