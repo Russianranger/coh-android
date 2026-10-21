@@ -34,6 +34,20 @@ def imports(exe, llvm):
                    if l.strip().startswith('Name:') and l.strip().lower().endswith('.dll')})
 
 
+def ocr(path):
+    """Screen text via ImageMagick + tesseract (3x scale for small dialog fonts)."""
+    try:
+        png = path.with_suffix('.png')
+        subprocess.run(['convert', f'xwd:{path}', '-resize', '300%', str(png)],
+                       capture_output=True, timeout=120)
+        r = subprocess.run(['tesseract', str(png), '-', '--psm', '11'],
+                           capture_output=True, text=True, timeout=120)
+        words = ' '.join(r.stdout.split())
+        return words or '(no text found)'
+    except Exception as e:
+        return f'ocr failed: {e!r}'
+
+
 def screenshot_summary(display, path):
     try:
         return _screenshot_summary(display, path)
@@ -91,7 +105,7 @@ def main():
     xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x800x24', '-nolisten', 'tcp'],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(2)
-    env = dict(os.environ, DISPLAY=display, WINEDEBUG='err+all,fixme-all,+seh',
+    env = dict(os.environ, DISPLAY=display, WINEDEBUG='err+all,fixme-all,+dialog',
                WINEDLLOVERRIDES='mscoree,mshtml=')
     wine = str(a.wine / 'wine')
     try:
@@ -134,12 +148,18 @@ def main():
     named = [l.strip() for l in titles.splitlines() if '"' in l and 'has no name' not in l]
     note('notice', 'ArmPort M2 smoke status',
          f'{status}\nscreenshot @60s: {shot_mid}\nscreenshot @end: {shot_end}\nwindows:\n' + '\n'.join(named[:15]))
+    for name in ('shot60.xwd', 'shotend.xwd'):
+        if (rt.parent / name).exists():
+            note('notice', f'ArmPort M2 smoke screen text {name}', ocr(rt.parent / name))
 
     lines = log.read_text(errors='replace').splitlines()
+    dialog = [l[:300] for l in lines if 'trace:dialog' in l and ('L"' in l or '"' in l)]
+    if dialog:
+        note('notice', 'ArmPort M2 smoke dialog text', '\n'.join(dialog[:40]))
     exc = [l for l in lines if 'exception' in l.lower() or 'unhandled' in l.lower() or 'err:' in l][:40]
     if exc:
         note('warning', 'ArmPort M2 smoke exceptions', '\n'.join(exc[:30]))
-    tail = [l[:300] for l in lines if '+seh' not in l][-75:]
+    tail = [l[:300] for l in lines if 'trace:' not in l][-75:]
     for i, c in enumerate(chunks(tail)):
         note('notice', f'ArmPort M2 smoke output {i}', c)
 
