@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Qualify unchanged application command handlers and optional saved INITIAL tail."""
+"""Qualify original application reads with private UI shims and saved INITIAL tails."""
 import argparse
 import hashlib
 import importlib.util
@@ -32,12 +32,12 @@ def main():
     legacy = module('command_native_run', HERE / 'check_original_costume_receive.py')
     paths = [HERE / name for name in ('coh_original_command_tail.c', 'coh_original_command_tail.h',
         'original_command_tail.inc', 'prepare_original_command_tail.py', 'test_original_command_tail.c',
-        'check_original_command_tail.py', '../replication/coh_replication.c', '../replication/coh_replication.h')]
+        'check_original_command_tail.py', 'command-tail-entry-contract.json', '../replication/coh_replication.c', '../replication/coh_replication.h')]
     hashes = {path.resolve(): digest(path.read_bytes()) for path in paths}
     result = {'passed': True, 'source': source, 'modes': {},
         'scope': 'Original source handlers and actual command termination; no actor/UI/filesystem publication or READY/ACK.',
-        'source_safety_shims': 'Pinned original call lines guard unchecked contact/task indices, signed size+1 and Karma StatsSent[9]; whole function bodies remain unchanged. Private fixed UI sinks discard presentation/outbound window callbacks.'}
-    flags = ['cc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-pedantic',
+        'source_safety_shims': 'Pinned call-line guards cover contact/task indices, signed counts, Karma StatsSent[9], UI vars and bitmap spans. Friends substitutes NULL display labels and private ordering; all original packet reads remain. Fixed UI/audio sinks publish nothing.'}
+    flags = ['cc', '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror', '-pedantic',
              '-fno-pie', '-no-pie', '-fstack-usage']
     sources = [HERE / name for name in ('test_original_command_tail.c', 'coh_original_command_tail.c',
                                        '../replication/coh_replication.c')]
@@ -61,7 +61,7 @@ def main():
     frame_sum = sum(frame['bytes'] for frame in frames)
     assert frame_sum <= 16384
     result['memory'] = {'workspace_bytes': result['modes']['release']['workspace_bytes'],
-        'report_bytes': result['modes']['release']['report_bytes'], 'heap_allocations': 0,
+        'report_bytes': result['modes']['release']['report_bytes'], 'heap_allocations': 0, 'private_context_bytes': result['modes']['release']['context_bytes'],
         'stack_reserve': 16384, 'closed_native_frame_sum': frame_sum, 'frames': frames,
         'initial_aggregate_limit': 8388608, 'decoded_message_limit': 4194304,
         'ordinary_message_limit': 16384, 'RSS_PSS': None}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate unchanged client command handlers, enum and source fixture senders."""
+"""Generate original client command reads, explicit UI shims and source senders."""
 import argparse
 import hashlib
 import importlib.util
@@ -29,7 +29,8 @@ def generate(root):
              'MapServer/src/gameComm/sendToClient.c', 'MapServer/src/entity/entserver.c',
              'MapServer/src/player/parseClientInput.c', 'MapServer/src/gameSys/EndGameRaid.c',
              'Game/src/gameComm/dooranimclient.c', 'Common/entity/attrib_description.c',
-             'Common/entity/attrib_description.h', 'MapServer/src/entity/entGameActions.c']
+             'Common/entity/attrib_description.h', 'MapServer/src/entity/entGameActions.c',
+             'MapServer/src/script/ZoneEvents/ScriptUI.c', 'Game/src/UI/uiCompass.c']
     texts = {path: source(root, path) for path in paths}
     assert re.search(r'COMM_MAX_CMD\s*=\s*2\b', texts[paths[5]])
     assert re.search(r'#define\s+MAX_MAPVISIT_CELLS\s+\(32\*32\*8\)', texts[paths[4]])
@@ -55,17 +56,30 @@ def generate(root):
         (paths[1], 'receiveDesaturateInfo'), (paths[11], 'receivePopHelpEventHappenedByTag'),
         (paths[11], 'receiveRewardChoice'), (paths[11], 'receiveMoralChoice'),
         (paths[21], 'DoorAnimReceiveExit'), (paths[22], 'receiveCombatMonitorStats'),
-        (paths[11], 'receiveClientCombatStats')]
+        (paths[11], 'receiveClientCombatStats'),
+        (paths[11], 'ScriptUIDestroyWidget'), (paths[11], 'ScriptUIApplyReceivedUpdates'),
+        (paths[11], 'ScriptUIRemoveUpdates'), (paths[11], 'ScriptUIReceive'),
+        (paths[11], 'ScriptUIReceiveUpdate'), (paths[1], 'receiveVisitMapCells'),
+        (paths[11], 'receiveDialog'), (paths[11], 'receiveChatMsg'),
+        (paths[1], 'receiveInfoBox'), (paths[1], 'receiveMissionExitText'),
+        (paths[1], 'receiveTeamCompletePrompt'), (paths[1], 'receiveBrokerAlert'),
+        (paths[1], 'receiveFloatingInfo'), (paths[1], 'receivePlaySound'),
+        (paths[1], 'receiveFadeSound'), (paths[26], 'ServerWaypointReceive'),
+        (paths[11], 'receiveFriendsList')]
     senders = [(paths[7], 'ContactStatusSendEmpty'), (paths[7], 'ClueSend'),
         (paths[15], 'CharacterKarmaStatsSend'), (paths[17], 'sendIncarnateTrialStatus'),
         (paths[7], 'SendSelectContact'), (paths[7], 'SendSelectTask'),
-        (paths[24], 'serveDesaturateInformation'), (paths[22], 'sendCombatMonitorStats')]
+        (paths[24], 'serveDesaturateInformation'), (paths[22], 'sendCombatMonitorStats'),
+        (paths[25], 'ScriptUISend'), (paths[25], 'ScriptUISendKillSignal')]
     guards = {key: texts[paths[2]][:texts[paths[2]].index(needle)].count('\n') + 1
         for key, needle in {'CONTACT_INDEX': 'contactNumber = pktGetBitsAuto(pak);',
             'CONTACT_SIZE': 'contactSize = pktGetBitsAuto(pak);',
             'TASK_INDEX': 'taskIndex = pktGetBitsPack(pak, 1);',
             'TASK_SIZE': 'taskSize = pktGetBitsPack(pak, 1);'}.items()}
     assert re.search(r'#define\s+MAX_COMBAT_STATS\s+10\b', texts[paths[23]])
+    guards['MAP_CELL_CREATE'] = texts[paths[1]][:texts[paths[1]].index('automap_addStaticMapCell(vsm, playerPtr()->db_id', texts[paths[1]].index('void receiveVisitMapCells('))].count('\n') + 1
+    guards['MAP_CELL_COUNT'] = texts[paths[1]][:texts[paths[1]].index('num_cells = pktGetBitsPack(pak,1);', texts[paths[1]].index('void receiveVisitMapCells('))].count('\n') + 1
+    guards['SCRIPT_VAR_COUNT'] = texts[paths[11]][:texts[paths[11]].index('num = pktGetBitsPack(pak, 1);', texts[paths[11]].index('void ScriptUIReceive('))].count('\n') + 1
     guards['KARMA_COUNT'] = texts[paths[11]][:texts[paths[11]].index('count = pktGetBitsAuto(pak);', texts[paths[11]].index('void receiveKarmaStats'))].count('\n') + 1
     def original_enum(path, name):
         text = texts[path]
@@ -90,10 +104,20 @@ def generate(root):
         result = ''
         for path, name in items:
             body = extract.extract(texts[path], name)
+            original = body
             line = texts[path][:texts[path].index(body.strip())].count('\n') + 1
+            if name == 'receiveFriendsList':
+                shims = {'g_CharacterClasses.ppClasses[tempint]': 'COMMAND_UI_CLASS_LABEL(tempint)',
+                         'g_CharacterOrigins.ppOrigins[tempint]': 'COMMAND_UI_ORIGIN_LABEL(tempint)',
+                         'static int last_pak_id = 0;': '/* UI packet ordering is private to the bounded owner. */'}
+                for before, after in shims.items():
+                    assert body.count(before) == 1
+                    body = body.replace(before, after)
+                assert re.findall(r'pktGet\w+\([^;\n]*', original) == re.findall(r'pktGet\w+\([^;\n]*', body)
+
             result += '#line ' + str(line) + ' "' + path + '"\n' + body
         return result
-    output = ('/* Unchanged source functions; bounded typed staging and no-I/O shims. */\n'
+    output = ('/* Original source functions; explicit non-wire Friends UI shims and bounded staging. */\n'
         '#ifdef COH_ORIGINAL_COMMAND_TYPES\n#define COMM_MAX_CMD 2\n#define MAX_COMBAT_STATS 10\n' +
         ''.join('#define COMMAND_' + key + '_LINE ' + str(value) + '\n' for key, value in guards.items()) +
         enum + '\n' + extra_types + '\n#elif defined(COH_ORIGINAL_COMMAND_SENDERS)\n' + whole(senders) + fixture_senders +
@@ -113,16 +137,46 @@ def generate(root):
         'SERVER_SEND_DESATURATE_INFO': 'receiveDesaturateInfo',
         'SERVER_POPHELP_EVENT_HAPPENED_BY_TAG': 'receivePopHelpEventHappenedByTag',
         'SERVER_SEND_REWARD_CHOICE': 'receiveRewardChoice', 'SERVER_SEND_MORAL_CHOICE': 'receiveMoralChoice',
-        'SERVER_DOOREXIT': 'DoorAnimReceiveExit', 'SERVER_SEND_COMBAT_STATS': 'receiveClientCombatStats'}
+        'SERVER_DOOREXIT': 'DoorAnimReceiveExit', 'SERVER_SEND_COMBAT_STATS': 'receiveClientCombatStats',
+        'SERVER_SCRIPT_UI': 'ScriptUIReceive', 'SERVER_SCRIPT_UI_UPDATE': 'ScriptUIReceiveUpdate',
+        'SERVER_VISITED_MAP_CELLS': 'receiveVisitMapCells',
+        'SERVER_RECEIVE_DIALOG': 'receiveDialog', 'SERVER_RECEIVE_INFO_BOX': 'receiveInfoBox',
+        'SERVER_SEND_CHAT_MSG': 'receiveChatMsg', 'SERVER_SET_WAYPOINT': 'ServerWaypointReceive',
+        'SERVER_MISSION_EXIT': 'receiveMissionExitText', 'SERVER_TEAMCOMPLETE_PROMPT': 'receiveTeamCompletePrompt',
+        'SERVER_BROKER_CONTACT': 'receiveBrokerAlert', 'SERVER_SEND_FLOATING_INFO': 'receiveFloatingInfo',
+        'SERVER_SEND_PLAY_SOUND': 'receivePlaySound', 'SERVER_SEND_FADE_SOUND': 'receiveFadeSound'}
     for command, name in expected_dispatch.items():
         assert re.search(r'_Ch\(\s*' + command + r'\s*,\s*' + name + r'\s*\)', texts[paths[0]])
     dispatch_text = ''.join(('COH_COMMAND_DISPATCH' if row['enabled'] else 'COH_COMMAND_DISABLED') + '(' + row['command'] + ', ' + row['handler'] + ', ' + str(int(row['command'] in expected_dispatch)) + ')\n' for row in dispatch)
     output = output.replace('#elif defined(COH_ORIGINAL_COMMAND_SENDERS)', '#elif defined(COH_ORIGINAL_COMMAND_DISPATCH)\n' + dispatch_text + '#elif defined(COH_ORIGINAL_COMMAND_SENDERS)')
+    assert re.search(r'xcase\s+SERVER_SEND_FRIENDS\s*:\s*receiveFriendsList\(pak,\s*playerPtr\(\)\s*\)', texts[paths[0]])
+    output = output.replace('#elif defined(COH_ORIGINAL_COMMAND_SENDERS)', '#elif defined(COH_ORIGINAL_COMMAND_INLINE_DISPATCH)\nCOH_COMMAND_INLINE_DISPATCH(SERVER_SEND_FRIENDS, receiveFriendsList, 1)\n#elif defined(COH_ORIGINAL_COMMAND_SENDERS)')
     digest = lambda value: hashlib.sha256(value.encode()).hexdigest()
-    proof = {'sources_sha256_lf': {path: digest(text) for path, text in texts.items()},
+    entry = json.loads((HERE / 'command-tail-entry-contract.json').read_text())
+    assert entry['schema'] == 'original-command-tail-entry-source-contract-v1'
+    for file, expected in entry['source_sha256_lf'].items():
+        assert file.startswith('upstream/ouroboros/')
+        text = source(root, file[len('upstream/ouroboros/'):])
+        assert digest(text) == expected, 'Map-entry original source changed: ' + file
+    rows = entry['concrete_sends']
+    for row in rows:
+        assert row['sourcefile'] in entry['source_sha256_lf']
+        row['covered_by_adapter'] = row['coverage_class'] == 'body' and row['command'] in {*expected_dispatch, 'SERVER_SEND_FRIENDS'}
+    covered_entry = sorted({row['command'] for row in rows if row['covered_by_adapter']})
+    unsupported_entry = sorted({row['command'] for row in rows if row['coverage_class'] == 'body' and not row['covered_by_adapter']})
+    outer_entry = sorted({row['command'] for row in rows if row['coverage_class'] != 'body'})
+    assert len(rows) == 97 and len(covered_entry) + len(unsupported_entry) + len(outer_entry) == 69
+    entry['computed_coverage'] = {'concrete_send_sites': len(rows), 'command_kinds': 69,
+        'covered_body_commands': covered_entry, 'unsupported_body_commands': unsupported_entry,
+        'separate_outer_and_framing_commands': outer_entry,
+        'dynamic_or_async_boundaries': len(entry['unsupported_boundaries']),
+        'unadmitted_conditional_dependencies': len(entry['unadmitted_conditional_dependencies'])}
+    proof = {'entry_send_source_contract': entry, 'sources_sha256_lf' : {path: digest(text) for path, text in texts.items()},
         'whole_functions_sha256_lf': {name: digest(extract.extract(texts[path], name)) for path, name in functions + senders},
         'source_bounds_guard_lines': guards, 'original_dispatch': expected_dispatch,
         'dispatch_table': [{**row, 'qualified_by_this_adapter': row['command'] in expected_dispatch} for row in dispatch],
+        'qualified_inline_handlers': {'SERVER_SEND_FRIENDS': 'receiveFriendsList'},
+        'non_wire_ui_shims': {'receiveFriendsList': ['CLIENT class/origin display labels resolve NULL; no friend UI owner is published', 'packet ordering counter is private workspace state; all original pktGet calls and branches retained']},
         'dispatch_active': 212, 'dispatch_textual': 213, 'dispatch_qualified': len(expected_dispatch),
         'entry_fixture_blocks_sha256_lf': {name: digest(block) for name, block in fixture_blocks.items()},
         'enum_sha256_lf': digest(enum), 'generated_sha256': digest(output)}

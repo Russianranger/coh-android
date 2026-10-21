@@ -1,4 +1,4 @@
-/* Unchanged source functions; bounded typed staging and no-I/O shims. */
+/* Original source functions; explicit non-wire Friends UI shims and bounded staging. */
 #ifdef COH_ORIGINAL_COMMAND_TYPES
 #define COMM_MAX_CMD 2
 #define MAX_COMBAT_STATS 10
@@ -6,6 +6,9 @@
 #define COMMAND_CONTACT_SIZE_LINE 180
 #define COMMAND_TASK_INDEX_LINE 511
 #define COMMAND_TASK_SIZE_LINE 475
+#define COMMAND_MAP_CELL_CREATE_LINE 953
+#define COMMAND_MAP_CELL_COUNT_LINE 968
+#define COMMAND_SCRIPT_VAR_COUNT_LINE 2937
 #define COMMAND_KARMA_COUNT_LINE 3062
 typedef enum ServerCommCmd
 {
@@ -506,18 +509,18 @@ typedef enum CharacterKarmaReason
     CKR_COUNT,
 }CharacterKarmaReason;
 #elif defined(COH_ORIGINAL_COMMAND_DISPATCH)
-COH_COMMAND_DISPATCH(SERVER_RECEIVE_DIALOG, receiveDialog, 0)
+COH_COMMAND_DISPATCH(SERVER_RECEIVE_DIALOG, receiveDialog, 1)
 COH_COMMAND_DISPATCH(SERVER_RECEIVE_DIALOG_POWREQ, receiveDialogPowerRequest, 0)
 COH_COMMAND_DISPATCH(SERVER_RECEIVE_DIALOG_TEAMLEVEL, receiveTeamChangeDialog, 0)
 COH_COMMAND_DISPATCH(SERVER_RECEIVE_DIALOG_NAG, receiveDialogNag, 0)
 COH_COMMAND_DISPATCH(SERVER_RECEIVE_DIALOG_IGNORABLE, receiveDialogIgnorable, 0)
 COH_COMMAND_DISPATCH(SERVER_RECEIVE_DIALOG_WIDTH, receiveDialogWithWidth, 0)
-COH_COMMAND_DISPATCH(SERVER_RECEIVE_INFO_BOX, receiveInfoBox, 0)
+COH_COMMAND_DISPATCH(SERVER_RECEIVE_INFO_BOX, receiveInfoBox, 1)
 COH_COMMAND_DISPATCH(SERVER_DOOR_CMD, receiveDoorMsg, 0)
 COH_COMMAND_DISPATCH(SERVER_SEND_CONSOLE_OUTPUT, receiveConsoleOutput, 0)
 COH_COMMAND_DISPATCH(SERVER_SET_CLIENT_STATE, receiveServerSetClientState, 0)
 COH_COMMAND_DISPATCH(SERVER_CON_PRINTF, receiveConPrintf, 0)
-COH_COMMAND_DISPATCH(SERVER_SEND_CHAT_MSG, receiveChatMsg, 0)
+COH_COMMAND_DISPATCH(SERVER_SEND_CHAT_MSG, receiveChatMsg, 1)
 COH_COMMAND_DISPATCH(SERVER_SEND_FLOATING_DAMAGE, receiveFloatingDmg, 0)
 COH_COMMAND_DISPATCH(SERVER_CONTROL_PLAYER, receiveControlPlayer, 0)
 COH_COMMAND_DISPATCH(SERVER_CONTACT_DIALOG_OPEN, receiveContactDialog, 0)
@@ -531,10 +534,10 @@ COH_COMMAND_DISPATCH(SERVER_TASK_SELECT, TaskSelectReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_TASK_STATUS, TaskStatusListReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_TASK_REMOVE_TEAMMATE_TASKS, TaskStatusListRemoveTeammates, 0)
 COH_COMMAND_DISPATCH(SERVER_MISSION_ENTRY, receiveMissionEntryText, 0)
-COH_COMMAND_DISPATCH(SERVER_MISSION_EXIT, receiveMissionExitText, 0)
+COH_COMMAND_DISPATCH(SERVER_MISSION_EXIT, receiveMissionExitText, 1)
 COH_COMMAND_DISPATCH(SERVER_MISSION_KICKTIMER, MissionKickReceive, 0)
-COH_COMMAND_DISPATCH(SERVER_TEAMCOMPLETE_PROMPT, receiveTeamCompletePrompt, 0)
-COH_COMMAND_DISPATCH(SERVER_BROKER_CONTACT, receiveBrokerAlert, 0)
+COH_COMMAND_DISPATCH(SERVER_TEAMCOMPLETE_PROMPT, receiveTeamCompletePrompt, 1)
+COH_COMMAND_DISPATCH(SERVER_BROKER_CONTACT, receiveBrokerAlert, 1)
 COH_COMMAND_DISPATCH(SERVER_CLUE_UPDATE, ClueListReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_KEYCLUE_UPDATE, KeyClueListReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_SOUVENIRCLUE_UPDATE, scReceiveAllHeaders, 1)
@@ -552,9 +555,9 @@ COH_COMMAND_DISPATCH(SERVER_DOORANIM, DoorAnimReceiveStart, 0)
 COH_COMMAND_DISPATCH(SERVER_DOOREXIT, DoorAnimReceiveExit, 1)
 COH_COMMAND_DISPATCH(SERVER_FACE_ENTITY, receiveFaceEntity, 0)
 COH_COMMAND_DISPATCH(SERVER_FACE_LOCATION, receiveFaceLocation, 0)
-COH_COMMAND_DISPATCH(SERVER_SEND_FLOATING_INFO, receiveFloatingInfo, 0)
-COH_COMMAND_DISPATCH(SERVER_SEND_PLAY_SOUND, receivePlaySound, 0)
-COH_COMMAND_DISPATCH(SERVER_SEND_FADE_SOUND, receiveFadeSound, 0)
+COH_COMMAND_DISPATCH(SERVER_SEND_FLOATING_INFO, receiveFloatingInfo, 1)
+COH_COMMAND_DISPATCH(SERVER_SEND_PLAY_SOUND, receivePlaySound, 1)
+COH_COMMAND_DISPATCH(SERVER_SEND_FADE_SOUND, receiveFadeSound, 1)
 COH_COMMAND_DISPATCH(SERVER_SEND_DESATURATE_INFO, receiveDesaturateInfo, 1)
 COH_COMMAND_DISPATCH(SERVER_SET_STANCE, entity_StanceReceive, 0)
 COH_COMMAND_DISPATCH(SERVER_MAP_XFER_LIST, mapSelectReceiveText, 0)
@@ -562,11 +565,11 @@ COH_COMMAND_DISPATCH(SERVER_MAP_XFER_LIST_INIT, mapSelectReceiveInit, 0)
 COH_COMMAND_DISPATCH(SERVER_MAP_XFER_LIST_APPEND, mapSelectReceiveUpdate, 0)
 COH_COMMAND_DISPATCH(SERVER_MAP_XFER_LIST_CLOSE, mapSelectReceiveClose, 0)
 COH_COMMAND_DISPATCH(SERVER_ENABLE_CONTROL_LOG, handleEnableControlLog, 0)
-COH_COMMAND_DISPATCH(SERVER_VISITED_MAP_CELLS, receiveVisitMapCells, 0)
+COH_COMMAND_DISPATCH(SERVER_VISITED_MAP_CELLS, receiveVisitMapCells, 1)
 COH_COMMAND_DISPATCH(SERVER_ALL_STATIC_MAP_CELLS, receiveStaticMapCells, 1)
 COH_COMMAND_DISPATCH(SERVER_RESEND_WAYPOINT_REQUEST, receiveResendWaypointRequest, 0)
 COH_COMMAND_DISPATCH(SERVER_UPDATE_WAYPOINT, receiveWaypointUpdate, 0)
-COH_COMMAND_DISPATCH(SERVER_SET_WAYPOINT, ServerWaypointReceive, 0)
+COH_COMMAND_DISPATCH(SERVER_SET_WAYPOINT, ServerWaypointReceive, 1)
 COH_COMMAND_DISPATCH(SERVER_LEVEL_UP, receiveLevelUp, 0)
 COH_COMMAND_DISPATCH(SERVER_LEVEL_UP_RESPEC, receiveLevelUpRespec, 0)
 COH_COMMAND_DISPATCH(SERVER_NEW_TITLE, receiveNewTitle, 0)
@@ -629,8 +632,8 @@ COH_COMMAND_DISPATCH(SERVER_ARENA_REQRESULTS, receiveArenaResults, 0)
 COH_COMMAND_DISPATCH(SERVER_ARENA_OFFER, receiveArenaInvite, 0)
 COH_COMMAND_DISPATCH(SERVER_SALVAGE_IMMEDIATE_USE_STATUS, receiveSalvageImmediateUseStatus, 0)
 COH_COMMAND_DISPATCH(SERVER_SEND_PACKAGEDENT, receivePackagedEnt, 0)
-COH_COMMAND_DISPATCH(SERVER_SCRIPT_UI, ScriptUIReceive, 0)
-COH_COMMAND_DISPATCH(SERVER_SCRIPT_UI_UPDATE, ScriptUIReceiveUpdate, 0)
+COH_COMMAND_DISPATCH(SERVER_SCRIPT_UI, ScriptUIReceive, 1)
+COH_COMMAND_DISPATCH(SERVER_SCRIPT_UI_UPDATE, ScriptUIReceiveUpdate, 1)
 COH_COMMAND_DISPATCH(SERVER_MISSION_WAYPOINT, MissionWaypointReceive, 0)
 COH_COMMAND_DISPATCH(SERVER_MISSION_KEYDOOR, MissionKeydoorReceive, 0)
 COH_COMMAND_DISPATCH(SERVER_PET_UI_UPDATE, receivePetUpdateUI, 0)
@@ -719,6 +722,8 @@ COH_COMMAND_DISPATCH(SERVER_SUPPORT_KB, displaySupportKB, 0)
 COH_COMMAND_DISPATCH(SERVER_DISPLAY_PRODUCT_PAGE, displayProductPage, 0)
 COH_COMMAND_DISPATCH(SERVER_FORCE_QUEUE_FOR_EVENT, turnstileGame_handleForceQueue, 0)
 COH_COMMAND_DISPATCH(SERVER_START_FORCED_MOVEMENT, playerStartForcedFollow, 0)
+#elif defined(COH_ORIGINAL_COMMAND_INLINE_DISPATCH)
+COH_COMMAND_INLINE_DISPATCH(SERVER_SEND_FRIENDS, receiveFriendsList, 1)
 #elif defined(COH_ORIGINAL_COMMAND_SENDERS)
 #line 913 "MapServer/src/storyarc/storySend.c"
 void ContactStatusSendEmpty(Packet* pak)
@@ -860,6 +865,43 @@ void sendCombatMonitorStats( Entity *e, Packet *pak)
         pktSendIfSetBitsPack(pak, 8, e->pl->combatMonitorStats[i].iKey );
         pktSendIfSetBits(pak, 4, e->pl->combatMonitorStats[i].iOrder );
     }
+}
+#line 182 "MapServer/src/script/ZoneEvents/ScriptUI.c"
+static void ScriptUISend(ScriptUIWidget* widget, Entity* player)
+{
+    int i, numVars = eaSize(&widget->varCache);
+    int entInfoIndex = eaSize(&player->scriptUIData)-1;
+
+    START_PACKET(pak, player, SERVER_SCRIPT_UI)
+    pktSendBitsPack(pak, 1, widget->uniqueID);
+    pktSendBits(pak, 1, 1); // Means create a new widget
+    pktSendBitsPack(pak, 1, widget->type);
+    pktSendBits(pak, 1, widget->hidden ? 1 : 0);
+    pktSendBitsPack(pak, 1, numVars);
+    for (i = 0; i < numVars; i++)
+    {
+        if (ISGLOBAL(widget->varCache[i]->varName))
+        {
+            pktSendString(pak, saUtilScriptLocalize(VTOS(widget->varCache[i])));
+            eaPush(&player->scriptUIData[entInfoIndex]->perPlayerVars, NULL);
+        }
+        else
+        {
+            const char* personal = ScriptUIGetPlayerVar(g_currentScript, widget->varCache[i]->varName, player);
+            personal = personal?personal:widget->varCache[i]->varName;
+            eaPush(&player->scriptUIData[entInfoIndex]->perPlayerVars, strdup(personal));
+            pktSendString(pak, saUtilScriptLocalize(personal));
+        }
+    }
+    END_PACKET
+}
+#line 212 "MapServer/src/script/ZoneEvents/ScriptUI.c"
+static void ScriptUISendKillSignal(Entity* player, int widgetID)
+{
+    START_PACKET(pak, player, SERVER_SCRIPT_UI)
+        pktSendBitsPack(pak, 1, widgetID);
+    pktSendBits(pak, 1, 0); // Means kill the widget
+    END_PACKET
 }
 
 void original_window_colors_send(Entity *e,U32 oldColor,U32 newColor){START_PACKET(pak, e, SERVER_CHANGE_WINDOW_COLORS);
@@ -1733,5 +1775,481 @@ void receiveCombatMonitorStats(Entity *e, Packet *pak)
 void receiveClientCombatStats( Packet *pak )
 {
     receiveCombatMonitorStats( playerPtr(), pak );
+}
+#line 2881 "Game/src/UI/uiNet.c"
+void ScriptUIDestroyWidget(ScriptUIClientWidget* widget)
+{
+    int i, n = eaSize(&widget->varList);
+    for (i = 0; i < n; i++)
+        free(widget->varList[i]);
+    freeToolTip(widget->tooltip);
+    eaiDestroy(&widget->packetOrder);
+    eaDestroy(&widget->varList);
+    free(widget);
+}
+#line 2837 "Game/src/UI/uiNet.c"
+static void ScriptUIApplyReceivedUpdates(ScriptUIClientWidget* newWidget)
+{
+    int i, n = eaSize(&scriptUIUpdates);
+    for (i = n-1; i >= 0; i--)
+    {
+        ScriptUIUpdate* update = scriptUIUpdates[i];
+        if (newWidget->uniqueID == update->widgetId)
+        {
+            if (update->index == -1)
+            {
+                newWidget->hidden = update->hidden;
+            }
+            else if (update->index >= 0 && update->index < eaSize(&newWidget->varList) && update->packetID >= newWidget->packetOrder[update->index])
+            {
+                free(newWidget->varList[update->index]);
+                newWidget->varList[update->index] = update->var;
+                newWidget->packetOrder[update->index] = update->packetID;
+            }
+            else
+            {
+                free(update->var);
+            }
+            free(update);
+            eaRemove(&scriptUIUpdates, i);
+        }
+    }
+}
+#line 2865 "Game/src/UI/uiNet.c"
+static void ScriptUIRemoveUpdates(int widgetId)
+{
+    int i, n = eaSize(&scriptUIUpdates);
+    for (i = n-1; i >= 0; i--)
+    {
+        ScriptUIUpdate* update = scriptUIUpdates[i];
+        if (widgetId == update->widgetId)
+        {
+            if (update->var)
+                free(update->var);
+            free(update);
+            eaRemove(&scriptUIUpdates, i);
+        }
+    }
+}
+#line 2923 "Game/src/UI/uiNet.c"
+void ScriptUIReceive(Packet* pak)
+{
+    int i, num;
+    int uniqueID = pktGetBitsPack(pak, 1);
+    scriptUIUpdated = 1; // Flag the scriptui as updated, so we recalc the compass
+    if (pktGetBits(pak, 1))
+    {
+        ScriptUIClientWidget* newWidget = malloc(sizeof(ScriptUIClientWidget));
+        memset(newWidget, 0, sizeof(ScriptUIClientWidget));
+        newWidget->type = pktGetBitsPack(pak, 1);
+        newWidget->hidden = pktGetBits(pak, 1);
+        newWidget->uniqueID = uniqueID;
+
+        // Get all the new vars
+        num = pktGetBitsPack(pak, 1);
+        for (i = 0; i < num; i++)
+        {
+            eaPush(&newWidget->varList, strdup(pktGetString(pak)));
+            eaiPush(&newWidget->packetOrder, pak->id);
+        }
+        eaPush(&scriptUIWidgetList, newWidget);
+
+        // Timer related info
+        if ((newWidget->type == TimerWidget) && (atoi(newWidget->varList[0]) - timerSecondsSince2000WithDelta() >= 3600))
+            newWidget->showHours = 1;
+
+        // Apply updates
+        ScriptUIApplyReceivedUpdates(newWidget);
+    }
+    else
+    {
+        int i, numWidgets = eaSize(&scriptUIWidgetList);
+        for (i = 0; i < numWidgets; i++)
+        {
+            ScriptUIClientWidget* widget = scriptUIWidgetList[i];
+            if (widget->uniqueID == uniqueID)
+            {
+                eaRemove(&scriptUIWidgetList, i);
+                ScriptUIDestroyWidget(widget);
+                break;
+            }
+        }
+        // Remove stale updates
+        ScriptUIRemoveUpdates(uniqueID);
+    }
+}
+#line 2970 "Game/src/UI/uiNet.c"
+void ScriptUIReceiveUpdate(Packet* pak)
+{
+    while (pktGetBits(pak, 1))
+    {
+        int widgetId = pktGetBitsPack(pak, 1);
+        int hidden = pktGetBits(pak, 1);
+        ScriptUIClientWidget* widget = ScriptUIClientWidgetFromId(scriptUIWidgetList, widgetId);
+        if (widget)
+        {
+            widget->hidden = hidden;
+        }
+        else
+        {
+            ScriptUIUpdate* update = malloc(sizeof(ScriptUIUpdate));
+            update->widgetId = widgetId;
+            update->index = -1;
+            update->hidden = hidden;
+            update->var = NULL;
+            update->packetID = pak->id;
+            eaPush(&scriptUIUpdates, update);
+        }
+        while(pktGetBits(pak, 1))
+        {
+            int index = pktGetBitsPack(pak, 1);
+            char* var = pktGetString(pak);
+
+            // If we don't have the widget yet, queue it, otherwise process it
+            if (!widget)
+            {
+                ScriptUIUpdate* update = malloc(sizeof(ScriptUIUpdate));
+                update->widgetId = widgetId;
+                update->index = index;
+                update->hidden = hidden;
+                update->var = strdup(var);
+                update->packetID = pak->id;
+                eaPush(&scriptUIUpdates, update);
+            }
+            else if (index >= 0 && index < eaSize(&widget->varList) && pak->id >= widget->packetOrder[index])
+            {
+                free(widget->varList[index]);
+                widget->varList[index] = strdup(var);
+                widget->packetOrder[index] = pak->id;
+            }
+        }
+    }
+}
+#line 924 "Game/src/clientcomm/clientcommreceive.c"
+void receiveVisitMapCells(Packet *pak)
+{
+    int staticMapId = pktGetBitsPack(pak, 1);
+    if (staticMapId)
+    {
+        //    load from file
+        VisitedStaticMap *vsm = automap_getMapStruct(playerPtr()->db_id);
+        VisitedMap *targetMap = NULL;
+        int opaque_fog = pktGetBits(pak, 1);
+        int clearFog = pktGetBits(pak, 1);
+        int i;
+        if (vsm)        //    test clients don't have a vsm
+        {
+            for (i = 0; i < eaSize(&vsm->staticMaps); ++i)
+            {
+                VisitedMap *vm = vsm->staticMaps[i];
+                if (vm->map_id == staticMapId)
+                {
+                    targetMap = vm;
+                    break;
+                }
+            }
+            if (i >= eaSize(&vsm->staticMaps))
+            {
+                int cell_array_size = (MAX_MAPVISIT_CELLS+31)/32;
+                U32 cell_array[4*(MAX_MAPVISIT_CELLS+31)/32];
+                int j;
+                for (j = 0; j < cell_array_size; j++)
+                    cell_array[j] = 0;
+                automap_addStaticMapCell(vsm, playerPtr()->db_id, staticMapId, opaque_fog, cell_array_size, cell_array);
+                targetMap = eaLast(&vsm->staticMaps);
+            }
+            if (clearFog)
+            {
+                int j;
+                for (j = 0; j < MAX_MAPVISIT_CELLS; j++)
+                    SETB(targetMap->cells, j);
+            }
+            mapfogSetVisitedCellsFromServer(targetMap->cells, MAX_MAPVISIT_CELLS, targetMap->opaque_fog);
+            automap_updateStaticMap(targetMap);
+        }
+    }
+    else
+    {
+        int num_cells = pktGetBitsPack(pak,1);
+        int cell_array_size = (num_cells+31)/32;
+        U32 *cell_array = calloc(cell_array_size*4, 1);
+        if (num_cells)
+        {
+            int i;
+            for (i = 0; i < cell_array_size; i++)
+                cell_array[i] = pktGetBits(pak, 32);
+        }
+        mapfogSetVisitedCellsFromServer(cell_array,num_cells,1);
+        free(cell_array);
+    }
+}
+#line 281 "Game/src/UI/uiNet.c"
+void receiveDialog( Packet *pak )
+{
+    char *pch = pktGetString( pak );
+
+    dialogStd( DIALOG_OK, pch, NULL, NULL, NULL, NULL, 0 );
+}
+#line 158 "Game/src/UI/uiNet.c"
+void receiveChatMsg( Packet *pak )
+{
+    Vec2 position;
+    int id            = pktGetBitsPack(pak, 10);
+    int type        = pktGetBitsPack(pak, 3);
+    float duration  = pktGetF32(pak);
+    char *s            = pktGetString(pak);
+    position[0]        = pktGetF32(pak);
+    position[1]        = pktGetF32(pak);
+     addSystemChatMsgEx(s, type, duration, id, position);
+}
+#line 106 "Game/src/clientcomm/clientcommreceive.c"
+void receiveInfoBox( Packet *pak )
+{
+    char *pchTmp;
+    int type;
+
+    type = pktGetBitsPack( pak, 2 );
+    pchTmp = pktGetString( pak ); // Pointer good until the next pktGetString.
+
+    InfoBox(type, "%s", pchTmp);
+}
+#line 310 "Game/src/clientcomm/clientcommreceive.c"
+void receiveMissionExitText( Packet *pak )
+{
+    char* text;
+
+    text = pktGetString(pak);
+    dialogStd(DIALOG_OK, text, NULL, NULL, NULL, NULL, 1);
+}
+#line 353 "Game/src/clientcomm/clientcommreceive.c"
+void receiveTeamCompletePrompt( Packet *pak )
+{
+    tcNeverAsk = 0;
+    dialog(DIALOG_YES_NO, -1, -1, -1, -1, textStd("TeamCompleteDescription"), textStd("YesString"),
+           respondTeamCompleteAccept, textStd( "NoString" ), respondTeamCompleteDecline, 
+           0, 0, teamCompleteDCB, 1, 0, 0, 0 );
+}
+#line 318 "Game/src/clientcomm/clientcommreceive.c"
+void receiveBrokerAlert( Packet *pak )
+{
+    char* text = pktGetString(pak);
+    dialogStd(DIALOG_OK, text, NULL, NULL, NULL, NULL, 1);
+}
+#line 732 "Game/src/clientcomm/clientcommreceive.c"
+void receiveFloatingInfo( Packet *pak )
+{
+    int iOwnerShownOver;
+    char *pch;
+    int iStyle;
+    float fDelay;
+    U32    iColor;
+
+    // TODO: This should probably not send strings
+    //       It should send an ID instead.
+    // SERVER_SEND_FLOATING_INFO
+    // owner to show info over
+    // string
+    // seconds to delay
+
+    iOwnerShownOver = pktGetBitsPack(pak, 1);
+    pch = pktGetString(pak);
+    iStyle = pktGetBitsPack(pak, 2);
+    fDelay = pktGetF32(pak);
+    iColor = pktGetBitsPack(pak, 32);
+    handleFloatingInfo(iOwnerShownOver, pch, iStyle, fDelay, iColor);
+}
+#line 755 "Game/src/clientcomm/clientcommreceive.c"
+void receivePlaySound( Packet *pak )
+{
+    char *filename;
+    int channel;
+    float volumeLevel;
+
+    filename = pktGetString(pak);
+    channel = pktGetBitsAuto(pak);
+    volumeLevel = pktGetF32(pak);
+    sndPlayEx(filename, channel, volumeLevel, SOUND_PLAY_FLAGS_INTERRUPT | SOUND_PLAY_FLAGS_SUSTAIN);
+}
+#line 767 "Game/src/clientcomm/clientcommreceive.c"
+void receiveFadeSound( Packet *pak )
+{
+    int channel;
+    float fadeTime;
+
+    channel = pktGetBitsAuto(pak);
+    fadeTime = pktGetF32(pak);
+    sndStop(channel, fadeTime);
+}
+#line 737 "Game/src/UI/uiCompass.c"
+void ServerWaypointReceive(Packet* pak)
+{
+    int                hasLocation = pktGetBits(pak, 1);
+    int                id = pktGetBitsPack(pak, 1);
+    int                setCompass = false;
+    char            key[20];
+    Destination        *dest;
+
+    sprintf(key, "%i", id);
+
+    if (serverDestList == NULL)
+        serverDestList = stashTableCreateWithStringKeys(20, StashDeepCopyKeys | StashCaseSensitive );
+
+    if (id > 0) {
+        stashFindPointer( serverDestList, key, &dest );
+
+        if (hasLocation)
+        {
+            if (dest == NULL) {
+                dest = malloc(sizeof(Destination));
+                memset(dest, 0, sizeof(Destination));
+                stashAddPointer(serverDestList, key, dest, false);
+            }
+
+            dest->navOn = 1;
+            dest->type = ICON_SERVER;
+            dest->id = -id;
+            setCompass = pktGetBits(pak, 1);
+            dest->pulseBIcon = pktGetBits(pak, 1);
+            if (pktGetBits(pak, 1))
+                dest->icon = atlasLoadTexture(pktGetString(pak));
+            if (pktGetBits(pak, 1))
+                dest->iconB = atlasLoadTexture(pktGetString(pak));
+            if (pktGetBits(pak, 1))
+                strncpyt(dest->name, pktGetString(pak), ARRAY_SIZE(dest->name));
+            if (pktGetBits(pak, 1)) {
+                strncpyt(dest->mapName, pktGetString(pak), ARRAY_SIZE(dest->mapName));
+                forwardSlashes(dest->mapName);
+            }
+            if (pktGetBits(pak, 1))
+                dest->angle = pktGetF32(pak);
+
+            dest->world_location[3][0] = pktGetF32(pak);
+            dest->world_location[3][1] = pktGetF32(pak);
+            dest->world_location[3][2] = pktGetF32(pak);
+
+            // need to do this after the position has been updated
+            if (setCompass || isDestination(&waypointDest, dest))
+                compass_SetDestination(&waypointDest, dest);
+
+        }
+        else // we may have lost this location, make sure we don't have waypoint
+        {
+            if (dest) {
+                compass_ClearAllMatchingId((dest->id));
+                clearDestination(dest);
+                stashRemovePointer(serverDestList, key, NULL);
+                free(dest);
+            }
+        }
+    } else {
+        // remove all server waypoints for this player
+        StashElement            waypoint;
+        StashTableIterator    iter;
+
+        stashGetIterator(serverDestList, &iter);
+        while (stashGetNextElement(&iter, &waypoint))
+        {
+            Destination *dest = stashElementGetPointer(waypoint);
+            if (dest)
+            {
+                compass_ClearAllMatchingId((dest->id));
+                clearDestination(dest);
+                stashRemovePointer(serverDestList, stashElementGetStringKey(waypoint), NULL);
+                free(dest);
+            }
+        }
+
+    }
+}
+#line 1692 "Game/src/UI/uiNet.c"
+void receiveFriendsList(Packet *pak, Entity *e )
+{
+    int i;
+    int count, full_update;
+    int oo_packet = 0;
+    /* UI packet ordering is private to the bounded owner. */
+
+    friendListPrepareUpdate();
+
+
+    full_update = pktGetBitsPack( pak, 1 );
+    count = pktGetBitsPack( pak, 1 );
+
+    if( full_update || (int)pak->id > last_pak_id )
+        last_pak_id = pak->id;
+    else
+        oo_packet = TRUE;
+
+    if(e && !oo_packet)
+        e->friendCount = count;
+
+    for( i = 0; i < count; i++ )
+    {
+        int tempint;
+        char* tempstr;
+        int online;
+        const CharacterClass *pclass;
+        const CharacterOrigin *porigin;
+
+        if( !pktGetBits(pak, 1) )
+            continue;
+
+        if( e && (int)pak->id > e->friends[i].send )
+            e->friends[i].send = pak->id;
+        else
+            oo_packet = TRUE;
+
+        // DBID.
+        tempint = pktGetBitsPack( pak, 1 );
+
+        if(e && !oo_packet)
+            e->friends[i].dbid = tempint;
+
+        // Online.
+        online = pktGetBits( pak, 1 );
+
+        if(e && !oo_packet)
+            e->friends[i].online = online;
+
+        // Name.
+        tempstr = pktGetString(pak);
+
+        if(e && !oo_packet)
+            strncpyta( &e->friends[i].name, tempstr, 32 );
+
+        // Archetype.
+        tempint = pktGetBitsPack(pak, 1);
+        if( tempint >= 0 )
+        {    pclass = COMMAND_UI_CLASS_LABEL(tempint);
+
+            if(e && !oo_packet)
+                e->friends[i].arch = allocAddString( pclass->pchName );
+        }
+
+        // Origin.
+        tempint = pktGetBitsPack(pak, 1);
+        if( tempint >= 0 )
+        {
+            porigin = COMMAND_UI_ORIGIN_LABEL(tempint);
+
+            if(e && !oo_packet)
+                e->friends[i].origin = allocAddString( porigin->pchName );
+        }
+
+        if ( online )
+        {
+            // Map ID.
+            tempint = pktGetBitsPack( pak, 1 );
+
+            if(e && !oo_packet)
+                e->friends[i].map_id = tempint;
+
+            // Map Name.
+            tempstr = pktGetString(pak);
+
+            if(e && !oo_packet)
+                strncpyta( &e->friends[i].mapname, tempstr, 256 );
+        }
+    }
 }
 #endif

@@ -19,6 +19,10 @@ typedef struct {
  * unchanged, raw unknown command payload left unread. Optional trace omission
  * never changes parsing. Fixed workspace/stack/report/input/retained owners charged under
  * the existing 8 MiB initial aggregate; decoded 4 MiB cap remains in reader.
+ * Private UI staging permits8 widgets,64 vars/64 queued updates and8192
+ * bitmap words within the same fixed workspace; capacity refusal never skips
+ * a body. A private per-thread context pointer is charged and cleared on exit.
+ * UI packet-order state is not published or used as entity authority.
  * tail_complete requires original zero-command terminator at actual logical end.
  */
 CohStatus coh_original_command_tail_receive(const CohRepReader *,

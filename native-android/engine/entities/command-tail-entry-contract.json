@@ -1,0 +1,3152 @@
+{
+  "schema": "original-command-tail-entry-source-contract-v1",
+  "source_baseline": "d6327cded4495ed2e826434f60422e368043522e",
+  "scope": "Original selected-character CLIENT_CONNECT/REQSCENE/REQALLENTS/READY; all semantic resumeCharacter direct callees; entSendUpdate prelude and full sendCharacterToClient own-packet subtree; concrete surrounding net-send branches. Known fixed send helpers expanded recursively. Every discovered script/autocommand/reward/power/async boundary is explicitly unsupported; no whole-server/runtime command closure claim.",
+  "concrete_sends": [
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entsend.c",
+      "line": 1821,
+      "function": "entFinishUpdate",
+      "trigger": "existing entityPacket and client",
+      "command": "zero command terminator",
+      "physical_id": 0,
+      "handler": "handleGameCmd terminator",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "entFinishUpdate"
+      ],
+      "send_form": "terminator before pktSend",
+      "status": "fixed_source_send",
+      "coverage_class": "terminator"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entsend.c",
+      "line": 4063,
+      "function": "entSendUpdate",
+      "trigger": "initial full or IN_GAME delta; append old queued packet",
+      "command": "SERVER_UPDATE",
+      "physical_id": 2,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "entSendUpdate"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entsend.c",
+      "line": 4055,
+      "function": "entSendUpdate",
+      "trigger": "initial full or IN_GAME delta; append old queued packet",
+      "command": "SERVER_ALLENTS",
+      "physical_id": 3,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "entSendUpdate"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 519,
+      "function": "svrHandleClientMsg",
+      "trigger": "CLIENT_REQSHORTCUTS explicit startup request",
+      "command": "SERVER_CMDSHORTCUTS",
+      "physical_id": 4,
+      "handler": "commHandleMessage inline outer-command case",
+      "coverage_class": "outer_packet_or_envelope",
+      "call_chain": [
+        "CLIENT_REQSHORTCUTS",
+        "cmdOldServerSendShortcuts/cmdOldServerSendCommands"
+      ],
+      "send_form": "direct packet write",
+      "status": "fixed_source_send"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 257,
+      "function": "svrHandleClientMsg",
+      "trigger": "CONNECT success/error; REQSCENE invalid character",
+      "command": "SERVER_CONNECT_MSG",
+      "physical_id": 5,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrHandleClientMsg"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 341,
+      "function": "svrHandleClientMsg",
+      "trigger": "CONNECT success/error; REQSCENE invalid character",
+      "command": "SERVER_CONNECT_MSG",
+      "physical_id": 5,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrHandleClientMsg"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 376,
+      "function": "svrHandleClientMsg",
+      "trigger": "CONNECT success/error; REQSCENE invalid character; READY unowned/cookie/resume failure",
+      "command": "SERVER_CONNECT_MSG",
+      "physical_id": 5,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrHandleClientMsg"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 431,
+      "function": "svrHandleClientMsg",
+      "trigger": "CONNECT success/error; REQSCENE invalid character; READY unowned/cookie/resume failure",
+      "command": "SERVER_CONNECT_MSG",
+      "physical_id": 5,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrHandleClientMsg"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 441,
+      "function": "svrHandleClientMsg",
+      "trigger": "CONNECT success/error; REQSCENE invalid character; READY unowned/cookie/resume failure",
+      "command": "SERVER_CONNECT_MSG",
+      "physical_id": 5,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrHandleClientMsg"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/group/groupnetsend.c",
+      "line": 340,
+      "function": "worldSendUpdate",
+      "trigger": "REQSCENE; later IN_GAME world_update",
+      "command": "SERVER_GROUPS",
+      "physical_id": 6,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "CLIENT_REQSCENE; sendWorldChanges",
+        "worldSendUpdate"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/group/groupnetsend.c",
+      "line": 496,
+      "function": "sendDynamicDefChanges",
+      "trigger": "IN_GAME and pending definitions",
+      "command": "SERVER_DYNAMIC_DEFS",
+      "physical_id": 7,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrTickDoNetSend -> sendWorldChanges",
+        "sendDynamicDefChanges"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/group/groupnetdb.c",
+      "line": 490,
+      "function": "sendEditMessage",
+      "trigger": "debug access and queued errors",
+      "command": "SERVER_EDITMSG",
+      "physical_id": 8,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrTickDoNetSend -> svrTickSendQueuedErrors",
+        "sendEditMessage"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c",
+      "line": 103,
+      "function": "dbCheckMapXfer",
+      "trigger": "in_map_xfer and ready>=ENTERING_GAME",
+      "command": "SERVER_MAP_XFER_WAIT",
+      "physical_id": 11,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "dbCheckMapXfer"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c",
+      "line": 45,
+      "function": "sendClientNewMapLoading",
+      "trigger": "abort map transfer",
+      "command": "SERVER_MAP_XFER_LOADING",
+      "physical_id": 12,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "dbCheckMapXfer -> dbUndoMapXfer",
+        "sendClientNewMapLoading"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_player.c",
+      "line": 173,
+      "function": "svrForceLogoutLink",
+      "trigger": "CONNECT error with attached entity",
+      "command": "SERVER_FORCE_LOGOUT",
+      "physical_id": 14,
+      "handler": "commHandleMessage inline outer-command case",
+      "call_chain": [
+        "CLIENT_CONNECT_ERROR",
+        "svrForceLogoutLink"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_base.h",
+      "line": 191,
+      "function": "START_PACKET macro",
+      "trigger": "first per-entity game command",
+      "command": "SERVER_GAME_CMDS",
+      "physical_id": 15,
+      "handler": "handleGameCmd framing no-op",
+      "call_chain": [
+        "START_PACKET"
+      ],
+      "send_form": "macro envelope",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope",
+      "definition_line": 182
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 384,
+      "function": "sendDialog",
+      "trigger": "newly awarded badge has pchDisplayPopup",
+      "command": "SERVER_RECEIVE_DIALOG",
+      "physical_id": 16,
+      "handler": "receiveDialog",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "BadgeFixCheckPlayer",
+        "badge_Award",
+        "sendDialog"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 500,
+      "function": "sendInfoBox",
+      "trigger": "conditional badge notice, ContactAdd overflow, development auto-dismiss diagnostic, power activation warning or story reward text",
+      "command": "SERVER_RECEIVE_INFO_BOX",
+      "physical_id": 22,
+      "handler": "receiveInfoBox",
+      "status": "fixed_source_send",
+      "notes": "Actual START_PACKET is doSendCmdAndString at sendToClient.c:449; cmd argument is this fixed command.",
+      "call_chain": [
+        "resumeCharacter",
+        "BadgeFixCheckPlayer/aiInit/StoryArcPlayerEnteredMap/character_ActivateAllAutoPowers",
+        "badge_Award/ContactAdd/StoryArc_RemoveAllAutoDismissContacts/character_ActivatePowerOnCharacter/StoryRewardApply",
+        "sendInfoBox"
+      ],
+      "send_form": "fixed command passed to sender helper",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/door.c",
+      "line": 141,
+      "function": "sendDoorMsg",
+      "trigger": "conditional denied SG-base entry / leaveMission / exitLocalMission transfer result",
+      "command": "SERVER_DOOR_CMD",
+      "physical_id": 23,
+      "handler": "receiveDoorMsg",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "RaidInitPlayer",
+        "leaveMission",
+        "exitLocalMission/sendDoorMsg"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entGameActions.c",
+      "line": 1504,
+      "function": "setClientState",
+      "trigger": "ArenaSwitchCamera sets STATE_RESURRECT; conditional elsewhere from power/gameplay paths",
+      "command": "SERVER_SET_CLIENT_STATE",
+      "physical_id": 25,
+      "handler": "receiveServerSetClientState",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer",
+        "ArenaSwitchCamera",
+        "setClientState"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 75,
+      "function": "convPrintf",
+      "trigger": "ArenaSendScheduledMessages finds a scheduled notice; or RaidAttackerWarp/sendPlayerToDoorway diagnostic path",
+      "command": "SERVER_CON_PRINTF",
+      "physical_id": 26,
+      "handler": "receiveConPrintf",
+      "status": "fixed_source_send",
+      "notes": "Console client path can instead use cmdOldServerParsef; source supports both paths.",
+      "call_chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer/RaidInitPlayer",
+        "ArenaSendScheduledMessages/sendPlayerToDoorway",
+        "conPrintf",
+        "convPrintf"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 258,
+      "function": "sendChatMsgEx",
+      "trigger": "friend notification / map-transfer abort",
+      "command": "SERVER_SEND_CHAT_MSG",
+      "physical_id": 27,
+      "handler": "receiveChatMsg",
+      "call_chain": [
+        "updateFriendStatus -> chatSendToPlayer; dbCheckMapXfer -> dbUndoMapXfer",
+        "sendChatMsgEx"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "local chat delivery from friend online/removal notices, story task repair, story rewards, team quit or power interaction interruption; filtering can suppress"
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "updateFriendList/StoryArcPlayerEnteredMap/team_MinorityQuit/character_ActivateAllAutoPowers",
+          "chatSendToPlayer/sendChatMsg/sendPrivateCaptionMsg/saUtilEntSays",
+          "sendChatMsgEx"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 273,
+      "function": "sendChatMsgEx",
+      "trigger": "friend notification / map-transfer abort",
+      "command": "SERVER_SEND_CHAT_MSG",
+      "physical_id": 27,
+      "handler": "receiveChatMsg",
+      "call_chain": [
+        "updateFriendStatus -> chatSendToPlayer; dbCheckMapXfer -> dbUndoMapXfer",
+        "sendChatMsgEx"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "local chat delivery from friend online/removal notices, story task repair, story rewards, team quit or power interaction interruption; filtering can suppress"
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "updateFriendList/StoryArcPlayerEnteredMap/team_MinorityQuit/character_ActivateAllAutoPowers",
+          "chatSendToPlayer/sendChatMsg/sendPrivateCaptionMsg/saUtilEntSays",
+          "sendChatMsgEx"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/automapServer.c",
+      "line": 53,
+      "function": "mapperSend",
+      "trigger": "CLIENT_READY: mapperSend(e,0); authorized entry before resumeCharacter",
+      "command": "SERVER_VISITED_MAP_CELLS",
+      "physical_id": 29,
+      "handler": "receiveVisitMapCells",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "CLIENT_READY",
+        "mapperSend"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/automapServer.c",
+      "line": 99,
+      "function": "automapserver_sendAllStaticMaps",
+      "trigger": "full sendCharacterToClient -> sendChatSettings; !CSFlags_MovedVisitedMaps",
+      "command": "SERVER_ALL_STATIC_MAP_CELLS",
+      "physical_id": 30,
+      "handler": "receiveStaticMapCells",
+      "call_chain": [
+        "entSendUpdate -> sendCharacterToClient -> sendChatSettings",
+        "automapserver_sendAllStaticMaps"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 601,
+      "function": "sendServerWaypoint",
+      "trigger": "ScriptPlayerEnteringMap removes script-controlled waypoints for entering player",
+      "command": "SERVER_SET_WAYPOINT",
+      "physical_id": 33,
+      "handler": "ServerWaypointReceive",
+      "status": "fixed_source_send",
+      "notes": "Fixed cleanup send before dynamic callback dispatch; ScriptUI widgets handled separately.",
+      "call_chain": [
+        "resumeCharacter",
+        "ScriptPlayerEnteringMap",
+        "ClearAllWaypoints",
+        "sendServerWaypoint"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 268,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 274,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 282,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 288,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 296,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 302,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 310,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 316,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 323,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 329,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_CANCEL",
+      "physical_id": 48,
+      "handler": "receiveTradeCancel",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 345,
+      "function": "trade_sendUpdate",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_UPDATE",
+      "physical_id": 49,
+      "handler": "receiveTradeUpdate",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_sendUpdate"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 951,
+      "function": "trade_sucess",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_SUCESS",
+      "physical_id": 50,
+      "handler": "receiveTradeSuccess",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_sucess"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 955,
+      "function": "trade_sucess",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "command": "SERVER_TRADE_SUCESS",
+      "physical_id": 50,
+      "handler": "receiveTradeSuccess",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_sucess"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/friends.c",
+      "line": 161,
+      "function": "updateFriendList",
+      "trigger": "changed friend and e->ready",
+      "command": "SERVER_SEND_FRIENDS",
+      "physical_id": 51,
+      "handler": "receiveFriendsList (inline handleGameCmd case, not _Ch)",
+      "call_chain": [
+        "svrTickDoNetSend -> updateAllFriendLists",
+        "updateFriendList"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "resumeCharacter: at least one friend changed and e->ready already set"
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "updateFriendList"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/friends.c",
+      "line": 319,
+      "function": "removeFriend",
+      "trigger": "invalid empty friend entry",
+      "command": "SERVER_SEND_FRIENDS",
+      "physical_id": 51,
+      "handler": "receiveFriendsList (inline handleGameCmd case, not _Ch)",
+      "call_chain": [
+        "updateAllFriendLists -> updateFriendStatus",
+        "removeFriend"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "updateFriendStatus finds unresolved name empty, removeFriend finds it"
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "updateFriendList",
+          "updateFriendStatus",
+          "removeFriend"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 149,
+      "function": "ContactStatusSendAll",
+      "trigger": "full ready contact refresh",
+      "command": "SERVER_CONTACT_STATUS",
+      "physical_id": 57,
+      "handler": "ContactStatusListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactStatusSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "ContactStatusSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "ContactStatusSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 167,
+      "function": "ContactStatusSendChanged",
+      "trigger": "dirty/full and e->ready",
+      "command": "SERVER_CONTACT_STATUS",
+      "physical_id": 57,
+      "handler": "ContactStatusListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactStatusSendChanged"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 186,
+      "function": "ContactStatusAccessibleSendAll",
+      "trigger": "map-entry accessible list",
+      "command": "SERVER_ACCESSIBLE_CONTACT_STATUS",
+      "physical_id": 58,
+      "handler": "ContactStatusAccessibleListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactStatusAccessibleSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "ContactStatusAccessibleSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "ContactStatusAccessibleSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 126,
+      "function": "SendSelectContact",
+      "trigger": "selected contact>=0",
+      "command": "SERVER_CONTACT_SELECT",
+      "physical_id": 59,
+      "handler": "ContactSelectReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "SendSelectContact"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply"
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "SendSelectContact"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1280,
+      "function": "TaskStatusSendAll",
+      "trigger": "full ready task refresh",
+      "command": "SERVER_TASK_STATUS",
+      "physical_id": 60,
+      "handler": "TaskStatusListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "TaskStatusSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "TaskStatusSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "TaskStatusSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1357,
+      "function": "TaskStatusSendUpdate",
+      "trigger": "contact path; ready self/teammates",
+      "command": "SERVER_TASK_STATUS",
+      "physical_id": 60,
+      "handler": "TaskStatusListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "TaskStatusSendUpdate"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_call_chains": [
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "TeamTaskAddMemberTaskList",
+          "TaskStatusSendUpdate"
+        ]
+      ],
+      "alternate_triggers": [
+        "player entity with storyInfo and teamup"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1368,
+      "function": "TaskStatusSendUpdate",
+      "trigger": "contact path; ready self/teammates",
+      "command": "SERVER_TASK_STATUS",
+      "physical_id": 60,
+      "handler": "TaskStatusListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "TaskStatusSendUpdate"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_call_chains": [
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "TeamTaskAddMemberTaskList",
+          "TaskStatusSendUpdate"
+        ]
+      ],
+      "alternate_triggers": [
+        "player entity with storyInfo and teamup"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1975,
+      "function": "SendMissionStatus",
+      "trigger": "MissionSendRefresh: team mission exists",
+      "command": "SERVER_TASK_STATUS",
+      "physical_id": 60,
+      "handler": "TaskStatusListReceive",
+      "call_chain": [
+        "entSendUpdate -> sendCharacterToClient -> MissionSendRefresh",
+        "SendMissionStatus"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 2057,
+      "function": "SendMissionStatus",
+      "trigger": "MissionSendRefresh: team mission exists",
+      "command": "SERVER_TASK_STATUS",
+      "physical_id": 60,
+      "handler": "TaskStatusListReceive",
+      "call_chain": [
+        "entSendUpdate -> sendCharacterToClient -> MissionSendRefresh",
+        "SendMissionStatus"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 2166,
+      "function": "ClearMissionStatus",
+      "trigger": "MissionSendRefresh: no active team mission",
+      "command": "SERVER_TASK_STATUS",
+      "physical_id": 60,
+      "handler": "TaskStatusListReceive",
+      "call_chain": [
+        "entSendUpdate -> sendCharacterToClient -> MissionSendRefresh",
+        "ClearMissionStatus"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 137,
+      "function": "SendSelectTask",
+      "trigger": "selected task>=0",
+      "command": "SERVER_TASK_SELECT",
+      "physical_id": 61,
+      "handler": "TaskSelectReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "SendSelectTask"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "player->pl && taskforce_mode -> select task0"
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "SendSelectTask"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "TaskForceSendSelect",
+          "SendSelectTask"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/mission.c",
+      "line": 1119,
+      "function": "MissionSendEntryText",
+      "trigger": "mission map, initialized mission/definition, player not in textSentList and localized entry text exists",
+      "command": "SERVER_MISSION_ENTRY",
+      "physical_id": 63,
+      "handler": "receiveMissionEntryText",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "MissionPlayerEnteredMap",
+        "MissionSendEntryText"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storyarc.c",
+      "line": 2906,
+      "function": "StoryArcPlayerEnteredMap",
+      "trigger": "non-mission entry: broker rewardContact SHOW or localized pending mission exit text",
+      "command": "SERVER_MISSION_EXIT",
+      "physical_id": 64,
+      "handler": "receiveMissionExitText",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "StoryArcPlayerEnteredMap"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/missionteamup.c",
+      "line": 1096,
+      "function": "MissionKickPlayer",
+      "trigger": "OnMissionMap with SG mission population exceeding SGMISSION_MAX_PLAYERS",
+      "command": "SERVER_MISSION_KICKTIMER",
+      "physical_id": 65,
+      "handler": "MissionKickReceive",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "MissionPlayerEnteredMap",
+        "MissionKickPlayer"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/task.c",
+      "line": 1216,
+      "function": "TaskPromptTeamComplete",
+      "trigger": "non-mission entry with teamCompleted in-progress task requiring prompt",
+      "command": "SERVER_TEAMCOMPLETE_PROMPT",
+      "physical_id": 66,
+      "handler": "receiveTeamCompletePrompt",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "StoryArcPlayerEnteredMap",
+        "TaskPromptTeamComplete"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storyarc.c",
+      "line": 2879,
+      "function": "StoryArcPlayerEnteredMap",
+      "trigger": "non-mission entry: broker rewardContact SHOW or localized pending mission exit text",
+      "command": "SERVER_BROKER_CONTACT",
+      "physical_id": 67,
+      "handler": "receiveBrokerAlert",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "StoryArcPlayerEnteredMap"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/dooranim.c",
+      "line": 916,
+      "function": "prepEntForEntryIntoMap",
+      "trigger": "resumeCharacter player entity: always after door preparation; one-bit sentNewLocation",
+      "command": "SERVER_DOOREXIT",
+      "physical_id": 70,
+      "handler": "DoorAnimReceiveExit",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "prepEntForEntryIntoMap"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entGameActions.c",
+      "line": 619,
+      "function": "serveFloater",
+      "trigger": "conditional badge award, arena waiting/countdown/fight phase, story reward float text, power activation failure or generic ent-says floating text",
+      "command": "SERVER_SEND_FLOATING_INFO",
+      "physical_id": 73,
+      "handler": "receiveFloatingInfo",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "BadgeFixCheckPlayer/ArenaMapInitPlayer/StoryArcPlayerEnteredMap/character_ActivateAllAutoPowers",
+        "badge_Award/ArenaStartClientCountdown/StoryRewardFloatText/serveFloatingInfo/saUtilEntSays",
+        "serveFloater"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entGameActions.c",
+      "line": 646,
+      "function": "servePlaySound",
+      "trigger": "mission currentServerMusicName exists or StoryRewardHandleSounds defined play-sound list",
+      "command": "SERVER_SEND_PLAY_SOUND",
+      "physical_id": 74,
+      "handler": "receivePlaySound",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "MissionPlayerEnteredMap/StoryArcPlayerEnteredMap",
+        "StoryRewardHandleSounds/servePlaySound"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entGameActions.c",
+      "line": 660,
+      "function": "serveFadeSound",
+      "trigger": "story reward contains sound-fade channels",
+      "command": "SERVER_SEND_FADE_SOUND",
+      "physical_id": 75,
+      "handler": "receiveFadeSound",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "StoryArcPlayerEnteredMap/TaskAdvanceCompleted",
+        "StoryRewardApply",
+        "StoryRewardHandleSounds",
+        "serveFadeSound"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entGameActions.c",
+      "line": 688,
+      "function": "serveDesaturateInformation",
+      "trigger": "resumeCharacter TaskForceResetDesaturate always for player; additionally mission flashback entry",
+      "command": "SERVER_SEND_DESATURATE_INFO",
+      "physical_id": 76,
+      "handler": "receiveDesaturateInfo",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "TaskForceResetDesaturate/MissionPlayerEnteredMap",
+        "TaskForceMissionEntryDesaturate/serveDesaturateInformation"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entity_power.c",
+      "line": 370,
+      "function": "entity_StanceSend",
+      "trigger": "restoration disables/shuts off the active stance toggle, or arena character_Reset cancels that toggle; character_ShutOffTogglePower calls character_EnterStance(p,NULL,1). Direct resume auto/toggle EnterStance calls use false and do not themselves send.",
+      "command": "SERVER_SET_STANCE",
+      "physical_id": 77,
+      "handler": "entity_StanceReceive",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "character_UpdateAllEnabledState/ArenaMapInitPlayer",
+        "character_DisablePower/character_Reset",
+        "character_ShutOffTogglePower",
+        "character_EnterStance(bReplaceStance=1)",
+        "entity_StanceSend"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/door.c",
+      "line": 3233,
+      "function": "checkDoorOptions",
+      "trigger": "conditional mission/base escape route invokes door list selector",
+      "command": "SERVER_MAP_XFER_LIST",
+      "physical_id": 78,
+      "handler": "mapSelectReceiveText",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "RaidInitPlayer",
+        "leaveMission",
+        "checkDoorOptions"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/door.c",
+      "line": 3289,
+      "function": "checkDoorOptions",
+      "trigger": "conditional mission/base escape route invokes door list selector",
+      "command": "SERVER_MAP_XFER_LIST",
+      "physical_id": 78,
+      "handler": "mapSelectReceiveText",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "RaidInitPlayer",
+        "leaveMission",
+        "checkDoorOptions"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 868,
+      "function": "sendPerformanceUpdate",
+      "trigger": "sendAutoTimers or autoTimersLayoutID requested; at most100 queued debug clients",
+      "command": "SERVER_PERFORMANCE_UPDATE",
+      "physical_id": 86,
+      "handler": "entDebugReceiveServerPerformanceUpdate (inline commHandleMessage outer case)",
+      "call_chain": [
+        "svrTickDoNetSend -> sendPerformanceUpdates",
+        "sendPerformanceUpdate"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "outer_packet_or_envelope"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 2232,
+      "function": "ContactVisitLocationSendAll",
+      "trigger": "visitLocationChanged",
+      "command": "SERVER_TASK_VISITLOCATION_UPDATE",
+      "physical_id": 91,
+      "handler": "receiveVisitLocations",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactVisitLocationSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "ContactVisitLocationSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "ContactVisitLocationSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/entity/attrib_description.c",
+      "line": 837,
+      "function": "updateCombatMonitorStats",
+      "trigger": "resumeCharacter: always after cookie/entity binding",
+      "command": "SERVER_SEND_COMBAT_STATS",
+      "physical_id": 93,
+      "handler": "receiveClientCombatStats",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "updateCombatMonitorStats"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1640,
+      "function": "ClueSendAll",
+      "trigger": "clueChanged",
+      "command": "SERVER_CLUE_UPDATE",
+      "physical_id": 94,
+      "handler": "ClueListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ClueSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "ClueSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "ClueSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1744,
+      "function": "KeyClueSendAll",
+      "trigger": "keyclueChanged",
+      "command": "SERVER_KEYCLUE_UPDATE",
+      "physical_id": 95,
+      "handler": "KeyClueListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "KeyClueSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "KeyClueSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "KeyClueSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1754,
+      "function": "KeyClueSendAll",
+      "trigger": "keyclueChanged",
+      "command": "SERVER_KEYCLUE_UPDATE",
+      "physical_id": 95,
+      "handler": "KeyClueListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "KeyClueSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "KeyClueSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "KeyClueSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1768,
+      "function": "KeyClueSendAll",
+      "trigger": "keyclueChanged",
+      "command": "SERVER_KEYCLUE_UPDATE",
+      "physical_id": 95,
+      "handler": "KeyClueListReceive",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "KeyClueSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "KeyClueSendAll"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "KeyClueSendAll"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/SouvenirClue.c",
+      "line": 282,
+      "function": "scSendAllHeaders",
+      "trigger": "souvenirClueChanged",
+      "command": "SERVER_SOUVENIRCLUE_UPDATE",
+      "physical_id": 96,
+      "handler": "scReceiveAllHeaders",
+      "call_chain": [
+        "entSendUpdate -> scSendChanged",
+        "scSendAllHeaders"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body",
+      "alternate_triggers": [
+        "conditional SG-base raid eject/minority team quit -> taskforce mode change -> StoryArcSendFullRefresh; individual sender gates still apply",
+        "Full whole-character send at entserver.c:1502-1512; sender-specific ready/selection flags still gate."
+      ],
+      "alternate_call_chains": [
+        [
+          "resumeCharacter",
+          "RaidInitPlayer/team_MinorityQuit/league_MinorityQuit/EndGameRaidPlayerEnteredMap",
+          "team_MemberQuit",
+          "TaskForceModeChange",
+          "StoryArcSendFullRefresh",
+          "scSendAllHeaders"
+        ],
+        [
+          "entSendUpdate(full_update)",
+          "sendCharacterToClient",
+          "scSendAllHeaders"
+        ]
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/task.c",
+      "line": 1535,
+      "function": "TaskComplete",
+      "trigger": "broken task repaired or task advancement/reward recursion; mission-survey predicate only",
+      "command": "SERVER_MISSION_SURVEY",
+      "physical_id": 107,
+      "handler": "receiveMissionSurvey",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "CLIENT_READY",
+        "TaskAdvanceCompleted/resumeCharacter",
+        "StoryArcPlayerEnteredMap/TaskSetComplete/StoryRewardApply",
+        "TaskComplete"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c",
+      "line": 142,
+      "function": "ArenaKioskSendIncremental",
+      "trigger": "arenaKioskSend or arenaKioskSendInit",
+      "command": "SERVER_ARENA_KIOSK",
+      "physical_id": 112,
+      "handler": "receiveArenaKiosk",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ArenaKioskSendIncremental"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamap.c",
+      "line": 563,
+      "function": "ArenaMapAdvancePlayerToBuffPhase",
+      "trigger": "arena non-camera entry, BUFF or later setup, and g_arenamap_event->use_gladiators; only gladiator branch sends tray-disable",
+      "command": "SERVER_ARENA_UPDATE_TRAY_DISABLE",
+      "physical_id": 115,
+      "handler": "receiveArenaUpdateTrayDisable",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer",
+        "ArenaMapAdvancePlayerToBuffPhase"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamap.c",
+      "line": 1239,
+      "function": "ArenaSwitchCamera",
+      "trigger": "arena entry participant missing/dropped; sends tray-disable only when arenaAmCamera changed",
+      "command": "SERVER_ARENA_UPDATE_TRAY_DISABLE",
+      "physical_id": 115,
+      "handler": "receiveArenaUpdateTrayDisable",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer",
+        "ArenaSwitchCamera"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/raidmapserver.c",
+      "line": 63,
+      "function": "RaidUpdateClient",
+      "trigger": "RaidFullyUpdateClient with client ready and each baseRaids entry; cstore lookup success",
+      "command": "SERVER_SGRAID_UPDATE",
+      "physical_id": 120,
+      "handler": "receiveSGRaidUpdate",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "RaidFullyUpdateClient",
+        "RaidUpdateClient"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/Reward.c",
+      "line": 4727,
+      "function": "rewardChoiceSend",
+      "trigger": "pending choice changed or invalid/finished reward queue cleared",
+      "command": "SERVER_SEND_REWARD_CHOICE",
+      "physical_id": 129,
+      "handler": "receiveRewardChoice",
+      "call_chain": [
+        "entSendUpdate -> sendPendingReward",
+        "rewardChoiceSend"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/scriptdebug.c",
+      "line": 44,
+      "function": "ScriptSendDebugInfo",
+      "trigger": "SCRIPTDEBUGFLAG_DEBUGON",
+      "command": "SERVER_SCRIPT_DEBUGINFO",
+      "physical_id": 133,
+      "handler": "receiveScriptDebugInfo",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "ScriptSendDebugInfo"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c",
+      "line": 1677,
+      "function": "ArenaStartClientCountdown",
+      "trigger": "arena BUFF phase; non-gladiator uses BuffPlayers, gladiator uses WaitPlayers",
+      "command": "SERVER_ARENA_START_COUNT",
+      "physical_id": 137,
+      "handler": "receiveArenaStartCountdown",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer",
+        "ArenaStartClientCountdown"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c",
+      "line": 1684,
+      "function": "ArenaSetClientCompassString",
+      "trigger": "arena observer, holding/buff/fight phases or countdown",
+      "command": "SERVER_ARENA_COMPASS_STRING",
+      "physical_id": 138,
+      "handler": "receiveArenaCompassString",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer",
+        "ArenaSwitchCamera/ArenaMapAdvancePlayerToFightPhase/ArenaSetClientCompassString"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c",
+      "line": 1708,
+      "function": "ArenaSendVictoryInformation",
+      "trigger": "arena observer or fight-phase stock/kill-limit setup",
+      "command": "SERVER_ARENA_VICTORY_INFORMATION",
+      "physical_id": 139,
+      "handler": "receiveArenaVictoryInformation",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer",
+        "ArenaSwitchCamera/ArenaMapAdvancePlayerToFightPhase",
+        "ArenaSendVictoryInformation"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/ZoneEvents/ScriptUI.c",
+      "line": 187,
+      "function": "ScriptUISend",
+      "trigger": "ScriptUIPlayerEnteredMap loops global widgets; ScriptUIAttachEnt sends only a not-yet-attached widget",
+      "command": "SERVER_SCRIPT_UI",
+      "physical_id": 143,
+      "handler": "ScriptUIReceive",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "ScriptPlayerEnteringMap",
+        "ScriptUIPlayerEnteredMap",
+        "ScriptUIAttachEnt",
+        "ScriptUISend"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/ZoneEvents/ScriptUI.c",
+      "line": 214,
+      "function": "ScriptUISendKillSignal",
+      "trigger": "missing widget -> prep -> remove data",
+      "command": "SERVER_SCRIPT_UI",
+      "physical_id": 143,
+      "handler": "ScriptUIReceive",
+      "call_chain": [
+        "entSendUpdate -> ScriptUISendUpdate -> ScriptUIPrepEntUpdate -> ScriptUIRemoveScriptData",
+        "ScriptUISendKillSignal"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/ZoneEvents/ScriptUI.c",
+      "line": 650,
+      "function": "ScriptUISendUpdate",
+      "trigger": "scriptUIData nonempty and dirty prep",
+      "command": "SERVER_SCRIPT_UI_UPDATE",
+      "physical_id": 144,
+      "handler": "ScriptUIReceiveUpdate",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ScriptUISendUpdate"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/mission.c",
+      "line": 1023,
+      "function": "MissionWaypointSendAll",
+      "trigger": "OnMissionMap accepted entry; sends clear bit and current waypoint list",
+      "command": "SERVER_MISSION_WAYPOINT",
+      "physical_id": 145,
+      "handler": "MissionWaypointReceive",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "MissionPlayerEnteredMap",
+        "MissionWaypointSendAll"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/missionobjective.c",
+      "line": 1413,
+      "function": "KeyDoorNewPlayer",
+      "trigger": "OnMissionMap accepted entry and key-door state exists",
+      "command": "SERVER_MISSION_KEYDOOR",
+      "physical_id": 146,
+      "handler": "MissionKeydoorReceive",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "MissionPlayerEnteredMap",
+        "KeyDoorNewPlayer"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entsend.c",
+      "line": 4623,
+      "function": "entSendUpdate",
+      "trigger": "initial full or IN_GAME delta; append old queued packet",
+      "command": "SERVER_BEGIN_BYTE_ALIGNED_DATA",
+      "physical_id": 197,
+      "handler": "receiveByteAlignmentTag",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "entSendUpdate"
+      ],
+      "send_form": "direct packet/framing write",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 431,
+      "function": "sendMoralChoice",
+      "trigger": "pending moral reward with changed choices",
+      "command": "SERVER_SEND_MORAL_CHOICE",
+      "physical_id": 200,
+      "handler": "receiveMoralChoice",
+      "call_chain": [
+        "entSendUpdate -> sendPendingReward",
+        "sendMoralChoice"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/entity/character_karma.c",
+      "line": 309,
+      "function": "CharacterKarmaStatsSend",
+      "trigger": "access>1 and odd send",
+      "command": "SERVER_SEND_KARMA_STATS",
+      "physical_id": 205,
+      "handler": "receiveKarmaStats",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "CharacterKarmaStatsSend"
+      ],
+      "send_form": "START_PACKET",
+      "status": "fixed_source_send",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/EndGameRaid.c",
+      "line": 216,
+      "function": "EndGameRaidPlayerEnteredMap",
+      "trigger": "is_endgame_raid; first initialization must pass nonempty event name and script startup",
+      "command": "SERVER_EVENT_START_STATUS",
+      "physical_id": 210,
+      "handler": "turnstileGame_HandleEventStartStatus",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "EndGameRaidPlayerEnteredMap"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "line": 696,
+      "function": "LeagueTeamOnEnterMapUpdate",
+      "trigger": "e/pl and !lastTurnstileEventID && lastTurnstileMissionID",
+      "command": "SERVER_EVENT_START_STATUS",
+      "physical_id": 210,
+      "handler": "turnstileGame_HandleEventStartStatus",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "LeagueTeamOnEnterMapUpdate"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 662,
+      "function": "sendIncarnateTrialStatus",
+      "trigger": "is_endgame_raid && !scriptIsRunning and successful configured script startup",
+      "command": "SERVER_INCARNATE_TRIAL_STATUS",
+      "physical_id": 215,
+      "handler": "receiveIncarnateTrialStatus",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "EndGameRaidPlayerEnteredMap",
+        "sendIncarnateTrialStatus"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/player/pophelp.c",
+      "line": 208,
+      "function": "triggerPopHelpEventHappenedByTag",
+      "trigger": "new Tourism badge with exploration pophelp untriggered, or data-backed StoryRewardApply popHelp list",
+      "command": "SERVER_POPHELP_EVENT_HAPPENED_BY_TAG",
+      "physical_id": 216,
+      "handler": "receivePopHelpEventHappenedByTag",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "BadgeFixCheckPlayer/StoryArcPlayerEnteredMap",
+        "badge_Award/StoryRewardApply",
+        "triggerPopHelpEventHappenedByTag"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 422,
+      "function": "entCheckAndUpdateWindowColors",
+      "trigger": "ENT_IS_LEAVING_PRAETORIA -> changed progress; distinct nonzero computed old/new colors and entity/client/link",
+      "command": "SERVER_CHANGE_WINDOW_COLORS",
+      "physical_id": 219,
+      "handler": "receiveChangeWindowColors",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "fixTravellingPraetorian",
+        "entSetPraetorianProgress",
+        "entCheckAndUpdateWindowColors"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 538,
+      "function": "sendCombatMessage",
+      "trigger": "auto-power activation ApplyPowerAtActivation/ApplyPowerInternal -> CreateAndAttachNewAttribMod -> sendHitMessage; template/chance/hit-message predicates",
+      "command": "SERVER_COMBAT_MESSAGE",
+      "physical_id": 222,
+      "handler": "receiveCombatMessage",
+      "status": "fixed_source_send",
+      "call_chain": [
+        "resumeCharacter",
+        "character_UpdateAllEnabledState/character_ActivateAllAutoPowers/ArenaMapInitPlayer",
+        "character_ApplyPowerInternal/character_ApplyPowerAtActivation",
+        "CreateAndAttachNewAttribMod",
+        "sendHitMessage",
+        "sendCombatMessage"
+      ],
+      "send_form": "START_PACKET",
+      "coverage_class": "body"
+    }
+  ],
+  "unsupported_boundaries": [
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 183,
+      "function": "svrHandleClientMsg",
+      "trigger": "CONNECT -> autoCommand_run",
+      "boundary": "data-driven autocommand interpreter",
+      "status": "unsupported; no additional body coverage inferred"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/friends.c",
+      "line": 51,
+      "function": "updateFriendStatus",
+      "trigger": "missing friend class/origin -> dbReqCustomData(friendReadDBData)",
+      "boundary": "asynchronous DB callback",
+      "status": "unsupported; no additional body coverage inferred"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c",
+      "line": 78,
+      "function": "dbCheckMapXfer",
+      "trigger": "DBCLIENT_MAP_XFER; remote completion",
+      "boundary": "asynchronous map-transfer completion",
+      "status": "unsupported; no additional body coverage inferred"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/Reward.c",
+      "line": 4684,
+      "function": "sendPendingReward",
+      "trigger": "loaded choice requirements",
+      "boundary": "data-driven reward/evaluation beyond fixed sends",
+      "status": "unsupported; no additional body coverage inferred"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 756,
+      "function": "trade_sucess",
+      "trigger": "salvage/inventory/temp-power mutations",
+      "boundary": "loaded power/reward effects beyond concrete trade sends",
+      "status": "unsupported; no additional body coverage inferred"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/Scripthook/ScriptHookCallbacks.c",
+      "line": 119,
+      "function": "ScriptPlayerEnteringMap",
+      "trigger": "resumeCharacter:774",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicScript",
+      "boundary_call": "ScriptClosureListCall",
+      "reason": "Runtime registered native/Lua callbacks are not enumerated; no whole-server callback graph claimed."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/EndGameRaid.c",
+      "line": 146,
+      "function": "EndGameRaidPlayerEnteredMap",
+      "trigger": "resumeCharacter endgame first initialization",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicScript",
+      "boundary_call": "ScriptedZoneEventStartFile",
+      "reason": "Configured ScriptedZoneEventStartFile and its script activity/spawns are unsupported beyond the fixed sends above."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/mission.c",
+      "line": 373,
+      "function": "MissionInitInfo",
+      "trigger": "MissionPlayerEnteredMap -> MissionSendEntryText",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicScript",
+      "boundary_call": "StartMissionScripts",
+      "reason": "Mission initialization executes StartMissionScripts, placement and dynamic encounter spawns."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/mission.c",
+      "line": 333,
+      "function": "MissionInitInfo",
+      "trigger": "MissionPlayerEnteredMap -> MissionSendEntryText",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "autocommand",
+      "boundary_call": "serverParseClient",
+      "reason": "Mission initialization can relay its task objective/map setup via serverParseClient; parser effects not closed here."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/missionteamup.c",
+      "line": 319,
+      "function": "MissionTeamupAdvanceTask",
+      "trigger": "CLIENT_READY before resumeCharacter",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "autocommand",
+      "boundary_call": "serverParseClient",
+      "reason": "Conditional taskadvancecomplete relay via serverParseClient; fixed TaskAdvanceCompleted -> TaskComplete sends catalogued separately."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/missionteamup.c",
+      "line": 209,
+      "function": "MissionChangeOwner",
+      "trigger": "MissionPlayerEnteredMap SG mission owner fixup",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "autocommand",
+      "boundary_call": "serverParseClient",
+      "reason": "team task owner update relays command through serverParseClient."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/clue.c",
+      "line": 320,
+      "function": "StoryRewardHandleTokens",
+      "trigger": "StoryArcPlayerEnteredMap reward/contact/task recursion",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "autocommand",
+      "boundary_call": "serverParseClientEx",
+      "reason": "Reward-defined token/command strings dispatch through serverParseClientEx."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/clue.c",
+      "line": 432,
+      "function": "StoryRewardBonusTime",
+      "trigger": "StoryArcPlayerEnteredMap reward recursion",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "autocommand",
+      "boundary_call": "serverParseClient",
+      "reason": "Reward bonus time can relay command via serverParseClient."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/taskforce.c",
+      "line": 262,
+      "function": "TaskForceModeChange",
+      "trigger": "minority quit/base-raid eject/EndGameRaid quitLeagueAndTeam",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "autocommand",
+      "boundary_call": "serverParseClient",
+      "reason": "Taskforce mode change command relay; fixed local full-refresh sends catalogued separately."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/clue.c",
+      "line": 597,
+      "function": "StoryRewardApply",
+      "trigger": "StoryArcPlayerEnteredMap task/contact/reward recursion",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicReward",
+      "boundary_call": "rewardSetsAward",
+      "reason": "Loaded reward tables can select arbitrary grants and dialog pages; fixed direct info/chat/pophelp/sound/float sends above are included, interpreter closure unsupported."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/badges_server.c",
+      "line": 693,
+      "function": "badge_Award",
+      "trigger": "BadgeFixCheckPlayer matched missing earned badge",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicReward",
+      "boundary_call": "rewardFindDefAndApplyToDbID",
+      "reason": "Badge reward definition dispatches through rewardFindDefAndApplyToDbID; direct badge notification/dialog/pophelp sends above included."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/clue.c",
+      "line": 506,
+      "function": "StoryRewardApply",
+      "trigger": "StoryArcPlayerEnteredMap selected dialog reward",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicReward",
+      "boundary_call": "DialogDef_FindAndHandlePage",
+      "reason": "Reward-selected DialogDef page executes gameplay/content actions; no arbitrary page closure claimed."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/character_combat.c",
+      "line": 3545,
+      "function": "character_ApplyPowerInternal",
+      "trigger": "restore enabled/disabled power states",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicPower",
+      "boundary_call": "CreateAndAttachNewAttribMod",
+      "reason": "Loaded attribmod templates are applied; fixed initial sendHitMessage -> combat message above included, arbitrary mod/gameplay effects unsupported."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/character_combat.c",
+      "line": 3395,
+      "function": "character_ApplyPowerAtActivation",
+      "trigger": "auto/global boost or arena power activation",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicPower",
+      "boundary_call": "CreateAndAttachNewAttribMod",
+      "reason": "Loaded attribmod templates are applied; fixed initial combat message included; arbitrary nested power/attribmod effects unsupported."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/entity/character_mods.c",
+      "line": 220,
+      "function": "character_AccrueMods",
+      "trigger": "ArenaMapInitPlayer -> character_Reset -> CancelPowers/UncancelPowers",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicPower",
+      "boundary_call": "mod_Process",
+      "reason": "Current loaded attribmods execute mod_Process during reset; not a bounded fixed startup command list."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/petarena.c",
+      "line": 170,
+      "function": "ArenaCreateArenaPets",
+      "trigger": "arena gladiator buff setup",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "dynamicGameplay",
+      "boundary_call": "character_CreateArenaPet",
+      "reason": "Content-selected pet creation executes NPC AI, powers and encounter callbacks; not flattened into ordinary startup closure."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/playerCreatedStoryarcServer.c",
+      "line": 2329,
+      "function": "missionserver_map_requestInventory",
+      "trigger": "resumeCharacter:795",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "DBCLIENT missionserver inventory request; later DB/MissionServer client replies not implied by this call."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/mission/missionserver_meta.c",
+      "line": 1174,
+      "function": "missionserver_grantOverflowTickets",
+      "trigger": "resumeCharacter -> missionserver_map_handlePendingStatus",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "MissionServer RPC grant request; response side effects asynchronous."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/account/AccountInventory.c",
+      "line": 114,
+      "function": "AccountServerTransactionFinish",
+      "trigger": "resumeCharacter pending-order loop",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "DB/account server transaction completion; response side effects asynchronous."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/Turnstile.c",
+      "line": 1196,
+      "function": "turnstileMapserver_generateTurnstilePing",
+      "trigger": "resumeCharacter:773",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "Only DBCLIENT_TURNSTILE_PING; original handleTurnstilePong emits no client packet."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/container/league.c",
+      "line": 130,
+      "function": "league_AcceptOfferTurnstile",
+      "trigger": "LeagueTeamOnEnterMapUpdate or EndGameRaidPlayerEnteredMap",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "Only StatServer passthrough league join; future reflected/DB responses unsupported."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c",
+      "line": 1510,
+      "function": "ArenaRequestCurrentResults",
+      "trigger": "ArenaMapInitPlayer -> ArenaRequestAllCurrentResults",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "ArenaServer result request; future replies unsupported."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c",
+      "line": 1284,
+      "function": "ArenaSyncRequestEvent",
+      "trigger": "ArenaMapInitPlayer non-arena -> ArenaSendScheduledMessages",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "ArenaServer event request/monitor processing; future server-reply callbacks unsupported."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/missionteamup.c",
+      "line": 193,
+      "function": "MissionChangeOwner",
+      "trigger": "MissionPlayerEnteredMap SG owner correction",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "Command relay also causes DB/team reflection; reflected callbacks unsupported."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/container/containerbroadcast.c",
+      "line": 364,
+      "function": "sendEntsMsg",
+      "trigger": "friend notice to remote/sleeping character or team quit",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "DB broadcast path; no immediate local START_PACKET implied."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "line": 554,
+      "function": "fixTravellingPraetorian",
+      "trigger": "resumeCharacter:755",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "dbAsyncMapMove returns early when travelling player is on wrong destination map."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "line": 602,
+      "function": "MapCheckBootPlayer",
+      "trigger": "resumeCharacter:760",
+      "command": null,
+      "handler": null,
+      "status": "unsupported_boundary",
+      "boundary_kind": "async",
+      "boundary_call": null,
+      "reason": "Disallowed static-map/faction/progress gate triggers dbAsyncMapMove and early return."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 287,
+      "function": "svrHandleClientMsg",
+      "trigger": "CLIENT_CONNECT newCharacter branch only",
+      "boundary": "new-character parseClientInput interpreter",
+      "boundary_kind": "new_character_input",
+      "status": "unsupported_boundary",
+      "reason": "Existing selected-character entry closure does not qualify new-character creation input interpretation or its content/gameplay effects."
+    }
+  ],
+  "unadmitted_conditional_dependencies": [
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/missionobjective.c",
+      "line": 647,
+      "function": "MissionItemSetClientTimer",
+      "trigger": "non-auto activation branch can interrupt an in-progress mission-object interaction; auto branch does not reach this branch",
+      "command": "SERVER_MISSION_OBJECTIVE_TIMER_UPDATE",
+      "physical_id": 98,
+      "handler": "MissionReceiveObjectiveTimer",
+      "chain": [
+        "resumeCharacter",
+        "ArenaMapInitPlayer",
+        "character_Reset/character_ActivatePower",
+        "MissionItemInterruptInteraction",
+        "MissionItemStopInteraction",
+        "MissionItemSetClientTimer"
+      ],
+      "status": "conditional_dependency_not_admitted",
+      "source_mechanism": "START_PACKET",
+      "notes": "Source generic activation switch reaches this through a Toggle branch; resume auto/global-boost restoration bypasses it. ArenaGiveTempPower resolves unpinned loaded power types, so this is an unsupported dynamicPower dependency, not an admitted startup send."
+    }
+  ],
+  "resume_direct_callees": [
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/clientEntityLink.c",
+      "line": 18,
+      "function": "clientSetEntity",
+      "root_call_line": 719,
+      "direct_START_PACKET": false,
+      "notes": "Binds entity and marks its position dirty; no START_PACKET in body.",
+      "classification": "reviewed_state_only"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/friends.c",
+      "line": 151,
+      "function": "updateFriendList",
+      "root_call_line": 723,
+      "direct_START_PACKET": true,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/entity/attrib_description.c",
+      "line": 835,
+      "function": "updateCombatMonitorStats",
+      "root_call_line": 724,
+      "direct_START_PACKET": true,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/ai/entaiInstance.c",
+      "line": 1555,
+      "function": "aiInit",
+      "root_call_line": 727,
+      "direct_START_PACKET": false,
+      "notes": "Existing ENTAI returns early. New player AI branch runs alignmentshift_revokeAllBadTips -> ContactDismiss; fixed story sends and dynamicReward boundary are shared with story/contact closure.",
+      "classification": "player_branch_contact_cleanup"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1177,
+      "function": "entSendPlrPosQrot",
+      "root_call_line": 729,
+      "direct_START_PACKET": false,
+      "notes": "Two consecutive root calls only increment server_pos_id and reset server_pos_id_sent.",
+      "classification": "reviewed_state_only"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/character_combat.c",
+      "line": 3750,
+      "function": "character_UpdateAllEnabledState",
+      "root_call_line": 734,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/character_combat.c",
+      "line": 4638,
+      "function": "character_ActivateAllAutoPowers",
+      "root_call_line": 736,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/character_combat.c",
+      "line": 4916,
+      "function": "character_TurnOnActiveTogglePowers",
+      "root_call_line": 738,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/entity/PowerInfo.c",
+      "line": 349,
+      "function": "powerInfo_UpdateFullRechargeStatus",
+      "root_call_line": 740,
+      "direct_START_PACKET": false,
+      "notes": "Queues rechargeStatusChange refs for later entity serialization; no immediate START_PACKET.",
+      "classification": "reviewed_state_only"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/dooranim.c",
+      "line": 894,
+      "function": "prepEntForEntryIntoMap",
+      "root_call_line": 745,
+      "direct_START_PACKET": true,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "line": 554,
+      "function": "fixTravellingPraetorian",
+      "root_call_line": 755,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "line": 602,
+      "function": "MapCheckBootPlayer",
+      "root_call_line": 760,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/taskforce.c",
+      "line": 861,
+      "function": "TaskForceResetDesaturate",
+      "root_call_line": 763,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/missionteamup.c",
+      "line": 703,
+      "function": "MissionPlayerEnteredMap",
+      "root_call_line": 765,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/contactdef.c",
+      "line": 1367,
+      "function": "BadgeFixCheckPlayer",
+      "root_call_line": 766,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamap.c",
+      "line": 716,
+      "function": "ArenaMapInitPlayer",
+      "root_call_line": 768,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/sgraid.c",
+      "line": 103,
+      "function": "RaidInitPlayer",
+      "root_call_line": 769,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "line": 655,
+      "function": "LeagueTeamOnEnterMapUpdate",
+      "root_call_line": 770,
+      "direct_START_PACKET": true,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storyarc.c",
+      "line": 2766,
+      "function": "StoryArcPlayerEnteredMap",
+      "root_call_line": 771,
+      "direct_START_PACKET": true,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/EndGameRaid.c",
+      "line": 127,
+      "function": "EndGameRaidPlayerEnteredMap",
+      "root_call_line": 772,
+      "direct_START_PACKET": true,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/Turnstile.c",
+      "line": 1196,
+      "function": "turnstileMapserver_generateTurnstilePing",
+      "root_call_line": 773,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/Scripthook/ScriptHookCallbacks.c",
+      "line": 111,
+      "function": "ScriptPlayerEnteringMap",
+      "root_call_line": 774,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/raidmapserver.c",
+      "line": 83,
+      "function": "RaidFullyUpdateClient",
+      "root_call_line": 775,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/player/badges_server.c",
+      "line": 561,
+      "function": "badge_RecordLevelChange",
+      "root_call_line": 776,
+      "direct_START_PACKET": false,
+      "notes": "Marks modified badge state; no immediate START_PACKET.",
+      "classification": "reviewed_state_only"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/pvp.c",
+      "line": 697,
+      "function": "pvp_ApplyPvPPowers",
+      "root_call_line": 777,
+      "direct_START_PACKET": false,
+      "notes": "Optional PvP power acquisition marks powerDefChange, then character_ActivateAllAutoPowers; fixed send helpers and dynamicPower boundaries apply.",
+      "classification": "power_state_and_restore"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/container/team.c",
+      "line": 1263,
+      "function": "team_MinorityQuit",
+      "root_call_line": 782,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/container/team.c",
+      "line": 1277,
+      "function": "league_MinorityQuit",
+      "root_call_line": 783,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/playerCreatedStoryarcServer.c",
+      "line": 2329,
+      "function": "missionserver_map_requestInventory",
+      "root_call_line": 794,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/playerCreatedStoryarcServer.c",
+      "line": 2401,
+      "function": "missionserver_map_handlePendingStatus",
+      "root_call_line": 795,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/account/AccountInventory.c",
+      "line": 114,
+      "function": "AccountServerTransactionFinish",
+      "root_call_line": 815,
+      "direct_START_PACKET": false,
+      "notes": null,
+      "classification": "fixed_sends_or_declared_boundary"
+    }
+  ],
+  "connect_ent_reviewed_functions": [
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 155,
+      "function": "ContactStatusSendChanged",
+      "trigger": "dirty/full and e->ready",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactStatusSendChanged"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 143,
+      "function": "ContactStatusSendAll",
+      "trigger": "full ready contact refresh",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactStatusSendAll"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 122,
+      "function": "SendSelectContact",
+      "trigger": "selected contact>=0",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "SendSelectContact"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1334,
+      "function": "TaskStatusSendUpdate",
+      "trigger": "contact path; ready self/teammates",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "TaskStatusSendUpdate"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1271,
+      "function": "TaskStatusSendAll",
+      "trigger": "full ready task refresh",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "TaskStatusSendAll"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 132,
+      "function": "SendSelectTask",
+      "trigger": "selected task>=0",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "SendSelectTask"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 180,
+      "function": "ContactStatusAccessibleSendAll",
+      "trigger": "map-entry accessible list",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactStatusAccessibleSendAll"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 2212,
+      "function": "ContactVisitLocationSendAll",
+      "trigger": "visitLocationChanged",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ContactVisitLocationSendAll"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1587,
+      "function": "ClueSendAll",
+      "trigger": "clueChanged",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ClueSendAll"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1732,
+      "function": "KeyClueSendAll",
+      "trigger": "keyclueChanged",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "KeyClueSendAll"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/automapServer.c",
+      "line": 96,
+      "function": "automapserver_sendAllStaticMaps",
+      "trigger": "full sendCharacterToClient -> sendChatSettings; !CSFlags_MovedVisitedMaps",
+      "call_chain": [
+        "entSendUpdate -> sendCharacterToClient -> sendChatSettings",
+        "automapserver_sendAllStaticMaps"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 1960,
+      "function": "SendMissionStatus",
+      "trigger": "MissionSendRefresh: team mission exists",
+      "call_chain": [
+        "entSendUpdate -> sendCharacterToClient -> MissionSendRefresh",
+        "SendMissionStatus"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/storySend.c",
+      "line": 2164,
+      "function": "ClearMissionStatus",
+      "trigger": "MissionSendRefresh: no active team mission",
+      "call_chain": [
+        "entSendUpdate -> sendCharacterToClient -> MissionSendRefresh",
+        "ClearMissionStatus"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/storyarc/SouvenirClue.c",
+      "line": 268,
+      "function": "scSendAllHeaders",
+      "trigger": "souvenirClueChanged",
+      "call_chain": [
+        "entSendUpdate -> scSendChanged",
+        "scSendAllHeaders"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/Common/entity/character_karma.c",
+      "line": 304,
+      "function": "CharacterKarmaStatsSend",
+      "trigger": "access>1 and odd send",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "CharacterKarmaStatsSend"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/ZoneEvents/ScriptUI.c",
+      "line": 645,
+      "function": "ScriptUISendUpdate",
+      "trigger": "scriptUIData nonempty and dirty prep",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ScriptUISendUpdate"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/ZoneEvents/ScriptUI.c",
+      "line": 212,
+      "function": "ScriptUISendKillSignal",
+      "trigger": "missing widget -> prep -> remove data",
+      "call_chain": [
+        "entSendUpdate -> ScriptUISendUpdate -> ScriptUIPrepEntUpdate -> ScriptUIRemoveScriptData",
+        "ScriptUISendKillSignal"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c",
+      "line": 135,
+      "function": "ArenaKioskSendIncremental",
+      "trigger": "arenaKioskSend or arenaKioskSendInit",
+      "call_chain": [
+        "svrTickDoNetSend -> entSendUpdate",
+        "ArenaKioskSendIncremental"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/Reward.c",
+      "line": 4725,
+      "function": "rewardChoiceSend",
+      "trigger": "pending choice changed or invalid/finished reward queue cleared",
+      "call_chain": [
+        "entSendUpdate -> sendPendingReward",
+        "rewardChoiceSend"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 427,
+      "function": "sendMoralChoice",
+      "trigger": "pending moral reward with changed choices",
+      "call_chain": [
+        "entSendUpdate -> sendPendingReward",
+        "sendMoralChoice"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/script/scriptdebug.c",
+      "line": 38,
+      "function": "ScriptSendDebugInfo",
+      "trigger": "SCRIPTDEBUGFLAG_DEBUGON",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "ScriptSendDebugInfo"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/friends.c",
+      "line": 151,
+      "function": "updateFriendList",
+      "trigger": "changed friend and e->ready",
+      "call_chain": [
+        "svrTickDoNetSend -> updateAllFriendLists",
+        "updateFriendList"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/friends.c",
+      "line": 296,
+      "function": "removeFriend",
+      "trigger": "invalid empty friend entry",
+      "call_chain": [
+        "updateAllFriendLists -> updateFriendStatus",
+        "removeFriend"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 137,
+      "function": "sendChatMsgEx",
+      "trigger": "friend notification / map-transfer abort",
+      "call_chain": [
+        "updateFriendStatus -> chatSendToPlayer; dbCheckMapXfer -> dbUndoMapXfer",
+        "sendChatMsgEx"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c",
+      "line": 293,
+      "function": "sendChatMsgFrom",
+      "trigger": "local friend notification",
+      "call_chain": [
+        "updateFriendStatus -> chatSendToPlayer",
+        "sendChatMsgFrom"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_player.c",
+      "line": 163,
+      "function": "svrForceLogoutLink",
+      "trigger": "CONNECT error with attached entity",
+      "call_chain": [
+        "CLIENT_CONNECT_ERROR",
+        "svrForceLogoutLink"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/group/groupnetsend.c",
+      "line": 325,
+      "function": "worldSendUpdate",
+      "trigger": "REQSCENE; later IN_GAME world_update",
+      "call_chain": [
+        "CLIENT_REQSCENE; sendWorldChanges",
+        "worldSendUpdate"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/group/groupnetsend.c",
+      "line": 491,
+      "function": "sendDynamicDefChanges",
+      "trigger": "IN_GAME and pending definitions",
+      "call_chain": [
+        "svrTickDoNetSend -> sendWorldChanges",
+        "sendDynamicDefChanges"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entsend.c",
+      "line": 3824,
+      "function": "entSendUpdate",
+      "trigger": "initial full or IN_GAME delta; append old queued packet",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "entSendUpdate"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c",
+      "line": 78,
+      "function": "dbCheckMapXfer",
+      "trigger": "in_map_xfer and ready>=ENTERING_GAME",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "dbCheckMapXfer"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c",
+      "line": 41,
+      "function": "sendClientNewMapLoading",
+      "trigger": "abort map transfer",
+      "call_chain": [
+        "dbCheckMapXfer -> dbUndoMapXfer",
+        "sendClientNewMapLoading"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/group/groupnetdb.c",
+      "line": 464,
+      "function": "sendEditMessage",
+      "trigger": "debug access and queued errors",
+      "call_chain": [
+        "svrTickDoNetSend -> svrTickSendQueuedErrors",
+        "sendEditMessage"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 854,
+      "function": "sendPerformanceUpdate",
+      "trigger": "sendAutoTimers or autoTimersLayoutID requested; at most100 queued debug clients",
+      "call_chain": [
+        "svrTickDoNetSend -> sendPerformanceUpdates",
+        "sendPerformanceUpdate"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 1020,
+      "function": "trade_finalize",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_finalize"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 249,
+      "function": "trade_cancel",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_cancel"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 974,
+      "function": "trade_fail",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_fail"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 756,
+      "function": "trade_sucess",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_sucess"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/gameComm/trading.c",
+      "line": 339,
+      "function": "trade_sendUpdate",
+      "trigger": "existing trade WAITING_FOR_SYNC success/failure",
+      "call_chain": [
+        "svrTickDoNetSend",
+        "trade_CheckFinalize",
+        "trade_sendUpdate"
+      ]
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "line": 183,
+      "function": "svrHandleClientMsg",
+      "trigger": "CONNECT success/error; REQSCENE invalid character; READY unowned/cookie/resume failure",
+      "call_chain": [
+        "svrHandleClientMsg"
+      ]
+    }
+  ],
+  "CLIENT_READY_after_resumeCharacter": {
+    "sourcefile": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+    "line": 451,
+    "finding": "Remaining branch is logging, tracked-salvage aggregation, optional PrintCostumeToLog and cleanup; no additional START_PACKET call found."
+  },
+  "framing_notes": [
+    "Coverage flags denote command handler admission, not arbitrary profile/value acceptance or packet EOF.",
+    "svrHandleClientConnect(svr_tick.c:153) initializes lists/control; clientPrintf(langServerUtil.c:120) localizes strings; neither starts packets.",
+    "entPrepareUpdate->BuildBuffList prepares embedded buff data with no START_PACKET in reviewed functions. sendCharacterToClient has an explicit own-packet subtree (entserver.c:1502-1512), and sendChatSettings has the visited-map migration sender; both are expanded here. Other embedded writer subtrees receive a separate focused gap check.",
+    "START_PACKET queues reliable SERVER_GAME_CMDS. entSendUpdate appends old entityPacket after byte-alignment marker; entFinishUpdate appends zero then sends.",
+    "Trade, DB transfer, debug and friend branches are conditional, not assumed active for a fresh ordinary character."
+  ],
+  "full_character_direct_send_callees": [
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1502,
+      "function": "sendCharacterToClient",
+      "callee": "ContactStatusSendAll",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1503,
+      "function": "sendCharacterToClient",
+      "callee": "ContactStatusAccessibleSendAll",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1504,
+      "function": "sendCharacterToClient",
+      "callee": "ContactVisitLocationSendAll",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1505,
+      "function": "sendCharacterToClient",
+      "callee": "TaskStatusSendAll",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1506,
+      "function": "sendCharacterToClient",
+      "callee": "TeamTaskAddMemberTaskList",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1507,
+      "function": "sendCharacterToClient",
+      "callee": "ClueSendAll",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1508,
+      "function": "sendCharacterToClient",
+      "callee": "KeyClueSendAll",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1509,
+      "function": "sendCharacterToClient",
+      "callee": "scSendAllHeaders",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1510,
+      "function": "sendCharacterToClient",
+      "callee": "MissionSendRefresh",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1511,
+      "function": "sendCharacterToClient",
+      "callee": "sendPendingReward",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "line": 1512,
+      "function": "sendCharacterToClient",
+      "callee": "TaskForceSendSelect",
+      "trigger": "full_update -> initial whole character own-packet subtree",
+      "status": "expanded_to_concrete_sends_or_declared_boundary"
+    }
+  ],
+  "main_payload_gap_check": {
+    "baseline": "d6327cde",
+    "scope": [
+      "svrPlayerSendControlState -> future push / physics update",
+      "entity_SendPowerInfoUpdate / entity_SendPowerModeUpdate and power subserializers",
+      "entity_SendBadgeUpdate / badgeMonitor_SendInfo / SgrpBadgesInit",
+      "entity_SendInvUpdate / entity_SendInventionUpdate and inventory/auction/invention subserializers",
+      "team_sendList / sgroup_sendList / league_sendList / sendMemberCommon",
+      "sendAttribDescription / sendAllMatchingMods",
+      "groupDynSend / sendSkyFade",
+      "sendEntity -> costume/PowerCust/buff/pet/AFK/taskforce/levelingpact/logout/create writers"
+    ],
+    "finding": "No START_PACKET, pktCreateEx, pktSend or lnkBatchSend submission found in these followed writer subtrees. sendEntity pktCreate/pktAppend are cached entity payload only. sendCharacterToClient own-packet subtree and startup prelude are explicitly expanded, not treated as pure leaves."
+  },
+  "additional_state_only_helpers": [
+    {
+      "sourcefile": "upstream/ouroboros/Common/entity/chatSettings.c",
+      "function": "addHelpChatTab -> createDefaultChannel",
+      "finding": "Modifies staged chat window/tab settings; no new START_PACKET in reviewed bodies."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/MARTY.c",
+      "line": 108,
+      "function": "clearMARTYHistory",
+      "finding": "Resets reward history counters only."
+    },
+    {
+      "sourcefile": "upstream/ouroboros/MapServer/src/entity/character_net_server.c",
+      "line": 339,
+      "function": "character_Send",
+      "finding": "Writes supplied pak and delegates supplied-packet powers/inspirations/boost/inventory serialization."
+    }
+  ],
+  "source_sha256_lf": {
+    "upstream/ouroboros/Common/account/AccountInventory.c": "36d7e7c5d4626506a057147e013167aabcdc1cdde758ec42be4d72eaa470ccaa",
+    "upstream/ouroboros/Common/entity/PowerInfo.c": "98ef9b93ec9e51623a7955aa173a5e53c24208e1b4ebca972a60753e81dda925",
+    "upstream/ouroboros/Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+    "upstream/ouroboros/Common/entity/character_karma.c": "7c307fc27c181b6c060bbaabc8deaba53c20d192375537f17810b82a9bf2373f",
+    "upstream/ouroboros/Common/entity/character_mods.c": "d61bd20cbc63b9763b5fe4805da3c700874c1ff4373980b3711780417ed5d096",
+    "upstream/ouroboros/Common/entity/chatSettings.c": "3c45ed2d51381914fc905f9305949184206b6f19370af7d03f5acf5f0b0f2146",
+    "upstream/ouroboros/Common/mission/missionserver_meta.c": "c460f5c3d8854aaa6deee1043843b075a00732725938823afeb757c1e5cd3af6",
+    "upstream/ouroboros/Common/player/pophelp.c": "8beec654ab65085b3df132af84c2b81bb3df95ecc7e367442bdcd2090fc0f969",
+    "upstream/ouroboros/MapServer/src/MARTY.c": "71f747f81908d848e0f42f9ca00a3507eec1274bb979617cedd3d8bb533c55a8",
+    "upstream/ouroboros/MapServer/src/Reward.c": "d3143fbb0d4e2a7134448cf51e5d47333cae6a3f8b8efe300a3d23a84766501b",
+    "upstream/ouroboros/MapServer/src/ai/entaiInstance.c": "7891d7238812e7a2faf218ed3fc83960096471550c74b00fd1856bcddde19c21",
+    "upstream/ouroboros/MapServer/src/container/containerbroadcast.c": "fb6d6a0c3716abeb1a6d92b2de9dcf8c02a4b06a4db0a7db462792492b0193f1",
+    "upstream/ouroboros/MapServer/src/container/league.c": "80c12cae89cad49b5d52e4f31bcc56400a27f11e519d5150789d0df07790e2fb",
+    "upstream/ouroboros/MapServer/src/container/team.c": "49a1202d4a8467f031ca684e8cc73560a905212433674c42005dbbf9d7b44ca0",
+    "upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c": "14799001b028608bf940b631b73ba6af02ed869915b09ec000547e3aa0106663",
+    "upstream/ouroboros/MapServer/src/door.c": "3d5ada96545afa6e5adea578654882d68ad8da5e93cf648604982283d5037022",
+    "upstream/ouroboros/MapServer/src/entity/character_combat.c": "fa4b2d329c17cba30b566574ee220112c8c99798e0df9c5f184f0a251a51e38b",
+    "upstream/ouroboros/MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+    "upstream/ouroboros/MapServer/src/entity/entGameActions.c": "8023d637cff0adcb8b6edd902b56f129feca550433106796002ec6b67001d67a",
+    "upstream/ouroboros/MapServer/src/entity/entity_power.c": "66f6e2c6190fa897333f2febc3c9477fcf40dcce51750ed8c32ef483f856434f",
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "upstream/ouroboros/MapServer/src/entity/friends.c": "dad13320de15e17e8d628536432fa51c0ad65d0e64dc3fb06ba09f71fcf64bb5",
+    "upstream/ouroboros/MapServer/src/entity/pvp.c": "d3e3370bae5dc1fd59a8e9d2c2276f85f71c15d6ab8211a33a24c0b53d2a42c0",
+    "upstream/ouroboros/MapServer/src/gameComm/automapServer.c": "1ac878b43d9e3830df542e9b71d5a5a56cdd497f8a063233f113e59eb681b97c",
+    "upstream/ouroboros/MapServer/src/gameComm/sendToClient.c": "99fb99214027555b8bf7755b4a46d5a6652b6e6ed031b0d728be9b9878501e95",
+    "upstream/ouroboros/MapServer/src/gameComm/trading.c": "608762b7b163d567a9c7f59386b865a2cea599b60354193db98d342b99125f9c",
+    "upstream/ouroboros/MapServer/src/gameSys/EndGameRaid.c": "e483b1846d9883048d39cf1a65411b1d18695f846861070f57e3571faa31744f",
+    "upstream/ouroboros/MapServer/src/gameSys/Turnstile.c": "67970c5f9f1614e92417f9d1cc7defe05deaf47e393c7767efca8697476a6f88",
+    "upstream/ouroboros/MapServer/src/gameSys/arenamap.c": "43557d311dff1f4c5bb349b5f5f1d5bf270d16616b0d7e104f8d45cbcf611516",
+    "upstream/ouroboros/MapServer/src/gameSys/arenamapserver.c": "6cc484a4cd65a6e67181d082e7ab9d62d86056b39a286d5425797617999ab938",
+    "upstream/ouroboros/MapServer/src/gameSys/dooranim.c": "8a8879efa2740f4dcfc22e91bf5768198b7235e3f3d66a3953623a34286fbd85",
+    "upstream/ouroboros/MapServer/src/gameSys/petarena.c": "b163233788b9a3cd0655cb6aa195d14e44d254d9374888f752d7ad2bf40234ff",
+    "upstream/ouroboros/MapServer/src/gameSys/raidmapserver.c": "ade39fdc84427632cb0711b1c6eb9ddfbceb84818870a9999be35f7c41b9cffe",
+    "upstream/ouroboros/MapServer/src/gameSys/sgraid.c": "78dba5f660175ae16515a6c81b9ebc8ca6c1bad6b0ef6ab3d14ad23ccd6ac92e",
+    "upstream/ouroboros/MapServer/src/group/groupnetdb.c": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3",
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "upstream/ouroboros/MapServer/src/player/badges_server.c": "d4c8913ebdbc26e911f6fb07e09269e67e8b636dd1ef902266e69df62aa7d677",
+    "upstream/ouroboros/MapServer/src/player/clientEntityLink.c": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b",
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313",
+    "upstream/ouroboros/MapServer/src/script/Scripthook/ScriptHookCallbacks.c": "45d5627b8c7f27a37578534d398f738ccef42bc1cb9dfe3173df5073173d5903",
+    "upstream/ouroboros/MapServer/src/script/ZoneEvents/ScriptUI.c": "8b4f1a1d144c399f6d543b0a4fc3c9645dc5bf1a23a9387bdfe7fa4e552fb960",
+    "upstream/ouroboros/MapServer/src/script/scriptdebug.c": "7b7eccbcdf35cedb8c216006304373dc014a05433a75d8ff6cdaf1b40a83c060",
+    "upstream/ouroboros/MapServer/src/storyarc/SouvenirClue.c": "531f1620bed3556c048106bccd41501fd364dc1b0abec5029ebc32195093a72e",
+    "upstream/ouroboros/MapServer/src/storyarc/clue.c": "2386e321c5fb08c76fa07ef21402d32ddc5ae6e09bdae9ff53aed137336502e3",
+    "upstream/ouroboros/MapServer/src/storyarc/contactdef.c": "688601db6eda98cd2afad63b11d62b27d78231bada09861fdd1cb3fee208cdf3",
+    "upstream/ouroboros/MapServer/src/storyarc/mission.c": "aa18e11bd1fdeebe63aea8eec3466620820ceaa2644a79f8af380d3677ecbfb1",
+    "upstream/ouroboros/MapServer/src/storyarc/missionobjective.c": "0f3ea960b07e89426088c50b88a94db918fbf44eaf12aa7a0ffdf6fda23394a1",
+    "upstream/ouroboros/MapServer/src/storyarc/missionteamup.c": "13df7632ac335a4981e4683caf6e817e6fd24ed2f3367cb79355b170fef0173d",
+    "upstream/ouroboros/MapServer/src/storyarc/playerCreatedStoryarcServer.c": "64b24a08783fdc2e8d6891d3841abc98804401247319cf6d44b07c3a6a21aa7d",
+    "upstream/ouroboros/MapServer/src/storyarc/storySend.c": "b1bc173b8328339564b23c5233599745ecc822ac0e4f2316e2e2e85de406375c",
+    "upstream/ouroboros/MapServer/src/storyarc/storyarc.c": "35def4e5998600f468c4371df8623563aca854f73b5f76476654bed974f7d635",
+    "upstream/ouroboros/MapServer/src/storyarc/task.c": "859ce4c654549896e1fdbfbda82a2e930094158cbd14b2f6bbf34840eb33e9da",
+    "upstream/ouroboros/MapServer/src/svr/svr_base.h": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+    "upstream/ouroboros/MapServer/src/svr/svr_player.c": "82fee142cd2a0d37f2ec8cb62c91b54ee34d5bb31655d1d33961187868a667a8",
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "upstream/ouroboros/MapServer/src/taskforce.c": "575f14dd00866f3e98fd93786fb379ced0a329c0a601c76e6c176666b6842652"
+  }
+}
