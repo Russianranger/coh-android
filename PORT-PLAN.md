@@ -2,9 +2,11 @@
 
 Goal: run the original City of Heroes client source natively on ARM64 Android
 (AYN Thor, personal use only). Compile the original `Game`, `Common` and
-`UtilitiesLib` code and replace only the Windows layer: window, input, sockets,
-threads, files, sound and the OpenGL/Cg setup. The local server stays on its
-existing Wine/FEX runtime.
+`UtilitiesLib` code as an ARM64 Windows program and run it in the app's
+existing ARM64 Wine 10, which needs no x86 emulation for ARM64 code (decided in
+M0, see `armport/M0-REPORT.md`). Changes are limited to 64-bit fixes, x86-only
+code (SSE, inline assembly, PhysX, Cg) and build files. The local server stays
+on its existing Wine/FEX runtime.
 
 ## Layout
 
@@ -28,10 +30,10 @@ existing Wine/FEX runtime.
 | | Milestone | Exit test (no user needed except M5) |
 |---|---|---|
 | M0 | Survey | Compile errors by category for all three trees; 64-bit risk list; Cg shader precompile result; graphics route chosen |
-| M1 | Libraries | `UtilitiesLib` and `Common` build for aarch64; original textparser loads `defs/ui/bodyparts.bp` to 28 entries on ARM64 |
-| M2 | Headless client | `Game` links for aarch64; boots with offscreen GL and reaches the login screen against the CI server |
-| M3 | Into Atlas | Scripted login to Atlas Park in CI; saved native-android packets replay through original receive code; screenshot check |
-| M4 | Android package | Runs inside the Combined app on the Android 13 emulator (x86_64 build) and builds for arm64 |
+| M1 | Libraries | `UtilitiesLib` and dependencies build as ARM64 Windows libraries with llvm-mingw in CI; an original unit (textparser loading `defs/ui/bodyparts.bp` to 28 entries) runs under the app's ARM64 Wine on an `ubuntu-24.04-arm` runner |
+| M2 | Client boots | `CityOfHeroes.exe` links for ARM64 Windows and reaches the login screen under that Wine with a virtual X server and software GL, against the CI server |
+| M3 | Into Atlas | Scripted login to Atlas Park in CI; saved native-android packets replay through the original receive code; screenshot check |
+| M4 | App integration | The Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files |
 | M5 | Thor | User installs once and play-tests (about 10 minutes) |
 
 Time boxes: M0 2 days, M1 1 week, M2 2 weeks, M3 2 weeks, M4 1 week.
