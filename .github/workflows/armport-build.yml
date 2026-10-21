@@ -28,6 +28,9 @@ env:
   # Same llvm-mingw release the app's Wine runtime is built with.
   LLVM_MINGW: '20250910'
   LLVM_MINGW_SHA256: '175f344e3db2e11b3d53f4f828ae7b5f0073a4d239b9600fa023ef4b90eb5a7e'
+  # Two compiler processes, including nested ExternalProject/CPM builds,
+  # matching the project's bounded build-host memory rule.
+  CMAKE_BUILD_PARALLEL_LEVEL: '2'
   WINEDEBUG: '-all'
   WINEDLLOVERRIDES: 'mscoree,mshtml='
 

@@ -22,7 +22,11 @@ runtime is built with) and run under that runtime's Wine 10
   `defs/ui/bodyparts.bp` to 28 entries.
 - The 64-bit build computes the same parse-table checksum (`cf27aba3`) as the
   32-bit build wrote into the shipped client `BodyParts.bin`, and loads that
-  file to the same 28 entries. Shipped `.bin` data works in the 64-bit client.
+  file to 28 entries that match the text result record by record in every
+  parsed field (name, bone count, influence cost, geometry, texture and base
+  names, dont_clear). This shows the shipped `BodyParts.bin` loads correctly
+  in the 64-bit client; other `.bin` files and cache formats are not tested
+  yet.
 - Upstream's mandatory precise floating-point check
   (`cox_precise_floating_point_test`) built and ran under the same Wine.
 
