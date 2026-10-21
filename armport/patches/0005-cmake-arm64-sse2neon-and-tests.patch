@@ -1,9 +1,9 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cbcbeea..e7da5c6 100644
+index aa6ff9f..969a0f7 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -46,6 +46,13 @@ if(COX_ARM64_WINDOWS)
- 		$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>)
+ 		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>")
  endif()
  
 +if(COX_ARM64_WINDOWS)

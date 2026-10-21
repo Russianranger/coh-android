@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 164aa6a..cbcbeea 100644
+index 164aa6a..aa6ff9f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -36,6 +36,16 @@ if(MSVC)
@@ -11,9 +11,9 @@ index 164aa6a..cbcbeea 100644
 +	# pointers. clang rejects several constructs MSVC accepts; downgrade those
 +	# to warnings rather than editing the code.
 +	add_compile_options(
-+		$<$<COMPILE_LANGUAGE:C,CXX>:-fms-extensions;-fno-strict-aliasing;-ffp-contract=off>
-+		$<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=incompatible-function-pointer-types;-Wno-error=incompatible-pointer-types;-Wno-error=int-conversion;-Wno-error=return-type>
-+		$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>)
++		"$<$<COMPILE_LANGUAGE:C,CXX>:-fms-extensions;-fno-strict-aliasing;-ffp-contract=off>"
++		"$<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=incompatible-function-pointer-types;-Wno-error=incompatible-pointer-types;-Wno-error=int-conversion;-Wno-error=return-type>"
++		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>")
 +endif()
 +
  # Run this mandatory check before other targets, even with testing disabled.
