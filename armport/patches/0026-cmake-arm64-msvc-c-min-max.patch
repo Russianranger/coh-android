@@ -1,0 +1,36 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ca45dee..17dc6e0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -63,6 +63,10 @@ if(COX_ARM64_WINDOWS)
+ 	include(dependencies/Sse2Neon)
+ 	include_directories(BEFORE SYSTEM
+ 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/armport-include" "${sse2neon_SOURCE_DIR}")
++	# MSVC <stdlib.h> min()/max() macros for C (see the header).
++	add_compile_options(
++		"$<$<COMPILE_LANGUAGE:C>:-include>"
++		"$<$<COMPILE_LANGUAGE:C>:${CMAKE_CURRENT_SOURCE_DIR}/cmake/armport-include/armport_c_compat.h>")
+ endif()
+ 
+ # Run this mandatory check before other targets, even with testing disabled.
+diff --git a/cmake/armport-include/armport_c_compat.h b/cmake/armport-include/armport_c_compat.h
+new file mode 100644
+index 0000000..04a209a
+--- /dev/null
++++ b/cmake/armport-include/armport_c_compat.h
+@@ -0,0 +1,15 @@
++/* ArmPort: forced include for C sources on ARM64 Windows.
++ * MSVC's <stdlib.h> defines min()/max() for C; mingw-w64's has them disabled,
++ * so several files call min/max without a declaration (an int-returning
++ * implicit function, wrong for floats). Provide MSVC's definitions. */
++#ifndef ARMPORT_C_COMPAT_H
++#define ARMPORT_C_COMPAT_H
++#if !defined(__cplusplus) && !defined(NOMINMAX)
++#ifndef max
++#define max(a,b) (((a) > (b)) ? (a) : (b))
++#endif
++#ifndef min
++#define min(a,b) (((a) < (b)) ? (a) : (b))
++#endif
++#endif
++#endif

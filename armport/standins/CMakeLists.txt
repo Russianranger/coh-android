@@ -10,8 +10,15 @@ foreach(component IN ITEMS Loader Cooking)
 	set_target_properties(PhysX::${component} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES
 		"${_coh_3rdparty}/PhysX/SDKs/Physics/include;${_coh_3rdparty}/PhysX/SDKs/Cooking/include;${_coh_3rdparty}/PhysX/SDKs/Foundation/include;${_coh_3rdparty}/PhysX/SDKs/PhysXLoader/include")
 endforeach()
+# Client ragdoll entry points that entrecv.c calls outside the PhysX guard.
+add_library(armport_physx_ragdoll STATIC physx/ragdoll_standin.c)
+set_property(TARGET PhysX::Loader APPEND PROPERTY INTERFACE_LINK_LIBRARIES armport_physx_ragdoll)
 function(cox_stage_physx target)
 endfunction()
+
+# MSVC intrinsics clang does not provide on ARM64 Windows (__cpuid, __nop).
+add_library(armport_msvc_intrinsics STATIC msvc/intrinsics_standin.c)
+set_property(TARGET PhysX::Loader APPEND PROPERTY INTERFACE_LINK_LIBRARIES armport_msvc_intrinsics)
 
 # AlienFX and NvCpl: vendor extras; headers only.
 add_library(AlienFX::AlienFX INTERFACE IMPORTED GLOBAL)
