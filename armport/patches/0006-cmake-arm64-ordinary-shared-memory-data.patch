@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ce1b627..79541e5 100644
+index c14c875..e812009 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -48,6 +48,14 @@ if(COX_ARM64_WINDOWS)
