@@ -1716,7 +1716,7 @@
     "version": "0.1.19",
     "version_code": 20,
     "profile": "freeze-diagnostic",
-    "state": "source_qualified_one_build_pending",
+    "state": "single_CI_dispatch_requested",
     "limits": {
       "decoded_message_bytes": 4194304,
       "ordinary_transport_bytes": 16384,
@@ -4841,7 +4841,7 @@
     "profile": "freeze-diagnostic",
     "version_name": "0.1.19-freeze-diagnostic-test",
     "version_code": 20,
-    "state": "source_qualified_one_CI_build_pending",
+    "state": "one_diagnostic_dispatch_requested",
     "APK_builds": 0,
     "max_APK_candidate_builds": 1,
     "workers": {
@@ -4914,6 +4914,10 @@
       "capture": "Export requires installed version and current activity session; otherwise explicit omission reason. Fresh viewport after actor epoch change.",
       "raw": "Explicit partial window, capacity, write and unobserved-message flags; no claim of complete recording on failure.",
       "actor": "Original first basename duplicate wins; case-insensitive query across all verified imported archives; box fallback."
-    }
+    },
+    "qualified_source_commit": "1caaf471afe1d725804e69d342a5b0d716c3f4e4",
+    "qualified_source_tree": "ff42137b8afee7640d08698b5dd5ae946c4420e8",
+    "CI_dispatches_requested": 1,
+    "local_qualified_history_branch": "recovery/coh019-qualified-before-api"
   }
 }
