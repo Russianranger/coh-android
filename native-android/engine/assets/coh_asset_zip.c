@@ -4,9 +4,10 @@
 #include <zlib.h>
 #define ZIP_MEMBERS 64u
 #define ZIP_ASSET_MAX (1u<<20)
+#define ZIP_SOURCE_MAX (4u<<20)
 #define ZIP_WORK 65568u
 #define ZIP_CHUNK 8192u
-typedef struct {struct CohAssetZip *owner;char path[COH_ASSET_PATH_MAX+1];uint64_t data;uint32_t stored,bytes,crc;uint16_t method,flags;int found;} Member;
+typedef struct {struct CohAssetZip *owner;char path[COH_ASSET_PATH_MAX+1];uint64_t data;uint32_t stored,bytes,crc;uint16_t method,flags;uint32_t matches;int found;} Member;
 struct CohAssetZip {CohAssetSource source;CohAssetZipStats stats;size_t arena_used;_Alignas(max_align_t) unsigned char workspace[ZIP_WORK];unsigned char input[ZIP_CHUNK],output[ZIP_CHUNK];Member member[];};
 static uint16_t u16(const unsigned char *p){return (uint16_t)(p[0]|(uint16_t)p[1]<<8);}
 static uint32_t u32(const unsigned char *p){return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
@@ -41,12 +42,28 @@ static CohStatus member_read(void *context,uint64_t offset,void *dst,size_t coun
     if(status==COH_OK)z->stats.decoded_bytes+=output;
     return status;
 }
-CohStatus coh_asset_zip_open(CohAssetSource source,const CohAssetZipMember *want,uint32_t count,CohCancel cancel,CohAssetZip **out){
-    if(!out||!source.read_at||source.size<22||source.size>UINT32_MAX||!want||!count||count>ZIP_MEMBERS||!source.generation)return COH_INVALID;
-    uintptr_t output=(uintptr_t)out,input=(uintptr_t)want;size_t input_bytes=(size_t)count*sizeof *want;
+static unsigned lower(unsigned c){return c>='A'&&c<='Z'?c+32u:c;}
+static int same(const char*a,const char*b){for(size_t i=0;i<=COH_ASSET_PATH_MAX;i++){if(lower((unsigned char)a[i])!=lower((unsigned char)b[i]))return 0;if(!a[i])return 1;}return 0;}
+static int query_match(const char *path,const CohAssetZipQuery*q){
+ if(q->kind==COH_ZIP_QUERY_PATH)return same(path,q->name);
+ const char *base=strrchr(path,'/');if(!base)return 0;const char *prefix="data/texture_library/";for(unsigned i=0;i<21;i++)if(!path[i]||lower((unsigned char)path[i])!=(unsigned char)prefix[i])return 0;base++;
+ size_t n=strlen(base),wanted=strlen(q->name);if(n!=wanted+8u||!same(base+wanted,".texture"))return 0;
+ for(size_t i=0;i<wanted;i++)if(lower((unsigned char)base[i])!=lower((unsigned char)q->name[i]))return 0;
+ return 1;
+}
+static CohStatus open_zip(CohAssetSource source,const CohAssetZipMember *want,const CohAssetZipQuery *query,uint32_t count,CohCancel cancel,CohAssetZip **out){
+    if(!out||!source.read_at||source.size<22||source.size>UINT32_MAX||(!want&&!query)||!count||count>ZIP_MEMBERS||!source.generation)return COH_INVALID;
+    uintptr_t output=(uintptr_t)out,input=(uintptr_t)(query?(const void*)query:(const void*)want);size_t input_bytes=(size_t)count*(query?sizeof *query:sizeof *want);
     if(output>UINTPTR_MAX-sizeof *out||input>UINTPTR_MAX-input_bytes||(output<input+input_bytes&&input<output+sizeof *out))return COH_INVALID;
     size_t bytes=coh_asset_zip_allocation_bytes(count);CohAssetZip *z=calloc(1,bytes);if(!z)return COH_LIMIT;z->source=source;z->stats.owned_bytes=bytes;z->stats.members=count;CohStatus status=COH_INVALID;
-    for(uint32_t i=0;i<count;i++){if(!valid_path(want[i].path)||!want[i].bytes||want[i].bytes>ZIP_ASSET_MAX)goto failed;uintptr_t path=(uintptr_t)want[i].path;size_t length=strlen(want[i].path)+1;if(output<path+length&&path<output+sizeof *out)goto failed;for(uint32_t j=0;j<i;j++)if(!strcmp(want[i].path,want[j].path))goto failed;z->member[i].owner=z;z->member[i].bytes=want[i].bytes;memcpy(z->member[i].path,want[i].path,strlen(want[i].path)+1);}
+    uint32_t asset_max=query?ZIP_SOURCE_MAX:ZIP_ASSET_MAX;
+    for(uint32_t i=0;i<count;i++){
+        const char *path=query?query[i].name:want[i].path;uint32_t expected=query?query[i].bytes:want[i].bytes;
+        if(!valid_path(path)||(!query&&!expected)||expected>asset_max||(query&&query[i].kind>COH_ZIP_QUERY_TEXTURE)||(query&&query[i].kind==COH_ZIP_QUERY_TEXTURE&&(strchr(path,'/')||strchr(path,'.'))))goto failed;
+        uintptr_t span=(uintptr_t)path;size_t length=strlen(path)+1;if(output<span+length&&span<output+sizeof *out)goto failed;
+        for(uint32_t j=0;j<i;j++)if(!strcmp(path,query?query[j].name:want[j].path)&&(!query||query[i].kind==query[j].kind))goto failed;
+        z->member[i].owner=z;z->member[i].bytes=expected;memcpy(z->member[i].path,path,length);
+    }
     if(cancelled(cancel)){status=COH_CANCELLED;goto failed;}
     size_t tail=source.size<65557u?(size_t)source.size:65557u;uint64_t base=source.size-tail;status=read_zip(z,base,z->workspace,tail);if(status!=COH_OK)goto failed;status=COH_INVALID;
     size_t eocd=tail;for(size_t p=tail-22;;p--){if(u32(z->workspace+p)==0x06054b50u&&p+22u+u16(z->workspace+p+20)==tail){eocd=p;break;}if(!p)break;}
@@ -59,8 +76,11 @@ CohStatus coh_asset_zip_open(CohAssetSource source,const CohAssetZipMember *want
         status=read_zip(z,cursor,header,sizeof header);if(status!=COH_OK)goto failed;
         uint16_t names=u16(header+28),extra=u16(header+30),comment=u16(header+32);uint64_t next=cursor+46u+names+extra+comment;if(u32(header)!=0x02014b50u||next>limit||u16(header+34))goto invalid;
         if(names&&names<=COH_ASSET_PATH_MAX){status=read_zip(z,cursor+46,name,names);if(status!=COH_OK)goto failed;name[names]=0;if(memchr(name,0,names))goto invalid;
-            for(uint32_t i=0;i<count;i++)if(!strcmp(name,z->member[i].path)){
-                Member *m=&z->member[i];uint16_t flags=u16(header+8),method=u16(header+10);if(m->found||(flags&~0x0808u)||(method!=0&&method!=8)||u32(header+24)!=m->bytes||!u32(header+20)||u32(header+20)>ZIP_ASSET_MAX||(method==0&&u32(header+20)!=m->bytes))goto invalid;
+            for(uint32_t i=0;i<count;i++)if(query?query_match(name,query+i):!strcmp(name,z->member[i].path)){
+                Member *m=&z->member[i];uint16_t flags=u16(header+8),method=u16(header+10);uint32_t decoded=u32(header+24);
+                if(query&&query[i].kind==COH_ZIP_QUERY_TEXTURE&&m->found){m->matches++;continue;}
+                if(m->found||(flags&~0x0808u)||(method!=0&&method!=8)||!decoded||decoded>asset_max||(m->bytes&&decoded!=m->bytes)||!u32(header+20)||u32(header+20)>asset_max||(method==0&&u32(header+20)!=decoded))goto invalid;
+                if(query){m->bytes=decoded;memcpy(m->path,name,(size_t)names+1u);}m->matches=1;
                 m->flags=flags;m->method=method;m->crc=u32(header+16);m->stored=u32(header+20);uint32_t local=u32(header+42);unsigned char h[30];if((uint64_t)local+30>central)goto invalid;status=read_zip(z,local,h,sizeof h);if(status!=COH_OK)goto failed;
                 if(u32(h)!=0x04034b50u||u16(h+6)!=flags||u16(h+8)!=method||u16(h+26)!=names)goto invalid;
                 uint64_t data=(uint64_t)local+30+names+u16(h+28);if(data>central||m->stored>central-data)goto invalid;
@@ -71,12 +91,28 @@ CohStatus coh_asset_zip_open(CohAssetSource source,const CohAssetZipMember *want
         cursor=next;
     }
     if(cursor!=limit)goto invalid;
-    for(uint32_t i=0;i<count;i++)if(!z->member[i].found){status=COH_NOT_FOUND;goto failed;}
+    for(uint32_t i=0;i<count;i++)if(!query&&!z->member[i].found){status=COH_NOT_FOUND;goto failed;}
     *out=z;return COH_OK;
 invalid:status=COH_INVALID;
 failed:free(z);return status;
 }
-CohStatus coh_asset_zip_mount(CohAssetZip *z,CohAssetLoader *loader){if(!z||!loader)return COH_INVALID;for(uint32_t i=0;i<z->stats.members;i++){Member *m=&z->member[i];CohAssetSource source={member_read,m,m->bytes,z->source.generation};CohStatus s=coh_asset_mount_file(loader,m->path,source);if(s!=COH_OK)return s;}return COH_OK;}
+CohStatus coh_asset_zip_open(CohAssetSource source,const CohAssetZipMember *want,uint32_t count,CohCancel cancel,CohAssetZip **out){return open_zip(source,want,NULL,count,cancel,out);}
+CohStatus coh_asset_zip_open_queries(CohAssetSource source,const CohAssetZipQuery *query,uint32_t count,CohCancel cancel,CohAssetZip **out){return open_zip(source,NULL,query,count,cancel,out);}
+static int disjoint(const void*a,size_t an,const void*b,size_t bn){uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;if((an&&(!a||an>UINTPTR_MAX-x))||(bn&&(!b||bn>UINTPTR_MAX-y)))return 0;return !an||!bn||(x<y?an<=y-x:bn<=x-y);}
+CohStatus coh_asset_zip_query(const CohAssetZip*z,uint32_t index,const char**path,uint32_t*bytes,uint32_t*matches){
+ if(!z||index>=z->stats.members||!path||!bytes||!matches)return COH_INVALID;
+ if(!disjoint(path,sizeof *path,z,z->stats.owned_bytes)||!disjoint(bytes,sizeof *bytes,z,z->stats.owned_bytes)||!disjoint(matches,sizeof *matches,z,z->stats.owned_bytes)||!disjoint(path,sizeof *path,bytes,sizeof *bytes)||!disjoint(path,sizeof *path,matches,sizeof *matches)||!disjoint(bytes,sizeof *bytes,matches,sizeof *matches))return COH_INVALID;
+ const Member*m=z->member+index;if(!m->found)return COH_NOT_FOUND;
+ *path=m->path;*bytes=m->bytes;*matches=m->matches;return COH_OK;
+}
+CohStatus coh_asset_zip_read(CohAssetZip*z,uint32_t index,void*dst,size_t bytes){
+ if(!z||index>=z->stats.members||!dst)return COH_INVALID;
+ Member*m=z->member+index;
+ if(!m->found)return COH_NOT_FOUND;
+ if(bytes!=m->bytes||!disjoint(dst,bytes,z,z->stats.owned_bytes))return COH_INVALID;
+ return member_read(m,0,dst,bytes);
+}
+CohStatus coh_asset_zip_mount(CohAssetZip *z,CohAssetLoader *loader){if(!z||!loader)return COH_INVALID;for(uint32_t i=0;i<z->stats.members;i++){Member *m=&z->member[i];if(!m->found)continue;CohAssetSource source={member_read,m,m->bytes,z->source.generation};CohStatus s=coh_asset_mount_file(loader,m->path,source);if(s!=COH_OK)return s;}return COH_OK;}
 void coh_asset_zip_free(CohAssetZip *z){free(z);}
 CohAssetZipStats coh_asset_zip_stats(const CohAssetZip *z){CohAssetZipStats s={0};return z?z->stats:s;}
 
