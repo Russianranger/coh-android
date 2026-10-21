@@ -5,6 +5,7 @@ name: Native source qualification
     - native-android
     paths:
     - .github/workflows/native-qualification.yml
+    - native-android/combined-client/DIAGNOSTIC-STATUS.json
     - native-android/combined-client/tools/check_observed_bridge.py
     - native-android/combined-client/qualification/check_interop_phase.py
     - native-android/combined-client/tools/emulator_check.py

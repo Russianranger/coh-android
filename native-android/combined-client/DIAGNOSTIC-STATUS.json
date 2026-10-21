@@ -4918,6 +4918,13 @@
     "qualified_source_commit": "1caaf471afe1d725804e69d342a5b0d716c3f4e4",
     "qualified_source_tree": "ff42137b8afee7640d08698b5dd5ae946c4420e8",
     "CI_dispatches_requested": 1,
-    "local_qualified_history_branch": "recovery/coh019-qualified-before-api"
+    "local_qualified_history_branch": "recovery/coh019-qualified-before-api",
+    "CI_bootstrap": {
+      "first_push": "49c71df1047e1e9b98ef3a440a3ba97300873533",
+      "result": "native-qualification never dispatched: status path absent from push filter",
+      "diagnostic_runs": 0,
+      "APK_builds": 0,
+      "correction": "Include the existing rolling status path in native-qualification push filter; one diagnostic dispatch still requested."
+    }
   }
 }
