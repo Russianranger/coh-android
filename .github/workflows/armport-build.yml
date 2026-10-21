@@ -111,7 +111,7 @@ jobs:
       - name: Report build errors
         if: failure()
         run: |
-          grep -E "error:|undefined (reference|symbol)" "$RUNNER_TEMP/build.log" | sed 's#.*/armport/src/##' | sort | uniq -c | sort -rn | head -40 > errors.txt || true
+          grep -E "error:|undefined (reference|symbol)|>>> referenced by" "$RUNNER_TEMP/build.log" | sed 's#.*/armport/src/##' | sort | uniq -c | sort -rn | head -40 > errors.txt || true
           cat errors.txt
           i=0
           while IFS= read -r chunk; do

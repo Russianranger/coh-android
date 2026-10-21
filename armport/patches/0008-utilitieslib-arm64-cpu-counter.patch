@@ -1,0 +1,45 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/timing.h b/libs/UtilitiesLib/include/utilitieslib/utils/timing.h
+index ffbfb48..07cecc5 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/timing.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/timing.h
+@@ -76,6 +76,16 @@ typedef struct PerformanceInfo {
+ 
+ #if defined(_XBOX)
+     #define GET_CPU_TICKS_64(x) x = __mftb();
++#elif defined(__aarch64__)
++    // ArmPort: no RDTSC on ARM64; read the ARM generic timer instead. Used for
++    // performance counters and seeding only; the game clock uses QueryPerformanceCounter.
++    static __inline unsigned __int64 timing_read_cpu_counter(void)
++    {
++        unsigned __int64 value;
++        __asm__ __volatile__("isb\n\tmrs %0, cntvct_el0" : "=r"(value) :: "memory");
++        return value;
++    }
++    #define GET_CPU_TICKS_64(x) x = timing_read_cpu_counter();
+ #elif defined (_WIN64) || (defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX))
+     #define GET_CPU_TICKS_64(x) x = __rdtsc();
+ #else
+diff --git a/libs/UtilitiesLib/src/UtilsNew/profiler.c b/libs/UtilitiesLib/src/UtilsNew/profiler.c
+index 63d5a73..a95b7a1 100644
+--- a/libs/UtilitiesLib/src/UtilsNew/profiler.c
++++ b/libs/UtilitiesLib/src/UtilsNew/profiler.c
+@@ -24,6 +24,19 @@
+ #define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #include <psapi.h>
++
++// ArmPort: x86 RDTSC does not exist on ARM64. The profiler only needs a
++// monotonic counter, so read the ARM generic timer (fixed frequency, not
++// CPU cycles; profiler units change accordingly).
++#if defined(__aarch64__)
++static __inline unsigned __int64 profiler_read_counter(void)
++{
++    unsigned __int64 value;
++    __asm__ __volatile__("isb\n\tmrs %0, cntvct_el0" : "=r"(value) :: "memory");
++    return value;
++}
++#define __rdtsc() profiler_read_counter()
++#endif
+ #pragma warning(disable:4127)
+ 
+ typedef unsigned __int32 uint32_t;

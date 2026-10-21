@@ -5,4 +5,4 @@
 0005-cmake-arm64-sse2neon-and-tests.patch
 0006-cmake-arm64-ordinary-shared-memory-data.patch
 0007-cmake-arm64-portable-cryptopp.patch
-0008-utilitieslib-arm64-profiler-counter.patch
+0008-utilitieslib-arm64-cpu-counter.patch
