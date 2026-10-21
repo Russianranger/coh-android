@@ -130,6 +130,22 @@ CohStatus coh_initial_map_finish_initial(CohInitialMap*x,const CohInitialCapture
     x->update.command!=COH_REP_ALLENTS||end!=x->reader.bits||end!=x->message->payload_bits||ic_owner(x)!=COH_OK)return COH_STATE;
  x->ready.pending_id=x->update.full_update_id;x->ready.pending=1;return COH_OK;
 }
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+CohStatus coh_initial_map_finish_partial_tail(CohInitialMap*x,const CohInitialCaptureEvent*event,size_t update_end,size_t command_begin,size_t command_body,uint32_t command){
+ if(!x||!event)return COH_INVALID;
+ if(!x->busy||event!=x->event||event->kind!=COH_INITIAL_CAPTURE_ALLENTS||!x->message||
+    !x->ready.password_set||x->ready.cookie<2||x->ready.pending||x->d.continuation.initial_complete||
+    x->update.command!=COH_REP_ALLENTS||!command||update_end<x->update.entity_tail_bit||
+    update_end>command_begin||command_begin>=command_body||command_body>=x->reader.bits||
+    x->reader.bits!=x->message->payload_bits||ic_owner(x)!=COH_OK)return COH_STATE;
+ CohRepReader command_reader=x->reader;command_reader.cursor=command_begin;uint32_t actual_command=0;
+ if(coh_rep_pack(&command_reader,1,&actual_command)!=COH_OK||actual_command!=command||command_reader.cursor!=command_body)return COH_STATE;
+ CohInitialContinuation*c=&x->d.continuation;c->source_entity_update_complete=1;c->partial_tail=1;c->diagnostic_ack_intent=1;
+ c->skipped_tail_command=command;c->source_update_end_bit=update_end;c->tail_command_begin_bit=command_begin;
+ c->tail_body_begin_bit=command_body;c->tail_remaining_bits=x->reader.bits-command_body;
+ x->ready.pending_id=x->update.full_update_id;x->ready.pending=1;return COH_OK;
+}
+#endif
 static CohStatus ic_ack_ready(CohInitialMap*x,uint64_t now){
  CohMapClient*m=x->map;CohMapPacket packet;CohMapProfile profile={x->version<4,0};CohInitialContinuation*c=&x->d.continuation;
  CohStatus s=coh_initial_input_serialize(profile,x->ready.pending_id,0,&packet);
@@ -156,12 +172,15 @@ static CohStatus ic_ack_ready(CohInitialMap*x,uint64_t now){
  coh_map_packet_wipe(&packet);wipe(&fields,sizeof(fields));wipe(&x->ready,sizeof(x->ready));
  if(s!=COH_OK)return s;
  c->client_ready_queued=1;c->waiting_for_full_update=1;c->initial_complete=1;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ c->source_entity_update_complete=1;c->diagnostic_ack_intent=1;c->initial_complete=!c->partial_tail;
+#endif
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
  c->abort_reason=COH_INITIAL_ABORT_NONE;
 #else
  c->post_begin_ms=now;
 #endif
- x->d.complete_initial_character=1;x->d.ack_permitted=1;x->d.phase=COH_INITIAL_CAPTURE_WAIT_UPDATES;x->d.status=COH_OK;return COH_OK;
+ x->d.complete_initial_character=c->initial_complete;x->d.ack_permitted=c->initial_complete;x->d.phase=COH_INITIAL_CAPTURE_WAIT_UPDATES;x->d.status=COH_OK;return COH_OK;
 }
 static void ic_post_count(CohInitialMap*x,const CohNetOwnedMessage*n,uint64_t now){
  CohInitialContinuation*c=&x->d.continuation;unsigned row;
@@ -169,6 +188,9 @@ static void ic_post_count(CohInitialMap*x,const CohNetOwnedMessage*n,uint64_t no
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
  c->post_total_bytes+=n->payload_bytes;c->post_total_bits+=n->payload_bits;if(c->post_messages==1)c->post_first_ms=now;c->post_last_ms=now;
  if(!c->full_update_ack_sent&&!c->client_ready_sent)c->post_before_send++;else if(!c->full_update_ack_sent||!c->client_ready_sent)c->post_between_sends++;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ if(c->client_ready_sent){if(!c->post_ready_messages)c->post_response_begin_ms=now;c->post_ready_messages++;}
+#endif
 #else
  (void)now;
 #endif
@@ -290,7 +312,18 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
  m->last_ms=now;
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
  /* Expire before UDP service can accept a previously deferred send or retry. */
- if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES&&now-x->d.continuation.ack_delivery.queued_ms>=COH_INITIAL_POST_DURATION_MS){x->d.continuation.post_window_complete=1;x->d.continuation.post_end_ms=now;x->d.continuation.abort_reason=COH_INITIAL_ABORT_DEADLINE;result=COH_STATE;why=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;goto done;}
+ if(x->d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES){CohInitialContinuation*c=&x->d.continuation;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+  if(c->post_ready_messages&&now-c->post_response_begin_ms>=COH_INITIAL_POST_OBSERVE_MS){
+   c->post_window_complete=1;c->post_observation_complete=1;c->post_end_ms=now;c->abort_reason=COH_INITIAL_ABORT_OBSERVATION_COMPLETE;
+   coh_initial_map_forget_ready(x);x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;goto done;
+  }
+  if(!c->post_ready_messages&&now-c->ack_delivery.queued_ms>=COH_INITIAL_POST_DURATION_MS)
+#else
+  if(now-c->ack_delivery.queued_ms>=COH_INITIAL_POST_DURATION_MS)
+#endif
+  {c->post_window_complete=1;c->post_end_ms=now;c->abort_reason=COH_INITIAL_ABORT_DEADLINE;result=COH_STATE;why=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;goto done;}
+ }
 #endif
  result=coh_net_udp_service(m->udp,now,cancel);CohNetUdpDiagnostics udp;coh_net_udp_diagnostics(m->udp,&udp);
  if(result!=COH_OK||udp.state!=COH_UDP_ACTIVE){if(result==COH_OK)result=COH_STATE;if(result==COH_CANCELLED)why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;else if(udp.state==COH_UDP_TIMED_OUT)why=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;

@@ -100,6 +100,13 @@ CohStatus coh_initial_capture_finish_initial(const CohInitialCapture*x,const Coh
  if(!x->busy||!x->observing||!x->map)return COH_STATE;
  return coh_initial_map_finish_initial(x->map,event,end);
 }
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+CohStatus coh_initial_capture_finish_partial_tail(const CohInitialCapture*x,const CohInitialCaptureEvent*event,size_t update_end,size_t command_begin,size_t command_body,uint32_t command){
+ if(!x||!event)return COH_INVALID;
+ if(!x->busy||!x->observing||!x->map)return COH_STATE;
+ return coh_initial_map_finish_partial_tail(x->map,event,update_end,command_begin,command_body,command);
+}
+#endif
 size_t coh_initial_capture_continuation_bytes(const CohInitialCapture*x){return x?sizeof(*x)-offsetof(CohInitialCapture,local_password_md5)+coh_initial_map_continuation_bytes():0;}
 #endif
 void coh_initial_capture_diagnostics(const CohInitialCapture*x,CohInitialCaptureDiagnostics*out){

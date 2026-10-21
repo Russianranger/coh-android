@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--source-root', type=Path, default=ROOT, help='Read-only pinned original source checkout for sparse local worktrees.')
     parser.add_argument('--bounded', action='store_true', help='Next diagnostic opt-in:20s and one same-ID accepted retry.')
+    parser.add_argument('--fallback', action='store_true', help='Opt-in partial command tail and30s after first observed READY response; implies bounded.')
     args = parser.parse_args()
     work = args.work.resolve()
     work.mkdir(parents=True, exist_ok=False)
@@ -41,8 +42,10 @@ def main():
     payload = bytes.fromhex(fixture['payload_hex'])
     (work / 'groups-fixtures.h').write_text('static const unsigned char source_groups_minimal_world_packed[]={' + ','.join(map(str, payload)) + '};\n#define source_groups_minimal_world_packed_bits ' + str(fixture['payload_bits']) + 'u\n')
     flags = ['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-DCOH_FRAME_CAPTURE_DIAGNOSTIC=1', '-I' + str(ROOT / 'native-android/include'), '-I' + str(work), '-fno-pie', '-no-pie', '-fstack-usage']
-    if args.bounded:
+    if args.bounded or args.fallback:
         flags += ['-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=1']
+    if args.fallback:
+        flags += ['-DCOH_INITIAL_ACK_FALLBACK_DIAGNOSTIC=1']
     dependency = subprocess.run([*flags, '-MM', *map(str, sources)], cwd=ROOT, capture_output=True, text=True, check=True)
     frozen = {Path(__file__).resolve()}
     for line in dependency.stdout.replace('\\\n', ' ').splitlines():
@@ -51,7 +54,7 @@ def main():
             if path.is_relative_to(ROOT):
                 frozen.add(path)
     pins = {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(frozen)}
-    result = {'passed': True, 'source_sha256': pins, 'original_db_fixture': db_source, 'original_groups_fixture': groups_source, 'request_tx_preservation': preservation, 'modes': {}, 'bounded_next_diagnostic': args.bounded, 'scope': 'Actual local OS UDP with a synthetic completion callback. Actual full saved-packet qualification is separate. No real server, actor publication or post-initial raw payload export.'}
+    result = {'passed': True, 'source_sha256': pins, 'original_db_fixture': db_source, 'original_groups_fixture': groups_source, 'request_tx_preservation': preservation, 'modes': {}, 'bounded_next_diagnostic': args.bounded or args.fallback, 'partial_tail_fallback':args.fallback, 'scope': 'Actual local OS UDP with a synthetic completion callback. Actual full saved-packet qualification is separate. No real server, actor publication or post-initial raw payload export.'}
     environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1:print_stacktrace=1'}
     for mode, options in [('release', ['-O2']), ('asan', ['-O1', '-g', '-fsanitize=address']), ('ubsan', ['-O1', '-g', '-fsanitize=undefined', '-fno-sanitize-recover=all'])]:
         objects = []

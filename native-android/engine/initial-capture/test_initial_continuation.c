@@ -8,6 +8,9 @@
 #pragma GCC diagnostic pop
 #include "coh_initial_send.h"
 static unsigned completion_mode,release_failure,post_callbacks;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+static size_t fallback_update_end,fallback_command_begin,fallback_body_begin;
+#endif
 #include <errno.h>
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
 static unsigned defer_ready,defer_ack;
@@ -30,22 +33,47 @@ static CohStatus completed(void*context,const CohInitialCapture*owner,const CohI
  Observation*o=context;CohInitialCaptureLease loan;CHECK(coh_initial_capture_lease(owner,event,&loan)==COH_OK);
  if(event->kind==COH_INITIAL_CAPTURE_UPDATE){post_callbacks++;return COH_OK;}
  CHECK(event->kind==COH_INITIAL_CAPTURE_ALLENTS);CHECK(observe(context,owner,event)==COH_OK);
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ if(completion_mode>=11){
+  size_t body_begin=fallback_body_begin,command_begin=fallback_command_begin;CohInitialCaptureEvent copy=*event;
+  CHECK(coh_initial_capture_finish_partial_tail(owner,&copy,fallback_update_end,command_begin,body_begin,205)==COH_STATE);
+  CHECK(coh_initial_capture_finish_partial_tail(owner,event,fallback_update_end,command_begin,body_begin,0)==COH_STATE);
+  CHECK(coh_initial_capture_finish_partial_tail(owner,event,command_begin+1,command_begin,body_begin,205)==COH_STATE);
+  CHECK(coh_initial_capture_finish_partial_tail(owner,event,fallback_update_end,command_begin,loan.reader.bits,205)==COH_STATE);
+  CHECK(coh_initial_capture_finish_partial_tail(owner,event,fallback_update_end,command_begin,body_begin,206)==COH_STATE);
+  CHECK(coh_initial_capture_finish_partial_tail(owner,event,fallback_update_end,command_begin,body_begin+1,205)==COH_STATE);
+  CHECK(coh_initial_capture_finish_partial_tail(owner,event,fallback_update_end,command_begin,body_begin,205)==COH_OK);
+  CHECK(coh_initial_capture_finish_initial(owner,event,loan.reader.bits)==COH_STATE);
+ }else
+#endif
+ {
  CohInitialCaptureEvent copy=*event;CHECK(coh_initial_capture_finish_initial(owner,&copy,loan.reader.bits)==COH_STATE);
  CHECK(coh_initial_capture_finish_initial(owner,event,loan.reader.bits-1)==COH_STATE);
  CHECK(coh_initial_capture_finish_initial(owner,event,loan.reader.bits)==COH_OK);
  CHECK(coh_initial_capture_finish_initial(owner,event,loan.reader.bits)==COH_STATE);
- if(completion_mode==1)o->cancelled=1;
- if(completion_mode==2)release_failure=1;
- return completion_mode==3?COH_IO:COH_OK;
+ }
+ unsigned failure=completion_mode>=12&&completion_mode<=14?completion_mode-11:completion_mode<4?completion_mode:0;
+ if(failure==1)o->cancelled=1;
+ if(failure==2)release_failure=1;
+ return failure==3?COH_IO:COH_OK;
 }
 static CohStatus next(Observation*o,uint64_t now){return coh_initial_capture_service(o->owner,now,(CohCancel){cancel_now,o},completed,o,sizeof(*o));}
 static void scenario_complete(unsigned mode){
  Peer db=peer_open(),map=peer_open();Observation o={0};completion_mode=mode;CohNetEndpoint to=setup(&o,&db,&map,0);
  CHECK(service(&o,115)==COH_OK);drain_ack(&map,5);ok(&o,116);CohNetPacket req=frame_read(&map,5,0);CHECK(command(&req,5,0)==COH_MAP_REQALLENTS);
- size_t bits;uint8_t*data=body(128,0,0,&bits);o.expected=data;o.bits=bits;o.bytes=(bits+7)/8;o.aligned=0;peer_message(&map,to,5,data,bits,0,req.id);
+ size_t bits;uint8_t*data=body(128,0,0,&bits);
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ if(mode>=11){CohProtocolBits writer;fallback_update_end=fallback_command_begin=bits;CHECK(coh_protocol_bits_init(&writer,data,128,bits,1)==COH_OK);writer.cursor=bits;CHECK(coh_protocol_write_pack(&writer,1,205)==COH_OK);fallback_body_begin=writer.bit_length;CHECK(coh_protocol_write(&writer,8,0xab)==COH_OK);bits=writer.bit_length;}
+#endif
+ o.expected=data;o.bits=bits;o.bytes=(bits+7)/8;o.aligned=0;peer_message(&map,to,5,data,bits,0,req.id);
  CohStatus s=next(&o,117);CohInitialCaptureDiagnostics d=diagnostic(o.owner);drain_ack(&map,5);
- if(mode&&mode<4){CHECK(s==(mode==1?COH_CANCELLED:COH_IO));CHECK(!d.continuation.initial_complete&&!d.continuation.full_update_ack_queued&&!d.continuation.client_ready_queued&&!d.continuation.full_update_ack_sent&&!d.continuation.client_ready_sent);quiet(&map);}
+ unsigned failure=mode>=12&&mode<=14?mode-11:mode<4?mode:0;
+ if(failure){CHECK(s==(failure==1?COH_CANCELLED:COH_IO));CHECK(!d.continuation.initial_complete&&!d.continuation.full_update_ack_queued&&!d.continuation.client_ready_queued&&!d.continuation.full_update_ack_sent&&!d.continuation.client_ready_sent);quiet(&map);}
  else{
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+  if(mode>=11){CHECK(s==COH_OK&&d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES&&d.raw_allents_observed&&!d.continuation.initial_complete&&!d.complete_initial_character&&!d.ack_permitted&&d.continuation.partial_tail&&d.continuation.source_entity_update_complete&&d.continuation.diagnostic_ack_intent&&d.continuation.skipped_tail_command==205&&d.continuation.tail_remaining_bits==8);}
+  else
+#endif
   CHECK(s==COH_OK&&d.phase==COH_INITIAL_CAPTURE_WAIT_UPDATES&&d.raw_allents_observed&&d.continuation.initial_complete&&d.complete_initial_character&&d.ack_permitted);
   CHECK(d.continuation.full_update_ack_queued&&d.continuation.client_ready_queued&&!d.continuation.full_update_ack_sent&&!d.continuation.client_ready_sent&&d.continuation.waiting_for_full_update&&!d.continuation.received_character_queued);
   #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
@@ -66,13 +94,23 @@ static void scenario_complete(unsigned mode){
 #endif
   if(mode==4){
    CohNetPacket msg=application(&map,15);msg.ack_count=2;msg.acks[0]=ack.id;msg.acks[1]=ready.id;frame_send(&map,to,5,&msg);CHECK(next(&o,119)==COH_OK);drain_ack(&map,5);
+#ifndef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
    CHECK(next(&o,3000)==COH_OK&&diagnostic(o.owner).phase==COH_INITIAL_CAPTURE_WAIT_UPDATES);
-   #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
+#endif
+   #ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+   for(uint64_t at=1119;at<30119;at+=1000){CohNetPacket keep=application(&map,15);keep.ack_count=2;keep.acks[0]=ack.id;keep.acks[1]=ready.id;frame_send(&map,to,5,&keep);CHECK(next(&o,at)==COH_OK);drain_ack(&map,5);}
+   CHECK(next(&o,30118)==COH_OK);CHECK(next(&o,30119)==COH_UNSUPPORTED);d=diagnostic(o.owner);
+   CHECK(d.phase==COH_INITIAL_CAPTURED&&d.continuation.abort_reason==COH_INITIAL_ABORT_OBSERVATION_COMPLETE&&d.continuation.post_response_begin_ms==119&&d.continuation.post_observation_complete&&d.continuation.post_end_ms==30119&&d.continuation.post_messages==30);totals(&d.continuation);
+#elif defined(COH_BOUNDED_CONTINUATION_DIAGNOSTIC)
    CHECK(next(&o,20116)==COH_OK);CHECK(next(&o,20117)==COH_STATE);d=diagnostic(o.owner);CHECK(d.phase==COH_INITIAL_CAPTURE_FAILED&&d.failure==COH_INITIAL_CAPTURE_FAILURE_TIMEOUT&&d.continuation.abort_reason==COH_INITIAL_ABORT_DEADLINE&&d.continuation.post_end_ms==20117&&d.continuation.post_begin_ms==118&&d.continuation.ack_delivery.queued_ms==117);totals(&d.continuation);
 #else
    CHECK(next(&o,10117)==COH_UNSUPPORTED);d=diagnostic(o.owner);CHECK(d.phase==COH_INITIAL_CAPTURED&&d.continuation.post_end_ms-d.continuation.post_begin_ms==10000);
 #endif
-   CHECK(d.continuation.post_window_complete&&d.continuation.post_messages==1);quiet(&map);
+   CHECK(d.continuation.post_window_complete);
+#ifndef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+   CHECK(d.continuation.post_messages==1);
+#endif
+   quiet(&map);
   }
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
   else if(mode==5){uint64_t due=118+coh_net_retry_ms(0,coh_net_default_config().ping_ms,0);CHECK(next(&o,due-1)==COH_OK);quiet(&map);CHECK(next(&o,due)==COH_OK);size_t a_bytes,r_bytes;CohNetPacket a=read_sized(&map,&a_bytes),r=read_sized(&map,&r_bytes);CHECK(a.id==ack.id&&r.id==ready.id&&a.payload_bits==ack.payload_bits&&r.payload_bits==ready.payload_bits&&!memcmp(a.payload,ack.payload,(ack.payload_bits+7)/8)&&!memcmp(r.payload,ready.payload,(ready.payload_bits+7)/8));d=diagnostic(o.owner);CHECK(d.continuation.ack_delivery.accepted==2&&d.continuation.ready_delivery.accepted==2&&d.continuation.ack_delivery.accepted_retries==1&&d.continuation.ready_delivery.accepted_retries==1&&d.continuation.ack_delivery.accepted_wire_bytes==ack_wire+a_bytes&&d.continuation.ready_delivery.accepted_wire_bytes==ready_wire+r_bytes);uint64_t end=due+coh_net_retry_ms(1,coh_net_default_config().ping_ms,0);CHECK(next(&o,end-1)==COH_OK);quiet(&map);CHECK(next(&o,end)==COH_STATE);d=diagnostic(o.owner);CHECK(d.phase==COH_INITIAL_CAPTURE_FAILED&&d.continuation.abort_reason==COH_INITIAL_ABORT_TRANSPORT_TIMEOUT&&d.continuation.ack_delivery.accepted==2&&d.continuation.ready_delivery.accepted==2&&d.continuation.post_end_ms==end);quiet(&map);}
@@ -87,17 +125,23 @@ static void scenario_complete(unsigned mode){
    CohNetPacket msg=application(&map,15);app_send(&map,to,msg,NULL,i&1?ready.id:ack.id);CHECK(next(&o,119+i)==(i+1==COH_INITIAL_POST_MESSAGES_MAX?COH_UNSUPPORTED:COH_OK));drain_ack(&map,5);
   }
   d=diagnostic(o.owner);CHECK(d.phase==COH_INITIAL_CAPTURED&&d.continuation.post_window_complete&&d.continuation.post_messages==128&&d.continuation.post_rows==1&&!d.continuation.post_row_overflow);
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+  CHECK(!d.continuation.post_observation_complete&&d.continuation.post_response_begin_ms==119);
+#endif
   CHECK(d.continuation.post[0].kind==COH_INITIAL_CAPTURE_COMMAND_SERVER_GAME_CMDS&&d.continuation.post[0].count==128&&d.continuation.post[0].total_bytes>0&&d.continuation.post[0].total_bits>0&&!d.continuation.received_character_queued);quiet(&map);
   }
  }
  #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
  scenario_cleanup:
- totals(&d.continuation);if(!mode)CHECK(d.continuation.abort_reason==COH_INITIAL_ABORT_MESSAGE_LIMIT);
+ totals(&d.continuation);if(!mode||mode==11)CHECK(d.continuation.abort_reason==COH_INITIAL_ABORT_MESSAGE_LIMIT);
 #endif
  free(data);coh_initial_capture_close(o.owner);CHECK(diagnostic(o.owner).local.opened_sockets==diagnostic(o.owner).local.closed_sockets);coh_initial_capture_destroy(o.owner);peer_close(&db);peer_close(&map);CHECK(!live_allocations);scenarios++;
 }
 int main(void){unsigned fds=descriptors();unsigned modes=5;
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
  modes=11;
+#endif
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ modes=15;
 #endif
  for(unsigned i=0;i<modes;i++){scenario_complete(i);}CHECK(fds==descriptors()&&!post_callbacks);printf("{\"passed\":true,\"checks\":%u,\"scenarios\":%u,\"synthetic_completion_double\":true,\"real_server\":false,\"post_message_bound\":128,\"post_duration_ms\":%u,\"whole_source_packet_qualification_claim\":false}\n",checks,scenarios,COH_INITIAL_POST_DURATION_MS);return 0;}

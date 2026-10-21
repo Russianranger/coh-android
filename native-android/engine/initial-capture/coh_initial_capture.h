@@ -15,6 +15,9 @@ typedef enum { COH_INITIAL_CAPTURE_NONE,COH_INITIAL_CAPTURE_GROUPS,
  COH_INITIAL_CAPTURE_ALLENTS,COH_INITIAL_CAPTURE_UPDATE } CohInitialCaptureKind;
 #define COH_INITIAL_POST_COMMAND_ROWS 16u
 #define COH_INITIAL_POST_MESSAGES_MAX 128u
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+#define COH_INITIAL_POST_OBSERVE_MS 30000u
+#endif
 #ifdef COH_BOUNDED_CONTINUATION_DIAGNOSTIC
 #define COH_INITIAL_POST_DURATION_MS 20000u
 #else
@@ -49,7 +52,8 @@ typedef enum {COH_INITIAL_ABORT_NONE,COH_INITIAL_ABORT_DEADLINE,
  COH_INITIAL_ABORT_TRANSPORT_TIMEOUT,COH_INITIAL_ABORT_TRANSPORT_IO,
  COH_INITIAL_ABORT_MESSAGE,COH_INITIAL_ABORT_CANCELLED,
  COH_INITIAL_ABORT_OBSERVER,COH_INITIAL_ABORT_RELEASE,COH_INITIAL_ABORT_OWNER,
- COH_INITIAL_ABORT_QUEUE,COH_INITIAL_ABORT_CLIENT_CLOSED}CohInitialAbort;
+ COH_INITIAL_ABORT_QUEUE,COH_INITIAL_ABORT_CLIENT_CLOSED,
+ COH_INITIAL_ABORT_OBSERVATION_COMPLETE}CohInitialAbort;
 /* Callback acceptance is an OS UDP send, not peer delivery. Retries retain
  * their original reliable Tx ID. All times use the owner monotonic clock. */
 typedef struct{
@@ -57,7 +61,7 @@ typedef struct{
  uint32_t payload_bytes,payload_bits,attempts,accepted,accepted_retries,
   deferred,failures,last_status,counter_overflow;
 }CohInitialDelivery;
-static inline const char *coh_initial_abort_name(CohInitialAbort reason){static const char*const names[]={"none","20-second deadline","message limit","peer disconnected","transport retry timeout","transport I/O failure","invalid message","cancelled","observer failure","payload release failure","owner failure","queue failure","client closed"};return (unsigned)reason<sizeof(names)/sizeof(names[0])?names[reason]:"unknown abort";}
+static inline const char *coh_initial_abort_name(CohInitialAbort reason){static const char*const names[]={"none","20-second deadline","message limit","peer disconnected","transport retry timeout","transport I/O failure","invalid message","cancelled","observer failure","payload release failure","owner failure","queue failure","client closed","30-second observation complete"};return (unsigned)reason<sizeof(names)/sizeof(names[0])?names[reason]:"unknown abort";}
 #endif
 typedef struct {
  uint32_t initial_complete,full_update_ack_queued,client_ready_queued,
@@ -75,6 +79,12 @@ typedef struct {
   post_first_ms,post_last_ms;
  uint32_t post_unclassified,post_before_send,post_between_sends;
  CohInitialAbort abort_reason;
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+ uint32_t source_entity_update_complete,partial_tail,skipped_tail_command,
+  diagnostic_ack_intent,post_observation_complete,post_ready_messages;
+ uint64_t source_update_end_bit,tail_command_begin_bit,tail_body_begin_bit,
+  tail_remaining_bits,post_response_begin_ms;
+#endif
 #endif
 } CohInitialContinuation;
 /* Exact event ADDRESS is a synchronous loan key, not caller-populated labels.
@@ -182,6 +192,16 @@ CohStatus coh_initial_capture_local_password_digest(CohInitialCapture *,const ui
  * This schedules original ACK/READY after payload release; it is not an actor
  * or resource approval and accepts no caller cookie or full-update ID. */
 CohStatus coh_initial_capture_finish_initial(const CohInitialCapture *,const CohInitialCaptureEvent *,size_t consumed_bits);
+#ifdef COH_INITIAL_ACK_FALLBACK_DIAGNOSTIC
+/* Opt-in diagnostic only: the source entity/global update has returned, and
+ * the command receiver explicitly reports an unimplemented handler after a
+ * complete command ID. Unknown body bytes are dropped, never decoded/skipped
+ * to a later command. Not valid for malformed/truncated/unknown-width fields.
+ * Schedules original ACK/READY after release without claiming full INITIAL.
+ * IDs/cookie still come solely from the exact active owner. */
+CohStatus coh_initial_capture_finish_partial_tail(const CohInitialCapture *,const CohInitialCaptureEvent *,
+ size_t source_update_end,size_t command_begin,size_t command_body,uint32_t skipped_command);
+#endif
 /* Additional concrete fixed continuation owners, separate from historical
  * capture/transport storage. Charge alongside every new receiver allocation. */
 size_t coh_initial_capture_continuation_bytes(const CohInitialCapture *);
