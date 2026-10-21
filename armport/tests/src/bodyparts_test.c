@@ -6,8 +6,9 @@
  * 1. Text: ParserReadText with the original ParseBodyPartBegin table on
  *    defs/ui/bodyparts.bp must give 28 entries, first "Pants", last "Tail".
  * 2. Binary (optional): the shipped client BodyParts.bin must pass the
- *    original parse-table checksum and load to the same 28 entries. This
- *    checks that the 32-bit-built .bin files load in a 64-bit client.
+ *    original parse-table checksum, load to 28 entries, and match the text
+ *    result record by record in every parsed field. This covers this one
+ *    shipped .bin file; other cache formats are not tested here.
  *
  * Prints one JSON line and exits 0 only if every check passes.
  */
@@ -29,7 +30,7 @@ BoneId bone_IdFromName(const char *name) { (void)name; return (BoneId)0; }
 
 static char *read_all(const char *path, int *len)
 {
-	FILE *f = fopen(path, "rb");
+	FileWrapper *f = (FileWrapper *)fopen(path, "rb"); /* engine file layer */
 	char *buf;
 	long n;
 	if (!f) return NULL;
@@ -55,13 +56,39 @@ static int check_list(const char *label, BodyPartList *list, int ok_call)
 	return ok;
 }
 
+static int same_str(const char *a, const char *b)
+{
+	if (!a || !b) return a == b;
+	return !strcmp(a, b);
+}
+
+/* Compare every record field by field: name, bone count, influence cost,
+ * geometry/texture/base names and the dont_clear flag (all parsed fields). */
+static int compare_lists(BodyPartList *a, BodyPartList *b, int *first_diff)
+{
+	int i, n = eaSize(&a->bodyParts);
+	*first_diff = -1;
+	if (n != eaSize(&b->bodyParts)) return 0;
+	for (i = 0; i < n; i++) {
+		const BodyPart *x = a->bodyParts[i], *y = b->bodyParts[i];
+		if (!same_str(x->name, y->name) || x->num_parts != y->num_parts ||
+		    x->influenceCost != y->influenceCost || !same_str(x->name_geo, y->name_geo) ||
+		    !same_str(x->name_tex, y->name_tex) || !same_str(x->base_var, y->base_var) ||
+		    x->dont_clear != y->dont_clear) {
+			*first_diff = i;
+			return 0;
+		}
+	}
+	return 1;
+}
+
 int main(int argc, char **argv)
 {
 	int len = 0, ok = 1, r;
 	char *text;
 	BodyPartList text_list = {0};
 	if (argc < 2) {
-		fprintf(stderr, "usage: %s bodyparts.bp [BodyParts.bin]\n", argv[0]);
+		printf("usage: %s bodyparts.bp [BodyParts.bin]\n", argv[0]);
 		return 2;
 	}
 	printf("{\"pointer_bytes\":%d,\"long_bytes\":%d,", (int)sizeof(void *), (int)sizeof(long));
@@ -82,8 +109,13 @@ int main(int argc, char **argv)
 			printf("\"bin\":{\"pass\":false}");
 			ok = 0;
 		} else {
+			int same, diff;
 			r = ParserReadBinaryFile(file, argv[2], ParseBodyPartBegin, &bin_list, NULL, NULL);
 			ok &= check_list("bin", &bin_list, r);
+			same = compare_lists(&text_list, &bin_list, &diff);
+			printf(",\"text_bin_records_equal\":%s,\"first_differing_record\":%d",
+			       same ? "true" : "false", diff);
+			ok &= same;
 		}
 	}
 	printf(",\"pass\":%s}\n", ok ? "true" : "false");
