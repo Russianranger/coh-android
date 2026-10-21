@@ -21,3 +21,4 @@
 0021-game-cmake-arm64-standins.patch
 0022-cmake-nvparse-arm64.patch
 0023-cmake-cubemapgen-arm64.patch
+0024-game-texwords-explicit-comparison.patch

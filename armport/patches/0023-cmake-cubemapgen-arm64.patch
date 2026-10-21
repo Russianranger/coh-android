@@ -1,5 +1,5 @@
 diff --git a/cmake/dependencies/CubeMapGen.cmake b/cmake/dependencies/CubeMapGen.cmake
-index 132d1bc..b42ed49 100644
+index 132d1bc..0ffc233 100644
 --- a/cmake/dependencies/CubeMapGen.cmake
 +++ b/cmake/dependencies/CubeMapGen.cmake
 @@ -1,7 +1,8 @@
@@ -12,3 +12,19 @@ index 132d1bc..b42ed49 100644
  	message(FATAL_ERROR "CubeMapGen requires MSVC Win32")
  endif()
  
+@@ -33,6 +34,15 @@ function(cox_add_cubemapgen)
+ 			"${cubemapgen_BINARY_DIR}/include/libcubemapgen/${header}"
+ 			COPYONLY)
+ 	endforeach()
++	if(COX_ARM64_WINDOWS)
++		# ArmPort: the sources include "types.h"; the file is Types.h and the
++		# Linux build host is case-sensitive.
++		configure_file("${source_dir}/Types.h"
++			"${cubemapgen_BINARY_DIR}/include/libcubemapgen/types.h" COPYONLY)
++		configure_file("${source_dir}/Types.h"
++			"${cubemapgen_BINARY_DIR}/case-alias/types.h" COPYONLY)
++		target_include_directories(cubemapgen PRIVATE "${cubemapgen_BINARY_DIR}/case-alias")
++	endif()
+ 	target_include_directories(cubemapgen PUBLIC
+ 		"${cubemapgen_BINARY_DIR}/include")
+ 	target_compile_definitions(cubemapgen PRIVATE UNICODE _UNICODE _LIB)
