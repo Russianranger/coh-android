@@ -6,13 +6,13 @@
   "accepted_version": "0.1.14",
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
-  "rendered": "Physical Thor framebuffer: source roadway/pavement and yellow real-pose box in the existing two-instance neighborhood; no genuine costume model yet.",
-  "blocker": "Saved initial packet has no framing blocker. Immutable signed0.1.17 is qualified; live Thor ACK/READY and server responses are unmeasured. Host Huge inspection draws10 of13 visible meshes; three GEOs, complete texture selection and authored morphology remain missing.",
+  "rendered": "Physical Thor0.1.17 full-screen640x360 PNG: textured pavement with yellow real-pose box;2 world packets,1 entity draw. No real costume; another pose remains unverified.",
+  "blocker": "Latest Thor0.1.17 packet is303112bits, distinct from completed301656-bit host fixture. Source update ends300152; application tail stops at command205 SERVER_SEND_KARMA_STATS at300248,2864bits remain. ACK/READY correctly unsent; real Huge actor remains unfinished.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "Install unchanged0.1.17 over0.1.16, same character and one handoff; wait30seconds, export CombinedZIP with640x360PNG.",
-    "Finish three genuine Huge GEOs, complete SH texture lookup and authored morphology; integrate host path into a later APK with box fallback.",
-    "Verify imported archive streaming at another real pose on Thor without rebuilding."
+    "On future instruction, consume original SERVER_SEND_KARMA_STATS and continue saved303112-bit packet to exact EOF or next real unknown before ACK/READY.",
+    "Finish genuine Huge assets, full material selection and authored morphology for a later APK; preserve box fallback.",
+    "Verify imported archive streaming at another real pose without rebuilding; retain caps and process identity export."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -1797,212 +1797,289 @@
       "production_release": false
     }
   },
-  "latest_physical_version": "0.1.16",
+  "latest_physical_version": "0.1.17",
   "latest_physical_results": {
     "recorded_date": "2026-10-20",
-    "version": "0.1.16",
-    "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
-    "apk_sha256": "3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94",
-    "apk_bytes": 15150348,
+    "version": "0.1.17-fullscreen-diagnostic-test",
+    "source_commit": "81a47f8ccef15c26e02b5cbf2feb4b99ac465139",
+    "apk_sha256": "7167f6268e9c73e182535edd53717cd576fb8708fff1e79d8bb21118c3a47bc0",
+    "apk_bytes": 15219799,
     "inputs": [
       {
-        "file": "COH-NativeCombined-20261020-134738.json",
-        "bytes": 180199,
-        "sha256": "d89fb31b469bbc402d1d3ea6911389a27a7b129722e717af47300d56c5630267"
+        "file": "COH-NativeCombined-1792540450667.zip",
+        "bytes": 1922152,
+        "sha256": "86b57a3b5a637c717b701576a438173a088eeb6407a55d8cbfb652b25d24f790"
       },
       {
-        "file": "COH-ObservedScene-1792522037283.zip",
-        "bytes": 32602,
-        "sha256": "bbec2eafbd333796696c57c1ab999a0aecb2582606d48ed7a1233ffb0b46ed44"
+        "file": "COH-NativeCombined-20261020-185349.json",
+        "bytes": 296699,
+        "sha256": "44c18670831e1c3b7454a91be8ec0ea4cffa60eaeba083d1389422b93cf5c9e0"
       },
       {
-        "file": "COH-NativeCombined-1792522077694.zip",
-        "bytes": 72082,
-        "sha256": "ee7cf8fce146b3e0db5dfea3651d23710472f097bfaa605f2027dc76deeba08f"
+        "file": "COH-ObservedScene-1792540414843.zip",
+        "bytes": 1851129,
+        "sha256": "a5926fc8465b1e60c528e10795cb0f1d77e3553ac503992815d01abfaf243d39"
       }
     ],
     "raw_outputs_committed": false,
     "independent_runs": 1,
-    "client_session": "1a15aa36556",
-    "server_session": "b44f459062d3487da66bfe6ded2eb624",
-    "active_report_time": "2026-10-20T13:47:38.660-05:00",
-    "paused_report_time": "2026-10-20T13:47:47.343-05:00",
-    "native_zip_report_sha256": "62cc9d1c7caf7260b6acfb4918767f25c0ac3007888e7cf45b189c706e9d709b",
-    "scope": "One matching physical AYN Thor/Android13 client activity and owned server run, including two recorded pose generations/captures. Scene ZIP retains the first capture; standalone JSON and Combined ZIP identify the second. Not three independent tests. No continuation replay or development performed during this review.",
+    "client_session": "1a15bbadf01",
+    "server_session": "b6c6179a11dc4c1da8138fb1d67864d9",
+    "active_report_time": "2026-10-20T18:53:49.204-05:00",
+    "paused_report_time": "2026-10-20T18:54:02.489-05:00",
+    "native_zip_report_sha256": "54cfff710cc72af43c1f3faeef4b04842a8917c2e3d5ecf4d4f631aabb91dc02",
+    "scope": "Read-only analysis of three uploaded files from one native session. No source modification, parser replay, runtime contact, build, CI dispatch or cleanup. Historical guest reports are separate sessions.",
+    "initial": {
+      "observed": true,
+      "groups_bytes": 42889,
+      "groups_bits": 343112,
+      "groups_present_files": 508,
+      "groups_roots": 33,
+      "allents_bytes": 37889,
+      "allents_bits": 303112,
+      "previous_host_fixture_bits": 301656,
+      "same_as_previous_host_fixture": false,
+      "source_update_tail_complete": true,
+      "source_update_end_bit": 300152,
+      "character_end_bit": 128856,
+      "whole_packet_complete": false,
+      "application_command_tail": [
+        2,
+        300152,
+        300248,
+        3,
+        0,
+        0,
+        205
+      ],
+      "command_count_includes_unsupported_attempt": true,
+      "completed_prior_tail_commands": 2,
+      "attempted_command": 205,
+      "attempted_command_name": "SERVER_SEND_KARMA_STATS",
+      "reported_end_bit": 300248,
+      "remaining_bits": 2864,
+      "required_missing_table_identified": false,
+      "next_real_blocker": "Original receiver for application-tail command205 is not implemented in this APK. Do not describe as a BodyPart or power dictionary failure."
+    },
     "costume": {
-      "stage41_passed": true,
-      "bodies_expected": 1,
-      "bodies_read": 1,
-      "selected_index": 0,
       "bodytype": 4,
       "bodytype_name": "Huge",
-      "bodytype_source": "upstream/ouroboros/Common/entity/costume.h: kBodyType_Huge=4; actual decoded snapshot, not a forced renderer choice",
       "parts": 28,
-      "strings": 112,
-      "colors": 58,
-      "body_end_bit": 11648,
-      "appearance_end_bit": 11672,
-      "receiver_stop_bit": 11832,
-      "next_field": "BasePower CRC lookup",
-      "next_kind": "required table",
-      "required_table": true,
-      "requested_power_crc_u32": 2151953239,
-      "requested_power_crc_hex": "0x80443357",
-      "power_customizations_advertised": 343,
-      "first_customization_tint_or_token_consumed": false,
-      "entity_complete": false,
-      "message_complete": false
+      "costume_end_bit": 11648,
+      "default_bodyparts": [
+        0,
+        28
+      ],
+      "ordinary_strings": 112,
+      "palette_colors": 58,
+      "power_entries": 343,
+      "unresolved_power_CRCs": 343,
+      "original_tolerated_miss_path": true,
+      "real_costume_drawn_on_Thor": false
     },
     "replay": {
       "file": "initial-replay.bin",
-      "bytes": 37795,
-      "sha256": "148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba",
-      "payload_sha256": "a60221590f4ad8694c0edc5a3643fe880ae27498642548f0bd1d857d74af9dc5",
-      "logical_bits": 301656,
+      "bytes": 37977,
+      "sha256": "74d85be47f23fe674e32178296aaa0f93f8830bb9ec4a08e166ee6f4f4e1a234",
+      "payload_sha256": "ca4dcfa83ca44ee981a1cf2fc3373cb0bf9b9b00263aa7a47f8cb340c43ea2a6",
+      "logical_bits": 303112,
       "post_command_cursor": 32,
       "appearance_cursor": 1848,
       "byte_aligned_mode": 1,
       "selected_costume_index": 0,
-      "app_version": 17,
-      "activity_session": "1a15aa36556",
+      "app_version": 18,
+      "activity_session": "1a15bbadf01",
       "header_bytes": 88,
-      "payload_bytes": 37707,
-      "hashes_verified": true,
-      "continuation_replayed": false,
-      "scope": "Framing/header/hash inspection only; no additional entity fields parsed."
+      "payload_bytes": 37889,
+      "header_and_hashes_validated": true,
+      "host_replay_executed_this_evidence_update": false
     },
-    "first_actual_unknown_input": "The current genuine packet requests the original BasePower CRC/name mapping. Its known CLIENT powers.bin source is absent locally/from the current package; schema is already qualified. Later known rare/global integration also remains before message completion.",
-    "qualification_only_later_suffix": "Source tests cover empty-power paths through taskforce; these later fields were not reached by this live nonempty-power packet.",
     "transport": {
-      "active_phase": "INITIAL_OBSERVED",
-      "final_phase": "CLOSED",
-      "initial_observed": true,
-      "initial_bytes": 37707,
-      "initial_bits": 301656,
-      "prior_303112_bit_packet_is_distinct": true,
-      "post_command_cursor": 32,
-      "groups_present_files": 508,
-      "groups_roots": 33,
-      "groups_bytes": 42889,
-      "opened_sockets": 2,
-      "closed_sockets": 2,
-      "cleanup_verified": true,
-      "ack_sent": false,
-      "ready_sent": false,
-      "received_character_sent": false,
-      "post_ack_messages": "Not applicable: no application ACK was sent."
+      "character_lists": 1,
+      "character_choices": 1,
+      "map_handoffs": 1,
+      "attempts": 1,
+      "REQALLENTS_sent": true,
+      "ACK_queued": false,
+      "ACK_accepted_send": false,
+      "READY_queued": false,
+      "READY_accepted_send": false,
+      "RECEIVED_CHARACTER_sent": false,
+      "post_ack_observation_window_started": false,
+      "post_commands": [],
+      "post_position": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "server_after_ACK_observed": false,
+      "datagrams_sent": 12,
+      "datagrams_received": 31,
+      "transport_acknowledged": 6,
+      "retransmits": 0,
+      "IO_errors": 0,
+      "transport_acknowledgments_are_application_ACK_proof": false,
+      "position_updates_observed": 1,
+      "later_position_change_proved": false
     },
     "world": {
+      "capture": {
+        "format": "coh-game-surface-rgba8-v1",
+        "artifact": "scene-capture.rgba",
+        "capture_state": "historical_saved_frame",
+        "startup_witness": false,
+        "current_world_authority": false,
+        "whole_game_surface": true,
+        "pixel_format": "RGBA8",
+        "origin": "bottom-left",
+        "raw_header_bytes": 128,
+        "size_bytes": 921728,
+        "sha256": "6fc796b0bfe2314e8c49ac669f65ac7a13d04671eab9024ac6fff6b057325369",
+        "frame": 2227,
+        "epoch": 9,
+        "pose_generation": 1,
+        "pose_lock_frame": 2215,
+        "pose": [
+          131.453125,
+          0.25,
+          -114.953125
+        ],
+        "selected_entity_index": 125,
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "dimensions": {
+          "width": 640,
+          "height": 360
+        },
+        "world_packets": 2,
+        "entity_draws": 1,
+        "charged_scene_bytes": 23682305,
+        "memory_cap_bytes": 100663296,
+        "settled_frame_wait": 12,
+        "source_app_version": 18,
+        "activity_session": "1a15bbadf01",
+        "image": {
+          "file": "scene-capture.png",
+          "bytes": 928131,
+          "sha256": "c80d17c698df1104f0ac3e7510b061fa35c669272b04322e8540a347c30b107b",
+          "format": "PNG_RGBA8",
+          "origin": "top_left"
+        }
+      },
+      "png_bytes": 928131,
+      "png_sha256": "c80d17c698df1104f0ac3e7510b061fa35c669272b04322e8540a347c30b107b",
+      "capture_copies_identical": true,
+      "visual_observation": "Viewed physical PNG: textured pavement extends beneath/around a yellow vertical diagnostic box against a dark background. No real costume, buildings or complete Atlas neighborhood is visible; ground contact is not independently established.",
+      "full_screen_viewport": [
+        1920,
+        1080
+      ],
+      "capture_dimensions": [
+        640,
+        360
+      ],
+      "full_screen_entries": 2,
+      "controls_restored": 2,
+      "time_from_handoff_request_to_native_report_export_ms": 63285,
+      "time_from_character_choice_to_native_report_export_ms": 57182,
+      "entity_index": 125,
       "pose": [
         131.453125,
         0.25,
         -114.953125
       ],
-      "capture_observation": "Both decoded physical framebuffer captures visibly show textured source roadway/pavement and a yellow diagnostic box. This closes the previous empty-space/screenshot evidence gap for the existing bounded fixture; no full city or real character model is shown. Precise foot contact is not a collision or depth-contact proof from this 192x41 image.",
-      "captures": [
-        {
-          "source": "ObservedScene ZIP",
-          "size_bytes": 31616,
-          "sha256": "b2cadedc67df270e9bddf72cca76a4d0bb77929f2c3cf44aebb63632003684ae",
-          "frame": 663,
-          "epoch": 3,
-          "pose_generation": 1,
-          "pose_lock_frame": 650,
-          "selected_entity_index": 125
-        },
-        {
-          "source": "Combined ZIP",
-          "size_bytes": 31616,
-          "sha256": "9dc1b9bc1df15f4b0a6ce6b22eeb9a1f6a77a7a343e40e1a4e090877f252d9a1",
-          "frame": 1990,
-          "epoch": 7,
-          "pose_generation": 2,
-          "pose_lock_frame": 1978,
-          "selected_entity_index": 127
-        }
-      ],
-      "capture_hashes_verified": true,
-      "standalone_matches_second_capture": true,
-      "capture_frame_delays": [
-        13,
-        12
-      ],
-      "capture_delay_scope": "Twelve eligible world+box draw frames; elapsed frame counters are 13 and 12 respectively.",
-      "selected_instances": 6,
-      "resident_bytes": 486030,
-      "peak_resident_bytes": 486030,
-      "source_residency_cap_bytes": 524288,
-      "gl_renderer": "Adreno (TM) 740",
-      "gl_errors": 0,
-      "scene_charged_bytes": 19458482,
+      "same_pose_as_0_1_16": true,
+      "different_pose_Thor_streaming_verified": false,
+      "world_packets_at_capture": 2,
+      "entity_draws_at_capture": 1,
+      "source_charge_bytes": 23682305,
+      "parent_reservation_bytes": 31866806,
       "scene_cap_bytes": 100663296,
-      "runtime_archive_streaming_verified": false,
-      "real_costume_rendered": false,
-      "capture_format": "coh-game-surface-rgba8-v1; RGBA8, bottom-left origin,128-byte header",
-      "viewport": {
-        "width": 1920,
-        "height": 410
-      },
-      "dimensions": {
-        "width": 192,
-        "height": 41
-      },
-      "capture_world_packets": 2,
-      "capture_entity_draws": 1
+      "runtime_world_source": "verified_imported_archives",
+      "runtime_world_status": 1,
+      "archive_reads_final": 27018,
+      "archive_bytes_final": 2551783,
+      "runtime_world_fallback_reason": "",
+      "real_actor_or_world_authority": false,
+      "final_preview_is_capture_state": false
     },
     "memory": {
-      "scope": "Same-UID non-atomic process RSS/PSS observation; source-level scene charges and GPU/driver memory are separate.",
-      "running_sample_window_ms": 101,
-      "running_total": {
+      "measurement_scope": "Actual successive device samples; not source buffer accounting and not three independent runs. RSS double-counts shared pages.",
+      "combined_latest": {
         "process_count": 91,
-        "rss_bytes": 3992182784,
-        "pss_bytes": 2894646272,
-        "rss_complete": true,
-        "pss_complete": true,
-        "missing_rss_processes": 0,
-        "missing_pss_processes": 0,
-        "zombie_processes": 2
+        "scan_complete": true,
+        "omitted_detail_rows": 59,
+        "RSS_bytes": 3971457024,
+        "PSS_bytes": 2875698176
       },
-      "running_categories": {
-        "ANDROID_APP_AND_NATIVE_CLIENT": {
-          "process_count": 1,
-          "rss_bytes": 204398592,
-          "pss_bytes": 99095552
+      "category_sums": [
+        {
+          "category": "app_native",
+          "count": 1,
+          "RSS_bytes": 184463360,
+          "PSS_bytes": 77157376
         },
-        "WINE_SERVERS": {
-          "process_count": 10,
-          "rss_bytes": 2456440832,
-          "pss_bytes": 2421953536
+        {
+          "category": "wine",
+          "count": 10,
+          "RSS_bytes": 2459557888,
+          "PSS_bytes": 2424989696
         },
-        "POSTGRESQL": {
-          "process_count": 74,
-          "rss_bytes": 1089802240,
-          "pss_bytes": 149147648
+        {
+          "category": "postgresql",
+          "count": 74,
+          "RSS_bytes": 1085620224,
+          "PSS_bytes": 148714496
         },
-        "OTHER_APP_UID": {
-          "process_count": 6,
-          "rss_bytes": 241541120,
-          "pss_bytes": 224449536
+        {
+          "category": "other",
+          "count": 6,
+          "RSS_bytes": 241815552,
+          "PSS_bytes": 224836608
         }
+      ],
+      "sampled_peak_RSS_bytes": 4020211712,
+      "sampled_peak_PSS_bytes": 2930128896,
+      "native_zip_RSS_bytes": 4004118528,
+      "native_zip_PSS_bytes": 2908560384,
+      "standalone_RSS_bytes": 3985293312,
+      "standalone_PSS_bytes": 2890007552,
+      "retained_Wine_rows": 9,
+      "omitted_Wine": {
+        "count": 1,
+        "RSS_bytes": 1836785664,
+        "PSS_bytes": 1827947520,
+        "measurement": "Derived from complete Wine aggregate minus9 retained rows. No PID/executable/commandline retained.",
+        "identity_known": false,
+        "MapServer_attribution_proved": false
       },
-      "unclassified": 0,
-      "exported_detail_rows": 32,
-      "detail_rows_omitted": 59,
-      "sampled_peak_total_rss_bytes": 4021653504,
-      "sampled_peak_total_pss_bytes": 2925635584,
-      "app_uid_cgroup": {
-        "status": "unavailable",
-        "reason": "CGROUP_SOURCE_INVALID_OR_UNREADABLE",
-        "uid": 10315,
-        "charge_bytes": null,
-        "scope": "kernel UID-named cgroup charge; not same-UID RSS/PSS or whole-device RAM",
-        "source": "proc/self/cgroup and proc/self/mountinfo"
+      "wine_zombies_with_derived_zero_address_space_metrics": 2,
+      "policy": {
+        "admitted": true,
+        "valid_samples": 606,
+        "invalid_samples": 0,
+        "pressure_samples": 0,
+        "minimum_system_headroom_bytes": 7276732416,
+        "stop_requested": false
+      },
+      "cgroup_charge_bytes": null,
+      "cgroup_status": "CGROUP_SOURCE_INVALID_OR_UNREADABLE",
+      "android_callbacks": {
+        "trim_callbacks": 1,
+        "last_trim_level": 15,
+        "low_memory_callbacks": 0
       },
       "postgresql_SHOW": {
         "observation_status": "observed",
         "reason": "",
         "source": "owned_postgresql_SHOW",
-        "session_id": "b44f459062d3487da66bfe6ded2eb624",
+        "session_id": "b6c6179a11dc4c1da8138fb1d67864d9",
         "rss_pss_change_measured": false,
         "source_dbserver_connections": 65,
         "ordinary_spare_connections": 4,
@@ -2021,50 +2098,77 @@
           "maintenance_work_mem": "16MB"
         }
       },
-      "minimum_system_headroom_bytes": 8112177152,
-      "new_low_memory_exit_observed": false,
-      "earlier_low_memory_cause_established": false,
-      "older_7ms_admission_failure_cause_established": false,
-      "finding": "All 91 process/category sums are complete despite 59 omitted detail rows; Wine dominates PSS. Actual SHOW values match requested settings. No claim of measured configuration savings or resolution of historical exits."
-    },
-    "cleanup": {
-      "guest_exit_code": 0,
-      "server_status": "stopped",
-      "cleanup_complete": true,
-      "profile_preserved": true,
-      "original_profile_modified": false,
-      "render_contexts_started": 3,
-      "render_contexts_completed": 3,
-      "render_objects_released": true,
-      "source_gpu_payload_bytes": 0,
-      "cleanup_gl_errors": 0,
-      "cleanup_egl_errors": 0,
-      "remaining_total": {
-        "process_count": 1,
-        "rss_bytes": 180715520,
-        "pss_bytes": 75064320,
-        "rss_complete": true,
-        "pss_complete": true
+      "new_tuning_performed": false,
+      "server_admission": {
+        "current_start_succeeded": true,
+        "current_failure_code": "",
+        "current_failure_reason": "",
+        "new_admission_failure_exercised": false,
+        "historical_7ms_failure": "Retained0.1.14 SERVER_ADMISSION_FAILED has no reason/zero policy samples; not current run."
       },
-      "server_memory_monitor_last_sample_status": "running",
-      "monitor_scope": "Monitor retains its last running sample; stopped server report, guest exit0 and zero Wine/PostgreSQL processes establish cleanup.",
-      "remaining_category_counts": {
-        "ANDROID_APP_AND_NATIVE_CLIENT": 1,
-        "WINE_SERVERS": 0,
-        "POSTGRESQL": 0,
-        "OTHER_APP_UID": 0
+      "android_exit_history": {
+        "new_LOW_MEMORY_entries_vs_prior": 0,
+        "retained_earlier_LOW_MEMORY_entries": [
+          {
+            "pid": 24597,
+            "reason": 3,
+            "status": 0,
+            "timestamp_utc_ms": 1792469301504,
+            "importance": 100,
+            "pss_kib": 0,
+            "rss_kib": 0,
+            "low_memory": true
+          },
+          {
+            "pid": 23853,
+            "reason": 3,
+            "status": 0,
+            "timestamp_utc_ms": 1792469297925,
+            "importance": 100,
+            "pss_kib": 80536,
+            "rss_kib": 184152,
+            "low_memory": true
+          }
+        ],
+        "interpretation": "Earlier Oct19 23:08 Chicago LOW_MEMORY exits remain real historical evidence. No new low-memory exit is recorded for this run; their original trigger remains unestablished."
       }
     },
-    "diagnostics": {
-      "capture_error": null,
-      "replay_error": null,
-      "renderer_failure": null,
-      "gates25_to27": "OPEN in their documented full scopes"
+    "cleanup": {
+      "native_phase": "SUSPENDED",
+      "native_failure_code": "CANCELLED",
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "owned_socket_cleanup_verified": true,
+      "contexts_started": 7,
+      "contexts_completed": 7,
+      "GL_objects_released": true,
+      "GL_errors": 0,
+      "EGL_error": 0,
+      "cleanup_GL_errors": 0,
+      "cleanup_EGL_errors": 0,
+      "current_server_phase": "ready",
+      "current_server_owned_process_alive": true,
+      "current_server_shutdown_proved": false,
+      "previous_stopped_guest_receipt_applies_to_current_session": false
     },
-    "result": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete.",
-    "next_action": "Development paused at user request after recording these reports."
+    "diagnostics": {
+      "report_ceiling_bytes": 7168,
+      "optional_omissions": [
+        "first_record_triggered_moves",
+        "first_record_ai_animation",
+        "first_record_netfx",
+        "first_record_costume_prefix"
+      ],
+      "omitted_mask": 120,
+      "invalid_mask": 0,
+      "essential_state_retained": true,
+      "legacy_labels_are_current_furthest_blocker": false,
+      "gates25_27": "OPEN"
+    },
+    "result": "PARTIAL WITH EXACT BLOCKER: physical full-screen640x360 capture and source pavement/box qualified; Huge28 plus343 unresolved power entries consumed; new303112-bit packet stops at command205/bit300248. No application ACK/READY or later position observation.",
+    "next_action": "Wait for the next user prompt; no continued development authorized in this evidence-only update."
   },
-  "next_action": "Install the unchanged signed 0.1.17 ARM64 update over 0.1.16, preserve data/profile/imports, hand off the same character once, wait 30 seconds after handoff, then export the Combined ZIP and stop normally.",
+  "next_action": "Results recorded; wait for the next user prompt before development. No new APK, CI, replay or cleanup in this update.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -2696,6 +2800,272 @@
       },
       "result": "QUALIFIED physical costume-body continuation and bounded neighborhood report; PARTIAL aggregate memory because 64 rows omit 27 processes; runtime PostgreSQL settings unverified.",
       "next_action": "Wait for next user prompt."
+    },
+    {
+      "recorded_date": "2026-10-20",
+      "version": "0.1.16",
+      "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+      "apk_sha256": "3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94",
+      "apk_bytes": 15150348,
+      "inputs": [
+        {
+          "file": "COH-NativeCombined-20261020-134738.json",
+          "bytes": 180199,
+          "sha256": "d89fb31b469bbc402d1d3ea6911389a27a7b129722e717af47300d56c5630267"
+        },
+        {
+          "file": "COH-ObservedScene-1792522037283.zip",
+          "bytes": 32602,
+          "sha256": "bbec2eafbd333796696c57c1ab999a0aecb2582606d48ed7a1233ffb0b46ed44"
+        },
+        {
+          "file": "COH-NativeCombined-1792522077694.zip",
+          "bytes": 72082,
+          "sha256": "ee7cf8fce146b3e0db5dfea3651d23710472f097bfaa605f2027dc76deeba08f"
+        }
+      ],
+      "raw_outputs_committed": false,
+      "independent_runs": 1,
+      "client_session": "1a15aa36556",
+      "server_session": "b44f459062d3487da66bfe6ded2eb624",
+      "active_report_time": "2026-10-20T13:47:38.660-05:00",
+      "paused_report_time": "2026-10-20T13:47:47.343-05:00",
+      "native_zip_report_sha256": "62cc9d1c7caf7260b6acfb4918767f25c0ac3007888e7cf45b189c706e9d709b",
+      "scope": "One matching physical AYN Thor/Android13 client activity and owned server run, including two recorded pose generations/captures. Scene ZIP retains the first capture; standalone JSON and Combined ZIP identify the second. Not three independent tests. No continuation replay or development performed during this review.",
+      "costume": {
+        "stage41_passed": true,
+        "bodies_expected": 1,
+        "bodies_read": 1,
+        "selected_index": 0,
+        "bodytype": 4,
+        "bodytype_name": "Huge",
+        "bodytype_source": "upstream/ouroboros/Common/entity/costume.h: kBodyType_Huge=4; actual decoded snapshot, not a forced renderer choice",
+        "parts": 28,
+        "strings": 112,
+        "colors": 58,
+        "body_end_bit": 11648,
+        "appearance_end_bit": 11672,
+        "receiver_stop_bit": 11832,
+        "next_field": "BasePower CRC lookup",
+        "next_kind": "required table",
+        "required_table": true,
+        "requested_power_crc_u32": 2151953239,
+        "requested_power_crc_hex": "0x80443357",
+        "power_customizations_advertised": 343,
+        "first_customization_tint_or_token_consumed": false,
+        "entity_complete": false,
+        "message_complete": false
+      },
+      "replay": {
+        "file": "initial-replay.bin",
+        "bytes": 37795,
+        "sha256": "148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba",
+        "payload_sha256": "a60221590f4ad8694c0edc5a3643fe880ae27498642548f0bd1d857d74af9dc5",
+        "logical_bits": 301656,
+        "post_command_cursor": 32,
+        "appearance_cursor": 1848,
+        "byte_aligned_mode": 1,
+        "selected_costume_index": 0,
+        "app_version": 17,
+        "activity_session": "1a15aa36556",
+        "header_bytes": 88,
+        "payload_bytes": 37707,
+        "hashes_verified": true,
+        "continuation_replayed": false,
+        "scope": "Framing/header/hash inspection only; no additional entity fields parsed."
+      },
+      "first_actual_unknown_input": "The current genuine packet requests the original BasePower CRC/name mapping. Its known CLIENT powers.bin source is absent locally/from the current package; schema is already qualified. Later known rare/global integration also remains before message completion.",
+      "qualification_only_later_suffix": "Source tests cover empty-power paths through taskforce; these later fields were not reached by this live nonempty-power packet.",
+      "transport": {
+        "active_phase": "INITIAL_OBSERVED",
+        "final_phase": "CLOSED",
+        "initial_observed": true,
+        "initial_bytes": 37707,
+        "initial_bits": 301656,
+        "prior_303112_bit_packet_is_distinct": true,
+        "post_command_cursor": 32,
+        "groups_present_files": 508,
+        "groups_roots": 33,
+        "groups_bytes": 42889,
+        "opened_sockets": 2,
+        "closed_sockets": 2,
+        "cleanup_verified": true,
+        "ack_sent": false,
+        "ready_sent": false,
+        "received_character_sent": false,
+        "post_ack_messages": "Not applicable: no application ACK was sent."
+      },
+      "world": {
+        "pose": [
+          131.453125,
+          0.25,
+          -114.953125
+        ],
+        "capture_observation": "Both decoded physical framebuffer captures visibly show textured source roadway/pavement and a yellow diagnostic box. This closes the previous empty-space/screenshot evidence gap for the existing bounded fixture; no full city or real character model is shown. Precise foot contact is not a collision or depth-contact proof from this 192x41 image.",
+        "captures": [
+          {
+            "source": "ObservedScene ZIP",
+            "size_bytes": 31616,
+            "sha256": "b2cadedc67df270e9bddf72cca76a4d0bb77929f2c3cf44aebb63632003684ae",
+            "frame": 663,
+            "epoch": 3,
+            "pose_generation": 1,
+            "pose_lock_frame": 650,
+            "selected_entity_index": 125
+          },
+          {
+            "source": "Combined ZIP",
+            "size_bytes": 31616,
+            "sha256": "9dc1b9bc1df15f4b0a6ce6b22eeb9a1f6a77a7a343e40e1a4e090877f252d9a1",
+            "frame": 1990,
+            "epoch": 7,
+            "pose_generation": 2,
+            "pose_lock_frame": 1978,
+            "selected_entity_index": 127
+          }
+        ],
+        "capture_hashes_verified": true,
+        "standalone_matches_second_capture": true,
+        "capture_frame_delays": [
+          13,
+          12
+        ],
+        "capture_delay_scope": "Twelve eligible world+box draw frames; elapsed frame counters are 13 and 12 respectively.",
+        "selected_instances": 6,
+        "resident_bytes": 486030,
+        "peak_resident_bytes": 486030,
+        "source_residency_cap_bytes": 524288,
+        "gl_renderer": "Adreno (TM) 740",
+        "gl_errors": 0,
+        "scene_charged_bytes": 19458482,
+        "scene_cap_bytes": 100663296,
+        "runtime_archive_streaming_verified": false,
+        "real_costume_rendered": false,
+        "capture_format": "coh-game-surface-rgba8-v1; RGBA8, bottom-left origin,128-byte header",
+        "viewport": {
+          "width": 1920,
+          "height": 410
+        },
+        "dimensions": {
+          "width": 192,
+          "height": 41
+        },
+        "capture_world_packets": 2,
+        "capture_entity_draws": 1
+      },
+      "memory": {
+        "scope": "Same-UID non-atomic process RSS/PSS observation; source-level scene charges and GPU/driver memory are separate.",
+        "running_sample_window_ms": 101,
+        "running_total": {
+          "process_count": 91,
+          "rss_bytes": 3992182784,
+          "pss_bytes": 2894646272,
+          "rss_complete": true,
+          "pss_complete": true,
+          "missing_rss_processes": 0,
+          "missing_pss_processes": 0,
+          "zombie_processes": 2
+        },
+        "running_categories": {
+          "ANDROID_APP_AND_NATIVE_CLIENT": {
+            "process_count": 1,
+            "rss_bytes": 204398592,
+            "pss_bytes": 99095552
+          },
+          "WINE_SERVERS": {
+            "process_count": 10,
+            "rss_bytes": 2456440832,
+            "pss_bytes": 2421953536
+          },
+          "POSTGRESQL": {
+            "process_count": 74,
+            "rss_bytes": 1089802240,
+            "pss_bytes": 149147648
+          },
+          "OTHER_APP_UID": {
+            "process_count": 6,
+            "rss_bytes": 241541120,
+            "pss_bytes": 224449536
+          }
+        },
+        "unclassified": 0,
+        "exported_detail_rows": 32,
+        "detail_rows_omitted": 59,
+        "sampled_peak_total_rss_bytes": 4021653504,
+        "sampled_peak_total_pss_bytes": 2925635584,
+        "app_uid_cgroup": {
+          "status": "unavailable",
+          "reason": "CGROUP_SOURCE_INVALID_OR_UNREADABLE",
+          "uid": 10315,
+          "charge_bytes": null,
+          "scope": "kernel UID-named cgroup charge; not same-UID RSS/PSS or whole-device RAM",
+          "source": "proc/self/cgroup and proc/self/mountinfo"
+        },
+        "postgresql_SHOW": {
+          "observation_status": "observed",
+          "reason": "",
+          "source": "owned_postgresql_SHOW",
+          "session_id": "b44f459062d3487da66bfe6ded2eb624",
+          "rss_pss_change_measured": false,
+          "source_dbserver_connections": 65,
+          "ordinary_spare_connections": 4,
+          "requested": {
+            "max_connections": "72",
+            "superuser_reserved_connections": "3",
+            "shared_buffers": "16MB",
+            "work_mem": "1MB",
+            "maintenance_work_mem": "16MB"
+          },
+          "observed": {
+            "max_connections": "72",
+            "superuser_reserved_connections": "3",
+            "shared_buffers": "16MB",
+            "work_mem": "1MB",
+            "maintenance_work_mem": "16MB"
+          }
+        },
+        "minimum_system_headroom_bytes": 8112177152,
+        "new_low_memory_exit_observed": false,
+        "earlier_low_memory_cause_established": false,
+        "older_7ms_admission_failure_cause_established": false,
+        "finding": "All 91 process/category sums are complete despite 59 omitted detail rows; Wine dominates PSS. Actual SHOW values match requested settings. No claim of measured configuration savings or resolution of historical exits."
+      },
+      "cleanup": {
+        "guest_exit_code": 0,
+        "server_status": "stopped",
+        "cleanup_complete": true,
+        "profile_preserved": true,
+        "original_profile_modified": false,
+        "render_contexts_started": 3,
+        "render_contexts_completed": 3,
+        "render_objects_released": true,
+        "source_gpu_payload_bytes": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "remaining_total": {
+          "process_count": 1,
+          "rss_bytes": 180715520,
+          "pss_bytes": 75064320,
+          "rss_complete": true,
+          "pss_complete": true
+        },
+        "server_memory_monitor_last_sample_status": "running",
+        "monitor_scope": "Monitor retains its last running sample; stopped server report, guest exit0 and zero Wine/PostgreSQL processes establish cleanup.",
+        "remaining_category_counts": {
+          "ANDROID_APP_AND_NATIVE_CLIENT": 1,
+          "WINE_SERVERS": 0,
+          "POSTGRESQL": 0,
+          "OTHER_APP_UID": 0
+        }
+      },
+      "diagnostics": {
+        "capture_error": null,
+        "replay_error": null,
+        "renderer_failure": null,
+        "gates25_to27": "OPEN in their documented full scopes"
+      },
+      "result": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete.",
+      "next_action": "Development paused at user request after recording these reports."
     }
   ],
   "cycle_0_1_17": {
@@ -2704,7 +3074,7 @@
     "profile": "fullscreen-diagnostic",
     "version_name": "0.1.17-fullscreen-diagnostic-test",
     "version_code": 18,
-    "state": "qualified_source_and_signed_android_diagnostic_physical_continuation_pending",
+    "state": "physical_partial_exact_application_command205_blocker",
     "packet": {
       "input_bytes": 37795,
       "payload_bytes": 37707,
@@ -2774,7 +3144,8 @@
         "socket_or_send_calls": 0,
         "wrong_identity_stale_context_truncation_complete": false,
         "command": "flock /tmp/coh-next-build.lock python3 native-android/combined-client/tools/check_outer_costume_android.py --work <fresh> --output <scratch.json> --replay <saved-initial-replay.bin>"
-      }
+      },
+      "scope": "Earlier0.1.16 saved301656-bit host fixture; latest Thor0.1.17 packet is303112bits and does not reach EOF."
     },
     "capture": {
       "scope": "Explicit host retained-pose source-scene fixture; not a new Thor screenshot.",
@@ -3157,7 +3528,7 @@
       "build_ci_run_id": 39498990230,
       "qualification_ci_run_id": 39503076641,
       "artifact_id": 12298379427,
-      "physical_thor_tested": false,
+      "physical_thor_tested": true,
       "production_release": false
     },
     "delivery_recovery": {
@@ -3245,7 +3616,7 @@
         "build_ci_run_id": 39498990230,
         "qualification_ci_run_id": 39503076641,
         "artifact_id": 12298379427,
-        "physical_thor_tested": false,
+        "physical_thor_tested": true,
         "production_release": false
       },
       "baseline_reporting_limits": {
@@ -3420,6 +3791,25 @@
         "published_source_head": "fe41f6bca42bd18f3bf302e7e0f24aa071ee7b93",
         "focused_integrated_checks": "PASS: Huge all modes10 genuine meshes+6 texture decodes,2 recreated capture contexts; rig19,archive79,manifest8,HTTP11; process sampler90 with bounded full emitter; retry744/mode; bounded local UDP6269/mode."
       }
+    },
+    "physical_test": {
+      "date": "2026-10-20",
+      "session": "1a15bbadf01",
+      "APK_exact_hash_matched": true,
+      "initial_bits": 303112,
+      "source_update_end_bit": 300152,
+      "reported_command_tail_end_bit": 300248,
+      "unsupported_command": 205,
+      "unsupported_command_name": "SERVER_SEND_KARMA_STATS",
+      "remaining_bits": 2864,
+      "initial_packet_complete": false,
+      "ACK_READY_sent": false,
+      "PNG_sha256": "c80d17c698df1104f0ac3e7510b061fa35c669272b04322e8540a347c30b107b",
+      "full_screen_Thor_verified": true,
+      "real_character_on_Thor": false,
+      "different_pose_Thor_verified": false,
+      "server_still_running_at_export": true,
+      "full_evidence_is_rolling_status_only": true
     }
   },
   "ci_history": [

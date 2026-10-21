@@ -1,27 +1,28 @@
 # Native Android roadmap
 
-Updated 2026-10-20. Signed 0.1.17 is qualified and remains unchanged.
-Its original source/build passed; exact-APK CI run 39503076641 then passed
-45 Android 13 framework checks and 14 update/rollback checks after 2 harness reruns.
-The saved initial packet parses to 301656/301656 bits with 343 tolerated unresolved
-power CRCs. Original ACK/READY is host tested; live Thor traffic remains unmeasured.
-0.1.17 has a 10-second response window and the existing transport retry policy.
-Next-APK source adds send timing/bytes, a 20-second deadline and one ACK/READY retry;
-it is opt-in, host qualified and has not been packaged or deployed.
+Updated 2026-10-20. Physical Thor 0.1.17 matches the signed, qualified APK.
+The full-screen toggle/return works at 1920x1080; the exported 640x360 PNG shows
+textured pavement and the yellow real-pose box. No real costume is drawn yet.
 
-Android 13 verifies 1920x1080 full screen, Back and corner return. The 640x360
-world host capture shows pavement and the real-pose box; latest Thor is 0.1.16.
-The Huge snapshot has 13 visible records and 11 CLEAR, correcting the earlier 14.
-Host GLES now draws 10 genuine meshes with the original Huge rig; six textures
-decode, and explicit Chest_Stripe_1 appears on chest UVs as a layer inspection.
-Missing: huge_emblem.geo, huge_uarmr.geo, huge_waist.geo, complete SH texture lookup
-and authored body scales. Host absence does not prove Thor absence; live keeps the box.
+This new initial packet is 303112 bits. Huge bodytype 4, 28 parts and 343 tolerated
+unresolved powers decode; source update ends at 300152. Application-tail command
+205 SERVER_SEND_KARMA_STATS stops at 300248, with 2864 bits remaining. ACK/READY
+were neither queued nor sent. The earlier 301656-bit host fixture still reaches EOF;
+that result does not establish completion of this different physical packet.
+One position was observed; later server movement and post-ACK traffic are unmeasured.
 
-Wine PSS is about 2.42 GB; the old 1.83 GB process remains unidentified. Next-source
-exports up to 4 prioritized Wine executable/redacted-command identities within the
-24 KiB memory cap. No tuning; no world/collision allocation split is available.
+Host-only Huge work draws 10 of 13 genuine meshes with the original rig. Missing:
+huge_emblem.geo, huge_uarmr.geo, huge_waist.geo, complete SH/material selection and
+body-scale morphology. Six textures decode; one explicit chest layer is inspected.
+Live keeps the box. The current pose matches 0.1.16; another pose remains unverified.
 
-Thor procedure:
+Actual latest PSS is 2.876 GB; sampled peak 2.930 GB. Wine totals 2.425 GB, PostgreSQL
+0.149 GB. The omitted 1.828 GB Wine process is still unidentified. No new low-memory
+exit is recorded; earlier exits remain unexplained. PostgreSQL SHOW is confirmed.
+Native closed 2/2 sockets; 7/7 GL contexts completed. Server remained ready/alive.
+Next-APK send timing, 20-second/one-retry and process identities remain unshipped.
+
+Reference Thor export procedure:
 
 1. Install 0.1.17 over 0.1.16 without clearing data; preserve profile and imports.
 2. Start the existing server, select the same character and hand off once.
@@ -32,9 +33,8 @@ Thor procedure:
 7. Save the Combined ZIP; check scene-capture.png is 640x360 and JSON is included.
 8. Stop normally; retain the ZIP even after disconnect or timeout.
 
-Next 3: collect Thor export; finish Huge assets/material/morphology for a later APK;
-verify archive streaming at another real pose without rebuilding. These 3 steps
-remain before a qualified visible world with the genuine character.
-Caps: 4 MiB decoded, 16 KiB ordinary, 8 MiB initial, 96 MiB scene, 7168 B report.
-Next-source initial peak 7533927 B; Huge explicit source+GPU 6209694 B; host RSS 103168 KiB.
-Physical aggregate peak remains 4021653504 RSS / 2925635584 PSS bytes, separately.
+Next 3, when requested: original KarmaStats/tail to EOF and ACK observation;
+finish genuine Huge rendering; verify streamed world at a different pose.
+Caps stay 4 MiB decoded, 16 KiB ordinary, 8 MiB initial, 96 MiB scene and 7168 B report.
+Physical source peak 7537773 B; capture charge 23682305 B, parent reservation 31866806 B.
+Device RSS/PSS are separate from these source charges. Gates 25–27 remain open.
