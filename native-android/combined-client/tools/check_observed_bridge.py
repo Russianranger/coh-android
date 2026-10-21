@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute exact Activity pose-bridge methods with deterministic host doubles."""
+"""Execute exact Activity pose/costume bridges and FD helper with host doubles."""
 import argparse,hashlib,json,re,subprocess
 from pathlib import Path
 
@@ -19,6 +19,10 @@ def extract(text,name):
    if not depth:return text[m.start():i+1]
  raise ValueError('unclosed '+name)
 HEADER=r'''
+package org.coh.nativecombined;
+import android.os.ParcelFileDescriptor;
+import io.github.russianranger.cohdiagnostic.AssetPackStore;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -32,22 +36,26 @@ final class ObservedBridgeTest {
  String networkReport="{}";long policyCheckedAt=1000;
  Handler main=new Handler();Handoff handoffState=new Handoff();Ui networkStatus=new Ui();
  int publications,events,uiUpdates,saves,suspends,fullscreenRequests,fullscreenStep;boolean fullscreenEnabled;
+ long costumeReadAttempt=-1,actorPreparationSequence,epoch=1;boolean actorPreparing,resumed=true,renderQueued;
+ ImportContract.Control actorControl;String runtimeActorFailure="",failure,lastEvent;Surface currentSurface=new Surface();
+ Worker renderWorker=new Worker();
  void setSceneFullscreen(boolean enabled){fullscreenRequests++;fullscreenEnabled=enabled;fullscreenStep=++SessionNative.sequence;}
  JSONObject localPolicy(){return new JSONObject("{}");}
  boolean sameNetworkPolicy(JSONObject p){return true;}
  void publishNetwork(){publications++;}
  void suspendNetwork(){suspends++;}
  void showCharacters(JSONArray v,long attempt){}
- void event(String name){events++;}
+ void event(String name){events++;lastEvent=name;}
  void updateNetworkUi(){uiUpdates++;}
  void saveReport(){saves++;}
 '''
 TESTS=r'''
  static int checks;
  static void need(boolean b,String why){checks++;if(!b)throw new AssertionError(why+" ["+checks+"]");}
- static ObservedBridgeTest fresh(){InteropNative.reset();SessionNative.reset();return new ObservedBridgeTest();}
+ static ObservedBridgeTest fresh(){InteropNative.reset();SessionNative.reset();RuntimeWorldInputs.reset();ParcelFileDescriptor.reset();return new ObservedBridgeTest();}
  static byte[] pose(int index,float x,float y,float z){return ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN).putInt(index).putFloat(x).putFloat(y).putFloat(z).array();}
- public static void main(String[] args){
+ CONTINUATION_TEST_METHODS
+ public static void main(String[] args)throws Exception{
   ObservedBridgeTest t=fresh();InteropNative.raw=pose(27,123.25f,-74.5f,0.125f);
   t.networkTick();need(InteropNative.queries==1&&InteropNative.lastHandle==101,"getter uses exact owner handle");need(SessionNative.requests==0&&t.fullscreenRequests==0&&t.main.q.size()==1,"UI publication and fullscreen transition are deferred");t.main.drain();
   need(SessionNative.requests==1&&SessionNative.handle==900&&SessionNative.index==27,"exact renderer bridge signature");
@@ -73,42 +81,125 @@ TESTS=r'''
   t.clearObservedBox();need(t.observedEntityAttempt==-1&&t.observedEntityIndex==-1&&SessionNative.clears==1&&SessionNative.clearHandle==900,"clear resets marker and native renderer");t.handle=0;t.clearObservedBox();need(SessionNative.clears==1,"no clear against absent renderer");
   // A later coherent owner can publish normally after old queued work refused.
   t=fresh();t.publishObservedSelf(101,10);t.networkHandle=202;t.networkAttempt=t.networkOwnerAttempt=11;t.clearObservedBox();InteropNative.raw=pose(7,-1,-2,-3);t.publishObservedSelf(202,11);t.main.drain();need(SessionNative.requests==1&&SessionNative.index==7&&t.observedEntityAttempt==11,"new owner is not poisoned by stale queued pose");
-  System.out.println("{\"passed\":true,\"checks\":"+checks+",\"exact_activity_methods\":3,\"fullscreen_branch\":"+BuildConfig.FULLSCREEN_DIAGNOSTIC+",\"Android_or_native_execution\":false,\"collaborators_are_doubles\":true}");
+  if(BuildConfig.CONTINUATION_DIAGNOSTIC){continuationTests();inputTests();}
+  System.out.println("{\"passed\":true,\"checks\":"+checks+",\"exact_activity_methods\":5,\"continuation_branch\":"+BuildConfig.CONTINUATION_DIAGNOSTIC+",\"fullscreen_branch\":"+BuildConfig.FULLSCREEN_DIAGNOSTIC+",\"Android_or_native_execution\":false,\"collaborators_are_doubles\":true}");
  }
 }
-final class BuildConfig {static final boolean FULLSCREEN_DIAGNOSTIC=Boolean.getBoolean("coh.fullscreen");}
-final class Handler {final ArrayDeque<Runnable>q=new ArrayDeque<>();void post(Runnable r){q.add(r);}void drain(){while(!q.isEmpty())q.remove().run();}}
+final class BuildConfig {static final boolean FULLSCREEN_DIAGNOSTIC=Boolean.getBoolean("coh.fullscreen");static final boolean CONTINUATION_DIAGNOSTIC=Boolean.getBoolean("coh.continuation");}
+final class Handler {final ArrayDeque<Runnable>q=new ArrayDeque<>();void post(Runnable r){q.add(r);}void one(){ObservedBridgeTest.need(!q.isEmpty(),"queued main callback available");q.remove().run();}void drain(){while(!q.isEmpty())q.remove().run();}}
 final class Handoff {boolean service;void control(int bits){}boolean shouldService(){return service;}boolean charactersReady(){return false;}}
 final class SystemClock {static long elapsedRealtime(){return 1000;}}
-final class JSONObject {JSONObject(String raw){}String optString(String key,String value){return "WAIT_ALLENTS";}String optString(String key){return "WAIT_ALLENTS";}}
+final class JSONObject {String key;JSONObject(String raw){key=raw;}JSONObject getJSONObject(String name){return new JSONObject(name);}String optString(String key,String value){return "WAIT_ALLENTS";}String optString(String key){return "WAIT_ALLENTS";}}
 final class JSONArray {JSONArray(String raw){}}
 final class Ui {void setText(String text){}}
 final class InteropNative {
- static byte[]raw;static int queries,controls,services;static long lastHandle;static Runnable onService,onQuery;
- static void reset(){raw=ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN).putInt(1).putFloat(1).putFloat(2).putFloat(3).array();queries=controls=services=0;lastHandle=0;onService=onQuery=null;}
+ static byte[]raw,costume;static int queries,controls,services,costumeQueries,sourceQueries;static long lastHandle,sourceBytes;static Runnable onService,onQuery,onCostumeQuery;
+ static void reset(){raw=ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN).putInt(1).putFloat(1).putFloat(2).putFloat(3).array();queries=controls=services=costumeQueries=sourceQueries=0;lastHandle=0;sourceBytes=1432908;costume=null;onService=onQuery=onCostumeQuery=null;}
  static int controlState(long h){controls++;return 1;}
  static int service(long h,long now){services++;if(onService!=null)onService.run();return 0;}
  static byte[] observedSelfPose(long h){queries++;lastHandle=h;byte[]value=raw;if(onQuery!=null)onQuery.run();return value;}
+ static byte[]observedSelfCostume(long h){costumeQueries++;lastHandle=h;byte[]value=costume;if(onCostumeQuery!=null)onCostumeQuery.run();return value;}
+ static long observedSelfCostumeSourceBytes(long h){sourceQueries++;ObservedBridgeTest.need(h==101||h==202,"source charge belongs to supplied transport handle");return sourceBytes;}
  static byte[]characters(long h){return null;}
 }
 final class LocalNative {static int service(long h,long now){return 0;}static byte[]characters(long h){return null;}}
 final class SessionNative {
- static int requests,clears,index,sequence,poseStep;static long handle,clearHandle;static float x,y,z;
- static void reset(){requests=clears=index=sequence=poseStep=0;handle=clearHandle=0;x=y=z=0;}
+ static int requests,clears,index,sequence,poseStep,costumes,states,renders,admitResult;static long handle,clearHandle,actorHandle,staging,source;static float x,y,z;static boolean active;static Runnable onCostume;static ObservedBridgeTest actor;
+ static void reset(){requests=clears=index=sequence=poseStep=costumes=states=renders=admitResult=0;handle=clearHandle=actorHandle=staging=source=0;x=y=z=0;active=true;onCostume=null;actor=null;}
  static void observedEntity(long h,int i,float a,float b,float c){poseStep=++sequence;requests++;handle=h;index=i;x=a;y=b;z=c;}
+ static void state(long h,long epoch,boolean value){ObservedBridgeTest.need(h!=0&&epoch>0,"explicit renderer/epoch state");states++;active=value;}
+ static int observedCostume(long h,byte[]frame,int[]fds,long[]offsets,long[]lengths,long bytes,long charged){ObservedBridgeTest.need(actor!=null&&actor.actorPreparing&&!active,"no active EGL while preparing");ObservedBridgeTest.need(frame==InteropNative.costume&&frame.length==48384&&fds.length==2&&offsets.length==2&&lengths.length==2,"exact copied frame and bounded FD arrays");ObservedBridgeTest.need(ParcelFileDescriptor.live==2&&fds[0]>=0&&fds[1]>=0&&offsets[0]==0&&offsets[1]==0&&lengths[0]==4096&&lengths[1]==8192,"two pinned archive spans remain open for synchronous native call");costumes++;actorHandle=h;staging=bytes;source=charged;if(onCostume!=null)onCostume.run();return admitResult;}
+ static int render(long h,Surface surface,long epoch){ObservedBridgeTest.need(actor==null||!actor.actorPreparing,"render never enters preparation");renders++;return 0;}
  static void clearObservedEntity(long h){clears++;clearHandle=h;}
 }
 '''
 
+CONTINUATION_TESTS=r"""
+ static ObservedBridgeTest actorFresh(){ObservedBridgeTest t=fresh();t.observedEntityAttempt=t.networkAttempt;t.observedEntityIndex=125;InteropNative.costume=new byte[48384];SessionNative.actor=t;return t;}
+ static void queueActor(ObservedBridgeTest t){t.publishObservedCostume(101,10);need(t.main.q.size()==1,"actor UI start queued");t.main.one();need(t.actorPreparing&&!SessionNative.active&&t.renderWorker.q.size()==1,"EGL stopped before queued preparation");}
+ static void continuationTests(){
+  ObservedBridgeTest t=actorFresh();queueActor(t);t.requestRender();need(t.renderWorker.q.size()==1&&!t.renderQueued,"preparation blocks EGL queue");t.publishObservedCostume(101,10);need(InteropNative.costumeQueries==1,"actor attempt read once");t.renderWorker.one();need(SessionNative.costumes==1&&SessionNative.actorHandle==900&&SessionNative.staging==48424&&SessionNative.source==1432908,"frame and concrete source charge forwarded without changing native result");need(ParcelFileDescriptor.opened==2&&ParcelFileDescriptor.closed==2&&ParcelFileDescriptor.live==0,"FDs closed before UI completion");need(t.actorPreparing&&!SessionNative.active,"preparation stays exclusive through completion handoff");t.main.one();need(!t.actorPreparing&&t.actorControl==null&&SessionNative.active&&"observed_costume_published".equals(t.lastEvent)&&t.saves==1,"success resumes EGL and reports one publication");need(t.renderQueued&&t.renderWorker.q.size()==1,"success schedules rendering");t.renderWorker.one();need(SessionNative.renders==1,"EGL can run after preparation");
+  for(int bad=0;bad<5;bad++){t=actorFresh();if(bad==0)t.networkHandle++;if(bad==1)t.networkAttempt++;if(bad==2)t.networkOwnerAttempt++;if(bad==3)t.observedEntityAttempt=-1;if(bad==4)t.networkMode=NetworkMode.LOCAL;t.publishObservedCostume(101,10);need(InteropNative.costumeQueries==0&&t.main.q.isEmpty(),"actor tuple/mode rejected before getter "+bad);}
+  t=actorFresh();InteropNative.costume=null;t.publishObservedCostume(101,10);need(t.costumeReadAttempt==-1&&InteropNative.sourceQueries==0,"missing snapshot may retry");InteropNative.costume=new byte[48384];InteropNative.sourceBytes=-1;t.publishObservedCostume(101,10);need(t.costumeReadAttempt==-1&&t.main.q.isEmpty(),"unknown source charge may retry");InteropNative.sourceBytes=1432908;t.publishObservedCostume(101,10);need(t.main.q.size()==1&&t.costumeReadAttempt==10,"later admitted snapshot is not poisoned");
+  t=actorFresh();final ObservedBridgeTest getterRace=t;InteropNative.onCostumeQuery=()->{getterRace.networkHandle=202;getterRace.networkAttempt=getterRace.networkOwnerAttempt=11;getterRace.clearObservedBox();};t.publishObservedCostume(101,10);t.main.drain();need(SessionNative.costumes==0&&t.renderWorker.q.isEmpty(),"getter replacement cannot enqueue actor");
+  for(int change=0;change<10;change++){t=actorFresh();t.publishObservedCostume(101,10);if(change==0)t.networkAttempt++;if(change==1)t.networkOwnerAttempt++;if(change==2)t.networkHandle++;if(change==3)t.networkRequested=false;if(change==4)t.networkForeground=false;if(change==5)t.destroying=true;if(change==6)t.handle=0;if(change==7)t.networkMode=NetworkMode.LOCAL;if(change==8)t.clearObservedBox();if(change==9)t.observedEntityAttempt=-1;t.main.drain();need(t.renderWorker.q.isEmpty()&&SessionNative.costumes==0&&RuntimeWorldInputs.opens==0,"posted actor callback refuses stale/lifecycle change "+change);}
+  for(int change=0;change<10;change++){t=actorFresh();queueActor(t);if(change==0)t.networkAttempt++;if(change==1)t.networkOwnerAttempt++;if(change==2)t.networkHandle++;if(change==3)t.networkRequested=false;if(change==4)t.networkForeground=false;if(change==5)t.destroying=true;if(change==6)t.handle=901;if(change==7)t.networkMode=NetworkMode.LOCAL;if(change==8)t.clearObservedBox();if(change==9)t.observedEntityAttempt=-1;t.renderWorker.one();t.main.drain();need(SessionNative.costumes==0&&ParcelFileDescriptor.live==0&&ParcelFileDescriptor.opened==ParcelFileDescriptor.closed,"queued CPU work closes all FDs and refuses stale actor "+change);need(!SessionNative.active&&SessionNative.renders==0,"stale CPU result does not resume old renderer "+change);}
+  for(int change=0;change<10;change++){t=actorFresh();queueActor(t);t.renderWorker.one();need(SessionNative.costumes==1&&ParcelFileDescriptor.live==0,"successful synchronous native return precedes completion race");if(change==0)t.networkAttempt++;if(change==1)t.networkOwnerAttempt++;if(change==2)t.networkHandle++;if(change==3)t.networkRequested=false;if(change==4)t.networkForeground=false;if(change==5)t.destroying=true;if(change==6)t.handle=901;if(change==7)t.networkMode=NetworkMode.LOCAL;if(change==8)t.clearObservedBox();if(change==9)t.observedEntityAttempt=-1;t.main.drain();need(!SessionNative.active&&SessionNative.renders==0&&t.saves==0&&t.events==0,"stale completed candidate cannot resume or notify replacement "+change);}
+  for(int status:new int[]{5,7}){t=actorFresh();SessionNative.admitResult=status;queueActor(t);t.renderWorker.one();t.main.one();need(t.costumeReadAttempt==-1&&!t.actorPreparing&&SessionNative.active&&"observed_costume_box_fallback".equals(t.lastEvent),"native lifecycle result is retryable "+status);int before=InteropNative.costumeQueries;t.publishObservedCostume(101,10);need(InteropNative.costumeQueries==before+1&&t.main.q.size()==1,"same owner can retry after lifecycle result "+status);t.main.one();t.renderWorker.one();need(SessionNative.renders==0,"old queued render ticket cannot run during retry prep");t.renderWorker.one();need(SessionNative.costumes==2&&ParcelFileDescriptor.live==0,"retry remains bounded and closes both sources "+status);}
+  t=actorFresh();SessionNative.admitResult=2;queueActor(t);t.renderWorker.one();t.main.one();need(t.costumeReadAttempt==10&&!t.runtimeActorFailure.isEmpty(),"source/material failure retains box without retry loop");
+  t=actorFresh();RuntimeWorldInputs.failOpenAt=2;queueActor(t);t.renderWorker.one();t.main.one();need(ParcelFileDescriptor.opened==1&&ParcelFileDescriptor.closed==1&&ParcelFileDescriptor.live==0&&SessionNative.costumes==0&&!t.actorPreparing&&SessionNative.active&&"observed_costume_box_fallback".equals(t.lastEvent),"archive failure closes input and restores box rendering");
+  t=actorFresh();queueActor(t);final StringBuilder longProblem=new StringBuilder();for(int i=0;i<300;i++)longProblem.append('x');SessionNative.onCostume=()->{throw new IllegalStateException(longProblem.toString());};t.renderWorker.one();t.main.one();need(ParcelFileDescriptor.opened==2&&ParcelFileDescriptor.closed==2&&ParcelFileDescriptor.live==0&&t.runtimeActorFailure.length()==160&&!t.actorPreparing&&SessionNative.active,"native Java exception closes sources and bounds optional failure text");
+  t=actorFresh();queueActor(t);ImportContract.Control cancelled=t.actorControl;t.resumed=false;t.networkForeground=false;t.networkRequested=false;t.networkAttempt++;t.clearObservedBox();need(cancelled.isCancelled()&&t.costumeReadAttempt==-1&&!t.actorPreparing,"pause clear cancels active import and resets attempt");t.renderWorker.one();t.main.drain();need(SessionNative.costumes==0&&ParcelFileDescriptor.opened==0&&!SessionNative.active,"cancelled pending preparation opens nothing and never resumes EGL");t.networkForeground=t.networkRequested=t.resumed=true;t.networkAttempt=t.networkOwnerAttempt=11;t.networkHandle=202;t.observedEntityAttempt=11;t.publishObservedCostume(202,11);t.main.one();t.renderWorker.one();t.main.one();need(SessionNative.costumes==1&&t.costumeReadAttempt==11&&SessionNative.active,"fresh resumed owner can publish after cancelled work");
+  t=actorFresh();queueActor(t);final ObservedBridgeTest midRead=t;RuntimeWorldInputs.onOpen=()->{if(RuntimeWorldInputs.opens==2){midRead.networkAttempt++;midRead.clearObservedBox();}};t.renderWorker.one();t.main.drain();need(SessionNative.costumes==0&&ParcelFileDescriptor.opened==2&&ParcelFileDescriptor.closed==2&&ParcelFileDescriptor.live==0,"cancel during archive acquisition closes every acquired FD");
+  t=actorFresh();queueActor(t);final ObservedBridgeTest midNative=t;SessionNative.admitResult=5;SessionNative.onCostume=()->{midNative.networkAttempt++;midNative.clearObservedBox();};t.renderWorker.one();t.main.drain();need(SessionNative.costumes==1&&ParcelFileDescriptor.live==0&&!SessionNative.active&&t.costumeReadAttempt==-1,"cancel during synchronous native preparation cannot resume stale EGL");
+ }
+ static void inputTests()throws Exception{
+  fresh();RuntimeActorInputs inputs=RuntimeActorInputs.open(new ImportStore(null,(a,b,c)->{}),new ImportContract.Control());need(ParcelFileDescriptor.live==2&&inputs.fds.length==2&&inputs.fds[0]>=0&&inputs.fds[1]>=0&&inputs.offsets[0]==0&&inputs.offsets[1]==0&&inputs.lengths[0]==4096&&inputs.lengths[1]==8192&&inputs.stagingPayloadBytes()==40,"actual helper keeps bounded pinned archive spans");inputs.close();need(ParcelFileDescriptor.live==0&&inputs.fds[0]==-1&&inputs.fds[1]==-1&&inputs.lengths[0]==0&&inputs.lengths[1]==0,"actual close clears exported arrays");inputs.close();need(ParcelFileDescriptor.closed==2,"actual close is idempotent");
+  fresh();RuntimeWorldInputs.failOpenAt=2;try{RuntimeActorInputs.open(new ImportStore(null,(a,b,c)->{}),new ImportContract.Control());throw new AssertionError("second archive failure admitted");}catch(IOException expected){need(ParcelFileDescriptor.opened==1&&ParcelFileDescriptor.closed==1&&ParcelFileDescriptor.live==0,"second open failure closes first archive");}
+  fresh();ParcelFileDescriptor.failGetFd=1;try{RuntimeActorInputs.open(new ImportStore(null,(a,b,c)->{}),new ImportContract.Control());throw new AssertionError("FD failure admitted");}catch(IllegalStateException expected){need(ParcelFileDescriptor.opened==1&&ParcelFileDescriptor.closed==1&&ParcelFileDescriptor.live==0,"getFd failure closes already acquired descriptor");}
+  fresh();ImportContract.Control control=new ImportContract.Control();control.cancel();try{RuntimeActorInputs.open(new ImportStore(null,(a,b,c)->{}),control);throw new AssertionError("cancel admitted");}catch(InterruptedIOException expected){need(ParcelFileDescriptor.opened==0,"initial cancellation opens nothing");}
+  fresh();control=new ImportContract.Control();final ImportContract.Control cancelling=control;RuntimeWorldInputs.onOpen=()->cancelling.cancel();try{RuntimeActorInputs.open(new ImportStore(null,(a,b,c)->{}),control);throw new AssertionError("mid-open cancel admitted");}catch(InterruptedIOException expected){need(ParcelFileDescriptor.opened==1&&ParcelFileDescriptor.closed==1&&ParcelFileDescriptor.live==0,"mid-open cancellation closes acquired descriptor");}
+  fresh();inputs=RuntimeActorInputs.open(new ImportStore(null,(a,b,c)->{}),new ImportContract.Control());ParcelFileDescriptor.failClose=true;try{inputs.close();throw new AssertionError("close failures ignored");}catch(IOException expected){need(expected.getSuppressed().length==1&&ParcelFileDescriptor.closed==2&&ParcelFileDescriptor.live==0&&inputs.fds[0]==-1&&inputs.fds[1]==-1,"both close errors retained and arrays cleared");}inputs.close();need(ParcelFileDescriptor.closed==2,"failed-close owner remains idempotently retired");
+  fresh();RuntimeWorldInputs.failOpenAt=2;ParcelFileDescriptor.failClose=true;try{RuntimeActorInputs.open(new ImportStore(null,(a,b,c)->{}),new ImportContract.Control());throw new AssertionError("combined open/close failure ignored");}catch(IOException expected){need(expected.getSuppressed().length==1&&ParcelFileDescriptor.closed==1&&ParcelFileDescriptor.live==0,"primary open failure retains cleanup exception");}
+ }
+"""
+HELPERS=r"""
+final class Worker {final ArrayDeque<Runnable>q=new ArrayDeque<>();void execute(Runnable r){q.add(r);}void one(){ObservedBridgeTest.need(!q.isEmpty(),"queued render-worker task available");q.remove().run();}}
+final class Surface {boolean valid=true;boolean isValid(){return valid;}}
+final class ImportContract {
+ interface Progress {void update(String phase,long done,long total);}
+ static final class Control {boolean cancelled;void cancel(){cancelled=true;}boolean isCancelled(){return cancelled;}void check()throws InterruptedIOException{if(cancelled)throw new InterruptedIOException("test cancellation");}}
+ static final class Pin {final long bytes;Pin(long bytes){this.bytes=bytes;}}
+ final JSONObject runtimeManifest=new JSONObject("manifest");
+ static Pin pin(JSONObject value){return new Pin(value.key.equals("client-visual-assets.zip")?4096:8192);}
+}
+final class ImportStore {ImportStore(Object activity,ImportContract.Progress progress){}AssetPackStore assetStore(ImportContract.Control control)throws IOException{control.check();return new AssetPackStore();}ImportContract contract(){return new ImportContract();}}
+final class RuntimeWorldInputs {
+ static int opens,failOpenAt;static Runnable onOpen;
+ static void reset(){opens=failOpenAt=0;onOpen=null;}
+ static ParcelFileDescriptor openArchive(File file,ImportContract.Pin pin)throws IOException{opens++;ObservedBridgeTest.need(SessionNative.actor==null||!SessionNative.active,"archive acquisition starts only after EGL stop");if(onOpen!=null)onOpen.run();if(opens==failOpenAt)throw new IOException("test archive open failure");ObservedBridgeTest.need((file.getPath().endsWith("client-visual-assets.zip")&&pin.bytes==4096)||(file.getPath().endsWith("zones-world-supplement.zip")&&pin.bytes==8192),"exact declared archive and supplied pin");return ParcelFileDescriptor.openFixture();}
+}
+"""
+FD_DOUBLE=r"""
+package android.os;
+import java.io.IOException;
+public final class ParcelFileDescriptor implements AutoCloseable {
+ public static int opened,closed,live,failGetFd;public static boolean failClose;private final int ordinal;private boolean done;
+ private ParcelFileDescriptor(int value){ordinal=value;}
+ public static void reset(){opened=closed=live=failGetFd=0;failClose=false;}
+ public static ParcelFileDescriptor openFixture(){opened++;live++;return new ParcelFileDescriptor(opened);}
+ public int getFd(){if(ordinal==failGetFd)throw new IllegalStateException("test getFd failure");return 100+ordinal;}
+ public void close()throws IOException{if(done)return;done=true;closed++;live--;if(failClose)throw new IOException("test close failure "+ordinal);}
+}
+"""
+PACK_DOUBLE=r"""
+package io.github.russianranger.cohdiagnostic;
+import java.io.File;
+public final class AssetPackStore {public File resolve(String path){return new File(path);}}
+"""
+
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source-root',type=Path,required=True);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();source=a.source_root.resolve()/'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java';raw=source.read_bytes();text=raw.decode();assert 'networkOwnerAttempt=attempt;'in text and 'networkOwnerAttempt=-1;'in text
- names=['networkTick','publishObservedSelf','clearObservedBox'];methods={n:extract(text,n)for n in names};work=a.work.resolve();work.mkdir(parents=True,exist_ok=False);java=work/'ObservedBridgeTest.java';java.write_text(HEADER+'\n'.join(methods.values())+TESTS)
- result=subprocess.run(['java','-Xmx128m','com.sun.tools.javac.Main','--release','8','-d',str(work),str(java)],capture_output=True,text=True,timeout=60)
+ p=argparse.ArgumentParser(description=__doc__)
+ p.add_argument('--source-root',type=Path,required=True);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
+ a=p.parse_args();root=a.source_root.resolve();base=root/'native-android/combined-client/app/src/main/java/org/coh/nativecombined'
+ source=base/'NativeClientActivity.java';raw=source.read_bytes();text=raw.decode()
+ inputs=base/'RuntimeActorInputs.java';input_raw=inputs.read_bytes()
+ assert 'networkOwnerAttempt=attempt;'in text and 'networkOwnerAttempt=-1;'in text
+ names=['networkTick','publishObservedSelf','clearObservedBox','publishObservedCostume','requestRender'];methods={n:extract(text,n)for n in names}
+ work=a.work.resolve();work.mkdir(parents=True,exist_ok=False)
+ java=work/'ObservedBridgeTest.java';java.write_text(HEADER+'\n'.join(methods.values())+TESTS.replace(' CONTINUATION_TEST_METHODS',CONTINUATION_TESTS)+HELPERS)
+ helper=work/'RuntimeActorInputs.java';helper.write_bytes(input_raw)
+ fd=work/'android/os/ParcelFileDescriptor.java';fd.parent.mkdir(parents=True);fd.write_text(FD_DOUBLE)
+ pack=work/'io/github/russianranger/cohdiagnostic/AssetPackStore.java';pack.parent.mkdir(parents=True);pack.write_text(PACK_DOUBLE)
+ result=subprocess.run(['java','-Xmx128m','com.sun.tools.javac.Main','--release','8','-d',str(work),str(java),str(helper),str(fd),str(pack)],capture_output=True,text=True,timeout=60)
  if result.returncode:raise RuntimeError(result.stderr)
  profiles={}
- for profile in ('legacy','fullscreen'):
-  result=subprocess.run(['java','-Xmx64m','-Dcoh.fullscreen='+str(profile=='fullscreen').lower(),'-cp',str(work),'ObservedBridgeTest'],capture_output=True,text=True,timeout=30)
+ for profile in ('legacy','fullscreen','continuation'):
+  result=subprocess.run(['java','-Xmx64m','-Dcoh.fullscreen='+str(profile!='legacy').lower(),'-Dcoh.continuation='+str(profile=='continuation').lower(),'-cp',str(work),'org.coh.nativecombined.ObservedBridgeTest'],capture_output=True,text=True,timeout=30)
   if result.returncode:raise RuntimeError(result.stdout+result.stderr)
-  profiles[profile]=json.loads(result.stdout);assert profiles[profile]['fullscreen_branch']==(profile=='fullscreen')
- assert source.read_bytes()==raw,'source changed during focused qualification';v=profiles['legacy'].copy();v.update(profiles=profiles,checks=sum(x['checks']for x in profiles.values()),activity_sha256=hashlib.sha256(raw).hexdigest(),exact_method_sha256={n:hashlib.sha256(x.encode()).hexdigest()for n,x in methods.items()},source_unchanged_during_test=True,scope='Exact Java Activity owner-tuple/posted-callback bridge only; Android/JNI/render/network collaborators are explicit doubles.');a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(v,indent=2)+'\n');print(json.dumps(v))
+  profiles[profile]=json.loads(result.stdout)
+  assert profiles[profile]['fullscreen_branch']==(profile!='legacy') and profiles[profile]['continuation_branch']==(profile=='continuation')
+ assert source.read_bytes()==raw and inputs.read_bytes()==input_raw,'source changed during focused qualification'
+ v=profiles['legacy'].copy();v.update(profiles=profiles,checks=sum(x['checks']for x in profiles.values()),activity_sha256=hashlib.sha256(raw).hexdigest(),runtime_inputs_sha256=hashlib.sha256(input_raw).hexdigest(),exact_method_sha256={n:hashlib.sha256(x.encode()).hexdigest()for n,x in methods.items()},source_unchanged_during_test=True,scope='Exact Java Activity pose/costume/queued-render methods and unchanged RuntimeActorInputs source; Android/JNI/native/render/network/archive/pin collaborators are explicit host doubles. No Android, EGL, asset hash or native actor acceptance claim.')
+ a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(v,indent=2)+'\n');print(json.dumps(v))
 if __name__=='__main__':main()
