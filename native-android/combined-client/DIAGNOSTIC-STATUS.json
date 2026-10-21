@@ -4368,7 +4368,7 @@
         "original_status": "failed",
         "step": "Qualify preserved selectors and expanded snapshots",
         "error": "snapshot_check.py exact-source extraction omits transitive asset-loader/frame-capture headers and source-default diagnostic macros; compiler failure, no failing runtime assertion.",
-        "status": "local ASan and UBSan passed; final corrective CI run awaiting source push",
+        "status": "Affected ARM64 link and snapshot qualification passed; historical Session0.3 ARM64/package/signer checks also passed; Android13 emulator step17 still running at delivery, no reported failure.",
         "production_or_APK_change": false,
         "fix_local_commit": "476c5e9cf3336f6d8368d7a264e22eb8f42c646c",
         "local_checks": {
@@ -4378,8 +4378,32 @@
           "report_bytes_max": 9511,
           "report_limit": 16384
         },
-        "fix": "Genuine engine/assets include path, original session_frame_capture.h and exact original source default COH_FRAME_CAPTURE_DIAGNOSTIC=0; assertions unchanged."
-      }
+        "fix": "Genuine engine/assets include path, original session_frame_capture.h and exact original source default COH_FRAME_CAPTURE_DIAGNOSTIC=0; assertions unchanged.",
+        "fix_commit": "b4ebbaf9b5ccbc459e17c3d592f01a60fe0187a6",
+        "CI_run": 39531517183,
+        "CI_head": "490056e5b6d9104a0df9404409e9d9e02c3edc78",
+        "CI_snapshot_step": "passed",
+        "CI_ARM64_link_step": "passed"
+      },
+      "further_redispatches_permitted": false,
+      "qualified_APK_unchanged": true,
+      "delivery_scope": "Combined0.1.18 full source/package/framework/update CI39528643541 is passed; subsequent changes only fix three legacy checker/tool dependency closures and rolling documentation. No production source or signed APK changed.",
+      "historical_Session_workflow": {
+        "run": 39531517183,
+        "job": 118998258476,
+        "head": "490056e5b6d9104a0df9404409e9d9e02c3edc78",
+        "status": "in_progress",
+        "last_step": "Android13 bounded real input, source residency, renderer and lifecycle",
+        "passed_steps": [
+          "actual ARM64 NDK integrated GPU link",
+          "preserved selectors and expanded snapshots",
+          "historical ARM64 build and lint",
+          "historical emulator package, bytes and signer",
+          "emulator acceleration"
+        ],
+        "additional_redispatches": 0
+      },
+      "unchanged_APK_sha256": "dcf9c5074dcde620dc2aa117bc949bf63a2ce217e43ea1909555bc77ac345439"
     }
   }
 }
