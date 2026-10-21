@@ -1,0 +1,4662 @@
+{
+ "target": "linux-arm64",
+ "permissive": true,
+ "warn64": false,
+ "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+ "started": "2026-10-21T13:48:34-0500",
+ "targets": {
+  "UtilitiesLib": {
+   "warn64_total": 0,
+   "warn64_files": 0,
+   "warn64_top_files": {},
+   "warn64_examples": [],
+   "structparser": {
+    "returncode": 0,
+    "stdout_tail": "",
+    "stderr_tail": ""
+   },
+   "files": 165,
+   "files_clean": 5,
+   "errors_total": 189,
+   "errors_by_category": {
+    "missing-header": 159,
+    "undeclared-identifier": 29,
+    "other": 1
+   },
+   "first_error_by_category": {
+    "missing-header": 159,
+    "undeclared-identifier": 1
+   },
+   "missing_headers": {
+    "crtdbg.h": 137,
+    "excpt.h": 14,
+    "io.h": 2,
+    "intrin.h": 2,
+    "cryptlib.h": 1,
+    "share.h": 1,
+    "process.h": 1,
+    "crashrpt/Stackwalk.h": 1
+   },
+   "examples": {
+    "missing-header": [
+     "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    ],
+    "undeclared-identifier": [
+     "libs/UtilitiesLib/src/utils/cpu_count.c:237:5: error: use of undeclared identifier 'DWORD'",
+     "libs/UtilitiesLib/src/utils/cpu_count.c:238:5: error: use of undeclared identifier 'SYSTEM_LOGICAL_PROCESSOR_INFORMATION'",
+     "libs/UtilitiesLib/src/utils/cpu_count.c:238:43: error: use of undeclared identifier 'proc_info'",
+     "libs/UtilitiesLib/src/utils/cpu_count.c:239:5: error: use of undeclared identifier 'HANDLE'",
+     "libs/UtilitiesLib/src/utils/cpu_count.c:240:19: error: unknown type name 'WINAPI'",
+     "libs/UtilitiesLib/src/utils/cpu_count.c:241:5: error: use of undeclared identifier 'PGetLogicalProcessorInformation'",
+     "libs/UtilitiesLib/src/utils/cpu_count.c:247:5: error: use of undeclared identifier 'hModule'",
+     "libs/UtilitiesLib/src/utils/cpu_count.c:248:12: error: use of undeclared identifier 'hModule'"
+    ],
+    "other": [
+     "libs/UtilitiesLib/src/utils/cpu_count.c:240:60: error: a parameter list without types is only allowed in a function definition"
+    ]
+   },
+   "worst_files": [
+    {
+     "file": "libs/UtilitiesLib/src/utils/cpu_count.c",
+     "errors": 30
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/ArrayOld.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AssociationList.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AutoStructSupport.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BinarySearchTree.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitArray.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/bitfield.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitStream.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BloomFilter.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datalist.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datapool.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/earray.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/EString.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/FilespecMap.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Frustum.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/genericlist.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericMesh.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericPoly.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/gridpoly.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/HashFunctions.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/HashTableStack.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/mailbox.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemAlloc.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemoryBank.c",
+     "errors": 1
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemoryPool.c",
+     "errors": 1
+    }
+   ],
+   "per_file": [
+    {
+     "file": "libs/UtilitiesLib/src/components/ArrayOld.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AssociationList.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/AutoStructSupport.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BinarySearchTree.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitArray.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/bitfield.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BitStream.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/BloomFilter.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datalist.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/datapool.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/earray.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/EString.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/FilespecMap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Frustum.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/genericlist.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericMesh.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/GenericPoly.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/gridpoly.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/HashFunctions.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/HashTableStack.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/mailbox.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemAlloc.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemoryBank.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemoryPool.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MemRef.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/metadictionary.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MRUList.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/MultiVal.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/NamedBitArray.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Octree.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/PerformanceCounter.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/Queue.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/ReferenceList.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/ReferenceSystem.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/RingBuffer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SharedHeap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/sharedmalloc.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SharedMemory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SharedQueue.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/SimpleSet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/StashTable.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/StringCache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/StringTable.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/TriCube/fpcube.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/TriCube/pcube.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/components/WorkerThread.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/AppLocale.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/MessageStore.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/MessageStoreUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/language/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/language/MultiMessageStore.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/language/../components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/bignum.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/bindiff.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/blowfish.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/crc32c.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/crypt.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/src/network/crypt.cpp:7:10: fatal error: 'cryptlib.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/fingerprint.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/ftpclient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netcomp.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_core.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_receive.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_send.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/netio_stats.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/NetworkSpecifier.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_link.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_linklist.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_masterlist.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_masterlistref.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_packet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_packetutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_profile.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_socket.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/net_version.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/rsa.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/network/sock.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utilitiesLib.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "<clang>/include/intrin.h:12:15: fatal error: 'intrin.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/../assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/array.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/Bits.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/hashfunctions/lookup3.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/lock.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/meta.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ncHash.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ncstd.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ncutils.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/ntapiext.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/profiler.c",
+     "ok": false,
+     "errors": 1,
+     "first": "<clang>/include/intrin.h:12:15: fatal error: 'intrin.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/Str.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/Stream.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/UtilsNew/timer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Breakpoint.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/buildVersion.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/cmdoldparse.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Color.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/CommandFileParser.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ConsoleDebug.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/contextQsort.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ConvertUtf.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/cpu_count.c",
+     "ok": false,
+     "errors": 30,
+     "first": "libs/UtilitiesLib/src/utils/cpu_count.c:237:5: error: use of undeclared identifier 'DWORD'"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/dds.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/src/utils/dds.c:11:10: fatal error: 'share.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/DebugState.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/DirMonitor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/dobbs_hash.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/endian.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/error.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/eval.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/file.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/fileutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/fileWatch.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/src/utils/fileWatch.c:1:10: fatal error: 'process.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/FolderCache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/FolderCacheNode.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/genericDialog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/hoglib.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/hogutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/LineDist.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ListView.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/log.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/mathutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/memcheck.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/memlog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/MemoryHeap.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/MemoryMonitor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/memtrack.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/mutex.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/osdependent.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/PigDir.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/PigFileWrapper.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/piglib.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/process_util.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/qsortG.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Quat.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/quick_sprintf.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/rand.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/RegistryReader.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/rgb_hsv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/scriptvars.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/serialize.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/SimpleParser.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/ssemath.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/Stackdump.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/src/utils/Stackdump.c:1:10: fatal error: 'crashrpt/Stackwalk.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/strings_opt.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/StringUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structDefines.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structHist.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structInternals.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structNet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/structTokenizer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/SuperAssert.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/sysutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/textparser.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/textparserReg.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/textparserUtils.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/tga.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/threadedFileCopy.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/tiff.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/timing.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/tokenstore.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/UnitSpec.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/utils.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/utils_opt.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/winfiletime.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/WinTabUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/utils/winutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/version/AppRegCache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "libs/UtilitiesLib/src/version/AppVersion.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    }
+   ]
+  },
+  "Game": {
+   "warn64_total": 0,
+   "warn64_files": 0,
+   "warn64_top_files": {},
+   "warn64_examples": [],
+   "structparser": {
+    "returncode": 0,
+    "stdout_tail": "",
+    "stderr_tail": ""
+   },
+   "files": 558,
+   "files_clean": 6,
+   "errors_total": 555,
+   "errors_by_category": {
+    "missing-header": 552,
+    "other": 3
+   },
+   "first_error_by_category": {
+    "missing-header": 549,
+    "other": 3
+   },
+   "missing_headers": {
+    "crtdbg.h": 490,
+    "excpt.h": 40,
+    "io.h": 17,
+    "linux/NxMath_LINUX.h": 3,
+    "jpgd.h": 1,
+    "ddraw.h": 1
+   },
+   "examples": {
+    "missing-header": [
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found",
+     "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    ],
+    "other": [
+     "3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h:50:2: error: array is too large (18446744073709551615 elements)",
+     "3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h:50:2: error: array is too large (18446744073709551615 elements)",
+     "3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h:50:2: error: array is too large (18446744073709551615 elements)"
+    ]
+   },
+   "worst_files": [
+    {
+     "file": "Common/NovodeX/NwCoreDump.cpp",
+     "errors": 2
+    },
+    {
+     "file": "Common/NovodeX/NwRagdoll.cpp",
+     "errors": 2
+    },
+    {
+     "file": "Common/NovodeX/NwWrapper.cpp",
+     "errors": 2
+    },
+    {
+     "file": "Common/account/AccountCatalog.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/account/AccountData.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/account/AccountInventory.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/account/AccountTypes.cpp",
+     "errors": 1
+    },
+    {
+     "file": "Common/auction/Auction.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/auction/AuctionData.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/auction/Xact.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/auth/auth.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/auth/authUserData.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/basedata.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/BaseEntry.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/basefromgroup.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/baseinv.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/baselegal.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/baseparse.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/baseRaid.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/bases.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/basesend.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/basestorage.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/basesystems.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/basetogroup.c",
+     "errors": 1
+    },
+    {
+     "file": "Common/bases/basetrim.c",
+     "errors": 1
+    }
+   ],
+   "per_file": [
+    {
+     "file": "Common/account/AccountCatalog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/account/AccountData.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/account/AccountInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/account/AccountTypes.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/auction/Auction.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/auction/AuctionData.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/auction/Xact.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/auth/auth.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/auth/authUserData.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/basedata.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/bases/BaseEntry.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/basefromgroup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/baseinv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/baselegal.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/baseparse.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/baseRaid.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/bases.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/basesend.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/basestorage.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/basesystems.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/basetogroup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/basetrim.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/baseupkeep.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/bases/DetailRecipe.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/cmdparse/AppServerCmd.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/cmdparse/cmdaccountserver.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/cmdparse/cmdcommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/container/container_store.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/container/container_util.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/container/dbcontainerpack.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/DoorStrings.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/attrib_description.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/entity/attrib_names.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/attrib_net.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/entity/boost.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/boostset.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/buddy.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_attribs.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_base.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_combat_eval.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_eval.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_inventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_level.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_net.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_target.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/character_workshop.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/chatSettings.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/classes.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/Concept.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/costume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/CustomVillainGroup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/entity/entity.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/entityRef.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/entStrings.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/entworldcoll.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/friendCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/incarnate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/Invention.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/LoadDefCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/load_def.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/motion.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/origins.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/PCC_Critter.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/entity/PowerInfo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/powers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/powers_load.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/power_customization.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/entity/power_system.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/Proficiency.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/ragdoll.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/RewardItemType.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/RewardSlot.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/RewardToken.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/salvage.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/SgrpBasePermissions.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/Supergroup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/supergroup_eval.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/entity/TaskforceParams.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/entity/teamup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/filter/profanity.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/filter/titles.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/filter/validate_name.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/fxbhvr.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/fxinfo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameComm/dooranimcommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameComm/initCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameComm/NPC.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/gameComm/trayCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameComm/VillainDef.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/gameComm/wdwbase.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameData/arenastruct.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameData/BodyPart.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameData/costume_data.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameData/raidstruct.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameData/store.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gameData/store_data.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/ctri.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/grid.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/gridcache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/gridcoll.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/gridcollobj.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/gridfind.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/gridstats.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/gridcoll/tritri_isectline.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/group.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupdyn.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupfilelib.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupfileload.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupfileloadutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupfilesave.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupgrid.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupMetaMinimap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupnovodex.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupProperties.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/groupscene.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/grouptrack.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/group/grouputil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/imageServer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/language/commonLangUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/LWC_common.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/MissionControl.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/mission/MissionSearch.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/mission/missionserver_meta.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/NovodeX/NwCoreDump.cpp",
+     "ok": false,
+     "errors": 2,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h:50:2: error: array is too large (18446744073709551615 elements)"
+    },
+    {
+     "file": "Common/NovodeX/NwRagdoll.cpp",
+     "ok": false,
+     "errors": 2,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h:50:2: error: array is too large (18446744073709551615 elements)"
+    },
+    {
+     "file": "Common/NovodeX/NwSharedStream.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/NovodeX/NwStream.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Common/NovodeX/NwWrapper.cpp",
+     "ok": false,
+     "errors": 2,
+     "first": "3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h:50:2: error: array is too large (18446744073709551615 elements)"
+    },
+    {
+     "file": "Common/player/badges.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/player/pmotion.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/player/pophelp.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/Properties.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/anim.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/AnimBitList.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/animtrack.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/animtrackanimate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/AutoLOD.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/bones.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/gfxtree.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/modelReload.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seq.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seqanimate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seqload.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seqregistration.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seqsequence.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seqskeleton.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seqstate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/seq/seqtype.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/seq/tricks.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/contactCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/missiongeoCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/missionMapCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/playerCreatedStoryarc.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/playerCreatedStoryarcValidate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/pnpcCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/storyarcCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/storyarc/zowieCommon.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Common/testClient/testLevelup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/utils/debugUtils.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/utils/EVAL.C",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/utils/Position.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Common/varutils.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/arena/arenagame.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/bases/baseclientrecv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/bases/baseclientsend.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/bases/basedrag.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/bases/basedraw.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/bases/baseedit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/clientcomm/authclient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/clientcomm/autoResumeInfo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/clientcomm/clientcomm.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/clientcomm/clientcommreceive.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/clientcomm/dbclient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/clientcomm/Des.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/clientError.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/Cloth.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/ClothBuild.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/ClothCollide.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/ClothConstraint.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/ClothMesh.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/ClothMeshPrimitive.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/ClothObject.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/ClothParse.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/Cloth/Wind.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/cmdparse/cmdDebug.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/cmdparse/cmdgame.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/demo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/editorUI.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/ClickToSource.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/DebugLocation.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/EditListView.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_cmd.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_adjust.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_file.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_group.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_cmd_select.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_context_menu.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_cubemap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_drawlines.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_errcheck.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_info.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_library.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_lods.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_net.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_pickcolor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_select.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_transformToolbar.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/edit_uiscroll.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/MapGenerator.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/Menu.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/edit/UI.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/character_animfx_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/character_net_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/costume_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/CustomVillainGroup_Client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/entclient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/entDebug.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/entity_power_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/entrecv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/PCC_Critter_Client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/language/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/power_customization_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Game/src/entity/scriptDebugClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/formatter/smf_format.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/formatter/smf_interact.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/formatter/smf_main.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/formatter/smf_parse.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/formatter/smf_render.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/formatter/smf_select.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/formatter/smf_util.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/game.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameComm/chatClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameComm/dooranimclient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameComm/initClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameComm/itemselect.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameData/costume_critter.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameData/costume_diff.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameData/menudef.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameData/randomCharCreate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameData/randomName.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/gameData/sgraidClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/camera.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/camera_detached.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/clothnode.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/failtext.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/fog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/font.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/fontdata.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/frustum_c.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/fx.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/fxcapes.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/fxdebris.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/fxfluid.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/fxgeo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/fxlists.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/fxutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/FX/particle.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/gfx.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/gfxDebug.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/gfxDevHUD.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/gfxLoadScreens.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/gfxSettings.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/gfxwindow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/groupdraw.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/groupdrawinline.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/groupdrawutil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/groupMiniTrackers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/groupThumbnail.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/imageCapture.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/jpeg.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/graphics/jpeg.cpp:4:10: fatal error: 'jpgd.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/light.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/seqgraphics.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/splat.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/sun.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/textureatlas.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttAppleMapping.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttDebug.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontBitmap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontCore.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontDraw.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/truetype/ttFontManager.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/ttFont.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/ttFontUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/viewport.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/view_cache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/vistray.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/vistraygrid.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/zOcclusion.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/graphics/zOcclusionClip.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/group/groupdynrecv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/group/groupnetrecv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/language/langClientUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/LWC.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/main.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/player/badges_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/player/inventory_client.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/player/player.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/player/playerState.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/player/playerSticky.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/bump.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/cubemap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/cubemap_filter.cpp",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/render/dxtlibwrapper.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/render/model.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/model_cache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/pbuffer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/perfcounter.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderbonedmodel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/rendercloth.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderEffects.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderfont.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/rendermodel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderparticles.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderperf.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderprim.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/rendershadow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/rendershadowmap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderssao.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderstats.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/rendertree.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/rendertricks.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/renderWater.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/rotoZoom.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/sprite.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/tex.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/texUnload.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/texWords.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/texWordsEdit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/tex_gen.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/glext.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/mipmap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_bonedmodel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cgfx.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cgfx_statemgmt.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cloth.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cubemap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_cursor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_effects.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_filter.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_font.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_graphfps.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_model.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_model_cache.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_particles.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_pbuffer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_perf.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_prim.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_queue.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_report.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_shaderMgr.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_shadow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_shadowmap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_sprite.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_ssao.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_state.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_stats.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_tex.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_tricks.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_tune.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_util.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_water.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/rt_win_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/shadersATI.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/shadersTexEnv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/thread/wcw_statemgmt.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/render/videoMemory.cpp",
+     "ok": false,
+     "errors": 1,
+     "first": "Game/src/render/videoMemory.cpp:1:10: fatal error: 'ddraw.h' file not found"
+    },
+    {
+     "file": "Game/src/sound/ogg_decode.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/sound/sound.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/sound/sound_ambient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/sound/sound_sys.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/storyarc/contactClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/storyarc/missionClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Game/src/storyarc/playerCreatedStoryarcClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/storyarc/storyarcClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/storyarc/zowieClient.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/uiLevelingpact.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/uiTextLink.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiArchetype.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiBody.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiCostumes.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiHybridMenu.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiLoyaltyTree.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiLoyaltyTreeAccess.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiLWC.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiOrigin.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiPlaystyle.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiPower.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiRedirect.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiRegister.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/Hybrid/uiWebStoreFrame.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_base.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_debug.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_font.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_list.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/sprite/sprite_text.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiAmountSlider.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiArena.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiArenaGladiator.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiArenaJoin.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiArenaList.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiArenaResult.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiAuction.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiAutomap.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiAutomapFog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiAvatar.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBadges.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBaseInput.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBaseInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBaseLog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBaseProps.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBaseRoom.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBaseStorage.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBox.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBrowser.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiBuff.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiChannel.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiChannelSearch.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiChat.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiChatOptions.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiChatUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiClipper.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiClue.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiColorPicker.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCombatMonitor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCombatNumbers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCombineSpec.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiComboBox.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiComment.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCompass.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiConceptInv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiConsole.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiContact.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiContactDialog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiContactFinder.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiContextMenu.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiConvertEnhancement.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCostume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCostumeSelect.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCursor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCustomVillainGroupWindow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiCustomWindow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiDeath.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiDialog.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiDock.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/UIEdit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiEditText.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiEmail.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiEmote.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiEnhancement.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiFocus.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiFriend.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiFx.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiGame.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiGender.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiGift.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiGroupWindow.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiGrowBig.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiHelp.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiHelpButton.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiIME.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiIncarnate.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiInfo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiInput.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiInspiration.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiInvent.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiKeybind.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiKeymapping.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLeague.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLevelPower.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLevelSpec.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLfg.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiListView.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLoadCostume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLoadingTip.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/language/../components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLoadPowerCust.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiLogin.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMapSelect.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMission.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMissionComment.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMissionMaker.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMissionMakerScrollSet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMissionReview.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMissionSearch.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMissionSummary.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiMMMapViewer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiNet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiNewFeatures.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiNPCCostume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiNPCCreationNLM.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiNPCProfile.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiOptions.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPCCCreationNLM.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPCCPowers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPCCProfile.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPCCRank.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h:8:10: fatal error: 'io.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPetition.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPictureBrowser.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPlaque.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPlayerNote.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPopHelp.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPowerCust.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPowerInfo.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPowerInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiPowers.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiQuit.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiRaidResult.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiRecentTeam.c",
+     "ok": true,
+     "errors": 0,
+     "first": ""
+    },
+    {
+     "file": "Game/src/UI/uiRecipeInv.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiRecipeInventory.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiRenderStats.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiReSpec.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiReticle.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiRewardChoice.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSalvage.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSalvageOpen.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSaveCostume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiScript.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiScrollBar.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiScrollSelector.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiScrollSet.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiServerTransfer.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSGList.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSGRaidList.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSlider.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSMFView.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/assert/../utils/SuperAssert.h:5:10: fatal error: 'excpt.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiStatus.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiStore.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiStoredSalvage.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSupercostume.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSupergroup.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiSuperRegistration.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTabControl.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTailor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTarget.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTeam.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTitleSelect.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiToolTip.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTrade.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTradeLogic.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTray.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTraySingle.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTree.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTrialReminder.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiTurnstile.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiUtil.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiUtilGame.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiUtilMenu.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiWindows.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/UI/uiWindows_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/validateFiles.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/win/hwlight.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/win/input.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/win/win_cursor.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/utils/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    },
+    {
+     "file": "Game/src/win/win_init.c",
+     "ok": false,
+     "errors": 1,
+     "first": "libs/UtilitiesLib/include/utilitieslib/components/../crt.h:16:10: fatal error: 'crtdbg.h' file not found"
+    }
+   ]
+  }
+ },
+ "finished": "2026-10-21T13:49:13-0500",
+ "label": "comparison: same experiment, aarch64 Linux target"
+}
