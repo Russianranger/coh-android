@@ -61,7 +61,9 @@ def main():
     parser.add_argument('--fallback', action='store_true', help='Compile diagnostic known-handler partial-tail ACK and 30s observation opt-in.')
     parser.add_argument('--release-only', action='store_true', help='Run only the focused release fixture; default also qualifies ASan/UBSan.')
     parser.add_argument('--costume-frame-output', type=Path, help='Optional exclusive private output of the exact checked COHCST01 getter copy; requires --replay --fallback.')
+    parser.add_argument('--post-replay', action='store_true', help='Compile freeze-only raw post-READY FD tap; implies fallback.')
     args = parser.parse_args()
+    if args.post_replay: args.fallback = True
     if args.costume_frame_output and not (args.replay and args.fallback):
         parser.error('--costume-frame-output requires --replay --fallback')
     if args.costume_frame_output:
@@ -91,6 +93,8 @@ def main():
         flags += ['-DCOH_BOUNDED_CONTINUATION_DIAGNOSTIC=1']
     if args.fallback:
         flags += ['-DCOH_INITIAL_ACK_FALLBACK_DIAGNOSTIC=1']
+    if args.post_replay:
+        flags += ['-DCOH_POST_READY_REPLAY_DIAGNOSTIC=1']
     sources = [TOOLS / ('test_actual_initial_android.c' if args.replay else 'test_outer_costume_android.c'),
                *[Path('native-android/engine/initial-capture/coh_initial_' + name + '_probe.c') for name in PROBES],
                Path('native-android/engine/initial-capture/coh_local_bodypart_default.c'),
@@ -121,7 +125,7 @@ def main():
             if path.is_relative_to(ROOT):
                 frozen.add(path)
     pins = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(frozen)}
-    result = {'passed': True, 'bounded_next_diagnostic': args.bounded, 'partial_tail_diagnostic': args.fallback, 'release_only': args.release_only, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
+    result = {'passed': True, 'bounded_next_diagnostic': args.bounded, 'partial_tail_diagnostic': args.fallback, 'post_ready_raw_tap': args.post_replay, 'release_only': args.release_only, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
               'scope': ('Authentic saved Thor packet through shipping JNI observer/owner with original source-static shortcuts, test-owned selection and transport/JNI/Android asset doubles; no live authentication, actual network sends or Android ABI claim.' if args.replay else 'Shipping new-profile JNI observer, with Android asset/JNI/transport doubles and source-layout sender header composition; no physical packet, Android ABI, actor or ACK claim.')}
     if args.replay:
         result['actual_source_fixture'] = actual_source

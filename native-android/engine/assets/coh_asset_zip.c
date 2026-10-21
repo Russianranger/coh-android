@@ -46,7 +46,14 @@ static unsigned lower(unsigned c){return c>='A'&&c<='Z'?c+32u:c;}
 static int same(const char*a,const char*b){for(size_t i=0;i<=COH_ASSET_PATH_MAX;i++){if(lower((unsigned char)a[i])!=lower((unsigned char)b[i]))return 0;if(!a[i])return 1;}return 0;}
 static int query_match(const char *path,const CohAssetZipQuery*q){
  if(q->kind==COH_ZIP_QUERY_PATH)return same(path,q->name);
- const char *base=strrchr(path,'/');if(!base)return 0;const char *prefix="data/texture_library/";for(unsigned i=0;i<21;i++)if(!path[i]||lower((unsigned char)path[i])!=(unsigned char)prefix[i])return 0;base++;
+ const char *base=strrchr(path,'/');if(!base)return 0;
+ /* Imported CLIENT and reference archives retain different virtual roots.
+  * Original texLoadHeaderProcessor scans texture_library in all data dirs;
+  * texFind uses a case-insensitive basename, not one archive/path prefix. */
+ const char *prefixes[]={"texture_library/","data/texture_library/","assets/texture_library/"};int root=0;
+ for(unsigned r=0;r<3;r++){size_t i=0;for(;prefixes[r][i]&&path[i]&&lower((unsigned char)path[i])==(unsigned char)prefixes[r][i];i++);if(!prefixes[r][i])root=1;}
+ if(!root)return 0;
+ base++;
  size_t n=strlen(base),wanted=strlen(q->name);if(n!=wanted+8u||!same(base+wanted,".texture"))return 0;
  for(size_t i=0;i<wanted;i++)if(lower((unsigned char)base[i])!=lower((unsigned char)q->name[i]))return 0;
  return 1;

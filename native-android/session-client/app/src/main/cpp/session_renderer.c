@@ -587,16 +587,19 @@ static int received_cancel(void*context){ReceivedCancel*t=context;Session*s=t->s
  * invalidates the token; they never wait for IO or release borrowed GL data. */
 JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_observedCostume(JNIEnv*e,jclass c,jlong handle,jbyteArray frame,jintArray fds,jlongArray offsets,jlongArray lengths,jlong java_bytes,jlong source_bytes){
     (void)c;Session*s=(Session*)(intptr_t)handle;
+    jsize archive_count=fds?(*e)->GetArrayLength(e,fds):0;
     if(!s||!frame||!fds||!offsets||!lengths||java_bytes<48384||source_bytes<=0||
-       (*e)->GetArrayLength(e,frame)!=48384||(*e)->GetArrayLength(e,fds)!=2||(*e)->GetArrayLength(e,offsets)!=2||(*e)->GetArrayLength(e,lengths)!=2)return COH_INVALID;
-    uint8_t header[32];jint descriptors[2];jlong starts[2],sizes[2];
+       (*e)->GetArrayLength(e,frame)!=48384||archive_count<1||archive_count>(jsize)COH_RECEIVED_COSTUME_ARCHIVES||(*e)->GetArrayLength(e,offsets)!=archive_count||(*e)->GetArrayLength(e,lengths)!=archive_count)return COH_INVALID;
+    uint64_t java_charge=(uint64_t)java_bytes,minimum_java=48384u+(uint64_t)archive_count*(sizeof(jint)+2u*sizeof(jlong));
+    if(java_charge<minimum_java)java_charge=minimum_java;
+    uint8_t header[32];jint descriptors[COH_RECEIVED_COSTUME_ARCHIVES];jlong starts[COH_RECEIVED_COSTUME_ARCHIVES],sizes[COH_RECEIVED_COSTUME_ARCHIVES];
     (*e)->GetByteArrayRegion(e,frame,0,32,(jbyte*)header);if((*e)->ExceptionCheck(e))return COH_INVALID;
     if(memcmp(header,"COHCST01",8)||received_u32(header+8)!=32||received_u32(header+12)!=sizeof(CohOriginalCostumeSnapshot)||!received_u64(header+16)||received_u32(header+28))return COH_INVALID;
     uint32_t entity=received_u32(header+24);if(!entity||entity>10239)return COH_INVALID;
-    (*e)->GetIntArrayRegion(e,fds,0,2,descriptors);if((*e)->ExceptionCheck(e))return COH_INVALID;
-    (*e)->GetLongArrayRegion(e,offsets,0,2,starts);if((*e)->ExceptionCheck(e))return COH_INVALID;
-    (*e)->GetLongArrayRegion(e,lengths,0,2,sizes);if((*e)->ExceptionCheck(e))return COH_INVALID;
-    CohReceivedArchiveFd files[2];for(unsigned i=0;i<2;i++){if(descriptors[i]<0||starts[i]||sizes[i]<=0||sizes[i]>UINT32_MAX)return COH_INVALID;files[i]=(CohReceivedArchiveFd){descriptors[i],0,(uint64_t)sizes[i]};}
+    (*e)->GetIntArrayRegion(e,fds,0,archive_count,descriptors);if((*e)->ExceptionCheck(e))return COH_INVALID;
+    (*e)->GetLongArrayRegion(e,offsets,0,archive_count,starts);if((*e)->ExceptionCheck(e))return COH_INVALID;
+    (*e)->GetLongArrayRegion(e,lengths,0,archive_count,sizes);if((*e)->ExceptionCheck(e))return COH_INVALID;
+    CohReceivedArchiveFd files[COH_RECEIVED_COSTUME_ARCHIVES];for(jsize i=0;i<archive_count;i++){if(descriptors[i]<0||starts[i]||sizes[i]<=0||sizes[i]>UINT32_MAX)return COH_INVALID;files[i]=(CohReceivedArchiveFd){descriptors[i],0,(uint64_t)sizes[i]};}
     pthread_mutex_lock(&s->mutex);
     if(s->running||s->received_preparing||s->failed||s->observed_entity_index!=entity){pthread_mutex_unlock(&s->mutex);return COH_STATE;}
     s->received_preparing=1;ReceivedCancel token={s,s->epoch,s->observed_entity_updates,s->received_invalidations,entity};pthread_mutex_unlock(&s->mutex);
@@ -605,10 +608,10 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_observedCostume(
     for(unsigned set=0;set<3;set++)for(unsigned i=0;i<counts[set];i++){uint64_t bytes=(uint64_t)sets[set][i].count*13u*sizeof(float);if(bytes>future.tf_bytes)future.tf_bytes=(size_t)bytes;}
     if(!capture_scene_charge(s,&future,&base))goto done;
     parent=base;
-    if(!capture_add(&parent,(uint64_t)java_bytes)||!capture_add(&parent,(uint64_t)source_bytes)||!capture_add(&parent,sizeof* snapshot+coh_received_costume_fds_allocation_bytes()+COH_RECEIVED_COSTUME_STACK+COH_CAPTURE_RESERVE))goto done;
+    if(!capture_add(&parent,java_charge)||!capture_add(&parent,(uint64_t)source_bytes)||!capture_add(&parent,sizeof* snapshot+coh_received_costume_fds_allocation_bytes()+COH_RECEIVED_COSTUME_STACK+COH_CAPTURE_RESERVE))goto done;
     snapshot=malloc(sizeof*snapshot);if(!snapshot)goto done;
     (*e)->GetByteArrayRegion(e,frame,32,sizeof*snapshot,(jbyte*)snapshot);if((*e)->ExceptionCheck(e)){status=COH_INVALID;goto done;}
-    status=coh_received_costume_fds_open(files,&imports);if(status){snprintf(stats.missing,sizeof stats.missing,"CLIENT/zones immutable archive descriptors");goto done;}
+    status=coh_received_costume_fds_open(files,(uint32_t)archive_count,&imports);if(status){snprintf(stats.missing,sizeof stats.missing,"loaded immutable archive descriptors");goto done;}
     CohReceivedCostumeInputs inputs={0};inputs.snapshot=snapshot;inputs.rig=&s->rig;inputs.parent_bytes=parent;inputs.source_epoch=received_u64(header+16);inputs.entity_index=entity;inputs.cancel=(CohCancel){received_cancel,&token};
     status=coh_received_costume_fds_sources(imports,inputs.archives);if(status)goto done;
     status=coh_received_costume_prepare(&inputs,&candidate,&stats);if(status)goto done;

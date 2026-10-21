@@ -11,6 +11,11 @@ def main():
    z.writestr('data/player_library/v_huge_spadr.geo',bytes(i%251 for i in range(1500000)))
    z.writestr('data/texture_library/first/chest_stripe_1.texture',b'one')
    z.writestr('data/texture_library/second/CHEST_STRIPE_1.texture',b'two')
+   # Authentic reference manifest path; tiny explicit test body is not a texture oracle.
+   z.writestr('texture_library/v_players/avatar/male/face/helmets/face_v_helmet_robotic_01.texture',b'face')
+   z.writestr('DATA/TEXTURE_LIBRARY/duplicate/FACE_V_HELMET_ROBOTIC_01.texture',b'late')
+   z.writestr('ASSETS/Texture_Library/Other/MaSk_ReFeReNcE.texture',b'mask')
+   z.writestr('unrelated/face_v_helmet_robotic_01.texture',b'wrong')
   sources=[HERE/'test_archive_queries.c']+[NATIVE/name for name in ('engine/assets/coh_asset_zip.c','engine/assets/coh_asset_loader.c','src/coh_assets.c','src/coh_dds.c')]
   for mode in ['release','asan','ubsan'] if args.mode=='all' else [args.mode]:
    flags=['-O2'] if mode=='release' else ['-O1','-g','-fno-omit-frame-pointer','-fsanitize='+('address' if mode=='asan' else 'undefined')]

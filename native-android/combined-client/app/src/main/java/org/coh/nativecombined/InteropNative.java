@@ -33,6 +33,10 @@ public final class InteropNative {
     public static native long observedSelfCostumeSourceBytes(long handle);
     /** Capture profile only: bounded framed INITIAL bytes; query on the network owner before close. */
     public static native byte[] exportInitialReplay(long handle);
+    /** Freeze diagnostic only: attach a fresh private regular-file FD before
+     * the first service call. Native duplicates/closes it; caller closes its FD.
+     * Optional failure never prevents network ACK/READY. */
+    public static native int configurePostReadyReplay(long handle, int fileDescriptor);
     /** Scalar owner state independent of bounded report serialization.
      * Bits: owner present=1, terminal=2, raw initial observed=4, characters ready=8. */
     public static native int controlState(long handle);

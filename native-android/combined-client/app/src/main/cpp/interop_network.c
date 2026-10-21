@@ -47,6 +47,9 @@
 #endif
 #include "coh_client_costume_slots.h"
 #include "interop_network.h"
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+#include "post_ready_replay.h"
+#endif
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
@@ -95,6 +98,9 @@ typedef struct {
     CohRepPosition post_position;
     uint32_t post_position_packets,post_position_fields,post_position_changes,post_position_stationary,post_position_absent,post_position_unsupported;
     CohStatus post_position_status;
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+    CohPostReplay post_replay;uint64_t service_now;
+#endif
     uint32_t replay_bytes,replay_compressed,replay_omitted;
     uint8_t initial_replay[COH_INITIAL_REPLAY_BYTES];
 #endif
@@ -221,6 +227,9 @@ static void retire_request(Interop *h) {
 #endif
 }
 static void close_capture(Interop *h) {
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+    post_replay_finish(&h->post_replay,0);
+#endif
     sample_receive(h);
 #ifdef COH_INTEROP_REQUEST_TX
     if(!h->request_retired)coh_request_tx_close(h->request,h->capture);
@@ -349,6 +358,9 @@ JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_begin(JNIEnv *
     CohLocalConfig config;memset(&config,0,sizeof(config));Interop *h=NULL;
     if(!account_copy(env,account,name))goto failed;
     h=calloc(1,sizeof(*h));if(!h)goto failed;
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+    post_replay_init(&h->post_replay);
+#endif
     h->client_slots=configured_client_slots;h->client_slots_status=configured_client_slots_status;
     memset(&configured_client_slots,0,sizeof(configured_client_slots));configured_client_slots_status=COH_NOT_FOUND;
     /* The pinned CLIENT ParseBodyPart catalog defines GetBodyPartCount().
@@ -386,6 +398,26 @@ failed:
     coh_db_wipe(name,sizeof(name));coh_db_wipe(ids,sizeof(ids));
     coh_db_wipe(&policy,sizeof(policy));coh_db_wipe(&config,sizeof(config));return 0;
 }
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+/* Exactly one network executor owns this FD and all byte-loan callbacks.
+ * File capture is optional; failure never changes ACK/READY/network status. */
+static void save_post_ready_message(Interop*h,const CohInitialCaptureLease*lease){
+    if(!h->post_replay.configured||h->post_replay.finalized||lease->kind!=COH_INITIAL_CAPTURE_RAW_POST)return;
+    /* RAW_POST is emitted only after the live Map send callback accepts READY.
+     * A prior-service diagnostic snapshot can lag that callback; do not use it. */
+    size_t retained=initial_retained(h);
+    if(sizeof(*lease)>SIZE_MAX-retained)retained=SIZE_MAX;else retained+=sizeof(*lease);
+    post_replay_record(&h->post_replay,lease->reader.bytes.data,lease->reader.bytes.size,
+        lease->reader.bits,lease->reader.cursor,h->service_now,lease->message_generation,
+        lease->message_id,lease->update.command,lease->reader.compressed,lease->ordered,
+        lease->ordered_id,retained);
+}
+JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_configurePostReadyReplay(JNIEnv*env,jclass cls,jlong token,jint fd){
+    (void)env;(void)cls;Interop*h=owner(token);
+    if(!h||h->busy||h->suspended||h->disconnected||h->terminal||h->groups_callbacks||h->allents_callbacks)return COH_STATE;
+    return post_replay_start(&h->post_replay,fd)?COH_OK:COH_IO;
+}
+#endif
 static CohStatus observe(void *context,const CohInitialCapture *capture,const CohInitialCaptureEvent *event) {
     Interop *h=context;CohInitialCaptureLease lease;memset(&lease,0,sizeof(lease));
     CohStatus status=coh_initial_capture_lease(capture,event,&lease);
@@ -396,6 +428,10 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
        lease.ack_permitted||lease.world_authority||!lease.reader.bytes.size||
        lease.reader.bytes.size>COH_REP_BOUNDED_MESSAGE_MAX||lease.reader.bits>lease.reader.bytes.size*8||
        lease.reader.cursor>lease.reader.bits){status=COH_STATE;goto done;}
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+    if(event->kind==COH_INITIAL_CAPTURE_RAW_POST) {save_post_ready_message(h,&lease);}
+    else
+#endif
     if(event->kind==COH_INITIAL_CAPTURE_GROUPS) {
         if(h->groups_callbacks||h->allents_callbacks){status=COH_STATE;goto done;}
         h->groups_callbacks=1;h->groups_generation=lease.message_generation;
@@ -603,6 +639,9 @@ JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_service(JNIEnv 
     if(!h||now<0)return COH_INVALID;
     if(h->busy||h->suspended||h->disconnected||h->terminal)return COH_STATE;
     h->busy=1;
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+    h->service_now=(uint64_t)now;
+#endif
 #ifdef COH_INTEROP_REQUEST_TX
     h->last_status=coh_request_tx_service(h->request,h->capture,(uint64_t)now,(CohCancel){0},observe,h,sizeof(*h));
 #else
@@ -610,7 +649,12 @@ JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_service(JNIEnv 
 #endif
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
     coh_receive_sample(&h->receive,&d.local.map_protocol.udp);
-    h->terminal=capture_terminal(d.phase);coh_db_wipe(&d,sizeof(d));
+    h->terminal=capture_terminal(d.phase);
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+    post_replay_reconcile(&h->post_replay,d.continuation.post_ready_messages);
+    if(h->terminal)post_replay_finish(&h->post_replay,d.continuation.post_observation_complete);
+#endif
+    coh_db_wipe(&d,sizeof(d));
     if(h->terminal)retire_request(h);
     h->busy=0;return (jint)h->last_status;
 }
@@ -975,6 +1019,9 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
 JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_suspend(JNIEnv *env,jclass cls,jlong token) {
     (void)env;(void)cls;Interop *h=owner(token);if(!h||h->busy||h->disconnected||h->suspended)return;
     h->busy=1;h->suspended=1;
+#ifdef COH_POST_READY_REPLAY_DIAGNOSTIC
+    post_replay_finish(&h->post_replay,0);
+#endif
 #ifdef COH_INTEROP_REQUEST_TX
     if(!h->request_retired)coh_request_tx_cancel(h->request,h->capture);
     else coh_initial_capture_cancel(h->capture);

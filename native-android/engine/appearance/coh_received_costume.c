@@ -12,7 +12,7 @@ static const CohAppearancePartDef definitions[28]={
 typedef struct {char name[1025];uint32_t kind;} QueryName;
 typedef struct {
  QueryName names[QUERIES];CohAssetZipQuery query[QUERIES];uint32_t count;
- CohAssetZip *zip[2];uint64_t bytes,reads;CohCancel cancel;
+ CohAssetZip *zip[COH_RECEIVED_COSTUME_ARCHIVES];uint64_t bytes,reads;CohCancel cancel;
  CohAppearanceCostumeWorkspace appearance;CohAppearanceDraw initial[120];
 } Plan;
 typedef struct {uint8_t *pixels;size_t bytes;uint32_t width,height;char name[256];} Texture;
@@ -38,21 +38,21 @@ static int charge(uint64_t parent,uint64_t owned,uint64_t candidate,uint64_t*pea
  uint64_t total=parent+owned+candidate;if(total>*peak)*peak=total;return 1;
 }
 static CohStatus missing(CohReceivedCostume*a,const char*name,CohStatus status){snprintf(a->stats.missing,sizeof a->stats.missing,"%s",name);return status;}
-static void close_plan(Plan*p){for(unsigned i=0;i<2;i++)if(p->zip[i]){CohAssetZipStats stats=coh_asset_zip_stats(p->zip[i]);p->reads+=stats.reads;p->bytes+=stats.read_bytes;coh_asset_zip_free(p->zip[i]);p->zip[i]=NULL;}}
+static void close_plan(Plan*p){for(unsigned i=0;i<COH_RECEIVED_COSTUME_ARCHIVES;i++)if(p->zip[i]){CohAssetZipStats stats=coh_asset_zip_stats(p->zip[i]);p->reads+=stats.reads;p->bytes+=stats.read_bytes;coh_asset_zip_free(p->zip[i]);p->zip[i]=NULL;}}
 static int add_query(Plan*p,const char*name,uint32_t kind){
  for(uint32_t i=0;i<p->count;i++)if(p->names[i].kind==kind&&same(p->names[i].name,name))return (int)i;
  size_t n=strlen(name);if(p->count==QUERIES||!n||n>1024)return -1;
  uint32_t id=p->count++;memcpy(p->names[id].name,name,n+1);p->names[id].kind=kind;p->query[id]=(CohAssetZipQuery){p->names[id].name,0,kind};return (int)id;
 }
-static CohStatus open_plan(Plan*p,const CohReceivedCostumeInputs*in){for(unsigned i=0;i<2;i++)if(in->archives[i].read_at){CohStatus s=coh_asset_zip_open_queries(in->archives[i],p->query,p->count,in->cancel,&p->zip[i]);if(s)return s;}return COH_OK;}
+static CohStatus open_plan(Plan*p,const CohReceivedCostumeInputs*in){for(unsigned i=0;i<COH_RECEIVED_COSTUME_ARCHIVES;i++)if(in->archives[i].read_at){CohStatus s=coh_asset_zip_open_queries(in->archives[i],p->query,p->count,in->cancel,&p->zip[i]);if(s)return s;}return COH_OK;}
 static CohStatus locate(Plan*p,uint32_t query,CohAssetZip**zip,const char**path,uint32_t*bytes){
- for(unsigned i=0;i<2;i++)if(p->zip[i]){uint32_t matches=0;CohStatus status=coh_asset_zip_query(p->zip[i],query,path,bytes,&matches);if(status==COH_NOT_FOUND)continue;if(status)return status;if(matches!=1)return COH_UNSUPPORTED;*zip=p->zip[i];return COH_OK;}
+ for(unsigned i=0;i<COH_RECEIVED_COSTUME_ARCHIVES;i++)if(p->zip[i]){uint32_t matches=0;CohStatus status=coh_asset_zip_query(p->zip[i],query,path,bytes,&matches);if(status==COH_NOT_FOUND)continue;if(status)return status;if(!matches)return COH_INVALID;*zip=p->zip[i];return COH_OK;}
  return COH_NOT_FOUND;
 }
 static int prefix_probe(void*context,uint32_t kind,const char*key){
  Plan*p=context;if(kind!=COH_APPEARANCE_TEXTURE)return 0;size_t n=strlen(key);if(n<4||n>=256)return 0;
  char name[256];memcpy(name,key,n-4);name[n-4]=0;
- for(uint32_t i=0;i<p->count;i++)if(p->names[i].kind==COH_ZIP_QUERY_TEXTURE&&same(name,p->names[i].name))for(unsigned z=0;z<2;z++)if(p->zip[z]){const char*path;uint32_t bytes,matches;if(coh_asset_zip_query(p->zip[z],i,&path,&bytes,&matches)==COH_OK)return 1;}
+ for(uint32_t i=0;i<p->count;i++)if(p->names[i].kind==COH_ZIP_QUERY_TEXTURE&&same(name,p->names[i].name))for(unsigned z=0;z<COH_RECEIVED_COSTUME_ARCHIVES;z++)if(p->zip[z]){const char*path;uint32_t bytes,matches;if(coh_asset_zip_query(p->zip[z],i,&path,&bytes,&matches)==COH_OK)return 1;}
  return 0;
 }
 static CohStatus assembly(const CohReceivedCostumeInputs*in,Plan*p,CohAppearanceDraw*out,size_t*count,int probe){
@@ -79,13 +79,14 @@ CohStatus coh_received_costume_prepare(const CohReceivedCostumeInputs*in,CohRece
  if((uintptr_t)in%_Alignof(CohReceivedCostumeInputs)||(uintptr_t)out%_Alignof(void*)||(uintptr_t)diagnostics%_Alignof(CohReceivedCostumeStats))return COH_INVALID;
  if((uintptr_t)in->snapshot%_Alignof(CohOriginalCostumeSnapshot)||(uintptr_t)in->rig%_Alignof(CohAnimationRig))return COH_INVALID;
  if(!span_apart(out,sizeof*out,diagnostics,sizeof*diagnostics)||!span_apart(out,sizeof*out,in,sizeof*in)||!span_apart(diagnostics,sizeof*diagnostics,in,sizeof*in)||!span_apart(out,sizeof*out,in->snapshot,sizeof*in->snapshot)||!span_apart(diagnostics,sizeof*diagnostics,in->snapshot,sizeof*in->snapshot)||!span_apart(out,sizeof*out,in->rig,sizeof*in->rig)||!span_apart(diagnostics,sizeof*diagnostics,in->rig,sizeof*in->rig)||!span_apart(out,sizeof*out,in->rig->bytes,in->rig->byte_count)||!span_apart(diagnostics,sizeof*diagnostics,in->rig->bytes,in->rig->byte_count)||*out)return COH_INVALID;
- uint64_t peak=0,fixed=sizeof(CohReceivedCostume)+sizeof(Plan)+COH_RECEIVED_COSTUME_STACK+2u*coh_asset_zip_allocation_bytes(QUERIES);
+ uint32_t active_archives=0;for(unsigned i=0;i<COH_RECEIVED_COSTUME_ARCHIVES;i++)if(in->archives[i].read_at)active_archives++;
+ uint64_t peak=0,fixed=sizeof(CohReceivedCostume)+sizeof(Plan)+COH_RECEIVED_COSTUME_STACK+(uint64_t)active_archives*coh_asset_zip_allocation_bytes(QUERIES);
  if(!charge(in->parent_bytes,0,fixed,&peak))return COH_LIMIT;
  CohReceivedCostume*a=calloc(1,sizeof*a);Plan*p=calloc(1,sizeof*p);uint8_t*source=NULL;void*header=NULL;void*scratch=NULL;size_t header_bytes=0;CohStatus status=COH_LIMIT;
  if(!a||!p){free(p);free(a);return COH_LIMIT;}p->cancel=in->cancel;a->stats.cpu_bytes=sizeof*a;a->stats.source_epoch=in->source_epoch;a->stats.entity_index=in->entity_index;a->stats.bodytype=in->snapshot->bodytype;
  size_t count=0;status=assembly(in,p,p->initial,&count,0);if(status){missing(a,"source Huge Appearance",status);goto end;}
  for(size_t i=0;i<count;i++)for(unsigned j=0;j<2;j++){char name[256];int n=snprintf(name,sizeof name,"SH_%s",p->initial[i].texture[j]);if(n<0||(size_t)n>=sizeof name||add_query(p,name,COH_ZIP_QUERY_TEXTURE)<0){status=missing(a,"source query capacity",COH_LIMIT);goto end;}}
- status=open_plan(p,in);if(status){missing(a,"CLIENT/zones archive directory",status);goto end;}
+ status=open_plan(p,in);if(status){missing(a,"loaded archive directories",status);goto end;}
  status=assembly(in,p,a->draws,&count,1);if(status)goto end;a->count=(uint32_t)count;close_plan(p);p->count=0;
  int fat=add_query(p,"data/player_library/HUGE_BONES_SCALE_L.geo",COH_ZIP_QUERY_PATH),skinny=add_query(p,"data/player_library/HUGE_BONES_SCALE_S.geo",COH_ZIP_QUERY_PATH);
  for(uint32_t i=0;i<a->count;i++)if(!(a->draws[i].flags&COH_APPEARANCE_CLEAR)){
@@ -94,7 +95,7 @@ CohStatus coh_received_costume_prepare(const CohReceivedCostumeInputs*in,CohRece
   a->stats.material_fallbacks+=a->recipes[i].automatic_fallback;
   for(unsigned j=0;j<2;j++)if(!same(a->recipes[i].basic[j],"none")&&add_query(p,a->recipes[i].basic[j],COH_ZIP_QUERY_TEXTURE)<0){status=missing(a,a->recipes[i].basic[j],COH_LIMIT);goto end;}
  }
- status=open_plan(p,in);if(status){missing(a,"CLIENT/zones selected sources",status);goto end;}
+ status=open_plan(p,in);if(status){missing(a,"loaded selected sources",status);goto end;}
  size_t source_bytes=0;for(uint32_t i=0;i<p->count;i++){CohAssetZip*zip;const char*path;uint32_t bytes;status=locate(p,i,&zip,&path,&bytes);if(status){missing(a,p->names[i].name,status);goto end;}if(bytes>source_bytes)source_bytes=bytes;}
  if(!charge(in->parent_bytes,a->stats.cpu_bytes,fixed-sizeof*a+source_bytes,&peak)){status=COH_LIMIT;goto end;}source=malloc(source_bytes);if(!source){status=COH_LIMIT;goto end;}
  CohAppearanceHugeScales models;memset(&models,0,sizeof models);

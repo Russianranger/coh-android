@@ -2,6 +2,7 @@ package org.coh.nativecombined;
 
 import org.coh.sessionclient.SessionNative;
 import android.os.SystemClock;
+import android.os.ParcelFileDescriptor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -53,9 +54,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private static final int EXPORT_CAPTURE = 19;
     private final Object captureLife = new Object();
     private final AtomicBoolean captureQueued = new AtomicBoolean();
-    private volatile long captureSavedFrame;
+    private volatile long captureSavedFrame,captureRunSequence;
     private volatile String captureMetadata,captureFailure;
     private volatile String initialReplayMetadata,initialReplayFailure;
+    private volatile String postReadyReplayMetadata,postReadyReplayFailure;
+    private boolean postReadyReplayStorageReady,postReadyReplayAttempted;
     // Only networkWorker reads/writes these transport-attempt flags.
     private boolean initialReplayAttempted,initialReplayStorageReady;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -188,7 +191,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC){
             Button capture=new Button(this);capture.setText("Export scene ZIP");
             capture.setOnClickListener(v->exportSceneCapture());controlsLayout.addView(capture);
-            reportWorker.execute(()->captureMetadata=BuildConfig.FULLSCREEN_DIAGNOSTIC?SceneFrameCapture.metadataLarge(getFilesDir()):SceneFrameCapture.metadata(getFilesDir()));
+            reportWorker.execute(()->{
+                SceneFrameCapture.Selection capture=SceneFrameCapture.inspectCurrent(getFilesDir(),captureAppVersion(),
+                        Long.toHexString(sessionStarted),BuildConfig.FULLSCREEN_DIAGNOSTIC);
+                captureMetadata=capture.metadata();captureFailure=capture.omissionReason();
+            });
         }
         Button distance = new Button(this); distance.setText("View distance");
         distance.setOnClickListener(v -> {
@@ -339,6 +346,14 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(mode==NetworkMode.WORLD_HANDOFF&&networkMode==mode&&handoffState.blocksNewAttempt())return;
         final long attempt=++networkAttempt;networkRequested=true;
         clearObservedBox();
+        if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC){
+            final long run=++captureRunSequence;captureMetadata=null;captureFailure="CAPTURE_CURRENT_RUN_PENDING";
+            reportWorker.execute(()->{
+                if(run!=captureRunSequence)return;
+                try{SceneFrameCapture.clear(getFilesDir());}
+                catch(Exception unavailable){captureFailure="CAPTURE_STORAGE_CLEAR_FAILED";}
+            });
+        }
         MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.NATIVE_CONNECTION);
         networkConnecting=true;connectButton.setEnabled(false);handoffButton.setEnabled(false);
         characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);
@@ -350,6 +365,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             try {
                 if(!networkForeground||!networkRequested||attempt!=networkAttempt)return;
                 retireNetworkOwner();networkMode=mode;charactersPublished=false;
+                postReadyReplayMetadata=null;postReadyReplayFailure=null;
+                postReadyReplayStorageReady=false;postReadyReplayAttempted=false;
                 if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC){
                     initialReplayMetadata=null;initialReplayFailure=null;initialReplayAttempted=false;initialReplayStorageReady=false;
                     try{InitialReplayStore.clear(getFilesDir());initialReplayStorageReady=true;}
@@ -375,6 +392,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                             policy.getBoolean("encryption_required"),policy.getBoolean("outbound_compressed"),policyCheckedAt);
                 networkOwnerAttempt=attempt;
                 if(networkHandle==0)throw new IllegalStateException("Local owner rejected policy");
+                preparePostReadyReplay();
                 if(mode==NetworkMode.WORLD_HANDOFF){handoffState.begin();captureTelemetryPublished=false;}
                 publishNetwork();
             } catch(Exception problem) {
@@ -399,11 +417,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     }
     // Every handle operation runs on networkWorker, including mode switches.
     private void disconnectNetwork() {
-        if(networkMode==NetworkMode.WORLD_HANDOFF){saveInitialReplay();InteropNative.disconnect(networkHandle);handoffState.stopped();}
+        if(networkMode==NetworkMode.WORLD_HANDOFF){saveInitialReplay();InteropNative.disconnect(networkHandle);savePostReadyReplay();handoffState.stopped();}
         else LocalNative.disconnect(networkHandle);
     }
     private void suspendNetwork() {
-        if(networkMode==NetworkMode.WORLD_HANDOFF){saveInitialReplay();InteropNative.suspend(networkHandle);handoffState.stopped();}
+        if(networkMode==NetworkMode.WORLD_HANDOFF){saveInitialReplay();InteropNative.suspend(networkHandle);savePostReadyReplay();handoffState.stopped();}
         else LocalNative.suspend(networkHandle);
     }
     private void retireNetworkOwner() {
@@ -506,7 +524,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             epoch++;SessionNative.state(renderer,epoch,false);
             renderWorker.execute(()->{
                 int admitted=-1;String problem=null;
-                try(RuntimeActorInputs inputs=RuntimeActorInputs.open(new ImportStore(this,(phase,done,total)->{}),control)) {
+                try(RuntimeActorInputs inputs=RuntimeActorInputs.open(this,new ImportStore(this,(phase,done,total)->{}),control)) {
                     control.check();
                     if(!destroying&&networkRequested&&networkForeground&&renderer==handle&&attempt==networkAttempt
                             &&sourceHandle==networkHandle&&attempt==networkOwnerAttempt
@@ -525,6 +543,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     if(runtimeActorFailure.length()>160)runtimeActorFailure=runtimeActorFailure.substring(0,160);
                     if(result==5||result==7)costumeReadAttempt=-1; // lifecycle interruption may be retried
                     SessionNative.state(renderer,epoch,resumed);
+                    publishCaptureViewport();
                     event(result==0?"observed_costume_published":"observed_costume_box_fallback");
                     requestRender();saveReport();
                 });
@@ -615,9 +634,35 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         catch(OutOfMemoryError optionalReplay){initialReplayFailure="INITIAL replay memory unavailable";}
         finally{if(raw!=null)java.util.Arrays.fill(raw,(byte)0);}
     }
+    /** Optional fixture I/O stays on the serialized network owner. Native owns
+     * its duplicate; Java closes the attaching descriptor before any service. */
+    private void preparePostReadyReplay() {
+        if(!BuildConfig.POST_READY_REPLAY_DIAGNOSTIC||networkMode!=NetworkMode.WORLD_HANDOFF||networkHandle==0)return;
+        try {
+            File stage=PostReadyReplayStore.prepare(getFilesDir());
+            try(ParcelFileDescriptor fd=ParcelFileDescriptor.open(stage,ParcelFileDescriptor.MODE_WRITE_ONLY)) {
+                int status=InteropNative.configurePostReadyReplay(networkHandle,fd.getFd());
+                if(status!=0)throw new java.io.IOException("Native fixture storage status "+status);
+            }
+            postReadyReplayStorageReady=true;postReadyReplayFailure="POST_READY_REPLAY_RECORDING";
+        }catch(Exception unavailable){postReadyReplayFailure="POST_READY_REPLAY_STORAGE_"+unavailable.getClass().getSimpleName();}
+        catch(OutOfMemoryError optional){postReadyReplayFailure="POST_READY_REPLAY_MEMORY_UNAVAILABLE";}
+    }
+    private void savePostReadyReplay() {
+        if(!BuildConfig.POST_READY_REPLAY_DIAGNOSTIC||!postReadyReplayStorageReady||postReadyReplayAttempted
+                ||networkMode!=NetworkMode.WORLD_HANDOFF||networkHandle==0)return;
+        if((InteropNative.controlState(networkHandle)&2)==0)return;
+        postReadyReplayAttempted=true;
+        try {
+            postReadyReplayMetadata=PostReadyReplayStore.seal(getFilesDir(),BuildConfig.VERSION_CODE,Long.toHexString(sessionStarted));
+            postReadyReplayFailure=null;
+        }catch(Exception unavailable){postReadyReplayFailure="POST_READY_REPLAY_SEAL_"+unavailable.getClass().getSimpleName();}
+        catch(OutOfMemoryError optional){postReadyReplayFailure="POST_READY_REPLAY_MEMORY_UNAVAILABLE";}
+    }
     private void publishNetwork() {
         if(networkHandle==0)return;
         if(networkMode==NetworkMode.WORLD_HANDOFF)handoffState.control(InteropNative.controlState(networkHandle));
+        savePostReadyReplay();
         String next=networkMode==NetworkMode.WORLD_HANDOFF?InteropNative.report(networkHandle):LocalNative.report(networkHandle);
         String previous=networkReport;storeNetworkReport(next);
         saveInitialReplay();
@@ -930,6 +975,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("scene_frame_capture_error",captureFailure==null?JSONObject.NULL:captureFailure)
                 .put("initial_replay",initialReplayMetadata==null?JSONObject.NULL:new JSONObject(initialReplayMetadata))
                 .put("initial_replay_error",initialReplayFailure==null?JSONObject.NULL:initialReplayFailure);
+        if(BuildConfig.POST_READY_REPLAY_DIAGNOSTIC)j.put("post_ready_replay",postReadyReplayMetadata==null?JSONObject.NULL:new JSONObject(postReadyReplayMetadata))
+                .put("post_ready_replay_error",postReadyReplayFailure==null?JSONObject.NULL:postReadyReplayFailure);
         if(handle!=0)j.put("native",new JSONObject(SessionNative.snapshot(handle)));
         if(view!=null) {
             int[] location=new int[2];view.getLocationOnScreen(location);
@@ -962,21 +1009,28 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     + (writeFailed ? " • report save failed" : " • report ready"));
         } catch(Exception ex) { failure=ex.toString(); status.setText(failure); }
     }
+    private long captureAppVersion(){
+        try{return getPackageManager().getPackageInfo(getPackageName(),0).versionCode;}
+        catch(Exception unavailable){return -1;}
+    }
     private void queueSceneCapture(JSONObject report) {
         if(!BuildConfig.FRAME_CAPTURE_DIAGNOSTIC||destroying||!assetsVerified||reportWorker.isShutdown())return;
         JSONObject nativeState=report.optJSONObject("native");
         JSONObject frame=nativeState==null?null:nativeState.optJSONObject("frame_capture");
         if(frame==null||frame.optLong("frame")<=captureSavedFrame||!captureQueued.compareAndSet(false,true))return;
+        final long run=captureRunSequence;
         try{reportWorker.execute(()->{
             try{
+                if(run!=captureRunSequence)return;
                 byte[] raw;
                 synchronized(captureLife){if(destroying||handle==0)return;raw=SessionNative.frameCapture(handle,captureSavedFrame);}
-                if(raw==null)return;
+                if(raw==null||run!=captureRunSequence)return;
                 long version=getPackageManager().getPackageInfo(getPackageName(),0).versionCode;
                 String saved=BuildConfig.FULLSCREEN_DIAGNOSTIC
                         ?SceneFrameCapture.saveLarge(getFilesDir(),raw,version,Long.toHexString(sessionStarted))
                         :SceneFrameCapture.save(getFilesDir(),raw,version,Long.toHexString(sessionStarted));
-                JSONObject metadata=new JSONObject(saved);captureSavedFrame=metadata.getLong("frame");captureMetadata=saved;captureFailure=null;
+                JSONObject metadata=new JSONObject(saved);captureSavedFrame=metadata.getLong("frame");
+                if(run==captureRunSequence){captureMetadata=saved;captureFailure=null;}
             }catch(Exception ex){captureFailure=ex.getClass().getSimpleName();}
             catch(OutOfMemoryError optionalCapture){captureFailure="Capture memory unavailable";}
             finally{captureQueued.set(false);}
@@ -1020,7 +1074,10 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             reportWorker.execute(()->{
                 String error=null;
                 try(OutputStream output=getContentResolver().openOutputStream(data.getData(),"wt")){
-                    if(output==null||!(BuildConfig.FULLSCREEN_DIAGNOSTIC?SceneFrameCapture.writeZipLarge(getFilesDir(),output):SceneFrameCapture.writeZip(getFilesDir(),output)))error="No saved real-pose game frame";
+                    SceneFrameCapture.Selection capture=SceneFrameCapture.current(getFilesDir(),
+                            captureMetadata==null?-1:captureAppVersion(),Long.toHexString(sessionStarted),BuildConfig.FULLSCREEN_DIAGNOSTIC);
+                    if(output==null)error="CAPTURE_OUTPUT_UNAVAILABLE";
+                    else if(!capture.writeZip(output))error=capture.omissionReason();
                 }catch(Exception ex){error=ex.getClass().getSimpleName();}
                 final String problem=error;main.post(()->{if(destroying)return;captureFailure=problem;event(problem==null?"capture_export_complete":"capture_export_failed");saveReport();});
             });return;

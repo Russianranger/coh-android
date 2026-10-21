@@ -229,14 +229,20 @@ def source_checks(sources, method):
     assert activity.count("SessionNative.frameCapture(") == 1
     destroy = compact(method(activity, "@Override protected void onDestroy()"))
     assert "synchronized(captureLife){longprevious=handle;handle=0;if(previous!=0)SessionNative.destroy(previous);}" in destroy
-    assert "SceneFrameCapture.writeZip(getFilesDir(),output)" in compact(activity)
-    assert "SceneFrameCapture.append(getFilesDir(),zip)" in compact(sources["main"])
+    assert "SceneFrameCapture.current(getFilesDir()," in compact(activity)
+    assert "capture.writeZip(output)" in compact(activity)
+    assert "SceneFrameCapture.current(getFilesDir()," in compact(sources["main"])
+    assert "capture.append(zip)" in compact(sources["main"])
+    assert 'put("omission_reason",capture.omissionReason()' in compact(sources["main"])
+    actor=compact(method(activity,"private void publishObservedCostume(final long sourceHandle,final long attempt)"))
+    assert actor.index("SessionNative.state(renderer,epoch,resumed);")<actor.index("publishCaptureViewport();")<actor.index("requestRender();")
     assert "buildConfigField 'boolean', 'FRAME_CAPTURE_DIAGNOSTIC'" in sources["gradle"]
-    assert "buildConfigField'boolean','FULLSCREEN_DIAGNOSTIC',(candidateProfilein['fullscreen-diagnostic','continuation-diagnostic']).toString()" in compact(sources["gradle"])
+    assert any("buildConfigField'boolean','FULLSCREEN_DIAGNOSTIC',(candidateProfilein["+profiles+"]).toString()" in compact(sources["gradle"])
+               for profiles in ("'fullscreen-diagnostic','continuation-diagnostic'","'fullscreen-diagnostic','continuation-diagnostic','freeze-diagnostic'"))
     assert "-DCOH_FRAME_CAPTURE_DIAGNOSTIC=" in sources["gradle"]
     assert "if(COH_FRAME_CAPTURE_DIAGNOSTIC)" in sources["cmake"]
     assert "COH_FRAME_CAPTURE_DIAGNOSTIC=1" in sources["cmake"]
-    return 30
+    return 34
 
 
 def run(root, work):

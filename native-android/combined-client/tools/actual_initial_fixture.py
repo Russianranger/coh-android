@@ -21,7 +21,8 @@ def prepare(root, work, replay, bounded=False, fallback=False):
     raw = replay.read_bytes()
     assert (len(raw), hashlib.sha256(raw).hexdigest()) in (
         (37795, '148a4a687d709d2f9ae298bf457e1b067e82b90e70928bd47712ba733fd533ba'),
-        (37977, '74d85be47f23fe674e32178296aaa0f93f8830bb9ec4a08e166ee6f4f4e1a234'))
+        (37977, '74d85be47f23fe674e32178296aaa0f93f8830bb9ec4a08e166ee6f4f4e1a234'),
+        (37977, '2b5645a49693dda2b4e64030ecba32c00ce840c9f5c8fb012316bbb95baad58a'))
     assert hashlib.sha256(raw[88:]).digest() == raw[56:88]
     paths = ['Common/cmdparse/cmdcommon.c', 'MapServer/src/cmdparse/cmdserver.c',
              'libs/UtilitiesLib/src/utils/cmdoldparse.c']

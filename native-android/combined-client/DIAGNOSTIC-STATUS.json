@@ -10,9 +10,9 @@
   "blocker": "Initial303112-bit packet now completes physically and ACK/READY are sent. Remaining observed issues: Face_V_Helmet_Robotic_01 asset resolution, no fresh018 capture, and115 unsupported post-READY position observations.",
   "planned_steps_to_source_world_with_entity": 1,
   "next_steps": [
-    "Resolve the reported costume asset lookup, retaining box fallback.",
-    "Refresh framebuffer capture for the current018 session; retained017 PNG cannot validate018 actor/world.",
-    "Decode actual post-READY updates to determine position changes; later verify another real server-sent pose."
+    "Bounded raw post-READY full snapshot and UPDATE fixture export; no new update decoding.",
+    "Current app version and activity session required for capture export; refresh capture viewport after actor epoch changes.",
+    "Case-insensitive texture basename lookup across loaded verified archive descriptors, including reference textures; box fallback."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -1609,7 +1609,7 @@
     "integrated_source_checks": "Passed combined source qualification at 81a47f8ccef15c26e02b5cbf2feb4b99ac465139 (run39498990230). Actual private saved-packet replay separately passed production observer release/ASan/UBSan locally, with no network sends.",
     "integrated_memory_checks": "passed: sampler, worker, export, diagnostics and runtime; two existing platform skips",
     "android_build_and_emulator": "SignedARM64 build/lint/package/ELF/JNI and separatex86 build/audits passed at39498990230. The same exact packages passed Android13 framework and update/rollback/profile/import/preview/lifecycle validation at 39503076641. No new physicalThor or ARM64guest run inferred.",
-    "physical_thor": "Latest physical evidence remains0.1.16: textured pavement and real-pose box, Huge costume decoded, complete process totals and SHOW readback. New0.1.17 ACK/READY traffic, useful fullscreen capture, real Huge draw and alternate genuine pose await a Thor export."
+    "physical_thor": "0.1.18 accepted: full 303,112-bit packet, ACK/READY and 114 UPDATE messages without disconnect. 0.1.19 changes are host-qualified and await one physical export."
   },
   "ci": {
     "state": "passed",
@@ -1713,27 +1713,10 @@
     "scope": "Original-source receiver/sender fixtures and ARM64/x86 package/lint/ELF/JNI at build run39498990230; exact unchanged APKs passed the corrected Android13 framework test in the linked validation run. Actual saved Thor replay was qualified locally, not uploaded to CI. No live Thor ACK, server response, real Huge draw or alternate Thor pose inferred."
   },
   "candidate": {
-    "version": "0.1.18",
-    "version_code": 19,
-    "profile": "continuation-diagnostic",
-    "state": "physical018_packet_ACK_READY_verified_actor_fallback_capture_stale",
-    "source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
-    "source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
-    "receiver": {
-      "host_exact_EOF_bits": [
-        301656,
-        303112
-      ],
-      "active_Ch_handlers": 34,
-      "active_Ch_table_entries": 212,
-      "textual_Ch_entries": 213,
-      "inline_Friends_handler": true,
-      "unresolved_power_CRCS_tolerated": 343,
-      "live_ACK_READY_observed": false
-    },
-    "world": "Retained physically observed Atlas pavement at real pose; another server-sent pose is unverified.",
-    "actor": "Host13/13 genuine Huge meshes, original rig/scales and declared coarse material fallback; Thor drawing pending.",
-    "memory": "Source budgets unchanged; process identities export included, no PostgreSQL tuning and no new device RSS/PSS measurements.",
+    "version": "0.1.19",
+    "version_code": 20,
+    "profile": "freeze-diagnostic",
+    "state": "source_qualified_one_build_pending",
     "limits": {
       "decoded_message_bytes": 4194304,
       "ordinary_transport_bytes": 16384,
@@ -1742,52 +1725,16 @@
       "native_report_bytes": 7168
     },
     "thor_procedure": [
-      "Install0.1.18 over0.1.17 without clearing data; retain same imports/profile.",
-      "Start existing server, select same character and handoff once.",
-      "Full screen enters; corner Return to controls or Back exits.",
-      "Wait35seconds after ACK and READY show sent; export anyway after timeout/disconnect.",
-      "Return to controls, then Back to Combined launcher; Export report and save ZIP.",
-      "Keep640x360 scene-capture.png, initial replay, send timing and memory JSON.",
-      "Stop normally; do not repeat handoff or change the database."
+      "Install 0.1.19 over 0.1.18 without clearing data; keep the same imports and profile.",
+      "Start the existing server, select the same character, and hand off once.",
+      "Use Full screen; the corner button or Back returns to controls.",
+      "Wait 35 seconds after ACK and READY show sent.",
+      "Return to controls, then Back to the Combined launcher; Export report and save the ZIP.",
+      "Keep initial-replay.bin, post-ready-replay.bin/.json and the fresh 640x360 PNG, or its omission reason.",
+      "Stop normally and return the ZIP; do not change the database or repeat the handoff."
     ],
-    "apk": {
-      "bytes": 15275431,
-      "name": "CoH-Native-Combined-0.1.18-continuation-diagnostic-arm64.apk",
-      "sha256": "dcf9c5074dcde620dc2aa117bc949bf63a2ce217e43ea1909555bc77ac345439",
-      "version_code": 19,
-      "version_name": "0.1.18-continuation-diagnostic-test",
-      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
-      "qualified_source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
-      "qualified_source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
-      "rebuild_after_qualification": false,
-      "physical_Thor_tested": false
-    },
-    "CI": {
-      "status": "passed",
-      "purpose": "combined-diagnostic",
-      "diagnostic_profile": "continuation-diagnostic",
-      "initial_dispatches": 1,
-      "corrective_redispatches": 0,
-      "max_corrective_redispatches": 2,
-      "release_published": false,
-      "run_id": 39528643541,
-      "url": "https://github.com/Russianranger/coh-android/actions/runs/39528643541",
-      "head_sha": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
-      "current_job": null,
-      "current_step": null,
-      "source_job": "passed",
-      "diagnostic_job": "passed",
-      "ARM64_package": "passed",
-      "ARM64_interop_DSO": "passed;15 JNI entrypoints in this isolated profile",
-      "android13_framework_checks": 46,
-      "android13_update_checks": 14,
-      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17→0.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
-      "artifact_id": 12314108293,
-      "artifact_bytes": 26577860,
-      "artifact_sha256": "097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f",
-      "source_artifact_id": 12314196667,
-      "source_artifact_sha256": "1e27923f649fc01506eb16c98ff9b2731df46b49dee4d6e98554d98d98b2bd28"
-    }
+    "apk": null,
+    "physical_Thor_tested": false
   },
   "latest_physical_version": "0.1.18",
   "latest_physical_results": {
@@ -2180,7 +2127,7 @@
     ],
     "development_continued": false
   },
-  "next_action": "Results recorded; await user authorization for further development. No new build, runtime action or cleanup performed.",
+  "next_action": "Deliver the single qualified 0.1.19 diagnostic, then freeze native-android except fixes explicitly requested by the user.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
@@ -2606,6 +2553,83 @@
         "artifact_id": 12298379427,
         "physical_thor_tested": false,
         "production_release": false
+      }
+    },
+    {
+      "version": "0.1.18",
+      "version_code": 19,
+      "profile": "continuation-diagnostic",
+      "state": "physical018_packet_ACK_READY_verified_actor_fallback_capture_stale",
+      "source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+      "source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
+      "receiver": {
+        "host_exact_EOF_bits": [
+          301656,
+          303112
+        ],
+        "active_Ch_handlers": 34,
+        "active_Ch_table_entries": 212,
+        "textual_Ch_entries": 213,
+        "inline_Friends_handler": true,
+        "unresolved_power_CRCS_tolerated": 343,
+        "live_ACK_READY_observed": false
+      },
+      "world": "Retained physically observed Atlas pavement at real pose; another server-sent pose is unverified.",
+      "actor": "Host13/13 genuine Huge meshes, original rig/scales and declared coarse material fallback; Thor drawing pending.",
+      "memory": "Source budgets unchanged; process identities export included, no PostgreSQL tuning and no new device RSS/PSS measurements.",
+      "limits": {
+        "decoded_message_bytes": 4194304,
+        "ordinary_transport_bytes": 16384,
+        "initial_aggregate_bytes": 8388608,
+        "scene_transaction_bytes": 100663296,
+        "native_report_bytes": 7168
+      },
+      "thor_procedure": [
+        "Install0.1.18 over0.1.17 without clearing data; retain same imports/profile.",
+        "Start existing server, select same character and handoff once.",
+        "Full screen enters; corner Return to controls or Back exits.",
+        "Wait35seconds after ACK and READY show sent; export anyway after timeout/disconnect.",
+        "Return to controls, then Back to Combined launcher; Export report and save ZIP.",
+        "Keep640x360 scene-capture.png, initial replay, send timing and memory JSON.",
+        "Stop normally; do not repeat handoff or change the database."
+      ],
+      "apk": {
+        "bytes": 15275431,
+        "name": "CoH-Native-Combined-0.1.18-continuation-diagnostic-arm64.apk",
+        "sha256": "dcf9c5074dcde620dc2aa117bc949bf63a2ce217e43ea1909555bc77ac345439",
+        "version_code": 19,
+        "version_name": "0.1.18-continuation-diagnostic-test",
+        "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "qualified_source_commit": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+        "qualified_source_tree": "fe359eb340c60f20a50c12b2fcef235873180a0c",
+        "rebuild_after_qualification": false,
+        "physical_Thor_tested": false
+      },
+      "CI": {
+        "status": "passed",
+        "purpose": "combined-diagnostic",
+        "diagnostic_profile": "continuation-diagnostic",
+        "initial_dispatches": 1,
+        "corrective_redispatches": 0,
+        "max_corrective_redispatches": 2,
+        "release_published": false,
+        "run_id": 39528643541,
+        "url": "https://github.com/Russianranger/coh-android/actions/runs/39528643541",
+        "head_sha": "be35ccaed38b5cf9196eb01f2158f2222ca632ac",
+        "current_job": null,
+        "current_step": null,
+        "source_job": "passed",
+        "diagnostic_job": "passed",
+        "ARM64_package": "passed",
+        "ARM64_interop_DSO": "passed;15 JNI entrypoints in this isolated profile",
+        "android13_framework_checks": 46,
+        "android13_update_checks": 14,
+        "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17\u21920.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
+        "artifact_id": 12314108293,
+        "artifact_bytes": 26577860,
+        "artifact_sha256": "097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f",
+        "source_artifact_id": 12314196667,
+        "source_artifact_sha256": "1e27923f649fc01506eb16c98ff9b2731df46b49dee4d6e98554d98d98b2bd28"
       }
     }
   ],
@@ -4554,7 +4578,7 @@
       "ARM64_interop_DSO": "passed;15 JNI entrypoints in this isolated profile",
       "android13_framework_checks": 46,
       "android13_update_checks": 14,
-      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17→0.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
+      "android13_update_scope": "Actual package data and synthetic profile markers preserved across0.1.17\u21920.1.18 and reinstall/debuggable rollback; no real game-save migration or ARM64 guest execution claim.",
       "artifact_id": 12314108293,
       "artifact_bytes": 26577860,
       "artifact_sha256": "097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f",
@@ -4806,5 +4830,90 @@
     },
     "physical_results": "latest_physical_results"
   },
-  "updated_timezone": "America/Chicago"
+  "updated_timezone": "America/Chicago",
+  "cycle_0_1_19": {
+    "scope": [
+      "Bounded raw post-READY full snapshot and UPDATE fixture export; no new update decoding.",
+      "Current app version and activity session required for capture export; refresh capture viewport after actor epoch changes.",
+      "Case-insensitive texture basename lookup across loaded verified archive descriptors, including reference textures; box fallback."
+    ],
+    "baseline_commit": "8eba45535f3210bd18c0dcfbbf0a8948b7b2028f",
+    "profile": "freeze-diagnostic",
+    "version_name": "0.1.19-freeze-diagnostic-test",
+    "version_code": 20,
+    "state": "source_qualified_one_CI_build_pending",
+    "APK_builds": 0,
+    "max_APK_candidate_builds": 1,
+    "workers": {
+      "updates": "work/coh019-updates",
+      "capture": "work/coh019-capture",
+      "texture": "work/coh019-texture"
+    },
+    "frozen_after_delivery": true,
+    "future_native_changes": "Only fixes explicitly requested by the user.",
+    "update_decoding_added": false,
+    "memory_caps_increased": false,
+    "new_receipt_files": false,
+    "cleanup_performed": false,
+    "database_changed": false,
+    "runtime_deployed": false,
+    "tested_local_tree": "3362af95bd145468f9ff0f94aeb3129e63af8fd3",
+    "protected_inputs": {
+      "passed": true,
+      "unchanged": 9
+    },
+    "host_qualification": {
+      "saved_packets_exact_EOF_bits": [
+        301656,
+        303112,
+        303112
+      ],
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "initial_peak_bytes": 7534461,
+      "shipping_OS_UDP_checks_per_mode": 10748,
+      "shipping_OS_UDP_scenarios_per_mode": 15,
+      "raw_writer_checks_per_mode": 88,
+      "shipping_JNI_tap_checks_per_mode": 15,
+      "shipping_post_ready_checks_per_mode": 16,
+      "Java_raw_ZIP_checks": 61,
+      "activity_export_checks": 78,
+      "current_capture_export_checks": 46,
+      "bridge_checks": 794,
+      "raw_bodies_newly_decoded": false
+    },
+    "Huge_host": {
+      "draws": 13,
+      "vertices": 2068,
+      "indices": 5814,
+      "textures": 21,
+      "reference_face_bytes": 87776,
+      "reference_face_sha256": "8f5026b556b051fdf540e2a55379c9f570a349a72505077304e627aac2682df0",
+      "loaded_archive_descriptors": 11,
+      "max_archive_descriptors": 16,
+      "all_three_modes_passed": true,
+      "physical_019_draw": false
+    },
+    "memory": {
+      "caps_unchanged": true,
+      "initial_source_aggregate_peak_bytes": 7534461,
+      "raw_file_max_bytes_including_framing": 8388608,
+      "raw_max_records": 128,
+      "raw_native_sink_bytes": 184,
+      "raw_service_clock_bytes": 8,
+      "raw_charged_stack_bytes": 4096,
+      "raw_java_stream_scratch_bytes": 16384,
+      "capture_existing_parent_reserve_bytes": 5667858,
+      "Huge_module_host_peak_before_parent_charges_bytes": 12229022,
+      "new_Android_RSS_PSS_observations": false
+    },
+    "refusals": {
+      "capture": "Export requires installed version and current activity session; otherwise explicit omission reason. Fresh viewport after actor epoch change.",
+      "raw": "Explicit partial window, capacity, write and unobserved-message flags; no claim of complete recording on failure.",
+      "actor": "Original first basename duplicate wins; case-insensitive query across all verified imported archives; box fallback."
+    }
+  }
 }

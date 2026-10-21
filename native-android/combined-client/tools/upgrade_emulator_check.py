@@ -29,6 +29,11 @@ SIGNER = '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
 # Historical pins remain the default. The report regression must additionally
 # exercise the exact installed 0.1.10 donor, not infer that path from 0.1.9.
 PREVIOUS_INPUTS = {
+    'continuation-diagnostic': dict(revision='be35ccaed38b5cf9196eb01f2158f2222ca632ac', artifact='12314108293',
+        run='39528643541', archive_bytes=26577860,
+        archive_sha256='097e961e4fde752770afaf15f65c8ff16b1702c8e66a35642f6e94a18896348f',
+        apk='CoH-Native-Combined-0.1.18-continuation-diagnostic-x86_64.apk', apk_bytes=14575141,
+        apk_sha256='7512f220ed7e82c02705e18407a315edb315bf6fdb975ba93fab5cb9201d6111'),
     'fullscreen-diagnostic': dict(revision='81a47f8ccef15c26e02b5cbf2feb4b99ac465139', artifact='12298379427',
         run='39498990230', archive_bytes=25677911,
         archive_sha256='794c6c45ee0bde9002d7dcc5d02956137bc427171f3a6496f879f4b3a02c7d6d',

@@ -107,6 +107,7 @@ name: Native source qualification
         - capture-diagnostic
         - fullscreen-diagnostic
         - continuation-diagnostic
+        - freeze-diagnostic
         default: neighborhood-diagnostic
       qualifier:
         description: BodyPart qualifier; ignored for combined-source
@@ -167,7 +168,7 @@ jobs:
   body-plan:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && ((github.event_name
       == 'workflow_dispatch' && inputs.purpose == 'body-catalog') || (github.event_name == 'push' && !contains(github.event.head_commit.message,
-      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-framework-dispatch]') && !contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]')
+      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-framework-dispatch]') && !(contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]'))
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
@@ -258,13 +259,18 @@ jobs:
         python3 native-android/engine/appearance/check_costume_input.py --work /tmp/costume-input-ci --output native-android/results/combined-neighborhood-diagnostic/costume-input.json
         python3 native-android/session-client/tools/check_frame_capture.py --work /tmp/current-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/current-frame-owner.json
         python3 native-android/combined-client/tools/check_frame_capture_store.py
+        python3 native-android/combined-client/tools/check_current_capture_export.py
+        python3 native-android/combined-client/tools/check_post_ready_activity.py
+        python3 native-android/combined-client/tools/check_post_ready_replay.py --output "$RUNNER_TEMP/post-ready-replay-controls"
+        cp "$RUNNER_TEMP/post-ready-replay-controls/result.json" native-android/results/combined-neighborhood-diagnostic/post-ready-replay-controls.json
         python3 native-android/combined-client/tools/check_frame_capture_wiring.py
         python3 native-android/session-client/tools/check_frame_capture.py --fullscreen --work /tmp/fullscreen-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/fullscreen-frame-owner.json
         python3 native-android/combined-client/tools/check_fullscreen_capture.py
         python3 native-android/combined-client/tools/check_runtime_world_wiring.py
         python3 native-android/combined-client/imports/tests/check_runtime_world_inputs.py --work /tmp/runtime-world-inputs-ci --output native-android/results/combined-neighborhood-diagnostic/runtime-world-inputs.json
         CONTINUATION_FLAGS=
-        if test "${{ inputs.diagnostic_profile }}" = continuation-diagnostic; then CONTINUATION_FLAGS=--fallback; fi
+        if test "${{ inputs.diagnostic_profile }}" = continuation-diagnostic || test "${{ inputs.diagnostic_profile }}" = freeze-diagnostic; then CONTINUATION_FLAGS=--fallback; fi
+        if test "${{ inputs.diagnostic_profile }}" = freeze-diagnostic; then CONTINUATION_FLAGS="$CONTINUATION_FLAGS --post-replay"; fi
         python3 native-android/combined-client/tools/check_outer_costume_android.py $CONTINUATION_FLAGS --work /tmp/outer-costume-android-ci --output native-android/results/combined-neighborhood-diagnostic/outer-costume-android.json
         python3 native-android/combined-client/tools/check_initial_replay_store.py --work /tmp/initial-replay-store-ci --output native-android/results/combined-neighborhood-diagnostic/initial-replay-store.json
         # Send/continuation use original sender fixtures and synthetic local UDP;
@@ -286,7 +292,7 @@ jobs:
         retention-days: 90
   dispatch-neighborhood-diagnostic:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
-      == 'push' && (contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]')) && contains(github.event.head_commit.message, '[native-contracts-only]') && github.run_attempt
+      == 'push' && (contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') || (contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]'))) && contains(github.event.head_commit.message, '[native-contracts-only]') && github.run_attempt
       == '1'
     permissions:
       contents: read
@@ -298,7 +304,7 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         EXPECTED_SHA: ${{ github.sha }}
-        DIAGNOSTIC_PROFILE: ${{ contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') && 'continuation-diagnostic' || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && 'fullscreen-diagnostic' || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && 'capture-diagnostic' || 'neighborhood-diagnostic' }}
+        DIAGNOSTIC_PROFILE: ${{ contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]') && 'freeze-diagnostic' || (contains(github.event.head_commit.message, '[continuation-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[freeze-diagnostic-dispatch]')) && 'continuation-diagnostic' || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && 'fullscreen-diagnostic' || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && 'capture-diagnostic' || 'neighborhood-diagnostic' }}
       run: |
         test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
         gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
@@ -314,7 +320,8 @@ jobs:
     timeout-minutes: 60
     env:
       DIAGNOSTIC_PROFILE: ${{ inputs.diagnostic_profile || 'neighborhood-diagnostic' }}
-      DIAGNOSTIC_VERSION: ${{ inputs.diagnostic_profile == 'continuation-diagnostic' && '0.1.18' || inputs.diagnostic_profile == 'fullscreen-diagnostic' && '0.1.17' || inputs.diagnostic_profile == 'capture-diagnostic' && '0.1.16' || '0.1.15' }}
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      DIAGNOSTIC_VERSION: ${{ inputs.diagnostic_profile == 'freeze-diagnostic' && '0.1.19' || inputs.diagnostic_profile == 'continuation-diagnostic' && '0.1.18' || inputs.diagnostic_profile == 'fullscreen-diagnostic' && '0.1.17' || inputs.diagnostic_profile == 'capture-diagnostic' && '0.1.16' || '0.1.15' }}
     steps:
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
@@ -336,7 +343,7 @@ jobs:
         python3 -m pip install --disable-pip-version-check Pillow==12.3.0
     - name: Check the selected bounded diagnostic profile
       run: |
-        case "$DIAGNOSTIC_PROFILE" in neighborhood-diagnostic|capture-diagnostic|fullscreen-diagnostic|continuation-diagnostic) ;; *) exit 1 ;; esac
+        case "$DIAGNOSTIC_PROFILE" in neighborhood-diagnostic|capture-diagnostic|fullscreen-diagnostic|continuation-diagnostic|freeze-diagnostic) ;; *) exit 1 ;; esac
     - name: Reuse pinned crypto, accepted scene, dictionary and neighborhood inputs
       env:
         GH_TOKEN: ${{ github.token }}
@@ -346,7 +353,7 @@ jobs:
         python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/combined-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-neighborhood-diagnostic/crypto-reuse.json
         python3 native-android/combined-client/tools/prepare.py --client-slots --evidence native-android/results/combined-neighborhood-diagnostic/build-inputs.json
         python3 native-android/combined-client/tools/prepare_neighborhood.py --source-root . --assets native-android/combined-client/app/src/main/assets --cache /tmp/combined-neighborhood-inputs --output native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json
-        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then
+        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then
           python3 native-android/combined-client/tools/prepare_live_world.py --source-root . --assets native-android/combined-client/app/src/main/assets --cache /tmp/combined-neighborhood-inputs --output native-android/results/combined-neighborhood-diagnostic/live-world-inputs.json
         fi
         python3 - <<'PYASSETS'
@@ -357,7 +364,7 @@ jobs:
         scene_files = receipt['scene_files'].copy()
         neighborhood = json.loads((folder / 'neighborhood-inputs.json').read_bytes())
         receipt['neighborhood'] = {key: value for key, value in neighborhood.items() if key not in ('fixture', 'instances')}
-        if os.environ['DIAGNOSTIC_PROFILE'] in ('fullscreen-diagnostic', 'continuation-diagnostic'):
+        if os.environ['DIAGNOSTIC_PROFILE'] in ('fullscreen-diagnostic', 'continuation-diagnostic', 'freeze-diagnostic'):
             live = json.loads((folder / 'live-world-inputs.json').read_bytes())
             receipt['live_world'] = {key: value for key, value in live.items() if key != 'instances'}
         assert receipt['scene_files'] == scene_files
@@ -366,8 +373,9 @@ jobs:
         (folder / 'build-inputs.json').write_text(raw)
         PYASSETS
         PREVIOUS_ARTIFACT=12259140776; PREVIOUS_PROFILE=entity-diagnostic
-        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then PREVIOUS_ARTIFACT=12289656309; PREVIOUS_PROFILE=capture-diagnostic; fi
-        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then PREVIOUS_ARTIFACT=12298379427; PREVIOUS_PROFILE=fullscreen-diagnostic; fi
+        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then PREVIOUS_ARTIFACT=12289656309; PREVIOUS_PROFILE=capture-diagnostic; fi
+        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then PREVIOUS_ARTIFACT=12298379427; PREVIOUS_PROFILE=fullscreen-diagnostic; fi
+        if test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then PREVIOUS_ARTIFACT=12314108293; PREVIOUS_PROFILE=continuation-diagnostic; fi
         export PREVIOUS_PROFILE
         echo "PREVIOUS_PROFILE=$PREVIOUS_PROFILE" >> "$GITHUB_ENV"
         gh api repos/Russianranger/coh-android/actions/artifacts/$PREVIOUS_ARTIFACT/zip > /tmp/combined-previous.zip
@@ -389,14 +397,14 @@ jobs:
         cp "$RUNNER_TEMP/neighborhood-check/world-and-box.png" native-android/results/combined-neighborhood-diagnostic/host-world-and-box.png
         if test "$DIAGNOSTIC_PROFILE" != neighborhood-diagnostic; then
           CAPTURE_FLAGS=
-          if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then CAPTURE_FLAGS=--fullscreen; fi
+          if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic || test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then CAPTURE_FLAGS=--fullscreen; fi
           python3 native-android/session-client/tools/check_frame_capture_gl.py $CAPTURE_FLAGS --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-gl" --output native-android/results/combined-neighborhood-diagnostic/current-frame-gl.json
           python3 native-android/session-client/tools/check_frame_capture_scene.py $CAPTURE_FLAGS --stream-library "$RUNNER_TEMP/neighborhood-check/stream.so" --assets native-android/combined-client/app/src/main/assets --world-bin native-android/combined-client/app/src/main/assets/world.bin --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-scene" --output native-android/results/combined-neighborhood-diagnostic/current-frame-scene.json
           cp "$RUNNER_TEMP/current-frame-scene/captured-world-and-box.png" native-android/results/combined-neighborhood-diagnostic/captured-world-and-box.png
           cp "$RUNNER_TEMP/current-frame-scene/scene-capture.zip" native-android/results/combined-neighborhood-diagnostic/host-scene-capture.zip
         fi
     - name: Qualify imported-archive streaming with explicitly generated ZIP format fixtures
-      if: inputs.diagnostic_profile == 'fullscreen-diagnostic' || inputs.diagnostic_profile == 'continuation-diagnostic'
+      if: inputs.diagnostic_profile == 'fullscreen-diagnostic' || (inputs.diagnostic_profile == 'continuation-diagnostic' || inputs.diagnostic_profile == 'freeze-diagnostic')
       env:
         LIBGL_ALWAYS_SOFTWARE: '1'
         EGL_PLATFORM: surfaceless
@@ -406,7 +414,7 @@ jobs:
         python3 native-android/session-client/tools/prepare_runtime_zip_fixtures.py --cache /tmp/combined-neighborhood-inputs --output "$RUNNER_TEMP/runtime-format-fixtures"
         python3 native-android/session-client/tools/check_live_world.py --assets native-android/combined-client/app/src/main/assets --metadata native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json --live-assets native-android/combined-client/app/src/main/assets --live-metadata native-android/results/combined-neighborhood-diagnostic/live-world-inputs.json --archives "$RUNNER_TEMP/runtime-format-fixtures" --world-bin native-android/combined-client/app/src/main/assets/world.bin --source-root . --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/runtime-world-check" --output native-android/results/combined-neighborhood-diagnostic/runtime-world-host.json
     - name: Qualify received Huge ownership and selected original source identities
-      if: inputs.diagnostic_profile == 'continuation-diagnostic'
+      if: (inputs.diagnostic_profile == 'continuation-diagnostic' || inputs.diagnostic_profile == 'freeze-diagnostic')
       env:
         LIBGL_ALWAYS_SOFTWARE: '1'
         EGL_PLATFORM: surfaceless
@@ -415,6 +423,7 @@ jobs:
         python3 native-android/engine/appearance/recover_costume_sources.py --source-root . --resource-plan native-android/engine/appearance/received_huge_source_requests.json --cache "$RUNNER_TEMP/huge-source-cache" --output "$RUNNER_TEMP/huge-selected-source"
         python3 native-android/engine/appearance/recover_huge_rig.py --rig native-android/combined-client/app/src/main/assets/rig.bin --output "$RUNNER_TEMP/huge-original-rig"
         python3 native-android/engine/appearance/check_recover_costume_sources.py --source-root . --base "$RUNNER_TEMP/huge-original-rig/base.anim" --inventory-cache "$RUNNER_TEMP/huge-source-cache" > native-android/results/combined-neighborhood-diagnostic/huge-source-controls.json
+        python3 native-android/engine/appearance/check_archive_queries.py --mode all > native-android/results/combined-neighborhood-diagnostic/texture-query-controls.json
         python3 native-android/engine/appearance/check_huge_scales.py > native-android/results/combined-neighborhood-diagnostic/huge-source-scales.json
         python3 native-android/engine/appearance/check_huge_materials.py --mode all > native-android/results/combined-neighborhood-diagnostic/huge-source-materials.json
         # The genuine private costume replay and all13-mesh capture are qualified
@@ -424,7 +433,7 @@ jobs:
     - name: Build and inspect the signed ARM64 diagnostic
       run: |
         python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohBuildProfile="$DIAGNOSTIC_PROFILE" -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
-        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic; then
+        if test "$DIAGNOSTIC_PROFILE" = continuation-diagnostic || test "$DIAGNOSTIC_PROFILE" = freeze-diagnostic; then
           python3 - <<'PYSTACK'
         import json, pathlib
         rows = []
