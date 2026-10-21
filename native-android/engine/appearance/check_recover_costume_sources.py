@@ -10,7 +10,7 @@ import struct
 import tempfile
 import zlib
 from recover_costume_sources import (metadata_range, query_plan, selected_composites,
-                                    source_indexes)
+                                    source_indexes, selected_texture_headers)
 from costume_texture_inventory import texture_inventory
 from pigg_source_index import PiggSourceIndex, ENTRY
 from zone_source_index import selected_provenance
@@ -49,7 +49,7 @@ def metadata_fixture(raw):
             + ENTRY.pack(0x3456, 0, len(raw), 0, size, 0, 0, hashlib.md5(raw).digest(), 0) + pools)
 
 
-def controls(root, genuine, inventory_cache=None):
+def controls(root, genuine, inventory_cache=None, texture=None):
     raw = genuine.read_bytes()
     assert len(raw) == 6171 and hashlib.sha256(raw).hexdigest() == '19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6'
     packed, passed = zlib.compress(raw), 0
@@ -148,6 +148,23 @@ def controls(root, genuine, inventory_cache=None):
             assert all(len(inventory['lookup'][key]['paths']) == 1 for key in leaves)
             assert all(not row['ambiguous'] for row in inventory['lookup'].values())
             passed += 1
+        if texture:
+            texture_raw = texture.read_bytes()
+            assert hashlib.sha256(texture_raw).hexdigest() == '0d0658a7b4113d97dce8097db372c60187602fc26d0e8f52049916a421ee4cf1'
+            name = 'data/texture_library/players/avatar/male/hips/tights/hips_pants.texture'
+            path = scratch / name
+            path.parent.mkdir(parents=True)
+            path.write_bytes(texture_raw)
+            headers = selected_texture_headers(scratch, {name: {'bytes': len(texture_raw)}})
+            assert headers[name]['basic_key'] == 'hips_pants'
+            passed += 1
+            wrong = path.with_name('wrong.texture')
+            wrong.write_bytes(texture_raw)
+            try:
+                selected_texture_headers(scratch, {wrong.relative_to(scratch).as_posix(): {'bytes': len(texture_raw)}})
+                raise AssertionError('Cached-key/filename mismatch admitted')
+            except ValueError:
+                passed += 1
     return passed
 
 
@@ -156,8 +173,9 @@ def main():
     parser.add_argument('--source-root', type=Path, required=True)
     parser.add_argument('--base', type=Path, required=True)
     parser.add_argument('--inventory-cache', type=Path)
+    parser.add_argument('--texture', type=Path)
     args = parser.parse_args()
-    print(json.dumps({'passed': True, 'controls': controls(args.source_root, args.base, args.inventory_cache),
+    print(json.dumps({'passed': True, 'controls': controls(args.source_root, args.base, args.inventory_cache, args.texture),
                       'network_requests': 0, 'metadata_format_fixture_is_original_archive_proof': False}))
 
 

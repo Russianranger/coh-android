@@ -13,6 +13,7 @@ import importlib.util
 import json
 import os
 import shutil
+import struct
 import subprocess
 import tempfile
 import urllib.request
@@ -70,6 +71,36 @@ def selected_composites(root, cache, names):
     if len(leaves) > 64:
         raise ValueError('Original composite dependencies exceed bounded requests')
     return definitions, sources, leaves
+
+
+def selected_texture_headers(bodies, files):
+    """Preserve the original Basic key, independently of filename discovery.
+
+    texFillInBind reads the cached name; texLoadHeader rejects a filename/key
+    mismatch. These are cached-header observations, not effective TexOpt flags.
+    """
+    result = {}
+    for name in files:
+        if not name.endswith('.texture'):
+            continue
+        with (bodies / name).open('rb') as source:
+            raw = source.read(1056)
+        if len(raw) < 32:
+            raise ValueError('Selected original texture header is truncated')
+        header, payload, width, height = struct.unpack_from('<IIII', raw)
+        if not 32 < header <= min(1056, len(raw)) or payload > files[name]['bytes'] - header or not 0 < width <= 16384 or not 0 < height <= 16384:
+            raise ValueError('Selected original texture header bounds differ')
+        original, separator, _ = raw[32:header].partition(b'\0')
+        if not separator:
+            raise ValueError('Selected original cached texture name is unterminated')
+        original = original.decode('ascii')
+        if (not original.casefold().startswith('texture_library/')
+                or PurePosixPath(original).stem.casefold() != PurePosixPath(name).stem.casefold()):
+            raise ValueError('Selected original cached texture key differs from its filename')
+        result[name] = {'original_name': original, 'basic_key': PurePosixPath(original).stem.casefold(),
+                        'header_bytes': header, 'width': width, 'height': height,
+                        'effective_sampler_or_material_validated': False}
+    return result
 
 
 def query_plan(path):
@@ -299,7 +330,9 @@ def recover(root, plan_path, cache, output):
                     cached_header={'bytes': row['cached_header_bytes'], 'sha256': row['cached_header_sha256']})
         print(json.dumps({'path': name, **result}), flush=True)
     files = {name: {'bytes': row['bytes'], 'sha256': row['sha256']} for name, row in {**records, **derived}.items()}
+    headers = selected_texture_headers(bodies, files)
     index = {'files': files, 'texture_namespace': inventory['lookup'], 'texture_probe_complete': True,
+             'texture_headers': headers,
              'texture_inventory_scope': inventory['scope'], 'source_indexes': inventory['source_indexes'],
              'scope': 'Generated host transport of original verified selected bodies, not original ZIP or Thor execution proof',
              'bodytype': plan['bodytype'], 'resource_plan': plan,
