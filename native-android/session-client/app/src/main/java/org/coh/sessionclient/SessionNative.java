@@ -9,6 +9,10 @@ public final class SessionNative {
             byte[] morph, byte[] locomotion, byte[] walkable, byte[] map);
     /** Optional private initialization: verified index/Atlas/CLIENT descriptor spans. */
     public static native int runtimeWorld(long handle,int[] fds,long[] offsets,long[] lengths,long javaPayloadBytes);
+    /** Off-GL selected-self costume preparation from verified CLIENT/zones FDs.
+     * Returns CohStatus:0 published; positive codes preserve the box fallback. */
+    public static native int observedCostume(long handle, byte[] frame, int[] fds,
+            long[] offsets, long[] lengths, long javaPayloadBytes, long interopSourceBytes);
     public static native int render(long handle, Surface surface, long epoch);
     public static native void state(long handle, long epoch, boolean foreground);
     public static native void input(long handle, float forward, float strafe, float lookX, float lookY);

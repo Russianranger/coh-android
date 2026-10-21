@@ -29,6 +29,14 @@
 #include "session_stream_world.h"
 #include "session_frame_capture.h"
 #include "session_frame_capture_gl.h"
+#ifndef COH_LIVE_COSTUME_DIAGNOSTIC
+#define COH_LIVE_COSTUME_DIAGNOSTIC 0
+#endif
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+#include "../../../../../engine/appearance/coh_received_costume.h"
+#include "../../../../../engine/appearance/coh_received_costume_fd.h"
+#include "coh_renderer_gles.h"
+#endif
 
 #ifndef COH_FRAME_CAPTURE_DIAGNOSTIC
 #define COH_FRAME_CAPTURE_DIAGNOSTIC 0
@@ -66,6 +74,11 @@ typedef struct {
     float forward,strafe,accumulator,spawn[3],camera_target_height;
     uint32_t observed_entity_index;float observed_entity_position[3];
     uint64_t observed_entity_updates,observed_entity_draws;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    CohReceivedCostume *received_actor;CohReceivedCostumeStats received_stats;
+    uint64_t received_pose_updates,received_source_bytes,received_invalidations;
+    uint64_t received_frames,received_draws;int received_preparing,received_status,received_last_draw;
+#endif
     CohFrameCapture *frame_capture;
     uint64_t capture_lock_frame,capture_draws,capture_frame,capture_generation,capture_failures,capture_charge,capture_view_epoch;
     uint32_t capture_view_width,capture_view_height;
@@ -92,6 +105,10 @@ typedef struct { EGLDisplay display; EGLSurface surface; EGLContext context;
     GLuint depth_program,depth_vao,pixel_fbo,pixel_color;GLint depth_sampler,depth_pixel;
     size_t tf_bytes;
     int initialized,context_current;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    CohGlesRenderer *received_gles;CohRenderer *received_renderer;
+    GLuint received_textures[COH_RECEIVED_COSTUME_TEXTURES];int received_attempted;
+#endif
 } Graphics;
 static uint64_t now_ms(void) { struct timespec t; clock_gettime(CLOCK_MONOTONIC,&t);
     return (uint64_t)t.tv_sec*1000u+(uint64_t)t.tv_nsec/1000000u; }
@@ -152,7 +169,11 @@ static int copy_asset(JNIEnv *e,jbyteArray a,Bytes *out) {
     out->p=malloc((size_t)n);out->n=(size_t)n;if(!out->p)return 0;
     (*e)->GetByteArrayRegion(e,a,0,n,(jbyte*)out->p);return !(*e)->ExceptionCheck(e);
 }
-static void session_free(Session *s) {if(!s)return;coh_frame_capture_destroy(&s->frame_capture);coh_session_world_destroy(&s->stream_world);for(unsigned i=0;i<7;i++)free(s->assets[i].p);
+static void session_free(Session *s) {if(!s)return;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    coh_received_costume_destroy(&s->received_actor);
+#endif
+    coh_frame_capture_destroy(&s->frame_capture);coh_session_world_destroy(&s->stream_world);for(unsigned i=0;i<7;i++)free(s->assets[i].p);
     coh_walk_world_destroy(&s->walk_world);for(unsigned i=0;i<COH_WALKABLE_PARTS;i++)geometry_free(&s->walkable_geometry[i]);
     for(unsigned i=0;i<COH_WORLD_PARTS;i++)geometry_free(&s->world_geometry[i]);
     for(unsigned i=0;i<COH_SCENE_PARTS;i++)geometry_free(&s->actor_geometry[i]);pthread_mutex_destroy(&s->mutex);free(s); }
@@ -282,6 +303,44 @@ static void draw_actor(Session *s,Graphics *g,const float *model,const float *ey
         glBindVertexArray(geo->vao);glDrawElements(GL_TRIANGLES,(GLsizei)geo->index_count,GL_UNSIGNED_INT,NULL);s->actor_draws++;
     }
 }
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+static void received_surface_delete(Graphics*g,int alive){
+    if(g->received_renderer){coh_renderer_surface_lost(g->received_renderer,0,alive);coh_renderer_destroy(g->received_renderer);g->received_renderer=NULL;}
+    if(g->received_gles){coh_renderer_gles_destroy(g->received_gles,alive);g->received_gles=NULL;}
+    if(alive)glDeleteTextures(COH_RECEIVED_COSTUME_TEXTURES,g->received_textures);
+    memset(g->received_textures,0,sizeof g->received_textures);
+}
+static int received_draw(Session*s,Graphics*g,const float view[12],const float projection[16]){
+    s->received_last_draw=0;
+    if(!s->received_actor||s->received_pose_updates!=s->observed_entity_updates||s->received_stats.entity_index!=s->observed_entity_index)return 0;
+    CohStatus status=COH_OK;
+    if(!g->received_attempted){
+        g->received_attempted=1;CohRenderBackend backend={0};
+        for(uint32_t i=0;i<s->received_stats.textures;i++){
+            CohBytes pixels;uint32_t width,height;const char*name;
+            status=coh_received_costume_texture(s->received_actor,i,&pixels,&width,&height,&name);if(status)break;
+            glGenTextures(1,g->received_textures+i);glBindTexture(GL_TEXTURE_2D,g->received_textures[i]);
+            glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,(GLsizei)width,(GLsizei)height,0,GL_RGBA,GL_UNSIGNED_BYTE,pixels.data);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+            if(!g->received_textures[i]||glGetError()!=GL_NO_ERROR){status=COH_LIMIT;break;}
+        }
+        if(!status)status=coh_renderer_gles_create(s->received_stats.vertices,s->received_stats.indices,&g->received_gles,&backend);
+        CohRendererConfig config={120,s->received_stats.vertices,s->received_stats.indices,3};
+        if(!status)status=coh_renderer_create(&config,&backend,&g->received_renderer);
+        if(!status){coh_renderer_surface_lost(g->received_renderer,1,1);status=coh_received_costume_bind(s->received_actor,1,g->received_textures,s->received_stats.textures);}
+        if(status){received_surface_delete(g,1);s->received_status=status;for(unsigned error=0;error<32&&glGetError()!=GL_NO_ERROR;error++){}snprintf(s->received_stats.missing,sizeof s->received_stats.missing,"Huge GPU preparation status %d",status);}
+    }
+    if(!g->received_renderer)return 0;
+    const CohRenderDraw*draws=NULL;size_t count=0;
+    status=coh_received_costume_draws(s->received_actor,view,projection,s->observed_entity_position,&draws,&count);
+    if(!status)status=coh_renderer_begin(g->received_renderer,1);
+    for(size_t i=0;!status&&i<count;i++)status=coh_renderer_submit(g->received_renderer,draws+i);
+    if(!status)status=coh_renderer_flush(g->received_renderer,(CohCancel){0});
+    if(status){received_surface_delete(g,1);s->received_status=status;for(unsigned error=0;error<32&&glGetError()!=GL_NO_ERROR;error++){}snprintf(s->received_stats.missing,sizeof s->received_stats.missing,"Huge draw status %d",status);return 0;}
+    s->received_frames++;s->received_draws+=count;s->received_last_draw=1;s->received_status=COH_OK;s->received_stats.missing[0]=0;return 1;
+}
+#endif
 static int scene_draw(Session *s,Graphics *g,GLuint fbo,int width,int height,int mode,int reverse,uint8_t *image) {
     float view[12],projection[16],model[12],actor_eye[12],eye[6][12];if(!camera(s,(float)width/height,view,projection,model,actor_eye,eye))return 0;
     glBindFramebuffer(GL_FRAMEBUFFER,fbo);glViewport(0,0,width,height);glEnable(GL_DEPTH_TEST);glDepthMask(GL_TRUE);glDepthFunc(GL_LEQUAL);glClearDepthf(1);glClearColor(17/255.f,19/255.f,23/255.f,1);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);glFrontFace(GL_CW);glCullFace(GL_BACK);
@@ -293,7 +352,11 @@ static int scene_draw(Session *s,Graphics *g,GLuint fbo,int width,int height,int
         if(!world_ok)return fail(s,s->failure[0]?s->failure:"Indexed Atlas scene draw failed");
     }}
     if(observed&&mode!=1){
-        if(!coh_session_world_observed_entity(s->stream_world,view,projection,s->observed_entity_index,s->observed_entity_position,&s->stream_stats,s->failure,sizeof s->failure))return fail(s,"Observed server entity box draw failed");
+        int actor=0;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+        actor=received_draw(s,g,view,projection);
+#endif
+        if(!actor&&!coh_session_world_observed_entity(s->stream_world,view,projection,s->observed_entity_index,s->observed_entity_position,&s->stream_stats,s->failure,sizeof s->failure))return fail(s,"Observed server entity box draw failed");
         s->observed_entity_draws++;
     }
     if(mode!=1&&!reverse&&!observed)draw_actor(s,g,model,actor_eye,projection,0);
@@ -400,6 +463,9 @@ static int cleanup_egl_failure(Session *s,const char *operation) {
 }
 static void graphics_delete(Session *s,Graphics *g) {
     coh_session_world_surface_lost(s->stream_world,g->context_current,&s->stream_stats);
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    received_surface_delete(g,g->context_current);
+#endif
     int released=1;
     /* No GL call is permitted against a partial context that never became
      * current. Any context-owned resources then disappear with its checked
@@ -475,6 +541,9 @@ static void startup_commit(Session *s,const Session *copy) {
     s->depth_codec_float_precision=copy->depth_codec_float_precision;
     s->world_occludes_actor_pixels=copy->world_occludes_actor_pixels;s->actor_occludes_world_pixels=copy->actor_occludes_world_pixels;s->actor_changed_pixels=copy->actor_changed_pixels;
     s->observed_entity_draws=copy->observed_entity_draws;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    s->received_stats=copy->received_stats;s->received_last_draw=copy->received_last_draw;s->received_frames=copy->received_frames;s->received_draws=copy->received_draws;
+#endif
     s->runtime_world_reads=copy->runtime_world_reads;s->runtime_world_bytes=copy->runtime_world_bytes;
     s->startup_checked=copy->startup_checked;s->skin_samples=copy->skin_samples;s->world_draws=copy->world_draws;s->actor_draws=copy->actor_draws;
     s->egl_error=copy->egl_error;s->width=copy->width;s->height=copy->height;s->frames=copy->frames;
@@ -502,9 +571,71 @@ static int capture_scene_charge(const Session*s,const Graphics*g,uint64_t*out){
     for(unsigned i=0;i<s->world.texture_count;i++)if(!capture_add(&total,s->world.textures[i].bytes))return 0;
     for(unsigned i=0;i<s->actor.texture_count;i++)if(!capture_add(&total,s->actor.textures[i].bytes))return 0;
     for(unsigned i=0;i<s->walkable.texture_count;i++)if(!capture_add(&total,s->walkable.textures[i].bytes))return 0;
+    #if COH_LIVE_COSTUME_DIAGNOSTIC
+    if(s->received_actor&&(!capture_add(&total,s->received_stats.cpu_bytes)||!capture_add(&total,s->received_stats.gpu_reserve_bytes)||!capture_add(&total,s->received_stats.renderer_cpu_reserve_bytes)||!capture_add(&total,s->received_source_bytes)))return 0;
+#endif
     if(!capture_add(&total,(uint64_t)SIZE*SIZE*8u+4u+g->tf_bytes))return 0;
     *out=total;return total<=COH_CAPTURE_SCENE_LIMIT-COH_CAPTURE_RESERVE;
 }
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+static uint32_t received_u32(const uint8_t*p){return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
+static uint64_t received_u64(const uint8_t*p){return received_u32(p)|(uint64_t)received_u32(p+4)<<32;}
+typedef struct {Session*s;uint64_t epoch,updates,invalidation;uint32_t entity;} ReceivedCancel;
+static int received_cancel(void*context){ReceivedCancel*t=context;Session*s=t->s;pthread_mutex_lock(&s->mutex);int stop=s->failed||s->epoch!=t->epoch||s->observed_entity_updates!=t->updates||s->observed_entity_index!=t->entity||s->received_invalidations!=t->invalidation;pthread_mutex_unlock(&s->mutex);return stop;}
+/* Single renderWorker, after the old EGL loop/context returned. Every source
+ * FD is dup-owned only through preparation. Main-thread cancel/clear merely
+ * invalidates the token; they never wait for IO or release borrowed GL data. */
+JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_observedCostume(JNIEnv*e,jclass c,jlong handle,jbyteArray frame,jintArray fds,jlongArray offsets,jlongArray lengths,jlong java_bytes,jlong source_bytes){
+    (void)c;Session*s=(Session*)(intptr_t)handle;
+    if(!s||!frame||!fds||!offsets||!lengths||java_bytes<48384||source_bytes<=0||
+       (*e)->GetArrayLength(e,frame)!=48384||(*e)->GetArrayLength(e,fds)!=2||(*e)->GetArrayLength(e,offsets)!=2||(*e)->GetArrayLength(e,lengths)!=2)return COH_INVALID;
+    uint8_t header[32];jint descriptors[2];jlong starts[2],sizes[2];
+    (*e)->GetByteArrayRegion(e,frame,0,32,(jbyte*)header);if((*e)->ExceptionCheck(e))return COH_INVALID;
+    if(memcmp(header,"COHCST01",8)||received_u32(header+8)!=32||received_u32(header+12)!=sizeof(CohOriginalCostumeSnapshot)||!received_u64(header+16)||received_u32(header+28))return COH_INVALID;
+    uint32_t entity=received_u32(header+24);if(!entity||entity>10239)return COH_INVALID;
+    (*e)->GetIntArrayRegion(e,fds,0,2,descriptors);if((*e)->ExceptionCheck(e))return COH_INVALID;
+    (*e)->GetLongArrayRegion(e,offsets,0,2,starts);if((*e)->ExceptionCheck(e))return COH_INVALID;
+    (*e)->GetLongArrayRegion(e,lengths,0,2,sizes);if((*e)->ExceptionCheck(e))return COH_INVALID;
+    CohReceivedArchiveFd files[2];for(unsigned i=0;i<2;i++){if(descriptors[i]<0||starts[i]||sizes[i]<=0||sizes[i]>UINT32_MAX)return COH_INVALID;files[i]=(CohReceivedArchiveFd){descriptors[i],0,(uint64_t)sizes[i]};}
+    pthread_mutex_lock(&s->mutex);
+    if(s->running||s->received_preparing||s->failed||s->observed_entity_index!=entity){pthread_mutex_unlock(&s->mutex);return COH_STATE;}
+    s->received_preparing=1;ReceivedCancel token={s,s->epoch,s->observed_entity_updates,s->received_invalidations,entity};pthread_mutex_unlock(&s->mutex);
+    Graphics future={0};uint64_t parent=0,base=0,world_cpu=0,world_gpu=0;CohReceivedCostume*candidate=NULL;CohReceivedCostumeFds*imports=NULL;CohOriginalCostumeSnapshot*snapshot=NULL;CohReceivedCostumeStats stats={0};CohStatus status=COH_LIMIT;char reason[128]={0};
+    const Geometry*sets[]={s->world_geometry,s->actor_geometry,s->walkable_geometry};const unsigned counts[]={s->world.part_count,s->actor.part_count,s->walkable.part_count};
+    for(unsigned set=0;set<3;set++)for(unsigned i=0;i<counts[set];i++){uint64_t bytes=(uint64_t)sets[set][i].count*13u*sizeof(float);if(bytes>future.tf_bytes)future.tf_bytes=(size_t)bytes;}
+    if(!capture_scene_charge(s,&future,&base))goto done;
+    parent=base;
+    if(!capture_add(&parent,(uint64_t)java_bytes)||!capture_add(&parent,(uint64_t)source_bytes)||!capture_add(&parent,sizeof* snapshot+coh_received_costume_fds_allocation_bytes()+COH_RECEIVED_COSTUME_STACK+COH_CAPTURE_RESERVE))goto done;
+    snapshot=malloc(sizeof*snapshot);if(!snapshot)goto done;
+    (*e)->GetByteArrayRegion(e,frame,32,sizeof*snapshot,(jbyte*)snapshot);if((*e)->ExceptionCheck(e)){status=COH_INVALID;goto done;}
+    status=coh_received_costume_fds_open(files,&imports);if(status){snprintf(stats.missing,sizeof stats.missing,"CLIENT/zones immutable archive descriptors");goto done;}
+    CohReceivedCostumeInputs inputs={0};inputs.snapshot=snapshot;inputs.rig=&s->rig;inputs.parent_bytes=parent;inputs.source_epoch=received_u64(header+16);inputs.entity_index=entity;inputs.cancel=(CohCancel){received_cancel,&token};
+    status=coh_received_costume_fds_sources(imports,inputs.archives);if(status)goto done;
+    status=coh_received_costume_prepare(&inputs,&candidate,&stats);if(status)goto done;
+    if(received_cancel(&token)){status=COH_CANCELLED;goto done;}
+    /* The world owns its concrete old+candidate stream reservation. Add the
+     * new actor and retained observer source to that same parent domain; do not
+     * replace it with this module's independent96MiB check. */
+    if(!coh_session_world_owned_bytes(s->stream_world,&world_cpu,&world_gpu)||base<world_cpu+world_gpu){status=COH_STATE;goto done;}
+    uint64_t retained=base-world_cpu-world_gpu;
+    if(s->received_actor){uint64_t old=s->received_stats.cpu_bytes+s->received_stats.gpu_reserve_bytes+s->received_stats.renderer_cpu_reserve_bytes+s->received_source_bytes;if(retained<old){status=COH_STATE;goto done;}retained-=old;}
+    if(!capture_add(&retained,stats.cpu_bytes)||!capture_add(&retained,stats.gpu_reserve_bytes)||!capture_add(&retained,stats.renderer_cpu_reserve_bytes)||!capture_add(&retained,(uint64_t)source_bytes)||!capture_add(&retained,COH_CAPTURE_RESERVE)){status=COH_LIMIT;goto done;}
+    pthread_mutex_lock(&s->mutex);
+    int current=!s->failed&&s->epoch==token.epoch&&s->observed_entity_updates==token.updates&&s->observed_entity_index==token.entity&&s->received_invalidations==token.invalidation;
+    CohReceivedCostume*old=NULL;
+    /* Pure control/preflight update, no IO or driver calls. It shares final
+     * identity validation with publication, so cancellation cannot undercharge
+     * an old owner that remains live. Preparation already charged old+new. */
+    if(current&&s->runtime_world_status==1&&!coh_session_world_parent_bytes(s->stream_world,retained,reason,sizeof reason)){status=COH_LIMIT;snprintf(stats.missing,sizeof stats.missing,"%s",reason);current=0;}
+    if(current){old=s->received_actor;s->received_actor=candidate;candidate=NULL;s->received_stats=stats;s->received_source_bytes=(uint64_t)source_bytes;s->received_pose_updates=token.updates;s->received_status=COH_OK;s->received_last_draw=0;s->capture_lock_frame=s->frames;s->capture_draws=0;}else if(!status)status=COH_CANCELLED;
+    pthread_mutex_unlock(&s->mutex);coh_received_costume_destroy(&old);
+done:
+    coh_received_costume_destroy(&candidate);coh_received_costume_fds_destroy(&imports);free(snapshot);
+    pthread_mutex_lock(&s->mutex);s->received_preparing=0;
+    if(status){s->received_status=status;if(!stats.missing[0])snprintf(stats.missing,sizeof stats.missing,"Huge preparation status %d",status);if(!s->received_actor)s->received_stats=stats;else snprintf(s->received_stats.missing,sizeof s->received_stats.missing,"%s",stats.missing);}
+    pthread_mutex_unlock(&s->mutex);return status;
+}
+#endif
 #if COH_FULLSCREEN_DIAGNOSTIC
 /* Private initialization only, before Activity publishes its handle or a Surface.
  * The old stream remains owned until a complete FD-backed candidate exists. */
@@ -549,7 +680,11 @@ static int cancelled_surface_error(unsigned code){return code==EGL_BAD_NATIVE_WI
 JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e,jclass klass,jlong handle,jobject surface,jlong epoch) {
     (void)klass;Session *s=(Session*)(intptr_t)handle;if(!s||!surface)return -1;Graphics g={.display=EGL_NO_DISPLAY,.surface=EGL_NO_SURFACE,.context=EGL_NO_CONTEXT};uint64_t started=now_ms(),previous=started;
     Session *startup=malloc(sizeof *startup);if(!startup)return -1;
-    pthread_mutex_lock(&s->mutex);if(s->running||s->failed||!s->foreground||s->epoch!=(uint64_t)epoch){pthread_mutex_unlock(&s->mutex);free(startup);return 0;}s->cancel=0;s->running=1;s->contexts_started++;*startup=*s;pthread_mutex_unlock(&s->mutex);
+    pthread_mutex_lock(&s->mutex);if(s->running
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    ||s->received_preparing
+#endif
+    ||s->failed||!s->foreground||s->epoch!=(uint64_t)epoch){pthread_mutex_unlock(&s->mutex);free(startup);return 0;}s->cancel=0;s->running=1;s->contexts_started++;*startup=*s;pthread_mutex_unlock(&s->mutex);
     g.window=ANativeWindow_fromSurface(e,surface);if(!g.window)fail(startup,"Native Surface retention failed");else graphics_create(startup,&g);
     if(COH_FULLSCREEN_DIAGNOSTIC)coh_session_world_source_io(startup->stream_world,&startup->runtime_world_reads,&startup->runtime_world_bytes);
     pthread_mutex_lock(&s->mutex);
@@ -662,11 +797,19 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_observedEntity(J
     if(!s||index<=0||index>10239||!isfinite(x)||!isfinite(y)||!isfinite(z))return;
     pthread_mutex_lock(&s->mutex);clear_input(s);s->observed_entity_index=(uint32_t)index;
     s->observed_entity_position[0]=x;s->observed_entity_position[1]=y;s->observed_entity_position[2]=z;
-    s->observed_entity_updates++;s->capture_lock_frame=s->frames;s->capture_draws=0;s->accumulator=0;pthread_mutex_unlock(&s->mutex);
+    s->observed_entity_updates++;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    s->received_invalidations++;
+#endif
+    s->capture_lock_frame=s->frames;s->capture_draws=0;s->accumulator=0;pthread_mutex_unlock(&s->mutex);
 }
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_clearObservedEntity(JNIEnv*e,jclass c,jlong handle){
     (void)e;(void)c;Session*s=(Session*)(intptr_t)handle;if(!s)return;
-    pthread_mutex_lock(&s->mutex);s->observed_entity_index=0;memset(s->observed_entity_position,0,sizeof s->observed_entity_position);clear_input(s);pthread_mutex_unlock(&s->mutex);
+    pthread_mutex_lock(&s->mutex);
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    s->received_invalidations++;s->received_pose_updates=0;
+#endif
+    s->observed_entity_index=0;memset(s->observed_entity_position,0,sizeof s->observed_entity_position);clear_input(s);pthread_mutex_unlock(&s->mutex);
 }
 /* UI geometry for the current fullscreen Surface only. This controls optional
  * capture timing, never scene/entity admission or transport state. */
@@ -695,8 +838,16 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_viewDistance(JNI
     pthread_mutex_lock(&s->mutex);s->view_radius=s->view_radius<60?96:24;pthread_mutex_unlock(&s->mutex);
 }
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_focus(JNIEnv *e,jclass c,jlong handle) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);clear_input(s);pthread_mutex_unlock(&s->mutex);}
-JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_cancel(JNIEnv *e,jclass c,jlong handle) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);s->cancel=1;clear_input(s);pthread_mutex_unlock(&s->mutex);}
-JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_state(JNIEnv *e,jclass c,jlong handle,jlong epoch,jboolean foreground) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);s->epoch=(uint64_t)epoch;s->foreground=foreground?1:0;s->cancel=1;clear_input(s);pthread_mutex_unlock(&s->mutex);}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_cancel(JNIEnv *e,jclass c,jlong handle) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);s->cancel=1;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    s->received_invalidations++;
+#endif
+    clear_input(s);pthread_mutex_unlock(&s->mutex);}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_state(JNIEnv *e,jclass c,jlong handle,jlong epoch,jboolean foreground) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);s->epoch=(uint64_t)epoch;s->foreground=foreground?1:0;s->cancel=1;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    s->received_invalidations++;
+#endif
+    clear_input(s);pthread_mutex_unlock(&s->mutex);}
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_reset(JNIEnv *e,jclass c,jlong handle) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);clear_input(s);s->camera_yaw=wrap(s->walkable.spawn_yaw+PI);s->camera_pitch=.16f;if(!coh_walk_init(&s->walking,&s->walk_world,s->spawn,s->walkable.spawn_yaw))fail(s,"Authored ground reset failed");s->motion=s->walking.controls;memcpy(s->motion.position,s->walking.position,sizeof s->motion.position);coh_locomotion_init(&s->animation);coh_locomotion_blend_init(&s->blend);s->accumulator=0;pthread_mutex_unlock(&s->mutex);}
 static void escaped(char *out,size_t capacity,const char *in) {size_t n=0;for(const unsigned char *p=(const unsigned char*)in;*p&&n+7<capacity;p++){if(*p=='"'||*p=='\\'){out[n++]='\\';out[n++]=(char)*p;}else if(*p<32||*p>=127){int used=snprintf(out+n,capacity-n,"\\u%04x",*p);n+=(size_t)used;}else out[n++]=(char)*p;}out[n]=0;}
 typedef struct {char *p;size_t n;int ok;} Json;
@@ -720,7 +871,11 @@ JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIE
         jappend(&j,",\"walkable_tf_components\":%"PRIu64",\"walkable_tf_mismatches\":%"PRIu64",\"walkable_visible_pixels\":%"PRIu64",\"animation_move_samples\":[",s->walkable_tf_components,s->walkable_tf_mismatches,s->walkable_visible_pixels);
         for(unsigned i=0;i<COH_LOCOMOTION_CLIPS;i++)jappend(&j,"%s%"PRIu64,i?",":"",s->animation_move_samples[i]);jappend(&j,"]");
         jappend(&j,",\"walk_contact_hits\":%u,\"walk_wall_hits\":%u,\"walk_ground_hits\":%u",s->walking.contact_hits,s->walking.wall_hits,s->walking.ground_hits);
-        jappend(&j,",\"observed_server_entity\":{\"active\":%s,\"entity_index\":%u,\"position\":[%.9g,%.9g,%.9g],\"updates\":%"PRIu64",\"box_draws\":%"PRIu64",\"visual\":\"orange diagnostic box at decoded server coordinate\",\"complete_actor\":false",s->observed_entity_index?"true":"false",s->observed_entity_index,s->observed_entity_position[0],s->observed_entity_position[1],s->observed_entity_position[2],s->observed_entity_updates,s->observed_entity_draws);
+        uint64_t box_draws=s->observed_entity_draws;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+        box_draws=box_draws>=s->received_frames?box_draws-s->received_frames:0;
+#endif
+        jappend(&j,",\"observed_server_entity\":{\"active\":%s,\"entity_index\":%u,\"position\":[%.9g,%.9g,%.9g],\"updates\":%"PRIu64",\"box_draws\":%"PRIu64",\"visual\":\"orange diagnostic box at decoded server coordinate\",\"complete_actor\":false",s->observed_entity_index?"true":"false",s->observed_entity_index,s->observed_entity_position[0],s->observed_entity_position[1],s->observed_entity_position[2],s->observed_entity_updates,box_draws);
         if(COH_FULLSCREEN_DIAGNOSTIC)jappend(&j,",\"renderer_sends_application_ack\":false,\"transport_send_facts\":\"server_protocol.initial_continuation\"}");
         else jappend(&j,",\"application_ack\":false}");
         const CohSessionWorldStats *t=&s->stream_stats;
@@ -730,9 +885,18 @@ JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIE
         depth_json(&j,&s->clear_control,0);jappend(&j,",\"world_front\":");depth_json(&j,&s->world_front_control,0);jappend(&j,",\"actor_front\":");depth_json(&j,&s->actor_front_control,0);jappend(&j,"},\"depth_tie_diagnostics\":[");
         for(unsigned i=0;i<s->depth_diagnostics_count;i++){if(i)jappend(&j,",");depth_json(&j,&s->depth_diagnostics[i],1);}jappend(&j,"]");
         if(COH_FULLSCREEN_DIAGNOSTIC){char reason[256];escaped(reason,sizeof reason,s->runtime_world_failure);jappend(&j,",\"runtime_world\":{\"status\":%d,\"source\":\"%s\",\"parent_reservation_bytes\":%"PRIu64",\"archive_reads\":%"PRIu64",\"archive_bytes\":%"PRIu64",\"fallback_reason\":\"%s\"}",s->runtime_world_status,s->runtime_world_status==1?"verified_imported_archives":"accepted_fixture_fallback",s->runtime_world_parent_bytes,s->runtime_world_reads,s->runtime_world_bytes,reason);}
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+        {char missing[512];escaped(missing,sizeof missing,s->received_stats.missing);
+        int current=s->received_actor&&s->received_pose_updates==s->observed_entity_updates&&s->received_stats.entity_index==s->observed_entity_index;
+        jappend(&j,",\"received_actor\":{\"kind\":\"%s\",\"status\":%d,\"preparing\":%s,\"entity_index\":%u,\"parts\":%u,\"frames\":%"PRIu64",\"draws\":%"PRIu64",\"cpu_bytes\":%"PRIu64",\"gpu_reserved_bytes\":%"PRIu64",\"prepare_peak_bytes\":%"PRIu64",\"source_retained_bytes\":%"PRIu64",\"height_scale\":%.9g,\"automatic_material_fallbacks\":%u,\"quality\":\"original_noMULTI_noBUMP_DUAL; LINEAR_REPEAT_noMip; Ready_base_inspection\",\"missing_asset\":\"%s\"}",current&&s->received_last_draw?"received_huge":"box",s->received_status,s->received_preparing?"true":"false",s->received_stats.entity_index,s->received_stats.parts,s->received_frames,s->received_draws,s->received_stats.cpu_bytes,s->received_stats.gpu_reserve_bytes,s->received_stats.prepare_peak_bytes,s->received_source_bytes,s->received_stats.height_scale,s->received_stats.material_fallbacks,missing);}
+#endif
         if(COH_FRAME_CAPTURE_DIAGNOSTIC)jappend(&j,",\"frame_capture\":{\"frame\":%"PRIu64",\"pose_generation\":%"PRIu64",\"source_charge_bytes\":%"PRIu64",\"reserve_bytes\":%u,\"failures\":%"PRIu64",\"startup_witness\":false}",s->capture_frame,s->capture_generation,s->capture_charge,COH_CAPTURE_RESERVE,s->capture_failures);
         jappend(&j,"}");n=j.ok?(int)j.n:-1;
     }
     pthread_mutex_unlock(&s->mutex);if(n<0||(size_t)n>=sizeof json)return (*e)->NewStringUTF(e,"{\"valid\":false,\"failure\":\"Native snapshot capacity exceeded\"}");return (*e)->NewStringUTF(e,json);
 }
-JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_destroy(JNIEnv *e,jclass c,jlong handle) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);int running=s->running;s->cancel=1;pthread_mutex_unlock(&s->mutex);if(!running)session_free(s);}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_destroy(JNIEnv *e,jclass c,jlong handle) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);int running=s->running;
+#if COH_LIVE_COSTUME_DIAGNOSTIC
+    running|=s->received_preparing;s->received_invalidations++;
+#endif
+    s->cancel=1;pthread_mutex_unlock(&s->mutex);if(!running)session_free(s);}
