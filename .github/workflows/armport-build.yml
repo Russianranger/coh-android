@@ -82,6 +82,11 @@ jobs:
           sparse-checkout-cone-mode: false
           lfs: false
 
+      - name: Check the nvDXT stand-in's DDS decoder (native, ASan/UBSan)
+        run: |
+          python3 -m pip install --quiet --break-system-packages "pillow==12.0.0"
+          python3 armport/tests/nvdxt/check_decoder.py
+
       - name: Install llvm-mingw (aarch64 host)
         run: |
           curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
@@ -428,7 +433,7 @@ jobs:
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" \
             --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw --cg-dir "$RUNNER_TEMP/cg-arb" \
-            --requests-out "$RUNNER_TEMP/cg-requests-2"
+            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive
       - name: Export the last screen
         if: always()
         run: |

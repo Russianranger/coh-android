@@ -166,8 +166,19 @@ unsigned char *nvDXTdecompress(int &w, int &h, int &depth, int &total_width, int
 		}
 		if (!(pf_flags & 0x1))                 /* no DDPF_ALPHAPIXELS */
 			amask = 0;
+		/* Row pitch: rows may be padded to a DWORD (DDSD_PITCH). The client
+		 * (render/tex.c) rewrites width and height when it skips mip levels
+		 * but keeps the top level's pitch, so the header pitch is used only
+		 * when it is this width's unpadded or DWORD-aligned row. */
+		unsigned row_bytes = (unsigned)width * bytes, pitch = row_bytes;
+		unsigned hdr_flags = rd32(hdr + 8), hdr_pitch = rd32(hdr + 20);
+		if ((hdr_flags & 0x8) && hdr_pitch == ((row_bytes + 3) & ~3u))
+			pitch = hdr_pitch;
+		unsigned char pad[4];
 		for (int y = 0; y < height; y++) {
-			ReadDTXnFile((DWORD)(width * bytes), row, NULL);
+			ReadDTXnFile((DWORD)row_bytes, row, NULL);
+			if (pitch > row_bytes && y + 1 < height)
+				ReadDTXnFile((DWORD)(pitch - row_bytes), pad, NULL);
 			for (int x = 0; x < width; x++) {
 				unsigned v = 0;
 				for (int k = 0; k < bytes; k++)
