@@ -104,6 +104,16 @@ class Screen:
         sh('xdotool', 'key', name)
         self.log.append(f'   key {name}')
 
+    def crop(self, png, name, box):
+        """Full-resolution crop (x, y, w, h relative to the client window)."""
+        win = self.window()
+        if not png or not win:
+            return None
+        x, y, w, h = box
+        out = self.out / f'crop-{name}.jpg'
+        sh('convert', str(png), '-crop', f'{w}x{h}+{win[0] + x}+{win[1] + y}', '+repage', '-quality', '45', str(out))
+        return out if out.exists() else None
+
     def window(self):
         """Client window origin and size, or None."""
         r = sh('xdotool', 'search', '--name', 'City of Heroes', 'getwindowgeometry', '--shell')
@@ -167,6 +177,7 @@ def start_client(a, state, status, evidence):
     info = json.loads(ready.read_text())
     pid, ns = guest_netns(os.readlink('/proc/self/ns/net'))
     status['guest_netns'] = ns
+    status['guest_pid'] = pid
     if not pid:
         status['client_error'] = 'guest network namespace not found'
         (state / 'armport-client-exited.json').write_text(json.dumps({'error': status['client_error']}) + '\n')
@@ -261,16 +272,35 @@ def drive_login(a, screen, state, status, evidence):
         screen.type(value)
         time.sleep(1)
         png = screen.shot(name + '-typed')
+    # The login panel (fields and buttons) at full resolution, before and after Log In.
+    panel = (560, 260, 460, 280)
+    status['crop_before'] = str(screen.crop(png, 'login-panel-typed', panel))
     pos = screen.find(png, 'Log', 'Login') or at(screen, 'login_button')
     if pos:
         screen.click(*pos)
     else:
         screen.key('Return')
     status['login_sent'] = True
+    time.sleep(10)
+    status['crop_after'] = str(screen.crop(screen.shot('after-login'), 'login-panel-after', panel))
+    # Sockets in the guest's network namespace: does the client reach DbServer (6997)?
+    def sockets(label):
+        pid = status.get('guest_pid')
+        r = subprocess.run(['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', 'ss', '-tanup'],
+                           capture_output=True, text=True, timeout=30) if pid else None
+        lines = [l for l in (r.stdout.splitlines() if r else []) if ':69' in l or ':70' in l or 'State' in l]
+        status.setdefault('sockets', []).append({'when': label, 'lines': [' '.join(l.split())[:160] for l in lines[:20]]})
+    sockets('10s after Log In')
     # Character select: the created character's name, then Play (or Enter).
-    png, _ = wait_for(screen, 'character-select',
-                      lambda p: (lambda t: t if info['character'].lower() in t.lower() or 'play' in t.lower() else None)(screen.text(p)),
-                      300, interval=10)
+    checks = {'n': 0}
+
+    def character_select(p):
+        checks['n'] += 1
+        if checks['n'] % 3 == 0:
+            sockets(f'character-select wait {checks["n"]}')
+        t = screen.text(p)
+        return t if info['character'].lower() in t.lower() or 'play' in t.lower() else None
+    png, _ = wait_for(screen, 'character-select', character_select, 300, interval=10)
     status['character_select'] = bool(png)
     if png:
         pos = screen.find(png, info['character'])
@@ -408,6 +438,20 @@ def main():
             shutil.copyfile(path, evidence / name)
             tail = [l[:300] for l in path.read_text(errors='replace').splitlines() if l.strip()][-40:]
             note('notice', f'ArmPort M3 {name} tail', '\n'.join(tail))
+    # DbServer/MapServer log files the guest captured (connection records).
+    manifest = captures / 'manifest.json'
+    if manifest.exists():
+        files = json.loads(manifest.read_text()).get('files', {})
+        logs = {n: f.get('source_relative_path') for n, f in files.items() if f.get('kind') == 'runtime_log'}
+        note('notice', 'ArmPort M3 server log files', '\n'.join(f'{n}: {p}' for n, p in sorted(logs.items()))[:3500])
+        for n, rel in sorted(logs.items()):
+            if rel and any(k in rel.lower() for k in ('dbserver', 'connect', 'login', 'client', 'error')):
+                text = (captures / n).read_text(errors='replace').splitlines()
+                note('notice', f'ArmPort M3 log {rel}', '\n'.join(l[:250] for l in text[-30:]))
+    for name in ('login-panel-typed', 'login-panel-after'):
+        crop = evidence / 'screens' / f'crop-{name}.jpg'
+        if crop.exists():
+            shutil.copyfile(crop, evidence / f'{name}.jpg')
     # Contact sheet of the login steps (exported as 'ArmPort M3 steps').
     wanted = ('login-assumed', 'login-wait', 'ultra-dismissed', 'password-typed', 'character-select', 'loading', 'atlas')
     steps = []

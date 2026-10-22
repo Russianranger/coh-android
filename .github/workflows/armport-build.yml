@@ -602,6 +602,9 @@ jobs:
         run: |
           [ -f "$RUNNER_TEMP/m3-evidence/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/m3-evidence/screen.jpg" "ArmPort M3 screen" || echo "no screen"
           [ -f "$RUNNER_TEMP/m3-evidence/steps.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/m3-evidence/steps.jpg" "ArmPort M3 steps" || echo "no steps"
+          for n in login-panel-typed login-panel-after; do
+            [ -f "$RUNNER_TEMP/m3-evidence/$n.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/m3-evidence/$n.jpg" "ArmPort M3 $n" || echo "no $n"
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
