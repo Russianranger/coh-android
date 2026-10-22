@@ -99,6 +99,15 @@ class Screen:
         sh('xdotool', 'key', name)
         self.log.append(f'   key {name}')
 
+    def window(self):
+        """Client window origin and size, or None."""
+        r = sh('xdotool', 'search', '--name', 'City of Heroes', 'getwindowgeometry', '--shell')
+        geo = dict(l.split('=', 1) for l in r.stdout.split() if '=' in l)
+        try:
+            return int(geo['X']), int(geo['Y']), int(geo['WIDTH']), int(geo['HEIGHT'])
+        except (KeyError, ValueError):
+            return None
+
 
 def wait_for(screen, label, predicate, seconds, interval=10):
     deadline = time.time() + seconds
@@ -129,12 +138,18 @@ def drive_login(screen, state, status):
     status['login_screen'] = True
     if 'ultra' in words.lower():
         pos = screen.find(png, 'Cancel')
+        if not pos:
+            # The prompt is centred in the window; in M2's frame its Cancel
+            # button sat at (512, 490) of the 1024x768 client area.
+            win = screen.window()
+            pos = (win[0] + win[2] // 2, win[1] + int(win[3] * 490 / 768)) if win else None
         if pos:
             screen.click(*pos)
         else:
             screen.key('Escape')
         time.sleep(3)
         png = screen.shot('ultra-dismissed')
+        status['ultra_prompt_left'] = 'ultra' in screen.text(png).lower()
     # Account and password: click just below each label (the fields sit under them).
     for label_words, value, name in ((('ACCOUNT', 'Account'), info['account'], 'account'),
                                      (('PASSWORD', 'Password'), 'armport-m3', 'password')):
@@ -226,7 +241,9 @@ def main():
                       'ARMPORT_CLIENT_SECONDS=1500']
     command, env, network_expected = dbhost.isolate_command(command, evidence=evidence, proot=proot, work=work)
 
-    xvfb = subprocess.Popen(['Xvfb', DISPLAY, '-screen', '0', '1280x800x24', '-nolisten', 'tcp', '+extension', 'GLX'],
+    # Large enough for the whole 1024x768 window at Wine's default position
+    # (+104+130); at 1280x800 its bottom rows were off screen in M2.
+    xvfb = subprocess.Popen(['Xvfb', DISPLAY, '-screen', '0', '1600x1200x24', '-nolisten', 'tcp', '+extension', 'GLX'],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(3)
     screen = Screen(evidence / 'screens')
