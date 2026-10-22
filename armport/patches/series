@@ -27,3 +27,4 @@
 0027-game-arm64-winmain-entry.patch
 0028-game-arm64-stdio-log.patch
 0029-utilitieslib-arm64-superassert.patch
+0030-game-dds-header-file-layout.patch

@@ -1,0 +1,24 @@
+diff --git a/Game/src/render/dd.h b/Game/src/render/dd.h
+index 7559efb..7892a60 100644
+--- a/Game/src/render/dd.h
++++ b/Game/src/render/dd.h
+@@ -129,7 +129,14 @@ typedef struct DDSURFACEDESC2
+     } DUMMYUNIONNAMEN(2);
+     DWORD               dwAlphaBitDepth;        // depth of alpha buffer requested
+     DWORD               dwReserved;             // reserved
++#if defined(_WIN64)
++    // ArmPort: this struct is the DDS file header (124 bytes), read and written
++    // with fread/fwrite; keep the pointer slot 32 bits wide so the layout
++    // matches the files. The client never uses it as a pointer.
++    DWORD               lpSurface;
++#else
+     LPVOID              lpSurface;              // pointer to the associated surface memory
++#endif
+     union
+     {
+         DDCOLORKEY      ddckCKDestOverlay;      // color key for destination overlay use
+@@ -146,3 +153,4 @@ typedef struct DDSURFACEDESC2
+     DDSCAPS2            ddsCaps;                // direct draw surface capabilities
+     DWORD               dwTextureStage;         // stage in multitexture cascade
+ } DDSURFACEDESC2;
++typedef char ddsurfacedesc2_matches_dds_file_header[sizeof(DDSURFACEDESC2) == 124 ? 1 : -1];

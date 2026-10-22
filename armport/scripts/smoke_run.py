@@ -208,7 +208,8 @@ def report_exceptions(lines, exe, llvm, title):
     blocks = []
     for i, l in enumerate(lines):
         if 'dispatch_exception code=' in l and 'RPC_S_SERVER_UNAVAILABLE' not in l:
-            regs = ' '.join(lines[i + 1:i + 3])
+            tid = l.split(':', 1)[0]
+            regs = ' '.join(m for m in lines[i + 1:i + 40] if m.startswith(tid + ':trace:seh:dispatch_exception'))[:2000]
             pc = re.search(r'pc=([0-9a-f]+)', regs)
             lr = re.search(r'lr=([0-9a-f]+)', regs)
             blocks.append((l.split('trace:seh:dispatch_exception', 1)[-1].strip(),

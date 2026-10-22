@@ -23,3 +23,20 @@ index d943574..1881a09 100644
      memCheckInit();
  
      argv[0] = windowName;
+diff --git a/libs/UtilitiesLib/src/utils/utils.c b/libs/UtilitiesLib/src/utils/utils.c
+index 7f3d803..94afca7 100644
+--- a/libs/UtilitiesLib/src/utils/utils.c
++++ b/libs/UtilitiesLib/src/utils/utils.c
+@@ -449,6 +449,12 @@ static void fixStdio(int fh, DWORD std_handle)
+ void newConsoleWindow()
+ {
+     g_isConsoleOpen = true;
++#if defined(__aarch64__) && defined(__MINGW32__)
++    // ArmPort: stdout/stderr already go to ARMPORT_STDIO_LOG (win_init.c);
++    // do not move them to a console window.
++    if (getenv("ARMPORT_STDIO_LOG"))
++        return;
++#endif
+ 
+     if(isGuiDisabled() || IsUsingCider()) return;
+ 
