@@ -198,7 +198,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/client-bin
-          key: armport-client-${{ matrix.config }}-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
+          key: armport-client-${{ matrix.config }}-lines1-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
 
       - name: Prepare patched source
         if: steps.exe-cache.outputs.cache-hit != 'true'
@@ -211,6 +211,7 @@ jobs:
         run: |
           cmake -S "$RUNNER_TEMP/armport/src" -B "$RUNNER_TEMP/armport/build" -G Ninja \
             -DCMAKE_BUILD_TYPE=${{ matrix.config }} \
+            -DCMAKE_C_FLAGS=-gline-tables-only -DCMAKE_CXX_FLAGS=-gline-tables-only \
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/aarch64-w64-mingw32.cmake" \
             -DCOX_BUILD_COMMON=ON -DCOX_BUILD_GAME=ON \
             -DCOX_ARMPORT_COMPILE_ONLY=ON \
@@ -302,6 +303,12 @@ jobs:
           echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
         run: armport/scripts/install_wine_runtime.sh
+      - name: Check .anim file layout (patch 0033)
+        run: |
+          out=$(python3 armport/scripts/inspect_anim.py "$RUNNER_TEMP/assets" skel_test skel_male skel_fem skel_huge | tail -45)
+          echo "$out"
+          echo "::notice title=ArmPort .anim layout::$(echo "$out" | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' | cut -c1-3800)"
+
       - name: Install llvm-mingw (for llvm-symbolizer)
         run: |
           curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \

@@ -169,6 +169,7 @@ def createbins(a, rt, exe, env, wine):
     note('warning', 'ArmPort M2 createbins piggs check', '\n'.join(pig) or 'no texts.pigg lookups')
     note('notice', 'ArmPort M2 createbins trace size', f'{len(lines)} lines')
     report_exceptions(lines, binner, a.llvm_mingw, 'ArmPort M2 createbins')
+    report_crash(lines, 'ArmPort M2 createbins crash', binner, a.llvm_mingw)
     exc = [l[:300] for l in lines if 'err:' in l]
     if exc:
         note('warning', 'ArmPort M2 createbins exceptions and exits', '\n'.join(exc[:40]))
@@ -195,7 +196,7 @@ def symbolize(exe, addrs, llvm):
     if not llvm or not addrs:
         return {}
     r = subprocess.run([str(llvm / 'bin' / 'llvm-symbolizer'), '--obj=' + str(exe), '--functions=linkage',
-                        '--inlining=false', '--relative-address'] + ['0x%x' % (x - 0x140000000) for x in addrs],
+                        '--inlining=false', '--relative-address', '--basenames'] + ['0x%x' % (x - 0x140000000) for x in addrs],
                        capture_output=True, text=True)
     out = [b.strip().replace('\n', ' at ') for b in r.stdout.strip().split('\n\n')]
     return dict(zip(addrs, out))
@@ -233,6 +234,24 @@ def report_exceptions(lines, exe, llvm, title):
     for t in sorted(set(targets))[:8]:
         text.append(f'caught at {t:x} {names.get(t, "")}')
     note('warning', f'{title} exceptions', '\n'.join(text))
+
+
+def report_crash(lines, title, exe=None, llvm=None):
+    """Wine's unhandled-exception report and winedbg backtrace, if any, with
+    client addresses (image base 0x140000000) mapped to functions and lines."""
+    out = []
+    for i, l in enumerate(lines):
+        if 'Unhandled exception' in l or 'Unhandled page fault' in l or l.startswith('Backtrace:'):
+            out += [m[:220] for m in lines[i:i + 40] if 'trace:' not in m]
+            if len(out) > 60:
+                break
+    if out:
+        addrs = sorted({int(x, 16) for l in out for x in re.findall(r'0x0*(14[0-9a-f]{7})\b', l)})
+        names = symbolize(exe, addrs[:40], llvm) if exe else {}
+        if names:
+            out.append('client frames:')
+            out += [f'  {x:x} {names[x]}' for x in addrs if x in names]
+        note('error', title, '\n'.join(out[:90]))
 
 
 def report_runtime_files(rt):
@@ -341,6 +360,9 @@ def main():
         note('notice', 'ArmPort M2 smoke wineboot', f'exit {boot.returncode}')
     except subprocess.TimeoutExpired:
         note('warning', 'ArmPort M2 smoke wineboot', 'timed out after 300s')
+    # Crashes: no Wine crash dialog; winedbg prints the backtrace to the log.
+    subprocess.run([wine, 'reg', 'add', 'HKCU\\Software\\Wine\\WineDbg', '/v', 'ShowCrashDialog',
+                    '/t', 'REG_DWORD', '/d', '0', '/f'], env=env, capture_output=True, timeout=120)
     before = {p for p in rt.iterdir()}
 
     if a.createbins:
@@ -415,6 +437,7 @@ def main():
     if texts:
         note('warning', 'ArmPort M2 smoke window text', '\n'.join(t[:600] for t in texts[:30]))
     report_exceptions(lines, rt / exe.name, a.llvm_mingw, 'ArmPort M2 client')
+    report_crash(lines, 'ArmPort M2 client crash', rt / exe.name, a.llvm_mingw)
     tail = [l[:300] for l in lines if 'trace:' not in l][-75:]
     for i, c in enumerate(chunks(tail)):
         note('notice', f'ArmPort M2 smoke output {i}', c)

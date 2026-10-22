@@ -35,3 +35,4 @@
 0035-utilitieslib-eval-name-duplicate-registration.patch
 0036-common-eval-pointers-via-pointer-api.patch
 0037-utilitieslib-stash-deleted-slot-64bit.patch
+0038-utilitieslib-name-failing-parse-table-field.patch
