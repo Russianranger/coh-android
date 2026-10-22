@@ -35,6 +35,36 @@ env:
   WINEDLLOVERRIDES: 'mscoree,mshtml='
 
 jobs:
+  assets:
+    # The reviewed client asset bundle (fonts, UI textures, models) the other
+    # runtime workflows use. It is in an unpublished draft release, which the
+    # workflow token can read only with contents: write; that permission is
+    # limited to this job, which only downloads and caches the archive.
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /tools/fetch_runtime_asset_bundle.py
+            /assets/reference-inputs-receipt.json
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+      - name: Retrieve the reviewed asset ZIP
+        if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json \
+            --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
+
   libraries:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
@@ -124,6 +154,7 @@ jobs:
 
   client:
     # M2: compile and link CityOfHeroes.exe for ARM64 Windows.
+    needs: assets
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 120
     steps:
@@ -191,12 +222,26 @@ jobs:
       - name: Add the llvm-mingw runtime DLLs next to the client
         run: cp /opt/llvm-mingw/aarch64-w64-mingw32/bin/libc++.dll /opt/llvm-mingw/aarch64-w64-mingw32/bin/libunwind.dll "$RUNNER_TEMP/client-bin/"
 
+      - name: Restore the reviewed asset ZIP
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Unpack client assets
+        run: |
+          echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/assets" && unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
+          # Use the data root inside the archive if it has one.
+          if [ -d "$RUNNER_TEMP/assets/data" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/data" "$RUNNER_TEMP/assets"; fi
+          echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
+
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
         run: armport/scripts/install_wine_runtime.sh
 
       - name: Smoke run CityOfHeroes.exe under ARM64 Wine (records Cg requests)
         run: |
-          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data \
+          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
             --runtime "$RUNNER_TEMP/runtime" --llvm-mingw /opt/llvm-mingw --wine /opt/wine/bin \
             --requests-out "$RUNNER_TEMP/cg-requests"
 
@@ -270,7 +315,7 @@ jobs:
 
   client-run:
     # Run the client again with the precompiled ARB programs.
-    needs: [client, cg-precompile]
+    needs: [assets, client, cg-precompile]
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     steps:
@@ -291,10 +336,24 @@ jobs:
         with:
           name: armport-cg-arb
           path: ${{ runner.temp }}/cg-arb
+      - name: Restore the reviewed asset ZIP
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Unpack client assets
+        run: |
+          echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/assets" && unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
+          # Use the data root inside the archive if it has one.
+          if [ -d "$RUNNER_TEMP/assets/data" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/data" "$RUNNER_TEMP/assets"; fi
+          echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
+
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
         run: armport/scripts/install_wine_runtime.sh
       - name: Run CityOfHeroes.exe with precompiled Cg programs
         run: |
-          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data \
+          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --cg-dir "$RUNNER_TEMP/cg-arb" \
             --requests-out "$RUNNER_TEMP/cg-requests-2"

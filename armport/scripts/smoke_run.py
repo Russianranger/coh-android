@@ -48,6 +48,24 @@ def ocr(path):
         return f'ocr failed: {e!r}'
 
 
+def merge_tree(src, dst):
+    """Overlay src onto dst with symlinks, splitting a linked directory only
+    where two roots both have it. Earlier roots win for files."""
+    if not dst.exists() and not dst.is_symlink():
+        dst.symlink_to(src, target_is_directory=src.is_dir())
+        return
+    if not (src.is_dir() and dst.is_dir()):
+        return
+    if dst.is_symlink():
+        target = dst.resolve()
+        dst.unlink()
+        dst.mkdir()
+        for child in target.iterdir():
+            (dst / child.name).symlink_to(child, target_is_directory=child.is_dir())
+    for child in src.iterdir():
+        merge_tree(child, dst / child.name)
+
+
 def screenshot_summary(display, path):
     try:
         return _screenshot_summary(display, path)
@@ -74,7 +92,8 @@ def _screenshot_summary(display, path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--build', required=True, type=Path)
-    ap.add_argument('--data', required=True, type=Path)
+    ap.add_argument('--data', required=True, type=Path, action='append',
+                    help='data root; repeat to overlay several (merged with symlinks)')
     ap.add_argument('--runtime', required=True, type=Path)
     ap.add_argument('--llvm-mingw', type=Path, help='for the import list and runtime DLLs')
     ap.add_argument('--wine', required=True, type=Path, help='directory with wine, wineserver')
@@ -106,7 +125,8 @@ def main():
                 copied.append(d)
         note('notice', 'ArmPort M2 smoke imports', ', '.join(dlls))
     note('notice', 'ArmPort M2 smoke runtime DLLs', ', '.join(copied) or 'none')
-    (rt / 'data').symlink_to(a.data.resolve(), target_is_directory=True)
+    for root in a.data:
+        merge_tree(root.resolve(), rt / 'data')
     cg = rt / 'armport_cg'
     cg.mkdir()
     arb = sorted(a.cg_dir.glob('*.arb')) if a.cg_dir and a.cg_dir.is_dir() else []
@@ -126,7 +146,7 @@ def main():
         note('notice', 'ArmPort M2 smoke wineboot', f'exit {boot.returncode}')
     except subprocess.TimeoutExpired:
         note('warning', 'ArmPort M2 smoke wineboot', 'timed out after 300s')
-    before = {p for p in rt.rglob('*') if not str(p).startswith(str(rt / 'data'))}
+    before = {p for p in rt.iterdir()}
 
     log = rt.parent / 'smoke-output.txt'
     start = time.time()
@@ -181,6 +201,15 @@ def main():
                 break
     if win:
         note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:60]))
+    # Text the client put into windows and dialog controls (error messages).
+    texts = []
+    for l in lines:
+        if 'set_window_text' in l and 'Default IME' not in l:
+            t = l.split('set_window_text', 1)[1].strip()
+            if t not in texts and t not in ('L""',):
+                texts.append(t)
+    if texts:
+        note('warning', 'ArmPort M2 smoke window text', '\n'.join(t[:600] for t in texts[:30]))
     exc = [l for l in lines if 'exception' in l.lower() or 'unhandled' in l.lower() or 'err:' in l][:40]
     if exc:
         note('warning', 'ArmPort M2 smoke exceptions', '\n'.join(exc[:30]))
@@ -188,8 +217,9 @@ def main():
     for i, c in enumerate(chunks(tail)):
         note('notice', f'ArmPort M2 smoke output {i}', c)
 
-    new = [p for p in rt.rglob('*') if p.is_file() and p not in before
-           and not str(p).startswith(str(rt / 'data')) and p.suffix.lower() in ('.log', '.txt')]
+    new = [p for top in rt.iterdir() if top not in before and top.name != 'data'
+           for p in ([top] if top.is_file() else top.rglob('*'))
+           if p.is_file() and p.suffix.lower() in ('.log', '.txt')]
     for p in new[:6]:
         t = p.read_text(errors='replace').splitlines()[-30:]
         note('notice', f'ArmPort M2 smoke log {p.relative_to(rt)}', '\n'.join(l[:300] for l in t))
