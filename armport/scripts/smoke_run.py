@@ -324,8 +324,11 @@ def login_probe(out, proc):
         sockets = [' '.join(l.split())[:200] for l in r.stdout.splitlines() if 'CityOfHeroes' in l.lower() or 'cityofheroes' in l.lower()]
         w = subprocess.run(['xwininfo', '-root', '-tree', '-display', ':99'], capture_output=True, text=True).stdout
         named = [' '.join(x.split())[:140] for x in w.splitlines() if '"' in x and 'has no name' not in x]
+        top = subprocess.run(['top', '-b', '-n', '1', '-w', '200'], capture_output=True, text=True).stdout
+        cpu = [' '.join(l.split())[:120] for l in top.splitlines() if 'cityofheroes' in l.lower() or 'CityOfHeroes' in l][:3]
         status.setdefault('after', []).append({'when': label, 'client_sockets': sockets, 'windows': named[:8],
-                                               'client_alive': proc.poll() is None})
+                                               'client_alive': proc.poll() is None, 'cpu': cpu})
+    after('before the probe')
     try:
         from login_ui import after_login
         if login(screen, 'ArmPortProbe', 'probe-pass', status, after=after, wait_seconds=120):
@@ -366,7 +369,7 @@ def main():
     ap.add_argument('--require-alive', action='store_true',
                     help='exit 1 unless the client is still running at --seconds with no unhandled '
                          'exception, no message box and a drawn screen (diagnostics are reported either way)')
-    ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win,+seh')
+    ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win,+seh,+fps')
     ap.add_argument('--createbins', action='store_true',
                     help='first run the client with -createbins to build data/bin from text data')
     ap.add_argument('--createbins-seconds', type=int, default=1800)
@@ -503,6 +506,12 @@ def main():
                 break
     if win:
         note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:60]))
+    fps = [l.split('fps:', 1)[-1].strip()[:80] for l in lines if ':fps:' in l]
+    if fps:
+        note('notice', 'ArmPort M2 frame rate', f'{len(fps)} samples (Wine +fps, about one per second while frames are presented); '
+             f'first 10: {fps[:10]}; last 20: {fps[-20:]}')
+    else:
+        note('notice', 'ArmPort M2 frame rate', 'no +fps samples (no frame presented through wglSwapBuffers?)')
     report_stdio(rt / 'armport_stdio.txt', 'ArmPort M2 client output')
     # Text the client put into windows and dialog controls (error messages).
     texts = window_texts(lines)

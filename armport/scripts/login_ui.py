@@ -61,7 +61,7 @@ class Screen:
                 return x, y
         return None
 
-    def click(self, x, y, hold=0.6):
+    def click(self, x, y, hold=0.15):
         # The game reads the mouse once per frame (DirectInput); at software-
         # rendering frame rates an instant press and release can fall between
         # two frames, so the button is held down.
