@@ -371,7 +371,9 @@ def main():
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(2)
     env = dict(os.environ, DISPLAY=display, WINEDEBUG=a.winedebug,
-               WINEDLLOVERRIDES='mscoree,mshtml=')
+               WINEDLLOVERRIDES='mscoree,mshtml=',
+               # CI has loose data only, no piggs (patch 0042).
+               ARMPORT_LOOSE_DATA='1')
     wine = str(a.wine / 'wine')
     try:
         boot = subprocess.run([wine, 'wineboot', '-i'], env=env, capture_output=True, timeout=300)

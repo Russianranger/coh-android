@@ -9,7 +9,7 @@ M1 libraries: merged (PR #4, approved by Sol). The original textparser built
 for ARM64 reads bodyparts.bp and the shipped BodyParts.bin to 28 matching
 entries under the app's Wine. Details: armport/M1-REPORT.md.
 
-M2 client (branch armport/m2-client, in progress; 37 patches, upstream/ untouched):
+M2 client (branch armport/m2-client, in progress; 42 patches, upstream/ untouched):
 - CityOfHeroes.exe builds for ARM64 Windows (Release and OptDebug).
 - Under the app's ARM64 Wine (Xvfb, Mesa) the Release client renders the
   Freedom loading screen with the game's textures (screen exported from CI

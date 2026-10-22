@@ -1,0 +1,24 @@
+diff --git a/libs/UtilitiesLib/src/utils/FolderCache.c b/libs/UtilitiesLib/src/utils/FolderCache.c
+index 52389fe..1e7dde6 100644
+--- a/libs/UtilitiesLib/src/utils/FolderCache.c
++++ b/libs/UtilitiesLib/src/utils/FolderCache.c
+@@ -7,6 +7,7 @@
+ 
+ #include "utilitieslib/utils/FolderCache.h"
+ #include <string.h>
++#include <stdlib.h>
+ #include "utilitieslib/assert/assert.h"
+ #include "utilitieslib/components/genericlist.h"
+ #include "utilitieslib/utils/DirMonitor.h"
+@@ -214,7 +215,10 @@ static void FolderCacheAddFolderToNode(    FolderCache* fc,
+     WIN32_FIND_DATAA             wfd;
+     U32                            handle;
+ 
+-    if (!fileIsUsingDevData()) {
++    // ArmPort: ARMPORT_LOOSE_DATA lets a production client read every folder
++    // from loose files (no piggs), including the folders below that are
++    // otherwise only read from piggs.
++    if (!fileIsUsingDevData() && !getenv("ARMPORT_LOOSE_DATA")) {
+         static bool banned_overrides_inited=false;
+         
+         if (ban_all_overrides)
