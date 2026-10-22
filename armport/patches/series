@@ -36,3 +36,4 @@
 0036-common-eval-pointers-via-pointer-api.patch
 0037-utilitieslib-stash-deleted-slot-64bit.patch
 0038-utilitieslib-name-failing-parse-table-field.patch
+0039-common-pointer-int-arrays-64bit.patch

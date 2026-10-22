@@ -246,7 +246,7 @@ def report_crash(lines, title, exe=None, llvm=None):
             if len(out) > 60:
                 break
     if out:
-        addrs = sorted({int(x, 16) for l in out for x in re.findall(r'0x0*(14[0-9a-f]{7})\b', l)})
+        addrs = sorted({int(x, 16) for l in out for x in re.findall(r'(?:0x|\b)0*(14[0-9a-fA-F]{7})\b', l)})
         names = symbolize(exe, addrs[:40], llvm) if exe else {}
         if names:
             out.append('client frames:')
