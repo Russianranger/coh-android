@@ -319,7 +319,10 @@ def main():
                     help='data root; repeat to overlay several (merged with symlinks)')
     ap.add_argument('--runtime', required=True, type=Path)
     ap.add_argument('--llvm-mingw', type=Path, help='for the import list and runtime DLLs')
-    ap.add_argument('--wine', required=True, type=Path, help='directory with wine, wineserver')
+    ap.add_argument('--wine', type=Path, help='directory with wine, wineserver (not needed with --stage-only)')
+    ap.add_argument('--stage-only', action='store_true',
+                    help='only build the runtime folder (exe, DLLs, data overlay, Cg programs) and exit; '
+                         'used by the M3 server run, which starts the client itself')
     ap.add_argument('--seconds', type=int, default=180)
     ap.add_argument('--require-alive', action='store_true',
                     help='exit 1 unless the client is still running at --seconds with no unhandled '
@@ -368,6 +371,11 @@ def main():
     for f in arb:
         shutil.copy2(f, cg / f.name)
     note('notice', 'ArmPort M2 smoke Cg programs', f'{len(arb)} precompiled ARB programs staged')
+    if a.stage_only:
+        return 0
+    if not a.wine:
+        note('error', 'ArmPort M2 smoke', '--wine is required unless --stage-only')
+        return 1
 
     display = ':99'
     xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x800x24', '-nolisten', 'tcp'],

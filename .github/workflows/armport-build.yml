@@ -438,3 +438,167 @@ jobs:
         if: always()
         run: |
           [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"
+
+  server-run:
+    # M3: the repository's qualified ARM64 game stack (original DbServer and
+    # Atlas MapServer under the app's Wine 10 with FEX, PostgreSQL, PRoot,
+    # private loopback-only network) plus the ARM64 client, login typed on a
+    # shared Xvfb display. See armport/notes/M3-PLAN.md.
+    needs: [client, client-run1, cg-precompile]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 150
+    permissions:
+      contents: read
+      actions: read
+    env:
+      # Donor executables were built and receipted at this commit (run
+      # 38478387527 of android-game.yml); the package must name it.
+      DONOR_COMMIT: 1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /armport/
+            /tools/
+            /android/
+            /database/wine-game/
+            /assets/
+            /docs/android-evidence/
+            /upstream/i24/data/
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Free disk (preinstalled toolchains this job does not use)
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL \
+            /usr/share/swift /usr/local/share/powershell /usr/local/share/chromium /usr/lib/jvm/*openjdk*-amd64 || true
+          sudo docker image prune -af >/dev/null 2>&1 || true
+          echo "::notice title=ArmPort M3 disk::$(df -h / | tail -1)"
+      # Server donors. Two of the original artifacts expire on 2026-10-25 and
+      # 2026-10-27, so a copy is kept in this workflow's cache and artifacts.
+      - id: donors
+        uses: actions/cache/restore@v4
+        with:
+          path: out/donors
+          key: armport-server-donors-v1
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: wine-testclient-bridge, path: out/donors/bridge, run-id: 38478387527, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: wine-game-stack-probe, path: out/donors/stack-probe, run-id: 38478387527, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: wine-game-loopback-donors, path: out/donors/game-listeners, run-id: 38478387527, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: wine-dbserver-package, path: out/donors/wine-dbserver, run-id: 36460867428, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: reference-win32-runtime, path: out/donors/reference-artifact, run-id: 36088012664, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: resume-testclient-win32, path: out/donors/resume-client, run-id: 36297542986, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: coh-diagnostic-runtime-inputs, path: out/donors/runtime-inputs, run-id: 36364550345, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with: {name: coh-proot-android-source-and-build, path: out/donors/proot-sources, run-id: 36364550345, github-token: '${{ github.token }}'}
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: out/donors
+          key: armport-server-donors-v1
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: armport-server-donors
+          path: out/donors/
+          retention-days: 90
+      - name: Donor inventory
+        run: |
+          cd out/donors && find . -type f -printf '%s %p\n' | sort -k2 > ../donor-files.txt
+          (sha256sum reference-artifact/coh-reference-win32.zip; wc -l < ../donor-files.txt) | tee ../donor-summary.txt
+          echo "::notice title=ArmPort M3 donors::$(cat ../donor-summary.txt | tr '\n' ' ') cache-hit=${{ steps.donors.outputs.cache-hit }}"
+
+      - name: Assemble the game package (repository tools, donor commit)
+        run: |
+          python3 tools/android/extract_talloc_source.py --assets out/donors/runtime-inputs \
+            --bundle out/donors/proot-sources/proot-corresponding-sources.tar.gz \
+            --output out/android/source-cache/talloc-2.4.3.tar.gz > out/talloc-source-receipt.json
+          python3 - <<'PY'
+          import hashlib, pathlib, zipfile
+          archive = pathlib.Path('out/donors/reference-artifact/coh-reference-win32.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(archive) as value:
+              assert all('/' not in n and '\\' not in n and n not in ('.', '..') for n in value.namelist())
+              value.extractall('out/reference-runtime')
+          PY
+          python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime \
+            --dbserver out/donors/wine-dbserver --resume out/donors/resume-client --bridge out/donors/bridge \
+            --output out/wine-game --repository-commit "$DONOR_COMMIT" \
+            --dbserver-profile loopback --game-listener-profile loopback --loopback-game out/donors/game-listeners
+      - name: Restore the reviewed asset ZIP
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Stage server game data and schema
+        run: |
+          python3 tools/runtime_asset_bundle.py stage --archive "$RUNNER_TEMP/reference-assets.zip" \
+            --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
+          python3 tools/android/game/prepare_game_data.py --asset-data out/reviewed-assets --output out/game-data
+          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
+          rm -f "$RUNNER_TEMP/reference-assets.zip"
+          echo "::notice title=ArmPort M3 disk after staging::$(df -h / | tail -1)"
+      - name: Install host tools (PRoot build, Xvfb, xdotool, OCR)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux \
+            xvfb xdotool x11-apps imagemagick tesseract-ocr
+      - name: Build matching native ARM64 PRoot
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-Release
+          path: ${{ runner.temp }}/client-bin
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-cg-arb
+          path: ${{ runner.temp }}/cg-arb
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+      - name: Stage the ARM64 client
+        run: |
+          # The client reads the same reviewed asset bundle as M2's client-run,
+          # from the staged copy (no second unpack).
+          assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
+          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" \
+            --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
+          ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
+      - name: Server stack and ARM64 client login to Atlas Park
+        run: |
+          python3 armport/server/armport_game_host.py --assets out/donors/runtime-inputs --package out/wine-game \
+            --data out/game-data --schema out/dbserver-schema --stack-probe out/donors/stack-probe \
+            --proot out/android/native/linux-arm64 --client "$RUNNER_TEMP/armport-client" \
+            --work "$RUNNER_TEMP/m3-work" --evidence "$RUNNER_TEMP/m3-evidence"
+      - name: Export the in-game screen
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/m3-evidence/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/m3-evidence/screen.jpg" "ArmPort M3 screen" || echo "no screen"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-m3-evidence
+          path: |
+            ${{ runner.temp }}/m3-evidence/
+            ${{ runner.temp }}/armport-client/armport_stdio.txt
+            out/donor-files.txt
+            out/wine-game/game-package.json
+          if-no-files-found: warn
