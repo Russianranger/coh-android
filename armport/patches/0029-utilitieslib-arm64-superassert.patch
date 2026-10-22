@@ -1,0 +1,41 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/stdtypes.h b/libs/UtilitiesLib/include/utilitieslib/stdtypes.h
+index f398b13..73fde11 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/stdtypes.h
++++ b/libs/UtilitiesLib/include/utilitieslib/stdtypes.h
+@@ -767,7 +767,7 @@ void do_auto_runs(void);
+ // #define AUTO_TEST_GROUP(...) typedef int happyLongDummyMeaninglessNameThatMeansNothingLoopDeLoop
+ // #define AUTO_TEST_BLOCK(...) typedef int happyLongDummyMeaninglessNameThatMeansNothingLoopDeLoop
+ 
+-#if defined(_M_X64) || (defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX))
++#if defined(_M_X64) || (defined(__GNUC__) && defined(_WIN32) && (defined(__i386__) || defined(__aarch64__)) && !defined(_XBOX))
+ #    define _DbgBreak() __debugbreak()
+ #else
+ #    define _DbgBreak() __asm { int 3 }
+diff --git a/libs/UtilitiesLib/src/utils/SuperAssert.c b/libs/UtilitiesLib/src/utils/SuperAssert.c
+index aa6ea06..cdbc33f 100644
+--- a/libs/UtilitiesLib/src/utils/SuperAssert.c
++++ b/libs/UtilitiesLib/src/utils/SuperAssert.c
+@@ -2221,7 +2221,11 @@ void assertWriteFullDumpSimple(PEXCEPTION_POINTERS info)
+ 		EXCEPTION_POINTERS captured = {&record, &context};
+ 		RtlCaptureContext(&context);
+ 		record.ExceptionCode = EXCEPTION_BREAKPOINT;
++#if defined(__aarch64__)
++		record.ExceptionAddress = (void *)(uintptr_t)context.Pc;
++#else
+ 		record.ExceptionAddress = (void *)(uintptr_t)context.Eip;
++#endif
+ 		assertWriteMiniDump(moduleFilename, &captured);
+ #else
+         __try 
+@@ -2290,7 +2294,11 @@ void assertWriteMiniDumpSimple(PEXCEPTION_POINTERS info)
+ 		EXCEPTION_POINTERS captured = {&record, &context};
+ 		RtlCaptureContext(&context);
+ 		record.ExceptionCode = EXCEPTION_BREAKPOINT;
++#if defined(__aarch64__)
++		record.ExceptionAddress = (void *)(uintptr_t)context.Pc;
++#else
+ 		record.ExceptionAddress = (void *)(uintptr_t)context.Eip;
++#endif
+ 		assertWriteMiniDump(moduleFilename, &captured);
+ #else
+         __try 

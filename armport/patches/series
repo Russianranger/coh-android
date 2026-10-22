@@ -26,3 +26,4 @@
 0026-cmake-arm64-msvc-c-min-max.patch
 0027-game-arm64-winmain-entry.patch
 0028-game-arm64-stdio-log.patch
+0029-utilitieslib-arm64-superassert.patch
