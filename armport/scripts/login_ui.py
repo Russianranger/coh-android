@@ -178,3 +178,28 @@ def login(screen, account, password, status, after=lambda label: None, wait_seco
     status['crop_after'] = str(screen.crop(screen.shot('after-login'), 'login-panel-after', panel))
     after('10s after Log In')
     return True
+
+
+def after_login(screen, status, rounds=20, interval=15, done=lambda png: False, after=lambda label: None):
+    """Screens between Log In and the character list (uiLogin.c): the EULA
+    and NDA agreements (Agree) and the server list, where the single -db
+    entry is named 127.0.0.1 and clicking it calls loginToDbServer. Stops
+    when done(png) is true. Returns the last screenshot."""
+    png = None
+    for n in range(rounds):
+        time.sleep(interval)
+        png = screen.shot(f'post-login-{n:02d}')
+        if done(png):
+            return png
+        words = screen.words(png)
+        status.setdefault('post_login_text', []).append(' '.join(w for w, _, _ in words)[:300])
+        agree = next(((x, y) for w, x, y in words if w.lower().strip('.:,') in ('agree', 'accept')), None)
+        server = next(((x, y) for w, x, y in words if '127.0.0' in w), None)
+        if agree:
+            status['agreed'] = status.get('agreed', 0) + 1
+            screen.click(*agree)
+        elif server:
+            status['server_clicked'] = status.get('server_clicked', 0) + 1
+            screen.click(*server)
+            after(f'server clicked ({n})')
+    return png

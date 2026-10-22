@@ -327,10 +327,11 @@ def login_probe(out, proc):
         status.setdefault('after', []).append({'when': label, 'client_sockets': sockets, 'windows': named[:8],
                                                'client_alive': proc.poll() is None})
     try:
-        login(screen, 'ArmPortProbe', 'probe-pass', status, after=after, wait_seconds=120)
-        time.sleep(20)
+        from login_ui import after_login
+        if login(screen, 'ArmPortProbe', 'probe-pass', status, after=after, wait_seconds=120):
+            after_login(screen, status, rounds=8, interval=12, after=after)
         screen.shot('probe-end')
-        after('30s after Log In')
+        after('end of probe')
     except Exception as e:  # diagnostics only
         status['error'] = repr(e)
     note('notice', 'ArmPort M2 login probe', json.dumps(status, indent=1)[:3000] + '\n' + '\n'.join(screen.log[-40:]))

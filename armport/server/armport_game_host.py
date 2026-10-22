@@ -33,7 +33,7 @@ sys.path.insert(0, str(ROOT / 'tools/android/game'))
 sys.path.insert(0, str(ROOT / 'armport/scripts'))
 import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
-from login_ui import DISPLAY, sh, Screen, at, wait_for, login  # noqa: E402
+from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -152,7 +152,9 @@ def drive_login(a, screen, state, status, evidence):
             return None
         t = screen.text(p)
         return t if info['character'].lower() in t.lower() or 'play' in t.lower() else None
-    png, _ = wait_for(screen, 'character-select', character_select, 300, interval=10)
+    # EULA/NDA agreements and the server list come first (login_ui.after_login).
+    png = after_login(screen, status, rounds=30, interval=10, done=character_select, after=sockets)
+    png = png if png and character_select(png) else None
     status['character_select'] = bool(png)
     if png:
         pos = screen.find(png, info['character'])
