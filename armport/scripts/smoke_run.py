@@ -155,11 +155,12 @@ def createbins(a, rt, exe, env, wine):
     # How the client chose production vs development data (./piggs/texts.pigg).
     pig = []
     for i, l in enumerate(lines):
-        if 'texts.pigg' in l and 'Call ' in l:
+        if ('pigg' in l.lower() or re.search(r'ucrtbase\._w?stat|ucrtbase\._findfirst|GetFileAttributes', l)) \
+                and ('Call ' in l or 'Ret ' in l):
             tid = l.split(':', 1)[0]
             pig.append(l[:260])
             pig += [m[:260] for m in lines[i + 1:i + 60] if m.startswith(tid + ':') and 'Ret ' in m][:3]
-            if len(pig) > 24:
+            if len(pig) > 40:
                 break
     note('warning', 'ArmPort M2 createbins piggs check', '\n'.join(pig) or 'no texts.pigg lookups')
     note('notice', 'ArmPort M2 createbins trace size', f'{len(lines)} lines')
