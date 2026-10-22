@@ -309,7 +309,9 @@ def _screenshot_summary(display, path):
     pixels = data[hsize + ncolors * 12:]
     sample = pixels[::4 * 97]
     nonblack = sum(1 for b in sample if b) / max(1, len(sample))
-    distinct = len(set(pixels[i:i + 3] for i in range(0, min(len(pixels), 4 * 200000), 4 * 13)))
+    # Sample the whole frame (the window is not at the top of a tall display).
+    step = max(4, (len(pixels) // 4 // 60000) * 4)
+    distinct = len(set(pixels[i:i + 3] for i in range(0, len(pixels) - 3, step)))
     return f'nonzero bytes {nonblack:.1%}, distinct colors (sampled) {distinct}'
 
 
@@ -338,16 +340,23 @@ def login_probe(out, proc):
     except Exception as e:  # diagnostics only
         status['error'] = repr(e)
     note('notice', 'ArmPort M2 login probe', json.dumps(status, indent=1)[:3000] + '\n' + '\n'.join(screen.log[-40:]))
-    # Single frames for screen_export.py (one image per annotation title).
+    # One sheet of the steps, each cropped to the client window (GitHub keeps
+    # about ten notices per step, so one image for screen_export.py).
+    frames = []
     for key in ('ultra-dismissed', 'account-typed', 'password-typed', 'after-login', 'post-login-03', 'probe-end'):
         hits = [p for p in sorted(out.glob('*.png')) if key in p.name]
         if hits:
-            for q in (45, 35, 25):
-                dst = out.parent / f'probe-{key}.jpg'
-                subprocess.run(['convert', str(hits[-1]), '-crop', '1024x768+104+130', '+repage', '-resize', '512x384',
-                                '-quality', str(q), str(dst)], capture_output=True)
-                if dst.exists() and dst.stat().st_size < 24000:
-                    break
+            crop = out / f'sheet-{key}.png'
+            subprocess.run(['convert', str(hits[-1]), '-crop', '1024x768+104+130', '+repage', str(crop)], capture_output=True)
+            if crop.exists():
+                frames.append(crop)
+    if frames:
+        dst = out.parent / 'probe-steps.jpg'
+        for size, q in (('320x240', 40), ('256x192', 35), ('224x168', 30), ('192x144', 30)):
+            subprocess.run(['montage', *map(str, frames), '-tile', '3x', '-geometry', size + '+2+2',
+                            '-quality', str(q), str(dst)], capture_output=True)
+            if dst.exists() and dst.stat().st_size < 24000:
+                break
 
 
 def main():

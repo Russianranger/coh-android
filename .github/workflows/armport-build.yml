@@ -438,9 +438,11 @@ jobs:
         if: always()
         run: |
           [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"
-          for n in ultra-dismissed account-typed password-typed after-login post-login-03 probe-end; do
-            [ -f "$RUNNER_TEMP/probe-$n.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/probe-$n.jpg" "ArmPort probe $n" || echo "no $n"
-          done
+      # A separate step: GitHub keeps about ten notices per step.
+      - name: Export the login probe steps
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/probe-steps.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/probe-steps.jpg" "ArmPort probe steps" || echo "no probe steps"
 
   server-run:
     # M3: the repository's qualified ARM64 game stack (original DbServer and
