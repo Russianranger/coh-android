@@ -38,6 +38,7 @@ handles get cut.
 | 0034 | `.geo` files: `ModelHeader` (140 bytes on disk), `PolyGrid` (32), `PackData` (12), name tables (32-bit offsets converted to pointers in place), `BoneInfo` (32-bit pointer slots), collision `PolyCell` trees (32-bit offsets) and a `(U32)` base pointer | model headers, names, mesh data and collision misread or truncated |
 | 0033 | `.anim` files are 32-bit memory images (`SkeletonAnimTrack` 596 bytes, `BoneAnimTrack` 20, pointers as 32-bit offsets) | every field after the first pointer misread; createbins asserted in `animtrack.c` (no skeleton hierarchy) |
 
+| 0037 | StashTable removal wrote `U32_TO_PTR(STASH_TABLE_DELETED_SLOT_VALUE)`, cutting the 64-bit deleted marker to `0x00000000fffffffe` | every hash-table removal left a live entry; createbins asserted on re-registering `auto>` |
 | 0036 | Entity, power, recipe and task pointers kept in the expression evaluator's int table (`eval_StoreInt`, and `eval_FetchInt(..., (int *)&ptr)` writing 4 of 8 bytes) in 6 Common files | combat, power-slot, recipe and supergroup expressions would see broken pointers |
 
 ## Known, not fixed yet

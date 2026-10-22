@@ -1,0 +1,16 @@
+diff --git a/libs/UtilitiesLib/src/components/StashTable.c b/libs/UtilitiesLib/src/components/StashTable.c
+index bdbcaff..8b89a8a 100644
+--- a/libs/UtilitiesLib/src/components/StashTable.c
++++ b/libs/UtilitiesLib/src/components/StashTable.c
+@@ -1306,8 +1306,10 @@ static bool stashRemoveValueInternal(StashTableImp* pTable, StashKey key, U32 ui
+     }
+     if ( pValue )
+         pValue->pValue = pTable->pStorage[uiStorageIndex].value.pValue;
++	// ArmPort: the marker itself, not U32_TO_PTR of it, which cut the 64-bit
++	// marker to 0x00000000fffffffe so removed entries stayed live.
+ 	pTable->pStorage[uiStorageIndex].value.pValue =
+-		U32_TO_PTR(STASH_TABLE_DELETED_SLOT_VALUE);
++		(void *)STASH_TABLE_DELETED_SLOT_VALUE;
+     pTable->uiValidValues--;
+     if ( pTable->bDeepCopyKeys )
+     {
