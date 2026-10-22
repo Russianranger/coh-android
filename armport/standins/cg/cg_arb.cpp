@@ -99,7 +99,9 @@ std::string cache_dir()
     return (d && *d) ? d : "armport_cg";
 }
 
-/* FNV-1a 64 over NUL-separated fields; the precompile step computes the same. */
+/* FNV-1a 64 over NUL-separated fields; the precompile step computes the same.
+ * Include-path args (-I...) are left out: they name the install location, not
+ * what the program compiles to, so a key is the same on every machine. */
 std::string request_key(const char *profile, const char *entry,
                         const std::vector<std::string> &args, const char *source)
 {
@@ -110,7 +112,8 @@ std::string request_key(const char *profile, const char *entry,
     };
     add(profile, strlen(profile));
     add(entry, strlen(entry));
-    for (const std::string &a : args) add(a.data(), a.size());
+    for (const std::string &a : args)
+        if (a.compare(0, 2, "-I") != 0) add(a.data(), a.size());
     add("", 0);
     add(source, strlen(source));
     char buf[17];

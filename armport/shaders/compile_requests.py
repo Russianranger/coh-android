@@ -19,7 +19,8 @@ import tempfile
 
 
 def request_key(profile, entry, args, source):
-    """FNV-1a 64 over NUL-separated fields; must match cg_arb.cpp."""
+    """FNV-1a 64 over NUL-separated fields; must match cg_arb.cpp.
+    Include-path args (-I...) are not part of the key."""
     h = 1469598103934665603
     prime = 1099511628211
     mask = (1 << 64) - 1
@@ -33,7 +34,8 @@ def request_key(profile, entry, args, source):
     add(profile.encode())
     add(entry.encode())
     for a in args:
-        add(a.encode())
+        if not a.startswith('-I'):
+            add(a.encode())
     add(b'')
     add(source)
     return '%016x' % h
@@ -81,7 +83,8 @@ def main():
             f.write(source)
         dst = os.path.join(a.out, key + '.arb')
         cmd = [a.cgc, '-quiet', '-profile', profile, '-entry', entry] + \
-              ['-I' + d for d in includes] + args + ['-o', dst, src]
+              ['-I' + d for d in includes] + [x for x in args if not x.startswith('-I')] + \
+              ['-o', dst, src]
         p = subprocess.run(cmd, capture_output=True, text=True)
         os.remove(src)
         text = open(dst, encoding='latin-1').read() if os.path.exists(dst) else ''

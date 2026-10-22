@@ -18,9 +18,31 @@ import time
 from pathlib import Path
 
 
+# GitHub keeps only about 10 annotations of each kind per step, so reports are
+# buffered and emitted at the end as a few large annotations per kind.
+_REPORT = {'notice': [], 'warning': [], 'error': []}
+
+
 def note(kind, title, text):
-    text = text.replace('%', '%25').replace('\r', '').replace('\n', '%0A')
-    print(f'::{kind} title={title}::{text[:3800]}', flush=True)
+    _REPORT[kind].append(f'### {title}\n{text.strip()}')
+    print(f'--- {title}\n{text}', flush=True)
+
+
+def flush_report(limit=3800, per_kind=9):
+    for kind in ('error', 'warning', 'notice'):
+        pieces, cur = [], ''
+        for entry in _REPORT[kind]:
+            entry = entry[:limit]
+            if len(cur) + len(entry) + 1 > limit:
+                pieces.append(cur)
+                cur = ''
+            cur += entry + '\n'
+        if cur:
+            pieces.append(cur)
+        for i, piece in enumerate(pieces[:per_kind]):
+            text = piece.replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+            print(f'::{kind} title=ArmPort M2 smoke {kind} {i + 1}/{min(len(pieces), per_kind)}::{text}', flush=True)
+        _REPORT[kind].clear()
 
 
 def chunks(lines, n=25):
@@ -84,7 +106,8 @@ def createbins(a, rt, exe, env, wine):
     start = time.time()
     with open(log, 'wb') as out:
         p = subprocess.Popen([wine, str(rt / exe.name), '-createbins', '-nogui', '1', '-verbose', '1'],
-                             cwd=rt, env=dict(env, ARMPORT_STDIO_LOG=stdio.name),
+                             cwd=rt, env=dict(env, ARMPORT_STDIO_LOG=stdio.name,
+                                              WINEDEBUG=a.winedebug + ',+seh,+process'),
                              stdout=out, stderr=subprocess.STDOUT)
         status = 'timed out (killed)'
         while time.time() - start < a.createbins_seconds:
@@ -111,6 +134,12 @@ def createbins(a, rt, exe, env, wine):
     if texts:
         note('warning', 'ArmPort M2 createbins window text', '\n'.join(t[:600] for t in texts[:20]))
     report_stdio(stdio, 'ArmPort M2 createbins client output')
+    exc = [l[:300] for l in lines if 'dispatch_exception code=' in l or 'exit' in l.lower()
+           and 'trace:process' in l or 'err:' in l]
+    if exc:
+        note('warning', 'ArmPort M2 createbins exceptions and exits', '\n'.join(exc[:40]))
+    wine_tail = [l[:300] for l in lines if 'trace:' not in l][-40:]
+    note('notice', 'ArmPort M2 createbins Wine output', '\n'.join(wine_tail) or '(empty)')
 
 
 def report_stdio(path, title):
@@ -299,8 +328,11 @@ def main():
 
 if __name__ == '__main__':
     try:
-        sys.exit(main())
+        rc = main()
     except Exception:
         import traceback
         note('error', 'ArmPort M2 smoke script failed', traceback.format_exc())
+        flush_report()
         raise
+    flush_report()
+    sys.exit(rc)
