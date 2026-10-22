@@ -31,8 +31,8 @@ on its existing Wine/FEX runtime.
 |---|---|---|
 | M0 | Survey | Compile errors by category for all three trees; 64-bit risk list; Cg shader precompile result; graphics route chosen |
 | M1 | Libraries | `UtilitiesLib` and dependencies build as ARM64 Windows libraries with llvm-mingw in CI; an original unit (textparser loading `defs/ui/bodyparts.bp` to 28 entries) runs under the app's ARM64 Wine on an `ubuntu-24.04-arm` runner |
-| M2 | Client boots | `CityOfHeroes.exe` links for ARM64 Windows and reaches the login screen under that Wine with a virtual X server and software GL, against the CI server |
-| M3 | Into Atlas | Scripted login to Atlas Park in CI; saved native-android packets replay through the original receive code; screenshot check |
+| M2 | Client boots | `CityOfHeroes.exe` links for ARM64 Windows and reaches the login screen under that Wine with a virtual X server and software GL (no server connection; moved to M3 in the PR #5 review) |
+| M3 | Into Atlas | Scripted login against the CI server to Atlas Park in CI; saved native-android packets replay through the original receive code; screenshot check |
 | M4 | App integration | The Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files |
 | M5 | Thor | User installs once and play-tests (about 10 minutes) |
 
