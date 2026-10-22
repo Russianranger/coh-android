@@ -152,6 +152,16 @@ def createbins(a, rt, exe, env, wine):
         dlls = 'opengl32' in ' '.join(lines[max(0, end_i - 200000):end_i]).lower()
         note('warning', f'ArmPort M2 createbins exit on thread {tid}' + (' (client)' if dlls else ''),
              '\n'.join(ctx[-45:]))
+    # How the client chose production vs development data (./piggs/texts.pigg).
+    pig = []
+    for i, l in enumerate(lines):
+        if 'texts.pigg' in l and 'Call ' in l:
+            tid = l.split(':', 1)[0]
+            pig.append(l[:260])
+            pig += [m[:260] for m in lines[i + 1:i + 60] if m.startswith(tid + ':') and 'Ret ' in m][:3]
+            if len(pig) > 24:
+                break
+    note('warning', 'ArmPort M2 createbins piggs check', '\n'.join(pig) or 'no texts.pigg lookups')
     note('notice', 'ArmPort M2 createbins trace size', f'{len(lines)} lines')
     exc = [l[:300] for l in lines if 'dispatch_exception code=' in l or 'err:' in l]
     if exc:
