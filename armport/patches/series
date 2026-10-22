@@ -24,3 +24,4 @@
 0024-game-texwords-explicit-comparison.patch
 0025-common-file-local-static-names.patch
 0026-cmake-arm64-msvc-c-min-max.patch
+0027-game-arm64-winmain-entry.patch

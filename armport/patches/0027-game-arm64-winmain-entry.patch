@@ -1,0 +1,17 @@
+diff --git a/Game/CMakeLists.txt b/Game/CMakeLists.txt
+index 1ca66a6..d905ac5 100644
+--- a/Game/CMakeLists.txt
++++ b/Game/CMakeLists.txt
+@@ -1229,6 +1229,12 @@ if(COX_ARM64_WINDOWS)
+ 		../Common/NovodeX/NwCoreDump.cpp ../Common/NovodeX/NwRagdoll.cpp
+ 		../Common/NovodeX/NwSharedStream.cpp ../Common/NovodeX/NwStream.cpp
+ 		../Common/NovodeX/NwWrapper.cpp)
++	# The client starts in WinMain (win_init.c), which registers the window
++	# class and then calls main(). MSVC's GUI startup calls WinMain; the mingw
++	# CRT calls a user-defined main() directly and skips WinMain. Renaming the
++	# client's main() restores the MSVC start-up order.
++	set_source_files_properties(src/main.c src/win/win_init.c PROPERTIES
++		COMPILE_DEFINITIONS "main=coh_client_main")
+ endif()
+ 
+ add_executable(Game WIN32

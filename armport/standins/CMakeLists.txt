@@ -34,9 +34,11 @@ target_include_directories(armport_nvdxt PUBLIC "${_coh_3rdparty}/nvdxt")
 target_compile_definitions(armport_nvdxt PUBLIC EXCLUDE_LIBS)
 add_library(NvDxt::NvDxt ALIAS armport_nvdxt)
 
-# Cg runtime: stand-in for the functions the client calls (cg/generate_standin.py).
-add_library(armport_cg STATIC cg/cg_standin.cpp)
+# Cg runtime: vertex/fragment programs as precompiled ARB assembly (cg/cg_arb.cpp);
+# the remaining functions the client calls are stubs (cg/generate_standin.py).
+add_library(armport_cg STATIC cg/cg_arb.cpp cg/cg_standin.cpp)
 target_include_directories(armport_cg PUBLIC "${_coh_3rdparty}/cg/include")
+target_link_libraries(armport_cg PUBLIC opengl32)
 add_library(Cg::Cg ALIAS armport_cg)
 add_library(Cg::CgGL ALIAS armport_cg)
 function(cox_stage_cg target)
