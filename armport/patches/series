@@ -32,3 +32,4 @@
 0032-game-window-procedure-lresult.patch
 0033-common-anim-file-layout-64bit.patch
 0034-common-geo-file-layout-64bit.patch
+0035-utilitieslib-eval-name-duplicate-registration.patch
