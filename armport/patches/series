@@ -38,3 +38,4 @@
 0038-utilitieslib-name-failing-parse-table-field.patch
 0039-common-pointer-int-arrays-64bit.patch
 0040-common-geo-v2-records-64bit.patch
+0041-common-scene-load-diagnostics.patch

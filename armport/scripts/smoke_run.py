@@ -189,7 +189,7 @@ def report_stdio(path, title):
                        r"It won't create anything|contains EntCreate|^Player texture .* not found")
     text = [l for l in text if not noise.search(l)]
     note('notice', title + ' after filtering', f'{len(text)} lines')
-    focus = [l[:300] for l in text if re.search(r'(?i)tokenizer|scene|couldn.t open', l)]
+    focus = [l[:300] for l in text if re.search(r'(?i)tokenizer|scene|couldn.t open|geoLoadStubs', l)]
     if focus:
         note('warning', title + ' tokenizer and scene', '\n'.join(focus[-40:]))
     errors = [l[:300] for l in text if re.search(r'error|assert|fatal|fail|unable|cannot|missing|couldn.t open|is empty', l, re.I)
