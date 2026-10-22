@@ -113,7 +113,6 @@ def main():
     for f in arb:
         shutil.copy2(f, cg / f.name)
     note('notice', 'ArmPort M2 smoke Cg programs', f'{len(arb)} precompiled ARB programs staged')
-    note('notice', 'ArmPort M2 smoke imports', f'{", ".join(dlls)}\ncopied from llvm-mingw: {", ".join(copied) or "none"}')
 
     display = ':99'
     xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x800x24', '-nolisten', 'tcp'],
@@ -170,10 +169,18 @@ def main():
     dialog = [l[:300] for l in lines if 'trace:dialog' in l and ('L"' in l or '"' in l)]
     if dialog:
         note('notice', 'ArmPort M2 smoke dialog text', '\n'.join(dialog[:40]))
-    win = [l[:300] for l in lines if ('trace:win:' in l or 'trace:class:' in l or 'warn:win' in l or 'warn:class' in l)
-           and ('Cryptic' in l or 'CreateWindow' in l or 'NCCREATE' in l or 'returning' in l or 'abort' in l.lower() or 'fail' in l.lower())]
+    # Window creation by the client's own class, with what follows on that thread.
+    win = []
+    for i, l in enumerate(lines):
+        if 'CrypticWindow' in l and ('trace:win' in l or 'trace:class' in l):
+            tid = l.split(':', 1)[0]
+            win.append(l[:300])
+            win += [m[:300] for m in lines[i + 1:i + 400] if m.startswith(tid + ':')
+                    and ('trace:win' in m or 'trace:class' in m or 'err:' in m or 'warn:' in m)][:25]
+            if len(win) > 60:
+                break
     if win:
-        note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:45]))
+        note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:60]))
     exc = [l for l in lines if 'exception' in l.lower() or 'unhandled' in l.lower() or 'err:' in l][:40]
     if exc:
         note('warning', 'ArmPort M2 smoke exceptions', '\n'.join(exc[:30]))
