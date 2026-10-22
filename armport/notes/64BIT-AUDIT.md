@@ -42,6 +42,7 @@ handles get cut.
 | 0039 | Pointer arrays described to the textparser as int arrays (`TOK_AUTOINTEARRAY` of `ppPowers`, `ppPowerSets`, `ppItems`, `ppDetails`, for shared-memory copies); textparser int arrays are 32-bit | createbins asserted loading the power dictionary |
 | 0040 | `.geo` format version 2 model records read as a raw `ModelFormatOnDisk_v2` (216 bytes on disk, pointers) | release client crashed in `geoLoadStubs` on a garbage model name |
 | 0043 | SMF text attributes keep the font face (`TTDrawContext *`) in an int stack (`smf_PushAttrib`, `smf_InitTextAttribs`); the font-height cache keyed on the first 8 bytes of {font pointer, size} | release client crashed in `ttGetFontHeight` on a font pointer cut to 32 bits; every size of a font would have shared one cached height |
+| 0044 | `SOCKET` (64-bit on ARM64 Windows) passed as `int` in the receive path: `pktGetUdp`, `netAddLink`, the `accept` result | none seen (Winsock handles are small, and `-1` still compares equal to `INVALID_SOCKET` after widening); fixed so no handle value depends on that |
 
 All file-layout constants above were checked against the 32-bit structures by
 compiling them for i686 with static assertions (sizes and field offsets).
@@ -50,9 +51,9 @@ compiling them for i686 with static assertions (sizes and field offsets).
 
 - `libs/UtilitiesLib/src/utils/DirMonitor.c:338`: completion key narrowed to
   U32 (development-mode file watching only).
-- `libs/UtilitiesLib/src/network/*`: `SOCKET` values kept in `int`. Socket
-  handles are small numbers under Wine; revisit if networking misbehaves.
 
-Reviewed and safe: `net_masterlist.c` completion keys (32-bit indices),
+Reviewed and safe: the network library otherwise keeps `SOCKET` in `SOCKET`
+fields (`net_structdefs.h`); its other narrowings (`rsa.c`, `bignum.c`) store
+`strlen` results and pointer differences of short key strings in `int`. `net_masterlist.c` completion keys (32-bit indices),
 byte counts from `fread`/`fileSize`, textparser `intptr_t` parameters that
 hold integers, window ids passed through `void *` in the UI.
