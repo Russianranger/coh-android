@@ -35,6 +35,7 @@ handles get cut.
 | 0030 | `DDSURFACEDESC2` (DDS file header) held a pointer, 136 bytes instead of 124 | every DDS texture failed to decode |
 | 0031 | `_findfirst32` handles (`intptr_t`) kept in `int`/`long` in UtilitiesLib | directory scans found nothing; createbins could not see `sequencers/*.statebits` |
 | 0032 | `MainWndProc`/`DefWindowProc_timed` returned `LONG` | `LRESULT` values above 32 bits (handles) truncated |
+| 0034 | `.geo` files: `ModelHeader` (140 bytes on disk), `PolyGrid` (32), `PackData` (12), name tables (32-bit offsets converted to pointers in place), `BoneInfo` (32-bit pointer slots), collision `PolyCell` trees (32-bit offsets) and a `(U32)` base pointer | model headers, names, mesh data and collision misread or truncated |
 | 0033 | `.anim` files are 32-bit memory images (`SkeletonAnimTrack` 596 bytes, `BoneAnimTrack` 20, pointers as 32-bit offsets) | every field after the first pointer misread; createbins asserted in `animtrack.c` (no skeleton hierarchy) |
 
 ## Known, not fixed yet

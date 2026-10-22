@@ -1,0 +1,345 @@
+diff --git a/Common/seq/anim.c b/Common/seq/anim.c
+index 86ee0b4..87daf09 100644
+--- a/Common/seq/anim.c
++++ b/Common/seq/anim.c
+@@ -225,11 +225,19 @@ char    **idxs_ptr,*base_offset;
+     count = imem[0];
+     names->count = count;
+     idxs = &imem[1];
++    base_offset = (char *)(&idxs[count]);
++#if defined(_WIN64)
++    // ArmPort: the file holds 32-bit offsets; pointers do not fit in place.
++    (void)idxs_ptr;
++    names->strings = malloc(sizeof(char *) * (count ? count : 1));
++    for(i=0;i<count;i++)
++        names->strings[i] = idxs[i] + base_offset;
++#else
+     idxs_ptr = (void *)idxs;
+     names->strings = idxs_ptr;
+-    base_offset = (char *)(&idxs[count]);
+     for(i=0;i<count;i++)
+         idxs_ptr[i] = idxs[i] + base_offset;
++#endif
+ }
+ 
+ int uncompressDeltas(void *dst,U8 *src,int stride,int count,PackType pack_type)
+@@ -296,6 +304,83 @@ int uncompressDeltas(void *dst,U8 *src,int stride,int count,PackType pack_type)
+ #define IDX2PTR(idx,base) ((void *)((uintptr_t)idx + (uintptr_t)base))
+ #define PTR2IDX(ptr,base) ((void *)((uintptr_t)ptr - (uintptr_t)base))
+ 
++#if defined(_WIN64)
++/* ArmPort: .geo files store 32-bit structures. Sizes on disk: */
++#define GEO_FILE_MODELHEADER_SIZE   140 /* name[124], model_data, length, models, model_count */
++#define GEO_FILE_POLYGRID_SIZE      32  /* cell, pos, size, inv_size, tag, num_bits */
++#define GEO_FILE_PACKDATA_SIZE      12  /* packsize, unpacksize, data */
++#define GEO_FILE_POLYCELL_SIZE      12  /* children, tri_idxs, tri_count */
++
++/* Collision cells on disk are 32-bit (offsets from the first cell, 8 child
++ * offsets per children array). Rebuild them as native cells in front of the
++ * raw data (in the same allocation, which modelFreeCtris frees). Native cells
++ * take at most twice the raw bytes. */
++#define GEO_POLYCELL_NATIVE_RESERVE(unpacksize) ((((size_t)(unpacksize) * 2) + 31) & ~(size_t)15)
++
++typedef struct PolyCellBuild
++{
++    const U8    *raw;
++    U32         raw_size;
++    U8          *out;
++    size_t      used, cap;
++    Model       *model;
++} PolyCellBuild;
++
++static void *polyCellBuildAlloc(PolyCellBuild *b, size_t n)
++{
++    void *p;
++    n = (n + 7) & ~(size_t)7;
++    assert(b->used + n <= b->cap);
++    p = b->out + b->used;
++    b->used += n;
++    return p;
++}
++
++static PolyCell *polyCellBuildCell(PolyCellBuild *b, U32 off, PolyCell *dst)
++{
++    U32 children, tris;
++    int count, i;
++
++    assert(off <= b->raw_size && b->raw_size - off >= GEO_FILE_POLYCELL_SIZE);
++    memcpy(&children, b->raw + off, 4);
++    memcpy(&tris, b->raw + off + 4, 4);
++    memcpy(&count, b->raw + off + 8, 4);
++    if (!dst)
++        dst = polyCellBuildAlloc(b, sizeof(PolyCell));
++    dst->tri_count = count;
++    dst->tri_idxs = tris ? (U16 *)(b->raw + tris) : NULL;
++    assert(!tris || (tris <= b->raw_size && (b->raw_size - tris) / 2 >= (U32)count));
++    for (i = 0; i < count; i++)
++        assert(dst->tri_idxs[i] < b->model->tri_count);
++    dst->children = NULL;
++    if (children)
++    {
++        U32 kids[8];
++        assert(children <= b->raw_size && b->raw_size - children >= sizeof(kids));
++        memcpy(kids, b->raw + children, sizeof(kids));
++        dst->children = polyCellBuildAlloc(b, 8 * sizeof(PolyCell *));
++        for (i = 0; i < 8; i++)
++            dst->children[i] = kids[i] ? polyCellBuildCell(b, kids[i], NULL) : NULL;
++    }
++    return dst;
++}
++
++static PolyCell *polyCellUnpackFile(Model *model, const U8 *raw, U32 raw_size, void *out, size_t cap)
++{
++    PolyCellBuild b = { raw, raw_size, out, 0, cap, model };
++    PolyCell *root = polyCellBuildAlloc(&b, sizeof(PolyCell));
++    return polyCellBuildCell(&b, 0, root);
++}
++
++/* BoneInfo on disk ends in two 32-bit pointer slots; keep a native copy and
++ * the file offset (for restoreStubOffsets). */
++typedef struct ArmPortBoneInfo
++{
++    uintptr_t   file_offset;
++    BoneInfo    bi;
++} ArmPortBoneInfo;
++#endif
++
+ 
+ PolyCell *polyCellUnpack(Model* model,PolyCell *cell,void *base_offset)
+ {
+@@ -714,6 +799,10 @@ int modelCreateCtris(Model *model)
+     STR_COMBINE_END();
+ 
+     uiGridAllocSize = model->pack.grid.unpacksize;
++#if defined(_WIN64)
++    uiGridAllocSize = (U32)(GEO_POLYCELL_NATIVE_RESERVE(model->pack.grid.unpacksize) +
++                            ((model->pack.grid.unpacksize + 15) & ~15U));
++#endif
+     uiCTrisAllocSize = model->tri_count * sizeof(CTri);
+ 
+     uiTotalAllocSize = uiGridAllocSize + uiCTrisAllocSize + sizeof(int)*2;
+@@ -838,9 +927,18 @@ int modelCreateCtris(Model *model)
+ 
+ 
+     ctri_total += model->pack.grid.unpacksize;
++#if defined(_WIN64)
++    {
++        size_t reserve = GEO_POLYCELL_NATIVE_RESERVE(model->pack.grid.unpacksize);
++        U8 *raw = (U8 *)pTotalAlloc + reserve;
++        geoUncompress(raw,&model->pack.grid.unpacksize,model->pack.grid.data,model->pack.grid.packsize,model->name,model->filename);
++        model->grid.cell = polyCellUnpackFile(model, raw, model->pack.grid.unpacksize, pTotalAlloc, reserve);
++    }
++#else
+     model->grid.cell = pTotalAlloc; //malloc(model->pack.grid.unpacksize);
+     geoUncompress((U8*)model->grid.cell,&model->pack.grid.unpacksize,model->pack.grid.data,model->pack.grid.packsize,model->name,model->filename);
+     model->grid.cell = polyCellUnpack(model,model->grid.cell,(void*)model->grid.cell);
++#endif
+ 
+     if (model->vert_count > maxvcount)
+     {
+@@ -1115,7 +1213,7 @@ static void testGeoUnpack(Model *model)
+     free(matidxs);
+ }
+ 
+-static void patchPackPtr(PackData *pack,int offset)
++static void patchPackPtr(PackData *pack,intptr_t offset)
+ {
+     if (pack->unpacksize)
+     {
+@@ -1123,7 +1221,7 @@ static void patchPackPtr(PackData *pack,int offset)
+     }
+ }
+ 
+-static void unpatchPackPtr(PackData *pack,int offset)
++static void unpatchPackPtr(PackData *pack,intptr_t offset)
+ {
+ 
+     if (pack->unpacksize)
+@@ -1135,7 +1233,7 @@ static void unpatchPackPtr(PackData *pack,int offset)
+ 
+ static void restoreStubOffsets(GeoLoadData* gld)
+ {
+-    U32 base_offset = (U32)(uintptr_t)(gld->geo_data);
++    uintptr_t base_offset = (uintptr_t)(gld->geo_data);
+     int j;
+ 
+     for( j=0 ; j < gld->modelheader.model_count ; j++ )
+@@ -1157,7 +1255,15 @@ static void restoreStubOffsets(GeoLoadData* gld)
+         if (model->api)
+             model->api            = (void *)((uintptr_t)model->api - base_offset);
+         if(model->boneinfo)
++        {
++#if defined(_WIN64)
++            ArmPortBoneInfo *abi = (ArmPortBoneInfo *)((U8 *)model->boneinfo - offsetof(ArmPortBoneInfo, bi));
++            model->boneinfo = (void *)abi->file_offset;
++            free(abi);
++#else
+             model->boneinfo        = (void *)((uintptr_t)model->boneinfo - base_offset);
++#endif
++        }
+     }
+ }
+ 
+@@ -1166,7 +1272,7 @@ void geoLoadData(GeoLoadData* gld)
+ {
+     U8 * mem;
+     int j;
+-    U32 base_offset;
++    uintptr_t base_offset;
+ 
+     if(!gld->file)
+         gld->file = fileOpen(gld->name, "rb"); //if failure, I need to do something
+@@ -1181,7 +1287,7 @@ void geoLoadData(GeoLoadData* gld)
+     gld->geo_data = mem = malloc(gld->datasize);
+     fread(mem, 1, gld->datasize, gld->file);
+     assert((U32)gld->headersize < (uintptr_t)mem);
+-    base_offset = (U32)(uintptr_t)mem;
++    base_offset = (uintptr_t)mem;
+ 
+     for( j=0 ; j < gld->modelheader.model_count ; j++ )
+     {
+@@ -1204,7 +1310,15 @@ void geoLoadData(GeoLoadData* gld)
+             model->api            = (void *)(base_offset + (uintptr_t)model->api);
+         if(model->boneinfo)
+         {
++#if defined(_WIN64)
++            ArmPortBoneInfo *abi = calloc(1, sizeof(*abi));
++            assert(abi);
++            abi->file_offset = (uintptr_t)model->boneinfo;
++            memcpy(&abi->bi, (U8 *)base_offset + (uintptr_t)model->boneinfo, offsetof(BoneInfo, weights));
++            model->boneinfo = &abi->bi;
++#else
+             model->boneinfo    = (void *) (base_offset + (uintptr_t)model->boneinfo);
++#endif
+             model->boneinfo->weights    = 0;
+             model->boneinfo->matidxs    = 0;
+         }
+@@ -1269,6 +1383,9 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+     if (version_num < 3)
+     {
+         ModelFormatOnDisk_v2 *src = (void *)data;
++#if defined(_WIN64)
++        assertmsg(0, "geo format version < 3 is not supported on 64-bit (ArmPort)");
++#endif
+         #define COPY(fld) dst->fld = src->fld
+             COPY(flags);
+             COPY(radius);
+@@ -1308,6 +1425,20 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+     {
+         #define COPY(fld,bytes) { memcpy(&(dst->fld), data, bytes); data += bytes; }
+         #define COPY2(fld,bytes) { memcpy((dst->fld), data, bytes); data += bytes; }
++#if defined(_WIN64)
++        // ArmPort: PolyGrid and PackData hold pointers; read their 32-bit file layout.
++        #define COPY_GRID() { U32 c_; memcpy(&c_, data, 4); dst->grid.cell = (PolyCell *)(uintptr_t)c_; \
++            memcpy(dst->grid.pos, data + 4, sizeof(Vec3)); memcpy(&dst->grid.size, data + 16, 4); \
++            memcpy(&dst->grid.inv_size, data + 20, 4); memcpy(&dst->grid.tag, data + 24, 4); \
++            memcpy(&dst->grid.num_bits, data + 28, 4); data += GEO_FILE_POLYGRID_SIZE; }
++        #define COPY_PACK(fld) { U32 d_; memcpy(&dst->fld.packsize, data, 4); memcpy(&dst->fld.unpacksize, data + 4, 4); \
++            memcpy(&d_, data + 8, 4); dst->fld.data = (U8 *)(uintptr_t)d_; data += GEO_FILE_PACKDATA_SIZE; }
++        #define PACKDATA_FILE_SIZE GEO_FILE_PACKDATA_SIZE
++#else
++        #define COPY_GRID() COPY(grid, sizeof(PolyGrid))
++        #define COPY_PACK(fld) COPY(fld, sizeof(PackData))
++        #define PACKDATA_FILE_SIZE sizeof(PackData)
++#endif
+ 
+             memcpy(&size, data, 4); data += 4;
+             
+@@ -1322,33 +1453,33 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+             }
+             COPY(tex_idx, 4);
+             dst->tex_idx = (TexID*)(texidx_base + (intptr_t)dst->tex_idx);
+-            COPY(grid, sizeof(PolyGrid));
++            COPY_GRID();
+             COPY(name, 4);
+             dst->name = objname_base + (intptr_t)dst->name;
+             COPY(api, 4);
+             COPY2(scale, sizeof(Vec3));
+             COPY2(min, sizeof(Vec3));
+             COPY2(max, sizeof(Vec3));
+-            COPY(pack.tris, sizeof(PackData));
+-            COPY(pack.verts, sizeof(PackData));
+-            COPY(pack.norms, sizeof(PackData));
+-            COPY(pack.sts, sizeof(PackData));
+-            COPY(pack.sts3, sizeof(PackData));
+-            COPY(pack.weights, sizeof(PackData));
+-            COPY(pack.matidxs, sizeof(PackData));
+-            COPY(pack.grid, sizeof(PackData));
++            COPY_PACK(pack.tris);
++            COPY_PACK(pack.verts);
++            COPY_PACK(pack.norms);
++            COPY_PACK(pack.sts);
++            COPY_PACK(pack.sts3);
++            COPY_PACK(pack.weights);
++            COPY_PACK(pack.matidxs);
++            COPY_PACK(pack.grid);
+             if (version_num == 4)
+             {
+-                data += sizeof(PackData); // used to be pack.lmap_utransforms
+-                data += sizeof(PackData); // used to be pack.lmap_vtransforms
++                data += PACKDATA_FILE_SIZE; // used to be pack.lmap_utransforms
++                data += PACKDATA_FILE_SIZE; // used to be pack.lmap_vtransforms
+             }
+             if (version_num >= 7)
+             {
+-                COPY(pack.reductions, sizeof(PackData));
++                COPY_PACK(pack.reductions);
+             }
+             if (version_num >= 8)
+             {
+-                COPY(pack.reflection_quads, sizeof(PackData));
++                COPY_PACK(pack.reflection_quads);
+             }
+ #if 0
+             if (version_num < 8)
+@@ -1375,6 +1506,9 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+ 
+         #undef COPY
+         #undef COPY2
++        #undef COPY_GRID
++        #undef COPY_PACK
++        #undef PACKDATA_FILE_SIZE
+     }
+ 
+     assert(!dst->grid.cell);
+@@ -1684,7 +1818,11 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
+                     texidx_blocksize  +
+                     lodinfo_blocksize;
+ 
++#if defined(_WIN64)
++        totalSize += GEO_FILE_MODELHEADER_SIZE;
++#else
+         totalSize += sizeof(ModelHeader);
++#endif
+         
+         mem = malloc(totalSize);
+         
+@@ -1708,13 +1846,28 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
+             lod_data = (void *)MEM_NEXT(lodinfo_blocksize);
+         }
+ 
++#if defined(_WIN64)
++        MEM_NEXT(GEO_FILE_MODELHEADER_SIZE);
++#else
+         MEM_NEXT(sizeof(ModelHeader));
++#endif
+         
+         assert(mem_pos == totalSize);
+         
+         aps = (void*)((U8*)gld->header_data + mem_pos);
+ 
++#if defined(_WIN64)
++        {
++            // ArmPort: 32-bit ModelHeader layout: name[124], model_data, length, models, model_count.
++            const U8 *mh = (U8*)mem + mem_pos - GEO_FILE_MODELHEADER_SIZE;
++            memset(&gld->modelheader, 0, sizeof(gld->modelheader));
++            memcpy(gld->modelheader.name, mh, sizeof(gld->modelheader.name));
++            memcpy(&gld->modelheader.length, mh + 128, 4);
++            memcpy(&gld->modelheader.model_count, mh + 136, 4);
++        }
++#else
+         memcpy(&gld->modelheader, (void*)((U8*)mem + mem_pos - sizeof(gld->modelheader)), sizeof(gld->modelheader));
++#endif
+         gld->modelheader.models = allocModelList(gld->modelheader.model_count);
+         gld->modelheader.model_data = gld->modelheader.models?gld->modelheader.models[0]:NULL;
+ 
