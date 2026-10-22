@@ -1,0 +1,123 @@
+name: ArmPort build
+
+# COH-ArmPort: build the original client code as ARM64 Windows with llvm-mingw
+# and run test programs under the Android app's own ARM64 Wine 10 runtime.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['armport/**', 'COH-ArmPort']
+    paths:
+      - 'armport/**'
+      - '!armport/survey/**'
+      - '!armport/shaders/**'
+      - '!armport/*.md'
+      - '.github/workflows/armport-build.yml'
+  pull_request:
+    branches: ['COH-ArmPort']
+    paths:
+      - 'armport/**'
+      - '!armport/survey/**'
+      - '!armport/shaders/**'
+      - '!armport/*.md'
+      - '.github/workflows/armport-build.yml'
+
+permissions:
+  contents: read
+
+env:
+  # Same llvm-mingw release the app's Wine runtime is built with.
+  LLVM_MINGW: '20250910'
+  LLVM_MINGW_SHA256: '175f344e3db2e11b3d53f4f828ae7b5f0073a4d239b9600fa023ef4b90eb5a7e'
+  # Two compiler processes, including nested ExternalProject/CPM builds,
+  # matching the project's bounded build-host memory rule.
+  CMAKE_BUILD_PARALLEL_LEVEL: '2'
+  WINEDEBUG: '-all'
+  WINEDLLOVERRIDES: 'mscoree,mshtml='
+
+jobs:
+  libraries:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /armport/
+            /upstream/ouroboros/
+            !/upstream/ouroboros/data/
+            /upstream/i24/data/defs/ui/bodyparts.bp
+            /native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
+            /android/runtime-lock.json
+            /.github/
+          sparse-checkout-cone-mode: false
+          lfs: false
+
+      - name: Install llvm-mingw (aarch64 host)
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/llvm-mingw
+          sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
+          /opt/llvm-mingw/bin/aarch64-w64-mingw32-clang --version | head -1
+
+      - name: Install the app's ARM64 Wine runtime
+        run: |
+          url=$(python3 -c "import json;print(json.load(open('android/runtime-lock.json'))['wine']['url'])")
+          sha=$(python3 -c "import json;print(json.load(open('android/runtime-lock.json'))['wine']['sha256'])")
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/wine.tar.gz" "$url"
+          echo "$sha  $RUNNER_TEMP/wine.tar.gz" | sha256sum -c -
+          sudo mkdir -p /opt/wine
+          sudo tar -xzf "$RUNNER_TEMP/wine.tar.gz" -C /opt/wine
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ninja-build \
+            libfreetype6 libfontconfig1 libx11-6 libxext6 libxrender1 libxrandr2 libxi6 \
+            libxfixes3 libxcursor1 libxinerama1 libxxf86vm1 libgnutls30t64 libunwind8 libgl1
+          /opt/wine/bin/wine --version
+          echo "WINEPREFIX=$RUNNER_TEMP/wineprefix" >> "$GITHUB_ENV"
+
+      - name: Prepare patched source
+        run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/armport"
+
+      - name: Configure
+        env:
+          COH_LLVM_MINGW: /opt/llvm-mingw
+          COH_WINE: /opt/wine/bin/wine
+        run: |
+          cmake -S "$RUNNER_TEMP/armport/src" -B "$RUNNER_TEMP/armport/build" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/aarch64-w64-mingw32.cmake" \
+            -DCOX_ARMPORT_TESTS_DIR="$GITHUB_WORKSPACE/armport/tests" 2>&1 | tail -40
+
+      - name: Build UtilitiesLib, test program and precise floating-point check
+        run: |
+          cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts verify_precise_floating_point \
+            -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
+          test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Run the M1 test under ARM64 Wine
+        run: |
+          cd "$RUNNER_TEMP"
+          unzip -o -q "$GITHUB_WORKSPACE/native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip" data/bin/BodyParts.bin
+          cp "$GITHUB_WORKSPACE/upstream/i24/data/defs/ui/bodyparts.bp" .
+          exe="$RUNNER_TEMP/armport/build/bin/armport_bodyparts.exe"
+          file "$exe"
+          set +e
+          /opt/wine/bin/wine "$exe" "$(/opt/wine/bin/winepath -w bodyparts.bp)" \
+            "$(/opt/wine/bin/winepath -w data/bin/BodyParts.bin)" > result.json 2> stderr.txt
+          rc=$?
+          set -e
+          cat result.json; tail -20 stderr.txt
+          echo "::notice title=ArmPort M1 bodyparts (exit $rc)::$(head -c 900 result.json)"
+          exit $rc
+
+      - name: Report build errors
+        if: failure()
+        run: |
+          grep -E "error:|undefined (reference|symbol)|>>> referenced by" "$RUNNER_TEMP/build.log" | sed 's#.*/armport/src/##' | sort | uniq -c | sort -rn | head -40 > errors.txt || true
+          cat errors.txt
+          i=0
+          while IFS= read -r chunk; do
+            echo "::warning title=ArmPort build errors $i::$chunk"
+            i=$((i+1))
+          done < <(awk 'NR%6==1{if(buf)print buf;buf=$0;next}{buf=buf"%0A"$0}END{if(buf)print buf}' errors.txt | head -8)

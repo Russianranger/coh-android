@@ -2,13 +2,14 @@
 
 Updated 2026-10-21.
 
-Current milestone: M0 survey, in review (PR from `armport/m0-survey`).
+M0 survey: merged (PR #3, approved by Sol). Route: build the original client
+as an ARM64 Windows program for the app's existing ARM64 Wine.
 
-M0 result: build the client as an ARM64 Windows program for the app's existing
-ARM64 Wine. With flags, three one-line fixes and SSE shims, 502 of 558 Game
-files and 158 of 165 UtilitiesLib files compile for ARM64. 29 of 30 shaders
-precompile to ARB. 460 pointer-truncation warnings to fix. Details:
-`armport/M0-REPORT.md`.
+M1 libraries: exit test passed, PR in review. Under the app's own Wine on an
+ARM64 runner, the original textparser built for ARM64 reads bodyparts.bp and
+the shipped 32-bit-built BodyParts.bin (same checksum) to 28 entries, and the
+precise floating-point check passes. 8 small patches; upstream/ untouched.
+Details: armport/M1-REPORT.md.
 
-Next (M1): CMake + llvm-mingw ARM64 build of UtilitiesLib and dependencies,
-first patches, and an original unit running under ARM64 Wine in CI.
+Next (M2): compile and link CityOfHeroes.exe for ARM64 Windows, replace the
+Cg runtime dependency, then boot to the login screen in CI.

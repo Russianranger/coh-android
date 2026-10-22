@@ -1,0 +1,100 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 164aa6a..454a5fe 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -36,6 +36,18 @@ if(MSVC)
+ 		$<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:/fp:precise>)
+ endif()
+ 
++if(COX_ARM64_WINDOWS)
++	# The engine relies on Microsoft C extensions and on aliasing through typed
++	# pointers. -fno-autolink drops #pragma comment(lib) directives: CMake links
++	# the same libraries by their lowercase names, and the Linux host's
++	# case-sensitive file system cannot find "Ws2_32.lib" style spellings. clang rejects several constructs MSVC accepts; downgrade those
++	# to warnings rather than editing the code.
++	add_compile_options(
++		"$<$<COMPILE_LANGUAGE:C,CXX>:-fms-extensions;-fno-strict-aliasing;-ffp-contract=off;-fno-autolink>"
++		"$<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=incompatible-function-pointer-types;-Wno-error=incompatible-pointer-types;-Wno-error=int-conversion;-Wno-error=return-type>"
++		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>")
++endif()
++
+ # Run this mandatory check before other targets, even with testing disabled.
+ add_executable(cox_precise_floating_point_test EXCLUDE_FROM_ALL
+ 	cmake/tests/precise_floating_point.cpp)
+@@ -44,16 +56,23 @@ if(MINGW)
+ 	# Keep the check runnable without compiler runtime DLL copies.
+ 	target_link_options(cox_precise_floating_point_test PRIVATE -static)
+ endif()
++option(COX_ARMPORT_COMPILE_ONLY "Compile-only ARM64 build without a runnable toolchain" OFF)
++if(COX_ARMPORT_COMPILE_ONLY)
++	add_custom_target(verify_precise_floating_point
++		COMMAND "${CMAKE_COMMAND}" -E echo "precise floating-point check skipped: compile-only build"
++		VERBATIM)
++else()
+ add_custom_target(verify_precise_floating_point ALL
+ 	COMMAND cox_precise_floating_point_test
+ 	DEPENDS cox_precise_floating_point_test
+ 	COMMENT "Verifying precise floating-point behavior"
+ 	VERBATIM)
++endif()
+ 
+ add_subdirectory(Utilities/StructParser)
+ 
+ if(WIN32)
+-	if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
++	if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT COX_ARM64_WINDOWS)
+ 		message(FATAL_ERROR "CoX supports only 32-bit Windows builds")
+ 	endif()
+ 	enable_language(RC)
+diff --git a/cmake/CoXTargets.cmake b/cmake/CoXTargets.cmake
+index 94afe29..323e619 100644
+--- a/cmake/CoXTargets.cmake
++++ b/cmake/CoXTargets.cmake
+@@ -5,6 +5,14 @@ if(WIN32 AND MSVC AND CMAKE_SIZEOF_VOID_P EQUAL 4)
+ 	set(COX_MSVC_WIN32 ON)
+ endif()
+ 
++# ArmPort: 64-bit ARM Windows (llvm-mingw), run by the Android app's ARM64 Wine.
++# Projects are built only when their COX_BUILD_<name> option is set explicitly.
++set(COX_ARM64_WINDOWS OFF)
++if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8 AND
++   CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|ARM64|arm64)$")
++	set(COX_ARM64_WINDOWS ON)
++endif()
++
+ option(COX_BUILD_DEV_TOOLS "Build diagnostic utilities" OFF)
+ option(COX_BUILD_ART_TOOLS "Build art conversion tools" OFF)
+ 
+@@ -28,7 +36,7 @@ function(cox_add_project target directory)
+ 	set(option_name "COX_BUILD_${option_suffix}")
+ 	option(${option_name} "Build ${target} (MSVC Win32 only)" ${default})
+ 	if(${option_name})
+-		if(NOT COX_MSVC_WIN32)
++		if(NOT COX_MSVC_WIN32 AND NOT COX_ARM64_WINDOWS)
+ 			message(FATAL_ERROR
+ 				"${target} requires MSVC and 32-bit Windows (Win32)")
+ 		endif()
+@@ -74,6 +82,8 @@ function(cox_target_defaults target)
+ 		_WINSOCK_DEPRECATED_NO_WARNINGS
+ 		$<$<CONFIG:Debug>:FULLDEBUG;_CRTDBG_MAP_ALLOC;_DEBUG>
+ 		$<$<NOT:$<CONFIG:Debug,OptDebug>>:FINAL;NDEBUG>)
+-	target_compile_options(${target} PRIVATE /W3 /sdl /permissive- /wd4996
+-		$<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
++	if(MSVC)
++		target_compile_options(${target} PRIVATE /W3 /sdl /permissive- /wd4996
++			$<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
++	endif()
+ endfunction()
+diff --git a/libs/UtilitiesLib/CMakeLists.txt b/libs/UtilitiesLib/CMakeLists.txt
+index e08c230..0c7c83a 100644
+--- a/libs/UtilitiesLib/CMakeLists.txt
++++ b/libs/UtilitiesLib/CMakeLists.txt
+@@ -392,7 +392,7 @@ target_compile_definitions(UtilitiesLib PRIVATE
+ 	$<$<CONFIG:Debug>:FULLDEBUG;_CRTDBG_MAP_ALLOC;_DEBUG>
+ 	$<$<CONFIG:Release>:FINAL;NDEBUG>
+ )
+-if(CMAKE_SIZEOF_VOID_P EQUAL 4)
++if(CMAKE_SIZEOF_VOID_P EQUAL 4 OR COX_ARM64_WINDOWS)
+ 	target_compile_definitions(UtilitiesLib PRIVATE WIN32)
+ endif()
+ set_target_properties(UtilitiesLib PROPERTIES

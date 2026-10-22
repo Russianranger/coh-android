@@ -125,7 +125,8 @@ def dep_includes(src, tc):
            os.path.join(third, 'nvparse', 'include', 'nvparse'),
            os.path.join(third, 'nvparse', 'include'),
            os.path.join(third, 'AlienFX SDK', 'Unmanaged', 'includes'),
-           os.path.join(third, 'nvcpl')]
+           os.path.join(third, 'nvcpl'),
+           os.path.join(src, 'libs', 'crashrpt', 'include'), os.path.join(d, 'cryptopp')]
     sdks = os.path.join(third, 'PhysX', 'SDKs')
     if os.path.isdir(sdks):
         for comp in sorted(os.listdir(sdks)):
@@ -199,6 +200,9 @@ def main():
     ap.add_argument('--limit', type=int, default=0, help='compile only N files per target (debug)')
     ap.add_argument('--permissive', action='store_true',
                     help='downgrade clang strictness errors that MSVC accepts (flags only, no patches)')
+    ap.add_argument('--patched', action='store_true',
+                    help='work dir was made by armport/scripts/prepare.py: use the same ARM64 settings '
+                         'as the patched CMake build (shim headers, sse2neon, permissive flags)')
     ap.add_argument('--overlay', default='',
                     help='extra include dir searched first (shim headers for experiments)')
     ap.add_argument('--warn64', action='store_true',
@@ -212,6 +216,9 @@ def main():
     state = os.path.join(a.work, 'state')
     os.makedirs(state, exist_ok=True)
 
+    if a.patched:
+        a.permissive = True
+        a.overlay = a.overlay or os.path.join(src, 'cmake', 'armport-include')
     tflags = target_flags(a.target, a.toolchain)
     cxx = cxx_flags(a.target, a.toolchain)
     deps = dep_includes(src, a.toolchain)
@@ -228,8 +235,10 @@ def main():
                     '-Wvoid-pointer-to-int-cast', '-Wvoid-pointer-to-enum-cast']
         flags = tflags + ['-fms-extensions', '-fno-strict-aliasing', '-ferror-limit=0',
                           '-fno-color-diagnostics'] + warn + (PERMISSIVE if a.permissive else []) + \
-            ['-D' + d for d in COMMON_DEFINES + t['defines']
+            ['-D' + d for d in COMMON_DEFINES + t['defines'] +
+             (['DISABLE_SHARED_MEMORY_SEGMENT'] if a.patched else [])
              if a.target == 'win-arm64' or d not in WINDOWS_ONLY_DEFINES] + \
+            (['-isystem', os.path.join(a.toolchain, 'deps', 'sse2neon')] if a.patched else []) + \
             [x for p in inc if os.path.isdir(p) for x in ('-I', p)]
         jobs = []
         for p in t['sources']:

@@ -1,0 +1,27 @@
+diff --git a/libs/UtilitiesLib/src/utils/Breakpoint.c b/libs/UtilitiesLib/src/utils/Breakpoint.c
+index 07d777e..8abfe94 100644
+--- a/libs/UtilitiesLib/src/utils/Breakpoint.c
++++ b/libs/UtilitiesLib/src/utils/Breakpoint.c
+@@ -1,4 +1,6 @@
+-#ifndef _XBOX
++// ArmPort: x86 debug registers (Dr0-Dr7) do not exist on ARM64; data
++// breakpoints are a debugging aid only, so they are no-ops there.
++#if !defined(_XBOX) && !defined(__aarch64__)
+ 
+ #include "utilitieslib/utils/Breakpoint.h"
+ 
+@@ -218,4 +220,13 @@ void testBreakpoint(void)
+     }
+ }
+ 
++#elif defined(__aarch64__)
++
++#include "utilitieslib/utils/Breakpoint.h"
++
++void debugSetDataBreakPoint(BreakPointID breakpoint, void* dataAddress) {}
++void debugSetDataBreakPointEx(BreakPointID breakpoint, void* dataAddress, BreakCondition condition) {}
++void debugClearDataBreakPoint(BreakPointID breakpoint) {}
++void testBreakpoint(void) {}
++
+ #endif
+\ No newline at end of file

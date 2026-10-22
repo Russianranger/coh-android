@@ -1,0 +1,54 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp b/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp
+index d69b7e7..ed7a31b 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp
++++ b/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp
+@@ -4,6 +4,13 @@
+ #include "../assert/assert.h"
+ #include "../UtilsNew/barrier.h"
+ 
++// ArmPort: spin-wait hint. x86 uses PAUSE; ARM64 uses YIELD.
++#if defined(__aarch64__)
++#define RING_SPIN_PAUSE() __asm__ __volatile__("yield" ::: "memory")
++#else
++#define RING_SPIN_PAUSE() _mm_pause()
++#endif
++
+ #if _M_IX86
+     #define _InterlockedCompareExchangePointer(_destination, _exchange, _comparand) (void*)_InterlockedCompareExchange((volatile long*)_destination, (long)_exchange, (long)_comparand)
+ #endif
+@@ -79,7 +86,7 @@ public:
+             if (read != ATOMIC_HAZARD)
+                 return static_cast<T*>(this)->m_base[read]==NULL;
+ 
+-            _mm_pause();
++            RING_SPIN_PAUSE();
+         }
+     }
+ 
+@@ -89,7 +96,7 @@ public:
+             if (write != ATOMIC_HAZARD)
+                 return static_cast<PointerRingBase<T>*>(this)->m_base[write]!=NULL;
+ 
+-            _mm_pause();
++            RING_SPIN_PAUSE();
+         }
+     }
+ 
+@@ -111,7 +118,7 @@ public:
+                 if (write == static_cast<PointerRingBase<T>*>(this)->m_read)
+                     break;
+             }
+-            _mm_pause();
++            RING_SPIN_PAUSE();
+         }
+         return false;
+     }
+@@ -132,7 +139,7 @@ public:
+                 if (read == static_cast<PointerRingBase<T>*>(this)->m_write)
+                     break;
+             }
+-            _mm_pause();
++            RING_SPIN_PAUSE();
+         }
+         return NULL;
+     }
