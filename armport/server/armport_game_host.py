@@ -298,6 +298,13 @@ def drive_login(a, screen, state, status, evidence):
         checks['n'] += 1
         if checks['n'] % 3 == 0:
             sockets(f'character-select wait {checks["n"]}')
+        # After a successful dbConnect the client may show the NDA/agreement
+        # dialog (uiLogin.c LOGIN_STAGE_NDA) before the character list.
+        agree = screen.find(p, 'Agree', 'AGREE', 'Accept', 'ACCEPT')
+        if agree:
+            status['nda_agreed'] = status.get('nda_agreed', 0) + 1
+            screen.click(*agree)
+            return None
         t = screen.text(p)
         return t if info['character'].lower() in t.lower() or 'play' in t.lower() else None
     png, _ = wait_for(screen, 'character-select', character_select, 300, interval=10)
