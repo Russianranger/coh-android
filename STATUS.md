@@ -9,8 +9,8 @@ M1 libraries: merged (PR #4, approved by Sol). The original textparser built
 for ARM64 reads bodyparts.bp and the shipped BodyParts.bin to 28 matching
 entries under the app's Wine. Details: armport/M1-REPORT.md.
 
-M2 client boots: login screen reached, in review (branch armport/m2-client;
-43 patches, upstream/ untouched). Details: armport/M2-REPORT.md.
+M2 client boots: merged (PR #5, approved by Sol; 43 patches, upstream/
+untouched). Details: armport/M2-REPORT.md.
 - CityOfHeroes.exe (ARM64 Windows) runs under the app's ARM64 Wine on Xvfb
   and Mesa and shows the login screen with the game's own UI; still running
   with no exceptions at 180 s (CI run 39742143066, screen in
@@ -27,4 +27,5 @@ M2 client boots: login screen reached, in review (branch armport/m2-client;
 CI uses the reviewed client asset bundle the repo's other runtime workflows
 use (release asset 588984151) for fonts, UI textures and models.
 
-Next: Sol's review of M2, then M3 (CI server, scripted login to Atlas Park).
+M3 into Atlas (branch armport/m3-atlas): started. First step: the client
+logs in against the CI server.
