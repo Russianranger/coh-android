@@ -29,3 +29,5 @@
 0029-utilitieslib-arm64-superassert.patch
 0030-game-dds-header-file-layout.patch
 0031-utilitieslib-findfirst-handle-width.patch
+0032-game-window-procedure-lresult.patch
+0033-common-anim-file-layout-64bit.patch
