@@ -233,7 +233,9 @@ jobs:
           echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/assets" && unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
           # Use the data root inside the archive if it has one.
-          if [ -d "$RUNNER_TEMP/assets/data" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/data" "$RUNNER_TEMP/assets"; fi
+          for sub in data assets; do
+            if [ -d "$RUNNER_TEMP/assets/$sub" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/$sub" "$RUNNER_TEMP/assets"; break; fi
+          done
           echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
 
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
@@ -243,7 +245,7 @@ jobs:
         run: |
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
             --runtime "$RUNNER_TEMP/runtime" --llvm-mingw /opt/llvm-mingw --wine /opt/wine/bin \
-            --requests-out "$RUNNER_TEMP/cg-requests"
+            --createbins --requests-out "$RUNNER_TEMP/cg-requests"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -317,7 +319,7 @@ jobs:
     # Run the client again with the precompiled ARB programs.
     needs: [assets, client, cg-precompile]
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -347,7 +349,9 @@ jobs:
           echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/assets" && unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
           # Use the data root inside the archive if it has one.
-          if [ -d "$RUNNER_TEMP/assets/data" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/data" "$RUNNER_TEMP/assets"; fi
+          for sub in data assets; do
+            if [ -d "$RUNNER_TEMP/assets/$sub" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/$sub" "$RUNNER_TEMP/assets"; break; fi
+          done
           echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
 
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
@@ -356,4 +360,4 @@ jobs:
         run: |
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --cg-dir "$RUNNER_TEMP/cg-arb" \
-            --requests-out "$RUNNER_TEMP/cg-requests-2"
+            --createbins --requests-out "$RUNNER_TEMP/cg-requests-2"

@@ -66,6 +66,52 @@ def merge_tree(src, dst):
         merge_tree(child, dst / child.name)
 
 
+def window_texts(lines):
+    texts = []
+    for l in lines:
+        if 'set_window_text' in l and 'Default IME' not in l:
+            t = l.split('set_window_text', 1)[1].strip()
+            if t not in texts and t not in ('L""', '(null)', 'L"WineAppBar"'):
+                texts.append(t)
+    return texts
+
+
+def createbins(a, rt, exe, env, wine):
+    """Build the client's .bin files from the text data (as the x86 tools do)."""
+    log = rt.parent / 'createbins-output.txt'
+    start = time.time()
+    with open(log, 'wb') as out:
+        p = subprocess.Popen([wine, str(rt / exe.name), '-createbins', '-nogui', '1', '-console', '1'],
+                             cwd=rt, env=env, stdout=out, stderr=subprocess.STDOUT)
+        status = 'timed out (killed)'
+        while time.time() - start < a.createbins_seconds:
+            try:
+                p.wait(timeout=20)
+                status = f'exited with {p.returncode}'
+                break
+            except subprocess.TimeoutExpired:
+                pass
+            # A modal error dialog waits forever; stop once one appears.
+            if b'L"Fatal Error"' in log.read_bytes()[-2_000_000:]:
+                time.sleep(5)
+                status = 'stopped at a Fatal Error dialog'
+                break
+        if p.poll() is None:
+            p.kill()
+    subprocess.run([str(a.wine / 'wineserver'), '-k'], env=env, capture_output=True)
+    bins = sorted((rt / 'data' / 'bin').glob('*.bin')) if (rt / 'data' / 'bin').is_dir() else []
+    lines = log.read_text(errors='replace').splitlines()
+    texts = window_texts(lines)
+    note('notice', 'ArmPort M2 createbins',
+         f'{status} after {time.time() - start:.0f}s; {len(bins)} files in data/bin\n'
+         + ', '.join(b.name for b in bins[:80]))
+    if texts:
+        note('warning', 'ArmPort M2 createbins window text', '\n'.join(t[:600] for t in texts[:20]))
+    tail = [l[:300] for l in lines if 'trace:' not in l][-50:]
+    for i, c in enumerate(chunks(tail)):
+        note('notice', f'ArmPort M2 createbins output {i}', c)
+
+
 def screenshot_summary(display, path):
     try:
         return _screenshot_summary(display, path)
@@ -99,6 +145,9 @@ def main():
     ap.add_argument('--wine', required=True, type=Path, help='directory with wine, wineserver')
     ap.add_argument('--seconds', type=int, default=180)
     ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win')
+    ap.add_argument('--createbins', action='store_true',
+                    help='first run the client with -createbins to build data/bin from text data')
+    ap.add_argument('--createbins-seconds', type=int, default=1800)
     ap.add_argument('--cg-dir', type=Path, help='precompiled <key>.arb files for the Cg stand-in')
     ap.add_argument('--requests-out', type=Path, help='copy recorded Cg requests here')
     ap.add_argument('args', nargs='*')
@@ -147,6 +196,9 @@ def main():
     except subprocess.TimeoutExpired:
         note('warning', 'ArmPort M2 smoke wineboot', 'timed out after 300s')
     before = {p for p in rt.iterdir()}
+
+    if a.createbins:
+        createbins(a, rt, exe, env, wine)
 
     log = rt.parent / 'smoke-output.txt'
     start = time.time()
@@ -202,12 +254,7 @@ def main():
     if win:
         note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:60]))
     # Text the client put into windows and dialog controls (error messages).
-    texts = []
-    for l in lines:
-        if 'set_window_text' in l and 'Default IME' not in l:
-            t = l.split('set_window_text', 1)[1].strip()
-            if t not in texts and t not in ('L""',):
-                texts.append(t)
+    texts = window_texts(lines)
     if texts:
         note('warning', 'ArmPort M2 smoke window text', '\n'.join(t[:600] for t in texts[:30]))
     exc = [l for l in lines if 'exception' in l.lower() or 'unhandled' in l.lower() or 'err:' in l][:40]
