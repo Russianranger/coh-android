@@ -170,7 +170,8 @@ def createbins(a, rt, exe, env, wine):
                 break
     note('warning', 'ArmPort M2 createbins piggs check', '\n'.join(pig) or 'no texts.pigg lookups')
     note('notice', 'ArmPort M2 createbins trace size', f'{len(lines)} lines')
-    exc = [l[:300] for l in lines if 'dispatch_exception code=' in l or 'err:' in l]
+    report_exceptions(lines, binner, a.llvm_mingw, 'ArmPort M2 createbins')
+    exc = [l[:300] for l in lines if 'err:' in l]
     if exc:
         note('warning', 'ArmPort M2 createbins exceptions and exits', '\n'.join(exc[:40]))
     wine_tail = [l[:300] for l in lines if 'trace:' not in l][-40:]
@@ -189,6 +190,58 @@ def report_stdio(path, title):
         note('warning', f'{title} errors {i}', c)
     for i, c in enumerate(chunks([l[:300] for l in text[-75:]])):
         note('notice', f'{title} tail {i}', c)
+
+
+def symbolize(exe, addrs, llvm):
+    """Map client addresses (image base 0x140000000) to functions via DWARF."""
+    if not llvm or not addrs:
+        return {}
+    r = subprocess.run([str(llvm / 'bin' / 'llvm-symbolizer'), '--obj=' + str(exe), '--functions=linkage',
+                        '--inlining=false', '--relative-address'] + ['0x%x' % (x - 0x140000000) for x in addrs],
+                       capture_output=True, text=True)
+    out = [b.strip().replace('\n', ' at ') for b in r.stdout.strip().split('\n\n')]
+    return dict(zip(addrs, out))
+
+
+def report_exceptions(lines, exe, llvm, title):
+    """Wine SEH traces: exception code and the client functions at pc/lr."""
+    blocks = []
+    for i, l in enumerate(lines):
+        if 'dispatch_exception code=' in l and 'RPC_S_SERVER_UNAVAILABLE' not in l:
+            regs = ' '.join(lines[i + 1:i + 3])
+            pc = re.search(r'pc=([0-9a-f]+)', regs)
+            lr = re.search(r'lr=([0-9a-f]+)', regs)
+            blocks.append((l.split('trace:seh:dispatch_exception', 1)[-1].strip(),
+                           int(pc.group(1), 16) if pc else 0, int(lr.group(1), 16) if lr else 0))
+    if not blocks:
+        return
+    uniq = []
+    for b in blocks:
+        if b not in uniq:
+            uniq.append(b)
+    client = sorted({x for _, pc, lr in uniq for x in (pc, lr) if 0x140000000 <= x < 0x150000000})
+    names = symbolize(exe, client, llvm)
+    text = [f'{len(blocks)} exceptions, {len(uniq)} distinct']
+    for code, pc, lr in uniq[:12]:
+        text.append(f'{code}\n  pc={pc:x} {names.get(pc, "")}\n  lr={lr:x} {names.get(lr, "")}')
+    note('warning', f'{title} exceptions', '\n'.join(text))
+
+
+def report_runtime_files(rt):
+    """The client's own log files and what it wrote into the runtime folder."""
+    listing = []
+    for p in sorted(rt.rglob('*')):
+        if 'data' in p.relative_to(rt).parts[:1] or 'armport_cg' in p.relative_to(rt).parts[:1]:
+            continue
+        if p.is_file():
+            listing.append(f'{p.stat().st_size:>10} {p.relative_to(rt)}')
+    note('notice', 'ArmPort M2 runtime files', '\n'.join(listing[:60]))
+    for p in sorted(rt.rglob('*.log'))[:8]:
+        if 'data' in p.relative_to(rt).parts[:1]:
+            continue
+        t = p.read_text(errors='replace').splitlines()
+        note('warning' if 'error' in p.name.lower() else 'notice', f'ArmPort M2 log {p.relative_to(rt)}',
+             '\n'.join(l[:300] for l in t[-40:]) or '(empty)')
 
 
 def screenshot_summary(display, path):
@@ -285,7 +338,8 @@ def main():
     log = rt.parent / 'smoke-output.txt'
     start = time.time()
     with open(log, 'wb') as out:
-        proc = subprocess.Popen([wine, str(rt / exe.name)] + a.args, cwd=rt,
+        args = a.args or ['-fullscreen', '0', '-screen', '1024', '768']
+        proc = subprocess.Popen([wine, str(rt / exe.name)] + args, cwd=rt,
                                 env=dict(env, ARMPORT_STDIO_LOG='armport_stdio.txt'),
                                 stdout=out, stderr=subprocess.STDOUT)
         shot_mid = None
@@ -341,19 +395,12 @@ def main():
     texts = window_texts(lines)
     if texts:
         note('warning', 'ArmPort M2 smoke window text', '\n'.join(t[:600] for t in texts[:30]))
-    exc = [l for l in lines if 'exception' in l.lower() or 'unhandled' in l.lower() or 'err:' in l][:40]
-    if exc:
-        note('warning', 'ArmPort M2 smoke exceptions', '\n'.join(exc[:30]))
+    report_exceptions(lines, rt / exe.name, a.llvm_mingw, 'ArmPort M2 client')
     tail = [l[:300] for l in lines if 'trace:' not in l][-75:]
     for i, c in enumerate(chunks(tail)):
         note('notice', f'ArmPort M2 smoke output {i}', c)
 
-    new = [p for top in rt.iterdir() if top not in before and top.name != 'data'
-           for p in ([top] if top.is_file() else top.rglob('*'))
-           if p.is_file() and p.suffix.lower() in ('.log', '.txt')]
-    for p in new[:6]:
-        t = p.read_text(errors='replace').splitlines()[-30:]
-        note('notice', f'ArmPort M2 smoke log {p.relative_to(rt)}', '\n'.join(l[:300] for l in t))
+    report_runtime_files(rt)
     reqs = sorted((cg / 'requests').glob('*.req')) if (cg / 'requests').is_dir() else []
     note('notice', 'ArmPort M2 smoke Cg requests', f'{len(reqs)} programs had no precompiled ARB assembly')
     if a.requests_out:

@@ -293,10 +293,17 @@ jobs:
           echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
         run: armport/scripts/install_wine_runtime.sh
+      - name: Install llvm-mingw (for llvm-symbolizer)
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/llvm-mingw
+          sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
       - name: Create bins (OptDebug) and run the Release client
         run: |
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
-            --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin \
+            --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw \
             --createbins --createbins-build "$RUNNER_TEMP/client-dev" --bins-out "$RUNNER_TEMP/client-bins/bin" \
             --requests-out "$RUNNER_TEMP/cg-requests"
       - uses: actions/upload-artifact@v4
