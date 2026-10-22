@@ -1,8 +1,8 @@
 diff --git a/Common/seq/anim.c b/Common/seq/anim.c
-index 87daf09..99e9f0a 100644
+index 017071f..d4274dc 100644
 --- a/Common/seq/anim.c
 +++ b/Common/seq/anim.c
-@@ -1382,10 +1382,56 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+@@ -1398,10 +1398,56 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
  
      if (version_num < 3)
      {
@@ -61,7 +61,7 @@ index 87daf09..99e9f0a 100644
          #define COPY(fld) dst->fld = src->fld
              COPY(flags);
              COPY(radius);
-@@ -1885,6 +1931,17 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
+@@ -1901,6 +1947,17 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
              PERFINFO_AUTO_START("initModel", 1);
                  model = gld->modelheader.models[j]; 
                  aps += readModel(model, aps, version_num, (U8*)objnames, (U8*)texidx_offset);

@@ -1,5 +1,5 @@
 diff --git a/Common/seq/anim.c b/Common/seq/anim.c
-index 86ee0b4..87daf09 100644
+index 86ee0b4..017071f 100644
 --- a/Common/seq/anim.c
 +++ b/Common/seq/anim.c
 @@ -225,11 +225,19 @@ char    **idxs_ptr,*base_offset;
@@ -23,7 +23,7 @@ index 86ee0b4..87daf09 100644
  }
  
  int uncompressDeltas(void *dst,U8 *src,int stride,int count,PackType pack_type)
-@@ -296,6 +304,83 @@ int uncompressDeltas(void *dst,U8 *src,int stride,int count,PackType pack_type)
+@@ -296,6 +304,100 @@ int uncompressDeltas(void *dst,U8 *src,int stride,int count,PackType pack_type)
  #define IDX2PTR(idx,base) ((void *)((uintptr_t)idx + (uintptr_t)base))
  #define PTR2IDX(ptr,base) ((void *)((uintptr_t)ptr - (uintptr_t)base))
  
@@ -99,15 +99,32 @@ index 86ee0b4..87daf09 100644
 + * the file offset (for restoreStubOffsets). */
 +typedef struct ArmPortBoneInfo
 +{
++    Model       *model;
 +    uintptr_t   file_offset;
 +    BoneInfo    bi;
 +} ArmPortBoneInfo;
++
++/* Frees the BoneInfo copies geoLoadData made for this gld. A model still
++ * pointing at its copy gets the file offset back (restoreStubOffsets needs
++ * it); the client may have replaced boneinfo with a dummy, which is left. */
++static void armportFreeBoneInfos(GeoLoadData *gld)
++{
++    int i;
++    for (i = 0; i < eaSize(&gld->armport_boneinfos); i++)
++    {
++        ArmPortBoneInfo *abi = gld->armport_boneinfos[i];
++        if (abi->model->boneinfo == &abi->bi)
++            abi->model->boneinfo = (void *)abi->file_offset;
++        free(abi);
++    }
++    eaDestroy(&gld->armport_boneinfos);
++}
 +#endif
 +
  
  PolyCell *polyCellUnpack(Model* model,PolyCell *cell,void *base_offset)
  {
-@@ -714,6 +799,10 @@ int modelCreateCtris(Model *model)
+@@ -714,6 +816,10 @@ int modelCreateCtris(Model *model)
      STR_COMBINE_END();
  
      uiGridAllocSize = model->pack.grid.unpacksize;
@@ -118,7 +135,7 @@ index 86ee0b4..87daf09 100644
      uiCTrisAllocSize = model->tri_count * sizeof(CTri);
  
      uiTotalAllocSize = uiGridAllocSize + uiCTrisAllocSize + sizeof(int)*2;
-@@ -838,9 +927,18 @@ int modelCreateCtris(Model *model)
+@@ -838,9 +944,18 @@ int modelCreateCtris(Model *model)
  
  
      ctri_total += model->pack.grid.unpacksize;
@@ -137,7 +154,7 @@ index 86ee0b4..87daf09 100644
  
      if (model->vert_count > maxvcount)
      {
-@@ -1115,7 +1213,7 @@ static void testGeoUnpack(Model *model)
+@@ -1115,7 +1230,7 @@ static void testGeoUnpack(Model *model)
      free(matidxs);
  }
  
@@ -146,7 +163,7 @@ index 86ee0b4..87daf09 100644
  {
      if (pack->unpacksize)
      {
-@@ -1123,7 +1221,7 @@ static void patchPackPtr(PackData *pack,int offset)
+@@ -1123,7 +1238,7 @@ static void patchPackPtr(PackData *pack,int offset)
      }
  }
  
@@ -155,7 +172,7 @@ index 86ee0b4..87daf09 100644
  {
  
      if (pack->unpacksize)
-@@ -1135,7 +1233,7 @@ static void unpatchPackPtr(PackData *pack,int offset)
+@@ -1135,7 +1250,7 @@ static void unpatchPackPtr(PackData *pack,int offset)
  
  static void restoreStubOffsets(GeoLoadData* gld)
  {
@@ -164,23 +181,22 @@ index 86ee0b4..87daf09 100644
      int j;
  
      for( j=0 ; j < gld->modelheader.model_count ; j++ )
-@@ -1157,7 +1255,15 @@ static void restoreStubOffsets(GeoLoadData* gld)
+@@ -1156,9 +1271,14 @@ static void restoreStubOffsets(GeoLoadData* gld)
+             unpatchPackPtr(&model->pack.reflection_quads,base_offset);
          if (model->api)
              model->api            = (void *)((uintptr_t)model->api - base_offset);
++#if !defined(_WIN64)
          if(model->boneinfo)
-+        {
-+#if defined(_WIN64)
-+            ArmPortBoneInfo *abi = (ArmPortBoneInfo *)((U8 *)model->boneinfo - offsetof(ArmPortBoneInfo, bi));
-+            model->boneinfo = (void *)abi->file_offset;
-+            free(abi);
-+#else
              model->boneinfo        = (void *)((uintptr_t)model->boneinfo - base_offset);
 +#endif
-+        }
      }
++#if defined(_WIN64)
++    armportFreeBoneInfos(gld);
++#endif
  }
  
-@@ -1166,7 +1272,7 @@ void geoLoadData(GeoLoadData* gld)
+ 
+@@ -1166,7 +1286,7 @@ void geoLoadData(GeoLoadData* gld)
  {
      U8 * mem;
      int j;
@@ -189,7 +205,7 @@ index 86ee0b4..87daf09 100644
  
      if(!gld->file)
          gld->file = fileOpen(gld->name, "rb"); //if failure, I need to do something
-@@ -1181,7 +1287,7 @@ void geoLoadData(GeoLoadData* gld)
+@@ -1181,7 +1301,7 @@ void geoLoadData(GeoLoadData* gld)
      gld->geo_data = mem = malloc(gld->datasize);
      fread(mem, 1, gld->datasize, gld->file);
      assert((U32)gld->headersize < (uintptr_t)mem);
@@ -198,14 +214,16 @@ index 86ee0b4..87daf09 100644
  
      for( j=0 ; j < gld->modelheader.model_count ; j++ )
      {
-@@ -1204,7 +1310,15 @@ void geoLoadData(GeoLoadData* gld)
+@@ -1204,7 +1324,17 @@ void geoLoadData(GeoLoadData* gld)
              model->api            = (void *)(base_offset + (uintptr_t)model->api);
          if(model->boneinfo)
          {
 +#if defined(_WIN64)
 +            ArmPortBoneInfo *abi = calloc(1, sizeof(*abi));
 +            assert(abi);
++            abi->model = model;
 +            abi->file_offset = (uintptr_t)model->boneinfo;
++            eaPush(&gld->armport_boneinfos, abi);
 +            memcpy(&abi->bi, (U8 *)base_offset + (uintptr_t)model->boneinfo, offsetof(BoneInfo, weights));
 +            model->boneinfo = &abi->bi;
 +#else
@@ -214,7 +232,7 @@ index 86ee0b4..87daf09 100644
              model->boneinfo->weights    = 0;
              model->boneinfo->matidxs    = 0;
          }
-@@ -1269,6 +1383,9 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+@@ -1269,6 +1399,9 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
      if (version_num < 3)
      {
          ModelFormatOnDisk_v2 *src = (void *)data;
@@ -224,7 +242,7 @@ index 86ee0b4..87daf09 100644
          #define COPY(fld) dst->fld = src->fld
              COPY(flags);
              COPY(radius);
-@@ -1308,6 +1425,20 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+@@ -1308,6 +1441,20 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
      {
          #define COPY(fld,bytes) { memcpy(&(dst->fld), data, bytes); data += bytes; }
          #define COPY2(fld,bytes) { memcpy((dst->fld), data, bytes); data += bytes; }
@@ -245,7 +263,7 @@ index 86ee0b4..87daf09 100644
  
              memcpy(&size, data, 4); data += 4;
              
-@@ -1322,33 +1453,33 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+@@ -1322,33 +1469,33 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
              }
              COPY(tex_idx, 4);
              dst->tex_idx = (TexID*)(texidx_base + (intptr_t)dst->tex_idx);
@@ -292,7 +310,7 @@ index 86ee0b4..87daf09 100644
              }
  #if 0
              if (version_num < 8)
-@@ -1375,6 +1506,9 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+@@ -1375,6 +1522,9 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
  
          #undef COPY
          #undef COPY2
@@ -302,7 +320,7 @@ index 86ee0b4..87daf09 100644
      }
  
      assert(!dst->grid.cell);
-@@ -1684,7 +1818,11 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
+@@ -1684,7 +1834,11 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
                      texidx_blocksize  +
                      lodinfo_blocksize;
  
@@ -314,7 +332,7 @@ index 86ee0b4..87daf09 100644
          
          mem = malloc(totalSize);
          
-@@ -1708,13 +1846,28 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
+@@ -1708,13 +1862,28 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
              lod_data = (void *)MEM_NEXT(lodinfo_blocksize);
          }
  
@@ -342,4 +360,31 @@ index 86ee0b4..87daf09 100644
 +#endif
          gld->modelheader.models = allocModelList(gld->modelheader.model_count);
          gld->modelheader.model_data = gld->modelheader.models?gld->modelheader.models[0]:NULL;
+ 
+@@ -2616,6 +2785,12 @@ void modelListFree(GeoLoadData *gld)
+ #endif
+     if (stashFindPointerReturnPointer(glds_ht, gld->name) == gld)
+         stashRemovePointer(glds_ht, gld->name, NULL);
++#if defined(_WIN64)
++    // ArmPort: on 64-bit the name table and the BoneInfo copies are separate
++    // allocations (unpackNames, geoLoadData).
++    armportFreeBoneInfos(gld);
++    SAFE_FREE(gld->texnames.strings);
++#endif
+     SAFE_FREE(gld->modelheader.model_data);
+     eaDestroy(&gld->modelheader.models);
+     SAFE_FREE(gld->header_data);
+diff --git a/Common/seq/anim.h b/Common/seq/anim.h
+index d21cfc4..7288768 100644
+--- a/Common/seq/anim.h
++++ b/Common/seq/anim.h
+@@ -238,6 +238,9 @@ typedef struct GeoLoadData
+ #if CLIENT | GETVRML
+     ModelLODInfo *lod_infos;
+ #endif
++#if defined(_WIN64)
++    void        **armport_boneinfos; // ArmPort: native BoneInfo copies made by geoLoadData (earray)
++#endif
+ } GeoLoadData;
+ 
  
