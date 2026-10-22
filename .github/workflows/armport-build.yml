@@ -438,7 +438,7 @@ jobs:
         if: always()
         run: |
           [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"
-          for n in password-typed after-login probe-end; do
+          for n in ultra-dismissed account-typed password-typed after-login post-login-03 probe-end; do
             [ -f "$RUNNER_TEMP/probe-$n.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/probe-$n.jpg" "ArmPort probe $n" || echo "no $n"
           done
 

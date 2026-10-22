@@ -339,7 +339,7 @@ def login_probe(out, proc):
         status['error'] = repr(e)
     note('notice', 'ArmPort M2 login probe', json.dumps(status, indent=1)[:3000] + '\n' + '\n'.join(screen.log[-40:]))
     # Single frames for screen_export.py (one image per annotation title).
-    for key in ('password-typed', 'after-login', 'probe-end'):
+    for key in ('ultra-dismissed', 'account-typed', 'password-typed', 'after-login', 'post-login-03', 'probe-end'):
         hits = [p for p in sorted(out.glob('*.png')) if key in p.name]
         if hits:
             for q in (45, 35, 25):
@@ -420,7 +420,9 @@ def main():
         return 1
 
     display = ':99'
-    xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x800x24', '-nolisten', 'tcp'],
+    # 1600x1200 so the whole 1024x768 window is on screen at Wine's default
+    # position (+104+130), as in the M3 server run.
+    xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1600x1200x24', '-nolisten', 'tcp'],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(2)
     env = dict(os.environ, DISPLAY=display, WINEDEBUG=a.winedebug,
