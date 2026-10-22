@@ -306,6 +306,10 @@ jobs:
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw \
             --createbins --createbins-build "$RUNNER_TEMP/client-dev" --bins-out "$RUNNER_TEMP/client-bins/bin" \
             --requests-out "$RUNNER_TEMP/cg-requests"
+      - name: Export the last screen
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"
       - uses: actions/upload-artifact@v4
         with:
           name: armport-client-bins
@@ -404,3 +408,7 @@ jobs:
             --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --cg-dir "$RUNNER_TEMP/cg-arb" \
             --requests-out "$RUNNER_TEMP/cg-requests-2"
+      - name: Export the last screen
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"

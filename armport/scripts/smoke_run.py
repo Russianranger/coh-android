@@ -312,6 +312,9 @@ def main():
     note('notice', 'ArmPort M2 smoke runtime DLLs', ', '.join(copied) or 'none')
     for root in a.data:
         merge_tree(root.resolve(), rt / 'data')
+    # Development (non-FINAL) builds take a folder with data/ and tools/ as the
+    # game root (UtilitiesLib file.c addAppropriateDataDirs).
+    (rt / 'tools').mkdir()
     cg = rt / 'armport_cg'
     cg.mkdir()
     arb = sorted(a.cg_dir.glob('*.arb')) if a.cg_dir and a.cg_dir.is_dir() else []
@@ -374,6 +377,14 @@ def main():
     for name in ('shot60.xwd', 'shotend.xwd'):
         if (rt.parent / name).exists():
             note('notice', f'ArmPort M2 smoke screen text {name}', ocr(rt.parent / name))
+    # A small JPEG of the last screen, for export as annotations (screen_export.py).
+    last = rt.parent / ('shotend.xwd' if (rt.parent / 'shotend.xwd').exists() else 'shot60.xwd')
+    if last.exists():
+        for q in (60, 45, 35, 25):
+            subprocess.run(['convert', f'xwd:{last}', '-resize', '512x400', '-quality', str(q),
+                            str(rt.parent / 'screen.jpg')], capture_output=True)
+            if (rt.parent / 'screen.jpg').exists() and (rt.parent / 'screen.jpg').stat().st_size < 24000:
+                break
 
     lines = log.read_text(errors='replace').splitlines()
     dialog = [l[:300] for l in lines if 'trace:dialog' in l and ('L"' in l or '"' in l)]
