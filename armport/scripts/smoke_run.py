@@ -323,7 +323,7 @@ def main():
     ap.add_argument('--seconds', type=int, default=180)
     ap.add_argument('--require-alive', action='store_true',
                     help='exit 1 unless the client is still running at --seconds with no unhandled '
-                         'exception and no message box (diagnostics are reported either way)')
+                         'exception, no message box and a drawn screen (diagnostics are reported either way)')
     ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win,+seh')
     ap.add_argument('--createbins', action='store_true',
                     help='first run the client with -createbins to build data/bin from text data')
@@ -482,10 +482,15 @@ def main():
             failures.append(f'{len(crashes)} unhandled exception(s): {crashes[0][:200]}')
         if dialog:
             failures.append(f'message box shown: {dialog[0][:200]}')
+        # A live client must also be drawing: the last screen needs real content
+        # (the login screen samples about 1,200 distinct colours; a blank one 1).
+        m = re.search(r'distinct colors \(sampled\) (\d+)', shot_end or '')
+        if running and (not m or int(m.group(1)) < 64):
+            failures.append(f'last screen blank or missing: {shot_end}')
         if failures:
             note('error', 'ArmPort M2 smoke verdict', 'boot test failed:\n' + '\n'.join(failures))
             return 1
-        note('notice', 'ArmPort M2 smoke verdict', f'boot test passed: {status}, no unhandled exception, no message box')
+        note('notice', 'ArmPort M2 smoke verdict', f'boot test passed: {status}, no unhandled exception, no message box, screen drawn ({shot_end})')
     return 0
 
 
