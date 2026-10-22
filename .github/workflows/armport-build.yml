@@ -274,7 +274,6 @@ jobs:
           sparse-checkout: |
             /armport/
             /upstream/i24/data/
-            !/upstream/i24/data/maps/
             /android/runtime-lock.json
           sparse-checkout-cone-mode: false
           lfs: false
@@ -383,7 +382,6 @@ jobs:
           sparse-checkout: |
             /armport/
             /upstream/i24/data/
-            !/upstream/i24/data/maps/
             /android/runtime-lock.json
           sparse-checkout-cone-mode: false
           lfs: false
