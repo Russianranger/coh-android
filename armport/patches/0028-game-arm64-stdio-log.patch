@@ -1,0 +1,25 @@
+diff --git a/Game/src/win/win_init.c b/Game/src/win/win_init.c
+index d943574..1881a09 100644
+--- a/Game/src/win/win_init.c
++++ b/Game/src/win/win_init.c
+@@ -2104,6 +2104,20 @@ int WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstance,
+     int        noExceptionHandler=0;
+     FILE    *file;
+ 
++#if defined(__aarch64__) && defined(__MINGW32__)
++    {
++        // ArmPort: a GUI program has no usable stdout/stderr under Wine; when
++        // ARMPORT_STDIO_LOG names a file, send both there (diagnostics only).
++        const char *armportLog = getenv("ARMPORT_STDIO_LOG");
++        if (armportLog && *armportLog && freopen(armportLog, "a", stdout))
++        {
++            freopen(armportLog, "a", stderr);
++            setvbuf(stdout, NULL, _IONBF, 0);
++            setvbuf(stderr, NULL, _IONBF, 0);
++        }
++    }
++#endif
++
+     memCheckInit();
+ 
+     argv[0] = windowName;

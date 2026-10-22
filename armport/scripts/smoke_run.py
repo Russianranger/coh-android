@@ -9,6 +9,7 @@ the tail of the output and any log files written. Observational: the exit code
 is 0 unless the script itself cannot run.
 """
 import argparse
+import re
 import os
 import shutil
 import subprocess
@@ -79,10 +80,12 @@ def window_texts(lines):
 def createbins(a, rt, exe, env, wine):
     """Build the client's .bin files from the text data (as the x86 tools do)."""
     log = rt.parent / 'createbins-output.txt'
+    stdio = rt / 'armport_stdio_createbins.txt'
     start = time.time()
     with open(log, 'wb') as out:
-        p = subprocess.Popen([wine, str(rt / exe.name), '-createbins', '-nogui', '1', '-console', '1'],
-                             cwd=rt, env=env, stdout=out, stderr=subprocess.STDOUT)
+        p = subprocess.Popen([wine, str(rt / exe.name), '-createbins', '-nogui', '1', '-verbose', '1'],
+                             cwd=rt, env=dict(env, ARMPORT_STDIO_LOG=stdio.name),
+                             stdout=out, stderr=subprocess.STDOUT)
         status = 'timed out (killed)'
         while time.time() - start < a.createbins_seconds:
             try:
@@ -107,10 +110,21 @@ def createbins(a, rt, exe, env, wine):
          + ', '.join(b.name for b in bins[:80]))
     if texts:
         note('warning', 'ArmPort M2 createbins window text', '\n'.join(t[:600] for t in texts[:20]))
-    tail = [l[:300] for l in lines if 'trace:' not in l and 'Token id=' not in l
-            and 'Process id=' not in l][-75:]
-    for i, c in enumerate(chunks(tail)):
-        note('notice', f'ArmPort M2 createbins output {i}', c)
+    report_stdio(stdio, 'ArmPort M2 createbins client output')
+
+
+def report_stdio(path, title):
+    """The client's own stdout/stderr (patch 0028, ARMPORT_STDIO_LOG)."""
+    if not path.exists():
+        note('notice', title, 'no client output file')
+        return
+    text = path.read_text(errors='replace').splitlines()
+    note('notice', title + ' size', f'{len(text)} lines')
+    errors = [l[:300] for l in text if re.search(r'error|assert|fatal|fail|unable|cannot|missing', l, re.I)]
+    for i, c in enumerate(chunks(errors[:50])):
+        note('warning', f'{title} errors {i}', c)
+    for i, c in enumerate(chunks([l[:300] for l in text[-75:]])):
+        note('notice', f'{title} tail {i}', c)
 
 
 def screenshot_summary(display, path):
@@ -204,7 +218,8 @@ def main():
     log = rt.parent / 'smoke-output.txt'
     start = time.time()
     with open(log, 'wb') as out:
-        proc = subprocess.Popen([wine, str(rt / exe.name)] + a.args, cwd=rt, env=env,
+        proc = subprocess.Popen([wine, str(rt / exe.name)] + a.args, cwd=rt,
+                                env=dict(env, ARMPORT_STDIO_LOG='armport_stdio.txt'),
                                 stdout=out, stderr=subprocess.STDOUT)
         shot_mid = None
         titles = ''
@@ -254,6 +269,7 @@ def main():
                 break
     if win:
         note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:60]))
+    report_stdio(rt / 'armport_stdio.txt', 'ArmPort M2 client output')
     # Text the client put into windows and dialog controls (error messages).
     texts = window_texts(lines)
     if texts:
