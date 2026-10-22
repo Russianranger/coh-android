@@ -153,8 +153,13 @@ jobs:
           done < <(awk 'NR%6==1{if(buf)print buf;buf=$0;next}{buf=buf"%0A"$0}END{if(buf)print buf}' errors.txt | head -8)
 
   client:
-    # M2: compile and link CityOfHeroes.exe for ARM64 Windows.
-    needs: assets
+    # M2: compile and link CityOfHeroes.exe for ARM64 Windows. Release is the
+    # client that ships; OptDebug (non-FINAL) is the configuration upstream
+    # uses to build the data bins (-createbins), which FINAL builds cannot do.
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Release, OptDebug]
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 120
     steps:
@@ -164,9 +169,6 @@ jobs:
             /armport/
             /upstream/ouroboros/
             !/upstream/ouroboros/data/
-            /upstream/i24/data/
-            !/upstream/i24/data/maps/
-            /android/runtime-lock.json
             /.github/
           sparse-checkout-cone-mode: false
           lfs: false
@@ -187,7 +189,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/client-bin
-          key: armport-client-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
+          key: armport-client-${{ matrix.config }}-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
 
       - name: Prepare patched source
         if: steps.exe-cache.outputs.cache-hit != 'true'
@@ -199,7 +201,7 @@ jobs:
           COH_LLVM_MINGW: /opt/llvm-mingw
         run: |
           cmake -S "$RUNNER_TEMP/armport/src" -B "$RUNNER_TEMP/armport/build" -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config }} \
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/aarch64-w64-mingw32.cmake" \
             -DCOX_BUILD_COMMON=ON -DCOX_BUILD_GAME=ON \
             -DCOX_ARMPORT_COMPILE_ONLY=ON \
@@ -214,7 +216,7 @@ jobs:
           exe=$(find "$RUNNER_TEMP/armport/build" -name 'CityOfHeroes.exe' | head -1)
           if [ -n "$exe" ]; then
             info="$(file "$exe" | cut -d: -f2) size $(stat -c %s "$exe")"
-            echo "::notice title=ArmPort M2 client linked::$info"
+            echo "::notice title=ArmPort M2 client linked (${{ matrix.config }})::$info"
             [ "$rc" -eq 0 ] && mkdir -p "$RUNNER_TEMP/client-bin" && cp "$exe" "$RUNNER_TEMP/client-bin/"
           fi
           exit $rc
@@ -222,42 +224,10 @@ jobs:
       - name: Add the llvm-mingw runtime DLLs next to the client
         run: cp /opt/llvm-mingw/aarch64-w64-mingw32/bin/libc++.dll /opt/llvm-mingw/aarch64-w64-mingw32/bin/libunwind.dll "$RUNNER_TEMP/client-bin/"
 
-      - name: Restore the reviewed asset ZIP
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ runner.temp }}/reference-assets.zip
-          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
-          fail-on-cache-miss: true
-      - name: Unpack client assets
-        run: |
-          echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
-          mkdir -p "$RUNNER_TEMP/assets" && unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
-          # Use the data root inside the archive if it has one.
-          for sub in data assets; do
-            if [ -d "$RUNNER_TEMP/assets/$sub" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/$sub" "$RUNNER_TEMP/assets"; break; fi
-          done
-          echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
-
-      - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
-        run: armport/scripts/install_wine_runtime.sh
-
-      - name: Smoke run CityOfHeroes.exe under ARM64 Wine (records Cg requests)
-        run: |
-          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
-            --runtime "$RUNNER_TEMP/runtime" --llvm-mingw /opt/llvm-mingw --wine /opt/wine/bin \
-            --createbins --requests-out "$RUNNER_TEMP/cg-requests"
-
       - uses: actions/upload-artifact@v4
         with:
-          name: armport-client
+          name: armport-client-${{ matrix.config }}
           path: ${{ runner.temp }}/client-bin
-          retention-days: 7
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: armport-cg-requests
-          path: ${{ runner.temp }}/cg-requests
-          if-no-files-found: ignore
           retention-days: 7
 
       - name: Report build errors
@@ -282,9 +252,69 @@ jobs:
             i=$((i+1))
           done < <(awk 'NR%6==1{if(buf)print buf;buf=$0;next}{buf=buf"%0A"$0}END{if(buf)print buf}' errors.txt | head -10)
 
+  client-run1:
+    # Build data/bin with the OptDebug client, then run the Release client on
+    # it; records the Cg programs the Release client asks for.
+    needs: [assets, client]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /armport/
+            /upstream/i24/data/
+            !/upstream/i24/data/maps/
+            /android/runtime-lock.json
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-Release
+          path: ${{ runner.temp }}/client-bin
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-OptDebug
+          path: ${{ runner.temp }}/client-dev
+      - name: Restore the reviewed asset ZIP
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Unpack client assets
+        run: |
+          echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/assets" && unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
+          # Use the data root inside the archive if it has one.
+          for sub in data assets; do
+            if [ -d "$RUNNER_TEMP/assets/$sub" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/$sub" "$RUNNER_TEMP/assets"; break; fi
+          done
+          echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
+      - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
+        run: armport/scripts/install_wine_runtime.sh
+      - name: Create bins (OptDebug) and run the Release client
+        run: |
+          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
+            --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin \
+            --createbins --createbins-build "$RUNNER_TEMP/client-dev" --bins-out "$RUNNER_TEMP/client-bins/bin" \
+            --requests-out "$RUNNER_TEMP/cg-requests"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+          if-no-files-found: ignore
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-cg-requests
+          path: ${{ runner.temp }}/cg-requests
+          if-no-files-found: ignore
+          retention-days: 7
+
   cg-precompile:
     # Compile the Cg programs the client asked for with the original cgc.exe.
-    needs: client
+    needs: client-run1
     runs-on: windows-2025
     timeout-minutes: 20
     steps:
@@ -316,8 +346,8 @@ jobs:
           retention-days: 7
 
   client-run:
-    # Run the client again with the precompiled ARB programs.
-    needs: [assets, client, cg-precompile]
+    # Run the Release client with the bins and the precompiled ARB programs.
+    needs: [assets, client, client-run1, cg-precompile]
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     steps:
@@ -332,12 +362,17 @@ jobs:
           lfs: false
       - uses: actions/download-artifact@v4
         with:
-          name: armport-client
+          name: armport-client-Release
           path: ${{ runner.temp }}/client-bin
       - uses: actions/download-artifact@v4
         with:
           name: armport-cg-arb
           path: ${{ runner.temp }}/cg-arb
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+        continue-on-error: true
       - name: Restore the reviewed asset ZIP
         uses: actions/cache/restore@v4
         with:
@@ -353,11 +388,12 @@ jobs:
             if [ -d "$RUNNER_TEMP/assets/$sub" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/$sub" "$RUNNER_TEMP/assets"; break; fi
           done
           echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
-
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
         run: armport/scripts/install_wine_runtime.sh
-      - name: Run CityOfHeroes.exe with precompiled Cg programs
+      - name: Run CityOfHeroes.exe with bins and precompiled Cg programs
         run: |
-          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --data upstream/i24/data --data "$RUNNER_TEMP/assets" \
+          mkdir -p "$RUNNER_TEMP/client-bins"
+          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --cg-dir "$RUNNER_TEMP/cg-arb" \
-            --createbins --requests-out "$RUNNER_TEMP/cg-requests-2"
+            --requests-out "$RUNNER_TEMP/cg-requests-2"

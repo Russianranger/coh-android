@@ -103,12 +103,16 @@ def createbins(a, rt, exe, env, wine):
     """Build the client's .bin files from the text data (as the x86 tools do)."""
     log = rt.parent / 'createbins-output.txt'
     stdio = rt / 'armport_stdio_createbins.txt'
+    binner = rt / exe.name
+    if a.createbins_build:
+        dev = next(a.createbins_build.rglob('CityOfHeroes.exe'))
+        binner = rt / 'CityOfHeroes-createbins.exe'
+        shutil.copy2(dev, binner)
     start = time.time()
     with open(log, 'wb') as out:
-        p = subprocess.Popen([wine, str(rt / exe.name), '-createbins', '-nogui', '1', '-verbose', '1'],
+        p = subprocess.Popen([wine, str(binner), '-createbins', '-nogui', '1', '-verbose', '1'],
                              cwd=rt, env=dict(env, ARMPORT_STDIO_LOG=stdio.name,
-                                              WINEDEBUG='err+all,fixme-all,+seh,+process,+relay',
-                                              WINEDEBUG_RELAY_EXCLUDE='ntdll.Rtl*;ntdll.Nt*;kernelbase.Heap*'),
+                                              WINEDEBUG=a.winedebug + ',+seh'),
                              stdout=out, stderr=subprocess.STDOUT)
         status = 'timed out (killed)'
         while time.time() - start < a.createbins_seconds:
@@ -127,6 +131,8 @@ def createbins(a, rt, exe, env, wine):
             p.kill()
     subprocess.run([str(a.wine / 'wineserver'), '-k'], env=env, capture_output=True)
     bins = sorted((rt / 'data' / 'bin').glob('*.bin')) if (rt / 'data' / 'bin').is_dir() else []
+    if a.bins_out and bins:
+        shutil.copytree(rt / 'data' / 'bin', a.bins_out, dirs_exist_ok=True)
     lines = log.read_text(errors='replace').splitlines()
     texts = window_texts(lines)
     note('notice', 'ArmPort M2 createbins',
@@ -221,6 +227,9 @@ def main():
     ap.add_argument('--createbins', action='store_true',
                     help='first run the client with -createbins to build data/bin from text data')
     ap.add_argument('--createbins-seconds', type=int, default=1800)
+    ap.add_argument('--createbins-build', type=Path,
+                    help='directory with the non-FINAL (OptDebug) client used for -createbins')
+    ap.add_argument('--bins-out', type=Path, help='copy the created data/bin here')
     ap.add_argument('--cg-dir', type=Path, help='precompiled <key>.arb files for the Cg stand-in')
     ap.add_argument('--requests-out', type=Path, help='copy recorded Cg requests here')
     ap.add_argument('args', nargs='*')
