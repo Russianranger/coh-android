@@ -107,7 +107,8 @@ def createbins(a, rt, exe, env, wine):
          + ', '.join(b.name for b in bins[:80]))
     if texts:
         note('warning', 'ArmPort M2 createbins window text', '\n'.join(t[:600] for t in texts[:20]))
-    tail = [l[:300] for l in lines if 'trace:' not in l][-50:]
+    tail = [l[:300] for l in lines if 'trace:' not in l and 'Token id=' not in l
+            and 'Process id=' not in l][-75:]
     for i, c in enumerate(chunks(tail)):
         note('notice', f'ArmPort M2 createbins output {i}', c)
 
