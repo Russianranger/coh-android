@@ -184,6 +184,14 @@ def report_stdio(path, title):
         return
     text = path.read_text(errors='replace').splitlines()
     note('notice', title + ' size', f'{len(text)} lines')
+    # Missing-art warnings (assets not in the bundle) bury everything else.
+    noise = re.compile(r'references missing texture|^ERRORLOG FILEERROR|^File: |^Last Author|'
+                       r"It won't create anything|contains EntCreate|^Player texture .* not found")
+    text = [l for l in text if not noise.search(l)]
+    note('notice', title + ' after filtering', f'{len(text)} lines')
+    focus = [l[:300] for l in text if re.search(r'(?i)tokenizer|scene|couldn.t open', l)]
+    if focus:
+        note('warning', title + ' tokenizer and scene', '\n'.join(focus[-40:]))
     errors = [l[:300] for l in text if re.search(r'error|assert|fatal|fail|unable|cannot|missing|couldn.t open|is empty', l, re.I)
               and 'references missing texture' not in l and "It won't create" not in l]
     for i, c in enumerate(chunks(errors[:50])):
