@@ -184,7 +184,8 @@ def report_stdio(path, title):
         return
     text = path.read_text(errors='replace').splitlines()
     note('notice', title + ' size', f'{len(text)} lines')
-    errors = [l[:300] for l in text if re.search(r'error|assert|fatal|fail|unable|cannot|missing', l, re.I)]
+    errors = [l[:300] for l in text if re.search(r'error|assert|fatal|fail|unable|cannot|missing|couldn.t open|is empty', l, re.I)
+              and 'references missing texture' not in l and "It won't create" not in l]
     for i, c in enumerate(chunks(errors[:50])):
         note('warning', f'{title} errors {i}', c)
     for i, c in enumerate(chunks([l[:300] for l in text[-75:]])):
@@ -380,7 +381,7 @@ def main():
     log = rt.parent / 'smoke-output.txt'
     start = time.time()
     with open(log, 'wb') as out:
-        args = a.args or ['-fullscreen', '0', '-screen', '1024', '768']
+        args = a.args or ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1']
         proc = subprocess.Popen([wine, str(rt / exe.name)] + args, cwd=rt,
                                 env=dict(env, ARMPORT_STDIO_LOG='armport_stdio.txt'),
                                 stdout=out, stderr=subprocess.STDOUT)
