@@ -28,3 +28,4 @@
 0028-game-arm64-stdio-log.patch
 0029-utilitieslib-arm64-superassert.patch
 0030-game-dds-header-file-layout.patch
+0031-utilitieslib-findfirst-handle-width.patch

@@ -122,6 +122,7 @@ jobs:
       - name: Build UtilitiesLib, test program and precise floating-point check
         run: |
           cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts verify_precise_floating_point \
+            armport_address_space_laa armport_address_space_nolaa \
             -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
           test "${PIPESTATUS[0]}" -eq 0
 
@@ -140,6 +141,14 @@ jobs:
           cat result.json; tail -20 stderr.txt
           echo "::notice title=ArmPort M1 bodyparts (exit $rc)::$(head -c 900 result.json)"
           exit $rc
+
+      - name: Address space under ARM64 Wine (large-address-aware on and off)
+        run: |
+          for v in laa nolaa; do
+            out=$(/opt/wine/bin/wine "$RUNNER_TEMP/armport/build/bin/armport_address_space_$v.exe" 2>/dev/null | tr -d '\r')
+            echo "$out"
+            echo "::notice title=ArmPort address space ($v)::$out"
+          done
 
       - name: Report build errors
         if: failure()

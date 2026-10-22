@@ -1,0 +1,61 @@
+diff --git a/libs/UtilitiesLib/src/utils/FolderCache.c b/libs/UtilitiesLib/src/utils/FolderCache.c
+index 12e2f7d..52389fe 100644
+--- a/libs/UtilitiesLib/src/utils/FolderCache.c
++++ b/libs/UtilitiesLib/src/utils/FolderCache.c
+@@ -892,7 +892,7 @@ static int FolderCacheUpdate(DirChangeInfo** bufferOverrunOut)
+         char fullpath[MAX_PATH], long_path_name[MAX_PATH];
+         char *relpath;
+         struct _finddata32_t fd;
+-        int fdHandle;
++        intptr_t fdHandle;
+         int log=1;
+ 
+         if (folder_cache_debug>=2) {
+diff --git a/libs/UtilitiesLib/src/utils/file.c b/libs/UtilitiesLib/src/utils/file.c
+index 44e1799..670351c 100644
+--- a/libs/UtilitiesLib/src/utils/file.c
++++ b/libs/UtilitiesLib/src/utils/file.c
+@@ -2517,7 +2517,7 @@ int fileMakeLocalBackup(const char *_fname, int time_to_keep) {
+     int backup_num=0;
+     struct _finddata32_t fileinfo;
+     int i;
+-    long handle;
++    intptr_t handle;
+ 
+     if (!_fname)
+         return 0;
+diff --git a/libs/UtilitiesLib/src/utils/fileutil.c b/libs/UtilitiesLib/src/utils/fileutil.c
+index 3a53122..96fbb03 100644
+--- a/libs/UtilitiesLib/src/utils/fileutil.c
++++ b/libs/UtilitiesLib/src/utils/fileutil.c
+@@ -36,7 +36,7 @@ char * fileGetcwd(char * _DstBuf, int _SizeInBytes)
+ 
+ static void old_fileScanAllDataDirsRecurseHelper(char* relRootPath){
+     struct _finddata32_t fileinfo;
+-    int    handle,test;
++    intptr_t handle,test;
+     char buffer[1024];
+     FileScanAction action = FSA_EXPLORE_DIRECTORY;
+ 
+diff --git a/libs/UtilitiesLib/src/utils/utils.c b/libs/UtilitiesLib/src/utils/utils.c
+index 94afca7..b4fa069 100644
+--- a/libs/UtilitiesLib/src/utils/utils.c
++++ b/libs/UtilitiesLib/src/utils/utils.c
+@@ -149,7 +149,7 @@ void rmdirtree(char *path)
+ {
+     char    buf[1000],*s;
+     struct _finddata32_t finddata;
+-    long hfile;
++    intptr_t hfile;
+     forwardSlashes(path);
+ 
+     strcpy(buf,path);
+@@ -204,7 +204,7 @@ static void rmdirtreeExInternal(char* path, int forceRemove)
+     if(status.st_mode & _S_IFDIR)
+     {
+         char buffer[MAX_PATH];
+-        int handle;
++        intptr_t handle;
+         struct _finddata32_t finddata;
+ 
+ 

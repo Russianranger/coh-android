@@ -19,3 +19,11 @@ target_link_libraries(armport_bodyparts PRIVATE UtilitiesLib)
 # One self-contained executable: no compiler runtime DLLs to copy into Wine.
 target_link_options(armport_bodyparts PRIVATE -static)
 StructParse(armport_bodyparts)
+
+# M2: address space of an ARM64 program under Wine, with and without the
+# large-address-aware flag (see src/address_space_test.c).
+foreach(variant IN ITEMS laa nolaa)
+	add_executable(armport_address_space_${variant} src/address_space_test.c)
+	target_link_options(armport_address_space_${variant} PRIVATE -static)
+endforeach()
+target_link_options(armport_address_space_nolaa PRIVATE "-Wl,-Xlink=/largeaddressaware:no")
