@@ -107,7 +107,8 @@ def createbins(a, rt, exe, env, wine):
     with open(log, 'wb') as out:
         p = subprocess.Popen([wine, str(rt / exe.name), '-createbins', '-nogui', '1', '-verbose', '1'],
                              cwd=rt, env=dict(env, ARMPORT_STDIO_LOG=stdio.name,
-                                              WINEDEBUG=a.winedebug + ',+seh,+process'),
+                                              WINEDEBUG='err+all,fixme-all,+seh,+process,+relay',
+                                              WINEDEBUG_RELAY_EXCLUDE='ntdll.Rtl*;ntdll.Nt*;kernelbase.Heap*'),
                              stdout=out, stderr=subprocess.STDOUT)
         status = 'timed out (killed)'
         while time.time() - start < a.createbins_seconds:
@@ -134,8 +135,16 @@ def createbins(a, rt, exe, env, wine):
     if texts:
         note('warning', 'ArmPort M2 createbins window text', '\n'.join(t[:600] for t in texts[:20]))
     report_stdio(stdio, 'ArmPort M2 createbins client output')
-    exc = [l[:300] for l in lines if 'dispatch_exception code=' in l or 'exit' in l.lower()
-           and 'trace:process' in l or 'err:' in l]
+    # The calls leading to process exit (relay trace of the main thread).
+    end = next((i for i, l in enumerate(lines) if 'ExitProcess' in l or '_exit' in l.split('(')[0]
+                or 'exit(' in l and 'Call ' in l), None)
+    if end is not None:
+        tid = lines[end].split(':', 1)[0]
+        before = [l[:240] for l in lines[max(0, end - 4000):end + 3] if l.startswith(tid + ':')
+                  and ('Call ' in l or 'Ret ' in l or 'err:' in l)]
+        note('warning', 'ArmPort M2 createbins calls before exit', '\n'.join(before[-70:]))
+    note('notice', 'ArmPort M2 createbins trace size', f'{len(lines)} lines')
+    exc = [l[:300] for l in lines if 'dispatch_exception code=' in l or 'err:' in l]
     if exc:
         note('warning', 'ArmPort M2 createbins exceptions and exits', '\n'.join(exc[:40]))
     wine_tail = [l[:300] for l in lines if 'trace:' not in l][-40:]
