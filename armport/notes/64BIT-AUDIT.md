@@ -38,12 +38,10 @@ handles get cut.
 | 0034 | `.geo` files: `ModelHeader` (140 bytes on disk), `PolyGrid` (32), `PackData` (12), name tables (32-bit offsets converted to pointers in place), `BoneInfo` (32-bit pointer slots), collision `PolyCell` trees (32-bit offsets) and a `(U32)` base pointer | model headers, names, mesh data and collision misread or truncated |
 | 0033 | `.anim` files are 32-bit memory images (`SkeletonAnimTrack` 596 bytes, `BoneAnimTrack` 20, pointers as 32-bit offsets) | every field after the first pointer misread; createbins asserted in `animtrack.c` (no skeleton hierarchy) |
 
+| 0036 | Entity, power, recipe and task pointers kept in the expression evaluator's int table (`eval_StoreInt`, and `eval_FetchInt(..., (int *)&ptr)` writing 4 of 8 bytes) in 6 Common files | combat, power-slot, recipe and supergroup expressions would see broken pointers |
+
 ## Known, not fixed yet
 
-- `Common/entity/powers.c:2363-2365`, `Common/bases/DetailRecipe.c:848-850` and
-  `Common/entity/character_combat_eval.c`: entity, power and recipe pointers
-  stored with `eval_StoreInt` (32-bit) and read back as pointers. Affects
-  power-slot and recipe evaluation in game (M3).
 - `libs/UtilitiesLib/src/utils/DirMonitor.c:338`: completion key narrowed to
   U32 (development-mode file watching only).
 - `libs/UtilitiesLib/src/network/*`: `SOCKET` values kept in `int`. Socket
