@@ -24,14 +24,27 @@ class Screen:
         self.count = 0
         self.log = []
 
-    def shot(self, name):
+    def shot(self, name, tries=4):
+        """Screenshot; the client redraws at about 60 fps and a capture can
+        catch a frame half presented, so the most detailed of a few quick
+        captures is kept (largest PNG)."""
         self.count += 1
-        xwd = self.out / f'{self.count:02d}-{name}.xwd'
-        png = xwd.with_suffix('.png')
-        sh('xwd', '-root', '-silent', '-out', str(xwd))
-        if xwd.exists():
-            sh('convert', f'xwd:{xwd}', str(png))
-            xwd.unlink()
+        png = self.out / f'{self.count:02d}-{name}.png'
+        best = None
+        for i in range(tries):
+            xwd = self.out / f'grab{i}.xwd'
+            cand = self.out / f'grab{i}.png'
+            sh('xwd', '-root', '-silent', '-out', str(xwd))
+            if xwd.exists():
+                sh('convert', f'xwd:{xwd}', str(cand))
+                xwd.unlink()
+            if cand.exists() and (best is None or cand.stat().st_size > best.stat().st_size):
+                best = cand
+            time.sleep(0.05)
+        if best:
+            best.rename(png)
+        for left in self.out.glob('grab*.png'):
+            left.unlink()
         self.log.append(f'{self.count:02d} {name}')
         return png if png.exists() else None
 
@@ -150,33 +163,27 @@ def login(screen, account, password, status, after=lambda label: None, wait_seco
         time.sleep(3)
         png = screen.shot('ultra-dismissed')
         status['ultra_prompt_left'] = 'ultra' in screen.text(png).lower()
-    # Account and password: click just below each label (the fields sit under them).
-    for label_words, value, name in ((('ACCOUNT', 'Account'), account, 'account'),
-                                     (('PASSWORD', 'Password'), password, 'password')):
-        positions = [(w, x, y) for w, x, y in screen.words(png) if w.strip(':') in label_words]
-        if name == 'account':
-            # "ACCOUNT NAME" and "ACCOUNT PASSWORD" both start with ACCOUNT; take the upper one.
-            positions.sort(key=lambda p: p[2])
-        if positions:
-            _, x, y = positions[0]
-            screen.click(x + 40, y + 34)
-        else:
-            pos = at(screen, name + '_field')
-            if pos:
-                screen.click(*pos)
-        screen.key('ctrl+a')
-        screen.type(value)
-        time.sleep(1)
-        png = screen.shot(name + '-typed')
+    # Account and password by keyboard: the account field takes focus (one
+    # click on it), Tab moves to the password field, Return logs in.
+    positions = sorted(((w, x, y) for w, x, y in screen.words(png) if w.strip(':') in ('ACCOUNT', 'Account')),
+                       key=lambda p: p[2])
+    pos = (positions[0][1] + 40, positions[0][2] + 34) if positions else at(screen, 'account_field')
+    if pos:
+        screen.click(*pos)
+    screen.key('ctrl+a')
+    screen.type(account)
+    time.sleep(1)
+    png = screen.shot('account-typed')
+    screen.key('Tab')
+    time.sleep(0.5)
+    screen.type(password)
+    time.sleep(1)
+    png = screen.shot('password-typed')
     # The login panel (fields and buttons) at full resolution, before and after Log In.
     panel = (560, 260, 460, 280)
     status['crop_before'] = str(screen.crop(png, 'login-panel-typed', panel))
-    pos = screen.find(png, 'Log', 'Login') or at(screen, 'login_button')
-    if pos:
-        screen.click(*pos)
-    else:
-        screen.key('Return')
-    status['login_sent'] = True
+    screen.key('Return')
+    status['login_sent'] = "Return"
     time.sleep(2)
     after('2s after Log In')
     time.sleep(8)
