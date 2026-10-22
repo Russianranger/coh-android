@@ -415,12 +415,19 @@ jobs:
           echo "::notice title=ArmPort client assets::$(ls "$RUNNER_TEMP/assets" | tr '\n' ' ')"
       - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa
         run: armport/scripts/install_wine_runtime.sh
+      - name: Install llvm-mingw (for llvm-symbolizer)
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/llvm-mingw
+          sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
       - name: Run CityOfHeroes.exe with bins and precompiled Cg programs
         run: |
           mkdir -p "$RUNNER_TEMP/client-bins"
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" \
             --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
-            --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --cg-dir "$RUNNER_TEMP/cg-arb" \
+            --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw --cg-dir "$RUNNER_TEMP/cg-arb" \
             --requests-out "$RUNNER_TEMP/cg-requests-2"
       - name: Export the last screen
         if: always()
