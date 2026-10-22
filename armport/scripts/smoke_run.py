@@ -10,6 +10,7 @@ is 0 unless the script itself cannot run.
 """
 import argparse
 import re
+import json
 import os
 import shutil
 import subprocess
@@ -312,6 +313,36 @@ def _screenshot_summary(display, path):
     return f'nonzero bytes {nonblack:.1%}, distinct colors (sampled) {distinct}'
 
 
+def login_probe(out, proc):
+    """M3 debugging aid: drive the login screen as the M3 server run does."""
+    from login_ui import Screen, login
+    screen = Screen(out)
+    status = {}
+
+    def after(label):
+        r = subprocess.run(['ss', '-tuanp'], capture_output=True, text=True, timeout=30)
+        sockets = [' '.join(l.split())[:200] for l in r.stdout.splitlines() if 'CityOfHeroes' in l.lower() or 'cityofheroes' in l.lower()]
+        w = subprocess.run(['xwininfo', '-root', '-tree', '-display', ':99'], capture_output=True, text=True).stdout
+        named = [' '.join(x.split())[:140] for x in w.splitlines() if '"' in x and 'has no name' not in x]
+        status.setdefault('after', []).append({'when': label, 'client_sockets': sockets, 'windows': named[:8],
+                                               'client_alive': proc.poll() is None})
+    try:
+        login(screen, 'ArmPortProbe', 'probe-pass', status, after=after, wait_seconds=120)
+        time.sleep(20)
+        screen.shot('probe-end')
+        after('30s after Log In')
+    except Exception as e:  # diagnostics only
+        status['error'] = repr(e)
+    note('notice', 'ArmPort M2 login probe', json.dumps(status, indent=1)[:3000] + '\n' + '\n'.join(screen.log[-40:]))
+    shots = sorted(out.glob('*.png'))
+    if shots:
+        for size, q in (('320x240', 45), ('256x192', 40), ('200x150', 35)):
+            subprocess.run(['montage', *map(str, shots[-9:]), '-tile', '3x', '-geometry', size + '+2+2',
+                            '-quality', str(q), str(out.parent / 'probe.jpg')], capture_output=True)
+            if (out.parent / 'probe.jpg').exists() and (out.parent / 'probe.jpg').stat().st_size < 24000:
+                break
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--build', required=True, type=Path)
@@ -320,6 +351,10 @@ def main():
     ap.add_argument('--runtime', required=True, type=Path)
     ap.add_argument('--llvm-mingw', type=Path, help='for the import list and runtime DLLs')
     ap.add_argument('--wine', type=Path, help='directory with wine, wineserver (not needed with --stage-only)')
+    ap.add_argument('--login-probe', action='store_true',
+                    help='after the 60 s screenshot, type a throwaway login on the login screen and press '
+                         'Log In (login_ui.py); reports the client\'s sockets and windows and a step contact '
+                         'sheet. There is no server, so this only shows whether Log In starts a connection.')
     ap.add_argument('--stage-only', action='store_true',
                     help='only build the runtime folder (exe, DLLs, data overlay, Cg programs) and exit; '
                          'used by the M3 server run, which starts the client itself')
@@ -416,6 +451,8 @@ def main():
             shot_mid = screenshot_summary(display, rt.parent / 'shot60.xwd')
             titles = subprocess.run(['xwininfo', '-root', '-tree', '-display', display],
                                     capture_output=True, text=True).stdout
+            if a.login_probe:
+                login_probe(rt.parent / 'probe', proc)
             try:
                 proc.wait(timeout=max(0, a.seconds - 60))
             except subprocess.TimeoutExpired:
@@ -492,7 +529,8 @@ def main():
             failures.append(f'message box shown: {dialog[0][:200]}')
         # A live client must also be drawing: the last screen needs real content
         # (the login screen samples about 1,200 distinct colours; a blank one 1).
-        m = re.search(r'distinct colors \(sampled\) (\d+)', shot_end or '')
+        # With --login-probe the screen check uses the frame from before the probe.
+        m = re.search(r'distinct colors \(sampled\) (\d+)', (shot_mid if a.login_probe else shot_end) or '')
         if running and (not m or int(m.group(1)) < 64):
             failures.append(f'last screen blank or missing: {shot_end}')
         if failures:

@@ -433,11 +433,12 @@ jobs:
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" \
             --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw --cg-dir "$RUNNER_TEMP/cg-arb" \
-            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive
+            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive --login-probe
       - name: Export the last screen
         if: always()
         run: |
           [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"
+          [ -f "$RUNNER_TEMP/probe.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/probe.jpg" "ArmPort M2 login probe steps" || echo "no probe"
 
   server-run:
     # M3: the repository's qualified ARM64 game stack (original DbServer and
