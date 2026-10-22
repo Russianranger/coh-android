@@ -557,6 +557,16 @@ jobs:
             xvfb xdotool x11-apps imagemagick tesseract-ocr
       - name: Build matching native ARM64 PRoot
         run: armport/scripts/step.sh "ArmPort M3 PRoot build" python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      # The client runs on the host exactly as in M2's boot test.
+      - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa (client side)
+        run: armport/scripts/install_wine_runtime.sh
+      - name: Install llvm-mingw (for llvm-symbolizer)
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/llvm-mingw
+          sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
 
       - uses: actions/download-artifact@v4
         with:
@@ -584,7 +594,9 @@ jobs:
           armport/scripts/step.sh "ArmPort M3 server run" python3 armport/server/armport_game_host.py --assets out/donors/runtime-inputs --package out/wine-game \
             --data out/game-data --schema out/dbserver-schema --stack-probe out/donors/stack-probe \
             --proot out/android/native/linux-arm64 --client "$RUNNER_TEMP/armport-client" \
-            --work "$RUNNER_TEMP/m3-work" --evidence "$RUNNER_TEMP/m3-evidence"
+            --work "$RUNNER_TEMP/m3-work" --evidence "$RUNNER_TEMP/m3-evidence" \
+            --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw \
+            --client-prefix "$RUNNER_TEMP/m3-client-prefix" --client-home "$RUNNER_TEMP/m3-client-home"
       - name: Export the in-game screen
         if: always()
         run: |
@@ -596,6 +608,7 @@ jobs:
           path: |
             ${{ runner.temp }}/m3-evidence/
             ${{ runner.temp }}/armport-client/armport_stdio.txt
+            ${{ runner.temp }}/m3-evidence/client-output.txt
             out/donor-files.txt
             out/wine-game/game-package.json
           if-no-files-found: warn

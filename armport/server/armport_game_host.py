@@ -5,12 +5,13 @@ scripted on a shared X display.
 Reuses the repository's qualified ARM64 game stack (tools/android/game/
 host_game_smoke.py): the same PRoot guest, private loopback-only network
 namespace, PostgreSQL, Wine 10 with FEX, fake-auth DbServer, Atlas MapServer
-and the original TestClient that creates and saves a character. The guest
-script is armport_game_guest.py, which then starts the ARM64 client (staged
-by smoke_run.py --stage-only) in the same Wine. This driver runs Xvfb on the
-host (the guest reaches it through the bound /tmp/.X11-unix socket file),
-types the login with xdotool, finds buttons by OCR, and keeps a screenshot of
-every step.
+and the original TestClient that creates and saves a character
+(armport_game_guest.py). This driver then runs the ARM64 client exactly as
+M2's boot test does (the app's Wine 10 on the host, Xvfb, Mesa; folder staged
+by smoke_run.py --stage-only), but inside the guest's private network
+namespace (nsenter), so it reaches the servers on 127.0.0.1 and nothing else.
+It types the login with xdotool, finds buttons by OCR, and keeps a screenshot
+of every step.
 
 Exit status 0 only if the guest report passed, which requires the ARM64
 client's character to be connected on Atlas (map 1) in the database and still
@@ -120,15 +121,67 @@ def wait_for(screen, label, predicate, seconds, interval=10):
     return None, None
 
 
-def drive_login(screen, state, status):
-    """Runs in a thread: waits for the guest's client marker, then logs in."""
-    started = state / 'armport-client-started.json'
-    while not started.exists():
+def guest_netns(own):
+    """A process of ours inside the guest's network namespace (PRoot runs
+    there as the original user)."""
+    for entry in os.listdir('/proc'):
+        if not entry.isdigit():
+            continue
+        try:
+            if os.stat(f'/proc/{entry}').st_uid != os.getuid():
+                continue
+            ns = os.readlink(f'/proc/{entry}/ns/net')
+        except OSError:
+            continue
+        if ns != own:
+            return int(entry), ns
+    return None, None
+
+
+def start_client(a, state, status, evidence):
+    """Waits for the guest's ready marker, then starts the ARM64 client in the
+    guest's network namespace. Returns the process or None."""
+    ready = state / 'armport-ready.json'
+    while not ready.exists():
         if status.get('guest_exited'):
-            return
+            return None, None
         time.sleep(2)
-    info = json.loads(started.read_text())
+    info = json.loads(ready.read_text())
+    pid, ns = guest_netns(os.readlink('/proc/self/ns/net'))
+    status['guest_netns'] = ns
+    if not pid:
+        status['client_error'] = 'guest network namespace not found'
+        (state / 'armport-client-exited.json').write_text(json.dumps({'error': status['client_error']}) + '\n')
+        return None, info
+    client = a.client.resolve()
+    env = {'PATH': '/usr/bin:/bin', 'HOME': str(a.client_home), 'LANG': 'C.UTF-8', 'DISPLAY': DISPLAY,
+           'WINEPREFIX': str(a.client_prefix), 'WINEDEBUG': 'err+all,fixme-all,+seh',
+           'WINEDLLOVERRIDES': 'mscoree,mshtml=', 'ARMPORT_LOOSE_DATA': '1', 'ARMPORT_STDIO_LOG': 'armport_stdio.txt'}
+    args = ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1', '-db', '127.0.0.1']
+    command = ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', '--', 'sudo', '-n', '-u', os.environ.get('USER', 'runner'),
+               '--', 'env', '-C', str(client)] + [f'{k}={v}' for k, v in env.items()] + \
+              [str(a.wine / 'wine'), str(client / 'CityOfHeroes.exe')] + args
+    out = open(evidence / 'client-output.txt', 'wb')
+    proc = subprocess.Popen(command, stdout=out, stderr=subprocess.STDOUT, start_new_session=True)
     status['client_started'] = True
+    status['client_args'] = args
+    (state / 'armport-client-started.json').write_text(json.dumps({'args': args, 'netns': ns}) + '\n')
+
+    def watch():
+        code = proc.wait()
+        status['client_exit'] = code
+        if not (state / 'armport-guest-finished.json').exists():
+            (state / 'armport-client-exited.json').write_text(json.dumps({'exit': code}) + '\n')
+    threading.Thread(target=watch, daemon=True).start()
+    return proc, info
+
+
+def drive_login(a, screen, state, status, evidence):
+    """Runs in a thread: starts the client when the servers are ready, then logs in."""
+    proc, info = start_client(a, state, status, evidence)
+    status['proc'] = proc
+    if not proc:
+        return
     # Login screen: the account field label is drawn by the game's own UI.
     png, words = wait_for(screen, 'login-wait', lambda p: (lambda t: t if 'account' in t.lower() else None)(screen.text(p)),
                           900, interval=20)
@@ -214,6 +267,10 @@ def main():
     ap.add_argument('--client', type=Path, required=True, help='ARM64 client runtime folder (smoke_run --stage-only)')
     ap.add_argument('--work', type=Path, required=True)
     ap.add_argument('--evidence', type=Path, required=True)
+    ap.add_argument('--wine', type=Path, required=True, help='host install of the app\'s Wine (wine, wineserver)')
+    ap.add_argument('--llvm-mingw', type=Path, help='for llvm-symbolizer on client crashes')
+    ap.add_argument('--client-prefix', type=Path, required=True, help='fresh Wine prefix for the client')
+    ap.add_argument('--client-home', type=Path, required=True)
     ap.add_argument('--timeout-seconds', type=int, default=3600)
     a = ap.parse_args()
     assets, package, data, schema, work, evidence, proot, client = (
@@ -235,11 +292,8 @@ def main():
     command = game.make_command(work=work, assets=assets, package=package, data=data, schema=schema,
                                 proot=proot, timeout_seconds=a.timeout_seconds)
     command = ['/opt/coh-m3/armport_game_guest.py' if c == '/opt/coh-m3/game_diagnostic.py' else c for c in command]
-    w = command.index('-w')
-    command[w:w] = ['-b', f'{client}:/opt/armport-client', '-b', '/tmp/.X11-unix:/tmp/.X11-unix']
     py = command.index('/usr/bin/python3')
-    command[py:py] = ['ARMPORT_CLIENT_DIR=/opt/armport-client', f'ARMPORT_DISPLAY={DISPLAY}',
-                      'ARMPORT_CLIENT_SECONDS=1500']
+    command[py:py] = ['ARMPORT_CLIENT_SECONDS=1500']
     command, env, network_expected = dbhost.isolate_command(command, evidence=evidence, proot=proot, work=work)
 
     # Large enough for the whole 1024x768 window at Wine's default position
@@ -247,23 +301,41 @@ def main():
     xvfb = subprocess.Popen(['Xvfb', DISPLAY, '-screen', '0', '1600x1200x24', '-nolisten', 'tcp', '+extension', 'GLX'],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(3)
+    # The client's own Wine prefix, prepared on the host as in M2 while the
+    # servers start (wineserver stopped again so the client starts its own).
+    a.client_home.mkdir(parents=True, exist_ok=True)
+    wenv = dict(os.environ, DISPLAY=DISPLAY, WINEPREFIX=str(a.client_prefix), HOME=str(a.client_home),
+                WINEDLLOVERRIDES='mscoree,mshtml=')
+    boot = subprocess.run([str(a.wine / 'wine'), 'wineboot', '-i'], env=wenv, capture_output=True, timeout=600)
+    subprocess.run([str(a.wine / 'wine'), 'reg', 'add', 'HKCU\\Software\\Wine\\WineDbg', '/v', 'ShowCrashDialog',
+                    '/t', 'REG_DWORD', '/d', '0', '/f'], env=wenv, capture_output=True, timeout=120)
+    subprocess.run([str(a.wine / 'wineserver'), '-k'], env=wenv, capture_output=True, timeout=120)
+    note('notice', 'ArmPort M3 client prefix', f'wineboot exit {boot.returncode}')
     screen = Screen(evidence / 'screens')
     state = work / 'state'
     status = {}
-    driver = threading.Thread(target=drive_login, args=(screen, state, status), daemon=True)
-    driver.start()
 
     log_path = evidence / 'host-game.log'
     report_path = state / 'latest-report.json'
     code = None
     with log_path.open('w') as log:
         process = subprocess.Popen(command, env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        driver = threading.Thread(target=drive_login, args=(a, screen, state, status, evidence), daemon=True)
+        driver.start()
         try:
             code = process.wait(timeout=a.timeout_seconds + 120)
         except subprocess.TimeoutExpired:
             note('error', 'ArmPort M3 guest', 'timed out: ' + dbhost.stop_guest(process, state))
     status['guest_exited'] = True
     driver.join(timeout=60)
+    proc = status.pop('proc', None)
+    if proc and proc.poll() is None:
+        subprocess.run(['sudo', '-n', 'kill', '-TERM', '--', f'-{proc.pid}'], capture_output=True)
+        try:
+            proc.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            subprocess.run(['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], capture_output=True)
+    subprocess.run([str(a.wine / 'wineserver'), '-k'], env=wenv, capture_output=True, timeout=120)
     xvfb.kill()
 
     report = json.loads(report_path.read_text()) if report_path.is_file() else {}
@@ -275,10 +347,14 @@ def main():
          + '\n'.join(f'{n}: {s}' for n, s in stages[-25:])
          + ('\nfailures: ' + json.dumps(report.get('failures'))[:1500] if report.get('failures') else ''))
     client_record = report.get('game', {}).get('armport_client', {})
-    note('notice', 'ArmPort M3 ARM64 client', json.dumps({k: v for k, v in client_record.items()
-                                                          if k != 'client_output_tail'}, indent=1)[:3500])
-    if client_record.get('client_output_tail'):
-        note('notice', 'ArmPort M3 client output tail', client_record['client_output_tail'][-3500:])
+    note('notice', 'ArmPort M3 ARM64 client (guest view)', json.dumps(client_record, indent=1)[:3500])
+    lines = (evidence / 'client-output.txt').read_text(errors='replace').splitlines() \
+        if (evidence / 'client-output.txt').exists() else []
+    smoke_run.report_exceptions(lines, client / 'CityOfHeroes.exe', a.llvm_mingw, 'ArmPort M3 client')
+    smoke_run.report_crash(lines, 'ArmPort M3 client crash', client / 'CityOfHeroes.exe', a.llvm_mingw)
+    tail = [l[:300] for l in lines if 'trace:' not in l][-60:]
+    if tail:
+        note('notice', 'ArmPort M3 client output tail', '\n'.join(tail))
     note('notice', 'ArmPort M3 login driver', json.dumps(status, indent=1)[:1500] + '\n' + '\n'.join(screen.log[-60:]))
     smoke_run.report_stdio(client / 'armport_stdio.txt', 'ArmPort M3 client stdio')
     try:

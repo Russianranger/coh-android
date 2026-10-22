@@ -5,17 +5,20 @@ Runs inside the app runtime's PRoot guest, next to the pinned
 android/guest/game_diagnostic.py (copied to /opt/coh-m3 by the host driver).
 The original steps are reused unchanged: private runtime, PostgreSQL, Wine,
 fake-auth DbServer, Atlas MapServer, and a character created and saved by the
-original TestClient. Then the ARM64 CityOfHeroes.exe (staged by the host in
-/opt/armport-client) starts in the same Wine against 127.0.0.1. The host
-driver types the login on the shared X display (armport_game_host.py); this
+original TestClient. Then the host starts the ARM64 CityOfHeroes.exe inside
+this run's network namespace against 127.0.0.1 and types the login on its X
+display (armport_game_host.py); this
 script watches the database until that character is connected on Atlas.
 
 Coordination with the host is by small JSON files in /state:
-  armport-client-started.json  written here: account, character, pid
-  armport-atlas.json           written here: DB status once connected on Atlas
-  armport-host-done.json       written by the host when its screenshots are taken
-Environment (set by the host command): ARMPORT_CLIENT_DIR, ARMPORT_DISPLAY,
-ARMPORT_CLIENT_SECONDS.
+  armport-ready.json           here: servers up, TestClient character saved
+  armport-client-started.json  host: client launched in this network namespace
+  armport-play-sent.json       host: Play pressed on character select
+  armport-client-exited.json   host: client process ended (exit status)
+  armport-atlas.json           here: DB status once connected on Atlas
+  armport-host-done.json       host: in-game screenshots taken
+  armport-guest-finished.json  here: client phase over
+Environment (set by the host command): ARMPORT_CLIENT_SECONDS.
 """
 import json
 import os
@@ -70,34 +73,28 @@ class ArmPortGame(gd.GameDiagnostic):
         self.game.update(status='passed', query_processes=self.query_count, readiness_queries=self.readiness_count)
 
     def armport_client(self):
+        """The host runs the ARM64 client (as in M2, with the host's Wine,
+        Xvfb and Mesa) inside this run's private network namespace; this
+        side only tells it when the servers are ready and watches the
+        database for the character on Atlas."""
         self.ctx.stage('armport_arm64_client_atlas')
-        client_dir = Path(os.environ.get('ARMPORT_CLIENT_DIR', '/opt/armport-client'))
-        exe = client_dir / 'CityOfHeroes.exe'
-        require(exe.is_file(), 'ARM64 client is not staged')
-        seconds = int(os.environ.get('ARMPORT_CLIENT_SECONDS', '1200'))
-        env = dict(self.wine_env, DISPLAY=os.environ.get('ARMPORT_DISPLAY', ':99'),
-                   ARMPORT_LOOSE_DATA='1', ARMPORT_STDIO_LOG='armport_stdio.txt',
-                   LIBGL_ALWAYS_SOFTWARE='1', GALLIUM_DRIVER='llvmpipe',
-                   # Quiet: the guest fails any owned process past 2 MB of output; Wine
-                   # still prints its unhandled-exception line with the address.
-                   WINEDEBUG='-all')
-        args = ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1', '-db', '127.0.0.1']
-        client = self.ctx.start('armport-client', ['/usr/bin/env', '--chdir=' + str(client_dir), self.args.wine,
-                                base.windows_path(exe), *args], env=env)
+        seconds = int(os.environ.get('ARMPORT_CLIENT_SECONDS', '1500'))
         character = self.game['character']
-        write_marker('armport-client-started.json', {
+        write_marker('armport-ready.json', {
             'account': self.game['account'], 'character': character['name'],
-            'container_id': character['container_id'], 'started_utc': base.utc(), 'args': args})
-        record = {'args': args, 'connected_on_atlas': False, 'samples': []}
+            'container_id': character['container_id'], 'ready_utc': base.utc()})
+        record = {'connected_on_atlas': False, 'samples': []}
         self.game['armport_client'] = record
+        started, exited, play_sent = (STATE / name for name in (
+            'armport-client-started.json', 'armport-client-exited.json', 'armport-play-sent.json'))
+        self.wait(lambda: started.exists() or exited.exists(), 600, 'ARM64 client start on the host')
         deadline = time.monotonic() + seconds
         next_status = 0
         queries = 0
-        play_sent = STATE / 'armport-play-sent.json'
         while time.monotonic() < deadline:
             self.health()
-            if client.process.poll() is not None:
-                record['client_exit'] = client.process.poll()
+            if exited.exists():
+                record['client_exit'] = json.loads(exited.read_text())
                 break
             # Each status query is a MapServer -dbquery process within the
             # run's budget: once a minute until the host has pressed Play,
@@ -114,22 +111,16 @@ class ArmPortGame(gd.GameDiagnostic):
                     break
             time.sleep(1)
         if record['connected_on_atlas']:
-            # Let the host take its in-game screenshots, then keep the client
-            # alive a little longer to show it stays connected.
+            # Let the host take its in-game screenshots, then check the
+            # character is still connected.
             done = STATE / 'armport-host-done.json'
-            limit = time.monotonic() + 300
-            while time.monotonic() < limit and not done.exists():
-                self.health()
-                require(client.process.poll() is None, 'ARM64 client exited on Atlas')
-                time.sleep(1)
+            self.wait(lambda: done.exists() or exited.exists(), 300, 'Host in-game screenshots')
             record['host_done'] = done.exists()
+            require(not exited.exists(), 'ARM64 client exited on Atlas')
             sample = self.character_status('armport-final', allow_missing=True)
             record['final_status'] = sample
             record['still_connected'] = evidence.connected_on_atlas(sample)
-        record['client_output_tail'] = client.text()[-4000:]
-        if client.process.poll() is None:
-            client.process.kill()
-            client.process.wait(timeout=30)
+        write_marker('armport-guest-finished.json', {'connected_on_atlas': record['connected_on_atlas']})
         require(record['connected_on_atlas'], 'ARM64 client did not reach Atlas: ' + json.dumps(record['samples'][-1:]))
         require(record.get('still_connected'), 'ARM64 client did not stay connected on Atlas')
         self.ctx.passed(arm64_client_on_atlas=True, map_id=record['atlas_status'].get('map_id'))
