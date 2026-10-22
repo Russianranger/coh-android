@@ -357,6 +357,8 @@ def login_probe(out, proc):
                             '-quality', str(q), str(dst)], capture_output=True)
             if dst.exists() and dst.stat().st_size < 24000:
                 break
+        if dst.exists() and dst.stat().st_size >= 24000:
+            subprocess.run(['convert', str(dst), '-quality', '20', str(dst)], capture_output=True)
 
 
 def main():
