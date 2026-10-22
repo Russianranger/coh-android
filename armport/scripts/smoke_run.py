@@ -241,17 +241,26 @@ def report_crash(lines, title, exe=None, llvm=None):
     client addresses (image base 0x140000000) mapped to functions and lines."""
     out = []
     for i, l in enumerate(lines):
-        if 'Unhandled exception' in l or 'Unhandled page fault' in l or l.startswith('Backtrace:'):
-            out += [m[:220] for m in lines[i:i + 40] if 'trace:' not in m]
-            if len(out) > 60:
-                break
+        if 'Unhandled exception' in l or 'Unhandled page fault' in l:
+            out.append(l[:220])
+            block = [m for m in lines[i + 1:i + 600] if 'trace:' not in m and 'fixme:' not in m
+                     and 'err:' not in m]
+            keep = []
+            for m in block:
+                if (m.startswith('Backtrace:') or re.match(r'\s*=?>?\s*\d+\s+0x', m) or
+                        re.search(r'(?i)cityofheroes|ucrtbase|libc\+\+|opengl32|ntdll|kernelbase', m) and
+                        ('PE' in m or 'ELF' in m or '-' in m) or m.startswith('Modules:') or
+                        'Register dump' in m or re.match(r'\s*(pc|lr|sp|fp|x\d+):', m)):
+                    keep.append(m[:220])
+            out += keep[:70]
+            break
     if out:
         addrs = sorted({int(x, 16) for l in out for x in re.findall(r'(?:0x|\b)0*(14[0-9a-fA-F]{7})\b', l)})
         names = symbolize(exe, addrs[:40], llvm) if exe else {}
         if names:
             out.append('client frames:')
             out += [f'  {x:x} {names[x]}' for x in addrs if x in names]
-        note('error', title, '\n'.join(out[:90]))
+        note('error', title, '\n'.join(out[:110]))
 
 
 def report_runtime_files(rt):
