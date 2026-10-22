@@ -40,6 +40,10 @@ handles get cut.
 | 0036 | Entity, power, recipe and task pointers kept in the expression evaluator's int table (`eval_StoreInt`, and `eval_FetchInt(..., (int *)&ptr)` writing 4 of 8 bytes) in 6 Common files | combat, power-slot, recipe and supergroup expressions would see broken pointers |
 | 0037 | StashTable removal wrote `U32_TO_PTR(STASH_TABLE_DELETED_SLOT_VALUE)`, cutting the 64-bit deleted marker to `0x00000000fffffffe` | every hash-table removal left a live entry; createbins asserted on re-registering `auto>` |
 | 0039 | Pointer arrays described to the textparser as int arrays (`TOK_AUTOINTEARRAY` of `ppPowers`, `ppPowerSets`, `ppItems`, `ppDetails`, for shared-memory copies); textparser int arrays are 32-bit | createbins asserted loading the power dictionary |
+| 0040 | `.geo` format version 2 model records read as a raw `ModelFormatOnDisk_v2` (216 bytes on disk, pointers) | release client crashed in `geoLoadStubs` on a garbage model name |
+
+All file-layout constants above were checked against the 32-bit structures by
+compiling them for i686 with static assertions (sizes and field offsets).
 
 ## Known, not fixed yet
 
