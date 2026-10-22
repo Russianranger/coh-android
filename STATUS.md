@@ -13,7 +13,7 @@ M2 client (branch armport/m2-client, in progress; 37 patches, upstream/ untouche
 - CityOfHeroes.exe builds for ARM64 Windows (Release and OptDebug).
 - Under the app's ARM64 Wine (Xvfb, Mesa) the Release client renders the
   Freedom loading screen with the game's textures (screen exported from CI
-  run 39713962432); it stops at a missing bin (authmsg-en.bin).
+  run 39713451350); it stops at a missing bin (authmsg-en.bin).
 - Cg: the client's vertex/fragment programs are compiled to ARB assembly by
   the original cgc.exe in CI and loaded by the ARM64 stand-in.
 - Data bins: FINAL builds only read bins, so CI builds them with the OptDebug
