@@ -135,14 +135,23 @@ def createbins(a, rt, exe, env, wine):
     if texts:
         note('warning', 'ArmPort M2 createbins window text', '\n'.join(t[:600] for t in texts[:20]))
     report_stdio(stdio, 'ArmPort M2 createbins client output')
-    # The calls leading to process exit (relay trace of the main thread).
-    end = next((i for i, l in enumerate(lines) if 'ExitProcess' in l or '_exit' in l.split('(')[0]
-                or 'exit(' in l and 'Call ' in l), None)
-    if end is not None:
-        tid = lines[end].split(':', 1)[0]
-        before = [l[:240] for l in lines[max(0, end - 4000):end + 3] if l.startswith(tid + ':')
-                  and ('Call ' in l or 'Ret ' in l or 'err:' in l)]
-        note('warning', 'ArmPort M2 createbins calls before exit', '\n'.join(before[-70:]))
+    # The calls leading to each process exit (relay trace, same thread).
+    # The client is the process that loaded the game's own DLL imports.
+    exits = [i for i, l in enumerate(lines) if 'Call KERNEL32.ExitProcess' in l
+             or 'Call ucrtbase.exit(' in l or 'Call ucrtbase._exit(' in l
+             or 'Call ntdll.RtlExitUserProcess' in l]
+    shown = set()
+    for end_i in exits:
+        tid = lines[end_i].split(':', 1)[0]
+        if tid in shown:
+            continue
+        shown.add(tid)
+        ctx = [l[:220] for l in lines[max(0, end_i - 20000):end_i + 2] if l.startswith(tid + ':')
+               and ('Call ' in l or 'Ret ' in l or 'err:' in l)
+               and 'RtlNtStatusToDosError' not in l and 'HeapFree' not in l]
+        dlls = 'opengl32' in ' '.join(lines[max(0, end_i - 200000):end_i]).lower()
+        note('warning', f'ArmPort M2 createbins exit on thread {tid}' + (' (client)' if dlls else ''),
+             '\n'.join(ctx[-45:]))
     note('notice', 'ArmPort M2 createbins trace size', f'{len(lines)} lines')
     exc = [l[:300] for l in lines if 'dispatch_exception code=' in l or 'err:' in l]
     if exc:
