@@ -524,10 +524,11 @@ jobs:
 
       - name: Assemble the game package (repository tools, donor commit)
         run: |
-          python3 tools/android/extract_talloc_source.py --assets out/donors/runtime-inputs \
+          S=armport/scripts/step.sh
+          $S "ArmPort M3 talloc source" sh -c 'python3 tools/android/extract_talloc_source.py --assets out/donors/runtime-inputs \
             --bundle out/donors/proot-sources/proot-corresponding-sources.tar.gz \
-            --output out/android/source-cache/talloc-2.4.3.tar.gz > out/talloc-source-receipt.json
-          python3 - <<'PY'
+            --output out/android/source-cache/talloc-2.4.3.tar.gz > out/talloc-source-receipt.json'
+          cat > "$RUNNER_TEMP/unpack_reference.py" <<'PY'
           import hashlib, pathlib, zipfile
           archive = pathlib.Path('out/donors/reference-artifact/coh-reference-win32.zip')
           assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
@@ -535,7 +536,8 @@ jobs:
               assert all('/' not in n and '\\' not in n and n not in ('.', '..') for n in value.namelist())
               value.extractall('out/reference-runtime')
           PY
-          python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime \
+          $S "ArmPort M3 reference runtime" python3 "$RUNNER_TEMP/unpack_reference.py"
+          $S "ArmPort M3 assemble game package" python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime \
             --dbserver out/donors/wine-dbserver --resume out/donors/resume-client --bridge out/donors/bridge \
             --output out/wine-game --repository-commit "$DONOR_COMMIT" \
             --dbserver-profile loopback --game-listener-profile loopback --loopback-game out/donors/game-listeners
@@ -547,10 +549,11 @@ jobs:
           fail-on-cache-miss: true
       - name: Stage server game data and schema
         run: |
-          python3 tools/runtime_asset_bundle.py stage --archive "$RUNNER_TEMP/reference-assets.zip" \
+          S=armport/scripts/step.sh
+          $S "ArmPort M3 stage assets" python3 tools/runtime_asset_bundle.py stage --archive "$RUNNER_TEMP/reference-assets.zip" \
             --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
-          python3 tools/android/game/prepare_game_data.py --asset-data out/reviewed-assets --output out/game-data
-          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
+          $S "ArmPort M3 game data" python3 tools/android/game/prepare_game_data.py --asset-data out/reviewed-assets --output out/game-data
+          $S "ArmPort M3 schema" python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
           rm -f "$RUNNER_TEMP/reference-assets.zip"
           echo "::notice title=ArmPort M3 disk after staging::$(df -h / | tail -1)"
       - name: Install host tools (PRoot build, Xvfb, xdotool, OCR)
@@ -559,7 +562,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux \
             xvfb xdotool x11-apps imagemagick tesseract-ocr
       - name: Build matching native ARM64 PRoot
-        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+        run: armport/scripts/step.sh "ArmPort M3 PRoot build" python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
 
       - uses: actions/download-artifact@v4
         with:
@@ -578,13 +581,13 @@ jobs:
           # The client reads the same reviewed asset bundle as M2's client-run,
           # from the staged copy (no second unpack).
           assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
-          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
+          armport/scripts/step.sh "ArmPort M3 client stage" python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
             --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
           ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
       - name: Server stack and ARM64 client login to Atlas Park
         run: |
-          python3 armport/server/armport_game_host.py --assets out/donors/runtime-inputs --package out/wine-game \
+          armport/scripts/step.sh "ArmPort M3 server run" python3 armport/server/armport_game_host.py --assets out/donors/runtime-inputs --package out/wine-game \
             --data out/game-data --schema out/dbserver-schema --stack-probe out/donors/stack-probe \
             --proot out/android/native/linux-arm64 --client "$RUNNER_TEMP/armport-client" \
             --work "$RUNNER_TEMP/m3-work" --evidence "$RUNNER_TEMP/m3-evidence"
