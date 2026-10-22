@@ -400,6 +400,28 @@ def main():
     except Exception as e:  # reported, and fails the run below
         note('error', 'ArmPort M3 network', repr(e))
         code = code or 1
+    # The servers' side of the login: DbServer's and MapServer's own output.
+    captures = state / 'game-service-captures'
+    for name in ('first-dbserver-stdout.txt', 'first-atlas-stdout.txt'):
+        path = captures / name
+        if path.exists():
+            shutil.copyfile(path, evidence / name)
+            tail = [l[:300] for l in path.read_text(errors='replace').splitlines() if l.strip()][-40:]
+            note('notice', f'ArmPort M3 {name} tail', '\n'.join(tail))
+    # Contact sheet of the login steps (exported as 'ArmPort M3 steps').
+    wanted = ('login-assumed', 'login-wait', 'ultra-dismissed', 'password-typed', 'character-select', 'loading', 'atlas')
+    steps = []
+    for key in wanted:
+        hits = [p for p in shots if key in p.name] if (shots := sorted((evidence / 'screens').glob('*.png'))) else []
+        if hits:
+            steps.append(hits[0] if key != 'loading' else hits[-1])
+    if steps:
+        for size, q in (('256x192', 50), ('200x150', 40), ('160x120', 35)):
+            subprocess.run(['montage', *map(str, steps), '-tile', '4x', '-geometry', size + '+2+2',
+                            '-label', '%t', '-pointsize', '9', '-quality', str(q), str(evidence / 'steps.jpg')],
+                           capture_output=True)
+            if (evidence / 'steps.jpg').exists() and (evidence / 'steps.jpg').stat().st_size < 24000:
+                break
     # A small JPEG of the in-game frame (or the last step) for screen_export.py.
     shots = sorted((evidence / 'screens').glob('*.png'))
     pick = next((Path(p) for p in (status.get('atlas_shot'), ) if p and Path(p).exists()), shots[-1] if shots else None)
