@@ -65,16 +65,20 @@ class Screen:
         return png if png.exists() else None
 
     def words(self, png):
-        """OCR words with their centres in screen pixels."""
+        """OCR words with their centres in screen pixels. As M2's smoke
+        OCR: 3x scale and sparse-text mode for the UI's small fonts."""
         if not png:
             return []
-        r = sh('tesseract', str(png), '-', 'tsv', timeout=120)
+        big = png.with_name(png.stem + '-x3.png')
+        sh('convert', str(png), '-resize', '300%', str(big), timeout=120)
+        r = sh('tesseract', str(big), '-', '--psm', '11', 'tsv', timeout=180)
+        big.unlink(missing_ok=True)
         found = []
         for line in r.stdout.splitlines()[1:]:
             f = line.split('\t')
             if len(f) == 12 and f[11].strip():
                 left, top, w, h = map(int, f[6:10])
-                found.append((f[11].strip(), left + w // 2, top + h // 2))
+                found.append((f[11].strip(), (left + w // 2) // 3, (top + h // 2) // 3))
         return found
 
     def text(self, png):
@@ -108,6 +112,20 @@ class Screen:
             return int(geo['X']), int(geo['Y']), int(geo['WIDTH']), int(geo['HEIGHT'])
         except (KeyError, ValueError):
             return None
+
+
+# Login screen layout in the 1024x768 client window, measured from the M3
+# frame of run 39803404449 (used when OCR does not find a control).
+LAYOUT = {'ultra_cancel': (512, 495), 'account_field': (849, 307),
+          'password_field': (849, 420), 'login_button': (899, 486)}
+
+
+def at(screen, name):
+    win = screen.window()
+    if not win:
+        return None
+    x, y = LAYOUT[name]
+    return win[0] + x * win[2] // 1024, win[1] + y * win[3] // 768
 
 
 def wait_for(screen, label, predicate, seconds, interval=10):
@@ -172,8 +190,30 @@ def start_client(a, state, status, evidence):
         status['client_exit'] = code
         if not (state / 'armport-guest-finished.json').exists():
             (state / 'armport-client-exited.json').write_text(json.dumps({'exit': code}) + '\n')
+
+    def stop_when_guest_finishes():
+        # The guest's own cleanup audits same-user Wine processes, so the
+        # client and its wineserver must be gone before it continues.
+        while not (state / 'armport-guest-finished.json').exists():
+            if status.get('guest_exited'):
+                return
+            time.sleep(2)
+        stop_client(a, proc)
+        (state / 'armport-client-stopped.json').write_text(json.dumps({'stopped': True}) + '\n')
     threading.Thread(target=watch, daemon=True).start()
+    threading.Thread(target=stop_when_guest_finishes, daemon=True).start()
     return proc, info
+
+
+def stop_client(a, proc):
+    if proc and proc.poll() is None:
+        subprocess.run(['sudo', '-n', 'kill', '-TERM', '--', f'-{proc.pid}'], capture_output=True)
+        try:
+            proc.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            subprocess.run(['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], capture_output=True)
+    subprocess.run([str(a.wine / 'wineserver'), '-k'], capture_output=True, timeout=120,
+                   env=dict(os.environ, WINEPREFIX=str(a.client_prefix), HOME=str(a.client_home)))
 
 
 def drive_login(a, screen, state, status, evidence):
@@ -184,18 +224,18 @@ def drive_login(a, screen, state, status, evidence):
         return
     # Login screen: the account field label is drawn by the game's own UI.
     png, words = wait_for(screen, 'login-wait', lambda p: (lambda t: t if 'account' in t.lower() else None)(screen.text(p)),
-                          900, interval=20)
+                          600, interval=20)
     if not png:
-        status['login_screen'] = False
-        return
+        # No OCR match: go by the measured layout once the window exists.
+        png = screen.shot('login-assumed')
+        if not screen.window():
+            status['login_screen'] = False
+            return
+        words = 'ultra'
+        status['login_by_layout'] = True
     status['login_screen'] = True
     if 'ultra' in words.lower():
-        pos = screen.find(png, 'Cancel')
-        if not pos:
-            # The prompt is centred in the window; in M2's frame its Cancel
-            # button sat at (512, 490) of the 1024x768 client area.
-            win = screen.window()
-            pos = (win[0] + win[2] // 2, win[1] + int(win[3] * 490 / 768)) if win else None
+        pos = screen.find(png, 'Cancel') or at(screen, 'ultra_cancel')
         if pos:
             screen.click(*pos)
         else:
@@ -213,11 +253,15 @@ def drive_login(a, screen, state, status, evidence):
         if positions:
             _, x, y = positions[0]
             screen.click(x + 40, y + 34)
+        else:
+            pos = at(screen, name + '_field')
+            if pos:
+                screen.click(*pos)
         screen.key('ctrl+a')
         screen.type(value)
         time.sleep(1)
         png = screen.shot(name + '-typed')
-    pos = screen.find(png, 'Log', 'Login')
+    pos = screen.find(png, 'Log', 'Login') or at(screen, 'login_button')
     if pos:
         screen.click(*pos)
     else:
@@ -328,14 +372,7 @@ def main():
             note('error', 'ArmPort M3 guest', 'timed out: ' + dbhost.stop_guest(process, state))
     status['guest_exited'] = True
     driver.join(timeout=60)
-    proc = status.pop('proc', None)
-    if proc and proc.poll() is None:
-        subprocess.run(['sudo', '-n', 'kill', '-TERM', '--', f'-{proc.pid}'], capture_output=True)
-        try:
-            proc.wait(timeout=30)
-        except subprocess.TimeoutExpired:
-            subprocess.run(['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], capture_output=True)
-    subprocess.run([str(a.wine / 'wineserver'), '-k'], env=wenv, capture_output=True, timeout=120)
+    stop_client(a, status.pop('proc', None))
     xvfb.kill()
 
     report = json.loads(report_path.read_text()) if report_path.is_file() else {}

@@ -18,6 +18,7 @@ Coordination with the host is by small JSON files in /state:
   armport-atlas.json           here: DB status once connected on Atlas
   armport-host-done.json       host: in-game screenshots taken
   armport-guest-finished.json  here: client phase over
+  armport-client-stopped.json  host: client and its wineserver stopped
 Environment (set by the host command): ARMPORT_CLIENT_SECONDS.
 """
 import json
@@ -121,6 +122,11 @@ class ArmPortGame(gd.GameDiagnostic):
             record['final_status'] = sample
             record['still_connected'] = evidence.connected_on_atlas(sample)
         write_marker('armport-guest-finished.json', {'connected_on_atlas': record['connected_on_atlas']})
+        # The host's client Wine runs as the same user; the original cleanup
+        # audits same-user Wine processes, so wait until the host has stopped it.
+        stopped = STATE / 'armport-client-stopped.json'
+        self.wait(lambda: stopped.exists(), 180, 'Host stopped the ARM64 client')
+        record['client_stopped_before_cleanup'] = True
         require(record['connected_on_atlas'], 'ARM64 client did not reach Atlas: ' + json.dumps(record['samples'][-1:]))
         require(record.get('still_connected'), 'ARM64 client did not stay connected on Atlas')
         self.ctx.passed(arm64_client_on_atlas=True, map_id=record['atlas_status'].get('map_id'))
