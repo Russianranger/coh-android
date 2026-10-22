@@ -28,6 +28,10 @@ import game_diagnostic as gd  # noqa: E402
 
 base, require, evidence = gd.base, gd.require, gd.evidence
 STATE = Path('/state')
+CLIENT_QUERY_LIMIT = 40
+# The client phase adds up to CLIENT_QUERY_LIMIT status queries (plus a final
+# one) to the original flow's budget of 80.
+gd.QUERY_LIMIT = 120
 
 
 def write_marker(name, value):
@@ -58,6 +62,9 @@ class ArmPortGame(gd.GameDiagnostic):
         self.start_services('first')
         self.observe_atlas()
         session = self.create_character()
+        # live_currency sets influence 12345, which logout's saved snapshot
+        # is validated against; keep the original order.
+        self.live_currency(session)
         self.logout(session, 'first', 1)
         self.armport_client()
         self.game.update(status='passed', query_processes=self.query_count, readiness_queries=self.readiness_count)
@@ -85,13 +92,20 @@ class ArmPortGame(gd.GameDiagnostic):
         self.game['armport_client'] = record
         deadline = time.monotonic() + seconds
         next_status = 0
+        queries = 0
+        play_sent = STATE / 'armport-play-sent.json'
         while time.monotonic() < deadline:
             self.health()
             if client.process.poll() is not None:
                 record['client_exit'] = client.process.poll()
                 break
-            if time.monotonic() >= next_status:
-                next_status = time.monotonic() + 10
+            # Each status query is a MapServer -dbquery process within the
+            # run's budget: once a minute until the host has pressed Play,
+            # then every 15 s, at most CLIENT_QUERY_LIMIT in this phase.
+            if time.monotonic() >= next_status and queries < CLIENT_QUERY_LIMIT:
+                next_status = time.monotonic() + (15 if play_sent.exists() else 60)
+                queries += 1
+                record['status_queries'] = queries
                 sample = self.character_status('armport', allow_missing=True)
                 record['samples'] = (record['samples'] + [dict(sample, sampled_utc=base.utc())])[-20:]
                 if evidence.connected_on_atlas(sample):

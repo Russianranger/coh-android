@@ -187,6 +187,7 @@ def drive_login(screen, state, status):
         else:
             screen.key('Return')
         status['play_sent'] = True
+        (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': True}) + '\n')
     # In game: wait for the guest's database confirmation, then screenshots.
     atlas = state / 'armport-atlas.json'
     deadline = time.time() + 1200
