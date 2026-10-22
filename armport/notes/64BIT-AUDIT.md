@@ -41,6 +41,7 @@ handles get cut.
 | 0037 | StashTable removal wrote `U32_TO_PTR(STASH_TABLE_DELETED_SLOT_VALUE)`, cutting the 64-bit deleted marker to `0x00000000fffffffe` | every hash-table removal left a live entry; createbins asserted on re-registering `auto>` |
 | 0039 | Pointer arrays described to the textparser as int arrays (`TOK_AUTOINTEARRAY` of `ppPowers`, `ppPowerSets`, `ppItems`, `ppDetails`, for shared-memory copies); textparser int arrays are 32-bit | createbins asserted loading the power dictionary |
 | 0040 | `.geo` format version 2 model records read as a raw `ModelFormatOnDisk_v2` (216 bytes on disk, pointers) | release client crashed in `geoLoadStubs` on a garbage model name |
+| 0043 | SMF text attributes keep the font face (`TTDrawContext *`) in an int stack (`smf_PushAttrib`, `smf_InitTextAttribs`); the font-height cache keyed on the first 8 bytes of {font pointer, size} | release client crashed in `ttGetFontHeight` on a font pointer cut to 32 bits; every size of a font would have shared one cached height |
 
 All file-layout constants above were checked against the 32-bit structures by
 compiling them for i686 with static assertions (sizes and field offsets).
