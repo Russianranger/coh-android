@@ -272,6 +272,19 @@ def drive_login(a, screen, state, status, evidence):
         screen.type(value)
         time.sleep(1)
         png = screen.shot(name + '-typed')
+    # Sockets in the guest's network namespace: does the client reach DbServer (7000/UDP)?
+    def sockets(label):
+        pid = status.get('guest_pid')
+        r = subprocess.run(['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', 'ss', '-tanup'],
+                           capture_output=True, text=True, timeout=30) if pid else None
+        # The client's own sockets (servers' listeners and wineserver-held
+        # sockets are known from the DbServer and MapServer logs).
+        lines = [l for l in (r.stdout.splitlines() if r else [])
+                 if 'CityOfHeroes' in l or ('ESTAB' in l and ':70' in l)]
+        windows = sh('xwininfo', '-root', '-tree').stdout.splitlines()
+        named = [' '.join(w.split())[:140] for w in windows if '"' in w and 'has no name' not in w]
+        status.setdefault('sockets', []).append({'when': label, 'client_sockets': [' '.join(l.split())[:200] for l in lines[:30]],
+                                                 'windows': named[:12]})
     # The login panel (fields and buttons) at full resolution, before and after Log In.
     panel = (560, 260, 460, 280)
     status['crop_before'] = str(screen.crop(png, 'login-panel-typed', panel))
@@ -281,15 +294,10 @@ def drive_login(a, screen, state, status, evidence):
     else:
         screen.key('Return')
     status['login_sent'] = True
-    time.sleep(10)
+    time.sleep(2)
+    sockets('2s after Log In')
+    time.sleep(8)
     status['crop_after'] = str(screen.crop(screen.shot('after-login'), 'login-panel-after', panel))
-    # Sockets in the guest's network namespace: does the client reach DbServer (6997)?
-    def sockets(label):
-        pid = status.get('guest_pid')
-        r = subprocess.run(['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', 'ss', '-tanup'],
-                           capture_output=True, text=True, timeout=30) if pid else None
-        lines = [l for l in (r.stdout.splitlines() if r else []) if ':69' in l or ':70' in l or 'State' in l]
-        status.setdefault('sockets', []).append({'when': label, 'lines': [' '.join(l.split())[:160] for l in lines[:20]]})
     sockets('10s after Log In')
     # Character select: the created character's name, then Play (or Enter).
     checks = {'n': 0}
@@ -426,9 +434,12 @@ def main():
         if (evidence / 'client-output.txt').exists() else []
     smoke_run.report_exceptions(lines, client / 'CityOfHeroes.exe', a.llvm_mingw, 'ArmPort M3 client')
     smoke_run.report_crash(lines, 'ArmPort M3 client crash', client / 'CityOfHeroes.exe', a.llvm_mingw)
-    tail = [l[:300] for l in lines if 'trace:' not in l][-60:]
+    tail = [l[:300] for l in lines if not l.startswith('ALSA lib')][-60:]
     if tail:
         note('notice', 'ArmPort M3 client output tail', '\n'.join(tail))
+    errs = [l[:300] for l in lines if ':err:' in l or 'trace:seh' in l or 'Unhandled' in l]
+    if errs:
+        note('notice', 'ArmPort M3 client Wine errors', f'{len(errs)} lines; last 50:\n' + '\n'.join(errs[-50:]))
     note('notice', 'ArmPort M3 login driver', json.dumps(status, indent=1)[:1500] + '\n' + '\n'.join(screen.log[-60:]))
     smoke_run.report_stdio(client / 'armport_stdio.txt', 'ArmPort M3 client stdio')
     try:
