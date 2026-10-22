@@ -312,7 +312,7 @@ def main():
     ap.add_argument('--llvm-mingw', type=Path, help='for the import list and runtime DLLs')
     ap.add_argument('--wine', required=True, type=Path, help='directory with wine, wineserver')
     ap.add_argument('--seconds', type=int, default=180)
-    ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win')
+    ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win,+seh')
     ap.add_argument('--createbins', action='store_true',
                     help='first run the client with -createbins to build data/bin from text data')
     ap.add_argument('--createbins-seconds', type=int, default=1800)
