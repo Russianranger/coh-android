@@ -1,0 +1,50 @@
+diff --git a/Game/src/win/win_init.c b/Game/src/win/win_init.c
+index 27e3fe7..2541e47 100644
+--- a/Game/src/win/win_init.c
++++ b/Game/src/win/win_init.c
+@@ -103,9 +103,9 @@ char className[100] = "CrypticWindow";
+ #    define WS_EX_LAYERED           0x00080000
+ #endif
+ 
+-LONG WINAPI DefWindowProc_timed( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
++LRESULT WINAPI DefWindowProc_timed( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+ {
+-    LONG ret;
++    LRESULT ret;
+     PERFINFO_AUTO_START("DefWindowProc", 1);
+     ret = DefWindowProcA(hWnd, uMsg, wParam, lParam);
+     PERFINFO_AUTO_STOP();
+@@ -421,7 +421,7 @@ void windowSetSize(int width, int height)
+     result = MoveWindow(hwnd, x, y, width, height, 1);
+ }
+ 
+-static LONG WINAPI MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
++static LRESULT WINAPI MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+ 
+ static LRESULT CALLBACK MainWndProcCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+ {
+@@ -559,9 +559,9 @@ static void stopWindowMessageTimer()
+     }
+ }
+ 
+-static LONG WINAPI MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
++static LRESULT WINAPI MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+ {
+-    LONG    lRet = 1;
++    LRESULT lRet = 1;
+ 
+ #if DEBUG
+     if (isCrashed())
+diff --git a/Game/src/win/win_init.h b/Game/src/win/win_init.h
+index 4b954c5..cf51a77 100644
+--- a/Game/src/win/win_init.h
++++ b/Game/src/win/win_init.h
+@@ -56,7 +56,7 @@ void rdrSetGamma(float Gamma);
+ void rdrNeedGammaReset(void);
+ void rdrRestoreGammaRamp(void);
+ void rdrSetVSync(int enable);
+-LONG WINAPI DefWindowProc_timed( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
++LRESULT WINAPI DefWindowProc_timed( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+ 
+ // End mkproto
+ #define TEXT_DIALOG_MAX_STRLEN 256 // callers must provide incoming buffer of this length or risk crash

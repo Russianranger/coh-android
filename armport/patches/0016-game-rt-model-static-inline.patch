@@ -1,0 +1,14 @@
+diff --git a/Game/src/render/thread/rt_model.c b/Game/src/render/thread/rt_model.c
+index 0f5c4eb..e493e31 100644
+--- a/Game/src/render/thread/rt_model.c
++++ b/Game/src/render/thread/rt_model.c
+@@ -623,7 +623,8 @@ FORCEINLINE F32 diffuseBasedGlossScale(Vec4 diffuse)
+     return 1.0;
+ }
+ 
+-FORCEINLINE static void setupSpecularColor(ScrollsScales *scrollsScales, Vec4 directLightColor)
++// ArmPort: mingw-w64 defines FORCEINLINE with "extern"; use the engine macro.
++static COH_FORCEINLINE void setupSpecularColor(ScrollsScales *scrollsScales, Vec4 directLightColor)
+ {
+     Vec4 specularParam1;
+     Vec4 specularParam2;

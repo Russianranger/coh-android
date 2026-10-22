@@ -1,0 +1,46 @@
+diff --git a/Common/entity/Proficiency.c b/Common/entity/Proficiency.c
+index 280e3b3..2f70231 100644
+--- a/Common/entity/Proficiency.c
++++ b/Common/entity/Proficiency.c
+@@ -41,7 +41,8 @@ StaticDefineInt OriginEnum[] =
+     DEFINE_END
+ };
+ 
+-static StaticDefineInt RarityEnum[] =
++// ArmPort: renamed from RarityEnum: MSVC keeps this static copy file-local, clang links it against salvage.c.
++static StaticDefineInt ProficiencyRarityEnum[] =
+ {
+     DEFINE_INT
+     { "Ubiquitous", kProfRarityType_Ubiquitous},
+@@ -58,7 +59,7 @@ static TokenizerParseInfo ParseProficiencyDef[] =
+     { "Name",           TOK_STRING(ProficiencyItem, name, 0)    },
+     TOKENIZERUIWIDGET_INLINEPARSEINFO(ProficiencyItem),
+      { "Origin",            TOK_STRUCTPARAM | TOK_INT(ProficiencyItem,origin, 0), OriginEnum },
+-     { "Rarity",            TOK_STRUCTPARAM | TOK_INT(ProficiencyItem,rarity, 0), RarityEnum }, //default to 1 slot used
++     { "Rarity",            TOK_STRUCTPARAM | TOK_INT(ProficiencyItem,rarity, 0), ProficiencyRarityEnum }, //default to 1 slot used
+     { "}",                TOK_END,        0 },
+     { "", 0, 0 }
+ };
+diff --git a/Common/seq/modelReload.c b/Common/seq/modelReload.c
+index 8e7bf5a..3d454e2 100644
+--- a/Common/seq/modelReload.c
++++ b/Common/seq/modelReload.c
+@@ -71,7 +71,8 @@ static void addRequest(const char *file, ModelReloadType type)
+     modelReload_needsReload = 1;
+ }
+ 
+-static void __cdecl swap (void *a, void *b, size_t width)
++// ArmPort: renamed from swap: MSVC keeps this static copy file-local, clang links it against utils.c swap().
++static void __cdecl modelReloadSwap (void *a, void *b, size_t width)
+ {
+     char tmp;
+     char *ca=a, *cb=b;
+@@ -85,7 +86,7 @@ static void __cdecl swap (void *a, void *b, size_t width)
+ // Needs to copy all data, copy all pointers to static data, swap pointers to dynamic data (so it gets freed)
+ static void reloadModel(Model *dstModel, Model *srcModel)
+ {
+-    swap(dstModel, srcModel, sizeof(Model));
++    modelReloadSwap(dstModel, srcModel, sizeof(Model));
+ }
+ 
+ static void verifyGeoLoadData(GeoLoadData *gld)

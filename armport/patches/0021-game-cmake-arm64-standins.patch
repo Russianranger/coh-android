@@ -1,0 +1,71 @@
+diff --git a/Game/CMakeLists.txt b/Game/CMakeLists.txt
+index 0906f39..1ca66a6 100644
+--- a/Game/CMakeLists.txt
++++ b/Game/CMakeLists.txt
+@@ -3,13 +3,23 @@ include(dependencies/Glew)
+ include(dependencies/Jpeg)
+ include(dependencies/JpegCompressor)
+ include(dependencies/Vorbis)
+-include(dependencies/PhysX)
+-include(dependencies/NvDxt)
+ include(dependencies/CubeMapGen)
+-include(dependencies/Cg)
+ include(dependencies/NvParse)
+-include(dependencies/AlienFx)
+-include(dependencies/NvCpl)
++if(COX_ARM64_WINDOWS)
++	# ArmPort: the x86-only binary SDKs (PhysX, nvDXT, Cg, AlienFX, NvCpl) are
++	# replaced by stand-ins kept in the ArmPort tree.
++	set(COX_ARMPORT_DIR "" CACHE PATH "armport directory of the ArmPort tree")
++	if(NOT COX_ARMPORT_DIR)
++		message(FATAL_ERROR "ARM64 Game build needs -DCOX_ARMPORT_DIR=<repo>/armport")
++	endif()
++	add_subdirectory("${COX_ARMPORT_DIR}/standins" armport-standins)
++else()
++	include(dependencies/PhysX)
++	include(dependencies/NvDxt)
++	include(dependencies/Cg)
++	include(dependencies/AlienFx)
++	include(dependencies/NvCpl)
++endif()
+ 
+ set(Game_SOURCES
+ 	../Common/account/AccountCatalog.c
+@@ -1213,6 +1223,14 @@ list(APPEND Game_GENERATED
+ set_source_files_properties(${Game_GENERATED} PROPERTIES
+ 	GENERATED TRUE HEADER_FILE_ONLY TRUE)
+ 
++if(COX_ARM64_WINDOWS)
++	# PhysX wrappers: NOVODEX is undefined on ARM64 (see NwWrapper.h).
++	list(REMOVE_ITEM Game_SOURCES
++		../Common/NovodeX/NwCoreDump.cpp ../Common/NovodeX/NwRagdoll.cpp
++		../Common/NovodeX/NwSharedStream.cpp ../Common/NovodeX/NwStream.cpp
++		../Common/NovodeX/NwWrapper.cpp)
++endif()
++
+ add_executable(Game WIN32
+ 	${Game_SOURCES} ${Game_HEADERS} ${Game_RESOURCES} ${Game_IMAGES}
+ 	${Game_GENERATED})
+@@ -1236,13 +1254,15 @@ target_link_libraries(Game PRIVATE
+ target_compile_definitions(Game PRIVATE
+ 	CLIENT USEZLIB _WINDOWS _MBCS SUBSTANCE_PLATFORM_OGLCG
+ 	_CRT_SECURE_NO_DEPRECATE)
+-target_compile_options(Game PRIVATE
+-	$<$<AND:$<CONFIG:Release,OptDebug>,$<COMPILE_LANGUAGE:C,CXX>>:/Gy;/Oi;/Zi>)
+-target_link_options(Game PRIVATE /LARGEADDRESSAWARE
+-	$<$<CONFIG:Release,OptDebug>:/DEBUG;/OPT:REF;/OPT:ICF>)
+-# v143 14.44 crashes optimizing showGridExternal in this file.
+-set_source_files_properties(src/edit/edit_drawlines.c PROPERTIES
+-	COMPILE_OPTIONS "$<$<CONFIG:Release,OptDebug>:/Od;/GL->")
++if(MSVC)
++	target_compile_options(Game PRIVATE
++		$<$<AND:$<CONFIG:Release,OptDebug>,$<COMPILE_LANGUAGE:C,CXX>>:/Gy;/Oi;/Zi>)
++	target_link_options(Game PRIVATE /LARGEADDRESSAWARE
++		$<$<CONFIG:Release,OptDebug>:/DEBUG;/OPT:REF;/OPT:ICF>)
++	# v143 14.44 crashes optimizing showGridExternal in this file.
++	set_source_files_properties(src/edit/edit_drawlines.c PROPERTIES
++		COMPILE_OPTIONS "$<$<CONFIG:Release,OptDebug>:/Od;/GL->")
++endif()
+ 
+ include(StructParser)
+ StructParse(Game)

@@ -1,0 +1,26 @@
+diff --git a/cmake/dependencies/NvParse.cmake b/cmake/dependencies/NvParse.cmake
+index 1f21f2e..e7775e0 100644
+--- a/cmake/dependencies/NvParse.cmake
++++ b/cmake/dependencies/NvParse.cmake
+@@ -1,7 +1,8 @@
+ include_guard(GLOBAL)
+ 
+-if(NOT WIN32 OR NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 4 OR
+-	NOT CMAKE_CXX_COMPILER_ARCHITECTURE_ID STREQUAL "X86")
++# ArmPort: the bundled source also builds for ARM64 Windows.
++if(NOT COX_ARM64_WINDOWS AND (NOT WIN32 OR NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 4 OR
++	NOT CMAKE_CXX_COMPILER_ARCHITECTURE_ID STREQUAL "X86"))
+ 	message(FATAL_ERROR "The bundled NVParse library requires MSVC Win32")
+ endif()
+ 
+@@ -67,7 +68,9 @@ function(cox_add_nvparse)
+ 	target_link_libraries(nvparse_static PRIVATE GLEW::GLEW OpenGL::GLU)
+ 	target_compile_definitions(nvparse_static PRIVATE
+ 		WIN32 _LIB _MBCS _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS)
+-	target_compile_options(nvparse_static PRIVATE /W3 /sdl)
++	if(MSVC)
++		target_compile_options(nvparse_static PRIVATE /W3 /sdl)
++	endif()
+ 	set_target_properties(nvparse_static PROPERTIES
+ 		CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON
+ 		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

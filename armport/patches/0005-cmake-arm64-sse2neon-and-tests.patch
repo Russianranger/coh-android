@@ -1,9 +1,9 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 454a5fe..c14c875 100644
+index 93d399a..f0956d0 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -48,6 +48,13 @@ if(COX_ARM64_WINDOWS)
- 		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration>")
+@@ -50,6 +50,13 @@ if(COX_ARM64_WINDOWS)
+ 		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration;-fcommon>")
  endif()
  
 +if(COX_ARM64_WINDOWS)
@@ -16,7 +16,7 @@ index 454a5fe..c14c875 100644
  # Run this mandatory check before other targets, even with testing disabled.
  add_executable(cox_precise_floating_point_test EXCLUDE_FROM_ALL
  	cmake/tests/precise_floating_point.cpp)
-@@ -162,4 +169,10 @@ function(cox_require_precise_floating_point directory)
+@@ -164,4 +171,10 @@ function(cox_require_precise_floating_point directory)
  	endforeach()
  endfunction()
  

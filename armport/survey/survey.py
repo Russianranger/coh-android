@@ -43,7 +43,12 @@ def cmake_list(path, var, append_too=True):
         for m in re.finditer(pat, text, re.S):
             for tok in re.findall(r'"[^"]*"|\S+', m.group(1)):
                 items.append(tok.strip('"'))
-    return items
+    # The survey targets ARM64, so honor list(REMOVE_ITEM VAR ...) as well
+    # (the ArmPort patches use it only inside if(COX_ARM64_WINDOWS)).
+    removed = set()
+    for m in re.finditer(r'list\(\s*REMOVE_ITEM\s+' + var + r'\s+(.*?)\)', text, re.S):
+        removed.update(t.strip('"') for t in re.findall(r'"[^"]*"|\S+', m.group(1)))
+    return [i for i in items if i not in removed]
 
 
 def targets(src):
@@ -120,7 +125,8 @@ def dep_includes(src, tc):
            os.path.join(d, 'glew-cmake', 'include'),
            os.path.join(d, 'vorbis', 'include'), os.path.join(d, 'ogg', 'include'),
            os.path.join(d, 'libjpeg-turbo', 'src'), os.path.join(d, 'libjpeg-turbo'),
-           os.path.join(d, 'jpgd'), os.path.join(d, 'sparsehash', 'src'),
+           os.path.join(d, 'jpgd'), os.path.join(d, 'jpgd', 'include'),
+           os.path.join(d, 'sparsehash', 'src'),
            os.path.join(third, 'cg', 'include'), os.path.join(third, 'nvdxt'),
            os.path.join(third, 'nvparse', 'include', 'nvparse'),
            os.path.join(third, 'nvparse', 'include'),
@@ -165,6 +171,12 @@ CATEGORIES = [
 ]
 
 
+# Pointer-sized integer types; narrowing one of these to 32 bits can cut a
+# pointer or handle (e.g. an intptr_t _findfirst handle stored in an int).
+POINTER_SIZED = re.compile(r"'(u?intptr_t|INT_PTR|UINT_PTR|LONG_PTR|ULONG_PTR|DWORD_PTR|LPARAM|WPARAM|"
+                           r"LRESULT|HANDLE|ptrdiff_t|SSIZE_T)'")
+
+
 def classify(msg):
     for name, pat in CATEGORIES:
         if pat.search(msg):
@@ -183,7 +195,8 @@ def compile_one(args):
     r = subprocess.run(cmd, capture_output=True, text=True)
     errs = [l for l in r.stderr.splitlines() if ': error: ' in l or ': fatal error: ' in l]
     w64 = [l for l in r.stderr.splitlines() if ': warning: ' in l and
-           re.search(r'-W(void-)?pointer-to-(int|enum)-cast|-Wint-to-pointer-cast', l)]
+           (re.search(r'-W(void-)?pointer-to-(int|enum)-cast|-Wint-to-pointer-cast', l) or
+            ('-Wshorten-64-to-32' in l and POINTER_SIZED.search(l)))]
     return dict(file=rel, ok=(r.returncode == 0), errors=errs, warn64=w64,
                 seconds=round(time.time() - t0, 2))
 
@@ -198,6 +211,8 @@ def main():
     # Two compiler processes by default, matching the bounded build-host rule.
     ap.add_argument('--jobs', type=int, default=2)
     ap.add_argument('--limit', type=int, default=0, help='compile only N files per target (debug)')
+    ap.add_argument('--all-errors', action='store_true',
+                    help='keep every error line per failing file (default: first only)')
     ap.add_argument('--permissive', action='store_true',
                     help='downgrade clang strictness errors that MSVC accepts (flags only, no patches)')
     ap.add_argument('--patched', action='store_true',
@@ -207,6 +222,8 @@ def main():
                     help='extra include dir searched first (shim headers for experiments)')
     ap.add_argument('--warn64', action='store_true',
                     help='report pointer/integer size warnings instead of suppressing all warnings')
+    ap.add_argument('--warn-width', action='store_true',
+                    help='with --warn64, also report pointer-sized integers narrowed to 32 bits')
     a = ap.parse_args()
 
     src = os.path.join(a.work, 'src')
@@ -232,7 +249,8 @@ def main():
         warn = ['-w']
         if a.warn64:
             warn = ['-Wno-everything', '-Wpointer-to-int-cast', '-Wint-to-pointer-cast',
-                    '-Wvoid-pointer-to-int-cast', '-Wvoid-pointer-to-enum-cast']
+                    '-Wvoid-pointer-to-int-cast', '-Wvoid-pointer-to-enum-cast'] + \
+                (['-Wshorten-64-to-32'] if a.warn_width else [])
         flags = tflags + ['-fms-extensions', '-fno-strict-aliasing', '-ferror-limit=0',
                           '-fno-color-diagnostics'] + warn + (PERMISSIVE if a.permissive else []) + \
             ['-D' + d for d in COMMON_DEFINES + t['defines'] +
@@ -274,7 +292,7 @@ def main():
         for r in results:
             for w in r['warn64']:
                 w64[r['file']] += 1
-                if len(w64_examples) < 12:
+                if len(w64_examples) < (100000 if a.warn_width else 12):
                     w64_examples.append(w.split(src + '/', 1)[-1][:240])
         report['targets'][t['name']] = dict(
             warn64_total=sum(w64.values()), warn64_files=len(w64),
@@ -290,7 +308,9 @@ def main():
                          for r in sorted(results, key=lambda r: -len(r['errors']))[:25]],
             per_file=[dict(file=r['file'], ok=r['ok'], errors=len(r['errors']),
                            first=(r['errors'][0].split(src + '/', 1)[-1][:240]
-                                  if r['errors'] else ''))
+                                  if r['errors'] else ''),
+                           **({'all': [e.split(src + '/', 1)[-1][:300] for e in r['errors']]}
+                              if a.all_errors and r['errors'] else {}))
                       for r in results])
     report['finished'] = time.strftime('%Y-%m-%dT%H:%M:%S%z')
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)

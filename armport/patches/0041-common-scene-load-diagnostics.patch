@@ -1,0 +1,23 @@
+diff --git a/Common/group/groupscene.c b/Common/group/groupscene.c
+index acf70de..844e1a9 100644
+--- a/Common/group/groupscene.c
++++ b/Common/group/groupscene.c
+@@ -162,7 +162,17 @@ void sceneLoad(char *fname)
+ 
+     tok = TokenizerCreate(fname);
+     if( !tok )
+-        FatalErrorf( "This is not a valid scene file %s ", fname );
++    {
++        // ArmPort: say why the scene file could not be tokenized.
++        char located[MAX_PATH];
++        char *where = fileLocateRead(fname, located);
++        FILE *probe = where ? fopen(where, "rb") : NULL;
++        int size = probe ? (int)fileGetSize(probe) : -1;
++        if (probe)
++            fclose(probe);
++        FatalErrorf( "This is not a valid scene file %s (ArmPort: exists=%d located='%s' fopen=%s size=%d)",
++            fname, fileExists(fname), where ? where : "(null)", probe ? "ok" : "failed", size );
++    }
+     fileisgood = TokenizerParseList(tok, parse_scene, &scene_info, TokenizerErrorCallback);
+     TokenizerDestroy(tok);
+ 

@@ -1,0 +1,111 @@
+diff --git a/Game/src/formatter/smf_main.c b/Game/src/formatter/smf_main.c
+index bc236e3..0cdeb19 100644
+--- a/Game/src/formatter/smf_main.c
++++ b/Game/src/formatter/smf_main.c
+@@ -963,7 +963,7 @@ void smf_InitTextAttribs(TextAttribs *pattrs, TextAttribs *pdefaults)
+     eaiPush(&pattrs->piColorSelect,    (int)pdefaults->piColorSelect);
+     eaiPush(&pattrs->piColorSelectBG, (int)pdefaults->piColorSelectBG);
+     eaiPush(&pattrs->piScale,            (int)pdefaults->piScale);
+-    eaiPush(&pattrs->piFace,            (int)pdefaults->piFace);
++    eaiPush(&pattrs->piFace,            smf_FaceToken(pdefaults->piFace)); // ArmPort: token, not the pointer
+     eaiPush(&pattrs->piFont,            (int)pdefaults->piFont);
+     eaiPush(&pattrs->piAnchor,        (int)pdefaults->piAnchor);
+     eaiPush(&pattrs->piLink,            (int)pdefaults->piLink);
+diff --git a/Game/src/formatter/smf_util.c b/Game/src/formatter/smf_util.c
+index fe6c729..e4c511a 100644
+--- a/Game/src/formatter/smf_util.c
++++ b/Game/src/formatter/smf_util.c
+@@ -695,8 +695,50 @@ void smf_PushAttrib(SMBlock *pBlock, TextAttribs *pattr)
+         && pBlock->iType>=0
+         && pBlock->iType<kFormatTags_Count)
+     {
+-        eaiPush(&ppi[pBlock->iType], *(int *)(&pBlock->pv));
++        // ArmPort: a face is a TTDrawContext pointer; the int stacks hold a
++        // token for it (smf_FaceToken), not the pointer, which is 64 bits.
++        if(pBlock->iType==kFormatTags_Face)
++            eaiPush(&ppi[pBlock->iType], smf_FaceToken(pBlock->pv));
++        else
++            eaiPush(&ppi[pBlock->iType], *(int *)(&pBlock->pv));
++    }
++}
++
++/**********************************************************************func*
++* smf_FaceToken / smf_FaceFromToken
++*
++* ArmPort: TextAttribs keeps every attribute in an int stack, including the
++* face, which is a TTDrawContext pointer. Faces are long-lived font contexts,
++* so each distinct one gets a small table index (0 stays NULL).
++*/
++#define SMF_MAX_FACES 1024
++static void *s_apvFaces[SMF_MAX_FACES];
++static int s_iFaceCount;
++
++int smf_FaceToken(void *pv)
++{
++    int i;
++    if(!pv)
++        return 0;
++    for(i=0; i<s_iFaceCount; i++)
++    {
++        if(s_apvFaces[i]==pv)
++            return i+1;
++    }
++    if(s_iFaceCount>=SMF_MAX_FACES)
++    {
++        FatalErrorf("ArmPort: more than %d SMF font faces", SMF_MAX_FACES);
++        return 0;
+     }
++    s_apvFaces[s_iFaceCount++] = pv;
++    return s_iFaceCount;
++}
++
++void *smf_FaceFromToken(int token)
++{
++    if(token<=0 || token>s_iFaceCount)
++        return NULL;
++    return s_apvFaces[token-1];
+ }
+ 
+ /**********************************************************************func*
+@@ -805,7 +847,7 @@ bool smf_ApplyFormatting(SMBlock *pBlock, TextAttribs *pattrs)
+ void smf_MakeFont(TTDrawContext **ppttFont, TTFontRenderParams *prp, TextAttribs *pattrs)
+ {
+     // Set the font
+-    *ppttFont = (TTDrawContext *)pattrs->piFace[eaiSize(&pattrs->piFace)-1];
++    *ppttFont = (TTDrawContext *)smf_FaceFromToken(pattrs->piFace[eaiSize(&pattrs->piFace)-1]);
+ 
+     // Remember the original renderparams
+     *prp = (*ppttFont)->renderParams;
+diff --git a/Game/src/formatter/smf_util.h b/Game/src/formatter/smf_util.h
+index 90d4108..7c1c24a 100644
+--- a/Game/src/formatter/smf_util.h
++++ b/Game/src/formatter/smf_util.h
+@@ -571,6 +571,8 @@ typedef struct SMFont
+ void smf_PushAttrib(SMBlock *pBlock, TextAttribs *pattrs);
+ int smf_PopAttrib(SMBlock *pBlock, TextAttribs *pattr);
+ int smf_PopAttribInt(int idx, TextAttribs *pattr);
++int smf_FaceToken(void *pv);          // ArmPort: face pointer -> int stack token
++void *smf_FaceFromToken(int token);   // ArmPort: token -> face pointer
+ bool smf_ApplyFormatting(SMBlock *pBlock, TextAttribs *pattrs);
+ void smf_MakeFont(TTDrawContext **ppttFont, TTFontRenderParams *prp, TextAttribs *pattrs);
+ float* smf_GetCharacterWidths(SMBlock *pBlock, TextAttribs *pattrs);
+diff --git a/Game/src/graphics/truetype/ttFontDraw.c b/Game/src/graphics/truetype/ttFontDraw.c
+index 980835c..625785f 100644
+--- a/Game/src/graphics/truetype/ttFontDraw.c
++++ b/Game/src/graphics/truetype/ttFontDraw.c
+@@ -1,4 +1,5 @@
+ #include "graphics/truetype/ttFontDraw.h"
++#include <stddef.h>
+ #include "graphics/truetype/ttFontCore.h"
+ #include "graphics/truetype/ttFontManager.h"
+ 
+@@ -1008,7 +1009,8 @@ float ttGetFontHeight(TTDrawContext* context, float xScale, float yScale)
+     if (!htFontHeightCache) {
+         // The 8 byte size is the size of the first two elements of TTCachedFontHeight
+         // We don't want to hash the last element, that's what we're looking up...
+-        htFontHeightCache = stashTableCreate(64, StashDefault, StashKeyTypeFixedSize, 8);
++        // ArmPort: the key is font + renderSize, 8 bytes only on 32-bit.
++        htFontHeightCache = stashTableCreate(64, StashDefault, StashKeyTypeFixedSize, (int)offsetof(TTCachedFontHeight, fontHeight));
+     }
+     // Dummy element for lookup
+     ttcfh->font = context->font;

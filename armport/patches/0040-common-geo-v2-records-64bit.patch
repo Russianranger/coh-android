@@ -1,0 +1,81 @@
+diff --git a/Common/seq/anim.c b/Common/seq/anim.c
+index 017071f..d4274dc 100644
+--- a/Common/seq/anim.c
++++ b/Common/seq/anim.c
+@@ -1398,10 +1398,56 @@ static int readModel(Model *dst, char *data, int version_num, U8 *objname_base,
+ 
+     if (version_num < 3)
+     {
+-        ModelFormatOnDisk_v2 *src = (void *)data;
+ #if defined(_WIN64)
+-        assertmsg(0, "geo format version < 3 is not supported on 64-bit (ArmPort)");
++        // ArmPort: ModelFormatOnDisk_v2 is a 32-bit structure (216 bytes):
++        // flags 0, radius 4, vbo 8, tex_count 12, id 16, blend_mode 18,
++        // loadstate 19, boneinfo 20, trick 24, vert_count 28, tri_count 32,
++        // tex_idx 36, grid 40 (32), ctris 72, tags 76, name 80, api 84,
++        // extra 88, scale 92, min 104, max 116, gld 128, pack 132 (7 x 12).
++        const U8 *src = (const U8 *)data;
++        U32 off;
++        #define RD(fld, at, bytes) memcpy(&(dst->fld), src + (at), bytes)
++        #define RDPTR(fld, at) { memcpy(&off, src + (at), 4); dst->fld = (void *)(uintptr_t)off; }
++        #define RDPACK(fld, at) { RD(fld.packsize, at, 4); RD(fld.unpacksize, (at) + 4, 4); RDPTR(fld.data, (at) + 8); }
++            RD(flags, 0, 4);
++            RD(radius, 4, 4);
++            RD(tex_count, 12, 4);
++            RD(id, 16, 2);
++            RD(loadstate, 19, 1);
++            RDPTR(boneinfo, 20);
++            RD(vert_count, 28, 4);
++            RD(tri_count, 32, 4);
++            memcpy(&off, src + 36, 4);
++            dst->tex_idx = (TexID*)(texidx_base + off);
++            RDPTR(grid.cell, 40);
++            memcpy(dst->grid.pos, src + 44, sizeof(Vec3));
++            RD(grid.size, 56, 4);
++            RD(grid.inv_size, 60, 4);
++            RD(grid.tag, 64, 4);
++            RD(grid.num_bits, 68, 4);
++            memcpy(&off, src + 80, 4);
++            dst->name = objname_base + off;
++            RDPTR(api, 84);
++            memcpy(dst->scale, src + 92, sizeof(Vec3));
++            memcpy(dst->min, src + 104, sizeof(Vec3));
++            memcpy(dst->max, src + 116, sizeof(Vec3));
++            RDPACK(pack.tris, 132);
++            RDPACK(pack.verts, 144);
++            RDPACK(pack.norms, 156);
++            RDPACK(pack.sts, 168);
++            memset(&dst->pack.sts3, 0, sizeof(dst->pack.sts3));
++            RDPACK(pack.weights, 180);
++            RDPACK(pack.matidxs, 192);
++            RDPACK(pack.grid, 204);
++        #undef RD
++        #undef RDPTR
++        #undef RDPACK
++        size = 216;
++    }
++    else if (0)
++    {
+ #endif
++        ModelFormatOnDisk_v2 *src = (void *)data;
+         #define COPY(fld) dst->fld = src->fld
+             COPY(flags);
+             COPY(radius);
+@@ -1901,6 +1947,17 @@ static GeoLoadData *geoLoadStubs(FILE * file, GeoLoadData * gld,GeoUseType type)
+             PERFINFO_AUTO_START("initModel", 1);
+                 model = gld->modelheader.models[j]; 
+                 aps += readModel(model, aps, version_num, (U8*)objnames, (U8*)texidx_offset);
++#if defined(_WIN64)
++                // ArmPort: name offsets must fall inside the object-name block.
++                if ((uintptr_t)((U8*)model->name - (U8*)objnames) >= (uintptr_t)objname_blocksize)
++                {
++                    printf("geoLoadStubs: %s model %d/%d: name offset 0x%llx outside the %d-byte name block (version %d, header %d bytes)\n",
++                        gld->name, j, gld->modelheader.model_count,
++                        (unsigned long long)((U8*)model->name - (U8*)objnames), objname_blocksize, version_num, gld->headersize);
++                    ErrorFilenamef(gld->name, "Bad model name offset in .geo file");
++                    model->name = "";
++                }
++#endif
+ 
+                 model->gld = gld;
+                 model->namelen = (int)strlen(model->name);

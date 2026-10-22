@@ -1,0 +1,16 @@
+diff --git a/libs/UtilitiesLib/src/utils/structInternals.c b/libs/UtilitiesLib/src/utils/structInternals.c
+index 4e2c9c8..6fc7250 100644
+--- a/libs/UtilitiesLib/src/utils/structInternals.c
++++ b/libs/UtilitiesLib/src/utils/structInternals.c
+@@ -23,6 +23,11 @@ void TestParseTable(ParseTable pti[])
+     int i;
+     FORALL_PARSEINFO(pti, i)
+     {
++        if (TYPE_INFO(pti[i].type).type != TOK_GET_TYPE(pti[i].type) ||
++            (TYPE_INFO(pti[i].type).storage_compatibility &&
++             !TokenStoreIsCompatible(pti[i].type, TYPE_INFO(pti[i].type).storage_compatibility)))
++            printf("TestParseTable: field '%s' (index %d, type 0x%x, storage 0x%x) fails its type checks\n",
++                pti[i].name ? pti[i].name : "", i, (unsigned)pti[i].type, (unsigned)TokenStoreGetStorageType(pti[i].type));
+         devassert(TYPE_INFO(pti[i].type).type == TOK_GET_TYPE(pti[i].type));
+         if (TYPE_INFO(pti[i].type).storage_compatibility)
+             devassert(TokenStoreIsCompatible(pti[i].type, TYPE_INFO(pti[i].type).storage_compatibility));

@@ -1,0 +1,77 @@
+diff --git a/Game/src/graphics/frustum_c.c b/Game/src/graphics/frustum_c.c
+index f306151..b6e89d9 100644
+--- a/Game/src/graphics/frustum_c.c
++++ b/Game/src/graphics/frustum_c.c
+@@ -3,6 +3,14 @@
+ 
+ #include <utilitieslib/utils/mathutil.h>
+ 
++// ArmPort: MSVC exposes __m128 lanes as .m128_f32. On ARM64 (sse2neon) __m128
++// is a NEON vector, so reach the lanes through a float pointer.
++#if defined(__aarch64__)
++#define M128_F32(v) ((float *)&(v))
++#else
++#define M128_F32(v) ((v).m128_f32)
++#endif
++
+ // build a view frustum based on the supplied arguments
+ // this function builds the frustum planes as follows:
+ //  * in 'view space' i.e. for camera at origin
+@@ -28,12 +36,12 @@ void frustum_build( GfxFrustum* frustum, float fov_x, float aspect, float z_near
+     float s            = focal*norm2;
+     float t            = -aspect*norm2;
+ 
+-    setVec4( frustum->planes[FRUST_PLANE_NEAR].m128_f32,  0.0f, 0.0f, -1.0f, -z_near_abs );
+-    setVec4( frustum->planes[FRUST_PLANE_FAR].m128_f32,   0.0f, 0.0f,  1.0f,  z_far_abs  );
+-    setVec4( frustum->planes[FRUST_PLANE_LEFT].m128_f32,     u, 0.0f,     v,  0.0f   );
+-    setVec4( frustum->planes[FRUST_PLANE_RIGHT].m128_f32,   -u, 0.0f,     v,  0.0f   );
+-    setVec4( frustum->planes[FRUST_PLANE_BOTTOM].m128_f32, 0.0f,   s,     t,  0.0f   );
+-    setVec4( frustum->planes[FRUST_PLANE_TOP].m128_f32,    0.0f,  -s,     t,  0.0f   );
++    setVec4( M128_F32(frustum->planes[FRUST_PLANE_NEAR]),  0.0f, 0.0f, -1.0f, -z_near_abs );
++    setVec4( M128_F32(frustum->planes[FRUST_PLANE_FAR]),   0.0f, 0.0f,  1.0f,  z_far_abs  );
++    setVec4( M128_F32(frustum->planes[FRUST_PLANE_LEFT]),     u, 0.0f,     v,  0.0f   );
++    setVec4( M128_F32(frustum->planes[FRUST_PLANE_RIGHT]),   -u, 0.0f,     v,  0.0f   );
++    setVec4( M128_F32(frustum->planes[FRUST_PLANE_BOTTOM]), 0.0f,   s,     t,  0.0f   );
++    setVec4( M128_F32(frustum->planes[FRUST_PLANE_TOP]),    0.0f,  -s,     t,  0.0f   );
+ 
+ }
+ 
+@@ -87,7 +95,7 @@ bool frustum_is_capsule_culled_nosse( GfxFrustum* frustum, Vec3 origin, Vec3 dir
+ 
+     for (i=0; i < 6; ++i)
+     {
+-        if (cull_test_plane_capsule( frustum->planes[i].m128_f32, origin, direction, radius ) )
++        if (cull_test_plane_capsule( M128_F32(frustum->planes[i]), origin, direction, radius ) )
+             return true;
+     }
+     return false;
+@@ -108,9 +116,9 @@ static INLINEDBG __m128 sse2_dot4(__m128 a, __m128 b)
+         unsigned int saved_fpu_control;
+         _controlfp_s(&saved_fpu_control, 0, 0);    // retrieve current control word
+         _controlfp_s(NULL, _PC_24, _MCW_PC);    // set the fpu to 24 bit precision
+-        d = dotVec4(a.m128_f32, b.m128_f32);
++        d = dotVec4(M128_F32(a), M128_F32(b));
+         _controlfp_s(NULL, saved_fpu_control, _MCW_PC);    // restore fpu precision
+-        assert(t.m128_f32[0] == d);
++        assert(M128_F32(t)[0] == d);
+     }
+     #endif
+     return t;
+@@ -130,7 +138,7 @@ bool frustum_is_capsule_culled_sse2( GfxFrustum* frustum, Vec3 origin, Vec3 dire
+         register __m128 d1;
+         register __m128 d2;
+ 
+-        register __m128 plane = _mm_load_ps(frustum->planes[i].m128_f32);
++        register __m128 plane = _mm_load_ps(M128_F32(frustum->planes[i]));
+  
+         d1 = sse2_dot4(plane, pos); // plane . pos
+         if(_mm_comige_ss(d1, zero)) { // d1 >= zero
+@@ -176,7 +184,7 @@ bool frustum_is_sphere_culled_general( GfxFrustum* frustum, Vec3 origin, float r
+     {
+         // If the sphere origin is on the 'outside' of the plane by more than the
+         // sphere radius then it is completely out
+-        float d = dotVec3( frustum->planes[i].m128_f32, origin ) + frustum->planes[i].m128_f32[3];
++        float d = dotVec3( M128_F32(frustum->planes[i]), origin ) + M128_F32(frustum->planes[i])[3];
+         if (d < -radius)
+             return true;
+     }

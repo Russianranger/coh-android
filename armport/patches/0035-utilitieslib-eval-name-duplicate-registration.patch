@@ -1,0 +1,13 @@
+diff --git a/libs/UtilitiesLib/src/utils/eval.c b/libs/UtilitiesLib/src/utils/eval.c
+index 42c917c..37c7bee 100644
+--- a/libs/UtilitiesLib/src/utils/eval.c
++++ b/libs/UtilitiesLib/src/utils/eval.c
+@@ -1203,6 +1203,8 @@ static void eval_RegisterFuncEx(EvalContext *pcontext, const char *pchName, Eval
+     pdesc->reregistered = reregister;
+ 
+     added = stashAddPointer(pcontext->hashFuncs, pchName, pdesc, false);
++    if (!added)
++        printf("eval_RegisterFunc: '%s' is already registered in context %p\n", pchName, (void *)pcontext);
+     if (!devassertmsg(added, "Do you mean to call eval_ReRegisterFunc?"))
+     {
+         eval_UnregisterFunc(pcontext, pchName);

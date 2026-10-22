@@ -1,0 +1,102 @@
+diff --git a/Game/src/render/texWords.c b/Game/src/render/texWords.c
+index 32d7500..3cde1aa 100644
+--- a/Game/src/render/texWords.c
++++ b/Game/src/render/texWords.c
+@@ -1522,12 +1522,27 @@ static void drawQuad()
+     glEnd(); CHECKGL;
+ }
+ 
+-#if defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX)
++// ArmPort: the GCC/x86 paths below are plain C apart from x87 rounding steps.
++// ARM64 takes them too, rounding with lrint() in double precision, as x87 does
++// under the Windows default 53-bit precision control.
++#if defined(__GNUC__) && defined(_WIN32) && (defined(__i386__) || defined(__aarch64__)) && !defined(_XBOX)
++#define TEXWORDS_GCC_PATH 1
++#else
++#define TEXWORDS_GCC_PATH 0
++#endif
++#if defined(__aarch64__)
++#include <math.h>
++#endif
++
++#if TEXWORDS_GCC_PATH
+ // Each operation consumes its entire x87 stack, including before any C call.
+ // Memory operands retain the original single-precision inputs and x87 rounding.
+ static int texWordOverlayChannel(int top, int bottom, F32 topAlpha,
+     F32 bottomAlphaFact, F32 finalAlphaSaturateFact)
+ {
++#if defined(__aarch64__)
++    return (int)lrint(((double)top * topAlpha + (double)bottom * bottomAlphaFact) * finalAlphaSaturateFact);
++#else
+     int result;
+     __asm__ __volatile__(
+         "fildl %1; fmuls %3; fildl %2; fmuls %4; faddp; fmuls %5; fistpl %0"
+@@ -1536,6 +1551,7 @@ static int texWordOverlayChannel(int top, int bottom, F32 topAlpha,
+           "m" (bottomAlphaFact), "m" (finalAlphaSaturateFact)
+         : "st", "st(1)");
+     return result;
++#endif
+ }
+ #endif
+ 
+@@ -1590,13 +1606,17 @@ static void blendLayers(U8* dest, U8* bottom, U8* top, TexWordBlendType blend, F
+                         F32 bottomAlphaFact = (1.0 - topAlpha)*bottomAlpha;
+                         F32 finalAlpha = topAlpha + bottomAlphaFact;
+                         F32 finalAlphaSaturateFact = 1.0/finalAlpha;
+-#if defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX)
++#if TEXWORDS_GCC_PATH
+                         int alpha;
+                         d->r = texWordOverlayChannel(t.r, b.r, topAlpha, bottomAlphaFact, finalAlphaSaturateFact);
+                         d->g = texWordOverlayChannel(t.g, b.g, topAlpha, bottomAlphaFact, finalAlphaSaturateFact);
+                         d->b = texWordOverlayChannel(t.b, b.b, topAlpha, bottomAlphaFact, finalAlphaSaturateFact);
++#if defined(__aarch64__)
++                        alpha = (int)lrint((double)finalAlpha * float255);
++#else
+                         __asm__ __volatile__("flds %1; fmuls %2; fistpl %0"
+                             : "=m" (alpha) : "m" (finalAlpha), "m" (float255) : "st");
++#endif
+                         d->a = alpha;
+ #elif 0
+                         // ftol calls happen here!
+@@ -1650,7 +1670,7 @@ static void blendLayers(U8* dest, U8* bottom, U8* top, TexWordBlendType blend, F
+ #endif
+                     }
+                 xcase TWBLEND_MULTIPLY:
+-#if defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX)
++#if TEXWORDS_GCC_PATH
+                     // The signed MMX shift/pack has these same low eight bits.
+                     d->r = (unsigned int)t.r*b.r >> 8;
+                     d->g = (unsigned int)t.g*b.g >> 8;
+@@ -1703,7 +1723,7 @@ static void blendLayers(U8* dest, U8* bottom, U8* top, TexWordBlendType blend, F
+             }
+             // TODO: is the loss of precision here (1.0*1.0 = 254/255) acceptable?
+             if (topWeightByte!=255) {
+-#if defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX)
++#if TEXWORDS_GCC_PATH
+                 // Complementary weights keep the sum below 65536 (no saturation).
+                 d->r = ((unsigned int)d->r * topWeightByte + (unsigned int)b.r * invTopWeightByte) >> 8;
+                 d->g = ((unsigned int)d->g * topWeightByte + (unsigned int)b.g * invTopWeightByte) >> 8;
+@@ -1738,7 +1758,7 @@ static void blendLayers(U8* dest, U8* bottom, U8* top, TexWordBlendType blend, F
+         }
+         texWordsPixelsRendered(bufferSizeX*4, yield);
+     }
+-#if !(defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX))
++#if !(TEXWORDS_GCC_PATH)
+     // Empty Machine State (reset FPU for FP ops instead of MMX)
+     __asm {
+         emms
+@@ -2004,9 +2024,13 @@ static void filterKernelColorizeNoSpreadNoAlpha(U8* dest, U8* src, S32 *intKerne
+                         // Orig: dest[(bufferSizeX*y + x)] += s.a*kw;
+                         DWORD dwadd;
+                         DWORD alpha = s.a;
+-#if defined(__GNUC__) && defined(_WIN32) && defined(__i386__) && !defined(_XBOX)
++#if TEXWORDS_GCC_PATH
++#if defined(__aarch64__)
++                        dwadd = (int)lrint((double)alpha * kw);
++#else
+                         __asm__ __volatile__("fildl %1; fmuls %2; fistpl %0"
+                             : "=m" (dwadd) : "m" (alpha), "m" (kw) : "st");
++#endif
+ #else
+                         _asm {
+                             // fadd = falpha*kw;

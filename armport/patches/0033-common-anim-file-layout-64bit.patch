@@ -1,0 +1,176 @@
+diff --git a/Common/seq/animtrack.c b/Common/seq/animtrack.c
+index 4ac5d94..d8d6ed3 100644
+--- a/Common/seq/animtrack.c
++++ b/Common/seq/animtrack.c
+@@ -60,6 +60,122 @@ static void animDebugCheckBoneTrackOnLoad( BoneAnimTrack * bt, const char *fileN
+     }
+ }
+ 
++#if defined(_WIN64)
++/* ArmPort: .anim files are memory images of the 32-bit structures, with the
++ * pointers stored as 32-bit offsets from the start of the file. On 64-bit the
++ * structures are larger, so read the file layout explicitly and build native
++ * structures in front of a copy of the file bytes (one allocation, as before). */
++typedef struct SkeletonAnimTrackFile
++{
++    int     headerSize;
++    char    name[MAX_ANIM_FILE_NAME_LEN];
++    char    baseAnimName[MAX_ANIM_FILE_NAME_LEN];
++    F32     max_hip_displacement;
++    F32     length;
++    U32     bone_tracks;
++    int     bone_track_count;
++    int     rotation_compression_type;
++    int     position_compression_type;
++    U32     skeletonHeirarchy;
++    U32     backupAnimTrack;
++    int     loadstate;
++    F32     lasttimeused;
++    int     fileAge;
++    int     spare_room[9];
++} SkeletonAnimTrackFile;
++
++typedef struct BoneAnimTrackFile
++{
++    U32     rot_idx;
++    U32     pos_idx;
++    U16     rot_fullkeycount;
++    U16     pos_fullkeycount;
++    U16     rot_count;
++    U16     pos_count;
++    char    id;
++    char    flags;
++    unsigned short pack_pad;
++} BoneAnimTrackFile;
++
++STATIC_ASSERT(sizeof(SkeletonAnimTrackFile) == 596);
++STATIC_ASSERT(sizeof(BoneAnimTrackFile) == 20);
++
++static SkeletonAnimTrack * animConvertFileImage( const U8 * raw, int raw_size, int fix_data_ptrs, const char * fileName )
++{
++    const SkeletonAnimTrackFile * f = (const SkeletonAnimTrackFile *)raw;
++    const BoneAnimTrackFile * fb;
++    SkeletonAnimTrack * t;
++    BoneAnimTrack * bt;
++    U8 * block;
++    U8 * copy;
++    size_t head;
++    int i, n;
++
++    if ( raw_size < (int)sizeof(SkeletonAnimTrackFile) )
++        FatalErrorFilenamef(fileName, "Bad animation file: %d bytes", raw_size);
++    n = f->bone_track_count;
++    if ( n < 0 || f->bone_tracks > (U32)raw_size || (U32)raw_size - f->bone_tracks < (U32)n * sizeof(BoneAnimTrackFile) )
++    {
++        ErrorFilenamef(fileName, "Bad animation file: bone tracks outside the file");
++        n = 0;
++    }
++
++    // The copy of the file bytes is followed by zeroed slack: a skeleton-only
++    // load reads just the header, and a hierarchy may extend past it (the
++    // 32-bit client read whatever followed in memory).
++    head = sizeof(SkeletonAnimTrack) + (size_t)n * sizeof(BoneAnimTrack);
++    block = malloc( head + raw_size + sizeof(SkeletonHeirarchy) );
++    assert( block );
++    t = (SkeletonAnimTrack *)block;
++    bt = (BoneAnimTrack *)(t + 1);
++    copy = block + head;
++    memcpy( copy, raw, raw_size );
++    memset( copy + raw_size, 0, sizeof(SkeletonHeirarchy) );
++    fb = (const BoneAnimTrackFile *)(copy + f->bone_tracks);
++
++    memset( t, 0, sizeof(*t) );
++    t->headerSize = f->headerSize;
++    memcpy( t->name, f->name, sizeof(t->name) );
++    memcpy( t->baseAnimName, f->baseAnimName, sizeof(t->baseAnimName) );
++    t->max_hip_displacement = f->max_hip_displacement;
++    t->length = f->length;
++    t->bone_tracks = bt;
++    t->bone_track_count = n;
++    t->rotation_compression_type = f->rotation_compression_type;
++    t->position_compression_type = f->position_compression_type;
++    if ( f->skeletonHeirarchy && f->skeletonHeirarchy < (U32)raw_size )
++        t->skeletonHeirarchy = (const SkeletonHeirarchy *)(copy + f->skeletonHeirarchy);
++    else
++    {
++        if ( f->skeletonHeirarchy )
++            ErrorFilenamef(fileName, "Bad animation file: hierarchy outside the file");
++        t->skeletonHeirarchy = NULL;
++    }
++    t->backupAnimTrack = NULL;
++    t->loadstate = f->loadstate;
++    t->lasttimeused = f->lasttimeused;
++    t->fileAge = f->fileAge;
++    memcpy( t->spare_room, f->spare_room, sizeof(t->spare_room) );
++
++    for( i = 0 ; i < n ; i++ )
++    {
++        int keys_ok = fix_data_ptrs && fb[i].rot_idx <= (U32)raw_size && fb[i].pos_idx <= (U32)raw_size;
++        if ( fix_data_ptrs && !keys_ok )
++            ErrorFilenamef(fileName, "Bad animation file: key data outside the file");
++        bt[i].rot_idx = keys_ok ? (const void *)(copy + fb[i].rot_idx) : NULL;
++        bt[i].pos_idx = keys_ok ? (const void *)(copy + fb[i].pos_idx) : NULL;
++        bt[i].rot_fullkeycount = fb[i].rot_fullkeycount;
++        bt[i].pos_fullkeycount = fb[i].pos_fullkeycount;
++        bt[i].rot_count = fb[i].rot_count;
++        bt[i].pos_count = fb[i].pos_count;
++        bt[i].id = fb[i].id;
++        bt[i].flags = fb[i].flags;
++        bt[i].pack_pad = fb[i].pack_pad;
++    }
++    return t;
++}
++#endif
++
+ static SkeletonAnimTrack * animReadTrackFile( FILE * file, int load_type, const char* fileName, SharedHeapAcquireResult* ret ) 
+ {
+     SkeletonAnimTrack * skeleton;
+@@ -68,6 +184,32 @@ static SkeletonAnimTrack * animReadTrackFile( FILE * file, int load_type, const
+     void * track_data = 0;
+     SharedHeapHandle* pHandle = NULL;
+ 
++#if defined(_WIN64)
++    {
++        // ArmPort: not shared (the shared heap holds file images as-is).
++        U8 * raw;
++        *ret = SHAR_Error;
++        if ( load_type == LOAD_ALL || load_type == LOAD_ALL_SHARED )
++            file_size = fileGetSize( file );
++        else
++        {
++            fread( &file_size, sizeof( int ), 1, file );
++            fseek( file, 0, SEEK_SET );
++        }
++        raw = malloc( file_size );
++        assert( raw );
++        if ( fread( raw, 1, file_size, file ) != (size_t)file_size )
++            FatalErrorFilenamef(fileName, "Could not read animation file");
++        skeleton = animConvertFileImage( raw, file_size, load_type != LOAD_SKELETONS_ONLY, fileName );
++        free( raw );
++        if ( load_type != LOAD_SKELETONS_ONLY )
++            for( i = 0 ; i < skeleton->bone_track_count ; i++ )
++                animDebugCheckBoneTrackOnLoad( &skeleton->bone_tracks[i], fileName );
++        (void)bt; (void)track_data; (void)pHandle;
++        return skeleton;
++    }
++#endif
++
+     if ( load_type == LOAD_ALL_SHARED )
+     {
+         *ret = sharedHeapAcquire(&pHandle, fileName);
+@@ -209,7 +351,15 @@ SkeletonAnimTrack * animLoadAnimFile( const char* fileName )
+     }
+     fread( pTrack, 1, file_size, f );
+ 
++#if defined(_WIN64)
++    {
++        SkeletonAnimTrack * native = animConvertFileImage( (const U8 *)pTrack, file_size, 1, fileName );
++        free( pTrack );
++        pTrack = native;
++    }
++#else
+     animPatchLoadedRawData( pTrack );
++#endif
+     animValidateTrackData( pTrack );
+ 
+     fclose(f);

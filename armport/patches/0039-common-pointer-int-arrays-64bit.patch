@@ -1,0 +1,72 @@
+diff --git a/Common/bases/basedata.c b/Common/bases/basedata.c
+index 34d5008..8715b0a 100644
+--- a/Common/bases/basedata.c
++++ b/Common/bases/basedata.c
+@@ -185,7 +185,14 @@ static TokenizerParseInfo ParseDetailCategory[] =
+     { "ControlPriority", TOK_INT(DetailCategory, iControlPriority,0) },
+ 
+     // Used for shared memory only
++#if defined(_WIN64)
++    // ArmPort: a pointer array described as an int array (for shared-memory
++    // copies). Textparser int arrays are 32-bit, and the array is rebuilt in
++    // code after loading, so 64-bit builds skip it.
++    { "*DetailPointer", TOK_IGNORE, 0 },
++#else
+     { "*DetailPointer",  TOK_AUTOINTEARRAY(DetailCategory, ppDetails)        },
++#endif
+ 
+     { "}",               TOK_END,      0 },
+     { "", 0, 0 }
+diff --git a/Common/entity/powers_load.c b/Common/entity/powers_load.c
+index 8e27240..2451592 100644
+--- a/Common/entity/powers_load.c
++++ b/Common/entity/powers_load.c
+@@ -2251,7 +2251,14 @@ TokenizerParseInfo ParseBasePowerSet[] =
+     { "SpecializeAt",        TOK_INT(BasePowerSet, iSpecializeAt, 0) },
+     { "SpecializeRequires",    TOK_STRINGARRAY(BasePowerSet, ppSpecializeRequires) },
+     { "Powers",                TOK_STRINGARRAY(BasePowerSet, ppPowerNames ) },
++#if defined(_WIN64)
++    // ArmPort: a pointer array described as an int array (for shared-memory
++    // copies). Textparser int arrays are 32-bit, and the array is rebuilt in
++    // code after loading, so 64-bit builds skip it.
++    { "*PowersPointerArray", TOK_IGNORE, 0 },
++#else
+     { "",                    TOK_AUTOINTEARRAY(BasePowerSet, ppPowers ) },
++#endif
+     { "Available",            TOK_INTARRAY(BasePowerSet, piAvailable)         },
+     { "AIMaxLevel",            TOK_INTARRAY(BasePowerSet, piAIMaxLevel)         },
+     { "AIMinRankCon",        TOK_INTARRAY(BasePowerSet, piAIMinRankCon)         },
+@@ -2272,7 +2279,14 @@ TokenizerParseInfo ParsePowerCategory[] =
+     { "DisplayHelp",      TOK_STRING(PowerCategory, pchDisplayHelp, 0)      },
+     { "DisplayShortHelp", TOK_STRING(PowerCategory, pchDisplayShortHelp, 0) },
+     { "PowerSets",        TOK_STRINGARRAY(PowerCategory, ppPowerSetNames ) },
++#if defined(_WIN64)
++    // ArmPort: a pointer array described as an int array (for shared-memory
++    // copies). Textparser int arrays are 32-bit, and the array is rebuilt in
++    // code after loading, so 64-bit builds skip it.
++    { "*PowerSetsPointerArray", TOK_IGNORE, 0 },
++#else
+     { "",                  TOK_AUTOINTEARRAY(PowerCategory, ppPowerSets ) },
++#endif
+     { "Available",        TOK_IGNORE,      0 },
+     { "}",                TOK_END,         0 },
+     { "", 0, 0 }
+diff --git a/Common/gameData/store_data.c b/Common/gameData/store_data.c
+index 9ca74dc..441b572 100644
+--- a/Common/gameData/store_data.c
++++ b/Common/gameData/store_data.c
+@@ -65,7 +65,14 @@ TokenizerParseInfo ParseDepartments[] =
+ 
+ TokenizerParseInfo ParseDepartmentContent[] =
+ {
++#if defined(_WIN64)
++    // ArmPort: a pointer array described as an int array (for shared-memory
++    // copies). Textparser int arrays are 32-bit, and the array is rebuilt in
++    // code after loading, so 64-bit builds skip it.
++    { "Items", TOK_IGNORE, 0 },
++#else
+     { "Items", TOK_AUTOINTEARRAY(DepartmentContent, ppItems) }, // Here for memory sharing
++#endif
+     { "\n",    TOK_END,                      0 },
+     { "", 0, 0 }
+ };

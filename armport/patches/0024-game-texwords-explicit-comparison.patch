@@ -1,0 +1,15 @@
+diff --git a/Game/src/render/texWords.c b/Game/src/render/texWords.c
+index 3cde1aa..cf6e3e7 100644
+--- a/Game/src/render/texWords.c
++++ b/Game/src/render/texWords.c
+@@ -2377,7 +2377,9 @@ void renderTexWordLayer(PBName destBuf, TexWordLayer *layer, int screenPosX, int
+         leprintf("done.");
+     }
+     // Perform after effect filtering
+-    for (i=0; i<eaSize(&layer->filter)>0; i++)
++    // ArmPort: parentheses make the original parse explicit, (i < n) > 0,
++    // which newer clang rejects when written as a chained comparison.
++    for (i=0; (i<eaSize(&layer->filter))>0; i++)
+     {
+         PBName tempbuf = (destBuf == PB_THISLAYER)?PB_SUBLAYER:PB_THISLAYER;
+         lsprintf("Filtering...");
