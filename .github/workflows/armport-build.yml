@@ -455,17 +455,11 @@ jobs:
       # 38478387527 of android-game.yml); the package must name it.
       DONOR_COMMIT: 1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21
     steps:
+      # Full checkout, as android-game.yml's runtime job: the packaging and
+      # staging tools read accepted evidence under docs/, database/, patches/
+      # and upstream/ (about 2.9 GB, mostly upstream/i24/data the client uses).
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: |
-            /armport/
-            /tools/
-            /android/
-            /database/wine-game/
-            /assets/
-            /docs/android-evidence/
-            /upstream/i24/data/
-          sparse-checkout-cone-mode: false
           lfs: false
       - name: Free disk (preinstalled toolchains this job does not use)
         run: |
