@@ -72,22 +72,20 @@ def ocr(path):
 
 
 def merge_tree(src, dst):
-    """Overlay src onto dst with symlinks, splitting a linked directory only
-    where two roots both have it. Earlier roots win for files."""
-    if not dst.exists() and not dst.is_symlink():
-        dst.symlink_to(src, target_is_directory=src.is_dir())
-        return
-    if not (src.is_dir() and dst.is_dir()):
-        return
-    if dst.is_symlink():
-        target = dst.resolve()
-        dst.unlink()
-        dst.mkdir()
-        for child in target.iterdir():
-            (dst / child.name).symlink_to(child, target_is_directory=child.is_dir())
-    for child in src.iterdir():
-        merge_tree(child, dst / child.name)
-
+    """Overlay src onto dst as hard links (real directories, no symlinks, so the
+    client's directory scans see ordinary files). Earlier roots win for files."""
+    for dirpath, dirnames, filenames in os.walk(src, followlinks=True):
+        rel = os.path.relpath(dirpath, src)
+        target = dst / rel if rel != '.' else dst
+        target.mkdir(parents=True, exist_ok=True)
+        for f in filenames:
+            out = target / f
+            if out.exists():
+                continue
+            try:
+                os.link(os.path.join(dirpath, f), out)
+            except OSError:
+                shutil.copy2(os.path.join(dirpath, f), out)
 
 def window_texts(lines):
     texts = []
@@ -220,11 +218,20 @@ def report_exceptions(lines, exe, llvm, title):
     for b in blocks:
         if b not in uniq:
             uniq.append(b)
-    client = sorted({x for _, pc, lr in uniq for x in (pc, lr) if 0x140000000 <= x < 0x150000000})
+    # The client function that catches each exception: the unwind target.
+    targets = []
+    for l in lines:
+        m = re.search(r'RtlUnwindEx code=\S+ flags=\S+ end_frame=\S+ target_ip=([0-9A-Fa-f]+)', l)
+        if m:
+            targets.append(int(m.group(1), 16))
+    client = sorted({x for _, pc, lr in uniq for x in (pc, lr) if 0x140000000 <= x < 0x150000000}
+                    | {x for x in targets if 0x140000000 <= x < 0x150000000})
     names = symbolize(exe, client, llvm)
     text = [f'{len(blocks)} exceptions, {len(uniq)} distinct']
     for code, pc, lr in uniq[:12]:
         text.append(f'{code}\n  pc={pc:x} {names.get(pc, "")}\n  lr={lr:x} {names.get(lr, "")}')
+    for t in sorted(set(targets))[:8]:
+        text.append(f'caught at {t:x} {names.get(t, "")}')
     note('warning', f'{title} exceptions', '\n'.join(text))
 
 
