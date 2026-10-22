@@ -61,11 +61,16 @@ class Screen:
                 return x, y
         return None
 
-    def click(self, x, y):
+    def click(self, x, y, hold=0.6):
+        # The game reads the mouse once per frame (DirectInput); at software-
+        # rendering frame rates an instant press and release can fall between
+        # two frames, so the button is held down.
         sh('xdotool', 'mousemove', str(x), str(y))
-        time.sleep(0.3)
-        sh('xdotool', 'click', '1')
-        self.log.append(f'   click {x},{y}')
+        time.sleep(0.5)
+        sh('xdotool', 'mousedown', '1')
+        time.sleep(hold)
+        sh('xdotool', 'mouseup', '1')
+        self.log.append(f'   click {x},{y} (held {hold}s)')
 
     def type(self, text):
         sh('xdotool', 'type', '--delay', '120', text)

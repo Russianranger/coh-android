@@ -335,13 +335,16 @@ def login_probe(out, proc):
     except Exception as e:  # diagnostics only
         status['error'] = repr(e)
     note('notice', 'ArmPort M2 login probe', json.dumps(status, indent=1)[:3000] + '\n' + '\n'.join(screen.log[-40:]))
-    shots = sorted(out.glob('*.png'))
-    if shots:
-        for size, q in (('320x240', 45), ('256x192', 40), ('200x150', 35)):
-            subprocess.run(['montage', *map(str, shots[-9:]), '-tile', '3x', '-geometry', size + '+2+2',
-                            '-quality', str(q), str(out.parent / 'probe.jpg')], capture_output=True)
-            if (out.parent / 'probe.jpg').exists() and (out.parent / 'probe.jpg').stat().st_size < 24000:
-                break
+    # Single frames for screen_export.py (one image per annotation title).
+    for key in ('password-typed', 'after-login', 'probe-end'):
+        hits = [p for p in sorted(out.glob('*.png')) if key in p.name]
+        if hits:
+            for q in (45, 35, 25):
+                dst = out.parent / f'probe-{key}.jpg'
+                subprocess.run(['convert', str(hits[-1]), '-crop', '1024x768+104+130', '+repage', '-resize', '512x384',
+                                '-quality', str(q), str(dst)], capture_output=True)
+                if dst.exists() and dst.stat().st_size < 24000:
+                    break
 
 
 def main():

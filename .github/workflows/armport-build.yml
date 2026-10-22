@@ -438,7 +438,9 @@ jobs:
         if: always()
         run: |
           [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"
-          [ -f "$RUNNER_TEMP/probe.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/probe.jpg" "ArmPort M2 login probe steps" || echo "no probe"
+          for n in password-typed after-login probe-end; do
+            [ -f "$RUNNER_TEMP/probe-$n.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/probe-$n.jpg" "ArmPort probe $n" || echo "no $n"
+          done
 
   server-run:
     # M3: the repository's qualified ARM64 game stack (original DbServer and
