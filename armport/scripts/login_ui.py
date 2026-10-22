@@ -116,7 +116,10 @@ class Screen:
 # Login screen layout in the 1024x768 client window, measured from the M3
 # frame of run 39803404449 (used when OCR does not find a control).
 LAYOUT = {'ultra_cancel': (512, 495), 'account_field': (849, 307),
-          'password_field': (849, 420), 'login_button': (899, 486)}
+          'password_field': (849, 420), 'login_button': (899, 486),
+          # First server row: uiLogin.c SERVER_X 660, SERVER_LIST_Y 266, row
+          # 328 x 30 in the 1024x768 design space (scale 1 at this size).
+          'server_row': (824, 281)}
 
 
 def at(screen, name):
@@ -207,6 +210,9 @@ def after_login(screen, status, rounds=20, interval=15, done=lambda png: False, 
         status.setdefault('post_login_text', []).append(' '.join(w for w, _, _ in words)[:300])
         agree = next(((x, y) for w, x, y in words if w.lower().strip('.:,') in ('agree', 'accept')), None)
         server = next(((x, y) for w, x, y in words if '127.0.0' in w), None)
+        if not server and not agree and any(w.lower().strip('.:,') == 'server' for w, _, _ in words) \
+                and status.get('server_clicked', 0) < 3:
+            server = at(screen, 'server_row')   # "SELECT A SERVER" heading seen
         if agree:
             status['agreed'] = status.get('agreed', 0) + 1
             screen.click(*agree)
