@@ -65,13 +65,27 @@ Wine via FEX).
   bar), because the client was still loading 20-50 s after the database
   confirmation. Commit 748504dc makes the host wait up to 25 minutes for the
   window to leave the loading screen and requires a rendered frame for the
-  verdict. **Run 39973792458 (that commit) was in progress at handoff**:
-  check it first (`ci_results.py --run 39973792458 --job server-run --grep
-  verdict "login driver" "guest result"`).
+  verdict.
+- **Run 39973792458 (commit 748504dc) failed: the zone never loaded.** Login
+  and character select worked again; the DB showed the character connected
+  on Atlas at 15:59:48. The host then captured about 50 `zone-loading`
+  frames over the 25-minute wait. The final `ArmPort M3 screen` is still the
+  white loading screen with the progress bar near empty. After the wait the
+  DB showed `loaded false, connected false` (`still_connected` false), and
+  the guest failed with "ARM64 client did not stay connected on Atlas". The
+  client process had not exited (no `armport-client-exited`). So the load
+  stalls near the start and the server drops the link. Saved annotations:
+  `ci_results.py --run 39973792458 --job server-run --grep "login driver"
+  "client exceptions" "UDP sequences" "stdio"` (the stdio has 16,347
+  filtered lines). Next, find what the client is doing in the stall: a
+  missing data file, a wait on a packet it never parses (the 64-bit receive
+  path, see 0044), or a busy loop. Also find when the server dropped it
+  (MapServer stdout tail).
 
 ## 5. M3: remaining steps
 
-1. **Screenshot check.** Read run 39973792458. If `world_rendered` is true,
+1. **Screenshot check.** Blocked on the zone-load stall above; fix that
+   first. Once a run has `world_rendered` true,
    look at the `ArmPort M3 screen` image (Atlas Park should be visible) and
    copy it to `armport/evidence/m3-atlas.jpg`. If the zone never finishes
    loading, the client log and `loading_brightness` list say how far it got;
