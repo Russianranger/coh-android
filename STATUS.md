@@ -15,7 +15,6 @@ untouched). Details: armport/M2-REPORT.md.
   and Mesa and shows the login screen with the game's own UI; still running
   with no exceptions at 180 s (CI run 39742143066, screen in
   armport/evidence/m2-login-screen.jpg).
-- Not yet run against the CI server: that starts M3's scripted login.
 - Data bins are built in CI by the OptDebug client (-createbins); Cg programs
   are compiled to ARB by the original cgc.exe and loaded by the stand-in.
 - 64-bit bugs fixed one by one as they stopped the client
@@ -27,5 +26,16 @@ untouched). Details: armport/M2-REPORT.md.
 CI uses the reviewed client asset bundle the repo's other runtime workflows
 use (release asset 588984151) for fonts, UI textures and models.
 
-M3 into Atlas (branch armport/m3-atlas): started. First step: the client
-logs in against the CI server.
+M3 into Atlas (branch armport/m3-atlas, 47 patches):
+- CI job server-run: the repository's qualified ARM64 game stack (original
+  DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
+  loopback-only network) plus the ARM64 client, login typed on Xvfb.
+- Run 39960894368: the ARM64 client logged in through its own UI, chose the
+  TestClient-created character and is connected on Atlas Park in the
+  database (loaded, map 1), still connected after the screenshots.
+- Fixes on the way: SOCKET width (0044), version-check opt-in for the
+  fake-auth server (0045), empty world-group slots (0047), login-stage log
+  (0046, diagnostics only).
+- Open: screenshot of the rendered zone (run in progress; the first frames
+  were the zone loading screen); packet replay needs initial-replay.bin and
+  post-ready-replay.bin from the Thor report (requested).
