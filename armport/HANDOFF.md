@@ -48,7 +48,7 @@ Wine via FEX).
 | M0 | survey, route | merged |
 | M1 | libraries build; textparser unit runs under the app's Wine | merged |
 | M2 | client links and reaches the login screen under that Wine (Xvfb, Mesa) | merged; boot test still runs in every CI run (`client-run`) |
-| M3 | scripted login against the CI server to Atlas Park; saved native-android packets replay through the original receive code; screenshot check | **login to Atlas done; screenshot check pending; replay blocked on files** |
+| M3 | scripted login against the CI server to Atlas Park; saved native-android packets replay through the original receive code; screenshot check | **login reached Atlas; loading stalls in texLoadQueueFinish; replay inputs recovered** |
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | not started |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
@@ -82,6 +82,11 @@ Wine via FEX).
   path, see 0044), or a busy loop. Also find when the server dropped it
   (MapServer stdout tail).
 
+- Run **40011219458** (ff50ae2db) narrows the stall to
+  `texLoadQueueFinish()`: `textures.wait` is the final zone marker, and 49
+  log-growth samples are identical. Patch 0049 adds internal texture-queue
+  markers. See `notes/M3-LOAD-STALL.md`; no loading fix or M3 pass yet.
+
 ## 5. M3: remaining steps
 
 1. **Screenshot check.** Blocked on the zone-load stall above; fix that
@@ -91,12 +96,13 @@ Wine via FEX).
    loading, the client log and `loading_brightness` list say how far it got;
    likely causes are missing CI data (see section 8) or a 64-bit bug in the
    zone loader (look for crashes in `client exceptions`).
-2. **Packet replay.** Needs `initial-replay.bin` (37,994 bytes, sha256
+2. **Packet replay.** Both inputs were recovered and hash-verified on
+   2026-10-23; see `notes/M3-LOAD-STALL.md`. Use `initial-replay.bin` (37,994 bytes, sha256
    cc949b01...7b39) and `post-ready-replay.bin` (74,416 bytes, sha256
    f134c3c0...96a9) from the user's Thor report of 2026-10-21 (client
    session 1a15fad27e9; hashes in
    `native-android/combined-client/DIAGNOSTIC-STATUS.json`). They are not in
-   the repo; the user was asked for them. Format notes are in that JSON
+   the repo; the original report archive now supplies both. Format notes are in that JSON
    (`coh-post-ready-logical-messages-v1`; logical payloads, not UDP wire
    packets). Approach to agree with the reviewer first: feed the logical
    messages to the client's original receive functions (entity/initial
@@ -138,8 +144,9 @@ message for docs-only commits):
 | `client-run` | M2 boot test (`--require-alive`) plus a login probe (no server) | 6-11 min |
 | `server-run` | M3: server stack plus ARM64 client login to Atlas | 60-120 min |
 
-**Reading results.** Step logs and artifact downloads are not reachable from
-the agent environment; everything is reported as check-run annotations.
+**Reading results.** The current GitHub connector can fetch full job logs
+and download artifacts. Verify downloads against their API SHA-256 digests.
+The annotation reader remains a useful fallback without connector access.
 Use `python3 armport/scripts/ci_results.py --sha <commit> --job <job>`
 (waits, saves annotations, rebuilds exported images, prints sections;
 `--grep` to filter). Failing commands in `server-run` are wrapped in

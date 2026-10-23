@@ -46,3 +46,4 @@
 0046-game-arm64-login-stage-diagnostics.patch
 0047-common-group-recalc-bounds-empty-defs.patch
 0048-game-zone-load-progress-diagnostics.patch
+0049-tex-queue-stall-trace.patch
