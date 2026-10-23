@@ -43,3 +43,4 @@
 0043-game-smf-face-tokens-64bit.patch
 0044-utilitieslib-socket-values-keep-socket-type.patch
 0045-game-arm64-no-version-check-opt-in.patch
+0046-game-arm64-login-stage-diagnostics.patch

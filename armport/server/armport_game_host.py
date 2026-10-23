@@ -349,6 +349,12 @@ def main():
         note('notice', 'ArmPort M3 client Wine errors', f'{len(errs)} lines; last 50:\n' + '\n'.join(errs[-50:]))
     note('notice', 'ArmPort M3 login driver', json.dumps(status, indent=1)[:1500] + '\n' + '\n'.join(screen.log[-60:]))
     smoke_run.report_stdio(client / 'armport_stdio.txt', 'ArmPort M3 client stdio')
+    stdio = client / 'armport_stdio.txt'
+    if stdio.exists():
+        marks = [l[:240] for l in stdio.read_text(errors='replace').splitlines() if l.startswith('ArmPort ')]
+        note('notice', 'ArmPort M3 client login stages and dialogs (patch 0046)',
+             f'{len(marks)} lines; stage numbers from uiLogin.h LoginStage (0 start, 1 EULA, 3 server select, '
+             f'4 NDA, 6 character select, 7 leaving)\n' + '\n'.join(marks[-50:]))
     try:
         dbhost.validate_network_receipt(game.read_json(evidence / 'network-isolation.json'), network_expected)
         note('notice', 'ArmPort M3 network', 'guest ran in a private loopback-only network namespace')

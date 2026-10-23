@@ -556,6 +556,9 @@ def main():
     else:
         note('notice', 'ArmPort M2 frame rate', 'no +fps samples (no frame presented through wglSwapBuffers?)')
     report_stdio(rt / 'armport_stdio.txt', 'ArmPort M2 client output')
+    if a.login_probe and (rt / 'armport_stdio.txt').exists():
+        marks = [l[:240] for l in (rt / 'armport_stdio.txt').read_text(errors='replace').splitlines() if l.startswith('ArmPort ')]
+        note('notice', 'ArmPort M2 login probe stages and dialogs', f'{len(marks)} lines\n' + '\n'.join(marks[-40:]))
     # Text the client put into windows and dialog controls (error messages).
     texts = window_texts(lines)
     if texts:
