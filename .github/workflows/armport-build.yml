@@ -78,6 +78,7 @@ jobs:
             /upstream/i24/data/defs/ui/bodyparts.bp
             /native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
             /android/runtime-lock.json
+            /tools/android/interactive/test_client_render_queue_worker.py
             /.github/
           sparse-checkout-cone-mode: false
           lfs: false
@@ -116,6 +117,26 @@ jobs:
 
       - name: Prepare patched source
         run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/armport"
+
+      - name: Worker lost-wake regression and ARM64 queue publication
+        run: |
+          for variant in original patched; do
+            source=upstream/ouroboros
+            expected=0
+            if [ "$variant" = patched ]; then
+              source="$RUNNER_TEMP/armport/src"
+              expected=1
+            fi
+            python3 armport/tests/worker_wake.py --source "$source" --expect-dispatch "$expected" \
+              --emit-windows "$RUNNER_TEMP/worker-$variant.c"
+            for target in aarch64 i686; do
+              /opt/llvm-mingw/bin/$target-w64-mingw32-clang -std=gnu11 -O2 -fms-extensions \
+                -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types \
+                "$RUNNER_TEMP/worker-$variant.c" -o "$RUNNER_TEMP/worker-$variant-$target.exe"
+            done
+            # Execute ARM64 with the app runtime. i686 is compile coverage here.
+            timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/worker-$variant-aarch64.exe" "$expected"
+          done
 
       - name: Configure
         env:
