@@ -18,7 +18,7 @@ import time
 
 sys.path.insert(0, '/opt/coh-guest')
 import presentation_diagnostic as presentation
-from client_startup_diagnostic import XObserver
+from client_startup_diagnostic import XObserver, parse_launch, console_identity
 
 base, require = presentation.base, presentation.require
 
@@ -49,7 +49,8 @@ class ArmPortRuntime(presentation.PresentationDiagnostic):
                 'Private presentation socket directory required')
         require(not self.presentation_socket.exists(), 'Presentation endpoint already exists')
         executable = self.args.client / 'CityOfHeroes.exe'
-        binaries = [executable, *sorted(self.args.client.glob('*.dll'))]
+        binaries = [executable, self.args.client / 'armport-launcher.exe',
+                    *sorted(self.args.client.glob('*.dll'))]
         for binary in binaries:
             require(binary.is_file() and not binary.is_symlink(), 'Missing/linked client binary')
             arm64_pe(binary)
@@ -63,8 +64,9 @@ class ArmPortRuntime(presentation.PresentationDiagnostic):
         environment = dict(self.wine_env, ARMPORT_LOOSE_DATA='1',
                            ARMPORT_STDIO_LOG='armport_stdio.txt', WINEDEBUG='err+all,fixme-all,+seh')
         command = ['/usr/bin/env', '-C', str(self.args.client), str(self.args.wine),
-                   str(self.args.client / 'CityOfHeroes.exe'), '-fullscreen', '1',
-                   '-screen', '800', '600', '-noaudio', '1', '-maxfps', '10']
+                   base.windows_path(self.args.client / 'armport-launcher.exe'), self.args.session_id,
+                   base.windows_path(self.args.client / 'CityOfHeroes.exe'),
+                   base.windows_path(self.args.client), '--character-manual']
         child = self.ctx.start('armport-client', command, env=environment)
         observer = XObserver(self.wine_env['DISPLAY'])
         stdio = self.args.client / 'armport_stdio.txt'
@@ -85,8 +87,11 @@ class ArmPortRuntime(presentation.PresentationDiagnostic):
                            and w['height'] >= 480 and 'City of Heroes' in w['title']]
                 require(not any(w['mapped'] and ('Fatal Error' in w['title'] or 'Assertion' in w['title'])
                                 for w in windows), 'Client error dialog')
-                if visible and re.search(r'ArmPort login: stage 0\b', text):
-                    self.ctx.report.update(login_stage=0, client_windows=visible)
+                launch = parse_launch(child.text(), self.args.session_id)
+                console = console_identity(child.text(), launch)
+                if visible and launch and console and re.search(r'ArmPort login: stage 0\b', text):
+                    self.ctx.report.update(login_stage=0, client_windows=visible,
+                                           client_launch=launch, client_console_observation=console)
                     base.private_write(self.args.state / 'armport-app-ready.json',
                                        json.dumps({'login_stage': 0, 'windows': visible}) + '\n')
                     break
@@ -113,8 +118,10 @@ def main():
                           ('xserver', '/usr/bin/Xtigervnc'), ('socket-dir', '/presentation-socket')]:
         parser.add_argument('--' + name, type=Path, default=Path(default))
     parser.add_argument('--startup-seconds', type=int, default=600)
+    parser.add_argument('--session-id', default='a' * 32)
     args = parser.parse_args()
     require(30 <= args.startup_seconds <= 900, 'Startup budget out of bounds')
+    require(re.fullmatch('[0-9a-f]{32}', args.session_id) is not None, 'Invalid session')
     os.umask(0o077)
     context = base.Context(args.state, 1500)
     context.report.update(scope='armport_app_runtime_boot', m4_complete=False,

@@ -56,6 +56,24 @@ guest launch path, and qualify that integration on the ARM64 runner. M3
 must still pass its own exits and review. Building/signing an APK remains a
 separate approval step under HANDOFF section 6; no keys are used here.
 
+## App display path result
+
+[Run 40034280752](https://github.com/Russianranger/coh-android/actions/runs/40034280752),
+head c2e1ca2d872a571a864aa1f45481c2ac8ef8a2ee, completed the runtime probe.
+`host-report.json`: passed true, guest_exit 0, m4_complete false. The guest
+reported login stage 0, a mapped 800x600 City of Heroes window, the client
+alive after frame capture, zero surviving owned workers, and all cleanup
+checks true. The three RFB PNGs have SHA-256
+3e968bdba2433c0ab758f089644404d9cc6cc2a2e2a16dab5e6b39f78a9b8c6a.
+Visual inspection shows the actual login screen with the first-run graphics
+settings dialog, not Atlas. Artifact 12537065650 was downloaded and checked
+against API digest 86a90e23d9e4cb3799f2054d0ca45079271305cca7e28cc0effe9e126029ec4c.
+
+Next probe builds the app's unchanged `android/native/client-launcher.c` for
+ARM64 and requires its real child PID and console-membership observations.
+This tests the launcher used by the interactive app rather than assuming
+that direct Wine startup qualifies its console supervision.
+
 First attempt [40033778230](https://github.com/Russianranger/coh-android/actions/runs/40033778230)
 never launched the guest: `armport-client-bins` had not yet been uploaded by
 run 40032719161. The workflow now separates executable and data donor IDs:

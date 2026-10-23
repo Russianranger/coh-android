@@ -105,6 +105,15 @@ jobs:
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
             --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/m4-client" --cg-dir "$RUNNER_TEMP/cg-arb"
+      - name: Build the app's existing native client launcher for ARM64
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            https://github.com/mstorsjo/llvm-mingw/releases/download/20250910/llvm-mingw-20250910-ucrt-ubuntu-22.04-aarch64.tar.xz
+          echo "175f344e3db2e11b3d53f4f828ae7b5f0073a4d239b9600fa023ef4b90eb5a7e  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          mkdir "$RUNNER_TEMP/llvm"
+          tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C "$RUNNER_TEMP/llvm"
+          "$RUNNER_TEMP/llvm/bin/aarch64-w64-mingw32-clang" -O2 -Wall -Wextra \
+            android/native/client-launcher.c -luser32 -o "$RUNNER_TEMP/m4-client/armport-launcher.exe"
       - name: ARM64 client through app PRoot, Xtigervnc and private RFB
         run: |
           python3 armport/app/runtime_host.py --client "$RUNNER_TEMP/m4-client" \
