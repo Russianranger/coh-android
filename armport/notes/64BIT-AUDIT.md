@@ -47,6 +47,14 @@ handles get cut.
 All file-layout constants above were checked against the 32-bit structures by
 compiling them for i686 with static assertions (sizes and field offsets).
 
+## Not 64-bit, found on the way
+
+| Patch | Problem | Effect before the fix |
+|---|---|---|
+| 0042 | Production clients read `scenes/`, `ent_types/`, `object_library/`, `geobin/` only from piggs; CI has loose data (`ARMPORT_LOOSE_DATA`) | scene load failed |
+| 0045 | The fake-auth DbServer honours the client's no-version-check flag; the Release client can only set it with a level-9 command (`ARMPORT_NO_VERSION_CHECK`) | DbServer answered the login with WrongVersion |
+| 0047 | `groupFileRecalcBounds` did not skip empty def slots (members that failed to load; the 32-bit MapServer logs the same "can't find member" on this data), unlike `groupRecalcAllBounds` | client crashed loading Atlas Park's world groups |
+
 ## Known, not fixed yet
 
 - `libs/UtilitiesLib/src/utils/DirMonitor.c:338`: completion key narrowed to
