@@ -73,6 +73,29 @@ class ArmPortGame(gd.GameDiagnostic):
         self.armport_client()
         self.game.update(status='passed', query_processes=self.query_count, readiness_queries=self.readiness_count)
 
+    def observe_atlas(self):
+        """The original 30 s observation; repeated once in full if Atlas
+        missed a heartbeat (seen in 3 of 4 runs on 2026-10-23 before any
+        ArmPort step). Recorded as atlas_observation_retry."""
+        try:
+            return super().observe_atlas()
+        except base.DiagnosticError as exc:
+            if 'lost current readiness' not in str(exc):
+                raise
+            self.game['atlas_observation_retry'] = {'first_failure': str(exc), 'failed_utc': base.utc()}
+        next_status = 0
+
+        def ready():
+            nonlocal next_status
+            if time.monotonic() < next_status:
+                return False
+            next_status = time.monotonic() + 20
+            return evidence.map_ready_current(self.map_status('retry-ready', timeout=90))
+        self.wait(ready, 300, 'Atlas current readiness before the repeated observation')
+        result = super().observe_atlas()
+        self.game['atlas_observation_retry']['second_observation_passed'] = True
+        return result
+
     def armport_client(self):
         """The host runs the ARM64 client (as in M2, with the host's Wine,
         Xvfb and Mesa) inside this run's private network namespace; this
