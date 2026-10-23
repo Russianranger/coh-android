@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-22.
+Updated 2026-10-23.
 
 M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
@@ -23,8 +23,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-
-M3 into Atlas (branch armport/m3-atlas, 47 patches; Astra leads from here,
+M3 into Atlas (branch armport/m3-atlas, 48 patches; Astra leads from here,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -35,6 +34,7 @@ see armport/HANDOFF.md):
 - Fixes on the way: SOCKET width (0044), version-check opt-in for the
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
-- Open: screenshot of the rendered zone (run in progress; the first frames
-  were the zone loading screen); packet replay needs initial-replay.bin and
-  post-ready-replay.bin from the Thor report (requested).
+- Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
+- Patch 0048 + host diagnostics trace the stall; runtime result pending.
+  Validation and next step: armport/notes/M3-LOAD-STALL.md.
+- Replay still needs both .bin inputs and reviewer agreement (HANDOFF §5).

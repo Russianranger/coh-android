@@ -13,8 +13,9 @@ the report sections.
   --grep     print only sections whose title or text contains one of these
   --no-wait  read whatever is there now
 
-Uses the gh CLI (REST only; GraphQL is not available). Images are written to
-DIR as <title>.jpg.
+Uses the gh CLI (REST only; GraphQL is not available), or unauthenticated
+public REST reads when gh is not installed. Images are written to DIR as
+<title>.jpg.
 """
 import argparse
 import base64
@@ -23,13 +24,24 @@ import re
 import subprocess
 import sys
 import time
+import urllib.request
 from pathlib import Path
 
 REPO = 'Russianranger/coh-android'
 
 
 def gh(path):
-    r = subprocess.run(['gh', 'api', path], capture_output=True, text=True)
+    try:
+        r = subprocess.run(['gh', 'api', path], capture_output=True, text=True)
+    except FileNotFoundError:
+        # Public repository evidence needs no credentials. Do not read tokens
+        # or fall back after a CLI authentication/permission failure.
+        request = urllib.request.Request(
+            'https://api.github.com/' + path,
+            headers={'Accept': 'application/vnd.github+json',
+                     'User-Agent': 'coh-armport-ci-results'})
+        with urllib.request.urlopen(request, timeout=30) as response:
+            return json.load(response)
     if r.returncode:
         raise RuntimeError(f'gh api {path}: {r.stderr.strip()}')
     return json.loads(r.stdout)

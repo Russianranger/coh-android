@@ -33,6 +33,7 @@ sys.path.insert(0, str(ROOT / 'tools/android/game'))
 sys.path.insert(0, str(ROOT / 'armport/scripts'))
 import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
+import stall_snapshot  # noqa: E402
 from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login  # noqa: E402
 
 dbhost = game.dbhost
@@ -236,12 +237,25 @@ def drive_login(a, screen, state, status, evidence):
         started = time.time()
         rendered = 0
         status['loading_brightness'] = []
+        status['load_samples'] = []
+        next_snapshot = iter((120, 600))
+        snapshot_at = next(next_snapshot, None)
         while time.time() - started < 1500 and rendered < 2 and not status.get('guest_exited'):
             time.sleep(30)
             png = screen.shot('zone-loading')
             mean = window_brightness(png)
             status['loading_brightness'].append(round(mean, 3) if mean is not None else None)
             rendered = rendered + 1 if mean is not None and mean < 0.8 else 0
+            stdio = a.client / 'armport_stdio.txt'
+            status['load_samples'].append({'seconds': round(time.time() - started),
+                                          'stdio_bytes': stdio.stat().st_size if stdio.exists() else None})
+            if rendered == 0 and snapshot_at is not None and time.time() - started >= snapshot_at:
+                try:
+                    stall_snapshot.capture(a.client, evidence, str(snapshot_at), a.llvm_mingw)
+                except Exception as exc:
+                    # A diagnostic failure must not alter the existing verdict.
+                    (evidence / f'stall-{snapshot_at}.txt').write_text(repr(exc))
+                snapshot_at = next(next_snapshot, None)
         status['world_rendered'] = rendered >= 2
         status['zone_load_seconds'] = round(time.time() - started)
         status['atlas_shot'] = str(screen.shot('atlas'))
@@ -376,6 +390,7 @@ def main():
     errs = [l[:300] for l in lines if ':err:' in l or 'trace:seh' in l or 'Unhandled' in l]
     if errs:
         note('notice', 'ArmPort M3 client Wine errors', f'{len(errs)} lines; last 50:\n' + '\n'.join(errs[-50:]))
+    (evidence / 'login-driver.json').write_text(json.dumps(status, indent=2) + '\n')
     note('notice', 'ArmPort M3 login driver', json.dumps(status, indent=1)[:1500] + '\n' + '\n'.join(screen.log[-60:]))
     smoke_run.report_stdio(client / 'armport_stdio.txt', 'ArmPort M3 client stdio')
     stdio = client / 'armport_stdio.txt'
