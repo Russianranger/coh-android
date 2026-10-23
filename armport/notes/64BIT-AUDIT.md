@@ -53,7 +53,7 @@ compiling them for i686 with static assertions (sizes and field offsets).
 |---|---|---|
 | 0042 | Production clients read `scenes/`, `ent_types/`, `object_library/`, `geobin/` only from piggs; CI has loose data (`ARMPORT_LOOSE_DATA`) | scene load failed |
 | 0045 | The fake-auth DbServer honours the client's no-version-check flag; the Release client can only set it with a level-9 command (`ARMPORT_NO_VERSION_CHECK`) | DbServer answered the login with WrongVersion |
-| 0047 | `groupFileRecalcBounds` did not skip empty def slots (members that failed to load; the 32-bit MapServer logs the same "can't find member" on this data), unlike `groupRecalcAllBounds` | client crashed loading Atlas Park's world groups |
+| 0047 | `groupFileRecalcBounds` and the tree check in `groupDefFree` did not skip empty def slots (members that failed to load; the 32-bit MapServer logs the same "can't find member" on this data), unlike `groupRecalcAllBounds` | client crashed loading Atlas Park's world groups |
 
 ## Known, not fixed yet
 

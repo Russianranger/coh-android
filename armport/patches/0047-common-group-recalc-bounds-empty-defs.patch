@@ -1,5 +1,5 @@
 diff --git a/Common/group/group.c b/Common/group/group.c
-index 9ba9d80..2c96cb8 100644
+index 9ba9d80..ce99102 100644
 --- a/Common/group/group.c
 +++ b/Common/group/group.c
 @@ -619,8 +619,11 @@ void groupFileRecalcBounds(GroupFile *file)
@@ -15,3 +15,12 @@ index 9ba9d80..2c96cb8 100644
      }
      for(i=0;i<file->count;i++)
          calcBoundsRecurse(file->defs[i]);
+@@ -988,7 +991,7 @@ void groupDefFree(GroupDef *def,int check_tree)
+             for(i=0;i<file->count;i++)
+             {
+                 curr = file->defs[i];
+-                if (!curr->in_use)
++                if (!curr || !curr->in_use) // ArmPort: empty slots, as elsewhere in this file
+                     continue;
+                 for(j=0;j<curr->count;j++)
+                 {
