@@ -354,7 +354,7 @@ def login_probe(out, proc):
     after('before the probe')
     try:
         from login_ui import after_login
-        if login(screen, 'ArmPortProbe', 'probe-pass', status, after=after, wait_seconds=120):
+        if login(screen, 'armportprobe', 'probepass', status, after=after, wait_seconds=120):
             after_login(screen, status, rounds=8, interval=12, after=after)
         screen.shot('probe-end')
         after('end of probe')

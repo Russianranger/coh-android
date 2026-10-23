@@ -62,7 +62,9 @@ class ArmPortGame(gd.GameDiagnostic):
         base.private_write(config, gd.game_config(config.read_text(), self.database, self.connection_for(self.database)))
         self.private_connections.append(config)
         self.bind_fixed_inputs()
-        self.game['account'] = 'CohA' + os.urandom(5).hex()
+        # Lowercase letters and digits only: typed into the client's login
+        # screen key by key (no Shift handling needed).
+        self.game['account'] = 'coha' + os.urandom(5).hex()
         self.start_services('first')
         self.observe_atlas()
         session = self.create_character()

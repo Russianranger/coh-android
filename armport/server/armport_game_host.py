@@ -163,7 +163,8 @@ def drive_login(a, screen, state, status, evidence):
         named = [' '.join(w.split())[:140] for w in windows if '"' in w and 'has no name' not in w]
         status.setdefault('sockets', []).append({'when': label, 'client_sockets': [' '.join(l.split())[:200] for l in lines[:30]],
                                                  'windows': named[:12]})
-    if not login(screen, info['account'], 'armport-m3', status, after=sockets):
+    status['account'] = info['account']
+    if not login(screen, info['account'], 'armportm3', status, after=sockets):
         return
     # Character select: the created character's name, then Play (or Enter).
     checks = {'n': 0}
@@ -354,10 +355,12 @@ def main():
     smoke_run.report_stdio(client / 'armport_stdio.txt', 'ArmPort M3 client stdio')
     stdio = client / 'armport_stdio.txt'
     if stdio.exists():
-        marks = [l[:240] for l in stdio.read_text(errors='replace').splitlines() if l.startswith('ArmPort ')]
+        marks = [l[:200] for l in stdio.read_text(errors='replace').splitlines() if l.startswith('ArmPort ')]
+        changes = [l for i, l in enumerate(marks) if i == 0 or l.split(' frames')[0] != marks[i - 1].split(' frames')[0]]
         note('notice', 'ArmPort M3 client login stages and dialogs (patch 0046)',
              f'{len(marks)} lines; stage numbers from uiLogin.h LoginStage (0 start, 1 EULA, 3 server select, '
-             f'4 NDA, 6 character select, 7 leaving)\n' + '\n'.join(marks[-50:]))
+             f'4 NDA, 6 character select, 7 leaving). Changes:\n' + '\n'.join(changes[:30]) +
+             '\nLast:\n' + '\n'.join(marks[-5:]))
     try:
         dbhost.validate_network_receipt(game.read_json(evidence / 'network-isolation.json'), network_expected)
         note('notice', 'ArmPort M3 network', 'guest ran in a private loopback-only network namespace')
@@ -384,6 +387,12 @@ def main():
                 versions += [l[:300] for l in (captures / n).read_text(errors='replace').splitlines()
                              if 'connected with' in l or 'WrongVersion' in l or 'protocol' in l]
         note('notice', 'ArmPort M3 DbServer version checks', '\n'.join(versions[-12:]) or 'none logged')
+        accounts = []
+        for n, rel in sorted(logs.items()):
+            if rel and ('SystemSpecs' in rel or 'dbserver/debug' in rel):
+                accounts += [l[:200] for l in (captures / n).read_text(errors='replace').splitlines()
+                             if 'AuthName' in l or 'successful login' in l]
+        note('notice', 'ArmPort M3 DbServer logins', f"typed account {status.get('account')!r}\n" + '\n'.join(accounts[-10:]))
         for n, rel in sorted(logs.items()):
             if rel and any(k in rel.lower() for k in ('dbserver', 'connect', 'login', 'client', 'error')):
                 text = (captures / n).read_text(errors='replace').splitlines()

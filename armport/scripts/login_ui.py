@@ -85,12 +85,30 @@ class Screen:
         sh('xdotool', 'mouseup', '1')
         self.log.append(f'   click {x},{y} (held {hold}s)')
 
+    # The game reads the keyboard once per frame (DirectInput); xdotool's
+    # instant press and release can fall between two frames and be lost, so
+    # every key is held down for a few frames.
+    KEYSYMS = {'-': 'minus', '_': 'underscore', '.': 'period', ' ': 'space'}
+
+    def press(self, keysym, hold=0.06):
+        sh('xdotool', 'keydown', keysym)
+        time.sleep(hold)
+        sh('xdotool', 'keyup', keysym)
+        time.sleep(0.08)
+
     def type(self, text):
-        sh('xdotool', 'type', '--delay', '120', text)
-        self.log.append(f'   type {len(text)} characters')
+        for ch in text:
+            self.press(self.KEYSYMS.get(ch, ch))
+        self.log.append(f'   type {len(text)} characters (held keys)')
 
     def key(self, name):
-        sh('xdotool', 'key', name)
+        if '+' in name:            # chords such as ctrl+a
+            mod, k = name.split('+', 1)
+            sh('xdotool', 'keydown', mod)
+            self.press(k)
+            sh('xdotool', 'keyup', mod)
+        else:
+            self.press(name)
         self.log.append(f'   key {name}')
 
     def crop(self, png, name, box):
