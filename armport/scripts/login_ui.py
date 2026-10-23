@@ -210,9 +210,10 @@ def after_login(screen, status, rounds=20, interval=15, done=lambda png: False, 
         status.setdefault('post_login_text', []).append(' '.join(w for w, _, _ in words)[:300])
         agree = next(((x, y) for w, x, y in words if w.lower().strip('.:,') in ('agree', 'accept')), None)
         server = next(((x, y) for w, x, y in words if '127.0.0' in w), None)
-        if not server and not agree and any(w.lower().strip('.:,') == 'server' for w, _, _ in words) \
-                and status.get('server_clicked', 0) < 3:
-            server = at(screen, 'server_row')   # "SELECT A SERVER" heading seen
+        if not server and not agree and n < 3 and status.get('server_clicked', 0) < 3:
+            # Return leads to Select a Server (probe frames); OCR does not
+            # read its heading reliably, so the first row is clicked by layout.
+            server = at(screen, 'server_row')
         if agree:
             status['agreed'] = status.get('agreed', 0) + 1
             screen.click(*agree)

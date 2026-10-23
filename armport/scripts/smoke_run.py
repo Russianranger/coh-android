@@ -458,6 +458,9 @@ def main():
     start = time.time()
     with open(log, 'wb') as out:
         args = a.args or ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1']
+        if a.login_probe and not a.args:
+            # As in the M3 run: one server entry, 127.0.0.1 (nothing listens here).
+            args = args + ['-db', '127.0.0.1']
         proc = subprocess.Popen([wine, str(rt / exe.name)] + args, cwd=rt,
                                 env=dict(env, ARMPORT_STDIO_LOG='armport_stdio.txt'),
                                 stdout=out, stderr=subprocess.STDOUT)
