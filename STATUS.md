@@ -15,8 +15,7 @@ untouched). Details: armport/M2-REPORT.md.
   and Mesa and shows the login screen with the game's own UI; still running
   with no exceptions at 180 s (CI run 39742143066, screen in
   armport/evidence/m2-login-screen.jpg).
-- Data bins are built in CI by the OptDebug client (-createbins); Cg programs
-  are compiled to ARB by the original cgc.exe and loaded by the stand-in.
+- Data bins built in CI by the OptDebug client; Cg compiled to ARB by cgc.exe.
 - 64-bit bugs fixed one by one as they stopped the client
   (armport/notes/64BIT-AUDIT.md). Wine places a 64-bit program's memory above
   4 GB (measured), so truncated pointers have to be fixed, not tolerated.
@@ -25,7 +24,8 @@ untouched). Details: armport/M2-REPORT.md.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
 
-M3 into Atlas (branch armport/m3-atlas, 47 patches):
+M3 into Atlas (branch armport/m3-atlas, 47 patches; Astra leads from here,
+see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
   loopback-only network) plus the ARM64 client, login typed on Xvfb.
