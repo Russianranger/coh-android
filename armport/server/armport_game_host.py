@@ -73,7 +73,9 @@ def start_client(a, state, status, evidence):
     client = a.client.resolve()
     env = {'PATH': '/usr/bin:/bin', 'HOME': str(a.client_home), 'LANG': 'C.UTF-8', 'DISPLAY': DISPLAY,
            'WINEPREFIX': str(a.client_prefix), 'WINEDEBUG': 'err+all,fixme-all,+seh',
-           'WINEDLLOVERRIDES': 'mscoree,mshtml=', 'ARMPORT_LOOSE_DATA': '1', 'ARMPORT_STDIO_LOG': 'armport_stdio.txt'}
+           'WINEDLLOVERRIDES': 'mscoree,mshtml=', 'ARMPORT_LOOSE_DATA': '1', 'ARMPORT_STDIO_LOG': 'armport_stdio.txt',
+           # The servers are 32-bit builds with their own version string (patch 0045).
+           'ARMPORT_NO_VERSION_CHECK': '1'}
     args = ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1', '-db', '127.0.0.1']
     command = ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', '--', 'sudo', '-n', '-u', os.environ.get('USER', 'runner'),
                '--', 'env', '-C', str(client)] + [f'{k}={v}' for k, v in env.items()] + \
@@ -367,6 +369,12 @@ def main():
         files = json.loads(manifest.read_text()).get('files', {})
         logs = {n: f.get('source_relative_path') for n, f in files.items() if f.get('kind') == 'runtime_log'}
         note('notice', 'ArmPort M3 server log files', '\n'.join(f'{n}: {p}' for n, p in sorted(logs.items()))[:3500])
+        versions = []
+        for n, rel in sorted(logs.items()):
+            if rel and 'dbserver/error' in rel:
+                versions += [l[:300] for l in (captures / n).read_text(errors='replace').splitlines()
+                             if 'connected with' in l or 'WrongVersion' in l or 'protocol' in l]
+        note('notice', 'ArmPort M3 DbServer version checks', '\n'.join(versions[-12:]) or 'none logged')
         for n, rel in sorted(logs.items()):
             if rel and any(k in rel.lower() for k in ('dbserver', 'connect', 'login', 'client', 'error')):
                 text = (captures / n).read_text(errors='replace').splitlines()

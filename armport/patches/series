@@ -42,3 +42,4 @@
 0042-utilities-loose-data-opt-in.patch
 0043-game-smf-face-tokens-64bit.patch
 0044-utilitieslib-socket-values-keep-socket-type.patch
+0045-game-arm64-no-version-check-opt-in.patch

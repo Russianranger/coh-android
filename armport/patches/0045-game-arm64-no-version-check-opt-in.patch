@@ -1,0 +1,20 @@
+diff --git a/Game/src/game.c b/Game/src/game.c
+index d604fd7..a8406fd 100644
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -205,6 +205,15 @@ void parseArgs(int argc,char **argv)
+         }
+     }
+     cmdAccessOverride(0);
++#if defined(__aarch64__) && defined(__MINGW32__)
++    // ArmPort: -noversioncheck is a level-9 command that production builds
++    // ignore. The app's own fake-auth server accepts the client's
++    // no-version-check flag (DbServer handleLogin), and its servers are
++    // 32-bit builds whose version string never matches this client's, so
++    // ARMPORT_NO_VERSION_CHECK=1 sends the flag.
++    if (getenv("ARMPORT_NO_VERSION_CHECK"))
++        game_state.no_version_check = 1;
++#endif
+ 
+     //    fileAddSearchPath("./data");
+     //    if(!game_state.nodebug){
