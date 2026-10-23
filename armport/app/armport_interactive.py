@@ -42,6 +42,7 @@ class ArmPortClient:
         require({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py'} <= pins.keys(),
                 'ARM64 client is not included in this runtime package')
         self.ctx.stage('armport_client_data')
+        self.ctx.report['client_worktree']['purpose'] = 'retained_server_data_source_for_armport'
         self.armport_work = self.root / ('armport-client-' + self.args.session_id)
         self.ctx.report['armport_client'] = package.prepare(
             self.args.assets / package.ARCHIVE, self.work / 'data', self.armport_work)

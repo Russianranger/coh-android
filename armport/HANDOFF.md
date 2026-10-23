@@ -49,7 +49,7 @@ Wine via FEX).
 | M1 | libraries build; textparser unit runs under the app's Wine | merged |
 | M2 | client links and reaches the login screen under that Wine (Xvfb, Mesa) | merged; boot test still runs in every CI run (`client-run`) |
 | M3 | scripted login against the CI server to Atlas Park; saved native-android packets replay through the original receive code; screenshot check | **login reached Atlas; loading stalls in texLoadQueueFinish; replay inputs recovered** |
-| M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | not started |
+| M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | app display/launcher probes pass; client selector and package integration in progress on armport/m4-runtime |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
 ### M3 evidence so far
@@ -115,6 +115,10 @@ Wine via FEX).
    review (prompt for the reviewer: the user relays it).
 
 ## 6. M4 and M5 outline
+
+M4 work/evidence: `armport/notes/M4-RUNTIME.md`. Runs 40034280752 and
+40036045979 pass the app runtime/display and native launcher probes. These
+are startup checks, not completed M4 or Thor gameplay qualification.
 
 - M4: find where the app starts the x86 client in its runtime (the
   `android-*` workflows and `android/guest/` scripts; the app's Wine runs in

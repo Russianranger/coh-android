@@ -95,7 +95,7 @@ public final class ClientActivity extends Activity {
         performanceGraphics.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPerformanceGraphicsEnabled(this,checked));
         controls.addView(performanceGraphics);
         controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
-        controls.addView(text("Renderer for next launch",12,true));
+        controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
         clientArchitecture.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"x86 client", "ARM64 client (Atlas)"}));
@@ -108,6 +108,7 @@ public final class ClientActivity extends Activity {
         });
         controls.addView(clientArchitecture);
         controls.addView(text("ARM64 uses Software rendering and standard graphics. Return the saved character to Atlas with x86 before switching; ARM64 zone travel is not yet available.",12,false));
+        controls.addView(text("Renderer for next launch",12,true));
         gpuProfile=new Spinner(this);
         ArrayAdapter<String> gpuChoices=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"Software (current)","GPU test"});
