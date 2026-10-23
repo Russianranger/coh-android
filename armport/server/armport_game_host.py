@@ -129,10 +129,14 @@ def capture_traffic(status, evidence):
         pid, ns = guest_netns(own)
         if pid:
             cap = evidence / 'udp-7000-7001.pcap'
-            status['tcpdump'] = subprocess.Popen(
-                ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', 'tcpdump', '-i', 'lo', '-n', '-U', '-s', '256',
-                 '-w', str(cap), 'udp', 'and', '(port', '7000', 'or', 'port', '7001)'],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+            # Detached through a shell that exits at once: a sudo process left
+            # running keeps this user's real UID with a root-only environment,
+            # which the guest's Wine-ownership audit (rightly) refuses.
+            subprocess.run(['sudo', '-n', 'sh', '-c',
+                            f'nsenter --net=/proc/{pid}/ns/net tcpdump -i lo -n -U -s 256 -w {cap} '
+                            "'udp and (port 7000 or port 7001)' </dev/null >/dev/null 2>&1 &"],
+                           capture_output=True, timeout=30)
+            status['tcpdump'] = True
             return
         time.sleep(3)
 
@@ -291,10 +295,8 @@ def main():
     status['guest_exited'] = True
     driver.join(timeout=60)
     stop_client(a, status.pop('proc', None))
-    dump = status.pop('tcpdump', None)
-    if dump:
-        subprocess.run(['sudo', '-n', 'kill', '-INT', str(dump.pid)], capture_output=True)
-        subprocess.run(['sudo', '-n', 'pkill', '-INT', '-f', 'tcpdump -i lo -n -U -w'], capture_output=True)
+    if status.pop('tcpdump', None):
+        subprocess.run(['sudo', '-n', 'pkill', '-INT', '-f', 'tcpdump -i lo -n -U -s 256'], capture_output=True)
         time.sleep(2)
         cap = evidence / 'udp-7000-7001.pcap'
         if cap.exists():
