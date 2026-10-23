@@ -78,11 +78,6 @@ def start_client(a, state, status, evidence):
     command = ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', '--', 'sudo', '-n', '-u', os.environ.get('USER', 'runner'),
                '--', 'env', '-C', str(client)] + [f'{k}={v}' for k, v in env.items()] + \
               [str(a.wine / 'wine'), str(client / 'CityOfHeroes.exe')] + args
-    # Loopback traffic on the game-client ports inside the namespace.
-    cap = evidence / 'udp-7000-7001.pcap'
-    status['tcpdump'] = subprocess.Popen(['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', 'tcpdump', '-i', 'lo', '-n',
-                                          '-U', '-w', str(cap), 'udp', 'and', '(port', '7000', 'or', 'port', '7001)'],
-                                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     out = open(evidence / 'client-output.txt', 'wb')
     proc = subprocess.Popen(command, stdout=out, stderr=subprocess.STDOUT, start_new_session=True)
     status['client_started'] = True
@@ -116,8 +111,30 @@ def stop_client(a, proc):
             proc.wait(timeout=30)
         except subprocess.TimeoutExpired:
             subprocess.run(['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], capture_output=True)
-    subprocess.run([str(a.wine / 'wineserver'), '-k'], capture_output=True, timeout=120,
-                   env=dict(os.environ, WINEPREFIX=str(a.client_prefix), HOME=str(a.client_home)))
+    wenv = dict(os.environ, WINEPREFIX=str(a.client_prefix), HOME=str(a.client_home))
+    subprocess.run([str(a.wine / 'wineserver'), '-k'], capture_output=True, timeout=120, env=wenv)
+    # Wait until the client's wineserver (and so its Wine processes) is gone:
+    # the guest's cleanup audits same-user Wine processes.
+    try:
+        subprocess.run([str(a.wine / 'wineserver'), '-w'], capture_output=True, timeout=90, env=wenv)
+    except subprocess.TimeoutExpired:
+        pass
+
+
+def capture_traffic(status, evidence):
+    """Loopback traffic on the game-client ports inside the guest's namespace,
+    from as soon as it exists (so the TestClient's login is the reference)."""
+    own = os.readlink('/proc/self/ns/net')
+    while not status.get('guest_exited'):
+        pid, ns = guest_netns(own)
+        if pid:
+            cap = evidence / 'udp-7000-7001.pcap'
+            status['tcpdump'] = subprocess.Popen(
+                ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', 'tcpdump', '-i', 'lo', '-n', '-U', '-s', '256',
+                 '-w', str(cap), 'udp', 'and', '(port', '7000', 'or', 'port', '7001)'],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+            return
+        time.sleep(3)
 
 
 def drive_login(a, screen, state, status, evidence):
@@ -158,8 +175,19 @@ def drive_login(a, screen, state, status, evidence):
         t = screen.text(p)
         return t if info['character'].lower() in t.lower() or 'play' in t.lower() else None
     # EULA/NDA agreements and the server list come first (login_ui.after_login).
-    png = after_login(screen, status, rounds=30, interval=10, done=character_select, after=sockets)
+    png = after_login(screen, status, rounds=8, interval=10, done=character_select, after=sockets)
     png = png if png and character_select(png) else None
+    if not png and status.get('server_clicked'):
+        # Character select draws a 3D scene that OCR may not read; the login
+        # traffic shows the character list arrives, so enter by the Next arrow.
+        pos = at(screen, 'enter_world')
+        if pos:
+            screen.click(*pos)
+            status['enter_by_layout'] = True
+            (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': 'layout'}) + '\n')
+            time.sleep(15)
+            screen.shot('after-enter')
+            sockets('15s after Next')
     status['character_select'] = bool(png)
     if png:
         pos = screen.find(png, info['character'])
@@ -255,6 +283,7 @@ def main():
         process = subprocess.Popen(command, env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         driver = threading.Thread(target=drive_login, args=(a, screen, state, status, evidence), daemon=True)
         driver.start()
+        threading.Thread(target=capture_traffic, args=(status, evidence), daemon=True).start()
         try:
             code = process.wait(timeout=a.timeout_seconds + 120)
         except subprocess.TimeoutExpired:
@@ -278,8 +307,20 @@ def main():
                 if len(m) > 4:
                     flows[(m[2], m[4].rstrip(':'))] = flows.get((m[2], m[4].rstrip(':')), 0) + 1
             note('notice', 'ArmPort M3 UDP 7000/7001', f'{len(pk)} packets; flows: ' +
-                 '; '.join(f'{s}>{d}: {n}' for (s, d), n in sorted(flows.items(), key=lambda kv: -kv[1])[:12]) +
-                 '\nfirst 25:\n' + '\n'.join(l[:160] for l in pk[:25]))
+                 '; '.join(f'{s}>{d}: {n}' for (s, d), n in sorted(flows.items(), key=lambda kv: -kv[1])[:12]))
+            # Packet sizes in order per client port (TestClient first, then the ARM64 client).
+            seq = {}
+            for l in pk:
+                m = l.split()
+                if len(m) > 4:
+                    src, dst = m[2], m[4].rstrip(':')
+                    port = src if src.endswith(('.7000', '.7001')) is False else dst
+                    arrow = '>' if dst.endswith(('.7000', '.7001')) else '<'
+                    size = l.rsplit('(', 1)[-1].rstrip(')') if '(' in l else '?'
+                    seq.setdefault(port.rsplit('.', 1)[-1] + ('/7001' if '7001' in src + dst else '/7000'), []).append(arrow + size)
+            note('notice', 'ArmPort M3 UDP sequences', '\n'.join(f'{k}: ' + ' '.join(v[:45]) for k, v in seq.items())[:3800])
+            x = subprocess.run(['tcpdump', '-r', str(cap), '-n', '-X', '-c', '14'], capture_output=True, text=True).stdout
+            note('notice', 'ArmPort M3 UDP first packets (hex)', x[:3800])
     xvfb.kill()
 
     report = json.loads(report_path.read_text()) if report_path.is_file() else {}

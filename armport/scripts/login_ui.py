@@ -119,7 +119,10 @@ LAYOUT = {'ultra_cancel': (512, 495), 'account_field': (849, 307),
           'password_field': (849, 420), 'login_button': (899, 486),
           # First server row: uiLogin.c SERVER_X 660, SERVER_LIST_Y 266, row
           # 328 x 30 in the 1024x768 design space (scale 1 at this size).
-          'server_row': (824, 281)}
+          'server_row': (824, 281),
+          # Character select's Next arrow (uiHybridMenu.c drawHybridNext:
+          # x = 1024 - HYBRID_NEXT_X_OFFSET 55, y = 768 - HYBRID_NEXT_Y_OFFSET 27).
+          'enter_world': (969, 741)}
 
 
 def at(screen, name):
