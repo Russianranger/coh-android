@@ -66,6 +66,7 @@ def start_client(a, state, status, evidence):
     pid, ns = guest_netns(os.readlink('/proc/self/ns/net'))
     status['guest_netns'] = ns
     status['guest_pid'] = pid
+    capture_traffic(status, evidence)
     if not pid:
         status['client_error'] = 'guest network namespace not found'
         (state / 'armport-client-exited.json').write_text(json.dumps({'error': status['client_error']}) + '\n')
@@ -289,7 +290,9 @@ def main():
         process = subprocess.Popen(command, env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         driver = threading.Thread(target=drive_login, args=(a, screen, state, status, evidence), daemon=True)
         driver.start()
-        threading.Thread(target=capture_traffic, args=(status, evidence), daemon=True).start()
+        # (The capture starts with the ARM64 client: started with the guest, the two
+        # runs with it lost Atlas readiness in the original flow; the TestClient
+        # reference conversation is in runs 39910179066 and 39917757607.)
         try:
             code = process.wait(timeout=a.timeout_seconds + 120)
         except subprocess.TimeoutExpired:
