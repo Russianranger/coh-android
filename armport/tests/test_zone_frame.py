@@ -37,6 +37,18 @@ class ZoneFrameTests(unittest.TestCase):
                 self.assertFalse(zone_frame.evaluate(png, window, DONE, lambda _: 'Loading')['rendered'])
                 self.assertFalse(zone_frame.evaluate(png, None, DONE, lambda _: 'Atlas Park')['rendered'])
 
+    @unittest.skipUnless(shutil.which('convert'), 'ImageMagick required')
+    def test_map_ocr_receives_only_client_pixels(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            png = Path(tmp) / 'screen.png'
+            subprocess.run(['convert', '-size', '1600x1200', 'pattern:checkerboard', str(png)], check=True)
+            def ocr(crop):
+                result = subprocess.run(['identify', '-format', '%wx%h', str(crop)],
+                                        capture_output=True, text=True, check=True)
+                self.assertEqual(result.stdout, '1024x768')
+                return 'Atlas Park'
+            self.assertTrue(zone_frame.evaluate(png, (104, 130, 1024, 768), DONE, ocr)['rendered'])
+
 
 if __name__ == '__main__':
     unittest.main()

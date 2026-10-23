@@ -41,11 +41,13 @@ python3 armport/scripts/ci_results.py --run 40032719161 --job server-run --no-wa
   rendering. SQL connection and cleanup checks remain required.
 
 Local validation: `python3 -m unittest discover -s armport/tests -p 'test_*.py'
--v` passed 12 tests, including black/white/uniform frames, missing map name,
+-v` passed 13 tests, including black/white/uniform frames, missing map name,
 missing original completion, and stale completion from an earlier map.
 The changed zone-trace header compiled in the ARM64 tex.c translation unit
 (`ninja -j2 Game/CMakeFiles/Game.dir/src/render/tex.c.obj`, 8 existing warnings).
-CI validation of these review follow-ups is pending.
+Run 40040798938 libraries passed the initial 12-test review suite and worker
+controls; ci_results.py reads the new worker notices. The additional client-only
+OCR crop test passed locally. Full Atlas and replay validation remain pending.
 
 ## Remaining work
 

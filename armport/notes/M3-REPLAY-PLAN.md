@@ -88,3 +88,14 @@ https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5635319013
 
 Method agreement is not approval to merge M3. The rendered Atlas screenshot,
 replay results, final report and user's merge approval are still required.
+
+## Socketless link preflight
+
+Original netio_send.c checks `!link->socket` before raw batch I/O; pktSendDbg
+frees and nulls an outgoing packet with no socket or NLT_NONE. netSendIdle
+may construct a control ACK but routes it through that same discard path.
+The new armport_replay_sink test calls these actual UtilitiesLib functions
+with a zeroed link and both zero/nonzero ack_count. It compiles/links as an
+ARM64 PE executable with llvm-mingw and `ninja -j2 armport_replay_sink`.
+The libraries CI job runs it under the app Wine and emits a notice. Runtime
+result pending; this preflight is not one of the 117 receiver dispatches.

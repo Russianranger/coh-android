@@ -87,11 +87,32 @@ cc949b01f5db6ff108efcf6afcbfe9567c432b4aa15f3a02c8f193e380cc7b39
 f134c3c083e571b679ed6976bec36c672028854f4a48879cc0f2d47423db96a9
 ```
 
-Missing files are no longer a blocker. Reviewer agreement on the original
-receive-code replay method remains required before implementation.
+Missing files are no longer a blocker. Claude agreed to the original
+receive-code method in PR #6 review 5635319013; see M3-REPLAY-PLAN.md.
 
 Patch 0049 local validation: llvm-mingw 20250910 with the repository
 Release toolchain, `ninja -j2 Game/CMakeFiles/Game.dir/src/render/tex.c.obj`
 completed with exit 0 (eight existing warnings). `file` reports an Aarch64
 COFF object; `git diff --numstat -- upstream` is empty. Runtime result is
 pending the next CI run.
+
+## Review follow-up (2026-10-23)
+
+A search of the full 40011219458 client-output.txt finds only the caught
+startup RPC_S_SERVER_UNAVAILABLE (0x6ba) exception; no subsequent access
+violation or logged loader exception appears at the texture stall. This
+does not prove an exception was impossible or supply a missing stack.
+
+Run 40032719161 failed earlier in group loading, with Wine PC
+0x6fffffdb7518 reading address 0x50 in thread 0x128. Its final marker is
+groupfile.begin for office01/trays/halls/halls.txt; no texture-stall
+conclusion can be drawn from that run. Evidence artifact 12539025345
+SHA-256 d5cd00b8f6c175a6452527606efd5e4118125c14c38b250dba177a379912e177
+was checked before inspection. Patch 0051 adds thread IDs to existing zone
+markers; the bounded debugger now prints PC/LR and eight frame-chain levels.
+
+Run 40040798938 libraries passed the host diagnostic suite and ARM64 worker
+controls. `ci_results.py --run 40040798938 --job libraries --no-wait --grep
+"ARM64 worker"` returns original dispatched=0, patched dispatched=1, and
+4096 commands/replies in both notices. Rendering and receiver replay remain
+unproved.

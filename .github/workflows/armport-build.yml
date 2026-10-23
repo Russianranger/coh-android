@@ -159,10 +159,16 @@ jobs:
 
       - name: Build UtilitiesLib, test program and precise floating-point check
         run: |
-          cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts verify_precise_floating_point \
+          cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts armport_replay_sink verify_precise_floating_point \
             armport_address_space_laa armport_address_space_nolaa \
             -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
           test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Original network socketless replay preflight
+        run: |
+          out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/armport/build/bin/armport_replay_sink.exe")
+          printf '%s\n' "$out"
+          printf '::notice title=ArmPort replay sink::%s\n' "$out"
 
       - name: Run the M1 test under ARM64 Wine
         run: |

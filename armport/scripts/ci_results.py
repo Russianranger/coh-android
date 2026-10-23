@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Read ArmPort CI results from check-run annotations.
 
-Step logs and artifacts are not reachable from the agent environments used on
-this branch, so every job reports through annotations (notices, warnings,
-errors). This waits for one job of the "ArmPort build" run on a commit, saves
+Fallback when full job logs/artifacts are unavailable: jobs report through
+annotations (notices, warnings, errors). This waits for one job of the
+"ArmPort build" run on a commit, saves
 its annotations, rebuilds any images exported by screen_export.py and prints
 the report sections.
 
@@ -14,7 +14,8 @@ the report sections.
   --no-wait  read whatever is there now
 
 Uses the gh CLI (REST only; GraphQL is not available), or unauthenticated
-public REST reads when gh is not installed. Images are written to DIR as
+public REST reads when gh is not installed (180-second polling to leave room
+within the shared 60-request/hour quota). Images are written to DIR as
 <title>.jpg.
 """
 import argparse

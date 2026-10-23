@@ -2,6 +2,8 @@
 import math
 import re
 import subprocess
+from pathlib import Path
+import tempfile
 
 
 def load_state(text):
@@ -48,7 +50,16 @@ def evaluate(png, window, stdio, ocr):
     state = load_state(stdio)
     stats = frame_stats(png, window)
     # OCR is expensive; do it only after original loading and nonblank checks.
-    words = ocr(png) if state['load_complete'] and nonblank(stats) else ''
+    words = ''
+    if state['load_complete'] and nonblank(stats):
+        x, y, width, height = window
+        # Text elsewhere on the X display is not the client's map-name UI.
+        with tempfile.TemporaryDirectory(prefix='armport-frame-') as temporary:
+            cropped = Path(temporary) / 'client.png'
+            result = subprocess.run(['convert', str(png), '-crop', f'{width}x{height}+{x}+{y}',
+                '+repage', str(cropped)], capture_output=True, timeout=30)
+            if result.returncode == 0 and cropped.is_file():
+                words = ocr(cropped)
     map_visible = bool(re.search(r'\batlas\s+park\b', words, re.I))
     return {**state, 'frame': stats, 'map_name_visible': map_visible,
             'ocr': words[:2000], 'rendered': state['load_complete'] and nonblank(stats) and map_visible}
