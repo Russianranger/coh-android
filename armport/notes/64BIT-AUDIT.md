@@ -57,6 +57,17 @@ compiling them for i686 with static assertions (sizes and field offsets).
 
 ## Known, not fixed yet
 
+Patch 0050 changes ARM64 llvm-mingw worker queue indices, sleep flag and thread
+state to sequentially consistent atomic loads/stores and publishes the event
+before THREAD_RUNNING. The original negative control misses a wake; the patched
+case dispatches it, and both wrap 4096 commands/replies in run 40035482170,
+libraries job 120693769990. See WORKER-QUEUE.md for the remaining x86 ordering
+limitation and why this is not an established Atlas stall fix.
+
+Patches 0048 (zone progress) and 0049 (texture queue progress) are diagnostics
+only, like 0046: inert unless ARMPORT_STDIO_LOG is set; no gameplay, queue order
+or timeout changes. They are retained to diagnose original loading failures.
+
 - `libs/UtilitiesLib/src/utils/DirMonitor.c:338`: completion key narrowed to
   U32 (development-mode file watching only).
 

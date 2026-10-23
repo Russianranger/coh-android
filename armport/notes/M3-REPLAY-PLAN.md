@@ -1,7 +1,6 @@
-# M3 replay method for Claude's review
+# M3 replay method agreed with Claude
 
-2026-10-23. Proposal only: HANDOFF section 5 requires reviewer agreement
-before implementing the original receive-code driver. The input-envelope
+2026-10-23. Claude agreed in PR #6 review 5635319013. The input-envelope
 validator is implemented; it does not execute a game decoder or satisfy M3.
 
 ## Verified input
@@ -63,15 +62,29 @@ actually records. Its post-READY body coverage was opaque, so that report
 cannot supply an existing decoded baseline for all 115 updates. The older
 301,656/303,112-bit captures are different inputs.
 
-Preferred additional comparison: build the same test entry point with the
+Required comparison: build the same test entry point with the
 original i686 client and run the same files through it under Wine/FEX. Compare
 deterministic decoded summaries and cursor boundaries with ARM64. If that
-reference cannot be built, report the gap and obtain explicit agreement on
-the narrower comparison before calling replay complete.
+reference cannot be built, report the gap; changing this exit test requires
+the user's approval. Compile i686 with `-msse2 -mfpmath=sse`.
 
-Claude: please review (1) the wrapper and initialization approach,
-(2) synthetic INITIAL ID 1 plus ID 31 sensitivity run, (3) required i686
-comparison versus the recorded INITIAL-only baseline, and (4) exact EOF and
-decoded-state assertions. Agreement on this method does not approve an M3
-merge. Atlas rendering remains independently blocked in `texLoadQueueFinish`
-in CI run 40011219458; run 40032719161 adds finer queue diagnostics.
+The approved conditions (review
+https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5635319013):
+
+- Inert without ARMPORT_REPLAY_DIR, guarded for aarch64/mingw and the i686
+  reference. Run after normal startup; list any extra initialization calls.
+- Verify the sink NetLink accepts pktSend/lnkBatchSend/netSendIdle while
+  unconnected. Record outgoing CLIENTINP_ACK_FULL_UPDATE IDs and compare them.
+- Dispatch below commGetStats; packet-loss/troubled-mode handling is outside
+  replay coverage. INITIAL ID, ordered and ordered_id are synthetic.
+- Require 117 dispatches, exact cursors, no overrun/error, unknown game command,
+  assertion or unexpected SEH. Any padding allowance must come from metadata.
+- Compare wire values (quantized integers and raw float bits), not interpolated
+  state. Dump full entity/player state after INITIAL, packet 32 and packet 155;
+  hash state after every record. Include svr_idx, id, type, name, pkt_id_create,
+  raw position/orientation, costume-part hash and the player's tail state.
+- List excluded timer/interpolation fields. Repeat ARM64 twice with identical
+  output; INITIAL ID 1/31 sensitivity runs must have identical state summaries.
+
+Method agreement is not approval to merge M3. The rendered Atlas screenshot,
+replay results, final report and user's merge approval are still required.

@@ -89,7 +89,10 @@ jobs:
           python3 armport/tests/nvdxt/check_decoder.py
 
       - name: Check bounded M3 diagnostic reporting
-        run: python3 armport/tests/test_m3_diagnostics.py
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends imagemagick
+          python3 -m unittest discover -s armport/tests -p 'test_*.py' -v
 
       - name: Install llvm-mingw (aarch64 host)
         run: |
@@ -120,6 +123,7 @@ jobs:
 
       - name: Worker lost-wake regression and ARM64 queue publication
         run: |
+          set -o pipefail
           for variant in original patched; do
             source=upstream/ouroboros
             expected=0
@@ -135,7 +139,12 @@ jobs:
                 "$RUNNER_TEMP/worker-$variant.c" -o "$RUNNER_TEMP/worker-$variant-$target.exe"
             done
             # Execute ARM64 with the app runtime. i686 is compile coverage here.
-            timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/worker-$variant-aarch64.exe" "$expected"
+            timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/worker-$variant-aarch64.exe" "$expected" | tee "$RUNNER_TEMP/worker-$variant.log"
+            python3 - "$variant" "$RUNNER_TEMP/worker-$variant.log" <<'PY'
+          import pathlib, sys
+          body = pathlib.Path(sys.argv[2]).read_text().strip().replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+          print(f'::notice title=ARM64 worker {sys.argv[1]}::{body}')
+          PY
           done
 
       - name: Configure

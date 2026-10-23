@@ -34,6 +34,7 @@ sys.path.insert(0, str(ROOT / 'armport/scripts'))
 import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
 import stall_snapshot  # noqa: E402
+import zone_frame  # noqa: E402
 from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login  # noqa: E402
 
 dbhost = game.dbhost
@@ -123,19 +124,6 @@ def stop_client(a, proc):
         subprocess.run([str(a.wine / 'wineserver'), '-w'], capture_output=True, timeout=90, env=wenv)
     except subprocess.TimeoutExpired:
         pass
-
-
-def window_brightness(png):
-    """Mean grey level (0-1) of the client window area; the zone loading
-    screen is mostly white."""
-    if not png:
-        return None
-    r = sh('convert', str(png), '-crop', '1024x768+104+130', '+repage', '-colorspace', 'gray',
-           '-format', '%[fx:mean]', 'info:')
-    try:
-        return float(r.stdout.strip())
-    except ValueError:
-        return None
 
 
 def capture_traffic(status, evidence):
@@ -234,31 +222,40 @@ def drive_login(a, screen, state, status, evidence):
         status['atlas'] = json.loads(atlas.read_text())
         # The database has the character on Atlas; the client then loads the
         # zone (a mostly white loading screen). Wait for the world to render.
-        started = time.time()
+        started = time.monotonic()
+        diagnostic_seconds = 0
         rendered = 0
         status['loading_brightness'] = []
         status['load_samples'] = []
+        status['frame_checks'] = []
         next_snapshot = iter((120, 600))
         snapshot_at = next(next_snapshot, None)
-        while time.time() - started < 1500 and rendered < 2 and not status.get('guest_exited'):
+        while time.monotonic() - started - diagnostic_seconds < 1500 and rendered < 2 and not status.get('guest_exited'):
             time.sleep(30)
             png = screen.shot('zone-loading')
-            mean = window_brightness(png)
-            status['loading_brightness'].append(round(mean, 3) if mean is not None else None)
-            rendered = rendered + 1 if mean is not None and mean < 0.8 else 0
             stdio = a.client / 'armport_stdio.txt'
-            status['load_samples'].append({'seconds': round(time.time() - started),
+            check = zone_frame.evaluate(png, screen.window(),
+                stdio.read_text(errors='replace') if stdio.exists() else '', screen.text)
+            status['frame_checks'].append(check)
+            mean = check['frame']['mean'] if check['frame'] else None
+            status['loading_brightness'].append(round(mean, 3) if mean is not None else None)
+            rendered = rendered + 1 if check['rendered'] else 0
+            status['load_samples'].append({'seconds': round(time.monotonic() - started - diagnostic_seconds),
                                           'stdio_bytes': stdio.stat().st_size if stdio.exists() else None})
-            if rendered == 0 and snapshot_at is not None and time.time() - started >= snapshot_at:
+            if rendered == 0 and snapshot_at is not None and time.monotonic() - started - diagnostic_seconds >= snapshot_at:
+                sample_started = time.monotonic()
                 try:
                     stall_snapshot.capture(a.client, evidence, str(snapshot_at), a.llvm_mingw)
                 except Exception as exc:
                     # A diagnostic failure must not alter the existing verdict.
                     (evidence / f'stall-{snapshot_at}.txt').write_text(repr(exc))
+                finally:
+                    diagnostic_seconds += time.monotonic() - sample_started
                 snapshot_at = next(next_snapshot, None)
         status['world_rendered'] = rendered >= 2
-        status['zone_load_seconds'] = round(time.time() - started)
-        status['atlas_shot'] = str(screen.shot('atlas'))
+        status['zone_load_seconds'] = round(time.monotonic() - started - diagnostic_seconds)
+        status['diagnostic_seconds_excluded'] = round(diagnostic_seconds, 3)
+        status['atlas_shot'] = str(png) if png else None
         time.sleep(30)
         status['atlas_shot_later'] = str(screen.shot('atlas-later'))
         (state / 'armport-host-done.json').write_text(json.dumps({'done': True}) + '\n')

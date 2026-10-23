@@ -13,7 +13,10 @@ thread state use sequentially consistent atomic loads/stores. Besides publishing
 filled payloads and consumed slots, the global order prevents both sides of the
 sleep handshake from missing the other's store. Acquire/release alone on the
 two separate variables would not establish that guarantee. Other targets keep
-their existing volatile accesses. The event is created before publishing
+their existing volatile accesses: the i686 path still has a store/load ordering
+race under x86 TSO. The reordered flag alone does not fix that path. ArmPort
+ships the ARM64 client; the i686 build is only reference/compile coverage.
+The event is created before publishing
 THREAD_RUNNING, so wtStart cannot return with an uninitialized event handle.
 
 No command layout, order, dispatch callback or gameplay behavior changes. The
@@ -47,8 +50,13 @@ toolchain (ninja target `libs/UtilitiesLib/CMakeFiles/UtilitiesLib.dir/src/compo
 The Windows harness compiles the complete same worker body for aarch64 and
 i686 with llvm-mingw 20250910 and the repository's MS compatibility flags.
 CI's `libraries` job runs the original negative control and patched positive
-case under the app's ARM64 Wine. Its result is pending at publication.
+case under the app's ARM64 Wine. Run **40035482170**, libraries job
+**120693769990**, passed: original `dispatched=0`, patched `dispatched=1`,
+both followed by `commands=4096 messages=4096`. Full job logs contain these
+lines; subsequent runs also publish them as check-run notices for ci_results.py.
 
-This race is not yet established as the Atlas loading-stall cause. Run
+This is a latency bug, not an established Atlas stall cause: `wtReqFlush`
+unconditionally signals the event, and both `wtFlush` and a full command queue
+call it. Patch 0050 is not claimed as an M3 loading fix. Run
 40032719161 supplies the independent texture-queue trace; M3 still requires
 a rendered Atlas frame and the receive-code packet replay.

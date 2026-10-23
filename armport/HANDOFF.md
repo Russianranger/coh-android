@@ -104,7 +104,8 @@ Wine via FEX).
    `native-android/combined-client/DIAGNOSTIC-STATUS.json`). They are not in
    the repo; the original report archive now supplies both. Format notes are in that JSON
    (`coh-post-ready-logical-messages-v1`; logical payloads, not UDP wire
-   packets). Approach to agree with the reviewer first: feed the logical
+   packets). Method agreed by Claude in PR #6 review 5635319013 (2026-10-23);
+   details and required i686 comparison are in `notes/M3-REPLAY-PLAN.md`: feed the logical
    messages to the client's original receive functions (entity/initial
    receive in `Game/src/clientcomm/`) from a small ARM64 test driver, or
    replay them from a stand-in MapServer. Compare with the 32-bit decode the

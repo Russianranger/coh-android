@@ -21,7 +21,7 @@ def sections(evidence, client):
     raw = read(evidence / 'login-driver.json')
     status = json.loads(raw) if raw else {}
     keys = ('client_started', 'client_exit', 'client_error', 'enter_by_layout',
-            'play_sent', 'world_rendered', 'zone_load_seconds', 'loading_brightness', 'load_samples')
+            'play_sent', 'world_rendered', 'zone_load_seconds', 'diagnostic_seconds_excluded', 'loading_brightness', 'load_samples')
     summary = {key: status[key] for key in keys if key in status}
     raw = read(evidence / 'armport-game-report.json')
     report = json.loads(raw) if raw else {}
@@ -32,6 +32,8 @@ def sections(evidence, client):
     yield 'ArmPort M3 load status', json.dumps(summary, separators=(',', ':'))
     traces = [line for line in read(client / 'armport_stdio.txt').splitlines()
               if line.startswith('ArmPort zone: ')]
+    if status.get('frame_checks'):
+        yield 'ArmPort M3 final frame check', json.dumps(status['frame_checks'][-1], separators=(',', ':'))
     yield 'ArmPort M3 zone stages', tail('\n'.join(line for line in traces if ' library.' not in line)) or 'no zone traces'
     yield 'ArmPort M3 library progress', tail('\n'.join(line for line in traces if ' library.' in line)) or 'no library traces'
     for path in sorted(evidence.glob('stall-*.txt'))[:2]:

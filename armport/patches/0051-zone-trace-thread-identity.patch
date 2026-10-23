@@ -1,0 +1,24 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index 7dce587..8144798 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -1,6 +1,7 @@
+ #pragma once
+ 
+ // ArmPort diagnostics only. No packet, loading or timeout behavior changes.
++// 0051: identify APC threads without changing synchronization or scheduling.
+ #if defined(__aarch64__) && defined(__MINGW32__)
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -8,8 +9,9 @@
+ static void armportZoneTrace(const char *stage, const char *detail)
+ {
+     if (getenv("ARMPORT_STDIO_LOG"))
+-        fprintf(stderr, "ArmPort zone: %lu %s %.240s\n",
+-                (unsigned long)GetTickCount(), stage, detail ? detail : "");
++        fprintf(stderr, "ArmPort zone: %lu %s %.240s tid=%lu\n",
++                (unsigned long)GetTickCount(), stage, detail ? detail : "",
++                (unsigned long)GetCurrentThreadId());
+ }
+ #else
+ #define armportZoneTrace(stage, detail) ((void)0)

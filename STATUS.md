@@ -23,7 +23,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (branch armport/m3-atlas, 50 patches; Astra leads from here,
+M3 into Atlas (branch armport/m3-atlas, 51 patches; Astra leads from here,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -37,4 +37,4 @@ see armport/HANDOFF.md):
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Run 40011219458 stops in texLoadQueueFinish; 0049 traces it in run 40032719161.
 - Patch 0050 fixes a reproduced worker lost-wake race: notes/WORKER-QUEUE.md.
-- Both replay files recovered and hash-verified; reviewer agreement pending.
+- Both replay files recovered; Claude agreed to replay method in PR #6 (2026-10-23).

@@ -10,6 +10,29 @@ import subprocess
 import time
 
 
+# PE unwind metadata is not always understood by Linux gdb. Sample the ARM64
+# frame chain as supplementary evidence, never as a guaranteed stack unwind.
+FRAME_SAMPLE = '''
+import gdb, struct
+inferior = gdb.selected_inferior()
+for thread in inferior.threads()[:64]:
+    try:
+        thread.switch()
+        pc, lr, fp, sp = [int(gdb.parse_and_eval('$' + name)) for name in ('pc','x30','x29','sp')]
+        print('arm64-registers thread=%s pc=%#x lr=%#x fp=%#x sp=%#x' % (thread.ptid,pc,lr,fp,sp))
+        for depth in range(8):
+            if fp % 16 or not sp <= fp < sp + 1024*1024:
+                break
+            parent, ret = struct.unpack('<QQ', bytes(inferior.read_memory(fp,16)))
+            print('arm64-frame depth=%d fp=%#x return=%#x' % (depth,fp,ret))
+            if parent <= fp:
+                break
+            fp = parent
+    except (gdb.error, ValueError) as exc:
+        print('arm64-frame unavailable: ' + str(exc))
+'''
+
+
 def client_pids(client, proc=Path('/proc')):
     exe = str(client.resolve() / 'CityOfHeroes.exe')
     found = []
@@ -47,7 +70,8 @@ def capture(client, evidence, label, llvm=None):
                    '-q', '-nx', '-nh', '-batch', '-iex', 'set auto-load off',
                    '-iex', 'set debuginfod enabled off',
                    '-iex', 'set print frame-arguments none', '-p', str(pid),
-                   '-ex', 'thread apply all bt 12', '-ex', 'detach']
+                   '-ex', 'thread apply all bt 12',
+                   '-ex', 'python exec(' + repr(FRAME_SAMPLE) + ')', '-ex', 'detach']
         result = subprocess.run(command, capture_output=True, text=True, timeout=30)
         lines.extend(['debugger_exit=' + str(result.returncode), result.stdout, result.stderr])
         if llvm:
