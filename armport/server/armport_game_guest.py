@@ -140,7 +140,8 @@ class ArmPortGame(gd.GameDiagnostic):
             # Let the host take its in-game screenshots, then check the
             # character is still connected.
             done = STATE / 'armport-host-done.json'
-            self.wait(lambda: done.exists() or exited.exists(), 300, 'Host in-game screenshots')
+            # The host waits for the zone to finish loading (up to 25 min) first.
+            self.wait(lambda: done.exists() or exited.exists(), 1800, 'Host in-game screenshots')
             record['host_done'] = done.exists()
             require(not exited.exists(), 'ARM64 client exited on Atlas')
             sample = self.character_status('armport-final', allow_missing=True)

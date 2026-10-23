@@ -451,7 +451,7 @@ jobs:
     # shared Xvfb display. See armport/notes/M3-PLAN.md.
     needs: [client, client-run1, cg-precompile]
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 150
+    timeout-minutes: 180
     permissions:
       contents: read
       actions: read

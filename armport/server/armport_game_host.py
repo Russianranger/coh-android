@@ -124,6 +124,19 @@ def stop_client(a, proc):
         pass
 
 
+def window_brightness(png):
+    """Mean grey level (0-1) of the client window area; the zone loading
+    screen is mostly white."""
+    if not png:
+        return None
+    r = sh('convert', str(png), '-crop', '1024x768+104+130', '+repage', '-colorspace', 'gray',
+           '-format', '%[fx:mean]', 'info:')
+    try:
+        return float(r.stdout.strip())
+    except ValueError:
+        return None
+
+
 def capture_traffic(status, evidence):
     """Loopback traffic on the game-client ports inside the guest's namespace,
     from as soon as it exists (so the TestClient's login is the reference)."""
@@ -218,7 +231,19 @@ def drive_login(a, screen, state, status, evidence):
         screen.shot('loading')
     if atlas.exists():
         status['atlas'] = json.loads(atlas.read_text())
-        time.sleep(20)
+        # The database has the character on Atlas; the client then loads the
+        # zone (a mostly white loading screen). Wait for the world to render.
+        started = time.time()
+        rendered = 0
+        status['loading_brightness'] = []
+        while time.time() - started < 1500 and rendered < 2 and not status.get('guest_exited'):
+            time.sleep(30)
+            png = screen.shot('zone-loading')
+            mean = window_brightness(png)
+            status['loading_brightness'].append(round(mean, 3) if mean is not None else None)
+            rendered = rendered + 1 if mean is not None and mean < 0.8 else 0
+        status['world_rendered'] = rendered >= 2
+        status['zone_load_seconds'] = round(time.time() - started)
         status['atlas_shot'] = str(screen.shot('atlas'))
         time.sleep(30)
         status['atlas_shot_later'] = str(screen.shot('atlas-later'))
@@ -240,7 +265,7 @@ def main():
     ap.add_argument('--llvm-mingw', type=Path, help='for llvm-symbolizer on client crashes')
     ap.add_argument('--client-prefix', type=Path, required=True, help='fresh Wine prefix for the client')
     ap.add_argument('--client-home', type=Path, required=True)
-    ap.add_argument('--timeout-seconds', type=int, default=3600)
+    ap.add_argument('--timeout-seconds', type=int, default=5400)
     a = ap.parse_args()
     assets, package, data, schema, work, evidence, proot, client = (
         getattr(a, n).resolve() for n in ('assets', 'package', 'data', 'schema', 'work', 'evidence', 'proot', 'client'))
@@ -424,9 +449,10 @@ def main():
             if (evidence / 'screen.jpg').stat().st_size < 24000:
                 break
     ok = code == 0 and report.get('passed') is True and client_record.get('connected_on_atlas') is True \
-        and client_record.get('still_connected') is True
+        and client_record.get('still_connected') is True and status.get('world_rendered') is True
     note('notice' if ok else 'error', 'ArmPort M3 verdict',
-         'ARM64 client logged in through the UI and is connected on Atlas Park (DB status), still connected after the screenshots'
+         f"ARM64 client logged in through the UI, is connected on Atlas Park (DB status), rendered the zone after "
+         f"{status.get('zone_load_seconds')} s and was still connected after the screenshots"
          if ok else 'M3 login to Atlas not proved (see guest result, login driver and screens)')
     return 0 if ok else 1
 
