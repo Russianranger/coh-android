@@ -23,8 +23,7 @@ untouched). Details: armport/M2-REPORT.md.
 - Reduced function: no ragdolls (PhysX), CgFX effects (SSAO, filters), runtime
   DXT compression, SSE reported absent.
 
-CI uses the reviewed client asset bundle the repo's other runtime workflows
-use (release asset 588984151) for fonts, UI textures and models.
+CI data: the reviewed client asset bundle (release asset 588984151).
 
 M3 into Atlas (branch armport/m3-atlas, 47 patches):
 - CI job server-run: the repository's qualified ARM64 game stack (original
