@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """Exercise app runtime files and private RFB transport without building an APK."""
 import argparse
-import hashlib
 import importlib.util
 import json
 import os
 from pathlib import Path
 import platform
 import shutil
-import signal
 import socket
 import struct
 import subprocess
@@ -124,6 +122,7 @@ def main():
     require(not evidence.exists(), 'Use a fresh evidence directory')
     evidence.mkdir(parents=True)
     report = {'scope': 'armport_app_runtime_boot', 'passed': False, 'm4_complete': False}
+    report['artifact_runs'] = {name: os.environ.get(name) for name in ('CLIENT_RUN_ID', 'DATA_RUN_ID')}
     process = None
     try:
         command, report['runtime'] = prepare(work, evidence, client, proot)

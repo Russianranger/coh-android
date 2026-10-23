@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       client_run_id:
-        description: ArmPort build run containing client, bins and Cg artifacts
+        description: ArmPort build run containing the Release client
         required: true
         default: '40032719161'
+      data_run_id:
+        description: Completed ArmPort build run containing bins and Cg artifacts
+        required: true
+        default: '40011219458'
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', '.github/workflows/armport-app-runtime.yml']
@@ -17,6 +21,7 @@ permissions:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: '2'
   CLIENT_RUN_ID: ${{ inputs.client_run_id || '40032719161' }}
+  DATA_RUN_ID: ${{ inputs.data_run_id || '40011219458' }}
 
 jobs:
   assets:
@@ -83,13 +88,13 @@ jobs:
         with:
           name: armport-client-bins
           path: ${{ runner.temp }}/client-bins
-          run-id: ${{ env.CLIENT_RUN_ID }}
+          run-id: ${{ env.DATA_RUN_ID }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: armport-cg-arb
           path: ${{ runner.temp }}/cg-arb
-          run-id: ${{ env.CLIENT_RUN_ID }}
+          run-id: ${{ env.DATA_RUN_ID }}
           github-token: ${{ github.token }}
       - name: Stage ARM64 client
         run: |

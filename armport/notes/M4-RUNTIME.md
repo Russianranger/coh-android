@@ -55,3 +55,10 @@ failure, add the Android client choice and package staging using the same
 guest launch path, and qualify that integration on the ARM64 runner. M3
 must still pass its own exits and review. Building/signing an APK remains a
 separate approval step under HANDOFF section 6; no keys are used here.
+
+First attempt [40033778230](https://github.com/Russianranger/coh-android/actions/runs/40033778230)
+never launched the guest: `armport-client-bins` had not yet been uploaded by
+run 40032719161. The workflow now separates executable and data donor IDs:
+Release from 40032719161; completed bins/Cg from 40011219458. The only native
+patch between these builds is 0049's texture-queue diagnostics; no data,
+serialization or shader changes were made. The host report records both IDs.
