@@ -116,3 +116,44 @@ controls. `ci_results.py --run 40040798938 --job libraries --no-wait --grep
 "ARM64 worker"` returns original dispatched=0, patched dispatched=1, and
 4096 commands/replies in both notices. Rendering and receiver replay remain
 unproved.
+
+
+## CRT stream diagnostic bug (0052)
+
+Run 40035482170, server-run job 120697885705, failed before the texture
+wait at the same PC/LR as 40032719161. Artifact 12539159417 was verified:
+`2c8e123a393b46fe1cab2f6c7dc8864c5f13061d06919e8f029e2a4879879866`.
+The final partial stdio line is `ArmPort zone: 40`; no Atlas frame passed.
+
+A concrete defect in our trace explains this crash signature. Preprocessing
+tex.c with its actual ARM64 compile command and `-E` before 0052 produces:
+
+```
+x_fprintf((__acrt_iob_func(2)), "ArmPort zone: ...", ...);
+```
+
+file.h defines fprintf as x_fprintf, which requires FileWrapper*, while
+stderr is a CRT FILE*. x_vfprintf then calls x_fwrite using the CRT object's
+contents as a wrapper. This is undefined behavior, not a safe diagnostic.
+
+Disassembly of the hash-verified runtime-lock.json Wine archive with
+`llvm-objdump -d` finds RtlEnterCriticalSection at ntdll RVA 0x57510;
+its +8 instruction loads [x0+0x20]. ucrtbase fwrite at RVA 0x39f68 sets
+x0 = stream + 0x30 and calls that function, returning at +0x2c. These
+match the observed PC 0x6fffffdb7518, LR 0x6fffff469f94, x0=0x30,
+x19=0 and read address 0x50 with inferred module bases 0x6fffffd60000
+and 0x6fffff430000. A complete game call stack is still unavailable.
+
+0052 temporarily undefines fprintf inside the trace header and restores the
+caller's macro afterward. It preserves the actual CRT stderr destination,
+format, opt-in and thread markers. No queue/loading behavior changes.
+
+Regression command: `ninja -j2 armport_zone_trace
+Game/CMakeFiles/Game.dir/src/render/tex.c.obj` passed (seven existing tex.c
+warnings). The test includes file.h first, calls the trace, then uses the
+restored wrapper macro. It treats incompatible-pointer-types as an error.
+Compiling the same test with the pre-fix header exits 1 with FILE* versus
+FileWrapper* mismatch; the corrected header compiles and links. The CI test
+also runs both writes under ARM64 Wine and requires both output lines.
+Runtime/Atlas rerun pending; this fixes a diagnostic defect, not proof that
+the original texture wait has been resolved.

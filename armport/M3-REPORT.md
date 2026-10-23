@@ -11,7 +11,7 @@ the M3 exit test passes and is not a merge request.
 | Rendered Atlas screenshot and client map name | Not met. Run 39973792458 stayed on the loading screen. Run 40011219458 stopped at textures.wait with 49 unchanged log-size samples. Run 40032719161 failed earlier in group loading with a Wine access violation at 0x6fffffdb7518 reading 0x50; it does not establish the texture stall's cause. |
 | Original receive-code replay | Not met. Both inputs are recovered and hash-verified; replay_inventory.py validates envelopes only. Claude agreed to the method in review 5635319013, including a required same-driver i686 reference. See notes/M3-REPLAY-PLAN.md. |
 
-The latest completed trace run can be reproduced with:
+The earlier trace run can be reproduced with:
 
 ```
 python3 armport/scripts/ci_results.py --run 40032719161 --job server-run --no-wait --grep 'load status' 'zone stages' 'exceptions' 'crash'
@@ -48,6 +48,12 @@ The changed zone-trace header compiled in the ARM64 tex.c translation unit
 Run 40040798938 libraries passed the initial 12-test review suite and worker
 controls; ci_results.py reads the new worker notices. The additional client-only
 OCR crop test passed locally. Full Atlas and replay validation remain pending.
+
+Run 40041703285 libraries passed all 13 host tests and the original socketless
+network preflight. Run 40035482170 server-run failed before the texture wait.
+Patch 0052 fixes a confirmed FILE*/FileWrapper* mismatch in the diagnostic
+header; its before/after compile control and pinned-Wine disassembly are in
+notes/M3-LOAD-STALL.md. Full runtime and Atlas rerun remain pending.
 
 ## Remaining work
 

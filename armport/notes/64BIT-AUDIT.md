@@ -76,3 +76,10 @@ fields (`net_structdefs.h`); its other narrowings (`rsa.c`, `bignum.c`) store
 `strlen` results and pointer differences of short key strings in `int`. `net_masterlist.c` completion keys (32-bit indices),
 byte counts from `fread`/`fileSize`, textparser `intptr_t` parameters that
 hold integers, window ids passed through `void *` in the UI.
+
+
+0052: diagnostic CRT stream correction. file.h's fprintf macro takes a
+FileWrapper*, so passing CRT stderr from armport_zone_trace.h was invalid.
+The header now temporarily restores the CRT function and preserves caller
+macros. A negative/positive compile control and ARM64 Wine regression cover
+the tex.c include order. Evidence: notes/M3-LOAD-STALL.md, run 40035482170.

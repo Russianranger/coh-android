@@ -97,5 +97,6 @@ may construct a control ACK but routes it through that same discard path.
 The new armport_replay_sink test calls these actual UtilitiesLib functions
 with a zeroed link and both zero/nonzero ack_count. It compiles/links as an
 ARM64 PE executable with llvm-mingw and `ninja -j2 armport_replay_sink`.
-The libraries CI job runs it under the app Wine and emits a notice. Runtime
-result pending; this preflight is not one of the 117 receiver dispatches.
+The libraries CI job runs it under the app Wine and emits a notice. Run 40041703285, libraries job 120714048504, passed and emitted:
+`socketless replay sink: pktSend discards, netSendIdle/lnkBatchSend return`.
+This preflight is not one of the 117 receiver dispatches.

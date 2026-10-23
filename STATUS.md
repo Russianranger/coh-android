@@ -23,7 +23,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (branch armport/m3-atlas, 51 patches; Astra leads from here,
+M3 into Atlas (branch armport/m3-atlas, 52 patches; Astra leads from here,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,

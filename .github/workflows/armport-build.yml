@@ -159,10 +159,18 @@ jobs:
 
       - name: Build UtilitiesLib, test program and precise floating-point check
         run: |
-          cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts armport_replay_sink verify_precise_floating_point \
+          cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts armport_replay_sink armport_zone_trace verify_precise_floating_point \
             armport_address_space_laa armport_address_space_nolaa \
             -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
           test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Zone trace CRT stream regression
+        run: |
+          out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/armport/build/bin/armport_zone_trace.exe" 2>&1)
+          printf '%s\n' "$out"
+          printf '%s\n' "$out" | grep -F 'regression.crt file.h included first'
+          printf '%s\n' "$out" | grep -F 'zone trace wrapper restored'
+          printf '::notice title=ArmPort zone trace::CRT stderr and caller FileWrapper both passed\n'
 
       - name: Original network socketless replay preflight
         run: |
