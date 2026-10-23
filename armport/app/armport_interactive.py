@@ -11,6 +11,7 @@ import shutil
 
 import armport_client_package as package
 import client_startup_diagnostic as startup
+from client_stdio import read_stdio
 
 base, require = startup.base, startup.require
 
@@ -29,7 +30,7 @@ class LoggedClient:
             size = self.log.stat().st_size
             require(size <= 16 * 1024 * 1024, 'ARM64 diagnostic log exceeded 16 MiB')
             if size != self.size:
-                self.cached = self.log.read_text(errors='replace')
+                self.cached = read_stdio(self.log)
                 self.size = size
         return self.child.text() + '\n' + self.cached
 
@@ -39,7 +40,7 @@ class ArmPortClient:
     def initialize(self):
         super().initialize()
         pins = self.ctx.report['asset_sha256']
-        require({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py'} <= pins.keys(),
+        require({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py', 'client_stdio.py'} <= pins.keys(),
                 'ARM64 client is not included in this runtime package')
         self.ctx.stage('armport_client_data')
         self.ctx.report['client_worktree']['purpose'] = 'retained_server_data_source_for_armport'

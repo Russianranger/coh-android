@@ -19,6 +19,7 @@ import time
 sys.path.insert(0, '/opt/coh-guest')
 import presentation_diagnostic as presentation
 from client_startup_diagnostic import XObserver, parse_launch, console_identity, startup_evidence
+from client_stdio import read_stdio
 
 base, require = presentation.base, presentation.require
 
@@ -80,11 +81,7 @@ class ArmPortRuntime(presentation.PresentationDiagnostic):
                 require(child.process.poll() is None, 'ARM64 client exited: ' + child.text()[-4096:])
                 require(self.xserver.process.poll() is None, 'Display exited')
                 require(time.monotonic() < deadline, 'ARM64 login screen startup timed out')
-                text = ''
-                if stdio.exists():
-                    with stdio.open('rb') as stream:
-                        stream.seek(max(0, stdio.stat().st_size - 1024 * 1024))
-                        text = stream.read(1024 * 1024).decode('utf-8', 'replace')
+                text = read_stdio(stdio)
                 windows = observer.windows()
                 visible = [w for w in windows if w['mapped'] and w['width'] >= 640
                            and w['height'] >= 480 and 'City of Heroes' in w['title']]

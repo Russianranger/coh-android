@@ -13,7 +13,7 @@ on:
         default: '40011219458'
   push:
     branches: ['armport/m4-runtime']
-    paths: ['armport/app/**', 'armport/tests/test_client_package.py', 'android/interactive/**',
+    paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
             'android/native/client-launcher.c', 'android/guest/character_creation_diagnostic.py',
             '.github/workflows/armport-app-runtime.yml']
 
@@ -84,7 +84,7 @@ jobs:
       - name: Check host and guest probe syntax
         run: |
           python3 -m py_compile armport/app/*.py
-          python3 armport/tests/test_client_package.py
+          python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v
       - name: Build the app's pinned PRoot sources for Linux ARM64
         run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2
       - name: Restore reviewed data

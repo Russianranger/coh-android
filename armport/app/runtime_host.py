@@ -43,6 +43,7 @@ def prepare(work, evidence, client, proot):
     for source in (ROOT / 'android/guest').glob('*.py'):
         shutil.copyfile(source, work / 'guest' / source.name)
     shutil.copyfile(Path(__file__).with_name('runtime_guest.py'), work / 'probe/runtime_guest.py')
+    shutil.copyfile(Path(__file__).with_name('client_stdio.py'), work / 'probe/client_stdio.py')
     (work / 'passwd').write_text('root:x:0:0:root:/root:/bin/sh\ncoh:x:1000:1000:COH:/state:/bin/sh\n')
     (work / 'group').write_text('root:x:0:\ncoh:x:1000:\n')
     runtime.prepare_guest_hosts(work, evidence, os.uname().nodename)

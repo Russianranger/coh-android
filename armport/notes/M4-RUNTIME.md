@@ -112,3 +112,17 @@ run 40032719161. The workflow now separates executable and data donor IDs:
 Release from 40032719161; completed bins/Cg from 40011219458. The only native
 patch between these builds is 0049's texture-queue diagnostics; no data,
 serialization or shader changes were made. The host report records both IDs.
+
+## Startup evidence regression (40037067863)
+
+Run 40037067863 failed because the probe kept only the final 1 MiB of the
+client log. The artifact contains 1,397,688 bytes: OpenGL Renderer and Renderer
+initialization complete are present near its beginning and absent from the
+probe tail. GameProgress reached game_mainLoop, all data loaded and the owned
+800x600 window was mapped. This was an observation failure, not proof of a
+renderer failure.
+
+The probe and app wrapper now share a complete-log reader bounded to 16 MiB.
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v`
+passes five tests, including renderer evidence before more than 1 MiB of asset
+noise and rejection above the existing 16 MiB bound. Runtime rerun pending.

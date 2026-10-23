@@ -39,6 +39,7 @@ def stage(source, armport, output, repository_commit):
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
+                    'client_stdio.py': Path(__file__).with_name('client_stdio.py'),
                     'character_creation_diagnostic.py': ROOT / 'android/guest/character_creation_diagnostic.py'}
     output.mkdir(parents=True)
     # Ordinary copies keep the retained donor independent of future edits.
