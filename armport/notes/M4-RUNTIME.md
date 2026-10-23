@@ -74,6 +74,38 @@ ARM64 and requires its real child PID and console-membership observations.
 This tests the launcher used by the interactive app rather than assuming
 that direct Wine startup qualifies its console supervision.
 
+[Run 40036045979](https://github.com/Russianranger/coh-android/actions/runs/40036045979)
+passed that launcher probe: Windows child PID 404, matching session and
+`attached: true` console marker, login stage 0, mapped 800x600 game window,
+and complete cleanup. The artifact's API digest is
+1853fcfde401a4e6fbf984f09b6ea4f5dbe14a800553855f8cf171fb8b82fb71;
+it was checked after download. The Release window title omits the PID.
+The ARM64-only launcher build now exposes its already-resolved owned PID
+in that window's diagnostic title for the existing app identity check.
+
+## App option being qualified
+
+The selector defaults to x86. ARM64 selects a separate package/directory,
+its own generated bins and ARB shaders, and the 64-bit GameProgress registry
+view. The existing verified x86 data tree remains available for server
+preparation; its executable and DLLs are never copied into the ARM64 tree.
+Both clients retain the existing character-profile, local server, RFB/input,
+save-evidence and cleanup paths. ARM64 currently selects Software/standard
+graphics and Atlas only; return the saved character to Atlas with x86 before
+switching. Zone-travel asset synchronization is not yet qualified.
+
+`stage_app_assets.py` assembles extracted runtime assets and extends the
+existing input manifests. It does not build or sign an APK. Its inputs are
+the retained app assets and the CI `armport-app-client-package` artifact.
+The Android Java compile job likewise produces classes only. Building the
+installable APK still requires the user's signing approval.
+
+Local checks: `python3 armport/tests/test_client_package.py` passes four
+cases (separate ARM64 bins, x86 DLL refusal, changed payload refusal, unsafe
+extra member refusal); Python modules compile, launcher compiles for ARM64
+with warnings enabled, and `git diff --check` passes. These do not yet prove
+the complete interactive guest/server path or milestone completion.
+
 First attempt [40033778230](https://github.com/Russianranger/coh-android/actions/runs/40033778230)
 never launched the guest: `armport-client-bins` had not yet been uploaded by
 run 40032719161. The workflow now separates executable and data donor IDs:

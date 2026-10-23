@@ -13,7 +13,9 @@ on:
         default: '40011219458'
   push:
     branches: ['armport/m4-runtime']
-    paths: ['armport/app/**', '.github/workflows/armport-app-runtime.yml']
+    paths: ['armport/app/**', 'armport/tests/test_client_package.py', 'android/interactive/**',
+            'android/native/client-launcher.c', 'android/guest/character_creation_diagnostic.py',
+            '.github/workflows/armport-app-runtime.yml']
 
 permissions:
   contents: read
@@ -24,6 +26,21 @@ env:
   DATA_RUN_ID: ${{ inputs.data_run_id || '40011219458' }}
 
 jobs:
+  app-sources:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {lfs: false}
+      - name: Compile app Java against the Android SDK (no APK or signing)
+        run: |
+          test -f "$ANDROID_HOME/platforms/android-35/android.jar"
+          mkdir -p "$RUNNER_TEMP/armport-classes"
+          find android/interactive/src/main/java android/recovery/src/main/java \
+            android/zoning/src/main/java android/app/src/main/java \
+            android/atlas/src/main/java -name '*.java' > "$RUNNER_TEMP/app-sources.txt"
+          javac --release 8 -cp "$ANDROID_HOME/platforms/android-35/android.jar" \
+            -d "$RUNNER_TEMP/armport-classes" @"$RUNNER_TEMP/app-sources.txt"
   assets:
     # Same reviewed private asset download as armport-build; never publishes.
     runs-on: ubuntu-24.04-arm
@@ -65,7 +82,9 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
       - name: Check host and guest probe syntax
-        run: python3 -m py_compile armport/app/runtime_host.py armport/app/runtime_guest.py
+        run: |
+          python3 -m py_compile armport/app/*.py
+          python3 armport/tests/test_client_package.py
       - name: Build the app's pinned PRoot sources for Linux ARM64
         run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2
       - name: Restore reviewed data
@@ -112,11 +131,19 @@ jobs:
           echo "175f344e3db2e11b3d53f4f828ae7b5f0073a4d239b9600fa023ef4b90eb5a7e  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
           mkdir "$RUNNER_TEMP/llvm"
           tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C "$RUNNER_TEMP/llvm"
-          "$RUNNER_TEMP/llvm/bin/aarch64-w64-mingw32-clang" -O2 -Wall -Wextra \
+          "$RUNNER_TEMP/llvm/bin/aarch64-w64-mingw32-clang" -O2 -Wall -Wextra -DCOH_ARMPORT_LAUNCHER \
             android/native/client-launcher.c -luser32 -o "$RUNNER_TEMP/m4-client/armport-launcher.exe"
+      - name: Package and stage the separate ARM64 client overlay
+        run: |
+          python3 armport/app/armport_client_package.py --client "$RUNNER_TEMP/client-bin" \
+            --bins "$RUNNER_TEMP/client-bins/bin" --shaders "$RUNNER_TEMP/cg-arb" \
+            --launcher "$RUNNER_TEMP/m4-client/armport-launcher.exe" \
+            --client-run "$CLIENT_RUN_ID" --data-run "$DATA_RUN_ID" \
+            --output "$RUNNER_TEMP/armport-client.zip" \
+            --source-data "$RUNNER_TEMP/m4-client/data" --stage "$RUNNER_TEMP/m4-packaged-client"
       - name: ARM64 client through app PRoot, Xtigervnc and private RFB
         run: |
-          python3 armport/app/runtime_host.py --client "$RUNNER_TEMP/m4-client" \
+          python3 armport/app/runtime_host.py --client "$RUNNER_TEMP/m4-packaged-client" \
             --proot out/android/native/linux-arm64 --work "$RUNNER_TEMP/m4-work" \
             --evidence "$RUNNER_TEMP/m4-evidence"
       - uses: actions/upload-artifact@v4
@@ -125,3 +152,7 @@ jobs:
           name: armport-app-runtime-evidence
           path: ${{ runner.temp }}/m4-evidence/
           if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-app-client-package
+          path: ${{ runner.temp }}/armport-client.zip

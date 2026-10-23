@@ -436,6 +436,9 @@ def run(argv, diagnostic_type, scope, mode):
     try:
         validate_args(args); validated = True
         context.check()
+        if os.environ.get('COH_CLIENT_ARCH', 'x86') != 'x86':
+            import armport_interactive
+            diagnostic_type = armport_interactive.select(diagnostic_type)
         diagnostic = diagnostic_type(args, context)
         diagnostic.execute()
         context.report['status'] = 'passed'

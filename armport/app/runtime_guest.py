@@ -18,7 +18,7 @@ import time
 
 sys.path.insert(0, '/opt/coh-guest')
 import presentation_diagnostic as presentation
-from client_startup_diagnostic import XObserver, parse_launch, console_identity
+from client_startup_diagnostic import XObserver, parse_launch, console_identity, startup_evidence
 
 base, require = presentation.base, presentation.require
 
@@ -61,6 +61,9 @@ class ArmPortRuntime(presentation.PresentationDiagnostic):
         self.initialize()
         self.start_wine()
         self.ctx.stage('armport_login_screen')
+        self.ctx.run('armport-progress-reset', [self.args.wine, 'reg', 'delete',
+            r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/f', '/reg:64'],
+            timeout=8, env=self.wine_env, check=False)
         environment = dict(self.wine_env, ARMPORT_LOOSE_DATA='1',
                            ARMPORT_STDIO_LOG='armport_stdio.txt', WINEDEBUG='err+all,fixme-all,+seh')
         command = ['/usr/bin/env', '-C', str(self.args.client), str(self.args.wine),
@@ -90,6 +93,14 @@ class ArmPortRuntime(presentation.PresentationDiagnostic):
                 launch = parse_launch(child.text(), self.args.session_id)
                 console = console_identity(child.text(), launch)
                 if visible and launch and console and re.search(r'ArmPort login: stage 0\b', text):
+                    registry = self.ctx.run('armport-progress', [self.args.wine, 'reg', 'query',
+                        r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/reg:64'],
+                        timeout=8, env=self.wine_env)['output']
+                    observation = startup_evidence(child.text() + '\n' + text, registry, windows, launch)
+                    require(all(observation[key] for key in ('renderer_initialized', 'all_data_loaded',
+                            'client_main_loop_reached', 'client_window_observed', 'startup_observed')),
+                            'App startup observation failed: ' + json.dumps(observation))
+                    self.ctx.report['app_startup_observation'] = observation
                     self.ctx.report.update(login_stage=0, client_windows=visible,
                                            client_launch=launch, client_console_observation=console)
                     base.private_write(self.args.state / 'armport-app-ready.json',
