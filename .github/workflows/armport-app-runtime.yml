@@ -1,0 +1,113 @@
+name: ArmPort app runtime
+
+on:
+  workflow_dispatch:
+    inputs:
+      client_run_id:
+        description: ArmPort build run containing client, bins and Cg artifacts
+        required: true
+        default: '40032719161'
+  push:
+    branches: ['armport/m4-runtime']
+    paths: ['armport/app/**', '.github/workflows/armport-app-runtime.yml']
+
+permissions:
+  contents: read
+
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: '2'
+  CLIENT_RUN_ID: ${{ inputs.client_run_id || '40032719161' }}
+
+jobs:
+  assets:
+    # Same reviewed private asset download as armport-build; never publishes.
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /tools/fetch_runtime_asset_bundle.py
+            /assets/reference-inputs-receipt.json
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+      - if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json \
+            --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
+
+  guest-boot:
+    needs: assets
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with: {lfs: false}
+      - name: Install PRoot build and extraction tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
+      - name: Check host and guest probe syntax
+        run: python3 -m py_compile armport/app/runtime_host.py armport/app/runtime_guest.py
+      - name: Build the app's pinned PRoot sources for Linux ARM64
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2
+      - name: Restore reviewed data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Stage reviewed data
+        run: |
+          python3 tools/runtime_asset_bundle.py stage --archive "$RUNNER_TEMP/reference-assets.zip" \
+            --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-Release
+          path: ${{ runner.temp }}/client-bin
+          run-id: ${{ env.CLIENT_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+          run-id: ${{ env.CLIENT_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-cg-arb
+          path: ${{ runner.temp }}/cg-arb
+          run-id: ${{ env.CLIENT_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Stage ARM64 client
+        run: |
+          assets=out/reviewed-assets
+          for sub in data assets; do
+            if [ -d "$assets/$sub" ]; then assets="$assets/$sub"; break; fi
+          done
+          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" \
+            --runtime "$RUNNER_TEMP/m4-client" --cg-dir "$RUNNER_TEMP/cg-arb"
+      - name: ARM64 client through app PRoot, Xtigervnc and private RFB
+        run: |
+          python3 armport/app/runtime_host.py --client "$RUNNER_TEMP/m4-client" \
+            --proot out/android/native/linux-arm64 --work "$RUNNER_TEMP/m4-work" \
+            --evidence "$RUNNER_TEMP/m4-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-app-runtime-evidence
+          path: ${{ runner.temp }}/m4-evidence/
+          if-no-files-found: warn

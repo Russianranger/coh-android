@@ -5,7 +5,7 @@ name: ArmPort build
 on:
   workflow_dispatch:
   push:
-    branches: ['armport/**', 'COH-ArmPort']
+    branches: ['armport/**', '!armport/m4-runtime', 'COH-ArmPort']
     paths:
       - 'armport/**'
       - '!armport/survey/**'
