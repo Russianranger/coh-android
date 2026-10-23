@@ -330,6 +330,27 @@ def login_probe(out, proc):
         cpu = [' '.join(l.split())[:120] for l in top.splitlines() if 'cityofheroes' in l.lower() or 'CityOfHeroes' in l][:3]
         status.setdefault('after', []).append({'when': label, 'client_sockets': sockets, 'windows': named[:8],
                                                'client_alive': proc.poll() is None, 'cpu': cpu})
+    # Stand-in for DbServer's game-client port: record what the client sends.
+    import socket as _socket
+    import threading as _threading
+    received = []
+    listener = _socket.socket(_socket.AF_INET, _socket.SOCK_DGRAM)
+    try:
+        listener.bind(('127.0.0.1', 7000))
+        listener.settimeout(1)
+    except OSError as e:
+        status['listener_error'] = repr(e)
+        listener = None
+
+    def listen():
+        while listener and not status.get('probe_done'):
+            try:
+                data, addr = listener.recvfrom(65536)
+            except OSError:
+                continue
+            received.append((time.time(), addr[1], data))
+    if listener:
+        _threading.Thread(target=listen, daemon=True).start()
     after('before the probe')
     try:
         from login_ui import after_login
@@ -339,6 +360,12 @@ def login_probe(out, proc):
         after('end of probe')
     except Exception as e:  # diagnostics only
         status['error'] = repr(e)
+    status['probe_done'] = True
+    status['udp_7000'] = {'datagrams': len(received), 'sizes': [len(d) for _, _, d in received[:20]],
+                          'first': [d[:48].hex() for _, _, d in received[:3]],
+                          'source_ports': sorted({p for _, p, _ in received})[:5]}
+    if listener:
+        listener.close()
     note('notice', 'ArmPort M2 login probe', json.dumps(status, indent=1)[:3000] + '\n' + '\n'.join(screen.log[-40:]))
     # One sheet of the steps, each cropped to the client window (GitHub keeps
     # about ten notices per step, so one image for screen_export.py).

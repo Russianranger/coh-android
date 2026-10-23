@@ -78,6 +78,11 @@ def start_client(a, state, status, evidence):
     command = ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', '--', 'sudo', '-n', '-u', os.environ.get('USER', 'runner'),
                '--', 'env', '-C', str(client)] + [f'{k}={v}' for k, v in env.items()] + \
               [str(a.wine / 'wine'), str(client / 'CityOfHeroes.exe')] + args
+    # Loopback traffic on the game-client ports inside the namespace.
+    cap = evidence / 'udp-7000-7001.pcap'
+    status['tcpdump'] = subprocess.Popen(['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', 'tcpdump', '-i', 'lo', '-n',
+                                          '-U', '-w', str(cap), 'udp', 'and', '(port', '7000', 'or', 'port', '7001)'],
+                                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     out = open(evidence / 'client-output.txt', 'wb')
     proc = subprocess.Popen(command, stdout=out, stderr=subprocess.STDOUT, start_new_session=True)
     status['client_started'] = True
@@ -257,6 +262,24 @@ def main():
     status['guest_exited'] = True
     driver.join(timeout=60)
     stop_client(a, status.pop('proc', None))
+    dump = status.pop('tcpdump', None)
+    if dump:
+        subprocess.run(['sudo', '-n', 'kill', '-INT', str(dump.pid)], capture_output=True)
+        subprocess.run(['sudo', '-n', 'pkill', '-INT', '-f', 'tcpdump -i lo -n -U -w'], capture_output=True)
+        time.sleep(2)
+        cap = evidence / 'udp-7000-7001.pcap'
+        if cap.exists():
+            subprocess.run(['sudo', '-n', 'chown', str(os.getuid()), str(cap)], capture_output=True)
+            r = subprocess.run(['tcpdump', '-r', str(cap), '-n', '-tt'], capture_output=True, text=True)
+            pk = r.stdout.splitlines()
+            flows = {}
+            for l in pk:
+                m = l.split()
+                if len(m) > 4:
+                    flows[(m[2], m[4].rstrip(':'))] = flows.get((m[2], m[4].rstrip(':')), 0) + 1
+            note('notice', 'ArmPort M3 UDP 7000/7001', f'{len(pk)} packets; flows: ' +
+                 '; '.join(f'{s}>{d}: {n}' for (s, d), n in sorted(flows.items(), key=lambda kv: -kv[1])[:12]) +
+                 '\nfirst 25:\n' + '\n'.join(l[:160] for l in pk[:25]))
     xvfb.kill()
 
     report = json.loads(report_path.read_text()) if report_path.is_file() else {}

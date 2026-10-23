@@ -559,7 +559,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux \
-            xvfb xdotool x11-apps imagemagick tesseract-ocr
+            xvfb xdotool x11-apps imagemagick tesseract-ocr tcpdump
       - name: Build matching native ARM64 PRoot
         run: armport/scripts/step.sh "ArmPort M3 PRoot build" python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
       # The client runs on the host exactly as in M2's boot test.
