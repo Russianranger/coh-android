@@ -5,6 +5,9 @@
  * Shortcut names are initialized from the original shared command tables in
  * the same order as cmdOldServerInitShortcuts. The captures omit that earlier
  * SERVER_CMDSHORTCUTS message; no captured receiver payload is changed.
+ * The static Atlas map is loaded with the original group loader because the
+ * captures also omit SERVER_GROUPS. The receiver's dynamic-group count assertion
+ * remains active; no replacement count or synthetic breakable objects are used.
  * No entity/costume/game-command decoder is replaced. Transport statistics,
  * packet-loss handling, the UDP envelope and READY generation are not exercised.
  *
@@ -29,6 +32,10 @@
 #include "comm_game.h"
 #include "cmdparse/cmdcommon.h"
 #include <utilitieslib/utils/cmdoldparse.h>
+#include "group/group.h"
+#include "group/groupfileload.h"
+#include "group/groupdyn.h"
+#include "group/groupnetrecv.h"
 
 static HANDLE output = INVALID_HANDLE_VALUE;
 static int active;
@@ -75,6 +82,20 @@ static void initialize_shortcuts(void)
     }
     require(index == 36 && !strcmp(cmdOldShortcutName(26), "time"),
             "shared command table differs from INITIAL capture prerequisite");
+}
+
+static void initialize_map(void)
+{
+    char map[] = "maps/City_Zones/City_01_01/City_01_01.txt";
+    require(group_info.ref_count == 0, "unexpected preexisting world roots");
+    emit("{\"type\":\"map_initialize_begin\",\"map\":\"%s\"}\n", map);
+    clientLoadMapStart(map);
+    require(groupLoadFull(map) != NULL, "Atlas map could not be loaded");
+    require(group_info.ref_count > 0, "Atlas map has no world roots");
+    groupDynBuildBreakableList();
+    emit("{\"type\":\"map_initialize_end\",\"map\":\"%s\",\"roots\":%d,"
+         "\"dynamic_groups\":%d,\"captured_groups_replayed\":false}\n",
+         map, group_info.ref_count, dyn_group_count);
 }
 
 void armportReplayUnknownCommand(int command)
@@ -252,6 +273,7 @@ void armportReplayMaybeRun(void)
     sink = calloc(1, sizeof(*sink));
     require(sink != NULL, "sink allocation");
     initialize_shortcuts();
+    initialize_map();
     entReceiveInit();
     dispatch(sink, initial + 88, u32(initial + 12), (unsigned int)u64(initial + 16),
              (unsigned int)u64(initial + 24), u32(initial + 40), initial_id, SERVER_ALLENTS, 1, 1, 1);

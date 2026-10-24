@@ -131,3 +131,23 @@ independent INITIAL check, not full entity/player-state equivalence.
 After 0058, both ARM64 and i686 OptDebug Game links pass, all 29 host tests
 pass, and workflow YAML/compiler/matrix/data-dependency checks pass. Full
 state dumping/hashing and cross-architecture comparison remain unfinished.
+
+Run 40055978390, ARM64 job 120759128643, passes the shortcut-dependent
+header and character receive phases with zero stream errors, then asserts
+in groupdynrecv.c:24: dyn_group_count_from_server == dyn_group_count.
+Artifact 12545547444 (SHA-256
+a7db082751013cabbeba2eafb7d729adb8ec50f17dc8d0f67e0700b8e16e81d0)
+records the last boundary as groupDynReceive at bit 300128. INITIAL has not
+completed. The harness had no world roots because the saved files omit the
+earlier SERVER_GROUPS message as well as the shortcut message.
+
+The driver now calls clientLoadMapStart, groupLoadFull and
+groupDynBuildBreakableList for maps/City_Zones/City_01_01/City_01_01.txt,
+the static Atlas map used by the server (40042636088 first-dbserver-stdout).
+It requires an initially empty world and nonempty roots after loading, and
+records root/dynamic-group counts. This reconstructs local static-map
+initialization from the same data, not the omitted server-group payload.
+The original receive assertion remains intact and no synthetic group count,
+breakable object or packet byte is substituted. No rendered-map completion
+is claimed by this load. Both local OptDebug Game links (`ninja -j2 Game`)
+pass with this prerequisite; runtime qualification remains pending.
