@@ -14,6 +14,9 @@ def canonical_initial_ids(document, initial_id):
     for entity in result['entities']:
         if entity['pkt_id_create'] == initial_id:
             entity['pkt_id_create'] = 'synthetic_INITIAL'
+        for field in ('pkt_id_pos', 'pkt_id_qrot'):
+            entity[field] = ['synthetic_INITIAL' if value == initial_id else value
+                             for value in entity[field]]
         player = entity['player']
         if player and player['lastClientStatePktId'] == initial_id:
             player['lastClientStatePktId'] = 'synthetic_INITIAL'
@@ -79,7 +82,8 @@ def compare(root, commit):
                             'canonicalized_fields': [
                                 'entities[].pkt_id_create',
                                 'entities[].player.lastClientStatePktId',
-                                'delete_history[].pkt_id'] if sensitivity else [],
+                                'delete_history[].pkt_id',
+                                'entities[].pkt_id_pos[]', 'entities[].pkt_id_qrot[]'] if sensitivity else [],
                             'canonicalization_condition': 'equals this runs synthetic INITIAL ID' if sensitivity else None,
                             'equal': not mismatches, 'mismatches': mismatches})
     return {'source_commit': commit, 'scope': 'partial_receiver_state_comparison',
@@ -95,7 +99,9 @@ def main():
     args = parser.parse_args()
     result = compare(args.root, args.commit)
     args.output.write_text(json.dumps(result, indent=2) + '\n')
-    print(json.dumps({k: v for k, v in result.items() if k != 'comparisons'}))
+    summary = {k: v for k, v in result.items() if k != 'comparisons'}
+    print(json.dumps(summary))
+    run_ci.notice('ArmPort partial state comparison', summary)
     return 0 if result['partial_state_equal'] else 1
 
 

@@ -38,6 +38,10 @@
 #include "group/groupdyn.h"
 #include "group/groupnetrecv.h"
 
+#undef vsnprintf
+#undef snprintf
+#undef sprintf
+
 static HANDLE output = INVALID_HANDLE_VALUE;
 static int active;
 static char state_directory[768];

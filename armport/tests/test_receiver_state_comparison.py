@@ -42,6 +42,8 @@ class StateComparison(unittest.TestCase):
                         path = run / row['file']
                         value = json.loads(path.read_text())
                         value['entities'][0]['pkt_id_create'] = 31
+                        value['entities'][0]['pkt_id_pos'] = [31, 32]
+                        value['entities'][0]['pkt_id_qrot'] = [31, 155, 0]
                         value['entities'][0]['player']['lastClientStatePktId'] = 31
                         raw = json.dumps(value).encode()
                         path.write_bytes(raw)
@@ -78,17 +80,18 @@ class StateComparison(unittest.TestCase):
         self.assertEqual(result['comparisons'][0]['mismatches'], [
             {'index': 116, 'fields': ['$.entities[0].costume.bodytype']}])
         self.assertEqual(result['comparisons'][0]['canonicalized_fields'], [])
-        self.assertEqual(len(result['comparisons'][-1]['canonicalized_fields']), 3)
+        self.assertEqual(len(result['comparisons'][-1]['canonicalized_fields']), 5)
 
     def test_only_agreed_initial_id_fields_are_canonicalized(self):
         source = {'entities': [{'pkt_id_create': 1, 'id': 1, 'net_ipos': [1, 31, 1],
-                  'pkt_id_qrot': [1, 1, 1], 'player': {'lastClientStatePktId': 1}},
-                  {'pkt_id_create': 32, 'player': {'lastClientStatePktId': 155}}],
+                  'pkt_id_pos': [1, 32], 'pkt_id_qrot': [1, 155, 0], 'player': {'lastClientStatePktId': 1}},
+                  {'pkt_id_create': 32, 'pkt_id_pos': [32], 'pkt_id_qrot': [155], 'player': {'lastClientStatePktId': 155}}],
                   'delete_history': [{'pkt_id': 1, 'id': 1}, {'pkt_id': 32, 'id': 31}]}
         result = canonical_initial_ids(source, 1)
         self.assertEqual(set(differences(source, result)), {
             '$.entities[0].pkt_id_create', '$.entities[0].player.lastClientStatePktId',
-            '$.delete_history[0].pkt_id'})
+            '$.delete_history[0].pkt_id', '$.entities[0].pkt_id_pos[0]',
+            '$.entities[0].pkt_id_qrot[0]'})
         self.assertEqual(source['entities'][0]['pkt_id_create'], 1)
         self.assertEqual(result['entities'][1], source['entities'][1])
 

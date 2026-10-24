@@ -18,6 +18,7 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.path = Path(self.temp.name)
         self.wine = self.path / 'wine-output.txt'
         self.wine.write_text('')
+        (self.path / 'client-stdio.txt').write_text('')
         self.expected = replay.fixtures(self.path)
         self.rows = [dict(type='configuration', initial_id=1)]
         for i, want in enumerate(self.expected):
@@ -34,7 +35,8 @@ class ReceiverEvidenceTests(unittest.TestCase):
                                   state_schema_complete=False, delete_history=[],
                                   entities=[dict(svr_idx=125, type=2, pkt_id_create=1,
                                   player=dict(lastClientStatePktId=1),
-                                  costume=dict(bodytype=4, parts=[None] * 28))])).encode()
+                                  pkt_id_pos=[1, 32], pkt_id_qrot=[1, 155, 0],
+                                  costume=dict(bodytype=4, num_parts=28, parts=[None] * 60))])).encode()
             name = f'state-{i:03d}.json'
             (self.path / name).write_bytes(raw)
             self.rows.append(dict(type='state', index=i, id=packet_id, file=name,
@@ -58,6 +60,28 @@ class ReceiverEvidenceTests(unittest.TestCase):
     def test_complete_cursor_stage_still_not_milestone_pass(self):
         self.assertFalse(self.check()['m3_replay_complete'])
         self.assertFalse(self.check()['state_schema_complete'])
+
+    def test_game_error_and_assert_rejected(self):
+        for text in ('ArmPort zone: 1 client.error missing texture tid=2', 'Assertion failed'):
+            (self.path / 'client-stdio.txt').write_text(text)
+            with self.assertRaisesRegex(ValueError, 'Game error/assert'):
+                self.check()
+
+    def test_missing_game_stdio_rejected(self):
+        (self.path / 'client-stdio.txt').unlink()
+        with self.assertRaisesRegex(ValueError, 'game stdio'):
+            self.check()
+
+    def test_native_logical_count_not_storage_length(self):
+        self.assertTrue(self.check()['native_initial_entity_subset_match'])
+        path = self.path / 'state-000.json'
+        doc = json.loads(path.read_text())
+        doc['entities'][0]['costume']['num_parts'] = 29
+        raw = json.dumps(doc).encode()
+        path.write_bytes(raw)
+        next(r for r in self.rows if r['type'] == 'state')['sha256'] = hashlib.sha256(raw).hexdigest()
+        with self.assertRaisesRegex(ValueError, 'native INITIAL entity subset'):
+            self.check()
 
     def test_missing_state_snapshot_rejected(self):
         self.rows = [r for r in self.rows if r['type'] != 'state' or r['index'] != 116]

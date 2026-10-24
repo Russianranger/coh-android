@@ -1,0 +1,13 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index 2a66eb6..0c4ce96 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -2,7 +2,7 @@
+ 
+ // ArmPort diagnostics only. No packet, loading or timeout behavior changes.
+ // 0051: identify APC threads without changing synchronization or scheduling.
+-#if defined(__aarch64__) && defined(__MINGW32__)
++#if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <utilitieslib/utils/wininclude.h>

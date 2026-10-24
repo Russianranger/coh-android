@@ -22,7 +22,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (59 patches including partial replay observers; Astra leads,
+M3 into Atlas (60 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Run 40054327137 reaches the access-level QA notice; Atlas remains unrendered.
-- Harness acknowledges only that traced notice on the mapped client's window.
+- Review 5638209554 fixes: armport/M3-REPORT.md; data errors now fail replay.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
   remains incomplete. Observer build/tests: armport/replay/README.md.

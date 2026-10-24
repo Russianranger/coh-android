@@ -189,8 +189,10 @@ All completion flags remain false and successful execution still exits 2.
 
 The host requires 117 authenticated snapshots. The follow-up comparison
 reads one pair at a time, compares same-ID repeats and cross-architecture
-files byte-for-byte, and only for ID1/31 applies Claude's three agreed field
-normalizations. All other fields, including pkt_id_pos and pkt_id_qrot, remain
+files byte-for-byte, and only for ID1/31 applies Claude's five explicitly named field
+normalizations (review 5638209554): pkt_id_create, lastClientStatePktId,
+delete-history pkt_id, each pkt_id_pos[] and pkt_id_qrot[] element. Only
+values equal to that run's synthetic INITIAL ID change; later IDs remain
 literal. Differences fail this partial stage and are reported, not normalized
 away. Passing this stage still cannot complete M3.
 
@@ -233,6 +235,26 @@ ARM64 and i686, its current control finds CRT vsnprintf/snprintf/sprintf;
 removing only the three undef directives reproduces all three quick_ calls.
 Both controls pass for both targets and both updated OptDebug Game links
 exit 0. The reference workflow runs this control before a new client build.
-Run 40092531364 at 0296f2fb tests the corrected observer; execution evidence
-is still pending; all complete flags
-remain false and the previous failing run is retained as evidence.
+Run 40092531364 at 0296f2fb writes all 117 ARM64 snapshots, then rejects
+the native costume subset: it compared 60 allocated slots with 28 logical
+parts. The corrected check uses costume.num_parts and retains all slots in
+the literal dump. It does not weaken snapshot comparison. See M3-REPORT.md
+for the subsequent review fixes and newly inventoried game errors.
+
+### Review 5638209554 follow-up
+
+Both receiver.c and state.c now unbind the three CRT formatting macros after
+all game headers. Actual preprocessing plus old-macro negative controls cover
+both translation units on ARM64 and i686. Both updated Game links pass; the
+local host suite passes 46 tests (`python3 -m unittest discover -s armport/tests -v`).
+The two architectures both enable client.error traces (patch 0060, exported
+through patchwork.py). Acceptance requires zero game errors/asserts as well as
+zero Wine exceptions; a complete multiline inventory is retained as
+client-errors.json. No error allowlist has been introduced.
+
+CI now emits per-execution and comparison notices. A separately logged
+seh-control.exe raises and handles 0xe0424242 under the installed Wine +seh;
+the host requires its completion marker and real exception trace and must
+reject that log. Both control executables link locally; actual Wine execution
+remains pending. Pinned bins/Cg from run 40043254025 are copied to an exact-run
+cache and retained for 90 days, before their original October 31 expiration.

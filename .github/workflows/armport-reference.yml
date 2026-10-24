@@ -12,6 +12,7 @@ on:
       - 'armport/tests/test_receiver*.py'
       - 'armport/scripts/prepare.py'
       - 'armport/scripts/check_receiver_state_preprocess.py'
+      - 'armport/scripts/client_errors.py'
       - '.github/workflows/armport-reference.yml'
 
 permissions:
@@ -133,6 +134,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/reference-bin"
           cp "$RUNNER_TEMP/reference/build/bin/CityOfHeroes.exe" "$RUNNER_TEMP/reference-bin/"
           cp /opt/llvm-mingw/${{ matrix.triple }}-w64-mingw32/bin/{libc++,libunwind}.dll "$RUNNER_TEMP/reference-bin/"
+          /opt/llvm-mingw/bin/${{ matrix.triple }}-w64-mingw32-clang armport/replay/seh_control.c -o "$RUNNER_TEMP/reference-bin/seh-control.exe"
           file "$RUNNER_TEMP/reference-bin/CityOfHeroes.exe"
           echo '::notice title=ArmPort i686 reference::Client linked; receiver execution and equivalence NOT yet qualified'
       - name: Retain built client before replay (including failed decoder runs)
@@ -154,18 +156,41 @@ jobs:
           path: ${{ runner.temp }}/reference-*.log
           retention-days: 7
 
+      - id: replay-data-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ runner.temp }}/client-bins
+            ${{ runner.temp }}/cg-arb
+          key: armport-replay-data-40043254025-v1
       - uses: actions/download-artifact@v4
+        if: steps.replay-data-cache.outputs.cache-hit != 'true'
         with:
           name: armport-client-bins
           path: ${{ runner.temp }}/client-bins
           run-id: 40043254025
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
+        if: steps.replay-data-cache.outputs.cache-hit != 'true'
         with:
           name: armport-cg-arb
           path: ${{ runner.temp }}/cg-arb
           run-id: 40043254025
           github-token: ${{ github.token }}
+      - uses: actions/cache/save@v4
+        if: steps.replay-data-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ runner.temp }}/client-bins
+            ${{ runner.temp }}/cg-arb
+          key: ${{ steps.replay-data-cache.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-replay-data-${{ matrix.target }}
+          path: |
+            ${{ runner.temp }}/client-bins
+            ${{ runner.temp }}/cg-arb
+          retention-days: 90
       - name: Restore reviewed client data
         uses: actions/cache/restore@v4
         with:
@@ -194,6 +219,7 @@ jobs:
           sudo -n unshare --net -- sudo -u "$(id -un)" -- env GITHUB_SHA="$GITHUB_SHA" \
             python3 "$GITHUB_WORKSPACE/armport/replay/run_ci.py" \
               --runtime "$RUNNER_TEMP/replay-runtime" --out "$RUNNER_TEMP/replay-results" \
+              --seh-control "$RUNNER_TEMP/reference-bin/seh-control.exe" \
               --target '${{ matrix.target }}' --host-netns "$(readlink /proc/self/ns/net)"
       - uses: actions/upload-artifact@v4
         if: always()

@@ -68,7 +68,9 @@ Wine via FEX).
 - Partial state observer/comparison at 1e6952ed fails in the first snapshot
   formatter in 40091320504. Bounded CRT formatting replaces the inappropriate
   array-size macro; both links and preprocessing controls pass locally.
-  Corrected execution run 40092531364 at 0296f2fb is pending.
+  Corrected execution run 40092531364 writes 117 ARM64 snapshots but fails
+  the logical/allocated costume-part check; the review follow-up corrects it
+  and rejects newly inventoried game data errors. See M3-REPORT.md.
   It is intentionally incomplete; coverage and local validation commands
   are in replay/README.md and M3-REPORT.md.
 - M4 runtime probes 40040922125 and 40087554038 pass guest boot. The latter's
@@ -76,9 +78,10 @@ Wine via FEX).
   that required helper. Both interactive attempts in 40090844692 instead
   fail before launch on a dependency-download HTTP 503. Commit 58841f92
   recovers the exact pinned source from accepted artifacts and shares the
-  successful boot PRoot with the interactive job. Run 40092467628 tests that
-  correction. Full M4 remains unqualified.
-- Latest Claude review is 5637131418 at 443f1b73. Request a new implementation
+  successful boot PRoot with the interactive job. Run 40092467628 passes boot but interactive startup fails on missing
+  client_visual_assets; 723bbc32 stages the server helper and distinguishes
+  helper-only legacy inventories from optional visual payloads. Full M4 remains unqualified.
+- Latest Claude implementation review is 5638209554 at 49c390ada. Request a new implementation
   review for the integrated P2, handshake prerequisites, QA-notice handling
   and state observers. Method agreement is not milestone approval.
 

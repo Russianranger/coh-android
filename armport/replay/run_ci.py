@@ -14,6 +14,7 @@ import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import replay_inventory
+import client_errors
 
 
 def fixtures(destination):
@@ -53,8 +54,35 @@ def check_wine_output(path):
                 raise ValueError(f'Wine exception/fatal report at line {number}: {line.strip()[:300]}')
 
 
+def notice(title, value):
+    body = json.dumps(value, separators=(',', ':')).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+    print(f'::notice title={title}::{body}', flush=True)
+
+
+def check_exception_control(path):
+    text = path.read_text(errors='replace')
+    if ('ARMPORT_HANDLED_SEH_CONTROL passed' not in text
+            or not re.search(r'(?:dispatch_exception|raise_exception)\s+code=e0424242', text, re.I)):
+        raise ValueError('Real handled-SEH control marker/trace missing')
+    try:
+        check_wine_output(path)
+    except ValueError as error:
+        if 'Wine exception/fatal report' not in str(error):
+            raise
+        return
+    raise ValueError('Host failed to reject the real handled-SEH trace')
+
+
+def check_client_output(path):
+    errors = client_errors.inventory(path, path.with_name('client-errors.json'))
+    if errors['count']:
+        raise ValueError(f"Game error/assert: {errors['count']} reports, {errors['unique']} distinct; "
+                         'see client-errors.json: ' + errors['errors'][0]['text'][:300])
+
+
 def check_output(path, expected, initial_id, wine_output):
     check_wine_output(wine_output)
+    check_client_output(path.parent / 'client-stdio.txt')
     if path.stat().st_size > 1024 * 1024:
         raise ValueError('receiver output exceeds cursor-stage bound')
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -108,7 +136,8 @@ def check_output(path, expected, initial_id, wine_output):
             entity = next((e for e in document['entities'] if e['svr_idx'] == native_entity['svr_idx']), None)
             if (not entity or entity['type'] != native_entity['type'] or not entity['costume']
                     or entity['costume']['bodytype'] != native_entity['bodytype']
-                    or len(entity['costume']['parts']) != native_entity['part_count']):
+                    or entity['costume']['num_parts'] != native_entity['part_count']
+                    or len(entity['costume']['parts']) < entity['costume']['num_parts']):
                 raise ValueError('recorded native INITIAL entity subset differs')
     if [r['packet_id'] for r in acks] != [initial_id, 32]:
         raise ValueError('missing or unexpected full-update ACK')
@@ -139,7 +168,7 @@ def check_output(path, expected, initial_id, wine_output):
         raise ValueError('native INITIAL zero terminator mismatch')
     return dict(dispatches=117, exact_cursors=True, ack_ids=[r['ack_id'] for r in acks],
                 native_initial_command_boundaries_match=True,
-                native_initial_entity_subset_match=True,
+                native_initial_entity_subset_match=True, game_errors=0,
                 partial_state_snapshots=117, state_schema_complete=False,
                 state_comparison_complete=False, m3_replay_complete=False)
 
@@ -151,6 +180,7 @@ def main():
     parser.add_argument('--wine', type=Path, default=Path('/opt/wine/bin'))
     parser.add_argument('--target', choices=('arm64', 'i686'), required=True)
     parser.add_argument('--host-netns', required=True)
+    parser.add_argument('--seh-control', type=Path, required=True)
     args = parser.parse_args()
     # sysfs can still expose the host's interfaces after unshare --net.
     # Query netlink in this process's actual namespace instead.
@@ -191,6 +221,15 @@ def main():
                                     r'HKCU\Software\Wine\WineDbg', '/v', 'ShowCrashDialog',
                                     '/t', 'REG_DWORD', '/d', '0', '/f'], env=env,
                                    stdout=bootstrap, stderr=subprocess.STDOUT, check=True, timeout=60)
+                    if label == 'id1-a':
+                        control = args.out / 'handled-seh-control.txt'
+                        with control.open('wb') as control_log:
+                            subprocess.run([str(args.wine / 'wine'), str(args.seh_control.resolve())],
+                                           env=env, stdout=control_log, stderr=subprocess.STDOUT,
+                                           check=True, timeout=60)
+                        check_exception_control(control)
+                        report['real_handled_seh_rejected'] = True
+                        notice('ArmPort handled SEH control', dict(target=args.target, rejected=True))
                     env.update(ARMPORT_REPLAY_DIR='Z:' + str(folder).replace('/', '\\'),
                                ARMPORT_REPLAY_INITIAL_ID=str(initial_id))
                     run = subprocess.run([str(args.wine / 'wine'), str(args.runtime / 'CityOfHeroes.exe'),
@@ -203,6 +242,7 @@ def main():
                                           folder / 'wine-output.txt')
                     report['runs'].append(dict(label=label, **result))
                     print(json.dumps(report['runs'][-1]), flush=True)
+                    notice('ArmPort replay ' + args.target + ' ' + label, report['runs'][-1])
                 finally:
                     subprocess.run([str(args.wine / 'wineserver'), '-k'], env=env, timeout=30, check=False)
                     subprocess.run([str(args.wine / 'wineserver'), '-w'], env=env, timeout=30, check=False)
@@ -213,6 +253,9 @@ def main():
         report['cursor_stage_passed'] = True
         print('Receiver cursor/ACK stage passed; full state comparison and M3 remain incomplete.')
         return 0
+    except Exception as error:
+        notice('ArmPort replay failure', dict(target=args.target, error=str(error), m3_replay_complete=False))
+        raise
     finally:
         xvfb.terminate()
         xvfb.wait(timeout=15)

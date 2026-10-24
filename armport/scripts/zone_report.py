@@ -7,6 +7,7 @@ This report always reserves entries for load progress and sampled stacks.
 import argparse
 import json
 from pathlib import Path
+import client_errors
 
 
 def tail(text, limit=3600):
@@ -30,6 +31,11 @@ def sections(evidence, client):
         'connected_on_atlas', 'connected_utc', 'final_status', 'still_connected')}
     # Compact JSON keeps all 50 progress samples and brightness values intact.
     yield 'ArmPort M3 load status', json.dumps(summary, separators=(',', ':'))
+    stdio = client / 'armport_stdio.txt'
+    if stdio.is_file():
+        errors = client_errors.inventory(stdio, evidence / 'client-errors.json')
+        yield 'ArmPort M3 game errors', json.dumps(dict(count=errors['count'], unique=errors['unique'],
+            full_texts='client-errors.json', examples=errors['errors'][:3]))
     traces = [line for line in read(client / 'armport_stdio.txt').splitlines()
               if line.startswith('ArmPort zone: ')]
     if status.get('frame_checks'):

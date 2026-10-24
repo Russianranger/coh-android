@@ -10,9 +10,9 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 | Scripted original-client login to Atlas | Run [39960894368](https://github.com/Russianranger/coh-android/actions/runs/39960894368), attempt 2: typed login, character selection, database loaded/connected on map 1, still connected after captures. Accepted in Claude review 5635319013. |
 | Rendered Atlas screenshot | Not met. Run [40054327137](https://github.com/Russianranger/coh-android/actions/runs/40054327137), server-run 120756731269, ended with world_rendered=false and still_connected=false. Its artifact has the access-level QA notice trace and a modal on the loading screen. The bounded acknowledgement fix is being tested in [40087788009](https://github.com/Russianranger/coh-android/actions/runs/40087788009) at 563e49ac; no rendering pass is inferred from the fix. |
 | All supplied packets through original receivers | Cursor/ACK stage passed in [40087788115](https://github.com/Russianranger/coh-android/actions/runs/40087788115), head 563e49ac: ARM64 job 120854188812, i686 job 120854188725. Each target executes ID1 twice and ID31 once; each execution reports 117 exact cursors, ACK IDs [1,2], and matching native INITIAL command boundaries. |
-| Full deterministic state comparison | Not met. Patch 0059 and replay/state.c now emit explicitly partial snapshots. CI [40091320504](https://github.com/Russianranger/coh-android/actions/runs/40091320504), head 1e6952ed, fails in the first snapshot formatter after INITIAL cursor/ACK. The corrected formatter has passed both local links and four preprocessing controls; rerun [40092531364](https://github.com/Russianranger/coh-android/actions/runs/40092531364) at 0296f2fb is pending. Full entity/player/tail coverage is still incomplete. |
+| Full deterministic state comparison | Not met. Patch 0059 and replay/state.c now emit explicitly partial snapshots. CI [40091320504](https://github.com/Russianranger/coh-android/actions/runs/40091320504), head 1e6952ed, fails in the first snapshot formatter after INITIAL cursor/ACK. The corrected formatter has passed both local links and four preprocessing controls; rerun [40092531364](https://github.com/Russianranger/coh-android/actions/runs/40092531364) at 0296f2fb writes 117 ARM64 snapshots but rejects the costume subset because the validator confused 60 allocated slots with 28 logical parts. The current correction compares num_parts; full state remains incomplete. Full entity/player/tail coverage is still incomplete. |
 | Independent native INITIAL comparison | Command boundaries passed in 40087788115. Four additional recorded fields are checked by the new observer harness: selected entity index/type and costume bodytype/part count. That subset is not full native INITIAL equivalence; see replay/fixtures/native-initial-entity.json and replay/README.md. |
-| Final milestone approval | Pending. Claude review [5637131418](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5637131418) reviewed 443f1b73 and requested changes. Its replay P2 fix is now integrated; new code and final evidence still need review. |
+| Final milestone approval | Pending. Claude implementation review [5638209554](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638209554) reviewed 49c390ada and requested H1/M1–M4. Corrections below still require execution and review; this is not milestone approval. |
 
 ## Changes since Claude's last review
 
@@ -53,7 +53,7 @@ are false. See `replay/README.md` for coverage and explicit exclusions.
 
 The comparison checks input/commit identity and snapshot hashes, then compares
 same-ID repeats and ARM64/i686 bytes literally. Only ID1-versus-ID31 checks
-canonicalize the three fields agreed in review 5635783793, only when equal
+canonicalize the five named fields agreed in reviews 5635783793/5638209554, only when equal
 to that run's synthetic INITIAL ID; all other values stay literal. A mismatch
 fails the partial stage and records field paths. A passing partial stage
 cannot complete M3.
@@ -92,7 +92,7 @@ now explicitly uses bounded CRT formatting. Actual ARM64/i686 preprocessing
 and negative controls verify the correction; both updated links pass. See
 replay/README.md for the artifact identity and exact command. Runtime
 state comparison is still unqualified. The corrected code is tested by
-40092531364 at 0296f2fb; an in-progress/queued job is not a pass.
+40092531364 at 0296f2fb fails the native costume count check described above.
 
 ## Next exits
 
@@ -102,3 +102,46 @@ the agreed literal and sensitivity checks plus independent native evidence.
 Then update this report, obtain Claude's milestone review and the user's merge
 approval, and merge with a merge commit. M4 work is on armport/m4-runtime;
 its startup/interactive results do not waive any M3 requirement.
+
+## Review 5638209554 corrections and data evidence
+
+- H1: sensitivity-only normalization now explicitly includes pkt_id_pos[]
+  and pkt_id_qrot[]; same-ID/cross-architecture bytes remain exact.
+- M1: receiver.c also unbinds CRT macros; actual preprocessing and negative
+  controls cover both observer units on both architectures.
+- M3: patch 0060 enables identical game-error tracing on i686; both targets
+  require zero client.error/assert reports. Complete recorded multiline
+  texts and counts go into client-errors.json, including Atlas artifacts.
+- M4: per-run and partial comparison summaries emit Actions notices.
+- L1/L2: retain pinned bins/Cg in a run-keyed cache and 90-day artifacts;
+  add a real handled-SEH Wine control, separately logged from the game.
+
+M2 investigation: parsing all 16,721 entries of
+assets/reference-inputs-manifest.json with casefold searches finds zero
+matches for tickertape_talos_island or arch_ent_wall_brick_01. In the verified
+40054327137 artifact, client_errors.inventory reports 12,713 errors and
+11,063 distinct recorded texts, including twice: `TexSwap Warning: was unable
+to find source texture 'tickertape_TALOS_ISLAND' to swap (does not exist in
+texture_library/)`. This is the source-texture warning in texCheckSwapList,
+not a failed destination texFind call. It means no matching source was
+swapped; the name comparison in texCheckForSceneSwaps is stricmp. The absent
+case-insensitive manifest entry establishes a reviewed-bundle data gap; it
+does not prove that adding this one asset will complete loading. The QA
+notice/error pop-ups are specific to the fake-auth access-level-9 account.
+No error dialog is automatically acknowledged.
+
+Run 40092531364 artifact 12559387913 (SHA256
+da15257d2fd11d850ffc08a888d532f27d7f336582c597c5361653f2632b70bf)
+contains 184,514 game error records, 137,888 distinct recorded texts, in
+id1-a/client-stdio.txt. `client_errors.inventory` preserves multiline text;
+examples include missing Arch_Ent_Wall_Brick_01 and deleted geometry references.
+The new strict validator will reject these, even with exact dispatch cursors.
+The data errors must be resolved before state equivalence is accepted.
+
+Local review validation, 2026-10-24: 46 host tests pass; ARM64 and i686
+OptDebug Game links exit 0 with `[15/15] Linking CXX executable
+bin/CityOfHeroes.exe`; current/negative preprocessing controls pass for
+receiver.c and state.c on both targets. seh-control.c links for both targets.
+Workflow YAML parses; git diff --check passes. Runtime controls are pending.
+M4 branch 723bbc32 addresses the separate missing client_visual_assets import
+from run 40092467628; 19 app tests pass. No M4 completion is claimed.

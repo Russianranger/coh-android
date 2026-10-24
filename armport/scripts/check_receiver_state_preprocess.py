@@ -20,7 +20,8 @@ def check(row, source, expected, label):
     result = subprocess.run(args, cwd=row['directory'], capture_output=True, text=True, timeout=120)
     if result.returncode:
         raise RuntimeError(label + ': preprocessing failed\n' + result.stderr)
-    body = result.stdout.split('static void check_at(', 1)[1]
+    marker = 'static void check_at(' if Path(row['file']).name == 'state.c' else 'static HANDLE output'
+    body = result.stdout.split(marker, 1)[1]
     # check() stringifies its condition; those diagnostic literals are not calls.
     body = re.sub(r'"(?:\\.|[^"\\])*"', '""', body)
     calls = set(re.findall(r'\b((?:quick_)?(?:vsnprintf|snprintf|sprintf))\s*\(', body))
@@ -33,21 +34,23 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('compile_commands', type=Path)
     args = parser.parse_args()
-    rows = [r for r in json.loads(args.compile_commands.read_text())
-            if Path(r['file']).as_posix().endswith('/armport/replay/state.c')]
-    if len(rows) != 1:
-        raise ValueError('Expected one actual replay state compile command')
-    row = rows[0]
-    source = Path(row['file'])
-    check(row, source, {'vsnprintf', 'snprintf', 'sprintf'}, 'current heap snapshot writer')
-    with tempfile.TemporaryDirectory(prefix='armport-state-macro-') as temporary:
-        control = Path(temporary) / 'state-control.c'
-        text = source.read_text()
-        for name in ('vsnprintf', 'snprintf', 'sprintf'):
-            text = text.replace('#undef ' + name + '\n', '')
-        control.write_text(text)
-        check(row, control, {'quick_vsnprintf', 'quick_snprintf', 'quick_sprintf'},
-              'negative control without CRT unbinding')
+    rows = json.loads(args.compile_commands.read_text())
+    for unit in ('state.c', 'receiver.c'):
+        matches = [r for r in rows if Path(r['file']).as_posix().endswith('/armport/replay/' + unit)]
+        if len(matches) != 1:
+            raise ValueError('Expected one actual compile command for ' + unit)
+        row = matches[0]
+        source = Path(row['file'])
+        check(row, source, {'vsnprintf', 'snprintf', 'sprintf'}, 'current ' + unit)
+        with tempfile.TemporaryDirectory(prefix='armport-format-') as temporary:
+            control = Path(temporary) / unit
+            text = source.read_text()
+            for name in ('vsnprintf', 'snprintf', 'sprintf'):
+                text = text.replace('#undef ' + name + '\n', '')
+            control.write_text(text)
+            check(row, control, {'quick_vsnprintf', 'quick_snprintf', 'quick_sprintf'},
+                  'old-macro negative control ' + unit)
+
 
 
 if __name__ == '__main__':

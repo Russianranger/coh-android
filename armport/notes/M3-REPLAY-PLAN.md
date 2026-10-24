@@ -149,10 +149,12 @@ these ID-valued fields when they hold that run's synthetic INITIAL ID:
 
 - entity pkt_id_create;
 - lastClientStatePktId;
-- delete-history pkt_id (entrecv.c addDelete).
+- delete-history pkt_id (entrecv.c addDelete);
+- each pkt_id_pos[] and pkt_id_qrot[] element (review 5638209554 correction).
 
 Assert that no real post-READY record ID is below 32 (the inventory is
 32–155), and list the canonicalized fields in the output. All other state,
 including every later ID, must match exactly. Do not normalize arbitrary
-integers that happen to equal 1 or 31. This rule is agreed but the receiver
-driver and sensitivity execution remain outstanding.
+integers that happen to equal 1 or 31. The driver is implemented; full-state sensitivity execution remains
+outstanding. Future pak->id-derived fields must be enumerated individually
+when added; never normalize integer fields by name pattern or value alone.
