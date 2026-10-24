@@ -83,3 +83,9 @@ FileWrapper*, so passing CRT stderr from armport_zone_trace.h was invalid.
 The header now temporarily restores the CRT function and preserves caller
 macros. A negative/positive compile control and ARM64 Wine regression cover
 the tex.c include order. Evidence: notes/M3-LOAD-STALL.md, run 40035482170.
+
+
+0053–0055: i686 replay-reference build opt-ins, not additional ARM64 pointer
+fixes. They select matching reduced SDKs, fail rather than recover local SEH
+in the reference, and use clang vector-lane syntax. The original receiver is
+compiled unchanged. See M3-REPLAY-PLAN.md for compile evidence and exclusions.

@@ -100,3 +100,33 @@ ARM64 PE executable with llvm-mingw and `ninja -j2 armport_replay_sink`.
 The libraries CI job runs it under the app Wine and emits a notice. Run 40041703285, libraries job 120714048504, passed and emitted:
 `socketless replay sink: pktSend discards, netSendIdle/lnkBatchSend return`.
 This preflight is not one of the 117 receiver dispatches.
+
+
+## i686 reference build preparation
+
+The reference-only toolchain enables COX_ARMPORT_REFERENCE_I686. It builds
+the same Game/Common/UtilitiesLib sources with the same reduced SDK features
+as ARM64, explicit `-msse2 -mfpmath=sse`, and Microsoft inline-assembly syntax.
+Patch 0053 permits that opt-in build; normal i686/MSVC behavior is unchanged.
+The intrinsic stand-in keeps real i686 CPUID and supplies its missing __nop;
+0055 selects clang's existing vector-lane access rather than MSVC members.
+
+Local Release `ninja -C coh-build-i686 -j2 Game` exited zero. `file` reports
+`PE32 executable (GUI) Intel 80386, for MS Windows, 17 sections`. The original
+clientcomm.c compiles in this target. The separate armport-reference workflow
+builds it on ARM64, checks the receiver's actual compile flags and saves a
+separate artifact; it does not qualify execution or replay equivalence.
+
+0054 is limited to this reference: clang's local 32-bit SEH compilation fails
+with undefined L__ehtable and parent_frame_offset labels. Three protected
+bodies (volume exit, audio decode, disabled keep-memory experiment) remain,
+but the reference does not recover their faults. Any such SEH must fail the
+replay, consistent with its no-unexpected-SEH criterion. This is not equivalent
+exception recovery; ARM64 and normal builds retain their original handlers.
+No receive decoder is replaced. ARM64 pmotion.c, game.c, ogg_decode.c,
+frustum_c.c and the intrinsic stand-in compile after these guarded changes.
+
+Open reviewer clarification: PR #6 comment 6377175041 asks how to retain raw
+pkt_id_create in the full dumps while comparing synthetic INITIAL IDs 1/31.
+Identical same-ID repeats and ARM64/i686 comparisons remain required; no
+sensitivity normalization has been implemented or approved yet.
