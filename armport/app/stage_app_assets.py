@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Add the ARM64 option to extracted app assets; never builds/signs an APK."""
 import argparse
+import ast
 import json
 from pathlib import Path
 import re
@@ -22,6 +23,54 @@ GUEST_DEPENDENCIES = (
     'native_character_events.py', 'native_training_save.py',
     'stationary_contact_evidence.py', 'task_gate_evidence.py',
 )
+
+WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',
+                        'PAYLOAD_BYTES', 'FILE_COUNT', 'FILES_SHA256'))
+
+
+def world_pin_values(raw):
+    """Read constants without executing a retained helper."""
+    result = {}
+    assignments = []
+    for node in ast.parse(raw).body:
+        if not isinstance(node, ast.Assign):
+            continue
+        names = [n.id for target in node.targets for n in ast.walk(target)
+                 if isinstance(n, ast.Name)]
+        if not WORLD_PINS.intersection(names):
+            continue
+        package.require(len(node.targets) == 1 and set(names) <= WORLD_PINS,
+                        'Mixed world pin assignment')
+        value = ast.literal_eval(node.value)
+        values = value if isinstance(node.targets[0], (ast.Tuple, ast.List)) else [value]
+        package.require(len(names) == len(values), 'Malformed world pins')
+        for name, value in zip(names, values):
+            valid = (type(value) is int and value > 0 if name.endswith('BYTES') or name == 'FILE_COUNT'
+                     else isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value))
+            package.require(name not in result and valid, 'Invalid world pin: ' + name)
+            result[name] = value
+        assignments.append((node, names))
+    package.require(set(result) == WORLD_PINS, 'Incomplete world pins')
+    return result, assignments
+
+
+def bind_world_helper(current, donor):
+    """Keep current validation code, bound to the authenticated donor payload.
+
+    The retained 0.10 world predates the current 27-texture extension. Copying
+    today's hardcoded constants alongside that old archive rejects valid donor
+    bytes. Only the six immutable data constants are transplanted; no checks or
+    bounds are removed and no code from the donor is executed.
+    """
+    pins, _ = world_pin_values(donor)
+    _, assignments = world_pin_values(current)
+    lines = current.splitlines(keepends=True)
+    for node, names in reversed(assignments):
+        lines[node.lineno - 1:node.end_lineno] = [
+            ', '.join(names) + ' = ' + ', '.join(repr(pins[n]) for n in names) + '\n']
+    bound = ''.join(lines)
+    package.require(world_pin_values(bound)[0] == pins, 'World pin binding failed')
+    return bound
 
 
 def pin(path):
@@ -63,7 +112,11 @@ def stage(source, armport, output, repository_commit):
         if name not in replacements and name != 'client-manifest.json':
             shutil.copyfile(source / name, output / name)
     for name, path in replacements.items():
-        shutil.copyfile(path, output / name)
+        if name == 'atlas_world_assets.py':
+            # source was authenticated against both inventories above.
+            (output / name).write_text(bind_world_helper(path.read_text(), (source / name).read_text()))
+        else:
+            shutil.copyfile(path, output / name)
         record = pin(output / name)
         runtime['files'][name] = client['files'][name] = record
     package.require(len(client['files']) <= 96, 'Existing client inventory bound exceeded')
