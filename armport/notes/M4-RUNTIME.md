@@ -125,4 +125,27 @@ renderer failure.
 The probe and app wrapper now share a complete-log reader bounded to 16 MiB.
 `python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v`
 passes five tests, including renderer evidence before more than 1 MiB of asset
-noise and rejection above the existing 16 MiB bound. Runtime rerun pending.
+noise and rejection above the existing 16 MiB bound. The rerun passed in 40040922125, guest-boot 120711625618 (2026-10-23
+23:46 UTC). The evidence artifact 12538814705 was checked against SHA-256
+e490d2ae902b0f503975eedfe2668adae430278c51235e207245cf959d77ca1f.
+Its host report records passed=true, guest_exit=0, m4_complete=false.
+The guest reports Mesa/X.org llvmpipe LLVM 15.0.6, GL 4.5, renderer initialized,
+all data loaded, game_mainLoop reached and owned PID 420 mapped at 800x600.
+The client was alive after the RFB capture, its console was attached and all
+three cleanup checks passed. This resolves the startup observation regression;
+it does not qualify the complete interactive guest/server flow or M4.
+
+## Actual creation/reopen command routing
+
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v`
+passes nine tests. The four additional checks import the actual creation and
+reopen guest classes and execute their launcher_command inheritance: x86
+remains the default with its original worktree, ARM64 selects its separate
+launcher/client/worktree, creation/manual mode survives the wrapper, and
+unknown architectures or unqualified zoning fail. No Wine/server process
+is started by these host tests; full interactive execution remains pending.
+
+Next: incorporate the qualified M3 client, then run the real creation/reopen
+server flow through the selected ARM64 app guest and retain its SQL/save,
+RFB/input and cleanup evidence. Do not substitute the startup-only result
+for that integration check. Building/signing an APK still requires approval.

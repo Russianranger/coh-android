@@ -23,7 +23,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (branch armport/m3-atlas, 49 patches; Astra leads from here,
+M3 into Atlas (current work on armport/m3-atlas; Astra leads from here,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Run 40011219458 stops in texLoadQueueFinish; patch 0049 narrows the trace.
-  Evidence and next step: armport/notes/M3-LOAD-STALL.md.
-- Both replay files recovered and hash-verified; reviewer agreement pending.
+- M3 still incomplete: see draft PR #6 for current loading/replay evidence.
+- M4 startup passed 40040922125; full interactive guest/server flow pending.
+- M4 actual create/reopen command routing: 9 host tests pass; notes/M4-RUNTIME.md.
