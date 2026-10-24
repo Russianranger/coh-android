@@ -2,6 +2,9 @@
  * Called after game_beforeLoop's normal startup. Additional initialization:
  * entReceiveInit resets receive ordering/deletes as resetStuffOnMapMove does;
  * commNewInputPak resets the original outgoing input packet before each record.
+ * Shortcut names are initialized from the original shared command tables in
+ * the same order as cmdOldServerInitShortcuts. The captures omit that earlier
+ * SERVER_CMDSHORTCUTS message; no captured receiver payload is changed.
  * No entity/costume/game-command decoder is replaced. Transport statistics,
  * packet-loss handling, the UDP envelope and READY generation are not exercised.
  *
@@ -24,6 +27,8 @@
 #include <utilitieslib/network/netio.h>
 #include <utilitieslib/utils/SuperAssert.h>
 #include "comm_game.h"
+#include "cmdparse/cmdcommon.h"
+#include <utilitieslib/utils/cmdoldparse.h>
 
 static HANDLE output = INVALID_HANDLE_VALUE;
 static int active;
@@ -53,6 +58,23 @@ static void fail(const char *reason)
 static void require(int condition, const char *reason)
 {
     if (!condition) fail(reason);
+}
+
+static void initialize_shortcuts(void)
+{
+    Cmd *tables[] = {control_cmds, server_visible_cmds};
+    unsigned int table, index = 1;
+    int i;
+    require(cmdOldShortcutName(1) == NULL, "unexpected preexisting command shortcuts");
+    for (table = 0; table < 2; ++table) {
+        for (i = 0; tables[table][i].name; ++i, ++index) {
+            char *name = tables[table][i].name;
+            cmdOldSetShortcut(name, index);
+            emit("{\"type\":\"shortcut\",\"id\":%u,\"name\":\"%s\"}\n", index, name);
+        }
+    }
+    require(index == 36 && !strcmp(cmdOldShortcutName(26), "time"),
+            "shared command table differs from INITIAL capture prerequisite");
 }
 
 void armportReplayUnknownCommand(int command)
@@ -213,6 +235,7 @@ void armportReplayMaybeRun(void)
             "post-READY envelope");
     sink = calloc(1, sizeof(*sink));
     require(sink != NULL, "sink allocation");
+    initialize_shortcuts();
     entReceiveInit();
     dispatch(sink, initial + 88, u32(initial + 12), (unsigned int)u64(initial + 16),
              (unsigned int)u64(initial + 24), u32(initial + 40), initial_id, SERVER_ALLENTS, 1, 1, 1);

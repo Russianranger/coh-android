@@ -5,7 +5,9 @@ name: ArmPort build
 on:
   workflow_dispatch:
   push:
-    branches: ['armport/**', 'COH-ArmPort']
+    # Isolated replay iterations run their own ARM64/i686 execution workflow.
+    # Keep the milestone branch's long Atlas run alive while debugging replay.
+    branches: ['armport/**', '!armport/replay-*', 'COH-ArmPort']
     paths:
       - 'armport/**'
       - '!armport/survey/**'

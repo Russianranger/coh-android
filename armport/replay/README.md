@@ -21,7 +21,8 @@ client_input_pak; this does not reconstruct a UDP ACK/READY envelope.
 
 Extra initialization is limited to entReceiveInit (the original map-move
 receive reset), commNewInputPak (per-record output isolation), and
-setAssertMode (stderr plus exit). The socketless NetLink path is covered by
+setAssertMode (stderr plus exit), plus the original command shortcut table
+prerequisite described below. The socketless NetLink path is covered by
 the existing original-network preflight, CI 40041703285 libraries.
 Input BitStream fields are initialized directly: initBitStream zeros the
 first four payload bytes even in Read mode, so calling it on captured bytes
@@ -86,3 +87,28 @@ has no exception allowlist, including during startup. The command
 tests, including complete-transcript/fatal-log and handled-SEH counterexamples,
 missing Wine evidence and separate bootstrap output. This closes the host
 validator gap; it does not assert that the live receiver has no exceptions.
+
+## First original-receiver execution
+
+Run 40054327124, ARM64 job 120753892218, entered INITIAL and exited 3 on the
+original BitStream.c:308 read-overrun assertion. Artifact 12544733343 was
+downloaded and verified against SHA-256
+2f72d1d96b2b53ef5e4b08ebcc25e1089627cd2ee240f696bb500f2f3895d82c.
+It contains dispatch_begin index 0 but no completed dispatch. No cursor pass.
+
+Source inspection found a missing harness prerequisite: the capture begins
+after SERVER_CMDSHORTCUTS, but game_beforeLoop has no shortcut names installed.
+cmdOldReceivePacked returns on an unknown shortcut without consuming its
+arguments, which misaligns the rest of INITIAL. The captured first shortcut
+is ID 26; the original cmdOldServerInitShortcuts puts control_cmds first
+(25 entries), then server_visible_cmds (10), with ID 26 named time.
+The driver now seeds those original shared tables with cmdOldSetShortcut,
+logs every ID/name, and refuses an unexpected preexisting table or a changed
+count/name. This is a reconstructed initialization prerequisite, not replay
+of the missing handshake message. No receive body or captured byte is changed.
+Both local OptDebug Game links (`ninja -j2 Game`) pass after this change.
+Its runtime effect still requires a fresh replay run.
+
+The armport/replay-* development branch runs the same reference workflow
+without restarting the milestone branch's Atlas workflow. Changes return
+through a normal merge; no milestone criteria or history are rewritten.
