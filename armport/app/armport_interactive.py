@@ -37,6 +37,20 @@ class LoggedClient:
 
 class ArmPortClient:
     """Mixin ahead of the selected existing creation/reopen diagnostic."""
+    def prepare_client_visual_inputs(self):
+        # Retained app donors need the visual helper for server copy bounds,
+        # but do not contain its newer optional visual/animation bundle.
+        names = {'client_visual_assets.py', 'client_animation_package.py',
+                 'client-visual-assets.zip', 'client-visual-manifest.json'}
+        present = {name for name in names if (self.args.assets / name).exists()
+                   or (self.args.assets / name).is_symlink()}
+        if present == {'client_visual_assets.py'}:
+            helper = self.args.assets / 'client_visual_assets.py'
+            require(helper.is_file() and not helper.is_symlink(), 'Invalid server visual helper')
+            return
+        # Any payload or animation helper still invokes all original checks.
+        return super().prepare_client_visual_inputs()
+
     def initialize(self):
         super().initialize()
         pins = self.ctx.report['asset_sha256']

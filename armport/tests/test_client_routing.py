@@ -16,6 +16,16 @@ from test_client_package import pe
 
 
 class ClientRoutingTests(unittest.TestCase):
+    def test_server_helper_only_does_not_activate_optional_visuals(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            _, value = self.instance(CharacterCreationDiagnostic, 'arm64')
+            value.args.assets = Path(temporary)
+            (value.args.assets / 'client_visual_assets.py').write_text('server dependency')
+            value.prepare_client_visual_inputs()
+            (value.args.assets / 'client-visual-assets.zip').write_bytes(b'incomplete')
+            with self.assertRaisesRegex(armport.base.DiagnosticError, 'Incomplete client visual'):
+                value.prepare_client_visual_inputs()
+
     def instance(self, base, architecture):
         with patch.dict(os.environ, {'COH_CLIENT_ARCH': architecture}):
             selected = armport.select(base)
