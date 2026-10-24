@@ -29,6 +29,13 @@ class ReceiverEvidenceTests(unittest.TestCase):
                 self.rows.append(dict(type='ack', packet_id=packet_id, ack_id=123))
             self.rows.append(dict(type='dispatch_end', count=i+1, id=packet_id,
                                   cursor=want['logical_bits'], error_flags=0))
+        self.rows.append(dict(type='receive_boundary', index=0, stage='entity_tail', cursor=300328, error_flags=0))
+        for number in range(11):
+            for boundary in ('begin', 'end'):
+                self.rows.append(dict(type='game_command_' + boundary, index=0,
+                                      command=number+1, cursor=300360+number*32, error_flags=0))
+        self.rows.append(dict(type='game_command_end', index=0, command=0, cursor=303248, error_flags=0))
+        self.rows.append(dict(type='receive_boundary', index=0, stage='command_tail_end', cursor=303248, error_flags=0))
         self.rows.append(dict(type='result', dispatches=117, exact_cursors=True,
                               state_comparison_complete=False, m3_replay_complete=False))
 
@@ -70,6 +77,21 @@ class ReceiverEvidenceTests(unittest.TestCase):
         (self.path / 'bootstrap-output.txt').write_text(
             '0024:trace:seh:dispatch_exception code=6ba RPC_S_SERVER_UNAVAILABLE\n')
         self.assertFalse(self.check()['m3_replay_complete'])
+
+    def test_native_initial_tail_boundary_mismatch_rejected(self):
+        next(row for row in self.rows if row.get('stage') == 'entity_tail')['cursor'] -= 8
+        with self.assertRaisesRegex(ValueError, 'native INITIAL boundary'):
+            self.check()
+
+    def test_native_initial_missing_tail_command_rejected(self):
+        self.rows.remove(next(row for row in self.rows if row['type'] == 'game_command_begin'))
+        with self.assertRaisesRegex(ValueError, 'command count'):
+            self.check()
+
+    def test_native_initial_missing_zero_terminator_rejected(self):
+        self.rows.remove(next(row for row in self.rows if row.get('command') == 0))
+        with self.assertRaisesRegex(ValueError, 'zero terminator'):
+            self.check()
 
     def test_cursor_overrun_rejected(self):
         self.rows[2]['actual'] += 1

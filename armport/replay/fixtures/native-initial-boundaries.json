@@ -1,0 +1,11 @@
+{
+  "scope": "recorded_native_android_initial_command_boundaries_only",
+  "source_commit": "86a978a2b97b8d91e83fcbf1c04dc91d5e7bc981",
+  "report_sha256": "2876eb9b504614fad1de03adf4fa9eff82cfee3f56e9446e68d4d14afb217016",
+  "initial_file_sha256": "cc949b01f5db6ff108efcf6afcbfe9567c432b4aa15f3a02c8f193e380cc7b39",
+  "tail_start_bit": 300328,
+  "tail_end_bit": 303248,
+  "tail_commands": 11,
+  "zero_terminator": true,
+  "exact_EOF": true
+}

@@ -86,7 +86,29 @@ def check_output(path, expected, initial_id, wine_output):
     if rows[-1] != dict(type='result', dispatches=117, exact_cursors=True,
                         state_comparison_complete=False, m3_replay_complete=False):
         raise ValueError('missing explicit incomplete milestone result')
+    baseline = json.loads((Path(__file__).with_name('fixtures') / 'native-initial-boundaries.json').read_text())
+    if baseline['initial_file_sha256'] != replay_inventory.INITIAL_SHA:
+        raise ValueError('native INITIAL baseline identity mismatch')
+    initial = [r for r in rows if r.get('index') == 0]
+    for stage, expected_cursor in (('entity_tail', baseline['tail_start_bit']),
+                                   ('command_tail_end', baseline['tail_end_bit'])):
+        boundary = [r for r in initial if r['type'] == 'receive_boundary' and r['stage'] == stage]
+        if len(boundary) != 1 or boundary[0]['cursor'] != expected_cursor or boundary[0]['error_flags'] != 0:
+            raise ValueError('native INITIAL boundary mismatch: ' + stage)
+    starts = [r for r in initial if r['type'] == 'game_command_begin']
+    stops = [r for r in initial if r['type'] == 'game_command_end' and r['command'] != 0]
+    terminators = [r for r in initial if r['type'] == 'game_command_end' and r['command'] == 0]
+    if len(starts) != baseline['tail_commands'] or len(stops) != len(starts):
+        raise ValueError('native INITIAL tail command count mismatch')
+    for start, stop in zip(starts, stops):
+        if (start['command'] != stop['command'] or start['error_flags'] or stop['error_flags']
+                or not baseline['tail_start_bit'] <= start['cursor'] <= stop['cursor'] <= baseline['tail_end_bit']):
+            raise ValueError('native INITIAL command boundary mismatch')
+    if (len(terminators) != 1 or terminators[0]['cursor'] != baseline['tail_end_bit']
+            or terminators[0]['error_flags'] != 0):
+        raise ValueError('native INITIAL zero terminator mismatch')
     return dict(dispatches=117, exact_cursors=True, ack_ids=[r['ack_id'] for r in acks],
+                native_initial_command_boundaries_match=True,
                 state_comparison_complete=False, m3_replay_complete=False)
 
 

@@ -112,3 +112,22 @@ Its runtime effect still requires a fresh replay run.
 The armport/replay-* development branch runs the same reference workflow
 without restarting the milestone branch's Atlas workflow. Changes return
 through a normal merge; no milestone criteria or history are rewritten.
+
+That first branch run (40055381560, ARM64 job 120757110347) linked the client
+but stopped before execution because Actions caches are branch-scoped. The
+reference workflow now has the same reviewed-asset download/cache job as the
+milestone workflow; its matrix waits for that job and still verifies the ZIP
+hash before unpacking. No server/runtime result came from this failed attempt.
+
+Patch 0058 adds inert replay-only cursor observations around the original
+receive phases and game commands. It neither reads extra packet bits nor
+changes decoded state. The host compares INITIAL's entity-tail boundary
+(300328), final cursor (303248), eleven tail commands and zero terminator
+against the recorded native-android report's exact capture. The small frozen
+baseline records the source/report/input hashes; it does not invent a
+post-READY baseline. This boundary comparison is only part of the required
+independent INITIAL check, not full entity/player-state equivalence.
+
+After 0058, both ARM64 and i686 OptDebug Game links pass, all 29 host tests
+pass, and workflow YAML/compiler/matrix/data-dependency checks pass. Full
+state dumping/hashing and cross-architecture comparison remain unfinished.

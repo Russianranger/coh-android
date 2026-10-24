@@ -1,0 +1,223 @@
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 5ed991e..60e39d2 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -11,8 +11,12 @@ typedef struct Packet Packet;
+ typedef struct NetLink NetLink;
+ void armportReplayMaybeRun(void);
+ void armportReplayUnknownCommand(int command);
++void armportReplayCursor(Packet *pak, const char *stage);
++void armportReplayCommand(Packet *pak, int command, int begin);
+ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #else
+ #define armportReplayMaybeRun() ((void)0)
+ #define armportReplayUnknownCommand(command) ((void)0)
++#define armportReplayCursor(pak, stage) ((void)0)
++#define armportReplayCommand(pak, command, begin) ((void)0)
+ #endif
+diff --git a/Game/src/clientcomm/clientcomm.c b/Game/src/clientcomm/clientcomm.c
+index 1853494..0d713be 100644
+--- a/Game/src/clientcomm/clientcomm.c
++++ b/Game/src/clientcomm/clientcomm.c
+@@ -1107,8 +1107,12 @@ static int handleGameCmd(Packet *pak, int cmd)
+ 
+         if (cmd==-1)
+             cmd = pktGetBitsPack(pak,1);
+-        if (!cmd)
++        if (!cmd) {
++            armportReplayCommand(pak, 0, 0);
+             break;
++        }
++
++        armportReplayCommand(pak, cmd, 1);
+ 
+         if(cmd_count < ARRAY_SIZE(cmds))
+             cmds[cmd_count++] = cmd;
+@@ -1431,6 +1435,7 @@ static int handleGameCmd(Packet *pak, int cmd)
+             }
+         );
+ 
++        armportReplayCommand(pak, cmd, 0);
+         cmd = -1;
+     }
+ 
+@@ -1514,6 +1519,7 @@ static int commHandleMessageReceive(Packet *pak, int cmd, NetLink *link, unsigne
+             PERFINFO_AUTO_START("entReceiveUpdate", 1);
+                 if (cmd == SERVER_ALLENTS) armportZoneTrace("allents.begin", NULL);
+                 entReceiveUpdate(pak,cmd==SERVER_ALLENTS);
++                armportReplayCursor(pak, "entity_tail");
+                 if (cmd == SERVER_ALLENTS) armportZoneTrace("allents.done", NULL);
+ 
+                 PERFINFO_AUTO_START("handleGameCmd", 1);
+@@ -1529,6 +1535,7 @@ static int commHandleMessageReceive(Packet *pak, int cmd, NetLink *link, unsigne
+                             }
+                         }
+                     STOP_BIT_COUNT(pak);
++                    armportReplayCursor(pak, "command_tail_end");
+                 PERFINFO_AUTO_STOP();
+             PERFINFO_AUTO_STOP();
+         xcase SERVER_MAP_XFER_WAIT:
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index ef92611..a547383 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -20,6 +20,7 @@
+ #include "cmdparse/cmdgame.h"
+ #include <utilitieslib/network/netcomp.h>
+ #include "clientcomm/clientcomm.h"
++#include "clientcomm/armport_replay.h"
+ #include "UI/uiNet.h"
+ #include "UI/uiGame.h"
+ #include "UI/uiConsole.h"
+@@ -3646,8 +3647,11 @@ void entReceiveUpdate(Packet *pak,int full_update)
+ 
+     odd_send = pktGetBits(pak,1);
+ 
++    armportReplayCursor(pak, "entReceiveUpdate");
+     START_BIT_COUNT(pak, "entReceiveUpdate");
++        armportReplayCursor(pak, "top");
+         START_BIT_COUNT(pak, "top");
++            armportReplayCursor(pak, "cmdReceive");
+             START_BIT_COUNT(pak, "cmdReceive");
+                 context.access_level = ACCESS_INTERNAL;
+                 cmdOldReceive(pak,&cmd_list,&context);
+@@ -3733,6 +3737,7 @@ void entReceiveUpdate(Packet *pak,int full_update)
+         STOP_BIT_COUNT(pak);
+ 
+         // Receive entities.
++        armportReplayCursor(pak, "entReceive");
+         START_BIT_COUNT(pak, "entReceive");
+             idx = -1;
+             for(;;)
+@@ -3747,6 +3752,7 @@ void entReceiveUpdate(Packet *pak,int full_update)
+ 
+         // Receive the global debugging crap.
+ 
++        armportReplayCursor(pak, "bottom");
+         START_BIT_COUNT(pak, "bottom");
+             #ifndef TEST_CLIENT
+                 if(game_state.hasEntDebugInfo)
+@@ -3757,6 +3763,7 @@ void entReceiveUpdate(Packet *pak,int full_update)
+                         Entity* e = entFromId(svr_idx);
+                         if (!e) e = &dummy_ent;
+ 
++                        armportReplayCursor(pak, "receiveEntDebugInfo");
+                         START_BIT_COUNT(pak, "receiveEntDebugInfo");
+                             // Read the debug info.
+                             receiveEntDebugInfo(e, pak);
+@@ -3764,6 +3771,7 @@ void entReceiveUpdate(Packet *pak,int full_update)
+                     }
+                 }
+ 
++                armportReplayCursor(pak, "receiveGlobalEntDebugInfo");
+                 START_BIT_COUNT(pak, "receiveGlobalEntDebugInfo");
+                     receiveGlobalEntDebugInfo(pak);
+                 STOP_BIT_COUNT(pak);
+@@ -3775,12 +3783,14 @@ void entReceiveUpdate(Packet *pak,int full_update)
+ 
+             // Receive control state.
+ 
++            armportReplayCursor(pak, "playerReceiveControlState");
+             START_BIT_COUNT(pak, "playerReceiveControlState");
+                 playerReceiveControlState(pak);
+             STOP_BIT_COUNT(pak);
+ 
+             // Receive deletes here, of course.
+ 
++            armportReplayCursor(pak, "entReceiveDeletes");
+             START_BIT_COUNT(pak, "entReceiveDeletes");
+                 entReceiveDeletes(pak);
+             STOP_BIT_COUNT(pak);
+@@ -3789,10 +3799,12 @@ void entReceiveUpdate(Packet *pak,int full_update)
+ 
+             if(full_update)
+             {
++                armportReplayCursor(pak, "receiveCharacterFromServer");
+                 START_BIT_COUNT(pak, "receiveCharacterFromServer");
+                     receiveCharacterFromServer(pak, player);
+                 STOP_BIT_COUNT(pak);
+             } else {
++                armportReplayCursor(pak, "receiveFullStats");
+                 START_BIT_COUNT(pak, "receiveFullStats");
+                     sdUnpackDiff(SendCharacterToSelf, pak, player->pchar, &player->pkt_id_fullAttrDef, true);
+                 STOP_BIT_COUNT(pak);
+@@ -3804,65 +3816,79 @@ void entReceiveUpdate(Packet *pak,int full_update)
+ 
+             // Read Power activation updates
+ 
++            armportReplayCursor(pak, "receivePowerInfoUpdate");
+             START_BIT_COUNT(pak, "receivePowerInfoUpdate");
+                 entity_ReceivePowerInfoUpdate(player, pak);
+             STOP_BIT_COUNT(pak);
+ 
++            armportReplayCursor(pak, "ReceivePowerModeUpdate");
+             START_BIT_COUNT(pak, "ReceivePowerModeUpdate");
+                 entity_ReceivePowerModeUpdate(player, pak);
+             STOP_BIT_COUNT(pak);
+ 
+             // Badges, badges, badges, badges, badges, badges, mushroom, mushroom!
+ 
++            armportReplayCursor(pak, "ReceiveBadgeUpdate");
+             START_BIT_COUNT(pak, "ReceiveBadgeUpdate");
+                 entity_ReceiveBadgeUpdate(player, pak);
+             STOP_BIT_COUNT(pak);
+ 
+             if(full_update)
+             {
++                armportReplayCursor(pak, "ReceiveBadgeMonitorUpdate");
+                 START_BIT_COUNT(pak, "ReceiveBadgeMonitorUpdate");
+                     badgeMonitor_ReceiveInfo(player, pak);
+                 STOP_BIT_COUNT(pak);
+             }
+ 
++            armportReplayCursor(pak, "ReceiveGenericinventoryUpdate");
+             START_BIT_COUNT(pak, "ReceiveGenericinventoryUpdate");
+                 entity_ReceiveInvUpdate(player, pak);
+             STOP_BIT_COUNT(pak);
+ 
+ 
++            armportReplayCursor(pak, "ReceiveInventionUpdate");
++
+             START_BIT_COUNT(pak, "ReceiveInventionUpdate")
+                 entity_ReceiveInventionUpdate(player, pak);
+             STOP_BIT_COUNT(pak);
+ 
++            armportReplayCursor(pak, "ReceiveWorkshopUpdate");
+             START_BIT_COUNT(pak, "ReceiveWorkshopUpdate")
+                 strncpy( player->pl->workshopInteracting, pktGetString(pak), 32);
+             STOP_BIT_COUNT(pak);
+ 
+             // read in team list
+ 
++            armportReplayCursor(pak, "receiveTeamList");
+             START_BIT_COUNT(pak, "receiveTeamList");
+             if (!pktGetBits(pak, 1))
+                 receiveTeamList(pak, playerPtr());
+             STOP_BIT_COUNT(pak);
+ 
++            armportReplayCursor(pak, "receiveSuperStats");
+             START_BIT_COUNT(pak, "receiveSuperStats");
+                 receiveSuperStats(pak, playerPtr());
+             STOP_BIT_COUNT(pak);
+ 
++            armportReplayCursor(pak, "receiveLeague");
+             START_BIT_COUNT(pak, "receiveLeague");
+             if (!pktGetBits(pak, 1))
+                 receiveLeagueList(pak, playerPtr());
+             STOP_BIT_COUNT(pak);
+ 
++            armportReplayCursor(pak, "receiveAttribDescription");
+             START_BIT_COUNT(pak, "receiveAttribDescription");
+             if (pktGetBits(pak, 1))
+                 receiveAttribDescription(playerPtr(), pak, 1, 0 );
+             STOP_BIT_COUNT(pak);
+ 
++            armportReplayCursor(pak, "groupDynReceive");
+             START_BIT_COUNT(pak, "groupDynReceive");
+                 groupDynReceive(pak);
+             STOP_BIT_COUNT(pak);
+ 
++            armportReplayCursor(pak, "receiveSkyFade");
+             START_BIT_COUNT(pak, "receiveSkyFade");
+                 receiveSkyFade(pak);
+             STOP_BIT_COUNT(pak);

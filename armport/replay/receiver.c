@@ -85,6 +85,22 @@ void armportReplayUnknownCommand(int command)
     }
 }
 
+void armportReplayCursor(Packet *pak, const char *stage)
+{
+    if (active)
+        emit("{\"type\":\"receive_boundary\",\"index\":%u,\"id\":%u,\"stage\":\"%s\","
+             "\"cursor\":%u,\"error_flags\":%u}\n", dispatches, pak->id, stage,
+             bsGetCursorBitPosition(&pak->stream), pak->stream.errorFlags);
+}
+
+void armportReplayCommand(Packet *pak, int command, int begin)
+{
+    if (active)
+        emit("{\"type\":\"game_command_%s\",\"index\":%u,\"id\":%u,\"command\":%d,"
+             "\"cursor\":%u,\"error_flags\":%u}\n", begin ? "begin" : "end", dispatches,
+             pak->id, command, bsGetCursorBitPosition(&pak->stream), pak->stream.errorFlags);
+}
+
 static unsigned int u32(const unsigned char *p)
 {
     return (unsigned int)p[0] | (unsigned int)p[1] << 8 |
