@@ -28,6 +28,9 @@ GUEST_DEPENDENCIES = (
     # The server's immutable input-copy budgets import these constants even
     # when the retained donor has no optional client visual payload.
     'client_visual_assets.py',
+    # Cache ancestry validation imports these before rejecting unsupported
+    # producers and taking its existing original-loader fallback.
+    'native_monorail_contract.py', 'native_map_startup_contract.py',
 )
 
 WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',
