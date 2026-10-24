@@ -25,6 +25,11 @@ python3 armport/scripts/ci_results.py --run 40032719161 --job server-run --no-wa
   ARMPORT_STDIO_LOG. They log UI/loading progress and thread identity without
   changing gameplay, queue ordering or timeouts. The QueueUserAPC call remains
   the original call; its diagnostic wrapper only reports failure.
+  With ARMPORT_STDIO_LOG enabled, 0049's StartDummy/FinishDummy APC markers
+  intentionally include every map load, even outside armportTracingTexQueue:
+  earlier queue nesting is needed to interpret a later stuck Finish. Other
+  detailed finish/drain markers remain gated. With the environment opt-in
+  absent, all these markers are inert.
 - 0050 fixes a reproduced worker wake/publication race on ARM64. Run
   40035482170, libraries job 120693769990: original dispatched=0, patched=1,
   then 4096 commands/replies each. wtReqFlush already wakes a queued worker;
@@ -53,7 +58,35 @@ Run 40041703285 libraries passed all 13 host tests and the original socketless
 network preflight. Run 40035482170 server-run failed before the texture wait.
 Patch 0052 fixes a confirmed FILE*/FileWrapper* mismatch in the diagnostic
 header; its before/after compile control and pinned-Wine disassembly are in
-notes/M3-LOAD-STALL.md. Full runtime and Atlas rerun remain pending.
+notes/M3-LOAD-STALL.md. Run 40042636088, libraries job 120717013954, passed
+both CRT trace writes and the original socketless preflight. Atlas remains
+unqualified while server-run is pending.
+
+## Reference coverage and review 5635783793
+
+The i686 reference is the ArmPort-patched tree built with clang, so it checks
+pointer-width/architecture differences but is not independent of shared
+patches or compiler behavior. INITIAL must also match the recorded
+native-android 32-bit decode; the same-driver comparison does not replace it.
+Run 40043254232, reference-build job 120718968162, passed compile/link only.
+
+Both builds disable NOVODEX; original i686 PhysX/ragdoll receive paths are
+outside this comparison. i686 retains real CPUID and sseAvailable while
+ARM64 reports no SSE; the zOcclusion/frustum rendering paths consequently
+differ. Patch 0054 removes local SEH recovery only in the reference: the
+keepMemoryThread call is already disabled by if(0), and volume-exit/audio
+faults must fail replay, never be swallowed. See notes/M3-REPLAY-PLAN.md.
+
+Review 5635783793 clarifies the ID 1/31 sensitivity comparison: preserve raw
+IDs in dumps and normalize only pkt_id_create, lastClientStatePktId and
+delete-history pkt_id when they equal that run's synthetic INITIAL ID.
+Same-ID repeats and ARM64/i686 comparisons remain literally identical.
+This agreement is not receiver execution or milestone approval.
+
+The guest screenshot handshake now allows 2100 seconds, leaving headroom
+over the host's unchanged 1500-second loading observation and diagnostic
+pauses. ArmPort build runs once per internal branch push; branch-scoped
+concurrency cancels superseded runs. Manual dispatch remains available.
 
 ## Remaining work
 

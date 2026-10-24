@@ -63,10 +63,14 @@ cannot supply an existing decoded baseline for all 115 updates. The older
 301,656/303,112-bit captures are different inputs.
 
 Required comparison: build the same test entry point with the
-original i686 client and run the same files through it under Wine/FEX. Compare
+ArmPort-patched i686 client and run the same files through it under Wine/FEX. Compare
 deterministic decoded summaries and cursor boundaries with ARM64. If that
 reference cannot be built, report the gap; changing this exit test requires
 the user's approval. Compile i686 with `-msse2 -mfpmath=sse`.
+This clang-built reference isolates pointer-width/architecture differences;
+it is not independent of shared ArmPort patches or clang behavior. The
+recorded native-android 32-bit INITIAL decode remains a separate required
+comparison, to detect mistakes shared by both same-driver builds.
 
 The approved conditions (review
 https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5635319013):
@@ -84,7 +88,9 @@ https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5635319013
   hash state after every record. Include svr_idx, id, type, name, pkt_id_create,
   raw position/orientation, costume-part hash and the player's tail state.
 - List excluded timer/interpolation fields. Repeat ARM64 twice with identical
-  output; INITIAL ID 1/31 sensitivity runs must have identical state summaries.
+  output; same-ID ARM64/i686 comparisons must also match literally.
+- For INITIAL ID 1/31 sensitivity only, apply the narrowly scoped
+  canonicalization agreed in review 5635783793 below.
 
 Method agreement is not approval to merge M3. The rendered Atlas screenshot,
 replay results, final report and user's merge approval are still required.
@@ -110,12 +116,17 @@ as ARM64, explicit `-msse2 -mfpmath=sse`, and Microsoft inline-assembly syntax.
 Patch 0053 permits that opt-in build; normal i686/MSVC behavior is unchanged.
 The intrinsic stand-in keeps real i686 CPUID and supplies its missing __nop;
 0055 selects clang's existing vector-lane access rather than MSVC members.
+Both targets disable NOVODEX, so original i686 PhysX/ragdoll receive paths
+are outside this comparison. Real i686 CPUID sets sseAvailable whereas ARM64
+reports no SSE; zOcclusion/frustum rendering paths therefore differ. This
+is a recorded reference limitation, not a receiver-path equivalence claim.
 
 Local Release `ninja -C coh-build-i686 -j2 Game` exited zero. `file` reports
 `PE32 executable (GUI) Intel 80386, for MS Windows, 17 sections`. The original
 clientcomm.c compiles in this target. The separate armport-reference workflow
 builds it on ARM64, checks the receiver's actual compile flags and saves a
 separate artifact; it does not qualify execution or replay equivalence.
+Run 40043254232, reference-build job 120718968162, passed this build check.
 
 0054 is limited to this reference: clang's local 32-bit SEH compilation fails
 with undefined L__ehtable and parent_frame_offset labels. Three protected
@@ -123,10 +134,25 @@ bodies (volume exit, audio decode, disabled keep-memory experiment) remain,
 but the reference does not recover their faults. Any such SEH must fail the
 replay, consistent with its no-unexpected-SEH criterion. This is not equivalent
 exception recovery; ARM64 and normal builds retain their original handlers.
+The original keepMemoryThread call is already behind if(0), so removing
+its local handler changes no active path. Volume-exit or audio faults must
+be reported as replay failures, not recovered or omitted from the result.
 No receive decoder is replaced. ARM64 pmotion.c, game.c, ogg_decode.c,
 frustum_c.c and the intrinsic stand-in compile after these guarded changes.
 
-Open reviewer clarification: PR #6 comment 6377175041 asks how to retain raw
-pkt_id_create in the full dumps while comparing synthetic INITIAL IDs 1/31.
-Identical same-ID repeats and ARM64/i686 comparisons remain required; no
-sensitivity normalization has been implemented or approved yet.
+## Agreed synthetic-ID sensitivity comparison
+
+PR #6 review 5635783793 answers comment 6377175041. Keep raw IDs in every
+full dump; require literal identity for same-ID repeats and ARM64/i686
+comparisons. For the 1-versus-31 sensitivity comparison only, canonicalize
+these ID-valued fields when they hold that run's synthetic INITIAL ID:
+
+- entity pkt_id_create;
+- lastClientStatePktId;
+- delete-history pkt_id (entrecv.c addDelete).
+
+Assert that no real post-READY record ID is below 32 (the inventory is
+32–155), and list the canonicalized fields in the output. All other state,
+including every later ID, must match exactly. Do not normalize arbitrary
+integers that happen to equal 1 or 31. This rule is agreed but the receiver
+driver and sensitivity execution remain outstanding.

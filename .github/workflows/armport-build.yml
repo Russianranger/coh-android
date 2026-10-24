@@ -12,14 +12,12 @@ on:
       - '!armport/shaders/**'
       - '!armport/*.md'
       - '.github/workflows/armport-build.yml'
-  pull_request:
-    branches: ['COH-ArmPort']
-    paths:
-      - 'armport/**'
-      - '!armport/survey/**'
-      - '!armport/shaders/**'
-      - '!armport/*.md'
-      - '.github/workflows/armport-build.yml'
+
+# Internal milestone branches already run on push, including before a PR is
+# opened. A second pull_request trigger duplicates the full server stack.
+concurrency:
+  group: armport-build-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
