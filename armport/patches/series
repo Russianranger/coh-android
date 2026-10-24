@@ -53,3 +53,4 @@
 0053-cmake-i686-replay-reference.patch
 0054-i686-reference-fail-on-seh.patch
 0055-i686-reference-vector-lanes.patch
+0056-game-original-receiver-replay-entry.patch

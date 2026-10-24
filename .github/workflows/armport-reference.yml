@@ -8,11 +8,16 @@ on:
       - 'armport/patches/**'
       - 'armport/cmake/**'
       - 'armport/standins/**'
+      - 'armport/replay/**'
       - 'armport/scripts/prepare.py'
       - '.github/workflows/armport-reference.yml'
 
 permissions:
   contents: read
+
+concurrency:
+  group: armport-reference-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   LLVM_MINGW: '20250910'
@@ -49,7 +54,7 @@ jobs:
         run: |
           set -o pipefail
           cmake -S "$RUNNER_TEMP/reference/src" -B "$RUNNER_TEMP/reference/build" -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_BUILD_TYPE=OptDebug \
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/i686-w64-mingw32.cmake" \
             -DCOX_BUILD_COMMON=ON -DCOX_BUILD_GAME=ON -DCOX_ARMPORT_COMPILE_ONLY=ON \
             -DCOX_ARMPORT_DIR="$GITHUB_WORKSPACE/armport" \
@@ -60,7 +65,8 @@ jobs:
           receiver = [c['command'] for c in commands if c['file'].endswith('/clientcomm/clientcomm.c')]
           assert len(receiver) == 1
           assert all(flag in receiver[0].split() for flag in ('-msse2', '-mfpmath=sse', '-DCOH_ARMPORT_REFERENCE_I686=1'))
-          print('::notice title=ArmPort i686 flags::Original receiver uses SSE2 math and explicit reference-only define')
+          assert '-DFINAL' not in receiver[0].split()
+          print('::notice title=ArmPort i686 flags::Original receiver uses SSE2 math, reference-only define and assertions enabled (OptDebug)')
           PY
       - name: Build original i686 client
         run: |

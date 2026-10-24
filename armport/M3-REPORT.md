@@ -90,6 +90,21 @@ concurrency cancels superseded runs. Manual dispatch remains available.
 
 ## Remaining work
 
+Patch 0056 now exposes the original receive switch below commGetStats, with
+an inert post-startup hook. armport/replay/receiver.c verifies input identities,
+dispatch counts/cursors and records original ACK IDs. Local llvm-mingw builds
+of clientcomm.c, game.c and receiver.c pass for ARM64 Release and i686
+OptDebug. Execution and full state comparison remain pending; the driver
+explicitly exits 2 with m3_replay_complete=false even if all cursors pass.
+The reference workflow now builds OptDebug because FINAL disables assertions.
+See replay/README.md. No raw replay input or user report archive is committed.
+
+The historical 0048 preprocessing check is also complete: all eight checks
+in `check_zone_trace_preprocess.py ../build-active/compile_commands.json`
+pass. The three original trace sites call CRT fprintf, the tex.c negative
+control calls x_fprintf, and 0052 makes all four use CRT fprintf. Details
+and commands are in notes/M3-LOAD-STALL.md.
+
 Diagnose the loader stall/crash, obtain and inspect a rendered Atlas frame,
 implement and run all 117 original receiver dispatches with i686 comparison,
 then replace this incomplete report with the final results. No M3 approval,

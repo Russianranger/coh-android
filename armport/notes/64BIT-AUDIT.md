@@ -89,3 +89,10 @@ the tex.c include order. Evidence: notes/M3-LOAD-STALL.md, run 40035482170.
 fixes. They select matching reduced SDKs, fail rather than recover local SEH
 in the reference, and use clang vector-lane syntax. The original receiver is
 compiled unchanged. See M3-REPLAY-PLAN.md for compile evidence and exclusions.
+
+0056: opt-in original-receiver replay entry, not a pointer or decoder fix.
+The normal network callback retains statistics and dispatches through the
+same original switch; replay enters below transport statistics after normal
+startup. Extra receive/output initialization is listed in the patch's new
+header. No upstream file is modified. See replay/README.md: initial scope
+is cursor/ACK execution and deliberately cannot claim state equivalence.

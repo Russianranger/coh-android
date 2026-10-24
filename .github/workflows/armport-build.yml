@@ -248,7 +248,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/client-bin
-          key: armport-client-${{ matrix.config }}-lines1-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
+          key: armport-client-${{ matrix.config }}-lines1-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/replay/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
 
       - name: Prepare patched source
         if: steps.exe-cache.outputs.cache-hit != 'true'

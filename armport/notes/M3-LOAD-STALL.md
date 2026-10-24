@@ -157,3 +157,29 @@ FileWrapper* mismatch; the corrected header compiles and links. The CI test
 also runs both writes under ARM64 Wine and requires both output lines.
 Runtime/Atlas rerun pending; this fixes a diagnostic defect, not proof that
 the original texture wait has been resolved.
+
+## Review 5635783793: original 0048 call sites confirmed
+
+With llvm-mingw 20250910 and the actual Release ARM64 compile_commands.json,
+`ninja -C build-active -j2` compiled clientcomm.c, groupnetrecv.c,
+groupfileload.c and tex.c successfully, generating their required headers.
+The command below then preprocesses each complete translation unit with
+`-E`, first using an include overlay containing the exact header reconstructed
+from 0048, then with the current header. It changes no source files.
+
+```
+python3 armport/scripts/check_zone_trace_preprocess.py ../build-active/compile_commands.json
+```
+
+All eight preprocess invocations exited zero. The historical 0048 header
+calls CRT `fprintf` in clientcomm.c, groupnetrecv.c and groupfileload.c.
+The tex.c negative control calls `x_fprintf`, reproducing the diagnostic bug.
+With the current 0052 header all four call CRT `fprintf`.
+Before adding 0056, `git diff --exit-code <0048-commit> <0055-commit> -- Game/src/clientcomm/clientcomm.c
+Game/src/group/groupnetrecv.c Common/group/groupfileload.c` in the patchwork
+tree exited zero: those three traced translation units were unchanged from
+0048 through 0055. Repeating the preprocessing check with 0056's wrapper
+also passes. This confirms the include-order inference with actual preprocessing.
+Run 40011219458 therefore remains evidence of the original texture wait,
+not evidence of the later tex.c trace crash. The no-zone-trace run
+39973792458 also stalled. Neither result establishes the synchronization fix.
