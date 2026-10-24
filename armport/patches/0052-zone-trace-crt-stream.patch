@@ -1,0 +1,24 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index 8144798..2a66eb6 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -6,6 +6,11 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <utilitieslib/utils/wininclude.h>
++// file.h replaces fprintf with x_fprintf(FileWrapper *). stderr is a CRT
++// FILE *, so that macro would reinterpret its contents and can call
++// fwrite with a null stream. Use the CRT function; preserve caller macros.
++#pragma push_macro("fprintf")
++#undef fprintf
+ static void armportZoneTrace(const char *stage, const char *detail)
+ {
+     if (getenv("ARMPORT_STDIO_LOG"))
+@@ -13,6 +18,7 @@ static void armportZoneTrace(const char *stage, const char *detail)
+                 (unsigned long)GetTickCount(), stage, detail ? detail : "",
+                 (unsigned long)GetCurrentThreadId());
+ }
++#pragma pop_macro("fprintf")
+ #else
+ #define armportZoneTrace(stage, detail) ((void)0)
+ #endif

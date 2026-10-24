@@ -1,0 +1,15 @@
+{
+  "scope": "recorded_native_initial_selected_entity_subset_only",
+  "report_sha256": "2876eb9b504614fad1de03adf4fa9eff82cfee3f56e9446e68d4d14afb217016",
+  "initial_file_sha256": "cc949b01f5db6ff108efcf6afcbfe9567c432b4aa15f3a02c8f193e380cc7b39",
+  "source_fields": [
+    "world_handoff.first_create.entity_index",
+    "world_handoff.first_create.entity_type",
+    "world_handoff.selected_costume[2] (bodytype)",
+    "world_handoff.selected_costume[3] (part_count)"
+  ],
+  "svr_idx": 125,
+  "type": 2,
+  "bodytype": 4,
+  "part_count": 28
+}

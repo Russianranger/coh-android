@@ -1,0 +1,128 @@
+diff --git a/Game/src/render/tex.c b/Game/src/render/tex.c
+index 32fa55b..274e5f5 100644
+--- a/Game/src/render/tex.c
++++ b/Game/src/render/tex.c
+@@ -41,6 +41,17 @@
+ #include <utilitieslib/utils/osdependent.h>
+ #include <utilitieslib/utils/osdependent.h>
+ #include "LWC.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
++
++// Diagnose only the foreground queue drain; no loading or wait changes.
++#if defined(__aarch64__) && defined(__MINGW32__)
++static int armportTracingTexQueue;
++#define armportTexTrace(stage, detail) do { if (armportTracingTexQueue) armportZoneTrace(stage, detail); } while (0)
++#define armportTexTraceEnable(value) (armportTracingTexQueue = (value))
++#else
++#define armportTexTrace(stage, detail) ((void)0)
++#define armportTexTraceEnable(value) ((void)0)
++#endif
+ 
+ static const char TEXTURE_MEMMONITOR_NAME[] = "OpenGL Textures";
+ 
+@@ -1938,6 +1949,7 @@ static void texDoThreadedQueuedTextureLoading( void )
+     for( ; pkg ; pkg = prevPkg, i-- )
+     {
+         bool addToFinalList=true;
++        armportTexTrace("texqueue.texture.begin", pkg->bind->name);
+         prevPkg = pkg->prev;
+         listRemoveMember(pkg, &queuedTexLoads);
+ 
+@@ -1961,7 +1973,9 @@ static void texDoThreadedQueuedTextureLoading( void )
+             listAddForeignMember(&texBindsReadyForFinalProcessing, pkg);
+             LeaveCriticalSection(&CriticalSectionTexLoadQueues);
+         }
++        armportTexTrace("texqueue.texture.loaded", pkg->bind->name);
+         texCheckThreadLoader();
++        armportTexTrace("texqueue.texture.done", NULL);
+     }
+     
+     assert(!queuedTexLoads && !i);
+@@ -2107,7 +2121,9 @@ void texCheckThreadLoader()
+             eaPush(&eaTexBindsThisTick, pkg->bind);
+         
+             PERFINFO_AUTO_START("texConvertToGameFormat", 1);
++                armportTexTrace("texqueue.upload.begin", pkg->bind->name);
+                 texConvertToGameFormat(pkg->bind, &(pkg->info));
++                armportTexTrace("texqueue.upload.done", pkg->bind->name);
+             PERFINFO_AUTO_STOP();
+             
+             num_bytes_loaded += pkg->bind->file_bytes;
+@@ -2172,7 +2188,9 @@ void texCheckThreadLoader()
+     PERFINFO_AUTO_STOP();
+     
+     PERFINFO_AUTO_START("loadUpdate", 1);
++        armportTexTrace("texqueue.loadupdate.begin", NULL);
+         loadUpdate("bg_textures",num_bytes_loaded);
++        armportTexTrace("texqueue.loadupdate.done", NULL);
+     PERFINFO_AUTO_STOP();
+ 
+     // We have just loaded a texture, let's check to see if any old ones can be removed
+@@ -2188,6 +2206,7 @@ void texCheckThreadLoader()
+ static int hasStartedQueuing=0;
+ 
+ static VOID CALLBACK texLoadQueueStartDummy( ULONG_PTR useless) {
++    armportZoneTrace("texqueue.start.apc", NULL);
+     PERFINFO_AUTO_START("texLoadQueueStartDummy", 1);
+     queuingTexLoads++;
+     if (queuingTexLoads==1) {
+@@ -2195,6 +2214,7 @@ static VOID CALLBACK texLoadQueueStartDummy( ULONG_PTR useless) {
+         EnterQueueingLoadsCS();
+         assert(!hasStartedQueuing);
+         hasStartedQueuing=1;
++        armportZoneTrace("texqueue.start.locked", NULL);
+     }
+     PERFINFO_AUTO_STOP();
+ }
+@@ -2213,6 +2233,7 @@ void texLoadQueueStart(void)  // Directs the loader to queue successive load cal
+ 
+ static VOID CALLBACK texLoadQueueFinishDummy( ULONG_PTR useless ) // Directs the loader to stop queueing load calls and begin loading all queued graphics
+ {
++    armportZoneTrace("texqueue.finish.apc", NULL);
+     PERFINFO_AUTO_START("texLoadQueueFinishDummy", 1);
+     assert(queuingTexLoads>0);
+     queuingTexLoads--;
+@@ -2224,6 +2245,7 @@ static VOID CALLBACK texLoadQueueFinishDummy( ULONG_PTR useless ) // Directs the
+ 
+     // now done in main thread: texDoThreadedQueuedTextureLoading(); // Load in FG change
+     LeaveQueueingLoadsCS();
++    armportZoneTrace("texqueue.finish.unlocked", NULL);
+     PERFINFO_AUTO_STOP();
+ }
+ 
+@@ -2363,22 +2385,34 @@ void texCheckSwapList(void) {
+ void texLoadQueueFinish(void) // Directs the loader to stop queueing load calls and begin loading all queued graphics
+ {
+ 
+-    QueueUserAPC(texLoadQueueFinishDummy, background_loader_handle, (ULONG_PTR)NULL );
++    armportTexTraceEnable(1);
++    armportZoneTrace("texqueue.finish.begin", NULL);
++    if (!QueueUserAPC(texLoadQueueFinishDummy, background_loader_handle, (ULONG_PTR)NULL ))
++        armportZoneTrace("texqueue.finish.apc.failed", NULL);
++    armportZoneTrace("texqueue.precheck.begin", NULL);
+     texCheckThreadLoader();
++    armportZoneTrace("texqueue.precheck.done", NULL);
+     queuingTexLoadsOutOfThread--;
+     // Wait until all are loaded
+     if (queuingTexLoadsOutOfThread==0) {
+         // We want to wait until all the textures are loaded
+         
++        armportZoneTrace("texqueue.start.wait", NULL);
+         while (!hasStartedQueuing) Sleep(1); // Wait until we've *started* queueing the textures
+ 
++        armportZoneTrace("texqueue.lock.wait", NULL);
+         EnterQueueingLoadsCS(); // Wait for loads to finish
+         LeaveQueueingLoadsCS();
++        armportZoneTrace("texqueue.drain.begin", NULL);
+         texDoThreadedQueuedTextureLoading();  // Load in FG change
++        armportZoneTrace("texqueue.drain.done", NULL);
+ 
+         texCheckThreadLoader();
+     }
++    armportZoneTrace("texqueue.swaps.begin", NULL);
+     texCheckSwapList(); // This resets all textures to their original, and then swaps based on the swaplist
++    armportZoneTrace("texqueue.finish.done", NULL);
++    armportTexTraceEnable(0);
+ }
+ 
+ void texForceTexLoaderToComplete(int force_texword_flush)

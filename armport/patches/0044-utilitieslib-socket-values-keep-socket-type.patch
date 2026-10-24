@@ -1,0 +1,56 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/network/netio_receive.h b/libs/UtilitiesLib/include/utilitieslib/network/netio_receive.h
+index 20bfd9c..41db7b7 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/network/netio_receive.h
++++ b/libs/UtilitiesLib/include/utilitieslib/network/netio_receive.h
+@@ -3,6 +3,7 @@
+ 
+ #include "../stdtypes.h"
+ #include "../network/net_typedefs.h"
++#include "../network/sock.h" // SOCKET (ArmPort: pktGetUdp keeps the full socket value)
+ 
+ struct sockaddr_in;
+ 
+@@ -17,7 +18,7 @@ void lnkBatchReceive(NetLink* link);
+ int pktGet(Packet **pakptr,NetLink *link);
+ 
+ int pktGetUdpAsync(Packet** pakptr, NetLinkList* list, struct sockaddr_in *addr);
+-int pktGetUdp(Packet** pakptr,int socket,struct sockaddr_in *addr);
++int pktGetUdp(Packet** pakptr,SOCKET socket,struct sockaddr_in *addr);
+ int pktGetTcpAsync(Packet** pakptr, NetLink* link);
+ int pktGetTcp(Packet** pakptr, NetLink* link);
+ int pktGetTcpSync(Packet** pakptr, NetLink* link);
+diff --git a/libs/UtilitiesLib/src/network/net_linklist.c b/libs/UtilitiesLib/src/network/net_linklist.c
+index 8dd09e5..c6f535f 100644
+--- a/libs/UtilitiesLib/src/network/net_linklist.c
++++ b/libs/UtilitiesLib/src/network/net_linklist.c
+@@ -213,7 +213,7 @@ static void createLinkHashKey(NetLink* link, char* output){
+  *    NetLinkList.
+  *
+  */
+-static NetLink *netAddLink(NetLinkList *nlist, struct sockaddr_in *addr, int socket, NetLinkType type){
++static NetLink *netAddLink(NetLinkList *nlist, struct sockaddr_in *addr, SOCKET socket, NetLinkType type){
+     NetLink    *link;
+     void* userData;
+     char hashKey[100];
+@@ -744,7 +744,7 @@ NetLink* netValidateUDPPacket(NetLinkList* linklist, Packet* pak)
+ int netGetTcpConnect(NetLinkList *nlist)
+ {    
+     int        addrlen;
+-    int        socket;
++    SOCKET    socket;
+     struct sockaddr_in addr;
+     NetLink    *link;
+     FD_SET readSet;
+diff --git a/libs/UtilitiesLib/src/network/netio_receive.c b/libs/UtilitiesLib/src/network/netio_receive.c
+index 89ccc1b..e49aaa3 100644
+--- a/libs/UtilitiesLib/src/network/netio_receive.c
++++ b/libs/UtilitiesLib/src/network/netio_receive.c
+@@ -298,7 +298,7 @@ int pktGetUdpAsync(Packet** pakptr, NetLinkList* list, struct sockaddr_in *addr)
+  *        > 0 - number of bytes read.
+  *        0 - no more message to be read.
+  */
+-int pktGetUdp(Packet** pakptr,int socket,struct sockaddr_in *addr)
++int pktGetUdp(Packet** pakptr,SOCKET socket,struct sockaddr_in *addr)
+ {
+     int        amt;
+     int        addr_len = sizeof(struct sockaddr_in);

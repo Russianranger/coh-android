@@ -1,0 +1,236 @@
+diff --git a/Common/group/groupfileload.c b/Common/group/groupfileload.c
+index 821b4cd..a8f5d62 100644
+--- a/Common/group/groupfileload.c
++++ b/Common/group/groupfileload.c
+@@ -1,4 +1,5 @@
+ #include "group/group.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include <utilitieslib/utils/textparser.h>
+ #include <utilitieslib/utils/error.h>
+ #include "group/groupfileload.h"
+@@ -1643,6 +1644,7 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+     char * oldval1=0;
+     char * oldval2=0;
+ 
++    armportZoneTrace("library.begin", fname);
+     PERFINFO_AUTO_START("groupLoadInternal",1);
+ 
+     strcpy(fnamebuf, fname);
+@@ -1702,6 +1704,7 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+         FileListDestroy(&g_parselist);
+     }
+ 
++    armportZoneTrace("library.parsed", fname);
+     //Major Hack while I figure out how to handle the editing of Individual layers
+     if(!librootname && layer)
+     {
+@@ -1801,6 +1804,7 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+         printf("");
+     }*/
+ 
++    armportZoneTrace("library.defs.done", fname);
+     /////// Layer autogrouping
+     if ( !SERVER_OR_GAMESTATE.doNotAutoGroup)
+     {
+@@ -1857,6 +1861,7 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+     ParserDestroyStruct(parse_group_list, &group_file);
+     
+     group_info.loading--;
++    armportZoneTrace("library.done", fname);
+     
+     PERFINFO_AUTO_STOP();
+ 
+diff --git a/Game/src/clientcomm/clientcomm.c b/Game/src/clientcomm/clientcomm.c
+index fef73cb..f46d8b9 100644
+--- a/Game/src/clientcomm/clientcomm.c
++++ b/Game/src/clientcomm/clientcomm.c
+@@ -1,6 +1,7 @@
+ #include "clientcomm/clientcomm.h"
+ #include <stdio.h>
+ #include <float.h>
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include <utilitieslib/network/netio.h>
+ #include <utilitieslib/network/net_socket.h>
+ #include <utilitieslib/utils/error.h>
+@@ -1501,7 +1502,9 @@ static int commHandleMessage(Packet *pak,int cmd,NetLink *link)
+         }
+         case SERVER_UPDATE:
+             PERFINFO_AUTO_START("entReceiveUpdate", 1);
++                if (cmd == SERVER_ALLENTS) armportZoneTrace("allents.begin", NULL);
+                 entReceiveUpdate(pak,cmd==SERVER_ALLENTS);
++                if (cmd == SERVER_ALLENTS) armportZoneTrace("allents.done", NULL);
+ 
+                 PERFINFO_AUTO_START("handleGameCmd", 1);
+                     START_BIT_COUNT(pak, "handleGameCmd");
+@@ -1547,7 +1550,9 @@ static int commHandleMessage(Packet *pak,int cmd,NetLink *link)
+             START_BIT_COUNT(pak, "worldReceiveGroups");
+                 netSendIdle(link);
+                 lnkBatchSend(link);
++                armportZoneTrace("groups.begin", NULL);
+                 worldReceiveGroups(pak);
++                armportZoneTrace("groups.done", NULL);
+                 editNetUpdate();
+             STOP_BIT_COUNT(pak);
+         xcase SERVER_DYNAMIC_DEFS:
+@@ -1857,6 +1862,7 @@ int commReqScene(int isInitialLogin)
+     g_comicLoadScreen_pageIndex = 0;
+ #endif
+ 
++    armportZoneTrace("scene.begin", NULL);
+     PERFINFO_AUTO_START("commReqScene", 1);
+     
+         clearWaitingForFullUpdate();
+@@ -1874,6 +1880,7 @@ int commReqScene(int isInitialLogin)
+         pak->reliable = 1;
+         pktSend(&pak,&comm_link);
+ 
++        armportZoneTrace("scene.requested", NULL);
+         testClientRandomDisconnect(TCS_commReqScene_1);
+ 
+         loadUpdate("Requesting scene",-1);
+@@ -1887,6 +1894,7 @@ int commReqScene(int isInitialLogin)
+                 loadUpdate("Waiting for response from server...",-1);
+             }
+         }
++        armportZoneTrace("scene.wait.done", timeout ? "timeout" : "");
+         testClientRandomDisconnect(TCS_commReqScene_2);
+         if (timeout || !commConnected()){
+             printf("Server timeout\n");
+@@ -1903,6 +1911,7 @@ int commReqScene(int isInitialLogin)
+         pak = pktCreateEx(&comm_link,CLIENT_REQALLENTS); // Request all ents be sent
+         pak->reliable = 1;
+         pktSend(&pak,&comm_link);
++        armportZoneTrace("allents.requested", NULL);
+         testClientRandomDisconnect(TCS_commReqScene_3);
+ 
+         loadUpdate("Requesting entities",-1);
+@@ -1915,6 +1924,7 @@ int commReqScene(int isInitialLogin)
+                 loadUpdate("Waiting for response from server...",-1);
+             }
+         }
++        armportZoneTrace("allents.wait.done", timeout ? "timeout" : "");
+         testClientRandomDisconnect(TCS_commReqScene_4);
+         if (timeout || !commConnected()){
+             //FatalErrorf("Server timeout");
+@@ -1926,9 +1936,13 @@ int commReqScene(int isInitialLogin)
+         }
+ 
+         PERFINFO_AUTO_START("load stuff", 1);
++            armportZoneTrace("textures.begin", NULL);
+             gfxLoadRelevantTextures();
++            armportZoneTrace("geometry.wait", NULL);
+             forceGeoLoaderToComplete(); // This doesn't seem to do anything?
++            armportZoneTrace("textures.wait", NULL);
+             texLoadQueueFinish();
++            armportZoneTrace("textures.done", NULL);
+             texDynamicUnload(1);
+         PERFINFO_AUTO_STOP();
+ 
+@@ -1944,6 +1958,7 @@ int commReqScene(int isInitialLogin)
+ 
+         rdrNeedGammaReset(); // 'Cause I'm paranoid and people were seeing gamma bugs when mapmoving, and this is free.
+ 
++        armportZoneTrace("ready.sent", NULL);
+         testClientRandomDisconnect(TCS_commReqScene_5);
+         timerFree(timer);
+ 
+diff --git a/Game/src/group/groupnetrecv.c b/Game/src/group/groupnetrecv.c
+index 248bb8c..55f532c 100644
+--- a/Game/src/group/groupnetrecv.c
++++ b/Game/src/group/groupnetrecv.c
+@@ -1,4 +1,5 @@
+ #include "edit/edit.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include "win/win_init.h"
+ #include "sound/sound.h"
+ #include "edit/edit_net.h"
+@@ -667,6 +668,7 @@ static void receiveGroupFile(Packet *pak,int svr_file_idx,GroupFile *loadto)
+     if (!get_file)
+         return;
+     strcpy((fname=group_info.svr_file_names[svr_file_idx]),pktGetString(pak));
++    armportZoneTrace("groupfile.begin", fname);
+     checksum = pktGetBits(pak,32);
+     base_file = pktGetBits(pak,1);
+     g_isBaseRaid = 0;
+@@ -722,6 +724,7 @@ static void receiveGroupFile(Packet *pak,int svr_file_idx,GroupFile *loadto)
+     else
+         groupLoadTo(fname,loadto);
+ 
++    armportZoneTrace("groupfile.loaded", fname);
+     file = 0;
+     for(;;)
+     {
+@@ -732,6 +735,7 @@ static void receiveGroupFile(Packet *pak,int svr_file_idx,GroupFile *loadto)
+             file = groupFileFromName(fname);
+         receiveDef(pak,def_id,file);
+     }
++    armportZoneTrace("groupfile.done", fname);
+ }
+ 
+ bool onIndoorMission(void)
+@@ -873,6 +877,7 @@ void worldReceiveGroups(Packet *pak)
+             else
+                 grp_file = group_info.files[0];
+             groupFileSetName(grp_file,fname);
++            armportZoneTrace("map.start", fname);
+             clientLoadMapStart(fname);
+         }
+         game_state.beacons_loaded = pktGetBits(pak, 1);
+@@ -894,6 +899,7 @@ void worldReceiveGroups(Packet *pak)
+                 receiveGroupFile(pak,0,grp_file);
+         }
+ 
++    armportZoneTrace("groups.files.done", NULL);
+     PERFINFO_AUTO_STOP_START("middle2", 1);
+ 
+         // Read in group references
+@@ -995,6 +1001,7 @@ void worldReceiveGroups(Packet *pak)
+             }
+         }
+ 
++    armportZoneTrace("groups.refs.done", NULL);
+     PERFINFO_AUTO_STOP_START("bottom", 1);
+ 
+         if (1 || new_world || defs_not_in_bottom_up_order)
+@@ -1045,7 +1052,9 @@ void worldReceiveGroups(Packet *pak)
+         {
+             //setAllClientFlags(); // JE: Moved to happen when defs are created, since not all defs are created at this point!
+             PERFINFO_AUTO_STOP_START("finishLoadMap", 1);
++            armportZoneTrace("map.finish.begin", NULL);
+             finishLoadMap(true, true, false);
++            armportZoneTrace("map.finish.done", NULL);
+         }
+         PERFINFO_AUTO_STOP_START("groupRecalcAllBounds", 1);
+         groupRecalcAllBounds();
+@@ -1055,7 +1064,9 @@ void worldReceiveGroups(Packet *pak)
+         if(new_world && !newWorldIsBase())
+         {
+             PERFINFO_AUTO_STOP_START("groupCreateAllCtris", 1);
++            armportZoneTrace("collision.begin", NULL);
+             groupCreateAllCtris();
++            armportZoneTrace("collision.done", NULL);
+             PERFINFO_AUTO_STOP_START("groupInitNovodeX", 1);
+             groupInitNovodeX();
+         }
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+new file mode 100644
+index 0000000..7dce587
+--- /dev/null
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -0,0 +1,16 @@
++#pragma once
++
++// ArmPort diagnostics only. No packet, loading or timeout behavior changes.
++#if defined(__aarch64__) && defined(__MINGW32__)
++#include <stdio.h>
++#include <stdlib.h>
++#include <utilitieslib/utils/wininclude.h>
++static void armportZoneTrace(const char *stage, const char *detail)
++{
++    if (getenv("ARMPORT_STDIO_LOG"))
++        fprintf(stderr, "ArmPort zone: %lu %s %.240s\n",
++                (unsigned long)GetTickCount(), stage, detail ? detail : "");
++}
++#else
++#define armportZoneTrace(stage, detail) ((void)0)
++#endif

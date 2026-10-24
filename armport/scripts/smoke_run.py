@@ -9,7 +9,9 @@ the tail of the output and any log files written. Observational: the exit code
 is 0 unless the script itself cannot run.
 """
 import argparse
+import hashlib
 import re
+import json
 import os
 import shutil
 import subprocess
@@ -71,21 +73,55 @@ def ocr(path):
         return f'ocr failed: {e!r}'
 
 
-def merge_tree(src, dst):
+def merge_tree(src, dst, strict=False, earlier_roots=None):
     """Overlay src onto dst as hard links (real directories, no symlinks, so the
-    client's directory scans see ordinary files). Earlier roots win for files."""
+    client's directory scans see ordinary files). Earlier roots win for files.
+    Strict supplements must agree byte-for-byte with every earlier collision,
+    including case aliases, before any of their files are installed."""
+    collisions = 0
+    if strict:
+        prior = {}
+        incoming = {}
+        # Inspect every earlier input layer, including files shadowed by the
+        # ordinary first-wins merge, not only its final destination view.
+        for root in earlier_roots if earlier_roots is not None else (dst,):
+            for base, _, names in os.walk(root, followlinks=True):
+                for name in names:
+                    path = Path(base) / name
+                    prior.setdefault(path.relative_to(root).as_posix().casefold(), []).append(path)
+        for base, _, names in os.walk(src, followlinks=True):
+            for name in names:
+                path = Path(base) / name
+                key = path.relative_to(src).as_posix().casefold()
+                if key in incoming:
+                    raise ValueError('Case-aliased supplement members: ' + key)
+                incoming[key] = path
+                for old in prior.get(key, []):
+                    collisions += 1
+                    with path.open('rb') as new_file, old.open('rb') as old_file:
+                        same = hashlib.file_digest(new_file, 'sha256').digest() == hashlib.file_digest(old_file, 'sha256').digest()
+                    if not same:
+                        print('::error title=ArmPort reviewed Atlas supplement::' +
+                              json.dumps(dict(collisions=collisions, conflicting_path=key)))
+                        raise ValueError('Supplement conflicts with earlier data: ' + key)
     for dirpath, dirnames, filenames in os.walk(src, followlinks=True):
         rel = os.path.relpath(dirpath, src)
         target = dst / rel if rel != '.' else dst
         target.mkdir(parents=True, exist_ok=True)
         for f in filenames:
             out = target / f
+            if strict and (Path(rel) / f).as_posix().casefold() in prior:
+                continue
             if out.exists():
                 continue
             try:
                 os.link(os.path.join(dirpath, f), out)
             except OSError:
                 shutil.copy2(os.path.join(dirpath, f), out)
+    if strict:
+        print('::notice title=ArmPort reviewed Atlas supplement::' +
+              json.dumps(dict(layer=str(src), collisions=collisions, conflicting_collisions=0)))
+    return collisions
 
 def window_texts(lines):
     texts = []
@@ -308,23 +344,107 @@ def _screenshot_summary(display, path):
     pixels = data[hsize + ncolors * 12:]
     sample = pixels[::4 * 97]
     nonblack = sum(1 for b in sample if b) / max(1, len(sample))
-    distinct = len(set(pixels[i:i + 3] for i in range(0, min(len(pixels), 4 * 200000), 4 * 13)))
+    # Sample the whole frame (the window is not at the top of a tall display).
+    step = max(4, (len(pixels) // 4 // 60000) * 4)
+    distinct = len(set(pixels[i:i + 3] for i in range(0, len(pixels) - 3, step)))
     return f'nonzero bytes {nonblack:.1%}, distinct colors (sampled) {distinct}'
+
+
+def login_probe(out, proc):
+    """M3 debugging aid: drive the login screen as the M3 server run does."""
+    from login_ui import Screen, login
+    screen = Screen(out)
+    status = {}
+
+    def after(label):
+        r = subprocess.run(['ss', '-tuanp'], capture_output=True, text=True, timeout=30)
+        sockets = [' '.join(l.split())[:200] for l in r.stdout.splitlines() if 'CityOfHeroes' in l.lower() or 'cityofheroes' in l.lower()]
+        w = subprocess.run(['xwininfo', '-root', '-tree', '-display', ':99'], capture_output=True, text=True).stdout
+        named = [' '.join(x.split())[:140] for x in w.splitlines() if '"' in x and 'has no name' not in x]
+        top = subprocess.run(['top', '-b', '-n', '1', '-w', '200'], capture_output=True, text=True).stdout
+        cpu = [' '.join(l.split())[:120] for l in top.splitlines() if 'cityofheroes' in l.lower() or 'CityOfHeroes' in l][:3]
+        status.setdefault('after', []).append({'when': label, 'client_sockets': sockets, 'windows': named[:8],
+                                               'client_alive': proc.poll() is None, 'cpu': cpu})
+    # Stand-in for DbServer's game-client port: record what the client sends.
+    import socket as _socket
+    import threading as _threading
+    received = []
+    listener = _socket.socket(_socket.AF_INET, _socket.SOCK_DGRAM)
+    try:
+        listener.bind(('127.0.0.1', 7000))
+        listener.settimeout(1)
+    except OSError as e:
+        status['listener_error'] = repr(e)
+        listener = None
+
+    def listen():
+        while listener and not status.get('probe_done'):
+            try:
+                data, addr = listener.recvfrom(65536)
+            except OSError:
+                continue
+            received.append((time.time(), addr[1], data))
+    if listener:
+        _threading.Thread(target=listen, daemon=True).start()
+    after('before the probe')
+    try:
+        from login_ui import after_login
+        if login(screen, 'armportprobe', 'probepass', status, after=after, wait_seconds=120):
+            after_login(screen, status, rounds=8, interval=12, after=after)
+        screen.shot('probe-end')
+        after('end of probe')
+    except Exception as e:  # diagnostics only
+        status['error'] = repr(e)
+    status['probe_done'] = True
+    status['udp_7000'] = {'datagrams': len(received), 'sizes': [len(d) for _, _, d in received[:20]],
+                          'first': [d[:48].hex() for _, _, d in received[:3]],
+                          'source_ports': sorted({p for _, p, _ in received})[:5]}
+    if listener:
+        listener.close()
+    note('notice', 'ArmPort M2 login probe', json.dumps(status, indent=1)[:3000] + '\n' + '\n'.join(screen.log[-40:]))
+    # One sheet of the steps, each cropped to the client window (GitHub keeps
+    # about ten notices per step, so one image for screen_export.py).
+    frames = []
+    for key in ('ultra-dismissed', 'account-typed', 'password-typed', 'after-login', 'post-login-03', 'probe-end'):
+        hits = [p for p in sorted(out.glob('*.png')) if key in p.name]
+        if hits:
+            crop = out / f'sheet-{key}.png'
+            subprocess.run(['convert', str(hits[-1]), '-crop', '1024x768+104+130', '+repage', str(crop)], capture_output=True)
+            if crop.exists():
+                frames.append(crop)
+    if frames:
+        dst = out.parent / 'probe-steps.jpg'
+        for size, q in (('320x240', 40), ('256x192', 35), ('224x168', 30), ('192x144', 30)):
+            subprocess.run(['montage', *map(str, frames), '-tile', '3x', '-geometry', size + '+2+2',
+                            '-quality', str(q), str(dst)], capture_output=True)
+            if dst.exists() and dst.stat().st_size < 24000:
+                break
+        if dst.exists() and dst.stat().st_size >= 24000:
+            subprocess.run(['convert', str(dst), '-quality', '20', str(dst)], capture_output=True)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--build', required=True, type=Path)
+    ap.add_argument('--strict-data', type=Path, action='append', default=[],
+                    help='--data root whose collisions must have identical bytes')
     ap.add_argument('--data', required=True, type=Path, action='append',
                     help='data root; repeat to overlay several (merged with symlinks)')
     ap.add_argument('--runtime', required=True, type=Path)
     ap.add_argument('--llvm-mingw', type=Path, help='for the import list and runtime DLLs')
-    ap.add_argument('--wine', required=True, type=Path, help='directory with wine, wineserver')
+    ap.add_argument('--wine', type=Path, help='directory with wine, wineserver (not needed with --stage-only)')
+    ap.add_argument('--login-probe', action='store_true',
+                    help='after the 60 s screenshot, type a throwaway login on the login screen and press '
+                         'Log In (login_ui.py); reports the client\'s sockets and windows and a step contact '
+                         'sheet. There is no server, so this only shows whether Log In starts a connection.')
+    ap.add_argument('--stage-only', action='store_true',
+                    help='only build the runtime folder (exe, DLLs, data overlay, Cg programs) and exit; '
+                         'used by the M3 server run, which starts the client itself')
     ap.add_argument('--seconds', type=int, default=180)
     ap.add_argument('--require-alive', action='store_true',
                     help='exit 1 unless the client is still running at --seconds with no unhandled '
                          'exception, no message box and a drawn screen (diagnostics are reported either way)')
-    ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win,+seh')
+    ap.add_argument('--winedebug', default='err+all,fixme-all,+dialog,+class,+win,+seh,+fps')
     ap.add_argument('--createbins', action='store_true',
                     help='first run the client with -createbins to build data/bin from text data')
     ap.add_argument('--createbins-seconds', type=int, default=1800)
@@ -357,8 +477,14 @@ def main():
                 copied.append(d)
         note('notice', 'ArmPort M2 smoke imports', ', '.join(dlls))
     note('notice', 'ArmPort M2 smoke runtime DLLs', ', '.join(copied) or 'none')
+    strict_roots = {root.resolve() for root in a.strict_data}
+    if not strict_roots.issubset({root.resolve() for root in a.data}):
+        raise ValueError('--strict-data must also appear in --data')
+    earlier_roots = []
     for root in a.data:
-        merge_tree(root.resolve(), rt / 'data')
+        root = root.resolve()
+        merge_tree(root, rt / 'data', strict=root in strict_roots, earlier_roots=earlier_roots)
+        earlier_roots.append(root)
     # Development (non-FINAL) builds take a folder with data/ and tools/ as the
     # game root (UtilitiesLib file.c addAppropriateDataDirs).
     (rt / 'tools').mkdir()
@@ -368,9 +494,16 @@ def main():
     for f in arb:
         shutil.copy2(f, cg / f.name)
     note('notice', 'ArmPort M2 smoke Cg programs', f'{len(arb)} precompiled ARB programs staged')
+    if a.stage_only:
+        return 0
+    if not a.wine:
+        note('error', 'ArmPort M2 smoke', '--wine is required unless --stage-only')
+        return 1
 
     display = ':99'
-    xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x800x24', '-nolisten', 'tcp'],
+    # 1600x1200 so the whole 1024x768 window is on screen at Wine's default
+    # position (+104+130), as in the M3 server run.
+    xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1600x1200x24', '-nolisten', 'tcp'],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(2)
     env = dict(os.environ, DISPLAY=display, WINEDEBUG=a.winedebug,
@@ -395,6 +528,9 @@ def main():
     start = time.time()
     with open(log, 'wb') as out:
         args = a.args or ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1']
+        if a.login_probe and not a.args:
+            # As in the M3 run: one server entry, 127.0.0.1 (nothing listens here).
+            args = args + ['-db', '127.0.0.1']
         proc = subprocess.Popen([wine, str(rt / exe.name)] + args, cwd=rt,
                                 env=dict(env, ARMPORT_STDIO_LOG='armport_stdio.txt'),
                                 stdout=out, stderr=subprocess.STDOUT)
@@ -408,6 +544,8 @@ def main():
             shot_mid = screenshot_summary(display, rt.parent / 'shot60.xwd')
             titles = subprocess.run(['xwininfo', '-root', '-tree', '-display', display],
                                     capture_output=True, text=True).stdout
+            if a.login_probe:
+                login_probe(rt.parent / 'probe', proc)
             try:
                 proc.wait(timeout=max(0, a.seconds - 60))
             except subprocess.TimeoutExpired:
@@ -454,7 +592,16 @@ def main():
                 break
     if win:
         note('notice', 'ArmPort M2 smoke window trace', '\n'.join(win[:60]))
+    fps = [l.split('fps:', 1)[-1].strip()[:80] for l in lines if ':fps:' in l]
+    if fps:
+        note('notice', 'ArmPort M2 frame rate', f'{len(fps)} samples (Wine +fps, about one per second while frames are presented); '
+             f'first 10: {fps[:10]}; last 20: {fps[-20:]}')
+    else:
+        note('notice', 'ArmPort M2 frame rate', 'no +fps samples (no frame presented through wglSwapBuffers?)')
     report_stdio(rt / 'armport_stdio.txt', 'ArmPort M2 client output')
+    if a.login_probe and (rt / 'armport_stdio.txt').exists():
+        marks = [l[:240] for l in (rt / 'armport_stdio.txt').read_text(errors='replace').splitlines() if l.startswith('ArmPort ')]
+        note('notice', 'ArmPort M2 login probe stages and dialogs', f'{len(marks)} lines\n' + '\n'.join(marks[-40:]))
     # Text the client put into windows and dialog controls (error messages).
     texts = window_texts(lines)
     if texts:
@@ -484,7 +631,8 @@ def main():
             failures.append(f'message box shown: {dialog[0][:200]}')
         # A live client must also be drawing: the last screen needs real content
         # (the login screen samples about 1,200 distinct colours; a blank one 1).
-        m = re.search(r'distinct colors \(sampled\) (\d+)', shot_end or '')
+        # With --login-probe the screen check uses the frame from before the probe.
+        m = re.search(r'distinct colors \(sampled\) (\d+)', (shot_mid if a.login_probe else shot_end) or '')
         if running and (not m or int(m.group(1)) < 64):
             failures.append(f'last screen blank or missing: {shot_end}')
         if failures:

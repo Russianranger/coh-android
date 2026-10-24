@@ -1,0 +1,155 @@
+diff --git a/Common/seq/anim.c b/Common/seq/anim.c
+index d4274dc..bf2dd06 100644
+--- a/Common/seq/anim.c
++++ b/Common/seq/anim.c
+@@ -1,4 +1,5 @@
+ #include <utilitieslib/utils/wininclude.h>
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdlib.h> 
+@@ -2983,11 +2984,14 @@ void modelResetAllFlags(bool freeModels)
+ void modelRebuildTextures(void)
+ {
+     int i;
++    unsigned int traced = 0;
+     StashElement element;
+     StashTableIterator it;
+ 
++    armportZoneTrace("texmodels.welded.begin", NULL);
+     for (i = 0; i < eaSize(&welded_models); i++)
+         addModelDataSingle(welded_models[i]);
++    armportZoneTrace("texmodels.welded.done", NULL);
+ 
+     if (!glds_ht)
+         return;
+@@ -3000,8 +3004,13 @@ void modelRebuildTextures(void)
+         gld = stashElementGetPointer(element);
+         if (!(gld->type & GEO_INIT_FOR_DRAWING))
+             continue;
++        // Bound this diagnostic to 512 geometry files per rebuild.
++        if (traced < 512) armportZoneTrace("texmodels.geo.begin", gld->name);
+         addModelData(gld);
++        if (traced < 512) armportZoneTrace("texmodels.geo.done", gld->name);
++        if (++traced == 512) armportZoneTrace("texmodels.trace.limit", NULL);
+     }
++    armportZoneTrace("texmodels.done", NULL);
+ }
+ #endif
+ 
+diff --git a/Game/src/clientError.c b/Game/src/clientError.c
+index 1ba7b72..3fa3727 100644
+--- a/Game/src/clientError.c
++++ b/Game/src/clientError.c
+@@ -1,4 +1,5 @@
+ #include "clientError.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include "graphics/font.h"
+ #include "UI/uiConsole.h"
+ #include "win/win_init.h"
+@@ -36,6 +37,7 @@ static void letThemKnowWhy()
+ 
+ void clientErrorfCallback(char* errMsg)
+ {
++    armportZoneTrace("client.error", errMsg);
+     printf("%s\n", errMsg);
+     if( strlen(errMsg) < 1000 )
+         printToScreenLog(1,"%s",errMsg);
+@@ -90,6 +92,7 @@ void disableClientCrashReports(void)
+ 
+ void clientFatalErrorfCallback(char* errMsg)
+ {
++    armportZoneTrace("client.fatal", errMsg);
+     winErrorDialog(errMsg, "Fatal Error", 0, 1);
+     if (!fileIsUsingDevData() && client_submit_crash_report) {
+         // Submit crash report
+diff --git a/Game/src/render/tex.c b/Game/src/render/tex.c
+index 274e5f5..7e55fc7 100644
+--- a/Game/src/render/tex.c
++++ b/Game/src/render/tex.c
+@@ -2257,6 +2257,8 @@ static int texCheckForSceneSwaps(BasicTexture *texbind) {
+     // NOTE: Any changes to the texture swapping logic should also be made in checkForTextureSwaps() in Game\entity\entityclient.c
+     for (j=count-1; j>=0; j--) // Top down to allow overriding
+         if (stricmp(texbind->name, swaplist[j]->src)==0) {
++            armportTexTrace("texswap.match", texbind->name);
++            armportTexTrace("texswap.destination", swaplist[j]->dst);
+             if (texbind->load_state[0]==TEX_NOT_LOADED) {
+                 // Never loaded originally, just set up the pointer
+                 texbind->actualTexture = texFind(swaplist[j]->dst);
+@@ -2342,6 +2344,7 @@ void texCheckSwapList(void) {
+     int *didSwap=NULL;
+     TexSwap **swaplist;
+ 
++    armportTexTrace("texswap.list.begin", NULL);
+     swaplist = sceneGetTexSwaps(&count);
+     // Check for any swapped textures, and load them as well
+     if (count) {
+@@ -2357,12 +2360,14 @@ void texCheckSwapList(void) {
+         }
+     }
+ 
++    armportTexTrace("texswap.list.ready", NULL);
+     // assign new textures based on SwapList, and reset any old, non-swapped textures
+     for( i = eaSize(&g_basicTextures)-1 ; i >= 0; i-- ) {
+         if (-1!=(j = texCheckForSwaps(g_basicTextures[i]))) {
+             didSwap[j] = true;
+         }
+     }
++    armportTexTrace("texswap.textures.done", NULL);
+     // check which ones weren't swapped
+     if (!quickload) {
+         for (j=0; j<count; j++) {
+@@ -2377,9 +2382,12 @@ void texCheckSwapList(void) {
+             }
+         }
+     }
++    armportTexTrace("texswap.warnings.done", NULL);
+     if (didSwap)
+         free(didSwap);
++    armportTexTrace("texswap.models.begin", NULL);
+     modelRebuildTextures();
++    armportTexTrace("texswap.models.done", NULL);
+ }
+ 
+ void texLoadQueueFinish(void) // Directs the loader to stop queueing load calls and begin loading all queued graphics
+diff --git a/Game/src/win/win_init.c b/Game/src/win/win_init.c
+index 2541e47..6d7d8f9 100644
+--- a/Game/src/win/win_init.c
++++ b/Game/src/win/win_init.c
+@@ -1,3 +1,5 @@
++// ArmPort opt-in dialog diagnostics; never dismiss or suppress a dialog.
++#include <utilitieslib/utils/armport_zone_trace.h>
+ //#include <winsock2.h>
+ #include <utilitieslib/components/StashTable.h>
+ #include <utilitieslib/utils/wininclude.h>
+@@ -1593,6 +1595,7 @@ void winRenderStall(void)
+ 
+ void winErrorDialog(char *str, char* title, char* fault, int highlight)
+ {
++    armportZoneTrace("dialog.error.begin", str);
+     if (rdrInThread()) {
+         winErrorQueueDialog(WINDIALOG_ERROR, str, title, fault, highlight);
+         wtFlushMessages(render_thread);
+@@ -1606,12 +1609,14 @@ void winErrorDialog(char *str, char* title, char* fault, int highlight)
+     }
+ 
+     errorDialog(hwnd, str, title, fault, highlight);
++    armportZoneTrace("dialog.error.done", title);
+ 
+     inpClear();
+ }
+ 
+ void winMsgAlert(char *str)
+ {
++    armportZoneTrace("dialog.alert.begin", str);
+     if (rdrInThread()) {
+         winErrorQueueDialog(WINDIALOG_MSG, str, "City of Heroes Alert", NULL, 0);
+         wtFlushMessages(render_thread);
+@@ -1624,6 +1629,7 @@ void winMsgAlert(char *str)
+     }
+ 
+     msgAlert(hwnd, str);
++    armportZoneTrace("dialog.alert.done", NULL);
+ 
+     inpClear();
+ }

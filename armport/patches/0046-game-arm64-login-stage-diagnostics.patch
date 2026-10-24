@@ -1,0 +1,49 @@
+diff --git a/Game/src/UI/uiDialog.c b/Game/src/UI/uiDialog.c
+index 3a20763..aacd96d 100644
+--- a/Game/src/UI/uiDialog.c
++++ b/Game/src/UI/uiDialog.c
+@@ -151,6 +151,12 @@ static void dialogImplementation( int type, float x, float y, float wd, float ht
+      Dialog *dlog;
+     int i;
+ 
++#if defined(__aarch64__) && defined(__MINGW32__)
++    // ArmPort diagnostic (ARMPORT_STDIO_LOG only): the text of every dialog.
++    if (getenv("ARMPORT_STDIO_LOG"))
++        printf("ArmPort dialog: %.300s\n", txt ? txt : "(null)");
++#endif
++
+     if( !dialogQueue )
+         eaCreate( &dialogQueue );
+ 
+diff --git a/Game/src/UI/uiLogin.c b/Game/src/UI/uiLogin.c
+index 6868c8d..b6e7680 100644
+--- a/Game/src/UI/uiLogin.c
++++ b/Game/src/UI/uiLogin.c
+@@ -4236,6 +4236,27 @@ void loginMenu()
+ 
+     int dbTimeoutSeconds = s_loginTimedOut();
+ 
++#if defined(__aarch64__) && defined(__MINGW32__)
++    // ArmPort diagnostic (ARMPORT_STDIO_LOG only): login stage changes and a
++    // heartbeat, so CI can tell which login screen the client is on.
++    {
++        static int armportStage = -1, armportSelect = -1, armportFrames = 0;
++        static U32 armportLastMs = 0;
++        U32 armportNow = (U32)timerMsecsSince2000();
++        armportFrames++;
++        if (getenv("ARMPORT_STDIO_LOG") && ((int)s_loggedIn_serverSelected != armportStage
++            || (int)selectCharacterState != armportSelect || armportNow - armportLastMs > 10000))
++        {
++            printf("ArmPort login: stage %d select %d player %d of %d timeout %d frames %d\n",
++                   (int)s_loggedIn_serverSelected, (int)selectCharacterState, gPlayerNumber,
++                   db_info.player_count, dbTimeoutSeconds, armportFrames);
++            armportStage = (int)s_loggedIn_serverSelected;
++            armportSelect = (int)selectCharacterState;
++            armportLastMs = armportNow;
++        }
++    }
++#endif
++
+     if (dbhasError())
+     {
+         dialogStd(DIALOG_OK, dbGetError(), NULL, NULL, s_quitToLogin, NULL, 0 );

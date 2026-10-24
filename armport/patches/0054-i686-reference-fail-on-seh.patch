@@ -1,0 +1,71 @@
+diff --git a/Common/player/pmotion.c b/Common/player/pmotion.c
+index 982d37d..87808d2 100644
+--- a/Common/player/pmotion.c
++++ b/Common/player/pmotion.c
+@@ -791,7 +791,10 @@ void pmotionIJustExitedAVolume(Entity* e, Volume* volume)
+     // some day we'll have time to figure out how to use deftrackers properly
+     // so that the crappy exited-a-volume pointer is tracked.
+     // Use SEH to try to catch an invalid access.
++    // i686 reference: do not recover faults; any SEH invalidates replay.
++#if !defined(COH_ARMPORT_REFERENCE_I686)
+     __try
++#endif
+     {
+         
+         if(ENTTYPE(e)==ENTTYPE_PLAYER && volume->volumePropertiesTracker &&
+@@ -841,10 +844,12 @@ void pmotionIJustExitedAVolume(Entity* e, Volume* volume)
+ #endif
+         }
+     }
++#if !defined(COH_ARMPORT_REFERENCE_I686)
+     __except(EXCEPTION_EXECUTE_HANDLER)
+     {
+         // catch any exceptions
+     }
++#endif
+ }
+ 
+ void pmotionVolumeTrackersInvalidate()
+diff --git a/Game/src/game.c b/Game/src/game.c
+index a8406fd..9b8256c 100644
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -1473,10 +1473,15 @@ static unsigned __stdcall keepMemoryThread(void* unusedParam){
+                 PERFINFO_AUTO_START("keepMemory", 1);
+ 
+                 while(!stop && acc < 64 * SQR(1024) && address < nextAddress){
+-                    __try{
++#if !defined(COH_ARMPORT_REFERENCE_I686)
++                    __try
++#endif
++                    {
+                         int x = *address;
+                     }
++#if !defined(COH_ARMPORT_REFERENCE_I686)
+                     __except(stop = 1, EXCEPTION_EXECUTE_HANDLER){}
++#endif
+                     address += systemInfo.dwPageSize;
+                     acc += systemInfo.dwPageSize;
+                 }
+diff --git a/Game/src/sound/ogg_decode.c b/Game/src/sound/ogg_decode.c
+index 544b108..9dac617 100644
+--- a/Game/src/sound/ogg_decode.c
++++ b/Game/src/sound/ogg_decode.c
+@@ -291,9 +291,15 @@ int oggDecode(DecodeState *decode)
+             
+             PERFINFO_AUTO_START("ov_read", 1);
+             
+-                __try{
++#if !defined(COH_ARMPORT_REFERENCE_I686)
++                __try
++#endif
++                {
+                     bytes=ov_read(&ogg->vf,decode->decode_buffer + decode->decode_count,decode->decode_len - decode->decode_count,0,2,1,&ogg->current_section);
+-                }__except(wouldCrash = 1, EXCEPTION_EXECUTE_HANDLER){}
++                }
++#if !defined(COH_ARMPORT_REFERENCE_I686)
++                __except(wouldCrash = 1, EXCEPTION_EXECUTE_HANDLER){}
++#endif
+                 
+                 if(wouldCrash){
+                     handleOggCrash(decode);

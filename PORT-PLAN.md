@@ -18,10 +18,12 @@ on its existing Wine/FEX runtime.
 
 ## Roles and workflow
 
-- Claude leads. Each milestone is a pull request from `armport/<milestone>`
-  into `COH-ArmPort`.
-- Sol reviews each pull request (PR comment, or `reviews/PR-<n>.md` on
-  `armport-reviews`). Claude addresses the review, then merges.
+- One agent leads, one reviews. M0-M2: Claude led, Sol reviewed. From
+  2026-10-23 (M3 onward, until the user says otherwise): Astra leads, Claude
+  reviews; the handoff is `armport/HANDOFF.md`.
+- Each milestone is a pull request from `armport/<milestone>` into
+  `COH-ArmPort`. The reviewer reviews it (PR comment, or `reviews/PR-<n>.md`
+  on `armport-reviews`); the lead addresses the review, then merges.
 - The user gets a daily summary and an alert when a milestone passes, a Thor
   test is needed, or work is blocked.
 

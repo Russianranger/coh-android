@@ -1,0 +1,33 @@
+diff --git a/Game/src/render/model_cache.c b/Game/src/render/model_cache.c
+index fe9480b..76ead17 100644
+--- a/Game/src/render/model_cache.c
++++ b/Game/src/render/model_cache.c
+@@ -401,12 +401,13 @@ void modelSetupVertexObject(Model *model, int useVbos, BlendModeType blend_mode
+         matidx_bytes = sizeof(boneinfo->matidxs[0]) * model->vert_count;
+     }
+ 
++    /* Queue payload starts with a native VBO pointer on both producer and consumer. */
+     vert_total = vert_bytes + norm_bytes + st1_bytes + st2_bytes + st3_bytes + tangent_bytes + weight_bytes + matidx_bytes;
+-    total = vert_total + tri_bytes + sizeof(U32) + model->tex_count * sizeof(TexID);
++    total = vert_total + tri_bytes + sizeof(VBO*) + model->tex_count * sizeof(TexID);
+     data = rdrQueueAlloc(DRAWCMD_CREATEVBO,total);
+ 
+     *((VBO**)data)    = vbo;
+-    vbo->tex_ids    = (TexID*) (data+4);
++    vbo->tex_ids    = (TexID*) (data+sizeof(VBO*));
+      vbo->tris        = (int*) (vbo->tex_ids + model->tex_count);
+     modelGetTris(vbo->tris, model);
+ 
+diff --git a/Game/src/render/thread/rt_model_cache.c b/Game/src/render/thread/rt_model_cache.c
+index 1537c90..ba84879 100644
+--- a/Game/src/render/thread/rt_model_cache.c
++++ b/Game/src/render/thread/rt_model_cache.c
+@@ -75,7 +75,7 @@ void createVboDirect(U8 *data)
+     VBO        *vbo;
+ 
+     vbo        = *(VBO**)    data;
+-    tex_ids    = (TexID*)    (data+4);
++    tex_ids    = (TexID*)    (data+sizeof(VBO*));
+     tris    = (int*)    (tex_ids + vbo->tex_count);
+     verts    = (Vec3*)    (tris + vbo->tri_count * 3);
+ 

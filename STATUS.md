@@ -1,30 +1,40 @@
 # COH-ArmPort status
 
-Updated 2026-10-22.
-
-M0 survey: merged (PR #3). Route: build the original client as an ARM64
+Updated 2026-10-24.M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
 
 M1 libraries: merged (PR #4, approved by Sol). The original textparser built
 for ARM64 reads bodyparts.bp and the shipped BodyParts.bin to 28 matching
 entries under the app's Wine. Details: armport/M1-REPORT.md.
 
-M2 client boots: login screen reached, in review (branch armport/m2-client;
-43 patches, upstream/ untouched). Details: armport/M2-REPORT.md.
+M2 client boots: merged (PR #5, approved by Sol; 43 patches, upstream/
+untouched). Details: armport/M2-REPORT.md.
 - CityOfHeroes.exe (ARM64 Windows) runs under the app's ARM64 Wine on Xvfb
   and Mesa and shows the login screen with the game's own UI; still running
   with no exceptions at 180 s (CI run 39742143066, screen in
   armport/evidence/m2-login-screen.jpg).
-- Not yet run against the CI server: that starts M3's scripted login.
-- Data bins are built in CI by the OptDebug client (-createbins); Cg programs
-  are compiled to ARB by the original cgc.exe and loaded by the stand-in.
+- Data bins built in CI by the OptDebug client; Cg compiled to ARB by cgc.exe.
 - 64-bit bugs fixed one by one as they stopped the client
   (armport/notes/64BIT-AUDIT.md). Wine places a 64-bit program's memory above
   4 GB (measured), so truncated pointers have to be fixed, not tolerated.
 - Reduced function: no ragdolls (PhysX), CgFX effects (SSAO, filters), runtime
   DXT compression, SSE reported absent.
 
-CI uses the reviewed client asset bundle the repo's other runtime workflows
-use (release asset 588984151) for fonts, UI textures and models.
-
-Next: Sol's review of M2, then M3 (CI server, scripted login to Atlas Park).
+CI data: the reviewed client asset bundle (release asset 588984151).
+M3 into Atlas (66 patches including partial replay observers; Astra leads,
+see armport/HANDOFF.md):
+- CI job server-run: the repository's qualified ARM64 game stack (original
+  DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
+  loopback-only network) plus the ARM64 client, login typed on Xvfb.
+- Run 39960894368: the ARM64 client logged in through its own UI, chose the
+  TestClient-created character and is connected on Atlas Park in the
+  database (loaded, map 1), still connected after the screenshots.
+- Fixes on the way: SOCKET width (0044), version-check opt-in for the
+  fake-auth server (0045), empty world-group slots (0047), login-stage log
+  (0046, diagnostics only).
+- Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
+- Run 40100355259: grid controls pass, Atlas still faults in groupGridActivate.
+- 40106727443: both targets fail on 541 dispatch errors; inventories/counts match.
+- Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
+  remains incomplete. 166 reviewed files selected; 14 uncovered files need approval.
+- M4 40106299491: boot passes, power search faults; diagnostic run 40110421624.

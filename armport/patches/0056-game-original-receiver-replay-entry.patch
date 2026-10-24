@@ -1,0 +1,119 @@
+diff --git a/Game/CMakeLists.txt b/Game/CMakeLists.txt
+index 85ccb49..6a8a1bf 100644
+--- a/Game/CMakeLists.txt
++++ b/Game/CMakeLists.txt
+@@ -1251,6 +1251,9 @@ set_target_properties(Game PROPERTIES
+ 	OUTPUT_NAME "CityOfHeroes")
+ 
+ target_include_directories(Game PRIVATE src)
++if(COX_ARMPORT_WINDOWS)
++	target_sources(Game PRIVATE "${COX_ARMPORT_DIR}/replay/receiver.c")
++endif()
+ target_link_libraries(Game PRIVATE
+ 	Common UtilitiesLib FreeType::FreeType GLEW::GLEW JPEG::JPEG
+ 	jpge::jpgd Vorbis::vorbisfile PhysX::Loader PhysX::Cooking
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+new file mode 100644
+index 0000000..5ed991e
+--- /dev/null
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -0,0 +1,18 @@
++#pragma once
++
++// Test-only original-receiver entry. Inert unless ARMPORT_REPLAY_DIR is set.
++// After normal game_beforeLoop startup, replay additionally calls
++// entReceiveInit (map-move receive reset), commNewInputPak (per-record output
++// isolation), and setAssertMode (stderr + exit). No hand-built entity/world
++// initialization replaces normal startup. See armport/replay/receiver.c.
++#if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
++#define COH_ARMPORT_REPLAY 1
++typedef struct Packet Packet;
++typedef struct NetLink NetLink;
++void armportReplayMaybeRun(void);
++void armportReplayUnknownCommand(int command);
++int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
++#else
++#define armportReplayMaybeRun() ((void)0)
++#define armportReplayUnknownCommand(command) ((void)0)
++#endif
+diff --git a/Game/src/clientcomm/clientcomm.c b/Game/src/clientcomm/clientcomm.c
+index f46d8b9..1853494 100644
+--- a/Game/src/clientcomm/clientcomm.c
++++ b/Game/src/clientcomm/clientcomm.c
+@@ -1,4 +1,5 @@
+ #include "clientcomm/clientcomm.h"
++#include "clientcomm/armport_replay.h"
+ #include <stdio.h>
+ #include <float.h>
+ #include <utilitieslib/utils/armport_zone_trace.h>
+@@ -1416,6 +1417,7 @@ static int handleGameCmd(Packet *pak, int cmd)
+                         pos += sprintf(pos, "%d, ", cmds[i]);
+                     }
+ 
++                    armportReplayUnknownCommand(cmd);
+                     assertmsg(0, assert_buffer );
+                 }
+                 break;
+@@ -1435,10 +1437,11 @@ static int handleGameCmd(Packet *pak, int cmd)
+     return FALSE;
+ }
+ 
++static int commHandleMessageReceive(Packet *pak, int cmd, NetLink *link, unsigned int cursorStart);
++
+ static int commHandleMessage(Packet *pak,int cmd,NetLink *link)
+ {
+     unsigned int cursorStart = pak->stream.cursor.byte * 8 + pak->stream.cursor.bit;
+-    int ret = 1;
+     
+     logPacketInfo(
+         //"Cmd, Id, Compress, Creation, Debug, RetransmitQueue, SendQueue, Ordered, OrderedId, Reliable, RetransCount, SibCount, SibId, SibPart, TruncId, Uid, XferTime"
+@@ -1464,6 +1467,13 @@ static int commHandleMessage(Packet *pak,int cmd,NetLink *link)
+ 
+     commGetStats(link, pak);
+ 
++    return commHandleMessageReceive(pak, cmd, link, cursorStart);
++}
++
++// ArmPort replay enters below transport statistics; the receive switch is shared.
++static int commHandleMessageReceive(Packet *pak, int cmd, NetLink *link, unsigned int cursorStart)
++{
++    int ret = 1;
+ #ifdef SHOW_ALL_SERVER_CMDS
+     if (cmd!=SERVER_UPDATE) {
+         consoleSetFGColor(COLOR_GREEN | COLOR_BRIGHT);
+@@ -1637,6 +1647,13 @@ static int commHandleMessage(Packet *pak,int cmd,NetLink *link)
+     return ret;
+ }
+ 
++#ifdef COH_ARMPORT_REPLAY
++int commArmPortReplayDispatch(Packet *pak, int cmd, NetLink *link)
++{
++    return commHandleMessageReceive(pak, cmd, link, bsGetCursorBitPosition(&pak->stream));
++}
++#endif
++
+ int commStart(char *ip_str,int port,int connect_cookie)
+ {
+     Packet    *pak;
+diff --git a/Game/src/game.c b/Game/src/game.c
+index 9b8256c..22064df 100644
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -12,6 +12,7 @@
+ #include "graphics/sun.h"
+ #include "edit/edit.h"
+ #include "clientcomm/clientcomm.h"
++#include "clientcomm/armport_replay.h"
+ #include "entity/entrecv.h"
+ #include "player/player.h"
+ #include "edit/edit_cmd.h"
+@@ -2181,6 +2182,9 @@ void game_beforeLoop(int isCostumeCreator, int timer)
+     // the old driver warning on the login page.  The dialog is there just in case the drivers
+     // are bad and the game won't initialize.
+     rdrClearOldDriverCheck();
++
++    // Opt-in qualification only, after the original startup path completes.
++    armportReplayMaybeRun();
+ }
+ 
+ void game_setProgressString(const char *progressString, const char *userMessageID, PROGRESSDIALOGTYPE type)
