@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-23.
+Updated 2026-10-24.
 
 M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
@@ -35,6 +35,7 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Runs 40042636088/40043254025 stop at texqueue.swaps.begin after texture drain.
-- Patch 0050 fixes a reproduced worker lost-wake race: notes/WORKER-QUEUE.md.
-- Replay inputs recovered; method agreed; 0056 driver compiles, execution/state comparison pending.
+- Run 40054327137 reaches the access-level QA notice; Atlas remains unrendered.
+- Harness acknowledges only that traced notice on the mapped client's window.
+- Replay run 40057090615: 117 cursor/ACK checks pass on ARM64/i686; full state
+  comparison remains incomplete. Fatal-Wine-log rejection is now integrated.

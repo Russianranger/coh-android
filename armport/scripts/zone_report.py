@@ -34,6 +34,8 @@ def sections(evidence, client):
               if line.startswith('ArmPort zone: ')]
     if status.get('frame_checks'):
         yield 'ArmPort M3 final frame check', json.dumps(status['frame_checks'][-1], separators=(',', ':'))
+    if status.get('qa_notice_actions'):
+        yield 'ArmPort M3 QA notice input', json.dumps(status['qa_notice_actions'], separators=(',', ':'))
     yield 'ArmPort M3 zone stages', tail('\n'.join(line for line in traces if ' library.' not in line)) or 'no zone traces'
     yield 'ArmPort M3 library progress', tail('\n'.join(line for line in traces if ' library.' in line)) or 'no library traces'
     for path in sorted(evidence.glob('stall-*.txt'))[:2]:

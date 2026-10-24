@@ -35,7 +35,7 @@ import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
-from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login  # noqa: E402
+from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -234,8 +234,13 @@ def drive_login(a, screen, state, status, evidence):
             time.sleep(30)
             png = screen.shot('zone-loading')
             stdio = a.client / 'armport_stdio.txt'
-            check = zone_frame.evaluate(png, screen.window(),
-                stdio.read_text(errors='replace') if stdio.exists() else '', screen.text)
+            stdio_text = stdio.read_text(errors='replace') if stdio.exists() else ''
+            if acknowledge_qa_notice(screen, stdio_text, stall_snapshot.client_pids(a.client), status):
+                # This pre-input frame cannot establish rendering. The next
+                # iteration must observe the original load/READY and image checks.
+                rendered = 0
+                continue
+            check = zone_frame.evaluate(png, screen.window(), stdio_text, screen.text)
             status['frame_checks'].append(check)
             mean = check['frame']['mean'] if check['frame'] else None
             status['loading_brightness'].append(round(mean, 3) if mean is not None else None)

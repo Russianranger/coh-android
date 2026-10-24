@@ -4,10 +4,54 @@ and the M2 boot test's login probe (smoke_run.py --login-probe): screenshots,
 OCR-located clicks and typing on the Xvfb display, with the control positions
 measured from a real frame as fallback."""
 import os
+import re
 import subprocess
 import time
 
 DISPLAY = ':99'
+
+QA_NOTICE = ('You are seeing pop-up errors because you have Access Level (9) or you are on a QA server. '
+             'These will not be seen by customers.')
+
+
+def pending_qa_notice(stdio):
+    """Only the known informational notice, not arbitrary errors or asserts."""
+    pending = None
+    for event in re.finditer(r'^ArmPort zone: \d+ (dialog\.(?:alert|error)\.(?:begin|done)|client\.fatal)\s*([^\r\n]*)',
+                             stdio, re.M):
+        kind, detail = event.groups()
+        if kind == 'client.fatal':
+            return False
+        pending = detail.split(' tid=')[0] if kind == 'dialog.alert.begin' else None
+    return pending is not None and ' '.join(pending.split()) == QA_NOTICE
+
+
+def acknowledge_qa_notice(screen, stdio, pids, status):
+    """Press the original dialog's OK button via Return; preserve all evidence.
+
+    msgAlert uses ErrorDlg with the default title Program Error (winutil.c).
+    Require its exact title and the one mapped client process on our X display.
+    Never dismiss a texture/error/crash dialog merely because it has that title.
+    """
+    attempts = status.setdefault('qa_notice_actions', [])
+    if len(attempts) >= 3 or len(pids) != 1 or not pending_qa_notice(stdio):
+        return False
+    result = sh('xdotool', 'search', '--onlyvisible', '--pid', str(pids[0]),
+                '--name', '^Program Error$')
+    windows = result.stdout.split()
+    if result.returncode or len(windows) != 1 or not windows[0].isdigit():
+        return False
+    before = screen.shot('qa-notice-before')
+    focused = sh('xdotool', 'windowfocus', '--sync', windows[0])
+    action = {'window': windows[0], 'pid': pids[0], 'before': str(before),
+              'focus_exit': focused.returncode, 'return_sent': False}
+    attempts.append(action)
+    if focused.returncode:
+        return False
+    screen.key('Return')
+    action['return_sent'] = True
+    action['after'] = str(screen.shot('qa-notice-after'))
+    return True
 
 
 def sh(*cmd, timeout=60, check=False):

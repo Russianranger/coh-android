@@ -151,3 +151,9 @@ The original receive assertion remains intact and no synthetic group count,
 breakable object or packet byte is substituted. No rendered-map completion
 is claimed by this load. Both local OptDebug Game links (`ninja -j2 Game`)
 pass with this prerequisite; runtime qualification remains pending.
+
+Run 40057090615 (1c91081d), ARM64 job 120762415670 and i686 job
+120762415580, passes all 117 cursor/ACK checks for ID1-a, ID1-b and ID31.
+Native INITIAL command boundaries match. Both completion flags remain false;
+this is not full receiver-state equivalence. The prerequisite fixes and
+review 5636418576 fatal-Wine-log rejection are now integrated into M3.
