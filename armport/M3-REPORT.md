@@ -5,6 +5,11 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 
 ## Review 5638956748 and approved follow-up (2026-10-24)
 
+Source/harness commit `07c536d7fe5d7748ced9e03845c53b0b3cf907d4` runs
+[build/Atlas 40113107671](https://github.com/Russianranger/coh-android/actions/runs/40113107671)
+and [replay 40113107670](https://github.com/Russianranger/coh-android/actions/runs/40113107670).
+The PR integration adds only these CI links; runtime checks are pending.
+
 The [review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638956748)
 verified the 166-file selection, trace IDs, final drain and NULL diagnostic.
 The [user decision](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6386664502)

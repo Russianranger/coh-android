@@ -65,7 +65,8 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
-Review 5638956748 follow-up is being qualified. The user approved the 14-name
+Review 5638956748 follow-up code 07c536d7 is being qualified by build/Atlas
+40113107671 and replay 40113107670 on armport/m3-review8. The user approved the 14-name
 PIGG fetch and the narrow Atlas startup RPC exception allowance; recorded in
 PR #6 comment 6386664502. Do not request those approvals again.
 
