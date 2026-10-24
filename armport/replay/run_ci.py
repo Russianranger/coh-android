@@ -73,16 +73,20 @@ def check_exception_control(path):
     raise ValueError('Host failed to reject the real handled-SEH trace')
 
 
-def check_client_output(path):
-    errors = client_errors.inventory(path, path.with_name('client-errors.json'))
+def check_client_output(path, runtime=None):
+    errors = client_errors.inventory(path, path.with_name('client-errors.json'),
+                                     path.with_name('zone-trace.jsonl'))
+    if runtime is not None:
+        lookup = client_errors.geometry_lookup(errors, runtime / 'data')
+        path.with_name('error-geometry-files.json').write_text(json.dumps(lookup, indent=2) + '\n')
     if errors['count']:
         raise ValueError(f"Game error/assert: {errors['count']} reports, {errors['unique']} distinct; "
                          'see client-errors.json: ' + errors['errors'][0]['text'][:300])
 
 
-def check_output(path, expected, initial_id, wine_output):
+def check_output(path, expected, initial_id, wine_output, runtime=None):
     check_wine_output(wine_output)
-    check_client_output(path.parent / 'client-stdio.txt')
+    check_client_output(path.parent / 'client-stdio.txt', runtime)
     if path.stat().st_size > 1024 * 1024:
         raise ValueError('receiver output exceeds cursor-stage bound')
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -210,7 +214,8 @@ def main():
             prefix = folder / 'wineprefix'
             env = dict(os.environ, DISPLAY=display, WINEPREFIX=str(prefix),
                        WINEDEBUG='err+all,fixme-all,+seh', WINEDLLOVERRIDES='mscoree,mshtml=',
-                       ARMPORT_LOOSE_DATA='1', ARMPORT_STDIO_LOG='Z:' + str(folder / 'client-stdio.txt').replace('/', '\\'))
+                       ARMPORT_LOOSE_DATA='1', ARMPORT_STDIO_LOG='Z:' + str(folder / 'client-stdio.txt').replace('/', '\\'),
+                       ARMPORT_ZONE_LOG='Z:' + str(folder / 'zone-trace.jsonl').replace('/', '\\'))
             # Bootstrap without the replay environment: only the actual game gets it.
             with (folder / 'bootstrap-output.txt').open('wb') as bootstrap, \
                     (folder / 'wine-output.txt').open('wb') as log:
@@ -239,7 +244,7 @@ def main():
                     if run.returncode != 2:
                         raise RuntimeError(f'{label}: expected incomplete-stage exit 2, got {run.returncode}')
                     result = check_output(folder / 'receiver.jsonl', expected, initial_id,
-                                          folder / 'wine-output.txt')
+                                          folder / 'wine-output.txt', args.runtime)
                     report['runs'].append(dict(label=label, **result))
                     print(json.dumps(report['runs'][-1]), flush=True)
                     notice('ArmPort replay ' + args.target + ' ' + label, report['runs'][-1])

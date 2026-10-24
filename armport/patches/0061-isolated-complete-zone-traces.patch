@@ -1,0 +1,106 @@
+diff --git a/Game/src/win/win_init.c b/Game/src/win/win_init.c
+index 6d7d8f9..a249dcc 100644
+--- a/Game/src/win/win_init.c
++++ b/Game/src/win/win_init.c
+@@ -2110,7 +2110,7 @@ int WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstance,
+     int        noExceptionHandler=0;
+     FILE    *file;
+ 
+-#if defined(__aarch64__) && defined(__MINGW32__)
++#if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
+     {
+         // ArmPort: a GUI program has no usable stdout/stderr under Wine; when
+         // ARMPORT_STDIO_LOG names a file, send both there (diagnostics only).
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index 0c4ce96..191a22d 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -5,14 +5,75 @@
+ #if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <utilitieslib/utils/wininclude.h>
+ // file.h replaces fprintf with x_fprintf(FileWrapper *). stderr is a CRT
+ // FILE *, so that macro would reinterpret its contents and can call
+ // fwrite with a null stream. Use the CRT function; preserve caller macros.
+ #pragma push_macro("fprintf")
+ #undef fprintf
++// 0061: full, ASCII JSON records on a dedicated handle. A process/file lock
++// covers each append, including writers in other translation units/threads.
++// No printf/FileWrapper buffering, truncation, timestamps or thread IDs enter
++// the message used to compare data errors between architectures.
++static char *armportTraceJsonString(char *out, const char *text)
++{
++    static const char hex[] = "0123456789abcdef";
++    const unsigned char *p = (const unsigned char *)(text ? text : "");
++    *out++ = '"';
++    for (; *p; ++p)
++    {
++        if (*p == '"' || *p == '\\') { *out++ = '\\'; *out++ = *p; }
++        else if (*p < 32 || *p >= 127)
++        {
++            *out++ = '\\'; *out++ = 'u'; *out++ = '0'; *out++ = '0';
++            *out++ = hex[*p >> 4]; *out++ = hex[*p & 15];
++        }
++        else *out++ = *p;
++    }
++    *out++ = '"';
++    return out;
++}
++
++static void armportZoneTraceFile(const char *stage, const char *detail)
++{
++    char path[32768], *record = NULL, *p;
++    DWORD length = GetEnvironmentVariableA("ARMPORT_ZONE_LOG", path, sizeof(path));
++    DWORD written = 0, bytes = 0;
++    size_t capacity;
++    HANDLE file = INVALID_HANDLE_VALUE;
++    OVERLAPPED lock = {0};
++    int locked = 0, ok = 0;
++    if (!length) return; // opt-in only
++    if (length >= sizeof(path)) goto done;
++    // Bound allocation without silently shortening the evidence.
++    if (strlen(stage) > 1024 || (detail && strlen(detail) > 1024 * 1024)) goto done;
++    capacity = 6 * (strlen(stage) + (detail ? strlen(detail) : 0)) + 32;
++    record = (char *)HeapAlloc(GetProcessHeap(), 0, capacity);
++    if (!record) goto done;
++    p = record;
++    memcpy(p, "{\"stage\":", 9); p += 9;
++    p = armportTraceJsonString(p, stage);
++    memcpy(p, ",\"text\":", 8); p += 8;
++    p = armportTraceJsonString(p, detail);
++    *p++ = '}'; *p++ = '\n';
++    bytes = (DWORD)(p - record);
++    file = CreateFileA(path, FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE,
++                       NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
++    if (file == INVALID_HANDLE_VALUE) goto done;
++    locked = LockFileEx(file, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD, &lock);
++    if (!locked) goto done;
++    ok = WriteFile(file, record, bytes, &written, NULL) && written == bytes;
++done:
++    if (locked) UnlockFileEx(file, 0, MAXDWORD, MAXDWORD, &lock);
++    if (file != INVALID_HANDLE_VALUE) CloseHandle(file);
++    if (record) HeapFree(GetProcessHeap(), 0, record);
++    if (!ok) fprintf(stderr, "ARMPORT_ZONE_LOG_FAILED\n");
++}
++
+ static void armportZoneTrace(const char *stage, const char *detail)
+ {
++    armportZoneTraceFile(stage, detail);
+     if (getenv("ARMPORT_STDIO_LOG"))
+         fprintf(stderr, "ArmPort zone: %lu %s %.240s tid=%lu\n",
+                 (unsigned long)GetTickCount(), stage, detail ? detail : "",
+diff --git a/libs/UtilitiesLib/src/utils/utils.c b/libs/UtilitiesLib/src/utils/utils.c
+index b4fa069..46efaf9 100644
+--- a/libs/UtilitiesLib/src/utils/utils.c
++++ b/libs/UtilitiesLib/src/utils/utils.c
+@@ -449,7 +449,7 @@ static void fixStdio(int fh, DWORD std_handle)
+ void newConsoleWindow()
+ {
+     g_isConsoleOpen = true;
+-#if defined(__aarch64__) && defined(__MINGW32__)
++#if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
+     // ArmPort: stdout/stderr already go to ARMPORT_STDIO_LOG (win_init.c);
+     // do not move them to a console window.
+     if (getenv("ARMPORT_STDIO_LOG"))

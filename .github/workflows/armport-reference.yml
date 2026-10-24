@@ -81,11 +81,7 @@ jobs:
         with:
           path: ${{ runner.temp }}/atlas-supplement
           key: ${{ steps.atlas-supplement.outputs.cache-primary-key }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: armport-reviewed-atlas-supplement
-          path: ${{ runner.temp }}/atlas-supplement
-          retention-days: 90
+      # Keep data in the cache; the existing pinned donor remains the fallback.
 
   reference-build:
     needs: assets
@@ -109,6 +105,7 @@ jobs:
             !/upstream/ouroboros/data/
             /upstream/i24/data/
             /android/runtime-lock.json
+            /assets/atlas-world-supplement-manifest.json
           sparse-checkout-cone-mode: false
           lfs: false
       - name: Check replay output rejection and fixture identities
@@ -253,7 +250,7 @@ jobs:
       - name: Stage same data, bins and shaders for replay
         run: |
           python3 armport/scripts/smoke_run.py --stage-only --build "$RUNNER_TEMP/reference-bin" \
-            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/client-bins" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" \
             --cg-dir "$RUNNER_TEMP/cg-arb" --runtime "$RUNNER_TEMP/replay-runtime"
       - name: Execute all original receiver dispatches (incomplete milestone stage)
         run: |
@@ -268,6 +265,35 @@ jobs:
           name: armport-receiver-${{ matrix.target }}
           path: ${{ runner.temp }}/replay-results
           if-no-files-found: warn
+          retention-days: 14
+
+  error-comparison:
+    needs: reference-build
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: armport
+          lfs: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-arm64
+          path: ${{ runner.temp }}/compare/arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-i686
+          path: ${{ runner.temp }}/compare/i686
+      - name: Diagnose shared data errors and architecture-only errors
+        run: |
+          python3 armport/replay/compare_errors.py --root "$RUNNER_TEMP/compare" \
+            --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/error-comparison.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-error-comparison
+          path: ${{ runner.temp }}/error-comparison.json
           retention-days: 14
 
   partial-state-comparison:

@@ -7,6 +7,7 @@ import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import stage_atlas_supplement as atlas
+import smoke_run
 
 
 class AtlasSupplement(unittest.TestCase):
@@ -52,3 +53,30 @@ class AtlasSupplement(unittest.TestCase):
     def test_recovery_rejects_other_apk(self):
         with self.assertRaisesRegex(ValueError, 'APK identity'):
             atlas.recover(self.archive, self.root / 'out')
+
+    def test_reviewed_subset_requires_matching_size_and_hash(self):
+        import copy
+        atlas.verify_reviewed_subset(self.document, self.document)
+        for mutation in ('missing', 'sha256', 'bytes'):
+            reviewed = copy.deepcopy(self.document)
+            if mutation == 'missing':
+                reviewed['files'].clear()
+            else:
+                reviewed['files'][self.name][mutation] = 0
+            with self.assertRaisesRegex(ValueError, 'repository manifest'):
+                atlas.verify_reviewed_subset(self.document, reviewed)
+
+    def test_runtime_collision_checked_before_any_supplement_copy(self):
+        source, dest = self.root / 'supplement', self.root / 'runtime'
+        source.mkdir(); dest.mkdir()
+        (source / 'new.texture').write_bytes(b'new')
+        (source / 'overlap.texture').write_bytes(b'reviewed')
+        (dest / 'OVERLAP.texture').write_bytes(b'different')
+        with self.assertRaisesRegex(ValueError, 'earlier data'):
+            smoke_run.merge_tree(source, dest, strict=True)
+        self.assertFalse((dest / 'new.texture').exists())
+        self.assertEqual((dest / 'OVERLAP.texture').read_bytes(), b'different')
+        (dest / 'OVERLAP.texture').write_bytes(b'reviewed')
+        self.assertEqual(smoke_run.merge_tree(source, dest, strict=True), 1)
+        self.assertFalse((dest / 'overlap.texture').exists())
+        self.assertEqual((dest / 'new.texture').read_bytes(), b'new')

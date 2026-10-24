@@ -58,3 +58,4 @@
 0058-game-replay-receive-boundaries.patch
 0059-game-replay-state-observers.patch
 0060-reference-i686-client-error-traces.patch
+0061-isolated-complete-zone-traces.patch

@@ -9,6 +9,7 @@ the tail of the output and any log files written. Observational: the exit code
 is 0 unless the script itself cannot run.
 """
 import argparse
+import hashlib
 import re
 import json
 import os
@@ -72,21 +73,52 @@ def ocr(path):
         return f'ocr failed: {e!r}'
 
 
-def merge_tree(src, dst):
+def merge_tree(src, dst, strict=False):
     """Overlay src onto dst as hard links (real directories, no symlinks, so the
-    client's directory scans see ordinary files). Earlier roots win for files."""
+    client's directory scans see ordinary files). Earlier roots win for files.
+    Strict supplements must agree byte-for-byte with every earlier collision,
+    including case aliases, before any of their files are installed."""
+    collisions = 0
+    if strict:
+        prior = {}
+        incoming = {}
+        for base, _, names in os.walk(dst, followlinks=True):
+            for name in names:
+                path = Path(base) / name
+                prior.setdefault(path.relative_to(dst).as_posix().casefold(), []).append(path)
+        for base, _, names in os.walk(src, followlinks=True):
+            for name in names:
+                path = Path(base) / name
+                key = path.relative_to(src).as_posix().casefold()
+                if key in incoming:
+                    raise ValueError('Case-aliased supplement members: ' + key)
+                incoming[key] = path
+                for old in prior.get(key, []):
+                    collisions += 1
+                    with path.open('rb') as new_file, old.open('rb') as old_file:
+                        same = hashlib.file_digest(new_file, 'sha256').digest() == hashlib.file_digest(old_file, 'sha256').digest()
+                    if not same:
+                        print('::error title=ArmPort reviewed Atlas supplement::' +
+                              json.dumps(dict(collisions=collisions, conflicting_path=key)))
+                        raise ValueError('Supplement conflicts with earlier data: ' + key)
     for dirpath, dirnames, filenames in os.walk(src, followlinks=True):
         rel = os.path.relpath(dirpath, src)
         target = dst / rel if rel != '.' else dst
         target.mkdir(parents=True, exist_ok=True)
         for f in filenames:
             out = target / f
+            if strict and (Path(rel) / f).as_posix().casefold() in prior:
+                continue
             if out.exists():
                 continue
             try:
                 os.link(os.path.join(dirpath, f), out)
             except OSError:
                 shutil.copy2(os.path.join(dirpath, f), out)
+    if strict:
+        print('::notice title=ArmPort reviewed Atlas supplement::' +
+              json.dumps(dict(layer=str(src), collisions=collisions, conflicting_collisions=0)))
+    return collisions
 
 def window_texts(lines):
     texts = []
@@ -391,6 +423,8 @@ def login_probe(out, proc):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--build', required=True, type=Path)
+    ap.add_argument('--strict-data', type=Path, action='append', default=[],
+                    help='--data root whose collisions must have identical bytes')
     ap.add_argument('--data', required=True, type=Path, action='append',
                     help='data root; repeat to overlay several (merged with symlinks)')
     ap.add_argument('--runtime', required=True, type=Path)
@@ -440,8 +474,11 @@ def main():
                 copied.append(d)
         note('notice', 'ArmPort M2 smoke imports', ', '.join(dlls))
     note('notice', 'ArmPort M2 smoke runtime DLLs', ', '.join(copied) or 'none')
+    strict_roots = {root.resolve() for root in a.strict_data}
+    if not strict_roots.issubset({root.resolve() for root in a.data}):
+        raise ValueError('--strict-data must also appear in --data')
     for root in a.data:
-        merge_tree(root.resolve(), rt / 'data')
+        merge_tree(root.resolve(), rt / 'data', strict=root.resolve() in strict_roots)
     # Development (non-FINAL) builds take a folder with data/ and tools/ as the
     # game root (UtilitiesLib file.c addAppropriateDataDirs).
     (rt / 'tools').mkdir()

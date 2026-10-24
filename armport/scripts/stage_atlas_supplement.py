@@ -13,6 +13,7 @@ ARCHIVE_SHA = '499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60'
 MANIFEST_SHA = '2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203'
 PINS = {'atlas-world-supplement.zip': (203438405, ARCHIVE_SHA),
         'atlas-world-supplement-manifest.json': (None, MANIFEST_SHA)}
+REVIEWED_MANIFEST = Path(__file__).resolve().parents[2] / 'assets/atlas-world-supplement-manifest.json'
 
 
 def require(ok, message):
@@ -76,6 +77,13 @@ def unpack(archive_path, document, output):
     return dict(files=len(files), payload_bytes=document['payload_bytes'], archive_sha256=ARCHIVE_SHA)
 
 
+def verify_reviewed_subset(document, reviewed):
+    for name, pin in document['files'].items():
+        entry = reviewed['files'].get(name)
+        require(entry is not None and entry['sha256'] == pin['sha256']
+                and entry['bytes'] == pin['bytes'], 'Pinned file differs from repository manifest: ' + name)
+
+
 def stage(source, output):
     for name, (size, sha) in PINS.items():
         path = source / name
@@ -84,7 +92,11 @@ def stage(source, output):
     document = json.loads((source / 'atlas-world-supplement-manifest.json').read_text())
     require(document['file_count'] == 2877 and document['payload_bytes'] == 309655940,
             'Unexpected retained Atlas scope')
-    return unpack(source / 'atlas-world-supplement.zip', document, output)
+    verify_reviewed_subset(document, json.loads(REVIEWED_MANIFEST.read_text()))
+    result = unpack(source / 'atlas-world-supplement.zip', document, output)
+    result['repository_manifest_sha256'] = digest(REVIEWED_MANIFEST)
+    result['reviewed_subset_files'] = len(document['files'])
+    return result
 
 
 def main():

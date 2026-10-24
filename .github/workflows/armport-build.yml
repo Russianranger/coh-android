@@ -95,11 +95,7 @@ jobs:
         with:
           path: ${{ runner.temp }}/atlas-supplement
           key: ${{ steps.atlas-supplement.outputs.cache-primary-key }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: armport-reviewed-atlas-supplement
-          path: ${{ runner.temp }}/atlas-supplement
-          retention-days: 90
+      # Keep data in the cache; the existing pinned donor remains the fallback.
 
   libraries:
     runs-on: ubuntu-24.04-arm
@@ -206,7 +202,15 @@ jobs:
           printf '%s\n' "$out"
           printf '%s\n' "$out" | grep -F 'regression.crt file.h included first'
           printf '%s\n' "$out" | grep -F 'zone trace wrapper restored'
-          printf '::notice title=ArmPort zone trace::CRT stderr and caller FileWrapper both passed\n'
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows = [json.loads(line) for line in Path('zone-trace-test.jsonl').read_text().splitlines()]
+          expected = 'x\n"\\\xff' + 'x' * (8191 - 5)
+          assert len(rows) == 65 and rows[0]['stage'] == 'regression.crt'
+          assert all(row == dict(stage='client.error', text=expected) for row in rows[1:])
+          PY
+          printf '::notice title=ArmPort zone trace::CRT/FileWrapper and 64 concurrent complete 8191-byte records passed\n'
 
       - name: Original network socketless replay preflight
         run: |
@@ -684,7 +688,7 @@ jobs:
           # from the staged copy (no second unpack).
           assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
           armport/scripts/step.sh "ArmPort M3 client stage" python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
-            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/client-bins" \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" \
             --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
           ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
       - name: Server stack and ARM64 client login to Atlas Park
@@ -713,6 +717,7 @@ jobs:
           path: |
             ${{ runner.temp }}/m3-evidence/
             ${{ runner.temp }}/armport-client/armport_stdio.txt
+            ${{ runner.temp }}/armport-client/zone-trace.jsonl
             ${{ runner.temp }}/m3-evidence/client-output.txt
             out/donor-files.txt
             out/wine-game/game-package.json

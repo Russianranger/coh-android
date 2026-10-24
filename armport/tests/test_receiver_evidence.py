@@ -19,6 +19,7 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.wine = self.path / 'wine-output.txt'
         self.wine.write_text('')
         (self.path / 'client-stdio.txt').write_text('')
+        (self.path / 'zone-trace.jsonl').write_text('{"stage":"init","text":""}\n')
         self.expected = replay.fixtures(self.path)
         self.rows = [dict(type='configuration', initial_id=1)]
         for i, want in enumerate(self.expected):
@@ -70,6 +71,16 @@ class ReceiverEvidenceTests(unittest.TestCase):
     def test_missing_game_stdio_rejected(self):
         (self.path / 'client-stdio.txt').unlink()
         with self.assertRaisesRegex(ValueError, 'game stdio'):
+            self.check()
+
+    def test_missing_or_partial_isolated_trace_rejected(self):
+        trace = self.path / 'zone-trace.jsonl'
+        for data in ('', '{"stage":"init","text":""}'):
+            trace.write_text(data)
+            with self.assertRaises(ValueError):
+                self.check()
+        trace.unlink()
+        with self.assertRaisesRegex(ValueError, 'isolated zone trace'):
             self.check()
 
     def test_native_logical_count_not_storage_length(self):

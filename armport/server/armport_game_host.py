@@ -77,6 +77,7 @@ def start_client(a, state, status, evidence):
     env = {'PATH': '/usr/bin:/bin', 'HOME': str(a.client_home), 'LANG': 'C.UTF-8', 'DISPLAY': DISPLAY,
            'WINEPREFIX': str(a.client_prefix), 'WINEDEBUG': 'err+all,fixme-all,+seh',
            'WINEDLLOVERRIDES': 'mscoree,mshtml=', 'ARMPORT_LOOSE_DATA': '1', 'ARMPORT_STDIO_LOG': 'armport_stdio.txt',
+           'ARMPORT_ZONE_LOG': 'zone-trace.jsonl',
            # The servers are 32-bit builds with their own version string (patch 0045).
            'ARMPORT_NO_VERSION_CHECK': '1'}
     args = ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1', '-db', '127.0.0.1']

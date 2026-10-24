@@ -11,6 +11,31 @@ import run_ci
 
 
 class ErrorInventory(unittest.TestCase):
+    def test_full_isolated_message_ignores_stdio_interleaving(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / 'stdio.txt'
+            trace = Path(temporary) / 'trace.jsonl'
+            output = Path(temporary) / 'errors.json'
+            source.write_text('BAArmPort zone: 8 client.error cut at 240 tid=42\n'
+                              'BAD DATA duplicated stdout fragment\n')
+            message = 'Long error ' + 'X' * 1000 + '\nLine two; literal tid=42 retained'
+            trace.write_text((json.dumps(dict(stage='client.error', text=message)) + '\n') * 2)
+            result = client_errors.inventory(source, output, trace)
+            self.assertEqual(result['count'], 2)
+            self.assertEqual(result['errors'], [dict(text='client.error ' + message, count=2)])
+            self.assertTrue(result['complete_messages'])
+            source.write_text('ARMPORT_ZONE_LOG_FAILED\n')
+            self.assertEqual(client_errors.inventory(source, output, trace)['count'], 3)
+
+    def test_legacy_prefix_and_embedded_thread_ids_removed(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / 'stdio.txt'
+            source.write_text('BAArmPort zone: 12 client.error missing tid=42\n'
+                              'ArmPort zone: 99 client.error missing tid=99\n')
+            result = client_errors.inventory(source, source.with_suffix('.json'))
+            self.assertEqual(result['errors'], [dict(text='client.error missing', count=2)])
+            self.assertFalse(result['complete_messages'])
+
     def test_multiline_errors_are_preserved_and_counted(self):
         with tempfile.TemporaryDirectory() as temporary:
             source = Path(temporary) / 'stdio.txt'
