@@ -3,6 +3,40 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## Case-equivalent data directories (2026-10-24)
+
+[Replay 40118399218](https://github.com/Russianranger/coh-android/actions/runs/40118399218/job/120944883208)
+identifies the two missing-room groups as PPD_Start_01_22& and grp141175.
+Their original parent definitions use _BNK_HALLWAY_01 and _ofc1_start_01.
+The same stdio records both geometry paths missing even though their exact
+files and models are in the retained, already approved Atlas supplement.
+[Artifact hashes, local reproduction and test output](evidence/m3-case-merged-data-40118399218.json)
+record the investigation. This is not a request for additional assets.
+
+The old merger creates separate original-case text directories and lowercase
+supplement directories. A reproduction with the real original text/rootnames
+and verified geometry leaves both requested original-case paths absent.
+The merger now keeps one physical directory for each case-equivalent path,
+using the first spelling, and preserves first-layer file contents. Strict
+supplement checks still compare every earlier colliding input's bytes before
+copying. Existing ambiguous destination entries and file/directory conflicts
+fail explicitly. Four regression tests cover those cases; all 87 tests pass.
+The corrected reproduction finds both exact geometry hashes at the original
+requested paths with no duplicate case-folded entries. A full local merge of
+156,287 original files and 2,877 approved supplement files retains all 159,164
+files, has zero case-duplicate entries, and verifies both geometry hashes.
+
+This establishes a staging defect, not a runtime tray or Atlas pass. New CI
+must establish the resulting error inventories and rendered world; neither
+strict replay acceptance nor the conditional texture exception changes.
+
+M4 is independently running [40127841088](https://github.com/Russianranger/coh-android/actions/runs/40127841088)
+at a63d0952d72987a1c237b6604304a3fbb15af3df, using Release 40127311343 and the
+existing data pin. Exact downloaded Release disassembly now confirms the
+48-byte power-lookup frame captures incoming LR before getenv and passes it
+to the noinline helper. No __chkstk is present in that lookup. This confirms
+0070's generated code; runtime caller identification is still pending.
+
 ## Login progress and corrected caller diagnostic (2026-10-24)
 
 The completed [Atlas run 40118399219](https://github.com/Russianranger/coh-android/actions/runs/40118399219/job/120947425896)

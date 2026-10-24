@@ -65,6 +65,18 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
+The mission-room diagnostics now identify PPD_Start_01_22& and grp141175.
+Both parent tray geometries already exist in the approved Atlas supplement,
+but the merger split original-case and lowercase parent directories. The
+corrected merger shares one directory per case-equivalent path and retains
+strict collision checks; 87 tests and the exact-file before/after reproduction
+pass. See evidence/m3-case-merged-data-40118399218.json. Qualify in new replay
+and Atlas CI; do not assume room errors or world rendering pass. M4 run
+40127841088 at a63d0952 uses Release 40127311343; its exact disassembly
+confirms the corrected incoming-LR capture. Symbolize the new runtime caller
+when available. M4 has not yet taken the new case-merging change.
+
+
 Latest completed evidence: build/Atlas 40118399219 fails before map.start,
 remaining at character-select stage 6 while repeated OCR consumes the login
 budget. The driver now uses the selected-character trace and caches same-frame

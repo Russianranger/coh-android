@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Atlas 40118399219: stopped at character select; trace/OCR driver fix pending CI.
-- Replay 40118399218: ARM64 16 errors, i686 SIGKILL; required exit 2 unchanged.
+- Atlas 40118399219: character-select stall; corrected driver in 40127311343.
+- Replay 40118399218: 16 errors/SIGKILL; case-split data staging fixed, CI pending.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
   remains incomplete. Texture exception OFF: 57/72 archives; composite gaps.
-- M4 40118768539: bad power key; 0070 fixes caller tracing, runtime proof pending.
+- M4 40127841088: corrected caller diagnostic running; bad power key unresolved.
