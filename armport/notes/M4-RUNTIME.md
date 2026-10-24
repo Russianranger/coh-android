@@ -281,3 +281,19 @@ notice shows the original VBO fault and the separate incomplete owned-cleanup
 failure. Ownership and cleanup checks remain unchanged and fail closed.
 `python3 -m unittest discover -s armport/tests -p 'test_client*.py'`: 23 tests OK
 (m4-round4-tests.log). No APK/signing, Thor run or M4 completion is claimed.
+
+## Power-customization fault after the VBO correction
+
+Run 40106299491 at a5d78afd passes guest boot, but interactive job
+120910487842 fails with a read at 0x0000010000000010, PC 0x14007457c.
+Artifact 12565996723 SHA-256
+`a897c9492bd28a64d30cfc0d647db2b8040098167103cfb046e95390065d3f30`
+and the packaged executable SHA-256
+`0e82dd6656a91e0e09eadb2a685de9c1dfb59e7573f22f6fa6d04e9c4dcf0844`
+were independently verified. `llvm-symbolizer --obj=CityOfHeroes.exe
+0x14007457c` reports `searchPowerCustomizations`, power_customization.c:159.
+Disassembly identifies the failing load as `(*power)->crcFullName`, the search
+key, rather than the candidate customization. Its origin is not established.
+The interactive launcher now enables the same Wine SEH diagnostics as the boot
+probe so a rerun retains registers/caller evidence. No NULL bypass, pointer
+repair or acceptance change is made. All 23 client host tests pass.

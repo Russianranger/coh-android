@@ -110,7 +110,8 @@ class ArmPortClient:
 
     def launch_client_attempt(self, *, label='actual-coh-client'):
         environment = dict(self.wine_env, ARMPORT_LOOSE_DATA='1', ARMPORT_NO_VERSION_CHECK='1',
-                           ARMPORT_STDIO_LOG='armport_stdio.txt', COH_CLIENT_GRAPHICS_PROFILE='standard')
+                           ARMPORT_STDIO_LOG='armport_stdio.txt', COH_CLIENT_GRAPHICS_PROFILE='standard',
+                           WINEDEBUG='err+all,fixme-all,+seh')
         # Client GPU selection remains Software until this ARM64 producer is
         # separately qualified. Do not reuse an x86 GPU-probe success receipt.
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
