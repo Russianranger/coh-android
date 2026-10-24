@@ -178,3 +178,29 @@ tests, including byte identity, unexpected members, path links and refusal
 to overwrite different data; production donor execution remains pending.
 M4 correction 723bbc32 runs in 40094077884; app sources and guest boot pass,
 interactive creation/save/reopen is still running.
+
+### Review follow-up execution, 2026-10-24
+
+Run 40094448205 ARM64 job 120873737155 passes the real handled-SEH rejection
+control (`target=arm64, rejected=true` annotation at 12:40:27 UTC), then
+fails closed on 184,514 game error reports as intended. This is a validator
+control/data-error result, not state equivalence. Artifact 12560234319 SHA256
+0689027af7bb9e780e2e71eef7c0aff97ddaa3b40277965cc01b957e9136ce30
+retains all recorded errors; the i686 side is still running.
+
+At code 7fb7c692, new runs 40094942235 (replay) and 40094942248 (Atlas/build)
+are in progress. The latter's libraries, Release and OptDebug jobs pass.
+Both asset jobs recover the reviewed supplement. Downloaded artifact
+12560402926 matches API SHA256
+1167a7d2a36adf1a264d6007ff2f7f1106bcfef15cd6e19aa88489b16e0a2308.
+`python3 armport/scripts/stage_atlas_supplement.py stage --source
+../recovered-atlas --output ../reviewed-atlas-data` then verifies and stages
+2,877 files / 309,655,940 bytes locally. The missing texture is 22,316 bytes
+and its SHA256 equals the reviewed 60e4fa24...f53b344 pin. No rendered-frame
+or error-free replay result has yet been established with this data.
+
+M4 run 40094077884 passes boot and proceeds beyond the visual-helper failure,
+then fails importing native_monorail_contract during cache ancestry checking.
+Branch commit 589a015bf86dada8d1f5673cd5ca53eed91b0478 adds the cache ancestry
+helpers; 20 app tests pass, including unsupported-producer rejection.
+40095316035 tests it; complete interactive qualification remains pending.

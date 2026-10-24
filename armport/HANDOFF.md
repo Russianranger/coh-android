@@ -35,9 +35,9 @@ Wine via FEX).
   merged with merge commits.
 - `armport/m3-atlas`: current M3 work, draft PR #6. See `git log` and
   `M3-REPORT.md` for the current implementation-review checkpoint; not a
-  milestone pass. The partial state observer and formatter correction are
-  integrated; 40092531364 tests code commit 0296f2fb on the replay iteration
-  branch while the earlier Atlas run finishes. M4 is on `armport/m4-runtime`.
+  milestone pass. Review 5638209554 corrections and the reviewed Atlas supplement are
+  integrated at code 7fb7c692; runs 40094942235/40094942248 test them.
+  40094448205 proves ARM64 handled-SEH rejection but fails on game data errors. M4 is on `armport/m4-runtime`.
 - Each milestone: PR from `armport/<milestone>` into `COH-ArmPort`; reviewer
   approves; author addresses findings; merge with a merge commit
   (`gh api -X PUT repos/Russianranger/coh-android/pulls/<n>/merge -f merge_method=merge`).
@@ -80,7 +80,9 @@ Wine via FEX).
   recovers the exact pinned source from accepted artifacts and shares the
   successful boot PRoot with the interactive job. Run 40092467628 passes boot but interactive startup fails on missing
   client_visual_assets; 723bbc32 stages the server helper and distinguishes
-  helper-only legacy inventories from optional visual payloads. Full M4 remains unqualified.
+  helper-only legacy inventories from optional visual payloads. Run 40094077884
+  then exposes a missing cache ancestry helper. Commit 589a015b addresses it;
+  40095316035 is pending. Full M4 remains unqualified.
 - Latest Claude implementation review is 5638209554 at 49c390ada. Request a new implementation
   review for the integrated P2, handshake prerequisites, QA-notice handling
   and state observers. Method agreement is not milestone approval.
