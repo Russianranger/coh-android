@@ -56,3 +56,4 @@
 0056-game-original-receiver-replay-entry.patch
 0057-game-swap-and-dialog-progress.patch
 0058-game-replay-receive-boundaries.patch
+0059-game-replay-state-observers.patch

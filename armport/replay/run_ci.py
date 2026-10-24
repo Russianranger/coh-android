@@ -80,6 +80,36 @@ def check_output(path, expected, initial_id, wine_output):
                 i, packet_id, want['logical_bits'], want['logical_bits'], 0):
             raise ValueError('receiver cursor mismatch')
     acks = [r for r in rows if r['type'] == 'ack']
+    states = [r for r in rows if r['type'] == 'state']
+    if len(states) != 117:
+        raise ValueError('expected all 117 partial state snapshots')
+    native_entity = json.loads((Path(__file__).with_name('fixtures') / 'native-initial-entity.json').read_text())
+    if native_entity['initial_file_sha256'] != replay_inventory.INITIAL_SHA:
+        raise ValueError('native entity input identity mismatch')
+    for i, (want, state) in enumerate(zip(expected, states)):
+        name = f'state-{i:03d}.json'
+        if (state['index'], state['id'], state['file'], state['state_schema_complete']) != (
+                i, initial_id if i == 0 else want['packet_id'], name, False):
+            raise ValueError('state snapshot metadata mismatch')
+        snapshot = path.parent / name
+        if snapshot.is_symlink() or not snapshot.is_file() or not 0 < snapshot.stat().st_size <= 16 * 1024 * 1024:
+            raise ValueError('invalid state snapshot file')
+        raw = snapshot.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != state['sha256']:
+            raise ValueError('state snapshot digest mismatch')
+        document = json.loads(raw)
+        if (document.get('schema') != 'armport-receiver-state-v1-partial'
+                or document.get('state_schema_complete') is not False):
+            raise ValueError('partial state schema mismatch')
+        indices = [e['svr_idx'] for e in document['entities']]
+        if len(indices) != state['entities'] or indices != sorted(set(indices)):
+            raise ValueError('state entity inventory mismatch')
+        if i == 0:
+            entity = next((e for e in document['entities'] if e['svr_idx'] == native_entity['svr_idx']), None)
+            if (not entity or entity['type'] != native_entity['type'] or not entity['costume']
+                    or entity['costume']['bodytype'] != native_entity['bodytype']
+                    or len(entity['costume']['parts']) != native_entity['part_count']):
+                raise ValueError('recorded native INITIAL entity subset differs')
     if [r['packet_id'] for r in acks] != [initial_id, 32]:
         raise ValueError('missing or unexpected full-update ACK')
     # The driver compares each outgoing ACK to the original incoming ACK ID.
@@ -109,6 +139,8 @@ def check_output(path, expected, initial_id, wine_output):
         raise ValueError('native INITIAL zero terminator mismatch')
     return dict(dispatches=117, exact_cursors=True, ack_ids=[r['ack_id'] for r in acks],
                 native_initial_command_boundaries_match=True,
+                native_initial_entity_subset_match=True,
+                partial_state_snapshots=117, state_schema_complete=False,
                 state_comparison_complete=False, m3_replay_complete=False)
 
 
@@ -132,7 +164,7 @@ def main():
     args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=False)
     report = dict(target=args.target, source_commit=os.getenv('GITHUB_SHA'),
-                  scope='original_receiver_cursor_stage', runs=[],
+                  scope='original_receiver_partial_state_stage', runs=[],
                   network_namespace=namespace, host_network_namespace=args.host_netns,
                   interfaces=[row['ifname'] for row in links],
                   state_comparison_complete=False, m3_replay_complete=False)
@@ -177,7 +209,7 @@ def main():
                     # Prefixes contain mutable runtime data, not useful decoder evidence.
                     shutil.rmtree(prefix, ignore_errors=True)
         if (args.out / 'id1-a/receiver.jsonl').read_bytes() != (args.out / 'id1-b/receiver.jsonl').read_bytes():
-            raise ValueError('same-ID cursor/ACK repeat differs')
+            raise ValueError('same-ID cursor/ACK/state-hash repeat differs')
         report['cursor_stage_passed'] = True
         print('Receiver cursor/ACK stage passed; full state comparison and M3 remain incomplete.')
         return 0

@@ -157,3 +157,52 @@ Run 40057090615 (1c91081d), ARM64 job 120762415670 and i686 job
 Native INITIAL command boundaries match. Both completion flags remain false;
 this is not full receiver-state equivalence. The prerequisite fixes and
 review 5636418576 fatal-Wine-log rejection are now integrated into M3.
+
+## Partial state capture (0059)
+
+The new replay-only observer retains accepted 9-bit quaternion components
+before unpacking/normalization, keyed by server index and entity generation.
+Normal gameplay does not enable it. The original decoder consumes exactly
+the same nine bits, applies its same stale-packet decision and calls the same
+unpacker. A read-only visitor exposes actual delete history in index order.
+All original-source edits were exported with patchwork.py as patch 0059.
+
+Each successful dispatch now writes state-NNN.json (16 MiB maximum) and its
+SHA-256. Server indices are ordered; strings preserve source bytes with JSON
+escapes; attribute floats use raw 32-bit representations. Included fields:
+identity/name/type, raw network positions, observed wire quaternion values
+(null where not observed), packet ordering IDs, selected costume appearance
+and parts, character levels/xp/debt/rest/influence/current and maximum
+attributes, player lastClientStatePktId, and actual delete history.
+
+This is explicitly schema armport-receiver-state-v1-partial. It is NOT a
+full entity/player dump: power sets, inventory, complete player tail,
+teams/tasks/UI game-command state, dynamic groups, further costume metadata
+and other receiver fields remain to be covered. Timer/interpolation fields,
+rendering quaternions, pointers, struct padding and asset addresses are excluded.
+All completion flags remain false and successful execution still exits 2.
+
+The host requires 117 authenticated snapshots. The follow-up comparison
+reads one pair at a time, compares same-ID repeats and cross-architecture
+files byte-for-byte, and only for ID1/31 applies Claude's three agreed field
+normalizations. All other fields, including pkt_id_pos and pkt_id_qrot, remain
+literal. Differences fail this partial stage and are reported, not normalized
+away. Passing this stage still cannot complete M3.
+
+The recovered native report archive SHA256 is
+623800b22640bb0f35a27bbf89bae04253c5acf9e1db10b0365084b0dd7def82;
+native-client-report.json SHA256 is
+2876eb9b504614fad1de03adf4fa9eff82cfee3f56e9446e68d4d14afb217016.
+The native-initial-entity.json fixture records only its explicitly reported
+entity index 125, type 2, costume bodytype 4 and part count 28. Field mapping
+comes from world_handoff.first_create and OUTER_COSTUME_ARGS in the frozen
+native-android interop_network.c. These checks complement the existing tail
+boundaries; they do not claim that the truncated report contains full state.
+
+Local validation on 2026-10-24: `python3 -m unittest discover -s armport/tests
+-v` passed 41 tests, including a self-consistent changed final snapshot that
+must fail comparison. `CMAKE_BUILD_PARALLEL_LEVEL=2 cmake --build
+../build-arm-new --target Game` and the same command for `../build-i686-new`
+both exited 0 and linked CityOfHeroes.exe. Workflow YAML parsed and
+`git diff --check` passed. Full replay execution with this observer is pending;
+the previous cursor-only execution passed at 563e49ac in run 40087788115.

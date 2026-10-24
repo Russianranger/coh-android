@@ -1,5 +1,6 @@
 """Reject partial/failing receiver output even when a terminal row looks good."""
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -29,6 +30,16 @@ class ReceiverEvidenceTests(unittest.TestCase):
                 self.rows.append(dict(type='ack', packet_id=packet_id, ack_id=123))
             self.rows.append(dict(type='dispatch_end', count=i+1, id=packet_id,
                                   cursor=want['logical_bits'], error_flags=0))
+            raw = json.dumps(dict(schema='armport-receiver-state-v1-partial',
+                                  state_schema_complete=False, delete_history=[],
+                                  entities=[dict(svr_idx=125, type=2, pkt_id_create=1,
+                                  player=dict(lastClientStatePktId=1),
+                                  costume=dict(bodytype=4, parts=[None] * 28))])).encode()
+            name = f'state-{i:03d}.json'
+            (self.path / name).write_bytes(raw)
+            self.rows.append(dict(type='state', index=i, id=packet_id, file=name,
+                                  sha256=hashlib.sha256(raw).hexdigest(), entities=1,
+                                  state_schema_complete=False))
         self.rows.append(dict(type='receive_boundary', index=0, stage='entity_tail', cursor=300328, error_flags=0))
         for number in range(11):
             for boundary in ('begin', 'end'):
@@ -46,6 +57,32 @@ class ReceiverEvidenceTests(unittest.TestCase):
 
     def test_complete_cursor_stage_still_not_milestone_pass(self):
         self.assertFalse(self.check()['m3_replay_complete'])
+        self.assertFalse(self.check()['state_schema_complete'])
+
+    def test_missing_state_snapshot_rejected(self):
+        self.rows = [r for r in self.rows if r['type'] != 'state' or r['index'] != 116]
+        with self.assertRaisesRegex(ValueError, '117 partial state'):
+            self.check()
+
+    def test_snapshot_tampering_rejected(self):
+        (self.path / 'state-116.json').write_text('{}')
+        with self.assertRaisesRegex(ValueError, 'digest mismatch'):
+            self.check()
+
+    def test_self_consistent_snapshot_disagrees_with_native_baseline(self):
+        path = self.path / 'state-000.json'
+        document = json.loads(path.read_text())
+        document['entities'][0]['costume']['bodytype'] = 0
+        raw = json.dumps(document).encode()
+        path.write_bytes(raw)
+        next(r for r in self.rows if r['type'] == 'state')['sha256'] = hashlib.sha256(raw).hexdigest()
+        with self.assertRaisesRegex(ValueError, 'native INITIAL entity subset'):
+            self.check()
+
+    def test_snapshot_path_substitution_rejected(self):
+        next(r for r in self.rows if r['type'] == 'state')['file'] = '../outside.json'
+        with self.assertRaisesRegex(ValueError, 'metadata mismatch'):
+            self.check()
 
     def test_partial_dispatch_rejected(self):
         self.rows.pop(1)

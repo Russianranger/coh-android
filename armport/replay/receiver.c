@@ -23,6 +23,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "clientcomm/armport_replay.h"
+#include "state.h"
 #include "clientcomm/clientcomm.h"
 #include "entity/entrecv.h"
 #include "entity/entVarUpdate.h"
@@ -39,6 +40,7 @@
 
 static HANDLE output = INVALID_HANDLE_VALUE;
 static int active;
+static char state_directory[768];
 static unsigned int dispatches;
 
 static void emit(const char *format, ...)
@@ -226,6 +228,13 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
         emit("{\"type\":\"ack\",\"packet_id\":%u,\"ack_id\":%u,\"ack_bits\":%u,\"total_input_bits\":%u}\n",
              id, ack, bsGetCursorBitPosition(&sent.stream), output_bits);
     }
+    {
+        char digest[65];
+        unsigned entities = armportReplayStateSave(state_directory, dispatches, digest);
+        emit("{\"type\":\"state\",\"index\":%u,\"id\":%u,\"file\":\"state-%03u.json\","
+             "\"sha256\":\"%s\",\"entities\":%u,\"state_schema_complete\":false}\n",
+             dispatches, id, dispatches, digest, entities);
+    }
     ++dispatches;
     emit("{\"type\":\"dispatch_end\",\"count\":%u,\"id\":%u,\"cursor\":%u,\"error_flags\":0}\n",
          dispatches, id, end);
@@ -245,6 +254,8 @@ void armportReplayMaybeRun(void)
     output = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (output == INVALID_HANDLE_VALUE) ExitProcess(3);
     active = 1;
+    strcpy(state_directory, directory);
+    armportReplayStateInit();
 #ifdef FINAL
     fail("replay requires OptDebug with assertions enabled");
 #endif
@@ -256,7 +267,7 @@ void armportReplayMaybeRun(void)
         initial_id = (unsigned int)atoi(id_text);
     }
     require(!comm_link.socket, "replay requires no server connection");
-    emit("{\"type\":\"configuration\",\"scope\":\"receiver_cursors_and_ack_only\","
+    emit("{\"type\":\"configuration\",\"scope\":\"receiver_cursors_ack_and_partial_state\","
          "\"initial_id\":%u,\"initial_ordered\":1,\"initial_ordered_id\":1,"
          "\"synthetic_initial_transport\":true,\"transport_stats_exercised\":false,"
          "\"state_comparison_complete\":false}\n", initial_id);

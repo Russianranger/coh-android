@@ -9,7 +9,7 @@ on:
       - 'armport/cmake/**'
       - 'armport/standins/**'
       - 'armport/replay/**'
-      - 'armport/tests/test_receiver_evidence.py'
+      - 'armport/tests/test_receiver*.py'
       - 'armport/scripts/prepare.py'
       - '.github/workflows/armport-reference.yml'
 
@@ -79,12 +79,12 @@ jobs:
           sparse-checkout-cone-mode: false
           lfs: false
       - name: Check replay output rejection and fixture identities
-        run: python3 -m unittest discover -s armport/tests -p 'test_receiver_evidence.py' -v
+        run: python3 -m unittest discover -s armport/tests -p 'test_receiver*.py' -v
       - id: replay-exe-cache
         uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/reference-bin
-          key: armport-replay-${{ matrix.target }}-OptDebug-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/replay/receiver.c', 'armport/replay/state.c', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
+          key: armport-replay-${{ matrix.target }}-OptDebug-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/replay/*.c', 'armport/replay/*.h', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
       - name: Install pinned llvm-mingw
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: |
@@ -197,4 +197,32 @@ jobs:
           name: armport-receiver-${{ matrix.target }}
           path: ${{ runner.temp }}/replay-results
           if-no-files-found: warn
+          retention-days: 14
+
+  partial-state-comparison:
+    needs: reference-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: armport
+          lfs: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-arm64
+          path: ${{ runner.temp }}/compare/arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-i686
+          path: ${{ runner.temp }}/compare/i686
+      - name: Compare partial state literally and with agreed INITIAL-ID rules
+        run: |
+          python3 armport/replay/compare_state.py --root "$RUNNER_TEMP/compare" \
+            --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/partial-state-comparison.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-partial-state-comparison
+          path: ${{ runner.temp }}/partial-state-comparison.json
           retention-days: 14
