@@ -1,6 +1,6 @@
 # COH-ArmPort handoff (to Astra)
 
-Updated 2026-10-23. From now on Astra leads development and Claude reviews
+Updated 2026-10-24. From now on Astra leads development and Claude reviews
 (roles reversed for now; see "Roles" below). Read this file, `PORT-PLAN.md`
 and `STATUS.md` first. Everything here can be checked against the repository
 and the CI runs it cites.
@@ -33,8 +33,10 @@ Wine via FEX).
 
 - `COH-ArmPort`: integration branch. M0 (PR #3), M1 (PR #4), M2 (PR #5) are
   merged with merge commits.
-- `armport/m3-atlas`: current M3 work (HEAD at handoff: see `git log`; last
-  code commit 748504dc). Not yet a PR.
+- `armport/m3-atlas`: current M3 work, draft PR #6. See `git log` and
+  `M3-REPORT.md` for the current implementation-review checkpoint; not a
+  milestone pass. `armport/replay-state` holds the partial state observer
+  while the earlier Atlas run finishes. M4 work is on `armport/m4-runtime`.
 - Each milestone: PR from `armport/<milestone>` into `COH-ArmPort`; reviewer
   approves; author addresses findings; merge with a merge commit
   (`gh api -X PUT repos/Russianranger/coh-android/pulls/<n>/merge -f merge_method=merge`).
@@ -48,11 +50,31 @@ Wine via FEX).
 | M0 | survey, route | merged |
 | M1 | libraries build; textparser unit runs under the app's Wine | merged |
 | M2 | client links and reaches the login screen under that Wine (Xvfb, Mesa) | merged; boot test still runs in every CI run (`client-run`) |
-| M3 | scripted login against the CI server to Atlas Park; saved native-android packets replay through the original receive code; screenshot check | **login reached Atlas; loading stalls in texLoadQueueFinish; replay inputs recovered** |
-| M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | not started |
+| M3 | scripted login against the CI server to Atlas Park; saved native-android packets replay through the original receive code; screenshot check | **login/cursor replay pass; rendered Atlas and full state comparison outstanding** |
+| M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
-### M3 evidence so far
+### Current checkpoint (2026-10-24)
+
+- Run 40087788115 at 563e49ac passes all 117 original cursor/ACK dispatches
+  on ARM64 and i686, each with ID1 twice and ID31 once. Full-state and M3
+  completion flags remain false. The Wine-fatal/SEH rejection requested by
+  Claude is integrated into that tested milestone head.
+- Run 40054327137 still fails rendering/connection. Its artifact records the
+  access-level QA notice and a modal on the loading screen. The bounded,
+  exact-notice acknowledgement is under test in 40087788009; do not claim a
+  rendering fix before inspecting its verdict and image.
+- Partial state observer/comparison at 1e6952ed is under test in 40091320504.
+  It is intentionally incomplete; coverage and local validation commands
+  are in replay/README.md and M3-REPORT.md.
+- M4 runtime probes 40040922125 and 40087554038 pass guest boot. The latter's
+  interactive job fails on missing zone_asset_package. Commit ddaccd4 adds
+  that required helper; 40090844692 tests it. Full M4 remains unqualified.
+- Latest Claude review is 5637131418 at 443f1b73. Request a new implementation
+  review for the integrated P2, handshake prerequisites, QA-notice handling
+  and state observers. Method agreement is not milestone approval.
+
+### Earlier M3 evidence
 
 - CI run **39960894368** (attempt 2), job `server-run`, commit c04eb2f1:
   guest report passed; the ARM64 client logged in through its own login
@@ -89,8 +111,7 @@ Wine via FEX).
 
 ## 5. M3: remaining steps
 
-1. **Screenshot check.** Blocked on the zone-load stall above; fix that
-   first. Once a run has `world_rendered` true,
+1. **Screenshot check.** Finish investigating the current load/modal run. Once a run has `world_rendered` true,
    look at the `ArmPort M3 screen` image (Atlas Park should be visible) and
    copy it to `armport/evidence/m3-atlas.jpg`. If the zone never finishes
    loading, the client log and `loading_brightness` list say how far it got;
@@ -110,10 +131,10 @@ Wine via FEX).
    receive in `Game/src/clientcomm/`) from a small ARM64 test driver, or
    replay them from a stand-in MapServer. Compare with the 32-bit decode the
    native-android work recorded.
-3. **M3 report and PR.** Write `armport/M3-REPORT.md` in the style of
-   `armport/M2-REPORT.md` (exit test, evidence, what it took, gaps), update
-   `STATUS.md`, open the PR `armport/m3-atlas` → `COH-ArmPort`, and ask for
-   review (prompt for the reviewer: the user relays it).
+3. **M3 report and PR.** Keep `armport/M3-REPORT.md` and `STATUS.md` current.
+   Draft PR #6 is already open from `armport/m3-atlas` → `COH-ArmPort`.
+   Ask for review with the exact head and CI evidence (the user relays the
+   prompt); retain incomplete status until all documented exits pass.
 
 ## 6. M4 and M5 outline
 
