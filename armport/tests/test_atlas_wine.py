@@ -16,6 +16,16 @@ BOUNDARY = atlas_wine.BOUNDARY + '\n'
 
 
 class AtlasWineTests(unittest.TestCase):
+    def test_retained_real_wine_rpc_sequence(self):
+        # Exact first 28 lines from run 40105902326, artifact 12566815878.
+        # This older run predates 0067: the boundary below is a test input,
+        # not proof that the historical Atlas run passed its verdict.
+        text = (Path(__file__).parent / 'fixtures/atlas-startup-rpc-40105902326.txt').read_text()
+        result = self.check(text + BOUNDARY)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['allowed_startup_rpc_exceptions'], 1)
+        self.assertFalse(self.check(BOUNDARY + text)['passed'])
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

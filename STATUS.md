@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (67 patches including partial replay observers; Astra leads,
+M3 into Atlas (69 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -34,7 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Run 40111054487: ARM64 emits result, then returns -9; termination unproved.
-- 40106727443: both targets fail on 541 dispatch errors; inventories/counts match.
+- 40113107670: both targets fail on 16 dispatch errors; id1-a inventories match.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
-  remains incomplete. Approved fetch finds 8 exact files; 6 names unresolved.
+  remains incomplete. Texture exception OFF: 57/72 archives; composite gaps.
 - M4 40110421624: boot passes, power search faults; x8 proves bad search key.

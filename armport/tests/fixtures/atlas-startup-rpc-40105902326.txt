@@ -1,0 +1,28 @@
+0050:trace:seh:dispatch_exception code=6ba (RPC_S_SERVER_UNAVAILABLE) flags=0 addr=00006FFFFF8EA5A4
+0050:trace:seh:dispatch_exception  pc=00006fffff8ea5a4  sp=00007ffffe1fdba0  lr=00006fffff8ea5a4  fp=0000000000000000
+0050:trace:seh:dispatch_exception  x0=00007ffffe1fdba8  x1=0000000000000000  x2=0000000000000000  x3=0000000000000000
+0050:trace:seh:dispatch_exception  x4=00000000c0000034  x5=0000ffc08c1a2d78  x6=00006fffffdcf39a  x7=0000000000000000
+0050:trace:seh:dispatch_exception  x8=00006fffffdb2cb0  x9=0000000000000003 x10=0000000000000000 x11=00007ffffe2200e0
+0050:trace:seh:dispatch_exception x12=0000000000000008 x13=0000000000000003 x14=0000000000000030 x15=0000000000000000
+0050:trace:seh:dispatch_exception x16=00006fffff8ea544 x17=00007ffffe1fd7e0 x18=000000007ffc0000 x19=0000000000000000
+0050:trace:seh:dispatch_exception x20=0000000000000064 x21=00007ffffe9dc690 x22=00006ffffdcaab38 x23=00006ffffdcaab14
+0050:trace:seh:dispatch_exception x24=0000000000000000 x25=00007ffffe9dc690 x26=00006ffffe67b000 x27=0000000000000000
+0050:trace:seh:dispatch_exception x28=00006ffffdcaa8e0 cpsr=60000000 fpcr=00000000 fpsr=00000000
+0050:trace:seh:call_seh_handlers calling TEB handler 00006FFFFE654E60 (rec=00007FFFFE1FDBA8 frame=00007FFFFE1FDC90 context=00007FFFFE1FD810 dispatch=00007FFFFE1FD428) sp=7ffffe1fe660
+0050:trace:seh:call_seh_handlers TEB handler at 00006FFFFE654E60 returned 1
+0050:trace:seh:call_seh_handlers calling TEB handler 00006FFFFDCA37BC (rec=00007FFFFE1FDBA8 frame=00007FFFFE1FEFC0 context=00007FFFFE1FD810 dispatch=00007FFFFE1FD428) sp=7ffffe1ff110
+0050:trace:seh:RtlUnwindEx code=6ba flags=2 end_frame=00007FFFFE1FEFC0 target_ip=00006FFFFDCA3974
+0050:trace:seh:RtlUnwindEx  pc=00006fffffdb36e4  sp=00007ffffe1fc6c0  lr=0000000000000000  fp=00007ffffe1fd7f0
+0050:trace:seh:RtlUnwindEx  x0=0000000000000000  x1=00006ffffdca3974  x2=00007ffffe1fdba8  x3=0000000000000000
+0050:trace:seh:RtlUnwindEx  x4=00007ffffe1fcc70  x5=0000000000000000  x6=00007ffffe1fefc0  x7=00007ffffe1fd810
+0050:trace:seh:RtlUnwindEx  x8=00006fffffdc1374  x9=00000000000006ba x10=00007ffffe0ffcd0 x11=0000000000000000
+0050:trace:seh:RtlUnwindEx x12=0000000000000037 x13=00006fffffdeb000 x14=00006fffffdd5a20 x15=00006ffffdcbbfc0
+0050:trace:seh:RtlUnwindEx x16=00007ffffe1fcbe0 x17=00006fffffdb9190 x18=000000007ffc0000 x19=00006ffffdca3974
+0050:trace:seh:RtlUnwindEx x20=00007ffffe1fcc70 x21=00006ffffdca3974 x22=00007ffffe1fefc0 x23=00007ffffe1fefc0
+0050:trace:seh:RtlUnwindEx x24=00007ffffe1fdc90 x25=00007ffffe1fdba8 x26=0000000000000001 x27=00007ffffe1fd428
+0050:trace:seh:RtlUnwindEx x28=00006fffffdeb000 cpsr=00000000 fpcr=00000000 fpsr=00000000
+0050:trace:seh:RtlUnwindEx calling handler 00006FFFFFD866EC (rec=00007FFFFE1FDBA8, frame=7ffffe1fd070 context=00007FFFFE1FCC70, dispatch=00007FFFFE1FCA88)
+0050:trace:seh:RtlUnwindEx handler 00006FFFFFD866EC returned 1
+0050:trace:seh:RtlUnwindEx calling TEB handler 00006FFFFE654E60 (rec=00007FFFFE1FDBA8, frame=00007FFFFE1FDC90 context=00007FFFFE1FCC70, dispatch=00007FFFFE1FCA88)
+0050:trace:seh:RtlUnwindEx handler at 00006FFFFE654E60 returned 1
+0050:trace:seh:RtlRestoreContext returning to 6ffffdca3974 stack 7ffffe1fefb0

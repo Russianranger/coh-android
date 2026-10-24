@@ -65,3 +65,5 @@
 0065-identify-zone-trace-writer-threads.patch
 0066-diagnose-null-grid-tracker-definition.patch
 0067-order-atlas-map-boundary-with-wine-traces.patch
+0068-trace-power-customization-input-and-caller.patch
+0069-identify-missing-mission-room-tray.patch

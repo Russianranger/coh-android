@@ -1,0 +1,554 @@
+{
+  "arm64": {
+    "trace_sha256": "b132d2db9470f9a68f9d111c6282b49dd39dc2a6600cddd42be95d9e20daddd0",
+    "count": 16,
+    "occurrences": [
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152601,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152602,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152603,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152604,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152605,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152606,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152611,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture X_ImperialDefense_Belt_01 as texture 1 on bone BELT.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152612,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152613,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152614,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152615,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152616,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152617,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152618,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "mission.c: Room -1 marker isn't in a room",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152620,
+        "error_class": "mission_room"
+      },
+      {
+        "text": "mission.c: Room -1 marker isn't in a room",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152621,
+        "error_class": "mission_room"
+      }
+    ],
+    "artifact_id": 12567418635,
+    "artifact_sha256": "526abd25c4f0e73b52f24181102a096c1a4bef9dd840c9ad17ef3d5c37150402",
+    "case": "id1-a"
+  },
+  "i686": {
+    "trace_sha256": "427252767cfc6c8a850824a015e0c7a538cc2900fad5f965df77096707bd1ff7",
+    "count": 16,
+    "occurrences": [
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152601,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152602,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152603,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152604,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152605,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 0,
+        "after_dispatch_index": null,
+        "trace_line": 152606,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152611,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture X_ImperialDefense_Belt_01 as texture 1 on bone BELT.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152612,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152613,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152614,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152615,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152616,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152617,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152618,
+        "error_class": "missing_texture"
+      },
+      {
+        "text": "mission.c: Room -1 marker isn't in a room",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152620,
+        "error_class": "mission_room"
+      },
+      {
+        "text": "mission.c: Room -1 marker isn't in a room",
+        "tid": 372,
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "trace_line": 152621,
+        "error_class": "mission_room"
+      }
+    ],
+    "artifact_id": 12567769314,
+    "artifact_sha256": "caa5b0898e573f90917316d5f662c1e237611945d85b664dc381bda60df71621",
+    "case": "id1-a"
+  },
+  "literal_text_count_index_equal": true,
+  "all_three_runs_available": false,
+  "exceptions_enabled": false,
+  "source_run": 40113107670,
+  "source_commit": "07c536d7fe5d7748ced9e03845c53b0b3cf907d4",
+  "archive_coverage": {
+    "source": "upstream/i24/tools/fetch_data.ps1",
+    "source_sha256": "34f8d908566fb03e9b74afeb5523538230c1666e968eafc3c48849e52c7605cd",
+    "client_list": [
+      "fonts.pigg",
+      "geom.pigg",
+      "geomBC.pigg",
+      "geomV1.pigg",
+      "geomV2.pigg",
+      "mapsCities1.pigg",
+      "mapsCities2.pigg",
+      "mapsHazards.pigg",
+      "mapsMisc.pigg",
+      "mapsMissions.pigg",
+      "mapsTrials.pigg",
+      "misc.pigg",
+      "player.pigg",
+      "sound.pigg",
+      "sound1.pigg",
+      "sound2.pigg",
+      "sound3.pigg",
+      "sound4.pigg",
+      "sound5.pigg",
+      "sound6.pigg",
+      "sound7.pigg",
+      "soundMusic.pigg",
+      "soundMusic1.pigg",
+      "soundMusic2.pigg",
+      "soundPowers.pigg",
+      "soundV1.pigg",
+      "soundV2.pigg",
+      "soundVMusic.pigg",
+      "stage1.pigg",
+      "stage1a.pigg",
+      "stage1b.pigg",
+      "stage1c.pigg",
+      "stage1d.pigg",
+      "stage1e.pigg",
+      "stage1f.pigg",
+      "stage2.pigg",
+      "stage2a.pigg",
+      "stage2b.pigg",
+      "stage2c.pigg",
+      "stage3.pigg",
+      "stage3a.pigg",
+      "stage3b.pigg",
+      "stage3c.pigg",
+      "stage3d.pigg",
+      "stage3e.pigg",
+      "stage3f.pigg",
+      "stage3g.pigg",
+      "texEnemies.pigg",
+      "texEnemies2.pigg",
+      "texEnemies3.pigg",
+      "texEnemies4.pigg",
+      "texEnemies5.pigg",
+      "texFxGuiItems.pigg",
+      "texGui1.pigg",
+      "texMaps.pigg",
+      "texMisc.pigg",
+      "texPlayersUI.pigg",
+      "texVEnemies.pigg",
+      "texVWorld.pigg",
+      "texVWorld1.pigg",
+      "texVWorld2.pigg",
+      "texVWorld3.pigg",
+      "texVWorldBases1.pigg",
+      "texVWorldBases2.pigg",
+      "texWorld.pigg",
+      "texWorldBC.pigg",
+      "texWorldBuildings.pigg",
+      "texWorldCZ.pigg",
+      "texWorldSW.pigg",
+      "texWorldV1.pigg",
+      "texWorldV2.pigg",
+      "texts.pigg"
+    ],
+    "client_list_matches_catalog": true,
+    "scanned": [
+      "fonts.pigg",
+      "geom.pigg",
+      "geomBC.pigg",
+      "geomV1.pigg",
+      "geomV2.pigg",
+      "mapsCities1.pigg",
+      "mapsCities2.pigg",
+      "mapsHazards.pigg",
+      "mapsMisc.pigg",
+      "mapsMissions.pigg",
+      "mapsTrials.pigg",
+      "misc.pigg",
+      "player.pigg",
+      "stage1.pigg",
+      "stage1a.pigg",
+      "stage1b.pigg",
+      "stage1c.pigg",
+      "stage1d.pigg",
+      "stage1e.pigg",
+      "stage1f.pigg",
+      "stage2.pigg",
+      "stage2a.pigg",
+      "stage2b.pigg",
+      "stage2c.pigg",
+      "stage3.pigg",
+      "stage3a.pigg",
+      "stage3b.pigg",
+      "stage3c.pigg",
+      "stage3d.pigg",
+      "stage3e.pigg",
+      "stage3f.pigg",
+      "stage3g.pigg",
+      "texEnemies.pigg",
+      "texEnemies2.pigg",
+      "texEnemies3.pigg",
+      "texEnemies4.pigg",
+      "texEnemies5.pigg",
+      "texFxGuiItems.pigg",
+      "texGui1.pigg",
+      "texMaps.pigg",
+      "texMisc.pigg",
+      "texPlayersUI.pigg",
+      "texVEnemies.pigg",
+      "texVWorld.pigg",
+      "texVWorld1.pigg",
+      "texVWorld2.pigg",
+      "texVWorld3.pigg",
+      "texVWorldBases1.pigg",
+      "texVWorldBases2.pigg",
+      "texWorld.pigg",
+      "texWorldBC.pigg",
+      "texWorldBuildings.pigg",
+      "texWorldCZ.pigg",
+      "texWorldSW.pigg",
+      "texWorldV1.pigg",
+      "texWorldV2.pigg",
+      "texts.pigg"
+    ],
+    "unscanned": [
+      "sound.pigg",
+      "sound1.pigg",
+      "sound2.pigg",
+      "sound3.pigg",
+      "sound4.pigg",
+      "sound5.pigg",
+      "sound6.pigg",
+      "sound7.pigg",
+      "soundMusic.pigg",
+      "soundMusic1.pigg",
+      "soundMusic2.pigg",
+      "soundPowers.pigg",
+      "soundV1.pigg",
+      "soundV2.pigg",
+      "soundVMusic.pigg"
+    ],
+    "complete_original_set_proven": false,
+    "reason": "15 sound archives are excluded. Names alone do not prove their contents. No additional archive fetched."
+  },
+  "thor_capture_search": [
+    {
+      "name": "COH-ObservedScene-1792606604967.zip",
+      "sha256": "940d50770fdbfd803af2e4407f8c98d7230f6e784a7d1cbce36a292d835c5732",
+      "searched_members": [
+        "scene-capture.json"
+      ],
+      "matches": {},
+      "standalone_client_log_present": false
+    },
+    {
+      "name": "COH-NativeCombined-1792606619522.zip",
+      "sha256": "623800b22640bb0f35a27bbf89bae04253c5acf9e1db10b0365084b0dd7def82",
+      "searched_members": [
+        "native-client-report.json",
+        "previous-session-combined-server-latest-report.json",
+        "combined-server-previous-attempts.json",
+        "scene-capture.json",
+        "post-ready-replay.json",
+        "combined-report.json"
+      ],
+      "matches": {},
+      "standalone_client_log_present": false
+    }
+  ],
+  "composite_definitions": {
+    "x_enforcer_glove_01_mask": {
+      "source": "upstream/i24/data/tricks/v_shaders/villains/male/shader_villain_enforcer.txt",
+      "source_sha256": "4f90b941e2ed2b053aa30493d136f70de7155a71f0e251dc2f8e8b32f1667222",
+      "texture_block": "X_Enforcer_Glove_01_Mask",
+      "leaves": {
+        "glove_v_enforcer_01": [
+          {
+            "manifest": "zones-world-supplement",
+            "path": "data/texture_library/v_players/avatar/super_shared/gloves/glove_v_enforcer_01.texture",
+            "in_current_staged_manifests": false
+          }
+        ],
+        "glove_v_enforcer_01_bump": [
+          {
+            "manifest": "zones-world-supplement",
+            "path": "data/texture_library/v_players/avatar/super_shared/gloves/glove_v_enforcer_01_bump.texture",
+            "in_current_staged_manifests": false
+          }
+        ],
+        "glove_v_enforcer_01_mask": [
+          {
+            "manifest": "zones-world-supplement",
+            "path": "data/texture_library/v_players/avatar/super_shared/gloves/glove_v_enforcer_01_mask.texture",
+            "in_current_staged_manifests": false
+          }
+        ],
+        "shader_reflect_chrome_01": []
+      },
+      "inference": "This name is a composite texture declaration, not necessarily an archive filename. Missing literal filename alone does not establish an original-data error. No dependencies staged."
+    },
+    "x_gear_pads": {
+      "source": "upstream/i24/data/tricks/v_shaders/villains/male/shader_villain_gear_pads.txt",
+      "source_sha256": "9c111bcd8114c3f718d9f3b7365c2ef50dfe146780be9847ca7a160a4cdf7d61",
+      "texture_block": "X_Gear_Pads",
+      "leaves": {
+        "shader_reflect_chrome_01": [],
+        "spadr_v_gears_01": [
+          {
+            "manifest": "zones-world-supplement",
+            "path": "data/texture_library/v_players/avatar/super_shared/shoulders/spadr_v_gears_01.texture",
+            "in_current_staged_manifests": false
+          }
+        ],
+        "spadr_v_gears_01_bump": [
+          {
+            "manifest": "zones-world-supplement",
+            "path": "data/texture_library/v_players/avatar/super_shared/shoulders/spadr_v_gears_01_bump.texture",
+            "in_current_staged_manifests": false
+          }
+        ],
+        "spadr_v_gears_01_mask": [
+          {
+            "manifest": "zones-world-supplement",
+            "path": "data/texture_library/v_players/avatar/super_shared/shoulders/spadr_v_gears_01_mask.texture",
+            "in_current_staged_manifests": false
+          }
+        ]
+      },
+      "inference": "This name is a composite texture declaration, not necessarily an archive filename. Missing literal filename alone does not establish an original-data error. No dependencies staged."
+    },
+    "x_imperialdefense_belt_01": {
+      "source": "upstream/i24/data/tricks/v_shaders/villains/male/shader_villain_imperialdefense.txt",
+      "source_sha256": "a579ef0008a3fd7fd9d3cc2fe5d8030c24a0eb3137397e2d5ac341569ec93f71",
+      "texture_block": "X_ImperialDefense_Belt_01",
+      "leaves": {
+        "belt_v_imperialdefense_01": [
+          {
+            "manifest": "client-visual",
+            "path": "data/texture_library/v_players/avatar/super_shared/belts/belt_v_imperialdefense_01.texture",
+            "in_current_staged_manifests": false
+          }
+        ],
+        "belt_v_imperialdefense_01_mask": [
+          {
+            "manifest": "client-visual",
+            "path": "data/texture_library/v_players/avatar/super_shared/belts/belt_v_imperialdefense_01_mask.texture",
+            "in_current_staged_manifests": true
+          }
+        ],
+        "belt_v_imperialdefense_01_normal": [
+          {
+            "manifest": "client-visual",
+            "path": "data/texture_library/v_players/avatar/super_shared/belts/belt_v_imperialdefense_01_normal.texture",
+            "in_current_staged_manifests": false
+          }
+        ]
+      },
+      "inference": "This name is a composite texture declaration, not necessarily an archive filename. Missing literal filename alone does not establish an original-data error. No dependencies staged."
+    }
+  }
+}

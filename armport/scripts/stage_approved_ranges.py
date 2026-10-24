@@ -89,7 +89,7 @@ def decode(stored, record):
     return raw
 
 
-def download(record):
+def download(record, receipts=None):
     start, size = record['offset'], record['stored_bytes']
     request = urllib.request.Request(record['source_url'], headers={
         'Range': f'bytes={start}-{start + size - 1}', 'If-Match': record['source_etag'],
@@ -101,7 +101,12 @@ def download(record):
                 and response.headers.get('Content-Range') == record['source_content_range']
                 and int(response.headers.get('Content-Length', -1)) == size,
                 'Donor changed or refused exact pinned partial transfer')
-        return response.read(size + 1)
+        stored = response.read(size + 1)
+        if receipts is not None:
+            receipts.append(dict(source_archive=record['source_archive'], path=record['path'],
+                status=response.status, content_range=response.headers.get('Content-Range'),
+                bytes_received=len(stored)))
+        return stored
 
 
 def verify(output, document):
@@ -141,11 +146,13 @@ def main():
     parser.add_argument('--verify-only', action='store_true')
     args = parser.parse_args()
     doc = read_manifest()
+    receipts = []
     if not args.verify_only:
-        stage(args.output, doc)
+        stage(args.output, doc, downloader=lambda record: download(record, receipts))
     verify(args.output, doc)
-    print(json.dumps(dict(files=doc['file_count'], bytes=doc['payload_bytes'],
-        unresolved=doc['unresolved'], source_archives_fully_downloaded=False, runtime_validated=False)))
+    print('::notice title=ArmPort approved ranges::' + json.dumps(dict(files=doc['file_count'], bytes=doc['payload_bytes'],
+        unresolved=doc['unresolved'], source_archives_fully_downloaded=False, runtime_validated=False,
+        verified_cached_layer=args.verify_only, transfers=receipts)))
 
 
 if __name__ == '__main__':

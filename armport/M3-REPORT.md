@@ -3,6 +3,74 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## Review 5639193819 follow-up
+
+[Review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5639193819)
+and [conditional exception decision](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6387467359).
+No texture exception is enabled. The required completeness and six-run proof
+are not established. No additional assets have been fetched or staged.
+
+[Replay 40113107670](https://github.com/Russianranger/coh-android/actions/runs/40113107670)
+fails on 16 errors on both targets. The exact occurrence list, dispatch index,
+thread ID, trace hash and artifact identities are in
+[evidence](evidence/m3-dispatch-errors-40113107670.json), produced with
+`python3 armport/scripts/itemize_dispatch_errors.py --arm64 <ARM64>/id1-a/zone-trace.jsonl --i686 <i686>/id1-a/zone-trace.jsonl --output <evidence>`.
+Both available id1-a traces match literal texts, counts and indices; both have
+thread ID 372. The validator stops after id1-a failure, so id1-b/id31 are not
+available and six-way equivalence must not be inferred.
+
+| Literal error text | dispatch 0 | dispatch 1 |
+|---|---:|---:|
+| CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR. | 2 | 2 |
+| CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML. | 2 | 2 |
+| CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR. | 2 | 2 |
+| CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS. | 0 | 1 |
+| CUSTOM TEXTURE ERROR: FEM wants nonexistent texture X_ImperialDefense_Belt_01 as texture 1 on bone BELT. | 0 | 1 |
+| mission.c: Room -1 marker isn't in a room | 0 | 2 |
+
+The committed client recipe `upstream/i24/tools/fetch_data.ps1` and
+`assets/catalog.json` agree on 72 archives. The 57-name scan omits 15 sound
+archives (listed in the evidence). Their metadata identities already exist
+in `assets/zones-audio-metadata.json`, but the ArmPort scan did not inspect
+those file tables. Archive names alone do not establish texture absence.
+
+More significantly, all three failing X_* names have original composite
+texture declarations. The evidence identifies their exact source blocks and
+leaf paths: eight referenced textures exist in reviewed visual/zone manifests
+but are absent from the current staged manifests. This is a dependency lead,
+not proof of a fix; no expanded dependency staging is authorized by the
+14-name fetch decision. Missing literal composite filenames do not by
+themselves prove erroneous original data. HIPS names also pass through the
+original gender_prefix_fixup lookup; no guessed substitution is made.
+
+The retained Thor archives COH-NativeCombined-1792606619522.zip and
+COH-ObservedScene-1792606604967.zip match the published SHA-256 values. Their
+JSON members contain no identical literal texts and neither ZIP has a
+standalone client log. This cannot prove the original client was error-free.
+
+The exact first 28 Wine lines from Atlas run 40105902326 artifact 12566815878
+(SHA-256 335a3ed556eccbee69d3b4ea1b967b5a931a50d2a4da5fdd7def6cb231beb7f1)
+are retained as a fixture. The real dispatch/unwind/restore sequence passes
+the startup matcher and fails when moved after a test boundary. That historical
+run predates 0067; its synthetic test boundary is not runtime qualification.
+Current server-run 120931544128 remains pending at this checkpoint.
+
+L1: successful uncached range staging now reports each response's actual
+Content-Range, status and received bytes; cache verification reports no new
+transfers. L2: the trace comment explicitly says every map.start emits a marker.
+
+0068 logs caller address, incoming power pointer and list address at the
+original powerCust_FindPowerCustomization entry, only with ARMPORT_POWER_TRACE.
+It never dereferences or repairs the suspect pointer. 0069 logs the original
+mission-room group, property and failed tray-lookup coordinates; the original
+error and RoomAdd call remain unchanged. These diagnostics investigate the
+M4 bad key and two replay mission-room errors without granting an exception.
+
+Local validation: [command evidence](evidence/review-5639193819-local.json).
+80 host tests and 23 M4 client tests pass. Full ARM64 OptDebug Game links;
+both changed translation units compile with the i686 compiler using the
+recorded adjusted build commands. That is not a full i686 link or runtime pass.
+
 ## Review 5638956748 and approved follow-up (2026-10-24)
 
 Source/harness commit `07c536d7fe5d7748ced9e03845c53b0b3cf907d4` runs

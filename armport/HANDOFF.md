@@ -65,6 +65,16 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
+Review 5639193819 follow-up: see the leading M3-REPORT section and
+m3-dispatch-errors-40113107670.json. Both targets have 14 texture and two
+mission-room errors in id1-a; id1-b/id31 have not run. The conditional texture
+exception approved in comment 6387467359 remains OFF: the archive scan is
+57 of 72 and composite names have unstaged dependencies in reviewed manifests.
+No extra fetch/staging or acceptance relaxation. Patches 0068/0069 diagnose
+M4 power inputs/caller and missing mission-room tray coordinates. Enable
+ARMPORT_POWER_TRACE only in the M4 interactive diagnostic.
+
+
 Review 5638956748 follow-up code 07c536d7 is being qualified by build/Atlas
 40113107671 and replay 40113107670 on armport/m3-review8. The user approved the 14-name
 PIGG fetch and the narrow Atlas startup RPC exception allowance; recorded in

@@ -77,3 +77,18 @@ class ApprovedRanges(unittest.TestCase):
             with self.assertRaises(ValueError): ranges.verify(root, doc)
             target.symlink_to('/dev/null')
             with self.assertRaises(ValueError): ranges.verify(root, doc)
+
+    def test_notice_receipt_uses_actual_successful_response(self):
+        record = next(iter(ranges.read_manifest()['provenance'].values()))
+        response = unittest.mock.MagicMock()
+        response.__enter__.return_value = response
+        response.status = 206
+        response.geturl.return_value = record['source_url']
+        response.headers = {'ETag': record['source_etag'], 'Last-Modified': record['source_last_modified'],
+            'Content-Range': record['source_content_range'], 'Content-Length': str(record['stored_bytes'])}
+        response.read.return_value = b'payload'
+        receipts = []
+        with patch('stage_approved_ranges.urllib.request.urlopen', return_value=response):
+            self.assertEqual(ranges.download(record, receipts), b'payload')
+        self.assertEqual(receipts[0]['content_range'], response.headers['Content-Range'])
+        self.assertEqual(receipts[0]['bytes_received'], 7)
