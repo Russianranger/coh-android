@@ -73,7 +73,7 @@ def ocr(path):
         return f'ocr failed: {e!r}'
 
 
-def merge_tree(src, dst, strict=False):
+def merge_tree(src, dst, strict=False, earlier_roots=None):
     """Overlay src onto dst as hard links (real directories, no symlinks, so the
     client's directory scans see ordinary files). Earlier roots win for files.
     Strict supplements must agree byte-for-byte with every earlier collision,
@@ -82,10 +82,13 @@ def merge_tree(src, dst, strict=False):
     if strict:
         prior = {}
         incoming = {}
-        for base, _, names in os.walk(dst, followlinks=True):
-            for name in names:
-                path = Path(base) / name
-                prior.setdefault(path.relative_to(dst).as_posix().casefold(), []).append(path)
+        # Inspect every earlier input layer, including files shadowed by the
+        # ordinary first-wins merge, not only its final destination view.
+        for root in earlier_roots if earlier_roots is not None else (dst,):
+            for base, _, names in os.walk(root, followlinks=True):
+                for name in names:
+                    path = Path(base) / name
+                    prior.setdefault(path.relative_to(root).as_posix().casefold(), []).append(path)
         for base, _, names in os.walk(src, followlinks=True):
             for name in names:
                 path = Path(base) / name
@@ -477,8 +480,11 @@ def main():
     strict_roots = {root.resolve() for root in a.strict_data}
     if not strict_roots.issubset({root.resolve() for root in a.data}):
         raise ValueError('--strict-data must also appear in --data')
+    earlier_roots = []
     for root in a.data:
-        merge_tree(root.resolve(), rt / 'data', strict=root.resolve() in strict_roots)
+        root = root.resolve()
+        merge_tree(root, rt / 'data', strict=root in strict_roots, earlier_roots=earlier_roots)
+        earlier_roots.append(root)
     # Development (non-FINAL) builds take a folder with data/ and tools/ as the
     # game root (UtilitiesLib file.c addAppropriateDataDirs).
     (rt / 'tools').mkdir()

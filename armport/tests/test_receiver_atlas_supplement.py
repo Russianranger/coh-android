@@ -1,4 +1,6 @@
 import hashlib
+import contextlib
+import io
 from pathlib import Path
 import sys
 import tempfile
@@ -12,6 +14,8 @@ import smoke_run
 
 class AtlasSupplement(unittest.TestCase):
     def setUp(self):
+        # Deliberately rejected fixtures must not emit CI error annotations.
+        self.enterContext(contextlib.redirect_stdout(io.StringIO()))
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
@@ -80,3 +84,13 @@ class AtlasSupplement(unittest.TestCase):
         self.assertEqual(smoke_run.merge_tree(source, dest, strict=True), 1)
         self.assertFalse((dest / 'overlap.texture').exists())
         self.assertEqual((dest / 'new.texture').read_bytes(), b'new')
+
+    def test_shadowed_earlier_layer_conflict_is_not_hidden(self):
+        first, second, source, dest = (self.root / name for name in ('first', 'second', 'source', 'runtime'))
+        for root in (first, second, source): root.mkdir()
+        for root, data in ((first, b'first'), (second, b'shadowed'), (source, b'first')):
+            (root / 'overlap.texture').write_bytes(data)
+        smoke_run.merge_tree(first, dest)
+        smoke_run.merge_tree(second, dest)
+        with self.assertRaisesRegex(ValueError, 'earlier data'):
+            smoke_run.merge_tree(source, dest, strict=True, earlier_roots=[first, second])

@@ -14,6 +14,8 @@ on:
       - 'armport/scripts/check_receiver_state_preprocess.py'
       - 'armport/scripts/client_errors.py'
       - 'armport/scripts/stage_atlas_supplement.py'
+      - 'armport/scripts/smoke_run.py'
+      - 'assets/atlas-world-supplement-manifest.json'
       - '.github/workflows/armport-reference.yml'
 
 permissions:
