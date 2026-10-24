@@ -233,5 +233,6 @@ ARM64 and i686, its current control finds CRT vsnprintf/snprintf/sprintf;
 removing only the three undef directives reproduces all three quick_ calls.
 Both controls pass for both targets and both updated OptDebug Game links
 exit 0. The reference workflow runs this control before a new client build.
-The corrected observer still needs execution evidence; all complete flags
+Run 40092531364 at 0296f2fb tests the corrected observer; execution evidence
+is still pending; all complete flags
 remain false and the previous failing run is retained as evidence.

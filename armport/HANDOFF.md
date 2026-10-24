@@ -35,8 +35,9 @@ Wine via FEX).
   merged with merge commits.
 - `armport/m3-atlas`: current M3 work, draft PR #6. See `git log` and
   `M3-REPORT.md` for the current implementation-review checkpoint; not a
-  milestone pass. `armport/replay-state` holds the partial state observer
-  while the earlier Atlas run finishes. M4 work is on `armport/m4-runtime`.
+  milestone pass. The partial state observer and formatter correction are
+  integrated; 40092531364 tests code commit 0296f2fb on the replay iteration
+  branch while the earlier Atlas run finishes. M4 is on `armport/m4-runtime`.
 - Each milestone: PR from `armport/<milestone>` into `COH-ArmPort`; reviewer
   approves; author addresses findings; merge with a merge commit
   (`gh api -X PUT repos/Russianranger/coh-android/pulls/<n>/merge -f merge_method=merge`).
@@ -67,11 +68,16 @@ Wine via FEX).
 - Partial state observer/comparison at 1e6952ed fails in the first snapshot
   formatter in 40091320504. Bounded CRT formatting replaces the inappropriate
   array-size macro; both links and preprocessing controls pass locally.
+  Corrected execution run 40092531364 at 0296f2fb is pending.
   It is intentionally incomplete; coverage and local validation commands
   are in replay/README.md and M3-REPORT.md.
 - M4 runtime probes 40040922125 and 40087554038 pass guest boot. The latter's
   interactive job fails on missing zone_asset_package. Commit ddaccd4 adds
-  that required helper; 40090844692 tests it. Full M4 remains unqualified.
+  that required helper. Both interactive attempts in 40090844692 instead
+  fail before launch on a dependency-download HTTP 503. Commit 58841f92
+  recovers the exact pinned source from accepted artifacts and shares the
+  successful boot PRoot with the interactive job. Run 40092467628 tests that
+  correction. Full M4 remains unqualified.
 - Latest Claude review is 5637131418 at 443f1b73. Request a new implementation
   review for the integrated P2, handshake prerequisites, QA-notice handling
   and state observers. Method agreement is not milestone approval.
