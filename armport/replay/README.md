@@ -2,7 +2,11 @@
 
 PR #6 comment 6385679120 supersedes the older process-wide game-error rule below.
 `receiver.c` writes indexed replay.dispatch.begin/end to the isolated zone log.
-All 117 paired ordered windows must contain zero errors. Startup/load inventories
+All 117 paired ordered windows and the final loader drain must contain zero errors.
+After dispatch 116 the driver calls forceGeoLoaderToComplete(), then
+texForceTexLoaderToComplete(0), inside replay.drain.begin/end. Inter-dispatch
+gaps also remain in dispatch phase. Each isolated record has a separate thread
+ID; IDs never enter literal message comparisons. Startup/load inventories
 must match literally with counts across all six executions; compare_state.py
 checks this before partial state comparisons. Wine exceptions, assertions,
 fatals, malformed traces and missing stdio error/fatal markers remain fatal.

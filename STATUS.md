@@ -1,7 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-24.
-M0 survey: merged (PR #3). Route: build the original client as an ARM64
+Updated 2026-10-24.M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
 
 M1 libraries: merged (PR #4, approved by Sol). The original textparser built
@@ -22,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (64 patches including partial replay observers; Astra leads,
+M3 into Atlas (66 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -35,6 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Run 40100355259: grid controls pass, Atlas still faults in groupGridActivate.
-- Run 40105902494 ARM64: 541 errors inside dispatch; missing-data evidence in M3 report.
+- 40106727443: both targets fail on 541 dispatch errors; inventories/counts match.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
-  remains incomplete. M4 VBO fix in 40106299491: boot passes, interactive pending.
+  remains incomplete. 166 reviewed files selected; 14 uncovered files need approval.
+- M4 40106299491: boot passes, power search faults; diagnostic run 40110421624.

@@ -62,3 +62,5 @@
 0062-initialize-costume-verification-appearance.patch
 0063-preserve-collision-grid-pointer-width.patch
 0064-preserve-vbo-command-pointer-header.patch
+0065-identify-zone-trace-writer-threads.patch
+0066-diagnose-null-grid-tracker-definition.patch

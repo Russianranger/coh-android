@@ -20,8 +20,10 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.wine.write_text('')
         (self.path / 'client-stdio.txt').write_text('')
         (self.path / 'zone-trace.jsonl').write_text(''.join(
-            json.dumps(dict(stage='replay.dispatch.' + edge, text=str(i))) + '\n'
-            for i in range(117) for edge in ('begin', 'end')))
+            json.dumps(dict(stage='replay.dispatch.' + edge, text=str(i), tid=1)) + '\n'
+            for i in range(117) for edge in ('begin', 'end')) + ''.join(
+            json.dumps(dict(stage='replay.drain.' + edge, text='117', tid=1)) + '\n'
+            for edge in ('begin', 'end')))
         self.expected = replay.fixtures(self.path)
         self.rows = [dict(type='configuration', initial_id=1)]
         for i, want in enumerate(self.expected):
@@ -84,7 +86,7 @@ class ReceiverEvidenceTests(unittest.TestCase):
     def test_only_errors_outside_dispatch_are_eligible_for_comparison(self):
         trace = self.path / 'zone-trace.jsonl'
         good = trace.read_text()
-        error = json.dumps(dict(stage='client.error', text='missing texture')) + '\n'
+        error = json.dumps(dict(stage='client.error', text='missing texture', tid=2)) + '\n'
         (self.path / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error missing texture tid=2\n')
         trace.write_text(error + good)
         result = self.check()
@@ -94,6 +96,23 @@ class ReceiverEvidenceTests(unittest.TestCase):
         trace.write_text(first + '\n' + error + rest)
         with self.assertRaisesRegex(ValueError, '1 dispatch errors'):
             self.check()
+
+    def test_loader_drain_and_inter_dispatch_errors_cannot_escape(self):
+        trace = self.path / 'zone-trace.jsonl'
+        good = trace.read_text()
+        error = json.dumps(dict(stage='client.error', text='late APC failure', tid=99)) + '\n'
+        (self.path / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error late APC failure tid=99\n')
+        rows = good.splitlines(True)
+        for offset in (2, len(rows) - 1):
+            trace.write_text(''.join(rows[:offset]) + error + ''.join(rows[offset:]))
+            with self.assertRaisesRegex(ValueError, '1 dispatch errors'):
+                self.check()
+        (self.path / 'client-stdio.txt').write_text('')
+        for bad in (''.join(rows[:-2]), ''.join(rows[:-1]), ''.join(rows + rows[-2:]),
+                    good.replace(', "tid": 1', ''), good.replace('"tid": 1', '"tid": 0')):
+            trace.write_text(bad)
+            with self.assertRaises(ValueError):
+                self.check()
 
     def test_missing_game_stdio_rejected(self):
         (self.path / 'client-stdio.txt').unlink()

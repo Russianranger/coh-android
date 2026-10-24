@@ -37,6 +37,8 @@
 #include "group/groupfileload.h"
 #include "group/groupdyn.h"
 #include "group/groupnetrecv.h"
+#include "seq/anim.h"
+#include "render/tex.h"
 #include <utilitieslib/utils/armport_zone_trace.h>
 
 #undef vsnprintf
@@ -317,6 +319,14 @@ void armportReplayMaybeRun(void)
             u32(post + at + 16) == records && u32(post + at + 28) == 1 &&
             u64(post + at + 32) == payload_total && u64(post + at + 40) == bit_total,
             "incomplete replay or trailer");
+    /* Extra driver step, not a captured message. Keep asynchronous geometry
+     * and texture failures inside the receive phase until both loaders drain. */
+    armportZoneTrace("replay.drain.begin", "117");
+    emit("{\"type\":\"loader_drain_begin\",\"after_dispatch\":116}\n");
+    forceGeoLoaderToComplete();
+    texForceTexLoaderToComplete(0);
+    armportZoneTrace("replay.drain.end", "117");
+    emit("{\"type\":\"loader_drain_end\",\"after_dispatch\":116}\n");
     emit("{\"type\":\"result\",\"dispatches\":117,\"exact_cursors\":true,"
          "\"state_comparison_complete\":false,\"m3_replay_complete\":false}\n");
     CloseHandle(output);

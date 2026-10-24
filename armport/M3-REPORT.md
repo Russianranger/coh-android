@@ -3,44 +3,79 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
-## New phase evidence and remaining replay blocker
+## Review 5638821870: corrected coverage and loader evidence
 
-At source 285f913c, [40105902494](https://github.com/Russianranger/coh-android/actions/runs/40105902494/job/120907498834)
-ARM64/id1-a fails the accepted phase rule: 150,549 startup errors, 32,179
-map-load errors and **541 errors inside dispatch windows**, across 303 literal
-texts. All 117 isolated boundary pairs are present and log-integrity checks
-pass. This run cannot establish accepted replay or state equivalence.
-`evidence/m3-dispatch-errors-40105902494.json` records the verified artifact
-SHA, exact missing geometry/texture names, phase counts and manifest coverage.
-The i686 comparison is pending; no absent-in-both claim is made for this run.
+Claude's [review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638821870)
+confirms the accepted phase rule implementation and 0064's VBO correction;
+it does not approve a milestone or merge.
 
-Dispatch classes: 179 missing geometry/model reports, 360 custom-texture reports
-and two mission-room reports. Affected indices are 0 (62), 1 (228), 3 (21),
-5 (192), 39 (18), 91 (20). Actual ARM64 lookup has none of the 45 named geometry
-files or 135 named textures. An exact, case-insensitive scan of assets/*manifest.json
-covers eight of those geometry paths and 16 texture basenames; 37 geometry
-paths and 119 textures have no match. This is narrower evidence than the old
-process-wide errors and shows that the accepted split alone does not remove
-the data blocker. The mission-room cause also remains unqualified.
+Run [40105902494](https://github.com/Russianranger/coh-android/actions/runs/40105902494)
+fails on both targets with 541 dispatch errors: 179 geometry/model reports,
+360 custom-texture reports and two mission-room reports. All 117 pairs exist.
+Run [40106727443](https://github.com/Russianranger/coh-android/actions/runs/40106727443)
+repeats the failure. Comparison job 120915264128 has 133,392 shared literal
+texts, no architecture-only texts and no count differences. Its downloaded
+artifact 12565955691 matches SHA-256
+`1def01e816b3ed6bdac9cb9ab937a6586aba61aba50e0c5f557330a58ef16310`.
+All 45 geometry paths and 135 texture names in the retained dispatch evidence
+are absent from both staged runtimes. i686 is no longer pending.
 
-No new assets or exemptions have been added. In particular, no failing decode
-is moved outside the dispatch windows. Any new source still needs user approval;
-Claude should review this evidence before a further acceptance decision.
+The previous manifest scan was wrong: it did not decode gzip+base64 manifests.
+`reviewed_asset_coverage.py` verifies both compressed and decoded identities,
+then resolves exact geometry paths and texture candidates. Against these same
+missing files, its retained `evidence/m3-reviewed-file-selection.json` selects:
 
-Classification follow-up e49d4065 includes TexSwap source/destination names and
-actual loose object-library Def declarations, mapped to .rootnames geometry
-with existence/hash checks. Names follow the original public basename/__ lookup;
-private & declarations are excluded. Declared names do not imply loaded models.
-Only shared references to absent geometry on both targets become candidates.
-Source-only check: 11,577/11,577 referenced group names have loose declarations
-in upstream/i24/data; this does not prove runtime model presence. All 63 host
-tests pass. Run 40106727443 tests this follow-up on armport/replay-state, keeping
-the long Atlas run at 285f913c alive. The integration below changes docs only.
+| Reviewed archive | Files selected | Bytes |
+|---|---:|---:|
+| client-visual-assets, 0.13.10 | 142 | 15,334,280 |
+| character-avatar-defaults | 11 | 1,882,288 |
+| zones-world-supplement | 13 | 776,315 |
 
-M4 a5d78afd passes guest boot in [40106299491](https://github.com/Russianranger/coh-android/actions/runs/40106299491);
-interactive creation/reopen with VBO-fixed build 40105902326 is still running.
-Build 40105902326 passes Release, OptDebug, libraries and both original/patched
-VBO controls under Wine. None of these successes completes M3 or M4.
+Command: `python3 armport/scripts/reviewed_asset_coverage.py --evidence
+armport/evidence/m3-dispatch-errors-40105902494.json --output
+armport/evidence/m3-reviewed-file-selection.json`. It reports zero ambiguous
+candidates and **seven uncovered geometry files plus seven texture names**.
+The earlier 37/119 figures are superseded. Every selected texture resolves to
+one exact path and hash across reviewed sources; ambiguous stems fail staging.
+
+CI retrieves the existing visual artifact from 37249488856 and zone resource
+artifact from 38112251836. Archive bytes/SHA-256, complete inventories and each
+selected file are verified before staging. The 166-file/17,992,883-byte result
+is checked again after retrieval and merged with strict checks against all
+earlier data layers. The selected archive is retained for 90 days. No original
+pigg fetch is made. Local staging verified the 153 visual/default files;
+zone donor execution and the new replay are pending CI.
+
+Patch 0065 adds a separate numeric thread ID to isolated records; literal error
+text and counts remain unchanged. After dispatch 116, the driver runs the
+original geometry and texture completion functions inside a mandatory paired
+drain window. Errors between dispatches also count as dispatch errors, so late
+APCs cannot escape simply by falling between markers. This extra driver step
+is not a captured packet or a change to original receive logic. Patch 0066
+logs a NULL grid tracker, its ID/entries and its parent's group name if available;
+the original assertion/fault stays intact. No NULL bypass is added.
+
+Local validation: `python3 -m unittest discover -s armport/tests -p 'test_*.py'`
+passes 66 tests, including malformed drain markers, delayed errors, missing
+thread IDs, compressed-manifest corruption and conflicting file pins. Both
+ARM64 and i686 OptDebug Game links pass with `CMAKE_BUILD_PARALLEL_LEVEL=2`
+(`review-round7-arm-build.log`, `review-round7-i686-build.log`). YAML parsing and
+`git diff --check` pass. Runtime replay/Atlas evidence is still required.
+
+Two explicit decisions remain: fetching the 14 uncovered files from original
+pigg archives, and allowing only handled startup RPC code 6ba before map.start.
+Neither is implemented or assumed approved. M3 still lacks full state coverage,
+accepted replay and a rendered/connected Atlas screenshot.
+
+M4 run [40106299491](https://github.com/Russianranger/coh-android/actions/runs/40106299491)
+passes guest boot but fails creation with PC 0x14007457c reading
+0x0000010000000010. Exact executable hash
+`0e82dd6656a91e0e09eadb2a685de9c1dfb59e7573f22f6fa6d04e9c4dcf0844`
+symbolizes to searchPowerCustomizations, power_customization.c:159 (invalid
+search key). M4 diagnostic head b9cf89cb enables Wine SEH registers/caller
+logging in [40110421624](https://github.com/Russianranger/coh-android/actions/runs/40110421624).
+The cause is not yet established; all 23 M4 client host tests pass. Neither
+milestone is complete and no APK signing/Thor test is requested.
 
 ## Review 5638651994 and the accepted error split
 

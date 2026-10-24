@@ -65,17 +65,21 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
-Code 285f913c implements review 5638651994 + the explicit user phase decision.
-Run 40105902494 ARM64/id1-a now proves 541 game errors inside 117 paired dispatch
-windows (179 geometry, 360 textures, two mission-room reports). The split alone
-cannot pass replay. Exact ARM64 file lists and manifest coverage are retained
-in evidence/m3-dispatch-errors-40105902494.json; i686 is still pending.
-Do not move decode work outside windows or relax the rule. Ask Claude to review
-this new evidence; a new data source still needs user approval.
-Classification follow-up e49d4065 runs in 40106727443 on armport/replay-state.
-Long Atlas 40105902326 remains at identical source patch 0064; M4 a5d78afd runs
-40106299491 with that Release client. Guest boot passes; interactive is pending.
-The current integration is documentation only over e49d4065; keep those runs alive.
+Review 5638821870 confirms phase enforcement and patch 0064. Follow-up corrects
+compressed manifest coverage: 166 exact files are covered by three reviewed
+archives, leaving seven geometry files and seven texture names. See
+M3-REPORT.md and evidence/m3-reviewed-file-selection.json for the reproducible
+selection and pins. Same-commit i686 comparison is complete in 40106727443:
+zero architecture-only errors/count differences; both targets still fail on 541
+dispatch errors. Stage the covered files only; original pigg fetching still
+needs explicit user approval. The proposed narrow startup RPC 6ba allowance
+also needs explicit agreement and has NOT been implemented.
+Patches 0065/0066 add trace thread IDs and NULL-grid diagnostics. The driver adds
+a required final loader drain; errors in inter-dispatch gaps also fail. Both
+local links and 66 host tests pass. No NULL bypass or acceptance loosening.
+M4 b9cf89cb runs 40110421624 to gather exception registers for the next fault:
+40106299491 fails in searchPowerCustomizations (PC 0x14007457c), after the VBO
+correction. Its guest boot passed; M4 remains incomplete. See M3-REPORT.md.
 
 ### Latest review decision (2026-10-24)
 

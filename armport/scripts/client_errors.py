@@ -143,6 +143,9 @@ def inventory(path, output, trace=None, expected_dispatches=None):
         raise ValueError('Missing or oversized game stdio evidence')
     counts, phases, isolated_markers, stdio_markers = Counter(), Counter(), Counter(), Counter()
     pending, failures = [], []
+    thread_errors = Counter()
+    replay_started = draining = drained = False
+    drain_windows = 0
     start = re.compile(r'client\.(?:error|fatal)|Assertion failed|assertion failure|ARMPORT_ZONE_LOG_FAILED', re.I)
     marker = re.compile(r'ArmPort zone: \d+ (client\.(?:error|fatal))\b')
     isolated = trace is not None
@@ -157,9 +160,12 @@ def inventory(path, output, trace=None, expected_dispatches=None):
         with trace.open(encoding='ascii') as stream:
             for line in stream:
                 row = json.loads(line)
-                if (not line.endswith('\n') or set(row) != {'stage', 'text'}
-                        or not all(isinstance(v, str) for v in row.values())):
+                if (not line.endswith('\n') or set(row) not in ({'stage', 'text'}, {'stage', 'text', 'tid'})
+                        or not isinstance(row.get('stage'), str) or not isinstance(row.get('text'), str)
+                        or ('tid' in row and (type(row['tid']) is not int or not 0 < row['tid'] <= 0xffffffff))):
                     raise ValueError('Malformed isolated zone trace')
+                if expected_dispatches is not None and 'tid' not in row:
+                    failures.append('Missing isolated writer thread ID')
                 trace_records += 1
                 stage, text = row['stage'], row['text']
                 if stage == 'replay.map.begin':
@@ -171,14 +177,26 @@ def inventory(path, output, trace=None, expected_dispatches=None):
                         failures.append('Unpaired map-load boundary')
                     map_active, phase = False, 'outside_dispatch'
                 elif stage == 'replay.dispatch.begin':
-                    if active is not None or text != str(dispatches) or map_active:
+                    if active is not None or text != str(dispatches) or map_active or draining or drained:
                         failures.append('Missing, nested or out-of-order dispatch begin: ' + text)
                     active = text
+                    replay_started = True
                 elif stage == 'replay.dispatch.end':
                     if active is None or text != active or text != str(dispatches):
                         failures.append('Unpaired or out-of-order dispatch end: ' + text)
                     active = None
                     dispatches += 1
+                elif stage == 'replay.drain.begin':
+                    if (not replay_started or active is not None or map_active or draining or drained
+                            or text != str(dispatches)
+                            or (expected_dispatches is not None and dispatches != expected_dispatches)):
+                        failures.append('Missing, nested or out-of-order loader drain begin')
+                    draining = True
+                elif stage == 'replay.drain.end':
+                    if not draining or active is not None or text != str(dispatches):
+                        failures.append('Unpaired loader drain end')
+                    draining, drained = False, True
+                    drain_windows += 1
                 elif stage in ('map.start', 'group.load.begin'):
                     phase = 'map_load'
                 elif stage == 'map.finish.done':
@@ -187,7 +205,10 @@ def inventory(path, output, trace=None, expected_dispatches=None):
                 if stage in ('client.error', 'client.fatal'):
                     key = stage + ' ' + text
                     counts[key] += 1
-                    phases[('dispatch' if active is not None else phase, key)] += 1
+                    # Include inter-dispatch gaps: background errors cannot escape
+                    # the dispatch rule simply by landing between two markers.
+                    phases[('dispatch' if active is not None or (replay_started and not drained) else phase, key)] += 1
+                    thread_errors[row.get('tid', 0)] += 1
                     isolated_markers[stage] += 1
                     if stage == 'client.fatal':
                         failures.append('Game fatal in isolated trace')
@@ -195,6 +216,8 @@ def inventory(path, output, trace=None, expected_dispatches=None):
             failures.append('Unclosed dispatch or map-load boundary')
         if expected_dispatches is not None and dispatches != expected_dispatches:
             failures.append(f'Expected {expected_dispatches} paired dispatch windows, got {dispatches}')
+        if draining or (expected_dispatches is not None and (not drained or drain_windows != 1)):
+            failures.append('Missing or unclosed final loader drain window')
 
     def finish():
         if pending:
@@ -242,6 +265,8 @@ def inventory(path, output, trace=None, expected_dispatches=None):
                                 for where in sorted({phase for phase, _ in phases})},
                   map_load_finished=map_finished,
                   dispatch_windows=dispatches,
+                  loader_drain_windows=drain_windows,
+                  error_writer_threads=dict(sorted(thread_errors.items())),
                   dispatch_error_count=sum(n for (where, _), n in phases.items() if where == 'dispatch'),
                   integrity_failures=sorted(set(failures)),
                   stdio_markers=dict(stdio_markers), isolated_markers=dict(isolated_markers),

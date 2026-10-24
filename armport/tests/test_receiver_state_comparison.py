@@ -64,7 +64,7 @@ class StateComparison(unittest.TestCase):
             for label in ('id1-a', 'id1-b', 'id31'):
                 run = root / target / label
                 trace = run / 'zone-trace.jsonl'
-                trace.write_text(json.dumps(dict(stage='client.error', text='literal DATA gap')) + '\n' + trace.read_text())
+                trace.write_text(json.dumps(dict(stage='client.error', text='literal DATA gap', tid=1)) + '\n' + trace.read_text())
                 (run / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error literal DATA gap tid=1\n')
         self.assertTrue(compare(root, 'a' * 40)['outside_error_inventories_equal'])
         run = root / 'i686/id31'
@@ -73,7 +73,7 @@ class StateComparison(unittest.TestCase):
         trace.write_text(good.replace('literal DATA gap', 'literal data gap'))
         with self.assertRaisesRegex(ValueError, 'inventories or counts differ'):
             compare(root, 'a' * 40)
-        trace.write_text(json.dumps(dict(stage='client.error', text='literal DATA gap')) + '\n' + good)
+        trace.write_text(json.dumps(dict(stage='client.error', text='literal DATA gap', tid=1)) + '\n' + good)
         (run / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error literal DATA gap tid=1\n' * 2)
         with self.assertRaisesRegex(ValueError, 'inventories or counts differ'):
             compare(root, 'a' * 40)

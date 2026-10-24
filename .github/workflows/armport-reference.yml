@@ -14,6 +14,9 @@ on:
       - 'armport/scripts/check_receiver_state_preprocess.py'
       - 'armport/scripts/client_errors.py'
       - 'armport/scripts/stage_atlas_supplement.py'
+      - 'armport/scripts/stage_reviewed_files.py'
+      - 'armport/scripts/reviewed_asset_coverage.py'
+      - 'armport/evidence/m3-reviewed-file-selection.json'
       - 'armport/scripts/smoke_run.py'
       - 'assets/atlas-world-supplement-manifest.json'
       - '.github/workflows/armport-reference.yml'
@@ -39,12 +42,21 @@ jobs:
     # only the workflow's existing download helper its required read access.
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
             /tools/fetch_runtime_asset_bundle.py
             /armport/scripts/stage_atlas_supplement.py
+            /armport/scripts/reviewed_asset_coverage.py
+            /armport/scripts/stage_reviewed_files.py
+            /armport/evidence/m3-reviewed-file-selection.json
+            /armport/evidence/m3-dispatch-errors-40105902494.json
+            /assets/client-visual-manifest.json
+            /assets/character-avatar-defaults-manifest.json
+            /assets/character-avatar-defaults.zip
+            /assets/zones-world-supplement-manifest.json
             /assets/reference-inputs-receipt.json
           sparse-checkout-cone-mode: false
           lfs: false
@@ -91,6 +103,48 @@ jobs:
           retention-days: 90
           if-no-files-found: error
 
+      - id: reviewed-dispatch
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          key: armport-reviewed-dispatch-${{ hashFiles('armport/evidence/m3-reviewed-file-selection.json') }}
+      - name: Retrieve the already reviewed 0.13.10 visual archive
+        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-assets
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-visual
+      - name: Retrieve the already reviewed zone archive
+        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-zones
+      - name: Select only shared missing files covered by reviewed manifests
+        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_reviewed_files.py \
+            --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" \
+            --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip" \
+            --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - name: Verify selected files even on a cache hit
+        run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - uses: actions/cache/save@v4
+        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          key: ${{ steps.reviewed-dispatch.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-dispatch-data
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          retention-days: 90
+          if-no-files-found: error
+
   reference-build:
     needs: assets
     runs-on: ubuntu-24.04-arm
@@ -114,6 +168,10 @@ jobs:
             /upstream/i24/data/
             /android/runtime-lock.json
             /assets/atlas-world-supplement-manifest.json
+            /assets/client-visual-manifest.json
+            /assets/character-avatar-defaults-manifest.json
+            /assets/character-avatar-defaults.zip
+            /assets/zones-world-supplement-manifest.json
           sparse-checkout-cone-mode: false
           lfs: false
       - name: Check replay output rejection and fixture identities
@@ -251,6 +309,13 @@ jobs:
           path: ${{ runner.temp }}/atlas-supplement
           key: armport-atlas-supplement-499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60
           fail-on-cache-miss: true
+      - name: Restore selected reviewed dispatch data
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-reviewed-dispatch-data
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+      - name: Verify every selected dispatch file
+        run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
       - name: Verify and stage all retained Atlas geometry and textures
         run: |
           python3 armport/scripts/stage_atlas_supplement.py stage \
@@ -258,7 +323,7 @@ jobs:
       - name: Stage same data, bins and shaders for replay
         run: |
           python3 armport/scripts/smoke_run.py --stage-only --build "$RUNNER_TEMP/reference-bin" \
-            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" \
             --cg-dir "$RUNNER_TEMP/cg-arb" --runtime "$RUNNER_TEMP/replay-runtime"
       - name: Execute all original receiver dispatches (incomplete milestone stage)
         run: |
