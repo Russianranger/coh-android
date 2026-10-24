@@ -1,0 +1,84 @@
+{
+  "scope": "proposal_only_not_staged",
+  "decision_required": true,
+  "prior_decision": "https://github.com/Russianranger/coh-android/pull/6#issuecomment-6386664502",
+  "files": {
+    "data/texture_library/v_players/avatar/super_shared/gloves/glove_v_enforcer_01.texture": {
+      "source": "zones-world-supplement",
+      "bytes": 87773,
+      "sha256": "3936e1146cb1a226b0e664f220df963aa02e11127d8b4f394e494e19fa05ea00",
+      "referenced_by": "x_enforcer_glove_01_mask"
+    },
+    "data/texture_library/v_players/avatar/super_shared/gloves/glove_v_enforcer_01_bump.texture": {
+      "source": "zones-world-supplement",
+      "bytes": 87778,
+      "sha256": "ed397abaaeb9ee150b5cf08c3765be582f0095a6f1d94d7c75717a4368698eab",
+      "referenced_by": "x_enforcer_glove_01_mask"
+    },
+    "data/texture_library/v_players/avatar/super_shared/gloves/glove_v_enforcer_01_mask.texture": {
+      "source": "zones-world-supplement",
+      "bytes": 44018,
+      "sha256": "ce39c51804f13eebd8857a8d94006794526f4c56c88bb603cc105c8f08f564f5",
+      "referenced_by": "x_enforcer_glove_01_mask"
+    },
+    "data/texture_library/v_players/avatar/super_shared/shoulders/spadr_v_gears_01.texture": {
+      "source": "zones-world-supplement",
+      "bytes": 87773,
+      "sha256": "46dda9e390a3051e818a40fec3015255e4b62f86c6165ea6a410dfa210ff0fd5",
+      "referenced_by": "x_gear_pads"
+    },
+    "data/texture_library/v_players/avatar/super_shared/shoulders/spadr_v_gears_01_bump.texture": {
+      "source": "zones-world-supplement",
+      "bytes": 87778,
+      "sha256": "bf34813351ab74941306f45d4cf17373034daf848de965b967998013e114e85c",
+      "referenced_by": "x_gear_pads"
+    },
+    "data/texture_library/v_players/avatar/super_shared/shoulders/spadr_v_gears_01_mask.texture": {
+      "source": "zones-world-supplement",
+      "bytes": 87778,
+      "sha256": "82d9ccf29d385cdcf1961dbbcb2531151fc4a9f43f9324b042230f36832f3ae5",
+      "referenced_by": "x_gear_pads"
+    },
+    "data/texture_library/v_players/avatar/super_shared/belts/belt_v_imperialdefense_01.texture": {
+      "source": "client-visual",
+      "bytes": 87778,
+      "sha256": "0d3b4dac3a96f17dfb761eda20a29c62e26a1be4faf8371389b4db0af6cb6011",
+      "referenced_by": "x_imperialdefense_belt_01"
+    },
+    "data/texture_library/v_players/avatar/super_shared/belts/belt_v_imperialdefense_01_normal.texture": {
+      "source": "client-visual",
+      "bytes": 87785,
+      "sha256": "e279b4af4d23a2a9eea8fd2afaa9dabe7b55d60473928db15dfc37d6d36599c8",
+      "referenced_by": "x_imperialdefense_belt_01"
+    }
+  },
+  "sources": {
+    "zones-world-supplement": {
+      "manifest": "assets/zones-world-supplement-manifest.json",
+      "decoded": {
+        "bytes": 4237139,
+        "sha256": "f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74"
+      },
+      "archive": {
+        "bytes": 1663681523,
+        "filename": "zones-world-supplement.zip",
+        "sha256": "f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3"
+      }
+    },
+    "client-visual": {
+      "manifest": "assets/client-visual-manifest.json",
+      "decoded": {
+        "bytes": 16272899,
+        "sha256": "447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b"
+      },
+      "archive": {
+        "bytes": 515813056,
+        "filename": "client-visual-assets.zip",
+        "sha256": "1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea"
+      }
+    }
+  },
+  "file_count": 8,
+  "payload_bytes": 658461,
+  "complete_fix_proven": false
+}

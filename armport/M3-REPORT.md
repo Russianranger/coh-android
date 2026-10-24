@@ -5,6 +5,11 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 
 ## Review 5639193819 follow-up
 
+Source `f0d78fd78e96643da50d90ddb5549110f73bb506` is tested by
+[build/Atlas 40118399219](https://github.com/Russianranger/coh-android/actions/runs/40118399219)
+and [replay 40118399218](https://github.com/Russianranger/coh-android/actions/runs/40118399218).
+Runtime outcomes are pending; this integration adds documentation only.
+
 [Review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5639193819)
 and [conditional exception decision](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6387467359).
 No texture exception is enabled. The required completeness and six-run proof
@@ -39,7 +44,10 @@ texture declarations. The evidence identifies their exact source blocks and
 leaf paths: eight referenced textures exist in reviewed visual/zone manifests
 but are absent from the current staged manifests. This is a dependency lead,
 not proof of a fix; no expanded dependency staging is authorized by the
-14-name fetch decision. Missing literal composite filenames do not by
+14-name fetch decision. The exact proposal (8 files / 658,461 bytes) is in
+[m3-proposed-composite-dependencies.json](evidence/m3-proposed-composite-dependencies.json),
+including per-file and source archive pins. It has not been staged.
+Missing literal composite filenames do not by
 themselves prove erroneous original data. HIPS names also pass through the
 original gender_prefix_fixup lookup; no guessed substitution is made.
 

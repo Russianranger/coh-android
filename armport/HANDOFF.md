@@ -65,7 +65,9 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
-Review 5639193819 follow-up: see the leading M3-REPORT section and
+Review 5639193819 follow-up source f0d78fd78 runs in build/Atlas 40118399219
+and replay 40118399218. The 8-file / 658,461-byte dependency proposal is
+committed but not staged. See the leading M3-REPORT section and
 m3-dispatch-errors-40113107670.json. Both targets have 14 texture and two
 mission-room errors in id1-a; id1-b/id31 have not run. The conditional texture
 exception approved in comment 6387467359 remains OFF: the archive scan is
