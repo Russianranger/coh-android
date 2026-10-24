@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Run 40100355259: grid controls pass, Atlas still faults in groupGridActivate.
-- Run 40100355275: identical startup errors; phase acceptance per comment 6385679120.
+- Run 40105902494 ARM64: 541 errors inside dispatch; missing-data evidence in M3 report.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
-  remains incomplete. Patch 0064 fixes the M4 VBO header; new runtime CI needed.
+  remains incomplete. M4 VBO fix in 40106299491: boot passes, interactive pending.

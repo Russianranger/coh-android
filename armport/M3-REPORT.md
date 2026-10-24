@@ -3,6 +3,45 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## New phase evidence and remaining replay blocker
+
+At source 285f913c, [40105902494](https://github.com/Russianranger/coh-android/actions/runs/40105902494/job/120907498834)
+ARM64/id1-a fails the accepted phase rule: 150,549 startup errors, 32,179
+map-load errors and **541 errors inside dispatch windows**, across 303 literal
+texts. All 117 isolated boundary pairs are present and log-integrity checks
+pass. This run cannot establish accepted replay or state equivalence.
+`evidence/m3-dispatch-errors-40105902494.json` records the verified artifact
+SHA, exact missing geometry/texture names, phase counts and manifest coverage.
+The i686 comparison is pending; no absent-in-both claim is made for this run.
+
+Dispatch classes: 179 missing geometry/model reports, 360 custom-texture reports
+and two mission-room reports. Affected indices are 0 (62), 1 (228), 3 (21),
+5 (192), 39 (18), 91 (20). Actual ARM64 lookup has none of the 45 named geometry
+files or 135 named textures. An exact, case-insensitive scan of assets/*manifest.json
+covers eight of those geometry paths and 16 texture basenames; 37 geometry
+paths and 119 textures have no match. This is narrower evidence than the old
+process-wide errors and shows that the accepted split alone does not remove
+the data blocker. The mission-room cause also remains unqualified.
+
+No new assets or exemptions have been added. In particular, no failing decode
+is moved outside the dispatch windows. Any new source still needs user approval;
+Claude should review this evidence before a further acceptance decision.
+
+Classification follow-up e49d4065 includes TexSwap source/destination names and
+actual loose object-library Def declarations, mapped to .rootnames geometry
+with existence/hash checks. Names follow the original public basename/__ lookup;
+private & declarations are excluded. Declared names do not imply loaded models.
+Only shared references to absent geometry on both targets become candidates.
+Source-only check: 11,577/11,577 referenced group names have loose declarations
+in upstream/i24/data; this does not prove runtime model presence. All 63 host
+tests pass. Run 40106727443 tests this follow-up on armport/replay-state, keeping
+the long Atlas run at 285f913c alive. The integration below changes docs only.
+
+M4 a5d78afd passes guest boot in [40106299491](https://github.com/Russianranger/coh-android/actions/runs/40106299491);
+interactive creation/reopen with VBO-fixed build 40105902326 is still running.
+Build 40105902326 passes Release, OptDebug, libraries and both original/patched
+VBO controls under Wine. None of these successes completes M3 or M4.
+
 ## Review 5638651994 and the accepted error split
 
 The [user decision 6385679120](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6385679120)
@@ -73,7 +112,7 @@ four-byte header. Patch 0064 changes both offsets and allocation to sizeof(VBO*)
 The original 32-bit layout stays four bytes. No rendering logic is replaced.
 
 Local validation commands (2026-10-24):
-- `python3 -m unittest discover -s armport/tests -p 'test_*.py'`: 62 tests OK
+- `python3 -m unittest discover -s armport/tests -p 'test_*.py'`: 63 tests OK
   (review-round6-tests.log); window/order/error/lost-record negatives and
   literal startup-inventory/count differences are covered.
 - `ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/vbo_header.py --source

@@ -1,0 +1,295 @@
+{
+  "classes": {
+    "geometry_file_or_model": 179,
+    "custom_texture": 360,
+    "mission_room": 2
+  },
+  "missing_geometry": [
+    "player_library/bf_boot.geo",
+    "player_library/bf_eyes.geo",
+    "player_library/bf_hair.geo",
+    "player_library/bf_head.geo",
+    "player_library/bf_pants.geo",
+    "player_library/bf_shirt.geo",
+    "player_library/bm_boot.geo",
+    "player_library/bm_eyes.geo",
+    "player_library/bm_hair.geo",
+    "player_library/bm_head.geo",
+    "player_library/bm_neck.geo",
+    "player_library/bm_pants.geo",
+    "player_library/bm_shirt.geo",
+    "player_library/fem_belt.geo",
+    "player_library/fem_boot.geo",
+    "player_library/fem_emblem.geo",
+    "player_library/fem_eyes.geo",
+    "player_library/fem_hair.geo",
+    "player_library/fem_head.geo",
+    "player_library/fem_pants.geo",
+    "player_library/fem_shirt.geo",
+    "player_library/fem_spadr.geo",
+    "player_library/huge_belt.geo",
+    "player_library/huge_boot.geo",
+    "player_library/huge_emblem.geo",
+    "player_library/huge_hair.geo",
+    "player_library/huge_head.geo",
+    "player_library/huge_pants.geo",
+    "player_library/huge_shirt.geo",
+    "player_library/huge_uarmr.geo",
+    "player_library/huge_waist.geo",
+    "player_library/male_belt.geo",
+    "player_library/male_boot.geo",
+    "player_library/male_hair.geo",
+    "player_library/male_head.geo",
+    "player_library/male_pants.geo",
+    "player_library/male_shirt.geo",
+    "player_library/v_fem_belt.geo",
+    "player_library/v_fem_boot.geo",
+    "player_library/v_fem_hair.geo",
+    "player_library/v_fem_sleeves.geo",
+    "player_library/v_fem_top.geo",
+    "player_library/v_huge_spadr.geo",
+    "player_library/v_male_boot.geo",
+    "player_library/v_male_head.geo"
+  ],
+  "present_geometry": [],
+  "missing_textures": [
+    "belt_miss_liberty",
+    "belt_sunstorm",
+    "belt_tactical_02a",
+    "belt_tactical_02b",
+    "belt_tactical_03a",
+    "belt_tactical_03b",
+    "belt_tail_01a",
+    "belt_tail_01b",
+    "belt_v_imperialdefense_01_mask",
+    "boot_banded_01",
+    "boot_bm_business_shoe",
+    "boot_bm_vans_01a",
+    "boot_bm_vans_01b",
+    "boot_circuitry",
+    "boot_fire_stripe",
+    "boot_pants",
+    "boot_skin_bf_high_heel_01a",
+    "boot_skin_bf_high_heel_01b",
+    "boot_smooth_01",
+    "boot_tech_modern_01",
+    "boot_tights",
+    "boot_v_motorcycle_01",
+    "boot_v_motorcycle_01_mask",
+    "boot_v_work_boot_02",
+    "boot_v_work_boot_02_mask",
+    "chest_bf_business_jacket_01a",
+    "chest_bf_business_jacket_01b",
+    "chest_blend",
+    "chest_bm_business_jacket_01a",
+    "chest_bm_business_jacket_01b",
+    "chest_bm_dress_shirt",
+    "chest_bm_jumpsuit",
+    "chest_desire",
+    "chest_fire_stripe",
+    "chest_flak_vest",
+    "chest_freedom_corp_01b",
+    "chest_skin_bf_blouse_01a",
+    "chest_skin_bf_blouse_01b",
+    "chest_skin_bf_sleeveless_01a",
+    "chest_skin_bf_sleeveless_01b",
+    "chest_skin_bf_tshirt_01a",
+    "chest_skin_bf_tshirt_01b",
+    "chest_skin_bm_tshirt_01a",
+    "chest_skin_bm_tshirt_01b",
+    "chest_stripe_1",
+    "chest_suit_01a",
+    "chest_suit_01b",
+    "chest_tech_steampunk",
+    "chest_tights",
+    "emblem_base",
+    "emblem_bullseye",
+    "emblem_club",
+    "emblem_npc_freedom_corp",
+    "eyes_bm_glasses_01a",
+    "eyes_bm_glasses_01b",
+    "eyes_gradient_01a",
+    "eyes_gradient_01b",
+    "face_mask_1",
+    "face_skin_bf_25asian2",
+    "face_skin_bf_25black1",
+    "face_skin_bm_25asian2",
+    "face_skin_bm_25asian3",
+    "face_skin_bm_25black1",
+    "face_skin_bm_25black2",
+    "face_skin_bm_45black2",
+    "face_skin_glowing_eyes_01a",
+    "face_skin_glowing_eyes_01b",
+    "face_skin_head_05",
+    "face_skin_head_08",
+    "face_skin_head_09",
+    "face_small_mask_4",
+    "glove_banded_01",
+    "glove_fire_stripe",
+    "glove_robotic_clean",
+    "glove_skin_bf_hand_01a",
+    "glove_skin_bf_hand_01b",
+    "glove_skin_bm_hand_01a",
+    "glove_skin_bm_hand_01b",
+    "glove_skin_fingerless_01a",
+    "glove_skin_fingerless_01b",
+    "glove_skin_suit_01a",
+    "glove_skin_suit_01b",
+    "glove_smooth_01",
+    "glove_tech_modern_01",
+    "glove_tights",
+    "hair_bf_hat_01a",
+    "hair_bf_hat_01b",
+    "hair_bm_hat_01a",
+    "hair_bm_hat_01b",
+    "hair_bm_long_01a",
+    "hair_bm_long_01b",
+    "hair_bm_short_01a",
+    "hair_bm_short_01b",
+    "hair_detail_base_01",
+    "hair_detail_base_01b",
+    "hair_long_01a",
+    "hair_long_01b",
+    "hair_skin_bm_balding_01a",
+    "hair_skin_bm_balding_01b",
+    "hair_style_01a",
+    "hair_style_01b",
+    "hips_bm_business_pants",
+    "hips_bm_cargo",
+    "hips_bm_jeans",
+    "hips_cargo_01",
+    "hips_celtic",
+    "hips_fire_stripe",
+    "hips_freedom_corp_01b",
+    "hips_miniskirt_1",
+    "hips_pants",
+    "hips_sharp",
+    "hips_skin_bf_skirt_01a",
+    "hips_skin_bf_skirt_01b",
+    "hips_skin_tights",
+    "hips_tights",
+    "neck_bm_beard_01a",
+    "neck_bm_beard_01b",
+    "sf_chest_skin_tights",
+    "sf_face_skin_head_06",
+    "sf_face_skin_head_09",
+    "sf_glove_skin_schoolgirl_01",
+    "sf_glove_skin_schoolgirl_01b",
+    "sf_hips_miniskirt_1b",
+    "sf_hips_skin_tights",
+    "sleeves_v_leather_01",
+    "spadr_manga_s",
+    "spadr_msliberty",
+    "spadr_spiked_01a",
+    "spadr_spiked_01b",
+    "spadr_studded_01a",
+    "spadr_studded_01b",
+    "top_v_leather_01",
+    "x_enforcer_glove_01_mask",
+    "x_gear_pads",
+    "x_imperialdefense_belt_01"
+  ],
+  "per_dispatch": {
+    "0": 62,
+    "1": 228,
+    "3": 21,
+    "5": 192,
+    "39": 18,
+    "91": 20
+  },
+  "manifest_coverage": {
+    "missing_geometry": {
+      "player_library/male_boot.geo": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "player_library/male_hair.geo": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "player_library/male_pants.geo": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "player_library/male_shirt.geo": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "player_library/v_male_head.geo": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "player_library/huge_emblem.geo": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "player_library/huge_uarmr.geo": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "player_library/huge_waist.geo": [
+        "zones-world-supplement-manifest.json"
+      ]
+    },
+    "missing_textures": {
+      "chest_tights": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "hips_tights": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "boot_smooth_01": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "glove_smooth_01": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "hair_style_01a": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "hair_style_01b": [
+        "character-avatar-defaults-manifest.json"
+      ],
+      "chest_tech_steampunk": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "face_skin_head_08": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "belt_tactical_03a": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "belt_tactical_03b": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "emblem_club": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "glove_robotic_clean": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "hair_detail_base_01": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "hair_detail_base_01b": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "boot_circuitry": [
+        "zones-world-supplement-manifest.json"
+      ],
+      "hips_celtic": [
+        "zones-world-supplement-manifest.json"
+      ]
+    }
+  },
+  "run": 40105902494,
+  "job": 120907498834,
+  "source_commit": "285f913cace5099c46e73f67f91d57d862edb10b",
+  "target": "arm64",
+  "execution": "id1-a",
+  "artifact_id": 12564587922,
+  "artifact_sha256": "03686ed8231c1e7d16ecef83b1e4c3c3f787076217b00577eae857901567368d",
+  "dispatch_windows": 117,
+  "dispatch_errors": 541,
+  "phase_counts": {
+    "startup": 150549,
+    "map_load": 32179,
+    "dispatch": 541
+  },
+  "trace_integrity_failures": [],
+  "i686_comparison_pending": true,
+  "m3_replay_complete": false
+}

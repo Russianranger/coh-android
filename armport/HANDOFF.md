@@ -63,6 +63,20 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Immediate next step (2026-10-24)
+
+Code 285f913c implements review 5638651994 + the explicit user phase decision.
+Run 40105902494 ARM64/id1-a now proves 541 game errors inside 117 paired dispatch
+windows (179 geometry, 360 textures, two mission-room reports). The split alone
+cannot pass replay. Exact ARM64 file lists and manifest coverage are retained
+in evidence/m3-dispatch-errors-40105902494.json; i686 is still pending.
+Do not move decode work outside windows or relax the rule. Ask Claude to review
+this new evidence; a new data source still needs user approval.
+Classification follow-up e49d4065 runs in 40106727443 on armport/replay-state.
+Long Atlas 40105902326 remains at identical source patch 0064; M4 a5d78afd runs
+40106299491 with that Release client. Guest boot passes; interactive is pending.
+The current integration is documentation only over e49d4065; keep those runs alive.
+
 ### Latest review decision (2026-10-24)
 
 Review 5638651994 verified 0061-0063 as implementation only. User decision
