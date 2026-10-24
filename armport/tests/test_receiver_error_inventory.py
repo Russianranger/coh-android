@@ -87,3 +87,24 @@ class ErrorInventory(unittest.TestCase):
             self.assertEqual(result['textures']['absent'], [])
             self.assertEqual(result['group_references'], {'streets/sign': 2})
             self.assertEqual(result['phase_classes'][0]['phase'], 'startup')
+
+    def test_texswap_and_group_declarations_do_not_conflate_missing_models_with_files(self):
+        self.assertEqual(client_errors.texture_names(
+            "*** TexSwap Warning: error finding texture 'DEST' to swap with 'SRC'"), ['dest', 'src'])
+        self.assertEqual(client_errors.texture_names(
+            "*** TexSwap Warning: was unable to find source texture 'SRC.tga' to swap"), ['src'])
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            folder = root / 'object_library/Signs'
+            folder.mkdir(parents=True)
+            (folder / 'Road.rootnames').write_text('Def StopSign\n Obj StopSign\nDefEnd\nDef Private&\n')
+            names = ['streets/stopsign', 'stopsign__instance', 'unknown', 'private&']
+            result = client_errors.group_definition_lookup(names, root)
+            self.assertEqual(result['streets/stopsign'][0]['path'], 'object_library/Signs/Road.rootnames')
+            self.assertFalse(result['streets/stopsign'][0]['geometry_present'])
+            self.assertEqual(result['unknown'], [])
+            self.assertEqual(result['private&'], [])
+            (folder / 'ROAD.geo').write_bytes(b'present; model content unverified')
+            result = client_errors.group_definition_lookup(names, root)
+            self.assertTrue(result['stopsign__instance'][0]['geometry_present'])
+            self.assertIn('geometry_sha256', result['streets/stopsign'][0])

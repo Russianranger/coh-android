@@ -29,8 +29,10 @@ def texture_names(text):
     patterns = (r"Player texture \d+ '([^']+)'", r'nonexistent texture (\S+)',
                 r'references missing texture "([^"]+)"',
                 r'referencing missing \S+ texture (\S+)')
-    return sorted({re.sub(r'\.(?:tga|texture|dds)$', '', name.casefold())
-                   for pattern in patterns for name in re.findall(pattern, text, re.I)})
+    names = {name for pattern in patterns for name in re.findall(pattern, text, re.I)}
+    if 'TexSwap' in text:
+        names.update(re.findall(r"(?:texture|swap with) '([^']+)'", text))
+    return sorted({re.sub(r'\.(?:tga|texture|dds)$', '', name.casefold()) for name in names})
 
 
 def group_references(text):
@@ -47,6 +49,7 @@ def error_class(text):
                          ('Player texture ', 'player_texture'),
                          ('Texture Trick ', 'texture_trick'),
                          ('Material trick ', 'material_texture'),
+                         ('TexSwap', 'texture_swap'),
                          ('.geo', 'geometry_file_or_model'),
                          ("Couldn't start DirectSound", 'audio_unavailable'),
                          ('No loading screen match', 'loading_screen'),
@@ -55,6 +58,53 @@ def error_class(text):
         if needle in text:
             return name
     return 'unclassified'
+
+
+
+def group_definition_lookup(names, data):
+    """Observe loose source declarations; do not claim runtime load/model success.
+
+    Public lookup follows groupNameIdx's basename and __ suffix handling.
+    As loadGroupNames does, ignore private & definitions and underscore paths.
+    A .rootnames declaration names geometry; a .txt group may be composite.
+    """
+    from pathlib import Path
+    requested = {}
+    for name in names:
+        public = name.rsplit('/', 1)[-1].split('__', 1)[0].casefold()
+        requested.setdefault(public, []).append(name)
+    result = {name: [] for name in sorted(names)}
+    geometry_info = {}
+    root = data / 'object_library'
+    actual = {p.relative_to(data).as_posix().casefold(): p for p in root.rglob('*') if p.is_file()}
+    for relative, path in sorted(actual.items()):
+        if path.suffix.casefold() not in ('.txt', '.rootnames') or any(
+                part.startswith('_') for part in path.relative_to(root).parts):
+            continue
+        # The repository group loader tokenizes one Def/name declaration per line.
+        for number, line in enumerate(path.read_text(encoding='latin-1').splitlines(), 1):
+            found = re.fullmatch(r'\s*Def\s+(?:"([^"]+)"|([^\s]+))\s*(?://.*)?', line, re.I)
+            if not found:
+                continue
+            public = (found[1] or found[2]).casefold()
+            if public.endswith('&') or public not in requested:
+                continue
+            entry = dict(path=path.relative_to(data).as_posix(), line=number,
+                         declaration=found[1] or found[2], kind=path.suffix.casefold()[1:])
+            if path.suffix.casefold() == '.rootnames':
+                geo = str(Path(relative).with_suffix('.geo')).replace('\\', '/')
+                actual_geo = actual.get(geo)
+                entry['geometry_path'] = geo
+                entry['geometry_present'] = actual_geo is not None
+                if actual_geo:
+                    if geo not in geometry_info:
+                        with actual_geo.open('rb') as stream:
+                            sha = hashlib.file_digest(stream, 'sha256').hexdigest()
+                        geometry_info[geo] = dict(geometry_sha256=sha, geometry_bytes=actual_geo.stat().st_size)
+                    entry.update(geometry_info[geo])
+            for name in requested[public]:
+                result[name].append(entry)
+    return result
 
 
 def asset_lookup(errors, data):
@@ -82,6 +132,7 @@ def asset_lookup(errors, data):
     for error in errors['phase_errors']:
         phases[(error['phase'], error_class(error['text']))] += error['count']
     return dict(textures=textures, group_references=dict(sorted(references.items())),
+                group_definitions=group_definition_lookup(references, data),
                 group_reference_scope='symbolic; file absence not inferred',
                 classes=dict(sorted(classes.items())),
                 phase_classes=[dict(phase=phase, error_class=kind, count=count)
