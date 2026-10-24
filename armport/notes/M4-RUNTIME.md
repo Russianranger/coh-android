@@ -297,3 +297,20 @@ key, rather than the candidate customization. Its origin is not established.
 The interactive launcher now enables the same Wine SEH diagnostics as the boot
 probe so a rerun retains registers/caller evidence. No NULL bypass, pointer
 repair or acceptance change is made. All 23 client host tests pass.
+
+## Caller diagnostic after review 5639193819
+
+Run 40110421624 (interactive job 120922819992) reproduces the power search
+fault. The register/disassembly evidence committed on M3 at 8e0c14542 proves
+the bad key x8=0x10000000000, not the candidate pointer. Its producer is not
+established. Source f0d78fd78 adds opt-in patch 0068 to log the
+incoming pointer, list and caller return address before the original bsearch.
+
+The interactive host enables ARMPORT_POWER_TRACE=1 and pins its Release client
+to build run 40118399219; data remains pinned to 40100355259. This is a
+source diagnostic, not a pointer repair, extra data fetch or acceptance change.
+Symbolize the last power.lookup caller against that exact downloaded Release
+executable. The failing instruction's PC will move with the diagnostic build.
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py'`: 23 pass
+(local output: m4-review9-tests.log). Runtime result is pending. No APK or
+signing is performed; M4 remains incomplete.
