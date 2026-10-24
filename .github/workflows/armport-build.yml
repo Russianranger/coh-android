@@ -179,6 +179,25 @@ jobs:
           PY
           done
 
+      - name: Collision grid pointer identity under ARM64 Wine
+        run: |
+          set -o pipefail
+          for variant in original patched; do
+            source=upstream/ouroboros
+            expected=0
+            if [ "$variant" = patched ]; then
+              source="$RUNNER_TEMP/armport/src"
+              expected=1
+            fi
+            python3 armport/tests/grid_pointers.py --source "$source" --expect-full-width "$expected" \
+              --emit-windows "$RUNNER_TEMP/grid-$variant.c"
+            /opt/llvm-mingw/bin/aarch64-w64-mingw32-clang -std=gnu11 -O2 \
+              "$RUNNER_TEMP/grid-$variant.c" -o "$RUNNER_TEMP/grid-$variant.exe"
+            out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/grid-$variant.exe" "$expected")
+            printf '%s\n' "$out"
+            printf '::notice title=ARM64 grid %s::%s\n' "$variant" "$out"
+          done
+
       - name: Configure
         env:
           COH_LLVM_MINGW: /opt/llvm-mingw

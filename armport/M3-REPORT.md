@@ -3,6 +3,103 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## Current review follow-up (5638301654)
+
+Claude verified the previous corrections at 045fe9aad, then requested full
+unmixed errors, same-commit ARM64/i686 data-gap classification, and runtime
+supplement collision checks. Code 0b42f7cf implements those corrections.
+Run [40097455262](https://github.com/Russianranger/coh-android/actions/runs/40097455262)
+fails strict replay on both targets: each has 183,269 complete game errors.
+The diagnostic comparison job 120887913787 succeeds; it is not replay success.
+It reports 132,393 shared literal keys, 1,020 ARM64-only spellings and 999
+i686-only spellings. Both actual staged runtimes lack the same 45 named
+geometry paths. No new costume assets have been added.
+
+The downloaded comparison artifact 12561139952 matches API SHA256
+8c971df69594458d9b18ce2b5e16685c8c47a84b1ba3d5d9c873bd0a519bcd77.
+A local diagnostic that casefolds the full texts produces identical dictionaries:
+133,341 keys, 183,269 occurrences, zero differing counts. Acceptance remains
+literal and zero-error. Source inspection found an uninitialized optional
+costumeFilePrefix in costumeVerifyTextures' dummy Appearance, used by
+determineTextureNames to choose uppercase B versus the data's lowercase b.
+Patch 0062 zero-initializes that structure, preserving the selected bodytype.
+Both OptDebug links pass ([8/8]); run
+[40099922039](https://github.com/Russianranger/coh-android/actions/runs/40099922039)
+at 023fd0dd tests whether this explains the architecture-only spellings.
+That result is still required; casefolding does not prove source correctness.
+
+A local manifest scan finds five of the 45 geometry paths in the reviewed
+character-avatar-defaults manifest and three in zones-world-supplement; 37
+have no matching entry in assets/*manifest.json. The 45-path list is not a
+complete inventory of every missing texture/model. Only shared errors and
+actual absent files can justify additions, from already reviewed pinned
+sources with per-file hashes. Any new data source needs the user's approval.
+
+Patch 0061 adds the full JSONL trace on a dedicated locked append handle and
+corrects i686 stdio routing. Strict replay rejects missing/malformed trace,
+error/fatal records, stdio assertions, and log-write failures. The independent
+error-comparison job checks source identity and actual-runtime file hashes.
+The earlier i686 run 40094942235 lacked client-stdio.txt; the new run supplies
+complete evidence on both targets. Both earlier real handled-SEH controls pass.
+No decoder, dialog-acknowledgement or zero-error rule is loosened.
+
+The Atlas stage mechanically verifies all 2,877 retained hashes and sizes
+against the repository's reviewed 2,904-file manifest. Runtime staging checks
+case-insensitive collisions against every earlier layer, including shadowed
+files; differing bytes fail before copying. The second public supplement
+upload is removed: future runs use cache and the existing pinned donor.
+Previously uploaded artifacts have not been deleted.
+
+### Atlas crash and pointer correction
+
+Run [40094942248](https://github.com/Russianranger/coh-android/actions/runs/40094942248)
+at 7fb7c692 fails server-run 120877721069. The original client exits 5, with
+an access violation reading 0x88 at 0x1400a4da4 after map.finish.begin.
+The final screenshot is black and the database never confirms this client's
+Atlas connection. QA-notice search/acknowledgement was not reached; the
+previous modal is not established as this run's failure.
+
+Evidence artifact 12562347411 matches API SHA256
+8aa29fecadec100f6fdc6ade178f1925aa89320a4a68b3bd27591d010f8f6403.
+The exact Release archive 12560726582 matches
+e87a4c98b28fa0497607196da2c765566c50ca9b5817a845c520ebec87fbd9a7.
+`llvm-symbolizer --obj=CityOfHeroes.exe 0x1400A4DA4` reports groupGridActivate,
+groupgrid.c:96:14. Disassembly loads def from the retrieved tracker and faults
+at def+0x88. Source inspection finds grid entries, insertion and collision
+lookup narrowing pointers to U32, plus an int temporary in sphere lookup.
+Patch 0063 preserves uintptr_t throughout storage, removal indices and both
+lookup paths. Small numeric node IDs and the low-bit group tag are preserved.
+It adds no NULL bypass or missing-geometry allowance.
+
+`grid_pointers.py` runs the actual grid insertion/removal and both lookup
+bodies with allocator/geometry adapters. Opaque addresses above 4 GB are never
+dereferenced. Original source returns storage=0, sphere=0, collision=0,
+distinct=0; patched source returns all four as 1. Two high addresses with
+identical low bits must remain distinct. Both generated controls compile for
+ARM64 Windows; the workflow also executes them under the pinned Wine.
+Actual Atlas execution after this correction remains required.
+
+Local validation on 2026-10-24:
+- `python3 -m unittest discover -s armport/tests -v`: 57 tests, OK.
+- `python3 armport/tests/grid_pointers.py --source ../patchwork-active/src
+  --expect-full-width 1` and the original-source negative control: exit 0.
+- Both OptDebug Game builds use CMAKE_BUILD_PARALLEL_LEVEL=2. Patch 0062
+  links both targets; patch 0063 also links both targets ([99/99], exit 0).
+- The standalone armport_zone_trace concurrent test links for ARM64. It checks
+  64 complete 8,191-byte messages from four threads; Wine execution is required.
+- `stage_atlas_supplement.py stage --source ../recovered-atlas --output
+  ../reviewed-atlas-data`: 2,877 files / 309,655,940 bytes, matching reviewed
+  manifest SHA256 204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86.
+- Workflow YAML parses; git diff --check passes; upstream/ has no changes.
+
+M4 continues independently: run 40095316035 reaches the actual ARM64 client,
+then faults at 0x140204184. The exact retained executable resolves that address
+to texResetTrickBasedParametersComposite, tex.c:1081:61 (generic texture NULL).
+Its log records failures opening reviewed textures. M4 branch ddceae53 makes
+private regular copies instead of calling link() inside --link2symlink PRoot,
+and captures client evidence from the ARM64 directory. The 22 app tests pass;
+run 40098262167 must confirm the staging hypothesis. No M4 pass is claimed.
+
 ## Exit-test evidence
 
 | Requirement | Evidence and current result |
@@ -12,9 +109,9 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 | All supplied packets through original receivers | Cursor/ACK stage passed in [40087788115](https://github.com/Russianranger/coh-android/actions/runs/40087788115), head 563e49ac: ARM64 job 120854188812, i686 job 120854188725. Each target executes ID1 twice and ID31 once; each execution reports 117 exact cursors, ACK IDs [1,2], and matching native INITIAL command boundaries. |
 | Full deterministic state comparison | Not met. Patch 0059 and replay/state.c now emit explicitly partial snapshots. CI [40091320504](https://github.com/Russianranger/coh-android/actions/runs/40091320504), head 1e6952ed, fails in the first snapshot formatter after INITIAL cursor/ACK. The corrected formatter has passed both local links and four preprocessing controls; rerun [40092531364](https://github.com/Russianranger/coh-android/actions/runs/40092531364) at 0296f2fb writes 117 ARM64 snapshots but rejects the costume subset because the validator confused 60 allocated slots with 28 logical parts. The current correction compares num_parts; full state remains incomplete. Full entity/player/tail coverage is still incomplete. |
 | Independent native INITIAL comparison | Command boundaries passed in 40087788115. Four additional recorded fields are checked by the new observer harness: selected entity index/type and costume bodytype/part count. That subset is not full native INITIAL equivalence; see replay/fixtures/native-initial-entity.json and replay/README.md. |
-| Final milestone approval | Pending. Claude implementation review [5638209554](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638209554) reviewed 49c390ada and requested H1/M1–M4. Corrections below still require execution and review; this is not milestone approval. |
+| Final milestone approval | Pending. Claude implementation review [5638301654](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638301654) verified prior fixes and requested the follow-up above. Its new corrections require execution and review; this is not milestone approval. |
 
-## Changes since Claude's last review
+## Earlier implementation changes
 
 The last review identified a P2: accepting a plausible receiver transcript
 without examining the game Wine log. The integrated check_wine_output now
@@ -132,8 +229,8 @@ No error dialog is automatically acknowledged.
 
 Run 40092531364 artifact 12559387913 (SHA256
 da15257d2fd11d850ffc08a888d532f27d7f336582c597c5361653f2632b70bf)
-contains 184,514 game error records, 137,888 distinct recorded texts, in
-id1-a/client-stdio.txt. `client_errors.inventory` preserves multiline text;
+contains 184,514 game error records, 137,888 legacy inventory keys (not reliable distinct messages), in
+id1-a/client-stdio.txt. `client_errors.inventory` collected mixed/truncated stdio text;
 examples include missing Arch_Ent_Wall_Brick_01 and deleted geometry references.
 The new strict validator will reject these, even with exact dispatch cursors.
 The data errors must be resolved before state equivalence is accepted.

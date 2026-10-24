@@ -37,7 +37,15 @@ Wine via FEX).
   `M3-REPORT.md` for the current implementation-review checkpoint; not a
   milestone pass. Review 5638209554 corrections and the reviewed Atlas supplement are
   integrated at code 7fb7c692; runs 40094942235/40094942248 test them.
-  40094448205 proves ARM64 handled-SEH rejection but fails on game data errors. M4 is on `armport/m4-runtime`.
+  40094448205 proves ARM64 handled-SEH rejection but fails on game data errors.
+  Review 5638301654 follow-up is at 0b42f7cf on armport/replay-state, tested
+  by 40097455262 (both targets fail on 183,269 complete errors):
+  complete isolated errors, i686 stdio routing,
+  same-commit data diagnostics and supplement identity/collision checks.
+  Code 023fd0dd / run 40099922039 tests zero-initialized costume Appearance.
+  Patch 0063 corrects collision-grid pointer truncation found in 40094942248;
+  original/patched host controls fail/pass pointer identity as expected.
+  M4 is on `armport/m4-runtime`.
 - Each milestone: PR from `armport/<milestone>` into `COH-ArmPort`; reviewer
   approves; author addresses findings; merge with a merge commit
   (`gh api -X PUT repos/Russianranger/coh-android/pulls/<n>/merge -f merge_method=merge`).
@@ -63,8 +71,9 @@ Wine via FEX).
   Claude is integrated into that tested milestone head.
 - Run 40054327137 still fails rendering/connection. Its artifact records the
   access-level QA notice and a modal on the loading screen. Run 40087788009 also fails with zero QA-notice actions; its image remains
-  loading. The next run stages the reviewed 2,877-file Atlas supplement
-  containing the missing texture and records the exact-window search result.
+  loading. Run 40094942248 stages the supplement but crashes in
+  groupGridActivate before the QA notice; its final frame is black. Patch 0063
+  fixes the grid storage/lookup pointer widths. No rendered Atlas is established.
 - Partial state observer/comparison at 1e6952ed fails in the first snapshot
   formatter in 40091320504. Bounded CRT formatting replaces the inappropriate
   array-size macro; both links and preprocessing controls pass locally.
@@ -82,8 +91,11 @@ Wine via FEX).
   client_visual_assets; 723bbc32 stages the server helper and distinguishes
   helper-only legacy inventories from optional visual payloads. Run 40094077884
   then exposes a missing cache ancestry helper. Commit 589a015b addresses it;
-  40095316035 is pending. Full M4 remains unqualified.
-- Latest Claude implementation review is 5638209554 at 49c390ada. Request a new implementation
+  40095316035 reaches client launch, then faults on a NULL texture. ddceae53
+  changes the ARM64 staging to private regular copies (PRoot translates link
+  calls) and fixes the evidence directory. 22 app tests pass; 40098262167 tests
+  the correction. Full M4 remains unqualified.
+- Latest Claude implementation review is 5638301654 at 045fe9aad. Request a new implementation
   review for the integrated P2, handshake prerequisites, QA-notice handling
   and state observers. Method agreement is not milestone approval.
 

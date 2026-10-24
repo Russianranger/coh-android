@@ -60,3 +60,4 @@
 0060-reference-i686-client-error-traces.patch
 0061-isolated-complete-zone-traces.patch
 0062-initialize-costume-verification-appearance.patch
+0063-preserve-collision-grid-pointer-width.patch

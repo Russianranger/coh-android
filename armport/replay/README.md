@@ -249,8 +249,9 @@ both translation units on ARM64 and i686. Both updated Game links pass; the
 local host suite passes 46 tests (`python3 -m unittest discover -s armport/tests -v`).
 The two architectures both enable client.error traces (patch 0060, exported
 through patchwork.py). Acceptance requires zero game errors/asserts as well as
-zero Wine exceptions; a complete multiline inventory is retained as
-client-errors.json. No error allowlist has been introduced.
+zero Wine exceptions. The original mixed stdio inventory was lossy; review
+5638301654 led to the isolated full-message log described below. No error
+allowlist has been introduced.
 
 CI now emits per-execution and comparison notices. A separately logged
 seh-control.exe raises and handles 0xe0424242 under the installed Wine +seh;
@@ -258,3 +259,50 @@ the host requires its completion marker and real exception trace and must
 reject that log. Both control executables link locally; actual Wine execution
 remains pending. Pinned bins/Cg from run 40043254025 are copied to an exact-run
 cache and retained for 90 days, before their original October 31 expiration.
+
+### Review 5638301654: complete error evidence and data collisions
+
+Code 0b42f7cf adds patch 0061, exported by patchwork.py. `ARMPORT_ZONE_LOG`
+selects an independent Win32 append handle. One locked WriteFile stores each
+complete ASCII-escaped JSON record; stderr keeps its bounded progress text.
+The log reports write/allocation/size failures, which fail strict replay.
+The i686 reference now honors ARMPORT_STDIO_LOG in WinMain and console setup,
+matching ARM64: run 40094942235's i686 job 120875377664 otherwise produced no
+client-stdio.txt. Both targets passed the real handled-SEH rejection control.
+
+`client_errors.inventory` requires this isolated log for replay, retains the
+full client.error/client.fatal text, and also rejects stdio assertions and
+log-write failures. Legacy stdio grouping is explicitly incomplete. The
+concurrent Wine regression writes 64 identical 8,191-byte multiline messages
+from four threads and checks exact decoded content; local ARM64 compilation
+and linking pass. Runtime execution is still required.
+
+The separate error-comparison job runs after failed receiver jobs as well as
+successful ones. It validates the same source commit, re-inventories both
+isolated logs, reports shared and architecture-only errors, and lists shared
+geometry paths absent from both actual staged runtimes. Existing geometry is
+reported with path, byte count and SHA256, so a missing model in an existing
+file cannot be classified as a missing file. This is a diagnostic only;
+zero-error replay, full state comparison and M3 remain separate requirements.
+No additional costume data has been selected or supplied.
+
+The Atlas stage checks every retained file's size/hash against the repository
+manifest. Runtime staging verifies case-insensitive collisions against
+every earlier input layer, including shadowed paths, and rejects differing
+bytes before copying the supplement.
+The workflow reports collision counts. Data uses cache plus the original
+pinned donor fallback; no further supplemental game-data artifacts are uploaded.
+
+Local commands: `python3 -m unittest discover -s armport/tests -v` gives 57
+passing tests; both OptDebug Game links exit 0 (`[18/18] Linking CXX executable
+bin/CityOfHeroes.exe`). The standalone concurrent trace test links for ARM64.
+The actual retained archive stage verifies 2,877 files / 309,655,940 bytes and
+repository manifest SHA256 204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86.
+Run 40097455262 rejects both targets on 183,269 complete errors each. The
+same-commit comparison reports 132,393 shared literal keys, 1,020 ARM64-only
+and 999 i686-only spellings; 45 named geometry paths are absent from both
+runtimes. A local casefold diagnostic matches every text/count, but acceptance
+remains literal and zero-error. Patch 0062 initializes the dummy costume
+Appearance whose optional prefix affects the suffix spelling. Run 40099922039
+at 023fd0dd tests that correction. See M3-REPORT.md for hashes, the separate
+Atlas pointer crash, patch 0063 controls, and the remaining data-source gate.

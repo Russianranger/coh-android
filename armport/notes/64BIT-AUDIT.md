@@ -100,3 +100,25 @@ is cursor/ACK execution and deliberately cannot claim state equivalence.
 0057: bounded swap/model and error-dialog progress diagnostics. No pointer
 fix or loading behavior change; follows the post-drain stop reproduced in
 40042636088 and 40043254025. ARM64/i686 OptDebug Game links pass locally.
+
+
+0062: initialize costumeVerifyTextures' entire dummy Appearance. Its optional
+costumeFilePrefix was read uninitialized in determineTextureNames. Run
+40097455262 has equal complete error counts on both targets but case-only
+spelling differences; run 40099922039 tests this correction. This is a shared
+source bug exposed by architecture-dependent stack contents, not an allowance
+for ARM64-only errors. No acceptance normalization is added.
+
+0063: collision-grid node storage and lookup must preserve pointer width.
+Run 40094942248's exact Release executable resolves 0x1400a4da4 to
+groupGridActivate (groupgrid.c:96:14), reading def+0x88 through a truncated
+tracker. GridEnts.entries, GridIdxList entry pointers, insertion temporaries,
+checkGridCellObjs and processGridEntries now use uintptr_t. The latter's int
+temporary could classify a high pointer as a small numeric ID. The group tag
+is still bit 0; IDs below 100000 still use the original numeric tag table.
+Host command `python3 armport/tests/grid_pointers.py --source
+../patchwork-active/src --expect-full-width 1` returns storage=1, sphere=1,
+collision=1, distinct=1. The same command with upstream/ouroboros and expected
+0 returns all four as 0. Both generated ARM64 Windows controls compile.
+The test adapts allocators/unrelated geometry but executes the original grid
+function bodies; high tokens are never dereferenced. Wine/Atlas CI is required.
