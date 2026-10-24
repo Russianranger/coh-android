@@ -75,18 +75,21 @@ def check_exception_control(path):
 
 def check_client_output(path, runtime=None):
     errors = client_errors.inventory(path, path.with_name('client-errors.json'),
-                                     path.with_name('zone-trace.jsonl'))
+                                     path.with_name('zone-trace.jsonl'), expected_dispatches=117)
     if runtime is not None:
+        assets = client_errors.asset_lookup(errors, runtime / 'data')
+        path.with_name('error-assets.json').write_text(json.dumps(assets, indent=2) + '\n')
         lookup = client_errors.geometry_lookup(errors, runtime / 'data')
         path.with_name('error-geometry-files.json').write_text(json.dumps(lookup, indent=2) + '\n')
-    if errors['count']:
-        raise ValueError(f"Game error/assert: {errors['count']} reports, {errors['unique']} distinct; "
-                         'see client-errors.json: ' + errors['errors'][0]['text'][:300])
+    if errors['integrity_failures'] or errors['dispatch_error_count']:
+        raise ValueError(f"Game error/assert: {errors['dispatch_error_count']} dispatch errors; "
+                         + '; '.join(errors['integrity_failures']) + '; see client-errors.json')
+    return errors
 
 
 def check_output(path, expected, initial_id, wine_output, runtime=None):
     check_wine_output(wine_output)
-    check_client_output(path.parent / 'client-stdio.txt', runtime)
+    errors = check_client_output(path.parent / 'client-stdio.txt', runtime)
     if path.stat().st_size > 1024 * 1024:
         raise ValueError('receiver output exceeds cursor-stage bound')
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -172,7 +175,9 @@ def check_output(path, expected, initial_id, wine_output, runtime=None):
         raise ValueError('native INITIAL zero terminator mismatch')
     return dict(dispatches=117, exact_cursors=True, ack_ids=[r['ack_id'] for r in acks],
                 native_initial_command_boundaries_match=True,
-                native_initial_entity_subset_match=True, game_errors=0,
+                native_initial_entity_subset_match=True, dispatch_game_errors=0,
+                outside_game_errors=sum(e['count'] for e in errors['outside_errors']),
+                outside_error_comparison_required=True,
                 partial_state_snapshots=117, state_schema_complete=False,
                 state_comparison_complete=False, m3_replay_complete=False)
 

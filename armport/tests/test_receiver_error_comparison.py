@@ -36,6 +36,7 @@ class ErrorComparison(unittest.TestCase):
                 self.assertEqual(lookup['player_library/present.geo'][0]['sha256'],
                                  hashlib.sha256(b'present geometry').hexdigest())
                 (run / 'error-geometry-files.json').write_text(json.dumps(lookup))
+                (run / 'error-assets.json').write_text(json.dumps(client_errors.asset_lookup(errors, data)))
             result = compare_errors.compare(root, 'same')
             self.assertEqual(result['shared_missing_geometry_files'], ['player_library/missing.geo'])
             self.assertEqual(len(result['shared']), 2)

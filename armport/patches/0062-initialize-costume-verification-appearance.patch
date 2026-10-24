@@ -1,12 +1,14 @@
 diff --git a/Common/gameData/costume_data.c b/Common/gameData/costume_data.c
-index 606ad4b..547d243 100644
+index 606ad4b..bc6842e 100644
 --- a/Common/gameData/costume_data.c
 +++ b/Common/gameData/costume_data.c
-@@ -977,7 +977,7 @@ static int costumeVerifyTextures( void * unused, CostumeMasterList * costumeMast
+@@ -977,7 +977,9 @@ static int costumeVerifyTextures( void * unused, CostumeMasterList * costumeMast
      for( i = eaSize(&costumeMaster->bodySet)-1; i >= 0; i-- )
      {
          const CostumeBodySet *bodySet = costumeMaster->bodySet[i];
 -        Appearance dummy_appearance;
++        /* Costume texture substitution reads other fields (including costumeFilePrefix).
++         * Zero them so verification does not depend on uninitialized stack bytes. */
 +        Appearance dummy_appearance = {0};
          if (!(stricmp(bodySet->name, "male")==0 || stricmp(bodySet->name, "fem")==0 || stricmp(bodySet->name, "huge")==0))
              continue;

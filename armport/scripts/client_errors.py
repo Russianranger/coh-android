@@ -24,15 +24,82 @@ def geometry_lookup(errors, data):
     return result
 
 
-def inventory(path, output, trace=None):
+
+def texture_names(text):
+    patterns = (r"Player texture \d+ '([^']+)'", r'nonexistent texture (\S+)',
+                r'references missing texture "([^"]+)"',
+                r'referencing missing \S+ texture (\S+)')
+    return sorted({re.sub(r'\.(?:tga|texture|dds)$', '', name.casefold())
+                   for pattern in patterns for name in re.findall(pattern, text, re.I)})
+
+
+def group_references(text):
+    patterns = (r'Deleted reference ([^\r\n]+)', r"can't find member ([^\r\n]+)",
+                r'Cant find root geo ([^\r\n]+)')
+    return sorted({name.casefold() for pattern in patterns for name in re.findall(pattern, text, re.I)})
+
+
+def error_class(text):
+    for needle, name in (('Deleted reference ', 'deleted_group_reference'),
+                         ("can't find member ", 'missing_group_member'),
+                         ('Cant find root geo ', 'missing_root_geometry'),
+                         ('CUSTOM TEXTURE ERROR:', 'custom_texture'),
+                         ('Player texture ', 'player_texture'),
+                         ('Texture Trick ', 'texture_trick'),
+                         ('Material trick ', 'material_texture'),
+                         ('.geo', 'geometry_file_or_model'),
+                         ("Couldn't start DirectSound", 'audio_unavailable'),
+                         ('No loading screen match', 'loading_screen'),
+                         ('ParserLoadFiles:', 'parser_input'),
+                         ("Room -1 marker isn't in a room", 'mission_room')):
+        if needle in text:
+            return name
+    return 'unclassified'
+
+
+def asset_lookup(errors, data):
+    """Resolve named textures against staged files, without fetching any assets.
+
+    Group names are symbolic references, not file paths. Retain them separately;
+    an absent definition/model cannot be inferred from an absent loose filename.
+    """
+    requested = {name for error in errors['errors'] for name in texture_names(error['text'])}
+    textures = {name: [] for name in sorted(requested)}
+    for path in sorted((data / 'texture_library').rglob('*')):
+        if path.is_file() and path.suffix.casefold() == '.texture':
+            relative = path.relative_to(data).as_posix()
+            keys = {path.stem.casefold(), path.relative_to(data / 'texture_library').with_suffix('').as_posix().casefold()}
+            for name in keys & requested:
+                with path.open('rb') as stream:
+                    sha = hashlib.file_digest(stream, 'sha256').hexdigest()
+                textures[name].append(dict(path=relative, bytes=path.stat().st_size, sha256=sha))
+    classes, references = Counter(), Counter()
+    for error in errors['errors']:
+        classes[error_class(error['text'])] += error['count']
+        for name in group_references(error['text']):
+            references[name] += error['count']
+    phases = Counter()
+    for error in errors['phase_errors']:
+        phases[(error['phase'], error_class(error['text']))] += error['count']
+    return dict(textures=textures, group_references=dict(sorted(references.items())),
+                group_reference_scope='symbolic; file absence not inferred',
+                classes=dict(sorted(classes.items())),
+                phase_classes=[dict(phase=phase, error_class=kind, count=count)
+                               for (phase, kind), count in sorted(phases.items())])
+
+def inventory(path, output, trace=None, expected_dispatches=None):
     if path.is_symlink() or not path.is_file() or path.stat().st_size > 256 * 1024 * 1024:
         raise ValueError('Missing or oversized game stdio evidence')
-    counts = Counter()
-    pending = []
+    counts, phases, isolated_markers, stdio_markers = Counter(), Counter(), Counter(), Counter()
+    pending, failures = [], []
     start = re.compile(r'client\.(?:error|fatal)|Assertion failed|assertion failure|ARMPORT_ZONE_LOG_FAILED', re.I)
+    marker = re.compile(r'ArmPort zone: \d+ (client\.(?:error|fatal))\b')
     isolated = trace is not None
-    trace_records = 0
-    stdio_error = False
+    trace_records = dispatches = 0
+    active = None
+    phase = 'startup'
+    map_active = False
+    map_finished = False
     if isolated:
         if trace.is_symlink() or not trace.is_file() or not 0 < trace.stat().st_size <= 256 * 1024 * 1024:
             raise ValueError('Missing or oversized isolated zone trace')
@@ -43,8 +110,40 @@ def inventory(path, output, trace=None):
                         or not all(isinstance(v, str) for v in row.values())):
                     raise ValueError('Malformed isolated zone trace')
                 trace_records += 1
-                if row['stage'] in ('client.error', 'client.fatal'):
-                    counts[row['stage'] + ' ' + row['text']] += 1
+                stage, text = row['stage'], row['text']
+                if stage == 'replay.map.begin':
+                    if map_active or active is not None:
+                        failures.append('Nested map-load boundary')
+                    map_active, phase = True, 'map_load'
+                elif stage == 'replay.map.end':
+                    if not map_active or active is not None:
+                        failures.append('Unpaired map-load boundary')
+                    map_active, phase = False, 'outside_dispatch'
+                elif stage == 'replay.dispatch.begin':
+                    if active is not None or text != str(dispatches) or map_active:
+                        failures.append('Missing, nested or out-of-order dispatch begin: ' + text)
+                    active = text
+                elif stage == 'replay.dispatch.end':
+                    if active is None or text != active or text != str(dispatches):
+                        failures.append('Unpaired or out-of-order dispatch end: ' + text)
+                    active = None
+                    dispatches += 1
+                elif stage in ('map.start', 'group.load.begin'):
+                    phase = 'map_load'
+                elif stage == 'map.finish.done':
+                    map_finished = True
+                    phase = 'after_map_load'
+                if stage in ('client.error', 'client.fatal'):
+                    key = stage + ' ' + text
+                    counts[key] += 1
+                    phases[('dispatch' if active is not None else phase, key)] += 1
+                    isolated_markers[stage] += 1
+                    if stage == 'client.fatal':
+                        failures.append('Game fatal in isolated trace')
+        if active is not None or map_active:
+            failures.append('Unclosed dispatch or map-load boundary')
+        if expected_dispatches is not None and dispatches != expected_dispatches:
+            failures.append(f'Expected {expected_dispatches} paired dispatch windows, got {dispatches}')
 
     def finish():
         if pending:
@@ -52,15 +151,20 @@ def inventory(path, output, trace=None):
             text = re.sub(r'.*?ArmPort zone: \d+ ', '', text)
             text = re.sub(r'\s*tid=\d+', '', text).rstrip()
             counts[text] += 1
+            phases[('unlocated_stdio', text)] += 1
+            if isolated:
+                failures.append('Game assertion or log-write failure in stdio')
             pending.clear()
 
     with path.open(errors='replace') as stream:
         for line in stream:
+            markers = marker.findall(line)
+            stdio_markers.update(markers)
             if start.search(line):
-                # Keep assertion and log-write failures from stdio. Error/fatal
-                # grouping comes exclusively from complete isolated records.
-                if isolated and re.search(r'client\.(?:error|fatal)', line):
-                    stdio_error = True
+                # Fragmented stdout cannot provide complete error text. Count its
+                # actual zone markers independently to detect partial trace loss.
+                if isolated and markers and not re.search(
+                        r'Assertion failed|assertion failure|ARMPORT_ZONE_LOG_FAILED', line, re.I):
                     finish()
                     continue
                 finish()
@@ -73,11 +177,26 @@ def inventory(path, output, trace=None):
             if pending and re.search(r' tid=\d+\s*$', line):
                 finish()
         finish()
-    if isolated and stdio_error and not counts:
-        counts['client.error/fatal in stdio without isolated error record'] += 1
+    if isolated and stdio_markers != isolated_markers:
+        failures.append('Game error/assert: stdio and isolated error/fatal marker counts differ')
+    rows = lambda counter: [dict(text=text, count=count) for text, count in sorted(counter.items())]
+    outside = Counter()
+    for (where, text), count in phases.items():
+        if where != 'dispatch':
+            outside[text] += count
     result = dict(count=sum(counts.values()), unique=len(counts),
                   source='isolated-jsonl' if isolated else 'legacy-interleaved-stdio',
                   complete_messages=isolated, trace_records=trace_records,
-                  errors=[dict(text=text, count=count) for text, count in sorted(counts.items())])
+                  phase_counts={where: sum(n for (phase, _), n in phases.items() if phase == where)
+                                for where in sorted({phase for phase, _ in phases})},
+                  map_load_finished=map_finished,
+                  dispatch_windows=dispatches,
+                  dispatch_error_count=sum(n for (where, _), n in phases.items() if where == 'dispatch'),
+                  integrity_failures=sorted(set(failures)),
+                  stdio_markers=dict(stdio_markers), isolated_markers=dict(isolated_markers),
+                  outside_errors=rows(outside),
+                  phase_errors=[dict(phase=where, text=text, count=count)
+                                for (where, text), count in sorted(phases.items())],
+                  errors=rows(counts))
     output.write_text(json.dumps(result, indent=2) + '\n')
     return result

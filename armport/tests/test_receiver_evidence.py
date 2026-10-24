@@ -19,7 +19,9 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.wine = self.path / 'wine-output.txt'
         self.wine.write_text('')
         (self.path / 'client-stdio.txt').write_text('')
-        (self.path / 'zone-trace.jsonl').write_text('{"stage":"init","text":""}\n')
+        (self.path / 'zone-trace.jsonl').write_text(''.join(
+            json.dumps(dict(stage='replay.dispatch.' + edge, text=str(i))) + '\n'
+            for i in range(117) for edge in ('begin', 'end')))
         self.expected = replay.fixtures(self.path)
         self.rows = [dict(type='configuration', initial_id=1)]
         for i, want in enumerate(self.expected):
@@ -67,6 +69,31 @@ class ReceiverEvidenceTests(unittest.TestCase):
             (self.path / 'client-stdio.txt').write_text(text)
             with self.assertRaisesRegex(ValueError, 'Game error/assert'):
                 self.check()
+
+    def test_dispatch_boundaries_cannot_be_missing_nested_or_misindexed(self):
+        trace = self.path / 'zone-trace.jsonl'
+        good = trace.read_text().splitlines(True)
+        variants = [good[:-1], good[2:], [good[0]] + good,
+                    [good[0], good[1].replace('"0"', '"1"')] + good[2:]]
+        for rows in variants:
+            with self.subTest(rows=len(rows)):
+                trace.write_text(''.join(rows))
+                with self.assertRaisesRegex(ValueError, 'Game error/assert'):
+                    self.check()
+
+    def test_only_errors_outside_dispatch_are_eligible_for_comparison(self):
+        trace = self.path / 'zone-trace.jsonl'
+        good = trace.read_text()
+        error = json.dumps(dict(stage='client.error', text='missing texture')) + '\n'
+        (self.path / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error missing texture tid=2\n')
+        trace.write_text(error + good)
+        result = self.check()
+        self.assertEqual(result['outside_game_errors'], 1)
+        self.assertTrue(result['outside_error_comparison_required'])
+        first, rest = good.split('\n', 1)
+        trace.write_text(first + '\n' + error + rest)
+        with self.assertRaisesRegex(ValueError, '1 dispatch errors'):
+            self.check()
 
     def test_missing_game_stdio_rejected(self):
         (self.path / 'client-stdio.txt').unlink()

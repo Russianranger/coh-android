@@ -39,7 +39,9 @@ def sections(evidence, client):
                                          trace if trace.exists() else None)
         yield 'ArmPort M3 game errors', json.dumps(dict(count=errors['count'], unique=errors['unique'],
             inventory='client-errors.json', source=errors['source'],
-            complete_messages=errors['complete_messages'], examples=errors['errors'][:3]))
+            complete_messages=errors['complete_messages'], trace_record_count=errors['trace_records'],
+            integrity_failures=errors['integrity_failures'],
+            phase_counts=errors['phase_counts'], examples=errors['errors'][:3]))
     traces = [line for line in read(client / 'armport_stdio.txt').splitlines()
               if line.startswith('ArmPort zone: ')]
     if status.get('frame_checks'):

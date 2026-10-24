@@ -37,6 +37,7 @@
 #include "group/groupfileload.h"
 #include "group/groupdyn.h"
 #include "group/groupnetrecv.h"
+#include <utilitieslib/utils/armport_zone_trace.h>
 
 #undef vsnprintf
 #undef snprintf
@@ -182,6 +183,7 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
                      unsigned int ordered_id, int synthetic)
 {
     Packet packet = {0};
+    char dispatch_index[24];
     unsigned int end, output_bits;
     unsigned int ack = 0, expected_ack = 0;
     require(size && bits && bits <= size * 8 && cursor <= bits, "packet bounds");
@@ -207,6 +209,8 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
         expected_ack = pktGetBitsPack(&input_ack, 1);
         require(!input_ack.stream.errorFlags, "input ACK field error");
     }
+    snprintf(dispatch_index, sizeof(dispatch_index), "%u", dispatches);
+    armportZoneTrace("replay.dispatch.begin", dispatch_index);
     commNewInputPak();
     emit("{\"type\":\"dispatch_begin\",\"index\":%u,\"id\":%u,\"command\":%u,"
          "\"logical_bits\":%u,\"cursor\":%u,\"byte_aligned\":%u,\"ordered\":%u,"
@@ -239,6 +243,7 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
              "\"sha256\":\"%s\",\"entities\":%u,\"state_schema_complete\":false}\n",
              dispatches, id, dispatches, digest, entities);
     }
+    armportZoneTrace("replay.dispatch.end", dispatch_index);
     ++dispatches;
     emit("{\"type\":\"dispatch_end\",\"count\":%u,\"id\":%u,\"cursor\":%u,\"error_flags\":0}\n",
          dispatches, id, end);
@@ -288,7 +293,9 @@ void armportReplayMaybeRun(void)
     sink = calloc(1, sizeof(*sink));
     require(sink != NULL, "sink allocation");
     initialize_shortcuts();
+    armportZoneTrace("replay.map.begin", "");
     initialize_map();
+    armportZoneTrace("replay.map.end", "");
     entReceiveInit();
     dispatch(sink, initial + 88, u32(initial + 12), (unsigned int)u64(initial + 16),
              (unsigned int)u64(initial + 24), u32(initial + 40), initial_id, SERVER_ALLENTS, 1, 1, 1);

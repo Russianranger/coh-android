@@ -14,7 +14,7 @@ import client_errors
 
 
 def compare(root, commit):
-    counts, lookups = {}, {}
+    counts, lookups, assets = {}, {}, {}
     for target in ('arm64', 'i686'):
         folder = root / target
         report = json.loads((folder / 'report.json').read_text())
@@ -24,6 +24,10 @@ def compare(root, commit):
         errors = client_errors.inventory(run / 'client-stdio.txt', run / 'client-errors.json',
                                          run / 'zone-trace.jsonl')
         counts[target] = {e['text']: e['count'] for e in errors['errors']}
+        assets[target] = json.loads((run / 'error-assets.json').read_text())
+        texture_requests = {name for text in counts[target] for name in client_errors.texture_names(text)}
+        if set(assets[target]['textures']) != texture_requests:
+            raise ValueError('Incomplete actual-runtime texture lookup: ' + target)
         lookups[target] = json.loads((run / 'error-geometry-files.json').read_text())
         requested = {name for text in counts[target] for name in client_errors.geometry_paths(text)}
         if set(lookups[target]) != requested:
@@ -33,7 +37,11 @@ def compare(root, commit):
               for text in sorted(common)]
     paths = {name for text in common for name in client_errors.geometry_paths(text)}
     missing = [name for name in sorted(paths) if not lookups['arm64'][name] and not lookups['i686'][name]]
-    return dict(source_commit=commit, scope='error_diagnostic_only', shared=shared,
+    textures = {name for text in common for name in client_errors.texture_names(text)}
+    missing_textures = [name for name in sorted(textures)
+                        if not assets['arm64']['textures'][name] and not assets['i686']['textures'][name]]
+    return dict(shared_missing_textures=missing_textures, actual_assets=assets,
+                source_commit=commit, scope='error_diagnostic_only', shared=shared,
                 arm64_only=[dict(text=text, count=counts['arm64'][text])
                             for text in sorted(counts['arm64'].keys() - common)],
                 i686_only=[dict(text=text, count=counts['i686'][text])

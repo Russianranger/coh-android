@@ -95,7 +95,13 @@ jobs:
         with:
           path: ${{ runner.temp }}/atlas-supplement
           key: ${{ steps.atlas-supplement.outputs.cache-primary-key }}
-      # Keep data in the cache; the existing pinned donor remains the fallback.
+      - name: Retain the reviewed Atlas supplement independently of cache eviction
+        uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-supplement
+          path: ${{ runner.temp }}/atlas-supplement
+          retention-days: 90
+          if-no-files-found: error
 
   libraries:
     runs-on: ubuntu-24.04-arm
@@ -196,6 +202,25 @@ jobs:
             out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/grid-$variant.exe" "$expected")
             printf '%s\n' "$out"
             printf '::notice title=ARM64 grid %s::%s\n' "$variant" "$out"
+          done
+
+      - name: VBO queue pointer header under ARM64 Wine
+        run: |
+          set -o pipefail
+          for variant in original patched; do
+            source=upstream/ouroboros
+            expected=0
+            if [ "$variant" = patched ]; then
+              source="$RUNNER_TEMP/armport/src"
+              expected=1
+            fi
+            python3 armport/tests/vbo_header.py --source "$source" --expect-full-width "$expected" \
+              --emit-windows "$RUNNER_TEMP/vbo-$variant.c"
+            /opt/llvm-mingw/bin/aarch64-w64-mingw32-clang -std=gnu11 -O2 \
+              "$RUNNER_TEMP/vbo-$variant.c" -o "$RUNNER_TEMP/vbo-$variant.exe"
+            out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/vbo-$variant.exe" "$expected")
+            printf '%s\n' "$out"
+            printf '::notice title=ARM64 VBO %s::%s\n' "$variant" "$out"
           done
 
       - name: Configure

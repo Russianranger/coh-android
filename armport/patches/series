@@ -61,3 +61,4 @@
 0061-isolated-complete-zone-traces.patch
 0062-initialize-costume-verification-appearance.patch
 0063-preserve-collision-grid-pointer-width.patch
+0064-preserve-vbo-command-pointer-header.patch

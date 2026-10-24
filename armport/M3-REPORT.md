@@ -3,7 +3,91 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
-## Current review follow-up (5638301654)
+## Review 5638651994 and the accepted error split
+
+The [user decision 6385679120](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6385679120)
+on 2026-10-24 supersedes the earlier process-wide zero-game-error rule below.
+All 117 dispatch windows must have zero errors; indexed begin/end records are
+written in the isolated trace around original receive, ACK and snapshot work.
+Missing, nested, unclosed or misindexed windows fail. Game-run Wine exceptions,
+stdio assertions, fatals and log-write failures still fail. Error/fatal marker
+counts must match between stdio and the isolated trace, including partial loss.
+All six startup/load error inventories must match literally, with counts, across
+ARM64/i686, repeats and synthetic IDs. No error normalization is accepted.
+Atlas inventories startup/load and rejects post-load errors, incomplete evidence,
+Wine exceptions and blocking dialogs; no error dialog is auto-acknowledged.
+
+Run [40100355275](https://github.com/Russianranger/coh-android/actions/runs/40100355275)
+at efc716bb still fails the old process-wide rule on both targets. Diagnostic job
+120896348621 reports 183,269 occurrences per target, 133,392 shared literal keys,
+zero architecture-only keys and 45 shared absent geometry paths. This confirms
+patch 0062's deterministic spellings; it is not a replay/milestone pass.
+The same counts were recorded in run 40099922039 at 023fd0dd.
+
+Classification of that retained ARM64 inventory with `client_errors.error_class`
+(command output, 2026-10-24):
+
+| CI data/environment gap class | Occurrences |
+|---|---:|
+| Deleted symbolic group reference | 22,290 |
+| Missing root geometry/model | 9,887 |
+| Geometry file or model | 179 |
+| Custom costume texture | 80,023 |
+| Player costume texture | 65,317 |
+| Texture trick | 5,156 |
+| Material texture | 412 |
+| DirectSound unavailable | 1 |
+| Loading-screen match | 1 |
+| Parser input | 1 |
+| Mission room marker | 2 |
+
+The new diagnostic resolves named textures case-insensitively under the actual
+staged texture_library, recording paths, sizes and hashes. It separately retains
+symbolic group references and phase/class counts. Only a shared error's file
+absent from both actual runtimes is a missing-file candidate; a missing model in
+an existing geometry file is not. Group references alone do not establish file
+absence. No new data is added. Existing startup evidence predates phase markers;
+new CI is required for phase attribution and the full texture lookup.
+
+Review nits: patch 0062 now explains the optional Appearance fields at the edit;
+supplement artifact retention is restored for 90 days under the existing public
+upload authorization; Atlas notices include trace_record_count.
+
+### Runtime fixes and remaining crashes
+
+Run [40100355259](https://github.com/Russianranger/coh-android/actions/runs/40100355259)
+passes both builds, libraries and login boot, including original/patched grid
+controls under Wine. However server-run 120893845364 still faults at
+0x1400a4ff4, groupGridActivate (groupgrid.c:96), reading NULL+0x88.
+Patch 0063 repairs genuine pointer loss but has not resolved this Atlas fault.
+The remaining NULL definition/lifecycle cause must be investigated; no bypass
+is added and no rendered Atlas is claimed.
+
+M4 run [40098262167](https://github.com/Russianranger/coh-android/actions/runs/40098262167)
+at ddceae53 passes startup but crashes during character creation. Exact client
+SHA256 0392424f466ceb6cbcb31d6c40252eace3570319db071369711ef35b74a6a00f,
+`llvm-symbolizer --obj=CityOfHeroes.exe 0x140231a94`: createVboDirect,
+rt_model_cache.c:79:41. The producer stores a native pointer then overwrites
+its upper four bytes with TexID at offset four; the consumer uses that same
+four-byte header. Patch 0064 changes both offsets and allocation to sizeof(VBO*).
+The original 32-bit layout stays four bytes. No rendering logic is replaced.
+
+Local validation commands (2026-10-24):
+- `python3 -m unittest discover -s armport/tests -p 'test_*.py'`: 62 tests OK
+  (review-round6-tests.log); window/order/error/lost-record negatives and
+  literal startup-inventory/count differences are covered.
+- `ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/vbo_header.py --source
+  upstream/ouroboros --expect-full-width 0`: allocation=0, payload=0.
+  Patched-source control with --expect-full-width 1: allocation=1, payload=1.
+  Both exit 0. ASan/UBSan active; leak detection unavailable in the local tracer.
+  CI additionally executes both controls under ARM64 Wine.
+- Both OptDebug Game links: [103/103], exit 0, two compiler processes;
+  review-round6-arm-build.log and review-round6-i686-build.log.
+- M4 `python3 -m unittest discover -s armport/tests -p 'test_client*.py'`:
+  23 tests OK (m4-round4-tests.log), including data byte/time metrics and bounded
+  guest crash notices. Cleanup remains fail-closed. M4 must retry with 0064.
+
+## Earlier review follow-up (5638301654; superseded where noted)
 
 Claude verified the previous corrections at 045fe9aad, then requested full
 unmixed errors, same-commit ARM64/i686 data-gap classification, and runtime

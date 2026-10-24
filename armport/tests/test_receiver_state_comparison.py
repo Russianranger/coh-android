@@ -58,6 +58,26 @@ class StateComparison(unittest.TestCase):
         for key in ('state_schema_complete', 'state_comparison_complete', 'm3_replay_complete'):
             self.assertFalse(result[key])
 
+    def test_startup_errors_require_literal_matching_counts_in_all_six_runs(self):
+        root = self.fixture()
+        for target in ('arm64', 'i686'):
+            for label in ('id1-a', 'id1-b', 'id31'):
+                run = root / target / label
+                trace = run / 'zone-trace.jsonl'
+                trace.write_text(json.dumps(dict(stage='client.error', text='literal DATA gap')) + '\n' + trace.read_text())
+                (run / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error literal DATA gap tid=1\n')
+        self.assertTrue(compare(root, 'a' * 40)['outside_error_inventories_equal'])
+        run = root / 'i686/id31'
+        trace = run / 'zone-trace.jsonl'
+        good = trace.read_text()
+        trace.write_text(good.replace('literal DATA gap', 'literal data gap'))
+        with self.assertRaisesRegex(ValueError, 'inventories or counts differ'):
+            compare(root, 'a' * 40)
+        trace.write_text(json.dumps(dict(stage='client.error', text='literal DATA gap')) + '\n' + good)
+        (run / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error literal DATA gap tid=1\n' * 2)
+        with self.assertRaisesRegex(ValueError, 'inventories or counts differ'):
+            compare(root, 'a' * 40)
+
     def test_wrong_reference_commit_rejected(self):
         with self.assertRaisesRegex(ValueError, 'identity or execution'):
             compare(self.fixture(), 'b' * 40)

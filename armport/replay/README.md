@@ -1,3 +1,16 @@
+## Current acceptance (2026-10-24)
+
+PR #6 comment 6385679120 supersedes the older process-wide game-error rule below.
+`receiver.c` writes indexed replay.dispatch.begin/end to the isolated zone log.
+All 117 paired ordered windows must contain zero errors. Startup/load inventories
+must match literally with counts across all six executions; compare_state.py
+checks this before partial state comparisons. Wine exceptions, assertions,
+fatals, malformed traces and missing stdio error/fatal markers remain fatal.
+The isolated inventory reports phases and the diagnostic resolves texture names
+against actual staged files; group names remain symbolic references. No new
+assets or message normalization are introduced. Full state coverage is still
+incomplete and no milestone flag is set by these checks.
+
 # Original receiver replay: execution stage under development
 
 `receiver.c` is linked into ARM64 and the opt-in i686 reference. Patch 0056,

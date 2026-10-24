@@ -83,7 +83,13 @@ jobs:
         with:
           path: ${{ runner.temp }}/atlas-supplement
           key: ${{ steps.atlas-supplement.outputs.cache-primary-key }}
-      # Keep data in the cache; the existing pinned donor remains the fallback.
+      - name: Retain the reviewed Atlas supplement independently of cache eviction
+        uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-supplement
+          path: ${{ runner.temp }}/atlas-supplement
+          retention-days: 90
+          if-no-files-found: error
 
   reference-build:
     needs: assets

@@ -59,6 +59,12 @@ def compare(root, commit):
             run = folder / label
             run_ci.check_output(run / 'receiver.jsonl', expected, initial_id, run / 'wine-output.txt')
             reports[target, label] = run
+    # All six runs must have identical literal startup/load inventories and counts,
+    # including the ID-sensitivity run. No message normalization is permitted.
+    outside = {key: json.loads((run / 'client-errors.json').read_text())['outside_errors']
+               for key, run in reports.items()}
+    if any(value != outside['arm64', 'id1-a'] for value in outside.values()):
+        raise ValueError('Startup/map-load error inventories or counts differ')
     comparisons = []
     pairs = [(('arm64', label), ('i686', label), False) for label in ('id1-a', 'id1-b', 'id31')]
     for target in ('arm64', 'i686'):
@@ -86,7 +92,7 @@ def compare(root, commit):
                                 'entities[].pkt_id_pos[]', 'entities[].pkt_id_qrot[]'] if sensitivity else [],
                             'canonicalization_condition': 'equals this runs synthetic INITIAL ID' if sensitivity else None,
                             'equal': not mismatches, 'mismatches': mismatches})
-    return {'source_commit': commit, 'scope': 'partial_receiver_state_comparison',
+    return {'outside_error_inventories_equal': True, 'source_commit': commit, 'scope': 'partial_receiver_state_comparison',
             'comparisons': comparisons, 'partial_state_equal': all(c['equal'] for c in comparisons),
             'state_schema_complete': False, 'state_comparison_complete': False, 'm3_replay_complete': False}
 

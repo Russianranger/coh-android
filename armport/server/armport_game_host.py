@@ -33,6 +33,9 @@ sys.path.insert(0, str(ROOT / 'tools/android/game'))
 sys.path.insert(0, str(ROOT / 'armport/scripts'))
 import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
+import client_errors  # noqa: E402
+sys.path.insert(0, str(ROOT / 'armport/replay'))
+from run_ci import check_wine_output  # noqa: E402
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
 from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice  # noqa: E402
@@ -466,7 +469,22 @@ def main():
             subprocess.run(['convert', str(pick), '-resize', '512x400', '-quality', str(q), str(evidence / 'screen.jpg')])
             if (evidence / 'screen.jpg').stat().st_size < 24000:
                 break
-    ok = code == 0 and report.get('passed') is True and client_record.get('connected_on_atlas') is True \
+    error_evidence_ok = False
+    try:
+        errors = client_errors.inventory(client / 'armport_stdio.txt', evidence / 'client-errors.json',
+                                         client / 'zone-trace.jsonl')
+        assets = client_errors.asset_lookup(errors, client / 'data')
+        (evidence / 'error-assets.json').write_text(json.dumps(assets, indent=2) + '\n')
+        check_wine_output(evidence / 'client-output.txt')
+        error_evidence_ok = (not errors['integrity_failures'] and errors['map_load_finished']
+                             and not errors['phase_counts'].get('after_map_load', 0))
+        note('notice', 'ArmPort M3 phased errors', json.dumps(dict(
+            passed=error_evidence_ok, phase_counts=errors['phase_counts'],
+            trace_record_count=errors['trace_records'], classes=assets['classes'],
+            integrity_failures=errors['integrity_failures'])))
+    except (OSError, ValueError) as error:
+        note('error', 'ArmPort M3 error evidence', str(error)[:1000])
+    ok = error_evidence_ok and code == 0 and report.get('passed') is True and client_record.get('connected_on_atlas') is True \
         and client_record.get('still_connected') is True and status.get('world_rendered') is True
     note('notice' if ok else 'error', 'ArmPort M3 verdict',
          f"ARM64 client logged in through the UI, is connected on Atlas Park (DB status), rendered the zone after "

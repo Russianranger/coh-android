@@ -62,3 +62,28 @@ class ErrorInventory(unittest.TestCase):
                     run_ci.check_exception_control(source)
             source.write_text(trace + marker)
             run_ci.check_exception_control(source)
+
+    def test_partial_isolated_loss_is_rejected_even_with_nonzero_errors(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            stdio, trace = root / 'stdio', root / 'trace'
+            stdio.write_text('ArmPort zone: 1 client.error x tid=1\n' * 2)
+            trace.write_text(json.dumps(dict(stage='client.error', text='x')) + '\n')
+            result = client_errors.inventory(stdio, root / 'out', trace)
+            self.assertEqual(result['count'], 1)
+            self.assertTrue(result['integrity_failures'])
+
+    def test_texture_resolution_is_case_insensitive_and_groups_are_symbolic(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data = Path(temporary)
+            (data / 'texture_library/People').mkdir(parents=True)
+            (data / 'texture_library/People/PRESENT.texture').write_bytes(b'texture')
+            errors = dict(errors=[dict(text="Player texture 1 'present' missing", count=1),
+                                  dict(text='A:\nDeleted reference Streets/Sign', count=2),
+                                  dict(text='Texture Trick "trick" references missing texture "absent".', count=3)],
+                          phase_errors=[dict(phase='startup', text="Player texture 1 'present' missing", count=1)])
+            result = client_errors.asset_lookup(errors, data)
+            self.assertEqual(result['textures']['present'][0]['path'], 'texture_library/People/PRESENT.texture')
+            self.assertEqual(result['textures']['absent'], [])
+            self.assertEqual(result['group_references'], {'streets/sign': 2})
+            self.assertEqual(result['phase_classes'][0]['phase'], 'startup')

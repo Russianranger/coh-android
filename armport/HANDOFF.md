@@ -63,6 +63,20 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Latest review decision (2026-10-24)
+
+Review 5638651994 verified 0061-0063 as implementation only. User decision
+6385679120 narrows errors to zero within all 117 indexed isolated dispatch
+windows, with literally identical startup/load inventories and counts across
+ARM64/i686. Global Wine exception, assertion/fatal and integrity rejection stays.
+See M3-REPORT.md for the implementation and data-gap classes; no new data added.
+Run 40100355275 reports identical 183,269-error inventories but fails the older
+rule. Run 40100355259 still faults on NULL+0x88 in groupGridActivate despite
+passing the grid pointer controls. Atlas remains unproved.
+Patch 0064 repairs a separate VBO queue pointer-header overlap proven by the
+M4 createVboDirect fault in 40098262167. Both local links and original/patched
+controls pass; runtime execution with this patch remains required.
+
 ### Current checkpoint (2026-10-24)
 
 - Run 40087788115 at 563e49ac passes all 117 original cursor/ACK dispatches
