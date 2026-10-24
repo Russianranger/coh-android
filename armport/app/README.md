@@ -23,3 +23,40 @@ contract dependency. Unsupported producers remain rejected by the existing
 validator and may take its existing optional-cache/original-loader fallback;
 no native provenance check is removed. The app test command above now passes
 20 tests, including that rejection path. The correction still needs execution.
+
+### Actual client startup fault, 2026-10-24
+
+Run 40095316035 at 589a015b passes source compilation and guest boot, then
+starts the ARM64 client after the local Atlas server becomes ready. Interactive
+job 120878044811 fails on a read of NULL at 0x140204184; the RFB-close message
+is again a consequence, not the root cause. The exact executable identity is recorded in its report. Downloaded Release artifact
+12544637038 from client run 40054327137 matches API SHA256
+1d73144e96e83112ea8c317bc4ddaf13f0ec11dd1fe0eed4eb7805a0773c1a08.
+`llvm-symbolizer --obj=CityOfHeroes.exe 0x140204184` identifies
+texResetTrickBasedParametersComposite, Game/src/render/tex.c:1081:61;
+`llvm-objdump` shows the NULL dereference of the generic texture's name.
+The executable's full SHA256 is
+0392424f466ceb6cbcb31d6c40252eace3570319db071369711ef35b74a6a00f.
+
+The retained stdio tail contains widespread texture-open errors and missing
+white/grey defaults, although the reviewed reference manifest contains them.
+The adapter stages files with os.link inside the app's --link2symlink PRoot,
+then renames the temporary tree. That is not the native-hardlink path used by
+M3's host. The current correction makes private ordinary copies, requires
+regular output files, and prevents client writes from changing server inputs.
+This is a staging hypothesis to verify under the same runtime; no texture
+NULL check or renderer fallback masks the fault.
+
+Base save_evidence was also inspecting the retained x86 server worktree's
+cache/logs, yielding `Linked private cache entry refused`. During that bounded
+capture the adapter now selects the ARM64 tree and restores the server root
+in finally. All original evidence bounds remain. The authenticated failure
+artifact is 12561646531, SHA256
+dcdfe341528f83182530ca04ae3dc64c4b27ce4cf0b42842a4192cd1a887125b.
+The inspected final PNG is black; renderer_initialized is true, but
+all_data_loaded and client_main_loop_reached are false.
+
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v`
+passes 22 tests, including immutable-source independence without link(),
+ordinary output files, and restoring the server root after capture failure.
+The correction needs CI execution. M4 remains incomplete; no APK or signing.

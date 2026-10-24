@@ -6,6 +6,7 @@ import struct
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'app'))
@@ -61,6 +62,24 @@ class ClientPackage(unittest.TestCase):
         (self.client / 'libc++.dll').write_bytes(pe(0x14c))
         with self.assertRaisesRegex(ValueError, 'ARM64 PE32'):
             self.build()
+
+    def test_linked_server_input_becomes_private_regular_file_without_link_syscall(self):
+        self.build()
+        source = self.root / 'server-data'
+        source.mkdir()
+        imported = self.root / 'immutable.texture'
+        imported.write_bytes(b'original')
+        (source / 'linked.texture').symlink_to(imported)
+        destination = self.root / 'arm64'
+        # PRoot remaps hard links; the new stage must not rely on link().
+        with mock.patch.object(package.os, 'link', side_effect=AssertionError('link2symlink path')):
+            report = package.prepare(self.archive, source, destination)
+        target = destination / 'data/linked.texture'
+        self.assertFalse(target.is_symlink())
+        self.assertEqual(target.read_bytes(), b'original')
+        target.write_bytes(b'client mutation')
+        self.assertEqual(imported.read_bytes(), b'original')
+        self.assertEqual(report['data_materialization'], 'private_regular_copies')
 
     def test_corrupt_payload(self):
         self.build()

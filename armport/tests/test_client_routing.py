@@ -16,6 +16,23 @@ from test_client_package import pe
 
 
 class ClientRoutingTests(unittest.TestCase):
+    def test_client_evidence_uses_arm64_tree_and_restores_server_root_on_failure(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            class ExistingGuest:
+                def save_evidence(self):
+                    self.observed_root = self.work
+                    raise RuntimeError('capture failed')
+            class Selected(armport.ArmPortClient, ExistingGuest): pass
+            value = Selected()
+            value.work = root / 'server'
+            value.armport_work = root / 'arm64'
+            value.armport_work.mkdir()
+            with self.assertRaisesRegex(RuntimeError, 'capture failed'):
+                value.save_evidence()
+            self.assertEqual(value.observed_root, value.armport_work)
+            self.assertEqual(value.work, root / 'server')
+
     def test_server_helper_only_does_not_activate_optional_visuals(self):
         with tempfile.TemporaryDirectory() as temporary:
             _, value = self.instance(CharacterCreationDiagnostic, 'arm64')

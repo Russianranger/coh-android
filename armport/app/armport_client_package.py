@@ -145,10 +145,12 @@ def prepare(archive, source_data, destination):
                 require(source.suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
                 output = target / name
                 require(not output.exists(), 'Data collides with ARM64 overlay')
-                try:
-                    os.link(source.resolve(strict=True), output)
-                except OSError:
-                    shutil.copyfile(source, output)
+                # The app uses PRoot --link2symlink: a successful link() there
+                # is not a native hard link and can leave Wine-visible links
+                # after this temporary tree is renamed. Materialize ordinary
+                # private files, also preventing client writes to server data.
+                shutil.copyfile(source, output)
+                require(output.is_file() and not output.is_symlink(), 'ARM64 data copy is not regular')
                 count += 1
         (pending / 'tools').mkdir()
         pending.rename(destination)
@@ -156,6 +158,7 @@ def prepare(archive, source_data, destination):
             'executable_sha256': document['files']['CityOfHeroes.exe']['sha256'],
             'client_run_id': document['client_run_id'], 'data_run_id': document['data_run_id'],
             'shared_data_files': count, 'x86_bins_reused': False,
+            'data_materialization': 'private_regular_copies',
             'work_directory': str(destination)}
 
 

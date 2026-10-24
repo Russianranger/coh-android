@@ -118,7 +118,16 @@ class ArmPortClient:
         self.client = LoggedClient(child, self.armport_work / 'armport_stdio.txt')
 
     def save_evidence(self):
-        super().save_evidence()
+        # Base diagnostics read work/data caches and work/logs. During this
+        # call they must observe the running ARM64 client, not the retained
+        # x86 server-data tree. Restore the server root even on capture failure.
+        server_work = self.work
+        try:
+            if hasattr(self, 'armport_work') and self.armport_work.exists():
+                self.work = self.armport_work
+            super().save_evidence()
+        finally:
+            self.work = server_work
         if hasattr(self, 'armport_work'):
             log = self.armport_work / 'armport_stdio.txt'
             if log.is_file() and not log.is_symlink():
