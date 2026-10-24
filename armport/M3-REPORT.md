@@ -8,7 +8,9 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 Source/harness commit `07c536d7fe5d7748ced9e03845c53b0b3cf907d4` runs
 [build/Atlas 40113107671](https://github.com/Russianranger/coh-android/actions/runs/40113107671)
 and [replay 40113107670](https://github.com/Russianranger/coh-android/actions/runs/40113107670).
-The PR integration adds only these CI links; runtime checks are pending.
+The PR integration adds documentation/evidence only. Both asset jobs pass;
+build jobs 120928759073 (OptDebug), 120928759106 (Release) and 120928759247
+(libraries) pass. Replay and Atlas runtime checks remain pending.
 
 The [review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638956748)
 verified the 166-file selection, trace IDs, final drain and NULL diagnostic.
@@ -46,8 +48,9 @@ before that boundary. Missing/malformed boundaries, pending/nested exceptions,
 late 6ba, every other code, page faults, unhandled exceptions and :err:seh:
 fail. The phased-errors notice includes the count even when another failure
 rejects the run. Replay retains its unmodified strict no-SEH checker.
-A real Wine logger control checks shared-file append ordering; execution is
-pending CI. Unit tests reject identical 6ba after map.start and incomplete or
+A real Wine logger control passes shared-file append ordering in libraries
+job 120928759247, which also passes 78 tests. Tests reject identical 6ba after
+map.start and incomplete or
 wrong-thread restoration. No game error, assertion or modal rule is weakened.
 
 [Replay 40111054487](https://github.com/Russianranger/coh-android/actions/runs/40111054487),
@@ -65,7 +68,16 @@ replay pass from a terminal row or change exit acceptance to accommodate -9.
 ARM64 and i686 OptDebug links pass sequentially with two compiler processes;
 range discovery/staging pass, YAML parses, and upstream/ is unchanged.
 M3 remains incomplete (six unresolved names, accepted replay, full state and
-rendered Atlas outstanding); M4 40110421624 is still awaiting diagnostic output.
+rendered Atlas outstanding).
+
+[M4 diagnostic 40110421624](https://github.com/Russianranger/coh-android/actions/runs/40110421624/job/120922819992)
+reproduces the power-customization fault. The verified artifact and exact
+executable disassembly are recorded in
+[register evidence](evidence/m4-power-fault-40110421624.json). The instruction
+at 0x14007457c reads `[x8+0x10]`, with x8=0x10000000000 loaded from the search
+key, whereas the candidate's power pointer is x9=0x1e236670. This establishes
+which operand is bad, not where that key originated. Trace the original game
+caller and pointer producer next; no NULL/range bypass is justified.
 
 ## Review 5638821870: corrected coverage and loader evidence
 

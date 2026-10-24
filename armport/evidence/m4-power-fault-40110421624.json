@@ -1,0 +1,22 @@
+{
+  "run_id": 40110421624,
+  "job_id": 120922819992,
+  "branch_commit": "b9cf89cb473270a8d61ba8c51a9d97ea4cca64b8",
+  "conclusion": "failure",
+  "artifact_id": 12567113967,
+  "artifact_bytes": 55185822,
+  "artifact_sha256": "e675a975d51c740fd1a2b80977d621cbf6730d632aab879c6a144c21371cd626",
+  "executable_sha256": "0e82dd6656a91e0e09eadb2a685de9c1dfb59e7573f22f6fa6d04e9c4dcf0844",
+  "trace_member": "creation/report.zip!client-evidence/client-console.log",
+  "trace": "0284:trace:seh:dispatch_exception code=c0000005 (EXCEPTION_ACCESS_VIOLATION) flags=0 addr=000000014007457C\n0284:trace:seh:dispatch_exception  info[0]=0000000000000000\n0284:trace:seh:dispatch_exception  info[1]=0000010000000010\n0284:trace:seh:dispatch_exception  pc=000000014007457c  sp=00007ffffe1fc9d0  lr=00006fffff47dfb0  fp=0000000000000000\n0284:trace:seh:dispatch_exception  x0=00007ffffe1fca28  x1=0000000042c466c0  x2=0000000000000159  x3=0000000000000008\n0284:trace:seh:dispatch_exception  x4=0000000140074560  x5=0000000000000000  x6=00007ffffe1fcb30  x7=0000000000000000\n0284:trace:seh:dispatch_exception  x8=0000010000000000  x9=000000001e236670 x10=0000000018bc6780 x11=0000000000000001\n0284:trace:seh:dispatch_exception x12=000000003f800000 x13=00000001414b6280 x14=0000000000000000 x15=0000000000000002\n0284:trace:seh:dispatch_exception x16=00006fffff47df64 x17=00007ffffe1fc36d x18=000000007ffc0000 x19=0000000140074560\n0284:trace:seh:dispatch_exception x20=0000000000000008 x21=0000000042c46160 x22=00007ffffe1fca28 x23=0000000042c466c0\n0284:trace:seh:dispatch_exception x24=0000000000000158 x25=0000000000000000 x26=00000000000000ac x27=0000000140e9cd08\n0284:trace:seh:dispatch_exception x28=0000000000000001 cpsr=20000000 fpcr=00000000 fpsr=00000010\nwine: Unhandled page fault on read access to 0000010000000010 at address 000000014007457C (thread 0284), starting debugger...",
+  "commands": [
+    {
+      "command": "restored-tools/llvm/bin/llvm-objdump -d --start-address=0x140074560 --stop-address=0x1400745b0 m4-new-exact/CityOfHeroes.exe",
+      "exit_code": 0,
+      "output": "\nm4-new-exact/CityOfHeroes.exe:\tfile format coff-arm64\n\nDisassembly of section .text:\n\n0000000140074560 <searchPowerCustomizations>:\n140074560: b40001a0    \tcbz\tx0, 0x140074594 <searchPowerCustomizations+0x34>\n140074564: f9400008    \tldr\tx8, [x0]\n140074568: b4000168    \tcbz\tx8, 0x140074594 <searchPowerCustomizations+0x34>\n14007456c: b4000101    \tcbz\tx1, 0x14007458c <searchPowerCustomizations+0x2c>\n140074570: f9400029    \tldr\tx9, [x1]\n140074574: f9400529    \tldr\tx9, [x9, #0x8]\n140074578: b40000a9    \tcbz\tx9, 0x14007458c <searchPowerCustomizations+0x2c>\n14007457c: b9401108    \tldr\tw8, [x8, #0x10]\n140074580: b9401129    \tldr\tw9, [x9, #0x10]\n140074584: 6b09011f    \tcmp\tw8, w9\n140074588: 540000aa    \tb.ge\t0x14007459c <searchPowerCustomizations+0x3c>\n14007458c: 12800000    \tmov\tw0, #-0x1               // =-1\n140074590: d65f03c0    \tret\n140074594: 52800020    \tmov\tw0, #0x1                // =1\n140074598: d65f03c0    \tret\n14007459c: 1a9fd7e0    \tcset\tw0, gt\n1400745a0: d65f03c0    \tret\n\n00000001400745a4 <PowerCustomizationMenuPostProcessInternal>:\n1400745a4: a9be53f3    \tstp\tx19, x20, [sp, #-0x20]!\n1400745a8: a9017bf5    \tstp\tx21, x30, [sp, #0x10]\n1400745ac: aa0003f3    \tmov\tx19, x0\n"
+    }
+  ],
+  "finding": "The faulting instruction reads the search key through x8=0x0000010000000000, not the candidate in x9=0x1e236670. The key came from the stack address x0=0x7ffffe1fca28. This confirms the bad operand, not its producer. LR=0x6fffff47dfb0 does not identify the original game caller in this evidence.",
+  "next_step": "Record the original game caller and incoming BasePower pointer at powerCust_FindPowerCustomization; trace its producer without a NULL/range guard or changes to acceptance.",
+  "m4_complete": false
+}

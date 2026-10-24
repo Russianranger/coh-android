@@ -88,9 +88,11 @@ Run 40111054487 (7a91b34d), ARM64 job 120923329915, writes its 117-dispatch
 result and completes the final drain but returns -9, not the required 2.
 Do not accept that transcript. New process/memory observations distinguish a
 host timeout from a signal and retain failure inventories; cause not known.
-M4 diagnostic 40110421624 remains in progress at the last check; prior fault
-is searchPowerCustomizations at 0x14007457c (40106299491). Keep investigating
-its exact register/caller evidence. No pointer guard, milestone pass or merge.
+M4 diagnostic 40110421624 fails with the same searchPowerCustomizations fault
+at 0x14007457c. The register trace proves the bad search key: x8=0x10000000000,
+loaded through x0 on the stack; candidate x9=0x1e236670 is not the faulting
+operand. See evidence/m4-power-fault-40110421624.json. Its producer and game
+caller are still unproved. No pointer guard, milestone pass or merge.
 
 ### Latest review decision (2026-10-24)
 

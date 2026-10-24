@@ -37,4 +37,4 @@ see armport/HANDOFF.md):
 - 40106727443: both targets fail on 541 dispatch errors; inventories/counts match.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
   remains incomplete. Approved fetch finds 8 exact files; 6 names unresolved.
-- M4 40106299491: boot passes, power search faults; diagnostic run 40110421624.
+- M4 40110421624: boot passes, power search faults; x8 proves bad search key.
