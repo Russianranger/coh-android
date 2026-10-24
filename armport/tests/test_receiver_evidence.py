@@ -15,6 +15,8 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.path = Path(self.temp.name)
+        self.wine = self.path / 'wine-output.txt'
+        self.wine.write_text('')
         self.expected = replay.fixtures(self.path)
         self.rows = [dict(type='configuration', initial_id=1)]
         for i, want in enumerate(self.expected):
@@ -33,7 +35,7 @@ class ReceiverEvidenceTests(unittest.TestCase):
     def check(self):
         output = self.path / 'receiver.jsonl'
         output.write_text('\n'.join(json.dumps(row) for row in self.rows))
-        return replay.check_output(output, self.expected, 1)
+        return replay.check_output(output, self.expected, 1, self.wine)
 
     def test_complete_cursor_stage_still_not_milestone_pass(self):
         self.assertFalse(self.check()['m3_replay_complete'])
@@ -42,6 +44,32 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.rows.pop(1)
         with self.assertRaisesRegex(ValueError, '117'):
             self.check()
+
+    def test_complete_transcript_does_not_hide_wine_fatal(self):
+        for message in ('wine: Unhandled page fault on read access',
+                        'wine: fatal error: failed to initialize',
+                        'wine client error:0: write: Bad file descriptor',
+                        '0024:err:module:import_dll Library missing.dll not found'):
+            with self.subTest(message=message):
+                self.wine.write_text(message + '\n')
+                with self.assertRaisesRegex(ValueError, 'Wine exception/fatal'):
+                    self.check()
+
+    def test_handled_seh_also_rejected(self):
+        self.wine.write_text('0024:trace:seh:dispatch_exception code=c0000005 flags=0\n'
+                             '0024:trace:seh:call_handlers handler returned 0\n')
+        with self.assertRaisesRegex(ValueError, 'Wine exception/fatal'):
+            self.check()
+
+    def test_missing_wine_evidence_rejected(self):
+        self.wine.unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.check()
+
+    def test_bootstrap_exceptions_are_separate_from_game_evidence(self):
+        (self.path / 'bootstrap-output.txt').write_text(
+            '0024:trace:seh:dispatch_exception code=6ba RPC_S_SERVER_UNAVAILABLE\n')
+        self.assertFalse(self.check()['m3_replay_complete'])
 
     def test_cursor_overrun_rejected(self):
         self.rows[2]['actual'] += 1

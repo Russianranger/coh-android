@@ -76,3 +76,13 @@ Replay-host/fixture-only changes no longer restart the Atlas build; the
 reference workflow owns their checks. Receiver C/patch changes still restart
 both. Executables are cached immediately after successful build so a later
 replay failure does not force another unchanged compile.
+
+Review 5636418576 identified that a valid JSONL transcript could conceal a
+fatal Wine log. The acceptance function now requires the game Wine log and
+rejects handled or unhandled SEH dispatches and fatal/loader failures before
+checking JSONL. Bootstrap/registry output is retained separately; the game
+has no exception allowlist, including during startup. The command
+`python3 -m unittest discover -s armport/tests -p 'test_*.py' -v` passes 26
+tests, including complete-transcript/fatal-log and handled-SEH counterexamples,
+missing Wine evidence and separate bootstrap output. This closes the host
+validator gap; it does not assert that the live receiver has no exceptions.

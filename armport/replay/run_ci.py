@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -31,7 +32,29 @@ def fixtures(destination):
     return [initial] + post['records']
 
 
-def check_output(path, expected, initial_id):
+def check_wine_output(path):
+    """Fail closed on game-process exceptions, including handled SEH.
+
+    Bootstrap/registry commands have their own log. No exception allowlist is
+    currently needed or approved for the game run, so startup is checked too.
+    A handled exception can otherwise leave a plausible complete transcript.
+    """
+    if path.stat().st_size > 64 * 1024 * 1024:
+        raise ValueError('Wine output exceeds replay evidence bound')
+    failure = re.compile(
+        r'(?:dispatch_exception|raise_exception)\s+code=|'
+        r':err:seh:|unhandled (?:exception|page fault)|'
+        r'wine(?: client| server)?:[^\n]*(?:fatal|could not load|failed to|unimplemented function)|'
+        r'wine (?:client|server) error:|'
+        r':err:module:(?:import_dll|LdrInitializeThunk)', re.IGNORECASE)
+    with path.open(errors='replace') as stream:
+        for number, line in enumerate(stream, 1):
+            if failure.search(line):
+                raise ValueError(f'Wine exception/fatal report at line {number}: {line.strip()[:300]}')
+
+
+def check_output(path, expected, initial_id, wine_output):
+    check_wine_output(wine_output)
     if path.stat().st_size > 1024 * 1024:
         raise ValueError('receiver output exceeds cursor-stage bound')
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -105,14 +128,15 @@ def main():
                        WINEDEBUG='err+all,fixme-all,+seh', WINEDLLOVERRIDES='mscoree,mshtml=',
                        ARMPORT_LOOSE_DATA='1', ARMPORT_STDIO_LOG='Z:' + str(folder / 'client-stdio.txt').replace('/', '\\'))
             # Bootstrap without the replay environment: only the actual game gets it.
-            with (folder / 'wine-output.txt').open('wb') as log:
+            with (folder / 'bootstrap-output.txt').open('wb') as bootstrap, \
+                    (folder / 'wine-output.txt').open('wb') as log:
                 try:
                     subprocess.run([str(args.wine / 'wine'), 'wineboot', '-i'], env=env,
-                                   stdout=log, stderr=subprocess.STDOUT, check=True, timeout=300)
+                                   stdout=bootstrap, stderr=subprocess.STDOUT, check=True, timeout=300)
                     subprocess.run([str(args.wine / 'wine'), 'reg', 'add',
                                     r'HKCU\Software\Wine\WineDbg', '/v', 'ShowCrashDialog',
                                     '/t', 'REG_DWORD', '/d', '0', '/f'], env=env,
-                                   stdout=log, stderr=subprocess.STDOUT, check=True, timeout=60)
+                                   stdout=bootstrap, stderr=subprocess.STDOUT, check=True, timeout=60)
                     env.update(ARMPORT_REPLAY_DIR='Z:' + str(folder).replace('/', '\\'),
                                ARMPORT_REPLAY_INITIAL_ID=str(initial_id))
                     run = subprocess.run([str(args.wine / 'wine'), str(args.runtime / 'CityOfHeroes.exe'),
@@ -121,7 +145,8 @@ def main():
                                          timeout=600)
                     if run.returncode != 2:
                         raise RuntimeError(f'{label}: expected incomplete-stage exit 2, got {run.returncode}')
-                    result = check_output(folder / 'receiver.jsonl', expected, initial_id)
+                    result = check_output(folder / 'receiver.jsonl', expected, initial_id,
+                                          folder / 'wine-output.txt')
                     report['runs'].append(dict(label=label, **result))
                     print(json.dumps(report['runs'][-1]), flush=True)
                 finally:
