@@ -2136,7 +2136,7 @@ public final class ClientRuntime {
         // asset pins include the complete bundle. A guest flag cannot select
         // a shorter path or excuse a missing/failed preparation stage.
         int interactionStage = ClientAcceptance.clientInteractionStageIndex(
-                jsonValue(stages), jsonValue(clientPins));
+                jsonValue(stages), jsonValue(clientPins), clientArchitectureRequested);
         if (interactionStage < 0) return false;
         JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(interactionStage);
         if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
@@ -2507,7 +2507,7 @@ public final class ClientRuntime {
                 .put("scope","Individual observations explain incomplete checks; none replaces the unchanged overall acceptance predicate.");
         try{gates.put("guest_acceptance",guestAccepted(report));}catch(Exception invalid){gates.put("guest_acceptance",false);}
         try{gates.put("complete_asset_stage_contract",clientManifest!=null && ClientAcceptance.clientInteractionStageIndex(
-                jsonValue(report.optJSONArray("stages")),jsonValue(clientManifest.optJSONObject("files")))>=0);}catch(Exception invalid){gates.put("complete_asset_stage_contract",false);}
+                jsonValue(report.optJSONArray("stages")),jsonValue(clientManifest.optJSONObject("files")),clientArchitectureRequested)>=0);}catch(Exception invalid){gates.put("complete_asset_stage_contract",false);}
         try{gates.put("android_client_surface",surfaceAccepted(report));}catch(Exception invalid){gates.put("android_client_surface",false);}
         gates.put("android_login_views",loginSurfaceAccepted());
         try{gates.put("android_character_save_views",characterSurfaceAccepted(report));}catch(Exception invalid){gates.put("android_character_save_views",false);}

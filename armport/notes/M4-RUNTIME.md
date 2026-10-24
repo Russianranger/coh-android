@@ -149,3 +149,28 @@ Next: incorporate the qualified M3 client, then run the real creation/reopen
 server flow through the selected ARM64 app guest and retain its SQL/save,
 RFB/input and cleanup evidence. Do not substitute the startup-only result
 for that integration check. Building/signing an APK still requires approval.
+
+## Preparation order and app acceptance
+
+The command-routing check exposed two untested integration boundaries. The
+ARM64 overlay had been copied in initialize(), before optional visual/animation
+inputs are installed after server preparation. Also, the app's exact stage
+validator did not recognize armport_client_data. An ARM64 run could therefore
+miss late-installed data and still be rejected after successful execution.
+
+ArmPortClient.start_wine now lets the existing server prepare first, installs
+the existing client-only visual/animation inputs, then creates the ARM64 tree.
+The original x86 producer opt-ins remain disabled for the ARM64 executable.
+ClientAcceptance selects the exact stage sequence using the app's selected
+architecture, requires all four pinned ARM64 package/helper inputs and the
+successful ARM64 preparation stage after optional visual/zone stages. Merely
+including the ARM64 package in an x86-selected app does not change that path.
+
+Validation command `python3 -m unittest discover -s armport/tests -p
+'test_client*.py' -v` passes 11 tests. One uses the real overlay packager to
+prove a visual file added after server preparation reaches the ARM64 tree.
+Another compiles and executes the actual app ClientAcceptance class with 13
+positive/negative cases: missing/failed/misordered ARM64 preparation, missing
+package pins, missing visual stages, invalid architecture, and retained x86
+selection. No APK is compiled or signed; interactive runtime evidence remains
+pending and M4 remains incomplete.

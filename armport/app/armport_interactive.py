@@ -42,12 +42,8 @@ class ArmPortClient:
         pins = self.ctx.report['asset_sha256']
         require({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py', 'client_stdio.py'} <= pins.keys(),
                 'ARM64 client is not included in this runtime package')
-        self.ctx.stage('armport_client_data')
         self.ctx.report['client_worktree']['purpose'] = 'retained_server_data_source_for_armport'
         self.armport_work = self.root / ('armport-client-' + self.args.session_id)
-        self.ctx.report['armport_client'] = package.prepare(
-            self.args.assets / package.ARCHIVE, self.work / 'data', self.armport_work)
-        self.client_executable_sha256 = self.ctx.report['armport_client']['executable_sha256']
         # These receipts describe the retained x86 staging producer. Do not
         # present them as ARM64 performance/renderer qualification or enable
         # their opt-ins for a different client binary.
@@ -60,6 +56,17 @@ class ArmPortClient:
                 retained[name] = self.ctx.report.pop(name)
             setattr(self, name, False)
         self.ctx.report['armport_server_staging'] = retained
+
+    def start_wine(self):
+        super().start_wine()
+        # The existing server must seal its inputs before client-only visual
+        # supplements are installed. The ARM64 copy must include those files;
+        # copying in initialize() would miss later animation/visual payloads.
+        self.prepare_client_visual_inputs()
+        self.ctx.stage('armport_client_data')
+        self.ctx.report['armport_client'] = package.prepare(
+            self.args.assets / package.ARCHIVE, self.work / 'data', self.armport_work)
+        self.client_executable_sha256 = self.ctx.report['armport_client']['executable_sha256']
         self.ctx.passed(machine='ARM64', x86_bins_reused=False,
                         executable_sha256=self.client_executable_sha256)
 
