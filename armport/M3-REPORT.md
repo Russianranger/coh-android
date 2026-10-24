@@ -3,13 +3,51 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## Login progress and corrected caller diagnostic (2026-10-24)
+
+The completed [Atlas run 40118399219](https://github.com/Russianranger/coh-android/actions/runs/40118399219/job/120947425896)
+failed before map.start. Its selected-character stage remained at 6, and no
+Next/play marker was recorded before guest cleanup. The eight post-login
+screens are 70–114 seconds apart; the driver runs OCR repeatedly on each
+same image. The final character screen shows TEST26602 and the Next arrow;
+it is not rendered Atlas. [Verified artifact and command evidence](evidence/m3-m4-diagnostics-40118399219.json)
+retains the exact frame identities, timestamps and logged stage.
+
+The driver now recognizes a selected existing character from the original
+stage log and clicks the established Next layout immediately. A later stage,
+pending error/alert or fatal rejects this shortcut. OCR results are reused for
+an unchanged image. Neither path establishes Atlas success: all database,
+rendered-frame, error and Wine checks remain required. Two local tests cover
+the stage/dialog cases and OCR invalidation; the full 83-test suite passes.
+
+[Replay 40118399218](https://github.com/Russianranger/coh-android/actions/runs/40118399218)
+fails ARM64 on 16 dispatch errors and i686 on exit -9. The i686 observation
+records SIGKILL at 310.978 seconds against a 600-second host timeout, no host
+kill flag, and unchanged zero cgroup OOM counters. This does not establish the
+kill's source. The receiver adds cleanup-begin and ExitProcess(2)-begin trace
+witnesses to localize another occurrence; expected exit 2 is unchanged.
+
+[M4 run 40118768539](https://github.com/Russianranger/coh-android/actions/runs/40118768539/job/120947602089)
+reproduces the bad power key 0x10000000000. Its recorded caller 0x140074774 is
+inside powerCust_FindPowerCustomization, immediately after __chkstk in the
+exact Release executable: the inlined large trace buffer caused the compiler
+to capture LR after its stack probe. Patch 0070 moves formatting/tracing to a
+noinline helper. Local ARM64 O2 disassembly has no stack probe in the lookup
+function and preserves incoming LR; full ARM64 OptDebug linking and both
+changed i686 units pass. The new runtime caller and pointer producer remain
+unproved. No pointer guard or game-logic repair is included.
+
+The 8-file dependency proposal is still unstaged, the conditional texture
+exception is OFF, and both milestones remain incomplete. A new CI result is
+required for these implementation changes; local builds are not runtime proof.
+
 ## Review 5639193819 follow-up
 
 Source `f0d78fd78e96643da50d90ddb5549110f73bb506` is tested by
 [build/Atlas 40118399219](https://github.com/Russianranger/coh-android/actions/runs/40118399219)
 and [replay 40118399218](https://github.com/Russianranger/coh-android/actions/runs/40118399218).
-Release and libraries jobs pass; the new replay and Atlas runtime outcomes
-remain pending. The following current-run fixture adds no validator behavior.
+Release and libraries jobs pass; replay and Atlas fail as recorded above.
+The following current-run fixture adds no validator behavior.
 
 [Review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5639193819)
 and [conditional exception decision](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6387467359).
@@ -78,7 +116,7 @@ retained screenshot is black, not a rendered Atlas frame. No NULL bypass.
 M4 diagnostic [40118768539](https://github.com/Russianranger/coh-android/actions/runs/40118768539)
 runs commit aa9cdcaa91334ab460e8bd6bb1918bf0688e2090 with the Release client
 from 40118399219 and existing data 40100355259. It enables only the requested
-power lookup caller/input diagnostic; runtime result remains pending.
+power lookup caller/input diagnostic; it fails as recorded above.
 
 L1: successful uncached range staging now reports each response's actual
 Content-Range, status and received bytes; cache verification reports no new

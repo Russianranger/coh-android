@@ -65,6 +65,20 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
+Latest completed evidence: build/Atlas 40118399219 fails before map.start,
+remaining at character-select stage 6 while repeated OCR consumes the login
+budget. The driver now uses the selected-character trace and caches same-frame
+OCR. Replay 40118399218 fails ARM64 on 16 dispatch errors; i686 is SIGKILL at
+311 seconds, no host timeout and no recorded cgroup OOM increment. New cleanup
+and ExitProcess-begin witnesses do not change required exit 2. M4 40118768539
+still faults on the bad power key. Its caller value is __chkstk's return PC
+inside the lookup; patch 0070 separates trace buffers to preserve incoming LR.
+See evidence/m3-m4-diagnostics-40118399219.json for artifacts, exact disassembly,
+83 tests and target compilation outputs. Next: qualify these changes in CI,
+then rerun M4 with the resulting Release client; symbolize its new caller.
+The existing texture exception remains OFF and the 8-file proposal unstaged.
+
+
 Review 5639193819 follow-up source f0d78fd78 runs in build/Atlas 40118399219
 and replay 40118399218. The 8-file / 658,461-byte dependency proposal is
 committed but not staged. See the leading M3-REPORT section and

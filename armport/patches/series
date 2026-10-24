@@ -67,3 +67,4 @@
 0067-order-atlas-map-boundary-with-wine-traces.patch
 0068-trace-power-customization-input-and-caller.patch
 0069-identify-missing-mission-room-tray.patch
+0070-preserve-power-lookup-caller-across-stack-probe.patch

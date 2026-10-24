@@ -14,6 +14,36 @@ QA_NOTICE = ('You are seeing pop-up errors because you have Access Level (9) or 
              'These will not be seen by customers.')
 
 
+def character_select_from_log(path):
+    """Use the current client's original UI stage, never a success verdict.
+
+    OCR of the character scene can consume the guest's whole login budget.
+    Only a selected, existing character at stage 6 permits the Next click.
+    A later stage, error/alert dialog or fatal prevents this shortcut.
+    """
+    try:
+        with path.open('rb') as source:
+            source.seek(0, 2)
+            source.seek(max(0, source.tell() - 512 * 1024))
+            text = source.read().decode('utf-8', errors='replace')
+    except OSError:
+        return False
+    stages = re.findall(r'^ArmPort login: stage (\d+) select (\d+) player (-?\d+) of (\d+) ', text, re.M)
+    if not stages:
+        return False
+    stage, selected, player, count = map(int, stages[-1])
+    pending = set()
+    for event in re.finditer(r'^ArmPort zone: \d+ (dialog\.(?:alert|error)\.(?:begin|done)|client\.fatal)\b', text, re.M):
+        if event[1] == 'client.fatal':
+            return False
+        kind, action = event[1].rsplit('.', 1)
+        if action == 'begin':
+            pending.add(kind)
+        else:
+            pending.discard(kind)
+    return stage == 6 and selected == 1 and 0 <= player < count and not pending
+
+
 def pending_qa_notice(stdio):
     """Only the known informational notice, not arbitrary errors or asserts."""
     pending = None
@@ -72,6 +102,8 @@ class Screen:
         out.mkdir(parents=True, exist_ok=True)
         self.count = 0
         self.log = []
+        self._words_key = None
+        self._words_value = []
 
     def shot(self, name, tries=4):
         """Screenshot; the client redraws at about 60 fps and a capture can
@@ -102,6 +134,10 @@ class Screen:
         OCR: 3x scale and sparse-text mode for the UI's small fonts."""
         if not png:
             return []
+        stat = png.stat()
+        key = (str(png), stat.st_mtime_ns, stat.st_size)
+        if self._words_key == key:
+            return self._words_value
         big = png.with_name(png.stem + '-x3.png')
         sh('convert', str(png), '-resize', '300%', str(big), timeout=120)
         r = sh('tesseract', str(big), '-', '--psm', '11', 'tsv', timeout=180)
@@ -112,6 +148,7 @@ class Screen:
             if len(f) == 12 and f[11].strip():
                 left, top, w, h = map(int, f[6:10])
                 found.append((f[11].strip(), (left + w // 2) // 3, (top + h // 2) // 3))
+        self._words_key, self._words_value = key, found
         return found
 
     def text(self, png):

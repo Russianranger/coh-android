@@ -38,7 +38,7 @@ import atlas_wine  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
-from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice  # noqa: E402
+from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -181,6 +181,9 @@ def drive_login(a, screen, state, status, evidence):
     checks = {'n': 0}
 
     def character_select(p):
+        status['character_select_by_trace'] = character_select_from_log(a.client / 'armport_stdio.txt')
+        if status['character_select_by_trace']:
+            return True
         checks['n'] += 1
         if checks['n'] % 3 == 0:
             sockets(f'character-select wait {checks["n"]}')
@@ -196,7 +199,8 @@ def drive_login(a, screen, state, status, evidence):
     # EULA/NDA agreements and the server list come first (login_ui.after_login).
     png = after_login(screen, status, rounds=8, interval=10, done=character_select, after=sockets)
     png = png if png and character_select(png) else None
-    if not png and status.get('server_clicked'):
+    trace_ready = status.get('character_select_by_trace', False)
+    if trace_ready or (not png and status.get('server_clicked')):
         # Character select draws a 3D scene that OCR may not read; the login
         # traffic shows the character list arrives, so enter by the Next arrow.
         pos = at(screen, 'enter_world')
@@ -207,8 +211,10 @@ def drive_login(a, screen, state, status, evidence):
             time.sleep(15)
             screen.shot('after-enter')
             sockets('15s after Next')
-    status['character_select'] = bool(png)
-    if png:
+        else:
+            status['enter_layout_error'] = 'Client window unavailable for Next'
+    status['character_select'] = bool(png) or trace_ready
+    if png and not trace_ready:
         pos = screen.find(png, info['character'])
         if pos:
             screen.click(*pos)

@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (69 patches including partial replay observers; Astra leads,
+M3 into Atlas (70 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Atlas 40113107671: startup RPC counted; NULL-def read at 0x88 still fails.
-- 40113107670: both targets fail on 16 dispatch errors; id1-a inventories match.
+- Atlas 40118399219: stopped at character select; trace/OCR driver fix pending CI.
+- Replay 40118399218: ARM64 16 errors, i686 SIGKILL; required exit 2 unchanged.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
   remains incomplete. Texture exception OFF: 57/72 archives; composite gaps.
-- M4 40110421624: boot passes, power search faults; x8 proves bad search key.
+- M4 40118768539: bad power key; 0070 fixes caller tracing, runtime proof pending.

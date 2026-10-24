@@ -208,6 +208,10 @@ teams/tasks/UI game-command state, dynamic groups, further costume metadata
 and other receiver fields remain to be covered. Timer/interpolation fields,
 rendering quaternions, pointers, struct padding and asset addresses are excluded.
 All completion flags remain false and successful execution still exits 2.
+After the terminal result, `replay.cleanup.begin` precedes CloseHandle/free,
+and `replay.exit.begin` precedes ExitProcess(2). These are diagnostic witnesses
+for the unexplained SIGKILL in run 40118399218; neither permits another exit
+code or rescues an incomplete/failed transcript.
 
 The host requires 117 authenticated snapshots. The follow-up comparison
 reads one pair at a time, compares same-ID repeats and cross-architecture

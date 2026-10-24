@@ -1,0 +1,40 @@
+diff --git a/Common/entity/power_customization.c b/Common/entity/power_customization.c
+index 6c355d3..a7978d1 100644
+--- a/Common/entity/power_customization.c
++++ b/Common/entity/power_customization.c
+@@ -240,20 +240,27 @@ PowerCustomizationList * powerCustList_current( Entity * e )
+     return e->pl->powerCustomizationLists[e->pl->current_powerCust];
+ }
+ 
++#if CLIENT && defined(__GNUC__) && defined(_WIN32)
++// 0070: keep the large trace buffers out of the caller-capture frame.
++// In the pinned ARM64 compiler, an inlined trace inserts __chkstk before
++// reading LR; that reports the stack probe's return address, not our caller.
++static __attribute__((noinline)) void armportPowerLookupTrace(
++    void *caller, const BasePower *power, PowerCustomizationList *list)
++{
++    char detail[160];
++    snprintf(detail, sizeof(detail), "caller=%p power=%p list=%p",
++        caller, (const void *)power, (void *)list);
++    armportZoneTrace("power.lookup", detail);
++}
++#endif
++
+ PowerCustomization* powerCust_FindPowerCustomization(PowerCustomizationList* powerCustList, const BasePower *power)
+ {
+     PowerCustomization **result;
+ 
+ #if CLIENT && defined(__GNUC__) && defined(_WIN32)
+-    // 0068: diagnose the incoming key and original caller before bsearch.
+-    // Opt-in only; do not dereference, filter or repair the suspect pointer.
+     if (getenv("ARMPORT_POWER_TRACE"))
+-    {
+-        char detail[160];
+-        snprintf(detail, sizeof(detail), "caller=%p power=%p list=%p",
+-            __builtin_return_address(0), (const void *)power, (void *)powerCustList);
+-        armportZoneTrace("power.lookup", detail);
+-    }
++        armportPowerLookupTrace(__builtin_return_address(0), power, powerCustList);
+ #endif
+ 
+     if (!powerCustList)

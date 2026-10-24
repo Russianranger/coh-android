@@ -338,9 +338,11 @@ void armportReplayMaybeRun(void)
     emit("{\"type\":\"loader_drain_end\",\"after_dispatch\":116}\n");
     emit("{\"type\":\"result\",\"dispatches\":117,\"exact_cursors\":true,"
          "\"state_comparison_complete\":false,\"m3_replay_complete\":false}\n");
+    armportZoneTrace("replay.cleanup.begin", "");
     CloseHandle(output);
     free(sink);
     free(post);
     free(initial);
+    armportZoneTrace("replay.exit.begin", "ExitProcess(2)");
     ExitProcess(2); /* Explicitly incomplete until full state comparison exists. */
 }
