@@ -314,3 +314,25 @@ executable. The failing instruction's PC will move with the diagnostic build.
 `python3 -m unittest discover -s armport/tests -p 'test_client*.py'`: 23 pass
 (local output: m4-review9-tests.log). Runtime result is pending. No APK or
 signing is performed; M4 remains incomplete.
+
+## Corrected caller capture after run 40118768539
+
+[M4 run 40118768539](https://github.com/Russianranger/coh-android/actions/runs/40118768539/job/120947602089)
+faulted with the same bad power key. Symbolization of its exact Release
+client shows caller 0x140074774 is immediately after __chkstk inside the
+lookup function: an inlined large trace frame clobbered LR before capture.
+Patch 0070 on M3 source 733dca10a9c5aa0a1f32676379080262d452422e moves the
+formatting and trace buffers to a noinline helper. Local ARM64 O2 disassembly
+shows incoming LR preserved and no stack probe in the lookup. Artifact
+identities, disassembly and target compile outputs are in that commit's
+armport/evidence/m3-m4-diagnostics-40118399219.json. This corrects the
+diagnostic; it does not repair or reject the bad key.
+
+The M4 workflow now pins Release build 40127311343 (client Release job
+120971386052 passed, artifact 12573119650). Data remains pinned to
+40100355259; ARMPORT_POWER_TRACE stays confined to interactive diagnosis.
+Next: symbolize the new runtime caller against this exact Release executable,
+then trace its pointer producer. No new data or acceptance change.
+Local validation: python3 -m unittest discover -s armport/tests -p
+'test_client*.py' reports 23 passing tests. M4 remains incomplete until
+interactive qualification succeeds; no APK or signing is performed.
