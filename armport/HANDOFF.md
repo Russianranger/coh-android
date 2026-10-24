@@ -64,7 +64,9 @@ Wine via FEX).
   access-level QA notice and a modal on the loading screen. The bounded,
   exact-notice acknowledgement is under test in 40087788009; do not claim a
   rendering fix before inspecting its verdict and image.
-- Partial state observer/comparison at 1e6952ed is under test in 40091320504.
+- Partial state observer/comparison at 1e6952ed fails in the first snapshot
+  formatter in 40091320504. Bounded CRT formatting replaces the inappropriate
+  array-size macro; both links and preprocessing controls pass locally.
   It is intentionally incomplete; coverage and local validation commands
   are in replay/README.md and M3-REPORT.md.
 - M4 runtime probes 40040922125 and 40087554038 pass guest boot. The latter's

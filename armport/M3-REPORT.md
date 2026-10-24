@@ -10,7 +10,7 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 | Scripted original-client login to Atlas | Run [39960894368](https://github.com/Russianranger/coh-android/actions/runs/39960894368), attempt 2: typed login, character selection, database loaded/connected on map 1, still connected after captures. Accepted in Claude review 5635319013. |
 | Rendered Atlas screenshot | Not met. Run [40054327137](https://github.com/Russianranger/coh-android/actions/runs/40054327137), server-run 120756731269, ended with world_rendered=false and still_connected=false. Its artifact has the access-level QA notice trace and a modal on the loading screen. The bounded acknowledgement fix is being tested in [40087788009](https://github.com/Russianranger/coh-android/actions/runs/40087788009) at 563e49ac; no rendering pass is inferred from the fix. |
 | All supplied packets through original receivers | Cursor/ACK stage passed in [40087788115](https://github.com/Russianranger/coh-android/actions/runs/40087788115), head 563e49ac: ARM64 job 120854188812, i686 job 120854188725. Each target executes ID1 twice and ID31 once; each execution reports 117 exact cursors, ACK IDs [1,2], and matching native INITIAL command boundaries. |
-| Full deterministic state comparison | Not met. Patch 0059 and replay/state.c now emit explicitly partial snapshots. CI [40091320504](https://github.com/Russianranger/coh-android/actions/runs/40091320504), head 1e6952ed, tests their execution/comparison. Full entity/player/tail coverage is still incomplete. |
+| Full deterministic state comparison | Not met. Patch 0059 and replay/state.c now emit explicitly partial snapshots. CI [40091320504](https://github.com/Russianranger/coh-android/actions/runs/40091320504), head 1e6952ed, fails in the first snapshot formatter after INITIAL cursor/ACK. The corrected formatter has passed both local links and four preprocessing controls; rerun pending. Full entity/player/tail coverage is still incomplete. |
 | Independent native INITIAL comparison | Command boundaries passed in 40087788115. Four additional recorded fields are checked by the new observer harness: selected entity index/type and costume bodytype/part count. That subset is not full native INITIAL equivalence; see replay/fixtures/native-initial-entity.json and replay/README.md. |
 | Final milestone approval | Pending. Claude review [5637131418](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5637131418) reviewed 443f1b73 and requested changes. Its replay P2 fix is now integrated; new code and final evidence still need review. |
 
@@ -85,6 +85,13 @@ Earlier fixes and diagnostic evidence remain in `notes/64BIT-AUDIT.md`,
 fix; it is not an Atlas rendering result. Run 40042636088 validates CRT trace
 writes and the socketless sink, not world loading. No ACK/READY grammar or
 original receive decoder was replaced.
+
+The first observer execution exposed the original ARRAY_SIZE_CHECKED printf
+macros on a heap-buffer offset (40091320504, quick_sprintf.c:101). The writer
+now explicitly uses bounded CRT formatting. Actual ARM64/i686 preprocessing
+and negative controls verify the correction; both updated links pass. See
+replay/README.md for the artifact identity and exact command. Runtime
+state comparison is still unqualified.
 
 ## Next exits
 

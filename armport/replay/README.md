@@ -211,3 +211,27 @@ must fail comparison. `CMAKE_BUILD_PARALLEL_LEVEL=2 cmake --build
 both exited 0 and linked CityOfHeroes.exe. Workflow YAML parsed and
 `git diff --check` passed. Full replay execution with this observer is pending;
 the previous cursor-only execution passed at 563e49ac in run 40087788115.
+
+### Snapshot formatter regression found by execution
+
+Run 40091320504 at 1e6952ed, ARM64 job 120864480058, reaches INITIAL cursor
+303248 and ACK ID 1, then exits 3 before writing its first state file.
+Artifact 12558638797 (API/download SHA256
+ab44ec03a6ad42faaba6528dfc7215fdc50130d22fd7b7e13d74eddebdbb773b)
+records an assertion in quick_sprintf.c:101, `(size_t)(tail-buf+1) <= buf_size`.
+This is an observer-output failure, not a completed state comparison.
+
+The included stdtypes.h macros replace vsnprintf/snprintf/sprintf with
+ARRAY_SIZE_CHECKED wrappers. The snapshot writer passes heap-buffer offsets,
+so that inferred size is only a pointer width. state.c now undefines those
+three macros after all game headers, preserving its explicit 16 MiB remaining
+capacity checks and CRT formatting. Check failures also emit the failed
+condition/line through WriteFile before exit 3. No original decoder changes.
+
+`check_receiver_state_preprocess.py` uses the actual compile commands. For
+ARM64 and i686, its current control finds CRT vsnprintf/snprintf/sprintf;
+removing only the three undef directives reproduces all three quick_ calls.
+Both controls pass for both targets and both updated OptDebug Game links
+exit 0. The reference workflow runs this control before a new client build.
+The corrected observer still needs execution evidence; all complete flags
+remain false and the previous failing run is retained as evidence.

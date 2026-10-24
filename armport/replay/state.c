@@ -18,13 +18,32 @@
 #include "entity/costume.h"
 #include <utilitieslib/components/earray.h>
 
+/* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
+ * deliberately uses heap-buffer offsets, whose sizeof is only pointer width.
+ * Keep the CRT functions and our explicit remaining-capacity bounds. */
+#undef vsnprintf
+#undef snprintf
+#undef sprintf
+
 #define CAPACITY (16 * 1024 * 1024)
 static int active;
 static char *buffer;
 static size_t used;
 static struct { unsigned id, create, valid, raw[3]; } orientation[MAX_ENTITIES_PRIVATE];
 
-static void check(int ok) { if (!ok) ExitProcess(3); }
+static void check_at(int ok, const char *condition, int line)
+{
+    if (!ok) {
+        char message[512];
+        DWORD written;
+        int size = snprintf(message, sizeof(message),
+            "ArmPort replay state failed at line %d: %s\n", line, condition);
+        if (size > 0 && size < sizeof(message))
+            WriteFile(GetStdHandle(STD_ERROR_HANDLE), message, size, &written, NULL);
+        ExitProcess(3);
+    }
+}
+#define check(condition) check_at(!!(condition), #condition, __LINE__)
 static void out(const char *format, ...)
 {
     int count;
