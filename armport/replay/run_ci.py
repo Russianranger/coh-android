@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+"""Run the original receiver in isolated Wine; success is cursor-stage only."""
+import argparse
+import gzip
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import time
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+import replay_inventory
+
+
+def fixtures(destination):
+    source = Path(__file__).resolve().parent / 'fixtures'
+    for name, size, sha in (
+        ('initial-replay.bin', 37994, replay_inventory.INITIAL_SHA),
+        ('post-ready-replay.bin', 74416, replay_inventory.POST_SHA),
+    ):
+        with gzip.open(source / (name + '.gz'), 'rb') as stream:
+            data = stream.read(size + 1)
+        if len(data) != size or hashlib.sha256(data).hexdigest() != sha:
+            raise ValueError('fixture identity: ' + name)
+        (destination / name).write_bytes(data)
+    initial = replay_inventory.initial((destination / 'initial-replay.bin').read_bytes())
+    post = replay_inventory.post_ready((destination / 'post-ready-replay.bin').read_bytes())
+    return [initial] + post['records']
+
+
+def check_output(path, expected, initial_id):
+    if path.stat().st_size > 1024 * 1024:
+        raise ValueError('receiver output exceeds cursor-stage bound')
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    if any(row['type'] in ('failure', 'unknown_game_command') for row in rows):
+        raise ValueError('receiver reported a failure')
+    configs = [r for r in rows if r['type'] == 'configuration']
+    if len(configs) != 1 or configs[0]['initial_id'] != initial_id:
+        raise ValueError('configuration mismatch')
+    begins = [r for r in rows if r['type'] == 'dispatch_begin']
+    ends = [r for r in rows if r['type'] == 'dispatch_end']
+    cursors = [r for r in rows if r['type'] == 'cursor']
+    if len(expected) != 117 or len(begins) != 117 or len(ends) != 117 or len(cursors) != 117:
+        raise ValueError('expected all 117 receiver dispatches')
+    for i, (want, begin, end, cursor) in enumerate(zip(expected, begins, ends, cursors)):
+        packet_id = initial_id if i == 0 else want['packet_id']
+        if (begin['index'], begin['id'], begin['command'], begin['logical_bits'], begin['cursor']) != (
+                i, packet_id, want['command'], want['logical_bits'], want['post_command_cursor']):
+            raise ValueError('dispatch metadata mismatch')
+        if (end['count'], end['id'], end['cursor'], end['error_flags']) != (
+                i + 1, packet_id, want['logical_bits'], 0):
+            raise ValueError('dispatch end mismatch')
+        if (cursor['index'], cursor['id'], cursor['expected'], cursor['actual'], cursor['error_flags']) != (
+                i, packet_id, want['logical_bits'], want['logical_bits'], 0):
+            raise ValueError('receiver cursor mismatch')
+    acks = [r for r in rows if r['type'] == 'ack']
+    if [r['packet_id'] for r in acks] != [initial_id, 32]:
+        raise ValueError('missing or unexpected full-update ACK')
+    # The driver compares each outgoing ACK to the original incoming ACK ID.
+    if rows[-1] != dict(type='result', dispatches=117, exact_cursors=True,
+                        state_comparison_complete=False, m3_replay_complete=False):
+        raise ValueError('missing explicit incomplete milestone result')
+    return dict(dispatches=117, exact_cursors=True, ack_ids=[r['ack_id'] for r in acks],
+                state_comparison_complete=False, m3_replay_complete=False)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--runtime', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--wine', type=Path, default=Path('/opt/wine/bin'))
+    parser.add_argument('--target', choices=('arm64', 'i686'), required=True)
+    args = parser.parse_args()
+    # The caller creates a new network namespace; only loopback may exist.
+    if {p.name for p in Path('/sys/class/net').iterdir()} != {'lo'}:
+        raise RuntimeError('replay requires a private loopback-only network namespace')
+    if os.geteuid() == 0:
+        raise RuntimeError('Wine must run as the unprivileged runner')
+    args.runtime = args.runtime.resolve()
+    args.out = args.out.resolve()
+    args.out.mkdir(parents=True, exist_ok=False)
+    report = dict(target=args.target, source_commit=os.getenv('GITHUB_SHA'),
+                  scope='original_receiver_cursor_stage', runs=[],
+                  state_comparison_complete=False, m3_replay_complete=False)
+    display = ':98'
+    xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x1024x24', '-nolisten', 'tcp'],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        time.sleep(2)
+        for label, initial_id in (('id1-a', 1), ('id1-b', 1), ('id31', 31)):
+            folder = args.out / label
+            folder.mkdir()
+            expected = fixtures(folder)
+            prefix = folder / 'wineprefix'
+            env = dict(os.environ, DISPLAY=display, WINEPREFIX=str(prefix),
+                       WINEDEBUG='err+all,fixme-all,+seh', WINEDLLOVERRIDES='mscoree,mshtml=',
+                       ARMPORT_LOOSE_DATA='1', ARMPORT_STDIO_LOG='Z:' + str(folder / 'client-stdio.txt').replace('/', '\\'))
+            # Bootstrap without the replay environment: only the actual game gets it.
+            with (folder / 'wine-output.txt').open('wb') as log:
+                try:
+                    subprocess.run([str(args.wine / 'wine'), 'wineboot', '-i'], env=env,
+                                   stdout=log, stderr=subprocess.STDOUT, check=True, timeout=300)
+                    subprocess.run([str(args.wine / 'wine'), 'reg', 'add',
+                                    r'HKCU\Software\Wine\WineDbg', '/v', 'ShowCrashDialog',
+                                    '/t', 'REG_DWORD', '/d', '0', '/f'], env=env,
+                                   stdout=log, stderr=subprocess.STDOUT, check=True, timeout=60)
+                    env.update(ARMPORT_REPLAY_DIR='Z:' + str(folder).replace('/', '\\'),
+                               ARMPORT_REPLAY_INITIAL_ID=str(initial_id))
+                    run = subprocess.run([str(args.wine / 'wine'), str(args.runtime / 'CityOfHeroes.exe'),
+                                          '-fullscreen', '0', '-screen', '800', '600', '-verbose', '1'],
+                                         cwd=args.runtime, env=env, stdout=log, stderr=subprocess.STDOUT,
+                                         timeout=600)
+                    if run.returncode != 2:
+                        raise RuntimeError(f'{label}: expected incomplete-stage exit 2, got {run.returncode}')
+                    result = check_output(folder / 'receiver.jsonl', expected, initial_id)
+                    report['runs'].append(dict(label=label, **result))
+                    print(json.dumps(report['runs'][-1]), flush=True)
+                finally:
+                    subprocess.run([str(args.wine / 'wineserver'), '-k'], env=env, timeout=30, check=False)
+                    subprocess.run([str(args.wine / 'wineserver'), '-w'], env=env, timeout=30, check=False)
+                    # Prefixes contain mutable runtime data, not useful decoder evidence.
+                    shutil.rmtree(prefix, ignore_errors=True)
+        if (args.out / 'id1-a/receiver.jsonl').read_bytes() != (args.out / 'id1-b/receiver.jsonl').read_bytes():
+            raise ValueError('same-ID cursor/ACK repeat differs')
+        report['cursor_stage_passed'] = True
+        print('Receiver cursor/ACK stage passed; full state comparison and M3 remain incomplete.')
+        return 0
+    finally:
+        xvfb.terminate()
+        xvfb.wait(timeout=15)
+        (args.out / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

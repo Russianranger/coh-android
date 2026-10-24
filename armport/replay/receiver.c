@@ -118,7 +118,7 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
 {
     Packet packet = {0};
     unsigned int end, output_bits;
-    unsigned int ack = 0;
+    unsigned int ack = 0, expected_ack = 0;
     require(size && bits && bits <= size * 8 && cursor <= bits, "packet bounds");
     require(aligned <= 1 && (!aligned || cursor % 8 == 0), "packet alignment");
     require(ordered <= 1 && (command == SERVER_ALLENTS || command == SERVER_UPDATE), "packet metadata");
@@ -136,6 +136,12 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
     packet.id = id;
     packet.ordered = ordered;
     packet.ordered_id = ordered_id;
+    if (command == SERVER_ALLENTS) {
+        Packet input_ack = packet;
+        input_ack.stream.userData = &input_ack;
+        expected_ack = pktGetBitsPack(&input_ack, 1);
+        require(!input_ack.stream.errorFlags, "input ACK field error");
+    }
     commNewInputPak();
     emit("{\"type\":\"dispatch_begin\",\"index\":%u,\"id\":%u,\"command\":%u,"
          "\"logical_bits\":%u,\"cursor\":%u,\"byte_aligned\":%u,\"ordered\":%u,"
@@ -143,6 +149,8 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
          dispatches, id, command, bits, cursor, aligned, ordered, ordered_id, synthetic ? "true" : "false");
     require(commArmPortReplayDispatch(&packet, command, sink) == 1, "receive dispatch returned failure");
     end = bsGetCursorBitPosition(&packet.stream);
+    emit("{\"type\":\"cursor\",\"index\":%u,\"id\":%u,\"expected\":%u,"
+         "\"actual\":%u,\"error_flags\":%u}\n", dispatches, id, bits, end, packet.stream.errorFlags);
     require(!packet.stream.errorFlags && !bsIsBad(&packet.stream), "receive stream error");
     require(end == bits, "receive did not consume exact logical bit length");
     output_bits = bsGetBitLength(&client_input_pak->stream);
@@ -155,6 +163,7 @@ static void dispatch(NetLink *sink, unsigned char *payload, unsigned int size,
         require(pktGetBitsPack(&sent, 1) == CLIENTINP_ACK_FULL_UPDATE, "missing full-update ACK");
         ack = pktGetBitsPack(&sent, 1);
         require(!sent.stream.errorFlags, "ACK stream error");
+        require(ack == expected_ack, "full-update ACK differs from incoming ID");
         emit("{\"type\":\"ack\",\"packet_id\":%u,\"ack_id\":%u,\"ack_bits\":%u,\"total_input_bits\":%u}\n",
              id, ack, bsGetCursorBitPosition(&sent.stream), output_bits);
     }

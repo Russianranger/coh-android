@@ -1,4 +1,4 @@
-name: ArmPort i686 replay reference
+name: ArmPort original receiver replay
 
 on:
   workflow_dispatch:
@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: armport-reference-${{ github.ref }}
@@ -27,7 +28,16 @@ env:
 jobs:
   reference-build:
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 90
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - target: arm64
+            triple: aarch64
+          - target: i686
+            triple: i686
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,6 +45,8 @@ jobs:
             /armport/
             /upstream/ouroboros/
             !/upstream/ouroboros/data/
+            /upstream/i24/data/
+            /android/runtime-lock.json
           sparse-checkout-cone-mode: false
           lfs: false
       - name: Install pinned llvm-mingw
@@ -48,14 +60,14 @@ jobs:
           sudo apt-get install -y --no-install-recommends ninja-build
       - name: Prepare original source plus patches
         run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/reference"
-      - name: Configure i686 comparison build
+      - name: Configure assertion-enabled comparison build
         env:
           COH_LLVM_MINGW: /opt/llvm-mingw
         run: |
           set -o pipefail
           cmake -S "$RUNNER_TEMP/reference/src" -B "$RUNNER_TEMP/reference/build" -G Ninja \
             -DCMAKE_BUILD_TYPE=OptDebug \
-            -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/i686-w64-mingw32.cmake" \
+            -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/${{ matrix.triple }}-w64-mingw32.cmake" \
             -DCOX_BUILD_COMMON=ON -DCOX_BUILD_GAME=ON -DCOX_ARMPORT_COMPILE_ONLY=ON \
             -DCOX_ARMPORT_DIR="$GITHUB_WORKSPACE/armport" \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 2>&1 | tee "$RUNNER_TEMP/reference-configure.log" | tail -40
@@ -64,29 +76,79 @@ jobs:
           commands = json.load(open(sys.argv[1]))
           receiver = [c['command'] for c in commands if c['file'].endswith('/clientcomm/clientcomm.c')]
           assert len(receiver) == 1
-          assert all(flag in receiver[0].split() for flag in ('-msse2', '-mfpmath=sse', '-DCOH_ARMPORT_REFERENCE_I686=1'))
+          if '${{ matrix.target }}' == 'i686':
+              assert all(flag in receiver[0].split() for flag in ('-msse2', '-mfpmath=sse', '-DCOH_ARMPORT_REFERENCE_I686=1'))
           assert '-DFINAL' not in receiver[0].split()
-          print('::notice title=ArmPort i686 flags::Original receiver uses SSE2 math, reference-only define and assertions enabled (OptDebug)')
+          print('::notice title=ArmPort replay flags::${{ matrix.target }} original receiver has assertions enabled (OptDebug); i686 requires SSE2 math')
           PY
-      - name: Build original i686 client
+      - name: Build original receiver client
         run: |
           set -o pipefail
           cmake --build "$RUNNER_TEMP/reference/build" --target Game -- -k 0 \
             2>&1 | tee "$RUNNER_TEMP/reference-build.log" | tail -60
           mkdir -p "$RUNNER_TEMP/reference-bin"
           cp "$RUNNER_TEMP/reference/build/bin/CityOfHeroes.exe" "$RUNNER_TEMP/reference-bin/"
-          cp /opt/llvm-mingw/i686-w64-mingw32/bin/{libc++,libunwind}.dll "$RUNNER_TEMP/reference-bin/"
+          cp /opt/llvm-mingw/${{ matrix.triple }}-w64-mingw32/bin/{libc++,libunwind}.dll "$RUNNER_TEMP/reference-bin/"
           file "$RUNNER_TEMP/reference-bin/CityOfHeroes.exe"
           echo '::notice title=ArmPort i686 reference::Client linked; receiver execution and equivalence NOT yet qualified'
       - uses: actions/upload-artifact@v4
         with:
-          name: armport-replay-reference-i686
+          name: armport-replay-reference-${{ matrix.target }}
           path: ${{ runner.temp }}/reference-bin
           if-no-files-found: error
           retention-days: 7
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: armport-replay-reference-build-logs
+          name: armport-replay-reference-build-logs-${{ matrix.target }}
           path: ${{ runner.temp }}/reference-*.log
           retention-days: 7
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+          run-id: 40043254025
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-cg-arb
+          path: ${{ runner.temp }}/cg-arb
+          run-id: 40043254025
+          github-token: ${{ github.token }}
+      - name: Restore reviewed client data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Unpack reviewed data
+        run: |
+          echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/assets"
+          unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
+          for sub in data assets; do
+            if [ -d "$RUNNER_TEMP/assets/$sub" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/$sub" "$RUNNER_TEMP/assets"; break; fi
+          done
+      - name: Install the app Wine/FEX runtime
+        run: |
+          armport/scripts/install_wine_runtime.sh
+          sudo apt-get install -y --no-install-recommends iproute2 util-linux
+      - name: Stage same data, bins and shaders for replay
+        run: |
+          python3 armport/scripts/smoke_run.py --stage-only --build "$RUNNER_TEMP/reference-bin" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
+            --cg-dir "$RUNNER_TEMP/cg-arb" --runtime "$RUNNER_TEMP/replay-runtime"
+      - name: Execute all original receiver dispatches (incomplete milestone stage)
+        run: |
+          sudo -n unshare --net -- sudo -u "$(id -un)" -- env GITHUB_SHA="$GITHUB_SHA" \
+            python3 "$GITHUB_WORKSPACE/armport/replay/run_ci.py" \
+              --runtime "$RUNNER_TEMP/replay-runtime" --out "$RUNNER_TEMP/replay-results" \
+              --target '${{ matrix.target }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-receiver-${{ matrix.target }}
+          path: ${{ runner.temp }}/replay-results
+          if-no-files-found: warn
+          retention-days: 14

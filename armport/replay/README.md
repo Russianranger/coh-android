@@ -38,5 +38,28 @@ Remaining before M3: full entity/player tail state dumps and per-record state
 hashes; wire-orientation capture rather than normalized rendering quaternions;
 literal ARM64/i686 and same-ID repeat comparison; the agreed narrow ID 1/31
 canonicalization; and comparison against the recorded native-android INITIAL
-decode. See ../notes/M3-REPLAY-PLAN.md for the binding criteria. The raw report
-archive and replay files have not been added to the repository.
+decode. See ../notes/M3-REPLAY-PLAN.md for the binding criteria. Only the two exact logical input files are now gzip test fixtures under
+fixtures/; the enclosing report archive remains outside the repository.
+
+## Executable CI stage
+
+armport-reference.yml now builds ARM64 and i686 OptDebug in a sequential
+matrix, capped at two compiler processes. Each target uses the app's pinned
+Wine/FEX runtime, the reviewed asset ZIP and bins/ARB shaders from completed
+run 40043254025 (no intervening data/schema/shader changes).
+run_ci.py requires an unprivileged process in a fresh network namespace
+containing only loopback, runs ID 1 twice and ID 31 once with separate Wine
+prefixes, and retains JSONL and logs. Each full-update ACK is compared to
+the incoming ID by the original packet reader. The host validates all
+117 ordered dispatch metadata/cursor records and both ACK records, and
+compares same-ID cursor/ACK output byte-for-byte. Full state equivalence
+and cross-architecture state comparison remain incomplete.
+
+A green job means only this cursor/ACK stage passed. The JSON result must
+retain state_comparison_complete=false and m3_replay_complete=false.
+Input/decoder failures, wrong process exit, timeouts, missing ACKs, partial
+counts and cursor errors fail the job. Local host tests cover those output
+rejection boundaries; runtime qualification awaits this workflow.
+
+Validation commands: both OptDebug Game links (`ninja -j2 Game`) exited 0
+after the ACK check, and the full Python unittest discovery passed 18 tests.

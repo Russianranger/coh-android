@@ -99,7 +99,8 @@ of clientcomm.c, game.c and receiver.c pass for ARM64 Release and i686
 OptDebug. Execution and full state comparison remain pending; the driver
 explicitly exits 2 with m3_replay_complete=false even if all cursors pass.
 The reference workflow now builds OptDebug because FINAL disables assertions.
-See replay/README.md. No raw replay input or user report archive is committed.
+See replay/README.md. The two exact logical packets are now gzip test
+fixtures; the enclosing user report archive is not committed.
 
 The historical 0048 preprocessing check is also complete: all eight checks
 in `check_zone_trace_preprocess.py ../build-active/compile_commands.json`

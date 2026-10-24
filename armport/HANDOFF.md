@@ -101,8 +101,8 @@ Wine via FEX).
    cc949b01...7b39) and `post-ready-replay.bin` (74,416 bytes, sha256
    f134c3c0...96a9) from the user's Thor report of 2026-10-21 (client
    session 1a15fad27e9; hashes in
-   `native-android/combined-client/DIAGNOSTIC-STATUS.json`). They are not in
-   the repo; the original report archive now supplies both. Format notes are in that JSON
+   `native-android/combined-client/DIAGNOSTIC-STATUS.json`). They are available as exact gzip fixtures under armport/replay/fixtures/;
+   the original report archive supplied both. Format notes are in that JSON
    (`coh-post-ready-logical-messages-v1`; logical payloads, not UDP wire
    packets). Method agreed by Claude in PR #6 review 5635319013 (2026-10-23);
    details and required i686 comparison are in `notes/M3-REPLAY-PLAN.md`: feed the logical
