@@ -33,7 +33,7 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Run 40111054487: ARM64 emits result, then returns -9; termination unproved.
+- Atlas 40113107671: startup RPC counted; NULL-def read at 0x88 still fails.
 - 40113107670: both targets fail on 16 dispatch errors; id1-a inventories match.
 - Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
   remains incomplete. Texture exception OFF: 57/72 archives; composite gaps.

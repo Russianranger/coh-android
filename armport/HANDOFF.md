@@ -74,7 +74,10 @@ exception approved in comment 6387467359 remains OFF: the archive scan is
 57 of 72 and composite names have unstaged dependencies in reviewed manifests.
 No extra fetch/staging or acceptance relaxation. Patches 0068/0069 diagnose
 M4 power inputs/caller and missing mission-room tray coordinates. Enable
-ARMPORT_POWER_TRACE only in the M4 interactive diagnostic.
+ARMPORT_POWER_TRACE only in the M4 interactive diagnostic. M4 run 40118768539
+uses aa9cdcaa9 and the new Release client. Atlas 40113107671 is now failed:
+the real startup RPC is counted once; a later NULL-def read at 0x88 is rejected.
+Its complete Wine fixture and evidence are committed; screenshot is black.
 
 
 Review 5638956748 follow-up code 07c536d7 is being qualified by build/Atlas

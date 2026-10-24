@@ -8,7 +8,8 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 Source `f0d78fd78e96643da50d90ddb5549110f73bb506` is tested by
 [build/Atlas 40118399219](https://github.com/Russianranger/coh-android/actions/runs/40118399219)
 and [replay 40118399218](https://github.com/Russianranger/coh-android/actions/runs/40118399218).
-Runtime outcomes are pending; this integration adds documentation only.
+Release and libraries jobs pass; the new replay and Atlas runtime outcomes
+remain pending. The following current-run fixture adds no validator behavior.
 
 [Review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5639193819)
 and [conditional exception decision](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6387467359).
@@ -61,7 +62,23 @@ The exact first 28 Wine lines from Atlas run 40105902326 artifact 12566815878
 are retained as a fixture. The real dispatch/unwind/restore sequence passes
 the startup matcher and fails when moved after a test boundary. That historical
 run predates 0067; its synthetic test boundary is not runtime qualification.
-Current server-run 120931544128 remains pending at this checkpoint.
+Server-run 120931544128 has now finished: [run 40113107671](https://github.com/Russianranger/coh-android/actions/runs/40113107671)
+fails. Its complete Wine output is retained byte-for-byte as
+`tests/fixtures/atlas-wine-40113107671.txt`; [artifact and validator evidence](evidence/m3-atlas-wine-40113107671.json)
+pins the download. The real dispatch/unwind/restore occur at lines 1/14/28,
+before the actual shared-stream map boundary at 45. The validator reports
+one allowed startup RPC, then correctly rejects the access violation at 46
+and unhandled page fault at 63 (read 0x88, PC 0x1400a56d4). Its result matches
+the retained CI wine-errors.json. The complete-log regression must fail, while
+the prefix through its real boundary passes and moving the RPC after it fails.
+The isolated trace ends with a NULL-def root tracker id=8, group_id=0,
+count=10 and no parent; its source definition is not yet identified. The
+retained screenshot is black, not a rendered Atlas frame. No NULL bypass.
+
+M4 diagnostic [40118768539](https://github.com/Russianranger/coh-android/actions/runs/40118768539)
+runs commit aa9cdcaa91334ab460e8bd6bb1918bf0688e2090 with the Release client
+from 40118399219 and existing data 40100355259. It enables only the requested
+power lookup caller/input diagnostic; runtime result remains pending.
 
 L1: successful uncached range staging now reports each response's actual
 Content-Range, status and received bytes; cache verification reports no new
@@ -86,7 +103,8 @@ Source/harness commit `07c536d7fe5d7748ced9e03845c53b0b3cf907d4` runs
 and [replay 40113107670](https://github.com/Russianranger/coh-android/actions/runs/40113107670).
 The PR integration adds documentation/evidence only. Both asset jobs pass;
 build jobs 120928759073 (OptDebug), 120928759106 (Release) and 120928759247
-(libraries) pass. Replay and Atlas runtime checks remain pending.
+(libraries) pass. Replay fails on 16 dispatch errors; Atlas fails with a
+NULL-def access violation. See the newer evidence above.
 
 The [review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638956748)
 verified the 166-file selection, trace IDs, final drain and NULL diagnostic.
@@ -116,7 +134,7 @@ Both texture drains invoke original texCheckThreadLoader/loadUpdate, including
 GL uploads under Xvfb; README lists these extra driver steps. L1: only the
 build workflow saves the shared reviewed-dispatch cache; replay restores it.
 
-Atlas-only allowance: patch 0067 writes the first map boundary directly into
+Atlas-only allowance: patch 0067 writes every map boundary directly into
 the same append-only file as Wine's +seh trace, before the isolated map.start.
 Cross-file line numbers or clocks are not compared. A 6ba dispatch is counted
 only after matching same-thread unwind and handler-target restoration, all

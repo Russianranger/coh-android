@@ -16,6 +16,28 @@ BOUNDARY = atlas_wine.BOUNDARY + '\n'
 
 
 class AtlasWineTests(unittest.TestCase):
+    def test_current_atlas_rpc_boundary_and_later_fault(self):
+        # Complete, byte-preserved Wine output from run 40113107671,
+        # artifact 12569553209. Its actual map boundary is line 45.
+        text = (Path(__file__).parent / 'fixtures/atlas-wine-40113107671.txt').read_text()
+        lines = text.splitlines(keepends=True)
+        self.assertEqual(lines[44], BOUNDARY)
+        before_fault = ''.join(lines[:45])
+        result = self.check(before_fault)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['allowed_startup_rpc_exceptions'], 1)
+        self.assertEqual(result['map_boundaries'], 1)
+        # The complete runtime still fails: startup handling cannot hide
+        # the subsequent real access violation or unhandled page fault.
+        result = self.check(text)
+        self.assertFalse(result['passed'])
+        self.assertEqual(result['allowed_startup_rpc_exceptions'], 1)
+        self.assertEqual(len(result['failures']), 3)
+        self.assertTrue(any('Wine fatal at line 63' in x for x in result['failures']))
+        self.assertFalse(self.check(BOUNDARY + ''.join(lines[:44]))['passed'])
+        with self.assertRaisesRegex(ValueError, 'Wine exception/fatal'):
+            run_ci.check_wine_output(self.wine)
+
     def test_retained_real_wine_rpc_sequence(self):
         # Exact first 28 lines from run 40105902326, artifact 12566815878.
         # This older run predates 0067: the boundary below is a test input,
