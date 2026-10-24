@@ -183,3 +183,37 @@ also passes. This confirms the include-order inference with actual preprocessing
 Run 40011219458 therefore remains evidence of the original texture wait,
 not evidence of the later tex.c trace crash. The no-zone-trace run
 39973792458 also stalled. Neither result establishes the synchronization fix.
+
+## Corrected trace reaches texture swaps (0052)
+
+Run 40042636088, server-run 120720476616, failed at 2026-10-24
+01:33 UTC (October 23 evening in Chicago). The evidence artifact 12542504923
+was downloaded and its SHA-256 verified:
+268ae750808e5baecf6e4c6f2abe8f491c637214426df7013f2d754d8cca372f.
+The final stdio markers are:
+
+```
+ArmPort zone: 4059595 texqueue.finish.unlocked  tid=296
+ArmPort zone: 4059599 texqueue.drain.done  tid=36
+ArmPort zone: 4059599 texqueue.swaps.begin  tid=36
+```
+
+Run 40043254025, server-run 120722352087, independently ends at the same
+markers and fails with `ARM64 client did not stay connected on Atlas`.
+Thus the current stop is after the APC/queue lock and foreground texture
+uploads, within texCheckSwapList or a callee. This is not a queue-lock hang
+in these two runs. The bounded native stacks contain Wine/system frames
+but no usable game frame, so they do not identify a callee or prove a cause.
+
+Visual inspection of 40042636088 screen.jpg shows a white loading view with
+a dark inset rectangle; it is not Atlas. A modal error is a hypothesis only.
+Patch 0057 traces swap-list preparation, matching swaps, scan/warnings,
+model rebuilding (at most 512 geometry entries per call), client error text
+and dialog entry/return. It does not suppress, dismiss or reinterpret errors,
+or alter queueing/loading. It is ARM64-only and emits only with the existing
+ARMPORT_STDIO_LOG opt-in.
+
+Validation: `ninja -C build-arm-opt -j2 Game` and
+`ninja -C build-reference-active -j2 Game` both exited zero after 0057,
+including full executable links. These are compile/link results only;
+no rendered Atlas frame or complete replay is claimed.

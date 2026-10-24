@@ -96,3 +96,7 @@ same original switch; replay enters below transport statistics after normal
 startup. Extra receive/output initialization is listed in the patch's new
 header. No upstream file is modified. See replay/README.md: initial scope
 is cursor/ACK execution and deliberately cannot claim state equivalence.
+
+0057: bounded swap/model and error-dialog progress diagnostics. No pointer
+fix or loading behavior change; follows the post-drain stop reproduced in
+40042636088 and 40043254025. ARM64/i686 OptDebug Game links pass locally.

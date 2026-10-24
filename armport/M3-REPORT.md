@@ -59,8 +59,10 @@ network preflight. Run 40035482170 server-run failed before the texture wait.
 Patch 0052 fixes a confirmed FILE*/FileWrapper* mismatch in the diagnostic
 header; its before/after compile control and pinned-Wine disassembly are in
 notes/M3-LOAD-STALL.md. Run 40042636088, libraries job 120717013954, passed
-both CRT trace writes and the original socketless preflight. Atlas remains
-unqualified while server-run is pending.
+both CRT trace writes and the original socketless preflight. Server-run then failed after texqueue.drain.done, stopping at
+texqueue.swaps.begin. Run 40043254025 repeats this boundary. See
+notes/M3-LOAD-STALL.md; 0057 adds bounded swap/model/dialog diagnostics.
+The cause remains unproven and Atlas remains unqualified.
 
 ## Reference coverage and review 5635783793
 

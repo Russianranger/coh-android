@@ -23,7 +23,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (branch armport/m3-atlas, 56 patches; Astra leads from here,
+M3 into Atlas (branch armport/m3-atlas, 57 patches; Astra leads from here,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Run 40011219458 stops in texLoadQueueFinish; 0049 traces it in run 40032719161.
+- Runs 40042636088/40043254025 stop at texqueue.swaps.begin after texture drain.
 - Patch 0050 fixes a reproduced worker lost-wake race: notes/WORKER-QUEUE.md.
 - Replay inputs recovered; method agreed; 0056 driver compiles, execution/state comparison pending.
