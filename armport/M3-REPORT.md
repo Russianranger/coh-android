@@ -8,7 +8,7 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 | Requirement | Evidence and current result |
 |---|---|
 | Scripted original-client login to Atlas | Run [39960894368](https://github.com/Russianranger/coh-android/actions/runs/39960894368), attempt 2: typed login, character selection, database loaded/connected on map 1, still connected after captures. Accepted in Claude review 5635319013. |
-| Rendered Atlas screenshot | Not met. Run [40054327137](https://github.com/Russianranger/coh-android/actions/runs/40054327137), server-run 120756731269, ended with world_rendered=false and still_connected=false. Its artifact has the access-level QA notice trace and a modal on the loading screen. The bounded acknowledgement fix is being tested in [40087788009](https://github.com/Russianranger/coh-android/actions/runs/40087788009) at 563e49ac; no rendering pass is inferred from the fix. |
+| Rendered Atlas screenshot | Not met. Run [40054327137](https://github.com/Russianranger/coh-android/actions/runs/40054327137), server-run 120756731269, ended with world_rendered=false and still_connected=false. Its artifact has the access-level QA notice trace and a modal on the loading screen. Run [40087788009](https://github.com/Russianranger/coh-android/actions/runs/40087788009) at 563e49ac also fails: world_rendered=false, zero QA-notice actions, 1,507 seconds loading. Its inspected screen remains white with a blank modal area; the pending exact notice is still in stdio. |
 | All supplied packets through original receivers | Cursor/ACK stage passed in [40087788115](https://github.com/Russianranger/coh-android/actions/runs/40087788115), head 563e49ac: ARM64 job 120854188812, i686 job 120854188725. Each target executes ID1 twice and ID31 once; each execution reports 117 exact cursors, ACK IDs [1,2], and matching native INITIAL command boundaries. |
 | Full deterministic state comparison | Not met. Patch 0059 and replay/state.c now emit explicitly partial snapshots. CI [40091320504](https://github.com/Russianranger/coh-android/actions/runs/40091320504), head 1e6952ed, fails in the first snapshot formatter after INITIAL cursor/ACK. The corrected formatter has passed both local links and four preprocessing controls; rerun [40092531364](https://github.com/Russianranger/coh-android/actions/runs/40092531364) at 0296f2fb writes 117 ARM64 snapshots but rejects the costume subset because the validator confused 60 allocated slots with 28 logical parts. The current correction compares num_parts; full state remains incomplete. Full entity/player/tail coverage is still incomplete. |
 | Independent native INITIAL comparison | Command boundaries passed in 40087788115. Four additional recorded fields are checked by the new observer harness: selected entity index/type and costume bodytype/part count. That subset is not full native INITIAL equivalence; see replay/fixtures/native-initial-entity.json and replay/README.md. |
@@ -145,3 +145,36 @@ receiver.c and state.c on both targets. seh-control.c links for both targets.
 Workflow YAML parses; git diff --check passes. Runtime controls are pending.
 M4 branch 723bbc32 addresses the separate missing client_visual_assets import
 from run 40092467628; 19 app tests pass. No M4 completion is claimed.
+
+### Reviewed Atlas supplement and current execution
+
+The missing texture is present in the already reviewed
+assets/atlas-world-supplement-manifest.json: 22,316 bytes, SHA256
+60e4fa246b6212ae882c44a0d3571bcb4ecc7d2c35f85f316fdad8a35f53b344.
+The retained 0.10 APK (run 36920583713, artifact 11192425448) supplies the
+original 2,877-file Atlas supplement. CI now verifies the exact APK and
+embedded manifest/archive hashes, retains the archive, and adds those
+original bytes to the client data for Atlas and both replay architectures.
+It does not modify the server's existing data or acknowledge error dialogs.
+The reviewed current 2,904-file Atlas manifest and base reference manifest
+have zero overlapping paths (`casefold` missing-texture search and Python
+manifest-set intersection, 2026-10-24). The 27 later material additions are
+not silently substituted for the retained baseline. This is a data-gap
+correction to test, not evidence that all game errors or loading are fixed.
+
+Run 40087788009 artifact 12559808809 SHA256
+68f239a459ff0cada2eafc49c375c831acce4e7ea3139a02791641768984612e
+was downloaded and verified. Its final trace is the exact QA notice after
+the missing source-texture warning; pending_qa_notice returns true locally,
+but qa_notice_actions is empty. The next run records the exact-window search
+result without widening its acceptance.
+
+Run 40094248191 at 1e3df462 fails the newly expanded preprocessing check
+before compilation because AutoGen/bones_h_ast.h has not been generated.
+Commit 06296c38 moves that check after the build and before executable caching;
+40094448205 tests it. Actual local incremental links and eight preprocessing
+controls already passed. The supplemental data change has 50 passing host
+tests, including byte identity, unexpected members, path links and refusal
+to overwrite different data; production donor execution remains pending.
+M4 correction 723bbc32 runs in 40094077884; app sources and guest boot pass,
+interactive creation/save/reopen is still running.

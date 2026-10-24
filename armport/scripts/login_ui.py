@@ -34,11 +34,16 @@ def acknowledge_qa_notice(screen, stdio, pids, status):
     Never dismiss a texture/error/crash dialog merely because it has that title.
     """
     attempts = status.setdefault('qa_notice_actions', [])
-    if len(attempts) >= 3 or len(pids) != 1 or not pending_qa_notice(stdio):
+    pending = pending_qa_notice(stdio)
+    status['qa_notice_last_check'] = {'pids': pids, 'pending_exact_notice': pending,
+                                     'attempts': len(attempts)}
+    if len(attempts) >= 3 or len(pids) != 1 or not pending:
         return False
     result = sh('xdotool', 'search', '--onlyvisible', '--pid', str(pids[0]),
                 '--name', '^Program Error$')
     windows = result.stdout.split()
+    status['qa_notice_last_check'].update(search_exit=result.returncode,
+        windows=windows[:8], search_stderr=getattr(result, 'stderr', '')[:300])
     if result.returncode or len(windows) != 1 or not windows[0].isdigit():
         return False
     before = screen.shot('qa-notice-before')

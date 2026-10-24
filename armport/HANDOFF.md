@@ -62,9 +62,9 @@ Wine via FEX).
   completion flags remain false. The Wine-fatal/SEH rejection requested by
   Claude is integrated into that tested milestone head.
 - Run 40054327137 still fails rendering/connection. Its artifact records the
-  access-level QA notice and a modal on the loading screen. The bounded,
-  exact-notice acknowledgement is under test in 40087788009; do not claim a
-  rendering fix before inspecting its verdict and image.
+  access-level QA notice and a modal on the loading screen. Run 40087788009 also fails with zero QA-notice actions; its image remains
+  loading. The next run stages the reviewed 2,877-file Atlas supplement
+  containing the missing texture and records the exact-window search result.
 - Partial state observer/comparison at 1e6952ed fails in the first snapshot
   formatter in 40091320504. Bounded CRT formatting replaces the inappropriate
   array-size macro; both links and preprocessing controls pass locally.

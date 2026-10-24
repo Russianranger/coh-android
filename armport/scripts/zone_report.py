@@ -22,7 +22,8 @@ def sections(evidence, client):
     raw = read(evidence / 'login-driver.json')
     status = json.loads(raw) if raw else {}
     keys = ('client_started', 'client_exit', 'client_error', 'enter_by_layout',
-            'play_sent', 'world_rendered', 'zone_load_seconds', 'diagnostic_seconds_excluded', 'loading_brightness', 'load_samples')
+            'play_sent', 'world_rendered', 'zone_load_seconds', 'diagnostic_seconds_excluded', 'loading_brightness', 'load_samples',
+            'qa_notice_last_check', 'qa_notice_actions')
     summary = {key: status[key] for key in keys if key in status}
     raw = read(evidence / 'armport-game-report.json')
     report = json.loads(raw) if raw else {}

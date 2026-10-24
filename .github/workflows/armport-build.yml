@@ -55,6 +55,7 @@ jobs:
         with:
           sparse-checkout: |
             /tools/fetch_runtime_asset_bundle.py
+            /armport/scripts/stage_atlas_supplement.py
             /assets/reference-inputs-receipt.json
           sparse-checkout-cone-mode: false
           lfs: false
@@ -70,6 +71,35 @@ jobs:
         run: |
           python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json \
             --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
+
+      - id: atlas-supplement
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: armport-atlas-supplement-499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60
+      - uses: actions/download-artifact@v4
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        with:
+          name: coh-client-interaction-apk
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/retained-atlas-donor
+      - name: Recover the reviewed Atlas supplement from the exact retained app
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_atlas_supplement.py recover \
+            --apk "$RUNNER_TEMP/retained-atlas-donor/COH-Character-Reopen-0.10.0.apk" \
+            --output "$RUNNER_TEMP/atlas-supplement"
+      - uses: actions/cache/save@v4
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: ${{ steps.atlas-supplement.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-supplement
+          path: ${{ runner.temp }}/atlas-supplement
+          retention-days: 90
 
   libraries:
     runs-on: ubuntu-24.04-arm
@@ -638,13 +668,23 @@ jobs:
         with:
           name: armport-client-bins
           path: ${{ runner.temp }}/client-bins
+      - name: Restore the exact reviewed Atlas supplement
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: armport-atlas-supplement-499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60
+          fail-on-cache-miss: true
+      - name: Verify and stage all retained Atlas geometry and textures
+        run: |
+          python3 armport/scripts/stage_atlas_supplement.py stage \
+            --source "$RUNNER_TEMP/atlas-supplement" --output "$RUNNER_TEMP/atlas-client-data"
       - name: Stage the ARM64 client
         run: |
           # The client reads the same reviewed asset bundle as M2's client-run,
           # from the staged copy (no second unpack).
           assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
           armport/scripts/step.sh "ArmPort M3 client stage" python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
-            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
           ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
       - name: Server stack and ARM64 client login to Atlas Park
