@@ -11,6 +11,7 @@ import shutil
 import socket
 import subprocess
 import time
+import zipfile
 
 import retained_assets
 import stage_app_assets
@@ -47,6 +48,37 @@ def legacy_report(report, runtime_manifest, client_manifest):
     result['asset_sha256'] = {name: report['asset_sha256'][name]
                              for name in character.host.assets_tool.PROBE_FILES}
     return result
+
+
+
+def guest_failure_summary(evidence):
+    """Bounded diagnostic only; never changes ownership/cleanup validation."""
+    result = {}
+    try:
+        path = evidence / 'latest-report.json'
+        if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
+            report = json.loads(path.read_text())
+            result['failures'] = [str(item)[:400] for item in report.get('failures', [])[:6]]
+            result['failed_stages'] = [item.get('stage') for item in report.get('stages', [])
+                                       if item.get('status') == 'failed'][:8]
+        path = evidence / 'report.zip'
+        if path.is_file():
+            with zipfile.ZipFile(path) as archive:
+                info = archive.getinfo('client-evidence/client-console.log')
+                if info.file_size <= 8 * 1024 * 1024:
+                    lines = archive.read(info).decode('utf-8', errors='replace').splitlines()
+                    result['client_faults'] = [line[:500] for line in lines
+                        if 'Unhandled' in line or 'unhandled exception' in line.lower()
+                        or 'page fault' in line.lower()][:3]
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        result['evidence_read_error'] = str(error)[:300]
+    return result
+
+
+def ci_notice(result):
+    text = json.dumps(result, separators=(',', ':'))
+    text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+    return '::notice title=ArmPort M4 interactive result::' + text
 
 
 def run_session(command, work, evidence, proot, session, runtime_manifest, client_manifest,
@@ -93,7 +125,7 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 'scope': 'arm64_app_guest_reopen' if reopening else 'arm64_app_guest_creation',
                 'session_id': session, 'passed': failure is None, 'failure': failure,
                 'external_observer': observer, 'host_cleanup': cleanup,
-                'guest_evidence_export': exported}, indent=2) + '\n')
+                'guest_evidence_export': exported, 'guest_failure': guest_failure_summary(evidence)}, indent=2) + '\n')
     return report
 
 
@@ -146,7 +178,12 @@ def main():
         result['error'] = {'type': type(error).__name__, 'message': str(error)}
     finally:
         result['elapsed_seconds'] = round(time.monotonic() - started, 3)
+        result['guest_failures'] = {name: guest_failure_summary(args.evidence / name)
+                                    for name in ('creation', 'reopen')
+                                    if (args.evidence / name).exists()}
         (args.evidence / 'host-report.json').write_text(json.dumps(result, indent=2) + '\n')
+        print(ci_notice({key: result.get(key) for key in
+            ('passed', 'm4_complete', 'elapsed_seconds', 'error', 'guest_failures')}), flush=True)
         print(json.dumps(result), flush=True)
     return 0 if result['passed'] else 1
 

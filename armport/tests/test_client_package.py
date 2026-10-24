@@ -56,6 +56,9 @@ class ClientPackage(unittest.TestCase):
         self.assertEqual((source / 'bin/BodyParts.bin').read_bytes(), b'x86 bins')
         self.assertEqual(texture.read_bytes(), b'immutable asset')
         self.assertEqual(report['shared_data_files'], 1)
+        self.assertEqual(report['shared_data_bytes'], len(b'immutable asset'))
+        self.assertGreaterEqual(report['data_copy_seconds'], 0)
+        self.assertGreaterEqual(report['preparation_seconds'], report['data_copy_seconds'])
         self.assertFalse(report['x86_bins_reused'])
 
     def test_reject_x86_binary(self):

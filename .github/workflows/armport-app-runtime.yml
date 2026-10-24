@@ -6,11 +6,11 @@ on:
       client_run_id:
         description: ArmPort build run containing the Release client
         required: true
-        default: '40054327137'
+        default: '40105902326'
       data_run_id:
         description: Completed ArmPort build run containing bins and Cg artifacts
         required: true
-        default: '40054327137'
+        default: '40100355259'
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
@@ -22,8 +22,8 @@ permissions:
 
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: '2'
-  CLIENT_RUN_ID: ${{ inputs.client_run_id || '40054327137' }}
-  DATA_RUN_ID: ${{ inputs.data_run_id || '40054327137' }}
+  CLIENT_RUN_ID: ${{ inputs.client_run_id || '40105902326' }}
+  DATA_RUN_ID: ${{ inputs.data_run_id || '40100355259' }}
 
 jobs:
   app-sources:

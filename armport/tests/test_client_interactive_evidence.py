@@ -1,6 +1,8 @@
 """ARM64 evidence must be checked before sharing the existing save validators."""
 import ast
 import copy
+import json
+import zipfile
 from pathlib import Path
 import shutil
 import subprocess
@@ -52,6 +54,22 @@ class InteractiveEvidence(unittest.TestCase):
         self.report['stages'][8], self.report['stages'][9] = self.report['stages'][9], self.report['stages'][8]
         with self.assertRaisesRegex(ValueError, 'preparation'):
             host.legacy_report(self.report, self.runtime, self.client)
+
+    def test_failure_notice_preserves_guest_cause_and_escapes_annotation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'latest-report.json').write_text(json.dumps(dict(
+                failures=['client exited', 'cleanup incomplete'],
+                stages=[dict(stage='client', status='failed')])))
+            with zipfile.ZipFile(root / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/client-console.log',
+                                 'wine: Unhandled page fault at 0x123\n')
+            result = host.guest_failure_summary(root)
+            self.assertEqual(result['failures'], ['client exited', 'cleanup incomplete'])
+            self.assertEqual(result['failed_stages'], ['client'])
+            self.assertIn('0x123', result['client_faults'][0])
+            self.assertIn('%25', host.ci_notice({'error': '50% failed'}))
+            self.assertNotIn('\n', host.ci_notice({'error': 'a\nb'}))
 
     def test_current_helpers_import_from_retained_donor_closure(self):
         tree = ast.parse((ROOT / 'tools/android/interactive/prepare_assets.py').read_text())

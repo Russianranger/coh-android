@@ -246,3 +246,38 @@ The interactive job now consumes a tar of the exact PRoot/loader/source
 receipt built and used by its successful guest-boot dependency, preserving
 executable modes; it no longer repeats the network download/build. This
 workflow change needs fresh CI; it is not a runtime success claim.
+
+
+## Review 5638651994 / VBO runtime correction (2026-10-24)
+
+Run 40098262167 at ddceae53 passes app compilation and guest boot. Its
+interactive client reaches renderer initialization, all data loaded and the
+main loop, then crashes during character creation after the costume input.
+Retained artifact 12562338334 SHA256
+4d8ad44362966f27c30cd9e3c8165e67c167fc8cd980561fbd49e5b8cebc1bda
+contains client-console.log: unhandled read 007A000642C587A0 at 0x140231A94.
+The exact executable SHA256 is
+0392424f466ceb6cbcb31d6c40252eace3570319db071369711ef35b74a6a00f.
+`llvm-symbolizer --obj=CityOfHeroes.exe 0x140231a94` resolves createVboDirect,
+rt_model_cache.c:79:41. Source producer model_cache.c writes an eight-byte
+pointer then overwrites its upper four bytes with TexID at offset four.
+Patch 0064 on PR #6 / 285f913c fixes allocation and both producer/consumer
+header offsets. Original/patched host controls fail/pass pointer and payload
+identity as expected; both ARM64/i686 Game links pass. Fresh runtime CI must
+exercise it before claiming resolution.
+
+This branch pins the new Release to build run 40105902326 and data/shaders to
+completed run 40100355259. Both source commits contain the deterministic
+Appearance fix; 0064 changes rendering only. Every package records both run
+IDs and executable/archive SHA256.
+
+Review M2: prepare() reports shared_data_bytes, data_copy_seconds and
+preparation_seconds. Private regular copies remain necessary for this tested
+PRoot path; a separate read-only data root is a future optimization requiring
+verification of the original client's writes and search precedence.
+Review L5: bounded CI notices now include guest failures and client fault
+lines, not only the outer RFB close. Against the retained failure artifact the
+notice shows the original VBO fault and the separate incomplete owned-cleanup
+failure. Ownership and cleanup checks remain unchanged and fail closed.
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py'`: 23 tests OK
+(m4-round4-tests.log). No APK/signing, Thor run or M4 completion is claimed.

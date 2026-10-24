@@ -15,6 +15,7 @@ import shutil
 import stat
 import struct
 import tempfile
+import time
 import zipfile
 
 ARCHIVE = 'armport-client.zip'
@@ -123,13 +124,15 @@ def unpack(archive_path, destination):
 
 def prepare(archive, source_data, destination):
     """Clone only data, then install ARM64 bins. Binary roots never overlap."""
+    started = time.monotonic()
     require(source_data.is_dir() and not source_data.is_symlink(), 'Verified app data required')
     require(not destination.exists(), 'Fresh ARM64 worktree required')
     destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='.armport-stage-', dir=destination.parent) as temp:
         pending = Path(temp) / 'client'
         document = unpack(archive, pending)
-        count = 0
+        count = copied_bytes = 0
+        copy_started = time.monotonic()
         for directory, dirs, files in os.walk(source_data, followlinks=False):
             relative = Path(directory).relative_to(source_data)
             if relative == Path('.'):
@@ -152,12 +155,16 @@ def prepare(archive, source_data, destination):
                 shutil.copyfile(source, output)
                 require(output.is_file() and not output.is_symlink(), 'ARM64 data copy is not regular')
                 count += 1
+                copied_bytes += output.stat().st_size
+        copy_seconds = time.monotonic() - copy_started
         (pending / 'tools').mkdir()
         pending.rename(destination)
     return {'machine': 'ARM64', 'archive_sha256': digest(archive),
             'executable_sha256': document['files']['CityOfHeroes.exe']['sha256'],
             'client_run_id': document['client_run_id'], 'data_run_id': document['data_run_id'],
-            'shared_data_files': count, 'x86_bins_reused': False,
+            'shared_data_files': count, 'shared_data_bytes': copied_bytes,
+            'data_copy_seconds': round(copy_seconds, 6),
+            'preparation_seconds': round(time.monotonic() - started, 6), 'x86_bins_reused': False,
             'data_materialization': 'private_regular_copies',
             'work_directory': str(destination)}
 
