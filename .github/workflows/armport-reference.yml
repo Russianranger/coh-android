@@ -9,6 +9,7 @@ on:
       - 'armport/cmake/**'
       - 'armport/standins/**'
       - 'armport/replay/**'
+      - 'armport/tests/test_receiver_evidence.py'
       - 'armport/scripts/prepare.py'
       - '.github/workflows/armport-reference.yml'
 
@@ -49,7 +50,15 @@ jobs:
             /android/runtime-lock.json
           sparse-checkout-cone-mode: false
           lfs: false
+      - name: Check replay output rejection and fixture identities
+        run: python3 -m unittest discover -s armport/tests -p 'test_receiver_evidence.py' -v
+      - id: replay-exe-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-bin
+          key: armport-replay-${{ matrix.target }}-OptDebug-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/replay/receiver.c', 'armport/replay/state.c', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
       - name: Install pinned llvm-mingw
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: |
           curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
             "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
@@ -59,8 +68,10 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends ninja-build
       - name: Prepare original source plus patches
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/reference"
       - name: Configure assertion-enabled comparison build
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:
           COH_LLVM_MINGW: /opt/llvm-mingw
         run: |
@@ -82,6 +93,7 @@ jobs:
           print('::notice title=ArmPort replay flags::${{ matrix.target }} original receiver has assertions enabled (OptDebug); i686 requires SSE2 math')
           PY
       - name: Build original receiver client
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: |
           set -o pipefail
           cmake --build "$RUNNER_TEMP/reference/build" --target Game -- -k 0 \
@@ -91,6 +103,12 @@ jobs:
           cp /opt/llvm-mingw/${{ matrix.triple }}-w64-mingw32/bin/{libc++,libunwind}.dll "$RUNNER_TEMP/reference-bin/"
           file "$RUNNER_TEMP/reference-bin/CityOfHeroes.exe"
           echo '::notice title=ArmPort i686 reference::Client linked; receiver execution and equivalence NOT yet qualified'
+      - name: Retain built client before replay (including failed decoder runs)
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/reference-bin
+          key: ${{ steps.replay-exe-cache.outputs.cache-primary-key }}
       - uses: actions/upload-artifact@v4
         with:
           name: armport-replay-reference-${{ matrix.target }}
@@ -144,7 +162,7 @@ jobs:
           sudo -n unshare --net -- sudo -u "$(id -un)" -- env GITHUB_SHA="$GITHUB_SHA" \
             python3 "$GITHUB_WORKSPACE/armport/replay/run_ci.py" \
               --runtime "$RUNNER_TEMP/replay-runtime" --out "$RUNNER_TEMP/replay-results" \
-              --target '${{ matrix.target }}'
+              --target '${{ matrix.target }}' --host-netns "$(readlink /proc/self/ns/net)"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

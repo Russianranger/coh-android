@@ -73,9 +73,13 @@ def main():
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--wine', type=Path, default=Path('/opt/wine/bin'))
     parser.add_argument('--target', choices=('arm64', 'i686'), required=True)
+    parser.add_argument('--host-netns', required=True)
     args = parser.parse_args()
-    # The caller creates a new network namespace; only loopback may exist.
-    if {p.name for p in Path('/sys/class/net').iterdir()} != {'lo'}:
+    # sysfs can still expose the host's interfaces after unshare --net.
+    # Query netlink in this process's actual namespace instead.
+    links = json.loads(subprocess.check_output(['ip', '-j', 'link', 'show'], text=True))
+    namespace = os.readlink('/proc/self/ns/net')
+    if namespace == args.host_netns or {row['ifname'] for row in links} != {'lo'}:
         raise RuntimeError('replay requires a private loopback-only network namespace')
     if os.geteuid() == 0:
         raise RuntimeError('Wine must run as the unprivileged runner')
@@ -84,6 +88,8 @@ def main():
     args.out.mkdir(parents=True, exist_ok=False)
     report = dict(target=args.target, source_commit=os.getenv('GITHUB_SHA'),
                   scope='original_receiver_cursor_stage', runs=[],
+                  network_namespace=namespace, host_network_namespace=args.host_netns,
+                  interfaces=[row['ifname'] for row in links],
                   state_comparison_complete=False, m3_replay_complete=False)
     display = ':98'
     xvfb = subprocess.Popen(['Xvfb', display, '-screen', '0', '1280x1024x24', '-nolisten', 'tcp'],

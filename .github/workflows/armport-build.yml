@@ -11,6 +11,12 @@ on:
       - '!armport/survey/**'
       - '!armport/shaders/**'
       - '!armport/*.md'
+      # Replay-host/fixture changes are checked by armport-reference.yml and
+      # do not change the Atlas client; leave its long server run running.
+      - '!armport/replay/run_ci.py'
+      - '!armport/replay/fixtures/**'
+      - '!armport/replay/README.md'
+      - '!armport/tests/test_receiver_evidence.py'
       - '.github/workflows/armport-build.yml'
 
 # Internal milestone branches already run on push, including before a PR is

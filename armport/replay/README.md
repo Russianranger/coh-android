@@ -63,3 +63,16 @@ rejection boundaries; runtime qualification awaits this workflow.
 
 Validation commands: both OptDebug Game links (`ninja -j2 Game`) exited 0
 after the ACK check, and the full Python unittest discovery passed 18 tests.
+
+The first attempt (40053724746, ARM64 job 120751905102) failed before Wine
+launch: /sys/class/net still reflected the host's sysfs mount after unshare.
+The harness now queries netlink with ip -j link show and requires only lo;
+it also compares /proc/self/ns/net with the host namespace captured before
+unshare. Neither isolation requirement is removed. Local unshare is denied
+by this workspace, so the corrected namespace execution is CI-only.
+The output checker still passes its five rejection tests and py_compile.
+
+Replay-host/fixture-only changes no longer restart the Atlas build; the
+reference workflow owns their checks. Receiver C/patch changes still restart
+both. Executables are cached immediately after successful build so a later
+replay failure does not force another unchanged compile.
