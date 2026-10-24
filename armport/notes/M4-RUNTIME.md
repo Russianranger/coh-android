@@ -204,3 +204,45 @@ rejection of wrong ARM64 binaries/missing inputs/failed or misplaced stages,
 and preservation of the original report. Python syntax, workflow YAML and
 two-compiler/dependency checks pass. Interactive execution remains pending;
 all host results retain m4_complete=false until the full evidence is reviewed.
+
+## Retained donor compatibility fixes (2026-10-24)
+
+Run 40087554038 at aef0c566 passed app-sources and guest-boot. The interactive
+job 120855148929 reached the private Xtigervnc/RFB display and Wine/ODBC,
+then failed local_dbserver_startup with `No module named 'zone_asset_package'`.
+Artifact 12557642717 was downloaded and checked against API SHA-256
+a9c6eb028365d867347ec8228b7396e3dbce5706b7abe3c7731aa00c47f19087.
+This is not an interactive pass or M4 completion.
+
+The earlier world-package mismatch was fixed by binding only six literal
+payload constants from the authenticated retained atlas_world_assets helper
+into the current helper. Its validation code and bounds stay current. Tests
+reject missing/duplicate/executable constants and preserve the current code.
+The retained world predates the current 27-texture extension; changing its
+expected digest without changing the payload would reject the donor bytes.
+
+Commit ddaccd4 adds zone_asset_package.py to the staged helper dependencies.
+LocalCharacterServer.prepare_runtime imports it unconditionally to check
+whether optional zone/audio payloads exist. The helper alone does not enable
+those optional packages; partial ZIP/manifest pairs still fail. Tests exercise
+these actual presence checks. `python3 -m unittest discover -s armport/tests
+-p 'test_client*.py' -v` passes 18 tests at ddaccd4.
+
+Run 40090844692 at ddaccd4 passes app-sources and guest-boot. The first
+interactive attempt (120864873702) failed before guest launch: build_proot.py
+reported HTTP 503 downloading a dependency. Only that failed job was retried.
+This attempt does not exercise the helper fix. Creation, save, reopen,
+persistence, private RFB/input and cleanup
+must all pass before this path can qualify. No APK, Android surface, Thor or
+M4 completion is claimed by the startup result.
+
+The failed interactive retry (120865719209) again received HTTP 503 from the
+talloc download before guest launch. The workflow now uses the repository's
+existing extract_talloc_source.py to recover the exact SHA-pinned source
+from run 36364550345's accepted runtime/source artifacts, caching that source.
+GitHub's artifacts API confirms both inputs unexpired on 2026-10-24. The
+build recipe still verifies the same talloc hash and uses two make workers.
+The interactive job now consumes a tar of the exact PRoot/loader/source
+receipt built and used by its successful guest-boot dependency, preserving
+executable modes; it no longer repeats the network download/build. This
+workflow change needs fresh CI; it is not a runtime success claim.

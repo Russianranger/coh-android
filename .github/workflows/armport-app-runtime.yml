@@ -85,8 +85,42 @@ jobs:
         run: |
           python3 -m py_compile armport/app/*.py
           python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v
+      - id: talloc-source
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/talloc-source
+          key: armport-talloc-dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd
+      - uses: actions/download-artifact@v4
+        if: steps.talloc-source.outputs.cache-hit != 'true'
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: ${{ runner.temp }}/accepted-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        if: steps.talloc-source.outputs.cache-hit != 'true'
+        with:
+          name: coh-proot-android-source-and-build
+          path: ${{ runner.temp }}/accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover the exact pinned talloc source from retained runtime artifacts
+        if: steps.talloc-source.outputs.cache-hit != 'true'
+        run: |
+          python3 tools/android/extract_talloc_source.py --assets "$RUNNER_TEMP/accepted-runtime" \
+            --bundle "$RUNNER_TEMP/accepted-proot/proot-corresponding-sources.tar.gz" \
+            --output "$RUNNER_TEMP/talloc-source/talloc-2.4.3.tar.gz"
       - name: Build the app's pinned PRoot sources for Linux ARM64
-        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2
+        run: |
+          python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2 \
+            --talloc-archive "$RUNNER_TEMP/talloc-source/talloc-2.4.3.tar.gz"
+      - name: Retain this exact PRoot build for the dependent interactive test
+        run: tar -C out/android/native/linux-arm64 -cf "$RUNNER_TEMP/proot-runtime.tar" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-app-proot-linux
+          path: ${{ runner.temp }}/proot-runtime.tar
+          retention-days: 14
       - name: Restore reviewed data
         uses: actions/cache/restore@v4
         with:
@@ -174,8 +208,16 @@ jobs:
             tesseract-ocr python3-pil iproute2 util-linux
       - name: Check ARM64 guest evidence and helper closure
         run: python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v
-      - name: Build the same pinned PRoot for the interactive guest
-        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-app-proot-linux
+          path: ${{ runner.temp }}/boot-proot
+      - name: Use the exact PRoot binary and loader that passed guest boot
+        run: |
+          mkdir -p out/android/native/linux-arm64
+          tar -C out/android/native/linux-arm64 -xf "$RUNNER_TEMP/boot-proot/proot-runtime.tar"
+          test -x out/android/native/linux-arm64/proot
+          test -x out/android/native/linux-arm64/proot-loader
       - uses: actions/download-artifact@v4
         with:
           name: armport-app-client-package
