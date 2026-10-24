@@ -174,3 +174,33 @@ positive/negative cases: missing/failed/misordered ARM64 preparation, missing
 package pins, missing visual stages, invalid architecture, and retained x86
 selection. No APK is compiled or signed; interactive runtime evidence remains
 pending and M4 remains incomplete.
+
+## Full interactive guest qualification under development
+
+Run 40055653259 at f0714bb7 passed app-sources and guest-boot, including the
+new stage/ordering host tests. This is still a startup probe, not an interactive
+or M4 pass. The next workflow packages the newer Release/bins/ARB inputs from
+40054327137 and adds a dependent interactive-guest job.
+
+interactive_host.py extracts only the assets of the retained 0.10.0 donor
+(run 36920583713, artifact 11192425448), requiring the frozen full APK and
+build-report hashes from android-character-reopen-qualified-apk.yml. The API
+still reports that artifact available through 2026-12-30. Its binary runtime,
+server packages and data inputs remain retained; stage_app_assets refreshes
+the current creation/reopen helper dependencies and adds the separate ARM64
+overlay. This is an assembled guest-assets test, not an exact old/new APK test.
+
+The host reuses the existing Java data importer, private RFB input observer,
+creation/save checks, reopening/powers/costume checks, profile continuity and
+owned cleanup. Each session uses the existing private network isolation
+helper. It checks the complete current helper/package inventory, ARM64 digest
+and successful preparation stage before applying the original persistence
+validators to their existing field subset. The complete unmodified report is
+retained. This avoids claiming ARM64 identity from an x86-only report.
+
+Local validation: 15 test_client host tests pass, including isolated imports
+from just the retained helper set plus its explicit current dependencies,
+rejection of wrong ARM64 binaries/missing inputs/failed or misplaced stages,
+and preservation of the original report. Python syntax, workflow YAML and
+two-compiler/dependency checks pass. Interactive execution remains pending;
+all host results retain m4_complete=false until the full evidence is reviewed.

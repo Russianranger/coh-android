@@ -10,6 +10,18 @@ import tempfile
 import armport_client_package as package
 
 ROOT = Path(__file__).resolve().parents[2]
+# Current creation/reopen helpers need these dependencies even with the
+# retained stock x86 client/server packages. Optional visual/zone payloads
+# remain selected by the donor inventory; adding just their helper would
+# falsely advertise an incomplete asset bundle.
+GUEST_DEPENDENCIES = (
+    'client_attempt_retry.py', 'character_session_budget.py',
+    'character_server_data_cache.py', 'texture_header_index.py',
+    'native_responsiveness_contract.py', 'client_gpu_profile.py',
+    'server_cache_package.py', 'server_message_cache_format.py', 'server_fx_catalog.py',
+    'native_character_events.py', 'native_training_save.py',
+    'stationary_contact_evidence.py', 'task_gate_evidence.py',
+)
 
 
 def pin(path):
@@ -41,6 +53,10 @@ def stage(source, armport, output, repository_commit):
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
                     'client_stdio.py': Path(__file__).with_name('client_stdio.py'),
                     'character_creation_diagnostic.py': ROOT / 'android/guest/character_creation_diagnostic.py'}
+    for name in set(client['files']) | set(GUEST_DEPENDENCIES):
+        source_helper = ROOT / 'android/guest' / name
+        if name.endswith('.py') and source_helper.is_file():
+            replacements[name] = source_helper
     output.mkdir(parents=True)
     # Ordinary copies keep the retained donor independent of future edits.
     for name in runtime['files']:

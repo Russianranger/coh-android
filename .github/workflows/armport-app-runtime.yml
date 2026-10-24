@@ -6,11 +6,11 @@ on:
       client_run_id:
         description: ArmPort build run containing the Release client
         required: true
-        default: '40032719161'
+        default: '40054327137'
       data_run_id:
         description: Completed ArmPort build run containing bins and Cg artifacts
         required: true
-        default: '40011219458'
+        default: '40054327137'
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
@@ -22,8 +22,8 @@ permissions:
 
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: '2'
-  CLIENT_RUN_ID: ${{ inputs.client_run_id || '40032719161' }}
-  DATA_RUN_ID: ${{ inputs.data_run_id || '40011219458' }}
+  CLIENT_RUN_ID: ${{ inputs.client_run_id || '40054327137' }}
+  DATA_RUN_ID: ${{ inputs.data_run_id || '40054327137' }}
 
 jobs:
   app-sources:
@@ -156,3 +156,54 @@ jobs:
         with:
           name: armport-app-client-package
           path: ${{ runner.temp }}/armport-client.zip
+
+  interactive-guest:
+    needs: [guest-boot, app-sources]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with: {lfs: false}
+      - name: Install host dependencies (no APK build or signing)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless \
+            tesseract-ocr python3-pil iproute2 util-linux
+      - name: Check ARM64 guest evidence and helper closure
+        run: python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v
+      - name: Build the same pinned PRoot for the interactive guest
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-app-client-package
+          path: ${{ runner.temp }}/armport-package
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: ${{ runner.temp }}/retained-app
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Create, save, restart and reopen through the selected ARM64 app guest
+        run: |
+          python3 armport/app/interactive_host.py \
+            --apk "$RUNNER_TEMP/retained-app/COH-Character-Reopen-0.10.0.apk" \
+            --build-report "$RUNNER_TEMP/retained-app/interactive-apk-build-report.json" \
+            --armport "$RUNNER_TEMP/armport-package/armport-client.zip" \
+            --archive "$RUNNER_TEMP/reference-assets.zip" --proot out/android/native/linux-arm64 \
+            --work "$RUNNER_TEMP/interactive-work" --evidence "$RUNNER_TEMP/interactive-evidence" \
+            --repository-commit "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-app-interactive-evidence
+          path: ${{ runner.temp }}/interactive-evidence/
+          if-no-files-found: warn
+          retention-days: 14
