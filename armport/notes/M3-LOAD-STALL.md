@@ -217,3 +217,25 @@ Validation: `ninja -C build-arm-opt -j2 Game` and
 `ninja -C build-reference-active -j2 Game` both exited zero after 0057,
 including full executable links. These are compile/link results only;
 no rendered Atlas frame or complete replay is claimed.
+
+## Saved Windows context in Wine syscall waits
+
+The full 40042636088 stack samples expose Linux-side Wine frames, not game
+frames. Source inspection of the runtime-lock.json Wine commit
+b073859675060c9211fcbccfd90e4e87520dc2c2, dlls/ntdll/unix/signal_arm64.c,
+shows the separate saved Windows syscall frame at TEB+0x2f0. Its saved
+FP/LR/SP/PC occupy offsets 0xe8/0xf0/0xf8/0x100. Source:
+https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/ntdll/unix/signal_arm64.c
+
+stall_snapshot.py now supplements its existing native sample with this
+candidate context only when the runtime source pin matches. It validates
+TEB alignment/self pointer, stack bounds and saved-SP containment, then
+reads at most 16 ascending aligned frames within the first MiB above SP.
+The existing PID ownership check, debugger duration and 80-address symbol
+limit remain. No raw memory dump, environment or server process is read.
+A source-layout match plus these checks is not a complete PE unwind or
+proof that every frame is current: runtime evidence is still required.
+
+Command: Python unittest discovery passed 22 tests, including wrong TEB,
+out-of-stack SP and cyclic/oversized-chain rejection. Both helpers passed
+py_compile; git diff --check passed. No new client binary is needed.
