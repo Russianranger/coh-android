@@ -22,6 +22,9 @@ GUEST_DEPENDENCIES = (
     'server_cache_package.py', 'server_message_cache_format.py', 'server_fx_catalog.py',
     'native_character_events.py', 'native_training_save.py',
     'stationary_contact_evidence.py', 'task_gate_evidence.py',
+    # LocalCharacterServer imports this to check archive/manifest presence.
+    # The helper alone does not activate zones or audio; both payloads must exist.
+    'zone_asset_package.py',
 )
 
 WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',
