@@ -65,6 +65,10 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
+Review follow-up code 7a91b34d runs build/Atlas 40111054496 and replay
+40111054487 on armport/m3-review7. The milestone integration is docs only
+over that tested source, preserving earlier Atlas run 40105902326.
+
 Review 5638821870 confirms phase enforcement and patch 0064. Follow-up corrects
 compressed manifest coverage: 166 exact files are covered by three reviewed
 archives, leaving seven geometry files and seven texture names. See

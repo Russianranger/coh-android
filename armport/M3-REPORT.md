@@ -5,6 +5,11 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 
 ## Review 5638821870: corrected coverage and loader evidence
 
+Code `7a91b34d956a115940cd4e9c5a58b50415110a71` runs
+[build/Atlas 40111054496](https://github.com/Russianranger/coh-android/actions/runs/40111054496)
+and [replay 40111054487](https://github.com/Russianranger/coh-android/actions/runs/40111054487).
+The PR integration adds only these CI links over that code; execution is pending.
+
 Claude's [review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638821870)
 confirms the accepted phase rule implementation and 0064's VBO correction;
 it does not approve a milestone or merge.
