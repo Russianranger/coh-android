@@ -3,8 +3,13 @@
 PR #6 comment 6385679120 supersedes the older process-wide game-error rule below.
 `receiver.c` writes indexed replay.dispatch.begin/end to the isolated zone log.
 All 117 paired ordered windows and the final loader drain must contain zero errors.
-After dispatch 116 the driver calls forceGeoLoaderToComplete(), then
-texForceTexLoaderToComplete(0), inside replay.drain.begin/end. Inter-dispatch
+Before replay.map.end the driver drains static-map background work with
+forceGeoLoaderToComplete() and texForceTexLoaderToComplete(0), keeping its
+errors in the map-load phase. After dispatch 116 it calls those functions again:
+forceGeoLoaderToComplete(), then
+texForceTexLoaderToComplete(0), inside replay.drain.begin/end. Both drains run
+the original texCheckThreadLoader and loadUpdate, including GL texture uploads
+under Xvfb. These are explicit driver steps, not captured packets. Inter-dispatch
 gaps also remain in dispatch phase. Each isolated record has a separate thread
 ID; IDs never enter literal message comparisons. Startup/load inventories
 must match literally with counts across all six executions; compare_state.py

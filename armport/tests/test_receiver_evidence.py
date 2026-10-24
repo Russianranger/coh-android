@@ -19,7 +19,10 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.wine = self.path / 'wine-output.txt'
         self.wine.write_text('')
         (self.path / 'client-stdio.txt').write_text('')
-        (self.path / 'zone-trace.jsonl').write_text(''.join(
+        self.map_rows = ''.join(json.dumps(dict(stage=stage, text='', tid=1)) + '\n'
+                               for stage in ('replay.map.begin', 'replay.map.drain.begin',
+                                             'replay.map.drain.end', 'replay.map.end'))
+        (self.path / 'zone-trace.jsonl').write_text(self.map_rows + ''.join(
             json.dumps(dict(stage='replay.dispatch.' + edge, text=str(i), tid=1)) + '\n'
             for i in range(117) for edge in ('begin', 'end')) + ''.join(
             json.dumps(dict(stage='replay.drain.' + edge, text='117', tid=1)) + '\n'
@@ -76,7 +79,7 @@ class ReceiverEvidenceTests(unittest.TestCase):
         trace = self.path / 'zone-trace.jsonl'
         good = trace.read_text().splitlines(True)
         variants = [good[:-1], good[2:], [good[0]] + good,
-                    [good[0], good[1].replace('"0"', '"1"')] + good[2:]]
+                    good[:5] + [good[5].replace('"0"', '"1"')] + good[6:]]
         for rows in variants:
             with self.subTest(rows=len(rows)):
                 trace.write_text(''.join(rows))
@@ -92,8 +95,9 @@ class ReceiverEvidenceTests(unittest.TestCase):
         result = self.check()
         self.assertEqual(result['outside_game_errors'], 1)
         self.assertTrue(result['outside_error_comparison_required'])
-        first, rest = good.split('\n', 1)
-        trace.write_text(first + '\n' + error + rest)
+        prefix, dispatch_rows = good[:len(self.map_rows)], good[len(self.map_rows):]
+        first, rest = dispatch_rows.split('\n', 1)
+        trace.write_text(prefix + first + '\n' + error + rest)
         with self.assertRaisesRegex(ValueError, '1 dispatch errors'):
             self.check()
 
@@ -103,7 +107,7 @@ class ReceiverEvidenceTests(unittest.TestCase):
         error = json.dumps(dict(stage='client.error', text='late APC failure', tid=99)) + '\n'
         (self.path / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error late APC failure tid=99\n')
         rows = good.splitlines(True)
-        for offset in (2, len(rows) - 1):
+        for offset in (6, len(rows) - 1):
             trace.write_text(''.join(rows[:offset]) + error + ''.join(rows[offset:]))
             with self.assertRaisesRegex(ValueError, '1 dispatch errors'):
                 self.check()
@@ -112,6 +116,21 @@ class ReceiverEvidenceTests(unittest.TestCase):
                     good.replace(', "tid": 1', ''), good.replace('"tid": 1', '"tid": 0')):
             trace.write_text(bad)
             with self.assertRaises(ValueError):
+                self.check()
+
+    def test_map_work_finishes_before_packet_attribution(self):
+        trace = self.path / 'zone-trace.jsonl'
+        good = trace.read_text()
+        error = json.dumps(dict(stage='client.error', text='map loader error', tid=99)) + '\n'
+        (self.path / 'client-stdio.txt').write_text('ArmPort zone: 1 client.error map loader error tid=99\n')
+        rows = good.splitlines(True)
+        trace.write_text(''.join(rows[:2]) + error + ''.join(rows[2:]))
+        self.assertEqual(self.check()['outside_game_errors'], 1)
+        (self.path / 'client-stdio.txt').write_text('')
+        for variant in (''.join(rows[4:]), ''.join(rows[:1] + rows[3:]),
+                        ''.join(rows[:2] + rows[3:]), ''.join(rows + rows[:4])):
+            trace.write_text(variant)
+            with self.assertRaisesRegex(ValueError, 'Game error/assert'):
                 self.check()
 
     def test_missing_game_stdio_rejected(self):

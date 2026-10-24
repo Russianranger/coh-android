@@ -37,5 +37,13 @@ int main(void)
     }
     if (WaitForMultipleObjects(4, threads, TRUE, 30000) != WAIT_OBJECT_0) return 5;
     for (i = 0; i < 4; ++i) CloseHandle(threads[i]);
+    if (getenv("ARMPORT_WINE_BOUNDARY_LOG"))
+    {
+        if (fprintf(&wrapped, "boundary control before\n") <= 0) return 6;
+        fflush(&wrapped);
+        armportZoneTrace("map.start", "boundary control");
+        if (fprintf(&wrapped, "boundary control after\n") <= 0) return 7;
+        fflush(&wrapped);
+    }
     return 0;
 }

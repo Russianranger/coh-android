@@ -15,6 +15,8 @@ on:
       - 'armport/scripts/client_errors.py'
       - 'armport/scripts/stage_atlas_supplement.py'
       - 'armport/scripts/stage_reviewed_files.py'
+      - 'armport/scripts/stage_approved_ranges.py'
+      - 'armport/evidence/m3-approved-range-assets.json'
       - 'armport/scripts/reviewed_asset_coverage.py'
       - 'armport/evidence/m3-reviewed-file-selection.json'
       - 'armport/scripts/smoke_run.py'
@@ -51,6 +53,8 @@ jobs:
             /armport/scripts/stage_atlas_supplement.py
             /armport/scripts/reviewed_asset_coverage.py
             /armport/scripts/stage_reviewed_files.py
+            /armport/scripts/stage_approved_ranges.py
+            /armport/evidence/m3-approved-range-assets.json
             /armport/evidence/m3-reviewed-file-selection.json
             /armport/evidence/m3-dispatch-errors-40105902494.json
             /assets/client-visual-manifest.json
@@ -133,15 +137,28 @@ jobs:
             --output "$RUNNER_TEMP/reviewed-dispatch-data"
       - name: Verify selected files even on a cache hit
         run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
-      - uses: actions/cache/save@v4
-        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
-        with:
-          path: ${{ runner.temp }}/reviewed-dispatch-data
-          key: ${{ steps.reviewed-dispatch.outputs.cache-primary-key }}
+      # Build workflow owns this shared cache; replay retains its own artifact.
       - uses: actions/upload-artifact@v4
         with:
           name: armport-reviewed-dispatch-data
           path: ${{ runner.temp }}/reviewed-dispatch-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: approved-ranges
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/approved-range-data
+          key: armport-approved-ranges-${{ hashFiles('armport/evidence/m3-approved-range-assets.json') }}
+      - name: Fetch only exact user-approved PIGG ranges
+        if: steps.approved-ranges.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_approved_ranges.py --output "$RUNNER_TEMP/approved-range-data"
+      - name: Verify all approved ranges even after cache restore
+        run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-approved-range-data
+          path: ${{ runner.temp }}/approved-range-data
           retention-days: 90
           if-no-files-found: error
 
@@ -316,6 +333,12 @@ jobs:
           path: ${{ runner.temp }}/reviewed-dispatch-data
       - name: Verify every selected dispatch file
         run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-approved-range-data
+          path: ${{ runner.temp }}/approved-range-data
+      - name: Verify the exact approved range layer
+        run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
       - name: Verify and stage all retained Atlas geometry and textures
         run: |
           python3 armport/scripts/stage_atlas_supplement.py stage \
@@ -323,7 +346,7 @@ jobs:
       - name: Stage same data, bins and shaders for replay
         run: |
           python3 armport/scripts/smoke_run.py --stage-only --build "$RUNNER_TEMP/reference-bin" \
-            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" \
             --cg-dir "$RUNNER_TEMP/cg-arb" --runtime "$RUNNER_TEMP/replay-runtime"
       - name: Execute all original receiver dispatches (incomplete milestone stage)
         run: |

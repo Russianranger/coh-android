@@ -34,8 +34,8 @@ sys.path.insert(0, str(ROOT / 'armport/scripts'))
 import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
 import client_errors  # noqa: E402
+import atlas_wine  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
-from run_ci import check_wine_output  # noqa: E402
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
 from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice  # noqa: E402
@@ -81,13 +81,18 @@ def start_client(a, state, status, evidence):
            'WINEPREFIX': str(a.client_prefix), 'WINEDEBUG': 'err+all,fixme-all,+seh',
            'WINEDLLOVERRIDES': 'mscoree,mshtml=', 'ARMPORT_LOOSE_DATA': '1', 'ARMPORT_STDIO_LOG': 'armport_stdio.txt',
            'ARMPORT_ZONE_LOG': 'zone-trace.jsonl',
+           'ARMPORT_WINE_BOUNDARY_LOG': 'Z:' + str((evidence / 'client-output.txt').resolve()).replace('/', '\\'),
            # The servers are 32-bit builds with their own version string (patch 0045).
            'ARMPORT_NO_VERSION_CHECK': '1'}
     args = ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1', '-db', '127.0.0.1']
     command = ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', '--', 'sudo', '-n', '-u', os.environ.get('USER', 'runner'),
                '--', 'env', '-C', str(client)] + [f'{k}={v}' for k, v in env.items()] + \
               [str(a.wine / 'wine'), str(client / 'CityOfHeroes.exe')] + args
-    out = open(evidence / 'client-output.txt', 'wb')
+    # Wine and the client's map-start witness append to this same stream.
+    # Remove stale evidence before opening with O_APPEND; never overwrite a
+    # client boundary with a later Wine write at a stale descriptor offset.
+    (evidence / 'client-output.txt').unlink(missing_ok=True)
+    out = open(evidence / 'client-output.txt', 'ab')
     proc = subprocess.Popen(command, stdout=out, stderr=subprocess.STDOUT, start_new_session=True)
     status['client_started'] = True
     status['client_args'] = args
@@ -475,12 +480,15 @@ def main():
                                          client / 'zone-trace.jsonl')
         assets = client_errors.asset_lookup(errors, client / 'data')
         (evidence / 'error-assets.json').write_text(json.dumps(assets, indent=2) + '\n')
-        check_wine_output(evidence / 'client-output.txt')
-        error_evidence_ok = (not errors['integrity_failures'] and errors['map_load_finished']
+        wine = atlas_wine.inventory(evidence / 'client-output.txt', client / 'zone-trace.jsonl')
+        (evidence / 'wine-errors.json').write_text(json.dumps(wine, indent=2) + '\n')
+        error_evidence_ok = (wine['passed'] and not errors['integrity_failures'] and errors['map_load_finished']
                              and not errors['phase_counts'].get('after_map_load', 0))
         note('notice', 'ArmPort M3 phased errors', json.dumps(dict(
             passed=error_evidence_ok, phase_counts=errors['phase_counts'],
             trace_record_count=errors['trace_records'], classes=assets['classes'],
+            allowed_startup_rpc_exceptions=wine['allowed_startup_rpc_exceptions'],
+            wine_failures=wine['failures'],
             integrity_failures=errors['integrity_failures'])))
     except (OSError, ValueError) as error:
         note('error', 'ArmPort M3 error evidence', str(error)[:1000])

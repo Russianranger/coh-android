@@ -64,3 +64,4 @@
 0064-preserve-vbo-command-pointer-header.patch
 0065-identify-zone-trace-writer-threads.patch
 0066-diagnose-null-grid-tracker-definition.patch
+0067-order-atlas-map-boundary-with-wine-traces.patch

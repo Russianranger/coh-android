@@ -1,0 +1,32 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index aa1da90..89a86ce 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -79,6 +79,27 @@ done:
+ 
+ static void armportZoneTrace(const char *stage, const char *detail)
+ {
++    // 0067: Atlas-only ordering witness in the SAME append-only stream as
++    // Wine's +seh output. A separate log's line numbers/ticks cannot order
++    // Wine exceptions against map.start. Emit before the isolated marker;
++    // no exception can gain a larger startup allowance from this boundary.
++    if (!strcmp(stage, "map.start"))
++    {
++        char path[32768];
++        DWORD length = GetEnvironmentVariableA("ARMPORT_WINE_BOUNDARY_LOG", path, sizeof(path));
++        if (length)
++        {
++            const char marker[] = "ARMPORT_ATLAS_MAP_START_V1\n";
++            DWORD written = 0;
++            HANDLE file = length < sizeof(path) ? CreateFileA(path, FILE_APPEND_DATA,
++                FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
++                FILE_ATTRIBUTE_NORMAL, NULL) : INVALID_HANDLE_VALUE;
++            int ok = file != INVALID_HANDLE_VALUE &&
++                WriteFile(file, marker, sizeof(marker) - 1, &written, NULL) && written == sizeof(marker) - 1;
++            if (file != INVALID_HANDLE_VALUE) CloseHandle(file);
++            if (!ok) fprintf(stderr, "ARMPORT_ZONE_LOG_FAILED\n");
++        }
++    }
+     armportZoneTraceFile(stage, detail);
+     if (getenv("ARMPORT_STDIO_LOG"))
+         fprintf(stderr, "ArmPort zone: %lu %s %.240s tid=%lu\n",

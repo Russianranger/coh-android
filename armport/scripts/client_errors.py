@@ -146,6 +146,8 @@ def inventory(path, output, trace=None, expected_dispatches=None):
     thread_errors = Counter()
     replay_started = draining = drained = False
     drain_windows = 0
+    map_windows = map_drain_windows = 0
+    map_draining = False
     start = re.compile(r'client\.(?:error|fatal)|Assertion failed|assertion failure|ARMPORT_ZONE_LOG_FAILED', re.I)
     marker = re.compile(r'ArmPort zone: \d+ (client\.(?:error|fatal))\b')
     isolated = trace is not None
@@ -169,16 +171,29 @@ def inventory(path, output, trace=None, expected_dispatches=None):
                 trace_records += 1
                 stage, text = row['stage'], row['text']
                 if stage == 'replay.map.begin':
-                    if map_active or active is not None:
+                    if map_active or active is not None or replay_started or map_windows:
                         failures.append('Nested map-load boundary')
                     map_active, phase = True, 'map_load'
+                elif stage == 'replay.map.drain.begin':
+                    if not map_active or map_draining or map_drain_windows or replay_started:
+                        failures.append('Invalid map-load drain begin')
+                    map_draining = True
+                elif stage == 'replay.map.drain.end':
+                    if not map_active or not map_draining or replay_started:
+                        failures.append('Unpaired map-load drain end')
+                    map_draining = False
+                    map_drain_windows += 1
                 elif stage == 'replay.map.end':
-                    if not map_active or active is not None:
+                    if (not map_active or active is not None or map_draining
+                            or expected_dispatches is not None and map_drain_windows != 1):
                         failures.append('Unpaired map-load boundary')
                     map_active, phase = False, 'outside_dispatch'
+                    map_windows += 1
                 elif stage == 'replay.dispatch.begin':
                     if active is not None or text != str(dispatches) or map_active or draining or drained:
                         failures.append('Missing, nested or out-of-order dispatch begin: ' + text)
+                    if expected_dispatches is not None and (map_windows != 1 or map_drain_windows != 1):
+                        failures.append('Dispatch before completed map-load drain')
                     active = text
                     replay_started = True
                 elif stage == 'replay.dispatch.end':
@@ -218,6 +233,8 @@ def inventory(path, output, trace=None, expected_dispatches=None):
             failures.append(f'Expected {expected_dispatches} paired dispatch windows, got {dispatches}')
         if draining or (expected_dispatches is not None and (not drained or drain_windows != 1)):
             failures.append('Missing or unclosed final loader drain window')
+        if map_draining or (expected_dispatches is not None and (map_windows != 1 or map_drain_windows != 1)):
+            failures.append('Missing or unclosed map-load drain window')
 
     def finish():
         if pending:
@@ -266,6 +283,7 @@ def inventory(path, output, trace=None, expected_dispatches=None):
                   map_load_finished=map_finished,
                   dispatch_windows=dispatches,
                   loader_drain_windows=drain_windows,
+                  map_loader_drain_windows=map_drain_windows,
                   error_writer_threads=dict(sorted(thread_errors.items())),
                   dispatch_error_count=sum(n for (where, _), n in phases.items() if where == 'dispatch'),
                   integrity_failures=sorted(set(failures)),

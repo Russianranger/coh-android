@@ -15,6 +15,7 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import replay_inventory
 import client_errors
+import process_observation
 
 
 def fixtures(destination):
@@ -242,11 +243,17 @@ def main():
                         notice('ArmPort handled SEH control', dict(target=args.target, rejected=True))
                     env.update(ARMPORT_REPLAY_DIR='Z:' + str(folder).replace('/', '\\'),
                                ARMPORT_REPLAY_INITIAL_ID=str(initial_id))
-                    run = subprocess.run([str(args.wine / 'wine'), str(args.runtime / 'CityOfHeroes.exe'),
+                    run = process_observation.run([str(args.wine / 'wine'), str(args.runtime / 'CityOfHeroes.exe'),
                                           '-fullscreen', '0', '-screen', '800', '600', '-verbose', '1'],
                                          cwd=args.runtime, env=env, stdout=log, stderr=subprocess.STDOUT,
-                                         timeout=600)
+                                         timeout=600, evidence=folder / 'process-observation.json')
                     if run.returncode != 2:
+                        # Retain the inventory even when exit-code acceptance
+                        # fails. A terminal row cannot rescue a killed process.
+                        try:
+                            check_client_output(folder / 'client-stdio.txt', args.runtime)
+                        except (OSError, ValueError) as error:
+                            (folder / 'failed-exit-inventory.txt').write_text(str(error) + '\n')
                         raise RuntimeError(f'{label}: expected incomplete-stage exit 2, got {run.returncode}')
                     result = check_output(folder / 'receiver.jsonl', expected, initial_id,
                                           folder / 'wine-output.txt', args.runtime)

@@ -3,6 +3,65 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## Review 5638956748 and approved follow-up (2026-10-24)
+
+The [review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638956748)
+verified the 166-file selection, trace IDs, final drain and NULL diagnostic.
+The [user decision](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6386664502)
+approves the 14 exact-name PIGG fetch and handled startup RPC 6ba allowance.
+It supersedes the two pending-decision statements in the historical section.
+
+`discover_approved_ranges.py` scans the 57 previously frozen metadata prefixes
+and rejects ambiguous exact matches. It found all seven geometry paths and
+`chest_stripe_1`: **8 files / 2,523,936 bytes**, ZIP SHA-256
+`ce591c96db8ff48e64e1ccf7b3be9a9d613859ec1f6a536f8aa20fc21f5a06ec`.
+A second discovery reproduced every file and archive pin. Selected transfers
+require HTTP 206, exact range/length/URL and frozen ETag/Last-Modified; payloads
+pass stored/decoded SHA-256, zlib bounds, PIGG table MD5 and cached headers.
+The committed manifest records every range and all unresolved names:
+`face_skin_head_09`, `hips_miniskirt_1`, `hips_skin_tights`,
+`x_enforcer_glove_01_mask`, `x_gear_pads`, `x_imperialdefense_belt_01`.
+No similar filename or composite dependency is substituted or fetched.
+Both workflows verify this separate layer on every cache/artifact retrieval
+and apply `--strict-data` after all preceding layers. Whole PIGGs are neither
+downloaded nor claimed SHA-256 verified. The layer artifact lasts 90 days.
+
+M1: before `replay.map.end`, the driver now calls the original geometry and
+texture completion functions inside required map-drain markers, keeping
+background static-map errors before dispatch 0. The final drain remains.
+Both texture drains invoke original texCheckThreadLoader/loadUpdate, including
+GL uploads under Xvfb; README lists these extra driver steps. L1: only the
+build workflow saves the shared reviewed-dispatch cache; replay restores it.
+
+Atlas-only allowance: patch 0067 writes the first map boundary directly into
+the same append-only file as Wine's +seh trace, before the isolated map.start.
+Cross-file line numbers or clocks are not compared. A 6ba dispatch is counted
+only after matching same-thread unwind and handler-target restoration, all
+before that boundary. Missing/malformed boundaries, pending/nested exceptions,
+late 6ba, every other code, page faults, unhandled exceptions and :err:seh:
+fail. The phased-errors notice includes the count even when another failure
+rejects the run. Replay retains its unmodified strict no-SEH checker.
+A real Wine logger control checks shared-file append ordering; execution is
+pending CI. Unit tests reject identical 6ba after map.start and incomplete or
+wrong-thread restoration. No game error, assertion or modal rule is weakened.
+
+[Replay 40111054487](https://github.com/Russianranger/coh-android/actions/runs/40111054487),
+ARM64 job 120923329915 at 7a91b34d, fails with return -9 instead of required 2.
+Artifact 12566549630 verifies SHA-256
+`659d0c158ca31d20145fa0b8886584c2b380d1c983d5547764d8435ccf5599a3`;
+it contains the 117-dispatch result and final drain end. The termination cause
+is unproved. The follow-up records bounded process memory samples, cgroup
+memory events and whether the host timeout killed the process, and retains
+game-error inventories on abnormal exit. It still rejects every return but 2.
+Shared cgroup counters alone cannot identify an OOM victim. Do not infer a
+replay pass from a terminal row or change exit acceptance to accommodate -9.
+
+[Local command evidence](evidence/review-5638956748-local.json): 78 tests pass;
+ARM64 and i686 OptDebug links pass sequentially with two compiler processes;
+range discovery/staging pass, YAML parses, and upstream/ is unchanged.
+M3 remains incomplete (six unresolved names, accepted replay, full state and
+rendered Atlas outstanding); M4 40110421624 is still awaiting diagnostic output.
+
 ## Review 5638821870: corrected coverage and loader evidence
 
 Code `7a91b34d956a115940cd4e9c5a58b50415110a71` runs

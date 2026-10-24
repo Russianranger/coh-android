@@ -65,25 +65,31 @@ Wine via FEX).
 
 ### Immediate next step (2026-10-24)
 
-Review follow-up code 7a91b34d runs build/Atlas 40111054496 and replay
-40111054487 on armport/m3-review7. The milestone integration is docs only
-over that tested source, preserving earlier Atlas run 40105902326.
+Review 5638956748 follow-up is being qualified. The user approved the 14-name
+PIGG fetch and the narrow Atlas startup RPC exception allowance; recorded in
+PR #6 comment 6386664502. Do not request those approvals again.
 
-Review 5638821870 confirms phase enforcement and patch 0064. Follow-up corrects
-compressed manifest coverage: 166 exact files are covered by three reviewed
-archives, leaving seven geometry files and seven texture names. See
-M3-REPORT.md and evidence/m3-reviewed-file-selection.json for the reproducible
-selection and pins. Same-commit i686 comparison is complete in 40106727443:
-zero architecture-only errors/count differences; both targets still fail on 541
-dispatch errors. Stage the covered files only; original pigg fetching still
-needs explicit user approval. The proposed narrow startup RPC 6ba allowance
-also needs explicit agreement and has NOT been implemented.
-Patches 0065/0066 add trace thread IDs and NULL-grid diagnostics. The driver adds
-a required final loader drain; errors in inter-dispatch gaps also fail. Both
-local links and 66 host tests pass. No NULL bypass or acceptance loosening.
-M4 b9cf89cb runs 40110421624 to gather exception registers for the next fault:
-40106299491 fails in searchPowerCustomizations (PC 0x14007457c), after the VBO
-correction. Its guest boot passed; M4 remains incomplete. See M3-REPORT.md.
+Exact frozen-index discovery found seven geometry files and chest_stripe_1:
+eight files / 2,523,936 bytes. Six texture names have no exact donor match and
+remain unresolved; no substitutions or additional dependency fetches. See
+M3-REPORT.md, evidence/m3-approved-range-assets.json and the reproducible
+commands in evidence/review-5638956748-local.json. Both workflows stage them
+as a separate strict layer after the prior 166 reviewed files.
+
+The replay now drains map loaders before replay.map.end as well as after the
+117 dispatches; both drains are required. Replay's Wine check stays strict.
+Atlas alone permits handled startup 6ba, proven by same-thread dispatch,
+unwind and restoration before the first map-start witness in Wine's own
+append log. Patch 0067 emits that boundary; CI checks concurrent append
+ordering. Other exceptions/fatals still fail, and the count is reported.
+
+Run 40111054487 (7a91b34d), ARM64 job 120923329915, writes its 117-dispatch
+result and completes the final drain but returns -9, not the required 2.
+Do not accept that transcript. New process/memory observations distinguish a
+host timeout from a signal and retain failure inventories; cause not known.
+M4 diagnostic 40110421624 remains in progress at the last check; prior fault
+is searchPowerCustomizations at 0x14007457c (40106299491). Keep investigating
+its exact register/caller evidence. No pointer guard, milestone pass or merge.
 
 ### Latest review decision (2026-10-24)
 

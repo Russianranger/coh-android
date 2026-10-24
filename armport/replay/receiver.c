@@ -297,6 +297,15 @@ void armportReplayMaybeRun(void)
     initialize_shortcuts();
     armportZoneTrace("replay.map.begin", "");
     initialize_map();
+    /* Extra driver step: finish static-map work within its own phase so
+     * background errors cannot race dispatch 0. Texture completion performs
+     * the original texCheckThreadLoader/loadUpdate uploads under Xvfb. */
+    armportZoneTrace("replay.map.drain.begin", "");
+    emit("{\"type\":\"map_loader_drain_begin\"}\n");
+    forceGeoLoaderToComplete();
+    texForceTexLoaderToComplete(0);
+    armportZoneTrace("replay.map.drain.end", "");
+    emit("{\"type\":\"map_loader_drain_end\"}\n");
     armportZoneTrace("replay.map.end", "");
     entReceiveInit();
     dispatch(sink, initial + 88, u32(initial + 12), (unsigned int)u64(initial + 16),
