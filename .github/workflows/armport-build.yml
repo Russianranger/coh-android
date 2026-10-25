@@ -59,6 +59,10 @@ jobs:
             /armport/scripts/stage_atlas_supplement.py
             /armport/scripts/reviewed_asset_coverage.py
             /armport/scripts/stage_reviewed_files.py
+            /armport/scripts/stage_composite_dependencies.py
+            /armport/evidence/m3-proposed-composite-dependencies.json
+            /armport/evidence/m3-dispatch-errors-40113107670.json
+            /upstream/i24/data/tricks/v_shaders/villains/male/
             /armport/scripts/stage_approved_ranges.py
             /armport/evidence/m3-approved-range-assets.json
             /armport/evidence/m3-reviewed-file-selection.json
@@ -119,8 +123,12 @@ jobs:
         with:
           path: ${{ runner.temp }}/reviewed-dispatch-data
           key: armport-reviewed-dispatch-${{ hashFiles('armport/evidence/m3-reviewed-file-selection.json') }}
+      - id: composite-data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/composite-data
+          key: armport-composite-data-${{ hashFiles('armport/evidence/m3-proposed-composite-dependencies.json', 'armport/scripts/stage_composite_dependencies.py') }}
       - name: Retrieve the already reviewed 0.13.10 visual archive
-        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v4
         with:
           name: coh-client-asset-closure-assets
@@ -128,7 +136,6 @@ jobs:
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/reviewed-visual
       - name: Retrieve the already reviewed zone archive
-        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v4
         with:
           name: coh-assets-resource-inputs
@@ -153,6 +160,27 @@ jobs:
         with:
           name: armport-reviewed-dispatch-data
           path: ${{ runner.temp }}/reviewed-dispatch-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Stage exactly eight approved composite dependencies
+        if: steps.composite-data.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_composite_dependencies.py \
+            --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" \
+            --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip" \
+            --output "$RUNNER_TEMP/composite-data"
+      - name: Recompute proposal and verify composite cache bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - uses: actions/cache/save@v4
+        if: steps.composite-data.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/composite-data
+          key: ${{ steps.composite-data.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
           retention-days: 90
           if-no-files-found: error
 
@@ -233,6 +261,14 @@ jobs:
 
       - name: Prepare patched source
         run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/armport"
+      - name: Prove collision triangles preserve the native grid
+        run: |
+          python3 armport/tests/polycell_allocation.py --source "$RUNNER_TEMP/armport/src" | tee "$RUNNER_TEMP/polycell-allocation.log"
+          python3 - "$RUNNER_TEMP/polycell-allocation.log" <<'PYCONTROL'
+          import pathlib, sys
+          print('::notice title=ArmPort native grid allocation::' + pathlib.Path(sys.argv[1]).read_text().replace('\n', '%0A'))
+          PYCONTROL
+
 
       - name: Worker lost-wake regression and ARM64 queue publication
         run: |
@@ -828,6 +864,27 @@ jobs:
           path: ${{ runner.temp }}/approved-range-data
       - name: Verify the exact approved range layer
         run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - name: Restore approved composite dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
+      - name: Reverify the already reviewed 0.13.10 visual archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-assets
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-visual
+      - name: Reverify the already reviewed zone archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-zones
+      - name: Recompute proposal and verify composite artifact bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
       - name: Verify and stage all retained Atlas geometry and textures
         run: |
           python3 armport/scripts/stage_atlas_supplement.py stage \
@@ -838,7 +895,7 @@ jobs:
           # from the staged copy (no second unpack).
           assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
           armport/scripts/step.sh "ArmPort M3 client stage" python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
-            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" \
             --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
           ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
       - name: Server stack and ARM64 client login to Atlas Park

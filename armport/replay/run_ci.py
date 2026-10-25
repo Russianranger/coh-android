@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import replay_inventory
 import client_errors
 import process_observation
+import exit_diagnostics
 
 
 def fixtures(destination):
@@ -254,7 +255,10 @@ def main():
                             check_client_output(folder / 'client-stdio.txt', args.runtime)
                         except (OSError, ValueError) as error:
                             (folder / 'failed-exit-inventory.txt').write_text(str(error) + '\n')
-                        raise RuntimeError(f'{label}: expected incomplete-stage exit 2, got {run.returncode}')
+                        diagnostic = exit_diagnostics.collect(folder)
+                        (folder / 'exit-diagnostics.json').write_text(json.dumps(diagnostic, indent=2) + '\n')
+                        raise RuntimeError(f'{label}: expected incomplete-stage exit 2, got {run.returncode}; '
+                                           + json.dumps(diagnostic, separators=(',', ':')))
                     result = check_output(folder / 'receiver.jsonl', expected, initial_id,
                                           folder / 'wine-output.txt', args.runtime)
                     report['runs'].append(dict(label=label, **result))

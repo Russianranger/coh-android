@@ -4,6 +4,7 @@ and the M2 boot test's login probe (smoke_run.py --login-probe): screenshots,
 OCR-located clicks and typing on the Xvfb display, with the control positions
 measured from a real frame as fallback."""
 import os
+import json
 import re
 import subprocess
 import time
@@ -14,13 +15,41 @@ QA_NOTICE = ('You are seeing pop-up errors because you have Access Level (9) or 
              'These will not be seen by customers.')
 
 
-def character_select_from_log(path):
-    """Use the current client's original UI stage, never a success verdict.
+def dialogs_clear(path):
+    """Fail closed on incomplete or malformed ordered traces, including torn writes."""
+    pending = {}
+    seen = False
+    try:
+        with path.open(encoding='utf-8') as source:
+            for line in source:
+                if not line.endswith('\n'):
+                    return False
+                row = json.loads(line)
+                if (not isinstance(row, dict) or not isinstance(row.get('stage'), str)
+                        or not isinstance(row.get('text'), str)
+                        or type(row.get('tid')) is not int or row['tid'] <= 0):
+                    return False
+                seen = True
+                stage = row['stage']
+                if stage == 'client.fatal':
+                    return False
+                if stage.startswith('dialog.'):
+                    if stage not in ('dialog.alert.begin', 'dialog.alert.done',
+                                     'dialog.error.begin', 'dialog.error.done'):
+                        return False
+                    kind, action = stage.rsplit('.', 1)
+                    key = (row['tid'], kind)
+                    count = pending.get(key, 0)
+                    if action == 'done' and not count:
+                        return False
+                    pending[key] = count + (1 if action == 'begin' else -1)
+    except (OSError, ValueError, UnicodeError):
+        return False
+    return seen and not any(pending.values())
 
-    OCR of the character scene can consume the guest's whole login budget.
-    Only a selected, existing character at stage 6 permits the Next click.
-    A later stage, error/alert dialog or fatal prevents this shortcut.
-    """
+
+def character_select_from_log(path, zone_trace):
+    """Use stdio only for the current UI stage; isolated trace owns dialog state."""
     try:
         with path.open('rb') as source:
             source.seek(0, 2)
@@ -32,16 +61,7 @@ def character_select_from_log(path):
     if not stages:
         return False
     stage, selected, player, count = map(int, stages[-1])
-    pending = set()
-    for event in re.finditer(r'^ArmPort zone: \d+ (dialog\.(?:alert|error)\.(?:begin|done)|client\.fatal)\b', text, re.M):
-        if event[1] == 'client.fatal':
-            return False
-        kind, action = event[1].rsplit('.', 1)
-        if action == 'begin':
-            pending.add(kind)
-        else:
-            pending.discard(kind)
-    return stage == 6 and selected == 1 and 0 <= player < count and not pending
+    return stage == 6 and selected == 1 and 0 <= player < count and dialogs_clear(zone_trace)
 
 
 def pending_qa_notice(stdio):

@@ -181,7 +181,7 @@ def drive_login(a, screen, state, status, evidence):
     checks = {'n': 0}
 
     def character_select(p):
-        status['character_select_by_trace'] = character_select_from_log(a.client / 'armport_stdio.txt')
+        status['character_select_by_trace'] = character_select_from_log(a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl')
         if status['character_select_by_trace']:
             return True
         checks['n'] += 1

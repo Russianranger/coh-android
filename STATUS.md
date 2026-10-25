@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (70 patches including partial replay observers; Astra leads,
+M3 into Atlas (73 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Atlas 40118399219: character-select stall; corrected driver in 40127311343.
-- Replay 40118399218: 16 errors/SIGKILL; case-split data staging fixed, CI pending.
-- Replay run 40087788115: 117 cursor/ACK checks pass on ARM64/i686; full state
-  remains incomplete. Texture exception OFF: 57/72 archives; composite gaps.
-- M4 40127841088: corrected caller diagnostic running; bad power key unresolved.
+- Atlas 40128377899/replay 40128377861 fault in objSplitPlanes; 0071 fixes grid
+  overlap. Host controls/both compiles pass; runtime CI pending. See M3-REPORT.
+- Review 5639886811: isolated dialog trace, exit diagnostics, full-tree audit.
+- Eight composite files approved (6389265419); CI pending. Texture exception OFF.
+- M4 40127841088: createPrimaryAnimationEvents caller; producer still unproved.

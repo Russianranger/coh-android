@@ -1,0 +1,16 @@
+diff --git a/Common/entity/power_customization.c b/Common/entity/power_customization.c
+index a7978d1..9e13704 100644
+--- a/Common/entity/power_customization.c
++++ b/Common/entity/power_customization.c
+@@ -259,7 +259,10 @@ PowerCustomization* powerCust_FindPowerCustomization(PowerCustomizationList* pow
+     PowerCustomization **result;
+ 
+ #if CLIENT && defined(__GNUC__) && defined(_WIN32)
+-    if (getenv("ARMPORT_POWER_TRACE"))
++    static int traceEnabled = -1;
++    if (traceEnabled < 0)
++        traceEnabled = getenv("ARMPORT_POWER_TRACE") != NULL;
++    if (traceEnabled)
+         armportPowerLookupTrace(__builtin_return_address(0), power, powerCustList);
+ #endif
+ 

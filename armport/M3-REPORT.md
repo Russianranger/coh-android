@@ -3,6 +3,87 @@
 Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## Review 5639886811 follow-up: native grid overlap (2026-10-24)
+
+[Exact artifact identities, terminal rows, disassembly and local command outputs](evidence/m3-review12-grid-and-runtime-40128377861.json)
+cover the following findings. This checkpoint addresses implementation findings;
+M3 and M4 remain incomplete, with no milestone or merge approval.
+
+- Replay [40128377861](https://github.com/Russianranger/coh-android/actions/runs/40128377861):
+  ARM64 stops inside dispatch index 1, ID 32, command 29, cursor 309912.
+  There is no receiver failure row, cleanup-begin or exit-begin witness.
+  Stdio records EXCEPTION_ACCESS_VIOLATION; Wine faults at 0x1400A1228,
+  `objSplitPlanes` gridcollobj.c:319, reading a corrupted child pointer.
+  The new failure notice includes terminal receiver/zone rows, cleanup/exit
+  witnesses, failure/assert text, Wine exception and failed inventory.
+- Atlas [40128377899](https://github.com/Russianranger/coh-android/actions/runs/40128377899/job/120976643585):
+  stops at map.finish.begin. Its exact Release binary resolves 0x14009607C
+  to the same function, gridcollobj.c:259. `ldrh w9,[x22],#2` reads tri_idxs
+  through x22=0xC180000000000000. This is a different corrupted cell field.
+- Patch 0071 fixes a concrete overlap in modelCreateCtris: triangles used
+  the raw on-disk grid size as their offset despite 0034 expanding native
+  cells and retaining raw indices in a larger grid allocation. They now start
+  at uiGridAllocSize, as the shared-heap path already does. i686 retains its
+  existing offset because its grid allocation equals the disk size.
+  Source-derived ASan/UBSan controls overwrite grid cells with the old offset
+  and preserve all grid bytes with 0071, for raw sizes 74 and 80. These controls
+  establish the allocation defect; new runtime CI must establish crash resolution.
+- i686's itemized dispatch inventory contains 14 texture errors and no
+  mission_room error. This confirms the two room errors disappeared after
+  the case-equivalent staging repair, without granting an error exception.
+- M1: the character-select shortcut takes dialog/fatal state from the entire
+  ordered zone-trace.jsonl. Missing, malformed, truncated, unmatched or
+  outstanding dialog records fail closed. Stdio supplies only the latest UI
+  stage. Earlier, interleaved and cross-thread dialog controls are included.
+- L1: 0072 caches the power-trace environment opt-in. L2: smoke staging emits
+  a case-duplicate audit after **all** runtime data layers, including the new
+  composite layer. The actual CI inventory counts are still pending.
+- M4 [40127841088](https://github.com/Russianranger/coh-android/actions/runs/40127841088)
+  supplies the corrected caller 0x1403BD1E0: createPrimaryAnimationEvents,
+  uiPowerCust.c:1634 (getPowerCustomization inlined). The selected power is
+  0x10000000000. Patch 0073 logs the original menu/index, selected pointer,
+  passed power and array address at queue/primary sites. It neither repairs
+  nor filters the pointer. The producer and runtime fix remain outstanding;
+  M4 must consume the newly built Release and the corrected staging afterward.
+
+Local validation: 92 tests pass; all three modified source files compile for
+ARM64 Release and i686 Release sequentially with two compiler processes.
+The evidence above records commands, exit codes, object hashes and control
+output. Both workflows run the new checks; full runtime CI remains required.
+
+### Eight approved composite dependencies
+
+[User decision 6389265419](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6389265419)
+authorizes exactly the historical proposal's 8 files / 658,461 bytes. The new
+staging script mechanically recomputes original declaration leaves, subtracts
+the prior selection, and checks exact proposal paths, manifest/archive pins,
+counts and hashes. Both workflows add a separate final strict layer. Every
+cache and artifact hit reopens the existing reviewed source archives, verifies
+archive SHA and full inventory, checks selected payload SHA, and independently
+checks the restored layer for missing/extra/linked/changed files. This costs
+another read of the existing archives; it introduces no new source or leaf.
+A CI notice reports the count/bytes and disabled texture exception. Actual
+CI staging and resulting errors are pending.
+
+All paths below are relative to `data/texture_library/v_players/avatar/super_shared/`:
+
+| File | Reviewed source |
+|---|---|
+| gloves/glove_v_enforcer_01.texture | zones-world-supplement |
+| gloves/glove_v_enforcer_01_bump.texture | zones-world-supplement |
+| gloves/glove_v_enforcer_01_mask.texture | zones-world-supplement |
+| shoulders/spadr_v_gears_01.texture | zones-world-supplement |
+| shoulders/spadr_v_gears_01_bump.texture | zones-world-supplement |
+| shoulders/spadr_v_gears_01_mask.texture | zones-world-supplement |
+| belts/belt_v_imperialdefense_01.texture | client-visual |
+| belts/belt_v_imperialdefense_01_normal.texture | client-visual |
+
+L3 remains unresolved: `assets/zones-audio-metadata.json` pins 15 archive metadata
+records, but does not itself contain their complete decoded file tables.
+Names alone do not prove texture absence. The conditional texture exception
+stays OFF pending complete tables and the required six-run literal identity.
+The previous sections below retain historical evidence, not current approval state.
+
 ## Case-equivalent data directories (2026-10-24)
 
 [Replay 40118399218](https://github.com/Russianranger/coh-android/actions/runs/40118399218/job/120944883208)

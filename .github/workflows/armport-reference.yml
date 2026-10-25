@@ -14,6 +14,8 @@ on:
       - 'armport/scripts/check_receiver_state_preprocess.py'
       - 'armport/scripts/client_errors.py'
       - 'armport/scripts/stage_atlas_supplement.py'
+      - 'armport/scripts/stage_composite_dependencies.py'
+      - 'armport/evidence/m3-proposed-composite-dependencies.json'
       - 'armport/scripts/stage_reviewed_files.py'
       - 'armport/scripts/stage_approved_ranges.py'
       - 'armport/evidence/m3-approved-range-assets.json'
@@ -53,6 +55,10 @@ jobs:
             /armport/scripts/stage_atlas_supplement.py
             /armport/scripts/reviewed_asset_coverage.py
             /armport/scripts/stage_reviewed_files.py
+            /armport/scripts/stage_composite_dependencies.py
+            /armport/evidence/m3-proposed-composite-dependencies.json
+            /armport/evidence/m3-dispatch-errors-40113107670.json
+            /upstream/i24/data/tricks/v_shaders/villains/male/
             /armport/scripts/stage_approved_ranges.py
             /armport/evidence/m3-approved-range-assets.json
             /armport/evidence/m3-reviewed-file-selection.json
@@ -112,8 +118,12 @@ jobs:
         with:
           path: ${{ runner.temp }}/reviewed-dispatch-data
           key: armport-reviewed-dispatch-${{ hashFiles('armport/evidence/m3-reviewed-file-selection.json') }}
+      - id: composite-data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/composite-data
+          key: armport-composite-data-${{ hashFiles('armport/evidence/m3-proposed-composite-dependencies.json', 'armport/scripts/stage_composite_dependencies.py') }}
       - name: Retrieve the already reviewed 0.13.10 visual archive
-        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v4
         with:
           name: coh-client-asset-closure-assets
@@ -121,7 +131,6 @@ jobs:
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/reviewed-visual
       - name: Retrieve the already reviewed zone archive
-        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v4
         with:
           name: coh-assets-resource-inputs
@@ -142,6 +151,22 @@ jobs:
         with:
           name: armport-reviewed-dispatch-data
           path: ${{ runner.temp }}/reviewed-dispatch-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Stage exactly eight approved composite dependencies
+        if: steps.composite-data.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_composite_dependencies.py \
+            --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" \
+            --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip" \
+            --output "$RUNNER_TEMP/composite-data"
+      - name: Recompute proposal and verify composite cache bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
           retention-days: 90
           if-no-files-found: error
 
@@ -339,6 +364,27 @@ jobs:
           path: ${{ runner.temp }}/approved-range-data
       - name: Verify the exact approved range layer
         run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - name: Restore approved composite dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
+      - name: Reverify the already reviewed 0.13.10 visual archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-assets
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-visual
+      - name: Reverify the already reviewed zone archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-zones
+      - name: Recompute proposal and verify composite artifact bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
       - name: Verify and stage all retained Atlas geometry and textures
         run: |
           python3 armport/scripts/stage_atlas_supplement.py stage \
@@ -346,7 +392,7 @@ jobs:
       - name: Stage same data, bins and shaders for replay
         run: |
           python3 armport/scripts/smoke_run.py --stage-only --build "$RUNNER_TEMP/reference-bin" \
-            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" \
             --cg-dir "$RUNNER_TEMP/cg-arb" --runtime "$RUNNER_TEMP/replay-runtime"
       - name: Execute all original receiver dispatches (incomplete milestone stage)
         run: |

@@ -1,0 +1,226 @@
+{
+  "arm64": {
+    "terminal_receiver": {
+      "type": "game_command_begin",
+      "index": 1,
+      "id": 32,
+      "command": 29,
+      "cursor": 309912,
+      "error_flags": 0
+    },
+    "terminal_zone": {
+      "stage": "allents.done",
+      "text": ""
+    },
+    "cleanup_begin": false,
+    "exit_begin": false,
+    "receiver_failure": null,
+    "client_failure": {
+      "line": 1309374,
+      "text": "Exception caught: EXCEPTION_ACCESS_VIOLATION"
+    },
+    "wine_exception": {
+      "line": 17,
+      "text": "0174:trace:seh:dispatch_exception code=c0000005 (EXCEPTION_ACCESS_VIOLATION) flags=0 addr=00000001400A1228"
+    },
+    "failed_inventory": "Game error/assert: 14 dispatch errors; Expected 117 paired dispatch windows, got 1; Missing or unclosed final loader drain window; Unclosed dispatch or map-load boundary; see client-errors.json",
+    "read_errors": [],
+    "dispatch_errors": [
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+        "count": 1
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture X_ImperialDefense_Belt_01 as texture 1 on bone BELT.",
+        "count": 1
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "count": 4
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "count": 4
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "count": 4
+      }
+    ],
+    "mission_room_dispatch_errors": [],
+    "dispatch_error_count": 14,
+    "artifact_id": 12574580630,
+    "source_file_hashes": {
+      "receiver.jsonl": "ef7a897002b281db4597b314e7b39c67e4a016c668332a26b9129ba793eee59f",
+      "zone-trace.jsonl": "11074691b7b2e691ce63c6d412c029a750c7a2e31b31b4a8e5999af1326cbfa3",
+      "client-stdio.txt": "d5a238f54037998d2c7dd4477f2c7f3d420ed2d91569dda8742cc25fcf089182",
+      "wine-output.txt": "ddf2f96101175d80fd7af77c7c4ff19e4fdf09bff75d47fc9d83fb2bda3957dd",
+      "client-errors.json": "0ba8242c569fd6020d1f5e037a9b72315c539f7683292e89cc1b38f4bac66f83",
+      "failed-exit-inventory.txt": "e25ff15305815002e73e00db90beb54389e0afd0e560802c0641841b626fa3c8"
+    },
+    "exe_sha256": "017eaf5ad08df00165d97c61d4eeb78646f5acac0f801d0667fb9a4d6840fc79",
+    "symbol_command": "llvm-addr2line -f -C -e CityOfHeroes.exe 0x1400A1228",
+    "symbols": "objSplitPlanes\n/home/runner/work/_temp/reference/src/Common/gridcoll/gridcollobj.c:319"
+  },
+  "i686": {
+    "terminal_receiver": {
+      "type": "result"
+    },
+    "terminal_zone": {
+      "stage": "replay.exit.begin",
+      "text": "ExitProcess(2)"
+    },
+    "cleanup_begin": true,
+    "exit_begin": true,
+    "receiver_failure": null,
+    "client_failure": null,
+    "wine_exception": null,
+    "failed_inventory": null,
+    "read_errors": [
+      "[Errno 2] No such file or directory: '/tmp/coh-dev12/12574821738/id1-a/failed-exit-inventory.txt'"
+    ],
+    "dispatch_errors": [
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+        "count": 1
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture X_ImperialDefense_Belt_01 as texture 1 on bone BELT.",
+        "count": 1
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARML.",
+        "count": 4
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Enforcer_Glove_01_Mask as texture 1 on bone LARMR.",
+        "count": 4
+      },
+      {
+        "phase": "dispatch",
+        "text": "client.error CUSTOM TEXTURE ERROR: HUGE wants nonexistent texture X_Gear_Pads as texture 1 on bone SPADR.",
+        "count": 4
+      }
+    ],
+    "mission_room_dispatch_errors": [],
+    "dispatch_error_count": 14,
+    "artifact_id": 12574821738,
+    "source_file_hashes": {
+      "receiver.jsonl": "794a420f55e15a5bcb2d805cb09fe8eeb2d37001e914248451878947b0adaf5c",
+      "zone-trace.jsonl": "d52388b997facaa76fbe45336deb6be8e6f04b63aff89fc8910478a313e1f543",
+      "client-stdio.txt": "333fa586f6ca4c3d54e8e204157999757ca90ca6b151bfa0a016608ded2f8644",
+      "wine-output.txt": "0f3e654dc2f13c26d9bfce54bdd5ca53bb2155b3e246809cca6a09d7e7dca44c",
+      "client-errors.json": "b0b438bb57c8df54882313e1f7472c930bf8d72a18bfbdb1bee7700e0367396d"
+    }
+  },
+  "atlas": {
+    "run": 40128377899,
+    "job": 120976643585,
+    "artifact_id": 12575238793,
+    "artifact_sha256": "b8f58e288311c6f9c7b670c1662eaced57ce20ace0b0b61dcefb365cddc1a2aa",
+    "terminal_zone": {
+      "stage": "map.finish.begin",
+      "text": "",
+      "tid": 36
+    },
+    "wine_fault_lines": [
+      "0024:trace:seh:dispatch_exception code=c0000005 (EXCEPTION_ACCESS_VIOLATION) flags=0 addr=000000014009607C",
+      "0024:trace:seh:dispatch_exception  info[0]=0000000000000000",
+      "0024:trace:seh:dispatch_exception  info[1]=C180000000000000",
+      "0024:trace:seh:dispatch_exception  pc=000000014009607c  sp=00007ffffe1f3400  lr=000000014009627c  fp=0000000000000000",
+      "0024:trace:seh:dispatch_exception  x0=00007ffffe1f3650  x1=0000000049494b10  x2=00007ffffe1f34b8  x3=00007ffffe1f34ac",
+      "0024:trace:seh:dispatch_exception  x4=00007ffffe1f34c4  x5=0000000042620000  x6=00007ffffe1f0c7c  x7=00007ffffe1f0b1c",
+      "0024:trace:seh:dispatch_exception  x8=0000000047959330  x9=0000000000000820 x10=00000000000818a1 x11=0000000000000000",
+      "0024:trace:seh:dispatch_exception x12=00000000490d50f0 x13=0000000000000000 x14=000000000000000c x15=00007ffffe1f0b0c",
+      "0024:trace:seh:dispatch_exception x16=00006fffff93acc8 x17=0000000000000000 x18=000000007ffc0000 x19=0000000042040000",
+      "0024:trace:seh:dispatch_exception x20=0000000049494b10 x21=00007ffffe1f34c4 x22=c180000000000000 x23=00007ffffe1f38c8",
+      "0024:trace:seh:dispatch_exception x24=00007ffffe1f3650 x25=00007ffffe1f3930 x26=0000000042889960 x27=0000000000000003",
+      "0024:trace:seh:dispatch_exception x28=00000001409c4000 cpsr=20000000 fpcr=00000000 fpsr=0000001a",
+      "0024:trace:seh:call_seh_handlers calling handler 00000001406BA104 (rec=00007FFFFE1F3340, frame=7ffffe1fffe0 context=00007FFFFE1F2F90, dispatch=00007FFFFE1F2BC8)",
+      "0024:trace:seh:signal (11, 0000000000000000)",
+      "0024:trace:seh:call_seh_handlers handler at 00000001406BA104 returned 1",
+      "0024:trace:seh:call_seh_handlers calling handler 00006FFFFFD86A1C (rec=00007FFFFE1F3340, frame=7ffffe200000 context=00007FFFFE1F2F90, dispatch=00007FFFFE1F2BC8)",
+      "0024:trace:seh:signal (11, 0000000000000000)",
+      "wine: Unhandled page fault on read access to C180000000000000 at address 000000014009607C (thread 0024), starting debugger..."
+    ],
+    "exe_sha256": "f1d439f469c7ba3cebbbcd3b06015f8bed6f29d28375553f0ae0a879c1899655",
+    "symbol_command": "llvm-addr2line -f -C -e CityOfHeroes.exe 0x14009607C 0x14009627C",
+    "symbols": "objSplitPlanes\n/home/runner/work/_temp/armport/src/Common/gridcoll/gridcollobj.c:259\nobjSplitPlanes\n/home/runner/work/_temp/armport/src/Common/gridcoll/gridcollobj.c:0",
+    "disassembly": "/tmp/coh-dev12/release/CityOfHeroes.exe:\tfile format coff-arm64\n\nDisassembly of section .text:\n\n0000000140095cdc <objSplitPlanes>:\n140096068: f9400436    \tldr\tx22, [x1, #0x8]\n14009606c: 14000003    \tb\t0x140096078 <objSplitPlanes+0x39c>\n140096070: f1000673    \tsubs\tx19, x19, #0x1\n140096074: 54000320    \tb.eq\t0x1400960d8 <objSplitPlanes+0x3fc>\n140096078: f9400008    \tldr\tx8, [x0]\n14009607c: 784026c9    \tldrh\tw9, [x22], #0x2\n140096080: f940550a    \tldr\tx10, [x8, #0xa8]"
+  },
+  "m4": {
+    "run": 40127841088,
+    "artifact_id": 12575180049,
+    "terminal_power_lookup": [
+      "ArmPort zone: 2163819 power.lookup caller=00000001403BD1E0 power=0000010000000000 list=000000004268A5B0 tid=644"
+    ],
+    "exe_sha256": "f1d439f469c7ba3cebbbcd3b06015f8bed6f29d28375553f0ae0a879c1899655",
+    "symbol_command": "llvm-addr2line -f -C -e CityOfHeroes.exe 0x1403BD1DC 0x1403BD1E0",
+    "symbols": "getPowerCustomization\n/home/runner/work/_temp/armport/src/Game/src/UI/uiPowerCust.c:260\ncreatePrimaryAnimationEvents\n/home/runner/work/_temp/armport/src/Game/src/UI/uiPowerCust.c:1634",
+    "producer_proven": false
+  },
+  "interpretation": {
+    "grid_defect": "modelCreateCtris used raw disk grid size for triangle offset after expanding native cells. Triangle writes overlap cells and retained indices. Patch 0071 uses the actual allocated grid extent, matching the shared-heap path.",
+    "atlas_relation": "Same collision routine, different cell field: Atlas reads tri_idxs through x22; replay reads a child pointer. Exact fault operands agree with corrupted cells. CI with 0071 still required to establish resolution.",
+    "texture_exception_enabled": false,
+    "milestone_complete": false
+  },
+  "local_validation": {
+    "polycell_command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/polycell_allocation.py --source ../patchwork-dev13/src",
+    "polycell_output": "PolyCell allocation: raw=74 grid=256 triangle_offset=74 preserved=0 expected=0\nPolyCell allocation: raw=80 grid=256 triangle_offset=80 preserved=0 expected=0\nPolyCell allocation: raw=74 grid=256 triangle_offset=256 preserved=1 expected=1\nPolyCell allocation: raw=80 grid=256 triangle_offset=256 preserved=1 expected=1\n",
+    "sanitizer_note": "LeakSanitizer disabled locally because process inspection is unsupported; ASan/UBSan enabled. CI uses default sanitizer settings.",
+    "tests_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py' -v",
+    "tests_result": "92 tests, OK (4.792s)",
+    "tests_log_sha256": "4e9273fa24f37e2787eea1a586e3385e737050906946b683881167051a31b8ea",
+    "compile_command": "ninja -C ../build-dev13-{arm,i686} -j2 Game/CMakeFiles/Game.dir/__/Common/seq/anim.c.obj Game/CMakeFiles/Game.dir/__/Common/entity/power_customization.c.obj Game/CMakeFiles/Game.dir/src/UI/uiPowerCust.c.obj",
+    "compilation": "ARM64 Release and i686 Release each exit 0; sequential, two compiler processes",
+    "compile_logs": {
+      "arm": "2cc5bf29feef16a55056115a2ff283d2e9f8560ab1aa2e9054cf369f073a1b48",
+      "i686": "b872d2b9771116722a62b0aee2a18922c9bd6e4c81634d6abd85aed627032e9e"
+    },
+    "compile_exit_codes": {
+      "arm64": 0,
+      "i686": 0
+    },
+    "objects": {
+      "arm": {
+        "__/Common/seq/anim.c": {
+          "bytes": 41259,
+          "sha256": "adae4ee2fe19f176a4a523a9bb9577cf1e81bc14453610f6526f35cdf226f245"
+        },
+        "__/Common/entity/power_customization.c": {
+          "bytes": 18661,
+          "sha256": "ac3fb8f7d2ae6f912e8e001882e41650aaea64fff463b6de2166aaaa1b59935a"
+        },
+        "src/UI/uiPowerCust.c": {
+          "bytes": 58599,
+          "sha256": "52c9f94f4a9cbec7607775ba8796d0363e0a2ec28a9fbd032c98e39a1ec3c781"
+        }
+      },
+      "i686": {
+        "__/Common/seq/anim.c": {
+          "bytes": 40384,
+          "sha256": "69a213684c8fe4b434a48a360d05d99b934f7d3cab672b4c8a2ae23979d0c99e"
+        },
+        "__/Common/entity/power_customization.c": {
+          "bytes": 15496,
+          "sha256": "c62571c773e63735cd429defbb4cf7dd6aa96a0dc7b573197f1165b70a70a984"
+        },
+        "src/UI/uiPowerCust.c": {
+          "bytes": 56037,
+          "sha256": "fca946a07a9f87b71abed5c0a035b4df4b51a012522c4fdf77aded18e58970b7"
+        }
+      }
+    },
+    "tests_output_tail": "\n----------------------------------------------------------------------\nRan 92 tests in 4.792s\n\nOK"
+  }
+}

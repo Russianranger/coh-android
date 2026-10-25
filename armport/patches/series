@@ -68,3 +68,6 @@
 0068-trace-power-customization-input-and-caller.patch
 0069-identify-missing-mission-room-tray.patch
 0070-preserve-power-lookup-caller-across-stack-probe.patch
+0071-collision-triangles-after-native-grid.patch
+0072-cache-power-trace-opt-in.patch
+0073-identify-selected-power-menu-index.patch

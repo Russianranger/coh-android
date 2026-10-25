@@ -122,3 +122,17 @@ collision=1, distinct=1. The same command with upstream/ouroboros and expected
 0 returns all four as 0. Both generated ARM64 Windows controls compile.
 The test adapts allocators/unrelated geometry but executes the original grid
 function bodies; high tokens are never dereferenced. Wine/Atlas CI is required.
+
+
+0071: modelCreateCtris allocated an expanded ARM64 PolyCell grid but placed
+triangles at the original disk byte count, overwriting native pointers and
+retained indices. Use uiGridAllocSize, matching the shared-heap path. Replay
+40128377861 and Atlas 40128377899 both fault in objSplitPlanes; the exact
+symbols, operands, allocation controls and both target compiles are recorded
+in ../evidence/m3-review12-grid-and-runtime-40128377861.json. Runtime repair
+still requires new CI; i686's computed grid extent remains the raw size.
+
+0072 caches the existing power trace opt-in. 0073 is an inert-unless-enabled
+selected-power diagnostic at M4's actual caller; no pointer filtering or game
+logic repair. Exact M4 40127841088 symbols and command outputs are in the same
+evidence JSON. It is not a power-pointer fix or milestone qualification.

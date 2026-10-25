@@ -73,6 +73,22 @@ def ocr(path):
         return f'ocr failed: {e!r}'
 
 
+def audit_runtime_tree(root):
+    """Audit the physical merged tree, after every runtime data layer."""
+    paths = set()
+    files = directories = 0
+    for path in root.rglob('*'):
+        key = path.relative_to(root).as_posix().casefold()
+        if key in paths:
+            raise ValueError('Case-equivalent runtime paths: ' + key)
+        paths.add(key)
+        if path.is_dir():
+            directories += 1
+        else:
+            files += 1
+    return dict(files=files, directories=directories, case_duplicates=0)
+
+
 def merge_tree(src, dst, strict=False, earlier_roots=None):
     """Overlay src onto dst as hard links (real directories, no symlinks, so the
     client's directory scans see ordinary files). Earlier roots win for files.
@@ -519,6 +535,7 @@ def main():
         root = root.resolve()
         merge_tree(root, rt / 'data', strict=root in strict_roots, earlier_roots=earlier_roots)
         earlier_roots.append(root)
+    print('::notice title=ArmPort complete runtime data inventory::' + json.dumps(audit_runtime_tree(rt / 'data')))
     # Development (non-FINAL) builds take a folder with data/ and tools/ as the
     # game root (UtilitiesLib file.c addAppropriateDataDirs).
     (rt / 'tools').mkdir()

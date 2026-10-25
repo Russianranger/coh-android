@@ -63,18 +63,25 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
-### Immediate next step (2026-10-24)
+### Immediate next step (review 5639886811 follow-up, 2026-10-24)
 
-The mission-room diagnostics now identify PPD_Start_01_22& and grp141175.
-Both parent tray geometries already exist in the approved Atlas supplement,
-but the merger split original-case and lowercase parent directories. The
-corrected merger shares one directory per case-equivalent path and retains
-strict collision checks; 87 tests and the exact-file before/after reproduction
-pass. See evidence/m3-case-merged-data-40118399218.json. Qualify in new replay
-and Atlas CI; do not assume room errors or world rendering pass. M4 run
-40127841088 at a63d0952 uses Release 40127311343; its exact disassembly
-confirms the corrected incoming-LR capture. Symbolize the new runtime caller
-when available. M4 has not yet taken the new case-merging change.
+0071 fixes triangle writes overlapping expanded native collision-grid cells.
+The exact replay and Atlas binaries both fault in objSplitPlanes, on child
+and tri_idxs pointers respectively. Source-derived ASan/UBSan controls and
+both target compilations pass; runtime resolution is not yet established.
+See evidence/m3-review12-grid-and-runtime-40128377861.json and the leading
+M3-REPORT section. Qualify the new replay/Atlas runs, then rerun M4 with the
+new Release and corrected case staging. 0073 logs the selected menu/index
+at the actual M4 caller createPrimaryAnimationEvents; its producer is unproved.
+The login shortcut now requires the complete isolated dialog trace. Failure
+notices retain exit diagnostics; a final runtime-tree audit checks all layers.
+User approval 6389265419 permits exactly the 8 proposed composite files;
+both workflows now stage them as a final strict layer, rechecking original
+archive identity/inventory and restored bytes. No other fetch is authorized.
+The texture exception remains OFF. Audio archive file tables and six-run
+identity are still needed; M3 and M4 are not approved or complete.
+
+The following paragraphs are historical checkpoints.
 
 
 Latest completed evidence: build/Atlas 40118399219 fails before map.start,
