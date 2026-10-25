@@ -206,29 +206,36 @@ def drive_login(a, screen, state, status, evidence):
     if trace_ready:
         # OCR may miss the 3D scene; only the validated trace permits layout Next.
         pos = at(screen, 'enter_world')
-        if pos:
+        if pos and character_select_from_log(a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl'):
             screen.click(*pos)
             status['enter_by_layout'] = True
             (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': 'layout'}) + '\n')
             time.sleep(15)
             screen.shot('after-enter')
             sockets('15s after Next')
-        else:
+        elif not pos:
             status['enter_layout_error'] = 'Client window unavailable for Next'
+        else:
+            status['enter_layout_error'] = 'Character or dialog state changed before Next'
     status['character_select'] = bool(png) or trace_ready
     if png and not trace_ready and dialogs_clear(a.client / 'zone-trace.jsonl'):
         pos = screen.find(png, info['character'])
-        if pos:
+        if pos and dialogs_clear(a.client / 'zone-trace.jsonl'):
             screen.click(*pos)
             time.sleep(2)
             png = screen.shot('character-chosen')
         pos = screen.find(png, 'Play', 'PLAY')
-        if pos:
-            screen.click(*pos)
+        # Selection, the wait, capture and OCR can each expose a new modal.
+        # Check the complete history after those operations, adjacent to input.
+        if dialogs_clear(a.client / 'zone-trace.jsonl'):
+            if pos:
+                screen.click(*pos)
+            else:
+                screen.key('Return')
+            status['play_sent'] = True
+            (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': True}) + '\n')
         else:
-            screen.key('Return')
-        status['play_sent'] = True
-        (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': True}) + '\n')
+            status['play_blocked'] = 'Dialog history rejected before Play/Return'
     # In game: wait for the guest's database confirmation, then screenshots.
     atlas = state / 'armport-atlas.json'
     deadline = time.time() + 1200

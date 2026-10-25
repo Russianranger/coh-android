@@ -3,6 +3,39 @@
 Updated 2026-10-25. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
 
+## Sol review 5641229238: changing OCR history and complete error series
+
+[Review 5641229238](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5641229238)
+confirmed the prior layout, pipefail and QA-selector corrections and found a
+remaining OCR timing gap. Character selection can open a dialog during the
+wait/capture/OCR before final Play/Return. The host now rechecks the complete
+isolated history immediately before that input and records `play_blocked`
+without sending input or writing a play marker on rejection. Character OCR
+and layout-coordinate lookup likewise cannot carry a stale clear-history check
+across the following click.
+
+[Actual-host before/after controls and complete local test output](evidence/m3-sol-review-5641229238.json)
+reproduce the unsafe Return and Play click before the fix, and only the initial
+character click afterward. New cases cover error/alert/fatal, malformed/torn
+or missing history arising during selection, waiting, capture or OCR. Clear
+history preserves both final-input paths. The full Python suite passes 111 tests.
+
+Replay now retains all three independent executions when ordinary dispatch
+data errors are the only rejection. It first checks Wine, integrity, complete
+cursor/ACK transcript and every partial-state hash, then raises a distinct
+data-error rejection caught only to collect the next fresh-prefix execution.
+Any rejection still fails the overall job; later successes cannot rescue it.
+Abnormal exits, Wine exceptions, malformed evidence, fatal/assert or snapshot
+failures still stop immediately. Six-run artifacts remain pending CI; this
+does not enable a texture exception or qualify partial-state comparison.
+
+The running [Atlas 40154965180](https://github.com/Russianranger/coh-android/actions/runs/40154965180)
+is kept intact while a separate candidate branch qualifies this follow-up.
+[M4 40155140217](https://github.com/Russianranger/coh-android/actions/runs/40155140217)
+passed guest boot and started interactive create/save/reopen. Sol found no new
+implementation issue in M4 staging 78a5624; its runtime result and bad-power
+producer remain pending. M3/M4 remain incomplete, with no merge approval.
+
 ## Sol 6.1 review 5641164200 follow-up (2026-10-25)
 
 [Review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5641164200)

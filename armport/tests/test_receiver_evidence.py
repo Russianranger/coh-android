@@ -5,7 +5,9 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'replay'))
 spec = importlib.util.spec_from_file_location('receiver_ci', Path(__file__).resolve().parents[1] / 'replay/run_ci.py')
 replay = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(replay)

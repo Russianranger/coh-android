@@ -332,3 +332,11 @@ remains literal and zero-error. Patch 0062 initializes the dummy costume
 Appearance whose optional prefix affects the suffix spelling. Run 40099922039
 at 023fd0dd tests that correction. See M3-REPORT.md for hashes, the separate
 Atlas pointer crash, patch 0063 controls, and the remaining data-source gate.
+# Diagnostic series after dispatch data errors
+
+The host collects id1-a, id1-b and id31 even when an execution has ordinary
+dispatch data errors, provided exit 2 and all Wine/integrity/transcript/state
+checks pass. Each such execution remains rejected and any rejection fails the
+job. This collects six-run comparison evidence without enabling exceptions or
+accepting replay. Crashes, fatal/assert, malformed evidence, wrong cursors and
+snapshot failures still stop immediately. See `test_receiver_run_series.py`.

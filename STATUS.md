@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Atlas 40148424741 stalls at QA notice; fix PID/title OR search with --all.
 - Replay 40148424802: both id1-a exit 2; one texture error, no acceptance.
-- Sol review 5641164200: host bypass/pipefail fixed; 101 tests pass. M3-REPORT.
+- Sol review 5641229238: final OCR recheck; 111 tests pass. See M3-REPORT.
 - Eight-file staging passed; zero case aliases. Texture exception remains OFF.
-- M4 40127841088: createPrimaryAnimationEvents caller; producer still unproved.
+- M4 40155140217: guest boot passed; interactive/producer qualification pending.

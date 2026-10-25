@@ -19,6 +19,17 @@ import process_observation
 import exit_diagnostics
 
 
+class DispatchGameErrors(ValueError):
+    """Rejected data errors after all receiver/integrity checks have passed.
+
+    A fresh run may still collect comparison evidence. This exception never
+    grants cursor-stage acceptance, a texture exception or milestone credit.
+    """
+    def __init__(self, count):
+        self.count = count
+        super().__init__(f'Game error/assert: {count} dispatch errors; see client-errors.json')
+
+
 def fixtures(destination):
     source = Path(__file__).resolve().parent / 'fixtures'
     for name, size, sha in (
@@ -75,7 +86,7 @@ def check_exception_control(path):
     raise ValueError('Host failed to reject the real handled-SEH trace')
 
 
-def check_client_output(path, runtime=None):
+def check_client_output(path, runtime=None, *, reject_dispatch_errors=True):
     errors = client_errors.inventory(path, path.with_name('client-errors.json'),
                                      path.with_name('zone-trace.jsonl'), expected_dispatches=117)
     if runtime is not None:
@@ -83,7 +94,7 @@ def check_client_output(path, runtime=None):
         path.with_name('error-assets.json').write_text(json.dumps(assets, indent=2) + '\n')
         lookup = client_errors.geometry_lookup(errors, runtime / 'data')
         path.with_name('error-geometry-files.json').write_text(json.dumps(lookup, indent=2) + '\n')
-    if errors['integrity_failures'] or errors['dispatch_error_count']:
+    if errors['integrity_failures'] or (reject_dispatch_errors and errors['dispatch_error_count']):
         raise ValueError(f"Game error/assert: {errors['dispatch_error_count']} dispatch errors; "
                          + '; '.join(errors['integrity_failures']) + '; see client-errors.json')
     return errors
@@ -91,7 +102,7 @@ def check_client_output(path, runtime=None):
 
 def check_output(path, expected, initial_id, wine_output, runtime=None):
     check_wine_output(wine_output)
-    errors = check_client_output(path.parent / 'client-stdio.txt', runtime)
+    errors = check_client_output(path.parent / 'client-stdio.txt', runtime, reject_dispatch_errors=False)
     if path.stat().st_size > 1024 * 1024:
         raise ValueError('receiver output exceeds cursor-stage bound')
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -175,6 +186,10 @@ def check_output(path, expected, initial_id, wine_output, runtime=None):
     if (len(terminators) != 1 or terminators[0]['cursor'] != baseline['tail_end_bit']
             or terminators[0]['error_flags'] != 0):
         raise ValueError('native INITIAL zero terminator mismatch')
+    # Defer only ordinary dispatch-error rejection until the transcript/state
+    # checks finish. Fatal, Wine, integrity and malformed evidence still abort.
+    if errors['dispatch_error_count']:
+        raise DispatchGameErrors(errors['dispatch_error_count'])
     return dict(dispatches=117, exact_cursors=True, ack_ids=[r['ack_id'] for r in acks],
                 native_initial_command_boundaries_match=True,
                 native_initial_entity_subset_match=True, dispatch_game_errors=0,
@@ -264,11 +279,22 @@ def main():
                     report['runs'].append(dict(label=label, **result))
                     print(json.dumps(report['runs'][-1]), flush=True)
                     notice('ArmPort replay ' + args.target + ' ' + label, report['runs'][-1])
+                except DispatchGameErrors as error:
+                    # Preserve all three independent executions for literal
+                    # six-run error comparison, while retaining a failed job.
+                    rejected = dict(label=label, accepted=False,
+                        rejection=str(error), dispatch_game_errors=error.count,
+                        receiver_checks_passed=True, m3_replay_complete=False)
+                    report['runs'].append(rejected)
+                    notice('ArmPort rejected replay ' + args.target + ' ' + label, rejected)
                 finally:
                     subprocess.run([str(args.wine / 'wineserver'), '-k'], env=env, timeout=30, check=False)
                     subprocess.run([str(args.wine / 'wineserver'), '-w'], env=env, timeout=30, check=False)
                     # Prefixes contain mutable runtime data, not useful decoder evidence.
                     shutil.rmtree(prefix, ignore_errors=True)
+        rejected = [run['label'] for run in report['runs'] if run.get('accepted') is False]
+        if rejected:
+            raise ValueError('Replay qualification failed on dispatch data errors: ' + ', '.join(rejected))
         if (args.out / 'id1-a/receiver.jsonl').read_bytes() != (args.out / 'id1-b/receiver.jsonl').read_bytes():
             raise ValueError('same-ID cursor/ACK/state-hash repeat differs')
         report['cursor_stage_passed'] = True

@@ -63,7 +63,22 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
-### Immediate next step (Sol review 5641164200, 2026-10-25)
+### Immediate next step (Sol review 5641229238, 2026-10-25 UTC)
+
+The remaining OCR timing gap is corrected: recheck isolated history after
+selection/wait/capture/OCR, immediately before final Play/Return. Rejection
+sends no final input or marker. Character OCR and layout lookup also revalidate
+before clicking. Actual-host negative/positive controls and all 111 tests pass;
+see evidence/m3-sol-review-5641229238.json and the leading M3-REPORT section.
+Replay collects all three runs per target only when dispatch data errors are
+the sole rejection after complete Wine/integrity/receiver checks. It still
+fails qualification; crashes/fatals/integrity failures stop immediately.
+Qualify the candidate without cancelling Atlas 40154965180. M4 40155140217
+passed guest boot; interactive qualification and the power producer remain
+pending. Sol found no new M4 staging issue. Exceptions remain OFF, M3/M4 are
+incomplete, and no milestone or merge approval has been granted.
+
+### Previous checkpoint (Sol review 5641164200, 2026-10-25)
 
 Both requested corrections are implemented: remove the host server-click
 bypass of rejected dialog history and propagate grid-control failures through

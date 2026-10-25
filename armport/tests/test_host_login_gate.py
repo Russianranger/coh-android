@@ -28,28 +28,56 @@ def load_driver(namespace, source=None):
 
 
 class HostLoginGate(unittest.TestCase):
-    def drive(self, trace, *, ocr=False, selected=True, replace_after_wait=None, source=None):
+    def drive(self, trace, *, ocr=False, selected=True, replace_after_wait=None, source=None,
+              character_found=False, play_found=False, change_at=None,
+              changed_trace=None):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             stdio, zone = root / 'armport_stdio.txt', root / 'zone-trace.jsonl'
             stdio.write_text('ArmPort login: stage 6 select %d player 0 of 1 timeout 0\n' % selected)
             if trace is not None:
                 zone.write_text(trace)
+            def change(event):
+                if event == change_at:
+                    if changed_trace is None:
+                        zone.unlink(missing_ok=True)
+                    else:
+                        zone.write_text(changed_trace)
             screen = Mock()
-            screen.find.return_value = None
+            def find(png, *words):
+                if words == ('TEST123',):
+                    change('character_ocr')
+                    return (100, 200) if character_found else None
+                if words == ('Play', 'PLAY'):
+                    change('play_ocr')
+                    return (900, 700) if play_found else None
+                return None
+            def click(*position):
+                if position == (100, 200):
+                    change('character_click')
+            def shot(label):
+                if label == 'character-chosen':
+                    change('capture')
+                return root / 'frame.png'
+            def at(*args):
+                change('layout_lookup')
+                return (960, 720)
+            screen.find.side_effect = find
+            screen.click.side_effect = click
             screen.text.return_value = 'TEST123 Play'
-            screen.shot.return_value = root / 'frame.png'
+            screen.shot.side_effect = shot
             status = dict(server_clicked=True, guest_exited=True)
             def after_login(screen, status, **kw):
                 kw['done'](root / 'frame.png')
                 if replace_after_wait is not None:
                     zone.write_text(replace_after_wait)
                 return root / 'frame.png' if ocr else None
-            namespace = dict(json=json, time=SimpleNamespace(time=lambda: 0, sleep=Mock()),
+            namespace = dict(json=json, time=SimpleNamespace(time=lambda: 0,
+                sleep=lambda seconds: change('selection_wait') if seconds == 2 else None),
                 start_client=lambda *a: (object(), dict(account='test', character='TEST123')),
                 login=lambda *a, **kw: True, after_login=after_login,
                 character_select_from_log=login_ui.character_select_from_log,
-                dialogs_clear=login_ui.dialogs_clear, at=lambda *a: (960, 720),
+                dialogs_clear=login_ui.dialogs_clear, at=at,
                 sh=lambda *a: SimpleNamespace(stdout=''))
             load_driver(namespace, source)(SimpleNamespace(client=root), screen, root, status, root)
             marker = root / 'armport-play-sent.json'
@@ -93,3 +121,49 @@ class HostLoginGate(unittest.TestCase):
         screen.key.assert_not_called()
         self.assertIsNone(marker)
         self.assertFalse(status['character_select_by_trace'])
+
+    def test_history_changed_during_selection_never_sends_final_input(self):
+        for event in ('character_click', 'selection_wait', 'capture', 'play_ocr'):
+            for trace in (row('dialog.error.begin'), row('dialog.alert.begin'),
+                          row('client.fatal'), '{}\n', row('login') + '{', None):
+                for play_found in (False, True):
+                    with self.subTest(event=event, trace=trace, play_found=play_found):
+                        screen, status, marker = self.drive(row('login'), ocr=True, selected=False,
+                            character_found=True, play_found=play_found, change_at=event,
+                            changed_trace=trace)
+                        screen.click.assert_called_once_with(100, 200)
+                        screen.key.assert_not_called()
+                        self.assertIsNone(marker)
+                        self.assertFalse(status.get('play_sent'))
+                        self.assertIn('rejected', status['play_blocked'])
+
+    def test_history_changed_during_character_ocr_blocks_selection_too(self):
+        screen, status, marker = self.drive(row('login'), ocr=True, selected=False,
+            character_found=True, play_found=True, change_at='character_ocr',
+            changed_trace=row('dialog.error.begin'))
+        screen.click.assert_not_called()
+        screen.key.assert_not_called()
+        self.assertIsNone(marker)
+
+    def test_history_changed_during_layout_lookup_blocks_next(self):
+        screen, status, marker = self.drive(row('login'), change_at='layout_lookup',
+            changed_trace=row('dialog.error.begin'))
+        screen.click.assert_not_called()
+        screen.key.assert_not_called()
+        self.assertIsNone(marker)
+        self.assertIn('changed', status['enter_layout_error'])
+
+    def test_clear_history_after_selection_keeps_both_final_input_paths(self):
+        for play_found in (False, True):
+            screen, status, marker = self.drive(row('login'), ocr=True, selected=False,
+                character_found=True, play_found=play_found)
+            self.assertEqual(screen.click.call_args_list[0].args, (100, 200))
+            if play_found:
+                self.assertEqual(screen.click.call_args_list[1].args, (900, 700))
+                self.assertEqual(screen.click.call_count, 2)
+                screen.key.assert_not_called()
+            else:
+                self.assertEqual(screen.click.call_count, 1)
+                screen.key.assert_called_once_with('Return')
+            self.assertTrue(status['play_sent'])
+            self.assertEqual(marker, dict(play_sent=True))
