@@ -10,7 +10,7 @@ import tempfile
 def main():
     source = (Path(__file__).resolve().parents[1] / 'replay/state.c').read_text()
     formatting = source[source.index('static void out('):source.index('void armportReplayStateInit(')]
-    writer = source[source.index('static void character_receive_core('):source.index('unsigned armportReplayStateSave(')]
+    writer = source[source.index('static void character_receive_core('):source.index('static void entity_receive_metadata(')]
     fixture = r'''
 #include <stdio.h>
 #include <stdlib.h>

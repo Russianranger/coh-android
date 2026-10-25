@@ -32,6 +32,7 @@
 #include "entity/Supergroup.h"
 #include "entity/RewardToken.h"
 #include "UI/uiGroupWindow.h"
+#include "UI/uiAutomap.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
 #include "storyarc/storyarcClient.h"
@@ -791,6 +792,59 @@ static void character_receive_core(const Character *p)
         p->playerTypeByLocation, p->iAllyID, p->iGangID, p->bPvPActive);
 }
 
+/* Individual retained scalar/string destinations. No bitfield storage,
+ * local PvP update clock, entity-reference pointers or new packet-ID fields. */
+static void entity_receive_metadata(const Entity *e)
+{
+    out("{\"mode_u32\":%u,\"vision_phases_u32\":%u,\"exclusive_vision_phase\":%d,\"con_yellow\":%d,"
+        "\"pvp_received_seconds\":%d,\"taskforce_id\":%d,\"on_flashback\":%d,"
+        "\"npc_index\":%d,\"gender\":%d,\"name_gender\":%d,\"world_group\":",
+        (unsigned)e->state.mode, (unsigned)e->bitfieldVisionPhases, e->exclusiveVisionPhase, e->shouldIConYellow,
+        e->pvpClientZoneTimer, e->taskforce_id, e->onFlashback, e->npcIndex, e->gender, e->name_gender);
+    string(e->costumeWorldGroup);
+    out(",\"ai_anim_list\":"); string(e->aiAnimList);
+    out(",\"no_draw\":%u,\"show_on_map\":%u,\"not_selectable\":%u,\"contact_or_pnpc\":%u,"
+        "\"contact_architect\":%u,\"always_con\":%u,\"see_through_walls\":%u,"
+        "\"commandable_pet\":%u,\"pet_dismissable\":%u,\"pet_visibility\":%d,\"pet_name\":",
+        (unsigned)e->noDrawOnClient, (unsigned)e->showOnMap, (unsigned)e->notSelectable,
+        (unsigned)e->contactOrPnpc, (unsigned)e->contactArchitect, (unsigned)e->alwaysCon,
+        (unsigned)e->seeThroughWalls, (unsigned)e->commandablePet, (unsigned)e->petDismissable, e->petVisibility);
+    string(e->petName);
+    out(",\"special_power_display_name\":"); string(e->specialPowerDisplayName);
+    out(",\"special_power_state\":%d}", e->specialPowerState);
+}
+
+/* Original static-map receive storage, in its retained owner/map order. The
+ * accessor never invokes the ordinary lazy file-loading/creating getter.
+ * Local visited-map files can also populate this storage; their retained data
+ * is compared literally. Derived minimap textures/fog grids are not included. */
+static void visited_map_state(void)
+{
+    const VisitedStaticMap *const *owners = armportReplayVisitedMaps();
+    int i, j, count = eaSize(&owners);
+    check(count >= 0 && count <= 8192);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const VisitedStaticMap *owner = owners[i];
+        int maps;
+        if (i) out(",");
+        if (!owner) { out("null"); continue; }
+        out("{\"db_id\":%d,\"maps\":[", owner->db_id);
+        maps = eaSize(&owner->staticMaps);
+        check(maps >= 0 && maps <= 8192);
+        for (j = 0; j < maps; ++j) {
+            const VisitedMap *map = owner->staticMaps[j];
+            if (j) out(",");
+            if (!map) { out("null"); continue; }
+            out("{\"db_id\":%d,\"map_id\":%d,\"opaque_fog\":%d,\"cells_u32\":",
+                map->db_id, map->map_id, map->opaque_fog);
+            words(map->cells, sizeof(map->cells)); out("}");
+        }
+        out("]}");
+    }
+    out("]");
+}
+
 unsigned armportReplayStateSave(const char *directory, unsigned index, char digest[65])
 {
     int idx, axis;
@@ -810,7 +864,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         if (!e) continue;
         check(e->svr_idx == idx);
         out("%s{\"svr_idx\":%d,\"id\":%u,\"db_id\":%d,\"type\":%d,\"name\":", count++ ? "," : "", idx, e->id, e->db_id, ENTTYPE(e));
-        string(e->name);
+        fixed_string(e->name, sizeof(e->name));
         out(",\"pkt_id_create\":%u,\"net_ipos\":[%d,%d,%d],\"wire_qrot9\":[", e->pkt_id_create, e->net_ipos[0], e->net_ipos[1], e->net_ipos[2]);
         valid = orientation[idx].id == e->id && orientation[idx].create == e->pkt_id_create ? orientation[idx].valid : 0;
         for (axis = 0; axis < 3; ++axis) {
@@ -845,6 +899,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"supergroup\":"); entity_supergroup_state(e);
         out(",\"power_customizations\":"); entity_power_customizations(e);
         out(",\"strings\":"); entity_strings(e->strings);
+        out(",\"receive_metadata\":"); entity_receive_metadata(e);
         out("}");
     }
     out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);
@@ -852,6 +907,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"group_map_names\":"); group_map_names();
     out(",\"world\":"); world_receive_state();
     out(",\"story\":"); story_receive_state();
+    out(",\"visited_maps\":"); visited_map_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));

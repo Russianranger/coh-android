@@ -947,3 +947,26 @@ The SHA-256-verified ARM64 artifact 12608430696 identifies 18 game-command types
 in id1-a and authenticates its 117 state hashes. The committed command inventory
 `evidence/m3-observed-game-commands-40217209257.json` guides remaining coverage;
 command execution counts alone do not establish destination-state coverage.
+
+### Retained visited-map and entity metadata observations (2026-10-25 UTC)
+
+Patch 0081 exposes existing visited-map storage through a build-guarded const
+accessor. The snapshot does not call automap_getMapStruct, whose normal behavior
+loads files and creates owners. Original owner/map order, nulls, db/map IDs, fog
+flags and all 256 U32 cell words are retained. Original local visited-map cache
+data can also populate this storage; it is compared literally. Derived fog
+grids, minimap bitmaps/textures and remaining UI state are not covered.
+
+Entity observations add individual mode/vision bits, scalar taskforce/flashback/
+NPC/gender fields, world-group/animation/pet strings, visibility/contact/pet flags
+and special-power state. The received integer PvP delay is retained separately
+from the excluded host update clock. Entity names must terminate within storage.
+No new packet-ID field or synthetic-ID normalization is introduced.
+
+Evidence: `evidence/m3-map-entity-metadata-controls.json`. Patchwork exports 81
+patches with all prior 80 patch files byte-identical; upstream/ is unchanged.
+Actual accessor/writer sanitizer controls, ARM64 then i686 native compilation
+(one compiler) and 156 Python tests pass. Host fixture layouts are not native
+ABI proof; only local LeakSanitizer is disabled for /proc. Fresh runtime is
+pending: replay 40220658755 predates these additions. Full-schema, full-state
+and M3 flags remain false.

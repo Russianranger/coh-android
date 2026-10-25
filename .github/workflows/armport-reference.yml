@@ -242,6 +242,8 @@ jobs:
         run: python3 armport/tests/receiver_player_identity_state.py
       - name: Check retained character identity and combat observations
         run: python3 armport/tests/receiver_character_core_state.py
+      - name: Check retained entity metadata observations
+        run: python3 armport/tests/receiver_entity_metadata_state.py
       - name: Check actual dynamic-group and sky snapshot serializer with sanitizers
         run: python3 armport/tests/receiver_world_state.py
       - id: replay-exe-cache
@@ -268,6 +270,8 @@ jobs:
       - name: Check actual contact receive observer and serializer
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_contact_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original visited-map accessor and retained-state writer
+        run: python3 armport/tests/receiver_visited_map_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:
