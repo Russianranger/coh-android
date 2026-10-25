@@ -305,6 +305,9 @@ jobs:
       - name: Check original target receiver and literal reference snapshots
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_target_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original buff receiver and const retained view
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_buff_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:

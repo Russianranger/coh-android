@@ -88,3 +88,4 @@
 0088-replay-existing-ui-mode-values.patch
 0089-replay-existing-door-transition-state.patch
 0090-observe-world-camera-player-inputs.patch
+0091-replay-existing-buff-view.patch

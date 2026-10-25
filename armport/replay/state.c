@@ -42,6 +42,8 @@
 #include "gameComm/itemselect.h"
 #include "UI/uiCursor.h"
 #include "UI/uiTarget.h"
+#include "UI/uiBuff.h"
+#include "entity/attrib_description.h"
 #include "gameComm/wdwbase.h"
 #include "gameComm/dooranimcommon.h"
 #include "UI/uiWindows.h"
@@ -745,6 +747,33 @@ static void default_power_state(const Power *power)
     out("}");
 }
 
+static void entity_buff_state(const Entity *entity)
+{
+    int i, count = armportReplayBuffCount(entity);
+    check(count >= 0 && count <= 8192);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        ArmPortReplayBuffView view;
+        int j, present = armportReplayBuffAt(entity, i, &view);
+        check(present >= 0 && present <= 1);
+        if (i) out(",");
+        if (!present) { out("null"); continue; }
+        check(view.description_count >= 0 && view.description_count <= 8192);
+        check(view.magnitude_count >= 0 && view.magnitude_count <= 8192);
+        out("{\"power\":"); base_power(view.power);
+        out(",\"uid\":%d,\"blink\":%d,\"delete_mark\":%d,\"descriptions\":[", view.uid, view.blink, view.delete_mark);
+        for (j = 0; j < view.description_count; ++j) {
+            const AttribDescription *description = view.descriptions[j];
+            if (j) out(",");
+            if (!description) { out("null"); continue; }
+            out("{\"key\":%d,\"name\":", description->iKey); string(description->pchName); out("}");
+        }
+        out("],\"magnitude_f32_bits\":"); words(view.magnitudes, view.magnitude_count * sizeof(*view.magnitudes));
+        out("}");
+    }
+    out("]");
+}
+
 static void character_target_state(const Character *p)
 {
     /* EntityRef is S64, not a pointer. Preserve both literal U32 words. */
@@ -1277,6 +1306,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
         out(",\"status_state\":"); entity_status_state(e);
+        out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");
     }

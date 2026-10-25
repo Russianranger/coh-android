@@ -747,3 +747,21 @@ values, bounds and immutability. ARM64 then i686 state.c compilation and 161
 Python tests pass. CI includes this control on future comparison builds. All
 90 native patches and upstream/ unchanged. Host dependencies are substitutes;
 runtime qualification remains pending and full-state/M3 flags remain false.
+
+### Retained buff observations (2026-10-25 UTC)
+
+Patch 0091 adds a replay-only const view of the private PowerBuff storage.
+Snapshots preserve list order/nulls, power identity, UID, blink/delete flags,
+descriptor key/name identities and magnitude F32 bits. Descriptor and magnitude
+counts remain independent; no repair or normalization is added. Timer, tooltip
+and UI window are excluded. Original full stale updates can still mark buffs
+for deletion before checking staleness; the observer preserves those marks.
+
+Evidence: `evidence/m3-buff-state-controls.json`: 21 ASan/UBSan cases execute
+original receive/find/update/mark/clear and actual view/writer code, covering
+full/diff/delete/stale/no-player/unknown-descriptor paths, retained absent mods,
+bounds and source/array immutability. Packet/lookup/earray/free dependencies are
+substituted, with fixture arena cleanup; original ownership is not qualified.
+Native uiBuff.c/state.c compile ARM64 then i686 with one compiler; 161 Python
+tests pass. Patchwork exports 91 patches, prior 90 byte-identical, upstream/
+unchanged. Runtime and reviewer qualification remain pending; no M3 pass.
