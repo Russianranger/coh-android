@@ -747,6 +747,29 @@ static void default_power_state(const Power *power)
     out("}");
 }
 
+static void entity_packet_order_state(const Entity *e)
+{
+    /* Literal retained IDs; no additions to INITIAL-ID canonicalization. */
+    out("{");
+    out("\"pkt_id_friendslist\":%u", (unsigned)e->pkt_id_friendslist);
+    out(",\"pkt_id_seq_move\":%u", (unsigned)e->pkt_id_seq_move);
+    out(",\"pkt_id_seq_triggermove\":%u", (unsigned)e->pkt_id_seq_triggermove);
+    out(",\"pkt_id_logout\":%u", (unsigned)e->pkt_id_logout);
+    out(",\"pkt_id_supergroup\":%u", (unsigned)e->pkt_id_supergroup);
+    out(",\"pkt_id_costume\":%u", (unsigned)e->pkt_id_costume);
+    out(",\"pkt_id_powerCust\":%u", (unsigned)e->pkt_id_powerCust);
+    out(",\"pkt_id_xlucency\":%u", (unsigned)e->pkt_id_xlucency);
+    out(",\"pkt_id_titles\":%u", (unsigned)e->pkt_id_titles);
+    out(",\"pkt_id_character_stats\":%u", (unsigned)e->pkt_id_character_stats);
+    out(",\"pkt_id_targetting\":%u", (unsigned)e->pkt_id_targetting);
+    out(",\"pkt_id_status_effects\":%u", (unsigned)e->pkt_id_status_effects);
+    out(",\"pkt_id_buffs\":%u", (unsigned)e->pkt_id_buffs);
+    out(",\"pkt_id_debug_info\":%u", (unsigned)e->pkt_id_debug_info);
+    out(",\"pkt_id_rare_bits\":%u", (unsigned)e->pkt_id_rare_bits);
+    out(",\"pkt_id_state_mode\":%u", (unsigned)e->pkt_id_state_mode);
+    out("}");
+}
+
 static void entity_buff_state(const Entity *entity)
 {
     int i, count = armportReplayBuffCount(entity);
@@ -1306,6 +1329,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
         out(",\"status_state\":"); entity_status_state(e);
+        out(",\"packet_order\":"); entity_packet_order_state(e);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");

@@ -1238,3 +1238,20 @@ substituted, with fixture arena cleanup; original ownership is not qualified.
 Native uiBuff.c/state.c compile ARM64 then i686 with one compiler; 161 Python
 tests pass. Patchwork exports 91 patches, prior 90 byte-identical, upstream/
 unchanged. Runtime and reviewer qualification remain pending; no M3 pass.
+
+### Literal receive-channel packet IDs (2026-10-25 UTC)
+
+Snapshots now include all 16 additional scalar U32 receive-channel packet IDs
+from entIncludeClient.h. Existing create/position/quaternion ID fields retain
+their existing paths. No additional canonicalization is applied. If the new
+fields expose INITIAL-ID sensitivity, the comparison must fail pending an
+individually enumerated reviewer decision. Structured full/basic AttrDef ID
+maps remain an explicit gap.
+
+Evidence: `evidence/m3-packet-order-controls.json`: ten ASan/UBSan cases cover
+the original header fields/update macro, ascending/stale/equal IDs, literal
+0/1/31/32/full-width values, bounds and immutability. A new comparison control
+proves newly added IDs are not canonicalized and genuine ID1/31 differences
+fail while same-ID comparisons pass. All 162 Python tests and ARM64-then-i686
+state.c compilation pass. No native patch or upstream/ change; runtime still
+pending and no full-state/M3 claim.
