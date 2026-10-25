@@ -378,6 +378,8 @@ jobs:
         run: python3 armport/tests/world_def_trace.py --source "$RUNNER_TEMP/armport/src"
       - name: Model-bearing traversal observation controls
         run: python3 armport/tests/world_model_paths.py --source "$RUNNER_TEMP/armport/src"
+      - name: Original model lookup results and bounded concurrent diagnostics
+        run: python3 armport/tests/group_model_lookup.py --source "$RUNNER_TEMP/armport/src"
 
       - name: Configure
         env:

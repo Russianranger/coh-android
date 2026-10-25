@@ -870,7 +870,7 @@ full replay/schema, rendering and milestone qualification remain pending.
 
 Patch 0093 changes only `1 << count` to `1U << count` in the original taskforce
 parameter receive loop. The old expression has undefined signed left shift at
-slot32 even with an empty enabled mask. The source-derived UBSan negative
+bit31 (the 32nd slot) even with an empty enabled mask. The source-derived UBSan negative
 control reproduces that error; the unsigned form preserves the U32 mask and
 original read order, retention and clock additions. Exported with patchwork;
 prior 92 patches byte-identical and upstream/ unchanged.
@@ -903,3 +903,35 @@ dependencies are substituted. Native entrecv.c/state.c compile sequentially
 ARM64 then i686; 168 Python tests pass. Patchwork exports94 patches with prior93
 byte-identical and upstream/ unchanged. Current replay40243785888 tests dd0c3dee
 before this addition; keep it running. Full-schema/M3 and merge approval false.
+
+Retained first/nocoll control flags and slave orientation F32 bits are now
+observed; local input also writes these destinations. Motion/prediction and
+local input clocks remain excluded. Evidence: evidence/m3-control-state-controls.json.
+
+### Original world-model lookup observations (2026-10-25 UTC)
+
+Patch0095 observes the existing groupModelFind results separately: missing
+object-library entry, present entry but null modelFind result, or found model.
+The network getGeo caller does not report a null model; prior traversal samples
+therefore cannot distinguish these lookup failures. Each outcome has an atomic
+process-wide16-record budget. Bounded labels and original loadstate/vertex/triangle
+metadata are recorded; names are diagnostic labels, not acceptance identities.
+No second lookup, fallback, culling/data/packet changes or root-cause claim.
+
+Evidence: `evidence/m3-group-model-lookup-controls.json`. Four source-derived
+ASan/UBSan configurations compare original and observed call counts/returns,
+exercise eight concurrent callers, independent budgets, long/sanitized labels,
+and disabled client/server guards. Lookup/Win32 atomic/environment/trace adapters
+limit host coverage. Native group.c compiles sequentially ARM64 then i686.
+All173 Python tests pass; the report rejects malformed/inconsistent/over-limit
+observations and preserves complete isolated records without a rendering verdict.
+
+All36 receiver-state programs also pass after fixing the contact test's overly
+broad function extraction, which unintentionally included the new taskforce
+observer. The intended original function body is still executed. All95 patches
+were exported with patchwork, prior94 byte-identical; upstream/ unchanged.
+Attempted local full links cannot run because these partial build directories
+lack most original objects/libraries; only changed-unit compilation is qualified.
+Full linking/runtime remains CI work. Keep active replay40243785888 and Atlas
+40240791819 on their existing heads; this pending delta is not qualified there.
+Full-schema/M3 completion, merge approval and Thor readiness remain false.
