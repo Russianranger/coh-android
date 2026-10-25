@@ -1759,3 +1759,28 @@ updates/null taskforce, retained slots, clock addition, bounds and immutability.
 Packet/clock dependencies are substitutes. Native entrecv.c/state.c compile
 ARM64 then i686 with one compiler; 163 Python tests pass. Full-state/runtime
 qualification and milestone approval remain pending.
+
+### Completed strict replay and camera report preparation (2026-10-25 UTC)
+
+Replay 40240791817 at f6332f29 completes both target executions and the outside
+error comparison successfully, but its partial-state comparison fails. Both
+SHA-256-verified receiver artifacts reproduce all seven CI comparisons exactly:
+three cross-target and two same-ID repeat comparisons match; both INITIAL-ID
+sensitivity comparisons differ at only snapshot0 in the same eleven enumerated
+scalar fields. All702 snapshot digests verify. Evidence and exact command:
+`evidence/m3-strict-partial-replay-40240791817.json`. The pending Sol proposal
+remains unimplemented; no full-state/M3 pass, and no extra data exceptions.
+
+A diagnostic camera report pairs the existing 0090 samples with validated model
+and draw frames/threads. It retains camera/view/player coordinates and reports
+the camera transformed by its view matrix plus camera-player distance. It does
+not impose tolerances, change rendering acceptance or establish a root cause.
+Five focused controls (including torn/malformed/nonfinite/duplicate/bounds and
+report-caller paths) and all168 Python tests pass. Evidence:
+`evidence/m3-world-camera-report-controls.json`. Atlas artifact still pending.
+
+Independent pet/attribute-ID/sequence/NetFx/taskforce work through dd0c3dee is
+now on armport/replay-retained-state and replay 40243785888 is running. Atlas
+40240791819 remains undisturbed at f6332f29. No duplicate Atlas run is started;
+the replay-only branch is excluded by armport-build.yml. Do not move that
+replay branch with further replay/native changes until its run completes.

@@ -10,6 +10,7 @@ from pathlib import Path
 import client_errors
 import world_draw_report
 import world_model_report
+import world_camera_report
 
 
 def tail(text, limit=3600):
@@ -55,6 +56,10 @@ def sections(evidence, client):
     (evidence / 'world-model-summary.json').write_text(json.dumps(models, indent=2) + '\n')
     yield 'ArmPort M3 model traversal', json.dumps(
         {key: value for key, value in models.items() if key != 'samples'}, separators=(',', ':'))
+    camera = world_camera_report.summarize(read(client / 'zone-trace.jsonl').splitlines(keepends=True))
+    (evidence / 'world-camera-summary.json').write_text(json.dumps(camera, indent=2) + '\n')
+    yield 'ArmPort M3 camera/player inputs', json.dumps(
+        {key: value for key, value in camera.items() if key != 'samples'}, separators=(',', ':'))
     if status.get('frame_checks'):
         yield 'ArmPort M3 final frame check', json.dumps(status['frame_checks'][-1], separators=(',', ':'))
     if status.get('qa_notice_actions'):

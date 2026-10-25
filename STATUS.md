@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
 - Sol midpoint finding 5644680146 fixed by 0082; fresh rendering run pending.
 - Atlas 40227784437: no rendered world; camera diagnosis pending 40240791819.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40227784453: partial pass; 40240791817 qualifies later observers.
+- Replay 40240791817: cross-target match; 11 INITIAL-ID fields need Sol decision.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.
