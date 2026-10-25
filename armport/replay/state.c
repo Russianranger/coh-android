@@ -31,10 +31,12 @@
 #include "entity/teamCommon.h"
 #include "entity/Supergroup.h"
 #include "entity/RewardToken.h"
+#include "entity/friendCommon.h"
 #include "UI/uiGroupWindow.h"
 #include "UI/uiAutomap.h"
 #include "UI/uiCompass.h"
 #include "UI/uiTurnstile.h"
+#include "UI/uiKeybind.h"
 #include "graphics/textureatlas.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
@@ -686,6 +688,68 @@ static void deletion(unsigned pkt_id, int idx, int id)
 
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
+static void friends_receive_state(const Entity *e)
+{
+    int i;
+    check(e->friendCount >= 0 && e->friendCount <= MAX_FRIENDS);
+    check(!e->friendCount || e->friends != NULL);
+    out("[");
+    for (i = 0; i < e->friendCount; ++i) {
+        const Friend *f = &e->friends[i];
+        out("%s{\"db_id\":%d,\"online\":%d,\"map_id\":%d,\"name\":", i ? "," : "", f->dbid, f->online, f->map_id);
+        string(f->name); out(",\"map_name\":"); string(f->mapname);
+        out(",\"class\":"); string(f->arch); out(",\"origin\":"); string(f->origin);
+        out("}");
+    }
+    out("]");
+}
+static void player_keybind_state(const EntPlayer *p)
+{
+    int i;
+    out("{\"profile\":"); fixed_string(p->keyProfile, sizeof(p->keyProfile));
+    out(",\"bindings\":");
+    if (!p->keybinds) out("null");
+    else {
+        out("[");
+        for (i = 0; i < BIND_MAX; ++i) {
+            const KeyBind *b = &p->keybinds[i];
+            out("%s{\"key\":%d,\"modifier\":%d,\"secondary\":%d,\"command\":", i ? "," : "", b->key, b->modifier, b->secondary);
+            string(b->command[0]); out("}");
+        }
+        out("]");
+    }
+    out("}");
+}
+static void player_chat_state(const EntPlayer *p)
+{
+    const ChatSettings *s = &p->chat_settings;
+    int i;
+    out("{\"help_added\":%d,\"send_channel\":%d,\"user_send_channel\":%d,\"options\":%u,\"minimized\":%d,\"windows\":[",
+        p->helpChatAdded, p->chatSendChannel, s->userSendChannel, (unsigned)s->options, s->primaryChatMinimized);
+    for (i = 0; i < MAX_CHAT_WINDOWS; ++i) {
+        const ChatWindowSettings *w = &s->windows[i];
+        out("%s{\"tabs\":%u,\"selected_top\":%d,\"selected_bottom\":%d,\"divider_f32_bits\":", i ? "," : "", (unsigned)w->tabListBF, w->selectedtop, w->selectedbot);
+        words(&w->divider, sizeof(w->divider)); out("}");
+    }
+    out("],\"tabs\":[");
+    for (i = 0; i < MAX_CHAT_TABS; ++i) {
+        const ChatTabSettings *t = &s->tabs[i];
+        if (i) out(",");
+        out("{\"name\":"); fixed_string(t->name, sizeof(t->name));
+        out(",\"system_channels\":"); words(t->systemChannels, sizeof(t->systemChannels));
+        out(",\"user_channels\":%u,\"options\":%u,\"default_channel\":%d,\"default_type\":%d}",
+            (unsigned)t->userBF, (unsigned)t->optionsBF, t->defaultChannel, t->defaultType);
+    }
+    out("],\"channels\":[");
+    for (i = 0; i < MAX_CHAT_CHANNELS; ++i) {
+        const ChatChannelSettings *c = &s->channels[i];
+        if (i) out(",");
+        out("{\"name\":"); fixed_string(c->name, sizeof(c->name));
+        out(",\"options\":%u,\"color1\":%u,\"color2\":%u}", (unsigned)c->optionsBF, (unsigned)c->color1, (unsigned)c->color2);
+    }
+    out("]}");
+}
+
 static void turnstile_mission_state(const TurnstileMissionClient *m)
 {
     if (!m) { out("null"); return; }
@@ -1027,6 +1091,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"receive_core\":"); player_receive_core(e->pl);
             out(",\"identity_state\":"); player_identity_state(e->pl);
             out(",\"turnstile_state\":"); player_turnstile_state(e->pl);
+            out(",\"keybind_state\":"); player_keybind_state(e->pl);
+            out(",\"chat_state\":"); player_chat_state(e->pl);
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
@@ -1034,6 +1100,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"power_customizations\":"); entity_power_customizations(e);
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
+        out(",\"friends\":"); friends_receive_state(e);
         out("}");
     }
     out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);

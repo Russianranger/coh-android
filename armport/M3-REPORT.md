@@ -1423,3 +1423,25 @@ the prior 84 are byte-identical and upstream/ unchanged. Host fixtures do not
 prove native ABI; only local LeakSanitizer is disabled for /proc. Runtime is
 pending and replay 40224584944 tests earlier 5919e8c, not these additions.
 All full-schema/full-state/M3 completion flags remain false.
+
+### Retained friends, saved keybinds and chat settings (2026-10-25 UTC)
+
+Snapshots now retain friend values through the original friendCount (bounded
+to MAX_FRIENDS), all 256 saved binding slots and their retained profile, and
+all chat window/tab/channel settings. Final slots, unsigned masks/colors and
+individual F32 divider bits are included. Chat names are the retained strings
+after original localization, not a new raw-wire claim. No receiver changes.
+
+Friend packet-order send/last_pak_id, map-info pointers, unused descriptions,
+runtime binding profiles/generated uIDs/pressed states/command[1..3], deprecated
+chat systemBF and live chat message/window objects remain uncovered. No new
+packet-ID normalization. These exclusions keep the full-schema flag false.
+
+Evidence: `evidence/m3-communication-state-controls.json`. Seventeen actual-writer
+cases and the original keybind receiver pass ASan/UBSan, checking its 257 string
+and 512 word reads, masks, Dev profile, null/order/final slots, mutation
+sensitivity, source immutability and count/storage/string/output bounds.
+state.c compiles for ARM64 then i686 with one compiler. Host fixtures are not
+native ABI proof; only local LeakSanitizer is disabled for /proc. No new patch;
+85 patch files remain unchanged, as does upstream/. Runtime is pending;
+40224584944 tests earlier 5919e8c. Full-state and M3 completion remain false.
