@@ -1723,3 +1723,20 @@ Proposed decision for Sol: permit only these enumerated fields, only snapshot0
 in the ID-sensitivity comparison, only values equal to that run's INITIAL ID.
 This proposal is NOT implemented or approved; strict comparison stays unchanged,
 all other/new structured IDs stay literal. Full-schema/M3 remain false.
+
+### Pending NetFx receive-list observations (2026-10-25 UTC)
+
+Snapshots now observe the retained NetFx queue in original order: command,
+literal IDs/handle, received delay/duration/radius F32 bits, flags, tint and
+active origin/target fields. Inactive fields can retain unwritten storage and
+are excluded, as are server bookkeeping and renderer trackers. Client-created
+effects may also populate this queue; no exclusive wire-origin claim is made.
+Unknown target/origin types retain their literal tags with null active values.
+
+Evidence: `evidence/m3-netfx-receive-controls.json`: 19 original-receiver/actual
+writer ASan/UBSan cases pass, including ordered append, destroy command, both
+position/entity branches, invalid type error path, full-width values, NaN and
+negative-zero bits, source immutability, 8192-entry boundary and bounds failures.
+Packet/allocator/demo/debug dependencies are substituted. Both native targets
+compile sequentially and 163 Python tests pass. No native patch/upstream change;
+full replay/schema, rendering and milestone qualification remain pending.

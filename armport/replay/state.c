@@ -45,6 +45,7 @@
 #include "UI/uiBuff.h"
 #include "entity/attrib_description.h"
 #include "entity/attrib_net.h"
+#include "entity/netfx.h"
 #include <utilitieslib/utils/textparser.h>
 #include "gameComm/wdwbase.h"
 #include "gameComm/dooranimcommon.h"
@@ -769,6 +770,42 @@ static void entity_pet_owner_state(const Entity *e)
     out("}");
 }
 
+static void entity_netfx_receive_state(const Entity *e)
+{
+    int i;
+    check(e->netfx_count >= 0 && e->netfx_count <= 8192);
+    check(e->netfx_count <= e->netfx_max && (!e->netfx_count || e->netfx_list));
+    out("[");
+    for (i = 0; i < e->netfx_count; ++i) {
+        const NetFx *f = &e->netfx_list[i];
+        out("%s{\"command\":%u,\"net_id\":%u,\"handle\":%u,\"pitch\":%u,\"power_flags\":%u,"
+            "\"has_tint\":%u,\"tint\":", i ? "," : "", (unsigned)f->command,
+            f->net_id, f->handle, (unsigned)f->pitchToTarget, (unsigned)f->powerTypeflags,
+            (unsigned)f->hasColorTint);
+        if (f->hasColorTint) out("[%u,%u]", f->colorTint.primary.integer, f->colorTint.secondary.integer);
+        else out("null");
+        out(",\"delay_f32_bits\":"); words(&f->clientTimer, sizeof(f->clientTimer));
+        out(",\"trigger_fx_id\":%u,\"duration_f32_bits\":", f->clientTriggerFx);
+        words(&f->duration, sizeof(f->duration)); out(",\"radius_f32_bits\":"); words(&f->radius, sizeof(f->radius));
+        out(",\"power\":%u,\"debris\":%u,\"origin_type\":%u,\"origin\":", (unsigned)f->power,
+            f->debris, (unsigned)f->originType);
+        if (f->originType == NETFX_POSITION) words(f->originPos, sizeof(f->originPos));
+        else if (f->originType == NETFX_ENTITY) out("{\"entity\":%u,\"bone\":%u}", f->originEnt, (unsigned)f->bone_id);
+        else out("null");
+        out(",\"target_type\":%u,\"target\":", (unsigned)f->targetType);
+        if (f->targetType == NETFX_POSITION) {
+            out("{\"position_f32_bits\":"); words(f->targetPos, sizeof(f->targetPos));
+            out(",\"entity\":%u}", f->targetEnt);
+        } else if (f->targetType == NETFX_ENTITY) out("{\"entity\":%u}", f->targetEnt);
+        else out("null");
+        out("}");
+    }
+    /* Observe only the active receive union selected by each type. Unwritten
+     * inactive coordinates/tint and renderer/server bookkeeping are excluded.
+     */
+    out("]");
+}
+
 static void entity_sequence_receive_state(const Entity *e)
 {
     int i;
@@ -1409,6 +1446,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"attribute_packet_order\":"); entity_attribute_packet_order_state(e);
         out(",\"pet_ownership\":"); entity_pet_owner_state(e);
         out(",\"sequence_receive\":"); entity_sequence_receive_state(e);
+        out(",\"netfx_receive\":"); entity_netfx_receive_state(e);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");

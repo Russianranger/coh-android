@@ -323,6 +323,9 @@ jobs:
       - name: Check original sequence receives and retained queue
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_sequence_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original NetFx receiving and active fields
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_netfx_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:
