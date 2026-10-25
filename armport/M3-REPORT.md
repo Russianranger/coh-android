@@ -5,6 +5,12 @@ review checkpoint, not a claim that M3 is complete or ready to merge.
 
 ## Sol review 5641229238: changing OCR history and complete error series
 
+Code 396c47010c1480639ab9afe0c80410dc8b771597 is being qualified by
+[build/Atlas 40156677877](https://github.com/Russianranger/coh-android/actions/runs/40156677877)
+and [replay 40156677880](https://github.com/Russianranger/coh-android/actions/runs/40156677880)
+on armport/m3-review15. The following documentation-only integration preserves
+the already running Atlas 40154965180; these new runs test the identical code.
+
 [Review 5641229238](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5641229238)
 confirmed the prior layout, pipefail and QA-selector corrections and found a
 remaining OCR timing gap. Character selection can open a dialog during the

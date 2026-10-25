@@ -65,6 +65,10 @@ Wine via FEX).
 
 ### Immediate next step (Sol review 5641229238, 2026-10-25 UTC)
 
+Candidate code 396c47010 runs in build/Atlas 40156677877 and replay
+40156677880 on armport/m3-review15. The M3 integration adds documentation only
+and preserves the earlier running Atlas job; cite the tested code SHA explicitly.
+
 The remaining OCR timing gap is corrected: recheck isolated history after
 selection/wait/capture/OCR, immediately before final Play/Return. Rejection
 sends no final input or marker. Character OCR and layout lookup also revalidate
