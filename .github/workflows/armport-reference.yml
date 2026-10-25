@@ -271,7 +271,14 @@ jobs:
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_contact_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Check original visited-map accessor and retained-state writer
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_visited_map_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original karma receiver and retained widget writer
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_karma_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check received desaturation observation before animation
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_desaturation_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:

@@ -33,6 +33,7 @@
 #include "entity/RewardToken.h"
 #include "UI/uiGroupWindow.h"
 #include "UI/uiAutomap.h"
+#include "UI/uiCompass.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
 #include "storyarc/storyarcClient.h"
@@ -52,6 +53,7 @@ static char *buffer;
 static size_t used;
 static struct { unsigned id, create, valid, raw[3]; } orientation[MAX_ENTITIES_PRIVATE];
 static struct { unsigned seconds, valid; } alignment_delays[ALIGNMENT_POINT_MAX_COUNT];
+static struct { unsigned valid, bits[4]; } desaturation;
 
 static void check_at(int ok, const char *condition, int line)
 {
@@ -107,6 +109,7 @@ void armportReplayStateInit(void)
     check(buffer != NULL);
     memset(orientation, 0, sizeof(orientation));
     memset(alignment_delays, 0, sizeof(alignment_delays));
+    memset(&desaturation, 0, sizeof(desaturation));
     active = 1;
 }
 void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
@@ -680,6 +683,44 @@ static void deletion(unsigned pkt_id, int idx, int id)
 
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
+void armportReplayDesaturation(const float *delay, const float *weight, const float *target, const float *fade)
+{
+    if (!active) return;
+    check(sizeof(*delay) == sizeof(desaturation.bits[0]));
+    memcpy(&desaturation.bits[0], delay, sizeof(*delay));
+    memcpy(&desaturation.bits[1], weight, sizeof(*weight));
+    memcpy(&desaturation.bits[2], target, sizeof(*target));
+    memcpy(&desaturation.bits[3], fade, sizeof(*fade));
+    desaturation.valid = 1;
+}
+static void desaturation_receive_state(void)
+{
+    if (!desaturation.valid) { out("null"); return; }
+    words(desaturation.bits, sizeof(desaturation.bits));
+}
+
+static void karma_receive_state(void)
+{
+    int i, j, count = eaSize(&scriptUIKarmaWidgetList);
+    check(count >= 0 && count <= 8192);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const ScriptUIClientWidget *widget = scriptUIKarmaWidgetList[i];
+        int variables;
+        if (i) out(",");
+        if (!widget) { out("null"); continue; }
+        variables = eaSize(&widget->varList);
+        check(variables >= 0 && variables <= 8192);
+        out("{\"type\":%d,\"id\":%u,\"variables\":[", (int)widget->type, widget->uniqueID);
+        for (j = 0; j < variables; ++j) {
+            if (j) out(",");
+            string(widget->varList[j]);
+        }
+        out("]}");
+    }
+    out("]");
+}
+
 static void power_customization_list(const PowerCustomizationList *list)
 {
     int i, count;
@@ -908,6 +949,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"world\":"); world_receive_state();
     out(",\"story\":"); story_receive_state();
     out(",\"visited_maps\":"); visited_map_state();
+    out(",\"karma_widgets\":"); karma_receive_state();
+    out(",\"desaturation_received_f32_bits\":"); desaturation_receive_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));

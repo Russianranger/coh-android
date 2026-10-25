@@ -1373,3 +1373,29 @@ outside-error comparisons (job 121259795237). This qualifies the retained
 supergroup/customization/player-core additions; all full-state/M3 flags remain
 false. Replay 40224584944 at 5919e8c tests later identity/map/metadata additions
 and 0082; it does not include 0083. Do not claim milestone or merge approval.
+
+### Retained karma and received desaturation observations (2026-10-25 UTC)
+
+Partial snapshots now retain ordered karma widgets, literal unsigned identities,
+logical types and all retained variable strings/nulls. Original receiver controls
+cover creation, updates, retained tails after shorter updates and inactive clear.
+General script-UI widgets/packet order/pending updates and tooltip caches remain
+uncovered. No ID normalization is added.
+
+Patch 0084 observes the four desaturation F32 values immediately after the
+original four reads and assignments. The observer is inert outside replay.
+Snapshots retain those individual bits, or null before the first receive,
+instead of the live fields subsequently changed by game.c frame-time animation.
+Original reads, stored bits and animation remain unchanged; this records received
+representation, not complete current renderer state.
+
+Evidence: `evidence/m3-karma-desaturation-controls.json`. Fourteen karma cases,
+six original/patched desaturation off/on cases plus three replacements pass
+ASan/UBSan controls. ARM64 then i686 state/receive units compile with one compiler;
+156 Python tests pass. Fixture types are not native ABI proof; only local
+LeakSanitizer is disabled for /proc. Patchwork exports 84 patches with the prior
+83 byte-identical; upstream/ is unchanged. The visited-map CI control now uses
+the same cache-miss condition as source preparation, as do the new controls.
+
+Runtime is pending: replay 40224584944 tests earlier 5919e8c, not these additions
+or model diagnostic 0083. Full-schema/full-state/M3 completion stays false.
