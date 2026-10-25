@@ -365,6 +365,9 @@ jobs:
             printf '::notice title=ARM64 VBO %s::%s\n' "$variant" "$out"
           done
 
+      - name: Bounded world-render diagnostic control
+        run: python3 armport/tests/world_trace.py --source "$RUNNER_TEMP/armport/src"
+
       - name: Configure
         env:
           COH_LLVM_MINGW: /opt/llvm-mingw

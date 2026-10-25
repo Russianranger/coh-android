@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (76 patches including partial replay observers; Astra leads,
+M3 into Atlas (77 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -34,7 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol 5643123702: final retry parser corrected; 135 tests pass; runtime pending.
-- 0074 defers power-preview queue to the destination menu; 0075 fixes CRT log buffering.
+- 0077 observes world traversal/model requests; both target units compile, runtime pending.
 - Atlas 40189560565: connection/guest pass; terrain absent, two post-load swap errors.
 - Replay 40170942751: partial snapshots match diagnostically; i686 SIGKILL still rejects.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

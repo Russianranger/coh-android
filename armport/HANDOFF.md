@@ -63,6 +63,23 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Bounded world traversal diagnostic (2026-10-25 UTC)
+
+Patch 0077, exported with patchwork.py, adds eight sampled main-viewport
+world.draw records under the existing stdio opt-in. It counts roots,
+definition visits, selected culling branches, model-load/alpha rejections
+and world-sort requests. It does not change visibility decisions, geometry,
+assets, inputs or rendering acceptance. Counts are not proof of GPU drawing.
+This separates traversal/culling from missing/unloaded geometry and submission
+in the next Atlas run; the terrain cause in 40189560565 remains unproved.
+Both changed translation units compile for ARM64 then i686 at one compiler
+process. The source-derived ASan/UBSan controller emits 0 records when off
+and exactly 8 across 5,000 frames when on; shell/non-main/empty-world calls
+are excluded. Local LeakSanitizer alone is disabled because /proc tasks are
+hidden; the added libraries CI control uses the default sanitizer settings.
+Evidence: evidence/m3-world-render-observation.json. Runtime pending; preserve
+active Atlas 40197277872 and replay 40200224489, which test earlier heads.
+
 ### Replay exit observation and rejected snapshot diagnostic (2026-10-25 UTC)
 
 All 702 snapshots retained by run 40170942751 authenticate against their
