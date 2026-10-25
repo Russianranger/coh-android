@@ -1,0 +1,68 @@
+{
+  "scope": "additional partial power inventory observations, not full-state qualification",
+  "changed_source": "armport/replay/state.c",
+  "source_sha256": "ceb8310c0c9a7c83bcdffb9337c63140f390f7ffb10d19eb1bfd1ea38915e037",
+  "receive_sources": [
+    "Common/entity/character_net.c:character_ReceivePowers",
+    "Common/entity/character_net.c:character_ReceivePowerBoost",
+    "Common/entity/character_net.c:boost_Receive",
+    "Common/entity/character_net.c:character_ReceiveBoosts",
+    "Common/entity/boost.c:boost_Create"
+  ],
+  "included": [
+    "current and active build, build levels",
+    "current and per-build power sets in original array order including null slots",
+    "power/set logical names, indices, unique ID, level bought, charges, boost slots, enabled flags",
+    "range, usage, available values as exact F32 bits",
+    "slotted/global/inventory boosts, original definition names, indices, level/combines, F32 variables, powerup reward slots",
+    "full fixed inspiration and boost inventory arrays including unused/null slots"
+  ],
+  "excluded": [
+    "Power/Boost fTimer, host-initialized ulCreationTime",
+    "pointers, padding, UI object state, calculated power attributes",
+    "power activation/recharge/mode update storage not represented by these fields",
+    "other generic inventories, teams/tasks/UI tails and remaining receive destinations"
+  ],
+  "bounds": {
+    "earray_entries": 4096,
+    "snapshot_bytes": 16777216
+  },
+  "commands": [
+    {
+      "target": "arm64",
+      "command": "/tmp/coh-toolchain/llvm-mingw-20250910-ucrt-ubuntu-22.04-x86_64/bin/aarch64-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-arm64/_deps/chromium_zlib-src -I/tmp/coh-world-build-arm64/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-arm64/_deps/freetype-src/include -I/tmp/coh-world-build-arm64/_deps/glew-src/include -I/tmp/coh-world-build-arm64/_deps/jpeg-build -I/tmp/coh-world-build-arm64/_deps/jpeg-src -I/tmp/coh-world-build-arm64/_deps/jpgd-src/include -I/tmp/coh-world-build-arm64/_deps/vorbis-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-arm64/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-arm64/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj -c /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c",
+      "exit_code": 0,
+      "output": "In file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:15:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\n1 warning generated.\n"
+    },
+    {
+      "target": "i686",
+      "command": "/tmp/coh-toolchain/llvm-mingw-20250910-ucrt-ubuntu-22.04-x86_64/bin/i686-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCOH_ARMPORT_REFERENCE_I686=1 -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-i686/_deps/chromium_zlib-src -I/tmp/coh-world-build-i686/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-i686/_deps/freetype-src/include -I/tmp/coh-world-build-i686/_deps/glew-src/include -I/tmp/coh-world-build-i686/_deps/jpeg-build -I/tmp/coh-world-build-i686/_deps/jpeg-src -I/tmp/coh-world-build-i686/_deps/jpgd-src/include -I/tmp/coh-world-build-i686/_deps/vorbis-src/include -I/tmp/coh-world-build-i686/_deps/ogg-src/include -I/tmp/coh-world-build-i686/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-i686/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-i686/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -msse2 -mfpmath=sse -fasm-blocks -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj -c /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c",
+      "exit_code": 0,
+      "output": "In file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:15:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\n1 warning generated.\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_power_state.py",
+      "exit_code": 0,
+      "output": "power serializer: null slots, identity escaping, raw float bits, build arrays, final inventory slots, timer exclusion and bound rejection pass; ASan/UBSan enabled\n",
+      "limitation": "Only local LeakSanitizer disabled due to hidden /proc tasks; ASan/UBSan active. CI control uses defaults."
+    },
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py' -v",
+      "exit_code": 0,
+      "output": "Ran 142 tests in 4.692s\n\nOK"
+    },
+    {
+      "command": "python3 armport/scripts/check_receiver_state_preprocess.py /tmp/coh-world-build-arm64/compile_commands.json",
+      "exit_code": 0,
+      "output": "current state.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']\nold-macro negative control state.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']\ncurrent receiver.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']\nold-macro negative control receiver.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']\n"
+    },
+    {
+      "command": "python3 armport/scripts/check_receiver_state_preprocess.py /tmp/coh-world-build-i686/compile_commands.json",
+      "exit_code": 0,
+      "output": "current state.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']\nold-macro negative control state.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']\ncurrent receiver.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']\nold-macro negative control receiver.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']\n"
+    }
+  ],
+  "runtime_qualified": false,
+  "state_schema_complete": false,
+  "m3_replay_complete": false
+}

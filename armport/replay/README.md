@@ -357,3 +357,25 @@ at 20 Hz. After observing it, up to 40 bounded `/proc/<pid>/task` stat/wchan
 samples can locate a shutdown wait. It neither sends signals nor attaches a
 debugger, and cannot identify a signal sender. Unavailable observations are
 explicit. Wine/runtime qualification of this diagnostic is still pending.
+
+## Additional partial power observations (2026-10-25)
+
+The v1 partial snapshot now includes character.power_inventory: current and
+all build power arrays, stable logical definition names, decoded scalar/F32
+values, slotted/global/inventory boosts and inspirations. Array order, null
+slots and every float bit are preserved. This is an additive partial schema;
+all completeness flags remain false. No new synthetic-ID normalization is
+introduced. Local power/boost timers and host-initialized creation timestamps
+are excluded; activation/recharge/mode storage, generic inventories and other
+tail destinations still need separate observation. Same-commit six-run equality
+must be requalified after this change; earlier snapshots cannot prove it.
+
+`ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_power_state.py`
+executes the actual serializer with host fixtures under ASan/UBSan. It tests
+null slots, escaped identities, negative zero/NaN/subnormal/infinity bit
+preservation, final array slots, timer exclusion, changed decoded charges and
+bound rejection. Local LeakSanitizer alone is disabled because /proc tasks
+are hidden. CI runs the same control with its default sanitizer settings.
+Both actual state.c units compile (ARM64 then i686, one compiler); formatter
+preprocessing retains CRT calls and rejects the old macro variant as before.
+See evidence/m3-power-state-observations.json. Runtime pending.

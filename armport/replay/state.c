@@ -1,6 +1,7 @@
 /* Deterministic, explicitly partial receiver-state observations. No pointers,
  * padding, clocks, interpolation or normalized rendering quaternions are hashed.
- * Power/inventory/team/task/UI-tail coverage still needs implementation/review.
+ * Power inventory observations are partial; team/task/UI-tail and other
+ * receive destinations still need implementation/review.
  */
 #include <winsock2.h>
 #include <windows.h>
@@ -16,6 +17,8 @@
 #include "entity/entPlayer.h"
 #include "entity/character_base.h"
 #include "entity/costume.h"
+#include "entity/powers.h"
+#include "entity/boost.h"
 #include <utilitieslib/components/earray.h>
 
 /* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
@@ -130,6 +133,102 @@ static void costume(const cCostume *c)
     }
     out("]}");
 }
+
+/* Persist logical identities and individual fields, never object bytes or
+ * pointers. Preserve array order/null slots. These observations do not claim
+ * full power activation or tail-state coverage. Local power/boost timers and
+ * ulCreationTime (also initialized from the host clock by power_Create) are
+ * deliberately absent until a wire-provenance observer can separate them. */
+static void base_power(const BasePower *p)
+{
+    string(p ? p->pchFullName : NULL);
+}
+static void boost(const Boost *b)
+{
+    int i;
+    if (!b) { out("null"); return; }
+    out("{\"base\":"); base_power(b->ppowBase);
+    out(",\"index\":%d,\"level\":%d,\"combines\":%d,\"vars_f32_bits\":",
+        b->idx, b->iLevel, b->iNumCombines);
+    words(b->afVars, sizeof(b->afVars));
+    out(",\"powerup_slots\":[");
+    for (i = 0; i < sizeof(b->aPowerupSlots) / sizeof(b->aPowerupSlots[0]); ++i) {
+        const PowerupSlot *slot = &b->aPowerupSlots[i];
+        out("%s{\"type\":%d,\"name\":", i ? "," : "", slot->reward.type);
+        string(slot->reward.name);
+        out(",\"filled\":%d}", slot->filled);
+    }
+    out("]}");
+}
+static void boosts(Boost *const *items)
+{
+    int i, count = eaSize(&items);
+    check(count >= 0 && count <= 4096);
+    out("[");
+    for (i = 0; i < count; ++i) { if (i) out(","); boost(items[i]); }
+    out("]");
+}
+static void power_sets(PowerSet *const *sets)
+{
+    int i, j, count = eaSize(&sets);
+    check(count >= 0 && count <= 4096);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const PowerSet *set = sets[i];
+        int powers;
+        if (i) out(",");
+        if (!set) { out("null"); continue; }
+        out("{\"base\":"); string(set->psetBase ? set->psetBase->pchFullName : NULL);
+        out(",\"index\":%d,\"level_bought\":%d,\"powers\":[", set->idx, set->iLevelBought);
+        powers = eaSize(&set->ppPowers);
+        check(powers >= 0 && powers <= 4096);
+        for (j = 0; j < powers; ++j) {
+            const Power *power = set->ppPowers[j];
+            if (j) out(",");
+            if (!power) { out("null"); continue; }
+            out("{\"base\":"); base_power(power->ppowBase);
+            out(",\"original\":"); base_power(power->ppowOriginal);
+            out(",\"index\":%d,\"unique_id\":%d,\"level_bought\":%d,\"charges\":%d,"
+                "\"boost_slots_bought\":%d,\"enabled\":%d,\"disabled_manually\":%d,\"range_f32_bits\":",
+                power->idx, power->iUniqueID, power->iLevelBought, power->iNumCharges,
+                power->iNumBoostsBought, power->bEnabled, power->bDisabledManually);
+            words(&power->fRangeLast, sizeof(power->fRangeLast));
+            out(",\"usage_f32_bits\":"); words(&power->fUsageTime, sizeof(power->fUsageTime));
+            out(",\"available_f32_bits\":"); words(&power->fAvailableTime, sizeof(power->fAvailableTime));
+            out(",\"boosts\":"); boosts(power->ppBoosts);
+            out(",\"global_boosts\":"); boosts(power->ppGlobalBoosts);
+            out("}");
+        }
+        out("]}");
+    }
+    out("]");
+}
+static void power_inventory(const Character *p)
+{
+    int i, j;
+    out("{\"current_build\":%d,\"active_build\":%d,\"build_levels\":", p->iCurBuild, p->iActiveBuild);
+    words(p->iBuildLevels, sizeof(p->iBuildLevels));
+    out(",\"current_sets\":"); power_sets(p->ppPowerSets);
+    out(",\"build_sets\":[");
+    for (i = 0; i < MAX_BUILD_NUM; ++i) {
+        if (i) out(",");
+        power_sets(p->ppBuildPowerSets[i]);
+    }
+    out("],\"inspiration_cols\":%d,\"inspiration_rows\":%d,\"inspirations\":[",
+        p->iNumInspirationCols, p->iNumInspirationRows);
+    for (i = 0; i < CHAR_INSP_MAX_COLS; ++i) {
+        out("%s[", i ? "," : "");
+        for (j = 0; j < CHAR_INSP_MAX_ROWS; ++j) {
+            if (j) out(",");
+            base_power(p->aInspirations[i][j]);
+        }
+        out("]");
+    }
+    out("],\"boost_slots\":%d,\"boost_inventory\":[", p->iNumBoostSlots);
+    for (i = 0; i < CHAR_BOOST_MAX; ++i) { if (i) out(","); boost(p->aBoosts[i]); }
+    out("]}");
+}
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
@@ -171,6 +270,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             /* CharacterAttributes consists exclusively of F32 fields/arrays. */
             words(&p->attrCur, sizeof(p->attrCur));
             out(",\"attr_max_f32_bits\":"); words(&p->attrMax, sizeof(p->attrMax));
+            out(",\"power_inventory\":"); power_inventory(p);
             out("}");
         } else out("null");
         out(",\"player\":");

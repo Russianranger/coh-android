@@ -218,6 +218,8 @@ jobs:
           lfs: false
       - name: Check replay output rejection and fixture identities
         run: python3 -m unittest discover -s armport/tests -p 'test_receiver*.py' -v
+      - name: Check actual power snapshot serializer with sanitizers
+        run: python3 armport/tests/receiver_power_state.py
       - id: replay-exe-cache
         uses: actions/cache/restore@v4
         with:
