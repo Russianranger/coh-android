@@ -104,6 +104,31 @@ class StateComparison(unittest.TestCase):
             if comparison['id_sensitivity']:
                 self.assertEqual(comparison['mismatches'], [dict(index=0, fields=['$.entities[0].packet_order.pkt_id_friendslist'])])
 
+    def test_nested_attribute_ids_remain_literal_in_sensitivity_comparison(self):
+        root = self.fixture()
+        for target in ('arm64', 'i686'):
+            for label in ('id1-a', 'id1-b', 'id31'):
+                run = root / target / label
+                path = run / 'state-000.json'
+                value = json.loads(path.read_text())
+                initial_id = 31 if label == 'id31' else 1
+                value['entities'][0]['attribute_packet_order'] = dict(self=[dict(field='CurrentAttribs', ids=[dict(field='HitPoints', ids=initial_id)])], basic=None)
+                self.assertEqual(canonical_initial_ids(value, initial_id)['entities'][0]['attribute_packet_order'],
+                                 value['entities'][0]['attribute_packet_order'])
+                raw = json.dumps(value).encode()
+                path.write_bytes(raw)
+                rows = [json.loads(line) for line in (run / 'receiver.jsonl').read_text().splitlines()]
+                for row in rows:
+                    if row['type'] == 'state' and row['index'] == 0:
+                        row['sha256'] = hashlib.sha256(raw).hexdigest()
+                (run / 'receiver.jsonl').write_text('\n'.join(json.dumps(row) for row in rows))
+        result = compare(root, 'a' * 40)
+        self.assertFalse(result['partial_state_equal'])
+        for comparison in result['comparisons']:
+            self.assertEqual(comparison['equal'], not comparison['id_sensitivity'])
+            if comparison['id_sensitivity']:
+                self.assertEqual(comparison['mismatches'], [dict(index=0, fields=['$.entities[0].attribute_packet_order.self[0].ids[0].ids'])])
+
     def test_wrong_reference_commit_rejected(self):
         with self.assertRaisesRegex(ValueError, 'identity or execution'):
             compare(self.fixture(), 'b' * 40)

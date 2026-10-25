@@ -805,3 +805,25 @@ work. All full-schema/full-state/M3 flags stay false. Atlas 40227784437 is still
 pending; keep its source branch stable until completion.
 
 Pet ownership retains both literal EntityRef U32 words and logical created-by power identity; original non-pet clearing can retain the power. No new ID normalization; full schema remains incomplete. See evidence/m3-pet-ownership-controls.json for source controls and limitations.
+
+### Structured attribute packet-ID observations (2026-10-25 UTC)
+
+Snapshots now retain the nested pkt_id_fullAttrDef/pkt_id_basicAttrDef trees
+using the original SendCharacterToSelf/SendBasicCharacter parse-table order and
+field names. Primitive ID slots become literal U32 values; nested arrays and
+null/unallocated trees stay distinct. No pointers, cache initialization, game
+receiver changes or added INITIAL-ID normalization. Unsupported schema types,
+storage, depth, field count, wide scalar slots and output overflow reject.
+
+Evidence: `evidence/m3-attribute-packet-id-controls.json`: 21 ASan/UBSan cases
+execute original int/float/struct receivers and allocation/free with original
+schema definitions and the actual observer. Packet/token-store/quantization
+dependencies are substituted; attribute value decoding/native ABI are not
+qualified. All 32 receiver programs and 163 Python tests pass, including literal
+nested-ID sensitivity rejection. Native state.c compiles ARM64 then i686 with
+one compiler. All 92 patches and upstream/ unchanged. Fresh runtime/reviewer
+qualification remains pending; full schema and M3 remain false.
+
+Sol review 5645758046 accepts implementation through f6332f29, explicitly not
+milestone/merge approval. Current runs 40240791819/40240791817 retain that head;
+this addition and pet ownership are not covered by those runs.

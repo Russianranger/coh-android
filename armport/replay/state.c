@@ -44,6 +44,8 @@
 #include "UI/uiTarget.h"
 #include "UI/uiBuff.h"
 #include "entity/attrib_description.h"
+#include "entity/attrib_net.h"
+#include <utilitieslib/utils/textparser.h>
 #include "gameComm/wdwbase.h"
 #include "gameComm/dooranimcommon.h"
 #include "UI/uiWindows.h"
@@ -767,6 +769,42 @@ static void entity_pet_owner_state(const Entity *e)
     out("}");
 }
 
+static void attribute_packet_ids(const ParseTable *schema, void *const *ids, unsigned depth)
+{
+    unsigned i;
+    if (!ids) { out("null"); return; }
+    check(schema != NULL && depth < 4);
+    out("[");
+    for (i = 0; (schema[i].name && schema[i].name[0]) || schema[i].type; ++i) {
+        unsigned type = TOK_GET_TYPE(schema[i].type);
+        check(i < 128);
+        /* These receive tables contain only direct scalars/embedded structs.
+         * Fail closed if their storage contract changes. No parser cache calls.
+         */
+        check((schema[i].type & ~(TOK_TYPE_MASK | TOK_PRECISION_MASK)) == 0);
+        check(type == TOK_INT_X || type == TOK_F32_X || type == TOK_STRUCT_X);
+        out("%s{\"field\":", i ? "," : ""); string(schema[i].name);
+        out(",\"ids\":");
+        if (type == TOK_STRUCT_X)
+            attribute_packet_ids(schema[i].subtable, (void *const *)ids[i], depth + 1);
+        else {
+            /* Primitive recvdiff stores a U32 packet ID in a pointer slot. */
+            UINT_PTR value = (UINT_PTR)ids[i];
+            check(value <= 0xffffffffU);
+            out("%u", (unsigned)value);
+        }
+        out("}");
+    }
+    out("]");
+}
+
+static void entity_attribute_packet_order_state(const Entity *e)
+{
+    out("{\"self\":"); attribute_packet_ids(SendCharacterToSelf, e->pkt_id_fullAttrDef, 0);
+    out(",\"basic\":"); attribute_packet_ids(SendBasicCharacter, e->pkt_id_basicAttrDef, 0);
+    out("}");
+}
+
 static void entity_packet_order_state(const Entity *e)
 {
     /* Literal retained IDs; no additions to INITIAL-ID canonicalization. */
@@ -1351,6 +1389,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
         out(",\"status_state\":"); entity_status_state(e);
         out(",\"packet_order\":"); entity_packet_order_state(e);
+        out(",\"attribute_packet_order\":"); entity_attribute_packet_order_state(e);
         out(",\"pet_ownership\":"); entity_pet_owner_state(e);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
