@@ -405,3 +405,10 @@ must exist for nonzero counts, and fixed strings must terminate in storage.
 rosters, final slots, maximum strings, mutations and invalid storage. Unused
 member tails and derived league UI rosters are explicitly not covered. See
 `../evidence/m3-group-state-observations.json`; schema remains partial.
+
+World observations include dynamic-group hp/repair values in original index
+order and server sky indices/raw weight bits. The writer reads logical fields,
+not bitfield storage or tracker pointers; render-volume overrides are excluded.
+`receiver_world_state.py` checks raw NaN/negative-zero weights, hp/repair
+mutations, empty state and invalid count/storage rejection. Evidence:
+`../evidence/m3-world-state-observations.json`; runtime pending, still partial.

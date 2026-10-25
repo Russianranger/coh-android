@@ -1062,3 +1062,12 @@ ARM64 then i686 compilation, source-derived sanitizer controls and 145 Python
 tests pass. Evidence: evidence/m3-group-state-observations.json. Runtime is
 pending; this skip-ci follow-up preserves Atlas 40204814232 and replay
 40203125375 at their earlier heads. Full-state/M3 completion remains false.
+
+### Dynamic group and sky observation follow-up (2026-10-25 UTC)
+
+Partial snapshots now retain ordered dynamic-group hp/repair fields and the
+server sky indices/raw weight bits from original receive storage. They do
+not hash bitfield layout, tracker pointers or render overrides. Both target
+units compile sequentially; actual-writer sanitizer controls and 145 Python
+tests pass. Evidence: evidence/m3-world-state-observations.json. Runtime
+pending, schema still partial, no change to packet bytes or acceptance.

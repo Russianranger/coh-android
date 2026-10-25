@@ -68,6 +68,15 @@ Sol supplemental review 5643697920 accepts implementation through 4c7ba7b
 texture staging), with no new finding. It explicitly grants no milestone or
 merge approval; keep PR #6 draft. Later inventory/badge additions need review.
 
+### Dynamic group and sky observation follow-up (2026-10-25 UTC)
+
+Partial snapshots now retain ordered dynamic-group hp/repair fields and the
+server sky indices/raw weight bits from original receive storage. They do
+not hash bitfield layout, tracker pointers or render overrides. Both target
+units compile sequentially; actual-writer sanitizer controls and 145 Python
+tests pass. Evidence: evidence/m3-world-state-observations.json. Runtime
+pending, schema still partial, no change to packet bytes or acceptance.
+
 ### Team and league observation follow-up (2026-10-25 UTC)
 
 Partial snapshots now include team/league IDs and nullable active rosters,

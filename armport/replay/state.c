@@ -27,6 +27,8 @@
 #include "player/badges_client.h"
 #include "entity/teamCommon.h"
 #include "UI/uiGroupWindow.h"
+#include "group/groupdyn.h"
+#include "cmdparse/cmdgame.h"
 #include <utilitieslib/components/earray.h>
 
 /* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
@@ -376,6 +378,21 @@ static void group_map_names(void)
     out("]}");
 }
 
+static void world_receive_state(void)
+{
+    int i;
+    check(dyn_group_count >= 0 && dyn_group_count <= 1048576);
+    check(!dyn_group_count || dyn_group_status);
+    out("{\"dynamic_groups\":[");
+    for (i = 0; i < dyn_group_count; ++i)
+        out("%s{\"hp\":%u,\"repair\":%u}", i ? "," : "",
+            (unsigned)dyn_group_status[i].hp, (unsigned)dyn_group_status[i].repair);
+    out("],\"sky1\":%d,\"sky2\":%d,\"sky_weight_f32_bits\":",
+        game_state.skyFade1, game_state.skyFade2);
+    words(&game_state.skyFadeWeight, sizeof(game_state.skyFadeWeight));
+    out("}");
+}
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
@@ -432,7 +449,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     }
     out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);
     out("],\"badge_client\":"); badge_client_state();
-    out(",\"group_map_names\":"); group_map_names(); out("}\n");
+    out(",\"group_map_names\":"); group_map_names();
+    out(",\"world\":"); world_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);
