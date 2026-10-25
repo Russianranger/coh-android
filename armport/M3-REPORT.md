@@ -1176,3 +1176,29 @@ observers after the passing run. Fresh replay
 at e628a05c tests those additions; qualification remains pending. The trigger
 changes only run_ci.py documentation and preserves Atlas 40204814232 at
 b3125faa. Atlas is still running, not passed. Keep PR #6 draft and unmerged.
+
+### Sampled world traversal diagnosis (2026-10-25 UTC)
+
+Atlas [40204814232](https://github.com/Russianranger/coh-android/actions/runs/40204814232)
+failed rendered-world qualification despite map-1 connection/still-connected.
+Artifact 12605194825 verifies SHA-256
+483cd92d87462105162c6ae8912df0dfaf75ba7452112b4b79f0e4ef16f95048.
+All eight original 0077 samples have zero model calls and sort requests. The
+steady samples have 4,870 visits: 4,534 editor-only, 307 distance and 13 frustum
+rejections, leaving 16 visits beyond those three checks. This is not proof
+that the flags, distances or definitions are wrong, nor evidence of GPU output.
+
+`zone_report.py` now preserves a compact world-draw summary and all eight
+parsed records in the evidence artifact. Missing, torn, inconsistent, duplicate
+or excess samples produce unknown zero-call conclusions, not a pass. It does
+not change rendering acceptance or original game code. The actual retained
+artifact reproduces the summary; 154 Python tests pass. See
+`evidence/m3-world-traversal-40204814232.json` for command, hashes and samples.
+Next native investigation must distinguish the editor-only flag sources and
+surviving definitions/camera distances; do not bypass visibility decisions.
+
+New replay [40210598573](https://github.com/Russianranger/coh-android/actions/runs/40210598573)
+at e628a05c now passes both targets and both comparison jobs, including the
+new costume/story/contact/task observations. Partial comparison job 121229221929
+still explicitly reports full-schema, full-comparison and M3 completion false.
+No milestone or merge approval. Sol 5644065631 remains the latest review.

@@ -34,7 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol 5644065631: no new finding through b9f6cd8c; no milestone/merge approval.
-- 0077 observes world traversal; duplicate host cleanup fixed, fresh runtime pending.
+- Atlas 40204814232: zero sampled world-model calls; rejection-source diagnosis pending.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40206484644: accepted partial comparison; newer observers run 40210598573.
+- Replay 40210598573: newer observers pass; complete receiver-state coverage pending.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

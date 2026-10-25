@@ -8,6 +8,7 @@ import argparse
 import json
 from pathlib import Path
 import client_errors
+import world_draw_report
 
 
 def tail(text, limit=3600):
@@ -44,6 +45,10 @@ def sections(evidence, client):
             phase_counts=errors['phase_counts'], examples=errors['errors'][:3]))
     traces = [line for line in read(client / 'armport_stdio.txt').splitlines()
               if line.startswith('ArmPort zone: ')]
+    world = world_draw_report.summarize(traces)
+    (evidence / 'world-draw-summary.json').write_text(json.dumps(world, indent=2) + '\n')
+    yield 'ArmPort M3 world traversal', json.dumps(
+        {key: value for key, value in world.items() if key != 'samples'}, separators=(',', ':'))
     if status.get('frame_checks'):
         yield 'ArmPort M3 final frame check', json.dumps(status['frame_checks'][-1], separators=(',', ':'))
     if status.get('qa_notice_actions'):
