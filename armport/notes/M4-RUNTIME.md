@@ -1,5 +1,17 @@
 # M4 runtime integration work
 
+## Reopen and sibling donor follow-up (2026-10-25 UTC)
+
+40167305715 passed creation validation but reopen faults at 0x1401726f0.
+M3 patch 0076 fixes the signed selection boundary; select its Release after
+qualification. The interactive M4 exit remains incomplete.
+
+Sibling build 40167326438 failed before runtime because reference-win32-runtime
+expired. The donor restore block, exact 47-file inventory, verifier and tests
+are copied from reviewed M3 a13fd86e. They preserve the same donor bytes and
+verify cache hits as well as retained fallback 39782080360. Local donor tests
+and full retained-inventory verification pass; a fresh sibling CI is required.
+
 ## Current host validation compatibility (2026-10-25 UTC)
 
 Run 40163555077 at ebe0159c passed guest boot and produced a creation report
