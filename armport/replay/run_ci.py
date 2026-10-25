@@ -3,7 +3,10 @@
 
 Render-cleanup/exit witnesses are diagnostic, never substitutes for a normal
 process exit. The explicit original-texture exception preserves the committed
-literal occurrence; inventory, badge, group and world observations remain partial.
+literal occurrence; all observations remain partial. Run 40206484644 qualified
+the inventory/badge/group/world scope at 65a494c9. Retained costume, story,
+contact and task observations added through b9f6cd8c require a fresh six-run
+comparison; neither stage establishes complete receiver-state coverage.
 """
 import argparse
 import gzip
