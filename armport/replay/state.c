@@ -39,6 +39,9 @@
 #include "UI/uiKeybind.h"
 #include "UI/uiOptions_Type.h"
 #include "gameComm/trayCommon.h"
+#include "gameComm/itemselect.h"
+#include "UI/uiCursor.h"
+#include "UI/uiTarget.h"
 #include "gameComm/wdwbase.h"
 #include "gameComm/dooranimcommon.h"
 #include "UI/uiWindows.h"
@@ -742,6 +745,33 @@ static void default_power_state(const Power *power)
     out("}");
 }
 
+static void character_target_state(const Character *p)
+{
+    /* EntityRef is S64, not a pointer. Preserve both literal U32 words. */
+    out("{\"target_ref_words\":"); words(&p->erTargetInstantaneous, sizeof(p->erTargetInstantaneous));
+    out(",\"assist_ref_words\":"); words(&p->erAssist, sizeof(p->erAssist));
+    out("}");
+}
+static void target_receive_state(void)
+{
+    int i, count = eaSize(&g_pperPlacators);
+    check(count >= 0 && count <= 8192);
+    out("{\"taunter_ref_words\":"); words(&g_erTaunter, sizeof(g_erTaunter));
+    out(",\"placator_ref_words\":[");
+    for (i = 0; i < count; ++i) {
+        if (i) out(",");
+        if (g_pperPlacators[i]) words(g_pperPlacators[i], sizeof(*g_pperPlacators[i]));
+        else out("null");
+    }
+    out("],\"selected_dbid\":%d,\"selected_handle\":", gSelectedDBID);
+    fixed_string(gSelectedHandle, sizeof(gSelectedHandle));
+    out(",\"current_target\":");
+    if (!current_target) out("null");
+    else out("{\"svr_idx\":%d,\"id\":%u,\"db_id\":%d}",
+        current_target->svr_idx, current_target->id, current_target->db_id);
+    out("}");
+}
+
 static void entity_status_state(const Entity *e)
 {
     int i, count;
@@ -1224,6 +1254,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"generic_inventories\":"); generic_inventories(p);
             out(",\"receive_core\":"); character_receive_core(p);
             out(",\"default_power\":"); default_power_state(p->ppowDefault);
+            out(",\"target_state\":"); character_target_state(p);
             out("}");
         } else out("null");
         out(",\"player\":");
@@ -1264,6 +1295,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"initial_ui\":"); initial_ui_state();
     out(",\"initial_server_state\":"); initial_server_state();
     out(",\"door_transition\":"); door_transition_state();
+    out(",\"target_state\":"); target_receive_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));

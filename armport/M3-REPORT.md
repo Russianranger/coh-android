@@ -1562,3 +1562,19 @@ ARM64 then i686 with one compiler. Patchwork exports 90 patches, prior 89
 byte-identical and upstream/ unchanged. These are host/compile checks; runtime
 qualification remains pending. Runs 40227784437/40227784453 use earlier e78f0193
 and do not include this patch or the later UI/door/entity-status additions.
+
+### Target and assist state observations (2026-10-25 UTC)
+
+Snapshots now retain literal S64 target/assist/taunter references as two U32
+words, ordered nullable placator references, selected DB ID/handle and nullable
+current-target logical identity. No pointers or new ID normalization are added.
+The original receiver clears the selected target even on a stale self update;
+this result is preserved. Its random confuseRand assignment remains excluded.
+
+Evidence: `evidence/m3-target-state-controls.json`: 17 ASan/UBSan cases execute
+the original target receiver/reference packer and actual snapshot writers,
+covering self/other/stale/null/no-update paths, all reads, order, full-width
+values, bounds and immutability. ARM64 then i686 state.c compilation and 161
+Python tests pass. CI includes this control on future comparison builds. All
+90 native patches and upstream/ unchanged. Host dependencies are substitutes;
+runtime qualification remains pending and full-state/M3 flags remain false.
