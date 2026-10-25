@@ -68,6 +68,18 @@ Sol supplemental review 5643697920 accepts implementation through 4c7ba7b
 texture staging), with no new finding. It explicitly grants no milestone or
 merge approval; keep PR #6 draft. Later inventory/badge additions need review.
 
+### Team and league observation follow-up (2026-10-25 UTC)
+
+Partial snapshots now include team/league IDs and nullable active rosters,
+team levels/mentor/active player, league leaders/locks, retained map names,
+and player taskforce/LFG flags. Original member order and IDs remain literal;
+counts, backing pointers and fixed-string termination are checked. Inactive
+member tails, derived UI rosters and other receive destinations remain gaps.
+ARM64 then i686 compilation, source-derived sanitizer controls and 145 Python
+tests pass. Evidence: evidence/m3-group-state-observations.json. Runtime is
+pending; this skip-ci follow-up preserves Atlas 40204814232 and replay
+40203125375 at their earlier heads. Full-state/M3 completion remains false.
+
 ### Shared host cleanup after 40197277872 (2026-10-25 UTC)
 
 Atlas 40197277872 (554afc86) still fails: connection/still-connected and

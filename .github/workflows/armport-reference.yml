@@ -224,6 +224,8 @@ jobs:
         run: python3 armport/tests/receiver_inventory_state.py
       - name: Check actual badge snapshot serializer with sanitizers
         run: python3 armport/tests/receiver_badge_state.py
+      - name: Check actual team and league snapshot serializer with sanitizers
+        run: python3 armport/tests/receiver_group_state.py
       - id: replay-exe-cache
         uses: actions/cache/restore@v4
         with:

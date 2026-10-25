@@ -1050,3 +1050,15 @@ clear stored errors. No marker/ownership audit or rendering rule changes.
 145 Python tests pass, including duplicate-stop and concurrent failure controls.
 Evidence: evidence/m3-shared-cleanup-40197277872.json. Fresh Atlas qualification
 must include this change, world diagnostic 0077 and the approved texture.
+
+### Team and league observation follow-up (2026-10-25 UTC)
+
+Partial snapshots now include team/league IDs and nullable active rosters,
+team levels/mentor/active player, league leaders/locks, retained map names,
+and player taskforce/LFG flags. Original member order and IDs remain literal;
+counts, backing pointers and fixed-string termination are checked. Inactive
+member tails, derived UI rosters and other receive destinations remain gaps.
+ARM64 then i686 compilation, source-derived sanitizer controls and 145 Python
+tests pass. Evidence: evidence/m3-group-state-observations.json. Runtime is
+pending; this skip-ci follow-up preserves Atlas 40204814232 and replay
+40203125375 at their earlier heads. Full-state/M3 completion remains false.

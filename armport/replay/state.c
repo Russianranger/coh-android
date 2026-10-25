@@ -25,6 +25,8 @@
 #include "bases/DetailRecipe.h"
 #include "bases/basedata.h"
 #include "player/badges_client.h"
+#include "entity/teamCommon.h"
+#include "UI/uiGroupWindow.h"
 #include <utilitieslib/components/earray.h>
 
 /* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
@@ -315,6 +317,65 @@ static void badge_client_state(void)
     out("]}");
 }
 
+/* Only active member slots are observed here. Unused allocation tails and
+ * derived league UI rosters are not a full-state claim. Fixed strings must
+ * terminate inside their original storage, before string() can scan them. */
+static void fixed_string(const char *value, size_t capacity)
+{
+    check(memchr(value, 0, capacity) != NULL);
+    string(value);
+}
+static void group_members(const TeamMembers *members, int maximum)
+{
+    int i;
+    check(members->count >= 0 && members->count <= maximum);
+    check(!members->count || (members->ids && members->onMapserver && members->names));
+    out("{\"leader\":%d,\"members\":[", members->leader);
+    for (i = 0; i < members->count; ++i) {
+        out("%s{\"db_id\":%d,\"on_mapserver\":%d,\"name\":", i ? "," : "",
+            members->ids[i], members->onMapserver[i]);
+        fixed_string(members->names[i], sizeof(MemberName)); out("}");
+    }
+    out("]}");
+}
+static void entity_groups(const Entity *e)
+{
+    int i;
+    out("{\"team_id\":%d,\"league_id\":%d,\"team\":", e->teamup_id, e->league_id);
+    if (e->teamup) {
+        const Teamup *t = e->teamup;
+        out("{\"level\":%d,\"mentor\":%d,\"active_player_db_id\":%d,\"roster\":",
+            t->team_level, t->team_mentor, t->activePlayerDbid);
+        group_members(&t->members, MAX_TEAM_MEMBERS); out("}");
+    } else out("null");
+    out(",\"league\":");
+    if (e->league) {
+        const League *l = e->league;
+        out("{\"roster\":"); group_members(&l->members, MAX_LEAGUE_MEMBERS);
+        out(",\"teams\":[");
+        for (i = 0; i < l->members.count; ++i)
+            out("%s{\"leader_db_id\":%d,\"lock_status\":%d}", i ? "," : "",
+                l->teamLeaderIDs[i], l->lockStatus[i]);
+        out("]}");
+    } else out("null");
+    out("}");
+}
+static void group_map_names(void)
+{
+    int i;
+    out("{\"team\":[");
+    for (i = 0; i < MAX_TEAM_MEMBERS; ++i) {
+        if (i) out(",");
+        fixed_string(teamMapNames[i], sizeof(MapName));
+    }
+    out("],\"league\":[");
+    for (i = 0; i < MAX_LEAGUE_MEMBERS; ++i) {
+        if (i) out(",");
+        fixed_string(leagueMapNames[i], sizeof(MapName));
+    }
+    out("]}");
+}
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
@@ -363,12 +424,15 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"player\":");
         if (e->pl) {
             out("{\"lastClientStatePktId\":%u,\"badges\":", e->pl->lastClientStatePktId);
-            player_badges(e->pl); out("}");
+            player_badges(e->pl);
+            out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
+        out(",\"groups\":"); entity_groups(e);
         out("}");
     }
     out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);
-    out("],\"badge_client\":"); badge_client_state(); out("}\n");
+    out("],\"badge_client\":"); badge_client_state();
+    out(",\"group_map_names\":"); group_map_names(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);

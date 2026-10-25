@@ -10,7 +10,7 @@ import tempfile
 def main():
     source = (Path(__file__).resolve().parents[1] / 'replay/state.c').read_text()
     formatting = source[source.index('static void out('):source.index('void armportReplayStateInit(')]
-    badges = source[source.index('static void player_badges('):source.index('static unsigned deletes;')]
+    badges = source[source.index('static void player_badges('):source.index('static void fixed_string(')]
     fixture = r'''
 #include <stdio.h>
 #include <stdlib.h>

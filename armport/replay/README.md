@@ -396,3 +396,12 @@ and buttons are excluded. No new ID normalization. The actual writer's
 unsigned words, null strings and mutation sensitivity. See
 `../evidence/m3-badge-state-observations.json`; runtime pending and schema
 still partial. Supergroup badge state remains uncovered.
+
+Team/league observations retain active member order, IDs, names, on-map
+flags, team reward fields, league leaders/locks, persistent map-name arrays
+and taskforce/LFG flags. Counts must fit 8/48 original slots, backing arrays
+must exist for nonzero counts, and fixed strings must terminate in storage.
+`receiver_group_state.py` exercises actual writer behavior with null/empty
+rosters, final slots, maximum strings, mutations and invalid storage. Unused
+member tails and derived league UI rosters are explicitly not covered. See
+`../evidence/m3-group-state-observations.json`; schema remains partial.
