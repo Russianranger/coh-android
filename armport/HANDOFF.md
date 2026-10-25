@@ -1,11 +1,10 @@
 # COH-ArmPort handoff (to Astra)
 
-M4 checkpoint, 2026-10-25: read the leading section of `notes/M4-RUNTIME.md`.
-Release 40148424741 now supplies 0073's selected-power producer trace for the
-unresolved failure in M4 40127841088. Bootstrap and private app copies join
-case-equivalent directories; 30 host tests pass, runtime qualification pending.
-See `evidence/m4-review14-local.json`. Sol 6.1 reviews PR #6 per user direction;
-neither milestone nor merge approval has been granted. Historical text follows.
+M4 checkpoint, 2026-10-25: run 40176336731 at 63f091de passes guest boot,
+creation/save/restart/reopen and final host continuity. Read M4-REPORT.md and
+evidence/m4-continuity-40176336731.json. Sol re-review of explicit Finish and
+live evidence remains pending; no milestone/merge approval. Android surface
+and Thor execution remain unvalidated. Historical text follows.
 
 Updated 2026-10-23. From now on Astra leads development and Claude reviews
 (roles reversed for now; see "Roles" below). Read this file, `PORT-PLAN.md`

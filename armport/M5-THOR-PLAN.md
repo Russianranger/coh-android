@@ -3,7 +3,9 @@
 This is a proposed test, not a request to install now or evidence of a pass.
 PORT-PLAN.md defines M5 as one installation and about ten minutes of play on
 Thor. HANDOFF.md section 6 requires user approval before APK build/signing.
-M4 run 40167305715 still fails reopen; no installable ArmPort APK is qualified.
+M4 run 40176336731 passes guest creation/reopen and host continuity; review
+and physical Android surface validation remain pending. No installable ArmPort
+APK is qualified. See M4-REPORT.md.
 
 ## Before asking for the device test
 

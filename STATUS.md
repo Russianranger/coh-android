@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-23.
+Updated 2026-10-25.
 
 M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - M3 still incomplete: see draft PR #6 for current loading/replay evidence.
-- M4 40171292922: guest reopen completed; old host timeout contract rejected it.
-- Explicit-Finish contract corrected; 36 tests pass; full runtime/continuity pending.
+- M4 40176336731 passes guest creation/save/reopen and host continuity.
+- M4 review pending; Android surface/Thor unvalidated. See armport/M4-REPORT.md.
