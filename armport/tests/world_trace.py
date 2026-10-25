@@ -70,6 +70,14 @@ int main(int argc, char **argv)
         unsigned previous;
         armportWorldBegin();
         assert(!!armport_world_trace.active == (on && (i == 1 || (i <= 4200 && i % 600 == 0))));
+        if (armport_world_trace.active) {
+            unsigned reason;
+            assert(armport_world_trace.frame == (unsigned)i);
+            for (reason = 0; reason < 4; ++reason) {
+                assert(!armport_world_trace.detail_samples[reason]);
+                armport_world_trace.detail_samples[reason] = 4;
+            }
+        }
         ARMPORT_WORLD_COUNT(visits);
         ARMPORT_WORLD_COUNT(model_calls);
         ARMPORT_WORLD_COUNT(sort_requests);

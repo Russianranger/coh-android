@@ -374,6 +374,8 @@ jobs:
 
       - name: Bounded world-render diagnostic control
         run: python3 armport/tests/world_trace.py --source "$RUNNER_TEMP/armport/src"
+      - name: Original distance decisions and bounded definition observations
+        run: python3 armport/tests/world_def_trace.py --source "$RUNNER_TEMP/armport/src"
 
       - name: Configure
         env:

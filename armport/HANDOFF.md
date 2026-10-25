@@ -866,3 +866,29 @@ distance. The next native observation must record flag sources, camera-relative
 midpoints/visibility distances and the remaining definitions without bypassing
 those original decisions. Sources: original Game/src/graphics/groupdraw.c
 makeAGroupEnt and groupdrawinline.c closeEnough/drawDefInternal (git show HEAD).
+
+### Bounded definition-input observations (2026-10-25 UTC)
+
+Patch 0080 adds at most four `world.def` observations for each of four reasons
+in the existing eight sampled frames (128 records maximum). It identifies the
+sample frame, sanitized definition name, model/children, editor-only sources,
+camera/local midpoint, actual distance midpoint (including parent fade),
+measured distance and valid calculated limit, cached visibility distance/radius
+and LOD scale. Reason 3 means only that the first three checks were survived.
+Original visibility decisions, arithmetic, shadow-map behavior and rendering
+acceptance remain unchanged. This is an experiment, not a terrain fix.
+
+Read full records from the retained isolated zone JSONL trace. Existing stdio
+previews truncate details to 240 bytes and cannot supply the complete fields.
+Only the first four definitions of each reason are observed, not all visits.
+
+Commands and output: `evidence/m3-world-definition-controls.json`. Changed
+`groupdraw.c`/`groupdrawinline.c` compile successfully for ARM64 then i686,
+one compiler at a time. Actual-source ASan/UBSan controls preserve all 384
+original distance results and calculation counts, bound names and record counts,
+keep disabled/secondary paths inert and reset per-frame sampling. The previous
+8-frame controller control and 156 Python tests pass. Host fixture types do not
+prove native ABI; LeakSanitizer alone is disabled locally for /proc limitations.
+CI runs these controls with its normal sanitizers. Runtime of 0080 is pending;
+40204814232 remains failed, and replay 40210598573 qualifies the prior code's
+partial observation scope only. No M3/M4/M5 completion or merge approval.

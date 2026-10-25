@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (79 patches including partial replay observers; Astra leads,
+M3 into Atlas (80 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Sol 5644065631: no new finding through b9f6cd8c; no milestone/merge approval.
-- Atlas 40204814232: zero sampled world-model calls; rejection-source diagnosis pending.
+- Sol 5644275188 truncation finding fixed at 7faa423e; no milestone/merge approval.
+- Atlas 40204814232: zero sampled models; 0080 adds bounded definition diagnosis.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
 - Replay 40210598573: newer observers pass; complete receiver-state coverage pending.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.
