@@ -21,7 +21,7 @@ class ReplayRunSeries(unittest.TestCase):
             runtime.mkdir()
             out = root / 'evidence'
             observed = []
-            def check(path, *args):
+            def check(path, *args, **kwargs):
                 observed.append(path.parent.name)
                 # Accepted-run repeat comparison still needs the two transcripts.
                 path.write_text('same transcript')

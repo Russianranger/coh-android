@@ -214,6 +214,8 @@ jobs:
         with:
           sparse-checkout: |
             /armport/
+            /assets/catalog.json
+            /assets/zones-audio-metadata.json
             /upstream/ouroboros/
             !/upstream/ouroboros/data/
             /upstream/i24/data/defs/ui/bodyparts.bp

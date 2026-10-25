@@ -44,7 +44,7 @@ def differences(a, b, path='$'):
         yield path
 
 
-def compare(root, commit):
+def compare(root, commit, *, original_texture_exception=False):
     import itertools
     reports = {}
     with tempfile.TemporaryDirectory() as temporary:
@@ -53,11 +53,17 @@ def compare(root, commit):
         folder = root / target
         report = json.loads((folder / 'report.json').read_text())
         if (report.get('target') != target or report.get('source_commit') != commit
-                or report.get('cursor_stage_passed') is not True):
+                or report.get('cursor_stage_passed') is not True
+                or report.get('original_texture_exception', False) is not original_texture_exception):
             raise ValueError('Reference identity or execution differs: ' + target)
         for label, initial_id in (('id1-a', 1), ('id1-b', 1), ('id31', 31)):
             run = folder / label
-            run_ci.check_output(run / 'receiver.jsonl', expected, initial_id, run / 'wine-output.txt')
+            process = json.loads((run / 'process-observation.json').read_text())
+            if (type(process.get('returncode')) is not int or process['returncode'] != 2
+                    or process.get('host_timeout_kill', False) is not False):
+                raise ValueError('Reference process exit or timeout differs: ' + str(run))
+            run_ci.check_output(run / 'receiver.jsonl', expected, initial_id, run / 'wine-output.txt',
+                                original_texture_exception=original_texture_exception)
             reports[target, label] = run
     # All six runs must have identical literal startup/load inventories and counts,
     # including the ID-sensitivity run. No message normalization is permitted.
@@ -93,6 +99,8 @@ def compare(root, commit):
                             'canonicalization_condition': 'equals this runs synthetic INITIAL ID' if sensitivity else None,
                             'equal': not mismatches, 'mismatches': mismatches})
     return {'outside_error_inventories_equal': True, 'source_commit': commit, 'scope': 'partial_receiver_state_comparison',
+            'original_texture_exception': original_texture_exception,
+            'accepted_original_data_errors': run_ci.original_data_errors.load_policy()['occurrences'] if original_texture_exception else [],
             'comparisons': comparisons, 'partial_state_equal': all(c['equal'] for c in comparisons),
             'state_schema_complete': False, 'state_comparison_complete': False, 'm3_replay_complete': False}
 
@@ -102,8 +110,9 @@ def main():
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--commit', required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--original-texture-exception', action='store_true')
     args = parser.parse_args()
-    result = compare(args.root, args.commit)
+    result = compare(args.root, args.commit, original_texture_exception=args.original_texture_exception)
     args.output.write_text(json.dumps(result, indent=2) + '\n')
     summary = {k: v for k, v in result.items() if k != 'comparisons'}
     print(json.dumps(summary))

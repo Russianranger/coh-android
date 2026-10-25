@@ -62,10 +62,10 @@ class ReceiverEvidenceTests(unittest.TestCase):
         self.rows.append(dict(type='result', dispatches=117, exact_cursors=True,
                               state_comparison_complete=False, m3_replay_complete=False))
 
-    def check(self):
+    def check(self, **kwargs):
         output = self.path / 'receiver.jsonl'
         output.write_text('\n'.join(json.dumps(row) for row in self.rows))
-        return replay.check_output(output, self.expected, 1, self.wine)
+        return replay.check_output(output, self.expected, 1, self.wine, **kwargs)
 
     def test_complete_cursor_stage_still_not_milestone_pass(self):
         self.assertFalse(self.check()['m3_replay_complete'])

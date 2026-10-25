@@ -29,6 +29,7 @@ class StateComparison(unittest.TestCase):
             for label in ('id1-a', 'id1-b', 'id31'):
                 run = folder / label
                 shutil.copytree(case.path, run)
+                (run / 'process-observation.json').write_text(json.dumps(dict(returncode=2)))
                 if label != 'id31':
                     continue
                 rows = json.loads('[' + ','.join((run / 'receiver.jsonl').read_text().splitlines()) + ']')

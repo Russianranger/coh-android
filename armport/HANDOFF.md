@@ -68,6 +68,44 @@ Sol supplemental review 5643697920 accepts implementation through 4c7ba7b
 texture staging), with no new finding. It explicitly grants no milestone or
 merge approval; keep PR #6 draft. Later inventory/badge additions need review.
 
+### Exact original-data exception enabled for fresh replay (2026-10-25 UTC)
+
+Replay [40203125375](https://github.com/Russianranger/coh-android/actions/runs/40203125375)
+(source 41c09e32) completes all six processes with expected exit 2 and no host
+timeout/SIGKILL. All 702 snapshot hashes authenticate, all seven partial-state
+comparisons match, and all six outside inventories match (117,777 errors each).
+The CI jobs still fail under their strict no-dispatch-error policy. This does
+not retroactively turn that run into an accepted replay or complete M3.
+
+User decision [6387467359](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6387467359)
+authorizes an exact original-data exception after complete archive evidence and
+literal six-run agreement. Sol [5643610947](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5643610947)
+accepted the frozen 57 non-audio plus 15 audio table coverage; their disjoint
+union equals all 72 catalog archives. The six names remain absent; audio tables
+contain no textures or geometry. The fresh replay workflow now explicitly opts
+into only this committed occurrence, present identically in all six traces:
+
+| Literal original-data error | Count per run | Dispatch index | After-dispatch index |
+|---|---:|---:|---|
+| `CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.` | 1 | 1 | null |
+
+The policy pins the archive proof and six-run evidence. Default CLI behavior
+still rejects dispatch errors. An absent, added, moved or changed occurrence
+fails even if it names another of the six approved textures. Mission-room and
+all other errors remain fatal to replay qualification. Every accepted occurrence
+is retained in each replay notice and the partial-comparison report. Wine,
+trace integrity, cursor, ACK, snapshot and exact outside-inventory checks remain;
+comparison also independently rejects abnormal process exits and host timeouts.
+
+Evidence: `evidence/m3-six-run-texture-exception-40203125375.json` (verified
+artifact digests and per-run literal texts, indices, process and trace hashes),
+`replay/fixtures/original-data-errors.json`, and
+`evidence/m3-original-data-exception-controls.json`. Local suite: 151 tests pass.
+Fresh CI must qualify the opt-in and inventory/badge/team/world observers added
+after 41c09e32. The schema remains partial and full-state/M3 flags remain false.
+Atlas 40204814232 at b3125faa is preserved independently, with world counters,
+approved texture and shared host teardown. No milestone or merge approval.
+
 ### Dynamic group and sky observation follow-up (2026-10-25 UTC)
 
 Partial snapshots now retain ordered dynamic-group hp/repair fields and the

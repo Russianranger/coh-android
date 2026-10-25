@@ -21,6 +21,7 @@ import replay_inventory
 import client_errors
 import process_observation
 import exit_diagnostics
+import original_data_errors
 
 
 class DispatchGameErrors(ValueError):
@@ -104,7 +105,7 @@ def check_client_output(path, runtime=None, *, reject_dispatch_errors=True):
     return errors
 
 
-def check_output(path, expected, initial_id, wine_output, runtime=None):
+def check_output(path, expected, initial_id, wine_output, runtime=None, *, original_texture_exception=False):
     check_wine_output(wine_output)
     errors = check_client_output(path.parent / 'client-stdio.txt', runtime, reject_dispatch_errors=False)
     if path.stat().st_size > 1024 * 1024:
@@ -192,11 +193,16 @@ def check_output(path, expected, initial_id, wine_output, runtime=None):
         raise ValueError('native INITIAL zero terminator mismatch')
     # Defer only ordinary dispatch-error rejection until the transcript/state
     # checks finish. Fatal, Wine, integrity and malformed evidence still abort.
-    if errors['dispatch_error_count']:
+    accepted_errors = []
+    if original_texture_exception:
+        accepted_errors = original_data_errors.check(path.parent / 'zone-trace.jsonl',
+                                                    errors['dispatch_error_count'])
+    elif errors['dispatch_error_count']:
         raise DispatchGameErrors(errors['dispatch_error_count'])
     return dict(dispatches=117, exact_cursors=True, ack_ids=[r['ack_id'] for r in acks],
                 native_initial_command_boundaries_match=True,
-                native_initial_entity_subset_match=True, dispatch_game_errors=0,
+                native_initial_entity_subset_match=True, dispatch_game_errors=errors['dispatch_error_count'],
+                accepted_original_data_errors=accepted_errors,
                 outside_game_errors=sum(e['count'] for e in errors['outside_errors']),
                 outside_error_comparison_required=True,
                 partial_state_snapshots=117, state_schema_complete=False,
@@ -209,9 +215,13 @@ def main():
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--wine', type=Path, default=Path('/opt/wine/bin'))
     parser.add_argument('--target', choices=('arm64', 'i686'), required=True)
+    parser.add_argument('--original-texture-exception', action='store_true',
+                        help='Apply only the committed literal original-data exception (PR #6 comment 6387467359)')
     parser.add_argument('--host-netns', required=True)
     parser.add_argument('--seh-control', type=Path, required=True)
     args = parser.parse_args()
+    if args.original_texture_exception:
+        original_data_errors.load_policy()
     # sysfs can still expose the host's interfaces after unshare --net.
     # Query netlink in this process's actual namespace instead.
     links = json.loads(subprocess.check_output(['ip', '-j', 'link', 'show'], text=True))
@@ -224,6 +234,7 @@ def main():
     args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=False)
     report = dict(target=args.target, source_commit=os.getenv('GITHUB_SHA'),
+                  original_texture_exception=args.original_texture_exception,
                   scope='original_receiver_partial_state_stage', runs=[],
                   network_namespace=namespace, host_network_namespace=args.host_netns,
                   interfaces=[row['ifname'] for row in links],
@@ -280,7 +291,8 @@ def main():
                         raise RuntimeError(f'{label}: expected incomplete-stage exit 2, got {run.returncode}; '
                                            + json.dumps(diagnostic, separators=(',', ':')))
                     result = check_output(folder / 'receiver.jsonl', expected, initial_id,
-                                          folder / 'wine-output.txt', args.runtime)
+                                          folder / 'wine-output.txt', args.runtime,
+                                          original_texture_exception=args.original_texture_exception)
                     report['runs'].append(dict(label=label, **result))
                     print(json.dumps(report['runs'][-1]), flush=True)
                     notice('ArmPort replay ' + args.target + ' ' + label, report['runs'][-1])

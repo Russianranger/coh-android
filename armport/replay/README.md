@@ -412,3 +412,20 @@ not bitfield storage or tracker pointers; render-volume overrides are excluded.
 `receiver_world_state.py` checks raw NaN/negative-zero weights, hp/repair
 mutations, empty state and invalid count/storage rejection. Evidence:
 `../evidence/m3-world-state-observations.json`; runtime pending, still partial.
+
+## Exact original-data texture exception (2026-10-25)
+
+The default validator still rejects all dispatch data errors. The reference
+workflow explicitly supplies `--original-texture-exception` to both execution
+and partial comparison, under user decision PR #6 comment 6387467359.
+`fixtures/original-data-errors.json` contains the sole literal occurrence:
+HIPS_miniskirt_1 on FEM/HIPS texture 2, count 1 at dispatch index 1 (not after a
+dispatch). The complete message is listed in M3-REPORT.md. A missing, changed,
+additional or relocated occurrence rejects; other approved names are not
+implicitly allowed. The policy verifies hashes of its archive and six-run proof.
+
+The prerequisite run 40203125375 exits 2 in all six processes and has identical
+literal occurrences and partial snapshots. Its jobs remain failed under their
+then-active strict policy. Fresh execution is required. Each accepted occurrence
+is printed in the replay notice; raw errors stay in evidence. All other rejection
+rules and outside-error comparison remain. No full-state or M3 claim follows.

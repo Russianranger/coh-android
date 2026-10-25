@@ -205,6 +205,8 @@ jobs:
         with:
           sparse-checkout: |
             /armport/
+            /assets/catalog.json
+            /assets/zones-audio-metadata.json
             /upstream/ouroboros/
             !/upstream/ouroboros/data/
             /upstream/i24/data/
@@ -410,7 +412,7 @@ jobs:
             python3 "$GITHUB_WORKSPACE/armport/replay/run_ci.py" \
               --runtime "$RUNNER_TEMP/replay-runtime" --out "$RUNNER_TEMP/replay-results" \
               --seh-control "$RUNNER_TEMP/reference-bin/seh-control.exe" \
-              --target '${{ matrix.target }}' --host-netns "$(readlink /proc/self/ns/net)"
+              --original-texture-exception --target '${{ matrix.target }}' --host-netns "$(readlink /proc/self/ns/net)"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -455,7 +457,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: armport
+          sparse-checkout: |
+            /armport/
+            /assets/catalog.json
+            /assets/zones-audio-metadata.json
+          sparse-checkout-cone-mode: false
           lfs: false
       - uses: actions/download-artifact@v4
         with:
@@ -468,7 +474,7 @@ jobs:
       - name: Compare partial state literally and with agreed INITIAL-ID rules
         run: |
           python3 armport/replay/compare_state.py --root "$RUNNER_TEMP/compare" \
-            --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/partial-state-comparison.json"
+            --original-texture-exception --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/partial-state-comparison.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
 - Sol 5643610947: retry resolved, audio tables accepted; no milestone approval.
 - 0077 observes world traversal; duplicate host cleanup fixed, fresh runtime pending.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40200224489: ARM64 id31 SIGKILL; cleanup/power-state candidates need runtime.
+- Replay 40203125375: six normal exits; exact approved texture opt-in needs fresh CI.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.
