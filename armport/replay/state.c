@@ -1006,6 +1006,16 @@ static void entity_status_state(const Entity *e)
     }
     out("}");
 }
+/* Retained destinations of receiveCharacterFromServer's control flags and
+ * entReceive's optional slave orientation. Local input can also write these;
+ * this view does not claim exclusive packet provenance or serialize motion,
+ * interpolation, prediction queues or local input clocks. */
+static void retained_control_state(void)
+{
+    out("{\"first\":%d,\"nocoll\":%d,\"pyr_f32_bits\":", control_state.first, control_state.nocoll);
+    words(control_state.pyr.cur, sizeof(control_state.pyr.cur));
+    out("}");
+}
 static void initial_ui_state(void)
 {
     int i;
@@ -1511,6 +1521,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"user_options\":"); options_receive_state();
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"initial_ui\":"); initial_ui_state();
+    out(",\"retained_control\":"); retained_control_state();
     out(",\"initial_server_state\":"); initial_server_state();
     out(",\"door_transition\":"); door_transition_state();
     out(",\"target_state\":"); target_receive_state();

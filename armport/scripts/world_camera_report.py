@@ -36,10 +36,13 @@ def summarize(lines):
         camera_view=[sum(camera[k]*view[k][axis] for k in range(3))+view[3][axis] for axis in range(3)]
         if any(not math.isfinite(v) for v in camera_view):
             failures.append(f'nonfinite camera transform {index}');continue
+        distance=math.dist(camera,player_pos) if present else None
+        if distance is not None and not math.isfinite(distance):
+            failures.append(f'nonfinite camera/player distance {index}');continue
         samples.append(dict(frame=frame,tid=record['tid'],camera=camera,view=view,
             player_present=present,player_svr_idx=int(m[8]),player_pos=player_pos,
             player_net_ipos=[int(v) for v in m[10].split(',')],camera_in_view=camera_view,
-            camera_player_distance=math.dist(camera,player_pos) if present else None))
+            camera_player_distance=distance))
     if count>8:failures.append('camera sample bound exceeded')
     if not samples or count!=len(samples) or len(samples)!=len(models['samples']):
         failures.append('missing matching camera/model samples')

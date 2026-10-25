@@ -1745,7 +1745,7 @@ full replay/schema, rendering and milestone qualification remain pending.
 
 Patch 0093 changes only `1 << count` to `1U << count` in the original taskforce
 parameter receive loop. The old expression has undefined signed left shift at
-slot32 even with an empty enabled mask. The source-derived UBSan negative
+bit31 (the 32nd slot) even with an empty enabled mask. The source-derived UBSan negative
 control reproduces that error; the unsigned form preserves the U32 mask and
 original read order, retention and clock additions. Exported with patchwork;
 prior 92 patches byte-identical and upstream/ unchanged.
@@ -1803,3 +1803,22 @@ dependencies are substituted. Native entrecv.c/state.c compile sequentially
 ARM64 then i686; 168 Python tests pass. Patchwork exports94 patches with prior93
 byte-identical and upstream/ unchanged. Current replay40243785888 tests dd0c3dee
 before this addition; keep it running. Full-schema/M3 and merge approval false.
+
+### Retained control destinations (2026-10-25 UTC)
+
+Partial snapshots now retain control_state.first/nocoll and individual F32 bits
+of the optional slave orientation destination. Local input can also write these
+fields; this is not exclusive wire provenance. Motion, prediction, input queues
+and local clocks remain excluded. Original receive fragments are unchanged.
+
+Evidence: `evidence/m3-control-state-controls.json`: 12 ASan/UBSan cases execute
+the exact original receive fragments and actual writer, checking every legal
+flag pair, present/absent orientation, full F32 bits (NaN, negative zero, infinity),
+consumption, nonmutation, excluded local fields and overflow rejection. Packet
+primitives/surrounding lifecycle are substituted; no native ABI claim. Native
+state.c compiles ARM64 then i686 with one compiler. All169 Python tests pass,
+including diagnostic rejection of derived camera-distance/transform overflow
+from finite inputs. That report safeguard does not change rendering acceptance.
+All94 patches and upstream/ are unchanged. Active replay40243785888 tests dd0c3dee
+before the raw-taskforce-time/control additions; keep it running. No full-schema,
+M3, merge or Thor qualification is claimed.

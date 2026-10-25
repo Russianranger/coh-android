@@ -34,6 +34,18 @@ class CameraReport(unittest.TestCase):
         self.assertTrue(world_camera_report.summarize(data)['observations_valid'])
         self.assertFalse(world_camera_report.summarize(data+[record('world.camera',CAMERA.replace('frame=600','frame=5400'))])['observations_valid'])
 
+    def test_finite_inputs_cannot_emit_infinite_derived_values(self):
+        text=CAMERA.replace('camera=10,20,30','camera=1e308,0,0').replace('player_pos=10,20,40','player_pos=-1e308,0,0')
+        result=world_camera_report.summarize(lines(text))
+        self.assertFalse(result['observations_valid'])
+        self.assertTrue(any('distance' in reason for reason in result['failures']))
+        json.dumps(result,allow_nan=False)
+        text=CAMERA.replace('camera=10,20,30','camera=1e308,0,0').replace('view0=1,0,0','view0=10,0,0')
+        result=world_camera_report.summarize(lines(text))
+        self.assertFalse(result['observations_valid'])
+        self.assertTrue(any('transform' in reason for reason in result['failures']))
+        json.dumps(result,allow_nan=False)
+
     def test_report_caller_preserves_record_endings(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)
