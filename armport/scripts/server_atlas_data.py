@@ -32,7 +32,7 @@ def stage(source, data, reviewed_manifest):
         result = atlas.stage(source, incoming, reviewed_manifest)
         # Both trees are private: incoming was just extracted with no symlinks,
         # and the original guest has verified/copied the complete base inventory.
-        result['matching_collisions'] = smoke_run.merge_tree(incoming, data, strict=True)
+        result['matching_collisions'] = smoke_run.merge_tree(incoming, data, strict=True, copy_files=True)
         result['merged_tree'] = smoke_run.audit_runtime_tree(data)
     result.update(scope='reviewed_atlas_supplement_for_private_server',
                   server_binaries_changed=False, rendered_world_verified=False)

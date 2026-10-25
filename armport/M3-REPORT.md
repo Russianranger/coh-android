@@ -1882,3 +1882,31 @@ snapshots and same-ID repetition. INITIAL1/31 has44 literal mismatches only
 in snapshot0: prior11 scalar packet IDs plus33 attribute-tree packet IDs. No
 normalization has been added. See `evidence/m3-arm64-expanded-ids-40243785888.json`;
 i686/cross-target results and Sol's exact normalization decision remain pending.
+
+### Raw player reward times and completed replay (2026-10-25 UTC)
+
+Patch 0096 observes the two original INITIAL token timer assignments only after
+the original destination check accepts them. The bounded ordered history copies
+entity identity, normal/active-player list, index, name and received U32 seconds.
+It is inert outside replay and in disabled builds. It does not call award helpers,
+change packet reads, or compare the live timer, which later awards set from a
+local clock. Long names/history/output overflow fail rather than truncate.
+All 37 receiver-control programs pass, including 20 new sanitizer cases; all
+180 Python tests pass. Changed state.c/entrecv.c compile ARM64 then i686 with
+one compiler. Host fixtures are not native ABI or complete runtime proof.
+`evidence/m3-reward-time-controls.json` records commands, outputs and limits.
+
+Replay 40243785888 at dd0c3dee is complete: both target execution jobs and
+outside-error comparison pass; strict partial comparison fails. Independent
+verification reproduces all seven comparisons and 702 hashes: three cross-target
+pairs and both same-ID repetitions match; only snapshot 0 differs in each
+INITIAL-ID sensitivity pair, with the same 44 fields on both architectures.
+The previous 11 scalar IDs plus 33 attribute-tree leaves require Sol's explicit
+normalization decision. No normalization was added. Full-schema/full-state/M3
+flags remain false. `evidence/m3-replay-expanded-ids-40243785888.json`.
+
+The server Atlas supplement merge explicitly copies ordinary private files.
+PRoot --link2symlink must not turn temporary extraction links into dangling
+paths. The no-link control and real retained-archive rehash pass after temporary
+files are removed. Base/schema validators remain unchanged; runtime rendering
+is still pending. `evidence/m3-server-atlas-staging-controls.json`.

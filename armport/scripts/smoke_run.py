@@ -89,13 +89,16 @@ def audit_runtime_tree(root):
     return dict(files=files, directories=directories, case_duplicates=0)
 
 
-def merge_tree(src, dst, strict=False, earlier_roots=None):
+def merge_tree(src, dst, strict=False, earlier_roots=None, copy_files=False):
     """Overlay src onto dst as hard links (real directories, no symlinks, so the
     client's directory scans see ordinary files). Earlier roots win for files.
     Case-equivalent directories share their first spelling, matching Windows
     lookup: a lowercase geometry layer must join the original text directory.
     Strict supplements must agree byte-for-byte with every earlier collision,
-    including case aliases, before any of their files are installed."""
+    including case aliases, before any of their files are installed.
+    copy_files keeps private guest data independent of inputs: PRoot's
+    --link2symlink can otherwise turn a temporary hard link into a dangling
+    symlink when the extraction directory is removed."""
     collisions = 0
     if strict:
         prior = {}
@@ -163,10 +166,13 @@ def merge_tree(src, dst, strict=False, earlier_roots=None):
                     raise ValueError('Runtime file conflicts with an existing entry: ' + str(index[key]))
                 continue
             out = target / f
-            try:
-                os.link(os.path.join(dirpath, f), out)
-            except OSError:
+            if copy_files:
                 shutil.copy2(os.path.join(dirpath, f), out)
+            else:
+                try:
+                    os.link(os.path.join(dirpath, f), out)
+                except OSError:
+                    shutil.copy2(os.path.join(dirpath, f), out)
             index[key] = out
     if strict:
         print('::notice title=ArmPort reviewed Atlas supplement::' +

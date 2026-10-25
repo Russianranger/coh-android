@@ -76,6 +76,8 @@ static struct { unsigned seconds, valid; } alignment_delays[ALIGNMENT_POINT_MAX_
 static struct { unsigned valid, bits[4]; } desaturation;
 static struct { int svr_idx, taskforce_id; unsigned id, slot, seconds; } taskforce_times[8192];
 static unsigned taskforce_time_count;
+static struct { int svr_idx, active_player, index; unsigned id, seconds; char name[1024]; } reward_times[8192];
+static unsigned reward_time_count;
 
 static void check_at(int ok, const char *condition, int line)
 {
@@ -133,6 +135,7 @@ void armportReplayStateInit(void)
     memset(alignment_delays, 0, sizeof(alignment_delays));
     memset(&desaturation, 0, sizeof(desaturation));
     taskforce_time_count = 0;
+    reward_time_count = 0;
     active = 1;
 }
 void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
@@ -181,6 +184,39 @@ static void taskforce_time_receives(void)
             taskforce_times[i].taskforce_id, taskforce_times[i].slot, taskforce_times[i].seconds);
     }
     /* Ordered accepted receive history, not reconstructed local-clock state. */
+    out("]");
+}
+
+void armportReplayRewardTime(const Entity *e, int activePlayer, int index, const char *name, unsigned seconds)
+{
+    unsigned n;
+    size_t length = 0;
+    if (!active) return;
+    check(e != NULL && name != NULL && index >= 0 && index < 8192);
+    check((activePlayer == 0 || activePlayer == 1) && reward_time_count < 8192);
+    while (length < sizeof(reward_times[0].name) && name[length]) ++length;
+    check(length < sizeof(reward_times[0].name));
+    n = reward_time_count++;
+    reward_times[n].svr_idx = e->svr_idx;
+    reward_times[n].id = e->id;
+    reward_times[n].active_player = activePlayer;
+    reward_times[n].index = index;
+    reward_times[n].seconds = seconds;
+    memcpy(reward_times[n].name, name, length + 1);
+}
+
+static void reward_time_receives(void)
+{
+    unsigned i;
+    check(reward_time_count <= 8192);
+    out("[");
+    for (i = 0; i < reward_time_count; ++i) {
+        out("%s{\"svr_idx\":%d,\"entity_id\":%u,\"active_player\":%d,\"index\":%d,\"received_seconds\":%u,\"name\":",
+            i ? "," : "", reward_times[i].svr_idx, reward_times[i].id,
+            reward_times[i].active_player, reward_times[i].index, reward_times[i].seconds);
+        string(reward_times[i].name); out("}");
+    }
+    /* Accepted wire-time history, not the mixed-provenance live timer field. */
     out("]");
 }
 
@@ -1326,7 +1362,8 @@ static void player_receive_core(const EntPlayer *p)
 
 /* INITIAL overwrites token timers with received values, but receiveRewardToken
  * calls rewardtoken_Award without overwriting its local-clock timer. Exclude
- * this mixed-provenance field until a separate wire observer is qualified.
+ * this mixed-provenance field; reward_time_receives separately retains accepted
+ * INITIAL raw-time assignments without calling the local-clock award helper.
  * No reward helper is called by this read-only writer. */
 static void player_reward_tokens(RewardToken *const *items)
 {
@@ -1527,7 +1564,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"target_state\":"); target_receive_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state();
-    out(",\"taskforce_time_receives\":"); taskforce_time_receives(); out("}\n");
+    out(",\"taskforce_time_receives\":"); taskforce_time_receives();
+    out(",\"reward_time_receives\":"); reward_time_receives(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);

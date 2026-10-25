@@ -77,6 +77,14 @@ class ServerAtlasData(unittest.TestCase):
         with self.assertRaises(ValueError): server.copy_inputs(self.source, tools)
         self.assertEqual(list(tools.iterdir()), [])
 
+    def test_guest_never_uses_links_and_copied_bytes_survive_temp_removal(self):
+        with patch.object(server.smoke_run.os, 'link', side_effect=AssertionError('PRoot link2symlink')):
+            self.stage()
+        target=self.data/'object_library/atlas/terrain.geo'
+        self.assertFalse(target.is_symlink())
+        self.assertEqual(target.read_bytes(),self.payload)
+        self.assertEqual(list(self.runtime.glob('armport-atlas-*')),[])
+
     def test_real_guest_executes_staging_after_base_before_any_service(self):
         calls = []
         class Stop(Exception): pass
