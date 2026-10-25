@@ -39,6 +39,7 @@
 #include "group/groupnetrecv.h"
 #include "seq/anim.h"
 #include "render/tex.h"
+#include "render/thread/rt_queue.h"
 #include <utilitieslib/utils/armport_zone_trace.h>
 
 #undef vsnprintf
@@ -336,6 +337,16 @@ void armportReplayMaybeRun(void)
     texForceTexLoaderToComplete(0);
     armportZoneTrace("replay.drain.end", "117");
     emit("{\"type\":\"loader_drain_end\",\"after_dispatch\":116}\n");
+    /* Match windowExit's original display-context teardown before process
+     * exit. This tests whether retained render resources contribute to the
+     * observed shutdown waits. It runs after every captured dispatch and
+     * state snapshot; no receiver state is observed or changed afterward.
+     * A stuck flush still hits the host timeout and fails qualification. */
+    require(render_thread != NULL, "replay render worker missing at cleanup");
+    armportZoneTrace("replay.render_cleanup.begin", "original display-context command");
+    rdrQueueCmd(DRAWCMD_DESTROYDISPLAYCONTEXTS);
+    rdrQueueFlush();
+    armportZoneTrace("replay.render_cleanup.end", "original render queue flushed");
     emit("{\"type\":\"result\",\"dispatches\":117,\"exact_cursors\":true,"
          "\"state_comparison_complete\":false,\"m3_replay_complete\":false}\n");
     armportZoneTrace("replay.cleanup.begin", "");

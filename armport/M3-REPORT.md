@@ -1,3 +1,20 @@
+### Replay render cleanup candidate (2026-10-25 UTC)
+
+Replay 40200224489 ARM64 id1 repeats exit 2 but id31 exits SIGKILL after
+its terminal/exit witnesses. Forty passive samples retain 11 sleeping tasks,
+including llvmpipe workers, at futex_do_wait. This is not a userspace stack
+or signal-sender identification. The candidate now queues the original
+DRAWCMD_DESTROYDISPLAYCONTEXTS and flushes before ExitProcess, matching the
+render-cleanup portion of windowExit after all 117 dispatches/snapshots.
+Full windowExit is not called. Timeout, kill, Wine and data-error rejection
+remain unchanged. ARM64 then i686 receiver compilation exits 0, one compiler;
+142 Python tests pass. Runtime pending. See evidence/m3-replay-exit-waits-40200224489.json.
+
+Sol review 5643610947 resolves the final retry finding and accepts the
+complete frozen audio-table coverage, with no new implementation finding
+through 2b860079. It does not review patch 0077 or this cleanup candidate,
+and grants no milestone/merge approval or additional asset permission.
+
 ## Audio-table evidence follow-up (2026-10-25 UTC)
 
 ### Bounded world traversal diagnostic (2026-10-25 UTC)

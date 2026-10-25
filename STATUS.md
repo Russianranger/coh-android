@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Sol 5643123702: final retry parser corrected; 135 tests pass; runtime pending.
+- Sol 5643610947: retry resolved, audio tables accepted; no milestone approval.
 - 0077 observes world traversal/model requests; both target units compile, runtime pending.
 - Atlas 40189560565: connection/guest pass; terrain absent, two post-load swap errors.
-- Replay 40170942751: partial snapshots match diagnostically; i686 SIGKILL still rejects.
+- Replay 40200224489: ARM64 exit waits/SIGKILL; original render cleanup candidate pending.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.
