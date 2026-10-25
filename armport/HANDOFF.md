@@ -63,6 +63,32 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Sol final retry check (2026-10-25 UTC)
+
+Review 5643123702 reproduces a torn stage-7 prefix between the strict retry
+read and the weaker final parser. The final input check now uses the same
+complete latest frame sample and rechecks Atlas-marker absence. Controls
+inject torn/transitioned stage records, a modal and an Atlas marker after
+geometry revalidation. Original 3539492e sends two clicks in the torn-stage
+negative control; corrected code sends one. All 135 tests pass. The new
+commit also includes the shutdown validation below; skip CI to preserve
+40189560565 at 3539492e. Its libraries pass resolves the earlier checkout
+finding, but server-run is still active. These newer fixes require a fresh
+runtime run after that completes; no milestone or merge approval.
+
+### Shutdown acknowledgement validation (2026-10-25 UTC)
+
+Source review of stop_client found wineserver -w timeout was ignored before
+writing stopped=true. The host now retains command/timeout failures, waits
+for a killed client, and publishes the existing stop marker atomically with
+stopped=false on failure. The guest validates the marker on normal and error
+paths; original service cleanup and ownership audits always run. Final host
+teardown errors also fail the verdict. Worst-case subprocess timeouts sum to
+150 seconds inside the existing 180-second coordination wait. 132 Python
+tests pass, including Wine timeout, failed stop, stuck KILL, and invalid
+marker controls. This follow-up skips CI to preserve 40189560565 (3539492e);
+it requires the next runtime qualification and review. No PID identity claim.
+
 ### Sol review and Next retry (2026-10-25 UTC)
 
 Sol 5642681417 identified the missing diagnostic.py dependency in libraries

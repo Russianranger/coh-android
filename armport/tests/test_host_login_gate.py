@@ -30,7 +30,8 @@ def load_driver(namespace, source=None):
 class HostLoginGate(unittest.TestCase):
     def drive(self, trace, *, ocr=False, selected=True, replace_after_wait=None, source=None,
               character_found=False, play_found=False, change_at=None,
-              changed_trace=None, progress=()):
+              changed_trace=None, progress=(), final_retry_stage=None, final_retry_trace=None,
+              final_retry_atlas=False):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             stdio, zone = root / 'armport_stdio.txt', root / 'zone-trace.jsonl'
@@ -81,11 +82,26 @@ class HostLoginGate(unittest.TestCase):
                     if next_line is not None:
                         stdio.write_text(stdio.read_text() + next_line)
                     change('next_wait')
+            retry_reads = [0]
+            def frame(path, trace_path):
+                result = login_ui.character_select_frame(path, trace_path)
+                if screen.click.call_count == 1:
+                    retry_reads[0] += 1
+                    if retry_reads[0] == 2:
+                        # Publish after geometry revalidation has read the old
+                        # sample, before the final adjacent input check reads.
+                        if final_retry_stage is not None:
+                            stdio.write_text(stdio.read_text() + final_retry_stage)
+                        if final_retry_trace is not None:
+                            zone.write_text(final_retry_trace)
+                        if final_retry_atlas:
+                            (root / 'armport-atlas.json').write_text('{}')
+                return result
             namespace = dict(json=json, time=SimpleNamespace(time=lambda: 0, sleep=sleep),
                 start_client=lambda *a: (object(), dict(account='test', character='TEST123')),
                 login=lambda *a, **kw: True, after_login=after_login,
                 character_select_from_log=login_ui.character_select_from_log,
-                character_select_frame=login_ui.character_select_frame,
+                character_select_frame=frame,
                 dialogs_clear=login_ui.dialogs_clear, at=at,
                 sh=lambda *a: SimpleNamespace(stdout=''))
             load_driver(namespace, source)(SimpleNamespace(client=root), screen, root, status, root)
@@ -193,4 +209,30 @@ class HostLoginGate(unittest.TestCase):
         screen, status, marker = self.drive(row('login'),
             progress=['ArmPort login: stage 6 select 1 player 0 of 1 timeout 0 frames 2\n'],
             change_at='next_wait', changed_trace=row('dialog.alert.begin'))
+        screen.click.assert_called_once()
+
+    def test_final_retry_recheck_rejects_new_stage_or_torn_sample(self):
+        ready = 'ArmPort login: stage 6 select 1 player 0 of 1 timeout 0 frames 2\n'
+        for latest in ('ArmPort login: stage 7',
+                       'ArmPort login: stage 6 select 1 player 0 of 1 timeout 0 frames 3',
+                       'ArmPort login: stage 7 select 1 player 0 of 1 timeout 0 frames 3\n'):
+            with self.subTest(latest=latest):
+                screen, status, _ = self.drive(row('login'), progress=[ready], final_retry_stage=latest)
+                screen.click.assert_called_once()
+                self.assertEqual(status['enter_attempts'], 1)
+
+    def test_final_retry_recheck_rejects_new_modal(self):
+        screen, _, _ = self.drive(row('login'),
+            progress=['ArmPort login: stage 6 select 1 player 0 of 1 timeout 0 frames 2\n'],
+            final_retry_trace=row('dialog.alert.begin'))
+        screen.click.assert_called_once()
+
+    def test_final_retry_recheck_rejects_new_atlas_marker(self):
+        # Stop before downstream rendering code; retain the marker check in
+        # the actual input branch, then return before the unrelated rendering loop.
+        source = (ROOT / 'armport/server/armport_game_host.py').read_text()
+        source = source.replace("    # In game: wait for the guest's database confirmation, then screenshots.",
+                                "    return\n    # In game: wait for the guest's database confirmation, then screenshots.")
+        screen, _, _ = self.drive(row('login'), source=source,
+            progress=['ArmPort login: stage 6 select 1 player 0 of 1 timeout 0 frames 2\n'], final_retry_atlas=True)
         screen.click.assert_called_once()

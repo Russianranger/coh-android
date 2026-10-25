@@ -111,28 +111,40 @@ def start_client(a, state, status, evidence):
             if status.get('guest_exited'):
                 return
             time.sleep(2)
-        stop_client(a, proc)
-        (state / 'armport-client-stopped.json').write_text(json.dumps({'stopped': True}) + '\n')
+        errors = stop_client(a, proc)
+        marker = state / 'armport-client-stopped.json'
+        pending = marker.with_suffix('.tmp')
+        pending.write_text(json.dumps({'stopped': not errors, 'errors': errors}) + '\n')
+        pending.replace(marker)
     threading.Thread(target=watch, daemon=True).start()
     threading.Thread(target=stop_when_guest_finishes, daemon=True).start()
     return proc, info
 
 
 def stop_client(a, proc):
+    """Retain failed teardown operations; never acknowledge a Wine wait timeout."""
+    errors = []
+    def run(label, command, timeout, **kwargs):
+        try:
+            result = subprocess.run(command, capture_output=True, timeout=timeout, **kwargs)
+            if result.returncode:
+                errors.append(f'{label}: exit {result.returncode}')
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            errors.append(f'{label}: {type(exc).__name__}')
     if proc and proc.poll() is None:
-        subprocess.run(['sudo', '-n', 'kill', '-TERM', '--', f'-{proc.pid}'], capture_output=True)
+        run('client TERM', ['sudo', '-n', 'kill', '-TERM', '--', f'-{proc.pid}'], 10)
         try:
             proc.wait(timeout=30)
         except subprocess.TimeoutExpired:
-            subprocess.run(['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], capture_output=True)
+            run('client KILL', ['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], 10)
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                errors.append('client wait: TimeoutExpired after KILL')
     wenv = dict(os.environ, WINEPREFIX=str(a.client_prefix), HOME=str(a.client_home))
-    subprocess.run([str(a.wine / 'wineserver'), '-k'], capture_output=True, timeout=120, env=wenv)
-    # Wait until the client's wineserver (and so its Wine processes) is gone:
-    # the guest's cleanup audits same-user Wine processes.
-    try:
-        subprocess.run([str(a.wine / 'wineserver'), '-w'], capture_output=True, timeout=90, env=wenv)
-    except subprocess.TimeoutExpired:
-        pass
+    run('wineserver stop', [str(a.wine / 'wineserver'), '-k'], 30, env=wenv)
+    run('wineserver wait', [str(a.wine / 'wineserver'), '-w'], 60, env=wenv)
+    return errors
 
 
 def capture_traffic(status, evidence):
@@ -222,7 +234,8 @@ def drive_login(a, screen, state, status, evidence):
                         break
                     sample = fresh
                 # Geometry lookup and progress sampling can expose a modal.
-                if not character_select_from_log(stdio, trace):
+                if ((state / 'armport-atlas.json').exists() or sample is None
+                        or character_select_frame(stdio, trace) != sample):
                     break
                 screen.click(*pos)
                 status['enter_by_layout'] = True
@@ -385,7 +398,10 @@ def main():
             note('error', 'ArmPort M3 guest', 'timed out: ' + dbhost.stop_guest(process, state))
     status['guest_exited'] = True
     driver.join(timeout=60)
-    stop_client(a, status.pop('proc', None))
+    status['final_cleanup_errors'] = stop_client(a, status.pop('proc', None))
+    if status['final_cleanup_errors']:
+        code = code or 1
+        note('error', 'ArmPort M3 host cleanup', json.dumps(status['final_cleanup_errors']))
     if status.pop('tcpdump', None):
         subprocess.run(['sudo', '-n', 'pkill', '-INT', '-f', 'tcpdump -i lo -n -U -s 256'], capture_output=True)
         time.sleep(2)

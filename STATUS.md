@@ -33,7 +33,7 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Sol 5642681417: CI fixture checkout fixed; 126 tests pass; M3/M4 incomplete.
+- Sol 5643123702: final retry parser corrected; 135 tests pass; runtime pending.
 - 0074 defers power-preview queue to the destination menu; 0075 fixes CRT log buffering.
 - Atlas 40181381808: stuck at character select; bounded fresh-frame Next retry pending.
 - Replay 40156677880: ARM64 second run killed; i686 three data-error rejections.

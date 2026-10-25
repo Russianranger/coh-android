@@ -1,5 +1,6 @@
 """Exercise the real M3 guest cleanup methods with a simulated host clock."""
 import ast
+import json
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
@@ -9,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CleanupCoordination(unittest.TestCase):
-    def exercise(self, *, ready=True, stopped=False, acknowledge=True):
+    def exercise(self, *, ready=True, stopped=False, acknowledge=True, receipt=None):
         events = []
         clock = [0]
         class Original:
@@ -21,19 +22,20 @@ class CleanupCoordination(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             state = Path(tmp)
             if ready: (state/'armport-ready.json').touch()
-            if stopped: (state/'armport-client-stopped.json').touch()
+            data = json.dumps({'stopped': True, 'errors': []} if receipt is None else receipt)
+            if stopped: (state/'armport-client-stopped.json').write_text(data)
             def marker(name, value):
                 events.append(name)
                 (state/name).write_text('finished')
             def sleep(seconds):
                 clock[0] += seconds
-                if acknowledge: (state/'armport-client-stopped.json').touch()
+                if acknowledge: (state/'armport-client-stopped.json').write_text(data)
             def require(ok, message):
                 if not ok: raise RuntimeError(message)
             path = ROOT/'armport/server/armport_game_guest.py'
             node = next(n for n in ast.parse(path.read_text()).body
                         if isinstance(n, ast.ClassDef) and n.name == 'ArmPortGame')
-            ns = dict(gd=SimpleNamespace(GameDiagnostic=Original), STATE=state,
+            ns = dict(json=json, gd=SimpleNamespace(GameDiagnostic=Original), STATE=state,
                       write_marker=marker, require=require,
                       time=SimpleNamespace(monotonic=lambda: clock[0], sleep=sleep))
             exec(compile(ast.Module(body=[node], type_ignores=[]), str(path), 'exec'), ns)
@@ -58,7 +60,17 @@ class CleanupCoordination(unittest.TestCase):
         self.assertEqual(elapsed, 0)
         self.assertEqual(result, ['original-failure'])
 
-    def test_completed_normal_handshake_is_not_repeated(self):
+    def test_completed_normal_handshake_is_validated_without_wait(self):
         result, events, elapsed = self.exercise(stopped=True)
-        self.assertEqual(events, ['original-audit'])
+        self.assertEqual(events, ['armport-guest-finished.json', 'original-audit'])
         self.assertEqual(elapsed, 0)
+        self.assertEqual(result, ['original-failure'])
+
+    def test_failed_or_incomplete_host_receipt_cannot_bypass_original_audit(self):
+        for receipt in ({'stopped': False, 'errors': ['timeout']},
+                        {'stopped': True, 'errors': ['timeout']},
+                        {'stopped': True}, {'stopped': 1, 'errors': []}, []):
+            result, events, elapsed = self.exercise(stopped=True, receipt=receipt)
+            self.assertIn('Host client cleanup coordination:', result[0])
+            self.assertEqual(events[-1], 'original-audit')
+            self.assertEqual(result[-1], 'original-failure')

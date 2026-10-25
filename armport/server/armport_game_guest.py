@@ -172,12 +172,16 @@ class ArmPortGame(gd.GameDiagnostic):
         while not stopped.exists():
             require(time.monotonic() < deadline, 'Host did not stop the ARM64 client before cleanup')
             time.sleep(1)
+        receipt = json.loads(stopped.read_text())
+        require(isinstance(receipt, dict) and receipt.get('stopped') is True
+                and receipt.get('errors') == [],
+                'Host ARM64 client teardown failed: ' + json.dumps(receipt))
 
     def cleanup(self):
         failures = []
         # No host launch is possible before ready. Once ready exists the host
         # may be launching, even if its started marker has not arrived yet.
-        if (STATE / 'armport-ready.json').exists() and not (STATE / 'armport-client-stopped.json').exists():
+        if (STATE / 'armport-ready.json').exists():
             try:
                 self.stop_host_client()
             except Exception as exc:

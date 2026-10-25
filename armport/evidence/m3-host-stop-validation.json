@@ -1,0 +1,12 @@
+{
+  "finding": "At 3539492e stop_client swallowed wineserver -w TimeoutExpired and then stop_when_guest_finishes wrote stopped=true. Guest checked existence only.",
+  "inspection_command": "git show 3539492e:armport/server/armport_game_host.py; git show 3539492e:armport/server/armport_game_guest.py",
+  "change": "Retain teardown failures; atomically publish existing marker; validate success and empty errors in guest; preserve original audit; fail final host cleanup.",
+  "validation_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "validation_result": "132 tests, 3.648 seconds, OK",
+  "timeout_budget_seconds": 150,
+  "guest_wait_seconds": 180,
+  "runtime_qualified": false,
+  "preserved_run": 40189560565,
+  "preserved_run_commit": "3539492e36d7436d29a02b789a2d29d4b3014cf0"
+}
