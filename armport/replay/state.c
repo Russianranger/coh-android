@@ -759,6 +759,14 @@ static void leveling_pact_state(const Entity *e)
     out("}");
 }
 
+static void entity_pet_owner_state(const Entity *e)
+{
+    out("{\"owner_ref_words\":"); words(&e->erOwner, sizeof(e->erOwner));
+    out(",\"creator_ref_words\":"); words(&e->erCreator, sizeof(e->erCreator));
+    out(",\"created_by_power\":"); base_power(e->pchar ? e->pchar->ppowCreatedMe : NULL);
+    out("}");
+}
+
 static void entity_packet_order_state(const Entity *e)
 {
     /* Literal retained IDs; no additions to INITIAL-ID canonicalization. */
@@ -1343,6 +1351,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
         out(",\"status_state\":"); entity_status_state(e);
         out(",\"packet_order\":"); entity_packet_order_state(e);
+        out(",\"pet_ownership\":"); entity_pet_owner_state(e);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");

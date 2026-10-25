@@ -1292,3 +1292,33 @@ controls; all 21 existing sanitizer cases pass. The previous compile-only note
 was insufficient to establish these definitions. Fresh full linking/runtime is
 still pending. Patchwork exports 92 patches, prior 91 byte-identical, upstream/
 unchanged. Full-schema/M3 completion and merge approval remain false.
+
+### Pet ownership observations and completed Atlas evidence (2026-10-25 UTC)
+
+Snapshots now retain literal owner/creator EntityRef words and nullable logical
+created-by power identity. No pointer addresses or new ID normalization. The
+original non-pet branch clears references even on a stale packet while retaining
+the created-by power; this is preserved. Existing pet flags/names remain as
+previously observed. No original receiving code or native patch changes.
+
+Evidence: `evidence/m3-pet-ownership-controls.json`: ten original-receiver/
+reference-packing/actual-writer ASan/UBSan cases, sequential ARM64/i686 state.c
+compilation and 162 Python tests pass. Packet, lookup, power and pet-name
+dependencies are substituted. Nonempty display-string paths and name decoding
+are not qualified by this fixture. Only local LeakSanitizer is disabled for
+/proc. Runtime and full-schema/M3 qualification remain pending.
+
+Atlas 40227784437 at e78f0193 is now failed with world_rendered:false after
+1,507 seconds despite successful guest connection/cleanup. Independently
+SHA-256-verified artifact 12614392749 contains eight valid model-counter pairs
+and 54 full model-definition records. Frame 1 has six model-bearing visits
+beyond the first three checks; later sampled frames have none. All samples
+still have zero model submissions. The final screenshot shows sky/HUD/partial
+character and the Help modal, without Atlas terrain. Root cause remains open;
+bounded visits are not a complete model census. Exact evidence:
+`evidence/m3-world-models-40227784437.json`. Sol 5645585894 confirms the earlier
+partial replay pass and failed Atlas, with no new defect or milestone approval.
+
+Fresh Atlas/build 40240791819 and replay 40240791817 test f6332f29, including
+the buff build-guard fix and camera diagnostics, but not this later ownership
+addition. Preserve those runs; no full-state/M3/M4/M5 completion is claimed.

@@ -803,3 +803,5 @@ comparisons with the exact approved texture occurrence. Exact command/output:
 state, before later UI/door/entity-status/camera/target/buff/packet-order/pact
 work. All full-schema/full-state/M3 flags stay false. Atlas 40227784437 is still
 pending; keep its source branch stable until completion.
+
+Pet ownership retains both literal EntityRef U32 words and logical created-by power identity; original non-pet clearing can retain the power. No new ID normalization; full schema remains incomplete. See evidence/m3-pet-ownership-controls.json for source controls and limitations.

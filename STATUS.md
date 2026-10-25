@@ -34,7 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol midpoint finding 5644680146 fixed by 0082; fresh rendering run pending.
-- Atlas 40217209151: no rendered world; 0083 isolates model-bearing rejections.
+- Atlas 40227784437: no rendered world; camera diagnosis pending 40240791819.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40227784453: verified partial pass; later observers/Atlas still pending.
+- Replay 40227784453: partial pass; 40240791817 qualifies later observers.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

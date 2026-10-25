@@ -1,0 +1,373 @@
+{
+  "run": 40227784437,
+  "source_commit": "e78f01930bbceaafe25c88eb64cd8355f673b8a0",
+  "artifact_id": 12614392749,
+  "artifact_sha256": "7d63349c78867e28425eb4a8fb51c47e940aac99c37d8b146b5f492f58df303a",
+  "command": "Verify artifact SHA-256; world_model_report.summarize on isolated zone-trace.jsonl with preserved line endings; parse login-driver.json; inspect screens/38-atlas-later.png",
+  "world_rendered": false,
+  "zone_load_seconds": 1507,
+  "guest": null,
+  "world_models": {
+    "scope": "sampled_model_counters_only",
+    "observations_valid": true,
+    "model_sample_count": 8,
+    "draw_sample_count": 8,
+    "failure_count": 0,
+    "failures": [],
+    "samples": [
+      {
+        "frame": 1,
+        "visits": 16,
+        "editor_skip": 2,
+        "distance_skip": 6,
+        "frustum_skip": 2,
+        "postchecks": 6,
+        "tid": 36
+      },
+      {
+        "frame": 600,
+        "visits": 9,
+        "editor_skip": 2,
+        "distance_skip": 7,
+        "frustum_skip": 0,
+        "postchecks": 0,
+        "tid": 36
+      },
+      {
+        "frame": 1200,
+        "visits": 9,
+        "editor_skip": 2,
+        "distance_skip": 7,
+        "frustum_skip": 0,
+        "postchecks": 0,
+        "tid": 36
+      },
+      {
+        "frame": 1800,
+        "visits": 9,
+        "editor_skip": 2,
+        "distance_skip": 7,
+        "frustum_skip": 0,
+        "postchecks": 0,
+        "tid": 36
+      },
+      {
+        "frame": 2400,
+        "visits": 9,
+        "editor_skip": 2,
+        "distance_skip": 7,
+        "frustum_skip": 0,
+        "postchecks": 0,
+        "tid": 36
+      },
+      {
+        "frame": 3000,
+        "visits": 9,
+        "editor_skip": 2,
+        "distance_skip": 7,
+        "frustum_skip": 0,
+        "postchecks": 0,
+        "tid": 36
+      },
+      {
+        "frame": 3600,
+        "visits": 9,
+        "editor_skip": 2,
+        "distance_skip": 7,
+        "frustum_skip": 0,
+        "postchecks": 0,
+        "tid": 36
+      },
+      {
+        "frame": 4200,
+        "visits": 9,
+        "editor_skip": 2,
+        "distance_skip": 7,
+        "frustum_skip": 0,
+        "postchecks": 0,
+        "tid": 36
+      }
+    ],
+    "all_sampled_model_visits_zero": false,
+    "all_sampled_postchecks_zero": false,
+    "cause_established": false,
+    "rendering_acceptance_changed": false
+  },
+  "model_definition_records": [
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,985.173096,-2018.10083 distance_valid=1 distance_mid=1554.401,985.173096,-2018.10083 distance2=7459459.5 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,989.407349,-2018.0459 distance_valid=1 distance_mid=1392.45544,989.407349,-2018.0459 distance2=6990368 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,978.947083,-1969.79602 distance_valid=1 distance_mid=1472.70544,978.947083,-1969.79602 distance2=7007295 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=2 sample=0 name=\"grp9111754\" cached_flags=10 model=1 children=22 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=297.455292,490.562378,-826.04657 distance_valid=1 distance_mid=297.455292,490.562378,-826.04657 distance2=1011484 limit_valid=0 limit=0 cached_vis=1000 radius=26.6844883 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=352 model_tris=238",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=3 sample=0 name=\"grp9111897\" cached_flags=10 model=1 children=13 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=393.954895,443.312378,-954.046387 distance_valid=1 distance_mid=393.954895,443.312378,-954.046387 distance2=1261930.75 limit_valid=0 limit=0 cached_vis=1000 radius=28.4523315 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=504 model_tris=380",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=3 sample=0 name=\"grp9111906\" cached_flags=10 model=1 children=13 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=201.955032,443.312378,-954.04657 distance_valid=1 distance_mid=201.955032,443.312378,-954.04657 distance2=1147516.5 limit_valid=0 limit=0 cached_vis=1000 radius=28.4523315 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=504 model_tris=380",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=3 sample=0 name=\"grp9112123\" cached_flags=8 model=1 children=449 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=297.455414,472.946503,-950.980774 distance_valid=1 distance_mid=297.455414,472.946503,-950.980774 distance2=1216522.5 limit_valid=0 limit=0 cached_vis=1173.96631 radius=173.243347 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=1221 model_tris=1131",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=3 sample=0 name=\"grp92915\" cached_flags=136 model=1 children=7 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=204.408081,309.951111,-778.599487 distance_valid=1 distance_mid=204.408081,309.951111,-778.599487 distance2=744069.5 limit_valid=0 limit=0 cached_vis=4045.55713 radius=311.82251 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=88 model_tris=56",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=2 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,964.447083,607.453491 distance_valid=1 distance_mid=221.454315,964.447083,607.453491 distance2=1348200 limit_valid=0 limit=0 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1 kind=1 sample=0 name=\"GRP751693\" cached_flags=8 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=384.919525,78.649353,355.992188 distance_valid=1 distance_mid=384.919525,78.649353,355.992188 distance2=281079.188 limit_valid=1 limit=139.577072 cached_vis=138.497284 radius=1.07978225 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=0 model_verts=24 model_tris=12",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=600 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=600 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=600 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,1886.41211,-2018.10083 distance_valid=1 distance_mid=1554.401,1886.41211,-2018.10083 distance2=10047444 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=600 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,1890.64636,-2018.0459 distance_valid=1 distance_mid=1392.45544,1890.64636,-2018.0459 distance2=9585985 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=600 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,1880.18616,-1969.79602 distance_valid=1 distance_mid=1472.70544,1880.18616,-1969.79602 distance2=9584057 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=600 kind=1 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,1865.68604,607.453491 distance_valid=1 distance_mid=221.454315,1865.68604,607.453491 distance2=3898826.25 limit_valid=1 limit=1560.52576 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1200 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1200 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1200 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,1886.41211,-2018.10083 distance_valid=1 distance_mid=1554.401,1886.41211,-2018.10083 distance2=10047444 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1200 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,1890.64636,-2018.0459 distance_valid=1 distance_mid=1392.45544,1890.64636,-2018.0459 distance2=9585985 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1200 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,1880.18616,-1969.79602 distance_valid=1 distance_mid=1472.70544,1880.18616,-1969.79602 distance2=9584057 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1200 kind=1 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,1865.68604,607.453491 distance_valid=1 distance_mid=221.454315,1865.68604,607.453491 distance2=3898826.25 limit_valid=1 limit=1560.52576 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1800 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1800 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1800 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,1886.41211,-2018.10083 distance_valid=1 distance_mid=1554.401,1886.41211,-2018.10083 distance2=10047444 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1800 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,1890.64636,-2018.0459 distance_valid=1 distance_mid=1392.45544,1890.64636,-2018.0459 distance2=9585985 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1800 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,1880.18616,-1969.79602 distance_valid=1 distance_mid=1472.70544,1880.18616,-1969.79602 distance2=9584057 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=1800 kind=1 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,1865.68604,607.453491 distance_valid=1 distance_mid=221.454315,1865.68604,607.453491 distance2=3898826.25 limit_valid=1 limit=1560.52576 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=2400 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=2400 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=2400 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,1886.41211,-2018.10083 distance_valid=1 distance_mid=1554.401,1886.41211,-2018.10083 distance2=10047444 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=2400 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,1890.64636,-2018.0459 distance_valid=1 distance_mid=1392.45544,1890.64636,-2018.0459 distance2=9585985 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=2400 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,1880.18616,-1969.79602 distance_valid=1 distance_mid=1472.70544,1880.18616,-1969.79602 distance2=9584057 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=2400 kind=1 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,1865.68604,607.453491 distance_valid=1 distance_mid=221.454315,1865.68604,607.453491 distance2=3898826.25 limit_valid=1 limit=1560.52576 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3000 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3000 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3000 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,1886.41211,-2018.10083 distance_valid=1 distance_mid=1554.401,1886.41211,-2018.10083 distance2=10047444 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3000 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,1890.64636,-2018.0459 distance_valid=1 distance_mid=1392.45544,1890.64636,-2018.0459 distance2=9585985 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3000 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,1880.18616,-1969.79602 distance_valid=1 distance_mid=1472.70544,1880.18616,-1969.79602 distance2=9584057 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3000 kind=1 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,1865.68604,607.453491 distance_valid=1 distance_mid=221.454315,1865.68604,607.453491 distance2=3898826.25 limit_valid=1 limit=1560.52576 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3600 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3600 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3600 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,1886.41211,-2018.10083 distance_valid=1 distance_mid=1554.401,1886.41211,-2018.10083 distance2=10047444 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3600 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,1890.64636,-2018.0459 distance_valid=1 distance_mid=1392.45544,1890.64636,-2018.0459 distance2=9585985 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3600 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,1880.18616,-1969.79602 distance_valid=1 distance_mid=1472.70544,1880.18616,-1969.79602 distance2=9584057 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=3600 kind=1 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,1865.68604,607.453491 distance_valid=1 distance_mid=221.454315,1865.68604,607.453491 distance2=3898826.25 limit_valid=1 limit=1560.52576 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=4200 kind=0 sample=0 name=\"grp122514\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-326.800629,164.75415,-947.999329 distance_valid=0 distance_mid=-326.800629,164.75415,-947.999329 distance2=0 limit_valid=0 limit=0 cached_vis=10000 radius=427.551849 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=20 model_verts=521 model_tris=372",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=4200 kind=0 sample=0 name=\"grp141170\" cached_flags=72 model=1 children=0 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=1 trick_hide=0 mid_camera=0 mid=-1141.87061,-251.863373,-562.518066 distance_valid=0 distance_mid=-1141.87061,-251.863373,-562.518066 distance2=0 limit_valid=0 limit=0 cached_vis=175.240662 radius=8.69972324 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=16 model_verts=947 model_tris=816",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=4200 kind=1 sample=0 name=\"grp141231\" cached_flags=136 model=1 children=2 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1554.401,1886.41211,-2018.10083 distance_valid=1 distance_mid=1554.401,1886.41211,-2018.10083 distance2=10047444 limit_valid=1 limit=1050.98096 cached_vis=982.389771 radius=68.5911789 lod_scale=1 model_sample=1 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=4200 kind=1 sample=0 name=\"grp1113960\" cached_flags=8 model=1 children=18 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1392.45544,1890.64636,-2018.0459 distance_valid=1 distance_mid=1392.45544,1890.64636,-2018.0459 distance2=9585985 limit_valid=1 limit=1052.55139 cached_vis=982.389771 radius=70.1616516 lod_scale=1 model_sample=2 model_loadstate=4 model_flags=1536 model_verts=84 model_tris=52",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=4200 kind=1 sample=0 name=\"grp142074\" cached_flags=136 model=1 children=9 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1472.70544,1880.18616,-1969.79602 distance_valid=1 distance_mid=1472.70544,1880.18616,-1969.79602 distance2=9584057 limit_valid=1 limit=1395.92615 cached_vis=1283.71362 radius=112.212563 lod_scale=1 model_sample=3 model_loadstate=4 model_flags=1536 model_verts=96 model_tris=64",
+      "tid": 36
+    },
+    {
+      "stage": "world.modeldef",
+      "text": "frame=4200 kind=1 sample=0 name=\"grp1111559\" cached_flags=136 model=1 children=1 tray=1 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=221.454315,1865.68604,607.453491 distance_valid=1 distance_mid=221.454315,1865.68604,607.453491 distance2=3898826.25 limit_valid=1 limit=1560.52576 cached_vis=1325 radius=235.525742 lod_scale=1 model_sample=4 model_loadstate=4 model_flags=1536 model_verts=56 model_tris=28",
+      "tid": 36
+    }
+  ],
+  "model_definition_count": 54,
+  "screenshot_sha256": "5f742bc080e80878ab6cbb8929ac6693e13e33751b95373860c0b3e0b14e6a01",
+  "screenshot_observation": "HUD, sky, partial character and new-character Help modal; Atlas terrain absent",
+  "root_cause_established": false,
+  "next_step": "Pending 0090 camera/player world-position evidence in fresh Atlas CI; do not bypass original visibility decisions"
+}
