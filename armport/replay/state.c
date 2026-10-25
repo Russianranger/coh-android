@@ -769,6 +769,23 @@ static void entity_pet_owner_state(const Entity *e)
     out("}");
 }
 
+static void entity_sequence_receive_state(const Entity *e)
+{
+    int i;
+    check(e->triggered_move_count >= 0 && e->triggered_move_count <= MAX_TRIGGEREDMOVES);
+    out("{\"next_index\":%d,\"next_bits\":%u,\"triggered\":[",
+        e->next_move_idx, (unsigned)e->next_move_bits);
+    for (i = 0; i < e->triggered_move_count; ++i) {
+        const TriggeredMove *m = &e->triggered_moves[i];
+        out("%s{\"index\":%d,\"delay_ticks\":%d,\"trigger_fx_id\":%d}",
+            i ? "," : "", m->idx, m->ticksToDelay, m->triggerFxNetId);
+    }
+    /* move_change_timer mixes the received delay with local timing. Neither
+     * it nor sequencer-created timestamps/state belong in this observation.
+     */
+    out("]}");
+}
+
 static void attribute_packet_ids(const ParseTable *schema, void *const *ids, unsigned depth)
 {
     unsigned i;
@@ -1391,6 +1408,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"packet_order\":"); entity_packet_order_state(e);
         out(",\"attribute_packet_order\":"); entity_attribute_packet_order_state(e);
         out(",\"pet_ownership\":"); entity_pet_owner_state(e);
+        out(",\"sequence_receive\":"); entity_sequence_receive_state(e);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");

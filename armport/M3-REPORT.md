@@ -1702,3 +1702,24 @@ qualification remains pending; full schema and M3 remain false.
 Sol review 5645758046 accepts implementation through f6332f29, explicitly not
 milestone/merge approval. Current runs 40240791819/40240791817 retain that head;
 this addition and pet ownership are not covered by those runs.
+
+### Sequence receive observations and pending ID decision (2026-10-25 UTC)
+
+Snapshots retain next sequence index/bits and the ordered triggered-move queue
+(index, delay ticks and trigger FX ID). Local mixed-clock move_change_timer,
+sequencer timestamps and server-only state are excluded. Original receiving,
+queue saturation and stale-packet behavior are unchanged. Evidence:
+`evidence/m3-sequence-receive-controls.json`: 17 original-receiver/actual-writer
+ASan/UBSan cases, sequential ARM64/i686 state.c compilation and 163 Python tests
+pass. Packet/demo substitutes limit host coverage; no native patch changes.
+
+ARM64 artifact 12617326111 from replay 40240791817 is SHA-256 verified and all
+351 snapshot digests checked. All three executions pass dispatch/cursor/ACK
+validation and normal exit2. Same-ID repeated runs match. INITIAL1/31 differ
+only in snapshot0 at 11 newly observed scalar packet-order fields, each 1/31.
+`evidence/m3-arm64-id-sensitivity-40240791817.json` enumerates exact values and
+original UPDATE_PACKET_ID sites. i686/combined comparison still pending.
+Proposed decision for Sol: permit only these enumerated fields, only snapshot0
+in the ID-sensitivity comparison, only values equal to that run's INITIAL ID.
+This proposal is NOT implemented or approved; strict comparison stays unchanged,
+all other/new structured IDs stay literal. Full-schema/M3 remain false.
