@@ -38,6 +38,7 @@
 #include "UI/uiTurnstile.h"
 #include "UI/uiKeybind.h"
 #include "UI/uiOptions_Type.h"
+#include "gameComm/trayCommon.h"
 #include "graphics/textureatlas.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
@@ -689,6 +690,53 @@ static void deletion(unsigned pkt_id, int idx, int id)
 
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
+static void tray_slots_state(const TrayObj *const *slots)
+{
+    int i, count = eaSize(&slots);
+    check(count >= 0 && count <= 8192);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const TrayObj *obj = slots[i];
+        if (i) out(",");
+        if (!obj) { out("null"); continue; }
+        out("{\"type\":%d", (int)obj->type);
+        if (obj->type == kTrayItemType_Power || obj->type == kTrayItemType_Inspiration)
+            out(",\"set\":%d,\"power\":%d", obj->iset, obj->ipow);
+        if (obj->type == kTrayItemType_Power) {
+            out(",\"auto\":%d,\"power_name\":", obj->autoPower); string(obj->pchPowerName);
+            out(",\"set_name\":"); string(obj->pchPowerSetName);
+            out(",\"category\":"); string(obj->pchCategory);
+        } else if (IS_TRAY_MACRO(obj->type)) {
+            out(",\"command\":"); fixed_string(obj->command, sizeof(obj->command));
+            out(",\"short_name\":"); fixed_string(obj->shortName, sizeof(obj->shortName));
+            out(",\"icon_name\":"); fixed_string(obj->iconName, sizeof(obj->iconName));
+        }
+        out("}");
+    }
+    out("]");
+}
+static void player_tray_state(const Tray *tray)
+{
+    int i;
+    if (!tray) { out("null"); return; }
+    out("{\"current\":[");
+    for (i = 0; i < kCurTrayType_Count; ++i) out("%s%d", i ? "," : "", tray->current_trays[i]);
+    out("],\"mode\":%d,\"mode_alt2\":%d,\"indexes\":%u,\"has_storage\":%s,\"player_slots\":",
+        tray->mode, tray->mode_alt2, (unsigned)tray->trayIndexes, tray->internals ? "true" : "false");
+    tray_slots_state(armportReplayTraySlots(tray, 0));
+    out(",\"server_slots\":"); tray_slots_state(armportReplayTraySlots(tray, 1));
+    out("}");
+}
+static void default_power_state(const Power *power)
+{
+    if (!power) { out("null"); return; }
+    out("{\"index\":%d,\"unique_id\":%d,\"set_index\":", power->idx, power->iUniqueID);
+    if (power->psetParent) out("%d", power->psetParent->idx); else out("null");
+    out(",\"base\":"); base_power(power->ppowBase);
+    out(",\"original\":"); base_power(power->ppowOriginal);
+    out("}");
+}
+
 static void options_receive_state(void)
 {
     int i, count = -1;
@@ -1099,6 +1147,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"power_inventory\":"); power_inventory(p);
             out(",\"generic_inventories\":"); generic_inventories(p);
             out(",\"receive_core\":"); character_receive_core(p);
+            out(",\"default_power\":"); default_power_state(p->ppowDefault);
             out("}");
         } else out("null");
         out(",\"player\":");
@@ -1111,6 +1160,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"turnstile_state\":"); player_turnstile_state(e->pl);
             out(",\"keybind_state\":"); player_keybind_state(e->pl);
             out(",\"chat_state\":"); player_chat_state(e->pl);
+            out(",\"tray_state\":"); player_tray_state(e->pl->tray);
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
@@ -1132,6 +1182,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"server_waypoints\":"); server_waypoint_state();
     out(",\"turnstile\":"); turnstile_receive_state();
     out(",\"user_options\":"); options_receive_state();
+    out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));

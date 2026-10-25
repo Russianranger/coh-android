@@ -1104,3 +1104,23 @@ and state.c compile ARM64 then i686 with one compiler. Patchwork exports 86
 patches and the prior 85 remain byte-identical; upstream/ unchanged. Host
 fixtures are not native ABI proof; only local LeakSanitizer is disabled for
 /proc. Fresh runtime remains pending. Full-state and M3 flags remain false.
+
+### Existing tray storage and default-power observations (2026-10-25 UTC)
+
+Patch 0087 exposes existing player/server tray arrays and the received sticky
+mode through const views. The normal getTrayObj lookup writes derived slot
+metadata even when creation is disabled, so snapshots never use it. Array order,
+nulls, all eight builds, stored tray selections/modes/index mask, power and
+inspiration indices, logical power names, macro fields and nullable default-power
+identity are retained. Render/icon caches, derived slot metadata and the local
+momentary key mask are excluded. Other tray kinds currently retain type only;
+this is an explicit coverage gap, not a complete tray/UI schema.
+
+Evidence: `evidence/m3-tray-state-controls.json`. Nineteen actual accessor/writer
+and original mode-receiver cases pass ASan/UBSan, including source immutability,
+four sticky modes, separate arrays, last slots, nulls and count/string/output
+bounds. Native trayCommon.c, uiTray.c and state.c compile ARM64 then i686 with
+one compiler. Patchwork exports 87 patches with the prior 86 byte-identical;
+upstream/ unchanged. Host fixtures are not native ABI proof; only local
+LeakSanitizer is disabled for /proc. Runtime remains pending; full-schema,
+full-state comparison and M3 completion remain false.
