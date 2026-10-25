@@ -37,4 +37,4 @@ see armport/HANDOFF.md):
 - 0074 defers power-preview queue to the destination menu; 0075 fixes CRT log buffering.
 - Atlas donor recovery verifies the retained 47-file set; 112 local tests pass.
 - Replay 40156677880: ARM64 second run killed; i686 three data-error rejections.
-- M4 40155140217: boot passed, creation failed at index -16; fixed runtime pending.
+- M4 40167305715: creation validated, reopen crashed on unsigned -1; 0076 runtime pending.

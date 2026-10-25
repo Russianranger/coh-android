@@ -271,6 +271,9 @@ jobs:
           PYCONTROL
 
 
+      - name: SMF selection respects signed string boundaries
+        run: python3 armport/tests/smf_selection_boundary.py --source "$RUNNER_TEMP/armport/src"
+
       - name: Power preview respects the deferred menu transition
         run: |
           set -o pipefail

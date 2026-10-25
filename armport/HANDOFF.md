@@ -63,6 +63,16 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Reopen selection boundary (2026-10-25 UTC)
+
+M4 40167305715 now reaches reopen after creation validation; reopen crashes
+in smf_SwitchBreakingToNonBreakingSpace. Exact Release disassembly and guest
+registers prove -1 became UINT_MAX. Patch 0076 keeps the index signed and
+checks bounds before reads, including both backward selection scans.
+Source-derived ASan/UBSan helper controls reject old/pass fixed behavior;
+ARM64 then i686 changed-unit builds pass. See evidence/m4-reopen-smf-40167305715.json.
+Live reopen remains unqualified; select the new Release after CI succeeds.
+
 ### Active continuation after Sol review 5641405794 (2026-10-25 UTC)
 
 Sol found no new implementation issue in code 396c470 / head 703ad1e, but
