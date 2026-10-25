@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Run the original receiver in isolated Wine; success is cursor-stage only."""
+"""Run the original receiver in isolated Wine; success is cursor-stage only.
+
+Render-cleanup/exit witnesses are diagnostic, never substitutes for a normal
+process exit. Power inventory additions remain part of a partial state schema.
+"""
 import argparse
 import gzip
 import hashlib
