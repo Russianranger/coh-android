@@ -68,6 +68,25 @@ Sol supplemental review 5643697920 accepts implementation through 4c7ba7b
 texture staging), with no new finding. It explicitly grants no milestone or
 merge approval; keep PR #6 draft. Later inventory/badge additions need review.
 
+### Accepted partial replay checkpoint (2026-10-25 UTC)
+
+Run [40206484644](https://github.com/Russianranger/coh-android/actions/runs/40206484644)
+at 65a494c9 completed successfully: both target jobs, exact outside-error
+comparison and partial-state comparison pass. Independent revalidation of both
+SHA-256-verified artifacts reproduces all seven matching comparisons with the
+one committed texture occurrence retained. Evidence and exact command:
+`evidence/m3-accepted-partial-replay-40206484644.json`. Full schema, full state
+comparison and M3 completion remain false. Historical 40203125375 stays failed.
+
+Sol review [5644065631](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5644065631)
+finds no new implementation issue through b9f6cd8c, but grants no milestone or
+merge approval. That head adds executable costume, story and contact/task
+observers after the passing run. Fresh replay
+[40210598573](https://github.com/Russianranger/coh-android/actions/runs/40210598573)
+at e628a05c tests those additions; qualification remains pending. The trigger
+changes only run_ci.py documentation and preserves Atlas 40204814232 at
+b3125faa. Atlas is still running, not passed. Keep PR #6 draft and unmerged.
+
 ### Contact and task observation follow-up (2026-10-25 UTC)
 
 Snapshots now retain ordered task sets/tasks, identities, difficulty, full

@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Sol 5643610947: retry resolved, audio tables accepted; no milestone approval.
+- Sol 5644065631: no new finding through b9f6cd8c; no milestone/merge approval.
 - 0077 observes world traversal; duplicate host cleanup fixed, fresh runtime pending.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40203125375: six normal exits; exact approved texture opt-in needs fresh CI.
+- Replay 40206484644: accepted partial comparison; newer observers run 40210598573.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

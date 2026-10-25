@@ -1157,3 +1157,22 @@ not hash bitfield layout, tracker pointers or render overrides. Both target
 units compile sequentially; actual-writer sanitizer controls and 145 Python
 tests pass. Evidence: evidence/m3-world-state-observations.json. Runtime
 pending, schema still partial, no change to packet bytes or acceptance.
+
+### Accepted partial replay checkpoint (2026-10-25 UTC)
+
+Run [40206484644](https://github.com/Russianranger/coh-android/actions/runs/40206484644)
+at 65a494c9 completed successfully: both target jobs, exact outside-error
+comparison and partial-state comparison pass. Independent revalidation of both
+SHA-256-verified artifacts reproduces all seven matching comparisons with the
+one committed texture occurrence retained. Evidence and exact command:
+`evidence/m3-accepted-partial-replay-40206484644.json`. Full schema, full state
+comparison and M3 completion remain false. Historical 40203125375 stays failed.
+
+Sol review [5644065631](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5644065631)
+finds no new implementation issue through b9f6cd8c, but grants no milestone or
+merge approval. That head adds executable costume, story and contact/task
+observers after the passing run. Fresh replay
+[40210598573](https://github.com/Russianranger/coh-android/actions/runs/40210598573)
+at e628a05c tests those additions; qualification remains pending. The trigger
+changes only run_ci.py documentation and preserves Atlas 40204814232 at
+b3125faa. Atlas is still running, not passed. Keep PR #6 draft and unmerged.

@@ -1,0 +1,155 @@
+{
+  "run_id": 40206484644,
+  "source_commit": "65a494c95d77a76bd3a282c620badc85630ce074",
+  "command": "python3 armport/replay/compare_state.py --root /tmp/coh-r21/accepted-six --commit 65a494c95d77a76bd3a282c620badc85630ce074 --original-texture-exception --output /tmp/coh-r21/accepted-six-comparison.json",
+  "exit_code": 0,
+  "comparison": {
+    "outside_error_inventories_equal": true,
+    "source_commit": "65a494c95d77a76bd3a282c620badc85630ce074",
+    "scope": "partial_receiver_state_comparison",
+    "original_texture_exception": true,
+    "accepted_original_data_errors": [
+      {
+        "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "count": 1
+      }
+    ],
+    "comparisons": [
+      {
+        "left": [
+          "arm64",
+          "id1-a"
+        ],
+        "right": [
+          "i686",
+          "id1-a"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id1-b"
+        ],
+        "right": [
+          "i686",
+          "id1-b"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id31"
+        ],
+        "right": [
+          "i686",
+          "id31"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id1-a"
+        ],
+        "right": [
+          "arm64",
+          "id1-b"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id1-a"
+        ],
+        "right": [
+          "arm64",
+          "id31"
+        ],
+        "id_sensitivity": true,
+        "canonicalized_fields": [
+          "entities[].pkt_id_create",
+          "entities[].player.lastClientStatePktId",
+          "delete_history[].pkt_id",
+          "entities[].pkt_id_pos[]",
+          "entities[].pkt_id_qrot[]"
+        ],
+        "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "i686",
+          "id1-a"
+        ],
+        "right": [
+          "i686",
+          "id1-b"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "i686",
+          "id1-a"
+        ],
+        "right": [
+          "i686",
+          "id31"
+        ],
+        "id_sensitivity": true,
+        "canonicalized_fields": [
+          "entities[].pkt_id_create",
+          "entities[].player.lastClientStatePktId",
+          "delete_history[].pkt_id",
+          "entities[].pkt_id_pos[]",
+          "entities[].pkt_id_qrot[]"
+        ],
+        "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+        "equal": true,
+        "mismatches": []
+      }
+    ],
+    "partial_state_equal": true,
+    "state_schema_complete": false,
+    "state_comparison_complete": false,
+    "m3_replay_complete": false
+  },
+  "artifacts": [
+    {
+      "target": "arm64",
+      "artifact_id": 12604731558,
+      "sha256": "76c2f1fa5ea3543f67ec61986a002efbc617eb6a664640bd623b62361cf6a322"
+    },
+    {
+      "target": "i686",
+      "artifact_id": 12604128497,
+      "sha256": "c17eba147b503cb2de882b21f55c136bf338439f4b6656418ef7f93d27ab5d8f"
+    }
+  ]
+}
