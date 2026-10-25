@@ -40,17 +40,80 @@ def sample(pid, start):
     return result
 
 
-def run(command, *, evidence, timeout, **kwargs):
+def exit_marker_seen(path):
+    """Read only a bounded tail; a torn or unrelated record is not a witness."""
+    try:
+        with path.open('rb') as stream:
+            stream.seek(0, 2)
+            size = stream.tell()
+            stream.seek(max(0, size - 8192))
+            data = stream.read(8192)
+        lines = data.split(b'\n')[:-1]
+        # When the tail starts in the middle of a row, discard that row even
+        # if its suffix happens to look like JSON.
+        if size > 8192:
+            lines = lines[1:]
+        for line in lines:
+            try:
+                row = json.loads(line)
+                if isinstance(row, dict) and row.get('stage') == 'replay.exit.begin':
+                    return True
+            except (ValueError, UnicodeError):
+                pass
+    except OSError:
+        pass
+    return False
+
+
+def task_sample(pid, start, proc_root=Path('/proc')):
+    """Passive /proc evidence only: no debugger, signal, environment or memory."""
+    result = dict(seconds=round(time.monotonic() - start, 3), tasks=[])
+    try:
+        tasks = sorted((proc_root / str(pid) / 'task').iterdir(), key=lambda p: int(p.name))
+        result['task_count'] = len(tasks)
+        result['truncated'] = len(tasks) > 64
+        for task in tasks[:64]:
+            row = dict(tid=int(task.name))
+            for name, bound in (('stat', 4096), ('wchan', 256)):
+                try:
+                    with (task / name).open() as stream:
+                        row[name] = stream.read(bound).strip()
+                except OSError as error:
+                    row[name + '_unavailable'] = error.errno
+            result['tasks'].append(row)
+    except OSError as error:
+        result['unavailable'] = error.errno
+    return result
+
+
+def run(command, *, evidence, timeout, exit_trace=None, **kwargs):
     start = time.monotonic()
     record = dict(timeout_seconds=timeout, memory_events_before=memory_events(), samples=[])
+    if exit_trace is not None:
+        record['exit_observation'] = dict(marker_seen=False, samples=[],
+                                         scope='passive_linux_tasks_not_signal_sender')
     stopped = threading.Event()
     proc = subprocess.Popen(command, **kwargs)
     record['pid'] = proc.pid
 
     def observe():
-        for _ in range(min(int(timeout) + 2, 602)):
-            record['samples'].append(sample(proc.pid, start))
-            if stopped.wait(1):
+        next_sample = start
+        # The Wine server's exit timer can be shorter than one second. Poll
+        # the existing exit witness at 20 Hz, retaining ordinary memory
+        # samples at 1 Hz and at most 40 task samples after the witness.
+        interval = 0.05 if exit_trace is not None else 1
+        for _ in range(int(min(timeout + 2, 602) / interval) + 1):
+            now = time.monotonic()
+            if now >= next_sample and len(record['samples']) < 602:
+                record['samples'].append(sample(proc.pid, start))
+                next_sample = now + 1
+            if exit_trace is not None:
+                observation = record['exit_observation']
+                if not observation['marker_seen'] and exit_marker_seen(exit_trace):
+                    observation.update(marker_seen=True, seconds=round(now - start, 3))
+                if observation['marker_seen'] and len(observation['samples']) < 40:
+                    observation['samples'].append(task_sample(proc.pid, start))
+            if stopped.wait(interval):
                 break
 
     thread = threading.Thread(target=observe, daemon=True)

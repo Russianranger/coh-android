@@ -63,6 +63,25 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Replay exit observation and rejected snapshot diagnostic (2026-10-25 UTC)
+
+All 702 snapshots retained by run 40170942751 authenticate against their
+recorded SHA-256 values. The seven partial-state comparisons match: literal
+same-ID repeats/cross-target pairs and the agreed five-field ID sensitivity.
+All six literal startup/load inventories match (117,777 errors per run).
+This remains diagnostic: i686 id31 exits SIGKILL (-9), and every run has the
+same one dispatch data error. No exception or replay qualification is enabled.
+`replay/diagnose_state.py` reproduces the inspection while retaining failed
+exit codes and false completion flags; hash/Wine/integrity failures abort.
+See evidence/m3-rejected-snapshots-40170942751.json for verified artifacts.
+
+The replay host now polls its existing complete exit witness every 50 ms and
+retains up to 40 passive Linux stat/wchan samples (64 tasks maximum per sample).
+This investigates the sub-second Wine exit timer hypothesis without ptrace,
+signals or changed exit acceptance. Missing task evidence is explicit. All
+142 Python tests pass, including real normal/SIGKILL exits and tampered state.
+Runtime qualification is pending; Atlas 40197277872 remains independent.
+
 ### Exact missing Atlas swap source (2026-10-25 UTC)
 
 Metadata-only inspection of all 57 pinned non-audio tables finds the exact

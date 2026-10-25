@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
 - Sol 5643123702: final retry parser corrected; 135 tests pass; runtime pending.
 - 0074 defers power-preview queue to the destination menu; 0075 fixes CRT log buffering.
 - Atlas 40189560565: connection/guest pass; terrain absent, two post-load swap errors.
-- Replay 40156677880: ARM64 second run killed; i686 three data-error rejections.
+- Replay 40170942751: partial snapshots match diagnostically; i686 SIGKILL still rejects.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

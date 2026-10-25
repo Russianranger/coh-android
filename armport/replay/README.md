@@ -340,3 +340,20 @@ checks pass. Each such execution remains rejected and any rejection fails the
 job. This collects six-run comparison evidence without enabling exceptions or
 accepting replay. Crashes, fatal/assert, malformed evidence, wrong cursors and
 snapshot failures still stop immediately. See `test_receiver_run_series.py`.
+
+## Rejected-run snapshot diagnostic
+
+`diagnose_state.py --root <extracted-root> --commit <source-sha> --output <json>`
+can inspect hash-authenticated partial snapshots even when the process exited
+incorrectly or only dispatch data errors rejected it. It verifies the existing
+Wine/integrity/cursor/ACK/snapshot/native-subset checks and preserves return
+codes, timeout flags and error counts. Its seven comparisons use the same
+literal and five-field ID rules; all qualification/completion flags stay false.
+This is separate from `compare_state.py` and is never an acceptance fallback.
+Run 40170942751's retained snapshots match, but its SIGKILL remains rejected.
+
+The normal replay process observer samples the existing complete exit marker
+at 20 Hz. After observing it, up to 40 bounded `/proc/<pid>/task` stat/wchan
+samples can locate a shutdown wait. It neither sends signals nor attaches a
+debugger, and cannot identify a signal sender. Unavailable observations are
+explicit. Wine/runtime qualification of this diagnostic is still pending.
