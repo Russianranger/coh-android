@@ -112,6 +112,7 @@ class StateComparison(unittest.TestCase):
                                                'generic_inventories': {'id': 1, 'amount': 31}}
         source['entities'][0]['player']['badges'] = {'states': [1, 31], 'time_awarded': 1}
         source['badge_client'] = {'debug_display_mode': 1}
+        source['entities'][0]['player']['costumes'] = {'current': 1, 'pending_number': 31, 'colors': [[1, 31]]}
         source['entities'][0]['groups'] = {'team_id': 1, 'league_id': 31, 'leader_db_id': 1}
         source['group_map_names'] = {'team': ['1', '31']}
         result = canonical_initial_ids(source, 1)

@@ -1,3 +1,17 @@
+### Retained costume observation follow-up (2026-10-25 UTC)
+
+Snapshots now observe convertedScale, selected SG color set and all six SG
+color-selection arrays as individual low/high U32 fields. All ten retained
+player costume slots (including nulls), super/deferred costume bodies and
+selection/mode fields are included. Logical part count is bounded by storage;
+no source pointers, union padding or local deferred-change clocks are hashed.
+Native ARM64 then i686 compilation, actual-writer ASan/UBSan controls, formatter
+controls and 151 Python tests pass. Only local LeakSanitizer is disabled due to
+/proc; CI defaults remain. Evidence: evidence/m3-costume-state-observations.json.
+Runtime pending; preserve replay 40206484644 and Atlas 40204814232 at their
+prior heads. NPC/power customization, reward ownership and broader tail/UI
+state remain uncovered. Schema remains partial; no M3 or merge approval.
+
 ### Exact original-data exception enabled for fresh replay (2026-10-25 UTC)
 
 Replay [40203125375](https://github.com/Russianranger/coh-android/actions/runs/40203125375)

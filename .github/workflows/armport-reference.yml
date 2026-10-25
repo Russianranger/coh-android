@@ -220,6 +220,8 @@ jobs:
           lfs: false
       - name: Check replay output rejection and fixture identities
         run: python3 -m unittest discover -s armport/tests -p 'test_receiver*.py' -v
+      - name: Check actual retained-costume serializer with sanitizers
+        run: python3 armport/tests/receiver_costume_state.py
       - name: Check actual power snapshot serializer with sanitizers
         run: python3 armport/tests/receiver_power_state.py
       - name: Check actual inventory snapshot serializer with sanitizers

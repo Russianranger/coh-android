@@ -203,9 +203,10 @@ and parts, character levels/xp/debt/rest/influence/current and maximum
 attributes, player lastClientStatePktId, and actual delete history.
 
 This is explicitly schema armport-receiver-state-v1-partial. It is NOT a
-full entity/player dump: power sets, inventory, complete player tail,
-teams/tasks/UI game-command state, dynamic groups, further costume metadata
-and other receiver fields remain to be covered. Timer/interpolation fields,
+full entity/player dump. The follow-ups below add inventories, groups, badges,
+world and retained costumes, but complete player tail, tasks/UI game-command
+state, power activation/recharge, supergroups, NPC costume customization and
+other receiver fields remain to be covered. Timer/interpolation fields,
 rendering quaternions, pointers, struct padding and asset addresses are excluded.
 All completion flags remain false and successful execution still exits 2.
 After the terminal result, `replay.cleanup.begin` precedes CloseHandle/free,
@@ -429,3 +430,22 @@ literal occurrences and partial snapshots. Its jobs remain failed under their
 then-active strict policy. Fresh execution is required. Each accepted occurrence
 is printed in the replay notice; raw errors stay in evidence. All other rejection
 rules and outside-error comparison remain. No full-state or M3 claim follows.
+
+## Retained costume observations (2026-10-25)
+
+Costume snapshots now include convertedScale, currentSuperColorSet and all six
+SG color-selection arrays as named low/high U32 halves, not union storage bytes.
+Player snapshots retain all ten costume slots, their null/order distinctions,
+super and pending costumes, selected/stored/unlocked indices and mode flags.
+The original costume_receive and receiveSGColorData destinations are read only.
+Logical part count must fit the retained part array; the original 256-entry
+output bound remains. Temporary editor colors, derived display/source/store
+metadata and local deferred-costume clock deadlines remain excluded. NPC
+customization, power customization and reward ownership are still coverage gaps.
+
+The actual writer's ASan/UBSan control checks the final SG slot/high half,
+all retained/null costume slots, raw float bits, source immutability, empty and
+invalid counts, changed fields and timer/editor exclusion. Both native target
+units compile sequentially; evidence/m3-costume-state-observations.json records
+commands. Runtime qualification is pending; the current replay 40206484644
+predates this observer. The schema remains partial and all completion flags false.

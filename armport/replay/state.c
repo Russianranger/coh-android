@@ -114,6 +114,14 @@ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
     orientation[idx].raw[axis] = value;
     orientation[idx].valid |= 1U << axis;
 }
+static void super_colors(const SGColorBits *values)
+{
+    int i;
+    out("[");
+    for (i = 0; i < NUM_SG_COLOR_SLOTS; ++i)
+        out("%s[%u,%u]", i ? "," : "", values[i].SGBitSetLow, values[i].SGBitSetHigh);
+    out("]");
+}
 static void costume(const cCostume *c)
 {
     int i, count;
@@ -124,8 +132,18 @@ static void costume(const cCostume *c)
     out(",\"skin\":"); words(&c->appearance.colorSkin, sizeof(c->appearance.colorSkin));
     out(",\"ent_type_file\":"); string(c->appearance.entTypeFile);
     out(",\"file_prefix\":"); string(c->appearance.costumeFilePrefix);
+    out(",\"converted_scale\":%d,\"current_super_color_set\":%d,\"super_colors\":{\"primary\":",
+        c->appearance.convertedScale, c->appearance.currentSuperColorSet);
+    super_colors(c->appearance.superColorsPrimaryU);
+    out(",\"secondary\":"); super_colors(c->appearance.superColorsSecondaryU);
+    out(",\"primary2\":"); super_colors(c->appearance.superColorsPrimary2U);
+    out(",\"secondary2\":"); super_colors(c->appearance.superColorsSecondary2U);
+    out(",\"tertiary\":"); super_colors(c->appearance.superColorsTertiaryU);
+    out(",\"quaternary\":"); super_colors(c->appearance.superColorsQuaternaryU);
+    out("}");
     count = eaSize(&c->parts);
     check(count >= 0 && count <= 256);
+    check(c->appearance.iNumParts >= 0 && c->appearance.iNumParts <= count);
     out(",\"num_parts\":%d,\"parts\":[", c->appearance.iNumParts);
     for (i = 0; i < count; ++i) {
         const CostumePart *p = c->parts[i];
@@ -142,6 +160,25 @@ static void costume(const cCostume *c)
         out("}");
     }
     out("]}");
+}
+
+/* Read all retained receive destinations, including inactive/deferred slots.
+ * The local deferred-change clock deadlines are deliberately not serialized.
+ * Temporary editor colors and derived display/source/store metadata are absent. */
+static void player_costumes(const EntPlayer *p)
+{
+    int i;
+    out("{\"current\":%d,\"current_super\":%d,\"unlocked_slots\":%d,\"stored_count\":%d,"
+        "\"npc_index\":%d,\"supergroup_mode\":%d,\"hide_emblem\":%d,\"pending_number\":%d,\"slots\":[",
+        p->current_costume, p->current_supercostume, p->num_costume_slots, p->num_costumes_stored,
+        p->npc_costume, p->supergroup_mode, p->hide_supergroup_emblem, p->pendingCostumeNumber);
+    for (i = 0; i < MAX_COSTUMES; ++i) {
+        if (i) out(",");
+        costume((const cCostume *)p->costume[i]);
+    }
+    out("],\"super\":"); costume((const cCostume *)p->superCostume);
+    out(",\"pending\":"); costume((const cCostume *)p->pendingCostume);
+    out("}");
 }
 
 /* Persist logical identities and individual fields, never object bytes or
@@ -442,6 +479,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         if (e->pl) {
             out("{\"lastClientStatePktId\":%u,\"badges\":", e->pl->lastClientStatePktId);
             player_badges(e->pl);
+            out(",\"costumes\":"); player_costumes(e->pl);
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
