@@ -293,6 +293,9 @@ jobs:
       - name: Check tray const views and original mode receiver
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_tray_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original initial UI receivers and snapshot
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_initial_ui_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:

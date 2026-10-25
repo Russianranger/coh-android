@@ -39,6 +39,10 @@
 #include "UI/uiKeybind.h"
 #include "UI/uiOptions_Type.h"
 #include "gameComm/trayCommon.h"
+#include "gameComm/wdwbase.h"
+#include "UI/uiWindows.h"
+#include "UI/uiListView.h"
+#include "cmdparse/cmdcommon.h"
 #include "graphics/textureatlas.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
@@ -737,6 +741,36 @@ static void default_power_state(const Power *power)
     out("}");
 }
 
+static void initial_ui_state(void)
+{
+    int i;
+    out("{\"team_buffs\":%d,\"inspiration_mode\":%d,\"dividers\":[%d,%d,%d,%d,%d,%d,%d,%d],\"window_rgba\":[",
+        armportReplayTeamBuffMode(), armportReplayInspirationMode(),
+        gDivSuperName, gDivSuperMap, gDivSuperTitle, gDivEmailFrom,
+        gDivEmailSubject, gDivFriendName, gDivLfgName, gDivLfgMap);
+    for (i = 0; i < 4; ++i) out("%s%d", i ? "," : "", gWindowRGBA[i]);
+    out("],\"windows\":[");
+    for (i = 0; i < MAX_WINDOW_COUNT; ++i) {
+        const Wdw *window = &winDefs[i];
+        const WdwBase *loc = &window->loc;
+        out("%s{\"index\":%d,\"x\":%d,\"y\":%d,\"width\":%d,\"height\":%d,\"draggable\":%d,\"locked\":%d,\"start_shrunk\":%d,\"color\":%u,\"back_color\":%u,\"scale_f32_bits\":",
+            i ? "," : "", i, loc->xp, loc->yp, loc->wd, loc->ht,
+            loc->draggable_frame, loc->locked, loc->start_shrunk,
+            (unsigned)loc->color, (unsigned)loc->back_color);
+        words(&loc->sc, sizeof(loc->sc));
+        out(",\"maximized\":%d,\"mode\":%d,\"below\":%d}",
+            loc->maximized, (int)loc->mode, window->below);
+    }
+    out("]}");
+}
+static void initial_server_state(void)
+{
+    out("{\"boost_diminishing\":%d,\"power_diminishing\":%d,\"no_base_edit\":%d,\"beta_base\":%d,\"base_raid\":%d,\"first_person\":%d,\"nocoll\":%d}",
+        game_state.enableBoostDiminishing, game_state.enablePowerDiminishing,
+        game_state.no_base_edit, game_state.beta_base, game_state.base_raid,
+        control_state.first, control_state.nocoll);
+}
+
 static void options_receive_state(void)
 {
     int i, count = -1;
@@ -1183,6 +1217,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"turnstile\":"); turnstile_receive_state();
     out(",\"user_options\":"); options_receive_state();
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
+    out(",\"initial_ui\":"); initial_ui_state();
+    out(",\"initial_server_state\":"); initial_server_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));

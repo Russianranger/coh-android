@@ -1124,3 +1124,30 @@ one compiler. Patchwork exports 87 patches with the prior 86 byte-identical;
 upstream/ unchanged. Host fixtures are not native ABI proof; only local
 LeakSanitizer is disabled for /proc. Runtime remains pending; full-schema,
 full-state comparison and M3 completion remain false.
+
+### Retained initial UI and server-control observations (2026-10-25 UTC)
+
+Partial snapshots now include every built-in window's retained WdwBase fields,
+its below flag, global RGBA, eight saved dividers, team/inspiration modes, five
+server-feature flags and the received first-person/nocoll values. Patch 0088
+adds const mode views only; window/default/clamp/color propagation and all
+original receivers are unchanged. Snapshots read existing winDefs directly.
+Window values are post-receiver retained state, not raw wire data. Custom and
+minimized windows, animation clocks/caches, callbacks and broader control state
+remain excluded; no packet-ID normalization is added.
+
+Evidence: `evidence/m3-initial-ui-state-controls.json`. Twelve ASan/UBSan cases
+execute original window/divider/mode receivers, actual accessor/writers and the
+original server/control assignment fragments. Native state.c, uiGroupWindow.c
+and uiInspiration.c compile ARM64 then i686 with one compiler. Patchwork exports
+88 patches; prior 87 are byte-identical and upstream/ unchanged. Host fixtures
+do not execute the entire initial-window setup block or establish native ABI
+or viewport equivalence. Runtime qualification is pending; full-state/M3 flags
+remain false.
+
+Replay 40224584944 at 5919e8c has now completed: both targets, outside-error and
+partial-state comparisons pass, still with all full-state/M3 flags false. Exact
+API/log notices are in `evidence/m3-replay-40224584944.json`; this is CI evidence,
+not independent artifact revalidation. PR #6 checkpoint e78f0193 starts fresh
+Atlas 40227784437 and replay 40227784453, both pending when this note was written.
+Keep their branch stable while they run; this UI addition is later work.
