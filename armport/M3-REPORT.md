@@ -1250,3 +1250,31 @@ prove native ABI; LeakSanitizer alone is disabled locally for /proc limitations.
 CI runs these controls with its normal sanitizers. Runtime of 0080 is pending;
 40204814232 remains failed, and replay 40210598573 qualifies the prior code's
 partial observation scope only. No M3/M4/M5 completion or merge approval.
+
+### Retained groups, customization and initial player fields (2026-10-25 UTC)
+
+Snapshots now include the retained destinations of entReceiveOtherSupergroupInfo:
+entity group name/emblem/colors, item-of-power spaces, mission, ordered/null reward
+tokens, recipes and special details. Received server times and U32 sentinel
+counts stay literal. Internal SpecialDetail.bValid bookkeeping is excluded.
+Supergroup roster/rank/stat/UI coverage is not claimed by this addition.
+
+Active/owned power-customization lists and all ten player slots preserve nulls,
+original retained order, stored/resolved logical names, token bytes and individual
+RGBA U32 values. Original packet reads/receivers and ID normalization do not
+change. Counts remain bounded to 8,192 and the existing 16 MiB snapshot limit
+applies. Broader entity/player/tail/UI coverage remains incomplete.
+
+Initial player observations also retain type/subtype/progress, hidden/skills,
+feature-version bits, original power-set names/comment and every account-game
+and pop-help U32 word. Chat/window/tray/keybind/options receivers remain gaps.
+
+Evidence: `evidence/m3-retained-group-customization-controls.json`. Twelve actual
+writer/observer sanitizer controls and 156 Python tests pass; state.c compiles
+ARM64 then i686 with one compiler. Fixture structures/earrays do not qualify
+native ABI; mission forwarding uses the separately tested original task writer.
+Only local LeakSanitizer is disabled for /proc; CI uses normal sanitizer settings.
+Runtime remains pending. Atlas 40217209151 and replay 40217209257 test 5d1d2da9,
+which predates these new serializers. All full-schema/full-state/M3 flags remain
+false. Existing native renderer 0080 and the review's host truncation fix are
+unchanged by this independent replay coverage work.

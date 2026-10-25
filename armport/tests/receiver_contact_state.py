@@ -16,7 +16,7 @@ def main():
     formatting = source[source.index('static void out('):source.index('void armportReplayStateInit(')]
     fixed = source[source.index('static void fixed_string('):source.index('static void group_members(')]
     observer = source[source.index('void armportReplayAlignmentDelay('):source.index('static void super_colors(')]
-    contacts = source[source.index('static void contact_states('):source.index('static unsigned deletes;')]
+    contacts = source[source.index('static void contact_states('):source.index('static void entity_supergroup_state(')]
     receiver = (args.source / 'Game/src/storyarc/contactClient.c').read_text()
     start = receiver.index('    for (pointIndex = 0; pointIndex < ALIGNMENT_POINT_MAX_COUNT; pointIndex++)')
     loop = receiver[start:receiver.index('    heroAlignmentPoints_self =', start)]

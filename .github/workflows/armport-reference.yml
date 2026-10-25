@@ -232,6 +232,12 @@ jobs:
         run: python3 armport/tests/receiver_badge_state.py
       - name: Check actual team and league snapshot serializer with sanitizers
         run: python3 armport/tests/receiver_group_state.py
+      - name: Check retained supergroup receive destinations
+        run: python3 armport/tests/receiver_supergroup_state.py
+      - name: Check retained power customization observations
+        run: python3 armport/tests/receiver_power_customization_state.py
+      - name: Check retained initial player fields
+        run: python3 armport/tests/receiver_player_core_state.py
       - name: Check actual dynamic-group and sky snapshot serializer with sanitizers
         run: python3 armport/tests/receiver_world_state.py
       - id: replay-exe-cache

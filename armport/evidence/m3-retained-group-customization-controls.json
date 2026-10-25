@@ -1,0 +1,117 @@
+{
+  "scope": "Retained supergroup, power-customization and fixed initial-player receiver observations",
+  "base_commit": "5d1d2da9c21d84bfefe598d526a7ccd38141c721",
+  "sources": [
+    "Game/src/entity/entrecv.c:entReceiveOtherSupergroupInfo,entReceivePowerCust",
+    "Common/entity/power_customization.c:powerCustList_receive",
+    "Common/entity/Supergroup.h,RewardToken.h,power_customization.h",
+    "Game/src/entity/entrecv.c:receiveCharacterFromServer,receiveFullPopHelp"
+  ],
+  "observed": [
+    "entity supergroup id/name/emblem/colors, spaces for items of power and retained SG mission via existing task writer",
+    "ordered/null supergroup reward tokens with received timestamps, recipe counts including UINT32_MAX unlimited sentinel and logical definitions, special detail names/IDs/received timestamps/flags",
+    "active and owned power customization lists, selected player slot and all ten retained slots, resolved logical power names, stored names, tokens and individual RGBA U32 values",
+    "initial player type/subtype/progress, hidden and skills fields, literal feature-version bits, original power-set names/comment and all account-game/pop-help U32 words"
+  ],
+  "excluded": [
+    "supergroup roster/ranks/stats and broader UI command state not populated by entReceiveOtherSupergroupInfo",
+    "SpecialDetail bValid internal bookkeeping",
+    "object pointers, padding, derived caches and local clock fields",
+    "broader entity/player/tail state and full receiver schema",
+    "chat, windows, tray, keybinds/options and other initial-player UI receivers"
+  ],
+  "state_c_sha256": "d9e23d582ee1424d0c79ff548dc4b87f80a1ae1de63ef60c17832903fabea615",
+  "original_receive_code_changed": false,
+  "normalization_changed": false,
+  "checks": [
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_power_state.py",
+      "exit_code": 0,
+      "output": "power serializer: null slots, identity escaping, raw float bits, build arrays, final inventory slots, timer exclusion and bound rejection pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_inventory_state.py",
+      "exit_code": 0,
+      "output": "inventory serializer: five typed arrays, null slots/definitions, unsigned amounts, concept F32 bits, capacity fields, mutation sensitivity and bounds pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_badge_state.py",
+      "exit_code": 0,
+      "output": "badge serializer: 4096 statuses/filenames, 50 wire-timestamp histories, 10 monitor entries, final slots, mutation sensitivity and localized-text exclusion pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_group_state.py",
+      "exit_code": 0,
+      "output": "group serializer: active 8/48 member rosters, retained map names, maximum strings, null/empty groups, mutation sensitivity and corrupt count/pointer/string rejection pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_world_state.py",
+      "exit_code": 0,
+      "output": "world serializer: individual hp/repair fields, original order, raw NaN/negative-zero sky weights, null-empty state and invalid count/storage rejection pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_costume_state.py",
+      "exit_code": 0,
+      "output": "costume serializer: six color sets with all low/high halves, raw float bits, 10 retained/null slots plus super/pending, logical/storage counts, mutation sensitivity, timer/editor exclusion and invalid counts pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_supergroup_state.py",
+      "exit_code": 0,
+      "output": "supergroup writer: metadata, mission forwarding, ordered/null tokens/recipes/details, U32 sentinels/timestamps, logical identities, source immutability, 8192 boundary, malformed counts/fixed strings/output rejection pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_power_customization_state.py",
+      "exit_code": 0,
+      "output": "power customization writer: active/owned/all ten player slots, null/empty/order, literal identity/token bytes, RGBA U32 values, source immutability, address independence, mutation sensitivity and count/output bounds pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_task_state.py",
+      "exit_code": 0,
+      "output": "task serializer: nested order/nulls, retained detail strings, individual flags, received U32 times, raw ordinary-location bits, zowie fields, mutation sensitivity, local-clock/cache exclusion and invalid count/string rejection pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_contact_state.py --source /tmp/coh-world-patchwork/src",
+      "exit_code": 0,
+      "output": "contact serializer: order/nulls, literal strings/flags/points/location bits; actual receiver preserves all ten reads and U32 clock-add results; observer captures raw delay, is inert when off, ignores host clock/UI cache changes and rejects invalid counts/strings/indices; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_story_state.py --source /tmp/coh-world-patchwork/src",
+      "exit_code": 0,
+      "output": "story serializer: ordered/null clue, key, server-souvenir and visit-location arrays; full strings/raw byte escapes, server-only accessor, mutation sensitivity and invalid count/output-size rejection pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_player_core_state.py",
+      "exit_code": 0,
+      "output": "player core writer: received scalar/flag fields, full fixed arrays and literal strings, high-bit U32 values, source immutability, last-slot mutation sensitivity, local-clock exclusion and string/output bounds pass; ASan/UBSan enabled\n"
+    },
+    {
+      "command": "PYTHONPATH=/tmp/coh-build-tools PATH=/tmp/coh-build-tools/bin:$PATH ninja -C /tmp/coh-world-build-arm64 -j1 Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj",
+      "exit_code": 0,
+      "output": "ninja: Entering directory `/tmp/coh-world-build-arm64'\n[1/7] cd /tmp/coh-world-build-arm64 && /tmp/coh-build-tools/cmake/data/bin/cmake -E echo \"precise floating-point check skipped: compile-only build\"\nprecise floating-point check skipped: compile-only build\n[2/7] Performing build step for 'StructParser'\nninja: no work to do.\n[3/7] No install step for 'StructParser'\n[4/7] Completed 'StructParser'\n[5/7] Running StructParser on UtilitiesLib\n[6/7] Running StructParser on Game\n[7/7] Building C object Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:15:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:143:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  143 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( SalvageInventoryItem, salvage, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:153:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  153 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( ConceptInventoryItem, concept, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:167:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  167 | STATIC_ASSERT(IS_GENERICINVENTORYTYPE_COMPATIBLE(RecipeItem,id,name));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:177:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  177 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( RecipeInventoryItem, recipe, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:187:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  187 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( DetailInventoryItem, item, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\n6 warnings generated.\n",
+      "output_sha256": "3e339f701d6c3bbc34285e65dbc78db7c86bf870d076f35c4f055ea90e5348dc",
+      "order": 1
+    },
+    {
+      "command": "PYTHONPATH=/tmp/coh-build-tools PATH=/tmp/coh-build-tools/bin:$PATH ninja -C /tmp/coh-world-build-i686 -j1 Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj",
+      "exit_code": 0,
+      "output": "ninja: Entering directory `/tmp/coh-world-build-i686'\n[1/7] cd /tmp/coh-world-build-i686 && /tmp/coh-build-tools/cmake/data/bin/cmake -E echo \"precise floating-point check skipped: compile-only build\"\nprecise floating-point check skipped: compile-only build\n[2/7] Performing build step for 'StructParser'\nninja: no work to do.\n[3/7] No install step for 'StructParser'\n[4/7] Completed 'StructParser'\n[5/7] Running StructParser on UtilitiesLib\n[6/7] Running StructParser on Game\n[7/7] Building C object Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:15:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:143:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  143 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( SalvageInventoryItem, salvage, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:153:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  153 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( ConceptInventoryItem, concept, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:167:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  167 | STATIC_ASSERT(IS_GENERICINVENTORYTYPE_COMPATIBLE(RecipeItem,id,name));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:177:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  177 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( RecipeInventoryItem, recipe, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:23:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:187:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  187 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( DetailInventoryItem, item, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\n6 warnings generated.\n",
+      "output_sha256": "c837e92044b686a70a8ff2ef1738a9a982814aef9a29039fe07135d33f55e6be",
+      "order": 2
+    },
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "output": "............................................................................................................................................................\n----------------------------------------------------------------------\nRan 156 tests in 7.186s\n\nOK\n"
+    }
+  ],
+  "local_sanitizers": "ASan and UBSan; only LeakSanitizer disabled for local /proc limitation. CI defaults unchanged.",
+  "fixture_limits": "Host fixture structs/earray substitutes are not native ABI qualification. SG control checks mission forwarding; the separate task control tests actual task serialization.",
+  "runtime_pending": true,
+  "current_runs_predate_change": [
+    40217209151,
+    40217209257
+  ],
+  "state_schema_complete": false,
+  "state_comparison_complete": false,
+  "m3_replay_complete": false
+}

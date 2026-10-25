@@ -18,6 +18,7 @@
 #include "entity/character_base.h"
 #include "entity/costume.h"
 #include "entity/powers.h"
+#include "entity/power_customization.h"
 #include "entity/boost.h"
 #include "entity/character_inventory.h"
 #include "entity/salvage.h"
@@ -26,6 +27,8 @@
 #include "bases/basedata.h"
 #include "player/badges_client.h"
 #include "entity/teamCommon.h"
+#include "entity/Supergroup.h"
+#include "entity/RewardToken.h"
 #include "UI/uiGroupWindow.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
@@ -607,11 +610,128 @@ static void contact_receive_state(void)
         heroAlignmentPoints_self, vigilanteAlignmentPoints_self, villainAlignmentPoints_self, rogueAlignmentPoints_self);
 }
 
+
+/* Retained destinations of entReceiveOtherSupergroupInfo. No pointers,
+ * local display caches or SpecialDetail's internal bValid bookkeeping.
+ * Token/detail timestamps below are received server values, not host clocks. */
+static void entity_supergroup_state(const Entity *e)
+{
+    const Supergroup *sg = e->supergroup;
+    int i, count;
+    out("{\"id\":%d,\"name\":", e->supergroup_id);
+    fixed_string(e->supergroup_name, sizeof(e->supergroup_name));
+    out(",\"emblem\":"); fixed_string(e->supergroup_emblem, sizeof(e->supergroup_emblem));
+    out(",\"colors_u32\":[%u,%u],\"retained\":", (unsigned)e->supergroup_color[0], (unsigned)e->supergroup_color[1]);
+    if (!sg) { out("null}"); return; }
+    out("{\"spaces_for_items_of_power\":%d,\"mission\":", sg->spacesForItemsOfPower);
+    task_state(sg->sgMission);
+    count = eaSize(&sg->rewardTokens);
+    check(count >= 0 && count <= 8192);
+    out(",\"reward_tokens\":[");
+    for (i = 0; i < count; ++i) {
+        const RewardToken *token = sg->rewardTokens[i];
+        if (i) out(",");
+        if (!token) { out("null"); continue; }
+        out("{\"name\":"); string(token->reward);
+        out(",\"value\":%d,\"received_time\":%u}", token->val, token->timer);
+    }
+    count = eaSize(&sg->invRecipes);
+    check(count >= 0 && count <= 8192);
+    out("],\"recipes\":[");
+    for (i = 0; i < count; ++i) {
+        const RecipeInvItem *item = sg->invRecipes[i];
+        if (i) out(",");
+        if (!item) { out("null"); continue; }
+        out("{\"count_u32\":%u,\"recipe\":", item->count);
+        if (!item->recipe) out("null");
+        else {
+            out("{\"id\":%d,\"name\":", item->recipe->id);
+            string(item->recipe->pchName); out("}");
+        }
+        out("}");
+    }
+    count = eaSize(&sg->specialDetails);
+    check(count >= 0 && count <= 8192);
+    out("],\"special_details\":[");
+    for (i = 0; i < count; ++i) {
+        const SpecialDetail *item = sg->specialDetails[i];
+        if (i) out(",");
+        if (!item) { out("null"); continue; }
+        out("{\"creation_time\":%u,\"expiration_time\":%u,\"flags\":%u,\"detail\":",
+            item->creation_time, item->expiration_time, item->iFlags);
+        if (!item->pDetail) out("null");
+        else {
+            out("{\"id\":%d,\"name\":", item->pDetail->id);
+            string(item->pDetail->pchName); out("}");
+        }
+        out("}");
+    }
+    out("]}}");
+}
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
     out("%s{\"svr_idx\":%d,\"id\":%d,\"pkt_id\":%u}", deletes++ ? "," : "", idx, id, pkt_id);
 }
+
+/* The original receiver resolves and orders these retained lists. Preserve
+ * that order and logical power identity, never allocator addresses or padding. */
+static void power_customization_list(const PowerCustomizationList *list)
+{
+    int i, count;
+    if (!list) { out("null"); return; }
+    count = eaSize(&list->powerCustomizations);
+    check(count >= 0 && count <= 8192);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const PowerCustomization *item = list->powerCustomizations[i];
+        if (i) out(",");
+        if (!item) { out("null"); continue; }
+        out("{\"full_name\":"); string(item->powerFullName);
+        out(",\"power\":"); base_power(item->power);
+        out(",\"primary_rgba_u32\":%u,\"secondary_rgba_u32\":%u,\"token\":",
+            item->customTint.primary.integer, item->customTint.secondary.integer);
+        string(item->token); out("}");
+    }
+    out("]");
+}
+static void entity_power_customizations(const Entity *e)
+{
+    int i;
+    out("{\"active\":"); power_customization_list(e->powerCust);
+    out(",\"owned\":"); power_customization_list(e->ownedPowerCustomizationList);
+    out(",\"player\":");
+    if (!e->pl) out("null");
+    else {
+        out("{\"current\":%d,\"slots\":[", e->pl->current_powerCust);
+        for (i = 0; i < MAX_COSTUMES; ++i) {
+            if (i) out(",");
+            power_customization_list(e->pl->powerCustomizationLists[i]);
+        }
+        out("]}");
+    }
+    out("}");
+}
+
+
+/* Fixed retained player destinations in receiveCharacterFromServer and
+ * receiveFullPopHelp. These are account/game flags, not authentication keys.
+ * Chat/window/keybind/options receivers still need separate coverage. */
+static void player_receive_core(const EntPlayer *p)
+{
+    out("{\"player_type\":%d,\"player_subtype\":%d,\"praetorian_progress\":%d,\"hidden\":%d,\"skills_unlocked\":%d,\"new_features_u32\":%u,\"primary_set\":",
+        p->playerType, p->playerSubType, p->praetorianProgress, p->hidden,
+        p->skillsUnlocked, (unsigned)p->newFeaturesVersion);
+    fixed_string(p->primarySet, sizeof(p->primarySet));
+    out(",\"secondary_set\":"); fixed_string(p->secondarySet, sizeof(p->secondarySet));
+    out(",\"comment\":"); fixed_string(p->comment, sizeof(p->comment));
+    out(",\"account_game_flags_u32\":"); words(p->auth_user_data, sizeof(p->auth_user_data));
+    out(",\"pop_help_status_u32\":"); words(p->popHelpStatus, sizeof(p->popHelpStatus));
+    out(",\"pop_help_latest_u32\":"); words(p->popHelpLatest, sizeof(p->popHelpLatest));
+    out("}");
+}
+
 unsigned armportReplayStateSave(const char *directory, unsigned index, char digest[65])
 {
     int idx, axis;
@@ -657,9 +777,12 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out("{\"lastClientStatePktId\":%u,\"badges\":", e->pl->lastClientStatePktId);
             player_badges(e->pl);
             out(",\"costumes\":"); player_costumes(e->pl);
+            out(",\"receive_core\":"); player_receive_core(e->pl);
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
+        out(",\"supergroup\":"); entity_supergroup_state(e);
+        out(",\"power_customizations\":"); entity_power_customizations(e);
         out("}");
     }
     out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);
