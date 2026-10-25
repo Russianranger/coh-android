@@ -1,3 +1,18 @@
+### Generic inventory observation follow-up (2026-10-25 UTC)
+
+Partial replay snapshots now also include all five generic inventory arrays:
+salvage, stored salvage, recipes, base details and concepts, plus decoded
+capacity fields. Array order, null entries, empty definitions, unsigned
+amounts and concept F32 bits are preserved. No decoder/state mutation or new
+ID normalization. Actual ARM64 then i686 compilation and source-derived
+ASan/UBSan controls pass, as do 142 Python tests and formatter controls.
+Local LeakSanitizer alone is disabled due to /proc; CI uses default settings.
+Evidence: evidence/m3-generic-inventory-observations.json. Full state still
+needs other receive destinations and accepted six-run comparison. Runtime
+pending: running replay 40203125375 tests preceding 41c09e32, including the
+cleanup/power additions/approved texture, but not these generic inventories.
+The running Atlas 40197277872 remains preserved at older 554afc86.
+
 ### Approved Atlas swap source staged; power observations expanded (2026-10-25 UTC)
 
 The user approved the exact Steel Canyon texture proposal in this development

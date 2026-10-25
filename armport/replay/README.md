@@ -379,3 +379,11 @@ are hidden. CI runs the same control with its default sanitizer settings.
 Both actual state.c units compile (ARM64 then i686, one compiler); formatter
 preprocessing retains CRT calls and rejects the old macro variant as before.
 See evidence/m3-power-state-observations.json. Runtime pending.
+
+Generic inventories are an additional partial observation in the same schema.
+`receiver_inventory_state.py` exercises the actual writer against all five
+array types, empty arrays, null entries/definitions, high unsigned amounts,
+concept raw float patterns and a changed recipe count. Counts over 8192 reject.
+Capacity totals are included; auction contents, inventions, team/task/UI and
+other uncovered receive destinations are not thereby qualified. See
+evidence/m3-generic-inventory-observations.json. Runtime pending.

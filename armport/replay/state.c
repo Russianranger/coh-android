@@ -19,6 +19,11 @@
 #include "entity/costume.h"
 #include "entity/powers.h"
 #include "entity/boost.h"
+#include "entity/character_inventory.h"
+#include "entity/salvage.h"
+#include "entity/Concept.h"
+#include "bases/DetailRecipe.h"
+#include "bases/basedata.h"
 #include <utilitieslib/components/earray.h>
 
 /* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
@@ -229,6 +234,59 @@ static void power_inventory(const Character *p)
     out("]}");
 }
 
+
+/* Read-only inventory destinations of character_ReceiveInventories and
+ * entity_ReceiveInvUpdate. Empty definitions remain distinct from null slots;
+ * no getter discards their amounts. Concepts retain all four received F32s. */
+static void inventory_item(int id, const char *name, unsigned amount)
+{
+    out("{\"id\":%d,\"name\":", id); string(name);
+    out(",\"amount\":%u}", amount);
+}
+#define INVENTORY_LIST(field, type, definition, idfield, namefield) do { \
+    int item_index, item_count = eaSize(&p->field); \
+    check(item_count >= 0 && item_count <= 8192); \
+    out(",\"" #field "\":["); \
+    for (item_index = 0; item_index < item_count; ++item_index) { \
+        const type *item = p->field[item_index]; \
+        if (item_index) out(","); \
+        if (!item) out("null"); \
+        else inventory_item(item->definition ? item->definition->idfield : 0, \
+                            item->definition ? item->definition->namefield : NULL, item->amount); \
+    } \
+    out("]"); \
+} while (0)
+static void generic_inventories(const Character *p)
+{
+    int i, count = eaSize(&p->conceptInv);
+    check(count >= 0 && count <= 8192);
+    out("{\"salvage_total\":%d,\"stored_salvage_total\":%d,\"recipe_total\":%d,\"auction_total\":%d",
+        p->salvageInvTotalSlots, p->storedSalvageInvTotalSlots, p->recipeInvTotalSlots, p->auctionInvTotalSlots);
+    INVENTORY_LIST(salvageInv, SalvageInventoryItem, salvage, salId, pchName);
+    INVENTORY_LIST(storedSalvageInv, SalvageInventoryItem, salvage, salId, pchName);
+    INVENTORY_LIST(recipeInv, RecipeInventoryItem, recipe, id, pchName);
+    INVENTORY_LIST(detailInv, DetailInventoryItem, item, id, pchName);
+    out(",\"conceptInv\":[");
+    for (i = 0; i < count; ++i) {
+        const ConceptInventoryItem *item = p->conceptInv[i];
+        const ConceptItem *concept;
+        if (i) out(",");
+        if (!item) { out("null"); continue; }
+        concept = item->concept;
+        out("{\"amount\":%u,\"concept\":", item->amount);
+        if (!concept) out("null");
+        else {
+            out("{\"id\":%d,\"name\":", concept->def ? concept->def->id : 0);
+            string(concept->def ? concept->def->name : NULL);
+            out(",\"vars_f32_bits\":"); words(concept->afVars, sizeof(concept->afVars));
+            out("}");
+        }
+        out("}");
+    }
+    out("]}");
+}
+#undef INVENTORY_LIST
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
@@ -271,6 +329,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             words(&p->attrCur, sizeof(p->attrCur));
             out(",\"attr_max_f32_bits\":"); words(&p->attrMax, sizeof(p->attrMax));
             out(",\"power_inventory\":"); power_inventory(p);
+            out(",\"generic_inventories\":"); generic_inventories(p);
             out("}");
         } else out("null");
         out(",\"player\":");
