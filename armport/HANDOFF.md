@@ -63,6 +63,18 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Owned frame execution and server capture (2026-10-25 UTC)
+
+40176407354 qualifies the frame lookup: geometry and brightness are present,
+but Atlas OCR fails and screenshot shows no terrain. The server again exceeds
+the stock 2 MiB output budget after 446 seconds of client observation.
+M3 alone now allows 8 MiB per owned child, retaining unfiltered output and
+fatal overflow checks. 120 tests pass, including real reader cap controls.
+Fresh CI must qualify the longer observation; terrain and Wine ownership
+cleanup remain separate. See evidence/m3-capture-budget-40176407354.json.
+M4 40176336731 passes full guest creation/reopen and host continuity;
+PR #7 retains pending reviewer approval and unvalidated Android surface.
+
 ### Frame title follow-up (2026-10-25 UTC)
 
 40161198295 changes the owned game window title to Atlas Park after Next;

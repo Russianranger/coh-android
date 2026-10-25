@@ -32,6 +32,13 @@ import game_diagnostic as gd  # noqa: E402
 
 base, require, evidence = gd.base, gd.require, gd.evidence
 STATE = Path('/state')
+# This longer-lived M3 stack exceeded the stock 2 MiB capture in 40176407354
+# before the 25-minute client observation ended. Keep all output and the
+# original fatal overflow check, with a finite 8 MiB per-child capture.
+# This is confined to this invocation, like the app interactive host's own
+# larger capture budget; no filtering or server executable change is made.
+SERVER_OUTPUT_LIMIT = 8 * 1024 * 1024
+base.OUTPUT_LIMIT = SERVER_OUTPUT_LIMIT
 CLIENT_QUERY_LIMIT = 40
 # The client phase adds up to CLIENT_QUERY_LIMIT status queries (plus a final
 # one) to the original flow's budget of 80.
@@ -48,6 +55,7 @@ def write_marker(name, value):
 class ArmPortGame(gd.GameDiagnostic):
     def execute(self):
         # Same order as GameDiagnostic.execute up to the first saved logout.
+        self.game['owned_output_limit_bytes'] = SERVER_OUTPUT_LIMIT
         self.prepare_runtime()
         self.initialize()
         self.start_postgres('postgres_first_start')

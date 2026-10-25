@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol 5641405794: no new implementation finding; M3/M4 still incomplete.
 - 0074 defers power-preview queue to the destination menu; 0075 fixes CRT log buffering.
-- Atlas donor recovery verifies the retained 47-file set; 112 local tests pass.
+- Atlas 40176407354: frame lookup works, terrain unproved; 8 MiB capture rerun pending.
 - Replay 40156677880: ARM64 second run killed; i686 three data-error rejections.
-- M4 40167305715: creation validated, reopen crashed on unsigned -1; 0076 runtime pending.
+- M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

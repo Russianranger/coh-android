@@ -1,0 +1,142 @@
+{
+  "run_id": 40176407354,
+  "job_id": 121120041761,
+  "source_commit": "9887369413a440900c5fbb71790312ac7219bbc1",
+  "artifact_id": 12594383317,
+  "artifact_sha256": "b743e7d6ada865daa54ca21d1d9e4073d6a2584d6b4217c2b4d2afa02cd8bd82",
+  "driver": {
+    "world_rendered": false,
+    "zone_load_seconds": 446,
+    "loading_brightness": [
+      0.575,
+      0.378,
+      0.118,
+      0.113,
+      0.111
+    ],
+    "frame_checks": [
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.575217,
+          "deviation": 0.19775
+        },
+        "map_name_visible": false,
+        "ocr": "i >. raymlargetNava Menu No Target 1 \\ SS NS se ee MalpmiGontact\u2122MissionmGluesmGollect Actions Ow Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose: \u2018felon | lealm Emaiil LEG MTiaibyely2 ~ leaguer Friends/Super \u00bb Global Hel pECom b. Pr \u2014 error: auctionhouse not connected C2 Pachatl LL! J Powers EnhaincementspSalvagel Rec 7 Empty Tray Slot \\afalinitG elias a a a a a a a a a a ( Global: SPOGGR ne a a a a a a a a a a",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.377724,
+          "deviation": 0.14379
+        },
+        "map_name_visible": false,
+        "ocr": "\u2018ray, Malrget) Nav, Menu) No Target i \u00bb Map) Contact) Mission) Glues Collect iey Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose: Team league FriendsBSupemeEmalllALECRI GbR 2 ESE GlobaliHelp error: a uctionho use not connected Chiat \u2014\u2014\u2014 pRowers)||nspirations) Enhancements) Salvage Reg mpty Tray Slot ROGBAAOG eS OF Global: Gee",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.117561,
+          "deviation": 0.157733
+        },
+        "map_name_visible": false,
+        "ocr": "ay Target Nav Menu Actions Map Contact Mission Clues Collect \u2014 = Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose: ii None = Team League Friends Super Email LFG Tab 1 2 3 4 error: auctionhouse not connected Noballitelpmicombat You received the pop help message: Pop Help You received the pop help message: Patrol XP You received the pop help message: Hit Points Chiat\u2019 Powers Inspirations Enhancements Salvage Re AO8BOA032 BS Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.11256,
+          "deviation": 0.172192
+        },
+        "map_name_visible": false,
+        "ocr": "a ay Target Nav Menu = No Target Map Contact Mission Clues Collect Actions Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose: cape) ro Me! EDS Team League Friends Super Email LFG Tab 1 2 334 > Globallite|pmcombatt \u2018 error: auctionhouse not connected twewst You received the pop help message: Pop Help You received the pop help message: Patrol XP You received the pop help message: Hit Points Pr Chiat\u2019 Powers Inspirations Enhancements Salvage Re LBL SEBEL SLA. a a a a a a a a a a Global: a a a a a a a a a a",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.111399,
+          "deviation": 0.174418
+        },
+        "map_name_visible": false,
+        "ocr": "ay Target Nav Menu \u2014 Map Contact Mission Clues Collect Actions Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose: ct) See i 4 ld \u2014 Team League Friends Super Email LFG Tab 1 2 3 4 Globallite|pmcombatt * - - error: auctionhouse not connected You received the pop help message: Pop Help You received the pop help message: Patrol XP You received the pop help message: Hit Points Chiat - Powers Inspirations Enhancements Salvage Re oO AO38:603-22 cf | a a a a a a a a a a Global: a a a a a a a a a a",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      }
+    ],
+    "client_exit": -15
+  },
+  "guest_failures": [
+    "Owned process exceeded output bound: first-atlas",
+    "Wine descendant cleanup: Cannot inspect same-UID Wine ownership",
+    "Owned process exceeded output bound: first-atlas"
+  ],
+  "screen_sha256": "14413510af38a434112f00d12597c783a6f012e67aa19af8fa8953ec86cf7e51",
+  "visual_inspection": "Character and HUD visible, welcome/helper modal remains, terrain not visible; not an Atlas pass.",
+  "capture_policy_change": {
+    "old_bytes": 2097152,
+    "new_bytes": 8388608,
+    "scope": "ArmPort M3 guest invocation, per owned child",
+    "filters_added": false,
+    "overflow_remains_fatal": true
+  },
+  "validation_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "validation_output": "........................................................................................................................\n----------------------------------------------------------------------\nRan 120 tests in 3.464s\n\nOK\n",
+  "limits": [
+    "Does not fix missing terrain or modal",
+    "Does not fix Wine ownership cleanup",
+    "No M3 or replay completion; texture exception OFF"
+  ]
+}
