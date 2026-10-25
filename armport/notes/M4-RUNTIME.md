@@ -1,5 +1,35 @@
 # M4 runtime integration work
 
+## Selected-power producer diagnostic and case staging (2026-10-25)
+
+[M4 40127841088](https://github.com/Russianranger/coh-android/actions/runs/40127841088)
+identifies createPrimaryAnimationEvents as the caller passing the bad power
+key 0x10000000000. Exact binary disassembly and artifact identities are in
+M3 commit 2e83133f's `armport/evidence/m3-review12-grid-and-runtime-40128377861.json`.
+The producer remains unproved. This checkpoint pins Release
+[40148424741](https://github.com/Russianranger/coh-android/actions/runs/40148424741/job/121034656145),
+executable SHA256 1f63d4112345c5bba87a222935e72557c66f8bdd234f6784790908df2d4771f0,
+which includes 0073's original menu/index/selected-power diagnostic and
+0072's cached trace opt-in. Data remains 40100355259; no new data selection.
+
+The bootstrap copies the reviewed M3 case-equivalent merger and complete
+tree audit byte-for-byte. The app's private-copy stage also joins directory
+case aliases, with sorted traversal and explicit refusal of colliding file
+aliases or file/directory conflicts. It retains ordinary private copies and
+never modifies imported server data. The report records zero case duplicates
+only after auditing the completed data tree. This avoids recreating separate
+Windows-equivalent directories inside the app guest.
+
+[Local command output and copied-function hashes](../evidence/m4-review14-local.json):
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v` passes
+30 tests. The actual package tests cover merged directory bytes, immutable
+source data and refusal without publishing a partial tree; four inherited
+bootstrap tests cover original-case geometry and collisions. These are local
+staging checks. New runtime execution and independent review remain required;
+M4 is incomplete, with no APK, signing, new data fetch or acceptance relaxation.
+
+The following sections retain historical checkpoints.
+
 M4 is not complete. This branch starts with a runtime boot probe while M3's
 texture-load fix and replay review continue on `armport/m3-atlas`.
 

@@ -66,6 +66,44 @@ class ClientPackage(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'ARM64 PE32'):
             self.build()
 
+    def test_case_equivalent_directories_share_one_private_copy(self):
+        self.build()
+        source = self.root / 'server-data'
+        (source / 'Maps/City').mkdir(parents=True)
+        (source / 'maps/city').mkdir(parents=True)
+        (source / 'Maps/City/Atlas.txt').write_bytes(b'original definition')
+        (source / 'maps/city/atlas.geo').write_bytes(b'original geometry')
+        destination = self.root / 'arm64'
+        report = package.prepare(self.archive, source, destination)
+        self.assertEqual((destination / 'data/Maps/City/Atlas.txt').read_bytes(), b'original definition')
+        self.assertEqual((destination / 'data/Maps/City/atlas.geo').read_bytes(), b'original geometry')
+        self.assertFalse((destination / 'data/maps').exists())
+        self.assertEqual(report['shared_data_files'], 2)
+        self.assertEqual(report['data_case_duplicates'], 0)
+        self.assertTrue((source / 'maps/city/atlas.geo').is_file())
+
+    def test_file_case_alias_refused_without_publishing_partial_tree(self):
+        self.build()
+        source = self.root / 'server-data'
+        source.mkdir()
+        (source / 'White.texture').write_bytes(b'first')
+        (source / 'white.texture').write_bytes(b'second')
+        destination = self.root / 'arm64'
+        with self.assertRaisesRegex(ValueError, 'collides'):
+            package.prepare(self.archive, source, destination)
+        self.assertFalse(destination.exists())
+
+    def test_case_directory_file_conflict_refused(self):
+        self.build()
+        source = self.root / 'server-data'
+        (source / 'Maps').mkdir(parents=True)
+        (source / 'Maps/atlas.txt').write_bytes(b'definition')
+        (source / 'maps').write_bytes(b'conflict')
+        destination = self.root / 'arm64'
+        with self.assertRaisesRegex(ValueError, 'directory conflicts'):
+            package.prepare(self.archive, source, destination)
+        self.assertFalse(destination.exists())
+
     def test_linked_server_input_becomes_private_regular_file_without_link_syscall(self):
         self.build()
         source = self.root / 'server-data'

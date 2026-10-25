@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - M3 still incomplete: see draft PR #6 for current loading/replay evidence.
-- M4 startup passed 40040922125; full interactive guest/server flow pending.
-- M4 actual create/reopen command routing: 9 host tests pass; notes/M4-RUNTIME.md.
+- M4 40127841088 faults in power lookup; latest Release pin is 40148424741.
+- M4 case staging and 30 host tests pass; runtime pending. notes/M4-RUNTIME.md.

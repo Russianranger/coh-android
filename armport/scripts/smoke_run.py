@@ -9,6 +9,7 @@ the tail of the output and any log files written. Observational: the exit code
 is 0 unless the script itself cannot run.
 """
 import argparse
+import hashlib
 import re
 import json
 import os
@@ -72,21 +73,104 @@ def ocr(path):
         return f'ocr failed: {e!r}'
 
 
-def merge_tree(src, dst):
+def audit_runtime_tree(root):
+    """Audit the physical merged tree, after every runtime data layer."""
+    paths = set()
+    files = directories = 0
+    for path in root.rglob('*'):
+        key = path.relative_to(root).as_posix().casefold()
+        if key in paths:
+            raise ValueError('Case-equivalent runtime paths: ' + key)
+        paths.add(key)
+        if path.is_dir():
+            directories += 1
+        else:
+            files += 1
+    return dict(files=files, directories=directories, case_duplicates=0)
+
+def merge_tree(src, dst, strict=False, earlier_roots=None):
     """Overlay src onto dst as hard links (real directories, no symlinks, so the
-    client's directory scans see ordinary files). Earlier roots win for files."""
+    client's directory scans see ordinary files). Earlier roots win for files.
+    Case-equivalent directories share their first spelling, matching Windows
+    lookup: a lowercase geometry layer must join the original text directory.
+    Strict supplements must agree byte-for-byte with every earlier collision,
+    including case aliases, before any of their files are installed."""
+    collisions = 0
+    if strict:
+        prior = {}
+        incoming = {}
+        # Inspect every earlier input layer, including files shadowed by the
+        # ordinary first-wins merge, not only its final destination view.
+        for root in earlier_roots if earlier_roots is not None else (dst,):
+            for base, _, names in os.walk(root, followlinks=True):
+                for name in names:
+                    path = Path(base) / name
+                    prior.setdefault(path.relative_to(root).as_posix().casefold(), []).append(path)
+        for base, _, names in os.walk(src, followlinks=True):
+            for name in names:
+                path = Path(base) / name
+                key = path.relative_to(src).as_posix().casefold()
+                if key in incoming:
+                    raise ValueError('Case-aliased supplement members: ' + key)
+                incoming[key] = path
+                for old in prior.get(key, []):
+                    collisions += 1
+                    with path.open('rb') as new_file, old.open('rb') as old_file:
+                        same = hashlib.file_digest(new_file, 'sha256').digest() == hashlib.file_digest(old_file, 'sha256').digest()
+                    if not same:
+                        print('::error title=ArmPort reviewed Atlas supplement::' +
+                              json.dumps(dict(collisions=collisions, conflicting_path=key)))
+                        raise ValueError('Supplement conflicts with earlier data: ' + key)
+    # Preserve one physical directory per case-insensitive Windows path.
+    # Separate Foo/foo directories can make an exact-spelling parent hide
+    # the other layer's files from Wine, even though both files were staged.
+    children = {}
+
+    def entries(parent):
+        if parent not in children:
+            index = {}
+            for path in parent.iterdir():
+                key = path.name.casefold()
+                if key in index:
+                    raise ValueError('Case-ambiguous runtime entries: ' + str(parent / key))
+                index[key] = path
+            children[parent] = index
+        return children[parent]
+
+    dst.mkdir(parents=True, exist_ok=True)
     for dirpath, dirnames, filenames in os.walk(src, followlinks=True):
-        rel = os.path.relpath(dirpath, src)
-        target = dst / rel if rel != '.' else dst
-        target.mkdir(parents=True, exist_ok=True)
-        for f in filenames:
-            out = target / f
-            if out.exists():
+        dirnames.sort()
+        rel = Path(dirpath).relative_to(src)
+        target = dst
+        for part in rel.parts:
+            index = entries(target)
+            key = part.casefold()
+            if key not in index:
+                path = target / part
+                path.mkdir()
+                index[key] = path
+            target = index[key]
+            if target.is_symlink() or not target.is_dir():
+                raise ValueError('Runtime directory conflicts with an existing entry: ' + str(target))
+        index = entries(target)
+        for f in sorted(filenames):
+            if strict and (rel / f).as_posix().casefold() in prior:
                 continue
+            key = f.casefold()
+            if key in index:
+                if index[key].is_symlink() or not index[key].is_file():
+                    raise ValueError('Runtime file conflicts with an existing entry: ' + str(index[key]))
+                continue
+            out = target / f
             try:
                 os.link(os.path.join(dirpath, f), out)
             except OSError:
                 shutil.copy2(os.path.join(dirpath, f), out)
+            index[key] = out
+    if strict:
+        print('::notice title=ArmPort reviewed Atlas supplement::' +
+              json.dumps(dict(layer=str(src), collisions=collisions, conflicting_collisions=0)))
+    return collisions
 
 def window_texts(lines):
     texts = []
@@ -442,6 +526,7 @@ def main():
     note('notice', 'ArmPort M2 smoke runtime DLLs', ', '.join(copied) or 'none')
     for root in a.data:
         merge_tree(root.resolve(), rt / 'data')
+    print('::notice title=ArmPort complete runtime data inventory::' + json.dumps(audit_runtime_tree(rt / 'data')))
     # Development (non-FINAL) builds take a folder with data/ and tools/ as the
     # game root (UtilitiesLib file.c addAppropriateDataDirs).
     (rt / 'tools').mkdir()

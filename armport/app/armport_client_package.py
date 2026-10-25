@@ -132,30 +132,57 @@ def prepare(archive, source_data, destination):
         pending = Path(temp) / 'client'
         document = unpack(archive, pending)
         count = copied_bytes = 0
+        # The app runs on a case-sensitive host, but Wine resolves Windows
+        # paths. Join directory aliases instead of producing Foo/ and foo/.
+        children = {}
+        def entries(parent):
+            if parent not in children:
+                index = {}
+                for child in parent.iterdir():
+                    key = child.name.casefold()
+                    require(key not in index, 'Case-ambiguous ARM64 data entry')
+                    index[key] = child
+                children[parent] = index
+            return children[parent]
         copy_started = time.monotonic()
         for directory, dirs, files in os.walk(source_data, followlinks=False):
+            dirs.sort()
             relative = Path(directory).relative_to(source_data)
             if relative == Path('.'):
                 dirs[:] = [name for name in dirs if name.casefold() != 'bin']
             for name in dirs:
                 require(not (Path(directory) / name).is_symlink(), 'Linked data directory refused')
-            target = pending / 'data' / relative
-            target.mkdir(parents=True, exist_ok=True)
-            for name in files:
+            target = pending / 'data'
+            for part in relative.parts:
+                index = entries(target)
+                key = part.casefold()
+                if key not in index:
+                    child = target / part
+                    child.mkdir()
+                    index[key] = child
+                target = index[key]
+                require(target.is_dir() and not target.is_symlink(),
+                        'ARM64 data directory conflicts with existing entry')
+            index = entries(target)
+            for name in sorted(files):
                 source = Path(directory) / name
                 # The existing app data tree can link immutable imported files.
                 require(source.is_file(), 'Nonregular app data')
                 require(source.suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
                 output = target / name
-                require(not output.exists(), 'Data collides with ARM64 overlay')
+                require(name.casefold() not in index, 'Data collides with ARM64 overlay or case alias')
                 # The app uses PRoot --link2symlink: a successful link() there
                 # is not a native hard link and can leave Wine-visible links
                 # after this temporary tree is renamed. Materialize ordinary
                 # private files, also preventing client writes to server data.
                 shutil.copyfile(source, output)
                 require(output.is_file() and not output.is_symlink(), 'ARM64 data copy is not regular')
+                index[name.casefold()] = output
                 count += 1
                 copied_bytes += output.stat().st_size
+        paths = [p.relative_to(pending / 'data').as_posix().casefold()
+                 for p in (pending / 'data').rglob('*')]
+        require(len(paths) == len(set(paths)), 'Case-equivalent ARM64 data paths')
         copy_seconds = time.monotonic() - copy_started
         (pending / 'tools').mkdir()
         pending.rename(destination)
@@ -166,6 +193,7 @@ def prepare(archive, source_data, destination):
             'data_copy_seconds': round(copy_seconds, 6),
             'preparation_seconds': round(time.monotonic() - started, 6), 'x86_bins_reused': False,
             'data_materialization': 'private_regular_copies',
+            'data_case_duplicates': 0,
             'work_directory': str(destination)}
 
 
