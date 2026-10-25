@@ -1,5 +1,29 @@
 # M4 runtime integration work
 
+## Current host validation compatibility (2026-10-25 UTC)
+
+Run 40163555077 at ebe0159c passed guest boot and produced a creation report
+with passed=true, but the host rejected its newer avatar receipt schema before
+reopen. Artifact 12588481125 was verified against SHA256
+8738cfadf7feffd042046618b82709625c00f92d4bf22cec2146466bf2721bee.
+The host predates zero-valued legacy repair counters, content-derived worktree
+keys, world preparation metrics, and the retained world's exact manifest.
+
+The ARM64 adapter validates both repair counters as integer zero, validates
+complete fresh/reused world metrics, and then projects only these additional
+fields for the legacy validators. Unknown fields remain rejected. Host-verified
+client package contents supply the native closure for recomputing the current
+worktree key; package/cache/prerequisite hashes must match the staged inventory.
+The exact world contract comes from the hash-verified retained manifest, rather
+than the newer repository world supplement. The stock host defaults remain.
+Raw guest evidence is unchanged. No new assets or native source changes.
+
+The retained creation report passes the complete original report, world and
+external-observer validators with this adapter. Tampered metrics, identities,
+counts and preservation claims remain rejected. All 33 app tests pass; command
+outputs are in evidence/m4-host-schema-40163555077.json. Runtime reopen and
+continuity remain untested; rerun the full workflow before claiming M4.
+
 ## Deferred preview runtime qualification (2026-10-25 UTC)
 
 The workflow now selects Release from [40161198295](https://github.com/Russianranger/coh-android/actions/runs/40161198295),

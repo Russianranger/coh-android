@@ -2,8 +2,10 @@
 """Exercise the selected ARM64 creation/reopen guest with retained app assets."""
 import argparse
 import copy
+import hashlib
 import importlib.util
 import json
+import math
 from pathlib import Path
 import platform
 import secrets
@@ -45,10 +47,60 @@ def legacy_report(report, runtime_manifest, client_manifest):
             'ARM64 preparation was missing, failed, misordered or for another executable')
     result = copy.deepcopy(report)
     result['stages'].pop(found[0][0])
+    # The current installer reports legacy-link repair counters; the retained
+    # host validator predates them. Only a proven no-repair receipt is eligible
+    # for projection. All original pins, counts and preservation checks remain
+    # in character.validate_report; unexpected fields still fail there.
+    avatar = result.get('character_avatar_supplement', {})
+    counters = ('legacy_repaired_files', 'legacy_backing_files_removed')
+    if any(name in avatar for name in counters):
+        require(all(type(avatar.get(name)) is int and avatar[name] == 0
+                    for name in counters), 'Avatar legacy repair requires separate qualification')
+        for name in counters:
+            del avatar[name]
+    world = result.get('atlas_world_supplement', {})
+    metrics = ('reuse_validation', 'archive_read_bytes', 'decoded_files',
+               'decoded_payload_bytes', 'preparation_elapsed_seconds')
+    if any(name in world for name in metrics):
+        contract = runtime_manifest.get('armport_world_contract') or character.host.assets_tool.world_tools().bundle_contract()
+        fresh = world.get('reuse_validation') == 'pinned_content_verification'
+        reused = world.get('reuse_validation') == 'unchanged_filesystem_receipt'
+        require(fresh or reused, 'Unknown world verification method')
+        expected_metrics = dict(archive_read_bytes=contract['archive_pin']['bytes'] if fresh else 0,
+            decoded_files=contract['file_count'] if fresh else 0,
+            decoded_payload_bytes=contract['payload_bytes'] if fresh else 0)
+        require(all(type(world.get(k)) is int and world[k] == v for k, v in expected_metrics.items())
+                and world.get('installed_files') == expected_metrics['decoded_files']
+                and world.get('reused_files') == (0 if fresh else contract['file_count']),
+                'World preparation metrics differ from complete fresh/reused staging')
+        elapsed = world.get('preparation_elapsed_seconds')
+        require(type(elapsed) in (int, float) and math.isfinite(elapsed) and elapsed >= 0,
+                'Invalid world preparation timing')
+        for name in metrics:
+            del world[name]
     result['asset_sha256'] = {name: report['asset_sha256'][name]
                              for name in character.host.assets_tool.PROBE_FILES}
     return result
 
+
+
+def validation_manifest(report, runtime_manifest):
+    """Compute the current worktree identity from host-verified native inputs."""
+    native = runtime_manifest['armport_server_native_closure']
+    work = report['client_worktree']
+    require(work['package_sha256'] == runtime_manifest['files']['client-runtime.zip']['sha256'],
+            'Server data worktree package differs')
+    for field, name in (('cache_archive_sha256', 'client-caches.zip'),
+                        ('prerequisites_archive_sha256', 'client-prerequisites.zip')):
+        require(work[field] == runtime_manifest['files'][name]['sha256'], 'Server data archive differs')
+    data = {k: work[k] for k in ('format', 'source_data', 'import', 'cache_archive_sha256',
+        'prerequisites_archive_sha256', 'prerequisites_manifest_sha256', 'normalized_mtime_epoch')}
+    digest = hashlib.sha256(json.dumps({'data': data, 'native': native},
+        sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    key = 'client-work-' + digest[:24]
+    require(work.get('content_identity_sha256') == digest and work.get('worktree_key') == key,
+            'Server data content identity differs')
+    return dict(runtime_manifest, armport_expected_worktree_key=key)
 
 
 def guest_failure_summary(evidence):
@@ -108,9 +160,10 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                     'ARM64 interactive guest exited unsuccessfully')
             report = json.loads((work / 'state/latest-report.json').read_text())
             projected = legacy_report(report, runtime_manifest, client_manifest)
-            (reopen.validate_report if reopening else character.validate_report)(projected, session, runtime_manifest)
+            checked_manifest = validation_manifest(report, runtime_manifest)
+            (reopen.validate_report if reopening else character.validate_report)(projected, session, checked_manifest)
             if not reopening:
-                reopen.validate_world_supplement(projected, runtime_manifest)
+                reopen.validate_world_supplement(projected, checked_manifest)
             (reopen.validate_observer if reopening else character.validate_observer)(observer, report)
             require(not endpoint.exists(), 'Private display survived guest cleanup')
             runtime_host.runtime.validate_network_receipt(
@@ -154,6 +207,20 @@ def main():
                                                         assets, args.repository_commit)
         runtime_manifest = json.loads((assets / 'runtime-manifest.json').read_text())
         client_manifest = json.loads((assets / 'client-manifest.json').read_text())
+        # stage() verified this archive against the retained donor's exact hash.
+        with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
+            native = json.loads(archive.read('client-package.json'))
+        runtime_manifest['armport_server_native_closure'] = {
+            key: native[key] for key in ('source_commit', 'data_commit', 'files')}
+        world_tool = character.host.assets_tool.world_tools()
+        world = json.loads((assets / world_tool.MANIFEST).read_text())
+        runtime_manifest['armport_world_manifest'] = world
+        runtime_manifest['armport_world_contract'] = dict(
+            scope=world['scope'], manifest_pin=runtime_manifest['files'][world_tool.MANIFEST],
+            archive_pin=runtime_manifest['files'][world_tool.ARCHIVE],
+            file_count=world['file_count'], payload_bytes=world['payload_bytes'],
+            files_sha256=hashlib.sha256(json.dumps(world['files'], sort_keys=True,
+                separators=(',', ':')).encode()).hexdigest())
         # The imported data uses the existing Java importer and exact donor contract.
         data = character.host.import_game_data(donor / 'atlas', args.archive, args.work, args.evidence)
         first, second = secrets.token_hex(16), secrets.token_hex(16)

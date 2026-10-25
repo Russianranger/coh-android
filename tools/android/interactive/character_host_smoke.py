@@ -550,7 +550,10 @@ def validate_avatar_supplement(report, manifest):
             and worktree.get('normalized_mtime_epoch') == expected['normalized_mtime_epoch'],
             'Missing original client worktree identity for avatar supplement')
     key = hashlib.sha256((''.join(identities)+str(expected['normalized_mtime_epoch'])).encode()).hexdigest()[:24]
-    require(receipt['worktree'] == 'client-work-'+key, 'Character avatar supplement was installed into another worktree')
+    expected_key = manifest.get('armport_expected_worktree_key', 'client-work-'+key)
+    require(isinstance(expected_key, str) and re.fullmatch(r'client-work-[0-9a-f]{24}', expected_key),
+            'Invalid host-verified worktree identity')
+    require(receipt['worktree'] == expected_key, 'Character avatar supplement was installed into another worktree')
 
 
 def validate_report(report, session, manifest):
