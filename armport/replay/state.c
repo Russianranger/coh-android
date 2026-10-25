@@ -742,6 +742,30 @@ static void default_power_state(const Power *power)
     out("}");
 }
 
+static void entity_status_state(const Entity *e)
+{
+    int i, count;
+    out("{\"effects\":%u,\"translucency_f32_bits\":", (unsigned)e->ulStatusEffects);
+    words(&e->xlucency, sizeof(e->xlucency));
+    out(",\"logout_bad_connection\":%u,\"afk\":", (unsigned)e->logout_bad_connection);
+    if (e->pl) {
+        out("{\"enabled\":%u,\"message\":", (unsigned)e->pl->afk);
+        fixed_string(e->pl->afk_string, sizeof(e->pl->afk_string)); out("}");
+    } else out("null");
+    out(",\"designer_statuses\":");
+    if (!e->pchar) out("null");
+    else {
+        count = eaSize(&e->pchar->designerStatuses);
+        check(count >= 0 && count <= 8192);
+        out("[");
+        for (i = 0; i < count; ++i) {
+            if (i) out(",");
+            string(e->pchar->designerStatuses[i]);
+        }
+        out("]");
+    }
+    out("}");
+}
 static void initial_ui_state(void)
 {
     int i;
@@ -1221,6 +1245,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"power_customizations\":"); entity_power_customizations(e);
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
+        out(",\"status_state\":"); entity_status_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");
     }

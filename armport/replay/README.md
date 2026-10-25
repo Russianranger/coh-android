@@ -714,3 +714,20 @@ Patchwork exports 89 patches; prior 88 are byte-identical, upstream/ unchanged.
 Dependency substitutes do not prove native ABI or full gameplay behavior; only
 local LeakSanitizer is disabled for /proc. Runtime remains pending, including
 later initial-UI work; M3/full-state completion flags remain false.
+
+### Retained entity status observations (2026-10-25 UTC)
+
+Snapshots retain status-effect flags, received translucency bits, the logout
+bad-connection flag, nullable AFK state/message and ordered designer-status
+strings. The original exclusiveVisionPhase read in character_ReceiveStatusEffects
+is discarded by that function; this observer does not invent a destination.
+Local countdown/rendering translucency, buffs, targeting and packet-order fields
+remain gaps. No native patch or normalization change.
+
+Evidence: `evidence/m3-entity-status-controls.json`. Fifteen original-receiver/
+actual-writer ASan/UBSan cases cover current/stale packets, null parents, full
+consumption, replacement/empty/null strings, retained AFK tails, bounds and
+source immutability. Native state.c compiles ARM64 then i686 with one compiler.
+All 89 patches and upstream/ remain unchanged. Host packet/earray substitutes
+are not native ABI or full-entity proof; only local LeakSanitizer is disabled
+for /proc. Runtime qualification and full-state/M3 completion remain pending.
