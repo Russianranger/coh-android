@@ -1,7 +1,7 @@
 /* Deterministic, explicitly partial receiver-state observations. No pointers,
  * padding, clocks, interpolation or normalized rendering quaternions are hashed.
- * Power inventory observations are partial; team/task/UI-tail and other
- * receive destinations still need implementation/review.
+ * Entity/player/UI-tail observations remain partial; other receive
+ * destinations still need implementation/review.
  */
 #include <winsock2.h>
 #include <windows.h>
@@ -16,6 +16,8 @@
 #include "entity/entclient.h"
 #include "entity/entPlayer.h"
 #include "entity/character_base.h"
+#include "entity/classes.h"
+#include "entity/origins.h"
 #include "entity/costume.h"
 #include "entity/powers.h"
 #include "entity/power_customization.h"
@@ -732,6 +734,63 @@ static void player_receive_core(const EntPlayer *p)
     out("}");
 }
 
+/* INITIAL overwrites token timers with received values, but receiveRewardToken
+ * calls rewardtoken_Award without overwriting its local-clock timer. Exclude
+ * this mixed-provenance field until a separate wire observer is qualified.
+ * No reward helper is called by this read-only writer. */
+static void player_reward_tokens(RewardToken *const *items)
+{
+    int i, count = eaSize(&items);
+    check(count >= 0 && count <= 8192);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const RewardToken *token = items[i];
+        if (i) out(",");
+        if (!token) { out("null"); continue; }
+        out("{\"name\":"); string(token->reward);
+        out(",\"value\":%d}", token->val);
+    }
+    out("]");
+}
+static void player_identity_state(const EntPlayer *p)
+{
+    int i;
+    out("{\"title_the\":%d,\"title_the_text\":", p->titleThe);
+    fixed_string(p->titleTheText, sizeof(p->titleTheText));
+    out(",\"title_common\":"); fixed_string(p->titleCommon, sizeof(p->titleCommon));
+    out(",\"title_origin\":"); fixed_string(p->titleOrigin, sizeof(p->titleOrigin));
+    out(",\"title_special\":"); fixed_string(p->titleSpecial, sizeof(p->titleSpecial));
+    out(",\"title_colors_u32\":[%u,%u],\"title_badge_u32\":%u,\"workshop\":",
+        (unsigned)p->titleColors[0], (unsigned)p->titleColors[1], (unsigned)p->titleBadge);
+    fixed_string(p->workshopInteracting, sizeof(p->workshopInteracting));
+    out(",\"reward_tokens\":"); player_reward_tokens(p->rewardTokens);
+    out(",\"active_player_reward_tokens\":"); player_reward_tokens(p->activePlayerRewardTokens);
+    out(",\"pvp_switch\":%d,\"is_ganker\":%d,\"combat_monitor\":[", p->pvpSwitch, p->bIsGanker);
+    for (i = 0; i < MAX_COMBAT_STATS; ++i)
+        out("%s{\"key\":%d,\"order\":%d}", i ? "," : "", p->combatMonitorStats[i].iKey, p->combatMonitorStats[i].iOrder);
+    out("]");
+    out("}");
+}
+static void entity_strings(const EntStrings *s)
+{
+    if (!s) { out("null"); return; }
+    /* Retained strings after original bounded copy/HTML handling; no
+     * localized title/menu lookup or transformation is performed here. */
+    out("{\"description\":"); fixed_string(s->playerDescription, sizeof(s->playerDescription));
+    out(",\"motto\":"); fixed_string(s->motto, sizeof(s->motto)); out("}");
+}
+
+/* Retained destinations of character_Receive, SendLevels and ally/PvP
+ * receives. Definition identity uses logical names, never addresses. */
+static void character_receive_core(const Character *p)
+{
+    out("{\"class\":"); string(p->pclass ? p->pclass->pchName : NULL);
+    out(",\"origin\":"); string(p->porigin ? p->porigin->pchName : NULL);
+    out(",\"combat_level\":%d,\"combat_mod_shift\":%d,\"player_type_by_location\":%d,"
+        "\"ally_id\":%d,\"gang_id\":%d,\"pvp_active\":%d}", p->iCombatLevel, p->iCombatModShift,
+        p->playerTypeByLocation, p->iAllyID, p->iGangID, p->bPvPActive);
+}
+
 unsigned armportReplayStateSave(const char *directory, unsigned index, char digest[65])
 {
     int idx, axis;
@@ -770,6 +829,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"attr_max_f32_bits\":"); words(&p->attrMax, sizeof(p->attrMax));
             out(",\"power_inventory\":"); power_inventory(p);
             out(",\"generic_inventories\":"); generic_inventories(p);
+            out(",\"receive_core\":"); character_receive_core(p);
             out("}");
         } else out("null");
         out(",\"player\":");
@@ -778,11 +838,13 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             player_badges(e->pl);
             out(",\"costumes\":"); player_costumes(e->pl);
             out(",\"receive_core\":"); player_receive_core(e->pl);
+            out(",\"identity_state\":"); player_identity_state(e->pl);
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
         out(",\"supergroup\":"); entity_supergroup_state(e);
         out(",\"power_customizations\":"); entity_power_customizations(e);
+        out(",\"strings\":"); entity_strings(e->strings);
         out("}");
     }
     out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);

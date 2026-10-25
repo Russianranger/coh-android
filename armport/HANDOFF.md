@@ -920,3 +920,30 @@ Runtime remains pending. Atlas 40217209151 and replay 40217209257 test 5d1d2da9,
 which predates these new serializers. All full-schema/full-state/M3 flags remain
 false. Existing native renderer 0080 and the review's host truncation fix are
 unchanged by this independent replay coverage work.
+
+### Player identity, rewards and combat observations (2026-10-25 UTC)
+
+Snapshots now retain literal title fields/colors/badge, workshop name, entity
+description/motto, both ordered/null player reward-token name/value lists, PvP
+flags, all ten combat-monitor key/order pairs and character class/origin logical
+names, combat level/modifier, location type and ally/gang/PvP fields. Receivers
+and synthetic-ID normalization are unchanged. Player token timers remain
+excluded: INITIAL receives them, but later receiveRewardToken initializes them
+from the local clock. This mixed provenance needs a separate observer. Title
+expiry, UI localization/caches and other entity/control/UI destinations remain
+uncovered; full-schema/full-comparison/M3 flags stay false.
+
+Evidence: `evidence/m3-player-character-identity-controls.json`. Actual writers
+pass ASan/UBSan controls for null/order/final slots, mutation sensitivity, U32
+bits, string/count/output bounds, source immutability and clock/address
+exclusion. Native state.c compiles ARM64 then i686 with one compiler; 156 Python
+tests pass. Host fixtures do not prove native ABI; only local LeakSanitizer is
+disabled for the known /proc limitation. Runtime qualification is pending:
+40220658755 tests preceding 8813b215, not these additions.
+
+Replay 40217209257 at 5d1d2da9 passes both targets and comparisons; job
+121249121432 explicitly reports partial_state_equal true and full-state/M3 false.
+The SHA-256-verified ARM64 artifact 12608430696 identifies 18 game-command types
+in id1-a and authenticates its 117 state hashes. The committed command inventory
+`evidence/m3-observed-game-commands-40217209257.json` guides remaining coverage;
+command execution counts alone do not establish destination-state coverage.
