@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol 5643123702: final retry parser corrected; 135 tests pass; runtime pending.
 - 0074 defers power-preview queue to the destination menu; 0075 fixes CRT log buffering.
-- Atlas 40181381808: stuck at character select; bounded fresh-frame Next retry pending.
+- Atlas 40189560565: connection/guest pass; terrain absent, two post-load swap errors.
 - Replay 40156677880: ARM64 second run killed; i686 three data-error rejections.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

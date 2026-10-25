@@ -63,6 +63,20 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Atlas connection sustained, rendering still failed (2026-10-25 UTC)
+
+Run 40189560565 / server 121159624900 at 3539492e finishes failed. Libraries,
+client runs and Cg pass. Guest passed with no failures: two Next attempts,
+Atlas loaded/connected and still connected at final check, normal shutdown
+before cleanup. World rendered remains false after 1,563 seconds: character,
+HUD and helper modal are visible but terrain is absent. Two post-load errors
+are the same tickertape_STEEL_CANYON_SOUTH -> tickertape_TALOS_ISLAND swap
+warning. No Wine/integrity failures. Artifact 12600255615 verified SHA-256
+008cca75eedecfdc0cbcf25a1e04e580ef40c519cbd413145a1c884e2d6173f7.
+This does not test fae492c3's final retry parser or stop-result validation;
+start fresh qualification now the prior run is complete. Record is
+`evidence/m3-connected-not-rendered-40189560565.json`. M3 remains incomplete.
+
 ### Complete audio file-table audit (2026-10-25 UTC)
 
 The remaining 15 pinned audio metadata prefixes now verify against original
