@@ -1,0 +1,28 @@
+{
+  "run_id": 40181381808,
+  "source_commit": "95c9698e41cec1ea1d023f092bc2952271522d5a",
+  "artifact_id": 12596102907,
+  "artifact_sha256": "fceebb5ad95b7814fe1ce777b1a897fe592c3b05ec6b12ef4e33bae240d8f57e",
+  "libraries_job": 121132992838,
+  "server_job": 121135007849,
+  "review_id": 5642681417,
+  "libraries_failure": "test_server_capture_budget requires android/guest/diagnostic.py missing from sparse checkout",
+  "driver": {
+    "character_select_by_trace": true,
+    "enter_by_layout": true,
+    "world_rendered": null,
+    "atlas": null,
+    "client_exit": -15,
+    "guest_exited": true
+  },
+  "trace_last_line": "ArmPort login: stage 6 select 1 player 0 of 1 timeout 0 frames 37107",
+  "observed": "15-after-enter and 16-loading screenshots remain at selected character with Next visible; guest reports loaded=false connected=false",
+  "inference": "The single Next click did not advance the login stage; cause of lost input is not established. Retry only with advancing complete stage-6 frames, selected character, clear dialog history, and no Atlas marker. At most three total attempts.",
+  "local_validation": {
+    "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+    "result": "126 tests passed in 3.892 seconds",
+    "reduced_checkout_before_retry": "124 tests passed in 3.500 seconds with armport, .github, exact diagnostic.py and worker test fixture"
+  },
+  "m3_complete": false,
+  "runtime_retry_qualified": false
+}

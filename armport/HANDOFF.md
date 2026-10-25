@@ -63,6 +63,19 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Sol review and Next retry (2026-10-25 UTC)
+
+Sol 5642681417 identified the missing diagnostic.py dependency in libraries
+121132992838 / run 40181381808. Its exact path is now checked out; the
+reduced-dependency checkout passed 124 tests. The same run's server job
+121135007849 remained at selected-character stage 6 after Next; screenshots
+15/16 still show Next, and the guest reports no Atlas connection. A bounded
+Next retry now requires advancing complete selected-character frame samples,
+clear dialog history and no Atlas marker. Three attempts maximum; subsequent
+connection/render/error acceptance is unchanged. 126 tests pass, including
+stale, torn, transitioned and modal retry rejection. New runtime qualification
+is required; M3 remains incomplete. See evidence/m3-next-input-40181381808.json.
+
 ### Failure-path host cleanup coordination (2026-10-25 UTC)
 
 40176407354 records output overflow followed by same-UID ownership inspection

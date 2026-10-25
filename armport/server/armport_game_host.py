@@ -38,7 +38,7 @@ import atlas_wine  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
-from login_ui import owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, dialogs_clear  # noqa: E402
+from login_ui import owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, character_select_frame, dialogs_clear  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -207,12 +207,30 @@ def drive_login(a, screen, state, status, evidence):
         # OCR may miss the 3D scene; only the validated trace permits layout Next.
         pos = at(screen, 'enter_world')
         if pos and character_select_from_log(a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl'):
-            screen.click(*pos)
-            status['enter_by_layout'] = True
-            (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': 'layout'}) + '\n')
-            time.sleep(15)
-            screen.shot('after-enter')
-            sockets('15s after Next')
+            stdio, trace = a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl'
+            sample = character_select_frame(stdio, trace)
+            for attempt in range(3):
+                if attempt:
+                    # Retry only after new frames still show selected character,
+                    # with no outstanding modal and no database Atlas witness.
+                    fresh = character_select_frame(stdio, trace)
+                    if ((state / 'armport-atlas.json').exists() or sample is None
+                            or fresh is None or fresh <= sample):
+                        break
+                    pos = at(screen, 'enter_world')
+                    if not pos or character_select_frame(stdio, trace) != fresh:
+                        break
+                    sample = fresh
+                # Geometry lookup and progress sampling can expose a modal.
+                if not character_select_from_log(stdio, trace):
+                    break
+                screen.click(*pos)
+                status['enter_by_layout'] = True
+                status['enter_attempts'] = attempt + 1
+                (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': 'layout'}) + '\n')
+                time.sleep(15)
+                screen.shot('after-enter' if not attempt else f'after-enter-retry-{attempt}')
+                sockets(f'15s after Next attempt {attempt + 1}')
         elif not pos:
             status['enter_layout_error'] = 'Client window unavailable for Next'
         else:

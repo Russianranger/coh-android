@@ -30,11 +30,11 @@ def load_driver(namespace, source=None):
 class HostLoginGate(unittest.TestCase):
     def drive(self, trace, *, ocr=False, selected=True, replace_after_wait=None, source=None,
               character_found=False, play_found=False, change_at=None,
-              changed_trace=None):
+              changed_trace=None, progress=()):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             stdio, zone = root / 'armport_stdio.txt', root / 'zone-trace.jsonl'
-            stdio.write_text('ArmPort login: stage 6 select %d player 0 of 1 timeout 0\n' % selected)
+            stdio.write_text('ArmPort login: stage 6 select %d player 0 of 1 timeout 0 frames 1\n' % selected)
             if trace is not None:
                 zone.write_text(trace)
             def change(event):
@@ -72,11 +72,20 @@ class HostLoginGate(unittest.TestCase):
                 if replace_after_wait is not None:
                     zone.write_text(replace_after_wait)
                 return root / 'frame.png' if ocr else None
-            namespace = dict(json=json, time=SimpleNamespace(time=lambda: 0,
-                sleep=lambda seconds: change('selection_wait') if seconds == 2 else None),
+            progress_iter = iter(progress)
+            def sleep(seconds):
+                if seconds == 2:
+                    change('selection_wait')
+                if seconds == 15:
+                    next_line = next(progress_iter, None)
+                    if next_line is not None:
+                        stdio.write_text(stdio.read_text() + next_line)
+                    change('next_wait')
+            namespace = dict(json=json, time=SimpleNamespace(time=lambda: 0, sleep=sleep),
                 start_client=lambda *a: (object(), dict(account='test', character='TEST123')),
                 login=lambda *a, **kw: True, after_login=after_login,
                 character_select_from_log=login_ui.character_select_from_log,
+                character_select_frame=login_ui.character_select_frame,
                 dialogs_clear=login_ui.dialogs_clear, at=at,
                 sh=lambda *a: SimpleNamespace(stdout=''))
             load_driver(namespace, source)(SimpleNamespace(client=root), screen, root, status, root)
@@ -167,3 +176,21 @@ class HostLoginGate(unittest.TestCase):
                 screen.key.assert_called_once_with('Return')
             self.assertTrue(status['play_sent'])
             self.assertEqual(marker, dict(play_sent=True))
+
+    def test_next_retries_only_on_new_selected_character_frames(self):
+        def sample(frame, stage=6):
+            return f'ArmPort login: stage {stage} select 1 player 0 of 1 timeout 0 frames {frame}\n'
+        for progress, expected in (([sample(2), sample(3), sample(4)], 3),
+                                   ([sample(2), sample(3, 7)], 2),
+                                   ([sample(1)], 1),
+                                   ([sample(2).rstrip()], 1)):
+            screen, status, marker = self.drive(row('login'), progress=progress)
+            self.assertEqual(screen.click.call_count, expected)
+            self.assertEqual(status['enter_attempts'], expected)
+            screen.key.assert_not_called()
+
+    def test_new_dialog_blocks_next_retry(self):
+        screen, status, marker = self.drive(row('login'),
+            progress=['ArmPort login: stage 6 select 1 player 0 of 1 timeout 0 frames 2\n'],
+            change_at='next_wait', changed_trace=row('dialog.alert.begin'))
+        screen.click.assert_called_once()

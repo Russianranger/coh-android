@@ -64,6 +64,26 @@ def character_select_from_log(path, zone_trace):
     return stage == 6 and selected == 1 and 0 <= player < count and dialogs_clear(zone_trace)
 
 
+def character_select_frame(path, zone_trace):
+    """A complete latest stage sample for bounded Next retries; no stale-stage fallback."""
+    try:
+        with path.open('rb') as source:
+            source.seek(0, 2)
+            source.seek(max(0, source.tell() - 512 * 1024))
+            text = source.read().decode('utf-8', errors='replace')
+    except OSError:
+        return None
+    lines = [line for line in text.splitlines(keepends=True)
+             if line.startswith('ArmPort login: stage ')]
+    if not lines:
+        return None
+    sample = re.fullmatch(r'ArmPort login: stage 6 select 1 player (\d+) of (\d+) timeout 0 frames (\d+)\r?\n', lines[-1])
+    if not sample or not dialogs_clear(zone_trace):
+        return None
+    player, count, frame = map(int, sample.groups())
+    return frame if player < count else None
+
+
 def pending_qa_notice(stdio):
     """Only the known informational notice, not arbitrary errors or asserts."""
     pending = None
