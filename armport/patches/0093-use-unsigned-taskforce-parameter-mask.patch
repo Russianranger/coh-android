@@ -1,0 +1,13 @@
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index 59f4100..15f8bd3 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -2565,7 +2565,7 @@ static int entReceiveTaskforceParameters(Packet *pak, Entity *e)
+ 
+         for (count = 0; count < MAX_TASKFORCE_PARAMETERS; count++)
+         {
+-            if (paramsSet & (1 << count))
++            if (paramsSet & (1U << count))
+             {
+                 param = pktGetBitsAuto(pak);
+ 

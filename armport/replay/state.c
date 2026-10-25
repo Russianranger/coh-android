@@ -770,6 +770,22 @@ static void entity_pet_owner_state(const Entity *e)
     out("}");
 }
 
+static void entity_taskforce_parameters(const Entity *e)
+{
+    int i;
+    if (!e->taskforce) { out("null"); return; }
+    out("{\"enabled_mask\":%u,\"nonclock_slots\":[", e->taskforce->parametersSet);
+    for (i = 0; i < MAX_TASKFORCE_PARAMETERS; ++i) {
+        if (i) out(",");
+        if (i == TFPARAM_TIME_LIMIT - 1 || i == TFPARAM_START_TIME - 1) out("null");
+        else out("%u", e->taskforce->parameters[i]);
+    }
+    /* The two null slots have local time added by the original receiver.
+     * Their raw received values still need separate provenance observations.
+     */
+    out("]}");
+}
+
 static void entity_netfx_receive_state(const Entity *e)
 {
     int i;
@@ -1447,6 +1463,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"pet_ownership\":"); entity_pet_owner_state(e);
         out(",\"sequence_receive\":"); entity_sequence_receive_state(e);
         out(",\"netfx_receive\":"); entity_netfx_receive_state(e);
+        out(",\"taskforce_parameters\":"); entity_taskforce_parameters(e);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");

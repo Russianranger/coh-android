@@ -1382,3 +1382,22 @@ negative-zero bits, source immutability, 8192-entry boundary and bounds failures
 Packet/allocator/demo/debug dependencies are substituted. Both native targets
 compile sequentially and 163 Python tests pass. No native patch/upstream change;
 full replay/schema, rendering and milestone qualification remain pending.
+
+### Unsigned taskforce mask and nonclock parameter observations (2026-10-25 UTC)
+
+Patch 0093 changes only `1 << count` to `1U << count` in the original taskforce
+parameter receive loop. The old expression has undefined signed left shift at
+slot32 even with an empty enabled mask. The source-derived UBSan negative
+control reproduces that error; the unsigned form preserves the U32 mask and
+original read order, retention and clock additions. Exported with patchwork;
+prior 92 patches byte-identical and upstream/ unchanged.
+
+Snapshots retain the enabled mask and all 30 nonclock slots, including disabled
+retained values. Time-limit/start-time slots are explicitly null because the
+original receiver adds the local clock; raw provenance remains a gap. Evidence:
+`evidence/m3-taskforce-parameter-controls.json`: nine sanitizer cases plus the
+old-code negative control, original enable helper, all32 parameter bits, absent
+updates/null taskforce, retained slots, clock addition, bounds and immutability.
+Packet/clock dependencies are substitutes. Native entrecv.c/state.c compile
+ARM64 then i686 with one compiler; 163 Python tests pass. Full-state/runtime
+qualification and milestone approval remain pending.
