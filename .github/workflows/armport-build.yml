@@ -12,14 +12,9 @@ on:
       - '!armport/shaders/**'
       - '!armport/*.md'
       - '.github/workflows/armport-build.yml'
-  pull_request:
-    branches: ['COH-ArmPort']
-    paths:
-      - 'armport/**'
-      - '!armport/survey/**'
-      - '!armport/shaders/**'
-      - '!armport/*.md'
-      - '.github/workflows/armport-build.yml'
+
+# Internal milestone branches qualify on push; M4 uses armport-app-runtime.
+# Do not duplicate the inherited M3 server stack for every M4 PR update.
 
 permissions:
   contents: read

@@ -1,5 +1,25 @@
 # M4 runtime integration work
 
+## Explicit Finish host contract (2026-10-25 UTC)
+
+Sol review 5642182878 identifies the next failure in 40171292922: creation
+host validation passes and guest reopen completes, but the host requires
+1200 seconds where the pinned manual-session producer reports timeout 0.
+The adapter now passes the external observer's Finish record to the existing
+validator explicitly for reopen. It validates the producer's exact manual
+policy and recomputes the host request bytes/hash from session/PID/action;
+the guest receipt must match. It does not rewrite timeout 0 to 1200.
+The original 30..1210 second observation and <=900 second startup bounds
+remain, with finite numeric types required. A host deadline check precedes
+report validation. Original defaults still require bounded sessions; original
+SQL-save, reopen, observer, network, cleanup and continuity checks remain.
+36 app tests pass, including policy, timing and finish tampering rejection.
+The verified retained reopen passes this session/Finish check; full host
+continuity still requires a new run. Evidence: m4-explicit-finish-40171292922.json.
+Remove the duplicate inherited M3 pull_request trigger; M4 retains its own
+push workflow, and the integration/M3 build's push trigger remains intact.
+
+
 ## Signed selection boundary qualification (2026-10-25 UTC)
 
 Select Release from 40170942752, source 48b5a2b4956b487624864ee611b8406f1831f79b.

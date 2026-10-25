@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - M3 still incomplete: see draft PR #6 for current loading/replay evidence.
-- M4 40167305715: creation passed; reopen failed on unsigned text-selection boundary.
-- New client 40170942752 includes 0076; M4 live reopen rerun pending. notes/M4-RUNTIME.md.
+- M4 40171292922: guest reopen completed; old host timeout contract rejected it.
+- Explicit-Finish contract corrected; 36 tests pass; full runtime/continuity pending.

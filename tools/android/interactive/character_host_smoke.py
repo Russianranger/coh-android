@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -556,19 +557,54 @@ def validate_avatar_supplement(report, manifest):
     require(receipt['worktree'] == expected_key, 'Character avatar supplement was installed into another worktree')
 
 
-def validate_report(report, session, manifest):
+def validate_session_bounds(report, session, finish_request=None):
+    # The host retains the same observation/startup bounds even when the pinned
+    # guest uses explicit Finish rather than its own interaction timer.
+    observation = report.get('observation_seconds')
+    startup = report.get('startup_elapsed_seconds')
+    require(all(type(value) in (int, float) and math.isfinite(value)
+                for value in (observation, startup))
+            and 30 <= observation <= INTERACTION_SECONDS + 10 and 0 <= startup <= 900
+            and report.get('interaction_session_completed') is True
+            and report.get('input_effect_verified') is False
+            and report.get('interaction_completion_reason') == 'finish_requested',
+            'Character session bounds or finish evidence differ')
+    if finish_request is None:
+        require(type(report.get('interaction_timeout_seconds')) is int
+                and report['interaction_timeout_seconds'] == INTERACTION_SECONDS
+                and report.get('manual_session', False) is False,
+                'Expected the bounded guest session contract')
+        return
+    require(report.get('manual_session') is True
+            and report.get('interaction_end_policy') == 'explicit_finish_or_abort'
+            and type(report.get('interaction_timeout_seconds')) is int
+            and report['interaction_timeout_seconds'] == 0
+            and type(report.get('minimum_observation_seconds')) is int
+            and report['minimum_observation_seconds'] == 0,
+            'Expected the explicit-finish guest session contract')
+    pid = report.get('client_launch', {}).get('pid')
+    require(type(pid) is int and pid > 0, 'Invalid finish client PID')
+    value = dict(format=1, session_id=session, client_pid=pid, action='finish_interaction')
+    payload = (json.dumps(value, sort_keys=True) + '\n').encode()
+    expected = dict(value, bytes=len(payload), sha256=hashlib.sha256(payload).hexdigest())
+    require(isinstance(finish_request, dict) and set(finish_request) == set(expected)
+            and all(type(finish_request[k]) is type(v) and finish_request[k] == v
+                    for k, v in expected.items()), 'Host finish identity or bytes differ')
+    received = report.get('interaction_finish_request', {})
+    require(isinstance(received, dict)
+            and all(type(received.get(k)) is type(v) and received[k] == v
+                    for k, v in expected.items() if k != 'format'),
+            'Guest did not receive the exact host finish request')
+
+
+def validate_report(report, session, manifest, *, finish_request=None):
     require(report.get('scope') == 'actual_character_creation_guest'
             and report.get('diagnostic_mode') == 'actual_character_creation'
             and report.get('session_id') == session, 'Wrong character session report')
     require(report.get('passed') is True and report.get('status') == 'passed' and report.get('failures') == [],
             'Graphical character creation did not pass')
     validate_avatar_supplement(report, manifest)
-    require(report.get('interaction_session_completed') is True and report.get('input_effect_verified') is False
-            and report.get('interaction_completion_reason') == 'finish_requested'
-            and 30 <= report.get('observation_seconds', 0) <= INTERACTION_SECONDS+10
-            and report.get('interaction_timeout_seconds') == INTERACTION_SECONDS
-            and 0 <= report.get('startup_elapsed_seconds', -1) <= 900,
-            'Character session bounds or finish evidence differ')
+    validate_session_bounds(report, session, finish_request)
     launch = report.get('client_launch', {})
     require(launch.get('session_id') == session and type(launch.get('pid')) is int and launch['pid'] > 0,
             'Actual graphical client session identity differs')

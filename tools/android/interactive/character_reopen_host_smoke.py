@@ -206,7 +206,7 @@ def validate_world_supplement(report, manifest):
             'World private-cache refresh receipt is incomplete or unbounded')
 
 
-def validate_report(report, session, manifest):
+def validate_report(report, session, manifest, *, finish_request=None):
     require(report.get('scope') == 'actual_character_reopen_guest'
             and report.get('diagnostic_mode') == 'actual_character_reopen', 'Wrong reopen report scope')
     # Retain every creation-mode startup, current-client, ordinary logout,
@@ -214,7 +214,7 @@ def validate_report(report, session, manifest):
     common = copy.deepcopy(report)
     common.update(scope='actual_character_creation_guest', diagnostic_mode='actual_character_creation',
                   character_creation=report.get('character_reopen'))
-    character.validate_report(common, session, manifest)
+    character.validate_report(common, session, manifest, finish_request=finish_request)
     validate_world_supplement(report, manifest)
     local = report['local_login']
     proof = report['character_reopen']

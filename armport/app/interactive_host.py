@@ -161,7 +161,13 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             report = json.loads((work / 'state/latest-report.json').read_text())
             projected = legacy_report(report, runtime_manifest, client_manifest)
             checked_manifest = validation_manifest(report, runtime_manifest)
-            (reopen.validate_report if reopening else character.validate_report)(projected, session, checked_manifest)
+            require(time.monotonic() <= deadline, 'ARM64 interactive host deadline exceeded')
+            if reopening:
+                finish_request = observer.get('interaction_script', {}).get('finish_request')
+                require(finish_request is not None, 'Missing host explicit-finish request')
+                reopen.validate_report(projected, session, checked_manifest, finish_request=finish_request)
+            else:
+                character.validate_report(projected, session, checked_manifest)
             if not reopening:
                 reopen.validate_world_supplement(projected, checked_manifest)
             (reopen.validate_observer if reopening else character.validate_observer)(observer, report)
