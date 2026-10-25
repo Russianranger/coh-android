@@ -1,0 +1,41 @@
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index f5dce9b..31219be 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -20,6 +20,7 @@ const TrayObj *const *armportReplayTraySlots(const Tray *tray, int server);
+ int armportReplayTrayStickyMask(void);
+ int armportReplayTeamBuffMode(void);
+ int armportReplayInspirationMode(void);
++void armportReplayDoorState(int *waiting, int *loading, int *animfadeout);
+ const UserOption *armportReplayOptions(int *count);
+ const TurnstileMissionClient *const *armportReplayTurnstileMissions(void);
+ const TurnstileMissionClient *armportReplayTurnstileDummy(int category);
+diff --git a/Game/src/gameComm/dooranimclient.c b/Game/src/gameComm/dooranimclient.c
+index 1e7350b..edd0b70 100644
+--- a/Game/src/gameComm/dooranimclient.c
++++ b/Game/src/gameComm/dooranimclient.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include "gameComm/dooranimclient.h"
++#include "clientcomm/armport_replay.h"
+ #include "gameComm/dooranimcommon.h"
+ #include <utilitieslib/network/netio.h>
+ #include "clientcomm/clientcomm.h"
+@@ -258,6 +259,16 @@ int DoorAnimIsFadedOut()
+ static U32 waiting_for_door_time;
+ static int waiting_for_door;
+ 
++#ifdef COH_ARMPORT_REPLAY
++void armportReplayDoorState(int *waiting, int *loading, int *animfadeout)
++{
++    *waiting = waiting_for_door;
++    *loading = dooranim_loadingtextures;
++    *animfadeout = dooranim_animfadeout;
++}
++#endif
++
++
+ void setWaitForDoorMode()
+ {
+     waiting_for_door = 1;

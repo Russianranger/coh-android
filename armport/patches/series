@@ -86,3 +86,4 @@
 0086-replay-existing-user-option-table.patch
 0087-replay-existing-tray-storage.patch
 0088-replay-existing-ui-mode-values.patch
+0089-replay-existing-door-transition-state.patch

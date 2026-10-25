@@ -296,6 +296,9 @@ jobs:
       - name: Check original initial UI receivers and snapshot
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_initial_ui_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original door receivers and non-expiring snapshot
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_door_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:

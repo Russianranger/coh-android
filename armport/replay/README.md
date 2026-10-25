@@ -695,3 +695,22 @@ API/log notices are in `evidence/m3-replay-40224584944.json`; this is CI evidenc
 not independent artifact revalidation. PR #6 checkpoint e78f0193 starts fresh
 Atlas 40227784437 and replay 40227784453, both pending when this note was written.
 Keep their branch stable while they run; this UI addition is later work.
+
+### Door receive-state observations (2026-10-25 UTC)
+
+Patch 0089 adds a read-only view of door wait/loading/fade-request state. It does
+not call waitingForDoor(), which can expire and clear the original wait state.
+Snapshots also retain game mode and nullable door-animation state, entry/target
+position bits, received integer radius, acknowledgement/threshold flags and
+animation string. Fade clocks, derived final position/speed and the forced-move
+packet-ID bookkeeping remain explicit gaps; no new ID normalization is added.
+
+Evidence: `evidence/m3-door-state-controls.json`. Fourteen ASan/UBSan cases run
+the original start/exit receivers, fade-in function and actual view/writers.
+They cover no-player/null-packet branches, packet-order decisions, animation
+freeing, output bounds and source immutability without any timeout clock read.
+Native dooranimclient.c and state.c compile ARM64 then i686 with one compiler.
+Patchwork exports 89 patches; prior 88 are byte-identical, upstream/ unchanged.
+Dependency substitutes do not prove native ABI or full gameplay behavior; only
+local LeakSanitizer is disabled for /proc. Runtime remains pending, including
+later initial-UI work; M3/full-state completion flags remain false.

@@ -40,6 +40,7 @@
 #include "UI/uiOptions_Type.h"
 #include "gameComm/trayCommon.h"
 #include "gameComm/wdwbase.h"
+#include "gameComm/dooranimcommon.h"
 #include "UI/uiWindows.h"
 #include "UI/uiListView.h"
 #include "cmdparse/cmdcommon.h"
@@ -763,6 +764,23 @@ static void initial_ui_state(void)
     }
     out("]}");
 }
+static void door_transition_state(void)
+{
+    int waiting, loading, animfadeout;
+    armportReplayDoorState(&waiting, &loading, &animfadeout);
+    out("{\"waiting\":%d,\"loading\":%d,\"anim_fadeout\":%d,\"game_mode\":%d}",
+        waiting, loading, animfadeout, game_state.game_mode);
+}
+static void door_animation_state(const DoorAnimState *door)
+{
+    if (!door) { out("null"); return; }
+    out("{\"state\":%d,\"entry_f32_bits\":", (int)door->state);
+    words(door->entrypos, sizeof(door->entrypos));
+    out(",\"target_f32_bits\":"); words(door->targetpos, sizeof(door->targetpos));
+    out(",\"entry_radius\":%d,\"client_ack\":%d,\"past_threshold\":%d,\"animation\":",
+        door->entryPointRadius, door->clientack, door->pastthreshold);
+    string(door->animation); out("}");
+}
 static void initial_server_state(void)
 {
     out("{\"boost_diminishing\":%d,\"power_diminishing\":%d,\"no_base_edit\":%d,\"beta_base\":%d,\"base_raid\":%d,\"first_person\":%d,\"nocoll\":%d}",
@@ -1195,6 +1213,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"keybind_state\":"); player_keybind_state(e->pl);
             out(",\"chat_state\":"); player_chat_state(e->pl);
             out(",\"tray_state\":"); player_tray_state(e->pl->tray);
+            out(",\"door_animation\":"); door_animation_state(e->pl->door_anim);
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
@@ -1219,6 +1238,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"initial_ui\":"); initial_ui_state();
     out(",\"initial_server_state\":"); initial_server_state();
+    out(",\"door_transition\":"); door_transition_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
