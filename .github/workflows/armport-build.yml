@@ -271,6 +271,30 @@ jobs:
           PYCONTROL
 
 
+      - name: Power preview respects the deferred menu transition
+        run: |
+          set -o pipefail
+          python3 armport/tests/power_preview_transition.py --source "$RUNNER_TEMP/armport/src" | tee "$RUNNER_TEMP/power-preview.log"
+          python3 - "$RUNNER_TEMP/power-preview.log" <<'PYCONTROL'
+          import pathlib, sys
+          print('::notice title=ArmPort power preview transition::' + pathlib.Path(sys.argv[1]).read_text().replace('\n', '%0A'))
+          PYCONTROL
+
+      - name: CRT log visibility with the actual FileWrapper macro under Wine
+        run: |
+          set -o pipefail
+          for variant in original patched; do
+            args=()
+            expected=1
+            if [ "$variant" = original ]; then args+=(--original); expected=0; fi
+            python3 armport/tests/stdio_buffering.py --source "$RUNNER_TEMP/armport/src" "${args[@]}" --emit-windows "$RUNNER_TEMP/stdio-$variant.c"
+            /opt/llvm-mingw/bin/aarch64-w64-mingw32-clang -std=gnu11 -O1 -Wno-error=incompatible-pointer-types "$RUNNER_TEMP/stdio-$variant.c" -o "$RUNNER_TEMP/stdio-$variant.exe"
+            logfile="$RUNNER_TEMP/stdio-$variant.txt"
+            ARMPORT_STDIO_LOG="Z:$logfile" timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/stdio-$variant.exe" "$expected"
+            cat "$logfile"
+            printf '::notice title=ArmPort CRT buffering %s::%s\n' "$variant" "$(tr '\n' ' ' < "$logfile")"
+          done
+
       - name: Worker lost-wake regression and ARM64 queue publication
         run: |
           set -o pipefail
@@ -734,43 +758,29 @@ jobs:
             /usr/share/swift /usr/local/share/powershell /usr/local/share/chromium /usr/lib/jvm/*openjdk*-amd64 || true
           sudo docker image prune -af >/dev/null 2>&1 || true
           echo "::notice title=ArmPort M3 disk::$(df -h / | tail -1)"
-      # Server donors. Two of the original artifacts expire on 2026-10-25 and
-      # 2026-10-27, so a copy is kept in this workflow's cache and artifacts.
+      # Original artifacts have begun expiring. Restore the exact donor set
+      # already retained by this workflow, then verify every file on cache hits too.
       - id: donors
         uses: actions/cache/restore@v4
         with:
           path: out/donors
           key: armport-server-donors-v1
-      - if: steps.donors.outputs.cache-hit != 'true'
+      - name: Restore the retained server donor bundle on a cache miss
+        if: steps.donors.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v4
-        with: {name: wine-testclient-bridge, path: out/donors/bridge, run-id: 38478387527, github-token: '${{ github.token }}'}
-      - if: steps.donors.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@v4
-        with: {name: wine-game-stack-probe, path: out/donors/stack-probe, run-id: 38478387527, github-token: '${{ github.token }}'}
-      - if: steps.donors.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@v4
-        with: {name: wine-game-loopback-donors, path: out/donors/game-listeners, run-id: 38478387527, github-token: '${{ github.token }}'}
-      - if: steps.donors.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@v4
-        with: {name: wine-dbserver-package, path: out/donors/wine-dbserver, run-id: 36460867428, github-token: '${{ github.token }}'}
-      - if: steps.donors.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@v4
-        with: {name: reference-win32-runtime, path: out/donors/reference-artifact, run-id: 36088012664, github-token: '${{ github.token }}'}
-      - if: steps.donors.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@v4
-        with: {name: resume-testclient-win32, path: out/donors/resume-client, run-id: 36297542986, github-token: '${{ github.token }}'}
-      - if: steps.donors.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@v4
-        with: {name: coh-diagnostic-runtime-inputs, path: out/donors/runtime-inputs, run-id: 36364550345, github-token: '${{ github.token }}'}
-      - if: steps.donors.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@v4
-        with: {name: coh-proot-android-source-and-build, path: out/donors/proot-sources, run-id: 36364550345, github-token: '${{ github.token }}'}
+        with:
+          name: armport-server-donors
+          path: out/donors
+          run-id: 39782080360
+          github-token: ${{ github.token }}
+      - name: Verify the complete retained server donor inventory
+        run: python3 armport/scripts/verify_server_donors.py out/donors
       - if: steps.donors.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: out/donors
           key: armport-server-donors-v1
-      - if: steps.donors.outputs.cache-hit != 'true'
+      - name: Retain the verified donors independently of cache eviction
         uses: actions/upload-artifact@v4
         with:
           name: armport-server-donors

@@ -1,3 +1,46 @@
+## Sol review 5641405794: runtime follow-up (2026-10-25 UTC)
+
+No new implementation finding at 703ad1e / code 396c470; review is not a
+milestone or merge approval. [Review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5641405794).
+Evidence and exact local outputs: `evidence/m3-m4-review16.json`.
+
+M4 run 40155140217's creation trace proves menu 8/index -16 at queue and
+primary selection. `hybrid_start_menu` invokes the destination entry before
+`start_menu`, which only sets `gNextMenu`; `serve_menus` commits it next frame.
+0074 replaces the immediate initialization restart with the existing preview
+reset/deferred-loop mechanism. It does not substitute or filter a pointer.
+The actual initialization/queue/animation selection control rejects the old
+index under UBSan; 36 fixed source-derived transitions/empty selections pass.
+Live create/save/restart/reopen remains unqualified.
+
+Atlas 40154965180 ends at character selection without host Next. The retained
+stdio later shows stage 6/select 1 and the isolated history is clear. The
+startup diagnostic's `setvbuf` was macro-routed to FileWrapper despite CRT
+streams; 0075 calls CRT `(setvbuf)` directly. Preprocessing verifies the calls;
+the host macro-routing control changes live visibility 0 to 1 (two wrapper
+calls to zero). That host control models the wrapper's non-CRT no-op branch;
+real Wine before/after controls are now part of libraries CI. This is not yet
+an Atlas pass or proof of the complete stall resolution.
+
+Run 40156677877's server job instead failed before runtime on the expired
+reference-win32-runtime artifact. Artifact 12428500525 from 39782080360 has
+been downloaded and matched to API SHA-256
+`3745750f83d35ceda47871d65570e579f66eff0af011f0c983d228c9eae1fe98`.
+The existing retained set has 47 files / 52,230,721 bytes. CI now restores that
+bundle, verifies every file on both cache hit and miss, and retains a new copy.
+No donor binary or external asset is changed.
+
+Replay 40156677880: i686 completes/rejects all three runs on the same texture
+error. ARM64 id1-a rejects likewise; id1-b returns -9 after 134.060 s, despite
+terminal/cleanup/exit witnesses. No host timeout or recorded cgroup OOM count
+increase; the cause is still unresolved. No acceptance relaxation is made.
+
+Validation: 112 Python tests; source-derived power and stdio controls; complete
+donor inventory and corruption/missing/link controls; both changed native
+translation units compile for ARM64 then i686. Outputs are in the evidence
+file. Full builds, real Wine controls and runtime reruns remain pending.
+Texture exceptions stay OFF. M3/M4 are incomplete; no merge approval.
+
 # M3 report: incomplete, implementation review requested
 
 Updated 2026-10-25. Draft PR #6 targets COH-ArmPort. This is an implementation

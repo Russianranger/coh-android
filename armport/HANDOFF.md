@@ -63,7 +63,34 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
-### Immediate next step (Sol review 5641229238, 2026-10-25 UTC)
+### Active continuation after Sol review 5641405794 (2026-10-25 UTC)
+
+Sol found no new implementation issue in code 396c470 / head 703ad1e, but
+qualification failed. See evidence/m3-m4-review16.json for hash-verified
+artifacts, source analysis and local command outputs. Continue independent
+work while PR review waits, per the user's active-development instruction.
+
+- M4 40155140217 identifies menu 8/index -16. hybrid_start_menu calls the
+  destination entry before serve_menus commits gNextMenu. Patch 0074 uses
+  the existing resetPowerCustomizationPreview/gLoopNow path to defer queue
+  construction to the destination frame. Source-derived sanitizer controls
+  reproduce old -16 access and pass 36 fixed transition/selection cases.
+- Atlas 40154965180 never sent Next despite later ready-stage stdio. WinMain
+  passed CRT streams to file.h's FileWrapper setvbuf macro. 0075 bypasses
+  that macro; host control sees the marker immediately only after the fix.
+  Real Wine controls and Atlas execution still need qualification.
+- Atlas 40156677877 failed on an expired original donor artifact. The exact
+  47-file retained bundle in 39782080360 remains available; the workflow
+  now restores it on cache miss and verifies its inventory even on hits.
+- Replay 40156677880: i686 runs all three, rejects the single dispatch error;
+  ARM64 id1-b is killed after the exit witness. Do not accept the killed run.
+  Investigate exit ownership/runtime behavior without changing acceptance.
+
+Both changed native units compile on ARM64 then i686, with at most two
+compiler processes. All 112 Python tests pass. M3/M4 remain incomplete;
+texture exception OFF; full-state/audio-table evidence still outstanding.
+
+### Previous checkpoint (Sol review 5641229238, 2026-10-25 UTC)
 
 Candidate code 396c47010 runs in build/Atlas 40156677877 and replay
 40156677880 on armport/m3-review15. The M3 integration adds documentation only

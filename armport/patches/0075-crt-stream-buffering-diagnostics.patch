@@ -1,0 +1,18 @@
+diff --git a/Game/src/win/win_init.c b/Game/src/win/win_init.c
+index a249dcc..542802b 100644
+--- a/Game/src/win/win_init.c
++++ b/Game/src/win/win_init.c
+@@ -2119,8 +2119,11 @@ int WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstance,
+         {
+             // One file descriptor for both streams, so writes do not overlap.
+             _dup2(_fileno(stdout), _fileno(stderr));
+-            setvbuf(stdout, NULL, _IONBF, 0);
+-            setvbuf(stderr, NULL, _IONBF, 0);
++            // 0075: file.h's function-like setvbuf macro expects a
++            // FileWrapper, not these CRT streams. Bypass that macro so UI
++            // stage diagnostics are visible before process exit.
++            (setvbuf)(stdout, NULL, _IONBF, 0);
++            (setvbuf)(stderr, NULL, _IONBF, 0);
+         }
+     }
+ #endif
