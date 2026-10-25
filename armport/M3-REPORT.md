@@ -1,3 +1,23 @@
+### Contact and task observation follow-up (2026-10-25 UTC)
+
+Snapshots now retain ordered task sets/tasks, identities, difficulty, full
+strings, individual flags, received U32 timer fields, ordinary destination
+coordinates and received zowie fields. Known/accessible contacts retain strings,
+identities, flags, points after the original clamp, and map/name/position.
+Patch 0079 observes each alignment delay before the existing host-clock addition;
+the original ten reads and U32 additions remain unchanged. The observer is inert
+outside active replay, bounds its index and records only raw received delays.
+Local clocks, format/icon caches, derived zowie coordinates/indices and resolved
+contact destination objects remain excluded. No new ID normalization.
+
+Patchwork exports 79 patches; upstream/ unchanged. Actual ARM64 then i686
+state/contact units compile; actual-writer/receive-loop ASan/UBSan controls,
+story regression and 151 Python tests pass. Evidence:
+evidence/m3-contact-task-state-observations.json. Only local LeakSanitizer is
+disabled due to /proc; CI defaults remain. Runtime pending; preserve replay
+40206484644 at 65a494c9 (ARM64 cursor/partial stage passes, i686 pending).
+Full entity/player/UI coverage and M3 remain incomplete.
+
 ### Story observation follow-up (2026-10-25 UTC)
 
 Snapshots now retain all story/key clue strings, server souvenir IDs/header/

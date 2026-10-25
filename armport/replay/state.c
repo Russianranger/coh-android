@@ -45,6 +45,7 @@ static int active;
 static char *buffer;
 static size_t used;
 static struct { unsigned id, create, valid, raw[3]; } orientation[MAX_ENTITIES_PRIVATE];
+static struct { unsigned seconds, valid; } alignment_delays[ALIGNMENT_POINT_MAX_COUNT];
 
 static void check_at(int ok, const char *condition, int line)
 {
@@ -99,6 +100,7 @@ void armportReplayStateInit(void)
     buffer = malloc(CAPACITY);
     check(buffer != NULL);
     memset(orientation, 0, sizeof(orientation));
+    memset(alignment_delays, 0, sizeof(alignment_delays));
     active = 1;
 }
 void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
@@ -115,6 +117,13 @@ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
     }
     orientation[idx].raw[axis] = value;
     orientation[idx].valid |= 1U << axis;
+}
+void armportReplayAlignmentDelay(unsigned index, unsigned seconds)
+{
+    if (!active) return;
+    check(index < ALIGNMENT_POINT_MAX_COUNT);
+    alignment_delays[index].seconds = seconds;
+    alignment_delays[index].valid = 1;
 }
 static void super_colors(const SGColorBits *values)
 {
@@ -480,6 +489,124 @@ static void story_receive_state(void)
     out("]}");
 }
 
+static void task_difficulty(const StoryDifficulty *d)
+{
+    out("{\"level_adjust\":%d,\"team_size\":%d,\"always_av\":%d,\"dont_reduce_boss\":%d}",
+        d->levelAdjust, d->teamSize, d->alwaysAV, d->dontReduceBoss);
+}
+static void task_state(const TaskStatus *t)
+{
+    if (!t) { out("null"); return; }
+    out("{\"owner_dbid\":%d,\"context\":%d,\"subhandle\":%d,\"level\":%d,\"alliance\":%d,\"difficulty\":",
+        t->ownerDbid, t->context, t->subhandle, t->level, t->alliance);
+    task_difficulty(&t->difficulty);
+    out(",\"description\":"); fixed_string(t->description, sizeof(t->description));
+    out(",\"owner\":"); fixed_string(t->owner, sizeof(t->owner));
+    out(",\"state\":"); fixed_string(t->state, sizeof(t->state));
+    out(",\"detail\":"); fixed_string(t->detail, sizeof(t->detail));
+    out(",\"intro\":"); fixed_string(t->intro, sizeof(t->intro));
+    out(",\"filename\":"); fixed_string(t->filename, sizeof(t->filename));
+    /* timeout/timezero are received U32 values, not the local iAskedWhen clock. */
+    out(",\"timeout\":%u,\"timezero\":%u,\"timer_type\":%d,\"fail_on_timeout\":%u,"
+        "\"complete\":%u,\"mission\":%u,\"running_mission\":%u,\"sg_mission\":%u,"
+        "\"has_location\":%u,\"detail_invalid\":%u,\"zone_transfer\":%u,\"teleport_on_complete\":%u,"
+        "\"enforce_time_limit\":%u,\"abandonable\":%u,\"zowie\":%u,\"location\":{\"contact_type\":%d,\"map\":",
+        t->timeout, t->timezero, t->timerType, t->failOnTimeout,
+        t->isComplete, t->isMission, t->hasRunningMission, t->isSGMission,
+        t->hasLocation, t->detailInvalid, t->zoneTransfer, t->teleportOnComplete,
+        t->enforceTimeLimit, t->isAbandonable, t->isZowie, t->location.contactType);
+    fixed_string(t->location.mapName, sizeof(t->location.mapName));
+    out(",\"name\":"); fixed_string(t->location.name, sizeof(t->location.name));
+    /* Zowie destination positions may already have been replaced by local
+     * automap selection. Preserve only ordinary received location coordinates. */
+    out(",\"received_position_f32_bits\":");
+    if (t->hasLocation && !t->isZowie) words(t->location.world_location[3], sizeof(t->location.world_location[3]));
+    else out("null");
+    out("},\"zinfo\":%u,\"zseed\":%u,\"zmap_id\":%d,\"ztype\":", t->zinfo, t->zseed, t->zmap_id);
+    fixed_string(t->ztype, sizeof(t->ztype));
+    out(",\"zname\":"); fixed_string(t->zname, sizeof(t->zname));
+    out(",\"zpool_size\":[");
+    {
+        unsigned i;
+        for (i = 0; i < sizeof(t->zpoolSize) / sizeof(t->zpoolSize[0]); ++i)
+            out("%s%d", i ? "," : "", t->zpoolSize[i]);
+    }
+    out("]}");
+}
+static void task_sets(void)
+{
+    int i, j, n = eaSize(&teamTaskSets);
+    check(n >= 0 && n <= 4096);
+    out("[");
+    for (i = 0; i < n; ++i) {
+        const TaskStatusSet *s = teamTaskSets[i];
+        int count;
+        if (i) out(",");
+        if (!s) { out("null"); continue; }
+        out("{\"dbid\":%d,\"difficulty\":", s->dbid); task_difficulty(&s->difficulty);
+        out(",\"tasks\":[");
+        count = eaSize(&s->list);
+        check(count >= 0 && count <= 8192);
+        for (j = 0; j < count; ++j) {
+            if (j) out(",");
+            task_state(s->list[j]);
+        }
+        out("]}");
+    }
+    out("]");
+}
+
+static void contact_states(ContactStatus *const *items)
+{
+    int i, n = eaSize(&items);
+    check(n >= 0 && n <= 8192);
+    out("[");
+    for (i = 0; i < n; ++i) {
+        const ContactStatus *c = items[i];
+        if (i) out(",");
+        if (!c) { out("null"); continue; }
+        out("{\"name\":"); string(c->name);
+        out(",\"location_description\":"); string(c->locationDescription);
+        out(",\"filename\":"); string(c->filename);
+        out(",\"call_override\":"); string(c->callOverride);
+        out(",\"ask_override\":"); string(c->askAboutOverride);
+        out(",\"leave_override\":"); string(c->leaveOverride);
+        out(",\"image_override\":"); string(c->imageOverride);
+        out(",\"npc\":%d,\"handle\":%d,\"task_context\":%d,\"task_subhandle\":%d,"
+            "\"points\":%d,\"friend_points\":%d,\"confidant_points\":%d,\"complete_points\":%d,\"heist_points\":%d,"
+            "\"tip_type\":%u,\"notify\":%u,\"has_task\":%u,\"can_use_cell\":%u,\"has_location\":%u,"
+            "\"newspaper\":%u,\"story_arc\":%u,\"mini_arc\":%u,\"wont_interact\":%u,\"meta_contact\":%u,"
+            "\"alliance\":%d,\"universe\":%d,\"location\":{\"map\":",
+            c->npcNum, c->handle, c->taskcontext, c->tasksubhandle,
+            c->currentCP, c->friendCP, c->confidantCP, c->completeCP, c->heistCP,
+            c->tipType, c->notifyPlayer, c->hasTask, c->canUseCell, c->hasLocation,
+            c->isNewspaper, c->onStoryArc, c->onMiniArc, c->wontInteract, c->metaContact,
+            c->alliance, c->universe);
+        fixed_string(c->location.mapName, sizeof(c->location.mapName));
+        out(",\"name\":"); fixed_string(c->location.name, sizeof(c->location.name));
+        out(",\"received_position_f32_bits\":");
+        if (c->hasLocation) words(c->location.world_location[3], sizeof(c->location.world_location[3]));
+        else out("null");
+        out("}}");
+    }
+    out("]");
+}
+static void contact_receive_state(void)
+{
+    unsigned i;
+    out("{\"known\":"); contact_states(contacts);
+    out(",\"accessible\":"); contact_states(contactsAccessibleNow);
+    out(",\"alignment_delay_seconds\":[");
+    for (i = 0; i < ALIGNMENT_POINT_MAX_COUNT; ++i) {
+        if (i) out(",");
+        if (alignment_delays[i].valid) out("%u", alignment_delays[i].seconds);
+        else out("null");
+    }
+    out("],\"earned_alignments\":"); words(earnedAlignments, sizeof(earnedAlignments));
+    out(",\"hero_points\":%u,\"vigilante_points\":%u,\"villain_points\":%u,\"rogue_points\":%u}",
+        heroAlignmentPoints_self, vigilanteAlignmentPoints_self, villainAlignmentPoints_self, rogueAlignmentPoints_self);
+}
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
@@ -539,7 +666,9 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out("],\"badge_client\":"); badge_client_state();
     out(",\"group_map_names\":"); group_map_names();
     out(",\"world\":"); world_receive_state();
-    out(",\"story\":"); story_receive_state(); out("}\n");
+    out(",\"story\":"); story_receive_state();
+    out(",\"task_sets\":"); task_sets();
+    out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);

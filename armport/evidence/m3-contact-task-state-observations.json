@@ -1,0 +1,113 @@
+{
+  "scope": "partial_contact_and_task_observations",
+  "patchwork_command": "python3 armport/scripts/patchwork.py export /tmp/coh-world-patchwork",
+  "patchwork_output": "exported 79 patches",
+  "patch_sha256": "b706038f850157a8645816c85f71547fe388c93284499c231b62d259ff38a720",
+  "source_paths": [
+    "Game/src/storyarc/contactClient.c:ContactStatusListReceive,ContactStatusReceive,TaskStatusListReceive,TaskStatusReceive,TaskDetailReceive"
+  ],
+  "observed": [
+    "ordered nested task sets and tasks including nulls",
+    "task identities, difficulty, full retained strings, individual flags, received U32 times, ordinary location raw bits, received zowie fields",
+    "known and accessible contacts: full strings, identities, individual flags, retained points, map/name/position",
+    "five raw received alignment delays (before host-clock addition), earned alignment counts and four self-point counts"
+  ],
+  "excluded": [
+    "task iAskedWhen, SMF/format caches and derived zowie indices/positions",
+    "contact currentOverheadIconState and unused timeAutoRemokes",
+    "resolved contact destination PNPC/entity objects",
+    "absolute now+delay contact deadlines (raw received delay observed separately)",
+    "broader entity/player/UI state"
+  ],
+  "checks": [
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_contact_state.py --source /tmp/coh-world-patchwork/src",
+      "exit_code": 0,
+      "output_sha256": "59bd8fe6dcebe72f03568b989da8c6b253ba5017c2e16224495d1e8503349021",
+      "output_tail": [
+        "contact serializer: order/nulls, literal strings/flags/points/location bits; actual receiver preserves all ten reads and U32 clock-add results; observer captures raw delay, is inert when off, ignores host clock/UI cache changes and rejects invalid counts/strings/indices; ASan/UBSan enabled"
+      ]
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_task_state.py",
+      "exit_code": 0,
+      "output_sha256": "f19387626ffd3aa9931f839c7357116c6f764ca280d9cf9e43e6bc335af954a3",
+      "output_tail": [
+        "task serializer: nested order/nulls, retained detail strings, individual flags, received U32 times, raw ordinary-location bits, zowie fields, mutation sensitivity, local-clock/cache exclusion and invalid count/string rejection pass; ASan/UBSan enabled"
+      ]
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_story_state.py --source /tmp/coh-world-patchwork/src",
+      "exit_code": 0,
+      "output_sha256": "6497d571b8b13f997fc34abd5dc999dfa39a0aa1a72da0640d02cf8c4b01c7fe",
+      "output_tail": [
+        "story serializer: ordered/null clue, key, server-souvenir and visit-location arrays; full strings/raw byte escapes, server-only accessor, mutation sensitivity and invalid count/output-size rejection pass; ASan/UBSan enabled"
+      ]
+    },
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p test_*.py -v",
+      "exit_code": 0,
+      "output_sha256": "ee6ecb28a1c1dd02e7d913d7487f7adddfd02a36d0fd4c3df4691dad58495316",
+      "output_tail": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 151 tests in 5.769s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "command": "actual compile_commands.json state.c command in /tmp/coh-world-build-arm64, sequential ARM64 then i686, one compiler",
+      "exit_code": 0,
+      "output_sha256": "8e37b54c5309bbc8db2ccdf32248de3ce9eaea97a5cf3495f9f147292043fbe3",
+      "output_tail": [
+        "      | ^",
+        "/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'",
+        "  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];",
+        "      |                                          ^",
+        "6 warnings generated."
+      ]
+    },
+    {
+      "command": "actual compile_commands.json contactClient.c command in /tmp/coh-world-build-arm64, sequential ARM64 then i686, one compiler",
+      "exit_code": 0,
+      "output_sha256": "58a44847da50df65e965f88b9a10aa93c0bc174d754d22f618f12c9680b7249c",
+      "output_tail": [
+        "/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]",
+        "   24 | #endif CHATDEFS_H",
+        "      |        ^",
+        "      |        //",
+        "1 warning generated."
+      ]
+    },
+    {
+      "command": "actual compile_commands.json state.c command in /tmp/coh-world-build-i686, sequential ARM64 then i686, one compiler",
+      "exit_code": 0,
+      "output_sha256": "8e37b54c5309bbc8db2ccdf32248de3ce9eaea97a5cf3495f9f147292043fbe3",
+      "output_tail": [
+        "      | ^",
+        "/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'",
+        "  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];",
+        "      |                                          ^",
+        "6 warnings generated."
+      ]
+    },
+    {
+      "command": "actual compile_commands.json contactClient.c command in /tmp/coh-world-build-i686, sequential ARM64 then i686, one compiler",
+      "exit_code": 0,
+      "output_sha256": "58a44847da50df65e965f88b9a10aa93c0bc174d754d22f618f12c9680b7249c",
+      "output_tail": [
+        "/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]",
+        "   24 | #endif CHATDEFS_H",
+        "      |        ^",
+        "      |        //",
+        "1 warning generated."
+      ]
+    }
+  ],
+  "local_sanitizers": "ASan+UBSan enabled; only local LeakSanitizer disabled because /proc task access unavailable; CI defaults unchanged",
+  "runtime_pending": true,
+  "running_replay_predates_change": 40206484644,
+  "state_schema_complete": false,
+  "m3_replay_complete": false
+}

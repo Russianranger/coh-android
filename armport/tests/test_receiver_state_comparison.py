@@ -114,6 +114,8 @@ class StateComparison(unittest.TestCase):
         source['badge_client'] = {'debug_display_mode': 1}
         source['entities'][0]['player']['costumes'] = {'current': 1, 'pending_number': 31, 'colors': [[1, 31]]}
         source['entities'][0]['groups'] = {'team_id': 1, 'league_id': 31, 'leader_db_id': 1}
+        source['contacts'] = {'alignment_delay_seconds': [1, 31], 'known': [{'handle': 1}]}
+        source['task_sets'] = [{'dbid': 1, 'tasks': [{'context': 31, 'timezero': 1}]}]
         source['group_map_names'] = {'team': ['1', '31']}
         result = canonical_initial_ids(source, 1)
         self.assertEqual(set(differences(source, result)), {

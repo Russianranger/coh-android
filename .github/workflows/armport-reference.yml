@@ -220,6 +220,8 @@ jobs:
           lfs: false
       - name: Check replay output rejection and fixture identities
         run: python3 -m unittest discover -s armport/tests -p 'test_receiver*.py' -v
+      - name: Check actual task-state serializer with sanitizers
+        run: python3 armport/tests/receiver_task_state.py
       - name: Check actual retained-costume serializer with sanitizers
         run: python3 armport/tests/receiver_costume_state.py
       - name: Check actual power snapshot serializer with sanitizers
@@ -253,6 +255,9 @@ jobs:
       - name: Check original souvenir view and story snapshot serializer
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_story_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check actual contact receive observer and serializer
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_contact_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:

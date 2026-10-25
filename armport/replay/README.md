@@ -462,3 +462,22 @@ and scroll/display caches are excluded. Contacts/tasks/waypoints and broader
 state remain gaps. See evidence/m3-story-state-observations.json for sequential
 native compilation and actual-writer/accessor sanitizer controls. Runtime
 pending; schema remains partial.
+
+## Contact and task observations (2026-10-25)
+
+Task sets preserve nested order/nulls, identities, difficulty, full retained
+strings, individual flags, received timeout/timezero U32 values and ordinary
+location F32 bits. Received zowie fields are included; locally selected zowie
+coordinates/indices, request clocks and SMF caches are excluded. Contact arrays
+preserve strings, identities, individual flags, retained points after the
+original clamp and received map/name/position. Resolved PNPC/entity objects and
+local overhead-icon state remain excluded.
+
+Patch 0079 copies raw alignment delay values to a replay-only observer while
+preserving the original clock addition and packet-read order. Snapshots store
+those five delays (null until observed), earned counts and four self-point counts;
+absolute host-clock deadlines are excluded. Actual receiver-loop controls prove
+inert-off behavior and unchanged reads/addition, including U32 wrap, while
+clock changes do not change the raw-delay output. Counts/strings/output remain
+bounded and ID normalization unchanged. See evidence/m3-contact-task-state-observations.json.
+Runtime pending, schema partial, no full entity/player/UI or M3 claim.

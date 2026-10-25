@@ -14,7 +14,7 @@ def main():
     args = parser.parse_args()
     source = (Path(__file__).resolve().parents[1] / 'replay/state.c').read_text()
     formatting = source[source.index('static void out('):source.index('void armportReplayStateInit(')]
-    story = source[source.index('static void story_clues('):source.index('static unsigned deletes;')]
+    story = source[source.index('static void story_clues('):source.index('static void task_difficulty(')]
     ui = (args.source / 'Game/src/UI/uiClue.c').read_text()
     start = ui.index('const SouvenirClue *const *armportReplaySouvenirClues(void)')
     assert ui[start - len('#ifdef COH_ARMPORT_REPLAY\n'):start] == '#ifdef COH_ARMPORT_REPLAY\n'

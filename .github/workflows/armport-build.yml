@@ -369,6 +369,8 @@ jobs:
 
       - name: Check original souvenir view and story snapshot serializer
         run: python3 armport/tests/receiver_story_state.py --source "$RUNNER_TEMP/armport/src"
+      - name: Check actual contact receive observer and serializer
+        run: python3 armport/tests/receiver_contact_state.py --source "$RUNNER_TEMP/armport/src"
 
       - name: Bounded world-render diagnostic control
         run: python3 armport/tests/world_trace.py --source "$RUNNER_TEMP/armport/src"
