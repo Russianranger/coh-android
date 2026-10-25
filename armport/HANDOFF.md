@@ -71,7 +71,8 @@ Frame-only lookup now requires one owned PID, exact game class, visible and
 unique game-sized geometry. Six controls plus all 118 tests pass. No input,
 map/OCR/connection acceptance or server output limit changes. Evidence:
 evidence/m3-frame-title-40161198295.json. Runtime qualification pending;
-allow current 40170942752 to finish before triggering another Atlas run.
+40170942752 has finished with server-run failure; the next run qualifies
+the owned-window lookup and adds the 63-case selection control to CI.
 The server output-bound failure remains separate and unresolved.
 
 ### Reopen selection boundary (2026-10-25 UTC)
