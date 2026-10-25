@@ -30,11 +30,25 @@ typedef struct { Def *def; } DefTracker;
 static struct { int mainViewport; } gfx_state;
 static struct { int ref_count; DefTracker **refs; } group_info;
 static struct { unsigned see_outside, zocclusion; int fog_clip; } group_draw;
-static int shell, records, model_records;
+typedef struct {int svr_idx,net_ipos[3];float position[3];} Entity;
+static Entity player = {17,{100,200,300},{1,2,3}};
+static int player_present, player_reads;
+static const Entity *playerPtr(void) {++player_reads;return player_present?&player:NULL;}
+#define ENTPOS(e) ((e)->position)
+static struct {float cammat[4][3],viewmat[4][3];} cam_info;
+static int shell, records, model_records, camera_records;
 static int shellMode(void) { return shell; }
 static void armportZoneTrace(const char *stage, const char *detail)
 {
     unsigned frame = 0;
+    if (!strcmp(stage, "world.camera")) {
+        assert(strlen(detail)<1024);
+        assert(sscanf(detail,"frame=%u",&frame)==1);
+        assert(frame == (camera_records ? (unsigned)camera_records * 600 : 1));
+        assert(strstr(detail,"camera=10,20,30 view0=1,2,3 view1=4,5,6 view2=7,8,9 view3=10,11,12"));
+        assert(strstr(detail,player_present?"player=1 player_svr_idx=17 player_pos=1,2,3 player_net_ipos=100,200,300":"player=0 player_svr_idx=0 player_pos=0,0,0 player_net_ipos=0,0,0"));
+        ++camera_records;return;
+    }
     if (!strcmp(stage, "world.models")) {
         unsigned frame=0;
         assert(sscanf(detail,"frame=%u",&frame)==1);
@@ -57,6 +71,10 @@ int main(int argc, char **argv)
     Def defs[2] = {{(void *)1}, {0}};
     DefTracker trackers[3] = {{&defs[0]}, {&defs[1]}, {0}};
     DefTracker *refs[3] = {&trackers[0], &trackers[1], &trackers[2]};
+    unsigned char saved_camera[sizeof(cam_info)],saved_player[sizeof(player)];
+    for(i=0;i<12;++i) cam_info.viewmat[i/3][i%3]=(float)(i+1);
+    cam_info.cammat[3][0]=10;cam_info.cammat[3][1]=20;cam_info.cammat[3][2]=30;
+    memcpy(saved_camera,&cam_info,sizeof(cam_info));memcpy(saved_player,&player,sizeof(player));
     if (on) setenv("ARMPORT_STDIO_LOG", "fixture", 1);
     else unsetenv("ARMPORT_STDIO_LOG");
     group_info.refs = refs;
@@ -75,6 +93,7 @@ int main(int argc, char **argv)
     assert(!records && !armport_world_frames);
     for (i = 1; i <= 5000; ++i) {
         unsigned previous;
+        player_present = i==1 || i%1200==0;
         armportWorldBegin();
         assert(!!armport_world_trace.active == (on && (i == 1 || (i <= 4200 && i % 600 == 0))));
         if (armport_world_trace.active) {
@@ -101,9 +120,10 @@ int main(int argc, char **argv)
         ARMPORT_WORLD_COUNT(visits);
         assert(armport_world_trace.visits == previous);
     }
-    assert(records == (on ? 8 : 0) && model_records == records);
+    assert(records == (on ? 8 : 0) && model_records == records && camera_records==records && player_reads==records);
     assert(group_info.ref_count == 3 && group_info.refs == refs);
-    printf("world trace %s: records=%d, 5000 frames, matching model summaries, per-frame reset and visibility inputs unchanged\n", on ? "on" : "off", records);
+    assert(!memcmp(saved_camera,&cam_info,sizeof(cam_info)) && !memcmp(saved_player,&player,sizeof(player)));
+    printf("world trace %s: records=%d, 5000 frames, matching model/camera summaries, nullable player, bounded reads, per-frame reset and visibility/pose inputs unchanged\n", on ? "on" : "off", records);
     return 0;
 }
 '''

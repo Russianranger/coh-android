@@ -1545,3 +1545,20 @@ source immutability. Native state.c compiles ARM64 then i686 with one compiler.
 All 89 patches and upstream/ remain unchanged. Host packet/earray substitutes
 are not native ABI or full-entity proof; only local LeakSanitizer is disabled
 for /proc. Runtime qualification and full-state/M3 completion remain pending.
+
+### Bounded world camera observations (2026-10-25 UTC)
+
+Patch 0090 records camera world position/view matrix and nullable player world
+position/network coordinates on the existing eight sampled frames. It only
+reads these values; no culling, camera or player decisions change. The isolated
+model-counter report correlates frame/thread and counter relationships and
+rejects incomplete/inconsistent evidence. It does not change visual acceptance
+or infer a cause from counters.
+
+Evidence: `evidence/m3-world-camera-controls.json`: opt-in/off and nullable-player
+controls verify eight/zero reads over 5,000 frames and source immutability;
+midpoint/path regressions and 161 Python tests pass. Native groupdraw.c compiles
+ARM64 then i686 with one compiler. Patchwork exports 90 patches, prior 89
+byte-identical and upstream/ unchanged. These are host/compile checks; runtime
+qualification remains pending. Runs 40227784437/40227784453 use earlier e78f0193
+and do not include this patch or the later UI/door/entity-status additions.
