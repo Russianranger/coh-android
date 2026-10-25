@@ -49,24 +49,25 @@ program = r'''
 typedef float F32;
 typedef F32 Vec3[3];
 typedef struct { unsigned flags1; } Trick;
-typedef struct { Trick *trick; } Model;
+typedef struct { Trick *trick; unsigned loadstate, flags; int vert_count, tri_count; } Model;
 typedef struct { const char *name; Model *model; int count; unsigned is_tray,
  has_fog, has_sound, has_light, editor_visible_only, has_cubemap; F32 lod_scale; } GroupDef;
 typedef struct { GroupDef *def; unsigned flags_cache; F32 vis_dist_scaled_cache, radius; } GroupEnt;
 typedef struct { int lod_fadenode; Vec3 node_mid; } DrawParams;
 ArmPortWorldTrace armport_world_trace;
-static unsigned records, calc_calls;
-static int check_distance;
+static unsigned records, model_records, calc_calls;
+static int check_distance, expected_model=1;
 static Vec3 expected_mid;
 static F32 expected_distance2;
 static const char *expected_name = "name=\"geo_unsafe__name\"";
 static F32 lengthVec3Squared(const Vec3 v) { return v[0]*v[0]+v[1]*v[1]+v[2]*v[2]; }
 static F32 calculateVisDist(GroupEnt *e) { ++calc_calls; return e->vis_dist_scaled_cache; }
 static void armportZoneTrace(const char *stage, const char *detail) {
- assert(!strcmp(stage,"world.def")); assert(strlen(detail)<768);
+ assert(!strcmp(stage,"world.def") || !strcmp(stage,"world.modeldef")); assert(strlen(detail)<1024);
+ if (!strcmp(stage,"world.modeldef")) assert(strstr(detail,"model_loadstate=4 model_flags=2147483649 model_verts=123 model_tris=456"));
  assert(!strchr(detail,'\n')); assert(!strchr(detail,'\r'));
  assert(strstr(detail,expected_name));
- assert(strstr(detail,"trick_editor=1 trick_hide=1"));
+ assert(strstr(detail,expected_model ? "trick_editor=1 trick_hide=1" : "trick_editor=0 trick_hide=0"));
  if (check_distance) {
   F32 x,y,z,d; unsigned valid;
   const char *p=strstr(detail,"distance_valid=");
@@ -74,14 +75,14 @@ static void armportZoneTrace(const char *stage, const char *detail) {
   assert(valid==1 && x==expected_mid[0] && y==expected_mid[1] && z==expected_mid[2]);
   assert(d==expected_distance2);
  }
- ++records;
+ if (!strcmp(stage,"world.def")) ++records; else ++model_records;
 }
 ''' + observer + r'''
 #define ARMPORT_WORLD_ACTIVE (armport_world_trace.active)
 #define ARMPORT_WORLD_DEF(kind,ent,mid,dm,d,dv,lim,lv) armportWorldDef(kind,ent,mid,dm,d,dv,lim,lv)
 ''' + old + changed + site_function + r'''
 int main(void) {
- Trick trick = {48}; Model model = {&trick};
+ Trick trick = {48}; Model model = {&trick,4,2147483649U,123,456};
  GroupDef def = {"geo\nunsafe\"\\name", &model, 3, 0, 0, 1, 0, 0, 0, 1};
  GroupEnt ent = {&def, 0, 10, 2}; DrawParams draw = {0,{3,4,0}};
  Vec3 mid = {0,0,0}; int on, f, fade, value, node_zero, i, kind, site;
@@ -100,20 +101,28 @@ int main(void) {
   calc_calls=0; after=closeEnough(&draw,mid,&ent,1);
   assert(memcmp(&before,&after,sizeof(F32))==0); assert(calls==calc_calls);
   if(on) for(site=0;site<5;++site) {
-   memset(armport_world_trace.detail_samples,0,sizeof(armport_world_trace.detail_samples)); records=0;
-   emitSite(site,&draw,mid,&ent,expected_distance2); assert(records==1);
+   memset(armport_world_trace.detail_samples,0,sizeof(armport_world_trace.detail_samples));
+   memset(armport_world_trace.model_detail_samples,0,sizeof(armport_world_trace.model_detail_samples)); records=model_records=0;
+   emitSite(site,&draw,mid,&ent,expected_distance2); assert(records==1 && model_records==1);
   }
   check_distance=0;
  }
- memset(&armport_world_trace,0,sizeof(armport_world_trace)); armport_world_trace.active=1; records=0;
+ memset(&armport_world_trace,0,sizeof(armport_world_trace)); armport_world_trace.active=1; records=model_records=0;
  for(i=0;i<100;++i) for(kind=0;kind<4;++kind) armportWorldDef(kind,&ent,mid,mid,4,1,10,1);
- assert(records==16);
- for(kind=0;kind<4;++kind) assert(armport_world_trace.detail_samples[kind]==4);
+ assert(records==16 && model_records==16);
+ for(kind=0;kind<4;++kind) assert(armport_world_trace.detail_samples[kind]==4 && armport_world_trace.model_detail_samples[kind]==4);
  memset(&armport_world_trace,0,sizeof(armport_world_trace)); armport_world_trace.active=1;
  records=0; ent.flags_cache=0; draw.lod_fadenode=0; mid[0]=100;
  assert(closeEnough(&draw,mid,&ent,0)==0); assert(!records);
  assert(closeEnough(&draw,mid,&ent,1)==0); assert(records==1);
  assert(ent.def==&def && ent.flags_cache==0 && ent.vis_dist_scaled_cache==10 && ent.radius==2);
+ /* Parent samples must not exhaust the independent model sample budget. */
+ memset(&armport_world_trace,0,sizeof(armport_world_trace)); armport_world_trace.active=1;
+ records=model_records=0;def.model=NULL;expected_model=0;
+ for(i=0;i<100;++i) armportWorldDef(0,&ent,mid,mid,0,0,0,0);
+ assert(records==4 && model_records==0);def.model=&model;expected_model=1;
+ for(i=0;i<100;++i) armportWorldDef(0,&ent,mid,mid,0,0,0,0);
+ assert(records==4 && model_records==4);
  /* Null and oversized names remain bounded; no formatting injection. */
  memset(&armport_world_trace,0,sizeof(armport_world_trace)); armport_world_trace.active=1;
  def.name=NULL; expected_name="name=\"\""; armportWorldDef(0,&ent,mid,mid,0,0,0,0);
@@ -122,7 +131,7 @@ int main(void) {
    memcpy(expected,"name=\"",6); memset(expected+6,'A',96); expected[102]='"'; expected[103]=0;
    def.name=long_name; expected_name=expected; armportWorldDef(0,&ent,mid,mid,0,0,0,0);
  }
- puts("768 original/patched distance cases agree; logged midpoint/distance correct at all five sites in 1920 cases; original calculateVisDist call counts agree; off/secondary path inert; 4 records per reason; sanitized bounded names");
+ puts("768 original/patched distance cases agree; logged midpoint/distance correct at all five sites in 1920 cases; original calculateVisDist call counts agree; off/secondary path inert; 4 general and 4 independent model records per reason; parent-budget separation and model metadata verified; sanitized bounded names");
  return 0;
 }
 '''

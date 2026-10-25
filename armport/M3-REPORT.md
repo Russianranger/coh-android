@@ -1346,3 +1346,30 @@ tests 5d1d2da9 before this correction: its distance_mid fields are unreliable
 when the old and original predicates differ. Do not use those fields to claim
 a root cause. Other observations need their own provenance and full records.
 No rendering acceptance change, milestone completion or merge approval.
+
+### Model-specific traversal evidence (2026-10-25 UTC)
+
+Atlas 40217209151 at 5d1d2da9 completed with server-run failure: guest passes
+and the client connects, but world_rendered remains false. Verified artifact
+12610104475 (SHA-256 a9f8056323f7e54a14da71d77f5eff94d65862cc9f78034b2ba7c00c9cf2460b)
+contains eight zero-model-submission samples and 128 full world.def records,
+all for definitions without models. These bounded parent samples do not prove
+that the loaded world has no models. Existing midpoint caveat from 0082 still
+applies to this older run. `evidence/m3-world-definition-40217209151.json`
+retains the samples and screenshot/report findings; root cause remains open.
+
+Patch 0083 adds separate four-per-reason model-definition samples, preserving
+the ordinary sample budget, and eight world.models summaries of model-bearing
+visits and first-three-check outcomes. Model load state, flags, vertex and
+triangle counts are diagnostic only. No culling/distance/render acceptance
+changes. Actual source controls verify independent budgets, model metadata,
+768 distance decisions, 1,920 midpoint/site checks, 32 traversal-prefix pairs
+and 5,000-frame off/on behavior. ARM64 then i686 compile with one compiler.
+Patchwork exports 83 patches; prior 82 are unchanged. Evidence:
+`evidence/m3-world-model-controls.json`. Fresh runtime remains pending.
+
+Replay 40220658755 at 8813b215 passes both architectures and partial-state/
+outside-error comparisons (job 121259795237). This qualifies the retained
+supergroup/customization/player-core additions; all full-state/M3 flags remain
+false. Replay 40224584944 at 5919e8c tests later identity/map/metadata additions
+and 0082; it does not include 0083. Do not claim milestone or merge approval.

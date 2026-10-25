@@ -1,0 +1,120 @@
+diff --git a/Game/src/graphics/armport_world_trace.h b/Game/src/graphics/armport_world_trace.h
+index f726f09..f2ec956 100644
+--- a/Game/src/graphics/armport_world_trace.h
++++ b/Game/src/graphics/armport_world_trace.h
+@@ -6,7 +6,8 @@ typedef struct ArmPortWorldTrace
+ {
+     unsigned active, visits, editor_skip, distance_skip, frustum_skip;
+     unsigned model_calls, model_not_loaded, alpha_zero, sort_requests;
+-    unsigned frame, detail_samples[4];
++    unsigned frame, detail_samples[4], model_detail_samples[4];
++    unsigned model_visits, editor_model_skip, distance_model_skip, frustum_model_skip, postchecks_model;
+ } ArmPortWorldTrace;
+ extern ArmPortWorldTrace armport_world_trace;
+ #define ARMPORT_WORLD_COUNT(field) do { if (armport_world_trace.active) ++armport_world_trace.field; } while (0)
+diff --git a/Game/src/graphics/groupdraw.c b/Game/src/graphics/groupdraw.c
+index 4779f4a..0e674b0 100644
+--- a/Game/src/graphics/groupdraw.c
++++ b/Game/src/graphics/groupdraw.c
+@@ -67,6 +67,13 @@ static void armportWorldEnd(int vis)
+         armport_world_trace.alpha_zero, armport_world_trace.sort_requests);
+     detail[sizeof(detail)-1] = 0;
+     armportZoneTrace("world.draw", detail);
++    _snprintf(detail, sizeof(detail),
++        "frame=%u visits=%u editor_skip=%u distance_skip=%u frustum_skip=%u postchecks=%u",
++        armport_world_frames, armport_world_trace.model_visits, armport_world_trace.editor_model_skip,
++        armport_world_trace.distance_model_skip, armport_world_trace.frustum_model_skip,
++        armport_world_trace.postchecks_model);
++    detail[sizeof(detail)-1] = 0;
++    armportZoneTrace("world.models", detail);
+     armport_world_trace.active = 0;
+     ++armport_world_samples;
+ }
+diff --git a/Game/src/graphics/groupdrawinline.c b/Game/src/graphics/groupdrawinline.c
+index a0aa89a..48cbdc2 100644
+--- a/Game/src/graphics/groupdrawinline.c
++++ b/Game/src/graphics/groupdrawinline.c
+@@ -982,12 +982,14 @@ static void armportWorldDef(unsigned kind, GroupEnt *ent, const Vec3 mid,
+ {
+     GroupDef *def;
+     unsigned trick = 0;
+-    char detail[768], name[97];
++    int general_sample, model_sample;
++    char detail[1024], name[97];
+     unsigned i;
+-    if (!armport_world_trace.active || kind >= 4 || armport_world_trace.detail_samples[kind] >= 4)
+-        return;
++    if (!armport_world_trace.active || kind >= 4) return;
+     if (!ent || !(def = ent->def)) return;
+-    ++armport_world_trace.detail_samples[kind];
++    general_sample = armport_world_trace.detail_samples[kind] < 4;
++    model_sample = def->model && armport_world_trace.model_detail_samples[kind] < 4;
++    if (!general_sample && !model_sample) return;
+     if (def->model && def->model->trick) trick = def->model->trick->flags1;
+     for (i = 0; i < sizeof(name)-1 && def->name && def->name[i]; ++i)
+     {
+@@ -996,17 +998,27 @@ static void armportWorldDef(unsigned kind, GroupEnt *ent, const Vec3 mid,
+     }
+     name[i] = 0;
+     _snprintf(detail, sizeof(detail),
+-        "frame=%u kind=%u sample=%u name=\"%s\" cached_flags=%u model=%u children=%d tray=%u fog=%u sound=%u light=%u editor=%u cubemap=%u trick_editor=%u trick_hide=%u mid_camera=%u mid=%.9g,%.9g,%.9g distance_valid=%u distance_mid=%.9g,%.9g,%.9g distance2=%.9g limit_valid=%u limit=%.9g cached_vis=%.9g radius=%.9g lod_scale=%.9g",
+-        armport_world_trace.frame, kind, armport_world_trace.detail_samples[kind], name, (unsigned)ent->flags_cache,
++        "frame=%u kind=%u sample=%u name=\"%s\" cached_flags=%u model=%u children=%d tray=%u fog=%u sound=%u light=%u editor=%u cubemap=%u trick_editor=%u trick_hide=%u mid_camera=%u mid=%.9g,%.9g,%.9g distance_valid=%u distance_mid=%.9g,%.9g,%.9g distance2=%.9g limit_valid=%u limit=%.9g cached_vis=%.9g radius=%.9g lod_scale=%.9g model_sample=%u model_loadstate=%u model_flags=%u model_verts=%d model_tris=%d",
++        armport_world_trace.frame, kind, general_sample ? armport_world_trace.detail_samples[kind] + 1 : 0, name, (unsigned)ent->flags_cache,
+         def->model != NULL, def->count, (unsigned)def->is_tray,
+         (unsigned)def->has_fog, (unsigned)def->has_sound, (unsigned)def->has_light,
+         (unsigned)def->editor_visible_only, (unsigned)def->has_cubemap,
+         !!(trick & TRICK_EDITORVISIBLE), !!(trick & TRICK_HIDE), kind != 0,
+         mid[0], mid[1], mid[2], (unsigned)distance_valid,
+         distance_mid[0], distance_mid[1], distance_mid[2], distance2,
+-        (unsigned)limit_valid, limit, ent->vis_dist_scaled_cache, ent->radius, def->lod_scale);
++        (unsigned)limit_valid, limit, ent->vis_dist_scaled_cache, ent->radius, def->lod_scale,
++        model_sample ? armport_world_trace.model_detail_samples[kind] + 1 : 0,
++        def->model ? (unsigned)def->model->loadstate : 0, def->model ? (unsigned)def->model->flags : 0,
++        def->model ? def->model->vert_count : 0, def->model ? def->model->tri_count : 0);
+     detail[sizeof(detail)-1] = 0;
+-    armportZoneTrace("world.def", detail);
++    if (general_sample) {
++        ++armport_world_trace.detail_samples[kind];
++        armportZoneTrace("world.def", detail);
++    }
++    if (model_sample) {
++        ++armport_world_trace.model_detail_samples[kind];
++        armportZoneTrace("world.modeldef", detail);
++    }
+ }
+ #define ARMPORT_WORLD_ACTIVE (armport_world_trace.active)
+ #define ARMPORT_WORLD_DEF(kind, ent, mid, dm, distance2, dv, limit, lv) do { if (armport_world_trace.active) armportWorldDef(kind, ent, mid, dm, distance2, dv, limit, lv); } while (0)
+@@ -1094,9 +1106,11 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+ #endif
+ 
+     ARMPORT_WORLD_COUNT(visits);
++    if (ARMPORT_WORLD_ACTIVE && groupEnt->def && groupEnt->def->model) ARMPORT_WORLD_COUNT(model_visits);
+     if (!group_draw.see_everything && groupEnt->flags_cache & ONLY_EDITORVISIBLE)
+     {
+         ARMPORT_WORLD_COUNT(editor_skip);
++        if (ARMPORT_WORLD_ACTIVE && groupEnt->def && groupEnt->def->model) ARMPORT_WORLD_COUNT(editor_model_skip);
+         ARMPORT_WORLD_DEF(0, groupEnt, groupEnt->mid_cache, groupEnt->mid_cache, 0, 0, 0, 0);
+         return 0;
+     }
+@@ -1107,16 +1121,20 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+     if (!(d=closeEnough(draw,mid,groupEnt,1)))
+     {
+         ARMPORT_WORLD_COUNT(distance_skip);
++        if (ARMPORT_WORLD_ACTIVE && groupEnt->def && groupEnt->def->model) ARMPORT_WORLD_COUNT(distance_model_skip);
+         return 0;
+     }
+     if (!(clip=sphereInFrustum(mid,groupEnt)))
+     {
+         ARMPORT_WORLD_COUNT(frustum_skip);
++        if (ARMPORT_WORLD_ACTIVE && groupEnt->def && groupEnt->def->model) ARMPORT_WORLD_COUNT(frustum_model_skip);
+         ARMPORT_WORLD_DEF(2, groupEnt, mid,
+             (draw->lod_fadenode && ((groupEnt->flags_cache & PARENT_FADE) || draw->lod_fadenode == 2)) ? draw->node_mid : mid, d, 1, 0, 0);
+         return 0;
+     }
+ 
++    if (ARMPORT_WORLD_ACTIVE && groupEnt->def && groupEnt->def->model) ARMPORT_WORLD_COUNT(postchecks_model);
++
+     // common rejections are above, try to avoid loading def until here because of memory stalls
+     def = groupEnt->def; 
+     local_mat    = groupEnt->mat;

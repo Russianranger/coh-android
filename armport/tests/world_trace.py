@@ -30,11 +30,18 @@ typedef struct { Def *def; } DefTracker;
 static struct { int mainViewport; } gfx_state;
 static struct { int ref_count; DefTracker **refs; } group_info;
 static struct { unsigned see_outside, zocclusion; int fog_clip; } group_draw;
-static int shell, records;
+static int shell, records, model_records;
 static int shellMode(void) { return shell; }
 static void armportZoneTrace(const char *stage, const char *detail)
 {
     unsigned frame = 0;
+    if (!strcmp(stage, "world.models")) {
+        unsigned frame=0;
+        assert(sscanf(detail,"frame=%u",&frame)==1);
+        assert(frame == (model_records ? (unsigned)model_records * 600 : 1));
+        assert(strstr(detail,"visits=5 editor_skip=1 distance_skip=1 frustum_skip=1 postchecks=2"));
+        ++model_records; return;
+    }
     assert(!strcmp(stage, "world.draw"));
     assert(strlen(detail) < 512);
     assert(sscanf(detail, "frame=%u", &frame) == 1);
@@ -74,9 +81,16 @@ int main(int argc, char **argv)
             unsigned reason;
             assert(armport_world_trace.frame == (unsigned)i);
             for (reason = 0; reason < 4; ++reason) {
-                assert(!armport_world_trace.detail_samples[reason]);
-                armport_world_trace.detail_samples[reason] = 4;
+                assert(!armport_world_trace.detail_samples[reason] && !armport_world_trace.model_detail_samples[reason]);
+                armport_world_trace.detail_samples[reason] = 4; armport_world_trace.model_detail_samples[reason] = 4;
             }
+        }
+        if (armport_world_trace.active) {
+            assert(!armport_world_trace.model_visits && !armport_world_trace.editor_model_skip &&
+                !armport_world_trace.distance_model_skip && !armport_world_trace.frustum_model_skip && !armport_world_trace.postchecks_model);
+            armport_world_trace.model_visits=5;armport_world_trace.editor_model_skip=1;
+            armport_world_trace.distance_model_skip=1;armport_world_trace.frustum_model_skip=1;
+            armport_world_trace.postchecks_model=2;
         }
         ARMPORT_WORLD_COUNT(visits);
         ARMPORT_WORLD_COUNT(model_calls);
@@ -87,9 +101,9 @@ int main(int argc, char **argv)
         ARMPORT_WORLD_COUNT(visits);
         assert(armport_world_trace.visits == previous);
     }
-    assert(records == (on ? 8 : 0));
+    assert(records == (on ? 8 : 0) && model_records == records);
     assert(group_info.ref_count == 3 && group_info.refs == refs);
-    printf("world trace %s: records=%d, 5000 frames, visibility inputs unchanged\n", on ? "on" : "off", records);
+    printf("world trace %s: records=%d, 5000 frames, matching model summaries, per-frame reset and visibility inputs unchanged\n", on ? "on" : "off", records);
     return 0;
 }
 '''
