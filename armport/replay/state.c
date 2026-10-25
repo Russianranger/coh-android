@@ -24,6 +24,7 @@
 #include "entity/Concept.h"
 #include "bases/DetailRecipe.h"
 #include "bases/basedata.h"
+#include "player/badges_client.h"
 #include <utilitieslib/components/earray.h>
 
 /* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
@@ -287,6 +288,33 @@ static void generic_inventories(const Character *p)
 }
 #undef INVENTORY_LIST
 
+
+/* Badge award timestamps below are received U32 values, not host clocks.
+ * Localized badge text/buttons are derived UI data and remain excluded. */
+static void player_badges(const EntPlayer *p)
+{
+    int i;
+    out("{\"states\":"); words(p->aiBadges, sizeof(p->aiBadges));
+    out(",\"recent\":[");
+    for (i = 0; i < BADGE_ENT_RECENT_BADGES; ++i)
+        out("%s{\"index\":%d,\"time_awarded\":%u}", i ? "," : "",
+            p->recentBadges[i].idx, p->recentBadges[i].timeAwarded);
+    out("],\"monitor\":[");
+    for (i = 0; i < MAX_BADGE_MONITOR_ENTRIES; ++i)
+        out("%s%d", i ? "," : "", p->badgeMonitorInfo[i].iIdx);
+    out("]}");
+}
+static void badge_client_state(void)
+{
+    int i;
+    out("{\"debug_display_mode\":%d,\"filenames\":[", g_DebugBadgeDisplayMode);
+    for (i = 0; i < BADGE_ENT_MAX_BADGES; ++i) {
+        if (i) out(",");
+        string(g_pchBadgeFilename[i]);
+    }
+    out("]}");
+}
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
@@ -333,10 +361,14 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out("}");
         } else out("null");
         out(",\"player\":");
-        if (e->pl) out("{\"lastClientStatePktId\":%u}", e->pl->lastClientStatePktId); else out("null");
+        if (e->pl) {
+            out("{\"lastClientStatePktId\":%u,\"badges\":", e->pl->lastClientStatePktId);
+            player_badges(e->pl); out("}");
+        } else out("null");
         out("}");
     }
-    out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion); out("]}\n");
+    out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);
+    out("],\"badge_client\":"); badge_client_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);

@@ -63,6 +63,23 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+Sol supplemental review 5643697920 accepts implementation through 4c7ba7b
+(world counters, render cleanup candidate, power observations and approved
+texture staging), with no new finding. It explicitly grants no milestone or
+merge approval; keep PR #6 draft. Later inventory/badge additions need review.
+
+### Badge observation follow-up (2026-10-25 UTC)
+
+Partial snapshots now retain all player badge status words, recent badge
+indices and received award timestamps, monitor entries, and client filename
+state. Localized UI text/buttons remain excluded. Actual ARM64 then i686
+compilation, source-derived ASan/UBSan controls, formatter controls and 142
+Python tests pass. Only local LeakSanitizer is disabled due to /proc; CI uses
+default settings. No new ID normalization, decoder mutation or full-state
+claim. Evidence: evidence/m3-badge-state-observations.json. The current replay
+40203125375 at 41c09e32 predates both generic-inventory and badge additions;
+these additions need fresh runtime qualification.
+
 ### Generic inventory observation follow-up (2026-10-25 UTC)
 
 Partial replay snapshots now also include all five generic inventory arrays:

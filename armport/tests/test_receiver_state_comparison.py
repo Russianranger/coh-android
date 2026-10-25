@@ -107,6 +107,10 @@ class StateComparison(unittest.TestCase):
                   'pkt_id_pos': [1, 32], 'pkt_id_qrot': [1, 155, 0], 'player': {'lastClientStatePktId': 1}},
                   {'pkt_id_create': 32, 'pkt_id_pos': [32], 'pkt_id_qrot': [155], 'player': {'lastClientStatePktId': 155}}],
                   'delete_history': [{'pkt_id': 1, 'id': 1}, {'pkt_id': 32, 'id': 31}]}
+        source['entities'][0]['character'] = {'power_inventory': {'unique_id': 1, 'build_levels': [1, 31]},
+                                               'generic_inventories': {'id': 1, 'amount': 31}}
+        source['entities'][0]['player']['badges'] = {'states': [1, 31], 'time_awarded': 1}
+        source['badge_client'] = {'debug_display_mode': 1}
         result = canonical_initial_ids(source, 1)
         self.assertEqual(set(differences(source, result)), {
             '$.entities[0].pkt_id_create', '$.entities[0].player.lastClientStatePktId',

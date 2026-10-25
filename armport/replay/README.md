@@ -387,3 +387,12 @@ concept raw float patterns and a changed recipe count. Counts over 8192 reject.
 Capacity totals are included; auction contents, inventions, team/task/UI and
 other uncovered receive destinations are not thereby qualified. See
 evidence/m3-generic-inventory-observations.json. Runtime pending.
+
+Badge observations additionally retain all 4096 status words, 50 recent
+indices/received timestamps and 10 monitor entries, plus client debug mode
+and optional filenames. Received award times stay literal; localized text
+and buttons are excluded. No new ID normalization. The actual writer's
+`receiver_badge_state.py` sanitizer control checks final array slots, raw
+unsigned words, null strings and mutation sensitivity. See
+`../evidence/m3-badge-state-observations.json`; runtime pending and schema
+still partial. Supergroup badge state remains uncovered.

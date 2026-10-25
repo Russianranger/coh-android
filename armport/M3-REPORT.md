@@ -1025,3 +1025,15 @@ then fails importing native_monorail_contract during cache ancestry checking.
 Branch commit 589a015bf86dada8d1f5673cd5ca53eed91b0478 adds the cache ancestry
 helpers; 20 app tests pass, including unsupported-producer rejection.
 40095316035 tests it; complete interactive qualification remains pending.
+
+### Badge observation follow-up (2026-10-25 UTC)
+
+Partial snapshots now retain all player badge status words, recent badge
+indices and received award timestamps, monitor entries, and client filename
+state. Localized UI text/buttons remain excluded. Actual ARM64 then i686
+compilation, source-derived ASan/UBSan controls, formatter controls and 142
+Python tests pass. Only local LeakSanitizer is disabled due to /proc; CI uses
+default settings. No new ID normalization, decoder mutation or full-state
+claim. Evidence: evidence/m3-badge-state-observations.json. The current replay
+40203125375 at 41c09e32 predates both generic-inventory and badge additions;
+these additions need fresh runtime qualification.
