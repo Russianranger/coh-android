@@ -96,6 +96,8 @@ def start_client(a, state, status, evidence):
     proc = subprocess.Popen(command, stdout=out, stderr=subprocess.STDOUT, start_new_session=True)
     status['client_started'] = True
     status['client_args'] = args
+    cleanup = ClientCleanup(a, proc)
+    status['client_cleanup'] = cleanup
     (state / 'armport-client-started.json').write_text(json.dumps({'args': args, 'netns': ns}) + '\n')
 
     def watch():
@@ -111,7 +113,7 @@ def start_client(a, state, status, evidence):
             if status.get('guest_exited'):
                 return
             time.sleep(2)
-        errors = stop_client(a, proc)
+        errors = cleanup.stop()
         marker = state / 'armport-client-stopped.json'
         pending = marker.with_suffix('.tmp')
         pending.write_text(json.dumps({'stopped': not errors, 'errors': errors}) + '\n')
@@ -119,6 +121,24 @@ def start_client(a, state, status, evidence):
     threading.Thread(target=watch, daemon=True).start()
     threading.Thread(target=stop_when_guest_finishes, daemon=True).start()
     return proc, info
+
+
+class ClientCleanup:
+    """Share one teardown result between guest coordination and host fallback.
+
+    Both callers can arrive together on a failed guest. Do not run a second
+    wineserver -k after successful teardown, or replace an earlier failure.
+    """
+    def __init__(self, args, process):
+        self.args, self.process = args, process
+        self.lock = threading.Lock()
+        self.errors = None
+
+    def stop(self):
+        with self.lock:
+            if self.errors is None:
+                self.errors = stop_client(self.args, self.process)
+            return list(self.errors)
 
 
 def stop_client(a, proc):
@@ -398,7 +418,9 @@ def main():
             note('error', 'ArmPort M3 guest', 'timed out: ' + dbhost.stop_guest(process, state))
     status['guest_exited'] = True
     driver.join(timeout=60)
-    status['final_cleanup_errors'] = stop_client(a, status.pop('proc', None))
+    proc = status.pop('proc', None)
+    cleanup = status.pop('client_cleanup', None)
+    status['final_cleanup_errors'] = cleanup.stop() if cleanup else stop_client(a, proc)
     if status['final_cleanup_errors']:
         code = code or 1
         note('error', 'ArmPort M3 host cleanup', json.dumps(status['final_cleanup_errors']))

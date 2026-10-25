@@ -3,6 +3,7 @@ import ast
 import os
 from pathlib import Path
 import subprocess
+import threading
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock
@@ -11,6 +12,51 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class HostCleanup(unittest.TestCase):
+    def shared_cleanup(self, stop):
+        path = ROOT / 'armport/server/armport_game_host.py'
+        node = next(n for n in ast.parse(path.read_text()).body
+                    if isinstance(n, ast.ClassDef) and n.name == 'ClientCleanup')
+        ns = dict(threading=threading, stop_client=stop)
+        exec(compile(ast.Module(body=[node], type_ignores=[]), str(path), 'exec'), ns)
+        return ns['ClientCleanup']('args', 'process')
+
+    def test_final_cleanup_reuses_coordinated_success(self):
+        # CI 40197277872: first cleanup succeeds; a second -k exits 1.
+        stop = Mock(side_effect=[[], ['wineserver stop: exit 1']])
+        cleanup = self.shared_cleanup(stop)
+        self.assertEqual(cleanup.stop(), [])
+        self.assertEqual(cleanup.stop(), [])
+        stop.assert_called_once_with('args', 'process')
+
+    def test_shared_failure_cannot_be_erased_by_a_later_success(self):
+        stop = Mock(side_effect=[['wineserver wait: TimeoutExpired'], []])
+        cleanup = self.shared_cleanup(stop)
+        errors = cleanup.stop()
+        errors.clear()
+        self.assertEqual(cleanup.stop(), ['wineserver wait: TimeoutExpired'])
+        stop.assert_called_once()
+
+    def test_concurrent_guest_and_final_cleanup_execute_once(self):
+        entered, release = threading.Event(), threading.Event()
+        def stop(*args):
+            entered.set()
+            if not release.wait(5):
+                raise RuntimeError('control failed to release teardown')
+            return ['client wait: TimeoutExpired after KILL']
+        operation = Mock(side_effect=stop)
+        cleanup = self.shared_cleanup(operation)
+        results = []
+        first = threading.Thread(target=lambda: results.append(cleanup.stop()))
+        second = threading.Thread(target=lambda: results.append(cleanup.stop()))
+        first.start()
+        self.assertTrue(entered.wait(5))
+        second.start()
+        release.set()
+        first.join(5); second.join(5)
+        self.assertFalse(first.is_alive() or second.is_alive())
+        self.assertEqual(results, [['client wait: TimeoutExpired after KILL']] * 2)
+        operation.assert_called_once()
+
     def exercise(self, *, live=True, waits=(), failures=None):
         path = ROOT / 'armport/server/armport_game_host.py'
         node = next(n for n in ast.parse(path.read_text()).body

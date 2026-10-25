@@ -1037,3 +1037,16 @@ default settings. No new ID normalization, decoder mutation or full-state
 claim. Evidence: evidence/m3-badge-state-observations.json. The current replay
 40203125375 at 41c09e32 predates both generic-inventory and badge additions;
 these additions need fresh runtime qualification.
+
+### Shared host cleanup after 40197277872 (2026-10-25 UTC)
+
+Atlas 40197277872 (554afc86) still fails: connection/still-connected and
+coordinated guest cleanup pass, but rendered terrain is absent after 1,542
+seconds. Final host cleanup repeats the already successful stop and records
+wineserver stop exit 1. The host now shares one process-scoped teardown result
+between its coordinating thread and final fallback, including every original
+failure. A lock prevents concurrent duplicate teardown; returned lists cannot
+clear stored errors. No marker/ownership audit or rendering rule changes.
+145 Python tests pass, including duplicate-stop and concurrent failure controls.
+Evidence: evidence/m3-shared-cleanup-40197277872.json. Fresh Atlas qualification
+must include this change, world diagnostic 0077 and the approved texture.

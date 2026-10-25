@@ -68,6 +68,19 @@ Sol supplemental review 5643697920 accepts implementation through 4c7ba7b
 texture staging), with no new finding. It explicitly grants no milestone or
 merge approval; keep PR #6 draft. Later inventory/badge additions need review.
 
+### Shared host cleanup after 40197277872 (2026-10-25 UTC)
+
+Atlas 40197277872 (554afc86) still fails: connection/still-connected and
+coordinated guest cleanup pass, but rendered terrain is absent after 1,542
+seconds. Final host cleanup repeats the already successful stop and records
+wineserver stop exit 1. The host now shares one process-scoped teardown result
+between its coordinating thread and final fallback, including every original
+failure. A lock prevents concurrent duplicate teardown; returned lists cannot
+clear stored errors. No marker/ownership audit or rendering rule changes.
+145 Python tests pass, including duplicate-stop and concurrent failure controls.
+Evidence: evidence/m3-shared-cleanup-40197277872.json. Fresh Atlas qualification
+must include this change, world diagnostic 0077 and the approved texture.
+
 ### Badge observation follow-up (2026-10-25 UTC)
 
 Partial snapshots now retain all player badge status words, recent badge
