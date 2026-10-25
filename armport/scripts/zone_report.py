@@ -43,9 +43,10 @@ def sections(evidence, client):
             complete_messages=errors['complete_messages'], trace_record_count=errors['trace_records'],
             integrity_failures=errors['integrity_failures'],
             phase_counts=errors['phase_counts'], examples=errors['errors'][:3]))
-    traces = [line for line in read(client / 'armport_stdio.txt').splitlines()
+    raw_lines = read(client / 'armport_stdio.txt').splitlines(keepends=True)
+    traces = [line.rstrip('\r\n') for line in raw_lines
               if line.startswith('ArmPort zone: ')]
-    world = world_draw_report.summarize(traces)
+    world = world_draw_report.summarize(raw_lines)
     (evidence / 'world-draw-summary.json').write_text(json.dumps(world, indent=2) + '\n')
     yield 'ArmPort M3 world traversal', json.dumps(
         {key: value for key, value in world.items() if key != 'samples'}, separators=(',', ':'))

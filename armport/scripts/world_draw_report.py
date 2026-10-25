@@ -8,16 +8,19 @@ PATTERN = re.compile(r'^ArmPort zone: [0-9]+ world\.draw ' +
 
 
 def summarize(lines):
+    """Consume raw lines including terminators; an unterminated record is unknown."""
     samples, failures = [], []
     seen = 0
     previous = -1
     for line in lines:
-        if not line.startswith('ArmPort zone: ') or ' world.draw ' not in line:
+        if not line.startswith('ArmPort zone: ') or ' world.draw' not in line:
             continue
         seen += 1
         if seen > 8:
             continue
-        match = PATTERN.fullmatch(line) if len(line) <= 1024 else None
+        terminated = line.endswith('\n')
+        record = line[:-1].removesuffix('\r') if terminated else line
+        match = PATTERN.fullmatch(record) if terminated and len(record) <= 1024 else None
         if not match:
             failures.append('malformed sample ' + str(seen))
             continue

@@ -1202,3 +1202,25 @@ at e628a05c now passes both targets and both comparison jobs, including the
 new costume/story/contact/task observations. Partial comparison job 121229221929
 still explicitly reports full-schema, full-comparison and M3 completion false.
 No milestone or merge approval. Sol 5644065631 remains the latest review.
+
+### Sol 5644275188 diagnostic integrity correction (2026-10-25 UTC)
+
+An incomplete world.draw token was previously filtered out, and splitlines()
+lost the newline needed to detect a partially written numeric field. The caller
+now preserves line endings; candidate recognition includes an unfinished
+world.draw token. Unterminated/malformed records invalidate aggregate conclusions.
+Actual-caller controls cover both review reproductions and complete CRLF input.
+156 Python tests pass; rerunning the verified Atlas 40204814232 artifact preserves
+all eight previously committed samples and every summary field exactly.
+Evidence: evidence/m3-world-report-review-5644275188.json. This is host-only;
+no original renderer, acceptance or replay policy changes. Fresh CI not claimed.
+
+Further source inspection narrows the next experiment: makeAGroupEnt sets
+ONLY_EDITORVISIBLE for fog, sound, light, explicit editor-only/cubemap helpers,
+or editor/hidden model tricks. Thus the large editor_skip count alone does not
+prove a corrupt flag. closeEnough returns squared distance after its threshold
+check, and the caller rejects zero; distance_skip can also mean exact zero
+distance. The next native observation must record flag sources, camera-relative
+midpoints/visibility distances and the remaining definitions without bypassing
+those original decisions. Sources: original Game/src/graphics/groupdraw.c
+makeAGroupEnt and groupdrawinline.c closeEnough/drawDefInternal (git show HEAD).
