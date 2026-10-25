@@ -80,7 +80,8 @@ def acknowledge_qa_notice(screen, stdio, pids, status):
     """Press the original dialog's OK button via Return; preserve all evidence.
 
     msgAlert uses ErrorDlg with the default title Program Error (winutil.c).
-    Require its exact title and the one mapped client process on our X display.
+    Require its exact title AND the one mapped client process on our X display.
+    xdotool defaults to --any: without --all it also returns the game window.
     Never dismiss a texture/error/crash dialog merely because it has that title.
     """
     attempts = status.setdefault('qa_notice_actions', [])
@@ -89,7 +90,7 @@ def acknowledge_qa_notice(screen, stdio, pids, status):
                                      'attempts': len(attempts)}
     if len(attempts) >= 3 or len(pids) != 1 or not pending:
         return False
-    result = sh('xdotool', 'search', '--onlyvisible', '--pid', str(pids[0]),
+    result = sh('xdotool', 'search', '--all', '--onlyvisible', '--pid', str(pids[0]),
                 '--name', '^Program Error$')
     windows = result.stdout.split()
     status['qa_notice_last_check'].update(search_exit=result.returncode,

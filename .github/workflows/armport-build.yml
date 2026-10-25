@@ -263,6 +263,7 @@ jobs:
         run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/armport"
       - name: Prove collision triangles preserve the native grid
         run: |
+          set -o pipefail
           python3 armport/tests/polycell_allocation.py --source "$RUNNER_TEMP/armport/src" | tee "$RUNNER_TEMP/polycell-allocation.log"
           python3 - "$RUNNER_TEMP/polycell-allocation.log" <<'PYCONTROL'
           import pathlib, sys

@@ -1,6 +1,6 @@
 # COH-ArmPort handoff (to Astra)
 
-Updated 2026-10-24. From now on Astra leads development and Claude reviews
+Updated 2026-10-25. Astra leads development; Sol 6.1 reviews this PR per user direction
 (roles reversed for now; see "Roles" below). Read this file, `PORT-PLAN.md`
 and `STATUS.md` first. Everything here can be checked against the repository
 and the CI runs it cites.
@@ -63,7 +63,23 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
-### Immediate next step (review 5639886811 follow-up, 2026-10-24)
+### Immediate next step (Sol review 5641164200, 2026-10-25)
+
+Both requested corrections are implemented: remove the host server-click
+bypass of rejected dialog history and propagate grid-control failures through
+tee. Actual host/shell negative and positive controls and 101 tests pass; see
+evidence/m3-sol-review-5641164200.json and the leading M3-REPORT section.
+Atlas 40148424741 now stops at the exact QA notice: xdotool's default OR search
+returns the main game window as well as the dialog. Require --all for PID AND
+title, preserving exact-notice/unique-window/focus limits. Rerun Atlas to prove
+progress; the current frame is still loading. Replay 40148424802 exits 2 on both
+targets with 117 snapshots but fails one HIPS_miniskirt_1 dispatch error; the
+other two runs per target and state comparison remain unqualified. Eight-file
+staging passed with zero case aliases. The texture exception remains OFF.
+M4 still needs the new Release and corrected case staging; identify the power
+producer using 0073. M3/M4 remain incomplete, without milestone/merge approval.
+
+### Previous checkpoint (review 5639886811 follow-up, 2026-10-24)
 
 0071 fixes triangle writes overlapping expanded native collision-grid cells.
 The exact replay and Atlas binaries both fault in objSplitPlanes, on child

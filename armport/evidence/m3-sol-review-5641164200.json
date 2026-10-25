@@ -1,0 +1,206 @@
+{
+  "review_id": 5641164200,
+  "review_head": "2e83133f7411182a03913c0d85cc5ed1ff539f28",
+  "date_utc": "2026-10-25",
+  "milestone_complete": false,
+  "merge_approved": false,
+  "texture_exception_enabled": false,
+  "controls": {
+    "host": [
+      {
+        "variant": "before",
+        "trace": "missing",
+        "clicks": 1,
+        "keys": 0,
+        "marker": {
+          "play_sent": "layout"
+        }
+      },
+      {
+        "variant": "before",
+        "trace": "malformed",
+        "clicks": 1,
+        "keys": 0,
+        "marker": {
+          "play_sent": "layout"
+        }
+      },
+      {
+        "variant": "before",
+        "trace": "outstanding",
+        "clicks": 1,
+        "keys": 0,
+        "marker": {
+          "play_sent": "layout"
+        }
+      },
+      {
+        "variant": "after",
+        "trace": "missing",
+        "clicks": 0,
+        "keys": 0,
+        "marker": null
+      },
+      {
+        "variant": "after",
+        "trace": "malformed",
+        "clicks": 0,
+        "keys": 0,
+        "marker": null
+      },
+      {
+        "variant": "after",
+        "trace": "outstanding",
+        "clicks": 0,
+        "keys": 0,
+        "marker": null
+      }
+    ],
+    "workflow": [
+      {
+        "variant": "before",
+        "injected_exit": 23,
+        "step_exit": 0,
+        "stdout": "injected control output\n::notice title=ArmPort native grid allocation::injected control output%0A\n",
+        "stderr": ""
+      },
+      {
+        "variant": "after",
+        "injected_exit": 23,
+        "step_exit": 23,
+        "stdout": "injected control output\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "tests": {
+    "command": "python3 -m unittest discover -s armport/tests -p test_*.py -v",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_current_atlas_rpc_boundary_and_later_fault (test_atlas_wine.AtlasWineTests.test_current_atlas_rpc_boundary_and_later_fault) ... ok\ntest_every_other_exception_and_fatal_stays_rejected (test_atlas_wine.AtlasWineTests.test_every_other_exception_and_fatal_stays_rejected) ... ok\ntest_handling_and_order_must_be_proven (test_atlas_wine.AtlasWineTests.test_handling_and_order_must_be_proven) ... ok\ntest_missing_files_do_not_pass (test_atlas_wine.AtlasWineTests.test_missing_files_do_not_pass) ... ok\ntest_only_completed_startup_rpc_is_allowed_and_counted (test_atlas_wine.AtlasWineTests.test_only_completed_startup_rpc_is_allowed_and_counted) ... ok\ntest_retained_real_wine_rpc_sequence (test_atlas_wine.AtlasWineTests.test_retained_real_wine_rpc_sequence) ... ok\ntest_same_rpc_after_first_map_start_fails (test_atlas_wine.AtlasWineTests.test_same_rpc_after_first_map_start_fails) ... ok\ntest_failed_control_fails_step_despite_successful_tee (test_grid_workflow_gate.GridWorkflowGate.test_failed_control_fails_step_despite_successful_tee) ... ok\ntest_successful_control_emits_evidence_notice (test_grid_workflow_gate.GridWorkflowGate.test_successful_control_emits_evidence_notice) ... ok\ntest_clear_history_keeps_ocr_play_available (test_host_login_gate.HostLoginGate.test_clear_history_keeps_ocr_play_available) ... ok\ntest_no_selection_without_ocr_never_uses_server_click_fallback (test_host_login_gate.HostLoginGate.test_no_selection_without_ocr_never_uses_server_click_fallback) ... ok\ntest_revalidates_after_wait_before_layout_input (test_host_login_gate.HostLoginGate.test_revalidates_after_wait_before_layout_input) ... ok\ntest_server_click_without_valid_trace_never_sends_next_or_play (test_host_login_gate.HostLoginGate.test_server_click_without_valid_trace_never_sends_next_or_play) ... ok\ntest_valid_selected_character_sends_one_next (test_host_login_gate.HostLoginGate.test_valid_selected_character_sends_one_next) ... ok\ntest_complete_isolated_dialog_history_is_required (test_login_progress.LoginProgress.test_complete_isolated_dialog_history_is_required) ... ok\ntest_only_current_selected_character_allows_next (test_login_progress.LoginProgress.test_only_current_selected_character_allows_next) ... ok\ntest_repeated_ocr_reads_same_frame_once_but_new_frame_reprocesses (test_login_progress.LoginProgress.test_repeated_ocr_reads_same_frame_once_but_new_frame_reprocesses) ... ok\ntest_full_loading_result_survives_socket_history_and_asset_noise (test_m3_diagnostics.M3DiagnosticsTests.test_full_loading_result_survives_socket_history_and_asset_noise) ... ok\ntest_missing_diagnostics_report_unknown_not_success (test_m3_diagnostics.M3DiagnosticsTests.test_missing_diagnostics_report_unknown_not_success) ... ok\ntest_snapshot_selects_exact_client_mapping_only (test_m3_diagnostics.M3DiagnosticsTests.test_snapshot_selects_exact_client_mapping_only) ... ok\ntest_exact_owned_window_and_bounded_input (test_qa_notice.QANotice.test_exact_owned_window_and_bounded_input) ... ok\ntest_no_input_on_ambiguous_or_unfocused_window (test_qa_notice.QANotice.test_no_input_on_ambiguous_or_unfocused_window) ... ok\ntest_only_known_pending_notice (test_qa_notice.QANotice.test_only_known_pending_notice) ... ok\ntest_search_failure_or_invalid_window_never_sends_input (test_qa_notice.QANotice.test_search_failure_or_invalid_window_never_sends_input) ... ok\ntest_unknown_or_finished_notice_never_searches_or_sends_input (test_qa_notice.QANotice.test_unknown_or_finished_notice_never_searches_or_sends_input) ... ok\ntest_committed_scope_and_unresolved_names (test_receiver_approved_ranges.ApprovedRanges.test_committed_scope_and_unresolved_names) ... ok\ntest_extra_missing_corrupt_or_linked_staged_data_rejected (test_receiver_approved_ranges.ApprovedRanges.test_extra_missing_corrupt_or_linked_staged_data_rejected) ... ok\ntest_notice_receipt_uses_actual_successful_response (test_receiver_approved_ranges.ApprovedRanges.test_notice_receipt_uses_actual_successful_response) ... ok\ntest_payload_and_header_pins_all_required (test_receiver_approved_ranges.ApprovedRanges.test_payload_and_header_pins_all_required) ... ok\ntest_whole_archive_and_changed_partial_response_rejected (test_receiver_approved_ranges.ApprovedRanges.test_whole_archive_and_changed_partial_response_rejected) ... ok\ntest_ambiguous_existing_directory_is_rejected (test_receiver_atlas_supplement.AtlasSupplement.test_ambiguous_existing_directory_is_rejected) ... ok\ntest_case_alias_file_keeps_first_layer_bytes (test_receiver_atlas_supplement.AtlasSupplement.test_case_alias_file_keeps_first_layer_bytes) ... ok\ntest_file_directory_case_collision_is_rejected (test_receiver_atlas_supplement.AtlasSupplement.test_file_directory_case_collision_is_rejected) ... ok\ntest_geometry_joins_original_case_directory (test_receiver_atlas_supplement.AtlasSupplement.test_geometry_joins_original_case_directory) ... ok\ntest_no_extra_members_or_bad_hashes (test_receiver_atlas_supplement.AtlasSupplement.test_no_extra_members_or_bad_hashes) ... ok\ntest_original_bytes_and_existing_conflicts (test_receiver_atlas_supplement.AtlasSupplement.test_original_bytes_and_existing_conflicts) ... ok\ntest_parent_links_refused (test_receiver_atlas_supplement.AtlasSupplement.test_parent_links_refused) ... ok\ntest_recovery_rejects_other_apk (test_receiver_atlas_supplement.AtlasSupplement.test_recovery_rejects_other_apk) ... ok\ntest_reviewed_subset_requires_matching_size_and_hash (test_receiver_atlas_supplement.AtlasSupplement.test_reviewed_subset_requires_matching_size_and_hash) ... ok\ntest_runtime_collision_checked_before_any_supplement_copy (test_receiver_atlas_supplement.AtlasSupplement.test_runtime_collision_checked_before_any_supplement_copy) ... ok\ntest_shadowed_earlier_layer_conflict_is_not_hidden (test_receiver_atlas_supplement.AtlasSupplement.test_shadowed_earlier_layer_conflict_is_not_hidden) ... ok\ntest_same_commit_shared_missing_files_and_present_geometry (test_receiver_error_comparison.ErrorComparison.test_same_commit_shared_missing_files_and_present_geometry) ... ok\ntest_exception_control_requires_both_execution_and_trace (test_receiver_error_inventory.ErrorInventory.test_exception_control_requires_both_execution_and_trace) ... ok\ntest_full_isolated_message_ignores_stdio_interleaving (test_receiver_error_inventory.ErrorInventory.test_full_isolated_message_ignores_stdio_interleaving) ... ok\ntest_legacy_prefix_and_embedded_thread_ids_removed (test_receiver_error_inventory.ErrorInventory.test_legacy_prefix_and_embedded_thread_ids_removed) ... ok\ntest_multiline_errors_are_preserved_and_counted (test_receiver_error_inventory.ErrorInventory.test_multiline_errors_are_preserved_and_counted) ... ok\ntest_partial_isolated_loss_is_rejected_even_with_nonzero_errors (test_receiver_error_inventory.ErrorInventory.test_partial_isolated_loss_is_rejected_even_with_nonzero_errors) ... ok\ntest_texswap_and_group_declarations_do_not_conflate_missing_models_with_files (test_receiver_error_inventory.ErrorInventory.test_texswap_and_group_declarations_do_not_conflate_missing_models_with_files) ... ok\ntest_texture_resolution_is_case_insensitive_and_groups_are_symbolic (test_receiver_error_inventory.ErrorInventory.test_texture_resolution_is_case_insensitive_and_groups_are_symbolic) ... ok\ntest_bootstrap_exceptions_are_separate_from_game_evidence (test_receiver_evidence.ReceiverEvidenceTests.test_bootstrap_exceptions_are_separate_from_game_evidence) ... ok\ntest_complete_cursor_stage_still_not_milestone_pass (test_receiver_evidence.ReceiverEvidenceTests.test_complete_cursor_stage_still_not_milestone_pass) ... ok\ntest_complete_transcript_does_not_hide_wine_fatal (test_receiver_evidence.ReceiverEvidenceTests.test_complete_transcript_does_not_hide_wine_fatal) ... ok\ntest_cursor_overrun_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_cursor_overrun_rejected) ... ok\ntest_dispatch_boundaries_cannot_be_missing_nested_or_misindexed (test_receiver_evidence.ReceiverEvidenceTests.test_dispatch_boundaries_cannot_be_missing_nested_or_misindexed) ... ok\ntest_game_error_and_assert_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_game_error_and_assert_rejected) ... ok\ntest_handled_seh_also_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_handled_seh_also_rejected) ... ok\ntest_loader_drain_and_inter_dispatch_errors_cannot_escape (test_receiver_evidence.ReceiverEvidenceTests.test_loader_drain_and_inter_dispatch_errors_cannot_escape) ... ok\ntest_map_work_finishes_before_packet_attribution (test_receiver_evidence.ReceiverEvidenceTests.test_map_work_finishes_before_packet_attribution) ... ok\ntest_missing_ack_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_missing_ack_rejected) ... ok\ntest_missing_game_stdio_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_missing_game_stdio_rejected) ... ok\ntest_missing_or_partial_isolated_trace_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_missing_or_partial_isolated_trace_rejected) ... ok\ntest_missing_state_snapshot_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_missing_state_snapshot_rejected) ... ok\ntest_missing_wine_evidence_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_missing_wine_evidence_rejected) ... ok\ntest_native_initial_missing_tail_command_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_native_initial_missing_tail_command_rejected) ... ok\ntest_native_initial_missing_zero_terminator_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_native_initial_missing_zero_terminator_rejected) ... ok\ntest_native_initial_tail_boundary_mismatch_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_native_initial_tail_boundary_mismatch_rejected) ... ok\ntest_native_logical_count_not_storage_length (test_receiver_evidence.ReceiverEvidenceTests.test_native_logical_count_not_storage_length) ... ok\ntest_only_errors_outside_dispatch_are_eligible_for_comparison (test_receiver_evidence.ReceiverEvidenceTests.test_only_errors_outside_dispatch_are_eligible_for_comparison) ... ok\ntest_partial_dispatch_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_partial_dispatch_rejected) ... ok\ntest_reported_failure_and_false_completion_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_reported_failure_and_false_completion_rejected) ... ok\ntest_self_consistent_snapshot_disagrees_with_native_baseline (test_receiver_evidence.ReceiverEvidenceTests.test_self_consistent_snapshot_disagrees_with_native_baseline) ... ok\ntest_snapshot_path_substitution_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_snapshot_path_substitution_rejected) ... ok\ntest_snapshot_tampering_rejected (test_receiver_evidence.ReceiverEvidenceTests.test_snapshot_tampering_rejected) ... ok\ntest_host_timeout_is_recorded_separately_and_still_raises (test_receiver_process_observation.ProcessObservation.test_host_timeout_is_recorded_separately_and_still_raises) ... ok\ntest_normal_and_signaled_exits_remain_distinct (test_receiver_process_observation.ProcessObservation.test_normal_and_signaled_exits_remain_distinct) ... ok\ntest_complete_runtime_audit_counts_and_rejects_aliases (test_receiver_review12.Review12.test_complete_runtime_audit_counts_and_rejects_aliases) ... ok\ntest_composite_cache_rejects_modified_extra_missing_and_linked_files (test_receiver_review12.Review12.test_composite_cache_rejects_modified_extra_missing_and_linked_files) ... ok\ntest_composite_scope_recomputed_and_drift_rejected (test_receiver_review12.Review12.test_composite_scope_recomputed_and_drift_rejected) ... ok\ntest_failure_evidence_retains_terminal_row_and_witnesses (test_receiver_review12.Review12.test_failure_evidence_retains_terminal_row_and_witnesses) ... ok\ntest_compressed_manifest_pins_and_ambiguous_texture_are_enforced (test_receiver_reviewed_files.ReviewedFiles.test_compressed_manifest_pins_and_ambiguous_texture_are_enforced) ... ok\ntest_selected_archive_payload_and_existing_collision_are_checked (test_receiver_reviewed_files.ReviewedFiles.test_selected_archive_payload_and_existing_collision_are_checked) ... ok\ntest_authenticated_later_state_difference_fails_comparison (test_receiver_state_comparison.StateComparison.test_authenticated_later_state_difference_fails_comparison) ... ok\ntest_complete_partial_comparison_does_not_claim_milestone (test_receiver_state_comparison.StateComparison.test_complete_partial_comparison_does_not_claim_milestone) ... ok\ntest_literal_comparison_detects_schema_length_and_float_bit_differences (test_receiver_state_comparison.StateComparison.test_literal_comparison_detects_schema_length_and_float_bit_differences) ... ok\ntest_only_agreed_initial_id_fields_are_canonicalized (test_receiver_state_comparison.StateComparison.test_only_agreed_initial_id_fields_are_canonicalized) ... ok\ntest_startup_errors_require_literal_matching_counts_in_all_six_runs (test_receiver_state_comparison.StateComparison.test_startup_errors_require_literal_matching_counts_in_all_six_runs) ... ok\ntest_wrong_reference_commit_rejected (test_receiver_state_comparison.StateComparison.test_wrong_reference_commit_rejected) ... ok\ntest_bad_cursor_and_length (test_replay_inventory.EnvelopeTests.test_bad_cursor_and_length) ... ok\ntest_metadata_corruption_is_covered_by_prefix_hash (test_replay_inventory.EnvelopeTests.test_metadata_corruption_is_covered_by_prefix_hash) ... ok\ntest_partial_capture (test_replay_inventory.EnvelopeTests.test_partial_capture) ... ok\ntest_payload_corruption (test_replay_inventory.EnvelopeTests.test_payload_corruption) ... ok\ntest_truncated_or_appended_records (test_replay_inventory.EnvelopeTests.test_truncated_or_appended_records) ... ok\ntest_valid_envelopes_preserve_unknown_initial_id_and_post_cursor (test_replay_inventory.EnvelopeTests.test_valid_envelopes_preserve_unknown_initial_id_and_post_cursor) ... ok\ntest_cyclic_and_excessive_chains_are_bounded (test_wine_saved_context.WineContextTests.test_cyclic_and_excessive_chains_are_bounded) ... ok\ntest_reads_saved_windows_chain (test_wine_saved_context.WineContextTests.test_reads_saved_windows_chain) ... ok\ntest_rejects_saved_sp_outside_stack (test_wine_saved_context.WineContextTests.test_rejects_saved_sp_outside_stack) ... ok\ntest_rejects_wrong_self_before_syscall_frame (test_wine_saved_context.WineContextTests.test_rejects_wrong_self_before_syscall_frame) ... ok\ntest_blank_frames_and_missing_map_name_fail (test_zone_frame.ZoneFrameTests.test_blank_frames_and_missing_map_name_fail) ... ok\ntest_map_ocr_receives_only_client_pixels (test_zone_frame.ZoneFrameTests.test_map_ocr_receives_only_client_pixels) ... ok\ntest_requires_completion_after_latest_map (test_zone_frame.ZoneFrameTests.test_requires_completion_after_latest_map) ... ok\ntest_thread_identity_does_not_change_map (test_zone_frame.ZoneFrameTests.test_thread_identity_does_not_change_map) ... ok\n\n----------------------------------------------------------------------\nRan 101 tests in 2.779s\n\nOK\n"
+  },
+  "atlas": {
+    "run_id": 40148424741,
+    "job_id": 121037254901,
+    "artifact_id": 12584500585,
+    "artifact_sha256": "fa274050a2da124cfdec6f3512c515294d93d45e6b2c55c9946941146764e0f2",
+    "driver": {
+      "world_rendered": false,
+      "zone_load_seconds": 1506,
+      "diagnostic_seconds_excluded": 0.773,
+      "qa_notice_actions": [],
+      "qa_notice_last_check": {
+        "pids": [
+          7998
+        ],
+        "pending_exact_notice": true,
+        "attempts": 0,
+        "search_exit": 0,
+        "windows": [
+          "10485761",
+          "10485764"
+        ],
+        "search_stderr": ""
+      },
+      "atlas": {
+        "connected_on_atlas": true,
+        "status": {
+          "loaded": true,
+          "connected": true,
+          "in_map_transfer": false,
+          "map_id": 1,
+          "static_map_id": 1,
+          "address": "127.0.0.1"
+        }
+      }
+    },
+    "sample_count": 49,
+    "stdio_byte_counts": [
+      3376618
+    ],
+    "mapped_game_window": "0xa00001 \"Atlas Park\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1024x768+104+130 +104+130",
+    "last_zone_rows": [
+      {
+        "stage": "texqueue.drain.done",
+        "text": "",
+        "tid": 36
+      },
+      {
+        "stage": "texqueue.swaps.begin",
+        "text": "",
+        "tid": 36
+      },
+      {
+        "stage": "texswap.list.begin",
+        "text": "",
+        "tid": 36
+      },
+      {
+        "stage": "texswap.list.ready",
+        "text": "",
+        "tid": 36
+      },
+      {
+        "stage": "texswap.match",
+        "text": "tickertape_TALOS_ISLAND",
+        "tid": 36
+      },
+      {
+        "stage": "texswap.destination",
+        "text": "tickertape_STEEL_CANYON_SOUTH",
+        "tid": 36
+      },
+      {
+        "stage": "client.error",
+        "text": "*** TexSwap Warning: error finding texture 'tickertape_STEEL_CANYON_SOUTH' to swap with 'tickertape_TALOS_ISLAND'\n",
+        "tid": 36
+      },
+      {
+        "stage": "dialog.alert.begin",
+        "text": "You are seeing pop-up errors because you have Access Level (9) or you are on a QA server.  These will not be seen by customers.",
+        "tid": 36
+      }
+    ],
+    "dialog_rows": [
+      {
+        "stage": "dialog.alert.begin",
+        "text": "You are seeing pop-up errors because you have Access Level (9) or you are on a QA server.  These will not be seen by customers.",
+        "tid": 36
+      }
+    ],
+    "screen_sha256": "4ec58a687085e3fc72d15c98433fcb2ce6382635448dbc127d2e7a100e7cf85b",
+    "screen_observation": "White loading view with blue progress bar and black modal rectangle; no rendered Atlas established."
+  },
+  "selector": {
+    "source_url": "https://raw.githubusercontent.com/jordansissel/xdotool/master/cmd_search.c",
+    "source_sha256": "829a8ead0540beca2fcbe6477b927e84693e99e69781ea40c03b3bd1255ab7f1",
+    "relevant_lines": [
+      {
+        "line": 62,
+        "text": "      \"--all           Require all conditions match a window. Default is --any\\n\""
+      },
+      {
+        "line": 72,
+        "text": "  search.require = SEARCH_ANY;"
+      },
+      {
+        "line": 95,
+        "text": "        search.require = SEARCH_ANY;"
+      },
+      {
+        "line": 98,
+        "text": "        search.require = SEARCH_ALL;"
+      }
+    ],
+    "change": "Require --all: PID and exact title; retain one-window and successful-focus checks.",
+    "limitation": "No local Xvfb/xdotool available. Unit controls verify command and refusal paths; live dialog resolution requires new Atlas CI."
+  },
+  "replay": {
+    "run_id": 40148424802,
+    "arm64_job": 121035096446,
+    "i686_job": 121035096391,
+    "review_evidence_url": "https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5641164200",
+    "result": "Both id1-a runs fail one identical dispatch texture error, after exit 2 and 117 dispatches/partial snapshots. id1-b/id31 unrun; partial comparison skipped.",
+    "remaining_error": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS."
+  }
+}

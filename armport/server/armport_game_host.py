@@ -38,7 +38,7 @@ import atlas_wine  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
-from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log  # noqa: E402
+from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, dialogs_clear  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -199,10 +199,12 @@ def drive_login(a, screen, state, status, evidence):
     # EULA/NDA agreements and the server list come first (login_ui.after_login).
     png = after_login(screen, status, rounds=8, interval=10, done=character_select, after=sockets)
     png = png if png and character_select(png) else None
-    trace_ready = status.get('character_select_by_trace', False)
-    if trace_ready or (not png and status.get('server_clicked')):
-        # Character select draws a 3D scene that OCR may not read; the login
-        # traffic shows the character list arrives, so enter by the Next arrow.
+    # Revalidate immediately before input; a server click alone says nothing
+    # about the current selected character or outstanding modal history.
+    trace_ready = character_select_from_log(a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl')
+    status['character_select_by_trace'] = trace_ready
+    if trace_ready:
+        # OCR may miss the 3D scene; only the validated trace permits layout Next.
         pos = at(screen, 'enter_world')
         if pos:
             screen.click(*pos)
@@ -214,7 +216,7 @@ def drive_login(a, screen, state, status, evidence):
         else:
             status['enter_layout_error'] = 'Client window unavailable for Next'
     status['character_select'] = bool(png) or trace_ready
-    if png and not trace_ready:
+    if png and not trace_ready and dialogs_clear(a.client / 'zone-trace.jsonl'):
         pos = screen.find(png, info['character'])
         if pos:
             screen.click(*pos)

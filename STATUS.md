@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-24. M0 survey: merged (PR #3). Route: build the original client as an ARM64
+Updated 2026-10-25. M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
 
 M1 libraries: merged (PR #4, approved by Sol). The original textparser built
@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Atlas 40128377899/replay 40128377861 fault in objSplitPlanes; 0071 fixes grid
-  overlap. Host controls/both compiles pass; runtime CI pending. See M3-REPORT.
-- Review 5639886811: isolated dialog trace, exit diagnostics, full-tree audit.
-- Eight composite files approved (6389265419); CI pending. Texture exception OFF.
+- Atlas 40148424741 stalls at QA notice; fix PID/title OR search with --all.
+- Replay 40148424802: both id1-a exit 2; one texture error, no acceptance.
+- Sol review 5641164200: host bypass/pipefail fixed; 101 tests pass. M3-REPORT.
+- Eight-file staging passed; zero case aliases. Texture exception remains OFF.
 - M4 40127841088: createPrimaryAnimationEvents caller; producer still unproved.

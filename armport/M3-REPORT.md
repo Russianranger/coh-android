@@ -1,7 +1,50 @@
 # M3 report: incomplete, implementation review requested
 
-Updated 2026-10-24. Draft PR #6 targets COH-ArmPort. This is an implementation
+Updated 2026-10-25. Draft PR #6 targets COH-ArmPort. This is an implementation
 review checkpoint, not a claim that M3 is complete or ready to merge.
+
+## Sol 6.1 review 5641164200 follow-up (2026-10-25)
+
+[Review](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5641164200)
+requests two implementation corrections at 2e83133f. Both are addressed here;
+new review and runtime qualification remain required.
+[Artifact identities, actual-function/shell controls and 101-test output](evidence/m3-sol-review-5641164200.json)
+record the evidence.
+
+- Remove the host's `server_clicked` fallback for layout Next. Revalidate
+  stage/selection and the complete isolated dialog history immediately before
+  layout entry. OCR Play also requires clear history. Tests execute the actual
+  `drive_login` function with mocked process/UI boundaries. Missing, malformed
+  and outstanding-dialog traces each click Next and write the marker before
+  the fix, but send no input and write no marker afterward. Positive layout/OCR
+  paths and a dialog appearing after the wait are covered.
+- Enable `pipefail` in the grid-corruption control step. A test executes the
+  actual workflow block under `bash -e` with an injected control exit 23.
+  Before: step exits 0 and emits the notice; after: exit 23, no success notice.
+  A successful control still emits its output notice.
+- Completed [Atlas 40148424741](https://github.com/Russianranger/coh-android/actions/runs/40148424741/job/121037254901)
+  fails at the exact access-level QA notice. All 49 samples have unchanged
+  3,376,618-byte stdio, no QA input, and no rendered world after 1,506 seconds.
+  The selector returns two windows; 10485761 is the previously mapped main
+  game window. xdotool's source documents/defaults to `--any`, so PID **or**
+  title matches. Add `--all` to require both. Keep the exact notice, one PID,
+  unique window, successful focus and three-attempt bound. Unknown/finished
+  notices and failed/ambiguous searches still receive no input. Live resolution
+  of this stall is pending new CI; the saved frame is still loading.
+- Completed [replay 40148424802](https://github.com/Russianranger/coh-android/actions/runs/40148424802)
+  no longer reproduces the objSplitPlanes crash in id1-a. Both architectures
+  exit 2 after 117 dispatches/partial snapshots, but fail one identical
+  `HIPS_miniskirt_1` dispatch error. id1-b/id31 are unrun and partial-state
+  comparison is skipped. Sol verified 176,168 staged files, 8,971 directories,
+  zero case aliases and the exact eight-file composite layer in both jobs.
+
+Local command `python3 -m unittest discover -s armport/tests -p 'test_*.py' -v`
+passes 101 tests. No native source changes in this follow-up; the prior
+ARM64/i686 compilation and grid-control evidence remain applicable. M3/M4
+remain incomplete. The texture exception stays OFF; complete audio file tables,
+six-run identity and full state coverage remain outstanding. M4 still needs the
+new Release diagnostic and corrected case staging to identify the bad power's
+producer. No new data fetch, APK, signing or merge is part of this checkpoint.
 
 ## Review 5639886811 follow-up: native grid overlap (2026-10-24)
 

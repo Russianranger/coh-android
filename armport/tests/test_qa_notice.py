@@ -28,7 +28,7 @@ class QANotice(unittest.TestCase):
             self.assertTrue(login_ui.acknowledge_qa_notice(screen, NOTICE, [42], status))
         self.assertFalse(login_ui.acknowledge_qa_notice(screen, NOTICE, [42], status))
         self.assertEqual(screen.key.call_count, 3)
-        sh.assert_any_call('xdotool', 'search', '--onlyvisible', '--pid', '42', '--name', '^Program Error$')
+        sh.assert_any_call('xdotool', 'search', '--all', '--onlyvisible', '--pid', '42', '--name', '^Program Error$')
         sh.assert_any_call('xdotool', 'windowfocus', '--sync', '12345')
         screen.key.assert_called_with('Return')
 
@@ -41,6 +41,24 @@ class QANotice(unittest.TestCase):
         sh.side_effect = [SimpleNamespace(returncode=0, stdout='1\n'),
                           SimpleNamespace(returncode=1, stdout='')]
         self.assertFalse(login_ui.acknowledge_qa_notice(screen, NOTICE, [1], {}))
+        screen.key.assert_not_called()
+
+    @patch.object(login_ui, 'sh')
+    def test_unknown_or_finished_notice_never_searches_or_sends_input(self, sh):
+        screen = Mock()
+        for text in (NOTICE.replace('(9)', '(0)'), NOTICE.replace('alert', 'error'),
+                     NOTICE + 'ArmPort zone: 2 dialog.alert.done tid=36\n',
+                     NOTICE + 'ArmPort zone: 2 client.fatal bad tid=36\n'):
+            self.assertFalse(login_ui.acknowledge_qa_notice(screen, text, [42], {}))
+        sh.assert_not_called()
+        screen.key.assert_not_called()
+
+    @patch.object(login_ui, 'sh')
+    def test_search_failure_or_invalid_window_never_sends_input(self, sh):
+        screen = Mock()
+        for code, output in ((1, '12345\n'), (0, 'not-a-window\n')):
+            sh.return_value = SimpleNamespace(returncode=code, stdout=output)
+            self.assertFalse(login_ui.acknowledge_qa_notice(screen, NOTICE, [42], {}))
         screen.key.assert_not_called()
 
 
