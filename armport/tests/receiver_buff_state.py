@@ -3,11 +3,45 @@
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import tempfile
 
 from receiver_tray_state import function
+
+
+def check_build_guard(source, native, header):
+    """Preprocess the actual ordered includes and guarded view, without fixture defines."""
+    includes = re.findall(r'^#include "(?:clientcomm/armport_replay.h|UI/uiBuff.h)"$',
+                          native, re.MULTILINE)
+    start = native.index('#ifdef COH_ARMPORT_REPLAY')
+    block = native[start:native.index('#endif', start) + len('#endif')]
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root/'UI').mkdir()
+        (root/'clientcomm').mkdir()
+        (root/'UI/uiBuff.h').write_text(header)
+        (root/'UI/comm_game.h').write_text('/* unrelated dependency omitted for preprocessing */\n')
+        (root/'clientcomm/armport_replay.h').write_bytes(
+            (source/'Game/src/clientcomm/armport_replay.h').read_bytes())
+        def preprocess(lines, defines):
+            return subprocess.run([os.environ.get('CC', 'cc'), '-E', '-P', '-x', 'c',
+                                   '-I', str(root), *defines, '-'],
+                                  input='\n'.join(lines)+'\n'+block,
+                                  capture_output=True, text=True, check=True).stdout
+        for defines in (['-D__aarch64__', '-D__MINGW32__'],
+                        ['-DCOH_ARMPORT_REFERENCE_I686']):
+            text = preprocess(includes, defines)
+            assert 'typedef struct ArmPortReplayBuffView' in text
+            for name in ('armportReplayBuffCount', 'armportReplayBuffAt'):
+                assert len(re.findall(r'\b'+name+r'\s*\(', text)) == 2, name
+            # The old missing include hides both declarations and definitions.
+            old = preprocess([line for line in includes if 'armport_replay.h' not in line], defines)
+            assert 'armportReplayBuffCount' not in old
+        off = preprocess(includes, [])
+        assert 'armportReplayBuffCount' not in off
+    print('buff build guard: ARM64/i686 declarations and definitions enabled; normal build and missing-include negative controls disabled')
 
 
 def main():
@@ -17,6 +51,7 @@ def main():
     state=(Path(__file__).resolve().parents[1]/'replay/state.c').read_text()
     native=(source/'Game/src/UI/uiBuff.c').read_text()
     header=(source/'Game/src/UI/uiBuff.h').read_text()
+    check_build_guard(source, native, header)
     receiver=(source/'Game/src/entity/character_net_client.c').read_text()
     fixture=r'''
 #include <assert.h>

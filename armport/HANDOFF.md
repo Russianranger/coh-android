@@ -1276,3 +1276,19 @@ comparisons with the exact approved texture occurrence. Exact command/output:
 state, before later UI/door/entity-status/camera/target/buff/packet-order/pact
 work. All full-schema/full-state/M3 flags stay false. Atlas 40227784437 is still
 pending; keep its source branch stable until completion.
+
+### Buff accessor build-guard correction (2026-10-25 UTC)
+
+Patch 0092 includes the replay feature header before uiBuff.h. Without it,
+uiBuff.c compiled successfully but emitted neither buff accessor; the snapshot
+consumer still referenced both. This corrects a link defect in the pending
+0091 addition, without changing original receiving or accessor behavior.
+
+Evidence: `evidence/m3-buff-build-guard-controls.json`. Actual native uiBuff.c
+commands compile sequentially for ARM64 then i686, and llvm-nm confirms both
+accessor definitions in both objects. A new actual-header preprocessing control
+checks both feature configurations and the disabled/missing-include negative
+controls; all 21 existing sanitizer cases pass. The previous compile-only note
+was insufficient to establish these definitions. Fresh full linking/runtime is
+still pending. Patchwork exports 92 patches, prior 91 byte-identical, upstream/
+unchanged. Full-schema/M3 completion and merge approval remain false.
