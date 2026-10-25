@@ -115,6 +115,32 @@ def sh(*cmd, timeout=60, check=False):
                           env=dict(os.environ, DISPLAY=DISPLAY), check=check)
 
 
+def owned_client_window(pids):
+    """Find a single visible game-sized window without relying on its map title."""
+    if len(pids) != 1 or type(pids[0]) is not int or pids[0] <= 0:
+        return None
+    result = sh('xdotool', 'search', '--all', '--onlyvisible', '--pid', str(pids[0]),
+                '--class', r'^cityofheroes\.exe$')
+    windows = result.stdout.split()
+    if result.returncode or not windows or len(windows) > 16 or any(not w.isdigit() for w in windows):
+        return None
+    candidates = []
+    for window in set(windows):
+        result = sh('xdotool', 'getwindowgeometry', '--shell', window)
+        if result.returncode:
+            return None
+        values = dict(line.split('=', 1) for line in result.stdout.split() if '=' in line)
+        try:
+            if int(values['WINDOW']) != int(window):
+                return None
+            x, y, width, height = (int(values[key]) for key in ('X', 'Y', 'WIDTH', 'HEIGHT'))
+        except (KeyError, ValueError):
+            return None
+        if x >= 0 and y >= 0 and width >= 640 and height >= 480:
+            candidates.append((x, y, width, height))
+    return candidates[0] if len(candidates) == 1 else None
+
+
 class Screen:
     """Screenshots and OCR-located clicks on the shared display."""
 

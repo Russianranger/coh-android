@@ -38,7 +38,7 @@ import atlas_wine  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
-from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, dialogs_clear  # noqa: E402
+from login_ui import owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, dialogs_clear  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -264,7 +264,9 @@ def drive_login(a, screen, state, status, evidence):
                 # iteration must observe the original load/READY and image checks.
                 rendered = 0
                 continue
-            check = zone_frame.evaluate(png, screen.window(), stdio_text, screen.text)
+            frame_window = owned_client_window(stall_snapshot.client_pids(a.client))
+            check = zone_frame.evaluate(png, frame_window, stdio_text, screen.text)
+            check['owned_window_geometry'] = frame_window
             status['frame_checks'].append(check)
             mean = check['frame']['mean'] if check['frame'] else None
             status['loading_brightness'].append(round(mean, 3) if mean is not None else None)

@@ -1,0 +1,62 @@
+{
+  "run_id": 40161198295,
+  "artifact_id": 12588291448,
+  "artifact_sha256": "95ea1f0cb67ba717abebc1d0337bdcc1a52e9146fd67d2b3c5ae602b954e496c",
+  "window_observations": [
+    {
+      "when": "2s after Log In",
+      "client_sockets": [],
+      "windows": [
+        "0xa00001 \"City of Heroes\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1024x768+104+130 +104+130",
+        "0xa00002 \"Default IME\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1x1+0+0 +0+0",
+        "0x400003 \"Default IME\": (\"explorer.exe\" \"explorer.exe\") 1x1+0+0 +0+0"
+      ]
+    },
+    {
+      "when": "10s after Log In",
+      "client_sockets": [],
+      "windows": [
+        "0xa00001 \"City of Heroes\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1024x768+104+130 +104+130",
+        "0xa00002 \"Default IME\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1x1+0+0 +0+0",
+        "0x400003 \"Default IME\": (\"explorer.exe\" \"explorer.exe\") 1x1+0+0 +0+0"
+      ]
+    },
+    {
+      "when": "server clicked (0)",
+      "client_sockets": [],
+      "windows": [
+        "0xa00001 \"City of Heroes\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1024x768+104+130 +104+130",
+        "0xa00002 \"Default IME\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1x1+0+0 +0+0",
+        "0x400003 \"Default IME\": (\"explorer.exe\" \"explorer.exe\") 1x1+0+0 +0+0"
+      ]
+    },
+    {
+      "when": "15s after Next",
+      "client_sockets": [
+        "udp UNCONN 0 0 0.0.0.0:56213 0.0.0.0:* users:((\"wineserver\",pid=8087,fd=249),(\"CityOfHeroes.ex\",pid=8082,fd=13))"
+      ],
+      "windows": [
+        "0xa00001 \"Atlas Park\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1024x768+104+130 +104+130",
+        "0xa00002 \"Default IME\": (\"cityofheroes.exe\" \"cityofheroes.exe\") 1x1+0+0 +0+0",
+        "0x400003 \"Default IME\": (\"explorer.exe\" \"explorer.exe\") 1x1+0+0 +0+0"
+      ]
+    }
+  ],
+  "first_frame_check": {
+    "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "textures_done": true,
+    "ready_sent": true,
+    "atlas_map": true,
+    "load_complete": true,
+    "frame": null,
+    "map_name_visible": false,
+    "ocr": "",
+    "rendered": false
+  },
+  "screenshot_inspection": "Player/HUD/welcome dialog visible, terrain absent in retained screen.jpg; not proof of rendered Atlas.",
+  "cause": "Screen.window searches old City of Heroes title; original client changes title to Atlas Park. All frame stats null despite original load completion.",
+  "change": "Frame-only lookup uses one owned PID AND exact game window class, visible, game-sized, exactly one eligible window. No dialog inputs or acceptance changes.",
+  "validation": "......................................................................................................................\n----------------------------------------------------------------------\nRan 118 tests in 3.334s\n\nOK\n",
+  "live_qualification": "pending; do not interrupt current 40170942752 Atlas run",
+  "output_bound": "Still unresolved: first-atlas exceeded its existing output cap. Debug file-read logging is unconditional in debug donor writeConsole; no verified runtime switch found. No donor or output cap changes made."
+}

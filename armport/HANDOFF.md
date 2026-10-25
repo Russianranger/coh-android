@@ -63,6 +63,17 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Frame title follow-up (2026-10-25 UTC)
+
+40161198295 changes the owned game window title to Atlas Park after Next;
+Screen.window still searched City of Heroes, so all frame stats were null.
+Frame-only lookup now requires one owned PID, exact game class, visible and
+unique game-sized geometry. Six controls plus all 118 tests pass. No input,
+map/OCR/connection acceptance or server output limit changes. Evidence:
+evidence/m3-frame-title-40161198295.json. Runtime qualification pending;
+allow current 40170942752 to finish before triggering another Atlas run.
+The server output-bound failure remains separate and unresolved.
+
 ### Reopen selection boundary (2026-10-25 UTC)
 
 M4 40167305715 now reaches reopen after creation validation; reopen crashes
