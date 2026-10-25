@@ -34,11 +34,14 @@
 #include "UI/uiGroupWindow.h"
 #include "UI/uiAutomap.h"
 #include "UI/uiCompass.h"
+#include "UI/uiTurnstile.h"
+#include "graphics/textureatlas.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
 #include "storyarc/storyarcClient.h"
 #include "storyarc/contactClient.h"
 #include <utilitieslib/components/earray.h>
+#include <utilitieslib/components/StashTable.h>
 
 /* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
  * deliberately uses heap-buffer offsets, whose sizeof is only pointer width.
@@ -683,6 +686,95 @@ static void deletion(unsigned pkt_id, int idx, int id)
 
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
+static void turnstile_mission_state(const TurnstileMissionClient *m)
+{
+    if (!m) { out("null"); return; }
+    out("{\"name\":"); string(m->name);
+    out(",\"average_wait_f32_bits\":"); words(&m->avgWait, sizeof(m->avgWait));
+    out(",\"weekly\":%d,\"selected\":%d,\"index\":%d,\"category\":%d,\"eligible\":%d}",
+        m->isWeeklyTF, m->selected, m->index, (int)m->category, m->eligible);
+}
+static void turnstile_receive_state(void)
+{
+    const TurnstileMissionClient *const *missions = armportReplayTurnstileMissions();
+    const float *wait = armportReplayTurnstileWait();
+    int i, count = eaSize(&missions);
+    check(count >= 0 && count <= 8192 && wait != NULL);
+    out("{\"in_queue\":%d,\"current_wait_f32_bits\":", armportReplayTurnstileQueue());
+    words(wait, sizeof(*wait));
+    out(",\"missions\":[");
+    for (i = 0; i < count; ++i) {
+        if (i) out(",");
+        turnstile_mission_state(missions[i]);
+    }
+    out("],\"all_dummy\":"); turnstile_mission_state(armportReplayTurnstileDummy(-1));
+    out(",\"category_dummies\":[");
+    for (i = 0; i < kTurnstileCategory_Count; ++i) {
+        if (i) out(",");
+        turnstile_mission_state(armportReplayTurnstileDummy(i));
+    }
+    out("]}");
+}
+static void player_turnstile_state(const EntPlayer *p)
+{
+    out("{\"last_event_id\":%d,\"last_mission_id\":%d}",
+        p->lastTurnstileEventID, p->lastTurnstileMissionID);
+}
+
+typedef struct ArmPortWaypointEntry {
+    const char *key;
+    const Destination *destination;
+} ArmPortWaypointEntry;
+static int waypoint_entry_compare(const void *left, const void *right)
+{
+    const ArmPortWaypointEntry *a = left, *b = right;
+    return strcmp(a->key, b->key);
+}
+static void server_waypoint_state(void)
+{
+    unsigned count, used_entries = 0, i;
+    ArmPortWaypointEntry *entries;
+    cStashTableIterator iterator;
+    cStashElement element;
+    if (!serverDestList) { out("[]"); return; }
+    count = stashGetValidElementCount(serverDestList);
+    check(count <= 8192);
+    entries = malloc((count ? count : 1) * sizeof(*entries));
+    check(entries != NULL);
+    stashGetIteratorConst(serverDestList, &iterator);
+    while (stashGetNextElementConst(&iterator, &element)) {
+        check(used_entries < count);
+        entries[used_entries].key = stashElementGetStringKey(element);
+        check(entries[used_entries].key != NULL);
+        entries[used_entries++].destination = stashElementGetPointerConst(element);
+    }
+    check(used_entries == count);
+    /* Stash bucket order is allocation-dependent; retain the literal key/value map. */
+    qsort(entries, count, sizeof(*entries), waypoint_entry_compare);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const Destination *d = entries[i].destination;
+        if (i) { check(strcmp(entries[i-1].key, entries[i].key) < 0); out(","); }
+        out("{\"key\":"); string(entries[i].key);
+        out(",\"destination\":");
+        if (!d) out("null");
+        else {
+            out("{\"nav_on\":%d,\"type\":%d,\"id\":%d,\"pulse\":%u,\"name\":",
+                d->navOn, d->type, d->id, (unsigned)d->pulseBIcon);
+            fixed_string(d->name, sizeof(d->name));
+            out(",\"map\":"); fixed_string(d->mapName, sizeof(d->mapName));
+            out(",\"angle_f32_bits\":"); words(&d->angle, sizeof(d->angle));
+            out(",\"position_f32_bits\":"); words(d->world_location[3], sizeof(d->world_location[3]));
+            out(",\"icon_name\":"); string(d->icon ? d->icon->name : NULL);
+            out(",\"background_icon_name\":"); string(d->iconB ? d->iconB->name : NULL);
+            out("}");
+        }
+        out("}");
+    }
+    out("]");
+    free(entries);
+}
+
 void armportReplayDesaturation(const float *delay, const float *weight, const float *target, const float *fade)
 {
     if (!active) return;
@@ -934,6 +1026,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"costumes\":"); player_costumes(e->pl);
             out(",\"receive_core\":"); player_receive_core(e->pl);
             out(",\"identity_state\":"); player_identity_state(e->pl);
+            out(",\"turnstile_state\":"); player_turnstile_state(e->pl);
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
@@ -951,6 +1044,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"visited_maps\":"); visited_map_state();
     out(",\"karma_widgets\":"); karma_receive_state();
     out(",\"desaturation_received_f32_bits\":"); desaturation_receive_state();
+    out(",\"server_waypoints\":"); server_waypoint_state();
+    out(",\"turnstile\":"); turnstile_receive_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));

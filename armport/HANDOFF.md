@@ -1041,3 +1041,27 @@ the same cache-miss condition as source preparation, as do the new controls.
 
 Runtime is pending: replay 40224584944 tests earlier 5919e8c, not these additions
 or model diagnostic 0083. Full-schema/full-state/M3 completion stays false.
+
+### Server waypoint and turnstile receive storage (2026-10-25 UTC)
+
+Snapshots now retain the original server-waypoint key/value mapping, sorting
+a private entry array by literal string keys rather than allocation-dependent
+stash bucket order. Values include received IDs/flags/names, individual F32
+coordinate/angle bits and resolved icon names. No key or integer normalization,
+stash mutation, asset loading or original receiver change. Selected compass
+copies, display caches/coordinates and texture addresses remain excluded.
+
+Patch 0085 exposes const views of retained turnstile missions/dummy categories
+and queue/wait storage. Snapshots retain original mission order, selections,
+eligibility, names, wait bits and literal player last event/mission IDs. Throttle
+clocks, event dialog/response/status fields and window widgets remain uncovered.
+The accessors are build-guarded and only called by active replay snapshots.
+
+Evidence: `evidence/m3-waypoint-turnstile-controls.json`. Eighteen waypoint and
+fourteen original turnstile receiver/accessor/writer cases pass ASan/UBSan. All
+20 actual-writer/source controls pass together. Native state.c/uiTurnstile.c
+compile for ARM64 then i686 with one compiler. Patchwork exports 85 patches;
+the prior 84 are byte-identical and upstream/ unchanged. Host fixtures do not
+prove native ABI; only local LeakSanitizer is disabled for /proc. Runtime is
+pending and replay 40224584944 tests earlier 5919e8c, not these additions.
+All full-schema/full-state/M3 completion flags remain false.

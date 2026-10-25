@@ -246,6 +246,8 @@ jobs:
         run: python3 armport/tests/receiver_entity_metadata_state.py
       - name: Check actual dynamic-group and sky snapshot serializer with sanitizers
         run: python3 armport/tests/receiver_world_state.py
+      - name: Check retained server-waypoint key/value snapshot
+        run: python3 armport/tests/receiver_waypoint_state.py
       - id: replay-exe-cache
         uses: actions/cache/restore@v4
         with:
@@ -279,6 +281,9 @@ jobs:
       - name: Check received desaturation observation before animation
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_desaturation_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original turnstile receivers and retained state
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_turnstile_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Configure assertion-enabled comparison build
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         env:
