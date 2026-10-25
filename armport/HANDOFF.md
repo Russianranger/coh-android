@@ -970,3 +970,21 @@ Actual accessor/writer sanitizer controls, ARM64 then i686 native compilation
 ABI proof; only local LeakSanitizer is disabled for /proc. Fresh runtime is
 pending: replay 40220658755 predates these additions. Full-schema, full-state
 and M3 flags remain false.
+
+### World-definition midpoint diagnostic correction (2026-10-25 UTC)
+
+Sol review 5644680146 identified an incorrect midpoint predicate in 0080.
+Patch 0082 makes all five distance-input observer sites use the same predicate
+as original closeEnough: nonzero lod_fadenode and (PARENT_FADE or fade==2).
+Original distance/culling calculations and returns are unchanged. The extended
+control fails on 0080, then passes 768 original/patched decision and calculation-
+count cases plus 1,920 logged midpoint/distance checks across all five sites.
+It includes both reported mismatches and zero-distance bypass/ordinary cases.
+The 5,000-frame off/on bound controls and sequential ARM64/i686 compilation
+pass. Evidence: `evidence/m3-world-midpoint-review-5644680146.json`.
+
+All prior 81 patch files are unchanged; patchwork exports 82. Atlas 40217209151
+tests 5d1d2da9 before this correction: its distance_mid fields are unreliable
+when the old and original predicates differ. Do not use those fields to claim
+a root cause. Other observations need their own provenance and full records.
+No rendering acceptance change, milestone completion or merge approval.

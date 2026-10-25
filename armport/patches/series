@@ -79,3 +79,4 @@
 0079-replay-alignment-wire-delay.patch
 0080-observe-world-definition-rejection-inputs.patch
 0081-observe-existing-visited-map-storage.patch
+0082-match-observed-distance-midpoint-to-original-selection.patch
