@@ -262,7 +262,8 @@ def main():
                     run = process_observation.run([str(args.wine / 'wine'), str(args.runtime / 'CityOfHeroes.exe'),
                                           '-fullscreen', '0', '-screen', '800', '600', '-verbose', '1'],
                                          cwd=args.runtime, env=env, stdout=log, stderr=subprocess.STDOUT,
-                                         timeout=600, evidence=folder / 'process-observation.json')
+                                         timeout=600, evidence=folder / 'process-observation.json',
+                                         exit_trace=folder / 'zone-trace.jsonl')
                     if run.returncode != 2:
                         # Retain the inventory even when exit-code acceptance
                         # fails. A terminal row cannot rescue a killed process.
