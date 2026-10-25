@@ -1,3 +1,17 @@
+### Story observation follow-up (2026-10-25 UTC)
+
+Snapshots now retain all story/key clue strings, server souvenir IDs/header/
+detail strings and visit-location names in their original array order, including
+null entries. Patch 0078 supplies a read-only view of the original server clue
+array; it is build-guarded and only called by active replay snapshots. Local
+player-created clue files and UI caches are excluded. No receive code changes.
+The patch was exported with patchwork.py; upstream/ remains unchanged.
+Both native targets compile state.c and uiClue.c sequentially; source-derived
+ASan/UBSan controls and 151 Python tests pass. Evidence:
+evidence/m3-story-state-observations.json. Runtime pending; active replay
+40206484644 predates this addition. Contacts/tasks/waypoints and broader player
+state remain uncovered; partial schema and false completion flags remain.
+
 ### Retained costume observation follow-up (2026-10-25 UTC)
 
 Snapshots now observe convertedScale, selected SG color set and all six SG

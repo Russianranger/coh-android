@@ -10,7 +10,7 @@ import tempfile
 def main():
     source = (Path(__file__).resolve().parents[1] / 'replay/state.c').read_text()
     formatting = source[source.index('static void out('):source.index('void armportReplayStateInit(')]
-    world = source[source.index('static void world_receive_state('):source.index('static unsigned deletes;')]
+    world = source[source.index('static void world_receive_state('):source.index('static void story_clues(')]
     fixture = r'''
 #include <stdio.h>
 #include <stdlib.h>

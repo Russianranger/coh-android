@@ -449,3 +449,16 @@ invalid counts, changed fields and timer/editor exclusion. Both native target
 units compile sequentially; evidence/m3-costume-state-observations.json records
 commands. Runtime qualification is pending; the current replay 40206484644
 predates this observer. The schema remains partial and all completion flags false.
+
+## Story observations (2026-10-25)
+
+The story snapshot now retains story/key clue arrays (all six strings), server
+souvenir UID/header/detail strings and visit-location names. Null items, empty
+strings and original order remain distinct; counts are bounded to 8,192 and
+the existing total output bound remains. Patch 0078 exposes only the original
+server souvenir array through a build-guarded read-only accessor, used solely
+by active replay snapshots. The player-created local-file array, UI formatting
+and scroll/display caches are excluded. Contacts/tasks/waypoints and broader
+state remain gaps. See evidence/m3-story-state-observations.json for sequential
+native compilation and actual-writer/accessor sanitizer controls. Runtime
+pending; schema remains partial.

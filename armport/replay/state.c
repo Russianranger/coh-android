@@ -29,6 +29,8 @@
 #include "UI/uiGroupWindow.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
+#include "storyarc/storyarcClient.h"
+#include "storyarc/contactClient.h"
 #include <utilitieslib/components/earray.h>
 
 /* stdtypes.h replaces these with ARRAY_SIZE_CHECKED wrappers. This writer
@@ -430,6 +432,54 @@ static void world_receive_state(void)
     out("}");
 }
 
+static void story_clues(StoryClue *const *items)
+{
+    int i, n = eaSize(&items);
+    check(n >= 0 && n <= 8192);
+    out("[");
+    for (i = 0; i < n; ++i) {
+        const StoryClue *c = items[i];
+        if (i) out(",");
+        if (!c) { out("null"); continue; }
+        out("{\"name\":"); string(c->name);
+        out(",\"filename\":"); string(c->filename);
+        out(",\"display_name\":"); string(c->displayname);
+        out(",\"intro\":"); string(c->introstring);
+        out(",\"detail\":"); string(c->detailtext);
+        out(",\"icon\":"); string(c->iconfile);
+        out("}");
+    }
+    out("]");
+}
+static void story_receive_state(void)
+{
+    const SouvenirClue *const *clues = armportReplaySouvenirClues();
+    int i, n = eaSize(&clues);
+    check(n >= 0 && n <= 8192);
+    out("{\"clues\":"); story_clues(storyClues);
+    out(",\"key_clues\":"); story_clues(keyClues);
+    out(",\"server_souvenirs\":[");
+    for (i = 0; i < n; ++i) {
+        const SouvenirClue *c = clues[i];
+        if (i) out(",");
+        if (!c) { out("null"); continue; }
+        out("{\"uid\":%d,\"name\":", c->uid); string(c->name);
+        out(",\"filename\":"); string(c->filename);
+        out(",\"display_name\":"); string(c->displayName);
+        out(",\"icon\":"); string(c->icon);
+        out(",\"description\":"); string(c->description);
+        out("}");
+    }
+    out("],\"visit_locations\":[");
+    n = eaSize(&visitLocations);
+    check(n >= 0 && n <= 8192);
+    for (i = 0; i < n; ++i) {
+        if (i) out(",");
+        string(visitLocations[i]);
+    }
+    out("]}");
+}
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
@@ -488,7 +538,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out("],\"delete_history\":["); deletes = 0; armportReplayDeletes(deletion);
     out("],\"badge_client\":"); badge_client_state();
     out(",\"group_map_names\":"); group_map_names();
-    out(",\"world\":"); world_receive_state(); out("}\n");
+    out(",\"world\":"); world_receive_state();
+    out(",\"story\":"); story_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);

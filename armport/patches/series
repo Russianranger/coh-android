@@ -75,3 +75,4 @@
 0075-crt-stream-buffering-diagnostics.patch
 0076-smf-signed-selection-boundary.patch
 0077-observe-world-traversal-and-model-submission.patch
+0078-replay-server-souvenir-view.patch

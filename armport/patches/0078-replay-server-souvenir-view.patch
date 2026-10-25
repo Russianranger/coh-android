@@ -1,0 +1,34 @@
+diff --git a/Game/src/UI/uiClue.c b/Game/src/UI/uiClue.c
+index 3cc672b..26b28f9 100644
+--- a/Game/src/UI/uiClue.c
++++ b/Game/src/UI/uiClue.c
+@@ -118,6 +118,16 @@ typedef struct SouvenirData
+ 
+ SouvenirData souvenirData[2] = { { -1, { WDW_CLUE, }, }, { -1, { WDW_CLUE, }, 1, } };
+ 
++// Read-only replay view of server-provided clues. Player-created local files
++// and mutable display caches are deliberately outside this view.
++#include "clientcomm/armport_replay.h"
++#ifdef COH_ARMPORT_REPLAY
++const SouvenirClue *const *armportReplaySouvenirClues(void)
++{
++    return (const SouvenirClue *const *)souvenirData[0].souvenirClues;
++}
++#endif
++
+ 
+ TokenizerParseInfo parsePlayerSouvenirClue[] =
+ {
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 5ed2205..753d258 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -10,6 +10,8 @@
+ typedef struct Entity Entity;
+ typedef struct Packet Packet;
+ typedef struct NetLink NetLink;
++typedef struct SouvenirClue SouvenirClue;
++const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
+ void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id));
+ void armportReplayMaybeRun(void);
