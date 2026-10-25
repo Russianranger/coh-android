@@ -2,7 +2,8 @@
 """Run the original receiver in isolated Wine; success is cursor-stage only.
 
 Render-cleanup/exit witnesses are diagnostic, never substitutes for a normal
-process exit. Power inventory additions remain part of a partial state schema.
+process exit. The explicit original-texture exception preserves the committed
+literal occurrence; inventory, badge, group and world observations remain partial.
 """
 import argparse
 import gzip
