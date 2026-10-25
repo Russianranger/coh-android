@@ -1,5 +1,24 @@
 # M4 runtime integration work
 
+## Deferred preview runtime qualification (2026-10-25 UTC)
+
+The workflow now selects Release from [40161198295](https://github.com/Russianranger/coh-android/actions/runs/40161198295),
+source a13fd86e2a097076676897c053ca56da614c469c. GitHub jobs API reports
+Release job 121072939544 and libraries job 121072939370 successful.
+This client includes 0074 (defer initial power-preview queue until the
+pending menu transition commits) and 0075 (direct CRT stream buffering).
+The original failure is M4 40155140217: menu 8 produces selection index -16.
+Source-derived controls and command outputs are committed in M3's
+armport/evidence/m3-m4-review16.json. The libraries CI also runs the actual
+Wine buffering control. Neither compilation nor controls prove M4 completion.
+
+Bins and shaders remain pinned to 40100355259. The new patches change preview
+timing and diagnostics, not their serialization or shader input. Package
+reports continue recording both donor IDs and hashes. Run the existing
+boot and create/save/restart/reopen jobs with the new client. No APK build,
+signing, data expansion, texture exception or acceptance change is included.
+M4 remains incomplete until that interactive execution passes and is reviewed.
+
 ## Selected-power producer diagnostic and case staging (2026-10-25)
 
 [M4 40127841088](https://github.com/Russianranger/coh-android/actions/runs/40127841088)
