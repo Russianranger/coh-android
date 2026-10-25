@@ -1,0 +1,32 @@
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 31219be..f104373 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -30,6 +30,7 @@ const VisitedStaticMap *const *armportReplayVisitedMaps(void);
+ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
+ void armportReplayAlignmentDelay(unsigned index, unsigned seconds);
++void armportReplayTaskforceTime(const Entity *e, unsigned index, unsigned seconds);
+ void armportReplayDesaturation(const float *delay, const float *weight, const float *target, const float *fade);
+ void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id));
+ void armportReplayMaybeRun(void);
+@@ -40,6 +41,7 @@ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #else
+ #define armportReplayOrientation(e, axis, value, accepted) ((void)0)
+ #define armportReplayAlignmentDelay(index, seconds) ((void)0)
++#define armportReplayTaskforceTime(e, index, seconds) ((void)0)
+ #define armportReplayDesaturation(delay, weight, target, fade) ((void)0)
+ #define armportReplayMaybeRun() ((void)0)
+ #define armportReplayUnknownCommand(command) ((void)0)
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index 15f8bd3..11fc4a6 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -2572,6 +2572,7 @@ static int entReceiveTaskforceParameters(Packet *pak, Entity *e)
+                 if (e->taskforce)
+                 {
+                     e->taskforce->parameters[count] = param;
++                    armportReplayTaskforceTime(e, count, param);
+                 }
+             }
+         }

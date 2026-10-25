@@ -884,3 +884,22 @@ updates/null taskforce, retained slots, clock addition, bounds and immutability.
 Packet/clock dependencies are substitutes. Native entrecv.c/state.c compile
 ARM64 then i686 with one compiler; 163 Python tests pass. Full-state/runtime
 qualification and milestone approval remain pending.
+
+### Raw taskforce time receipt history (2026-10-25 UTC)
+
+Patch0094 observes a parameter immediately after its original assignment and
+before either original local-clock addition. The active replay observer records
+only TIME_LIMIT/START_TIME values as bounded ordered receipts (entity index/ID,
+taskforce ID, slot, raw U32 seconds). Ordinary execution and disabled builds are
+inert. No packet reads, arithmetic or enable decisions change. Replay init clears
+the receipt count; histories are not reconstructed deadline/lifecycle state.
+
+Evidence: `evidence/m3-taskforce-time-controls.json`: 15 sanitizer cases plus
+the old signed-shift negative control and the actual disabled-header test pass.
+Controls cover both clocks, full-width/zero values, retained/absent/null cases,
+changed entity/taskforce identities, active/nonclock inertness, 8192 receipt
+boundary, overflow rejection and history/source immutability. Packet and clock
+dependencies are substituted. Native entrecv.c/state.c compile sequentially
+ARM64 then i686; 168 Python tests pass. Patchwork exports94 patches with prior93
+byte-identical and upstream/ unchanged. Current replay40243785888 tests dd0c3dee
+before this addition; keep it running. Full-schema/M3 and merge approval false.

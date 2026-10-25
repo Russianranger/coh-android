@@ -74,6 +74,8 @@ static size_t used;
 static struct { unsigned id, create, valid, raw[3]; } orientation[MAX_ENTITIES_PRIVATE];
 static struct { unsigned seconds, valid; } alignment_delays[ALIGNMENT_POINT_MAX_COUNT];
 static struct { unsigned valid, bits[4]; } desaturation;
+static struct { int svr_idx, taskforce_id; unsigned id, slot, seconds; } taskforce_times[8192];
+static unsigned taskforce_time_count;
 
 static void check_at(int ok, const char *condition, int line)
 {
@@ -130,6 +132,7 @@ void armportReplayStateInit(void)
     memset(orientation, 0, sizeof(orientation));
     memset(alignment_delays, 0, sizeof(alignment_delays));
     memset(&desaturation, 0, sizeof(desaturation));
+    taskforce_time_count = 0;
     active = 1;
 }
 void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
@@ -154,6 +157,33 @@ void armportReplayAlignmentDelay(unsigned index, unsigned seconds)
     alignment_delays[index].seconds = seconds;
     alignment_delays[index].valid = 1;
 }
+void armportReplayTaskforceTime(const Entity *e, unsigned index, unsigned seconds)
+{
+    unsigned n;
+    if (!active || (index != TFPARAM_TIME_LIMIT - 1 && index != TFPARAM_START_TIME - 1)) return;
+    check(e != NULL && taskforce_time_count < 8192);
+    n = taskforce_time_count++;
+    taskforce_times[n].svr_idx = e->svr_idx;
+    taskforce_times[n].id = e->id;
+    taskforce_times[n].taskforce_id = e->taskforce_id;
+    taskforce_times[n].slot = index;
+    taskforce_times[n].seconds = seconds;
+}
+
+static void taskforce_time_receives(void)
+{
+    unsigned i;
+    check(taskforce_time_count <= 8192);
+    out("[");
+    for (i = 0; i < taskforce_time_count; ++i) {
+        out("%s{\"svr_idx\":%d,\"entity_id\":%u,\"taskforce_id\":%d,\"slot\":%u,\"received_seconds\":%u}",
+            i ? "," : "", taskforce_times[i].svr_idx, taskforce_times[i].id,
+            taskforce_times[i].taskforce_id, taskforce_times[i].slot, taskforce_times[i].seconds);
+    }
+    /* Ordered accepted receive history, not reconstructed local-clock state. */
+    out("]");
+}
+
 static void super_colors(const SGColorBits *values)
 {
     int i;
@@ -1485,7 +1515,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"door_transition\":"); door_transition_state();
     out(",\"target_state\":"); target_receive_state();
     out(",\"task_sets\":"); task_sets();
-    out(",\"contacts\":"); contact_receive_state(); out("}\n");
+    out(",\"contacts\":"); contact_receive_state();
+    out(",\"taskforce_time_receives\":"); taskforce_time_receives(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);
