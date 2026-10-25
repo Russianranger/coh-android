@@ -29,6 +29,7 @@ import time
 
 sys.path.insert(0, '/opt/coh-m3')
 import game_diagnostic as gd  # noqa: E402
+import server_atlas_data  # noqa: E402
 
 base, require, evidence = gd.base, gd.require, gd.evidence
 STATE = Path('/state')
@@ -57,6 +58,11 @@ class ArmPortGame(gd.GameDiagnostic):
         # Same order as GameDiagnostic.execute up to the first saved logout.
         self.game['owned_output_limit_bytes'] = SERVER_OUTPUT_LIMIT
         self.prepare_runtime()
+        self.ctx.stage('armport_server_atlas_supplement')
+        self.game['atlas_supplement'] = server_atlas_data.stage(
+            Path('/opt/coh-m3/atlas-supplement'), self.runtime / 'data',
+            Path('/opt/coh-m3/atlas-world-supplement-manifest.json'))
+        self.ctx.passed(**self.game['atlas_supplement'])
         self.initialize()
         self.start_postgres('postgres_first_start')
         self.prepare_database()

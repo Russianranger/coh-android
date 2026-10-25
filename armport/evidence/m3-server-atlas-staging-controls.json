@@ -1,0 +1,78 @@
+{
+  "scope": "same reviewed Atlas supplement installed into private server runtime before services",
+  "source_run": "https://github.com/Russianranger/coh-android/actions/runs/40227784437",
+  "source_artifact_id": 12614392749,
+  "source_artifact_sha256": "7d63349c78867e28425eb4a8fb51c47e940aac99c37d8b146b5f492f58df303a",
+  "retained_server_stdout": {
+    "path": "_temp/m3-evidence/first-atlas-stdout.txt",
+    "sha256": "7c3ce295919e99c125fb0a2214aa72d66eaef75b8cefd8a5edc3b996c51e6f94",
+    "missing_root_geo_records_in_retained_capture": 10506,
+    "complete_server_output_claimed": false,
+    "atlas_examples": [
+      "Cant find root geo ap_blockfoundation_06",
+      "Cant find root geo _ap_blockfoundation_06_LOD",
+      "Cant find root geo AP_Plaza_Main",
+      "Cant find root geo _AP_Plaza_Main_LOD",
+      "Cant find root geo _ap_blockfoundation_14",
+      "Cant find root geo _ap_blockfoundation_14_LOD",
+      "Cant find root geo _ap_blockfoundation_07_LOD",
+      "Cant find root geo _ap_blockfoundation_07",
+      "Cant find root geo _ap_blockfoundation_26",
+      "Cant find root geo _ap_blockfoundation_26_LOD",
+      "Cant find root geo _ap_blockfoundation_19_LOD",
+      "Cant find root geo _ap_blockfoundation_19",
+      "Cant find root geo _ap_block_foundation_04",
+      "Cant find root geo _ap_blockfoundation_12_LOD",
+      "Cant find root geo _ap_blockfoundation_12",
+      "Cant find root geo _ap_blockfoundation_15",
+      "Cant find root geo _ap_blockfoundation_15_LOD1",
+      "Cant find root geo _AP_blockfoundtaion_13",
+      "Cant find root geo _AP_blockfoundtaion_13_LOD1",
+      "Cant find root geo _ap_blockfoundation_11_LOD"
+    ]
+  },
+  "mechanism": {
+    "server": "MapServer/src/group/groupnetsend.c sends has_geo iff def->model is non-null, then its model name.",
+    "client": "Game/src/group/groupnetrecv.c receiveDef zeroes GroupDef and only getGeo assigns a model when has_geo is set.",
+    "limitation": "Source path plus staging mismatch support a cause hypothesis, not proof this run sent a particular missing model or that rendering is now fixed."
+  },
+  "control_result": {
+    "files": 2877,
+    "payload_bytes": 309655940,
+    "archive_sha256": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60",
+    "repository_manifest_sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+    "reviewed_subset_files": 2877,
+    "matching_collisions": 0,
+    "merged_tree": {
+      "files": 2877,
+      "directories": 8904,
+      "case_duplicates": 0
+    },
+    "scope": "reviewed_atlas_supplement_for_private_server",
+    "server_binaries_changed": false,
+    "rendered_world_verified": false,
+    "original_base_files": 173011,
+    "original_base_bytes": 2977730517,
+    "supplement_files_absent_from_base": 2877,
+    "supplement_geometry_absent_from_base": 488,
+    "independently_rehashed_files": 2877,
+    "base_directory_spelling_fixture": true,
+    "full_base_payload_present": false,
+    "server_execution_tested": false
+  },
+  "real_archive_artifact": {
+    "id": 12616197633,
+    "run": 40240791819,
+    "sha256": "1167a7d2a36adf1a264d6007ff2f7f1106bcfef15cd6e19aa88489b16e0a2308"
+  },
+  "command": "python3 /tmp/coh-resume/verify_server_atlas.py",
+  "command_source": "import hashlib,json,sys\nfrom pathlib import Path\nsys.path[:0]=['armport/scripts','tools','tools/android/game']\nimport server_atlas_data as server\nimport prepare_runtime as runtime\nimport prepare_game_data as game\nroot=Path('/tmp/coh-resume/server-atlas-real-control');root.mkdir()\ntools=root/'tools';tools.mkdir()\nserver.copy_inputs(Path('/tmp/coh-resume/atlas-supplement-input'),tools)\n# Recreate the exact original assembler's directory spelling without pretending\n# that this local structural control contains the unavailable full base assets.\nplan=runtime.FilePlan()\nfor r in json.loads(Path('docs/data-manifest.json').read_text())['entries']:\n n=r['path']\n if n.startswith('data/') and runtime.excluded_reason(n[5:]) is None:plan.add(n[5:],Path(n))\nfor r in json.loads(Path('docs/source-manifest.json').read_text())['entries']:\n n=r['path']\n if n.startswith('data/server/db/') and Path(n).suffix.casefold()=='.cfg':plan.add(n[5:],Path(n),replace=True)\nbase=json.loads(Path('assets/reference-inputs-manifest.json').read_text())['files']\nfor r in base:\n if r['path'].casefold() not in plan.files:plan.add(r['path'],Path(r['path']))\ndata=root/'runtime/data';data.mkdir(parents=True)\nfor parent in plan.directories.values():(data/parent).mkdir(parents=True,exist_ok=True)\nmanifest=tools/'atlas-world-supplement-manifest.json'\nresult=server.stage(tools/'atlas-supplement',data,manifest)\nretained=json.loads((tools/'atlas-supplement/atlas-world-supplement-manifest.json').read_text())['files']\nactual={p.relative_to(data).as_posix().casefold():p for p in data.rglob('*') if p.is_file()}\nfor name,pin in retained.items():\n p=actual[name[5:].casefold()]\n assert p.stat().st_size==pin['bytes'] and hashlib.file_digest(p.open('rb'),'sha256').hexdigest()==pin['sha256']\nexpected=game.expected_data(Path('.'),base)\nmissing=[n for n in retained if n.casefold() not in expected]\nassert len(missing)==len(retained)==2877\nresult.update(original_base_files=len(expected),original_base_bytes=sum(r['bytes'] for r in expected.values()),\n supplement_files_absent_from_base=len(missing),supplement_geometry_absent_from_base=sum(n.endswith('.geo') for n in missing),\n independently_rehashed_files=len(actual),base_directory_spelling_fixture=True,full_base_payload_present=False,\n server_execution_tested=False)\nPath('/tmp/coh-resume/server-atlas-real-result.json').write_text(json.dumps(result,indent=2)+'\\n')\nprint(json.dumps(result,indent=2))\n",
+  "command_output": "::notice title=ArmPort reviewed Atlas supplement::{\"layer\": \"/tmp/coh-resume/server-atlas-real-control/runtime/armport-atlas-lmwr1mij/data\", \"collisions\": 0, \"conflicting_collisions\": 0}\n{\n  \"files\": 2877,\n  \"payload_bytes\": 309655940,\n  \"archive_sha256\": \"499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60\",\n  \"repository_manifest_sha256\": \"204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86\",\n  \"reviewed_subset_files\": 2877,\n  \"matching_collisions\": 0,\n  \"merged_tree\": {\n    \"files\": 2877,\n    \"directories\": 8904,\n    \"case_duplicates\": 0\n  },\n  \"scope\": \"reviewed_atlas_supplement_for_private_server\",\n  \"server_binaries_changed\": false,\n  \"rendered_world_verified\": false,\n  \"original_base_files\": 173011,\n  \"original_base_bytes\": 2977730517,\n  \"supplement_files_absent_from_base\": 2877,\n  \"supplement_geometry_absent_from_base\": 488,\n  \"independently_rehashed_files\": 2877,\n  \"base_directory_spelling_fixture\": true,\n  \"full_base_payload_present\": false,\n  \"server_execution_tested\": false\n}\n",
+  "unit_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "unit_output": "...................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 179 tests in 7.858s\n\nOK\n",
+  "new_asset_authority": false,
+  "server_binaries_changed": false,
+  "full_schema_complete": false,
+  "rendered_world_verified": false,
+  "m3_complete": false
+}

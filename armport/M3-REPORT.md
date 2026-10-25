@@ -1850,3 +1850,35 @@ lack most original objects/libraries; only changed-unit compilation is qualified
 Full linking/runtime remains CI work. Keep active replay40243785888 and Atlas
 40240791819 on their existing heads; this pending delta is not qualified there.
 Full-schema/M3 completion, merge approval and Thor readiness remain false.
+
+### Private server Atlas supplement (2026-10-25 UTC)
+
+The base server assembly has173,011 files /2,977,730,517 bytes and lacks all
+2,877 files (including488 geometry files) from the same pinned retained Atlas
+archive already staged for the client. The retained server stdout from
+40227784437 contains10,506 missing-root-geometry records; this is a bounded
+capture, not a claim about complete server output. Original groupnetsend sends
+geometry only for a non-null model; receiveDef clears the old definition and
+only loads a model when that bit is set. This supports an input-mismatch cause
+hypothesis, not proof of a fixed render or a particular observed packet.
+
+The ArmPort host now freezes the same two pinned Atlas inputs beside its guest
+helpers. After the original full base/schema validation and private copy, before
+any database/server initialization, the guest verifies/extracts that archive and
+merges it with the client's case-aware strict merge. Conflicting bytes fail;
+matching collisions preserve the original file. No new assets, server binary,
+base manifest, schema, generated-cache exemption or rendering threshold changes.
+The original server-data validators remain unchanged.
+
+All179 Python tests pass. A real-archive control rehashes all2,877 staged files
+using the original base directory spelling (a structural fixture; unavailable
+base binary payload is not claimed). There are no case duplicates or collisions.
+Exact commands, controls, captured-log identity and limitations:
+`evidence/m3-server-atlas-staging-controls.json`. A fresh native server/client
+run remains required; preserve currentAtlas40240791819 until it completes.
+
+Replay40243785888 ARM64 source dd0c3dee passes execution/hash checks for351
+snapshots and same-ID repetition. INITIAL1/31 has44 literal mismatches only
+in snapshot0: prior11 scalar packet IDs plus33 attribute-tree packet IDs. No
+normalization has been added. See `evidence/m3-arm64-expanded-ids-40243785888.json`;
+i686/cross-target results and Sol's exact normalization decision remain pending.

@@ -35,6 +35,7 @@ import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
 import client_errors  # noqa: E402
 import atlas_wine  # noqa: E402
+import server_atlas_data  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
@@ -348,6 +349,8 @@ def main():
     ap.add_argument('--assets', type=Path, required=True, help='coh-diagnostic-runtime-inputs')
     ap.add_argument('--package', type=Path, required=True, help='assembled wine-game package')
     ap.add_argument('--data', type=Path, required=True)
+    ap.add_argument('--atlas-supplement', type=Path, required=True,
+                    help='the same pinned Atlas archive/manifest used by the client')
     ap.add_argument('--schema', type=Path, required=True)
     ap.add_argument('--stack-probe', type=Path, required=True)
     ap.add_argument('--proot', type=Path, required=True)
@@ -375,6 +378,9 @@ def main():
     game.prepare_runtime(work, evidence, assets)
     shutil.copyfile(a.stack_probe / 'GameStackProbe.exe', work / 'm3-tools/GameStackProbe.exe')
     shutil.copyfile(HERE / 'armport_game_guest.py', work / 'm3-tools/armport_game_guest.py')
+    for name in ('server_atlas_data.py', 'stage_atlas_supplement.py', 'smoke_run.py'):
+        shutil.copyfile(ROOT / 'armport/scripts' / name, work / 'm3-tools' / name)
+    server_atlas_data.copy_inputs(a.atlas_supplement, work / 'm3-tools')
 
     command = game.make_command(work=work, assets=assets, package=package, data=data, schema=schema,
                                 proot=proot, timeout_seconds=a.timeout_seconds)

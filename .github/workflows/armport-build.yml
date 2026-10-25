@@ -935,6 +935,7 @@ jobs:
         run: |
           armport/scripts/step.sh "ArmPort M3 server run" python3 armport/server/armport_game_host.py --assets out/donors/runtime-inputs --package out/wine-game \
             --data out/game-data --schema out/dbserver-schema --stack-probe out/donors/stack-probe \
+            --atlas-supplement "$RUNNER_TEMP/atlas-supplement" \
             --proot out/android/native/linux-arm64 --client "$RUNNER_TEMP/armport-client" \
             --work "$RUNNER_TEMP/m3-work" --evidence "$RUNNER_TEMP/m3-evidence" \
             --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw \

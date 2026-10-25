@@ -69,7 +69,9 @@ int main(void){
   armportGroupModelResult(3,longname,longname,&model);assert(records==1);
  }
 #endif
+ lookup_calls=find_calls=ext_calls=0;
  {pthread_t threads[8];for(i=0;i<8;i++)assert(!pthread_create(&threads[i],NULL,worker,NULL));for(i=0;i<8;i++)assert(!pthread_join(threads[i],NULL));}
+ assert(lookup_calls==2400&&find_calls==1600&&ext_calls==1600);
 #if CLIENT && (defined(COH_ARMPORT_REFERENCE_I686) || (defined(__aarch64__) && defined(__MINGW32__)))
  assert(records==48);
  for(i=0;i<records;i++){unsigned kind,sample;assert(sscanf(log_records[i],"outcome=%u sample=%u",&kind,&sample)==2);assert(kind<3&&sample>=1&&sample<=16);assert(!(seen[kind]&(1U<<(sample-1))));seen[kind]|=1U<<(sample-1);

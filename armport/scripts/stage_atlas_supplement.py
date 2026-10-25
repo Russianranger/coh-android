@@ -84,7 +84,7 @@ def verify_reviewed_subset(document, reviewed):
                 and entry['bytes'] == pin['bytes'], 'Pinned file differs from repository manifest: ' + name)
 
 
-def stage(source, output):
+def verify_inputs(source, reviewed_manifest=None):
     for name, (size, sha) in PINS.items():
         path = source / name
         require((size is None or path.stat().st_size == size) and digest(path) == sha,
@@ -92,9 +92,15 @@ def stage(source, output):
     document = json.loads((source / 'atlas-world-supplement-manifest.json').read_text())
     require(document['file_count'] == 2877 and document['payload_bytes'] == 309655940,
             'Unexpected retained Atlas scope')
-    verify_reviewed_subset(document, json.loads(REVIEWED_MANIFEST.read_text()))
+    reviewed_manifest = reviewed_manifest or REVIEWED_MANIFEST
+    verify_reviewed_subset(document, json.loads(reviewed_manifest.read_text()))
+    return document
+
+
+def stage(source, output, reviewed_manifest=None):
+    document = verify_inputs(source, reviewed_manifest)
     result = unpack(source / 'atlas-world-supplement.zip', document, output)
-    result['repository_manifest_sha256'] = digest(REVIEWED_MANIFEST)
+    result['repository_manifest_sha256'] = digest(reviewed_manifest or REVIEWED_MANIFEST)
     result['reviewed_subset_files'] = len(document['files'])
     return result
 
