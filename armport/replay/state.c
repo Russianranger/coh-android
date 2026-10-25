@@ -37,6 +37,7 @@
 #include "UI/uiCompass.h"
 #include "UI/uiTurnstile.h"
 #include "UI/uiKeybind.h"
+#include "UI/uiOptions_Type.h"
 #include "graphics/textureatlas.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
@@ -688,6 +689,23 @@ static void deletion(unsigned pkt_id, int idx, int id)
 
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
+static void options_receive_state(void)
+{
+    int i, count = -1;
+    const UserOption *options = armportReplayOptions(&count);
+    check(count >= 0 && count <= 8192 && (!count || options));
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const UserOption *option = &options[i];
+        out("%s{\"id\":%d,\"bit_size\":%d,", i ? "," : "", option->id, option->bitSize);
+        if (option->bitSize < 0) {
+            out("\"value_f32_bits\":"); words(&option->fVal, sizeof(option->fVal));
+        } else out("\"value_u32\":%u", (unsigned)option->iVal);
+        out("}");
+    }
+    out("]");
+}
+
 static void friends_receive_state(const Entity *e)
 {
     int i;
@@ -1113,6 +1131,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"desaturation_received_f32_bits\":"); desaturation_receive_state();
     out(",\"server_waypoints\":"); server_waypoint_state();
     out(",\"turnstile\":"); turnstile_receive_state();
+    out(",\"user_options\":"); options_receive_state();
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state(); out("}\n");
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));

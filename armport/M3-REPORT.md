@@ -1445,3 +1445,20 @@ state.c compiles for ARM64 then i686 with one compiler. Host fixtures are not
 native ABI proof; only local LeakSanitizer is disabled for /proc. No new patch;
 85 patch files remain unchanged, as does upstream/. Runtime is pending;
 40224584944 tests earlier 5919e8c. Full-state and M3 completion remain false.
+
+### Existing user-option table observations (2026-10-25 UTC)
+
+Patch 0086 exposes a const view of the existing option array without calling
+userOptionGet, which can initialize its lookup stash. Snapshots preserve original
+array order, literal option IDs/bit sizes and the F32 or U32 representation used
+by receiveOptions. Unused alternate numeric storage, display labels, data
+pointers and delayed-save metadata are excluded. No option/receiver mutation,
+lookup initialization or new packet-ID normalization.
+
+Evidence: `evidence/m3-option-state-controls.json`. Eight original receiver/
+actual accessor/writer cases pass ASan/UBSan, including mutation sensitivity,
+raw NaN/negative-zero/high bits, table order and output bounds. Native uiOptions.c
+and state.c compile ARM64 then i686 with one compiler. Patchwork exports 86
+patches and the prior 85 remain byte-identical; upstream/ unchanged. Host
+fixtures are not native ABI proof; only local LeakSanitizer is disabled for
+/proc. Fresh runtime remains pending. Full-state and M3 flags remain false.
