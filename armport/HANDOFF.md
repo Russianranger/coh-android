@@ -63,6 +63,20 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Complete audio file-table audit (2026-10-25 UTC)
+
+The remaining 15 pinned audio metadata prefixes now verify against original
+length, SHA-256 and complete PIGG tables: 207,340 bytes, 2,177 file paths,
+zero texture/geometry entries. Full decoded paths and identities are in
+`evidence/m3-audio-file-tables.json`; `scripts/audit_audio_tables.py` reproduces
+it with the existing frozen range reader and no payload downloads. A corrupt
+cached prefix is rejected. Names are disjoint from the earlier 57-archive
+scan and their union equals all 72 catalog entries. This fills the audio
+table evidence gap; reviewer acceptance and literal six-run replay agreement
+remain required. Texture exception OFF, M3 incomplete, no new asset staging.
+Command: `python3 armport/scripts/audit_audio_tables.py --cache <cache-dir>
+--output <report.json>` (default pinned assets/zones-audio-metadata.json).
+
 ### Sol final retry check (2026-10-25 UTC)
 
 Review 5643123702 reproduces a torn stage-7 prefix between the strict retry

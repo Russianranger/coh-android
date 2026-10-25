@@ -1,3 +1,19 @@
+## Audio-table evidence follow-up (2026-10-25 UTC)
+
+`python3 armport/scripts/audit_audio_tables.py --identities /tmp/coh-r21/audio-identities.json
+--cache /tmp/coh-r21/audio-metadata --output armport/evidence/m3-audio-file-tables.json`
+reports 15 archives, 2,177 file paths, 207,340 metadata bytes and zero texture/geometry
+entries. The identity input is exactly `git show HEAD:assets/zones-audio-metadata.json`,
+SHA-256 `729035bea0e65fc9585c084efbb67dea0ffc2546f630dc01c28811173e95c78b`.
+The reused range reader validates HTTP 206, exact Content-Range, length, ETag and
+Last-Modified; metadata decoding validates frozen SHA-256 and complete PIGG tables.
+Full decoded paths are retained. A mutated cached byte is rejected by the digest check.
+A set comparison with `assets/catalog.json` and the earlier 57-archive evidence
+confirms 57 + 15 = 72, disjoint, missing []. No payload bytes were fetched or staged.
+This supplies the previously missing audio tables; it does not establish six-run
+literal replay agreement or activate the texture exception. Reviewer acceptance,
+rendered Atlas and full state comparison remain outstanding. M3 is incomplete.
+
 ## Sol review 5641405794: runtime follow-up (2026-10-25 UTC)
 
 No new implementation finding at 703ad1e / code 396c470; review is not a
