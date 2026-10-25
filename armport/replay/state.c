@@ -747,6 +747,18 @@ static void default_power_state(const Power *power)
     out("}");
 }
 
+static void leveling_pact_state(const Entity *e)
+{
+    out("{\"id\":%d,\"pact\":", e->levelingpact_id);
+    if (!e->levelingpact) out("null");
+    else {
+        out("{\"count\":%d,\"roster\":", e->levelingpact->count);
+        group_members(&e->levelingpact->members, MAX_LEVELINGPACT_MEMBERS);
+        out("}");
+    }
+    out("}");
+}
+
 static void entity_packet_order_state(const Entity *e)
 {
     /* Literal retained IDs; no additions to INITIAL-ID canonicalization. */
@@ -1324,6 +1336,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             out(",\"taskforce_mode\":%d,\"lfg\":%d}", e->pl->taskforce_mode, e->pl->lfg);
         } else out("null");
         out(",\"groups\":"); entity_groups(e);
+        out(",\"leveling_pact\":"); leveling_pact_state(e);
         out(",\"supergroup\":"); entity_supergroup_state(e);
         out(",\"power_customizations\":"); entity_power_customizations(e);
         out(",\"strings\":"); entity_strings(e->strings);

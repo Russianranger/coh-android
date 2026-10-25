@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
 - Sol midpoint finding 5644680146 fixed by 0082; fresh rendering run pending.
 - Atlas 40217209151: no rendered world; 0083 isolates model-bearing rejections.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40224584944: partial pass; fresh 40227784453 and Atlas 40227784437 pending.
+- Replay 40227784453: verified partial pass; later observers/Atlas still pending.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

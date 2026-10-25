@@ -782,3 +782,24 @@ proves newly added IDs are not canonicalized and genuine ID1/31 differences
 fail while same-ID comparisons pass. All 162 Python tests and ARM64-then-i686
 state.c compilation pass. No native patch or upstream/ change; runtime still
 pending and no full-state/M3 claim.
+
+### Leveling-pact roster and fresh replay (2026-10-25 UTC)
+
+The observer retains leveling-pact ID, nullable pact, independent count and
+ordered roster ID/name/on-map fields. It preserves stale zero-ID destruction
+without rewriting the retained ID, and name tails when local lookup fails.
+Derived map caches/server accounting are excluded. The original stale positive
+member-count path skips member reads; these controls do not qualify that path.
+Evidence: `evidence/m3-leveling-pact-controls.json`: 13 original-receiver/actual
+writer ASan/UBSan cases pass, plus all receiver controls and 162 Python tests.
+Native state.c compiles ARM64 then i686 with one compiler; all 91 patches and
+upstream/ unchanged. Allocator/UI/packet/lookup substitutes limit host coverage.
+
+Replay 40227784453 at e78f0193 completes both targets and both comparisons.
+Independent revalidation of artifact 12612527715 (ARM64) and 12613195474 (i686),
+each SHA-256 verified against the API digest, reproduces all seven matching
+comparisons with the exact approved texture occurrence. Exact command/output:
+`evidence/m3-accepted-partial-replay-40227784453.json`. This tests through tray
+state, before later UI/door/entity-status/camera/target/buff/packet-order/pact
+work. All full-schema/full-state/M3 flags stay false. Atlas 40227784437 is still
+pending; keep its source branch stable until completion.
