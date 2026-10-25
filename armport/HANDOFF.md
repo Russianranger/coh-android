@@ -63,6 +63,18 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Failure-path host cleanup coordination (2026-10-25 UTC)
+
+40176407354 records output overflow followed by same-UID ownership inspection
+failure. Source inspection shows health() can raise before the normal host-stop
+handshake. ArmPortGame.cleanup now requests host stop before the original
+cleanup audit on this path, using a bounded wait independent of failed health.
+Timeout is retained as a failure and original cleanup still runs. No ownership
+check is bypassed. 124 tests pass, including failure, timeout, no-launch and
+already-stopped controls. This explains a possible overlap, not the identity
+of the unreadable process; runtime confirmation remains required. The commit
+skips CI to preserve active 40181381808; qualify in the next Atlas run.
+
 ### Owned frame execution and server capture (2026-10-25 UTC)
 
 40176407354 qualifies the frame lookup: geometry and brightness are present,

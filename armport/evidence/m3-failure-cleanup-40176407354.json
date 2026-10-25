@@ -1,0 +1,17 @@
+{
+  "baseline_run": 40176407354,
+  "job_id": 121120041761,
+  "observed_failures": [
+    "Owned process exceeded output bound: first-atlas",
+    "Wine descendant cleanup: Cannot inspect same-UID Wine ownership"
+  ],
+  "source_finding": "armport_client calls health through wait before writing guest-finished; an exception skips normal host stop coordination. Cleanup now performs bounded coordination before the original audit.",
+  "limits": [
+    "Unreadable process identity not established",
+    "No ownership acceptance change",
+    "Current run 40181381808 does not contain this change",
+    "M3 remains incomplete"
+  ],
+  "validation_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "validation_output": "............................................................................................................................\n----------------------------------------------------------------------\nRan 124 tests in 3.332s\n\nOK\n"
+}

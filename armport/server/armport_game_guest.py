@@ -157,15 +157,34 @@ class ArmPortGame(gd.GameDiagnostic):
             sample = self.character_status('armport-final', allow_missing=True)
             record['final_status'] = sample
             record['still_connected'] = evidence.connected_on_atlas(sample)
-        write_marker('armport-guest-finished.json', {'connected_on_atlas': record['connected_on_atlas']})
-        # The host's client Wine runs as the same user; the original cleanup
-        # audits same-user Wine processes, so wait until the host has stopped it.
-        stopped = STATE / 'armport-client-stopped.json'
-        self.wait(lambda: stopped.exists(), 180, 'Host stopped the ARM64 client')
+        self.stop_host_client()
         record['client_stopped_before_cleanup'] = True
         require(record['connected_on_atlas'], 'ARM64 client did not reach Atlas: ' + json.dumps(record['samples'][-1:]))
         require(record.get('still_connected'), 'ARM64 client did not stay connected on Atlas')
         self.ctx.passed(arm64_client_on_atlas=True, map_id=record['atlas_status'].get('map_id'))
+
+    def stop_host_client(self):
+        # Also used after health()/overflow raises: self.wait would call health
+        # again and abort before the host can stop its same-UID sudo/Wine tree.
+        write_marker('armport-guest-finished.json', {'client_phase_finished': True})
+        stopped = STATE / 'armport-client-stopped.json'
+        deadline = time.monotonic() + 180
+        while not stopped.exists():
+            require(time.monotonic() < deadline, 'Host did not stop the ARM64 client before cleanup')
+            time.sleep(1)
+
+    def cleanup(self):
+        failures = []
+        # No host launch is possible before ready. Once ready exists the host
+        # may be launching, even if its started marker has not arrived yet.
+        if (STATE / 'armport-ready.json').exists() and not (STATE / 'armport-client-stopped.json').exists():
+            try:
+                self.stop_host_client()
+            except Exception as exc:
+                failures.append('Host client cleanup coordination: ' + str(exc))
+        # Preserve the original ownership audit and all service cleanup even
+        # when coordination fails; the original execution error stays recorded.
+        return failures + super().cleanup()
 
 
 def main(argv=None):
