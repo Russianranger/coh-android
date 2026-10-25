@@ -63,6 +63,22 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Exact missing Atlas swap source (2026-10-25 UTC)
+
+Metadata-only inspection of all 57 pinned non-audio tables finds the exact
+missing tickertape_STEEL_CANYON_SOUTH.texture in stage3f.pigg: offset 72610035,
+5,859 stored bytes, 22,322 decoded bytes, table MD5
+c0d3e59b54b214d4a0ec1e7b4e60ff4d. The existing Talos texture is present in
+run 40189560565; only the Steel Canyon source is missing. This name is outside
+the user's 14-name and 8-composite-file grants. No payload fetched or staged.
+External action: approve only this exact original range for verification and
+staging; no other dependency expansion. The proposed fix targets the two
+post-load swap warnings, not the unproved terrain cause. Reproducer:
+`python3 armport/scripts/inspect_atlas_swap_sources.py --cache <cache-dir>
+--output <report.json>`. Complete identity/range evidence is in
+`evidence/m3-atlas-swap-source-40189560565.json`. New runtime 40197277872
+qualifies existing retry/shutdown fixes at 554afc86, without this missing asset.
+
 ### Atlas connection sustained, rendering still failed (2026-10-25 UTC)
 
 Run 40189560565 / server 121159624900 at 3539492e finishes failed. Libraries,
