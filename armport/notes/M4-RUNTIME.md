@@ -1,5 +1,18 @@
 # M4 runtime integration work
 
+## Signed selection boundary qualification (2026-10-25 UTC)
+
+Select Release from 40170942752, source 48b5a2b4956b487624864ee611b8406f1831f79b.
+Its Release, OptDebug and libraries jobs passed. Patch 0076 preserves the
+signed -1 text-selection boundary and checks backward scan bounds before
+reads. The fault is proven by the exact prior Release disassembly/registers
+in M3 evidence/m4-reopen-smf-40167305715.json; 112 Python tests, helper
+sanitizer controls, 63 extracted plain-text selection cases and both changed
+architecture units pass locally. The latter test-only evidence is c5cc0873.
+Data remains 40100355259. Complete live creation/save/reopen qualification
+with the new client is pending; no M4/M5 completion or APK approval implied.
+The proposed later device session is in M5-THOR-PLAN.md.
+
 ## Reopen and sibling donor follow-up (2026-10-25 UTC)
 
 40167305715 passed creation validation but reopen faults at 0x1401726f0.
