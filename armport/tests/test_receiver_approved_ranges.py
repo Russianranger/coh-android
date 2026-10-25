@@ -15,7 +15,7 @@ import stage_approved_ranges as ranges
 class ApprovedRanges(unittest.TestCase):
     def test_committed_scope_and_unresolved_names(self):
         document = ranges.read_manifest()
-        self.assertEqual(document['file_count'], 8)
+        self.assertEqual(document['file_count'], 9)
         self.assertEqual(len(document['unresolved']), 6)
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'manifest.json'

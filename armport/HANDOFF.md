@@ -63,6 +63,35 @@ Wine via FEX).
 | M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | startup path passes; complete interactive qualification pending |
 | M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
 
+### Approved Atlas swap source staged; power observations expanded (2026-10-25 UTC)
+
+The user approved the exact Steel Canyon texture proposal in this development
+conversation. The original range returns HTTP 206, 5,859 stored bytes and
+22,322 decoded bytes; MD5 and cached header match. Decoded SHA-256 is
+b4a62083f96562f15b241534a93846dbaea09696b0fd5977b982628f03108b5c.
+The approved layer now has 9 files for 15 requests; the previous eight files
+and their provenance are identical. Six unresolved exact names stay absent.
+Existing workflow cache keys follow the manifest hash and reverify all bytes
+before strict staging. No source archive was downloaded in full. Five range
+controls pass; evidence/m3-approved-atlas-swap-staging.json records commands
+and the real transfer. This targets swap warnings; terrain remains unproved.
+
+Power/build/inspiration/boost inventory observations now extend the partial
+state dump. Actual ARM64 then i686 units compile; the source-derived host
+ASan/UBSan serializer control passes bit-pattern/null-slot/order/bound checks.
+142 Python tests pass. Local LeakSanitizer alone is disabled due to /proc;
+CI uses default sanitizer settings. No new ID normalization or full-state
+claim; other receive destinations remain uncovered. See
+evidence/m3-power-state-observations.json and replay/README.md.
+
+Completed replay 40200224489 still fails: five processes exit 2, ARM64 id31
+exits -9; every run has one dispatch error. All 702 authenticated snapshots
+and seven partial comparisons match diagnostically, as do the six literal
+117,777-entry outside inventories. Evidence:
+evidence/m3-rejected-snapshots-40200224489.json. This run predates render
+cleanup, power additions and the new texture. All exceptions remain OFF.
+Preserve active Atlas 40197277872; qualify the current changes next.
+
 ### Replay render cleanup candidate (2026-10-25 UTC)
 
 Replay 40200224489 ARM64 id1 repeats exit 2 but id31 exits SIGKILL after
@@ -116,7 +145,7 @@ signals or changed exit acceptance. Missing task evidence is explicit. All
 142 Python tests pass, including real normal/SIGKILL exits and tampered state.
 Runtime qualification is pending; Atlas 40197277872 remains independent.
 
-### Exact missing Atlas swap source (2026-10-25 UTC)
+### Historical proposal: exact missing Atlas swap source (now approved above)
 
 Metadata-only inspection of all 57 pinned non-audio tables finds the exact
 missing tickertape_STEEL_CANYON_SOUTH.texture in stage3f.pigg: offset 72610035,

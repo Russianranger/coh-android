@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage only exact files found for the user's 14 approved M3 requests.
+"""Stage only exact files found for the user's 15 approved M3 requests.
 
 The committed manifest freezes bounded original PIGG ranges, decoded SHA-256,
 stored SHA-256, table MD5 and cached-header SHA-256. Absent exact names stay
@@ -19,7 +19,8 @@ MANIFEST = ROOT / 'armport/evidence/m3-approved-range-assets.json'
 GEOMETRY = {'player_library/' + name + '.geo' for name in
             ('huge_belt', 'huge_boot', 'huge_hair', 'huge_head', 'huge_pants', 'huge_shirt', 'v_huge_spadr')}
 TEXTURES = {'chest_stripe_1', 'face_skin_head_09', 'hips_miniskirt_1', 'hips_skin_tights',
-            'x_enforcer_glove_01_mask', 'x_gear_pads', 'x_imperialdefense_belt_01'}
+            'x_enforcer_glove_01_mask', 'x_gear_pads', 'x_imperialdefense_belt_01',
+            'tickertape_steel_canyon_south'}
 
 
 def require(value, message):
@@ -32,8 +33,8 @@ def read_manifest(path=MANIFEST):
             'Missing/oversized approved range manifest')
     doc = json.loads(path.read_text())
     require(doc['format'] == 1 and doc['scope'] == 'user_approved_m3_dispatch_missing_files'
-            and set(doc['requests']) == GEOMETRY | TEXTURES and len(doc['requests']) == 14
-            and set(doc['files']) == set(doc['provenance']) and 0 < len(doc['files']) <= 14,
+            and set(doc['requests']) == GEOMETRY | TEXTURES and len(doc['requests']) == 15
+            and set(doc['files']) == set(doc['provenance']) and 0 < len(doc['files']) <= 15,
             'Approved request scope differs')
     covered = set()
     for name, record in doc['provenance'].items():

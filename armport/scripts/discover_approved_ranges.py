@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce exact-name discovery for the 14 user-approved M3 asset requests.
+"""Reproduce exact-name discovery for the 15 user-approved M3 asset requests.
 
 Reads only the previously frozen metadata prefixes, then selected ranges for
 unique exact matches. Does not follow composite dependencies or similar names.
@@ -47,6 +47,7 @@ def discover(output, cache):
     donor.write_donor_zip(archive, result)
     report = dict(format=1, scope='user_approved_m3_dispatch_missing_files',
         approval='https://github.com/Russianranger/coh-android/pull/6#issuecomment-6386664502',
+        additional_approval='User approval in development conversation, 2026-10-25: exact Steel Canyon texture proposed in m3-atlas-swap-source-40189560565.json; no additional dependencies',
         requests=list(matches),
         matches={name: [dict(archive=r['identity']['archive'], path=r['path']) for r in rows]
                  for name, rows in matches.items()},
