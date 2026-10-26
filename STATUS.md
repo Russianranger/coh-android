@@ -34,7 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol accepts implementation through e6d39d7a; no milestone or merge approval.
-- Atlas 40283068606 failed rendering; new Atlas 40314007807 running.
-- Overflow replay 40308641544 passes partial scope; current-head replay 40321211800 running.
-- Mission destinations/UI diagnostic pass host controls/native compilation; runtime pending.
+- Atlas 40314007807 fails rendering; 8 UI samples show unnamed waypoint/map docked.
+- Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
+- Mission destinations qualified in partial replay; runtime UI report saved for review.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.

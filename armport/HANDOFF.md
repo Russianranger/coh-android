@@ -1961,3 +1961,24 @@ All196 Python tests pass, including five new report tests. No source patches,
 acceptance policy, assets or active CI heads changed for this host report.
 Commands and limits: evidence/m3-world-ui-report-controls.json. Apply the report
 to the retained Atlas artifact when it finishes, then inspect current-head replay.
+
+### Atlas UI state verified; reviewed replay passes partial scope (2026-10-26 UTC)
+
+Atlas40314007807 at e6d39d7a completed FAILED. Artifact12650754712 is independently
+SHA256-verified (1d9b886f124d01dd7ae3b0a521a0239f44986555e1880626161650361ee4c05a).
+All8 world.ui records match model/draw frames/threads and report compass mode2
+(DISPLAYING), map mode4(DOCKED), selected_task0/type0, name/map presence0.
+The upstream default compass contract therefore has no destination name to draw
+at these sample points; this does not prove a later UI branch or glyph failure.
+Final frame still shows incomplete purple/blue materials and white UI placeholders.
+The complete literal error list matches40283068606. No rendering criterion changes.
+Evidence, frame/trace hashes and exact next diagnostic:
+evidence/m3-atlas-ui-outcome-40314007807.json. Next retain the original 3D frames
+and verdict, then exercise the original map UI separately to inspect zone text;
+an overlay must not be counted as accepted terrain. Six textures remain unapproved.
+
+Replay40321211800 at reviewed e6d39d7a passes both targets and both comparisons;
+job121584110467 records partial_state_equal/outside_error_inventories_equal true
+and full-schema/full-state/M3 false. This qualifies mission/keydoor snapshots in
+the partial scope. Sol5651480055 approves implementation only. No Thor action
+is ready; M4 surface/M5 remain unqualified. Host report189ef449 still needs review.
