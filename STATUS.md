@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (105 patches including partial replay observers; Astra leads,
+M3 into Atlas (105 patches including partial replay observers; Claude leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
 - Sol accepts implementation through e6d39d7a; no milestone or merge approval.
 - Atlas 40314007807 fails rendering; 8 UI samples show unnamed waypoint/map docked.
 - Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
-- Separate Map UI diagnostic: 202 host tests pass; runtime/review pending.
+- Atlas40337294759 running; NPC/Architect WIP preserved unapplied in handoff/.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.
