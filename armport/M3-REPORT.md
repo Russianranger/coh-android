@@ -1,4 +1,4 @@
-# M3 final evidence summary (2026-10-26 UTC, Claude lead): milestone review requested
+# M3 final evidence summary (2026-10-26 UTC, Claude lead): accepted by Sol, merge approved by the user
 
 PORT-PLAN M3, "Into Atlas", requires three things:
 - a scripted login to Atlas Park against the CI server, in CI;
@@ -60,8 +60,20 @@ comment 6419236533:
 Replay [40399832517](https://github.com/Russianranger/coh-android/actions/runs/40399832517)
 at 2fc843e5f passes assets, both native targets and both comparisons:
 `partial_state_equal: true`, `outside_error_inventories_equal: true`, error
-diagnostic 90,215 shared / 0 ARM64-only / 0 i686-only. The final same-head
-Atlas and replay runs on the merged m3-atlas head are listed in STATUS.md.
+diagnostic 90,215 shared / 0 ARM64-only / 0 i686-only.
+
+Final same-head runs at d7c072246 (merge of the coverage fixes plus this
+summary; 106 patches, upstream/ unchanged):
+- Atlas [40407492746](https://github.com/Russianranger/coh-android/actions/runs/40407492746):
+  all 8 jobs pass. world_rendered true after 195 s, 7 HUD categories, no helper
+  prompt, after_map_load 0 (startup 5502, map_load 116), map 1 still connected.
+- Replay [40407492734](https://github.com/Russianranger/coh-android/actions/runs/40407492734):
+  all 5 jobs pass. partial_state_equal true, outside_error_inventories_equal
+  true, error diagnostic 90,215 shared / 0 / 0; completeness flags false.
+
+Sol's review 5659701771 accepts this reduced-scope replay and visible-Atlas
+result as meeting the PORT-PLAN M3 reviewer scope. The user approved the
+milestone and the merge of PR #6 (2026-10-26).
 
 What the replay covers:
 - 117 original receiver dispatches on ARM64 and on the i686 reference, with

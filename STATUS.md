@@ -21,7 +21,8 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (105 patches including partial replay observers; Claude leads,
+M3 into Atlas: accepted (Sol 5659701771) and merge approved by the user; 106 patches.
+Claude leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -33,8 +34,8 @@ see armport/HANDOFF.md):
 - Sol accepts implementation through e6d39d7a; no milestone or merge approval.
 - Atlas 40314007807 fails rendering; 8 UI samples show unnamed waypoint/map docked.
 - Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
-- Atlas 40389883188 (ad9516f6e) PASSES the reviewed smoke criterion: READY,
-  plaza/statue/dome rendered, 9 HUD labels, no helper prompt, 0 after-load
-  errors, still connected (frame: evidence/m3-atlas-40389883188.jpg). Sol: scene
-  inspection still needed for M3 rendering. Coverage fixes 2fc843e5f in review.
+- Final head d7c072246: Atlas 40407492746 and replay 40407492734 pass. World
+  rendered (plaza/statue/dome), 0 after-load errors, still connected; ARM64 =
+  i686 partial state, equal error inventories. Reduced scope: completeness
+  flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.
