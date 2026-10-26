@@ -1,0 +1,46 @@
+diff --git a/Game/src/graphics/groupdraw.c b/Game/src/graphics/groupdraw.c
+index 0e674b0..aac2821 100644
+--- a/Game/src/graphics/groupdraw.c
++++ b/Game/src/graphics/groupdraw.c
+@@ -6,6 +6,8 @@
+ #include "graphics/groupdrawinline.h"
+ #include "cmdparse/cmdgame.h"
+ #include "graphics/camera.h"
++#include "entity/entity.h"
++#include "player/player.h"
+ #include "edit/edit_cmd.h"
+ #include "edit/edit_select.h"
+ #include "graphics/sun.h"
+@@ -46,6 +48,24 @@ static void armportWorldBegin(void)
+     armport_world_trace.active = 1;
+     armport_world_trace.frame = armport_world_frames;
+ }
++static void armportWorldCamera(void)
++{
++    const Entity *player = playerPtr();
++    const float zero[3] = {0, 0, 0};
++    const float *position = player ? ENTPOS(player) : zero;
++    char detail[1024];
++    _snprintf(detail, sizeof(detail),
++        "frame=%u camera=%.9g,%.9g,%.9g view0=%.9g,%.9g,%.9g view1=%.9g,%.9g,%.9g view2=%.9g,%.9g,%.9g view3=%.9g,%.9g,%.9g player=%u player_svr_idx=%d player_pos=%.9g,%.9g,%.9g player_net_ipos=%d,%d,%d",
++        armport_world_frames, cam_info.cammat[3][0], cam_info.cammat[3][1], cam_info.cammat[3][2],
++        cam_info.viewmat[0][0], cam_info.viewmat[0][1], cam_info.viewmat[0][2],
++        cam_info.viewmat[1][0], cam_info.viewmat[1][1], cam_info.viewmat[1][2],
++        cam_info.viewmat[2][0], cam_info.viewmat[2][1], cam_info.viewmat[2][2],
++        cam_info.viewmat[3][0], cam_info.viewmat[3][1], cam_info.viewmat[3][2],
++        player != NULL, player ? player->svr_idx : 0, position[0], position[1], position[2],
++        player ? player->net_ipos[0] : 0, player ? player->net_ipos[1] : 0, player ? player->net_ipos[2] : 0);
++    detail[sizeof(detail)-1] = 0;
++    armportZoneTrace("world.camera", detail);
++}
+ static void armportWorldEnd(int vis)
+ {
+     int i;
+@@ -74,6 +94,7 @@ static void armportWorldEnd(int vis)
+         armport_world_trace.postchecks_model);
+     detail[sizeof(detail)-1] = 0;
+     armportZoneTrace("world.models", detail);
++    armportWorldCamera();
+     armport_world_trace.active = 0;
+     ++armport_world_samples;
+ }

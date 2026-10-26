@@ -1,0 +1,36 @@
+diff --git a/Game/src/render/tex.c b/Game/src/render/tex.c
+index 7e55fc7..6e4640b 100644
+--- a/Game/src/render/tex.c
++++ b/Game/src/render/tex.c
+@@ -600,17 +600,17 @@ s = input name, res = chopped name (can be same ptr) */
+ static int texFixName(const char *s,char *res, int size)
+ {
+ int        type = 0;
++size_t     name_len;
+ 
+     if (s != res)
+         strncpyt(res,s,size);
+ 
+-    if( strlen(res) < 4 )
++    name_len = strlen(res);
++    if( name_len < 4 )
+         return TEX_TGA; //I guess, maybe error out?
+ 
+-    for(;*s;s++,res++)
+-    {
+-        //*res = tolower(*s);
+-    }
++    // Work within the copied name, which may be shorter than the input.
++    res += name_len;
+     if (res[-4] == '.')
+     {
+         if (strcmp(res-3,"tga")==0) {
+@@ -623,7 +623,7 @@ int        type = 0;
+         res[-4] = 0;
+     }
+     //fix for files that were incorrectly named .texture instead of dds.
+-    else if(res[-8] == '.')
++    else if(name_len >= 8 && res[-8] == '.')
+     {
+         if (strcmp(res-7,"texture")==0) {
+             // Even though we don't load .tga files anymore, this is still used (through texFind)

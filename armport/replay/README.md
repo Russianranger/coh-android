@@ -1,0 +1,1206 @@
+## Current acceptance (2026-10-24)
+
+PR #6 comment 6385679120 supersedes the older process-wide game-error rule below.
+`receiver.c` writes indexed replay.dispatch.begin/end to the isolated zone log.
+All 117 paired ordered windows and the final loader drain must contain zero errors.
+Before replay.map.end the driver drains static-map background work with
+forceGeoLoaderToComplete() and texForceTexLoaderToComplete(0), keeping its
+errors in the map-load phase. After dispatch 116 it calls those functions again:
+forceGeoLoaderToComplete(), then
+texForceTexLoaderToComplete(0), inside replay.drain.begin/end. Both drains run
+the original texCheckThreadLoader and loadUpdate, including GL texture uploads
+under Xvfb. These are explicit driver steps, not captured packets. Inter-dispatch
+gaps also remain in dispatch phase. Each isolated record has a separate thread
+ID; IDs never enter literal message comparisons. Startup/load inventories
+must match literally with counts across all six executions; compare_state.py
+checks this before partial state comparisons. Wine exceptions, assertions,
+fatals, malformed traces and missing stdio error/fatal markers remain fatal.
+The isolated inventory reports phases and the diagnostic resolves texture names
+against actual staged files; group names remain symbolic references. No new
+assets or message normalization are introduced. Full state coverage is still
+incomplete and no milestone flag is set by these checks.
+
+# Original receiver replay: execution stage under development
+
+`receiver.c` is linked into ARM64 and the opt-in i686 reference. Patch 0056,
+exported through patchwork.py, calls it only after normal game_beforeLoop
+startup. Without ARMPORT_REPLAY_DIR it immediately returns.
+
+The opt-in requires an OptDebug executable so original assertions remain
+active. It rejects FINAL/Release, any live server connection, different input
+file sizes or SHA-256 identities, and any synthetic INITIAL ID except 1/31.
+Place the recovered initial-replay.bin and post-ready-replay.bin in the
+directory named by ARMPORT_REPLAY_DIR (a Wine-visible Windows path).
+ARMPORT_REPLAY_INITIAL_ID defaults to 1. Every run needs a fresh directory:
+receiver.jsonl and state-NNN.json are outputs for that run.
+
+The driver uses the unchanged original receive switch below commGetStats,
+preserves saved cursor/alignment/transport metadata, and requires exactly
+117 successful dispatches with exact end cursors and no BitStream errors.
+Unknown game commands fail explicitly even if a caller's assertions were
+disabled. Actual CLIENTINP_ACK_FULL_UPDATE IDs are read back from the original
+client_input_pak; this does not reconstruct a UDP ACK/READY envelope.
+
+Extra initialization is limited to entReceiveInit (the original map-move
+receive reset), commNewInputPak (per-record output isolation), and
+setAssertMode (stderr plus exit), plus the original command shortcut table
+and original static Atlas map prerequisites described below. The socketless
+NetLink path is covered by
+the existing original-network preflight, CI 40041703285 libraries.
+Input BitStream fields are initialized directly: initBitStream zeros the
+first four payload bytes even in Read mode, so calling it on captured bytes
+would corrupt the input. Packet ownership stays local; the original pool
+does not free these stack Packet views.
+
+This is not the completed replay exit test. The first execution stage emits
+`state_comparison_complete: false` and `m3_replay_complete: false`, and exits
+**2 even after all 117 cursors pass**. Malformed input, decoder failure or
+unknown command exits 3. Assertions and unexpected SEH also invalidate a run.
+No completed receiver run is claimed by merely compiling this driver.
+
+Partial wire-state dumps/hashes, same-ID and ARM64/i686 comparison, and the
+agreed narrow ID1/31 canonicalization are implemented below (0059), with
+execution under test in run 40091320504. Full entity/player/tail coverage and
+complete qualification remain outstanding. The independent native INITIAL
+comparison covers the boundaries and selected fields actually recorded; it
+is not a full-state baseline. See ../notes/M3-REPLAY-PLAN.md for the binding criteria. Only the two exact logical input files are now gzip test fixtures under
+fixtures/; the enclosing report archive remains outside the repository.
+
+## Executable CI stage
+
+armport-reference.yml now builds ARM64 and i686 OptDebug in a sequential
+matrix, capped at two compiler processes. Each target uses the app's pinned
+Wine/FEX runtime, the reviewed asset ZIP and bins/ARB shaders from completed
+run 40043254025 (no intervening data/schema/shader changes).
+run_ci.py requires an unprivileged process in a fresh network namespace
+containing only loopback, runs ID 1 twice and ID 31 once with separate Wine
+prefixes, and retains JSONL and logs. Each full-update ACK is compared to
+the incoming ID by the original packet reader. The host validates all
+117 ordered dispatch metadata/cursor records and both ACK records, and
+compares same-ID cursor/ACK/state-hash output byte-for-byte. It also validates
+117 snapshot digests and a recorded native INITIAL subset. The follow-up
+comparison job checks both architectures and ID sensitivity for this partial
+schema. Full state equivalence remains incomplete.
+
+A green job means only its explicitly partial stage passed. The JSON result must
+retain state_comparison_complete=false and m3_replay_complete=false.
+Input/decoder failures, wrong process exit, timeouts, missing ACKs, partial
+counts and cursor errors fail the job. Local host tests cover those output
+rejection boundaries. Prior cursor-only execution passed in 40087788115;
+0059 observer execution is being tested in 40091320504.
+
+Validation commands: both OptDebug Game links (`ninja -j2 Game`) exited 0
+after the ACK check, and the full Python unittest discovery passed 18 tests.
+
+The first attempt (40053724746, ARM64 job 120751905102) failed before Wine
+launch: /sys/class/net still reflected the host's sysfs mount after unshare.
+The harness now queries netlink with ip -j link show and requires only lo;
+it also compares /proc/self/ns/net with the host namespace captured before
+unshare. Neither isolation requirement is removed. Local unshare is denied
+by this workspace, so the corrected namespace execution is CI-only.
+The output checker still passes its five rejection tests and py_compile.
+
+Replay-host/fixture-only changes no longer restart the Atlas build; the
+reference workflow owns their checks. Receiver C/patch changes still restart
+both. Executables are cached immediately after successful build so a later
+replay failure does not force another unchanged compile.
+
+Review 5636418576 identified that a valid JSONL transcript could conceal a
+fatal Wine log. The acceptance function now requires the game Wine log and
+rejects handled or unhandled SEH dispatches and fatal/loader failures before
+checking JSONL. Bootstrap/registry output is retained separately; the game
+has no exception allowlist, including during startup. The command
+`python3 -m unittest discover -s armport/tests -p 'test_*.py' -v` passes 26
+tests, including complete-transcript/fatal-log and handled-SEH counterexamples,
+missing Wine evidence and separate bootstrap output. This closes the host
+validator gap; it does not assert that the live receiver has no exceptions.
+
+## First original-receiver execution
+
+Run 40054327124, ARM64 job 120753892218, entered INITIAL and exited 3 on the
+original BitStream.c:308 read-overrun assertion. Artifact 12544733343 was
+downloaded and verified against SHA-256
+2f72d1d96b2b53ef5e4b08ebcc25e1089627cd2ee240f696bb500f2f3895d82c.
+It contains dispatch_begin index 0 but no completed dispatch. No cursor pass.
+
+Source inspection found a missing harness prerequisite: the capture begins
+after SERVER_CMDSHORTCUTS, but game_beforeLoop has no shortcut names installed.
+cmdOldReceivePacked returns on an unknown shortcut without consuming its
+arguments, which misaligns the rest of INITIAL. The captured first shortcut
+is ID 26; the original cmdOldServerInitShortcuts puts control_cmds first
+(25 entries), then server_visible_cmds (10), with ID 26 named time.
+The driver now seeds those original shared tables with cmdOldSetShortcut,
+logs every ID/name, and refuses an unexpected preexisting table or a changed
+count/name. This is a reconstructed initialization prerequisite, not replay
+of the missing handshake message. No receive body or captured byte is changed.
+Both local OptDebug Game links (`ninja -j2 Game`) pass after this change.
+Its runtime effect still requires a fresh replay run.
+
+The armport/replay-* development branch runs the same reference workflow
+without restarting the milestone branch's Atlas workflow. Changes return
+through a normal merge; no milestone criteria or history are rewritten.
+
+That first branch run (40055381560, ARM64 job 120757110347) linked the client
+but stopped before execution because Actions caches are branch-scoped. The
+reference workflow now has the same reviewed-asset download/cache job as the
+milestone workflow; its matrix waits for that job and still verifies the ZIP
+hash before unpacking. No server/runtime result came from this failed attempt.
+
+Patch 0058 adds inert replay-only cursor observations around the original
+receive phases and game commands. It neither reads extra packet bits nor
+changes decoded state. The host compares INITIAL's entity-tail boundary
+(300328), final cursor (303248), eleven tail commands and zero terminator
+against the recorded native-android report's exact capture. The small frozen
+baseline records the source/report/input hashes; it does not invent a
+post-READY baseline. This boundary comparison is only part of the required
+independent INITIAL check, not full entity/player-state equivalence.
+
+After 0058, both ARM64 and i686 OptDebug Game links pass, all 29 host tests
+pass, and workflow YAML/compiler/matrix/data-dependency checks pass. Full
+state dumping/hashing and cross-architecture comparison remain unfinished.
+
+Run 40055978390, ARM64 job 120759128643, passes the shortcut-dependent
+header and character receive phases with zero stream errors, then asserts
+in groupdynrecv.c:24: dyn_group_count_from_server == dyn_group_count.
+Artifact 12545547444 (SHA-256
+a7db082751013cabbeba2eafb7d729adb8ec50f17dc8d0f67e0700b8e16e81d0)
+records the last boundary as groupDynReceive at bit 300128. INITIAL has not
+completed. The harness had no world roots because the saved files omit the
+earlier SERVER_GROUPS message as well as the shortcut message.
+
+The driver now calls clientLoadMapStart, groupLoadFull and
+groupDynBuildBreakableList for maps/City_Zones/City_01_01/City_01_01.txt,
+the static Atlas map used by the server (40042636088 first-dbserver-stdout).
+It requires an initially empty world and nonempty roots after loading, and
+records root/dynamic-group counts. This reconstructs local static-map
+initialization from the same data, not the omitted server-group payload.
+The original receive assertion remains intact and no synthetic group count,
+breakable object or packet byte is substituted. No rendered-map completion
+is claimed by this load. Both local OptDebug Game links (`ninja -j2 Game`)
+pass with this prerequisite; runtime qualification remains pending.
+
+Run 40057090615 (1c91081d), ARM64 job 120762415670 and i686 job
+120762415580, passes all 117 cursor/ACK checks for ID1-a, ID1-b and ID31.
+Native INITIAL command boundaries match. Both completion flags remain false;
+this is not full receiver-state equivalence. The prerequisite fixes and
+review 5636418576 fatal-Wine-log rejection are now integrated into M3.
+
+## Partial state capture (0059)
+
+The new replay-only observer retains accepted 9-bit quaternion components
+before unpacking/normalization, keyed by server index and entity generation.
+Normal gameplay does not enable it. The original decoder consumes exactly
+the same nine bits, applies its same stale-packet decision and calls the same
+unpacker. A read-only visitor exposes actual delete history in index order.
+All original-source edits were exported with patchwork.py as patch 0059.
+
+Each successful dispatch now writes state-NNN.json (16 MiB maximum) and its
+SHA-256. Server indices are ordered; strings preserve source bytes with JSON
+escapes; attribute floats use raw 32-bit representations. Included fields:
+identity/name/type, raw network positions, observed wire quaternion values
+(null where not observed), packet ordering IDs, selected costume appearance
+and parts, character levels/xp/debt/rest/influence/current and maximum
+attributes, player lastClientStatePktId, and actual delete history.
+
+This is explicitly schema armport-receiver-state-v1-partial. It is NOT a
+full entity/player dump. The follow-ups below add inventories, groups, badges,
+world and retained costumes, but complete player tail, tasks/UI game-command
+state, power activation/recharge, supergroups, NPC costume customization and
+other receiver fields remain to be covered. Timer/interpolation fields,
+rendering quaternions, pointers, struct padding and asset addresses are excluded.
+All completion flags remain false and successful execution still exits 2.
+After the terminal result, `replay.cleanup.begin` precedes CloseHandle/free,
+and `replay.exit.begin` precedes ExitProcess(2). These are diagnostic witnesses
+for the unexplained SIGKILL in run 40118399218; neither permits another exit
+code or rescues an incomplete/failed transcript.
+
+The host requires 117 authenticated snapshots. The follow-up comparison
+reads one pair at a time, compares same-ID repeats and cross-architecture
+files byte-for-byte, and only for ID1/31 applies Claude's five explicitly named field
+normalizations (review 5638209554): pkt_id_create, lastClientStatePktId,
+delete-history pkt_id, each pkt_id_pos[] and pkt_id_qrot[] element. Only
+values equal to that run's synthetic INITIAL ID change; later IDs remain
+literal. Differences fail this partial stage and are reported, not normalized
+away. Passing this stage still cannot complete M3.
+
+The recovered native report archive SHA256 is
+623800b22640bb0f35a27bbf89bae04253c5acf9e1db10b0365084b0dd7def82;
+native-client-report.json SHA256 is
+2876eb9b504614fad1de03adf4fa9eff82cfee3f56e9446e68d4d14afb217016.
+The native-initial-entity.json fixture records only its explicitly reported
+entity index 125, type 2, costume bodytype 4 and part count 28. Field mapping
+comes from world_handoff.first_create and OUTER_COSTUME_ARGS in the frozen
+native-android interop_network.c. These checks complement the existing tail
+boundaries; they do not claim that the truncated report contains full state.
+
+Local validation on 2026-10-24: `python3 -m unittest discover -s armport/tests
+-v` passed 41 tests, including a self-consistent changed final snapshot that
+must fail comparison. `CMAKE_BUILD_PARALLEL_LEVEL=2 cmake --build
+../build-arm-new --target Game` and the same command for `../build-i686-new`
+both exited 0 and linked CityOfHeroes.exe. Workflow YAML parsed and
+`git diff --check` passed. Full replay execution with this observer is pending;
+the previous cursor-only execution passed at 563e49ac in run 40087788115.
+
+### Snapshot formatter regression found by execution
+
+Run 40091320504 at 1e6952ed, ARM64 job 120864480058, reaches INITIAL cursor
+303248 and ACK ID 1, then exits 3 before writing its first state file.
+Artifact 12558638797 (API/download SHA256
+ab44ec03a6ad42faaba6528dfc7215fdc50130d22fd7b7e13d74eddebdbb773b)
+records an assertion in quick_sprintf.c:101, `(size_t)(tail-buf+1) <= buf_size`.
+This is an observer-output failure, not a completed state comparison.
+
+The included stdtypes.h macros replace vsnprintf/snprintf/sprintf with
+ARRAY_SIZE_CHECKED wrappers. The snapshot writer passes heap-buffer offsets,
+so that inferred size is only a pointer width. state.c now undefines those
+three macros after all game headers, preserving its explicit 16 MiB remaining
+capacity checks and CRT formatting. Check failures also emit the failed
+condition/line through WriteFile before exit 3. No original decoder changes.
+
+`check_receiver_state_preprocess.py` uses the actual compile commands. For
+ARM64 and i686, its current control finds CRT vsnprintf/snprintf/sprintf;
+removing only the three undef directives reproduces all three quick_ calls.
+Both controls pass for both targets and both updated OptDebug Game links
+exit 0. The reference workflow runs this control before a new client build.
+Run 40092531364 at 0296f2fb writes all 117 ARM64 snapshots, then rejects
+the native costume subset: it compared 60 allocated slots with 28 logical
+parts. The corrected check uses costume.num_parts and retains all slots in
+the literal dump. It does not weaken snapshot comparison. See M3-REPORT.md
+for the subsequent review fixes and newly inventoried game errors.
+
+### Review 5638209554 follow-up
+
+Both receiver.c and state.c now unbind the three CRT formatting macros after
+all game headers. Actual preprocessing plus old-macro negative controls cover
+both translation units on ARM64 and i686. Both updated Game links pass; the
+local host suite passes 46 tests (`python3 -m unittest discover -s armport/tests -v`).
+The two architectures both enable client.error traces (patch 0060, exported
+through patchwork.py). Acceptance requires zero game errors/asserts as well as
+zero Wine exceptions. The original mixed stdio inventory was lossy; review
+5638301654 led to the isolated full-message log described below. No error
+allowlist has been introduced.
+
+CI now emits per-execution and comparison notices. A separately logged
+seh-control.exe raises and handles 0xe0424242 under the installed Wine +seh;
+the host requires its completion marker and real exception trace and must
+reject that log. Both control executables link locally; actual Wine execution
+remains pending. Pinned bins/Cg from run 40043254025 are copied to an exact-run
+cache and retained for 90 days, before their original October 31 expiration.
+
+### Review 5638301654: complete error evidence and data collisions
+
+Code 0b42f7cf adds patch 0061, exported by patchwork.py. `ARMPORT_ZONE_LOG`
+selects an independent Win32 append handle. One locked WriteFile stores each
+complete ASCII-escaped JSON record; stderr keeps its bounded progress text.
+The log reports write/allocation/size failures, which fail strict replay.
+The i686 reference now honors ARMPORT_STDIO_LOG in WinMain and console setup,
+matching ARM64: run 40094942235's i686 job 120875377664 otherwise produced no
+client-stdio.txt. Both targets passed the real handled-SEH rejection control.
+
+`client_errors.inventory` requires this isolated log for replay, retains the
+full client.error/client.fatal text, and also rejects stdio assertions and
+log-write failures. Legacy stdio grouping is explicitly incomplete. The
+concurrent Wine regression writes 64 identical 8,191-byte multiline messages
+from four threads and checks exact decoded content; local ARM64 compilation
+and linking pass. Runtime execution is still required.
+
+The separate error-comparison job runs after failed receiver jobs as well as
+successful ones. It validates the same source commit, re-inventories both
+isolated logs, reports shared and architecture-only errors, and lists shared
+geometry paths absent from both actual staged runtimes. Existing geometry is
+reported with path, byte count and SHA256, so a missing model in an existing
+file cannot be classified as a missing file. This is a diagnostic only;
+zero-error replay, full state comparison and M3 remain separate requirements.
+No additional costume data has been selected or supplied.
+
+The Atlas stage checks every retained file's size/hash against the repository
+manifest. Runtime staging verifies case-insensitive collisions against
+every earlier input layer, including shadowed paths, and rejects differing
+bytes before copying the supplement.
+The workflow reports collision counts. Data uses cache plus the original
+pinned donor fallback; no further supplemental game-data artifacts are uploaded.
+
+Local commands: `python3 -m unittest discover -s armport/tests -v` gives 57
+passing tests; both OptDebug Game links exit 0 (`[18/18] Linking CXX executable
+bin/CityOfHeroes.exe`). The standalone concurrent trace test links for ARM64.
+The actual retained archive stage verifies 2,877 files / 309,655,940 bytes and
+repository manifest SHA256 204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86.
+Run 40097455262 rejects both targets on 183,269 complete errors each. The
+same-commit comparison reports 132,393 shared literal keys, 1,020 ARM64-only
+and 999 i686-only spellings; 45 named geometry paths are absent from both
+runtimes. A local casefold diagnostic matches every text/count, but acceptance
+remains literal and zero-error. Patch 0062 initializes the dummy costume
+Appearance whose optional prefix affects the suffix spelling. Run 40099922039
+at 023fd0dd tests that correction. See M3-REPORT.md for hashes, the separate
+Atlas pointer crash, patch 0063 controls, and the remaining data-source gate.
+# Diagnostic series after dispatch data errors
+
+The host collects id1-a, id1-b and id31 even when an execution has ordinary
+dispatch data errors, provided exit 2 and all Wine/integrity/transcript/state
+checks pass. Each such execution remains rejected and any rejection fails the
+job. This collects six-run comparison evidence without enabling exceptions or
+accepting replay. Crashes, fatal/assert, malformed evidence, wrong cursors and
+snapshot failures still stop immediately. See `test_receiver_run_series.py`.
+
+## Rejected-run snapshot diagnostic
+
+`diagnose_state.py --root <extracted-root> --commit <source-sha> --output <json>`
+can inspect hash-authenticated partial snapshots even when the process exited
+incorrectly or only dispatch data errors rejected it. It verifies the existing
+Wine/integrity/cursor/ACK/snapshot/native-subset checks and preserves return
+codes, timeout flags and error counts. Its seven comparisons use the same
+literal and five-field ID rules; all qualification/completion flags stay false.
+This is separate from `compare_state.py` and is never an acceptance fallback.
+Run 40170942751's retained snapshots match, but its SIGKILL remains rejected.
+
+The normal replay process observer samples the existing complete exit marker
+at 20 Hz. After observing it, up to 40 bounded `/proc/<pid>/task` stat/wchan
+samples can locate a shutdown wait. It neither sends signals nor attaches a
+debugger, and cannot identify a signal sender. Unavailable observations are
+explicit. Wine/runtime qualification of this diagnostic is still pending.
+
+## Additional partial power observations (2026-10-25)
+
+The v1 partial snapshot now includes character.power_inventory: current and
+all build power arrays, stable logical definition names, decoded scalar/F32
+values, slotted/global/inventory boosts and inspirations. Array order, null
+slots and every float bit are preserved. This is an additive partial schema;
+all completeness flags remain false. No new synthetic-ID normalization is
+introduced. Local power/boost timers and host-initialized creation timestamps
+are excluded; activation/recharge/mode storage, generic inventories and other
+tail destinations still need separate observation. Same-commit six-run equality
+must be requalified after this change; earlier snapshots cannot prove it.
+
+`ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_power_state.py`
+executes the actual serializer with host fixtures under ASan/UBSan. It tests
+null slots, escaped identities, negative zero/NaN/subnormal/infinity bit
+preservation, final array slots, timer exclusion, changed decoded charges and
+bound rejection. Local LeakSanitizer alone is disabled because /proc tasks
+are hidden. CI runs the same control with its default sanitizer settings.
+Both actual state.c units compile (ARM64 then i686, one compiler); formatter
+preprocessing retains CRT calls and rejects the old macro variant as before.
+See evidence/m3-power-state-observations.json. Runtime pending.
+
+Generic inventories are an additional partial observation in the same schema.
+`receiver_inventory_state.py` exercises the actual writer against all five
+array types, empty arrays, null entries/definitions, high unsigned amounts,
+concept raw float patterns and a changed recipe count. Counts over 8192 reject.
+Capacity totals are included; auction contents, inventions, team/task/UI and
+other uncovered receive destinations are not thereby qualified. See
+evidence/m3-generic-inventory-observations.json. Runtime pending.
+
+Badge observations additionally retain all 4096 status words, 50 recent
+indices/received timestamps and 10 monitor entries, plus client debug mode
+and optional filenames. Received award times stay literal; localized text
+and buttons are excluded. No new ID normalization. The actual writer's
+`receiver_badge_state.py` sanitizer control checks final array slots, raw
+unsigned words, null strings and mutation sensitivity. See
+`../evidence/m3-badge-state-observations.json`; runtime pending and schema
+still partial. Supergroup badge state remains uncovered.
+
+Team/league observations retain active member order, IDs, names, on-map
+flags, team reward fields, league leaders/locks, persistent map-name arrays
+and taskforce/LFG flags. Counts must fit 8/48 original slots, backing arrays
+must exist for nonzero counts, and fixed strings must terminate in storage.
+`receiver_group_state.py` exercises actual writer behavior with null/empty
+rosters, final slots, maximum strings, mutations and invalid storage. Unused
+member tails and derived league UI rosters are explicitly not covered. See
+`../evidence/m3-group-state-observations.json`; schema remains partial.
+
+World observations include dynamic-group hp/repair values in original index
+order and server sky indices/raw weight bits. The writer reads logical fields,
+not bitfield storage or tracker pointers; render-volume overrides are excluded.
+`receiver_world_state.py` checks raw NaN/negative-zero weights, hp/repair
+mutations, empty state and invalid count/storage rejection. Evidence:
+`../evidence/m3-world-state-observations.json`; runtime pending, still partial.
+
+## Exact original-data texture exception (2026-10-25)
+
+The default validator still rejects all dispatch data errors. The reference
+workflow explicitly supplies `--original-texture-exception` to both execution
+and partial comparison, under user decision PR #6 comment 6387467359.
+`fixtures/original-data-errors.json` contains the sole literal occurrence:
+HIPS_miniskirt_1 on FEM/HIPS texture 2, count 1 at dispatch index 1 (not after a
+dispatch). The complete message is listed in M3-REPORT.md. A missing, changed,
+additional or relocated occurrence rejects; other approved names are not
+implicitly allowed. The policy verifies hashes of its archive and six-run proof.
+
+The prerequisite run 40203125375 exits 2 in all six processes and has identical
+literal occurrences and partial snapshots. Its jobs remain failed under their
+then-active strict policy. Fresh execution is required. Each accepted occurrence
+is printed in the replay notice; raw errors stay in evidence. All other rejection
+rules and outside-error comparison remain. No full-state or M3 claim follows.
+
+## Retained costume observations (2026-10-25)
+
+Costume snapshots now include convertedScale, currentSuperColorSet and all six
+SG color-selection arrays as named low/high U32 halves, not union storage bytes.
+Player snapshots retain all ten costume slots, their null/order distinctions,
+super and pending costumes, selected/stored/unlocked indices and mode flags.
+The original costume_receive and receiveSGColorData destinations are read only.
+Logical part count must fit the retained part array; the original 256-entry
+output bound remains. Temporary editor colors, derived display/source/store
+metadata and local deferred-costume clock deadlines remain excluded. NPC
+customization, power customization and reward ownership are still coverage gaps.
+
+The actual writer's ASan/UBSan control checks the final SG slot/high half,
+all retained/null costume slots, raw float bits, source immutability, empty and
+invalid counts, changed fields and timer/editor exclusion. Both native target
+units compile sequentially; evidence/m3-costume-state-observations.json records
+commands. Runtime qualification is pending; the current replay 40206484644
+predates this observer. The schema remains partial and all completion flags false.
+
+## Story observations (2026-10-25)
+
+The story snapshot now retains story/key clue arrays (all six strings), server
+souvenir UID/header/detail strings and visit-location names. Null items, empty
+strings and original order remain distinct; counts are bounded to 8,192 and
+the existing total output bound remains. Patch 0078 exposes only the original
+server souvenir array through a build-guarded read-only accessor, used solely
+by active replay snapshots. The player-created local-file array, UI formatting
+and scroll/display caches are excluded. Contacts/tasks/waypoints and broader
+state remain gaps. See evidence/m3-story-state-observations.json for sequential
+native compilation and actual-writer/accessor sanitizer controls. Runtime
+pending; schema remains partial.
+
+## Contact and task observations (2026-10-25)
+
+Task sets preserve nested order/nulls, identities, difficulty, full retained
+strings, individual flags, received timeout/timezero U32 values and ordinary
+location F32 bits. Received zowie fields are included; locally selected zowie
+coordinates/indices, request clocks and SMF caches are excluded. Contact arrays
+preserve strings, identities, individual flags, retained points after the
+original clamp and received map/name/position. Resolved PNPC/entity objects and
+local overhead-icon state remain excluded.
+
+Patch 0079 copies raw alignment delay values to a replay-only observer while
+preserving the original clock addition and packet-read order. Snapshots store
+those five delays (null until observed), earned counts and four self-point counts;
+absolute host-clock deadlines are excluded. Actual receiver-loop controls prove
+inert-off behavior and unchanged reads/addition, including U32 wrap, while
+clock changes do not change the raw-delay output. Counts/strings/output remain
+bounded and ID normalization unchanged. See evidence/m3-contact-task-state-observations.json.
+Runtime pending, schema partial, no full entity/player/UI or M3 claim.
+
+### Retained groups, customization and initial player fields (2026-10-25 UTC)
+
+Snapshots now include the retained destinations of entReceiveOtherSupergroupInfo:
+entity group name/emblem/colors, item-of-power spaces, mission, ordered/null reward
+tokens, recipes and special details. Received server times and U32 sentinel
+counts stay literal. Internal SpecialDetail.bValid bookkeeping is excluded.
+Supergroup roster/rank/stat/UI coverage is not claimed by this addition.
+
+Active/owned power-customization lists and all ten player slots preserve nulls,
+original retained order, stored/resolved logical names, token bytes and individual
+RGBA U32 values. Original packet reads/receivers and ID normalization do not
+change. Counts remain bounded to 8,192 and the existing 16 MiB snapshot limit
+applies. Broader entity/player/tail/UI coverage remains incomplete.
+
+Initial player observations also retain type/subtype/progress, hidden/skills,
+feature-version bits, original power-set names/comment and every account-game
+and pop-help U32 word. Chat/window/tray/keybind/options receivers remain gaps.
+
+Evidence: `evidence/m3-retained-group-customization-controls.json`. Twelve actual
+writer/observer sanitizer controls and 156 Python tests pass; state.c compiles
+ARM64 then i686 with one compiler. Fixture structures/earrays do not qualify
+native ABI; mission forwarding uses the separately tested original task writer.
+Only local LeakSanitizer is disabled for /proc; CI uses normal sanitizer settings.
+Runtime remains pending. Atlas 40217209151 and replay 40217209257 test 5d1d2da9,
+which predates these new serializers. All full-schema/full-state/M3 flags remain
+false. Existing native renderer 0080 and the review's host truncation fix are
+unchanged by this independent replay coverage work.
+
+### Player identity, rewards and combat observations (2026-10-25 UTC)
+
+Snapshots now retain literal title fields/colors/badge, workshop name, entity
+description/motto, both ordered/null player reward-token name/value lists, PvP
+flags, all ten combat-monitor key/order pairs and character class/origin logical
+names, combat level/modifier, location type and ally/gang/PvP fields. Receivers
+and synthetic-ID normalization are unchanged. Player token timers remain
+excluded: INITIAL receives them, but later receiveRewardToken initializes them
+from the local clock. This mixed provenance needs a separate observer. Title
+expiry, UI localization/caches and other entity/control/UI destinations remain
+uncovered; full-schema/full-comparison/M3 flags stay false.
+
+Evidence: `evidence/m3-player-character-identity-controls.json`. Actual writers
+pass ASan/UBSan controls for null/order/final slots, mutation sensitivity, U32
+bits, string/count/output bounds, source immutability and clock/address
+exclusion. Native state.c compiles ARM64 then i686 with one compiler; 156 Python
+tests pass. Host fixtures do not prove native ABI; only local LeakSanitizer is
+disabled for the known /proc limitation. Runtime qualification is pending:
+40220658755 tests preceding 8813b215, not these additions.
+
+Replay 40217209257 at 5d1d2da9 passes both targets and comparisons; job
+121249121432 explicitly reports partial_state_equal true and full-state/M3 false.
+The SHA-256-verified ARM64 artifact 12608430696 identifies 18 game-command types
+in id1-a and authenticates its 117 state hashes. The committed command inventory
+`evidence/m3-observed-game-commands-40217209257.json` guides remaining coverage;
+command execution counts alone do not establish destination-state coverage.
+
+### Retained visited-map and entity metadata observations (2026-10-25 UTC)
+
+Patch 0081 exposes existing visited-map storage through a build-guarded const
+accessor. The snapshot does not call automap_getMapStruct, whose normal behavior
+loads files and creates owners. Original owner/map order, nulls, db/map IDs, fog
+flags and all 256 U32 cell words are retained. Original local visited-map cache
+data can also populate this storage; it is compared literally. Derived fog
+grids, minimap bitmaps/textures and remaining UI state are not covered.
+
+Entity observations add individual mode/vision bits, scalar taskforce/flashback/
+NPC/gender fields, world-group/animation/pet strings, visibility/contact/pet flags
+and special-power state. The received integer PvP delay is retained separately
+from the excluded host update clock. Entity names must terminate within storage.
+No new packet-ID field or synthetic-ID normalization is introduced.
+
+Evidence: `evidence/m3-map-entity-metadata-controls.json`. Patchwork exports 81
+patches with all prior 80 patch files byte-identical; upstream/ is unchanged.
+Actual accessor/writer sanitizer controls, ARM64 then i686 native compilation
+(one compiler) and 156 Python tests pass. Host fixture layouts are not native
+ABI proof; only local LeakSanitizer is disabled for /proc. Fresh runtime is
+pending: replay 40220658755 predates these additions. Full-schema, full-state
+and M3 flags remain false.
+
+### Retained karma and received desaturation observations (2026-10-25 UTC)
+
+Partial snapshots now retain ordered karma widgets, literal unsigned identities,
+logical types and all retained variable strings/nulls. Original receiver controls
+cover creation, updates, retained tails after shorter updates and inactive clear.
+General script-UI widgets/packet order/pending updates and tooltip caches remain
+uncovered. No ID normalization is added.
+
+Patch 0084 observes the four desaturation F32 values immediately after the
+original four reads and assignments. The observer is inert outside replay.
+Snapshots retain those individual bits, or null before the first receive,
+instead of the live fields subsequently changed by game.c frame-time animation.
+Original reads, stored bits and animation remain unchanged; this records received
+representation, not complete current renderer state.
+
+Evidence: `evidence/m3-karma-desaturation-controls.json`. Fourteen karma cases,
+six original/patched desaturation off/on cases plus three replacements pass
+ASan/UBSan controls. ARM64 then i686 state/receive units compile with one compiler;
+156 Python tests pass. Fixture types are not native ABI proof; only local
+LeakSanitizer is disabled for /proc. Patchwork exports 84 patches with the prior
+83 byte-identical; upstream/ is unchanged. The visited-map CI control now uses
+the same cache-miss condition as source preparation, as do the new controls.
+
+Runtime is pending: replay 40224584944 tests earlier 5919e8c, not these additions
+or model diagnostic 0083. Full-schema/full-state/M3 completion stays false.
+
+### Server waypoint and turnstile receive storage (2026-10-25 UTC)
+
+Snapshots now retain the original server-waypoint key/value mapping, sorting
+a private entry array by literal string keys rather than allocation-dependent
+stash bucket order. Values include received IDs/flags/names, individual F32
+coordinate/angle bits and resolved icon names. No key or integer normalization,
+stash mutation, asset loading or original receiver change. Selected compass
+copies, display caches/coordinates and texture addresses remain excluded.
+
+Patch 0085 exposes const views of retained turnstile missions/dummy categories
+and queue/wait storage. Snapshots retain original mission order, selections,
+eligibility, names, wait bits and literal player last event/mission IDs. Throttle
+clocks, event dialog/response/status fields and window widgets remain uncovered.
+The accessors are build-guarded and only called by active replay snapshots.
+
+Evidence: `evidence/m3-waypoint-turnstile-controls.json`. Eighteen waypoint and
+fourteen original turnstile receiver/accessor/writer cases pass ASan/UBSan. All
+20 actual-writer/source controls pass together. Native state.c/uiTurnstile.c
+compile for ARM64 then i686 with one compiler. Patchwork exports 85 patches;
+the prior 84 are byte-identical and upstream/ unchanged. Host fixtures do not
+prove native ABI; only local LeakSanitizer is disabled for /proc. Runtime is
+pending and replay 40224584944 tests earlier 5919e8c, not these additions.
+All full-schema/full-state/M3 completion flags remain false.
+
+### Retained friends, saved keybinds and chat settings (2026-10-25 UTC)
+
+Snapshots now retain friend values through the original friendCount (bounded
+to MAX_FRIENDS), all 256 saved binding slots and their retained profile, and
+all chat window/tab/channel settings. Final slots, unsigned masks/colors and
+individual F32 divider bits are included. Chat names are the retained strings
+after original localization, not a new raw-wire claim. No receiver changes.
+
+Friend packet-order send/last_pak_id, map-info pointers, unused descriptions,
+runtime binding profiles/generated uIDs/pressed states/command[1..3], deprecated
+chat systemBF and live chat message/window objects remain uncovered. No new
+packet-ID normalization. These exclusions keep the full-schema flag false.
+
+Evidence: `evidence/m3-communication-state-controls.json`. Seventeen actual-writer
+cases and the original keybind receiver pass ASan/UBSan, checking its 257 string
+and 512 word reads, masks, Dev profile, null/order/final slots, mutation
+sensitivity, source immutability and count/storage/string/output bounds.
+state.c compiles for ARM64 then i686 with one compiler. Host fixtures are not
+native ABI proof; only local LeakSanitizer is disabled for /proc. No new patch;
+85 patch files remain unchanged, as does upstream/. Runtime is pending;
+40224584944 tests earlier 5919e8c. Full-state and M3 completion remain false.
+
+### Existing user-option table observations (2026-10-25 UTC)
+
+Patch 0086 exposes a const view of the existing option array without calling
+userOptionGet, which can initialize its lookup stash. Snapshots preserve original
+array order, literal option IDs/bit sizes and the F32 or U32 representation used
+by receiveOptions. Unused alternate numeric storage, display labels, data
+pointers and delayed-save metadata are excluded. No option/receiver mutation,
+lookup initialization or new packet-ID normalization.
+
+Evidence: `evidence/m3-option-state-controls.json`. Eight original receiver/
+actual accessor/writer cases pass ASan/UBSan, including mutation sensitivity,
+raw NaN/negative-zero/high bits, table order and output bounds. Native uiOptions.c
+and state.c compile ARM64 then i686 with one compiler. Patchwork exports 86
+patches and the prior 85 remain byte-identical; upstream/ unchanged. Host
+fixtures are not native ABI proof; only local LeakSanitizer is disabled for
+/proc. Fresh runtime remains pending. Full-state and M3 flags remain false.
+
+### Existing tray storage and default-power observations (2026-10-25 UTC)
+
+Patch 0087 exposes existing player/server tray arrays and the received sticky
+mode through const views. The normal getTrayObj lookup writes derived slot
+metadata even when creation is disabled, so snapshots never use it. Array order,
+nulls, all eight builds, stored tray selections/modes/index mask, power and
+inspiration indices, logical power names, macro fields and nullable default-power
+identity are retained. Render/icon caches, derived slot metadata and the local
+momentary key mask are excluded. Other tray kinds currently retain type only;
+this is an explicit coverage gap, not a complete tray/UI schema.
+
+Evidence: `evidence/m3-tray-state-controls.json`. Nineteen actual accessor/writer
+and original mode-receiver cases pass ASan/UBSan, including source immutability,
+four sticky modes, separate arrays, last slots, nulls and count/string/output
+bounds. Native trayCommon.c, uiTray.c and state.c compile ARM64 then i686 with
+one compiler. Patchwork exports 87 patches with the prior 86 byte-identical;
+upstream/ unchanged. Host fixtures are not native ABI proof; only local
+LeakSanitizer is disabled for /proc. Runtime remains pending; full-schema,
+full-state comparison and M3 completion remain false.
+
+### Retained initial UI and server-control observations (2026-10-25 UTC)
+
+Partial snapshots now include every built-in window's retained WdwBase fields,
+its below flag, global RGBA, eight saved dividers, team/inspiration modes, five
+server-feature flags and the received first-person/nocoll values. Patch 0088
+adds const mode views only; window/default/clamp/color propagation and all
+original receivers are unchanged. Snapshots read existing winDefs directly.
+Window values are post-receiver retained state, not raw wire data. Custom and
+minimized windows, animation clocks/caches, callbacks and broader control state
+remain excluded; no packet-ID normalization is added.
+
+Evidence: `evidence/m3-initial-ui-state-controls.json`. Twelve ASan/UBSan cases
+execute original window/divider/mode receivers, actual accessor/writers and the
+original server/control assignment fragments. Native state.c, uiGroupWindow.c
+and uiInspiration.c compile ARM64 then i686 with one compiler. Patchwork exports
+88 patches; prior 87 are byte-identical and upstream/ unchanged. Host fixtures
+do not execute the entire initial-window setup block or establish native ABI
+or viewport equivalence. Runtime qualification is pending; full-state/M3 flags
+remain false.
+
+Replay 40224584944 at 5919e8c has now completed: both targets, outside-error and
+partial-state comparisons pass, still with all full-state/M3 flags false. Exact
+API/log notices are in `evidence/m3-replay-40224584944.json`; this is CI evidence,
+not independent artifact revalidation. PR #6 checkpoint e78f0193 starts fresh
+Atlas 40227784437 and replay 40227784453, both pending when this note was written.
+Keep their branch stable while they run; this UI addition is later work.
+
+### Door receive-state observations (2026-10-25 UTC)
+
+Patch 0089 adds a read-only view of door wait/loading/fade-request state. It does
+not call waitingForDoor(), which can expire and clear the original wait state.
+Snapshots also retain game mode and nullable door-animation state, entry/target
+position bits, received integer radius, acknowledgement/threshold flags and
+animation string. Fade clocks, derived final position/speed and the forced-move
+packet-ID bookkeeping remain explicit gaps; no new ID normalization is added.
+
+Evidence: `evidence/m3-door-state-controls.json`. Fourteen ASan/UBSan cases run
+the original start/exit receivers, fade-in function and actual view/writers.
+They cover no-player/null-packet branches, packet-order decisions, animation
+freeing, output bounds and source immutability without any timeout clock read.
+Native dooranimclient.c and state.c compile ARM64 then i686 with one compiler.
+Patchwork exports 89 patches; prior 88 are byte-identical, upstream/ unchanged.
+Dependency substitutes do not prove native ABI or full gameplay behavior; only
+local LeakSanitizer is disabled for /proc. Runtime remains pending, including
+later initial-UI work; M3/full-state completion flags remain false.
+
+### Retained entity status observations (2026-10-25 UTC)
+
+Snapshots retain status-effect flags, received translucency bits, the logout
+bad-connection flag, nullable AFK state/message and ordered designer-status
+strings. The original exclusiveVisionPhase read in character_ReceiveStatusEffects
+is discarded by that function; this observer does not invent a destination.
+Local countdown/rendering translucency, buffs, targeting and packet-order fields
+remain gaps. No native patch or normalization change.
+
+Evidence: `evidence/m3-entity-status-controls.json`. Fifteen original-receiver/
+actual-writer ASan/UBSan cases cover current/stale packets, null parents, full
+consumption, replacement/empty/null strings, retained AFK tails, bounds and
+source immutability. Native state.c compiles ARM64 then i686 with one compiler.
+All 89 patches and upstream/ remain unchanged. Host packet/earray substitutes
+are not native ABI or full-entity proof; only local LeakSanitizer is disabled
+for /proc. Runtime qualification and full-state/M3 completion remain pending.
+
+### Target and assist state observations (2026-10-25 UTC)
+
+Snapshots now retain literal S64 target/assist/taunter references as two U32
+words, ordered nullable placator references, selected DB ID/handle and nullable
+current-target logical identity. No pointers or new ID normalization are added.
+The original receiver clears the selected target even on a stale self update;
+this result is preserved. Its random confuseRand assignment remains excluded.
+
+Evidence: `evidence/m3-target-state-controls.json`: 17 ASan/UBSan cases execute
+the original target receiver/reference packer and actual snapshot writers,
+covering self/other/stale/null/no-update paths, all reads, order, full-width
+values, bounds and immutability. ARM64 then i686 state.c compilation and 161
+Python tests pass. CI includes this control on future comparison builds. All
+90 native patches and upstream/ unchanged. Host dependencies are substitutes;
+runtime qualification remains pending and full-state/M3 flags remain false.
+
+### Retained buff observations (2026-10-25 UTC)
+
+Patch 0091 adds a replay-only const view of the private PowerBuff storage.
+Snapshots preserve list order/nulls, power identity, UID, blink/delete flags,
+descriptor key/name identities and magnitude F32 bits. Descriptor and magnitude
+counts remain independent; no repair or normalization is added. Timer, tooltip
+and UI window are excluded. Original full stale updates can still mark buffs
+for deletion before checking staleness; the observer preserves those marks.
+
+Evidence: `evidence/m3-buff-state-controls.json`: 21 ASan/UBSan cases execute
+original receive/find/update/mark/clear and actual view/writer code, covering
+full/diff/delete/stale/no-player/unknown-descriptor paths, retained absent mods,
+bounds and source/array immutability. Packet/lookup/earray/free dependencies are
+substituted, with fixture arena cleanup; original ownership is not qualified.
+Native uiBuff.c/state.c compile ARM64 then i686 with one compiler; 161 Python
+tests pass. Patchwork exports 91 patches, prior 90 byte-identical, upstream/
+unchanged. Runtime and reviewer qualification remain pending; no M3 pass.
+
+### Literal receive-channel packet IDs (2026-10-25 UTC)
+
+Snapshots now include all 16 additional scalar U32 receive-channel packet IDs
+from entIncludeClient.h. Existing create/position/quaternion ID fields retain
+their existing paths. No additional canonicalization is applied. If the new
+fields expose INITIAL-ID sensitivity, the comparison must fail pending an
+individually enumerated reviewer decision. Structured full/basic AttrDef ID
+maps remain an explicit gap.
+
+Evidence: `evidence/m3-packet-order-controls.json`: ten ASan/UBSan cases cover
+the original header fields/update macro, ascending/stale/equal IDs, literal
+0/1/31/32/full-width values, bounds and immutability. A new comparison control
+proves newly added IDs are not canonicalized and genuine ID1/31 differences
+fail while same-ID comparisons pass. All 162 Python tests and ARM64-then-i686
+state.c compilation pass. No native patch or upstream/ change; runtime still
+pending and no full-state/M3 claim.
+
+### Leveling-pact roster and fresh replay (2026-10-25 UTC)
+
+The observer retains leveling-pact ID, nullable pact, independent count and
+ordered roster ID/name/on-map fields. It preserves stale zero-ID destruction
+without rewriting the retained ID, and name tails when local lookup fails.
+Derived map caches/server accounting are excluded. The original stale positive
+member-count path skips member reads; these controls do not qualify that path.
+Evidence: `evidence/m3-leveling-pact-controls.json`: 13 original-receiver/actual
+writer ASan/UBSan cases pass, plus all receiver controls and 162 Python tests.
+Native state.c compiles ARM64 then i686 with one compiler; all 91 patches and
+upstream/ unchanged. Allocator/UI/packet/lookup substitutes limit host coverage.
+
+Replay 40227784453 at e78f0193 completes both targets and both comparisons.
+Independent revalidation of artifact 12612527715 (ARM64) and 12613195474 (i686),
+each SHA-256 verified against the API digest, reproduces all seven matching
+comparisons with the exact approved texture occurrence. Exact command/output:
+`evidence/m3-accepted-partial-replay-40227784453.json`. This tests through tray
+state, before later UI/door/entity-status/camera/target/buff/packet-order/pact
+work. All full-schema/full-state/M3 flags stay false. Atlas 40227784437 is still
+pending; keep its source branch stable until completion.
+
+Pet ownership retains both literal EntityRef U32 words and logical created-by power identity; original non-pet clearing can retain the power. No new ID normalization; full schema remains incomplete. See evidence/m3-pet-ownership-controls.json for source controls and limitations.
+
+### Structured attribute packet-ID observations (2026-10-25 UTC)
+
+Snapshots now retain the nested pkt_id_fullAttrDef/pkt_id_basicAttrDef trees
+using the original SendCharacterToSelf/SendBasicCharacter parse-table order and
+field names. Primitive ID slots become literal U32 values; nested arrays and
+null/unallocated trees stay distinct. No pointers, cache initialization, game
+receiver changes or added INITIAL-ID normalization. Unsupported schema types,
+storage, depth, field count, wide scalar slots and output overflow reject.
+
+Evidence: `evidence/m3-attribute-packet-id-controls.json`: 21 ASan/UBSan cases
+execute original int/float/struct receivers and allocation/free with original
+schema definitions and the actual observer. Packet/token-store/quantization
+dependencies are substituted; attribute value decoding/native ABI are not
+qualified. All 32 receiver programs and 163 Python tests pass, including literal
+nested-ID sensitivity rejection. Native state.c compiles ARM64 then i686 with
+one compiler. All 92 patches and upstream/ unchanged. Fresh runtime/reviewer
+qualification remains pending; full schema and M3 remain false.
+
+Sol review 5645758046 accepts implementation through f6332f29, explicitly not
+milestone/merge approval. Current runs 40240791819/40240791817 retain that head;
+this addition and pet ownership are not covered by those runs.
+
+### Sequence receive observations and pending ID decision (2026-10-25 UTC)
+
+Snapshots retain next sequence index/bits and the ordered triggered-move queue
+(index, delay ticks and trigger FX ID). Local mixed-clock move_change_timer,
+sequencer timestamps and server-only state are excluded. Original receiving,
+queue saturation and stale-packet behavior are unchanged. Evidence:
+`evidence/m3-sequence-receive-controls.json`: 17 original-receiver/actual-writer
+ASan/UBSan cases, sequential ARM64/i686 state.c compilation and 163 Python tests
+pass. Packet/demo substitutes limit host coverage; no native patch changes.
+
+ARM64 artifact 12617326111 from replay 40240791817 is SHA-256 verified and all
+351 snapshot digests checked. All three executions pass dispatch/cursor/ACK
+validation and normal exit2. Same-ID repeated runs match. INITIAL1/31 differ
+only in snapshot0 at 11 newly observed scalar packet-order fields, each 1/31.
+`evidence/m3-arm64-id-sensitivity-40240791817.json` enumerates exact values and
+original UPDATE_PACKET_ID sites. i686/combined comparison still pending.
+Proposed decision for Sol: permit only these enumerated fields, only snapshot0
+in the ID-sensitivity comparison, only values equal to that run's INITIAL ID.
+This proposal is NOT implemented or approved; strict comparison stays unchanged,
+all other/new structured IDs stay literal. Full-schema/M3 remain false.
+
+### Pending NetFx receive-list observations (2026-10-25 UTC)
+
+Snapshots now observe the retained NetFx queue in original order: command,
+literal IDs/handle, received delay/duration/radius F32 bits, flags, tint and
+active origin/target fields. Inactive fields can retain unwritten storage and
+are excluded, as are server bookkeeping and renderer trackers. Client-created
+effects may also populate this queue; no exclusive wire-origin claim is made.
+Unknown target/origin types retain their literal tags with null active values.
+
+Evidence: `evidence/m3-netfx-receive-controls.json`: 19 original-receiver/actual
+writer ASan/UBSan cases pass, including ordered append, destroy command, both
+position/entity branches, invalid type error path, full-width values, NaN and
+negative-zero bits, source immutability, 8192-entry boundary and bounds failures.
+Packet/allocator/demo/debug dependencies are substituted. Both native targets
+compile sequentially and 163 Python tests pass. No native patch/upstream change;
+full replay/schema, rendering and milestone qualification remain pending.
+
+### Unsigned taskforce mask and nonclock parameter observations (2026-10-25 UTC)
+
+Patch 0093 changes only `1 << count` to `1U << count` in the original taskforce
+parameter receive loop. The old expression has undefined signed left shift at
+bit31 (the 32nd slot) even with an empty enabled mask. The source-derived UBSan negative
+control reproduces that error; the unsigned form preserves the U32 mask and
+original read order, retention and clock additions. Exported with patchwork;
+prior 92 patches byte-identical and upstream/ unchanged.
+
+Snapshots retain the enabled mask and all 30 nonclock slots, including disabled
+retained values. Time-limit/start-time slots are explicitly null because the
+original receiver adds the local clock; raw provenance remains a gap. Evidence:
+`evidence/m3-taskforce-parameter-controls.json`: nine sanitizer cases plus the
+old-code negative control, original enable helper, all32 parameter bits, absent
+updates/null taskforce, retained slots, clock addition, bounds and immutability.
+Packet/clock dependencies are substitutes. Native entrecv.c/state.c compile
+ARM64 then i686 with one compiler; 163 Python tests pass. Full-state/runtime
+qualification and milestone approval remain pending.
+
+### Raw taskforce time receipt history (2026-10-25 UTC)
+
+Patch0094 observes a parameter immediately after its original assignment and
+before either original local-clock addition. The active replay observer records
+only TIME_LIMIT/START_TIME values as bounded ordered receipts (entity index/ID,
+taskforce ID, slot, raw U32 seconds). Ordinary execution and disabled builds are
+inert. No packet reads, arithmetic or enable decisions change. Replay init clears
+the receipt count; histories are not reconstructed deadline/lifecycle state.
+
+Evidence: `evidence/m3-taskforce-time-controls.json`: 15 sanitizer cases plus
+the old signed-shift negative control and the actual disabled-header test pass.
+Controls cover both clocks, full-width/zero values, retained/absent/null cases,
+changed entity/taskforce identities, active/nonclock inertness, 8192 receipt
+boundary, overflow rejection and history/source immutability. Packet and clock
+dependencies are substituted. Native entrecv.c/state.c compile sequentially
+ARM64 then i686; 168 Python tests pass. Patchwork exports94 patches with prior93
+byte-identical and upstream/ unchanged. Current replay40243785888 tests dd0c3dee
+before this addition; keep it running. Full-schema/M3 and merge approval false.
+
+Retained first/nocoll control flags and slave orientation F32 bits are now
+observed; local input also writes these destinations. Motion/prediction and
+local input clocks remain excluded. Evidence: evidence/m3-control-state-controls.json.
+
+### Original world-model lookup observations (2026-10-25 UTC)
+
+Patch0095 observes the existing groupModelFind results separately: missing
+object-library entry, present entry but null modelFind result, or found model.
+The network getGeo caller does not report a null model; prior traversal samples
+therefore cannot distinguish these lookup failures. Each outcome has an atomic
+process-wide16-record budget. Bounded labels and original loadstate/vertex/triangle
+metadata are recorded; names are diagnostic labels, not acceptance identities.
+No second lookup, fallback, culling/data/packet changes or root-cause claim.
+
+Evidence: `evidence/m3-group-model-lookup-controls.json`. Four source-derived
+ASan/UBSan configurations compare original and observed call counts/returns,
+exercise eight concurrent callers, independent budgets, long/sanitized labels,
+and disabled client/server guards. Lookup/Win32 atomic/environment/trace adapters
+limit host coverage. Native group.c compiles sequentially ARM64 then i686.
+All173 Python tests pass; the report rejects malformed/inconsistent/over-limit
+observations and preserves complete isolated records without a rendering verdict.
+
+All36 receiver-state programs also pass after fixing the contact test's overly
+broad function extraction, which unintentionally included the new taskforce
+observer. The intended original function body is still executed. All95 patches
+were exported with patchwork, prior94 byte-identical; upstream/ unchanged.
+Attempted local full links cannot run because these partial build directories
+lack most original objects/libraries; only changed-unit compilation is qualified.
+Full linking/runtime remains CI work. Keep active replay40243785888 and Atlas
+40240791819 on their existing heads; this pending delta is not qualified there.
+Full-schema/M3 completion, merge approval and Thor readiness remain false.
+
+### Raw player reward times and completed replay (2026-10-25 UTC)
+
+Patch 0096 observes the two original INITIAL token timer assignments only after
+the original destination check accepts them. The bounded ordered history copies
+entity identity, normal/active-player list, index, name and received U32 seconds.
+It is inert outside replay and in disabled builds. It does not call award helpers,
+change packet reads, or compare the live timer, which later awards set from a
+local clock. Long names/history/output overflow fail rather than truncate.
+All 37 receiver-control programs pass, including 20 new sanitizer cases; all
+180 Python tests pass. Changed state.c/entrecv.c compile ARM64 then i686 with
+one compiler. Host fixtures are not native ABI or complete runtime proof.
+`evidence/m3-reward-time-controls.json` records commands, outputs and limits.
+
+Replay 40243785888 at dd0c3dee is complete: both target execution jobs and
+outside-error comparison pass; strict partial comparison fails. Independent
+verification reproduces all seven comparisons and 702 hashes: three cross-target
+pairs and both same-ID repetitions match; only snapshot 0 differs in each
+INITIAL-ID sensitivity pair, with the same 44 fields on both architectures.
+The previous 11 scalar IDs plus 33 attribute-tree leaves require Sol's explicit
+normalization decision. No normalization was added. Full-schema/full-state/M3
+flags remain false. `evidence/m3-replay-expanded-ids-40243785888.json`.
+
+The server Atlas supplement merge explicitly copies ordinary private files.
+PRoot --link2symlink must not turn temporary extraction links into dangling
+paths. The no-link control and real retained-archive rehash pass after temporary
+files are removed. Base/schema validators remain unchanged; runtime rendering
+is still pending. `evidence/m3-server-atlas-staging-controls.json`.
+
+### Friend receive ordering and exact missing server geometry (2026-10-26 UTC)
+
+Patch 0097 exposes receiveFriendsList's existing last packet ID through a const
+getter; the static keeps its original zero initialization/lifetime at file scope.
+The receiver body is byte-compared against immutable upstream after reversing
+only that scope/name change. Per-friend `send` and the global ID retain full U32
+words. No new normalization or signed-comparison change. Source-derived controls
+cover full/stale/equal/lower/high-bit IDs, absent entries/null entity, cumulative
+out-of-order behavior, exact consumption, nonmutation and output/storage bounds.
+All 16 new and 17 updated communication cases pass with ASan/UBSan; 180 Python
+tests pass. Native uiNet.c/state.c compile sequentially ARM64/i686, and llvm-nm
+confirms the accessor definition in both objects. Runtime remains pending.
+`evidence/m3-friend-order-controls.json`. These newly exposed IDs may retain
+INITIAL sensitivity beyond snapshot 0; do not silently normalize them.
+
+The retained 40227784437 server capture explicitly lists 483 distinct missing
+`.geo` paths. All 483 match files in the already approved Atlas supplement;
+none needs a new source. The exact path lists are retained in
+`evidence/m3-server-atlas-staging-controls.json`. This strengthens the staging
+diagnosis; it does not declare rendering or M3 complete.
+
+### Accepted power creation times (2026-10-26 UTC)
+
+Patch 0098 observes the original character_ReceivePowers timestamp assignment
+only after power acceptance. The bounded history records nullable parent
+identity, received build/set/power ordinals, literal received/retained unique IDs,
+copied logical name and U32 wire seconds. It runs before power_LevelFinalize;
+it neither calls a packet reader nor changes original state or clock handling.
+Live ulCreationTime remains excluded because power_Create and lifetime changes
+also write local-clock values. This is receive history, not full power lifecycle.
+
+All 26 source-derived ASan/UBSan cases and 20 reward-time regression cases pass;
+180 Python tests pass. The original and observed accept blocks have identical
+read/call counts and power/set storage across success/failure/existing/temp-power
+controls. Changed native character_net.c/state.c compile ARM64 then i686 with
+one compiler. Only local LeakSanitizer is disabled for /proc; CI keeps defaults.
+`evidence/m3-power-creation-time-controls.json` records exact commands and limits.
+Fresh runtime qualification is required. All prior 97 patch bytes are unchanged.
+No new packet-ID normalization, milestone completion or merge approval.
+
+Replay 40247679017 at 4c8b6c39 has now completed: both native jobs and outside-error
+comparison pass; strict partial-state comparison fails. Independent verification
+of both SHA-256-verified artifacts authenticates 702 snapshots and reproduces
+all seven comparisons. Three cross-target pairs and both same-ID repeats match;
+both INITIAL1/31 pairs differ only in snapshot 0 at the same 45 literal fields.
+See `evidence/m3-replay-40247679017.json`. Sol's exact normalization decision is
+still pending. Atlas 40247679019 remains active and must not be restarted.
+
+### Retained active powers and received modes (2026-10-26 UTC)
+
+Snapshots now retain PowerInfo.activePowers as ordered nullable logical
+build/set/power references, without resolving or repairing them. Character
+pPowerModes retains signed words, duplicates and order. Null PowerInfo remains
+separate from an empty active list. Recharge timer values and membership remain
+excluded: the original powerInfo_UpdateTimers changes and removes them using
+elapsed time. No original receive/update behavior changes and no new patch.
+
+All 19 source-derived sanitizer cases pass, including the actual mode receiver
+and duplicate/add/remove/absent active helpers, bounds, nulls, nonmutation and
+an inaccessible recharge pointer. Inventory-writer regression, 180 Python tests
+and sequential ARM64/i686 state.c compilation pass. The inventory fixture now
+extracts its five actual functions individually so adjacent observers do not
+silently enlarge its dependencies. `evidence/m3-power-activity-controls.json`
+records commands and limits. Host controls do not establish native ABI or full
+activation/recharge lifecycle. Fresh runtime qualification remains required;
+active replay 40254223051 tests preceding power-time head 38b5cebb only.
+
+### Power-update wire-time observations (2026-10-26 UTC)
+
+Patch 0099 extends the accepted creation-time history to PowerInfo updates and
+records received recharge F32 bits after the original timer-change call. Ordered
+bounded histories retain literal identities and signed references; no float
+normalization, packet reads or original assignments change. Live recharge
+countdown/membership and live creation clocks remain excluded because local
+elapsed-time code changes them. This is receive history, not full lifecycle.
+
+All 14 source-derived ASan/UBSan update cases, 26 initial creation-time cases,
+20 reward regression cases and 180 Python tests pass. Original-vs-observed
+controls retain reads/calls/storage, including skipped/accepted entries, raw
+NaN/zero/infinity bits, repeated references, bounds/reset/nonmutation and later
+local timer overwrite/removal. PowerInfo.c/state.c compile ARM64 then i686 with
+one compiler. Only local LeakSanitizer is disabled for /proc; CI keeps defaults.
+See `evidence/m3-power-update-time-controls.json` for commands and limits.
+All prior 98 patches are byte-identical; upstream/ remains untouched. Fresh
+native linking/runtime qualification is still required. No milestone pass.
+
+### Reviewed INITIAL-ID comparison scope (2026-10-26 UTC)
+
+Sol review 5646841168 accepts implementation through 4c8b6c39 and permits a
+comparison-only rule for the new source-proven packet-ID observations. The
+implementation now normalizes only snapshot 0, 16 explicitly named scalar
+channels, primitive leaves of the exact basic/self AttrDef schemas, and the
+friend-order ID, each only when an integer equals that run's INITIAL ID. Schema
+names/order/shapes and unrelated values stay literal. Saved snapshots, later
+snapshots, cross-target and same-ID comparisons are unchanged. The previous
+five lifecycle destinations retain their already agreed behavior. The scope
+approval does not approve this new implementation or a milestone/merge.
+
+All 191 Python tests pass (13 comparison tests), including wrong values/types,
+exact and adjacent paths, schema mutation/nulls, input nonmutation and actual
+comparison failures for later/same-ID/cross-target differences. SHA-verified
+artifacts from 40247679017 and 40254223051 each revalidate 702 snapshots and pass
+all seven pairs with this proposed comparator. The historical CI runs remain
+FAILED; their strict sensitivity differences were respectively 45 and 20 fields
+at snapshot 0. This is retrospective qualification, not fresh combined-head CI.
+The exact single authorized texture occurrence and false full-schema/full-state/
+M3 flags remain. Commands, pins and results are recorded in
+`evidence/m3-initial-id-normalization-controls.json`.
+
+Next: fresh native replay and Atlas qualification for the combined power-time,
+active-power/mode, 27-material and comparison changes, plus Sol's implementation
+review. Full retained-state coverage and the Atlas screenshot remain open;
+M4 Android surface and physical Thor/M5 are not qualified. No Thor test ready.
+
+### Retained turnstile event state (2026-10-26 UTC)
+
+Patch 0100 adds a const-data/copy-out view of the original event name, expected
+response, acceptance/decline/progress/player counts, instance ID and event-status
+reply/status masks. The snapshot writer bounds the fixed name and preserves
+signed counts and all U32 bits, including literal IDs 1/31. No original receive,
+ACK, dialog or update behavior changes. Local input can also change response
+state; the snapshot does not claim exclusive packet provenance. Local throttle
+clocks, widget objects, force-queue and invitation state remain excluded.
+
+Eleven original-receiver/actual-accessor/writer sanitizer cases pass, including
+read widths/counts, ACK identity, replacements, response changes, high-bit IDs,
+name/output bounds and nonmutation. Fourteen queue/status regression cases and
+191 Python tests pass. uiTurnstile.c/state.c compile ARM64 then i686 with one
+compiler. Host packet/dialog/ACK substitutes are not native ABI/runtime proof;
+only local LeakSanitizer is disabled for /proc. Patchwork exports 100 patches;
+prior 99 are byte-identical and upstream/ stays unchanged. Commands/output are
+in `evidence/m3-turnstile-event-state-controls.json`. Fresh runtime/review pending.
+
+Preserve Atlas 40263048945 and replay 40263048934 at 9d82645c; they test the
+preceding combined power/material/normalization head, not this event addition.
+Full state, screenshot, M3/M4/M5 and Thor readiness remain unqualified.
+
+### Mission waypoint and keydoor retained arrays (2026-10-26 UTC)
+
+Partial state now includes ordered nullable mission_waypoints and mission_keydoors.
+The actual receivers' retained IDs, types, flags, received creationTime, colors,
+name/map strings, original/current position F32 bits and resolved icon names stay
+literal. Local request UIDs, layout/pointer caches and complete selected-destination
+lifecycle are excluded. No decoder or normalization changes. Seventeen receiver/
+writer sanitizer cases,18 server-waypoint regression cases,191 Python tests and
+sequential native state.c compilation pass. See evidence/m3-mission-destination-controls.json
+for commands, host-fixture limits and the preserved zero-time closest-selection
+quirk. Fresh native replay and review remain pending; full state/M3 stay incomplete.
+
+### Custom NPC, Architect and command-table destinations (2026-10-26)
+
+Recovered from `handoff/2026-10-26-npc-architect-wip.patch` (post-apply hashes
+match its evidence): ordered/null custom NPC regions, colors and name, plus the
+retained Architect flags, contact override/name, full and custom NPC contact
+costumes. Retained fields stay visible after onArchitect is cleared. Added
+`use_cached_costume`, which the receiver clears when the contact changes.
+Mission-review widget state remains excluded.
+
+New: `command_destinations` dumps every argument of every command in
+`control_cmds` and `server_visible_cmds`, the same two tables as entrecv.c's
+`cmd_list` that `cmdOldReceive` writes, whether or not a packet named the
+command, plus `server_visible_state.abs_time`. Floats keep raw bits; strings
+stay within each command's maxval. `receiver_command_destinations.py` compiles
+the actual cmdOldReceivePacked/cmdOldReceive/doDataSwap with host adapters and
+checks table parity with entrecv.c's cmd_list, bit patterns, the access-level
+gate, unreceived commands and bounds. `cmdReceiveServerCommands`
+(SERVER_GAME_CMDS) only appends names to cmdgame.c's global `serverCommands`
+through cmdAddServerCommand (case-insensitive duplicates skipped); the ordered
+list and its initialized flag are now dumped as `server_commands`, tested with
+the actual receive/add/lookup bodies. Schema and completion flags stay partial.
+
+`super_stats` adds the entity-tail receiveSuperStats destinations: the
+supergroup header (influence, prestige fields, rent, player type, names,
+colors, tithe, timeout, entry permission, alliance rank), all seven ranks with
+permission words, member ranks, all ten ally slots, ordered member stat
+records, the player's own rank copy and pl->supergroup_mode. Fixed storage is
+dumped up to its capacity, so unterminated strncpy ranks stay literal.
+`receiver_super_stats_state.py` runs the actual receiver body with host
+adapters (7 cases). UI refresh, MOTD chat and the static prestige mirror are
+excluded.
+
+`server_control_receive` adds playerReceiveControlState's retained server
+state: the accepted ServerControlState (speed, back speed, jump height and
+surface modifiers as raw bits, 17 flags), the 100-step received physics ring
+(net_id, position and velocity bits, end/cur) and the three packet-ID guards
+server_state_pkt_id, server_pos_pkt_id and forced_move_pkt_id. Those three are
+pak->id-derived and can persist from INITIAL, so compare_state.py canonicalizes
+them in every snapshot of the ID1/31 pair only when exactly equal to that run's
+synthetic ID (real IDs are 32..155); every other field stays literal. CSC
+prediction lists, future pushes, interpolation and local input are excluded.
+`receiver_server_control_state.py` checks the actual writer (3 cases) with the
+original header layouts; the original receivers are not compiled there.
+Entity-tail invention_Receive has an entirely commented-out body in the
+original source, so it writes nothing and needs no observation.
+
+## Receiver destination inventory (game commands and entrecv.c)
+
+`evidence/m3-receiver-destination-inventory.json` maps every game command
+dispatched in replay 40356647596 (18 IDs; `run_ci.py` `game_commands`) to its
+original `handleGameCmd` handler and the snapshot key that retains its
+destination. `SERVER_BEGIN_BYTE_ALIGNED_DATA` has no retained destination.
+
+It also lists the result of a scripted destination scan of each `entrecv.c`
+function (lvalues and address-of chains compared with the field names
+`state.c` writes), with a manual classification. Received values that no
+writer kept are now in `receive_extras`:
+- access level, db flags and logout timer bits;
+- the owned costume;
+- the four `entReceiveTitles` player values and the costume special-FX name;
+- the IgnoreCombatMods pair.
+
+Local clocks (`pendingCostume*Time`, `pvpUpdateTime`), `confuseRand`,
+calloc-only `mapIds`, interpolation history and the unsupported ragdoll are
+explicit exclusions. Initial-path callees in `Common/entity`, the
+tray/window/options gaps above and the UI-cache lifecycle audit remain. The
+inventory is partial and changes no completion flag.
+
+### entReceiveUpdate retained state (review 5657846186)
+
+Review 5657846186 found received destinations the name-based scan missed.
+Patch 0106 adds a read-only copy-out of the `entrecv.c` statics
+`interp_data_level`/`interp_data_precision` (they set later position read
+widths and decode levels) and `last_abs_time`/`last_packet_abs_time`. It also
+adds a `db_time` observer, because `setServerS2000` keeps only a local-clock
+difference.
+
+`entreceive_update` retains:
+- those values;
+- `hasEntDebugInfo`;
+- `last_pkt_id`;
+- `global_state.abs_time`;
+- the 100-slot `time_since` history, which derives only from received
+  `abs_time` (it was earlier listed as a local clock in error);
+- both `client_pos_id` values.
+
+Each entity retains `send_on_odd_send`. `last_pkt_id` is canonicalized only
+in snapshot 0, and only when it equals the synthetic INITIAL ID: the first
+post-READY `pak->id` (32) exceeds both 1 and 31. `local_time_bias` and
+`server_time` mix the local clock and stay excluded. Writer ASan/UBSan cases
+and comparison negative controls cover each retained value.

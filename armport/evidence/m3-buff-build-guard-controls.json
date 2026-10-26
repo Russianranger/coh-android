@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-25",
+  "patch": "0092-enable-replay-buff-view-guard.patch",
+  "patchwork_commit": "32ab33f1fa14cadcd9f039a57d2c0d0f9af04484",
+  "defect": "uiBuff.c did not include the replay feature header before the guarded view; compile-only success did not establish emitted accessor definitions",
+  "correction": "Include clientcomm/armport_replay.h before UI/uiBuff.h; no receiver/view behavior changes",
+  "commands": [
+    {
+      "command": "/tmp/coh-toolchain/bin/aarch64-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-arm64/_deps/chromium_zlib-src -I/tmp/coh-world-build-arm64/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-arm64/_deps/freetype-src/include -I/tmp/coh-world-build-arm64/_deps/glew-src/include -I/tmp/coh-world-build-arm64/_deps/jpeg-build -I/tmp/coh-world-build-arm64/_deps/jpeg-src -I/tmp/coh-world-build-arm64/_deps/jpgd-src/include -I/tmp/coh-world-build-arm64/_deps/vorbis-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-arm64/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-arm64/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/src/UI/uiBuff.c.obj -c /tmp/coh-world-patchwork/src/Game/src/UI/uiBuff.c",
+      "exit_code": 0,
+      "output": "In file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiBuff.c:23:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\n/tmp/coh-world-patchwork/src/Game/src/UI/uiBuff.c:332:102: warning: cast to 'void *' from smaller integer type 'int' [-Wint-to-void-pointer-cast]\n  332 |         contextMenu_addVariableTitleVisibleNoTrans( gPowerBuffcm, buffcm_PowerNumbersVisibleAdapter, (void*)i, buffcm_PowerNumbersInfoAdapter, (void*)i );\n      |                                                                                                      ^~~~~~~~\n/tmp/coh-world-patchwork/src/Game/src/UI/uiBuff.c:332:144: warning: cast to 'void *' from smaller integer type 'int' [-Wint-to-void-pointer-cast]\n  332 |         contextMenu_addVariableTitleVisibleNoTrans( gPowerBuffcm, buffcm_PowerNumbersVisibleAdapter, (void*)i, buffcm_PowerNumbersInfoAdapter, (void*)i );\n      |                                                                                                                                                ^~~~~~~~\n3 warnings generated.\n"
+    },
+    {
+      "command": "/tmp/coh-toolchain/bin/llvm-nm /tmp/coh-world-build-arm64/Game/CMakeFiles/Game.dir/src/UI/uiBuff.c.obj | rg armportReplayBuff",
+      "exit_code": 0,
+      "output": "0000001c T armportReplayBuffAt\n00000000 T armportReplayBuffCount\n"
+    },
+    {
+      "command": "/tmp/coh-toolchain/bin/i686-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCOH_ARMPORT_REFERENCE_I686=1 -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-i686/_deps/chromium_zlib-src -I/tmp/coh-world-build-i686/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-i686/_deps/freetype-src/include -I/tmp/coh-world-build-i686/_deps/glew-src/include -I/tmp/coh-world-build-i686/_deps/jpeg-build -I/tmp/coh-world-build-i686/_deps/jpeg-src -I/tmp/coh-world-build-i686/_deps/jpgd-src/include -I/tmp/coh-world-build-i686/_deps/vorbis-src/include -I/tmp/coh-world-build-i686/_deps/ogg-src/include -I/tmp/coh-world-build-i686/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-i686/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-i686/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -msse2 -mfpmath=sse -fasm-blocks -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/src/UI/uiBuff.c.obj -c /tmp/coh-world-patchwork/src/Game/src/UI/uiBuff.c",
+      "exit_code": 0,
+      "output": "In file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiBuff.c:23:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\n1 warning generated.\n"
+    },
+    {
+      "command": "/tmp/coh-toolchain/bin/llvm-nm /tmp/coh-world-build-i686/Game/CMakeFiles/Game.dir/src/UI/uiBuff.c.obj | rg armportReplayBuff",
+      "exit_code": 0,
+      "output": "00000020 T _armportReplayBuffAt\n00000000 T _armportReplayBuffCount\n"
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_buff_state.py --source /tmp/coh-world-patchwork/src",
+      "exit_code": 0,
+      "output": "buff build guard: ARM64/i686 declarations and definitions enabled; normal build and missing-include negative controls disabled\nbuff state original receiver/update/find/mark/clear and actual view/writer: 21 cases pass; full/diff/delete/stale/no-player/unknown-descriptor paths, retained absent mods, order/nulls/mismatched arrays, F32 bits, bounds, const views and timer/UI exclusion; ASan/UBSan enabled; fixture arena and free substitute do not qualify ownership\n"
+    },
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "output": "..................................................................................................................................................................\n----------------------------------------------------------------------\nRan 162 tests in 7.088s\n\nOK\n"
+    }
+  ],
+  "patch_count": 92,
+  "previous_91_patches_byte_identical": true,
+  "upstream_unchanged": true,
+  "runtime_qualification": "pending",
+  "full_link_qualification": "pending",
+  "state_schema_complete": false,
+  "m3_replay_complete": false,
+  "limitations": [
+    "Native objects were compiled sequentially from retained compile_commands after checkout recovery caused CMake regeneration to retry an already-applied dependency patch. No fresh configure/full link claimed.",
+    "Preprocessor regression uses actual ordered replay/buff includes and guarded view, omitting unrelated includes; native object symbol inspection supplies separate target evidence.",
+    "Only local LeakSanitizer disabled for /proc; original allocation ownership remains unqualified."
+  ],
+  "negative_regression": "check_build_guard with the replay include removed raises AssertionError as expected"
+}

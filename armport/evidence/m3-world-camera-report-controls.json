@@ -1,0 +1,20 @@
+{
+  "scope": "Sampled camera/player diagnostics only; no acceptance changes",
+  "python_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "python_output": "........................................................................................................................................................................\n----------------------------------------------------------------------\nRan 168 tests in 6.826s\n\nOK\n",
+  "specific_controls": [
+    "Five tests: literal matrices/coordinates and residuals without cause claim",
+    "Absent player and exponent syntax",
+    "Torn/malformed/nonfinite/duplicate/frame/thread rejection",
+    "Eight-sample limit",
+    "Report caller preserves LF/CRLF/unterminated records"
+  ],
+  "transform_source": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h: mulVecMat4",
+  "limitations": [
+    "No new rendering threshold, data change or acceptance gate",
+    "Computed residual uses printed decimal values, not original full-precision matrix",
+    "Runtime camera artifact is pending"
+  ],
+  "upstream_unchanged": true,
+  "patches_unchanged_since_0093": true
+}

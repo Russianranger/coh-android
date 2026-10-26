@@ -1,0 +1,761 @@
+{
+  "date_utc": "2026-10-26",
+  "review": "https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5646841168",
+  "review_scope": "Normalization scope approved; this implementation and controls still need review.",
+  "comparison_script_sha256": "a64945ff36a48f5207842bc60a596df305c3a51d9786b62763076d3d0a437fa7",
+  "tests": {
+    "command": "python3 -m unittest discover -s armport/tests",
+    "output": "Ran 191 tests in 10.109s; OK",
+    "focused_command": "python3 -m unittest discover -s armport/tests -p 'test_receiver_state_comparison.py'",
+    "focused_output": "Ran 13 tests in 2.026s; OK",
+    "controls": [
+      "exact snapshot-zero scalar/attribute/friend destinations",
+      "wrong integers, bool, float, string and null remain literal",
+      "schema names/order/extra fields and null branches",
+      "adjacent EntityRef/actor/taskforce/token/payload/sequence/NetFx/clock unchanged",
+      "saved source input immutable",
+      "later snapshot and same-ID/cross-target differences fail"
+    ]
+  },
+  "replays": [
+    {
+      "run": 40247679017,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/40247679017",
+      "source_commit": "4c8b6c3903187a187028bb708e0f22159cc8496a",
+      "historical_ci_conclusion": "failure",
+      "artifacts": [
+        {
+          "id": 12620176960,
+          "sha256": "b8bc699e099ebd414598abada0b5c8e9014d710c00caeb429c275d77693a22b5"
+        },
+        {
+          "id": 12620705411,
+          "sha256": "e592dcc8150e2cc6cbc6fd5f95c9b407a86152bb3c7a5ec1c7698d723d58a96f"
+        }
+      ],
+      "command": "python3 armport/replay/compare_state.py --root <verified-40247679017-artifacts> --commit 4c8b6c3903187a187028bb708e0f22159cc8496a --original-texture-exception --output result.json",
+      "retrospective_result": {
+        "outside_error_inventories_equal": true,
+        "source_commit": "4c8b6c3903187a187028bb708e0f22159cc8496a",
+        "scope": "partial_receiver_state_comparison",
+        "original_texture_exception": true,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "comparisons": [
+          {
+            "left": [
+              "arm64",
+              "id1-a"
+            ],
+            "right": [
+              "i686",
+              "id1-a"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id1-b"
+            ],
+            "right": [
+              "i686",
+              "id1-b"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id31"
+            ],
+            "right": [
+              "i686",
+              "id31"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id1-a"
+            ],
+            "right": [
+              "arm64",
+              "id1-b"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id1-a"
+            ],
+            "right": [
+              "arm64",
+              "id31"
+            ],
+            "id_sensitivity": true,
+            "canonicalized_fields": [
+              "entities[].pkt_id_create",
+              "entities[].player.lastClientStatePktId",
+              "delete_history[].pkt_id",
+              "entities[].pkt_id_pos[]",
+              "entities[].pkt_id_qrot[]"
+            ],
+            "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+            "snapshot0_additional_canonicalization": {
+              "scalar_channels": [
+                "pkt_id_friendslist",
+                "pkt_id_seq_move",
+                "pkt_id_seq_triggermove",
+                "pkt_id_logout",
+                "pkt_id_supergroup",
+                "pkt_id_costume",
+                "pkt_id_powerCust",
+                "pkt_id_xlucency",
+                "pkt_id_titles",
+                "pkt_id_character_stats",
+                "pkt_id_targetting",
+                "pkt_id_status_effects",
+                "pkt_id_buffs",
+                "pkt_id_debug_info",
+                "pkt_id_rare_bits",
+                "pkt_id_state_mode"
+              ],
+              "attribute_schemas": {
+                "basic": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ]
+                ],
+                "self": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused",
+                      "ToHit"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ],
+                  [
+                    "ExperiencePoints",
+                    null
+                  ],
+                  [
+                    "ExperienceDebt",
+                    null
+                  ],
+                  [
+                    "ExperienceRest",
+                    null
+                  ],
+                  [
+                    "InfluencePoints",
+                    null
+                  ]
+                ]
+              },
+              "friend_receive_id": true,
+              "condition": "snapshot index 0; exact integer equals this runs synthetic INITIAL ID",
+              "review": 5646841168
+            },
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "i686",
+              "id1-a"
+            ],
+            "right": [
+              "i686",
+              "id1-b"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "i686",
+              "id1-a"
+            ],
+            "right": [
+              "i686",
+              "id31"
+            ],
+            "id_sensitivity": true,
+            "canonicalized_fields": [
+              "entities[].pkt_id_create",
+              "entities[].player.lastClientStatePktId",
+              "delete_history[].pkt_id",
+              "entities[].pkt_id_pos[]",
+              "entities[].pkt_id_qrot[]"
+            ],
+            "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+            "snapshot0_additional_canonicalization": {
+              "scalar_channels": [
+                "pkt_id_friendslist",
+                "pkt_id_seq_move",
+                "pkt_id_seq_triggermove",
+                "pkt_id_logout",
+                "pkt_id_supergroup",
+                "pkt_id_costume",
+                "pkt_id_powerCust",
+                "pkt_id_xlucency",
+                "pkt_id_titles",
+                "pkt_id_character_stats",
+                "pkt_id_targetting",
+                "pkt_id_status_effects",
+                "pkt_id_buffs",
+                "pkt_id_debug_info",
+                "pkt_id_rare_bits",
+                "pkt_id_state_mode"
+              ],
+              "attribute_schemas": {
+                "basic": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ]
+                ],
+                "self": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused",
+                      "ToHit"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ],
+                  [
+                    "ExperiencePoints",
+                    null
+                  ],
+                  [
+                    "ExperienceDebt",
+                    null
+                  ],
+                  [
+                    "ExperienceRest",
+                    null
+                  ],
+                  [
+                    "InfluencePoints",
+                    null
+                  ]
+                ]
+              },
+              "friend_receive_id": true,
+              "condition": "snapshot index 0; exact integer equals this runs synthetic INITIAL ID",
+              "review": 5646841168
+            },
+            "equal": true,
+            "mismatches": []
+          }
+        ],
+        "partial_state_equal": true,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      }
+    },
+    {
+      "run": 40254223051,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/40254223051",
+      "source_commit": "38b5cebb86a246413d85dacde43a788a0c955037",
+      "historical_ci_conclusion": "failure",
+      "artifacts": [
+        {
+          "id": 12622456693,
+          "sha256": "ced4f475ac81a6c025d5dac70d41f61d77ea79a0ee3a592e01185f7841818f1b"
+        },
+        {
+          "id": 12623057138,
+          "sha256": "98e98df39bb3afeb1f921e62efdbd44536de66e8c550862b09e724d46389601b"
+        }
+      ],
+      "command": "python3 armport/replay/compare_state.py --root <verified-40254223051-artifacts> --commit 38b5cebb86a246413d85dacde43a788a0c955037 --original-texture-exception --output result.json",
+      "retrospective_result": {
+        "outside_error_inventories_equal": true,
+        "source_commit": "38b5cebb86a246413d85dacde43a788a0c955037",
+        "scope": "partial_receiver_state_comparison",
+        "original_texture_exception": true,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "comparisons": [
+          {
+            "left": [
+              "arm64",
+              "id1-a"
+            ],
+            "right": [
+              "i686",
+              "id1-a"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id1-b"
+            ],
+            "right": [
+              "i686",
+              "id1-b"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id31"
+            ],
+            "right": [
+              "i686",
+              "id31"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id1-a"
+            ],
+            "right": [
+              "arm64",
+              "id1-b"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "arm64",
+              "id1-a"
+            ],
+            "right": [
+              "arm64",
+              "id31"
+            ],
+            "id_sensitivity": true,
+            "canonicalized_fields": [
+              "entities[].pkt_id_create",
+              "entities[].player.lastClientStatePktId",
+              "delete_history[].pkt_id",
+              "entities[].pkt_id_pos[]",
+              "entities[].pkt_id_qrot[]"
+            ],
+            "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+            "snapshot0_additional_canonicalization": {
+              "scalar_channels": [
+                "pkt_id_friendslist",
+                "pkt_id_seq_move",
+                "pkt_id_seq_triggermove",
+                "pkt_id_logout",
+                "pkt_id_supergroup",
+                "pkt_id_costume",
+                "pkt_id_powerCust",
+                "pkt_id_xlucency",
+                "pkt_id_titles",
+                "pkt_id_character_stats",
+                "pkt_id_targetting",
+                "pkt_id_status_effects",
+                "pkt_id_buffs",
+                "pkt_id_debug_info",
+                "pkt_id_rare_bits",
+                "pkt_id_state_mode"
+              ],
+              "attribute_schemas": {
+                "basic": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ]
+                ],
+                "self": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused",
+                      "ToHit"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ],
+                  [
+                    "ExperiencePoints",
+                    null
+                  ],
+                  [
+                    "ExperienceDebt",
+                    null
+                  ],
+                  [
+                    "ExperienceRest",
+                    null
+                  ],
+                  [
+                    "InfluencePoints",
+                    null
+                  ]
+                ]
+              },
+              "friend_receive_id": true,
+              "condition": "snapshot index 0; exact integer equals this runs synthetic INITIAL ID",
+              "review": 5646841168
+            },
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "i686",
+              "id1-a"
+            ],
+            "right": [
+              "i686",
+              "id1-b"
+            ],
+            "id_sensitivity": false,
+            "canonicalized_fields": [],
+            "canonicalization_condition": null,
+            "snapshot0_additional_canonicalization": null,
+            "equal": true,
+            "mismatches": []
+          },
+          {
+            "left": [
+              "i686",
+              "id1-a"
+            ],
+            "right": [
+              "i686",
+              "id31"
+            ],
+            "id_sensitivity": true,
+            "canonicalized_fields": [
+              "entities[].pkt_id_create",
+              "entities[].player.lastClientStatePktId",
+              "delete_history[].pkt_id",
+              "entities[].pkt_id_pos[]",
+              "entities[].pkt_id_qrot[]"
+            ],
+            "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+            "snapshot0_additional_canonicalization": {
+              "scalar_channels": [
+                "pkt_id_friendslist",
+                "pkt_id_seq_move",
+                "pkt_id_seq_triggermove",
+                "pkt_id_logout",
+                "pkt_id_supergroup",
+                "pkt_id_costume",
+                "pkt_id_powerCust",
+                "pkt_id_xlucency",
+                "pkt_id_titles",
+                "pkt_id_character_stats",
+                "pkt_id_targetting",
+                "pkt_id_status_effects",
+                "pkt_id_buffs",
+                "pkt_id_debug_info",
+                "pkt_id_rare_bits",
+                "pkt_id_state_mode"
+              ],
+              "attribute_schemas": {
+                "basic": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "StealthRadiusPlayer"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ]
+                ],
+                "self": [
+                  [
+                    "CurrentAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused",
+                      "ToHit"
+                    ]
+                  ],
+                  [
+                    "MaxAttribs",
+                    [
+                      "HitPoints",
+                      "Absorb",
+                      "Endurance",
+                      "Meter",
+                      "PerceptionRadius",
+                      "StealthRadiusPlayer",
+                      "Confused"
+                    ]
+                  ],
+                  [
+                    "SendLevels",
+                    [
+                      "Level",
+                      "CombatLevel"
+                    ]
+                  ],
+                  [
+                    "ExperiencePoints",
+                    null
+                  ],
+                  [
+                    "ExperienceDebt",
+                    null
+                  ],
+                  [
+                    "ExperienceRest",
+                    null
+                  ],
+                  [
+                    "InfluencePoints",
+                    null
+                  ]
+                ]
+              },
+              "friend_receive_id": true,
+              "condition": "snapshot index 0; exact integer equals this runs synthetic INITIAL ID",
+              "review": 5646841168
+            },
+            "equal": true,
+            "mismatches": []
+          }
+        ],
+        "partial_state_equal": true,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      }
+    }
+  ],
+  "limitations": [
+    "Retrospective comparator qualification, not a new CI run or changed historical result.",
+    "Schema/full comparison/M3/M4/M5 remain incomplete.",
+    "No raw snapshot, game receiver or screenshot gate changed."
+  ]
+}

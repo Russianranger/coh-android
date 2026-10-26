@@ -1,0 +1,13 @@
+diff --git a/Game/src/UI/uiTurnstile.c b/Game/src/UI/uiTurnstile.c
+index d146deb..27e0059 100644
+--- a/Game/src/UI/uiTurnstile.c
++++ b/Game/src/UI/uiTurnstile.c
+@@ -726,7 +726,7 @@ void turnstileGame_handleForceQueue(Packet *pak)
+     const char * eventName = pktGetString(pak);
+ 
+     window_setMode(WDW_TURNSTILE, WINDOW_GROWING);
+-    strcpy(sForceQueueEvent, eventName);
++    strncpyt(sForceQueueEvent, eventName, sizeof(sForceQueueEvent));
+ }
+ 
+ static int ts_inviter_db_id;

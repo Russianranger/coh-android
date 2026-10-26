@@ -42,17 +42,97 @@ handles get cut.
 | 0039 | Pointer arrays described to the textparser as int arrays (`TOK_AUTOINTEARRAY` of `ppPowers`, `ppPowerSets`, `ppItems`, `ppDetails`, for shared-memory copies); textparser int arrays are 32-bit | createbins asserted loading the power dictionary |
 | 0040 | `.geo` format version 2 model records read as a raw `ModelFormatOnDisk_v2` (216 bytes on disk, pointers) | release client crashed in `geoLoadStubs` on a garbage model name |
 | 0043 | SMF text attributes keep the font face (`TTDrawContext *`) in an int stack (`smf_PushAttrib`, `smf_InitTextAttribs`); the font-height cache keyed on the first 8 bytes of {font pointer, size} | release client crashed in `ttGetFontHeight` on a font pointer cut to 32 bits; every size of a font would have shared one cached height |
+| 0044 | `SOCKET` (64-bit on ARM64 Windows) passed as `int` in the receive path: `pktGetUdp`, `netAddLink`, the `accept` result | none seen (Winsock handles are small, and `-1` still compares equal to `INVALID_SOCKET` after widening); fixed so no handle value depends on that |
 
 All file-layout constants above were checked against the 32-bit structures by
 compiling them for i686 with static assertions (sizes and field offsets).
 
+## Not 64-bit, found on the way
+
+| Patch | Problem | Effect before the fix |
+|---|---|---|
+| 0042 | Production clients read `scenes/`, `ent_types/`, `object_library/`, `geobin/` only from piggs; CI has loose data (`ARMPORT_LOOSE_DATA`) | scene load failed |
+| 0045 | The fake-auth DbServer honours the client's no-version-check flag; the Release client can only set it with a level-9 command (`ARMPORT_NO_VERSION_CHECK`) | DbServer answered the login with WrongVersion |
+| 0047 | `groupFileRecalcBounds` and the tree check in `groupDefFree` did not skip empty def slots (members that failed to load; the 32-bit MapServer logs the same "can't find member" on this data), unlike `groupRecalcAllBounds` | client crashed loading Atlas Park's world groups |
+
 ## Known, not fixed yet
+
+Patch 0050 changes ARM64 llvm-mingw worker queue indices, sleep flag and thread
+state to sequentially consistent atomic loads/stores and publishes the event
+before THREAD_RUNNING. The original negative control misses a wake; the patched
+case dispatches it, and both wrap 4096 commands/replies in run 40035482170,
+libraries job 120693769990. See WORKER-QUEUE.md for the remaining x86 ordering
+limitation and why this is not an established Atlas stall fix.
+
+Patches 0048 (zone progress) and 0049 (texture queue progress) are diagnostics
+only, like 0046: inert unless ARMPORT_STDIO_LOG is set; no gameplay, queue order
+or timeout changes. They are retained to diagnose original loading failures.
 
 - `libs/UtilitiesLib/src/utils/DirMonitor.c:338`: completion key narrowed to
   U32 (development-mode file watching only).
-- `libs/UtilitiesLib/src/network/*`: `SOCKET` values kept in `int`. Socket
-  handles are small numbers under Wine; revisit if networking misbehaves.
 
-Reviewed and safe: `net_masterlist.c` completion keys (32-bit indices),
+Reviewed and safe: the network library otherwise keeps `SOCKET` in `SOCKET`
+fields (`net_structdefs.h`); its other narrowings (`rsa.c`, `bignum.c`) store
+`strlen` results and pointer differences of short key strings in `int`. `net_masterlist.c` completion keys (32-bit indices),
 byte counts from `fread`/`fileSize`, textparser `intptr_t` parameters that
 hold integers, window ids passed through `void *` in the UI.
+
+
+0052: diagnostic CRT stream correction. file.h's fprintf macro takes a
+FileWrapper*, so passing CRT stderr from armport_zone_trace.h was invalid.
+The header now temporarily restores the CRT function and preserves caller
+macros. A negative/positive compile control and ARM64 Wine regression cover
+the tex.c include order. Evidence: notes/M3-LOAD-STALL.md, run 40035482170.
+
+
+0053–0055: i686 replay-reference build opt-ins, not additional ARM64 pointer
+fixes. They select matching reduced SDKs, fail rather than recover local SEH
+in the reference, and use clang vector-lane syntax. The original receiver is
+compiled unchanged. See M3-REPLAY-PLAN.md for compile evidence and exclusions.
+
+0056: opt-in original-receiver replay entry, not a pointer or decoder fix.
+The normal network callback retains statistics and dispatches through the
+same original switch; replay enters below transport statistics after normal
+startup. Extra receive/output initialization is listed in the patch's new
+header. No upstream file is modified. See replay/README.md: initial scope
+is cursor/ACK execution and deliberately cannot claim state equivalence.
+
+0057: bounded swap/model and error-dialog progress diagnostics. No pointer
+fix or loading behavior change; follows the post-drain stop reproduced in
+40042636088 and 40043254025. ARM64/i686 OptDebug Game links pass locally.
+
+
+0062: initialize costumeVerifyTextures' entire dummy Appearance. Its optional
+costumeFilePrefix was read uninitialized in determineTextureNames. Run
+40097455262 has equal complete error counts on both targets but case-only
+spelling differences; run 40099922039 tests this correction. This is a shared
+source bug exposed by architecture-dependent stack contents, not an allowance
+for ARM64-only errors. No acceptance normalization is added.
+
+0063: collision-grid node storage and lookup must preserve pointer width.
+Run 40094942248's exact Release executable resolves 0x1400a4da4 to
+groupGridActivate (groupgrid.c:96:14), reading def+0x88 through a truncated
+tracker. GridEnts.entries, GridIdxList entry pointers, insertion temporaries,
+checkGridCellObjs and processGridEntries now use uintptr_t. The latter's int
+temporary could classify a high pointer as a small numeric ID. The group tag
+is still bit 0; IDs below 100000 still use the original numeric tag table.
+Host command `python3 armport/tests/grid_pointers.py --source
+../patchwork-active/src --expect-full-width 1` returns storage=1, sphere=1,
+collision=1, distinct=1. The same command with upstream/ouroboros and expected
+0 returns all four as 0. Both generated ARM64 Windows controls compile.
+The test adapts allocators/unrelated geometry but executes the original grid
+function bodies; high tokens are never dereferenced. Wine/Atlas CI is required.
+
+
+0071: modelCreateCtris allocated an expanded ARM64 PolyCell grid but placed
+triangles at the original disk byte count, overwriting native pointers and
+retained indices. Use uiGridAllocSize, matching the shared-heap path. Replay
+40128377861 and Atlas 40128377899 both fault in objSplitPlanes; the exact
+symbols, operands, allocation controls and both target compiles are recorded
+in ../evidence/m3-review12-grid-and-runtime-40128377861.json. Runtime repair
+still requires new CI; i686's computed grid extent remains the raw size.
+
+0072 caches the existing power trace opt-in. 0073 is an inert-unless-enabled
+selected-power diagnostic at M4's actual caller; no pointer filtering or game
+logic repair. Exact M4 40127841088 symbols and command outputs are in the same
+evidence JSON. It is not a power-pointer fix or milestone qualification.

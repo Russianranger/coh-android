@@ -1,0 +1,84 @@
+0050:trace:seh:dispatch_exception code=6ba (RPC_S_SERVER_UNAVAILABLE) flags=0 addr=00006FFFFF8EA5A4
+0050:trace:seh:dispatch_exception  pc=00006fffff8ea5a4  sp=00007ffffe1fdba0  lr=00006fffff8ea5a4  fp=0000000000000000
+0050:trace:seh:dispatch_exception  x0=00007ffffe1fdba8  x1=0000000000000000  x2=0000000000000000  x3=0000000000000000
+0050:trace:seh:dispatch_exception  x4=00000000c0000034  x5=0000ff11588b2d78  x6=00006fffffdcf39a  x7=0000000000000000
+0050:trace:seh:dispatch_exception  x8=00006fffffdb2cb0  x9=0000000000000003 x10=0000000000000000 x11=00007ffffe2200e0
+0050:trace:seh:dispatch_exception x12=0000000000000008 x13=0000000000000003 x14=0000000000000030 x15=0000000000000000
+0050:trace:seh:dispatch_exception x16=00006fffff8ea544 x17=00007ffffe1fd7e0 x18=000000007ffc0000 x19=0000000000000000
+0050:trace:seh:dispatch_exception x20=0000000000000064 x21=00007ffffe9dca90 x22=00006ffffde4ab38 x23=00006ffffde4ab14
+0050:trace:seh:dispatch_exception x24=0000000000000000 x25=00007ffffe9dca90 x26=00006ffffe21b000 x27=0000000000000000
+0050:trace:seh:dispatch_exception x28=00006ffffde4a8e0 cpsr=60000000 fpcr=00000000 fpsr=00000000
+0050:trace:seh:call_seh_handlers calling TEB handler 00006FFFFE1F4E60 (rec=00007FFFFE1FDBA8 frame=00007FFFFE1FDC90 context=00007FFFFE1FD810 dispatch=00007FFFFE1FD428) sp=7ffffe1fe660
+0050:trace:seh:call_seh_handlers TEB handler at 00006FFFFE1F4E60 returned 1
+0050:trace:seh:call_seh_handlers calling TEB handler 00006FFFFDE437BC (rec=00007FFFFE1FDBA8 frame=00007FFFFE1FEFC0 context=00007FFFFE1FD810 dispatch=00007FFFFE1FD428) sp=7ffffe1ff110
+0050:trace:seh:RtlUnwindEx code=6ba flags=2 end_frame=00007FFFFE1FEFC0 target_ip=00006FFFFDE43974
+0050:trace:seh:RtlUnwindEx  pc=00006fffffdb36e4  sp=00007ffffe1fc6c0  lr=0000000000000000  fp=00007ffffe1fd7f0
+0050:trace:seh:RtlUnwindEx  x0=0000000000000000  x1=00006ffffde43974  x2=00007ffffe1fdba8  x3=0000000000000000
+0050:trace:seh:RtlUnwindEx  x4=00007ffffe1fcc70  x5=0000000000000000  x6=00007ffffe1fefc0  x7=00007ffffe1fd810
+0050:trace:seh:RtlUnwindEx  x8=00006fffffdc1374  x9=00000000000006ba x10=00007ffffe0ffcd0 x11=0000000000000000
+0050:trace:seh:RtlUnwindEx x12=0000000000000037 x13=00006fffffdeb000 x14=00006fffffdd5a20 x15=00006ffffde5bfc0
+0050:trace:seh:RtlUnwindEx x16=00007ffffe1fcbe0 x17=00006fffffdb9190 x18=000000007ffc0000 x19=00006ffffde43974
+0050:trace:seh:RtlUnwindEx x20=00007ffffe1fcc70 x21=00006ffffde43974 x22=00007ffffe1fefc0 x23=00007ffffe1fefc0
+0050:trace:seh:RtlUnwindEx x24=00007ffffe1fdc90 x25=00007ffffe1fdba8 x26=0000000000000001 x27=00007ffffe1fd428
+0050:trace:seh:RtlUnwindEx x28=00006fffffdeb000 cpsr=00000000 fpcr=00000000 fpsr=00000000
+0050:trace:seh:RtlUnwindEx calling handler 00006FFFFFD866EC (rec=00007FFFFE1FDBA8, frame=7ffffe1fd070 context=00007FFFFE1FCC70, dispatch=00007FFFFE1FCA88)
+0050:trace:seh:RtlUnwindEx handler 00006FFFFFD866EC returned 1
+0050:trace:seh:RtlUnwindEx calling TEB handler 00006FFFFE1F4E60 (rec=00007FFFFE1FDBA8, frame=00007FFFFE1FDC90 context=00007FFFFE1FCC70, dispatch=00007FFFFE1FCA88)
+0050:trace:seh:RtlUnwindEx handler at 00006FFFFE1F4E60 returned 1
+0050:trace:seh:RtlRestoreContext returning to 6ffffde43974 stack 7ffffe1fefb0
+ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default
+ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default
+ARMPORT_ATLAS_MAP_START_V1
+0024:trace:seh:dispatch_exception code=c0000005 (EXCEPTION_ACCESS_VIOLATION) flags=0 addr=00000001400A56D4
+0024:trace:seh:dispatch_exception  info[0]=0000000000000000
+0024:trace:seh:dispatch_exception  info[1]=0000000000000088
+0024:trace:seh:dispatch_exception  pc=00000001400a56d4  sp=00007ffffe1f36f0  lr=00000001400a56d4  fp=0000000000000000
+0024:trace:seh:dispatch_exception  x0=00000000000000bb  x1=0000000000000000  x2=0000ff9b2bc38fc8  x3=0000000000000000
+0024:trace:seh:dispatch_exception  x4=0000000000000000  x5=d655e02031d677b3  x6=0000000000000002  x7=0000000000000000
+0024:trace:seh:dispatch_exception  x8=00006fffff4e9fa0  x9=00000000ffffffff x10=0000000000000000 x11=000000000000000a
+0024:trace:seh:dispatch_exception x12=000000000000000d x13=0000000000000000 x14=0000000000000033 x15=0000000000000103
+0024:trace:seh:dispatch_exception x16=00006fffffdb29d4 x17=00007ffffe1f20c0 x18=000000007ffc0000 x19=00000001409c4c40
+0024:trace:seh:dispatch_exception x20=0000000043ed4550 x21=0000000000000000 x22=00006fffff4e9f68 x23=00000000003a86e7
+0024:trace:seh:dispatch_exception x24=00000000000000bc x25=0000000000000001 x26=00006fffffc6619c x27=00006fffff461e2c
+0024:trace:seh:dispatch_exception x28=00000000000000bc cpsr=80000000 fpcr=00000000 fpsr=00000010
+0024:trace:seh:call_seh_handlers calling handler 00000001406B964C (rec=00007FFFFE1F3630, frame=7ffffe1fffe0 context=00007FFFFE1F3280, dispatch=00007FFFFE1F2EB8)
+0024:trace:seh:signal (11, 0000000000000000)
+0024:trace:seh:call_seh_handlers handler at 00000001406B964C returned 1
+0024:trace:seh:call_seh_handlers calling handler 00006FFFFFD86A1C (rec=00007FFFFE1F3630, frame=7ffffe200000 context=00007FFFFE1F3280, dispatch=00007FFFFE1F2EB8)
+0024:trace:seh:signal (11, 0000000000000000)
+wine: Unhandled page fault on read access to 0000000000000088 at address 00000001400A56D4 (thread 0024), starting debugger...
+0024:trace:seh:start_debugger Starting debugger L"winedbg --auto 32 364"
+013c:fixme:dbghelp:elf_search_auxv can't find symbol in module
+0024:trace:seh:call_seh_handlers handler at 00006FFFFFD86A1C returned 1
+013c:fixme:dbghelp:elf_search_auxv can't find symbol in module
+0024:trace:seh:dispatch_exception code=c0000005 (EXCEPTION_ACCESS_VIOLATION) flags=0 addr=00000001400A56D4
+0024:trace:seh:dispatch_exception  info[0]=0000000000000000
+0024:trace:seh:dispatch_exception  info[1]=0000000000000088
+0024:trace:seh:dispatch_exception  pc=00000001400a56d4  sp=00007ffffe1f36f0  lr=00000001400a56d4  fp=0000000000000000
+0024:trace:seh:dispatch_exception  x0=00000000000000bb  x1=0000000000000000  x2=0000ff9b2bc38fc8  x3=0000000000000000
+0024:trace:seh:dispatch_exception  x4=0000000000000000  x5=d655e02031d677b3  x6=0000000000000002  x7=0000000000000000
+0024:trace:seh:dispatch_exception  x8=00006fffff4e9fa0  x9=00000000ffffffff x10=0000000000000000 x11=000000000000000a
+0024:trace:seh:dispatch_exception x12=000000000000000d x13=0000000000000000 x14=0000000000000033 x15=0000000000000103
+0024:trace:seh:dispatch_exception x16=00006fffffdb29d4 x17=00007ffffe1f20c0 x18=000000007ffc0000 x19=00000001409c4c40
+0024:trace:seh:dispatch_exception x20=0000000043ed4550 x21=0000000000000000 x22=00006fffff4e9f68 x23=00000000003a86e7
+0024:trace:seh:dispatch_exception x24=00000000000000bc x25=0000000000000001 x26=00006fffffc6619c x27=00006fffff461e2c
+0024:trace:seh:dispatch_exception x28=00000000000000bc cpsr=80000000 fpcr=00000000 fpsr=00000010
+0024:trace:seh:call_seh_handlers calling handler 00000001406B964C (rec=00007FFFFE1F3630, frame=7ffffe1fffe0 context=00007FFFFE1F3280, dispatch=00007FFFFE1F2EB8)
+0024:trace:seh:signal (11, 0000000000000000)
+0024:trace:seh:call_seh_handlers handler at 00000001406B964C returned 1
+0024:trace:seh:call_seh_handlers calling handler 00006FFFFFD86A1C (rec=00007FFFFE1F3630, frame=7ffffe200000 context=00007FFFFE1F3280, dispatch=00007FFFFE1F2EB8)
+0024:trace:seh:signal (11, 0000000000000000)

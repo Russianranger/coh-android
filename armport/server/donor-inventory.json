@@ -1,0 +1,242 @@
+{
+  "source_run": 39782080360,
+  "source_artifact": 12428500525,
+  "archive_sha256": "3745750f83d35ceda47871d65570e579f66eff0af011f0c983d228c9eae1fe98",
+  "files": [
+    {
+      "path": "bridge/TestClientBridge.exe",
+      "bytes": 145920,
+      "sha256": "05a5be239648ef6fe88079566d97d879d53e96993c0093b15a09462a992f5b0d"
+    },
+    {
+      "path": "bridge/bridge-build.json",
+      "bytes": 776,
+      "sha256": "bf448522a3719d3e866a8675048275403eccf3e77402ab959f209ae6054cc9f1"
+    },
+    {
+      "path": "game-listeners/MapServer.exe",
+      "bytes": 6908416,
+      "sha256": "5e00103ded99c2d2f0e65f3caab0e3e53c322f96a7d44da7bb449af7be48874d"
+    },
+    {
+      "path": "game-listeners/TestClientCreate.exe",
+      "bytes": 3143680,
+      "sha256": "170fe8fd8a1e811e03bc67ac1673f29852864e69763ec2414bdd7694d7f45080"
+    },
+    {
+      "path": "game-listeners/TestClientResume.exe",
+      "bytes": 3146240,
+      "sha256": "c6bf013cffb79af3e66d142e5bb791234ad12d9de04ecc288f07b803129e30b9"
+    },
+    {
+      "path": "game-listeners/build-info.json",
+      "bytes": 37681,
+      "sha256": "70cf5a152eea81e497044e409c0f3b5f4626382beb7bf70466d2c2534283f791"
+    },
+    {
+      "path": "game-listeners/game-create-build-input.json",
+      "bytes": 6287,
+      "sha256": "fec1eacc71022d41f905a00455895ae2c3cf037c140731131dabd5dea2e2919c"
+    },
+    {
+      "path": "game-listeners/game-resume-build-input.json",
+      "bytes": 9601,
+      "sha256": "adf70f4125b74d265381b394f7a8052dbae70c7c4561ee0538f6b27df23206ff"
+    },
+    {
+      "path": "proot-sources/libproot-loader.so",
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    {
+      "path": "proot-sources/libproot.so",
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    },
+    {
+      "path": "proot-sources/licenses/PRoot-COPYING",
+      "bytes": 19106,
+      "sha256": "0ffa6454acbe7e410ac6f0007df83b9b3161fe55484c1f4b87487c0f2d228a6d"
+    },
+    {
+      "path": "proot-sources/licenses/talloc-LICENSE",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "proot-sources/licenses/talloc-talloc.h",
+      "bytes": 65526,
+      "sha256": "e01fb092aaed2b431be26674e2b791c77fb5984537c29b514e957582c6b31465"
+    },
+    {
+      "path": "proot-sources/proot-build-receipt.json",
+      "bytes": 3236,
+      "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+    },
+    {
+      "path": "proot-sources/proot-corresponding-sources.tar.gz",
+      "bytes": 1014688,
+      "sha256": "ae2a4de4b6008ceb3230e0cf77881b4b1fffe52f9ad5b1179b03b67d4395fee7"
+    },
+    {
+      "path": "reference-artifact/SHA256SUMS.txt",
+      "bytes": 190,
+      "sha256": "975bdd0a4d496d76abf02beacdb35179124e33b89b7b739b6f7cada79bf4d136"
+    },
+    {
+      "path": "reference-artifact/build-info.json",
+      "bytes": 30740,
+      "sha256": "a498eeb9c92299d44a748d08e720cd2e8aeacca0631129182a766ed00ff98952"
+    },
+    {
+      "path": "reference-artifact/coh-reference-win32.zip",
+      "bytes": 14495500,
+      "sha256": "dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa"
+    },
+    {
+      "path": "reference-artifact/dependency-report.json",
+      "bytes": 14720,
+      "sha256": "8b9e604621c4ccfff30857093e4b42b7645900ad3f4885fead6d6d07ec82140b"
+    },
+    {
+      "path": "reference-artifact/dumpbin-dependents.txt",
+      "bytes": 14783,
+      "sha256": "1359aa2b7af8dd0c90a7831ffa402b13638ce40c901a448c0ee20afbbdf080d8"
+    },
+    {
+      "path": "resume-client/TestClient.exe",
+      "bytes": 3143168,
+      "sha256": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856"
+    },
+    {
+      "path": "resume-client/build-info.json",
+      "bytes": 4619,
+      "sha256": "299b908e42abd3164d85e75b96122c3a61bfb1d33055e0967ccfe3f891ab7048"
+    },
+    {
+      "path": "resume-client/resume-client-build-input.json",
+      "bytes": 3220,
+      "sha256": "18a27dc8a801db05a69fa87936364f4266678e7c99effcf7d28d3cc4b3e06771"
+    },
+    {
+      "path": "runtime-inputs/001-coh-compat.sql",
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    {
+      "path": "runtime-inputs/THIRD_PARTY_NOTICES.md",
+      "bytes": 2184,
+      "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+    },
+    {
+      "path": "runtime-inputs/client-probe.exe",
+      "bytes": 470392,
+      "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+    },
+    {
+      "path": "runtime-inputs/diagnostic.py",
+      "bytes": 69529,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    {
+      "path": "runtime-inputs/odbc_probe.exe",
+      "bytes": 270071,
+      "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+    },
+    {
+      "path": "runtime-inputs/postgresql-build.json",
+      "bytes": 163117,
+      "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+    },
+    {
+      "path": "runtime-inputs/postgresql-runtime.tar.gz",
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    },
+    {
+      "path": "runtime-inputs/probe.dll",
+      "bytes": 82761,
+      "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+    },
+    {
+      "path": "runtime-inputs/proot-build.json",
+      "bytes": 3236,
+      "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+    },
+    {
+      "path": "runtime-inputs/psqlodbc_x86.msi",
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    {
+      "path": "runtime-inputs/runtime-lock.json",
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    {
+      "path": "runtime-inputs/runtime-manifest.json",
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    {
+      "path": "runtime-inputs/runtime-probe.exe",
+      "bytes": 245968,
+      "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+    },
+    {
+      "path": "stack-probe/GameStackProbe.exe",
+      "bytes": 121344,
+      "sha256": "06f95eea1ddbf8d4e1c54b04e79aca125dc276292f447f15ab968eacbae4b087"
+    },
+    {
+      "path": "stack-probe/stack-probe-build.json",
+      "bytes": 577,
+      "sha256": "843a5a886e2de1550c0deedf909058417a24b692d23dd8e1636e99ca0006cb6b"
+    },
+    {
+      "path": "wine-dbserver/fixture/CrashRpt.dll",
+      "bytes": 39424,
+      "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+    },
+    {
+      "path": "wine-dbserver/fixture/DbServer.exe",
+      "bytes": 1674240,
+      "sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212"
+    },
+    {
+      "path": "wine-dbserver/fixture/msvcp140.dll",
+      "bytes": 618944,
+      "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+    },
+    {
+      "path": "wine-dbserver/fixture/vcruntime140.dll",
+      "bytes": 123328,
+      "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+    },
+    {
+      "path": "wine-dbserver/normal/CrashRpt.dll",
+      "bytes": 39424,
+      "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+    },
+    {
+      "path": "wine-dbserver/normal/DbServer.exe",
+      "bytes": 1661440,
+      "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+    },
+    {
+      "path": "wine-dbserver/normal/msvcp140.dll",
+      "bytes": 618944,
+      "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+    },
+    {
+      "path": "wine-dbserver/normal/vcruntime140.dll",
+      "bytes": 123328,
+      "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+    },
+    {
+      "path": "wine-dbserver/package-manifest.json",
+      "bytes": 31325,
+      "sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6"
+    }
+  ]
+}

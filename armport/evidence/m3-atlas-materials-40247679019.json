@@ -1,0 +1,907 @@
+{
+  "run": 40247679019,
+  "url": "https://github.com/Russianranger/coh-android/actions/runs/40247679019",
+  "source_commit": "4c8b6c3903187a187028bb708e0f22159cc8496a",
+  "artifact": {
+    "id": 12622117293,
+    "bytes": 20718953,
+    "sha256": "f15fd5417893ae01967d9c4d09b9812cb6ed1535fe4b29ab6aaddeeeaf5a3b91"
+  },
+  "member_sha256": {
+    "client-errors.json": "2c17ad38ebd28dbd9e335635a50237df24de0f9015050f947d477e68a31e614d",
+    "error-assets.json": "9b7eacd4538f4fd3f053ff0e44c02afac7276eef8ac6bd483d652f572b32f358",
+    "world-camera-summary.json": "ab683089742eb76aff15511f62cef1545847f7690ec66f4aab241e457c3491c2",
+    "world-draw-summary.json": "e037992c1698d950a22e12f013db8f63b54ffd284ef1c45c1ecf46f0492b3b9c",
+    "login-driver.json": "0c353481ed0264df14c224c6f6baa8fdad08667a0c63a075913019fc08f206a3",
+    "armport-game-report.json": "fd43803cba95f13c413c77222b9558da746ee699b4ab796f968d14583733955e",
+    "screens/35-atlas-later.png": "d139f8ba54294e557422373ce3d42764e49d34bcde8fa6d2a192b2e023e94c9f"
+  },
+  "completed_utc": "2026-10-26T01:34:55.829493+00:00",
+  "guest_passed": true,
+  "cleanup_complete": true,
+  "world_rendered": false,
+  "last_frame_check": {
+    "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "textures_done": true,
+    "ready_sent": true,
+    "atlas_map": true,
+    "load_complete": true,
+    "frame": {
+      "mean": 0.420274,
+      "deviation": 0.221751
+    },
+    "map_name_visible": false,
+    "ocr": "ray Target Nav Menu EEE No Target . Actions Map Contact Mission Clues Collect Sav | , A ofr . 4 Nb] he f Zs ams . \u2014 Sean 0 ~ Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. . choose Help Me! None Helper, eam) League) Friends) Super Email) LEG) Tab) 112) 03) 45 as Clopal Help Comber Yo. receive i the pop heln message: Patrol XP Yo jon't have anv ava lable free ta 1 Or sessions error: auctionhouse not connected Yo eceived the pop he | Dp message\u2019 Pon He ) Chiat \u2014\u2014 Rowersm|nspirationsmenhancementsmsalvage! Global",
+    "rendered": false,
+    "owned_window_geometry": [
+      104,
+      130,
+      1024,
+      768
+    ]
+  },
+  "camera_samples": [
+    {
+      "frame": 1,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    },
+    {
+      "frame": 600,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    },
+    {
+      "frame": 1200,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    },
+    {
+      "frame": 1800,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    },
+    {
+      "frame": 2400,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    },
+    {
+      "frame": 3000,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    },
+    {
+      "frame": 3600,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    },
+    {
+      "frame": 4200,
+      "tid": 36,
+      "camera": [
+        106.454597,
+        5.75326586,
+        -105.45343
+      ],
+      "view": [
+        [
+          -1.0,
+          0.0,
+          -4.5413509e-07
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -4.5413509e-07,
+          0.0,
+          1.0
+        ],
+        [
+          106.454552,
+          -5.75326586,
+          105.453476
+        ]
+      ],
+      "player_present": true,
+      "player_svr_idx": 125,
+      "player_pos": [
+        106.454605,
+        0.251066208,
+        -114.45343
+      ],
+      "player_net_ipos": [
+        8395421,
+        8388624,
+        8381283
+      ],
+      "camera_in_view": [
+        2.890102919650417e-06,
+        0.0,
+        -2.3447679922128373e-06
+      ],
+      "camera_player_distance": 10.548658730404208
+    }
+  ],
+  "draw_samples": [
+    {
+      "frame": 1,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    },
+    {
+      "frame": 600,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    },
+    {
+      "frame": 1200,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    },
+    {
+      "frame": 1800,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    },
+    {
+      "frame": 2400,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    },
+    {
+      "frame": 3000,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    },
+    {
+      "frame": 3600,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    },
+    {
+      "frame": 4200,
+      "refs": 33,
+      "roots": 33,
+      "root_models": 0,
+      "vis": 0,
+      "outside": 1,
+      "zocc": 0,
+      "fog": 0,
+      "visits": 8648,
+      "editor_skip": 567,
+      "distance_skip": 3637,
+      "frustum_skip": 1403,
+      "model_calls": 2253,
+      "not_loaded": 0,
+      "alpha_zero": 960,
+      "sort_requests": 1293,
+      "tid": 36,
+      "visited_after_first_three_checks": 3041
+    }
+  ],
+  "visual_inspection": "Final screenshot shows Atlas statue legs, stairs, trees and the upright player. Large flat blue surfaces, black blocks and missing textures remain; not visually qualified.",
+  "client_errors": {
+    "count": 5683,
+    "unique": 5680,
+    "phase_counts": {
+      "after_map_load": 1,
+      "map_load": 116,
+      "startup": 5566
+    },
+    "integrity_failures": []
+  },
+  "selected_materials": [
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture",
+      "bytes": 175099,
+      "sha256": "305541139ecc57f584639611651d0f55fd2874e5e8abf7e280bf74ab6779f557",
+      "observed_error_texts": [
+        "Texture Trick \"x_AP_dirty_concrete_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+        "Texture Trick \"x_AP_dirty_brick_floor_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+        "Texture Trick \"X_AP_Drity_Asphalt_01\" references missing texture \"AP_ConcreteGrunge_01_d\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture",
+      "bytes": 44033,
+      "sha256": "f3e8488fb59790d5750bea9e42a50f5ab6765da3b5d500947f8373b4c1baf38f",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_BaseConcrete_01\" references missing texture \"ap_cityhall_baseconcrete_01_ns\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture",
+      "bytes": 175147,
+      "sha256": "d1e21413477589ea46da49c92c948a2d0e43dee1729031911e9ef9fec54d3bc8",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Border_01\" references missing texture \"AP_CityHall_Border_01_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture",
+      "bytes": 44075,
+      "sha256": "1f60d4d094578590cf9cdbaf6f100ad4b33274d7614897bfa0e19787a7359a26",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Border_02\" references missing texture \"AP_CityHall_Border_02_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture",
+      "bytes": 87787,
+      "sha256": "776244435164578dfe8a2f7f01af5034abd649cacc697081a308b2c7d1e288a7",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Border_03\" references missing texture \"AP_CityHall_Border_03_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture",
+      "bytes": 175147,
+      "sha256": "5ad3d76fa86762654db68aad1491abe6d696ecf32cb673303e705aeb59204d06",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Border_04\" references missing texture \"AP_CityHall_Border_04_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture",
+      "bytes": 1398509,
+      "sha256": "28ce1c6261d9fbeab45486400cb59689249ff896d395838653a72e2a81e0a411",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Concrete_01\" references missing texture \"AP_CityHall_Concrete_01_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture",
+      "bytes": 349932,
+      "sha256": "54fbc6525caebcf6c89080a09ad36ee873b895527f649b148baac148ca8ab960",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Details_01\" references missing texture \"AP_CityHall_Details_01_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture",
+      "bytes": 349929,
+      "sha256": "57a11b2ddf07eab077701374e4ae735a995ff0f8f22becfa56bb04c140f6e6b0",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Dome_01\" references missing texture \"AP_CityHall_Dome_01_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture",
+      "bytes": 11254,
+      "sha256": "d7b09cb00d5fa8f7fb7f3d0b24731b1b39d8469474192585663482d7d08958a0",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Gold_D\" references missing texture \"AP_CityHall_Gold_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture",
+      "bytes": 22248,
+      "sha256": "f54262b7920e45f1914553debf10847d9905d34e78914c4dfecb80f1a526a69c",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Marble\" references missing texture \"AP_CityHall_Marble_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture",
+      "bytes": 87787,
+      "sha256": "73409cddf7590052497a96f024fa0848e798675327632db36787cc6b7a4eecfe",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Pillar_01\" references missing texture \"AP_CityHall_Pillar_01_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture",
+      "bytes": 44024,
+      "sha256": "6283a70ebf380bef3a87f4c15dfc58908fc860bfff8acabdc3ee4242f52cb765",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Plaque_01\" references missing texture \"AP_CityHall_Plaque_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture",
+      "bytes": 349930,
+      "sha256": "e687c635ea483f3eea1d69ebf7ba757fd3e56994dbf7b687ed3e32cf64ada775",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_CityHall_Tiles\" references missing texture \"AP_CityHall_Tiles_01_NS\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture",
+      "bytes": 349939,
+      "sha256": "d0baaa577cff9f52fc03a363629ffa0e87e8bf0844371c81d19a7ceeb8947388",
+      "observed_error_texts": [
+        "Texture Trick \"x_AP_oilstains_decal_01\" references missing texture \"AP_oilstains_decal_01_n.tga\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture",
+      "bytes": 1398507,
+      "sha256": "61ec4e17889e0222effa7861d0df33e6950dcf91cbb347e6d973511a93ca262f",
+      "observed_error_texts": [
+        "Texture Trick \"x_AP_crack_decal_01\" references missing texture \"AP_crack_decal_01_n\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture",
+      "bytes": 175099,
+      "sha256": "f98e11fbc24284253a438cf2f8a22bce5cdea506a0cec632f3e567acf05dd27f",
+      "observed_error_texts": [
+        "Texture Trick \"x_AP_grass_decal_01\" references missing texture \"AP_grass_detail_01_b\".",
+        "Texture Trick \"x_AP_grass_decal_02\" references missing texture \"AP_grass_detail_01_b\".",
+        "Texture Trick \"x_AP_grass_decal_03\" references missing texture \"AP_grass_detail_01_b\".",
+        "Texture Trick \"x_AP_grass_decal_04\" references missing texture \"AP_grass_detail_01_b\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture",
+      "bytes": 44027,
+      "sha256": "78ea94981ca3b2b0736d0a8ad3eb43e88fb3cd55a28d5b8d57243a4a2e0cdcca",
+      "observed_error_texts": [
+        "Texture Trick \"X_Door_Atlas_Generic_Double\" references missing texture \"Door_Atlas_Generic_Double_D\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture",
+      "bytes": 349930,
+      "sha256": "82f5db35e01862744613f8eda6a1b99a4824d3d40d67646e82177bd35f57f362",
+      "observed_error_texts": [
+        "Texture Trick \"x_AP_agapanthus\" references missing texture \"AP_agapanthus_01_b.tga\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture",
+      "bytes": 1398500,
+      "sha256": "4c060302e6c91192499adc09b2b36423ba19b0a224b05ed9e48e86f5ce4df336",
+      "observed_error_texts": [
+        "Texture Trick \"x_AP_ivy_01\" references missing texture \"AP_ivy_01_dc\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture",
+      "bytes": 349933,
+      "sha256": "b37ab5984967995823a10375a2d88b77de56f3a3d3161d3cd0cf61fbe173a1f9",
+      "observed_error_texts": [
+        "Texture Trick \"x_AP_ivy_creepers_01\" references missing texture \"AP_ivy_creepers_01_dc\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture",
+      "bytes": 175084,
+      "sha256": "3895d914c2a1b8dc3d12517e5023eb5358f5a17409d73e19c378382bd359c205",
+      "observed_error_texts": [
+        "Texture Trick \"X_Male_Statue_Atlas_01\" references missing texture \"Male_Statue_Atlas_AO\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture",
+      "bytes": 175187,
+      "sha256": "ad720f9c55096d3cfed761f4583c3dad13ffe5f3b45d2f51cc9aeea5ff399d15",
+      "observed_error_texts": [
+        "Texture Trick \"X_Male_Statue_Atlas_Globe_01\" references missing texture \"Statue_Globe_02_N\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture",
+      "bytes": 349908,
+      "sha256": "23155804baeec962bc85a12b879bda5d26c7578e241cee0741de8c698df2b3a1",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_treeleaf01\" references missing texture \"Alas_tree01_d\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture",
+      "bytes": 349910,
+      "sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_treelroots01\" references missing texture \"Alas_treebase_n\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture",
+      "bytes": 349906,
+      "sha256": "6a3266dcf6abff2bd0a05750e8e9a7db7d5c189a1162d5a67ac278faed21c41f",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_rock01\" references missing texture \"AP_rock01_d.tga\"."
+      ],
+      "runtime_texture_paths": []
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture",
+      "bytes": 175100,
+      "sha256": "594e84c2c3def6ee7bf0c968d905a794a2f2786d18baeb997006402ae8b17f82",
+      "observed_error_texts": [
+        "Texture Trick \"X_AP_Asphalt_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\".",
+        "Texture Trick \"X_AP_BrickTile_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\"."
+      ],
+      "runtime_texture_paths": []
+    }
+  ],
+  "material_recovery": {
+    "scope": "atlas_world_geometry_texture_supplement",
+    "archive": "atlas-world-supplement.zip",
+    "archive_pin": {
+      "bytes": 207803201,
+      "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+    },
+    "manifest_file": "atlas-world-supplement-manifest.json",
+    "manifest_pin": {
+      "bytes": 4258210,
+      "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "file_count": 2904,
+    "payload_bytes": 318611871,
+    "files_sha256": "1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4",
+    "installation": "private_client_and_server_worktrees_missing_files_only",
+    "imported_assets_modified": false,
+    "accepted_cache_archive_modified": false,
+    "runtime_visual_validated": false,
+    "gameplay_validated": false,
+    "status": "extended_verified_baseline_archive",
+    "downloaded_ranges": 27,
+    "source_archives_fully_downloaded": false,
+    "source_archive_sha256_verified": false,
+    "original_donor_deflate_streams_reused": true,
+    "baseline_archive_verified": true,
+    "baseline_payloads_preserved": true,
+    "selected_donor_files": 27,
+    "selected_transfer_bytes": 4357758
+  },
+  "staging_command": "python3 armport/scripts/stage_atlas_materials.py --archive /tmp/coh-resume/atlas-materials-input/atlas-world-supplement.zip --output /tmp/coh-resume/atlas-material-data",
+  "staging_output": "::notice title=ArmPort reviewed Atlas materials::{\"files\": 27, \"payload_bytes\": 8955931, \"manifest_sha256\": \"204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86\", \"scope\": \"reviewed_27_atlas_material_additions\", \"runtime_validated\": false}\n",
+  "test_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "test_output": "..........................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 186 tests in 7.425s\n\nOK\n",
+  "limits": [
+    "Rendered-world classifier is unchanged: load completion and nonblank image pass, Atlas Park map-name OCR fails.",
+    "All 27 selected textures have exact recorded trick errors and empty texture-path matches in this runtime. The existing 2904-file manifest has these exact 27 additions over the unchanged 2877 baseline.",
+    "Existing reproduction code reused the verified old baseline and 27 frozen donor ranges (4357758 transferred bytes); full archive and all 2904 payloads verify. No new donor/name/pin was introduced.",
+    "Server staging improvement and matching runtime samples support the terrain diagnosis; draw-call counters alone do not prove GPU rendering.",
+    "New material staging is locally verified only; fresh native Atlas/replay qualification remains required. This does not establish complete materials or M3/M4/M5."
+  ],
+  "earlier_reviewed_manifest_path_overlaps": {
+    "client-visual": [],
+    "character-avatar-defaults": [],
+    "zones-world-supplement": []
+  }
+}

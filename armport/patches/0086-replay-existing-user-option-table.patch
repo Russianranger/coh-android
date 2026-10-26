@@ -1,0 +1,41 @@
+diff --git a/Game/src/UI/uiOptions.c b/Game/src/UI/uiOptions.c
+index 6ff467f..c951654 100644
+--- a/Game/src/UI/uiOptions.c
++++ b/Game/src/UI/uiOptions.c
+@@ -54,6 +54,7 @@
+ #include "uiHelpButton.h"
+ #include "win/hwlight.h"
+ #include "UI/uiEmail.h"
++#include "clientcomm/armport_replay.h"
+ #include "player/inventory_client.h"
+ 
+ typedef enum
+@@ -72,6 +73,15 @@ extern AudioState g_audio_state;
+ 
+ #include "uiOptions_Type.c"
+ 
++#ifdef COH_ARMPORT_REPLAY
++const UserOption *armportReplayOptions(int *count)
++{
++    *count = ARRAY_SIZE(game_options);
++    return game_options;
++}
++#endif
++
++
+ static int s_petSay;
+ static int status_hideauto, status_blink, status_stack, status_nonum, status_nosend;
+ static int group_hideauto,  group_blink,  group_stack,  group_nonum, group_nosend;
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 9776076..9c4d5e8 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -13,6 +13,8 @@ typedef struct NetLink NetLink;
+ typedef struct SouvenirClue SouvenirClue;
+ typedef struct VisitedStaticMap VisitedStaticMap;
+ typedef struct TurnstileMissionClient TurnstileMissionClient;
++typedef struct UserOption UserOption;
++const UserOption *armportReplayOptions(int *count);
+ const TurnstileMissionClient *const *armportReplayTurnstileMissions(void);
+ const TurnstileMissionClient *armportReplayTurnstileDummy(int category);
+ int armportReplayTurnstileQueue(void);

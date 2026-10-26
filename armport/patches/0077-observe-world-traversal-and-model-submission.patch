@@ -1,0 +1,172 @@
+diff --git a/Game/src/graphics/armport_world_trace.h b/Game/src/graphics/armport_world_trace.h
+new file mode 100644
+index 0000000..3420d89
+--- /dev/null
++++ b/Game/src/graphics/armport_world_trace.h
+@@ -0,0 +1,15 @@
++#ifndef ARMPORT_WORLD_TRACE_H
++#define ARMPORT_WORLD_TRACE_H
++/* Diagnostic counters only; original traversal/culling decisions are unchanged. */
++#if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
++typedef struct ArmPortWorldTrace
++{
++    unsigned active, visits, editor_skip, distance_skip, frustum_skip;
++    unsigned model_calls, model_not_loaded, alpha_zero, sort_requests;
++} ArmPortWorldTrace;
++extern ArmPortWorldTrace armport_world_trace;
++#define ARMPORT_WORLD_COUNT(field) do { if (armport_world_trace.active) ++armport_world_trace.field; } while (0)
++#else
++#define ARMPORT_WORLD_COUNT(field) ((void)0)
++#endif
++#endif
+diff --git a/Game/src/graphics/groupdraw.c b/Game/src/graphics/groupdraw.c
+index 1ad868e..73391c6 100644
+--- a/Game/src/graphics/groupdraw.c
++++ b/Game/src/graphics/groupdraw.c
+@@ -1,4 +1,7 @@
+ #include "graphics/groupdraw.h"
++#include "graphics/armport_world_trace.h"
++#include "UI/sprite/sprite_base.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include "graphics/groupdrawutil.h"
+ #include "graphics/groupdrawinline.h"
+ #include "cmdparse/cmdgame.h"
+@@ -26,6 +29,52 @@
+ GroupDraw    group_draw;
+ static bool invalidate_group_ents;
+ 
++#if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
++ArmPortWorldTrace armport_world_trace;
++static unsigned armport_world_frames, armport_world_samples;
++static void armportWorldBegin(void)
++{
++    static int enabled = -1;
++    armport_world_trace.active = 0;
++    if (enabled < 0) enabled = getenv("ARMPORT_STDIO_LOG") != NULL;
++    if (!enabled || armport_world_samples >= 8 || !gfx_state.mainViewport || shellMode() || group_info.ref_count <= 0)
++        return;
++    ++armport_world_frames;
++    if (armport_world_frames != 1 && armport_world_frames % 600 != 0)
++        return;
++    memset(&armport_world_trace, 0, sizeof(armport_world_trace));
++    armport_world_trace.active = 1;
++}
++static void armportWorldEnd(int vis)
++{
++    int i;
++    unsigned roots = 0, models = 0;
++    char detail[512];
++    if (!armport_world_trace.active) return;
++    for (i = 0; i < group_info.ref_count; ++i)
++    {
++        DefTracker *ref = group_info.refs[i];
++        if (ref && ref->def) { ++roots; if (ref->def->model) ++models; }
++    }
++    _snprintf(detail, sizeof(detail),
++        "frame=%u refs=%d roots=%u root_models=%u vis=%d outside=%u zocc=%u fog=%d visits=%u editor_skip=%u distance_skip=%u frustum_skip=%u model_calls=%u not_loaded=%u alpha_zero=%u sort_requests=%u",
++        armport_world_frames, group_info.ref_count, roots, models, vis,
++        group_draw.see_outside, group_draw.zocclusion, group_draw.fog_clip,
++        armport_world_trace.visits, armport_world_trace.editor_skip,
++        armport_world_trace.distance_skip, armport_world_trace.frustum_skip,
++        armport_world_trace.model_calls, armport_world_trace.model_not_loaded,
++        armport_world_trace.alpha_zero, armport_world_trace.sort_requests);
++    detail[sizeof(detail)-1] = 0;
++    armportZoneTrace("world.draw", detail);
++    armport_world_trace.active = 0;
++    ++armport_world_samples;
++}
++#else
++#define armportWorldBegin() ((void)0)
++#define armportWorldEnd(vis) ((void)0)
++#endif
++
++
+ //Build a GroupEnt for passing into drawDefInternal. All calls to drawDefInternal need a GroupEnt 
+ //That's been run through this
+ void makeAGroupEnt( GroupEnt * groupEnt, GroupDef * def, const Mat4 mat, F32 view_scale, int has_dynamic_parent )
+@@ -141,6 +190,8 @@ void groupDrawRefs(Mat4 cam_mat, Mat4 inv_cam_mat)
+     int            vis;
+     DrawParams    draw;
+ 
++    armportWorldBegin();
++
+     if (group_draw.calls[0])
+     {
+         xyprintf(0,25,"%d %d %d %d %d %d %d %d %d %d %d",
+@@ -241,4 +292,5 @@ void groupDrawRefs(Mat4 cam_mat, Mat4 inv_cam_mat)
+         baseedit_SelDraw();
+ 
+     PERFINFO_AUTO_STOP();
++    armportWorldEnd(vis);
+ }
+diff --git a/Game/src/graphics/groupdrawinline.c b/Game/src/graphics/groupdrawinline.c
+index a94ec17..65a23ff 100644
+--- a/Game/src/graphics/groupdrawinline.c
++++ b/Game/src/graphics/groupdrawinline.c
+@@ -4,6 +4,7 @@
+ #endif
+ 
+ #include "graphics/groupdraw.h"
++#include "graphics/armport_world_trace.h"
+ #include "graphics/groupdrawutil.h"
+ #include "graphics/groupdrawinline.h"
+ #include "render/rendermodel.h"
+@@ -176,8 +177,12 @@ static INLINEDBG int drawModel(Model *model, Model *lowLodModel, AutoLOD *lod, G
+     int                beyond_fog = 0;
+     int                checked_occluder = 0;
+ 
++    ARMPORT_WORLD_COUNT(model_calls);
+     if(!model || !(model->loadstate & LOADED))
++    {
++        ARMPORT_WORLD_COUNT(model_not_loaded);
+         return checked_occluder;
++    }
+ 
+     if (model->trick && vis != VIS_DRAWALL)
+     {
+@@ -250,7 +255,10 @@ static INLINEDBG int drawModel(Model *model, Model *lowLodModel, AutoLOD *lod, G
+     }
+ 
+     if (!alpha)
++    {
++        ARMPORT_WORLD_COUNT(alpha_zero);
+         return checked_occluder;
++    }
+ 
+     CALL_INC
+ 
+@@ -355,6 +363,7 @@ static INLINEDBG int drawModel(Model *model, Model *lowLodModel, AutoLOD *lod, G
+                 }
+                 if(i < 0)
+                     avsn_params.materials = model->tex_binds;
++                ARMPORT_WORLD_COUNT(sort_requests);
+                 addViewSortNodeWorldModel();
+             }
+ 
+@@ -1029,16 +1038,26 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+     }
+ #endif
+ 
++    ARMPORT_WORLD_COUNT(visits);
+     if (!group_draw.see_everything && groupEnt->flags_cache & ONLY_EDITORVISIBLE)
++    {
++        ARMPORT_WORLD_COUNT(editor_skip);
+         return 0;
++    }
+ 
+     CALL_INIT
+     mulVecMat4(groupEnt->mid_cache,parent_mat_p,mid);
+ 
+     if (!(d=closeEnough(draw,mid,groupEnt)))
++    {
++        ARMPORT_WORLD_COUNT(distance_skip);
+         return 0;
++    }
+     if (!(clip=sphereInFrustum(mid,groupEnt)))
++    {
++        ARMPORT_WORLD_COUNT(frustum_skip);
+         return 0;
++    }
+ 
+     // common rejections are above, try to avoid loading def until here because of memory stalls
+     def = groupEnt->def; 

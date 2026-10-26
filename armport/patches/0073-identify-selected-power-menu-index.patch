@@ -1,0 +1,65 @@
+diff --git a/Game/src/UI/uiPowerCust.c b/Game/src/UI/uiPowerCust.c
+index 25a93c0..cd3c61a 100644
+--- a/Game/src/UI/uiPowerCust.c
++++ b/Game/src/UI/uiPowerCust.c
+@@ -1,5 +1,6 @@
+ 
+ #include <utilitieslib/stdtypes.h>
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include "UI/uiPowerCust.h"
+ 
+ #include <utilitieslib/utils/file.h>
+@@ -91,6 +92,24 @@ typedef enum PowerCustSet
+ static bool menuInitialized = false;
+ static const BasePowerSet* sSelectedPowerSets[POWERCUSTSET_COUNT];
+ static const BasePower* sSelectedPowers[POWERCUSTSET_COUNT];
++
++// 0073: identify the selected-power producer for the runtime fault.
++// Opt-in diagnostics only: retain the original index, pointer and lookup.
++static void armportSelectedPowerTrace(const char *site, int menu, const BasePower *selected,
++                                     const BasePower *argument)
++{
++    static int traceEnabled = -1;
++    char detail[224];
++    if (traceEnabled < 0)
++        traceEnabled = getenv("ARMPORT_POWER_TRACE") != NULL;
++    if (!traceEnabled)
++        return;
++    snprintf(detail, sizeof(detail), "site=%s menu=%d index=%d count=%d array=%p selected=%p argument=%p",
++        site, menu, menu - MENU_POWER_CUST, POWERCUSTSET_COUNT,
++        (void *)sSelectedPowers, (const void *)selected, (const void *)argument);
++    armportZoneTrace("power.selected", detail);
++}
++
+ static int gSelectedTintComponent = 1; // 1 == primary; 2 == secondary
+ static float gAnimationProgress;
+ static int gPowerColorsLinked;
+@@ -1626,7 +1645,11 @@ static PowerAnimEvent* createPrimaryAnimationEvents(PowerAnimEvent* event, Entit
+     const PowerFX* fx = &power->fx;
+ 
+     // May not be the power passed in as a parameter.
+-    PowerCustomization* selectedCustomization = getPowerCustomization(sSelectedPowers[CURRENT_POWER_CUST_MENU]);
++    int selectedMenu = current_menu();
++    const BasePower *selected = sSelectedPowers[selectedMenu - MENU_POWER_CUST];
++    PowerCustomization* selectedCustomization;
++    armportSelectedPowerTrace("primary", selectedMenu, selected, power);
++    selectedCustomization = getPowerCustomization(selected);
+     Vec3 targetOffset = {0, 0, 8};
+     FxKey target = {0};
+     bool targetCaster = false;
+@@ -2053,10 +2076,13 @@ static void createAnimationQueue()
+     event->time = 1e6;
+     ++event;
+ 
+-    if (!sSelectedPowers[CURRENT_POWER_CUST_MENU])
++    int selectedMenu = current_menu();
++    const BasePower *selected = sSelectedPowers[selectedMenu - MENU_POWER_CUST];
++    armportSelectedPowerTrace("queue", selectedMenu, selected, selected);
++    if (!selected)
+         return;
+ 
+-    event = createPowerAnimationEvents(event, player, sSelectedPowers[CURRENT_POWER_CUST_MENU], 0.0f);
++    event = createPowerAnimationEvents(event, player, selected, 0.0f);
+ 
+     compressAnimationQueue();
+ 

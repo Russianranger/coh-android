@@ -1,0 +1,56 @@
+{
+  "prior_run_id": 40189560565,
+  "prior_server_job_id": 121159624900,
+  "purpose": "Locate absent terrain without changing traversal, visibility, loading or assets. Counts show calls/branches, not GPU rendering acceptance.",
+  "patch": "armport/patches/0077-observe-world-traversal-and-model-submission.patch",
+  "patch_sha256": "76ac2b2aa8a217b74a9eddfa347f8073e407ff325321f76276be726576e7459a",
+  "patchwork_commit": "680184349908b344d1b520b0ee4f092a5addfd2b",
+  "toolchain": {
+    "release": "20250910",
+    "asset_id": 291855983,
+    "sha256": "f83556c9ffa4d4291fadea1a0776c1383332dacdf4d7fbdf974c2928cb32c6f7"
+  },
+  "commands": [
+    {
+      "command": "CMAKE_BUILD_PARALLEL_LEVEL=1 ninja -C /tmp/coh-world-build-arm64 -j1 Game/CMakeFiles/Game.dir/src/graphics/groupdraw.c.obj Game/CMakeFiles/Game.dir/src/graphics/groupdrawinline.c.obj",
+      "exit_code": 0,
+      "output_tail": "In file included from /tmp/coh-world-patchwork/src/cmake/armport-include/xmmintrin.h:3:\n/tmp/coh-world-build-arm64/_deps/sse2neon-src/sse2neon.h:115:2: warning: \"Report any potential compiler optimization issues when using SSE2NEON. See the 'Optimization' section at https://github.com/DLTcollab/sse2neon.\" [-W#warnings]\n  115 | #warning \\\n      |  ^\n1 warning generated.\n[13/13] Building C object Game/CMakeFiles/Game.dir/src/graphics/groupdrawinline.c.obj\nIn file included from /tmp/coh-world-patchwork/src/Game/src/graphics/groupdrawinline.c:6:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/graphics/groupdraw.h:7:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/graphics/frustum_c.h:5:\nIn file included from /tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/utils/ssemath.h:20:\nIn file included from /tmp/coh-world-patchwork/src/cmake/armport-include/xmmintrin.h:3:\n/tmp/coh-world-build-arm64/_deps/sse2neon-src/sse2neon.h:115:2: warning: \"Report any potential compiler optimization issues when using SSE2NEON. See the 'Optimization' section at https://github.com/DLTcollab/sse2neon.\" [-W#warnings]\n  115 | #warning \\\n      |  ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/graphics/groupdrawinline.c:38:\n/tmp/coh-world-patchwork/src/Game/src/graphics/FX/fxgeo.h:137:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n  137 | #endif NOVODEX_FLUIDS\n      |        ^\n      |        //\n2 warnings generated."
+    },
+    {
+      "command": "CMAKE_BUILD_PARALLEL_LEVEL=1 ninja -C /tmp/coh-world-build-i686 -j1 Game/CMakeFiles/Game.dir/src/graphics/groupdraw.c.obj Game/CMakeFiles/Game.dir/src/graphics/groupdrawinline.c.obj",
+      "exit_code": 0,
+      "output_tail": "   31 |                                   __glibc_objsize (__s), __fmt,\n      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n   32 |                                   __va_arg_pack ());\n      |                                   ~~~~~~~~~~~~~~~~~\n[13/16] Building CXX object CMakeFiles/StructParser.dir/src/strutils.cpp.o\n[14/16] Building CXX object CMakeFiles/StructParser.dir/src/Tokenizer.cpp.o\n[15/16] Building CXX object CMakeFiles/StructParser.dir/src/utils.cpp.o\n[16/16] Linking CXX executable StructParser\n[8/13] No install step for 'StructParser'\n[9/13] Completed 'StructParser'\n[10/13] Running StructParser on UtilitiesLib\n[11/13] Running StructParser on Game\n[12/13] Building C object Game/CMakeFiles/Game.dir/src/graphics/groupdraw.c.obj\n[13/13] Building C object Game/CMakeFiles/Game.dir/src/graphics/groupdrawinline.c.obj\nIn file included from /tmp/coh-world-patchwork/src/Game/src/graphics/groupdrawinline.c:38:\n/tmp/coh-world-patchwork/src/Game/src/graphics/FX/fxgeo.h:137:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n  137 | #endif NOVODEX_FLUIDS\n      |        ^\n      |        //\n1 warning generated."
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/world_trace.py --source /tmp/coh-world-patchwork/src",
+      "exit_code": 0,
+      "output": "world trace off: records=0, 5000 frames, visibility inputs unchanged\nworld trace on: records=8, 5000 frames, visibility inputs unchanged\n",
+      "limitation": "Local /proc hides task directories, so LeakSanitizer is disabled locally; ASan and UBSan remain enabled. CI runs the control without this override."
+    },
+    {
+      "command": "python3 armport/scripts/patchwork.py export /tmp/coh-world-patchwork",
+      "exit_code": 0,
+      "output": "exported 77 patches; only 0077 and series changed among patch files"
+    }
+  ],
+  "runtime_qualified": false,
+  "m3_complete": false,
+  "assets_added": false,
+  "bounds": {
+    "samples_per_process": 8,
+    "first_frame": 1,
+    "following_frame_interval": 600,
+    "requires": "existing ARMPORT_STDIO_LOG; main viewport; non-shell mode; positive root count",
+    "counters": [
+      "root references",
+      "roots with definitions",
+      "root models",
+      "definition visits",
+      "editor/distance/frustum rejections",
+      "model calls",
+      "unloaded models",
+      "zero alpha",
+      "world sort requests"
+    ]
+  }
+}

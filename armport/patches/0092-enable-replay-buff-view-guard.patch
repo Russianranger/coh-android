@@ -1,0 +1,12 @@
+diff --git a/Game/src/UI/uiBuff.c b/Game/src/UI/uiBuff.c
+index 93a32ac..a05e1d2 100644
+--- a/Game/src/UI/uiBuff.c
++++ b/Game/src/UI/uiBuff.c
+@@ -6,6 +6,7 @@
+ #include "UI/uiToolTip.h"
+ #include "UI/uiContextMenu.h"
+ #include "UI/uiInclude.h"
++#include "clientcomm/armport_replay.h"
+ #include "UI/uiBuff.h"
+ #include "UI/uiGame.h"
+ #include "UI/uiPet.h"

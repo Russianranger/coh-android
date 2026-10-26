@@ -1,0 +1,70 @@
+diff --git a/Common/gameComm/trayCommon.c b/Common/gameComm/trayCommon.c
+index a4e2983..1a3550c 100644
+--- a/Common/gameComm/trayCommon.c
++++ b/Common/gameComm/trayCommon.c
+@@ -9,6 +9,9 @@
+ #include <utilitieslib/components/earray.h>
+ 
+ #include "gameComm/trayCommon.h"
++#ifdef CLIENT
++#include "clientcomm/armport_replay.h"
++#endif
+ #include "entity/character_base.h"
+ #include "entity/powers.h"
+ #include "entity/entity.h"
+@@ -40,6 +43,16 @@ typedef struct TrayInternals
+                                 // serverSlot is build-agnostic!
+ } TrayInternals;
+ 
++#ifdef COH_ARMPORT_REPLAY
++const TrayObj *const *armportReplayTraySlots(const Tray *tray, int server)
++{
++    if (!tray || !tray->internals || server < 0 || server > 1) return NULL;
++    return server ? (const TrayObj *const *)tray->internals->serverSlot
++                  : (const TrayObj *const *)tray->internals->slot;
++}
++#endif
++
++
+ LineDesc tray_line_desc[] =
+ {
+     {{ PACKTYPE_INT,     SIZE_INT32,     "Type",             OFFSET(TrayObj, type ),            },
+diff --git a/Game/src/UI/uiTray.c b/Game/src/UI/uiTray.c
+index d538187..1757313 100644
+--- a/Game/src/UI/uiTray.c
++++ b/Game/src/UI/uiTray.c
+@@ -1,6 +1,7 @@
+ /***************************************************************************/
+ 
+ #include "UI/uiTray.h"
++#include "clientcomm/armport_replay.h"
+ #include "varutils.h"
+ #include "player/player.h"
+ #include <utilitieslib/components/HashFunctions.h>
+@@ -80,6 +81,11 @@ static int      print_state;
+ static int             s_TrayStickyMask = 0;
+ static int             s_TrayMomentaryMask = 0; // a mask of AltTrayMomentaryMask type
+ 
++#ifdef COH_ARMPORT_REPLAY
++int armportReplayTrayStickyMask(void) { return s_TrayStickyMask; }
++#endif
++
++
+ TrayObj         new_empty_tray_obj = {0};
+ TrayObj         *s_ptsActivated = 0;
+ static TrayObj  s_toTemp = {0};
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 9c4d5e8..c04997b 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -14,6 +14,10 @@ typedef struct SouvenirClue SouvenirClue;
+ typedef struct VisitedStaticMap VisitedStaticMap;
+ typedef struct TurnstileMissionClient TurnstileMissionClient;
+ typedef struct UserOption UserOption;
++typedef struct Tray Tray;
++typedef struct TrayObj TrayObj;
++const TrayObj *const *armportReplayTraySlots(const Tray *tray, int server);
++int armportReplayTrayStickyMask(void);
+ const UserOption *armportReplayOptions(int *count);
+ const TurnstileMissionClient *const *armportReplayTurnstileMissions(void);
+ const TurnstileMissionClient *armportReplayTurnstileDummy(int category);

@@ -1,0 +1,40 @@
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index f104373..6166484 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -31,6 +31,7 @@ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
+ void armportReplayAlignmentDelay(unsigned index, unsigned seconds);
+ void armportReplayTaskforceTime(const Entity *e, unsigned index, unsigned seconds);
++void armportReplayRewardTime(const Entity *e, int activePlayer, int index, const char *name, unsigned seconds);
+ void armportReplayDesaturation(const float *delay, const float *weight, const float *target, const float *fade);
+ void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id));
+ void armportReplayMaybeRun(void);
+@@ -42,6 +43,7 @@ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #define armportReplayOrientation(e, axis, value, accepted) ((void)0)
+ #define armportReplayAlignmentDelay(index, seconds) ((void)0)
+ #define armportReplayTaskforceTime(e, index, seconds) ((void)0)
++#define armportReplayRewardTime(e, activePlayer, index, name, seconds) ((void)0)
+ #define armportReplayDesaturation(delay, weight, target, fade) ((void)0)
+ #define armportReplayMaybeRun() ((void)0)
+ #define armportReplayUnknownCommand(command) ((void)0)
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index 11fc4a6..758726e 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -4427,6 +4427,7 @@ void receiveCharacterFromServer( Packet *pak, Entity *e )
+         {
+             e->pl->rewardTokens[idx]->val = val;
+             e->pl->rewardTokens[idx]->timer = time;
++            armportReplayRewardTime(e, 0, idx, e->pl->rewardTokens[idx]->reward, (unsigned)time);
+         }
+     }
+ 
+@@ -4445,6 +4446,7 @@ void receiveCharacterFromServer( Packet *pak, Entity *e )
+         {
+             e->pl->activePlayerRewardTokens[idx]->val = val;
+             e->pl->activePlayerRewardTokens[idx]->timer = time;
++            armportReplayRewardTime(e, 1, idx, e->pl->activePlayerRewardTokens[idx]->reward, (unsigned)time);
+         }
+     }
+ 

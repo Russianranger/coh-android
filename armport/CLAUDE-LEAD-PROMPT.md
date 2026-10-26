@@ -1,0 +1,9 @@
+Take back lead development of Russianranger/coh-android COH-ArmPort. Astra has stopped development, and all scheduled tasks have been disabled. Sol remains the independent reviewer; do not recreate schedules or start other agents.
+
+Start on armport/m3-atlas. Read armport/HANDOFF.md, PORT-PLAN.md, STATUS.md, armport/notes/M3-REPLAY-PLAN.md, and Sol's latest PR #6 review. Refresh branch heads and CI before acting. The handoff documents exact commits, artifacts, outstanding approvals, and an unapplied NPC/Architect WIP patch with test and compilation evidence. Recover and review that work rather than losing or blindly applying it.
+
+Focus on completing M3: accepted Atlas rendering and complete, reviewed retained-state replay coverage. Inspect Atlas run 40337294759 first; preserve its original screenshot verdict and keep the separate Map UI diagnostic distinct from 3D-world acceptance. Review the WIP, audit remaining receiver destinations/exclusions, close concrete gaps, and run exact ARM64/i686 replay comparisons. Do not treat builds, partial replay, or implementation approval as milestone completion. Continue independent authorized work while CI or review is pending.
+
+Never edit upstream/. Use armport/scripts/patchwork.py for native source patches. Limit compilation to two compiler processes, with ARM64 and i686 sequential. Avoid concurrent edits or competing CI. Keep STATUS.md at most 40 lines and cite command/CI evidence. The six proposed plaza/statue files still need explicit selection approval; do not fetch/stage them or expand error exceptions without it.
+
+No protected-branch changes, main/native-android edits, history rewrites, secrets/signing, releases or merges are authorized by this handoff. Honor existing review and user-approval gates. Resume implementation after checking the handoff; ask me only for a necessary external decision or a substantial qualified device test.

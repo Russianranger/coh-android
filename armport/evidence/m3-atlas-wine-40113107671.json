@@ -1,0 +1,62 @@
+{
+  "run_id": 40113107671,
+  "job_id": 120931544128,
+  "source_commit": "07c536d7fe5d7748ced9e03845c53b0b3cf907d4",
+  "artifact": {
+    "id": 12569553209,
+    "bytes": 17545297,
+    "sha256": "16bd08657c4b124991a90668246c95ce5cd9d159009f6981387e37734cf169f4"
+  },
+  "wine_output": {
+    "path": "_temp/m3-evidence/client-output.txt",
+    "bytes": 8454,
+    "sha256": "ac43cff44cedf435762a8a4349b1cb32c2c010d5cd52aa935b64210e8190f922",
+    "fixture": "armport/tests/fixtures/atlas-wine-40113107671.txt",
+    "complete_byte_preserved": true,
+    "dispatch_line": 1,
+    "unwind_line": 14,
+    "restore_line": 28,
+    "map_boundary_line": 45,
+    "access_violation_line": 46,
+    "unhandled_page_fault_line": 63
+  },
+  "wine_inventory": {
+    "allowed_startup_rpc_exceptions": 1,
+    "map_boundaries": 1,
+    "isolated_map_starts": 1,
+    "failures": [
+      "Unapproved Wine exception at line 46: 0024:trace:seh:dispatch_exception code=c0000005 (EXCEPTION_ACCESS_VIOLATION) flags=0 addr=00000001400A56D4",
+      "Wine fatal at line 63: wine: Unhandled page fault on read access to 0000000000000088 at address 00000001400A56D4 (thread 0024), starting debugger...",
+      "Unapproved Wine exception at line 68: 0024:trace:seh:dispatch_exception code=c0000005 (EXCEPTION_ACCESS_VIOLATION) flags=0 addr=00000001400A56D4"
+    ],
+    "passed": false
+  },
+  "zone_trace": {
+    "bytes": 1765979,
+    "sha256": "da0f0ec42717beff2800e276807e297f5e5e319730b7647bbae683dd5527df73",
+    "records": 9669,
+    "null_def_records": [
+      {
+        "trace_line": 9669,
+        "stage": "grid.activate.null_def",
+        "text": "tracker=0000000043ED4550 id=8 group_id=0 entries=0000000043AE63C0 count=10 parent=0000000000000000 parent_group=<no parent definition>",
+        "tid": 36
+      }
+    ]
+  },
+  "screenshot": {
+    "member": "_temp/m3-evidence/screen.jpg",
+    "sha256": "5b5cefee53fdea30b6466f3eaed5461a9a7859ba2e6776e5a77489d97a175273",
+    "visual_observation": "Black frame; Atlas Park not visible."
+  },
+  "local_validator": {
+    "command": "atlas_wine.inventory(client-output.txt, zone-trace.jsonl)",
+    "matches_retained_ci_wine_errors": true
+  },
+  "milestone_pass": false,
+  "regression_command": {
+    "command": "python3 -m unittest discover -s armport/tests -p 'test_atlas_wine.py'",
+    "exit_code": 0,
+    "output": "Ran 7 tests in 0.011s\nOK"
+  }
+}

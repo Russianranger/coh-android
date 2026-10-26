@@ -1,0 +1,436 @@
+{
+  "run": 40240791819,
+  "source_commit": "f6332f2953f5d79768717f0021a5626fe04af318",
+  "artifact_id": 12619730241,
+  "artifact_sha256": "d076872ad2446918fab4ff10cf5824b0edf22ba66e80bdfa8795e4d3463e7573",
+  "connected_on_atlas": true,
+  "world_rendered": false,
+  "camera": {
+    "scope": "sampled_camera_player_inputs_only",
+    "observations_valid": true,
+    "sample_count": 8,
+    "failure_count": 0,
+    "failures": [],
+    "samples": [
+      {
+        "frame": 1,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -972.713806,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            972.713806,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -978.519592,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8326427,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710142439661816
+      },
+      {
+        "frame": 600,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -1994.19421,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            1994.19421,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -2000.0,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8260608,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710144607994222
+      },
+      {
+        "frame": 1200,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -1994.19421,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            1994.19421,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -2000.0,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8260608,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710144607994222
+      },
+      {
+        "frame": 1800,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -1994.19421,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            1994.19421,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -2000.0,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8260608,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710144607994222
+      },
+      {
+        "frame": 2400,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -1994.19421,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            1994.19421,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -2000.0,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8260608,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710144607994222
+      },
+      {
+        "frame": 3000,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -1994.19421,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            1994.19421,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -2000.0,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8260608,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710144607994222
+      },
+      {
+        "frame": 3600,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -1994.19421,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            1994.19421,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -2000.0,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8260608,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710144607994222
+      },
+      {
+        "frame": 4200,
+        "tid": 36,
+        "camera": [
+          112.45459,
+          -1994.19421,
+          -102.45343
+        ],
+        "view": [
+          [
+            -1.0,
+            0.0,
+            -4.5413509e-07
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -4.5413509e-07,
+            0.0,
+            1.0
+          ],
+          [
+            112.454544,
+            1994.19421,
+            102.453484
+          ]
+        ],
+        "player_present": true,
+        "player_svr_idx": 130,
+        "player_pos": [
+          112.454597,
+          -2000.0,
+          -111.45343
+        ],
+        "player_net_ipos": [
+          8395805,
+          8260608,
+          8381475
+        ],
+        "camera_in_view": [
+          5.276976509094311e-07,
+          0.0,
+          2.930424656710784e-06
+        ],
+        "camera_player_distance": 10.710144607994222
+      }
+    ],
+    "cause_established": false,
+    "rendering_acceptance_changed": false
+  },
+  "retained_server_missing_root_records": 10506,
+  "all_missing_paths_in_approved_supplement": true,
+  "complete_server_output_claimed": false,
+  "source_hashes": {
+    "_temp/armport-client/zone-trace.jsonl": "1b03f69a1b900dc98bd4c6e9378a0e38ab1a759fd499e608b6000a939c5f986e",
+    "_temp/m3-evidence/first-atlas-stdout.txt": "22258aa246d2137df8d6718d868a73461e7adeeae1e2d3c5040343659ca1e78c",
+    "_temp/m3-evidence/login-driver.json": "ba711b84d2deedf45c41c30dd63757914cb60591f554ec8d875aff9384611106",
+    "_temp/m3-evidence/screens/42-atlas-later.png": "6a4823cc2c30a311b48b747db05643561d517b5a65bb46b8f40421913055f09a"
+  },
+  "interpretation": "Player Y descends from -978.519592 to -2000 with camera tracking it. Missing server geometry is a supported cause hypothesis; this run does not test the later server supplement fix.",
+  "m3_complete": false,
+  "reproduction_command": "python /tmp/coh-resume/record-latest-atlas.py",
+  "reproduction_script": "import json,sys,hashlib,re\nfrom pathlib import Path\nsys.path.insert(0,'armport/scripts')\nimport world_camera_report\nroot=Path('/tmp/coh-resume/atlas-40240791819'); p=root/'_temp/m3-evidence'\ntrace=root/'_temp/armport-client/zone-trace.jsonl'\ncamera=world_camera_report.summarize(trace.read_text().splitlines(keepends=True))\nassert camera['observations_valid'] and camera['sample_count']==8\nserver=p/'first-atlas-stdout.txt'; text=server.read_text(errors='replace')\nmissing=sorted(set(re.findall(r'GEO: Missing .geo file ([^\\r\\n]+?) \\(but rootnames exists\\)',text)))\nfiles=json.loads(Path('assets/atlas-world-supplement-manifest.json').read_text())['files']\nknown={s.casefold() for s in files}\nassert len(missing)==482 and all('data/'+s.casefold() in known for s in missing)\ndriver=json.loads((p/'login-driver.json').read_text())\nresult=dict(run=40240791819,source_commit='f6332f2953f5d79768717f0021a5626fe04af318',artifact_id=12619730241,artifact_sha256='d076872ad2446918fab4ff10cf5824b0edf22ba66e80bdfa8795e4d3463e7573',connected_on_atlas=driver['atlas']['connected_on_atlas'],world_rendered=driver['world_rendered'],camera=camera,retained_server_missing_root_records=text.count('Cant find root geo'),retained_server_missing_geo_paths=missing,all_missing_paths_in_approved_supplement=True,complete_server_output_claimed=False,source_hashes={str(x.relative_to(root)):hashlib.sha256(x.read_bytes()).hexdigest() for x in [trace,server,p/'login-driver.json',p/'screens/42-atlas-later.png']},interpretation='Player Y descends from -978.519592 to -2000 with camera tracking it. Missing server geometry is a supported cause hypothesis; this run does not test the later server supplement fix.',m3_complete=False)\n",
+  "retained_server_missing_geo_path_count": 482,
+  "missing_geo_sorted_paths_sha256": "44c01fdc23c6ac09d36c169b274fce805edbd3a757153874abb1e7f4b3775c92",
+  "missing_geo_examples": [
+    "object_library/Collision/collision_walls/collision_walls.geo",
+    "object_library/Collision/no_teleport/no_teleport.geo",
+    "object_library/Omni/City_Volumes/city_volumes.geo",
+    "object_library/Omni/CubeMap/cubemapgen.geo",
+    "object_library/Omni/Door_Boxes/door_boxes.geo",
+    "object_library/Omni/EncounterSpawns/BaseTypes/basetypes.geo",
+    "object_library/Omni/EncounterSpawns/Base_Missions/base_missions.geo",
+    "object_library/Omni/EncounterSpawns/CITY_01_01/city_01_01.geo"
+  ]
+}

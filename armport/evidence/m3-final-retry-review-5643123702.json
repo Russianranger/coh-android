@@ -1,0 +1,18 @@
+{
+  "review_id": 5643123702,
+  "reviewed_commit": "3539492e36d7436d29a02b789a2d29d4b3014cf0",
+  "negative_control": "HostLoginGate.drive with original driver from git show 3539492e:armport/server/armport_game_host.py; append torn stage-7 after geometry revalidation: 2 clicks",
+  "corrected_control": "Same latest-sample injection: 1 click. Complete transition, new modal and new Atlas marker also prevent retry.",
+  "validation_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "validation_result": "135 tests passed in 4.132 seconds",
+  "ci": {
+    "run_id": 40189560565,
+    "tested_commit": "3539492e36d7436d29a02b789a2d29d4b3014cf0",
+    "libraries_job": 121157453040,
+    "libraries_conclusion": "success",
+    "server_job": 121159624900,
+    "server_status": "in_progress"
+  },
+  "runtime_qualified": false,
+  "milestone_complete": false
+}

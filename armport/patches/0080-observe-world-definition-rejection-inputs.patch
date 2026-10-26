@@ -1,0 +1,157 @@
+diff --git a/Game/src/graphics/armport_world_trace.h b/Game/src/graphics/armport_world_trace.h
+index 3420d89..f726f09 100644
+--- a/Game/src/graphics/armport_world_trace.h
++++ b/Game/src/graphics/armport_world_trace.h
+@@ -6,6 +6,7 @@ typedef struct ArmPortWorldTrace
+ {
+     unsigned active, visits, editor_skip, distance_skip, frustum_skip;
+     unsigned model_calls, model_not_loaded, alpha_zero, sort_requests;
++    unsigned frame, detail_samples[4];
+ } ArmPortWorldTrace;
+ extern ArmPortWorldTrace armport_world_trace;
+ #define ARMPORT_WORLD_COUNT(field) do { if (armport_world_trace.active) ++armport_world_trace.field; } while (0)
+diff --git a/Game/src/graphics/groupdraw.c b/Game/src/graphics/groupdraw.c
+index 73391c6..4779f4a 100644
+--- a/Game/src/graphics/groupdraw.c
++++ b/Game/src/graphics/groupdraw.c
+@@ -44,6 +44,7 @@ static void armportWorldBegin(void)
+         return;
+     memset(&armport_world_trace, 0, sizeof(armport_world_trace));
+     armport_world_trace.active = 1;
++    armport_world_trace.frame = armport_world_frames;
+ }
+ static void armportWorldEnd(int vis)
+ {
+diff --git a/Game/src/graphics/groupdrawinline.c b/Game/src/graphics/groupdrawinline.c
+index 65a23ff..6ac4f02 100644
+--- a/Game/src/graphics/groupdrawinline.c
++++ b/Game/src/graphics/groupdrawinline.c
+@@ -5,6 +5,7 @@
+ 
+ #include "graphics/groupdraw.h"
+ #include "graphics/armport_world_trace.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include "graphics/groupdrawutil.h"
+ #include "graphics/groupdrawinline.h"
+ #include "render/rendermodel.h"
+@@ -970,7 +971,51 @@ static INLINEDBG void drawDef(DrawParams *draw,F32 d,Vec3 mid,GroupDef *def,DefT
+     }
+ }
+ 
+-static INLINEDBG F32 closeEnough(DrawParams *draw,Vec3 mid,GroupEnt * groupEnt)
++#if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
++/* Four records per reason in each of the existing eight sampled frames.
++ * kind: 0 editor-only (local midpoint), 1 distance, 2 frustum, 3 survived
++ * the first three checks. These are observations, never visibility overrides.
++ * limit_valid distinguishes an actually calculated limit from cached inputs.
++ */
++static void armportWorldDef(unsigned kind, GroupEnt *ent, const Vec3 mid,
++                            const Vec3 distance_mid, F32 distance2, int distance_valid, F32 limit, int limit_valid)
++{
++    GroupDef *def;
++    unsigned trick = 0;
++    char detail[768], name[97];
++    unsigned i;
++    if (!armport_world_trace.active || kind >= 4 || armport_world_trace.detail_samples[kind] >= 4)
++        return;
++    if (!ent || !(def = ent->def)) return;
++    ++armport_world_trace.detail_samples[kind];
++    if (def->model && def->model->trick) trick = def->model->trick->flags1;
++    for (i = 0; i < sizeof(name)-1 && def->name && def->name[i]; ++i)
++    {
++        unsigned char c = (unsigned char)def->name[i];
++        name[i] = (c >= 33 && c <= 126 && c != '"' && c != '\\') ? c : '_';
++    }
++    name[i] = 0;
++    _snprintf(detail, sizeof(detail),
++        "frame=%u kind=%u sample=%u name=\"%s\" cached_flags=%u model=%u children=%d tray=%u fog=%u sound=%u light=%u editor=%u cubemap=%u trick_editor=%u trick_hide=%u mid_camera=%u mid=%.9g,%.9g,%.9g distance_valid=%u distance_mid=%.9g,%.9g,%.9g distance2=%.9g limit_valid=%u limit=%.9g cached_vis=%.9g radius=%.9g lod_scale=%.9g",
++        armport_world_trace.frame, kind, armport_world_trace.detail_samples[kind], name, (unsigned)ent->flags_cache,
++        def->model != NULL, def->count, (unsigned)def->is_tray,
++        (unsigned)def->has_fog, (unsigned)def->has_sound, (unsigned)def->has_light,
++        (unsigned)def->editor_visible_only, (unsigned)def->has_cubemap,
++        !!(trick & TRICK_EDITORVISIBLE), !!(trick & TRICK_HIDE), kind != 0,
++        mid[0], mid[1], mid[2], (unsigned)distance_valid,
++        distance_mid[0], distance_mid[1], distance_mid[2], distance2,
++        (unsigned)limit_valid, limit, ent->vis_dist_scaled_cache, ent->radius, def->lod_scale);
++    detail[sizeof(detail)-1] = 0;
++    armportZoneTrace("world.def", detail);
++}
++#define ARMPORT_WORLD_ACTIVE (armport_world_trace.active)
++#define ARMPORT_WORLD_DEF(kind, ent, mid, dm, distance2, dv, limit, lv) do { if (armport_world_trace.active) armportWorldDef(kind, ent, mid, dm, distance2, dv, limit, lv); } while (0)
++#else
++#define ARMPORT_WORLD_ACTIVE 0
++#define ARMPORT_WORLD_DEF(kind, ent, mid, dm, distance2, dv, limit, lv) ((void)0)
++#endif
++
++static INLINEDBG F32 closeEnough(DrawParams *draw,Vec3 mid,GroupEnt * groupEnt, int observe)
+ {
+     F32        d;
+     F32        groupEntDist;
+@@ -984,13 +1029,23 @@ static INLINEDBG F32 closeEnough(DrawParams *draw,Vec3 mid,GroupEnt * groupEnt)
+         d = lengthVec3Squared(mid);
+ 
+     if (groupEnt->flags_cache & (HAS_FOG | VIS_DOORFRAME | CHILD_PARENT_FADE))
++    {
++        if (observe && ARMPORT_WORLD_ACTIVE && d == 0) ARMPORT_WORLD_DEF(1, groupEnt, mid,
++            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, 0, 0);
+         return d;
++    }
+ 
+     groupEntDist = calculateVisDist(groupEnt);
+ 
+     //By far the most common rejection
+     if ( d > SQR(groupEntDist))
++    {
++        if (observe) ARMPORT_WORLD_DEF(1, groupEnt, mid,
++            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, groupEntDist, 1);
+         return 0;
++    }
++    if (observe && ARMPORT_WORLD_ACTIVE && d == 0) ARMPORT_WORLD_DEF(1, groupEnt, mid,
++            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, groupEntDist, 1);
+     return d;
+ }
+ 
+@@ -1042,13 +1097,14 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+     if (!group_draw.see_everything && groupEnt->flags_cache & ONLY_EDITORVISIBLE)
+     {
+         ARMPORT_WORLD_COUNT(editor_skip);
++        ARMPORT_WORLD_DEF(0, groupEnt, groupEnt->mid_cache, groupEnt->mid_cache, 0, 0, 0, 0);
+         return 0;
+     }
+ 
+     CALL_INIT
+     mulVecMat4(groupEnt->mid_cache,parent_mat_p,mid);
+ 
+-    if (!(d=closeEnough(draw,mid,groupEnt)))
++    if (!(d=closeEnough(draw,mid,groupEnt,1)))
+     {
+         ARMPORT_WORLD_COUNT(distance_skip);
+         return 0;
+@@ -1056,6 +1112,8 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+     if (!(clip=sphereInFrustum(mid,groupEnt)))
+     {
+         ARMPORT_WORLD_COUNT(frustum_skip);
++        ARMPORT_WORLD_DEF(2, groupEnt, mid,
++            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, 0, 0);
+         return 0;
+     }
+ 
+@@ -1066,6 +1124,9 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+     if (def->pre_alloc)
+         groupFileLoadFromName(def->name);
+ 
++    ARMPORT_WORLD_DEF(3, groupEnt, mid,
++            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, 0, 0);
++
+     // If this group is beyond the fog, and noFogClip is not set, and ClipFoggedGeometry is set, discard it
+     // don't fog clip if a parent or child has noFogClip set
+     CALL_INC
+@@ -1649,7 +1710,7 @@ int drawDefInternal_shadowmap( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker
+     // do a sphere visibility test and test if group is close enough
+     // to show up given its lod/visibility properties and current lod_scale
+     // (uses cached GroupEnt vis quantities)
+-    if (!(d=closeEnough(draw,mid,groupEnt)))
++    if (!(d=closeEnough(draw,mid,groupEnt,0)))
+         return 0;
+ 
+     // test against cascade view frustum slice

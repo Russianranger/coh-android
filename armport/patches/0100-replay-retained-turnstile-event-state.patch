@@ -1,0 +1,52 @@
+diff --git a/Game/src/UI/uiTurnstile.c b/Game/src/UI/uiTurnstile.c
+index fe56aa2..9839de7 100644
+--- a/Game/src/UI/uiTurnstile.c
++++ b/Game/src/UI/uiTurnstile.c
+@@ -125,6 +125,27 @@ const float *armportReplayTurnstileWait(void) { return &currentWait; }
+ #endif
+ 
+ 
++#ifdef COH_ARMPORT_REPLAY
++/* Read only: retained packet/event response destinations, not UI widgets or
++ * local request/queue clocks. Called only by active replay snapshots. */
++void armportReplayTurnstileEventState(ArmPortTurnstileEventState *state)
++{
++    state->name = event_name;
++    state->name_capacity = sizeof(event_name);
++    state->response_expected = eventResponseExpected;
++    state->accepted_count = event_acceptedCount;
++    state->declined_count = event_declinedCount;
++    state->in_progress = event_inProgress;
++    state->player_count = event_playerCount;
++    state->instance_id = event_instanceID;
++    state->status_player_count = status_playerCount;
++    state->replied[0] = status_replied1;
++    state->replied[1] = status_replied2;
++    state->status[0] = status_status1;
++    state->status[1] = status_status2;
++}
++#endif
++
+ static U32 windowColor;
+ static int tsJoinFlags = 0;
+ static char sForceQueueEvent[MAX_NAME_LEN] = "";
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 983c0b6..b05b00c 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -27,6 +27,15 @@ const TurnstileMissionClient *const *armportReplayTurnstileMissions(void);
+ const TurnstileMissionClient *armportReplayTurnstileDummy(int category);
+ int armportReplayTurnstileQueue(void);
+ const float *armportReplayTurnstileWait(void);
++typedef struct ArmPortTurnstileEventState {
++    const char *name;
++    unsigned name_capacity;
++    int response_expected, accepted_count, declined_count, in_progress, player_count;
++    unsigned instance_id;
++    int status_player_count;
++    unsigned replied[2], status[2];
++} ArmPortTurnstileEventState;
++void armportReplayTurnstileEventState(ArmPortTurnstileEventState *state);
+ const VisitedStaticMap *const *armportReplayVisitedMaps(void);
+ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);

@@ -1,0 +1,15 @@
+diff --git a/Common/seq/anim.c b/Common/seq/anim.c
+index bf2dd06..0751150 100644
+--- a/Common/seq/anim.c
++++ b/Common/seq/anim.c
+@@ -976,7 +976,9 @@ int modelCreateCtris(Model *model)
+     modelGetVerts(verts, model);
+     
+     model->tags = calloc(sizeof(model->tags[0]) * model->tri_count,1);
+-    model->ctris = (void*)((char*)pTotalAlloc + model->pack.grid.unpacksize);//calloc(sizeof(model->tags[0]) * model->tri_count,1);
++    // ARM64: triangles follow the expanded native grid AND retained disk indices.
++    // The disk byte count alone places triangle writes inside native PolyCells.
++    model->ctris = (void*)((char*)pTotalAlloc + uiGridAllocSize);//calloc(sizeof(model->tags[0]) * model->tri_count,1);
+     for(i=0;i<model->tri_count;i++)
+     {
+         

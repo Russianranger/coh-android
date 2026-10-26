@@ -1,0 +1,43 @@
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 753d258..b51c026 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -13,6 +13,7 @@ typedef struct NetLink NetLink;
+ typedef struct SouvenirClue SouvenirClue;
+ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
++void armportReplayAlignmentDelay(unsigned index, unsigned seconds);
+ void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id));
+ void armportReplayMaybeRun(void);
+ void armportReplayUnknownCommand(int command);
+@@ -21,6 +22,7 @@ void armportReplayCommand(Packet *pak, int command, int begin);
+ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #else
+ #define armportReplayOrientation(e, axis, value, accepted) ((void)0)
++#define armportReplayAlignmentDelay(index, seconds) ((void)0)
+ #define armportReplayMaybeRun() ((void)0)
+ #define armportReplayUnknownCommand(command) ((void)0)
+ #define armportReplayCursor(pak, stage) ((void)0)
+diff --git a/Game/src/storyarc/contactClient.c b/Game/src/storyarc/contactClient.c
+index e97f9e8..426fc35 100644
+--- a/Game/src/storyarc/contactClient.c
++++ b/Game/src/storyarc/contactClient.c
+@@ -14,6 +14,7 @@
+ #include "group/groupnetrecv.h"
+ #include "UI/uiDialog.h"
+ #include "clientcomm/clientcomm.h"
++#include "clientcomm/armport_replay.h"
+ #include "cmdparse/cmdgame.h"
+ #include "entity/entPlayer.h"
+ #include "UI/uiMissionSummary.h"
+@@ -167,7 +168,9 @@ void ContactStatusListReceive(Packet* pak)
+ 
+     for (pointIndex = 0; pointIndex < ALIGNMENT_POINT_MAX_COUNT; pointIndex++)
+     {
+-        timeWhenCanEarnAlignmentPoint[pointIndex] = now + pktGetBitsAuto(pak);
++        U32 delay = pktGetBitsAuto(pak);
++        timeWhenCanEarnAlignmentPoint[pointIndex] = now + delay;
++        armportReplayAlignmentDelay(pointIndex, delay);
+         earnedAlignments[pointIndex] = pktGetBitsAuto(pak);
+     }
+     heroAlignmentPoints_self = pktGetBitsAuto(pak);

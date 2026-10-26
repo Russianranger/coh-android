@@ -1,25 +1,32 @@
 name: ArmPort build
 
+# Qualify bounded world.ui samples after replay40308641544 finished native builds.
 # COH-ArmPort: build the original client code as ARM64 Windows with llvm-mingw
 # and run test programs under the Android app's own ARM64 Wine 10 runtime.
 on:
   workflow_dispatch:
   push:
-    branches: ['armport/**', 'COH-ArmPort']
+    # Isolated replay iterations run their own ARM64/i686 execution workflow.
+    # Keep the milestone branch's long Atlas run alive while debugging replay.
+    branches: ['armport/**', '!armport/replay-*', 'COH-ArmPort']
     paths:
       - 'armport/**'
       - '!armport/survey/**'
       - '!armport/shaders/**'
       - '!armport/*.md'
+      # Replay-host/fixture changes are checked by armport-reference.yml and
+      # do not change the Atlas client; leave its long server run running.
+      - '!armport/replay/run_ci.py'
+      - '!armport/replay/fixtures/**'
+      - '!armport/replay/README.md'
+      - '!armport/tests/test_receiver_evidence.py'
       - '.github/workflows/armport-build.yml'
-  pull_request:
-    branches: ['COH-ArmPort']
-    paths:
-      - 'armport/**'
-      - '!armport/survey/**'
-      - '!armport/shaders/**'
-      - '!armport/*.md'
-      - '.github/workflows/armport-build.yml'
+
+# Internal milestone branches already run on push, including before a PR is
+# opened. A second pull_request trigger duplicates the full server stack.
+concurrency:
+  group: armport-build-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -44,11 +51,35 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
             /tools/fetch_runtime_asset_bundle.py
+            /armport/scripts/stage_atlas_supplement.py
+            /armport/scripts/stage_atlas_materials.py
+            /tools/android/interactive/prepare_atlas_world_assets.py
+            /assets/atlas-world-supplement-manifest.json
+            /assets/reference-inputs-manifest.json
+            /armport/scripts/reviewed_asset_coverage.py
+            /armport/scripts/stage_reviewed_files.py
+            /armport/scripts/stage_composite_dependencies.py
+            /armport/scripts/stage_plaza_statue_materials.py
+            /armport/evidence/m3-proposed-plaza-statue-materials.json
+            /armport/evidence/m3-approved-after-load-materials.json
+            /armport/evidence/m3-proposed-composite-dependencies.json
+            /armport/evidence/m3-dispatch-errors-40113107670.json
+            /upstream/i24/data/tricks/v_shaders/villains/male/
+            /armport/scripts/stage_approved_ranges.py
+            /armport/evidence/m3-approved-range-assets.json
+            /armport/evidence/m3-approved-cape-ranges.json
+            /armport/evidence/m3-reviewed-file-selection.json
+            /armport/evidence/m3-dispatch-errors-40105902494.json
+            /assets/client-visual-manifest.json
+            /assets/character-avatar-defaults-manifest.json
+            /assets/character-avatar-defaults.zip
+            /assets/zones-world-supplement-manifest.json
             /assets/reference-inputs-receipt.json
           sparse-checkout-cone-mode: false
           lfs: false
@@ -65,6 +96,195 @@ jobs:
           python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json \
             --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
 
+      - id: atlas-supplement
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: armport-atlas-supplement-499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60
+      - uses: actions/download-artifact@v4
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        with:
+          name: coh-client-interaction-apk
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/retained-atlas-donor
+      - name: Recover the reviewed Atlas supplement from the exact retained app
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_atlas_supplement.py recover \
+            --apk "$RUNNER_TEMP/retained-atlas-donor/COH-Character-Reopen-0.10.0.apk" \
+            --output "$RUNNER_TEMP/atlas-supplement"
+      - uses: actions/cache/save@v4
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: ${{ steps.atlas-supplement.outputs.cache-primary-key }}
+      - name: Retain the reviewed Atlas supplement independently of cache eviction
+        uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-supplement
+          path: ${{ runner.temp }}/atlas-supplement
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: reviewed-dispatch
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          key: armport-reviewed-dispatch-${{ hashFiles('armport/evidence/m3-reviewed-file-selection.json') }}
+      - id: composite-data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/composite-data
+          key: armport-composite-data-${{ hashFiles('armport/evidence/m3-proposed-composite-dependencies.json', 'armport/scripts/stage_composite_dependencies.py') }}
+      - name: Retrieve the already reviewed 0.13.10 visual archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-assets
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-visual
+      - name: Retrieve the already reviewed zone archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-zones
+      - name: Select only shared missing files covered by reviewed manifests
+        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_reviewed_files.py \
+            --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" \
+            --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip" \
+            --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - name: Verify selected files even on a cache hit
+        run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - uses: actions/cache/save@v4
+        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          key: ${{ steps.reviewed-dispatch.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-dispatch-data
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Stage exactly eight approved composite dependencies
+        if: steps.composite-data.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_composite_dependencies.py \
+            --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" \
+            --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip" \
+            --output "$RUNNER_TEMP/composite-data"
+      - name: Recompute proposal and verify composite cache bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - uses: actions/cache/save@v4
+        if: steps.composite-data.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/composite-data
+          key: ${{ steps.composite-data.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: plaza-data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/plaza-data
+          key: armport-plaza-data-${{ hashFiles('armport/evidence/m3-proposed-plaza-statue-materials.json', 'armport/evidence/m3-approved-after-load-materials.json', 'armport/scripts/stage_plaza_statue_materials.py') }}
+      - name: Stage exactly six approved plaza/statue textures
+        if: steps.plaza-data.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - name: Verify plaza/statue cache bytes against the reviewed archive
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --verify-only --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - uses: actions/cache/save@v4
+        if: steps.plaza-data.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/plaza-data
+          key: ${{ steps.plaza-data.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-plaza-data
+          path: ${{ runner.temp }}/plaza-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: approved-ranges
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/approved-range-data
+          key: armport-approved-ranges-${{ hashFiles('armport/evidence/m3-approved-range-assets.json') }}
+      - name: Fetch only exact user-approved PIGG ranges
+        if: steps.approved-ranges.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_approved_ranges.py --output "$RUNNER_TEMP/approved-range-data"
+      - name: Verify all approved ranges even after cache restore
+        run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - uses: actions/cache/save@v4
+        if: steps.approved-ranges.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/approved-range-data
+          key: ${{ steps.approved-ranges.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-approved-range-data
+          path: ${{ runner.temp }}/approved-range-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: cape-ranges
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/cape-range-data
+          key: armport-cape-ranges-${{ hashFiles('armport/evidence/m3-approved-cape-ranges.json', 'armport/scripts/stage_approved_ranges.py') }}
+      - name: Fetch only the exact approved cape geometry ranges
+        if: steps.cape-ranges.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_approved_ranges.py --manifest armport/evidence/m3-approved-cape-ranges.json --output "$RUNNER_TEMP/cape-range-data"
+      - name: Verify cape ranges even after cache restore
+        run: python3 armport/scripts/stage_approved_ranges.py --manifest armport/evidence/m3-approved-cape-ranges.json --verify-only --output "$RUNNER_TEMP/cape-range-data"
+      - uses: actions/cache/save@v4
+        if: steps.cape-ranges.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/cape-range-data
+          key: ${{ steps.cape-ranges.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-cape-range-data
+          path: ${{ runner.temp }}/cape-range-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: atlas-materials
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-material-data
+          key: armport-atlas-materials-27-204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86
+      - name: Recover only the previously reviewed Atlas material additions
+        if: steps.atlas-materials.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_atlas_materials.py \
+            --base-archive "$RUNNER_TEMP/atlas-supplement/atlas-world-supplement.zip" \
+            --archive "$RUNNER_TEMP/atlas-material-input/atlas-world-supplement.zip" \
+            --output "$RUNNER_TEMP/atlas-material-data"
+      - name: Verify all 27 material files even after cache restore
+        run: python3 armport/scripts/stage_atlas_materials.py --verify-only --output "$RUNNER_TEMP/atlas-material-data"
+      - uses: actions/cache/save@v4
+        if: steps.atlas-materials.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/atlas-material-data
+          key: ${{ steps.atlas-materials.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-materials
+          path: ${{ runner.temp }}/atlas-material-data
+          retention-days: 90
+          if-no-files-found: error
+
   libraries:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
@@ -73,11 +293,16 @@ jobs:
         with:
           sparse-checkout: |
             /armport/
+            /tools/android/interactive/prepare_atlas_world_assets.py
+            /assets/catalog.json
+            /assets/zones-audio-metadata.json
             /upstream/ouroboros/
             !/upstream/ouroboros/data/
             /upstream/i24/data/defs/ui/bodyparts.bp
             /native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
             /android/runtime-lock.json
+            /android/guest/diagnostic.py
+            /tools/android/interactive/test_client_render_queue_worker.py
             /.github/
           sparse-checkout-cone-mode: false
           lfs: false
@@ -86,6 +311,12 @@ jobs:
         run: |
           python3 -m pip install --quiet --break-system-packages "pillow==12.0.0"
           python3 armport/tests/nvdxt/check_decoder.py
+
+      - name: Check bounded M3 diagnostic reporting
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends imagemagick
+          python3 -m unittest discover -s armport/tests -p 'test_*.py' -v
 
       - name: Install llvm-mingw (aarch64 host)
         run: |
@@ -113,6 +344,126 @@ jobs:
 
       - name: Prepare patched source
         run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/armport"
+      - name: Texture names stay inside copied and in-place buffers
+        run: python3 armport/tests/texture_name_bounds.py --source "$RUNNER_TEMP/armport/src"
+      - name: Force-queue packet names stay inside retained storage
+        run: python3 armport/tests/receiver_force_queue_bounds.py --source "$RUNNER_TEMP/armport/src"
+      - name: Prove collision triangles preserve the native grid
+        run: |
+          set -o pipefail
+          python3 armport/tests/polycell_allocation.py --source "$RUNNER_TEMP/armport/src" | tee "$RUNNER_TEMP/polycell-allocation.log"
+          python3 - "$RUNNER_TEMP/polycell-allocation.log" <<'PYCONTROL'
+          import pathlib, sys
+          print('::notice title=ArmPort native grid allocation::' + pathlib.Path(sys.argv[1]).read_text().replace('\n', '%0A'))
+          PYCONTROL
+
+
+      - name: SMF selection respects signed string boundaries
+        run: |
+          python3 armport/tests/smf_selection_boundary.py --source "$RUNNER_TEMP/armport/src"
+          python3 armport/tests/smf_plain_selection.py --source "$RUNNER_TEMP/armport/src"
+
+      - name: Power preview respects the deferred menu transition
+        run: |
+          set -o pipefail
+          python3 armport/tests/power_preview_transition.py --source "$RUNNER_TEMP/armport/src" | tee "$RUNNER_TEMP/power-preview.log"
+          python3 - "$RUNNER_TEMP/power-preview.log" <<'PYCONTROL'
+          import pathlib, sys
+          print('::notice title=ArmPort power preview transition::' + pathlib.Path(sys.argv[1]).read_text().replace('\n', '%0A'))
+          PYCONTROL
+
+      - name: CRT log visibility with the actual FileWrapper macro under Wine
+        run: |
+          set -o pipefail
+          for variant in original patched; do
+            args=()
+            expected=1
+            if [ "$variant" = original ]; then args+=(--original); expected=0; fi
+            python3 armport/tests/stdio_buffering.py --source "$RUNNER_TEMP/armport/src" "${args[@]}" --emit-windows "$RUNNER_TEMP/stdio-$variant.c"
+            /opt/llvm-mingw/bin/aarch64-w64-mingw32-clang -std=gnu11 -O1 -Wno-error=incompatible-pointer-types "$RUNNER_TEMP/stdio-$variant.c" -o "$RUNNER_TEMP/stdio-$variant.exe"
+            logfile="$RUNNER_TEMP/stdio-$variant.txt"
+            ARMPORT_STDIO_LOG="Z:$logfile" timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/stdio-$variant.exe" "$expected"
+            cat "$logfile"
+            printf '::notice title=ArmPort CRT buffering %s::%s\n' "$variant" "$(tr '\n' ' ' < "$logfile")"
+          done
+
+      - name: Worker lost-wake regression and ARM64 queue publication
+        run: |
+          set -o pipefail
+          for variant in original patched; do
+            source=upstream/ouroboros
+            expected=0
+            if [ "$variant" = patched ]; then
+              source="$RUNNER_TEMP/armport/src"
+              expected=1
+            fi
+            python3 armport/tests/worker_wake.py --source "$source" --expect-dispatch "$expected" \
+              --emit-windows "$RUNNER_TEMP/worker-$variant.c"
+            for target in aarch64 i686; do
+              /opt/llvm-mingw/bin/$target-w64-mingw32-clang -std=gnu11 -O2 -fms-extensions \
+                -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types \
+                "$RUNNER_TEMP/worker-$variant.c" -o "$RUNNER_TEMP/worker-$variant-$target.exe"
+            done
+            # Execute ARM64 with the app runtime. i686 is compile coverage here.
+            timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/worker-$variant-aarch64.exe" "$expected" | tee "$RUNNER_TEMP/worker-$variant.log"
+            python3 - "$variant" "$RUNNER_TEMP/worker-$variant.log" <<'PY'
+          import pathlib, sys
+          body = pathlib.Path(sys.argv[2]).read_text().strip().replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+          print(f'::notice title=ARM64 worker {sys.argv[1]}::{body}')
+          PY
+          done
+
+      - name: Collision grid pointer identity under ARM64 Wine
+        run: |
+          set -o pipefail
+          for variant in original patched; do
+            source=upstream/ouroboros
+            expected=0
+            if [ "$variant" = patched ]; then
+              source="$RUNNER_TEMP/armport/src"
+              expected=1
+            fi
+            python3 armport/tests/grid_pointers.py --source "$source" --expect-full-width "$expected" \
+              --emit-windows "$RUNNER_TEMP/grid-$variant.c"
+            /opt/llvm-mingw/bin/aarch64-w64-mingw32-clang -std=gnu11 -O2 \
+              "$RUNNER_TEMP/grid-$variant.c" -o "$RUNNER_TEMP/grid-$variant.exe"
+            out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/grid-$variant.exe" "$expected")
+            printf '%s\n' "$out"
+            printf '::notice title=ARM64 grid %s::%s\n' "$variant" "$out"
+          done
+
+      - name: VBO queue pointer header under ARM64 Wine
+        run: |
+          set -o pipefail
+          for variant in original patched; do
+            source=upstream/ouroboros
+            expected=0
+            if [ "$variant" = patched ]; then
+              source="$RUNNER_TEMP/armport/src"
+              expected=1
+            fi
+            python3 armport/tests/vbo_header.py --source "$source" --expect-full-width "$expected" \
+              --emit-windows "$RUNNER_TEMP/vbo-$variant.c"
+            /opt/llvm-mingw/bin/aarch64-w64-mingw32-clang -std=gnu11 -O2 \
+              "$RUNNER_TEMP/vbo-$variant.c" -o "$RUNNER_TEMP/vbo-$variant.exe"
+            out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/vbo-$variant.exe" "$expected")
+            printf '%s\n' "$out"
+            printf '::notice title=ARM64 VBO %s::%s\n' "$variant" "$out"
+          done
+
+      - name: Check original souvenir view and story snapshot serializer
+        run: python3 armport/tests/receiver_story_state.py --source "$RUNNER_TEMP/armport/src"
+      - name: Check actual contact receive observer and serializer
+        run: python3 armport/tests/receiver_contact_state.py --source "$RUNNER_TEMP/armport/src"
+
+      - name: Bounded world-render diagnostic control
+        run: python3 armport/tests/world_trace.py --source "$RUNNER_TEMP/armport/src"
+      - name: Original distance decisions and bounded definition observations
+        run: python3 armport/tests/world_def_trace.py --source "$RUNNER_TEMP/armport/src"
+      - name: Model-bearing traversal observation controls
+        run: python3 armport/tests/world_model_paths.py --source "$RUNNER_TEMP/armport/src"
+      - name: Original model lookup results and bounded concurrent diagnostics
+        run: python3 armport/tests/group_model_lookup.py --source "$RUNNER_TEMP/armport/src"
 
       - name: Configure
         env:
@@ -126,10 +477,50 @@ jobs:
 
       - name: Build UtilitiesLib, test program and precise floating-point check
         run: |
-          cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts verify_precise_floating_point \
+          cmake --build "$RUNNER_TEMP/armport/build" --target UtilitiesLib armport_bodyparts armport_replay_sink armport_zone_trace verify_precise_floating_point \
             armport_address_space_laa armport_address_space_nolaa \
             -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
           test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Zone trace CRT stream regression
+        run: |
+          python3 - <<'PYCONTROL'
+          import os, subprocess
+          from pathlib import Path
+          path = Path('zone-boundary-test.log')
+          path.unlink(missing_ok=True)
+          with path.open('ab') as output:
+              output.write(b'host before\n'); output.flush()
+              subprocess.run(['/opt/wine/bin/wine', os.environ['RUNNER_TEMP'] + '/armport/build/bin/armport_zone_trace.exe'],
+                             env=os.environ | {'ARMPORT_WINE_BOUNDARY_LOG': 'zone-boundary-test.log'},
+                             stdout=output, stderr=subprocess.STDOUT, timeout=60, check=True)
+              output.write(b'host after\n'); output.flush()
+          text = path.read_text(errors='replace')
+          assert 'regression.crt file.h included first' in text and 'zone trace wrapper restored' in text
+          markers = ['host before', 'boundary control before', 'ARMPORT_ATLAS_MAP_START_V1',
+                     'map.start boundary control', 'boundary control after', 'host after']
+          positions = [text.index(marker) for marker in markers]
+          assert positions == sorted(positions) and text.count('ARMPORT_ATLAS_MAP_START_V1') == 1
+          assert 'ARMPORT_ZONE_LOG_FAILED' not in text
+          PYCONTROL
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows = [json.loads(line) for line in Path('zone-trace-test.jsonl').read_text().splitlines()]
+          expected = 'x\n"\\\xff' + 'x' * (8191 - 5)
+          assert len(rows) == 66 and rows[0]['stage'] == 'regression.crt' and rows[-1]['stage'] == 'map.start'
+          assert all(set(row) == {'stage', 'text', 'tid'} and row['stage'] == 'client.error'
+                     and row['text'] == expected and type(row['tid']) is int and row['tid'] > 0
+                     for row in rows[1:-1])
+          assert len({row['tid'] for row in rows[1:-1]}) == 4
+          PY
+          printf '::notice title=ArmPort zone trace::CRT/FileWrapper, 64 complete threaded records and shared Wine/map append ordering passed\n'
+
+      - name: Original network socketless replay preflight
+        run: |
+          out=$(timeout 60s /opt/wine/bin/wine "$RUNNER_TEMP/armport/build/bin/armport_replay_sink.exe")
+          printf '%s\n' "$out"
+          printf '::notice title=ArmPort replay sink::%s\n' "$out"
 
       - name: Run the M1 test under ARM64 Wine
         run: |
@@ -203,7 +594,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/client-bin
-          key: armport-client-${{ matrix.config }}-lines1-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
+          key: armport-client-${{ matrix.config }}-lines1-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/replay/**', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
 
       - name: Prepare patched source
         if: steps.exe-cache.outputs.cache-hit != 'true'
@@ -228,6 +619,9 @@ jobs:
         run: |
           cmake --build "$RUNNER_TEMP/armport/build" --target Game -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
           rc=${PIPESTATUS[0]}
+          if [ "$rc" -ne 0 ]; then
+            grep -m 20 -E ' error: |fatal error:' "$RUNNER_TEMP/build.log" | cut -c1-400 | sed 's/^/::error title=ArmPort Game compile::/' || true
+          fi
           exe=$(find "$RUNNER_TEMP/armport/build" -name 'CityOfHeroes.exe' | head -1)
           if [ -n "$exe" ]; then
             info="$(file "$exe" | cut -d: -f2) size $(stat -c %s "$exe")"
@@ -433,8 +827,246 @@ jobs:
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" \
             --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw --cg-dir "$RUNNER_TEMP/cg-arb" \
-            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive
+            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive --login-probe
       - name: Export the last screen
         if: always()
         run: |
           [ -f "$RUNNER_TEMP/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/screen.jpg" "ArmPort screen" || echo "no screen"
+      # A separate step: GitHub keeps about ten notices per step.
+      - name: Export the login probe steps
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/probe-steps.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/probe-steps.jpg" "ArmPort probe steps" || echo "no probe steps"
+
+  server-run:
+    # M3: the repository's qualified ARM64 game stack (original DbServer and
+    # Atlas MapServer under the app's Wine 10 with FEX, PostgreSQL, PRoot,
+    # private loopback-only network) plus the ARM64 client, login typed on a
+    # shared Xvfb display. See armport/notes/M3-PLAN.md.
+    needs: [client, client-run1, cg-precompile]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      actions: read
+    env:
+      # Donor executables were built and receipted at this commit (run
+      # 38478387527 of android-game.yml); the package must name it.
+      DONOR_COMMIT: 1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21
+    steps:
+      # Full checkout, as android-game.yml's runtime job: the packaging and
+      # staging tools read accepted evidence under docs/, database/, patches/
+      # and upstream/ (about 2.9 GB, mostly upstream/i24/data the client uses).
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - name: Free disk (preinstalled toolchains this job does not use)
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL \
+            /usr/share/swift /usr/local/share/powershell /usr/local/share/chromium /usr/lib/jvm/*openjdk*-amd64 || true
+          sudo docker image prune -af >/dev/null 2>&1 || true
+          echo "::notice title=ArmPort M3 disk::$(df -h / | tail -1)"
+      # Original artifacts have begun expiring. Restore the exact donor set
+      # already retained by this workflow, then verify every file on cache hits too.
+      - id: donors
+        uses: actions/cache/restore@v4
+        with:
+          path: out/donors
+          key: armport-server-donors-v1
+      - name: Restore the retained server donor bundle on a cache miss
+        if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-server-donors
+          path: out/donors
+          run-id: 39782080360
+          github-token: ${{ github.token }}
+      - name: Verify the complete retained server donor inventory
+        run: python3 armport/scripts/verify_server_donors.py out/donors
+      - if: steps.donors.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: out/donors
+          key: armport-server-donors-v1
+      - name: Retain the verified donors independently of cache eviction
+        uses: actions/upload-artifact@v4
+        with:
+          name: armport-server-donors
+          path: out/donors/
+          retention-days: 90
+      - name: Donor inventory
+        run: |
+          cd out/donors && find . -type f -printf '%s %p\n' | sort -k2 > ../donor-files.txt
+          (sha256sum reference-artifact/coh-reference-win32.zip; wc -l < ../donor-files.txt) | tee ../donor-summary.txt
+          echo "::notice title=ArmPort M3 donors::$(cat ../donor-summary.txt | tr '\n' ' ') cache-hit=${{ steps.donors.outputs.cache-hit }}"
+
+      - name: Assemble the game package (repository tools, donor commit)
+        run: |
+          S=armport/scripts/step.sh
+          $S "ArmPort M3 talloc source" sh -c 'python3 tools/android/extract_talloc_source.py --assets out/donors/runtime-inputs \
+            --bundle out/donors/proot-sources/proot-corresponding-sources.tar.gz \
+            --output out/android/source-cache/talloc-2.4.3.tar.gz > out/talloc-source-receipt.json'
+          cat > "$RUNNER_TEMP/unpack_reference.py" <<'PY'
+          import hashlib, pathlib, zipfile
+          archive = pathlib.Path('out/donors/reference-artifact/coh-reference-win32.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(archive) as value:
+              assert all('/' not in n and '\\' not in n and n not in ('.', '..') for n in value.namelist())
+              value.extractall('out/reference-runtime')
+          PY
+          $S "ArmPort M3 reference runtime" python3 "$RUNNER_TEMP/unpack_reference.py"
+          $S "ArmPort M3 assemble game package" python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime \
+            --dbserver out/donors/wine-dbserver --resume out/donors/resume-client --bridge out/donors/bridge \
+            --output out/wine-game --repository-commit "$DONOR_COMMIT" \
+            --dbserver-profile loopback --game-listener-profile loopback --loopback-game out/donors/game-listeners
+      - name: Restore the reviewed asset ZIP
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Stage server game data and schema
+        run: |
+          S=armport/scripts/step.sh
+          $S "ArmPort M3 stage assets" python3 tools/runtime_asset_bundle.py stage --archive "$RUNNER_TEMP/reference-assets.zip" \
+            --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
+          $S "ArmPort M3 game data" python3 tools/android/game/prepare_game_data.py --asset-data out/reviewed-assets --output out/game-data
+          $S "ArmPort M3 schema" python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
+          rm -f "$RUNNER_TEMP/reference-assets.zip"
+          echo "::notice title=ArmPort M3 disk after staging::$(df -h / | tail -1)"
+      - name: Install host tools (PRoot build, Xvfb, xdotool, OCR)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux \
+            xvfb xdotool x11-apps imagemagick tesseract-ocr tcpdump gdb
+      - name: Build matching native ARM64 PRoot
+        run: armport/scripts/step.sh "ArmPort M3 PRoot build" python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      # The client runs on the host exactly as in M2's boot test.
+      - name: Install the app's ARM64 Wine runtime, Xvfb and Mesa (client side)
+        run: armport/scripts/install_wine_runtime.sh
+      - name: Install llvm-mingw (for llvm-symbolizer)
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/llvm-mingw
+          sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-Release
+          path: ${{ runner.temp }}/client-bin
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-cg-arb
+          path: ${{ runner.temp }}/cg-arb
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+      - name: Restore the exact reviewed Atlas supplement
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: armport-atlas-supplement-499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60
+          fail-on-cache-miss: true
+      - name: Restore selected reviewed dispatch data
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-reviewed-dispatch-data
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+      - name: Verify every selected dispatch file
+        run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-approved-range-data
+          path: ${{ runner.temp }}/approved-range-data
+      - name: Verify the exact approved range layer
+        run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-cape-range-data
+          path: ${{ runner.temp }}/cape-range-data
+      - name: Verify the exact approved cape geometry layer
+        run: python3 armport/scripts/stage_approved_ranges.py --manifest armport/evidence/m3-approved-cape-ranges.json --verify-only --output "$RUNNER_TEMP/cape-range-data"
+      - name: Restore approved composite dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
+      - name: Reverify the already reviewed 0.13.10 visual archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-assets
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-visual
+      - name: Reverify the already reviewed zone archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-zones
+      - name: Recompute proposal and verify composite artifact bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - name: Restore approved plaza/statue textures
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-plaza-data
+          path: ${{ runner.temp }}/plaza-data
+      - name: Verify plaza/statue artifact bytes
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --verify-only --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - name: Restore the reviewed Atlas material additions
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-reviewed-atlas-materials
+          path: ${{ runner.temp }}/atlas-material-data
+      - name: Verify the separate Atlas material layer
+        run: python3 armport/scripts/stage_atlas_materials.py --verify-only --output "$RUNNER_TEMP/atlas-material-data"
+      - name: Verify and stage all retained Atlas geometry and textures
+        run: |
+          python3 armport/scripts/stage_atlas_supplement.py stage \
+            --source "$RUNNER_TEMP/atlas-supplement" --output "$RUNNER_TEMP/atlas-client-data"
+      - name: Stage the ARM64 client
+        run: |
+          # The client reads the same reviewed asset bundle as M2's client-run,
+          # from the staged copy (no second unpack).
+          assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
+          armport/scripts/step.sh "ArmPort M3 client stage" python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/atlas-material-data" --strict-data "$RUNNER_TEMP/atlas-material-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" --data "$RUNNER_TEMP/plaza-data" --strict-data "$RUNNER_TEMP/plaza-data" --data "$RUNNER_TEMP/cape-range-data" --strict-data "$RUNNER_TEMP/cape-range-data" \
+            --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
+          ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
+      - name: Server stack and ARM64 client login to Atlas Park
+        run: |
+          armport/scripts/step.sh "ArmPort M3 server run" python3 armport/server/armport_game_host.py --assets out/donors/runtime-inputs --package out/wine-game \
+            --data out/game-data --schema out/dbserver-schema --stack-probe out/donors/stack-probe \
+            --atlas-supplement "$RUNNER_TEMP/atlas-supplement" \
+            --proot out/android/native/linux-arm64 --client "$RUNNER_TEMP/armport-client" \
+            --work "$RUNNER_TEMP/m3-work" --evidence "$RUNNER_TEMP/m3-evidence" \
+            --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw \
+            --client-prefix "$RUNNER_TEMP/m3-client-prefix" --client-home "$RUNNER_TEMP/m3-client-home"
+      - name: Report zone-load progress and bounded client stack samples
+        if: always()
+        run: python3 armport/scripts/zone_report.py --evidence "$RUNNER_TEMP/m3-evidence" --client "$RUNNER_TEMP/armport-client"
+      - name: Export the in-game screen
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/m3-evidence/screen.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/m3-evidence/screen.jpg" "ArmPort M3 screen" || echo "no screen"
+          [ -f "$RUNNER_TEMP/m3-evidence/steps.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/m3-evidence/steps.jpg" "ArmPort M3 steps" || echo "no steps"
+          for n in login-panel-typed login-panel-after; do
+            [ -f "$RUNNER_TEMP/m3-evidence/$n.jpg" ] && python3 armport/scripts/screen_export.py "$RUNNER_TEMP/m3-evidence/$n.jpg" "ArmPort M3 $n" || echo "no $n"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-m3-evidence
+          path: |
+            ${{ runner.temp }}/m3-evidence/
+            ${{ runner.temp }}/armport-client/armport_stdio.txt
+            ${{ runner.temp }}/armport-client/zone-trace.jsonl
+            ${{ runner.temp }}/m3-evidence/client-output.txt
+            out/donor-files.txt
+            out/wine-game/game-package.json
+          if-no-files-found: warn

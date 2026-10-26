@@ -1,0 +1,33 @@
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 6c91f47..d490cc0 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -16,6 +16,7 @@ const VisitedStaticMap *const *armportReplayVisitedMaps(void);
+ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
+ void armportReplayAlignmentDelay(unsigned index, unsigned seconds);
++void armportReplayDesaturation(const float *delay, const float *weight, const float *target, const float *fade);
+ void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id));
+ void armportReplayMaybeRun(void);
+ void armportReplayUnknownCommand(int command);
+@@ -25,6 +26,7 @@ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #else
+ #define armportReplayOrientation(e, axis, value, accepted) ((void)0)
+ #define armportReplayAlignmentDelay(index, seconds) ((void)0)
++#define armportReplayDesaturation(delay, weight, target, fade) ((void)0)
+ #define armportReplayMaybeRun() ((void)0)
+ #define armportReplayUnknownCommand(command) ((void)0)
+ #define armportReplayCursor(pak, stage) ((void)0)
+diff --git a/Game/src/clientcomm/clientcommreceive.c b/Game/src/clientcomm/clientcommreceive.c
+index 55597ee..57825e2 100644
+--- a/Game/src/clientcomm/clientcommreceive.c
++++ b/Game/src/clientcomm/clientcommreceive.c
+@@ -780,6 +780,8 @@ void receiveDesaturateInfo( Packet *pak )
+     game_state.desaturateWeight = pktGetF32(pak);
+     game_state.desaturateWeightTarget = pktGetF32(pak);
+     game_state.desaturateFadeTime = pktGetF32(pak);
++    armportReplayDesaturation(&game_state.desaturateDelay, &game_state.desaturateWeight,
++        &game_state.desaturateWeightTarget, &game_state.desaturateFadeTime);
+ }
+ 
+ //

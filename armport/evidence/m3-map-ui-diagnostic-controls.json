@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-26",
+  "scope": "host map UI diagnostic, runtime pending",
+  "command": "python3 -m unittest discover -s coh-active/armport/tests -p 'test_*.py'",
+  "output": "..........................................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 202 tests in 7.994s\n\nOK\n",
+  "changes": [
+    "Preserve original frame checks, world_rendered, atlas_shot and atlas_shot_later before diagnostic",
+    "Single unique OCR Map label inside owned game top navigation strip; no key commands or dialog dismissal",
+    "Recheck owned window and complete dialog trace after OCR and dialog trace after focus",
+    "Separate before/after screenshots, failure isolated from original verdict and host-done signaling"
+  ],
+  "limitations": [
+    "Mocked host controls do not establish X11 focus or game UI runtime behavior",
+    "Click delivery does not prove map opened; inspect saved frame",
+    "In-game helper dialogs are not dismissed; an intercepted click remains inconclusive",
+    "Overlay cannot qualify 3D rendering or M3"
+  ],
+  "native_changes": false,
+  "milestone_complete": false,
+  "next_action": "Run Atlas and inspect map-ui diagnostic frames separately from unchanged original acceptance frames."
+}

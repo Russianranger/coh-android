@@ -1,0 +1,38 @@
+{
+ "scope": "one exact existing visual-archive texture missing from the Atlas staging layers, logged after map load",
+ "date_utc": "2026-10-26",
+ "source_run": 40356647478,
+ "source_commit": "f10e2aff133dcbfe94963db0ade9e6915dd1107e",
+ "error": "client.error File: TRICKS/STREETS/STREETS.TXT Last Author/Status:UNKNOWN Material trick street_sidewalk1 is referencing missing DualColor1 texture dcoarse_sidewalk.tga",
+ "phase": "after_map_load",
+ "sources": {
+  "client-visual": {
+   "manifest": "assets/client-visual-manifest.json",
+   "encoded_sha256": "e5817e1f9bc4693066927485218687db70e476e0baaea75e9e633861ddcc004e",
+   "git_blob": "9bdba855bbf3ea0dbcc1ff61e58a2ae1fe18e81c",
+   "decoded": {
+    "bytes": 16272899,
+    "sha256": "447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b"
+   },
+   "archive": {
+    "bytes": 515813056,
+    "filename": "client-visual-assets.zip",
+    "sha256": "1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea"
+   },
+   "existing_workflow_donor_run": 37249488856,
+   "existing_workflow_donor_artifact_name": "coh-client-asset-closure-assets"
+  }
+ },
+ "files": {
+  "data/texture_library/world/det_texture/dcoarse_sidewalk.texture": {
+   "source": "client-visual",
+   "request": "dcoarse_sidewalk.tga",
+   "bytes": 43991,
+   "sha256": "312ed00587c8663376ac38260b721df6ac7ead3e39f528f23f8b8777d7180b4e"
+  }
+ },
+ "file_count": 1,
+ "payload_bytes": 43991,
+ "approval": "User authority relayed in PR #6 comment 6419236533 (2026-10-26): explicit permission to use the textures and implement anything else that blocks the milestones. Exact selection only; no new source, no whole-archive expansion, no error exception.",
+ "m3_complete": false
+}

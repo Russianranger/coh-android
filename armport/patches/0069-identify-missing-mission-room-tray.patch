@@ -1,0 +1,34 @@
+diff --git a/Common/storyarc/missiongeoCommon.c b/Common/storyarc/missiongeoCommon.c
+index 4de0d37..3bc25d8 100644
+--- a/Common/storyarc/missiongeoCommon.c
++++ b/Common/storyarc/missiongeoCommon.c
+@@ -23,6 +23,9 @@
+ 
+ #include <utilitieslib/utils/mathutil.h>
+ #include <utilitieslib/utils/error.h>
++#if CLIENT
++#include <utilitieslib/utils/armport_zone_trace.h>
++#endif
+ 
+ #if SERVER
+ //#include "groupnetdb.h" // for attemptToCheckOut
+@@ -378,6 +381,19 @@ int RoomLoader(GroupDefTraverser* traverser)
+             if (roomProp->value_str) pace = atoi(roomProp->value_str);
+             if (!tracker)
+             {
++#if CLIENT
++                // 0069: identify the original failed tray lookup; retain the error
++                // and RoomAdd behavior below unchanged. No data/lookup bypass.
++                if (getenv("ARMPORT_STDIO_LOG"))
++                {
++                    char detail[512];
++                    snprintf(detail, sizeof(detail), "group=%.160s marker=%.32s lookup=(%.9g,%.9g,%.9g)",
++                        traverser->def->name ? traverser->def->name : "(null)",
++                        roomProp->value_str ? roomProp->value_str : "(null)",
++                        roomPos[0], roomPos[1], roomPos[2]);
++                    armportZoneTrace("mission.room.missing", detail);
++                }
++#endif
+                 ErrorFilenamef(g_mapname, "mission.c: Room %s marker isn't in a room", roomProp->value_str);
+             }
+             RoomAdd(tracker, atoi(roomProp->value_str), traverser->mat[3]);

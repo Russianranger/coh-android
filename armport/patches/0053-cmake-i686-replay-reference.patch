@@ -1,0 +1,167 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 17dc6e0..cceaaaa 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -36,7 +36,7 @@ if(MSVC)
+ 		$<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:/fp:precise>)
+ endif()
+ 
+-if(COX_ARM64_WINDOWS)
++if(COX_ARMPORT_WINDOWS)
+ 	# The engine relies on Microsoft C extensions and on aliasing through typed
+ 	# pointers. -fno-autolink drops #pragma comment(lib) directives: CMake links
+ 	# the same libraries by their lowercase names, and the Linux host's
+@@ -50,7 +50,7 @@ if(COX_ARM64_WINDOWS)
+ 		"$<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-int;-Wno-error=implicit-function-declaration;-fcommon>")
+ endif()
+ 
+-if(COX_ARM64_WINDOWS)
++if(COX_ARMPORT_WINDOWS)
+ 	# SHARED_MEMORY data is written at load time. MSVC places it in a read/write
+ 	# named section (#pragma section); with clang that section conflicts with
+ 	# its const objects, and the section is not shared anyway. Use the existing
+@@ -58,7 +58,7 @@ if(COX_ARM64_WINDOWS)
+ 	add_compile_definitions(DISABLE_SHARED_MEMORY_SEGMENT)
+ endif()
+ 
+-if(COX_ARM64_WINDOWS)
++if(COX_ARMPORT_WINDOWS)
+ 	# x86 SSE headers resolve to shims that use sse2neon on ARM64.
+ 	include(dependencies/Sse2Neon)
+ 	include_directories(BEFORE SYSTEM
+@@ -93,7 +93,7 @@ endif()
+ add_subdirectory(Utilities/StructParser)
+ 
+ if(WIN32)
+-	if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT COX_ARM64_WINDOWS)
++	if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT COX_ARMPORT_WINDOWS)
+ 		message(FATAL_ERROR "CoX supports only 32-bit Windows builds")
+ 	endif()
+ 	enable_language(RC)
+@@ -185,7 +185,7 @@ endfunction()
+ 
+ # ArmPort: optional test programs kept outside this source tree.
+ set(COX_ARMPORT_TESTS_DIR "" CACHE PATH "armport/tests directory to build (ARM64 only)")
+-if(COX_ARM64_WINDOWS AND COX_ARMPORT_TESTS_DIR)
++if(COX_ARMPORT_WINDOWS AND COX_ARMPORT_TESTS_DIR)
+ 	add_subdirectory("${COX_ARMPORT_TESTS_DIR}" armport-tests)
+ endif()
+ 
+diff --git a/Common/NovodeX/NwWrapper.h b/Common/NovodeX/NwWrapper.h
+index 2b39bb0..2675f37 100644
+--- a/Common/NovodeX/NwWrapper.h
++++ b/Common/NovodeX/NwWrapper.h
+@@ -8,7 +8,7 @@
+ #if !BEACONIZER
+ // ArmPort: PhysX (NovodeX) is an x86-only binary SDK; off on ARM64. Leave
+ // NOVODEX undefined there: the code tests it with both #if and #ifdef.
+-#if !defined(__aarch64__)
++#if !defined(__aarch64__) && !defined(COH_ARMPORT_REFERENCE_I686)
+ #define NOVODEX 1
+ #endif
+ #endif
+diff --git a/Game/CMakeLists.txt b/Game/CMakeLists.txt
+index d905ac5..85ccb49 100644
+--- a/Game/CMakeLists.txt
++++ b/Game/CMakeLists.txt
+@@ -5,7 +5,7 @@ include(dependencies/JpegCompressor)
+ include(dependencies/Vorbis)
+ include(dependencies/CubeMapGen)
+ include(dependencies/NvParse)
+-if(COX_ARM64_WINDOWS)
++if(COX_ARMPORT_WINDOWS)
+ 	# ArmPort: the x86-only binary SDKs (PhysX, nvDXT, Cg, AlienFX, NvCpl) are
+ 	# replaced by stand-ins kept in the ArmPort tree.
+ 	set(COX_ARMPORT_DIR "" CACHE PATH "armport directory of the ArmPort tree")
+@@ -1223,7 +1223,7 @@ list(APPEND Game_GENERATED
+ set_source_files_properties(${Game_GENERATED} PROPERTIES
+ 	GENERATED TRUE HEADER_FILE_ONLY TRUE)
+ 
+-if(COX_ARM64_WINDOWS)
++if(COX_ARMPORT_WINDOWS)
+ 	# PhysX wrappers: NOVODEX is undefined on ARM64 (see NwWrapper.h).
+ 	list(REMOVE_ITEM Game_SOURCES
+ 		../Common/NovodeX/NwCoreDump.cpp ../Common/NovodeX/NwRagdoll.cpp
+diff --git a/cmake/CoXTargets.cmake b/cmake/CoXTargets.cmake
+index 323e619..9dabf1f 100644
+--- a/cmake/CoXTargets.cmake
++++ b/cmake/CoXTargets.cmake
+@@ -13,6 +13,21 @@ if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8 AND
+ 	set(COX_ARM64_WINDOWS ON)
+ endif()
+ 
++# Same original receiver, 32-bit comparison build only; never the shipped client.
++option(COX_ARMPORT_REFERENCE_I686 "Build the ArmPort i686 replay reference" OFF)
++if(COX_ARMPORT_REFERENCE_I686)
++    if(NOT MINGW OR NOT CMAKE_SIZEOF_VOID_P EQUAL 4 OR
++       NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(i686|x86)$")
++        message(FATAL_ERROR "ArmPort reference requires 32-bit i686 llvm-mingw")
++    endif()
++    add_compile_definitions(COH_ARMPORT_REFERENCE_I686=1)
++    add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX>:-msse2;-mfpmath=sse;-fasm-blocks>")
++endif()
++set(COX_ARMPORT_WINDOWS OFF)
++if(COX_ARM64_WINDOWS OR COX_ARMPORT_REFERENCE_I686)
++    set(COX_ARMPORT_WINDOWS ON)
++endif()
++
+ option(COX_BUILD_DEV_TOOLS "Build diagnostic utilities" OFF)
+ option(COX_BUILD_ART_TOOLS "Build art conversion tools" OFF)
+ 
+@@ -36,7 +51,7 @@ function(cox_add_project target directory)
+ 	set(option_name "COX_BUILD_${option_suffix}")
+ 	option(${option_name} "Build ${target} (MSVC Win32 only)" ${default})
+ 	if(${option_name})
+-		if(NOT COX_MSVC_WIN32 AND NOT COX_ARM64_WINDOWS)
++		if(NOT COX_MSVC_WIN32 AND NOT COX_ARMPORT_WINDOWS)
+ 			message(FATAL_ERROR
+ 				"${target} requires MSVC and 32-bit Windows (Win32)")
+ 		endif()
+diff --git a/cmake/dependencies/CryptoPP.cmake b/cmake/dependencies/CryptoPP.cmake
+index 9436b70..073c4b9 100644
+--- a/cmake/dependencies/CryptoPP.cmake
++++ b/cmake/dependencies/CryptoPP.cmake
+@@ -9,7 +9,7 @@ CPMAddPackage(
+ 	PATCHES "${CMAKE_CURRENT_LIST_DIR}/../patches/cryptopp-cmake.patch"
+ )
+ 
+-if(COX_ARM64_WINDOWS)
++if(COX_ARMPORT_WINDOWS)
+ 	# ArmPort: Crypto++'s CPU-feature probes for ARM64 assume Unix signals
+ 	# (SIGILL / sigset_t). Build the portable C++ implementation instead; the
+ 	# definition is PUBLIC so every user sees the same configuration.
+diff --git a/cmake/dependencies/CubeMapGen.cmake b/cmake/dependencies/CubeMapGen.cmake
+index 0ffc233..104e262 100644
+--- a/cmake/dependencies/CubeMapGen.cmake
++++ b/cmake/dependencies/CubeMapGen.cmake
+@@ -2,7 +2,7 @@ include_guard(GLOBAL)
+ include(CPM)
+ 
+ # ArmPort: the library sources also build for ARM64 Windows.
+-if(NOT COX_ARM64_WINDOWS AND (NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 4))
++if(NOT COX_ARMPORT_WINDOWS AND (NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 4))
+ 	message(FATAL_ERROR "CubeMapGen requires MSVC Win32")
+ endif()
+ 
+@@ -34,7 +34,7 @@ function(cox_add_cubemapgen)
+ 			"${cubemapgen_BINARY_DIR}/include/libcubemapgen/${header}"
+ 			COPYONLY)
+ 	endforeach()
+-	if(COX_ARM64_WINDOWS)
++	if(COX_ARMPORT_WINDOWS)
+ 		# ArmPort: the sources include "types.h"; the file is Types.h and the
+ 		# Linux build host is case-sensitive.
+ 		configure_file("${source_dir}/Types.h"
+diff --git a/cmake/dependencies/NvParse.cmake b/cmake/dependencies/NvParse.cmake
+index e7775e0..48f0419 100644
+--- a/cmake/dependencies/NvParse.cmake
++++ b/cmake/dependencies/NvParse.cmake
+@@ -1,7 +1,7 @@
+ include_guard(GLOBAL)
+ 
+ # ArmPort: the bundled source also builds for ARM64 Windows.
+-if(NOT COX_ARM64_WINDOWS AND (NOT WIN32 OR NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 4 OR
++if(NOT COX_ARMPORT_WINDOWS AND (NOT WIN32 OR NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 4 OR
+ 	NOT CMAKE_CXX_COMPILER_ARCHITECTURE_ID STREQUAL "X86"))
+ 	message(FATAL_ERROR "The bundled NVParse library requires MSVC Win32")
+ endif()

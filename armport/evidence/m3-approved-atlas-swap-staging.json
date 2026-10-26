@@ -1,0 +1,71 @@
+{
+  "approval": {
+    "source": "User development conversation, 2026-10-25",
+    "text": "Approval is granted. Continue development",
+    "scope": "Exact proposed Steel Canyon source texture, 5859 stored / 22322 decoded bytes; no additional dependencies"
+  },
+  "prior_failure_run": 40189560565,
+  "file": "data/texture_library/world/streets/elements/monorail/tickertape_steel_canyon_south.texture",
+  "provenance": {
+    "bytes": 22322,
+    "cached_header_bytes": 170,
+    "cached_header_id": 1067,
+    "cached_header_sha256": "99b0eef26d02e24a1b4f7f4667ae68dcc6837a74d69d322ec6383d7b25963622",
+    "cached_header_verified": true,
+    "compressed": true,
+    "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+    "md5_table": "c0d3e59b54b214d4a0ec1e7b4e60ff4d",
+    "offset": 72610035,
+    "path": "texture_library/WORLD/streets/elements/monorail/tickertape_STEEL_CANYON_SOUTH.texture",
+    "sha256": "b4a62083f96562f15b241534a93846dbaea09696b0fd5977b982628f03108b5c",
+    "source_archive": "stage3f.pigg",
+    "source_archive_bytes": 89617460,
+    "source_content_range": "bytes 72610035-72615893/89617460",
+    "source_etag": "\"b04d2e31c61306fbc19ad1a83ca73ae8\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:28:27 GMT",
+    "source_metadata_sha256": "6a0242b5ee6260bb4b088b6601d6d537a0398e7a3c8c0280910b63d022f21753",
+    "source_url": "https://dists.thunderspy.org/piggs/stage3f.pigg",
+    "stored_bytes": 5859,
+    "stored_sha256": "227fb867191a4485e47056666bbbfecf7c6e7000ab8a26d61b7d37f4674c74d4",
+    "texture_header": {
+      "data_bounds_verified": true,
+      "header_bytes": 170,
+      "height": 32,
+      "original_name": "texture_library/WORLD/streets/elements/monorail/tickertape_STEEL_CANYON_SOUTH.dds",
+      "struct_bytes": 32,
+      "width": 1024
+    }
+  },
+  "existing_eight_files_and_provenance_unchanged": true,
+  "commands": [
+    {
+      "command": "python3 armport/scripts/discover_approved_ranges.py --output /tmp/coh-r21/approved-with-swap --metadata-cache /tmp/coh-r21/visual-metadata",
+      "exit_code": 0,
+      "output": {
+        "files": 9,
+        "bytes": 2546258,
+        "unresolved": [
+          "face_skin_head_09",
+          "hips_miniskirt_1",
+          "hips_skin_tights",
+          "x_enforcer_glove_01_mask",
+          "x_gear_pads",
+          "x_imperialdefense_belt_01"
+        ]
+      }
+    },
+    {
+      "command": "python3 armport/scripts/stage_approved_ranges.py --output /tmp/coh-r21/approved-with-swap/restaged",
+      "exit_code": 0,
+      "output": "::notice title=ArmPort approved ranges::{\"files\": 9, \"bytes\": 2546258, \"unresolved\": [\"face_skin_head_09\", \"hips_miniskirt_1\", \"hips_skin_tights\", \"x_enforcer_glove_01_mask\", \"x_gear_pads\", \"x_imperialdefense_belt_01\"], \"source_archives_fully_downloaded\": false, \"runtime_validated\": false, \"verified_cached_layer\": false, \"transfers\": [{\"source_archive\": \"stage1.pigg\", \"path\": \"player_library/HUGE_BELT.geo\", \"status\": 206, \"content_range\": \"bytes 40441456-40539040/87459151\", \"bytes_received\": 97585}, {\"source_archive\": \"stage1.pigg\", \"path\": \"player_library/HUGE_BOOT.geo\", \"status\": 206, \"content_range\": \"bytes 40543488-40635346/87459151\", \"bytes_received\": 91859}, {\"source_archive\": \"stage1.pigg\", \"path\": \"player_library/HUGE_HAIR.geo\", \"status\": 206, \"content_range\": \"bytes 42127225-42389607/87459151\", \"bytes_received\": 262383}, {\"source_archive\": \"stage1.pigg\", \"path\": \"player_library/HUGE_HEAD.geo\", \"status\": 206, \"content_range\": \"bytes 42389608-42425794/87459151\", \"bytes_received\": 36187}, {\"source_archive\": \"stage1.pigg\", \"path\": \"player_library/HUGE_PANTS.geo\", \"status\": 206, \"content_range\": \"bytes 42509338-42609601/87459151\", \"bytes_received\": 100264}, {\"source_archive\": \"stage1.pigg\", \"path\": \"player_library/HUGE_SHIRT.geo\", \"status\": 206, \"content_range\": \"bytes 42609602-42670269/87459151\", \"bytes_received\": 60668}, {\"source_archive\": \"stage1.pigg\", \"path\": \"player_library/V_HUGE_SPADR.geo\", \"status\": 206, \"content_range\": \"bytes 71657965-72714896/87459151\", \"bytes_received\": 1056932}, {\"source_archive\": \"stage1c.pigg\", \"path\": \"texture_library/PLAYERS/AVATAR/Super_Shared/Patterns/Chest/chest_stripe_1.texture\", \"status\": 206, \"content_range\": \"bytes 195768288-195771111/201809454\", \"bytes_received\": 2824}, {\"source_archive\": \"stage3f.pigg\", \"path\": \"texture_library/WORLD/streets/elements/monorail/tickertape_STEEL_CANYON_SOUTH.texture\", \"status\": 206, \"content_range\": \"bytes 72610035-72615893/89617460\", \"bytes_received\": 5859}]}\n"
+    },
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p 'test_receiver_approved_ranges.py' -v",
+      "exit_code": 0,
+      "output": "Ran 5 tests; OK"
+    }
+  ],
+  "runtime_validated": false,
+  "terrain_rendering_proved": false,
+  "texture_exception_enabled": false
+}

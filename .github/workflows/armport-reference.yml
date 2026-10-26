@@ -1,0 +1,700 @@
+name: ArmPort original receiver replay
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['armport/**']
+    paths:
+      - 'armport/patches/**'
+      - 'armport/cmake/**'
+      - 'armport/standins/**'
+      - 'armport/replay/**'
+      - 'armport/tests/test_receiver*.py'
+      - 'armport/tests/receiver_*.py'
+      - 'armport/scripts/step.sh'
+      - 'armport/scripts/stage_plaza_statue_materials.py'
+      - 'armport/evidence/m3-proposed-plaza-statue-materials.json'
+      - 'armport/evidence/m3-approved-after-load-materials.json'
+      - 'armport/scripts/prepare.py'
+      - 'armport/scripts/check_receiver_state_preprocess.py'
+      - 'armport/scripts/client_errors.py'
+      - 'armport/scripts/stage_atlas_supplement.py'
+      - 'armport/scripts/stage_composite_dependencies.py'
+      - 'armport/evidence/m3-proposed-composite-dependencies.json'
+      - 'armport/scripts/stage_reviewed_files.py'
+      - 'armport/scripts/stage_approved_ranges.py'
+      - 'armport/evidence/m3-approved-range-assets.json'
+      - 'armport/scripts/reviewed_asset_coverage.py'
+      - 'armport/evidence/m3-reviewed-file-selection.json'
+      - 'armport/scripts/smoke_run.py'
+      - 'assets/atlas-world-supplement-manifest.json'
+      - '.github/workflows/armport-reference.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: armport-reference-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  LLVM_MINGW: '20250910'
+  LLVM_MINGW_SHA256: '175f344e3db2e11b3d53f4f828ae7b5f0073a4d239b9600fa023ef4b90eb5a7e'
+  CMAKE_BUILD_PARALLEL_LEVEL: '2'
+
+jobs:
+  assets:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    # The existing reviewed ZIP is a private draft-release asset. This grants
+    # only the workflow's existing download helper its required read access.
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /tools/fetch_runtime_asset_bundle.py
+            /armport/scripts/stage_atlas_supplement.py
+            /armport/scripts/stage_atlas_materials.py
+            /tools/android/interactive/prepare_atlas_world_assets.py
+            /assets/atlas-world-supplement-manifest.json
+            /assets/reference-inputs-manifest.json
+            /armport/scripts/reviewed_asset_coverage.py
+            /armport/scripts/stage_reviewed_files.py
+            /armport/scripts/stage_composite_dependencies.py
+            /armport/scripts/stage_plaza_statue_materials.py
+            /armport/evidence/m3-proposed-plaza-statue-materials.json
+            /armport/evidence/m3-approved-after-load-materials.json
+            /armport/evidence/m3-proposed-composite-dependencies.json
+            /armport/evidence/m3-dispatch-errors-40113107670.json
+            /upstream/i24/data/tricks/v_shaders/villains/male/
+            /armport/scripts/stage_approved_ranges.py
+            /armport/evidence/m3-approved-range-assets.json
+            /armport/evidence/m3-reviewed-file-selection.json
+            /armport/evidence/m3-dispatch-errors-40105902494.json
+            /assets/client-visual-manifest.json
+            /assets/character-avatar-defaults-manifest.json
+            /assets/character-avatar-defaults.zip
+            /assets/zones-world-supplement-manifest.json
+            /assets/reference-inputs-receipt.json
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - id: data
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+      - if: steps.data.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json \
+            --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
+
+      - id: atlas-supplement
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: armport-atlas-supplement-499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60
+      - uses: actions/download-artifact@v4
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        with:
+          name: coh-client-interaction-apk
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/retained-atlas-donor
+      - name: Recover the reviewed Atlas supplement from the exact retained app
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_atlas_supplement.py recover \
+            --apk "$RUNNER_TEMP/retained-atlas-donor/COH-Character-Reopen-0.10.0.apk" \
+            --output "$RUNNER_TEMP/atlas-supplement"
+      - uses: actions/cache/save@v4
+        if: steps.atlas-supplement.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: ${{ steps.atlas-supplement.outputs.cache-primary-key }}
+      - name: Retain the reviewed Atlas supplement independently of cache eviction
+        uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-supplement
+          path: ${{ runner.temp }}/atlas-supplement
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: reviewed-dispatch
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          key: armport-reviewed-dispatch-${{ hashFiles('armport/evidence/m3-reviewed-file-selection.json') }}
+      - id: composite-data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/composite-data
+          key: armport-composite-data-${{ hashFiles('armport/evidence/m3-proposed-composite-dependencies.json', 'armport/scripts/stage_composite_dependencies.py') }}
+      - name: Retrieve the already reviewed 0.13.10 visual archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-assets
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-visual
+      - name: Retrieve the already reviewed zone archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-zones
+      - name: Select only shared missing files covered by reviewed manifests
+        if: steps.reviewed-dispatch.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_reviewed_files.py \
+            --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" \
+            --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip" \
+            --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - name: Verify selected files even on a cache hit
+        run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      # Build workflow owns this shared cache; replay retains its own artifact.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-dispatch-data
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Stage exactly eight approved composite dependencies
+        if: steps.composite-data.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_composite_dependencies.py \
+            --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" \
+            --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip" \
+            --output "$RUNNER_TEMP/composite-data"
+      - name: Recompute proposal and verify composite cache bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: plaza-data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/plaza-data
+          key: armport-plaza-data-${{ hashFiles('armport/evidence/m3-proposed-plaza-statue-materials.json', 'armport/evidence/m3-approved-after-load-materials.json', 'armport/scripts/stage_plaza_statue_materials.py') }}
+      - name: Stage exactly six approved plaza/statue textures
+        if: steps.plaza-data.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - name: Verify plaza/statue cache bytes against the reviewed archive
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --verify-only --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - uses: actions/cache/save@v4
+        if: steps.plaza-data.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/plaza-data
+          key: ${{ steps.plaza-data.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-plaza-data
+          path: ${{ runner.temp }}/plaza-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: approved-ranges
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/approved-range-data
+          key: armport-approved-ranges-${{ hashFiles('armport/evidence/m3-approved-range-assets.json') }}
+      - name: Fetch only exact user-approved PIGG ranges
+        if: steps.approved-ranges.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_approved_ranges.py --output "$RUNNER_TEMP/approved-range-data"
+      - name: Verify all approved ranges even after cache restore
+        run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-approved-range-data
+          path: ${{ runner.temp }}/approved-range-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: atlas-materials
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-material-data
+          key: armport-atlas-materials-27-204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86
+      - name: Recover only the previously reviewed Atlas material additions
+        if: steps.atlas-materials.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_atlas_materials.py \
+            --base-archive "$RUNNER_TEMP/atlas-supplement/atlas-world-supplement.zip" \
+            --archive "$RUNNER_TEMP/atlas-material-input/atlas-world-supplement.zip" \
+            --output "$RUNNER_TEMP/atlas-material-data"
+      - name: Verify all 27 material files even after cache restore
+        run: python3 armport/scripts/stage_atlas_materials.py --verify-only --output "$RUNNER_TEMP/atlas-material-data"
+      - uses: actions/cache/save@v4
+        if: steps.atlas-materials.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/atlas-material-data
+          key: ${{ steps.atlas-materials.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-materials
+          path: ${{ runner.temp }}/atlas-material-data
+          retention-days: 90
+          if-no-files-found: error
+
+  reference-build:
+    needs: assets
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - target: arm64
+            triple: aarch64
+          - target: i686
+            triple: i686
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /armport/
+            /tools/android/interactive/prepare_atlas_world_assets.py
+            /assets/reference-inputs-manifest.json
+            /assets/catalog.json
+            /assets/zones-audio-metadata.json
+            /upstream/ouroboros/
+            !/upstream/ouroboros/data/
+            /upstream/i24/data/
+            /android/runtime-lock.json
+            /assets/atlas-world-supplement-manifest.json
+            /assets/client-visual-manifest.json
+            /assets/character-avatar-defaults-manifest.json
+            /assets/character-avatar-defaults.zip
+            /assets/zones-world-supplement-manifest.json
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Check replay output rejection and fixture identities
+        run: python3 -m unittest discover -s armport/tests -p 'test_receiver*.py' -v
+      - name: Check actual task-state serializer with sanitizers
+        run: python3 armport/tests/receiver_task_state.py
+      - name: Check actual retained-costume serializer with sanitizers
+        run: python3 armport/tests/receiver_costume_state.py
+      - name: Check actual power snapshot serializer with sanitizers
+        run: python3 armport/tests/receiver_power_state.py
+      - name: Check actual inventory snapshot serializer with sanitizers
+        run: python3 armport/tests/receiver_inventory_state.py
+      - name: Check actual badge snapshot serializer with sanitizers
+        run: python3 armport/tests/receiver_badge_state.py
+      - name: Check actual team and league snapshot serializer with sanitizers
+        run: python3 armport/tests/receiver_group_state.py
+      - name: Check retained supergroup receive destinations
+        run: python3 armport/tests/receiver_supergroup_state.py
+      - name: Check retained power customization observations
+        run: python3 armport/tests/receiver_power_customization_state.py
+      - name: Check retained initial player fields
+        run: python3 armport/tests/receiver_player_core_state.py
+      - name: Check retained player identity and reward observations
+        run: python3 armport/tests/receiver_player_identity_state.py
+      - name: Check retained character identity and combat observations
+        run: python3 armport/tests/receiver_character_core_state.py
+      - name: Check retained entity metadata observations
+        run: python3 armport/tests/receiver_entity_metadata_state.py
+      - name: Check actual dynamic-group and sky snapshot serializer with sanitizers
+        run: python3 armport/tests/receiver_world_state.py
+      - name: Check retained server-waypoint key/value snapshot
+        run: python3 armport/tests/receiver_waypoint_state.py
+      - id: replay-exe-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-bin
+          key: armport-replay-${{ matrix.target }}-OptDebug-${{ env.LLVM_MINGW }}-${{ hashFiles('armport/patches/**', 'armport/standins/**', 'armport/cmake/**', 'armport/replay/*.c', 'armport/replay/*.h', 'armport/scripts/prepare.py', 'upstream/ouroboros/**') }}
+      - name: Install pinned llvm-mingw
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/llvm-mingw
+          sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ninja-build
+      - name: Prepare original source plus patches
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/reference"
+      - name: Texture names stay inside copied and in-place buffers
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/texture_name_bounds.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original souvenir view and story snapshot serializer
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_story_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check actual contact receive observer and serializer
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_contact_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original visited-map accessor and retained-state writer
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_visited_map_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original karma receiver and retained widget writer
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_karma_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check received desaturation observation before animation
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_desaturation_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original turnstile receivers and retained state
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_turnstile_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original turnstile event receivers and retained state
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_turnstile_event_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original force-queue receiver and retained name
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_force_queue_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check force-queue packet name bounds
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_force_queue_bounds.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original turnstile invitation receiver and retained IDs
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_turnstile_invitation_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original mission waypoint and keydoor receivers
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_mission_destinations.py --source "$RUNNER_TEMP/reference/src"
+      - name: NPC and Architect retained-state controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort NPC Architect control" python3 armport/tests/receiver_npc_architect_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Command-table receive destination controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort command destinations control" python3 armport/tests/receiver_command_destinations.py --source "$RUNNER_TEMP/reference/src"
+      - name: Supergroup stats receive destination controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort super stats control" python3 armport/tests/receiver_super_stats_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Server control receive writer controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort server control control" python3 armport/tests/receiver_server_control_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Entity receive-extras writer controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort entity extras control" python3 armport/tests/receiver_entity_extras_state.py
+      - name: entReceiveUpdate retained-state writer controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort entReceiveUpdate state control" python3 armport/tests/receiver_entreceive_update_state.py
+      - name: Check retained friends, saved keybinds and chat settings
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_communication_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original option receiver and const table snapshot
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_options_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check tray const views and original mode receiver
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_tray_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original initial UI receivers and snapshot
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_initial_ui_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original door receivers and non-expiring snapshot
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_door_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original entity status receivers and retained snapshot
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_entity_status_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original target receiver and literal reference snapshots
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_target_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original buff receiver and const retained view
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_buff_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check literal receive-channel packet IDs
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_packet_order_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original leveling-pact receiver and retained roster
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_leveling_pact_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original pet ownership and literal references
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_pet_owner_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original attribute packet-ID trees
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_attribute_packet_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original sequence receives and retained queue
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_sequence_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original NetFx receiving and active fields
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_netfx_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check taskforce parameter mask and retained slots
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_taskforce_parameter_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original accepted player reward time receipts
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_reward_time_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original accepted power creation times
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_power_time_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original active-power references and received modes
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_power_activity_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original power-update creation and recharge wire times
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_power_update_time_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original friend packet ordering and literal retained IDs
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_friend_order_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original control flags and slave orientation destinations
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_control_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original model lookup results and bounded concurrent diagnostics
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/group_model_lookup.py --source "$RUNNER_TEMP/reference/src"
+      - name: Configure assertion-enabled comparison build
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        env:
+          COH_LLVM_MINGW: /opt/llvm-mingw
+        run: |
+          set -o pipefail
+          cmake -S "$RUNNER_TEMP/reference/src" -B "$RUNNER_TEMP/reference/build" -G Ninja \
+            -DCMAKE_BUILD_TYPE=OptDebug \
+            -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/armport/cmake/${{ matrix.triple }}-w64-mingw32.cmake" \
+            -DCOX_BUILD_COMMON=ON -DCOX_BUILD_GAME=ON -DCOX_ARMPORT_COMPILE_ONLY=ON \
+            -DCOX_ARMPORT_DIR="$GITHUB_WORKSPACE/armport" \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 2>&1 | tee "$RUNNER_TEMP/reference-configure.log" | tail -40
+          python3 - "$RUNNER_TEMP/reference/build/compile_commands.json" <<'PY'
+          import json, sys
+          commands = json.load(open(sys.argv[1]))
+          receiver = [c['command'] for c in commands if c['file'].endswith('/clientcomm/clientcomm.c')]
+          assert len(receiver) == 1
+          if '${{ matrix.target }}' == 'i686':
+              assert all(flag in receiver[0].split() for flag in ('-msse2', '-mfpmath=sse', '-DCOH_ARMPORT_REFERENCE_I686=1'))
+          assert '-DFINAL' not in receiver[0].split()
+          print('::notice title=ArmPort replay flags::${{ matrix.target }} original receiver has assertions enabled (OptDebug); i686 requires SSE2 math')
+          PY
+      - name: Build original receiver client
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: |
+          set -o pipefail
+          cmake --build "$RUNNER_TEMP/reference/build" --target Game -- -k 0 \
+            2>&1 | tee "$RUNNER_TEMP/reference-build.log" | tail -60 || {
+            grep -m 20 -E ' error: |fatal error:' "$RUNNER_TEMP/reference-build.log" | cut -c1-400 \
+              | sed 's/^/::error title=ArmPort receiver compile::/' || true
+            exit 1; }
+          mkdir -p "$RUNNER_TEMP/reference-bin"
+          cp "$RUNNER_TEMP/reference/build/bin/CityOfHeroes.exe" "$RUNNER_TEMP/reference-bin/"
+          cp /opt/llvm-mingw/${{ matrix.triple }}-w64-mingw32/bin/{libc++,libunwind}.dll "$RUNNER_TEMP/reference-bin/"
+          /opt/llvm-mingw/bin/${{ matrix.triple }}-w64-mingw32-clang armport/replay/seh_control.c -o "$RUNNER_TEMP/reference-bin/seh-control.exe"
+          file "$RUNNER_TEMP/reference-bin/CityOfHeroes.exe"
+          echo '::notice title=ArmPort i686 reference::Client linked; receiver execution and equivalence NOT yet qualified'
+      - name: Check actual snapshot formatter and old-macro negative control
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/check_receiver_state_preprocess.py "$RUNNER_TEMP/reference/build/compile_commands.json"
+      - name: Retain built client before replay (including failed decoder runs)
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/reference-bin
+          key: ${{ steps.replay-exe-cache.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-replay-reference-${{ matrix.target }}
+          path: ${{ runner.temp }}/reference-bin
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-replay-reference-build-logs-${{ matrix.target }}
+          path: ${{ runner.temp }}/reference-*.log
+          retention-days: 7
+
+      - id: replay-data-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ runner.temp }}/client-bins
+            ${{ runner.temp }}/cg-arb
+          key: armport-replay-data-40043254025-v1
+      - uses: actions/download-artifact@v4
+        if: steps.replay-data-cache.outputs.cache-hit != 'true'
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+          run-id: 40043254025
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        if: steps.replay-data-cache.outputs.cache-hit != 'true'
+        with:
+          name: armport-cg-arb
+          path: ${{ runner.temp }}/cg-arb
+          run-id: 40043254025
+          github-token: ${{ github.token }}
+      - uses: actions/cache/save@v4
+        if: steps.replay-data-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ runner.temp }}/client-bins
+            ${{ runner.temp }}/cg-arb
+          key: ${{ steps.replay-data-cache.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-replay-data-${{ matrix.target }}
+          path: |
+            ${{ runner.temp }}/client-bins
+            ${{ runner.temp }}/cg-arb
+          retention-days: 90
+      - name: Restore reviewed client data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Unpack reviewed data
+        run: |
+          echo "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07  $RUNNER_TEMP/reference-assets.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/assets"
+          unzip -q "$RUNNER_TEMP/reference-assets.zip" -d "$RUNNER_TEMP/assets"
+          for sub in data assets; do
+            if [ -d "$RUNNER_TEMP/assets/$sub" ]; then mv "$RUNNER_TEMP/assets" "$RUNNER_TEMP/assets-zip" && mv "$RUNNER_TEMP/assets-zip/$sub" "$RUNNER_TEMP/assets"; break; fi
+          done
+      - name: Install the app Wine/FEX runtime
+        run: |
+          armport/scripts/install_wine_runtime.sh
+          sudo apt-get install -y --no-install-recommends iproute2 util-linux
+      - name: Restore the exact reviewed Atlas supplement
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-supplement
+          key: armport-atlas-supplement-499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60
+          fail-on-cache-miss: true
+      - name: Restore selected reviewed dispatch data
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-reviewed-dispatch-data
+          path: ${{ runner.temp }}/reviewed-dispatch-data
+      - name: Verify every selected dispatch file
+        run: python3 armport/scripts/stage_reviewed_files.py --verify-only --output "$RUNNER_TEMP/reviewed-dispatch-data"
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-approved-range-data
+          path: ${{ runner.temp }}/approved-range-data
+      - name: Verify the exact approved range layer
+        run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - name: Restore approved composite dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-composite-data
+          path: ${{ runner.temp }}/composite-data
+      - name: Reverify the already reviewed 0.13.10 visual archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-assets
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-visual
+      - name: Reverify the already reviewed zone archive
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-zones
+      - name: Recompute proposal and verify composite artifact bytes
+        run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - name: Restore approved plaza/statue textures
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-plaza-data
+          path: ${{ runner.temp }}/plaza-data
+      - name: Verify plaza/statue artifact bytes
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --verify-only --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - name: Restore the reviewed Atlas material additions
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-reviewed-atlas-materials
+          path: ${{ runner.temp }}/atlas-material-data
+      - name: Verify the separate Atlas material layer
+        run: python3 armport/scripts/stage_atlas_materials.py --verify-only --output "$RUNNER_TEMP/atlas-material-data"
+      - name: Verify and stage all retained Atlas geometry and textures
+        run: |
+          python3 armport/scripts/stage_atlas_supplement.py stage \
+            --source "$RUNNER_TEMP/atlas-supplement" --output "$RUNNER_TEMP/atlas-client-data"
+      - name: Stage same data, bins and shaders for replay
+        run: |
+          python3 armport/scripts/smoke_run.py --stage-only --build "$RUNNER_TEMP/reference-bin" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/atlas-material-data" --strict-data "$RUNNER_TEMP/atlas-material-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" --data "$RUNNER_TEMP/plaza-data" --strict-data "$RUNNER_TEMP/plaza-data" \
+            --cg-dir "$RUNNER_TEMP/cg-arb" --runtime "$RUNNER_TEMP/replay-runtime"
+      - name: Execute all original receiver dispatches (incomplete milestone stage)
+        run: |
+          sudo -n unshare --net -- sudo -u "$(id -un)" -- env GITHUB_SHA="$GITHUB_SHA" \
+            python3 "$GITHUB_WORKSPACE/armport/replay/run_ci.py" \
+              --runtime "$RUNNER_TEMP/replay-runtime" --out "$RUNNER_TEMP/replay-results" \
+              --seh-control "$RUNNER_TEMP/reference-bin/seh-control.exe" \
+              --original-texture-exception --target '${{ matrix.target }}' --host-netns "$(readlink /proc/self/ns/net)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-receiver-${{ matrix.target }}
+          path: ${{ runner.temp }}/replay-results
+          if-no-files-found: warn
+          retention-days: 14
+
+  error-comparison:
+    needs: reference-build
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: armport
+          lfs: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-arm64
+          path: ${{ runner.temp }}/compare/arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-i686
+          path: ${{ runner.temp }}/compare/i686
+      - name: Diagnose shared data errors and architecture-only errors
+        run: |
+          python3 armport/replay/compare_errors.py --root "$RUNNER_TEMP/compare" \
+            --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/error-comparison.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-error-comparison
+          path: ${{ runner.temp }}/error-comparison.json
+          retention-days: 14
+
+  partial-state-comparison:
+    needs: reference-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /armport/
+            /assets/catalog.json
+            /assets/zones-audio-metadata.json
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-arm64
+          path: ${{ runner.temp }}/compare/arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-receiver-i686
+          path: ${{ runner.temp }}/compare/i686
+      - name: Compare partial state literally and with agreed INITIAL-ID rules
+        run: |
+          python3 armport/replay/compare_state.py --root "$RUNNER_TEMP/compare" \
+            --original-texture-exception --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/partial-state-comparison.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-partial-state-comparison
+          path: ${{ runner.temp }}/partial-state-comparison.json
+          retention-days: 14

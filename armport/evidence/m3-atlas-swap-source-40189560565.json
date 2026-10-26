@@ -1,0 +1,503 @@
+{
+  "run_id": 40189560565,
+  "requests": [
+    "tickertape_steel_canyon_south",
+    "tickertape_talos_island"
+  ],
+  "metadata_archives": [
+    {
+      "archive": "fonts.pigg",
+      "source_archive_bytes": 20870327,
+      "source_etag": "\"22775c3c4bf5fca70c4b435ccb4deb14\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:19:52 GMT",
+      "source_metadata_bytes": 3284,
+      "source_metadata_sha256": "2bd897c2c524289b5474741489084a4487c7dffbd198de7d55d2cc765de737c4"
+    },
+    {
+      "archive": "geom.pigg",
+      "source_archive_bytes": 101980407,
+      "source_etag": "\"40238992c22395c6f5ce0c3011801ea9\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:20:30 GMT",
+      "source_metadata_bytes": 1000452,
+      "source_metadata_sha256": "d3605ee14cfbacbc93ac77578616a52d020952f5fd6c68c5ee2e5e7dd8086964"
+    },
+    {
+      "archive": "geomBC.pigg",
+      "source_archive_bytes": 167716173,
+      "source_etag": "\"7ed80a009622c003a585d1b56d1faadb\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:21:19 GMT",
+      "source_metadata_bytes": 1032608,
+      "source_metadata_sha256": "5907785d305b2b8bac55a0c4643900de26ce2a08e6b3e03138f377aa671f7fec"
+    },
+    {
+      "archive": "geomV1.pigg",
+      "source_archive_bytes": 2157788,
+      "source_etag": "\"81356a3686ea528761239db3d20de312\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:19:30 GMT",
+      "source_metadata_bytes": 244278,
+      "source_metadata_sha256": "a0f59ee116959b58a98c953fb7cd5ed266ea2d2368571ab28a63091eccae9729"
+    },
+    {
+      "archive": "geomV2.pigg",
+      "source_archive_bytes": 30124982,
+      "source_etag": "\"a3aac19cc055057e5a7acbfe6ff611db\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:20:00 GMT",
+      "source_metadata_bytes": 231822,
+      "source_metadata_sha256": "227ed66901c8704bf25d537ee6157b0bc7a60549ac7ad2c685d1b4fdd62ec5fa"
+    },
+    {
+      "archive": "mapsCities1.pigg",
+      "source_archive_bytes": 2318163,
+      "source_etag": "\"46aba7a665b5bf058b8f7417280c2e8f\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:19:35 GMT",
+      "source_metadata_bytes": 343,
+      "source_metadata_sha256": "cdc6ff70d3aaee7455c92e91a562768d85b2d0890f4fe3cb30f52d53d891cc36"
+    },
+    {
+      "archive": "mapsCities2.pigg",
+      "source_archive_bytes": 3539433,
+      "source_etag": "\"58082c0b82011bc8ad55e724ab0eb235\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:19:40 GMT",
+      "source_metadata_bytes": 444,
+      "source_metadata_sha256": "8f7c4a69fd920b34497cc06f752f65368f6fa3612d2966a1811597ab54aa3cf2"
+    },
+    {
+      "archive": "mapsHazards.pigg",
+      "source_archive_bytes": 7201017,
+      "source_etag": "\"5a544b22eb7f0a8dbd31cb9c632f93d3\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:19:46 GMT",
+      "source_metadata_bytes": 1195,
+      "source_metadata_sha256": "e63187606bd0f5fefa19f2924c138584111bc082b3bdde1151fd5bdcf8f48aed"
+    },
+    {
+      "archive": "mapsMisc.pigg",
+      "source_archive_bytes": 29030333,
+      "source_etag": "\"4fae2e235dd17f6348ac8ce4fa00188e\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:20:05 GMT",
+      "source_metadata_bytes": 10182,
+      "source_metadata_sha256": "da1b9a415951adf9b02c2afa38df0709929c80f0bb2e41055701fd752500b097"
+    },
+    {
+      "archive": "mapsMissions.pigg",
+      "source_archive_bytes": 191447729,
+      "source_etag": "\"1a603510de458669a79d68d731e2c65c\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:21:57 GMT",
+      "source_metadata_bytes": 296766,
+      "source_metadata_sha256": "6a13c27e969d14ed6021a96ba533cf025475112f3fc8d58913b67c86f0611a8e"
+    },
+    {
+      "archive": "mapsTrials.pigg",
+      "source_archive_bytes": 5035603,
+      "source_etag": "\"f7a5c8fb95459fb822627fc970e31cfa\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:20:05 GMT",
+      "source_metadata_bytes": 1109,
+      "source_metadata_sha256": "6729c9df6b24240993e914e49a81c09ce8571a4cff38223a0662f28c60f96ce6"
+    },
+    {
+      "archive": "misc.pigg",
+      "source_archive_bytes": 436423,
+      "source_etag": "\"7e62b6ee45de760c891b0028d1a62d9e\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:20:07 GMT",
+      "source_metadata_bytes": 59296,
+      "source_metadata_sha256": "4aa6d55c240e1a34dbe5048a14de3247f2abfa214726905c46f1fb0febd7ffdd"
+    },
+    {
+      "archive": "player.pigg",
+      "source_archive_bytes": 17547239,
+      "source_etag": "\"926912b6d0992ab73ef9f76eefd260b9\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:20:21 GMT",
+      "source_metadata_bytes": 843185,
+      "source_metadata_sha256": "31dde30a15e82e9b0baf0190624a060cf8b43cf3b491c257dca8cb0838e6e104"
+    },
+    {
+      "archive": "stage1.pigg",
+      "source_archive_bytes": 87459151,
+      "source_etag": "\"a600c69a37213e53b6a909d4c36a3c16\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:23:40 GMT",
+      "source_metadata_bytes": 3698772,
+      "source_metadata_sha256": "f6acbebf7181775cbba7b90e07ed690b095d59071049aec384c9f524b11bff02"
+    },
+    {
+      "archive": "stage1a.pigg",
+      "source_archive_bytes": 61306611,
+      "source_etag": "\"f2cb9e286826b6d01fbf8b8721448330\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:23:39 GMT",
+      "source_metadata_bytes": 8703726,
+      "source_metadata_sha256": "0d9e6dccc58d7e5154bf4fe67e3e812f3888f027ebb623dab2cc169b58b72d08"
+    },
+    {
+      "archive": "stage1b.pigg",
+      "source_archive_bytes": 144033704,
+      "source_etag": "\"7921837066fdc29c7e98770d72debc41\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:24:49 GMT",
+      "source_metadata_bytes": 1879082,
+      "source_metadata_sha256": "92c23b9f4c510444ba41f2b434a29dd9685875913eea250961cef1c8c7c76f97"
+    },
+    {
+      "archive": "stage1c.pigg",
+      "source_archive_bytes": 201809454,
+      "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+      "source_metadata_bytes": 1359889,
+      "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b"
+    },
+    {
+      "archive": "stage1d.pigg",
+      "source_archive_bytes": 85976182,
+      "source_etag": "\"db7159daa22f8ba3b1b309d5588b4846\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:24:45 GMT",
+      "source_metadata_bytes": 531682,
+      "source_metadata_sha256": "08eb0e438fbaa25a8d3b869184e6241eeb75e4f25b8681fd68c1d99f07f391f7"
+    },
+    {
+      "archive": "stage1e.pigg",
+      "source_archive_bytes": 63614423,
+      "source_etag": "\"f3846ef3849648e9cad97d0b87028f56\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:24:46 GMT",
+      "source_metadata_bytes": 339909,
+      "source_metadata_sha256": "8e0a155acf4a0f2511bb5824f78b55136c4a245482f5606c433a3fea51cd6114"
+    },
+    {
+      "archive": "stage1f.pigg",
+      "source_archive_bytes": 124587057,
+      "source_etag": "\"4becd7e43669da5ae68d8cd37d898096\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:26:10 GMT",
+      "source_metadata_bytes": 633970,
+      "source_metadata_sha256": "18e1a8999fe75b07bfa0e431e82b61af13105774da3bba305f9f2f6d4616da65"
+    },
+    {
+      "archive": "stage2.pigg",
+      "source_archive_bytes": 88673593,
+      "source_etag": "\"d265c6e5e6f18ec4cdf2462276d26698\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:25:57 GMT",
+      "source_metadata_bytes": 1344852,
+      "source_metadata_sha256": "e07f5731844206ba9348f2559feab2aaadabc15f26a18d888e7ddfedcb3df2af"
+    },
+    {
+      "archive": "stage2a.pigg",
+      "source_archive_bytes": 69353816,
+      "source_etag": "\"fdbd062a8ca95b5565ba4abc21956259\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:25:46 GMT",
+      "source_metadata_bytes": 161783,
+      "source_metadata_sha256": "648d84bdf8acec23cdba68ea3f224a90f3ae77f41d113046c38fdfd51aa460c0"
+    },
+    {
+      "archive": "stage2b.pigg",
+      "source_archive_bytes": 102575394,
+      "source_etag": "\"6358fc5fb04a9fe4724df40262cc6900\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:25:59 GMT",
+      "source_metadata_bytes": 133265,
+      "source_metadata_sha256": "177f89f164ac1ecd8a647d57be515f699429cba6d69543e4ce8278298784f256"
+    },
+    {
+      "archive": "stage2c.pigg",
+      "source_archive_bytes": 98053608,
+      "source_etag": "\"ff04ac39150a1dfbf95a525592bac23d\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:26:35 GMT",
+      "source_metadata_bytes": 286376,
+      "source_metadata_sha256": "7fd7d3f674296d8261f0ee9d66d89835342f79fd705742393310ce9e1aad9dfa"
+    },
+    {
+      "archive": "stage3.pigg",
+      "source_archive_bytes": 120838386,
+      "source_etag": "\"dfd7d70f8852d219f3698044b7b3b2f7\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:27:40 GMT",
+      "source_metadata_bytes": 1622971,
+      "source_metadata_sha256": "8e34ee39f7e1a243a277066f6a6d036da6d6a3d56fe89337a72c34320a2f5fd2"
+    },
+    {
+      "archive": "stage3a.pigg",
+      "source_archive_bytes": 76133806,
+      "source_etag": "\"9475d2e24a28c27db9f733a389772a6a\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:27:02 GMT",
+      "source_metadata_bytes": 40671,
+      "source_metadata_sha256": "c55c5f2c6eab115002e5731d9322218b4f38dfdf34a49c26bca4fc816f7bc0a6"
+    },
+    {
+      "archive": "stage3b.pigg",
+      "source_archive_bytes": 94288451,
+      "source_etag": "\"ed859c6e6d30c271ce6ecb0b6f9e0bd0\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:27:28 GMT",
+      "source_metadata_bytes": 24226,
+      "source_metadata_sha256": "b6d9f62218692f54e62235ffce1a1abfd7e4c427004d452620c223c2e0e468fe"
+    },
+    {
+      "archive": "stage3c.pigg",
+      "source_archive_bytes": 120989824,
+      "source_etag": "\"2f71c55dbc18d7ccd3f2d97714a544bc\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:27:58 GMT",
+      "source_metadata_bytes": 1595287,
+      "source_metadata_sha256": "0a4d351cd41703dd9e21c81c088fda900c1d8d0456fdd59cdbe2188d49b6b46d"
+    },
+    {
+      "archive": "stage3d.pigg",
+      "source_archive_bytes": 117707953,
+      "source_etag": "\"6db9b1092b83a12c9d34f1002530756d\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:32 GMT",
+      "source_metadata_bytes": 582240,
+      "source_metadata_sha256": "27f5e44fb3418b79a77e612dd43362fb8eb82f0e05f8b4f3d7c0d3a110024e2d"
+    },
+    {
+      "archive": "stage3e.pigg",
+      "source_archive_bytes": 103674426,
+      "source_etag": "\"f0985699b72833d530603869cae79be0\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:56 GMT",
+      "source_metadata_bytes": 532454,
+      "source_metadata_sha256": "a1c6d9f458d7ba1419a16ddd0242cab8a1966c3e76f59a120f26f2df33f579bd"
+    },
+    {
+      "archive": "stage3f.pigg",
+      "source_archive_bytes": 89617460,
+      "source_etag": "\"b04d2e31c61306fbc19ad1a83ca73ae8\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:27 GMT",
+      "source_metadata_bytes": 509884,
+      "source_metadata_sha256": "6a0242b5ee6260bb4b088b6601d6d537a0398e7a3c8c0280910b63d022f21753"
+    },
+    {
+      "archive": "stage3g.pigg",
+      "source_archive_bytes": 83430571,
+      "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+      "source_metadata_bytes": 488521,
+      "source_metadata_sha256": "a5091143cdbc108ffd00f8500b03688e3032df28b1ec276e029d9118f2712c16"
+    },
+    {
+      "archive": "texEnemies.pigg",
+      "source_archive_bytes": 1665779,
+      "source_etag": "\"aab346d71d53158169fece8644c3bc5b\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:00 GMT",
+      "source_metadata_bytes": 10968,
+      "source_metadata_sha256": "63b5fd022d2adfcf7aa45309f73cc4b3f2028da4e9f59a169fe26eb03d7d9683"
+    },
+    {
+      "archive": "texEnemies2.pigg",
+      "source_archive_bytes": 23391597,
+      "source_etag": "\"d21f722b0a17e9f1e6eb6571004b3b0d\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:18 GMT",
+      "source_metadata_bytes": 141558,
+      "source_metadata_sha256": "4784e41fd517f720e37c9ee2b589676d9b273c33a8867e01f08facf253c9972d"
+    },
+    {
+      "archive": "texEnemies3.pigg",
+      "source_archive_bytes": 4113262,
+      "source_etag": "\"cc6b3b5a12e9d32ceca0babc5fea8537\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:21 GMT",
+      "source_metadata_bytes": 26626,
+      "source_metadata_sha256": "f2d72edb11593fd7aafd0f95b7faee2448911da97676618c2ed731cc3f005057"
+    },
+    {
+      "archive": "texEnemies4.pigg",
+      "source_archive_bytes": 4155374,
+      "source_etag": "\"b65a2c479f1f3c2720276c22ebafa2f6\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:23 GMT",
+      "source_metadata_bytes": 23236,
+      "source_metadata_sha256": "aaa8f2c7201ff1f5d4178b4867d5e75c86deaa32eee410e43c9f2438b7bcbc28"
+    },
+    {
+      "archive": "texEnemies5.pigg",
+      "source_archive_bytes": 5403262,
+      "source_etag": "\"87c445994c258c78b61acc73b85acf89\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:26 GMT",
+      "source_metadata_bytes": 15308,
+      "source_metadata_sha256": "9e9b840ecd861614709fc06073af5134ba4a4767d487f5422dd03901bcab8969"
+    },
+    {
+      "archive": "texFxGuiItems.pigg",
+      "source_archive_bytes": 11929920,
+      "source_etag": "\"29d9e5b45dedfb68fd98564b6e8e36aa\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:30 GMT",
+      "source_metadata_bytes": 64760,
+      "source_metadata_sha256": "34ba55886607f0835a22da609b3dbe50dec4a036224df1ae0e605a91f6bfc4fa"
+    },
+    {
+      "archive": "texGui1.pigg",
+      "source_archive_bytes": 18287717,
+      "source_etag": "\"edd6061a225693177ed148001682512f\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:32 GMT",
+      "source_metadata_bytes": 5768,
+      "source_metadata_sha256": "a3ae1f06d97518073c59fb5206f75305f5b61367690a083e85a22a2e6652c160"
+    },
+    {
+      "archive": "texMaps.pigg",
+      "source_archive_bytes": 154907821,
+      "source_etag": "\"0bb4c1e97f53c55287b7871d7b60fa0c\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:30:18 GMT",
+      "source_metadata_bytes": 110984,
+      "source_metadata_sha256": "55e8cb42891e78226b2b9695ee2dda64ff1e1f2c29af99103cc5c022c17ed430"
+    },
+    {
+      "archive": "texMisc.pigg",
+      "source_archive_bytes": 119931393,
+      "source_etag": "\"b85595ba78d066acae2ba65d143233e6\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:30:12 GMT",
+      "source_metadata_bytes": 639914,
+      "source_metadata_sha256": "340828d73fb9ed98f681cabde946b87719c5decf032e4f433b4b27f13feaf149"
+    },
+    {
+      "archive": "texPlayersUI.pigg",
+      "source_archive_bytes": 4542733,
+      "source_etag": "\"893c1f8854c055825f1c8669b31c885b\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:36 GMT",
+      "source_metadata_bytes": 39292,
+      "source_metadata_sha256": "d342fd877a8742b38dbf225038983c7568f286d80a9e8a7400cb5eccd52cca1c"
+    },
+    {
+      "archive": "texts.pigg",
+      "source_archive_bytes": 683463,
+      "source_etag": "\"75521556ca00cc1dafd0679ab74f0e8e\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:31:12 GMT",
+      "source_metadata_bytes": 101842,
+      "source_metadata_sha256": "a1fd262090db30a3b6b12aa42221fb24543888298176dc291641b03518e27d6b"
+    },
+    {
+      "archive": "texVEnemies.pigg",
+      "source_archive_bytes": 11390327,
+      "source_etag": "\"d63f1473e728c6c0dcfac51b3b792cf5\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:42 GMT",
+      "source_metadata_bytes": 55672,
+      "source_metadata_sha256": "ab4ab15e7c4ced9ad2b3f2513e880342b019700fd1f249c499248136be74c515"
+    },
+    {
+      "archive": "texVWorld.pigg",
+      "source_archive_bytes": 42464511,
+      "source_etag": "\"26cced48eea0379a1638d5b25deee514\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:29:08 GMT",
+      "source_metadata_bytes": 111476,
+      "source_metadata_sha256": "188e3f08e151a7d81314e38c1443203262ef03b783506661badc41ba4a09ee23"
+    },
+    {
+      "archive": "texVWorld1.pigg",
+      "source_archive_bytes": 27037480,
+      "source_etag": "\"1278223ffb5a3f652989158a460b3c9a\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:29:05 GMT",
+      "source_metadata_bytes": 144420,
+      "source_metadata_sha256": "64f5f6f7fbeb3634d559eb10d2e48b4e9c945e60b32f9b613e5e1505fed4d12b"
+    },
+    {
+      "archive": "texVWorld2.pigg",
+      "source_archive_bytes": 8678429,
+      "source_etag": "\"6713d913ba3ad51e0cde828d55bc21d0\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:29:05 GMT",
+      "source_metadata_bytes": 63952,
+      "source_metadata_sha256": "b1a46c3b5af21249e1f47335b43446cfbe5c2f1bf4eba5e757e06db0c2509ee3"
+    },
+    {
+      "archive": "texVWorld3.pigg",
+      "source_archive_bytes": 21498767,
+      "source_etag": "\"d61b67a897ecebd2621c0c5cc3c6effe\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:29:24 GMT",
+      "source_metadata_bytes": 107576,
+      "source_metadata_sha256": "8cfb7f2d56d6605519122ee73005145719499cdcec7c003497526a96155b149a"
+    },
+    {
+      "archive": "texVWorldBases1.pigg",
+      "source_archive_bytes": 54592901,
+      "source_etag": "\"d54c96aed0478efc872ec4643a6ac2e4\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:29:55 GMT",
+      "source_metadata_bytes": 115910,
+      "source_metadata_sha256": "c49abf63f1d47886ab362fa1d5a83b3e27f07c2a33d00b3e1813e2ccf4dfe48d"
+    },
+    {
+      "archive": "texVWorldBases2.pigg",
+      "source_archive_bytes": 53233917,
+      "source_etag": "\"131da3dafd966429a1746c7d8cd610ff\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:30:00 GMT",
+      "source_metadata_bytes": 242868,
+      "source_metadata_sha256": "1b2193500664bc2ced70424781d0ca564360fdfaa93118540ae8252b09bb322d"
+    },
+    {
+      "archive": "texWorld.pigg",
+      "source_archive_bytes": 41829634,
+      "source_etag": "\"808def8b2d35647c85b609726bc3ab7b\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:30:05 GMT",
+      "source_metadata_bytes": 183014,
+      "source_metadata_sha256": "2087263307d14cd18fcb259fc5e4da81cd8f1288c7ec609b5072451c6c4c42db"
+    },
+    {
+      "archive": "texWorldBC.pigg",
+      "source_archive_bytes": 66612759,
+      "source_etag": "\"9468d71696814f36b93fe4c9fb767f87\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:30:44 GMT",
+      "source_metadata_bytes": 136012,
+      "source_metadata_sha256": "9e8b273c828cc92dcdeb95314306406b81ff3a33460cafc602f5e954bad63c84"
+    },
+    {
+      "archive": "texWorldBuildings.pigg",
+      "source_archive_bytes": 63752042,
+      "source_etag": "\"71c4d6f1253f0311e164b64b75945164\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:31:14 GMT",
+      "source_metadata_bytes": 342549,
+      "source_metadata_sha256": "6360461e75c95e08c39acf94b7b8a79e4d2cf8e75e9adb2429a2b3e0034173f7"
+    },
+    {
+      "archive": "texWorldCZ.pigg",
+      "source_archive_bytes": 184436277,
+      "source_etag": "\"bef8e01b6cfc0a86c2f56a0e835a4f65\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:31:52 GMT",
+      "source_metadata_bytes": 424560,
+      "source_metadata_sha256": "422e27d32126607f6dc9e999eee2b348ead021b6026b3b92d4bd611321bcf7cc"
+    },
+    {
+      "archive": "texWorldSW.pigg",
+      "source_archive_bytes": 99009547,
+      "source_etag": "\"9b914538df6bc1c60778c19545eea9c5\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:31:24 GMT",
+      "source_metadata_bytes": 280833,
+      "source_metadata_sha256": "33391219c0e03413eca1a579ab76c30ba68cad78169572e797e6dd6cf090536d"
+    },
+    {
+      "archive": "texWorldV1.pigg",
+      "source_archive_bytes": 65102337,
+      "source_etag": "\"ffa7b54e98795e5cd485bf8c540470d1\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:31:10 GMT",
+      "source_metadata_bytes": 180094,
+      "source_metadata_sha256": "4e418b5d449b5bcea26386f2f5e3baafd07784d15a4f38209a334de86fa412cb"
+    },
+    {
+      "archive": "texWorldV2.pigg",
+      "source_archive_bytes": 42660930,
+      "source_etag": "\"5aac77922809036bbe2a93cc2a7d58d7\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:31:15 GMT",
+      "source_metadata_bytes": 71130,
+      "source_metadata_sha256": "e955a7e8ca8c0bab5050905abb4681f0625deb64be69345f9a562445b7d862a5"
+    }
+  ],
+  "matches": [
+    {
+      "identity": {
+        "archive": "stage3f.pigg",
+        "source_archive_bytes": 89617460,
+        "source_etag": "\"b04d2e31c61306fbc19ad1a83ca73ae8\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:27 GMT",
+        "source_metadata_bytes": 509884,
+        "source_metadata_sha256": "6a0242b5ee6260bb4b088b6601d6d537a0398e7a3c8c0280910b63d022f21753"
+      },
+      "path": "texture_library/WORLD/streets/elements/monorail/tickertape_STEEL_CANYON_SOUTH.texture",
+      "offset": 72610035,
+      "bytes": 22322,
+      "stored_bytes": 5859,
+      "compressed": true,
+      "md5_table": "c0d3e59b54b214d4a0ec1e7b4e60ff4d",
+      "cached_header_id": 1067
+    },
+    {
+      "identity": {
+        "archive": "stage3f.pigg",
+        "source_archive_bytes": 89617460,
+        "source_etag": "\"b04d2e31c61306fbc19ad1a83ca73ae8\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:27 GMT",
+        "source_metadata_bytes": 509884,
+        "source_metadata_sha256": "6a0242b5ee6260bb4b088b6601d6d537a0398e7a3c8c0280910b63d022f21753"
+      },
+      "path": "texture_library/WORLD/streets/elements/monorail/tickertape_TALOS_ISLAND.texture",
+      "offset": 72617176,
+      "bytes": 22316,
+      "stored_bytes": 4932,
+      "compressed": true,
+      "md5_table": "5d3c392950540a8f8f64f4c8a0e9910d",
+      "cached_header_id": 1069
+    }
+  ],
+  "payloads_fetched": false,
+  "scope": "exact-name source inspection only; no staging or acceptance change"
+}
