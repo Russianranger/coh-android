@@ -595,6 +595,9 @@ jobs:
         run: |
           cmake --build "$RUNNER_TEMP/armport/build" --target Game -- -k 0 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -60
           rc=${PIPESTATUS[0]}
+          if [ "$rc" -ne 0 ]; then
+            grep -m 20 -E ' error: |fatal error:' "$RUNNER_TEMP/build.log" | cut -c1-400 | sed 's/^/::error title=ArmPort Game compile::/' || true
+          fi
           exe=$(find "$RUNNER_TEMP/armport/build" -name 'CityOfHeroes.exe' | head -1)
           if [ -n "$exe" ]; then
             info="$(file "$exe" | cut -d: -f2) size $(stat -c %s "$exe")"

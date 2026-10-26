@@ -56,6 +56,7 @@
 #include "graphics/textureatlas.h"
 #include "group/groupdyn.h"
 #include "cmdparse/cmdgame.h"
+#include "cmdparse/cmdcontrols.h"
 #include "storyarc/storyarcClient.h"
 #include "storyarc/contactClient.h"
 #include <utilitieslib/components/earray.h>
@@ -1062,7 +1063,7 @@ static void entity_architect_state(const Entity *e)
             t->architect_id, t->architect_flags, t->architect_contact_override,
             t->architect_useCachedCostume);
         fixed_string(t->architect_contact_name, sizeof(t->architect_contact_name));
-        out(",\"contact_costume\":"); costume(t->architect_contact_costume);
+        out(",\"contact_costume\":"); costume((const cCostume *)t->architect_contact_costume);
         out(",\"contact_npc_costume\":"); npc_costume_state(t->architect_contact_npc_costume);
         out("}");
     }

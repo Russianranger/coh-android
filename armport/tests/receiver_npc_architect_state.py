@@ -32,7 +32,7 @@ static char buffer[CAPACITY];static size_t used;
 typedef union {unsigned integer;unsigned char bytes[4];} Color;
 typedef struct {const char *regionName;Color color[2];} CustomNPCCostumePart;
 typedef struct {char *originalNPCName;CustomNPCCostumePart **parts;Color skinColor;} CustomNPCCostume;
-typedef struct {int marker;} Costume;
+typedef struct {int marker;} Costume; typedef Costume cCostume;
 typedef struct {int architect_id,architect_flags,architect_authid;char architect_contact_name[32];int architect_contact_override,architect_useCachedCostume;Costume *architect_contact_costume;CustomNPCCostume *architect_contact_npc_costume;} TaskForce;
 typedef struct {TaskForce *taskforce;int onArchitect,architect_invincible,architect_untargetable;} Entity;
 typedef struct {int n;CustomNPCCostumePart *v[8193];} Array;

@@ -467,7 +467,10 @@ jobs:
         run: |
           set -o pipefail
           cmake --build "$RUNNER_TEMP/reference/build" --target Game -- -k 0 \
-            2>&1 | tee "$RUNNER_TEMP/reference-build.log" | tail -60
+            2>&1 | tee "$RUNNER_TEMP/reference-build.log" | tail -60 || {
+            grep -m 20 -E ' error: |fatal error:' "$RUNNER_TEMP/reference-build.log" | cut -c1-400 \
+              | sed 's/^/::error title=ArmPort receiver compile::/' || true
+            exit 1; }
           mkdir -p "$RUNNER_TEMP/reference-bin"
           cp "$RUNNER_TEMP/reference/build/bin/CityOfHeroes.exe" "$RUNNER_TEMP/reference-bin/"
           cp /opt/llvm-mingw/${{ matrix.triple }}-w64-mingw32/bin/{libc++,libunwind}.dll "$RUNNER_TEMP/reference-bin/"
