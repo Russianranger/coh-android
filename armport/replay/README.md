@@ -1112,3 +1112,23 @@ writer sanitizer cases,18 server-waypoint regression cases,191 Python tests and
 sequential native state.c compilation pass. See evidence/m3-mission-destination-controls.json
 for commands, host-fixture limits and the preserved zero-time closest-selection
 quirk. Fresh native replay and review remain pending; full state/M3 stay incomplete.
+
+### Custom NPC, Architect and command-table destinations (2026-10-26)
+
+Recovered from `handoff/2026-10-26-npc-architect-wip.patch` (post-apply hashes
+match its evidence): ordered/null custom NPC regions, colors and name, plus the
+retained Architect flags, contact override/name, full and custom NPC contact
+costumes. Retained fields stay visible after onArchitect is cleared. Added
+`use_cached_costume`, which the receiver clears when the contact changes.
+Mission-review widget state remains excluded.
+
+New: `command_destinations` dumps every argument of every command in
+`control_cmds` and `server_visible_cmds`, the same two tables as entrecv.c's
+`cmd_list` that `cmdOldReceive` writes, whether or not a packet named the
+command, plus `server_visible_state.abs_time`. Floats keep raw bits; strings
+stay within each command's maxval. `receiver_command_destinations.py` compiles
+the actual cmdOldReceivePacked/cmdOldReceive/doDataSwap with host adapters and
+checks table parity with entrecv.c's cmd_list, bit patterns, the access-level
+gate, unreceived commands and bounds. `cmdReceiveServerCommands`
+(SERVER_GAME_CMDS) only registers command names through cmdAddServerCommand;
+that client-side list is not yet dumped. Schema and completion flags stay partial.

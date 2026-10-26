@@ -1201,6 +1201,47 @@ static void retained_control_state(void)
     words(control_state.pyr.cur, sizeof(control_state.pyr.cur));
     out("}");
 }
+/* Destinations of entReceiveUpdate's cmdOldReceive: every argument of every
+ * command in the same two tables as entrecv.c's cmd_list (control_cmds, then
+ * server_visible_cmds), whether or not a packet named it, so no later update
+ * can change an unobserved destination. entrecv.c's CmdContext is zeroed, so
+ * doDataSwap is the identity there and the table pointer is the destination.
+ * Floats keep raw bits; strings stay within the command's maxval storage.
+ * abs_time is read directly by entReceiveUpdate after the commands. */
+static void command_table_state(const Cmd *cmds)
+{
+    int i, j;
+    out("[");
+    for (i = 0; cmds[i].name; ++i) {
+        const Cmd *cmd = &cmds[i];
+        check(cmd->num_args >= 0 && cmd->num_args <= CMDMAXARGS);
+        out("%s{\"name\":", i ? "," : ""); string(cmd->name);
+        out(",\"args\":[");
+        for (j = 0; j < cmd->num_args; ++j) {
+            const DataDesc *data = &cmd->data[j];
+            out("%s{\"type\":%d,\"value\":", j ? "," : "", (int)data->type);
+            if (!data->ptr) out("null");
+            else switch (data->type) {
+            case PARSETYPE_S32: { int v; memcpy(&v, data->ptr, sizeof(v)); out("%d", v); } break;
+            case PARSETYPE_U32: { unsigned v; memcpy(&v, data->ptr, sizeof(v)); out("%u", v); } break;
+            case PARSETYPE_FLOAT: case PARSETYPE_EULER: words(data->ptr, sizeof(F32)); break;
+            case PARSETYPE_VEC3: words(data->ptr, sizeof(Vec3)); break;
+            case PARSETYPE_STR: case PARSETYPE_SENTENCE:
+                check(data->maxval > 0); fixed_string((const char *)data->ptr, (size_t)data->maxval); break;
+            default: out("\"not_received_by_cmdOldReceivePacked\""); break;
+            }
+            out("}");
+        }
+        out("]}");
+    }
+    out("]");
+}
+static void command_destination_state(void)
+{
+    out("{\"control_cmds\":"); command_table_state(control_cmds);
+    out(",\"server_visible_cmds\":"); command_table_state(server_visible_cmds);
+    out(",\"abs_time\":%u}", (unsigned)server_visible_state.abs_time);
+}
 static void initial_ui_state(void)
 {
     int i;
@@ -1776,6 +1817,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"initial_ui\":"); initial_ui_state();
     out(",\"retained_control\":"); retained_control_state();
+    out(",\"command_destinations\":"); command_destination_state();
     out(",\"initial_server_state\":"); initial_server_state();
     out(",\"door_transition\":"); door_transition_state();
     out(",\"target_state\":"); target_receive_state();
