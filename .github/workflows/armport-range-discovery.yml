@@ -29,13 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: |
-            /armport/scripts
-            /armport/evidence
-            /tools/android/interactive
-            /tools/inspect_piggs.py
-            /assets
-          sparse-checkout-cone-mode: false
+          lfs: false
       - name: Discover exact approved ranges
         env:
           PROFILE: ${{ github.event.inputs.profile || 'cape' }}
