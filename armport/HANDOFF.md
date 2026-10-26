@@ -1759,3 +1759,20 @@ This docs-only work-branch update must not cancel that run. Next investigate
 remaining plaza/statue dependencies and UI/map-name rendering against existing
 asset authority, then inspect fresh event-state replay and obtain its review.
 M4 surface and Thor/M5 remain unqualified. No device action is ready.
+
+
+### Retained force-queue name (2026-10-26 UTC)
+
+Patch0101 exposes a const pointer and exact capacity of the original deferred
+force-queue event name. Snapshots serialize the bounded retained name; original
+packet reads, strcpy, window action and UI consumption/clearing remain unchanged.
+Seven source-derived ASan/UBSan cases cover original reads/window call, replacement,
+empty/cleared state, 127-byte boundary, invalid retained termination/output bounds
+and nonmutation. Eleven event and fourteen queue regression cases and all191
+Python tests pass. Native uiTurnstile.c/state.c compile ARM64 then i686 with one
+compiler. This does not qualify oversized original input or full UI lifecycle.
+Patchwork commit45ce405 exports101 patches; upstream/ remains untouched.
+Commands/output: evidence/m3-force-queue-state-controls.json. Runtime and review
+of this delta remain pending. Prior c72dbc58 replay40273728728 now passes both
+targets and partial comparison; full-schema/full-state/M3 flags remain false.
+No screenshot change, asset expansion, Android-surface or Thor qualification.

@@ -98,3 +98,4 @@
 0098-observe-accepted-power-creation-times.patch
 0099-observe-power-update-wire-times.patch
 0100-replay-retained-turnstile-event-state.patch
+0101-replay-retained-force-queue-name.patch

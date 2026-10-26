@@ -1318,6 +1318,14 @@ static void turnstile_receive_state(void)
 }
 /* Event response fields can also change through local dialog actions. Preserve
  * their retained values without claiming exclusive receive provenance. */
+/* The original UI clears this deferred selection after consuming it. */
+static void turnstile_force_queue_state(void)
+{
+    unsigned capacity;
+    const char *name = armportReplayTurnstileForceQueue(&capacity);
+    check(name != NULL && capacity == 128);
+    fixed_string(name, capacity);
+}
 static void turnstile_event_state(void)
 {
     ArmPortTurnstileEventState state;
@@ -1682,6 +1690,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"server_waypoints\":"); server_waypoint_state();
     out(",\"turnstile\":"); turnstile_receive_state();
     out(",\"turnstile_event\":"); turnstile_event_state();
+    out(",\"turnstile_force_queue\":"); turnstile_force_queue_state();
     out(",\"user_options\":"); options_receive_state();
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"initial_ui\":"); initial_ui_state();
