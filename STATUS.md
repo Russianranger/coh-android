@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Sol accepts implementation through 4c8b6c39; new normalizer/delta need review.
-- Atlas 40247679019: terrain visible/player grounded; screenshot/materials still fail.
+- Sol accepts implementation through 9d82645c; turnstile event delta needs review.
+- Atlas 40263048945: 33 covered errors removed; screenshot/materials still fail.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40263048934 / Atlas 40263048945 test 9d82645c; event follow-up pending.
+- Replay 40263048934 passes partial scope; event follow-up 40273728728 active.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

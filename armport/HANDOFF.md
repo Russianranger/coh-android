@@ -1736,3 +1736,26 @@ in `evidence/m3-turnstile-event-state-controls.json`. Fresh runtime/review pendi
 Preserve Atlas 40263048945 and replay 40263048934 at 9d82645c; they test the
 preceding combined power/material/normalization head, not this event addition.
 Full state, screenshot, M3/M4/M5 and Thor readiness remain unqualified.
+
+
+### Verified Atlas material outcome (2026-10-26 UTC)
+
+Atlas 40263048945 at 9d82645c completed FAILED. Artifact 12628120860 was
+independently downloaded and SHA-256 verified (4d67049025022d17caaaa6b88f4da39f43ac20b38916337c460f6ee2c7b5e0d4).
+All 33 exact error messages associated with the reviewed 27-file material
+extension are absent from the complete error inventory. This establishes that
+bounded improvement, not complete materials or terrain acceptance. The full
+screenshot shows stairs/railings/trees/player but flat blue buildings, a purple
+statue and incomplete UI; map-name acceptance remains false. The guest remains
+connected; world_rendered is false. Remaining exact plaza/statue errors and
+artifact/file hashes are in evidence/m3-atlas-material-outcome-40263048945.json.
+Do not weaken the screenshot criterion or expand asset selection silently.
+
+Sol review 5647159725 accepts implementation through 9d82645c, explicitly not
+milestone or merge approval. Replay 40263048934 passed the partial scope only;
+full schema/state/M3 remain false. Patch0100 at c72dbc58 is now qualifying on
+armport/replay-retained-state in run 40273728728; ARM64/i686 remain sequential.
+This docs-only work-branch update must not cancel that run. Next investigate
+remaining plaza/statue dependencies and UI/map-name rendering against existing
+asset authority, then inspect fresh event-state replay and obtain its review.
+M4 surface and Thor/M5 remain unqualified. No device action is ready.
