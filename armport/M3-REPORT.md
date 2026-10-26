@@ -1,3 +1,108 @@
+# M3 final evidence summary (2026-10-26 UTC, Claude lead): milestone review requested
+
+PORT-PLAN M3, "Into Atlas", requires three things:
+- a scripted login to Atlas Park against the CI server, in CI;
+- the saved native-android packets replayed through the original receive code;
+- a screenshot check.
+
+This section reconciles the current evidence. The dated entries below it are
+the historical log, and failed runs in that log remain failed.
+
+## 1. Login and Atlas rendering: passes the reviewed bounded scope
+
+Run: Atlas [40389883188](https://github.com/Russianranger/coh-android/actions/runs/40389883188)
+at ad9516f6e. All eight jobs pass.
+
+What the run shows:
+- The ARM64 `CityOfHeroes.exe` runs under the app's Wine 10. It logs in
+  through its own UI, against the original DbServer and Atlas MapServer
+  running on Wine/FEX in PRoot.
+- It loads `maps/City_Zones/City_01_01` (textures.done, READY).
+- The database shows the character on map 1, still connected after the
+  screenshots.
+
+The frame check passed on two consecutive samples. This is the smoke criterion
+Sol ruled on in 5656152388:
+- nonblank whole frame and central world region;
+- 9 HUD label categories;
+- no helper prompt. The saved HelperStatus was 3, set with the original
+  `sethelperstatus 3` through the TestClient.
+
+Errors:
+- After map load: 0.
+- Startup: 5502, recorded and not erased.
+- Map load: 116, recorded and not erased.
+
+Sol's inspection (review 5659130262):
+- Sol inspected the artifact frame and the full-size `18-atlas-later.png`.
+  They show real scene geometry: plaza stairs and railings, the Atlas statue,
+  the dome, trees, skyline, the player and the original HUD.
+- The loader trace names `ap_plaza_upgrade_01.geo` and
+  `male_statue_atlas.geo`.
+- The frame is kept as `evidence/m3-atlas-40389883188.jpg`
+  (sha256 1430d8b2…ae8fb).
+
+Visual limits, recorded as observed:
+- some surfaces and the player still have purple or flat colouring;
+- several HUD icons are white or blue blocks.
+
+This result does not establish complete textures, correct bronze colour,
+complete character appearance, or Android rendering.
+
+The data added for this run, all under the user's authority in PR #6
+comment 6419236533:
+- six plaza/statue textures;
+- one sidewalk texture;
+- three base cape geometries, from pinned exact PIGG ranges.
+
+## 2. Replay through the original receive code: partial retained-state comparison passes
+
+Replay [40399832517](https://github.com/Russianranger/coh-android/actions/runs/40399832517)
+at 2fc843e5f passes assets, both native targets and both comparisons:
+`partial_state_equal: true`, `outside_error_inventories_equal: true`, error
+diagnostic 90,215 shared / 0 ARM64-only / 0 i686-only. The final same-head
+Atlas and replay runs on the merged m3-atlas head are listed in STATUS.md.
+
+What the replay covers:
+- 117 original receiver dispatches on ARM64 and on the i686 reference, with
+  six runs (id1-a, id1-b and id31 on each).
+- Exact cursors and ACKs, with zero errors inside dispatch windows.
+- Outside-window error inventories that are literally equal.
+- Exactly one authorized original-data texture occurrence.
+
+Coverage:
+- `evidence/m3-receiver-destination-inventory.json` maps all 18 dispatched
+  game commands, the `entrecv.c` entity path and the initial path to their
+  snapshot keys.
+- Review 5657846186's four omissions are resolved by 0106 and `state.c`
+  (approved in 5659130262):
+  - the interpolation selectors;
+  - `send_on_odd_send`;
+  - `last_pkt_id`;
+  - `hasEntDebugInfo`.
+
+Reduced scope, stated explicitly:
+- These are excluded: local-clock contributions and `rand()`; derived
+  interpolation history and `calcAutoDelay`'s adaptive counters; UI widget
+  caches; and ragdoll, which this port does not support.
+- The comparison is therefore a retained-received-state equivalence under
+  these exclusions. It is not a complete original-client simulation
+  equivalence.
+- `state_schema_complete`, `state_comparison_complete` and `m3_replay_complete`
+  are still false in `compare_state.py`. The reviewer and the user decide
+  whether this reduced-scope comparison satisfies M3. These flags are not
+  changed without that decision.
+
+## Not established by M3
+
+- Android surface rendering (M4).
+- Physical device or Thor testing (M5).
+- Complete textures.
+- Full original-client simulation equivalence.
+
+PR #6 stays a draft. A merge requires the user's approval.
+
+
 ### Contact and task observation follow-up (2026-10-25 UTC)
 
 Snapshots now retain ordered task sets/tasks, identities, difficulty, full
