@@ -9,7 +9,42 @@ import tempfile
 import run_ci
 
 
-def canonical_initial_ids(document, initial_id):
+
+# Review 5646841168: these additions apply only to snapshot 0 of the
+# ID1/31 comparison. Saved data, same-ID pairs and later snapshots stay literal.
+INITIAL_CHANNEL_IDS = (
+    'pkt_id_friendslist', 'pkt_id_seq_move', 'pkt_id_seq_triggermove',
+    'pkt_id_logout', 'pkt_id_supergroup', 'pkt_id_costume', 'pkt_id_powerCust',
+    'pkt_id_xlucency', 'pkt_id_titles', 'pkt_id_character_stats',
+    'pkt_id_targetting', 'pkt_id_status_effects', 'pkt_id_buffs',
+    'pkt_id_debug_info', 'pkt_id_rare_bits', 'pkt_id_state_mode')
+_LOW = ('HitPoints', 'Absorb', 'Endurance', 'Meter', 'StealthRadiusPlayer')
+_HIGH = ('HitPoints', 'Absorb', 'Endurance', 'Meter', 'PerceptionRadius',
+         'StealthRadiusPlayer', 'Confused')
+_LEVELS = ('Level', 'CombatLevel')
+ATTRIBUTE_ID_SCHEMAS = {
+    'basic': (('CurrentAttribs', _LOW), ('MaxAttribs', _LOW), ('SendLevels', _LEVELS)),
+    'self': (('CurrentAttribs', _HIGH + ('ToHit',)), ('MaxAttribs', _HIGH),
+             ('SendLevels', _LEVELS), ('ExperiencePoints', None),
+             ('ExperienceDebt', None), ('ExperienceRest', None), ('InfluencePoints', None))}
+
+
+def canonical_attribute_ids(rows, schema, initial_id):
+    # Match both the original schema position and name. Unknown or malformed
+    # shapes are left literal, never recursively normalized by key spelling.
+    if not isinstance(rows, list) or len(rows) != len(schema):
+        return
+    if any(not isinstance(row, dict) or set(row) != {'field', 'ids'}
+           or row['field'] != name for row, (name, _) in zip(rows, schema)):
+        return
+    for row, (_, children) in zip(rows, schema):
+        if children is not None:
+            canonical_attribute_ids(row['ids'], tuple((name, None) for name in children), initial_id)
+        elif type(row['ids']) is int and row['ids'] == initial_id:
+            row['ids'] = 'synthetic_INITIAL'
+
+
+def canonical_initial_ids(document, initial_id, snapshot_index=None):
     result = copy.deepcopy(document)
     for entity in result['entities']:
         if entity['pkt_id_create'] == initial_id:
@@ -17,12 +52,22 @@ def canonical_initial_ids(document, initial_id):
         for field in ('pkt_id_pos', 'pkt_id_qrot'):
             entity[field] = ['synthetic_INITIAL' if value == initial_id else value
                              for value in entity[field]]
+        if type(snapshot_index) is int and snapshot_index == 0:
+            channels = entity.get('packet_order', {})
+            for name in INITIAL_CHANNEL_IDS:
+                if type(channels.get(name)) is int and channels[name] == initial_id:
+                    channels[name] = 'synthetic_INITIAL'
+            attributes = entity.get('attribute_packet_order', {})
+            for name, schema in ATTRIBUTE_ID_SCHEMAS.items():
+                canonical_attribute_ids(attributes.get(name), schema, initial_id)
         player = entity['player']
         if player and player['lastClientStatePktId'] == initial_id:
             player['lastClientStatePktId'] = 'synthetic_INITIAL'
     for deletion in result['delete_history']:
         if deletion['pkt_id'] == initial_id:
             deletion['pkt_id'] = 'synthetic_INITIAL'
+    if type(snapshot_index) is int and snapshot_index == 0 and type(result.get('friend_receive_id')) is int and result['friend_receive_id'] == initial_id:
+        result['friend_receive_id'] = 'synthetic_INITIAL'
     return result
 
 
@@ -84,7 +129,7 @@ def compare(root, commit, *, original_texture_exception=False):
             b_raw = (reports[right] / f'state-{i:03d}.json').read_bytes()
             a, b = json.loads(a_raw), json.loads(b_raw)
             if sensitivity:
-                a, b = canonical_initial_ids(a, 1), canonical_initial_ids(b, 31)
+                a, b = canonical_initial_ids(a, 1, i), canonical_initial_ids(b, 31, i)
                 equal = json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
             else:
                 equal = a_raw == b_raw
@@ -97,6 +142,12 @@ def compare(root, commit, *, original_texture_exception=False):
                                 'delete_history[].pkt_id',
                                 'entities[].pkt_id_pos[]', 'entities[].pkt_id_qrot[]'] if sensitivity else [],
                             'canonicalization_condition': 'equals this runs synthetic INITIAL ID' if sensitivity else None,
+                            'snapshot0_additional_canonicalization': {
+                                'scalar_channels': list(INITIAL_CHANNEL_IDS),
+                                'attribute_schemas': ATTRIBUTE_ID_SCHEMAS,
+                                'friend_receive_id': True,
+                                'condition': 'snapshot index 0; exact integer equals this runs synthetic INITIAL ID',
+                                'review': 5646841168} if sensitivity else None,
                             'equal': not mismatches, 'mismatches': mismatches})
     return {'outside_error_inventories_equal': True, 'source_commit': commit, 'scope': 'partial_receiver_state_comparison',
             'original_texture_exception': original_texture_exception,

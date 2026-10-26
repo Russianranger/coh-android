@@ -1959,3 +1959,31 @@ files, atomic failure, links and collision preservation. Real archive staging
 verifies all 27 files locally. Evidence, exact errors, snapshot pins, recovery
 receipt and command outputs are in evidence/m3-atlas-materials-40247679019.json.
 Full schema/comparison and M3/M4/M5 remain unqualified; PR #6 stays draft.
+
+### Reviewed INITIAL-ID comparison scope (2026-10-26 UTC)
+
+Sol review 5646841168 accepts implementation through 4c8b6c39 and permits a
+comparison-only rule for the new source-proven packet-ID observations. The
+implementation now normalizes only snapshot 0, 16 explicitly named scalar
+channels, primitive leaves of the exact basic/self AttrDef schemas, and the
+friend-order ID, each only when an integer equals that run's INITIAL ID. Schema
+names/order/shapes and unrelated values stay literal. Saved snapshots, later
+snapshots, cross-target and same-ID comparisons are unchanged. The previous
+five lifecycle destinations retain their already agreed behavior. The scope
+approval does not approve this new implementation or a milestone/merge.
+
+All 191 Python tests pass (13 comparison tests), including wrong values/types,
+exact and adjacent paths, schema mutation/nulls, input nonmutation and actual
+comparison failures for later/same-ID/cross-target differences. SHA-verified
+artifacts from 40247679017 and 40254223051 each revalidate 702 snapshots and pass
+all seven pairs with this proposed comparator. The historical CI runs remain
+FAILED; their strict sensitivity differences were respectively 45 and 20 fields
+at snapshot 0. This is retrospective qualification, not fresh combined-head CI.
+The exact single authorized texture occurrence and false full-schema/full-state/
+M3 flags remain. Commands, pins and results are recorded in
+`evidence/m3-initial-id-normalization-controls.json`.
+
+Next: fresh native replay and Atlas qualification for the combined power-time,
+active-power/mode, 27-material and comparison changes, plus Sol's implementation
+review. Full retained-state coverage and the Atlas screenshot remain open;
+M4 Android surface and physical Thor/M5 are not qualified. No Thor test ready.
