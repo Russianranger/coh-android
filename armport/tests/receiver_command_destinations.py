@@ -148,8 +148,68 @@ int main(int argc, char **argv) {
             assert server['str'] == [{'type': 7, 'value': 'abcdefg' if mode == 1 else 'xy'},
                                      {'type': 8, 'value': 'sentence words'}]
             assert v['abs_time'] == 0xfffffffe
-    print('5 command-destination cases pass: actual cmdOldReceive, table parity with entrecv.c cmd_list, '
-          'bits, gating, unreceived commands, bounds; host adapters do not qualify native ABI')
+    server_commands(source, state)
+    print('5 command-destination cases and 4 server-command list cases pass: actual cmdOldReceive and '
+          'cmdReceiveServerCommands, table parity with entrecv.c cmd_list, bits, gating, unreceived commands, '
+          'duplicates and bounds; host adapters do not qualify native ABI')
+
+
+def server_commands(source, state):
+    receive = (source / 'Game/src/clientcomm/clientcommreceive.c').read_text()
+    game = (source / 'Game/src/cmdparse/cmdgame.c').read_text()
+    code = r'''
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <stddef.h>
+#include <stdarg.h>
+#define CAPACITY 1048576
+#define check(x) do { if (!(x)) _Exit(3); } while (0)
+#define stricmp strcasecmp
+static char buffer[CAPACITY]; static size_t used;
+typedef char **StringArray;
+typedef struct { int n; char *v[70000]; } Array;
+static Array *arr(char **v) { return (Array *)((char *)v - offsetof(Array, v)); }
+#define eaSize(p) (*(p) ? arr(*(p))->n : 0)
+static void eaCreate(StringArray *p) { Array *a = calloc(1, sizeof(*a)); assert(a); *p = a->v; }
+static void eaPush(StringArray *p, char *s) { Array *a = arr(*p); assert(a->n < 70000); a->v[a->n++] = s; }
+typedef struct { const char *s[8]; int count, n, cursor; } Packet;
+static int pktGetBitsPack(Packet *p, int b) { (void)b; assert(p->cursor == 0); p->cursor = 1; return p->count; }
+static char *pktGetString(Packet *p) { assert(p->n < p->count); return (char *)p->s[p->n++]; }
+'''
+    code += game[game.index('StringArray serverCommands;'):game.index('void cmdAddServerCommand(')]
+    code += 'int cmdIsServerCommand(char *str);\n'
+    code += function(game, 'void cmdAddServerCommand(')
+    code += function(game, 'int cmdIsServerCommand(')
+    code += function(receive, 'void cmdReceiveServerCommands(')
+    code += state[state.index('static void out('):state.index('void armportReplayStateInit(')]
+    writer = function(state, 'static void server_command_names_state(')
+    code += writer
+    code += r'''
+int main(int argc, char **argv) {
+    int mode = atoi(argv[1]); (void)argc;
+    Packet p = {{"mapmove", "MapMove", "who\"q", "\x80x"}, 4};
+    if (mode != 1) cmdReceiveServerCommands(&p);
+    if (mode == 2) { Packet q = {{"who\"Q", "new"}, 2}; cmdReceiveServerCommands(&q); }
+    if (mode == 3) arr(serverCommands)->n = 65537;
+    server_command_names_state(); puts(buffer); return 0; }
+'''
+    with tempfile.TemporaryDirectory() as tmp:
+        c = Path(tmp) / 'server.c'
+        c.write_text(code)
+        exe = c.with_suffix('')
+        subprocess.run([os.environ.get('CC', 'cc'), '-std=gnu11', '-O1', '-g', '-fsanitize=address,undefined',
+                        '-fno-sanitize-recover=all', str(c), '-o', str(exe)], check=True)
+        expect = {0: (1, ['mapmove', 'who"q', '\u0080x']), 1: (0, []), 2: (1, ['mapmove', 'who"q', '\u0080x', 'new'])}
+        for mode in range(4):
+            r = subprocess.run([str(exe), str(mode)], capture_output=True, text=True, timeout=20)
+            assert r.returncode == (3 if mode == 3 else 0), (mode, r.returncode, r.stderr)
+            if mode == 3:
+                continue
+            v = json.loads(r.stdout)
+            assert (v['initialized'], v['names']) == expect[mode], (mode, v)
 
 
 if __name__ == '__main__':

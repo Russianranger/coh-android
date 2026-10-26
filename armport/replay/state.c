@@ -1242,6 +1242,22 @@ static void command_destination_state(void)
     out(",\"server_visible_cmds\":"); command_table_state(server_visible_cmds);
     out(",\"abs_time\":%u}", (unsigned)server_visible_state.abs_time);
 }
+/* cmdReceiveServerCommands (SERVER_GAME_CMDS) only appends names to the
+ * global cmdgame.c serverCommands list through cmdAddServerCommand, which
+ * skips case-insensitive duplicates. Retain the ordered list literally. */
+extern StringArray serverCommands;
+extern int serverCommandsInitialized;
+static void server_command_names_state(void)
+{
+    int i, count = eaSize(&serverCommands);
+    check(count >= 0 && count <= 65536);
+    out("{\"initialized\":%d,\"names\":[", serverCommandsInitialized);
+    for (i = 0; i < count; ++i) {
+        if (i) out(",");
+        string(serverCommands[i]);
+    }
+    out("]}");
+}
 static void initial_ui_state(void)
 {
     int i;
@@ -1818,6 +1834,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"initial_ui\":"); initial_ui_state();
     out(",\"retained_control\":"); retained_control_state();
     out(",\"command_destinations\":"); command_destination_state();
+    out(",\"server_commands\":"); server_command_names_state();
     out(",\"initial_server_state\":"); initial_server_state();
     out(",\"door_transition\":"); door_transition_state();
     out(",\"target_state\":"); target_receive_state();

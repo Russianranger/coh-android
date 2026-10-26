@@ -1130,5 +1130,7 @@ stay within each command's maxval. `receiver_command_destinations.py` compiles
 the actual cmdOldReceivePacked/cmdOldReceive/doDataSwap with host adapters and
 checks table parity with entrecv.c's cmd_list, bit patterns, the access-level
 gate, unreceived commands and bounds. `cmdReceiveServerCommands`
-(SERVER_GAME_CMDS) only registers command names through cmdAddServerCommand;
-that client-side list is not yet dumped. Schema and completion flags stay partial.
+(SERVER_GAME_CMDS) only appends names to cmdgame.c's global `serverCommands`
+through cmdAddServerCommand (case-insensitive duplicates skipped); the ordered
+list and its initialized flag are now dumped as `server_commands`, tested with
+the actual receive/add/lookup bodies. Schema and completion flags stay partial.
