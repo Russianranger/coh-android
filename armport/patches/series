@@ -97,3 +97,4 @@
 0097-observe-original-friend-packet-order.patch
 0098-observe-accepted-power-creation-times.patch
 0099-observe-power-update-wire-times.patch
+0100-replay-retained-turnstile-event-state.patch

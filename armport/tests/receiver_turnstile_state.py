@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+from receiver_tray_state import function
 
 
 def main():
@@ -14,7 +15,7 @@ def main():
     args = p.parse_args()
     state = (Path(__file__).resolve().parents[1] / 'replay/state.c').read_text()
     formatting = state[state.index('static void out('):state.index('void armportReplayStateInit(')]
-    writer = state[state.index('static void turnstile_mission_state('):state.index('typedef struct ArmPortWaypointEntry')]
+    writer = ''.join(function(state, name) for name in ('static void turnstile_mission_state(', 'static void turnstile_receive_state(', 'static void player_turnstile_state('))
     native = (args.source / 'Game/src/UI/uiTurnstile.c').read_text()
     start = native.index('const TurnstileMissionClient *const *armportReplayTurnstileMissions(')
     assert native[start-len('#ifdef COH_ARMPORT_REPLAY\n'):start] == '#ifdef COH_ARMPORT_REPLAY\n'

@@ -1987,3 +1987,26 @@ Next: fresh native replay and Atlas qualification for the combined power-time,
 active-power/mode, 27-material and comparison changes, plus Sol's implementation
 review. Full retained-state coverage and the Atlas screenshot remain open;
 M4 Android surface and physical Thor/M5 are not qualified. No Thor test ready.
+
+### Retained turnstile event state (2026-10-26 UTC)
+
+Patch 0100 adds a const-data/copy-out view of the original event name, expected
+response, acceptance/decline/progress/player counts, instance ID and event-status
+reply/status masks. The snapshot writer bounds the fixed name and preserves
+signed counts and all U32 bits, including literal IDs 1/31. No original receive,
+ACK, dialog or update behavior changes. Local input can also change response
+state; the snapshot does not claim exclusive packet provenance. Local throttle
+clocks, widget objects, force-queue and invitation state remain excluded.
+
+Eleven original-receiver/actual-accessor/writer sanitizer cases pass, including
+read widths/counts, ACK identity, replacements, response changes, high-bit IDs,
+name/output bounds and nonmutation. Fourteen queue/status regression cases and
+191 Python tests pass. uiTurnstile.c/state.c compile ARM64 then i686 with one
+compiler. Host packet/dialog/ACK substitutes are not native ABI/runtime proof;
+only local LeakSanitizer is disabled for /proc. Patchwork exports 100 patches;
+prior 99 are byte-identical and upstream/ stays unchanged. Commands/output are
+in `evidence/m3-turnstile-event-state-controls.json`. Fresh runtime/review pending.
+
+Preserve Atlas 40263048945 and replay 40263048934 at 9d82645c; they test the
+preceding combined power/material/normalization head, not this event addition.
+Full state, screenshot, M3/M4/M5 and Thor readiness remain unqualified.

@@ -1316,6 +1316,21 @@ static void turnstile_receive_state(void)
     }
     out("]}");
 }
+/* Event response fields can also change through local dialog actions. Preserve
+ * their retained values without claiming exclusive receive provenance. */
+static void turnstile_event_state(void)
+{
+    ArmPortTurnstileEventState state;
+    armportReplayTurnstileEventState(&state);
+    check(state.name != NULL && state.name_capacity == 256);
+    out("{\"name\":"); fixed_string(state.name, state.name_capacity);
+    out(",\"response_expected\":%d,\"accepted_count\":%d,\"declined_count\":%d,"
+        "\"in_progress\":%d,\"player_count\":%d,\"instance_id\":%u,"
+        "\"status_player_count\":%d,\"replied_u32\":[%u,%u],\"status_u32\":[%u,%u]}",
+        state.response_expected, state.accepted_count, state.declined_count,
+        state.in_progress, state.player_count, state.instance_id, state.status_player_count,
+        state.replied[0], state.replied[1], state.status[0], state.status[1]);
+}
 static void player_turnstile_state(const EntPlayer *p)
 {
     out("{\"last_event_id\":%d,\"last_mission_id\":%d}",
@@ -1666,6 +1681,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"desaturation_received_f32_bits\":"); desaturation_receive_state();
     out(",\"server_waypoints\":"); server_waypoint_state();
     out(",\"turnstile\":"); turnstile_receive_state();
+    out(",\"turnstile_event\":"); turnstile_event_state();
     out(",\"user_options\":"); options_receive_state();
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"initial_ui\":"); initial_ui_state();

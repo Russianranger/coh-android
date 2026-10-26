@@ -316,6 +316,9 @@ jobs:
       - name: Check original turnstile receivers and retained state
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_turnstile_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check original turnstile event receivers and retained state
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_turnstile_event_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Check retained friends, saved keybinds and chat settings
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_communication_state.py --source "$RUNNER_TEMP/reference/src"
