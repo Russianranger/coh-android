@@ -39,7 +39,7 @@ jobs:
         env:
           PROFILE: ${{ github.event.inputs.profile || 'cape' }}
         run: |
-          python3 armport/scripts/discover_approved_ranges.py --profile "$PROFILE" \
+          armport/scripts/step.sh "ArmPort range discovery" python3 armport/scripts/discover_approved_ranges.py --profile "$PROFILE" \
             --output "$RUNNER_TEMP/discovered" --metadata-cache "$RUNNER_TEMP/metadata"
           python3 - "$RUNNER_TEMP/discovered" <<'EOF'
           import json, sys
