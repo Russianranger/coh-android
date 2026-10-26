@@ -334,6 +334,9 @@ jobs:
       - name: Check original mission waypoint and keydoor receivers
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_mission_destinations.py --source "$RUNNER_TEMP/reference/src"
+      - name: NPC and Architect retained-state controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_npc_architect_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Check retained friends, saved keybinds and chat settings
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_communication_state.py --source "$RUNNER_TEMP/reference/src"

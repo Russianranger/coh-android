@@ -943,6 +943,48 @@ static void entity_pet_owner_state(const Entity *e)
     out("}");
 }
 
+/* Retained custom NPC colors/regions. originalNPCName is not received by
+ * NPCcostume_receive; retain it literally if another path populated it. */
+static void npc_costume_state(const CustomNPCCostume *c)
+{
+    int i, count;
+    if (!c) { out("null"); return; }
+    count = eaSize(&c->parts);
+    check(count >= 0 && count <= 8192);
+    out("{\"original_npc_name\":"); string(c->originalNPCName);
+    out(",\"skin_u32\":%u,\"parts\":[", (unsigned)c->skinColor.integer);
+    for (i = 0; i < count; ++i) {
+        const CustomNPCCostumePart *p = c->parts[i];
+        if (i) out(",");
+        if (!p) { out("null"); continue; }
+        out("{\"region\":"); string(p->regionName);
+        out(",\"colors_u32\":[%u,%u]}", (unsigned)p->color[0].integer, (unsigned)p->color[1].integer);
+    }
+    out("]}");
+}
+
+static void entity_architect_state(const Entity *e)
+{
+    const TaskForce *t = e->taskforce;
+    out("{\"on_architect\":%d,\"invincible\":%d,\"untargetable\":%d,\"taskforce\":",
+        e->onArchitect, e->architect_invincible, e->architect_untargetable);
+    if (!t) out("null");
+    else {
+        /* use_cached_costume is cleared by the receiver when the contact
+         * override or name changes; retain its literal value. */
+        out("{\"id\":%d,\"flags\":%d,\"contact_override\":%d,\"use_cached_costume\":%d,\"contact_name\":",
+            t->architect_id, t->architect_flags, t->architect_contact_override,
+            t->architect_useCachedCostume);
+        fixed_string(t->architect_contact_name, sizeof(t->architect_contact_name));
+        out(",\"contact_costume\":"); costume(t->architect_contact_costume);
+        out(",\"contact_npc_costume\":"); npc_costume_state(t->architect_contact_npc_costume);
+        out("}");
+    }
+    /* Mission-review widget state is not observed here. Retain fields even
+     * after onArchitect is cleared. */
+    out("}");
+}
+
 static void entity_taskforce_parameters(const Entity *e)
 {
     int i;
@@ -1709,6 +1751,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"sequence_receive\":"); entity_sequence_receive_state(e);
         out(",\"netfx_receive\":"); entity_netfx_receive_state(e);
         out(",\"taskforce_parameters\":"); entity_taskforce_parameters(e);
+        out(",\"architect\":"); entity_architect_state(e);
+        out(",\"custom_npc_costume\":"); npc_costume_state(e->customNPC_costume);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");
