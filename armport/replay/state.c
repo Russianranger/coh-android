@@ -961,6 +961,41 @@ static void entity_super_stats_state(const Entity *e)
 }
 
 
+/* Received destinations found by the entrecv.c destination audit that no
+ * other writer retains: checkEntCreate access_level, receiveCharacterFromServer
+ * db_flags, entReceiveLogoutUpdate logout_timer, the entReceiveCostume owned
+ * costume, entReceiveTitles helper/respec/article/glowie values, the costume
+ * special FX name and the IgnoreCombatMods pair. Excluded local clocks and
+ * random values: pendingCostume*Time, pvpUpdateTime and confuseRand. */
+static void entity_receive_extras_state(const Entity *e)
+{
+    out("{\"access_level\":%d,\"db_flags_u32\":%u,\"logout_timer_f32_bits\":",
+        (int)e->access_level, (unsigned)e->db_flags);
+    words(&e->logout_timer, sizeof(e->logout_timer));
+    out(",\"owned_costume\":"); costume((const cCostume *)e->ownedCostume);
+    out(",\"player\":");
+    if (e->pl) {
+        out("{\"glowie_unlocked\":%d,\"attach_article\":%d,\"respec_tokens_u32\":%u,\"helper_status\":%d,\"costume_fx_special\":",
+            e->pl->glowieUnlocked, e->pl->attachArticle, (unsigned)e->pl->respecTokens, e->pl->helperStatus);
+        fixed_string(e->pl->costumeFxSpecial, sizeof(e->pl->costumeFxSpecial));
+        out("}");
+    } else {
+        out("null");
+    }
+    out(",\"character\":");
+    if (e->pchar) {
+        out("{\"ignore_combat_mods\":%d,\"ignore_combat_mod_level_shift\":%d}",
+            (int)e->pchar->bIgnoreCombatMods, e->pchar->ignoreCombatModLevelShift);
+    } else {
+        out("null");
+    }
+    out("}");
+}
+
+/* Original static-map receive storage, in its retained owner/map order. The
+ * accessor never invokes the ordinary lazy file-loading/creating getter.
+ * Local visited-map files can also populate this storage; their retained data
+ * is compared literally. Derived minimap textures/fog grids are not included. */
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
 static void tray_slots_state(const TrayObj *const *slots)
@@ -1829,10 +1864,6 @@ static void entity_receive_metadata(const Entity *e)
     out(",\"special_power_state\":%d}", e->specialPowerState);
 }
 
-/* Original static-map receive storage, in its retained owner/map order. The
- * accessor never invokes the ordinary lazy file-loading/creating getter.
- * Local visited-map files can also populate this storage; their retained data
- * is compared literally. Derived minimap textures/fog grids are not included. */
 static void visited_map_state(void)
 {
     const VisitedStaticMap *const *owners = armportReplayVisitedMaps();
@@ -1926,6 +1957,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"power_customizations\":"); entity_power_customizations(e);
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
+        out(",\"receive_extras\":"); entity_receive_extras_state(e);
         out(",\"status_state\":"); entity_status_state(e);
         out(",\"packet_order\":"); entity_packet_order_state(e);
         out(",\"attribute_packet_order\":"); entity_attribute_packet_order_state(e);

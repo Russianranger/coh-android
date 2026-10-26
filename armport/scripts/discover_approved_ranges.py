@@ -11,14 +11,28 @@ import json
 from pathlib import Path
 import sys
 
-from stage_approved_ranges import ROOT, GEOMETRY, TEXTURES, require
+from stage_approved_ranges import ROOT, GEOMETRY, TEXTURES, CAPE_GEOMETRY, require
 sys.path.insert(0, str(ROOT / 'tools/android/interactive'))
 import prepare_client_visual_assets as visual
 import discover_client_visual_sweep as sweep
 import prepare_atlas_world_assets as donor
 
 
-def discover(output, cache):
+PROFILES = {
+    'dispatch': dict(geometry=GEOMETRY, textures=TEXTURES, scope='user_approved_m3_dispatch_missing_files',
+        manifest='m3-approved-range-assets.json',
+        approval='https://github.com/Russianranger/coh-android/pull/6#issuecomment-6386664502',
+        additional_approval='User approval in development conversation, 2026-10-25: exact Steel Canyon texture proposed in m3-atlas-swap-source-40189560565.json; no additional dependencies'),
+    'cape': dict(geometry=CAPE_GEOMETRY, textures=frozenset(), scope='user_approved_m3_after_load_cape_geometry',
+        manifest='m3-approved-cape-ranges.json',
+        approval='https://github.com/Russianranger/coh-android/pull/6#issuecomment-6419236533',
+        additional_approval='Atlas 40373337135 after-map-load errors: FX/CAPES/CapeShortMale.cape could not find Male_Cape.geo cape geometry/harness; the three base cape geometries only, no other dependencies'),
+}
+
+
+def discover(output, cache, profile='dispatch'):
+    chosen = PROFILES[profile]
+    GEOMETRY, TEXTURES = chosen['geometry'], chosen['textures']
     require(not output.exists() and not output.is_symlink(), 'Discovery output exists')
     baseline = visual.read_manifest(ROOT / 'assets/client-visual-manifest.json')
     identities = baseline['provenance']['metadata_archives']
@@ -45,9 +59,8 @@ def discover(output, cache):
     output.mkdir(parents=True)
     archive = output / 'm3-approved-assets.zip'
     donor.write_donor_zip(archive, result)
-    report = dict(format=1, scope='user_approved_m3_dispatch_missing_files',
-        approval='https://github.com/Russianranger/coh-android/pull/6#issuecomment-6386664502',
-        additional_approval='User approval in development conversation, 2026-10-25: exact Steel Canyon texture proposed in m3-atlas-swap-source-40189560565.json; no additional dependencies',
+    report = dict(format=1, scope=chosen['scope'], approval=chosen['approval'],
+        additional_approval=chosen['additional_approval'],
         requests=list(matches),
         matches={name: [dict(archive=r['identity']['archive'], path=r['path']) for r in rows]
                  for name, rows in matches.items()},
@@ -58,13 +71,15 @@ def discover(output, cache):
         metadata_archives=identities,
         source_archives_fully_downloaded=False, source_archive_sha256_verified=False,
         runtime_validated=False)
-    (output / 'm3-approved-range-assets.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
+    (output / chosen['manifest']).write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
     print(json.dumps(dict(files=report['file_count'], bytes=report['payload_bytes'], unresolved=report['unresolved'])))
+    return report
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--metadata-cache', type=Path, required=True)
+    parser.add_argument('--profile', choices=sorted(PROFILES), default='dispatch')
     args = parser.parse_args()
-    discover(args.output, args.metadata_cache)
+    discover(args.output, args.metadata_cache, args.profile)

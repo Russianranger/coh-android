@@ -376,6 +376,9 @@ jobs:
       - name: Server control receive writer controls
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: armport/scripts/step.sh "ArmPort server control control" python3 armport/tests/receiver_server_control_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Entity receive-extras writer controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort entity extras control" python3 armport/tests/receiver_entity_extras_state.py
       - name: Check retained friends, saved keybinds and chat settings
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_communication_state.py --source "$RUNNER_TEMP/reference/src"

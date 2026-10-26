@@ -1158,3 +1158,25 @@ prediction lists, future pushes, interpolation and local input are excluded.
 original header layouts; the original receivers are not compiled there.
 Entity-tail invention_Receive has an entirely commented-out body in the
 original source, so it writes nothing and needs no observation.
+
+## Receiver destination inventory (game commands and entrecv.c)
+
+`evidence/m3-receiver-destination-inventory.json` maps every game command
+dispatched in replay 40356647596 (18 IDs; `run_ci.py` `game_commands`) to its
+original `handleGameCmd` handler and the snapshot key that retains its
+destination. `SERVER_BEGIN_BYTE_ALIGNED_DATA` has no retained destination.
+
+It also lists the result of a scripted destination scan of each `entrecv.c`
+function (lvalues and address-of chains compared with the field names
+`state.c` writes), with a manual classification. Received values that no
+writer kept are now in `receive_extras`:
+- access level, db flags and logout timer bits;
+- the owned costume;
+- the four `entReceiveTitles` player values and the costume special-FX name;
+- the IgnoreCombatMods pair.
+
+Local clocks (`pendingCostume*Time`, `pvpUpdateTime`), `confuseRand`,
+calloc-only `mapIds`, interpolation history and the unsupported ragdoll are
+explicit exclusions. Initial-path callees in `Common/entity`, the
+tray/window/options gaps above and the UI-cache lifecycle audit remain. The
+inventory is partial and changes no completion flag.

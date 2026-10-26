@@ -2010,3 +2010,43 @@ in `evidence/m3-turnstile-event-state-controls.json`. Fresh runtime/review pendi
 Preserve Atlas 40263048945 and replay 40263048934 at 9d82645c; they test the
 preceding combined power/material/normalization head, not this event addition.
 Full state, screenshot, M3/M4/M5 and Thor readiness remain unqualified.
+
+### Atlas acceptance, plaza data and coverage inventory (2026-10-26 UTC, Claude lead)
+
+**Atlas screenshot.** Atlas 40337294759 (dd0f0ea4) rendered the plaza: City Hall
+stairs, the dome and trees. It failed only the "Atlas Park" OCR rule. The
+original client never draws the zone display name in the world view:
+- `uiCompass` prints destination names only;
+- the `uiAutomap` footer prints the `gMapName` file path.
+
+De8feb1b3 changes the verdict. All of the following must hold, in the owned
+client window after the latest Atlas load (READY):
+- the frame is nonblank;
+- the central world region is nonblank;
+- at least four original HUD labels are read;
+- no helper prompt is open.
+
+Map-name OCR is kept as a diagnostic only.
+
+**Plaza data.** The six approved plaza/statue textures are staged, and the
+statue is now textured (40356647478). d10e19a25 also stages the exact
+`dcoarse_sidewalk` texture that was the one after-load error in 40356647478.
+
+**Remaining Atlas failures (40373337135):**
+- The new-character helper prompt stayed open. `input.c` only counts a press
+  as a click when down and up are within 250 ms, so the 2 s hold could not
+  click.
+- Four after-load errors: cape geometry `Male_Cape.geo`.
+
+On `armport/replay-coverage` (ed828028f):
+- The guest now sends the original `sethelperstatus 3` through the TestClient
+  before the saved logout and checks that HelperStatus reads back as 3.
+- Exact range discovery is prepared for the three base cape geometries.
+
+**Coverage inventory.** `evidence/m3-receiver-destination-inventory.json` maps:
+- all 18 dispatched game commands to their handlers and snapshot keys;
+- the `entrecv.c` entity path and the initial path to snapshot keys.
+
+`receive_extras` now retains the received values the inventory found missing.
+Replay 40374095666 passes, and ARM64 equals i686. All completion flags stay
+false pending Sol's review and the user's approval.
