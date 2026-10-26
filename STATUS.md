@@ -33,7 +33,8 @@ see armport/HANDOFF.md):
 - Sol accepts implementation through e6d39d7a; no milestone or merge approval.
 - Atlas 40314007807 fails rendering; 8 UI samples show unnamed waypoint/map docked.
 - Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
-- Atlas 40337294759: plaza rendered behind helper prompt; failed only the Atlas Park
-  OCR rule (original HUD never prints it). New HUD+world-region rule de8feb1b3,
-  plaza textures staged, NPC/Architect+control state merged; Atlas 40354655954.
+- Atlas 40389883188 (ad9516f6e) PASSES the reviewed smoke criterion: READY,
+  plaza/statue/dome rendered, 9 HUD labels, no helper prompt, 0 after-load
+  errors, still connected (frame: evidence/m3-atlas-40389883188.jpg). Sol: scene
+  inspection still needed for M3 rendering. Coverage fixes 2fc843e5f in review.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.
