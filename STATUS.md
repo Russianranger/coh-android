@@ -33,8 +33,8 @@ see armport/HANDOFF.md):
   fake-auth server (0045), empty world-group slots (0047), login-stage log
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- Sol accepts implementation through 74aa2c32; newer observers/fixes need review.
-- Atlas 40283068606: connection passes; rendered-world/map-name checks still fail.
-- Invitation replay 40299446281 passes; overflow fix replay 40308641544 running.
+- Sol accepts implementation through e6d39d7a; no milestone or merge approval.
+- Atlas 40283068606 failed rendering; new Atlas 40314007807 running.
+- Overflow replay 40308641544 passes partial scope; current-head replay 40321211800 running.
 - Mission destinations/UI diagnostic pass host controls/native compilation; runtime pending.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.

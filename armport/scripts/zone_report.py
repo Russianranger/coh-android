@@ -11,6 +11,7 @@ import client_errors
 import world_draw_report
 import world_model_report
 import world_camera_report
+import world_ui_report
 import group_model_report
 
 
@@ -62,8 +63,11 @@ def sections(evidence, client):
     yield 'ArmPort M3 model traversal', json.dumps(model_summary, separators=(',', ':'))
     camera = world_camera_report.summarize(read(client / 'zone-trace.jsonl').splitlines(keepends=True))
     (evidence / 'world-camera-summary.json').write_text(json.dumps(camera, indent=2) + '\n')
-    yield 'ArmPort M3 camera/player inputs', json.dumps(
-        {key: value for key, value in camera.items() if key != 'samples'}, separators=(',', ':'))
+    ui = world_ui_report.summarize(read(client / 'zone-trace.jsonl').splitlines(keepends=True))
+    (evidence / 'world-ui-summary.json').write_text(json.dumps(ui, indent=2) + '\n')
+    camera_summary = {key: value for key, value in camera.items() if key != 'samples'}
+    camera_summary['ui_inputs'] = {key: value for key, value in ui.items() if key != 'samples'}
+    yield 'ArmPort M3 camera/player inputs', json.dumps(camera_summary, separators=(',', ':'))
     if status.get('frame_checks'):
         yield 'ArmPort M3 final frame check', json.dumps(status['frame_checks'][-1], separators=(',', ':'))
     if status.get('qa_notice_actions'):

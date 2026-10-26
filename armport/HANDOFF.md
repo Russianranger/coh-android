@@ -1941,3 +1941,23 @@ after deletion; this snapshot addition does not repair it. Reference CI runs the
 new control on fresh executable builds. Commands/output and limitations:
 evidence/m3-mission-destination-controls.json. Native replay/review are pending;
 full-schema/full-state/M3 flags remain false. Preserve40308641544 at6f60f802.
+
+### Reviewed head qualification and UI report (2026-10-26 UTC)
+
+Sol5651480055 accepts implementation through e6d39d7a, without milestone/merge
+approval. Overflow replay40308641544 passed all five jobs; partial comparison
+121544054824 retains full-schema/full-state/M3 false. Atlas40314007807 has passed
+all seven pre-server jobs; server-run121550219027 remains active. Preserve it.
+The existing replay branch now tests reviewed e6d39d7a in40321211800, to qualify
+mission/keydoor snapshots. Both earlier native builds finished before this run.
+
+Host-only world_ui_report.py now parses the bounded world.ui records, validates
+frame/thread pairing with model/draw records, and saves world-ui-summary.json.
+Missing/torn/malformed/duplicate/excess observations are invalid, including old
+traces without world.ui. Numeric state stays literal; absent names do not prove
+a font or rendering cause. The report preserves the existing eight-section
+log bound by nesting the compact UI summary under camera/player inputs.
+All196 Python tests pass, including five new report tests. No source patches,
+acceptance policy, assets or active CI heads changed for this host report.
+Commands and limits: evidence/m3-world-ui-report-controls.json. Apply the report
+to the retained Atlas artifact when it finishes, then inspect current-head replay.
