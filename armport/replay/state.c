@@ -1344,6 +1344,43 @@ static void server_command_names_state(void)
     }
     out("]}");
 }
+/* Retained destinations of playerReceiveControlState's server control state
+ * and physics-position receivers: the accepted ServerControlState, the
+ * received physics step ring and the packet-ID guards. CSC prediction lists,
+ * future pushes, motion interpolation and local input are excluded. The three
+ * pkt_id fields are pak->id-derived; see compare_state.py for ID1/31. */
+static void server_control_receive_state(void)
+{
+    const ServerControlState *s = control_state.server_state;
+    int i;
+    out("{\"server_state_pkt_id\":%u,\"server_pos_pkt_id\":%u,\"forced_move_pkt_id\":%u,"
+        "\"received_update_id\":%u,\"server_state\":",
+        control_state.server_state_pkt_id, control_state.server_pos_pkt_id,
+        control_state.forced_move_pkt_id, (unsigned)control_state.received_update_id);
+    if (!s) out("null");
+    else {
+        out("{\"speed_f32_bits\":"); words(s->speed, sizeof(s->speed));
+        out(",\"speed_back_f32_bits\":"); words(&s->speed_back, sizeof(s->speed_back));
+        out(",\"jump_height_f32_bits\":"); words(&s->jump_height, sizeof(s->jump_height));
+        out(",\"surf_mods_f32_bits\":"); words(s->surf_mods, sizeof(s->surf_mods));
+        out(",\"flags\":[%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u]}",
+            (unsigned)s->controls_input_ignored, (unsigned)s->shell_disabled,
+            (unsigned)s->no_ent_collision, (unsigned)s->fly, (unsigned)s->stun,
+            (unsigned)s->jumppack, (unsigned)s->no_jump_repeat, (unsigned)s->glide,
+            (unsigned)s->no_physics, (unsigned)s->hit_stumble, (unsigned)s->ninja_run,
+            (unsigned)s->walk, (unsigned)s->beast_run, (unsigned)s->steam_jump,
+            (unsigned)s->hover_board, (unsigned)s->magic_carpet, (unsigned)s->parkour_run);
+    }
+    out(",\"physics_end\":%d,\"physics_cur\":%d,\"physics_steps\":[",
+        control_state.svr_phys.end, control_state.svr_phys.cur);
+    for (i = 0; i < (int)(sizeof(control_state.svr_phys.step) / sizeof(control_state.svr_phys.step[0])); ++i) {
+        out("%s[%u,", i ? "," : "", (unsigned)control_state.svr_phys.step[i].net_id);
+        words(control_state.svr_phys.step[i].pos, sizeof(control_state.svr_phys.step[i].pos));
+        out(","); words(control_state.svr_phys.step[i].vel, sizeof(control_state.svr_phys.step[i].vel));
+        out("]");
+    }
+    out("]}");
+}
 static void initial_ui_state(void)
 {
     int i;
@@ -1922,6 +1959,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"retained_control\":"); retained_control_state();
     out(",\"command_destinations\":"); command_destination_state();
     out(",\"server_commands\":"); server_command_names_state();
+    out(",\"server_control_receive\":"); server_control_receive_state();
     out(",\"initial_server_state\":"); initial_server_state();
     out(",\"door_transition\":"); door_transition_state();
     out(",\"target_state\":"); target_receive_state();

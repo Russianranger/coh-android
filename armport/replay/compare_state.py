@@ -66,6 +66,14 @@ def canonical_initial_ids(document, initial_id, snapshot_index=None):
     for deletion in result['delete_history']:
         if deletion['pkt_id'] == initial_id:
             deletion['pkt_id'] = 'synthetic_INITIAL'
+    # Lead review 2026-10-26: the three control-receive packet-ID guards are
+    # pak->id-derived and may persist from INITIAL; canonicalize only exact
+    # synthetic values (real IDs are 32..155) in every snapshot.
+    control = result.get('server_control_receive')
+    if isinstance(control, dict):
+        for name in ('server_state_pkt_id', 'server_pos_pkt_id', 'forced_move_pkt_id'):
+            if type(control.get(name)) is int and control[name] == initial_id:
+                control[name] = 'synthetic_INITIAL'
     if type(snapshot_index) is int and snapshot_index == 0 and type(result.get('friend_receive_id')) is int and result['friend_receive_id'] == initial_id:
         result['friend_receive_id'] = 'synthetic_INITIAL'
     return result
@@ -140,7 +148,10 @@ def compare(root, commit, *, original_texture_exception=False):
                                 'entities[].pkt_id_create',
                                 'entities[].player.lastClientStatePktId',
                                 'delete_history[].pkt_id',
-                                'entities[].pkt_id_pos[]', 'entities[].pkt_id_qrot[]'] if sensitivity else [],
+                                'entities[].pkt_id_pos[]', 'entities[].pkt_id_qrot[]',
+                                'server_control_receive.server_state_pkt_id',
+                                'server_control_receive.server_pos_pkt_id',
+                                'server_control_receive.forced_move_pkt_id'] if sensitivity else [],
                             'canonicalization_condition': 'equals this runs synthetic INITIAL ID' if sensitivity else None,
                             'snapshot0_additional_canonicalization': {
                                 'scalar_channels': list(INITIAL_CHANNEL_IDS),
