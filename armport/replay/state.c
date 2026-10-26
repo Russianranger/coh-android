@@ -76,6 +76,7 @@ static size_t used;
 static struct { unsigned id, create, valid, raw[3]; } orientation[MAX_ENTITIES_PRIVATE];
 static struct { unsigned seconds, valid; } alignment_delays[ALIGNMENT_POINT_MAX_COUNT];
 static struct { unsigned valid, bits[4]; } desaturation;
+static struct { unsigned valid, value; } received_db_time;
 static struct { int svr_idx, taskforce_id; unsigned id, slot, seconds; } taskforce_times[8192];
 static unsigned taskforce_time_count;
 static struct { int svr_idx, active_player, index; unsigned id, seconds; char name[1024]; } reward_times[8192];
@@ -154,6 +155,7 @@ void armportReplayStateInit(void)
     memset(orientation, 0, sizeof(orientation));
     memset(alignment_delays, 0, sizeof(alignment_delays));
     memset(&desaturation, 0, sizeof(desaturation));
+    memset(&received_db_time, 0, sizeof(received_db_time));
     taskforce_time_count = 0;
     reward_time_count = 0;
     power_creation_time_count = 0;
@@ -1385,6 +1387,39 @@ static void server_command_names_state(void)
  * received physics step ring and the packet-ID guards. CSC prediction lists,
  * future pushes, motion interpolation and local input are excluded. The three
  * pkt_id fields are pak->id-derived; see compare_state.py for ID1/31. */
+/* entReceiveUpdate passes the raw db_time to setServerS2000, which keeps
+ * only its difference from the local clock; retain the received value. */
+void armportReplayDbTime(unsigned db_time)
+{
+    if (!active) return;
+    received_db_time.value = db_time;
+    received_db_time.valid = 1;
+}
+/* Retained entReceiveUpdate destinations: interpolation settings (they set
+ * later position read widths and decode levels), the debug-info selector,
+ * the last ordered packet ID guard, received abs_time values and the
+ * time_since history derived only from received abs_time. local_time_bias
+ * and server_time mix the local clock and are excluded. client_pos_id is a
+ * client-side counter that full updates reset; it is retained literally. */
+extern U32 last_pkt_id;
+extern int glob_client_pos_id;
+static void entreceive_update_state(void)
+{
+    ArmPortEntReceiveUpdateState u;
+    armportReplayEntReceiveUpdateState(&u);
+    out("{\"interp_data_level\":%d,\"interp_data_precision\":%d,\"has_ent_debug_info\":%d,"
+        "\"last_pkt_id\":%u,\"last_abs_time\":%u,\"last_packet_abs_time\":%u,\"abs_time\":%u,\"db_time\":",
+        u.interp_data_level, u.interp_data_precision, game_state.hasEntDebugInfo, (unsigned)last_pkt_id,
+        u.last_abs_time, u.last_packet_abs_time, (unsigned)global_state.abs_time);
+    if (received_db_time.valid) {
+        out("%u", received_db_time.value);
+    } else {
+        out("null");
+    }
+    out(",\"time_since_f32_bits\":");
+    words(global_state.time_since, sizeof(global_state.time_since));
+    out(",\"client_pos_id\":%d,\"glob_client_pos_id\":%d}", (int)control_state.client_pos_id, glob_client_pos_id);
+}
 static void server_control_receive_state(void)
 {
     const ServerControlState *s = control_state.server_state;
@@ -1958,6 +1993,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
         out(",\"receive_extras\":"); entity_receive_extras_state(e);
+        out(",\"send_on_odd_send\":%u", (unsigned)ENTINFO(e).send_on_odd_send);
         out(",\"status_state\":"); entity_status_state(e);
         out(",\"packet_order\":"); entity_packet_order_state(e);
         out(",\"attribute_packet_order\":"); entity_attribute_packet_order_state(e);
@@ -1993,6 +2029,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"command_destinations\":"); command_destination_state();
     out(",\"server_commands\":"); server_command_names_state();
     out(",\"server_control_receive\":"); server_control_receive_state();
+    out(",\"entreceive_update\":"); entreceive_update_state();
     out(",\"initial_server_state\":"); initial_server_state();
     out(",\"door_transition\":"); door_transition_state();
     out(",\"target_state\":"); target_receive_state();

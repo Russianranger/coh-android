@@ -76,6 +76,13 @@ def canonical_initial_ids(document, initial_id, snapshot_index=None):
                 control[name] = 'synthetic_INITIAL'
     if type(snapshot_index) is int and snapshot_index == 0 and type(result.get('friend_receive_id')) is int and result['friend_receive_id'] == initial_id:
         result['friend_receive_id'] = 'synthetic_INITIAL'
+    # entReceiveUpdate assigns last_pkt_id = pak->id for ordered packets; the
+    # first post-READY record (pak->id 32) exceeds both synthetic INITIAL IDs,
+    # so only snapshot 0 can hold the synthetic value.
+    update = result.get('entreceive_update')
+    if (type(snapshot_index) is int and snapshot_index == 0 and isinstance(update, dict)
+            and type(update.get('last_pkt_id')) is int and update['last_pkt_id'] == initial_id):
+        update['last_pkt_id'] = 'synthetic_INITIAL'
     return result
 
 
@@ -157,6 +164,7 @@ def compare(root, commit, *, original_texture_exception=False):
                                 'scalar_channels': list(INITIAL_CHANNEL_IDS),
                                 'attribute_schemas': ATTRIBUTE_ID_SCHEMAS,
                                 'friend_receive_id': True,
+                                'entreceive_update.last_pkt_id': True,
                                 'condition': 'snapshot index 0; exact integer equals this runs synthetic INITIAL ID',
                                 'review': 5646841168} if sensitivity else None,
                             'equal': not mismatches, 'mismatches': mismatches})

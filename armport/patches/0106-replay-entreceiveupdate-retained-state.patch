@@ -1,0 +1,53 @@
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 08adcb5..b5c9ef4 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -48,6 +48,12 @@ void armportReplayPowerCreationTime(const Entity *e, int build, int setOrdinal,
+ void armportReplayRewardTime(const Entity *e, int activePlayer, int index, const char *name, unsigned seconds);
+ void armportReplayDesaturation(const float *delay, const float *weight, const float *target, const float *fade);
+ void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id));
++typedef struct ArmPortEntReceiveUpdateState {
++    int interp_data_level, interp_data_precision;
++    unsigned last_abs_time, last_packet_abs_time;
++} ArmPortEntReceiveUpdateState;
++void armportReplayEntReceiveUpdateState(ArmPortEntReceiveUpdateState *state);
++void armportReplayDbTime(unsigned db_time);
+ void armportReplayMaybeRun(void);
+ void armportReplayUnknownCommand(int command);
+ void armportReplayCursor(Packet *pak, const char *stage);
+@@ -61,6 +67,7 @@ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #define armportReplayPowerCreationTime(e, build, setOrdinal, powerOrdinal, receivedUniqueId, retainedUniqueId, name, seconds) ((void)0)
+ #define armportReplayRewardTime(e, activePlayer, index, name, seconds) ((void)0)
+ #define armportReplayDesaturation(delay, weight, target, fade) ((void)0)
++#define armportReplayDbTime(db_time) ((void)0)
+ #define armportReplayMaybeRun() ((void)0)
+ #define armportReplayUnknownCommand(command) ((void)0)
+ #define armportReplayCursor(pak, stage) ((void)0)
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index 758726e..6bfb0b7 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -183,6 +183,15 @@ void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id))
+         if (entry) visit(entry->pkt_id, entry->idx, entry->id);
+     }
+ }
++// Copy-out of entReceiveUpdate's retained file statics: received interpolation
++// settings and the previous received abs_time values. Read-only.
++void armportReplayEntReceiveUpdateState(ArmPortEntReceiveUpdateState *state)
++{
++    state->interp_data_level = interp_data_level;
++    state->interp_data_precision = interp_data_precision;
++    state->last_abs_time = last_abs_time;
++    state->last_packet_abs_time = last_packet_abs_time;
++}
+ #endif
+ 
+ static void addDelete(U32 pkt_id, int idx, int id)
+@@ -3681,6 +3690,7 @@ void entReceiveUpdate(Packet *pak,int full_update)
+ 
+             START_BIT_COUNT(pak, "db_time");
+                 db_time = pktGetBits(pak,32);
++                armportReplayDbTime(db_time);
+                 setServerS2000(db_time);
+                 setAssertShardTime(db_time);
+             STOP_BIT_COUNT(pak);

@@ -50,7 +50,7 @@ static PowerRechargeTimer *powerInfo_PowerGetRechargeTimer(PowerInfo *info,Power
 static PowerRechargeTimer *powerRechargeTimer_Create(void){assert(alloc_calls<2);return &pool[alloc_calls++];}
 static void eaPush(PowerRechargeTimer ***a,PowerRechargeTimer *v){assert(count<2);*a=items;items[count++]=v;++push_calls;}
 static int active;static char *buffer;static size_t used;
-static int orientation[1],alignment_delays[1],desaturation;
+static int orientation[1],alignment_delays[1],desaturation,received_db_time;
 static unsigned taskforce_time_count,reward_time_count,power_creation_time_count;
 static struct {struct {int piFreeBoostSlotsOnPower;}aSchedules;}g_Schedules;
 static int destroy_calls,size_calls,creation_calls;

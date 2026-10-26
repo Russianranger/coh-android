@@ -245,7 +245,7 @@
     "game_state.hasEntDebugInfo",
     "context.access_level"
    ],
-   "status": "excluded: local clocks/counters and debug-only state (to be confirmed in review)"
+   "status": "superseded by review_5657846186_fixes; only global_state.client_abs/client_abs_slow (local clock in entNetUpdate) remain excluded"
   }
  ],
  "remaining_audits": [
@@ -284,7 +284,7 @@
    "status": "covered: strings, identity_state, receive_core pop-help, tray_state, chat_state"
   }
  ],
- "scan_limits": "Name-based: a field name present anywhere in state.c counts as covered; globals written through setters are checked by hand; this is an audit aid, not proof of value equality.",
+ "scan_limits": "Name-based: a field name present anywhere in state.c counts as covered; globals written through setters are checked by hand; this is an audit aid, not proof of value equality. Review 5657846186 found statics, ENTINFO and globals the scan missed; file-scope statics/globals of entrecv.c were then audited by hand.",
  "readme_gap_reconciliation": [
   {
    "readme": "tray: other tray kinds retain type only",
@@ -315,6 +315,36 @@
    "readme": "mission-review widget state, translucency countdown, overhead-icon state",
    "finding": "local UI widgets and local clocks",
    "status": "excluded"
+  }
+ ],
+ "review_5657846186_fixes": [
+  {
+   "item": "interp_data_level/interp_data_precision (entrecv.c file statics; set position read widths and decode levels)",
+   "status": "retained: entreceive_update via patch 0106 read-only accessor"
+  },
+  {
+   "item": "ENTINFO(e).send_on_odd_send (entReceiveSendOnOddSend)",
+   "status": "retained per entity: entities[].send_on_odd_send"
+  },
+  {
+   "item": "last_pkt_id (pak->id ordering guard)",
+   "status": "retained literally; canonicalized only in snapshot 0 when it equals the synthetic INITIAL ID (first post-READY pak->id 32 exceeds 1 and 31)"
+  },
+  {
+   "item": "game_state.hasEntDebugInfo (selector for later debug reads)",
+   "status": "retained: entreceive_update.has_ent_debug_info"
+  },
+  {
+   "item": "client_pos_id",
+   "status": "retained literally (control_state.client_pos_id and glob_client_pos_id); producer is client input sending, reset by full update; replay sends no input"
+  },
+  {
+   "item": "additional entReceiveUpdate values found in the same audit",
+   "status": "retained: last_abs_time, last_packet_abs_time, global_state.abs_time, raw db_time (setServerS2000 keeps only a local-clock difference), time_since (derived only from received abs_time; earlier listed as a local clock in error)"
+  },
+  {
+   "item": "local_time_bias, server_time",
+   "status": "excluded: mix the local clock (test_timer_elapsed)"
   }
  ]
 }
