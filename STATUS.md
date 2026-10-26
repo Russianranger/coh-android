@@ -29,12 +29,11 @@ see armport/HANDOFF.md):
 - Run 39960894368: the ARM64 client logged in through its own UI, chose the
   TestClient-created character and is connected on Atlas Park in the
   database (loaded, map 1), still connected after the screenshots.
-- Fixes on the way: SOCKET width (0044), version-check opt-in for the
-  fake-auth server (0045), empty world-group slots (0047), login-stage log
-  (0046, diagnostics only).
-- Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
+- Fixes: SOCKET width (0044), version-check opt-in (0045), empty world groups (0047).
 - Sol accepts implementation through e6d39d7a; no milestone or merge approval.
 - Atlas 40314007807 fails rendering; 8 UI samples show unnamed waypoint/map docked.
 - Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
-- Atlas40337294759 running; NPC/Architect WIP preserved unapplied in handoff/.
+- Atlas 40337294759: plaza rendered behind helper prompt; failed only the Atlas Park
+  OCR rule (original HUD never prints it). New HUD+world-region rule de8feb1b3,
+  plaza textures staged, NPC/Architect+control state merged; Atlas 40354655954.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.
