@@ -9,6 +9,7 @@ contact and task observations added through b9f6cd8c require a fresh six-run
 comparison; neither stage establishes complete receiver-state coverage.
 """
 import argparse
+from collections import Counter
 import gzip
 import hashlib
 import json
@@ -209,6 +210,9 @@ def check_output(path, expected, initial_id, wine_output, runtime=None, *, origi
                 accepted_original_data_errors=accepted_errors,
                 outside_game_errors=sum(e['count'] for e in errors['outside_errors']),
                 outside_error_comparison_required=True,
+                # Coverage audit input: every game command id actually dispatched.
+                game_commands={str(k): v for k, v in sorted(Counter(
+                    r['command'] for r in rows if r['type'] == 'game_command_begin').items())},
                 partial_state_snapshots=117, state_schema_complete=False,
                 state_comparison_complete=False, m3_replay_complete=False)
 
