@@ -33,6 +33,7 @@ jobs:
             /armport/scripts
             /armport/evidence
             /tools/android/interactive
+            /tools/inspect_piggs.py
             /assets
           sparse-checkout-cone-mode: false
       - name: Discover exact approved ranges
