@@ -57,6 +57,10 @@ jobs:
           sparse-checkout: |
             /tools/fetch_runtime_asset_bundle.py
             /armport/scripts/stage_atlas_supplement.py
+            /armport/scripts/stage_atlas_materials.py
+            /tools/android/interactive/prepare_atlas_world_assets.py
+            /assets/atlas-world-supplement-manifest.json
+            /assets/reference-inputs-manifest.json
             /armport/scripts/reviewed_asset_coverage.py
             /armport/scripts/stage_reviewed_files.py
             /armport/scripts/stage_composite_dependencies.py
@@ -206,6 +210,32 @@ jobs:
           retention-days: 90
           if-no-files-found: error
 
+      - id: atlas-materials
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/atlas-material-data
+          key: armport-atlas-materials-27-204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86
+      - name: Recover only the previously reviewed Atlas material additions
+        if: steps.atlas-materials.outputs.cache-hit != 'true'
+        run: |
+          python3 armport/scripts/stage_atlas_materials.py \
+            --base-archive "$RUNNER_TEMP/atlas-supplement/atlas-world-supplement.zip" \
+            --archive "$RUNNER_TEMP/atlas-material-input/atlas-world-supplement.zip" \
+            --output "$RUNNER_TEMP/atlas-material-data"
+      - name: Verify all 27 material files even after cache restore
+        run: python3 armport/scripts/stage_atlas_materials.py --verify-only --output "$RUNNER_TEMP/atlas-material-data"
+      - uses: actions/cache/save@v4
+        if: steps.atlas-materials.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/atlas-material-data
+          key: ${{ steps.atlas-materials.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-reviewed-atlas-materials
+          path: ${{ runner.temp }}/atlas-material-data
+          retention-days: 90
+          if-no-files-found: error
+
   libraries:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
@@ -214,6 +244,7 @@ jobs:
         with:
           sparse-checkout: |
             /armport/
+            /tools/android/interactive/prepare_atlas_world_assets.py
             /assets/catalog.json
             /assets/zones-audio-metadata.json
             /upstream/ouroboros/
@@ -918,6 +949,13 @@ jobs:
           path: ${{ runner.temp }}/reviewed-zones
       - name: Recompute proposal and verify composite artifact bytes
         run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - name: Restore the reviewed Atlas material additions
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-reviewed-atlas-materials
+          path: ${{ runner.temp }}/atlas-material-data
+      - name: Verify the separate Atlas material layer
+        run: python3 armport/scripts/stage_atlas_materials.py --verify-only --output "$RUNNER_TEMP/atlas-material-data"
       - name: Verify and stage all retained Atlas geometry and textures
         run: |
           python3 armport/scripts/stage_atlas_supplement.py stage \
@@ -928,7 +966,7 @@ jobs:
           # from the staged copy (no second unpack).
           assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
           armport/scripts/step.sh "ArmPort M3 client stage" python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
-            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/atlas-material-data" --strict-data "$RUNNER_TEMP/atlas-material-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" \
             --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
           ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
       - name: Server stack and ARM64 client login to Atlas Park

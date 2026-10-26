@@ -1657,3 +1657,31 @@ one compiler. Only local LeakSanitizer is disabled for /proc; CI keeps defaults.
 See `evidence/m3-power-update-time-controls.json` for commands and limits.
 All prior 98 patches are byte-identical; upstream/ remains untouched. Fresh
 native linking/runtime qualification is still required. No milestone pass.
+
+### Atlas terrain and reviewed material follow-up (2026-10-26 UTC)
+
+Atlas run 40247679019 at 4c8b6c39 has completed FAILED. Artifact 12622117293
+SHA-256 f15fd5417893ae01967d9c4d09b9812cb6ed1535fe4b29ab6aaddeeeaf5a3b91
+contains visible statue/stairs/trees and a grounded player in the final frame.
+All eight camera samples retain player Y 0.251066208; all eight traversal samples
+have 2253 model calls and 1293 sort requests. The guest reports successful
+connection and cleanup. The screenshot gate still fails: Atlas Park map-name
+OCR is absent, and the scene has flat blue surfaces/black blocks/missing textures.
+The screenshot rule and rendering/culling behavior have not been weakened.
+
+All 27 material additions in the existing reviewed 2904-file manifest have exact
+texture-trick errors and empty runtime texture-path matches in this run. The
+old 2877-file baseline remains intact. Existing reproduction code fetched only
+27 pinned original ranges (4357758 bytes), reused the exact old baseline and
+verified archive c7ed82aa plus every payload. No new donor/name/pin is introduced.
+The new stage_atlas_materials.py selects just those 27 files (8955931 bytes),
+verifies exact inventories/hashes after caches and artifact downloads, and
+stages a separate strict-collision client layer in Atlas and both replay targets.
+It does not replace the original baseline or server assets. New data is not
+claimed to close all material errors; native visual qualification is pending.
+
+All 186 Python tests pass, including corrupt archive/member/cache, missing/extra
+files, atomic failure, links and collision preservation. Real archive staging
+verifies all 27 files locally. Evidence, exact errors, snapshot pins, recovery
+receipt and command outputs are in evidence/m3-atlas-materials-40247679019.json.
+Full schema/comparison and M3/M4/M5 remain unqualified; PR #6 stays draft.
