@@ -136,7 +136,8 @@ static void full(Packet *p, int count, int update) {
 int main(int argc, char **argv) {
     int mode = atoi(argv[1]); (void)argc;
     memset(long_rank, 'r', 70); long_rank[70] = 0;
-    EntPlayer pl = {1}; Entity e = {0}; e.pl = &pl; e.db_id = 77; e.supergroup_id = 5;
+    /* Static: the receiver's allocations stay reachable for LeakSanitizer. */
+    static EntPlayer pl = {1}; static Entity e; e.pl = &pl; e.db_id = 77; e.supergroup_id = 5;
     Packet p = {0};
     if (mode == 1) e.pl = NULL;
     full(&p, mode == 2 ? 0 : 2, mode == 3 ? 0 : 1);
