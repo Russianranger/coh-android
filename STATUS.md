@@ -32,7 +32,6 @@ see armport/HANDOFF.md):
   database (loaded, map 1), still connected after the screenshots.
 - Fixes: SOCKET width (0044), version-check opt-in (0045), empty world groups (0047).
 - Sol accepts implementation through e6d39d7a; no milestone or merge approval.
-- Atlas 40314007807 fails rendering; 8 UI samples show unnamed waypoint/map docked.
 - Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
 - Final head d7c072246: Atlas 40407492746 and replay 40407492734 pass. World
   rendered (plaza/statue/dome), 0 after-load errors, still connected; ARM64 =
