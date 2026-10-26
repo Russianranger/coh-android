@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
 - Sol accepts implementation through 9d82645c; event/force-queue deltas need review.
 - Atlas 40263048945: 33 covered errors removed; screenshot/materials still fail.
 - Texture-name bounds fix: 161 sanitizer cases/native units pass; runtime/review pending.
-- Replay 40263048934 passes partial scope; event 40273728728 passes; force-queue pending.
+- Replay 40278258501 passes both targets/partial comparison; full state remains false.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.

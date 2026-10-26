@@ -1798,3 +1798,26 @@ This is not proof of the Atlas rendering cause or milestone completion. Preserve
 running force-queue replay40278258501 at929d7ea0; this work-branch follow-up requires
 fresh runtime qualification and Sol review before integration. Existing review
 5647159725 covers9d82645c only. M3/full state/rendering and M4 surface/Thor remain open.
+
+### Remaining plaza/statue material proposal (2026-10-26 UTC)
+
+The six exact requests AP_Asphalt_01_NS, Plaza_Brick_Floor_02_NS,
+deco_building_03_concrete_01_n, Male_Statue_Atlas_N, Statue_Globe_02_MK and
+Statue_Stone_Detail.tga map uniquely to six files in the existing reviewed
+client-visual manifest (2,306,838 bytes). They correspond to27 complete literal
+startup errors in Atlas40263048945 and are absent from current selected/base
+layers. The .tga suffix is removed only for matching, consistent with texFixName.
+No new source or payload was fetched and no runtime selection is enabled.
+
+Reproducible command, literal messages, exact paths and SHA-256 pins:
+evidence/m3-proposed-plaza-statue-materials.json. Existing approval6389265419
+allows exactly8 earlier files and says "No other composite leaves, similar names
+or new fetches." These6 need a separate selection approval before staging; the
+proposal does not broaden the sole replay error exception or prove rendering.
+
+Force-queue run40278258501 at929d7ea0 completed successfully on both targets,
+partial-state comparison121437357940 and outside-error comparison121437358092.
+The comparison log retains state_schema_complete:false,
+state_comparison_complete:false and m3_replay_complete:false. This run predates
+texture-name patch0102. Keep PR6 draft; source review and fresh Atlas/replay
+qualification of0102 remain required. M4 surface and Thor remain unqualified.
