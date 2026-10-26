@@ -248,6 +248,28 @@ class StateComparison(unittest.TestCase):
         self.assertNotEqual(canonical_initial_ids(doc(1, 1), 1, 0)['server_control_receive']['server_pos_pkt_id'], 1)
         self.assertEqual(canonical_initial_ids(doc(1, 31), 1, 0)['server_control_receive']['server_pos_pkt_id'], 31)
 
+    def test_entreceive_update_last_pkt_id_snapshot0_only_and_retained_values_compare(self):
+        def doc(last, **changes):
+            update = dict(interp_data_level=2, interp_data_precision=1, has_ent_debug_info=0,
+                          last_pkt_id=last, last_abs_time=100, last_packet_abs_time=90, abs_time=110,
+                          db_time=7, time_since_f32_bits=[0] * 100, client_pos_id=0, glob_client_pos_id=0)
+            update.update(changes)
+            return {'entities': [{'pkt_id_create': 40, 'pkt_id_pos': [], 'pkt_id_qrot': [], 'player': None,
+                                  'send_on_odd_send': 0}],
+                    'delete_history': [], 'entreceive_update': update}
+        same = lambda a, b: json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
+        self.assertTrue(same(canonical_initial_ids(doc(1), 1, 0), canonical_initial_ids(doc(31), 31, 0)))
+        # Later snapshots keep literal packet IDs; a persisting synthetic value fails.
+        self.assertFalse(same(canonical_initial_ids(doc(1), 1, 3), canonical_initial_ids(doc(31), 31, 3)))
+        self.assertEqual(canonical_initial_ids(doc(40), 1, 0)['entreceive_update']['last_pkt_id'], 40)
+        # Changed retained selectors and received values are never canonicalized.
+        for change in (dict(interp_data_level=0), dict(interp_data_precision=2), dict(has_ent_debug_info=1),
+                       dict(last_abs_time=101), dict(db_time=8), dict(time_since_f32_bits=[1] + [0] * 99),
+                       dict(client_pos_id=1)):
+            self.assertFalse(same(canonical_initial_ids(doc(1), 1, 0), canonical_initial_ids(doc(31, **change), 31, 0)), change)
+        odd = doc(31); odd['entities'][0]['send_on_odd_send'] = 1
+        self.assertFalse(same(canonical_initial_ids(doc(1), 1, 0), canonical_initial_ids(odd, 31, 0)))
+
     def test_wrong_reference_commit_rejected(self):
         with self.assertRaisesRegex(ValueError, 'identity or execution'):
             compare(self.fixture(), 'b' * 40)

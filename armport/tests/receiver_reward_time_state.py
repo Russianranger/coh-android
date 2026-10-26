@@ -33,7 +33,7 @@ static RewardToken created[2];
 static int rewardtoken_Award(RewardToken***items,const char*name,int val){int n=award_calls++;if(award_fail)return -1;assert(n<2);++clock_calls;created[n]=(RewardToken){name,val,local_clock};(*items)[0]=&created[n];return 0;}
 #define EAINRANGE(i,a) ((i)>=0&&(i)<1&&(a)[i])
 static int active;static char*buffer;static size_t used;
-static int orientation[1],alignment_delays[1],desaturation;static unsigned power_recharge_time_count;
+static int orientation[1],alignment_delays[1],desaturation,received_db_time;static unsigned power_recharge_time_count;
 static unsigned taskforce_time_count,power_creation_time_count;
 '''
     c+=re.search(r'^static struct \{ int svr_idx, active_player[^\n]+',state,re.M).group(0)+'\nstatic unsigned reward_time_count;\n'

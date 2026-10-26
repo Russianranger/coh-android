@@ -103,3 +103,4 @@
 0103-replay-retained-turnstile-invitation.patch
 0104-turnstile-force-queue-name-bounds.patch
 0105-bounded-world-ui-state.patch
+0106-replay-entreceiveupdate-retained-state.patch

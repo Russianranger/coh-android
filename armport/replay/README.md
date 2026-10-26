@@ -1180,3 +1180,27 @@ calloc-only `mapIds`, interpolation history and the unsupported ragdoll are
 explicit exclusions. Initial-path callees in `Common/entity`, the
 tray/window/options gaps above and the UI-cache lifecycle audit remain. The
 inventory is partial and changes no completion flag.
+
+### entReceiveUpdate retained state (review 5657846186)
+
+Review 5657846186 found received destinations the name-based scan missed.
+Patch 0106 adds a read-only copy-out of the `entrecv.c` statics
+`interp_data_level`/`interp_data_precision` (they set later position read
+widths and decode levels) and `last_abs_time`/`last_packet_abs_time`. It also
+adds a `db_time` observer, because `setServerS2000` keeps only a local-clock
+difference.
+
+`entreceive_update` retains:
+- those values;
+- `hasEntDebugInfo`;
+- `last_pkt_id`;
+- `global_state.abs_time`;
+- the 100-slot `time_since` history, which derives only from received
+  `abs_time` (it was earlier listed as a local clock in error);
+- both `client_pos_id` values.
+
+Each entity retains `send_on_odd_send`. `last_pkt_id` is canonicalized only
+in snapshot 0, and only when it equals the synthetic INITIAL ID: the first
+post-READY `pak->id` (32) exceeds both 1 and 31. `local_time_bias` and
+`server_time` mix the local clock and stay excluded. Writer ASan/UBSan cases
+and comparison negative controls cover each retained value.

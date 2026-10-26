@@ -54,7 +54,7 @@ static Power *powerset_AddNewPower(PowerSet *s,const BasePower *b,int id,void *u
 static int CountForLevel(int level,int schedule){return 2;}
 static void power_LevelFinalize(Power *p){++final_calls;if(mode==10)p->ulCreationTime=local_clock;}
 static int active;static char *buffer;static size_t used;
-static int orientation[1],alignment_delays[1],desaturation;
+static int orientation[1],alignment_delays[1],desaturation,received_db_time;
 static unsigned power_recharge_time_count;
 static unsigned taskforce_time_count,reward_time_count;
 '''
