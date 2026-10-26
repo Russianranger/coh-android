@@ -135,7 +135,7 @@ def sh(*cmd, timeout=60, check=False):
                           env=dict(os.environ, DISPLAY=DISPLAY), check=check)
 
 
-def owned_client_window(pids):
+def owned_client_target(pids):
     """Find a single visible game-sized window without relying on its map title."""
     if len(pids) != 1 or type(pids[0]) is not int or pids[0] <= 0:
         return None
@@ -157,8 +157,56 @@ def owned_client_window(pids):
         except (KeyError, ValueError):
             return None
         if x >= 0 and y >= 0 and width >= 640 and height >= 480:
-            candidates.append((x, y, width, height))
+            candidates.append((window, (x, y, width, height)))
     return candidates[0] if len(candidates) == 1 else None
+
+
+def owned_client_window(pids):
+    """Geometry-only interface used by the original acceptance checks."""
+    target = owned_client_target(pids)
+    return target[1] if target else None
+
+
+def map_ui_diagnostic(screen, pids, trace):
+    """One OCR-located Map click, after acceptance frames; never a verdict.
+
+    Do not dismiss dialogs, choose helper preferences, send console commands,
+    or retry input. Missing/ambiguous text is useful diagnostic evidence too.
+    """
+    report = {'scope': 'map_ui_diagnostic_only', 'click_sent': False,
+              'rendering_acceptance_changed': False}
+    before = screen.shot('map-ui-before')
+    report['before'] = str(before) if before else None
+    target = owned_client_target(pids)
+    if not before or not target or not dialogs_clear(trace):
+        report['blocked'] = 'Missing frame, unique owned window or clear dialog trace'
+        return report
+    window, geometry = target
+    x, y, w, h = geometry
+    # Only the top navigation strip; not arbitrary Map words in chat/dialogs.
+    points = [(px, py) for word, px, py in screen.words(before)
+              if word.casefold() == 'map' and x <= px < x + w
+              and y <= py < y + min(100, h // 4)]
+    report.update(window=window, geometry=geometry, candidates=points)
+    if len(points) != 1:
+        report['blocked'] = 'Map navigation label is missing or ambiguous'
+        return report
+    # OCR may take time. Recheck ownership/geometry and dialog history before input.
+    if owned_client_target(pids) != target or not dialogs_clear(trace):
+        report['blocked'] = 'Window or dialog state changed during OCR'
+        return report
+    focused = sh('xdotool', 'windowfocus', '--sync', window, timeout=5)
+    report['focus_exit'] = focused.returncode
+    if focused.returncode or not dialogs_clear(trace):
+        report['blocked'] = 'Focus failed or dialog state changed'
+        return report
+    screen.click(*points[0])
+    report['click_sent'] = True
+    time.sleep(3)
+    after = screen.shot('map-ui-after')
+    report['after'] = str(after) if after else None
+    # Raw evidence only: even readable zone text is not 3D-world acceptance.
+    return report
 
 
 class Screen:

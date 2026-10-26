@@ -36,5 +36,5 @@ see armport/HANDOFF.md):
 - Sol accepts implementation through e6d39d7a; no milestone or merge approval.
 - Atlas 40314007807 fails rendering; 8 UI samples show unnamed waypoint/map docked.
 - Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
-- Mission destinations qualified in partial replay; runtime UI report saved for review.
+- Separate Map UI diagnostic: 202 host tests pass; runtime/review pending.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.

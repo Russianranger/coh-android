@@ -1982,3 +1982,16 @@ job121584110467 records partial_state_equal/outside_error_inventories_equal true
 and full-schema/full-state/M3 false. This qualifies mission/keydoor snapshots in
 the partial scope. Sol5651480055 approves implementation only. No Thor action
 is ready; M4 surface/M5 remain unqualified. Host report189ef449 still needs review.
+
+### Separate map UI diagnostic (2026-10-26 UTC)
+
+After original Atlas frames and world_rendered are fixed, the host now attempts
+one unique OCR-located Map navigation click in the owned game window. Ownership,
+geometry and complete dialog history are rechecked after OCR; failed focus or
+ambiguous text blocks input. It does not dismiss helper dialogs or send commands.
+Separate before/after screenshots and blocked/error outcomes are retained. An
+overlay never changes original rendering acceptance. All202 Python tests pass
+(six new diagnostic controls); native code/patches/assets are unchanged.
+See evidence/m3-map-ui-diagnostic-controls.json. Runtime qualification and review
+are pending. Inspect the separate frames, then continue rendering/full-state
+work. Six-file material selection still requires approval; no Thor test is ready.

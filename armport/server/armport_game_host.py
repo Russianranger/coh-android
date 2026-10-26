@@ -39,7 +39,7 @@ import server_atlas_data  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
-from login_ui import owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, character_select_frame, dialogs_clear  # noqa: E402
+from login_ui import map_ui_diagnostic, owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, character_select_frame, dialogs_clear  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -341,6 +341,12 @@ def drive_login(a, screen, state, status, evidence):
         status['atlas_shot'] = str(png) if png else None
         time.sleep(30)
         status['atlas_shot_later'] = str(screen.shot('atlas-later'))
+        try:
+            status['map_ui_diagnostic'] = map_ui_diagnostic(
+                screen, stall_snapshot.client_pids(a.client), a.client / 'zone-trace.jsonl')
+        except Exception as exc:
+            status['map_ui_diagnostic'] = {'scope': 'map_ui_diagnostic_only',
+                'error': repr(exc), 'rendering_acceptance_changed': False}
         (state / 'armport-host-done.json').write_text(json.dumps({'done': True}) + '\n')
 
 
