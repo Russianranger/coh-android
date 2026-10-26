@@ -1134,3 +1134,13 @@ gate, unreceived commands and bounds. `cmdReceiveServerCommands`
 through cmdAddServerCommand (case-insensitive duplicates skipped); the ordered
 list and its initialized flag are now dumped as `server_commands`, tested with
 the actual receive/add/lookup bodies. Schema and completion flags stay partial.
+
+`super_stats` adds the entity-tail receiveSuperStats destinations: the
+supergroup header (influence, prestige fields, rent, player type, names,
+colors, tithe, timeout, entry permission, alliance rank), all seven ranks with
+permission words, member ranks, all ten ally slots, ordered member stat
+records, the player's own rank copy and pl->supergroup_mode. Fixed storage is
+dumped up to its capacity, so unterminated strncpy ranks stay literal.
+`receiver_super_stats_state.py` runs the actual receiver body with host
+adapters (7 cases). UI refresh, MOTD chat and the static prestige mirror are
+excluded.

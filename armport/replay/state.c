@@ -119,6 +119,20 @@ static void string(const char *value)
     }
     out("\"");
 }
+/* Bytes of fixed storage up to the first NUL or the capacity. A result of
+ * exactly capacity bytes means the storage was unterminated (strncpy). */
+static void storage_string(const char *value, size_t capacity)
+{
+    const unsigned char *p = (const unsigned char *)value;
+    size_t i;
+    out("\"");
+    for (i = 0; i < capacity && p[i]; ++i) {
+        if (p[i] == '"' || p[i] == '\\') out("\\%c", p[i]);
+        else if (p[i] < 32 || p[i] >= 127) out("\\u%04x", p[i]);
+        else out("%c", p[i]);
+    }
+    out("\"");
+}
 static void words(const void *data, size_t bytes)
 {
     size_t i;
@@ -868,11 +882,83 @@ static void entity_supergroup_state(const Entity *e)
     out("]}}");
 }
 
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
     out("%s{\"svr_idx\":%d,\"id\":%d,\"pkt_id\":%u}", deletes++ ? "," : "", idx, id, pkt_id);
 }
+
+/* Retained destinations of receiveSuperStats (entity tail): the supergroup
+ * header, ranks, member ranks, allies, the member stat records and the
+ * player's own rank copy. Pointers, the UI list refresh and the MOTD chat
+ * side effect are excluded. game_state.edit_base is not set during replay. */
+static void super_stat_record(const SupergroupStats *stat)
+{
+    if (!stat) { out("null"); return; }
+    out("{\"db_id\":%d,\"rank\":%d,\"total_time_played\":%d,\"member_since\":%d,\"last_online\":%d,"
+        "\"online\":%d,\"level\":%d,\"map_id\":%d,\"prestige\":%d,\"player_type\":%d,\"zone\":",
+        stat->db_id, stat->rank, stat->total_time_played, stat->member_since, stat->last_online,
+        stat->online, stat->level, stat->map_id, stat->prestige, stat->playerType);
+    storage_string(stat->zone, sizeof(stat->zone));
+    out(",\"name\":"); storage_string(stat->name, sizeof(stat->name));
+    out(",\"origin\":"); storage_string(stat->origin, sizeof(stat->origin));
+    out(",\"arch\":"); storage_string(stat->arch, sizeof(stat->arch));
+    out("}");
+}
+static void entity_super_stats_state(const Entity *e)
+{
+    const Supergroup *sg = e->supergroup;
+    int i, count = eaSize(&e->sgStats);
+    check(count >= 0 && count <= 8192);
+    out("{\"supergroup_mode\":");
+    if (e->pl) out("%d", e->pl->supergroup_mode); else out("null");
+    out(",\"own_stat\":"); super_stat_record(e->superstat);
+    out(",\"member_stats\":[");
+    for (i = 0; i < count; ++i) { if (i) out(","); super_stat_record(e->sgStats[i]); }
+    out("],\"header\":");
+    if (!sg) out("null");
+    else {
+        out("{\"influence\":%d,\"prestige\":%d,\"prestige_base\":%d,\"prestige_added_upkeep\":%d,"
+            "\"rent_due\":%d,\"rent_due_date\":%u,\"player_type\":%d,\"colors\":[%d,%d],\"tithe\":%d,"
+            "\"demote_timeout\":%d,\"entry_permission\":%d,\"alliance_min_talk_rank\":%d,\"name\":",
+            sg->influence, sg->prestige, sg->prestigeBase, sg->prestigeAddedUpkeep,
+            sg->upkeep.prtgRentDue, sg->upkeep.secsRentDueDate, sg->playerType, sg->colors[0], sg->colors[1],
+            sg->tithe, sg->demoteTimeout, (int)sg->entryPermission, sg->alliance_minTalkRank);
+        storage_string(sg->name, sizeof(sg->name));
+        out(",\"motto\":"); storage_string(sg->motto, sizeof(sg->motto));
+        out(",\"msg\":"); storage_string(sg->msg, sizeof(sg->msg));
+        out(",\"emblem\":"); storage_string(sg->emblem, sizeof(sg->emblem));
+        out(",\"description\":"); storage_string(sg->description, sizeof(sg->description));
+        out(",\"ranks\":[");
+        for (i = 0; i < NUM_SG_RANKS; ++i) {
+            out("%s{\"name\":", i ? "," : "");
+            storage_string(sg->rankList[i].name, sizeof(sg->rankList[i].name));
+            out(",\"permission_words\":");
+            words(sg->rankList[i].permissionInt, sizeof(sg->rankList[i].permissionInt));
+            out("}");
+        }
+        count = eaSize(&sg->memberranks);
+        check(count >= 0 && count <= 8192);
+        out("],\"member_ranks\":[");
+        for (i = 0; i < count; ++i) {
+            const SupergroupMemberInfo *m = sg->memberranks[i];
+            if (i) out(",");
+            if (!m) out("null"); else out("[%d,%d]", m->dbid, m->rank);
+        }
+        out("],\"allies\":[");
+        for (i = 0; i < MAX_SUPERGROUP_ALLIES; ++i) {
+            const SupergroupAlly *a = &sg->allies[i];
+            out("%s{\"db_id\":%d,\"dont_talk_to\":%d,\"min_display_rank\":%d,\"name\":",
+                i ? "," : "", a->db_id, a->dontTalkTo, a->minDisplayRank);
+            storage_string(a->name, sizeof(a->name));
+            out("}");
+        }
+        out("]}");
+    }
+    out("}");
+}
+
 
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
@@ -1798,6 +1884,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"groups\":"); entity_groups(e);
         out(",\"leveling_pact\":"); leveling_pact_state(e);
         out(",\"supergroup\":"); entity_supergroup_state(e);
+        out(",\"super_stats\":"); entity_super_stats_state(e);
         out(",\"power_customizations\":"); entity_power_customizations(e);
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
