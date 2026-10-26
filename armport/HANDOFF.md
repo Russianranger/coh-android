@@ -1881,3 +1881,23 @@ This is not permission to weaken screenshot acceptance or count a map overlay
 as a rendered 3D scene. Investigate original UI state/zone labeling next while
 invitation replay40299446281 runs. The separate six-file selection still needs
 explicit approval; no assets, dialogs or screenshot criteria changed here.
+
+### Invitation qualified; overflow follow-up running (2026-10-26 UTC)
+
+Replay40299446281 at6f092b1a completed successfully on both native targets and
+both comparison jobs. Partial-state job121511599454 records partial_state_equal
+and outside_error_inventories_equal true; schema/state-completion/M3 remain false.
+This qualifies the invitation observer's partial scope, not the later overflow fix.
+Fresh replay40308641544 now tests6f60f802 including0104. Keep that run intact.
+Review5648682350 still covers only74aa2c32; neither follow-up has new review.
+
+The actual upstream-identical compass_DrawHeaderText function now has five
+ASan/UBSan host probes. Default empty/no-name destinations emit no text; same-map
+named destinations omit the map label; different-map destinations emit it. The
+fixture explicitly substitutes localization/SMF and does not exercise mission,
+raid, arena or exit/script branches. See tests/compass_header_contract.py and
+evidence/m3-compass-header-contract.json. This proves a conditional text contract,
+not current runtime UI state or rendered-world acceptance. No game/host gate
+changed. Next distinguish runtime UI label state from the remaining visible
+material failures; an automap overlay must not stand in for rendered 3D terrain.
+The six-file material staging proposal still requires explicit selection approval.

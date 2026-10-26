@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-26",
+  "scope": "original_default_compass_text_contract_only",
+  "source_function": "Game/src/UI/uiCompass.c:compass_DrawHeaderText",
+  "function_sha256": "99c834bd0dd2d26302942b2b88d820d8123da21f9e5692a79449c126cd4afebb",
+  "byte_identical_to_patchwork_base": true,
+  "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/compass_header_contract.py --source /tmp/coh-world-patchwork/src",
+  "exit_code": 0,
+  "sanitizer_cases": 5,
+  "observations": [
+    "Empty destination emits no text.",
+    "Named destination without map emits only its name.",
+    "Named destination on current map emits only its name, not map label.",
+    "Named destination on a different map emits both its name and that map label.",
+    "Current-map destination with no name emits no text.",
+    "Destination storage unchanged in all five cases."
+  ],
+  "limitations": [
+    "Host Destination, localization, SMF, and other UI functions are substituted.",
+    "Arena, raid, mission and exit/script UI branches are not exercised.",
+    "Does not observe the current live destination or prove font/material/rendering correctness.",
+    "No screenshot acceptance criteria or original game logic changed."
+  ],
+  "interpretation": "Map-name OCR requires an actual UI path that renders the map label. The ordinary default compass path cannot guarantee a current-zone label. Independent world visual defects remain unresolved.",
+  "relevant_atlas_run": 40283068606,
+  "m3_complete": false
+}

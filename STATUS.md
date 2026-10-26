@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol accepts implementation through 74aa2c32; invitation delta needs review.
 - Atlas 40283068606: connection passes; rendered-world/map-name checks still fail.
-- Invitation replay 40299446281 active; force-queue bounds fix awaits runtime/review.
-- Replay 40283068633 passes both targets/partial comparison; full state remains false.
+- Invitation replay 40299446281 passes; overflow fix replay 40308641544 running.
+- Original compass text contract: 5 host probes pass; full state/rendering remain open.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.
