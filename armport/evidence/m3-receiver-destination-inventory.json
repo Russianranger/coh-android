@@ -249,10 +249,41 @@
   }
  ],
  "remaining_audits": [
-  "initial path receivers outside entrecv.c (receiveCharacterFromServer callees in Common/entity: character_Receive, powers, inventories)",
-  "tray/window/options/keybind receivers named as gaps in replay/README.md",
-  "UI-cache vs received-state distinction for task/waypoint lifecycle"
+  "tray/window/options/keybind gaps named in replay/README.md (verify each against the scan)",
+  "UI-cache vs received-state distinction for task/waypoint lifecycle",
+  "independent review of exclusions (local clocks, debug-only state)"
  ],
  "state_schema_complete": false,
- "m3_replay_complete": false
+ "m3_replay_complete": false,
+ "initial_path": [
+  {
+   "receiver": "receiveCharacterFromServer \u2192 character_Receive, character_ReceiveInspirations, character_ReceiveStatusEffects (Game/src/entity/character_net_client.c)",
+   "status": "scan: all written fields named by state.c (character, power_inventory, inspirations, status_state)"
+  },
+  {
+   "receiver": "character_ReceiveInventories (Common/entity/character_net.c)",
+   "status": "scan: covered (generic_inventories)"
+  },
+  {
+   "receiver": "receiveWindowIdx/receiveWindow (Common/gameComm/wdwbase.c) via receiveCharacterFromServer window loop",
+   "status": "covered: initial_ui.windows (all WdwBase fields, below)"
+  },
+  {
+   "receiver": "receiveTrayMode \u2192 tray_setMode",
+   "status": "covered: tray_sticky_mask"
+  },
+  {
+   "receiver": "receiveInspirationMode, receiveTeamBuffMode",
+   "status": "covered: initial_ui.inspiration_mode, initial_ui.team_buffs"
+  },
+  {
+   "receiver": "receiveDockMode",
+   "status": "excluded: reads 32 bits into an unused local"
+  },
+  {
+   "receiver": "receiveDescription, receiveTitles, receiveFullPopHelp, receiveTray, receiveChatSettingsFromServer",
+   "status": "covered: strings, identity_state, receive_core pop-help, tray_state, chat_state"
+  }
+ ],
+ "scan_limits": "Name-based: a field name present anywhere in state.c counts as covered; globals written through setters are checked by hand; this is an audit aid, not proof of value equality."
 }
