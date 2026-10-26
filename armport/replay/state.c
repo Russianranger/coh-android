@@ -119,6 +119,20 @@ static void string(const char *value)
     }
     out("\"");
 }
+/* Bytes of fixed storage up to the first NUL or the capacity. A result of
+ * exactly capacity bytes means the storage was unterminated (strncpy). */
+static void storage_string(const char *value, size_t capacity)
+{
+    const unsigned char *p = (const unsigned char *)value;
+    size_t i;
+    out("\"");
+    for (i = 0; i < capacity && p[i]; ++i) {
+        if (p[i] == '"' || p[i] == '\\') out("\\%c", p[i]);
+        else if (p[i] < 32 || p[i] >= 127) out("\\u%04x", p[i]);
+        else out("%c", p[i]);
+    }
+    out("\"");
+}
 static void words(const void *data, size_t bytes)
 {
     size_t i;
@@ -868,11 +882,83 @@ static void entity_supergroup_state(const Entity *e)
     out("]}}");
 }
 
+
 static unsigned deletes;
 static void deletion(unsigned pkt_id, int idx, int id)
 {
     out("%s{\"svr_idx\":%d,\"id\":%d,\"pkt_id\":%u}", deletes++ ? "," : "", idx, id, pkt_id);
 }
+
+/* Retained destinations of receiveSuperStats (entity tail): the supergroup
+ * header, ranks, member ranks, allies, the member stat records and the
+ * player's own rank copy. Pointers, the UI list refresh and the MOTD chat
+ * side effect are excluded. game_state.edit_base is not set during replay. */
+static void super_stat_record(const SupergroupStats *stat)
+{
+    if (!stat) { out("null"); return; }
+    out("{\"db_id\":%d,\"rank\":%d,\"total_time_played\":%d,\"member_since\":%d,\"last_online\":%d,"
+        "\"online\":%d,\"level\":%d,\"map_id\":%d,\"prestige\":%d,\"player_type\":%d,\"zone\":",
+        stat->db_id, stat->rank, stat->total_time_played, stat->member_since, stat->last_online,
+        stat->online, stat->level, stat->map_id, stat->prestige, stat->playerType);
+    storage_string(stat->zone, sizeof(stat->zone));
+    out(",\"name\":"); storage_string(stat->name, sizeof(stat->name));
+    out(",\"origin\":"); storage_string(stat->origin, sizeof(stat->origin));
+    out(",\"arch\":"); storage_string(stat->arch, sizeof(stat->arch));
+    out("}");
+}
+static void entity_super_stats_state(const Entity *e)
+{
+    const Supergroup *sg = e->supergroup;
+    int i, count = eaSize(&e->sgStats);
+    check(count >= 0 && count <= 8192);
+    out("{\"supergroup_mode\":");
+    if (e->pl) out("%d", e->pl->supergroup_mode); else out("null");
+    out(",\"own_stat\":"); super_stat_record(e->superstat);
+    out(",\"member_stats\":[");
+    for (i = 0; i < count; ++i) { if (i) out(","); super_stat_record(e->sgStats[i]); }
+    out("],\"header\":");
+    if (!sg) out("null");
+    else {
+        out("{\"influence\":%d,\"prestige\":%d,\"prestige_base\":%d,\"prestige_added_upkeep\":%d,"
+            "\"rent_due\":%d,\"rent_due_date\":%u,\"player_type\":%d,\"colors\":[%d,%d],\"tithe\":%d,"
+            "\"demote_timeout\":%d,\"entry_permission\":%d,\"alliance_min_talk_rank\":%d,\"name\":",
+            sg->influence, sg->prestige, sg->prestigeBase, sg->prestigeAddedUpkeep,
+            sg->upkeep.prtgRentDue, sg->upkeep.secsRentDueDate, sg->playerType, sg->colors[0], sg->colors[1],
+            sg->tithe, sg->demoteTimeout, (int)sg->entryPermission, sg->alliance_minTalkRank);
+        storage_string(sg->name, sizeof(sg->name));
+        out(",\"motto\":"); storage_string(sg->motto, sizeof(sg->motto));
+        out(",\"msg\":"); storage_string(sg->msg, sizeof(sg->msg));
+        out(",\"emblem\":"); storage_string(sg->emblem, sizeof(sg->emblem));
+        out(",\"description\":"); storage_string(sg->description, sizeof(sg->description));
+        out(",\"ranks\":[");
+        for (i = 0; i < NUM_SG_RANKS; ++i) {
+            out("%s{\"name\":", i ? "," : "");
+            storage_string(sg->rankList[i].name, sizeof(sg->rankList[i].name));
+            out(",\"permission_words\":");
+            words(sg->rankList[i].permissionInt, sizeof(sg->rankList[i].permissionInt));
+            out("}");
+        }
+        count = eaSize(&sg->memberranks);
+        check(count >= 0 && count <= 8192);
+        out("],\"member_ranks\":[");
+        for (i = 0; i < count; ++i) {
+            const SupergroupMemberInfo *m = sg->memberranks[i];
+            if (i) out(",");
+            if (!m) out("null"); else out("[%d,%d]", m->dbid, m->rank);
+        }
+        out("],\"allies\":[");
+        for (i = 0; i < MAX_SUPERGROUP_ALLIES; ++i) {
+            const SupergroupAlly *a = &sg->allies[i];
+            out("%s{\"db_id\":%d,\"dont_talk_to\":%d,\"min_display_rank\":%d,\"name\":",
+                i ? "," : "", a->db_id, a->dontTalkTo, a->minDisplayRank);
+            storage_string(a->name, sizeof(a->name));
+            out("}");
+        }
+        out("]}");
+    }
+    out("}");
+}
+
 
 /* The original receiver resolves and orders these retained lists. Preserve
  * that order and logical power identity, never allocator addresses or padding. */
@@ -940,6 +1026,48 @@ static void entity_pet_owner_state(const Entity *e)
     out("{\"owner_ref_words\":"); words(&e->erOwner, sizeof(e->erOwner));
     out(",\"creator_ref_words\":"); words(&e->erCreator, sizeof(e->erCreator));
     out(",\"created_by_power\":"); base_power(e->pchar ? e->pchar->ppowCreatedMe : NULL);
+    out("}");
+}
+
+/* Retained custom NPC colors/regions. originalNPCName is not received by
+ * NPCcostume_receive; retain it literally if another path populated it. */
+static void npc_costume_state(const CustomNPCCostume *c)
+{
+    int i, count;
+    if (!c) { out("null"); return; }
+    count = eaSize(&c->parts);
+    check(count >= 0 && count <= 8192);
+    out("{\"original_npc_name\":"); string(c->originalNPCName);
+    out(",\"skin_u32\":%u,\"parts\":[", (unsigned)c->skinColor.integer);
+    for (i = 0; i < count; ++i) {
+        const CustomNPCCostumePart *p = c->parts[i];
+        if (i) out(",");
+        if (!p) { out("null"); continue; }
+        out("{\"region\":"); string(p->regionName);
+        out(",\"colors_u32\":[%u,%u]}", (unsigned)p->color[0].integer, (unsigned)p->color[1].integer);
+    }
+    out("]}");
+}
+
+static void entity_architect_state(const Entity *e)
+{
+    const TaskForce *t = e->taskforce;
+    out("{\"on_architect\":%d,\"invincible\":%d,\"untargetable\":%d,\"taskforce\":",
+        e->onArchitect, e->architect_invincible, e->architect_untargetable);
+    if (!t) out("null");
+    else {
+        /* use_cached_costume is cleared by the receiver when the contact
+         * override or name changes; retain its literal value. */
+        out("{\"id\":%d,\"flags\":%d,\"contact_override\":%d,\"use_cached_costume\":%d,\"contact_name\":",
+            t->architect_id, t->architect_flags, t->architect_contact_override,
+            t->architect_useCachedCostume);
+        fixed_string(t->architect_contact_name, sizeof(t->architect_contact_name));
+        out(",\"contact_costume\":"); costume(t->architect_contact_costume);
+        out(",\"contact_npc_costume\":"); npc_costume_state(t->architect_contact_npc_costume);
+        out("}");
+    }
+    /* Mission-review widget state is not observed here. Retain fields even
+     * after onArchitect is cleared. */
     out("}");
 }
 
@@ -1158,6 +1286,100 @@ static void retained_control_state(void)
     out("{\"first\":%d,\"nocoll\":%d,\"pyr_f32_bits\":", control_state.first, control_state.nocoll);
     words(control_state.pyr.cur, sizeof(control_state.pyr.cur));
     out("}");
+}
+/* Destinations of entReceiveUpdate's cmdOldReceive: every argument of every
+ * command in the same two tables as entrecv.c's cmd_list (control_cmds, then
+ * server_visible_cmds), whether or not a packet named it, so no later update
+ * can change an unobserved destination. entrecv.c's CmdContext is zeroed, so
+ * doDataSwap is the identity there and the table pointer is the destination.
+ * Floats keep raw bits; strings stay within the command's maxval storage.
+ * abs_time is read directly by entReceiveUpdate after the commands. */
+static void command_table_state(const Cmd *cmds)
+{
+    int i, j;
+    out("[");
+    for (i = 0; cmds[i].name; ++i) {
+        const Cmd *cmd = &cmds[i];
+        check(cmd->num_args >= 0 && cmd->num_args <= CMDMAXARGS);
+        out("%s{\"name\":", i ? "," : ""); string(cmd->name);
+        out(",\"args\":[");
+        for (j = 0; j < cmd->num_args; ++j) {
+            const DataDesc *data = &cmd->data[j];
+            out("%s{\"type\":%d,\"value\":", j ? "," : "", (int)data->type);
+            if (!data->ptr) out("null");
+            else switch (data->type) {
+            case PARSETYPE_S32: { int v; memcpy(&v, data->ptr, sizeof(v)); out("%d", v); } break;
+            case PARSETYPE_U32: { unsigned v; memcpy(&v, data->ptr, sizeof(v)); out("%u", v); } break;
+            case PARSETYPE_FLOAT: case PARSETYPE_EULER: words(data->ptr, sizeof(F32)); break;
+            case PARSETYPE_VEC3: words(data->ptr, sizeof(Vec3)); break;
+            case PARSETYPE_STR: case PARSETYPE_SENTENCE:
+                check(data->maxval > 0); fixed_string((const char *)data->ptr, (size_t)data->maxval); break;
+            default: out("\"not_received_by_cmdOldReceivePacked\""); break;
+            }
+            out("}");
+        }
+        out("]}");
+    }
+    out("]");
+}
+static void command_destination_state(void)
+{
+    out("{\"control_cmds\":"); command_table_state(control_cmds);
+    out(",\"server_visible_cmds\":"); command_table_state(server_visible_cmds);
+    out(",\"abs_time\":%u}", (unsigned)server_visible_state.abs_time);
+}
+/* cmdReceiveServerCommands (SERVER_GAME_CMDS) only appends names to the
+ * global cmdgame.c serverCommands list through cmdAddServerCommand, which
+ * skips case-insensitive duplicates. Retain the ordered list literally. */
+extern StringArray serverCommands;
+extern int serverCommandsInitialized;
+static void server_command_names_state(void)
+{
+    int i, count = eaSize(&serverCommands);
+    check(count >= 0 && count <= 65536);
+    out("{\"initialized\":%d,\"names\":[", serverCommandsInitialized);
+    for (i = 0; i < count; ++i) {
+        if (i) out(",");
+        string(serverCommands[i]);
+    }
+    out("]}");
+}
+/* Retained destinations of playerReceiveControlState's server control state
+ * and physics-position receivers: the accepted ServerControlState, the
+ * received physics step ring and the packet-ID guards. CSC prediction lists,
+ * future pushes, motion interpolation and local input are excluded. The three
+ * pkt_id fields are pak->id-derived; see compare_state.py for ID1/31. */
+static void server_control_receive_state(void)
+{
+    const ServerControlState *s = control_state.server_state;
+    int i;
+    out("{\"server_state_pkt_id\":%u,\"server_pos_pkt_id\":%u,\"forced_move_pkt_id\":%u,"
+        "\"received_update_id\":%u,\"server_state\":",
+        control_state.server_state_pkt_id, control_state.server_pos_pkt_id,
+        control_state.forced_move_pkt_id, (unsigned)control_state.received_update_id);
+    if (!s) out("null");
+    else {
+        out("{\"speed_f32_bits\":"); words(s->speed, sizeof(s->speed));
+        out(",\"speed_back_f32_bits\":"); words(&s->speed_back, sizeof(s->speed_back));
+        out(",\"jump_height_f32_bits\":"); words(&s->jump_height, sizeof(s->jump_height));
+        out(",\"surf_mods_f32_bits\":"); words(s->surf_mods, sizeof(s->surf_mods));
+        out(",\"flags\":[%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u]}",
+            (unsigned)s->controls_input_ignored, (unsigned)s->shell_disabled,
+            (unsigned)s->no_ent_collision, (unsigned)s->fly, (unsigned)s->stun,
+            (unsigned)s->jumppack, (unsigned)s->no_jump_repeat, (unsigned)s->glide,
+            (unsigned)s->no_physics, (unsigned)s->hit_stumble, (unsigned)s->ninja_run,
+            (unsigned)s->walk, (unsigned)s->beast_run, (unsigned)s->steam_jump,
+            (unsigned)s->hover_board, (unsigned)s->magic_carpet, (unsigned)s->parkour_run);
+    }
+    out(",\"physics_end\":%d,\"physics_cur\":%d,\"physics_steps\":[",
+        control_state.svr_phys.end, control_state.svr_phys.cur);
+    for (i = 0; i < (int)(sizeof(control_state.svr_phys.step) / sizeof(control_state.svr_phys.step[0])); ++i) {
+        out("%s[%u,", i ? "," : "", (unsigned)control_state.svr_phys.step[i].net_id);
+        words(control_state.svr_phys.step[i].pos, sizeof(control_state.svr_phys.step[i].pos));
+        out(","); words(control_state.svr_phys.step[i].vel, sizeof(control_state.svr_phys.step[i].vel));
+        out("]");
+    }
+    out("]}");
 }
 static void initial_ui_state(void)
 {
@@ -1699,6 +1921,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"groups\":"); entity_groups(e);
         out(",\"leveling_pact\":"); leveling_pact_state(e);
         out(",\"supergroup\":"); entity_supergroup_state(e);
+        out(",\"super_stats\":"); entity_super_stats_state(e);
         out(",\"power_customizations\":"); entity_power_customizations(e);
         out(",\"strings\":"); entity_strings(e->strings);
         out(",\"receive_metadata\":"); entity_receive_metadata(e);
@@ -1709,6 +1932,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
         out(",\"sequence_receive\":"); entity_sequence_receive_state(e);
         out(",\"netfx_receive\":"); entity_netfx_receive_state(e);
         out(",\"taskforce_parameters\":"); entity_taskforce_parameters(e);
+        out(",\"architect\":"); entity_architect_state(e);
+        out(",\"custom_npc_costume\":"); npc_costume_state(e->customNPC_costume);
         out(",\"buffs\":"); entity_buff_state(e);
         out(",\"friends\":"); friends_receive_state(e);
         out("}");
@@ -1732,6 +1957,9 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"initial_ui\":"); initial_ui_state();
     out(",\"retained_control\":"); retained_control_state();
+    out(",\"command_destinations\":"); command_destination_state();
+    out(",\"server_commands\":"); server_command_names_state();
+    out(",\"server_control_receive\":"); server_control_receive_state();
     out(",\"initial_server_state\":"); initial_server_state();
     out(",\"door_transition\":"); door_transition_state();
     out(",\"target_state\":"); target_receive_state();

@@ -232,6 +232,22 @@ class StateComparison(unittest.TestCase):
         self.assertGreaterEqual(len(failed_literal), 2)
         self.assertTrue(any('$.friend_receive_id' in mismatch['fields'] for pair in failed_literal for mismatch in pair['mismatches']))
 
+    def test_control_receive_packet_ids_canonicalize_exact_synthetic_values_only(self):
+        def doc(initial, other):
+            return {'entities': [], 'delete_history': [], 'server_control_receive': {
+                'server_state_pkt_id': initial, 'server_pos_pkt_id': other, 'forced_move_pkt_id': 0,
+                'received_update_id': 7, 'physics_end': 7}}
+        for index in (0, 5):
+            a, b = canonical_initial_ids(doc(1, 40), 1, index), canonical_initial_ids(doc(31, 40), 31, index)
+            self.assertEqual(a, b)
+            self.assertEqual(a['server_control_receive']['server_state_pkt_id'], 'synthetic_INITIAL')
+            self.assertEqual(a['server_control_receive']['server_pos_pkt_id'], 40)
+        # Other fields holding the synthetic value stay literal.
+        value = doc(1, 40); value['server_control_receive']['received_update_id'] = 1
+        self.assertEqual(canonical_initial_ids(value, 1, 0)['server_control_receive']['received_update_id'], 1)
+        self.assertNotEqual(canonical_initial_ids(doc(1, 1), 1, 0)['server_control_receive']['server_pos_pkt_id'], 1)
+        self.assertEqual(canonical_initial_ids(doc(1, 31), 1, 0)['server_control_receive']['server_pos_pkt_id'], 31)
+
     def test_wrong_reference_commit_rejected(self):
         with self.assertRaisesRegex(ValueError, 'identity or execution'):
             compare(self.fixture(), 'b' * 40)
@@ -254,7 +270,7 @@ class StateComparison(unittest.TestCase):
         self.assertEqual(result['comparisons'][0]['mismatches'], [
             {'index': 116, 'fields': ['$.entities[0].costume.bodytype']}])
         self.assertEqual(result['comparisons'][0]['canonicalized_fields'], [])
-        self.assertEqual(len(result['comparisons'][-1]['canonicalized_fields']), 5)
+        self.assertEqual(len(result['comparisons'][-1]['canonicalized_fields']), 8)
 
     def test_only_agreed_initial_id_fields_are_canonicalized(self):
         source = {'entities': [{'pkt_id_create': 1, 'id': 1, 'net_ipos': [1, 31, 1],

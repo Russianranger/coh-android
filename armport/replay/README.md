@@ -1112,3 +1112,49 @@ writer sanitizer cases,18 server-waypoint regression cases,191 Python tests and
 sequential native state.c compilation pass. See evidence/m3-mission-destination-controls.json
 for commands, host-fixture limits and the preserved zero-time closest-selection
 quirk. Fresh native replay and review remain pending; full state/M3 stay incomplete.
+
+### Custom NPC, Architect and command-table destinations (2026-10-26)
+
+Recovered from `handoff/2026-10-26-npc-architect-wip.patch` (post-apply hashes
+match its evidence): ordered/null custom NPC regions, colors and name, plus the
+retained Architect flags, contact override/name, full and custom NPC contact
+costumes. Retained fields stay visible after onArchitect is cleared. Added
+`use_cached_costume`, which the receiver clears when the contact changes.
+Mission-review widget state remains excluded.
+
+New: `command_destinations` dumps every argument of every command in
+`control_cmds` and `server_visible_cmds`, the same two tables as entrecv.c's
+`cmd_list` that `cmdOldReceive` writes, whether or not a packet named the
+command, plus `server_visible_state.abs_time`. Floats keep raw bits; strings
+stay within each command's maxval. `receiver_command_destinations.py` compiles
+the actual cmdOldReceivePacked/cmdOldReceive/doDataSwap with host adapters and
+checks table parity with entrecv.c's cmd_list, bit patterns, the access-level
+gate, unreceived commands and bounds. `cmdReceiveServerCommands`
+(SERVER_GAME_CMDS) only appends names to cmdgame.c's global `serverCommands`
+through cmdAddServerCommand (case-insensitive duplicates skipped); the ordered
+list and its initialized flag are now dumped as `server_commands`, tested with
+the actual receive/add/lookup bodies. Schema and completion flags stay partial.
+
+`super_stats` adds the entity-tail receiveSuperStats destinations: the
+supergroup header (influence, prestige fields, rent, player type, names,
+colors, tithe, timeout, entry permission, alliance rank), all seven ranks with
+permission words, member ranks, all ten ally slots, ordered member stat
+records, the player's own rank copy and pl->supergroup_mode. Fixed storage is
+dumped up to its capacity, so unterminated strncpy ranks stay literal.
+`receiver_super_stats_state.py` runs the actual receiver body with host
+adapters (7 cases). UI refresh, MOTD chat and the static prestige mirror are
+excluded.
+
+`server_control_receive` adds playerReceiveControlState's retained server
+state: the accepted ServerControlState (speed, back speed, jump height and
+surface modifiers as raw bits, 17 flags), the 100-step received physics ring
+(net_id, position and velocity bits, end/cur) and the three packet-ID guards
+server_state_pkt_id, server_pos_pkt_id and forced_move_pkt_id. Those three are
+pak->id-derived and can persist from INITIAL, so compare_state.py canonicalizes
+them in every snapshot of the ID1/31 pair only when exactly equal to that run's
+synthetic ID (real IDs are 32..155); every other field stays literal. CSC
+prediction lists, future pushes, interpolation and local input are excluded.
+`receiver_server_control_state.py` checks the actual writer (3 cases) with the
+original header layouts; the original receivers are not compiled there.
+Entity-tail invention_Receive has an entirely commented-out body in the
+original source, so it writes nothing and needs no observation.

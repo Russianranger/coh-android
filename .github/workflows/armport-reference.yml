@@ -10,6 +10,10 @@ on:
       - 'armport/standins/**'
       - 'armport/replay/**'
       - 'armport/tests/test_receiver*.py'
+      - 'armport/tests/receiver_*.py'
+      - 'armport/scripts/step.sh'
+      - 'armport/scripts/stage_plaza_statue_materials.py'
+      - 'armport/evidence/m3-proposed-plaza-statue-materials.json'
       - 'armport/scripts/prepare.py'
       - 'armport/scripts/check_receiver_state_preprocess.py'
       - 'armport/scripts/client_errors.py'
@@ -60,6 +64,8 @@ jobs:
             /armport/scripts/reviewed_asset_coverage.py
             /armport/scripts/stage_reviewed_files.py
             /armport/scripts/stage_composite_dependencies.py
+            /armport/scripts/stage_plaza_statue_materials.py
+            /armport/evidence/m3-proposed-plaza-statue-materials.json
             /armport/evidence/m3-proposed-composite-dependencies.json
             /armport/evidence/m3-dispatch-errors-40113107670.json
             /upstream/i24/data/tricks/v_shaders/villains/male/
@@ -171,6 +177,28 @@ jobs:
         with:
           name: armport-composite-data
           path: ${{ runner.temp }}/composite-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: plaza-data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/plaza-data
+          key: armport-plaza-data-${{ hashFiles('armport/evidence/m3-proposed-plaza-statue-materials.json', 'armport/scripts/stage_plaza_statue_materials.py') }}
+      - name: Stage exactly six approved plaza/statue textures
+        if: steps.plaza-data.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - name: Verify plaza/statue cache bytes against the reviewed archive
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --verify-only --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
+      - uses: actions/cache/save@v4
+        if: steps.plaza-data.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/plaza-data
+          key: ${{ steps.plaza-data.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-plaza-data
+          path: ${{ runner.temp }}/plaza-data
           retention-days: 90
           if-no-files-found: error
 
@@ -334,6 +362,18 @@ jobs:
       - name: Check original mission waypoint and keydoor receivers
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_mission_destinations.py --source "$RUNNER_TEMP/reference/src"
+      - name: NPC and Architect retained-state controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort NPC Architect control" python3 armport/tests/receiver_npc_architect_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Command-table receive destination controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort command destinations control" python3 armport/tests/receiver_command_destinations.py --source "$RUNNER_TEMP/reference/src"
+      - name: Supergroup stats receive destination controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort super stats control" python3 armport/tests/receiver_super_stats_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Server control receive writer controls
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: armport/scripts/step.sh "ArmPort server control control" python3 armport/tests/receiver_server_control_state.py --source "$RUNNER_TEMP/reference/src"
       - name: Check retained friends, saved keybinds and chat settings
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_communication_state.py --source "$RUNNER_TEMP/reference/src"
@@ -549,6 +589,13 @@ jobs:
           path: ${{ runner.temp }}/reviewed-zones
       - name: Recompute proposal and verify composite artifact bytes
         run: python3 armport/scripts/stage_composite_dependencies.py --verify-only --output "$RUNNER_TEMP/composite-data" --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --zones "$RUNNER_TEMP/reviewed-zones/zones-world-supplement.zip"
+      - name: Restore approved plaza/statue textures
+        uses: actions/download-artifact@v4
+        with:
+          name: armport-plaza-data
+          path: ${{ runner.temp }}/plaza-data
+      - name: Verify plaza/statue artifact bytes
+        run: python3 armport/scripts/stage_plaza_statue_materials.py --verify-only --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"
       - name: Restore the reviewed Atlas material additions
         uses: actions/download-artifact@v4
         with:
@@ -563,7 +610,7 @@ jobs:
       - name: Stage same data, bins and shaders for replay
         run: |
           python3 armport/scripts/smoke_run.py --stage-only --build "$RUNNER_TEMP/reference-bin" \
-            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/atlas-material-data" --strict-data "$RUNNER_TEMP/atlas-material-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" \
+            --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/atlas-material-data" --strict-data "$RUNNER_TEMP/atlas-material-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" --data "$RUNNER_TEMP/plaza-data" --strict-data "$RUNNER_TEMP/plaza-data" \
             --cg-dir "$RUNNER_TEMP/cg-arb" --runtime "$RUNNER_TEMP/replay-runtime"
       - name: Execute all original receiver dispatches (incomplete milestone stage)
         run: |
