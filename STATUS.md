@@ -34,7 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol midpoint finding 5644680146 fixed by 0082; fresh rendering run pending.
-- Atlas 40227784437 fails; server supplement staging fixed locally, fresh CI pending.
+- Atlas 40240791819 fails; server supplement fix under test in 40247679019.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
-- Replay 40243785888: cross-target match; 44 INITIAL-ID fields need Sol decision.
+- Replay 40247679017: ARM64 passes; 45 INITIAL-ID fields need Sol decision.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

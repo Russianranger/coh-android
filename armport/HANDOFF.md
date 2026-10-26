@@ -1573,3 +1573,22 @@ The retained 40227784437 server capture explicitly lists 483 distinct missing
 none needs a new source. The exact path lists are retained in
 `evidence/m3-server-atlas-staging-controls.json`. This strengthens the staging
 diagnosis; it does not declare rendering or M3 complete.
+
+### Current runtime qualification (2026-10-26 UTC)
+
+Tested implementation head is 4c8b6c39 on armport/m3-atlas. Runs 40247679019
+(Atlas) and 40247679017 (replay) are active; do not restart them. Local working
+branch is armport/replay-retained-state; no integration/milestone merge.
+ARM64 replay artifact 12620176960 independently passes 351 snapshot hashes,
+cursors/ACKs/error checks and 117 same-ID comparisons. ID1/31 differs only at
+snapshot 0 in 45 fields: prior 44 plus friend_receive_id. i686/cross-target
+qualification remains pending. No new normalization; Sol decision required.
+See evidence/m3-arm64-replay-40247679017.json for exact command and paths.
+
+Prior Atlas 40240791819 completed failed: connection passes, rendered world
+false. Eight complete isolated camera records show player Y -978.519592 then
+-2000, with camera tracking the player. The retained bounded server capture
+has 482 explicit missing geometry paths, all in the approved supplement.
+This supports, but does not prove, the missing-server-geometry hypothesis.
+See evidence/m3-atlas-camera-40240791819.json. Fresh Atlas tests the staging
+fix; no terrain pass is claimed. Full schema/M3/M4/M5 remain unqualified.
