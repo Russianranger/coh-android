@@ -1860,3 +1860,24 @@ Preserve active invitation replay40299446281 at6f092b1a; it predates0104. This
 work-branch follow-up needs fresh runtime qualification and Sol review. No change
 to asset selection, original-data exception, screenshot acceptance or milestone
 completion. M3/M4 surface/M5 are still unqualified.
+
+### Independently checked Atlas40283068606 (2026-10-26 UTC)
+
+Artifact12636806804 SHA256577155874c99c98d8a1a43a0d1f7037a39d9317d8383187affd3d0812a37ba5c
+is downloaded and verified. Its complete literal text/count error inventory is
+identical to40263048945:5659 errors/5656 unique. Connection and load/READY pass,
+but world_rendered and map_name_visible are false. The final frame still shows
+incomplete materials, black building gaps and placeholder UI squares. Evidence:
+evidence/m3-atlas-outcome-40283068606.json (artifact/file hashes, exact inventory
+comparison command, frame result and source excerpts). Texture-name bounds did
+not resolve these recorded rendering/error outcomes. No milestone is complete.
+
+Source inspection identifies a separate harness assumption to investigate:
+compass_DrawHeaderText's default path draws a destination name and only a
+*different* map's destination label. It does not always draw the current zone.
+The automap label is conditional on WDW_MAP being displayed and city/zone state.
+Missing Atlas Park OCR alone therefore does not identify a font/texture defect.
+This is not permission to weaken screenshot acceptance or count a map overlay
+as a rendered 3D scene. Investigate original UI state/zone labeling next while
+invitation replay40299446281 runs. The separate six-file selection still needs
+explicit approval; no assets, dialogs or screenshot criteria changed here.
