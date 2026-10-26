@@ -1,0 +1,30 @@
+diff --git a/Game/src/UI/uiTurnstile.c b/Game/src/UI/uiTurnstile.c
+index 3cea17f..d146deb 100644
+--- a/Game/src/UI/uiTurnstile.c
++++ b/Game/src/UI/uiTurnstile.c
+@@ -731,6 +731,13 @@ void turnstileGame_handleForceQueue(Packet *pak)
+ 
+ static int ts_inviter_db_id;
+ static int ts_inviter_mission_id;
++#ifdef COH_ARMPORT_REPLAY
++void armportReplayTurnstileInvitation(int *db_id, int *mission_id)
++{
++    *db_id = ts_inviter_db_id;
++    *mission_id = ts_inviter_mission_id;
++}
++#endif
+ static void sendJoinLeaderAccept(void *data)
+ {
+     char msg[64];
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 40f8a95..08adcb5 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -27,6 +27,7 @@ const TurnstileMissionClient *const *armportReplayTurnstileMissions(void);
+ const TurnstileMissionClient *armportReplayTurnstileDummy(int category);
+ int armportReplayTurnstileQueue(void);
+ const char *armportReplayTurnstileForceQueue(unsigned *capacity);
++void armportReplayTurnstileInvitation(int *db_id, int *mission_id);
+ const float *armportReplayTurnstileWait(void);
+ typedef struct ArmPortTurnstileEventState {
+     const char *name;

@@ -1326,6 +1326,13 @@ static void turnstile_force_queue_state(void)
     check(name != NULL && capacity == 128);
     fixed_string(name, capacity);
 }
+/* Original invitation IDs persist after the dialog response; do not clear them. */
+static void turnstile_invitation_state(void)
+{
+    int db_id, mission_id;
+    armportReplayTurnstileInvitation(&db_id, &mission_id);
+    out("{\"db_id\":%d,\"mission_id\":%d}", db_id, mission_id);
+}
 static void turnstile_event_state(void)
 {
     ArmPortTurnstileEventState state;
@@ -1691,6 +1698,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"turnstile\":"); turnstile_receive_state();
     out(",\"turnstile_event\":"); turnstile_event_state();
     out(",\"turnstile_force_queue\":"); turnstile_force_queue_state();
+    out(",\"turnstile_invitation\":"); turnstile_invitation_state();
     out(",\"user_options\":"); options_receive_state();
     out(",\"tray_sticky_mask\":%d", armportReplayTrayStickyMask());
     out(",\"initial_ui\":"); initial_ui_state();

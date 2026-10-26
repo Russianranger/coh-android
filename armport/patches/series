@@ -100,3 +100,4 @@
 0100-replay-retained-turnstile-event-state.patch
 0101-replay-retained-force-queue-name.patch
 0102-texture-name-copy-bounds.patch
+0103-replay-retained-turnstile-invitation.patch

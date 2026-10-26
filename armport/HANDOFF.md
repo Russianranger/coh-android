@@ -1821,3 +1821,24 @@ The comparison log retains state_schema_complete:false,
 state_comparison_complete:false and m3_replay_complete:false. This run predates
 texture-name patch0102. Keep PR6 draft; source review and fresh Atlas/replay
 qualification of0102 remain required. M4 surface and Thor remain unqualified.
+
+### Retained turnstile invitation IDs (2026-10-26 UTC)
+
+Patch0103 adds a replay-only copy-out accessor for the original signed inviter
+DB and mission IDs. The snapshot retains both literally, including 1/31 and
+high-bit values; no packet-ID normalization is added. The original receiver and
+accept/decline callback bodies are byte-identical to upstream. IDs persist after
+responses as in the original; temporary names and dialog objects are excluded.
+Ten actual-receiver/accessor/writer sanitizer cases pass, including exact ordered
+reads, callback identity, emitted accept/decline commands, replacement, signed
+extremes, nonmutation and output bounds. All32 turnstile regression cases and191
+Python tests pass. uiTurnstile.c/state.c compile ARM64 then i686 with one compiler.
+All102 earlier patches are byte-identical. See evidence/m3-turnstile-invitation-controls.json.
+Host substitutes do not establish native ABI or complete dialog lifecycle.
+Fresh replay and implementation review are required; full state/M3 remain false.
+
+Sol5648682350 accepts implementation through74aa2c32 only, not milestone/merge
+or six-file asset expansion. Replay40283068633 at that head passes both targets
+and partial comparison. Atlas40283068606 completed failed: still connected,
+world_rendered:false and map_name_visible:false (job121444348155). No Thor test
+is ready. The six-file material selection remains proposal-only pending approval.
