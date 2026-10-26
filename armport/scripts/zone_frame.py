@@ -24,11 +24,11 @@ def load_state(text):
     return state
 
 
-def frame_stats(png, window):
+def frame_stats(png, window, minimum=(640, 480)):
     if not png or not window:
         return None
     x, y, width, height = window
-    if min(x, y) < 0 or width < 640 or height < 480:
+    if min(x, y) < 0 or width < minimum[0] or height < minimum[1]:
         return None
     result = subprocess.run(['convert', str(png), '-crop', f'{width}x{height}+{x}+{y}',
         '+repage', '-colorspace', 'gray', '-format', '%[fx:mean] %[fx:standard_deviation]',
@@ -46,20 +46,47 @@ def nonblank(stats):
     return bool(stats and 0.02 < stats['mean'] < 0.8 and stats['deviation'] > 0.02)
 
 
+def world_region(window):
+    """Central client area between the original HUD windows (nav/target top,
+    chat/tray bottom, power/team side windows). 3D world pixels only."""
+    x, y, width, height = window
+    return (x + width // 5, y + height * 3 // 20, width * 3 // 5, height * 9 // 20)
+
+
+# The original in-world HUD (uiNav/uiTarget/uiChat/uiTray) labels. The original
+# client never prints the zone display name in-world: uiCompass draws only
+# destination names and uiAutomap's footer prints the gMapName file path.
+HUD_LABELS = ('target', 'contact', 'mission', 'chat', 'tray')
+# uiHelp.c displayHelperStatusPopup (DoYouWantToFlagForHelp), modal over the world.
+HELPER_DIALOG = re.compile(r'this\s+character\s+is\s+new', re.I)
+
+
+def hud_labels(words):
+    return [label for label in HUD_LABELS if re.search(label, words, re.I)]
+
+
 def evaluate(png, window, stdio, ocr):
     state = load_state(stdio)
     stats = frame_stats(png, window)
+    world = frame_stats(png, world_region(window), (64, 48)) if stats else None
     # OCR is expensive; do it only after original loading and nonblank checks.
     words = ''
     if state['load_complete'] and nonblank(stats):
         x, y, width, height = window
-        # Text elsewhere on the X display is not the client's map-name UI.
+        # Text elsewhere on the X display is not the client's UI.
         with tempfile.TemporaryDirectory(prefix='armport-frame-') as temporary:
             cropped = Path(temporary) / 'client.png'
             result = subprocess.run(['convert', str(png), '-crop', f'{width}x{height}+{x}+{y}',
                 '+repage', str(cropped)], capture_output=True, timeout=30)
             if result.returncode == 0 and cropped.is_file():
                 words = ocr(cropped)
-    map_visible = bool(re.search(r'\batlas\s+park\b', words, re.I))
-    return {**state, 'frame': stats, 'map_name_visible': map_visible,
-            'ocr': words[:2000], 'rendered': state['load_complete'] and nonblank(stats) and map_visible}
+    labels = hud_labels(words)
+    helper = bool(HELPER_DIALOG.search(words))
+    world_visible = bool(world and 0.02 < world['mean'] < 0.8 and world['deviation'] > 0.04)
+    return {**state, 'frame': stats, 'world_region': world, 'world_region_visible': world_visible,
+            'hud_labels': labels, 'helper_dialog_visible': helper,
+            # Diagnostic only; see HUD_LABELS. Not part of the verdict.
+            'map_name_visible': bool(re.search(r'\batlas\s+park\b', words, re.I)),
+            'ocr': words[:2000],
+            'rendered': (state['load_complete'] and nonblank(stats) and world_visible
+                         and len(labels) >= 3 and not helper)}

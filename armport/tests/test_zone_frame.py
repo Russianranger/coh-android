@@ -9,6 +9,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import zone_frame
 
+HUD = 'No Target Nav Map Contact Mission Clues Chat Empty Tray Slot'
 MAP = 'ArmPort zone: 100 map.start maps/City_Zones/City_01_01/City_01_01.txt\n'
 DONE = MAP + 'ArmPort zone: 101 textures.done \nArmPort zone: 102 ready.sent \n'
 
@@ -31,11 +32,34 @@ class ZoneFrameTests(unittest.TestCase):
                 png = Path(tmp) / 'frame.png'
                 subprocess.run(['convert', '-size', '1600x1200', source, str(png)], check=True)
                 window = (104, 130, 1024, 768)
-                result = zone_frame.evaluate(png, window, DONE, lambda _: 'Atlas Park')
+                result = zone_frame.evaluate(png, window, DONE, lambda _: HUD)
                 self.assertEqual(result['rendered'], source == 'pattern:checkerboard')
-                self.assertFalse(zone_frame.evaluate(png, window, MAP, lambda _: 'Atlas Park')['rendered'])
+                self.assertFalse(zone_frame.evaluate(png, window, MAP, lambda _: HUD)['rendered'])
                 self.assertFalse(zone_frame.evaluate(png, window, DONE, lambda _: 'Loading')['rendered'])
-                self.assertFalse(zone_frame.evaluate(png, None, DONE, lambda _: 'Atlas Park')['rendered'])
+                self.assertFalse(zone_frame.evaluate(png, None, DONE, lambda _: HUD)['rendered'])
+                # A readable zone name is diagnostic only, never the world verdict.
+                named = zone_frame.evaluate(png, window, DONE, lambda _: 'Atlas Park Target Chat')
+                self.assertFalse(named['rendered'])
+                self.assertEqual(named['map_name_visible'], source == 'pattern:checkerboard')
+
+    @unittest.skipUnless(shutil.which('convert'), 'ImageMagick required')
+    def test_modal_or_blank_world_region_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            png = Path(tmp) / 'frame.png'
+            window = (104, 130, 1024, 768)
+            subprocess.run(['convert', '-size', '1600x1200', 'pattern:checkerboard', str(png)], check=True)
+            helper = HUD + ' Welcome! This character is new and may need help'
+            result = zone_frame.evaluate(png, window, DONE, lambda _: helper)
+            self.assertTrue(result['helper_dialog_visible'] and result['world_region_visible'])
+            self.assertFalse(result['rendered'])
+            self.assertFalse(zone_frame.evaluate(png, window, DONE, lambda _: 'Target Chat')['rendered'])
+            # HUD over a flat (unrendered) centre: whole frame nonblank, world region not.
+            x, y, w, h = zone_frame.world_region(window)
+            subprocess.run(['convert', str(png), '-fill', 'gray30', '-draw',
+                            f'rectangle {x},{y} {x + w - 1},{y + h - 1}', str(png)], check=True)
+            flat = zone_frame.evaluate(png, window, DONE, lambda _: HUD)
+            self.assertTrue(zone_frame.nonblank(flat['frame']))
+            self.assertFalse(flat['world_region_visible'] or flat['rendered'])
 
     @unittest.skipUnless(shutil.which('convert'), 'ImageMagick required')
     def test_map_ocr_receives_only_client_pixels(self):
@@ -46,7 +70,7 @@ class ZoneFrameTests(unittest.TestCase):
                 result = subprocess.run(['identify', '-format', '%wx%h', str(crop)],
                                         capture_output=True, text=True, check=True)
                 self.assertEqual(result.stdout, '1024x768')
-                return 'Atlas Park'
+                return HUD
             self.assertTrue(zone_frame.evaluate(png, (104, 130, 1024, 768), DONE, ocr)['rendered'])
 
 

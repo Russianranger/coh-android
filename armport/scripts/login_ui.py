@@ -167,6 +167,46 @@ def owned_client_window(pids):
     return target[1] if target else None
 
 
+def dismiss_helper_status(screen, png, pids, trace, status):
+    """Answer the original first-login helper prompt with its neutral choice.
+
+    uiHelp.c displayHelperStatusPopup offers Help Me!/None/Helper; None runs the
+    original helperStatusPopupNone ("sethelperstatus 3"). Require the prompt's
+    text and one OCR-located None button inside the owned client window, a clean
+    error/alert history and successful focus. At most two attempts; every
+    attempt keeps its before/after frames.
+    """
+    attempts = status.setdefault('helper_status_actions', [])
+    if len(attempts) >= 2 or not png:
+        return False
+    target = owned_client_target(pids)
+    if not target or not dialogs_clear(trace):
+        return False
+    window, (x, y, w, h) = target
+    words = screen.words(png)
+    inside = [(word, px, py) for word, px, py in words if x <= px < x + w and y <= py < y + h]
+    if not re.search(r'this\s+character\s+is\s+new', ' '.join(word for word, _, _ in inside), re.I):
+        return False
+    buttons = [(px, py) for word, px, py in inside if word.strip('.,:!').casefold() == 'none']
+    action = {'window': window, 'geometry': [x, y, w, h], 'before': str(png),
+              'candidates': buttons, 'click_sent': False}
+    attempts.append(action)
+    if len(buttons) != 1:
+        action['blocked'] = 'None button missing or ambiguous'
+        return False
+    focused = sh('xdotool', 'windowfocus', '--sync', window, timeout=5)
+    action['focus_exit'] = focused.returncode
+    if focused.returncode or owned_client_target(pids) != target or not dialogs_clear(trace):
+        action['blocked'] = 'Focus, window or dialog state changed'
+        return False
+    screen.click(*buttons[0])
+    action['click_sent'] = True
+    time.sleep(3)
+    after = screen.shot('helper-status-after')
+    action['after'] = str(after) if after else None
+    return True
+
+
 def map_ui_diagnostic(screen, pids, trace):
     """One OCR-located Map click, after acceptance frames; never a verdict.
 

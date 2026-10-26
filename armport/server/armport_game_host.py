@@ -39,7 +39,7 @@ import server_atlas_data  # noqa: E402
 sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
 import zone_frame  # noqa: E402
-from login_ui import map_ui_diagnostic, owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, character_select_frame, dialogs_clear  # noqa: E402
+from login_ui import dismiss_helper_status, map_ui_diagnostic, owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, character_select_frame, dialogs_clear  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -320,6 +320,11 @@ def drive_login(a, screen, state, status, evidence):
             check = zone_frame.evaluate(png, frame_window, stdio_text, screen.text)
             check['owned_window_geometry'] = frame_window
             status['frame_checks'].append(check)
+            if check['load_complete'] and check['helper_dialog_visible'] and dismiss_helper_status(
+                    screen, png, stall_snapshot.client_pids(a.client), a.client / 'zone-trace.jsonl', status):
+                # The modal covered the world; only later frames can count.
+                rendered = 0
+                continue
             mean = check['frame']['mean'] if check['frame'] else None
             status['loading_brightness'].append(round(mean, 3) if mean is not None else None)
             rendered = rendered + 1 if check['rendered'] else 0
@@ -569,14 +574,23 @@ def main():
         (evidence / 'wine-errors.json').write_text(json.dumps(wine, indent=2) + '\n')
         error_evidence_ok = (wine['passed'] and not errors['integrity_failures'] and errors['map_load_finished']
                              and not errors['phase_counts'].get('after_map_load', 0))
-        note('notice', 'ArmPort M3 phased errors', json.dumps(dict(
+        # Failing inventories go to the error kind: notices beyond GitHub's
+        # per-step cap are dropped. After-load texts are the acceptance blockers.
+        note('notice' if error_evidence_ok else 'error', 'ArmPort M3 phased errors', json.dumps(dict(
             passed=error_evidence_ok, phase_counts=errors['phase_counts'],
+            after_map_load=[e for e in errors['phase_errors'] if e['phase'] == 'after_map_load'][:20],
             trace_record_count=errors['trace_records'], classes=assets['classes'],
             allowed_startup_rpc_exceptions=wine['allowed_startup_rpc_exceptions'],
             wine_failures=wine['failures'],
             integrity_failures=errors['integrity_failures'])))
     except (OSError, ValueError) as error:
         note('error', 'ArmPort M3 error evidence', str(error)[:1000])
+    checks = status.get('frame_checks') or [{}]
+    note('notice' if status.get('world_rendered') else 'error', 'ArmPort M3 world frame', json.dumps(dict(
+        world_rendered=status.get('world_rendered'), zone_load_seconds=status.get('zone_load_seconds'),
+        helper_status_actions=status.get('helper_status_actions'),
+        last_check={k: checks[-1].get(k) for k in ('load_complete', 'frame', 'world_region',
+                    'world_region_visible', 'hud_labels', 'helper_dialog_visible', 'map_name_visible')})))
     ok = error_evidence_ok and code == 0 and report.get('passed') is True and client_record.get('connected_on_atlas') is True \
         and client_record.get('still_connected') is True and status.get('world_rendered') is True
     note('notice' if ok else 'error', 'ArmPort M3 verdict',
