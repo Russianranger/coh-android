@@ -1901,3 +1901,25 @@ not current runtime UI state or rendered-world acceptance. No game/host gate
 changed. Next distinguish runtime UI label state from the remaining visible
 material failures; an automap overlay must not stand in for rendered 3D terrain.
 The six-file material staging proposal still requires explicit selection approval.
+
+### Bounded runtime UI state diagnostic (2026-10-26 UTC)
+
+Patch0105 adds world.ui beside the existing eight opt-in world samples. It records
+compass/map window modes, mission-map state and the selected destination type and
+name/map presence. Selection matches compassWindow; only fixed-array first bytes
+are read. It never localizes strings, invokes UI actions or changes acceptance.
+These are world-phase inputs, not proof of a later header draw: mission, arena,
+raid, script/exit paths and later state can override default text.
+
+The actual controller/getter pass ASan/UBSan controls across5000 frames off/on,
+all eight selection/name/map combinations, unterminated arrays and nonmutation.
+The five original compass contract probes still pass. groupdraw.c compiles ARM64
+then i686 with one compiler. All104 earlier patch hashes are unchanged; export
+used patchwork.py. Existing libraries CI already runs this controller test.
+Commands/output and limitations: evidence/m3-world-ui-state-controls.json.
+
+Replay40308641544 at6f60f802 has passed ARM64 and is running i686; it predates
+this diagnostic and must be preserved. Qualify the new diagnostic in a fresh
+Atlas run after existing compilation completes. Review5648682350 still covers
+74aa2c32 only; neither newer receiver changes nor this probe have new review.
+M3/full state/rendering, M4 Android surface and physical Thor/M5 remain open.

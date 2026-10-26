@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+from receiver_tray_state import function
 
 
 def main():
@@ -16,6 +17,10 @@ def main():
     start = source.index('ArmPortWorldTrace armport_world_trace;')
     stop = source.index('\n#else', start)
     controller = source[start:stop]
+    ui_source = (args.source / 'Game/src/UI/uiWindows.c').read_text()
+    compass = (args.source / 'Game/src/UI/uiCompass.c').read_text()
+    assert 'if (activeTaskDest.type == ICON_MISSION)' in compass
+    assert '&activeTaskDest, 1' in compass and '&waypointDest, 0' in compass
     program = r'''
 #define _POSIX_C_SOURCE 200809L
 #define COH_ARMPORT_REFERENCE_I686 1
@@ -36,11 +41,30 @@ static int player_present, player_reads;
 static const Entity *playerPtr(void) {++player_reads;return player_present?&player:NULL;}
 #define ENTPOS(e) ((e)->position)
 static struct {float cammat[4][3],viewmat[4][3];} cam_info;
+/* Host stand-ins for native layout; actual read-only window getter below. */
+enum { WDW_COMPASS, WDW_MAP, ICON_MISSION = 9 };
+typedef struct { int type; char name[256], mapName[512]; } Destination;
+static Destination activeTaskDest, waypointDest;
+static struct {int mission_map;} game_state;
+static struct {struct {int mode;} loc;} winDefs[2];
+static int ui_records, expected_task, expected_type, expected_name, expected_map;
 static int shell, records, model_records, camera_records;
 static int shellMode(void) { return shell; }
 static void armportZoneTrace(const char *stage, const char *detail)
 {
     unsigned frame = 0;
+    if (!strcmp(stage, "world.ui")) {
+        int compass_mode,map_mode,mission,task,type,name,map,n=0;
+        assert(strlen(detail)<256);
+        assert(sscanf(detail,"frame=%u compass_mode=%d map_mode=%d mission_map=%d selected_task=%d selected_type=%d name_present=%d map_present=%d%n",
+            &frame,&compass_mode,&map_mode,&mission,&task,&type,&name,&map,&n)==8);
+        assert(detail[n]==0);
+        assert(frame == (ui_records ? (unsigned)ui_records * 600 : 1));
+        assert(compass_mode==winDefs[0].loc.mode && map_mode==winDefs[1].loc.mode);
+        assert(mission==game_state.mission_map && task==expected_task && type==expected_type);
+        assert(name==expected_name && map==expected_map);
+        ++ui_records;return;
+    }
     if (!strcmp(stage, "world.camera")) {
         assert(strlen(detail)<1024);
         assert(sscanf(detail,"frame=%u",&frame)==1);
@@ -64,7 +88,7 @@ static void armportZoneTrace(const char *stage, const char *detail)
     assert(strstr(detail, "visits=1 editor_skip=0 distance_skip=0 frustum_skip=0 model_calls=1 not_loaded=0 alpha_zero=0 sort_requests=1"));
     ++records;
 }
-''' + controller + r'''
+''' + function(ui_source, 'int window_getMode(') + controller + r'''
 int main(int argc, char **argv)
 {
     int i, on = argc == 2 && !strcmp(argv[1], "on");
@@ -93,6 +117,21 @@ int main(int argc, char **argv)
     assert(!records && !armport_world_frames);
     for (i = 1; i <= 5000; ++i) {
         unsigned previous;
+        Destination saved_task,saved_waypoint;
+        unsigned sample = i==1 ? 0 : (unsigned)i/600;
+        /* All eight combinations of selection/name/map, including completely
+         * unterminated arrays: the diagnostic may inspect only their first byte. */
+        expected_task=!!(sample&4);expected_name=!!(sample&2);expected_map=!!(sample&1);
+        memset(&activeTaskDest,0,sizeof(activeTaskDest));memset(&waypointDest,0,sizeof(waypointDest));
+        activeTaskDest.type=expected_task?ICON_MISSION:-7;waypointDest.type=3;
+        expected_type=expected_task?ICON_MISSION:3;
+        memset(activeTaskDest.name,expected_task?expected_name:!expected_name,sizeof(activeTaskDest.name));
+        memset(activeTaskDest.mapName,expected_task?expected_map:!expected_map,sizeof(activeTaskDest.mapName));
+        memset(waypointDest.name,expected_task?!expected_name:expected_name,sizeof(waypointDest.name));
+        memset(waypointDest.mapName,expected_task?!expected_map:expected_map,sizeof(waypointDest.mapName));
+        winDefs[0].loc.mode=(int)sample;winDefs[1].loc.mode=-(int)sample;
+        game_state.mission_map=(int)(sample&1);
+        memcpy(&saved_task,&activeTaskDest,sizeof(saved_task));memcpy(&saved_waypoint,&waypointDest,sizeof(saved_waypoint));
         player_present = i==1 || i%1200==0;
         armportWorldBegin();
         assert(!!armport_world_trace.active == (on && (i == 1 || (i <= 4200 && i % 600 == 0))));
@@ -115,15 +154,19 @@ int main(int argc, char **argv)
         ARMPORT_WORLD_COUNT(model_calls);
         ARMPORT_WORLD_COUNT(sort_requests);
         armportWorldEnd(0);
+        assert(!memcmp(&saved_task,&activeTaskDest,sizeof(saved_task)));
+        assert(!memcmp(&saved_waypoint,&waypointDest,sizeof(saved_waypoint)));
+        assert(winDefs[0].loc.mode==(int)sample && winDefs[1].loc.mode==-(int)sample);
+        assert(game_state.mission_map==(int)(sample&1));
         assert(!armport_world_trace.active);
         previous = armport_world_trace.visits;
         ARMPORT_WORLD_COUNT(visits);
         assert(armport_world_trace.visits == previous);
     }
-    assert(records == (on ? 8 : 0) && model_records == records && camera_records==records && player_reads==records);
+    assert(records == (on ? 8 : 0) && model_records == records && camera_records==records && player_reads==records && ui_records==records);
     assert(group_info.ref_count == 3 && group_info.refs == refs);
     assert(!memcmp(saved_camera,&cam_info,sizeof(cam_info)) && !memcmp(saved_player,&player,sizeof(player)));
-    printf("world trace %s: records=%d, 5000 frames, matching model/camera summaries, nullable player, bounded reads, per-frame reset and visibility/pose inputs unchanged\n", on ? "on" : "off", records);
+    printf("world trace %s: records=%d, 5000 frames, matching model/camera/UI summaries, eight UI selection/name/map combinations, unterminated arrays, nullable player, bounded reads, per-frame reset and visibility/pose/UI inputs unchanged\n", on ? "on" : "off", records);
     return 0;
 }
 '''
