@@ -78,6 +78,8 @@ static struct { int svr_idx, taskforce_id; unsigned id, slot, seconds; } taskfor
 static unsigned taskforce_time_count;
 static struct { int svr_idx, active_player, index; unsigned id, seconds; char name[1024]; } reward_times[8192];
 static unsigned reward_time_count;
+static struct { int entity_valid, svr_idx, build, set_ordinal, power_ordinal, received_unique_id, retained_unique_id; unsigned id, seconds; char name[1024]; } power_creation_times[8192];
+static unsigned power_creation_time_count;
 
 static void check_at(int ok, const char *condition, int line)
 {
@@ -136,6 +138,7 @@ void armportReplayStateInit(void)
     memset(&desaturation, 0, sizeof(desaturation));
     taskforce_time_count = 0;
     reward_time_count = 0;
+    power_creation_time_count = 0;
     active = 1;
 }
 void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
@@ -217,6 +220,47 @@ static void reward_time_receives(void)
         string(reward_times[i].name); out("}");
     }
     /* Accepted wire-time history, not the mixed-provenance live timer field. */
+    out("]");
+}
+
+
+void armportReplayPowerCreationTime(const Entity *e, int build, int setOrdinal, int powerOrdinal, int receivedUniqueId, int retainedUniqueId, const char *name, unsigned seconds)
+{
+    unsigned n;
+    size_t length = 0;
+    if (!active) return;
+    check(build >= 0 && build < MAX_BUILD_NUM && setOrdinal >= 0 && powerOrdinal >= 0);
+    check(name != NULL && power_creation_time_count < 8192);
+    while (length < sizeof(power_creation_times[0].name) && name[length]) ++length;
+    check(length < sizeof(power_creation_times[0].name));
+    n = power_creation_time_count++;
+    power_creation_times[n].entity_valid = e != NULL;
+    power_creation_times[n].svr_idx = e ? e->svr_idx : 0;
+    power_creation_times[n].id = e ? e->id : 0;
+    power_creation_times[n].build = build;
+    power_creation_times[n].set_ordinal = setOrdinal;
+    power_creation_times[n].power_ordinal = powerOrdinal;
+    power_creation_times[n].received_unique_id = receivedUniqueId;
+    power_creation_times[n].retained_unique_id = retainedUniqueId;
+    power_creation_times[n].seconds = seconds;
+    memcpy(power_creation_times[n].name, name, length + 1);
+}
+
+static void power_creation_time_receives(void)
+{
+    unsigned i;
+    check(power_creation_time_count <= 8192);
+    out("[");
+    for (i = 0; i < power_creation_time_count; ++i) {
+        out("%s{\"entity_valid\":%d,\"svr_idx\":%d,\"entity_id\":%u,\"build\":%d,\"set_ordinal\":%d,\"power_ordinal\":%d,\"received_unique_id\":%d,\"retained_unique_id\":%d,\"received_seconds\":%u,\"name\":",
+            i ? "," : "", power_creation_times[i].entity_valid, power_creation_times[i].svr_idx,
+            power_creation_times[i].id, power_creation_times[i].build, power_creation_times[i].set_ordinal,
+            power_creation_times[i].power_ordinal, power_creation_times[i].received_unique_id,
+            power_creation_times[i].retained_unique_id, power_creation_times[i].seconds);
+        string(power_creation_times[i].name); out("}");
+    }
+    /* Ordered accepted wire assignments, not power lifetime or live clock state.
+     * Ordinals identify received slots; they need not equal retained power indices. */
     out("]");
 }
 
@@ -1568,6 +1612,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"contacts\":"); contact_receive_state();
     out(",\"taskforce_time_receives\":"); taskforce_time_receives();
     out(",\"reward_time_receives\":"); reward_time_receives();
+    out(",\"power_creation_time_receives\":"); power_creation_time_receives();
     out(",\"friend_receive_id\":%u}\n", armportReplayFriendPacketId());
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);

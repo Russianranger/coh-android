@@ -984,3 +984,30 @@ The retained 40227784437 server capture explicitly lists 483 distinct missing
 none needs a new source. The exact path lists are retained in
 `evidence/m3-server-atlas-staging-controls.json`. This strengthens the staging
 diagnosis; it does not declare rendering or M3 complete.
+
+### Accepted power creation times (2026-10-26 UTC)
+
+Patch 0098 observes the original character_ReceivePowers timestamp assignment
+only after power acceptance. The bounded history records nullable parent
+identity, received build/set/power ordinals, literal received/retained unique IDs,
+copied logical name and U32 wire seconds. It runs before power_LevelFinalize;
+it neither calls a packet reader nor changes original state or clock handling.
+Live ulCreationTime remains excluded because power_Create and lifetime changes
+also write local-clock values. This is receive history, not full power lifecycle.
+
+All 26 source-derived ASan/UBSan cases and 20 reward-time regression cases pass;
+180 Python tests pass. The original and observed accept blocks have identical
+read/call counts and power/set storage across success/failure/existing/temp-power
+controls. Changed native character_net.c/state.c compile ARM64 then i686 with
+one compiler. Only local LeakSanitizer is disabled for /proc; CI keeps defaults.
+`evidence/m3-power-creation-time-controls.json` records exact commands and limits.
+Fresh runtime qualification is required. All prior 97 patch bytes are unchanged.
+No new packet-ID normalization, milestone completion or merge approval.
+
+Replay 40247679017 at 4c8b6c39 has now completed: both native jobs and outside-error
+comparison pass; strict partial-state comparison fails. Independent verification
+of both SHA-256-verified artifacts authenticates 702 snapshots and reproduces
+all seven comparisons. Three cross-target pairs and both same-ID repeats match;
+both INITIAL1/31 pairs differ only in snapshot 0 at the same 45 literal fields.
+See `evidence/m3-replay-40247679017.json`. Sol's exact normalization decision is
+still pending. Atlas 40247679019 remains active and must not be restarted.

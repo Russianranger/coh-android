@@ -1,0 +1,314 @@
+{
+  "outside_error_inventories_equal": true,
+  "source_commit": "4c8b6c3903187a187028bb708e0f22159cc8496a",
+  "scope": "partial_receiver_state_comparison",
+  "original_texture_exception": true,
+  "accepted_original_data_errors": [
+    {
+      "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+      "dispatch_index": 1,
+      "after_dispatch_index": null,
+      "count": 1
+    }
+  ],
+  "comparisons": [
+    {
+      "left": [
+        "arm64",
+        "id1-a"
+      ],
+      "right": [
+        "i686",
+        "id1-a"
+      ],
+      "id_sensitivity": false,
+      "canonicalized_fields": [],
+      "canonicalization_condition": null,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id1-b"
+      ],
+      "right": [
+        "i686",
+        "id1-b"
+      ],
+      "id_sensitivity": false,
+      "canonicalized_fields": [],
+      "canonicalization_condition": null,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id31"
+      ],
+      "right": [
+        "i686",
+        "id31"
+      ],
+      "id_sensitivity": false,
+      "canonicalized_fields": [],
+      "canonicalization_condition": null,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id1-a"
+      ],
+      "right": [
+        "arm64",
+        "id1-b"
+      ],
+      "id_sensitivity": false,
+      "canonicalized_fields": [],
+      "canonicalization_condition": null,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id1-a"
+      ],
+      "right": [
+        "arm64",
+        "id31"
+      ],
+      "id_sensitivity": true,
+      "canonicalized_fields": [
+        "entities[].pkt_id_create",
+        "entities[].player.lastClientStatePktId",
+        "delete_history[].pkt_id",
+        "entities[].pkt_id_pos[]",
+        "entities[].pkt_id_qrot[]"
+      ],
+      "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+      "equal": false,
+      "mismatches": [
+        {
+          "index": 0,
+          "fields": [
+            "$.entities[0].attribute_packet_order.basic[0].ids[0].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[1].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[2].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[3].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[4].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[0].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[1].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[2].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[3].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[4].ids",
+            "$.entities[0].attribute_packet_order.basic[2].ids[0].ids",
+            "$.entities[0].attribute_packet_order.basic[2].ids[1].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[0].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[1].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[2].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[3].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[4].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[5].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[6].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[7].ids"
+          ]
+        }
+      ]
+    },
+    {
+      "left": [
+        "i686",
+        "id1-a"
+      ],
+      "right": [
+        "i686",
+        "id1-b"
+      ],
+      "id_sensitivity": false,
+      "canonicalized_fields": [],
+      "canonicalization_condition": null,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "i686",
+        "id1-a"
+      ],
+      "right": [
+        "i686",
+        "id31"
+      ],
+      "id_sensitivity": true,
+      "canonicalized_fields": [
+        "entities[].pkt_id_create",
+        "entities[].player.lastClientStatePktId",
+        "delete_history[].pkt_id",
+        "entities[].pkt_id_pos[]",
+        "entities[].pkt_id_qrot[]"
+      ],
+      "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+      "equal": false,
+      "mismatches": [
+        {
+          "index": 0,
+          "fields": [
+            "$.entities[0].attribute_packet_order.basic[0].ids[0].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[1].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[2].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[3].ids",
+            "$.entities[0].attribute_packet_order.basic[0].ids[4].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[0].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[1].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[2].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[3].ids",
+            "$.entities[0].attribute_packet_order.basic[1].ids[4].ids",
+            "$.entities[0].attribute_packet_order.basic[2].ids[0].ids",
+            "$.entities[0].attribute_packet_order.basic[2].ids[1].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[0].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[1].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[2].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[3].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[4].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[5].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[6].ids",
+            "$.entities[0].attribute_packet_order.self[0].ids[7].ids"
+          ]
+        }
+      ]
+    }
+  ],
+  "partial_state_equal": false,
+  "state_schema_complete": false,
+  "state_comparison_complete": false,
+  "m3_replay_complete": false,
+  "verified_snapshots": 702,
+  "all_initial_id_differences": {
+    "arm64": [
+      {
+        "index": 0,
+        "paths": [
+          "$.entities[0].attribute_packet_order.basic[0].ids[0].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[1].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[2].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[3].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[4].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[0].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[1].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[2].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[3].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[4].ids",
+          "$.entities[0].attribute_packet_order.basic[2].ids[0].ids",
+          "$.entities[0].attribute_packet_order.basic[2].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[0].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[2].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[3].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[4].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[5].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[6].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[7].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[0].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[2].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[3].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[4].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[5].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[6].ids",
+          "$.entities[0].attribute_packet_order.self[2].ids[0].ids",
+          "$.entities[0].attribute_packet_order.self[2].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[3].ids",
+          "$.entities[0].attribute_packet_order.self[4].ids",
+          "$.entities[0].attribute_packet_order.self[5].ids",
+          "$.entities[0].attribute_packet_order.self[6].ids",
+          "$.entities[0].packet_order.pkt_id_character_stats",
+          "$.entities[0].packet_order.pkt_id_costume",
+          "$.entities[0].packet_order.pkt_id_logout",
+          "$.entities[0].packet_order.pkt_id_powerCust",
+          "$.entities[0].packet_order.pkt_id_rare_bits",
+          "$.entities[0].packet_order.pkt_id_seq_move",
+          "$.entities[0].packet_order.pkt_id_state_mode",
+          "$.entities[0].packet_order.pkt_id_supergroup",
+          "$.entities[0].packet_order.pkt_id_targetting",
+          "$.entities[0].packet_order.pkt_id_titles",
+          "$.entities[0].packet_order.pkt_id_xlucency",
+          "$.friend_receive_id"
+        ]
+      }
+    ],
+    "i686": [
+      {
+        "index": 0,
+        "paths": [
+          "$.entities[0].attribute_packet_order.basic[0].ids[0].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[1].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[2].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[3].ids",
+          "$.entities[0].attribute_packet_order.basic[0].ids[4].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[0].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[1].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[2].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[3].ids",
+          "$.entities[0].attribute_packet_order.basic[1].ids[4].ids",
+          "$.entities[0].attribute_packet_order.basic[2].ids[0].ids",
+          "$.entities[0].attribute_packet_order.basic[2].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[0].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[2].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[3].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[4].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[5].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[6].ids",
+          "$.entities[0].attribute_packet_order.self[0].ids[7].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[0].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[2].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[3].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[4].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[5].ids",
+          "$.entities[0].attribute_packet_order.self[1].ids[6].ids",
+          "$.entities[0].attribute_packet_order.self[2].ids[0].ids",
+          "$.entities[0].attribute_packet_order.self[2].ids[1].ids",
+          "$.entities[0].attribute_packet_order.self[3].ids",
+          "$.entities[0].attribute_packet_order.self[4].ids",
+          "$.entities[0].attribute_packet_order.self[5].ids",
+          "$.entities[0].attribute_packet_order.self[6].ids",
+          "$.entities[0].packet_order.pkt_id_character_stats",
+          "$.entities[0].packet_order.pkt_id_costume",
+          "$.entities[0].packet_order.pkt_id_logout",
+          "$.entities[0].packet_order.pkt_id_powerCust",
+          "$.entities[0].packet_order.pkt_id_rare_bits",
+          "$.entities[0].packet_order.pkt_id_seq_move",
+          "$.entities[0].packet_order.pkt_id_state_mode",
+          "$.entities[0].packet_order.pkt_id_supergroup",
+          "$.entities[0].packet_order.pkt_id_targetting",
+          "$.entities[0].packet_order.pkt_id_titles",
+          "$.entities[0].packet_order.pkt_id_xlucency",
+          "$.friend_receive_id"
+        ]
+      }
+    ]
+  },
+  "run": 40247679017,
+  "artifacts": [
+    {
+      "target": "arm64",
+      "id": 12620176960,
+      "sha256": "b8bc699e099ebd414598abada0b5c8e9014d710c00caeb429c275d77693a22b5"
+    },
+    {
+      "target": "i686",
+      "id": 12620705411,
+      "sha256": "e592dcc8150e2cc6cbc6fd5f95c9b407a86152bb3c7a5ec1c7698d723d58a96f"
+    }
+  ],
+  "notes": [
+    "Artifacts were SHA-256 verified before extraction. compare() revalidates all six processes, 702 snapshot hashes, cursors, ACKs, literal outside inventories and exact authorized texture occurrence.",
+    "Five literal cross-target/repeat pairs match. Both INITIAL1/31 sensitivity pairs fail only snapshot0 in the same45fields. No new normalization or broader error exception."
+  ],
+  "command": "python3 - <<'PYVERIFY'\nimport json,sys\nfrom pathlib import Path\nsys.path.insert(0, 'armport/replay')\nimport compare_state\nroot=Path('/tmp/coh-resume/compare-40247679017') # arm64/i686 point to verified artifact extraction folders\nresult=compare_state.compare(root, '4c8b6c3903187a187028bb708e0f22159cc8496a', original_texture_exception=True)\nfor target in ('arm64','i686'):\n    for i in range(117):\n        a=json.loads((root/target/'id1-a'/f'state-{i:03d}.json').read_text())\n        b=json.loads((root/target/'id31'/f'state-{i:03d}.json').read_text())\n        paths=list(compare_state.differences(compare_state.canonical_initial_ids(a,1), compare_state.canonical_initial_ids(b,31)))\n        assert len(paths)==(45 if i==0 else 0)\n        if paths: print(target,i,paths)\nfor row in result['comparisons']: print(row['left'],row['right'],row['equal'],[m['index'] for m in row['mismatches']])\nPYVERIFY"
+}
