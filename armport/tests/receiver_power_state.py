@@ -5,12 +5,14 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+from receiver_tray_state import function
 
 
 def main():
     source = (Path(__file__).resolve().parents[1] / 'replay/state.c').read_text()
     formatting = source[source.index('static void out('):source.index('void armportReplayStateInit(')]
-    powers = source[source.index('static void base_power('):source.index('static void inventory_item(')]
+    powers = ''.join(function(source, 'static void ' + name + '(')
+                     for name in ('base_power', 'boost', 'boosts', 'power_sets', 'power_inventory'))
     fixture = r'''
 #include <stdio.h>
 #include <stdlib.h>

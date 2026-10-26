@@ -1011,3 +1011,22 @@ all seven comparisons. Three cross-target pairs and both same-ID repeats match;
 both INITIAL1/31 pairs differ only in snapshot 0 at the same 45 literal fields.
 See `evidence/m3-replay-40247679017.json`. Sol's exact normalization decision is
 still pending. Atlas 40247679019 remains active and must not be restarted.
+
+### Retained active powers and received modes (2026-10-26 UTC)
+
+Snapshots now retain PowerInfo.activePowers as ordered nullable logical
+build/set/power references, without resolving or repairing them. Character
+pPowerModes retains signed words, duplicates and order. Null PowerInfo remains
+separate from an empty active list. Recharge timer values and membership remain
+excluded: the original powerInfo_UpdateTimers changes and removes them using
+elapsed time. No original receive/update behavior changes and no new patch.
+
+All 19 source-derived sanitizer cases pass, including the actual mode receiver
+and duplicate/add/remove/absent active helpers, bounds, nulls, nonmutation and
+an inaccessible recharge pointer. Inventory-writer regression, 180 Python tests
+and sequential ARM64/i686 state.c compilation pass. The inventory fixture now
+extracts its five actual functions individually so adjacent observers do not
+silently enlarge its dependencies. `evidence/m3-power-activity-controls.json`
+records commands and limits. Host controls do not establish native ABI or full
+activation/recharge lifecycle. Fresh runtime qualification remains required;
+active replay 40254223051 tests preceding power-time head 38b5cebb only.

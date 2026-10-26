@@ -20,6 +20,7 @@
 #include "entity/origins.h"
 #include "entity/costume.h"
 #include "entity/powers.h"
+#include "entity/PowerInfo.h"
 #include "entity/power_customization.h"
 #include "entity/boost.h"
 #include "entity/character_inventory.h"
@@ -335,7 +336,8 @@ static void player_costumes(const EntPlayer *p)
  * pointers. Preserve array order/null slots. These observations do not claim
  * full power activation or tail-state coverage. Local power/boost timers and
  * ulCreationTime (also initialized from the host clock by power_Create) are
- * deliberately absent until a wire-provenance observer can separate them. */
+ * deliberately absent here. Accepted creation-time wire assignments are
+ * recorded separately; that history does not reconstruct a live lifetime. */
 static void base_power(const BasePower *p)
 {
     string(p ? p->pchFullName : NULL);
@@ -423,6 +425,33 @@ static void power_inventory(const Character *p)
     }
     out("],\"boost_slots\":%d,\"boost_inventory\":[", p->iNumBoostSlots);
     for (i = 0; i < CHAR_BOOST_MAX; ++i) { if (i) out(","); boost(p->aBoosts[i]); }
+    out("]}");
+}
+
+static void power_modes(const Character *p)
+{
+    int i, count = eaiSize(&p->pPowerModes);
+    check(count >= 0 && count <= 1024 && (!count || p->pPowerModes != NULL));
+    out("[");
+    for (i = 0; i < count; ++i) out("%s%d", i ? "," : "", p->pPowerModes[i]);
+    out("]");
+}
+
+static void power_activity(const PowerInfo *info)
+{
+    int i, count;
+    if (!info) { out("null"); return; }
+    count = eaSize(&info->activePowers);
+    check(count >= 0 && count <= 4096 && (!count || info->activePowers != NULL));
+    out("{\"active_refs\":[");
+    for (i = 0; i < count; ++i) {
+        const PowerRef *ref = info->activePowers[i];
+        if (i) out(",");
+        if (!ref) { out("null"); continue; }
+        out("{\"build\":%d,\"set\":%d,\"power\":%d}", ref->buildNum, ref->powerSet, ref->power);
+    }
+    /* Recharge countdowns and even timer membership change with elapsed time.
+     * Do not traverse that live array or resolve/repair retained active refs. */
     out("]}");
 }
 
@@ -1554,12 +1583,14 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
             words(&p->attrCur, sizeof(p->attrCur));
             out(",\"attr_max_f32_bits\":"); words(&p->attrMax, sizeof(p->attrMax));
             out(",\"power_inventory\":"); power_inventory(p);
+            out(",\"power_modes\":"); power_modes(p);
             out(",\"generic_inventories\":"); generic_inventories(p);
             out(",\"receive_core\":"); character_receive_core(p);
             out(",\"default_power\":"); default_power_state(p->ppowDefault);
             out(",\"target_state\":"); character_target_state(p);
             out("}");
         } else out("null");
+        out(",\"power_activity\":"); power_activity(e->powerInfo);
         out(",\"player\":");
         if (e->pl) {
             out("{\"lastClientStatePktId\":%u,\"badges\":", e->pl->lastClientStatePktId);
