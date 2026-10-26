@@ -1842,3 +1842,21 @@ or six-file asset expansion. Replay40283068633 at that head passes both targets
 and partial comparison. Atlas40283068606 completed failed: still connected,
 world_rendered:false and map_name_visible:false (job121444348155). No Thor test
 is ready. The six-file material selection remains proposal-only pending approval.
+
+### Force-queue name bounds (2026-10-26 UTC)
+
+Patch0104 replaces the original unbounded force-queue strcpy with the existing
+strncpyt helper and the exact128-byte storage capacity. Valid names up to127 bytes
+remain identical; longer decoded names are terminated after127 bytes. This changes
+only previously overflowing input behavior. Packet reads/window actions and later
+UI consumption remain unchanged. Eight sanitizer cases pass; original128/4096-byte
+inputs reproduce global-buffer-overflows and four defined cases remain identical.
+Forty-two invitation/event/queue/force-queue regression cases pass. uiTurnstile.c
+compiles ARM64 then i686 with one compiler. Both native workflows run the bounds
+control; the force-queue observer test uses the actual strncpyt with a host CRT
+adapter. See evidence/m3-force-queue-bounds.json for commands, outputs and limits.
+
+Preserve active invitation replay40299446281 at6f092b1a; it predates0104. This
+work-branch follow-up needs fresh runtime qualification and Sol review. No change
+to asset selection, original-data exception, screenshot acceptance or milestone
+completion. M3/M4 surface/M5 are still unqualified.

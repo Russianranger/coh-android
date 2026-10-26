@@ -35,6 +35,13 @@ static int window_calls;
 static const char *pktGetString(Packet *p) { ++p->reads; return p->text; }
 static void window_setMode(int w,int m) { assert(w==1 && m==2); ++window_calls; }
 '''
+    code += r"""
+static int strncpy_s(char *d,size_t capacity,const char *s,size_t count) {
+ size_t n=strlen(s); assert(capacity>0 && count<capacity);
+ if(n>count)n=count; memcpy(d,s,n);d[n]=0;return 0;
+}
+"""
+    code += function((source/'libs/UtilitiesLib/src/utils/utils.c').read_text(), 'char *strncpyt(')
     code += state[state.index('static void out('):state.index('void armportReplayStateInit(')]
     code += function(state,'static void fixed_string(')+accessor
     code += function(state,'static void turnstile_force_queue_state(')

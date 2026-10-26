@@ -325,6 +325,9 @@ jobs:
       - name: Check original force-queue receiver and retained name
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_force_queue_state.py --source "$RUNNER_TEMP/reference/src"
+      - name: Check force-queue packet name bounds
+        if: steps.replay-exe-cache.outputs.cache-hit != 'true'
+        run: python3 armport/tests/receiver_force_queue_bounds.py --source "$RUNNER_TEMP/reference/src"
       - name: Check original turnstile invitation receiver and retained IDs
         if: steps.replay-exe-cache.outputs.cache-hit != 'true'
         run: python3 armport/tests/receiver_turnstile_invitation_state.py --source "$RUNNER_TEMP/reference/src"

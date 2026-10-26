@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (103 patches including partial replay observers; Astra leads,
+M3 into Atlas (104 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol accepts implementation through 74aa2c32; invitation delta needs review.
 - Atlas 40283068606: connection passes; rendered-world/map-name checks still fail.
-- Invitation IDs: 10 sanitizer cases/native units pass; fresh runtime/review pending.
+- Invitation replay 40299446281 active; force-queue bounds fix awaits runtime/review.
 - Replay 40283068633 passes both targets/partial comparison; full state remains false.
 - M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.
