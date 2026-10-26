@@ -1100,3 +1100,15 @@ in `evidence/m3-turnstile-event-state-controls.json`. Fresh runtime/review pendi
 Preserve Atlas 40263048945 and replay 40263048934 at 9d82645c; they test the
 preceding combined power/material/normalization head, not this event addition.
 Full state, screenshot, M3/M4/M5 and Thor readiness remain unqualified.
+
+### Mission waypoint and keydoor retained arrays (2026-10-26 UTC)
+
+Partial state now includes ordered nullable mission_waypoints and mission_keydoors.
+The actual receivers' retained IDs, types, flags, received creationTime, colors,
+name/map strings, original/current position F32 bits and resolved icon names stay
+literal. Local request UIDs, layout/pointer caches and complete selected-destination
+lifecycle are excluded. No decoder or normalization changes. Seventeen receiver/
+writer sanitizer cases,18 server-waypoint regression cases,191 Python tests and
+sequential native state.c compilation pass. See evidence/m3-mission-destination-controls.json
+for commands, host-fixture limits and the preserved zero-time closest-selection
+quirk. Fresh native replay and review remain pending; full state/M3 stay incomplete.

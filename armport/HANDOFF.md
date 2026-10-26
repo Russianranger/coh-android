@@ -1923,3 +1923,21 @@ this diagnostic and must be preserved. Qualify the new diagnostic in a fresh
 Atlas run after existing compilation completes. Review5648682350 still covers
 74aa2c32 only; neither newer receiver changes nor this probe have new review.
 M3/full state/rendering, M4 Android surface and physical Thor/M5 remain open.
+
+### Retained mission waypoint and keydoor arrays (2026-10-26 UTC)
+
+Snapshots now retain original missionDest/keydoorDest array order, nullable entries,
+IDs/types, navigation/display flags, received creation timestamps, colors, bounded
+name/map strings, original/current position F32 bits and resolved icon names.
+Local request UIDs, layout caches and pointers are excluded. No original receiver,
+closest-selection, outgoing waypoint request or UI behavior changes; no new ID
+normalization. Complete selected task/waypoint lifecycle remains outside coverage.
+
+Seventeen actual-receiver/helper/writer sanitizer cases pass, plus18 server-waypoint
+regression cases and191 Python tests. state.c compiles ARM64 then i686 with one
+compiler. The receiver/selection/request bodies remain byte-identical to upstream.
+The controls preserve the original unsigned zero-time closest-selection quirk
+after deletion; this snapshot addition does not repair it. Reference CI runs the
+new control on fresh executable builds. Commands/output and limitations:
+evidence/m3-mission-destination-controls.json. Native replay/review are pending;
+full-schema/full-state/M3 flags remain false. Preserve40308641544 at6f60f802.

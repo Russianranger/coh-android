@@ -1352,6 +1352,33 @@ static void player_turnstile_state(const EntPlayer *p)
         p->lastTurnstileEventID, p->lastTurnstileMissionID);
 }
 
+/* Original mission/keydoor array order and retained receive destinations.
+ * creationTime here is received U32 data, not a local clock. Exclude the local
+ * request UID, map-layout caches, pointers and render-only bookkeeping. */
+static void mission_destination_state(Destination *const *items)
+{
+    int i, count = eaSize(&items);
+    check(count >= 0 && count <= 8192);
+    out("[");
+    for (i = 0; i < count; ++i) {
+        const Destination *d = items[i];
+        if (i) out(",");
+        if (!d) { out("null"); continue; }
+        out("{\"id\":%d,\"type\":%d,\"nav_on\":%d,\"show_waypoint\":%u,\"icon_in_compass\":%u,\"creation_time\":%u,\"color\":%u,\"background_color\":%u,\"name\":",
+            d->id, d->type, d->navOn, (unsigned)d->showWaypoint,
+            (unsigned)d->iconBInCompass, d->creationTime,
+            (unsigned)d->color, (unsigned)d->colorB);
+        fixed_string(d->name, sizeof(d->name));
+        out(",\"map\":"); fixed_string(d->mapName, sizeof(d->mapName));
+        out(",\"original_position_f32_bits\":"); words(d->orig_world_pos, sizeof(d->orig_world_pos));
+        out(",\"position_f32_bits\":"); words(d->world_location[3], sizeof(d->world_location[3]));
+        out(",\"icon_name\":"); string(d->icon ? d->icon->name : NULL);
+        out(",\"background_icon_name\":"); string(d->iconB ? d->iconB->name : NULL);
+        out("}");
+    }
+    out("]");
+}
+
 typedef struct ArmPortWaypointEntry {
     const char *key;
     const Destination *destination;
@@ -1695,6 +1722,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"karma_widgets\":"); karma_receive_state();
     out(",\"desaturation_received_f32_bits\":"); desaturation_receive_state();
     out(",\"server_waypoints\":"); server_waypoint_state();
+    out(",\"mission_waypoints\":"); mission_destination_state(missionDest);
+    out(",\"mission_keydoors\":"); mission_destination_state(keydoorDest);
     out(",\"turnstile\":"); turnstile_receive_state();
     out(",\"turnstile_event\":"); turnstile_event_state();
     out(",\"turnstile_force_queue\":"); turnstile_force_queue_state();
