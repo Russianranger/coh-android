@@ -1,0 +1,57 @@
+diff --git a/Common/entity/PowerInfo.c b/Common/entity/PowerInfo.c
+index ec1fd98..3476d15 100644
+--- a/Common/entity/PowerInfo.c
++++ b/Common/entity/PowerInfo.c
+@@ -26,6 +26,9 @@
+ #include "player/player.h"
+ #include "entity/entity.h"
+ #include "entity/entPlayer.h"
++#if !TEST_CLIENT
++#include "clientcomm/armport_replay.h"
++#endif
+ #endif
+ #if SERVER
+ #include "entity/character_combat.h"
+@@ -850,6 +853,10 @@ void entity_ReceivePowerInfoUpdate(Entity* e, Packet* pak)
+                     ppow->fUsageTime = fUsageTime;
+                     ppow->fAvailableTime = fAvailableTime;
+                     ppow->ulCreationTime = ulCreationTime;
++#if CLIENT && !TEST_CLIENT
++                    armportReplayPowerCreationTime(e, ppowRef.buildNum, ppowRef.powerSet, ppowRef.power,
++                        uniqueID, ppow->iUniqueID, ppow->ppowBase->pchFullName, ulCreationTime);
++#endif
+                     ppow->bEnabled = bEnabled;
+                     ppow->bDisabledManually = bDisabledManually;
+ 
+@@ -1027,6 +1034,11 @@ void entity_ReceivePowerInfoUpdate(Entity* e, Packet* pak)
+             {
+                 powerRechargeTimer_Receive(&timer, pak);
+                 powerInfo_ChangeRechargeTimer(e->powerInfo, timer.ppowRef, timer.rechargeCountdown);
++#if CLIENT && !TEST_CLIENT
++                /* Preserve the received bits before elapsed-time updates. */
++                armportReplayPowerRechargeTime(e, timer.ppowRef.buildNum, timer.ppowRef.powerSet,
++                    timer.ppowRef.power, &timer.rechargeCountdown);
++#endif
+             }
+         }
+     }
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index c714366..983c0b6 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -32,6 +32,7 @@ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
+ void armportReplayAlignmentDelay(unsigned index, unsigned seconds);
+ void armportReplayTaskforceTime(const Entity *e, unsigned index, unsigned seconds);
++void armportReplayPowerRechargeTime(const Entity *e, int build, int set, int power, const float *seconds);
+ void armportReplayPowerCreationTime(const Entity *e, int build, int setOrdinal, int powerOrdinal, int receivedUniqueId, int retainedUniqueId, const char *name, unsigned seconds);
+ void armportReplayRewardTime(const Entity *e, int activePlayer, int index, const char *name, unsigned seconds);
+ void armportReplayDesaturation(const float *delay, const float *weight, const float *target, const float *fade);
+@@ -45,6 +46,7 @@ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #define armportReplayOrientation(e, axis, value, accepted) ((void)0)
+ #define armportReplayAlignmentDelay(index, seconds) ((void)0)
+ #define armportReplayTaskforceTime(e, index, seconds) ((void)0)
++#define armportReplayPowerRechargeTime(e, build, set, power, seconds) ((void)0)
+ #define armportReplayPowerCreationTime(e, build, setOrdinal, powerOrdinal, receivedUniqueId, retainedUniqueId, name, seconds) ((void)0)
+ #define armportReplayRewardTime(e, activePlayer, index, name, seconds) ((void)0)
+ #define armportReplayDesaturation(delay, weight, target, fade) ((void)0)

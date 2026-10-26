@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-25. M0 survey: merged (PR #3). Route: build the original client as an ARM64
+Updated 2026-10-26. M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
 
 M1 libraries: merged (PR #4, approved by Sol). The original textparser built
@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (98 patches including partial replay observers; Astra leads,
+M3 into Atlas (99 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -34,7 +34,7 @@ see armport/HANDOFF.md):
   (0046, diagnostics only).
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol midpoint finding 5644680146 fixed by 0082; fresh rendering run pending.
-- Atlas 40240791819 fails; server supplement fix under test in 40247679019.
+- Atlas 40247679019: terrain visible/player grounded; screenshot/materials still fail.
 - Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
 - Replay 40247679017: both targets pass; 45 INITIAL-ID fields need Sol decision.
 - M4 40176336731 passes guest create/reopen and continuity; review/surface pending.

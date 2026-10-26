@@ -81,6 +81,8 @@ static struct { int svr_idx, active_player, index; unsigned id, seconds; char na
 static unsigned reward_time_count;
 static struct { int entity_valid, svr_idx, build, set_ordinal, power_ordinal, received_unique_id, retained_unique_id; unsigned id, seconds; char name[1024]; } power_creation_times[8192];
 static unsigned power_creation_time_count;
+static struct { int svr_idx, build, set, power; unsigned id, bits; } power_recharge_times[8192];
+static unsigned power_recharge_time_count;
 
 static void check_at(int ok, const char *condition, int line)
 {
@@ -140,6 +142,7 @@ void armportReplayStateInit(void)
     taskforce_time_count = 0;
     reward_time_count = 0;
     power_creation_time_count = 0;
+    power_recharge_time_count = 0;
     active = 1;
 }
 void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted)
@@ -262,6 +265,37 @@ static void power_creation_time_receives(void)
     }
     /* Ordered accepted wire assignments, not power lifetime or live clock state.
      * Ordinals identify received slots; they need not equal retained power indices. */
+    out("]");
+}
+
+
+void armportReplayPowerRechargeTime(const Entity *e, int build, int set, int power, const float *seconds)
+{
+    unsigned n;
+    if (!active) return;
+    check(e != NULL && seconds != NULL && power_recharge_time_count < 8192);
+    check(sizeof(*seconds) == sizeof(unsigned));
+    n = power_recharge_time_count++;
+    power_recharge_times[n].svr_idx = e->svr_idx;
+    power_recharge_times[n].id = e->id;
+    power_recharge_times[n].build = build;
+    power_recharge_times[n].set = set;
+    power_recharge_times[n].power = power;
+    memcpy(&power_recharge_times[n].bits, seconds, sizeof(unsigned));
+}
+
+static void power_recharge_time_receives(void)
+{
+    unsigned i;
+    check(power_recharge_time_count <= 8192);
+    out("[");
+    for (i = 0; i < power_recharge_time_count; ++i) {
+        out("%s{\"svr_idx\":%d,\"entity_id\":%u,\"build\":%d,\"set\":%d,\"power\":%d,\"received_f32_bits\":%u}",
+            i ? "," : "", power_recharge_times[i].svr_idx, power_recharge_times[i].id,
+            power_recharge_times[i].build, power_recharge_times[i].set,
+            power_recharge_times[i].power, power_recharge_times[i].bits);
+    }
+    /* Accepted receive history; live countdown and expiry remain unobserved. */
     out("]");
 }
 
@@ -1644,6 +1678,7 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"taskforce_time_receives\":"); taskforce_time_receives();
     out(",\"reward_time_receives\":"); reward_time_receives();
     out(",\"power_creation_time_receives\":"); power_creation_time_receives();
+    out(",\"power_recharge_time_receives\":"); power_recharge_time_receives();
     out(",\"friend_receive_id\":%u}\n", armportReplayFriendPacketId());
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);

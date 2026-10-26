@@ -1638,3 +1638,22 @@ silently enlarge its dependencies. `evidence/m3-power-activity-controls.json`
 records commands and limits. Host controls do not establish native ABI or full
 activation/recharge lifecycle. Fresh runtime qualification remains required;
 active replay 40254223051 tests preceding power-time head 38b5cebb only.
+
+### Power-update wire-time observations (2026-10-26 UTC)
+
+Patch 0099 extends the accepted creation-time history to PowerInfo updates and
+records received recharge F32 bits after the original timer-change call. Ordered
+bounded histories retain literal identities and signed references; no float
+normalization, packet reads or original assignments change. Live recharge
+countdown/membership and live creation clocks remain excluded because local
+elapsed-time code changes them. This is receive history, not full lifecycle.
+
+All 14 source-derived ASan/UBSan update cases, 26 initial creation-time cases,
+20 reward regression cases and 180 Python tests pass. Original-vs-observed
+controls retain reads/calls/storage, including skipped/accepted entries, raw
+NaN/zero/infinity bits, repeated references, bounds/reset/nonmutation and later
+local timer overwrite/removal. PowerInfo.c/state.c compile ARM64 then i686 with
+one compiler. Only local LeakSanitizer is disabled for /proc; CI keeps defaults.
+See `evidence/m3-power-update-time-controls.json` for commands and limits.
+All prior 98 patches are byte-identical; upstream/ remains untouched. Fresh
+native linking/runtime qualification is still required. No milestone pass.
