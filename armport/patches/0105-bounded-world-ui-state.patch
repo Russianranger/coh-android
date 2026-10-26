@@ -1,0 +1,47 @@
+diff --git a/Game/src/graphics/groupdraw.c b/Game/src/graphics/groupdraw.c
+index aac2821..040d992 100644
+--- a/Game/src/graphics/groupdraw.c
++++ b/Game/src/graphics/groupdraw.c
+@@ -32,6 +32,11 @@ GroupDraw    group_draw;
+ static bool invalidate_group_ents;
+ 
+ #if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
++#include "UI/uiCompass.h"
++#include "UI/uiWindows.h"
++#include "UI/uiAutomap.h"
++#include "gameComm/wdwbase.h"
++
+ ArmPortWorldTrace armport_world_trace;
+ static unsigned armport_world_frames, armport_world_samples;
+ static void armportWorldBegin(void)
+@@ -66,6 +71,22 @@ static void armportWorldCamera(void)
+     detail[sizeof(detail)-1] = 0;
+     armportZoneTrace("world.camera", detail);
+ }
++/* A world-phase state sample, not proof that a later UI draw emitted text.
++ * Match compassWindow's destination selection; inspect only fixed-array first
++ * bytes, never localize strings, invoke UI actions or traverse widget objects. */
++static void armportWorldUI(void)
++{
++    const int selected_task = activeTaskDest.type == ICON_MISSION;
++    const Destination *dest = selected_task ? &activeTaskDest : &waypointDest;
++    char detail[256];
++    _snprintf(detail, sizeof(detail),
++        "frame=%u compass_mode=%d map_mode=%d mission_map=%d selected_task=%d selected_type=%d name_present=%d map_present=%d",
++        armport_world_frames, window_getMode(WDW_COMPASS), window_getMode(WDW_MAP),
++        game_state.mission_map, selected_task, dest->type,
++        dest->name[0] != 0, dest->mapName[0] != 0);
++    detail[sizeof(detail)-1] = 0;
++    armportZoneTrace("world.ui", detail);
++}
+ static void armportWorldEnd(int vis)
+ {
+     int i;
+@@ -95,6 +116,7 @@ static void armportWorldEnd(int vis)
+     detail[sizeof(detail)-1] = 0;
+     armportZoneTrace("world.models", detail);
+     armportWorldCamera();
++    armportWorldUI();
+     armport_world_trace.active = 0;
+     ++armport_world_samples;
+ }

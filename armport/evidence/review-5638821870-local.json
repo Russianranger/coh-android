@@ -1,0 +1,20 @@
+{
+  "tests_command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "tests": 66,
+  "tests_result": "OK",
+  "arm64_game_link_exit": 0,
+  "i686_game_link_exit": 0,
+  "compiler_processes": 2,
+  "manifest_coverage_command": "python3 armport/scripts/reviewed_asset_coverage.py --evidence armport/evidence/m3-dispatch-errors-40105902494.json --output armport/evidence/m3-reviewed-file-selection.json",
+  "selected_files": 166,
+  "selected_bytes": 17992883,
+  "ambiguous": 0,
+  "uncovered_geometry": 7,
+  "uncovered_textures": 7,
+  "local_archive_verification": [
+    "client-visual-assets.zip",
+    "character-avatar-defaults.zip"
+  ],
+  "zone_archive_execution_pending_ci": true,
+  "upstream_diff_empty": true
+}

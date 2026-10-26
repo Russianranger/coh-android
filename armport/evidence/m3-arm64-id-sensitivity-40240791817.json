@@ -1,0 +1,173 @@
+{
+  "run": 40240791817,
+  "artifact": 12617326111,
+  "verified_snapshots": 351,
+  "same_id_mismatches": [],
+  "id_sensitivity_differing_snapshots": 1,
+  "id_sensitivity_paths": {
+    "$.entities[0].packet_order.pkt_id_character_stats": 1,
+    "$.entities[0].packet_order.pkt_id_costume": 1,
+    "$.entities[0].packet_order.pkt_id_logout": 1,
+    "$.entities[0].packet_order.pkt_id_powerCust": 1,
+    "$.entities[0].packet_order.pkt_id_rare_bits": 1,
+    "$.entities[0].packet_order.pkt_id_seq_move": 1,
+    "$.entities[0].packet_order.pkt_id_state_mode": 1,
+    "$.entities[0].packet_order.pkt_id_supergroup": 1,
+    "$.entities[0].packet_order.pkt_id_targetting": 1,
+    "$.entities[0].packet_order.pkt_id_titles": 1,
+    "$.entities[0].packet_order.pkt_id_xlucency": 1
+  },
+  "sample_differences": {
+    "0": [
+      "$.entities[0].packet_order.pkt_id_character_stats",
+      "$.entities[0].packet_order.pkt_id_costume",
+      "$.entities[0].packet_order.pkt_id_logout",
+      "$.entities[0].packet_order.pkt_id_powerCust",
+      "$.entities[0].packet_order.pkt_id_rare_bits",
+      "$.entities[0].packet_order.pkt_id_seq_move",
+      "$.entities[0].packet_order.pkt_id_state_mode",
+      "$.entities[0].packet_order.pkt_id_supergroup",
+      "$.entities[0].packet_order.pkt_id_targetting",
+      "$.entities[0].packet_order.pkt_id_titles",
+      "$.entities[0].packet_order.pkt_id_xlucency"
+    ]
+  },
+  "scope": "ARM64 only; i686 and combined comparison pending",
+  "literal_values": {
+    "pkt_id_character_stats": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_costume": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_logout": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_powerCust": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_rare_bits": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_seq_move": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_state_mode": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_supergroup": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_targetting": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_titles": {
+      "id1": 1,
+      "id31": 31
+    },
+    "pkt_id_xlucency": {
+      "id1": 1,
+      "id31": 31
+    }
+  },
+  "source_updates": {
+    "pkt_id_character_stats": [
+      {
+        "line": 3290,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_character_stats);"
+      }
+    ],
+    "pkt_id_costume": [
+      {
+        "line": 3242,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_costume);"
+      }
+    ],
+    "pkt_id_logout": [
+      {
+        "line": 3487,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_logout);"
+      }
+    ],
+    "pkt_id_powerCust": [
+      {
+        "line": 3254,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_powerCust);"
+      }
+    ],
+    "pkt_id_rare_bits": [
+      {
+        "line": 3506,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_rare_bits);"
+      }
+    ],
+    "pkt_id_seq_move": [
+      {
+        "line": 3202,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_seq_move);"
+      }
+    ],
+    "pkt_id_state_mode": [
+      {
+        "line": 3187,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_state_mode);"
+      }
+    ],
+    "pkt_id_supergroup": [
+      {
+        "line": 3476,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_supergroup);"
+      }
+    ],
+    "pkt_id_targetting": [
+      {
+        "line": 3320,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_targetting);"
+      }
+    ],
+    "pkt_id_titles": [
+      {
+        "line": 3258,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_titles);"
+      }
+    ],
+    "pkt_id_xlucency": [
+      {
+        "line": 3246,
+        "text": "UPDATE_PACKET_ID(e->pkt_id_xlucency);"
+      }
+    ]
+  },
+  "artifact_sha256": "7a50c8cb886cc244eba2bcb886acff38b8c801a02a5d56036091596a8875ce87",
+  "source_commit": "f6332f2953f5d79768717f0021a5626fe04af318",
+  "dispatch_validation": "run_ci.check_output for all three labels, approved exact original_texture_exception=True; returncode2 and no timeout kill",
+  "comparison_method": "SHA256-check each receiver.jsonl state row against state-NNN.json; compare id1-a/id1-b literally; compare id1-a/id31 using only existing compare_state.canonical_initial_ids, then enumerate compare_state.differences for all117 snapshots",
+  "proposed_reviewer_decision": {
+    "status": "pending, not implemented",
+    "fields": [
+      "pkt_id_character_stats",
+      "pkt_id_costume",
+      "pkt_id_logout",
+      "pkt_id_powerCust",
+      "pkt_id_rare_bits",
+      "pkt_id_seq_move",
+      "pkt_id_state_mode",
+      "pkt_id_supergroup",
+      "pkt_id_targetting",
+      "pkt_id_titles",
+      "pkt_id_xlucency"
+    ],
+    "condition": "only snapshot index0 in INITIAL-ID sensitivity comparison, and only if that value equals this run synthetic INITIAL ID; preserve literal snapshots and same-ID/cross-architecture comparisons",
+    "constraints": "No wildcard packet-ID rule; later snapshots and other packet-order/structured-ID fields remain literal. Review actual i686/comparison evidence before deciding."
+  },
+  "m3_complete": false
+}

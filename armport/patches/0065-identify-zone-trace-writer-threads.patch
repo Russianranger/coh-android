@@ -1,0 +1,35 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index 191a22d..aa1da90 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -39,7 +39,9 @@ static void armportZoneTraceFile(const char *stage, const char *detail)
+ {
+     char path[32768], *record = NULL, *p;
+     DWORD length = GetEnvironmentVariableA("ARMPORT_ZONE_LOG", path, sizeof(path));
+-    DWORD written = 0, bytes = 0;
++    DWORD written = 0, bytes = 0, tid = GetCurrentThreadId();
++    char digits[10];
++    int digit_count = 0;
+     size_t capacity;
+     HANDLE file = INVALID_HANDLE_VALUE;
+     OVERLAPPED lock = {0};
+@@ -48,7 +50,7 @@ static void armportZoneTraceFile(const char *stage, const char *detail)
+     if (length >= sizeof(path)) goto done;
+     // Bound allocation without silently shortening the evidence.
+     if (strlen(stage) > 1024 || (detail && strlen(detail) > 1024 * 1024)) goto done;
+-    capacity = 6 * (strlen(stage) + (detail ? strlen(detail) : 0)) + 32;
++    capacity = 6 * (strlen(stage) + (detail ? strlen(detail) : 0)) + 64;
+     record = (char *)HeapAlloc(GetProcessHeap(), 0, capacity);
+     if (!record) goto done;
+     p = record;
+@@ -56,6 +58,10 @@ static void armportZoneTraceFile(const char *stage, const char *detail)
+     p = armportTraceJsonString(p, stage);
+     memcpy(p, ",\"text\":", 8); p += 8;
+     p = armportTraceJsonString(p, detail);
++    // Thread metadata is separate from the literal cross-architecture message.
++    memcpy(p, ",\"tid\":", 7); p += 7;
++    do { digits[digit_count++] = '0' + tid % 10; tid /= 10; } while (tid);
++    while (digit_count) *p++ = digits[--digit_count];
+     *p++ = '}'; *p++ = '\n';
+     bytes = (DWORD)(p - record);
+     file = CreateFileA(path, FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE,

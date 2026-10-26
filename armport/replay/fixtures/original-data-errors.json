@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "approval_comment": 6387467359,
+  "proof_sha256": {
+    "armport/evidence/m3-approved-range-assets.json": "5a2505d2eb1d12d16d2e11b439f01987d1f4ef518ab46b953c3aa4f54048b20e",
+    "armport/evidence/m3-audio-file-tables.json": "cefa63a90711678ca4a06dd5c899795c3dbb685ef89d0116b2f58ddfc6f1bc6a",
+    "armport/evidence/m3-six-run-texture-exception-40203125375.json": "79eae7d45c3d1dffe11c18279a714c096829405415917e0a60a5357c8c58781a",
+    "assets/catalog.json": "6bdfe06a4644b98a07482522fc1aa7f0e209926564942b51a8de03e3683bf6d5",
+    "assets/zones-audio-metadata.json": "729035bea0e65fc9585c084efbb67dea0ffc2546f630dc01c28811173e95c78b"
+  },
+  "occurrences": [
+    {
+      "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+      "dispatch_index": 1,
+      "after_dispatch_index": null,
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+diff --git a/Game/src/UI/uiTurnstile.c b/Game/src/UI/uiTurnstile.c
+index 9839de7..3cea17f 100644
+--- a/Game/src/UI/uiTurnstile.c
++++ b/Game/src/UI/uiTurnstile.c
+@@ -149,6 +149,13 @@ void armportReplayTurnstileEventState(ArmPortTurnstileEventState *state)
+ static U32 windowColor;
+ static int tsJoinFlags = 0;
+ static char sForceQueueEvent[MAX_NAME_LEN] = "";
++#ifdef COH_ARMPORT_REPLAY
++const char *armportReplayTurnstileForceQueue(unsigned *capacity)
++{
++    *capacity = sizeof(sForceQueueEvent);
++    return sForceQueueEvent;
++}
++#endif
+ 
+ static TextAttribs smfTSTextAttr =
+ {
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index b05b00c..40f8a95 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -26,6 +26,7 @@ const UserOption *armportReplayOptions(int *count);
+ const TurnstileMissionClient *const *armportReplayTurnstileMissions(void);
+ const TurnstileMissionClient *armportReplayTurnstileDummy(int category);
+ int armportReplayTurnstileQueue(void);
++const char *armportReplayTurnstileForceQueue(unsigned *capacity);
+ const float *armportReplayTurnstileWait(void);
+ typedef struct ArmPortTurnstileEventState {
+     const char *name;

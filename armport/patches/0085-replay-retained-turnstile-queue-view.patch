@@ -1,0 +1,51 @@
+diff --git a/Game/src/UI/uiTurnstile.c b/Game/src/UI/uiTurnstile.c
+index f65624d..fe56aa2 100644
+--- a/Game/src/UI/uiTurnstile.c
++++ b/Game/src/UI/uiTurnstile.c
+@@ -33,6 +33,7 @@
+ #include "UI/sprite/sprite_text.h"
+ #include "UI/sprite/sprite_base.h"
+ #include "UI/uiTurnstile.h"
++#include "clientcomm/armport_replay.h"
+ #include "graphics/ttFontUtil.h"
+ #include "UI/uiToolTip.h"
+ #include "UI/uiGame.h"
+@@ -108,6 +109,22 @@ static int waitingForData = WAITING_FOR_DATA_OLD_DATA;
+ static TurnstileMissionClient s_firstAvailableDummyMission;
+ static TurnstileMissionClient s_firstAvailableCategoryDummyMission[kTurnstileCategory_Count];
+ 
++#ifdef COH_ARMPORT_REPLAY
++const TurnstileMissionClient *const *armportReplayTurnstileMissions(void)
++{
++    return (const TurnstileMissionClient *const *)turnstileMissions;
++}
++const TurnstileMissionClient *armportReplayTurnstileDummy(int category)
++{
++    if (category == -1) return &s_firstAvailableDummyMission;
++    if (category < 0 || category >= kTurnstileCategory_Count) return NULL;
++    return &s_firstAvailableCategoryDummyMission[category];
++}
++int armportReplayTurnstileQueue(void) { return inQueue; }
++const float *armportReplayTurnstileWait(void) { return &currentWait; }
++#endif
++
++
+ static U32 windowColor;
+ static int tsJoinFlags = 0;
+ static char sForceQueueEvent[MAX_NAME_LEN] = "";
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index d490cc0..9776076 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -12,6 +12,11 @@ typedef struct Packet Packet;
+ typedef struct NetLink NetLink;
+ typedef struct SouvenirClue SouvenirClue;
+ typedef struct VisitedStaticMap VisitedStaticMap;
++typedef struct TurnstileMissionClient TurnstileMissionClient;
++const TurnstileMissionClient *const *armportReplayTurnstileMissions(void);
++const TurnstileMissionClient *armportReplayTurnstileDummy(int category);
++int armportReplayTurnstileQueue(void);
++const float *armportReplayTurnstileWait(void);
+ const VisitedStaticMap *const *armportReplayVisitedMaps(void);
+ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);

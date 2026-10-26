@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-24",
+  "source_parent": "733dca10a9c5aa0a1f32676379080262d452422e",
+  "scope": "case-coherent staging of already approved data; no added assets",
+  "replay": {
+    "run": 40118399218,
+    "job": 120944883208,
+    "artifact": 12570666715,
+    "zip_sha256": "2bfb1f4c364826521680081b53462301ff782bd7f731c594981d357266369fd9",
+    "zone_trace_sha256": "c5260b01393a7b48e038fb0a6a468e98c92f762c4fed87d915fa0a383c0851ef",
+    "mission_room_markers": [
+      {
+        "stage": "mission.room.missing",
+        "text": "group=PPD_Start_01_22& marker=-1 lookup=(-31,-158.5,-338.000061)",
+        "tid": 372
+      },
+      {
+        "stage": "mission.room.missing",
+        "text": "group=grp141175 marker=-1 lookup=(3901.68726,179.903046,201.908447)",
+        "tid": 372
+      }
+    ],
+    "missing_geometry_lines": [
+      "GEO: Missing .geo file object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/Bus_Bank_trays/bus_bank_trays.geo (but rootnames exists)",
+      "GEO: Missing .geo file object_library/Villain_Lairs/office01/trays/start/start.geo (but rootnames exists)"
+    ]
+  },
+  "supplement": {
+    "run": 40127311343,
+    "artifact": 12573793169,
+    "artifact_sha256": "1167a7d2a36adf1a264d6007ff2f7f1106bcfef15cd6e19aa88489b16e0a2308",
+    "inner_zip_sha256": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60",
+    "manifest_sha256": "2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203",
+    "retained_file_count": 2877
+  },
+  "original_input_reproduction": [
+    {
+      "group": "PPD_Start_01_22&",
+      "model": "_BNK_HALLWAY_01",
+      "requested_geometry": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/Bus_Bank_trays/bus_bank_trays.geo",
+      "supplement_member": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+      "bytes": 8367,
+      "sha256": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+      "before": {
+        "requested_path_exists": false,
+        "requested_path_sha256": null,
+        "case_duplicate_entries": 10
+      },
+      "after": {
+        "requested_path_exists": true,
+        "requested_path_sha256": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+        "case_duplicate_entries": 0
+      }
+    },
+    {
+      "group": "grp141175",
+      "model": "_ofc1_start_01",
+      "requested_geometry": "object_library/Villain_Lairs/office01/trays/start/start.geo",
+      "supplement_member": "data/object_library/villain_lairs/office01/trays/start/start.geo",
+      "bytes": 4183,
+      "sha256": "c29fee7dbfec141d3eeca2d72ecb90c7a797b217b0dae2cde4abcd9b6e721f8a",
+      "before": {
+        "requested_path_exists": false,
+        "requested_path_sha256": null,
+        "case_duplicate_entries": 10
+      },
+      "after": {
+        "requested_path_exists": true,
+        "requested_path_sha256": "c29fee7dbfec141d3eeca2d72ecb90c7a797b217b0dae2cde4abcd9b6e721f8a",
+        "case_duplicate_entries": 0
+      }
+    }
+  ],
+  "command": "Load prior merge_tree with git show 733dca10a9c5aa0a1f32676379080262d452422e:armport/scripts/smoke_run.py; merge exact original .txt/.rootnames parents and the two SHA-verified approved .geo members into separate temporary before/after roots, strict=True and earlier_roots=[original]; assert prior requested paths absent, corrected paths present with identical hashes and no case-duplicate entries.",
+  "interpretation": "The previous merger physically split case-equivalent parent directories; replay reported both approved geometries missing. This is a staging defect and a supported explanation for the failed tray lookups, not runtime proof that they are fixed.",
+  "tests": {
+    "command": "python3 -m unittest discover -s armport/tests",
+    "exit_code": 0,
+    "output": ".......................................................................................\n----------------------------------------------------------------------\nRan 87 tests in 5.567s\n\nOK\n"
+  },
+  "m4": {
+    "branch_commit": "a63d0952d72987a1c237b6604304a3fbb15af3df",
+    "run": 40127841088,
+    "result": "pending",
+    "client_run": 40127311343,
+    "client_artifact": 12573119650,
+    "client_artifact_sha256": "4cf396436be37d38f04ab7cef036d25fe17f383b08d730ff388ff011e6c2ec09",
+    "client_exe_sha256": "f1d439f469c7ba3cebbbcd3b06015f8bed6f29d28375553f0ae0a879c1899655",
+    "disassembly_command": "llvm-objdump -d --start-address=0x140074754 --stop-address=0x1400747e0 CityOfHeroes.exe",
+    "disassembly_output": "\n/tmp/coh-dev11/release/CityOfHeroes.exe:\tfile format coff-arm64\n\nDisassembly of section .text:\n\n0000000140074754 <powerCust_FindPowerCustomization>:\n140074754: d100c3ff    \tsub\tsp, sp, #0x30\n140074758: a90153f3    \tstp\tx19, x20, [sp, #0x10]\n14007475c: a9027bf5    \tstp\tx21, x30, [sp, #0x20]\n140074760: aa0003f3    \tmov\tx19, x0\n140074764: d00032a0    \tadrp\tx0, 0x1406ca000 <.refptr.white_tex_atlas+0x1e58>\n140074768: 91286c00    \tadd\tx0, x0, #0xa1b\n14007476c: aa1e03f5    \tmov\tx21, x30\n140074770: aa0103f4    \tmov\tx20, x1\n140074774: f90007e1    \tstr\tx1, [sp, #0x8]\n140074778: 94191747    \tbl\t0x1406ba494 <getenv>\n14007477c: b40000e0    \tcbz\tx0, 0x140074798 <powerCust_FindPowerCustomization+0x44>\n140074780: aa1503fe    \tmov\tx30, x21\n140074784: aa1403e1    \tmov\tx1, x20\n140074788: aa1303e2    \tmov\tx2, x19\n14007478c: d50320ff    \txpaclri\n140074790: aa1e03e0    \tmov\tx0, x30\n140074794: 94000013    \tbl\t0x1400747e0 <armportPowerLookupTrace>\n140074798: b40001b3    \tcbz\tx19, 0x1400747cc <powerCust_FindPowerCustomization+0x78>\n14007479c: f9400261    \tldr\tx1, [x19]\n1400747a0: b4000161    \tcbz\tx1, 0x1400747cc <powerCust_FindPowerCustomization+0x78>\n1400747a4: b89f0022    \tldursw\tx2, [x1, #-0x10]\n1400747a8: 34000122    \tcbz\tw2, 0x1400747cc <powerCust_FindPowerCustomization+0x78>\n1400747ac: 90000004    \tadrp\tx4, 0x140074000 <ReloadPowers+0x2b0>\n1400747b0: 91158084    \tadd\tx4, x4, #0x560\n1400747b4: 910023e0    \tadd\tx0, sp, #0x8\n1400747b8: 52800103    \tmov\tw3, #0x8                // =8\n1400747bc: 9419170c    \tbl\t0x1406ba3ec <bsearch>\n1400747c0: b4000080    \tcbz\tx0, 0x1400747d0 <powerCust_FindPowerCustomization+0x7c>\n1400747c4: f9400000    \tldr\tx0, [x0]\n1400747c8: 14000002    \tb\t0x1400747d0 <powerCust_FindPowerCustomization+0x7c>\n1400747cc: aa1f03e0    \tmov\tx0, xzr\n1400747d0: a9427bf5    \tldp\tx21, x30, [sp, #0x20]\n1400747d4: a94153f3    \tldp\tx19, x20, [sp, #0x10]\n1400747d8: 9100c3ff    \tadd\tsp, sp, #0x30\n1400747dc: d65f03c0    \tret\n",
+    "observation": "Exact CI Release has a 48-byte frame, no __chkstk in the lookup, and captures x30 before getenv; incoming LR is passed to the noinline trace helper.",
+    "tests_output": "..................Note: /workspace/scratch/6e8acd6310fe/coh-m4/armport/tests/java/ArmPortAcceptanceTest.java uses unchecked or unsafe operations.\nNote: Recompile with -Xlint:unchecked for details.\n.....\n----------------------------------------------------------------------\nRan 23 tests in 1.092s\n\nOK\n"
+  },
+  "acceptance": {
+    "m3_complete": false,
+    "m4_complete": false,
+    "texture_exception_enabled": false,
+    "extra_assets_added": false,
+    "wine_execution_locally": false
+  },
+  "full_original_tree_merge": {
+    "command": "stage_atlas_supplement.stage(retained_source, supplement); merge_tree(upstream/i24/data, runtime); merge_tree(supplement, runtime, strict=True, earlier_roots=[upstream/i24/data]); assert case-folded inventory unique and both requested geometry SHA-256 values match",
+    "output": {
+      "original_data_files": 156287,
+      "supplement_files": 2877,
+      "merged_files": 159164,
+      "case_duplicate_entries": 0,
+      "both_requested_geometry_hashes_match": true,
+      "elapsed_seconds": 20.827
+    }
+  }
+}

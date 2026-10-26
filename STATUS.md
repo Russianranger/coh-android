@@ -1,8 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-25.
-
-M0 survey: merged (PR #3). Route: build the original client as an ARM64
+Updated 2026-10-26. M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
 
 M1 libraries: merged (PR #4, approved by Sol). The original textparser built
@@ -23,7 +21,8 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (current work on armport/m3-atlas; Astra leads from here,
+M3 into Atlas: accepted (Sol 5659701771) and merge approved by the user; 106 patches.
+Claude leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -31,10 +30,11 @@ see armport/HANDOFF.md):
 - Run 39960894368: the ARM64 client logged in through its own UI, chose the
   TestClient-created character and is connected on Atlas Park in the
   database (loaded, map 1), still connected after the screenshots.
-- Fixes on the way: SOCKET width (0044), version-check opt-in for the
-  fake-auth server (0045), empty world-group slots (0047), login-stage log
-  (0046, diagnostics only).
-- Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
-- M3 still incomplete: see draft PR #6 for current loading/replay evidence.
-- M4 40176336731 passes guest creation/save/reopen and host continuity.
-- M4 review pending; Android surface/Thor unvalidated. See armport/M4-REPORT.md.
+- Fixes: SOCKET width (0044), version-check opt-in (0045), empty world groups (0047).
+- Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
+- Final head d7c072246: Atlas 40407492746 and replay 40407492734 pass. World
+  rendered (plaza/statue/dome), 0 after-load errors, still connected; ARM64 =
+  i686 partial state, equal error inventories. Reduced scope: completeness
+  flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
+- M4 (PR #7, armport/m4-runtime): 40176336731 passes guest continuity; rerun on the
+  merged M3 client pending. See armport/M4-REPORT.md. Android surface/Thor pending.

@@ -1,0 +1,60 @@
+{
+  "run_id": 40224584944,
+  "source_commit": "5919e8c327f2b17d3adab5fb8fa965ebb16aa2f4",
+  "url": "https://github.com/Russianranger/coh-android/actions/runs/40224584944",
+  "api_evidence": {
+    "jobs_endpoint": "GET /repos/Russianranger/coh-android/actions/runs/40224584944/jobs",
+    "jobs": [
+      {
+        "id": 121263668685,
+        "name": "reference-build (arm64, aarch64)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121263668743,
+        "name": "reference-build (i686, i686)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121272378091,
+        "name": "partial-state-comparison",
+        "conclusion": "success"
+      },
+      {
+        "id": 121272378270,
+        "name": "error-comparison",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "job_log_notices": {
+    "partial": {
+      "outside_error_inventories_equal": true,
+      "source_commit": "5919e8c327f2b17d3adab5fb8fa965ebb16aa2f4",
+      "scope": "partial_receiver_state_comparison",
+      "original_texture_exception": true,
+      "accepted_original_data_errors": [
+        {
+          "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+          "dispatch_index": 1,
+          "after_dispatch_index": null,
+          "count": 1
+        }
+      ],
+      "partial_state_equal": true,
+      "state_schema_complete": false,
+      "state_comparison_complete": false,
+      "m3_replay_complete": false
+    },
+    "errors": {
+      "source_commit": "5919e8c327f2b17d3adab5fb8fa965ebb16aa2f4",
+      "shared": 90279,
+      "arm64_only": 0,
+      "i686_only": 0,
+      "shared_missing_geometry_files": 0,
+      "error_free": false,
+      "m3_replay_complete": false
+    }
+  },
+  "interpretation": "CI reports matching partial receiver state and matching outside-error inventories. This is not independent artifact revalidation or complete milestone qualification. It predates e78f0193 observer additions."
+}

@@ -1,0 +1,652 @@
+{
+  "run_id": 40189560565,
+  "job_id": 121159624900,
+  "tested_commit": "3539492e36d7436d29a02b789a2d29d4b3014cf0",
+  "artifact_id": 12600255615,
+  "artifact_sha256": "008cca75eedecfdc0cbcf25a1e04e580ef40c519cbd413145a1c884e2d6173f7",
+  "guest_passed": true,
+  "guest_failures": [],
+  "client": {
+    "connected_on_atlas": true,
+    "samples": [
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:21:55.368427+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:22:59.611453+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:24:01.996902+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:24:59.391960+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:26:00.453801+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:26:58.412255+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:27:59.578617+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:28:58.955323+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:30:00.576147+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:31:00.753018+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:32:00.880768+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:33:01.180439+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:34:02.398890+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:35:01.699591+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:36:03.331333+00:00"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false,
+        "sampled_utc": "2026-10-25T12:37:02.288098+00:00"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1",
+        "sampled_utc": "2026-10-25T12:37:20.051338+00:00"
+      }
+    ],
+    "status_queries": 17,
+    "atlas_status": {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "address": "127.0.0.1"
+    },
+    "connected_utc": "2026-10-25T12:37:20.051350+00:00",
+    "host_done": true,
+    "final_status": {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "address": "127.0.0.1"
+    },
+    "still_connected": true,
+    "client_stopped_before_cleanup": true
+  },
+  "driver": {
+    "enter_attempts": 2,
+    "world_rendered": false,
+    "zone_load_seconds": 1563,
+    "qa_notice_actions": [
+      {
+        "window": "10485764",
+        "pid": 8166,
+        "before": "/home/runner/work/_temp/m3-evidence/screens/18-qa-notice-before.png",
+        "focus_exit": 0,
+        "return_sent": true,
+        "after": "/home/runner/work/_temp/m3-evidence/screens/19-qa-notice-after.png"
+      }
+    ],
+    "frame_checks": [
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.435363,
+          "deviation": 0.142339
+        },
+        "map_name_visible": false,
+        "ocr": "_ ferieroet New! Mere!* Aa ea == \u2018Malp) Contact) Mission) Glues) Collect a GepiMs) GNorep Gisins feamilecguelhriendsiSuperdEmai! UF Tab 1) 2) 3) 4 vate CT > | wo Rowers)||nspirations)/Enhancements) Salvage =r SAO. ARAOeRe a a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.436246,
+          "deviation": 0.142328
+        },
+        "map_name_visible": false,
+        "ocr": "ray) Target) Nav) Menu: ) U Qe eee eS aa \u2018Malp) Contact) Mission) Glues) Collect ae ENE a =e \u2014 sas os \u2014\u2014 a ae \u2014\u2014\u2014 = aes \u2014\u2014\u2014 a == \u2014 apIMs) Cone) Helped LsomaleagueliriendstS uperdEmallBLECGTabElE 20364 \u2014T vate CT | wo Rowers)||nspirations)/Enhancements) Salvage Ni. vans A.-.a.a.\u00a9. = 7 a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.439111,
+          "deviation": 0.144237
+        },
+        "map_name_visible": false,
+        "ocr": "\u2014\u2014 ra! Miarget! Nay; Menu: \u2014\u2014\u00ab_) No MR \u2018Malp) Contact) Mission) Glues) Collect 7 ae \u2014 oi \u2014\u2014 = \u2014_\u2014 \u2014 ae _ a a GepyMs) GNonep Gizins) LsomaleagueliriendstS uperdEmallBLECGTabElE 20364 \u2014T - vate CT Rowers)|inspirations\u2122enhancements) Salvage A..F malriralrale = 7 a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.440713,
+          "deviation": 0.145112
+        },
+        "map_name_visible": false,
+        "ocr": "ly) larget) Nav) Menu: pu ee, a , _/ \u2018Malp) Contact) Mission) Glues) Collect a a = \u2014\u2014\u2014 \u2014_\u2014\u2014 a \u2014\u2014\u2014\u2014 \u2014 a \u2014 = \u2014\u2014 aD \u20ac2 GD Tab 1) 2) 3) 4 feamMleaguellhriendsiSuperiima WilLle \u2018 s SRY tm \u2014 TT Rowers)|inspirations\u2122enhancements) Salvage LALA. malriralrale = 7 Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.443278,
+          "deviation": 0.146426
+        },
+        "map_name_visible": false,
+        "ocr": "LA* D Target! Nav) Menu) arget Menu) a Z\u2014 5:5 Cora Witten GD Gell ee ow (Help Me!) G27 CED LsomaleagueliriendstS uperdEmallBLECGTabElE 20364 \u2014T vate =a Rowers)|inspirations\u2122enhancements) Salvage =.=\" COR AAOe a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.44402,
+          "deviation": 0.146641
+        },
+        "map_name_visible": false,
+        "ocr": "i | yaliarget)|NavjiMeny) Se a Ee Glues) Gollect 4 \u2014 _ a to = \u2014\u2014\u2014 = (Help Me!) ED LsomaleagueliriendstS uperdEmallBLECGTabElE 20364 \u2014T vate =a Rowers)|inspirations\u2122enhancements) Salvage Ja Pea. Woveale lic lt oi AOA OS 7 a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.447005,
+          "deviation": 0.149058
+        },
+        "map_name_visible": false,
+        "ocr": "a yliarget|NaviMeny) IMapliGontact)/Mission)|Glues)iGollect \u2014\u2014\u2014 4 2 \u2014\u2014 = \u2014\u2014 a = = \u2014_ a ae (Help Me!) Be tao feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity Cc) Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.448412,
+          "deviation": 0.150338
+        },
+        "map_name_visible": false,
+        "ocr": "lyasarget) Nav Menu) IMapContactiMissionGlues Collect 4 a a a \u2014 _ \u2014 \u2014, (Help Me!) Ge ED feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.448199,
+          "deviation": 0.149591
+        },
+        "map_name_visible": false,
+        "ocr": "yaliarget|NaviMeny) 4 a ape) Goren) Fela feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.446869,
+          "deviation": 0.148676
+        },
+        "map_name_visible": false,
+        "ocr": "yaliarget|NaviMeny) 4 a (Help Me!) _ Bere Gains feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.447792,
+          "deviation": 0.149417
+        },
+        "map_name_visible": false,
+        "ocr": "yaliarget|NaviMeny) 4 a (Help Me!) a on ee feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.446295,
+          "deviation": 0.147743
+        },
+        "map_name_visible": false,
+        "ocr": "yaliarget|NaviMeny) 4 a (Help Me!) Gen Gree feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.447463,
+          "deviation": 0.148269
+        },
+        "map_name_visible": false,
+        "ocr": "yaliarget|NaviMeny) 4 a (Help Me!) CED GED feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT q ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.446623,
+          "deviation": 0.147777
+        },
+        "map_name_visible": false,
+        "ocr": "yeslarget) Navy) Menu) = 4 _ (Help)Me!) Sec) _ GED feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.448259,
+          "deviation": 0.149909
+        },
+        "map_name_visible": false,
+        "ocr": "lyasarget) Nav Menu) SSS eee Maip) _==- iContact Mission) Glues, a 4 HeipyMs) \u2018@NeneD feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.444926,
+          "deviation": 0.145293
+        },
+        "map_name_visible": false,
+        "ocr": "a eo Ee = iMalpyiGontactl/ Missions Glues) Collect) = \u2014\u2014 a _ ae = \u2014\u2014 \u2014\u2014\u2014 (Help)Me!) mm 0 J feamileagueBfriend:fSuper@Ema IMLEGETGbEIE2E 304 wT ity C1 Rowers)|inspirationss\u2014enhancements) Salvage: Ja Pea. Woveale lic lt oi Walla iat olin . a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.444524,
+          "deviation": 0.144628
+        },
+        "map_name_visible": false,
+        "ocr": "oe ee = iMalpyiGontactl/ Missions Glues) Collect) = \u2014\u2014 a _ ae = \u2014\u2014 \u2014\u2014\u2014 (Help Me!) Si) GED LsomaleagueliriendstS uperdEmallBLECGTabElE 20364 \u2014T A \u00e9l vate =a Rowers)|inspirations\u2122enhancements) Salvage Ja Pea. Woveale lic lt oi AOA OS 7 a a a a Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.599535,
+          "deviation": 0.18639
+        },
+        "map_name_visible": false,
+        "ocr": "TargetmNava Menu} No Target Mop Goats? Mipsihm Clecs Colles? _ \u2014_ _ Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose Help Me! None Helper, ec mebecoseRi eres Ro upstate Ica sma RS wv Ecloball Help error: auctionhouse not connected J i] Wchath Rowersm|nspirationsmenhancementsmsalvage! Reo Empty Tray Slot B B B Global a a a -",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.606638,
+          "deviation": 0.181742
+        },
+        "map_name_visible": false,
+        "ocr": "a hat ra: rgei Navy; Menu) No Target ee | | 0 \u2014\u2014\u2014 1c) p) Contact SAMISSIRSS UALEE ANAL Mission Clue: \u2014 OE collect LASS \\ctions) We \u2014\u2014 ss oo \u2014 Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose Ip Me! Helpe g % pie Ay eampleaguelFriendssSupermsEmailmLEG labeler 2isi4) eclobal Hele) E ombat availa error: auctionhouse not connected noOPp Dp very D OD noOPp Dp very D 7 Chiat = \u20144 > force inspirations Enhaincements\u2122s Salvagemkec DOODOQS@eOOOGA (Global: Gee",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.586841,
+          "deviation": 0.175609
+        },
+        "map_name_visible": false,
+        "ocr": "a Ghat ra\u2019 large\u2019 Nava Menu we ee | No Target | 1) = IA sontac Gert Mission Glues 7 Collec: ictions) Map) Tf Soy \u2014 _ \u2014\u2014 Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose telp Me! 4 \"aT TleamleaguelFriendssSupers email sLEG Tab) &) &) 4) fiseet Vv GlobalHelpmcombat \u00a3 | lon \u2018tt ave Onv ava Bl ee ta Or c\u00a2essions error: auctionhouse not connected Vv ere ed +h e nop heln message D ele) int Vv ere ed +h e nop heln message Lit Printe Chiat (Rowers! nspiictionsMEnhancementssoalvage BSF Empty Tray Slot) int Empty Tray Slot | Slot VD@\u00aeDOSeOCOGA Global",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.283982,
+          "deviation": 0.129818
+        },
+        "map_name_visible": false,
+        "ocr": "a | hat ra: large Nay, Menu Ley No Target re 1 | ~ \u2014 = Conta ct AIRS\" 3S 8 t Mission Glues =\u2014_ Golle \\ctions Map 4 Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag Please choose yourself as a Helper. vj lp) Me! a (iy Team League Friends Super Email LFG Tab 1 2 3 4 EGlobal HelpMiGombat J L~ bl free, an't I avean ava on error: auctionhouse not connected 1 ol u.! e po D eln age OD eln u receive 1 ol e po eln me age LUie D oint Chiat \u2014~ \u2014\u201c Powers Inspirations, Enhancements S Salvage R ={Empty Tray Slot SOO:26:0;'3;2,eS 8) Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.0992236,
+          "deviation": 0.1533
+        },
+        "map_name_visible": false,
+        "ocr": "a Chat ray Target Nav ienu =P \u2014 \u2014\u2014 \u2014y \u00bb Map \u201d Mission Clues Collect) \u2018Act tons Ne Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose: v Help Me! No INO lal re He me Iper per Team League Friends Super Email LFG Tab 123 4 ~~ el pmicom bart! You don't have any available free tailor sessions. error: auctionhouse not connected You received the pop help message: Pop Help You received the pop help message: Hit Points @ Powers Inspirations Enhancements Salvage Re O88: 0338S Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.0985939,
+          "deviation": 0.155827
+        },
+        "map_name_visible": false,
+        "ocr": "a Chat vay Target Nav ienu =P \u2014\u2014 A \u2014 4 Actions Map a ission clus iif eer ect Oe ee te Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. lease choose: Help Me! | u f TSiper f Iper abe 4) Team League Friends Super Email LFG Tab 123 4 ~~ jobal\u2122itelpmcom bat You don't have any available free tailor sessions. error: auctionhouse not connected You received the pop help message: Pop Help \u2014~ You received the pop help message: Hit Points @ lat Powers Inspirations Enhancements Salvage Re O86: 0-33 8S Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      },
+      {
+        "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "textures_done": true,
+        "ready_sent": true,
+        "atlas_map": true,
+        "load_complete": true,
+        "frame": {
+          "mean": 0.10012,
+          "deviation": 0.15833
+        },
+        "map_name_visible": false,
+        "ocr": "a Chat ray Target Nav ienu No Target =P \u2014\u2014 tions Aap .t Missio Clues Coll ect Oe re Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper\u2019 Please choose: Help Me! = None None Helper, Team League Friends Super Email LFG Tab 123 4 ~~ jobal\u2122itelpmcom bat You don't have any available free tailor sessions. error: auctionhouse not connected You received the pop help message: Pop Help You received the pop help message: Hit Points \u00a9 iat Powers Inspirations Enhancements Salvage Re O86: 0-33 8S Global:",
+        "rendered": false,
+        "owned_window_geometry": [
+          104,
+          130,
+          1024,
+          768
+        ]
+      }
+    ]
+  },
+  "phase_counts": {
+    "after_map_load": 2,
+    "map_load": 229,
+    "startup": 5566
+  },
+  "after_map_errors": [
+    {
+      "phase": "after_map_load",
+      "text": "client.error *** TexSwap Warning: error finding texture 'tickertape_STEEL_CANYON_SOUTH' to swap with 'tickertape_TALOS_ISLAND'\n",
+      "count": 2
+    }
+  ],
+  "screenshot_observation": "Character, HUD and helper modal visible; terrain absent. Screenshot is not accepted Atlas proof.",
+  "milestone_complete": false,
+  "latest_corrections_tested": false
+}

@@ -1,0 +1,222 @@
+{
+  "scope": "rejected_run_partial_snapshot_diagnostic",
+  "source_commit": "2b8600799b49e70bcee1a35f3eb522fa1e50188b",
+  "executions": [
+    {
+      "target": "arm64",
+      "label": "id1-a",
+      "returncode": 2,
+      "host_timeout_kill": false,
+      "dispatch_errors": 1,
+      "outside_error_count": 117777,
+      "dispatch_error_inventory": [
+        {
+          "phase": "dispatch",
+          "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+          "count": 1
+        }
+      ],
+      "source_cursor_stage_passed": false
+    },
+    {
+      "target": "arm64",
+      "label": "id1-b",
+      "returncode": 2,
+      "host_timeout_kill": false,
+      "dispatch_errors": 1,
+      "outside_error_count": 117777,
+      "dispatch_error_inventory": [
+        {
+          "phase": "dispatch",
+          "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+          "count": 1
+        }
+      ],
+      "source_cursor_stage_passed": false
+    },
+    {
+      "target": "arm64",
+      "label": "id31",
+      "returncode": -9,
+      "host_timeout_kill": false,
+      "dispatch_errors": 1,
+      "outside_error_count": 117777,
+      "dispatch_error_inventory": [
+        {
+          "phase": "dispatch",
+          "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+          "count": 1
+        }
+      ],
+      "source_cursor_stage_passed": false
+    },
+    {
+      "target": "i686",
+      "label": "id1-a",
+      "returncode": 2,
+      "host_timeout_kill": false,
+      "dispatch_errors": 1,
+      "outside_error_count": 117777,
+      "dispatch_error_inventory": [
+        {
+          "phase": "dispatch",
+          "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+          "count": 1
+        }
+      ],
+      "source_cursor_stage_passed": false
+    },
+    {
+      "target": "i686",
+      "label": "id1-b",
+      "returncode": 2,
+      "host_timeout_kill": false,
+      "dispatch_errors": 1,
+      "outside_error_count": 117777,
+      "dispatch_error_inventory": [
+        {
+          "phase": "dispatch",
+          "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+          "count": 1
+        }
+      ],
+      "source_cursor_stage_passed": false
+    },
+    {
+      "target": "i686",
+      "label": "id31",
+      "returncode": 2,
+      "host_timeout_kill": false,
+      "dispatch_errors": 1,
+      "outside_error_count": 117777,
+      "dispatch_error_inventory": [
+        {
+          "phase": "dispatch",
+          "text": "client.error CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+          "count": 1
+        }
+      ],
+      "source_cursor_stage_passed": false
+    }
+  ],
+  "comparisons": [
+    {
+      "left": [
+        "arm64",
+        "id1-a"
+      ],
+      "right": [
+        "i686",
+        "id1-a"
+      ],
+      "id_sensitivity": false,
+      "snapshots": 117,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id1-b"
+      ],
+      "right": [
+        "i686",
+        "id1-b"
+      ],
+      "id_sensitivity": false,
+      "snapshots": 117,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id31"
+      ],
+      "right": [
+        "i686",
+        "id31"
+      ],
+      "id_sensitivity": false,
+      "snapshots": 117,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id1-a"
+      ],
+      "right": [
+        "arm64",
+        "id1-b"
+      ],
+      "id_sensitivity": false,
+      "snapshots": 117,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "arm64",
+        "id1-a"
+      ],
+      "right": [
+        "arm64",
+        "id31"
+      ],
+      "id_sensitivity": true,
+      "snapshots": 117,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "i686",
+        "id1-a"
+      ],
+      "right": [
+        "i686",
+        "id1-b"
+      ],
+      "id_sensitivity": false,
+      "snapshots": 117,
+      "equal": true,
+      "mismatches": []
+    },
+    {
+      "left": [
+        "i686",
+        "id1-a"
+      ],
+      "right": [
+        "i686",
+        "id31"
+      ],
+      "id_sensitivity": true,
+      "snapshots": 117,
+      "equal": true,
+      "mismatches": []
+    }
+  ],
+  "diagnostic_snapshots_equal": true,
+  "diagnostic_outside_error_inventories_equal": true,
+  "execution_qualified": false,
+  "state_schema_complete": false,
+  "state_comparison_complete": false,
+  "m3_replay_complete": false,
+  "artifacts": [
+    {
+      "target": "arm64",
+      "id": 12601992458,
+      "sha256": "b2ef6e084fcf52203b4f4a56e87e0ec23b28cf15bd00960c1b7a1fadd4680a90"
+    },
+    {
+      "target": "i686",
+      "id": 12602271920,
+      "sha256": "7b5dbb79dddd6dc3fac6f60de87fc95cde6b45d4560fcbf6a56238bab6eab84b"
+    }
+  ],
+  "command": "python3 armport/replay/diagnose_state.py --root /tmp/coh-r21/replay-new --commit 2b8600799b49e70bcee1a35f3eb522fa1e50188b --output /tmp/coh-r21/rejected-state-40200224489.json",
+  "command_exit_code": 0
+}

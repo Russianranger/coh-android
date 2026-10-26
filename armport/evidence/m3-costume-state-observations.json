@@ -1,0 +1,104 @@
+{
+  "scope": "retained_costume_partial_observations",
+  "source_paths": [
+    "Common/entity/costume.c:costume_receive,receiveSGColorData",
+    "Game/src/entity/entrecv.c:entReceiveCostume",
+    "Common/entity/entPlayer.h:costume[MAX_COSTUMES],superCostume,pendingCostume"
+  ],
+  "fields": [
+    "convertedScale",
+    "currentSuperColorSet",
+    "six SGColorBits arrays: low/high U32 fields",
+    "ten retained player costume slots including nulls",
+    "super and deferred costume bodies",
+    "current/current-super/stored/unlocked/npc indices and mode flags"
+  ],
+  "excluded": [
+    "local pendingCostumeForceTime and pendingCostumeIgnoreTime",
+    "temporary editor colors",
+    "derived display/source/store metadata",
+    "NPC customization and power customization",
+    "costume reward ownership"
+  ],
+  "checks": [
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_costume_state.py",
+      "exit_code": 0,
+      "output_sha256": "dae92f9a900c5439f45c516240f8372617ef98f2bf4ea7e7e473967ad8893965",
+      "output_tail": [
+        "costume serializer: six color sets with all low/high halves, raw float bits, 10 retained/null slots plus super/pending, logical/storage counts, mutation sensitivity, timer/editor exclusion and invalid counts pass; ASan/UBSan enabled"
+      ]
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_power_state.py",
+      "exit_code": 0,
+      "output_sha256": "58d36c45b5f0d535f2f545b1e8ac59298258d33bc25d1806fd88f4cca05e1c46",
+      "output_tail": [
+        "power serializer: null slots, identity escaping, raw float bits, build arrays, final inventory slots, timer exclusion and bound rejection pass; ASan/UBSan enabled"
+      ]
+    },
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p test_*.py -v",
+      "exit_code": 0,
+      "output_sha256": "d200b74d960d4f7ce7b29986464f9a56eb3cccc7108c8e67a4789c7e4d949304",
+      "output_tail": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 151 tests in 5.144s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "command": "actual compile_commands.json state.c command from /tmp/coh-world-build-arm64, one compiler; ARM64 before i686",
+      "exit_code": 0,
+      "output_sha256": "8e37b54c5309bbc8db2ccdf32248de3ce9eaea97a5cf3495f9f147292043fbe3",
+      "output_tail": [
+        "      | ^",
+        "/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'",
+        "  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];",
+        "      |                                          ^",
+        "6 warnings generated."
+      ]
+    },
+    {
+      "command": "actual compile_commands.json state.c command from /tmp/coh-world-build-i686, one compiler; ARM64 before i686",
+      "exit_code": 0,
+      "output_sha256": "8e37b54c5309bbc8db2ccdf32248de3ce9eaea97a5cf3495f9f147292043fbe3",
+      "output_tail": [
+        "      | ^",
+        "/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'",
+        "  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];",
+        "      |                                          ^",
+        "6 warnings generated."
+      ]
+    },
+    {
+      "command": "python3 armport/scripts/check_receiver_state_preprocess.py /tmp/coh-world-build-arm64/compile_commands.json",
+      "exit_code": 0,
+      "output_sha256": "ffab70fe8fc1b1b5a4b66be2c5a5e254d48fab623e4ab50847594830bb14ee68",
+      "output_tail": [
+        "current state.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']",
+        "old-macro negative control state.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']",
+        "current receiver.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']",
+        "old-macro negative control receiver.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']"
+      ]
+    },
+    {
+      "command": "python3 armport/scripts/check_receiver_state_preprocess.py /tmp/coh-world-build-i686/compile_commands.json",
+      "exit_code": 0,
+      "output_sha256": "ffab70fe8fc1b1b5a4b66be2c5a5e254d48fab623e4ab50847594830bb14ee68",
+      "output_tail": [
+        "current state.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']",
+        "old-macro negative control state.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']",
+        "current receiver.c: preprocess_exit=0 formatting_callees=['snprintf', 'sprintf', 'vsnprintf']",
+        "old-macro negative control receiver.c: preprocess_exit=0 formatting_callees=['quick_snprintf', 'quick_sprintf', 'quick_vsnprintf']"
+      ]
+    }
+  ],
+  "local_leak_sanitizer_disabled": "only because local /proc task access unavailable; ASan and UBSan enabled; CI default sanitizer settings",
+  "fresh_runtime_pending": true,
+  "running_replay_predates_change": 40206484644,
+  "state_schema_complete": false,
+  "m3_replay_complete": false
+}

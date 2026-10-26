@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Read ArmPort CI results from check-run annotations.
 
-Step logs and artifacts are not reachable from the agent environments used on
-this branch, so every job reports through annotations (notices, warnings,
-errors). This waits for one job of the "ArmPort build" run on a commit, saves
+Fallback when full job logs/artifacts are unavailable: jobs report through
+annotations (notices, warnings, errors). This waits for one job of the
+"ArmPort build" run on a commit, saves
 its annotations, rebuilds any images exported by screen_export.py and prints
 the report sections.
 
@@ -14,13 +14,15 @@ the report sections.
   --no-wait  read whatever is there now
 
 Uses the gh CLI (REST only; GraphQL is not available), or unauthenticated
-public REST reads when gh is not installed. Images are written to DIR as
+public REST reads when gh is not installed (180-second polling to leave room
+within the shared 60-request/hour quota). Images are written to DIR as
 <title>.jpg.
 """
 import argparse
 import base64
 import json
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -53,7 +55,7 @@ def find_run(sha):
         ids = [r['id'] for r in runs if r['name'] == 'ArmPort build']
         if ids:
             return ids[0]
-        time.sleep(20)
+        time.sleep(20 if shutil.which('gh') else 180)
     sys.exit(f'no ArmPort build run for {sha}')
 
 
@@ -65,7 +67,9 @@ def wait_job(run, name, wait):
             return job
         if not job and not wait:
             sys.exit(f'job {name} not found in run {run}')
-        time.sleep(60)
+        # Public REST shares a 60-request/hour IP quota with other readers.
+        # 3-minute polling leaves room for run discovery and annotations.
+        time.sleep(60 if shutil.which('gh') else 180)
 
 
 def sections(annotations):

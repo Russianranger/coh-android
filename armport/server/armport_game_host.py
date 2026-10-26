@@ -33,8 +33,13 @@ sys.path.insert(0, str(ROOT / 'tools/android/game'))
 sys.path.insert(0, str(ROOT / 'armport/scripts'))
 import host_game_smoke as game  # noqa: E402
 import smoke_run  # noqa: E402
+import client_errors  # noqa: E402
+import atlas_wine  # noqa: E402
+import server_atlas_data  # noqa: E402
+sys.path.insert(0, str(ROOT / 'armport/replay'))
 import stall_snapshot  # noqa: E402
-from login_ui import DISPLAY, sh, Screen, at, wait_for, login, after_login  # noqa: E402
+import zone_frame  # noqa: E402
+from login_ui import dismiss_helper_status, map_ui_diagnostic, owned_client_window, DISPLAY, sh, Screen, at, wait_for, login, after_login, acknowledge_qa_notice, character_select_from_log, character_select_frame, dialogs_clear  # noqa: E402
 
 dbhost = game.dbhost
 note, flush_report = smoke_run.note, smoke_run.flush_report
@@ -76,16 +81,24 @@ def start_client(a, state, status, evidence):
     env = {'PATH': '/usr/bin:/bin', 'HOME': str(a.client_home), 'LANG': 'C.UTF-8', 'DISPLAY': DISPLAY,
            'WINEPREFIX': str(a.client_prefix), 'WINEDEBUG': 'err+all,fixme-all,+seh',
            'WINEDLLOVERRIDES': 'mscoree,mshtml=', 'ARMPORT_LOOSE_DATA': '1', 'ARMPORT_STDIO_LOG': 'armport_stdio.txt',
+           'ARMPORT_ZONE_LOG': 'zone-trace.jsonl',
+           'ARMPORT_WINE_BOUNDARY_LOG': 'Z:' + str((evidence / 'client-output.txt').resolve()).replace('/', '\\'),
            # The servers are 32-bit builds with their own version string (patch 0045).
            'ARMPORT_NO_VERSION_CHECK': '1'}
     args = ['-fullscreen', '0', '-screen', '1024', '768', '-verbose', '1', '-db', '127.0.0.1']
     command = ['sudo', '-n', 'nsenter', f'--net=/proc/{pid}/ns/net', '--', 'sudo', '-n', '-u', os.environ.get('USER', 'runner'),
                '--', 'env', '-C', str(client)] + [f'{k}={v}' for k, v in env.items()] + \
               [str(a.wine / 'wine'), str(client / 'CityOfHeroes.exe')] + args
-    out = open(evidence / 'client-output.txt', 'wb')
+    # Wine and the client's map-start witness append to this same stream.
+    # Remove stale evidence before opening with O_APPEND; never overwrite a
+    # client boundary with a later Wine write at a stale descriptor offset.
+    (evidence / 'client-output.txt').unlink(missing_ok=True)
+    out = open(evidence / 'client-output.txt', 'ab')
     proc = subprocess.Popen(command, stdout=out, stderr=subprocess.STDOUT, start_new_session=True)
     status['client_started'] = True
     status['client_args'] = args
+    cleanup = ClientCleanup(a, proc)
+    status['client_cleanup'] = cleanup
     (state / 'armport-client-started.json').write_text(json.dumps({'args': args, 'netns': ns}) + '\n')
 
     def watch():
@@ -101,41 +114,58 @@ def start_client(a, state, status, evidence):
             if status.get('guest_exited'):
                 return
             time.sleep(2)
-        stop_client(a, proc)
-        (state / 'armport-client-stopped.json').write_text(json.dumps({'stopped': True}) + '\n')
+        errors = cleanup.stop()
+        marker = state / 'armport-client-stopped.json'
+        pending = marker.with_suffix('.tmp')
+        pending.write_text(json.dumps({'stopped': not errors, 'errors': errors}) + '\n')
+        pending.replace(marker)
     threading.Thread(target=watch, daemon=True).start()
     threading.Thread(target=stop_when_guest_finishes, daemon=True).start()
     return proc, info
 
 
+class ClientCleanup:
+    """Share one teardown result between guest coordination and host fallback.
+
+    Both callers can arrive together on a failed guest. Do not run a second
+    wineserver -k after successful teardown, or replace an earlier failure.
+    """
+    def __init__(self, args, process):
+        self.args, self.process = args, process
+        self.lock = threading.Lock()
+        self.errors = None
+
+    def stop(self):
+        with self.lock:
+            if self.errors is None:
+                self.errors = stop_client(self.args, self.process)
+            return list(self.errors)
+
+
 def stop_client(a, proc):
+    """Retain failed teardown operations; never acknowledge a Wine wait timeout."""
+    errors = []
+    def run(label, command, timeout, **kwargs):
+        try:
+            result = subprocess.run(command, capture_output=True, timeout=timeout, **kwargs)
+            if result.returncode:
+                errors.append(f'{label}: exit {result.returncode}')
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            errors.append(f'{label}: {type(exc).__name__}')
     if proc and proc.poll() is None:
-        subprocess.run(['sudo', '-n', 'kill', '-TERM', '--', f'-{proc.pid}'], capture_output=True)
+        run('client TERM', ['sudo', '-n', 'kill', '-TERM', '--', f'-{proc.pid}'], 10)
         try:
             proc.wait(timeout=30)
         except subprocess.TimeoutExpired:
-            subprocess.run(['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], capture_output=True)
+            run('client KILL', ['sudo', '-n', 'kill', '-KILL', '--', f'-{proc.pid}'], 10)
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                errors.append('client wait: TimeoutExpired after KILL')
     wenv = dict(os.environ, WINEPREFIX=str(a.client_prefix), HOME=str(a.client_home))
-    subprocess.run([str(a.wine / 'wineserver'), '-k'], capture_output=True, timeout=120, env=wenv)
-    # Wait until the client's wineserver (and so its Wine processes) is gone:
-    # the guest's cleanup audits same-user Wine processes.
-    try:
-        subprocess.run([str(a.wine / 'wineserver'), '-w'], capture_output=True, timeout=90, env=wenv)
-    except subprocess.TimeoutExpired:
-        pass
-
-
-def window_brightness(png):
-    """Mean grey level (0-1) of the client window area; the zone loading
-    screen is mostly white."""
-    if not png:
-        return None
-    r = sh('convert', str(png), '-crop', '1024x768+104+130', '+repage', '-colorspace', 'gray',
-           '-format', '%[fx:mean]', 'info:')
-    try:
-        return float(r.stdout.strip())
-    except ValueError:
-        return None
+    run('wineserver stop', [str(a.wine / 'wineserver'), '-k'], 30, env=wenv)
+    run('wineserver wait', [str(a.wine / 'wineserver'), '-w'], 60, env=wenv)
+    return errors
 
 
 def capture_traffic(status, evidence):
@@ -184,6 +214,9 @@ def drive_login(a, screen, state, status, evidence):
     checks = {'n': 0}
 
     def character_select(p):
+        status['character_select_by_trace'] = character_select_from_log(a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl')
+        if status['character_select_by_trace']:
+            return True
         checks['n'] += 1
         if checks['n'] % 3 == 0:
             sockets(f'character-select wait {checks["n"]}')
@@ -199,31 +232,62 @@ def drive_login(a, screen, state, status, evidence):
     # EULA/NDA agreements and the server list come first (login_ui.after_login).
     png = after_login(screen, status, rounds=8, interval=10, done=character_select, after=sockets)
     png = png if png and character_select(png) else None
-    if not png and status.get('server_clicked'):
-        # Character select draws a 3D scene that OCR may not read; the login
-        # traffic shows the character list arrives, so enter by the Next arrow.
+    # Revalidate immediately before input; a server click alone says nothing
+    # about the current selected character or outstanding modal history.
+    trace_ready = character_select_from_log(a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl')
+    status['character_select_by_trace'] = trace_ready
+    if trace_ready:
+        # OCR may miss the 3D scene; only the validated trace permits layout Next.
         pos = at(screen, 'enter_world')
-        if pos:
-            screen.click(*pos)
-            status['enter_by_layout'] = True
-            (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': 'layout'}) + '\n')
-            time.sleep(15)
-            screen.shot('after-enter')
-            sockets('15s after Next')
-    status['character_select'] = bool(png)
-    if png:
+        if pos and character_select_from_log(a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl'):
+            stdio, trace = a.client / 'armport_stdio.txt', a.client / 'zone-trace.jsonl'
+            sample = character_select_frame(stdio, trace)
+            for attempt in range(3):
+                if attempt:
+                    # Retry only after new frames still show selected character,
+                    # with no outstanding modal and no database Atlas witness.
+                    fresh = character_select_frame(stdio, trace)
+                    if ((state / 'armport-atlas.json').exists() or sample is None
+                            or fresh is None or fresh <= sample):
+                        break
+                    pos = at(screen, 'enter_world')
+                    if not pos or character_select_frame(stdio, trace) != fresh:
+                        break
+                    sample = fresh
+                # Geometry lookup and progress sampling can expose a modal.
+                if ((state / 'armport-atlas.json').exists() or sample is None
+                        or character_select_frame(stdio, trace) != sample):
+                    break
+                screen.click(*pos)
+                status['enter_by_layout'] = True
+                status['enter_attempts'] = attempt + 1
+                (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': 'layout'}) + '\n')
+                time.sleep(15)
+                screen.shot('after-enter' if not attempt else f'after-enter-retry-{attempt}')
+                sockets(f'15s after Next attempt {attempt + 1}')
+        elif not pos:
+            status['enter_layout_error'] = 'Client window unavailable for Next'
+        else:
+            status['enter_layout_error'] = 'Character or dialog state changed before Next'
+    status['character_select'] = bool(png) or trace_ready
+    if png and not trace_ready and dialogs_clear(a.client / 'zone-trace.jsonl'):
         pos = screen.find(png, info['character'])
-        if pos:
+        if pos and dialogs_clear(a.client / 'zone-trace.jsonl'):
             screen.click(*pos)
             time.sleep(2)
             png = screen.shot('character-chosen')
         pos = screen.find(png, 'Play', 'PLAY')
-        if pos:
-            screen.click(*pos)
+        # Selection, the wait, capture and OCR can each expose a new modal.
+        # Check the complete history after those operations, adjacent to input.
+        if dialogs_clear(a.client / 'zone-trace.jsonl'):
+            if pos:
+                screen.click(*pos)
+            else:
+                screen.key('Return')
+            status['play_sent'] = True
+            (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': True}) + '\n')
         else:
-            screen.key('Return')
-        status['play_sent'] = True
-        (state / 'armport-play-sent.json').write_text(json.dumps({'play_sent': True}) + '\n')
+            status['play_blocked'] = 'Dialog history rejected before Play/Return'
     # In game: wait for the guest's database confirmation, then screenshots.
     atlas = state / 'armport-atlas.json'
     deadline = time.time() + 1200
@@ -234,33 +298,60 @@ def drive_login(a, screen, state, status, evidence):
         status['atlas'] = json.loads(atlas.read_text())
         # The database has the character on Atlas; the client then loads the
         # zone (a mostly white loading screen). Wait for the world to render.
-        started = time.time()
+        started = time.monotonic()
+        diagnostic_seconds = 0
         rendered = 0
         status['loading_brightness'] = []
         status['load_samples'] = []
+        status['frame_checks'] = []
         next_snapshot = iter((120, 600))
         snapshot_at = next(next_snapshot, None)
-        while time.time() - started < 1500 and rendered < 2 and not status.get('guest_exited'):
+        while time.monotonic() - started - diagnostic_seconds < 1500 and rendered < 2 and not status.get('guest_exited'):
             time.sleep(30)
             png = screen.shot('zone-loading')
-            mean = window_brightness(png)
-            status['loading_brightness'].append(round(mean, 3) if mean is not None else None)
-            rendered = rendered + 1 if mean is not None and mean < 0.8 else 0
             stdio = a.client / 'armport_stdio.txt'
-            status['load_samples'].append({'seconds': round(time.time() - started),
+            stdio_text = stdio.read_text(errors='replace') if stdio.exists() else ''
+            if acknowledge_qa_notice(screen, stdio_text, stall_snapshot.client_pids(a.client), status):
+                # This pre-input frame cannot establish rendering. The next
+                # iteration must observe the original load/READY and image checks.
+                rendered = 0
+                continue
+            frame_window = owned_client_window(stall_snapshot.client_pids(a.client))
+            check = zone_frame.evaluate(png, frame_window, stdio_text, screen.text)
+            check['owned_window_geometry'] = frame_window
+            status['frame_checks'].append(check)
+            if check['load_complete'] and check['helper_dialog_visible'] and dismiss_helper_status(
+                    screen, png, stall_snapshot.client_pids(a.client), a.client / 'zone-trace.jsonl', status):
+                # The modal covered the world; only later frames can count.
+                rendered = 0
+                continue
+            mean = check['frame']['mean'] if check['frame'] else None
+            status['loading_brightness'].append(round(mean, 3) if mean is not None else None)
+            rendered = rendered + 1 if check['rendered'] else 0
+            status['load_samples'].append({'seconds': round(time.monotonic() - started - diagnostic_seconds),
                                           'stdio_bytes': stdio.stat().st_size if stdio.exists() else None})
-            if rendered == 0 and snapshot_at is not None and time.time() - started >= snapshot_at:
+            if rendered == 0 and snapshot_at is not None and time.monotonic() - started - diagnostic_seconds >= snapshot_at:
+                sample_started = time.monotonic()
                 try:
                     stall_snapshot.capture(a.client, evidence, str(snapshot_at), a.llvm_mingw)
                 except Exception as exc:
                     # A diagnostic failure must not alter the existing verdict.
                     (evidence / f'stall-{snapshot_at}.txt').write_text(repr(exc))
+                finally:
+                    diagnostic_seconds += time.monotonic() - sample_started
                 snapshot_at = next(next_snapshot, None)
         status['world_rendered'] = rendered >= 2
-        status['zone_load_seconds'] = round(time.time() - started)
-        status['atlas_shot'] = str(screen.shot('atlas'))
+        status['zone_load_seconds'] = round(time.monotonic() - started - diagnostic_seconds)
+        status['diagnostic_seconds_excluded'] = round(diagnostic_seconds, 3)
+        status['atlas_shot'] = str(png) if png else None
         time.sleep(30)
         status['atlas_shot_later'] = str(screen.shot('atlas-later'))
+        try:
+            status['map_ui_diagnostic'] = map_ui_diagnostic(
+                screen, stall_snapshot.client_pids(a.client), a.client / 'zone-trace.jsonl')
+        except Exception as exc:
+            status['map_ui_diagnostic'] = {'scope': 'map_ui_diagnostic_only',
+                'error': repr(exc), 'rendering_acceptance_changed': False}
         (state / 'armport-host-done.json').write_text(json.dumps({'done': True}) + '\n')
 
 
@@ -269,6 +360,8 @@ def main():
     ap.add_argument('--assets', type=Path, required=True, help='coh-diagnostic-runtime-inputs')
     ap.add_argument('--package', type=Path, required=True, help='assembled wine-game package')
     ap.add_argument('--data', type=Path, required=True)
+    ap.add_argument('--atlas-supplement', type=Path, required=True,
+                    help='the same pinned Atlas archive/manifest used by the client')
     ap.add_argument('--schema', type=Path, required=True)
     ap.add_argument('--stack-probe', type=Path, required=True)
     ap.add_argument('--proot', type=Path, required=True)
@@ -296,6 +389,9 @@ def main():
     game.prepare_runtime(work, evidence, assets)
     shutil.copyfile(a.stack_probe / 'GameStackProbe.exe', work / 'm3-tools/GameStackProbe.exe')
     shutil.copyfile(HERE / 'armport_game_guest.py', work / 'm3-tools/armport_game_guest.py')
+    for name in ('server_atlas_data.py', 'stage_atlas_supplement.py', 'smoke_run.py'):
+        shutil.copyfile(ROOT / 'armport/scripts' / name, work / 'm3-tools' / name)
+    server_atlas_data.copy_inputs(a.atlas_supplement, work / 'm3-tools')
 
     command = game.make_command(work=work, assets=assets, package=package, data=data, schema=schema,
                                 proot=proot, timeout_seconds=a.timeout_seconds)
@@ -339,7 +435,12 @@ def main():
             note('error', 'ArmPort M3 guest', 'timed out: ' + dbhost.stop_guest(process, state))
     status['guest_exited'] = True
     driver.join(timeout=60)
-    stop_client(a, status.pop('proc', None))
+    proc = status.pop('proc', None)
+    cleanup = status.pop('client_cleanup', None)
+    status['final_cleanup_errors'] = cleanup.stop() if cleanup else stop_client(a, proc)
+    if status['final_cleanup_errors']:
+        code = code or 1
+        note('error', 'ArmPort M3 host cleanup', json.dumps(status['final_cleanup_errors']))
     if status.pop('tcpdump', None):
         subprocess.run(['sudo', '-n', 'pkill', '-INT', '-f', 'tcpdump -i lo -n -U -s 256'], capture_output=True)
         time.sleep(2)
@@ -463,7 +564,34 @@ def main():
             subprocess.run(['convert', str(pick), '-resize', '512x400', '-quality', str(q), str(evidence / 'screen.jpg')])
             if (evidence / 'screen.jpg').stat().st_size < 24000:
                 break
-    ok = code == 0 and report.get('passed') is True and client_record.get('connected_on_atlas') is True \
+    error_evidence_ok = False
+    try:
+        errors = client_errors.inventory(client / 'armport_stdio.txt', evidence / 'client-errors.json',
+                                         client / 'zone-trace.jsonl')
+        assets = client_errors.asset_lookup(errors, client / 'data')
+        (evidence / 'error-assets.json').write_text(json.dumps(assets, indent=2) + '\n')
+        wine = atlas_wine.inventory(evidence / 'client-output.txt', client / 'zone-trace.jsonl')
+        (evidence / 'wine-errors.json').write_text(json.dumps(wine, indent=2) + '\n')
+        error_evidence_ok = (wine['passed'] and not errors['integrity_failures'] and errors['map_load_finished']
+                             and not errors['phase_counts'].get('after_map_load', 0))
+        # Failing inventories go to the error kind: notices beyond GitHub's
+        # per-step cap are dropped. After-load texts are the acceptance blockers.
+        note('notice' if error_evidence_ok else 'error', 'ArmPort M3 phased errors', json.dumps(dict(
+            passed=error_evidence_ok, phase_counts=errors['phase_counts'],
+            after_map_load=[e for e in errors['phase_errors'] if e['phase'] == 'after_map_load'][:20],
+            trace_record_count=errors['trace_records'], classes=assets['classes'],
+            allowed_startup_rpc_exceptions=wine['allowed_startup_rpc_exceptions'],
+            wine_failures=wine['failures'],
+            integrity_failures=errors['integrity_failures'])))
+    except (OSError, ValueError) as error:
+        note('error', 'ArmPort M3 error evidence', str(error)[:1000])
+    checks = status.get('frame_checks') or [{}]
+    note('notice' if status.get('world_rendered') else 'error', 'ArmPort M3 world frame', json.dumps(dict(
+        world_rendered=status.get('world_rendered'), zone_load_seconds=status.get('zone_load_seconds'),
+        helper_status_actions=status.get('helper_status_actions'),
+        last_check={k: checks[-1].get(k) for k in ('load_complete', 'frame', 'world_region',
+                    'world_region_visible', 'hud_labels', 'helper_dialog_visible', 'map_name_visible')})))
+    ok = error_evidence_ok and code == 0 and report.get('passed') is True and client_record.get('connected_on_atlas') is True \
         and client_record.get('still_connected') is True and status.get('world_rendered') is True
     note('notice' if ok else 'error', 'ArmPort M3 verdict',
          f"ARM64 client logged in through the UI, is connected on Atlas Park (DB status), rendered the zone after "

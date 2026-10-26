@@ -1,0 +1,350 @@
+{
+ "scope": "receiver destination coverage/exclusion inventory (game commands and entrecv.c entity path); partial; does not flip any completion flag",
+ "source_run": 40356647596,
+ "source_commit": "f10e2aff133dcbfe94963db0ade9e6915dd1107e",
+ "histogram_source": "run_ci.py game_commands (ARM64 and i686 runs agree; partial_state_equal true)",
+ "game_commands": [
+  {
+   "id": 15,
+   "name": "SERVER_GAME_CMDS",
+   "count": 60,
+   "handler": "cmdOldReceive",
+   "snapshot": "command_destinations (control_cmds, server_visible_cmds, server_visible_state.abs_time); server_commands for cmdReceiveServerCommands"
+  },
+  {
+   "id": 29,
+   "name": "SERVER_VISITED_MAP_CELLS",
+   "count": 1,
+   "handler": "receiveVisitMapCells",
+   "snapshot": "visited_maps"
+  },
+  {
+   "id": 30,
+   "name": "SERVER_ALL_STATIC_MAP_CELLS",
+   "count": 2,
+   "handler": "receiveStaticMapCells",
+   "snapshot": "visited_maps"
+  },
+  {
+   "id": 33,
+   "name": "SERVER_SET_WAYPOINT",
+   "count": 1,
+   "handler": "ServerWaypointReceive",
+   "snapshot": "server_waypoints"
+  },
+  {
+   "id": 57,
+   "name": "SERVER_CONTACT_STATUS",
+   "count": 2,
+   "handler": "ContactStatusListReceive",
+   "snapshot": "story.contacts"
+  },
+  {
+   "id": 58,
+   "name": "SERVER_ACCESSIBLE_CONTACT_STATUS",
+   "count": 2,
+   "handler": "ContactStatusAccessibleListReceive",
+   "snapshot": "story.accessible"
+  },
+  {
+   "id": 60,
+   "name": "SERVER_TASK_STATUS",
+   "count": 4,
+   "handler": "TaskStatusListReceive",
+   "snapshot": "story.task_sets"
+  },
+  {
+   "id": 70,
+   "name": "SERVER_DOOREXIT",
+   "count": 1,
+   "handler": "DoorAnimReceiveExit",
+   "snapshot": "player.door_animation"
+  },
+  {
+   "id": 76,
+   "name": "SERVER_SEND_DESATURATE_INFO",
+   "count": 1,
+   "handler": "receiveDesaturateInfo",
+   "snapshot": "desaturation_received_f32_bits"
+  },
+  {
+   "id": 91,
+   "name": "SERVER_TASK_VISITLOCATION_UPDATE",
+   "count": 2,
+   "handler": "receiveVisitLocations",
+   "snapshot": "story.visit_locations"
+  },
+  {
+   "id": 93,
+   "name": "SERVER_SEND_COMBAT_STATS",
+   "count": 1,
+   "handler": "receiveClientCombatStats",
+   "snapshot": "player.identity_state.combat_monitor"
+  },
+  {
+   "id": 94,
+   "name": "SERVER_CLUE_UPDATE",
+   "count": 2,
+   "handler": "ClueListReceive",
+   "snapshot": "story.clues"
+  },
+  {
+   "id": 95,
+   "name": "SERVER_KEYCLUE_UPDATE",
+   "count": 4,
+   "handler": "KeyClueListReceive",
+   "snapshot": "story.key_clues"
+  },
+  {
+   "id": 96,
+   "name": "SERVER_SOUVENIRCLUE_UPDATE",
+   "count": 2,
+   "handler": "scReceiveAllHeaders",
+   "snapshot": "story.server_souvenirs"
+  },
+  {
+   "id": 197,
+   "name": "SERVER_BEGIN_BYTE_ALIGNED_DATA",
+   "count": 60,
+   "handler": "receiveByteAlignmentTag",
+   "snapshot": "excluded: alignment tag only, no retained destination; cursor/ACK checks cover it"
+  },
+  {
+   "id": 205,
+   "name": "SERVER_SEND_KARMA_STATS",
+   "count": 58,
+   "handler": "receiveKarmaStats",
+   "snapshot": "karma_widgets"
+  },
+  {
+   "id": 207,
+   "name": "SERVER_QUEUE_STATUS",
+   "count": 1,
+   "handler": "turnstileGame_handleQueueStatus",
+   "snapshot": "turnstile"
+  },
+  {
+   "id": 220,
+   "name": "SERVER_UPDATE_TURNSTILE_STATUS",
+   "count": 1,
+   "handler": "turnstileGame_handleTurnstileGeneralStatus",
+   "snapshot": "turnstile_state / turnstile"
+  }
+ ],
+ "entrecv_method": "armport scripted lvalue/address-of scan of each entrecv.c function, compared with field names written by replay/state.c, then manual classification",
+ "entrecv_uncovered": [
+  {
+   "receiver": "entReceiveTitles",
+   "fields": [
+    "pl->glowieUnlocked",
+    "pl->attachArticle",
+    "pl->respecTokens",
+    "pl->helperStatus"
+   ],
+   "status": "added: receive_extras.player"
+  },
+  {
+   "receiver": "entReceiveCostume",
+   "fields": [
+    "pl->costumeFxSpecial",
+    "ownedCostume"
+   ],
+   "status": "added: receive_extras.player.costume_fx_special, receive_extras.owned_costume"
+  },
+  {
+   "receiver": "entReceiveCostume",
+   "fields": [
+    "pl->pendingCostumeForceTime",
+    "pl->pendingCostumeIgnoreTime"
+   ],
+   "status": "excluded: local timerSecondsSince2000 deadlines"
+  },
+  {
+   "receiver": "entReceive (IgnoreCombatMods)",
+   "fields": [
+    "pchar->bIgnoreCombatMods",
+    "pchar->ignoreCombatModLevelShift"
+   ],
+   "status": "added: receive_extras.character"
+  },
+  {
+   "receiver": "checkEntCreate",
+   "fields": [
+    "e->access_level"
+   ],
+   "status": "added: receive_extras.access_level"
+  },
+  {
+   "receiver": "receiveCharacterFromServer",
+   "fields": [
+    "e->db_flags"
+   ],
+   "status": "added: receive_extras.db_flags_u32"
+  },
+  {
+   "receiver": "entReceiveLogoutUpdate",
+   "fields": [
+    "e->logout_timer"
+   ],
+   "status": "added: receive_extras.logout_timer_f32_bits (entNetUpdate decrements it locally; snapshots are taken at dispatch boundaries)"
+  },
+  {
+   "receiver": "entReceiveTargetUpdate",
+   "fields": [
+    "e->confuseRand"
+   ],
+   "status": "excluded: local rand()"
+  },
+  {
+   "receiver": "entReceivePvP",
+   "fields": [
+    "e->pvpUpdateTime"
+   ],
+   "status": "excluded: local timerCpuTicks()"
+  },
+  {
+   "receiver": "entReceiveLevelingpactInfo",
+   "fields": [
+    "levelingpact->members.mapIds"
+   ],
+   "status": "excluded: calloc only, never received"
+  },
+  {
+   "receiver": "entGetPosition/entGetOrientation/entReceivePosUpdate/entReceiveUnpackInterpPositions",
+   "fields": [
+    "e->net_pos",
+    "e->net_qrot",
+    "e->motion_hist",
+    "e->motion_hist_latest",
+    "seq->moved_instantly"
+   ],
+   "status": "excluded: derived interpolation/history; received net_ipos, wire qrot9 and pkt_id_pos/qrot are retained"
+  },
+  {
+   "receiver": "entGetRagdoll*",
+   "fields": [
+    "e->ragdoll*",
+    "e->nonRagdollBoneRecord"
+   ],
+   "status": "excluded: ragdoll unsupported in this port (no PhysX); recorded as reduced function in M2"
+  },
+  {
+   "receiver": "entReceiveDeletes",
+   "fields": [
+    "entity reset fields"
+   ],
+   "status": "covered by entity presence and delete_history; freed entities have no retained fields"
+  },
+  {
+   "receiver": "entReceiveUpdate/entNetUpdate",
+   "fields": [
+    "control_state.client_pos_id",
+    "global_state.time_since",
+    "global_state.client_abs",
+    "global_state.client_abs_slow",
+    "game_state.hasEntDebugInfo",
+    "context.access_level"
+   ],
+   "status": "superseded by review_5657846186_fixes; only global_state.client_abs/client_abs_slow (local clock in entNetUpdate) remain excluded"
+  }
+ ],
+ "remaining_audits": [
+  "independent review of every exclusion in this file and in replay/README.md",
+  "decide (reviewer/user gate) whether the completion flags may be derived from this inventory"
+ ],
+ "state_schema_complete": false,
+ "m3_replay_complete": false,
+ "initial_path": [
+  {
+   "receiver": "receiveCharacterFromServer \u2192 character_Receive, character_ReceiveInspirations, character_ReceiveStatusEffects (Game/src/entity/character_net_client.c)",
+   "status": "scan: all written fields named by state.c (character, power_inventory, inspirations, status_state)"
+  },
+  {
+   "receiver": "character_ReceiveInventories (Common/entity/character_net.c)",
+   "status": "scan: covered (generic_inventories)"
+  },
+  {
+   "receiver": "receiveWindowIdx/receiveWindow (Common/gameComm/wdwbase.c) via receiveCharacterFromServer window loop",
+   "status": "covered: initial_ui.windows (all WdwBase fields, below)"
+  },
+  {
+   "receiver": "receiveTrayMode \u2192 tray_setMode",
+   "status": "covered: tray_sticky_mask"
+  },
+  {
+   "receiver": "receiveInspirationMode, receiveTeamBuffMode",
+   "status": "covered: initial_ui.inspiration_mode, initial_ui.team_buffs"
+  },
+  {
+   "receiver": "receiveDockMode",
+   "status": "excluded: reads 32 bits into an unused local"
+  },
+  {
+   "receiver": "receiveDescription, receiveTitles, receiveFullPopHelp, receiveTray, receiveChatSettingsFromServer",
+   "status": "covered: strings, identity_state, receive_core pop-help, tray_state, chat_state"
+  }
+ ],
+ "scan_limits": "Name-based: a field name present anywhere in state.c counts as covered; globals written through setters are checked by hand; this is an audit aid, not proof of value equality. Review 5657846186 found statics, ENTINFO and globals the scan missed; file-scope statics/globals of entrecv.c were then audited by hand.",
+ "readme_gap_reconciliation": [
+  {
+   "readme": "tray: other tray kinds retain type only",
+   "finding": "receiveTrayObj (trayCommon.c:605) writes fields only for Power, Inspiration and Macro/MacroHideName; other kinds are created by the iterator and receive nothing further. tray_slots_state retains every received field.",
+   "status": "no received destination missing"
+  },
+  {
+   "readme": "packet order: structured full/basic AttrDef ID maps remain a gap",
+   "finding": "entity_attribute_packet_order_state retains pkt_id_fullAttrDef/pkt_id_basicAttrDef for SendCharacterToSelf/SendBasicCharacter",
+   "status": "covered (attribute_packet_order); README note predates it"
+  },
+  {
+   "readme": "entity status: buffs, targeting and packet-order fields remain gaps",
+   "finding": "buffs, character.target_state and packet_order writers were added later",
+   "status": "covered"
+  },
+  {
+   "readme": "taskforce parameters: raw time-limit provenance remains a gap",
+   "finding": "armportReplayTaskforceTime records the raw received values before the original adds the local clock",
+   "status": "covered (taskforce_time_receives)"
+  },
+  {
+   "readme": "chat/window/tray/keybind/options receivers remain gaps",
+   "finding": "chat_state, initial_ui.windows, tray_state/tray_sticky_mask, keybind_state, user_options writers exist",
+   "status": "covered by name; values compared ARM64 vs i686 in 40356647596"
+  },
+  {
+   "readme": "mission-review widget state, translucency countdown, overhead-icon state",
+   "finding": "local UI widgets and local clocks",
+   "status": "excluded"
+  }
+ ],
+ "review_5657846186_fixes": [
+  {
+   "item": "interp_data_level/interp_data_precision (entrecv.c file statics; set position read widths and decode levels)",
+   "status": "retained: entreceive_update via patch 0106 read-only accessor"
+  },
+  {
+   "item": "ENTINFO(e).send_on_odd_send (entReceiveSendOnOddSend)",
+   "status": "retained per entity: entities[].send_on_odd_send"
+  },
+  {
+   "item": "last_pkt_id (pak->id ordering guard)",
+   "status": "retained literally; canonicalized only in snapshot 0 when it equals the synthetic INITIAL ID (first post-READY pak->id 32 exceeds 1 and 31)"
+  },
+  {
+   "item": "game_state.hasEntDebugInfo (selector for later debug reads)",
+   "status": "retained: entreceive_update.has_ent_debug_info"
+  },
+  {
+   "item": "client_pos_id",
+   "status": "retained literally (control_state.client_pos_id and glob_client_pos_id); producer is client input sending, reset by full update; replay sends no input"
+  },
+  {
+   "item": "additional entReceiveUpdate values found in the same audit",
+   "status": "retained: last_abs_time, last_packet_abs_time, global_state.abs_time, raw db_time (setServerS2000 keeps only a local-clock difference), time_since (derived only from received abs_time; earlier listed as a local clock in error)"
+  },
+  {
+   "item": "local_time_bias, server_time",
+   "status": "excluded: mix the local clock (test_timer_elapsed)"
+  }
+ ]
+}

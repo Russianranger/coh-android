@@ -1,0 +1,70 @@
+diff --git a/Common/group/group.c b/Common/group/group.c
+index ce99102..c32187a 100644
+--- a/Common/group/group.c
++++ b/Common/group/group.c
+@@ -105,6 +105,49 @@ void groupBaseName(const char *fname,char *basename)
+     strcpy(basename,s);
+ }
+ 
++#if CLIENT && ((defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686))
++#include <utilitieslib/utils/armport_zone_trace.h>
++/* Observe the original two-stage lookup without another lookup or fallback.
++ * Each outcome has an independent, process-wide 16-record budget. Atomic
++ * reservation keeps background callers inside that bound. Names are bounded
++ * diagnostic labels, not identities for acceptance or state comparison. */
++static volatile LONG armport_group_model_samples[3];
++static void armportGroupModelLabel(char *out, size_t capacity, const char *in)
++{
++    size_t i;
++    for (i = 0; i + 1 < capacity && in && in[i]; ++i)
++    {
++        unsigned char c = (unsigned char)in[i];
++        out[i] = c >= 33 && c <= 126 && c != '"' && c != '\\' ? c : '_';
++    }
++    out[i] = 0;
++}
++static void armportGroupModelResult(unsigned outcome, const char *name,
++                                   const char *path, const Model *model)
++{
++    LONG before;
++    char label[97], file[261], detail[512];
++    if (outcome >= 3 || (!getenv("ARMPORT_STDIO_LOG") && !getenv("ARMPORT_ZONE_LOG"))) return;
++    do
++    {
++        before = InterlockedCompareExchange(&armport_group_model_samples[outcome], 0, 0);
++        if (before >= 16) return;
++    } while (InterlockedCompareExchange(&armport_group_model_samples[outcome], before + 1, before) != before);
++    armportGroupModelLabel(label, sizeof(label), name);
++    armportGroupModelLabel(file, sizeof(file), path);
++    _snprintf(detail, sizeof(detail),
++        "outcome=%u sample=%ld name=\"%s\" geo=\"%s\" model=%u loadstate=%u verts=%d tris=%d",
++        outcome, (long)before + 1, label, file, model != NULL,
++        model ? (unsigned)model->loadstate : 0,
++        model ? model->vert_count : 0, model ? model->tri_count : 0);
++    detail[sizeof(detail)-1] = 0;
++    armportZoneTrace("group.model", detail);
++}
++#define ARMPORT_GROUP_MODEL_RESULT(outcome, name, path, model) armportGroupModelResult(outcome, name, path, model)
++#else
++#define ARMPORT_GROUP_MODEL_RESULT(outcome, name, path, model) ((void)0)
++#endif
++
+ Model * groupModelFind(const char *name)
+ {
+     GroupFileEntry    *gf;
+@@ -120,6 +163,7 @@ Model * groupModelFind(const char *name)
+     gf = objectLibraryEntryFromObj(cs);
+     if (!gf)
+     {
++        ARMPORT_GROUP_MODEL_RESULT(0, cs, NULL, NULL);
+         PERFINFO_AUTO_STOP_CHECKED("groupModelFind");
+         return 0;
+     }
+@@ -134,6 +178,7 @@ Model * groupModelFind(const char *name)
+     // in shared memory
+     model = modelFind(cs,geoname,LOAD_HEADER, GEO_DONT_INIT_FOR_DRAWING | GEO_USED_BY_WORLD);
+ #endif
++    ARMPORT_GROUP_MODEL_RESULT(model ? 2 : 1, cs, geoname, model);
+     PERFINFO_AUTO_STOP_CHECKED("groupModelFind");
+     return model;
+ }

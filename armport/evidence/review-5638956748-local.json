@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-24",
+  "review": "https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5638956748",
+  "approval": "https://github.com/Russianranger/coh-android/pull/6#issuecomment-6386664502",
+  "patchwork_commit": "39c62da",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "output": "..............................................................................\n----------------------------------------------------------------------\nRan 78 tests in 4.614s\n\nOK",
+      "log": {
+        "bytes": 177,
+        "sha256": "bbcd24eb944079ce0dae8720d440638aca09fabde0b4f15cc6a7ba6f61bd2145"
+      }
+    },
+    {
+      "command": "CMAKE_BUILD_PARALLEL_LEVEL=2 PYTHONPATH=restored-tools/python restored-tools/python/bin/cmake --build build-arm-new --target Game",
+      "exit_code": 0,
+      "output": "[16/16] Linking CXX executable bin/CityOfHeroes.exe",
+      "log": {
+        "bytes": 39095,
+        "sha256": "a0460278310184dd387a7cc62ec6a92293849fb09dc14c7c17bdffa89d3ac251"
+      }
+    },
+    {
+      "command": "CMAKE_BUILD_PARALLEL_LEVEL=2 PYTHONPATH=restored-tools/python restored-tools/python/bin/cmake --build build-i686-new --target Game",
+      "exit_code": 0,
+      "output": "[16/16] Linking CXX executable bin/CityOfHeroes.exe",
+      "log": {
+        "bytes": 35657,
+        "sha256": "78e3bdf7af32658739a1d8bd4164e91520c6cb5678b21d6a21eda3650dce9fff"
+      }
+    },
+    {
+      "command": "python3 armport/scripts/discover_approved_ranges.py --output /tmp/m3-range-reproduction --metadata-cache /tmp/m3-pigg-metadata",
+      "exit_code": 0,
+      "output": "{\"files\": 8, \"bytes\": 2523936, \"unresolved\": [\"face_skin_head_09\", \"hips_miniskirt_1\", \"hips_skin_tights\", \"x_enforcer_glove_01_mask\", \"x_gear_pads\", \"x_imperialdefense_belt_01\"]}"
+    },
+    {
+      "command": "python3 armport/scripts/stage_approved_ranges.py --output /tmp/m3-approved-staged",
+      "exit_code": 0,
+      "output": "{\"files\": 8, \"bytes\": 2523936, \"unresolved\": [\"face_skin_head_09\", \"hips_miniskirt_1\", \"hips_skin_tights\", \"x_enforcer_glove_01_mask\", \"x_gear_pads\", \"x_imperialdefense_belt_01\"], \"source_archives_fully_downloaded\": false, \"runtime_validated\": false}"
+    },
+    {
+      "command": "git diff -- upstream/",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "CMAKE_BUILD_PARALLEL_LEVEL=2 PYTHONPATH=restored-tools/python restored-tools/python/bin/cmake --build build-arm-new --target armport_zone_trace",
+      "exit_code": 0,
+      "output": "[7/7] Linking CXX executable bin/armport_zone_trace.exe",
+      "log": {
+        "bytes": 595,
+        "sha256": "f70d29869d29cb3ce7218a0373a4c0928fb654634cc7cf6de8dd6bb576d965d7"
+      }
+    }
+  ],
+  "asset_manifest": {
+    "bytes": 35427,
+    "sha256": "b1520ad580af1af958f96fa33bb0dc3d9574a736f0fbd18cd4e5ee15a40df29a"
+  },
+  "file_count": 8,
+  "payload_bytes": 2523936,
+  "unresolved": [
+    "face_skin_head_09",
+    "hips_miniskirt_1",
+    "hips_skin_tights",
+    "x_enforcer_glove_01_mask",
+    "x_gear_pads",
+    "x_imperialdefense_belt_01"
+  ],
+  "arm64_replay_40111054487": {
+    "job": 120923329915,
+    "artifact": 12566549630,
+    "artifact_sha256": "659d0c158ca31d20145fa0b8886584c2b380d1c983d5547764d8435ccf5599a3",
+    "returncode": -9,
+    "required_returncode": 2,
+    "terminal_dispatches": 117,
+    "final_loader_drain_completed": true,
+    "termination_cause_known": false
+  },
+  "runtime_validated": false,
+  "m3_complete": false,
+  "m4_complete": false
+}

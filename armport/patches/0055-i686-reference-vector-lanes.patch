@@ -1,0 +1,16 @@
+diff --git a/Game/src/graphics/frustum_c.c b/Game/src/graphics/frustum_c.c
+index b6e89d9..88b325b 100644
+--- a/Game/src/graphics/frustum_c.c
++++ b/Game/src/graphics/frustum_c.c
+@@ -4,8 +4,9 @@
+ #include <utilitieslib/utils/mathutil.h>
+ 
+ // ArmPort: MSVC exposes __m128 lanes as .m128_f32. On ARM64 (sse2neon) __m128
+-// is a NEON vector, so reach the lanes through a float pointer.
+-#if defined(__aarch64__)
++// is a NEON vector; the clang i686 reference also uses a vector type.
++// Reach the same lanes through a float pointer on those builds.
++#if defined(__aarch64__) || defined(COH_ARMPORT_REFERENCE_I686)
+ #define M128_F32(v) ((float *)&(v))
+ #else
+ #define M128_F32(v) ((v).m128_f32)

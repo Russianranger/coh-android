@@ -7,6 +7,12 @@ This report always reserves entries for load progress and sampled stacks.
 import argparse
 import json
 from pathlib import Path
+import client_errors
+import world_draw_report
+import world_model_report
+import world_camera_report
+import world_ui_report
+import group_model_report
 
 
 def tail(text, limit=3600):
@@ -21,7 +27,8 @@ def sections(evidence, client):
     raw = read(evidence / 'login-driver.json')
     status = json.loads(raw) if raw else {}
     keys = ('client_started', 'client_exit', 'client_error', 'enter_by_layout',
-            'play_sent', 'world_rendered', 'zone_load_seconds', 'loading_brightness', 'load_samples')
+            'play_sent', 'world_rendered', 'zone_load_seconds', 'diagnostic_seconds_excluded', 'loading_brightness', 'load_samples',
+            'qa_notice_last_check', 'qa_notice_actions')
     summary = {key: status[key] for key in keys if key in status}
     raw = read(evidence / 'armport-game-report.json')
     report = json.loads(raw) if raw else {}
@@ -30,8 +37,41 @@ def sections(evidence, client):
         'connected_on_atlas', 'connected_utc', 'final_status', 'still_connected')}
     # Compact JSON keeps all 50 progress samples and brightness values intact.
     yield 'ArmPort M3 load status', json.dumps(summary, separators=(',', ':'))
-    traces = [line for line in read(client / 'armport_stdio.txt').splitlines()
+    stdio = client / 'armport_stdio.txt'
+    if stdio.is_file():
+        trace = client / 'zone-trace.jsonl'
+        errors = client_errors.inventory(stdio, evidence / 'client-errors.json',
+                                         trace if trace.exists() else None)
+        yield 'ArmPort M3 game errors', json.dumps(dict(count=errors['count'], unique=errors['unique'],
+            inventory='client-errors.json', source=errors['source'],
+            complete_messages=errors['complete_messages'], trace_record_count=errors['trace_records'],
+            integrity_failures=errors['integrity_failures'],
+            phase_counts=errors['phase_counts'], examples=errors['errors'][:3]))
+    raw_lines = read(client / 'armport_stdio.txt').splitlines(keepends=True)
+    traces = [line.rstrip('\r\n') for line in raw_lines
               if line.startswith('ArmPort zone: ')]
+    world = world_draw_report.summarize(raw_lines)
+    (evidence / 'world-draw-summary.json').write_text(json.dumps(world, indent=2) + '\n')
+    yield 'ArmPort M3 world traversal', json.dumps(
+        {key: value for key, value in world.items() if key != 'samples'}, separators=(',', ':'))
+    models = world_model_report.summarize(read(client / 'zone-trace.jsonl').splitlines(keepends=True))
+    (evidence / 'world-model-summary.json').write_text(json.dumps(models, indent=2) + '\n')
+    lookups = group_model_report.summarize(read(client / 'zone-trace.jsonl').splitlines(keepends=True))
+    (evidence / 'group-model-summary.json').write_text(json.dumps(lookups, indent=2) + '\n')
+    model_summary = {key: value for key, value in models.items() if key != 'samples'}
+    model_summary['lookup_observations'] = {key: value for key, value in lookups.items() if key != 'samples'}
+    yield 'ArmPort M3 model traversal', json.dumps(model_summary, separators=(',', ':'))
+    camera = world_camera_report.summarize(read(client / 'zone-trace.jsonl').splitlines(keepends=True))
+    (evidence / 'world-camera-summary.json').write_text(json.dumps(camera, indent=2) + '\n')
+    ui = world_ui_report.summarize(read(client / 'zone-trace.jsonl').splitlines(keepends=True))
+    (evidence / 'world-ui-summary.json').write_text(json.dumps(ui, indent=2) + '\n')
+    camera_summary = {key: value for key, value in camera.items() if key != 'samples'}
+    camera_summary['ui_inputs'] = {key: value for key, value in ui.items() if key != 'samples'}
+    yield 'ArmPort M3 camera/player inputs', json.dumps(camera_summary, separators=(',', ':'))
+    if status.get('frame_checks'):
+        yield 'ArmPort M3 final frame check', json.dumps(status['frame_checks'][-1], separators=(',', ':'))
+    if status.get('qa_notice_actions'):
+        yield 'ArmPort M3 QA notice input', json.dumps(status['qa_notice_actions'], separators=(',', ':'))
     yield 'ArmPort M3 zone stages', tail('\n'.join(line for line in traces if ' library.' not in line)) or 'no zone traces'
     yield 'ArmPort M3 library progress', tail('\n'.join(line for line in traces if ' library.' in line)) or 'no library traces'
     for path in sorted(evidence.glob('stall-*.txt'))[:2]:

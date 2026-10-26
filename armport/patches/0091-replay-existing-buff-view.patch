@@ -1,0 +1,56 @@
+diff --git a/Game/src/UI/uiBuff.c b/Game/src/UI/uiBuff.c
+index 285bd22..93a32ac 100644
+--- a/Game/src/UI/uiBuff.c
++++ b/Game/src/UI/uiBuff.c
+@@ -46,6 +46,29 @@ typedef struct PowerBuff
+     int window;
+ }PowerBuff;
+ 
++#ifdef COH_ARMPORT_REPLAY
++int armportReplayBuffCount(const Entity *entity)
++{
++    return entity ? eaSize(&entity->ppowBuffs) : 0;
++}
++int armportReplayBuffAt(const Entity *entity, int index, ArmPortReplayBuffView *view)
++{
++    const PowerBuff *buff;
++    if (!entity || !view || index < 0 || index >= eaSize(&entity->ppowBuffs)) return -1;
++    buff = entity->ppowBuffs[index];
++    if (!buff) return 0;
++    view->power = buff->ppow;
++    view->descriptions = (const AttribDescription *const *)buff->ppDesc;
++    view->magnitudes = buff->ppfMag;
++    view->description_count = eaSize(&buff->ppDesc);
++    view->magnitude_count = eafSize(&buff->ppfMag);
++    view->blink = buff->iBlink;
++    view->uid = buff->uid;
++    view->delete_mark = buff->delete_mark;
++    return 1;
++}
++#endif
++
+ void markBuffForDeletion(Entity *e, int uid)
+ {
+     int i;
+diff --git a/Game/src/UI/uiBuff.h b/Game/src/UI/uiBuff.h
+index 6fd28b2..73ce6a1 100644
+--- a/Game/src/UI/uiBuff.h
++++ b/Game/src/UI/uiBuff.h
+@@ -38,4 +38,17 @@ void markBuffForDeletion(Entity *e, int uid);
+ void setBuffSetting( BuffWindow window, BuffSettings setting );
+ int isBuffSetting( BuffWindow window, BuffSettings setting );
+ 
++#ifdef COH_ARMPORT_REPLAY
++typedef struct ArmPortReplayBuffView {
++    const BasePower *power;
++    const AttribDescription *const *descriptions;
++    const float *magnitudes;
++    int description_count, magnitude_count;
++    int blink, uid, delete_mark;
++} ArmPortReplayBuffView;
++int armportReplayBuffCount(const Entity *entity);
++/* -1: invalid index, 0: null slot, 1: existing buff copied to view. */
++int armportReplayBuffAt(const Entity *entity, int index, ArmPortReplayBuffView *view);
++#endif
++
+ #endif

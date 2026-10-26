@@ -1,0 +1,18 @@
+diff --git a/Game/src/UI/uiPowerCust.c b/Game/src/UI/uiPowerCust.c
+index cd3c61a..6036954 100644
+--- a/Game/src/UI/uiPowerCust.c
++++ b/Game/src/UI/uiPowerCust.c
+@@ -647,7 +647,12 @@ static void initializeMenu()
+     randomizePowerCustColors();
+     initializeTokens();
+     costume_Apply(playerPtr());
+-    restartPowerCustomizationAnimation();
++    // 0074: hybrid_start_menu calls this entry callback before serve_menus
++    // commits gNextMenu. Building now indexes sSelectedPowers using the old
++    // menu (MENU_COSTUME - MENU_POWER_CUST == -16 on first creation entry).
++    // Clear the preview now and let its existing gLoopNow path build it on
++    // the destination menu's first animation frame. No power is substituted.
++    resetPowerCustomizationPreview();
+     s_outOfDate = 1;
+     gPowerColorsLinked = POWERCUST_LINKED_COLORS_NONE;
+     menuInitialized = true;

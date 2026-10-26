@@ -1,0 +1,45 @@
+diff --git a/Common/entity/power_customization.c b/Common/entity/power_customization.c
+index 8510a32..6c355d3 100644
+--- a/Common/entity/power_customization.c
++++ b/Common/entity/power_customization.c
+@@ -17,6 +17,7 @@
+ #include <utilitieslib/utils/FolderCache.h>
+ #include "entity/character_eval.h"
+ #if CLIENT
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include "entity/power_customization_client.h"
+ #elif SERVER
+ #include "entity/power_customization_server.h"
+@@ -243,6 +244,18 @@ PowerCustomization* powerCust_FindPowerCustomization(PowerCustomizationList* pow
+ {
+     PowerCustomization **result;
+ 
++#if CLIENT && defined(__GNUC__) && defined(_WIN32)
++    // 0068: diagnose the incoming key and original caller before bsearch.
++    // Opt-in only; do not dereference, filter or repair the suspect pointer.
++    if (getenv("ARMPORT_POWER_TRACE"))
++    {
++        char detail[160];
++        snprintf(detail, sizeof(detail), "caller=%p power=%p list=%p",
++            __builtin_return_address(0), (const void *)power, (void *)powerCustList);
++        armportZoneTrace("power.lookup", detail);
++    }
++#endif
++
+     if (!powerCustList)
+         return NULL;
+ 
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index 89a86ce..a714912 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -81,7 +81,8 @@ static void armportZoneTrace(const char *stage, const char *detail)
+ {
+     // 0067: Atlas-only ordering witness in the SAME append-only stream as
+     // Wine's +seh output. A separate log's line numbers/ticks cannot order
+-    // Wine exceptions against map.start. Emit before the isolated marker;
++    // Wine exceptions against map.start. Emit for EVERY map.start before its
++    // isolated marker (the validator checks both counts);
+     // no exception can gain a larger startup allowance from this boundary.
+     if (!strcmp(stage, "map.start"))
+     {

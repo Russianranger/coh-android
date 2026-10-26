@@ -88,13 +88,17 @@ def audit_runtime_tree(root):
             files += 1
     return dict(files=files, directories=directories, case_duplicates=0)
 
-def merge_tree(src, dst, strict=False, earlier_roots=None):
+
+def merge_tree(src, dst, strict=False, earlier_roots=None, copy_files=False):
     """Overlay src onto dst as hard links (real directories, no symlinks, so the
     client's directory scans see ordinary files). Earlier roots win for files.
     Case-equivalent directories share their first spelling, matching Windows
     lookup: a lowercase geometry layer must join the original text directory.
     Strict supplements must agree byte-for-byte with every earlier collision,
-    including case aliases, before any of their files are installed."""
+    including case aliases, before any of their files are installed.
+    copy_files keeps private guest data independent of inputs: PRoot's
+    --link2symlink can otherwise turn a temporary hard link into a dangling
+    symlink when the extraction directory is removed."""
     collisions = 0
     if strict:
         prior = {}
@@ -162,10 +166,13 @@ def merge_tree(src, dst, strict=False, earlier_roots=None):
                     raise ValueError('Runtime file conflicts with an existing entry: ' + str(index[key]))
                 continue
             out = target / f
-            try:
-                os.link(os.path.join(dirpath, f), out)
-            except OSError:
+            if copy_files:
                 shutil.copy2(os.path.join(dirpath, f), out)
+            else:
+                try:
+                    os.link(os.path.join(dirpath, f), out)
+                except OSError:
+                    shutil.copy2(os.path.join(dirpath, f), out)
             index[key] = out
     if strict:
         print('::notice title=ArmPort reviewed Atlas supplement::' +
@@ -475,6 +482,8 @@ def login_probe(out, proc):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--build', required=True, type=Path)
+    ap.add_argument('--strict-data', type=Path, action='append', default=[],
+                    help='--data root whose collisions must have identical bytes')
     ap.add_argument('--data', required=True, type=Path, action='append',
                     help='data root; repeat to overlay several (merged with symlinks)')
     ap.add_argument('--runtime', required=True, type=Path)
@@ -524,8 +533,14 @@ def main():
                 copied.append(d)
         note('notice', 'ArmPort M2 smoke imports', ', '.join(dlls))
     note('notice', 'ArmPort M2 smoke runtime DLLs', ', '.join(copied) or 'none')
+    strict_roots = {root.resolve() for root in a.strict_data}
+    if not strict_roots.issubset({root.resolve() for root in a.data}):
+        raise ValueError('--strict-data must also appear in --data')
+    earlier_roots = []
     for root in a.data:
-        merge_tree(root.resolve(), rt / 'data')
+        root = root.resolve()
+        merge_tree(root, rt / 'data', strict=root in strict_roots, earlier_roots=earlier_roots)
+        earlier_roots.append(root)
     print('::notice title=ArmPort complete runtime data inventory::' + json.dumps(audit_runtime_tree(rt / 'data')))
     # Development (non-FINAL) builds take a folder with data/ and tools/ as the
     # game root (UtilitiesLib file.c addAppropriateDataDirs).

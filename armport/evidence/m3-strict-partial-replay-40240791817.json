@@ -1,0 +1,197 @@
+{
+  "run": 40240791817,
+  "source_commit": "f6332f2953f5d79768717f0021a5626fe04af318",
+  "artifacts": [
+    {
+      "id": 12617326111,
+      "target": "arm64",
+      "sha256": "7a50c8cb886cc244eba2bcb886acff38b8c801a02a5d56036091596a8875ce87"
+    },
+    {
+      "id": 12618125914,
+      "target": "i686",
+      "sha256": "ad27f4cbf4043e0ef48f973ec1404ac873aa9ffbafe3648f482033c64703d65b"
+    },
+    {
+      "id": 12617363460,
+      "name": "partial-state-comparison",
+      "sha256": "bbf0514c4e8b618e503f027737c02cef31d302592490177b21edc7a9e12ea100"
+    }
+  ],
+  "verified_snapshot_digests": 702,
+  "independent_command": "compare_state.compare(Path(\"/tmp/coh-resume/compare-40240791817\"), \"f6332f2953f5d79768717f0021a5626fe04af318\", original_texture_exception=True)",
+  "matches_ci_report_exactly_after_json_serialization": true,
+  "comparison": {
+    "outside_error_inventories_equal": true,
+    "source_commit": "f6332f2953f5d79768717f0021a5626fe04af318",
+    "scope": "partial_receiver_state_comparison",
+    "original_texture_exception": true,
+    "accepted_original_data_errors": [
+      {
+        "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+        "dispatch_index": 1,
+        "after_dispatch_index": null,
+        "count": 1
+      }
+    ],
+    "comparisons": [
+      {
+        "left": [
+          "arm64",
+          "id1-a"
+        ],
+        "right": [
+          "i686",
+          "id1-a"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id1-b"
+        ],
+        "right": [
+          "i686",
+          "id1-b"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id31"
+        ],
+        "right": [
+          "i686",
+          "id31"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id1-a"
+        ],
+        "right": [
+          "arm64",
+          "id1-b"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "arm64",
+          "id1-a"
+        ],
+        "right": [
+          "arm64",
+          "id31"
+        ],
+        "id_sensitivity": true,
+        "canonicalized_fields": [
+          "entities[].pkt_id_create",
+          "entities[].player.lastClientStatePktId",
+          "delete_history[].pkt_id",
+          "entities[].pkt_id_pos[]",
+          "entities[].pkt_id_qrot[]"
+        ],
+        "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+        "equal": false,
+        "mismatches": [
+          {
+            "index": 0,
+            "fields": [
+              "$.entities[0].packet_order.pkt_id_character_stats",
+              "$.entities[0].packet_order.pkt_id_costume",
+              "$.entities[0].packet_order.pkt_id_logout",
+              "$.entities[0].packet_order.pkt_id_powerCust",
+              "$.entities[0].packet_order.pkt_id_rare_bits",
+              "$.entities[0].packet_order.pkt_id_seq_move",
+              "$.entities[0].packet_order.pkt_id_state_mode",
+              "$.entities[0].packet_order.pkt_id_supergroup",
+              "$.entities[0].packet_order.pkt_id_targetting",
+              "$.entities[0].packet_order.pkt_id_titles",
+              "$.entities[0].packet_order.pkt_id_xlucency"
+            ]
+          }
+        ]
+      },
+      {
+        "left": [
+          "i686",
+          "id1-a"
+        ],
+        "right": [
+          "i686",
+          "id1-b"
+        ],
+        "id_sensitivity": false,
+        "canonicalized_fields": [],
+        "canonicalization_condition": null,
+        "equal": true,
+        "mismatches": []
+      },
+      {
+        "left": [
+          "i686",
+          "id1-a"
+        ],
+        "right": [
+          "i686",
+          "id31"
+        ],
+        "id_sensitivity": true,
+        "canonicalized_fields": [
+          "entities[].pkt_id_create",
+          "entities[].player.lastClientStatePktId",
+          "delete_history[].pkt_id",
+          "entities[].pkt_id_pos[]",
+          "entities[].pkt_id_qrot[]"
+        ],
+        "canonicalization_condition": "equals this runs synthetic INITIAL ID",
+        "equal": false,
+        "mismatches": [
+          {
+            "index": 0,
+            "fields": [
+              "$.entities[0].packet_order.pkt_id_character_stats",
+              "$.entities[0].packet_order.pkt_id_costume",
+              "$.entities[0].packet_order.pkt_id_logout",
+              "$.entities[0].packet_order.pkt_id_powerCust",
+              "$.entities[0].packet_order.pkt_id_rare_bits",
+              "$.entities[0].packet_order.pkt_id_seq_move",
+              "$.entities[0].packet_order.pkt_id_state_mode",
+              "$.entities[0].packet_order.pkt_id_supergroup",
+              "$.entities[0].packet_order.pkt_id_targetting",
+              "$.entities[0].packet_order.pkt_id_titles",
+              "$.entities[0].packet_order.pkt_id_xlucency"
+            ]
+          }
+        ]
+      }
+    ],
+    "partial_state_equal": false,
+    "state_schema_complete": false,
+    "state_comparison_complete": false,
+    "m3_replay_complete": false
+  },
+  "review_decision": "11 scalar IDs differ1/31 only in snapshot0 on both targets; proposed enumeration not implemented or approved",
+  "m3_complete": false
+}

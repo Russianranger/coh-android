@@ -87,11 +87,155 @@ cc949b01f5db6ff108efcf6afcbfe9567c432b4aa15f3a02c8f193e380cc7b39
 f134c3c083e571b679ed6976bec36c672028854f4a48879cc0f2d47423db96a9
 ```
 
-Missing files are no longer a blocker. Reviewer agreement on the original
-receive-code replay method remains required before implementation.
+Missing files are no longer a blocker. Claude agreed to the original
+receive-code method in PR #6 review 5635319013; see M3-REPLAY-PLAN.md.
 
 Patch 0049 local validation: llvm-mingw 20250910 with the repository
 Release toolchain, `ninja -j2 Game/CMakeFiles/Game.dir/src/render/tex.c.obj`
 completed with exit 0 (eight existing warnings). `file` reports an Aarch64
 COFF object; `git diff --numstat -- upstream` is empty. Runtime result is
 pending the next CI run.
+
+## Review follow-up (2026-10-23)
+
+A search of the full 40011219458 client-output.txt finds only the caught
+startup RPC_S_SERVER_UNAVAILABLE (0x6ba) exception; no subsequent access
+violation or logged loader exception appears at the texture stall. This
+does not prove an exception was impossible or supply a missing stack.
+
+Run 40032719161 failed earlier in group loading, with Wine PC
+0x6fffffdb7518 reading address 0x50 in thread 0x128. Its final marker is
+groupfile.begin for office01/trays/halls/halls.txt; no texture-stall
+conclusion can be drawn from that run. Evidence artifact 12539025345
+SHA-256 d5cd00b8f6c175a6452527606efd5e4118125c14c38b250dba177a379912e177
+was checked before inspection. Patch 0051 adds thread IDs to existing zone
+markers; the bounded debugger now prints PC/LR and eight frame-chain levels.
+
+Run 40040798938 libraries passed the host diagnostic suite and ARM64 worker
+controls. `ci_results.py --run 40040798938 --job libraries --no-wait --grep
+"ARM64 worker"` returns original dispatched=0, patched dispatched=1, and
+4096 commands/replies in both notices. Rendering and receiver replay remain
+unproved.
+
+
+## CRT stream diagnostic bug (0052)
+
+Run 40035482170, server-run job 120697885705, failed before the texture
+wait at the same PC/LR as 40032719161. Artifact 12539159417 was verified:
+`2c8e123a393b46fe1cab2f6c7dc8864c5f13061d06919e8f029e2a4879879866`.
+The final partial stdio line is `ArmPort zone: 40`; no Atlas frame passed.
+
+A concrete defect in our trace explains this crash signature. Preprocessing
+tex.c with its actual ARM64 compile command and `-E` before 0052 produces:
+
+```
+x_fprintf((__acrt_iob_func(2)), "ArmPort zone: ...", ...);
+```
+
+file.h defines fprintf as x_fprintf, which requires FileWrapper*, while
+stderr is a CRT FILE*. x_vfprintf then calls x_fwrite using the CRT object's
+contents as a wrapper. This is undefined behavior, not a safe diagnostic.
+
+Disassembly of the hash-verified runtime-lock.json Wine archive with
+`llvm-objdump -d` finds RtlEnterCriticalSection at ntdll RVA 0x57510;
+its +8 instruction loads [x0+0x20]. ucrtbase fwrite at RVA 0x39f68 sets
+x0 = stream + 0x30 and calls that function, returning at +0x2c. These
+match the observed PC 0x6fffffdb7518, LR 0x6fffff469f94, x0=0x30,
+x19=0 and read address 0x50 with inferred module bases 0x6fffffd60000
+and 0x6fffff430000. A complete game call stack is still unavailable.
+
+0052 temporarily undefines fprintf inside the trace header and restores the
+caller's macro afterward. It preserves the actual CRT stderr destination,
+format, opt-in and thread markers. No queue/loading behavior changes.
+
+Regression command: `ninja -j2 armport_zone_trace
+Game/CMakeFiles/Game.dir/src/render/tex.c.obj` passed (seven existing tex.c
+warnings). The test includes file.h first, calls the trace, then uses the
+restored wrapper macro. It treats incompatible-pointer-types as an error.
+Compiling the same test with the pre-fix header exits 1 with FILE* versus
+FileWrapper* mismatch; the corrected header compiles and links. The CI test
+also runs both writes under ARM64 Wine and requires both output lines.
+Runtime/Atlas rerun pending; this fixes a diagnostic defect, not proof that
+the original texture wait has been resolved.
+
+## Review 5635783793: original 0048 call sites confirmed
+
+With llvm-mingw 20250910 and the actual Release ARM64 compile_commands.json,
+`ninja -C build-active -j2` compiled clientcomm.c, groupnetrecv.c,
+groupfileload.c and tex.c successfully, generating their required headers.
+The command below then preprocesses each complete translation unit with
+`-E`, first using an include overlay containing the exact header reconstructed
+from 0048, then with the current header. It changes no source files.
+
+```
+python3 armport/scripts/check_zone_trace_preprocess.py ../build-active/compile_commands.json
+```
+
+All eight preprocess invocations exited zero. The historical 0048 header
+calls CRT `fprintf` in clientcomm.c, groupnetrecv.c and groupfileload.c.
+The tex.c negative control calls `x_fprintf`, reproducing the diagnostic bug.
+With the current 0052 header all four call CRT `fprintf`.
+Before adding 0056, `git diff --exit-code <0048-commit> <0055-commit> -- Game/src/clientcomm/clientcomm.c
+Game/src/group/groupnetrecv.c Common/group/groupfileload.c` in the patchwork
+tree exited zero: those three traced translation units were unchanged from
+0048 through 0055. Repeating the preprocessing check with 0056's wrapper
+also passes. This confirms the include-order inference with actual preprocessing.
+Run 40011219458 therefore remains evidence of the original texture wait,
+not evidence of the later tex.c trace crash. The no-zone-trace run
+39973792458 also stalled. Neither result establishes the synchronization fix.
+
+## Corrected trace reaches texture swaps (0052)
+
+Run 40042636088, server-run 120720476616, failed at 2026-10-24
+01:33 UTC (October 23 evening in Chicago). The evidence artifact 12542504923
+was downloaded and its SHA-256 verified:
+268ae750808e5baecf6e4c6f2abe8f491c637214426df7013f2d754d8cca372f.
+The final stdio markers are:
+
+```
+ArmPort zone: 4059595 texqueue.finish.unlocked  tid=296
+ArmPort zone: 4059599 texqueue.drain.done  tid=36
+ArmPort zone: 4059599 texqueue.swaps.begin  tid=36
+```
+
+Run 40043254025, server-run 120722352087, independently ends at the same
+markers and fails with `ARM64 client did not stay connected on Atlas`.
+Thus the current stop is after the APC/queue lock and foreground texture
+uploads, within texCheckSwapList or a callee. This is not a queue-lock hang
+in these two runs. The bounded native stacks contain Wine/system frames
+but no usable game frame, so they do not identify a callee or prove a cause.
+
+Visual inspection of 40042636088 screen.jpg shows a white loading view with
+a dark inset rectangle; it is not Atlas. A modal error is a hypothesis only.
+Patch 0057 traces swap-list preparation, matching swaps, scan/warnings,
+model rebuilding (at most 512 geometry entries per call), client error text
+and dialog entry/return. It does not suppress, dismiss or reinterpret errors,
+or alter queueing/loading. It is ARM64-only and emits only with the existing
+ARMPORT_STDIO_LOG opt-in.
+
+Validation: `ninja -C build-arm-opt -j2 Game` and
+`ninja -C build-reference-active -j2 Game` both exited zero after 0057,
+including full executable links. These are compile/link results only;
+no rendered Atlas frame or complete replay is claimed.
+
+## Saved Windows context in Wine syscall waits
+
+The full 40042636088 stack samples expose Linux-side Wine frames, not game
+frames. Source inspection of the runtime-lock.json Wine commit
+b073859675060c9211fcbccfd90e4e87520dc2c2, dlls/ntdll/unix/signal_arm64.c,
+shows the separate saved Windows syscall frame at TEB+0x2f0. Its saved
+FP/LR/SP/PC occupy offsets 0xe8/0xf0/0xf8/0x100. Source:
+https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/ntdll/unix/signal_arm64.c
+
+stall_snapshot.py now supplements its existing native sample with this
+candidate context only when the runtime source pin matches. It validates
+TEB alignment/self pointer, stack bounds and saved-SP containment, then
+reads at most 16 ascending aligned frames within the first MiB above SP.
+The existing PID ownership check, debugger duration and 80-address symbol
+limit remain. No raw memory dump, environment or server process is read.
+A source-layout match plus these checks is not a complete PE unwind or
+proof that every frame is current: runtime evidence is still required.
+
+Command: Python unittest discovery passed 22 tests, including wrong TEB,
+out-of-stack SP and cyclic/oversized-chain rejection. Both helpers passed
+py_compile; git diff --check passed. No new client binary is needed.

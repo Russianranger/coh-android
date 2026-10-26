@@ -1,0 +1,53 @@
+name: ArmPort approved range discovery
+
+# Exact-name discovery of user-approved PIGG ranges (no staging, no runtime).
+# Prints the candidate manifest as annotations for review and commit; the
+# Atlas workflow only stages a committed, pinned manifest.
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Request profile
+        default: cape
+  push:
+    branches: ['armport/**']
+    paths:
+      - 'armport/scripts/discover_approved_ranges.py'
+      - '.github/workflows/armport-range-discovery.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: armport-range-discovery-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - name: Discover exact approved ranges
+        env:
+          PROFILE: ${{ github.event.inputs.profile || 'cape' }}
+        run: |
+          armport/scripts/step.sh "ArmPort range discovery" python3 armport/scripts/discover_approved_ranges.py --profile "$PROFILE" \
+            --output "$RUNNER_TEMP/discovered" --metadata-cache "$RUNNER_TEMP/metadata"
+          python3 - "$RUNNER_TEMP/discovered" <<'EOF'
+          import json, sys
+          from pathlib import Path
+          [manifest] = [p for p in Path(sys.argv[1]).glob('*.json')]
+          text = json.dumps(json.loads(manifest.read_text()), sort_keys=True, separators=(',', ':'))
+          chunks = [text[i:i + 3500] for i in range(0, len(text), 3500)]
+          for i, chunk in enumerate(chunks, 1):
+              chunk = chunk.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::notice title=ArmPort discovered {manifest.name} {i}/{len(chunks)}::{chunk}')
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-discovered-ranges
+          path: ${{ runner.temp }}/discovered
+          retention-days: 30

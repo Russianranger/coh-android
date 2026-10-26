@@ -2,6 +2,18 @@
 # -DCOX_ARMPORT_TESTS_DIR=<repo>/armport/tests (ARM64 Windows builds only).
 include(StructParser)
 
+add_executable(armport_zone_trace src/zone_trace_test.c)
+cox_target_defaults(armport_zone_trace)
+target_compile_options(armport_zone_trace PRIVATE -Werror=incompatible-pointer-types)
+target_link_libraries(armport_zone_trace PRIVATE UtilitiesLib)
+target_link_options(armport_zone_trace PRIVATE -static)
+
+# Preflight required by Claude's replay-method review; not packet replay.
+add_executable(armport_replay_sink src/replay_sink_test.c)
+cox_target_defaults(armport_replay_sink)
+target_link_libraries(armport_replay_sink PRIVATE UtilitiesLib)
+target_link_options(armport_replay_sink PRIVATE -static)
+
 # M1: the original textparser reads defs/ui/bodyparts.bp and the shipped
 # BodyParts.bin on ARM64. BodyPart.c needs the generated bones_h_ast.h.
 add_executable(armport_bodyparts

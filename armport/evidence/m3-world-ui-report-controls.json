@@ -1,0 +1,25 @@
+{
+  "date_utc": "2026-10-26",
+  "scope": "Host-only parser/report of sampled world-phase UI state",
+  "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+  "exit_code": 0,
+  "tests_passed": 196,
+  "new_tests": 5,
+  "controls": [
+    "literal fields and no rendering verdict",
+    "missing, torn, malformed, duplicated, mismatched and oversized records reject",
+    "eight samples accepted, ninth rejected",
+    "signed modes/types preserved without guessed enum meaning",
+    "zone report LF/CRLF/torn and old-trace integration",
+    "existing eight-section diagnostic log bound preserved"
+  ],
+  "output": "world-ui-summary.json; compact ui_inputs under camera/player summary",
+  "limits": [
+    "Host fixtures are not native UI/runtime proof.",
+    "World-phase samples cannot prove a later UI draw emitted text.",
+    "No screenshot acceptance or milestone flag is changed.",
+    "Running Atlas40314007807 predates host report; its artifact can be analyzed retrospectively."
+  ],
+  "cause_established": false,
+  "rendering_acceptance_changed": false
+}

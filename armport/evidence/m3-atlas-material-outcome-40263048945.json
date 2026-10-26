@@ -1,0 +1,213 @@
+{
+  "source_commit": "9d82645ced5699c448e7a4c636eed5c6ec1b12d0",
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/40263048945",
+  "artifact_id": 12628120860,
+  "artifact_sha256": "4d67049025022d17caaaa6b88f4da39f43ac20b38916337c460f6ee2c7b5e0d4",
+  "artifact_sha256_verified": true,
+  "manifest_sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+  "client_errors_sha256": "2d7c3f7c867ff39e9f20b73aae25b57d4419353c0370150e9da15f3dc8f51884",
+  "checks": [
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_dirty_concrete_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_dirty_brick_floor_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_Drity_Asphalt_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_BaseConcrete_01\" references missing texture \"ap_cityhall_baseconcrete_01_ns\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Border_01\" references missing texture \"AP_CityHall_Border_01_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Border_02\" references missing texture \"AP_CityHall_Border_02_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Border_03\" references missing texture \"AP_CityHall_Border_03_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Border_04\" references missing texture \"AP_CityHall_Border_04_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Concrete_01\" references missing texture \"AP_CityHall_Concrete_01_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Details_01\" references missing texture \"AP_CityHall_Details_01_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Dome_01\" references missing texture \"AP_CityHall_Dome_01_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Gold_D\" references missing texture \"AP_CityHall_Gold_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Marble\" references missing texture \"AP_CityHall_Marble_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Pillar_01\" references missing texture \"AP_CityHall_Pillar_01_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Plaque_01\" references missing texture \"AP_CityHall_Plaque_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_CityHall_Tiles\" references missing texture \"AP_CityHall_Tiles_01_NS\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_oilstains_decal_01\" references missing texture \"AP_oilstains_decal_01_n.tga\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_crack_decal_01\" references missing texture \"AP_crack_decal_01_n\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_grass_decal_01\" references missing texture \"AP_grass_detail_01_b\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_grass_decal_02\" references missing texture \"AP_grass_detail_01_b\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_grass_decal_03\" references missing texture \"AP_grass_detail_01_b\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_grass_decal_04\" references missing texture \"AP_grass_detail_01_b\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture",
+      "expected_removed_error": "Texture Trick \"X_Door_Atlas_Generic_Double\" references missing texture \"Door_Atlas_Generic_Double_D\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_agapanthus\" references missing texture \"AP_agapanthus_01_b.tga\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_ivy_01\" references missing texture \"AP_ivy_01_dc\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture",
+      "expected_removed_error": "Texture Trick \"x_AP_ivy_creepers_01\" references missing texture \"AP_ivy_creepers_01_dc\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture",
+      "expected_removed_error": "Texture Trick \"X_Male_Statue_Atlas_01\" references missing texture \"Male_Statue_Atlas_AO\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture",
+      "expected_removed_error": "Texture Trick \"X_Male_Statue_Atlas_Globe_01\" references missing texture \"Statue_Globe_02_N\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_treeleaf01\" references missing texture \"Alas_tree01_d\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_treelroots01\" references missing texture \"Alas_treebase_n\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_rock01\" references missing texture \"AP_rock01_d.tga\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_Asphalt_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\".",
+      "remaining": false
+    },
+    {
+      "path": "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture",
+      "expected_removed_error": "Texture Trick \"X_AP_BrickTile_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\".",
+      "remaining": false
+    }
+  ],
+  "covered_error_count": 33,
+  "covered_errors_remaining": 0,
+  "remaining_atlas_plaza_and_statue_errors": [
+    "client.error File: TRICKS/CITYZONES/ATLASPARK_MAKEOVER/AP_PLAZA_MATERIALS.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_AP_Drity_Asphalt_01\" references missing texture \"AP_Asphalt_01_NS\".",
+    "client.error File: TRICKS/CITYZONES/ATLASPARK_MAKEOVER/AP_PLAZA_MATERIALS.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"x_AP_dirty_brick_floor_01\" references missing texture \"Plaza_Brick_Floor_02_NS\".",
+    "client.error File: TRICKS/CITYZONES/ATLASPARK_MAKEOVER/AP_PLAZA_MATERIALS.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"x_AP_dirty_concrete_01\" references missing texture \"deco_building_03_concrete_01_n\".",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick M_Stat_Chest_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick M_Stat_Face_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick M_Stat_Hips_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Jewel_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Plain_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Tactical_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Tech_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Boot_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Fem_Chest_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Fem_Face_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Fem_Hips_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Glove_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Hair_Long_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Hair_Male_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Shoulder_Spiked_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Wings_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_Male_Statue_Atlas_01\" references missing texture \"Male_Statue_Atlas_N\".",
+    "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_Male_Statue_Atlas_Globe_01\" references missing texture \"Statue_Globe_02_MK\"."
+  ],
+  "screenshot_sha256": "69e4006e039f1ec314507e6626cf6973edf999a4fe4a6d61bc084055d5a1e369",
+  "visual_observation": "Stairs, railings, trees and player visible; flat blue buildings, purple statue and incomplete UI/materials remain. Welcome dialog visible; map name absent. Visual observations do not establish root cause.",
+  "world_rendered": false,
+  "m3_complete": false,
+  "new_asset_authority": false,
+  "next_action": "Resolve exact remaining plaza/statue texture dependencies against existing approved manifests before proposing any additional asset selection. Independently investigate map-name/UI rendering; do not weaken screenshot gate.",
+  "reproduction_script": "import pathlib,json,hashlib,re\nroot=pathlib.Path('/tmp/atlas-latest/_temp/m3-evidence')\nmp=pathlib.Path('coh-active/assets/atlas-world-supplement-manifest.json')\nm=json.loads(mp.read_text()); e=json.loads((root/'client-errors.json').read_text())\ntexts=[x['text'] for x in e['errors']]\nchecks=[{'path':p,'expected_removed_error':r['console_line'],'remaining':any(r['console_line'] in t for t in texts)} for p,rs in m['material_extension']['files'].items() for r in rs]\nremaining=[t for t in texts if re.search(r'TRICKS/(?:CITYZONES/ATLASPARK_MAKEOVER/|HERO_STATUES.TXT)',t)]\nd={'source_commit':'9d82645ced5699c448e7a4c636eed5c6ec1b12d0','run_url':'https://github.com/Russianranger/coh-android/actions/runs/40263048945','artifact_id':12628120860,'artifact_sha256':'4d67049025022d17caaaa6b88f4da39f43ac20b38916337c460f6ee2c7b5e0d4','artifact_sha256_verified':True,'manifest_sha256':hashlib.sha256(mp.read_bytes()).hexdigest(),'client_errors_sha256':hashlib.sha256((root/'client-errors.json').read_bytes()).hexdigest(),'checks':checks,'covered_error_count':len(checks),'covered_errors_remaining':sum(x['remaining'] for x in checks),'remaining_atlas_plaza_and_statue_errors':remaining,'screenshot_sha256':hashlib.sha256((root/'screens/33-atlas-later.png').read_bytes()).hexdigest(),'visual_observation':'Stairs, railings, trees and player visible; flat blue buildings, purple statue and incomplete UI/materials remain. Welcome dialog visible; map name absent. Visual observations do not establish root cause.','world_rendered':False,'m3_complete':False,'new_asset_authority':False,'next_action':'Resolve exact remaining plaza/statue texture dependencies against existing approved manifests before proposing any additional asset selection. Independently investigate map-name/UI rendering; do not weaken screenshot gate.'}\npathlib.Path('/tmp/atlas-diagnostic.json').write_text(json.dumps(d,indent=2)+'\\n')\nprint(json.dumps(d))\n",
+  "replay_followup": {
+    "commit": "c72dbc5837174d0be9799d6cdd194e393d176fd9",
+    "run": "https://github.com/Russianranger/coh-android/actions/runs/40273728728",
+    "qualification": "pending"
+  }
+}

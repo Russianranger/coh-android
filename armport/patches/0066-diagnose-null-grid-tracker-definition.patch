@@ -1,0 +1,29 @@
+diff --git a/Common/group/groupgrid.c b/Common/group/groupgrid.c
+index 2f5a5c9..a2457a8 100644
+--- a/Common/group/groupgrid.c
++++ b/Common/group/groupgrid.c
+@@ -1,4 +1,5 @@
+ #include "group/groupgrid.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include <float.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -90,6 +91,18 @@ void groupGridActivate(DefTracker *parent_tracker,int group_id,Grid *grid)
+     trackerOpen(parent_tracker);
+     def = parent_tracker->def;
+ 
++    // Diagnostics only: keep the original assert/fault, never skip this entry.
++    if (!def)
++    {
++        char detail[512];
++        GroupDef *ancestor = parent_tracker->parent ? parent_tracker->parent->def : NULL;
++        sprintf_s(SAFESTR(detail), "tracker=%p id=%d group_id=%d entries=%p count=%d parent=%p parent_group=%.200s",
++                  parent_tracker, parent_tracker->id, group_id, parent_tracker->entries,
++                  parent_tracker->count, parent_tracker->parent,
++                  ancestor && ancestor->name ? ancestor->name : "<no parent definition>");
++        armportZoneTrace("grid.activate.null_def", detail);
++    }
++
+     if (!def || (def->file && def->pre_alloc))
+         assert(0);
+ 

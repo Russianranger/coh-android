@@ -1,0 +1,155 @@
+{
+  "date_utc": "2026-10-26",
+  "run_id": 40314007807,
+  "source_commit": "e6d39d7a56f52ce2ad25e43ed7117389d0e8a0cb",
+  "conclusion": "failure",
+  "artifact_id": 12650754712,
+  "artifact_bytes": 27115706,
+  "artifact_sha256": "1d9b886f124d01dd7ae3b0a521a0239f44986555e1880626161650361ee4c05a",
+  "verified_files": {
+    "_temp/armport-client/zone-trace.jsonl": "5f4300ce0bc1d298464e03cd0393875164ff8d1ea920955b7f1972bf4e00349e",
+    "_temp/m3-evidence/login-driver.json": "f53d4d82a155080cee9cb06664ae417bd1450569cfce6aa2eba5ec87ea9cfe95",
+    "_temp/m3-evidence/client-errors.json": "d208e66bd1d061c7b74b652f7c21a7626a946d2ac226d73aebdbbea3cb6a5bba",
+    "_temp/m3-evidence/screens/36-atlas-later.png": "1c47527aaa3d78cddff48700db029585bd9df889f346b92baf6e9d0df0807371"
+  },
+  "world_ui": {
+    "scope": "sampled_world_phase_ui_inputs_only",
+    "observations_valid": true,
+    "sample_count": 8,
+    "failure_count": 0,
+    "failures": [],
+    "samples": [
+      {
+        "frame": 1,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      },
+      {
+        "frame": 600,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      },
+      {
+        "frame": 1200,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      },
+      {
+        "frame": 1800,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      },
+      {
+        "frame": 2400,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      },
+      {
+        "frame": 3000,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      },
+      {
+        "frame": 3600,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      },
+      {
+        "frame": 4200,
+        "compass_mode": 2,
+        "map_mode": 4,
+        "mission_map": 0,
+        "selected_task": 0,
+        "selected_type": 0,
+        "name_present": 0,
+        "map_present": 0,
+        "tid": 36
+      }
+    ],
+    "samples_without_destination_name": 8,
+    "cause_established": false,
+    "rendering_acceptance_changed": false
+  },
+  "window_enum_source": "Common/gameComm/wdwbase.h WindowDisplayMode: UNINITIALIZED=0,GROWING=1,DISPLAYING=2,SHRINKING=3,DOCKED=4",
+  "world_rendered": false,
+  "zone_load_seconds": 1593,
+  "last_frame_check": {
+    "map": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "textures_done": true,
+    "ready_sent": true,
+    "atlas_map": true,
+    "load_complete": true,
+    "frame": {
+      "mean": 0.36575,
+      "deviation": 0.238726
+    },
+    "map_name_visible": false,
+    "ocr": "| ray NargetsNava Menu 1 No Target =] Ey SS } } 8 co / Actions En. Map Contact\u00a7Mission\u00a7CluesiGollect aus ' at \"~*~ cal a t | ble Welcome! This character is new and may need help in City of Heroes. You have the option to flag yourself as needing help from other players with a specially colored name and title. You also have the option to flag yourself as a Helper. Please choose: Team League Friends Super Email LFG Tab 1 2 3 /GloballtelpMcomba, | error: auctionhouse not connected i\u00b0 - ac hat re SS, EE, ve Powers Enhancements) Salvage) Rec \u2018=== ~~ ~\u00ae\u00a9\u20ac86CtC\u2018 ; 3SRt*=i=~=*~*~*~::C: Empty Tray Slot Nie Tt Uisi@isiticie. A. a a a a a a a a a a : ( Global: at a a a a a a a a a a",
+    "rendered": false,
+    "owned_window_geometry": [
+      104,
+      130,
+      1024,
+      768
+    ]
+  },
+  "error_count": 5659,
+  "unique_errors": 5656,
+  "complete_literal_error_list_matches_run": 40283068606,
+  "visual_inspection": "Final frame shows stairs, railings, trees, statue/player geometry, flat purple/blue material areas and white UI placeholder squares. Welcome dialog remains; Map is a visible navigation label. No accepted Atlas Park label.",
+  "interpretation": "All eight world-phase samples have compass DISPLAYING, map DOCKED and an unnamed/unmapped default waypoint. Original default compass header emits no name for this input. This is not proof of the later draw branch, missing glyph cause, or acceptable 3D rendering.",
+  "next_action": "After preserving unchanged world frames/verdict, exercise the original map UI in a separate bounded diagnostic to inspect zone-label rendering. Do not count a map overlay as rendered terrain or silently weaken screenshot acceptance. Six-file material proposal still needs explicit selection approval.",
+  "replay": {
+    "run_id": 40321211800,
+    "comparison_job": 121584110467,
+    "partial_state_equal": true,
+    "outside_error_inventories_equal": true,
+    "state_schema_complete": false,
+    "state_comparison_complete": false,
+    "m3_replay_complete": false
+  },
+  "command": "python3: verify artifact SHA256; world_ui_report.summarize(zone_trace.read_text().splitlines(keepends=True)); compare complete client-errors.json errors lists; inspect final screenshot",
+  "m3_complete": false
+}

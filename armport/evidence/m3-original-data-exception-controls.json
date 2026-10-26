@@ -1,0 +1,205 @@
+{
+  "scope": "local_original_data_exception_controls",
+  "checks": [
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p test_*.py -v",
+      "tests": 151,
+      "exit_code": 0,
+      "output_tail": [
+        "----------------------------------------------------------------------",
+        "Ran 151 tests in 5.515s",
+        "",
+        "OK"
+      ],
+      "output_sha256": "b67750fda8f2f0196a7e9d1736b8a8095c8983cd9bcfe089592feb5dfc22e1b2"
+    },
+    {
+      "command": "python3 -m unittest discover -s <armport-plus-two-exact-assets-checkout>/armport/tests -p test_receiver_original_data_errors.py -v",
+      "tests": 6,
+      "exit_code": 0,
+      "output_tail": [
+        "----------------------------------------------------------------------",
+        "Ran 6 tests in 0.656s",
+        "",
+        "OK"
+      ],
+      "output_sha256": "35a56ba716ee234199e2ae8d5d3d03389cbab037a188739234dee3d749a1393f"
+    }
+  ],
+  "retained_trace_validator_control": {
+    "scope": "offline_validator_control_not_fresh_ci",
+    "ci_run": 40203125375,
+    "runs": [
+      {
+        "target": "arm64",
+        "label": "id1-a",
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      },
+      {
+        "target": "arm64",
+        "label": "id1-b",
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      },
+      {
+        "target": "arm64",
+        "label": "id31",
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      },
+      {
+        "target": "i686",
+        "label": "id1-a",
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      },
+      {
+        "target": "i686",
+        "label": "id1-b",
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      },
+      {
+        "target": "i686",
+        "label": "id31",
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      }
+    ],
+    "m3_replay_complete": false
+  },
+  "workflow_yaml_parse": "armport-build 7 jobs; armport-reference 4 jobs; parsed",
+  "upstream_diff_command": "git diff --exit-code HEAD -- upstream",
+  "upstream_diff_exit_code": 0,
+  "format_check_command": "git diff --check",
+  "format_check_exit_code": 0,
+  "fresh_ci_pending": true,
+  "m3_replay_complete": false
+}

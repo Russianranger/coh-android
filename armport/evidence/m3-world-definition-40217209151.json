@@ -1,0 +1,841 @@
+{
+  "run": 40217209151,
+  "source_commit": "5d1d2da9c21d84bfefe598d526a7ccd38141c721",
+  "job": 121243876035,
+  "job_conclusion": "failure",
+  "artifact_id": 12610104475,
+  "artifact_sha256": "a9f8056323f7e54a14da71d77f5eff94d65862cc9f78034b2ba7c00c9cf2460b",
+  "command": "SHA-256 verify artifact, parse complete isolated JSONL, inspect login/guest reports and screens/41-atlas-later.png",
+  "guest_status": "passed",
+  "guest_failures": [],
+  "connected_on_atlas": true,
+  "world_rendered": false,
+  "world_draw": {
+    "scope": "sampled_world_traversal_only",
+    "observations_valid": true,
+    "sample_count": 8,
+    "failures": [],
+    "samples": [
+      {
+        "frame": 1,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4974,
+        "editor_skip": 4564,
+        "distance_skip": 342,
+        "frustum_skip": 21,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 47
+      },
+      {
+        "frame": 600,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4870,
+        "editor_skip": 4534,
+        "distance_skip": 307,
+        "frustum_skip": 13,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 16
+      },
+      {
+        "frame": 1200,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4870,
+        "editor_skip": 4534,
+        "distance_skip": 307,
+        "frustum_skip": 13,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 16
+      },
+      {
+        "frame": 1800,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4870,
+        "editor_skip": 4534,
+        "distance_skip": 307,
+        "frustum_skip": 13,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 16
+      },
+      {
+        "frame": 2400,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4870,
+        "editor_skip": 4534,
+        "distance_skip": 307,
+        "frustum_skip": 13,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 16
+      },
+      {
+        "frame": 3000,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4870,
+        "editor_skip": 4534,
+        "distance_skip": 307,
+        "frustum_skip": 13,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 16
+      },
+      {
+        "frame": 3600,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4870,
+        "editor_skip": 4534,
+        "distance_skip": 307,
+        "frustum_skip": 13,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 16
+      },
+      {
+        "frame": 4200,
+        "refs": 34,
+        "roots": 34,
+        "root_models": 0,
+        "vis": 0,
+        "outside": 1,
+        "zocc": 0,
+        "fog": 0,
+        "visits": 4870,
+        "editor_skip": 4534,
+        "distance_skip": 307,
+        "frustum_skip": 13,
+        "model_calls": 0,
+        "not_loaded": 0,
+        "alpha_zero": 0,
+        "sort_requests": 0,
+        "tid": 36,
+        "visited_after_first_three_checks": 16
+      }
+    ],
+    "all_sampled_model_calls_zero": true,
+    "all_sampled_sort_requests_zero": true,
+    "cause_established": false,
+    "rendering_acceptance_changed": false
+  },
+  "definition_samples": [
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,877.569092,-533.047119 distance_valid=1 distance_mid=-1173.29517,877.569092,-533.047119 distance2=2430888.25 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,859.744263,-533.046753 distance_valid=1 distance_mid=-432.295166,859.744263,-533.046753 distance2=1210178.12 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=0 sample=4 name=\"grp3950\" cached_flags=72 model=0 children=34 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=901.750671,-282.994629,-260.500122 distance_valid=0 distance_mid=901.750671,-282.994629,-260.500122 distance2=0 limit_valid=0 limit=0 cached_vis=1876.62744 radius=1876.62744 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=2 sample=1 name=\"baseportaldoor_outsde\" cached_flags=8 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-288.545044,883.54126,-780.546692 distance_valid=1 distance_mid=-288.545044,883.54126,-780.546692 distance2=1473156.5 limit_valid=0 limit=0 cached_vis=3188.34302 radius=29.3938828 lod_scale=1.06278098",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,890.317627,-1413.41235 distance_valid=1 distance_mid=-641.778381,890.317627,-1413.41235 distance2=3202279.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,1019.84467,489.453979 distance_valid=1 distance_mid=1239.45447,1019.84467,489.453979 distance2=2815895.75 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,1019.84467,489.453979 distance_valid=1 distance_mid=1239.45447,1019.84467,489.453979 distance2=2815895.75 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,1142.8457,-1682.36218 distance_valid=1 distance_mid=2993.99292,1142.8457,-1682.36218 distance2=13100432 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,1043.23291,-1430.29517 distance_valid=1 distance_mid=3058.59912,1043.23291,-1430.29517 distance2=12489108 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,1139.55591,-1238.54565 distance_valid=1 distance_mid=1705.92065,1139.55591,-1238.54565 distance2=5742748.5 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,999.733032,-519.295349 distance_valid=1 distance_mid=2721.76025,999.733032,-519.295349 distance2=8677113 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=2 sample=3 name=\"grpa1773\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=567.705017,843.169312,-627.281616 distance_valid=1 distance_mid=567.705017,843.169312,-627.281616 distance2=1426705.75 limit_valid=0 limit=0 cached_vis=1505.59998 radius=364.801392 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1 kind=2 sample=4 name=\"grpa1900\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1134.45483,947.176453,-202.546082 distance_valid=1 distance_mid=1134.45483,947.176453,-202.546082 distance2=2225156 limit_valid=0 limit=0 cached_vis=2473.63232 radius=662.281006 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,2029.01685,-533.047119 distance_valid=1 distance_mid=-1173.29517,2029.01685,-533.047119 distance2=5777670 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,2011.19202,-533.046753 distance_valid=1 distance_mid=-432.295166,2011.19202,-533.046753 distance2=4515911.5 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=0 sample=4 name=\"grp_NAV_Beacons\" cached_flags=72 model=0 children=95 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=284.379395,-255.023621,157 distance_valid=0 distance_mid=284.379395,-255.023621,157 distance2=0 limit_valid=0 limit=0 cached_vis=1631.89734 radius=1631.89734 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,2041.76538,-1413.41235 distance_valid=1 distance_mid=-641.778381,2041.76538,-1413.41235 distance2=6578419.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,2294.2937,-1682.36218 distance_valid=1 distance_mid=2993.99292,2294.2937,-1682.36218 distance2=17058120 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,2194.68091,-1430.29517 distance_valid=1 distance_mid=3058.59912,2194.68091,-1430.29517 distance2=16217398 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,2291.00391,-1238.54565 distance_valid=1 distance_mid=1705.92065,2291.00391,-1238.54565 distance2=9692859 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=2 sample=1 name=\"grpa883\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=816.955322,2213.68091,-1392.6958 distance_valid=1 distance_mid=816.955322,2213.68091,-1392.6958 distance2=7507400.5 limit_valid=0 limit=0 cached_vis=3752.60522 radius=1270.84668 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,2151.18091,-519.295349 distance_valid=1 distance_mid=2721.76025,2151.18091,-519.295349 distance2=12305226 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=2 sample=3 name=\"grpa1981\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=786.454956,2006.1394,-474.546234 distance_valid=1 distance_mid=786.454956,2006.1394,-474.546234 distance2=4868300.5 limit_valid=0 limit=0 cached_vis=2924.89893 radius=1289.54395 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=600 kind=2 sample=4 name=\"grpa2604\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2710.45435,2192.29248,937.454651 distance_valid=1 distance_mid=2710.45435,2192.29248,937.454651 distance2=13031531 limit_valid=0 limit=0 cached_vis=7015.68213 radius=2116.49731 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,2029.01685,-533.047119 distance_valid=1 distance_mid=-1173.29517,2029.01685,-533.047119 distance2=5777670 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,2011.19202,-533.046753 distance_valid=1 distance_mid=-432.295166,2011.19202,-533.046753 distance2=4515911.5 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=0 sample=4 name=\"grp_NAV_Beacons\" cached_flags=72 model=0 children=95 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=284.379395,-255.023621,157 distance_valid=0 distance_mid=284.379395,-255.023621,157 distance2=0 limit_valid=0 limit=0 cached_vis=1631.89734 radius=1631.89734 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,2041.76538,-1413.41235 distance_valid=1 distance_mid=-641.778381,2041.76538,-1413.41235 distance2=6578419.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,2294.2937,-1682.36218 distance_valid=1 distance_mid=2993.99292,2294.2937,-1682.36218 distance2=17058120 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,2194.68091,-1430.29517 distance_valid=1 distance_mid=3058.59912,2194.68091,-1430.29517 distance2=16217398 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,2291.00391,-1238.54565 distance_valid=1 distance_mid=1705.92065,2291.00391,-1238.54565 distance2=9692859 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=2 sample=1 name=\"grpa883\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=816.955322,2213.68091,-1392.6958 distance_valid=1 distance_mid=816.955322,2213.68091,-1392.6958 distance2=7507400.5 limit_valid=0 limit=0 cached_vis=3752.60522 radius=1270.84668 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,2151.18091,-519.295349 distance_valid=1 distance_mid=2721.76025,2151.18091,-519.295349 distance2=12305226 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=2 sample=3 name=\"grpa1981\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=786.454956,2006.1394,-474.546234 distance_valid=1 distance_mid=786.454956,2006.1394,-474.546234 distance2=4868300.5 limit_valid=0 limit=0 cached_vis=2924.89893 radius=1289.54395 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1200 kind=2 sample=4 name=\"grpa2604\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2710.45435,2192.29248,937.454651 distance_valid=1 distance_mid=2710.45435,2192.29248,937.454651 distance2=13031531 limit_valid=0 limit=0 cached_vis=7015.68213 radius=2116.49731 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,2029.01685,-533.047119 distance_valid=1 distance_mid=-1173.29517,2029.01685,-533.047119 distance2=5777670 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,2011.19202,-533.046753 distance_valid=1 distance_mid=-432.295166,2011.19202,-533.046753 distance2=4515911.5 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=0 sample=4 name=\"grp_NAV_Beacons\" cached_flags=72 model=0 children=95 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=284.379395,-255.023621,157 distance_valid=0 distance_mid=284.379395,-255.023621,157 distance2=0 limit_valid=0 limit=0 cached_vis=1631.89734 radius=1631.89734 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,2041.76538,-1413.41235 distance_valid=1 distance_mid=-641.778381,2041.76538,-1413.41235 distance2=6578419.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,2294.2937,-1682.36218 distance_valid=1 distance_mid=2993.99292,2294.2937,-1682.36218 distance2=17058120 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,2194.68091,-1430.29517 distance_valid=1 distance_mid=3058.59912,2194.68091,-1430.29517 distance2=16217398 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,2291.00391,-1238.54565 distance_valid=1 distance_mid=1705.92065,2291.00391,-1238.54565 distance2=9692859 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=2 sample=1 name=\"grpa883\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=816.955322,2213.68091,-1392.6958 distance_valid=1 distance_mid=816.955322,2213.68091,-1392.6958 distance2=7507400.5 limit_valid=0 limit=0 cached_vis=3752.60522 radius=1270.84668 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,2151.18091,-519.295349 distance_valid=1 distance_mid=2721.76025,2151.18091,-519.295349 distance2=12305226 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=2 sample=3 name=\"grpa1981\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=786.454956,2006.1394,-474.546234 distance_valid=1 distance_mid=786.454956,2006.1394,-474.546234 distance2=4868300.5 limit_valid=0 limit=0 cached_vis=2924.89893 radius=1289.54395 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=1800 kind=2 sample=4 name=\"grpa2604\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2710.45435,2192.29248,937.454651 distance_valid=1 distance_mid=2710.45435,2192.29248,937.454651 distance2=13031531 limit_valid=0 limit=0 cached_vis=7015.68213 radius=2116.49731 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,2029.01685,-533.047119 distance_valid=1 distance_mid=-1173.29517,2029.01685,-533.047119 distance2=5777670 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,2011.19202,-533.046753 distance_valid=1 distance_mid=-432.295166,2011.19202,-533.046753 distance2=4515911.5 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=0 sample=4 name=\"grp_NAV_Beacons\" cached_flags=72 model=0 children=95 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=284.379395,-255.023621,157 distance_valid=0 distance_mid=284.379395,-255.023621,157 distance2=0 limit_valid=0 limit=0 cached_vis=1631.89734 radius=1631.89734 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,2041.76538,-1413.41235 distance_valid=1 distance_mid=-641.778381,2041.76538,-1413.41235 distance2=6578419.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,2294.2937,-1682.36218 distance_valid=1 distance_mid=2993.99292,2294.2937,-1682.36218 distance2=17058120 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,2194.68091,-1430.29517 distance_valid=1 distance_mid=3058.59912,2194.68091,-1430.29517 distance2=16217398 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,2291.00391,-1238.54565 distance_valid=1 distance_mid=1705.92065,2291.00391,-1238.54565 distance2=9692859 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=2 sample=1 name=\"grpa883\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=816.955322,2213.68091,-1392.6958 distance_valid=1 distance_mid=816.955322,2213.68091,-1392.6958 distance2=7507400.5 limit_valid=0 limit=0 cached_vis=3752.60522 radius=1270.84668 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,2151.18091,-519.295349 distance_valid=1 distance_mid=2721.76025,2151.18091,-519.295349 distance2=12305226 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=2 sample=3 name=\"grpa1981\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=786.454956,2006.1394,-474.546234 distance_valid=1 distance_mid=786.454956,2006.1394,-474.546234 distance2=4868300.5 limit_valid=0 limit=0 cached_vis=2924.89893 radius=1289.54395 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=2400 kind=2 sample=4 name=\"grpa2604\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2710.45435,2192.29248,937.454651 distance_valid=1 distance_mid=2710.45435,2192.29248,937.454651 distance2=13031531 limit_valid=0 limit=0 cached_vis=7015.68213 radius=2116.49731 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,2029.01685,-533.047119 distance_valid=1 distance_mid=-1173.29517,2029.01685,-533.047119 distance2=5777670 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,2011.19202,-533.046753 distance_valid=1 distance_mid=-432.295166,2011.19202,-533.046753 distance2=4515911.5 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=0 sample=4 name=\"grp_NAV_Beacons\" cached_flags=72 model=0 children=95 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=284.379395,-255.023621,157 distance_valid=0 distance_mid=284.379395,-255.023621,157 distance2=0 limit_valid=0 limit=0 cached_vis=1631.89734 radius=1631.89734 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,2041.76538,-1413.41235 distance_valid=1 distance_mid=-641.778381,2041.76538,-1413.41235 distance2=6578419.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,2294.2937,-1682.36218 distance_valid=1 distance_mid=2993.99292,2294.2937,-1682.36218 distance2=17058120 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,2194.68091,-1430.29517 distance_valid=1 distance_mid=3058.59912,2194.68091,-1430.29517 distance2=16217398 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,2291.00391,-1238.54565 distance_valid=1 distance_mid=1705.92065,2291.00391,-1238.54565 distance2=9692859 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=2 sample=1 name=\"grpa883\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=816.955322,2213.68091,-1392.6958 distance_valid=1 distance_mid=816.955322,2213.68091,-1392.6958 distance2=7507400.5 limit_valid=0 limit=0 cached_vis=3752.60522 radius=1270.84668 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,2151.18091,-519.295349 distance_valid=1 distance_mid=2721.76025,2151.18091,-519.295349 distance2=12305226 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=2 sample=3 name=\"grpa1981\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=786.454956,2006.1394,-474.546234 distance_valid=1 distance_mid=786.454956,2006.1394,-474.546234 distance2=4868300.5 limit_valid=0 limit=0 cached_vis=2924.89893 radius=1289.54395 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3000 kind=2 sample=4 name=\"grpa2604\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2710.45435,2192.29248,937.454651 distance_valid=1 distance_mid=2710.45435,2192.29248,937.454651 distance2=13031531 limit_valid=0 limit=0 cached_vis=7015.68213 radius=2116.49731 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,2029.01685,-533.047119 distance_valid=1 distance_mid=-1173.29517,2029.01685,-533.047119 distance2=5777670 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,2011.19202,-533.046753 distance_valid=1 distance_mid=-432.295166,2011.19202,-533.046753 distance2=4515911.5 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=0 sample=4 name=\"grp_NAV_Beacons\" cached_flags=72 model=0 children=95 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=284.379395,-255.023621,157 distance_valid=0 distance_mid=284.379395,-255.023621,157 distance2=0 limit_valid=0 limit=0 cached_vis=1631.89734 radius=1631.89734 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,2041.76538,-1413.41235 distance_valid=1 distance_mid=-641.778381,2041.76538,-1413.41235 distance2=6578419.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,2294.2937,-1682.36218 distance_valid=1 distance_mid=2993.99292,2294.2937,-1682.36218 distance2=17058120 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,2194.68091,-1430.29517 distance_valid=1 distance_mid=3058.59912,2194.68091,-1430.29517 distance2=16217398 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,2291.00391,-1238.54565 distance_valid=1 distance_mid=1705.92065,2291.00391,-1238.54565 distance2=9692859 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=2 sample=1 name=\"grpa883\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=816.955322,2213.68091,-1392.6958 distance_valid=1 distance_mid=816.955322,2213.68091,-1392.6958 distance2=7507400.5 limit_valid=0 limit=0 cached_vis=3752.60522 radius=1270.84668 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,2151.18091,-519.295349 distance_valid=1 distance_mid=2721.76025,2151.18091,-519.295349 distance2=12305226 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=2 sample=3 name=\"grpa1981\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=786.454956,2006.1394,-474.546234 distance_valid=1 distance_mid=786.454956,2006.1394,-474.546234 distance2=4868300.5 limit_valid=0 limit=0 cached_vis=2924.89893 radius=1289.54395 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=3600 kind=2 sample=4 name=\"grpa2604\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2710.45435,2192.29248,937.454651 distance_valid=1 distance_mid=2710.45435,2192.29248,937.454651 distance2=13031531 limit_valid=0 limit=0 cached_vis=7015.68213 radius=2116.49731 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=0 sample=1 name=\"grp_GC_Shutdown_Atmo\" cached_flags=72 model=0 children=22 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=-368.25,-56.0109558,-1168.86011 distance_valid=0 distance_mid=-368.25,-56.0109558,-1168.86011 distance2=0 limit_valid=0 limit=0 cached_vis=1335.19861 radius=1335.19861 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=0 sample=2 name=\"grp_audiogroup\" cached_flags=200 model=0 children=292 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=1067.71765,9509.08984,-694.96582 distance_valid=0 distance_mid=1067.71765,9509.08984,-694.96582 distance2=0 limit_valid=0 limit=0 cached_vis=13065.6787 radius=13065.6787 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=0 sample=3 name=\"grp_Badge_tourism\" cached_flags=72 model=0 children=14 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=646.764465,-232.141815,-744.756836 distance_valid=0 distance_mid=646.764465,-232.141815,-744.756836 distance2=0 limit_valid=0 limit=0 cached_vis=2029.20166 radius=2029.20166 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=3 sample=1 name=\"grp_beacons\" cached_flags=8 model=0 children=261 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-1173.29517,2029.01685,-533.047119 distance_valid=1 distance_mid=-1173.29517,2029.01685,-533.047119 distance2=5777670 limit_valid=0 limit=0 cached_vis=11452.5381 radius=3695.77808 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=3 sample=2 name=\"grp3971\" cached_flags=8 model=0 children=9 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-432.295166,2011.19202,-533.046753 distance_valid=1 distance_mid=-432.295166,2011.19202,-533.046753 distance2=4515911.5 limit_valid=0 limit=0 cached_vis=3475.54785 radius=2954.56372 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=0 sample=4 name=\"grp_NAV_Beacons\" cached_flags=72 model=0 children=95 tray=0 fog=0 sound=0 light=0 editor=1 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=0 mid=284.379395,-255.023621,157 distance_valid=0 distance_mid=284.379395,-255.023621,157 distance2=0 limit_valid=0 limit=0 cached_vis=1631.89734 radius=1631.89734 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=1 sample=1 name=\"grp_TUNNELHero_TUNNELHero\" cached_flags=8 model=0 children=6 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=-641.778381,2041.76538,-1413.41235 distance_valid=1 distance_mid=-641.778381,2041.76538,-1413.41235 distance2=6578419.5 limit_valid=1 limit=40.7912445 cached_vis=20.3956223 radius=20.3956223 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=3 sample=3 name=\"grp_Geometry\" cached_flags=140 model=0 children=1 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=3 sample=4 name=\"grpa3840\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1239.45447,2171.29248,489.453979 distance_valid=1 distance_mid=1239.45447,2171.29248,489.453979 distance2=6490323.5 limit_valid=0 limit=0 cached_vis=9085.35352 radius=4293.81055 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=1 sample=2 name=\"grpa85\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2993.99292,2294.2937,-1682.36218 distance_valid=1 distance_mid=2993.99292,2294.2937,-1682.36218 distance2=17058120 limit_valid=1 limit=2653.90869 cached_vis=1369.59375 radius=1284.31506 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=1 sample=3 name=\"grpa497\" cached_flags=136 model=0 children=7 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=3058.59912,2194.68091,-1430.29517 distance_valid=1 distance_mid=3058.59912,2194.68091,-1430.29517 distance2=16217398 limit_valid=1 limit=2475.35449 cached_vis=1237.67725 radius=1371.47827 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=1 sample=4 name=\"grpa627\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=1705.92065,2291.00391,-1238.54565 distance_valid=1 distance_mid=1705.92065,2291.00391,-1238.54565 distance2=9692859 limit_valid=1 limit=2068.43823 cached_vis=1034.21912 radius=1172.38672 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=2 sample=1 name=\"grpa883\" cached_flags=136 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=816.955322,2213.68091,-1392.6958 distance_valid=1 distance_mid=816.955322,2213.68091,-1392.6958 distance2=7507400.5 limit_valid=0 limit=0 cached_vis=3752.60522 radius=1270.84668 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=2 sample=2 name=\"grpa1608\" cached_flags=140 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2721.76025,2151.18091,-519.295349 distance_valid=1 distance_mid=2721.76025,2151.18091,-519.295349 distance2=12305226 limit_valid=0 limit=0 cached_vis=3482.42529 radius=1923.59961 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=2 sample=3 name=\"grpa1981\" cached_flags=140 model=0 children=4 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=786.454956,2006.1394,-474.546234 distance_valid=1 distance_mid=786.454956,2006.1394,-474.546234 distance2=4868300.5 limit_valid=0 limit=0 cached_vis=2924.89893 radius=1289.54395 lod_scale=1",
+      "tid": 36
+    },
+    {
+      "stage": "world.def",
+      "text": "frame=4200 kind=2 sample=4 name=\"grpa2604\" cached_flags=136 model=0 children=5 tray=0 fog=0 sound=0 light=0 editor=0 cubemap=0 trick_editor=0 trick_hide=0 mid_camera=1 mid=2710.45435,2192.29248,937.454651 distance_valid=1 distance_mid=2710.45435,2192.29248,937.454651 distance2=13031531 limit_valid=0 limit=0 cached_vis=7015.68213 radius=2116.49731 lod_scale=1",
+      "tid": 36
+    }
+  ],
+  "definition_samples_with_model": 0,
+  "per_kind_counts": {
+    "0": 32,
+    "3": 32,
+    "2": 32,
+    "1": 32
+  },
+  "limits": [
+    "All 128 samples have no model; parent-biased bounded samples do not establish absence of models from the entire loaded world.",
+    "0080 distance_mid predicate is wrong in two parent-fade cases; corrected by 0082. Do not infer source coordinates from those old records.",
+    "The retained screenshot shows HUD, sky and malformed-looking character, without visible Atlas terrain; this is not an accepted world frame."
+  ],
+  "cause_established": false,
+  "m3_complete": false
+}

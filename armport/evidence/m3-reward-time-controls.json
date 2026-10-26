@@ -1,0 +1,513 @@
+{
+  "scope": "accepted INITIAL normal/active-player reward-token raw time receipts, not mixed-clock live timers",
+  "patch": "0096-observe-received-player-reward-token-times.patch",
+  "patchwork_command": "python3 armport/scripts/patchwork.py export /tmp/coh-world-patchwork",
+  "patch_count": 96,
+  "previous_95_patch_bytes_unchanged": true,
+  "control_command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_reward_time_state.py --source /tmp/coh-world-patchwork/src",
+  "control_output": "reward raw times: 20 ASan/UBSan cases and disabled-header inertness passed; actual two INITIAL loops, original field assignments/read counts, accepted-only history, normal/active lists, copied names, full U32, local-clock exclusion, reset, bounds and nonmutation; packet/award/clock dependencies substituted, not native ABI proof\n",
+  "native_changed_unit_results": [
+    {
+      "arch": "arm64",
+      "file": "/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c",
+      "command": "/tmp/coh-toolchain/bin/aarch64-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-arm64/_deps/chromium_zlib-src -I/tmp/coh-world-build-arm64/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-arm64/_deps/freetype-src/include -I/tmp/coh-world-build-arm64/_deps/glew-src/include -I/tmp/coh-world-build-arm64/_deps/jpeg-build -I/tmp/coh-world-build-arm64/_deps/jpeg-src -I/tmp/coh-world-build-arm64/_deps/jpgd-src/include -I/tmp/coh-world-build-arm64/_deps/vorbis-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-arm64/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-arm64/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/src/entity/entrecv.c.obj -c /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c",
+      "cwd": "/tmp/coh-world-build-arm64",
+      "exit": 0,
+      "elapsed": 2.007749080657959,
+      "stdout": "",
+      "stderr": "In file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:14:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:143:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  143 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( SalvageInventoryItem, salvage, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:153:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  153 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( ConceptInventoryItem, concept, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:167:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  167 | STATIC_ASSERT(IS_GENERICINVENTORYTYPE_COMPATIBLE(RecipeItem,id,name));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:177:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  177 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( RecipeInventoryItem, recipe, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:187:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  187 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( DetailInventoryItem, item, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:94:\n/tmp/coh-world-patchwork/src/Game/src/UI/uiLogin.h:59:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   59 | #endif UI_LOGIN_H\n      |        ^\n      |        //\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:620:25: warning: address of array 'specialPowerDisplayName' will always evaluate to 'true' [-Wpointer-bool-conversion]\n  620 |                     if( specialPowerDisplayName && specialPowerDisplayName[0] )\n      |                         ^~~~~~~~~~~~~~~~~~~~~~~ ~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:623:25: warning: address of array 'petName' will always evaluate to 'true' [-Wpointer-bool-conversion]\n  623 |                     if( petName && petName[0] ) {\n      |                         ^~~~~~~ ~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:1896:13: warning: enumeration values 'AT_NO_APPEARANCE', 'AT_NPC_COSTUME', and 'AT_SEQ_NAME' not handled in switch [-Wswitch]\n 1896 |     switch (type)\n      |             ^~~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:2796:62: warning: address of array 'e->name' will always evaluate to 'true' [-Wpointer-bool-conversion]\n 2796 |     if(!oo_packet && e!=playerPtr() && name && name[0] && e->name)\n      |                                                        ~~ ~~~^~~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3615:23: warning: address of array 'e->name' will always evaluate to 'true' [-Wpointer-bool-conversion]\n 3615 |     assertmsg(e && e->name && e->name[0]!='\\0', \"Invalid entity being sent to server.\");\n      |                 ~~ ~~~^~~~\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../components/../assert/../utils/SuperAssert.h:118:47: note: expanded from macro 'assertmsg'\n  118 |     #define assertmsg(exp, msg)    assertmsgf(exp, msg) \n      |                                               ^~~\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../components/../assert/../utils/SuperAssert.h:112:7: note: expanded from macro 'assertmsgf'\n  112 |         if ((exp)) { \\\n      |              ^~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3779:35: warning: using the result of an assignment as a condition without parentheses [-Wparentheses]\n 3779 |                     while(svr_idx = pktGetBitsPack(pak, 10)){\n      |                           ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3779:35: note: place parentheses around the assignment to silence this warning\n 3779 |                     while(svr_idx = pktGetBitsPack(pak, 10)){\n      |                                   ^                        \n      |                           (                                )\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3779:35: note: use '==' to turn this assignment into an equality comparison\n 3779 |                     while(svr_idx = pktGetBitsPack(pak, 10)){\n      |                                   ^\n      |                                   ==\n13 warnings generated.\n"
+    },
+    {
+      "arch": "arm64",
+      "file": "/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c",
+      "command": "/tmp/coh-toolchain/bin/aarch64-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-arm64/_deps/chromium_zlib-src -I/tmp/coh-world-build-arm64/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-arm64/_deps/freetype-src/include -I/tmp/coh-world-build-arm64/_deps/glew-src/include -I/tmp/coh-world-build-arm64/_deps/jpeg-build -I/tmp/coh-world-build-arm64/_deps/jpeg-src -I/tmp/coh-world-build-arm64/_deps/jpgd-src/include -I/tmp/coh-world-build-arm64/_deps/vorbis-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-src/include -I/tmp/coh-world-build-arm64/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-arm64/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-arm64/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj -c /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c",
+      "cwd": "/tmp/coh-world-build-arm64",
+      "exit": 0,
+      "elapsed": 1.1218080520629883,
+      "stdout": "",
+      "stderr": "In file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:15:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:143:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  143 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( SalvageInventoryItem, salvage, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:153:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  153 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( ConceptInventoryItem, concept, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:167:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  167 | STATIC_ASSERT(IS_GENERICINVENTORYTYPE_COMPATIBLE(RecipeItem,id,name));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:177:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  177 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( RecipeInventoryItem, recipe, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:187:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  187 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( DetailInventoryItem, item, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\n6 warnings generated.\n"
+    },
+    {
+      "arch": "i686",
+      "file": "/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c",
+      "command": "/tmp/coh-toolchain/bin/i686-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCOH_ARMPORT_REFERENCE_I686=1 -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-i686/_deps/chromium_zlib-src -I/tmp/coh-world-build-i686/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-i686/_deps/freetype-src/include -I/tmp/coh-world-build-i686/_deps/glew-src/include -I/tmp/coh-world-build-i686/_deps/jpeg-build -I/tmp/coh-world-build-i686/_deps/jpeg-src -I/tmp/coh-world-build-i686/_deps/jpgd-src/include -I/tmp/coh-world-build-i686/_deps/vorbis-src/include -I/tmp/coh-world-build-i686/_deps/ogg-src/include -I/tmp/coh-world-build-i686/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-i686/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-i686/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -msse2 -mfpmath=sse -fasm-blocks -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/src/entity/entrecv.c.obj -c /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c",
+      "cwd": "/tmp/coh-world-build-i686",
+      "exit": 0,
+      "elapsed": 2.267228364944458,
+      "stdout": "",
+      "stderr": "In file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:14:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:143:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  143 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( SalvageInventoryItem, salvage, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:153:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  153 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( ConceptInventoryItem, concept, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:167:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  167 | STATIC_ASSERT(IS_GENERICINVENTORYTYPE_COMPATIBLE(RecipeItem,id,name));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:177:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  177 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( RecipeInventoryItem, recipe, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:56:\nIn file included from /tmp/coh-world-patchwork/src/Game/src/UI/uiCursor.h:6:\nIn file included from /tmp/coh-world-patchwork/src/Common/gameComm/trayCommon.h:9:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:187:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  187 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( DetailInventoryItem, item, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../utils/../stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:94:\n/tmp/coh-world-patchwork/src/Game/src/UI/uiLogin.h:59:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   59 | #endif UI_LOGIN_H\n      |        ^\n      |        //\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:620:25: warning: address of array 'specialPowerDisplayName' will always evaluate to 'true' [-Wpointer-bool-conversion]\n  620 |                     if( specialPowerDisplayName && specialPowerDisplayName[0] )\n      |                         ^~~~~~~~~~~~~~~~~~~~~~~ ~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:623:25: warning: address of array 'petName' will always evaluate to 'true' [-Wpointer-bool-conversion]\n  623 |                     if( petName && petName[0] ) {\n      |                         ^~~~~~~ ~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:1896:13: warning: enumeration values 'AT_NO_APPEARANCE', 'AT_NPC_COSTUME', and 'AT_SEQ_NAME' not handled in switch [-Wswitch]\n 1896 |     switch (type)\n      |             ^~~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:2796:62: warning: address of array 'e->name' will always evaluate to 'true' [-Wpointer-bool-conversion]\n 2796 |     if(!oo_packet && e!=playerPtr() && name && name[0] && e->name)\n      |                                                        ~~ ~~~^~~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3615:23: warning: address of array 'e->name' will always evaluate to 'true' [-Wpointer-bool-conversion]\n 3615 |     assertmsg(e && e->name && e->name[0]!='\\0', \"Invalid entity being sent to server.\");\n      |                 ~~ ~~~^~~~\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../components/../assert/../utils/SuperAssert.h:118:47: note: expanded from macro 'assertmsg'\n  118 |     #define assertmsg(exp, msg)    assertmsgf(exp, msg) \n      |                                               ^~~\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/network/../network/../components/../assert/../utils/SuperAssert.h:112:7: note: expanded from macro 'assertmsgf'\n  112 |         if ((exp)) { \\\n      |              ^~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3779:35: warning: using the result of an assignment as a condition without parentheses [-Wparentheses]\n 3779 |                     while(svr_idx = pktGetBitsPack(pak, 10)){\n      |                           ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3779:35: note: place parentheses around the assignment to silence this warning\n 3779 |                     while(svr_idx = pktGetBitsPack(pak, 10)){\n      |                                   ^                        \n      |                           (                                )\n/tmp/coh-world-patchwork/src/Game/src/entity/entrecv.c:3779:35: note: use '==' to turn this assignment into an equality comparison\n 3779 |                     while(svr_idx = pktGetBitsPack(pak, 10)){\n      |                                   ^\n      |                                   ==\n13 warnings generated.\n"
+    },
+    {
+      "arch": "i686",
+      "file": "/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c",
+      "command": "/tmp/coh-toolchain/bin/i686-w64-mingw32-clang -DCHROMIUM_ZLIB_NO_CHROMECONF -DCLIENT -DCOH_ARMPORT_REFERENCE_I686=1 -DCRASHRPT_STUB -DCRYPTOPP_DISABLE_ASM -DDISABLE_SHARED_MEMORY_SEGMENT -DEXCLUDE_LIBS -DGLEW_STATIC -DNDEBUG=1 -DSUBSTANCE_PLATFORM_OGLCG -DUSEZLIB -DWIN32 -D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_MBCS -D_OPTDEBUG=1 -D_WINDOWS -D_WINSOCK_DEPRECATED_NO_WARNINGS -I/tmp/coh-world-patchwork/src/Game/src -I/tmp/coh-world-patchwork/src/Common -I/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include -I/tmp/coh-world-build-i686/_deps/chromium_zlib-src -I/tmp/coh-world-build-i686/_deps/cryptopp-src -I/tmp/coh-world-patchwork/src/libs/crashrpt/include -I/tmp/coh-world-build-i686/_deps/freetype-src/include -I/tmp/coh-world-build-i686/_deps/glew-src/include -I/tmp/coh-world-build-i686/_deps/jpeg-build -I/tmp/coh-world-build-i686/_deps/jpeg-src -I/tmp/coh-world-build-i686/_deps/jpgd-src/include -I/tmp/coh-world-build-i686/_deps/vorbis-src/include -I/tmp/coh-world-build-i686/_deps/ogg-src/include -I/tmp/coh-world-build-i686/_deps/ogg-build/include -I/tmp/coh-world-patchwork/src/3rdparty/nvdxt -I/tmp/coh-world-build-i686/_deps/cubemapgen-build/include -I/tmp/coh-world-patchwork/src/3rdparty/cg/include -I/tmp/coh-world-patchwork/src/3rdparty/nvparse/include -isystem /tmp/coh-world-build-i686/_deps/sse2neon-src -isystem /tmp/coh-world-patchwork/src/cmake/armport-include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Physics/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Cooking/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/Foundation/include -isystem /tmp/coh-world-patchwork/src/3rdparty/PhysX/SDKs/PhysXLoader/include -isystem \"/tmp/coh-world-patchwork/src/3rdparty/AlienFX SDK/Unmanaged/includes\" -isystem /tmp/coh-world-patchwork/src/3rdparty/nvcpl -O3 -DNDEBUG -g -fno-omit-frame-pointer -std=gnu11 -msse2 -mfpmath=sse -fasm-blocks -fms-extensions -fno-strict-aliasing -ffp-contract=off -fno-autolink -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=return-type -Wno-error=implicit-int -Wno-error=implicit-function-declaration -fcommon -include /tmp/coh-world-patchwork/src/cmake/armport-include/armport_c_compat.h -o Game/CMakeFiles/Game.dir/workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c.obj -c /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c",
+      "cwd": "/tmp/coh-world-build-i686",
+      "exit": 0,
+      "elapsed": 1.1157519817352295,
+      "stdout": "",
+      "stderr": "In file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:15:\nIn file included from /tmp/coh-world-patchwork/src/Common/entity/entity.h:15:\n/tmp/coh-world-patchwork/src/Common/chatdefs.h:24:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]\n   24 | #endif CHATDEFS_H\n      |        ^\n      |        //\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:143:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  143 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( SalvageInventoryItem, salvage, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:153:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  153 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( ConceptInventoryItem, concept, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:167:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  167 | STATIC_ASSERT(IS_GENERICINVENTORYTYPE_COMPATIBLE(RecipeItem,id,name));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:177:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  177 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( RecipeInventoryItem, recipe, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\nIn file included from /workspace/scratch/6e8acd6310fe/coh-active/armport/replay/state.c:25:\n/tmp/coh-world-patchwork/src/Common/entity/character_inventory.h:187:1: warning: variable length array folded to constant array as an extension [-Wgnu-folding-constant]\n  187 | STATIC_ASSERT(GENERICINVITEM_COMPATIBLE( DetailInventoryItem, item, amount ));\n      | ^\n/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'\n  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];\n      |                                          ^\n6 warnings generated.\n"
+    }
+  ],
+  "all_receiver_controls": [
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_attribute_packet_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "attribute packet IDs: 21 ASan/UBSan cases; original parse tables and int/float/struct receivers, nested allocation/free, absolute/delta/stale/equal/full-width/no-destination/null trees, schema/order checks, empty allocation, repeated observation, tree and character immutability and fail-closed type/storage/width/depth/count/output checks; packet/token-store/quantization dependencies substituted; no ID normalization\n",
+      "stderr": "",
+      "seconds": 0.518
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_badge_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "badge serializer: 4096 statuses/filenames, 50 wire-timestamp histories, 10 monitor entries, final slots, mutation sensitivity and localized-text exclusion pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.217
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_buff_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "buff build guard: ARM64/i686 declarations and definitions enabled; normal build and missing-include negative controls disabled\nbuff state original receiver/update/find/mark/clear and actual view/writer: 21 cases pass; full/diff/delete/stale/no-player/unknown-descriptor paths, retained absent mods, order/nulls/mismatched arrays, F32 bits, bounds, const views and timer/UI exclusion; ASan/UBSan enabled; fixture arena and free substitute do not qualify ownership\n",
+      "stderr": "",
+      "seconds": 0.576
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_character_core_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "character core writer: nullable logical class/origin, signed combat/ally/gang fields, location/PvP, individual-field mutation sensitivity, pointer/clock exclusion, source immutability and output bounds pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.259
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_communication_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "friends/keybind/chat actual writers: 17 cases pass; original keybind receiver 257 strings/512 words, masked keys/secondary values, Dev profile, all fixed slots/final words, null/order/raw escapes, unsigned masks/colors and F32 bits, source immutability, cache/packet-order exclusions and count/storage/string/output rejection; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.605
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_contact_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "contact serializer: order/nulls, literal strings/flags/points/location bits; actual receiver preserves all ten reads and U32 clock-add results; observer captures raw delay, is inert when off, ignores host clock/UI cache changes and rejects invalid counts/strings/indices; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.354
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_control_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "retained controls: 12 ASan/UBSan cases; original unchanged receive fragments, all first/nocoll combinations, present/absent slave orientation, exact F32 bits including NaN/negative zero/infinity, unchanged consumption and state, excluded local fields and overflow rejection; packet primitives and surrounding receiver lifecycle substituted, not native ABI/full control-state qualification\n",
+      "stderr": "",
+      "seconds": 0.272
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_costume_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "costume serializer: six color sets with all low/high halves, raw float bits, 10 retained/null slots plus super/pending, logical/storage counts, mutation sensitivity, timer/editor exclusion and invalid counts pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.333
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_desaturation_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "desaturation actual original/patched receiver: 6 off/on cases and 3 replacements pass; four packet reads and stored F32 bits unchanged, null-before-receive, inactive no-dereference, NaN/negative-zero/infinity/subnormal bits preserved, frame-time changes excluded; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.21
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_door_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "door original start/exit receivers and actual snapshot: 14 cases pass; raw retained positions/radius/string, state/null/free transition, packet-order branch without normalization, waiting/loading/game mode, no timeout getter or clock reads, derived-motion exclusion, source immutability and output bounds; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.334
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_entity_metadata_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "entity metadata writer: literal mode/vision bits, scalar identities, nullable names, individual flags/pet fields, received PvP seconds, local-clock exclusion, per-field mutations, source immutability and output bounds pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.263
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_entity_status_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "entity status original receivers/actual writer: 15 cases pass; current/stale/null-parent semantics, all reads consumed, translucency bits, AFK retained strings, status list replacement/order/nulls, logout connection flag, ignored exclusive-phase field, local timer exclusion, immutability and bounds; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.349
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_group_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "group serializer: active 8/48 member rosters, retained map names, maximum strings, null/empty groups, mutation sensitivity and corrupt count/pointer/string rejection pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.296
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_initial_ui_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "initial UI/server original receiver fragments and actual snapshot: 12 cases pass; window fields/default scale/NaN, retained dividers and zero gate, team/inspiration modes and original dimension call, literal server/control flags, unsigned colors, local-cache exclusion, source immutability and bounded output; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.372
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_inventory_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "inventory serializer: five typed arrays, null slots/definitions, unsigned amounts, concept F32 bits, capacity fields, mutation sensitivity and bounds pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.284
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_karma_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "karma original receiver/actual writer: 14 cases pass; create/update/short-update retention/clear, ordered/null widgets and variables, unsigned sentinel identities, raw escaped strings, final slot, local cache exclusion, source immutability, invalid count/output bounds; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.503
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_leveling_pact_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "leveling-pact original receiver/actual writer: 13 ASan/UBSan cases pass; new/update/absent/zero/stale/no-character, local name lookup and retained tails, null pact, independent counts, source immutability and bounds; stale positive member bodies are not qualified; allocator/UI dependencies substituted\n",
+      "stderr": "",
+      "seconds": 0.402
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_netfx_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "NetFx receive state: 19 ASan/UBSan cases; original receive/allocation caller and actual writer, position/entity/invalid-type branches, tint/no-tint, ordered append and destroy command, full-width IDs and F32 bits, demo/debug, inactive/cache exclusion, immutable storage, null/count/capacity/output rejection and 8192 boundary; packet/allocator/demo dependencies substituted; renderer execution excluded\n",
+      "stderr": "",
+      "seconds": 0.591
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_options_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "options original receiver/actual const view/writer: 8 cases pass; original float/integer reads, literal table order/IDs/bit sizes, selected F32/U32 representation, NaN/negative-zero/high bits, unused storage/cache exclusion, no lazy stash initialization, source immutability and output bounds; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.234
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_packet_order_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "literal packet-order writer: 10 ASan/UBSan cases, all 16 scalar fields from original header, original update macro advancing/stale/equal decisions, 0/1/31/32/full-width IDs, source immutability and output bounds; no new canonicalization; structured AttrDef ID maps remain excluded\n",
+      "stderr": "",
+      "seconds": 0.299
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_pet_owner_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "pet ownership: 10 ASan/UBSan cases; original receiver and reference packing, current/stale/non-pet/missing-ID/no-power paths, null character, full-width literal references, immutability and output bounds; packet/power/name dependencies substituted; display-string nonempty paths not qualified\n",
+      "stderr": "",
+      "seconds": 0.288
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_player_core_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "player core writer: received scalar/flag fields, full fixed arrays and literal strings, high-bit U32 values, source immutability, last-slot mutation sensitivity, local-clock exclusion and string/output bounds pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.233
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_player_identity_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "player identity writer: ordered/null reward lists, literal titles/descriptions, high-bit colors/badge, PvP flags, all 10 combat-monitor slots, full-bound strings, mutation sensitivity, source immutability, pointer/timer exclusion and count/output bounds pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.373
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_power_customization_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "power customization writer: active/owned/all ten player slots, null/empty/order, literal identity/token bytes, RGBA U32 values, source immutability, address independence, mutation sensitivity and count/output bounds pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.273
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_power_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "power serializer: null slots, identity escaping, raw float bits, build arrays, final inventory slots, timer exclusion and bound rejection pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.335
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_sequence_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "sequence receive state: 17 ASan/UBSan cases; original move and triggered-move receivers; current/stale/absent, append/saturation/dummy consumption, full queue, demo/odd-send/negative timer paths, literal fields, local timing exclusion, source immutability and count/output rejection; packet and demo dependencies substituted\n",
+      "stderr": "",
+      "seconds": 0.358
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_story_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "story serializer: ordered/null clue, key, server-souvenir and visit-location arrays; full strings/raw byte escapes, server-only accessor, mutation sensitivity and invalid count/output-size rejection pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.375
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_supergroup_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "supergroup writer: metadata, mission forwarding, ordered/null tokens/recipes/details, U32 sentinels/timestamps, logical identities, source immutability, 8192 boundary, malformed counts/fixed strings/output rejection pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.351
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_target_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "target state original receiver/reference packer/actual writers: 17 cases pass; self/other/stale/null/missing updates, literal 64-bit references, ordered/null placators, target clearing including stale packets, all reads consumed, no observer mutation, bounds; random confusion value excluded; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.4
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_task_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "task serializer: nested order/nulls, retained detail strings, individual flags, received U32 times, raw ordinary-location bits, zowie fields, mutation sensitivity, local-clock/cache exclusion and invalid count/string rejection pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.508
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_taskforce_parameter_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "taskforce parameters: 15 passing ASan/UBSan cases plus old signed-shift negative control; original receiver/enable helper, all32 bits, retained disabled slots, absent update/null taskforce, exact clock addition and exclusion, nonmutation and output bounds; packet/clock dependencies substituted; raw accepted time receipts captured in bounded ordered history before clock addition, inactive/nonclock and actual disabled-header inertness, changed entity/taskforce IDs and full-width time values\n",
+      "stderr": "",
+      "seconds": 0.605
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_tray_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "tray original mode receiver/actual const views/writers: 19 cases pass; separate player/server slots, all builds and null slots, power/inspiration/macro fields, default-power identity/nulls, four sticky modes, source immutability, cache exclusion, bounded counts/strings/output; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.369
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_turnstile_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "turnstile original receivers/actual accessors/writers: 14 cases pass; queue enter/leave/general-status/no-player, retained mission selections and dummy categories, null/order/final slots, raw wait bits, literal player IDs, clock exclusion, source immutability, count/string/output bounds; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.472
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_visited_map_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "visited-map actual accessor/writer: existing/null storage, original owner/map order, all 256 U32 words including final/high bits, literal IDs, source immutability, mutation sensitivity and 8192/count/output bounds pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.293
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_waypoint_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "waypoint actual writer: 18 cases pass; literal key/value map independent of stash bucket order, null/empty state, signed IDs, raw F32 bits, resolved icon names, fixed strings, source immutability, mutation sensitivity, local cache exclusion, 8192 entries and count/key/string/output rejection; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.389
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_world_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "world serializer: individual hp/repair fields, original order, raw NaN/negative-zero sky weights, null-empty state and invalid count/storage rejection pass; ASan/UBSan enabled\n",
+      "stderr": "",
+      "seconds": 0.206
+    },
+    {
+      "command": [
+        "python3",
+        "armport/tests/receiver_reward_time_state.py",
+        "--source",
+        "/tmp/coh-world-patchwork/src"
+      ],
+      "exit_code": 0,
+      "stdout": "reward raw times: 20 ASan/UBSan cases and disabled-header inertness passed; actual two INITIAL loops, original field assignments/read counts, accepted-only history, normal/active lists, copied names, full U32, local-clock exclusion, reset, bounds and nonmutation; packet/award/clock dependencies substituted, not native ABI proof\n",
+      "stderr": "",
+      "seconds": 0.52
+    }
+  ],
+  "python_tests": "....................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 180 tests in 7.518s\n\nOK\n",
+  "limits": {
+    "history_count": 8192,
+    "copied_name_bytes_including_terminator": 1024,
+    "snapshot_buffer_bytes": 16777216
+  },
+  "limitations": [
+    "Original two INITIAL loop bodies use stubbed packet reads, award allocator and local clock in host controls.",
+    "Native compilation of state.c and entrecv.c is sequential ARM64 then i686, one compiler; these are changed-unit checks, not a full local link.",
+    "History records assignments accepted by the original token destination check, with entity/list/index/name/raw time; it does not reconstruct token lifetime or serialize the live mixed-provenance timer.",
+    "Runtime qualification remains pending for this source.",
+    "LeakSanitizer is disabled only for this local environment; CI retains its default."
+  ],
+  "new_normalization": false,
+  "full_schema_complete": false,
+  "m3_complete": false
+}

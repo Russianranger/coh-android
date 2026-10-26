@@ -1,0 +1,73 @@
+diff --git a/Game/CMakeLists.txt b/Game/CMakeLists.txt
+index 6a8a1bf..59efb3e 100644
+--- a/Game/CMakeLists.txt
++++ b/Game/CMakeLists.txt
+@@ -1252,7 +1252,8 @@ set_target_properties(Game PROPERTIES
+ 
+ target_include_directories(Game PRIVATE src)
+ if(COX_ARMPORT_WINDOWS)
+-	target_sources(Game PRIVATE "${COX_ARMPORT_DIR}/replay/receiver.c")
++	target_sources(Game PRIVATE "${COX_ARMPORT_DIR}/replay/receiver.c"
++        "${COX_ARMPORT_DIR}/replay/state.c")
+ endif()
+ target_link_libraries(Game PRIVATE
+ 	Common UtilitiesLib FreeType::FreeType GLEW::GLEW JPEG::JPEG
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index 60e39d2..5ed2205 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -7,14 +7,18 @@
+ // initialization replaces normal startup. See armport/replay/receiver.c.
+ #if (defined(__aarch64__) && defined(__MINGW32__)) || defined(COH_ARMPORT_REFERENCE_I686)
+ #define COH_ARMPORT_REPLAY 1
++typedef struct Entity Entity;
+ typedef struct Packet Packet;
+ typedef struct NetLink NetLink;
++void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
++void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id));
+ void armportReplayMaybeRun(void);
+ void armportReplayUnknownCommand(int command);
+ void armportReplayCursor(Packet *pak, const char *stage);
+ void armportReplayCommand(Packet *pak, int command, int begin);
+ int commArmPortReplayDispatch(Packet *pak, int command, NetLink *link);
+ #else
++#define armportReplayOrientation(e, axis, value, accepted) ((void)0)
+ #define armportReplayMaybeRun() ((void)0)
+ #define armportReplayUnknownCommand(command) ((void)0)
+ #define armportReplayCursor(pak, stage) ((void)0)
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index a547383..59f4100 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -173,6 +173,18 @@ static DeleteHistory* checkDelete(int idx)
+     return NULL;
+ }
+ 
++#ifdef COH_ARMPORT_REPLAY
++// Read-only access to actual delete history in deterministic server-index order.
++void armportReplayDeletes(void (*visit)(unsigned pkt_id, int idx, int id))
++{
++    int idx;
++    for (idx = 0; idx < MAX_ENTITIES_PRIVATE; ++idx) {
++        DeleteHistory *entry = checkDelete(idx);
++        if (entry) visit(entry->pkt_id, entry->idx, entry->id);
++    }
++}
++#endif
++
+ static void addDelete(U32 pkt_id, int idx, int id)
+ {
+     DeleteHistory *dh = checkDelete(idx);
+@@ -903,7 +915,11 @@ static int entGetOrientation(Packet *pak,Entity *e)
+                         case 2:START_BIT_COUNT(pak, "qrotZ");break;
+                     }
+                 );
+-                    qelem = unpackQuatElem(pktGetBits(pak,9),9);
++                    {
++                        unsigned raw_qrot = pktGetBits(pak,9);
++                        armportReplayOrientation(e, j, raw_qrot, pak->id > e->pkt_id_qrot[j]);
++                        qelem = unpackQuatElem(raw_qrot,9);
++                    }
+                 STOP_BIT_COUNT(pak);
+ 
+                 if (pak->id > e->pkt_id_qrot[j])

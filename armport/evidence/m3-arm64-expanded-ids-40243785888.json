@@ -1,0 +1,4025 @@
+{
+  "run": 40243785888,
+  "source_commit": "dd0c3deebc7c9f8a0cb37018f21fd7541834813c",
+  "artifact_id": 12618224155,
+  "artifact_sha256": "aeda39957994c73bfc5184aa0844d36be26cc4d705c90052ab0f0c4ae17f3ef5",
+  "verified_snapshots": 351,
+  "execution_validation": {
+    "id1-a": {
+      "process": {
+        "timeout_seconds": 600,
+        "memory_events_before": {
+          "available": true,
+          "path": "/sys/fs/cgroup/system.slice/hosted-compute-agent.service/memory.events",
+          "counters": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          }
+        },
+        "samples": [
+          {
+            "seconds": 0.001,
+            "State": "R (running)",
+            "VmSize": "2956 kB",
+            "VmHWM": "1092 kB",
+            "VmRSS": "1092 kB",
+            "Threads": "1",
+            "MemAvailable": "14888504 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 1.004,
+            "State": "R (running)",
+            "VmSize": "322852 kB",
+            "VmHWM": "159024 kB",
+            "VmRSS": "159024 kB",
+            "Threads": "2",
+            "MemAvailable": "14759544 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 2.008,
+            "State": "R (running)",
+            "VmSize": "322852 kB",
+            "VmHWM": "159664 kB",
+            "VmRSS": "159664 kB",
+            "Threads": "2",
+            "MemAvailable": "14759544 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 3.011,
+            "State": "R (running)",
+            "VmSize": "324644 kB",
+            "VmHWM": "162064 kB",
+            "VmRSS": "162064 kB",
+            "Threads": "2",
+            "MemAvailable": "14759548 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 4.014,
+            "State": "R (running)",
+            "VmSize": "324644 kB",
+            "VmHWM": "162192 kB",
+            "VmRSS": "162192 kB",
+            "Threads": "2",
+            "MemAvailable": "14759548 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 5.016,
+            "State": "R (running)",
+            "VmSize": "322852 kB",
+            "VmHWM": "162112 kB",
+            "VmRSS": "162112 kB",
+            "Threads": "2",
+            "MemAvailable": "14759128 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 6.019,
+            "State": "R (running)",
+            "VmSize": "325476 kB",
+            "VmHWM": "165496 kB",
+            "VmRSS": "165496 kB",
+            "Threads": "2",
+            "MemAvailable": "14758568 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 7.021,
+            "State": "R (running)",
+            "VmSize": "325476 kB",
+            "VmHWM": "165496 kB",
+            "VmRSS": "165496 kB",
+            "Threads": "2",
+            "MemAvailable": "14764532 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 8.024,
+            "State": "R (running)",
+            "VmSize": "323940 kB",
+            "VmHWM": "165020 kB",
+            "VmRSS": "164816 kB",
+            "Threads": "2",
+            "MemAvailable": "14774900 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 9.026,
+            "State": "R (running)",
+            "VmSize": "325284 kB",
+            "VmHWM": "166448 kB",
+            "VmRSS": "166448 kB",
+            "Threads": "2",
+            "MemAvailable": "14781876 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 10.029,
+            "State": "R (running)",
+            "VmSize": "340132 kB",
+            "VmHWM": "165932 kB",
+            "VmRSS": "165736 kB",
+            "Threads": "2",
+            "MemAvailable": "14815684 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 11.031,
+            "State": "R (running)",
+            "VmSize": "326052 kB",
+            "VmHWM": "167236 kB",
+            "VmRSS": "167236 kB",
+            "Threads": "2",
+            "MemAvailable": "14815684 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 12.034,
+            "State": "R (running)",
+            "VmSize": "342244 kB",
+            "VmHWM": "167984 kB",
+            "VmRSS": "167984 kB",
+            "Threads": "2",
+            "MemAvailable": "14815684 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 13.037,
+            "State": "R (running)",
+            "VmSize": "342244 kB",
+            "VmHWM": "167660 kB",
+            "VmRSS": "167324 kB",
+            "Threads": "2",
+            "MemAvailable": "14815684 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 14.039,
+            "State": "R (running)",
+            "VmSize": "343268 kB",
+            "VmHWM": "170700 kB",
+            "VmRSS": "170700 kB",
+            "Threads": "2",
+            "MemAvailable": "14817100 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 15.042,
+            "State": "R (running)",
+            "VmSize": "642304 kB",
+            "VmHWM": "188072 kB",
+            "VmRSS": "188072 kB",
+            "Threads": "3",
+            "MemAvailable": "14824312 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 16.044,
+            "State": "S (sleeping)",
+            "VmSize": "642304 kB",
+            "VmHWM": "212276 kB",
+            "VmRSS": "212276 kB",
+            "Threads": "3",
+            "MemAvailable": "14825668 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 17.047,
+            "State": "S (sleeping)",
+            "VmSize": "642264 kB",
+            "VmHWM": "226388 kB",
+            "VmRSS": "226388 kB",
+            "Threads": "3",
+            "MemAvailable": "14828612 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 18.05,
+            "State": "S (sleeping)",
+            "VmSize": "1381420 kB",
+            "VmHWM": "243612 kB",
+            "VmRSS": "243612 kB",
+            "Threads": "12",
+            "MemAvailable": "14832920 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 19.052,
+            "State": "S (sleeping)",
+            "VmSize": "1390268 kB",
+            "VmHWM": "290904 kB",
+            "VmRSS": "278452 kB",
+            "Threads": "14",
+            "MemAvailable": "14811880 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 20.055,
+            "State": "R (running)",
+            "VmSize": "1406460 kB",
+            "VmHWM": "294436 kB",
+            "VmRSS": "294436 kB",
+            "Threads": "14",
+            "MemAvailable": "14786940 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 21.058,
+            "State": "S (sleeping)",
+            "VmSize": "1408636 kB",
+            "VmHWM": "321072 kB",
+            "VmRSS": "300548 kB",
+            "Threads": "14",
+            "MemAvailable": "14750964 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 22.062,
+            "State": "R (running)",
+            "VmSize": "1408836 kB",
+            "VmHWM": "321072 kB",
+            "VmRSS": "302920 kB",
+            "Threads": "14",
+            "MemAvailable": "14749452 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 23.066,
+            "State": "R (running)",
+            "VmSize": "1408836 kB",
+            "VmHWM": "321072 kB",
+            "VmRSS": "304652 kB",
+            "Threads": "14",
+            "MemAvailable": "14750852 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 24.07,
+            "State": "R (running)",
+            "VmSize": "1408836 kB",
+            "VmHWM": "321072 kB",
+            "VmRSS": "306472 kB",
+            "Threads": "14",
+            "MemAvailable": "14750412 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 25.075,
+            "State": "R (running)",
+            "VmSize": "1425028 kB",
+            "VmHWM": "321072 kB",
+            "VmRSS": "309088 kB",
+            "Threads": "14",
+            "MemAvailable": "14756048 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 26.08,
+            "State": "R (running)",
+            "VmSize": "1425028 kB",
+            "VmHWM": "321072 kB",
+            "VmRSS": "312544 kB",
+            "Threads": "14",
+            "MemAvailable": "14758304 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 27.086,
+            "State": "R (running)",
+            "VmSize": "1500412 kB",
+            "VmHWM": "335748 kB",
+            "VmRSS": "335748 kB",
+            "Threads": "14",
+            "MemAvailable": "14745844 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 28.092,
+            "State": "S (sleeping)",
+            "VmSize": "1500412 kB",
+            "VmHWM": "337576 kB",
+            "VmRSS": "337576 kB",
+            "Threads": "14",
+            "MemAvailable": "14745372 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 29.097,
+            "State": "R (running)",
+            "VmSize": "1517692 kB",
+            "VmHWM": "351244 kB",
+            "VmRSS": "349888 kB",
+            "Threads": "14",
+            "MemAvailable": "14731764 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 30.103,
+            "State": "D (disk sleep)",
+            "VmSize": "1519804 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "355192 kB",
+            "Threads": "14",
+            "MemAvailable": "14676304 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 31.109,
+            "State": "R (running)",
+            "VmSize": "1520892 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "359516 kB",
+            "Threads": "14",
+            "MemAvailable": "14674096 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 32.115,
+            "State": "R (running)",
+            "VmSize": "1537084 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "363220 kB",
+            "Threads": "14",
+            "MemAvailable": "14671864 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 33.121,
+            "State": "R (running)",
+            "VmSize": "1537084 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "367780 kB",
+            "Threads": "14",
+            "MemAvailable": "14667388 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 34.127,
+            "State": "R (running)",
+            "VmSize": "1537084 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "376092 kB",
+            "Threads": "14",
+            "MemAvailable": "14658568 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 35.133,
+            "State": "R (running)",
+            "VmSize": "1553276 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "381856 kB",
+            "Threads": "14",
+            "MemAvailable": "14658568 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 36.139,
+            "State": "S (sleeping)",
+            "VmSize": "1553276 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "387248 kB",
+            "Threads": "14",
+            "MemAvailable": "14658568 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 37.145,
+            "State": "S (sleeping)",
+            "VmSize": "1553276 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "393216 kB",
+            "Threads": "14",
+            "MemAvailable": "14658176 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 38.151,
+            "State": "R (running)",
+            "VmSize": "1569468 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "404696 kB",
+            "Threads": "14",
+            "MemAvailable": "14656416 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 39.157,
+            "State": "R (running)",
+            "VmSize": "1585660 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "412512 kB",
+            "Threads": "14",
+            "MemAvailable": "14652636 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 40.162,
+            "State": "R (running)",
+            "VmSize": "1585660 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "417324 kB",
+            "Threads": "14",
+            "MemAvailable": "14652384 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 41.169,
+            "State": "R (running)",
+            "VmSize": "1585660 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "424148 kB",
+            "Threads": "14",
+            "MemAvailable": "14644572 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 42.175,
+            "State": "R (running)",
+            "VmSize": "1601852 kB",
+            "VmHWM": "435412 kB",
+            "VmRSS": "432228 kB",
+            "Threads": "14",
+            "MemAvailable": "14632476 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 43.18,
+            "State": "R (running)",
+            "VmSize": "1601852 kB",
+            "VmHWM": "436176 kB",
+            "VmRSS": "436176 kB",
+            "Threads": "14",
+            "MemAvailable": "14632228 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 44.186,
+            "State": "R (running)",
+            "VmSize": "1601852 kB",
+            "VmHWM": "441632 kB",
+            "VmRSS": "441632 kB",
+            "Threads": "14",
+            "MemAvailable": "14630856 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 45.193,
+            "State": "R (running)",
+            "VmSize": "1618044 kB",
+            "VmHWM": "449336 kB",
+            "VmRSS": "449336 kB",
+            "Threads": "14",
+            "MemAvailable": "14622260 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 46.198,
+            "State": "R (running)",
+            "VmSize": "1618044 kB",
+            "VmHWM": "456068 kB",
+            "VmRSS": "456068 kB",
+            "Threads": "14",
+            "MemAvailable": "14617360 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 47.203,
+            "State": "R (running)",
+            "VmSize": "1634236 kB",
+            "VmHWM": "460920 kB",
+            "VmRSS": "460920 kB",
+            "Threads": "14",
+            "MemAvailable": "14611368 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 48.208,
+            "State": "R (running)",
+            "VmSize": "1634236 kB",
+            "VmHWM": "468052 kB",
+            "VmRSS": "468052 kB",
+            "Threads": "14",
+            "MemAvailable": "14597852 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 49.213,
+            "State": "S (sleeping)",
+            "VmSize": "1634236 kB",
+            "VmHWM": "472232 kB",
+            "VmRSS": "472232 kB",
+            "Threads": "14",
+            "MemAvailable": "14597620 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 50.219,
+            "State": "R (running)",
+            "VmSize": "1650428 kB",
+            "VmHWM": "480348 kB",
+            "VmRSS": "480348 kB",
+            "Threads": "14",
+            "MemAvailable": "14597668 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 51.224,
+            "State": "R (running)",
+            "VmSize": "1650428 kB",
+            "VmHWM": "484420 kB",
+            "VmRSS": "484420 kB",
+            "Threads": "14",
+            "MemAvailable": "14601756 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 52.23,
+            "State": "R (running)",
+            "VmSize": "1650428 kB",
+            "VmHWM": "486596 kB",
+            "VmRSS": "486596 kB",
+            "Threads": "14",
+            "MemAvailable": "14603448 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 53.237,
+            "State": "R (running)",
+            "VmSize": "1650428 kB",
+            "VmHWM": "486596 kB",
+            "VmRSS": "486596 kB",
+            "Threads": "14",
+            "MemAvailable": "14606584 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 54.245,
+            "State": "R (running)",
+            "VmSize": "1650428 kB",
+            "VmHWM": "486632 kB",
+            "VmRSS": "486632 kB",
+            "Threads": "14",
+            "MemAvailable": "14609328 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 55.253,
+            "State": "R (running)",
+            "VmSize": "1650428 kB",
+            "VmHWM": "486632 kB",
+            "VmRSS": "486632 kB",
+            "Threads": "14",
+            "MemAvailable": "14611740 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 56.26,
+            "State": "R (running)",
+            "VmSize": "1650428 kB",
+            "VmHWM": "588440 kB",
+            "VmRSS": "491436 kB",
+            "Threads": "14",
+            "MemAvailable": "14549016 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 57.265,
+            "State": "R (running)",
+            "VmSize": "1682812 kB",
+            "VmHWM": "588440 kB",
+            "VmRSS": "511420 kB",
+            "Threads": "14",
+            "MemAvailable": "14520044 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 58.271,
+            "State": "S (sleeping)",
+            "VmSize": "1699004 kB",
+            "VmHWM": "588440 kB",
+            "VmRSS": "529984 kB",
+            "Threads": "14",
+            "MemAvailable": "14508648 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 59.277,
+            "State": "S (sleeping)",
+            "VmSize": "1715196 kB",
+            "VmHWM": "588440 kB",
+            "VmRSS": "545852 kB",
+            "Threads": "14",
+            "MemAvailable": "14493532 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 60.283,
+            "State": "S (sleeping)",
+            "VmSize": "1731388 kB",
+            "VmHWM": "588440 kB",
+            "VmRSS": "563588 kB",
+            "Threads": "14",
+            "MemAvailable": "14471976 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 61.288,
+            "State": "R (running)",
+            "VmSize": "1749756 kB",
+            "VmHWM": "588440 kB",
+            "VmRSS": "580052 kB",
+            "Threads": "14",
+            "MemAvailable": "14464504 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 62.294,
+            "State": "R (running)",
+            "VmSize": "1783004 kB",
+            "VmHWM": "608948 kB",
+            "VmRSS": "608948 kB",
+            "Threads": "14",
+            "MemAvailable": "14437732 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 63.299,
+            "State": "R (running)",
+            "VmSize": "1783004 kB",
+            "VmHWM": "615712 kB",
+            "VmRSS": "615712 kB",
+            "Threads": "14",
+            "MemAvailable": "14432296 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 64.305,
+            "State": "S (sleeping)",
+            "VmSize": "1799196 kB",
+            "VmHWM": "622916 kB",
+            "VmRSS": "622916 kB",
+            "Threads": "14",
+            "MemAvailable": "14421024 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 65.31,
+            "State": "R (running)",
+            "VmSize": "1800220 kB",
+            "VmHWM": "632100 kB",
+            "VmRSS": "632100 kB",
+            "Threads": "14",
+            "MemAvailable": "14424736 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 66.317,
+            "State": "R (running)",
+            "VmSize": "1800220 kB",
+            "VmHWM": "639056 kB",
+            "VmRSS": "639056 kB",
+            "Threads": "14",
+            "MemAvailable": "14411792 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 67.323,
+            "State": "R (running)",
+            "VmSize": "1816412 kB",
+            "VmHWM": "644472 kB",
+            "VmRSS": "644472 kB",
+            "Threads": "14",
+            "MemAvailable": "14412312 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 68.328,
+            "State": "D (disk sleep)",
+            "VmSize": "1816412 kB",
+            "VmHWM": "649968 kB",
+            "VmRSS": "649968 kB",
+            "Threads": "14",
+            "MemAvailable": "14404192 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 69.334,
+            "State": "R (running)",
+            "VmSize": "1816412 kB",
+            "VmHWM": "655640 kB",
+            "VmRSS": "655640 kB",
+            "Threads": "14",
+            "MemAvailable": "14391660 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 70.339,
+            "State": "R (running)",
+            "VmSize": "1832604 kB",
+            "VmHWM": "661612 kB",
+            "VmRSS": "661612 kB",
+            "Threads": "14",
+            "MemAvailable": "14388508 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 71.344,
+            "State": "R (running)",
+            "VmSize": "1832604 kB",
+            "VmHWM": "670672 kB",
+            "VmRSS": "670672 kB",
+            "Threads": "14",
+            "MemAvailable": "14366540 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 72.349,
+            "State": "R (running)",
+            "VmSize": "1848796 kB",
+            "VmHWM": "677396 kB",
+            "VmRSS": "677396 kB",
+            "Threads": "14",
+            "MemAvailable": "14361080 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 73.355,
+            "State": "R (running)",
+            "VmSize": "1848796 kB",
+            "VmHWM": "683068 kB",
+            "VmRSS": "683068 kB",
+            "Threads": "14",
+            "MemAvailable": "14364392 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 74.36,
+            "State": "R (running)",
+            "VmSize": "1864988 kB",
+            "VmHWM": "689844 kB",
+            "VmRSS": "689844 kB",
+            "Threads": "14",
+            "MemAvailable": "14364988 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 75.365,
+            "State": "R (running)",
+            "VmSize": "1864988 kB",
+            "VmHWM": "695792 kB",
+            "VmRSS": "695792 kB",
+            "Threads": "14",
+            "MemAvailable": "14359512 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 76.37,
+            "State": "R (running)",
+            "VmSize": "1864988 kB",
+            "VmHWM": "702088 kB",
+            "VmRSS": "702088 kB",
+            "Threads": "14",
+            "MemAvailable": "14359388 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 77.376,
+            "State": "S (sleeping)",
+            "VmSize": "1881180 kB",
+            "VmHWM": "708328 kB",
+            "VmRSS": "708328 kB",
+            "Threads": "14",
+            "MemAvailable": "14361864 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 78.382,
+            "State": "R (running)",
+            "VmSize": "1881180 kB",
+            "VmHWM": "719220 kB",
+            "VmRSS": "719220 kB",
+            "Threads": "14",
+            "MemAvailable": "14366784 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 79.387,
+            "State": "D (disk sleep)",
+            "VmSize": "1897372 kB",
+            "VmHWM": "726936 kB",
+            "VmRSS": "726936 kB",
+            "Threads": "14",
+            "MemAvailable": "14366444 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 80.393,
+            "State": "R (running)",
+            "VmSize": "1897372 kB",
+            "VmHWM": "734196 kB",
+            "VmRSS": "734196 kB",
+            "Threads": "14",
+            "MemAvailable": "14358616 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 81.4,
+            "State": "R (running)",
+            "VmSize": "1913564 kB",
+            "VmHWM": "740316 kB",
+            "VmRSS": "740316 kB",
+            "Threads": "14",
+            "MemAvailable": "14350676 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 82.409,
+            "State": "D (disk sleep)",
+            "VmSize": "1913564 kB",
+            "VmHWM": "746068 kB",
+            "VmRSS": "746068 kB",
+            "Threads": "14",
+            "MemAvailable": "14348932 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 83.415,
+            "State": "R (running)",
+            "VmSize": "1913564 kB",
+            "VmHWM": "752736 kB",
+            "VmRSS": "752736 kB",
+            "Threads": "14",
+            "MemAvailable": "14340568 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 84.421,
+            "State": "R (running)",
+            "VmSize": "1929756 kB",
+            "VmHWM": "857748 kB",
+            "VmRSS": "759688 kB",
+            "Threads": "14",
+            "MemAvailable": "14257844 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 85.428,
+            "State": "R (running)",
+            "VmSize": "1948124 kB",
+            "VmHWM": "857748 kB",
+            "VmRSS": "782676 kB",
+            "Threads": "14",
+            "MemAvailable": "14263780 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 86.434,
+            "State": "R (running)",
+            "VmSize": "1984860 kB",
+            "VmHWM": "857748 kB",
+            "VmRSS": "816532 kB",
+            "Threads": "14",
+            "MemAvailable": "14231992 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 87.44,
+            "State": "R (running)",
+            "VmSize": "1984860 kB",
+            "VmHWM": "857748 kB",
+            "VmRSS": "821508 kB",
+            "Threads": "14",
+            "MemAvailable": "14230224 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 88.445,
+            "State": "S (sleeping)",
+            "VmSize": "2001052 kB",
+            "VmHWM": "857748 kB",
+            "VmRSS": "832540 kB",
+            "Threads": "14",
+            "MemAvailable": "14218760 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 89.45,
+            "State": "R (running)",
+            "VmSize": "2017244 kB",
+            "VmHWM": "857748 kB",
+            "VmRSS": "849292 kB",
+            "Threads": "14",
+            "MemAvailable": "14206664 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 90.456,
+            "State": "R (running)",
+            "VmSize": "2019356 kB",
+            "VmHWM": "876072 kB",
+            "VmRSS": "857104 kB",
+            "Threads": "14",
+            "MemAvailable": "14186572 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 91.462,
+            "State": "R (running)",
+            "VmSize": "2109660 kB",
+            "VmHWM": "898760 kB",
+            "VmRSS": "898760 kB",
+            "Threads": "14",
+            "MemAvailable": "14175772 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 92.468,
+            "State": "R (running)",
+            "VmSize": "2053916 kB",
+            "VmHWM": "940192 kB",
+            "VmRSS": "884688 kB",
+            "Threads": "14",
+            "MemAvailable": "14190220 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 93.473,
+            "State": "S (sleeping)",
+            "VmSize": "2053916 kB",
+            "VmHWM": "940192 kB",
+            "VmRSS": "890692 kB",
+            "Threads": "14",
+            "MemAvailable": "14196064 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 94.479,
+            "State": "S (sleeping)",
+            "VmSize": "2070108 kB",
+            "VmHWM": "940192 kB",
+            "VmRSS": "898108 kB",
+            "Threads": "14",
+            "MemAvailable": "14195060 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 95.485,
+            "State": "D (disk sleep)",
+            "VmSize": "2088348 kB",
+            "VmHWM": "940192 kB",
+            "VmRSS": "912848 kB",
+            "Threads": "14",
+            "MemAvailable": "14189408 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 96.491,
+            "State": "R (running)",
+            "VmSize": "2104540 kB",
+            "VmHWM": "940192 kB",
+            "VmRSS": "926620 kB",
+            "Threads": "14",
+            "MemAvailable": "14174120 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 97.496,
+            "State": "D (disk sleep)",
+            "VmSize": "2104540 kB",
+            "VmHWM": "940192 kB",
+            "VmRSS": "939616 kB",
+            "Threads": "14",
+            "MemAvailable": "14166576 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 98.502,
+            "State": "R (running)",
+            "VmSize": "2122780 kB",
+            "VmHWM": "953852 kB",
+            "VmRSS": "953852 kB",
+            "Threads": "14",
+            "MemAvailable": "14124716 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 99.508,
+            "State": "R (running)",
+            "VmSize": "2138972 kB",
+            "VmHWM": "968884 kB",
+            "VmRSS": "968884 kB",
+            "Threads": "14",
+            "MemAvailable": "14136948 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 100.513,
+            "State": "R (running)",
+            "VmSize": "2155164 kB",
+            "VmHWM": "978776 kB",
+            "VmRSS": "978776 kB",
+            "Threads": "14",
+            "MemAvailable": "14131992 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 101.519,
+            "State": "D (disk sleep)",
+            "VmSize": "2155164 kB",
+            "VmHWM": "992732 kB",
+            "VmRSS": "992732 kB",
+            "Threads": "14",
+            "MemAvailable": "14115992 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 102.525,
+            "State": "R (running)",
+            "VmSize": "2171356 kB",
+            "VmHWM": "1006240 kB",
+            "VmRSS": "1006240 kB",
+            "Threads": "14",
+            "MemAvailable": "14102260 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 103.531,
+            "State": "D (disk sleep)",
+            "VmSize": "2187548 kB",
+            "VmHWM": "1018832 kB",
+            "VmRSS": "1018832 kB",
+            "Threads": "14",
+            "MemAvailable": "14089248 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 104.537,
+            "State": "R (running)",
+            "VmSize": "2187548 kB",
+            "VmHWM": "1024420 kB",
+            "VmRSS": "1024420 kB",
+            "Threads": "14",
+            "MemAvailable": "14079552 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 105.543,
+            "State": "R (running)",
+            "VmSize": "2203740 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1036984 kB",
+            "Threads": "14",
+            "MemAvailable": "13955888 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 106.551,
+            "State": "R (running)",
+            "VmSize": "2203740 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1036984 kB",
+            "Threads": "14",
+            "MemAvailable": "13957720 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 107.556,
+            "State": "R (running)",
+            "VmSize": "2204828 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1039112 kB",
+            "Threads": "14",
+            "MemAvailable": "13965632 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 108.562,
+            "State": "S (sleeping)",
+            "VmSize": "2204828 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1039740 kB",
+            "Threads": "14",
+            "MemAvailable": "13973384 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 109.567,
+            "State": "D (disk sleep)",
+            "VmSize": "2204828 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1040720 kB",
+            "Threads": "14",
+            "MemAvailable": "13983092 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 110.573,
+            "State": "D (disk sleep)",
+            "VmSize": "2253404 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1089884 kB",
+            "Threads": "14",
+            "MemAvailable": "13984172 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 111.579,
+            "State": "S (sleeping)",
+            "VmSize": "2269596 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1102516 kB",
+            "Threads": "14",
+            "MemAvailable": "13963860 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 112.584,
+            "State": "R (running)",
+            "VmSize": "2285788 kB",
+            "VmHWM": "1138000 kB",
+            "VmRSS": "1117136 kB",
+            "Threads": "14",
+            "MemAvailable": "13963948 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 113.589,
+            "State": "D (disk sleep)",
+            "VmSize": "2353244 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1167596 kB",
+            "Threads": "14",
+            "MemAvailable": "13962560 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 114.595,
+            "State": "R (running)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13955260 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 115.6,
+            "State": "R (running)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13953892 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 116.605,
+            "State": "R (running)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13951332 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 117.612,
+            "State": "R (running)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13955616 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 118.617,
+            "State": "S (sleeping)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13955600 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 119.623,
+            "State": "R (running)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13957200 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 120.632,
+            "State": "R (running)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13953648 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 121.637,
+            "State": "R (running)",
+            "VmSize": "2301980 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1139688 kB",
+            "Threads": "14",
+            "MemAvailable": "13953708 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 122.642,
+            "State": "D (disk sleep)",
+            "VmSize": "2318172 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1140372 kB",
+            "Threads": "14",
+            "MemAvailable": "13957052 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 123.648,
+            "State": "D (disk sleep)",
+            "VmSize": "2318172 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1142736 kB",
+            "Threads": "14",
+            "MemAvailable": "13952148 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 124.653,
+            "State": "R (running)",
+            "VmSize": "2318172 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1153644 kB",
+            "Threads": "14",
+            "MemAvailable": "13958700 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 125.658,
+            "State": "D (disk sleep)",
+            "VmSize": "2318172 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1153644 kB",
+            "Threads": "14",
+            "MemAvailable": "13961308 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 126.664,
+            "State": "R (running)",
+            "VmSize": "2319196 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1154668 kB",
+            "Threads": "14",
+            "MemAvailable": "13962048 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 127.669,
+            "State": "S (sleeping)",
+            "VmSize": "2319196 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1154668 kB",
+            "Threads": "14",
+            "MemAvailable": "13954436 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 128.674,
+            "State": "R (running)",
+            "VmSize": "2319196 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1156340 kB",
+            "Threads": "14",
+            "MemAvailable": "13952728 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 129.679,
+            "State": "S (sleeping)",
+            "VmSize": "2335388 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1159280 kB",
+            "Threads": "14",
+            "MemAvailable": "13959048 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 130.685,
+            "State": "S (sleeping)",
+            "VmSize": "2335388 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1162448 kB",
+            "Threads": "14",
+            "MemAvailable": "13945108 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 131.69,
+            "State": "D (disk sleep)",
+            "VmSize": "2335388 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1165216 kB",
+            "Threads": "14",
+            "MemAvailable": "13947508 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 132.696,
+            "State": "R (running)",
+            "VmSize": "2335388 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1168064 kB",
+            "Threads": "14",
+            "MemAvailable": "13941508 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 133.701,
+            "State": "R (running)",
+            "VmSize": "2335388 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1171224 kB",
+            "Threads": "14",
+            "MemAvailable": "13927592 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 134.706,
+            "State": "R (running)",
+            "VmSize": "2351580 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1174064 kB",
+            "Threads": "14",
+            "MemAvailable": "13927200 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 135.712,
+            "State": "D (disk sleep)",
+            "VmSize": "2351580 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1176804 kB",
+            "Threads": "14",
+            "MemAvailable": "13933492 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 136.717,
+            "State": "S (sleeping)",
+            "VmSize": "2351580 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1179896 kB",
+            "Threads": "14",
+            "MemAvailable": "13933740 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 137.723,
+            "State": "S (sleeping)",
+            "VmSize": "2351580 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1182884 kB",
+            "Threads": "14",
+            "MemAvailable": "13921272 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 138.728,
+            "State": "R (running)",
+            "VmSize": "2351580 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1185852 kB",
+            "Threads": "14",
+            "MemAvailable": "13919492 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 139.733,
+            "State": "D (disk sleep)",
+            "VmSize": "2351580 kB",
+            "VmHWM": "1190192 kB",
+            "VmRSS": "1188792 kB",
+            "Threads": "14",
+            "MemAvailable": "13922356 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 140.739,
+            "State": "D (disk sleep)",
+            "VmSize": "2367772 kB",
+            "VmHWM": "1191392 kB",
+            "VmRSS": "1191392 kB",
+            "Threads": "14",
+            "MemAvailable": "13922764 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 141.744,
+            "State": "R (running)",
+            "VmSize": "2371868 kB",
+            "VmHWM": "1198400 kB",
+            "VmRSS": "1198400 kB",
+            "Threads": "14",
+            "MemAvailable": "13909928 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 142.749,
+            "State": "R (running)",
+            "VmSize": "2371868 kB",
+            "VmHWM": "1201312 kB",
+            "VmRSS": "1201312 kB",
+            "Threads": "14",
+            "MemAvailable": "13908744 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 143.754,
+            "State": "R (running)",
+            "VmSize": "2371868 kB",
+            "VmHWM": "1204276 kB",
+            "VmRSS": "1204276 kB",
+            "Threads": "14",
+            "MemAvailable": "13901780 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 144.76,
+            "State": "R (running)",
+            "VmSize": "2371868 kB",
+            "VmHWM": "1206804 kB",
+            "VmRSS": "1206804 kB",
+            "Threads": "14",
+            "MemAvailable": "13900088 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 145.765,
+            "State": "D (disk sleep)",
+            "VmSize": "2388060 kB",
+            "VmHWM": "1210016 kB",
+            "VmRSS": "1210016 kB",
+            "Threads": "14",
+            "MemAvailable": "13901412 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 146.771,
+            "State": "R (running)",
+            "VmSize": "2388060 kB",
+            "VmHWM": "1212200 kB",
+            "VmRSS": "1212200 kB",
+            "Threads": "14",
+            "MemAvailable": "13888820 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 147.776,
+            "State": "S (sleeping)",
+            "VmSize": "2388060 kB",
+            "VmHWM": "1215004 kB",
+            "VmRSS": "1215004 kB",
+            "Threads": "14",
+            "MemAvailable": "13883180 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 148.781,
+            "State": "R (running)",
+            "VmSize": "2404252 kB",
+            "VmHWM": "1240592 kB",
+            "VmRSS": "1229456 kB",
+            "Threads": "14",
+            "MemAvailable": "13869248 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 149.786,
+            "State": "S (sleeping)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13806720 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 150.791,
+            "State": "S (sleeping)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13811428 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 151.796,
+            "State": "R (running)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13816428 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 152.802,
+            "State": "R (running)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13822340 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 153.808,
+            "State": "S (sleeping)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13827620 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 154.814,
+            "State": "R (running)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13831572 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 155.819,
+            "State": "R (running)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13835520 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 156.826,
+            "State": "R (running)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1260560 kB",
+            "Threads": "14",
+            "MemAvailable": "13836488 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 157.832,
+            "State": "R (running)",
+            "VmSize": "2436636 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1261960 kB",
+            "Threads": "14",
+            "MemAvailable": "13839408 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 158.838,
+            "State": "R (running)",
+            "VmSize": "2437788 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1275892 kB",
+            "Threads": "14",
+            "MemAvailable": "13829848 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 159.845,
+            "State": "R (running)",
+            "VmSize": "2453980 kB",
+            "VmHWM": "1284328 kB",
+            "VmRSS": "1279248 kB",
+            "Threads": "14",
+            "MemAvailable": "13825840 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 160.852,
+            "State": "R (running)",
+            "VmSize": "2491612 kB",
+            "VmHWM": "1317548 kB",
+            "VmRSS": "1317548 kB",
+            "Threads": "14",
+            "MemAvailable": "13786836 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 161.861,
+            "State": "R (running)",
+            "VmSize": "2626208 kB",
+            "VmHWM": "1368196 kB",
+            "VmRSS": "1368196 kB",
+            "Threads": "15",
+            "MemAvailable": "13742720 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 162.869,
+            "State": "S (sleeping)",
+            "VmSize": "2627680 kB",
+            "VmHWM": "1367740 kB",
+            "VmRSS": "1365680 kB",
+            "Threads": "15",
+            "MemAvailable": "13741464 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 163.877,
+            "State": "R (running)",
+            "VmSize": "2629152 kB",
+            "VmHWM": "1376668 kB",
+            "VmRSS": "1376668 kB",
+            "Threads": "15",
+            "MemAvailable": "13738116 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 164.884,
+            "State": "S (sleeping)",
+            "VmSize": "2650784 kB",
+            "VmHWM": "1395888 kB",
+            "VmRSS": "1395888 kB",
+            "Threads": "15",
+            "MemAvailable": "13717028 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 165.892,
+            "State": "S (sleeping)",
+            "VmSize": "2668320 kB",
+            "VmHWM": "1408512 kB",
+            "VmRSS": "1408512 kB",
+            "Threads": "15",
+            "MemAvailable": "13696752 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 166.899,
+            "State": "S (sleeping)",
+            "VmSize": "2669408 kB",
+            "VmHWM": "1421104 kB",
+            "VmRSS": "1421104 kB",
+            "Threads": "15",
+            "MemAvailable": "13690484 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 167.907,
+            "State": "R (running)",
+            "VmSize": "2688544 kB",
+            "VmHWM": "1432764 kB",
+            "VmRSS": "1432764 kB",
+            "Threads": "15",
+            "MemAvailable": "13679452 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 168.914,
+            "State": "R (running)",
+            "VmSize": "2700256 kB",
+            "VmHWM": "1454268 kB",
+            "VmRSS": "1454268 kB",
+            "Threads": "15",
+            "MemAvailable": "13664284 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 169.922,
+            "State": "R (running)",
+            "VmSize": "2745440 kB",
+            "VmHWM": "1484400 kB",
+            "VmRSS": "1484400 kB",
+            "Threads": "15",
+            "MemAvailable": "13618828 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 170.93,
+            "State": "R (running)",
+            "VmSize": "2765920 kB",
+            "VmHWM": "1511140 kB",
+            "VmRSS": "1506220 kB",
+            "Threads": "15",
+            "MemAvailable": "13601440 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 171.97,
+            "State": "R (running)",
+            "VmSize": "2769308 kB",
+            "VmHWM": "1511212 kB",
+            "VmRSS": "1508240 kB",
+            "Threads": "15",
+            "MemAvailable": "13592252 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 172.981,
+            "State": "Z (zombie)",
+            "Threads": "2",
+            "MemAvailable": "14338832 kB",
+            "SwapFree": "3145560 kB"
+          }
+        ],
+        "exit_observation": {
+          "marker_seen": true,
+          "samples": [
+            {
+              "seconds": 172.829,
+              "tasks": [
+                {
+                  "tid": 16657,
+                  "stat": "16657 (CityOfHeroes.ex) D 16564 1963 1963 0 -1 4194304 912004 0 0 0 6041 4965 0 0 20 0 9 0 52608 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 268511747 4096 3838 1 0 0 17 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "folio_wait_bit_common"
+                },
+                {
+                  "tid": 16675,
+                  "stat": "16675 (llvmpipe-0) S 16564 1963 1963 0 -1 4194368 591 0 0 0 3 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16676,
+                  "stat": "16676 (llvmpipe-1) S 16564 1963 1963 0 -1 4194368 528 0 0 0 2 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16677,
+                  "stat": "16677 (llvmpipe-2) S 16564 1963 1963 0 -1 4194368 555 0 0 0 2 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 3 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16678,
+                  "stat": "16678 (llvmpipe-3) S 16564 1963 1963 0 -1 4194368 545 0 0 0 3 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16679,
+                  "stat": "16679 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 0 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16680,
+                  "stat": "16680 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16681,
+                  "stat": "16681 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 0 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16682,
+                  "stat": "16682 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                }
+              ],
+              "task_count": 9,
+              "truncated": false
+            },
+            {
+              "seconds": 172.88,
+              "tasks": [
+                {
+                  "tid": 16657,
+                  "stat": "16657 (CityOfHeroes.ex) D 16564 1963 1963 0 -1 4194304 912004 0 1 0 6041 4965 0 0 20 0 9 0 52608 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 268511747 4096 3838 1 0 0 17 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "folio_wait_bit_common"
+                },
+                {
+                  "tid": 16675,
+                  "stat": "16675 (llvmpipe-0) S 16564 1963 1963 0 -1 4194368 591 0 0 0 3 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16676,
+                  "stat": "16676 (llvmpipe-1) S 16564 1963 1963 0 -1 4194368 528 0 0 0 2 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16677,
+                  "stat": "16677 (llvmpipe-2) S 16564 1963 1963 0 -1 4194368 555 0 0 0 2 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 3 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16678,
+                  "stat": "16678 (llvmpipe-3) S 16564 1963 1963 0 -1 4194368 545 0 0 0 3 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16679,
+                  "stat": "16679 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 0 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16680,
+                  "stat": "16680 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16681,
+                  "stat": "16681 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 0 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16682,
+                  "stat": "16682 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378126 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                }
+              ],
+              "task_count": 9,
+              "truncated": false
+            },
+            {
+              "seconds": 172.931,
+              "tasks": [
+                {
+                  "tid": 16657,
+                  "stat": "16657 (CityOfHeroes.ex) D 16564 1963 1963 0 -1 4194304 912006 0 8 0 6041 4965 0 0 20 0 9 0 52608 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 268511747 4096 3838 1 0 0 17 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "folio_wait_bit_common"
+                },
+                {
+                  "tid": 16675,
+                  "stat": "16675 (llvmpipe-0) S 16564 1963 1963 0 -1 4194368 591 0 0 0 3 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16676,
+                  "stat": "16676 (llvmpipe-1) S 16564 1963 1963 0 -1 4194368 528 0 0 0 2 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16677,
+                  "stat": "16677 (llvmpipe-2) S 16564 1963 1963 0 -1 4194368 555 0 0 0 2 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 3 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16678,
+                  "stat": "16678 (llvmpipe-3) S 16564 1963 1963 0 -1 4194368 545 0 0 0 3 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 2 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16679,
+                  "stat": "16679 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 0 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16680,
+                  "stat": "16680 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16681,
+                  "stat": "16681 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 0 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                },
+                {
+                  "tid": 16682,
+                  "stat": "16682 (CityOfHeroes.ex) S 16564 1963 1963 0 -1 4194368 2 0 0 0 0 0 0 0 20 0 9 0 54343 2824335360 378286 18446744073709551615 281091495624704 281091495633020 281474783511296 0 0 0 1073478399 4096 3838 1 0 0 -1 1 0 0 0 0 0 281091495755536 281091495755872 187650701488128 281474783515861 281474783516006 281474783516006 281474783518683 0",
+                  "wchan": "futex_do_wait"
+                }
+              ],
+              "task_count": 9,
+              "truncated": false
+            },
+            {
+              "seconds": 172.981,
+              "tasks": [
+                {
+                  "tid": 16657,
+                  "stat": "16657 (CityOfHeroes.ex) Z 16564 1963 1963 0 -1 4227084 912024 0 12 0 6041 4965 0 0 20 0 2 0 52608 0 0 18446744073709551615 0 0 0 0 0 0 268511747 4096 3838 1 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                },
+                {
+                  "tid": 16676,
+                  "stat": "16676 (llvmpipe-1) R 16564 1963 1963 0 -1 4195404 528 0 0 0 2 3 0 0 20 0 2 0 54343 0 0 18446744073709551615 0 0 0 0 0 0 1073478399 4096 3838 0 0 0 -1 3 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                }
+              ],
+              "task_count": 2,
+              "truncated": false
+            },
+            {
+              "seconds": 173.032,
+              "tasks": [
+                {
+                  "tid": 16657,
+                  "stat": "16657 (CityOfHeroes.ex) Z 16564 1963 1963 0 -1 4227084 912024 0 12 0 6041 4965 0 0 20 0 1 0 52608 0 0 18446744073709551615 0 0 0 0 0 0 268511747 4096 3838 1 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                }
+              ],
+              "task_count": 1,
+              "truncated": false
+            }
+          ],
+          "scope": "passive_linux_tasks_not_signal_sender",
+          "seconds": 172.829
+        },
+        "pid": 16657,
+        "elapsed_seconds": 173.042,
+        "returncode": 2,
+        "memory_events_after": {
+          "available": true,
+          "path": "/sys/fs/cgroup/system.slice/hosted-compute-agent.service/memory.events",
+          "counters": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          }
+        }
+      },
+      "validated": {
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      }
+    },
+    "id1-b": {
+      "process": {
+        "timeout_seconds": 600,
+        "memory_events_before": {
+          "available": true,
+          "path": "/sys/fs/cgroup/system.slice/hosted-compute-agent.service/memory.events",
+          "counters": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          }
+        },
+        "samples": [
+          {
+            "seconds": 0.001,
+            "State": "R (running)",
+            "VmSize": "2956 kB",
+            "VmHWM": "1020 kB",
+            "VmRSS": "1020 kB",
+            "Threads": "1",
+            "MemAvailable": "14810676 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 1.004,
+            "State": "S (sleeping)",
+            "VmSize": "1405248 kB",
+            "VmHWM": "279956 kB",
+            "VmRSS": "279956 kB",
+            "Threads": "14",
+            "MemAvailable": "14653200 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 2.008,
+            "State": "R (running)",
+            "VmSize": "1410368 kB",
+            "VmHWM": "296276 kB",
+            "VmRSS": "288808 kB",
+            "Threads": "14",
+            "MemAvailable": "14639332 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 3.012,
+            "State": "S (sleeping)",
+            "VmSize": "1410564 kB",
+            "VmHWM": "296276 kB",
+            "VmRSS": "290632 kB",
+            "Threads": "14",
+            "MemAvailable": "14647100 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 4.016,
+            "State": "R (running)",
+            "VmSize": "1410564 kB",
+            "VmHWM": "296276 kB",
+            "VmRSS": "292496 kB",
+            "Threads": "14",
+            "MemAvailable": "14653840 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 5.02,
+            "State": "R (running)",
+            "VmSize": "1410564 kB",
+            "VmHWM": "296276 kB",
+            "VmRSS": "294184 kB",
+            "Threads": "14",
+            "MemAvailable": "14666276 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 6.024,
+            "State": "S (sleeping)",
+            "VmSize": "1410564 kB",
+            "VmHWM": "297280 kB",
+            "VmRSS": "297280 kB",
+            "Threads": "14",
+            "MemAvailable": "14670948 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 7.029,
+            "State": "R (running)",
+            "VmSize": "1426756 kB",
+            "VmHWM": "300804 kB",
+            "VmRSS": "300804 kB",
+            "Threads": "14",
+            "MemAvailable": "14677540 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 8.035,
+            "State": "R (running)",
+            "VmSize": "1502140 kB",
+            "VmHWM": "323992 kB",
+            "VmRSS": "323992 kB",
+            "Threads": "14",
+            "MemAvailable": "14664976 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 9.041,
+            "State": "S (sleeping)",
+            "VmSize": "1502140 kB",
+            "VmHWM": "325948 kB",
+            "VmRSS": "325948 kB",
+            "Threads": "14",
+            "MemAvailable": "14664488 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 10.047,
+            "State": "R (running)",
+            "VmSize": "1635708 kB",
+            "VmHWM": "460960 kB",
+            "VmRSS": "460960 kB",
+            "Threads": "14",
+            "MemAvailable": "14503320 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 11.053,
+            "State": "R (running)",
+            "VmSize": "1634876 kB",
+            "VmHWM": "530528 kB",
+            "VmRSS": "463584 kB",
+            "Threads": "14",
+            "MemAvailable": "14426880 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 12.058,
+            "State": "R (running)",
+            "VmSize": "1667260 kB",
+            "VmHWM": "530528 kB",
+            "VmRSS": "484872 kB",
+            "Threads": "14",
+            "MemAvailable": "14406720 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 13.064,
+            "State": "R (running)",
+            "VmSize": "1683452 kB",
+            "VmHWM": "530528 kB",
+            "VmRSS": "501540 kB",
+            "Threads": "14",
+            "MemAvailable": "14394876 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 14.069,
+            "State": "R (running)",
+            "VmSize": "1699644 kB",
+            "VmHWM": "530528 kB",
+            "VmRSS": "519028 kB",
+            "Threads": "14",
+            "MemAvailable": "14374716 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 15.074,
+            "State": "R (running)",
+            "VmSize": "1715836 kB",
+            "VmHWM": "535232 kB",
+            "VmRSS": "535232 kB",
+            "Threads": "14",
+            "MemAvailable": "14358588 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 16.08,
+            "State": "S (sleeping)",
+            "VmSize": "1734204 kB",
+            "VmHWM": "554024 kB",
+            "VmRSS": "554024 kB",
+            "Threads": "14",
+            "MemAvailable": "14350536 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 17.085,
+            "State": "R (running)",
+            "VmSize": "1812764 kB",
+            "VmHWM": "638632 kB",
+            "VmRSS": "638632 kB",
+            "Threads": "14",
+            "MemAvailable": "14271724 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 18.091,
+            "State": "S (sleeping)",
+            "VmSize": "1813788 kB",
+            "VmHWM": "640556 kB",
+            "VmRSS": "640556 kB",
+            "Threads": "14",
+            "MemAvailable": "14279788 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 19.097,
+            "State": "R (running)",
+            "VmSize": "1813788 kB",
+            "VmHWM": "641420 kB",
+            "VmRSS": "641420 kB",
+            "Threads": "14",
+            "MemAvailable": "14287724 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 20.104,
+            "State": "R (running)",
+            "VmSize": "1813788 kB",
+            "VmHWM": "641556 kB",
+            "VmRSS": "641556 kB",
+            "Threads": "14",
+            "MemAvailable": "14291096 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 21.109,
+            "State": "R (running)",
+            "VmSize": "1813788 kB",
+            "VmHWM": "641764 kB",
+            "VmRSS": "641764 kB",
+            "Threads": "14",
+            "MemAvailable": "14290340 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 22.115,
+            "State": "S (sleeping)",
+            "VmSize": "1813788 kB",
+            "VmHWM": "641980 kB",
+            "VmRSS": "641980 kB",
+            "Threads": "14",
+            "MemAvailable": "14290340 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 23.121,
+            "State": "R (running)",
+            "VmSize": "1928604 kB",
+            "VmHWM": "772372 kB",
+            "VmRSS": "748724 kB",
+            "Threads": "14",
+            "MemAvailable": "14148708 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 24.128,
+            "State": "S (sleeping)",
+            "VmSize": "1954652 kB",
+            "VmHWM": "775168 kB",
+            "VmRSS": "775168 kB",
+            "Threads": "14",
+            "MemAvailable": "14152360 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 25.133,
+            "State": "R (running)",
+            "VmSize": "1985500 kB",
+            "VmHWM": "818104 kB",
+            "VmRSS": "805548 kB",
+            "Threads": "14",
+            "MemAvailable": "14108676 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 26.14,
+            "State": "R (running)",
+            "VmSize": "2077916 kB",
+            "VmHWM": "893608 kB",
+            "VmRSS": "893608 kB",
+            "Threads": "14",
+            "MemAvailable": "14031208 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 27.146,
+            "State": "S (sleeping)",
+            "VmSize": "2077916 kB",
+            "VmHWM": "895520 kB",
+            "VmRSS": "895520 kB",
+            "Threads": "14",
+            "MemAvailable": "14023164 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 28.152,
+            "State": "S (sleeping)",
+            "VmSize": "2079964 kB",
+            "VmHWM": "898292 kB",
+            "VmRSS": "898292 kB",
+            "Threads": "14",
+            "MemAvailable": "14023844 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 29.157,
+            "State": "R (running)",
+            "VmSize": "2079964 kB",
+            "VmHWM": "899080 kB",
+            "VmRSS": "899080 kB",
+            "Threads": "14",
+            "MemAvailable": "14025420 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 30.164,
+            "State": "R (running)",
+            "VmSize": "2082012 kB",
+            "VmHWM": "903200 kB",
+            "VmRSS": "901896 kB",
+            "Threads": "14",
+            "MemAvailable": "14037340 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 31.17,
+            "State": "S (sleeping)",
+            "VmSize": "2082012 kB",
+            "VmHWM": "903200 kB",
+            "VmRSS": "902804 kB",
+            "Threads": "14",
+            "MemAvailable": "14028664 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 32.176,
+            "State": "R (running)",
+            "VmSize": "2098204 kB",
+            "VmHWM": "924564 kB",
+            "VmRSS": "924564 kB",
+            "Threads": "14",
+            "MemAvailable": "14012564 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 33.182,
+            "State": "R (running)",
+            "VmSize": "2159580 kB",
+            "VmHWM": "1031848 kB",
+            "VmRSS": "983172 kB",
+            "Threads": "14",
+            "MemAvailable": "13907732 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 34.187,
+            "State": "S (sleeping)",
+            "VmSize": "2160668 kB",
+            "VmHWM": "1031848 kB",
+            "VmRSS": "984496 kB",
+            "Threads": "14",
+            "MemAvailable": "13907732 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 35.194,
+            "State": "R (running)",
+            "VmSize": "2221660 kB",
+            "VmHWM": "1059092 kB",
+            "VmRSS": "1044920 kB",
+            "Threads": "14",
+            "MemAvailable": "13843472 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 36.199,
+            "State": "R (running)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13782072 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 37.206,
+            "State": "R (running)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13786976 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 38.212,
+            "State": "S (sleeping)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13792028 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 39.217,
+            "State": "S (sleeping)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13797084 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 40.223,
+            "State": "R (running)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13798264 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 41.229,
+            "State": "R (running)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13799332 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 42.235,
+            "State": "S (sleeping)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13805368 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 43.24,
+            "State": "R (running)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13809480 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 44.246,
+            "State": "R (running)",
+            "VmSize": "2254044 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1081496 kB",
+            "Threads": "14",
+            "MemAvailable": "13821064 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 45.251,
+            "State": "S (sleeping)",
+            "VmSize": "2255516 kB",
+            "VmHWM": "1108576 kB",
+            "VmRSS": "1083584 kB",
+            "Threads": "14",
+            "MemAvailable": "13828852 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 46.256,
+            "State": "R (running)",
+            "VmSize": "2295452 kB",
+            "VmHWM": "1121464 kB",
+            "VmRSS": "1121464 kB",
+            "Threads": "14",
+            "MemAvailable": "13804620 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 47.262,
+            "State": "S (sleeping)",
+            "VmSize": "2296476 kB",
+            "VmHWM": "1123040 kB",
+            "VmRSS": "1123040 kB",
+            "Threads": "14",
+            "MemAvailable": "13812552 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 48.267,
+            "State": "S (sleeping)",
+            "VmSize": "2296476 kB",
+            "VmHWM": "1124124 kB",
+            "VmRSS": "1124124 kB",
+            "Threads": "14",
+            "MemAvailable": "13817684 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 49.272,
+            "State": "S (sleeping)",
+            "VmSize": "2296476 kB",
+            "VmHWM": "1125220 kB",
+            "VmRSS": "1125220 kB",
+            "Threads": "14",
+            "MemAvailable": "13818852 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 50.277,
+            "State": "R (running)",
+            "VmSize": "2296476 kB",
+            "VmHWM": "1126288 kB",
+            "VmRSS": "1126288 kB",
+            "Threads": "14",
+            "MemAvailable": "13819096 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 51.282,
+            "State": "R (running)",
+            "VmSize": "2312668 kB",
+            "VmHWM": "1127088 kB",
+            "VmRSS": "1127088 kB",
+            "Threads": "14",
+            "MemAvailable": "13819176 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 52.288,
+            "State": "S (sleeping)",
+            "VmSize": "2312668 kB",
+            "VmHWM": "1128148 kB",
+            "VmRSS": "1128148 kB",
+            "Threads": "14",
+            "MemAvailable": "13819192 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 53.293,
+            "State": "R (running)",
+            "VmSize": "2316764 kB",
+            "VmHWM": "1134024 kB",
+            "VmRSS": "1133020 kB",
+            "Threads": "14",
+            "MemAvailable": "13813612 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 54.298,
+            "State": "R (running)",
+            "VmSize": "2316764 kB",
+            "VmHWM": "1134076 kB",
+            "VmRSS": "1134076 kB",
+            "Threads": "14",
+            "MemAvailable": "13811436 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 55.304,
+            "State": "R (running)",
+            "VmSize": "2316764 kB",
+            "VmHWM": "1134576 kB",
+            "VmRSS": "1134576 kB",
+            "Threads": "14",
+            "MemAvailable": "13813380 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 56.309,
+            "State": "R (running)",
+            "VmSize": "2341212 kB",
+            "VmHWM": "1171144 kB",
+            "VmRSS": "1166984 kB",
+            "Threads": "14",
+            "MemAvailable": "13775144 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 57.316,
+            "State": "S (sleeping)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13728900 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 58.322,
+            "State": "R (running)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13730716 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 59.327,
+            "State": "S (sleeping)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13735816 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 60.332,
+            "State": "R (running)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13740108 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 61.339,
+            "State": "R (running)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13741604 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 62.344,
+            "State": "S (sleeping)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13746572 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 63.35,
+            "State": "R (running)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13740124 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 64.355,
+            "State": "R (running)",
+            "VmSize": "2372508 kB",
+            "VmHWM": "1215420 kB",
+            "VmRSS": "1200040 kB",
+            "Threads": "14",
+            "MemAvailable": "13740640 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 65.361,
+            "State": "R (running)",
+            "VmSize": "2411292 kB",
+            "VmHWM": "1243872 kB",
+            "VmRSS": "1243872 kB",
+            "Threads": "14",
+            "MemAvailable": "13695736 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 66.37,
+            "State": "R (running)",
+            "VmSize": "2561828 kB",
+            "VmHWM": "1296936 kB",
+            "VmRSS": "1296676 kB",
+            "Threads": "15",
+            "MemAvailable": "13633136 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 67.378,
+            "State": "R (running)",
+            "VmSize": "2587684 kB",
+            "VmHWM": "1324904 kB",
+            "VmRSS": "1324904 kB",
+            "Threads": "15",
+            "MemAvailable": "13622688 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 68.386,
+            "State": "R (running)",
+            "VmSize": "2606308 kB",
+            "VmHWM": "1350388 kB",
+            "VmRSS": "1350388 kB",
+            "Threads": "15",
+            "MemAvailable": "13603928 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 69.394,
+            "State": "R (running)",
+            "VmSize": "2662052 kB",
+            "VmHWM": "1397052 kB",
+            "VmRSS": "1397052 kB",
+            "Threads": "15",
+            "MemAvailable": "13561008 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 70.402,
+            "State": "R (running)",
+            "VmSize": "2702820 kB",
+            "VmHWM": "1440544 kB",
+            "VmRSS": "1435696 kB",
+            "Threads": "15",
+            "MemAvailable": "13505076 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 71.411,
+            "State": "D (disk sleep)",
+            "VmSize": "2702820 kB",
+            "VmHWM": "1440748 kB",
+            "VmRSS": "1435824 kB",
+            "Threads": "15",
+            "MemAvailable": "13509448 kB",
+            "SwapFree": "3145560 kB"
+          }
+        ],
+        "exit_observation": {
+          "marker_seen": true,
+          "samples": [
+            {
+              "seconds": 72.22,
+              "tasks": [
+                {
+                  "tid": 16847,
+                  "stat": "16847 (CityOfHeroes.ex) Z 16564 1963 1963 0 -1 4227084 664852 0 0 0 1663 2297 0 0 20 0 2 0 72499 0 0 18446744073709551615 0 0 0 0 0 0 268511747 4096 3838 1 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                },
+                {
+                  "tid": 16858,
+                  "stat": "16858 (CityOfHeroes.ex) R 16564 1963 1963 0 -1 4195404 2 0 0 0 0 3 0 0 20 0 2 0 72542 0 0 18446744073709551615 0 0 0 0 0 0 1073478399 4096 3838 0 0 0 -1 3 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                }
+              ],
+              "task_count": 2,
+              "truncated": false
+            },
+            {
+              "seconds": 72.271,
+              "tasks": [
+                {
+                  "tid": 16847,
+                  "stat": "16847 (CityOfHeroes.ex) Z 16564 1963 1963 0 -1 4227084 664852 0 0 0 1663 2297 0 0 20 0 1 0 72499 0 0 18446744073709551615 0 0 0 0 0 0 268511747 4096 3838 1 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                }
+              ],
+              "task_count": 1,
+              "truncated": false
+            }
+          ],
+          "scope": "passive_linux_tasks_not_signal_sender",
+          "seconds": 72.22
+        },
+        "pid": 16847,
+        "elapsed_seconds": 72.301,
+        "returncode": 2,
+        "memory_events_after": {
+          "available": true,
+          "path": "/sys/fs/cgroup/system.slice/hosted-compute-agent.service/memory.events",
+          "counters": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          }
+        }
+      },
+      "validated": {
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      }
+    },
+    "id31": {
+      "process": {
+        "timeout_seconds": 600,
+        "memory_events_before": {
+          "available": true,
+          "path": "/sys/fs/cgroup/system.slice/hosted-compute-agent.service/memory.events",
+          "counters": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          }
+        },
+        "samples": [
+          {
+            "seconds": 0.001,
+            "State": "R (running)",
+            "VmSize": "2176 kB",
+            "VmHWM": "532 kB",
+            "VmRSS": "532 kB",
+            "Threads": "1",
+            "MemAvailable": "14747692 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 1.004,
+            "State": "S (sleeping)",
+            "VmSize": "1393152 kB",
+            "VmHWM": "279848 kB",
+            "VmRSS": "279848 kB",
+            "Threads": "14",
+            "MemAvailable": "14688408 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 2.007,
+            "State": "R (running)",
+            "VmSize": "1406464 kB",
+            "VmHWM": "296296 kB",
+            "VmRSS": "288668 kB",
+            "Threads": "14",
+            "MemAvailable": "14688412 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 3.012,
+            "State": "S (sleeping)",
+            "VmSize": "1406660 kB",
+            "VmHWM": "296296 kB",
+            "VmRSS": "290492 kB",
+            "Threads": "14",
+            "MemAvailable": "14688412 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 4.016,
+            "State": "R (running)",
+            "VmSize": "1406660 kB",
+            "VmHWM": "296296 kB",
+            "VmRSS": "292352 kB",
+            "Threads": "14",
+            "MemAvailable": "14688412 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 5.02,
+            "State": "R (running)",
+            "VmSize": "1406660 kB",
+            "VmHWM": "296296 kB",
+            "VmRSS": "294048 kB",
+            "Threads": "14",
+            "MemAvailable": "14688412 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 6.025,
+            "State": "R (running)",
+            "VmSize": "1422852 kB",
+            "VmHWM": "297112 kB",
+            "VmRSS": "297112 kB",
+            "Threads": "14",
+            "MemAvailable": "14688412 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 7.03,
+            "State": "R (running)",
+            "VmSize": "1422852 kB",
+            "VmHWM": "300672 kB",
+            "VmRSS": "300672 kB",
+            "Threads": "14",
+            "MemAvailable": "14691304 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 8.036,
+            "State": "S (sleeping)",
+            "VmSize": "1498236 kB",
+            "VmHWM": "323888 kB",
+            "VmRSS": "323888 kB",
+            "Threads": "14",
+            "MemAvailable": "14673924 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 9.042,
+            "State": "S (sleeping)",
+            "VmSize": "1498236 kB",
+            "VmHWM": "325712 kB",
+            "VmRSS": "325712 kB",
+            "Threads": "14",
+            "MemAvailable": "14674588 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 10.047,
+            "State": "R (running)",
+            "VmSize": "1631804 kB",
+            "VmHWM": "455440 kB",
+            "VmRSS": "455440 kB",
+            "Threads": "14",
+            "MemAvailable": "14533968 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 11.053,
+            "State": "R (running)",
+            "VmSize": "1630972 kB",
+            "VmHWM": "530292 kB",
+            "VmRSS": "462604 kB",
+            "Threads": "14",
+            "MemAvailable": "14441988 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 12.06,
+            "State": "R (running)",
+            "VmSize": "1663356 kB",
+            "VmHWM": "530292 kB",
+            "VmRSS": "484008 kB",
+            "Threads": "14",
+            "MemAvailable": "14417808 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 13.065,
+            "State": "R (running)",
+            "VmSize": "1679548 kB",
+            "VmHWM": "530292 kB",
+            "VmRSS": "500928 kB",
+            "Threads": "14",
+            "MemAvailable": "14405712 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 14.071,
+            "State": "R (running)",
+            "VmSize": "1695740 kB",
+            "VmHWM": "530292 kB",
+            "VmRSS": "518380 kB",
+            "Threads": "14",
+            "MemAvailable": "14381520 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 15.077,
+            "State": "R (running)",
+            "VmSize": "1711932 kB",
+            "VmHWM": "534784 kB",
+            "VmRSS": "534784 kB",
+            "Threads": "14",
+            "MemAvailable": "14385048 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 16.083,
+            "State": "R (running)",
+            "VmSize": "1730300 kB",
+            "VmHWM": "552084 kB",
+            "VmRSS": "552084 kB",
+            "Threads": "14",
+            "MemAvailable": "14369676 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 17.089,
+            "State": "R (running)",
+            "VmSize": "1808860 kB",
+            "VmHWM": "638520 kB",
+            "VmRSS": "638520 kB",
+            "Threads": "14",
+            "MemAvailable": "14351788 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 18.095,
+            "State": "R (running)",
+            "VmSize": "1809884 kB",
+            "VmHWM": "640444 kB",
+            "VmRSS": "640444 kB",
+            "Threads": "14",
+            "MemAvailable": "14349772 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 19.1,
+            "State": "S (sleeping)",
+            "VmSize": "1809884 kB",
+            "VmHWM": "641320 kB",
+            "VmRSS": "641320 kB",
+            "Threads": "14",
+            "MemAvailable": "14345740 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 20.106,
+            "State": "R (running)",
+            "VmSize": "1809884 kB",
+            "VmHWM": "641452 kB",
+            "VmRSS": "641452 kB",
+            "Threads": "14",
+            "MemAvailable": "14312476 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 21.111,
+            "State": "S (sleeping)",
+            "VmSize": "1826076 kB",
+            "VmHWM": "641668 kB",
+            "VmRSS": "641668 kB",
+            "Threads": "14",
+            "MemAvailable": "14312476 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 22.117,
+            "State": "R (running)",
+            "VmSize": "1826076 kB",
+            "VmHWM": "641880 kB",
+            "VmRSS": "641880 kB",
+            "Threads": "14",
+            "MemAvailable": "14313032 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 23.123,
+            "State": "R (running)",
+            "VmSize": "1912476 kB",
+            "VmHWM": "772120 kB",
+            "VmRSS": "734900 kB",
+            "Threads": "14",
+            "MemAvailable": "14174752 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 24.129,
+            "State": "S (sleeping)",
+            "VmSize": "1950748 kB",
+            "VmHWM": "775028 kB",
+            "VmRSS": "775028 kB",
+            "Threads": "14",
+            "MemAvailable": "14134632 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 25.134,
+            "State": "R (running)",
+            "VmSize": "1979036 kB",
+            "VmHWM": "806620 kB",
+            "VmRSS": "806620 kB",
+            "Threads": "14",
+            "MemAvailable": "14118756 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 26.14,
+            "State": "R (running)",
+            "VmSize": "2004380 kB",
+            "VmHWM": "819088 kB",
+            "VmRSS": "819088 kB",
+            "Threads": "14",
+            "MemAvailable": "14096528 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 27.146,
+            "State": "S (sleeping)",
+            "VmSize": "2074012 kB",
+            "VmHWM": "895376 kB",
+            "VmRSS": "895376 kB",
+            "Threads": "14",
+            "MemAvailable": "14048332 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 28.152,
+            "State": "S (sleeping)",
+            "VmSize": "2074012 kB",
+            "VmHWM": "895792 kB",
+            "VmRSS": "895792 kB",
+            "Threads": "14",
+            "MemAvailable": "14047884 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 29.158,
+            "State": "R (running)",
+            "VmSize": "2076060 kB",
+            "VmHWM": "898908 kB",
+            "VmRSS": "898908 kB",
+            "Threads": "14",
+            "MemAvailable": "14045140 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 30.165,
+            "State": "R (running)",
+            "VmSize": "2078108 kB",
+            "VmHWM": "902988 kB",
+            "VmRSS": "901720 kB",
+            "Threads": "14",
+            "MemAvailable": "14040180 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 31.17,
+            "State": "S (sleeping)",
+            "VmSize": "2078108 kB",
+            "VmHWM": "902988 kB",
+            "VmRSS": "902504 kB",
+            "Threads": "14",
+            "MemAvailable": "14039676 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 32.176,
+            "State": "R (running)",
+            "VmSize": "2078108 kB",
+            "VmHWM": "903540 kB",
+            "VmRSS": "903540 kB",
+            "Threads": "14",
+            "MemAvailable": "14038668 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 33.182,
+            "State": "S (sleeping)",
+            "VmSize": "2155676 kB",
+            "VmHWM": "1031348 kB",
+            "VmRSS": "983044 kB",
+            "Threads": "14",
+            "MemAvailable": "13918120 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 34.187,
+            "State": "S (sleeping)",
+            "VmSize": "2156764 kB",
+            "VmHWM": "1031348 kB",
+            "VmRSS": "984368 kB",
+            "Threads": "14",
+            "MemAvailable": "13920596 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 35.193,
+            "State": "R (running)",
+            "VmSize": "2217756 kB",
+            "VmHWM": "1058628 kB",
+            "VmRSS": "1044796 kB",
+            "Threads": "14",
+            "MemAvailable": "13888416 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 36.198,
+            "State": "R (running)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13811504 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 37.206,
+            "State": "R (running)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13816752 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 38.211,
+            "State": "R (running)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13821912 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 39.217,
+            "State": "R (running)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13826920 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 40.222,
+            "State": "R (running)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13831896 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 41.228,
+            "State": "R (running)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13836916 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 42.234,
+            "State": "R (running)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13840988 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 43.24,
+            "State": "S (sleeping)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13842976 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 44.246,
+            "State": "S (sleeping)",
+            "VmSize": "2266332 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1081384 kB",
+            "Threads": "14",
+            "MemAvailable": "13848472 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 45.251,
+            "State": "R (running)",
+            "VmSize": "2267804 kB",
+            "VmHWM": "1108248 kB",
+            "VmRSS": "1083468 kB",
+            "Threads": "14",
+            "MemAvailable": "13850664 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 46.257,
+            "State": "S (sleeping)",
+            "VmSize": "2307740 kB",
+            "VmHWM": "1121384 kB",
+            "VmRSS": "1121384 kB",
+            "Threads": "14",
+            "MemAvailable": "13811100 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 47.262,
+            "State": "R (running)",
+            "VmSize": "2308764 kB",
+            "VmHWM": "1123088 kB",
+            "VmRSS": "1123088 kB",
+            "Threads": "14",
+            "MemAvailable": "13813100 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 48.267,
+            "State": "R (running)",
+            "VmSize": "2308764 kB",
+            "VmHWM": "1124044 kB",
+            "VmRSS": "1124044 kB",
+            "Threads": "14",
+            "MemAvailable": "13815496 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 49.272,
+            "State": "R (running)",
+            "VmSize": "2308764 kB",
+            "VmHWM": "1125132 kB",
+            "VmRSS": "1125132 kB",
+            "Threads": "14",
+            "MemAvailable": "13817188 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 50.278,
+            "State": "R (running)",
+            "VmSize": "2308764 kB",
+            "VmHWM": "1126200 kB",
+            "VmRSS": "1126200 kB",
+            "Threads": "14",
+            "MemAvailable": "13822192 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 51.283,
+            "State": "S (sleeping)",
+            "VmSize": "2308764 kB",
+            "VmHWM": "1127000 kB",
+            "VmRSS": "1127000 kB",
+            "Threads": "14",
+            "MemAvailable": "13826076 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 52.288,
+            "State": "R (running)",
+            "VmSize": "2308764 kB",
+            "VmHWM": "1128060 kB",
+            "VmRSS": "1128060 kB",
+            "Threads": "14",
+            "MemAvailable": "13827948 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 53.294,
+            "State": "S (sleeping)",
+            "VmSize": "2312860 kB",
+            "VmHWM": "1133840 kB",
+            "VmRSS": "1132932 kB",
+            "Threads": "14",
+            "MemAvailable": "13827752 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 54.299,
+            "State": "R (running)",
+            "VmSize": "2312860 kB",
+            "VmHWM": "1133992 kB",
+            "VmRSS": "1133992 kB",
+            "Threads": "14",
+            "MemAvailable": "13827696 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 55.304,
+            "State": "R (running)",
+            "VmSize": "2312860 kB",
+            "VmHWM": "1134776 kB",
+            "VmRSS": "1134776 kB",
+            "Threads": "14",
+            "MemAvailable": "13827696 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 56.309,
+            "State": "R (running)",
+            "VmSize": "2369692 kB",
+            "VmHWM": "1193220 kB",
+            "VmRSS": "1193220 kB",
+            "Threads": "14",
+            "MemAvailable": "13771752 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 57.314,
+            "State": "R (running)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1199940 kB",
+            "Threads": "14",
+            "MemAvailable": "13749764 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 58.32,
+            "State": "S (sleeping)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1199940 kB",
+            "Threads": "14",
+            "MemAvailable": "13751776 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 59.325,
+            "State": "R (running)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1199940 kB",
+            "Threads": "14",
+            "MemAvailable": "13750904 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 60.33,
+            "State": "R (running)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1199940 kB",
+            "Threads": "14",
+            "MemAvailable": "13743948 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 61.335,
+            "State": "R (running)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1199940 kB",
+            "Threads": "14",
+            "MemAvailable": "13748208 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 62.34,
+            "State": "R (running)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1199940 kB",
+            "Threads": "14",
+            "MemAvailable": "13738280 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 63.345,
+            "State": "R (running)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1199940 kB",
+            "Threads": "14",
+            "MemAvailable": "13742004 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 64.351,
+            "State": "R (running)",
+            "VmSize": "2384796 kB",
+            "VmHWM": "1215104 kB",
+            "VmRSS": "1201212 kB",
+            "Threads": "14",
+            "MemAvailable": "13744036 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 65.358,
+            "State": "R (running)",
+            "VmSize": "2423580 kB",
+            "VmHWM": "1247148 kB",
+            "VmRSS": "1247148 kB",
+            "Threads": "14",
+            "MemAvailable": "13708688 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 66.364,
+            "State": "R (running)",
+            "VmSize": "2559588 kB",
+            "VmHWM": "1298440 kB",
+            "VmRSS": "1298440 kB",
+            "Threads": "15",
+            "MemAvailable": "13661496 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 67.372,
+            "State": "R (running)",
+            "VmSize": "2585124 kB",
+            "VmHWM": "1329908 kB",
+            "VmRSS": "1329908 kB",
+            "Threads": "15",
+            "MemAvailable": "13625128 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 68.38,
+            "State": "R (running)",
+            "VmSize": "2621540 kB",
+            "VmHWM": "1359368 kB",
+            "VmRSS": "1359368 kB",
+            "Threads": "15",
+            "MemAvailable": "13600924 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 69.388,
+            "State": "R (running)",
+            "VmSize": "2696676 kB",
+            "VmHWM": "1426424 kB",
+            "VmRSS": "1426424 kB",
+            "Threads": "15",
+            "MemAvailable": "13535900 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 70.397,
+            "State": "R (running)",
+            "VmSize": "2698916 kB",
+            "VmHWM": "1440564 kB",
+            "VmRSS": "1435708 kB",
+            "Threads": "15",
+            "MemAvailable": "13509532 kB",
+            "SwapFree": "3145560 kB"
+          },
+          {
+            "seconds": 71.445,
+            "State": "D (disk sleep)",
+            "VmSize": "2698916 kB",
+            "VmHWM": "1440600 kB",
+            "VmRSS": "1435736 kB",
+            "Threads": "15",
+            "MemAvailable": "13517908 kB",
+            "SwapFree": "3145560 kB"
+          }
+        ],
+        "exit_observation": {
+          "marker_seen": true,
+          "samples": [
+            {
+              "seconds": 72.103,
+              "tasks": [
+                {
+                  "tid": 17010,
+                  "stat": "17010 (CityOfHeroes.ex) Z 16564 1963 1963 0 -1 4227084 663932 0 0 0 1622 2289 0 0 20 0 2 0 82213 0 0 18446744073709551615 0 0 0 0 0 0 268511747 4096 3838 1 0 0 17 3 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                },
+                {
+                  "tid": 17024,
+                  "stat": "17024 (CityOfHeroes.ex) R 16564 1963 1963 0 -1 4195404 2 0 0 0 0 3 0 0 20 0 2 0 82256 0 0 18446744073709551615 0 0 0 0 0 0 1073478399 4096 3838 0 0 0 -1 1 0 0 0 0 0 0 0 0 0 0 0 0 512",
+                  "wchan": "0"
+                }
+              ],
+              "task_count": 2,
+              "truncated": false
+            }
+          ],
+          "scope": "passive_linux_tasks_not_signal_sender",
+          "seconds": 72.102
+        },
+        "pid": 17010,
+        "elapsed_seconds": 72.15,
+        "returncode": 2,
+        "memory_events_after": {
+          "available": true,
+          "path": "/sys/fs/cgroup/system.slice/hosted-compute-agent.service/memory.events",
+          "counters": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          }
+        }
+      },
+      "validated": {
+        "dispatches": 117,
+        "exact_cursors": true,
+        "ack_ids": [
+          1,
+          2
+        ],
+        "native_initial_command_boundaries_match": true,
+        "native_initial_entity_subset_match": true,
+        "dispatch_game_errors": 1,
+        "accepted_original_data_errors": [
+          {
+            "text": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture HIPS_miniskirt_1 as texture 2 on bone HIPS.",
+            "dispatch_index": 1,
+            "after_dispatch_index": null,
+            "count": 1
+          }
+        ],
+        "outside_game_errors": 117777,
+        "outside_error_comparison_required": true,
+        "partial_state_snapshots": 117,
+        "state_schema_complete": false,
+        "state_comparison_complete": false,
+        "m3_replay_complete": false
+      }
+    }
+  },
+  "same_id_mismatch_indices": [],
+  "id_sensitivity_mismatches": [
+    {
+      "index": 0,
+      "fields": [
+        "$.entities[0].attribute_packet_order.basic[0].ids[0].ids",
+        "$.entities[0].attribute_packet_order.basic[0].ids[1].ids",
+        "$.entities[0].attribute_packet_order.basic[0].ids[2].ids",
+        "$.entities[0].attribute_packet_order.basic[0].ids[3].ids",
+        "$.entities[0].attribute_packet_order.basic[0].ids[4].ids",
+        "$.entities[0].attribute_packet_order.basic[1].ids[0].ids",
+        "$.entities[0].attribute_packet_order.basic[1].ids[1].ids",
+        "$.entities[0].attribute_packet_order.basic[1].ids[2].ids",
+        "$.entities[0].attribute_packet_order.basic[1].ids[3].ids",
+        "$.entities[0].attribute_packet_order.basic[1].ids[4].ids",
+        "$.entities[0].attribute_packet_order.basic[2].ids[0].ids",
+        "$.entities[0].attribute_packet_order.basic[2].ids[1].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[0].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[1].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[2].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[3].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[4].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[5].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[6].ids",
+        "$.entities[0].attribute_packet_order.self[0].ids[7].ids",
+        "$.entities[0].attribute_packet_order.self[1].ids[0].ids",
+        "$.entities[0].attribute_packet_order.self[1].ids[1].ids",
+        "$.entities[0].attribute_packet_order.self[1].ids[2].ids",
+        "$.entities[0].attribute_packet_order.self[1].ids[3].ids",
+        "$.entities[0].attribute_packet_order.self[1].ids[4].ids",
+        "$.entities[0].attribute_packet_order.self[1].ids[5].ids",
+        "$.entities[0].attribute_packet_order.self[1].ids[6].ids",
+        "$.entities[0].attribute_packet_order.self[2].ids[0].ids",
+        "$.entities[0].attribute_packet_order.self[2].ids[1].ids",
+        "$.entities[0].attribute_packet_order.self[3].ids",
+        "$.entities[0].attribute_packet_order.self[4].ids",
+        "$.entities[0].attribute_packet_order.self[5].ids",
+        "$.entities[0].attribute_packet_order.self[6].ids",
+        "$.entities[0].packet_order.pkt_id_character_stats",
+        "$.entities[0].packet_order.pkt_id_costume",
+        "$.entities[0].packet_order.pkt_id_logout",
+        "$.entities[0].packet_order.pkt_id_powerCust",
+        "$.entities[0].packet_order.pkt_id_rare_bits",
+        "$.entities[0].packet_order.pkt_id_seq_move",
+        "$.entities[0].packet_order.pkt_id_state_mode",
+        "$.entities[0].packet_order.pkt_id_supergroup",
+        "$.entities[0].packet_order.pkt_id_targetting",
+        "$.entities[0].packet_order.pkt_id_titles",
+        "$.entities[0].packet_order.pkt_id_xlucency"
+      ]
+    }
+  ],
+  "cross_architecture_pending": true,
+  "full_schema_complete": false,
+  "m3_complete": false,
+  "literal_snapshot0_values": [
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[0].ids[0].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "HitPoints"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[0].ids[1].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "Absorb"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[0].ids[2].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "Endurance"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[0].ids[3].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "Meter"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[0].ids[4].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "StealthRadiusPlayer"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[1].ids[0].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "HitPoints"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[1].ids[1].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "Absorb"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[1].ids[2].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "Endurance"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[1].ids[3].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "Meter"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[1].ids[4].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "StealthRadiusPlayer"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[2].ids[0].ids",
+      "parse_table_fields": [
+        "SendLevels",
+        "Level"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.basic[2].ids[1].ids",
+      "parse_table_fields": [
+        "SendLevels",
+        "CombatLevel"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[0].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "HitPoints"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[1].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "Absorb"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[2].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "Endurance"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[3].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "Meter"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[4].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "PerceptionRadius"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[5].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "StealthRadiusPlayer"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[6].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "Confused"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[0].ids[7].ids",
+      "parse_table_fields": [
+        "CurrentAttribs",
+        "ToHit"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[1].ids[0].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "HitPoints"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[1].ids[1].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "Absorb"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[1].ids[2].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "Endurance"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[1].ids[3].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "Meter"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[1].ids[4].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "PerceptionRadius"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[1].ids[5].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "StealthRadiusPlayer"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[1].ids[6].ids",
+      "parse_table_fields": [
+        "MaxAttribs",
+        "Confused"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[2].ids[0].ids",
+      "parse_table_fields": [
+        "SendLevels",
+        "Level"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[2].ids[1].ids",
+      "parse_table_fields": [
+        "SendLevels",
+        "CombatLevel"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[3].ids",
+      "parse_table_fields": [
+        "ExperiencePoints"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[4].ids",
+      "parse_table_fields": [
+        "ExperienceDebt"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[5].ids",
+      "parse_table_fields": [
+        "ExperienceRest"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].attribute_packet_order.self[6].ids",
+      "parse_table_fields": [
+        "InfluencePoints"
+      ],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_character_stats",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_costume",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_logout",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_powerCust",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_rare_bits",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_seq_move",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_state_mode",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_supergroup",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_targetting",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_titles",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    },
+    {
+      "path": "$.entities[0].packet_order.pkt_id_xlucency",
+      "parse_table_fields": [],
+      "id1": 1,
+      "id31": 31
+    }
+  ],
+  "command": "python3 /tmp/coh-resume/verify_latest_arm.py (script retained in evidence below)",
+  "verification_script": "import sys,json,tempfile,hashlib\nfrom pathlib import Path\nsys.path.insert(0,'armport/replay')\nimport run_ci,compare_state\nroot=Path('/tmp/coh-resume/receiver-arm64-40243785888')\nresults={}\nwith tempfile.TemporaryDirectory() as tmp:\n expected=run_ci.fixtures(Path(tmp))\n for label,initial in [('id1-a',1),('id1-b',1),('id31',31)]:\n  p=root/label\n  process=json.loads((p/'process-observation.json').read_text());assert process['returncode']==2 and process.get('host_timeout_kill',False) is False\n  validated=run_ci.check_output(p/'receiver.jsonl',expected,initial,p/'wine-output.txt',original_texture_exception=True)\n  results[label]=dict(process=process,validated=validated)\n  print(label,'validated',flush=True)\nrepeat=[];sensitivity=[];coverage={k:set() for k in ['attribute_ids_nonempty','sequence_nonempty','netfx_nonempty','taskforce_nonnull']}\nfor i in range(117):\n a_raw=(root/'id1-a'/f'state-{i:03d}.json').read_bytes();b_raw=(root/'id1-b'/f'state-{i:03d}.json').read_bytes()\n if a_raw!=b_raw:repeat.append(i)\n a=json.loads(a_raw);b=json.loads((root/'id31'/f'state-{i:03d}.json').read_bytes())\n a,b=compare_state.canonical_initial_ids(a,1),compare_state.canonical_initial_ids(b,31)\n differences=list(compare_state.differences(a,b))\n if differences:sensitivity.append(dict(index=i,fields=differences))\nprint('same-id differences',repeat,'sensitivity snapshot count',len(sensitivity),'field counts',[(x['index'],len(x['fields'])) for x in sensitivity],flush=True)\nresult=dict(run=40243785888,source_commit='dd0c3deebc7c9f8a0cb37018f21fd7541834813c',artifact_id=12618224155,artifact_sha256='aeda39957994c73bfc5184aa0844d36be26cc4d705c90052ab0f0c4ae17f3ef5',verified_snapshots=351,execution_validation=results,same_id_mismatch_indices=repeat,id_sensitivity_mismatches=sensitivity,cross_architecture_pending=True,full_schema_complete=False,m3_complete=False)\nPath('/tmp/coh-resume/dd0-arm64-independent.json').write_text(json.dumps(result,indent=2)+'\\n')\n",
+  "command_output": "id1-a validated\nid1-b validated\nid31 validated\nsame-id differences [] sensitivity snapshot count 1 field counts [(0, 44)]\n",
+  "reviewer_decision": "No new normalization implemented. Prior 11 scalar proposal remains pending; these additional33 structured IDs require a separate enumerated review decision after cross-target evidence. All snapshots after0 and same-ID repeats match."
+}

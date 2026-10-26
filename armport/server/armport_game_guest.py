@@ -29,9 +29,17 @@ import time
 
 sys.path.insert(0, '/opt/coh-m3')
 import game_diagnostic as gd  # noqa: E402
+import server_atlas_data  # noqa: E402
 
 base, require, evidence = gd.base, gd.require, gd.evidence
 STATE = Path('/state')
+# This longer-lived M3 stack exceeded the stock 2 MiB capture in 40176407354
+# before the 25-minute client observation ended. Keep all output and the
+# original fatal overflow check, with a finite 8 MiB per-child capture.
+# This is confined to this invocation, like the app interactive host's own
+# larger capture budget; no filtering or server executable change is made.
+SERVER_OUTPUT_LIMIT = 8 * 1024 * 1024
+base.OUTPUT_LIMIT = SERVER_OUTPUT_LIMIT
 CLIENT_QUERY_LIMIT = 40
 # The client phase adds up to CLIENT_QUERY_LIMIT status queries (plus a final
 # one) to the original flow's budget of 80.
@@ -48,7 +56,13 @@ def write_marker(name, value):
 class ArmPortGame(gd.GameDiagnostic):
     def execute(self):
         # Same order as GameDiagnostic.execute up to the first saved logout.
+        self.game['owned_output_limit_bytes'] = SERVER_OUTPUT_LIMIT
         self.prepare_runtime()
+        self.ctx.stage('armport_server_atlas_supplement')
+        self.game['atlas_supplement'] = server_atlas_data.stage(
+            Path('/opt/coh-m3/atlas-supplement'), self.runtime / 'data',
+            Path('/opt/coh-m3/atlas-world-supplement-manifest.json'))
+        self.ctx.passed(**self.game['atlas_supplement'])
         self.initialize()
         self.start_postgres('postgres_first_start')
         self.prepare_database()
@@ -71,9 +85,35 @@ class ArmPortGame(gd.GameDiagnostic):
         # live_currency sets influence 12345, which logout's saved snapshot
         # is validated against; keep the original order.
         self.live_currency(session)
+        self.helper_status(session)
         self.logout(session, 'first', 1)
+        self.saved_helper_status()
         self.armport_client()
         self.game.update(status='passed', query_processes=self.query_count, readiness_queries=self.readiness_count)
+
+    def helper_status(self, session):
+        """Answer the new-character helper prompt before the ARM64 login.
+
+        A new character has HelperStatus 0, so the client's helpWindow opens
+        displayHelperStatusPopup (uiHelp.c) over the world. Its None button
+        runs the original "sethelperstatus 3"; the TestClient sends the same
+        original command here (access level 0, cmdserver.c
+        SCMD_SET_HELPER_STATUS -> entSetHelperStatus). The saved value is
+        read back after the original logout save.
+        """
+        self.ctx.stage('armport_helper_status')
+        session.send('CMD sethelperstatus 3')
+        time.sleep(5)
+        self.ctx.passed(command='sethelperstatus 3', sql_mutation_used=False)
+
+    def saved_helper_status(self):
+        self.ctx.stage('armport_helper_status_saved')
+        character = self.game['character']
+        value = self.sql('SELECT helperstatus FROM dbo.ents2 WHERE containerid='
+                         + str(int(character['container_id'])) + ';', game=True)
+        self.game['helper_status_saved'] = value
+        require(value == '3', 'Saved HelperStatus is not 3: ' + repr(value)[:80])
+        self.ctx.passed(helper_status=3)
 
     def observe_atlas(self):
         """The original 30 s observation; repeated once in full if Atlas
@@ -140,22 +180,47 @@ class ArmPortGame(gd.GameDiagnostic):
             # Let the host take its in-game screenshots, then check the
             # character is still connected.
             done = STATE / 'armport-host-done.json'
-            # The host waits for the zone to finish loading (up to 25 min) first.
-            self.wait(lambda: done.exists() or exited.exists(), 1800, 'Host in-game screenshots')
+            # Allow the host's 1500 s loading budget plus excluded debugger
+            # pauses, the last capture/OCR iteration and final observation.
+            # This is coordination headroom, not extra loading-success time.
+            self.wait(lambda: done.exists() or exited.exists(), 2100, 'Host in-game screenshots')
             record['host_done'] = done.exists()
             require(not exited.exists(), 'ARM64 client exited on Atlas')
             sample = self.character_status('armport-final', allow_missing=True)
             record['final_status'] = sample
             record['still_connected'] = evidence.connected_on_atlas(sample)
-        write_marker('armport-guest-finished.json', {'connected_on_atlas': record['connected_on_atlas']})
-        # The host's client Wine runs as the same user; the original cleanup
-        # audits same-user Wine processes, so wait until the host has stopped it.
-        stopped = STATE / 'armport-client-stopped.json'
-        self.wait(lambda: stopped.exists(), 180, 'Host stopped the ARM64 client')
+        self.stop_host_client()
         record['client_stopped_before_cleanup'] = True
         require(record['connected_on_atlas'], 'ARM64 client did not reach Atlas: ' + json.dumps(record['samples'][-1:]))
         require(record.get('still_connected'), 'ARM64 client did not stay connected on Atlas')
         self.ctx.passed(arm64_client_on_atlas=True, map_id=record['atlas_status'].get('map_id'))
+
+    def stop_host_client(self):
+        # Also used after health()/overflow raises: self.wait would call health
+        # again and abort before the host can stop its same-UID sudo/Wine tree.
+        write_marker('armport-guest-finished.json', {'client_phase_finished': True})
+        stopped = STATE / 'armport-client-stopped.json'
+        deadline = time.monotonic() + 180
+        while not stopped.exists():
+            require(time.monotonic() < deadline, 'Host did not stop the ARM64 client before cleanup')
+            time.sleep(1)
+        receipt = json.loads(stopped.read_text())
+        require(isinstance(receipt, dict) and receipt.get('stopped') is True
+                and receipt.get('errors') == [],
+                'Host ARM64 client teardown failed: ' + json.dumps(receipt))
+
+    def cleanup(self):
+        failures = []
+        # No host launch is possible before ready. Once ready exists the host
+        # may be launching, even if its started marker has not arrived yet.
+        if (STATE / 'armport-ready.json').exists():
+            try:
+                self.stop_host_client()
+            except Exception as exc:
+                failures.append('Host client cleanup coordination: ' + str(exc))
+        # Preserve the original ownership audit and all service cleanup even
+        # when coordination fails; the original execution error stays recorded.
+        return failures + super().cleanup()
 
 
 def main(argv=None):

@@ -1,0 +1,118 @@
+diff --git a/Common/gridcoll/grid.c b/Common/gridcoll/grid.c
+index a641437..a402d29 100644
+--- a/Common/gridcoll/grid.c
++++ b/Common/gridcoll/grid.c
+@@ -108,7 +108,7 @@ static void freeEntries(Grid *grid,GridEnts *ents)
+     }
+ }
+ 
+-static U32 *findEntry(GridEnts *ents,U32 old_val)
++static uintptr_t *findEntry(GridEnts *ents,uintptr_t old_val)
+ {
+     int        i;
+ 
+@@ -123,7 +123,7 @@ static U32 *findEntry(GridEnts *ents,U32 old_val)
+     return 0;
+ }
+ 
+-static U32 **findListIdx(GridIdxList *list,U32 *old_val)
++static uintptr_t **findListIdx(GridIdxList *list,uintptr_t *old_val)
+ {
+     int        i;
+ 
+@@ -213,7 +213,7 @@ static void gridInsert(GridInsertState *state,GridCell *cell,Vec3 pos,F32 cell_s
+     //filled = tp[0] + tp[1] + tp[2];
+     if (filled || cell_size <= state->fit_size)
+     {
+-    U32        *mptr,**mmptr;
++    uintptr_t  *mptr,**mmptr;
+ 
+         mptr = findEntry(cell->entries,0);
+         if (!mptr)
+@@ -224,7 +224,7 @@ static void gridInsert(GridInsertState *state,GridCell *cell,Vec3 pos,F32 cell_s
+             cell->entries = ents;
+             mptr = findEntry(cell->entries,0);
+         }
+-        *mptr = (U32)(uintptr_t)state->node;
++        *mptr = (uintptr_t)state->node;
+         if (state->idx_list)
+         {
+             mmptr = findListIdx(state->idx_list,0);
+diff --git a/Common/gridcoll/grid.h b/Common/gridcoll/grid.h
+index 40ad564..176757c 100644
+--- a/Common/gridcoll/grid.h
++++ b/Common/gridcoll/grid.h
+@@ -15,13 +15,13 @@
+ 
+ typedef struct GridEnts
+ {
+-    U32        entries[7];
++    uintptr_t  entries[7];
+     struct GridEnts    *next;
+ } GridEnts;
+ 
+ typedef struct GridIdxList
+ {
+-    U32        *entries[7];
++    uintptr_t  *entries[7];
+     struct GridIdxList    *next;
+ } GridIdxList;
+ 
+diff --git a/Common/gridcoll/gridcoll.c b/Common/gridcoll/gridcoll.c
+index 71c2c8b..05ba617 100644
+--- a/Common/gridcoll/gridcoll.c
++++ b/Common/gridcoll/gridcoll.c
+@@ -171,7 +171,7 @@ Vec3    dv,dv_p1,dv_ln,line_pos;
+ static int checkGridCellObjs(GridCell *cell,CollInfo *coll)
+ {
+     int            i,tag,group_opened;
+-    U32            t;
++    uintptr_t      t;
+     static        int rndo;
+     void        *node;
+     DefTracker    *tracker;
+@@ -185,10 +185,10 @@ static int checkGridCellObjs(GridCell *cell,CollInfo *coll)
+         {
+             for(i=0;i<ARRAY_SIZE(ents->entries);i++)
+             {
+-                t = (U32)ents->entries[i];
++                t = ents->entries[i];
+                 if (!t)
+                     continue;
+-                node = (void*)(uintptr_t)(t & ~1);
++                node = (void*)(t & ~(uintptr_t)1);
+                 tracker = node;
+ 
+                 if (!(coll->flags & COLL_NOTTRACKERS))
+diff --git a/Common/gridcoll/gridfind.c b/Common/gridcoll/gridfind.c
+index 8d76dac..8fba864 100644
+--- a/Common/gridcoll/gridfind.c
++++ b/Common/gridcoll/gridfind.c
+@@ -35,7 +35,8 @@ typedef struct
+ 
+ static void processGridEntries(GridCell *cell,GridEntryState *state)
+ {
+-    int            i,t,tag,group_opened;
++    int            i,tag,group_opened;
++    uintptr_t      t;
+     static        int rndo = 0;
+     void        *node;
+     GridEnts    *ents;
+@@ -57,7 +58,7 @@ static void processGridEntries(GridCell *cell,GridEntryState *state)
+                 if (((uintptr_t)node) & 1)
+                 {
+                     group_opened = 1;
+-                    groupUnpackGrid(state->grid,(DefTracker*)(((uintptr_t) node) & ~1));
++                    groupUnpackGrid(state->grid,(DefTracker*)(((uintptr_t) node) & ~(uintptr_t)1));
+                     break;
+                 }
+ 
+@@ -67,7 +68,7 @@ static void processGridEntries(GridCell *cell,GridEntryState *state)
+                     if (t >= tag_max)
+                     {
+                         assert(t < 100000);
+-                        tag_max = 2*t;
++                        tag_max = 2*(int)t;
+                         tags = realloc(tags,tag_max * sizeof(U32));
+                     }
+                     if (tags[t] == tag)

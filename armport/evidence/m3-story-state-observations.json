@@ -1,0 +1,104 @@
+{
+  "scope": "partial_story_receive_state",
+  "patchwork_command": "python3 armport/scripts/patchwork.py export /tmp/coh-world-patchwork",
+  "patchwork_output": "exported 78 patches",
+  "patch_sha256": "866b9a9e31f06c5868e323e45f039a4058160dbad63d2ca5a95ab3a5b0ebbbc7",
+  "observed": [
+    "storyClues: all six string fields in retained order",
+    "keyClues: all six string fields in retained order",
+    "souvenirData[0].souvenirClues: uid and five strings in retained order",
+    "visitLocations: exact retained string order"
+  ],
+  "source_paths": [
+    "Game/src/storyarc/storyarcClient.c:ClueListReceive,KeyClueListReceive,scReceiveAllHeaders,scReceiveDetails",
+    "Game/src/UI/uiClue.c:souvenirData[0]",
+    "Game/src/clientcomm/clientcommreceive.c:receiveVisitLocations"
+  ],
+  "excluded": [
+    "souvenirData[1]: local player-created file content",
+    "mutable display/scroll/format caches",
+    "contact/task/waypoint and further UI state"
+  ],
+  "checks": [
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_story_state.py --source /tmp/coh-world-patchwork/src",
+      "exit_code": 0,
+      "output_sha256": "6497d571b8b13f997fc34abd5dc999dfa39a0aa1a72da0640d02cf8c4b01c7fe",
+      "output_tail": [
+        "story serializer: ordered/null clue, key, server-souvenir and visit-location arrays; full strings/raw byte escapes, server-only accessor, mutation sensitivity and invalid count/output-size rejection pass; ASan/UBSan enabled"
+      ]
+    },
+    {
+      "command": "ASAN_OPTIONS=detect_leaks=0 python3 armport/tests/receiver_world_state.py",
+      "exit_code": 0,
+      "output_sha256": "00cd39bcd50159ae85f697321445611dc9edf4ea630a0f608611e8309533a63a",
+      "output_tail": [
+        "world serializer: individual hp/repair fields, original order, raw NaN/negative-zero sky weights, null-empty state and invalid count/storage rejection pass; ASan/UBSan enabled"
+      ]
+    },
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p test_*.py -v",
+      "exit_code": 0,
+      "output_sha256": "16feda76bc122283b0fe7b714b354c860d9e3983c9fedf3908f6babd0c163356",
+      "output_tail": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 151 tests in 6.209s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "command": "actual compile_commands.json state.c command in /tmp/coh-world-build-arm64; one compiler, ARM64 before i686",
+      "exit_code": 0,
+      "output_sha256": "8e37b54c5309bbc8db2ccdf32248de3ce9eaea97a5cf3495f9f147292043fbe3",
+      "output_tail": [
+        "      | ^",
+        "/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'",
+        "  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];",
+        "      |                                          ^",
+        "6 warnings generated."
+      ]
+    },
+    {
+      "command": "actual compile_commands.json uiClue.c command in /tmp/coh-world-build-arm64; one compiler, ARM64 before i686",
+      "exit_code": 0,
+      "output_sha256": "fa8632facaed23a425faed7bff9dbca78e939a919d06e05bd321f9bbf5ffd0a7",
+      "output_tail": [
+        "      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+        "/tmp/coh-world-patchwork/src/Game/src/UI/uiClue.c:754:12: warning: enumeration value 'CCT_COUNT' not handled in switch [-Wswitch]",
+        "  754 |     switch(contentType)",
+        "      |            ^~~~~~~~~~~",
+        "4 warnings generated."
+      ]
+    },
+    {
+      "command": "actual compile_commands.json state.c command in /tmp/coh-world-build-i686; one compiler, ARM64 before i686",
+      "exit_code": 0,
+      "output_sha256": "8e37b54c5309bbc8db2ccdf32248de3ce9eaea97a5cf3495f9f147292043fbe3",
+      "output_tail": [
+        "      | ^",
+        "/tmp/coh-world-patchwork/src/libs/UtilitiesLib/include/utilitieslib/stdtypes.h:275:42: note: expanded from macro 'STATIC_ASSERT'",
+        "  275 | #define STATIC_ASSERT(COND) typedef char __STATIC_ASSERT__[(COND)?1:-1];",
+        "      |                                          ^",
+        "6 warnings generated."
+      ]
+    },
+    {
+      "command": "actual compile_commands.json uiClue.c command in /tmp/coh-world-build-i686; one compiler, ARM64 before i686",
+      "exit_code": 0,
+      "output_sha256": "26cb1639044962623b8cd9148f22c17a61c98b283bcc6dcd00b92b642a52d8b3",
+      "output_tail": [
+        "/tmp/coh-world-patchwork/src/Game/src/UI/uiClue.c:754:12: warning: enumeration value 'CCT_COUNT' not handled in switch [-Wswitch]",
+        "  754 |     switch(contentType)",
+        "      |            ^~~~~~~~~~~",
+        "1 warning generated."
+      ]
+    }
+  ],
+  "local_sanitizers": "ASan+UBSan enabled; only local LeakSanitizer disabled because /proc task access is unavailable; CI default",
+  "runtime_pending": true,
+  "running_replay_predates_change": 40206484644,
+  "state_schema_complete": false,
+  "m3_replay_complete": false
+}

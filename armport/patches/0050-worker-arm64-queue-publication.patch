@@ -1,0 +1,196 @@
+diff --git a/libs/UtilitiesLib/src/components/WorkerThread.c b/libs/UtilitiesLib/src/components/WorkerThread.c
+index dcdfa7f..2b42bfd 100644
+--- a/libs/UtilitiesLib/src/components/WorkerThread.c
++++ b/libs/UtilitiesLib/src/components/WorkerThread.c
+@@ -7,6 +7,18 @@
+ 
+ #define SAFETY_CHECKS_ON 0
+ 
++// x86 volatile publication relied on its strong memory ordering. ARM64 needs
++// atomic publication of filled command slots, consumed slots and the wake
++// handshake. Sequential consistency also forbids the producer and consumer
++// both missing each other's publication before the consumer sleeps.
++#if defined(__aarch64__) && defined(__MINGW32__)
++#define wtSharedLoad(value) __atomic_load_n(&(value), __ATOMIC_SEQ_CST)
++#define wtSharedStore(value, next) __atomic_store_n(&(value), (next), __ATOMIC_SEQ_CST)
++#else
++#define wtSharedLoad(value) (value)
++#define wtSharedStore(value, next) ((value) = (next))
++#endif
++
+ static void wtDispatchMessages(WorkerThread *wt);
+ 
+ #ifdef _M_X64
+@@ -111,19 +123,19 @@ static INLINEDBG void wtReqFlush(WorkerThread *wt, int sleep)
+ static INLINEDBG void getStoredCmd(CmdQueue *cmd_queue)
+ {
+     QueuedCmd *entry;
+-    if (cmd_queue->start == cmd_queue->end)
++    if (wtSharedLoad(cmd_queue->start) == wtSharedLoad(cmd_queue->end))
+         return;
+-    entry = &cmd_queue->queue[cmd_queue->start];
++    entry = &cmd_queue->queue[wtSharedLoad(cmd_queue->start)];
+     assert(entry->num_blocks); // Must be *before* the following line, lest the other thread use it right away
+-    cmd_queue->start = (cmd_queue->start + entry->num_blocks) & (cmd_queue->max_queued-1);
++    wtSharedStore(cmd_queue->start, (wtSharedLoad(cmd_queue->start) + entry->num_blocks) & (cmd_queue->max_queued-1));
+ }
+ 
+ static INLINEDBG QueuedCmd *peekStoredCmd(CmdQueue *cmd_queue)
+ {
+-    if (cmd_queue->start == cmd_queue->end)
++    if (wtSharedLoad(cmd_queue->start) == wtSharedLoad(cmd_queue->end))
+         return 0;
+-    assert(cmd_queue->queue[cmd_queue->start].num_blocks);
+-    return &cmd_queue->queue[cmd_queue->start];
++    assert(cmd_queue->queue[wtSharedLoad(cmd_queue->start)].num_blocks);
++    return &cmd_queue->queue[wtSharedLoad(cmd_queue->start)];
+ }
+ 
+ static INLINEDBG void handleQueuedCmd(QueuedCmd *cmd, WTDispatchCallback dispatch, void *user_data)
+@@ -158,14 +170,14 @@ static INLINEDBG void *allocStoredCmd(WorkerThread *wt, CmdQueue *cmd_queue, int
+         malloc_size = 0;
+     num_blocks = 1 + (size + sizeof(QueuedCmd) - 1) / sizeof(QueuedCmd);
+ 
+-    contiguous_blocks = cmd_queue->max_queued - cmd_queue->end;
++    contiguous_blocks = cmd_queue->max_queued - wtSharedLoad(cmd_queue->end);
+     if (num_blocks > contiguous_blocks)
+         filler_blocks = contiguous_blocks;
+     else
+         filler_blocks = 0;
+     for(;;)
+     {
+-        free_blocks = (cmd_queue->start - (cmd_queue->end+1)) & (cmd_queue->max_queued-1);
++        free_blocks = (wtSharedLoad(cmd_queue->start) - (wtSharedLoad(cmd_queue->end)+1)) & (cmd_queue->max_queued-1);
+         if (num_blocks+filler_blocks <= free_blocks)
+             break;
+ 
+@@ -183,15 +195,15 @@ static INLINEDBG void *allocStoredCmd(WorkerThread *wt, CmdQueue *cmd_queue, int
+             wt->stall_callback();
+         }
+     }
+-    cmd_queue->next_end = (cmd_queue->end + num_blocks + filler_blocks) & (cmd_queue->max_queued-1);
++    cmd_queue->next_end = (wtSharedLoad(cmd_queue->end) + num_blocks + filler_blocks) & (cmd_queue->max_queued-1);
+ 
+-    cmd = &cmd_queue->queue[cmd_queue->end];
++    cmd = &cmd_queue->queue[wtSharedLoad(cmd_queue->end)];
+     if (filler_blocks)
+     {
+         memset(cmd,0,sizeof(*cmd));
+         cmd->type = WT_CMD_NOP;
+         cmd->num_blocks = filler_blocks;
+-        cmd = &cmd_queue->queue[(cmd_queue->end + filler_blocks) & (cmd_queue->max_queued-1)];
++        cmd = &cmd_queue->queue[(wtSharedLoad(cmd_queue->end) + filler_blocks) & (cmd_queue->max_queued-1)];
+     }
+     cmd->type        = cmd_type;
+     cmd->num_blocks = num_blocks;
+@@ -228,7 +240,7 @@ void wtFlushMessages(WorkerThread *wt)
+ {
+     while (wt->run_threaded && wt->thread_handle)
+     {
+-        if (wt->msg_queue.start == wt->msg_queue.end)
++        if (wtSharedLoad(wt->msg_queue.start) == wtSharedLoad(wt->msg_queue.end))
+             break;
+         Sleep(1);
+     }
+@@ -241,7 +253,7 @@ void wtFlush(WorkerThread *wt)
+ #endif
+     while (wt->run_threaded && wt->thread_handle)
+     {
+-        if (wt->cmd_queue.start == wt->cmd_queue.end)
++        if (wtSharedLoad(wt->cmd_queue.start) == wtSharedLoad(wt->cmd_queue.end))
+             break;
+         wtReqFlush(wt, 1);
+         wtDispatchMessages(wt);
+@@ -291,10 +303,10 @@ void wtSetProcessor(WorkerThread *wt, int processor_idx)
+ void wtDestroy(WorkerThread *wt)
+ {
+     wtFlush(wt);
+-    if (wt->thread_handle && wt->thread_state != THREAD_EXITED)
++    if (wt->thread_handle && wtSharedLoad(wt->thread_state) != THREAD_EXITED)
+     {
+-        wt->thread_state = THREAD_TOLDTOEXIT;
+-        while (wt->thread_state != THREAD_EXITED)
++        wtSharedStore(wt->thread_state, THREAD_TOLDTOEXIT);
++        while (wtSharedLoad(wt->thread_state) != THREAD_EXITED)
+             wtReqFlush(wt, 1);
+         CloseHandle(wt->data_queued);
+         CloseHandle(wt->thread_handle);
+@@ -339,8 +351,8 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+ 
+     wt = (WorkerThread *)lpParam;
+     wt->thread_id = (int)GetCurrentThreadId();
+-    wt->thread_state = THREAD_RUNNING;
+     wt->data_queued = CreateEvent(0,0,0,0);
++    wtSharedStore(wt->thread_state, THREAD_RUNNING);
+ #ifdef _XBOX
+     if (wt->processor_idx >= 0)
+         XSetThreadProcessor(wt->thread_handle, wt->processor_idx);
+@@ -348,9 +360,9 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+ 
+     for(;;)
+     {
+-        if (wt->thread_state == THREAD_TOLDTOEXIT)
++        if (wtSharedLoad(wt->thread_state) == THREAD_TOLDTOEXIT)
+         {
+-            wt->thread_state = THREAD_EXITED;
++            wtSharedStore(wt->thread_state, THREAD_EXITED);
+             ExitThread(0);
+         }
+ 
+@@ -362,13 +374,15 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+         {
+             if (wt->data_queued)
+             {
++                // Arm before the final empty check: a producer after that
++                // check must signal us even if WaitForSingleObject has not run.
++                wtSharedStore(wt->thread_asleep, 1);
+                 ResetEvent(wt->data_queued);
+                 cmd = peekStoredCmd(&wt->cmd_queue);
+                 if (!cmd) {
+-                    wt->thread_asleep = 1;
+                     WaitForSingleObject(wt->data_queued, INFINITE);
+-                    wt->thread_asleep = 0;
+                 }
++                wtSharedStore(wt->thread_asleep, 0);
+             }
+             continue;
+         }
+@@ -395,7 +409,7 @@ void wtStart(WorkerThread *wt)
+ //         SetThreadPriority(wt->thread_handle, THREAD_PRIORITY_LOWEST);
+     //ret = SetThreadIdealProcessor(render_thread_handle,1);
+     //ret = SetThreadIdealProcessor(GetCurrentThread(),0);
+-    while (wt->thread_state != THREAD_RUNNING)
++    while (wtSharedLoad(wt->thread_state) != THREAD_RUNNING)
+         Sleep(1);
+ }
+ 
+@@ -422,17 +436,17 @@ void wtSendCmd(WorkerThread *wt)
+         handleQueuedCmd(&wt->cmd_queue.queue[0], wt->cmd_dispatch, wt->user_data);
+         return;
+     }
+-    wt->cmd_queue.end = wt->cmd_queue.next_end;
++    wtSharedStore(wt->cmd_queue.end, wt->cmd_queue.next_end);
+ #if SAFETY_CHECKS_ON
+     wtAssertNotWorkerThread(wt);
+ #endif
+-    if (wt->thread_asleep && wt->data_queued)
++    if (wtSharedLoad(wt->thread_asleep) && wt->data_queued)
+         SetEvent(wt->data_queued);
+ }
+ 
+ void wtCancelCmd(WorkerThread *wt)
+ {
+-    QueuedCmd    *cmd = &wt->cmd_queue.queue[wt->cmd_queue.end];
++    QueuedCmd    *cmd = &wt->cmd_queue.queue[wtSharedLoad(wt->cmd_queue.end)];
+ 
+     wt->curr_active_cmdtype = 0;
+     if (cmd->data)
+@@ -460,7 +474,7 @@ void wtQueueMsg(WorkerThread *wt,int msg_type,void *msg_data,int size)
+     EnterCriticalSection(&wt->msg_criticalsection);
+     mem = allocStoredCmd(0, &wt->msg_queue, msg_type, size);
+     memcpy(mem,msg_data,size);
+-    wt->msg_queue.end = wt->msg_queue.next_end;
++    wtSharedStore(wt->msg_queue.end, wt->msg_queue.next_end);
+     LeaveCriticalSection(&wt->msg_criticalsection);
+ }
+ 

@@ -1,246 +1,229 @@
-# COH-ArmPort handoff (to Astra)
+# COH-ArmPort handoff to Claude
 
-M4 checkpoint, 2026-10-25: run 40176336731 at 63f091de passes guest boot,
-creation/save/restart/reopen and final host continuity. Read M4-REPORT.md and
-evidence/m4-continuity-40176336731.json. Sol re-review of explicit Finish and
-live evidence remains pending; no milestone/merge approval. Android surface
-and Thor execution remain unvalidated. Historical text follows.
+**Update 2026-10-26 (Claude lead): M3 is merged.** PR #6 merged into
+`COH-ArmPort` as 3ac8eedc9 after Sol accepted it (5659701771) and the user
+approved it. Its scope is reduced: the completeness flags stay false and the
+textures are incomplete (see the M3-REPORT summary). The current work is M4 on
+`armport/m4-runtime` (PR #7), which has COH-ArmPort merged in.
 
-Updated 2026-10-23. From now on Astra leads development and Claude reviews
-(roles reversed for now; see "Roles" below). Read this file, `PORT-PLAN.md`
-and `STATUS.md` first. Everything here can be checked against the repository
-and the CI runs it cites.
+M4 checkpoint from 2026-10-25: run 40176336731 at 63f091de passes guest boot,
+creation/save/restart/reopen and final host continuity (see M4-REPORT.md and
+evidence/m4-continuity-40176336731.json). Sol re-review 5642680640 resolved
+the explicit-Finish finding. M4 milestone review is still pending; the Android
+surface and Thor execution are unvalidated. M4 work notes are in
+armport/notes/M4-RUNTIME.md. Building or signing an APK needs the user's
+approval first.
 
-## 1. What the project is
+The sections below describe the M3 handoff, which is now complete.
 
-Run the original City of Heroes client source natively on ARM64 Android, on
-one AYN Thor, for personal use only. The client (`Game`, `Common`,
-`UtilitiesLib` from `upstream/ouroboros`) is built as an **ARM64 Windows
-program** with llvm-mingw and runs in the Android app's own ARM64 Wine 10
-runtime (`android/runtime-lock.json`). ARM64 code needs no emulation there.
-The local game servers stay as they are (32-bit x86 builds under the same
-Wine via FEX).
 
-## 2. Rules (from PORT-PLAN.md; they still apply)
+Updated 2026-10-26. **The user has handed development leadership back to Claude.**
+Astra is stopping active development. Sol remains the independent reviewer unless
+the user changes that assignment. All scheduled ChatGPT tasks were disabled at
+user request; do not recreate or resume them without a new request.
 
-- `upstream/` is never edited. All source changes are patches in
-  `armport/patches/` (one purpose each), applied by `armport/scripts/prepare.py`.
-- Original game logic is not rewritten; if behaviour must change, the patch
-  says why. Opt-ins are environment variables set only by our harness
-  (`ARMPORT_LOOSE_DATA`, `ARMPORT_NO_VERSION_CHECK`, `ARMPORT_STDIO_LOG`).
-- Every claim in a PR points to a CI run or command output.
-- `STATUS.md` stays at most 40 lines.
-- Two compiler processes (`CMAKE_BUILD_PARALLEL_LEVEL=2`).
-- **Stop and ask the user before:** changing `main` or `native-android`,
-  rewriting pushed history, using secrets or signing keys, publishing
-  releases, spending money, or any legal question.
+This document supersedes the previous role assignments and stale status entries.
+The full development history is preserved in
+[the previous handoff at dd0f0ea4](https://github.com/Russianranger/coh-android/blob/dd0f0ea454033abf21b84d7e1ad56c0267d927aa/armport/HANDOFF.md),
+Git history, `M3-REPORT.md`, and `replay/README.md`. Those reports are chronological
+and contain historical “pending” statements; use exact source/run identities.
 
-## 3. Branches and review
+## Start here
 
-- `COH-ArmPort`: integration branch. M0 (PR #3), M1 (PR #4), M2 (PR #5) are
-  merged with merge commits.
-- `armport/m3-atlas`: current M3 work (HEAD at handoff: see `git log`; last
-  code commit 748504dc). Not yet a PR.
-- Each milestone: PR from `armport/<milestone>` into `COH-ArmPort`; reviewer
-  approves; author addresses findings; merge with a merge commit
-  (`gh api -X PUT repos/Russianranger/coh-android/pulls/<n>/merge -f merge_method=merge`).
-- If the base moved since the branch point, merge `COH-ArmPort` into the
-  branch (never rebase pushed branches) and confirm the tree is unchanged.
+1. Read this file, root `PORT-PLAN.md` and `STATUS.md`, then
+   `notes/M3-REPLAY-PLAN.md` and the latest PR #6 review.
+2. Check current branches, processes, CI and reviews before editing. Do not
+   duplicate another active development session or cancel a useful CI run.
+3. Prioritize **M3 completion**, not another round of unrelated M4/M5 work.
+4. Preserve and inspect Atlas run **40337294759**. It was still running at
+   handoff; builds had passed, but no final rendering result was available.
+5. Recover the unapplied NPC/Architect WIP below, review it and decide whether
+   to integrate it. It is not part of the executable source at this handoff.
 
-## 4. Milestones and state
+## Goal and constraints
 
-| | Exit test | State |
+Run the original City of Heroes Game/Common/UtilitiesLib source as an ARM64
+Windows client under the Android app's ARM64 Wine 10 on the AYN Thor. Local
+servers retain their existing x86 Wine/FEX runtime. M0–M2 are merged; M3 remains
+incomplete. M4 has runner continuity evidence, not Android-surface qualification.
+M5 has not been qualified and no substantial Thor test is ready.
+
+- Never edit `upstream/`. Native source patches must use
+  `armport/scripts/patchwork.py` in an external worktree and be exported into
+  `armport/patches/`. There are currently 105 source patches.
+- Preserve original game logic; clearly document necessary bounds/64-bit fixes.
+- At most two compiler processes. ARM64 and i686 compilation stays sequential.
+  Do not start competing native builds while another session is compiling.
+- No new gate/lease/receipt systems. Keep root `STATUS.md` at most 40 lines.
+- Do not change `main`, `native-android`, protected branches, pushed history,
+  secrets/signing, APK publication or releases under this handoff.
+- No merge is authorized here. Preserve explicit review and user merge gates.
+- No agents or schedules should be started by this handoff. Work directly.
+- Evidence must name commands, exact commits and CI runs. A green build or
+  partial replay is not milestone completion; implementation approval is not
+  milestone or merge approval.
+
+## Branches and review boundary
+
+| Branch / PR | Head before this documentation-only handoff | Meaning |
 |---|---|---|
-| M0 | survey, route | merged |
-| M1 | libraries build; textparser unit runs under the app's Wine | merged |
-| M2 | client links and reaches the login screen under that Wine (Xvfb, Mesa) | merged; boot test still runs in every CI run (`client-run`) |
-| M3 | scripted login against the CI server to Atlas Park; saved native-android packets replay through the original receive code; screenshot check | **login reached Atlas; loading stalls in texLoadQueueFinish; replay inputs recovered** |
-| M4 | the Android app runs the ARM64 client in its existing runtime instead of the x86 one; verified on the ARM64 runner with the same runtime files | app display/launcher probes pass; client selector and package integration in progress on armport/m4-runtime |
-| M5 | user installs once and play-tests about 10 minutes on the Thor | not started |
+| `COH-ArmPort` | `9e76c4d48d1d5f69c1fa880551ed5e3690f09180` | Integration branch; unchanged |
+| `armport/m3-atlas`, [PR #6](https://github.com/Russianranger/coh-android/pull/6) | `dd0f0ea454033abf21b84d7e1ad56c0267d927aa` | Current M3 code, draft and unmerged |
+| `armport-work/power-receive-observations` | `dd0f0ea454033abf21b84d7e1ad56c0267d927aa` | Parallel preparation branch; no active CI trigger |
+| `armport/replay-retained-state` | `e6d39d7a56f52ce2ad25e43ed7117389d0e8a0cb` | Last qualified partial replay |
+| `armport/m4-runtime`, [PR #7](https://github.com/Russianranger/coh-android/pull/7) | `08e9a9773cbd36151a773faab404462655c5ccce` | Draft; guest continuity only |
 
-### M3 evidence so far
+The handoff commit advances only `armport/m3-atlas` with documentation and inert
+WIP recovery files, using `[skip ci]` to preserve the running Atlas experiment.
+Its native/runtime source remains dd0f0ea4. The work branch remains at dd0f0ea4.
 
-- CI run **39960894368** (attempt 2), job `server-run`, commit c04eb2f1:
-  guest report passed; the ARM64 client logged in through its own login
-  screen (typed by xdotool), chose the TestClient-created character, joined
-  the Atlas MapServer, and the database shows it `loaded`, `connected`,
-  map 1, and still connected after the screenshots. The capture shows the
-  same DbServer exchange as the TestClient's (login 244 bytes, character
-  list, choice) and about 25 KB of map data on UDP 7001.
-- Its screenshots show the **zone loading screen** (white with a progress
-  bar), because the client was still loading 20-50 s after the database
-  confirmation. Commit 748504dc makes the host wait up to 25 minutes for the
-  window to leave the loading screen and requires a rendered frame for the
-  verdict.
-- **Run 39973792458 (commit 748504dc) failed: the zone never loaded.** Login
-  and character select worked again; the DB showed the character connected
-  on Atlas at 15:59:48. The host then captured about 50 `zone-loading`
-  frames over the 25-minute wait. The final `ArmPort M3 screen` is still the
-  white loading screen with the progress bar near empty. After the wait the
-  DB showed `loaded false, connected false` (`still_connected` false), and
-  the guest failed with "ARM64 client did not stay connected on Atlas". The
-  client process had not exited (no `armport-client-exited`). So the load
-  stalls near the start and the server drops the link. Saved annotations:
-  `ci_results.py --run 39973792458 --job server-run --grep "login driver"
-  "client exceptions" "UDP sequences" "stdio"` (the stdio has 16,347
-  filtered lines). Next, find what the client is doing in the stall: a
-  missing data file, a wait on a packet it never parses (the 64-bit receive
-  path, see 0044), or a busy loop. Also find when the server dropped it
-  (MapServer stdout tail).
+Sol's latest [review 5651480055](https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5651480055)
+approves implementation through **e6d39d7a** only. It covers patches 0103–0105
+and the mission/keydoor snapshot writer. It does not grant milestone/merge or
+six-texture selection approval. Later host report 189ef449, evidence24fb6e3e,
+and the post-verdict Map diagnostic dd0f0ea4 still need review.
 
-- Run **40011219458** (ff50ae2db) narrows the stall to
-  `texLoadQueueFinish()`: `textures.wait` is the final zone marker, and 49
-  log-growth samples are identical. Patch 0049 adds internal texture-queue
-  markers. See `notes/M3-LOAD-STALL.md`; no loading fix or M3 pass yet.
+## CI and artifact evidence
 
-## 5. M3: remaining steps
+| Run | Observed result / scope |
+|---|---|
+| [40321211800](https://github.com/Russianranger/coh-android/actions/runs/40321211800), e6d39d7a | Both native targets and both comparisons pass. Job121584110467 records partial-state and outside-error equality, but schema/state/M3 completion remain false. Qualifies mission/keydoor snapshots only within that partial scope. |
+| [40314007807](https://github.com/Russianranger/coh-android/actions/runs/40314007807), e6d39d7a | Failed Atlas screenshot acceptance. Connection/load/READY pass; world_rendered and map_name_visible are false. |
+| [40337294759](https://github.com/Russianranger/coh-android/actions/runs/40337294759), dd0f0ea4 | Running at handoff. libraries, Release, OptDebug, assets, client-run1 and Cg had passed. client-run121629180185 and server-run121629180393 were pending/in progress. Do not infer final pass. |
+| [40176336731](https://github.com/Russianranger/coh-android/actions/runs/40176336731) | Reviewed M4 guest create/save/restart/reopen and host continuity pass. Not Android-surface/device/M4/M5 completion. |
 
-1. **Screenshot check.** Blocked on the zone-load stall above; fix that
-   first. Once a run has `world_rendered` true,
-   look at the `ArmPort M3 screen` image (Atlas Park should be visible) and
-   copy it to `armport/evidence/m3-atlas.jpg`. If the zone never finishes
-   loading, the client log and `loading_brightness` list say how far it got;
-   likely causes are missing CI data (see section 8) or a 64-bit bug in the
-   zone loader (look for crashes in `client exceptions`).
-2. **Packet replay.** Both inputs were recovered and hash-verified on
-   2026-10-23; see `notes/M3-LOAD-STALL.md`. Use `initial-replay.bin` (37,994 bytes, sha256
-   cc949b01...7b39) and `post-ready-replay.bin` (74,416 bytes, sha256
-   f134c3c0...96a9) from the user's Thor report of 2026-10-21 (client
-   session 1a15fad27e9; hashes in
-   `native-android/combined-client/DIAGNOSTIC-STATUS.json`). They are not in
-   the repo; the original report archive now supplies both. Format notes are in that JSON
-   (`coh-post-ready-logical-messages-v1`; logical payloads, not UDP wire
-   packets). Approach to agree with the reviewer first: feed the logical
-   messages to the client's original receive functions (entity/initial
-   receive in `Game/src/clientcomm/`) from a small ARM64 test driver, or
-   replay them from a stand-in MapServer. Compare with the 32-bit decode the
-   native-android work recorded.
-3. **M3 report and PR.** Write `armport/M3-REPORT.md` in the style of
-   `armport/M2-REPORT.md` (exit test, evidence, what it took, gaps), update
-   `STATUS.md`, open the PR `armport/m3-atlas` → `COH-ArmPort`, and ask for
-   review (prompt for the reviewer: the user relays it).
+Atlas40314007807 artifact12650754712 was downloaded and verified:
+SHA-256 `1d9b886f124d01dd7ae3b0a521a0239f44986555e1880626161650361ee4c05a`.
+Eight world.ui samples match model/draw frame and thread IDs: compass mode2
+(DISPLAYING), map mode4(DOCKED), default destination type0, no name/map text.
+The original default compass does not guarantee a zone label. That is not proof
+of font failure or of accepted rendering. The inspected final frame still shows
+incomplete purple/blue materials and white UI placeholders. The complete literal
+error inventory is unchanged from40283068606:5659 occurrences/5656 unique.
+See `evidence/m3-atlas-ui-outcome-40314007807.json` for hashes and commands.
 
-## 6. M4 and M5 outline
+The dd0f0ea4 diagnostic runs **after** original frames and world_rendered are
+fixed. It attempts one unique OCR Map label in the owned navigation strip,
+checks ownership/geometry and dialog history, and records separate before/after
+frames or a blocked/error outcome. It does not dismiss helper dialogs or send
+console commands. A click is not proof that the map opened; an overlay is not
+accepted 3D terrain. All202 Python host tests passed, including six diagnostic
+controls: `evidence/m3-map-ui-diagnostic-controls.json`.
 
-M4 work/evidence: `armport/notes/M4-RUNTIME.md`. Runs 40034280752 and
-40036045979 pass the app runtime/display and native launcher probes. These
-are startup checks, not completed M4 or Thor gameplay qualification.
+## What still completes M3
 
-- M4: find where the app starts the x86 client in its runtime (the
-  `android-*` workflows and `android/guest/` scripts; the app's Wine runs in
-  PRoot on the device). Add the ARM64 client next to it as an option, with
-  the same data and runtime files, and verify on `ubuntu-24.04-arm` with the
-  same runtime files the device uses. Note from M3: inside the PRoot guest
-  the ARM64 client died with an Xlib BadWindow error before drawing (run
-  39795786028); on the host it works. M4 has to solve the device display
-  path (the app presents through its own X server; check how the x86 client
-  is shown on the device first).
-- Building or signing an APK uses signing keys: ask the user first.
-- M5: the user installs once and play-tests; prepare a short test list.
+### 1. Accepted Atlas rendering
 
-## 7. CI: how it works and how to read it
+Inspect run40337294759's original `atlas-later` image, `login-driver.json`,
+complete client-errors inventory, and separate `map-ui-before`/`map-ui-after`
+images. Preserve its actual result. Use `scripts/world_ui_report.py` on its
+isolated trace; do not turn the default compass source observation or a readable
+map overlay into an accepted terrain screenshot. Diagnose actual material/UI
+problems and reconcile any proposed acceptance change through review/user gates.
 
-Workflow `.github/workflows/armport-build.yml` (triggers on pushes to
-`armport/**` that touch `armport/` or the workflow; `[skip ci]` in the commit
-message for docs-only commits):
+Six plaza/statue files remain **proposal-only** in
+`evidence/m3-proposed-plaza-statue-materials.json` (2,306,838 bytes):
+AP_Asphalt_01_NS, Plaza_Brick_Floor_02_NS, deco_building_03_concrete_01_n,
+Male_Statue_Atlas_N, Statue_Globe_02_MK, Statue_Stone_Detail.tga.
+Use the manifest for exact paths/pins, not these shortened names. Existing
+[approval6389265419](https://github.com/Russianranger/coh-android/pull/6#issuecomment-6389265419)
+authorizes only the earlier eight composite files. It explicitly excludes
+other leaves/new fetches; Sol's latest review does not expand this authority.
+**Obtain explicit approval for this exact six-file selection before staging or
+fetching it.** Do not broaden game-error exceptions.
 
-| Job | What it does | Time |
-|---|---|---|
-| `libraries` | M1 unit, nvDXT decoder test (ASan/UBSan) | 3 min |
-| `assets` | caches the reviewed asset ZIP (release asset 588984151) | 1 min |
-| `client` | Release and OptDebug builds (cached by build inputs) | 1-40 min |
-| `client-run1` | OptDebug `-createbins` builds the data bins; records Cg requests | 8 min |
-| `cg-precompile` | original `cgc.exe` on Windows compiles Cg programs to ARB | 1 min |
-| `client-run` | M2 boot test (`--require-alive`) plus a login probe (no server) | 6-11 min |
-| `server-run` | M3: server stack plus ARM64 client login to Atlas | 60-120 min |
+### 2. Complete retained-state replay coverage and qualification
 
-**Reading results.** The current GitHub connector can fetch full job logs
-and download artifacts. Verify downloads against their API SHA-256 digests.
-The annotation reader remains a useful fallback without connector access.
-Use `python3 armport/scripts/ci_results.py --sha <commit> --job <job>`
-(waits, saves annotations, rebuilds exported images, prints sections;
-`--grep` to filter). Failing commands in `server-run` are wrapped in
-`armport/scripts/step.sh`, which puts the last 3,500 characters of output
-into an error annotation. GitHub keeps only about ten notices per step;
-images go through `armport/scripts/screen_export.py` (at most 10 parts, one
-image per step).
+The old “missing initial-replay.bin/post-ready-replay.bin and no agreement”
+baseline is obsolete. The exact two logical files are recovered as gzip fixtures;
+Claude agreed the method in review5635319013. Read `notes/M3-REPLAY-PLAN.md`.
+The native-android post-READY capture remains opaque source evidence, not a
+historical decoded oracle. The i686 reference shares ArmPort patches/compiler
+and has documented limits; the separate native INITIAL subset remains required.
 
-**Fast loop.** `client-run`'s login probe (`smoke_run.py --login-probe`)
-drives the real login screen in 6-11 minutes without servers; use it for UI
-automation changes before spending a 1-2 hour `server-run`. Cancel a stale
-run with `gh api -X POST repos/Russianranger/coh-android/actions/runs/<id>/cancel`.
+Preserve all117 dispatches, exact cursors, ACK checks, frozen bytes, unknown-command
+rejection, assertions/SEH rejection, six-run literal outside-error inventories,
+same-ID repeats/architecture comparisons and narrowly enumerated ID1/31 rules.
+There is exactly one authorized original-data texture occurrence, not a general
+ignore list; see `replay/fixtures/original-data-errors.json` and its evidence.
 
-**Donor binaries.** `server-run` uses server executables from
-`android-game.yml` run 38478387527 and inputs from runs 36460867428,
-36088012664, 36297542986 and 36364550345. Two of those artifacts expire
-2026-10-25/27; a copy is kept in the Actions cache (`armport-server-donors-v1`,
-branch-scoped) and as artifact `armport-server-donors` of run 39782080360
-(expires 2027-01-20). If both are gone, the donors must be rebuilt by
-re-running android-game.yml's build jobs (ask the user: it is their workflow).
+`replay/state.c` and `compare_state.py` still deliberately report partial scope.
+Many entity/player/inventory/costume/story/contact/task/world/options/turnstile
+fields and raw received clock histories are covered, but no full coverage audit
+has been completed. Do not flip completion flags because the suite is green.
+Next build an explicit receiver-destination coverage/exclusion inventory for the
+actual initial/entity/tail paths, then close concrete gaps. Known follow-ups:
 
-## 8. Things learned the hard way (each cost a CI cycle)
+- Review/integrate the custom NPC/Architect WIP below; mission-review widget
+  state and cached-costume lifecycle are not covered by it.
+- Audit selected task/waypoint lifecycle, remaining tray kinds and other retained
+  state excluded in `replay/README.md`; distinguish received state from local
+  caches, clocks, interpolation and pointer identity.
+- Trace `cmdReceiveServerCommands` and original command-table destinations rather
+  than assuming SERVER_GAME_CMDS dispatch counts prove all values are captured.
+  This last audit was identified but not implemented.
+- Qualify the combined candidate on sequential ARM64/i686 with all six runs and
+  exact comparisons; obtain review of the coverage and final M3 evidence report.
 
-- **Wine puts a 64-bit program's memory above 4 GB**, so every truncated
-  pointer crashes; fix them (`armport/notes/64BIT-AUDIT.md` lists all, with
-  symptoms). A fault at a small address (0x5d, 0x60) is usually a field read
-  through a NULL pointer, not truncation.
-- **Production clients** read `scenes/`, `ent_types/`, `object_library/`,
-  `geobin/` only from piggs (patch 0042), only take level-0 command-line
-  options (`-quicklogin`, `-noversioncheck`, `-verbose` are ignored), and only
-  read bins (bins are built in CI by the OptDebug client).
-- **Fake-auth DbServer** rejects the Release client with WrongVersion unless
-  the client sends the no-version-check flag (patch 0045,
-  `ARMPORT_NO_VERSION_CHECK=1`).
-- **Login UI**: the game samples keyboard and mouse once per frame
-  (DirectInput). Hold keys ~60 ms (`login_ui.Screen.press`). Log In is
-  disabled while either field is empty; use Tab and Return, not clicks, on
-  the login form. After Return comes Select a Server (click the first row,
-  layout (824, 281)), then character select (Next arrow at (969, 741)); both
-  positions come from `uiLogin.c` / `uiHybridMenu.c` constants in the
-  1024x768 design space. OCR is unreliable on the game's fonts; the layout
-  fallbacks in `login_ui.LAYOUT` are what works. Use lowercase account names.
-- **Screenshots** of the 60 fps window can catch half-presented frames;
-  `Screen.shot` keeps the largest of four captures. Frame rate is 45-63 fps
-  (Wine `+fps`), so slowness is not the issue.
-- **Patch 0046** makes the client log its login stage and dialog texts to its
-  stdio log (`ArmPort login: stage N ...`, stages from `uiLogin.h`); the M3
-  report prints the changes. Use it instead of guessing from screenshots.
-- **Server stack (guest)** runs in a private loopback-only network namespace;
-  the client joins it with `sudo nsenter --net=/proc/<pid>/ns/net`. The
-  guest's cleanup audits same-user processes: never leave a `sudo` process
-  running (it has your real UID and a root-only environment), and stop the
-  client and its wineserver (`wineserver -k` then `-w`) before the guest
-  cleans up (marker handshake in `armport_game_host.py`).
-- **Atlas readiness** sometimes misses a heartbeat during the original
-  30-second observation; the guest repeats the observation once and records
-  `atlas_observation_retry`.
-- **Guest budgets**: the guest allows 80 (raised to 120) DbServer status
-  queries per run; poll sparingly. Owned processes fail the run past 2 MB of
-  output (keep `WINEDEBUG` quiet inside the guest).
-- **CI data gaps**: many `object_library` geometry files are missing, so some
-  world-group members do not load (the 32-bit MapServer logs the same "can't
-  find member"); patch 0047 makes the client skip empty slots. Expect more of
-  this kind in the zone loader.
+### 3. Review and close only after both independent criteria pass
 
-## 9. Patch workflow
+Update M3-REPORT with exact tested commits/results and all remaining exclusions.
+Get implementation and milestone review, then the required user merge approval.
+Keep PR #6 draft/unmerged until those conditions are met. M4/M5 are later work;
+no physical Thor request is appropriate on current evidence.
+
+## Recoverable unfinished work — unapplied, not qualified
+
+Immediately before the user stopped development, Astra prepared:
+`handoff/2026-10-26-npc-architect-wip.patch` and
+`handoff/2026-10-26-npc-architect-wip-evidence.json`.
+These are **inert recovery artifacts**, not patches in `armport/patches/` and
+not applied to this handoff branch. They preserve edits to:
+
+- `armport/replay/state.c`: ordered/null custom NPC regions/colors/name, plus
+  retained Architect flags/contact IDs/name/full costume/custom NPC costume.
+  Stale retained fields remain visible when onArchitect is cleared. No ID
+  normalization, decoder edits or completion-flag changes.
+- `armport/tests/receiver_npc_architect_state.py`:19 actual-receiver/writer host
+  sanitizer cases, including original clear/retain/replace behavior, bounds,
+  literal high-bit values, array order/nulls and nonmutation.
+- `.github/workflows/armport-reference.yml`: run the new control on fresh replay
+  executable builds, using existing `steps.replay-exe-cache` condition.
+
+Local validation:19 new sanitizer cases pass; existing costume controls and15
+TaskForce parameter cases plus original signed-shift negative control pass;
+all202 Python tests pass. `state.c` compiled ARM64 then i686 successfully, one
+compiler at a time. Exact compiler commands/output and post-apply SHA256 values
+are in the evidence JSON. Both original receiver bodies were byte-compared to
+patchwork base and are unchanged. Native patchwork is clean at0105.
+
+Limits: host packet/earray/allocation/string-interning/mission-review and full
+costume decoder adapters are substitutes; the full-costume writer has a separate
+regression suite. Local LeakSanitizer was disabled for environment restrictions;
+CI defaults remain unchanged. No live six-run replay or Sol review covers this WIP.
+
+From a clean checkout of dd0f0ea4 (or this documentation-only descendant):
 
 ```sh
-python3 armport/scripts/patchwork.py init /path/outside/checkouts/pw   # base + one commit per patch
-cd /path/outside/checkouts/pw/src
-# new patch: edit, then: git commit -am "0048-<area>-<purpose>.patch"
-# change an existing patch: git commit -am "fixup! 00NN-<name>.patch"
-GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash base
-python3 <repo>/armport/scripts/patchwork.py export /path/outside/checkouts/pw
+git apply --check armport/handoff/2026-10-26-npc-architect-wip.patch
+git apply armport/handoff/2026-10-26-npc-architect-wip.patch
+python3 armport/tests/receiver_npc_architect_state.py --source /path/to/prepared/source
+python3 -m unittest discover -s armport/tests -p 'test_*.py'
 ```
 
-Check a changed file compiles for ARM64 (and i686 for the 32-bit branch of
-`#if defined(_WIN64)` code) before pushing; CI builds in a few minutes when
-the build cache misses only the changed files. Keep CRLF/Latin-1 source files
-byte-preserved when editing with scripts.
+The patch dry-run passed against copies of the base files. Apply once, compare
+post-apply hashes to evidence, and review before committing. If files changed,
+resolve manually; do not overwrite another developer's edits. Source changes to
+upstream game files, if subsequently necessary, still require patchwork.py.
 
-## 10. Roles (temporary)
+## Environment recovery (optional, never rely on these surviving)
 
-Astra leads and pushes to `armport/*` branches; Claude reviews each PR (PR
-comment or `reviews/PR-<n>.md` on `armport-reviews`) and checks claims
-against the cited CI runs. The user relays prompts between the two and
-receives the daily summary and milestone alerts from the lead.
+Old scratch checkout: `/workspace/scratch/6e8acd6310fe/coh-active` (no `.git`).
+It still contains the unapplied-to-GitHub WIP edits; do not apply the patch twice
+there. Use a fresh Git checkout for Claude's work. External prepared source:
+`/tmp/coh-world-patchwork/src`, clean patchwork HEAD
+`e057696fcc6acc4dfc6dd03d38581a1cdfd74081` (0105). Toolchain:
+`/tmp/coh-toolchain/bin`; compile databases under `/tmp/coh-world-build-arm64`
+and `/tmp/coh-world-build-i686`. No local compiler was active at handoff.
+Verified Atlas artifact extracts may remain under `/tmp/atlas-40314007807` and
+`/tmp/atlas-40283068606`; prefer committed hashes and re-fetch if missing.

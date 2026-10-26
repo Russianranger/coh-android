@@ -1,0 +1,45 @@
+diff --git a/Game/src/graphics/groupdrawinline.c b/Game/src/graphics/groupdrawinline.c
+index 6ac4f02..a0aa89a 100644
+--- a/Game/src/graphics/groupdrawinline.c
++++ b/Game/src/graphics/groupdrawinline.c
+@@ -1031,7 +1031,7 @@ static INLINEDBG F32 closeEnough(DrawParams *draw,Vec3 mid,GroupEnt * groupEnt,
+     if (groupEnt->flags_cache & (HAS_FOG | VIS_DOORFRAME | CHILD_PARENT_FADE))
+     {
+         if (observe && ARMPORT_WORLD_ACTIVE && d == 0) ARMPORT_WORLD_DEF(1, groupEnt, mid,
+-            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, 0, 0);
++            (draw->lod_fadenode && ((groupEnt->flags_cache & PARENT_FADE) || draw->lod_fadenode == 2)) ? draw->node_mid : mid, d, 1, 0, 0);
+         return d;
+     }
+ 
+@@ -1041,11 +1041,11 @@ static INLINEDBG F32 closeEnough(DrawParams *draw,Vec3 mid,GroupEnt * groupEnt,
+     if ( d > SQR(groupEntDist))
+     {
+         if (observe) ARMPORT_WORLD_DEF(1, groupEnt, mid,
+-            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, groupEntDist, 1);
++            (draw->lod_fadenode && ((groupEnt->flags_cache & PARENT_FADE) || draw->lod_fadenode == 2)) ? draw->node_mid : mid, d, 1, groupEntDist, 1);
+         return 0;
+     }
+     if (observe && ARMPORT_WORLD_ACTIVE && d == 0) ARMPORT_WORLD_DEF(1, groupEnt, mid,
+-            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, groupEntDist, 1);
++            (draw->lod_fadenode && ((groupEnt->flags_cache & PARENT_FADE) || draw->lod_fadenode == 2)) ? draw->node_mid : mid, d, 1, groupEntDist, 1);
+     return d;
+ }
+ 
+@@ -1113,7 +1113,7 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+     {
+         ARMPORT_WORLD_COUNT(frustum_skip);
+         ARMPORT_WORLD_DEF(2, groupEnt, mid,
+-            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, 0, 0);
++            (draw->lod_fadenode && ((groupEnt->flags_cache & PARENT_FADE) || draw->lod_fadenode == 2)) ? draw->node_mid : mid, d, 1, 0, 0);
+         return 0;
+     }
+ 
+@@ -1125,7 +1125,7 @@ int drawDefInternal( GroupEnt *groupEnt, Mat4 parent_mat_p, DefTracker *tracker,
+         groupFileLoadFromName(def->name);
+ 
+     ARMPORT_WORLD_DEF(3, groupEnt, mid,
+-            (draw->lod_fadenode == 2 && groupEnt->flags_cache & PARENT_FADE) ? draw->node_mid : mid, d, 1, 0, 0);
++            (draw->lod_fadenode && ((groupEnt->flags_cache & PARENT_FADE) || draw->lod_fadenode == 2)) ? draw->node_mid : mid, d, 1, 0, 0);
+ 
+     // If this group is beyond the fog, and noFogClip is not set, and ClipFoggedGeometry is set, discard it
+     // don't fog clip if a parent or child has noFogClip set

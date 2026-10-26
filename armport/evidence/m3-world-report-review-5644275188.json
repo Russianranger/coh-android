@@ -1,0 +1,23 @@
+{
+  "review": "https://github.com/Russianranger/coh-android/pull/6#pullrequestreview-5644275188",
+  "resolved_cases": [
+    "world.draw token without trailing space or fields",
+    "final numeric field without newline, including tid=36 truncated to tid=3"
+  ],
+  "caller": "zone_report.sections preserves splitlines(keepends=True) into summarize",
+  "retained_artifact_run": 40204814232,
+  "retained_summary_identical": true,
+  "tests": {
+    "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+    "count": 156,
+    "exit_code": 0,
+    "output_tail": [
+      "----------------------------------------------------------------------",
+      "Ran 156 tests in 7.069s",
+      "",
+      "OK"
+    ],
+    "output_sha256": "f7ce74637a3dae1b1a4c9f1671c941532c8c426ac5eda03520d467587d09b13f"
+  },
+  "rendering_acceptance_changed": false
+}

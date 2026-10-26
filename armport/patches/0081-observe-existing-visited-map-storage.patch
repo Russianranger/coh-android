@@ -1,0 +1,41 @@
+diff --git a/Game/src/UI/uiAutomap.c b/Game/src/UI/uiAutomap.c
+index 0e5852c..e32da6e 100644
+--- a/Game/src/UI/uiAutomap.c
++++ b/Game/src/UI/uiAutomap.c
+@@ -15,6 +15,7 @@
+ #include "UI/uiWindows.h"
+ #include "UI/uiCompass.h"
+ #include "UI/uiAutomap.h"
++#include "clientcomm/armport_replay.h"
+ #include "UI/uiCompass.h"
+ #include "UI/uiUtilGame.h"
+ #include "UI/uiGroupWindow.h"
+@@ -1555,6 +1556,15 @@ char * getVisitedMapsDir(void)
+     return sVisitedMapDirectory;
+ }
+ static VisitedStaticMap **g_vsm = NULL;
++
++#ifdef COH_ARMPORT_REPLAY
++/* Observe existing storage only: the ordinary getter loads files and creates
++ * owners, so replay snapshots must not call it. No initialization or mutation. */
++const VisitedStaticMap *const *armportReplayVisitedMaps(void)
++{
++    return (const VisitedStaticMap *const *)g_vsm;
++}
++#endif
+ static FileList s_vmBinList = 0;
+ 
+ static FileScanAction  processVisitedMaps(char *dir, struct _finddata32_t *data)
+diff --git a/Game/src/clientcomm/armport_replay.h b/Game/src/clientcomm/armport_replay.h
+index b51c026..6c91f47 100644
+--- a/Game/src/clientcomm/armport_replay.h
++++ b/Game/src/clientcomm/armport_replay.h
+@@ -11,6 +11,8 @@ typedef struct Entity Entity;
+ typedef struct Packet Packet;
+ typedef struct NetLink NetLink;
+ typedef struct SouvenirClue SouvenirClue;
++typedef struct VisitedStaticMap VisitedStaticMap;
++const VisitedStaticMap *const *armportReplayVisitedMaps(void);
+ const SouvenirClue *const *armportReplaySouvenirClues(void);
+ void armportReplayOrientation(Entity *e, int axis, unsigned value, int accepted);
+ void armportReplayAlignmentDelay(unsigned index, unsigned seconds);

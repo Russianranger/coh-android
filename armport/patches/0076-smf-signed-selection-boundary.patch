@@ -1,0 +1,36 @@
+diff --git a/Game/src/formatter/smf_interact.c b/Game/src/formatter/smf_interact.c
+index 855e32b..817d21a 100644
+--- a/Game/src/formatter/smf_interact.c
++++ b/Game/src/formatter/smf_interact.c
+@@ -319,9 +319,11 @@ bool smf_Navigate(char *pch)
+     return true;
+ }
+ 
+-static void smf_SwitchBreakingToNonBreakingSpace(SMFBlock *pSMFBlock, unsigned int rawIndex)
++static void smf_SwitchBreakingToNonBreakingSpace(SMFBlock *pSMFBlock, int rawIndex)
+ {
+-    if (pSMFBlock->rawString[rawIndex] == ' ' && (rawIndex && pSMFBlock->rawString[rawIndex - 1] == ' ') )
++    // Selection scans use -1 for the boundary before the first character.
++    // Keep it signed and require two characters before examining either byte.
++    if (rawIndex > 0 && pSMFBlock->rawString[rawIndex] == ' ' && pSMFBlock->rawString[rawIndex - 1] == ' ')
+     {
+         estrRemove(&pSMFBlock->rawString, rawIndex - 1, 1);
+ 
+@@ -470,7 +472,7 @@ static void smf_UpdateSelectionInRawString(SMFBlock *pSMFBlock)
+     {
+         int tagIndex;
+ 
+-        while (pSMFBlock->rawString[workingEarlyIndex] != '>' && workingEarlyIndex >= deletedEarlyIndex)
++        while (workingEarlyIndex >= deletedEarlyIndex && pSMFBlock->rawString[workingEarlyIndex] != '>')
+         {
+             workingEarlyIndex--;
+         }
+@@ -482,7 +484,7 @@ static void smf_UpdateSelectionInRawString(SMFBlock *pSMFBlock)
+ 
+         workingTagEnd = workingLateIndex = workingEarlyIndex;
+ 
+-        while (pSMFBlock->rawString[workingEarlyIndex] != '<' && workingEarlyIndex >= deletedEarlyIndex)
++        while (workingEarlyIndex >= deletedEarlyIndex && pSMFBlock->rawString[workingEarlyIndex] != '<')
+         {
+             if (pSMFBlock->rawString[workingEarlyIndex] == ' ' ||
+                 pSMFBlock->rawString[workingEarlyIndex] == '\r' ||

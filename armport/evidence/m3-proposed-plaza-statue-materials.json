@@ -1,0 +1,223 @@
+{
+  "scope": "proposal only: six exact existing visual-archive textures missing from the current Atlas staging layers",
+  "date_utc": "2026-10-26",
+  "source_commit": "929d7ea039f4d5136b751d76e605ec70917dfcad",
+  "source_run": 40263048945,
+  "source_artifact": {
+    "id": 12628120860,
+    "sha256": "4d67049025022d17caaaa6b88f4da39f43ac20b38916337c460f6ee2c7b5e0d4"
+  },
+  "client_errors_sha256": "2d7c3f7c867ff39e9f20b73aae25b57d4419353c0370150e9da15f3dc8f51884",
+  "sources": {
+    "client-visual": {
+      "manifest": "assets/client-visual-manifest.json",
+      "encoded_sha256": "e5817e1f9bc4693066927485218687db70e476e0baaea75e9e633861ddcc004e",
+      "git_blob": "9bdba855bbf3ea0dbcc1ff61e58a2ae1fe18e81c",
+      "decoded": {
+        "bytes": 16272899,
+        "sha256": "447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b"
+      },
+      "archive": {
+        "bytes": 515813056,
+        "filename": "client-visual-assets.zip",
+        "sha256": "1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea"
+      },
+      "existing_workflow_donor_run": 37249488856,
+      "existing_workflow_donor_artifact_name": "coh-client-asset-closure-assets"
+    }
+  },
+  "files": {
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_asphalt_01_ns.texture": {
+      "source": "client-visual",
+      "request": "AP_Asphalt_01_NS",
+      "bytes": 175093,
+      "sha256": "9e83a96567ea8f4eea29b1026e2dc25e5e3288185cef6f912740ea5b4a37fcc7",
+      "error_occurrences": 3,
+      "errors": [
+        {
+          "text": "client.error File: TRICKS/CITYZONES/ATLASPARK_MAKEOVER/AP_PLAZA_MATERIALS.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_AP_Drity_Asphalt_01\" references missing texture \"AP_Asphalt_01_NS\".",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/CITYZONES/DARKASTORIA_MAKEOVER/TERRAIN/DA_CITYBLOCK_MATERIAL.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_DA_Drity_Asphalt_01\" references missing texture \"AP_Asphalt_01_NS\".",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/CITYZONES/PRAETORIA/ATLASPARK_MAKEOVER/CITYHALL_MAKEOVER/AP_CITYBLOCKS_01.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_AP_Asphalt_01\" references missing texture \"AP_Asphalt_01_NS\".",
+          "count": 1
+        }
+      ]
+    },
+    "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_brick_floor_02_ns.texture": {
+      "source": "client-visual",
+      "request": "Plaza_Brick_Floor_02_NS",
+      "bytes": 349926,
+      "sha256": "08c442b756a881c86383f46e719c1d3e3beb13376fb74ece4de39108fb7dca97",
+      "error_occurrences": 3,
+      "errors": [
+        {
+          "text": "client.error File: TRICKS/CITYZONES/ATLASPARK_MAKEOVER/AP_PLAZA_MATERIALS.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"x_AP_dirty_brick_floor_01\" references missing texture \"Plaza_Brick_Floor_02_NS\".",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/CITYZONES/PRAETORIA/ATLASPARK_MAKEOVER/CITYHALL_MAKEOVER/AP_CITYBLOCKS_01.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_AP_BrickTile_01\" references missing texture \"Plaza_Brick_Floor_02_NS\".",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/CITYZONES/PRAETORIA/PLAZAS/PLAZA_SURFACES_B.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_Plaza_Brick_Floor_02\" references missing texture \"Plaza_Brick_Floor_02_NS\".",
+          "count": 1
+        }
+      ]
+    },
+    "data/texture_library/world/buildings/upgradeddeco/deco03/deco_building_03_concrete_01_n.texture": {
+      "source": "client-visual",
+      "request": "deco_building_03_concrete_01_n",
+      "bytes": 349927,
+      "sha256": "3b8b23a1c8c886a5497a87ae9bcfb3d9836f1a7229e5dbd2bbbb1fbdbc26408b",
+      "error_occurrences": 3,
+      "errors": [
+        {
+          "text": "client.error File: TRICKS/BUILDINGS/STYLE/UPGRADED_DECO/DECO_SKYSCRAPER_03.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"x_deco_skyscraper_03_concrete_03\" references missing texture \"deco_building_03_concrete_01_n\".",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/BUILDINGS/STYLE/UPGRADED_DECO/DECO_SKYSCRAPER_03.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"x_deco_skyscraper_03_trim_02\" references missing texture \"deco_building_03_concrete_01_n\".",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/CITYZONES/ATLASPARK_MAKEOVER/AP_PLAZA_MATERIALS.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"x_AP_dirty_concrete_01\" references missing texture \"deco_building_03_concrete_01_n\".",
+          "count": 1
+        }
+      ]
+    },
+    "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_n.texture": {
+      "source": "client-visual",
+      "request": "Male_Statue_Atlas_N",
+      "bytes": 1398491,
+      "sha256": "bfe125f583a1c5706d946796180ae7fcc03455e5be93073b121825e9f04780e9",
+      "error_occurrences": 1,
+      "errors": [
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_Male_Statue_Atlas_01\" references missing texture \"Male_Statue_Atlas_N\".",
+          "count": 1
+        }
+      ]
+    },
+    "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_mk.texture": {
+      "source": "client-visual",
+      "request": "Statue_Globe_02_MK",
+      "bytes": 22156,
+      "sha256": "07694e25b1b18cc67533241544b89186df41f0b208fc91a12cdc3f6f13dc2140",
+      "error_occurrences": 1,
+      "errors": [
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nTexture Trick \"X_Male_Statue_Atlas_Globe_01\" references missing texture \"Statue_Globe_02_MK\".",
+          "count": 1
+        }
+      ]
+    },
+    "data/texture_library/world/city_zones/hero_statues/shared/statue_stone_detail.texture": {
+      "source": "client-visual",
+      "request": "Statue_Stone_Detail.tga",
+      "bytes": 11245,
+      "sha256": "b02e360819a5d9d9d098ce7422b56c77a1e6ca4d2510f4e2f13e1bef87ee0825",
+      "error_occurrences": 16,
+      "errors": [
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick M_Stat_Chest_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick M_Stat_Face_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick M_Stat_Hips_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Jewel_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Plain_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Tactical_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Belt_Tech_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Boot_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Fem_Chest_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Fem_Face_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Fem_Hips_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Glove_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Hair_Long_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Hair_Male_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Shoulder_Spiked_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        },
+        {
+          "text": "client.error File: TRICKS/HERO_STATUES.TXT\nLast Author/Status:UNKNOWN\nMaterial trick Statue_Wings_Stone is referencing missing DualColor1 texture Statue_Stone_Detail.tga",
+          "count": 1
+        }
+      ]
+    }
+  },
+  "file_count": 6,
+  "payload_bytes": 2306838,
+  "literal_error_occurrences": 27,
+  "previous_staging_layers_checked": [
+    "reference-inputs-manifest files",
+    "atlas-world-supplement-manifest files (including 27 material extension)",
+    "m3-reviewed-file-selection selected files",
+    "m3-proposed-composite-dependencies eight files",
+    "m3-approved-range-assets nine files"
+  ],
+  "none_previously_selected": true,
+  "normalization": "Only Statue_Stone_Detail.tga has its .tga suffix removed for basename matching, as original texFixName does; texture hash-table lookup is case-insensitive. Original logged spelling remains above.",
+  "request_to_file_mapping_ambiguous": false,
+  "payloads_independently_downloaded_this_check": false,
+  "runtime_staging_enabled": false,
+  "approval_required": "Approve adding exactly these six existing archived files to the ArmPort Atlas client layer; no new source, whole-archive runtime expansion, or texture-error exception.",
+  "m3_complete": false,
+  "limitations": [
+    "These are startup material references, not proof that each material was drawn in the final viewport.",
+    "Presence in a reviewed donor manifest does not prove current runtime staging or texture upload.",
+    "The proposal does not qualify the screenshot or identify the UI/map-name failure cause."
+  ],
+  "reproduction_command": "python3 -c \"import json; exec(json.load(open('armport/evidence/m3-proposed-plaza-statue-materials.json'))['reproduction_script'])\" --assets assets --errors /path/to/40263048945/client-errors.json",
+  "reproduction_script": "import argparse, hashlib, json, sys\nfrom pathlib import Path, PurePosixPath\nsys.path.insert(0, 'armport/scripts')\nfrom reviewed_asset_coverage import load_manifest\np=argparse.ArgumentParser(); p.add_argument('--assets',type=Path,required=True); p.add_argument('--errors',type=Path,required=True); a=p.parse_args()\nplan=json.load(open('armport/evidence/m3-proposed-plaza-statue-materials.json'))\nraw=(a.assets/'client-visual-manifest.json').read_bytes()\nassert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\\0'+raw).hexdigest()==plan['sources']['client-visual']['git_blob']\ndoc,decoded=load_manifest(a.assets/'client-visual-manifest.json')\nassert decoded==plan['sources']['client-visual']['decoded'] and doc['archive']==plan['sources']['client-visual']['archive']\nerrors_raw=a.errors.read_bytes(); assert hashlib.sha256(errors_raw).hexdigest()==plan['client_errors_sha256']\nerrors=json.loads(errors_raw); assert errors['complete_messages'] and not errors['integrity_failures']\nfor path,pin in plan['files'].items():\n    request=pin['request']; key=request.removesuffix('.tga').casefold()\n    matches={n:v for n,v in doc['files'].items() if n.startswith('data/texture_library/') and PurePosixPath(n).suffix=='.texture' and PurePosixPath(n).stem.casefold()==key}\n    assert matches=={path:{k:pin[k] for k in ('bytes','sha256')}}\n    rows=[r for r in errors['outside_errors'] if ('\"'+request+'\"') in r['text'] or r['text'].endswith(' texture '+request)]\n    assert rows==pin['errors'] and sum(r['count'] for r in rows)==pin['error_occurrences']\nassert sum(v['bytes'] for v in plan['files'].values())==plan['payload_bytes']==2306838\nassert sum(v['error_occurrences'] for v in plan['files'].values())==plan['literal_error_occurrences']==27\nprint('6 unique existing visual-manifest files, 2306838 bytes, 27 literal errors; proposal only, no staging')\n",
+  "prior_approval": {
+    "url": "https://github.com/Russianranger/coh-android/pull/6#issuecomment-6389265419",
+    "scope": "exactly eight earlier files, 658461 bytes",
+    "restriction": "No other composite leaves, similar names or new fetches."
+  },
+  "reproduction_output": "6 unique existing visual-manifest files, 2306838 bytes, 27 literal errors; proposal only, no staging"
+}

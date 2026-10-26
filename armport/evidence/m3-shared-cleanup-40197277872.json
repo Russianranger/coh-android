@@ -1,0 +1,49 @@
+{
+  "ci_run": 40197277872,
+  "server_job": 121183042431,
+  "source_commit": "554afc86a912d19dcd9433f4803a2ab92cb0f79e",
+  "artifact": {
+    "id": 12603510004,
+    "sha256": "d941c1e50d0bbd3ad76ed2482a2c9727c505d46589193524fe43caf494e87052"
+  },
+  "guest": {
+    "passed": true,
+    "failures": [],
+    "connected_on_atlas": true,
+    "still_connected": true,
+    "client_stopped_before_cleanup": true,
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "cleanup_complete": true
+  },
+  "driver": {
+    "enter_attempts": 2,
+    "world_rendered": false,
+    "zone_load_seconds": 1542,
+    "client_exit": -15,
+    "final_cleanup_errors": [
+      "wineserver stop: exit 1"
+    ]
+  },
+  "screenshot": {
+    "path": "_temp/m3-evidence/screens/42-atlas-later.png",
+    "sha256": "d20c4ad304b42517ef9ef4e5a856f85fcdba79a06cb1c32cc03a92d116dc1f39",
+    "visual_observation": "Player, HUD and helper modal visible over blue sky; terrain absent."
+  },
+  "finding": "Guest-coordinated teardown succeeds and ownership audit completes. Host finalization repeats stop_client; its second wineserver -k returns 1. Retaining that error correctly fails this run, independently of rendered-world rejection.",
+  "change": "One process-scoped ClientCleanup shares the original stop_client result under a lock between coordination and finalization. Initial errors are retained, including wait timeouts; returned lists cannot mutate retained failures. No second kill after completed teardown. No marker or guest audit acceptance changes.",
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s armport/tests -p 'test_*.py' -v",
+      "output": "----------------------------------------------------------------------\nRan 145 tests in 5.213s\n\nOK",
+      "exit_code": 0
+    }
+  ],
+  "runtime_qualified": false,
+  "m3_complete": false,
+  "next": "Fresh Atlas run includes this fix, patch 0077 world traversal diagnostic and approved exact Steel Canyon texture; the finished run predates those."
+}
