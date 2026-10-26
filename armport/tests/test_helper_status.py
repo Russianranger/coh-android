@@ -29,7 +29,7 @@ class HelperStatus(unittest.TestCase):
     def test_clicks_unique_none(self):
         screen, sent, status = self.run_once()
         self.assertTrue(sent)
-        screen.click.assert_called_once_with(500, 400)
+        screen.click.assert_called_once_with(500, 400, hold=2.0, settle=2.0)
         screen.key.assert_not_called()
         self.assertEqual(status['helper_status_actions'][0]['after'], 'after.png')
 
@@ -49,7 +49,7 @@ class HelperStatus(unittest.TestCase):
             screen.click.assert_not_called()
 
     def test_attempts_are_bounded(self):
-        status = {'helper_status_actions': [{}, {}]}
+        status = {'helper_status_actions': [{}, {}, {}]}
         screen, sent, _ = self.run_once(status=status)
         self.assertFalse(sent)
         screen.click.assert_not_called()

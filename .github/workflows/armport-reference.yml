@@ -14,6 +14,7 @@ on:
       - 'armport/scripts/step.sh'
       - 'armport/scripts/stage_plaza_statue_materials.py'
       - 'armport/evidence/m3-proposed-plaza-statue-materials.json'
+      - 'armport/evidence/m3-approved-after-load-materials.json'
       - 'armport/scripts/prepare.py'
       - 'armport/scripts/check_receiver_state_preprocess.py'
       - 'armport/scripts/client_errors.py'
@@ -66,6 +67,7 @@ jobs:
             /armport/scripts/stage_composite_dependencies.py
             /armport/scripts/stage_plaza_statue_materials.py
             /armport/evidence/m3-proposed-plaza-statue-materials.json
+            /armport/evidence/m3-approved-after-load-materials.json
             /armport/evidence/m3-proposed-composite-dependencies.json
             /armport/evidence/m3-dispatch-errors-40113107670.json
             /upstream/i24/data/tricks/v_shaders/villains/male/
@@ -184,7 +186,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/plaza-data
-          key: armport-plaza-data-${{ hashFiles('armport/evidence/m3-proposed-plaza-statue-materials.json', 'armport/scripts/stage_plaza_statue_materials.py') }}
+          key: armport-plaza-data-${{ hashFiles('armport/evidence/m3-proposed-plaza-statue-materials.json', 'armport/evidence/m3-approved-after-load-materials.json', 'armport/scripts/stage_plaza_statue_materials.py') }}
       - name: Stage exactly six approved plaza/statue textures
         if: steps.plaza-data.outputs.cache-hit != 'true'
         run: python3 armport/scripts/stage_plaza_statue_materials.py --visual "$RUNNER_TEMP/reviewed-visual/client-visual-assets.zip" --output "$RUNNER_TEMP/plaza-data"

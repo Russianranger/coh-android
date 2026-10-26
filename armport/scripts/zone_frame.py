@@ -56,7 +56,10 @@ def world_region(window):
 # The original in-world HUD (uiNav/uiTarget/uiChat/uiTray) labels. The original
 # client never prints the zone display name in-world: uiCompass draws only
 # destination names and uiAutomap's footer prints the gMapName file path.
-HUD_LABELS = ('target', 'contact', 'mission', 'chat', 'tray')
+# Run 40356647478 OCR: "Navy, Menu, 1 No Target ... GontactmMission ... Actions
+# ... Salvage ... Global"; individual labels drop out between frames.
+HUD_LABELS = ('target', 'nav', 'menu', 'contact', 'mission', 'actions', 'chat', 'tray',
+              'salvage', 'global')
 # uiHelp.c displayHelperStatusPopup (DoYouWantToFlagForHelp), modal over the world.
 HELPER_DIALOG = re.compile(r'this\s+character\s+is\s+new', re.I)
 
@@ -89,4 +92,4 @@ def evaluate(png, window, stdio, ocr):
             'map_name_visible': bool(re.search(r'\batlas\s+park\b', words, re.I)),
             'ocr': words[:2000],
             'rendered': (state['load_complete'] and nonblank(stats) and world_visible
-                         and len(labels) >= 3 and not helper)}
+                         and len(labels) >= 4 and not helper)}

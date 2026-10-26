@@ -38,7 +38,7 @@ class ZoneFrameTests(unittest.TestCase):
                 self.assertFalse(zone_frame.evaluate(png, window, DONE, lambda _: 'Loading')['rendered'])
                 self.assertFalse(zone_frame.evaluate(png, None, DONE, lambda _: HUD)['rendered'])
                 # A readable zone name is diagnostic only, never the world verdict.
-                named = zone_frame.evaluate(png, window, DONE, lambda _: 'Atlas Park Target Chat')
+                named = zone_frame.evaluate(png, window, DONE, lambda _: 'Atlas Park Target Chat Tray')
                 self.assertFalse(named['rendered'])
                 self.assertEqual(named['map_name_visible'], source == 'pattern:checkerboard')
 
@@ -52,7 +52,7 @@ class ZoneFrameTests(unittest.TestCase):
             result = zone_frame.evaluate(png, window, DONE, lambda _: helper)
             self.assertTrue(result['helper_dialog_visible'] and result['world_region_visible'])
             self.assertFalse(result['rendered'])
-            self.assertFalse(zone_frame.evaluate(png, window, DONE, lambda _: 'Target Chat')['rendered'])
+            self.assertFalse(zone_frame.evaluate(png, window, DONE, lambda _: 'Target Chat Tray')['rendered'])
             # HUD over a flat (unrendered) centre: whole frame nonblank, world region not.
             x, y, w, h = zone_frame.world_region(window)
             subprocess.run(['convert', str(png), '-fill', 'gray30', '-draw',

@@ -173,11 +173,13 @@ def dismiss_helper_status(screen, png, pids, trace, status):
     uiHelp.c displayHelperStatusPopup offers Help Me!/None/Helper; None runs the
     original helperStatusPopupNone ("sethelperstatus 3"). Require the prompt's
     text and one OCR-located None button inside the owned client window, a clean
-    error/alert history and successful focus. At most two attempts; every
-    attempt keeps its before/after frames.
+    error/alert history and successful focus. In-world frames are ~3 fps
+    (world.draw frame 4200 near 1500 s), so the pointer settles and the button
+    is held for several frames; run 40356647478's 0.15 s press was not seen.
+    At most three attempts; every attempt keeps its before/after frames.
     """
     attempts = status.setdefault('helper_status_actions', [])
-    if len(attempts) >= 2 or not png:
+    if len(attempts) >= 3 or not png:
         return False
     target = owned_client_target(pids)
     if not target or not dialogs_clear(trace):
@@ -187,7 +189,7 @@ def dismiss_helper_status(screen, png, pids, trace, status):
     inside = [(word, px, py) for word, px, py in words if x <= px < x + w and y <= py < y + h]
     if not re.search(r'this\s+character\s+is\s+new', ' '.join(word for word, _, _ in inside), re.I):
         return False
-    buttons = [(px, py) for word, px, py in inside if word.strip('.,:!').casefold() == 'none']
+    buttons = [(px, py) for word, px, py in inside if word.strip('.,:;!()[]|').casefold() == 'none']
     action = {'window': window, 'geometry': [x, y, w, h], 'before': str(png),
               'candidates': buttons, 'click_sent': False}
     attempts.append(action)
@@ -199,9 +201,9 @@ def dismiss_helper_status(screen, png, pids, trace, status):
     if focused.returncode or owned_client_target(pids) != target or not dialogs_clear(trace):
         action['blocked'] = 'Focus, window or dialog state changed'
         return False
-    screen.click(*buttons[0])
+    screen.click(*buttons[0], hold=2.0, settle=2.0)
     action['click_sent'] = True
-    time.sleep(3)
+    time.sleep(5)
     after = screen.shot('helper-status-after')
     action['after'] = str(after) if after else None
     return True
@@ -315,12 +317,12 @@ class Screen:
                 return x, y
         return None
 
-    def click(self, x, y, hold=0.15):
+    def click(self, x, y, hold=0.15, settle=0.5):
         # The game reads the mouse once per frame (DirectInput); at software-
         # rendering frame rates an instant press and release can fall between
         # two frames, so the button is held down.
         sh('xdotool', 'mousemove', str(x), str(y))
-        time.sleep(0.5)
+        time.sleep(settle)
         sh('xdotool', 'mousedown', '1')
         time.sleep(hold)
         sh('xdotool', 'mouseup', '1')
