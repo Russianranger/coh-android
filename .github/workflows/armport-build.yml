@@ -1,5 +1,6 @@
 name: ArmPort build
 
+# Qualify bounded world.ui samples after replay40308641544 finished native builds.
 # COH-ArmPort: build the original client code as ARM64 Windows with llvm-mingw
 # and run test programs under the Android app's own ARM64 Wine 10 runtime.
 on:
