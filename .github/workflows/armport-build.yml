@@ -295,6 +295,8 @@ jobs:
 
       - name: Prepare patched source
         run: python3 armport/scripts/prepare.py --out "$RUNNER_TEMP/armport"
+      - name: Texture names stay inside copied and in-place buffers
+        run: python3 armport/tests/texture_name_bounds.py --source "$RUNNER_TEMP/armport/src"
       - name: Prove collision triangles preserve the native grid
         run: |
           set -o pipefail

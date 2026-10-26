@@ -21,7 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas (101 patches including partial replay observers; Astra leads,
+M3 into Atlas (102 patches including partial replay observers; Astra leads,
 see armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
@@ -35,6 +35,6 @@ see armport/HANDOFF.md):
 - Run 39973792458 failed: zone stayed loading, then Atlas disconnected.
 - Sol accepts implementation through 9d82645c; event/force-queue deltas need review.
 - Atlas 40263048945: 33 covered errors removed; screenshot/materials still fail.
-- Approved Steel Canyon texture staged/verified; Atlas 40197277872 rendering fails.
+- Texture-name bounds fix: 161 sanitizer cases/native units pass; runtime/review pending.
 - Replay 40263048934 passes partial scope; event 40273728728 passes; force-queue pending.
-- M4 40176336731 passes guest create/reopen and continuity; review/surface pending.
+- M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.

@@ -99,3 +99,4 @@
 0099-observe-power-update-wire-times.patch
 0100-replay-retained-turnstile-event-state.patch
 0101-replay-retained-force-queue-name.patch
+0102-texture-name-copy-bounds.patch

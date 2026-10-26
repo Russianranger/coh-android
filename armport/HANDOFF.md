@@ -1776,3 +1776,25 @@ Commands/output: evidence/m3-force-queue-state-controls.json. Runtime and review
 of this delta remain pending. Prior c72dbc58 replay40273728728 now passes both
 targets and partial comparison; full-schema/full-state/M3 flags remain false.
 No screenshot change, asset expansion, Android-surface or Thor qualification.
+
+### Texture-name bounds correction (2026-10-26 UTC)
+
+Patch0102 fixes two reproducible memory-safety defects in original texFixName:
+4..7-byte names without an extension read before the destination, and a bounded
+copy is followed by pointer advancement using the longer input length. The helper
+now uses the retained/copied length and checks eight bytes before the long suffix
+probe. Existing defined suffix/type semantics remain unchanged; no texture lookup,
+fallback, selection, screenshot rule or asset exception is changed.
+
+The actual helper and original strncpyt body pass161 ASan/UBSan cases. The prior
+function reproduces four short-name under-reads and one truncated-name invalid
+store;66 defined cases have identical output/type. Windows strncpy_s is represented
+by a host adapter; only local LeakSanitizer is disabled for /proc. All191 Python
+tests pass. Actual tex.c compiles ARM64 then i686 with one compiler. Patchwork
+exports102 patches; all101 prior patch hashes are identical. Commands and output:
+evidence/m3-texture-name-bounds.json. Both native CI workflows run the new control.
+
+This is not proof of the Atlas rendering cause or milestone completion. Preserve
+running force-queue replay40278258501 at929d7ea0; this work-branch follow-up requires
+fresh runtime qualification and Sol review before integration. Existing review
+5647159725 covers9d82645c only. M3/full state/rendering and M4 surface/Thor remain open.
