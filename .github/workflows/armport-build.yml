@@ -73,6 +73,7 @@ jobs:
             /upstream/i24/data/tricks/v_shaders/villains/male/
             /armport/scripts/stage_approved_ranges.py
             /armport/evidence/m3-approved-range-assets.json
+            /armport/evidence/m3-approved-cape-ranges.json
             /armport/evidence/m3-reviewed-file-selection.json
             /armport/evidence/m3-dispatch-errors-40105902494.json
             /assets/client-visual-manifest.json
@@ -233,6 +234,28 @@ jobs:
         with:
           name: armport-approved-range-data
           path: ${{ runner.temp }}/approved-range-data
+          retention-days: 90
+          if-no-files-found: error
+
+      - id: cape-ranges
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/cape-range-data
+          key: armport-cape-ranges-${{ hashFiles('armport/evidence/m3-approved-cape-ranges.json', 'armport/scripts/stage_approved_ranges.py') }}
+      - name: Fetch only the exact approved cape geometry ranges
+        if: steps.cape-ranges.outputs.cache-hit != 'true'
+        run: python3 armport/scripts/stage_approved_ranges.py --manifest armport/evidence/m3-approved-cape-ranges.json --output "$RUNNER_TEMP/cape-range-data"
+      - name: Verify cape ranges even after cache restore
+        run: python3 armport/scripts/stage_approved_ranges.py --manifest armport/evidence/m3-approved-cape-ranges.json --verify-only --output "$RUNNER_TEMP/cape-range-data"
+      - uses: actions/cache/save@v4
+        if: steps.cape-ranges.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/cape-range-data
+          key: ${{ steps.cape-ranges.outputs.cache-primary-key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-cape-range-data
+          path: ${{ runner.temp }}/cape-range-data
           retention-days: 90
           if-no-files-found: error
 
@@ -961,6 +984,12 @@ jobs:
           path: ${{ runner.temp }}/approved-range-data
       - name: Verify the exact approved range layer
         run: python3 armport/scripts/stage_approved_ranges.py --verify-only --output "$RUNNER_TEMP/approved-range-data"
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-cape-range-data
+          path: ${{ runner.temp }}/cape-range-data
+      - name: Verify the exact approved cape geometry layer
+        run: python3 armport/scripts/stage_approved_ranges.py --manifest armport/evidence/m3-approved-cape-ranges.json --verify-only --output "$RUNNER_TEMP/cape-range-data"
       - name: Restore approved composite dependencies
         uses: actions/download-artifact@v4
         with:
@@ -1006,7 +1035,7 @@ jobs:
           # from the staged copy (no second unpack).
           assets=out/reviewed-assets; for sub in data assets; do [ -d "$assets/$sub" ] && assets="$assets/$sub" && break; done
           armport/scripts/step.sh "ArmPort M3 client stage" python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
-            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/atlas-material-data" --strict-data "$RUNNER_TEMP/atlas-material-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" --data "$RUNNER_TEMP/plaza-data" --strict-data "$RUNNER_TEMP/plaza-data" \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" --data "$RUNNER_TEMP/atlas-client-data" --strict-data "$RUNNER_TEMP/atlas-client-data" --data "$RUNNER_TEMP/atlas-material-data" --strict-data "$RUNNER_TEMP/atlas-material-data" --data "$RUNNER_TEMP/reviewed-dispatch-data" --strict-data "$RUNNER_TEMP/reviewed-dispatch-data" --data "$RUNNER_TEMP/approved-range-data" --strict-data "$RUNNER_TEMP/approved-range-data" --data "$RUNNER_TEMP/composite-data" --strict-data "$RUNNER_TEMP/composite-data" --data "$RUNNER_TEMP/plaza-data" --strict-data "$RUNNER_TEMP/plaza-data" --data "$RUNNER_TEMP/cape-range-data" --strict-data "$RUNNER_TEMP/cape-range-data" \
             --runtime "$RUNNER_TEMP/armport-client" --cg-dir "$RUNNER_TEMP/cg-arb"
           ls "$RUNNER_TEMP/armport-client" | head; df -h / | tail -1
       - name: Server stack and ARM64 client login to Atlas Park
