@@ -173,9 +173,11 @@ def dismiss_helper_status(screen, png, pids, trace, status):
     uiHelp.c displayHelperStatusPopup offers Help Me!/None/Helper; None runs the
     original helperStatusPopupNone ("sethelperstatus 3"). Require the prompt's
     text and one OCR-located None button inside the owned client window, a clean
-    error/alert history and successful focus. In-world frames are ~3 fps
-    (world.draw frame 4200 near 1500 s), so the pointer settles and the button
-    is held for several frames; run 40356647478's 0.15 s press was not seen.
+    error/alert history and successful focus. The pointer settles for several
+    in-world frames (~3 fps). The press stays below input.c CLICK_TIME (250 ms
+    between buffered DirectInput down/up timestamps); a 2 s hold is not a click.
+    The guest normally answers the prompt with the same original command before
+    login (armport_game_guest.helper_status), so this is a fallback.
     At most three attempts; every attempt keeps its before/after frames.
     """
     attempts = status.setdefault('helper_status_actions', [])
@@ -201,7 +203,7 @@ def dismiss_helper_status(screen, png, pids, trace, status):
     if focused.returncode or owned_client_target(pids) != target or not dialogs_clear(trace):
         action['blocked'] = 'Focus, window or dialog state changed'
         return False
-    screen.click(*buttons[0], hold=2.0, settle=2.0)
+    screen.click(*buttons[0], hold=0.15, settle=2.0)
     action['click_sent'] = True
     time.sleep(5)
     after = screen.shot('helper-status-after')

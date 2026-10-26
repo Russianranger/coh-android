@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Stage only exact files found for the user's 15 approved M3 requests.
+"""Stage only exact files found for the user's approved M3 range requests.
+
+Profiles: the 15 dispatch requests (m3-approved-range-assets.json) and the
+three base cape geometries logged after map load in Atlas 40373337135
+(m3-approved-cape-ranges.json; user authority relayed in PR #6 6419236533).
 
 The committed manifest freezes bounded original PIGG ranges, decoded SHA-256,
 stored SHA-256, table MD5 and cached-header SHA-256. Absent exact names stay
@@ -23,6 +27,15 @@ TEXTURES = {'chest_stripe_1', 'face_skin_head_09', 'hips_miniskirt_1', 'hips_ski
             'tickertape_steel_canyon_south'}
 
 
+CAPE_GEOMETRY = {'player_library/' + name + '.geo' for name in ('male_cape', 'fem_cape', 'huge_cape')}
+CAPE_MANIFEST = ROOT / 'armport/evidence/m3-approved-cape-ranges.json'
+PROFILES = {
+    MANIFEST.name: dict(scope='user_approved_m3_dispatch_missing_files', geometry=GEOMETRY, textures=TEXTURES),
+    CAPE_MANIFEST.name: dict(scope='user_approved_m3_after_load_cape_geometry', geometry=CAPE_GEOMETRY,
+                             textures=frozenset()),
+}
+
+
 def require(value, message):
     if not value:
         raise ValueError(message)
@@ -32,9 +45,14 @@ def read_manifest(path=MANIFEST):
     require(path.is_file() and not path.is_symlink() and path.stat().st_size < 256 * 1024,
             'Missing/oversized approved range manifest')
     doc = json.loads(path.read_text())
-    require(doc['format'] == 1 and doc['scope'] == 'user_approved_m3_dispatch_missing_files'
-            and set(doc['requests']) == GEOMETRY | TEXTURES and len(doc['requests']) == 15
-            and set(doc['files']) == set(doc['provenance']) and 0 < len(doc['files']) <= 15,
+    profiles = [p for p in PROFILES.values() if p['scope'] == doc.get('scope')]
+    require(len(profiles) == 1, 'Approved request scope differs')
+    profile = profiles[0]
+    GEOMETRY, TEXTURES = profile['geometry'], profile['textures']
+    count = len(GEOMETRY | TEXTURES)
+    require(doc['format'] == 1 and doc['scope'] == profile['scope']
+            and set(doc['requests']) == GEOMETRY | TEXTURES and len(doc['requests']) == count
+            and set(doc['files']) == set(doc['provenance']) and 0 < len(doc['files']) <= count,
             'Approved request scope differs')
     covered = set()
     for name, record in doc['provenance'].items():
@@ -145,13 +163,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--verify-only', action='store_true')
+    parser.add_argument('--manifest', type=Path, default=MANIFEST)
     args = parser.parse_args()
-    doc = read_manifest()
+    doc = read_manifest(args.manifest)
     receipts = []
     if not args.verify_only:
         stage(args.output, doc, downloader=lambda record: download(record, receipts))
     verify(args.output, doc)
-    print('::notice title=ArmPort approved ranges::' + json.dumps(dict(files=doc['file_count'], bytes=doc['payload_bytes'],
+    print('::notice title=ArmPort approved ranges::' + json.dumps(dict(manifest=args.manifest.name, files=doc['file_count'], bytes=doc['payload_bytes'],
         unresolved=doc['unresolved'], source_archives_fully_downloaded=False, runtime_validated=False,
         verified_cached_layer=args.verify_only, transfers=receipts)))
 

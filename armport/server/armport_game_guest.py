@@ -85,9 +85,35 @@ class ArmPortGame(gd.GameDiagnostic):
         # live_currency sets influence 12345, which logout's saved snapshot
         # is validated against; keep the original order.
         self.live_currency(session)
+        self.helper_status(session)
         self.logout(session, 'first', 1)
+        self.saved_helper_status()
         self.armport_client()
         self.game.update(status='passed', query_processes=self.query_count, readiness_queries=self.readiness_count)
+
+    def helper_status(self, session):
+        """Answer the new-character helper prompt before the ARM64 login.
+
+        A new character has HelperStatus 0, so the client's helpWindow opens
+        displayHelperStatusPopup (uiHelp.c) over the world. Its None button
+        runs the original "sethelperstatus 3"; the TestClient sends the same
+        original command here (access level 0, cmdserver.c
+        SCMD_SET_HELPER_STATUS -> entSetHelperStatus). The saved value is
+        read back after the original logout save.
+        """
+        self.ctx.stage('armport_helper_status')
+        session.send('CMD sethelperstatus 3')
+        time.sleep(5)
+        self.ctx.passed(command='sethelperstatus 3', sql_mutation_used=False)
+
+    def saved_helper_status(self):
+        self.ctx.stage('armport_helper_status_saved')
+        character = self.game['character']
+        value = self.sql('SELECT helperstatus FROM dbo.ents2 WHERE containerid='
+                         + str(int(character['container_id'])) + ';', game=True)
+        self.game['helper_status_saved'] = value
+        require(value == '3', 'Saved HelperStatus is not 3: ' + repr(value)[:80])
+        self.ctx.passed(helper_status=3)
 
     def observe_atlas(self):
         """The original 30 s observation; repeated once in full if Atlas
