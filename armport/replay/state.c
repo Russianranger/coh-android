@@ -1124,7 +1124,9 @@ static void friends_receive_state(const Entity *e)
     out("[");
     for (i = 0; i < e->friendCount; ++i) {
         const Friend *f = &e->friends[i];
-        out("%s{\"db_id\":%d,\"online\":%d,\"map_id\":%d,\"name\":", i ? "," : "", f->dbid, f->online, f->map_id);
+        out("%s{\"db_id\":%d,\"online\":%d,\"map_id\":%d,", i ? "," : "", f->dbid, f->online, f->map_id);
+        /* send is signed in the original receiver; preserve its full word. */
+        out("\"send_id\":%u,\"name\":", (unsigned)f->send);
         string(f->name); out(",\"map_name\":"); string(f->mapname);
         out(",\"class\":"); string(f->arch); out(",\"origin\":"); string(f->origin);
         out("}");
@@ -1565,7 +1567,8 @@ unsigned armportReplayStateSave(const char *directory, unsigned index, char dige
     out(",\"task_sets\":"); task_sets();
     out(",\"contacts\":"); contact_receive_state();
     out(",\"taskforce_time_receives\":"); taskforce_time_receives();
-    out(",\"reward_time_receives\":"); reward_time_receives(); out("}\n");
+    out(",\"reward_time_receives\":"); reward_time_receives();
+    out(",\"friend_receive_id\":%u}\n", armportReplayFriendPacketId());
     check(snprintf(path, sizeof(path), "%s/state-%03u.json", directory, index) < sizeof(path));
     file = CreateFileA(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     check(file != INVALID_HANDLE_VALUE);

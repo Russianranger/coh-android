@@ -94,7 +94,7 @@ int main(int argc,char **argv) {
         for i,r in enumerate(results):
             assert r.returncode==(3 if i in (4,5,6,7,8,9,10,14) else 0),(i,r.returncode,r.stderr)
         values={i:json.loads(r.stdout) for i,r in enumerate(results) if r.returncode==0};d=values[0]
-        assert len(d['friends'])==25 and d['friends'][0]==dict(db_id=17,online=1,map_id=31,name='Friend"\\\x80',map_name='Atlas',origin='Magic',**{'class':'Blaster'})
+        assert len(d['friends'])==25 and d['friends'][0]==dict(db_id=17,online=1,map_id=31,send_id=0,name='Friend"\\\x80',map_name='Atlas',origin='Magic',**{'class':'Blaster'})
         assert d['friends'][24]['name']=='Last' and d['friends'][1]['name'] is None
         assert d['keybinds']['profile']=='Default' and len(d['keybinds']['bindings'])==256
         assert d['keybinds']['bindings'][255]==dict(key=255,modifier=-2147483648,secondary=0xf00,command='last"\\\x80\n')
@@ -102,13 +102,15 @@ int main(int argc,char **argv) {
         assert d['chat']['windows'][-1]==dict(tabs=0x80000004,selected_top=4,selected_bottom=-1,divider_f32_bits=[0x80000000])
         assert len(d['chat']['tabs'])==20 and d['chat']['tabs'][-1]==dict(name='tab19',system_channels=[0,0,0,0xffffffff],user_channels=0x80000000,options=0xffffffff,default_channel=19,default_type=2)
         assert len(d['chat']['channels'])==15 and d['chat']['channels'][-1]==dict(name='channel14',options=0xffffffff,color1=0x80000000,color2=0xffffffff)
+        assert values[11]['friends'][0]['send_id']==31
+        values[11]['friends'][0]['send_id']=0
         assert values[11]==d
         changed=values[12];assert changed['friends'][-1]['map_name']=='changed' and changed['keybinds']['bindings'][-1]['key']==17
         assert changed['chat']['windows'][-1]['selected_bottom']==19 and changed['chat']['tabs'][-1]['system_channels'][-1]==17 and changed['chat']['channels'][-1]['color2']==17
         assert values[13]['keybinds']['bindings'][-1]['command'] is None
         assert values[15]['keybinds']['profile']=='P'*31 and values[15]['chat']['tabs'][-1]['name']=='T'*18 and values[15]['chat']['channels'][-1]['name']=='C'*21
         assert values[16]['friends'][0]==d['friends'][-1] and values[16]['friends'][-1]==d['friends'][0]
-    print('friends/keybind/chat actual writers: 17 cases pass; original keybind receiver 257 strings/512 words, masked keys/secondary values, Dev profile, all fixed slots/final words, null/order/raw escapes, unsigned masks/colors and F32 bits, source immutability, cache/packet-order exclusions and count/storage/string/output rejection; ASan/UBSan enabled')
+    print('friends/keybind/chat actual writers: 17 cases pass; original keybind receiver 257 strings/512 words, masked keys/secondary values, Dev profile, all fixed slots/final words, null/order/raw escapes, unsigned masks/colors and F32 bits, source immutability, cache exclusions and literal per-friend packet-order word and count/storage/string/output rejection; ASan/UBSan enabled')
 
 
 if __name__=='__main__':

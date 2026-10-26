@@ -1910,3 +1910,24 @@ PRoot --link2symlink must not turn temporary extraction links into dangling
 paths. The no-link control and real retained-archive rehash pass after temporary
 files are removed. Base/schema validators remain unchanged; runtime rendering
 is still pending. `evidence/m3-server-atlas-staging-controls.json`.
+
+### Friend receive ordering and exact missing server geometry (2026-10-26 UTC)
+
+Patch 0097 exposes receiveFriendsList's existing last packet ID through a const
+getter; the static keeps its original zero initialization/lifetime at file scope.
+The receiver body is byte-compared against immutable upstream after reversing
+only that scope/name change. Per-friend `send` and the global ID retain full U32
+words. No new normalization or signed-comparison change. Source-derived controls
+cover full/stale/equal/lower/high-bit IDs, absent entries/null entity, cumulative
+out-of-order behavior, exact consumption, nonmutation and output/storage bounds.
+All 16 new and 17 updated communication cases pass with ASan/UBSan; 180 Python
+tests pass. Native uiNet.c/state.c compile sequentially ARM64/i686, and llvm-nm
+confirms the accessor definition in both objects. Runtime remains pending.
+`evidence/m3-friend-order-controls.json`. These newly exposed IDs may retain
+INITIAL sensitivity beyond snapshot 0; do not silently normalize them.
+
+The retained 40227784437 server capture explicitly lists 483 distinct missing
+`.geo` paths. All 483 match files in the already approved Atlas supplement;
+none needs a new source. The exact path lists are retained in
+`evidence/m3-server-atlas-staging-controls.json`. This strengthens the staging
+diagnosis; it does not declare rendering or M3 complete.
