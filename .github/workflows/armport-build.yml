@@ -364,6 +364,12 @@ jobs:
           python3 armport/tests/smf_selection_boundary.py --source "$RUNNER_TEMP/armport/src"
           python3 armport/tests/smf_plain_selection.py --source "$RUNNER_TEMP/armport/src"
 
+      - name: SMF anchor indices keep 64-bit anchors for the pass (patch 0110)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort SMF anchor indices" python3 armport/tests/smf_anchor_tokens.py --source "$RUNNER_TEMP/armport/src")
+          echo "$out"
+          echo "::notice title=ArmPort SMF anchor indices::$out"
+
       - name: Power preview respects the deferred menu transition
         run: |
           set -o pipefail

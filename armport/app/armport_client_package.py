@@ -160,12 +160,24 @@ def validate_links(source_data, links, tree, receipt):
     directories = set()
     for path in links:
         try:
-            mode = os.stat(path).st_mode
+            info = os.stat(path)
         except OSError:
-            mode = 0
+            info = None
+        mode = info.st_mode if info else 0
         require(not stat.S_ISDIR(mode), 'Linked data directory refused')
         require(stat.S_ISREG(mode), 'Nonregular app data')
-        directories.add(os.path.dirname(os.path.join(os.path.dirname(path), os.readlink(path))))
+        # One hop only (the app worktree links straight to verified imports):
+        # the recorded directory must hold the final file, or a later change
+        # at the end of a chain would not change any recorded identity.
+        target = os.path.join(os.path.dirname(path), os.readlink(path))
+        try:
+            final = os.lstat(target)
+        except OSError:
+            final = None
+        require(final is not None and stat.S_ISREG(final.st_mode)
+                and (final.st_dev, final.st_ino) == (info.st_dev, info.st_ino),
+                'Chained data link refused')
+        directories.add(os.path.dirname(target))
     names = sorted(directories)
     targets = [[name, *identity(name)] for name in names]
     if receipt is not None:

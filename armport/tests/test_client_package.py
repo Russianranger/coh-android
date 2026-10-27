@@ -178,6 +178,21 @@ class ClientPackage(unittest.TestCase):
             run('five')
         self.assertFalse((runs / 'five').exists())
 
+    def test_chained_link_refused_so_cache_tracks_the_final_file(self):
+        # Sol review 5666568411 finding 1: source/a -> intermediate/alias -> real/a.
+        self.build()
+        real, middle = self.root / 'real', self.root / 'intermediate'
+        real.mkdir(); middle.mkdir()
+        (real / 'a.texture').write_bytes(b'a')
+        (middle / 'alias.texture').symlink_to(real / 'a.texture')
+        source = self.root / 'server-data'
+        (source / 'models').mkdir(parents=True)
+        (source / 'models/a.texture').symlink_to(middle / 'alias.texture')
+        with self.assertRaisesRegex(ValueError, 'Chained data link'):
+            package.prepare(self.archive, source, self.root / 'arm64')
+        self.assertFalse((self.root / 'arm64').exists())
+        self.assertFalse((self.root / package.VALIDATION_RECEIPT).exists())
+
     def test_linked_directory_refused(self):
         self.build()
         elsewhere = self.root / 'elsewhere'
