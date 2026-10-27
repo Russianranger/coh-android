@@ -1,0 +1,251 @@
+name: ArmPort app runtime
+
+on:
+  workflow_dispatch:
+    inputs:
+      client_run_id:
+        description: ArmPort build run containing the Release client
+        required: true
+        default: '40407492746'
+      data_run_id:
+        description: Completed ArmPort build run containing bins and Cg artifacts
+        required: true
+        default: '40407492746'
+  push:
+    branches: ['armport/m4-runtime']
+    paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
+            'android/native/client-launcher.c', 'android/guest/character_creation_diagnostic.py',
+            '.github/workflows/armport-app-runtime.yml']
+
+permissions:
+  contents: read
+
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: '2'
+  CLIENT_RUN_ID: ${{ inputs.client_run_id || '40407492746' }}
+  DATA_RUN_ID: ${{ inputs.data_run_id || '40407492746' }}
+
+jobs:
+  app-sources:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {lfs: false}
+      - name: Compile app Java against the Android SDK (no APK or signing)
+        run: |
+          test -f "$ANDROID_HOME/platforms/android-35/android.jar"
+          mkdir -p "$RUNNER_TEMP/armport-classes"
+          find android/interactive/src/main/java android/recovery/src/main/java \
+            android/zoning/src/main/java android/app/src/main/java \
+            android/atlas/src/main/java -name '*.java' > "$RUNNER_TEMP/app-sources.txt"
+          javac --release 8 -cp "$ANDROID_HOME/platforms/android-35/android.jar" \
+            -d "$RUNNER_TEMP/armport-classes" @"$RUNNER_TEMP/app-sources.txt"
+  assets:
+    # Same reviewed private asset download as armport-build; never publishes.
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /tools/fetch_runtime_asset_bundle.py
+            /assets/reference-inputs-receipt.json
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+      - if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json \
+            --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
+
+  guest-boot:
+    needs: assets
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with: {lfs: false}
+      - name: Install PRoot build and extraction tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
+      - name: Check host and guest probe syntax
+        run: |
+          python3 -m py_compile armport/app/*.py
+          python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v
+      - id: talloc-source
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/talloc-source
+          key: armport-talloc-dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd
+      - uses: actions/download-artifact@v4
+        if: steps.talloc-source.outputs.cache-hit != 'true'
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: ${{ runner.temp }}/accepted-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        if: steps.talloc-source.outputs.cache-hit != 'true'
+        with:
+          name: coh-proot-android-source-and-build
+          path: ${{ runner.temp }}/accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover the exact pinned talloc source from retained runtime artifacts
+        if: steps.talloc-source.outputs.cache-hit != 'true'
+        run: |
+          python3 tools/android/extract_talloc_source.py --assets "$RUNNER_TEMP/accepted-runtime" \
+            --bundle "$RUNNER_TEMP/accepted-proot/proot-corresponding-sources.tar.gz" \
+            --output "$RUNNER_TEMP/talloc-source/talloc-2.4.3.tar.gz"
+      - name: Build the app's pinned PRoot sources for Linux ARM64
+        run: |
+          python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --jobs 2 \
+            --talloc-archive "$RUNNER_TEMP/talloc-source/talloc-2.4.3.tar.gz"
+      - name: Retain this exact PRoot build for the dependent interactive test
+        run: tar -C out/android/native/linux-arm64 -cf "$RUNNER_TEMP/proot-runtime.tar" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-app-proot-linux
+          path: ${{ runner.temp }}/proot-runtime.tar
+          retention-days: 14
+      - name: Restore reviewed data
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Stage reviewed data
+        run: |
+          python3 tools/runtime_asset_bundle.py stage --archive "$RUNNER_TEMP/reference-assets.zip" \
+            --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-Release
+          path: ${{ runner.temp }}/client-bin
+          run-id: ${{ env.CLIENT_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-bins
+          path: ${{ runner.temp }}/client-bins
+          run-id: ${{ env.DATA_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-cg-arb
+          path: ${{ runner.temp }}/cg-arb
+          run-id: ${{ env.DATA_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Stage ARM64 client
+        run: |
+          assets=out/reviewed-assets
+          for sub in data assets; do
+            if [ -d "$assets/$sub" ]; then assets="$assets/$sub"; break; fi
+          done
+          python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" --stage-only \
+            --data upstream/i24/data --data "$assets" --data "$RUNNER_TEMP/client-bins" \
+            --runtime "$RUNNER_TEMP/m4-client" --cg-dir "$RUNNER_TEMP/cg-arb"
+      - name: Build the app's existing native client launcher for ARM64
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            https://github.com/mstorsjo/llvm-mingw/releases/download/20250910/llvm-mingw-20250910-ucrt-ubuntu-22.04-aarch64.tar.xz
+          echo "175f344e3db2e11b3d53f4f828ae7b5f0073a4d239b9600fa023ef4b90eb5a7e  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          mkdir "$RUNNER_TEMP/llvm"
+          tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C "$RUNNER_TEMP/llvm"
+          "$RUNNER_TEMP/llvm/bin/aarch64-w64-mingw32-clang" -O2 -Wall -Wextra -DCOH_ARMPORT_LAUNCHER \
+            android/native/client-launcher.c -luser32 -o "$RUNNER_TEMP/m4-client/armport-launcher.exe"
+      - name: Package and stage the separate ARM64 client overlay
+        run: |
+          python3 armport/app/armport_client_package.py --client "$RUNNER_TEMP/client-bin" \
+            --bins "$RUNNER_TEMP/client-bins/bin" --shaders "$RUNNER_TEMP/cg-arb" \
+            --launcher "$RUNNER_TEMP/m4-client/armport-launcher.exe" \
+            --client-run "$CLIENT_RUN_ID" --data-run "$DATA_RUN_ID" \
+            --output "$RUNNER_TEMP/armport-client.zip" \
+            --source-data "$RUNNER_TEMP/m4-client/data" --stage "$RUNNER_TEMP/m4-packaged-client"
+      - name: ARM64 client through app PRoot, Xtigervnc and private RFB
+        run: |
+          python3 armport/app/runtime_host.py --client "$RUNNER_TEMP/m4-packaged-client" \
+            --proot out/android/native/linux-arm64 --work "$RUNNER_TEMP/m4-work" \
+            --evidence "$RUNNER_TEMP/m4-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-app-runtime-evidence
+          path: ${{ runner.temp }}/m4-evidence/
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-app-client-package
+          path: ${{ runner.temp }}/armport-client.zip
+
+  interactive-guest:
+    needs: [guest-boot, app-sources]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with: {lfs: false}
+      - name: Install host dependencies (no APK build or signing)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless \
+            tesseract-ocr python3-pil iproute2 util-linux
+      - name: Check ARM64 guest evidence and helper closure
+        run: python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-app-proot-linux
+          path: ${{ runner.temp }}/boot-proot
+      - name: Use the exact PRoot binary and loader that passed guest boot
+        run: |
+          mkdir -p out/android/native/linux-arm64
+          tar -C out/android/native/linux-arm64 -xf "$RUNNER_TEMP/boot-proot/proot-runtime.tar"
+          test -x out/android/native/linux-arm64/proot
+          test -x out/android/native/linux-arm64/proot-loader
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-app-client-package
+          path: ${{ runner.temp }}/armport-package
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: ${{ runner.temp }}/retained-app
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/reference-assets.zip
+          key: armport-reference-assets-28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07
+          fail-on-cache-miss: true
+      - name: Create, save, restart and reopen through the selected ARM64 app guest
+        run: |
+          python3 armport/app/interactive_host.py \
+            --apk "$RUNNER_TEMP/retained-app/COH-Character-Reopen-0.10.0.apk" \
+            --build-report "$RUNNER_TEMP/retained-app/interactive-apk-build-report.json" \
+            --armport "$RUNNER_TEMP/armport-package/armport-client.zip" \
+            --archive "$RUNNER_TEMP/reference-assets.zip" --proot out/android/native/linux-arm64 \
+            --work "$RUNNER_TEMP/interactive-work" --evidence "$RUNNER_TEMP/interactive-evidence" \
+            --repository-commit "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-app-interactive-evidence
+          path: ${{ runner.temp }}/interactive-evidence/
+          if-no-files-found: warn
+          retention-days: 14

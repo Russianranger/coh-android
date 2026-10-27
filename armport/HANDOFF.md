@@ -1,5 +1,22 @@
 # COH-ArmPort handoff to Claude
 
+**Update 2026-10-26 (Claude lead): M3 is merged.** PR #6 merged into
+`COH-ArmPort` as 3ac8eedc9 after Sol accepted it (5659701771) and the user
+approved it. Its scope is reduced: the completeness flags stay false and the
+textures are incomplete (see the M3-REPORT summary). The current work is M4 on
+`armport/m4-runtime` (PR #7), which has COH-ArmPort merged in.
+
+M4 checkpoint from 2026-10-25: run 40176336731 at 63f091de passes guest boot,
+creation/save/restart/reopen and final host continuity (see M4-REPORT.md and
+evidence/m4-continuity-40176336731.json). Sol re-review 5642680640 resolved
+the explicit-Finish finding. M4 milestone review is still pending; the Android
+surface and Thor execution are unvalidated. M4 work notes are in
+armport/notes/M4-RUNTIME.md. Building or signing an APK needs the user's
+approval first.
+
+The sections below describe the M3 handoff, which is now complete.
+
+
 Updated 2026-10-26. **The user has handed development leadership back to Claude.**
 Astra is stopping active development. Sol remains the independent reviewer unless
 the user changes that assignment. All scheduled ChatGPT tasks were disabled at

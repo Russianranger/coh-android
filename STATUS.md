@@ -31,10 +31,10 @@ see armport/HANDOFF.md):
   TestClient-created character and is connected on Atlas Park in the
   database (loaded, map 1), still connected after the screenshots.
 - Fixes: SOCKET width (0044), version-check opt-in (0045), empty world groups (0047).
-- Sol accepts implementation through e6d39d7a; no milestone or merge approval.
 - Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
 - Final head d7c072246: Atlas 40407492746 and replay 40407492734 pass. World
   rendered (plaza/statue/dome), 0 after-load errors, still connected; ARM64 =
   i686 partial state, equal error inventories. Reduced scope: completeness
   flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
-- M4 40176336731 passes reviewed guest continuity; Android surface/Thor pending.
+- M4 (PR #7, armport/m4-runtime): 40176336731 passes guest continuity; rerun on the
+  merged M3 client pending. See armport/M4-REPORT.md. Android surface/Thor pending.

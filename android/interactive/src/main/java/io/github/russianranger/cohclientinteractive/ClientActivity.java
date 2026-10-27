@@ -32,7 +32,7 @@ public final class ClientActivity extends Activity {
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30;
     private CheckBox performanceGraphics;
-    private Spinner gpuProfile;
+    private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
     private final ClientInput.KeyOwners heldKeys=new ClientInput.KeyOwners();
@@ -95,6 +95,19 @@ public final class ClientActivity extends Activity {
         performanceGraphics.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPerformanceGraphicsEnabled(this,checked));
         controls.addView(performanceGraphics);
         controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
+        controls.addView(text("Client for next launch",12,true));
+        clientArchitecture=new Spinner(this);
+        clientArchitecture.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"x86 client", "ARM64 client (Atlas)"}));
+        clientArchitecture.setSelection("arm64".equals(ClientRuntime.clientArchitecture(this))?1:0);
+        clientArchitecture.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> parent,View view,int position,long id){
+                if(clientArchitecture.isEnabled())ClientRuntime.setClientArchitecture(ClientActivity.this,position==1?"arm64":"x86");
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent){}
+        });
+        controls.addView(clientArchitecture);
+        controls.addView(text("ARM64 uses Software rendering and standard graphics. Return the saved character to Atlas with x86 before switching; ARM64 zone travel is not yet available.",12,false));
         controls.addView(text("Renderer for next launch",12,true));
         gpuProfile=new Spinner(this);
         ArrayAdapter<String> gpuChoices=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
@@ -309,7 +322,7 @@ public final class ClientActivity extends Activity {
         state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
-        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);gpuProfile.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
+        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}

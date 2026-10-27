@@ -1,0 +1,111 @@
+{
+  "run_id": 40176336731,
+  "job_id": 121118808157,
+  "tested_commit": "63f091defc0a9c5fda78bb1420bfce73df59c4f8",
+  "artifact_id": 12593347536,
+  "artifact_sha256": "24a4230600127b4d5f5bde58bfc270b875e9b625b4598dd01422fee6d16e7cb7",
+  "host_report": {
+    "scope": "arm64_app_guest_creation_and_reopen",
+    "passed": true,
+    "m4_complete": false,
+    "apk_built": false,
+    "android_surface_validated": false,
+    "repository_commit": "63f091defc0a9c5fda78bb1420bfce73df59c4f8",
+    "donor": {
+      "run_id": 36920583713,
+      "artifact_id": 11192425448,
+      "source_commit": "204615c6c4a809d6b814c7174b81448cffea3f7a",
+      "apk_sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688",
+      "asset_count": 46
+    },
+    "armport_client": {
+      "archive_sha256": "d2e44baf97f838c2e144c2a592054e20cd3bbc3acd3c6eeaa4058606175063cd",
+      "executable_sha256": "500cea5f1bae84d7c38cacda50c0b4c21410c9a24b82a5b5b322b3d6a1a50752",
+      "client_run_id": 40170942752,
+      "data_run_id": 40100355259,
+      "machine": "ARM64",
+      "default_architecture": "x86"
+    },
+    "same_persistent_profile": true,
+    "same_character_id": true,
+    "creation_session_id": "aaf6286434c5c301273b03a015611648",
+    "reopen_session_id": "9f8eb8d00d21820ca6fdc9b8489a0a78",
+    "elapsed_seconds": 2805.644,
+    "guest_failures": {
+      "creation": {
+        "failures": [],
+        "failed_stages": [],
+        "client_faults": []
+      },
+      "reopen": {
+        "failures": [],
+        "failed_stages": [],
+        "client_faults": []
+      }
+    }
+  },
+  "sessions": {
+    "creation": {
+      "raw_report_sha256": "1408116b042591023adbff4d7dfec4153b8dbf568ac86aa79332d3d943cfdeaa",
+      "host_passed": true,
+      "host_cleanup": {
+        "stop_requested": false,
+        "grace_seconds": 180,
+        "forced_quit": false,
+        "forced_kill": false,
+        "errors": [],
+        "process_reaped": true
+      },
+      "session_id": "aaf6286434c5c301273b03a015611648",
+      "observation_seconds": 384.259,
+      "startup_elapsed_seconds": 122.534,
+      "proof": {
+        "verified": true,
+        "connected_on_atlas": true,
+        "committed_sql_verified": true,
+        "requested_logout_observed": true,
+        "forced_stop_before_save": false,
+        "reopen_verified": false,
+        "gameplay_verified": false
+      },
+      "cleanup_complete": true
+    },
+    "reopen": {
+      "raw_report_sha256": "f9a667dc11f94251d0ff115d1760bd060c348af019cd920503d189e3fe58608f",
+      "host_passed": true,
+      "host_cleanup": {
+        "stop_requested": false,
+        "grace_seconds": 180,
+        "forced_quit": false,
+        "forced_kill": false,
+        "errors": [],
+        "process_reaped": true
+      },
+      "session_id": "9f8eb8d00d21820ca6fdc9b8489a0a78",
+      "observation_seconds": 414.288,
+      "startup_elapsed_seconds": 127.8,
+      "proof": {
+        "verified": true,
+        "connected_on_atlas": true,
+        "committed_sql_verified": true,
+        "requested_logout_observed": true,
+        "forced_stop_before_save": false,
+        "reopen_verified": true,
+        "gameplay_verified": false
+      },
+      "cleanup_complete": true,
+      "preservation": {
+        "preserved_existing_identity": true,
+        "powers_preserved": true,
+        "costume_preserved": true,
+        "committed_safe_position_verified": true
+      }
+    }
+  },
+  "limits": [
+    "M4 milestone approval pending reviewer assessment",
+    "Android surface and physical Thor execution not validated",
+    "No APK built or signed",
+    "M3 rendering/replay/full-state/audio completeness remain separate"
+  ]
+}

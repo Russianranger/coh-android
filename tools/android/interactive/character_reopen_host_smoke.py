@@ -156,14 +156,14 @@ class ReopenEvents(character.CharacterEvents):
 
 def validate_world_supplement(report, manifest):
     world = host.assets_tool.world_tools()
-    contract = world.bundle_contract()
+    contract = manifest.get('armport_world_contract') or world.bundle_contract()
     require(all(manifest.get('files', {}).get(name) == pin for name, pin in
             ((world.ARCHIVE, contract['archive_pin']), (world.MANIFEST, contract['manifest_pin']))),
             'World inputs differ from the reviewed exact APK package')
     # extract_apk_assets already verifies the complete world archive extracted
     # from this exact APK. Runtime checkouts only retain its committed metadata;
     # do not require a second copy of the ignored 200 MB source archive.
-    pinned = world.read_manifest(host.ROOT/'assets'/world.MANIFEST)
+    pinned = manifest.get('armport_world_manifest') or world.read_manifest(host.ROOT/'assets'/world.MANIFEST)
     receipt = report.get('atlas_world_supplement')
     expected = {'format': 1, 'scope': contract['scope'],
         'manifest_sha256': contract['manifest_pin']['sha256'], 'archive_sha256': contract['archive_pin']['sha256'],
@@ -186,7 +186,10 @@ def validate_world_supplement(report, manifest):
             and worktree.get('normalized_mtime_epoch') == expected['normalized_mtime_epoch'],
             'World supplement lost the accepted worktree input identity')
     key = hashlib.sha256((''.join(identities)+str(expected['normalized_mtime_epoch'])).encode()).hexdigest()[:24]
-    require(receipt['worktree'] == 'client-work-'+key, 'World supplement was installed into another private tree')
+    expected_key = manifest.get('armport_expected_worktree_key', 'client-work-'+key)
+    require(isinstance(expected_key, str) and re.fullmatch(r'client-work-[0-9a-f]{24}', expected_key),
+            'Invalid host-verified worktree identity')
+    require(receipt['worktree'] == expected_key, 'World supplement was installed into another private tree')
     proof = report.get('character_reopen', report.get('character_creation', {}))
     require(proof.get('private_map_data', {}).get('source_worktree') == receipt['worktree']
             and proof['private_map_data'].get('imported_inputs_readonly') is True,
@@ -203,7 +206,7 @@ def validate_world_supplement(report, manifest):
             'World private-cache refresh receipt is incomplete or unbounded')
 
 
-def validate_report(report, session, manifest):
+def validate_report(report, session, manifest, *, finish_request=None):
     require(report.get('scope') == 'actual_character_reopen_guest'
             and report.get('diagnostic_mode') == 'actual_character_reopen', 'Wrong reopen report scope')
     # Retain every creation-mode startup, current-client, ordinary logout,
@@ -211,7 +214,7 @@ def validate_report(report, session, manifest):
     common = copy.deepcopy(report)
     common.update(scope='actual_character_creation_guest', diagnostic_mode='actual_character_creation',
                   character_creation=report.get('character_reopen'))
-    character.validate_report(common, session, manifest)
+    character.validate_report(common, session, manifest, finish_request=finish_request)
     validate_world_supplement(report, manifest)
     local = report['local_login']
     proof = report['character_reopen']

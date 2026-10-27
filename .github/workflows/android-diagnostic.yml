@@ -1,8 +1,12 @@
 name: Thor real DbServer candidate
 on:
   push:
+    # ArmPort has its own compile/runtime checks. APK builds require explicit
+    # user approval under armport/HANDOFF.md, including after integration.
+    branches-ignore: ['armport/**', 'COH-ArmPort']
     paths: ['android/**', 'tools/android/**', '.github/workflows/android-diagnostic.yml']
   pull_request:
+    branches-ignore: ['COH-ArmPort']
     paths: ['android/**', 'tools/android/**', '.github/workflows/android-diagnostic.yml']
   workflow_dispatch:
 permissions:

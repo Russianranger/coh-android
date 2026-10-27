@@ -202,6 +202,7 @@ public final class ClientRuntime {
     private String manifestHash, session, operation, runId, error;
     private String graphicsProfileRequested="standard";
     private String gpuProfileRequested="software";
+    private String clientArchitectureRequested="x86";
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -249,6 +250,17 @@ public final class ClientRuntime {
         String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getString("gpu-profile", "software");
         return "turnip".equals(selected)?"turnip":"software";
+    }
+    public static String clientArchitecture(Context context) {
+        String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getString("client-architecture", "x86");
+        return "arm64".equals(selected)?"arm64":"x86";
+    }
+    public static synchronized void setClientArchitecture(Context context, String selected) {
+        if(!"x86".equals(selected)&&!"arm64".equals(selected))throw new IllegalArgumentException("Unknown client architecture");
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putString("client-architecture", selected).apply();
     }
     public static synchronized void setGpuProfileEnabled(Context context, String selected) {
         if(!"software".equals(selected)&&!"turnip".equals(selected))throw new IllegalArgumentException("Unknown renderer profile");
@@ -554,8 +566,9 @@ public final class ClientRuntime {
         reopen = reopening;
         if (selectedSession == null || !selectedSession.matches("[0-9a-f]{32}")) throw new IOException("Invalid client session identity");
         begin(reopen ? "character_reopen" : "character_creation", selectedSession);
-        graphicsProfileRequested=performanceGraphicsEnabled(context)?"performance":"standard";
-        gpuProfileRequested=gpuProfileEnabled(context);
+        clientArchitectureRequested=clientArchitecture(context);
+        graphicsProfileRequested="arm64".equals(clientArchitectureRequested)?"standard":performanceGraphicsEnabled(context)?"performance":"standard";
+        gpuProfileRequested="arm64".equals(clientArchitectureRequested)?"software":gpuProfileEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -564,6 +577,8 @@ public final class ClientRuntime {
             // runtime hashing, thin worktree staging, or any Wine/SQL process.
             requireCharacterProfile(reopen);
             loadManifest(); check(); validateInstalled();
+            if("arm64".equals(clientArchitectureRequested)&&!manifest.has("armport_client"))
+                throw new IOException("This runtime does not include the ARM64 client. Select x86 or install the ARM64 runtime update.");
             imported = importer().inspect();
             if (imported == null) throw new IOException("Import the pinned Atlas assets before starting the client");
             state.mkdirs();
@@ -601,6 +616,7 @@ public final class ClientRuntime {
                     "PYTHONUNBUFFERED=1", "PYTHONDONTWRITEBYTECODE=1",
                     "COH_CLIENT_GRAPHICS_PROFILE="+graphicsProfileRequested,
                     "COH_CLIENT_GPU_PROFILE="+gpuProfileRequested,
+                    "COH_CLIENT_ARCH="+clientArchitectureRequested,
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -798,7 +814,7 @@ public final class ClientRuntime {
         return true;
     }
     private boolean zoningEnabled() {
-        return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
+        return !"arm64".equals(clientArchitectureRequested) && reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
                 && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
     }
     public synchronized String zoningStatus() {
@@ -2035,7 +2051,13 @@ public final class ClientRuntime {
     }
 
     private boolean guestAccepted(JSONObject report) throws Exception {
-        if(manifest.has("client_gpu_profile")&&!gpuProfileReportMatches(report))return false;
+        if("arm64".equals(clientArchitectureRequested)) {
+            JSONObject expected=manifest.optJSONObject("armport_client"), observed=report.optJSONObject("armport_client");
+            if(expected==null||observed==null||!"ARM64".equals(observed.optString("machine"))
+                    ||!Boolean.FALSE.equals(observed.opt("x86_bins_reused"))
+                    ||!expected.getString("archive_sha256").equals(observed.optString("archive_sha256"))
+                    ||!expected.getString("executable_sha256").equals(observed.optString("executable_sha256")))return false;
+        } else if(manifest.has("client_gpu_profile")&&!gpuProfileReportMatches(report))return false;
         if (!(report.optBoolean("passed") && "passed".equals(report.optString("status"))
                 && session.equals(report.optString("session_id"))
                 && (reopen ? Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "actual_character_startup_timing_guest" : "actual_character_reopen_guest" : "actual_character_creation_guest").equals(report.optString("scope"))
@@ -2114,7 +2136,7 @@ public final class ClientRuntime {
         // asset pins include the complete bundle. A guest flag cannot select
         // a shorter path or excuse a missing/failed preparation stage.
         int interactionStage = ClientAcceptance.clientInteractionStageIndex(
-                jsonValue(stages), jsonValue(clientPins));
+                jsonValue(stages), jsonValue(clientPins), clientArchitectureRequested);
         if (interactionStage < 0) return false;
         JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(interactionStage);
         if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
@@ -2249,6 +2271,7 @@ public final class ClientRuntime {
                     .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
                     .put("graphics_profile_requested", graphicsProfileRequested)
                     .put("gpu_profile_requested", gpuProfileRequested)
+                    .put("client_architecture_requested", clientArchitectureRequested)
                     .put("fresh_profile_creation_requested", !reopen && !resumeFirstCreation && "character_creation".equals(operation))
                     .put("resume_first_creation_requested", !reopen && resumeFirstCreation && "character_creation".equals(operation))
                     .put("startup_only_reopen", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
@@ -2484,7 +2507,7 @@ public final class ClientRuntime {
                 .put("scope","Individual observations explain incomplete checks; none replaces the unchanged overall acceptance predicate.");
         try{gates.put("guest_acceptance",guestAccepted(report));}catch(Exception invalid){gates.put("guest_acceptance",false);}
         try{gates.put("complete_asset_stage_contract",clientManifest!=null && ClientAcceptance.clientInteractionStageIndex(
-                jsonValue(report.optJSONArray("stages")),jsonValue(clientManifest.optJSONObject("files")))>=0);}catch(Exception invalid){gates.put("complete_asset_stage_contract",false);}
+                jsonValue(report.optJSONArray("stages")),jsonValue(clientManifest.optJSONObject("files")),clientArchitectureRequested)>=0);}catch(Exception invalid){gates.put("complete_asset_stage_contract",false);}
         try{gates.put("android_client_surface",surfaceAccepted(report));}catch(Exception invalid){gates.put("android_client_surface",false);}
         gates.put("android_login_views",loginSurfaceAccepted());
         try{gates.put("android_character_save_views",characterSurfaceAccepted(report));}catch(Exception invalid){gates.put("android_character_save_views",false);}

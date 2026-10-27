@@ -10,8 +10,20 @@ import java.util.Set;
 final class ClientAcceptance {
     /** Exact stage sequence selected from the APK's already verified asset pins. */
     static int clientInteractionStageIndex(Object stagesValue, Object verifiedPinsValue) {
+        return clientInteractionStageIndex(stagesValue, verifiedPinsValue, "x86");
+    }
+
+    static int clientInteractionStageIndex(Object stagesValue, Object verifiedPinsValue, String architecture) {
         if (!(stagesValue instanceof List) || !(verifiedPinsValue instanceof Map)) return -1;
+        if (!"x86".equals(architecture) && !"arm64".equals(architecture)) return -1;
+        boolean arm64 = "arm64".equals(architecture);
         Map<?, ?> pins = object(verifiedPinsValue);
+        if (arm64) {
+            for (String name : new String[]{"armport-client.zip", "armport_client_package.py",
+                    "armport_interactive.py", "client_stdio.py"}) {
+                if (!assetPin(pins.get(name))) return -1;
+            }
+        }
         int visualInputs = 0;
         for (String name : new String[]{"client_visual_assets.py", "client_animation_package.py",
                 "client-visual-assets.zip", "client-visual-manifest.json"}) {
@@ -41,13 +53,15 @@ final class ClientAcceptance {
                 "local_atlas_startup"};
         String[] after = {"win32_runtime_dll", "actual_client_startup", "actual_client_interaction"};
         List<?> stages = (List<?>) stagesValue;
-        if (stages.size() != before.length + after.length + (visual ? 2 : 0) + (zones ? 2 : 0)) return -1;
+        if (stages.size() != before.length + after.length + (visual ? 2 : 0) + (zones ? 2 : 0)
+                + (arm64 ? 1 : 0)) return -1;
         int index = 0;
         for (String name : before) if (!passedStage(stages.get(index++), name)) return -1;
         if (visual && (!passedStage(stages.get(index++), "client_visual_assets")
                 || !passedStage(stages.get(index++), "client_animation_pack"))) return -1;
         if (zones && (!passedStage(stages.get(index++), "client_all_zone_assets")
                 || !passedStage(stages.get(index++), "client_all_zone_audio"))) return -1;
+        if (arm64 && !passedStage(stages.get(index++), "armport_client_data")) return -1;
         for (String name : after) if (!passedStage(stages.get(index++), name)) return -1;
         return stages.size() - 1;
     }

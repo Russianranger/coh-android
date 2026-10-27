@@ -3,7 +3,7 @@ name: ArmPort original receiver replay
 on:
   workflow_dispatch:
   push:
-    branches: ['armport/**']
+    branches: ['armport/**', '!armport/m4-runtime']
     paths:
       - 'armport/patches/**'
       - 'armport/cmake/**'

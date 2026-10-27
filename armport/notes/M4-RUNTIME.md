@@ -1,0 +1,456 @@
+# M4 runtime integration work
+
+## Explicit Finish host contract (2026-10-25 UTC)
+
+Sol review 5642182878 identifies the next failure in 40171292922: creation
+host validation passes and guest reopen completes, but the host requires
+1200 seconds where the pinned manual-session producer reports timeout 0.
+The adapter now passes the external observer's Finish record to the existing
+validator explicitly for reopen. It validates the producer's exact manual
+policy and recomputes the host request bytes/hash from session/PID/action;
+the guest receipt must match. It does not rewrite timeout 0 to 1200.
+The original 30..1210 second observation and <=900 second startup bounds
+remain, with finite numeric types required. A host deadline check precedes
+report validation. Original defaults still require bounded sessions; original
+SQL-save, reopen, observer, network, cleanup and continuity checks remain.
+36 app tests pass, including policy, timing and finish tampering rejection.
+The verified retained reopen passes this session/Finish check; full host
+continuity still requires a new run. Evidence: m4-explicit-finish-40171292922.json.
+Remove the duplicate inherited M3 pull_request trigger; M4 retains its own
+push workflow, and the integration/M3 build's push trigger remains intact.
+
+
+## Signed selection boundary qualification (2026-10-25 UTC)
+
+Select Release from 40170942752, source 48b5a2b4956b487624864ee611b8406f1831f79b.
+Its Release, OptDebug and libraries jobs passed. Patch 0076 preserves the
+signed -1 text-selection boundary and checks backward scan bounds before
+reads. The fault is proven by the exact prior Release disassembly/registers
+in M3 evidence/m4-reopen-smf-40167305715.json; 112 Python tests, helper
+sanitizer controls, 63 extracted plain-text selection cases and both changed
+architecture units pass locally. The latter test-only evidence is c5cc0873.
+Data remains 40100355259. Complete live creation/save/reopen qualification
+with the new client is pending; no M4/M5 completion or APK approval implied.
+The proposed later device session is in M5-THOR-PLAN.md.
+
+## Reopen and sibling donor follow-up (2026-10-25 UTC)
+
+40167305715 passed creation validation but reopen faults at 0x1401726f0.
+M3 patch 0076 fixes the signed selection boundary; select its Release after
+qualification. The interactive M4 exit remains incomplete.
+
+Sibling build 40167326438 failed before runtime because reference-win32-runtime
+expired. The donor restore block, exact 47-file inventory, verifier and tests
+are copied from reviewed M3 a13fd86e. They preserve the same donor bytes and
+verify cache hits as well as retained fallback 39782080360. Local donor tests
+and full retained-inventory verification pass; a fresh sibling CI is required.
+
+## Current host validation compatibility (2026-10-25 UTC)
+
+Run 40163555077 at ebe0159c passed guest boot and produced a creation report
+with passed=true, but the host rejected its newer avatar receipt schema before
+reopen. Artifact 12588481125 was verified against SHA256
+8738cfadf7feffd042046618b82709625c00f92d4bf22cec2146466bf2721bee.
+The host predates zero-valued legacy repair counters, content-derived worktree
+keys, world preparation metrics, and the retained world's exact manifest.
+
+The ARM64 adapter validates both repair counters as integer zero, validates
+complete fresh/reused world metrics, and then projects only these additional
+fields for the legacy validators. Unknown fields remain rejected. Host-verified
+client package contents supply the native closure for recomputing the current
+worktree key; package/cache/prerequisite hashes must match the staged inventory.
+The exact world contract comes from the hash-verified retained manifest, rather
+than the newer repository world supplement. The stock host defaults remain.
+Raw guest evidence is unchanged. No new assets or native source changes.
+
+The retained creation report passes the complete original report, world and
+external-observer validators with this adapter. Tampered metrics, identities,
+counts and preservation claims remain rejected. All 33 app tests pass; command
+outputs are in evidence/m4-host-schema-40163555077.json. Runtime reopen and
+continuity remain untested; rerun the full workflow before claiming M4.
+
+## Deferred preview runtime qualification (2026-10-25 UTC)
+
+The workflow now selects Release from [40161198295](https://github.com/Russianranger/coh-android/actions/runs/40161198295),
+source a13fd86e2a097076676897c053ca56da614c469c. GitHub jobs API reports
+Release job 121072939544 and libraries job 121072939370 successful.
+This client includes 0074 (defer initial power-preview queue until the
+pending menu transition commits) and 0075 (direct CRT stream buffering).
+The original failure is M4 40155140217: menu 8 produces selection index -16.
+Source-derived controls and command outputs are committed in M3's
+armport/evidence/m3-m4-review16.json. The libraries CI also runs the actual
+Wine buffering control. Neither compilation nor controls prove M4 completion.
+
+Bins and shaders remain pinned to 40100355259. The new patches change preview
+timing and diagnostics, not their serialization or shader input. Package
+reports continue recording both donor IDs and hashes. Run the existing
+boot and create/save/restart/reopen jobs with the new client. No APK build,
+signing, data expansion, texture exception or acceptance change is included.
+M4 remains incomplete until that interactive execution passes and is reviewed.
+
+## Selected-power producer diagnostic and case staging (2026-10-25)
+
+[M4 40127841088](https://github.com/Russianranger/coh-android/actions/runs/40127841088)
+identifies createPrimaryAnimationEvents as the caller passing the bad power
+key 0x10000000000. Exact binary disassembly and artifact identities are in
+M3 commit 2e83133f's `armport/evidence/m3-review12-grid-and-runtime-40128377861.json`.
+The producer remains unproved. This checkpoint pins Release
+[40148424741](https://github.com/Russianranger/coh-android/actions/runs/40148424741/job/121034656145),
+executable SHA256 1f63d4112345c5bba87a222935e72557c66f8bdd234f6784790908df2d4771f0,
+which includes 0073's original menu/index/selected-power diagnostic and
+0072's cached trace opt-in. Data remains 40100355259; no new data selection.
+
+The bootstrap copies the reviewed M3 case-equivalent merger and complete
+tree audit byte-for-byte. The app's private-copy stage also joins directory
+case aliases, with sorted traversal and explicit refusal of colliding file
+aliases or file/directory conflicts. It retains ordinary private copies and
+never modifies imported server data. The report records zero case duplicates
+only after auditing the completed data tree. This avoids recreating separate
+Windows-equivalent directories inside the app guest.
+
+[Local command output and copied-function hashes](../evidence/m4-review14-local.json):
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v` passes
+30 tests. The actual package tests cover merged directory bytes, immutable
+source data and refusal without publishing a partial tree; four inherited
+bootstrap tests cover original-case geometry and collisions. These are local
+staging checks. New runtime execution and independent review remain required;
+M4 is incomplete, with no APK, signing, new data fetch or acceptance relaxation.
+
+The following sections retain historical checkpoints.
+
+M4 is not complete. This branch starts with a runtime boot probe while M3's
+texture-load fix and replay review continue on `armport/m3-atlas`.
+
+## Existing app path
+
+Source inspection (`rg -n 'launcher_command|Xtigervnc|presentation-socket'
+android/guest/*.py` and `ClientRuntime.java`):
+
+- `android/interactive/.../ClientRuntime.java:runCharacter` starts the app's
+  PRoot with its Bookworm rootfs, Wine, private state, data and display-socket
+  bindings. It invokes the character creation/reopen Python guest.
+- `android/guest/client_interactive_diagnostic.py:launcher_command` selects
+  the current `client-launcher.exe` and `CityOfHeroes.exe` in the worktree.
+- `android/guest/presentation_diagnostic.py:PresentationDiagnostic` starts
+  Xtigervnc with TCP disabled and exports `view.sock` through the private
+  `/presentation-socket` binding. The Android wrapper receives RFB frames.
+- The current x86 worktree/package validators pin the executable and data.
+  ARM64 needs an explicit separate client option/package, not replacement of
+  the accepted x86 pins or mixing x86 DLLs with the ARM64 executable.
+
+The earlier in-guest attempt failed in
+[run 39795786028](https://github.com/Russianranger/coh-android/actions/runs/39795786028),
+job 119887720825: client exit 1, `BadWindow`, `X_UnmapWindow`, resource
+`0x800003`. That log does not establish the cause. Host Wine startup succeeds
+in the M2 jobs; it does not qualify the app guest/display path.
+
+## First probe
+
+`armport/app/runtime_host.py` downloads and verifies the exact base/Wine
+archives from `android/runtime-lock.json`. It extracts them with the app's
+Java extractor, builds the existing pinned PRoot source for Linux ARM64,
+and runs the client in a private loopback-only network namespace. No server
+or APK is built by this workflow.
+
+`runtime_guest.py` reuses `PresentationDiagnostic.start_wine` and cleanup.
+It verifies ARM64 PE32+ client binaries, starts the original client on the
+guest display, requires login stage 0 and a mapped game window, then waits
+for three fresh host RFB captures. The host uses the existing app-transport
+handshake and framebuffer decoder. The report requires guest success and
+owned cleanup, and explicitly records `m4_complete: false`.
+
+Local checks before the first push:
+
+- `python3 -m py_compile armport/app/runtime_host.py armport/app/runtime_guest.py`: exit 0.
+- `python3 tools/android/client/test_host_transport.py`: four tests passed.
+- A synthetic PE-header check accepted ARM64 PE32+ and rejected i686; guest
+  imports completed. This validates the architecture preflight, not execution.
+- Both changed workflow YAML files parsed with PyYAML; `git diff --check`
+  passed. Runtime evidence is pending CI.
+
+Next after this probe: inspect its actual RFB images, fix any guest/display
+failure, add the Android client choice and package staging using the same
+guest launch path, and qualify that integration on the ARM64 runner. M3
+must still pass its own exits and review. Building/signing an APK remains a
+separate approval step under HANDOFF section 6; no keys are used here.
+
+## App display path result
+
+[Run 40034280752](https://github.com/Russianranger/coh-android/actions/runs/40034280752),
+head c2e1ca2d872a571a864aa1f45481c2ac8ef8a2ee, completed the runtime probe.
+`host-report.json`: passed true, guest_exit 0, m4_complete false. The guest
+reported login stage 0, a mapped 800x600 City of Heroes window, the client
+alive after frame capture, zero surviving owned workers, and all cleanup
+checks true. The three RFB PNGs have SHA-256
+3e968bdba2433c0ab758f089644404d9cc6cc2a2e2a16dab5e6b39f78a9b8c6a.
+Visual inspection shows the actual login screen with the first-run graphics
+settings dialog, not Atlas. Artifact 12537065650 was downloaded and checked
+against API digest 86a90e23d9e4cb3799f2054d0ca45079271305cca7e28cc0effe9e126029ec4c.
+
+Next probe builds the app's unchanged `android/native/client-launcher.c` for
+ARM64 and requires its real child PID and console-membership observations.
+This tests the launcher used by the interactive app rather than assuming
+that direct Wine startup qualifies its console supervision.
+
+[Run 40036045979](https://github.com/Russianranger/coh-android/actions/runs/40036045979)
+passed that launcher probe: Windows child PID 404, matching session and
+`attached: true` console marker, login stage 0, mapped 800x600 game window,
+and complete cleanup. The artifact's API digest is
+1853fcfde401a4e6fbf984f09b6ea4f5dbe14a800553855f8cf171fb8b82fb71;
+it was checked after download. The Release window title omits the PID.
+The ARM64-only launcher build now exposes its already-resolved owned PID
+in that window's diagnostic title for the existing app identity check.
+
+## App option being qualified
+
+The selector defaults to x86. ARM64 selects a separate package/directory,
+its own generated bins and ARB shaders, and the 64-bit GameProgress registry
+view. The existing verified x86 data tree remains available for server
+preparation; its executable and DLLs are never copied into the ARM64 tree.
+Both clients retain the existing character-profile, local server, RFB/input,
+save-evidence and cleanup paths. ARM64 currently selects Software/standard
+graphics and Atlas only; return the saved character to Atlas with x86 before
+switching. Zone-travel asset synchronization is not yet qualified.
+
+`stage_app_assets.py` assembles extracted runtime assets and extends the
+existing input manifests. It does not build or sign an APK. Its inputs are
+the retained app assets and the CI `armport-app-client-package` artifact.
+The Android Java compile job likewise produces classes only. Building the
+installable APK still requires the user's signing approval.
+
+Local checks: `python3 armport/tests/test_client_package.py` passes four
+cases (separate ARM64 bins, x86 DLL refusal, changed payload refusal, unsafe
+extra member refusal); Python modules compile, launcher compiles for ARM64
+with warnings enabled, and `git diff --check` passes. These do not yet prove
+the complete interactive guest/server path or milestone completion.
+
+First attempt [40033778230](https://github.com/Russianranger/coh-android/actions/runs/40033778230)
+never launched the guest: `armport-client-bins` had not yet been uploaded by
+run 40032719161. The workflow now separates executable and data donor IDs:
+Release from 40032719161; completed bins/Cg from 40011219458. The only native
+patch between these builds is 0049's texture-queue diagnostics; no data,
+serialization or shader changes were made. The host report records both IDs.
+
+## Startup evidence regression (40037067863)
+
+Run 40037067863 failed because the probe kept only the final 1 MiB of the
+client log. The artifact contains 1,397,688 bytes: OpenGL Renderer and Renderer
+initialization complete are present near its beginning and absent from the
+probe tail. GameProgress reached game_mainLoop, all data loaded and the owned
+800x600 window was mapped. This was an observation failure, not proof of a
+renderer failure.
+
+The probe and app wrapper now share a complete-log reader bounded to 16 MiB.
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v`
+passes five tests, including renderer evidence before more than 1 MiB of asset
+noise and rejection above the existing 16 MiB bound. The rerun passed in 40040922125, guest-boot 120711625618 (2026-10-23
+23:46 UTC). The evidence artifact 12538814705 was checked against SHA-256
+e490d2ae902b0f503975eedfe2668adae430278c51235e207245cf959d77ca1f.
+Its host report records passed=true, guest_exit=0, m4_complete=false.
+The guest reports Mesa/X.org llvmpipe LLVM 15.0.6, GL 4.5, renderer initialized,
+all data loaded, game_mainLoop reached and owned PID 420 mapped at 800x600.
+The client was alive after the RFB capture, its console was attached and all
+three cleanup checks passed. This resolves the startup observation regression;
+it does not qualify the complete interactive guest/server flow or M4.
+
+## Actual creation/reopen command routing
+
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v`
+passes nine tests. The four additional checks import the actual creation and
+reopen guest classes and execute their launcher_command inheritance: x86
+remains the default with its original worktree, ARM64 selects its separate
+launcher/client/worktree, creation/manual mode survives the wrapper, and
+unknown architectures or unqualified zoning fail. No Wine/server process
+is started by these host tests; full interactive execution remains pending.
+
+Next: incorporate the qualified M3 client, then run the real creation/reopen
+server flow through the selected ARM64 app guest and retain its SQL/save,
+RFB/input and cleanup evidence. Do not substitute the startup-only result
+for that integration check. Building/signing an APK still requires approval.
+
+## Preparation order and app acceptance
+
+The command-routing check exposed two untested integration boundaries. The
+ARM64 overlay had been copied in initialize(), before optional visual/animation
+inputs are installed after server preparation. Also, the app's exact stage
+validator did not recognize armport_client_data. An ARM64 run could therefore
+miss late-installed data and still be rejected after successful execution.
+
+ArmPortClient.start_wine now lets the existing server prepare first, installs
+the existing client-only visual/animation inputs, then creates the ARM64 tree.
+The original x86 producer opt-ins remain disabled for the ARM64 executable.
+ClientAcceptance selects the exact stage sequence using the app's selected
+architecture, requires all four pinned ARM64 package/helper inputs and the
+successful ARM64 preparation stage after optional visual/zone stages. Merely
+including the ARM64 package in an x86-selected app does not change that path.
+
+Validation command `python3 -m unittest discover -s armport/tests -p
+'test_client*.py' -v` passes 11 tests. One uses the real overlay packager to
+prove a visual file added after server preparation reaches the ARM64 tree.
+Another compiles and executes the actual app ClientAcceptance class with 13
+positive/negative cases: missing/failed/misordered ARM64 preparation, missing
+package pins, missing visual stages, invalid architecture, and retained x86
+selection. No APK is compiled or signed; interactive runtime evidence remains
+pending and M4 remains incomplete.
+
+## Full interactive guest qualification under development
+
+Run 40055653259 at f0714bb7 passed app-sources and guest-boot, including the
+new stage/ordering host tests. This is still a startup probe, not an interactive
+or M4 pass. The next workflow packages the newer Release/bins/ARB inputs from
+40054327137 and adds a dependent interactive-guest job.
+
+interactive_host.py extracts only the assets of the retained 0.10.0 donor
+(run 36920583713, artifact 11192425448), requiring the frozen full APK and
+build-report hashes from android-character-reopen-qualified-apk.yml. The API
+still reports that artifact available through 2026-12-30. Its binary runtime,
+server packages and data inputs remain retained; stage_app_assets refreshes
+the current creation/reopen helper dependencies and adds the separate ARM64
+overlay. This is an assembled guest-assets test, not an exact old/new APK test.
+
+The host reuses the existing Java data importer, private RFB input observer,
+creation/save checks, reopening/powers/costume checks, profile continuity and
+owned cleanup. Each session uses the existing private network isolation
+helper. It checks the complete current helper/package inventory, ARM64 digest
+and successful preparation stage before applying the original persistence
+validators to their existing field subset. The complete unmodified report is
+retained. This avoids claiming ARM64 identity from an x86-only report.
+
+Local validation: 15 test_client host tests pass, including isolated imports
+from just the retained helper set plus its explicit current dependencies,
+rejection of wrong ARM64 binaries/missing inputs/failed or misplaced stages,
+and preservation of the original report. Python syntax, workflow YAML and
+two-compiler/dependency checks pass. Interactive execution remains pending;
+all host results retain m4_complete=false until the full evidence is reviewed.
+
+## Retained donor compatibility fixes (2026-10-24)
+
+Run 40087554038 at aef0c566 passed app-sources and guest-boot. The interactive
+job 120855148929 reached the private Xtigervnc/RFB display and Wine/ODBC,
+then failed local_dbserver_startup with `No module named 'zone_asset_package'`.
+Artifact 12557642717 was downloaded and checked against API SHA-256
+a9c6eb028365d867347ec8228b7396e3dbce5706b7abe3c7731aa00c47f19087.
+This is not an interactive pass or M4 completion.
+
+The earlier world-package mismatch was fixed by binding only six literal
+payload constants from the authenticated retained atlas_world_assets helper
+into the current helper. Its validation code and bounds stay current. Tests
+reject missing/duplicate/executable constants and preserve the current code.
+The retained world predates the current 27-texture extension; changing its
+expected digest without changing the payload would reject the donor bytes.
+
+Commit ddaccd4 adds zone_asset_package.py to the staged helper dependencies.
+LocalCharacterServer.prepare_runtime imports it unconditionally to check
+whether optional zone/audio payloads exist. The helper alone does not enable
+those optional packages; partial ZIP/manifest pairs still fail. Tests exercise
+these actual presence checks. `python3 -m unittest discover -s armport/tests
+-p 'test_client*.py' -v` passes 18 tests at ddaccd4.
+
+Run 40090844692 at ddaccd4 passes app-sources and guest-boot. The first
+interactive attempt (120864873702) failed before guest launch: build_proot.py
+reported HTTP 503 downloading a dependency. Only that failed job was retried.
+This attempt does not exercise the helper fix. Creation, save, reopen,
+persistence, private RFB/input and cleanup
+must all pass before this path can qualify. No APK, Android surface, Thor or
+M4 completion is claimed by the startup result.
+
+The failed interactive retry (120865719209) again received HTTP 503 from the
+talloc download before guest launch. The workflow now uses the repository's
+existing extract_talloc_source.py to recover the exact SHA-pinned source
+from run 36364550345's accepted runtime/source artifacts, caching that source.
+GitHub's artifacts API confirms both inputs unexpired on 2026-10-24. The
+build recipe still verifies the same talloc hash and uses two make workers.
+The interactive job now consumes a tar of the exact PRoot/loader/source
+receipt built and used by its successful guest-boot dependency, preserving
+executable modes; it no longer repeats the network download/build. This
+workflow change needs fresh CI; it is not a runtime success claim.
+
+
+## Review 5638651994 / VBO runtime correction (2026-10-24)
+
+Run 40098262167 at ddceae53 passes app compilation and guest boot. Its
+interactive client reaches renderer initialization, all data loaded and the
+main loop, then crashes during character creation after the costume input.
+Retained artifact 12562338334 SHA256
+4d8ad44362966f27c30cd9e3c8165e67c167fc8cd980561fbd49e5b8cebc1bda
+contains client-console.log: unhandled read 007A000642C587A0 at 0x140231A94.
+The exact executable SHA256 is
+0392424f466ceb6cbcb31d6c40252eace3570319db071369711ef35b74a6a00f.
+`llvm-symbolizer --obj=CityOfHeroes.exe 0x140231a94` resolves createVboDirect,
+rt_model_cache.c:79:41. Source producer model_cache.c writes an eight-byte
+pointer then overwrites its upper four bytes with TexID at offset four.
+Patch 0064 on PR #6 / 285f913c fixes allocation and both producer/consumer
+header offsets. Original/patched host controls fail/pass pointer and payload
+identity as expected; both ARM64/i686 Game links pass. Fresh runtime CI must
+exercise it before claiming resolution.
+
+This branch pins the new Release to build run 40105902326 and data/shaders to
+completed run 40100355259. Both source commits contain the deterministic
+Appearance fix; 0064 changes rendering only. Every package records both run
+IDs and executable/archive SHA256.
+
+Review M2: prepare() reports shared_data_bytes, data_copy_seconds and
+preparation_seconds. Private regular copies remain necessary for this tested
+PRoot path; a separate read-only data root is a future optimization requiring
+verification of the original client's writes and search precedence.
+Review L5: bounded CI notices now include guest failures and client fault
+lines, not only the outer RFB close. Against the retained failure artifact the
+notice shows the original VBO fault and the separate incomplete owned-cleanup
+failure. Ownership and cleanup checks remain unchanged and fail closed.
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py'`: 23 tests OK
+(m4-round4-tests.log). No APK/signing, Thor run or M4 completion is claimed.
+
+## Power-customization fault after the VBO correction
+
+Run 40106299491 at a5d78afd passes guest boot, but interactive job
+120910487842 fails with a read at 0x0000010000000010, PC 0x14007457c.
+Artifact 12565996723 SHA-256
+`a897c9492bd28a64d30cfc0d647db2b8040098167103cfb046e95390065d3f30`
+and the packaged executable SHA-256
+`0e82dd6656a91e0e09eadb2a685de9c1dfb59e7573f22f6fa6d04e9c4dcf0844`
+were independently verified. `llvm-symbolizer --obj=CityOfHeroes.exe
+0x14007457c` reports `searchPowerCustomizations`, power_customization.c:159.
+Disassembly identifies the failing load as `(*power)->crcFullName`, the search
+key, rather than the candidate customization. Its origin is not established.
+The interactive launcher now enables the same Wine SEH diagnostics as the boot
+probe so a rerun retains registers/caller evidence. No NULL bypass, pointer
+repair or acceptance change is made. All 23 client host tests pass.
+
+## Caller diagnostic after review 5639193819
+
+Run 40110421624 (interactive job 120922819992) reproduces the power search
+fault. The register/disassembly evidence committed on M3 at 8e0c14542 proves
+the bad key x8=0x10000000000, not the candidate pointer. Its producer is not
+established. Source f0d78fd78 adds opt-in patch 0068 to log the
+incoming pointer, list and caller return address before the original bsearch.
+
+The interactive host enables ARMPORT_POWER_TRACE=1 and pins its Release client
+to build run 40118399219; data remains pinned to 40100355259. This is a
+source diagnostic, not a pointer repair, extra data fetch or acceptance change.
+Symbolize the last power.lookup caller against that exact downloaded Release
+executable. The failing instruction's PC will move with the diagnostic build.
+`python3 -m unittest discover -s armport/tests -p 'test_client*.py'`: 23 pass
+(local output: m4-review9-tests.log). Runtime result is pending. No APK or
+signing is performed; M4 remains incomplete.
+
+## Corrected caller capture after run 40118768539
+
+[M4 run 40118768539](https://github.com/Russianranger/coh-android/actions/runs/40118768539/job/120947602089)
+faulted with the same bad power key. Symbolization of its exact Release
+client shows caller 0x140074774 is immediately after __chkstk inside the
+lookup function: an inlined large trace frame clobbered LR before capture.
+Patch 0070 on M3 source 733dca10a9c5aa0a1f32676379080262d452422e moves the
+formatting and trace buffers to a noinline helper. Local ARM64 O2 disassembly
+shows incoming LR preserved and no stack probe in the lookup. Artifact
+identities, disassembly and target compile outputs are in that commit's
+armport/evidence/m3-m4-diagnostics-40118399219.json. This corrects the
+diagnostic; it does not repair or reject the bad key.
+
+The M4 workflow now pins Release build 40127311343 (client Release job
+120971386052 passed, artifact 12573119650). Data remains pinned to
+40100355259; ARMPORT_POWER_TRACE stays confined to interactive diagnosis.
+Next: symbolize the new runtime caller against this exact Release executable,
+then trace its pointer producer. No new data or acceptance change.
+Local validation: python3 -m unittest discover -s armport/tests -p
+'test_client*.py' reports 23 passing tests. M4 remains incomplete until
+interactive qualification succeeds; no APK or signing is performed.
