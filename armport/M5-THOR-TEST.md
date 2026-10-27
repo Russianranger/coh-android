@@ -1,18 +1,28 @@
-# COH Atlas Gameplay 0.13.39: M5 Thor test (ARM64 client)
+# COH Atlas Gameplay 0.13.40: M5 Thor test (ARM64 client)
 
 **Status:** candidate built and signed, waiting for review. Not yet installed
 or played. M5 is not complete.
 
 | Item | Value |
 |---|---|
-| APK | `COH-Atlas-Gameplay-0.13.39.apk`, versionCode 54, 80,907,096 bytes |
-| APK sha256 | `d341a045a3fafa3e3acba1c3df046f9fece5a284ae9a4c47d714bcc7b6af620a` |
-| Built by | run [40526906680](https://github.com/Russianranger/coh-android/actions/runs/40526906680) at `6e08aad1f`, artifact `coh-atlas-gameplay-0.13.39-apk` (12742874538, kept until 2026-11-26) |
-| Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.38) |
-| ARM64 client | executable `ed70b6c3…d92a`, package `68c68f7a…c57d`, from build 40510032907 (patches to 0111, per-set anchor indices) |
-| CI qualification | run 40519490566 at `6e08aad1f`: ARM64 creation then reopen through the app guest passed (retained 0.10 runtime; the full 0.13.39 runtime has not run in CI) |
+| APK | `COH-Atlas-Gameplay-0.13.40.apk`, versionCode 55, 80,907,096 bytes |
+| APK sha256 | `29f102c4cc8ef66682d4ae749d2f991e92e28436fee618866836e94f0022cd74` |
+| Built by | run [40560666702](https://github.com/Russianranger/coh-android/actions/runs/40560666702) at `2d3c8a6c5`, artifact `coh-atlas-gameplay-0.13.40-apk` (12760522009, kept until 2026-11-26) |
+| Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.39) |
+| ARM64 client | executable `dfd967f6…18a8`, package `9599acc4…b60a`, from build 40543984620 at `eb976d7a1` (patches to 0113; provenance step: same `armport/patches` tree as the APK head) |
+| CI qualification | build 40543984620: all 8 jobs passed. Run 40547544476 attempt 2: ARM64 creation then reopen passed (2196 s). Attempt 1 stopped when the creator's rendered "No" button was not found; no client fault. Retained 0.10 runtime; the full 0.13.40 runtime has not run in CI |
 
-## What changed from 0.13.38 (Thor report, session a354bb95)
+## What changed from 0.13.39 (Thor report, sessions 577aff8c and 8f2ed736)
+
+| 0.13.39 problem | Cause found in the exported report | 0.13.40 change |
+|---|---|---|
+| Very low FPS | Every client starts with `-maxfps 10`; only x86's qualified producer raises gameplay to 30 | Patch 0113 (the app's reviewed gameplay-performance hook): 30 FPS in gameplay when Turnip/Zink is selected, 10 on Software; menus stay 10 |
+| Crash opening the graphics options | Page fault reading `FFFFFFFFFDF9D3DC` in `initializeShadowInfo`: shadow-volume/cape models rebased their vertex streams with int arithmetic | Patch 0112: pointer-width rebase |
+| Session ended about 30 s after logout | The save was correct, but the strict reopen check refused an added `temporary_powers.brawl_tranq` | ARM64 accepts added temporary powers only, with every prior power preserved |
+| ARM64 data stage 65 s with a valid cache | The merged-view case check followed links (173k stats) | That check now walks only the real (merged) directories |
+| 110-145 s client folder scan | Measured by patch 0111: the whole-tree scan, not the change monitor | Not changed yet. After these fixes the x86 MapServer (about 6 min to ready) bounds the warm start |
+
+## Earlier: what changed from 0.13.38 (Thor report, session a354bb95)
 
 | 0.13.38 problem | Cause found in the exported report | 0.13.39 change |
 |---|---|---|
@@ -32,7 +42,7 @@ or played. M5 is not complete.
 
 ## Install (keep everything)
 
-1. Install 0.13.39 over 0.13.38. Do not uninstall or clear data.
+1. Install 0.13.40 over 0.13.39. Do not uninstall or clear data.
 2. Run **Set up / update runtime** once.
 
 ## Test
@@ -42,8 +52,8 @@ or played. M5 is not complete.
 2. **Reopen saved THORHERO** twice. For each, note the time from the tap
    until you can move. The first launch after the update may still be cold;
    the second shows the warm time (the target is under 5 minutes).
-3. Note whether Atlas Park draws, the FPS, and whether the GPU fallback
-   message appeared.
+3. Note the FPS in Atlas (it should be clearly smoother than 0.13.39), and
+   open the graphics options once.
 4. Move, open the map, try one power, then **Save/Logout**, **Finish** and
    export the diagnostic ZIP from *both* launches.
 
