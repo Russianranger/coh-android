@@ -1,18 +1,26 @@
-# COH Atlas Gameplay 0.13.40: M5 Thor test (ARM64 client)
+# COH Atlas Gameplay 0.13.41: M5 Thor test (ARM64 client)
 
 **Status:** candidate built and signed, waiting for review. Not yet installed
 or played. M5 is not complete.
 
 | Item | Value |
 |---|---|
-| APK | `COH-Atlas-Gameplay-0.13.40.apk`, versionCode 55, 80,907,096 bytes |
-| APK sha256 | `29f102c4cc8ef66682d4ae749d2f991e92e28436fee618866836e94f0022cd74` |
-| Built by | run [40560666702](https://github.com/Russianranger/coh-android/actions/runs/40560666702) at `2d3c8a6c5`, artifact `coh-atlas-gameplay-0.13.40-apk` (12760522009, kept until 2026-11-26) |
-| Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.39) |
-| ARM64 client | executable `dfd967f6…18a8`, package `9599acc4…b60a`, from build 40543984620 at `eb976d7a1` (patches to 0113; provenance step: same `armport/patches` tree as the APK head) |
-| CI qualification | build 40543984620: all 8 jobs passed. Run 40547544476 attempt 2: ARM64 creation then reopen passed (2196 s). Attempt 1 stopped when the creator's rendered "No" button was not found; no client fault. Retained 0.10 runtime; the full 0.13.40 runtime has not run in CI |
+| APK | `COH-Atlas-Gameplay-0.13.41.apk`, versionCode 56, 80,911,192 bytes |
+| APK sha256 | `d8757237d7f47e8aa60b727b4d6d1c2b5e5f36b09f12bf2ffd6eab1b32df98d7` |
+| Built by | run [40597604226](https://github.com/Russianranger/coh-android/actions/runs/40597604226) at `d3f88f700`, artifact `coh-atlas-gameplay-0.13.41-apk` (12777057685) |
+| Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.40) |
+| ARM64 client | executable `61fd1f85…53c2`, package `c5d4429f…bbc7`, from build 40573892264 at `4e387bca5` (patches to 0114; provenance step: `armport/patches` tree `61e62110` equals the APK head's) |
+| CI qualification | build 40573892264: all 8 jobs passed. Requalification 40591557473: ARM64 creation then reopen passed (2256 s) with the creator transition checks. Earlier attempts 40576183475 (creator stayed on Powers) and 40587090046 (validator predated the checks) had no client fault. Retained 0.10 runtime; the full 0.13.41 runtime has not run in CI |
 
-## What changed from 0.13.39 (Thor report, sessions 577aff8c and 8f2ed736)
+## What changed from 0.13.40 (Thor report: 30 FPS cap active, about 9.5 frames/s shown)
+
+| 0.13.40 problem | Cause found in the exported report | 0.13.41 change |
+|---|---|---|
+| FPS still very low | The game's cap was 30, but the app showed about 9.5 frames/s: Raw RFB decoded per pixel and drawn with a software canvas and CPU scaling on the UI thread | Scaled draw on a hardware canvas (one canvas mode per Surface; recreated after a failure); Raw decoded in 64 KiB chunks through an int view (same pixels) |
+| No way to tell game FPS from shown FPS | Not measured | Patch 0114 logs the game's frame rate every 5 s (`ARMPORT_FRAME_RATE_V1`); the report adds delivered frames per 5 s and decode times |
+| Session ended after entering the new character | Logged in as another account and created a new hero; the strict same-session inventory check refused it. Not a client crash | Unchanged; reopen THORHERO on the usual account |
+
+## Earlier: what changed from 0.13.39 (Thor report, sessions 577aff8c and 8f2ed736)
 
 | 0.13.39 problem | Cause found in the exported report | 0.13.40 change |
 |---|---|---|
@@ -42,7 +50,7 @@ or played. M5 is not complete.
 
 ## Install (keep everything)
 
-1. Install 0.13.40 over 0.13.39. Do not uninstall or clear data.
+1. Install 0.13.41 over 0.13.40. Do not uninstall or clear data.
 2. Run **Set up / update runtime** once.
 
 ## Test
@@ -52,7 +60,7 @@ or played. M5 is not complete.
 2. **Reopen saved THORHERO** twice. For each, note the time from the tap
    until you can move. The first launch after the update may still be cold;
    the second shows the warm time (the target is under 5 minutes).
-3. Note the FPS in Atlas (it should be clearly smoother than 0.13.39), and
+3. Note the FPS in Atlas (it should be clearly smoother than 0.13.40), and
    open the graphics options once.
 4. Move, open the map, try one power, then **Save/Logout**, **Finish** and
    export the diagnostic ZIP from *both* launches.

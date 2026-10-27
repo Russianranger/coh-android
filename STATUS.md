@@ -35,6 +35,6 @@ M3 into Atlas: accepted (Sol 5659701771), merged; 106 patches (armport/HANDOFF.m
   i686 partial state, equal error inventories. Reduced scope: completeness
   flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
 - M4 app runtime: accepted (Sol 5660940046), merged (PR #7; armport/M4-REPORT.md).
-- M5 Thor (PR #8): 0.13.39 on Thor: Atlas entered; 10 FPS cap, shadow crash, strict-save end.
-  0.13.40: patches 0112 (VBO rebase), 0113 (30 FPS with GPU); temporary power grants; build
-  40543984620, requalify 40547544476, APK 40560666702 (provenance-checked package).
+- M5 Thor (PR #8): 0.13.40 on Thor: 30 FPS cap active, about 9.5 frames/s shown (presentation path).
+  0.13.41: hardware-canvas draw, chunked Raw decode, FPS log 0114; build 40573892264, requalify
+  40591557473 (creator transition checks), APK 40597604226 (provenance-checked package).
