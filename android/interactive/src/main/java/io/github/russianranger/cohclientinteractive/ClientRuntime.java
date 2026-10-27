@@ -568,7 +568,7 @@ public final class ClientRuntime {
         begin(reopen ? "character_reopen" : "character_creation", selectedSession);
         clientArchitectureRequested=clientArchitecture(context);
         graphicsProfileRequested="arm64".equals(clientArchitectureRequested)?"standard":performanceGraphicsEnabled(context)?"performance":"standard";
-        gpuProfileRequested="arm64".equals(clientArchitectureRequested)?"software":gpuProfileEnabled(context);
+        gpuProfileRequested=gpuProfileEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;

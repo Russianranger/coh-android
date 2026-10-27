@@ -107,7 +107,7 @@ public final class ClientActivity extends Activity {
             @Override public void onNothingSelected(AdapterView<?> parent){}
         });
         controls.addView(clientArchitecture);
-        controls.addView(text("ARM64 uses Software rendering and standard graphics. Return the saved character to Atlas with x86 before switching; ARM64 zone travel is not yet available.",12,false));
+        controls.addView(text("ARM64 uses standard graphics and the renderer selected below (GPU test falls back to Software if its checks fail). Return the saved character to Atlas with x86 before switching; ARM64 zone travel is not yet available.",12,false));
         controls.addView(text("Renderer for next launch",12,true));
         gpuProfile=new Spinner(this);
         ArrayAdapter<String> gpuChoices=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,

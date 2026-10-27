@@ -56,7 +56,7 @@ class ClientPackage(unittest.TestCase):
         self.assertEqual((source / 'bin/BodyParts.bin').read_bytes(), b'x86 bins')
         self.assertEqual(texture.read_bytes(), b'immutable asset')
         self.assertEqual(report['shared_data_files'], 1)
-        self.assertEqual(report['shared_data_bytes'], len(b'immutable asset'))
+        self.assertEqual(report['data_materialization'], 'case_merged_symlinks')
         self.assertGreaterEqual(report['data_copy_seconds'], 0)
         self.assertGreaterEqual(report['preparation_seconds'], report['data_copy_seconds'])
         self.assertFalse(report['x86_bins_reused'])
@@ -100,27 +100,32 @@ class ClientPackage(unittest.TestCase):
         (source / 'Maps/atlas.txt').write_bytes(b'definition')
         (source / 'maps').write_bytes(b'conflict')
         destination = self.root / 'arm64'
-        with self.assertRaisesRegex(ValueError, 'directory conflicts'):
+        with self.assertRaisesRegex(ValueError, 'directory conflicts|collides'):
             package.prepare(self.archive, source, destination)
         self.assertFalse(destination.exists())
 
-    def test_linked_server_input_becomes_private_regular_file_without_link_syscall(self):
+    def test_linked_server_input_is_exposed_by_symlink_without_copy_or_link_syscall(self):
         self.build()
         source = self.root / 'server-data'
-        source.mkdir()
+        (source / 'Maps').mkdir(parents=True)
         imported = self.root / 'immutable.texture'
         imported.write_bytes(b'original')
         (source / 'linked.texture').symlink_to(imported)
+        (source / 'Maps/atlas.txt').write_bytes(b'definition')
         destination = self.root / 'arm64'
-        # PRoot remaps hard links; the new stage must not rely on link().
-        with mock.patch.object(package.os, 'link', side_effect=AssertionError('link2symlink path')):
+        # PRoot remaps hard links; staging must not rely on link() or copy 8.5 GB.
+        with mock.patch.object(package.os, 'link', side_effect=AssertionError('link2symlink path')), \
+             mock.patch.object(package.shutil, 'copyfile', side_effect=AssertionError('data copy')):
             report = package.prepare(self.archive, source, destination)
         target = destination / 'data/linked.texture'
-        self.assertFalse(target.is_symlink())
+        self.assertTrue(target.is_symlink())
         self.assertEqual(target.read_bytes(), b'original')
-        target.write_bytes(b'client mutation')
-        self.assertEqual(imported.read_bytes(), b'original')
-        self.assertEqual(report['data_materialization'], 'private_regular_copies')
+        # A case-unique directory is one directory symlink, not per-file entries.
+        self.assertTrue((destination / 'data/Maps').is_symlink())
+        self.assertEqual((destination / 'data/Maps/atlas.txt').read_bytes(), b'definition')
+        self.assertEqual(report['data_materialization'], 'case_merged_symlinks')
+        self.assertEqual(report['linked_directories'], 1)
+        self.assertEqual(report['shared_data_files'], 2)
 
     def test_corrupt_payload(self):
         self.build()

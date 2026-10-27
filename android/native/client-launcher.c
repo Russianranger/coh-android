@@ -34,17 +34,6 @@ static BOOL CALLBACK position_owned_window(HWND window, LPARAM unused) {
     (void)unused;
     GetWindowThreadProcessId(window,&pid);
     if(pid!=owned_pid || !GetClassNameA(window,name,sizeof(name)) || strcmp(name,"CrypticWindow")) return TRUE;
-#ifdef COH_ARMPORT_LAUNCHER
-    /* The Release client omits the development PID title. This launcher
-       already resolves the real child-owned CrypticWindow; expose that PID
-       for the app's existing X-window identity check. Diagnostic title only. */
-    {
-        char title[96], current[96];
-        snprintf(title,sizeof(title),"City of Heroes : PID: %lu",(unsigned long)pid);
-        GetWindowTextA(window,current,sizeof(current));
-        if(strcmp(current,title)) SetWindowTextA(window,title);
-    }
-#endif
     if(GetWindowRect(window,&rect) && (rect.left || rect.top || rect.right!=800 || rect.bottom!=600))
         SetWindowPos(window,NULL,0,0,800,600,SWP_NOZORDER|SWP_NOACTIVATE|SWP_ASYNCWINDOWPOS);
     return TRUE;

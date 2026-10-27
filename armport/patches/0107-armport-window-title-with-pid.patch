@@ -1,0 +1,35 @@
+diff --git a/Game/src/edit/edit_cmd_file.c b/Game/src/edit/edit_cmd_file.c
+index e13affd..b0d3608 100644
+--- a/Game/src/edit/edit_cmd_file.c
++++ b/Game/src/edit/edit_cmd_file.c
+@@ -25,7 +25,14 @@ extern char    map_loadsave_name[1024];
+ void editShowTitle()
+ {
+     char        titleBuffer[1000];
++#if defined(__aarch64__) && defined(__MINGW32__)
++    /* ArmPort: the Android app identifies its owned client window by the
++     * development title format (map path and PID). Release keeps its normal
++     * behavior otherwise; only the window caption differs. */
++    if(1)
++#else
+     if(isDevelopmentMode())
++#endif
+     {
+         char* mapName = game_state.world_name;
+         
+diff --git a/Game/src/game.c b/Game/src/game.c
+index 22064df..9a059ca 100644
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -431,7 +431,11 @@ void engine_update_net() {
+ // If we're in development mode, and we're working on the Release branch, let them know!
+ void showBranchWarning()
+ {
++#if defined(__aarch64__) && defined(__MINGW32__)
++    if (1) {    /* ArmPort: PID caption in every build; see editShowTitle. */
++#else
+     if (isDevelopmentMode()) {
++#endif
+         char    titleBuffer[1000];
+         sprintf(titleBuffer, "City of Heroes : PID: %d", _getpid());
+         winSetText(titleBuffer);

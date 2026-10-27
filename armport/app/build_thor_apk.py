@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.37: the public 0.13.36 app with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.38: the public 0.13.36 app with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -15,7 +15,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.37 / 52, and the binary manifest is checked
+- version metadata becomes 0.13.38 / 53, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries, and replaces character_creation_diagnostic.py.
@@ -40,8 +40,8 @@ import stage_app_assets
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.37', 52
-APK_NAME = 'COH-Atlas-Gameplay-0.13.37.apk'
+VERSION_NAME, VERSION_CODE = '0.13.38', 53
+APK_NAME = 'COH-Atlas-Gameplay-0.13.38.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -58,7 +58,8 @@ EXTRA_SOURCES = ('android/zoning/src/main/java/io/github/russianranger/cohclient
 # Runtime payloads the ARM64 option may add or change. Everything else is retained.
 ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py',
                            'client_stdio.py'})
-CHANGED_RUNTIME = frozenset({'character_creation_diagnostic.py', 'runtime-manifest.json', 'client-manifest.json'})
+CHANGED_RUNTIME = frozenset({'character_creation_diagnostic.py', 'local_character_server.py',
+                             'runtime-manifest.json', 'client-manifest.json'})
 REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java',
@@ -147,7 +148,7 @@ def members(apk):
 def build(args):
     require(re.fullmatch('[0-9a-f]{40}', args.repository_commit), 'Exact repository commit required')
     require(pin(args.donor_apk) == DONOR_APK, 'Donor 0.13.36 APK bytes differ from the public release')
-    require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh 0.13.37 output required')
+    require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh output required')
     for tool in (args.android_jar, args.build_tools / 'aapt2', args.build_tools / 'zipalign',
                  args.build_tools / 'lib/d8.jar', args.build_tools / 'lib/apksigner.jar'):
         require(tool.is_file(), 'Missing Android SDK tool: ' + str(tool))

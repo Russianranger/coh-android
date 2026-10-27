@@ -76,6 +76,18 @@ SERVER_TEXTURE_EXCLUSION_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d
 SERVER_TEXTURE_EXCLUSION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d'
 
 
+
+def LOCAL_CLIENT_LINK_OPTIONS():
+    """Keep the single local client's link while it loads the zone.
+
+    On the Thor the ARM64 client's first Atlas load took over two minutes
+    without servicing its link (0.13.37 report 2026-10-27); the MapServer
+    disconnected it on netlink overflow and the client returned to login.
+    The original -notimeout option (svr_init.c) keeps local links through
+    overflow/logout timers. Used only for the ARM64 client option.
+    """
+    return ['-notimeout'] if os.environ.get('COH_CLIENT_ARCH', 'x86') == 'arm64' else []
+
 def server_input_projection(package):
     if (not isinstance(package, dict) or package.get('source_commit') != device.SOURCE_COMMIT
             or package.get('files', {}).get('MapServer.exe', {}).get('sha256') != SERVER_TEXTURE_EXCLUSION_MAP):
@@ -1983,7 +1995,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
             '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
-            '-donotautogroup'],
+            '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS()],
             env=environment)
         # Use the native production grouping policy. The stock world packet
         # delivers this same flag to the client before it loads Atlas; geometry,

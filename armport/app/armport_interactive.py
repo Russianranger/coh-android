@@ -109,14 +109,38 @@ class ArmPortClient:
         (self.armport_work / 'armport_stdio.txt').unlink(missing_ok=True)
 
     def launch_client_attempt(self, *, label='actual-coh-client'):
+        # Device play: no per-exception SEH or power tracing and only boundary
+        # zone records (patch 0108); CI qualification keeps its own tracing.
         environment = dict(self.wine_env, ARMPORT_LOOSE_DATA='1', ARMPORT_NO_VERSION_CHECK='1',
                            ARMPORT_STDIO_LOG='armport_stdio.txt', COH_CLIENT_GRAPHICS_PROFILE='standard',
-                           WINEDEBUG='err+all,fixme-all,+seh', ARMPORT_POWER_TRACE='1')
-        # Client GPU selection remains Software until this ARM64 producer is
-        # separately qualified. Do not reuse an x86 GPU-probe success receipt.
+                           WINEDEBUG='err+all,fixme-all', ARMPORT_TRACE_QUIET='1')
+        environment = self.armport_gpu_environment(environment, label)
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
         child = self.ctx.start(label, command, env=environment)
         self.client = LoggedClient(child, self.armport_work / 'armport_stdio.txt')
+
+    def armport_gpu_environment(self, environment, label):
+        """Apply the app's existing GPU option (Turnip + Zink) to the ARM64 client.
+
+        The same pinned driver and the same native Vulkan and Wine GL probes
+        gate it; any probe failure falls back to Software before launch. The
+        x86 Game producer pin is the only check replaced: the selected producer
+        is this ARM64 executable. The renderer the client then reports is
+        recorded by the existing startup evidence.
+        """
+        requested = self.wine_env.get('COH_CLIENT_GPU_PROFILE', os.environ.get('COH_CLIENT_GPU_PROFILE', 'software'))
+        environment['COH_CLIENT_GPU_PROFILE'] = requested
+        if requested == 'software':
+            return environment
+        import client_gpu_profile as gpu
+        executable = self.client_executable_sha256
+        original = gpu.current_game_producer
+        gpu.current_game_producer = lambda owner: {'policy': 'armport_arm64_client_v1',
+                                                   'client_executable_sha256': executable}
+        try:
+            return gpu.apply_profile(self, environment, label)
+        finally:
+            gpu.current_game_producer = original
 
     def save_evidence(self):
         # Base diagnostics read work/data caches and work/logs. During this

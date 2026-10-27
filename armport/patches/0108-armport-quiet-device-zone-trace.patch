@@ -1,0 +1,30 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index a714912..5fd0412 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -77,8 +77,25 @@ done:
+     if (!ok) fprintf(stderr, "ARMPORT_ZONE_LOG_FAILED\n");
+ }
+ 
++static int armportZoneTraceQuietDrops(const char *stage)
++{
++    /* ARMPORT_TRACE_QUIET (device play): keep only load boundaries, errors
++     * and dialogs. Per-file library/texture/model records cost load time on
++     * the Thor and are only needed by CI qualification, which leaves it unset. */
++    static int quiet = -1;
++    static const char *const keep[] = {"map.start", "textures.done", "ready.sent",
++        "client.error", "client.fatal", "dialog."};
++    size_t i;
++    if (quiet < 0) quiet = getenv("ARMPORT_TRACE_QUIET") != NULL;
++    if (!quiet) return 0;
++    for (i = 0; i < sizeof(keep) / sizeof(keep[0]); ++i)
++        if (!strncmp(stage, keep[i], strlen(keep[i]))) return 0;
++    return 1;
++}
++
+ static void armportZoneTrace(const char *stage, const char *detail)
+ {
++    if (armportZoneTraceQuietDrops(stage)) return;
+     // 0067: Atlas-only ordering witness in the SAME append-only stream as
+     // Wine's +seh output. A separate log's line numbers/ticks cannot order
+     // Wine exceptions against map.start. Emit for EVERY map.start before its
