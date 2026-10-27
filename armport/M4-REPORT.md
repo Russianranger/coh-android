@@ -1,7 +1,28 @@
 # M4 app integration report
 
-Status: ARM64-runner guest qualification passed; milestone approval pending.
-No physical Android surface or Thor gameplay result is claimed.
+Status: ARM64-runner guest qualification passed again on the merged M3
+client; milestone review requested. No physical Android surface or Thor
+gameplay result is claimed.
+
+## Requalification on the merged M3 client (2026-10-27 UTC)
+
+M3 merged into COH-ArmPort (PR #6, 3ac8eedc9), and COH-ArmPort is merged into
+this branch at cdc059a4b. ae1186ea3 points the workflow defaults at Atlas
+40407492746, the final same-head M3 run at d7c072246, for the Release
+client, bins and Cg.
+
+Run [40417983694](https://github.com/Russianranger/coh-android/actions/runs/40417983694)
+passes all four jobs: assets, app-sources, guest-boot and interactive-guest.
+The interactive result is `passed: true`, 2591.4 s, with no creation or reopen
+guest failures, failed stages or client faults. The complete runtime data
+inventory has 173,109 files and 0 case duplicates.
+
+Artifacts (GitHub digests):
+- interactive evidence 12699480903, sha256 92286fb8…3b8889;
+- client package 12697725129, sha256 f5d719be…df5e97.
+
+The 245 Python tests pass locally after the merge. The earlier evidence from
+40176336731 stays below as history.
 
 ## Exit test and evidence
 

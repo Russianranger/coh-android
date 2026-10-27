@@ -10,7 +10,7 @@ on:
         description: Request profile
         default: cape
   push:
-    branches: ['armport/**']
+    branches: ['armport/**', '!armport/m4-runtime']
     paths:
       - 'armport/scripts/discover_approved_ranges.py'
       - '.github/workflows/armport-range-discovery.yml'
