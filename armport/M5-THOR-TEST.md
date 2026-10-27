@@ -6,18 +6,18 @@ or played. M5 is not complete.
 | Item | Value |
 |---|---|
 | APK | `COH-Atlas-Gameplay-0.13.39.apk`, versionCode 54, 80,907,096 bytes |
-| APK sha256 | `66545e79b25f8c0148c1187bcf7f9cb3199ac1904ef962d1bb39d723b334086d` |
-| Built by | run [40499862451](https://github.com/Russianranger/coh-android/actions/runs/40499862451), artifact `coh-atlas-gameplay-0.13.39-apk` (12732630594, kept until 2026-11-26) |
+| APK sha256 | `d341a045a3fafa3e3acba1c3df046f9fece5a284ae9a4c47d714bcc7b6af620a` |
+| Built by | run [40526906680](https://github.com/Russianranger/coh-android/actions/runs/40526906680) at `6e08aad1f`, artifact `coh-atlas-gameplay-0.13.39-apk` (12742874538, kept until 2026-11-26) |
 | Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.38) |
-| ARM64 client | executable `3a6f98cf…b17e`, package `afef6bb7…d81c`, from build 40492374580 (patches to 0111) |
-| CI qualification | run 40494392234: ARM64 creation then reopen through the app guest passed (retained 0.10 runtime; the full 0.13.39 runtime has not run in CI) |
+| ARM64 client | executable `ed70b6c3…d92a`, package `68c68f7a…c57d`, from build 40510032907 (patches to 0111, per-set anchor indices) |
+| CI qualification | run 40519490566 at `6e08aad1f`: ARM64 creation then reopen through the app guest passed (retained 0.10 runtime; the full 0.13.39 runtime has not run in CI) |
 
 ## What changed from 0.13.38 (Thor report, session a354bb95)
 
 | 0.13.38 problem | Cause found in the exported report | 0.13.39 change |
 |---|---|---|
-| Crash entering Atlas after the MapServer connection | Page fault reading `FFFFFFFFA3E25370` at `smf_RenderTextAndWhitespace` (smf_render.c:219): SMF anchor pointers were kept in an int stack | Patch 0110: anchor ring tokens (as for faces); all six anchor reads resolve through them |
-| ARM64 data stage 114 s | One stat per linked file (212k under PRoot) for the descendant check | The walk classifies by d_type; a passed check is reused while every source and link-target directory keeps its identity |
+| Crash entering Atlas after the MapServer connection | Page fault reading `FFFFFFFFA3E25370` at `smf_RenderTextAndWhitespace` (smf_render.c:219): SMF anchor pointers were kept in an int stack | Patch 0110: each attribute set keeps its anchor pointers; the int stack holds indices into it, so no anchor is truncated or recycled |
+| ARM64 data stage 114 s | One stat per linked file (212k under PRoot) for the descendant check | The walk classifies by d_type; links must point directly at their file; a passed check (format 2) is reused while every source and link-target directory keeps its identity |
 | 137 s before the first message store | Not yet measured: whole-tree folder cache scan plus recursive change monitor | Patch 0111 prints each folder-cache phase (`ARMPORT_FOLDER_CACHE_V1`) and skips the monitor for the immutable app worktree |
 
 ## Earlier: what changed from 0.13.37 (Thor report, 2026-10-27)

@@ -30,7 +30,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  M4_RUN_ID: ${{ inputs.m4_run_id || '40494392234' }}
+  M4_RUN_ID: ${{ inputs.m4_run_id || '40519490566' }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 

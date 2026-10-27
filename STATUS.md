@@ -37,4 +37,4 @@ M3 into Atlas: accepted (Sol 5659701771), merged; 106 patches (armport/HANDOFF.m
 - M4 app runtime: accepted (Sol 5660940046), merged (PR #7; armport/M4-REPORT.md).
 - M5 Thor (PR #8): 0.13.38 on Thor: warm start about 10 min, GPU (Zink/Turnip) and texture
   index worked; crash entering Atlas (SMF anchor pointer in int). 0.13.39: patches 0110-0111,
-  cached link check; build 40492374580, requalify 40494392234, APK 40499862451.
+  cached link check; build 40510032907, requalify 40519490566, APK 40526906680 (Sol 5669282764).
