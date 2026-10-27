@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-26. M0 survey: merged (PR #3). Route: build the original client as an ARM64
+Updated 2026-10-27. M0 survey: merged (PR #3). Route: build the original client as an ARM64
 Windows program for the app's existing ARM64 Wine.
 
 M1 libraries: merged (PR #4, approved by Sol). The original textparser built
@@ -21,9 +21,7 @@ untouched). Details: armport/M2-REPORT.md.
   DXT compression, SSE reported absent.
 
 CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas: accepted (Sol 5659701771) and merge approved by the user; 106 patches.
-Claude leads,
-see armport/HANDOFF.md):
+M3 into Atlas: accepted (Sol 5659701771), merged; 106 patches (armport/HANDOFF.md):
 - CI job server-run: the repository's qualified ARM64 game stack (original
   DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
   loopback-only network) plus the ARM64 client, login typed on Xvfb.
@@ -36,5 +34,7 @@ see armport/HANDOFF.md):
   rendered (plaza/statue/dome), 0 after-load errors, still connected; ARM64 =
   i686 partial state, equal error inventories. Reduced scope: completeness
   flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
-- M4 (PR #7, armport/m4-runtime): 40176336731 passes guest continuity; rerun on the
-  merged M3 client pending. See armport/M4-REPORT.md. Android surface/Thor pending.
+- M4 app runtime: accepted (Sol 5660940046), merged (PR #7; armport/M4-REPORT.md).
+- M5 Thor (PR #8): 0.13.37 played on Thor; 35-min cold start, Atlas load lost (title
+  without PID), software renderer. 0.13.38 fixes on armport/m5-thor (patches 0107-0109,
+  linked data, zoning overlap, GPU option); build 40445773810, requalify 40446992851.
