@@ -116,10 +116,20 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     private float pointerX = 400, pointerY = 300;
 
     private Bitmap displayed;
-    // Main-thread presentation timing; a hardware canvas scales on the GPU and
-    // falls back to the software canvas for the rest of the view's life.
+    // Main-thread presentation timing. Each Surface generation keeps one canvas
+    // mode: a Surface that has created its hardware (HWUI) context must not be
+    // locked with a software canvas (Surface.unlockCanvasAndPost dispatches to
+    // that context and rejects it). lockHardwareCanvas reports failure as null
+    // (SurfaceView.internalLockCanvas), so null is transient and retried; a
+    // draw/post failure, or HARDWARE_NULL_LIMIT consecutive nulls, ends hardware
+    // use for this view and recreates the Surface, whose next generation is
+    // software from its first frame.
+    private static final int HARDWARE_NULL_LIMIT = 30;
+    private static final long HARDWARE_RETRY_MS = 16;
     private long renderedFrames, renderNanosSum, renderNanosMax;
-    private boolean hardwareCanvasFailed, lastHardwareCanvas;
+    private boolean hardwareCanvasFailed, lastHardwareCanvas, surfaceUsesHardware, recreateRequested;
+    private int hardwareNullLocks;
+    private final Runnable hardwareRetry = this::scheduleRender;
     private boolean ready;
     private boolean capturePending;
     private CaptureWork captureWork;
@@ -291,18 +301,15 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
                 displayed = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.ARGB_8888);
             }
             displayed.setPixels(frame.pixels, 0, frame.width, 0, 0, frame.width, frame.height);
-            canvas = null;
             lastHardwareCanvas = false;
-            if (!hardwareCanvasFailed && android.os.Build.VERSION.SDK_INT >= 26) {
-                try {
-                    canvas = getHolder().lockHardwareCanvas();
-                    lastHardwareCanvas = canvas != null;
-                } catch (RuntimeException ex) {
-                    hardwareCanvasFailed = true;
-                    reportError("Hardware canvas: " + ex.getClass().getSimpleName());
-                }
+            if (surfaceUsesHardware) {
+                canvas = getHolder().lockHardwareCanvas();
+                if (canvas == null) { hardwareUnavailable(); return; }
+                hardwareNullLocks = 0;
+                lastHardwareCanvas = true;
+            } else {
+                canvas = getHolder().lockCanvas();
             }
-            if (canvas == null) canvas = getHolder().lockCanvas();
             if (canvas == null) throw new IllegalStateException("Surface canvas unavailable");
             surfaceWidth = canvas.getWidth();
             surfaceHeight = canvas.getHeight();
@@ -314,14 +321,16 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
             canvas.drawColor(Color.BLACK);
             canvas.drawBitmap(displayed, null, destination, paint);
         } catch (RuntimeException ex) {
-            reportError("Surface render: " + ex.getClass().getSimpleName());
+            if (lastHardwareCanvas) hardwareFailed("render: " + ex.getClass().getSimpleName());
+            else reportError("Surface render: " + ex.getClass().getSimpleName());
             destination = null;
         } finally {
             if (canvas != null) {
                 try { getHolder().unlockCanvasAndPost(canvas); }
                 catch (RuntimeException ex) {
                     destination = null;
-                    reportError("Surface post: " + ex.getClass().getSimpleName());
+                    if (lastHardwareCanvas) hardwareFailed("post: " + ex.getClass().getSimpleName());
+                    else reportError("Surface post: " + ex.getClass().getSimpleName());
                 }
             }
         }
@@ -592,6 +601,29 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         if (!focus) releaseInput();
     }
 
+    private void hardwareUnavailable() {
+        if (++hardwareNullLocks >= HARDWARE_NULL_LIMIT) {
+            hardwareFailed("unavailable after " + hardwareNullLocks + " attempts");
+            return;
+        }
+        main.removeCallbacks(hardwareRetry);
+        main.postAtTime(hardwareRetry, SystemClock.uptimeMillis() + HARDWARE_RETRY_MS);
+    }
+
+    /** Ends hardware use for this view; the replacement Surface starts in software. */
+    private void hardwareFailed(String detail) {
+        main.removeCallbacks(hardwareRetry);
+        if (!hardwareCanvasFailed) {
+            hardwareCanvasFailed = true;
+            reportError("Hardware canvas " + detail);
+        }
+        if (recreateRequested || detached) return;
+        recreateRequested = true;
+        // Hide first; surfaceDestroyed shows the view again once the old Surface
+        // (and its HWUI context) is released, so a traversal separates the two.
+        main.post(() -> { if (!detached) setVisibility(INVISIBLE); });
+    }
+
     private void reportError(String detail) {
         Listener target = listener;
         if (target != null) target.onCaptureError(detail);
@@ -600,6 +632,9 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     @Override public void surfaceCreated(SurfaceHolder holder) {
         ready = true;
         surfaceGeneration++;
+        surfaceUsesHardware = !hardwareCanvasFailed && android.os.Build.VERSION.SDK_INT >= 26;
+        hardwareNullLocks = 0;
+        recreateRequested = false;
         invalidateCapture();
         scheduleRender();
     }
@@ -613,6 +648,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     @Override public void surfaceDestroyed(SurfaceHolder holder) {
         releaseInput();
         ready = false;
+        main.removeCallbacks(hardwareRetry);
+        if (recreateRequested && !detached) main.post(() -> { if (!detached) setVisibility(VISIBLE); });
         updateCursor();
         surfaceGeneration++;
         invalidateCapture();

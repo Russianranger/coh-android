@@ -76,7 +76,7 @@ public class Bitmap {
     'android/graphics/Canvas.java': r'''package android.graphics;
 import android.view.SurfaceView;
 public class Canvas {
- final SurfaceView.TestHolder holder;public Canvas(SurfaceView.TestHolder h){holder=h;}
+ final SurfaceView.TestHolder holder;public boolean hardware;public Canvas(SurfaceView.TestHolder h){holder=h;}
  public int getWidth(){return holder.width;}public int getHeight(){return holder.height;}
  public void drawColor(int c){}public void drawBitmap(Bitmap b,Object source,RectF destination,Paint p){holder.marker=b.pixels[0];holder.pixels=b.pixels.clone();holder.frameWidth=b.width;holder.frameHeight=b.height;}
 }''',
@@ -90,12 +90,20 @@ import android.content.Context;import android.graphics.Canvas;
 public class SurfaceView {
  public static class TestHolder implements SurfaceHolder {
   public int width=800,height=600,marker,posts,frameWidth,frameHeight;public int[] pixels;
-  public int hardwareLocks,softwareLocks;public boolean hardwareFails;
+  // AOSP: lockHardwareCanvas returns null on failure (SurfaceView.internalLockCanvas);
+  // a successful one creates the Surface's HWUI context, after which posting a
+  // software canvas fails the canvas-identity check until the Surface is released.
+  public int hardwareLocks,hardwareAttempts,softwareLocks,hardwareNulls;public boolean hwuiContext,postFails;
   public void addCallback(Callback c){}public Canvas lockCanvas(){softwareLocks++;return new Canvas(this);}
-  public Canvas lockHardwareCanvas(){if(hardwareFails)throw new IllegalStateException("no hardware canvas");hardwareLocks++;return new Canvas(this);}
-  public void unlockCanvasAndPost(Canvas c){posts++;}
+  public Canvas lockHardwareCanvas(){hardwareAttempts++;if(hardwareNulls!=0){if(hardwareNulls>0)hardwareNulls--;return null;}
+   hardwareLocks++;hwuiContext=true;Canvas c=new Canvas(this);c.hardware=true;return c;}
+  public void unlockCanvasAndPost(Canvas c){if(postFails){postFails=false;throw new IllegalStateException("post failed");}
+   if(hwuiContext&&!c.hardware)throw new IllegalArgumentException("canvas does not belong to this surface");posts++;}
+  public void release(){hwuiContext=false;}
  }
  public static class Parent {public void requestDisallowInterceptTouchEvent(boolean b){}}
+ public static final int VISIBLE=0,INVISIBLE=4;public int visibility=VISIBLE,visibilityChanges;
+ public void setVisibility(int v){visibility=v;visibilityChanges++;}
  final TestHolder holder=new TestHolder();public SurfaceView(Context context){}
  public TestHolder getHolder(){return holder;}public void setWillNotDraw(boolean b){}
  public int getWidth(){return holder.width;}public int getHeight(){return holder.height;}public Parent getParent(){return null;}
@@ -153,13 +161,22 @@ public class SurfaceCaptureHost {
  static void encoded(){try{need(Bitmap.encodeEntered.await(3,TimeUnit.SECONDS),"encoder never started");}catch(InterruptedException e){throw new AssertionError(e);}}
  static void release(){Bitmap.encodeProceed.countDown();}
  static void copied(){SystemClock.now+=17;PixelCopy.complete(PixelCopy.SUCCESS);}
+ static void settle(ClientSurface s)throws Exception{if(PixelCopy.requests>settled){settled=PixelCopy.requests;copied();waitIdle(s);}}
+ static int settled;
+ static void recreate(ClientSurface s){
+  s.surfaceDestroyed(s.getHolder());s.getHolder().release();Handler.drain();
+  need(s.visibility==SurfaceView.VISIBLE,"view not shown again after release");
+  s.surfaceCreated(s.getHolder());Handler.drain();
+ }
  static void oneRecycle(Bitmap b){need(b.recycled==1,"capture bitmap ownership leak");}
  static void hash(ClientSurface.Capture c)throws Exception {byte[] digest=MessageDigest.getInstance("SHA-256").digest(c.png);StringBuilder hex=new StringBuilder();for(byte b:digest)hex.append(String.format("%02x",b&255));need(c.sha256.equals(hex.toString()),"PNG hash does not close");}
  public static void main(String[] args)throws Exception {
   ClientSurface surface=new ClientSurface(new Context());Evidence evidence=new Evidence();
   surface.setSession(FIRST);surface.setCaptureListener(evidence);surface.surfaceCreated(surface.getHolder());Handler.drain();
   if(args[0].equals("request_failure"))PixelCopy.reject=true;
-  if(args[0].equals("hardware_fallback"))surface.getHolder().hardwareFails=true;
+  if(args[0].equals("hardware_fallback"))surface.getHolder().hardwareNulls=-1;
+  if(args[0].equals("hardware_transient"))surface.getHolder().hardwareNulls=2;
+  if(args[0].equals("hardware_post_failure"))surface.getHolder().postFails=true;
   frame(surface,0xff101010,1);Bitmap owned=Bitmap.all.get(Bitmap.all.size()-1);
   switch(args[0]) {
   case "resume": {
@@ -246,12 +263,36 @@ public class SurfaceCaptureHost {
    oneRecycle(owned);break;
   }
   case "hardware_fallback": {
-   need(surface.getHolder().softwareLocks==1&&surface.getHolder().hardwareLocks==0&&surface.getHolder().posts==1,"no software fallback");
-   need(evidence.errors.size()==1&&evidence.errors.get(0).startsWith("Hardware canvas"),"fallback not reported");
-   copied();waitIdle(surface);SystemClock.now+=2000;frame(surface,0xff303030,2);
-   need(surface.getHolder().softwareLocks==2&&surface.getHolder().marker==0xff303030,"fallback not kept for later frames");
-   need(evidence.errors.size()==1,"hardware canvas retried after failure");
-   need(evidence.captures.size()==1&&!evidence.captures.get(0).hardwareCanvas,"capture misreports canvas");
+   SurfaceView.TestHolder h=surface.getHolder();
+   need(h.softwareLocks==0&&h.posts==0&&evidence.errors.isEmpty(),"null hardware lock fell through to software on the same surface");
+   for(int i=0;i<40;i++){SystemClock.now+=16;Handler.drain();}
+   need(h.hardwareAttempts==30&&h.softwareLocks==0&&h.posts==0,"null locks not bounded or mixed with software");
+   need(evidence.errors.size()==1&&evidence.errors.get(0).startsWith("Hardware canvas unavailable"),"unavailable hardware not reported once");
+   need(surface.visibility==SurfaceView.INVISIBLE,"surface not released for recreation");
+   recreate(surface);
+   need(h.softwareLocks==1&&h.posts==1&&h.hardwareAttempts==30,"replacement surface not software");
+   settle(surface);SystemClock.now+=2000;frame(surface,0xff303030,2);
+   need(h.softwareLocks==2&&h.marker==0xff303030&&h.hardwareAttempts==30,"software mode not kept");
+   break;
+  }
+  case "hardware_transient": {
+   SurfaceView.TestHolder h=surface.getHolder();
+   need(h.posts==0&&h.softwareLocks==0,"transient null mixed with software");
+   SystemClock.now+=16;Handler.drain();SystemClock.now+=16;Handler.drain();
+   need(h.hardwareLocks==1&&h.hardwareAttempts==3&&h.posts==1&&h.softwareLocks==0&&evidence.errors.isEmpty(),"transient null not retried in hardware");
+   settle(surface);h.hardwareNulls=1;SystemClock.now+=2000;frame(surface,0xff404040,2);
+   need(h.softwareLocks==0&&h.posts==1,"null after HWUI context used a software canvas");
+   SystemClock.now+=16;Handler.drain();
+   need(h.posts==2&&h.marker==0xff404040&&h.softwareLocks==0&&surface.visibilityChanges==0,"hardware retry did not present");
+   break;
+  }
+  case "hardware_post_failure": {
+   SurfaceView.TestHolder h=surface.getHolder();
+   need(h.hardwareLocks==1&&h.posts==0&&h.softwareLocks==0,"post failure retried in software on the same surface");
+   need(evidence.errors.size()==1&&evidence.errors.get(0).startsWith("Hardware canvas post"),"post failure not reported");
+   need(surface.visibility==SurfaceView.INVISIBLE,"surface not released after post failure");
+   recreate(surface);
+   need(h.softwareLocks==1&&h.posts==1&&h.hardwareLocks==1,"replacement surface not software");
    break;
   }
   default:throw new AssertionError("unknown scenario");
@@ -291,7 +332,7 @@ class ClientSurfaceCaptureTests(unittest.TestCase):
 for _name in ('resume', 'session_copy', 'session_encode', 'listener', 'generation', 'destroy',
               'detach', 'clear', 'pixel_failure', 'encode_failure', 'png_bound', 'reject',
               'request_failure', 'duplicate_callback', 'recreate', 'fresh',
-              'hardware_canvas', 'hardware_fallback'):
+              'hardware_canvas', 'hardware_fallback', 'hardware_transient', 'hardware_post_failure'):
     setattr(ClientSurfaceCaptureTests, 'test_' + _name,
             lambda self, scenario=_name: self.scenario(scenario))
 

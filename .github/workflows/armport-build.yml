@@ -364,6 +364,11 @@ jobs:
           python3 armport/tests/smf_selection_boundary.py --source "$RUNNER_TEMP/armport/src"
           python3 armport/tests/smf_plain_selection.py --source "$RUNNER_TEMP/armport/src"
 
+      - name: Frame-rate log uses the CRT stdout stream (patch 0114)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort frame-rate log CRT" python3 armport/tests/frame_rate_log_crt.py --source "$RUNNER_TEMP/armport/src")
+          echo "::notice title=ArmPort frame-rate log CRT::$out"
+
       - name: VBO stream rebase keeps 64-bit pointers (patch 0112)
         run: |
           out=$(armport/scripts/step.sh "ArmPort VBO rebase" python3 armport/tests/vbo_rebase.py --source "$RUNNER_TEMP/armport/src")
@@ -842,7 +847,7 @@ jobs:
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" \
             --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw --cg-dir "$RUNNER_TEMP/cg-arb" \
-            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive --login-probe
+            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive --login-probe --require-fps-log
       - name: Export the last screen
         if: always()
         run: |

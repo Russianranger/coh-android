@@ -47,12 +47,19 @@ public final class InteractiveRfbClient implements Closeable {
 
     private byte[] raw;
     private java.nio.IntBuffer rawInts;
-    // Decoder thread only; read through the synchronized-free getters as
-    // diagnostics (the values are monotonic counters).
-    private volatile long decodeNanosSum, decodeNanosMax, decodedRects;
-    public long decodeNanosSum() { return decodeNanosSum; }
-    public long decodeNanosMax() { return decodeNanosMax; }
+    // Written by the decoder thread only; read as diagnostics. Read time is the
+    // blocking socket wait plus copy for Raw pixel bytes; convert time is the
+    // pixel conversion alone.
+    private volatile long readNanosSum, readNanosMax, convertNanosSum, convertNanosMax, decodedRects;
+    private final java.util.concurrent.atomic.AtomicBoolean totalsRetired = new java.util.concurrent.atomic.AtomicBoolean();
+    public long readNanosSum() { return readNanosSum; }
+    public long readNanosMax() { return readNanosMax; }
+    public long convertNanosSum() { return convertNanosSum; }
+    public long convertNanosMax() { return convertNanosMax; }
     public long decodedRects() { return decodedRects; }
+    /** True exactly once, for the caller that moves these totals into session-owned state. */
+    public boolean retireTotals() { return totalsRetired.compareAndSet(false, true); }
+    public boolean totalsRetired() { return totalsRetired.get(); }
 
     public InteractiveRfbClient(InputStream input, OutputStream output, Listener listener) {
         if (input == null || output == null || listener == null) throw new NullPointerException();
@@ -184,15 +191,18 @@ public final class InteractiveRfbClient implements Closeable {
                 // Bounded 64 KiB reads keep the socket read-ahead contract.
                 for (int done = 0; done < bytes; done += Math.min(64 * 1024, bytes - done))
                     input.readFully(raw, done, Math.min(64 * 1024, bytes - done));
+                long read = System.nanoTime();
                 for (int yy = 0; yy < h; yy++) {
                     int offset = (y + yy) * width + x;
                     rawInts.position(yy * w);
                     rawInts.get(pixels, offset, w);
                     for (int xx = offset, end = offset + w; xx < end; xx++) pixels[xx] |= 0xff000000;
                 }
-                long elapsed = System.nanoTime() - started;
-                decodeNanosSum += elapsed;
-                decodeNanosMax = Math.max(decodeNanosMax, elapsed);
+                long converted = System.nanoTime();
+                readNanosSum += read - started;
+                readNanosMax = Math.max(readNanosMax, read - started);
+                convertNanosSum += converted - read;
+                convertNanosMax = Math.max(convertNanosMax, converted - read);
                 decodedRects++;
                 changed = true;
             } else throw new IOException("Unsupported RFB encoding: " + encoding);

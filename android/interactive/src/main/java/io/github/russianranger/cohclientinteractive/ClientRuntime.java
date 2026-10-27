@@ -1446,18 +1446,31 @@ public final class ClientRuntime {
         }
         presentationWindowFrames++;
     }
+    private long retainedRects, retainedReadNanosSum, retainedReadNanosMax, retainedConvertNanosSum, retainedConvertNanosMax;
+    /** Moves a decoder's totals into session state once, before it is dropped. */
+    private synchronized void retainDecoderTotals(InteractiveRfbClient retiring) {
+        if (retiring == null || !retiring.retireTotals()) return;
+        retainedRects += retiring.decodedRects();
+        retainedReadNanosSum += retiring.readNanosSum(); retainedConvertNanosSum += retiring.convertNanosSum();
+        retainedReadNanosMax = Math.max(retainedReadNanosMax, retiring.readNanosMax());
+        retainedConvertNanosMax = Math.max(retainedConvertNanosMax, retiring.convertNanosMax());
+    }
     private synchronized Map<String,Object> presentationTiming() {
         Map<String,Object> result = new LinkedHashMap<>();
         result.put("format", 1); result.put("window_ms", PRESENTATION_WINDOW_MS);
         result.put("delivered_frames_per_window", new ArrayList<>(presentationWindows));
         result.put("windows_limit_reached", presentationWindows.size() >= MAX_PRESENTATION_WINDOWS);
+        long rects = retainedRects, readSum = retainedReadNanosSum, readMax = retainedReadNanosMax,
+            convertSum = retainedConvertNanosSum, convertMax = retainedConvertNanosMax;
         InteractiveRfbClient current = decoder;
-        if (current != null) {
-            result.put("rfb_decoded_rectangles", current.decodedRects());
-            result.put("rfb_decode_ms_sum", current.decodeNanosSum() / 1000000);
-            result.put("rfb_decode_ms_max", current.decodeNanosMax() / 1000000);
+        if (current != null && !current.totalsRetired()) {
+            rects += current.decodedRects(); readSum += current.readNanosSum(); convertSum += current.convertNanosSum();
+            readMax = Math.max(readMax, current.readNanosMax()); convertMax = Math.max(convertMax, current.convertNanosMax());
         }
-        result.put("scope", "Delivered RFB frames and Raw decode time; displayed-frame render totals are in each surface capture record.");
+        result.put("rfb_decoded_rectangles", rects);
+        result.put("rfb_read_ms_sum", readSum / 1000000); result.put("rfb_read_ms_max", readMax / 1000000);
+        result.put("rfb_convert_ms_sum", convertSum / 1000000); result.put("rfb_convert_ms_max", convertMax / 1000000);
+        result.put("scope", "Delivered RFB frames per window; Raw read (socket wait plus copy) and pixel conversion time, retained across receiver teardown; displayed-frame render totals are in each surface capture record.");
         return result;
     }
     private synchronized Map<String,Object> captureDiagnostics() {
@@ -1735,7 +1748,9 @@ public final class ClientRuntime {
                         recordPresentedFrame(SystemClock.uptimeMillis());
                         listener.onFrame(pixels, width, height, sequence);
                     });
-                    decoder.run(); return;
+                    InteractiveRfbClient running = decoder;
+                    try { running.run(); } finally { retainDecoderTotals(running); }
+                    return;
                 } catch (IOException e) {
                     try { candidate.close(); } catch (IOException ignored) {}
                     if (socket == candidate) {
@@ -1765,7 +1780,9 @@ public final class ClientRuntime {
     private void closeReceiver() {
         LocalSocket active = socket; socket = null;
         if (active != null) try { active.close(); } catch (IOException ignored) {}
-        InteractiveRfbClient activeDecoder = decoder; decoder = null;
+        InteractiveRfbClient activeDecoder = decoder;
+        retainDecoderTotals(activeDecoder);
+        decoder = null;
         if (activeDecoder != null) try { activeDecoder.close(); } catch (IOException ignored) {}
     }
     private static void join(Thread thread, long millis) {
