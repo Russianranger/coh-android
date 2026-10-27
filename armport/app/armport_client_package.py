@@ -123,7 +123,60 @@ def unpack(archive_path, destination):
 
 
 
-def merge_links(source_data, target_root):
+VALIDATION_RECEIPT = 'armport-data-validation.json'
+
+
+def identity(path):
+    info = os.stat(path)
+    return [info.st_dev, info.st_ino, info.st_mtime_ns, info.st_ctime_ns]
+
+
+def identity_digest(records):
+    return hashlib.sha256(json.dumps(records, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
+def validate_links(source_data, links, tree, receipt):
+    """Per-file rules for linked entries, reused while no directory changed.
+
+    Real files, directories and special files are classified by the walk from
+    d_type. Linked files need a stat of their target: 212k stats under PRoot
+    took 111 s on Thor. A passed full check records the identity (device,
+    inode, mtime, ctime) of every source directory and of each directory the
+    links point into. Adding, removing, renaming or replacing any entry changes
+    its directory's identity, so a later identical record proves the same
+    validated entries without visiting them; anything else rechecks all links.
+    """
+    if receipt is not None and receipt.is_file() and not receipt.is_symlink():
+        try:
+            saved = json.loads(receipt.read_text())
+            if (saved.get('format') == 1 and saved.get('source') == str(source_data)
+                    and saved.get('tree') == tree and saved.get('links') == len(links)):
+                targets = [[name, *identity(name)] for name in saved['target_directories']]
+                if identity_digest(targets) == saved.get('targets'):
+                    return {'mode': 'unchanged_directory_receipt', 'links_checked': 0,
+                            'target_directories': len(targets)}
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
+    directories = set()
+    for path in links:
+        try:
+            mode = os.stat(path).st_mode
+        except OSError:
+            mode = 0
+        require(not stat.S_ISDIR(mode), 'Linked data directory refused')
+        require(stat.S_ISREG(mode), 'Nonregular app data')
+        directories.add(os.path.dirname(os.path.join(os.path.dirname(path), os.readlink(path))))
+    names = sorted(directories)
+    targets = [[name, *identity(name)] for name in names]
+    if receipt is not None:
+        pending = receipt.with_name(receipt.name + '.pending')
+        pending.write_text(json.dumps({'format': 1, 'source': str(source_data), 'tree': tree,
+            'links': len(links), 'target_directories': names, 'targets': identity_digest(targets)}))
+        pending.replace(receipt)
+    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names)}
+
+
+def merge_links(source_data, target_root, receipt=None):
     """Expose the verified app data under one case-insensitive view, by symlink.
 
     Wine resolves Windows paths case-insensitively, so case-alias directories
@@ -131,36 +184,44 @@ def merge_links(source_data, target_root):
     everything else is a single symlink to its source directory or file. The
     top-level bin/ is excluded: the ARM64 overlay owns it. Copying 8.5 GB per
     launch (0.13.37 on Thor: 419 s) is replaced by a walk of directory names.
+    Every descendant passes the per-file rules before any link is published.
     """
     source_data = source_data.resolve()
     # casefold relative directory -> actual relative paths (aliases).
     aliases, total = {}, 0
     conflicts = set()
-    for directory, dirs, files in os.walk(source_data, followlinks=False):
-        relative = Path(directory).relative_to(source_data)
-        if relative == Path('.'):
-            dirs[:] = [name for name in dirs if name.casefold() != 'bin']
-        for name in dirs:
-            path = Path(directory) / name
-            require(not path.is_symlink(), 'Linked data directory refused')
-            aliases.setdefault((relative / name).as_posix().casefold(), []).append(relative / name)
+    tree, links = [], []
+    pending = [source_data]
+    while pending:
+        directory = pending.pop()
+        relative = directory.relative_to(source_data)
+        tree.append([relative.as_posix(), *identity(directory)])
+        with os.scandir(directory) as scan:
+            entries = sorted(scan, key=lambda entry: entry.name)
+        dirs, files = [], []
+        for entry in entries:
+            if entry.is_symlink():
+                links.append(entry.path)
+                files.append(entry.name)
+            elif entry.is_dir(follow_symlinks=False):
+                if relative == Path('.') and entry.name.casefold() == 'bin':
+                    continue
+                dirs.append(entry.name)
+            else:
+                require(entry.is_file(follow_symlinks=False), 'Nonregular app data')
+                files.append(entry.name)
         for name in files:
-            # Every published descendant passes the per-file rules before any
-            # link exists, including files reached later through a single
-            # directory link (worktree files may be links to verified regular files).
-            path = Path(directory) / name
-            try:
-                mode = os.stat(path).st_mode
-            except OSError:
-                mode = 0
-            require(stat.S_ISREG(mode), 'Nonregular app data')
-            require(path.suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
+            require(Path(name).suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
+        for name in dirs:
+            aliases.setdefault((relative / name).as_posix().casefold(), []).append(relative / name)
+            pending.append(directory / name)
         total += len(files)
         names = [name.casefold() for name in files] + [name.casefold() for name in dirs]
         if len(names) != len(set(names)):
             # File case aliases or file/directory clashes: merge here so the
             # per-entry checks below reject them explicitly.
             conflicts.add(relative.as_posix().casefold() if relative != Path('.') else '')
+    validation = validate_links(source_data, links, identity_digest(sorted(tree)), receipt)
     conflicts |= {key for key, paths in aliases.items() if len(paths) > 1}
     dirty = {''}
     for key in conflicts:
@@ -213,6 +274,7 @@ def merge_links(source_data, target_root):
     target_root.mkdir(exist_ok=True)
     populate([source_data], target_root, '')
     stats['files'] = total
+    stats['validation'] = validation
     return stats
 
 
@@ -233,7 +295,7 @@ def prepare(archive, source_data, destination):
         document = unpack(archive, pending)
         count = copied_bytes = 0
         copy_started = time.monotonic()
-        linked = merge_links(source_data, pending / 'data')
+        linked = merge_links(source_data, pending / 'data', destination.parent / VALIDATION_RECEIPT)
         count, copied_bytes = linked['files'], 0
         entries = [p.relative_to(pending / 'data').as_posix().casefold()
                    for p in walk_links(pending / 'data')]
@@ -248,7 +310,7 @@ def prepare(archive, source_data, destination):
             'linked_file_entries': linked['file_links'], 'merged_directories': linked['merged'],
             'data_copy_seconds': round(copy_seconds, 6),
             'preparation_seconds': round(time.monotonic() - started, 6), 'x86_bins_reused': False,
-            'data_materialization': 'case_merged_symlinks',
+            'data_materialization': 'case_merged_symlinks', 'data_validation': linked['validation'],
             'data_case_duplicates': 0,
             'work_directory': str(destination)}
 

@@ -147,6 +147,48 @@ class ClientPackage(unittest.TestCase):
                     package.prepare(self.archive, source, destination)
                 self.assertFalse(destination.exists())
 
+    def test_validation_receipt_reused_only_while_every_directory_is_unchanged(self):
+        self.build()
+        imported = self.root / 'import'
+        (imported / 'tex').mkdir(parents=True)
+        (imported / 'tex/a.texture').write_bytes(b'a')
+        source = self.root / 'server-data'
+        (source / 'models/deep').mkdir(parents=True)
+        (source / 'models/deep/a.texture').symlink_to(imported / 'tex/a.texture')
+        (source / 'models/ok.geo').write_bytes(b'geometry')
+        runs = self.root / 'runs'
+        runs.mkdir()
+        def run(name):
+            return package.prepare(self.archive, source, runs / name)['data_validation']
+        first = run('one')
+        self.assertEqual((first['mode'], first['links_checked']), ('complete_link_check', 1))
+        with mock.patch.object(package.os, 'readlink', side_effect=AssertionError('link revisited')):
+            second = run('two')
+        self.assertEqual((second['mode'], second['links_checked']), ('unchanged_directory_receipt', 0))
+        # A new nested entry changes its directory's identity: full check, refused.
+        (source / 'models/deep/new.exe').write_bytes(b'MZ')
+        with self.assertRaisesRegex(ValueError, 'Executable'):
+            run('three')
+        (source / 'models/deep/new.exe').unlink()
+        self.assertEqual(run('four')['mode'], 'complete_link_check')
+        # Replacing a link target changes the target directory's identity.
+        (imported / 'tex/a.texture').unlink()
+        os.mkfifo(imported / 'tex/a.texture')
+        with self.assertRaisesRegex(ValueError, 'Nonregular'):
+            run('five')
+        self.assertFalse((runs / 'five').exists())
+
+    def test_linked_directory_refused(self):
+        self.build()
+        elsewhere = self.root / 'elsewhere'
+        elsewhere.mkdir()
+        source = self.root / 'server-data'
+        (source / 'models').mkdir(parents=True)
+        (source / 'models/linked').symlink_to(elsewhere, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'Linked data directory'):
+            package.prepare(self.archive, source, self.root / 'arm64')
+        self.assertFalse((self.root / 'arm64').exists())
+
     def test_corrupt_payload(self):
         self.build()
         altered = self.root / 'altered.zip'
