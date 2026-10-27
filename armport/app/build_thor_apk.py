@@ -49,8 +49,12 @@ DONOR_APK = {'bytes': 42076692, 'sha256': '14d88da1796d155dc1b98e45ac642c7702ff3
 DONOR_COMMIT = '3570430cefdb'  # release target prefix, informational
 SIGNER = '92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282'
 ALIAS = 'coh-client-interactive'
+# The donor DEX's exact 24-source set (class list of the 0.13.36 classes.dex).
 HELPERS = ('TarExtractor', 'DeviceHosts', 'DiagnosticOutcome', 'DiagnosticReports', 'CleanupGuard',
-           'DiagnosticRuntime', 'DbServerAcceptance')
+           'DiagnosticRuntime', 'DbServerAcceptance', 'AssetPackArchive', 'AssetPackStore', 'SetupMemoryGuard')
+EXTRA_SOURCES = ('android/zoning/src/main/java/io/github/russianranger/cohclientinteractive/ClientZoning.java',
+                 'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java',
+                 'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientSocketRecovery.java')
 # Runtime payloads the ARM64 option may add or change. Everything else is retained.
 ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py',
                            'client_stdio.py'})
@@ -93,6 +97,8 @@ def java_sources(main_dir, generated):
     sources.append(ROOT / 'android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java')
     diagnostic = ROOT / 'android/app/src/main/java/io/github/russianranger/cohdiagnostic'
     sources += [diagnostic / (name + '.java') for name in HELPERS]
+    sources += [ROOT / name for name in EXTRA_SOURCES]
+    require(len([p for p in sources if not p.is_relative_to(generated)]) == 24, 'Donor 24-source set differs')
     require(len(sources) == len(set(sources)) and all(p.is_file() and not p.is_symlink() for p in sources),
             'Missing, linked or duplicated Java source')
     return sources
