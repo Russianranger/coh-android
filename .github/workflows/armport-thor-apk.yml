@@ -1,0 +1,94 @@
+name: ArmPort Thor APK (M5 candidate)
+
+# User approval 2026-10-26 (Claude lead session): build and sign COH Atlas
+# Gameplay 0.13.37, the 0.13.36 app plus the ARM64 client option, for the M5
+# Thor play test. Uploads a workflow artifact only; no release is published.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['armport/m5-thor']
+    paths:
+      - 'armport/app/build_thor_apk.py'
+      - 'armport/app/stage_app_assets.py'
+      - 'armport/app/armport_client_package.py'
+      - 'armport/app/armport_interactive.py'
+      - 'armport/app/client_stdio.py'
+      - 'android/interactive/**'
+      - 'android/guest/**'
+      - '.github/workflows/armport-thor-apk.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: armport-thor-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  M4_RUN_ID: '40417983694'
+  SIGNER_RUN_ID: '36731428735'
+  DONOR_ASSET_ID: '635975286'
+
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: {lfs: false, persist-credentials: false}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Android SDK 35 platform and build tools
+        run: timeout 300 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Download the public 0.13.36 donor APK
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          mkdir -p "$RUNNER_TEMP/donor"
+          gh api -H 'Accept: application/octet-stream' \
+            "repos/${GITHUB_REPOSITORY}/releases/assets/${DONOR_ASSET_ID}" > "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk"
+          echo "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f  $RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" | sha256sum -c -
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-app-client-package
+          path: ${{ runner.temp }}/armport-package
+          run-id: ${{ env.M4_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: ${{ env.SIGNER_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Build and sign COH Atlas Gameplay 0.13.37
+        env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
+        run: |
+          mkdir -p out/thor
+          armport/scripts/step.sh "ArmPort Thor APK build" python3 armport/app/build_thor_apk.py \
+            --donor-apk "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" \
+            --armport "$RUNNER_TEMP/armport-package/armport-client.zip" \
+            --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
+            --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
+            --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.37.apk
+      - name: Remove retained signing material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+      - name: Report
+        run: |
+          python3 - <<'EOF'
+          import json
+          r = json.load(open('out/thor/thor-apk-build-report.json'))
+          keep = {k: r[k] for k in ('apk', 'bytes', 'sha256', 'version_name', 'version_code',
+                  'signer_certificate_sha256', 'replaced_members', 'added_members', 'changed_runtime_payloads',
+                  'retained_members', 'armport_client')}
+          print('::notice title=ArmPort Thor APK::' + json.dumps(keep))
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-gameplay-0.13.37-apk
+          path: out/thor/
+          retention-days: 30
+          if-no-files-found: error
