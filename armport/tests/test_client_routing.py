@@ -79,15 +79,31 @@ class ClientRoutingTests(unittest.TestCase):
             self.assertEqual(command[3], armport.base.windows_path(value.work / 'CityOfHeroes.exe'))
             self.assertEqual(command[-1], mode)
 
-    def test_unknown_architecture_and_unqualified_zoning_rejected(self):
+    def test_unknown_architecture_rejected_and_zoning_reopen_selected(self):
         with patch.dict(os.environ, {'COH_CLIENT_ARCH': 'guess'}):
             with self.assertRaisesRegex(armport.base.DiagnosticError, 'Unknown graphical client architecture'):
                 armport.select(CharacterCreationDiagnostic)
         class Zoning(CharacterReopenDiagnostic):
             ZONING = True
         with patch.dict(os.environ, {'COH_CLIENT_ARCH': 'arm64'}):
-            with self.assertRaisesRegex(armport.base.DiagnosticError, 'zone travel is not yet qualified'):
-                armport.select(Zoning)
+            selected = armport.select(Zoning)
+        self.assertTrue(issubclass(selected, armport.ArmPortClient) and issubclass(selected, Zoning))
+
+    def test_arm64_requests_overlap_only_from_a_server_that_supervises_it(self):
+        class Server:
+            pass
+        class Overlap(Server):
+            def client_startup_assets_allowed(self): return False
+        class Existing:
+            def start_wine(self): self.flag = getattr(self.local_server, 'overlap_client_initialization', None)
+        class Probe(armport.ArmPortClient, Existing):
+            def prepare_client_visual_inputs(self): raise StopIteration
+        for server, expected in ((Server(), None), (Overlap(), True)):
+            probe = Probe.__new__(Probe)
+            probe.local_server = server
+            with self.assertRaises(StopIteration):
+                probe.start_wine()
+            self.assertEqual(probe.flag, expected)
 
     def test_arm64_copy_includes_visuals_installed_after_server_preparation(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -98,7 +98,7 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
         clientArchitecture.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"x86 client", "ARM64 client (Atlas)"}));
+                new String[]{"x86 client", "ARM64 client (experimental)"}));
         clientArchitecture.setSelection("arm64".equals(ClientRuntime.clientArchitecture(this))?1:0);
         clientArchitecture.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override public void onItemSelected(AdapterView<?> parent,View view,int position,long id){

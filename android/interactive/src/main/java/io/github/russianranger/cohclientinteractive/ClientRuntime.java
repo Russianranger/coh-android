@@ -814,7 +814,7 @@ public final class ClientRuntime {
         return true;
     }
     private boolean zoningEnabled() {
-        return !"arm64".equals(clientArchitectureRequested) && reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
+        return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
                 && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
     }
     public synchronized String zoningStatus() {

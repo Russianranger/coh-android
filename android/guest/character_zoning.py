@@ -747,7 +747,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
             self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
             '-nosharedmemory', '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0', '-map_id', str(map_id),
-            '-idleExitTimeout', '0', '-donotautogroup'], env=environment)
+            '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS()], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
                              'runtime': map_runtime, 'launch_monotonic': launch_monotonic}

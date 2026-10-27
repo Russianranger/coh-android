@@ -72,6 +72,14 @@ class ArmPortClient:
         self.ctx.report['armport_server_staging'] = retained
 
     def start_wine(self):
+        # Device startup: the saved-world server prepares and starts Atlas or
+        # Kings Row while client supplements, the ARM64 link view and client
+        # startup proceed; the existing main-thread join still admits input
+        # only after native map readiness. Only the zoning reopen server
+        # provides this supervised overlap (creation keeps its sequence).
+        server = getattr(self, 'local_server', None)
+        if callable(getattr(server, 'client_startup_assets_allowed', None)):
+            server.overlap_client_initialization = True
         super().start_wine()
         # The existing server must seal its inputs before client-only visual
         # supplements are installed. The ARM64 copy must include those files;
@@ -174,5 +182,4 @@ def select(diagnostic_type):
     require(selected in ('x86', 'arm64'), 'Unknown graphical client architecture')
     if selected == 'x86':
         return diagnostic_type
-    require(not getattr(diagnostic_type, 'ZONING', False), 'ARM64 zone travel is not yet qualified')
     return type('ArmPort' + diagnostic_type.__name__, (ArmPortClient, diagnostic_type), {})
