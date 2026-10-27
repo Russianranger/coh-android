@@ -144,6 +144,17 @@ def merge_links(source_data, target_root):
             path = Path(directory) / name
             require(not path.is_symlink(), 'Linked data directory refused')
             aliases.setdefault((relative / name).as_posix().casefold(), []).append(relative / name)
+        for name in files:
+            # Every published descendant passes the per-file rules before any
+            # link exists, including files reached later through a single
+            # directory link (worktree files may be links to verified regular files).
+            path = Path(directory) / name
+            try:
+                mode = os.stat(path).st_mode
+            except OSError:
+                mode = 0
+            require(stat.S_ISREG(mode), 'Nonregular app data')
+            require(path.suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
         total += len(files)
         names = [name.casefold() for name in files] + [name.casefold() for name in dirs]
         if len(names) != len(set(names)):

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Exercise architecture separation and malformed overlay rejection."""
+import os
 import json
 from pathlib import Path
 import struct
@@ -126,6 +127,25 @@ class ClientPackage(unittest.TestCase):
         self.assertEqual(report['data_materialization'], 'case_merged_symlinks')
         self.assertEqual(report['linked_directories'], 1)
         self.assertEqual(report['shared_data_files'], 2)
+
+    def test_nested_executable_fifo_or_dangling_link_in_linked_directory_refused(self):
+        # Sol review 5661731725 finding 2: a case-unique directory becomes one
+        # link, so its descendants must pass the per-file rules beforehand.
+        self.build()
+        for name, make, message in (
+                ('bad.exe', lambda path: path.write_bytes(b'MZ'), 'Executable'),
+                ('bad.DLL', lambda path: path.write_bytes(b'MZ'), 'Executable'),
+                ('bad.pipe', os.mkfifo, 'Nonregular'),
+                ('gone.texture', lambda path: path.symlink_to(path.with_name('missing')), 'Nonregular')):
+            with self.subTest(name=name):
+                source = self.root / ('server-data-' + name)
+                (source / 'models/deep').mkdir(parents=True)
+                (source / 'models/ok.geo').write_bytes(b'geometry')
+                make(source / 'models/deep' / name)
+                destination = self.root / ('arm64-' + name)
+                with self.assertRaisesRegex(ValueError, message):
+                    package.prepare(self.archive, source, destination)
+                self.assertFalse(destination.exists())
 
     def test_corrupt_payload(self):
         self.build()
