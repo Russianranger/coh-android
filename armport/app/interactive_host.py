@@ -27,6 +27,90 @@ spec.loader.exec_module(reopen)
 character, require = reopen.character, reopen.require
 
 
+# Creator transition checks for the ARM64 lane (Astra review 5672637914, OCR
+# evidence in PR #8 comment 6451908706). The shared host driver clicks fixed
+# positions; a primary power click that did not register left the creator on
+# the Powers page ("Choose Primary Power set and Power to continue") and later
+# steps failed far downstream ("Rendered No button not found").
+PRIMARY_HINT_REGION = (480, 530, 780, 565)
+PRIMARY_RETRIES = 2
+COSTUME_TOKENS = {'head', 'weapons', 'colors'}
+COSTUME_ATTEMPTS = 5
+
+
+def ocr_words(tsv):
+    """Level-5 OCR words with confidence of at least 20, casefolded."""
+    import csv, io
+    words = set()
+    for row in csv.DictReader(io.StringIO(tsv), delimiter='\t'):
+        try:
+            if int(row['level']) == 5 and float(row['conf']) >= 20:
+                text = (row.get('text') or '').strip().strip('.,:;!?[](){}<>|').casefold()
+                if text: words.add(text)
+        except (KeyError, TypeError, ValueError):
+            continue
+    return words
+
+
+def primary_selection_pending(tsv):
+    words = ocr_words(tsv)
+    return 'choose' in words and 'primary' in words
+
+
+def costume_page_shown(tsv):
+    return bool(ocr_words(tsv) & COSTUME_TOKENS)
+
+
+def armport_creation_actions():
+    actions = list(character.creation_actions())
+    names = [action[2] for action in actions]
+    actions.insert(names.index('select_primary_power') + 1,
+                   ('verify_primary', None, 'verify_primary_power_selected'))
+    names = [action[2] for action in actions]
+    actions.insert(names.index('body_next') + 1, ('verify_costume', None, 'verify_costume_page'))
+    return tuple(actions)
+
+
+class ArmPortCharacterInteraction(character.CharacterInteraction):
+    """The shared creation script plus page-transition proof before later clicks."""
+    ACTIONS = character.CharacterInteraction.LOGIN_ACTIONS + armport_creation_actions()
+
+    def __init__(self, session, evidence, finish_path):
+        super().__init__(session, evidence, finish_path)
+        self.result['armport_transition_checks'] = []
+        self.primary_retries = 0
+        self.costume_attempts = 0
+
+    def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
+        if kind not in ('verify_primary', 'verify_costume'):
+            return super().custom_action(kind, value, name, connection, frame, events, sequence, now)
+        if kind == 'verify_primary':
+            tsv, stem = character.read_ocr(frame, self.evidence, name, self.primary_retries + 1, PRIMARY_HINT_REGION)
+            pending = primary_selection_pending(tsv)
+            self.result['armport_transition_checks'].append({'check': name, 'retry': self.primary_retries,
+                'primary_selection_pending': pending, 'evidence': stem, 'frame_sequence': sequence})
+            if pending:
+                require(self.primary_retries < PRIMARY_RETRIES,
+                        'Primary power selection did not register after %d retries; the creator is still on '
+                        'the Powers page ("Choose Primary Power set and Power to continue")' % PRIMARY_RETRIES)
+                self.primary_retries += 1
+                # Replay the set and power selection; on_frame then advances to it.
+                self.action = next(index for index, action in enumerate(self.ACTIONS)
+                                   if action[2] == 'preposition_select_primary_set') - 1
+            return True
+        tsv, stem = character.read_ocr(frame, self.evidence, name, self.costume_attempts + 1, (0, 0, 800, 600))
+        shown = costume_page_shown(tsv)
+        self.costume_attempts += 1
+        self.result['armport_transition_checks'].append({'check': name, 'attempt': self.costume_attempts,
+            'costume_page_shown': shown, 'evidence': stem, 'frame_sequence': sequence})
+        if not shown:
+            require(self.costume_attempts < COSTUME_ATTEMPTS,
+                    'Costume page (HEAD/WEAPONS/Colors) not reached after body_next; inspect retained creator frames')
+            # Stay on this check: wait for later frames before trying again.
+            self.action -= 1
+        return True
+
+
 def legacy_report(report, runtime_manifest, client_manifest):
     """Validate the ARM64 additions before using the existing persistence checks."""
     expected = runtime_manifest['armport_client']
@@ -153,7 +237,7 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 connection.connect(str(endpoint))
                 observer = character.observe_rfb(connection, session, process, deadline, evidence,
                     evidence / 'host-client.log', work / 'state/interaction-finish.json',
-                    reopen.ReopenInteraction if reopening else None,
+                    reopen.ReopenInteraction if reopening else ArmPortCharacterInteraction,
                     reopen.ReopenEvents if reopening else None)
             require(observer.get('failure') is None, observer.get('failure') or 'ARM64 RFB observer failed')
             require(process.wait(timeout=max(1, deadline - time.monotonic())) == 0,
