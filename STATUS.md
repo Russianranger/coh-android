@@ -35,6 +35,6 @@ M3 into Atlas: accepted (Sol 5659701771), merged; 106 patches (armport/HANDOFF.m
   i686 partial state, equal error inventories. Reduced scope: completeness
   flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
 - M4 app runtime: accepted (Sol 5660940046), merged (PR #7; armport/M4-REPORT.md).
-- M5 Thor (PR #8): 0.13.37 played on Thor; 35-min cold start, Atlas load lost (title
-  without PID), software renderer. 0.13.38 fixes on armport/m5-thor (patches 0107-0109,
-  linked data, zoning overlap, GPU option); build 40445773810, requalify 40446992851.
+- M5 Thor (PR #8): 0.13.38 on Thor: warm start about 10 min, GPU (Zink/Turnip) and texture
+  index worked; crash entering Atlas (SMF anchor pointer in int). 0.13.39: patches 0110-0111,
+  cached link check; build 40492374580, requalify 40494392234, APK 40499862451.
