@@ -8,7 +8,7 @@ on:
   push:
     # Isolated replay iterations run their own ARM64/i686 execution workflow;
     # M4 qualifies with armport-app-runtime, not the inherited M3 stack.
-    branches: ['armport/**', '!armport/replay-*', '!armport/m4-runtime', 'COH-ArmPort']
+    branches: ['armport/**', '!armport/replay-*', '!armport/m4-runtime', '!armport/m5-thor', 'COH-ArmPort']
     paths:
       - 'armport/**'
       - '!armport/survey/**'

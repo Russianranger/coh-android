@@ -161,8 +161,14 @@ def build(args):
                 if name.startswith('assets/runtime/'):
                     require(len(path.parts) == 3 and '\\' not in name, 'Unsafe donor runtime member')
                     (donor_runtime / path.name).write_bytes(archive.read(name))
+        pack = json.loads((donor_runtime / 'asset-pack-manifest.json').read_text())
+        external = {name.split('/', 1)[1]: record for name, record in pack['files'].items()
+                    if name.startswith('runtime/')}
+        runtime_files = json.loads((donor_runtime / 'runtime-manifest.json').read_text())['files']
+        require({n for n in runtime_files if not (donor_runtime / n).exists()} == set(external),
+                'Unpackaged runtime payloads must be exactly the external asset-pack runtime files')
         staged = work / 'staged-runtime'
-        armport = stage_app_assets.stage(donor_runtime, args.armport, staged, args.repository_commit)
+        armport = stage_app_assets.stage(donor_runtime, args.armport, staged, args.repository_commit, external)
         staged_names = {p.name for p in staged.iterdir()}
         donor_names = {p.name for p in donor_runtime.iterdir()}
         require(staged_names - donor_names == ADDED_RUNTIME and donor_names <= staged_names,
