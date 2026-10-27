@@ -1,0 +1,58 @@
+name: ArmPort symbolize client fault
+
+# Maps device fault addresses (image base 0x140000000) in an exact built
+# CityOfHeroes.exe to functions/lines and prints the surrounding disassembly as
+# annotations. Read-only: downloads one build artifact, publishes nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      run_id: {description: ArmPort build run with armport-client-Release, required: true}
+      sha256: {description: Expected CityOfHeroes.exe sha256, required: true}
+      addresses: {description: Space-separated virtual addresses, required: true}
+  push:
+    branches: ['armport/m5-thor']
+    paths: ['.github/workflows/armport-symbolize.yml']
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  RUN_ID: ${{ inputs.run_id || '40445773810' }}
+  EXE_SHA256: ${{ inputs.sha256 || 'ba6fb3efbae3b06620fc0682a1fd8238dbfd4c8d02f97eec71adba42e0432011' }}
+  # Thor 0.13.38 session a354bb95: page fault reading FFFFFFFFA3E25370.
+  ADDRESSES: ${{ inputs.addresses || '0x14017B32C' }}
+  LLVM_MINGW: '20250910'
+  LLVM_MINGW_SHA256: '175f344e3db2e11b3d53f4f828ae7b5f0073a4d239b9600fa023ef4b90eb5a7e'
+
+jobs:
+  symbolize:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-client-Release
+          path: ${{ runner.temp }}/client
+          run-id: ${{ env.RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Install llvm-mingw
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/llvm.tar.xz" \
+            "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW}/llvm-mingw-${LLVM_MINGW}-ucrt-ubuntu-22.04-aarch64.tar.xz"
+          echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
+          mkdir "$RUNNER_TEMP/llvm" && tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C "$RUNNER_TEMP/llvm"
+      - name: Symbolize and disassemble
+        run: |
+          exe="$RUNNER_TEMP/client/CityOfHeroes.exe"
+          echo "$EXE_SHA256  $exe" | sha256sum -c -
+          L="$RUNNER_TEMP/llvm/bin"
+          note() { printf '::notice title=%s::%s\n' "$1" "$(printf '%s' "$2" | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' | cut -c1-3900)"; }
+          for va in $ADDRESSES; do
+            rva=$(printf '0x%x' $(( va - 0x140000000 )))
+            sym=$("$L/llvm-symbolizer" --obj="$exe" --functions=linkage --inlining=true --relative-address "$rva" 2>&1)
+            note "ArmPort fault $va symbol" "$sym"
+            start=$(printf '0x%x' $(( va - 0xa0 ))); stop=$(printf '0x%x' $(( va + 0x40 )))
+            dis=$("$L/llvm-objdump" -d --no-show-raw-insn -l --start-address="$start" --stop-address="$stop" "$exe" 2>&1 | tail -80)
+            note "ArmPort fault $va disassembly" "$dis"
+          done
