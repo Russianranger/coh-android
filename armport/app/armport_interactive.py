@@ -91,6 +91,22 @@ class ArmPortClient:
         self.client_executable_sha256 = self.ctx.report['armport_client']['executable_sha256']
         self.ctx.passed(machine='ARM64', x86_bins_reused=False,
                         executable_sha256=self.client_executable_sha256)
+        self.start_texture_header_index()
+
+    def start_texture_header_index(self):
+        """Index texture headers for the ARM64 client (patch 0109) in the background.
+
+        The existing worker reads the same immutable texture files the ARM64
+        view links to and keys the pack to this executable; it is reused while
+        neither changes. Any failure keeps the client's ordinary header reads.
+        """
+        import character_creation_diagnostic as creation
+        if (getattr(self, 'texture_header_preparation', None) is not None
+                or not hasattr(creation, 'TextureHeaderPreparation')
+                or not {'import_identity', 'client_worktree'} <= self.ctx.report.keys()):
+            return
+        self.texture_header_preparation = creation.TextureHeaderPreparation(self)
+        self.texture_header_preparation.start()
 
     def launcher_command(self):
         command = super().launcher_command()
@@ -105,6 +121,9 @@ class ArmPortClient:
             timeout=8, env=self.wine_env, check=False)['output']
 
     def reset_client_startup_inputs(self):
+        join = getattr(self, 'join_texture_header_preparation', None)
+        if callable(join):
+            join()
         # The original server's verified x86 data tree remains untouched.
         self.ctx.run('armport-progress-reset', [self.args.wine, 'reg', 'delete',
             r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/f', '/reg:64'],

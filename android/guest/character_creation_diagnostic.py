@@ -298,6 +298,13 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             self.wine_env.pop(name, None)
         if self.ctx.report.get('client_loading'):
             self.wine_env.update(COH_CLIENT_KNOWN_STRING_COPY='1', COH_CLIENT_BIN_PROFILE='1')
+        self.join_texture_header_preparation()
+        # This hook is also used by bounded client retries. Only the first call
+        # joins preparation; every launch still retains ordinary input reset.
+        return super().reset_client_startup_inputs()
+
+    def join_texture_header_preparation(self):
+        """Join the optional worker once and publish its index environment."""
         preparation = self.texture_header_preparation
         if preparation is not None:
             waited_at = time.monotonic()
@@ -329,9 +336,6 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                 self.wine_env.pop(key, None)
             self.wine_env.update(index_env)
             self.texture_header_preparation = None
-        # This hook is also used by bounded client retries. Only the first call
-        # joins preparation; every launch still retains ordinary input reset.
-        return super().reset_client_startup_inputs()
 
     def cleanup(self):
         preparation = self.texture_header_preparation

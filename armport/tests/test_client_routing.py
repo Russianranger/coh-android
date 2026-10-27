@@ -89,6 +89,39 @@ class ClientRoutingTests(unittest.TestCase):
             selected = armport.select(Zoning)
         self.assertTrue(issubclass(selected, armport.ArmPortClient) and issubclass(selected, Zoning))
 
+    def test_arm64_texture_index_worker_starts_and_its_environment_reaches_launch(self):
+        import character_creation_diagnostic as creation
+        started = []
+        class Worker:
+            def __init__(self, owner): self.owner = owner
+            def start(self): started.append(self.owner)
+        class Probe(armport.ArmPortClient, CharacterCreationDiagnostic):
+            def __init__(self):
+                self.ctx = SimpleNamespace(report={'import_identity': {}, 'client_worktree': {}})
+                self.texture_header_preparation = None
+                self.wine_env = {}
+        probe = Probe()
+        with patch.object(creation, 'TextureHeaderPreparation', Worker):
+            probe.start_texture_header_index()
+            probe.start_texture_header_index()
+        self.assertEqual(started, [probe])
+        def joined():
+            probe.wine_env['COH_TEXTURE_HEADER_PACK'] = 'Z:\\pack'
+            probe.texture_header_preparation = None
+        probe.join_texture_header_preparation = joined
+        with patch.object(armport.base, 'windows_path', str):
+            probe.query_client_progress = lambda: ''
+            probe.ctx.run = lambda *a, **k: {'output': ''}
+            probe.args = SimpleNamespace(wine='wine')
+            with tempfile.TemporaryDirectory() as temporary:
+                probe.armport_work = Path(temporary)
+                probe.reset_client_startup_inputs()
+        self.assertEqual(probe.wine_env['COH_TEXTURE_HEADER_PACK'], 'Z:\\pack')
+        empty = Probe(); empty.ctx.report = {}
+        with patch.object(creation, 'TextureHeaderPreparation', Worker):
+            empty.start_texture_header_index()
+        self.assertIsNone(empty.texture_header_preparation)
+
     def test_arm64_requests_overlap_only_from_a_server_that_supervises_it(self):
         class Server:
             pass
