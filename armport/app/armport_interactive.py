@@ -143,7 +143,9 @@ class ArmPortClient:
                            WINEDEBUG='err+all,fixme-all', ARMPORT_TRACE_QUIET='1',
                            # The linked worktree is immutable for the session
                            # (patch 0111: no recursive change monitor).
-                           ARMPORT_FIXED_DATA='1')
+                           ARMPORT_FIXED_DATA='1',
+                           # Patch 0114: the game's own frame rate every 5 s.
+                           ARMPORT_FPS_LOG='1')
         environment = self.armport_gpu_environment(environment, label)
         environment = self.armport_gameplay_fps(environment)
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]

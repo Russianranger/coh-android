@@ -53,6 +53,9 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         public final long pixelCopyWallMs, encodingWallMs, encodingCpuMs, presentationFreezeMs, encodeQueueWallMs;
         public final boolean encodingOnUiThread;
         public final int pendingFramesPeak, framesCoalescedDuringCopy;
+        /** Presentation totals for this view up to the copied frame (main-thread render work). */
+        public final long renderedFrames, renderMsSum, renderMsMax;
+        public final boolean hardwareCanvas;
 
         private Capture(Frame frame, int sw, int sh, int generation, long capturedAt,
                 String hash, boolean varied, byte[] bytes, CaptureWork work,
@@ -76,6 +79,10 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
             encodingOnUiThread = onUiThread;
             pendingFramesPeak = work.pendingFramesPeak;
             framesCoalescedDuringCopy = Math.max(0, work.framesDuringCopy - 1);
+            renderedFrames = work.renderedFrames;
+            renderMsSum = work.renderNanosSum / 1000000;
+            renderMsMax = work.renderNanosMax / 1000000;
+            hardwareCanvas = work.hardwareCanvas;
         }
     }
 
@@ -109,6 +116,10 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     private float pointerX = 400, pointerY = 300;
 
     private Bitmap displayed;
+    // Main-thread presentation timing; a hardware canvas scales on the GPU and
+    // falls back to the software canvas for the rest of the view's life.
+    private long renderedFrames, renderNanosSum, renderNanosMax;
+    private boolean hardwareCanvasFailed, lastHardwareCanvas;
     private boolean ready;
     private boolean capturePending;
     private CaptureWork captureWork;
@@ -151,6 +162,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         boolean copyFinished, recycled;
         long capturedAt, freezeEndedAt, encodeRequestedAt;
         int framesDuringCopy, pendingFramesPeak;
+        long renderedFrames, renderNanosSum, renderNanosMax;
+        boolean hardwareCanvas;
         CaptureWork(Frame frame, Listener target, long epoch, int generation,
                 int sw, int sh, RectF content, Bitmap bitmap, long startedAt) {
             this.frame = frame; this.target = target; listenerEpoch = epoch;
@@ -271,13 +284,25 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         Canvas canvas = null;
         RectF destination = null;
         int surfaceWidth = 0, surfaceHeight = 0;
+        final long renderStarted = System.nanoTime();
         try {
             if (displayed == null || displayed.getWidth() != frame.width || displayed.getHeight() != frame.height) {
                 if (displayed != null) displayed.recycle();
                 displayed = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.ARGB_8888);
             }
             displayed.setPixels(frame.pixels, 0, frame.width, 0, 0, frame.width, frame.height);
-            canvas = getHolder().lockCanvas();
+            canvas = null;
+            lastHardwareCanvas = false;
+            if (!hardwareCanvasFailed && android.os.Build.VERSION.SDK_INT >= 26) {
+                try {
+                    canvas = getHolder().lockHardwareCanvas();
+                    lastHardwareCanvas = canvas != null;
+                } catch (RuntimeException ex) {
+                    hardwareCanvasFailed = true;
+                    reportError("Hardware canvas: " + ex.getClass().getSimpleName());
+                }
+            }
+            if (canvas == null) canvas = getHolder().lockCanvas();
             if (canvas == null) throw new IllegalStateException("Surface canvas unavailable");
             surfaceWidth = canvas.getWidth();
             surfaceHeight = canvas.getHeight();
@@ -301,6 +326,10 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
             }
         }
         if (destination == null) return;
+        long renderNanos = System.nanoTime() - renderStarted;
+        renderedFrames++;
+        renderNanosSum += renderNanos;
+        renderNanosMax = Math.max(renderNanosMax, renderNanos);
         if (inputWidth != frame.width || inputHeight != frame.height) {
             releaseInput();
             inputWidth = frame.width; inputHeight = frame.height;
@@ -320,6 +349,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         synchronized (pendingLock) {
             work = new CaptureWork(frame, listener, listenerEpoch, generation,
                     surfaceWidth, surfaceHeight, destination, captured, SystemClock.uptimeMillis());
+            work.renderedFrames = renderedFrames; work.renderNanosSum = renderNanosSum;
+            work.renderNanosMax = renderNanosMax; work.hardwareCanvas = lastHardwareCanvas;
             captureWork = work;
             capturePending = true;
         }

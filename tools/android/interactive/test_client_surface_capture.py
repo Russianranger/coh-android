@@ -22,6 +22,8 @@ public class Looper {
 }''',
     'android/os/SystemClock.java': r'''package android.os;
 public class SystemClock {public static volatile long now=100;public static long uptimeMillis(){return now;}}''',
+    'android/os/Build.java': r'''package android.os;
+public class Build {public static class VERSION {public static volatile int SDK_INT=33;}}''',
     'android/os/Debug.java': r'''package android.os;
 public class Debug {public static long threadCpuTimeNanos(){return System.nanoTime();}}''',
     'android/os/Handler.java': r'''package android.os;
@@ -81,14 +83,17 @@ public class Canvas {
     'android/view/SurfaceHolder.java': r'''package android.view;import android.graphics.Canvas;
 public interface SurfaceHolder {
  interface Callback {void surfaceCreated(SurfaceHolder h);void surfaceChanged(SurfaceHolder h,int f,int w,int z);void surfaceDestroyed(SurfaceHolder h);}
- void addCallback(Callback c);Canvas lockCanvas();void unlockCanvasAndPost(Canvas c);
+ void addCallback(Callback c);Canvas lockCanvas();Canvas lockHardwareCanvas();void unlockCanvasAndPost(Canvas c);
 }''',
     'android/view/SurfaceView.java': r'''package android.view;
 import android.content.Context;import android.graphics.Canvas;
 public class SurfaceView {
  public static class TestHolder implements SurfaceHolder {
   public int width=800,height=600,marker,posts,frameWidth,frameHeight;public int[] pixels;
-  public void addCallback(Callback c){}public Canvas lockCanvas(){return new Canvas(this);}public void unlockCanvasAndPost(Canvas c){posts++;}
+  public int hardwareLocks,softwareLocks;public boolean hardwareFails;
+  public void addCallback(Callback c){}public Canvas lockCanvas(){softwareLocks++;return new Canvas(this);}
+  public Canvas lockHardwareCanvas(){if(hardwareFails)throw new IllegalStateException("no hardware canvas");hardwareLocks++;return new Canvas(this);}
+  public void unlockCanvasAndPost(Canvas c){posts++;}
  }
  public static class Parent {public void requestDisallowInterceptTouchEvent(boolean b){}}
  final TestHolder holder=new TestHolder();public SurfaceView(Context context){}
@@ -154,6 +159,7 @@ public class SurfaceCaptureHost {
   ClientSurface surface=new ClientSurface(new Context());Evidence evidence=new Evidence();
   surface.setSession(FIRST);surface.setCaptureListener(evidence);surface.surfaceCreated(surface.getHolder());Handler.drain();
   if(args[0].equals("request_failure"))PixelCopy.reject=true;
+  if(args[0].equals("hardware_fallback"))surface.getHolder().hardwareFails=true;
   frame(surface,0xff101010,1);Bitmap owned=Bitmap.all.get(Bitmap.all.size()-1);
   switch(args[0]) {
   case "resume": {
@@ -232,6 +238,22 @@ public class SurfaceCaptureHost {
    need(evidence.captures.size()==3,"three fresh readiness samples lost");
    for(int i=1;i<3;i++){ClientSurface.Capture a=evidence.captures.get(i-1),b=evidence.captures.get(i);need(b.sequence>a.sequence&&b.capturedAtUptimeMillis-a.capturedAtUptimeMillis>=1000,"sample freshness changed");}
    for(ClientSurface.Capture c:evidence.captures)hash(c);break;
+  case "hardware_canvas": {
+   need(surface.getHolder().hardwareLocks==1&&surface.getHolder().softwareLocks==0,"presentation did not use the hardware canvas");
+   copied();waitIdle(surface);need(evidence.captures.size()==1,"capture not retained");
+   ClientSurface.Capture c=evidence.captures.get(0);
+   need(c.hardwareCanvas&&c.renderedFrames==1&&c.renderMsSum>=0&&c.renderMsMax>=0,"render telemetry missing");
+   oneRecycle(owned);break;
+  }
+  case "hardware_fallback": {
+   need(surface.getHolder().softwareLocks==1&&surface.getHolder().hardwareLocks==0&&surface.getHolder().posts==1,"no software fallback");
+   need(evidence.errors.size()==1&&evidence.errors.get(0).startsWith("Hardware canvas"),"fallback not reported");
+   copied();waitIdle(surface);SystemClock.now+=2000;frame(surface,0xff303030,2);
+   need(surface.getHolder().softwareLocks==2&&surface.getHolder().marker==0xff303030,"fallback not kept for later frames");
+   need(evidence.errors.size()==1,"hardware canvas retried after failure");
+   need(evidence.captures.size()==1&&!evidence.captures.get(0).hardwareCanvas,"capture misreports canvas");
+   break;
+  }
   default:throw new AssertionError("unknown scenario");
   }
   System.out.println("PASS "+args[0]);
@@ -268,7 +290,8 @@ class ClientSurfaceCaptureTests(unittest.TestCase):
 
 for _name in ('resume', 'session_copy', 'session_encode', 'listener', 'generation', 'destroy',
               'detach', 'clear', 'pixel_failure', 'encode_failure', 'png_bound', 'reject',
-              'request_failure', 'duplicate_callback', 'recreate', 'fresh'):
+              'request_failure', 'duplicate_callback', 'recreate', 'fresh',
+              'hardware_canvas', 'hardware_fallback'):
     setattr(ClientSurfaceCaptureTests, 'test_' + _name,
             lambda self, scenario=_name: self.scenario(scenario))
 

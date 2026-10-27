@@ -45,6 +45,15 @@ public final class InteractiveRfbClient implements Closeable {
 
 
 
+    private byte[] raw;
+    private java.nio.IntBuffer rawInts;
+    // Decoder thread only; read through the synchronized-free getters as
+    // diagnostics (the values are monotonic counters).
+    private volatile long decodeNanosSum, decodeNanosMax, decodedRects;
+    public long decodeNanosSum() { return decodeNanosSum; }
+    public long decodeNanosMax() { return decodeNanosMax; }
+    public long decodedRects() { return decodedRects; }
+
     public InteractiveRfbClient(InputStream input, OutputStream output, Listener listener) {
         if (input == null || output == null || listener == null) throw new NullPointerException();
         // Raw rectangles arrive row by row. Bound read-ahead so those small
@@ -164,16 +173,27 @@ public final class InteractiveRfbClient implements Closeable {
             } else if (encoding == 0) {
                 if (w == 0 || h == 0 || x > width || y > height || w > width - x || h > height - y)
                     throw new IOException("RFB rectangle outside framebuffer");
-                byte[] row = new byte[w * 4];
-                for (int yy = 0; yy < h; yy++) {
-                    input.readFully(row);
-                    int offset = (y + yy) * width + x;
-                    for (int xx = 0; xx < w; xx++) {
-                        int source = xx * 4;
-                        pixels[offset + xx] = 0xff000000 | ((row[source + 2] & 255) << 16)
-                                | ((row[source + 1] & 255) << 8) | (row[source] & 255);
-                    }
+                // One bulk read per rectangle; each 32-bit little-endian pixel
+                // is B,G,R,X, so the int view is 0xXXRRGGBB and only alpha is set.
+                long started = System.nanoTime();
+                int bytes = w * h * 4;
+                if (raw == null || raw.length < bytes) {
+                    raw = new byte[bytes];
+                    rawInts = java.nio.ByteBuffer.wrap(raw).order(java.nio.ByteOrder.LITTLE_ENDIAN).asIntBuffer();
                 }
+                // Bounded 64 KiB reads keep the socket read-ahead contract.
+                for (int done = 0; done < bytes; done += Math.min(64 * 1024, bytes - done))
+                    input.readFully(raw, done, Math.min(64 * 1024, bytes - done));
+                for (int yy = 0; yy < h; yy++) {
+                    int offset = (y + yy) * width + x;
+                    rawInts.position(yy * w);
+                    rawInts.get(pixels, offset, w);
+                    for (int xx = offset, end = offset + w; xx < end; xx++) pixels[xx] |= 0xff000000;
+                }
+                long elapsed = System.nanoTime() - started;
+                decodeNanosSum += elapsed;
+                decodeNanosMax = Math.max(decodeNanosMax, elapsed);
+                decodedRects++;
                 changed = true;
             } else throw new IOException("Unsupported RFB encoding: " + encoding);
         }

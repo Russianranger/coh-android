@@ -111,3 +111,4 @@
 0111-armport-folder-cache-timing-fixed-data.patch
 0112-armport-vbo-rebase-pointer-width.patch
 0113-armport-gameplay-fps-profile.patch
+0114-armport-frame-rate-log.patch

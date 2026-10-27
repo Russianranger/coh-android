@@ -7,6 +7,8 @@ import unittest
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java'
 PACKAGE = 'io.github.russianranger.cohclientinteractive'
+BULK_RAW = '                // One bulk read per rectangle; each 32-bit little-endian pixel\n                // is B,G,R,X, so the int view is 0xXXRRGGBB and only alpha is set.\n                long started = System.nanoTime();\n                int bytes = w * h * 4;\n                if (raw == null || raw.length < bytes) {\n                    raw = new byte[bytes];\n                    rawInts = java.nio.ByteBuffer.wrap(raw).order(java.nio.ByteOrder.LITTLE_ENDIAN).asIntBuffer();\n                }\n                // Bounded 64 KiB reads keep the socket read-ahead contract.\n                for (int done = 0; done < bytes; done += Math.min(64 * 1024, bytes - done))\n                    input.readFully(raw, done, Math.min(64 * 1024, bytes - done));\n                for (int yy = 0; yy < h; yy++) {\n                    int offset = (y + yy) * width + x;\n                    rawInts.position(yy * w);\n                    rawInts.get(pixels, offset, w);\n                    for (int xx = offset, end = offset + w; xx < end; xx++) pixels[xx] |= 0xff000000;\n                }\n                long elapsed = System.nanoTime() - started;\n                decodeNanosSum += elapsed;\n                decodeNanosMax = Math.max(decodeNanosMax, elapsed);\n                decodedRects++;\n'
+ORIGINAL_RAW = '                byte[] row = new byte[w * 4];\n                for (int yy = 0; yy < h; yy++) {\n                    input.readFully(row);\n                    int offset = (y + yy) * width + x;\n                    for (int xx = 0; xx < w; xx++) {\n                        int source = xx * 4;\n                        pixels[offset + xx] = 0xff000000 | ((row[source + 2] & 255) << 16)\n                                | ((row[source + 1] & 255) << 8) | (row[source] & 255);\n                    }\n                }\n'
 BUFFERED = 'new DataInputStream(new BufferedInputStream(input, 64 * 1024))'
 HARNESS = r'''
 package io.github.russianranger.cohclientinteractive;
@@ -158,7 +160,11 @@ class RfbBufferedInputTests(unittest.TestCase):
         # The baseline executes the identical shipped decoder with only its
         # constructor wrapper reverted. It is generated only in a temporary
         # host directory; no game/runtime package is created or executed.
-        baseline = source.replace(BUFFERED, 'new DataInputStream(input)').replace('InteractiveRfbClient', 'BaselineRfbClient')
+        # The baseline is the original decoder: unbuffered input and the
+        # original per-row Raw conversion, so pixels are compared with it.
+        require_block = BULK_RAW in source
+        assert require_block, 'bulk Raw decode block not found'
+        baseline = source.replace(BULK_RAW, ORIGINAL_RAW).replace(BUFFERED, 'new DataInputStream(input)').replace('InteractiveRfbClient', 'BaselineRfbClient')
         (cls.output/'BaselineRfbClient.java').write_text(baseline)
         (cls.output/'BufferedRfbHost.java').write_text(HARNESS)
         subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',str(cls.output),str(SOURCE),str(cls.output/'BaselineRfbClient.java'),str(cls.output/'BufferedRfbHost.java')],check=True,capture_output=True,text=True)

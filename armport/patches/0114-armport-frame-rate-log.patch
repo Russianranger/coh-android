@@ -1,0 +1,34 @@
+diff --git a/Game/src/graphics/gfx.c b/Game/src/graphics/gfx.c
+index ed836bf..a0af2f1 100644
+--- a/Game/src/graphics/gfx.c
++++ b/Game/src/graphics/gfx.c
+@@ -375,6 +375,29 @@ void showFrameRate()
+         }
+     }
+     frame_count++;
++    {
++        // ArmPort: ARMPORT_FPS_LOG=1 prints the measured frame rate and cap
++        // every 5 s (stdout only), so device exports show the game's own rate
++        // apart from the app's presentation path.
++        static int fps_log = -1, fps_frames;
++        static U32 fps_since;
++        if (fps_log < 0) {
++            const char *value = getenv("ARMPORT_FPS_LOG");
++            fps_log = value && value[0] == '1';
++            fps_since = curr;
++        }
++        if (fps_log) {
++            F32 elapsed = (F32)(U32)(curr - fps_since) / (F32)timerCpuSpeed();
++            fps_frames++;
++            if (elapsed >= 5.0f) {
++                printf("ARMPORT_FRAME_RATE_V1 fps=%.2f frames=%d seconds=%.2f maxfps=%d menu=%d\n",
++                    fps_frames / elapsed, fps_frames, elapsed, game_state.maxfps, game_state.maxMenuFps);
++                fflush(stdout);
++                fps_frames = 0;
++                fps_since = curr;
++            }
++        }
++    }
+ 
+     if(sum_frames == 30)
+     {

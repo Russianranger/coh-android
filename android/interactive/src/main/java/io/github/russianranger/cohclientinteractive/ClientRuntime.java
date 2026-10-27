@@ -1429,6 +1429,37 @@ public final class ClientRuntime {
         long value = ((Number)raw).longValue();
         return value < 0 || value > maximum ? -1 : value;
     }
+    // Delivered RFB frames per 5-second window from the first frame, bounded to
+    // one hour; with the native ARMPORT_FRAME_RATE_V1 lines this separates the
+    // game's own rate from the presentation path.
+    private static final int PRESENTATION_WINDOW_MS = 5000, MAX_PRESENTATION_WINDOWS = 720;
+    private final List<Integer> presentationWindows = new ArrayList<>();
+    private long presentationWindowStart = -1;
+    private int presentationWindowFrames;
+    private synchronized void recordPresentedFrame(long now) {
+        if (presentationWindowStart < 0) presentationWindowStart = now;
+        while (now - presentationWindowStart >= PRESENTATION_WINDOW_MS
+                && presentationWindows.size() < MAX_PRESENTATION_WINDOWS) {
+            presentationWindows.add(presentationWindowFrames);
+            presentationWindowFrames = 0;
+            presentationWindowStart += PRESENTATION_WINDOW_MS;
+        }
+        presentationWindowFrames++;
+    }
+    private synchronized Map<String,Object> presentationTiming() {
+        Map<String,Object> result = new LinkedHashMap<>();
+        result.put("format", 1); result.put("window_ms", PRESENTATION_WINDOW_MS);
+        result.put("delivered_frames_per_window", new ArrayList<>(presentationWindows));
+        result.put("windows_limit_reached", presentationWindows.size() >= MAX_PRESENTATION_WINDOWS);
+        InteractiveRfbClient current = decoder;
+        if (current != null) {
+            result.put("rfb_decoded_rectangles", current.decodedRects());
+            result.put("rfb_decode_ms_sum", current.decodeNanosSum() / 1000000);
+            result.put("rfb_decode_ms_max", current.decodeNanosMax() / 1000000);
+        }
+        result.put("scope", "Delivered RFB frames and Raw decode time; displayed-frame render totals are in each surface capture record.");
+        return result;
+    }
     private synchronized Map<String,Object> captureDiagnostics() {
         Map<String,Object> result = new LinkedHashMap<>();
         result.put("format", 1); result.put("captures_observed", captureTimingCount);
@@ -1701,6 +1732,7 @@ public final class ClientRuntime {
                     decoder = new InteractiveRfbClient(candidate.getInputStream(), candidate.getOutputStream(), (pixels, width, height, sequence) -> {
                         if (closingReceiver || cancelled) return;
                         decodedFrames++; frameWidth = width; frameHeight = height;
+                        recordPresentedFrame(SystemClock.uptimeMillis());
                         listener.onFrame(pixels, width, height, sequence);
                     });
                     decoder.run(); return;
@@ -2324,6 +2356,7 @@ public final class ClientRuntime {
             if (receiverFailure != null) wrapper.put("receiver_error", receiverFailure);
             synchronized (this) {
                 wrapper.put("android_capture_diagnostics", new JSONObject(captureDiagnostics()));
+                wrapper.put("presentation_timing", new JSONObject(presentationTiming()));
                 wrapper.put("surface_captures", new JSONArray(surfaceSamples));
                 wrapper.put("login_captures", new JSONArray(loginSamples));
                 wrapper.put("character_captures", new JSONArray(characterSamples));
