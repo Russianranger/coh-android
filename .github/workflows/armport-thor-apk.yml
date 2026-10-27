@@ -4,22 +4,13 @@ name: ArmPort Thor APK (M5 candidate)
 # Gameplay 0.13.40, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact only; no release is published.
 on:
+  # Dispatch only, with an explicit package run: a default or push build could
+  # silently embed an older client (Sol 5661731725, Astra 5671483734).
   workflow_dispatch:
     inputs:
       m4_run_id:
-        description: ArmPort app runtime run with the armport-app-client-package artifact
-        required: false
-  push:
-    branches: ['armport/m5-thor']
-    paths:
-      - 'armport/app/build_thor_apk.py'
-      - 'armport/app/stage_app_assets.py'
-      - 'armport/app/armport_client_package.py'
-      - 'armport/app/armport_interactive.py'
-      - 'armport/app/client_stdio.py'
-      - 'android/interactive/**'
-      - 'android/guest/**'
-      - '.github/workflows/armport-thor-apk.yml'
+        description: Successful ArmPort app runtime run (armport-app-client-package) for this head's patches
+        required: true
 
 permissions:
   contents: read
@@ -30,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  M4_RUN_ID: ${{ inputs.m4_run_id || '40519490566' }}
+  M4_RUN_ID: ${{ inputs.m4_run_id }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 
@@ -54,12 +45,39 @@ jobs:
           gh api -H 'Accept: application/octet-stream' \
             "repos/${GITHUB_REPOSITORY}/releases/assets/${DONOR_ASSET_ID}" > "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk"
           echo "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f  $RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" | sha256sum -c -
+      - name: Require a qualified package built from this head's native patches
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          test -n "$M4_RUN_ID"
+          R="$GITHUB_REPOSITORY"
+          q=$(gh api "repos/$R/actions/runs/$M4_RUN_ID" --jq '[.path,.status,.conclusion]|join(" ")')
+          [ "$q" = ".github/workflows/armport-app-runtime.yml completed success" ] || {
+            echo "::error title=ArmPort package provenance::run $M4_RUN_ID is not a successful app runtime run ($q)"; exit 1; }
+          echo "M4_RUN_ID_VERIFIED=$M4_RUN_ID" >> "$GITHUB_ENV"
       - uses: actions/download-artifact@v4
         with:
           name: armport-app-client-package
           path: ${{ runner.temp }}/armport-package
           run-id: ${{ env.M4_RUN_ID }}
           github-token: ${{ github.token }}
+      - name: Embedded client must come from a build with this head's armport/patches
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          R="$GITHUB_REPOSITORY"
+          client=$(python3 -c "import json,sys,zipfile; print(json.loads(zipfile.ZipFile(sys.argv[1]).read('client-package.json'))['client_run_id'])" \
+            "$RUNNER_TEMP/armport-package/armport-client.zip")
+          path=$(gh api "repos/$R/actions/runs/$client" --jq .path)
+          conclusion=$(gh api "repos/$R/actions/runs/$client" --jq '.conclusion // "none"')
+          sha=$(gh api "repos/$R/actions/runs/$client" --jq .head_sha)
+          [ "$path" = .github/workflows/armport-build.yml ] && [ "$conclusion" = success ] || {
+            echo "::error title=ArmPort package provenance::client run $client is not a successful ArmPort build ($path $conclusion)"; exit 1; }
+          tree() { gh api "repos/$R/contents/armport?ref=$1" --jq '.[]|select(.name=="patches")|.sha'; }
+          built=$(tree "$sha"); current=$(tree "$GITHUB_SHA")
+          [ -n "$built" ] && [ "$built" = "$current" ] || {
+            echo "::error title=ArmPort package provenance::client run $client built armport/patches $built at $sha; this head has $current"; exit 1; }
+          echo "::notice title=ArmPort package provenance::package run $M4_RUN_ID_VERIFIED, client run $client at $sha, armport/patches tree $current matches $GITHUB_SHA"
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-interactive-signing
