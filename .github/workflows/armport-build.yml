@@ -364,6 +364,14 @@ jobs:
           python3 armport/tests/smf_selection_boundary.py --source "$RUNNER_TEMP/armport/src"
           python3 armport/tests/smf_plain_selection.py --source "$RUNNER_TEMP/armport/src"
 
+      - name: VBO stream rebase keeps 64-bit pointers (patch 0112)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort VBO rebase" python3 armport/tests/vbo_rebase.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/vbo_rebase.py --source "$RUNNER_TEMP/armport/src" --original > "$RUNNER_TEMP/vbo-original.txt" 2>&1; then
+            echo "::error title=ArmPort VBO rebase::the original int rebase unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort VBO rebase::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/vbo-original.txt")"
+
       - name: SMF anchor indices keep 64-bit anchors for the pass (patch 0110)
         run: |
           out=$(armport/scripts/step.sh "ArmPort SMF anchor indices" python3 armport/tests/smf_anchor_tokens.py --source "$RUNNER_TEMP/armport/src")

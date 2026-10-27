@@ -1352,6 +1352,34 @@ class LocalCharacterServer(login.LocalLoginServer):
             return
         self.prepare_atlas_data(self.runtime, identity, receipt, prepared_at, phases, checkpoint)
 
+    def accept_added_temporary_powers(self, before, after):
+        """ARM64 option: accept a reopen whose only power change is a server grant.
+
+        Ordinary play can receive a temporary power (Thor 0.13.39 reopen:
+        temporary_powers.temporary_powers.brawl_tranq). The existing delta
+        resolver must show every prior power preserved by uniqueid with all
+        semantic fields, contiguous native indexes, nothing deleted or changed,
+        and only added rows resolving under temporary_powers. The x86 client
+        keeps the original strict comparison unchanged.
+        """
+        if os.environ.get('COH_CLIENT_ARCH', 'x86') != 'arm64':
+            return False
+        delta = stock_power_delta(before['rows']['powers'], after['rows']['powers'],
+            self.schema['expected_attributes']['attributes'])
+        added = delta.get('added_powers') or []
+        accepted = (delta.get('prior_powers_preserved_by_uniqueid') is True
+            and delta.get('all_prior_semantic_fields_preserved') is True
+            and delta.get('current_native_indexes_contiguous') is True
+            and delta.get('deleted_uniqueids') == [] and delta.get('changed_prior_powers') == []
+            and delta.get('after_power_count') == delta.get('before_power_count', -1) + len(added)
+            and len(added) > 0 and all(isinstance(item.get('resolved_power'), str)
+                and item['resolved_power'].startswith('temporary_powers.') for item in added))
+        if accepted:
+            self.creation_report['accepted_temporary_power_grants'] = {'format': 1,
+                'policy': 'arm64_added_temporary_powers_only', 'power_delta': delta,
+                'sql_game_mutations_performed': False}
+        return accepted
+
     def initial_map_preparation(self):
         """Creation and the legacy Atlas reopen retain their qualified layout."""
         return 1
@@ -2812,6 +2840,9 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             if table == 'ents':
                 previous = [{key: value for key, value in row.items() if key != 'logincount'} for row in previous]
                 current = [{key: value for key, value in row.items() if key != 'logincount'} for row in current]
+            if (table == 'powers' and not self.saved_selected_rows_match(table, previous, current)
+                    and self.accept_added_temporary_powers(before, after)):
+                continue
             if not self.saved_selected_rows_match(table, previous, current):
                 # A typed SQL snapshot after logout is evidence of the observed
                 # difference, not a successful persistence proof. Preserve it

@@ -145,9 +145,27 @@ class ArmPortClient:
                            # (patch 0111: no recursive change monitor).
                            ARMPORT_FIXED_DATA='1')
         environment = self.armport_gpu_environment(environment, label)
+        environment = self.armport_gameplay_fps(environment)
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
         child = self.ctx.start(label, command, env=environment)
         self.client = LoggedClient(child, self.armport_work / 'armport_stdio.txt')
+
+    def armport_gameplay_fps(self, environment):
+        """Gameplay frame cap (patch 0113, the app's reviewed opt-in hook).
+
+        The app launcher starts every client at 10 FPS; x86 raises gameplay to
+        30 only through its separately qualified Game producer. The ARM64
+        client asks for 30 only when the GPU renderer was selected after its
+        probes; Software (default or fallback) keeps 10. Menu and background
+        caps stay 10, and in-game /maxfps commands still apply.
+        """
+        gpu = self.ctx.report.get('client_gpu_profile') or {}
+        fps = '30' if gpu.get('selected') == 'turnip' else '10'
+        environment = dict(environment, COH_CLIENT_GAMEPLAY_FPS=fps, COH_CLIENT_BOUNDED_TEXTURE_ERRORS='1')
+        self.ctx.report['armport_gameplay_fps'] = {'format': 1, 'requested_cap': int(fps),
+            'renderer_selected': gpu.get('selected', 'software'), 'menu_and_background_cap': 10,
+            'physical_fps_measured': False}
+        return environment
 
     def armport_gpu_environment(self, environment, label):
         """Apply the app's existing GPU option (Turnip + Zink) to the ARM64 client.

@@ -297,10 +297,22 @@ def merge_links(source_data, target_root, receipt=None):
 
 
 def walk_links(root):
-    """Every entry of the merged view, following directory symlinks."""
-    for directory, dirs, files in os.walk(root, followlinks=True):
-        for name in dirs + files:
-            yield Path(directory) / name
+    """Every entry of the real (merged) directories of the view, by d_type.
+
+    Linked directories are not followed: each is one case-unique source
+    directory whose names merge_links already checked casefold-unique (any
+    alias or file/directory clash makes its parent a merged real directory).
+    Following them stat'ed all 173k linked files (about 60 s on Thor).
+    """
+    pending = [Path(root)]
+    while pending:
+        directory = pending.pop()
+        with os.scandir(directory) as scan:
+            for entry in scan:
+                path = Path(entry.path)
+                yield path
+                if entry.is_dir(follow_symlinks=False):
+                    pending.append(path)
 
 def prepare(archive, source_data, destination):
     """Clone only data, then install ARM64 bins. Binary roots never overlap."""

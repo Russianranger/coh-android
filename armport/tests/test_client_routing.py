@@ -122,6 +122,17 @@ class ClientRoutingTests(unittest.TestCase):
             empty.start_texture_header_index()
         self.assertIsNone(empty.texture_header_preparation)
 
+    def test_arm64_gameplay_cap_is_30_only_with_the_selected_gpu_renderer(self):
+        class Probe(armport.ArmPortClient, CharacterCreationDiagnostic):
+            def __init__(self, gpu):
+                self.ctx = SimpleNamespace(report={} if gpu is None else {'client_gpu_profile': {'selected': gpu}})
+        for gpu, fps in (('turnip', '30'), ('software', '10'), (None, '10')):
+            with self.subTest(gpu=gpu):
+                probe = Probe(gpu)
+                env = probe.armport_gameplay_fps({'WINEDEBUG': 'x'})
+                self.assertEqual((env['COH_CLIENT_GAMEPLAY_FPS'], env['WINEDEBUG']), (fps, 'x'))
+                self.assertEqual(probe.ctx.report['armport_gameplay_fps']['requested_cap'], int(fps))
+
     def test_arm64_requests_overlap_only_from_a_server_that_supervises_it(self):
         class Server:
             pass

@@ -109,3 +109,5 @@
 0109-armport-texture-header-index.patch
 0110-armport-smf-anchor-tokens.patch
 0111-armport-folder-cache-timing-fixed-data.patch
+0112-armport-vbo-rebase-pointer-width.patch
+0113-armport-gameplay-fps-profile.patch
