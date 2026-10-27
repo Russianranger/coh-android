@@ -301,8 +301,10 @@ jobs:
             /upstream/i24/data/defs/ui/bodyparts.bp
             /native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
             /android/runtime-lock.json
-            /android/guest/diagnostic.py
-            /tools/android/interactive/test_client_render_queue_worker.py
+            /android/guest/
+            /android/interactive/src/
+            /tools/android/
+            /tools/*.py
             /.github/
           sparse-checkout-cone-mode: false
           lfs: false
