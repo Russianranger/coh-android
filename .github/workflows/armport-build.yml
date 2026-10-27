@@ -314,9 +314,8 @@ jobs:
 
       - name: Check bounded M3 diagnostic reporting
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends imagemagick
-          python3 -m unittest discover -s armport/tests -p 'test_*.py' -v
+          armport/scripts/step.sh "ArmPort test apt" bash -c 'sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends imagemagick'
+          armport/scripts/step.sh "ArmPort unit tests" python3 -m unittest discover -s armport/tests -p 'test_*.py'
 
       - name: Install llvm-mingw (aarch64 host)
         run: |
