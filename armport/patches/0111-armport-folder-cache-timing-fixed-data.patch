@@ -1,0 +1,110 @@
+diff --git a/libs/UtilitiesLib/src/utils/FolderCache.c b/libs/UtilitiesLib/src/utils/FolderCache.c
+index 1e7dde6..3a19c2a 100644
+--- a/libs/UtilitiesLib/src/utils/FolderCache.c
++++ b/libs/UtilitiesLib/src/utils/FolderCache.c
+@@ -350,6 +350,16 @@ typedef struct DirectoryUpdateContext {
+     int virtual_location;
+ } DirectoryUpdateContext;
+ 
++static int armportFixedData(void)
++{
++    static int fixed = -1;
++    if (fixed < 0) {
++        const char *value = getenv("ARMPORT_FIXED_DATA");
++        fixed = value && strcmp(value, "1") == 0;
++    }
++    return fixed;
++}
++
+ void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_location) {
+     DirectoryUpdateContext *context=NULL;
+     int timer;
+@@ -369,18 +379,27 @@ void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_loc
+         return;
+     }
+ 
+-    // Add notification hook
+-    dirMonSetFlags(DIR_MON_NO_TIMESTAMPS);
+-    context = malloc(sizeof(*context));
+-    context->fc = fc;
+-    context->virtual_location = virtual_location;
+-    if (!dirMonAddDirectory(basepath, true, (void*)context)) {
+-        verbose_printf("Error adding dirMon!  Dynamic reloading may not fully function.\n");
++    // ArmPort: ARMPORT_FIXED_DATA=1 states the data tree is immutable for this
++    // session (the Android app's verified, read-only worktree), so the
++    // recursive change monitor, which only drives dynamic reloading, is not
++    // registered. Each startup phase is timed on stdout either way.
++    timer = timerAlloc();
++    timerStart(timer);
++    if (!armportFixedData()) {
++        // Add notification hook
++        dirMonSetFlags(DIR_MON_NO_TIMESTAMPS);
++        context = malloc(sizeof(*context));
++        context->fc = fc;
++        context->virtual_location = virtual_location;
++        if (!dirMonAddDirectory(basepath, true, (void*)context)) {
++            verbose_printf("Error adding dirMon!  Dynamic reloading may not fully function.\n");
++        }
+     }
++    printf("ARMPORT_FOLDER_CACHE_V1 phase=dirmon skipped=%d seconds=%.3f path=%s\n",
++        armportFixedData(), timerElapsed(timer), basepath);
+     
+     if (FolderCacheGetMode()!=FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC) {
+ 
+-        timer = timerAlloc();
+         timerStart(timer);
+         count_file=0;
+         count_folder=0;
+@@ -388,6 +407,9 @@ void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_loc
+         // Scan HD
+         
+         FolderCacheAddFolderToNode(fc, &fc->root, &fc->root_tail, NULL, basepath, virtual_location);
++        printf("ARMPORT_FOLDER_CACHE_V1 phase=scan files=%d folders=%d seconds=%.3f\n",
++            count_file, count_folder, timerElapsed(timer));
++        timerStart(timer);
+ 
+         // Re-Fill hashtable by parsing the tree
+         //if (fc->htAllFiles)
+@@ -396,14 +418,15 @@ void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_loc
+         // deep copies of every string
+         
+         FolderCacheBuildHashTable(fc, fc->root, "");
++        printf("ARMPORT_FOLDER_CACHE_V1 phase=hash seconds=%.3f\n", timerElapsed(timer));
+ 
+         FolderNodeGetCounts(&discard, &update);
+         if (folder_cache_debug) {
+             printf("FOLDER: %25s: Added %5d files and %5d folders with %5d updates and %5d discards in %1.3gs\n",
+                 basepath, count_file, count_folder, update, discard, timerElapsed(timer));
+         }
+-        timerFree(timer);
+     }
++    timerFree(timer);
+ }
+ 
+ // returns the virtual location or -1 if not found
+@@ -422,12 +445,19 @@ int FolderCacheAddAllPigs(FolderCache *fc) {
+     if (FolderCacheGetMode() == FOLDER_CACHE_MODE_FILESYSTEM_ONLY) {
+         return 0;
+     }
+-    if (-1 == PigSetGetNumPigs()) {
+-        return 1; //TODO return an error
+-    }
+-
+-    for (i=0; i<PigSetGetNumPigs(); i++)  {
+-        FolderCacheAddPig(fc, PigSetGetPigFile(i), PIG_INDEX_TO_VIRTUAL_LOCATION(i));
++    {
++        // ArmPort: timed from the first PigSetGetNumPigs(), which loads the set.
++        int timer = timerAlloc();
++        timerStart(timer);
++        if (-1 == PigSetGetNumPigs()) {
++            timerFree(timer);
++            return 1; //TODO return an error
++        }
++        for (i=0; i<PigSetGetNumPigs(); i++)  {
++            FolderCacheAddPig(fc, PigSetGetPigFile(i), PIG_INDEX_TO_VIRTUAL_LOCATION(i));
++        }
++        printf("ARMPORT_FOLDER_CACHE_V1 phase=piggs count=%d seconds=%.3f\n", PigSetGetNumPigs(), timerElapsed(timer));
++        timerFree(timer);
+     }
+     return 0;
+ }

@@ -140,7 +140,10 @@ class ArmPortClient:
         # zone records (patch 0108); CI qualification keeps its own tracing.
         environment = dict(self.wine_env, ARMPORT_LOOSE_DATA='1', ARMPORT_NO_VERSION_CHECK='1',
                            ARMPORT_STDIO_LOG='armport_stdio.txt', COH_CLIENT_GRAPHICS_PROFILE='standard',
-                           WINEDEBUG='err+all,fixme-all', ARMPORT_TRACE_QUIET='1')
+                           WINEDEBUG='err+all,fixme-all', ARMPORT_TRACE_QUIET='1',
+                           # The linked worktree is immutable for the session
+                           # (patch 0111: no recursive change monitor).
+                           ARMPORT_FIXED_DATA='1')
         environment = self.armport_gpu_environment(environment, label)
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
         child = self.ctx.start(label, command, env=environment)
