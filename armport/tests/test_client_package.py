@@ -193,6 +193,44 @@ class ClientPackage(unittest.TestCase):
         self.assertFalse((self.root / 'arm64').exists())
         self.assertFalse((self.root / package.VALIDATION_RECEIPT).exists())
 
+    def test_old_format_receipt_never_skips_the_one_hop_check(self):
+        # Sol review 5668344473: a format-1 record written by the previous code
+        # for a chained link must not be reused after the upgrade.
+        self.build()
+        real, middle = self.root / 'real', self.root / 'middle'
+        real.mkdir(); middle.mkdir()
+        (real / 'a.texture').write_bytes(b'a')
+        (middle / 'a.texture').symlink_to(real / 'a.texture')
+        source = self.root / 'server-data'
+        (source / 'models').mkdir(parents=True)
+        (source / 'models/a.texture').symlink_to(middle / 'a.texture')
+        runs = self.root / 'runs'
+        runs.mkdir()
+        resolved = source.resolve()
+        tree = []
+        for directory in (resolved, resolved / 'models'):
+            tree.append([directory.relative_to(resolved).as_posix(), *package.identity(directory)])
+        targets = [[str(middle), *package.identity(middle)]]
+        old = {'format': 1, 'source': str(resolved), 'tree': package.identity_digest(sorted(tree)),
+               'links': 1, 'target_directories': [str(middle)], 'targets': package.identity_digest(targets)}
+        (runs / package.VALIDATION_RECEIPT).write_text(json.dumps(old))
+        (real / 'a.texture').unlink()
+        os.mkfifo(real / 'a.texture')
+        with self.assertRaisesRegex(ValueError, 'Nonregular|Chained data link'):
+            package.prepare(self.archive, source, runs / 'upgraded')
+        self.assertFalse((runs / 'upgraded').exists())
+        # The same record with the current format and policy would be accepted,
+        # so the refusal above comes from the format/policy gate.
+        current = dict(old, format=package.VALIDATION_FORMAT, policy=package.VALIDATION_POLICY)
+        (runs / package.VALIDATION_RECEIPT).write_text(json.dumps(current))
+        (real / 'a.texture').unlink()
+        (real / 'a.texture').write_bytes(b'a')
+        targets = [[str(middle), *package.identity(middle)]]
+        current['targets'] = package.identity_digest(targets)
+        (runs / package.VALIDATION_RECEIPT).write_text(json.dumps(current))
+        report = package.prepare(self.archive, source, runs / 'current-format')
+        self.assertEqual(report['data_validation']['mode'], 'unchanged_directory_receipt')
+
     def test_linked_directory_refused(self):
         self.build()
         elsewhere = self.root / 'elsewhere'

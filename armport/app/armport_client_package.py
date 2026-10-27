@@ -124,6 +124,10 @@ def unpack(archive_path, destination):
 
 
 VALIDATION_RECEIPT = 'armport-data-validation.json'
+# Format 2 = one-hop links (final file in the recorded directory). Records of
+# any other format or policy, such as format 1 written before that check,
+# never skip validation.
+VALIDATION_FORMAT, VALIDATION_POLICY = 2, 'one_hop_regular_link_targets'
 
 
 def identity(path):
@@ -149,7 +153,8 @@ def validate_links(source_data, links, tree, receipt):
     if receipt is not None and receipt.is_file() and not receipt.is_symlink():
         try:
             saved = json.loads(receipt.read_text())
-            if (saved.get('format') == 1 and saved.get('source') == str(source_data)
+            if (saved.get('format') == VALIDATION_FORMAT and saved.get('policy') == VALIDATION_POLICY
+                    and saved.get('source') == str(source_data)
                     and saved.get('tree') == tree and saved.get('links') == len(links)):
                 targets = [[name, *identity(name)] for name in saved['target_directories']]
                 if identity_digest(targets) == saved.get('targets'):
@@ -182,7 +187,8 @@ def validate_links(source_data, links, tree, receipt):
     targets = [[name, *identity(name)] for name in names]
     if receipt is not None:
         pending = receipt.with_name(receipt.name + '.pending')
-        pending.write_text(json.dumps({'format': 1, 'source': str(source_data), 'tree': tree,
+        pending.write_text(json.dumps({'format': VALIDATION_FORMAT, 'policy': VALIDATION_POLICY,
+            'source': str(source_data), 'tree': tree,
             'links': len(links), 'target_directories': names, 'targets': identity_digest(targets)}))
         pending.replace(receipt)
     return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names)}
