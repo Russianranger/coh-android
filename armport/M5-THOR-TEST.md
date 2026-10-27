@@ -1,7 +1,16 @@
 # COH Atlas Gameplay 0.13.38: M5 Thor test (ARM64 client)
 
-**Status:** candidate being built. Not yet installed or played. M5 is not
-complete.
+**Status:** candidate built and signed, waiting for review. Not yet installed
+or played. M5 is not complete.
+
+| Item | Value |
+|---|---|
+| APK | `COH-Atlas-Gameplay-0.13.38.apk`, versionCode 53, 80,903,000 bytes |
+| APK sha256 | `8366d47a7b138ee590b9f5eaaa950fe4c26b1326995e95fb80f11b4955aff4b3` |
+| Built by | run [40451061122](https://github.com/Russianranger/coh-android/actions/runs/40451061122), artifact `coh-atlas-gameplay-0.13.38-apk` (12709708594, kept until 2026-11-26) |
+| Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36/0.13.37) |
+| ARM64 client | executable `ba6fb3ef…2011`, package `a962ece5…6f64`, from build 40445773810 |
+| CI qualification | run 40446992851: ARM64 creation then reopen through the app guest passed (retained 0.10 runtime; the full 0.13.38 runtime has not run in CI) |
 
 ## What changed from 0.13.37 (Thor report, 2026-10-27)
 
