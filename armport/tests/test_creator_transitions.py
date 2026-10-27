@@ -85,6 +85,54 @@ class CreatorTransitions(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Costume page'):
             self.run_check(value, 'verify_costume', 'verify_costume_page', [AFTER_POWERS])
 
+    def observer(self, primary_pending, costume_misses, accounts=1):
+        names = [a[2] for a in host.ArmPortCharacterInteraction.ACTIONS]
+        retry, account = names.index('preposition_account'), names.index('verify_rendered_account')
+        start = names.index('preposition_select_primary_set')
+        check, costume = names.index('verify_primary_power_selected'), names.index('verify_costume_page')
+        order = (names[:retry] + names[retry:account] * accounts + names[account:start]
+                 + names[start:check + 1] * (primary_pending + 1) + names[check + 1:costume]
+                 + [names[costume]] * (costume_misses + 1) + names[costume + 1:])
+        steps = [{'action': name, 'order': index} for index, name in enumerate(order)]
+        checks = [{'check': 'verify_primary_power_selected', 'retry': i, 'primary_selection_pending': i < primary_pending,
+                   'evidence': 'p%d' % i} for i in range(primary_pending + 1)]
+        checks += [{'check': 'verify_costume_page', 'attempt': i + 1, 'costume_page_shown': i == costume_misses,
+                    'evidence': 'c%d' % i} for i in range(costume_misses + 1)]
+        return {'interaction_script': {'steps': steps, 'armport_transition_checks': checks,
+                                       'account_entry_checks': [{}] * accounts}}
+
+    def shared_expected(self, accounts):
+        names = [a[2] for a in host.character.CharacterInteraction.ACTIONS]
+        retry, account = names.index('preposition_account'), names.index('verify_rendered_account')
+        return names[:retry] + names[retry:account] * accounts + names[account:]
+
+    def test_validator_projects_replays_onto_the_shared_sequence(self):
+        for primary, costume, accounts in ((0, 0, 1), (2, 3, 2), (1, 0, 1)):
+            observer = self.observer(primary, costume, accounts)
+            with mock.patch.object(host.character, 'validate_observer') as shared:
+                host.armport_validate_observer(observer, {})
+            projected = shared.call_args[0][0]['interaction_script']['steps']
+            self.assertEqual([s['action'] for s in projected], self.shared_expected(accounts))
+            orders = [s['order'] for s in projected]
+            self.assertEqual(orders, sorted(orders))  # the final primary pass is the one kept
+            self.assertEqual(len(observer['interaction_script']['steps']) - len(projected),
+                             primary * 5 + 1 + costume + 1 if primary else 1 + costume + 1)
+
+    def test_validator_rejects_inconsistent_evidence(self):
+        observer = self.observer(1, 0)
+        observer['interaction_script']['steps'].pop()
+        with mock.patch.object(host.character, 'validate_observer'):
+            with self.assertRaisesRegex(ValueError, 'did not finish'):
+                host.armport_validate_observer(observer, {})
+            observer = self.observer(1, 0)
+            observer['interaction_script']['armport_transition_checks'][0]['primary_selection_pending'] = False
+            with self.assertRaisesRegex(ValueError, 'transition evidence'):
+                host.armport_validate_observer(observer, {})
+            observer = self.observer(0, 1)
+            observer['interaction_script']['armport_transition_checks'].pop()
+            with self.assertRaisesRegex(ValueError, 'transition evidence'):
+                host.armport_validate_observer(observer, {})
+
 
 if __name__ == '__main__':
     unittest.main()
