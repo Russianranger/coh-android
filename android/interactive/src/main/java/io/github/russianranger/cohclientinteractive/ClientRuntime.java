@@ -1447,7 +1447,11 @@ public final class ClientRuntime {
         presentationWindowFrames++;
     }
     private long retainedRects, retainedReadNanosSum, retainedReadNanosMax, retainedConvertNanosSum, retainedConvertNanosMax;
-    /** Moves a decoder's totals into session state once, before it is dropped. */
+    // The most recent decoder, kept after closeReceiver() drops `decoder`. Only
+    // its receiver thread retires its totals, after run() has stopped writing
+    // them; until then the report adds its live totals and says they are partial.
+    private volatile InteractiveRfbClient lastDecoder;
+    /** Moves a stopped decoder's totals into session state exactly once. */
     private synchronized void retainDecoderTotals(InteractiveRfbClient retiring) {
         if (retiring == null || !retiring.retireTotals()) return;
         retainedRects += retiring.decodedRects();
@@ -1462,11 +1466,13 @@ public final class ClientRuntime {
         result.put("windows_limit_reached", presentationWindows.size() >= MAX_PRESENTATION_WINDOWS);
         long rects = retainedRects, readSum = retainedReadNanosSum, readMax = retainedReadNanosMax,
             convertSum = retainedConvertNanosSum, convertMax = retainedConvertNanosMax;
-        InteractiveRfbClient current = decoder;
-        if (current != null && !current.totalsRetired()) {
+        InteractiveRfbClient current = lastDecoder;
+        boolean live = current != null && !current.totalsRetired();
+        if (live) {
             rects += current.decodedRects(); readSum += current.readNanosSum(); convertSum += current.convertNanosSum();
             readMax = Math.max(readMax, current.readNanosMax()); convertMax = Math.max(convertMax, current.convertNanosMax());
         }
+        result.put("rfb_totals_final", !live);
         result.put("rfb_decoded_rectangles", rects);
         result.put("rfb_read_ms_sum", readSum / 1000000); result.put("rfb_read_ms_max", readMax / 1000000);
         result.put("rfb_convert_ms_sum", convertSum / 1000000); result.put("rfb_convert_ms_max", convertMax / 1000000);
@@ -1749,6 +1755,7 @@ public final class ClientRuntime {
                         listener.onFrame(pixels, width, height, sequence);
                     });
                     InteractiveRfbClient running = decoder;
+                    lastDecoder = running;
                     try { running.run(); } finally { retainDecoderTotals(running); }
                     return;
                 } catch (IOException e) {
@@ -1780,8 +1787,9 @@ public final class ClientRuntime {
     private void closeReceiver() {
         LocalSocket active = socket; socket = null;
         if (active != null) try { active.close(); } catch (IOException ignored) {}
+        // Totals are retired by the receiver thread once run() stops (see
+        // receiveFrames); lastDecoder keeps them reportable meanwhile.
         InteractiveRfbClient activeDecoder = decoder;
-        retainDecoderTotals(activeDecoder);
         decoder = null;
         if (activeDecoder != null) try { activeDecoder.close(); } catch (IOException ignored) {}
     }
