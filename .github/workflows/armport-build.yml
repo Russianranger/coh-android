@@ -293,6 +293,10 @@ jobs:
         with:
           sparse-checkout: |
             /armport/
+            /upstream-lock.json
+            /patches/
+            /database/
+            /docs/android-evidence/client-map-startup-0.13.32-publication.json
             /tools/android/interactive/prepare_atlas_world_assets.py
             /assets/catalog.json
             /assets/zones-audio-metadata.json
@@ -400,6 +404,20 @@ jobs:
             echo "::error title=ArmPort ragdoll without physics::the original NULL-ragdoll path unexpectedly passed"; exit 1
           fi
           echo "::notice title=ArmPort ragdoll without physics::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/ragdoll-original.txt")"
+
+      - name: MapServer tick and file timing uses actual prepared code (patch 0119)
+        run: |
+          python3 armport/tests/server_metrics_native.py --source "$RUNNER_TEMP/armport/src"
+          if python3 armport/tests/server_metrics_native.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/server-metrics-original.txt" 2>&1; then
+            echo "::error title=ArmPort server metrics::uninstrumented upstream unexpectedly produced metrics"; exit 1
+          fi
+          # A compiler/tool failure is not the expected negative-control result.
+          python3 - "$RUNNER_TEMP/server-metrics-original.txt" <<'PYCONTROL'
+          import pathlib, re, sys
+          text = pathlib.Path(sys.argv[1]).read_text()
+          assert re.search(r'^FAIL line [0-9]+: s->ticks == 4 && s->file_calls == 4 && s->window_start == 0$', text, re.M), text
+          print('::notice title=ArmPort server metrics::prepared controls pass; upstream executable failed the required missing-counter assertion')
+          PYCONTROL
 
       - name: Render worker hand-off with spin-before-sleep under TSan (patch 0116)
         run: |

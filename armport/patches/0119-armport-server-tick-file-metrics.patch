@@ -1,0 +1,288 @@
+diff --git a/MapServer/src/svr/svr_init.c b/MapServer/src/svr/svr_init.c
+index 916cbee..cead606 100644
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -23,6 +23,7 @@
+ #include <utilitieslib/utils/fpmacros.h>
+ #include <utilitieslib/utils/error.h>
+ #include <utilitieslib/utils/file.h>
++#include <utilitieslib/utils/armport_server_metrics.h>
+ #include "dbcomm/dbcomm.h"
+ #include <utilitieslib/utils/utils.h>
+ #include "utils/debugUtils.h"
+@@ -2230,8 +2231,10 @@ int __cdecl main(int argc,char **argv)
+     if (coll_test)
+         gridCollPerfTest();
+ 
++    armportServerMetricsInit(db_state.map_id);
+     for(;;)
+     {
++        armportServerMetricsTickBegin();
+         timerTickBegin();
+ 
+         startProfilingCPU();
+@@ -2244,7 +2247,9 @@ int __cdecl main(int argc,char **argv)
+ 
+         timerTickEnd();
+ 
++        armportServerMetricsTickEnd();
+         sleepAndCalcTimers();
++        armportServerMetricsLoopEnd();
+     }
+     EXCEPTION_HANDLER_END
+ }
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h
+new file mode 100644
+index 0000000..93eec0d
+--- /dev/null
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h
+@@ -0,0 +1,14 @@
++/* Opt-in, post-ready MapServer main-thread measurements. No gameplay decisions. */
++#ifndef ARMPORT_SERVER_METRICS_H
++#define ARMPORT_SERVER_METRICS_H
++#ifdef __cplusplus
++extern "C" {
++#endif
++void armportServerMetricsInit(int map_id);
++void armportServerMetricsTickBegin(void);
++void armportServerMetricsTickEnd(void);
++void armportServerMetricsLoopEnd(void);
++#ifdef __cplusplus
++}
++#endif
++#endif
+diff --git a/libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h b/libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h
+new file mode 100644
+index 0000000..dff447c
+--- /dev/null
++++ b/libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h
+@@ -0,0 +1,176 @@
++/* Included only by file.c: TLS makes the main-thread fileAlloc observer local
++ * to the thread that opted in. Background file loads and all other programs
++ * stay disabled. No clocks, environment reads or logging on the disabled path.
++ *
++ * filealloc_ms = inclusive wall time in outermost fileAlloc[_Ex]_dbg calls
++ * during tick work, including lookup/allocation/read/decompression/callbacks
++ * and failed attempts. It is NOT disk-only time, parsing time or all file I/O.
++ * max_tick_ms excludes deliberate sleep; max_loop_ms includes it. Logging
++ * happens after loop measurement, so its own I/O is not in max_loop_ms.
++ */
++#ifndef ARMPORT_SERVER_METRICS_IMPL_H
++#define ARMPORT_SERVER_METRICS_IMPL_H
++#include "utilitieslib/utils/armport_server_metrics.h"
++#include "utilitieslib/utils/wininclude.h"
++#pragma push_macro("snprintf")
++#pragma push_macro("fputs")
++#pragma push_macro("fflush")
++#pragma push_macro("FILE")
++#undef snprintf
++#undef fputs
++#undef fflush
++#undef FILE
++#include <stdio.h>
++#include <stdlib.h>
++#include <limits.h>
++
++typedef struct ArmportServerMetrics {
++    int enabled, in_tick, map_id, saturated;
++    unsigned int file_depth;
++    DWORD pid;
++    LONGLONG frequency, last_clock, window_start, tick_start, file_start;
++    unsigned long long ticks, file_calls, file_failures;
++    double max_tick_ms, max_loop_ms, file_ms;
++} ArmportServerMetrics;
++
++static __declspec(thread) ArmportServerMetrics armport_server_metrics;
++
++/* A failure disables only telemetry, not the server. Never fabricate a zero
++ * latency when the clock failed or moved backwards. */
++static int armportServerMetricsClock(LONGLONG *value)
++{
++    LARGE_INTEGER now;
++    ArmportServerMetrics *s = &armport_server_metrics;
++    if (!QueryPerformanceCounter(&now) || now.QuadPart < 0 || now.QuadPart < s->last_clock) {
++        char line[160];
++        snprintf(line, sizeof(line), "ARMPORT_SERVER_METRICS_V1 status=clock_error map_id=%d pid=%lu\n",
++                 s->map_id, (unsigned long)s->pid);
++        fputs(line, stdout);
++        fflush(stdout);
++        s->enabled = 0;
++        return 0;
++    }
++    s->last_clock = *value = now.QuadPart;
++    return 1;
++}
++
++static double armportServerMetricsMs(LONGLONG end, LONGLONG begin)
++{
++    /* Convert before subtraction: no signed overflow at a large QPC value. */
++    return ((double)end - (double)begin) * 1000.0 / (double)armport_server_metrics.frequency;
++}
++
++static void armportServerMetricsIncrement(unsigned long long *value)
++{
++    if (*value == ULLONG_MAX)
++        armport_server_metrics.saturated = 1;
++    else
++        ++*value;
++}
++
++void armportServerMetricsInit(int map_id)
++{
++    ArmportServerMetrics *s = &armport_server_metrics;
++    ArmportServerMetrics empty = {0};
++    LARGE_INTEGER frequency;
++    const char *option = getenv("ARMPORT_SERVER_METRICS");
++    *s = empty;
++    if (!option || option[0] != '1' || option[1] != 0)
++        return;
++    s->map_id = map_id;
++    s->pid = GetCurrentProcessId();
++    if (!QueryPerformanceFrequency(&frequency) || frequency.QuadPart <= 0) {
++        char line[160];
++        snprintf(line, sizeof(line), "ARMPORT_SERVER_METRICS_V1 status=clock_error map_id=%d pid=%lu\n",
++                 map_id, (unsigned long)s->pid);
++        fputs(line, stdout);
++        fflush(stdout);
++        return;
++    }
++    s->frequency = frequency.QuadPart;
++    if (!armportServerMetricsClock(&s->window_start))
++        return;
++    s->enabled = 1;
++}
++
++void armportServerMetricsTickBegin(void)
++{
++    ArmportServerMetrics *s = &armport_server_metrics;
++    if (!s->enabled || !armportServerMetricsClock(&s->tick_start))
++        return;
++    s->in_tick = 1;
++}
++
++void armportServerMetricsTickEnd(void)
++{
++    ArmportServerMetrics *s = &armport_server_metrics;
++    LONGLONG now;
++    double elapsed;
++    if (!s->enabled || !s->in_tick || !armportServerMetricsClock(&now))
++        return;
++    s->in_tick = 0;
++    armportServerMetricsIncrement(&s->ticks);
++    elapsed = armportServerMetricsMs(now, s->tick_start);
++    if (elapsed > s->max_tick_ms)
++        s->max_tick_ms = elapsed;
++}
++
++void armportServerMetricsLoopEnd(void)
++{
++    ArmportServerMetrics *s = &armport_server_metrics;
++    LONGLONG now;
++    double elapsed, seconds;
++    char line[480];
++    if (!s->enabled || s->in_tick || !armportServerMetricsClock(&now))
++        return;
++    elapsed = armportServerMetricsMs(now, s->tick_start);
++    if (elapsed > s->max_loop_ms)
++        s->max_loop_ms = elapsed;
++    seconds = armportServerMetricsMs(now, s->window_start) / 1000.0;
++    if (seconds < 5.0)
++        return;
++    snprintf(line, sizeof(line),
++        "ARMPORT_SERVER_METRICS_V1 status=ok map_id=%d pid=%lu seconds=%.6f ticks=%llu max_tick_ms=%.3f max_loop_ms=%.3f filealloc_ms=%.3f filealloc_calls=%llu filealloc_failures=%llu counter_saturated=%d scope=post_ready_main_thread_outer_filealloc\n",
++        s->map_id, (unsigned long)s->pid, seconds, s->ticks, s->max_tick_ms,
++        s->max_loop_ms, s->file_ms, s->file_calls, s->file_failures, s->saturated);
++    fputs(line, stdout);
++    fflush(stdout);
++    /* Keep contiguous wall-time windows. This line's output cost is included
++     * in the next window's denominator, although not in tick/loop maxima. */
++    s->window_start = now;
++    s->ticks = s->file_calls = s->file_failures = 0;
++    s->max_tick_ms = s->max_loop_ms = s->file_ms = 0;
++    s->saturated = 0;
++}
++
++static int armportServerMetricsFileBegin(void)
++{
++    ArmportServerMetrics *s = &armport_server_metrics;
++    if (!s->enabled || !s->in_tick || s->file_depth == UINT_MAX)
++        return 0;
++    if (s->file_depth == 0 && !armportServerMetricsClock(&s->file_start))
++        return 0;
++    ++s->file_depth;
++    return 1;
++}
++
++static void armportServerMetricsFileEnd(int tracked, int succeeded)
++{
++    ArmportServerMetrics *s = &armport_server_metrics;
++    LONGLONG now;
++    if (!tracked)
++        return;
++    --s->file_depth;
++    if (!s->enabled || s->file_depth != 0 || !armportServerMetricsClock(&now))
++        return;
++    s->file_ms += armportServerMetricsMs(now, s->file_start);
++    armportServerMetricsIncrement(&s->file_calls);
++    if (!succeeded)
++        armportServerMetricsIncrement(&s->file_failures);
++}
++
++#pragma pop_macro("FILE")
++#pragma pop_macro("fflush")
++#pragma pop_macro("fputs")
++#pragma pop_macro("snprintf")
++#endif
+diff --git a/libs/UtilitiesLib/src/utils/file.c b/libs/UtilitiesLib/src/utils/file.c
+index 670351c..acccd33 100644
+--- a/libs/UtilitiesLib/src/utils/file.c
++++ b/libs/UtilitiesLib/src/utils/file.c
+@@ -41,6 +41,7 @@
+ #include <share.h>
+ #include "utilitieslib/UtilsNew/lock.h"
+ #include <zlib.h>
++#include "armport_server_metrics_impl.h"
+ 
+ #ifdef FW_TRACK_ALLOCATION
+ #include "Stackwalk.h"
+@@ -946,7 +947,7 @@ void fileFree(void *mem)
+ }
+ 
+ static int filealloc_failure_spot=0;
+-void *fileAlloc_dbg(const char *fname,int *lenp MEM_DBG_PARMS)
++static void *fileAllocInternal_dbg(const char *fname,int *lenp MEM_DBG_PARMS)
+ {
+     FILE    *file;
+     intptr_t    total=0,bytes_read;
+@@ -1013,7 +1014,15 @@ void *fileAlloc_dbg(const char *fname,int *lenp MEM_DBG_PARMS)
+     return mem;
+ }
+ 
+-void *fileAllocEx_dbg(const char *fname,int *lenp, const char *mode, FileProcessCallback callback MEM_DBG_PARMS)
++void *fileAlloc_dbg(const char *fname,int *lenp MEM_DBG_PARMS)
++{
++    int tracked = armportServerMetricsFileBegin();
++    void *result = fileAllocInternal_dbg(fname, lenp MEM_DBG_PARMS_CALL);
++    armportServerMetricsFileEnd(tracked, result != NULL);
++    return result;
++}
++
++static void *fileAllocExInternal_dbg(const char *fname,int *lenp, const char *mode, FileProcessCallback callback MEM_DBG_PARMS)
+ {
+     FILE    *file;
+     intptr_t total=0,bytes_read=0, last_read, zipped, eof=0, original_total;
+@@ -1093,6 +1102,14 @@ void *fileAllocEx_dbg(const char *fname,int *lenp, const char *mode, FileProcess
+     return mem;
+ }
+ 
++void *fileAllocEx_dbg(const char *fname,int *lenp, const char *mode, FileProcessCallback callback MEM_DBG_PARMS)
++{
++    int tracked = armportServerMetricsFileBegin();
++    void *result = fileAllocExInternal_dbg(fname, lenp, mode, callback MEM_DBG_PARMS_CALL);
++    armportServerMetricsFileEnd(tracked, result != NULL);
++    return result;
++}
++
+ int printPercentage(int bytes_processed, int total) // Sample FileProcessCallback
+ {
+     static int last = 0;
