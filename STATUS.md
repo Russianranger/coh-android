@@ -35,6 +35,6 @@ M3 into Atlas: accepted (Sol 5659701771), merged; 106 patches (armport/HANDOFF.m
   i686 partial state, equal error inventories. Reduced scope: completeness
   flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
 - M4 app runtime: accepted (Sol 5660940046), merged (PR #7; armport/M4-REPORT.md).
-- M5 Thor (PR #8): 0.13.41 on Thor: game 6-12 FPS (cap 30); combat crash (message vararg slots).
-  0.13.43: 0115 8-byte vararg slots, 0116 worker spin (atomic counters); build 40623975414,
-  requalify 40630719845, APK 40634910831 approved for Thor (Astra 5681163575; 0.13.42 was not).
+- M5 Thor (PR #8): 0.13.43 on Thor: game 15-27 FPS; combat works; crash after a defeat (NULL ragdoll).
+  0.13.44: 0117 message index width, 0118 ragdoll packets without PhysX; build 40724321192,
+  requalify 40736589404, APK 40743596575 (provenance-checked package).

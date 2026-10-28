@@ -1,21 +1,28 @@
-# COH Atlas Gameplay 0.13.43: M5 Thor test (ARM64 client)
+# COH Atlas Gameplay 0.13.44: M5 Thor test (ARM64 client)
 
-**Status:** candidate built and signed; approved for Thor handoff (Astra
-5681163575). Not yet installed or played. M5 is not complete. (0.13.42 was not approved: Astra review
-5677080577 found two races in patch 0116; 0.13.43 fixes them.)
+**Status:** candidate built and signed, waiting for review. Not yet installed
+or played. M5 is not complete.
 
 | Item | Value |
 |---|---|
-| APK | `COH-Atlas-Gameplay-0.13.43.apk`, versionCode 58, 80,911,192 bytes |
-| APK sha256 | `78a04c4df310f22edb4bfa7a02a52e3c33d01e0a8c6ecdc9c2a83f26ca3238b4` |
-| Built by | run [40634910831](https://github.com/Russianranger/coh-android/actions/runs/40634910831) at `d85695289`, artifact `coh-atlas-gameplay-0.13.43-apk` (12793385619) |
-| Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.41) |
-| ARM64 client | executable `e6671c1e…1f1d`, package `09871d61…1341`, from build 40623975414 at `d85695289` (patches to 0116; provenance: `armport/patches` tree `20d8303a` equals the APK head's) |
-| CI qualification | build 40623975414: all 8 jobs passed, including the 0115 slot check (original fails) and the two-worker 0116 TSan check with live sampling (plain-counter control reported). Requalification 40630719845: ARM64 creation then reopen passed (2138 s). Retained 0.10 runtime; the full 0.13.43 runtime has not run in CI |
+| APK | `COH-Atlas-Gameplay-0.13.44.apk`, versionCode 59, 80,911,192 bytes |
+| APK sha256 | `2cf80a03a0161fc42581147f0c75d8f22ea2ad93fc8884c9abab5c72388e5c1b` |
+| Built by | run [40743596575](https://github.com/Russianranger/coh-android/actions/runs/40743596575) at `a5bd2bbe3`, artifact `coh-atlas-gameplay-0.13.44-apk` (12840043807) |
+| Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.43) |
+| ARM64 client | executable `2caf815f…db6e`, package `bba31da1…52bf`, from build 40724321192 at `a5bd2bbe3` (patches to 0118; provenance: `armport/patches` tree `992ed11b` equals the APK head's) |
+| CI qualification | build 40724321192: all 8 jobs passed, including the 0117 index check and the 0118 ragdoll check (upstream code fails both). Requalification 40736589404: ARM64 creation then reopen passed (2177 s). Retained 0.10 runtime; the full 0.13.44 runtime has not run in CI |
 
-## What changed from 0.13.41 (Thor report, exports 20261027-235148/235205)
+## What changed from 0.13.43 (Thor report, exports 20261028-160515/160528)
 
-| 0.13.41 problem | Cause found in the exported report | 0.13.43 change |
+| 0.13.43 result | Cause found in the exported report | 0.13.44 change |
+|---|---|---|
+| FPS much better: game 15-27 FPS in Atlas (was 6-12) | Patch 0116 works: the render worker now mostly polls instead of sleeping (spin hits above sleeps) | Unchanged |
+| Combat worked, but hit/miss texts showed `Bad parameter for: PlayerPowerHit:powerName` | Each message's parameter list was rebuilt by reading pointer-sized index elements as `int`, so powerName took the ToHit slot | Patch 0117: pointer-sized index reads, shared-heap copy and allocation |
+| Crash after defeating an enemy | Page fault writing `0x38` in `mat3ToQuat`: without PhysX the ragdoll stand-in returns NULL, and the first ragdoll pose was written through it (`qCurrentRot` at 0x34) | Patch 0118: ARM64 reads and discards ragdoll packets (upstream `entGetRagdollIgnore`); creation checks for NULL. Server ragdoll poses are not shown on ARM64 (they never were without PhysX) |
+
+## Earlier: what changed from 0.13.41 (Thor report, exports 20261027-235148/235205)
+
+| 0.13.41 problem | Cause found in the exported report | 0.13.42/0.13.43 change |
 |---|---|---|
 | Crash when engaging an NPC in combat | `Bad parameter for: P1703759751:PowerName`, then a page fault reading `3FFC000000000000` (1.75 as a double): the combat message read its 8-byte argument slots 4 bytes apart, so PlayerSource came from the Damage slot | Patch 0115: 8-byte variadic slots on 64-bit Windows |
 | FPS still very low | The game itself measured 6-12 FPS with a 30 cap; the app now shows what it receives. The render worker sleeps on an event whenever its queue drains, and each event call is a traced wineserver round trip under PRoot | Patch 0116: the worker polls its queue up to 2 ms before sleeping (event round trips about 23x fewer in the TSan stress test); `ARMPORT_WORKER_V1` logs sleeps, spin hits and client CPU every 5 s (counters atomic, timer per worker). Not yet measured on Thor |
@@ -58,7 +65,7 @@
 
 ## Install (keep everything)
 
-1. Install 0.13.43 over 0.13.41. Do not uninstall or clear data.
+1. Install 0.13.44 over 0.13.43. Do not uninstall or clear data.
 2. Run **Set up / update runtime** once.
 
 ## Test
@@ -68,9 +75,9 @@
 2. **Reopen saved THORHERO** twice. For each, note the time from the tap
    until you can move. The first launch after the update may still be cold;
    the second shows the warm time (the target is under 5 minutes).
-3. Note the FPS in Atlas (it should be clearly smoother than 0.13.41), and
+3. Note the FPS in Atlas (it should be at least as smooth as 0.13.43), and
    open the graphics options once.
-4. Move, open the map, fight an NPC with a power, then **Save/Logout**, **Finish** and
+4. Move, open the map, fight and defeat a few NPCs with powers, then **Save/Logout**, **Finish** and
    export the diagnostic ZIP from *both* launches.
 
 ## If something fails
