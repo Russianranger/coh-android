@@ -1,7 +1,8 @@
 # COH Atlas Gameplay 0.13.44: M5 Thor test (ARM64 client)
 
-**Status:** candidate built and signed, waiting for review. Not yet installed
-or played. M5 is not complete.
+**Status:** 0.13.44 candidate built and signed, waiting for review; 0.13.44
+itself has not been played yet. The latest device result is 0.13.43 (played on
+Thor 2026-10-28, below). M5 is not complete.
 
 | Item | Value |
 |---|---|
@@ -77,8 +78,12 @@ or played. M5 is not complete.
    the second shows the warm time (the target is under 5 minutes).
 3. Note the FPS in Atlas (it should be at least as smooth as 0.13.43), and
    open the graphics options once.
-4. Move, open the map, fight and defeat a few NPCs with powers, then **Save/Logout**, **Finish** and
-   export the diagnostic ZIP from *both* launches.
+4. Move and open the map. Fight and defeat several NPCs with powers, reading
+   the hit/miss lines in the combat chat (they should name your power, with no
+   "Bad parameter" pop-up), and keep playing for a few minutes after the last
+   defeat. On the second launch, also take the monorail to another zone once.
+   Then **Save/Logout**, **Finish** and export the diagnostic ZIP from *both*
+   launches.
 
 ## If something fails
 
