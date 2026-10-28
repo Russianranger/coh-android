@@ -1,0 +1,45 @@
+diff --git a/libs/UtilitiesLib/src/language/MessageStore.c b/libs/UtilitiesLib/src/language/MessageStore.c
+index 3b16140..ed1bd73 100644
+--- a/libs/UtilitiesLib/src/language/MessageStore.c
++++ b/libs/UtilitiesLib/src/language/MessageStore.c
+@@ -461,8 +461,10 @@ static void copyTextMessageStructsToShared(    MessageStore* store,
+             pCurrentAddress += sizeof(*indices);
+             indices->storage = (void*)pCurrentAddress;
+             indices->size = indices->maxSize = uiNumNamedVariableDefIndices;
+-            memcpy(indices->storage, pOldTM->variableDefNameIndices->storage, sizeof(int) * uiNumNamedVariableDefIndices);
+-            pCurrentAddress += sizeof(int) * uiNumNamedVariableDefIndices;
++            // ArmPort: the Array holds one pointer-sized element per index
++            // (arrayPushBack of (void*)(intptr_t)index); copy whole elements.
++            memcpy(indices->storage, pOldTM->variableDefNameIndices->storage, sizeof(void*) * uiNumNamedVariableDefIndices);
++            pCurrentAddress += sizeof(void*) * uiNumNamedVariableDefIndices;
+         }
+ 
+         // Fix the messageId pointer
+@@ -524,7 +526,7 @@ static bool msMoveStoreIntoSharedHeap(MessageStore* store)
+     U32 uiNumTextMessages = stashGetValidElementCount(store->messageIDStash);
+     U32 uiNamedVariableDefs = getNumNamedVariableDefs(store->messageIDStash, uiNumTextMessages);
+     size_t uiTextMessageSize = getUITextMessageSize(store);
+-    size_t uiNamedVariableDefIndexArraySize = sizeof(int) * uiNamedVariableDefs;
++    size_t uiNamedVariableDefIndexArraySize = sizeof(void*) * uiNamedVariableDefs; // ArmPort: pointer-sized elements
+ 
+     size_t uiTotalAllocSize =
+         uiMessageStringTableSize
+@@ -2130,11 +2132,15 @@ int msvaPrintfInternalEx(    MessageStore* store,
+         for (uiIndex=0; uiIndex < uiNumVariableDefs; ++uiIndex)
+         {
+             NamedVariableDef*    pDef = _alloca(sizeof(*pDef));
+-            int*                indices = (int*)textMessage->variableDefNameIndices->storage;
++            // ArmPort: each index is one pointer-sized Array element. Reading
++            // the storage as int* on 64-bit gave idx0, 0, idx1, 0, ...: the
++            // second definition came from string 0 and later parameters
++            // shifted (Thor: "Bad parameter for: PlayerPowerHit:powerName").
++            int                    variableIndex = (int)(intptr_t)textMessage->variableDefNameIndices->storage[uiIndex];
+             
+             initVariableNameAndType(pDef,
+-                                    strTableGetConstString(store->variableStringTable, indices[uiIndex]),
+-                                    strTableGetConstString(store->variableStringTable, indices[uiIndex] + 1));
++                                    strTableGetConstString(store->variableStringTable, variableIndex),
++                                    strTableGetConstString(store->variableStringTable, variableIndex + 1));
+ 
+             pDef->variablePointer = NULL;
+             messageTypeDef->storage[uiIndex] = pDef;

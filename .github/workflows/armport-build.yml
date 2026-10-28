@@ -385,6 +385,22 @@ jobs:
           fi
           echo "::notice title=ArmPort message-store slots::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/slots-original.txt")"
 
+      - name: Message-store definition indices are pointer-sized (patch 0117)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort message-store indices" python3 armport/tests/message_store_indices.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/message_store_indices.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/indices-original.txt" 2>&1; then
+            echo "::error title=ArmPort message-store indices::the original int-width indices unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort message-store indices::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/indices-original.txt")"
+
+      - name: Ragdoll packets without PhysX stay in sync and never use a NULL ragdoll (patch 0118)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort ragdoll without physics" python3 armport/tests/ragdoll_without_physics.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/ragdoll_without_physics.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/ragdoll-original.txt" 2>&1; then
+            echo "::error title=ArmPort ragdoll without physics::the original NULL-ragdoll path unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort ragdoll without physics::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/ragdoll-original.txt")"
+
       - name: Render worker hand-off with spin-before-sleep under TSan (patch 0116)
         run: |
           out=$(armport/scripts/step.sh "ArmPort worker spin" python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src")

@@ -1,0 +1,59 @@
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index 6bfb0b7..6457f33 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -1004,10 +1004,14 @@ static int entGetRagdoll(Packet *pak,Entity *e)
+ 
+             e->ragdoll = nwCreateRagdollNoPhysics(e);
+ 
+-            mat3ToQuat(mWorldSpaceMat, e->ragdoll->qCurrentRot);
+-            quatNormalize(e->ragdoll->qCurrentRot);
++            // ArmPort: the no-physics creator may return NULL (ARM64 stand-in).
++            if (e->ragdoll)
++            {
++                mat3ToQuat(mWorldSpaceMat, e->ragdoll->qCurrentRot);
++                quatNormalize(e->ragdoll->qCurrentRot);
+ 
+-            bCreatedRagdoll = true;
++                bCreatedRagdoll = true;
++            }
+         }
+ 
+         START_BIT_COUNT(pak, "ragdollQuats");
+@@ -1097,10 +1101,14 @@ int entGetRagdoll_ForDemoPlayback(Entity *e, int num_bones, int *ragdollCompress
+ 
+             e->ragdoll = nwCreateRagdollNoPhysics(e);
+ 
+-            mat3ToQuat(mWorldSpaceMat, e->ragdoll->qCurrentRot);
+-            quatNormalize(e->ragdoll->qCurrentRot);
++            // ArmPort: the no-physics creator may return NULL (ARM64 stand-in).
++            if (e->ragdoll)
++            {
++                mat3ToQuat(mWorldSpaceMat, e->ragdoll->qCurrentRot);
++                quatNormalize(e->ragdoll->qCurrentRot);
+ 
+-            bCreatedRagdoll = true;
++                bCreatedRagdoll = true;
++            }
+         }
+ 
+         {
+@@ -3272,12 +3280,17 @@ static int entReceive(Packet *pak,int idx,int odd_send)
+     // Note that the ragdoll update must happen after the costume is received
+     // since we need the sequencer to exist.
+     START_BIT_COUNT(pak, "entGetRagdoll");
+-#ifdef RAGDOLL
++#if defined(RAGDOLL) && !defined(__aarch64__)
+     if ( e->seq ) // we might be an out of order packet, just throw away ragdoll info in case
+         entGetRagdoll(pak,e);
+     else
+         entGetRagdollIgnore(pak,e);
+ #else
++    // ArmPort: PhysX is compiled out on ARM64 and nwCreateRagdollNoPhysics is
++    // a stand-in that returns NULL, so entGetRagdoll could only discard the
++    // poses, and it wrote the first one through the NULL ragdoll (Thor fault
++    // writing 0x38 in mat3ToQuat when a defeated enemy started its ragdoll).
++    // Read and discard the same bits.
+     entGetRagdollIgnore(pak, e);
+ #endif
+     STOP_BIT_COUNT(pak);

@@ -114,3 +114,5 @@
 0114-armport-frame-rate-log.patch
 0115-armport-message-store-vararg-slots.patch
 0116-armport-worker-spin-before-sleep.patch
+0117-armport-message-store-index-width.patch
+0118-armport-ragdoll-without-physics.patch
