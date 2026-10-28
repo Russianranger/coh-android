@@ -279,6 +279,17 @@ final class ClientAcceptance {
                 && ("finish_requested".equals(reason) || "interaction_timeout".equals(reason));
     }
 
+    /** Stage policy follows the app-selected operation, not a guest-selected shortcut.
+     * Session, budget, Finish-request and save proofs are checked separately. */
+    static boolean clientInteractionPolicyAccepted(Object value, boolean manual) {
+        Map<?, ?> stage = object(value);
+        return passedStage(value, "actual_client_interaction")
+                && Boolean.valueOf(!manual).equals(stage.get("bounded_live_observation"))
+                && Boolean.valueOf(manual).equals(stage.get("user_controlled_observation"))
+                && interactionCompleted(value)
+                && (!manual || "finish_requested".equals(stage.get("interaction_completion_reason")));
+    }
+
     /** Observation belongs to the accepted owned session, including explicit manual policy. */
     static boolean clientObservationAccepted(Object value, List<?> acceptedBudgets, String session,
             long clientPid, long windowStarted, long windowEnded, long budgetDeadline,

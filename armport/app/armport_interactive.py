@@ -70,6 +70,23 @@ class ArmPortClient:
                 retained[name] = self.ctx.report.pop(name)
             setattr(self, name, False)
         self.ctx.report['armport_server_staging'] = retained
+        # Cooperative telemetry shares the existing main-thread health cadence;
+        # it adds no worker, subprocess or readiness/acceptance condition.
+        try:
+            import server_metrics
+            self.armport_server_metrics = server_metrics.ServerMetrics(self)
+            original_health = self.ctx.server_health
+            def health_with_metrics():
+                if original_health is not None:
+                    original_health()
+                try:
+                    self.armport_server_metrics.observe()
+                except Exception as exc:
+                    self.armport_server_metrics.failure(exc)
+            self.ctx.server_health = health_with_metrics
+        except Exception as exc:
+            self.ctx.report['armport_server_metrics'] = {'format': 1, 'is_success_proof': False,
+                'available': False, 'initialization_error_type': type(exc).__name__}
 
     def start_wine(self):
         # Device startup: the saved-world server prepares and starts Atlas or
@@ -211,6 +228,12 @@ class ArmPortClient:
                     (self.capture_dir / 'armport_stdio.txt').write_bytes(source.read(4 * 1024 * 1024))
 
     def cleanup(self):
+        metrics = getattr(self, 'armport_server_metrics', None)
+        if metrics is not None:
+            try:
+                metrics.close()
+            except Exception as exc:
+                metrics.failure(exc)
         failures = super().cleanup()
         if hasattr(self, 'armport_work') and self.armport_work.exists() and all(self.cleanup_status.values()):
             require(self.armport_work.parent == self.root and not self.armport_work.is_symlink(),

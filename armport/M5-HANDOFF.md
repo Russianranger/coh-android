@@ -4,6 +4,26 @@ Written 2026-10-28 at the end of the M5 Thor iteration (PR #8, branch
 `armport/m5-thor`, head after this file). All scheduled checks were cancelled
 at the user's request; nothing is running or waiting in CI.
 
+## Lead audit correction (2026-10-28)
+
+The historical measurements below are retained as the previous lead's report;
+raw Thor exports were not independently recovered in this checkout. The source
+and all PR reviews/comments were audited in PR comment 6480628043, mirrored in
+`notes/M5-ASTRA-ANALYSIS.md`. Apply these corrections to the next steps:
+
+- `seqGetSeq` prints “Reading” before its hash lookup; these counts do not prove
+  repeated file loads. Startup already calls `seqPreloadSeqInfos`. Instrument
+  actual load paths before adding another preload.
+- The Java validator already supports ARM64. The confirmed false rejection is
+  a manual session emitting `bounded_live_observation=false` while the caller
+  demanded true. Correct the policy while retaining session and Finish checks.
+- DbServer's 64 SQL workers block on semaphores. 67 threads do not establish 64 polling
+  workers. CPU totals do not measure Wine request counts or identify a hot thread.
+- Smooth player prediction plus remote stutter supports a server/update-path
+  hypothesis; longest tick, file-load duration and request counts are not measured.
+- 0.13.45 first adds bounded host tick-counter/CPU observations and honest cleanup
+  errors. A separate native timing producer/package follows; no esync change yet.
+
 ## Where things stand
 
 **0.13.44 on the AYN Thor is playable on the ARM64 client.** The user's exports

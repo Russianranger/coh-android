@@ -68,7 +68,8 @@ jobs:
             --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
 
   guest-boot:
-    needs: assets
+    # Do not overlap Java compilation with the two-worker native PRoot build.
+    needs: [assets, app-sources]
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     permissions:

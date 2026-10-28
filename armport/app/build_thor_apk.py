@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.44: the public 0.13.36 app with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.45: the public 0.13.36 app with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -15,7 +15,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.44 / 59, and the binary manifest is checked
+- version metadata becomes 0.13.45 / 60, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries, and replaces character_creation_diagnostic.py.
@@ -40,8 +40,8 @@ import stage_app_assets
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.44', 59
-APK_NAME = 'COH-Atlas-Gameplay-0.13.44.apk'
+VERSION_NAME, VERSION_CODE = '0.13.45', 60
+APK_NAME = 'COH-Atlas-Gameplay-0.13.45.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -57,8 +57,8 @@ EXTRA_SOURCES = ('android/zoning/src/main/java/io/github/russianranger/cohclient
                  'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientSocketRecovery.java')
 # Runtime payloads the ARM64 option may add or change. Everything else is retained.
 ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py',
-                           'client_stdio.py'})
-CHANGED_RUNTIME = frozenset({'character_creation_diagnostic.py', 'local_character_server.py', 'character_zoning.py',
+                           'client_stdio.py', 'server_metrics.py'})
+CHANGED_RUNTIME = frozenset({'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_character_server.py', 'character_zoning.py',
                              'runtime-manifest.json', 'client-manifest.json'})
 REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',

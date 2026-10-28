@@ -119,6 +119,7 @@ def stage(source, armport, output, repository_commit, external=None):
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
                     'client_stdio.py': Path(__file__).with_name('client_stdio.py'),
+                    'server_metrics.py': Path(__file__).with_name('server_metrics.py'),
                     'character_creation_diagnostic.py': ROOT / 'android/guest/character_creation_diagnostic.py'}
     for name in set(client['files']) | set(GUEST_DEPENDENCIES):
         source_helper = ROOT / 'android/guest' / name

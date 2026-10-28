@@ -610,11 +610,14 @@ jobs:
           done < <(awk 'NR%6==1{if(buf)print buf;buf=$0;next}{buf=buf"%0A"$0}END{if(buf)print buf}' errors.txt | head -8)
 
   client:
+    # Keep compiler jobs serialized: libraries, then each client configuration.
+    needs: libraries
     # M2: compile and link CityOfHeroes.exe for ARM64 Windows. Release is the
     # client that ships; OptDebug (non-FINAL) is the configuration upstream
     # uses to build the data bins (-createbins), which FINAL builds cannot do.
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         config: [Release, OptDebug]
     runs-on: ubuntu-24.04-arm

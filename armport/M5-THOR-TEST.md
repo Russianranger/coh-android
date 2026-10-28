@@ -1,4 +1,33 @@
-# COH Atlas Gameplay 0.13.44: M5 Thor test (ARM64 client)
+# COH Atlas Gameplay 0.13.45: candidate preparation (ARM64 client)
+
+**Not ready for handoff.** VersionCode 60 is reserved for this candidate. Build,
+requalification, APK artifact/hash and Claude approval are pending. 0.13.44 below
+remains the last device-tested candidate; M5 acceptance and merge are not requested.
+
+Changes: five-second cooperative `server-metrics.jsonl` tick-counter and CPU
+samples (50 ms collection budget, 4 MiB cap, partial/unavailable markers); the Java
+manual-session policy now matches the guest's emitted flags and still requires
+completed interaction and Finish; cleanup retains the original Wine failure
+alongside any cache-return failure. Native patches/runtime/server pins unchanged.
+The “server side” explanation below is an inference; no measured King's Row tick
+rate or Wine request count is available. Sequencer “Reading” lines are cache
+lookups, not proven disk reads. See `notes/M5-ASTRA-ANALYSIS.md`.
+
+Local validation: 292 tests pass with `python3 -m unittest discover -s armport/tests
+-p 'test_*.py'` and a javac launcher for the installed Java compiler module.
+Native longest-tick/file-load time and Wine request counts explicitly remain
+unavailable in this candidate. CI on retained 0.10 will not establish Thor behaviour.
+
+After exact artifacts and reviewer approval are recorded, the Thor test will use
+two saved-character launches and Atlas→King's Row→Atlas travel, combat/defeats,
+Save/Logout and Finish. Both exports must retain `server-metrics.jsonl`, stage
+logs, zoning consoles and ownership/cleanup receipts. Enhancement additions and
+the underlying post-zoning cleanup failure remain open; this candidate must
+report those failures accurately rather than relax their checks.
+
+---
+
+## Last device-tested candidate: 0.13.44
 
 **Status:** 0.13.44 approved for Thor handoff (Astra 5687848443) and played on
 Thor 2026-10-28: combat, defeats, zoning and save work; game 12-30 FPS (mean

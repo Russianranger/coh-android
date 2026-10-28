@@ -186,10 +186,18 @@ class ClientLoginDiagnostic(interactive.ClientInteractiveDiagnostic):
 
     def cleanup(self):
         self.ctx.server_health = None
+        failures = []
         try:
             failures = super().cleanup()
+        except Exception as exc:
+            failures.append('Owned cleanup failed: ' + str(exc))
         finally:
-            self.local_server.cleanup_config()
+            # Cache return still requires proved Wine/descendant shutdown. Its
+            # refusal must not replace the failure that prevented that proof.
+            try:
+                self.local_server.cleanup_config()
+            except Exception as exc:
+                failures.append('Server configuration/cache cleanup: ' + str(exc))
         # Proven shutdown and the intact owned PG_VERSION/profile marker are
         # persistence evidence; a subsequent restart verifies logical reuse.
         profile = self.local_server.profile
