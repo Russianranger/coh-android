@@ -241,6 +241,139 @@ def enhancement_semantics(boosts, powers, attributes):
     return sorted(result, key=digest_json)
 
 
+def additive_inventory_enhancements(previous, current, attributes):
+    """Describe only new, unmodified inventory rows after semantic validation.
+
+    Existing attachments/payloads remain exact. This observes committed SQL,
+    not a particular loot event. Reward.c clamps the displayed award level to
+    1..MAX_PLAYER_SECURITY_LEVEL+3 (50+3) and stores level-1; character_AddBoost
+    supplies zero combines, vars and powerup slots for a fresh award.
+    """
+    before = {digest_json(row['location']): row for row in previous}
+    after = {digest_json(row['location']): row for row in current}
+    if (len(before) != len(previous) or len(after) != len(current)
+            or any(key not in after or not evidence._same(row, after[key])
+                   for key, row in before.items())):
+        return None
+    added = [row for key, row in after.items() if key not in before]
+    if not 1 <= len(added) <= 70:
+        return None
+    names = {row['id']: row['name'] for row in attributes}
+    result = []
+    for row in added:
+        location, payload = row['location'], row['payload']
+        if (set(location) != {'inventory_index'}
+                or type(location['inventory_index']) is not int
+                or not 0 <= location['inventory_index'] < 70
+                or type(payload['level']) is not int or not 0 <= payload['level'] <= 52
+                or any(payload[key] != 0 for key in BOOST_FIELDS[8:])):
+            return None
+        path = '.'.join(names[payload[key]] for key in ('categoryname', 'powersetname', 'boostname'))
+        if re.fullmatch(r'(?i:Boosts)\.[A-Za-z0-9_]{1,120}\.[A-Za-z0-9_]{1,120}', path) is None:
+            return None
+        result.append({'inventory_index': location['inventory_index'], 'resolved_power': path,
+                       'level': payload['level'], 'semantic_sha256': digest_json(row)})
+    return sorted(result, key=lambda row: row['inventory_index'])
+
+
+def observed_inventory_boost_definitions(server, additions, map_id):
+    """Check added power names against bounded current readonly input leaves.
+
+    Reuse the source-root identities from server preparation. Runtime definitions
+    must be direct links into those readonly input roots. Root identities do not
+    prove a leaf's bytes are unchanged since preparation; the returned hashes
+    describe this observation only. No native effect or loot cause is inferred.
+    """
+    require(1 <= len(additions) <= 70, 'Enhancement addition count exceeds inventory bound')
+    require(server.ctx.report.get('client_worktree', {}).get('imported_inputs_readonly') is True,
+            'Enhancement definitions have no readonly input receipt')
+    roots = (server.owner.work.resolve(strict=True), server.owner.args.game_data.resolve(strict=True))
+    expected_roots = getattr(server, 'server_data_identity', {}).get('source_roots')
+    require(expected_roots == [{'path': str(root),
+                'identity': server_data_cache.fingerprint(root, directory=True)} for root in roots],
+            'Enhancement definition input root changed after preparation')
+    runtime = (getattr(server, 'kings_row_runtime', None) if map_id == 5
+               else getattr(server, 'atlas_map_runtime', None) or server.runtime)
+    require(runtime is not None, 'Enhancement definitions have no owned map runtime')
+    observations, definitions = {}, {}
+
+    def parents(path, root):
+        parent = path.parent
+        while True:
+            info = parent.lstat()
+            require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid(),
+                    'Enhancement definition parent is linked or unowned')
+            identity = server_fx_catalog._unchanged_leaf(info)
+            require(parent not in observations or observations[parent] == identity,
+                    'Enhancement definition parent changed during observation')
+            observations[parent] = identity
+            if parent == root:
+                break
+            require(root in parent.parents, 'Enhancement definition escaped its prepared root')
+            parent = parent.parent
+
+    for addition in additions:
+        path = addition['resolved_power']
+        require(re.fullmatch(r'(?i:Boosts)\.[A-Za-z0-9_]{1,120}\.[A-Za-z0-9_]{1,120}', path) is not None,
+                'Enhancement definition name is invalid')
+        if path.casefold() in definitions:
+            continue
+        server.ctx.check()
+        relative = 'data/defs/powers/boosts_' + path.split('.')[1].lower() + '.powers'
+        link = runtime / relative
+        parents(link, runtime)
+        info = link.lstat()
+        require(stat.S_ISLNK(info.st_mode) and info.st_uid == os.geteuid(),
+                'Enhancement definition is not an owned readonly input link')
+        observations[link] = server_fx_catalog._unchanged_leaf(info)
+        source = Path(os.readlink(link))
+        require(source.is_absolute() and '..' not in source.parts,
+                'Enhancement definition link is not an absolute input path')
+        root = next((root for root in roots if root in source.parents), None)
+        require(root is not None, 'Enhancement definition escaped authenticated input roots')
+        parents(source, root)
+        leaf = source.lstat()
+        require(stat.S_ISREG(leaf.st_mode) and leaf.st_nlink == 1
+                and leaf.st_uid == os.geteuid() and not leaf.st_mode & 0o222
+                and 0 < leaf.st_size <= 65536,
+                'Enhancement definition is not a bounded readonly current input')
+        observations[source] = server_fx_catalog._unchanged_leaf(leaf)
+        descriptor = os.open(source, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        try:
+            require(server_fx_catalog._unchanged_leaf(os.fstat(descriptor)) == observations[source],
+                    'Enhancement definition changed before read')
+            with os.fdopen(descriptor, 'rb', closefd=False) as handle:
+                raw = handle.read(65537)
+            require(len(raw) == leaf.st_size
+                    and server_fx_catalog._unchanged_leaf(os.fstat(descriptor)) == observations[source],
+                    'Enhancement definition changed during read')
+        finally:
+            os.close(descriptor)
+        # The qualified stock corpus has exactly one top-level Power per file.
+        # Do not accept a comment or nested AttribMod Type as a power identity.
+        text = re.sub(r'//[^\r\n]*', '', raw.decode('utf-8')).strip()
+        depth, types = 0, []
+        for line in re.sub(r'"(?:[^"\\]|\\.)*"', '""', text).splitlines():
+            if depth == 1 and re.match(r'^\s*Type\s+', line):
+                types.append(line.strip())
+            depth += line.count('{') - line.count('}')
+            require(depth >= 0, 'Malformed enhancement definition nesting')
+        require(re.match(r'^Power\s+' + re.escape(path) + r'\s*\{', text, re.I) is not None
+                and len(re.findall(r'^\s*Power\s+', text, re.M)) == 1
+                and len(types) == 1 and re.fullmatch(r'Type\s+kBoost', types[0])
+                and depth == 0 and text.endswith('}'),
+                'Enhancement path is absent from its observed kBoost definition')
+        definitions[path.casefold()] = {'path': relative, 'sha256': hashlib.sha256(raw).hexdigest(),
+                                       'bytes': len(raw)}
+    require(all(server_fx_catalog._unchanged_leaf(path.lstat()) == identity
+                for path, identity in observations.items()),
+            'Enhancement definition or ancestor changed during observation')
+    require(expected_roots == [{'path': str(root),
+                'identity': server_data_cache.fingerprint(root, directory=True)} for root in roots],
+            'Enhancement definition input root changed during observation')
+    return definitions
+
+
 def stock_power_preservation(previous, current, attributes, *, native_sha256, data_sha256):
     """Preserve permanent powers while recognizing one stock temporary lifecycle.
 
@@ -2798,12 +2931,18 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             self.creation_report['enhancement_preservation'] = comparison
             semantic = enhancement_semantics(boosts, after['rows']['powers'], self.schema['expected_attributes']['attributes'])
             equal = evidence._same(self.baseline_enhancements['semantic'], semantic)
-            comparison.update(verified=equal, status='verified' if equal else 'incomplete',
+            additive = None if equal else self.accept_added_inventory_enhancements(semantic)
+            accepted = equal or additive is not None
+            comparison.update(verified=accepted, status='verified' if accepted else 'incomplete',
                 saved_semantic_sha256=digest_json(semantic), reason=('Enhancement payload and attachment preserved'
-                if equal else 'Observed enhancement change needs native loot/equipping/combining evidence; '
+                if equal else 'Every prior enhancement preserved; bounded additions verified in committed inventory'
+                if additive is not None else 'Observed enhancement change exceeds the bounded additive inventory policy; '
                     'ordinary logout and saved-location evidence are retained separately'))
-            require(equal, 'Character diagnostic incomplete: saved enhancements changed; native inventory '
-                    'change is not independently verified. This does not establish a failed native save.')
+            if additive is not None:
+                comparison.update(scope='prior_enhancements_preserved_with_bounded_inventory_additions',
+                                  additive_inventory=additive)
+            require(accepted, 'Character diagnostic incomplete: saved enhancements changed outside the '
+                    'verified preservation policy. This does not establish a failed native save.')
         if self.stock_power_diagnostics_enabled():
             self.creation_report['stock_power_lifecycle_after_logout'] = self.stock_power_lifecycle(rows)
         # Only the typed current reader repair permits the finite first-training
@@ -2868,6 +3007,44 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             committed_native_position_verified=True,
             committed_safe_position_verified=location['requested_recovery_verified'])
         return after
+
+    def accept_added_inventory_enhancements(self, semantic):
+        """ARM64: accept committed additions without asserting their loot cause.
+
+        Called only after the ordinary save's identity, logout/disconnect and
+        SQL-location checks. All other selected SQL fields still pass their
+        existing comparators before the caller marks the complete save verified.
+        """
+        proof = self.creation_report
+        if (os.environ.get('COH_CLIENT_ARCH', 'x86') != 'arm64'
+                or proof.get('task_gate_required') is True
+                or self.baseline_enhancements is None
+                or not all(proof.get(key) is True for key in
+                    ('disconnected_before_sql', 'requested_logout_observed', 'logout_timer_observed'))
+                or proof.get('forced_stop_before_save') is not False):
+            return None
+        binding = reopen_connection_binding(proof, self.owner.args.session_id,
+            proof.get('client_pid'), int(time.time() * 1000))
+        if binding is None:
+            return None
+        additions = additive_inventory_enhancements(self.baseline_enhancements['semantic'], semantic,
+            self.schema['expected_attributes']['attributes'])
+        if additions is None:
+            return None
+        try:
+            definitions = observed_inventory_boost_definitions(self, additions, binding['map_id'])
+        except (OSError, UnicodeError, base.DiagnosticError) as exc:
+            proof['enhancement_preservation']['definition_check_error_type'] = type(exc).__name__
+            return None
+        return {'format': 1, 'policy': 'arm64_preserve_prior_and_allow_new_inventory_only_v1',
+            'connection': binding, 'prior_enhancement_rows_preserved': True,
+            'added_inventory_count': len(additions), 'additions': additions,
+            'current_readonly_definitions': definitions,
+            'definition_identity_during_observation_verified': True,
+            'definition_identity_since_preparation_verified': False,
+            'native_effect_verified': False,
+            'native_award_causality_verified': False, 'combat_defeat_verified': False,
+            'sql_game_mutations_performed': False}
 
     def observe_saved_location(self):
         """Capture SQL/native location even when another diagnostic fails later."""
