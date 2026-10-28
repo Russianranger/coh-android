@@ -389,7 +389,9 @@ jobs:
         run: |
           out=$(armport/scripts/step.sh "ArmPort worker spin" python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src")
           base=$(python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src" --no-spin)
-          echo "::notice title=ArmPort worker spin::patched: $out%0Awithout polling: $base"
+          control=$(python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src" --plain-counters) || {
+            echo "::error title=ArmPort worker spin::plain (non-atomic) counters were not reported by TSan: $control"; exit 1; }
+          echo "::notice title=ArmPort worker spin::patched: $out%0Awithout polling: $base%0Anegative control: $control"
 
       - name: SMF anchor indices keep 64-bit anchors for the pass (patch 0110)
         run: |

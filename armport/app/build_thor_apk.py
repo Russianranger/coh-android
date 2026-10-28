@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.42: the public 0.13.36 app with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.43: the public 0.13.36 app with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -15,7 +15,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.42 / 57, and the binary manifest is checked
+- version metadata becomes 0.13.43 / 58, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries, and replaces character_creation_diagnostic.py.
@@ -40,8 +40,8 @@ import stage_app_assets
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.42', 57
-APK_NAME = 'COH-Atlas-Gameplay-0.13.42.apk'
+VERSION_NAME, VERSION_CODE = '0.13.43', 58
+APK_NAME = 'COH-Atlas-Gameplay-0.13.43.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286

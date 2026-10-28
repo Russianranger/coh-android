@@ -1,5 +1,5 @@
 diff --git a/Game/src/graphics/armport_frame_rate_log.h b/Game/src/graphics/armport_frame_rate_log.h
-index 53e6b9f..505f668 100644
+index 53e6b9f..e9b2344 100644
 --- a/Game/src/graphics/armport_frame_rate_log.h
 +++ b/Game/src/graphics/armport_frame_rate_log.h
 @@ -5,6 +5,10 @@
@@ -8,8 +8,8 @@ index 53e6b9f..505f668 100644
  #define ARMPORT_FRAME_RATE_LOG_H
 +#include "utilitieslib/utils/wininclude.h"
 +/* Worker-thread wakeup counters (WorkerThread.c, patch 0116): all worker
-+ * threads, cumulative. */
-+extern volatile long armport_wt_sleeps, armport_wt_spin_hits;
++ * threads, cumulative; workers update them atomically, so read them atomically. */
++extern long armport_wt_sleeps, armport_wt_spin_hits;
  #pragma push_macro("printf")
  #pragma push_macro("snprintf")
  #pragma push_macro("fflush")
@@ -26,8 +26,8 @@ index 53e6b9f..505f668 100644
 +static void armportWorkerSample(ArmportWorkerSample *sample)
 +{
 +    FILETIME created, exited, kernel, user;
-+    sample->sleeps = armport_wt_sleeps;
-+    sample->spin_hits = armport_wt_spin_hits;
++    sample->sleeps = __atomic_load_n(&armport_wt_sleeps, __ATOMIC_RELAXED);
++    sample->spin_hits = __atomic_load_n(&armport_wt_spin_hits, __ATOMIC_RELAXED);
 +    sample->user_100ns = sample->kernel_100ns = 0;
 +    if (GetProcessTimes(GetCurrentProcess(), &created, &exited, &kernel, &user)) {
 +        sample->user_100ns = ((unsigned long long)user.dwHighDateTime << 32) | user.dwLowDateTime;
@@ -83,10 +83,10 @@ index 8b85fff..d6eb2a1 100644
                  fps_since = curr;
              }
 diff --git a/libs/UtilitiesLib/src/components/WorkerThread.c b/libs/UtilitiesLib/src/components/WorkerThread.c
-index 2b42bfd..91c99ca 100644
+index 2b42bfd..54e3a4a 100644
 --- a/libs/UtilitiesLib/src/components/WorkerThread.c
 +++ b/libs/UtilitiesLib/src/components/WorkerThread.c
-@@ -21,6 +21,17 @@
+@@ -21,6 +21,20 @@
  
  static void wtDispatchMessages(WorkerThread *wt);
  
@@ -99,23 +99,38 @@ index 2b42bfd..91c99ca 100644
 +#if defined(__aarch64__) && defined(__MINGW32__)
 +#define ARMPORT_WT_SPIN_US 2000
 +#endif
-+volatile long armport_wt_sleeps, armport_wt_spin_hits;
++// Process-wide totals over all workers, read live by the frame-rate log:
++// every access is atomic (relaxed: counts only, no ordering implied).
++long armport_wt_sleeps, armport_wt_spin_hits;
++#define ARMPORT_WT_COUNT(counter) __atomic_fetch_add(&(counter), 1, __ATOMIC_RELAXED)
 +
  #ifdef _M_X64
  #    pragma warning(push)
  #    pragma warning(disable:4324)
-@@ -372,6 +383,34 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+@@ -349,7 +363,14 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+     WorkerThread *wt;
+     QueuedCmd *cmd,last;
+ 
++#ifdef ARMPORT_WT_SPIN_US
++    LARGE_INTEGER frequency; // per worker, set before the loop
++#endif
++
+     wt = (WorkerThread *)lpParam;
++#ifdef ARMPORT_WT_SPIN_US
++    QueryPerformanceFrequency(&frequency);
++#endif
+     wt->thread_id = (int)GetCurrentThreadId();
+     wt->data_queued = CreateEvent(0,0,0,0);
+     wtSharedStore(wt->thread_state, THREAD_RUNNING);
+@@ -372,6 +393,31 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
              cmd = peekStoredCmd(&wt->cmd_queue);
          if (!cmd)
          {
 +#ifdef ARMPORT_WT_SPIN_US
 +            if (wt->data_queued && !(wt->debug && !wt->flush_requested && wt->run_threaded))
 +            {
-+                static LARGE_INTEGER frequency;
 +                LARGE_INTEGER started, now;
 +                int spins = 0;
-+                if (!frequency.QuadPart)
-+                    QueryPerformanceFrequency(&frequency);
 +                QueryPerformanceCounter(&started);
 +                while (!(cmd = peekStoredCmd(&wt->cmd_queue))
 +                       && wtSharedLoad(wt->thread_state) != THREAD_TOLDTOEXIT)
@@ -131,7 +146,7 @@ index 2b42bfd..91c99ca 100644
 +                }
 +                if (cmd)
 +                {
-+                    armport_wt_spin_hits++;
++                    ARMPORT_WT_COUNT(armport_wt_spin_hits);
 +                    continue;
 +                }
 +            }
@@ -139,11 +154,11 @@ index 2b42bfd..91c99ca 100644
              if (wt->data_queued)
              {
                  // Arm before the final empty check: a producer after that
-@@ -380,6 +419,7 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+@@ -380,6 +426,7 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
                  ResetEvent(wt->data_queued);
                  cmd = peekStoredCmd(&wt->cmd_queue);
                  if (!cmd) {
-+                    armport_wt_sleeps++;
++                    ARMPORT_WT_COUNT(armport_wt_sleeps);
                      WaitForSingleObject(wt->data_queued, INFINITE);
                  }
                  wtSharedStore(wt->thread_asleep, 0);

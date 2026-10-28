@@ -24,7 +24,7 @@ TU = '''#include <stdio.h>
 #include "utilitieslib/stdtypes.h"
 #include "utilitieslib/utils/file.h"
 #include "%s"
-volatile long armport_wt_sleeps, armport_wt_spin_hits;
+long armport_wt_sleeps, armport_wt_spin_hits;
 int armport_fps_check(void) { if (armportFrameRateLogEnabled()) { armportWorkerLogStart(); armportFrameRateLogWrite(9.5f, 48, 5.05f, 30, 10); armportWorkerLogWrite(5.05f); } return 0; }
 '''
 with tempfile.TemporaryDirectory() as temporary:
