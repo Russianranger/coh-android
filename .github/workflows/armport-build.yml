@@ -377,6 +377,20 @@ jobs:
           fi
           echo "::notice title=ArmPort VBO rebase::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/vbo-original.txt")"
 
+      - name: Message-store variadic slots are 8 bytes on 64-bit Windows (patch 0115)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort message-store slots" python3 armport/tests/message_store_slots.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/message_store_slots.py --source "$RUNNER_TEMP/armport/src" --original > "$RUNNER_TEMP/slots-original.txt" 2>&1; then
+            echo "::error title=ArmPort message-store slots::the original 4-byte slots unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort message-store slots::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/slots-original.txt")"
+
+      - name: Render worker hand-off with spin-before-sleep under TSan (patch 0116)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort worker spin" python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src")
+          base=$(python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src" --no-spin)
+          echo "::notice title=ArmPort worker spin::patched: $out%0Awithout polling: $base"
+
       - name: SMF anchor indices keep 64-bit anchors for the pass (patch 0110)
         run: |
           out=$(armport/scripts/step.sh "ArmPort SMF anchor indices" python3 armport/tests/smf_anchor_tokens.py --source "$RUNNER_TEMP/armport/src")

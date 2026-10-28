@@ -1,0 +1,149 @@
+diff --git a/Game/src/graphics/armport_frame_rate_log.h b/Game/src/graphics/armport_frame_rate_log.h
+index 53e6b9f..505f668 100644
+--- a/Game/src/graphics/armport_frame_rate_log.h
++++ b/Game/src/graphics/armport_frame_rate_log.h
+@@ -5,6 +5,10 @@
+  */
+ #ifndef ARMPORT_FRAME_RATE_LOG_H
+ #define ARMPORT_FRAME_RATE_LOG_H
++#include "utilitieslib/utils/wininclude.h"
++/* Worker-thread wakeup counters (WorkerThread.c, patch 0116): all worker
++ * threads, cumulative. */
++extern volatile long armport_wt_sleeps, armport_wt_spin_hits;
+ #pragma push_macro("printf")
+ #pragma push_macro("snprintf")
+ #pragma push_macro("fflush")
+@@ -38,6 +42,49 @@ static void armportFrameRateLogWrite(float fps, int frames, float seconds, int m
+     fflush(stdout);
+ }
+ 
++typedef struct ArmportWorkerSample
++{
++    long sleeps, spin_hits;
++    unsigned long long user_100ns, kernel_100ns;
++} ArmportWorkerSample;
++
++static void armportWorkerSample(ArmportWorkerSample *sample)
++{
++    FILETIME created, exited, kernel, user;
++    sample->sleeps = armport_wt_sleeps;
++    sample->spin_hits = armport_wt_spin_hits;
++    sample->user_100ns = sample->kernel_100ns = 0;
++    if (GetProcessTimes(GetCurrentProcess(), &created, &exited, &kernel, &user)) {
++        sample->user_100ns = ((unsigned long long)user.dwHighDateTime << 32) | user.dwLowDateTime;
++        sample->kernel_100ns = ((unsigned long long)kernel.dwHighDateTime << 32) | kernel.dwLowDateTime;
++    }
++}
++
++static ArmportWorkerSample armport_worker_since;
++
++/* Start (or restart) the window that armportWorkerLogWrite reports. */
++static void armportWorkerLogStart(void)
++{
++    armportWorkerSample(&armport_worker_since);
++}
++
++/* Patch 0116: worker sleeps vs spin hits and the client's CPU time over the
++ * same window as the ARMPORT_FRAME_RATE_V1 line just written. */
++static void armportWorkerLogWrite(float seconds)
++{
++    char line[200];
++    ArmportWorkerSample now;
++    armportWorkerSample(&now);
++    snprintf(line, sizeof(line),
++        "ARMPORT_WORKER_V1 seconds=%.2f worker_sleeps=%ld worker_spin_hits=%ld cpu_user_ms=%llu cpu_kernel_ms=%llu\n",
++        seconds, now.sleeps - armport_worker_since.sleeps, now.spin_hits - armport_worker_since.spin_hits,
++        (now.user_100ns - armport_worker_since.user_100ns) / 10000,
++        (now.kernel_100ns - armport_worker_since.kernel_100ns) / 10000);
++    fputs(line, stdout);
++    fflush(stdout);
++    armport_worker_since = now;
++}
++
+ #pragma pop_macro("FILE")
+ #pragma pop_macro("fputs")
+ #pragma pop_macro("fflush")
+diff --git a/Game/src/graphics/gfx.c b/Game/src/graphics/gfx.c
+index 8b85fff..d6eb2a1 100644
+--- a/Game/src/graphics/gfx.c
++++ b/Game/src/graphics/gfx.c
+@@ -383,12 +383,13 @@ void showFrameRate()
+         static U32 fps_since;
+         if (armportFrameRateLogEnabled()) {
+             F32 elapsed;
+-            if (!fps_started) { fps_started = 1; fps_since = curr; }
++            if (!fps_started) { fps_started = 1; fps_since = curr; armportWorkerLogStart(); }
+             elapsed = (F32)(U32)(curr - fps_since) / (F32)timerCpuSpeed();
+             fps_frames++;
+             if (elapsed >= 5.0f) {
+                 armportFrameRateLogWrite(fps_frames / elapsed, fps_frames, elapsed,
+                     game_state.maxfps, game_state.maxMenuFps);
++                armportWorkerLogWrite(elapsed);
+                 fps_frames = 0;
+                 fps_since = curr;
+             }
+diff --git a/libs/UtilitiesLib/src/components/WorkerThread.c b/libs/UtilitiesLib/src/components/WorkerThread.c
+index 2b42bfd..91c99ca 100644
+--- a/libs/UtilitiesLib/src/components/WorkerThread.c
++++ b/libs/UtilitiesLib/src/components/WorkerThread.c
+@@ -21,6 +21,17 @@
+ 
+ static void wtDispatchMessages(WorkerThread *wt);
+ 
++// ArmPort (patch 0116): under Wine 10 in PRoot every ResetEvent, SetEvent and
++// WaitForSingleObject is a traced wineserver round trip. A worker that sleeps
++// whenever its queue drains pays up to three round trips per queued render
++// command. On ARM64 it first polls the (atomically published, patch 0050)
++// queue for up to ARMPORT_WT_SPIN_US; it sleeps only when no work arrives.
++// thread_asleep stays 0 while polling, so producers do not signal.
++#if defined(__aarch64__) && defined(__MINGW32__)
++#define ARMPORT_WT_SPIN_US 2000
++#endif
++volatile long armport_wt_sleeps, armport_wt_spin_hits;
++
+ #ifdef _M_X64
+ #    pragma warning(push)
+ #    pragma warning(disable:4324)
+@@ -372,6 +383,34 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+             cmd = peekStoredCmd(&wt->cmd_queue);
+         if (!cmd)
+         {
++#ifdef ARMPORT_WT_SPIN_US
++            if (wt->data_queued && !(wt->debug && !wt->flush_requested && wt->run_threaded))
++            {
++                static LARGE_INTEGER frequency;
++                LARGE_INTEGER started, now;
++                int spins = 0;
++                if (!frequency.QuadPart)
++                    QueryPerformanceFrequency(&frequency);
++                QueryPerformanceCounter(&started);
++                while (!(cmd = peekStoredCmd(&wt->cmd_queue))
++                       && wtSharedLoad(wt->thread_state) != THREAD_TOLDTOEXIT)
++                {
++                    YieldProcessor();
++                    if ((++spins & 63) == 0)
++                    {
++                        QueryPerformanceCounter(&now);
++                        if ((now.QuadPart - started.QuadPart) * 1000000
++                                >= frequency.QuadPart * ARMPORT_WT_SPIN_US)
++                            break;
++                    }
++                }
++                if (cmd)
++                {
++                    armport_wt_spin_hits++;
++                    continue;
++                }
++            }
++#endif
+             if (wt->data_queued)
+             {
+                 // Arm before the final empty check: a producer after that
+@@ -380,6 +419,7 @@ static unsigned __stdcall wtThread( LPVOID lpParam )
+                 ResetEvent(wt->data_queued);
+                 cmd = peekStoredCmd(&wt->cmd_queue);
+                 if (!cmd) {
++                    armport_wt_sleeps++;
+                     WaitForSingleObject(wt->data_queued, INFINITE);
+                 }
+                 wtSharedStore(wt->thread_asleep, 0);

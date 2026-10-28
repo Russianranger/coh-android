@@ -18,12 +18,14 @@ args = parser.parse_args()
 header = (args.source / 'Game/src/graphics/armport_frame_rate_log.h').read_text()
 gfx = (args.source / 'Game/src/graphics/gfx.c').read_text()
 assert '#include "graphics/armport_frame_rate_log.h"' in gfx and 'armportFrameRateLogWrite(' in gfx
+assert 'armportWorkerLogWrite(elapsed)' in gfx and 'armportWorkerLogStart()' in gfx
 assert not re.search(r'ARMPORT_FRAME_RATE_V1[^\n]*\n[^\n]*fflush', gfx), 'gfx.c must not flush directly'
 TU = '''#include <stdio.h>
 #include "utilitieslib/stdtypes.h"
 #include "utilitieslib/utils/file.h"
 #include "%s"
-int armport_fps_check(void) { if (armportFrameRateLogEnabled()) armportFrameRateLogWrite(9.5f, 48, 5.05f, 30, 10); return 0; }
+volatile long armport_wt_sleeps, armport_wt_spin_hits;
+int armport_fps_check(void) { if (armportFrameRateLogEnabled()) { armportWorkerLogStart(); armportFrameRateLogWrite(9.5f, 48, 5.05f, 30, 10); armportWorkerLogWrite(5.05f); } return 0; }
 '''
 with tempfile.TemporaryDirectory() as temporary:
     root = Path(temporary)

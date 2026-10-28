@@ -665,9 +665,17 @@ def main():
         logged = re.findall(r'^ARMPORT_FRAME_RATE_V1 fps=(\d+\.\d\d) frames=(\d+) seconds=(\d+\.\d\d) maxfps=(-?\d+) menu=(-?\d+)$',
                             text, re.M)
         note('notice', 'ArmPort frame-rate log', f'{len(logged)} windows; client running at end: {running}; first 5: {logged[:5]}')
+        workers = re.findall(r'^ARMPORT_WORKER_V1 seconds=(\d+\.\d\d) worker_sleeps=(\d+) worker_spin_hits=(\d+) '
+                             r'cpu_user_ms=(\d+) cpu_kernel_ms=(\d+)$', text, re.M)
+        note('notice', 'ArmPort worker wakeups (patch 0116)',
+             f'{len(workers)} windows (seconds, sleeps, spin hits, cpu user ms, cpu kernel ms); first 5: {workers[:5]}')
         if len(logged) < 3 or not running or not all(float(w[2]) >= 5.0 for w in logged):
             note('error', 'ArmPort frame-rate log',
                  'ARMPORT_FPS_LOG=1 must log at least three 5 s windows while the client keeps running')
+            return 1
+        if len(workers) != len(logged) or not all(w[0] == f[2] for w, f in zip(workers, logged)):
+            note('error', 'ArmPort worker wakeups (patch 0116)',
+                 'each ARMPORT_FRAME_RATE_V1 window must be followed by its ARMPORT_WORKER_V1 line')
             return 1
     if a.login_probe and (rt / 'armport_stdio.txt').exists():
         marks = [l[:240] for l in (rt / 'armport_stdio.txt').read_text(errors='replace').splitlines() if l.startswith('ArmPort ')]

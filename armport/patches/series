@@ -112,3 +112,5 @@
 0112-armport-vbo-rebase-pointer-width.patch
 0113-armport-gameplay-fps-profile.patch
 0114-armport-frame-rate-log.patch
+0115-armport-message-store-vararg-slots.patch
+0116-armport-worker-spin-before-sleep.patch

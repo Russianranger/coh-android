@@ -1,0 +1,20 @@
+diff --git a/libs/UtilitiesLib/src/language/MessageStore.c b/libs/UtilitiesLib/src/language/MessageStore.c
+index be0668c..3b16140 100644
+--- a/libs/UtilitiesLib/src/language/MessageStore.c
++++ b/libs/UtilitiesLib/src/language/MessageStore.c
+@@ -1658,6 +1658,15 @@ static void msGetTypeDefPointers(Array* messageTypeDef, va_list arg)
+                 variableTypeSize = sizeof(double);
+                 break;
+         }
++#if defined(_WIN64)
++        // ArmPort: on 64-bit Windows (ARM64 and x64) every variadic argument,
++        // int or pointer or double, occupies one 8-byte slot. Stepping ints and
++        // pointers by sizeof(int) read later parameters from the wrong slot:
++        // a power-name pointer became "Bad parameter for: P...:PowerName" and a
++        // double (1.75) was dereferenced as a pointer (Thor combat fault reading
++        // 3FFC000000000000).
++        variableTypeSize = 8;
++#endif
+         def->variablePointer = arg;
+         va_advance(arg, variableTypeSize);
+     }
