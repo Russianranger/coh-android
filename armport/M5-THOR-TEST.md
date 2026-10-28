@@ -1,7 +1,7 @@
 # COH Atlas Gameplay 0.13.44: M5 Thor test (ARM64 client)
 
-**Status:** 0.13.44 candidate built and signed, waiting for review; 0.13.44
-itself has not been played yet. The latest device result is 0.13.43 (played on
+**Status:** 0.13.44 candidate built and signed; approved for Thor handoff
+(Astra 5687848443). 0.13.44 itself has not been played yet. The latest device result is 0.13.43 (played on
 Thor 2026-10-28, below). M5 is not complete.
 
 | Item | Value |

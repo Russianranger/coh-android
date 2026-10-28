@@ -37,4 +37,4 @@ M3 into Atlas: accepted (Sol 5659701771), merged; 106 patches (armport/HANDOFF.m
 - M4 app runtime: accepted (Sol 5660940046), merged (PR #7; armport/M4-REPORT.md).
 - M5 Thor (PR #8): 0.13.43 on Thor: game 15-27 FPS; combat works; crash after a defeat (NULL ragdoll).
   0.13.44: 0117 message index width, 0118 ragdoll packets without PhysX; build 40724321192,
-  requalify 40736589404, APK 40743596575 (provenance-checked package).
+  requalify 40736589404, APK 40743596575 approved for Thor (Astra 5687848443).
