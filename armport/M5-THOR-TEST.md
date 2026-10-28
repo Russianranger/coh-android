@@ -1,23 +1,24 @@
-# COH Atlas Gameplay 0.13.42: M5 Thor test (ARM64 client)
+# COH Atlas Gameplay 0.13.43: M5 Thor test (ARM64 client)
 
 **Status:** candidate built and signed, waiting for review. Not yet installed
-or played. M5 is not complete.
+or played. M5 is not complete. (0.13.42 was not approved: Astra review
+5677080577 found two races in patch 0116; 0.13.43 fixes them.)
 
 | Item | Value |
 |---|---|
-| APK | `COH-Atlas-Gameplay-0.13.42.apk`, versionCode 57, 80,911,192 bytes |
-| APK sha256 | `e3918350673b6e8e54b990553c0d7a776104ad25522318aff3e077985bfa70ff` |
-| Built by | run [40618244717](https://github.com/Russianranger/coh-android/actions/runs/40618244717) at `7d4aeff44`, artifact `coh-atlas-gameplay-0.13.42-apk` (12785842820) |
+| APK | `COH-Atlas-Gameplay-0.13.43.apk`, versionCode 58, 80,911,192 bytes |
+| APK sha256 | `78a04c4df310f22edb4bfa7a02a52e3c33d01e0a8c6ecdc9c2a83f26ca3238b4` |
+| Built by | run [40634910831](https://github.com/Russianranger/coh-android/actions/runs/40634910831) at `d85695289`, artifact `coh-atlas-gameplay-0.13.43-apk` (12793385619) |
 | Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.41) |
-| ARM64 client | executable `172f551a…3371`, package `b5c9d660…76bb`, from build 40606436389 at `7d4aeff44` (patches to 0116; provenance: `armport/patches` tree `6df91d5d` equals the APK head's) |
-| CI qualification | build 40606436389: all 8 jobs passed, including the 0115 slot check (original fails) and the 0116 TSan worker check. Requalification 40614028544: ARM64 creation then reopen passed (2126 s). Retained 0.10 runtime; the full 0.13.42 runtime has not run in CI |
+| ARM64 client | executable `e6671c1e…1f1d`, package `09871d61…1341`, from build 40623975414 at `d85695289` (patches to 0116; provenance: `armport/patches` tree `20d8303a` equals the APK head's) |
+| CI qualification | build 40623975414: all 8 jobs passed, including the 0115 slot check (original fails) and the two-worker 0116 TSan check with live sampling (plain-counter control reported). Requalification 40630719845: ARM64 creation then reopen passed (2138 s). Retained 0.10 runtime; the full 0.13.43 runtime has not run in CI |
 
 ## What changed from 0.13.41 (Thor report, exports 20261027-235148/235205)
 
-| 0.13.41 problem | Cause found in the exported report | 0.13.42 change |
+| 0.13.41 problem | Cause found in the exported report | 0.13.43 change |
 |---|---|---|
 | Crash when engaging an NPC in combat | `Bad parameter for: P1703759751:PowerName`, then a page fault reading `3FFC000000000000` (1.75 as a double): the combat message read its 8-byte argument slots 4 bytes apart, so PlayerSource came from the Damage slot | Patch 0115: 8-byte variadic slots on 64-bit Windows |
-| FPS still very low | The game itself measured 6-12 FPS with a 30 cap; the app now shows what it receives. The render worker sleeps on an event whenever its queue drains, and each event call is a traced wineserver round trip under PRoot | Patch 0116: the worker polls its queue up to 2 ms before sleeping (event round trips about 23x fewer in the TSan stress test); `ARMPORT_WORKER_V1` logs sleeps, spin hits and client CPU every 5 s. Not yet measured on Thor |
+| FPS still very low | The game itself measured 6-12 FPS with a 30 cap; the app now shows what it receives. The render worker sleeps on an event whenever its queue drains, and each event call is a traced wineserver round trip under PRoot | Patch 0116: the worker polls its queue up to 2 ms before sleeping (event round trips about 23x fewer in the TSan stress test); `ARMPORT_WORKER_V1` logs sleeps, spin hits and client CPU every 5 s (counters atomic, timer per worker). Not yet measured on Thor |
 
 ## Earlier: what changed from 0.13.40 (Thor report: 30 FPS cap active, about 9.5 frames/s shown)
 
@@ -57,7 +58,7 @@ or played. M5 is not complete.
 
 ## Install (keep everything)
 
-1. Install 0.13.42 over 0.13.41. Do not uninstall or clear data.
+1. Install 0.13.43 over 0.13.41. Do not uninstall or clear data.
 2. Run **Set up / update runtime** once.
 
 ## Test
