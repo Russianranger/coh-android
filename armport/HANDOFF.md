@@ -1,5 +1,10 @@
 # COH-ArmPort handoff to Claude
 
+**Current handoff (2026-10-28): `armport/M5-HANDOFF.md`** — 0.13.44 plays on
+Thor; next steps toward an optimized client/server. The text below is the
+earlier M3/M4 handoff, kept for history.
+
+
 **Update 2026-10-26 (Claude lead): M3 is merged.** PR #6 merged into
 `COH-ArmPort` as 3ac8eedc9 after Sol accepted it (5659701771) and the user
 approved it. Its scope is reduced: the completeness flags stay false and the

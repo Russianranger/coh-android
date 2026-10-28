@@ -1,8 +1,9 @@
 # COH Atlas Gameplay 0.13.44: M5 Thor test (ARM64 client)
 
-**Status:** 0.13.44 candidate built and signed; approved for Thor handoff
-(Astra 5687848443). 0.13.44 itself has not been played yet. The latest device result is 0.13.43 (played on
-Thor 2026-10-28, below). M5 is not complete.
+**Status:** 0.13.44 approved for Thor handoff (Astra 5687848443) and played on
+Thor 2026-10-28: combat, defeats, zoning and save work; game 12-30 FPS (mean
+22.8). Open: NPCs and cars stutter in the second zone (server side), warm start
+about 12 minutes. Next steps: `armport/M5-HANDOFF.md`. M5 is not complete.
 
 | Item | Value |
 |---|---|
@@ -12,6 +13,18 @@ Thor 2026-10-28, below). M5 is not complete.
 | Signer / app ID | retained `92955353…c282`, `io.github.russianranger.cohclientinteractive` (same as 0.13.36 to 0.13.43) |
 | ARM64 client | executable `2caf815f…db6e`, package `bba31da1…52bf`, from build 40724321192 at `a5bd2bbe3` (patches to 0118; provenance: `armport/patches` tree `992ed11b` equals the APK head's) |
 | CI qualification | build 40724321192: all 8 jobs passed, including the 0117 index check and the 0118 ragdoll check (upstream code fails both). Requalification 40736589404: ARM64 creation then reopen passed (2177 s). Retained 0.10 runtime; the full 0.13.44 runtime has not run in CI |
+
+## 0.13.44 on Thor (exports 20261028-202049 zoning, -203539, -202106 setup)
+
+| Check | Result |
+|---|---|
+| Combat, hit/miss lines | Works; no `Bad parameter` lines (0117) |
+| Defeats, play afterwards | Works; no fault, client exit 0 on launch 2 (0118) |
+| FPS | 12-30 in gameplay, mean 22.8 over 227 windows |
+| Monorail Atlas → King's Row → Atlas | Works; client 18-23 s per zone |
+| NPCs and cars in King's Row | Stutter; the player is smooth. Server side: wineserver 478 s and DbServer 428 s system time, two x86 MapServers at once |
+| Warm start | About 12 min; Atlas MapServer 9.5 min on the critical path |
+| Harness | False failures: enhancement additions after defeats, ARM64 evidence check in the app, post-zoning cleanup proof |
 
 ## What changed from 0.13.43 (Thor report, exports 20261028-160515/160528)
 
