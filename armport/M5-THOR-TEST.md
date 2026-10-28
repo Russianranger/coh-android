@@ -1,7 +1,7 @@
 # COH Atlas Gameplay 0.13.43: M5 Thor test (ARM64 client)
 
-**Status:** candidate built and signed, waiting for review. Not yet installed
-or played. M5 is not complete. (0.13.42 was not approved: Astra review
+**Status:** candidate built and signed; approved for Thor handoff (Astra
+5681163575). Not yet installed or played. M5 is not complete. (0.13.42 was not approved: Astra review
 5677080577 found two races in patch 0116; 0.13.43 fixes them.)
 
 | Item | Value |
