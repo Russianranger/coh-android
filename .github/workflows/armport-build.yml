@@ -294,6 +294,7 @@ jobs:
           sparse-checkout: |
             /armport/
             /upstream-lock.json
+            /docs/source-manifest.json
             /patches/
             /database/
             /docs/android-evidence/client-map-startup-0.13.32-publication.json
@@ -301,7 +302,6 @@ jobs:
             /assets/catalog.json
             /assets/zones-audio-metadata.json
             /upstream/ouroboros/
-            !/upstream/ouroboros/data/
             /upstream/i24/data/defs/ui/bodyparts.bp
             /native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
             /android/runtime-lock.json
