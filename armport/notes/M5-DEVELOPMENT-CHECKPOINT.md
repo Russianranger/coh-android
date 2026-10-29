@@ -3,8 +3,7 @@
 PR #8 candidate 0.13.45/code 60 at `0bf31c81b1b5a9f8427b4692c623702b30e7029e`
 passed build 40776745390, retained runtime 40786315414 and APK 40791416254.
 Artifact 12860779714 was independently inspected; exact evidence is in
-`../evidence/0.13.45-qualification.json`. Claude candidate review is requested
-in PR #8 comment 6485053545 and is pending. No .45 Thor result or M5 acceptance.
+`../evidence/0.13.45-qualification.json`. Claude review 5692088051 approves this exact diagnostics APK for Thor handoff. No .45 Thor result or M5 acceptance.
 
 This separate `armport/server-metrics` branch develops 0.13.46/code 61:
 
@@ -24,11 +23,15 @@ This separate `armport/server-metrics` branch develops 0.13.46/code 61:
   new inventory slots with valid native fields/current readonly definitions,
   and retains existing connection/logout/identity/committed-SQL checks. It does
   not prove award causality or definition identity since preparation.
-- 392 ArmPort unit tests pass with the local JDK compiler launcher and pristine
+- 415 ArmPort unit tests and 61 existing saved-startup/zoning/monorail tests pass with the local JDK compiler launcher and pristine
   c86a579 baseline. Independent workflow review and syntax/whitespace checks pass.
   Detailed scope and dispatch inputs: SERVER-METRICS-DEVELOPMENT.md.
 
-No .46 native CI, runtime, APK or Thor result exists at this checkpoint.
+Build 40805020119 is running at frozen dd9d755bd; its downstream runtime/APK
+chain is held by comment 6486287635. The separate sampler-review-fix branch
+addresses review P2/P3 and adds bounded observational launch history; it needs a
+new full chain after the current build finishes. No .46 runtime/APK/Thor result
+exists. Details: M5-SAMPLER-REVIEW.md.
 No performance, startup, battery or thermal improvement is claimed. Native
 ARM64 servers and prior-zone retirement remain plans, not implemented features.
 Wine request counts remain unavailable. Esync/runtime changes need a proposal

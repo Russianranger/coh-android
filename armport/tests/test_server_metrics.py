@@ -13,6 +13,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / 'armport/app'), str(ROOT / 'android/guest')]
 import diagnostic as base
+import game_device_diagnostic as device
 import game_map_progress as progress
 import server_metrics as metrics
 import armport_interactive
@@ -66,6 +67,20 @@ class MetricsTests(unittest.TestCase):
             (thread / 'stat').write_text(stat_text(tid, start + i, user + i, system))
             (thread / 'status').write_text(status_text(tid, pid))
         return path
+
+    def proc_order(self, names):
+        """Fix only the process directory order; task reads remain real."""
+        original = os.scandir
+        class Entries:
+            def __init__(self, values): self.values = iter(values)
+            def __iter__(self): return self
+            def __next__(self): return next(self.values)
+            def close(self): pass
+        def ordered(path):
+            if Path(path) == self.proc:
+                return Entries(SimpleNamespace(name=str(name), path=str(self.proc / str(name))) for name in names)
+            return original(path)
+        return patch.object(metrics.os, 'scandir', ordered)
 
     def test_stat_parser_handles_parentheses_and_rejects_invalid(self):
         value = metrics.parse_stat(stat_text(123, 456, 78, 90, 4))
@@ -165,16 +180,211 @@ class MetricsTests(unittest.TestCase):
         def slower_inspect(observer, pid, deadline):
             self.now += .02
             return original(observer, pid, deadline)
-        found = []
-        with patch.object(base.WineProcessOwner, 'inspect', slower_inspect):
-            for _ in range(5):
-                rows, info = self.sampler.processes(self.now + metrics.BUDGET)
-                found.extend(rows)
-                self.now += 5
-        self.assertIn(9008, [row['proc_pid'] for row in found])
+        for names, deferred in (([9008, 9001, 9002, 9003, 9004, 9005, 9006, 'self'], False),
+                ([9002, 'self', 9004, 9008, 9006, 9001, 9003, 9005], True)):
+            with self.subTest(names=names):
+                self.sampler.close()
+                self.sampler = metrics.ServerMetrics(self.diagnostic, clock=lambda: self.now)
+                self.addCleanup(self.sampler.close)
+                with self.proc_order(names), patch.object(base.WineProcessOwner, 'inspect', slower_inspect):
+                    first, info = self.sampler.processes(self.now + metrics.BUDGET)
+                    self.assertEqual(info['discovery_retry_pending'], deferred)
+                    if deferred:
+                        self.assertFalse(first)
+                        self.assertFalse(self.sampler.process_previous)
+                    self.now += 5
+                    second, info = self.sampler.processes(self.now + metrics.BUDGET)
+                    self.assertEqual(info['discovery_retried_before_scan'], deferred)
+                    found = first + second
+                    target = next(row for row in found if row['proc_pid'] == 9008)
+                    self.assertEqual(target['delta_status'], 'initial')
+                    self.assertIsNone(target['cpu_user_ms'])
         rows, info = self.sampler.processes(9)
         self.assertFalse(rows)
         self.assertFalse(info['complete'])
+
+    def test_timeout_after_second_ownership_read_retries_without_partial_delta(self):
+        self.process(pid=9008, role=b'MapServer.exe')
+        original = base.WineProcessOwner.inspect
+        calls = []
+        def delayed_second_read(observer, pid, deadline):
+            calls.append(pid)
+            self.now += .06 if len(calls) == 2 else .005
+            return original(observer, pid, deadline)
+        with self.proc_order([9008]), patch.object(base.WineProcessOwner, 'inspect', delayed_second_read):
+            rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+            self.assertFalse(rows)
+            self.assertTrue(info['discovery_retry_pending'])
+            self.assertFalse(self.sampler.process_previous)
+            self.now += 5
+            rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertTrue(info['discovery_retried_before_scan'])
+        self.assertEqual(rows[0]['delta_status'], 'initial')
+        self.assertIsNone(rows[0]['cpu_system_ms'])
+
+    def test_process_exceeding_whole_window_cannot_monopolize_discovery_retry(self):
+        self.process(pid=9008, role=b'MapServer.exe')
+        self.process(pid=9009, role=b'wineserver')
+        original = base.WineProcessOwner.inspect
+        def slower_inspect(observer, pid, deadline):
+            self.now += .03 if pid == 9008 else .001
+            return original(observer, pid, deadline)
+        with self.proc_order([9008, 9009]), patch.object(base.WineProcessOwner, 'inspect', slower_inspect):
+            rows, first = self.sampler.processes(self.now + metrics.BUDGET)
+            self.assertFalse(rows)
+            self.assertTrue(first['discovery_retry_pending'])
+            self.now += 5
+            rows, second = self.sampler.processes(self.now + metrics.BUDGET)
+            self.assertFalse(rows)
+            self.assertTrue(second['discovery_retried_before_scan'])
+            self.assertFalse(second['discovery_retry_pending'])
+            self.now += 5
+            rows, third = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertIn(9009, [row['proc_pid'] for row in rows])
+        self.assertFalse(third['discovery_retried_before_scan'])
+
+    def test_pending_discovery_retry_survives_an_expired_callback(self):
+        for pid in (9002, 9004):
+            self.process(pid=pid, token=False)
+        self.process(pid=9008, role=b'MapServer.exe')
+        original = base.WineProcessOwner.inspect
+        def slower_inspect(observer, pid, deadline):
+            self.now += .02
+            return original(observer, pid, deadline)
+        with self.proc_order([9002, 9004, 9008]), patch.object(base.WineProcessOwner, 'inspect', slower_inspect):
+            rows, first = self.sampler.processes(self.now + metrics.BUDGET)
+            self.assertFalse(rows)
+            self.assertTrue(first['discovery_retry_pending'])
+            rows, expired = self.sampler.processes(self.now)
+            self.assertFalse(rows)
+            self.assertFalse(expired['discovery_retried_before_scan'])
+            self.assertTrue(expired['discovery_retry_pending'])
+            self.now += 5
+            rows, fresh = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertTrue(fresh['discovery_retried_before_scan'])
+        self.assertIn(9008, [row['proc_pid'] for row in rows])
+
+    def test_expired_window_does_not_copy_initialize_or_scan_owner(self):
+        with patch.object(metrics, 'detached_owner', side_effect=AssertionError('copied after deadline')), \
+                patch.object(metrics.os, 'scandir', side_effect=AssertionError('scanned after deadline')):
+            rows, info = self.sampler.processes(self.now)
+        self.assertFalse(rows)
+        self.assertFalse(info['complete'])
+        self.assertEqual(info['proc_entries_visited'], 0)
+
+    def test_large_lineage_history_only_scans_bounded_keys_and_no_worker_values(self):
+        class History(dict):
+            def __deepcopy__(self, memo): raise AssertionError('copied historical records')
+        class Groups(History):
+            visited = 0
+            def __iter__(self):
+                for key in super().__iter__():
+                    self.visited += 1
+                    yield key
+        groups = Groups({(10000 + index, 200): History(workers=History()) for index in range(4096)})
+        self.owner.live_lineage = dict(groups=groups, prefix=None)
+        self.owner.receipt['large_history'] = History(unrelated=['old evidence'] * 4096)
+        self.process(role=b'unknown')
+        rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertEqual([row['proc_pid'] for row in rows], [9001])
+        self.assertEqual(groups.visited, metrics.PROCESS_LIMIT)
+        self.assertFalse(info['lineage_key_scan_complete'])
+        self.assertEqual(len(groups), 4096)
+        self.assertEqual(len(self.owner.receipt['large_history']['unrelated']), 4096)
+        self.now += 5
+        self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertEqual(groups.visited, 2 * metrics.PROCESS_LIMIT)
+
+    def test_private_group_snapshot_cannot_mutate_cleanup_lineage_or_receipts(self):
+        self.process(role=b'unknown')
+        group = {'stat': {'pid': 9001, 'starttime': 200}, 'status': {'namespace_pids': [9001]},
+                 'prefix_sha256': 'a' * 64, 'workers': {(9002, 201): {'status': {'namespace_pids': [9002]}}}}
+        self.owner.live_lineage = {'groups': {(9001, 200): group}, 'prefix': '/owned'}
+        self.owner.receipt['permission_observations'] = [{'keep': True}]
+        self.owner.dead_leaders.add((100, 101))
+        self.owner.owned_workers.add((100, 101, 102, 103))
+        before = copy.deepcopy((self.owner.live_lineage, self.owner.receipt,
+                                self.owner.dead_leaders, self.owner.owned_workers))
+        original = base.WineProcessOwner.inspect
+        def mutate_private(observer, pid, deadline):
+            snapshot = observer.live_lineage['groups'][(9001, 200)]
+            self.assertIsNot(snapshot, group)
+            snapshot['workers'][(9002, 201)]['status']['namespace_pids'].append(9999)
+            snapshot['workers'].pop((9002, 201))
+            observer.receipt['permission_observations'].append({'private': True})
+            observer.dead_leaders.add((9001, 200))
+            observer.owned_workers.add((9001, 200, 9002, 201))
+            return original(observer, pid, deadline)
+        # Both ownership checks share this process snapshot; restore the
+        # private worker before the second read solely to repeat the mutation.
+        def repeated_mutation(observer, pid, deadline):
+            self.sampler.snapshot_lineage(observer, self.owner, pid, 200, deadline)
+            return mutate_private(observer, pid, deadline)
+        with patch.object(base.WineProcessOwner, 'inspect', repeated_mutation):
+            rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual((self.owner.live_lineage, self.owner.receipt,
+                          self.owner.dead_leaders, self.owner.owned_workers), before)
+
+    def test_oversized_group_cache_does_not_hide_fresh_owned_process_total(self):
+        self.process(role=b'unknown')
+        workers = {(9002 + i, 201 + i): {} for i in range(metrics.THREAD_LIMIT + 1)}
+        self.owner.live_lineage = {'groups': {(9001, 200): {'workers': workers}}, 'prefix': '/owned'}
+        rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertEqual([row['proc_pid'] for row in rows], [9001])
+        self.assertTrue(rows[0]['ownership_rechecked_before_and_after'])
+        self.assertFalse(info['complete'])
+        self.assertEqual(info['errors'], 0)
+        self.assertEqual(info['lineage_snapshot_omissions'], 1)
+        self.assertEqual(len(workers), metrics.THREAD_LIMIT + 1)
+
+    def test_lineage_snapshot_stops_between_workers_at_deadline(self):
+        self.process(role=b'unknown')
+        workers = {(9002 + i, 201 + i): {'stat': {'pid': 9002 + i}} for i in range(8)}
+        self.owner.live_lineage = {'groups': {(9001, 200): {'workers': workers}}, 'prefix': '/owned'}
+        original, copied = copy.deepcopy, []
+        def costly_copy(value):
+            copied.append(value)
+            self.now += .02
+            return original(value)
+        with patch.object(metrics.copy, 'deepcopy', costly_copy):
+            rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertFalse(rows)
+        self.assertFalse(info['complete'])
+        self.assertLessEqual(len(copied), 3)
+        self.assertEqual(len(workers), 8)
+
+    def test_device_cached_worker_proof_remains_exact_and_private(self):
+        self.owner = device.DeviceWineProcessOwner(self.context, self.proc)
+        self.diagnostic.wine_owner = self.owner
+        path = self.process(role=b'unknown', count=2)
+        prefix = '/private/test-wine'
+        for entry in (self.proc / 'self', path, path / 'task/9001', path / 'task/9002'):
+            (entry / 'ns').mkdir()
+            (entry / 'ns/pid').symlink_to('pid:[111]')
+            (entry / 'environ').write_bytes(self.owner.needle + b'\0WINEPREFIX=' + prefix.encode() + b'\0')
+        with patch.object(device.time, 'monotonic', side_effect=lambda: self.now):
+            self.owner.observe_live_lineage(self.now + 1, prefix=prefix)
+            self.assertEqual(len(self.owner.live_lineage['groups']), 1)
+            (path / 'stat').write_text((path / 'stat').read_text().replace(') S ', ') Z ', 1))
+            before = copy.deepcopy((self.owner.receipt, self.owner.live_lineage))
+            original = device.DeviceWineProcessOwner.has_token
+            def deny_worker(observer, entry):
+                if entry.parent.name == 'task':
+                    raise PermissionError(13, 'unreadable worker')
+                return original(observer, entry)
+            with patch.object(device.DeviceWineProcessOwner, 'has_token', deny_worker):
+                rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+                self.assertEqual([row['proc_pid'] for row in rows], [9001])
+                self.assertEqual((self.owner.receipt, self.owner.live_lineage), before)
+                # Matching process shape without its previously authenticated
+                # workers cannot grant telemetry ownership after env denial.
+                self.owner.live_lineage['groups'].clear()
+                self.now += 5
+                rows, info = self.sampler.processes(self.now + metrics.BUDGET)
+        self.assertFalse(rows)
+        self.assertFalse(info['complete'])
+        self.assertEqual(self.owner.receipt, before[0])
 
     def test_cleanup_closes_partial_discovery_and_stops_observation(self):
         self.process()

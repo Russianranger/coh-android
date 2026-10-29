@@ -2,6 +2,14 @@
 
 Design checkpoint, 2026-10-28. **No production retirement change is implemented by this document.** Obtain the 0.13.45 host-metrics baseline and the subsequent native-duration evidence before enabling retirement. No CPU, tick-rate, FPS, battery, or startup improvement is measured here.
 
+Update after review 5692088051: `MapLaunchHistory` now supplies bounded immutable
+launch descriptors and unique 256 KiB console tails, with current/resident labels.
+Resident travel does not create a new launch generation. It is observational,
+not native-process authentication or retirement authority. Existing progress,
+reply/control paths and readiness/save/cleanup remain unchanged. Unique native
+control paths, confirmed-transfer retirement and safe restart are still future
+work; this first slice does not claim that the full generation lifecycle is done.
+
 Harness anchors below refer to source commit `0bf31c81` (the relevant lifecycle files are unchanged from `7d3f234c`). Native anchors refer to the source prepared with patches 0001–0118 in `/tmp/audit-native-prepared/src`, not edited `upstream/`. Wine anchors refer to the exact commit in `android/runtime-lock.json:17`, `b073859675060c9211fcbccfd90e4e87520dc2c2`; the linked source was read through GitHub. Compilers, CI, runtime pins, and production lifecycle code were not changed for this investigation.
 
 ## What arrival proves, and what it does not

@@ -45,6 +45,9 @@ class SavedMapStartupTests(unittest.TestCase):
         owner = SimpleNamespace(ctx=ctx, root=root, wine_env={},
             args=SimpleNamespace(session_id=SESSION, state=state, wine='/usr/bin/wine'))
         value = zoning.LocalCharacterZoningServer(owner)
+        # Payload admission is outside this launch/readiness fixture. Model the
+        # explicitly uninstrumented package, not a missing production payload.
+        value.map_package = {}
         value.monorail_qualified = True
         value.runtime = root / 'atlas-runtime'; value.runtime.mkdir()
         value.sample_startup_observation = Mock()

@@ -13,6 +13,7 @@ import re
 import socket
 import stat
 import time
+from types import MappingProxyType
 
 import local_character_server as character
 import character_session_budget as session_budget
@@ -288,12 +289,114 @@ def terminal_position(logs, map_id, delivery, minimum_ms, now_ms):
     return matches[-1] if matches else None
 
 
+class MapLaunchHistory:
+    """Bounded observations of launches; never ownership or shutdown authority.
+
+    Native progress and the existing process owner remain authoritative. A
+    resident map keeps its generation when the player returns; only a different
+    owned launcher reference may produce another immutable launch descriptor.
+    """
+    LIMIT = MAX_EPOCHS + 1
+    CONSOLE_BYTES = 256 * 1024
+
+    def __init__(self, session):
+        self.session, self._launches = session, ()
+        self.errors, self.omitted = {}, 0
+
+    def unavailable(self, reason):
+        self.errors[reason] = min(self.errors.get(reason, 0) + 1, 65535)
+
+    def observe(self, map_id, owned, epoch):
+        try:
+            process, path, launch = owned['process'], owned['progress_path'], owned['launch_utc_ms']
+            child = getattr(process, 'process', None)
+            capture = getattr(process, 'output', None)
+            require(supported(map_id) and isinstance(path, Path) and process is not None
+                    and isinstance(capture, (bytes, bytearray))
+                    and type(launch) is int and launch > 0
+                    and type(epoch) is int and 0 <= epoch <= MAX_EPOCHS,
+                    'Incomplete launch observation')
+            for record, previous, previous_path, previous_child, previous_capture in self._launches:
+                if previous is process:
+                    require(record['map_id'] == map_id and previous_path == path
+                            and previous_child is child and record['launch_utc_ms'] == launch,
+                            'Launch observation changed')
+                    require(previous_capture is capture, 'Launch capture changed')
+                    return record
+            if len(self._launches) >= self.LIMIT:
+                self.omitted = min(self.omitted + 1, 65535)
+                return None
+            number = len(self._launches) + 1
+            pid = getattr(child, 'pid', None)
+            record = MappingProxyType({'generation': number, 'map_id': map_id,
+                'observed_at_epoch': epoch, 'launch_utc_ms': launch,
+                'launcher_pid': pid if type(pid) is int and pid > 0 else None,
+                'progress_member': path.name,
+                'console_member': 'character-zoning-generation-' + str(number)
+                    + '-map-' + str(map_id) + '-console-tail.txt'})
+            self._launches += ((record, process, path, child, capture),)
+            return record
+        except Exception:
+            # Optional evidence must not alter the launch/readiness/save path.
+            self.unavailable('invalid_or_changed_launch_observation')
+            return None
+
+    def collect(self, target, maps, active_process, secrets):
+        report = {'format': 1, 'session_id': self.session, 'retirement_enabled': False,
+            'is_success_proof': False, 'identity_scope': 'owned_launcher_reference_only',
+            'native_process_identity_verified': False, 'generation_limit': self.LIMIT,
+            'console_tail_bytes_per_generation': self.CONSOLE_BYTES,
+            'omitted_launch_observations': self.omitted, 'observation_errors': dict(self.errors),
+            'generations': []}
+        for record, process, _, child, capture in self._launches:
+            resident = maps.get(record['map_id'], {})
+            row = {'launch': dict(record), 'current_resident': resident.get('process') is process,
+                'active_process_reference': active_process is process, 'console': {'available': False}}
+            report['generations'].append(row)
+            try:
+                output = process.output
+                require(getattr(process, 'process', None) is child and output is capture,
+                        'Launch process or capture was replaced')
+                # A multiline secret could straddle a complete-line tail edge.
+                # The legacy full console remains available with its ordinary
+                # redaction; omit this optional tail rather than export a part.
+                require(not any('\n' in secret or '\r' in secret for secret in secrets if secret),
+                        'Multiline secrets require full-console redaction')
+                size = len(output)
+                start = max(0, size - self.CONSOLE_BYTES)
+                # Copy at most one small tail, not process.text()'s full log.
+                chunk = bytes(output[start:size])
+                first = chunk.find(b'\n') + 1 if start else 0
+                if start and not first:
+                    first = len(chunk)
+                end = chunk.rfind(b'\n') + 1
+                tail = chunk[first:max(first, end)]
+                text = base.redact(tail.decode('utf-8', 'replace'), secrets)
+                require(len(text.encode()) <= self.CONSOLE_BYTES, 'Redacted console tail exceeds bound')
+                path = target / record['console_member']
+                require(not path.exists() and not path.is_symlink(), 'Existing generation export refused')
+                base.private_write(path, text)
+                row['console'] = {'available': True, 'capture_bytes': size,
+                    'exported_bytes': len(text.encode()), 'retained_source_bytes': len(tail),
+                    'omitted_source_bytes': size - len(tail), 'complete_lines_only': True,
+                    'overflow': getattr(process, 'overflow', False) is True,
+                    'complete': start == 0 and first == 0 and end == len(chunk)
+                        and getattr(process, 'overflow', False) is False}
+            except Exception as error:
+                row['console'] = {'available': False, 'reason': type(error).__name__}
+        report['available'] = bool(report['generations'])
+        report['complete'] = (report['available'] and not self.errors and not self.omitted
+            and all(row['console'].get('complete') is True for row in report['generations']))
+        return report
+
+
 class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     """At most two owned static map processes, started only when requested."""
     def __init__(self, owner):
         super().__init__(owner)
         self.active_map_id = 1
         self.maps = {}
+        self.map_launch_history = MapLaunchHistory(owner.args.session_id)
         self.ready_floor_ms = 0
         self.zoning_next = 0
         self.zoning_query = None
@@ -484,6 +587,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.maps[self.active_map_id] = {'process': self.map_process, 'progress_path': self.map_progress_path,
             'previous': self.map_previous, 'launch_utc_ms': self.map_launch_utc_ms, 'ready': True,
             'server_metrics_enabled': getattr(self, 'server_metrics_enabled', False)}
+        self.map_launch_history.observe(self.active_map_id, self.maps[self.active_map_id], self.epoch)
 
     def _activate(self, map_id):
         if self.map_process is not None and self.active_map_id in self.maps:
@@ -494,6 +598,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.map_previous, self.map_launch_utc_ms = owned.get('previous'), owned['launch_utc_ms']
         self.map_progress_next = 0
         self.creation_report['map_id'] = map_id
+        self.map_launch_history.observe(map_id, owned, self.epoch)
 
     def start_map(self):
         if self.active_map_id == 1 and getattr(self, 'overlap_client_initialization', False) is not True:
@@ -504,6 +609,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 super().start_map()
             finally:
                 self.owner.wine_env = original
+                if self.map_process is not None:
+                    # Capture an actual launch even if inherited readiness
+                    # raises. This does not insert it into the ready maps set.
+                    self.map_launch_history.observe(1, {'process': self.map_process,
+                        'progress_path': getattr(self, 'map_progress_path', None),
+                        'launch_utc_ms': getattr(self, 'map_launch_utc_ms', None)}, self.epoch)
             self._remember_active()
         else:
             # Retain the accepted stage identifier while displaying the exact
@@ -754,6 +865,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
                              'runtime': map_runtime, 'launch_monotonic': launch_monotonic,
                              'server_metrics_enabled': self.server_metrics_enabled}
+        self.map_launch_history.observe(map_id, self.maps[map_id], self.epoch)
 
     def _check_preparation_deadline(self):
         """Read fresh clocks; phase allowances cannot extend the connected cap."""
@@ -1290,6 +1402,13 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             raw = base.redact(owned['process'].text(), self.ctx.secrets)
             require(len(raw.encode()) <= 16 * 1024 * 1024, 'Zoning server console export exceeded bound')
             base.private_write(target / ('character-zoning-map-' + str(map_id) + '-console.txt'), raw)
+        try:
+            self.zoning_report['launch_history'] = self.map_launch_history.collect(
+                target, self.maps, self.map_process, self.ctx.secrets)
+        except Exception as error:
+            self.zoning_report['launch_history'] = {'format': 1, 'available': False,
+                'complete': False, 'is_success_proof': False, 'retirement_enabled': False,
+                'reason': type(error).__name__[:80]}
         base.private_write(target / 'character-zoning.json', json.dumps(self.zoning_report, indent=2) + '\n')
 
 

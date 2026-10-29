@@ -264,12 +264,22 @@ def map_delta(current, previous):
 
 
 def detached_owner(owner):
-    """Optional observations must not amend authoritative cleanup receipts."""
+    """Give ownership reads private scratch state, without copying history.
+
+    Inspection creates new receipt observations and can invalidate cached
+    lineage. It does not need old diagnostic lists or the cleanup census sets.
+    Only the exact group being inspected receives a bounded lineage snapshot.
+    """
     observer = copy.copy(owner)
-    observer.receipt = copy.deepcopy(owner.receipt)
-    observer.dead_leaders, observer.owned_workers = set(owner.dead_leaders), set(owner.owned_workers)
+    observer.receipt = {name: [] if isinstance(value, list) else {} if isinstance(value, dict) else value
+                        for name, value in owner.receipt.items()}
+    observer.dead_leaders, observer.owned_workers = set(), set()
     if hasattr(owner, 'live_lineage'):
-        observer.live_lineage = copy.deepcopy(owner.live_lineage)
+        observer.live_lineage = dict(owner.live_lineage, groups={})
+        # This optional stronger proof exists for future cleanup. A telemetry
+        # reader must neither collect it into cleanup's registry nor spend its
+        # short sampling budget rebuilding the worker history.
+        observer.remember_readable_workers = lambda *args, **kwargs: None
     if not observer.initialized:
         observer.initialize()
     return observer
@@ -281,6 +291,8 @@ class ServerMetrics:
         self.next_sample = 0
         self.known_cursor = 0
         self._proc_entries = self._proc_root = None
+        self._discovery_retry = None
+        self._lineage_entries = self._lineage_groups = None
         self.stopped = False
         self.process_previous, self.thread_previous, self.map_previous = {}, {}, {}
         self.native_context, self.native_tails = {}, {}
@@ -313,6 +325,59 @@ class ServerMetrics:
         if self._proc_entries is not None:
             self._proc_entries.close()
             self._proc_entries = None
+        self._discovery_retry = None
+        self._lineage_entries = self._lineage_groups = None
+
+    def lineage_candidates(self, owner, deadline):
+        """Rotate through group keys only; never enumerate all worker records."""
+        groups = getattr(owner, 'live_lineage', {}).get('groups', {})
+        if groups is not self._lineage_groups:
+            self._lineage_groups, self._lineage_entries = groups, None
+        if self._lineage_entries is None:
+            self._lineage_entries = iter(groups)
+        pids, complete = [], True
+        while len(pids) < PROCESS_LIMIT:
+            if self.clock() >= deadline:
+                complete = False
+                break
+            try:
+                pid, _ = next(self._lineage_entries)
+            except StopIteration:
+                self._lineage_entries = None
+                break
+            except RuntimeError:
+                # The authoritative registry may change between callbacks.
+                # Restart its key scan next time; /proc discovery is separate.
+                self._lineage_entries = None
+                complete = False
+                break
+            pids.append(pid)
+        if self._lineage_entries is not None:
+            complete = False
+        return pids, complete
+
+    def snapshot_lineage(self, observer, owner, pid, starttime, deadline):
+        if not hasattr(observer, 'live_lineage'):
+            return
+        observer.live_lineage['groups'] = {}
+        key = (pid, starttime)
+        record = owner.live_lineage['groups'].get(key)
+        if record is None:
+            return
+        # An oversized cache stays unavailable, but a live group may still
+        # pass fresh ownership checks. Never truncate cached worker proofs.
+        if len(record['workers']) > THREAD_LIMIT:
+            return False
+        workers = {}
+        for name, worker in record['workers'].items():
+            if self.clock() >= deadline:
+                raise TimeoutError('sample budget exhausted')
+            workers[name] = copy.deepcopy(worker)
+        if self.clock() >= deadline:
+            raise TimeoutError('sample budget exhausted')
+        observer.live_lineage['groups'][key] = {
+            'stat': dict(record['stat']), 'status': copy.deepcopy(record['status']),
+            'prefix_sha256': record['prefix_sha256'], 'workers': workers}
 
     def thread_samples(self, observer, path, group, deadline, remaining):
         rows, previous = [], {}
@@ -352,20 +417,35 @@ class ServerMetrics:
             'export_order': 'largest_measured_cpu_delta_first'}, seen
 
     def processes(self, deadline):
-        observer = detached_owner(self.diagnostic.wine_owner)
+        owner = self.diagnostic.wine_owner
+        observer = detached_owner(owner) if self.clock() < deadline else None
         rows, processes, threads, inspected = [], {}, {}, set()
         errors, visited, task_total, complete = 0, 0, 0, True
+        retried, lineage_complete, lineage_omissions = False, True, 0
 
-        def inspect(pid):
-            nonlocal errors
+        def inspect(pid, *, retry_on_timeout=False):
+            nonlocal errors, lineage_omissions
             inspected.add(pid)
             try:
+                if self.clock() >= deadline:
+                    raise TimeoutError('sample budget exhausted')
+                path = observer.proc_root / str(pid)
+                first = parse_stat(bounded_read(path / 'stat'))
+                if self.snapshot_lineage(observer, owner, pid, first['starttime'], deadline) is False:
+                    lineage_omissions += 1
+                if self.clock() >= deadline:
+                    raise TimeoutError('sample budget exhausted')
                 before = observer.inspect(pid, deadline)
                 if before is None:
                     return
-                path = observer.proc_root / str(pid)
+                if self.clock() >= deadline:
+                    raise TimeoutError('sample budget exhausted')
                 value = parse_stat(bounded_read(path / 'stat'))
+                if self.clock() >= deadline:
+                    raise TimeoutError('sample budget exhausted')
                 role, map_id = process_role(bounded_read(path / 'cmdline'))
+                if self.clock() >= deadline:
+                    raise TimeoutError('sample budget exhausted')
                 after = observer.inspect(pid, deadline)
                 if before != after or (value['proc_pid'], value['starttime']) != (pid, before['starttime']):
                     raise ValueError('process ownership changed during sample')
@@ -379,11 +459,25 @@ class ServerMetrics:
                 processes[pid] = value
             except Exception:
                 errors += 1
+                if retry_on_timeout and self.clock() >= deadline:
+                    # The directory iterator has already advanced. Retry this
+                    # exact entry first with a fresh window, once. A process
+                    # too expensive even for a whole window cannot monopolize
+                    # every future sample; the iterator resumes after it.
+                    self._discovery_retry = pid
+
+        retry = self._discovery_retry
+        if retry is not None and observer is not None and self.clock() < deadline:
+            self._discovery_retry = None
+            retried = True
+            inspect(retry)
 
         # Previously observed groups first so unrelated /proc entries cannot
         # repeatedly starve the resident servers under the bounded scan.
         known = list(self.process_previous)
-        for pid, _ in getattr(observer, 'live_lineage', {}).get('groups', {}):
+        candidates, lineage_complete = (self.lineage_candidates(owner, deadline)
+                                        if observer is not None else ([], False))
+        for pid in candidates:
             if pid not in known:
                 known.append(pid)
         # Reserve at least half the callback budget and half the row capacity
@@ -397,16 +491,18 @@ class ServerMetrics:
                 complete = False
                 break
             self.known_cursor = pid
-            inspect(pid)
+            if pid not in inspected:
+                inspect(pid)
         resumed = self._proc_entries is not None
         if resumed:
             complete = False  # a continuation is a subset of this window
-        if self._proc_root != observer.proc_root and self._proc_entries is not None:
+        proc_root = owner.proc_root
+        if self._proc_root != proc_root and self._proc_entries is not None:
             self._proc_entries.close()
             self._proc_entries = None
-        if self._proc_entries is None:
-            self._proc_entries = os.scandir(observer.proc_root)
-            self._proc_root = observer.proc_root
+        if self._proc_entries is None and self.clock() < deadline:
+            self._proc_entries = os.scandir(proc_root)
+            self._proc_root = proc_root
         # Retain the iterator only until the next cooperative sample. This
         # resumes even when procfs directory order is not numeric and avoids
         # repeatedly inspecting an expensive prefix. close() releases it when
@@ -423,13 +519,15 @@ class ServerMetrics:
                 break
             visited += 1
             if entry.name.isdecimal() and int(entry.name) not in inspected:
-                inspect(int(entry.name))
+                inspect(int(entry.name), retry_on_timeout=True)
         # Totals for all groups take precedence over optional thread detail.
         for row in sorted(rows, key=lambda value: value['role'] != 'dbserver'):
             if row['role'] == 'other' or self.clock() >= deadline or task_total >= THREAD_TOTAL_LIMIT:
                 continue
             pid = row['proc_pid']
             try:
+                if self.snapshot_lineage(observer, owner, pid, row['starttime'], deadline) is False:
+                    lineage_omissions += 1
                 before = observer.inspect(pid, deadline)
                 if before is None or before['starttime'] != row['starttime']:
                     raise ValueError('process changed before thread sampling')
@@ -444,8 +542,13 @@ class ServerMetrics:
             except Exception as exc:
                 row['thread_sampling'] = {'complete': False, 'unavailable_reason': type(exc).__name__}
         self.process_previous, self.thread_previous = processes, threads
-        return rows, {'complete': complete and not errors, 'errors': errors, 'proc_entries_visited': visited,
+        return rows, {'complete': complete and lineage_complete and not errors and not lineage_omissions,
+                      'errors': errors, 'proc_entries_visited': visited,
                       'process_limit': PROCESS_LIMIT, 'thread_tasks_scanned': task_total,
+                      'lineage_key_scan_complete': lineage_complete,
+                      'lineage_snapshot_omissions': lineage_omissions,
+                      'discovery_retried_before_scan': retried,
+                      'discovery_retry_pending': self._discovery_retry is not None,
                       'discovery_resumed_from_prior_sample': resumed,
                       'discovery_continues_next_sample': self._proc_entries is not None}
 
