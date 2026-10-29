@@ -1,8 +1,34 @@
-# COH Atlas Gameplay 0.13.45: candidate preparation (ARM64 client)
+# COH Atlas Gameplay 0.13.45: CI-qualified candidate (ARM64 client)
 
-**Not ready for handoff.** VersionCode 60 is reserved for this candidate. Build,
-requalification, APK artifact/hash and Claude approval are pending. 0.13.44 below
-remains the last device-tested candidate; M5 acceptance and merge are not requested.
+**Awaiting Claude approval; not yet handed off.** VersionCode 60, tested source
+`0bf31c81b1b5a9f8427b4692c623702b30e7029e`. All three serialized CI stages passed.
+0.13.44 below remains the last device-tested candidate. This documentation update
+does not change the tested code. M5 acceptance and merge are not requested.
+
+| Item | Exact evidence |
+|---|---|
+| Native build | [40776745390](https://github.com/Russianranger/coh-android/actions/runs/40776745390): all 8 jobs passed; Release/OptDebug reused clients with matching inputs |
+| Runtime requalification | [40786315414](https://github.com/Russianranger/coh-android/actions/runs/40786315414): all 4 jobs passed; client/data inputs both 40776745390 |
+| APK run | [40791416254](https://github.com/Russianranger/coh-android/actions/runs/40791416254), input `m4_run_id=40786315414` |
+| Artifact | `coh-atlas-gameplay-0.13.45-apk`, ID 12860779714 |
+| ZIP SHA-256 | `2e27321c4097a71e5d9a135642794973cefc0d6eed9f022c1eb27a6262493efb` |
+| APK | `COH-Atlas-Gameplay-0.13.45.apk`, 80,919,462 bytes, version 0.13.45 / 60 |
+| APK SHA-256 | `1ff2252876def6cfeb28d33490d8c2f5d5952c330698d6a719fb67a2197b3959` |
+| ARM64 package SHA-256 | `caf54a9aea9e5fcb479ff651b25892e5a731f1300f44fa8e43401341bd21c0c8` |
+| ARM64 executable SHA-256 | `2caf815fc2262399440af333512cec3d83bf69ce43fc3a6d44ba35b21f67db6e` (unchanged from 0.13.44) |
+| Native patch tree | `992ed11b116a2db10179c8507ce61e3f37b27840` |
+
+CI provenance notice: `package run 40786315414, client run 40776745390 at 0bf31c81b1b5a9f8427b4692c623702b30e7029e, armport/patches tree 992ed11b116a2db10179c8507ce61e3f37b27840 matches 0bf31c81b1b5a9f8427b4692c623702b30e7029e`.
+
+The downloaded ZIP/APK hashes, APK v2/v3 signatures and complete content digest,
+binary manifest, 377 inner file pins, 75 packaged runtime pins and 67 packaged
+client pins were independently checked. The retained signer is
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+Raw runtime ZIPs, the donor APK and 19 external assets were not independently
+downloaded. See [qualification evidence](evidence/0.13.45-qualification.json).
+The interactive guest reported `passed=true`, `m4_complete=false`, elapsed
+2214.441 seconds, and no error. This is retained 0.10 runtime qualification,
+not execution of the full Android 0.13.45 runtime or device acceptance.
 
 Changes: five-second cooperative `server-metrics.jsonl` tick-counter and CPU
 samples (50 ms collection budget, 4 MiB cap, partial/unavailable markers); the Java
@@ -16,14 +42,27 @@ lookups, not proven disk reads. See `notes/M5-ASTRA-ANALYSIS.md`.
 Local validation: 292 tests pass with `python3 -m unittest discover -s armport/tests
 -p 'test_*.py'` and a javac launcher for the installed Java compiler module.
 Native longest-tick/file-load time and Wine request counts explicitly remain
-unavailable in this candidate. CI on retained 0.10 will not establish Thor behaviour.
+unavailable in this candidate. No 0.13.45 Thor behaviour is established yet.
 
-After exact artifacts and reviewer approval are recorded, the Thor test will use
-two saved-character launches and Atlas→King's Row→Atlas travel, combat/defeats,
-Save/Logout and Finish. Both exports must retain `server-metrics.jsonl`, stage
-logs, zoning consoles and ownership/cleanup receipts. Enhancement additions and
-the underlying post-zoning cleanup failure remain open; this candidate must
-report those failures accurately rather than relax their checks.
+After reviewer approval, install over the current app without clearing data.
+Keep the same ARM64/GPU profile and saved character for both launches:
+
+1. Launch the saved character, wait in Atlas for at least 30 seconds, then take
+   the monorail to King's Row. Observe NPC/car movement there for at least 60
+   seconds before returning to Atlas. Include combat and defeats; record any
+   enhancement award rather than avoiding the known harness limitation.
+2. Use Save/Logout and Finish, then export the report even if a harness check
+   reports failure. Reopen the same character, repeat the route, save and Finish,
+   and export again. These are cold/warm comparisons only if cache state supports
+   that description; record which launch the export belongs to.
+3. Each `guest-report.zip` must retain `client-evidence/server-metrics.jsonl`,
+   `armport_stdio.txt`, `client-console.log`, stage logs, zoning consoles and
+   ownership/cleanup receipts. Confirm telemetry schema and sample coverage
+   before computing CPU/tick rates; retain partial/unavailable markers.
+
+Enhancement additions and the underlying post-zoning cleanup failure remain
+open. This candidate must report those failures accurately. The experimental
+enhancement policy and native patch 0119 are not included in this APK.
 
 ---
 

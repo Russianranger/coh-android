@@ -2,7 +2,27 @@
 
 Written 2026-10-28 at the end of the M5 Thor iteration (PR #8, branch
 `armport/m5-thor`, head after this file). All scheduled checks were cancelled
-at the user's request; nothing is running or waiting in CI.
+at the user's request. The historical measurements below describe that handoff.
+
+## Current development checkpoint (2026-10-28)
+
+0.13.45/code 60 at `0bf31c81b1b5a9f8427b4692c623702b30e7029e` passed build
+40776745390, retained-runtime requalification 40786315414 and APK 40791416254.
+Artifact 12860779714 is awaiting Claude's candidate review; dispatch/results
+comments 6481790173 and 6484030941 explicitly are not approval. Exact digests,
+limits and the proposed two-launch Thor procedure are in `M5-THOR-TEST.md`.
+There is no 0.13.45 device result and no M5 acceptance/merge request.
+
+Parallel development is saved on `armport/server-metrics` at `c86a57962`:
+native 0119 timing, source/lineage adapters, MapServer-only packaging and bounded
+enhancement additions. These are not in 0.13.45. Continue the Windows native
+producer and guest/package integration before claiming longest-tick/file-load
+measurement. See that branch's `notes/M5-DEVELOPMENT-CHECKPOINT.md`.
+
+This lead session can commit through the GitHub connector but cannot dispatch
+workflows. Claude has offered to dispatch a PR #8 `CI request: build at <sha>`
+with explicit stages. Keep the serialized build→app-runtime→thor-apk sequence;
+do not use push-trigger workarounds or start duplicate runs.
 
 ## Lead audit correction (2026-10-28)
 
