@@ -1,0 +1,89 @@
+diff --git a/Game/src/graphics/armport_frame_rate_log.h b/Game/src/graphics/armport_frame_rate_log.h
+new file mode 100644
+index 0000000..53e6b9f
+--- /dev/null
++++ b/Game/src/graphics/armport_frame_rate_log.h
+@@ -0,0 +1,46 @@
++/* ArmPort: frame-rate log for device exports (patch 0114).
++ * Game/UtilitiesLib headers redefine printf/fflush (fflush -> x_fflush on a
++ * FileWrapper*). This header isolates those macros so the CRT stdout stream is
++ * written and flushed with the real CRT functions.
++ */
++#ifndef ARMPORT_FRAME_RATE_LOG_H
++#define ARMPORT_FRAME_RATE_LOG_H
++#pragma push_macro("printf")
++#pragma push_macro("snprintf")
++#pragma push_macro("fflush")
++#pragma push_macro("fputs")
++#pragma push_macro("FILE")
++#undef printf
++#undef snprintf
++#undef fflush
++#undef fputs
++#undef FILE
++#include <stdio.h>
++#include <stdlib.h>
++
++static int armportFrameRateLogEnabled(void)
++{
++    static int enabled = -1;
++    if (enabled < 0) {
++        const char *value = getenv("ARMPORT_FPS_LOG");
++        enabled = value && value[0] == '1' && value[1] == 0;
++    }
++    return enabled;
++}
++
++static void armportFrameRateLogWrite(float fps, int frames, float seconds, int maxfps, int menu)
++{
++    char line[160];
++    snprintf(line, sizeof(line),
++        "ARMPORT_FRAME_RATE_V1 fps=%.2f frames=%d seconds=%.2f maxfps=%d menu=%d\n",
++        fps, frames, seconds, maxfps, menu);
++    fputs(line, stdout);
++    fflush(stdout);
++}
++
++#pragma pop_macro("FILE")
++#pragma pop_macro("fputs")
++#pragma pop_macro("fflush")
++#pragma pop_macro("snprintf")
++#pragma pop_macro("printf")
++#endif
+diff --git a/Game/src/graphics/gfx.c b/Game/src/graphics/gfx.c
+index ed836bf..8b85fff 100644
+--- a/Game/src/graphics/gfx.c
++++ b/Game/src/graphics/gfx.c
+@@ -67,6 +67,7 @@
+ #include "graphics/gfxLoadScreens.h"
+ #include "graphics/gfxDevHUD.h"
+ #include "UI/sprite/sprite_base.h"
++#include "graphics/armport_frame_rate_log.h"
+ 
+ GfxState gfx_state;
+ 
+@@ -375,6 +376,24 @@ void showFrameRate()
+         }
+     }
+     frame_count++;
++    {
++        // ArmPort: ARMPORT_FPS_LOG=1 logs the measured frame rate and cap every
++        // 5 s through the macro-isolated CRT helper (armport_frame_rate_log.h).
++        static int fps_frames, fps_started;
++        static U32 fps_since;
++        if (armportFrameRateLogEnabled()) {
++            F32 elapsed;
++            if (!fps_started) { fps_started = 1; fps_since = curr; }
++            elapsed = (F32)(U32)(curr - fps_since) / (F32)timerCpuSpeed();
++            fps_frames++;
++            if (elapsed >= 5.0f) {
++                armportFrameRateLogWrite(fps_frames / elapsed, fps_frames, elapsed,
++                    game_state.maxfps, game_state.maxMenuFps);
++                fps_frames = 0;
++                fps_since = curr;
++            }
++        }
++    }
+ 
+     if(sum_frames == 30)
+     {

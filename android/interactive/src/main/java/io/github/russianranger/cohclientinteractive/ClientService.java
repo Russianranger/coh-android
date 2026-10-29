@@ -243,6 +243,7 @@ public final class ClientService extends Service {
         record.put("encoding_cpu_ms",c.encodingCpuMs);record.put("presentation_freeze_ms",c.presentationFreezeMs);
         record.put("encode_queue_wall_ms",c.encodeQueueWallMs);record.put("encoding_on_ui_thread",c.encodingOnUiThread);
         record.put("pending_frames_peak",c.pendingFramesPeak);record.put("frames_coalesced_during_copy",c.framesCoalescedDuringCopy);
+        record.put("rendered_frames",c.renderedFrames);record.put("render_ms_sum",c.renderMsSum);record.put("render_ms_max",c.renderMsMax);record.put("hardware_canvas",c.hardwareCanvas);
         r.recordCaptureTiming(record);
         r.recordSurfaceCapture(record,c.png);if(c.nonUniform)certified++;publish();
     }

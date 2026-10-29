@@ -193,7 +193,8 @@ class ClientStageAcceptanceTests(unittest.TestCase):
         self.assertIn('jsonValue(stages), jsonValue(clientPins)', body)
         self.assertIn('stages.getJSONObject(interactionStage)', body)
         self.assertNotIn('stages.getJSONObject(11)', body)
-        for proof in ('bounded_live_observation', 'ClientAcceptance.cleanupSafe',
+        for proof in ('ClientAcceptance.clientInteractionPolicyAccepted(jsonValue(startup), reopen)',
+                      'ClientAcceptance.clientObservationAccepted', 'ClientAcceptance.cleanupSafe',
                       'ClientAcceptance.characterReopenVerified', 'ClientAcceptance.characterCreationVerified',
                       'ClientAcceptance.clientWindowAccepted', 'asset_sha256', 'receipt_sha256',
                       'distinct_colors_capped', 'presentation_socket_removed',

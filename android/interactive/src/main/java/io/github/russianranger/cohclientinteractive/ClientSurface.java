@@ -53,6 +53,9 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         public final long pixelCopyWallMs, encodingWallMs, encodingCpuMs, presentationFreezeMs, encodeQueueWallMs;
         public final boolean encodingOnUiThread;
         public final int pendingFramesPeak, framesCoalescedDuringCopy;
+        /** Presentation totals for this view up to the copied frame (main-thread render work). */
+        public final long renderedFrames, renderMsSum, renderMsMax;
+        public final boolean hardwareCanvas;
 
         private Capture(Frame frame, int sw, int sh, int generation, long capturedAt,
                 String hash, boolean varied, byte[] bytes, CaptureWork work,
@@ -76,6 +79,10 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
             encodingOnUiThread = onUiThread;
             pendingFramesPeak = work.pendingFramesPeak;
             framesCoalescedDuringCopy = Math.max(0, work.framesDuringCopy - 1);
+            renderedFrames = work.renderedFrames;
+            renderMsSum = work.renderNanosSum / 1000000;
+            renderMsMax = work.renderNanosMax / 1000000;
+            hardwareCanvas = work.hardwareCanvas;
         }
     }
 
@@ -109,6 +116,20 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     private float pointerX = 400, pointerY = 300;
 
     private Bitmap displayed;
+    // Main-thread presentation timing. Each Surface generation keeps one canvas
+    // mode: a Surface that has created its hardware (HWUI) context must not be
+    // locked with a software canvas (Surface.unlockCanvasAndPost dispatches to
+    // that context and rejects it). lockHardwareCanvas reports failure as null
+    // (SurfaceView.internalLockCanvas), so null is transient and retried; a
+    // draw/post failure, or HARDWARE_NULL_LIMIT consecutive nulls, ends hardware
+    // use for this view and recreates the Surface, whose next generation is
+    // software from its first frame.
+    private static final int HARDWARE_NULL_LIMIT = 30;
+    private static final long HARDWARE_RETRY_MS = 16;
+    private long renderedFrames, renderNanosSum, renderNanosMax;
+    private boolean hardwareCanvasFailed, lastHardwareCanvas, surfaceUsesHardware, recreateRequested;
+    private int hardwareNullLocks;
+    private final Runnable hardwareRetry = this::scheduleRender;
     private boolean ready;
     private boolean capturePending;
     private CaptureWork captureWork;
@@ -151,6 +172,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         boolean copyFinished, recycled;
         long capturedAt, freezeEndedAt, encodeRequestedAt;
         int framesDuringCopy, pendingFramesPeak;
+        long renderedFrames, renderNanosSum, renderNanosMax;
+        boolean hardwareCanvas;
         CaptureWork(Frame frame, Listener target, long epoch, int generation,
                 int sw, int sh, RectF content, Bitmap bitmap, long startedAt) {
             this.frame = frame; this.target = target; listenerEpoch = epoch;
@@ -271,13 +294,22 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         Canvas canvas = null;
         RectF destination = null;
         int surfaceWidth = 0, surfaceHeight = 0;
+        final long renderStarted = System.nanoTime();
         try {
             if (displayed == null || displayed.getWidth() != frame.width || displayed.getHeight() != frame.height) {
                 if (displayed != null) displayed.recycle();
                 displayed = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.ARGB_8888);
             }
             displayed.setPixels(frame.pixels, 0, frame.width, 0, 0, frame.width, frame.height);
-            canvas = getHolder().lockCanvas();
+            lastHardwareCanvas = false;
+            if (surfaceUsesHardware) {
+                canvas = getHolder().lockHardwareCanvas();
+                if (canvas == null) { hardwareUnavailable(); return; }
+                hardwareNullLocks = 0;
+                lastHardwareCanvas = true;
+            } else {
+                canvas = getHolder().lockCanvas();
+            }
             if (canvas == null) throw new IllegalStateException("Surface canvas unavailable");
             surfaceWidth = canvas.getWidth();
             surfaceHeight = canvas.getHeight();
@@ -289,18 +321,24 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
             canvas.drawColor(Color.BLACK);
             canvas.drawBitmap(displayed, null, destination, paint);
         } catch (RuntimeException ex) {
-            reportError("Surface render: " + ex.getClass().getSimpleName());
+            if (lastHardwareCanvas) hardwareFailed("render: " + ex.getClass().getSimpleName());
+            else reportError("Surface render: " + ex.getClass().getSimpleName());
             destination = null;
         } finally {
             if (canvas != null) {
                 try { getHolder().unlockCanvasAndPost(canvas); }
                 catch (RuntimeException ex) {
                     destination = null;
-                    reportError("Surface post: " + ex.getClass().getSimpleName());
+                    if (lastHardwareCanvas) hardwareFailed("post: " + ex.getClass().getSimpleName());
+                    else reportError("Surface post: " + ex.getClass().getSimpleName());
                 }
             }
         }
         if (destination == null) return;
+        long renderNanos = System.nanoTime() - renderStarted;
+        renderedFrames++;
+        renderNanosSum += renderNanos;
+        renderNanosMax = Math.max(renderNanosMax, renderNanos);
         if (inputWidth != frame.width || inputHeight != frame.height) {
             releaseInput();
             inputWidth = frame.width; inputHeight = frame.height;
@@ -320,6 +358,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         synchronized (pendingLock) {
             work = new CaptureWork(frame, listener, listenerEpoch, generation,
                     surfaceWidth, surfaceHeight, destination, captured, SystemClock.uptimeMillis());
+            work.renderedFrames = renderedFrames; work.renderNanosSum = renderNanosSum;
+            work.renderNanosMax = renderNanosMax; work.hardwareCanvas = lastHardwareCanvas;
             captureWork = work;
             capturePending = true;
         }
@@ -561,6 +601,29 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         if (!focus) releaseInput();
     }
 
+    private void hardwareUnavailable() {
+        if (++hardwareNullLocks >= HARDWARE_NULL_LIMIT) {
+            hardwareFailed("unavailable after " + hardwareNullLocks + " attempts");
+            return;
+        }
+        main.removeCallbacks(hardwareRetry);
+        main.postAtTime(hardwareRetry, SystemClock.uptimeMillis() + HARDWARE_RETRY_MS);
+    }
+
+    /** Ends hardware use for this view; the replacement Surface starts in software. */
+    private void hardwareFailed(String detail) {
+        main.removeCallbacks(hardwareRetry);
+        if (!hardwareCanvasFailed) {
+            hardwareCanvasFailed = true;
+            reportError("Hardware canvas " + detail);
+        }
+        if (recreateRequested || detached) return;
+        recreateRequested = true;
+        // Hide first; surfaceDestroyed shows the view again once the old Surface
+        // (and its HWUI context) is released, so a traversal separates the two.
+        main.post(() -> { if (!detached) setVisibility(INVISIBLE); });
+    }
+
     private void reportError(String detail) {
         Listener target = listener;
         if (target != null) target.onCaptureError(detail);
@@ -569,6 +632,9 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     @Override public void surfaceCreated(SurfaceHolder holder) {
         ready = true;
         surfaceGeneration++;
+        surfaceUsesHardware = !hardwareCanvasFailed && android.os.Build.VERSION.SDK_INT >= 26;
+        hardwareNullLocks = 0;
+        recreateRequested = false;
         invalidateCapture();
         scheduleRender();
     }
@@ -582,6 +648,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     @Override public void surfaceDestroyed(SurfaceHolder holder) {
         releaseInput();
         ready = false;
+        main.removeCallbacks(hardwareRetry);
+        if (recreateRequested && !detached) main.post(() -> { if (!detached) setVisibility(VISIBLE); });
         updateCursor();
         surfaceGeneration++;
         invalidateCapture();

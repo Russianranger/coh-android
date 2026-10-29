@@ -76,6 +76,18 @@ SERVER_TEXTURE_EXCLUSION_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d
 SERVER_TEXTURE_EXCLUSION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d'
 
 
+
+def LOCAL_CLIENT_LINK_OPTIONS():
+    """Keep the single local client's link while it loads the zone.
+
+    On the Thor the ARM64 client's first Atlas load took over two minutes
+    without servicing its link (0.13.37 report 2026-10-27); the MapServer
+    disconnected it on netlink overflow and the client returned to login.
+    The original -notimeout option (svr_init.c) keeps local links through
+    overflow/logout timers. Used only for the ARM64 client option.
+    """
+    return ['-notimeout'] if os.environ.get('COH_CLIENT_ARCH', 'x86') == 'arm64' else []
+
 def server_input_projection(package):
     if (not isinstance(package, dict) or package.get('source_commit') != device.SOURCE_COMMIT
             or package.get('files', {}).get('MapServer.exe', {}).get('sha256') != SERVER_TEXTURE_EXCLUSION_MAP):
@@ -1340,6 +1352,34 @@ class LocalCharacterServer(login.LocalLoginServer):
             return
         self.prepare_atlas_data(self.runtime, identity, receipt, prepared_at, phases, checkpoint)
 
+    def accept_added_temporary_powers(self, before, after):
+        """ARM64 option: accept a reopen whose only power change is a server grant.
+
+        Ordinary play can receive a temporary power (Thor 0.13.39 reopen:
+        temporary_powers.temporary_powers.brawl_tranq). The existing delta
+        resolver must show every prior power preserved by uniqueid with all
+        semantic fields, contiguous native indexes, nothing deleted or changed,
+        and only added rows resolving under temporary_powers. The x86 client
+        keeps the original strict comparison unchanged.
+        """
+        if os.environ.get('COH_CLIENT_ARCH', 'x86') != 'arm64':
+            return False
+        delta = stock_power_delta(before['rows']['powers'], after['rows']['powers'],
+            self.schema['expected_attributes']['attributes'])
+        added = delta.get('added_powers') or []
+        accepted = (delta.get('prior_powers_preserved_by_uniqueid') is True
+            and delta.get('all_prior_semantic_fields_preserved') is True
+            and delta.get('current_native_indexes_contiguous') is True
+            and delta.get('deleted_uniqueids') == [] and delta.get('changed_prior_powers') == []
+            and delta.get('after_power_count') == delta.get('before_power_count', -1) + len(added)
+            and len(added) > 0 and all(isinstance(item.get('resolved_power'), str)
+                and item['resolved_power'].startswith('temporary_powers.') for item in added))
+        if accepted:
+            self.creation_report['accepted_temporary_power_grants'] = {'format': 1,
+                'policy': 'arm64_added_temporary_powers_only', 'power_delta': delta,
+                'sql_game_mutations_performed': False}
+        return accepted
+
     def initial_map_preparation(self):
         """Creation and the legacy Atlas reopen retain their qualified layout."""
         return 1
@@ -1983,7 +2023,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
             '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
-            '-donotautogroup'],
+            '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS()],
             env=environment)
         # Use the native production grouping policy. The stock world packet
         # delivers this same flag to the client before it loads Atlas; geometry,
@@ -2800,6 +2840,9 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             if table == 'ents':
                 previous = [{key: value for key, value in row.items() if key != 'logincount'} for row in previous]
                 current = [{key: value for key, value in row.items() if key != 'logincount'} for row in current]
+            if (table == 'powers' and not self.saved_selected_rows_match(table, previous, current)
+                    and self.accept_added_temporary_powers(before, after)):
+                continue
             if not self.saved_selected_rows_match(table, previous, current):
                 # A typed SQL snapshot after logout is evidence of the observed
                 # difference, not a successful persistence proof. Preserve it

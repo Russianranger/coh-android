@@ -68,7 +68,8 @@ jobs:
             --output "$RUNNER_TEMP/reference-assets.zip" --release-asset-id 588984151
 
   guest-boot:
-    needs: assets
+    # Do not overlap Java compilation with the two-worker native PRoot build.
+    needs: [assets, app-sources]
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     permissions:
@@ -177,7 +178,8 @@ jobs:
             --source-data "$RUNNER_TEMP/m4-client/data" --stage "$RUNNER_TEMP/m4-packaged-client"
       - name: ARM64 client through app PRoot, Xtigervnc and private RFB
         run: |
-          python3 armport/app/runtime_host.py --client "$RUNNER_TEMP/m4-packaged-client" \
+          armport/scripts/step.sh "ArmPort app runtime boot" python3 armport/app/runtime_host.py \
+            --client "$RUNNER_TEMP/m4-packaged-client" --link-source "$RUNNER_TEMP/m4-client/data" \
             --proot out/android/native/linux-arm64 --work "$RUNNER_TEMP/m4-work" \
             --evidence "$RUNNER_TEMP/m4-evidence"
       - uses: actions/upload-artifact@v4
@@ -235,7 +237,7 @@ jobs:
           fail-on-cache-miss: true
       - name: Create, save, restart and reopen through the selected ARM64 app guest
         run: |
-          python3 armport/app/interactive_host.py \
+          armport/scripts/step.sh "ArmPort app interactive guest" python3 armport/app/interactive_host.py \
             --apk "$RUNNER_TEMP/retained-app/COH-Character-Reopen-0.10.0.apk" \
             --build-report "$RUNNER_TEMP/retained-app/interactive-apk-build-report.json" \
             --armport "$RUNNER_TEMP/armport-package/armport-client.zip" \

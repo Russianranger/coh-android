@@ -90,16 +90,25 @@ def encoded(value):
     return (json.dumps(value, sort_keys=True, indent=2) + '\n').encode()
 
 
-def stage(source, armport, output, repository_commit):
+def stage(source, armport, output, repository_commit, external=None):
+    """external: payloads the app installs from its external asset pack (0.13.x
+    apps). They are listed in the runtime manifest but not packaged; each must
+    match the pack manifest's pin and is neither required on disk nor copied."""
+    external = dict(external or {})
     package.require(re.fullmatch('[0-9a-f]{40}', repository_commit), 'Exact repository commit required')
     package.require(not output.exists(), 'Fresh app asset output required')
     runtime = json.loads((source / 'runtime-manifest.json').read_text())
     client = json.loads((source / 'client-manifest.json').read_text())
     package.require(runtime.get('format') == client.get('format') == 1
                     and client.get('scope') == 'actual_client_startup_guest', 'Existing client manifest required')
+    package.require(set(external) <= set(runtime['files']), 'External payload not in the runtime manifest')
     for name, expected in runtime['files'].items():
         package.require(re.fullmatch('[A-Za-z0-9_.-]+', name) and name not in ('.', '..'), 'Unsafe app payload')
         path = source / name
+        if name in external:
+            package.require(external[name] == expected and not path.exists(),
+                            'External asset-pack payload differs: ' + name)
+            continue
         package.require(path.is_file() and not path.is_symlink()
                         and pin(path) == expected, 'Donor app payload differs: ' + name)
     package.require(all(runtime['files'].get(name) == expected for name, expected in client['files'].items()),
@@ -110,6 +119,7 @@ def stage(source, armport, output, repository_commit):
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
                     'client_stdio.py': Path(__file__).with_name('client_stdio.py'),
+                    'server_metrics.py': Path(__file__).with_name('server_metrics.py'),
                     'character_creation_diagnostic.py': ROOT / 'android/guest/character_creation_diagnostic.py'}
     for name in set(client['files']) | set(GUEST_DEPENDENCIES):
         source_helper = ROOT / 'android/guest' / name
@@ -118,7 +128,7 @@ def stage(source, armport, output, repository_commit):
     output.mkdir(parents=True)
     # Ordinary copies keep the retained donor independent of future edits.
     for name in runtime['files']:
-        if name not in replacements and name != 'client-manifest.json':
+        if name not in replacements and name != 'client-manifest.json' and name not in external:
             shutil.copyfile(source / name, output / name)
     for name, path in replacements.items():
         if name == 'atlas_world_assets.py':

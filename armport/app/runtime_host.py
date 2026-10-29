@@ -23,7 +23,7 @@ spec.loader.exec_module(rfb)
 require = runtime.require
 
 
-def prepare(work, evidence, client, proot):
+def prepare(work, evidence, client, proot, link_source=None):
     require(platform.machine().lower() in ('aarch64', 'arm64'), 'ARM64 runner required')
     require(not work.exists(), 'Use a fresh runtime work directory')
     work.mkdir(mode=0o700)
@@ -51,7 +51,11 @@ def prepare(work, evidence, client, proot):
                 'assets': '/opt/coh', 'guest': '/opt/coh-guest', 'probe': '/opt/armport',
                 'wine': '/opt/wine', 'passwd': '/etc/passwd', 'group': '/etc/group',
                 'hosts': '/etc/hosts'}
-    for destination in (*bindings.values(), '/opt/armport-client'):
+    # The packaged stage exposes data as links to its source tree (the same
+    # case-merged view the app guest builds). Bind that source at its own path
+    # so the links resolve unchanged inside PRoot.
+    extra = [] if link_source is None else [str(link_source)]
+    for destination in (*bindings.values(), '/opt/armport-client', *extra):
         path = work / 'rootfs' / destination.lstrip('/')
         path.parent.mkdir(parents=True, exist_ok=True)
         if not destination.startswith('/etc/'):
@@ -60,6 +64,8 @@ def prepare(work, evidence, client, proot):
                '-i', '1000:1000', '-r', str(work / 'rootfs'), '-b', '/dev', '-b', '/proc', '-b', '/sys']
     for name, destination in bindings.items():
         command += ['-b', str(work / name) + ':' + destination]
+    for source in extra:
+        command += ['-b', source + ':' + source]
     command += ['-b', str(client) + ':/opt/armport-client', '-w', '/state', '/usr/bin/env', '-i',
                 'HOME=/state', 'USER=coh', 'LOGNAME=coh', 'PATH=/usr/local/bin:/usr/bin:/bin',
                 'LANG=C.UTF-8', 'TZ=UTC', 'TMPDIR=/tmp', 'PYTHONUNBUFFERED=1',
@@ -118,15 +124,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('client', 'proot', 'work', 'evidence'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--link-source', type=Path)
     args = parser.parse_args()
     client, proot, work, evidence = (getattr(args, n).resolve() for n in ('client', 'proot', 'work', 'evidence'))
+    link_source = args.link_source.resolve() if args.link_source else None
     require(not evidence.exists(), 'Use a fresh evidence directory')
     evidence.mkdir(parents=True)
     report = {'scope': 'armport_app_runtime_boot', 'passed': False, 'm4_complete': False}
     report['artifact_runs'] = {name: os.environ.get(name) for name in ('CLIENT_RUN_ID', 'DATA_RUN_ID')}
     process = None
     try:
-        command, report['runtime'] = prepare(work, evidence, client, proot)
+        command, report['runtime'] = prepare(work, evidence, client, proot, link_source)
         command, environment, expected = runtime.isolate_command(command, evidence=evidence, proot=proot, work=work)
         with (evidence / 'guest.log').open('wb') as log:
             process = subprocess.Popen(command, env=environment, stdout=log, stderr=subprocess.STDOUT)

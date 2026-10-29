@@ -1,40 +1,39 @@
 # COH-ArmPort status
 
-Updated 2026-10-26. M0 survey: merged (PR #3). Route: build the original client as an ARM64
-Windows program for the app's existing ARM64 Wine.
+Updated 2026-10-28 CDT. Branch armport/m5-thor; PR #8 remains draft, M5 unaccepted.
+Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
 
-M1 libraries: merged (PR #4, approved by Sol). The original textparser built
-for ARM64 reads bodyparts.bp and the shipped BodyParts.bin to 28 matching
-entries under the app's Wine. Details: armport/M1-REPORT.md.
-
-M2 client boots: merged (PR #5, approved by Sol; 43 patches, upstream/
-untouched). Details: armport/M2-REPORT.md.
-- CityOfHeroes.exe (ARM64 Windows) runs under the app's ARM64 Wine on Xvfb
-  and Mesa and shows the login screen with the game's own UI; still running
-  with no exceptions at 180 s (CI run 39742143066, screen in
-  armport/evidence/m2-login-screen.jpg).
-- Data bins built in CI by the OptDebug client; Cg compiled to ARB by cgc.exe.
-- 64-bit bugs fixed one by one as they stopped the client
-  (armport/notes/64BIT-AUDIT.md). Wine places a 64-bit program's memory above
-  4 GB (measured), so truncated pointers have to be fixed, not tolerated.
-- Reduced function: no ragdolls (PhysX), CgFX effects (SSAO, filters), runtime
-  DXT compression, SSE reported absent.
-
-CI data: the reviewed client asset bundle (release asset 588984151).
-M3 into Atlas: accepted (Sol 5659701771) and merge approved by the user; 106 patches.
-Claude leads,
-see armport/HANDOFF.md):
-- CI job server-run: the repository's qualified ARM64 game stack (original
-  DbServer and Atlas MapServer under the app's Wine 10/FEX, PostgreSQL, PRoot,
-  loopback-only network) plus the ARM64 client, login typed on Xvfb.
-- Run 39960894368: the ARM64 client logged in through its own UI, chose the
-  TestClient-created character and is connected on Atlas Park in the
-  database (loaded, map 1), still connected after the screenshots.
-- Fixes: SOCKET width (0044), version-check opt-in (0045), empty world groups (0047).
-- Reviewed-head replay 40321211800 passes partial scope; full state/M3 remain false.
-- Final head d7c072246: Atlas 40407492746 and replay 40407492734 pass. World
-  rendered (plaza/statue/dome), 0 after-load errors, still connected; ARM64 =
-  i686 partial state, equal error inventories. Reduced scope: completeness
-  flags false; textures incomplete (purple/flat surfaces), Android/Thor pending.
-- M4 (PR #7, armport/m4-runtime): 40176336731 passes guest continuity; rerun on the
-  merged M3 client pending. See armport/M4-REPORT.md. Android surface/Thor pending.
+- M0/M1/M2 merged (PRs #3/#4/#5); details: armport/M1-REPORT.md and M2-REPORT.md.
+- M3 merged (PR #6): final build 40407492746/replay 40407492734 passed partial
+  state scope; world rendered, completeness false, textures incomplete.
+- M4 app runtime accepted/merged (PR #7, review 5660940046); armport/M4-REPORT.md.
+- Last device-tested candidate: 0.13.44, APK run 40743596575/artifact 12840043807,
+  sha256 2cf80a03a0161fc42581147f0c75d8f22ea2ad93fc8884c9abab5c72388e5c1b.
+  Build 40724321192/requalification 40736589404 passed; review 5687848443 approved
+  that APK only. Retained 0.10 CI is not full 0.13.x runtime/device validation.
+- Thor results recorded by previous lead: combat, defeats, zoning, save work;
+  12–30 FPS (window mean 22.8); ~12 min warm startup, MapServer 9.5 min critical path.
+  King's Row NPC/car stutter remains; server contention is a hypothesis to measure.
+- Task A audit posted: PR #8 comment 6480628043; armport/notes/M5-ASTRA-ANALYSIS.md.
+  Sequencer “Reading” logs precede cache lookup: not proof of disk loads.
+  Java already knows ARM64; confirmed defect is manual/bounded interaction policy.
+- Claude-approved for Thor handoff (review 5692088051): 0.13.45/code 60 at 0bf31c81b,
+  build 40776745390 (8 jobs), requalification 40786315414 (4), APK 40791416254.
+  Artifact 12860779714; APK 80,919,462 bytes, sha256
+  1ff2252876def6cfeb28d33490d8c2f5d5952c330698d6a719fb67a2197b3959.
+  Host CPU/tick-counter telemetry, manual-session
+  acceptance correction, preservation of both Wine and cache cleanup failures.
+  No native/runtime-pin changes. Longest ticks/file-load/Wine request counts
+  remain unavailable until a separately qualified native producer is integrated.
+- Review P2: budget-edge PID discovery can starve the new zone; fix before next
+  candidate. P3: whole-registry observer copies exceed the cooperative budget.
+- Native 0119 timing producer held in isolated patchwork/server-metrics branch;
+  extracted ASan/UBSan controls pass, upstream negative fails as expected.
+  Packaging must preserve distinct retained 0.10 and Thor server ancestry.
+- Next: approved .45 baseline Thor test; sampler fixes in parallel with native
+  build 40805020119 at dd9d755bd. Runtime/APK chain held: comment 6486287635.
+- Remaining: prior-zone retirement, DbServer wait cost, ARM64 servers, persistent
+  folder cache, late data-stage launch, enhancement additions and cleanup proof.
+  Esync requires a proposal before changing the pinned runtime.
+- Reduced client features remain: no PhysX ragdolls, CgFX effects, runtime DXT.
+  No releases/protected-branch changes. See armport/M5-HANDOFF.md and M5-THOR-TEST.md.

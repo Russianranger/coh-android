@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Exercise architecture separation and malformed overlay rejection."""
+import os
 import json
 from pathlib import Path
 import struct
@@ -56,7 +57,7 @@ class ClientPackage(unittest.TestCase):
         self.assertEqual((source / 'bin/BodyParts.bin').read_bytes(), b'x86 bins')
         self.assertEqual(texture.read_bytes(), b'immutable asset')
         self.assertEqual(report['shared_data_files'], 1)
-        self.assertEqual(report['shared_data_bytes'], len(b'immutable asset'))
+        self.assertEqual(report['data_materialization'], 'case_merged_symlinks')
         self.assertGreaterEqual(report['data_copy_seconds'], 0)
         self.assertGreaterEqual(report['preparation_seconds'], report['data_copy_seconds'])
         self.assertFalse(report['x86_bins_reused'])
@@ -100,27 +101,146 @@ class ClientPackage(unittest.TestCase):
         (source / 'Maps/atlas.txt').write_bytes(b'definition')
         (source / 'maps').write_bytes(b'conflict')
         destination = self.root / 'arm64'
-        with self.assertRaisesRegex(ValueError, 'directory conflicts'):
+        with self.assertRaisesRegex(ValueError, 'directory conflicts|collides'):
             package.prepare(self.archive, source, destination)
         self.assertFalse(destination.exists())
 
-    def test_linked_server_input_becomes_private_regular_file_without_link_syscall(self):
+    def test_linked_server_input_is_exposed_by_symlink_without_copy_or_link_syscall(self):
         self.build()
         source = self.root / 'server-data'
-        source.mkdir()
+        (source / 'Maps').mkdir(parents=True)
         imported = self.root / 'immutable.texture'
         imported.write_bytes(b'original')
         (source / 'linked.texture').symlink_to(imported)
+        (source / 'Maps/atlas.txt').write_bytes(b'definition')
         destination = self.root / 'arm64'
-        # PRoot remaps hard links; the new stage must not rely on link().
-        with mock.patch.object(package.os, 'link', side_effect=AssertionError('link2symlink path')):
+        # PRoot remaps hard links; staging must not rely on link() or copy 8.5 GB.
+        with mock.patch.object(package.os, 'link', side_effect=AssertionError('link2symlink path')), \
+             mock.patch.object(package.shutil, 'copyfile', side_effect=AssertionError('data copy')):
             report = package.prepare(self.archive, source, destination)
         target = destination / 'data/linked.texture'
-        self.assertFalse(target.is_symlink())
+        self.assertTrue(target.is_symlink())
         self.assertEqual(target.read_bytes(), b'original')
-        target.write_bytes(b'client mutation')
-        self.assertEqual(imported.read_bytes(), b'original')
-        self.assertEqual(report['data_materialization'], 'private_regular_copies')
+        # A case-unique directory is one directory symlink, not per-file entries.
+        self.assertTrue((destination / 'data/Maps').is_symlink())
+        self.assertEqual((destination / 'data/Maps/atlas.txt').read_bytes(), b'definition')
+        self.assertEqual(report['data_materialization'], 'case_merged_symlinks')
+        self.assertEqual(report['linked_directories'], 1)
+        self.assertEqual(report['shared_data_files'], 2)
+
+    def test_nested_executable_fifo_or_dangling_link_in_linked_directory_refused(self):
+        # Sol review 5661731725 finding 2: a case-unique directory becomes one
+        # link, so its descendants must pass the per-file rules beforehand.
+        self.build()
+        for name, make, message in (
+                ('bad.exe', lambda path: path.write_bytes(b'MZ'), 'Executable'),
+                ('bad.DLL', lambda path: path.write_bytes(b'MZ'), 'Executable'),
+                ('bad.pipe', os.mkfifo, 'Nonregular'),
+                ('gone.texture', lambda path: path.symlink_to(path.with_name('missing')), 'Nonregular')):
+            with self.subTest(name=name):
+                source = self.root / ('server-data-' + name)
+                (source / 'models/deep').mkdir(parents=True)
+                (source / 'models/ok.geo').write_bytes(b'geometry')
+                make(source / 'models/deep' / name)
+                destination = self.root / ('arm64-' + name)
+                with self.assertRaisesRegex(ValueError, message):
+                    package.prepare(self.archive, source, destination)
+                self.assertFalse(destination.exists())
+
+    def test_validation_receipt_reused_only_while_every_directory_is_unchanged(self):
+        self.build()
+        imported = self.root / 'import'
+        (imported / 'tex').mkdir(parents=True)
+        (imported / 'tex/a.texture').write_bytes(b'a')
+        source = self.root / 'server-data'
+        (source / 'models/deep').mkdir(parents=True)
+        (source / 'models/deep/a.texture').symlink_to(imported / 'tex/a.texture')
+        (source / 'models/ok.geo').write_bytes(b'geometry')
+        runs = self.root / 'runs'
+        runs.mkdir()
+        def run(name):
+            return package.prepare(self.archive, source, runs / name)['data_validation']
+        first = run('one')
+        self.assertEqual((first['mode'], first['links_checked']), ('complete_link_check', 1))
+        with mock.patch.object(package.os, 'readlink', side_effect=AssertionError('link revisited')):
+            second = run('two')
+        self.assertEqual((second['mode'], second['links_checked']), ('unchanged_directory_receipt', 0))
+        # A new nested entry changes its directory's identity: full check, refused.
+        (source / 'models/deep/new.exe').write_bytes(b'MZ')
+        with self.assertRaisesRegex(ValueError, 'Executable'):
+            run('three')
+        (source / 'models/deep/new.exe').unlink()
+        self.assertEqual(run('four')['mode'], 'complete_link_check')
+        # Replacing a link target changes the target directory's identity.
+        (imported / 'tex/a.texture').unlink()
+        os.mkfifo(imported / 'tex/a.texture')
+        with self.assertRaisesRegex(ValueError, 'Nonregular'):
+            run('five')
+        self.assertFalse((runs / 'five').exists())
+
+    def test_chained_link_refused_so_cache_tracks_the_final_file(self):
+        # Sol review 5666568411 finding 1: source/a -> intermediate/alias -> real/a.
+        self.build()
+        real, middle = self.root / 'real', self.root / 'intermediate'
+        real.mkdir(); middle.mkdir()
+        (real / 'a.texture').write_bytes(b'a')
+        (middle / 'alias.texture').symlink_to(real / 'a.texture')
+        source = self.root / 'server-data'
+        (source / 'models').mkdir(parents=True)
+        (source / 'models/a.texture').symlink_to(middle / 'alias.texture')
+        with self.assertRaisesRegex(ValueError, 'Chained data link'):
+            package.prepare(self.archive, source, self.root / 'arm64')
+        self.assertFalse((self.root / 'arm64').exists())
+        self.assertFalse((self.root / package.VALIDATION_RECEIPT).exists())
+
+    def test_old_format_receipt_never_skips_the_one_hop_check(self):
+        # Sol review 5668344473: a format-1 record written by the previous code
+        # for a chained link must not be reused after the upgrade.
+        self.build()
+        real, middle = self.root / 'real', self.root / 'middle'
+        real.mkdir(); middle.mkdir()
+        (real / 'a.texture').write_bytes(b'a')
+        (middle / 'a.texture').symlink_to(real / 'a.texture')
+        source = self.root / 'server-data'
+        (source / 'models').mkdir(parents=True)
+        (source / 'models/a.texture').symlink_to(middle / 'a.texture')
+        runs = self.root / 'runs'
+        runs.mkdir()
+        resolved = source.resolve()
+        tree = []
+        for directory in (resolved, resolved / 'models'):
+            tree.append([directory.relative_to(resolved).as_posix(), *package.identity(directory)])
+        targets = [[str(middle), *package.identity(middle)]]
+        old = {'format': 1, 'source': str(resolved), 'tree': package.identity_digest(sorted(tree)),
+               'links': 1, 'target_directories': [str(middle)], 'targets': package.identity_digest(targets)}
+        (runs / package.VALIDATION_RECEIPT).write_text(json.dumps(old))
+        (real / 'a.texture').unlink()
+        os.mkfifo(real / 'a.texture')
+        with self.assertRaisesRegex(ValueError, 'Nonregular|Chained data link'):
+            package.prepare(self.archive, source, runs / 'upgraded')
+        self.assertFalse((runs / 'upgraded').exists())
+        # The same record with the current format and policy would be accepted,
+        # so the refusal above comes from the format/policy gate.
+        current = dict(old, format=package.VALIDATION_FORMAT, policy=package.VALIDATION_POLICY)
+        (runs / package.VALIDATION_RECEIPT).write_text(json.dumps(current))
+        (real / 'a.texture').unlink()
+        (real / 'a.texture').write_bytes(b'a')
+        targets = [[str(middle), *package.identity(middle)]]
+        current['targets'] = package.identity_digest(targets)
+        (runs / package.VALIDATION_RECEIPT).write_text(json.dumps(current))
+        report = package.prepare(self.archive, source, runs / 'current-format')
+        self.assertEqual(report['data_validation']['mode'], 'unchanged_directory_receipt')
+
+    def test_linked_directory_refused(self):
+        self.build()
+        elsewhere = self.root / 'elsewhere'
+        elsewhere.mkdir()
+        source = self.root / 'server-data'
+        (source / 'models').mkdir(parents=True)
+        (source / 'models/linked').symlink_to(elsewhere, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'Linked data directory'):
+            package.prepare(self.archive, source, self.root / 'arm64')
+        self.assertFalse((self.root / 'arm64').exists())
 
     def test_corrupt_payload(self):
         self.build()

@@ -8,7 +8,7 @@ on:
   push:
     # Isolated replay iterations run their own ARM64/i686 execution workflow;
     # M4 qualifies with armport-app-runtime, not the inherited M3 stack.
-    branches: ['armport/**', '!armport/replay-*', '!armport/m4-runtime', 'COH-ArmPort']
+    branches: ['armport/**', '!armport/replay-*', '!armport/m4-runtime', '!armport/m5-thor', 'COH-ArmPort']
     paths:
       - 'armport/**'
       - '!armport/survey/**'
@@ -301,8 +301,10 @@ jobs:
             /upstream/i24/data/defs/ui/bodyparts.bp
             /native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
             /android/runtime-lock.json
-            /android/guest/diagnostic.py
-            /tools/android/interactive/test_client_render_queue_worker.py
+            /android/guest/
+            /android/interactive/src/
+            /tools/android/
+            /tools/*.py
             /.github/
           sparse-checkout-cone-mode: false
           lfs: false
@@ -314,9 +316,8 @@ jobs:
 
       - name: Check bounded M3 diagnostic reporting
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends imagemagick
-          python3 -m unittest discover -s armport/tests -p 'test_*.py' -v
+          armport/scripts/step.sh "ArmPort test apt" bash -c 'sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends imagemagick'
+          armport/scripts/step.sh "ArmPort unit tests" python3 -m unittest discover -s armport/tests -p 'test_*.py'
 
       - name: Install llvm-mingw (aarch64 host)
         run: |
@@ -362,6 +363,57 @@ jobs:
         run: |
           python3 armport/tests/smf_selection_boundary.py --source "$RUNNER_TEMP/armport/src"
           python3 armport/tests/smf_plain_selection.py --source "$RUNNER_TEMP/armport/src"
+
+      - name: Frame-rate log uses the CRT stdout stream (patch 0114)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort frame-rate log CRT" python3 armport/tests/frame_rate_log_crt.py --source "$RUNNER_TEMP/armport/src")
+          echo "::notice title=ArmPort frame-rate log CRT::$out"
+
+      - name: VBO stream rebase keeps 64-bit pointers (patch 0112)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort VBO rebase" python3 armport/tests/vbo_rebase.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/vbo_rebase.py --source "$RUNNER_TEMP/armport/src" --original > "$RUNNER_TEMP/vbo-original.txt" 2>&1; then
+            echo "::error title=ArmPort VBO rebase::the original int rebase unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort VBO rebase::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/vbo-original.txt")"
+
+      - name: Message-store variadic slots are 8 bytes on 64-bit Windows (patch 0115)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort message-store slots" python3 armport/tests/message_store_slots.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/message_store_slots.py --source "$RUNNER_TEMP/armport/src" --original > "$RUNNER_TEMP/slots-original.txt" 2>&1; then
+            echo "::error title=ArmPort message-store slots::the original 4-byte slots unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort message-store slots::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/slots-original.txt")"
+
+      - name: Message-store definition indices are pointer-sized (patch 0117)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort message-store indices" python3 armport/tests/message_store_indices.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/message_store_indices.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/indices-original.txt" 2>&1; then
+            echo "::error title=ArmPort message-store indices::the original int-width indices unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort message-store indices::patched: $out%0Aoriginal: $(head -1 "$RUNNER_TEMP/indices-original.txt")"
+
+      - name: Ragdoll packets without PhysX stay in sync and never use a NULL ragdoll (patch 0118)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort ragdoll without physics" python3 armport/tests/ragdoll_without_physics.py --source "$RUNNER_TEMP/armport/src")
+          if python3 armport/tests/ragdoll_without_physics.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/ragdoll-original.txt" 2>&1; then
+            echo "::error title=ArmPort ragdoll without physics::the original NULL-ragdoll path unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort ragdoll without physics::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/ragdoll-original.txt")"
+
+      - name: Render worker hand-off with spin-before-sleep under TSan (patch 0116)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort worker spin" python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src")
+          base=$(python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src" --no-spin)
+          control=$(python3 armport/tests/worker_spin.py --source "$RUNNER_TEMP/armport/src" --plain-counters) || {
+            echo "::error title=ArmPort worker spin::plain (non-atomic) counters were not reported by TSan: $control"; exit 1; }
+          echo "::notice title=ArmPort worker spin::patched: $out%0Awithout polling: $base%0Anegative control: $control"
+
+      - name: SMF anchor indices keep 64-bit anchors for the pass (patch 0110)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort SMF anchor indices" python3 armport/tests/smf_anchor_tokens.py --source "$RUNNER_TEMP/armport/src")
+          echo "$out"
+          echo "::notice title=ArmPort SMF anchor indices::$out"
 
       - name: Power preview respects the deferred menu transition
         run: |
@@ -558,11 +610,14 @@ jobs:
           done < <(awk 'NR%6==1{if(buf)print buf;buf=$0;next}{buf=buf"%0A"$0}END{if(buf)print buf}' errors.txt | head -8)
 
   client:
+    # Keep compiler jobs serialized: libraries, then each client configuration.
+    needs: libraries
     # M2: compile and link CityOfHeroes.exe for ARM64 Windows. Release is the
     # client that ships; OptDebug (non-FINAL) is the configuration upstream
     # uses to build the data bins (-createbins), which FINAL builds cannot do.
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         config: [Release, OptDebug]
     runs-on: ubuntu-24.04-arm
@@ -827,7 +882,7 @@ jobs:
           python3 armport/scripts/smoke_run.py --build "$RUNNER_TEMP/client-bin" \
             --data upstream/i24/data --data "$RUNNER_TEMP/assets" --data "$RUNNER_TEMP/client-bins" \
             --runtime "$RUNNER_TEMP/runtime" --wine /opt/wine/bin --llvm-mingw /opt/llvm-mingw --cg-dir "$RUNNER_TEMP/cg-arb" \
-            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive --login-probe
+            --requests-out "$RUNNER_TEMP/cg-requests-2" --require-alive --login-probe --require-fps-log
       - name: Export the last screen
         if: always()
         run: |

@@ -568,7 +568,7 @@ public final class ClientRuntime {
         begin(reopen ? "character_reopen" : "character_creation", selectedSession);
         clientArchitectureRequested=clientArchitecture(context);
         graphicsProfileRequested="arm64".equals(clientArchitectureRequested)?"standard":performanceGraphicsEnabled(context)?"performance":"standard";
-        gpuProfileRequested="arm64".equals(clientArchitectureRequested)?"software":gpuProfileEnabled(context);
+        gpuProfileRequested=gpuProfileEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -814,7 +814,7 @@ public final class ClientRuntime {
         return true;
     }
     private boolean zoningEnabled() {
-        return !"arm64".equals(clientArchitectureRequested) && reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
+        return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
                 && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
     }
     public synchronized String zoningStatus() {
@@ -1429,6 +1429,56 @@ public final class ClientRuntime {
         long value = ((Number)raw).longValue();
         return value < 0 || value > maximum ? -1 : value;
     }
+    // Delivered RFB frames per 5-second window from the first frame, bounded to
+    // one hour; with the native ARMPORT_FRAME_RATE_V1 lines this separates the
+    // game's own rate from the presentation path.
+    private static final int PRESENTATION_WINDOW_MS = 5000, MAX_PRESENTATION_WINDOWS = 720;
+    private final List<Integer> presentationWindows = new ArrayList<>();
+    private long presentationWindowStart = -1;
+    private int presentationWindowFrames;
+    private synchronized void recordPresentedFrame(long now) {
+        if (presentationWindowStart < 0) presentationWindowStart = now;
+        while (now - presentationWindowStart >= PRESENTATION_WINDOW_MS
+                && presentationWindows.size() < MAX_PRESENTATION_WINDOWS) {
+            presentationWindows.add(presentationWindowFrames);
+            presentationWindowFrames = 0;
+            presentationWindowStart += PRESENTATION_WINDOW_MS;
+        }
+        presentationWindowFrames++;
+    }
+    private long retainedRects, retainedReadNanosSum, retainedReadNanosMax, retainedConvertNanosSum, retainedConvertNanosMax;
+    // The most recent decoder, kept after closeReceiver() drops `decoder`. Only
+    // its receiver thread retires its totals, after run() has stopped writing
+    // them; until then the report adds its live totals and says they are partial.
+    private volatile InteractiveRfbClient lastDecoder;
+    /** Moves a stopped decoder's totals into session state exactly once. */
+    private synchronized void retainDecoderTotals(InteractiveRfbClient retiring) {
+        if (retiring == null || !retiring.retireTotals()) return;
+        retainedRects += retiring.decodedRects();
+        retainedReadNanosSum += retiring.readNanosSum(); retainedConvertNanosSum += retiring.convertNanosSum();
+        retainedReadNanosMax = Math.max(retainedReadNanosMax, retiring.readNanosMax());
+        retainedConvertNanosMax = Math.max(retainedConvertNanosMax, retiring.convertNanosMax());
+    }
+    private synchronized Map<String,Object> presentationTiming() {
+        Map<String,Object> result = new LinkedHashMap<>();
+        result.put("format", 1); result.put("window_ms", PRESENTATION_WINDOW_MS);
+        result.put("delivered_frames_per_window", new ArrayList<>(presentationWindows));
+        result.put("windows_limit_reached", presentationWindows.size() >= MAX_PRESENTATION_WINDOWS);
+        long rects = retainedRects, readSum = retainedReadNanosSum, readMax = retainedReadNanosMax,
+            convertSum = retainedConvertNanosSum, convertMax = retainedConvertNanosMax;
+        InteractiveRfbClient current = lastDecoder;
+        boolean live = current != null && !current.totalsRetired();
+        if (live) {
+            rects += current.decodedRects(); readSum += current.readNanosSum(); convertSum += current.convertNanosSum();
+            readMax = Math.max(readMax, current.readNanosMax()); convertMax = Math.max(convertMax, current.convertNanosMax());
+        }
+        result.put("rfb_totals_final", !live);
+        result.put("rfb_decoded_rectangles", rects);
+        result.put("rfb_read_ms_sum", readSum / 1000000); result.put("rfb_read_ms_max", readMax / 1000000);
+        result.put("rfb_convert_ms_sum", convertSum / 1000000); result.put("rfb_convert_ms_max", convertMax / 1000000);
+        result.put("scope", "Delivered RFB frames per window; Raw read (socket wait plus copy) and pixel conversion time, retained across receiver teardown; displayed-frame render totals are in each surface capture record.");
+        return result;
+    }
     private synchronized Map<String,Object> captureDiagnostics() {
         Map<String,Object> result = new LinkedHashMap<>();
         result.put("format", 1); result.put("captures_observed", captureTimingCount);
@@ -1701,9 +1751,13 @@ public final class ClientRuntime {
                     decoder = new InteractiveRfbClient(candidate.getInputStream(), candidate.getOutputStream(), (pixels, width, height, sequence) -> {
                         if (closingReceiver || cancelled) return;
                         decodedFrames++; frameWidth = width; frameHeight = height;
+                        recordPresentedFrame(SystemClock.uptimeMillis());
                         listener.onFrame(pixels, width, height, sequence);
                     });
-                    decoder.run(); return;
+                    InteractiveRfbClient running = decoder;
+                    lastDecoder = running;
+                    try { running.run(); } finally { retainDecoderTotals(running); }
+                    return;
                 } catch (IOException e) {
                     try { candidate.close(); } catch (IOException ignored) {}
                     if (socket == candidate) {
@@ -1733,7 +1787,10 @@ public final class ClientRuntime {
     private void closeReceiver() {
         LocalSocket active = socket; socket = null;
         if (active != null) try { active.close(); } catch (IOException ignored) {}
-        InteractiveRfbClient activeDecoder = decoder; decoder = null;
+        // Totals are retired by the receiver thread once run() stops (see
+        // receiveFrames); lastDecoder keeps them reportable meanwhile.
+        InteractiveRfbClient activeDecoder = decoder;
+        decoder = null;
         if (activeDecoder != null) try { activeDecoder.close(); } catch (IOException ignored) {}
     }
     private static void join(Thread thread, long millis) {
@@ -2141,7 +2198,7 @@ public final class ClientRuntime {
         JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(interactionStage);
         if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
                 || !imported.dataCommit.equals(inputs.optString("data_commit"))
-                || !Boolean.TRUE.equals(startup.opt("bounded_live_observation"))) return false;
+                || !ClientAcceptance.clientInteractionPolicyAccepted(jsonValue(startup), reopen)) return false;
         JSONArray screenshots = report.optJSONArray("screenshots");
         if (screenshots == null || screenshots.length() != 3) return false;
         Set<String> actualCaptures = new HashSet<>();
@@ -2324,6 +2381,7 @@ public final class ClientRuntime {
             if (receiverFailure != null) wrapper.put("receiver_error", receiverFailure);
             synchronized (this) {
                 wrapper.put("android_capture_diagnostics", new JSONObject(captureDiagnostics()));
+                wrapper.put("presentation_timing", new JSONObject(presentationTiming()));
                 wrapper.put("surface_captures", new JSONArray(surfaceSamples));
                 wrapper.put("login_captures", new JSONArray(loginSamples));
                 wrapper.put("character_captures", new JSONArray(characterSamples));

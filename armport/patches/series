@@ -104,3 +104,15 @@
 0104-turnstile-force-queue-name-bounds.patch
 0105-bounded-world-ui-state.patch
 0106-replay-entreceiveupdate-retained-state.patch
+0107-armport-window-title-with-pid.patch
+0108-armport-quiet-device-zone-trace.patch
+0109-armport-texture-header-index.patch
+0110-armport-smf-anchor-tokens.patch
+0111-armport-folder-cache-timing-fixed-data.patch
+0112-armport-vbo-rebase-pointer-width.patch
+0113-armport-gameplay-fps-profile.patch
+0114-armport-frame-rate-log.patch
+0115-armport-message-store-vararg-slots.patch
+0116-armport-worker-spin-before-sleep.patch
+0117-armport-message-store-index-width.patch
+0118-armport-ragdoll-without-physics.patch

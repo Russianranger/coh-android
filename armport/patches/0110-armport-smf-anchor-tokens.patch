@@ -1,0 +1,165 @@
+diff --git a/Game/src/formatter/smf_interact.c b/Game/src/formatter/smf_interact.c
+index 817d21a..9cee5fd 100644
+--- a/Game/src/formatter/smf_interact.c
++++ b/Game/src/formatter/smf_interact.c
+@@ -2406,7 +2406,7 @@ static void smf_InteractWithSMBlock(SMBlock *pBlock, TextAttribs *pattrs, int iX
+             {
+                 // Although tracked, multiply nested anchors are ignored. Always use
+                 // the first anchor if available.
+-                pAnchor = (SMAnchor *)pattrs->piAnchor[1];
++                pAnchor = (SMAnchor *)smf_AnchorFromToken(pattrs, pattrs->piAnchor[1]);
+ 
+                 if (mouseClickHit(&box, MS_LEFT))
+                 {
+diff --git a/Game/src/formatter/smf_main.c b/Game/src/formatter/smf_main.c
+index 0cdeb19..b84586a 100644
+--- a/Game/src/formatter/smf_main.c
++++ b/Game/src/formatter/smf_main.c
+@@ -849,6 +849,7 @@ void smf_DestroyTextAttribs(TextAttribs *pattrs)
+         eaiDestroy(&pattrs->piFace);
+         eaiDestroy(&pattrs->piFont);
+         eaiDestroy(&pattrs->piAnchor);
++        eaDestroy(&pattrs->ppvAnchors); // ArmPort
+         eaiDestroy(&pattrs->piLink);
+         eaiDestroy(&pattrs->piLinkBG);
+         eaiDestroy(&pattrs->piLinkHover);
+@@ -944,6 +945,8 @@ void smf_InitTextAttribs(TextAttribs *pattrs, TextAttribs *pdefaults)
+         eaiSetSize(&pattrs->piFace,            0);
+         eaiSetSize(&pattrs->piFont,            0);
+         eaiSetSize(&pattrs->piAnchor,            0);
++        if (pattrs->ppvAnchors)
++            eaSetSize(&pattrs->ppvAnchors, 0); // ArmPort: indices restart with the stacks
+         eaiSetSize(&pattrs->piLink,            0);
+         eaiSetSize(&pattrs->piLinkBG,            0);
+         eaiSetSize(&pattrs->piLinkHover,        0);
+@@ -965,7 +968,7 @@ void smf_InitTextAttribs(TextAttribs *pattrs, TextAttribs *pdefaults)
+     eaiPush(&pattrs->piScale,            (int)pdefaults->piScale);
+     eaiPush(&pattrs->piFace,            smf_FaceToken(pdefaults->piFace)); // ArmPort: token, not the pointer
+     eaiPush(&pattrs->piFont,            (int)pdefaults->piFont);
+-    eaiPush(&pattrs->piAnchor,        (int)pdefaults->piAnchor);
++    eaiPush(&pattrs->piAnchor,        smf_AnchorToken(pattrs, pdefaults->piAnchor)); // ArmPort: index, not the pointer
+     eaiPush(&pattrs->piLink,            (int)pdefaults->piLink);
+     eaiPush(&pattrs->piLinkBG,        (int)pdefaults->piLinkBG);
+     eaiPush(&pattrs->piLinkHover,        (int)pdefaults->piLinkHover);
+diff --git a/Game/src/formatter/smf_render.c b/Game/src/formatter/smf_render.c
+index 7ca40ef..e6aabf3 100644
+--- a/Game/src/formatter/smf_render.c
++++ b/Game/src/formatter/smf_render.c
+@@ -199,7 +199,7 @@ static void smf_RenderTextAndWhitespace(SMBlock *pBlock, TextAttribs *pattrs, in
+     // Always use the first anchor if available.
+     if(eaiSize(&pattrs->piAnchor) > 1 && s_bAllowAnchor)
+     {
+-        pAnchor = (SMAnchor *)pattrs->piAnchor[1];
++        pAnchor = (SMAnchor *)smf_AnchorFromToken(pattrs, pattrs->piAnchor[1]);
+     }
+ 
+     if (TAG_MATCHES(sm_text))
+@@ -546,7 +546,7 @@ static void smf_RenderImage(SMBlock *pBlock, TextAttribs *pattrs, int iXBase, in
+     // the first anchor if available.
+     if(eaiSize(&pattrs->piAnchor) > 1 && s_bAllowAnchor)
+     {
+-        pAnchor = (SMAnchor *)pattrs->piAnchor[1];
++        pAnchor = (SMAnchor *)smf_AnchorFromToken(pattrs, pattrs->piAnchor[1]);
+     }
+ 
+     if(pAnchor)
+@@ -795,7 +795,7 @@ static void smf_RenderTableRow(SMBlock *pBlock, TextAttribs *pattrs, int iXBase,
+     // the first anchor if available.
+     if(eaiSize(&pattrs->piAnchor) > 1 && s_bAllowAnchor)
+     {
+-        pAnchor = (SMAnchor *)pattrs->piAnchor[1];
++        pAnchor = (SMAnchor *)smf_AnchorFromToken(pattrs, pattrs->piAnchor[1]);
+     }
+ 
+     if(prow->iHighlight)
+@@ -870,7 +870,7 @@ static void smf_RenderTableDataAndSpan(SMBlock *pBlock, TextAttribs *pattrs, int
+     // the first anchor if available.
+     if(eaiSize(&pattrs->piAnchor) > 1 && s_bAllowAnchor)
+     {
+-        pAnchor = (SMAnchor *)pattrs->piAnchor[1];
++        pAnchor = (SMAnchor *)smf_AnchorFromToken(pattrs, pattrs->piAnchor[1]);
+     }
+ 
+     if(pBlock->bgcolor && pBlock->bgcolor != 0x000000ff )
+diff --git a/Game/src/formatter/smf_select.c b/Game/src/formatter/smf_select.c
+index a83136b..ed97a07 100644
+--- a/Game/src/formatter/smf_select.c
++++ b/Game/src/formatter/smf_select.c
+@@ -462,7 +462,7 @@ void smf_Select(SMBlock *pBlock, TextAttribs *pattrs, int iXBase, int iYBase, in
+         {
+             // Although tracked, multiply nested anchors are ignored. Always use
+             // the first anchor if available.
+-            pAnchor = (SMAnchor *)pattrs->piAnchor[1];
++            pAnchor = (SMAnchor *)smf_AnchorFromToken(pattrs, pattrs->piAnchor[1]);
+             if (pBlock->bHover)
+             {
+                 pAnchor->bHover = true;
+diff --git a/Game/src/formatter/smf_util.c b/Game/src/formatter/smf_util.c
+index e4c511a..5d243ad 100644
+--- a/Game/src/formatter/smf_util.c
++++ b/Game/src/formatter/smf_util.c
+@@ -699,6 +699,8 @@ void smf_PushAttrib(SMBlock *pBlock, TextAttribs *pattr)
+         // token for it (smf_FaceToken), not the pointer, which is 64 bits.
+         if(pBlock->iType==kFormatTags_Face)
+             eaiPush(&ppi[pBlock->iType], smf_FaceToken(pBlock->pv));
++        else if(pBlock->iType==kFormatTags_Anchor)
++            eaiPush(&ppi[pBlock->iType], smf_AnchorToken(pattr, pBlock->pv));
+         else
+             eaiPush(&ppi[pBlock->iType], *(int *)(&pBlock->pv));
+     }
+@@ -741,6 +743,32 @@ void *smf_FaceFromToken(int token)
+     return s_apvFaces[token-1];
+ }
+ 
++/**********************************************************************func*
++* smf_AnchorToken / smf_AnchorFromToken
++*
++* ArmPort: the anchor stack held SMAnchor pointers cast to int; on 64-bit a
++* heap anchor above 2 GB came back sign-extended (Thor fault reading
++* FFFFFFFFA3E25370 in smf_RenderTextAndWhitespace). Each attribute set keeps
++* the pointers in its own pointer earray and the int stack holds 1-based
++* indices into it. Entries are only appended while the set is in use and are
++* cleared with the stacks (smf_InitTextAttribs) or destroyed with the set, so
++* an index stays bound to its anchor for as long as any stack can hold it.
++*/
++int smf_AnchorToken(TextAttribs *pattr, void *pv)
++{
++    if(!pv || !pattr)
++        return 0;
++    eaPush(&pattr->ppvAnchors, pv);
++    return eaSize(&pattr->ppvAnchors);
++}
++
++void *smf_AnchorFromToken(TextAttribs *pattr, int token)
++{
++    if(!pattr || token<=0 || token>eaSize(&pattr->ppvAnchors))
++        return NULL;
++    return pattr->ppvAnchors[token-1];
++}
++
+ /**********************************************************************func*
+ * smf_PopAttrib
+ *
+diff --git a/Game/src/formatter/smf_util.h b/Game/src/formatter/smf_util.h
+index 7c1c24a..dbc1a37 100644
+--- a/Game/src/formatter/smf_util.h
++++ b/Game/src/formatter/smf_util.h
+@@ -506,6 +506,9 @@ typedef struct TextAttribs
+     int *piLinkSelectBG;
+     int *piOutline;
+     int *piShadow;
++    // ArmPort: width-correct anchor pointers for this attribute set; the
++    // piAnchor stack holds 1-based indices into it (0 is NULL). Not a tag.
++    void **ppvAnchors;
+ } TextAttribs;
+ 
+ typedef enum FormatTags
+@@ -573,6 +576,8 @@ int smf_PopAttrib(SMBlock *pBlock, TextAttribs *pattr);
+ int smf_PopAttribInt(int idx, TextAttribs *pattr);
+ int smf_FaceToken(void *pv);          // ArmPort: face pointer -> int stack token
+ void *smf_FaceFromToken(int token);   // ArmPort: token -> face pointer
++int smf_AnchorToken(TextAttribs *pattr, void *pv);        // ArmPort: SMAnchor pointer -> index in pattr
++void *smf_AnchorFromToken(TextAttribs *pattr, int token); // ArmPort: index in pattr -> SMAnchor pointer
+ bool smf_ApplyFormatting(SMBlock *pBlock, TextAttribs *pattrs);
+ void smf_MakeFont(TTDrawContext **ppttFont, TTFontRenderParams *prp, TextAttribs *pattrs);
+ float* smf_GetCharacterWidths(SMBlock *pBlock, TextAttribs *pattrs);

@@ -98,7 +98,7 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
         clientArchitecture.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"x86 client", "ARM64 client (Atlas)"}));
+                new String[]{"x86 client", "ARM64 client (experimental)"}));
         clientArchitecture.setSelection("arm64".equals(ClientRuntime.clientArchitecture(this))?1:0);
         clientArchitecture.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override public void onItemSelected(AdapterView<?> parent,View view,int position,long id){
@@ -107,7 +107,7 @@ public final class ClientActivity extends Activity {
             @Override public void onNothingSelected(AdapterView<?> parent){}
         });
         controls.addView(clientArchitecture);
-        controls.addView(text("ARM64 uses Software rendering and standard graphics. Return the saved character to Atlas with x86 before switching; ARM64 zone travel is not yet available.",12,false));
+        controls.addView(text("ARM64 uses standard graphics and the renderer selected below (GPU test falls back to Software if its checks fail). Saved-character reopen and supported monorail travel are available; ARM64 remains experimental.",12,false));
         controls.addView(text("Renderer for next launch",12,true));
         gpuProfile=new Spinner(this);
         ArrayAdapter<String> gpuChoices=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,

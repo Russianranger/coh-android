@@ -122,6 +122,198 @@ def unpack(archive_path, destination):
     return document
 
 
+
+VALIDATION_RECEIPT = 'armport-data-validation.json'
+# Format 2 = one-hop links (final file in the recorded directory). Records of
+# any other format or policy, such as format 1 written before that check,
+# never skip validation.
+VALIDATION_FORMAT, VALIDATION_POLICY = 2, 'one_hop_regular_link_targets'
+
+
+def identity(path):
+    info = os.stat(path)
+    return [info.st_dev, info.st_ino, info.st_mtime_ns, info.st_ctime_ns]
+
+
+def identity_digest(records):
+    return hashlib.sha256(json.dumps(records, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
+def validate_links(source_data, links, tree, receipt):
+    """Per-file rules for linked entries, reused while no directory changed.
+
+    Real files, directories and special files are classified by the walk from
+    d_type. Linked files need a stat of their target: 212k stats under PRoot
+    took 111 s on Thor. A passed full check records the identity (device,
+    inode, mtime, ctime) of every source directory and of each directory the
+    links point into. Adding, removing, renaming or replacing any entry changes
+    its directory's identity, so a later identical record proves the same
+    validated entries without visiting them; anything else rechecks all links.
+    """
+    if receipt is not None and receipt.is_file() and not receipt.is_symlink():
+        try:
+            saved = json.loads(receipt.read_text())
+            if (saved.get('format') == VALIDATION_FORMAT and saved.get('policy') == VALIDATION_POLICY
+                    and saved.get('source') == str(source_data)
+                    and saved.get('tree') == tree and saved.get('links') == len(links)):
+                targets = [[name, *identity(name)] for name in saved['target_directories']]
+                if identity_digest(targets) == saved.get('targets'):
+                    return {'mode': 'unchanged_directory_receipt', 'links_checked': 0,
+                            'target_directories': len(targets)}
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
+    directories = set()
+    for path in links:
+        try:
+            info = os.stat(path)
+        except OSError:
+            info = None
+        mode = info.st_mode if info else 0
+        require(not stat.S_ISDIR(mode), 'Linked data directory refused')
+        require(stat.S_ISREG(mode), 'Nonregular app data')
+        # One hop only (the app worktree links straight to verified imports):
+        # the recorded directory must hold the final file, or a later change
+        # at the end of a chain would not change any recorded identity.
+        target = os.path.join(os.path.dirname(path), os.readlink(path))
+        try:
+            final = os.lstat(target)
+        except OSError:
+            final = None
+        require(final is not None and stat.S_ISREG(final.st_mode)
+                and (final.st_dev, final.st_ino) == (info.st_dev, info.st_ino),
+                'Chained data link refused')
+        directories.add(os.path.dirname(target))
+    names = sorted(directories)
+    targets = [[name, *identity(name)] for name in names]
+    if receipt is not None:
+        pending = receipt.with_name(receipt.name + '.pending')
+        pending.write_text(json.dumps({'format': VALIDATION_FORMAT, 'policy': VALIDATION_POLICY,
+            'source': str(source_data), 'tree': tree,
+            'links': len(links), 'target_directories': names, 'targets': identity_digest(targets)}))
+        pending.replace(receipt)
+    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names)}
+
+
+def merge_links(source_data, target_root, receipt=None):
+    """Expose the verified app data under one case-insensitive view, by symlink.
+
+    Wine resolves Windows paths case-insensitively, so case-alias directories
+    (Maps/ and maps/) must be merged. Merged directories are real here;
+    everything else is a single symlink to its source directory or file. The
+    top-level bin/ is excluded: the ARM64 overlay owns it. Copying 8.5 GB per
+    launch (0.13.37 on Thor: 419 s) is replaced by a walk of directory names.
+    Every descendant passes the per-file rules before any link is published.
+    """
+    source_data = source_data.resolve()
+    # casefold relative directory -> actual relative paths (aliases).
+    aliases, total = {}, 0
+    conflicts = set()
+    tree, links = [], []
+    pending = [source_data]
+    while pending:
+        directory = pending.pop()
+        relative = directory.relative_to(source_data)
+        tree.append([relative.as_posix(), *identity(directory)])
+        with os.scandir(directory) as scan:
+            entries = sorted(scan, key=lambda entry: entry.name)
+        dirs, files = [], []
+        for entry in entries:
+            if entry.is_symlink():
+                links.append(entry.path)
+                files.append(entry.name)
+            elif entry.is_dir(follow_symlinks=False):
+                if relative == Path('.') and entry.name.casefold() == 'bin':
+                    continue
+                dirs.append(entry.name)
+            else:
+                require(entry.is_file(follow_symlinks=False), 'Nonregular app data')
+                files.append(entry.name)
+        for name in files:
+            require(Path(name).suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
+        for name in dirs:
+            aliases.setdefault((relative / name).as_posix().casefold(), []).append(relative / name)
+            pending.append(directory / name)
+        total += len(files)
+        names = [name.casefold() for name in files] + [name.casefold() for name in dirs]
+        if len(names) != len(set(names)):
+            # File case aliases or file/directory clashes: merge here so the
+            # per-entry checks below reject them explicitly.
+            conflicts.add(relative.as_posix().casefold() if relative != Path('.') else '')
+    validation = validate_links(source_data, links, identity_digest(sorted(tree)), receipt)
+    conflicts |= {key for key, paths in aliases.items() if len(paths) > 1}
+    dirty = {''}
+    for key in conflicts:
+        if not key:
+            continue
+        parts = key.split('/')
+        for i in range(1, len(parts) + 1):
+            dirty.add('/'.join(parts[:i]))
+    stats = {'directories': 0, 'file_links': 0, 'merged': 0, 'files': 0}
+
+    def populate(sources, target, key):
+        # sources: actual source directories merged into target (a real dir).
+        index = {child.name.casefold(): child for child in target.iterdir()}
+        children = {}
+        for source in sources:
+            for child in sorted(source.iterdir(), key=lambda p: p.name):
+                ckey = child.name.casefold()
+                if not key and ckey == 'bin' and child.is_dir() and not child.is_symlink():
+                    continue
+                if child.is_dir() and not child.is_symlink():
+                    children.setdefault(ckey, []).append(child)
+                    continue
+                require(child.is_file(), 'Nonregular app data')
+                require(child.suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
+                require(ckey not in index and ckey not in children,
+                        'Data collides with ARM64 overlay or case alias')
+                link = target / child.name
+                os.symlink(child, link)
+                index[ckey] = link
+                stats['file_links'] += 1
+        for ckey, dirs in sorted(children.items()):
+            child_key = (key + '/' + ckey) if key else ckey
+            existing = index.get(ckey)
+            if child_key in dirty or existing is not None:
+                if existing is None:
+                    existing = target / dirs[0].name
+                    existing.mkdir()
+                    index[ckey] = existing
+                require(existing.is_dir() and not existing.is_symlink(),
+                        'ARM64 data directory conflicts with existing entry')
+                stats['merged'] += 1
+                populate(dirs, existing, child_key)
+            else:
+                require(len(dirs) == 1, 'Unmerged case alias')
+                link = target / dirs[0].name
+                os.symlink(dirs[0], link, target_is_directory=True)
+                index[ckey] = link
+                stats['directories'] += 1
+
+    target_root.mkdir(exist_ok=True)
+    populate([source_data], target_root, '')
+    stats['files'] = total
+    stats['validation'] = validation
+    return stats
+
+
+def walk_links(root):
+    """Every entry of the real (merged) directories of the view, by d_type.
+
+    Linked directories are not followed: each is one case-unique source
+    directory whose names merge_links already checked casefold-unique (any
+    alias or file/directory clash makes its parent a merged real directory).
+    Following them stat'ed all 173k linked files (about 60 s on Thor).
+    """
+    pending = [Path(root)]
+    while pending:
+        directory = pending.pop()
+        with os.scandir(directory) as scan:
+            for entry in scan:
+                path = Path(entry.path)
+                yield path
+                if entry.is_dir(follow_symlinks=False):
+                    pending.append(path)
+
 def prepare(archive, source_data, destination):
     """Clone only data, then install ARM64 bins. Binary roots never overlap."""
     started = time.monotonic()
@@ -132,67 +324,23 @@ def prepare(archive, source_data, destination):
         pending = Path(temp) / 'client'
         document = unpack(archive, pending)
         count = copied_bytes = 0
-        # The app runs on a case-sensitive host, but Wine resolves Windows
-        # paths. Join directory aliases instead of producing Foo/ and foo/.
-        children = {}
-        def entries(parent):
-            if parent not in children:
-                index = {}
-                for child in parent.iterdir():
-                    key = child.name.casefold()
-                    require(key not in index, 'Case-ambiguous ARM64 data entry')
-                    index[key] = child
-                children[parent] = index
-            return children[parent]
         copy_started = time.monotonic()
-        for directory, dirs, files in os.walk(source_data, followlinks=False):
-            dirs.sort()
-            relative = Path(directory).relative_to(source_data)
-            if relative == Path('.'):
-                dirs[:] = [name for name in dirs if name.casefold() != 'bin']
-            for name in dirs:
-                require(not (Path(directory) / name).is_symlink(), 'Linked data directory refused')
-            target = pending / 'data'
-            for part in relative.parts:
-                index = entries(target)
-                key = part.casefold()
-                if key not in index:
-                    child = target / part
-                    child.mkdir()
-                    index[key] = child
-                target = index[key]
-                require(target.is_dir() and not target.is_symlink(),
-                        'ARM64 data directory conflicts with existing entry')
-            index = entries(target)
-            for name in sorted(files):
-                source = Path(directory) / name
-                # The existing app data tree can link immutable imported files.
-                require(source.is_file(), 'Nonregular app data')
-                require(source.suffix.lower() not in ('.exe', '.dll'), 'Executable in game data')
-                output = target / name
-                require(name.casefold() not in index, 'Data collides with ARM64 overlay or case alias')
-                # The app uses PRoot --link2symlink: a successful link() there
-                # is not a native hard link and can leave Wine-visible links
-                # after this temporary tree is renamed. Materialize ordinary
-                # private files, also preventing client writes to server data.
-                shutil.copyfile(source, output)
-                require(output.is_file() and not output.is_symlink(), 'ARM64 data copy is not regular')
-                index[name.casefold()] = output
-                count += 1
-                copied_bytes += output.stat().st_size
-        paths = [p.relative_to(pending / 'data').as_posix().casefold()
-                 for p in (pending / 'data').rglob('*')]
-        require(len(paths) == len(set(paths)), 'Case-equivalent ARM64 data paths')
+        linked = merge_links(source_data, pending / 'data', destination.parent / VALIDATION_RECEIPT)
+        count, copied_bytes = linked['files'], 0
+        entries = [p.relative_to(pending / 'data').as_posix().casefold()
+                   for p in walk_links(pending / 'data')]
+        require(len(entries) == len(set(entries)), 'Case-equivalent ARM64 data paths')
         copy_seconds = time.monotonic() - copy_started
         (pending / 'tools').mkdir()
         pending.rename(destination)
     return {'machine': 'ARM64', 'archive_sha256': digest(archive),
             'executable_sha256': document['files']['CityOfHeroes.exe']['sha256'],
             'client_run_id': document['client_run_id'], 'data_run_id': document['data_run_id'],
-            'shared_data_files': count, 'shared_data_bytes': copied_bytes,
+            'shared_data_files': count, 'linked_directories': linked['directories'],
+            'linked_file_entries': linked['file_links'], 'merged_directories': linked['merged'],
             'data_copy_seconds': round(copy_seconds, 6),
             'preparation_seconds': round(time.monotonic() - started, 6), 'x86_bins_reused': False,
-            'data_materialization': 'private_regular_copies',
+            'data_materialization': 'case_merged_symlinks', 'data_validation': linked['validation'],
             'data_case_duplicates': 0,
             'work_directory': str(destination)}
 

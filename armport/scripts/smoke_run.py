@@ -504,6 +504,8 @@ def main():
     ap.add_argument('--createbins', action='store_true',
                     help='first run the client with -createbins to build data/bin from text data')
     ap.add_argument('--createbins-seconds', type=int, default=1800)
+    ap.add_argument('--require-fps-log', action='store_true',
+                    help='run the client with ARMPORT_FPS_LOG=1 and require at least three logged 5 s windows')
     ap.add_argument('--createbins-build', type=Path,
                     help='directory with the non-FINAL (OptDebug) client used for -createbins')
     ap.add_argument('--bins-out', type=Path, help='copy the created data/bin here')
@@ -588,9 +590,11 @@ def main():
         if a.login_probe and not a.args:
             # As in the M3 run: one server entry, 127.0.0.1 (nothing listens here).
             args = args + ['-db', '127.0.0.1']
+        run_env = dict(env, ARMPORT_STDIO_LOG='armport_stdio.txt')
+        if a.require_fps_log:
+            run_env['ARMPORT_FPS_LOG'] = '1'   # patch 0114 frame-rate log
         proc = subprocess.Popen([wine, str(rt / exe.name)] + args, cwd=rt,
-                                env=dict(env, ARMPORT_STDIO_LOG='armport_stdio.txt'),
-                                stdout=out, stderr=subprocess.STDOUT)
+                                env=run_env, stdout=out, stderr=subprocess.STDOUT)
         shot_mid = None
         titles = ''
         try:
@@ -656,6 +660,23 @@ def main():
     else:
         note('notice', 'ArmPort M2 frame rate', 'no +fps samples (no frame presented through wglSwapBuffers?)')
     report_stdio(rt / 'armport_stdio.txt', 'ArmPort M2 client output')
+    if a.require_fps_log:
+        text = (rt / 'armport_stdio.txt').read_text(errors='replace') if (rt / 'armport_stdio.txt').exists() else ''
+        logged = re.findall(r'^ARMPORT_FRAME_RATE_V1 fps=(\d+\.\d\d) frames=(\d+) seconds=(\d+\.\d\d) maxfps=(-?\d+) menu=(-?\d+)$',
+                            text, re.M)
+        note('notice', 'ArmPort frame-rate log', f'{len(logged)} windows; client running at end: {running}; first 5: {logged[:5]}')
+        workers = re.findall(r'^ARMPORT_WORKER_V1 seconds=(\d+\.\d\d) worker_sleeps=(\d+) worker_spin_hits=(\d+) '
+                             r'cpu_user_ms=(\d+) cpu_kernel_ms=(\d+)$', text, re.M)
+        note('notice', 'ArmPort worker wakeups (patch 0116)',
+             f'{len(workers)} windows (seconds, sleeps, spin hits, cpu user ms, cpu kernel ms); first 5: {workers[:5]}')
+        if len(logged) < 3 or not running or not all(float(w[2]) >= 5.0 for w in logged):
+            note('error', 'ArmPort frame-rate log',
+                 'ARMPORT_FPS_LOG=1 must log at least three 5 s windows while the client keeps running')
+            return 1
+        if len(workers) != len(logged) or not all(w[0] == f[2] for w, f in zip(workers, logged)):
+            note('error', 'ArmPort worker wakeups (patch 0116)',
+                 'each ARMPORT_FRAME_RATE_V1 window must be followed by its ARMPORT_WORKER_V1 line')
+            return 1
     if a.login_probe and (rt / 'armport_stdio.txt').exists():
         marks = [l[:240] for l in (rt / 'armport_stdio.txt').read_text(errors='replace').splitlines() if l.startswith('ArmPort ')]
         note('notice', 'ArmPort M2 login probe stages and dialogs', f'{len(marks)} lines\n' + '\n'.join(marks[-40:]))

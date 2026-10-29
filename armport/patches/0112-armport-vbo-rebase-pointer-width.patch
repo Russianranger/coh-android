@@ -1,0 +1,57 @@
+diff --git a/Game/src/render/model_cache.c b/Game/src/render/model_cache.c
+index 76ead17..434f090 100644
+--- a/Game/src/render/model_cache.c
++++ b/Game/src/render/model_cache.c
+@@ -336,7 +336,11 @@ void modelSetupVertexObject(Model *model, int useVbos, BlendModeType blend_mode
+ {
+     static int crit_init = 0;
+     int            idx,total,vert_total,tri_bytes,vert_bytes,norm_bytes,st1_bytes,st2_bytes,st3_bytes,
+-                tangent_bytes,weight_bytes,matidx_bytes,delta;
++                tangent_bytes,weight_bytes,matidx_bytes;
++    // ArmPort: the rebase delta is a pointer difference (64-bit here); an int
++    // truncated it and sign-extended the rebased streams (Thor fault in
++    // initializeShadowInfo on a VBOS_DONTUSE shadow model).
++    intptr_t delta;
+     U8            *data;
+     VBO            *vbo;
+     bool        needBump = blendModeHasBump(blend_mode);
+@@ -500,7 +504,7 @@ void modelSetupVertexObject(Model *model, int useVbos, BlendModeType blend_mode
+     vbo->flags                = model->flags;
+     memcpy(vbo->tex_ids,model->tex_idx,sizeof(TexID) * vbo->tex_count);
+ 
+-    delta = (int)vbo->verts;
++    delta = (intptr_t)vbo->verts;
+     if (!rdr_caps.use_vbos || useVbos == VBOS_DONTUSE)
+     {
+         vbo->tris = memcpy(malloc(vbo->tri_count * 3 * sizeof(int)),vbo->tris,vbo->tri_count * 3 * sizeof(int));
+@@ -512,22 +516,22 @@ void modelSetupVertexObject(Model *model, int useVbos, BlendModeType blend_mode
+         vbo->verts            = 0;
+         vbo->tris            = 0;
+     }
+-    delta -= (int)vbo->verts;
++    delta -= (intptr_t)vbo->verts;
+ 
+     if (vbo->norms)
+-        vbo->norms        = (void *)((int)vbo->norms - delta);
++        vbo->norms        = (void *)((char *)vbo->norms - delta);
+     if (vbo->sts)
+-        vbo->sts        = (void *)((int)vbo->sts - delta);
++        vbo->sts        = (void *)((char *)vbo->sts - delta);
+     if (vbo->sts2)
+-        vbo->sts2        = (void *)((int)vbo->sts2 - delta);
++        vbo->sts2        = (void *)((char *)vbo->sts2 - delta);
+     if (vbo->sts3)
+-        vbo->sts3        = (void *)((int)vbo->sts3 - delta);
++        vbo->sts3        = (void *)((char *)vbo->sts3 - delta);
+     if (vbo->tangents)
+-        vbo->tangents    = (void *)((int)vbo->tangents - delta);
++        vbo->tangents    = (void *)((char *)vbo->tangents - delta);
+     if (vbo->weights)
+-        vbo->weights    = (void *)((int)vbo->weights - delta);
++        vbo->weights    = (void *)((char *)vbo->weights - delta);
+     if (vbo->matidxs)
+-        vbo->matidxs    = (void *)((int)vbo->matidxs - delta);
++        vbo->matidxs    = (void *)((char *)vbo->matidxs - delta);
+     if (!vbo->verts)
+         rdrQueueSend();
+     else
