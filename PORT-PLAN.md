@@ -18,10 +18,12 @@ on its existing Wine/FEX runtime.
 
 ## Roles and workflow
 
-- One agent leads, one reviews. As of the user's 2026-10-26 handoff,
-  Claude leads development again and Sol remains independent reviewer.
-  Astra has stopped active development; all scheduled tasks are disabled.
-  Read `armport/HANDOFF.md` for the current checkpoint and unapplied WIP.
+- One agent leads, one reviews. Follow the latest explicit user assignment.
+  Read root `STATUS.md`, the current task note/handoff it identifies, and the
+  relevant current PR reviews/comments. Earlier handoffs retain historical
+  assignments and milestone statements; they are not current task instructions.
+  Durable working rules are in `AGENTS.md`; Cloud setup is documented in
+  `armport/CLOUD-DEVELOPMENT.md`.
 - Each milestone is a pull request from `armport/<milestone>` into
   `COH-ArmPort`. The reviewer reviews it (PR comment, or `reviews/PR-<n>.md`
   on `armport-reviews`); the lead addresses the review, then merges.
@@ -57,3 +59,4 @@ Overrunning a box triggers a short note to the user with the reason.
 - Stop and ask the user before: changing `main` or `native-android`, rewriting
   history, using secrets or signing keys, publishing releases, spending money,
   or any legal question.
+

@@ -5,7 +5,11 @@ Branch for porting the original City of Heroes client source (`Game`, `Common`,
 
 - Created 2026-10-20 from `native-android`.
 - Scope: personal use on one AYN Thor only.
-- Roles: Claude leads the port; Sol reviews.
+- Roles: follow the latest explicit user assignment; current work is recorded
+  in `STATUS.md` and the task note or handoff it identifies.
 - Plan: [PORT-PLAN.md](PORT-PLAN.md). Current state: [STATUS.md](STATUS.md).
+- Agent guidance: [AGENTS.md](AGENTS.md). Cloud setup:
+  [armport/CLOUD-DEVELOPMENT.md](armport/CLOUD-DEVELOPMENT.md).
 
 `main` and `native-android` are not changed from this branch.
+
