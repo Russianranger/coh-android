@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
-# User approval 2026-10-26 (Claude lead session): build and sign COH Atlas
-# Gameplay 0.13.45, the 0.13.36 app plus the ARM64 client option, for the M5
+# User-authorized M5 development: build and sign COH Atlas
+# Gameplay 0.13.46, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact only; no release is published.
 on:
   # Dispatch only, with an explicit package run: a default or push build could
@@ -11,6 +11,11 @@ on:
       m4_run_id:
         description: Successful ArmPort app runtime run (armport-app-client-package) for this head's patches
         required: true
+      server_metrics:
+        description: Include the two-variant server package qualified by this exact runtime run
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -22,6 +27,7 @@ concurrency:
 
 env:
   M4_RUN_ID: ${{ inputs.m4_run_id }}
+  SERVER_METRICS: ${{ inputs.server_metrics }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 
@@ -54,6 +60,10 @@ jobs:
           q=$(gh api "repos/$R/actions/runs/$M4_RUN_ID" --jq '[.path,.status,.conclusion]|join(" ")')
           [ "$q" = ".github/workflows/armport-app-runtime.yml completed success" ] || {
             echo "::error title=ArmPort package provenance::run $M4_RUN_ID is not a successful app runtime run ($q)"; exit 1; }
+          if [ "$SERVER_METRICS" = true ]; then
+            sha=$(gh api "repos/$R/actions/runs/$M4_RUN_ID" --jq .head_sha)
+            [ "$sha" = "$GITHUB_SHA" ] || { echo '::error::Metrics runtime must qualify this exact head'; exit 1; }
+          fi
           echo "M4_RUN_ID_VERIFIED=$M4_RUN_ID" >> "$GITHUB_ENV"
       - uses: actions/download-artifact@v4
         with:
@@ -79,22 +89,57 @@ jobs:
             echo "::error title=ArmPort package provenance::client run $client built armport/patches $built at $sha; this head has $current"; exit 1; }
           echo "::notice title=ArmPort package provenance::package run $M4_RUN_ID_VERIFIED, client run $client at $sha, armport/patches tree $current matches $GITHUB_SHA"
       - uses: actions/download-artifact@v4
+        if: inputs.server_metrics
+        with:
+          name: armport-app-server-metrics
+          path: ${{ runner.temp }}/qualified-server-metrics
+          run-id: ${{ env.M4_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Checkout the immutable server certificate baseline
+        if: inputs.server_metrics
+        uses: actions/checkout@v4
+        with:
+          ref: c86a57962363dbe2dc2091dadde6abdfaa2e1e1c
+          path: server-baseline
+          lfs: false
+          persist-credentials: false
+      - name: Authenticate server qualification and both variant byte inventories
+        if: inputs.server_metrics
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 armport/app/server_pipeline.py check \
+            --source "$RUNNER_TEMP/qualified-server-metrics" \
+            --repository-commit "$GITHUB_SHA" --runtime-run-id "$M4_RUN_ID" \
+            --baseline-root "$GITHUB_WORKSPACE/server-baseline" > "$RUNNER_TEMP/server-qualified.json"
+          server=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["native_build_run_id"])' "$RUNNER_TEMP/server-qualified.json")
+          client=$(python3 -c 'import json,sys,zipfile; print(json.loads(zipfile.ZipFile(sys.argv[1]).read("client-package.json"))["client_run_id"])' "$RUNNER_TEMP/armport-package/armport-client.zip")
+          data=$(python3 -c 'import json,sys,zipfile; print(json.loads(zipfile.ZipFile(sys.argv[1]).read("client-package.json"))["data_run_id"])' "$RUNNER_TEMP/armport-package/armport-client.zip")
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$server" > "$RUNNER_TEMP/server-build-run.json"
+          python3 armport/app/server_pipeline.py check-run \
+            --build-run-json "$RUNNER_TEMP/server-build-run.json" --repository-commit "$GITHUB_SHA" \
+            --server-run-id "$server" --client-run-id "$client" --data-run-id "$data"
+          echo "::notice title=ArmPort server provenance::native build $server at $GITHUB_SHA; retained runtime $M4_RUN_ID passed; Thor server built/source-checked but not runtime/device validated"
+      - uses: actions/download-artifact@v4
         with:
           name: coh-client-interactive-signing
           path: ${{ runner.temp }}/coh-retained-signing
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
-      - name: Build and sign COH Atlas Gameplay 0.13.45
+      - name: Build and sign COH Atlas Gameplay 0.13.46
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
+          server_args=()
+          if [ "$SERVER_METRICS" = true ]; then
+            server_args=(--server-metrics "$RUNNER_TEMP/qualified-server-metrics" --runtime-run-id "$M4_RUN_ID" --baseline-root "$GITHUB_WORKSPACE/server-baseline")
+          fi
           armport/scripts/step.sh "ArmPort Thor APK build" python3 armport/app/build_thor_apk.py \
             --donor-apk "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" \
             --armport "$RUNNER_TEMP/armport-package/armport-client.zip" \
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.45.apk
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.46.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -106,11 +151,14 @@ jobs:
           keep = {k: r[k] for k in ('apk', 'bytes', 'sha256', 'version_name', 'version_code',
                   'signer_certificate_sha256', 'replaced_members', 'added_members', 'changed_runtime_payloads',
                   'retained_members', 'armport_client')}
+          if 'server_metrics_qualification' in r:
+              keep['server_metrics_qualification'] = r['server_metrics_qualification']
+              keep['server_metrics_runtime_validated'] = r['server_metrics_runtime_validated']
           print('::notice title=ArmPort Thor APK::' + json.dumps(keep))
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.45-apk
+          name: coh-atlas-gameplay-0.13.46-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error

@@ -142,7 +142,7 @@ def verify_mapserver_compatibility(mapserver_path, mapserver_package=None):
         result = startup.verify_current_map(mapserver_path, mapserver_package)
         require(result['original_cache_donor_mapserver_sha256'] == MAPSERVER_SHA256,
                 'Map startup altered the original cache donor history')
-        return dict(result, retained_schema_sources_sha256=startup.embedded_receipt(mapserver_package)['schema_sources_sha256'])
+        return dict(result, retained_schema_sources_sha256=startup.current_receipt(mapserver_path, mapserver_package)['schema_sources_sha256'])
     import native_monorail_contract
     require(isinstance(mapserver_package, dict), 'Server-cache executable identity differs')
     receipt = native_monorail_contract.embedded_receipt(mapserver_package)

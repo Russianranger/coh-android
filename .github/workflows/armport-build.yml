@@ -5,6 +5,12 @@ name: ArmPort build
 # and run test programs under the Android app's own ARM64 Wine 10 runtime.
 on:
   workflow_dispatch:
+    inputs:
+      build_server_metrics:
+        description: Build both exact Win32 server metrics variants after the existing ArmPort stages
+        type: boolean
+        required: false
+        default: false
   push:
     # Isolated replay iterations run their own ARM64/i686 execution workflow;
     # M4 qualifies with armport-app-runtime, not the inherited M3 stack.
@@ -288,6 +294,8 @@ jobs:
   libraries:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
+    env:
+      ARMPORT_SERVER_BASELINE_ROOT: ${{ github.workspace }}/server-baseline
     steps:
       - uses: actions/checkout@v4
         with:
@@ -298,6 +306,7 @@ jobs:
             /patches/
             /database/
             /docs/android-evidence/client-map-startup-0.13.32-publication.json
+            /docs/android-evidence/mapserver-progress-package-36630872719.json
             /tools/android/interactive/prepare_atlas_world_assets.py
             /assets/catalog.json
             /assets/zones-audio-metadata.json
@@ -312,6 +321,26 @@ jobs:
             /.github/
           sparse-checkout-cone-mode: false
           lfs: false
+
+      - name: Retain the exact historical certificate validator source
+        uses: actions/checkout@v4
+        with:
+          ref: c86a57962363dbe2dc2091dadde6abdfaa2e1e1c
+          path: server-baseline
+          persist-credentials: false
+          lfs: false
+          sparse-checkout: |
+            /.gitignore
+            /tools/
+            /android/guest/
+            /database/
+            /patches/
+            /upstream-lock.json
+            /docs/source-manifest.json
+            /docs/android-evidence/client-map-startup-0.13.32-publication.json
+            /docs/android-evidence/mapserver-progress-package-36630872719.json
+            /upstream/ouroboros/
+          sparse-checkout-cone-mode: false
 
       - name: Check the nvDXT stand-in's DDS decoder (native, ASan/UBSan)
         run: |
@@ -1142,4 +1171,170 @@ jobs:
             ${{ runner.temp }}/m3-evidence/client-output.txt
             out/donor-files.txt
             out/wine-game/game-package.json
+          if-no-files-found: warn
+
+  server-metrics-source:
+    # Opt-in only. Finish every existing ARM64 compilation/runtime stage first;
+    # this job's extracted-source compilers and the next Win32 job are serial.
+    if: github.event_name == 'workflow_dispatch' && inputs.build_server_metrics == true
+    needs: [client-run, server-run]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions: {contents: read, actions: read}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            /armport/
+            /tools/
+            /android/guest/
+          sparse-checkout-cone-mode: false
+      - uses: actions/checkout@v4
+        with:
+          ref: c86a57962363dbe2dc2091dadde6abdfaa2e1e1c
+          path: server-baseline
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            /.gitignore
+            /tools/
+            /android/guest/
+            /database/
+            /patches/
+            /upstream-lock.json
+            /docs/source-manifest.json
+            /upstream/ouroboros/
+          sparse-checkout-cone-mode: false
+      - uses: actions/cache@v4
+        id: retained-server-app
+        with:
+          path: out/server-donors/retained
+          key: armport-metrics-retained-ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688
+      - uses: actions/download-artifact@v4
+        if: steps.retained-server-app.outputs.cache-hit != 'true'
+        with:
+          name: coh-client-interaction-apk
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+          path: out/server-donors/retained
+      - uses: actions/cache@v4
+        with:
+          path: out/map-startup-cache
+          key: armport-metrics-animation-inputs-465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b
+      - name: Recover the exact public Thor donor and original animation bytes
+        run: |
+          mkdir -p out/server-donors/thor
+          curl -fL --retry 3 -o out/server-donors/thor/COH-Atlas-Gameplay-0.13.36.apk \
+            https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk
+          python3 tools/android/interactive/map_startup_inputs.py \
+            --output out/map-startup-inputs --cache out/map-startup-cache
+      - name: Authenticate both donors and execute exact prepared-source controls
+        run: |
+          python3 armport/scripts/server_metrics_producer.py stage \
+            --retained-apk out/server-donors/retained/COH-Character-Reopen-0.10.0.apk \
+            --retained-report out/server-donors/retained/interactive-apk-build-report.json \
+            --thor-apk out/server-donors/thor/COH-Atlas-Gameplay-0.13.36.apk \
+            --animations-pigg out/map-startup-inputs/server-animations.pigg \
+            --animation-manifest out/map-startup-inputs/server-animation-manifest.json \
+            --upstream-root server-baseline \
+            --repository-commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" \
+            --output out/server-metrics-input
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-server-metrics-source
+          path: |
+            out/server-metrics-input.tar.gz
+            out/server-metrics-input.tar.gz.sha256
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-server-metrics-source-evidence
+          path: |
+            out/server-metrics-input/server-metrics-input.json
+            out/server-metrics-input/*/source-checks.log
+            out/server-metrics-input/*/server-metrics-source-checks.json
+            out/server-metrics-input/*/source/server-metrics-build-input.json
+            out/map-startup-inputs/map-startup-inputs.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  server-metrics-native:
+    needs: server-metrics-source
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 180
+    permissions: {contents: read, actions: read}
+    steps:
+      - name: Preserve exact source and validator bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            /armport/
+            /tools/
+            /android/guest/
+          sparse-checkout-cone-mode: false
+      - uses: actions/checkout@v4
+        with:
+          ref: c86a57962363dbe2dc2091dadde6abdfaa2e1e1c
+          path: server-baseline
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            /.gitignore
+            /tools/
+            /android/guest/
+            /database/
+            /patches/
+            /upstream-lock.json
+            /docs/source-manifest.json
+            /upstream/ouroboros/
+          sparse-checkout-cone-mode: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-server-metrics-source
+          path: out/source-bundle
+      - name: Verify every tested source byte and exact donor before compiling
+        shell: pwsh
+        run: |
+          python armport/scripts/server_metrics_producer.py extract --archive out/source-bundle/server-metrics-input.tar.gz --output C:/ams-input --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline
+          if ($LASTEXITCODE -ne 0) { throw 'Server source identity check failed' }
+      - name: Genuine x86 fixtures then two single-worker MapServer builds
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC x86 installation was not found' }
+          New-Item -ItemType Directory -Path out -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python armport/scripts/server_metrics_producer.py build --directory C:/ams-input --output out/server-native --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/server-native.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\server-native.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'Bounded server producer failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-server-metrics-native
+          path: |
+            out/server-native/server-metrics-*.zip
+            out/server-native/server-metrics-*.pin.json
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-server-metrics-native-evidence
+          path: out/server-native/evidence/
+          retention-days: 30
           if-no-files-found: warn

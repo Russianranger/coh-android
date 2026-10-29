@@ -18,6 +18,7 @@ import zipfile
 import retained_assets
 import stage_app_assets
 import runtime_host
+import server_pipeline
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('armport_existing_reopen_host',
@@ -155,6 +156,7 @@ def armport_validate_observer(observer, report):
 
 def legacy_report(report, runtime_manifest, client_manifest):
     """Validate the ARM64 additions before using the existing persistence checks."""
+    server_pipeline.guest_admission(report, runtime_manifest)
     expected = runtime_manifest['armport_client']
     observed = report.get('armport_client', {})
     require(observed.get('machine') == 'ARM64' and observed.get('x86_bins_reused') is False
@@ -319,9 +321,15 @@ def main():
     for name in ('apk', 'build-report', 'armport', 'archive', 'proot', 'work', 'evidence'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--repository-commit', required=True)
+    parser.add_argument('--server-archive', type=Path)
+    parser.add_argument('--server-run-id', type=int)
+    parser.add_argument('--baseline-root', type=Path)
     args = parser.parse_args()
+    require((args.server_archive is None) == (args.server_run_id is None) == (args.baseline_root is None),
+            'Server archive, exact build run and pinned baseline must be provided together')
     for name, value in vars(args).items():
         if isinstance(value, Path): setattr(args, name, value.resolve())
+    baseline = server_pipeline.native.baseline_root(args.baseline_root) if args.server_archive else ROOT
     require(platform.machine().lower() in ('aarch64', 'arm64'), 'Native ARM64 runner required')
     require(shutil.which('tesseract') is not None, 'Existing RFB driver requires tesseract')
     require(not args.work.exists() and not args.evidence.exists(), 'Fresh private work/evidence required')
@@ -336,9 +344,15 @@ def main():
         result['donor'] = retained_assets.extract(args.apk, args.build_report, donor)
         assets = args.work / 'armport-assets'
         result['armport_client'] = stage_app_assets.stage(donor / 'runtime', args.armport,
-                                                        assets, args.repository_commit)
+            assets, args.repository_commit, server_archive=args.server_archive,
+            server_variant='retained_progress' if args.server_archive else None,
+            server_run_id=args.server_run_id, upstream_root=baseline)
         runtime_manifest = json.loads((assets / 'runtime-manifest.json').read_text())
         client_manifest = json.loads((assets / 'client-manifest.json').read_text())
+        if args.server_archive:
+            binding = json.loads((assets / 'armport-server-metrics-binding.json').read_text())
+            runtime_manifest['armport_server_metrics_build'] = json.loads(binding['build_manifest_utf8'])
+            result['armport_server_metrics'] = runtime_manifest['armport_server_metrics']
         # stage() verified this archive against the retained donor's exact hash.
         with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
             native = json.loads(archive.read('client-package.json'))
@@ -371,6 +385,10 @@ def main():
                                second, runtime_manifest, client_manifest, deadline, reopening=True)
         after = reopen.persistent_profile_identity(args.work)
         reopen.validate_continuity(created, reopened, before, after)
+        if args.server_archive:
+            result['server_metrics_native_execution'] = {
+                'creation': server_pipeline.guest_admission(created, runtime_manifest),
+                'reopen': server_pipeline.guest_admission(reopened, runtime_manifest)}
         result.update(passed=True, same_persistent_profile=True, same_character_id=True,
                       creation_session_id=first, reopen_session_id=second)
     except Exception as error:

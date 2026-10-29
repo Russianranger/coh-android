@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.45: the public 0.13.36 app with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.46 with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -8,17 +8,20 @@ character, private database, imported assets and Wine prefix are kept.
 
 Inputs are pinned:
 - the public 0.13.36 donor APK;
-- the M4-qualified ARM64 client package (armport-app-client-package from M4
-  run 40417983694; client/data from M3 run 40407492746);
+- the ARM64 client package from the explicitly selected runtime qualification;
+- optionally, both MapServer metrics packages from that same native build,
+  bound to retained creation/reopen execution in that runtime qualification;
 - the retained signing identity (run 36731428735).
 
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.45 / 60, and the binary manifest is checked
+- version metadata becomes 0.13.46 / 61, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
-  entries, and replaces character_creation_diagnostic.py.
+  entries and the explicitly listed guest helpers;
+- with metrics enabled, the authenticated modern MapServer replaces only the
+  donor's MapServer; its host build checks do not claim Thor execution.
 
 Every other APK member must stay byte-identical to the donor. x86 remains the
 default client.
@@ -36,12 +39,13 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 import stage_app_assets
+import server_pipeline
 
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.45', 60
-APK_NAME = 'COH-Atlas-Gameplay-0.13.45.apk'
+VERSION_NAME, VERSION_CODE = '0.13.46', 61
+APK_NAME = 'COH-Atlas-Gameplay-0.13.46.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -59,7 +63,12 @@ EXTRA_SOURCES = ('android/zoning/src/main/java/io/github/russianranger/cohclient
 ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py',
                            'client_stdio.py', 'server_metrics.py'})
 CHANGED_RUNTIME = frozenset({'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_character_server.py', 'character_zoning.py',
-                             'runtime-manifest.json', 'client-manifest.json'})
+                             'runtime-manifest.json', 'client-manifest.json',
+                             'game_diagnostic.py', 'atlas_beacon_package.py',
+                             'native_map_startup_contract.py', 'native_monorail_contract.py',
+                             'server_cache_package.py', 'server_fx_catalog.py', 'server_animation_package.py'})
+SERVER_ADDED_RUNTIME = frozenset({'armport_server_metrics_contract.py', 'armport-server-metrics-binding.json'})
+SERVER_CHANGED_RUNTIME = frozenset({'game-package.tar.gz'})
 REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java',
@@ -150,6 +159,16 @@ def members(apk):
 
 def build(args):
     require(re.fullmatch('[0-9a-f]{40}', args.repository_commit), 'Exact repository commit required')
+    server_directory = getattr(args, 'server_metrics', None)
+    runtime_run_id = getattr(args, 'runtime_run_id', None)
+    baseline_directory = getattr(args, 'baseline_root', None)
+    require((server_directory is None) == (runtime_run_id is None) == (baseline_directory is None),
+            'Metrics APK requires its exact runtime qualification artifact, run and pinned baseline')
+    baseline = server_pipeline.native.baseline_root(baseline_directory) if server_directory else ROOT
+    server_qualification = (server_pipeline.read_qualification(server_directory,
+        args.repository_commit, runtime_run_id, baseline) if server_directory is not None else None)
+    added_runtime = ADDED_RUNTIME | (SERVER_ADDED_RUNTIME if server_qualification else frozenset())
+    changed_runtime = CHANGED_RUNTIME | (SERVER_CHANGED_RUNTIME if server_qualification else frozenset())
     require(pin(args.donor_apk) == DONOR_APK, 'Donor 0.13.36 APK bytes differ from the public release')
     require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh output required')
     for tool in (args.android_jar, args.build_tools / 'aapt2', args.build_tools / 'zipalign',
@@ -178,13 +197,21 @@ def build(args):
         require({n for n in runtime_files if not (donor_runtime / n).exists()} == set(external),
                 'Unpackaged runtime payloads must be exactly the external asset-pack runtime files')
         staged = work / 'staged-runtime'
-        armport = stage_app_assets.stage(donor_runtime, args.armport, staged, args.repository_commit, external)
+        armport = stage_app_assets.stage(donor_runtime, args.armport, staged, args.repository_commit, external,
+            server_archive=(server_directory / server_pipeline.PACKAGES['thor_certified_startup']
+                            if server_qualification else None),
+            server_variant='thor_certified_startup' if server_qualification else None,
+            server_run_id=server_qualification['native_build_run_id'] if server_qualification else None,
+            upstream_root=baseline)
+        if server_qualification:
+            require(armport['client_run_id'] == armport['data_run_id'] == server_qualification['native_build_run_id'],
+                    'APK client/data and metrics servers came from different builds')
         staged_names = {p.name for p in staged.iterdir()}
         donor_names = {p.name for p in donor_runtime.iterdir()}
-        require(staged_names - donor_names == ADDED_RUNTIME and donor_names <= staged_names,
+        require(staged_names - donor_names == added_runtime and donor_names <= staged_names,
                 'Unexpected runtime additions or removals: ' + repr(sorted(staged_names ^ donor_names)))
         changed = sorted(name for name in donor_names if pin(staged / name) != pin(donor_runtime / name))
-        require(set(changed) <= CHANGED_RUNTIME, 'Unreviewed runtime payload changed: ' + repr(changed))
+        require(set(changed) <= changed_runtime, 'Unreviewed runtime payload changed: ' + repr(changed))
         # 2. Shell: versioned manifest, retained resources, recompiled DEX.
         manifest = work / 'AndroidManifest.xml'
         main_dir = ROOT / 'android/interactive/src/main'
@@ -251,10 +278,10 @@ def build(args):
                 replaced.append(name)
         removed = sorted(n for n in donor_members if n not in final and not n.startswith('META-INF/'))
         require(not removed, 'Donor members removed: ' + repr(removed))
-        require(set(added) == {'assets/runtime/' + n for n in ADDED_RUNTIME}, 'Unexpected added members: ' + repr(added))
-        require(set(replaced) <= {'classes.dex', 'AndroidManifest.xml'} | {'assets/runtime/' + n for n in CHANGED_RUNTIME},
+        require(set(added) == {'assets/runtime/' + n for n in added_runtime}, 'Unexpected added members: ' + repr(added))
+        require(set(replaced) <= {'classes.dex', 'AndroidManifest.xml'} | {'assets/runtime/' + n for n in changed_runtime},
                 'Unreviewed replaced members: ' + repr(replaced))
-        for name in ADDED_RUNTIME | CHANGED_RUNTIME:
+        for name in added_runtime | changed_runtime:
             if (staged / name).exists():
                 require(final['assets/runtime/' + name] == pin(staged / name), 'Staged payload differs: ' + name)
         shutil.copyfile(signed, args.output)
@@ -273,6 +300,10 @@ def build(args):
                         'Keeps the saved character, private database, imported assets and Wine prefix.',
         'device_validated': False, 'gameplay_validated': False, 'm5_complete': False,
     }
+    if server_qualification:
+        report['server_metrics_qualification'] = server_qualification
+        report['server_metrics_variant'] = 'thor_certified_startup'
+        report['server_metrics_runtime_validated'] = False
     report_path = args.output.with_name('thor-apk-build-report.json')
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
     args.output.with_suffix('.apk.sha256').write_text(report['sha256'] + '  ' + APK_NAME + '\n')
@@ -287,9 +318,14 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--password-env', default='COH_INTERACTIVE_KEYSTORE_PASSWORD')
+    parser.add_argument('--server-metrics', type=Path)
+    parser.add_argument('--runtime-run-id', type=int)
+    parser.add_argument('--baseline-root', type=Path)
     args = parser.parse_args()
     for key in ('donor_apk', 'armport', 'android_jar', 'build_tools', 'keystore', 'output'):
         setattr(args, key, getattr(args, key).absolute())
+    if args.server_metrics is not None:
+        args.server_metrics = args.server_metrics.absolute()
     build(args)
 
 

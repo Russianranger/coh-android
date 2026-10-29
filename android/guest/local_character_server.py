@@ -88,16 +88,27 @@ def LOCAL_CLIENT_LINK_OPTIONS():
     """
     return ['-notimeout'] if os.environ.get('COH_CLIENT_ARCH', 'x86') == 'arm64' else []
 
-def server_input_projection(package):
+def server_input_projection(package, mapserver_path=None):
+    metrics = None
+    if isinstance(package, dict) and 'armport_server_metrics' in package:
+        import armport_server_metrics_contract as observer
+        require(mapserver_path is not None, 'Metrics input projection requires the actual current PE')
+        package, metrics = observer.verified_previous(mapserver_path, package)
     if (not isinstance(package, dict) or package.get('source_commit') != device.SOURCE_COMMIT
             or package.get('files', {}).get('MapServer.exe', {}).get('sha256') != SERVER_TEXTURE_EXCLUSION_MAP):
         return None
-    return {'policy': 'exact_native_excluded_texture_directory_v1',
+    result = {'policy': 'exact_native_excluded_texture_directory_v1',
             'excluded_top_level_directories': ['texture_library'],
             'native_consumer_sha256': SERVER_TEXTURE_EXCLUSION_MAP,
             'native_source_path': 'MapServer/src/svr/svr_init.c',
             'native_source_sha256': SERVER_TEXTURE_EXCLUSION_SOURCE,
             'client_inputs_modified': False, 'native_bytes_changed': False}
+    if metrics is not None:
+        result.update(native_consumer_sha256=metrics['actual_mapserver_sha256'], native_bytes_changed=True,
+            retained_native_source_sha256=SERVER_TEXTURE_EXCLUSION_SOURCE,
+            native_source_sha256=metrics['native_changed_source_sha256']['MapServer/src/svr/svr_init.c'],
+            armport_server_metrics=metrics)
+    return result
 
 
 def stock_power_delta(previous, current, attributes):
@@ -374,7 +385,18 @@ def observed_inventory_boost_definitions(server, additions, map_id):
     return definitions
 
 
-def stock_power_preservation(previous, current, attributes, *, native_sha256, data_sha256):
+def native_producer_matches(producer):
+    if not isinstance(producer, dict):
+        return False
+    if producer.get('mapserver_sha256') == SERVER_TEXTURE_EXCLUSION_MAP:
+        return True
+    if 'armport_server_metrics' not in producer:
+        return False
+    import armport_server_metrics_contract as metrics
+    return metrics.producer_matches(producer, SERVER_TEXTURE_EXCLUSION_MAP)
+
+
+def stock_power_preservation(previous, current, attributes, *, native_sha256, data_sha256, native_producer=None):
     """Preserve permanent powers while recognizing one stock temporary lifecycle.
 
     Native packing row numbers are not power identity. Commuter is explicitly
@@ -382,7 +404,9 @@ def stock_power_preservation(previous, current, attributes, *, native_sha256, da
     its addition/expiry is not independent proof of DayJob grant eligibility.
     Unknown temporary powers and every changed/lost permanent power fail closed.
     """
-    if native_sha256 != SERVER_TEXTURE_EXCLUSION_MAP or data_sha256 != STOCK_DAYJOB_DATA_INPUTS:
+    compatible = native_sha256 == SERVER_TEXTURE_EXCLUSION_MAP or (
+        native_producer_matches(native_producer) and native_producer.get('mapserver_sha256') == native_sha256)
+    if not compatible or data_sha256 != STOCK_DAYJOB_DATA_INPUTS:
         return None
     delta = stock_power_delta(previous, current, attributes)
     if (delta.get('status') != 'observed' or delta.get('current_native_indexes_contiguous') is not True
@@ -812,7 +836,7 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
                 'preserved_existing_identity', 'reopen_verified', 'native_client_ready_observed',
                 'connected_on_supported_map', 'db_map_assignment_observed', 'monorail_enabled'))
             and type(proof.get('mapserver_producer')) is dict
-            and proof['mapserver_producer'].get('mapserver_sha256') == SERVER_TEXTURE_EXCLUSION_MAP
+            and native_producer_matches(proof['mapserver_producer'])
             and type(proof.get('character_progress_guard')) is dict
             and proof['character_progress_guard'].get('passed') is True
             and type(proof.get('client_ready_observed_utc_ms')) is int
@@ -1337,7 +1361,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         archive = self.owner.args.assets / 'game-package.tar.gz'
         receipt_path = self.owner.args.assets / 'native-responsiveness.json'
         candidate_receipt = dbserver.load_json(receipt_path, 4 * 1024 * 1024) if receipt_path.exists() else None
-        payload_key = base.file_hash(archive) if candidate_receipt is not None else device.MAP_PROGRESS_PACKAGE_SHA256
+        metrics = (self.owner.args.assets / 'armport-server-metrics-binding.json').exists()
+        runtime_manifest = self.owner.args.assets / 'runtime-manifest.json'
+        declared_metrics = runtime_manifest.is_file() and 'armport_server_metrics' in dbserver.load_json(runtime_manifest)
+        require(metrics == declared_metrics, 'Metrics admission and runtime inventory must be installed together')
+        if metrics:
+            import armport_server_metrics_contract as observer
+            observer.verify_archive(archive)
+        payload_key = base.file_hash(archive) if candidate_receipt is not None or metrics else device.MAP_PROGRESS_PACKAGE_SHA256
         destination = self.owner.root / ('character-map-payload-' + payload_key[:16])
         require(not destination.is_symlink(), 'Linked Atlas payload refused')
         if not destination.exists():
@@ -1351,7 +1382,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_package = self.verify_map_payload(destination, candidate_receipt)
         self.map_package_dir = destination
         self.map_manifest_sha256 = base.file_hash(destination / 'game-package.json')
-        self.map_contract = game.mapserver_progress_contract(self.map_package)
+        self.map_contract = game.mapserver_progress_contract(self.map_package, destination / 'MapServer.exe')
         self.creation_report['mapserver_producer'] = self.map_contract['producer']
 
     @staticmethod
@@ -1359,26 +1390,32 @@ class LocalCharacterServer(login.LocalLoginServer):
         path = directory / 'game-package.json'
         require(path.is_file() and not path.is_symlink(), 'Missing or linked Atlas package receipt')
         package = dbserver.load_json(path)
-        candidate = 'native_responsiveness' in package
+        dbserver.verify_inventory(directory, package['files'], manifest='game-package.json', binary=True)
+        for name in package['files']: base.verify_pe32(directory / name)
+        previous, metrics = package, None
+        if 'armport_server_metrics' in package:
+            import armport_server_metrics_contract as observer
+            previous, metrics = observer.verified_previous(directory / 'MapServer.exe', package)
+        candidate = 'native_responsiveness' in previous
         if candidate:
             import native_responsiveness_contract as native_candidate
             require(candidate_receipt is not None
-                    and native_candidate.embedded_receipt(package) == native_candidate.validate_receipt(candidate_receipt),
+                    and native_candidate.embedded_receipt(previous) == native_candidate.validate_receipt(candidate_receipt),
                     'Atlas candidate differs from the installed source receipt')
         else:
-            require(candidate_receipt is None and base.file_hash(path) == device.MAP_PROGRESS_PACKAGE_SHA256
-                    and package.get('repository_commit') == device.MAP_PROGRESS_COMMIT,
+            require(candidate_receipt is None
+                    and (metrics is not None or base.file_hash(path) == device.MAP_PROGRESS_PACKAGE_SHA256)
+                    and previous.get('repository_commit') == device.MAP_PROGRESS_COMMIT,
                     'Atlas package differs from the device-qualified progress donor')
         require(package.get('source_commit') == device.SOURCE_COMMIT
                 and package.get('data_commit') == device.DATA_COMMIT
                 and package.get('postgresql_persistence_fixture') is False,
                 'Atlas package provenance or fixture mode differs')
-        dbserver.verify_inventory(directory, package['files'], manifest='game-package.json', binary=True)
-        game.game_loopback_contract(package)
-        game.game_listener_contract(package)
-        contract = game.mapserver_progress_contract(package)
-        require(candidate or contract['producer'] == device.MAP_PROGRESS_PRODUCER, 'Atlas progress producer differs')
-        for name in package['files']: base.verify_pe32(directory / name)
+        game.game_loopback_contract(previous)
+        game.game_listener_contract(previous)
+        contract = game.mapserver_progress_contract(package, directory / 'MapServer.exe')
+        require(candidate or metrics is not None or contract['producer'] == device.MAP_PROGRESS_PRODUCER,
+                'Atlas progress producer differs')
         return package
 
     def prepare_runtime(self):
@@ -1449,9 +1486,15 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'files': cache_native_package['files']})).hexdigest()}
         if required_geometry is not None:
             identity['required_geometry'] = required_geometry
-        projection = server_input_projection(self.map_package)
+        projection = server_input_projection(self.map_package, self.map_package_dir / 'MapServer.exe')
         if projection is not None:
-            identity['server_input_projection'] = projection
+            identity['server_input_projection'] = {key: value for key, value in projection.items()
+                if key not in ('armport_server_metrics', 'retained_native_source_sha256')}
+            if 'armport_server_metrics' in projection:
+                # Cache identity describes the authenticated unchanged input
+                # projection; the separate report names the actual new PE.
+                identity['server_input_projection'].update(native_consumer_sha256=SERVER_TEXTURE_EXCLUSION_MAP,
+                    native_source_sha256=SERVER_TEXTURE_EXCLUSION_SOURCE, native_bytes_changed=False)
             self.creation_report['server_input_projection'] = dict(projection)
         self.server_data_identity = identity
         self.server_data_receipt = receipt
@@ -1782,10 +1825,13 @@ class LocalCharacterServer(login.LocalLoginServer):
         independently; cache ownership and source validation still run in full.
         """
         package = self.map_package
+        if 'armport_server_metrics' in package:
+            import armport_server_metrics_contract as observer
+            package, _ = observer.verified_previous(self.map_package_dir / 'MapServer.exe', package)
         if 'native_map_startup' not in package:
             return package
         import native_map_startup_contract as startup
-        proof = startup.verify_current_map(self.map_package_dir / 'MapServer.exe', package)
+        proof = startup.verify_current_map(self.map_package_dir / 'MapServer.exe', self.map_package)
         self.creation_report['server_data_cache_native_consumer'] = dict(proof,
             cache_identity_policy='retain_authenticated_station_donor_data_generation')
         return startup.previous_package(package)
@@ -2039,7 +2085,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         max_bytes = device.DATA_BYTES + 1024**3 + world.PAYLOAD_BYTES + avatar.PAYLOAD_BYTES + visual.PAYLOAD_BYTES
         result = {'files': 0, 'bytes': 0, 'directories': 0, 'linked_immutable_files': 0,
                   'copied_private_files': 0, 'preserved_schema_files': 0}
-        projection = server_input_projection(getattr(self, 'map_package', None))
+        projection = server_input_projection(getattr(self, 'map_package', None),
+            getattr(self, 'map_package_dir', Path('.')) / 'MapServer.exe')
         excluded = set(projection['excluded_top_level_directories']) if projection else set()
         if projection is not None:
             self.creation_report['server_input_projection'] = dict(projection)
@@ -2136,6 +2183,17 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report.update(baseline_character_count=len(self.baseline),
                                     baseline_identity_sha256=digest_json(self.baseline))
 
+    def map_metrics_environment(self, environment, runtime):
+        environment = dict(environment)
+        environment.pop('ARMPORT_SERVER_METRICS', None)
+        enabled = 'armport_server_metrics' in self.map_package
+        if enabled:
+            import armport_server_metrics_contract as metrics
+            metrics.verify_current_map(Path(runtime) / 'MapServer.exe', self.map_package)
+            environment['ARMPORT_SERVER_METRICS'] = '1'
+        self.server_metrics_enabled = enabled
+        return environment
+
     def start_map(self):
         self.ctx.stage('local_atlas_startup')
         game.check_game_port(7001, socket.SOCK_DGRAM)
@@ -2151,6 +2209,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             environment[character_events.ENVIRONMENT] = self.owner.args.session_id
             self.creation_report['immediate_native_events'] = {'enabled': True,
                 'contract': event_contract, 'legacy_sorted_logs_used_for_ready_or_ground': False}
+        environment = self.map_metrics_environment(environment, self.runtime)
         self.map_launch_utc_ms = int(time.time() * 1000)
         self.persist_startup_observation()
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
@@ -2746,7 +2805,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 'row_counts': {name: len(value) for name, value in rows.items()},
                 'login_count': count, 'captured_utc': base.utc(), 'saved_position': position},
             sql_game_mutations_performed=False)
-        if self.creation_report.get('mapserver_producer', {}).get('mapserver_sha256') == SERVER_TEXTURE_EXCLUSION_MAP:
+        if native_producer_matches(self.creation_report.get('mapserver_producer', {})):
             boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'), 'containerid=1')
             semantic = enhancement_semantics(boosts, rows['powers'], self.schema['expected_attributes']['attributes'])
             self.baseline_enhancements = {'rows': boosts, 'semantic': semantic}
@@ -3118,7 +3177,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 or self.creation_report.get('enhancement_preservation', {}).get('verified') is not True):
             return None
         producer = self.creation_report.get('mapserver_producer', {})
-        if producer.get('mapserver_sha256') != SERVER_TEXTURE_EXCLUSION_MAP:
+        if not native_producer_matches(producer):
             return None
         runtime = (getattr(self, 'kings_row_runtime', None) if binding['map_id'] == 5
                    else getattr(self, 'atlas_map_runtime', None) or self.runtime)
@@ -3192,9 +3251,11 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             return None
         value = stock_power_preservation(before['rows']['powers'], after['rows']['powers'],
             self.schema['expected_attributes']['attributes'],
-            native_sha256=producer['mapserver_sha256'], data_sha256=hashes)
+            native_sha256=producer['mapserver_sha256'], data_sha256=hashes, native_producer=producer)
         if value is not None:
             value['connection'] = binding
+            if 'armport_server_metrics' in producer:
+                value['armport_server_metrics'] = producer['armport_server_metrics']
         return value
 
     def saved_selected_rows_match(self, table, previous, current):

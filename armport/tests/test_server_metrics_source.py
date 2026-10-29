@@ -3,17 +3,19 @@
 import argparse
 import copy
 import json
+import os
 from pathlib import Path
 import shutil
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'armport/scripts'))
 import prepare_server_metrics_source as source
 
-UPSTREAM_ROOT = ROOT
+UPSTREAM_ROOT = Path(os.environ.get('ARMPORT_SERVER_BASELINE_ROOT', ROOT)).resolve()
 
 
 def find_startup_receipt(value):
@@ -114,6 +116,18 @@ class SourceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Unexpected source lineage'):
             self.apply()
 
+    def test_actual_retained_donor_eol_profile_is_reproduced_before_overlays(self):
+        path = UPSTREAM_ROOT / 'docs/android-evidence/mapserver-progress-package-36630872719.json'
+        donor = json.loads(path.read_text())['inputs']['mapserver_progress']['manifest']['build_input']
+        fresh = self.stage / 'actual-donor-source'
+        receipt = source.prepare(fresh, 'retained_progress', UPSTREAM_ROOT,
+                                 required_baseline_receipt=donor)
+        self.assertEqual(receipt['baseline_receipt'], donor)
+        pg = donor['game_build_input']['postgresql_build_input']
+        for name, wanted in pg['overlay_sha256'].items():
+            self.assertEqual(source.digest((fresh / name).read_bytes()), wanted)
+        self.assertEqual(source.verify_prepared(fresh, UPSTREAM_ROOT), receipt)
+
     def test_post_stage_source_or_receipt_tamper_refused(self):
         self.apply()
         path = self.stage / source.IMPL
@@ -168,10 +182,19 @@ class SourceTests(unittest.TestCase):
         # receipt-only test must never imply it generated or executed that data.
         self.assertFalse(receipt['native_execution_validated'])
 
+    def test_modern_generation_refuses_cached_validator_from_another_root(self):
+        _, startup = source.modules(UPSTREAM_ROOT)
+        target = self.stage / 'never-created'
+        with mock.patch.object(startup.certificate, 'ROOT', self.stage / 'different-root'):
+            with self.assertRaisesRegex(ValueError, 'modules were imported from another root'):
+                source.prepare(target, 'thor_certified_startup', UPSTREAM_ROOT,
+                               required_baseline_receipt=self.startup_base)
+        self.assertFalse(target.exists())
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--upstream-root', type=Path, default=ROOT)
+    parser.add_argument('--upstream-root', type=Path, default=UPSTREAM_ROOT)
     args, rest = parser.parse_known_args()
     UPSTREAM_ROOT = args.upstream_root.resolve()
     unittest.main(argv=[sys.argv[0], *rest])

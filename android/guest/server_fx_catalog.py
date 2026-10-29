@@ -198,7 +198,7 @@ def verify_consumer(runtime, mapserver_package):
     require(isinstance(mapserver_package.get('native_map_startup'), dict),
             'FX supplement requires the exact accepted native startup consumer')
     import native_map_startup_contract as startup
-    receipt = startup.embedded_receipt(mapserver_package)
+    receipt = startup.current_receipt(Path(runtime) / 'MapServer.exe', mapserver_package)
     proof = startup.verify_current_map(Path(runtime)/'MapServer.exe', mapserver_package)
     previous = receipt.get('previous_mapserver', {})
     require({'bytes':previous.get('bytes',previous.get('size')), 'sha256':previous.get('sha256')} == MAPSERVER
@@ -220,10 +220,14 @@ def install(assets, runtime, *, context=None, mapserver_package=None):
     require(re.fullmatch(r'local-login-server-[0-9a-f]{32}(?:-kings-row|-atlas-park)?', runtime.name) is not None,
             'FX projection is restricted to the owned Atlas/Kings server namespace')
     value, raw = verify_package(assets)
-    verify_consumer(runtime, mapserver_package)
+    compatibility = verify_consumer(runtime, mapserver_package)
     actual = caches.file_pin(runtime/'MapServer.exe')
-    if actual != MAPSERVER:
-        require(actual == value['native_qualification']['startup_native_consumer']['mapserver'],
+    qualified = actual
+    if 'armport_server_metrics' in compatibility:
+        import native_map_startup_contract as startup
+        qualified = startup.pin_record(startup.current_receipt(Path(runtime) / 'MapServer.exe', mapserver_package)['mapserver'])
+    if qualified != MAPSERVER:
+        require(qualified == value['native_qualification']['startup_native_consumer']['mapserver'],
                 'FX supplement was qualified for different startup native bytes')
     owner = runtime.lstat().st_uid
     require(runtime.is_dir() and not runtime.is_symlink(), 'Owned FX server runtime required')

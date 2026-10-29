@@ -345,7 +345,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def qualify_monorail_preparation(self):
         if 'native_monorail' not in self.map_package:
             return
-        monorail_contract.embedded_receipt(self.map_package)
+        monorail_contract.current_receipt(self.map_package_dir / 'MapServer.exe', self.map_package)
         graph = self.creation_report.get('kings_row_beacon_graph', {})
         require(graph.get('verified') is True and graph.get('map_id') == 5,
                 'Kings Row native collision/beacon package is not verified')
@@ -482,7 +482,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
 
     def _remember_active(self):
         self.maps[self.active_map_id] = {'process': self.map_process, 'progress_path': self.map_progress_path,
-            'previous': self.map_previous, 'launch_utc_ms': self.map_launch_utc_ms, 'ready': True}
+            'previous': self.map_previous, 'launch_utc_ms': self.map_launch_utc_ms, 'ready': True,
+            'server_metrics_enabled': getattr(self, 'server_metrics_enabled', False)}
 
     def _activate(self, map_id):
         if self.map_process is not None and self.active_map_id in self.maps:
@@ -742,6 +743,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             environment.update(self.monorail_environment(map_id))
         if self.pending is not None:
             self._check_preparation_deadline()
+        environment = self.map_metrics_environment(environment, map_runtime)
         launch_ms = int(time.time() * 1000)
         launch_monotonic = time.monotonic()
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
@@ -750,7 +752,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS()], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
-                             'runtime': map_runtime, 'launch_monotonic': launch_monotonic}
+                             'runtime': map_runtime, 'launch_monotonic': launch_monotonic,
+                             'server_metrics_enabled': self.server_metrics_enabled}
 
     def _check_preparation_deadline(self):
         """Read fresh clocks; phase allowances cannot extend the connected cap."""

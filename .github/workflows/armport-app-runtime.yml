@@ -11,6 +11,10 @@ on:
         description: Completed ArmPort build run containing bins and Cg artifacts
         required: true
         default: '40407492746'
+      server_run_id:
+        description: Optional same build run containing both instrumented MapServer variants
+        required: false
+        default: ''
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
@@ -24,6 +28,7 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: '2'
   CLIENT_RUN_ID: ${{ inputs.client_run_id || '40407492746' }}
   DATA_RUN_ID: ${{ inputs.data_run_id || '40407492746' }}
+  SERVER_RUN_ID: ${{ inputs.server_run_id }}
 
 jobs:
   app-sources:
@@ -210,6 +215,30 @@ jobs:
             tesseract-ocr python3-pil iproute2 util-linux
       - name: Check ARM64 guest evidence and helper closure
         run: python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v
+      - name: Require the optional servers from this exact successful build
+        if: env.SERVER_RUN_ID != ''
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SERVER_RUN_ID" > "$RUNNER_TEMP/server-build-run.json"
+          python3 armport/app/server_pipeline.py check-run \
+            --build-run-json "$RUNNER_TEMP/server-build-run.json" \
+            --repository-commit "$GITHUB_SHA" --server-run-id "$SERVER_RUN_ID" \
+            --client-run-id "$CLIENT_RUN_ID" --data-run-id "$DATA_RUN_ID"
+      - name: Checkout the immutable server certificate baseline
+        if: env.SERVER_RUN_ID != ''
+        uses: actions/checkout@v4
+        with:
+          ref: c86a57962363dbe2dc2091dadde6abdfaa2e1e1c
+          path: server-baseline
+          lfs: false
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        if: env.SERVER_RUN_ID != ''
+        with:
+          name: armport-server-metrics-native
+          path: ${{ runner.temp }}/server-metrics-native
+          run-id: ${{ env.SERVER_RUN_ID }}
+          github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: armport-app-proot-linux
@@ -237,13 +266,35 @@ jobs:
           fail-on-cache-miss: true
       - name: Create, save, restart and reopen through the selected ARM64 app guest
         run: |
+          server_args=()
+          if [ -n "$SERVER_RUN_ID" ]; then
+            server_args=(--server-archive "$RUNNER_TEMP/server-metrics-native/server-metrics-retained-progress.zip" --server-run-id "$SERVER_RUN_ID" --baseline-root "$GITHUB_WORKSPACE/server-baseline")
+          fi
           armport/scripts/step.sh "ArmPort app interactive guest" python3 armport/app/interactive_host.py \
             --apk "$RUNNER_TEMP/retained-app/COH-Character-Reopen-0.10.0.apk" \
             --build-report "$RUNNER_TEMP/retained-app/interactive-apk-build-report.json" \
             --armport "$RUNNER_TEMP/armport-package/armport-client.zip" \
             --archive "$RUNNER_TEMP/reference-assets.zip" --proot out/android/native/linux-arm64 \
             --work "$RUNNER_TEMP/interactive-work" --evidence "$RUNNER_TEMP/interactive-evidence" \
-            --repository-commit "$GITHUB_SHA"
+            --repository-commit "$GITHUB_SHA" "${server_args[@]}"
+      - name: Bind the exact server packages to the successful retained guest sessions
+        if: env.SERVER_RUN_ID != ''
+        run: |
+          python3 armport/app/server_pipeline.py qualify \
+            --build-run-json "$RUNNER_TEMP/server-build-run.json" \
+            --repository-commit "$GITHUB_SHA" --server-run-id "$SERVER_RUN_ID" \
+            --client-run-id "$CLIENT_RUN_ID" --data-run-id "$DATA_RUN_ID" \
+            --runtime-run-id "$GITHUB_RUN_ID" \
+            --baseline-root "$GITHUB_WORKSPACE/server-baseline" \
+            --host-report "$RUNNER_TEMP/interactive-evidence/host-report.json" \
+            --source "$RUNNER_TEMP/server-metrics-native" --output "$RUNNER_TEMP/qualified-server-metrics"
+      - uses: actions/upload-artifact@v4
+        if: env.SERVER_RUN_ID != ''
+        with:
+          name: armport-app-server-metrics
+          path: ${{ runner.temp }}/qualified-server-metrics/
+          if-no-files-found: error
+          retention-days: 30
       - uses: actions/upload-artifact@v4
         if: always()
         with:

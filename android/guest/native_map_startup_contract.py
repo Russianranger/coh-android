@@ -155,10 +155,24 @@ def embedded_receipt(package):
         'Map startup component provenance/scope missing')
     return receipt
 
-def verify_current_map(path, package):
+def _current(path, package):
+    metrics = None
+    if 'armport_server_metrics' in package:
+        import armport_server_metrics_contract as observer
+        package, metrics = observer.verified_previous(path, package)
+        require(metrics['variant'] == 'thor_certified_startup', 'Startup compatibility requires the modern metrics lineage')
     receipt = embedded_receipt(package)
-    require(file_pin(path) == pin_record(receipt['mapserver']), 'Current MapServer bytes differ from startup source receipt')
-    return {'format': 1, 'policy': 'qualified_startup_overlay_preserves_original_cache_and_graph_history',
+    if metrics is None:
+        require(file_pin(path) == pin_record(receipt['mapserver']), 'Current MapServer bytes differ from startup source receipt')
+    return receipt, package, metrics
+
+def current_receipt(path, package):
+    """Authenticate the current PE before returning its retained startup recipe."""
+    return _current(path, package)[0]
+
+def verify_current_map(path, package):
+    receipt, package, metrics = _current(path, package)
+    result = {'format': 1, 'policy': 'qualified_startup_overlay_preserves_original_cache_and_graph_history',
         'actual_mapserver_sha256': receipt['mapserver']['sha256'],
         'previous_monorail_mapserver_sha256': PREVIOUS_SHA256,
         'original_cache_donor_mapserver_sha256': receipt['build_input']['animation_certificate']['original_animation_identity']['mapserver_sha256'],
@@ -168,6 +182,9 @@ def verify_current_map(path, package):
         'native_build_manifest': receipt['native_build_manifest'],
         'native_map_startup_receipt_sha256': package['native_map_startup']['receipt_sha256'],
         'physical_loading_gain_validated': False}
+    if metrics is not None:
+        result.update(actual_mapserver_sha256=metrics['actual_mapserver_sha256'], armport_server_metrics=metrics)
+    return result
 
 def progress_contract(package):
     receipt = embedded_receipt(package)

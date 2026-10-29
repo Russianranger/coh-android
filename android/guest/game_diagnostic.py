@@ -237,8 +237,17 @@ def game_listener_contract(package):
     return metadata
 
 
-def mapserver_progress_contract(package):
+def mapserver_progress_contract(package, mapserver_path=None):
     """Bind the opt-in binary, complete source receipt and exact publication ABI."""
+    if 'armport_server_metrics' in package:
+        import armport_server_metrics_contract as metrics
+        require(mapserver_path is not None, 'Metrics progress contract requires the actual current PE')
+        previous, proof = metrics.verified_previous(mapserver_path, package)
+        retained = mapserver_progress_contract(previous)
+        return {'contract': retained['contract'], 'producer': {
+            'repository_commit': proof['repository_commit'], 'run_id': proof['run_id'],
+            'manifest_sha256': proof['build_manifest']['sha256'],
+            'mapserver_sha256': proof['actual_mapserver_sha256'], 'armport_server_metrics': proof}}
     profile = package.get('mapserver_progress_profile')
     if profile is None:
         require('mapserver_progress' not in package.get('inputs', {}), 'Unexpected MapServer progress donor')
@@ -580,7 +589,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.loopback_enabled = self.loopback_contract is not None
         self.game_listener_metadata = game_listener_contract(self.package)
         self.game_listener_enabled = self.game_listener_metadata is not None
-        self.map_progress_contract = mapserver_progress_contract(self.package)
+        self.map_progress_contract = mapserver_progress_contract(self.package, args.game_package / 'MapServer.exe')
         self.map_progress_paths, self.map_progress_previous = {}, {}
         self.map_progress_phase = None
         self.map_progress_next_sample = 0

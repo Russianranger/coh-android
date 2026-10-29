@@ -63,6 +63,7 @@ class ServerArchiveTests(unittest.TestCase):
         self.cache = b'COH_PG_PERSISTENCE_TESTS:BOOL=OFF\n'
         # Contract/source fixtures are isolated seams. Byte, PE, archive, source
         # invocation and exact donor binding below use production functions.
+        mock.patch.object(package, 'baseline_root', side_effect=lambda path: Path(path)).start()
         self.source_mock = mock.patch.object(package, 'validate_source', side_effect=self.check_source).start()
         self.addCleanup(mock.patch.stopall)
         self.predecessor_mock = mock.patch.object(package, 'validate_predecessor', side_effect=self.check_predecessor).start()
@@ -303,6 +304,23 @@ class ServerArchiveTests(unittest.TestCase):
         self.build(); wrapped = self.patch()
         wrapped['historical_receipt']['original'] = False
         with self.assertRaisesRegex(ValueError, 'retained package ancestry'): package.previous_package(wrapped)
+
+
+class BaselineCheckoutTests(unittest.TestCase):
+    def test_exact_clean_baseline_is_required(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory).resolve()
+            def result(value):
+                return subprocess.CompletedProcess([], 0, value + '\n', '')
+            for head, status, accepted in ((package.BASELINE_COMMIT, '', True),
+                    ('0' * 40, '', False), (package.BASELINE_COMMIT, ' M tools/changed.py', False),
+                    (package.BASELINE_COMMIT, '?? tools/new.py', False)):
+                with self.subTest(head=head, status=status), mock.patch.object(package.subprocess, 'run',
+                    side_effect=[result(str(path)), result(head), result(status)]):
+                    if accepted:
+                        self.assertEqual(package.baseline_root(path), path)
+                    else:
+                        with self.assertRaises(ValueError): package.baseline_root(path)
 
 
 class HistoricalDonorTests(unittest.TestCase):

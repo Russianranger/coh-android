@@ -3,12 +3,14 @@
 No readiness decisions, subprocesses, environment/command-line export, or new
 threads. Linux CPU counters are not Wine request counts. Map tick counters come
 from the retained native progress publisher; they cannot reveal the longest
-individual tick or time inside file loads.
+individual tick or time inside file loads. Opt-in 0119 console windows supply
+separate post-ready main-thread durations, with their narrower scope retained.
 """
 import copy
 import json
 import os
 from pathlib import Path
+import re
 import stat
 import time
 
@@ -24,6 +26,163 @@ MAP_LIMIT = 8
 SAMPLE_LIMIT = 2048
 EXPORT_BYTES = 4 * 1024 * 1024
 READ_BYTES = 8192
+NATIVE_BUDGET = .005
+NATIVE_BYTES_PER_MAP = 8192
+NATIVE_TOTAL_BYTES = 32768
+NATIVE_LINE_BYTES = 480
+NATIVE_LINES = 256
+NATIVE_WINDOWS = 8
+NATIVE_STALE_SECONDS = 15
+NATIVE_SCOPE = 'post_ready_main_thread_outer_filealloc'
+NATIVE_PREFIX = b'ARMPORT_SERVER_METRICS_V1 '
+_UINT = rb'([0-9]{1,20})'
+_MS = rb'([0-9]{1,24}\.[0-9]{3})'
+_NATIVE_OK = re.compile(NATIVE_PREFIX + rb'status=ok map_id=' + _UINT + rb' pid=' + _UINT
+    + rb' seconds=([0-9]{1,24}\.[0-9]{6}) ticks=' + _UINT + rb' max_tick_ms=' + _MS
+    + rb' max_loop_ms=' + _MS + rb' filealloc_ms=' + _MS + rb' filealloc_calls=' + _UINT
+    + rb' filealloc_failures=' + _UINT + rb' counter_saturated=([01]) scope=' + NATIVE_SCOPE.encode())
+_NATIVE_ERROR = re.compile(NATIVE_PREFIX + rb'status=clock_error map_id=' + _UINT + rb' pid=' + _UINT)
+
+
+def parse_native_window(line, map_id, windows_pid):
+    """Parse the actual 0119 record, never raw text or arbitrary key/value fields.
+
+    pid is the native Windows PID, not the Linux launcher PID. None means an
+    unrelated console line; malformed/foreign records cannot become zeros.
+    """
+    if NATIVE_PREFIX not in line:
+        return None
+    if len(line) >= NATIVE_LINE_BYTES:
+        raise ValueError('native metrics line exceeds bound')
+    line = line.removesuffix(b'\r')
+    match = _NATIVE_OK.fullmatch(line)
+    error = _NATIVE_ERROR.fullmatch(line) if match is None else None
+    if match is None and error is None:
+        raise ValueError('native metrics format differs')
+    fields = (match or error).groups()
+    identity = tuple(int(value) for value in fields[:2])
+    if not (0 < identity[0] <= 0x7fffffff and 0 < identity[1] <= 0xffffffff):
+        raise ValueError('invalid native metrics identity')
+    if identity != (map_id, windows_pid):
+        raise LookupError('native metrics generation identity differs')
+    if error is not None:
+        return {'status': 'clock_error', 'map_id': map_id, 'windows_pid': windows_pid}
+    seconds, ticks, tick_ms, loop_ms, file_ms, calls, failures, saturated = fields[2:]
+    seconds, tick_ms, loop_ms, file_ms = map(float, (seconds, tick_ms, loop_ms, file_ms))
+    ticks, calls, failures = map(int, (ticks, calls, failures))
+    if (seconds < 5 or not 0 < ticks <= 0xffffffffffffffff
+            or not 0 <= failures <= calls <= 0xffffffffffffffff
+            or tick_ms > loop_ms + .002 or loop_ms > seconds * 1000 + .002
+            or file_ms > seconds * 1000 + .002):
+        raise ValueError('native metrics counters or durations differ')
+    return {'status': 'ok', 'map_id': map_id, 'windows_pid': windows_pid,
+        'seconds': seconds, 'ticks': ticks, 'max_tick_ms': tick_ms, 'max_loop_ms': loop_ms,
+        'filealloc_ms': file_ms, 'filealloc_calls': calls, 'filealloc_failures': failures,
+        'counter_saturated': saturated == b'1', 'scope': NATIVE_SCOPE}
+
+
+class NativeConsoleTail:
+    """Independent bounded offsets for one already-owned map console generation."""
+    def __init__(self, binding, output):
+        self.binding, self.output = binding, output
+        self.offset, self.pending, self.discarding = 0, b'', False
+        self.last_record_at = self.caught_up_at = None
+        self.clock_error = False
+
+    def sample(self, map_id, windows_pid, now, clock, deadline, maximum):
+        result = {'available': False, 'is_success_proof': False, 'status': 'missing',
+            'windows': [], 'bytes_scanned': 0, 'bytes_copied': 0, 'bytes_skipped': 0, 'lines_scanned': 0,
+            'malformed_records': 0, 'identity_mismatches': 0, 'windows_omitted': 0,
+            'partial_line_bytes': len(self.pending), 'complete': True,
+            'scope': NATIVE_SCOPE, 'window_end_time_unknown': True,
+            'freshness_basis': 'console_observation_not_native_emission_timestamp'}
+        size = len(self.output)
+        if size < self.offset:
+            raise ValueError('owned native metrics console shrank')
+        if clock() >= deadline or maximum <= 0:
+            result.update(status='partial', complete=False, reason='sample_budget_exhausted')
+            return result
+        maximum = min(maximum, NATIVE_BYTES_PER_MAP)
+        # Prefer current windows to an unbounded scan of startup logging. Drop
+        # the first fragment after a skip, never parse a substring as a record.
+        if size - self.offset > maximum:
+            result['bytes_skipped'] = size - self.offset - maximum
+            self.offset = size - maximum
+            self.pending, self.discarding, self.caught_up_at = b'', True, None
+            result['complete'] = False
+        start, end = self.offset, min(size, self.offset + maximum)
+        chunk = bytes(self.output[start:end])
+        result['bytes_copied'] = len(chunk)
+        position = 0
+        while position < len(chunk):
+            if result['lines_scanned'] >= NATIVE_LINES or clock() >= deadline:
+                result['complete'] = False
+                break
+            newline = chunk.find(b'\n', position)
+            finish = newline + 1 if newline >= 0 else len(chunk)
+            fragment = chunk[position:newline if newline >= 0 else finish]
+            position = finish
+            if self.discarding:
+                if newline >= 0:
+                    self.discarding = False
+            elif len(self.pending) + len(fragment) >= NATIVE_LINE_BYTES:
+                if NATIVE_PREFIX in self.pending + fragment[:NATIVE_LINE_BYTES]:
+                    result['malformed_records'] += 1
+                self.pending = b''
+                self.discarding = newline < 0
+                result['complete'] = False
+            else:
+                self.pending += fragment
+                if newline >= 0:
+                    try:
+                        value = parse_native_window(self.pending, map_id, windows_pid)
+                        if value is not None:
+                            value['console_end_offset'] = start + finish
+                            # This only bounds when bytes reached our captured
+                            # console; pipe/reader buffering can predate it.
+                            value['since_previous_caught_up_sample_seconds'] = (
+                                None if self.caught_up_at is None else round(max(0, now - self.caught_up_at), 6))
+                            if value['status'] == 'clock_error':
+                                self.clock_error = True
+                            elif self.clock_error:
+                                result['malformed_records'] += 1
+                            else:
+                                self.last_record_at = now
+                                result['windows'].append(value)
+                                if len(result['windows']) > NATIVE_WINDOWS:
+                                    del result['windows'][0]
+                                    result['windows_omitted'] += 1
+                                    result['complete'] = False
+                    except LookupError:
+                        result['identity_mismatches'] += 1
+                    except ValueError:
+                        result['malformed_records'] += 1
+                    self.pending = b''
+            if newline >= 0:
+                result['lines_scanned'] += 1
+        self.offset = start + position
+        result.update(bytes_scanned=position, partial_line_bytes=len(self.pending),
+            discarding_oversized_or_skipped_line=self.discarding,
+            unscanned_bytes=size - self.offset, available=bool(result['windows']))
+        if self.offset == size and not self.pending and not self.discarding:
+            self.caught_up_at = now
+        else:
+            result['complete'] = False
+        result['seconds_since_last_record_observed'] = (
+            None if self.last_record_at is None else round(max(0, now - self.last_record_at), 6))
+        result['last_record_stale'] = (self.last_record_at is not None
+                                       and now - self.last_record_at >= NATIVE_STALE_SECONDS)
+        if self.clock_error:
+            result['status'] = 'clock_error'
+        elif result['malformed_records'] or result['identity_mismatches']:
+            result.update(status='malformed', complete=False)
+        elif not result['complete'] or any(row['counter_saturated'] for row in result['windows']):
+            result.update(status='partial', complete=False)
+        elif result['windows']:
+            result['status'] = 'measured'
+        elif self.last_record_at is not None:
+            result['status'] = 'stale' if result['last_record_stale'] else 'no_new_record'
+        return result
 
 
 def bounded_read(path):
@@ -124,6 +283,8 @@ class ServerMetrics:
         self._proc_entries = self._proc_root = None
         self.stopped = False
         self.process_previous, self.thread_previous, self.map_previous = {}, {}, {}
+        self.native_context, self.native_tails = {}, {}
+        self.native_cursor = 0
         self.hz = int(os.sysconf('SC_CLK_TCK'))
         self.path = Path(diagnostic.capture_dir) / 'server-metrics.jsonl'
         self.summary = {'schema': SCHEMA, 'format': 1, 'is_success_proof': False,
@@ -132,8 +293,14 @@ class ServerMetrics:
             'export_bytes': 0, 'export_limit_bytes': EXPORT_BYTES, 'sample_limit': SAMPLE_LIMIT,
             'cpu_clock_ticks_per_second': self.hz,
             'sampling': 'cooperative_health_callback_not_a_realtime_schedule',
-            'longest_tick_ms': {'available': False, 'reason': 'native_duration_producer_not_wired'},
-            'file_load_ms': {'available': False, 'reason': 'native_duration_producer_not_wired'},
+            'longest_tick_ms': {'available': False, 'reason': 'no_native_window_observed'},
+            'file_load_ms': {'available': False, 'reason': 'no_native_window_observed'},
+            'native_duration_windows_observed': 0,
+            'native_duration_scope': {'max_tick_ms': 'post_ready_main_thread_work_excludes_sleep',
+                'max_loop_ms': 'post_ready_main_thread_work_and_sleep_excludes_metrics_logging',
+                'filealloc_ms': 'inclusive_outer_fileAlloc_and_fileAllocEx_attempts_during_tick_work',
+                'filealloc_excludes': ['startup', 'background_threads', 'other_file_IO'],
+                'filealloc_is_disk_only_time': False, 'windows_align_with_host_samples': False},
             'wineserver_requests': {'available': False, 'reason': 'request_counter_producer_not_wired'}}
         diagnostic.ctx.report['armport_server_metrics'] = self.summary
 
@@ -284,12 +451,9 @@ class ServerMetrics:
 
     def maps(self, deadline):
         import game_map_progress as progress
-        server = getattr(self.diagnostic, 'local_server', None)
-        owned = dict(getattr(server, 'maps', {}))
-        if not owned and getattr(server, 'map_process', None) is not None:
-            owned[getattr(server, 'active_map_id', 1)] = {'process': server.map_process,
-                'progress_path': server.map_progress_path}
+        owned = self.owned_maps()
         rows, previous = [], {}
+        self.native_context = {}
         for map_id, entry in list(owned.items())[:MAP_LIMIT]:
             row = {'map_id': map_id, 'available': False, 'is_success_proof': False}
             try:
@@ -308,11 +472,104 @@ class ServerMetrics:
                         'sequence', 'tick_started', 'tick_completed', 'stage', 'observed_monotonic')},
                     **map_delta(value, self.map_previous.get(map_id)))
                 previous[map_id] = value
+                self.native_context[map_id] = (entry['process'], entry['progress_path'],
+                    entry.get('launch_utc_ms'), value)
             except Exception as exc:
                 row['unavailable_reason'] = type(exc).__name__
             rows.append(row)
         self.map_previous = previous
         return rows, {'maps_omitted': max(0, len(owned) - MAP_LIMIT)}
+
+    def owned_maps(self):
+        server = getattr(self.diagnostic, 'local_server', None)
+        owned = dict(getattr(server, 'maps', {}))
+        if not owned and getattr(server, 'map_process', None) is not None:
+            owned[getattr(server, 'active_map_id', 1)] = {'process': server.map_process,
+                'progress_path': server.map_progress_path,
+                'launch_utc_ms': getattr(server, 'map_launch_utc_ms', None),
+                'server_metrics_enabled': getattr(server, 'server_metrics_enabled', None)}
+        return owned
+
+    def native_qualified(self):
+        server = getattr(self.diagnostic, 'local_server', None)
+        contract = getattr(server, 'map_contract', None)
+        producer = contract.get('producer') if isinstance(contract, dict) else None
+        proof = producer.get('armport_server_metrics') if isinstance(producer, dict) else None
+        return isinstance(proof, dict) and bool(proof)
+
+    def native_durations(self, rows, deadline):
+        """Use only the console generation whose progress was sampled this turn.
+
+        Package admission owns environment activation. This parser cannot enable
+        the producer, qualify a binary, alter health, or grant readiness.
+        """
+        deadline = min(deadline, self.clock() + NATIVE_BUDGET)
+        owned = self.owned_maps()
+        qualified = self.native_qualified()
+        remaining, scanned, copied, windows = NATIVE_TOTAL_BYTES, 0, 0, 0
+        current = {row['map_id']: row for row in rows}
+        self.native_tails = {key: value for key, value in self.native_tails.items() if key in current}
+        order = sorted(current)
+        order = [key for key in order if key > self.native_cursor] + [key for key in order if key <= self.native_cursor]
+        for map_id in order:
+            row, entry = current[map_id], owned.get(map_id)
+            unavailable = {'available': False, 'is_success_proof': False, 'windows': []}
+            if not qualified or (entry is not None and entry.get('server_metrics_enabled') is False):
+                row['native_durations'] = dict(unavailable, status='disabled',
+                    reason='producer_not_qualified' if not qualified else 'producer_not_enabled')
+                self.native_tails.pop(map_id, None)
+                continue
+            if entry is None or entry.get('server_metrics_enabled') is not True:
+                row['native_durations'] = dict(unavailable, status='activation_unknown',
+                    reason='qualified_producer_without_launch_activation_receipt')
+                continue
+            context = self.native_context.get(map_id)
+            if context is None:
+                row['native_durations'] = dict(unavailable, status='identity_unavailable', reason='map_progress_unavailable')
+                continue
+            handle, path, launch_ms, value = context
+            try:
+                if (entry is None or entry.get('process') is not handle or entry.get('progress_path') != path
+                        or entry.get('launch_utc_ms') != launch_ms or handle.process.poll() is not None):
+                    raise LookupError('map generation changed before console sample')
+                output = handle.output
+                if not isinstance(output, bytearray) or handle.overflow:
+                    raise ValueError('owned console is unavailable or overflowed')
+                binding = (handle, path, launch_ms, value['windows_pid'], value['main_thread_id'],
+                           tuple(sorted(value['file_identity'].items())))
+                tail = self.native_tails.get(map_id)
+                if tail is not None and tail.binding[0] is handle and tail.binding != binding:
+                    raise LookupError('progress identity changed within map generation')
+                if tail is None or tail.binding != binding:
+                    tail = NativeConsoleTail(binding, output)
+                    self.native_tails[map_id] = tail
+                if tail.output is not output:
+                    raise LookupError('owned console replaced within map generation')
+                result = tail.sample(map_id, value['windows_pid'], self.clock(), self.clock, deadline, remaining)
+                if result.get('reason') != 'sample_budget_exhausted':
+                    self.native_cursor = map_id
+                remaining -= result['bytes_copied']
+                copied += result['bytes_copied']
+                scanned += result['bytes_scanned']
+                after = self.owned_maps().get(map_id)
+                if (after is None or after.get('process') is not handle or after.get('progress_path') != path
+                        or after.get('launch_utc_ms') != launch_ms or handle.process.poll() is not None
+                        or handle.output is not output or len(output) < tail.offset or handle.overflow):
+                    raise LookupError('map generation changed during console sample')
+                row['native_durations'] = result
+                windows += len(result['windows'])
+            except Exception as exc:
+                row['native_durations'] = dict(unavailable, status='identity_unavailable', reason=type(exc).__name__)
+        self.summary['native_duration_windows_observed'] += windows
+        for key in ('longest_tick_ms', 'file_load_ms'):
+            self.summary[key] = {'available': self.summary['native_duration_windows_observed'] > 0,
+                'reason': 'per_map_native_windows' if self.summary['native_duration_windows_observed']
+                          else 'no_native_window_observed', 'scope': NATIVE_SCOPE}
+        return {'bytes_scanned': scanned, 'bytes_copied': copied,
+            'byte_limit': NATIVE_TOTAL_BYTES, 'line_limit_per_map': NATIVE_LINES,
+            'windows_observed': windows, 'qualified_producer': qualified,
+            'reserved_within_callback_budget_seconds': NATIVE_BUDGET,
+            'stale_after_seconds_without_new_console_record': NATIVE_STALE_SECONDS}
 
     def append(self, sample):
         raw = (json.dumps(sample, sort_keys=True, separators=(',', ':')) + '\n').encode()
@@ -346,10 +603,17 @@ class ServerMetrics:
                   'longest_tick_ms': None, 'file_load_ms': None, 'wineserver_requests': None}
         try:
             sample['maps'], sample['map_sampling'] = self.maps(deadline)
-            sample['processes'], sample['process_sampling'] = self.processes(deadline)
+            process_deadline = deadline - NATIVE_BUDGET if self.native_qualified() and self.native_context else deadline
+            sample['processes'], sample['process_sampling'] = self.processes(process_deadline)
         except Exception as exc:
             self.failure(exc)
             sample['sample_error_type'] = type(exc).__name__
+        if 'maps' in sample:
+            try:
+                sample['native_duration_sampling'] = self.native_durations(sample['maps'], deadline)
+            except Exception as exc:
+                self.failure(exc)
+                sample['native_duration_error_type'] = type(exc).__name__
         sample['collection_overhead_ms'] = round((self.clock() - now) * 1000, 3)
         sample['budget_exceeded'] = self.clock() >= deadline
         try:

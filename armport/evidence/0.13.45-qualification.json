@@ -1,0 +1,96 @@
+{
+  "checked_by": "independent connector metadata/log reads plus downloaded APK byte inspection",
+  "head_sha": "0bf31c81b1b5a9f8427b4692c623702b30e7029e",
+  "build_run_id": 40776745390,
+  "runtime_run_id": 40786315414,
+  "apk_run_id": 40791416254,
+  "artifact_id": 12860779714,
+  "artifact_bytes": 79812556,
+  "artifact_sha256": "2e27321c4097a71e5d9a135642794973cefc0d6eed9f022c1eb27a6262493efb",
+  "apk_bytes": 80919462,
+  "apk_sha256": "1ff2252876def6cfeb28d33490d8c2f5d5952c330698d6a719fb67a2197b3959",
+  "apk_signatures": {
+    "v2": true,
+    "v3": true,
+    "full_content_digest": true,
+    "algorithm": "RSA PKCS1 v1.5 SHA256",
+    "certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "binary_manifest": {
+    "package": "io.github.russianranger.cohclientinteractive",
+    "versionName": "0.13.45",
+    "versionCode": 60
+  },
+  "pin_checks": {
+    "inner_files": 377,
+    "packaged_runtime_files": 75,
+    "packaged_client_files": 67,
+    "mismatches": [],
+    "external_files_not_downloaded": 19
+  },
+  "runtime_summary_from_actual_job_log": {
+    "scope": "arm64_app_guest_creation_and_reopen",
+    "passed": true,
+    "m4_complete": false,
+    "apk_built": false,
+    "android_surface_validated": false,
+    "repository_commit": "0bf31c81b1b5a9f8427b4692c623702b30e7029e",
+    "donor": {
+      "run_id": 36920583713,
+      "artifact_id": 11192425448,
+      "source_commit": "204615c6c4a809d6b814c7174b81448cffea3f7a",
+      "apk_sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688",
+      "asset_count": 46
+    },
+    "armport_client": {
+      "archive_sha256": "caf54a9aea9e5fcb479ff651b25892e5a731f1300f44fa8e43401341bd21c0c8",
+      "executable_sha256": "2caf815fc2262399440af333512cec3d83bf69ce43fc3a6d44ba35b21f67db6e",
+      "client_run_id": 40776745390,
+      "data_run_id": 40776745390,
+      "machine": "ARM64",
+      "default_architecture": "x86"
+    },
+    "same_persistent_profile": true,
+    "same_character_id": true,
+    "creation_session_id": "b8b89581fd78436018b8cc6f53a3a546",
+    "reopen_session_id": "6194204e7c54cea6a5db1da0a43c4c45",
+    "elapsed_seconds": 2214.441,
+    "guest_failures": {
+      "creation": {
+        "failures": [],
+        "failed_stages": [],
+        "client_faults": []
+      },
+      "reopen": {
+        "failures": [],
+        "failed_stages": [],
+        "client_faults": []
+      }
+    }
+  },
+  "limits": [
+    "Raw runtime evidence ZIPs were not downloaded; runtime observations come from actual CI logs and metadata.",
+    "Dedicated check-annotation REST endpoint unavailable; emitted log warnings/notices inspected.",
+    "Retained donor APK was not independently downloaded/diffed.",
+    "No Thor validation and no Claude 0.13.45 approval as of comment6484030941."
+  ],
+  "format": 1,
+  "native_patch_tree": "992ed11b116a2db10179c8507ce61e3f37b27840",
+  "provenance_notice": "package run 40786315414, client run 40776745390 at 0bf31c81b1b5a9f8427b4692c623702b30e7029e, armport/patches tree 992ed11b116a2db10179c8507ce61e3f37b27840 matches 0bf31c81b1b5a9f8427b4692c623702b30e7029e",
+  "review_status": "awaiting_Claude_candidate_review",
+  "thor_validated": false,
+  "workflow_jobs": {
+    "build": {
+      "passed": 8,
+      "total": 8
+    },
+    "runtime": {
+      "passed": 4,
+      "total": 4
+    },
+    "apk": {
+      "passed": 1,
+      "total": 1
+    }
+  }
+}

@@ -90,11 +90,15 @@ def encoded(value):
     return (json.dumps(value, sort_keys=True, indent=2) + '\n').encode()
 
 
-def stage(source, armport, output, repository_commit, external=None):
+def stage(source, armport, output, repository_commit, external=None, *,
+          server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
     external = dict(external or {})
+    metrics = server_archive is not None
+    package.require(metrics == (server_variant is not None) == (server_run_id is not None),
+                    'Metrics staging requires archive, variant and build run together')
     package.require(re.fullmatch('[0-9a-f]{40}', repository_commit), 'Exact repository commit required')
     package.require(not output.exists(), 'Fresh app asset output required')
     runtime = json.loads((source / 'runtime-manifest.json').read_text())
@@ -115,12 +119,28 @@ def stage(source, armport, output, repository_commit, external=None):
                     'Inner/outer app inventories disagree')
     with tempfile.TemporaryDirectory(prefix='armport-package-check-') as temporary:
         document = package.unpack(armport, Path(temporary) / 'client')
+    generated = {}
+    if metrics:
+        import server_package
+        import armport_server_metrics_contract as contract
+        with tempfile.TemporaryDirectory(prefix='armport-server-stage-') as temporary:
+            staged_game = Path(temporary) / 'game-package.tar.gz'
+            server_package.patch_game(source / 'game-package.tar.gz', server_archive, staged_game,
+                variant=server_variant, repository_commit=repository_commit, run_id=server_run_id,
+                upstream_root=upstream_root)
+            binding = server_package.runtime_binding(server_archive, staged_game,
+                variant=server_variant, repository_commit=repository_commit, run_id=server_run_id,
+                upstream_root=upstream_root)
+            generated = {'game-package.tar.gz': staged_game.read_bytes(), contract.BINDING: encoded(binding)}
+        runtime[contract.WRAPPER] = contract.summary(binding)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
                     'client_stdio.py': Path(__file__).with_name('client_stdio.py'),
                     'server_metrics.py': Path(__file__).with_name('server_metrics.py'),
                     'character_creation_diagnostic.py': ROOT / 'android/guest/character_creation_diagnostic.py'}
+    if metrics:
+        replacements['armport_server_metrics_contract.py'] = ROOT / 'android/guest/armport_server_metrics_contract.py'
     for name in set(client['files']) | set(GUEST_DEPENDENCIES):
         source_helper = ROOT / 'android/guest' / name
         if name.endswith('.py') and source_helper.is_file():
@@ -128,7 +148,7 @@ def stage(source, armport, output, repository_commit, external=None):
     output.mkdir(parents=True)
     # Ordinary copies keep the retained donor independent of future edits.
     for name in runtime['files']:
-        if name not in replacements and name != 'client-manifest.json' and name not in external:
+        if name not in replacements and name not in generated and name != 'client-manifest.json' and name not in external:
             shutil.copyfile(source / name, output / name)
     for name, path in replacements.items():
         if name == 'atlas_world_assets.py':
@@ -138,6 +158,9 @@ def stage(source, armport, output, repository_commit, external=None):
             shutil.copyfile(path, output / name)
         record = pin(output / name)
         runtime['files'][name] = client['files'][name] = record
+    for name, raw in generated.items():
+        (output / name).write_bytes(raw)
+        runtime['files'][name] = client['files'][name] = pin(output / name)
     package.require(len(client['files']) <= 96, 'Existing client inventory bound exceeded')
     (output / 'client-manifest.json').write_bytes(encoded(client))
     runtime['files']['client-manifest.json'] = pin(output / 'client-manifest.json')
@@ -155,6 +178,10 @@ def main():
     for name in ('source', 'armport', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--repository-commit', required=True)
+    parser.add_argument('--server-archive', type=Path)
+    parser.add_argument('--server-variant', choices=('retained_progress', 'thor_certified_startup'))
+    parser.add_argument('--server-run-id', type=int)
+    parser.add_argument('--upstream-root', type=Path, default=ROOT)
     print(json.dumps(stage(**vars(parser.parse_args()))))
 
 

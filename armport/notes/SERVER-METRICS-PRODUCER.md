@@ -4,6 +4,78 @@ This experimental source producer is separate from the 0.13.45 APK inputs.
 It has host source tests, not a Windows MapServer build or Thor validation.
 Package and guest integration status is in [SERVER-METRICS-DEVELOPMENT.md](SERVER-METRICS-DEVELOPMENT.md).
 
+## Producer integration — 2026-10-29
+
+The opt-in pipeline is now implemented in `armport-build.yml`; it has **not yet
+run**. Dispatch with `build_server_metrics=true` to add `server-metrics-source`
+after the existing client/server jobs, then `server-metrics-native`. The input
+defaults to false. No separate workflow or overlapping native stage is started.
+
+[server_metrics_producer.py](../scripts/server_metrics_producer.py) authenticates
+the complete retained 0.10 APK and build report and the complete pinned 0.13.36
+APK before extracting either game package. It preserves each raw predecessor
+manifest and builds both source trees against their actual donor receipts.
+The retained receipt uses CRLF for two PostgreSQL overlay files; the adapter now
+reproduces that already accepted byte profile in fresh staging before applying
+the unchanged overlay chain. It does not normalize the donor's receipt.
+
+Both jobs use a pristine, separately checked-out baseline at
+`c86a57962363dbe2dc2091dadde6abdfaa2e1e1c`, passed as `--upstream-root`. The shared
+`server_package.baseline_root` gate verifies the exact Git head and a clean
+working tree. This is required because the historical animation certificate
+pins the old guest animation helper's bytes, while the new runtime admission
+helper changes that file. Sparse baseline checkouts include `.gitignore`, so
+ordinary Python bytecode caches do not falsely dirty the baseline. Modern
+generation also refuses cached certificate modules imported from another root.
+
+The Linux job runs eight extracted-source cases plus the specific upstream
+negative control on **each actual prepared variant**. Its bounded archive binds
+every transferred source byte, source report, donor manifest and animation
+input to the producer commit/run and frozen baseline. The Windows job verifies
+that closure again, executes the existing genuine Win32 animation-certificate
+and monorail-boundary fixtures, then builds only MapServer for the retained and
+modern variants, sequentially. `CMAKE_BUILD_PARALLEL_LEVEL=1`, `--parallel 1`, and
+`_CL_=/MP1` bound the builds. `_CL_` is appended after command-line options, so
+the existing project `/MP` cannot override the limit
+([Microsoft documentation](https://learn.microsoft.com/en-us/cpp/build/reference/cl-environment-variables?view=msvc-170)).
+The compiler process count is constrained by those settings, not reported as a
+measured process count.
+
+Artifacts from the same ArmPort build run are:
+
+- `armport-server-metrics-source`: exact prepared input tarball and its digest.
+- `armport-server-metrics-native`: flat `server-metrics-retained-progress.zip`
+  and `server-metrics-thor-certified-startup.zip`, plus their byte pins.
+- `armport-server-metrics-native-evidence`: PDBs, configuration/build logs,
+  source reports and genuine Windows fixture evidence. A failure does not upload
+  the success-only native package artifact.
+
+Each native ZIP retains its four-member contract: `MapServer.exe`,
+`server-metrics-build.json`, `previous-game-package.json` and
+`server-metrics-source-checks.json`. The POSIX fixture report remains explicitly
+separate from Windows PE execution. The producer compiles the shipping binary
+but does not launch it, qualify the app runtime or validate Thor behavior.
+
+Additional local results for this integration:
+
+- `ARMPORT_SERVER_BASELINE_ROOT=../coh-server-baseline python3
+  armport/tests/test_server_metrics_source.py -v`: **10 passed**, including the
+  actual retained CRLF donor and the wrong-module-root generation refusal.
+- `python3 armport/tests/test_server_metrics_producer.py -v`: **8 passed**.
+  These are archive/identity/sequencing tests; compiler commands are mocked in
+  the sequencing test and make no Windows execution claim.
+- The actual retained donor source receipt is
+  `8e26c7eafbb4546976eefa0212394a7bfaaa8a5af347710303ecbd0d1fe47885`.
+  Eight extracted runtime cases and the specific upstream runtime negative
+  control passed locally against that tree, with one compiler at a time.
+
+No full modern source tree, Windows build or new server APK has been produced
+locally. The first opt-in Actions run must recover the exact published animation
+PIGG/manifest and both donors; missing or changed inputs fail closed. Runtime
+qualification and the Thor APK must consume the appropriate variant from the
+same build chain, preserving the distinction between retained CI execution and
+modern device evidence.
+
 ## Native source and measurement scope
 
 Patch [0119](../patches/0119-armport-server-tick-file-metrics.patch) was authored
@@ -122,14 +194,12 @@ receipt digest is
 does not authenticate arbitrary reports: CI must execute the checks and retain
 their logs.
 
-## Remaining producer work
+## Remaining execution and qualification
 
 No Windows executable, native symbols or server-containing APK was built here.
-The native Windows producer must build the two lineages separately and keep
-their exact donor receipts. The old native workflow's unbounded `--parallel`
-and CMake `/MP` defaults must not be reused: set `/MP1` and at most two concurrent
-build jobs, or an equivalently bounded configuration. ARM64 and i686 builds
-remain sequential. The persisted CMake cache alone cannot prove compiler
+The implemented opt-in producer still needs its first actual run. It builds the
+two lineages separately and retains their exact donor receipts. ARM64 and i686
+builds remain sequential; the persisted CMake cache alone cannot prove compiler
 concurrency.
 
 The ARM64 client build's source test does not replace either Win32 MapServer

@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 import re
 import stat
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -27,6 +28,7 @@ sys.path[:0] = [str(ROOT / 'tools'), str(ROOT / 'android/guest'), str(ROOT / 'ar
 from package_reference_runtime import dependency_report, pe_info
 
 VARIANTS = frozenset({'retained_progress', 'thor_certified_startup'})
+BASELINE_COMMIT = 'c86a57962363dbe2dc2091dadde6abdfaa2e1e1c'
 ROLE = 'armport_server_metrics'
 WRAPPER = ROLE
 BUILD = 'server-metrics-build.json'
@@ -51,6 +53,23 @@ NAME = re.compile(r'[A-Za-z0-9_][A-Za-z0-9_.-]*')
 def require(condition, message):
     if not condition:
         raise ValueError(message)
+
+
+def baseline_root(path):
+    """Use the exact clean historical producer checkout, never guest code."""
+    path = Path(path)
+    require(path.is_dir() and not path.is_symlink(), 'Historical baseline must be a real checkout')
+    path = path.resolve()
+    def git(*arguments):
+        result = subprocess.run(['git', '-C', str(path), *arguments], capture_output=True, text=True, timeout=30)
+        require(result.returncode == 0, 'Historical baseline git identity is unavailable')
+        return result.stdout.strip()
+    require(Path(git('rev-parse', '--show-toplevel')).resolve() == path
+            and git('rev-parse', 'HEAD') == BASELINE_COMMIT,
+            'Historical baseline must be exactly ' + BASELINE_COMMIT)
+    require(git('status', '--porcelain', '--untracked-files=normal') == '',
+            'Historical baseline checkout has modified or untracked inputs')
+    return path
 
 
 def canonical(value):
@@ -108,7 +127,7 @@ def source_module():
 
 
 def validate_source(value, upstream_root=ROOT):
-    return source_module().validate_receipt(value, upstream_root=upstream_root)
+    return source_module().validate_receipt(value, upstream_root=baseline_root(upstream_root))
 
 
 def validate_predecessor(raw, variant):
@@ -255,6 +274,7 @@ def _write_new(path, writer):
 def package(binary_directory, prepared_source, cmake_cache, predecessor_manifest, source_report, output,
             *, variant, repository_commit, run_id, expected_predecessor_pin, upstream_root=ROOT):
     """Produce a deterministic ZIP; PDB stays in the separate symbol artifact."""
+    upstream_root = baseline_root(upstream_root)
     source = source_module()
     receipt = source.verify_prepared(Path(prepared_source), upstream_root=upstream_root)
     previous_raw = read_file(predecessor_manifest, MAX_JSON)
@@ -354,6 +374,24 @@ def patch_game(game_archive, server_archive, output, *, variant, repository_comm
         read_game_archive(target)
     _write_new(output, write)
     return game
+
+
+def runtime_binding(server_archive, game_archive, *, variant, repository_commit, run_id, upstream_root=ROOT):
+    """Create a runtime-owned binding after the full source/package gates."""
+    import armport_server_metrics_contract as guest
+    build, previous, native = read_package(server_archive, variant=variant,
+        repository_commit=repository_commit, run_id=run_id, upstream_root=upstream_root)
+    game, _ = read_game_archive(game_archive)
+    require(game.get(WRAPPER) == {'receipt': build, 'receipt_sha256': digest(canonical(build))}
+            and previous_package(game) == previous, 'Staged game differs from the admitted metrics package')
+    value = {'format': 1, 'role': guest.ROLE,
+        'server_package': pin(read_file(server_archive, MAX_FILE + 3 * MAX_JSON)),
+        'game_archive': pin(read_file(game_archive, MAX_GAME)),
+        'build_manifest': pin(native[BUILD]), 'build_manifest_utf8': native[BUILD].decode('utf-8'),
+        'previous_manifest': pin(native[PREVIOUS]), 'previous_manifest_utf8': native[PREVIOUS].decode('utf-8'),
+        'source_report': pin(native[CHECKS]), 'source_report_utf8': native[CHECKS].decode('utf-8')}
+    guest.validate_binding(value)
+    return value
 
 
 def main():

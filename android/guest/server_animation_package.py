@@ -179,7 +179,7 @@ def verify_runtime(runtime, document, *, mapserver_package=None):
     if isinstance(mapserver_package, dict) and 'native_map_startup' in mapserver_package:
         import native_map_startup_contract as startup
         proof = startup.verify_current_map(runtime / 'MapServer.exe', mapserver_package)
-        receipt = startup.embedded_receipt(mapserver_package)
+        receipt = startup.current_receipt(runtime / 'MapServer.exe', mapserver_package)
         require(document['identity'] == identity()
                 and proof['original_cache_donor_mapserver_sha256'] == historical
                 and receipt['build_input']['animation_certificate']['original_animation_pack'] == document['pigg'],

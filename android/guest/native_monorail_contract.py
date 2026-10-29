@@ -63,6 +63,12 @@ def embedded_receipt(package):
         'Monorail native build source binding missing')
     return receipt
 
+def current_receipt(path, package):
+    if 'armport_server_metrics' in package:
+        import armport_server_metrics_contract as metrics
+        package, _ = metrics.verified_previous(path, package)
+    return embedded_receipt(package)
+
 def progress_contract(package):
     if 'native_map_startup' in package:
         import native_map_startup_contract as startup

@@ -12,6 +12,7 @@ import importlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import tempfile
 
@@ -293,11 +294,52 @@ def prepare(output, variant, upstream_root=ROOT, animations_pigg=None,
     root = Path(upstream_root).resolve()
     require(variant in VARIANTS, 'Unknown server metrics source variant')
     progress, startup = modules(root)
-    if variant == 'retained_progress':
-        progress.prepare(Path(output), root)
-    else:
+    if variant == 'thor_certified_startup':
+        # generate() uses module globals, while the receipt-only validator
+        # takes an explicit root. A host that pre-imported current guest code
+        # must not silently generate a different historical certificate.
+        certificate = startup.certificate
+        require(Path(certificate.ROOT).resolve() == root
+                and Path(certificate.__file__).resolve() == root / 'tools/map_startup_animation_certificate.py'
+                and Path(certificate.package.__file__).resolve() == root / 'android/guest/server_animation_package.py',
+                'Historical certificate modules were imported from another root; use a fresh producer process')
         require(animations_pigg is not None and animation_manifest is not None,
                 'Certified startup requires the actual pinned animations PIGG and manifest')
+    if required_baseline_receipt is not None:
+        # Historical Windows producers have two explicitly accepted PG overlay
+        # EOL profiles. Reproduce the donor's bytes in this new tree before its
+        # unchanged overlay chain runs; never rewrite a published receipt.
+        base = expected_baseline(variant, required_baseline_receipt, root)
+        pg = base
+        while 'postgresql_build_input' not in pg:
+            key = next(key for key in ('monorail_build_input', 'events_build_input',
+                                       'progress_build_input', 'game_build_input') if key in pg)
+            pg = pg[key]
+        pg = pg['postgresql_build_input']
+        subprocess.run([sys.executable, str(root / 'tools/prepare_pg_source.py'),
+                        '--output', str(Path(output).resolve())], check=True)
+        output = Path(output)
+        actual = json.loads((output / 'postgresql-build-input.json').read_text())
+        require(progress.game.pg_receipt_matches(pg, actual, root), 'Donor PostgreSQL profile differs')
+        for name, wanted in pg['overlay_sha256'].items():
+            path = output / name
+            original = path.read_bytes()
+            if digest(original) != wanted:
+                require(path.suffix.lower() in ('.c', '.h'), 'Nontext donor profile differs')
+                lf = original.replace(b'\r\n', b'\n')
+                choices = [data for data in (lf, lf.replace(b'\n', b'\r\n')) if digest(data) == wanted]
+                require(len(choices) == 1, 'Unrecognized donor overlay profile: ' + name)
+                path.write_bytes(choices[0])
+        (output / 'postgresql-build-input.json').write_text(json.dumps(pg, indent=2) + '\n')
+        progress.game.apply_game_overlay(output, root, variant='creation')
+        progress.apply_progress_overlay(output, root)
+        if variant == 'thor_certified_startup':
+            startup.monorail.events.apply_events_overlay(output, root)
+            startup.monorail.apply_monorail_overlay(output, root)
+            startup.apply_startup_overlay(output, animations_pigg, animation_manifest, root)
+    elif variant == 'retained_progress':
+        progress.prepare(Path(output), root)
+    else:
         startup.prepare(Path(output), animations_pigg, animation_manifest, root)
     return apply_metrics(output, variant, root, required_baseline_receipt)
 
