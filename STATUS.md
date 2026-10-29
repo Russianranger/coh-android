@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-28 CDT. Experimental server metrics + review fixes; PR #8 remains draft, M5 unaccepted.
+Updated 2026-10-29 CDT. Experimental server metrics + review fixes; PR #8 remains draft, M5 unaccepted.
 Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
 
 - M3 merged (PR #6): final build 40407492746/replay 40407492734 passed partial
@@ -26,12 +26,12 @@ Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
   remain unavailable until a separately qualified native producer is integrated.
 - 0.13.46/code 61 development: opt-in serial Win32 producer, exact two-variant
   qualification, guest admission and bounded native-console export are wired.
-  Build 40805020119 at dd9d755bd running; runtime/APK chain held (6486287635).
+  Build 40805020119: 9 jobs passed; Windows import of fcntl failed before MSVC.
 - Local command: PATH=<javac-wrapper>:$PATH ARMPORT_SERVER_BASELINE_ROOT=<c86>
-  python3 -m unittest discover -s armport/tests -p 'test_*.py': 415 passed; 61 existing lifecycle tests also pass.
+  python3 -m unittest discover -s armport/tests -p 'test_*.py': 419 passed; 61 lifecycle tests pass.
   Extracted retained-source ASan/UBSan controls pass; original control fails.
 - P2/P3 fixed locally; bounded launch history added, retirement stays disabled.
-  Next: after current build, qualify the revised head through the full chain.
+  Windows host admission and CRLF-cache fixes tested; full revised CI chain pending.
 - Remaining: prior-zone retirement, DbServer wait cost, ARM64 servers, persistent
   folder cache, late data-stage launch, enhancement additions and cleanup proof.
   Esync requires a proposal before changing the pinned runtime.

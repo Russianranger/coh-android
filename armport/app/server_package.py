@@ -44,6 +44,15 @@ MAX_SYMBOLS = 256 * 1024 * 1024
 # manifest still comes from that authenticated outer donor at packaging time.
 THOR_PREDECESSOR_MAPSERVER = {'bytes': 7475200,
     'sha256': 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'}
+# Exact accepted 0.10 game-package.json bytes and producer, also pinned by the
+# historical game_device_diagnostic. Host packaging must not import that POSIX
+# lifecycle (diagnostic imports fcntl). The complete raw pin authenticates every
+# nested contract/receipt; prepared-source verification remains a separate gate.
+RETAINED_PREDECESSOR_SHA256 = 'ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd'
+RETAINED_PREDECESSOR_PRODUCER = {
+    'repository_commit': '003b07bcd98cb100c1505c15670c07d11a240c8f',
+    'manifest_sha256': 'b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1',
+    'mapserver_sha256': '52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb'}
 MAX_GAME = 512 * 1024 * 1024
 HEX64 = re.compile(r'[a-f0-9]{64}')
 COMMIT = re.compile(r'[a-f0-9]{40}')
@@ -131,7 +140,7 @@ def validate_source(value, upstream_root=ROOT):
 
 
 def validate_predecessor(raw, variant):
-    """Run the historical contract, without teaching it any new binary hash."""
+    """Admit exact historical donors using host-safe metadata checks only."""
     require(variant in VARIANTS, 'Unknown server variant')
     value = parse_json(raw)
     require(WRAPPER not in value and value.get('source_commit') == SOURCE
@@ -145,13 +154,17 @@ def validate_predecessor(raw, variant):
         require(isinstance(record, dict), 'Native record must be an object')
         valid_pin({'bytes': record.get('bytes'), 'sha256': record.get('sha256')})
     if variant == 'retained_progress':
-        import game_device_diagnostic as accepted
-        require(digest(raw) == accepted.MAP_PROGRESS_PACKAGE_SHA256
+        require(digest(raw) == RETAINED_PREDECESSOR_SHA256
                 and not any(name in value for name in ('native_responsiveness', 'native_monorail', 'native_map_startup')),
                 'Exact retained 0.10 progress donor required')
-        proof = accepted.game.mapserver_progress_contract(value)
-        require(proof['producer'] == accepted.MAP_PROGRESS_PRODUCER, 'Retained progress producer changed')
-        baseline = value['inputs']['mapserver_progress']['manifest']['build_input']
+        # Only inspect nested fields after the complete immutable byte identity
+        # passes. This admits no edited/re-serialized donor, on any host OS.
+        donor = value['inputs']['mapserver_progress']
+        producer = {'repository_commit': donor['repository_commit'],
+            'manifest_sha256': donor['manifest_sha256'],
+            'mapserver_sha256': records['MapServer.exe']['sha256']}
+        require(producer == RETAINED_PREDECESSOR_PRODUCER, 'Retained progress producer changed')
+        baseline = donor['manifest']['build_input']
     else:
         import native_map_startup_contract as accepted
         receipt = accepted.embedded_receipt(value)
@@ -217,7 +230,9 @@ def make_manifest(executable, symbols, source_receipt, previous_raw, cache, repo
     require(parse_json(report).get('shipping_binary_executed') is False,
             'Source report must distinguish the shipping binary from extracted code')
     source_module().validate_test_report(parse_json(report), source_receipt, upstream_root=upstream_root)
-    require(re.findall(r'^COH_PG_PERSISTENCE_TESTS:BOOL=(.*)$', cache.decode('utf-8-sig'), re.M) == ['OFF'],
+    fixture_modes = [line.partition('=')[2] for line in cache.decode('utf-8-sig').splitlines()
+                     if line.startswith('COH_PG_PERSISTENCE_TESTS:BOOL=')]
+    require(fixture_modes == ['OFF'],
             'Shipping MapServer requires persistence fixture mode OFF')
     result = {'format': 1, 'role': ROLE, 'variant': variant, 'repository_commit': repository_commit,
         'source_commit': SOURCE, 'data_commit': DATA, 'run_id': run_id,

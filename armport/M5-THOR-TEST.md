@@ -181,7 +181,7 @@ Export the ZIP, then switch back to x86. Do not recreate the character.
 
 ## 0.13.46 development reservation — no APK available
 
-Version/code 0.13.46/61 is reserved on the experimental server-metrics branch.
+Version/code 0.13.46/61 is reserved for the revised sampler/server-metrics branch.
 It adds an optional modern Win32 MapServer with 0119 timing and bounded native
 console ingestion. The paired retained-progress executable runs in retained
 0.10 CI; that does not execute the modern Thor executable. Exact same-head
@@ -202,3 +202,26 @@ five, 256 KiB each). Resident returns keep the same generation; records refer to
 owned launcher objects and are not native PID authentication or shutdown proof.
 Retirement, restart/control paths and existing save/cleanup rules are unchanged.
 This revision is not yet CI-qualified; no new APK is approved or available.
+
+## Windows producer correction — 2026-10-29 CDT
+
+Build [40805020119](https://github.com/Russianranger/coh-android/actions/runs/40805020119)
+at `dd9d755bd` passed nine jobs, including both real prepared-source positive and
+original-code negative controls. Windows job 123247607771 failed before MSVC:
+retained donor admission imported POSIX lifecycle code requiring `fcntl`.
+No runtime or APK stage was dispatched, and no .46 executable was produced.
+
+The revision keeps the sampler/launch-history fixes and removes that host-only
+import while retaining the exact raw donor and producer pins. It also accepts
+Windows CRLF CMake cache lines without changing raw cache hashing or the unique
+`COH_PG_PERSISTENCE_TESTS:BOOL=OFF` requirement. Windows CI now runs portable donor
+regressions and retains preflight logs even if compilation cannot start.
+
+Local verification: 419 ArmPort tests and 61 lifecycle tests passed; both real
+donors pass in fresh processes with POSIX imports blocked. The original retained
+reader reproduces the missing-fcntl failure. Downloaded source artifact
+12870633271 matches ZIP SHA-256
+`3a4da8ad601b1fdc22651e7967ca0060552afc11dd1f80bebb8cd2b9394e4654`;
+its complete bundle extracts/verifies with the fixed code on Linux. This is not
+Windows execution. See [failure and correction](notes/M5-WINDOWS-PRODUCER-FIX.md).
+The full revised build/runtime/APK chain and Claude approval remain required.

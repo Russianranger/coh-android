@@ -4,12 +4,14 @@ from __future__ import annotations
 import copy
 import io
 import json
+import os
 from pathlib import Path
 import struct
 import subprocess
 import sys
 import tarfile
 import tempfile
+import textwrap
 import unittest
 from unittest import mock
 import warnings
@@ -289,6 +291,28 @@ class ServerArchiveTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'fixture mode OFF'): self.build()
         self.assertFalse(self.native.exists())
 
+    def test_cmake_cache_accepts_lf_crlf_and_bom_without_changing_raw_pin(self):
+        for newline in (b'\n', b'\r\n'):
+            for bom in (b'', b'\xef\xbb\xbf'):
+                with self.subTest(newline=newline, bom=bom):
+                    self.native.unlink(missing_ok=True)
+                    cache = bom + newline.join((b'// CMake cache',
+                        b'COH_PG_PERSISTENCE_TESTS:BOOL=OFF', b'OTHER:STRING=value', b''))
+                    self.cache_path.write_bytes(cache)
+                    manifest = self.build()
+                    self.assertEqual(manifest['cmake_cache'], package.pin(cache))
+
+    def test_cmake_cache_rejects_missing_on_or_duplicate_fixture_mode(self):
+        for rows in ([], ['ON'], ['OFF', 'OFF'], ['OFF', 'ON'], ['OFF ']):
+            for newline in (b'\n', b'\r\n'):
+                with self.subTest(rows=rows, newline=newline):
+                    cache = newline.join(('COH_PG_PERSISTENCE_TESTS:BOOL=' + row).encode()
+                                         for row in rows) or b'// no fixture mode'
+                    self.cache_path.write_bytes(cache)
+                    with self.assertRaisesRegex(ValueError, 'fixture mode OFF'):
+                        self.build()
+                    self.assertFalse(self.native.exists())
+
     def test_output_is_never_replaced_and_failed_stage_leaves_no_output(self):
         self.build()
         with self.assertRaisesRegex(ValueError, 'new path'): self.build()
@@ -361,6 +385,34 @@ class HistoricalDonorTests(unittest.TestCase):
         self.assertEqual(baseline['build_role'], 'mapserver_progress')
         with self.assertRaises(ValueError): package.validate_predecessor(raw + b' ', 'retained_progress')
         with self.assertRaises(ValueError): package.validate_predecessor(raw, 'thor_certified_startup')
+
+    @unittest.skipIf(os.name == 'nt', 'Historical guest lifecycle is POSIX-only')
+    def test_host_retained_admission_matches_frozen_historical_contract(self):
+        frozen = package.baseline_root(Path(os.environ.get('ARMPORT_SERVER_BASELINE_ROOT', ROOT)))
+        raw = self.historical_bytes('docs/android-evidence/mapserver-progress-package-36630872719.json')
+        script = textwrap.dedent('''\
+            import json
+            from pathlib import Path
+            import sys
+            sys.path.insert(0, str(Path(sys.argv[1]) / 'armport/app'))
+            import server_package as package
+            frozen = Path(sys.argv[2])
+            sys.path[:0] = [str(frozen / 'android/guest'), str(frozen / 'tools')]
+            import game_device_diagnostic as historical
+            assert Path(historical.__file__).resolve().parent == frozen / 'android/guest'
+            raw = sys.stdin.buffer.read()
+            game, baseline = package.validate_predecessor(raw, 'retained_progress')
+            assert package.RETAINED_PREDECESSOR_SHA256 == historical.MAP_PROGRESS_PACKAGE_SHA256
+            assert package.RETAINED_PREDECESSOR_PRODUCER == historical.MAP_PROGRESS_PRODUCER
+            proof = historical.game.mapserver_progress_contract(game)
+            assert proof['producer'] == package.RETAINED_PREDECESSOR_PRODUCER
+            assert baseline == game['inputs']['mapserver_progress']['manifest']['build_input']
+            print('frozen_historical_progress_contract_matches_host')
+        ''')
+        result = subprocess.run([sys.executable, '-I', '-c', script, str(ROOT), str(frozen)],
+            input=raw, capture_output=True, timeout=60)
+        self.assertEqual(result.returncode, 0, result.stdout.decode() + result.stderr.decode())
+        self.assertIn(b'frozen_historical_progress_contract_matches_host', result.stdout)
 
 
 if __name__ == '__main__':

@@ -1,13 +1,14 @@
 # Native server metrics producer checkpoint
 
 This experimental source producer is separate from the 0.13.45 APK inputs.
-It has host source tests, not a Windows MapServer build or Thor validation.
+Both real source variants passed CI controls; Windows compilation and Thor validation remain pending.
 Package and guest integration status is in [SERVER-METRICS-DEVELOPMENT.md](SERVER-METRICS-DEVELOPMENT.md).
 
 ## Producer integration — 2026-10-29
 
-The opt-in pipeline is now implemented in `armport-build.yml`; it has **not yet
-run**. Dispatch with `build_server_metrics=true` to add `server-metrics-source`
+The opt-in pipeline ran in build 40805020119: source preparation/controls passed;
+Windows extraction failed on a POSIX guest import before MSVC. See
+[M5-WINDOWS-PRODUCER-FIX.md](M5-WINDOWS-PRODUCER-FIX.md) for the correction. Dispatch with `build_server_metrics=true` to add `server-metrics-source`
 after the existing client/server jobs, then `server-metrics-native`. The input
 defaults to false. No separate workflow or overlapping native stage is started.
 
@@ -69,9 +70,10 @@ Additional local results for this integration:
   Eight extracted runtime cases and the specific upstream runtime negative
   control passed locally against that tree, with one compiler at a time.
 
-No full modern source tree, Windows build or new server APK has been produced
-locally. The first opt-in Actions run must recover the exact published animation
-PIGG/manifest and both donors; missing or changed inputs fail closed. Runtime
+The first opt-in Actions run recovered the exact published animation
+PIGG/manifest and both donors, then prepared and source-tested both variants.
+The downloaded bundle has since been fully reverified locally; Windows builds
+and a new server APK remain pending. Missing or changed inputs fail closed. Runtime
 qualification and the Thor APK must consume the appropriate variant from the
 same build chain, preserving the distinction between retained CI execution and
 modern device evidence.
@@ -132,12 +134,10 @@ nested receipts, patch, two modified preimages, four resulting native files and
 all retained predecessor overlay identities. `--baseline-receipt` additionally
 requires exact equality with the chosen donor's actual source receipt.
 
-The full retained-progress tree was staged locally and tested. The modern
-variant's receipt, hook rebase, animation-table pin and 720-second budget were
-checked against the real 0.13.32 publication metadata. **Full modern staging was
-not run**: it requires the actual pinned animation PIGG and manifest, which were
-not available in this workspace. The producer does not invent or substitute a
-certificate table.
+Initial local work staged the retained-progress tree and checked the modern
+receipt against the 0.13.32 publication metadata. CI 40805020119 subsequently
+completed full modern staging and source controls with the actual pinned PIGG
+and animation manifest. The producer does not substitute a certificate table.
 
 ## Reproduction and observed checks
 

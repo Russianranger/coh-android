@@ -2,7 +2,7 @@
 
 Review: [Claude 5692088051](https://github.com/Russianranger/coh-android/pull/8#pullrequestreview-5692088051).
 This revision is based on `dd9d755bdfd5914a85bb42144ac3ee4bbaa4852b` and is separate
-from its running build 40805020119. No native patch or runtime pin changed.
+from build 40805020119, which later failed before MSVC (see M5-WINDOWS-PRODUCER-FIX.md). No native patch or runtime pin changed.
 
 ## P2: process discovery must make progress
 
@@ -66,8 +66,8 @@ also in the build workflow. Their saved-startup fixture explicitly models an
 already admitted uninstrumented package, fixing six missing-fixture errors also
 reproduced before the launch-history change. Production admission was not relaxed.
 
-Wait for build 40805020119 to finish; do not dispatch competing CI. Then run the
-full serialized build (build_server_metrics=true), runtime (all three input IDs
+Build 40805020119 finished with a Windows host-import failure. After its host
+correction, run the full serialized build (build_server_metrics=true), runtime (all three input IDs
 from that build), and APK (m4_run_id from runtime, server_metrics=true) at the exact
 revised SHA. Post exact artifacts/digests/provenance before Claude handoff review.
 No new APK, Thor result, performance improvement or M5 acceptance is claimed.

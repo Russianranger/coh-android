@@ -1282,6 +1282,8 @@ jobs:
             /armport/
             /tools/
             /android/guest/
+            /docs/android-evidence/mapserver-progress-package-36630872719.json
+            /docs/android-evidence/client-map-startup-0.13.32-publication.json
           sparse-checkout-cone-mode: false
       - uses: actions/checkout@v4
         with:
@@ -1306,7 +1308,11 @@ jobs:
       - name: Verify every tested source byte and exact donor before compiling
         shell: pwsh
         run: |
-          python armport/scripts/server_metrics_producer.py extract --archive out/source-bundle/server-metrics-input.tar.gz --output C:/ams-input --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Path out/server-preflight-evidence -Force | Out-Null
+          python armport/tests/test_server_predecessor_host.py -v 2>&1 | Tee-Object -FilePath out/server-preflight-evidence/predecessor-tests.log
+          if ($LASTEXITCODE -ne 0) { throw 'Portable donor verification tests failed' }
+          python armport/scripts/server_metrics_producer.py extract --archive out/source-bundle/server-metrics-input.tar.gz --output C:/ams-input --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline 2>&1 | Tee-Object -FilePath out/server-preflight-evidence/source-extract.log
           if ($LASTEXITCODE -ne 0) { throw 'Server source identity check failed' }
       - name: Genuine x86 fixtures then two single-worker MapServer builds
         shell: pwsh
@@ -1338,6 +1344,8 @@ jobs:
         if: always()
         with:
           name: armport-server-metrics-native-evidence
-          path: out/server-native/evidence/
+          path: |
+            out/server-native/evidence/
+            out/server-preflight-evidence/
           retention-days: 30
           if-no-files-found: warn

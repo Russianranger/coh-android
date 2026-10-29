@@ -1,0 +1,81 @@
+{
+  "format": 1,
+  "date": "2026-10-29",
+  "timezone": "America/Chicago",
+  "failed_run": 40805020119,
+  "failed_head": "dd9d755bdfd5914a85bb42144ac3ee4bbaa4852b",
+  "failed_job": 123247607771,
+  "successful_jobs": 9,
+  "failure_stage": "Windows source extraction before MSVC",
+  "exception": "ModuleNotFoundError: No module named 'fcntl'",
+  "import_chain": [
+    "server_metrics_producer.verify_bundle",
+    "server_package.validate_predecessor",
+    "game_device_diagnostic",
+    "game_diagnostic",
+    "dbserver_diagnostic",
+    "diagnostic",
+    "fcntl"
+  ],
+  "native_compilation_started": false,
+  "runtime_dispatched": false,
+  "apk_dispatched": false,
+  "source_artifact": {
+    "id": 12870633271,
+    "bytes": 159214983,
+    "sha256": "3a4da8ad601b1fdc22651e7967ca0060552afc11dd1f80bebb8cd2b9394e4654",
+    "downloaded_and_digest_verified": true
+  },
+  "source_reports": {
+    "retained_progress": {
+      "sha256": "510b0dfb3ebfc7a6b4cad27fa242a9e9bf78764ff9d14653d8405fb60a663b9f",
+      "build_input_sha256": "8e26c7eafbb4546976eefa0212394a7bfaaa8a5af347710303ecbd0d1fe47885",
+      "positive_cases": [
+        "window",
+        "disabled",
+        "files",
+        "thread",
+        "slow",
+        "clock",
+        "saturation",
+        "progress_markers"
+      ],
+      "unpatched_control_failure": "runtime_missing_metrics_assertion",
+      "shipping_binary_executed": false
+    },
+    "thor_certified_startup": {
+      "sha256": "4ec8abfd0e1ff701dea3e565fb0bb63985cd33eeabde4df83ca69fe2f7d3c171",
+      "build_input_sha256": "65e3ffb7f16618d141bdc18a0f6a72fb231a0c7e9525da9fec10052a42b6944e",
+      "positive_cases": [
+        "window",
+        "disabled",
+        "files",
+        "thread",
+        "slow",
+        "clock",
+        "saturation",
+        "progress_markers"
+      ],
+      "unpatched_control_failure": "runtime_missing_metrics_assertion",
+      "shipping_binary_executed": false
+    }
+  },
+  "local_verification": {
+    "armport_unit_tests": 419,
+    "armport_unit_command": "PATH=<javac-wrapper>:$PATH ARMPORT_SERVER_BASELINE_ROOT=<pristine-c86> python3 -m unittest discover -s armport/tests -p 'test_*.py'",
+    "original_donor_admission_fails_without_fcntl": true,
+    "fixed_real_donor_admission_without_posix_imports": true,
+    "full_failed_ci_bundle_extract_and_verify": "passed_on_linux",
+    "windows_execution": false,
+    "device_execution": false,
+    "lifecycle_tests": 61
+  },
+  "native_patch_changed": false,
+  "upstream_changed": false,
+  "runtime_pin_changed": false,
+  "candidate": {
+    "version_name": "0.13.46",
+    "version_code": 61,
+    "apk_available": false
+  }
+}
