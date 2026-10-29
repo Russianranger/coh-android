@@ -11,8 +11,9 @@ for coh_argument in "$@"; do
       cat <<'HELP'
 Usage: bash scripts/codex/setup.sh [--install-system] [--skip-baseline]
 Prepare the Python environment and exact historical test baseline.
---install-system  Install missing Debian/Ubuntu developer packages using apt.
+--install-system  Optionally install genuinely missing tools using Debian/Ubuntu apt.
 --skip-baseline   Deliberately omit baseline preparation; exits 2 when required.
+Tools already on PATH and an existing managed venv are reused without sudo/apt.
 Existing checkouts are verified and preserved, never reset or cleaned.
 COH_CODEX_CACHE_DIR selects the cache; ARMPORT_SERVER_BASELINE_ROOT selects an
 existing baseline or a new destination. Proxy and credential settings are retained.
@@ -22,45 +23,102 @@ HELP
   esac
 done
 
-if (( coh_install_system )); then
-  command -v apt-get >/dev/null && command -v dpkg-query >/dev/null || {
-    printf '%s\n' '--install-system requires a Debian/Ubuntu apt environment.' >&2; exit 2;
-  }
-  coh_packages=(python3 python3-venv git gh curl cmake ninja-build build-essential clang
-    openjdk-17-jdk-headless imagemagick pkg-config unzip xz-utils ca-certificates ripgrep)
-  coh_missing=()
-  for coh_package in "${coh_packages[@]}"; do
-    [[ "$(dpkg-query -W -f='${Status}' "$coh_package" 2>/dev/null || true)" == 'install ok installed' ]] || coh_missing+=("$coh_package")
-  done
-  if (( ${#coh_missing[@]} )); then
-    coh_privilege=()
-    if [[ "$(id -u)" != 0 ]]; then
-      command -v sudo >/dev/null && sudo -n true || {
-        printf '%s\n' 'Installing system dependencies needs root or passwordless sudo in the setup environment.' >&2; exit 2;
-      }
-      coh_privilege=(sudo -n)
-    fi
-    "${coh_privilege[@]}" apt-get update
-    "${coh_privilege[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${coh_missing[@]}"
+coh_install_packages() {
+  (( $# )) || return 0
+  if (( ! coh_install_system )); then
+    printf '%s\n' 'Prepare the missing tools in the Cloud environment, then rerun setup.sh.' \
+      'Use --install-system only when Debian/Ubuntu package installation is available.' >&2
+    return 2
   fi
+  command -v apt-get >/dev/null && command -v apt-cache >/dev/null || {
+    printf '%s\n' 'Missing tools require environment preparation; apt is unavailable.' >&2
+    return 2
+  }
+  local -a coh_privilege=()
+  local coh_package coh_policy coh_field coh_value coh_rest coh_candidate
+  if [[ "$(id -u)" != 0 ]]; then
+    command -v sudo >/dev/null && sudo -n true || {
+      printf '%s\n' 'Missing tools cannot be installed with apt: root or passwordless sudo is unavailable.' \
+        'Prepare those tools through environment setup in a user-writable location, preserve their PATH, and rerun setup.sh.' >&2
+      return 2
+    }
+    coh_privilege=(sudo -n)
+  fi
+  "${coh_privilege[@]}" apt-get update
+  for coh_package in "$@"; do
+    coh_policy="$(LC_ALL=C apt-cache policy "$coh_package")" || return "$?"
+    coh_candidate=''
+    while read -r coh_field coh_value coh_rest; do
+      [[ "$coh_field" != 'Candidate:' ]] || coh_candidate="$coh_value"
+    done <<< "$coh_policy"
+    if [[ -z "$coh_candidate" || "$coh_candidate" == '(none)' ]]; then
+      printf 'Package unavailable in configured repositories: %s\n' "$coh_package" >&2
+      if [[ "$coh_package" == openjdk-17-jdk-headless ]]; then
+        printf '%s\n' 'Prepare JDK 17 through environment setup and persist its PATH/JAVA_HOME. No alternate Java major or repository will be selected.' >&2
+      else
+        printf '%s\n' 'Prepare the equivalent tool through environment setup, then rerun setup.sh.' >&2
+      fi
+      return 2
+    fi
+  done
+  "${coh_privilege[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
+}
+
+# Python is needed to read the repository's pins and configured cache paths.
+if ! command -v python3 >/dev/null; then
+  printf '%s\n' 'Missing developer tools: python3' >&2
+  coh_install_packages python3 python3-venv
 fi
 
 source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
-coh_missing=()
-for coh_tool in "${COH_CODEX_REQUIRED_TOOLS[@]}"; do
-  command -v "$coh_tool" >/dev/null || coh_missing+=("$coh_tool")
-done
-if (( ${#coh_missing[@]} )); then
-  printf 'Missing developer tools: %s\nRun setup.sh --install-system, or install equivalent tools in this environment.\n' "${coh_missing[*]}" >&2
-  exit 2
-fi
 
+coh_create_venv=1
 if [[ -e "$COH_CODEX_VENV" || -L "$COH_CODEX_VENV" ]]; then
   if [[ -L "$COH_CODEX_VENV" || ! -f "$COH_CODEX_VENV/pyvenv.cfg" || ! -x "$COH_CODEX_VENV/bin/python" ]]; then
     printf 'Existing venv path is not a usable managed Python environment; preserved: %s\n' "$COH_CODEX_VENV" >&2
     exit 2
   fi
-else
+  coh_create_venv=0
+fi
+
+# Installed package names do not establish tool availability: Cloud runtimes
+# may supply tools outside apt, including user-managed JDKs and Python.
+coh_missing=()
+coh_packages=()
+for coh_tool in "${COH_CODEX_REQUIRED_TOOLS[@]}"; do
+  command -v "$coh_tool" >/dev/null && continue
+  coh_missing+=("$coh_tool")
+  case "$coh_tool" in
+    ninja) coh_package=ninja-build ;;
+    cc|c++) coh_package=build-essential ;;
+    java|javac) coh_package=openjdk-17-jdk-headless ;;
+    convert|identify) coh_package=imagemagick ;;
+    xz) coh_package=xz-utils ;;
+    rg) coh_package=ripgrep ;;
+    *) coh_package="$coh_tool" ;;
+  esac
+  [[ " ${coh_packages[*]} " == *" $coh_package "* ]] || coh_packages+=("$coh_package")
+done
+if (( coh_create_venv )) && ! "$COH_CODEX_SYSTEM_PYTHON" -c 'import venv, ensurepip' >/dev/null 2>&1; then
+  coh_missing+=('Python venv/ensurepip')
+  coh_packages+=(python3-venv)
+fi
+if (( ${#coh_missing[@]} )); then
+  printf 'Missing developer tools: %s\n' "${coh_missing[*]}" >&2
+  coh_install_packages "${coh_packages[@]}"
+  for coh_tool in "${COH_CODEX_REQUIRED_TOOLS[@]}"; do
+    command -v "$coh_tool" >/dev/null || {
+      printf 'Tool still missing from PATH after installation: %s\n' "$coh_tool" >&2
+      exit 2
+    }
+  done
+fi
+
+if (( coh_create_venv )); then
+  if ! "$COH_CODEX_SYSTEM_PYTHON" -c 'import venv, ensurepip' >/dev/null 2>&1; then
+    printf '%s\n' 'Selected Python still lacks venv/ensurepip. Prepare a Python with venv support in this environment.' >&2
+    exit 2
+  fi
   mkdir -p -- "$COH_CODEX_CACHE_DIR"
   "$COH_CODEX_SYSTEM_PYTHON" -m venv "$COH_CODEX_VENV"
 fi

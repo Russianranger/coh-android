@@ -19,12 +19,14 @@ Thor measurements remain the project's existing, separately qualified stages.
 4. From the repository root, run:
 
    ```bash
-   bash scripts/codex/setup.sh --install-system
+   bash scripts/codex/setup.sh
    bash scripts/codex/doctor.sh --github
    bash scripts/codex/check.sh --all
    ```
 
-5. Resolve reported prerequisites/access failures. Record the tested setup in
+5. Resolve reported prerequisites/access failures in the setup conversation.
+   Reuse the environment's existing tools or prepare missing tools through its
+   supported setup workflow. Record the tested setup in
    the environment's Install script and Start skill, save and publish/republish.
 6. Start a new task from the published environment. Verify the assigned branch
    and run the same doctor before starting development. Preserve the distinction
@@ -42,19 +44,50 @@ Official guide: <https://learn.chatgpt.com/docs/environments/cloud-environments>
 Run from the checkout containing this file:
 
 ```bash
-bash scripts/codex/setup.sh --install-system
+bash scripts/codex/setup.sh
 ```
 
-The script installs missing Debian/Ubuntu host tools when explicitly given
-`--install-system`, prepares a Python virtual environment, installs the exact
-Pillow version read from the build workflow, and prepares the pinned baseline.
-It does not install an ARM64-host compiler onto an x86 host or run the game.
-Without `--install-system`, system tools are left to the prepared environment.
-The Android SDK and signing material remain in the established APK workflow.
+The default command reuses host tools already available in the environment,
+prepares a Python virtual environment, installs the exact Pillow version read
+from the build workflow, and prepares the pinned baseline. It requires no system
+package installation when the host tools are ready. Missing prerequisites still
+fail setup; the command does not suppress validation.
+
+`--install-system` is optional for Debian/Ubuntu hosts where package installation
+is available. It checks for the required tools first and only uses apt when a
+capability is missing. Tools installed outside Debian packages count as present.
+If installation is needed, this mode requires root or passwordless sudo. Do not
+assume those privileges are available in a managed Cloud environment.
+
+Keep any tested PATH/JAVA_HOME preparation in the saved Install script and make
+it available to the Start skill. Verify the exact saved command in a fresh shell;
+an export in an earlier setup shell is not evidence that new tasks can find it.
+The wrappers load their own Python environment and historical-baseline path.
+
+The local checks report the installed Java tools; they do not establish that
+the APK toolchain matches CI. The APK workflow retains its Temurin 17 pin, Android
+SDK, and signing configuration. If Java 17 must be installed and the configured
+Debian repositories lack it, prepare a suitable JDK through the environment's
+supported setup workflow; do not change project pins or system repositories to
+silence setup errors. This script does not install an ARM64-host compiler onto
+an x86 host or run the game.
 
 `--skip-baseline` is an explicit partial-setup option for specialized work.
 Its result does not establish that the ArmPort suite is ready. The normal
 foundation setup includes the baseline.
+
+### Existing tools pass, but system installation or publication fails
+
+Preserve the prepared environment. Run `bash scripts/codex/setup.sh` and
+`bash scripts/codex/doctor.sh --github`, then save the exact successful install
+command. Rerun the foundation regressions after changing the setup scripts, and
+rerun affected project suites if tool versions or search paths changed.
+
+A generic "Couldn't publish environment" banner does not identify its cause.
+After setup succeeds, retry publication. If publication still fails, inspect
+the failed publication operation or report its error through the UI; keep the
+draft and passing setup evidence. Do not infer a game regression, add broader
+network access, or recreate the environment from that banner alone.
 
 ## Start skill text
 
@@ -144,8 +177,9 @@ before dispatch. Foundation scripts only prepare/check the host and read CI.
 
 ## Integration and recovery
 
-The initial foundation is a separate commit/branch. Once it is accepted for the
-development branch, integrate that commit through the normal review workflow;
+The foundation and its setup corrections are on a separate branch. Once accepted
+for the development branch, integrate the foundation commits, including setup
+fixes, through the normal review workflow;
 do not advance a frozen candidate while its source identity is being qualified.
 The environment must use a branch containing these scripts when invoking them.
 

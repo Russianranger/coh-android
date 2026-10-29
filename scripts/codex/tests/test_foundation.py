@@ -112,6 +112,118 @@ raise SystemExit(int(os.environ.get('FOUNDATION_GH_EXIT', '0')))
         self.assertEqual(result.returncode, 0, result.stdout)
         return self.cache / "baselines" / self.pin
 
+    def isolate_host_tools(self, *missing):
+        # Keep missing tools absent even when the machine running these tests
+        # happens to have them. System package commands are always intercepted.
+        for name in ("bash", "python3", "git", "dirname", "mkdir", "mktemp",
+                     "rm", "mv", "uname", "df", "timeout", "env", "cat"):
+            path = self.bin / name
+            if not path.exists():
+                path.symlink_to(shutil.which(name))
+        for name in missing:
+            (self.bin / name).unlink(missing_ok=True)
+        self.env["PATH"] = str(self.bin)
+        self.env["FOUNDATION_PACKAGE_LOG"] = str(self.work / "package-requests.jsonl")
+        package_stub = f"#!{sys.executable}\n" + """import json, os, sys
+from pathlib import Path
+name = Path(sys.argv[0]).name
+with open(os.environ['FOUNDATION_PACKAGE_LOG'], 'a') as stream:
+    stream.write(json.dumps([name, *sys.argv[1:]]) + '\\n')
+if name == 'id':
+    print(os.environ.get('FOUNDATION_UID', '1000'))
+elif name == 'apt-cache':
+    package = sys.argv[-1]
+    candidate = '(none)' if package == os.environ.get('FOUNDATION_UNAVAILABLE_PACKAGE') else '1.0'
+    print(f'{package}:\\n  Candidate: {candidate}')
+elif name == 'apt-get' and os.environ.get('FOUNDATION_UID') == '0':
+    if 'install' in sys.argv:
+        for tool in os.environ.get('FOUNDATION_INSTALL_TOOLS', '').split():
+            path = Path(os.environ['PATH']) / tool
+            path.write_text('#!/bin/sh\\nprintf "fixture installed tool 1\\\\n"\\n')
+            path.chmod(0o755)
+else:
+    raise SystemExit(99)
+"""
+        for name in ("id", "sudo", "apt-get", "apt-cache", "dpkg-query"):
+            self.executable(name, package_stub)
+
+    def package_calls(self):
+        path = Path(self.env["FOUNDATION_PACKAGE_LOG"])
+        return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+
+    def python_without_venv_support(self):
+        (self.bin / "python3").unlink(missing_ok=True)
+        self.env["FOUNDATION_VENV_PROBE_LOG"] = str(self.work / "venv-probe.txt")
+        self.executable("python3", f"#!{sys.executable}\n" + """import os, sys
+from pathlib import Path
+if len(sys.argv) > 2 and sys.argv[1] == '-c' and 'ensurepip' in sys.argv[2]:
+    Path(os.environ['FOUNDATION_VENV_PROBE_LOG']).write_text('base Python has no ensurepip')
+    raise SystemExit(1)
+os.execv(sys.executable, [sys.executable, *sys.argv[1:]])
+""")
+
+    def test_install_system_reuses_existing_tools_without_admin_or_apt(self):
+        self.isolate_host_tools()
+        first = self.script("setup.sh", "--install-system")
+        self.assertEqual(first.returncode, 0, first.stdout)
+        second = self.script("setup.sh", "--install-system")
+        self.assertEqual(second.returncode, 0, second.stdout)
+        self.assertEqual(self.package_calls(), [])
+        self.assertTrue((self.cache / "baselines" / self.pin / ".git").is_dir())
+
+    def test_existing_venv_does_not_require_base_python_ensurepip(self):
+        self.isolate_host_tools()
+        self.python_without_venv_support()
+        result = self.script("setup.sh", "--install-system")
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertFalse(Path(self.env["FOUNDATION_VENV_PROBE_LOG"]).exists())
+        self.assertEqual(self.package_calls(), [])
+
+    def test_missing_tool_without_admin_is_actionable_and_preserves_venv(self):
+        self.isolate_host_tools("clang")
+        result = self.script("setup.sh", "--install-system")
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("Missing developer tools: clang", result.stdout)
+        self.assertIn("root or passwordless sudo is unavailable", result.stdout)
+        self.assertTrue((self.venv / "pyvenv.cfg").is_file())
+        self.assertFalse(any(call[0] == "apt-get" for call in self.package_calls()))
+
+    def test_default_setup_reports_missing_tool_without_package_operations(self):
+        self.isolate_host_tools("clang")
+        result = self.script("setup.sh")
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("Missing developer tools: clang", result.stdout)
+        self.assertEqual(self.package_calls(), [])
+
+    def test_optional_apt_installs_only_the_missing_tool(self):
+        self.isolate_host_tools("clang")
+        self.env.update(FOUNDATION_UID="0", FOUNDATION_INSTALL_TOOLS="clang")
+        result = self.script("setup.sh", "--install-system")
+        self.assertEqual(result.returncode, 0, result.stdout)
+        installs = [call for call in self.package_calls() if call[:2] == ["apt-get", "install"]]
+        self.assertEqual(installs, [["apt-get", "install", "-y", "--no-install-recommends", "clang"]])
+
+    def test_unavailable_jdk17_does_not_select_another_java_or_repository(self):
+        self.isolate_host_tools("java", "javac")
+        self.env.update(FOUNDATION_UID="0", FOUNDATION_UNAVAILABLE_PACKAGE="openjdk-17-jdk-headless")
+        result = self.script("setup.sh", "--install-system")
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("Package unavailable in configured repositories: openjdk-17-jdk-headless", result.stdout)
+        self.assertIn("Prepare JDK 17 through environment setup", result.stdout)
+        self.assertFalse(any(call[:2] == ["apt-get", "install"] for call in self.package_calls()))
+        self.assertEqual([call for call in self.package_calls() if call[0] == "apt-cache"],
+                         [["apt-cache", "policy", "openjdk-17-jdk-headless"]])
+
+    def test_new_venv_requires_support_without_attempting_privileged_install(self):
+        self.isolate_host_tools()
+        self.python_without_venv_support()
+        shutil.rmtree(self.venv)
+        result = self.script("setup.sh")
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("Python venv/ensurepip", result.stdout)
+        self.assertFalse(self.venv.exists())
+        self.assertEqual(self.package_calls(), [])
+
     def test_sourcing_common_is_read_only_and_does_not_import_project(self):
         self.write("armport/app/server_package.py", f"BASELINE_COMMIT = {self.pin!r}\nraise RuntimeError('must not import')\n")
         nonexistent = self.work / "absent cache"
