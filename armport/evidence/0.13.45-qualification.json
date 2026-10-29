@@ -92,5 +92,16 @@
       "passed": 1,
       "total": 1
     }
+  },
+  "review": {
+    "id": 5692088051,
+    "url": "https://github.com/Russianranger/coh-android/pull/8#pullrequestreview-5692088051",
+    "decision": "approved_for_thor_diagnostics_handoff",
+    "scope": "artifact_12860779714_only",
+    "m5_accepted": false,
+    "merge_approved": false,
+    "reviewer_independently_downloaded_artifact": false,
+    "next_candidate_required_fix": "budget_edge_pid_discovery_liveness",
+    "additional_followup": "bound_observer_lineage_snapshot"
   }
 }

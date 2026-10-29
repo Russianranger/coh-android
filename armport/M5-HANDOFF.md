@@ -8,16 +8,23 @@ at the user's request. The historical measurements below describe that handoff.
 
 0.13.45/code 60 at `0bf31c81b1b5a9f8427b4692c623702b30e7029e` passed build
 40776745390, retained-runtime requalification 40786315414 and APK 40791416254.
-Artifact 12860779714 is awaiting Claude's candidate review; dispatch/results
-comments 6481790173 and 6484030941 explicitly are not approval. Exact digests,
+Artifact 12860779714 is approved for Thor handoff by Claude review 5692088051.
+The earlier dispatch/results comments were not approval; this review is. Exact digests,
 limits and the proposed two-launch Thor procedure are in `M5-THOR-TEST.md`.
 There is no 0.13.45 device result and no M5 acceptance/merge request.
 
-Parallel development is saved on `armport/server-metrics` at `c86a57962`:
-native 0119 timing, source/lineage adapters, MapServer-only packaging and bounded
-enhancement additions. These are not in 0.13.45. Continue the Windows native
-producer and guest/package integration before claiming longest-tick/file-load
-measurement. See that branch's `notes/M5-DEVELOPMENT-CHECKPOINT.md`.
+Review P2 must be fixed before the next candidate: scandir advances past a PID
+whose ownership inspection times out, allowing repeat starvation of the new-zone
+server. Add bounded next-window retry and deterministic directory-order tests.
+P3 requires removing whole-registry/receipt deepcopy from the observation path.
+
+Parallel 0.13.46 development is on `armport/server-metrics` at
+`dd9d755bdfd5914a85bb42144ac3ee4bbaa4852b`: native producer, guest admission,
+exact two-variant/session qualification and bounded console timing export.
+Build 40805020119 is running at that frozen head. PR comment 6486287635 asks
+Claude to hold its downstream runtime/APK chain while the sampler fix is tested.
+Do not start competing CI; let the current build finish its native checks.
+See that branch's `notes/SERVER-METRICS-DEVELOPMENT.md` for the complete contract.
 
 This lead session can commit through the GitHub connector but cannot dispatch
 workflows. Claude has offered to dispatch a PR #8 `CI request: build at <sha>`

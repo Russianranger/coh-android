@@ -1,6 +1,6 @@
 # COH-ArmPort status
 
-Updated 2026-10-28. Branch armport/m5-thor; PR #8 remains draft, M5 unaccepted.
+Updated 2026-10-28 CDT. Branch armport/m5-thor; PR #8 remains draft, M5 unaccepted.
 Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
 
 - M0/M1/M2 merged (PRs #3/#4/#5); details: armport/M1-REPORT.md and M2-REPORT.md.
@@ -17,7 +17,7 @@ Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
 - Task A audit posted: PR #8 comment 6480628043; armport/notes/M5-ASTRA-ANALYSIS.md.
   Sequencer “Reading” logs precede cache lookup: not proof of disk loads.
   Java already knows ARM64; confirmed defect is manual/bounded interaction policy.
-- CI-qualified, awaiting Claude review: 0.13.45/code 60 at 0bf31c81b,
+- Claude-approved for Thor handoff (review 5692088051): 0.13.45/code 60 at 0bf31c81b,
   build 40776745390 (8 jobs), requalification 40786315414 (4), APK 40791416254.
   Artifact 12860779714; APK 80,919,462 bytes, sha256
   1ff2252876def6cfeb28d33490d8c2f5d5952c330698d6a719fb67a2197b3959.
@@ -25,13 +25,13 @@ Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
   acceptance correction, preservation of both Wine and cache cleanup failures.
   No native/runtime-pin changes. Longest ticks/file-load/Wine request counts
   remain unavailable until a separately qualified native producer is integrated.
-- Local command: PATH=<javac-module-wrapper>:$PATH python3 -m unittest discover
-  -s armport/tests -p 'test_*.py':292 passed. No 0.13.45 Thor result yet.
+- Review P2: budget-edge PID discovery can starve the new zone; fix before next
+  candidate. P3: whole-registry observer copies exceed the cooperative budget.
 - Native 0119 timing producer held in isolated patchwork/server-metrics branch;
   extracted ASan/UBSan controls pass, upstream negative fails as expected.
   Packaging must preserve distinct retained 0.10 and Thor server ancestry.
-- Next: Claude candidate review before APK handoff; native server timing and
-  package integration continue on armport/server-metrics (c86a57962 checkpoint).
+- Next: approved .45 baseline Thor test; sampler fixes in parallel with native
+  build 40805020119 at dd9d755bd. Runtime/APK chain held: comment 6486287635.
 - Remaining: prior-zone retirement, DbServer wait cost, ARM64 servers, persistent
   folder cache, late data-stage launch, enhancement additions and cleanup proof.
   Esync requires a proposal before changing the pinned runtime.

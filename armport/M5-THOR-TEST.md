@@ -1,6 +1,6 @@
 # COH Atlas Gameplay 0.13.45: CI-qualified candidate (ARM64 client)
 
-**Awaiting Claude approval; not yet handed off.** VersionCode 60, tested source
+**Approved for Thor handoff by Claude, review [5692088051](https://github.com/Russianranger/coh-android/pull/8#pullrequestreview-5692088051).** VersionCode 60, tested source
 `0bf31c81b1b5a9f8427b4692c623702b30e7029e`. All three serialized CI stages passed.
 0.13.44 below remains the last device-tested candidate. This documentation update
 does not change the tested code. M5 acceptance and merge are not requested.
@@ -44,7 +44,14 @@ Local validation: 292 tests pass with `python3 -m unittest discover -s armport/t
 Native longest-tick/file-load time and Wine request counts explicitly remain
 unavailable in this candidate. No 0.13.45 Thor behaviour is established yet.
 
-After reviewer approval, install over the current app without clearing data.
+Reviewer reproduced a sampler liveness defect: a new-zone PID at a budget
+boundary can be missed repeatedly. Local 292-test success depended on directory
+order; Claude's run passed 291/292 and exposed that defect. A deterministic retry
+fix is required before the next candidate. Missing King's Row telemetry must
+remain unknown; it is not evidence that its server was idle or stopped. The
+review also identified a costly whole-registry copy being corrected separately.
+
+Install this approved diagnostics APK over the current app without clearing data.
 Keep the same ARM64/GPU profile and saved character for both launches:
 
 1. Launch the saved character, wait in Atlas for at least 30 seconds, then take
@@ -58,7 +65,9 @@ Keep the same ARM64/GPU profile and saved character for both launches:
 3. Each `guest-report.zip` must retain `client-evidence/server-metrics.jsonl`,
    `armport_stdio.txt`, `client-console.log`, stage logs, zoning consoles and
    ownership/cleanup receipts. Confirm telemetry schema and sample coverage
-   before computing CPU/tick rates; retain partial/unavailable markers.
+   before computing CPU/tick rates; retain partial/unavailable markers. Explicitly
+   check whether a MapServer row with map_id 5 appears after zoning; report its
+   absence without repeating a long test solely to obtain that row.
 
 Enhancement additions and the underlying post-zoning cleanup failure remain
 open. This candidate must report those failures accurately. The experimental
