@@ -150,7 +150,7 @@ class SourceTests(unittest.TestCase):
                 source.validate_receipt(changed, UPSTREAM_ROOT)
 
     def test_published_host_report_binds_exact_source_and_host_scope(self):
-        path = ROOT / 'armport/evidence/server-metrics-host-checks.json'
+        path = ROOT / 'armport/evidence/mapserver-startup-retained-host-checks.json'
         document = json.loads(path.read_text())
         source.validate_test_report(document, self.receipt, UPSTREAM_ROOT)
         for key, value in [('shipping_binary_executed', True),

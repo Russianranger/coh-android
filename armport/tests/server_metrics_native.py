@@ -10,13 +10,16 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 
-CASES = ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation']
+CASES = ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
+         'startup', 'startup_disabled', 'startup_clock']
 NEGATIVE_ASSERTION = 's->ticks == 4 && s->file_calls == 4 && s->window_start == 0'
+STARTUP_NEGATIVE_ASSERTION = 'startup->enabled && startup->sequence == 17'
 
 
 def test_cases(source):
@@ -27,6 +30,29 @@ def test_cases(source):
 def function(text, signature):
     start = text.index(signature)
     return text[start:text.index('\n}\n', start) + 3]
+
+
+def startup_calls(svr, original=False):
+    """Use the shipping call sites, expanding sysInit at its real main call."""
+    main = svr[svr.index('int __cdecl main(int argc,char **argv)'):]
+    pattern = r'^\s*(armportServerStartup(?:Begin\(\)|Phase\("[a-z_]+", db_state.map_id\));|sysInit\(\);)'
+    calls = []
+    for call in re.findall(pattern, main, re.MULTILINE):
+        if call == 'sysInit();':
+            calls.extend(re.findall(pattern, function(svr, 'static void sysInit()'), re.MULTILINE))
+        else:
+            calls.append(call)
+    if not original:
+        assert calls[0] == 'armportServerStartupBegin();'
+        assert main.index(calls[0]) < main.index('memCheckInit();')
+        # Early diagnostic commands can exit in parseArgs1. Their stdout
+        # stays quiet even when telemetry was requested.
+        assert main.index('parseArgs1(argc,argv);') < main.index(calls[1])
+        assert main.index('dbReadyForPlayers();') < main.index('armportServerStartupPhase("ready_published"')
+        assert main.index('armportServerStartupPhase("main_loop_begin"') < main.index('armportServerMetricsInit(')
+        assert len(calls) == 18, calls
+    return '\n'.join(('    ' if i == 0 else '    fake_now += 100; ') + call.replace('db_state.map_id', '2')
+                     for i, call in enumerate(calls))
 
 
 def fixture(source, original=None):
@@ -123,6 +149,9 @@ static void sleepAndCalcTimers(void) { fake_now += 750; }
 static void one_actual_loop(void) {
 ''' + loop + r'''
 }
+static void actual_startup_observations(void) {
+''' + startup_calls(svr, original is not None) + r'''
+}
 static void *background(void *unused) {
     void *p;
     (void)unused;
@@ -137,6 +166,39 @@ int main(int argc, char **argv) {
     /* Keep helpers referenced in the original-code negative control. */
     (void)armportServerMetricsFileBegin; (void)armportServerMetricsFileEnd;
     setenv("ARMPORT_SERVER_METRICS", "1", 1);
+    if (!strcmp(mode, "startup")) {
+        ArmportServerStartup *startup = &armport_server_startup;
+        actual_startup_observations();
+        CHECK(startup->enabled && startup->sequence == 17);
+        CHECK(startup->begin == 0 && startup->previous == 1700);
+        CHECK(s->enabled == 0 && s->file_calls == 0 && s->ticks == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "startup_disabled")) {
+        const char *options[] = {"0", "", "10", "true"};
+        for (i = 0; i < 4; ++i) {
+            setenv("ARMPORT_SERVER_METRICS", options[i], 1);
+            actual_startup_observations();
+        }
+        unsetenv("ARMPORT_SERVER_METRICS"); actual_startup_observations();
+        CHECK(clock_calls == 0 && armport_server_startup.sequence == 0);
+        puts("startup disabled: clocks=0"); return 0;
+    }
+    if (!strcmp(mode, "startup_clock")) {
+        ArmportServerStartup *startup = &armport_server_startup;
+        frequency_ok = 0; armportServerStartupBegin();
+        CHECK(startup->clock_error && !startup->enabled);
+        armportServerStartupPhase("args_parsed", 2);
+        CHECK(!startup->clock_error && !startup->enabled && startup->sequence == 0);
+        i = clock_calls; armportServerStartupPhase("ignored", 2); CHECK(clock_calls == i);
+        frequency_ok = 1; fake_now = 20; armportServerStartupBegin();
+        CHECK(startup->enabled && startup->sequence == 0);
+        fake_now = 19; armportServerStartupPhase("args_parsed", 2);
+        CHECK(!startup->enabled && startup->sequence == 0);
+        fake_now = 30; armportServerStartupBegin(); clock_ok = 0;
+        armportServerStartupPhase("args_parsed", 2); CHECK(!startup->enabled);
+        return 0;
+    }
     if (!strcmp(mode, "disabled")) {
         const char *options[] = {"0", "", "10", "true"};
         for (i = 0; i < 4; ++i) {
@@ -230,14 +292,16 @@ def run(source, original=None, expect_control_failure=False):
                         '-Wno-unused-but-set-variable',  # upstream fileAllocEx original_total
                         '-fsanitize=address,undefined', '-pthread', '-I', str(work),
                         str(work / 'control.c'), '-o', str(exe)], check=True)
-        for mode in (['window'] if original else test_cases(source)):
+        for mode in (['window', 'startup'] if original and expect_control_failure else
+                     (['window'] if original else test_cases(source))):
             result = subprocess.run([str(exe), mode], capture_output=True, text=True,
                                     env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'})
             print(mode + ': ' + ' | '.join(result.stdout.splitlines()))
             if expect_control_failure:
-                assert result.returncode != 0 and 'FAIL line ' in result.stderr and NEGATIVE_ASSERTION in result.stderr, result.stderr
-                print('unpatched negative control: expected missing-metrics assertion')
-                return hashlib.sha256(control.encode()).hexdigest()
+                assertion = NEGATIVE_ASSERTION if mode == 'window' else STARTUP_NEGATIVE_ASSERTION
+                assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
+                print('unpatched negative control: expected missing-' + mode + ' assertion')
+                continue
             if result.returncode:
                 print(result.stderr)
                 raise SystemExit(result.returncode)
@@ -253,6 +317,24 @@ def run(source, original=None, expect_control_failure=False):
                     assert dict(field.split('=', 1) for field in row.split()[1:]) == expected, row
             if mode == 'disabled':
                 assert 'ARMPORT_SERVER_METRICS_V1' not in result.stdout
+            if mode == 'startup':
+                rows = result.stdout.splitlines()
+                assert len(rows) == 17, rows
+                phases = ['args_parsed', 'directory_cache_begin', 'directory_cache_done', 'sys_init_done',
+                          'server_state_done', 'map_metadata_done', 'sequencer_info_done', 'definitions_done',
+                          'encounter_scripts_done', 'player_animations_done', 'db_connect_begin', 'db_connected',
+                          'group_load_begin', 'group_load_done', 'db_setup_done', 'ready_published', 'main_loop_begin']
+                for i, (row, phase) in enumerate(zip(rows, phases), 1):
+                    assert row.startswith('ARMPORT_SERVER_STARTUP_V1 '), row
+                    fields = dict(field.split('=', 1) for field in row.split()[1:])
+                    assert fields == {'status': 'ok', 'map_id': '2', 'pid': '42', 'sequence': str(i),
+                                      'phase': phase, 'elapsed_ms': f'{i * 100:.3f}', 'phase_ms': '100.000',
+                                      'scope': 'main_entry_to_checkpoint'}, row
+            if mode == 'startup_disabled':
+                assert 'ARMPORT_SERVER_STARTUP_V1' not in result.stdout
+            if mode == 'startup_clock':
+                rows = result.stdout.splitlines()
+                assert len(rows) == 3 and all('status=clock_error' in row for row in rows), rows
             if mode == 'slow':
                 fields = dict(field.split('=', 1) for field in result.stdout.split()[1:])
                 assert fields['ticks'] == '1' and fields['seconds'] == '7.500000'
@@ -299,7 +381,7 @@ def main():
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_assertion',
+                    'unpatched_control_failure': 'runtime_missing_metrics_and_startup_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

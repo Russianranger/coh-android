@@ -1,0 +1,40 @@
+{
+  "format": 1,
+  "role": "armport_server_metrics_source_checks",
+  "status": "passed",
+  "variant": "retained_progress",
+  "build_input_sha256": "718c1b6282fff45059aae9a7aac469b0e5ec9be2c875eaa73cfe9ac60514bb21",
+  "source_sha256": {
+    "MapServer/src/svr/svr_init.c": "d06ff1ecea746a4b277dbf77b6d6e64876f524895c5af0727fb1d0f6d9d7f521",
+    "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71",
+    "libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h": "7f10c993614ee0756c408627b4698c3b107d1a3875184f85ff231fadad170813",
+    "libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h": "807969ff3d923fbf3d6a8188150b387ff93eecb0b4b621cdbf4b0435d61f1c7b"
+  },
+  "original_sha256": {
+    "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+    "libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+  },
+  "fixture_sha256": {
+    "positive": "12710f56ea23afa2f7ddefb44960bd47ed7f302ff919607a280e5ccdc000a999",
+    "negative": "9c759b5c01fd10f9f6f8b4197d6f4c93bfcf21035b1c668b5d697437ac57170c"
+  },
+  "test_script_sha256": "cb7ae4c95866b3fd9c441ccd3466c9c7e1c72bc7c01d4792335788719928fb48",
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "execution_environment": "posix_host_with_windows_clock_and_file_io_shims",
+  "positive_cases": [
+    "window",
+    "disabled",
+    "files",
+    "thread",
+    "slow",
+    "clock",
+    "saturation",
+    "startup",
+    "startup_disabled",
+    "startup_clock",
+    "progress_markers"
+  ],
+  "unpatched_control_failed": true,
+  "unpatched_control_failure": "runtime_missing_metrics_and_startup_assertions",
+  "shipping_binary_executed": false
+}

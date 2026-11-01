@@ -1,5 +1,5 @@
 diff --git a/MapServer/src/svr/svr_init.c b/MapServer/src/svr/svr_init.c
-index 916cbee..cead606 100644
+index 916cbee..f5ec513 100644
 --- a/MapServer/src/svr/svr_init.c
 +++ b/MapServer/src/svr/svr_init.c
 @@ -23,6 +23,7 @@
@@ -10,10 +10,101 @@ index 916cbee..cead606 100644
  #include "dbcomm/dbcomm.h"
  #include <utilitieslib/utils/utils.h>
  #include "utils/debugUtils.h"
-@@ -2230,8 +2231,10 @@ int __cdecl main(int argc,char **argv)
+@@ -307,7 +308,9 @@ static void sysInit() // non game-specific initializations
+     if(beaconizerIsStarting() != 1){
+         // File system completely disabled for beacon clients.
+ 
++        armportServerStartupPhase("directory_cache_begin", db_state.map_id);
+         fileDataDir();
++        armportServerStartupPhase("directory_cache_done", db_state.map_id);
+ 
+         loadend_printf("Caching directory tree and misc startup...");
+     }
+@@ -1938,6 +1941,7 @@ int __cdecl main(int argc,char **argv)
+     #pragma message("Don't even think about running 64 bit compiled MapServer binaries. The only reason they are compile-able in this state is to simplify batch builds")
+ #endif
+     
++    armportServerStartupBegin();
+     memCheckInit();
+ 
+     regSetAppName("CoH");
+@@ -2001,6 +2005,7 @@ int __cdecl main(int argc,char **argv)
+     // Nothing above this point should have hit the disk or shared memory at all, all file access must be after parseArgs1()
+     // Additionally, no console output can be outputted before this, otherwise it breaks
+     // -getcharacter and other -dbquery command lines
++    armportServerStartupPhase("args_parsed", db_state.map_id);
+ 
+     trickGoogleDesktopDll(server_state.silent);
+ 
+@@ -2021,8 +2026,10 @@ int __cdecl main(int argc,char **argv)
+     }
+ 
+     sysInit();
++    armportServerStartupPhase("sys_init_done", db_state.map_id);
+     loadstart_printf("serverStateInit.. ");
+     serverStateInit(argc,argv);
++    armportServerStartupPhase("server_state_done", db_state.map_id);
+     loadend_printf("done");
+ 
+     getServerCmdName(0);
+@@ -2085,11 +2092,14 @@ int __cdecl main(int argc,char **argv)
+     MapSpecReload();
+     MissionSpecReload();
+     MonorailsLoad();
++    armportServerStartupPhase("map_metadata_done", db_state.map_id);
+     loadend_printf("done");
+ 
+     seqPreloadSeqInfos(); // Must be *before* groupLoadMap
++    armportServerStartupPhase("sequencer_info_done", db_state.map_id);
+ 
+     loadConfigFiles(); // templates get written here.
++    armportServerStartupPhase("definitions_done", db_state.map_id);
+ 
+     if (grid_cache_bits < 0)
+     {
+@@ -2104,6 +2114,7 @@ int __cdecl main(int argc,char **argv)
+     {
+         EncounterPreload();
+         ScriptDefLoad();
++        armportServerStartupPhase("encounter_scripts_done", db_state.map_id);
+     }
+ 
+     loadstart_printf("loading sequencers...");
+@@ -2121,6 +2132,8 @@ int __cdecl main(int argc,char **argv)
+ 
+     loadend_printf("done");
+ 
++    armportServerStartupPhase("player_animations_done", db_state.map_id);
++
+     // csv dump mode
+     if(strstr(GetCommandLineA(),"-dumpspawndefs"))
+         DumpSpawndefs();
+@@ -2134,14 +2147,20 @@ int __cdecl main(int argc,char **argv)
+     if(!server_state.create_bins && !server_state.unpack_map)
+     {
+         cmdCfgLoad();
++        armportServerStartupPhase("db_connect_begin", db_state.map_id);
+         connectToDbserver(NO_TIMEOUT);
++        armportServerStartupPhase("db_connected", db_state.map_id);
+ 
+         if (map_batch_cmds)
+             groupdbRunBatch(map_batch_cmds);
+ 
++        armportServerStartupPhase("group_load_begin", db_state.map_id);
+         groupLoadMap(db_state.map_name,0,!server_state.beaconProcessOnLoad);
++        armportServerStartupPhase("group_load_done", db_state.map_id);
+         dbSetupMap();
++        armportServerStartupPhase("db_setup_done", db_state.map_id);
+         dbReadyForPlayers();
++        armportServerStartupPhase("ready_published", db_state.map_id);
+     }
+ 
+     //memCheckDumpAllocs();
+@@ -2230,8 +2249,11 @@ int __cdecl main(int argc,char **argv)
      if (coll_test)
          gridCollPerfTest();
  
++    armportServerStartupPhase("main_loop_begin", db_state.map_id);
 +    armportServerMetricsInit(db_state.map_id);
      for(;;)
      {
@@ -21,7 +112,7 @@ index 916cbee..cead606 100644
          timerTickBegin();
  
          startProfilingCPU();
-@@ -2244,7 +2247,9 @@ int __cdecl main(int argc,char **argv)
+@@ -2244,7 +2266,9 @@ int __cdecl main(int argc,char **argv)
  
          timerTickEnd();
  
@@ -33,10 +124,10 @@ index 916cbee..cead606 100644
  }
 diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h
 new file mode 100644
-index 0000000..93eec0d
+index 0000000..9ba89c9
 --- /dev/null
 +++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,18 @@
 +/* Opt-in, post-ready MapServer main-thread measurements. No gameplay decisions. */
 +#ifndef ARMPORT_SERVER_METRICS_H
 +#define ARMPORT_SERVER_METRICS_H
@@ -47,16 +138,20 @@ index 0000000..93eec0d
 +void armportServerMetricsTickBegin(void);
 +void armportServerMetricsTickEnd(void);
 +void armportServerMetricsLoopEnd(void);
++/* Begin captures main entry without output. Phase is called only after
++ * parseArgs1, preserving the quiet -dbquery/-getcharacter protocols. */
++void armportServerStartupBegin(void);
++void armportServerStartupPhase(const char *phase, int map_id);
 +#ifdef __cplusplus
 +}
 +#endif
 +#endif
 diff --git a/libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h b/libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h
 new file mode 100644
-index 0000000..dff447c
+index 0000000..4a4553c
 --- /dev/null
 +++ b/libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,235 @@
 +/* Included only by file.c: TLS makes the main-thread fileAlloc observer local
 + * to the thread that opted in. Background file loads and all other programs
 + * stay disabled. No clocks, environment reads or logging on the disabled path.
@@ -93,6 +188,65 @@ index 0000000..dff447c
 +} ArmportServerMetrics;
 +
 +static __declspec(thread) ArmportServerMetrics armport_server_metrics;
++
++/* Startup has independent state: entering the post-ready observer must not
++ * erase the earlier timestamps, and startup file loads remain outside its
++ * post-ready fileAlloc counters. No output is permitted before parseArgs1. */
++typedef struct ArmportServerStartup {
++    int enabled, clock_error;
++    unsigned int sequence;
++    DWORD pid;
++    LONGLONG frequency, begin, previous;
++} ArmportServerStartup;
++
++static __declspec(thread) ArmportServerStartup armport_server_startup;
++
++void armportServerStartupBegin(void)
++{
++    ArmportServerStartup *s = &armport_server_startup;
++    ArmportServerStartup empty = {0};
++    LARGE_INTEGER frequency, now;
++    const char *option = getenv("ARMPORT_SERVER_METRICS");
++    *s = empty;
++    if (!option || option[0] != '1' || option[1] != 0)
++        return;
++    s->pid = GetCurrentProcessId();
++    if (!QueryPerformanceFrequency(&frequency) || frequency.QuadPart <= 0 ||
++        !QueryPerformanceCounter(&now) || now.QuadPart < 0) {
++        s->clock_error = 1;
++        return;
++    }
++    s->frequency = frequency.QuadPart;
++    s->begin = s->previous = now.QuadPart;
++    s->enabled = 1;
++}
++
++void armportServerStartupPhase(const char *phase, int map_id)
++{
++    ArmportServerStartup *s = &armport_server_startup;
++    LARGE_INTEGER now;
++    char line[384];
++    if (!s->enabled && !s->clock_error)
++        return;
++    if (s->clock_error || !QueryPerformanceCounter(&now) ||
++        now.QuadPart < 0 || now.QuadPart < s->previous) {
++        snprintf(line, sizeof(line),
++            "ARMPORT_SERVER_STARTUP_V1 status=clock_error map_id=%d pid=%lu scope=main_entry_to_checkpoint\n",
++            map_id, (unsigned long)s->pid);
++        s->enabled = s->clock_error = 0;
++    } else {
++        ++s->sequence; /* The fixed startup call sites emit fewer than 32 rows. */
++        snprintf(line, sizeof(line),
++            "ARMPORT_SERVER_STARTUP_V1 status=ok map_id=%d pid=%lu sequence=%u phase=%s elapsed_ms=%.3f phase_ms=%.3f scope=main_entry_to_checkpoint\n",
++            map_id, (unsigned long)s->pid, s->sequence, phase,
++            ((double)now.QuadPart - (double)s->begin) * 1000.0 / (double)s->frequency,
++            ((double)now.QuadPart - (double)s->previous) * 1000.0 / (double)s->frequency);
++        /* Logging cost is included in the following phase and total. */
++        s->previous = now.QuadPart;
++    }
++    fputs(line, stdout);
++    fflush(stdout);
++}
 +
 +/* A failure disables only telemetry, not the server. Never fabricate a zero
 + * latency when the clock failed or moved backwards. */
