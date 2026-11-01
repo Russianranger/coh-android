@@ -117,9 +117,25 @@ remain unrun, as do post-reboot and gameplay/save/reopen/zoning checks.
 
 The connector supports authenticated source writes and workflow reads but has
 no workflow-dispatch operation. Shell GitHub `/user` returned HTTP 401; no
-GitHub CLI credential binding or connected Thor was exposed. No duplicate or
-push-trigger workaround was used. Native full compilation needs the established
-Windows CI and runtime stages. No job is continuing after this checkpoint.
+GitHub CLI credential binding or connected Thor was exposed. The user then
+explicitly authorized browser dispatch and all available tools. The signed-in
+browser has repository access, but no Run workflow control: all three workflows
+are absent from default `main`. No default-branch or repository-setting change
+is authorized or made.
+
+The user's original authorization expressly permits branch-specific CI. That
+supersedes the older handoff's prohibition on push-based dispatch for this task.
+`mapserver-startup-ci.yml` is therefore a narrow coordinator on this exact
+experiment branch, triggered only by a change to its own YAML. It uses the
+ordinary ephemeral Actions token with Actions write in that job, no personal
+credential, to dispatch the existing workflows with their explicit inputs.
+It checks frozen source, refuses duplicates, requires successful stage artifacts
+and runs no compiler itself. No build or runtime semantics change. Initial setup
+is skipped by `[skip ci]`; one separate coordinator-only kickoff starts the chain
+without also matching the existing ArmPort push filters. Freeze the branch while
+it runs. Six coordinator tests cover stage order/inputs, moved heads, failed and
+duplicate runs, absent artifacts and existing-stage reuse. Actual run IDs follow
+in STATUS.md once observable. Modern runtime/Thor qualification remains separate.
 
 Once authenticated dispatch is available, freeze the branch SHA and run:
 

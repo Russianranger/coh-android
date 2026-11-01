@@ -24,8 +24,11 @@ Current exact head: git rev-parse HEAD. No protected branch or release changed.
   remain documented. See evidence/mapserver-startup-*-host-checks.json.
 - Reserved .47/code62 packaging is wired; NO candidate APK, acceptance timing,
   new shipping-PE/runtime execution, persistence run, or physical test exists.
-- Blocker: connector has no dispatch operation; shell GitHub authentication is401.
-  No exposed Thor test connection. No job continues after this checkpoint.
+- Browser authorized; repository access works, but Run workflow is absent because
+  these workflow files are missing from default main. Main remains unchanged.
+- Authorized branch-specific CI coordinator prepared; six tests pass. It binds
+  the existing serial chain to one frozen head with no duplicate push build.
+  Separate coordinator-only kickoff will supply run identities. Thor unavailable.
 - Next: authenticated serial build (build_server_metrics=true), retained runtime,
   exact modern full-data/runtime and disposable-DB correctness tests, signed APK
   plus real server-package rollback; then five cold starts/map + reboot/gameplay.
