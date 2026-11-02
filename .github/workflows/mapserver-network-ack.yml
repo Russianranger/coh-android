@@ -1,5 +1,5 @@
 name: Exact modern MapServer PostgreSQL network ACK
-# Authorized runtime-only kickoff 1; candidate e563 remains frozen.
+# Authorized runtime-only kickoff 2; candidate e563 remains frozen.
 # Supporting-only runtime test. No compiler, signing, schema generation or
 # production branch edit. Setup is pushed with skip-ci; kickoff changes only
 # this YAML file after the supporting source is reviewable.
@@ -37,6 +37,9 @@ jobs:
     runs-on: windows-2025-vs2026
     timeout-minutes: 60
     steps:
+      - name: Preserve exact source and validator bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
         with:
           path: supporting
