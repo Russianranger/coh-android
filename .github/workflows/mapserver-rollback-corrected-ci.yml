@@ -1,4 +1,5 @@
 name: Corrected MapServer rollback APK packaging
+# Corrected-cohort kickoff: native41378036783 at source1f75894db911.
 # Corrected-cohort setup: wait for the new candidate coordinator to
 # finish, then build one server_metrics=false APK through its existing signer.
 on:

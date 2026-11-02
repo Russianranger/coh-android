@@ -1,4 +1,5 @@
 name: ArmPort modern MapServer runtime qualification
+# Corrected-cohort kickoff: native41378036783 at source1f75894db911.
 # Corrected-cohort setup: include original-server saved-data compatibility.
 
 # Supporting branch only. The read-only wait job hands off the unique exact
