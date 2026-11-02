@@ -22,6 +22,7 @@ import zipfile
 
 import modern_runtime_donor as donor
 import modern_validation as validation
+import baseline_reopen
 
 
 def encoded(value):
@@ -43,7 +44,7 @@ def load_candidate(root):
 def source_identity():
     result = {'supporting_scripts': {}}
     directory = Path(__file__).resolve().parent
-    for name in ('modern_runtime_host.py', 'modern_validation.py', 'modern_runtime_donor.py'):
+    for name in ('modern_runtime_host.py', 'modern_validation.py', 'modern_runtime_donor.py', 'baseline_reopen.py'):
         result['supporting_scripts'][name] = donor.pin(directory / name)
     try:
         result['supporting_test_commit'] = subprocess.check_output(
@@ -142,7 +143,8 @@ def execute(args):
         'modern_build_manifest_sha256': hashlib.sha256(members[native.BUILD]).hexdigest(),
         'passed': False, 'modern_runtime_executed': None, 'modern_runtime_qualified': False, 'physical_device_validated': False,
         'kings_row_runtime_validated': False, 'combat_rewards_validated': False, 'apk_built': False,
-        'android_surface_validated': False, 'm4_complete': False, **source_identity()}
+        'android_surface_validated': False, 'm4_complete': False,
+        'baseline_saved_data_compatibility_validated': False, **source_identity()}
     started = time.monotonic()
     projector = None
     try:
@@ -187,10 +189,16 @@ def execute(args):
         # scripts cannot accidentally cause production-source drift unnoticed.
         validation.verify_candidate_checkout(root, args.candidate_commit)
         validation.require(donor.pin(assets / 'task-gate.json') == task_pin, 'Modern runtime modified the task gate payload')
-        result.update(passed=True, modern_runtime_executed=True, modern_runtime_qualified=True, same_persistent_profile=True,
+        result.update(modern_runtime_executed=True, modern_runtime_qualified=True, same_persistent_profile=True,
             same_character_id=True, creation_session_id=first, reopen_session_id=second,
             modern_sessions={'creation': projector.records[first], 'reopen': projector.records[second]},
             map_ids_executed=[1], normal_reopen_route='explicit_zoning', task_gate_payload_preserved=True)
+        result['baseline_compatibility'] = baseline_reopen.run(
+            interactive, command, args.work, args.evidence, args.proot, runtime, client, progress,
+            projector, reopened, second, assets, args.apk, native)
+        validation.verify_candidate_checkout(root, args.candidate_commit)
+        validation.require(donor.pin(assets / 'task-gate.json') == task_pin, 'Baseline test modified task gate payload')
+        result.update(passed=True, baseline_saved_data_compatibility_validated=True)
     except Exception as error:
         result['error'] = {'type': type(error).__name__, 'message': str(error)}
     finally:
@@ -201,7 +209,7 @@ def execute(args):
         elif not any((args.evidence / name).exists() for name in ('creation', 'reopen')):
             result['modern_runtime_executed'] = False
         result['guest_failures'] = {name: interactive.guest_failure_summary(args.evidence / name)
-            for name in ('creation', 'reopen') if (args.evidence / name).exists()}
+            for name in ('creation', 'reopen', 'baseline-reopen') if (args.evidence / name).exists()}
         (args.evidence / 'modern-runtime-report.json').write_bytes(encoded(result))
         print('::notice title=Modern MapServer runtime result::' + json.dumps({key: result.get(key)
             for key in ('passed', 'modern_runtime_executed', 'elapsed_seconds', 'error')}, separators=(',', ':')))

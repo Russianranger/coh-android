@@ -26,11 +26,17 @@ runs or changed identities, then passes the successful runtime ID to the ARM job
 No manual ID placeholder or follow-up dispatch is needed. Setup commits use
 [skip ci]; a single supporting workflow-only kickoff starts the wait.
 Twelve waiter controls plus nine modern admission controls pass. The wait is
-bounded to198 minutes; the ARM job then has its independent240-minute cap.
+bounded to198 minutes; the ARM job then has its independent360-minute cap.
 No write API, compiler or workflow dispatch exists in this read-only handoff.
 The production branch stays frozen and its existing coordinator owns dispatch.
 
 Each guest has its own existing 5,400-second correctness timeout. A passing pair
-qualifies Atlas creation/save/reopen only. King's Row, combat, rewards, collision,
+qualifies Atlas creation/save/reopen only. A third ordinary reopen uses the actual
+authenticated original .36 modern MapServer and the same stopped disposable save
+to test backward compatibility. It retains client/DbServer/data bytes and uses
+verified PRoot file binds for immutable assets; candidate inodes and payloads are
+unchanged. Six admission/continuity controls and independent review passed.
+The prior read-only waiter41367191699 is cancelled before native execution and
+a corrected workflow-only kickoff includes this third stage. King's Row, combat, rewards, collision,
 zoning, memory/thermal behavior and Thor cold-start acceptance remain separate.
 No <=60-second performance or physical-device result is claimed.

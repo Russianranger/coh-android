@@ -201,19 +201,20 @@ def validate_readiness(report, progress):
 
 
 class ModernProjector:
-    def __init__(self, interactive, runtime_manifest, client_manifest, documents, progress):
+    def __init__(self, interactive, runtime_manifest, client_manifest, documents, progress, *, admit_native=None):
         self.interactive = interactive
         self.runtime_manifest = runtime_manifest
         self.client_manifest = client_manifest
         self.documents = documents
         self.progress = progress
         self.legacy = interactive.legacy_report
+        self.admit_native = native_admission if admit_native is None else admit_native
         self.records = {}
 
     def project(self, report, runtime_manifest, client_manifest):
         require(runtime_manifest is self.runtime_manifest and client_manifest is self.client_manifest,
                 'Modern host changed its authenticated staged inputs')
-        admission = native_admission(report, runtime_manifest)
+        admission = self.admit_native(report, runtime_manifest)
         validate_components(report, runtime_manifest, self.documents)
         character = validate_readiness(report, self.progress)
         reopening = report.get('scope') == 'actual_character_reopen_guest'
@@ -234,7 +235,7 @@ class ModernProjector:
         # Host-only dependency injection: the existing legacy projector repeats
         # full actual modern admission. It does not receive fabricated old pins.
         original = self.interactive.server_pipeline.guest_admission
-        self.interactive.server_pipeline.guest_admission = native_admission
+        self.interactive.server_pipeline.guest_admission = self.admit_native
         try:
             projected = self.legacy(report, runtime_manifest, client_manifest)
         finally:

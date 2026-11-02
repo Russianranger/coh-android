@@ -1,5 +1,4 @@
 name: ArmPort modern MapServer runtime qualification
-# Authorized supporting kickoff: wait for candidate e563 and exact successful runtime.
 
 # Supporting branch only. The read-only wait job hands off the unique exact
 # successful runtime. Production helpers use a separate candidate checkout.
@@ -58,7 +57,7 @@ jobs:
     env:
       CANDIDATE_RUNTIME_RUN_ID: ${{ needs.wait-upstreams.outputs.runtime_run_id }}
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 240
+    timeout-minutes: 360
     steps:
       - name: Checkout supporting tests only
         uses: actions/checkout@v4
@@ -128,7 +127,9 @@ jobs:
       - name: Run modern admission and projection controls
         env:
           COH_CANDIDATE_ROOT: ${{ github.workspace }}/candidate
-        run: python3 supporting/armport/modern-runtime/test_modern_runtime.py -v
+        run: |
+          python3 supporting/armport/modern-runtime/test_modern_runtime.py -v
+          python3 supporting/armport/modern-runtime/test_baseline_reopen.py -v
       - uses: actions/download-artifact@v4
         with:
           name: armport-app-proot-linux
@@ -162,7 +163,7 @@ jobs:
         with:
           path: ${{ runner.temp }}/modern-assets-cache/payloads
           key: coh-modern-assets-1.0.0-9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c
-      - name: Execute modern Atlas creation, committed save and zoning reopen
+      - name: Execute modern Atlas pair and original-server saved-data compatibility reopen
         run: |
           df -h "$RUNNER_TEMP"
           python3 supporting/armport/modern-runtime/modern_runtime_host.py \
