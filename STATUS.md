@@ -1,37 +1,38 @@
 # MapServer startup experiment status
 
-Updated 2026-11-01 America/Chicago. Target <=60 seconds on Thor remains UNPROVEN.
-Branch: armport/mapserver-startup-60s; base 8dc2a66d72477b3c62227e572538b13f0e4f912b.
-Task commits: a14d1a838 (measurement), 95a09d11d (ODBC reuse), then this status commit.
-Current exact head: git rev-parse HEAD. No protected branch or release changed.
+Updated 2026-11-01 America/Chicago. Thor <=60 seconds remains UNPROVEN.
+Branch armport/mapserver-startup-60s; base8dc2a66d72477b3c62227e572538b13f0e4f912b.
+Exact qualification head is frozen by the coordinator-only kickoff; see git HEAD
+and live draft PR9. No protected branch, merge, release or repository setting changed.
 
-- Latest playable Thor comparison: .44/a5bd2bbe3, APK run40743596575/artifact12840043807.
-- Latest built predecessor: .46/code61, build40929292200/runtime40945708189/APK40952408285.
-  The .46 modern Win32 server is built/source-checked, not runtime/device validated.
-  Runtime CI qualified retained .10 only; last formal handoff approval is .45.
-- Added outer supervisor request/preparation/spawn/ready timing, distinct resident
-  returns, explicit failures/invalid clocks, existing full-console native phase logs.
-- Native 0119 now observes startup after quiet argument processing; readiness,
-  database durability, gameplay, collision and physics behavior are unchanged.
-- ODBC experiment skips repeated MSI only for matching installed bytes and inputs;
-  every launch still executes native registration/DLL/export checks. Gain unmeasured.
-- ARM64 physics closure is unresolved: bundled PhysX2.8.4 has Win32/x64, no ARM64.
-  Client NOVODEX disabling cannot qualify server physics; x86 lane retained.
-- Validation: full ArmPort suite419 passed with pristine c86 baseline + javac module;
-  source10/package26/producer8 checks passed; 11 compiled positive +2 original
-  negative controls per actual retained/modern source. ODBC9 + timing7 + login15 pass.
-  Additional affected lifecycle suites pass; known base fixture/namespace failures
-  remain documented. See evidence/mapserver-startup-*-host-checks.json.
-- Reserved .47/code62 packaging is wired; NO candidate APK, acceptance timing,
-  new shipping-PE/runtime execution, persistence run, or physical test exists.
-- Browser authorized; repository access works, but Run workflow is absent because
-  these workflow files are missing from default main. Main remains unchanged.
-- Authorized branch-specific CI coordinator prepared; six tests pass. It binds
-  the existing serial chain to one frozen head with no duplicate push build.
-  Separate coordinator-only kickoff will supply run identities. Thor unavailable.
-- Next: authenticated serial build (build_server_metrics=true), retained runtime,
-  exact modern full-data/runtime and disposable-DB correctness tests, signed APK
-  plus real server-package rollback; then five cold starts/map + reboot/gameplay.
-- Full identities, commands, hypotheses, limitations and handoff:
-  armport/notes/MAPSERVER-STARTUP-60S.md. Integrate task commits in parent order
-  only after their M5/.46 base dependencies, with modern runtime and Thor evidence.
+- Playable Thor comparison: .44/a5bd2bbe3, APK40743596575/artifact12840043807.
+  Latest predecessor APK .46/code61 (build40929292200/runtime40945708189/APK40952408285).
+  Its modern Win32 server was built/source-checked; last formal approval is .45.
+- e563 build41363927704 passed all10 jobs, including both Win32 MapServers.
+  Modern PE SHA f893cee6cd6c4dc8b7c45c8b5f7c07572aaabbe50ee5b8730b9ddd3da12dac94.
+- Actual Windows ACK41372568968 passed unchanged commit/blocked/failed-write
+  checks and postrun binary hashes; this is not gameplay or app-DbServer proof.
+- App runtime41372922907 failed staging after5.419s, before guest/map launch:
+  stale guest0119 hash49c0... versus actual5656... . No APK was dispatched.
+  Coordinator41363909847 and modern/rollback upstream waits failed accordingly.
+- Corrected pin + independent actual-file regression; real packages now admit.
+- Primary Android service-entry→ready-event receipt clock now includes all
+  Android/guest preparation and suspend. UI-action/world and guest/native clocks
+  are separate; ready telemetry changes no input/save/readiness or timeouts.
+- Contiguous PG/Wine/DbServer route + narrower ODBC interval; single owned-launch
+  kernel HWM/RSS and sparse thermal-severity/battery observations have explicit
+  exclusions. Aggregate server peak/PSS/CPU temperature/movable proof stay unknown.
+- ODBC reuse still verifies inputs/actual DLL and executes native probe each launch;
+  cache<4KiB, gain unmeasured. Win32 physics retained; ARM64 SDK closure unresolved.
+- Corrected validation: ArmPort443; Android timing6 +69 existing cases;
+  guest timing16/memory16/saved-map14. Actual official SDK35 all24 Java sources,
+  resources and D8 passed; resources/manifest retained except version metadata.
+- Source/native/ACK/staging failure/repair/SDK evidence: armport/evidence.
+- Next: fresh exact build→retained runtime→signed .47/code62; separately modern
+  full-data Atlas pair + original-server saved-data reopen and actual ACK checks.
+  Refresh supporting cohort IDs; serialize primary then real rollback APK build.
+- No installable .47 APK, modern asset-backed runtime, startup result, physical
+  install/recovery, five-run Atlas/King's or reboot/gameplay acceptance exists.
+- Thor unavailable. Complete CI/APK audits first, then physical capture procedure:
+  armport/THOR-STARTUP-CAPTURE.md; full continuation armport/notes/MAPSERVER-STARTUP-60S.md.
+  Integrate task commits in order after their inherited M5/.46 dependencies.

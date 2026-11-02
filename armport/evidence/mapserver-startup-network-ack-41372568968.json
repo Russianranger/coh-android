@@ -1,0 +1,658 @@
+{
+  "format": 1,
+  "scope": "exact_modern_MapServer_dbquery_with_unchanged_reference_DbServer",
+  "candidate_repository_commit": "e563fe5664cd13570899800695c7e9680ac68877",
+  "native_build_run_id": 41363927704,
+  "passed": true,
+  "app_DbServer_runtime_validated": false,
+  "character_persistence_validated": false,
+  "asset_complete_mapserver_startup_validated": false,
+  "physical_device_validated": false,
+  "thor_60_second_target_proven": false,
+  "supporting_repository_commit": "99280a2ee714f594fcf4ab68bfce03a0bd68ecb7",
+  "supporting_scripts": {
+    "network_ack_candidate.py": {
+      "bytes": 13523,
+      "sha256": "22428a51caf9a8501ac51775c2894fa38814f0614464480412ce8b80e1dd8919"
+    },
+    "modern_validation.py": {
+      "bytes": 16065,
+      "sha256": "cdcf7b731d31be68d38f637efb4b1eaa22c4f9d60c9c56dd193bf5ec4cbc40d1"
+    },
+    "modern_wait_upstream.py": {
+      "bytes": 10527,
+      "sha256": "9565b037ae4a51c7bc156f0884e7361febd4a0ca1049b77e9663a5df7c495c60"
+    }
+  },
+  "host_postgresql_version": "postgres (PostgreSQL) 17.11",
+  "preserved_donors": {
+    "files": 47,
+    "bytes": 52230721,
+    "source_run": 39782080360,
+    "source_artifact": 12428500525,
+    "verified": true
+  },
+  "accepted_schema_report": {
+    "bytes": 38041,
+    "sha256": "ae73b29e193d34950be2043c8fb0ef41b9055d75d573f83e6059e12d95f1a5bf"
+  },
+  "accepted_schema_archive": {
+    "bytes": 682745,
+    "sha256": "a7bb94cd936198850f1a35ac58df925b3638caae29c02f47dca1cb3e21dbc132"
+  },
+  "network_ack_status": "normal_network_ack_commit_order_passed_gameplay_unvalidated",
+  "native_overlay": {
+    "format": 1,
+    "policy": "original_reference_verified_then_exact_MapServer_mapping_only",
+    "candidate_repository_commit": "e563fe5664cd13570899800695c7e9680ac68877",
+    "native_build_run_id": 41363927704,
+    "variant": "thor_certified_startup",
+    "native_archive": {
+      "bytes": 3240315,
+      "sha256": "5d63d123ade2c1af4c2f8e09b4d4e6f225a75d89bd86541296ddad17559c6183"
+    },
+    "native_build_manifest": {
+      "bytes": 45045,
+      "sha256": "6cd8dcbbf0adb27c00ce3b982c96db5b041a29ba51c9fcaf926978039989aa32"
+    },
+    "native_source_receipt_sha256": "8d8ad6f8caf846020b78ce9ba1c908eb8287b206fda0be2a2f62c123b7b6c78d",
+    "candidate_mapserver": {
+      "bytes": 7494656,
+      "sha256": "f893cee6cd6c4dc8b7c45c8b5f7c07572aaabbe50ee5b8730b9ddd3da12dac94"
+    },
+    "original_mapserver_sha256": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+    "unchanged_dbserver_sha256": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+    "original_reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+    "original_reference_receipt_preserved": true,
+    "original_schema_and_templates_preserved": true,
+    "candidate_import_closure": {
+      "files": {
+        "DbServer.exe": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "GDI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "ODBC32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WINMM.dll": {
+            "kind": "windows_system_api"
+          },
+          "WS2_32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "MapServer.exe": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "COMDLG32.dll": {
+            "kind": "windows_system_api"
+          },
+          "GDI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "PhysXCooking.dll": {
+            "kind": "packaged",
+            "file": "PhysXCooking.dll"
+          },
+          "PhysXLoader.dll": {
+            "kind": "packaged",
+            "file": "PhysXLoader.dll"
+          },
+          "SHELL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WINMM.dll": {
+            "kind": "windows_system_api"
+          },
+          "WS2_32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "CityOfHeroes.exe": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "cg.dll": {
+            "kind": "packaged",
+            "file": "cg.dll"
+          },
+          "cgGL.dll": {
+            "kind": "packaged",
+            "file": "cgGL.dll"
+          },
+          "COMDLG32.dll": {
+            "kind": "windows_system_api"
+          },
+          "DDRAW.dll": {
+            "kind": "windows_system_api"
+          },
+          "DINPUT8.dll": {
+            "kind": "windows_system_api"
+          },
+          "DSOUND.dll": {
+            "kind": "windows_system_api"
+          },
+          "GDI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "GLU32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IMM32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "ole32.dll": {
+            "kind": "windows_system_api"
+          },
+          "OPENGL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "PhysXCooking.dll": {
+            "kind": "packaged",
+            "file": "PhysXCooking.dll"
+          },
+          "PhysXLoader.dll": {
+            "kind": "packaged",
+            "file": "PhysXLoader.dll"
+          },
+          "SHELL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "VERSION.dll": {
+            "kind": "windows_system_api"
+          },
+          "WINMM.dll": {
+            "kind": "windows_system_api"
+          },
+          "WS2_32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "TestClient.exe": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "GDI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WINMM.dll": {
+            "kind": "windows_system_api"
+          },
+          "WS2_32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "pig.exe": {
+          "COMCTL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "GDI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "SHELL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WINMM.dll": {
+            "kind": "windows_system_api"
+          },
+          "WS2_32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "Launcher.exe": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "GDI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "pdh.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WINMM.dll": {
+            "kind": "windows_system_api"
+          },
+          "WS2_32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "CrashRpt.dll": {
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "MSVCP140.dll": {
+            "kind": "packaged",
+            "file": "msvcp140.dll"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "cg.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "cgGL.dll": {
+          "cg.dll": {
+            "kind": "packaged",
+            "file": "cg.dll"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "OPENGL32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "NxCharacter.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "PhysXLoader.dll": {
+            "kind": "packaged",
+            "file": "PhysXLoader.dll"
+          }
+        },
+        "PhysXCooking.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WSOCK32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "PhysXCore.dll": {
+          "cudart32_30_9.dll": {
+            "kind": "packaged",
+            "file": "cudart32_30_9.dll"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WSOCK32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "PhysXLoader.dll": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "cudart32_30_9.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "NxCooking.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WSOCK32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "physxcudart_20.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "PhysXDevice.dll": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "concrt140.dll": {
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-math-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "MSVCP140.dll": {
+            "kind": "packaged",
+            "file": "msvcp140.dll"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "msvcp140.dll": {
+          "api-ms-win-crt-convert-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-environment-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-filesystem-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-locale-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-math-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-time-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-utility-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "msvcp140_1.dll": {
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "MSVCP140.dll": {
+            "kind": "packaged",
+            "file": "msvcp140.dll"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "msvcp140_2.dll": {
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-locale-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-math-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "MSVCP140.dll": {
+            "kind": "packaged",
+            "file": "msvcp140.dll"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "msvcp140_atomic_wait.dll": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-core-synch-l1-2-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-locale-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "MSVCP140.dll": {
+            "kind": "packaged",
+            "file": "msvcp140.dll"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "msvcp140_codecvt_ids.dll": {
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "vccorlib140.dll": {
+          "api-ms-win-core-winrt-error-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-core-winrt-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-core-winrt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-math-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "MSVCP140.dll": {
+            "kind": "packaged",
+            "file": "msvcp140.dll"
+          },
+          "ole32.dll": {
+            "kind": "windows_system_api"
+          },
+          "OLEAUT32.dll": {
+            "kind": "windows_system_api"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        },
+        "vcruntime140.dll": {
+          "api-ms-win-crt-convert-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "vcruntime140_threads.dll": {
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-time-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "VCRUNTIME140.dll": {
+            "kind": "packaged",
+            "file": "vcruntime140.dll"
+          }
+        }
+      },
+      "unresolved": [],
+      "explicit_dynamic_dependencies": [
+        "CrashRpt.dll",
+        "cg.dll",
+        "cgGL.dll",
+        "NxCharacter.dll",
+        "PhysXCooking.dll",
+        "PhysXCore.dll",
+        "PhysXLoader.dll",
+        "cudart32_30_9.dll",
+        "NxCooking.dll",
+        "physxcudart_20.dll",
+        "PhysXDevice.dll"
+      ],
+      "optional_dynamic_driver_probes": [
+        "lightfx.dll",
+        "nvcpl.dll",
+        "nvcuda.dll"
+      ],
+      "limitation": "Import inventory and explicit dynamic allowlist; execution not validated"
+    },
+    "test_guards_modified": false,
+    "original_reference_reverified_after_execution": true,
+    "exercised_binary_hashes_reverified_after_execution": true
+  }
+}

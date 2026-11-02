@@ -2,6 +2,7 @@
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('startup_ci_chain', ROOT / 'armport/scripts/startup_ci_chain.py')
@@ -58,6 +59,8 @@ class FakeGithub:
 
 class ChainTests(unittest.TestCase):
     def setUp(self):
+        self.enterContext(patch.dict('os.environ', {'GITHUB_STEP_SUMMARY': ''}))
+        self.enterContext(patch('builtins.print'))
         self.github = FakeGithub()
         self.chain = chain.Chain(SHA, api=self.github.api, sleep=lambda _: None)
 

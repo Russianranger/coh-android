@@ -2,8 +2,8 @@
 
 Updated 2026-11-01 (America/Chicago). Branch `armport/mapserver-startup-60s`.
 **The 60-second Thor target is unproven. No candidate APK or controlled cold
-MapServer timing exists from this work.** This checkpoint implements measurement
-and one dependency-startup experiment; it is not a performance acceptance.
+MapServer timing exists from this work.** This checkpoint implements the full Android request boundary, guest/native phase
+observations and one dependency-startup experiment. It is not acceptance.
 
 ## Source and comparison identities
 
@@ -34,16 +34,35 @@ bounded enhancement additions and sampler fixes; none gains Thor acceptance here
 
 ## Measurement and implementation
 
-Guest `map_startup_timing` rows are additive in the character report and existing
-`map-startup-observation.json`. Initial request starts at guest service
-construction before initialization/dependencies; Android transport and earlier
-app work are excluded. Zoning starts at supervisor request receipt, including
-validation, baseline query and destination preparation. Spawn-to-ready is a
-separate number. Readiness still requires existing owned completed-loop and
-DbServer endpoint-status proof; telemetry cannot authorize readiness.
-Resident returns are labelled separately. Dependency state at initial receipt
-is not automatically a fully stopped-session proof. Client-world observation
-is not proof the character is movable; UI tap timing is explicitly unavailable.
+Android `android_startup_timing.service_receipt_to_map_ready_seconds` is the
+primary initial-launch interval: `elapsedRealtime()` is captured at the first
+`ClientService.onStartCommand` statement, before validation, profile checks,
+worker queuing, Android runtime/import preparation and all guest startup. The
+endpoint is Android receipt of a strictly session-bound event emitted only after
+the existing owned completed-tick plus fresh DbServer status gate. It is a
+conservative upper bound including event delivery; no Python/Android clock
+arithmetic is used. Suspend is included. Optional Activity action-to-ready and
+client-world observations are separate; a callback is not a physical finger-tap
+timestamp, and client-world observation is not movable-character proof.
+
+Guest `map_startup_timing` is retained as a narrower diagnostic. Its initial
+clock starts at guest construction and excludes earlier Android work. Zoning
+uses its own supervisor request, baseline check and complete destination prep;
+resident returns are labelled separately. `runtime_database_route_seconds`
+observes private-profile/PostgreSQL initialization through Wine/intervening
+setup, ODBC/private DbServer preparation and DbServer-ready/schema snapshot.
+This is a contiguous route, not exclusive CPU time. The older
+`dependency_start_seconds` remains the narrower ODBC/DbServer subinterval.
+Neither observer changes readiness, timeouts, saves, input or gameplay gates.
+Initial dependency state alone does not certify a fully stopped session.
+
+A single post-ready `/proc` observation records kernel VmHWM/VmRSS of the exact
+owned Linux launch process, with PID-view, start-time and Popen-liveness checks.
+It excludes other Wine/FEX workers, DbServer and client; it is not aggregate
+MapServer peak or PSS. Missing/denied/mismatched proc views remain unavailable.
+Android captures two optional thermal-severity and latest sticky battery-deci-C
+observations. Read time is not battery sensor sample time; neither is CPU
+thermal measurement. No additional permission, polling or setting is required.
 
 Native 0119 now emits separate opt-in `ARMPORT_SERVER_STARTUP_V1` checkpoints.
 QPC begins at main entry; output begins only after `parseArgs1` to preserve
@@ -72,9 +91,9 @@ No schema, durability, character semantics, resolution or simulation is changed.
 | --- | --- | --- |
 | Full startup phase observation | Implemented and host compiled | Shipping PE and collection overhead still untested |
 | Avoid repeated ODBC MSI transaction | Exact reuse/refusal mechanism host-tested | Measure dependency interval with same driver/prefix; may be a small gain |
-| Persistent portable FolderCache index | Native `FolderCacheAddFolder` traverses the full data tree; client scans were slow | Key to immutable data generation; preserve timestamps/private BIN updates and fallback; not implemented |
+| Portable FolderCache metadata replay | Traversal depends on mode: development-dynamic mode defers enumeration to demanded directories; client whole-tree timing is not a server baseline | Measure actual mode/directories first; a fresh host census must include metadata/private BIN updates and its cost inside startup. Persistent reuse needs stronger generation authority than current directory fingerprints |
 | Reusable cooked physics meshes | `nwCookAndLoadMeshShape` calls Nx cooking each process | Measure group-load first; SDK/input/architecture-keyed cache needs bounded stream and corruption fallback |
-| Startup priority | Development-data `sysInit` selects IDLE priority | Controlled isolated experiment, not a default change; contention-dependent |
+| Startup priority | Development-data `sysInit` selects Win32 IDLE priority; Wine may only record that metadata | First measure actual Linux task scheduling/nice effects; direct zoning nice adjustments are separate |
 | ARM64 MapServer | Real ABI and physics blockers found | Dependency work required before full-function build; no stubbed physics candidate |
 
 Physics closure: bundled SDK 2.8.4 has Win32 **and x64** import libraries but
@@ -88,6 +107,17 @@ An ARM MapServer can retain the x86 DbServer: callback U32 fields are echoed by
 DbServer and can use a MapServer-local full-pointer token registry. Evaluator
 pointer/int pairs, pointer-array clears, queues and derived-cache layouts still
 need controls. Keep `-nosharedmemory`. No reason to port PostgreSQL was found.
+
+Follow-up source correction during CI: `FolderCacheChooseMode` selects
+development-dynamic mode when `./piggs/texts.pigg` is absent; that mode does not
+perform the ordinary AddFolder full scan. Modern staging is expected to omit
+texts.pigg, but the actual launched mode still needs observing. Per-directory
+interception can retain demand behavior. A host-only fresh two-pass census of
+162,937 server-like rows took 7.445 seconds including comparison and an 8.15 MB
+compact packet on this x86 host. That is a corpus experiment, not an engine,
+Wine, PRoot or Thor result. Earlier actual POSIX capture cost ~56 seconds, so
+moving Python outside Wine alone has no established benefit. Current directory
+fingerprints and a few anchor files do not prove every leaf remains unchanged.
 
 ## Validation and limits
 
@@ -103,74 +133,97 @@ Modern animation inputs came from authenticated artifact 12926674360 of build
 Full ArmPort suite: 419 tests passed with the exact c86 historical baseline and
 the installed Java compiler module exposed as `javac`. ODBC cache suite: 9 passed.
 Guest lifecycle results and final integration counts are recorded in STATUS.md.
+The existing database protocol/receipt regressions also pass: network ACK17 and
+character persistence18. These execute host process/capture controls and source/
+receipt checks; they do not rerun the Windows/PostgreSQL commit-lock/failure
+experiments or create a native gameplay character. New exact-PE runtime evidence
+remains separate from these host regressions.
 An initial run without those prerequisites failed four checks; it was not a
 source failure. Existing server fixtures also reproduce two errors at the base
 (missing `map_package` and manifest `files`); a scheduler ownership test is
 namespace-sensitive. No acceptance/ownership guard was weakened to hide them.
 
-No new Windows server execution, PostgreSQL persistence/network regression run,
-full modern runtime, physical device, memory/thermal result, or acceptance start
-has occurred. All ten required Atlas/King's Row process-cold acceptance slots
-remain unrun, as do post-reboot and gameplay/save/reopen/zoning checks.
+The e563 modern PE executed the real Windows PostgreSQL network-ACK tests
+successfully, but its app runtime failed package staging before any guest/map
+launch. No new asset-backed modern map, physical device, startup timing or
+acceptance run exists. All ten Thor Atlas/King's Row slots remain unrun, as do
+reboot and complete gameplay/save/reopen/zoning checks.
 
-## Build access and exact continuation
+## CI evidence and corrected continuation
 
-The connector supports authenticated source writes and workflow reads but has
-no workflow-dispatch operation. Shell GitHub `/user` returned HTTP 401; no
-GitHub CLI credential binding or connected Thor was exposed. The user then
-explicitly authorized browser dispatch and all available tools. The signed-in
-browser has repository access, but no Run workflow control: all three workflows
-are absent from default `main`. No default-branch or repository-setting change
-is authorized or made.
+Implementation branch: `armport/mapserver-startup-60s`; base remains
+`8dc2a66d72477b3c62227e572538b13f0e4f912b`. Initial task commits are
+a14d1a838 (instrumentation), 95a09d11d (ODBC reuse), 51fa0bbb8 (record),
+155c33bcf (branch CI) and e563fe5664cd13570899800695c7e9680ac68877 (kickoff).
+The corrected source is frozen by a separate workflow-only kickoff; obtain its
+exact identity with `git rev-parse HEAD` and the live run IDs in draft PR #9.
+No main/protected branch, repository setting, merge or release was changed.
 
-The user's original authorization expressly permits branch-specific CI. That
-supersedes the older handoff's prohibition on push-based dispatch for this task.
-`mapserver-startup-ci.yml` is therefore a narrow coordinator on this exact
-experiment branch, triggered only by a change to its own YAML. It uses the
-ordinary ephemeral Actions token with Actions write in that job, no personal
-credential, to dispatch the existing workflows with their explicit inputs.
-It checks frozen source, refuses duplicates, requires successful stage artifacts
-and runs no compiler itself. No build or runtime semantics change. Initial setup
-is skipped by `[skip ci]`; one separate coordinator-only kickoff starts the chain
-without also matching the existing ArmPort push filters. Freeze the branch while
-it runs. Six coordinator tests cover stage order/inputs, moved heads, failed and
-duplicate runs, absent artifacts and existing-stage reuse. Actual run IDs follow
-in STATUS.md once observable. Modern runtime/Thor qualification remains separate.
+| e563 attempt | Result / scope |
+| --- | --- |
+| Build41363927704 | All10 jobs passed, including both genuine Win32 builds |
+| Native artifact13109558483 | 6,163,033B; SHA256 d54b90f27f6bab463d6304f68dc91286a31305bd6db819055b5027bacc293d7c |
+| Modern PE | 7,494,656B; SHA256 f893cee6cd6c4dc8b7c45c8b5f7c07572aaabbe50ee5b8730b9ddd3da12dac94 |
+| ACK41372568968 | Actual PE/unchanged reference DbServer, committed/blocked/failed-write ACK checks passed; not gameplay |
+| ACK artifact13110032093 | 18,126B; SHA256 269445c6be39e7c94aacc54f5e337e1a7a5b60cec7f7c4dcf73a622871323551 |
+| Runtime41372922907 | Staging failed after5.419s; guest_failures={}, no guest launched; not a startup measurement |
+| Coordinator41363909847 | Failed, no APK dispatched |
+| Modern41370488143 / rollback41368945719 | Failed their upstream waits, no native test/APK launched |
 
-Once authenticated dispatch is available, freeze the branch SHA and run:
+The independent native audit found the cause: guest validation still pinned
+old0119 SHA49c0f73d...c387 while both actual packages use
+5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f.
+The pin is corrected without widening admission. A real-file hash regression
+fails before the repair; both real native bindings and actual modern archive
+staging pass afterward. The initial fixtures derived their synthetic patch pin
+from the validator and missed drift; the new check is independent of them.
+The native/ACK success remains valid in its stated scope, not app qualification.
 
-```sh
-gh workflow run armport-build.yml --repo Russianranger/coh-android \
-  --ref armport/mapserver-startup-60s -f build_server_metrics=true
-# After every job succeeds, use that exact run ID for all three inputs:
-gh workflow run armport-app-runtime.yml --repo Russianranger/coh-android \
-  --ref armport/mapserver-startup-60s \
-  -f client_run_id=BUILD_RUN -f data_run_id=BUILD_RUN -f server_run_id=BUILD_RUN
-```
+Retained source/SDK/native/ACK/rejection/repair evidence is under
+`armport/evidence/mapserver-startup-*`. Corrected host checks: full ArmPort443;
+Android timing6 plus69 existing lifecycle/stage/sidebar/budget/profile checks;
+guest timing16, memory observation16, saved-map14. Two unrelated character
+fixture errors reproduce with the original method and remain documented above.
+Actual official SDK35 resource/all24 Java-source/D8 compilation passed; every
+nonmanifest resource stayed byte-identical to .36 and manifest differs only in
+version. This produced no signed installable APK or runtime claim.
 
-Existing runtime success still qualifies only retained-server creation/reopen.
-Execute the exact modern full-data server, persistence/network acknowledgement
-tests on disposable DBs and Atlas/King's Row gameplay before treating it as
-qualified. Only then dispatch `armport-thor-apk.yml` with that exact
-`m4_run_id` and `server_metrics=true`. Reserved candidate metadata is
-**0.13.47/code 62**, same app ID/retained signer; no such APK exists yet.
+The authorized coordinator uses the normal ephemeral Actions token on this
+isolated branch, dispatching existing build → runtime → APK serially and refusing
+failed/duplicate/moved-source stages. Setup uses [skip ci]; only its own YAML
+kickoff is unskipped, avoiding a duplicate push build. Freeze its source until
+both primary and rollback coordinators finish. Mock tests now suppress fixture
+run IDs from real workflow summaries. Browser Run workflow was absent because
+these ArmPort workflow files are missing from main; main stayed unchanged.
 
-Before handing off an APK, also produce an authenticated installable rollback
-that actually restores the predecessor modern MapServer package (a client
-selector change is insufficient). The original pinned .36 donor package is
-retained in the producer ancestry; its MapServer is `fea96d0a...8071363`.
-Use a greater versionCode for a normal install-over rollback, or a separately
-verified supported downgrade mechanism. Do not uninstall/clear the profile.
+Supporting test code is on `armport/mapserver-modern-runtime-qualification`.
+Modern full-data qualification authenticates original23 payloads, all173,011
+import leaves, exact candidate PE/client/data and c86 validators, then runs
+candidate Atlas creation/save, candidate reopen/save and original-modern-server
+reopen of that same stopped disposable save. It preserves all native tick/status,
+SQL/save, identity, cleanup and task gates. Windows ACK uses the original accepted
+reference/schema receipts, separately authenticates only the MapServer overlay,
+keeps all original ACK/lock/fatal/commit guards, and rehashes executed bytes.
+Both supporting source/run constants must be refreshed for the corrected cohort.
+No new native compiler or schema build is needed by those supporting jobs.
 
-Then install over the app, keep assets/settings/save constant, and use Save/Logout,
-Finish, report export and complete owned shutdown between launches. Collect five
-Atlas and five King's Row launches with destination stopped; label first cache
-generation separately, plus a separate reboot start. Export every attempt,
-including failures. Record OS/cache/dependency state, temperature and battery;
-compare phase and full supervisor intervals, then play combat/rewards/collision,
-zone/save/reopen and verify destination persistence. Preserve app data on every
-failure. No physical 60-second verdict follows from host timing or resident return.
+Earlier read-only modern41367191699 and ACK41370948195 were cancelled before
+heavy execution to add baseline continuity and Windows byte-preserving checkout,
+respectively. Unrelated PR diagnostic41363913327 was cancelled to avoid compiler
+overlap. These are CI orchestration records, not failed MapServer timing runs.
 
-Review task commits against the frozen implementation base first. Incorporation
-into `COH-ArmPort` depends on the relevant M5/.46 lineage; cherry-pick task commits
-in parent order after that dependency is integrated, not unrelated branch history.
+After corrected build/runtime success, sign .47/code62 through the established
+workflow and independently audit APK identity/signer/retained bytes/actual PE.
+Produce one same-source/runtime `server_metrics=false` rollback APK only after
+the primary coordinator succeeds. It restores actual original modern MapServer
+fea96d0a...8071363, not a client selector. Equal code62 installs over the candidate
+with the same retained signer. Save/Logout → verified Finish/cleanup → install →
+Set up / update runtime activates the archive; APK installation alone does not.
+Never uninstall/clear profile data. Physical install and recovery remain untested.
+
+Use `armport/THOR-STARTUP-CAPTURE.md` and the offline report extractor for five
+fully stopped Atlas plus five King's Row attempts, reboot and normal gameplay/
+save/reopen/zoning. Preserve every failed/slow attempt, caches/settings and declared
+snapshot conditions. The normal UI cannot restore identical database snapshots;
+that comparison limitation is explicit. No Thor connection is currently exposed.
+The <=60-second Thor target remains unproven until physical evidence is collected.
