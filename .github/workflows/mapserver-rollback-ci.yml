@@ -1,5 +1,5 @@
 name: MapServer rollback APK packaging
-# Authorized supporting-only kickoff: wait for the original coordinator to
+# Authorized supporting-only kickoff 1: wait for the original coordinator to
 # finish, then build one server_metrics=false APK through its existing signer.
 on:
   push:
