@@ -20,12 +20,15 @@ and 81 client pins; original importer contract 173,011 leaves / 2,977,730,517 by
 Evidence: `armport/evidence/modern-runtime-donor-hydration.json`. This did not
 execute a native program or access a database.
 
-Next: wait for the exact candidate build and retained app runtime to succeed.
-Replace BOTH runtime-ID zero placeholders in the supporting workflow with the
-actual successful runtime ID, then make one workflow-only kickoff. Setup commits
-use [skip ci]; the frozen production branch is untouched. The job uses separate
-candidate and c86 baseline checkouts and consumes exact existing native/PRoot/
-client artifacts. It installs no alternate server and signs no APK.
+A read-only x86 wait job now observes the exact native build and discovers the
+unique same-source app runtime. It fails on upstream failure, duplicate runtime
+runs or changed identities, then passes the successful runtime ID to the ARM job.
+No manual ID placeholder or follow-up dispatch is needed. Setup commits use
+[skip ci]; a single supporting workflow-only kickoff starts the wait.
+Twelve waiter controls plus nine modern admission controls pass. The wait is
+bounded to198 minutes; the ARM job then has its independent240-minute cap.
+No write API, compiler or workflow dispatch exists in this read-only handoff.
+The production branch stays frozen and its existing coordinator owns dispatch.
 
 Each guest has its own existing 5,400-second correctness timeout. A passing pair
 qualifies Atlas creation/save/reopen only. King's Row, combat, rewards, collision,

@@ -1,7 +1,7 @@
 name: ArmPort modern MapServer runtime qualification
 
-# Supporting branch only. Pin the successful candidate runtime ID before its
-# CI kickoff. Production helpers are read from a separate candidate checkout.
+# Supporting branch only. The read-only wait job hands off the unique exact
+# successful runtime. Production helpers use a separate candidate checkout.
 on:
   workflow_dispatch:
     inputs:
@@ -13,10 +13,6 @@ on:
         description: Successful candidate build including the modern server
         required: true
         default: '41363927704'
-      candidate_runtime_run_id:
-        description: Successful same-candidate retained app runtime run
-        required: true
-        default: '0'
   push:
     branches: ['armport/mapserver-modern-runtime-qualification']
     paths: ['armport/modern-runtime/**', '.github/workflows/armport-modern-runtime.yml']
@@ -30,12 +26,36 @@ concurrency:
 env:
   CANDIDATE_COMMIT: ${{ inputs.candidate_commit || 'e563fe5664cd13570899800695c7e9680ac68877' }}
   NATIVE_BUILD_RUN_ID: ${{ inputs.native_build_run_id || '41363927704' }}
-  CANDIDATE_RUNTIME_RUN_ID: ${{ inputs.candidate_runtime_run_id || '0' }}
   CMAKE_BUILD_PARALLEL_LEVEL: '2'
   PYTHONDONTWRITEBYTECODE: '1'
 
 jobs:
+  wait-upstreams:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 200
+    outputs:
+      runtime_run_id: ${{ steps.wait.outputs.runtime_run_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: supporting
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            armport/modern-runtime
+      - name: Check read-only upstream waiter controls
+        run: python3 supporting/armport/modern-runtime/test_modern_wait_upstream.py -v
+      - name: Wait for exact native build and unique successful candidate runtime
+        id: wait
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 supporting/armport/modern-runtime/modern_wait_upstream.py \
+            --repository "$GITHUB_REPOSITORY" --candidate-commit "$CANDIDATE_COMMIT" \
+            --native-build-run-id "$NATIVE_BUILD_RUN_ID" --timeout-seconds 11880 --poll-seconds 30
   modern-runtime:
+    needs: wait-upstreams
+    env:
+      CANDIDATE_RUNTIME_RUN_ID: ${{ needs.wait-upstreams.outputs.runtime_run_id }}
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 240
     steps:
@@ -83,7 +103,7 @@ jobs:
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
-          test "$CANDIDATE_RUNTIME_RUN_ID" != 0
+          test -n "$CANDIDATE_RUNTIME_RUN_ID"
           gh api "repos/$GITHUB_REPOSITORY/actions/runs/$NATIVE_BUILD_RUN_ID" > "$RUNNER_TEMP/native-build-run.json"
           gh api "repos/$GITHUB_REPOSITORY/actions/runs/$CANDIDATE_RUNTIME_RUN_ID" > "$RUNNER_TEMP/candidate-runtime-run.json"
           python3 - <<'PY'
