@@ -1,0 +1,120 @@
+name: Exact modern MapServer PostgreSQL network ACK
+# Supporting-only runtime test. No compiler, signing, schema generation or
+# production branch edit. Setup is pushed with skip-ci; kickoff changes only
+# this YAML file after the supporting source is reviewable.
+on:
+  push:
+    branches: ['armport/mapserver-modern-runtime-qualification']
+    paths: ['.github/workflows/mapserver-network-ack.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: exact-mapserver-network-ack-e563fe5664cd
+  cancel-in-progress: false
+env:
+  NATIVE_BUILD_RUN_ID: '41363927704'
+  CANDIDATE_COMMIT: e563fe5664cd13570899800695c7e9680ac68877
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  wait-native:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/armport/mapserver-modern-runtime-qualification'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 200
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: supporting
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: armport/modern-runtime
+      - name: Wait read-only for exact successful native build
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: python3 -u supporting/armport/modern-runtime/network_ack_candidate.py wait
+  network-ack:
+    needs: wait-native
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: supporting
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: armport/modern-runtime
+      - name: Checkout exact production candidate without modifications
+        uses: actions/checkout@v4
+        with:
+          ref: e563fe5664cd13570899800695c7e9680ac68877
+          path: candidate
+          lfs: false
+          persist-credentials: false
+      - name: Checkout immutable server certificate baseline
+        uses: actions/checkout@v4
+        with:
+          ref: c86a57962363dbe2dc2091dadde6abdfaa2e1e1c
+          path: server-baseline
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            armport
+            android
+            tools
+            patches
+            database
+            docs
+            assets
+            upstream/ouroboros
+      - name: Validate adapter admission and unchanged network acceptance controls
+        shell: pwsh
+        run: |
+          python supporting/armport/modern-runtime/test_network_ack_candidate.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate adapter controls failed' }
+          python -m unittest discover -s candidate/database/postgresql/tests -p test_run_network_ack.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Original network acceptance controls failed' }
+      - name: Capture exact native build metadata
+        shell: pwsh
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $run = gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/$env:NATIVE_BUILD_RUN_ID"
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot read exact native build metadata' }
+          $run | Out-File "$env:RUNNER_TEMP/native-build-run.json" -Encoding utf8
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-server-donors
+          path: ${{ runner.temp }}/preserved-donors
+          run-id: '41363927704'
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-server-metrics-native
+          path: ${{ runner.temp }}/candidate-native
+          run-id: '41363927704'
+          github-token: ${{ github.token }}
+      - name: Install the existing pinned x86 PostgreSQL ODBC driver
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Join-Path $env:RUNNER_TEMP 'psqlodbc_x86.msi'
+          Invoke-WebRequest 'https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi' -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash differs' }
+          $process = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
+          if ($process.ExitCode -notin @(0,3010)) { throw "ODBC install failed: $($process.ExitCode)" }
+      - name: Execute unchanged ACK lock, commit and failure checks with the exact candidate MapServer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
+          if (-not $driver) { throw 'Existing x86 Unicode ODBC driver unavailable' }
+          if (-not $env:PGBIN) { throw 'Existing Windows PostgreSQL bin directory unavailable' }
+          python supporting/armport/modern-runtime/network_ack_candidate.py run --candidate-root candidate --baseline-root server-baseline --native-run-json "$env:RUNNER_TEMP/native-build-run.json" --donors "$env:RUNNER_TEMP/preserved-donors" --server-archive "$env:RUNNER_TEMP/candidate-native/server-metrics-thor-certified-startup.zip" --work "$env:RUNNER_TEMP/exact-mapserver-ack-private" --output "$env:GITHUB_WORKSPACE/out/exact-mapserver-ack-evidence" --pg-bin "$env:PGBIN" --driver "$($driver.Name)"
+          if ($LASTEXITCODE -ne 0) { throw 'Exact modern MapServer network ACK validation failed' }
+      - name: Retain redacted evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exact-modern-mapserver-network-ack-evidence
+          path: out/exact-mapserver-ack-evidence/
+          retention-days: 30
+          if-no-files-found: warn
