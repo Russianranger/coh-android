@@ -1,0 +1,232 @@
+{
+  "actual_repository_java_sources": 24,
+  "all_compiled_non_manifest_resources_identical_to_donor": true,
+  "all_java_compilation_units": 25,
+  "android_jar": {
+    "bytes": 27092450,
+    "sha256": "4566663c3876e022b4fa4ced8c8697c4ab1688267f090114fd92d027b32e619b"
+  },
+  "binary_manifest_matches_donor_except_version": true,
+  "class_file_count": 135,
+  "classes_jar": {
+    "bytes": 377808,
+    "sha256": "853fe0020d342ef4eb530dae0eba06d3008274a02857c6caf6f3146912ed8cc9"
+  },
+  "d8_provenance": {
+    "archive_member": "android-15/lib/d8.jar",
+    "build_tools_archive_sha256": "bd3a4966912eb8b30ed0d00b0cda6b6543b949d5ffe00bea54c04c81e1561d88",
+    "d8_jar": {
+      "bytes": 16614740,
+      "sha256": "305622ad00535684534eb8f742cbf5e628a9abc09d8ea4d39d1babb95bf0cee5"
+    },
+    "source_url": "https://dl.google.com/android/repository/build-tools_r35_linux.zip"
+  },
+  "device_validated": false,
+  "dex": {
+    "bytes": 536748,
+    "sha256": "bb2d2fbad46dea255e8c5d33e8cb1ea541a7cdbf82effa623f2303b389e081f4"
+  },
+  "elapsed_seconds": 6.359,
+  "format": 1,
+  "generated_sources": {
+    "io/github/russianranger/cohclientinteractive/R.java": {
+      "bytes": 454,
+      "sha256": "d7c54e3aa63621d86e82913f2ffab196b8be3033a63ff0905b9c4ca6f2da8840"
+    }
+  },
+  "installable_candidate_APK_built": false,
+  "java_source_bytes_unchanged_after_compilation": true,
+  "java_sources": {
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/AssetPackArchive.java": {
+      "bytes": 22279,
+      "sha256": "91a02b7e4ff84709123fce4a109dc77ff0ecd7c4d770c9b555b7a43b7e80af83"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/AssetPackStore.java": {
+      "bytes": 8618,
+      "sha256": "eddb4c28448c071d54c839c0b129e6dbab3d61cfe08eff7d0e5615721f083455"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/CleanupGuard.java": {
+      "bytes": 1294,
+      "sha256": "b695b469a0e43276c304bf7e8a46c467e792fe0d8cede095e6fe9fa10d0878b3"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DbServerAcceptance.java": {
+      "bytes": 6109,
+      "sha256": "d1e74551a51fe1a5e52774582184ad02d53b528c5a357f82034755b220d370a6"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DeviceHosts.java": {
+      "bytes": 879,
+      "sha256": "f5911d577902f24a4ab6323d710b8835e8d809722cdd281d5fad61496e8ec5f6"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticOutcome.java": {
+      "bytes": 1017,
+      "sha256": "9602b52d52a84bd2ce15b85ad766d66c2c9c9554e68d8c071410da262bf7479d"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticReports.java": {
+      "bytes": 1208,
+      "sha256": "afbd4cab1ad3246b7cf5af6cc0ade2c420c1982062fb515a4cb33104e14198b8"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java": {
+      "bytes": 49674,
+      "sha256": "4d62ea2ede34a3ef7fe8b9a22cc18225e04adddd45609aa5070835c1c6e3cecd"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java": {
+      "bytes": 12918,
+      "sha256": "551c1555dd9cc69f224f7f087dc782be101e27a5f71e2ba65bdc773dd78e15ea"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+      "bytes": 23110,
+      "sha256": "cfb529976e2b89b385ece37e0ecab3759153d011910e9fddf375be7338b01b87"
+    },
+    "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+      "bytes": 37139,
+      "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java": {
+      "bytes": 36770,
+      "sha256": "a3088ddd8127edf9a3f11e47ed68aa97083d8a7e35618de13ade461a7783768d"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java": {
+      "bytes": 57928,
+      "sha256": "0f6151efc743d30e3e61147ff3c053f6f227c56ca63e6cf30d482ca6f4480425"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java": {
+      "bytes": 6032,
+      "sha256": "a368c9c0304e3c40cdf07dde0a55b154653185f7e03c5b754c70751f9eda4089"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+      "bytes": 209609,
+      "sha256": "6b6ca4ec56c1d08510a995c8d375cfd53dc51a993c12afa833ad46801ab62bc3"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+      "bytes": 71256,
+      "sha256": "72bad6e8d1524d00a494f07fa8899161f57fbdd9349e6e1bf95bf6bc698895a1"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java": {
+      "bytes": 5942,
+      "sha256": "2e42014ebe7af01f0298becd8dcfac913fbb44c80d2d3ff427b248fe548c8c29"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java": {
+      "bytes": 30695,
+      "sha256": "4e8cc0fc1be24b45051ebf61a4cf119a29f30734750f72943081d3b8bc31c706"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java": {
+      "bytes": 20390,
+      "sha256": "77d83f5124478f168d1bc4460e581e2f8e4b4211b91fe3a5bd8970a3b6b6def6"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java": {
+      "bytes": 49178,
+      "sha256": "5a07091e15f9eb4aeac20a50d3c6c5ba1959905a6738466dcebb289ef6b1715a"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageFiles.java": {
+      "bytes": 18684,
+      "sha256": "bfb5659e30608613e67e83f386d412fa3e55d645ee180e6581311f14498dbb36"
+    },
+    "android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java": {
+      "bytes": 66513,
+      "sha256": "25ab1d7f8f3c122bd52e919861a810d7bb05384f435ec1751e509df1934179b8"
+    },
+    "android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientSocketRecovery.java": {
+      "bytes": 16683,
+      "sha256": "9454a5842aad8ebd1c8238d6c5a0936bf3ff0845158f76a5021df26951676281"
+    },
+    "android/zoning/src/main/java/io/github/russianranger/cohclientinteractive/ClientZoning.java": {
+      "bytes": 8771,
+      "sha256": "9f24f24f9417c52a11e82e569d245888049b79d1fa1da44e6c0f6d9491da1fdf"
+    }
+  },
+  "local_source_bytes_authoritative": true,
+  "manifest": {
+    "bytes": 1523,
+    "sha256": "71bee9125970a163094cab6e5e6580416ac2130c28f6f0086fd83419ed3aaaf3"
+  },
+  "native_compilation_performed": false,
+  "official_platform_provenance": {
+    "android_jar_archive_member": "android-35/android.jar",
+    "android_jar_bytes": 27092450,
+    "android_jar_sha256": "4566663c3876e022b4fa4ced8c8697c4ab1688267f090114fd92d027b32e619b",
+    "archive_bytes": 64273788,
+    "archive_final_url": "https://dl.google.com/android/repository/platform-35_r02.zip",
+    "archive_sha1": "0bb560a90a7a2cbd0dd8348224d518b638fe7949",
+    "archive_sha256": "0988cacad01b38a18a47bac14a0695f246bc76c1b06c0eeb8eb0dc825ab0c8e0",
+    "archive_url": "https://dl.google.com/android/repository/platform-35_r02.zip",
+    "archives": [
+      {
+        "checksum": "0bb560a90a7a2cbd0dd8348224d518b638fe7949",
+        "checksum_type": {
+          "type": "sha1"
+        },
+        "size": "64273788",
+        "url": "platform-35_r02.zip"
+      }
+    ],
+    "metadata_bytes": 426356,
+    "metadata_final_url": "https://dl.google.com/android/repository/repository2-3.xml",
+    "metadata_sha256": "fb1bd2fcd70b6116519563f1ff96cc578381e4e29237ab05ec8920f0864a7955",
+    "metadata_url": "https://dl.google.com/android/repository/repository2-3.xml",
+    "official_archive_checksum_verified": true,
+    "package_path": "platforms;android-35"
+  },
+  "passed": true,
+  "phases": [
+    {
+      "elapsed_seconds": 0.004,
+      "exit_code": 0,
+      "name": "resource-compile",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "elapsed_seconds": 0.273,
+      "exit_code": 0,
+      "name": "resource-link",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "elapsed_seconds": 2.673,
+      "exit_code": 0,
+      "name": "javac-api35",
+      "stderr": {
+        "bytes": 478,
+        "sha256": "d1cfc9f34d5f55e231a14985746a9ed88db1e06e4fe8e45c2563049091bdaed5"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "elapsed_seconds": 3.324,
+      "exit_code": 0,
+      "name": "d8-api35",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "repository_head": "e563fe5664cd13570899800695c7e9680ac68877",
+  "runtime_assets_packaged": false,
+  "scope": "unsigned_full_24_source_Android_API35_shell_resource_and_DEX_compilation",
+  "signed": false,
+  "unsigned_resource_container": {
+    "bytes": 2819,
+    "sha256": "8fdf89158b5333c5e9b9804d8f91721772ffaa71ecb669c488c029294a960000"
+  }
+}

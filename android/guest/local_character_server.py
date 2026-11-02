@@ -1192,6 +1192,62 @@ def observe_animation_counter_bytes(state, output):
     return changed
 
 
+def observe_owned_launch_memory(child, proc_root=Path('/proc')):
+    """Once-only kernel memory observation for the exact owned Linux child.
+
+    VmHWM is this launch process's lifetime peak through this status read. Wine
+    or FEX workers, DbServer and client processes are neither scanned nor added.
+    """
+    result = {'status': 'unavailable', 'observed': False,
+        'scope': 'owned_linux_launch_process_only_at_first_native_ready',
+        'peak_scope': 'kernel_VmHWM_for_this_process_lifetime_to_status_read',
+        'includes_other_wine_fex_workers': False, 'includes_dbserver_or_client': False,
+        'aggregate_mapserver_peak_measured': False, 'pss_measured': False,
+        'linux_pid': None, 'process_starttime_ticks': None,
+        'kernel_vm_hwm_bytes': None, 'vm_rss_bytes': None}
+    try:
+        process = getattr(child, 'process', None)
+        pid, poll = getattr(process, 'pid', None), getattr(process, 'poll', None)
+        if type(pid) is not int or pid <= 0 or not callable(poll):
+            raise ValueError('Owned launch process interface unavailable')
+        result['linux_pid'] = pid
+        if poll() is not None:
+            raise ValueError('Owned launch leader already exited')
+        if base.WineProcessOwner.process_stat(Path(proc_root) / 'self')['pid'] != os.getpid():
+            raise ValueError('Direct owned-launch PID view unavailable; no alternate process guessed')
+        path = Path(proc_root) / str(pid)
+        before = base.WineProcessOwner.process_stat(path)
+        if before['pid'] != pid or before['state'] == 'Z' or before['starttime'] <= 0:
+            raise ValueError('Owned launch process identity unavailable')
+        with (path / 'status').open('rb') as source:
+            raw = source.read(64 * 1024 + 1)
+        if len(raw) > 64 * 1024:
+            raise ValueError('Owned launch status exceeded bound')
+        fields = {}
+        for line in raw.splitlines():
+            name, separator, value = line.partition(b':')
+            if separator and name in (b'Pid', b'VmHWM', b'VmRSS'):
+                tokens = value.split()
+                if (name in fields or len(tokens) != (1 if name == b'Pid' else 2)
+                        or not tokens[0].isdigit() or len(tokens[0]) > 20
+                        or name != b'Pid' and tokens[1] != b'kB'):
+                    raise ValueError('Owned launch status fields malformed')
+                fields[name] = int(tokens[0])
+        if (set(fields) != {b'Pid', b'VmHWM', b'VmRSS'} or fields[b'Pid'] != pid
+                or not 0 < fields[b'VmRSS'] <= fields[b'VmHWM'] <= (2**63 - 1) // 1024):
+            raise ValueError('Owned launch memory fields unavailable or inconsistent')
+        after = base.WineProcessOwner.process_stat(path)
+        if (after['pid'] != pid or after['starttime'] != before['starttime']
+                or after['state'] == 'Z' or poll() is not None):
+            raise ValueError('Owned launch process exited or changed identity')
+        result.update(status='observed_owned_linux_launch_process', observed=True,
+            process_starttime_ticks=before['starttime'], kernel_vm_hwm_bytes=fields[b'VmHWM'] * 1024,
+            vm_rss_bytes=fields[b'VmRSS'] * 1024)
+    except (OSError, ValueError, KeyError, IndexError) as failure:
+        result['reason'] = str(failure)[:200]
+    return result
+
+
 def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_payload):
     """Once-only optional private FX byte observation after native readiness.
 
@@ -1312,6 +1368,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             'process_spawn_to_map_ready_seconds': ('map_spawn_requested', 'map_ready_observed'),
             'request_to_process_spawn_seconds': ('request', 'map_spawn_requested'),
             'dependency_start_seconds': ('dependencies_start', 'dependencies_ready'),
+            'runtime_database_route_seconds': ('runtime_database_route_start', 'dependencies_ready'),
             'request_to_client_world_ready_seconds': ('request', 'client_world_ready_observed')}
         try:
             now = time.monotonic() if now is None else now
@@ -1335,6 +1392,26 @@ class LocalCharacterServer(login.LocalLoginServer):
             row.update(status='map_readiness_observed',
                 readiness_proof='existing_owned_completed_tick_and_DbServer_endpoint_status',
                 timing_scope='sampled_upper_bound_including_protocol_observer_delay')
+            # Android timestamps receipt on its own monotonic clock. This
+            # reports the existing readiness proof; it grants no lifecycle
+            # transition and never combines the guest and Android clocks.
+            if (row.get('kind') == 'initial_guest_service_request' and row.get('epoch') is None
+                    and row.get('destination_already_resident') is False
+                    and type(row.get('map_id')) is int and row['map_id'] in (1, 5)
+                    and row.get('clock_valid') is True and row.get('request_boundary_observed') is True
+                    and row.get('baseline_destination_not_started') is True
+                    and 'request' in row['points'] and 'map_spawn_requested' in row['points']):
+                event = getattr(self.ctx, 'event', None)
+                if not callable(event):
+                    row['map_server_ready_event_error'] = 'event_unavailable'
+                else:
+                    try:
+                        event('map_server_ready_observed', format=1, session_id=self.owner.args.session_id,
+                            request_kind='initial_guest_service_request', epoch=None, destination_already_resident=False,
+                            map_id=row['map_id'], readiness_proof=row['readiness_proof'],
+                            process_spawn_observed=True, native_ready_observed=True)
+                    except OSError as failure:
+                        row['map_server_ready_event_error'] = type(failure).__name__
         if phase == 'client_world_ready_observed':
             row['client_world_ready_observed'] = True
 
@@ -1366,6 +1443,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         ever saved a character. Resuming that first creation is explicit and
         never removes or replaces the persistent profile.
         """
+        timing = getattr(self, 'initial_startup_timing', None)
+        if (timing is not None and timing.get('kind') == 'initial_guest_service_request'
+                and timing.get('request_boundary_observed') is True and 'request' in timing['points']):
+            timing['runtime_database_route_scope'] = (
+                'guest private-profile/PostgreSQL initialization through Wine/init and intervening display/setup '
+                'to ODBC/private DbServer preparation and DbServer readiness/schema snapshot; '
+                'contiguous wall-clock route, not exclusive dependency CPU time')
+            self.mark_startup_timing(timing, 'runtime_database_route_start')
         resume = getattr(self.owner.args, 'resume_empty_profile', False)
         require(type(resume) is bool, 'Invalid first-creation resume request')
         self.creation_report['resume_first_creation_requested'] = resume
@@ -1876,6 +1961,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 row.update(native_ready_verified=True,
                     native_ready_elapsed_seconds=round(now - child.started, 6),
                     native_ready_time_scope='sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded')
+                row['owned_launch_memory_at_first_native_ready'] = observe_owned_launch_memory(child)
                 row['server_fx_provider']['post_native_ready'] = observe_ready_fx_provider(
                     runtime, row['private_runtime_identity'], row['server_fx_provider']['actual_payload'])
                 changed = True

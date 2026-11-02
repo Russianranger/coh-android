@@ -55,6 +55,7 @@ public final class ClientActivity extends Activity {
     private TextView assetPackStatus;
     private boolean assetStatusChecking,assetStatusLoaded,assetStatusDirty;
     private String pendingExport,pendingAction,shownSession="";
+    private long pendingStartupUiActionElapsedRealtime = -1;
     private String pendingStorageExport;
     private android.net.Uri pendingExportDestination;
     private String pendingExportSource;
@@ -483,11 +484,13 @@ public final class ClientActivity extends Activity {
     }
 
     private void request(String action){
+        final long uiActionElapsedRealtime = SystemClock.elapsedRealtime();
         if(!diagnosticControlsReady(state,service!=null,exporting,ClientRuntime.operationInProgress())||(state.blocked&&!ClientService.STORAGE_SCAN.equals(action)))return;
+        pendingStartupUiActionElapsedRealtime = uiActionElapsedRealtime;
         if(Build.VERSION.SDK_INT>=33&&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED){pendingAction=action;requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},NOTIFY);return;}
         launch(action);
     }
-    private void launch(String action){try{Intent intent=new Intent(this,ClientService.class).setAction(action);if(ClientService.IMPORT.equals(action)){intent.setData(pendingImport);intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);}startForegroundService(intent);}catch(RuntimeException e){Toast.makeText(this,"Could not start. Return to this screen and retry.",Toast.LENGTH_LONG).show();}}
+    private void launch(String action){final long uiActionElapsedRealtime=pendingStartupUiActionElapsedRealtime;pendingStartupUiActionElapsedRealtime=-1;try{Intent intent=new Intent(this,ClientService.class).setAction(action);if((ClientService.RUN.equals(action)||ClientService.CREATE.equals(action)||ClientService.RESUME_FIRST_CREATION.equals(action))&&uiActionElapsedRealtime>=0)intent.putExtra(ClientService.EXTRA_STARTUP_UI_ACTION_ELAPSED_REALTIME,uiActionElapsedRealtime);if(ClientService.IMPORT.equals(action)){intent.setData(pendingImport);intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);}startForegroundService(intent);}catch(RuntimeException e){Toast.makeText(this,"Could not start. Return to this screen and retry.",Toast.LENGTH_LONG).show();}}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);if(request==NOTIFY&&pendingAction!=null){String action=pendingAction;pendingAction=null;launch(action);}}
     private void chooseImport(){
         if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;

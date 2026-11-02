@@ -3,11 +3,91 @@ package io.github.russianranger.cohclientinteractive;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 /** Pure acceptance checks: a decoded framebuffer alone never proves an Android display. */
 final class ClientAcceptance {
+    /** Diagnostic receipt only; this must never grant input or gameplay readiness. */
+    static boolean initialMapReadyObservation(Object value, String session) {
+        Map<?, ?> event = object(value);
+        return session != null && session.matches("[0-9a-f]{32}")
+                && "map_server_ready_observed".equals(event.get("type"))
+                && session.equals(event.get("session_id")) && number(event.get("format"), 1)
+                && "initial_guest_service_request".equals(event.get("request_kind"))
+                && event.containsKey("epoch") && event.get("epoch") == null
+                && Boolean.FALSE.equals(event.get("destination_already_resident"))
+                && (number(event.get("map_id"), 1) || number(event.get("map_id"), 5))
+                && "existing_owned_completed_tick_and_DbServer_endpoint_status".equals(event.get("readiness_proof"))
+                && yes(event.get("process_spawn_observed")) && yes(event.get("native_ready_observed"));
+    }
+
+    /** All points use Android elapsedRealtime, including time spent suspended. */
+    static final class StartupTiming {
+        private final long serviceReceipt, uiAction;
+        private long mapReady = -1, worldReady = -1;
+        private boolean clockValid;
+        private Map<String, Object> readyEvent;
+
+        StartupTiming(long serviceReceiptElapsed, long uiActionElapsed) {
+            serviceReceipt = serviceReceiptElapsed;
+            clockValid = serviceReceiptElapsed >= 0;
+            uiAction = uiActionElapsed >= 0 && uiActionElapsed <= serviceReceiptElapsed ? uiActionElapsed : -1;
+        }
+
+        synchronized boolean observeMapReady(Object event, String session, long receivedElapsed) {
+            if (mapReady >= 0 || !initialMapReadyObservation(event, session)) return false;
+            if (!clockValid || receivedElapsed < serviceReceipt || worldReady >= 0 && receivedElapsed > worldReady) {
+                clockValid = false; return false;
+            }
+            mapReady = receivedElapsed;
+            readyEvent = new LinkedHashMap<>();
+            for (String key : new String[]{"type", "format", "session_id", "request_kind", "epoch", "map_id",
+                    "destination_already_resident", "readiness_proof", "process_spawn_observed", "native_ready_observed"})
+                readyEvent.put(key, object(event).get(key));
+            return true;
+        }
+
+        synchronized void observeWorldReady(long receivedElapsed) {
+            if (worldReady >= 0) return;
+            if (!clockValid || receivedElapsed < serviceReceipt || mapReady >= 0 && receivedElapsed < mapReady) {
+                clockValid = false; return;
+            }
+            worldReady = receivedElapsed;
+        }
+
+        private Double seconds(long start, long end) {
+            return clockValid && start >= 0 && end >= start ? (end - start) / 1000.0 : null;
+        }
+
+        synchronized Map<String, Object> report() {
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("format", 1);
+            result.put("clock", "android_elapsed_realtime_milliseconds");
+            result.put("includes_system_suspend", true);
+            result.put("clock_valid", clockValid);
+            result.put("service_receipt_elapsed_realtime_ms", serviceReceipt >= 0 ? serviceReceipt : null);
+            result.put("ui_action_elapsed_realtime_ms", uiAction >= 0 ? uiAction : null);
+            result.put("map_ready_receipt_elapsed_realtime_ms", mapReady >= 0 ? mapReady : null);
+            result.put("client_world_ready_receipt_elapsed_realtime_ms", worldReady >= 0 ? worldReady : null);
+            result.put("service_receipt_to_map_ready_seconds", seconds(serviceReceipt, mapReady));
+            result.put("ui_action_to_map_ready_seconds", seconds(uiAction, mapReady));
+            result.put("service_receipt_to_client_world_ready_seconds", seconds(serviceReceipt, worldReady));
+            result.put("ui_action_to_client_world_ready_seconds", seconds(uiAction, worldReady));
+            result.put("map_ready_event", readyEvent == null ? null : new LinkedHashMap<Object, Object>(readyEvent));
+            result.put("status", mapReady >= 0 ? "map_readiness_receipt_observed" : "map_readiness_receipt_not_observed");
+            result.put("request_boundary", "first_onStartCommand_entry_before_action_validation");
+            result.put("ready_boundary", "Android_receipt_after_existing_owned_completed_tick_and_DbServer_endpoint_status");
+            result.put("timing_scope", "conservative_upper_bound_including_guest_event_delivery_delay");
+            result.put("ui_action_is_physical_tap_timestamp", false);
+            result.put("movement_readiness_measured", false);
+            result.put("is_success_proof", false);
+            result.put("physical_60_second_acceptance_validated", false);
+            return result;
+        }
+    }
+
     /** Exact stage sequence selected from the APK's already verified asset pins. */
     static int clientInteractionStageIndex(Object stagesValue, Object verifiedPinsValue) {
         return clientInteractionStageIndex(stagesValue, verifiedPinsValue, "x86");
