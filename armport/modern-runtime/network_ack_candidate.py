@@ -23,8 +23,8 @@ import zipfile
 import modern_wait_upstream as upstream
 import modern_validation as validation
 
-SOURCE = 'e563fe5664cd13570899800695c7e9680ac68877'
-BUILD_RUN = 41363927704
+SOURCE = '1f75894db9117f3567b76d087d7cc5ddce87b3e6'
+BUILD_RUN = 41378036783
 VARIANT = 'thor_certified_startup'
 REFERENCE_ARCHIVE = 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
 ACK_MARKER = b'COH_DBQUERY_CONTAINER_ACK'

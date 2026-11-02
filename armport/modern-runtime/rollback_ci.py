@@ -17,11 +17,13 @@ import urllib.parse
 import modern_wait_upstream as upstream
 
 REPOSITORY, SOURCE_BRANCH = upstream.REPOSITORY, upstream.BRANCH
-SOURCE = 'e563fe5664cd13570899800695c7e9680ac68877'
-PARENT = 41363909847
+SOURCE = '1f75894db9117f3567b76d087d7cc5ddce87b3e6'
+PARENT = 41378023882
 SUPPORT_BRANCH = 'armport/mapserver-modern-runtime-qualification'
 PARENT_PATH = '.github/workflows/mapserver-startup-ci.yml'
-OWN_PATH = '.github/workflows/mapserver-rollback-ci.yml'
+OWN_PATH = '.github/workflows/mapserver-rollback-corrected-ci.yml'
+OWN_WORKFLOW = Path(OWN_PATH).name
+OWN_WORKFLOW_REF = REPOSITORY + '/' + OWN_PATH + '@refs/heads/' + SUPPORT_BRANCH
 APK_PATH = '.github/workflows/armport-thor-apk.yml'
 APK_WORKFLOW = 'armport-thor-apk.yml'
 ARTIFACT = 'coh-atlas-gameplay-0.13.47-apk'
@@ -141,7 +143,7 @@ class Rollback:
         # Existing workflow history is the ambiguity check; no new receipt or
         # lease system is introduced. A failed earlier coordinator may have sent
         # a POST, so a new kickoff must not blindly send another one.
-        others = self.runs('mapserver-rollback-ci.yml', branch=SUPPORT_BRANCH, sha=None, event='push')
+        others = self.runs(OWN_WORKFLOW, branch=SUPPORT_BRANCH, sha=None, event='push')
         require(all(r.get('id') == self.current for r in others), 'Another rollback coordinator exists; inspect its run before a new kickoff')
         while not self.checked(self.read('/actions/runs/' + str(PARENT)), PARENT, PARENT_PATH, event='push'):
             self.pause(self.poll)
@@ -191,8 +193,9 @@ class Rollback:
 
 def main():
     require(os.environ.get('GITHUB_REPOSITORY') == REPOSITORY
-            and os.environ.get('GITHUB_REF_NAME') == SUPPORT_BRANCH and bool(os.environ.get('GH_TOKEN')),
-            'Rollback coordinator is isolated to the authorized supporting branch')
+            and os.environ.get('GITHUB_REF_NAME') == SUPPORT_BRANCH
+            and os.environ.get('GITHUB_WORKFLOW_REF') == OWN_WORKFLOW_REF and bool(os.environ.get('GH_TOKEN')),
+            'Rollback coordinator requires the exact corrected workflow on the authorized supporting branch')
     result = Rollback(current_run_id=int(os.environ['GITHUB_RUN_ID']), supporting_sha=os.environ['GITHUB_SHA'],
                       attempt=int(os.environ.get('GITHUB_RUN_ATTEMPT', '0'))).execute()
     text = json.dumps(result, sort_keys=True)

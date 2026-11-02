@@ -40,7 +40,7 @@ class Fake:
             return {'object': {'sha': 'b' * 40 if self.moved else ci.SOURCE}}
         if endpoint.startswith('/actions/workflows/'):
             workflow = endpoint.split('/')[3]
-            if workflow == 'mapserver-rollback-ci.yml':
+            if workflow == ci.OWN_WORKFLOW:
                 rows = [run(CURRENT, ci.OWN_PATH, event='push', branch=ci.SUPPORT_BRANCH, sha=SUPPORT_SHA)]
                 if self.prior_coordinator: rows.append(run(CURRENT - 1, ci.OWN_PATH, event='push', branch=ci.SUPPORT_BRANCH, sha='e' * 40))
             elif workflow == 'armport-app-runtime.yml':
@@ -181,6 +181,33 @@ class RollbackTests(unittest.TestCase):
             fake.coordinator(timeout=15).execute()
         self.assertEqual(fake.now, 15)
         self.assertEqual(fake.posts, 0)
+
+    def test_main_refuses_legacy_missing_or_foreign_workflow_ref_before_api(self):
+        environment = {'GITHUB_REPOSITORY': ci.REPOSITORY, 'GITHUB_REF_NAME': ci.SUPPORT_BRANCH,
+            'GH_TOKEN': 'ordinary-ephemeral-fixture', 'GITHUB_RUN_ID': str(CURRENT),
+            'GITHUB_SHA': SUPPORT_SHA, 'GITHUB_RUN_ATTEMPT': '1'}
+        wrong = (None, ci.REPOSITORY + '/.github/workflows/mapserver-rollback-ci.yml@refs/heads/' + ci.SUPPORT_BRANCH,
+            ci.OWN_WORKFLOW_REF.replace('@refs/heads/' + ci.SUPPORT_BRANCH, '@refs/heads/main'))
+        for workflow_ref in wrong:
+            selected = dict(environment)
+            if workflow_ref is not None: selected['GITHUB_WORKFLOW_REF'] = workflow_ref
+            with self.subTest(workflow_ref=workflow_ref), mock.patch.dict(ci.os.environ, selected, clear=True), \
+                    mock.patch.object(ci, 'Rollback') as coordinator:
+                with self.assertRaisesRegex(ci.upstream.UpstreamError, 'exact corrected workflow'):
+                    ci.main()
+                coordinator.assert_not_called()
+
+    def test_main_exact_corrected_workflow_ref_reaches_existing_coordinator(self):
+        environment = {'GITHUB_REPOSITORY': ci.REPOSITORY, 'GITHUB_REF_NAME': ci.SUPPORT_BRANCH,
+            'GITHUB_WORKFLOW_REF': ci.OWN_WORKFLOW_REF, 'GH_TOKEN': 'ordinary-ephemeral-fixture',
+            'GITHUB_RUN_ID': str(CURRENT), 'GITHUB_SHA': SUPPORT_SHA, 'GITHUB_RUN_ATTEMPT': '1'}
+        self.assertEqual(ci.OWN_WORKFLOW, ci.Path(ci.OWN_PATH).name)
+        self.assertEqual(ci.OWN_WORKFLOW, 'mapserver-rollback-corrected-ci.yml')
+        with mock.patch.dict(ci.os.environ, environment, clear=True), mock.patch.object(ci, 'Rollback') as coordinator:
+            coordinator.return_value.execute.return_value = {'fixture_only': True}
+            ci.main()
+        coordinator.assert_called_once_with(current_run_id=CURRENT, supporting_sha=SUPPORT_SHA, attempt=1)
+        coordinator.return_value.execute.assert_called_once_with()
 
     def test_api_allows_only_exact_false_metrics_post(self):
         api = ci.ActionsApi()

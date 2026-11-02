@@ -1,5 +1,5 @@
 name: ArmPort modern MapServer runtime qualification
-# Authorized supporting kickoff 2: include original-server saved-data compatibility.
+# Corrected-cohort setup: include original-server saved-data compatibility.
 
 # Supporting branch only. The read-only wait job hands off the unique exact
 # successful runtime. Production helpers use a separate candidate checkout.
@@ -9,11 +9,11 @@ on:
       candidate_commit:
         description: Exact production candidate source SHA
         required: true
-        default: e563fe5664cd13570899800695c7e9680ac68877
+        default: 1f75894db9117f3567b76d087d7cc5ddce87b3e6
       native_build_run_id:
         description: Successful candidate build including the modern server
         required: true
-        default: '41363927704'
+        default: '41378036783'
   push:
     branches: ['armport/mapserver-modern-runtime-qualification']
     paths: ['armport/modern-runtime/**', '.github/workflows/armport-modern-runtime.yml']
@@ -25,8 +25,8 @@ concurrency:
   group: modern-mapserver-runtime-${{ github.ref }}
   cancel-in-progress: false
 env:
-  CANDIDATE_COMMIT: ${{ inputs.candidate_commit || 'e563fe5664cd13570899800695c7e9680ac68877' }}
-  NATIVE_BUILD_RUN_ID: ${{ inputs.native_build_run_id || '41363927704' }}
+  CANDIDATE_COMMIT: ${{ inputs.candidate_commit || '1f75894db9117f3567b76d087d7cc5ddce87b3e6' }}
+  NATIVE_BUILD_RUN_ID: ${{ inputs.native_build_run_id || '41378036783' }}
   CMAKE_BUILD_PARALLEL_LEVEL: '2'
   PYTHONDONTWRITEBYTECODE: '1'
 

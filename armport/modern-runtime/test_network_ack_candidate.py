@@ -1,6 +1,7 @@
 """Synthetic PE admission controls; these never claim native execution."""
 import copy
 import hashlib
+import os
 from pathlib import Path
 import struct
 import sys
@@ -10,8 +11,8 @@ import unittest
 from unittest.mock import Mock
 import network_ack_candidate as adapter
 
-ROOT = Path.cwd() / 'candidate'
-if not ROOT.is_dir(): ROOT = Path('/workspace/scratch/264803527b0d/coh-mapserver')
+ROOT = Path(os.environ.get('COH_CANDIDATE_ROOT', Path.cwd() / 'candidate'))
+if not ROOT.is_dir(): ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools'))
 import package_reference_runtime as pe
 

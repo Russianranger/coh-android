@@ -1,42 +1,40 @@
 # Exact modern MapServer runtime qualification
 
-Production source stays frozen at `e563fe5664cd13570899800695c7e9680ac68877`.
-Native build: 41363927704. Supporting test code is independently identified and
-cannot replace those candidate identities.
+Production stays frozen at1f75894db9117f3567b76d087d7cc5ddce87b3e6.
+Native build41378036783; primary coordinator41378023882. Supporting source has
+its own immutable commit and cannot replace those production identities.
 
-Implemented: full .36 donor hydration, exact native/source admission, the four
-additional asset stages, actual completed-tick/DbServer readiness, Atlas creation,
-ordinary committed save, explicit shipped zoning reopen and unchanged profile,
-character, save and owned-cleanup validators. The task-gate payload stays intact.
+The e563 attempt passed native build/Windows ACK but failed app package admission
+before guest execution because its guest0119 pin was stale. The corrected source
+repairs that pin with a real-file regression and adds complete Android service
+request timing. Earlier failed/cancelled run identities remain in main branch
+armport/notes/MAPSERVER-STARTUP-60S.md; no old APK was produced.
 
-Nine controls pass with:
+Modern qualification waits read-only for exact build and unique app-runtime
+success, then uses the full original .36 donor and all23 verified payloads for
+candidate Atlas creation/save, candidate reopen/save and original-modern-server
+reopen of the same stopped disposable profile. Native completed ticks, fresh
+DbServer status, SQL/save/identity/cleanup and task gates stay unchanged. Explicit
+verified PRoot file binds preserve source payloads and single-link readers.
+Each guest keeps its own5400-second bound; the ARM job has360minutes.
 
-```sh
-COH_CANDIDATE_ROOT=/path/to/candidate python3 armport/modern-runtime/test_modern_runtime.py -v
-```
+ACK qualification waits for exact native build success, admits original accepted
+reference/schema receipts, substitutes only the authenticated MapServer mapping,
+executes unchanged commit/blocked-batch/failure ACK tests, then rehashes actual
+binaries. Windows checkouts preserve raw source bytes. No compiler or schema
+build is added by these supporting jobs.
 
-Local full hydration passed: 23 external payloads / 4,786,799,760 bytes; 89 runtime
-and 81 client pins; original importer contract 173,011 leaves / 2,977,730,517 bytes.
-Evidence: `armport/evidence/modern-runtime-donor-hydration.json`. This did not
-execute a native program or access a database.
+The new mapserver-rollback-corrected-ci.yml is isolated from the failed legacy
+rollback workflow. Its exact GITHUB_WORKFLOW_REF guard prevents the legacy YAML
+from running the refreshed helper. It waits for primary-chain success before
+one same-source/runtime server_metrics=false APK dispatch; duplicate/uncertain
+POST paths still stop. Legacy rollback YAML is retained unchanged.
 
-A read-only x86 wait job now observes the exact native build and discovers the
-unique same-source app runtime. It fails on upstream failure, duplicate runtime
-runs or changed identities, then passes the successful runtime ID to the ARM job.
-No manual ID placeholder or follow-up dispatch is needed. Setup commits use
-[skip ci]; a single supporting workflow-only kickoff starts the wait.
-Twelve waiter controls plus nine modern admission controls pass. The wait is
-bounded to198 minutes; the ARM job then has its independent360-minute cap.
-No write API, compiler or workflow dispatch exists in this read-only handoff.
-The production branch stays frozen and its existing coordinator owns dispatch.
+Supporting controls:53passed (modern9,baseline6,waiter12,ACK10,rollback16), with
+independent review. Use COH_CANDIDATE_ROOT pointing to a separate exact checkout
+when running these controls locally. Setup commits use [skip ci], then separate
+YAML-only kickoffs start each job without an extra production build.
 
-Each guest has its own existing 5,400-second correctness timeout. A passing pair
-qualifies Atlas creation/save/reopen only. A third ordinary reopen uses the actual
-authenticated original .36 modern MapServer and the same stopped disposable save
-to test backward compatibility. It retains client/DbServer/data bytes and uses
-verified PRoot file binds for immutable assets; candidate inodes and payloads are
-unchanged. Six admission/continuity controls and independent review passed.
-The prior read-only waiter41367191699 is cancelled before native execution and
-a corrected workflow-only kickoff includes this third stage. King's Row, combat, rewards, collision,
-zoning, memory/thermal behavior and Thor cold-start acceptance remain separate.
-No <=60-second performance or physical-device result is claimed.
+A passing Atlas sequence does not qualify King's Row/combat/rewards/normal
+monorail, Android surface, reboot or physical-device startup. CI host clocks
+exclude the Android service boundary. No <=60-second Thor claim is made.

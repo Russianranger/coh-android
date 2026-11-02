@@ -1,5 +1,5 @@
 name: Exact modern MapServer PostgreSQL network ACK
-# Authorized runtime-only kickoff 2; candidate e563 remains frozen.
+# Corrected-cohort setup; candidate 1f75894db911 remains frozen.
 # Supporting-only runtime test. No compiler, signing, schema generation or
 # production branch edit. Setup is pushed with skip-ci; kickoff changes only
 # this YAML file after the supporting source is reviewable.
@@ -11,11 +11,11 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: exact-mapserver-network-ack-e563fe5664cd
+  group: exact-mapserver-network-ack-1f75894db911
   cancel-in-progress: false
 env:
-  NATIVE_BUILD_RUN_ID: '41363927704'
-  CANDIDATE_COMMIT: e563fe5664cd13570899800695c7e9680ac68877
+  NATIVE_BUILD_RUN_ID: '41378036783'
+  CANDIDATE_COMMIT: 1f75894db9117f3567b76d087d7cc5ddce87b3e6
   PYTHONDONTWRITEBYTECODE: '1'
 jobs:
   wait-native:
@@ -49,7 +49,7 @@ jobs:
       - name: Checkout exact production candidate without modifications
         uses: actions/checkout@v4
         with:
-          ref: e563fe5664cd13570899800695c7e9680ac68877
+          ref: 1f75894db9117f3567b76d087d7cc5ddce87b3e6
           path: candidate
           lfs: false
           persist-credentials: false
@@ -88,13 +88,13 @@ jobs:
         with:
           name: armport-server-donors
           path: ${{ runner.temp }}/preserved-donors
-          run-id: '41363927704'
+          run-id: '41378036783'
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: armport-server-metrics-native
           path: ${{ runner.temp }}/candidate-native
-          run-id: '41363927704'
+          run-id: '41378036783'
           github-token: ${{ github.token }}
       - name: Install the existing pinned x86 PostgreSQL ODBC driver
         shell: pwsh
