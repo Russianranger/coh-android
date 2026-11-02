@@ -1,5 +1,5 @@
 name: MapServer startup serialized CI
-# Authorized kickoff: 2026-11-01; freeze this branch until the chain completes.
+# Corrected kickoff 2: freeze this exact source through primary and rollback qualification.
 
 # The user explicitly authorized branch-specific CI and this complete chain.
 # This one-file push trigger supplies the unavailable local dispatch capability.
