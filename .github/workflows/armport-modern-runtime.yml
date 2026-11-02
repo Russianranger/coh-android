@@ -1,4 +1,5 @@
 name: ArmPort modern MapServer runtime qualification
+# Authorized supporting kickoff: wait for candidate e563 and exact successful runtime.
 
 # Supporting branch only. The read-only wait job hands off the unique exact
 # successful runtime. Production helpers use a separate candidate checkout.
