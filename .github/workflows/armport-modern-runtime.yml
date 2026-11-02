@@ -1,0 +1,166 @@
+name: ArmPort modern MapServer runtime qualification
+
+# Supporting branch only. Pin the successful candidate runtime ID before its
+# CI kickoff. Production helpers are read from a separate candidate checkout.
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_commit:
+        description: Exact production candidate source SHA
+        required: true
+        default: e563fe5664cd13570899800695c7e9680ac68877
+      native_build_run_id:
+        description: Successful candidate build including the modern server
+        required: true
+        default: '41363927704'
+      candidate_runtime_run_id:
+        description: Successful same-candidate retained app runtime run
+        required: true
+        default: '0'
+  push:
+    branches: ['armport/mapserver-modern-runtime-qualification']
+    paths: ['armport/modern-runtime/**', '.github/workflows/armport-modern-runtime.yml']
+
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: modern-mapserver-runtime-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  CANDIDATE_COMMIT: ${{ inputs.candidate_commit || 'e563fe5664cd13570899800695c7e9680ac68877' }}
+  NATIVE_BUILD_RUN_ID: ${{ inputs.native_build_run_id || '41363927704' }}
+  CANDIDATE_RUNTIME_RUN_ID: ${{ inputs.candidate_runtime_run_id || '0' }}
+  CMAKE_BUILD_PARALLEL_LEVEL: '2'
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  modern-runtime:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 240
+    steps:
+      - name: Checkout supporting tests only
+        uses: actions/checkout@v4
+        with:
+          path: supporting
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            armport/modern-runtime
+      - name: Checkout exact candidate production source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_COMMIT }}
+          path: candidate
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            armport
+            android
+            tools
+            patches
+            database
+            docs
+            assets
+            upstream/ouroboros
+      - name: Checkout immutable certificate baseline
+        uses: actions/checkout@v4
+        with:
+          ref: c86a57962363dbe2dc2091dadde6abdfaa2e1e1c
+          path: server-baseline
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            armport
+            android
+            tools
+            patches
+            database
+            docs
+            assets
+            upstream/ouroboros
+      - name: Require completed exact upstream stages before runtime work
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          test "$CANDIDATE_RUNTIME_RUN_ID" != 0
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$NATIVE_BUILD_RUN_ID" > "$RUNNER_TEMP/native-build-run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$CANDIDATE_RUNTIME_RUN_ID" > "$RUNNER_TEMP/candidate-runtime-run.json"
+          python3 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, 'supporting/armport/modern-runtime')
+          import modern_runtime_host as host
+          import modern_validation as v
+          root = v.verify_candidate_checkout(Path('candidate'), os.environ['CANDIDATE_COMMIT'])
+          _, _, pipeline, _ = host.load_candidate(root)
+          build = int(os.environ['NATIVE_BUILD_RUN_ID'])
+          pipeline.check_build_run(json.loads(Path(os.environ['RUNNER_TEMP'], 'native-build-run.json').read_text()),
+              repository_commit=os.environ['CANDIDATE_COMMIT'], server_run_id=build, client_run_id=build, data_run_id=build)
+          v.verify_runtime_run(json.loads(Path(os.environ['RUNNER_TEMP'], 'candidate-runtime-run.json').read_text()),
+              os.environ['CANDIDATE_COMMIT'], int(os.environ['CANDIDATE_RUNTIME_RUN_ID']))
+          PY
+      - name: Install existing observer and importer dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gawk default-jdk-headless tesseract-ocr python3-pil iproute2 util-linux
+      - name: Run modern admission and projection controls
+        env:
+          COH_CANDIDATE_ROOT: ${{ github.workspace }}/candidate
+        run: python3 supporting/armport/modern-runtime/test_modern_runtime.py -v
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-app-proot-linux
+          path: ${{ runner.temp }}/proot-artifact
+          run-id: ${{ env.CANDIDATE_RUNTIME_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-app-client-package
+          path: ${{ runner.temp }}/armport-package
+          run-id: ${{ env.CANDIDATE_RUNTIME_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: armport-server-metrics-native
+          path: ${{ runner.temp }}/server-native
+          run-id: ${{ env.NATIVE_BUILD_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Restore the exact qualified PRoot binary and loader
+        run: |
+          mkdir -p "$RUNNER_TEMP/qualified-proot"
+          tar -C "$RUNNER_TEMP/qualified-proot" -xf "$RUNNER_TEMP/proot-artifact/proot-runtime.tar"
+          test -x "$RUNNER_TEMP/qualified-proot/proot"
+          test -x "$RUNNER_TEMP/qualified-proot/proot-loader"
+      - name: Download the exact public modern donor
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          gh api -H 'Accept: application/octet-stream' "repos/$GITHUB_REPOSITORY/releases/assets/635975286" > "$RUNNER_TEMP/COH-Atlas-Gameplay-0.13.36.apk"
+          python3 supporting/armport/modern-runtime/modern_runtime_donor.py --apk "$RUNNER_TEMP/COH-Atlas-Gameplay-0.13.36.apk"
+      - uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/modern-assets-cache/payloads
+          key: coh-modern-assets-1.0.0-9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c
+      - name: Execute modern Atlas creation, committed save and zoning reopen
+        run: |
+          df -h "$RUNNER_TEMP"
+          python3 supporting/armport/modern-runtime/modern_runtime_host.py \
+            --candidate-root "$GITHUB_WORKSPACE/candidate" --baseline-root "$GITHUB_WORKSPACE/server-baseline" \
+            --candidate-commit "$CANDIDATE_COMMIT" --native-build-run-id "$NATIVE_BUILD_RUN_ID" \
+            --candidate-runtime-run-id "$CANDIDATE_RUNTIME_RUN_ID" \
+            --native-run-json "$RUNNER_TEMP/native-build-run.json" --candidate-runtime-json "$RUNNER_TEMP/candidate-runtime-run.json" \
+            --apk "$RUNNER_TEMP/COH-Atlas-Gameplay-0.13.36.apk" --asset-cache "$RUNNER_TEMP/modern-assets-cache" \
+            --armport "$RUNNER_TEMP/armport-package/armport-client.zip" \
+            --server-archive "$RUNNER_TEMP/server-native/server-metrics-thor-certified-startup.zip" \
+            --proot "$RUNNER_TEMP/qualified-proot" --work "$RUNNER_TEMP/modern-runtime-work" \
+            --evidence "$RUNNER_TEMP/modern-runtime-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-modern-server-runtime-evidence
+          path: |
+            ${{ runner.temp }}/modern-runtime-evidence/
+            ${{ runner.temp }}/native-build-run.json
+            ${{ runner.temp }}/candidate-runtime-run.json
+          if-no-files-found: warn
+          retention-days: 30

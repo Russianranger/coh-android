@@ -1,0 +1,24 @@
+{
+  "donor": {
+    "bytes": 42076692,
+    "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+  },
+  "runtime_files": 89,
+  "client_files": 81,
+  "external_files": 23,
+  "runtime": "/workspace/scratch/264803527b0d/modern-runtime-work/hydrated-036/runtime",
+  "imports": "/workspace/scratch/264803527b0d/modern-runtime-work/hydrated-036/atlas",
+  "reference_archive": "/workspace/scratch/264803527b0d/modern-runtime-work/asset-cache/payloads/atlas-assets.zip",
+  "native_runtime_executed": false,
+  "database_accessed": false,
+  "original_import_contract_verified": true,
+  "original_import_total_count": 173011,
+  "original_import_total_bytes": 2977730517,
+  "external_asset_manifest_sha256": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c",
+  "external_payload_bytes": 4786799760,
+  "source_commit": "e563fe5664cd13570899800695c7e9680ac68877",
+  "source_helpers": [
+    "tools/android/interactive/qualify_runtime_asset_preflight.py",
+    "tools/android/interactive/qualify_full_startup_preflight.py"
+  ]
+}
