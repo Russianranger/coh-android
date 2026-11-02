@@ -1,0 +1,64 @@
+{
+  "actual_patch": {
+    "bytes": 16629,
+    "sha256": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f"
+  },
+  "format": 1,
+  "guest_patch_pin": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f",
+  "local_guest_helper": {
+    "bytes": 12437,
+    "sha256": "ab03e153ea74579603c2870ce0d739667c28e6926662f2eb40825a4ad033ac43"
+  },
+  "modern_actual_archive_staging": {
+    "actual_full_runtime_binding": {
+      "bytes": 390082,
+      "sha256": "c1746a056237fc8cb21ceb24932fccd2c2ec303cd50fd772820cf987297d0248"
+    },
+    "metadata_placeholder_used": false,
+    "native_execution": false,
+    "source_game_archive": {
+      "bytes": 11231995,
+      "sha256": "20445586ef4271b5f1ce34dd105d4131b8ec1a73fbd88f21c23b700a6913bfe6"
+    },
+    "source_package_and_PE_byte_inventories_authenticated": true,
+    "staged_actual_archive_and_binding_validated": true,
+    "staged_game_archive": {
+      "bytes": 11251769,
+      "sha256": "ab137eac07a96770c9da36f32fc0365ab56bde0d70bf8156aa81a0a2ab8955bb"
+    },
+    "temporary_archive_removed_after_check": true
+  },
+  "native_build_run_id": 41363927704,
+  "native_source_commit": "e563fe5664cd13570899800695c7e9680ac68877",
+  "physical_device_validated": false,
+  "runtime_executed": false,
+  "scope": "local_guest_patch_pin_fix_real_native_metadata_and_modern_archive_staging",
+  "variants": {
+    "retained_progress": {
+      "game_archive_authenticated_in_this_metadata_check": false,
+      "mapserver": {
+        "bytes": 6904832,
+        "sha256": "0f779d95693e4dad9e8beeaf1e1ec8ebcecc2a282936edf816d3e6a7fb45a70d"
+      },
+      "metadata_only_game_archive_pin_is_placeholder": true,
+      "native_archive": {
+        "bytes": 2929519,
+        "sha256": "598d1640d0cbd559c1efcb28e03c39f1ac516527c8282a8284ee61a7a1028aea"
+      },
+      "real_native_metadata_admitted_without_mocking_or_constant_override": true
+    },
+    "thor_certified_startup": {
+      "game_archive_authenticated_in_this_metadata_check": false,
+      "mapserver": {
+        "bytes": 7494656,
+        "sha256": "f893cee6cd6c4dc8b7c45c8b5f7c07572aaabbe50ee5b8730b9ddd3da12dac94"
+      },
+      "metadata_only_game_archive_pin_is_placeholder": true,
+      "native_archive": {
+        "bytes": 3240315,
+        "sha256": "5d63d123ade2c1af4c2f8e09b4d4e6f225a75d89bd86541296ddad17559c6183"
+      },
+      "real_native_metadata_admitted_without_mocking_or_constant_override": true
+    }
+  }
+}

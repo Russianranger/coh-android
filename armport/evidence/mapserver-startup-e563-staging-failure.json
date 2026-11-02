@@ -1,0 +1,21 @@
+{
+  "scope": "arm64_app_guest_creation_and_reopen",
+  "passed": false,
+  "m4_complete": false,
+  "apk_built": false,
+  "android_surface_validated": false,
+  "repository_commit": "e563fe5664cd13570899800695c7e9680ac68877",
+  "donor": {
+    "run_id": 36920583713,
+    "artifact_id": 11192425448,
+    "source_commit": "204615c6c4a809d6b814c7174b81448cffea3f7a",
+    "apk_sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688",
+    "asset_count": 46
+  },
+  "error": {
+    "type": "ValueError",
+    "message": "Metrics source scope or extracted-source report differs"
+  },
+  "elapsed_seconds": 5.419,
+  "guest_failures": {}
+}
