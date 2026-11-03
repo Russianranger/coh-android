@@ -2,6 +2,7 @@
 """Exercise the selected ARM64 creation/reopen guest with retained app assets."""
 import argparse
 import copy
+import datetime
 import hashlib
 import importlib.util
 import json
@@ -257,6 +258,28 @@ def guest_failure_summary(evidence):
     return result
 
 
+def stage_timeline(report, limit=24):
+    """[stage, start offset s, duration s] from the guest's own UTC stage stamps; bounded."""
+    rows, first = [], None
+    for item in report.get('stages', []) if isinstance(report.get('stages'), list) else []:
+        try:
+            started = datetime.datetime.fromisoformat(item['started_utc'])
+            finished = (datetime.datetime.fromisoformat(item['finished_utc'])
+                        if item.get('finished_utc') else None)
+        except (KeyError, TypeError, ValueError):
+            continue
+        first = started if first is None else first
+        rows.append([str(item.get('stage'))[:48], round((started - first).total_seconds(), 1),
+                     round((finished - started).total_seconds(), 1) if finished else None])
+    return rows[:limit]
+
+
+def client_folder_cache(text, limit=8):
+    """The client's ARMPORT_FOLDER_CACHE_V1 phase lines (scan, hash, piggs), bounded."""
+    return [line.split('ARMPORT_FOLDER_CACHE_V1 ', 1)[1][:160] for line in text.splitlines()
+            if 'ARMPORT_FOLDER_CACHE_V1 ' in line][:limit]
+
+
 TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spawn_to_map_ready_seconds',
                  'dependency_start_seconds', 'request_to_client_world_ready_seconds')
 
@@ -276,6 +299,7 @@ def guest_timing_summary(evidence):
         if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
             report = json.loads(path.read_text())
             result['proot_mode'] = report.get('proot_mode')
+            result['stage_timeline'] = stage_timeline(report)
             result['trusted_bins'] = next((section.get('trusted_bins') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('trusted_bins') is not None), None)
@@ -298,6 +322,10 @@ def guest_timing_summary(evidence):
         if path.is_file():
             with zipfile.ZipFile(path) as archive:
                 names = set(archive.namelist())
+                client = 'client-evidence/client-console.log'
+                if client in names and archive.getinfo(client).file_size <= 16 * 1024 * 1024:
+                    result['client_folder_cache'] = client_folder_cache(
+                        archive.read(client).decode('utf-8', errors='replace'))
                 member = 'client-evidence/character-atlas-console.txt'
                 if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
                     result['atlas_mapserver_phases'] = mapserver_phases.summary(
@@ -308,11 +336,15 @@ def guest_timing_summary(evidence):
 
 
 def timing_notices(timings, proot_seccomp, trusted_bins):
-    """One notice per session, with the rewritten-bin list apart: each stays under 4 KiB."""
+    """Per session: a timings notice, then a detail notice (stage timeline, client
+    folder-cache phases, rewritten bins). Each stays under the 4 KiB annotation limit."""
     lines = []
     for name, original in timings.items():
         summary, writes = {}, {}
+        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache') if original.get(key)}
         for key, value in original.items():
+            if key in detail:
+                continue
             if key in ('character_creation', 'character_reopen') and isinstance(value, dict):
                 value = dict(value)
                 writes[key] = value.pop('native_bin_writes', None)
@@ -322,6 +354,9 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         if any(value for value in writes.values()):
             lines.append(ci_notice({'session': name, 'native_bin_writes': writes})
                          .replace('interactive result', 'bin writes ' + name, 1))
+        if detail:
+            lines.append(ci_notice(dict(detail, session=name))
+                         .replace('interactive result', 'startup detail ' + name, 1))
     return lines
 
 

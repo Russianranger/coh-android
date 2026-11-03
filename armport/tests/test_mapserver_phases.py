@@ -82,12 +82,20 @@ class MapServerPhaseTests(unittest.TestCase):
         import interactive_host
         with tempfile.TemporaryDirectory() as temporary:
             evidence = Path(temporary)
-            (evidence / 'latest-report.json').write_text(json.dumps({'proot_mode': {'format': 1},
+            stages = [{'stage': 'guest_start', 'started_utc': '2026-11-03T08:00:00+00:00',
+                       'finished_utc': '2026-11-03T08:00:30.5+00:00'},
+                      {'stage': 'client_login', 'started_utc': '2026-11-03T08:01:00+00:00'},
+                      {'stage': 'bad', 'started_utc': 'not a time'}]
+            (evidence / 'latest-report.json').write_text(json.dumps({'proot_mode': {'format': 1}, 'stages': stages,
                 'character_creation': {'prepared_server_caches': {'status': 'skipped_native_fallback',
                     'reason': 'x' * 400, 'installed_files': 0, 'archive': {'bytes': 1}}}}))
             with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
                 archive.writestr('client-evidence/character-atlas-console.txt', CONSOLE)
+                archive.writestr('client-evidence/client-console.log',
+                    'noise\nARMPORT_FOLDER_CACHE_V1 phase=scan files=212496 folders=9000 seconds=142.000\n')
             result = interactive_host.guest_timing_summary(evidence)
+        self.assertEqual(result['stage_timeline'], [['guest_start', 0.0, 30.5], ['client_login', 60.0, None]])
+        self.assertEqual(result['client_folder_cache'], ['phase=scan files=212496 folders=9000 seconds=142.000'])
         self.assertEqual(result['proot_mode'], {'format': 1})
         caches = result['character_creation']['prepared_server_caches']
         self.assertEqual((caches['status'], len(caches['reason']), caches['installed_files']),
@@ -104,12 +112,19 @@ class MapServerPhaseTests(unittest.TestCase):
         timings = {name: {'proot_mode': {'format': 1}, 'trusted_bins': {'applied': True},
                           'character_' + ('creation' if name == 'creation' else 'reopen'): {
                               'map_startup': [], 'preparation_phase_seconds': {}, 'native_bin_writes': writes},
-                          'atlas_mapserver_phases': mapserver_phases.summary(CONSOLE, top=6)}
+                          'atlas_mapserver_phases': mapserver_phases.summary(CONSOLE, top=6),
+                          'stage_timeline': [['s' * 48, 1000.0, 1000.0]] * 24,
+                          'client_folder_cache': ['phase=scan ' + 'x' * 140] * 8}
                    for name in ('creation', 'reopen')}
         lines = interactive_host.timing_notices(timings, True, True)
         titles = [line.split('::')[1] for line in lines]
         self.assertEqual(titles, ['notice title=ArmPort M4 guest timings creation', 'notice title=ArmPort M4 bin writes creation',
-                                  'notice title=ArmPort M4 guest timings reopen', 'notice title=ArmPort M4 bin writes reopen'])
+                                  'notice title=ArmPort M4 startup detail creation',
+                                  'notice title=ArmPort M4 guest timings reopen', 'notice title=ArmPort M4 bin writes reopen',
+                                  'notice title=ArmPort M4 startup detail reopen'])
+        detail = json.loads(lines[2].split('::', 2)[2])
+        self.assertEqual(len(detail['stage_timeline']), 24)
+        self.assertNotIn('stage_timeline', json.loads(lines[0].split('::', 2)[2]))
         self.assertTrue(all(len(line.split('::', 2)[2]) < 4096 for line in lines))
         first = json.loads(lines[0].split('::', 2)[2])
         self.assertNotIn('native_bin_writes', first['character_creation'])
