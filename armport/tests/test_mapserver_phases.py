@@ -91,6 +91,26 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertIn(93.93, [row[0] for row in phases['slowest_untimed_gaps']])
         self.assertLessEqual(len(phases['slowest_self_timed']), 6)
 
+    def test_timing_notices_split_sessions_and_bin_writes_under_the_annotation_limit(self):
+        sys.path[:0] = [str(ROOT / 'armport/app')]
+        import interactive_host
+        writes = {'1': {'files': ['data/bin/' + 'x' * 40 + str(i) + '.bin' for i in range(48)]}}
+        timings = {name: {'proot_mode': {'format': 1}, 'trusted_bins': {'applied': True},
+                          'character_' + ('creation' if name == 'creation' else 'reopen'): {
+                              'map_startup': [], 'preparation_phase_seconds': {}, 'native_bin_writes': writes},
+                          'atlas_mapserver_phases': mapserver_phases.summary(CONSOLE, top=6)}
+                   for name in ('creation', 'reopen')}
+        lines = interactive_host.timing_notices(timings, True, True)
+        titles = [line.split('::')[1] for line in lines]
+        self.assertEqual(titles, ['notice title=ArmPort M4 guest timings creation', 'notice title=ArmPort M4 bin writes creation',
+                                  'notice title=ArmPort M4 guest timings reopen', 'notice title=ArmPort M4 bin writes reopen'])
+        self.assertTrue(all(len(line.split('::', 2)[2]) < 4096 for line in lines))
+        first = json.loads(lines[0].split('::', 2)[2])
+        self.assertNotIn('native_bin_writes', first['character_creation'])
+        self.assertEqual((first['session'], first['proot_seccomp'], first['trusted_bins_requested']), ('creation', True, True))
+        self.assertIn('native_bin_writes', timings['creation']['character_creation'])
+        self.assertEqual(interactive_host.timing_notices({'reopen': {'proot_mode': None}}, False, False)[0].count('bin writes'), 0)
+
 
 if __name__ == '__main__':
     unittest.main()

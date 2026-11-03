@@ -276,7 +276,9 @@ def guest_timing_summary(evidence):
         if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
             report = json.loads(path.read_text())
             result['proot_mode'] = report.get('proot_mode')
-            result['trusted_bins'] = (report.get('character_creation') or {}).get('trusted_bins')
+            result['trusted_bins'] = next((section.get('trusted_bins') for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('trusted_bins') is not None), None)
             for key in ('character_creation', 'character_reopen'):
                 section = report.get(key)
                 if not isinstance(section, dict):
@@ -299,6 +301,24 @@ def guest_timing_summary(evidence):
     except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
         result['evidence_read_error'] = str(error)[:300]
     return result
+
+
+def timing_notices(timings, proot_seccomp, trusted_bins):
+    """One notice per session, with the rewritten-bin list apart: each stays under 4 KiB."""
+    lines = []
+    for name, original in timings.items():
+        summary, writes = {}, {}
+        for key, value in original.items():
+            if key in ('character_creation', 'character_reopen') and isinstance(value, dict):
+                value = dict(value)
+                writes[key] = value.pop('native_bin_writes', None)
+            summary[key] = value
+        lines.append(ci_notice(dict(summary, session=name, proot_seccomp=proot_seccomp, trusted_bins_requested=trusted_bins))
+                     .replace('interactive result', 'guest timings ' + name, 1))
+        if any(value for value in writes.values()):
+            lines.append(ci_notice({'session': name, 'native_bin_writes': writes})
+                         .replace('interactive result', 'bin writes ' + name, 1))
+    return lines
 
 
 def ci_notice(result):
@@ -454,9 +474,9 @@ def main():
         # Separate notice; host-report.json keeps its qualified schema.
         timings = {name: guest_timing_summary(args.evidence / name) for name in ('creation', 'reopen')
                    if (args.evidence / name).exists()}
-        print(ci_notice(dict(timings, proot_seccomp=runtime_host.runtime.proot_seccomp_requested(),
-                             trusted_bins=trusted_bins_requested()))
-              .replace('interactive result', 'guest timings', 1), flush=True)
+        for line in timing_notices(timings, runtime_host.runtime.proot_seccomp_requested(),
+                                   trusted_bins_requested()):
+            print(line, flush=True)
         print(json.dumps(result), flush=True)
     return 0 if result['passed'] else 1
 
