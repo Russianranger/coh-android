@@ -84,7 +84,13 @@ def foreign_processes(proc=Path('/proc'), pid=None):
     ancestors, current = set(), pid
     while current > 1 and current not in ancestors and len(ancestors) < 256:
         ancestors.add(current)
-        current = int(process_status(proc / str(current))['PPid'])
+        try:
+            current = int(process_status(proc / str(current))['PPid'])
+        except (FileNotFoundError, ProcessLookupError):
+            # Thor 0.13.49: an ancestor exited between its child's PPid read and
+            # its own status read. An exited process holds no tree. Ancestors
+            # above it stay unexcluded, so the scan below still counts them.
+            break
     foreign, count = [], 0
     with os.scandir(proc) as entries:
         for entry in entries:

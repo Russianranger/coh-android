@@ -856,6 +856,20 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         with self.assertRaisesRegex(server.base.DiagnosticError, 'PRoot tracer'):
             cache.foreign_processes(proc, 600)
 
+    def test_ancestor_exiting_during_the_walk_is_not_a_refusal_and_stays_fail_safe(self):
+        proc = self.root / 'proc'
+        def task(pid, ppid, uid, tracer, name='x'):
+            (proc / str(pid)).mkdir(parents=True)
+            (proc / str(pid) / 'status').write_text(f'Name:\t{name}\nState:\tS (sleeping)\nPPid:\t{ppid}\n'
+                                                    f'TracerPid:\t{tracer}\nUid:\t{uid}\t{uid}\t{uid}\t{uid}\n')
+        task(1, 0, 0, 0, name='init')
+        task(500, 26417, 10234, 0, name='proot')                      # parent 26417 has exited
+        task(600, 500, 10234, 500, name='python3')                    # this guest
+        (proc / 'self').mkdir()
+        self.assertEqual(cache.foreign_processes(proc, 600), [])
+        task(450, 1, 10234, 0, name='app-shell')                      # unwalked same-uid process
+        self.assertEqual([row['pid'] for row in cache.foreign_processes(proc, 600)], [450])
+
     def test_changed_input_identity_uses_original_staging_without_adopting_prior_tree(self):
         first = self.make(1); self.prepare(first); self.close(first)
         old = first.data_cache.path
