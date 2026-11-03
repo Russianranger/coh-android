@@ -206,6 +206,7 @@ public final class ClientRuntime {
     private boolean prootFastModeRequested=false;
     private boolean prestartNextZoneRequested=false;
     private boolean trustedBinsRequested=false;
+    private boolean gameplay60Requested=false, gameplay60Queued=false;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -271,6 +272,17 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("trusted-bins", enabled).apply();
+    }
+    /** Raise the gameplay frame cap to 60 once the reopened character is in the world.
+     * Uses the sidebar's /maxfps 60 command; the native launch cap stays 30/10. */
+    public static boolean gameplay60FpsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("gameplay-60fps", true);
+    }
+    public static synchronized void setGameplay60FpsEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("gameplay-60fps", enabled).apply();
     }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
@@ -669,6 +681,7 @@ public final class ClientRuntime {
         prootFastModeRequested=prootFastModeEnabled(context);
         prestartNextZoneRequested=prestartNextZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
+        gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -895,6 +908,10 @@ public final class ClientRuntime {
                 && performanceCommandInputAllowed();
     }
     public synchronized boolean requestPerformanceCommand(ClientInput.PerformanceCommand command) {
+        return requestPerformanceCommand(command, true);
+    }
+    /** The automatic world-entry cap keeps the current stage text instead of announcing itself. */
+    private synchronized boolean requestPerformanceCommand(ClientInput.PerformanceCommand command, boolean announce) {
         if (command == null || !canSendPerformanceCommand()) return false;
         final String selectedSession = session;
         final long selectedPid = observedClientPid;
@@ -911,7 +928,7 @@ public final class ClientRuntime {
             active.sendPerformanceCommand(command.safeName, epoch);
             recordLifecycle("performance_command_submitted name=" + command.safeName
                     + " submitted_utc_ms=" + System.currentTimeMillis() + " native_effect_verified=false");
-            stage("FPS command sent", "Check the in-game FPS display. The selected value is a cap.");
+            if (announce) stage("FPS command sent", "Check the in-game FPS display. The selected value is a cap.");
         }, true, token);
         if (!queued) { performanceCommandPending = false; return false; }
         recordLifecycle("performance_command_queued name=" + command.safeName);
@@ -1730,6 +1747,10 @@ public final class ClientRuntime {
                     else if(zoningEnabled())stage("Ready for zone travel","Use the monorail station to choose Kings Row or Atlas Park. Preparation happens on demand. Keep current graphics settings; tap Start test and Stop test for optional capture, then use ordinary Save and Finish when ready.");
                     else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
+                    if (gameplay60Requested && !gameplay60Queued) {
+                        gameplay60Queued = true;
+                        recordLifecycle("gameplay_60fps_auto queued=" + requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60, false));
+                    }
                 }
             }
             if (relocationSample) {
@@ -2472,6 +2493,7 @@ public final class ClientRuntime {
                     .put("character_connected_event", characterConnectedEvent == null ? JSONObject.NULL : characterConnectedEvent)
                     .put("character_relocated_event", characterRelocatedEvent == null ? JSONObject.NULL : characterRelocatedEvent)
                     .put("stuck_requested", stuckRequested)
+                    .put("gameplay_60fps_requested", gameplay60Requested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

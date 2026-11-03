@@ -78,7 +78,12 @@ labelled `prestarted_loading`.
 `Fast server data loading (trusted bins, experimental)` (off by default) only
 acts when the APK carries the instrumented MapServer. It skips the data-folder
 scans for prepared `.bin` files; `trusted_bins` records whether it was used.
-The sidebar adds `60 FPS` (`/maxfps 60`); the launch cap stays 30/10.
+`Raise the frame cap to 60 FPS in the world` (on by default) sends the
+sidebar's `/maxfps 60` once, quietly, when a reopened character's world views
+are captured; the report records `gameplay_60fps_requested` and the lifecycle
+line `gameplay_60fps_auto`. The native launch cap stays 30/10 until a client
+rebuild. A higher client frame rate takes CPU from the MapServers: if NPCs or
+cars stutter, uncheck it, or tap `30 FPS`, and note which setting was used.
 A cache left behind by a cleanup that could not prove it finished is reused in
 a later session only when no same-uid process outside that guest is alive
 (`stranded_generation_recovered`). The earlier session's failed cleanup is
