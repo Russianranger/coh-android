@@ -316,5 +316,65 @@ class ZonePackageTests(unittest.TestCase):
             self.assertEqual(reused['preparation']['geometry']['installed_files'], 0)
 
 
+    def test_kings_runtime_reads_shared_folders_through_the_same_tree_as_atlas(self):
+        zones.install(self.work, self.assets, self.ctx)
+        data = self.work/'data'
+        for name in ('bin', 'geobin', 'server/db', 'scripts.loc/arcs'):
+            (data/name).mkdir(parents=True, exist_ok=True)
+        (data/'server/db/servers.cfg').write_text('schema')
+        arc = data/'scripts.loc/arcs/a.storyarc'; arc.write_text('arc'); arc.chmod(0o444)
+        keep = data/'object_library/atlas.geo'; keep.write_bytes(b'accepted atlas'); keep.chmod(0o444)
+        imported = self.root/'import'; imported.mkdir()
+        schema = self.root/'schema'; (schema/'data/server/db').mkdir(parents=True)
+        (schema/'data/server/db/servers.cfg').write_text('schema')
+        state = self.root/'state'; state.mkdir()
+        identity = {'format': 2, 'source_data': str(data), 'source_roots': [
+                {'path': str(p), 'identity': server.server_data_cache.fingerprint(p, directory=True)}
+                for p in (self.work, imported)],
+            'shared_server_data': {'format': 1, 'selection': 'app_default_folders_v1',
+                                   'shared_top_level': ['scripts.loc']}}
+        self.addCleanup(lambda: [os.chmod(c, 0o700) for c, _d, _f in os.walk(state)])
+
+        def instance(session):
+            value = server.LocalCharacterServer.__new__(server.LocalCharacterServer)
+            value.owner = SimpleNamespace(work=self.work, root=state,
+                args=SimpleNamespace(game_data=imported, assets=self.assets, session_id=session),
+                cleanup_status={'wine_prefix_stopped': True, 'owned_processes_reaped': True})
+            value.ctx = SimpleNamespace(check=mock.Mock(), event=mock.Mock(), report={})
+            value.creation_report = {}; value.zone_asset_document = zones.package(self.assets)
+            value.zone_asset_exclusions = {n[5:] for n in self.files}
+            value.kings_row_beacon_graph = {'verified': True, 'map_id': 5}
+            value.kings_row_beacon_lock = {'manifest': {'bytes': 1, 'sha256': 'f'*64}}
+            value.runtime = state/('session-'+session)
+            (value.runtime/'data/server/db').mkdir(parents=True)
+            (value.runtime/'data/server/db/servers.cfg').write_text('current credentials '+session)
+            (value.runtime/'MapServer.exe').write_bytes(b'fixture native closure')
+            value.map_package = {'files': {'MapServer.exe': self.pin(b'fixture native closure')}}
+            value.server_data_identity = identity
+            value.schema_dir = schema; value.schema = {'files': {'data/server/db/servers.cfg': {}}}
+            return value
+
+        with mock.patch('server_cache_package.verify_mapserver_compatibility', return_value={'verified': True}), \
+             mock.patch('server_cache_package.build_expected_identity', return_value={}), \
+             mock.patch('server_cache_package.install', return_value={'installed_files': 1}), \
+             mock.patch('server_animation_package.install', return_value={'installed_files': 1}), \
+             mock.patch('kings_row_beacon_package.install', return_value={'verified': True, 'map_id': 5}):
+            first = instance('1'*32)
+            king = first.prepare_kings_row_runtime()['runtime']
+            self.assertTrue((king/'tools').is_dir())
+            self.assertFalse((king/'data/scripts.loc').exists())
+            self.assertEqual((king/'serverdata/scripts.loc/arcs/a.storyarc').resolve(), arc)
+            self.assertEqual(len(list((king/'data/object_library/kings').glob('*.geo'))), 52)
+            link = first.creation_report['kings_row_preparation']['shared_server_data']
+            self.assertFalse(link['reused_shared_tree'])
+            first.kings_row_data_cache.release(king/'data', first.owner.cleanup_status)
+            second = instance('2'*32)
+            with mock.patch.object(second, 'stage_map_data', side_effect=AssertionError('warm full data mirror')):
+                reused = second.prepare_kings_row_runtime()
+            self.assertTrue(reused['preparation']['server_data_cache']['reused'])
+            self.assertTrue(reused['preparation']['shared_server_data']['reused_shared_tree'])
+            self.assertEqual((reused['runtime']/'serverdata').resolve(), (king/'serverdata').resolve())
+
+
 if __name__ == '__main__':
     unittest.main()
