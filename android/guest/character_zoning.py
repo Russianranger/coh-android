@@ -50,8 +50,61 @@ PRESTART_THREAD_NICE = 10
 PRESTART_MIN_AVAILABLE_MIB = 3072
 # Idle priority for a resident MapServer the player is not on (launch option).
 IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
-PRIORITY_SAMPLES = 6
-PRIORITY_INTERVAL_SECONDS = 300
+PRIORITY_SAMPLES = 12
+PRIORITY_INTERVAL_SECONDS = 120
+# ARM64 client (patch 0121): the frame cap while the player waits for a
+# destination to be prepared. Input is held during that wait, and the 0.13.50
+# Thor test drew Atlas at 30-60 FPS through a 9-minute King's Row preparation.
+STATION_FPS_CAP = 10
+STATION_FPS_CAP_PHASES = ('baseline', 'map_ready')
+# Read-only tick timing of the occupied MapServer (shipping binaries report no
+# tick durations). NPCs and cars are simulated and sent only every 15th tick
+# (2 per second) and drawn 0.6 s in the past; a long tick there, or any tick
+# over 2/30 s (lost game time), makes them stop and jump. 0.13.50 King's Row.
+TICK_PROBE_INTERVAL_SECONDS = 45
+TICK_PROBE_SECONDS = 4.0
+TICK_PROBE_PERIOD_SECONDS = 0.02
+TICK_PROBE_LIMIT = 90
+TICK_PROBE_JOIN_SECONDS = 8
+
+
+def tick_gap_probe(path, *, seconds=TICK_PROBE_SECONDS, period=TICK_PROBE_PERIOD_SECONDS,
+                   clock=time.monotonic, sleep=time.sleep, read=None):
+    """Sample one MapServer progress record at ~50 Hz and summarise completed-tick gaps.
+
+    A gap is the time between two observed changes of tick_completed. With
+    33 ms ticks and 20 ms sampling, normal gaps are 20-40 ms; a gap over
+    67 ms is a tick that overran 2/30 s. Bounded, read-only, never a proof.
+    """
+    read = read or character.progress.read_record
+    previous = last_tick = last_change = None
+    gaps, reads, errors = [], 0, 0
+    started = clock()
+    end = started + seconds
+    while clock() < end:
+        try:
+            previous = read(path, previous)
+            reads += 1
+        except (character.progress.PublicationPending, OSError):
+            errors += 1
+            sleep(period)
+            continue
+        now, tick = clock(), previous.get('tick_completed')
+        if type(tick) is int:
+            if last_tick is None or tick < last_tick:
+                last_tick, last_change = tick, now
+            elif tick != last_tick:
+                gaps.append(((now - last_change) * 1000, tick - last_tick))
+                last_tick, last_change = tick, now
+        sleep(period)
+    durations = sorted(gap for gap, _count in gaps)
+    def over(limit):
+        return sum(1 for gap in durations if gap > limit)
+    return {'reads': reads, 'read_errors': errors, 'window_seconds': round(clock() - started, 3),
+            'ticks': sum(count for _gap, count in gaps), 'gaps': len(durations),
+            'max_gap_ms': round(durations[-1], 1) if durations else None,
+            'p90_gap_ms': round(durations[int(len(durations) * .9)], 1) if durations else None,
+            'gaps_over_67ms': over(1000 * 2 / 30), 'gaps_over_150ms': over(150), 'gaps_over_300ms': over(300)}
 
 
 def available_memory_mib(path=Path('/proc/meminfo')):
@@ -462,11 +515,64 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'policy': 'resident_map_not_occupied_plus_10_nice_restored_before_return_v1',
             'nice_increment': scheduler.IDLE_NICE_INCREMENT, 'periods': [],
             'physical_performance_gain_verified': False}
+        self.station_fps_cap = {'format': 1, 'policy': 'client_cap_while_trip_is_prepared_v1',
+            'cap': STATION_FPS_CAP, 'client_supported': False, 'applied': 0, 'removed': 0, 'error': None}
+        self.zoning_report['station_fps_cap'] = self.station_fps_cap
+        self.tick_probe = None
+        self.active_since_monotonic = None
+        self.zoning_report['tick_probe'] = {'format': 1,
+            'policy': 'read_only_occupied_map_completed_tick_gaps_v1',
+            'interval_seconds': TICK_PROBE_INTERVAL_SECONDS, 'window_seconds': TICK_PROBE_SECONDS,
+            'sample_period_seconds': TICK_PROBE_PERIOD_SECONDS, 'limit': TICK_PROBE_LIMIT,
+            'samples': [], 'skipped_busy': 0, 'error': None, 'is_success_proof': False}
         self.priority_next = 0
         self.zoning_report['wine_priorities'] = {'format': 1,
             'policy': 'read_only_thread_nice_by_wine_program_v1', 'samples': [],
             'sample_limit': PRIORITY_SAMPLES, 'interval_seconds': PRIORITY_INTERVAL_SECONDS,
             'priorities_changed': False}
+
+    def start_tick_probe(self):
+        """One daemon thread; it only reads the occupied map's progress file."""
+        report = (getattr(self, 'zoning_report', None) or {}).get('tick_probe')
+        if report is None or getattr(self, 'tick_probe', None) is not None:
+            return
+        if getattr(self, 'active_since_monotonic', None) is None:
+            self.active_since_monotonic = time.monotonic()
+        stop = threading.Event()
+
+        def run():
+            try:
+                while not stop.wait(TICK_PROBE_INTERVAL_SECONDS) and len(report['samples']) < TICK_PROBE_LIMIT:
+                    map_id, path = self.active_map_id, getattr(self, 'map_progress_path', None)
+                    since = self.active_since_monotonic
+                    if self.pending is not None or path is None:
+                        report['skipped_busy'] += 1
+                        continue
+                    started_utc_ms = int(time.time() * 1000)
+                    sample = tick_gap_probe(path)
+                    if (self.pending is not None or self.active_map_id != map_id
+                            or self.active_since_monotonic != since):
+                        report['skipped_busy'] += 1
+                        continue
+                    sample.update(map_id=map_id, started_utc_ms=started_utc_ms,
+                                  seconds_since_map_active=round(time.monotonic() - since, 1) if since else None)
+                    report['samples'].append(sample)
+            except Exception as error:   # observation only; never affects zoning
+                report['error'] = type(error).__name__ + ': ' + str(error)[:160]
+
+        thread = threading.Thread(target=run, name='coh-tick-probe', daemon=True)
+        self.tick_probe = {'stop': stop, 'thread': thread}
+        thread.start()
+
+    def stop_tick_probe(self, timeout=TICK_PROBE_JOIN_SECONDS):
+        probe = getattr(self, 'tick_probe', None)
+        if probe is None:
+            return True
+        probe['stop'].set()
+        probe['thread'].join(timeout)
+        alive = probe['thread'].is_alive()
+        self.zoning_report['tick_probe']['thread_joined'] = not alive
+        return not alive
 
     def tick_priorities(self, now):
         """A few read-only samples in play: does Wine run the client at a higher nice?"""
@@ -717,6 +823,13 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         # The preparation thread starts no processes; join it before the
         # inherited cache return so no tree is returned while being written.
         self.stop_background_prestart()
+        self.stop_tick_probe()
+        path = getattr(self.owner, 'armport_fps_cap_file', None)
+        if getattr(self, 'station_fps_cap', None) is not None and path is not None:
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
         self.restore_idle_maps('cleanup')
         super().cleanup_config()
 
@@ -901,6 +1014,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if self.map_process is not None and self.active_map_id in self.maps:
             self.maps[self.active_map_id]['previous'] = self.map_previous
         self.active_map_id = map_id
+        self.active_since_monotonic = time.monotonic()
         owned = self.maps[map_id]
         self.map_process, self.map_progress_path = owned['process'], owned['progress_path']
         self.map_previous, self.map_launch_utc_ms = owned.get('previous'), owned['launch_utc_ms']
@@ -1591,6 +1705,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if not self.enabled_announced:
             self.enabled_announced = True
             self._emit('enabled', current_map_verified=True, zoning_enabled=True)
+            self.start_tick_probe()
         # A corrupt/foreign post-send receipt cannot be treated as proof that
         # no command was sent. Only a fully parsed, unchanged historical receipt
         # can clear this conservative uncertainty flag.
@@ -1610,6 +1725,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     require(request == old, 'Accepted zoning preparation receipt changed')
                 else:
                     self._accept_prepare(request, now_ms)
+            # Before this tick can block in the destination's Python preparation.
+            self._sync_station_fps_cap()
             if delivery is not None:
                 old = self.delivery_history.get(delivery.get('epoch'))
                 if old is not None:
@@ -1719,6 +1836,45 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.zoning_report['preparation_failed'] = True
             self.pending = None
             self.zoning_next = float('inf')
+        finally:
+            # Ready, arrival, failure or a cancelled request lifts the cap.
+            self._sync_station_fps_cap()
+
+    def _sync_station_fps_cap(self):
+        """Hold the ARM64 client at STATION_FPS_CAP while a trip is prepared.
+
+        The client polls the file once a second (patch 0121) and restores its
+        previous cap when the file is gone, unless /maxfps changed it meanwhile.
+        A failure here never affects zoning; it is reported and the cap is lifted.
+        """
+        path = getattr(self.owner, 'armport_fps_cap_file', None)
+        record = getattr(self, 'station_fps_cap', None)
+        if record is None:
+            return
+        # Only the ARM64 client (armport_interactive) carries patch 0121.
+        record['client_supported'] = path is not None
+        if path is None:
+            return
+        pending = self.pending
+        want = (record['error'] is None and pending is not None
+                and pending.get('phase') in STATION_FPS_CAP_PHASES and not pending.get('transfer_requested'))
+        try:
+            present = path.exists() or path.is_symlink()
+            if want and not present:
+                staged = path.with_name(path.name + '.tmp')
+                staged.unlink(missing_ok=True)
+                staged.write_text(str(STATION_FPS_CAP) + '\n')
+                os.replace(staged, path)
+                record['applied'] += 1
+            elif present and not want:
+                path.unlink()
+                record['removed'] += 1
+        except OSError as failure:
+            record['error'] = type(failure).__name__ + ': ' + str(failure)[:160]
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
 
     def character_evidence(self):
         self.remember_reward_connection()

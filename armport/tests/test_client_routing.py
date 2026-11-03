@@ -214,5 +214,28 @@ class ClientFolderSkipTests(unittest.TestCase):
             armport.client_skips_server_folders()
 
 
+class StationFpsCapFileTests(unittest.TestCase):
+    """Patch 0121: the launcher names the cap file and clears a stale one."""
+    def test_cap_file_is_relative_to_the_client_and_stale_caps_are_removed(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temporary:
+            captured = {}
+            client = armport.ArmPortClient.__new__(armport.ArmPortClient)
+            client.wine_env = {'WINEPREFIX': '/x'}
+            client.armport_work = Path(temporary)
+            (client.armport_work / armport.FPS_CAP_FILE).write_text('10\n')
+            client.launcher_command = lambda: ['launcher']
+            client.armport_gpu_environment = lambda environment, label: environment
+            client.armport_gameplay_fps = lambda environment: environment
+            client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env))
+            with patch.object(armport, 'LoggedClient', lambda child, log: child):
+                client.launch_client_attempt()
+            self.assertEqual(captured['env']['ARMPORT_FPS_CAP_FILE'], 'armport-fps-cap.txt')
+            self.assertEqual(client.armport_fps_cap_file, Path(temporary) / 'armport-fps-cap.txt')
+            self.assertFalse(client.armport_fps_cap_file.exists())
+        series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
+        self.assertIn('0121-armport-station-fps-cap-file.patch', series)
+
+
 if __name__ == '__main__':
     unittest.main()

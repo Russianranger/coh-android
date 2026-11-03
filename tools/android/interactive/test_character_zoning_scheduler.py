@@ -282,9 +282,10 @@ class WinePrioritySnapshotTests(unittest.TestCase):
     def fake_proc(self, root, pid, command, tasks):
         directory = root / str(pid); (directory / 'task').mkdir(parents=True)
         (directory / 'cmdline').write_bytes(command)
-        for tid, state, nice in tasks:
+        for tid, state, nice, *cpu in tasks:
             task = directory / 'task' / str(tid); task.mkdir()
-            fields = [state] + ['0'] * 15 + [str(nice)] + ['0'] * 30
+            # stat fields 3.., nice is field 19 (index 16), processor field 39 (index 36).
+            fields = [state] + ['0'] * 15 + [str(nice)] + ['0'] * 19 + [str(cpu[0] if cpu else 0)] + ['0'] * 10
             (task / 'stat').write_text(str(tid) + ' (wine) name) ' + ' '.join(fields) + '\n')
 
     def test_counts_threads_per_nice_for_known_programs_only(self):
@@ -292,17 +293,31 @@ class WinePrioritySnapshotTests(unittest.TestCase):
             root = Path(temporary)
             self.fake_proc(root, 10, b'/usr/bin/FEXInterpreter\0C:\\coh\\CityOfHeroes.exe\0-noaudio\0',
                            [(10, 'S', 0), (11, 'S', 11), (12, 'R', 11), (13, 'Z', 11)])
-            self.fake_proc(root, 20, b'C:\\srv\\MapServer.exe\0', [(20, 'S', 0), (21, 'S', 0)])
+            self.fake_proc(root, 20, b'C:\\srv\\MapServer.exe\0', [(20, 'S', 0, 7), (21, 'S', 0, 2)])
             self.fake_proc(root, 30, b'/opt/wine/bin/wineserver\0', [(30, 'S', 0)])
             self.fake_proc(root, 40, b'/usr/bin/python3\0guest.py\0', [(40, 'S', 0)])
             (root / 'self').mkdir()
             value = scheduler.wine_priority_snapshot(root)
-        self.assertEqual(value['programs']['CityOfHeroes.exe'], {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}})
-        self.assertEqual(value['programs']['MapServer.exe'], {'processes': 1, 'threads': 2, 'nice': {'0': 2}})
+        self.assertEqual(value['programs']['CityOfHeroes.exe'],
+                         {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}, 'last_cpu': {'0': 3}})
+        self.assertEqual(value['programs']['MapServer.exe'],
+                         {'processes': 1, 'threads': 2, 'nice': {'0': 2}, 'last_cpu': {'2': 1, '7': 1}})
         self.assertEqual(set(value['programs']), {'CityOfHeroes.exe', 'MapServer.exe', 'wineserver'})
         self.assertEqual(value['processes_scanned'], 4)
         self.assertFalse(value['truncated'])
         self.assertEqual(len(value['rlimit_nice']), 2)
+
+    def test_cpu_max_frequencies_tell_clusters_apart_and_hidden_sysfs_is_none(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for cpu, khz in ((0, 2016000), (1, 2016000), (3, 2803200), (7, 3187200)):
+                path = root / ('cpu%d' % cpu) / 'cpufreq'; path.mkdir(parents=True)
+                (path / 'cpuinfo_max_freq').write_text(str(khz) + '\n')
+            (root / 'cpu2').mkdir()   # online CPU without cpufreq
+            for cpu in (4, 5, 6):
+                (root / ('cpu%d' % cpu)).mkdir()
+            self.assertEqual(scheduler.cpu_max_khz(root), {'0': 2016000, '1': 2016000, '3': 2803200, '7': 3187200})
+            self.assertIsNone(scheduler.cpu_max_khz(root / 'missing'))
 
     def test_foreign_uid_vanished_and_malformed_entries_are_skipped_and_bounds_hold(self):
         with tempfile.TemporaryDirectory() as temporary:

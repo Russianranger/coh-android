@@ -83,7 +83,7 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
             name = next((value for value in PRIORITY_PROGRAMS if value.encode() in command), None)
             if name is None:
                 continue
-            counts, tasks = {}, 0
+            counts, cpus, tasks = {}, {}, 0
             for task in os.scandir(path / 'task'):
                 if not task.name.isdecimal():
                     continue
@@ -98,19 +98,45 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
                 nice = int(fields[16])  # stat field 19
                 base.require(-20 <= nice <= 19, 'Invalid task nice value')
                 counts[str(nice)] = counts.get(str(nice), 0) + 1
-            row = programs.setdefault(name, {'processes': 0, 'threads': 0, 'nice': {}})
+                # stat field 39: the CPU the thread last ran on (0.13.50:
+                # which cluster runs the zone servers' bursty ticks).
+                cpu = fields[36] if len(fields) > 36 and fields[36].isdecimal() else None
+                if cpu is not None and int(cpu) < 64:
+                    cpus[cpu] = cpus.get(cpu, 0) + 1
+            row = programs.setdefault(name, {'processes': 0, 'threads': 0, 'nice': {}, 'last_cpu': {}})
             row['processes'] += 1
             row['threads'] += sum(counts.values())
             for nice, count in counts.items():
                 row['nice'][nice] = row['nice'].get(nice, 0) + count
+            for cpu, count in cpus.items():
+                row['last_cpu'][cpu] = row['last_cpu'].get(cpu, 0) + count
         except (OSError, IndexError, ValueError):
             continue
     limits = resource.getrlimit(resource.RLIMIT_NICE)
     for row in programs.values():
         row['nice'] = dict(sorted(row['nice'].items(), key=lambda item: int(item[0])))
+        row['last_cpu'] = dict(sorted(row['last_cpu'].items(), key=lambda item: int(item[0])))
     return {'programs': dict(sorted(programs.items())), 'rlimit_nice': [limits[0], limits[1]],
-            'processes_scanned': scanned, 'truncated': truncated,
+            'cpu_max_khz': cpu_max_khz(), 'processes_scanned': scanned, 'truncated': truncated,
             'seconds': round(time.monotonic() - started, 3)}
+
+
+def cpu_max_khz(root=Path('/sys/devices/system/cpu')):
+    """Per-CPU maximum frequency, to tell the clusters apart; None when hidden."""
+    result = {}
+    try:
+        for cpu in range(64):
+            path = root / ('cpu%d' % cpu) / 'cpufreq/cpuinfo_max_freq'
+            if not path.exists():
+                if cpu and not (root / ('cpu%d' % cpu)).exists():
+                    break
+                continue
+            value = path.read_text().strip()
+            if value.isdecimal():
+                result[str(cpu)] = int(value)
+    except OSError:
+        return None
+    return result or None
 
 
 def priority_probe():

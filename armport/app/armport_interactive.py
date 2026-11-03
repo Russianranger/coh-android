@@ -17,6 +17,7 @@ base, require = startup.base, startup.require
 # Patch 0120 skip list for the client's folder scan; COH_CLIENT_SKIP_SERVER_FOLDERS=0
 # (the app option unticked) keeps the full scan.
 CLIENT_SKIPPED_FOLDERS = 'scripts.loc,server'
+FPS_CAP_FILE = 'armport-fps-cap.txt'
 
 
 def client_skips_server_folders():
@@ -176,6 +177,11 @@ class ArmPortClient:
             # Patch 0120: the client never reads these server-only folders
             # (52,149 scripts.loc files of 212,496); its upfront scan skips them.
             environment['ARMPORT_FOLDER_CACHE_SKIP'] = CLIENT_SKIPPED_FOLDERS
+        # Patch 0121: zoning writes a lower frame cap here while a trip is
+        # prepared (relative to the client's working directory).
+        self.armport_fps_cap_file = self.armport_work / FPS_CAP_FILE
+        self.armport_fps_cap_file.unlink(missing_ok=True)
+        environment['ARMPORT_FPS_CAP_FILE'] = FPS_CAP_FILE
         environment = self.armport_gpu_environment(environment, label)
         environment = self.armport_gameplay_fps(environment)
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]

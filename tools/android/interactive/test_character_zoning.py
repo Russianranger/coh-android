@@ -892,6 +892,114 @@ class BackgroundPrestartTests(unittest.TestCase):
         release.set(); stuck.prestart['thread'].join(5)
 
 
+class StationFpsCapTests(unittest.TestCase):
+    """ARM64 client cap file (patch 0121) while a trip is prepared."""
+    def instance(self):
+        instance = ZoningServerTests.instance(self)
+        instance.owner.armport_fps_cap_file = instance.owner.args.state / 'armport-fps-cap.txt'
+        instance.station_fps_cap = {'cap': zoning.STATION_FPS_CAP, 'client_supported': False,
+                                    'applied': 0, 'removed': 0, 'error': None}
+        return instance
+
+    def test_cap_follows_the_preparation_phases_only(self):
+        instance = self.instance(); path = instance.owner.armport_fps_cap_file
+        instance._sync_station_fps_cap()
+        self.assertFalse(path.exists())
+        for phase, expected in (('baseline', True), ('map_ready', True), ('ready', False),
+                                ('map_ready', True), ('arrival', False)):
+            instance.pending = {'phase': phase}
+            instance._sync_station_fps_cap()
+            self.assertIs(path.exists(), expected, phase)
+        self.assertEqual(path.exists(), False)
+        instance.pending = {'phase': 'baseline'}; instance._sync_station_fps_cap()
+        self.assertEqual(path.read_text(), str(zoning.STATION_FPS_CAP) + '\n')
+        instance.pending = None; instance._sync_station_fps_cap()
+        self.assertFalse(path.exists())
+        record = instance.station_fps_cap
+        self.assertEqual((record['applied'], record['removed'], record['client_supported']), (3, 3, True))
+        instance.pending = {'phase': 'map_ready', 'transfer_requested': True}
+        instance._sync_station_fps_cap()
+        self.assertFalse(path.exists())
+
+    def test_x86_client_and_write_errors_never_affect_zoning(self):
+        instance = self.instance()
+        del instance.owner.armport_fps_cap_file
+        instance.pending = {'phase': 'baseline'}
+        instance._sync_station_fps_cap()
+        self.assertFalse(instance.station_fps_cap['client_supported'])
+        instance = self.instance()
+        instance.owner.armport_fps_cap_file = instance.owner.args.state / 'missing-directory' / 'cap.txt'
+        instance.pending = {'phase': 'baseline'}
+        instance._sync_station_fps_cap()
+        self.assertIn('FileNotFoundError', instance.station_fps_cap['error'])
+        instance._sync_station_fps_cap()   # disabled after an error
+        self.assertEqual(instance.station_fps_cap['applied'], 0)
+
+    def test_tick_zoning_writes_the_cap_before_a_blocking_preparation_and_lifts_it(self):
+        instance = self.instance(); path = instance.owner.armport_fps_cap_file
+        observed = []
+        def accept(value, now_ms):
+            instance.pending = {'phase': 'baseline', 'to_map_id': 101}
+        instance._accept_prepare = accept
+        instance._check_preparation_deadline = Mock(return_value=time.monotonic())
+        instance._query_poll = Mock(side_effect=lambda: observed.append(path.exists()) or None)
+        with patch.object(zoning, 'read_request', side_effect=lambda p: request() if p.name.endswith('request.json') else None):
+            instance.tick_zoning()
+        self.assertEqual(observed, [True])
+        self.assertTrue(path.exists())
+        instance.pending['phase'] = 'ready'; instance.zoning_next = 0
+        instance.request_history = {1: request()}
+        with patch.object(zoning, 'read_request', side_effect=lambda p: request() if p.name.endswith('request.json') else None):
+            instance.tick_zoning()
+        self.assertFalse(path.exists())
+
+
+class TickGapProbeTests(unittest.TestCase):
+    def test_gaps_between_completed_ticks_and_overruns(self):
+        clock = [0.0]
+        # tick_completed observed at each 20 ms read: steady, then one 200 ms tick.
+        ticks = iter([1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 5, 6, 6, 6])
+        def read(path, previous):
+            value = next(ticks, None)
+            if value is None:
+                raise zoning.character.progress.PublicationPending('changing')
+            return {'tick_completed': value}
+        def sleep(seconds):
+            clock[0] += seconds
+        result = zoning.tick_gap_probe(Path('/nonexistent'), seconds=0.5, period=0.02,
+                                       clock=lambda: clock[0], sleep=sleep, read=read)
+        self.assertEqual(result['ticks'], 5)
+        self.assertEqual(result['gaps'], 5)
+        self.assertAlmostEqual(result['max_gap_ms'], 200.0, places=0)
+        self.assertEqual((result['gaps_over_67ms'], result['gaps_over_150ms'], result['gaps_over_300ms']), (1, 1, 0))
+        self.assertGreater(result['read_errors'], 0)
+
+    def test_no_progress_reports_no_gap(self):
+        result = zoning.tick_gap_probe(Path('/nonexistent'), seconds=0.05, period=0.01)
+        self.assertIsNone(result['max_gap_ms'])
+        self.assertEqual(result['reads'], 0)
+
+    def test_probe_thread_skips_trips_and_stops_for_cleanup(self):
+        instance = ZoningServerTests.instance(self)
+        instance.zoning_report['tick_probe'] = {'samples': [], 'skipped_busy': 0, 'error': None}
+        instance.map_progress_path = Path('/nonexistent')
+        instance.pending = {'phase': 'baseline'}
+        with patch.object(zoning, 'TICK_PROBE_INTERVAL_SECONDS', 0.01), \
+             patch.object(zoning, 'tick_gap_probe', return_value={'ticks': 1}) as probe:
+            instance.start_tick_probe()
+            deadline = time.monotonic() + 5
+            while instance.zoning_report['tick_probe']['skipped_busy'] < 2 and time.monotonic() < deadline:
+                time.sleep(0.01)
+            probe.assert_not_called()
+            instance.pending = None
+            while not instance.zoning_report['tick_probe']['samples'] and time.monotonic() < deadline:
+                time.sleep(0.01)
+            self.assertTrue(instance.stop_tick_probe(timeout=5))
+        sample = instance.zoning_report['tick_probe']['samples'][0]
+        self.assertEqual((sample['ticks'], sample['map_id']), (1, 1))
+        self.assertIsNotNone(sample['seconds_since_map_active'])
+
+
 class WinePriorityTickTests(unittest.TestCase):
     """A few read-only priority samples during play; nothing is changed."""
     def test_samples_are_spaced_bounded_and_errors_recorded(self):
