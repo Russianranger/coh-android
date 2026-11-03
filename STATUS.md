@@ -33,8 +33,8 @@ Default branch remains main; no release, APK handoff or repository setting chang
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode (PRoot seccomp) default on: CI Atlas start −26/−32% (41588867344 vs 41584980465).
-- Trusted bins: reopen Atlas 130→94 s (41610459604 vs 41605600310); inert in 0.13.48 (shipping
-  MapServer, device-run on .44; the Thor metrics variant has never run).
+- Trusted bins: reopen Atlas 130→94 s (41610459604 vs 41605600310); inert with the shipping MapServer.
 - CI creation re-parses ~230 s: CI's retained-progress MapServer fails the cache check (41630365042).
-- 0.13.48 pre-release (APK 41636249551, sha256 0da7621b): fast mode, 60 FPS (on); King's Row
-  pre-start, idle priority (off). Next: Thor test, shared read-only tree, client priority, FPS.
+- Pre-releases 0.13.48 (APK 41636249551) and 0.13.49 (APK 41647713812, runtime 41642095387,
+  sha256 9520fb31; adds wine_priorities and cleanup lineage evidence). Neither has run on a device.
+- Shared read-only tree probe passed (41636702283): scripts.loc via serverdata, mirror 106→74 s.
