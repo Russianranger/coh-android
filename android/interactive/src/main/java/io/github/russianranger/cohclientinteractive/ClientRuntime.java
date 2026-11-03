@@ -205,6 +205,7 @@ public final class ClientRuntime {
     private String clientArchitectureRequested="x86";
     private boolean prootFastModeRequested=false;
     private boolean prestartNextZoneRequested=false;
+    private boolean trustedBinsRequested=false;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -250,15 +251,26 @@ public final class ClientRuntime {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("performance-graphics", enabled).apply();
     }
-    /** Fast mode lets PRoot install its seccomp filter, so only path syscalls stop in the tracer. */
+    /** Fast mode lets PRoot install its seccomp filter, so only path syscalls stop in the tracer.
+     * On by default: CI A/B 41584980465 vs 41588867344 cut MapServer startup 26-32%. */
     public static boolean prootFastModeEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("proot-fast-mode", false);
+                .getBoolean("proot-fast-mode", true);
     }
     public static synchronized void setProotFastModeEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("proot-fast-mode", enabled).apply();
+    }
+    /** Let an instrumented MapServer trust CRC-matching prepared .bin files (no source tree scan). */
+    public static boolean trustedBinsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("trusted-bins", false);
+    }
+    public static synchronized void setTrustedBinsEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("trusted-bins", enabled).apply();
     }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
@@ -656,6 +668,7 @@ public final class ClientRuntime {
         gpuProfileRequested=gpuProfileEnabled(context);
         prootFastModeRequested=prootFastModeEnabled(context);
         prestartNextZoneRequested=prestartNextZoneEnabled(context);
+        trustedBinsRequested=trustedBinsEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -706,6 +719,7 @@ public final class ClientRuntime {
                     "COH_CLIENT_ARCH="+clientArchitectureRequested,
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
                     "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
+                    "COH_TRUSTED_BINS="+(trustedBinsRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",

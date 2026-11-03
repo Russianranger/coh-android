@@ -64,16 +64,22 @@ The integration's namespace/disappearing-task port is not evidence that the
 Thor EACCES defect is fixed. No ≤60-second cold-start, FPS, thermal or memory
 improvement is measured at this integration head.
 
-## Performance round 1 options (branch `x86/perf-round1`, not yet in an APK)
+## Performance options (0.13.48 candidate, branch `x86/perf-round2`)
 
-Both new launch options start **off**; test each as its own matched comparison.
-`Fast mode (PRoot seccomp, experimental)` stops tracing non-path syscalls; the
-guest report's `proot_mode` records the choice and a getppid cost probe.
-`Start King's Row in the background (zoning)` prepares and launches King's Row
-about 20 s after Atlas is live, only with at least 3 GiB available (else
-`skipped_low_memory`); `character_zoning.background_prestart` records each
-phase. A trip during native loading is labelled `prestarted_loading`.
+`Fast mode (PRoot seccomp, experimental)` is now **on** by default. In CI
+(41584980465 vs 41588867344) it made MapServer startup 26-32% faster with no
+failures. Uncheck it to get the old compatible mode back. The guest report's
+`proot_mode` records the mode and the cost of a test system call.
+`Start King's Row in the background (zoning)` (off by default) prepares and
+launches King's Row about 20 s after Atlas is live, but only with at least
+3 GiB of memory available (else `skipped_low_memory`). The phases are recorded
+in `character_zoning.background_prestart`. A trip during native loading is
+labelled `prestarted_loading`.
+`Fast server data loading (trusted bins, experimental)` (off by default) only
+acts when the APK carries the instrumented MapServer. It skips the data-folder
+scans for prepared `.bin` files; `trusted_bins` records whether it was used.
 The sidebar adds `60 FPS` (`/maxfps 60`); the launch cap stays 30/10.
-A cache stranded by unproved cleanup is reused in a later session only when no
-same-uid process outside that guest is alive (`stranded_generation_recovered`);
-the earlier session's failed cleanup is still reported as failed.
+A cache left behind by a cleanup that could not prove it finished is reused in
+a later session only when no same-uid process outside that guest is alive
+(`stranded_generation_recovered`). The earlier session's failed cleanup is
+still reported as failed.
