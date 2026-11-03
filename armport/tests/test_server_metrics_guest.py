@@ -7,6 +7,7 @@ or execute Windows code, and cannot qualify a real shipping server artifact.
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -235,6 +236,36 @@ class GuestMetrics(unittest.TestCase):
         server.map_package = self.previous
         self.assertEqual(server.map_metrics_environment({'ARMPORT_SERVER_METRICS': '1'}, self.runtime), {})
         self.assertFalse(server.server_metrics_enabled)
+
+    def test_trusted_bins_env_needs_request_and_the_admitted_switch(self):
+        server = object.__new__(local.LocalCharacterServer); server.map_package = self.game
+        server.creation_report = {}
+        with mock.patch.dict(os.environ, {'COH_TRUSTED_BINS': '1'}):
+            # This fixture's build has no textparser change: never enabled.
+            env = server.map_metrics_environment({'ARMPORT_TRUSTED_BINS': '1'}, self.runtime)
+            self.assertNotIn('ARMPORT_TRUSTED_BINS', env)
+            self.assertEqual(server.creation_report['trusted_bins']['reason'], 'switch_not_in_admitted_build')
+            with mock.patch.object(contract, 'trusted_bins_available', return_value=True):
+                env = server.map_metrics_environment({}, self.runtime)
+            self.assertEqual(env['ARMPORT_TRUSTED_BINS'], '1')
+            self.assertTrue(server.creation_report['trusted_bins']['applied'])
+        with mock.patch.dict(os.environ, {'COH_TRUSTED_BINS': ''}), \
+                mock.patch.object(contract, 'trusted_bins_available', return_value=True):
+            env = server.map_metrics_environment({}, self.runtime)
+        self.assertNotIn('ARMPORT_TRUSTED_BINS', env)
+        self.assertFalse(server.creation_report['trusted_bins']['requested'])
+
+    def test_parser_change_claim_is_exact_and_limited_to_the_reviewed_switch(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.parser_changed(build))
+        build['build_input']['patched_sha256'][contract.TEXTPARSER] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.parser_changed(build)
+        build['build_input'].update(
+            trusted_bins_patch={'path': 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch',
+                                'sha256': contract.TRUSTED_PATCH},
+            contract={'trusted_bins': {'disabled_by_default': True}})
+        self.assertTrue(contract.parser_changed(build))
 
     def test_fx_installer_binds_original_qualified_consumer_separately_from_new_pe(self):
         (self.assets/fx.PAYLOAD).write_bytes(b'fixture marker')

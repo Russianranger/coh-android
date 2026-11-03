@@ -25,6 +25,9 @@ DATA = 'd51533ec8e6a9cf726b9214968077a05fdcf19f3'
 PATCH = '5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f'
 RETAINED_MAP = '52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb'
 THOR_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
+# Opt-in ARMPORT_TRUSTED_BINS switch (patch 0120), off unless the guest sets it.
+TRUSTED_PATCH = '906433c1e6266f9ee4e6fa41e426676bdde45c9efc9df26dddadfbc2e34f6779'
+TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
 
 
 def require(condition, message):
@@ -202,7 +205,27 @@ def _proof(value, build, previous):
         package_receipt_sha256=digest(canonical(build)),
         source_receipt_sha256=digest(canonical(build['build_input'])),
         native_changed_source_sha256=build['build_input']['patched_sha256'],
-        parser_or_definition_sources_changed=False, gameplay_decisions_changed=False)
+        parser_or_definition_sources_changed=parser_changed(build), gameplay_decisions_changed=False)
+
+
+def parser_changed(build):
+    """True only for the reviewed default-off trusted-bin switch in textparser.c."""
+    source = build.get('build_input', {})
+    changed = TEXTPARSER in source.get('patched_sha256', {})
+    require(not changed or (source.get('trusted_bins_patch') == {
+                'path': 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch', 'sha256': TRUSTED_PATCH}
+            and source.get('contract', {}).get('trusted_bins', {}).get('disabled_by_default') is True),
+            'Metrics build changed the text parser outside the reviewed trusted-bin switch')
+    return changed
+
+
+def trusted_bins_available():
+    """Whether the admitted metrics MapServer carries the opt-in switch."""
+    try:
+        _, build, _, _ = load_binding()
+        return parser_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def verified_previous(path, package):

@@ -23,7 +23,11 @@ SVR = 'MapServer/src/svr/svr_init.c'
 FILE = 'libs/UtilitiesLib/src/utils/file.c'
 HEADER = 'libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h'
 IMPL = 'libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h'
-FILES = (SVR, FILE, HEADER, IMPL)
+METRIC_FILES = (SVR, FILE, HEADER, IMPL)
+# Opt-in trusted prepared bins (ARMPORT_TRUSTED_BINS=1), off by default.
+TRUSTED_PATCH = 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch'
+TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+FILES = METRIC_FILES + (TEXTPARSER,)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
 CONTRACT = {
@@ -40,6 +44,14 @@ CONTRACT = {
     'disk_only_measurement': False, 'wineserver_request_counts': False,
     'clock_failure': 'disable_metrics_only_with_status_record',
     'gameplay_decisions_changed': False,
+    'trusted_bins': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_TRUSTED_BINS_V1',
+        'record_limit': 256, 'function': 'ParserIsPersistNewer',
+        'skipped_when_enabled': ['source_tree_scan', 'per_file_date_check'],
+        'still_required': ['bin_signature', 'parse_table_crc'],
+        'text_fallback_retained': ['missing_bin', 'signature_or_crc_mismatch', 'binary_read_failure'],
+    },
     'startup': {
         'record_prefix': 'ARMPORT_SERVER_STARTUP_V1',
         'scope': 'main_entry_to_checkpoint',
@@ -87,7 +99,14 @@ def modules(upstream_root):
 def patch_bytes():
     data = (ROOT / PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
-    require(len(names) == 4 and set(names) == set(FILES), 'Native metric patch file set differs')
+    require(len(names) == 4 and set(names) == set(METRIC_FILES), 'Native metric patch file set differs')
+    return data
+
+
+def trusted_patch_bytes():
+    data = (ROOT / TRUSTED_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [TEXTPARSER], 'Trusted-bin patch file set differs')
     return data
 
 
@@ -213,7 +232,11 @@ def native_images(variant, baseline_receipt, root):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
         original_loop = (stage / SVR).read_bytes()
+        target = stage / TEXTPARSER
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((root / 'upstream/ouroboros' / TEXTPARSER).read_bytes())
         apply_patch(stage, patch_bytes())
+        apply_patch(stage, trusted_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
         require(images[SVR] == patch_loop(original_loop), 'Loop rebase differs from exported native patch')
     with tempfile.TemporaryDirectory(prefix='coh-server-metrics-base-') as directory:
@@ -230,11 +253,14 @@ def native_images(variant, baseline_receipt, root):
         for patch in patches:
             apply_patch(stage, patch)
         inputs = {SVR: (stage / SVR).read_bytes(),
-                  FILE: (root / 'upstream/ouroboros' / FILE).read_bytes()}
+                  FILE: (root / 'upstream/ouroboros' / FILE).read_bytes(),
+                  TEXTPARSER: (root / 'upstream/ouroboros' / TEXTPARSER).read_bytes()}
     images[SVR] = patch_loop(inputs[SVR])
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
     require(FILE not in closure or closure[FILE] == digest(inputs[FILE]), 'Baseline file loader preimage differs')
+    require(TEXTPARSER not in closure or closure[TEXTPARSER] == digest(inputs[TEXTPARSER]),
+            'Baseline text parser preimage differs')
     return inputs, images
 
 
@@ -248,6 +274,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'baseline_receipt': base, 'baseline_receipt_sha256': digest(canonical(base)),
             'baseline_receipts_sha256': {name: digest(canonical(value)) for name, value in receipts.items()},
             'patch': {'path': PATCH, 'sha256': digest(patch_bytes())},
+            'trusted_bins_patch': {'path': TRUSTED_PATCH, 'sha256': digest(trusted_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -274,14 +301,14 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'variant': receipt['variant'], 'build_input_sha256': digest(canonical(receipt)),
                 'source_sha256': receipt['patched_sha256'],
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
-                                    for name in (SVR, FILE)},
+                                    for name in (SVR, FILE, TEXTPARSER)},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
                                    'startup', 'startup_disabled', 'startup_clock',
-                                   'progress_markers'],
+                                   'progress_markers', 'trusted_bins', 'trusted_bins_disabled'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_and_startup_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_and_trusted_bin_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

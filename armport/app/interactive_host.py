@@ -6,6 +6,7 @@ import hashlib
 import importlib.util
 import json
 import math
+import os
 from pathlib import Path
 import platform
 import secrets
@@ -260,6 +261,13 @@ TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spaw
                  'dependency_start_seconds', 'request_to_client_world_ready_seconds')
 
 
+def trusted_bins_requested():
+    """CI A/B switch for the metrics MapServer's opt-in trusted-bin path."""
+    value = os.environ.get('COH_TRUSTED_BINS', '')
+    require(value in ('', '0', '1'), 'COH_TRUSTED_BINS must be empty, 0 or 1')
+    return value == '1'
+
+
 def guest_timing_summary(evidence):
     """Bounded A/B diagnostic (PRoot mode, map startup, preparation phases); never gates."""
     result = {}
@@ -268,6 +276,7 @@ def guest_timing_summary(evidence):
         if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
             report = json.loads(path.read_text())
             result['proot_mode'] = report.get('proot_mode')
+            result['trusted_bins'] = (report.get('character_creation') or {}).get('trusted_bins')
             for key in ('character_creation', 'character_reopen'):
                 section = report.get(key)
                 if not isinstance(section, dict):
@@ -409,6 +418,8 @@ def main():
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_GRAPHICS_PROFILE=standard')
         if runtime_host.runtime.proot_seccomp_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
+        if trusted_bins_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
         deadline = time.monotonic() + character.OVERALL_SECONDS
         created = run_session(command, args.work, args.evidence / 'creation', args.proot,
                               first, runtime_manifest, client_manifest, deadline)
@@ -439,7 +450,8 @@ def main():
         # Separate notice; host-report.json keeps its qualified schema.
         timings = {name: guest_timing_summary(args.evidence / name) for name in ('creation', 'reopen')
                    if (args.evidence / name).exists()}
-        print(ci_notice(dict(timings, proot_seccomp=runtime_host.runtime.proot_seccomp_requested()))
+        print(ci_notice(dict(timings, proot_seccomp=runtime_host.runtime.proot_seccomp_requested(),
+                             trusted_bins=trusted_bins_requested()))
               .replace('interactive result', 'guest timings', 1), flush=True)
         print(json.dumps(result), flush=True)
     return 0 if result['passed'] else 1

@@ -2365,12 +2365,29 @@ class LocalCharacterServer(login.LocalLoginServer):
     def map_metrics_environment(self, environment, runtime):
         environment = dict(environment)
         environment.pop('ARMPORT_SERVER_METRICS', None)
+        environment.pop('ARMPORT_TRUSTED_BINS', None)
         enabled = 'armport_server_metrics' in self.map_package
+        requested = os.environ.get('COH_TRUSTED_BINS') == '1'
+        trusted = False
         if enabled:
             import armport_server_metrics_contract as metrics
             metrics.verify_current_map(Path(runtime) / 'MapServer.exe', self.map_package)
             environment['ARMPORT_SERVER_METRICS'] = '1'
+            # Opt-in: a CRC-matching prepared .bin skips the source tree scan
+            # and date check (patch 0120). Off unless requested and present.
+            trusted = requested and metrics.trusted_bins_available()
+            if trusted:
+                environment['ARMPORT_TRUSTED_BINS'] = '1'
         self.server_metrics_enabled = enabled
+        report = getattr(self, 'creation_report', None)
+        if report is None and getattr(self, 'ctx', None) is not None:
+            report = self.ctx.report
+        if report is not None:
+            report['trusted_bins'] = {'format': 1,
+                'requested': requested, 'applied': trusted,
+                'environment_variable': 'ARMPORT_TRUSTED_BINS',
+                'reason': None if trusted or not requested else
+                    ('no_metrics_mapserver' if not enabled else 'switch_not_in_admitted_build')}
         return environment
 
     def start_map(self):

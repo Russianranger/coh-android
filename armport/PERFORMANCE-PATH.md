@@ -96,6 +96,15 @@ alone would break map loading. The two candidates are piggs for the immutable
 data (the shipped configuration the code expects) or a narrow native switch
 that trusts a CRC-matching prepared `.bin` without the tree scan.
 
+The narrow switch is `patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch`
+(PR #11). It is applied only by the instrumented-MapServer producer
+(`server-metrics-*` jobs, next to 0119) and is off unless the guest sets
+`ARMPORT_TRUSTED_BINS=1`. CI requests it with `armport-app-runtime`
+`trusted_bins=true`, which needs that build's servers (`server_run_id` at the
+same commit). Each trusted `.bin` is logged as `ARMPORT_TRUSTED_BINS_V1`. The
+metrics proof now reports `parser_or_definition_sources_changed: true` for such
+a build. It accepts that only for this reviewed, default-off switch.
+
 ### Zoning, 0.13.44 launch 1
 
 | Transfer | Server side | Client load | Total |

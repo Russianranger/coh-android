@@ -84,7 +84,9 @@ def native_admission(report, runtime_manifest):
             and proof.get('previous_mapserver_sha256') == build['predecessor']['mapserver']['sha256']
             and proof.get('package_receipt_sha256') == hashlib.sha256(canonical(build)).hexdigest()
             and all(proof.get(key) is False for key in ('runtime_execution_validated',
-                'physical_device_validated', 'parser_or_definition_sources_changed', 'gameplay_decisions_changed')),
+                'physical_device_validated', 'gameplay_decisions_changed'))
+            and proof.get('parser_or_definition_sources_changed') is (
+                'libs/UtilitiesLib/src/utils/textparser.c' in build['build_input'].get('patched_sha256', {})),
             'Modern guest PE/run/source/package admission differs')
     return {'session_id': session, 'producer': copy.deepcopy(proof)}
 

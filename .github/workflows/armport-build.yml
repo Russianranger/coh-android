@@ -1193,6 +1193,7 @@ jobs:
             /armport/
             /tools/
             /android/guest/
+            /patches/mapserver-trusted-bins/
           sparse-checkout-cone-mode: false
       - uses: actions/checkout@v4
         with:
@@ -1282,6 +1283,7 @@ jobs:
             /armport/
             /tools/
             /android/guest/
+            /patches/mapserver-trusted-bins/
             /docs/android-evidence/mapserver-progress-package-36630872719.json
             /docs/android-evidence/client-map-startup-0.13.32-publication.json
           sparse-checkout-cone-mode: false

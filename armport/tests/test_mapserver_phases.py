@@ -12,6 +12,8 @@ import mapserver_phases
 
 # Shape copied from the 0.13.44 Thor Atlas console (session id replaced).
 CONSOLE = """started 2026-10-28 19:41:29
+ARMPORT_TRUSTED_BINS_V1 status=trusted ordinal=1 bin=bin/seqstatebits.bin
+ARMPORT_TRUSTED_BINS_V1 status=trusted ordinal=2 bin=server/bin/mapsspec.bin
 ARMPORT_SERVER_STARTUP_V1 status=ok map_id=1 pid=556 sequence=6 phase=sequencer_info_done elapsed_ms=96000.000 phase_ms=93930.000 scope=main_entry_to_checkpoint
 Caching directory tree and misc startup...                            (0.17)
 more miscellany..[2026-10-28 19:41:30.441] [DEBUG] \tParsing .statebits from seqstatebits.bin
@@ -49,6 +51,7 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertEqual(timed['Caching directory tree and misc startup'], 0.17)
         self.assertEqual(result['slowest_self_timed'][0][0], 'Loading story arcs')
         self.assertEqual(result['animation_files_opened'], 5120)
+        self.assertEqual(result['trusted_bins_reported'], 2)
 
     def test_untimed_animation_gap_is_reported_and_post_ready_waits_are_not(self):
         result = mapserver_phases.summary(CONSOLE)

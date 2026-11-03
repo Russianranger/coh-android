@@ -22,6 +22,7 @@ STARTUP = re.compile(r'ARMPORT_SERVER_STARTUP_V1 status=ok .*?\bphase=([a-z_]{1,
 SESSION = re.compile(r'[0-9a-f]{32}')
 # The last startup line before the map serves; later gaps are client waits.
 READY = 'Verifying SG permission tables'
+TRUSTED = 'ARMPORT_TRUSTED_BINS_V1 status=trusted'
 LINE_LIMIT = 200000
 LABEL_BYTES = 72
 
@@ -41,10 +42,13 @@ def summary(text, top=8):
     timed, gaps = [], []
     first = last = None
     animations = None
-    checkpoints, ready = {}, False
+    checkpoints, ready, trusted = {}, False, 0
     for index, line in enumerate(text.splitlines()):
         if index >= LINE_LIMIT:
             break
+        if line.startswith(TRUSTED):
+            trusted += 1
+            continue
         match = STARTUP.search(line)
         if match and len(checkpoints) < 32:
             checkpoints.setdefault(match.group(1), round(float(match.group(3)) / 1000, 2))
@@ -88,7 +92,8 @@ def summary(text, top=8):
             'slowest_self_timed': timed[:top],
             'slowest_untimed_gaps': gaps[:top],
             'animation_files_opened': animations,
-            'native_checkpoint_seconds': checkpoints or None}
+            'native_checkpoint_seconds': checkpoints or None,
+            'trusted_bins_reported': trusted}
 
 
 if __name__ == '__main__':
