@@ -37,4 +37,4 @@ Default branch remains main; no release, APK handoff or repository setting chang
 - CI creation re-parses ~230 s: CI's retained-progress MapServer fails the cache check (41630365042).
 - Pre-releases 0.13.48 (APK 41636249551) and 0.13.49 (APK 41647713812, runtime 41642095387,
   sha256 9520fb31; adds wine_priorities and cleanup lineage evidence). Neither has run on a device.
-- Shared read-only tree probe passed (41636702283): scripts.loc via serverdata, mirror 106→74 s.
+- Shared-tree probes: scripts.loc clean, mirror 106→74 s (41636702283); wide set rebuilds bins (41648097743).
