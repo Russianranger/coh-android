@@ -273,3 +273,22 @@ into main as part of the handoff.
 
 After posting the final source/tree, local results, port/skip list and CI request
 and closing the four draft PRs, this agent stops. Claude continues development.
+
+## Performance rounds (Claude, 2026-11-03)
+
+Draft PR #11 (`x86/perf-round1` → `x86-track`); round-2 work on
+`x86/perf-round2` until it is fast-forwarded into round 1. Evidence and
+numbers: [PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md) and issue #10.
+
+- Fast mode (PRoot seccomp) is on by default from 0.13.48. In CI it cut MapServer
+  startup by 26-32% (41588867344 off vs 41584980465 on).
+- Trusted prepared bins (`patches/mapserver-trusted-bins/0001`) is an opt-in
+  switch in the instrumented MapServer only. It does not help a cold mirror,
+  where the `.bin` files are missing or rejected; warm reopen is in the A/B
+  (41605600310 on, 41610459604 off).
+- Background King's Row start, stranded-cache recovery and the 60 FPS
+  world-entry cap are launch options; see X86-THOR-TEST.md.
+- Next: name the bins a cold MapServer rewrites (`bin writes` notice) and ship
+  them as prepared caches; the shared read-only server tree (design in
+  PERFORMANCE-PATH.md); idle priority for resident MapServers; a native 60 FPS
+  launch cap with the next client rebuild; an x86 FPS baseline on the Thor.
