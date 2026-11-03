@@ -1,5 +1,10 @@
 # COH-ArmPort M5 handoff: from a playable ARM64 client to an optimized client/server
 
+**Historical M5 handoff.** Current direction and integration ownership are in
+[HANDOFF-X86.md](../HANDOFF-X86.md). The x86 client is primary, ARM64 is shelved,
+and Claude continues from `x86-track`. Earlier pause/development instructions
+below describe their dated sessions, not the current integration assignment.
+
 Written 2026-10-28 at the end of the M5 Thor iteration (PR #8, branch
 `armport/m5-thor`, head after this file). All scheduled checks were cancelled
 at the user's request. The historical measurements below describe that handoff.

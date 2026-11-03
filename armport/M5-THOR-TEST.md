@@ -1,4 +1,10 @@
-# COH Atlas Gameplay 0.13.45: CI-qualified candidate (ARM64 client)
+# COH Atlas Gameplay 0.13.45: historical ARM64 candidate
+
+**Historical evidence.** The current device-test target is the x86 client on
+`x86-track`; use [X86-THOR-TEST.md](../X86-THOR-TEST.md) and
+[HANDOFF-X86.md](../HANDOFF-X86.md). ARM64 remains selectable and experimental,
+with further ARM64 work shelved. The installation requests below describe the
+old M5 handoff; this integration supplies no APK or new device-test request.
 
 ## Device feedback recorded 2026-11-02 — development paused
 
