@@ -35,6 +35,6 @@ Default branch remains main; no repository setting change.
 - Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
 - 0.13.49 on the Thor (2 sessions, ARM64 client): in-world FPS mean 45-48, 91-97% windows ≥30;
   Atlas MapServer ready 204/222 s (.44: 287 s); King's Row failed (420 s Python budget, cold mirror).
-- 0.13.50 (ARM64 primary): shared server data for both zones, client scan skips scripts.loc/server
-  (patch 0120), recovery race fix; runtime 41704290931 passed (reopen bin writes 0, Atlas
-  private mirror 31 s vs 99.5-106 s, client start 81.7 → 71.8 s). Published APK 41712293048; THOR-TEST-0.13.50.md.
+- 0.13.50 (ARM64 primary; APK 41712293048): shared server data, client scan skip, recovery fix.
+  Thor: King's Row reached (cold trip 562 s, return 50 s); session 2 Atlas cache refused (shared folders
+  missing from the changed-root check), Atlas ready 444 s vs 297 s on .49. HANDOFF-X86.md has the table.

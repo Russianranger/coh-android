@@ -318,6 +318,47 @@ reversion path. Test sheet: [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
 - Known: `test_classify_storage_cleanup_change` keys on the last commit's file
   list and fails for multi-area commits; not a behaviour regression.
 
+## Thor test of 0.13.50 (user, 2026-11-03; exports 20261103-215454 and -220758)
+
+Two sessions, both passed with proved cleanup; export -215435 is the runtime
+setup. ARM64 client, fast mode, 60 FPS, shared data and the client skip on.
+User report: King's Row reached; device at 76 °C while loading; King's Row NPCs
+look laggy while the client is smooth; loading still long.
+
+| | Session 1 (first start) | Session 2 | 0.13.49 session 2 |
+|---|---|---|---|
+| Tap → Atlas map ready | 762 s | 444 s | 297 s |
+| Atlas Python preparation | 537 s (mirror 88, shared tree 282 one-time, beacons 75) | 202 s (mirror 84, beacons 75) | 70 s (checkout 9, beacons 25) |
+| Atlas MapServer spawn → ready | 225 s | 242 s | 227 s |
+| Client asset installs (incl. client data) | 97 s | 56 s | 98 s |
+| Client folder scan | 160,114 files, 106 s | 160,114 files, 114 s | 212,496 files, 138 s |
+| King's Row trip (request → in world) | 562 s (cold: Python 244 = mirror 103 + beacons 121; native 280; transfer 35) | not taken | failed |
+| Return to Atlas (resident) | 50 s (prep 10, transfer 40) | | |
+
+- **King's Row works:** Python preparation 244 s, inside the 420 s budget (cold
+  mirror 103 s on the device, against 360 s+ on 0.13.49). Its cache was sealed
+  and returned after owned cleanup.
+- **Session 2 regression is a bug of mine:** the Atlas cache was refused with
+  `Immutable Atlas child layout changed: .`. When the data root's mtime changes,
+  `verify_changed_directories` expects every source top-level folder, but the
+  generation omits the 15 shared folders. CI never changed the root mtime, so it
+  never ran this path. Cost: cold mirror 84 s and beacon graph 75 s instead of
+  checkout 9 s and 25 s. King's Row uses the same validator.
+- **Shared tree lookup cost on the device:** Atlas `loading map` 34.1 s and
+  King's Row 35.7 s, against 20.8 s on 0.13.49 (CI: +0.8 s). The engine searches
+  `serverdata/` first, so every map-geometry open misses there first. Other
+  phases are unchanged (story arcs 43-45 s, fx gap 35-36 s).
+- **Client:** the skip saves 24-33 s of scan; the single-pass installs save
+  about 42 s. Client preparation still starts only after Atlas's Python preparation.
+- **NPC lag:** the King's Row MapServer ticked at 29/s throughout (same as
+  Atlas), at 3-25% of one core; client 55-60 FPS there. The stay was about 80 s,
+  beginning within a minute of King's Row's server becoming ready (3,768 entity file reads at ready).
+  No cause found in the logs; the shipping MapServer does not report tick
+  durations.
+- **Heat:** the report has only battery temperature (31-35 °C) and Android thermal
+  status `none` at Atlas start and ready. During the 9-minute station wait the
+  client kept rendering Atlas at 30-60 FPS (dips to 15-20 during King's Row's load).
+
 ## Thor test of 0.13.49 (user, 2026-11-03; exports 20261103-162813 and -165322)
 
 Two sessions on 0.13.49, both passed with proved cleanup. **They ran the ARM64
