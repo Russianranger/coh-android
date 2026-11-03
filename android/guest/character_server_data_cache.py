@@ -371,6 +371,10 @@ class ServerDataCache:
                 'Atlas cache source data escaped verified roots')
         private_names = set(record['private_files'])
         owner_uid = self.root.stat().st_uid
+        # Top-level folders the zone servers read from the shared read-only
+        # tree (runtime/serverdata) are never staged into this generation.
+        shared = {str(value).casefold() for value in
+                  (self.identity.get('shared_server_data') or {}).get('shared_top_level', ())}
         examined = 0
         for row, observed_mtime in changed:
             self.ctx.check()
@@ -393,6 +397,12 @@ class ServerDataCache:
                         # A new projected generation omits this native-excluded
                         # directory. Migrated full generations still record it
                         # and therefore keep their complete original checks.
+                        continue
+                    if (not name and entry.name.casefold() in shared
+                            and relative not in directory_names):
+                        # Thor 0.13.50: a changed data root refused every reuse
+                        # because these were expected. A private copy of one
+                        # is still unexpected below, so the check stays exact.
                         continue
                     expected.add(entry.name)
             actual = set()

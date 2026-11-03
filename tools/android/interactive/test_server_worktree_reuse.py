@@ -496,6 +496,38 @@ class ServerWorktreeReuseTests(unittest.TestCase):
                          'qualified salvage ids')
         self.close(second)
 
+    def test_shared_folders_absent_from_the_generation_reuse_after_a_root_change(self):
+        """Thor 0.13.50 session 2: a changed data root refused reuse of a shared-data generation."""
+        self.source('fx/glow.fx', 'shared fx'); self.source('scripts.loc/a.storyarc', 'shared arc')
+        def writable():
+            for current, _directories, _files in os.walk(self.root):
+                if not os.path.islink(current):
+                    os.chmod(current, 0o700)
+        self.addCleanup(writable)
+        with patch.dict(os.environ, {server.SHARED_SERVER_ENV: '1'}):
+            first = self.make(1); self.prepare(first)
+            data = first.runtime / 'data'
+            self.assertFalse((data / 'fx').exists()); self.assertTrue((first.runtime / 'serverdata/fx/glow.fx').exists())
+            root = data.stat()
+            os.utime(data, ns=(root.st_atime_ns, root.st_mtime_ns + 1000000))
+            self.close(first)
+            second = self.make(2)
+            with patch.object(second, 'stage_map_data', side_effect=AssertionError('shared generation rebuilt')):
+                result = self.prepare(second)['server_data_cache']
+            self.assertTrue(result['reused'])
+            self.assertEqual(result['changed_parent_paths'], ['.'])
+            # A private copy of a shared folder is still an unexpected entry.
+            data = second.runtime / 'data'
+            (data / 'fx').mkdir()
+            root = data.stat()
+            os.utime(data, ns=(root.st_atime_ns, root.st_mtime_ns + 1000000))
+            self.close(second)
+            third = self.make(3)
+            result = self.prepare(third)['server_data_cache']
+            self.assertFalse(result['reused'])
+            self.assertIn('Unexpected immutable Atlas entry: fx', result['reuse_refused'])
+            self.close(third)
+
     def test_client_visual_additions_preserve_closed_server_tree_and_native_bins(self):
         old_texture = self.source('texture_library/gui/old.texture', 'old texture')
         self.source('player_library/animations/old.anim', 'old animation')

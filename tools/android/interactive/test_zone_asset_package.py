@@ -328,7 +328,8 @@ class ZonePackageTests(unittest.TestCase):
         schema = self.root/'schema'; (schema/'data/server/db').mkdir(parents=True)
         (schema/'data/server/db/servers.cfg').write_text('schema')
         state = self.root/'state'; state.mkdir()
-        identity = {'format': 2, 'source_data': str(data), 'source_roots': [
+        identity = {'format': 2, 'source_data': str(data),
+            'source_device': data.stat().st_dev, 'source_inode': data.stat().st_ino, 'source_roots': [
                 {'path': str(p), 'identity': server.server_data_cache.fingerprint(p, directory=True)}
                 for p in (self.work, imported)],
             'shared_server_data': {'format': 1, 'selection': 'app_default_folders_v1',
@@ -367,11 +368,15 @@ class ZonePackageTests(unittest.TestCase):
             self.assertEqual(len(list((king/'data/object_library/kings').glob('*.geo'))), 52)
             link = first.creation_report['kings_row_preparation']['shared_server_data']
             self.assertFalse(link['reused_shared_tree'])
+            # Thor 0.13.50: a changed data root must not refuse the shared-data generation.
+            root = (king/'data').stat()
+            os.utime(king/'data', ns=(root.st_atime_ns, root.st_mtime_ns + 1000000))
             first.kings_row_data_cache.release(king/'data', first.owner.cleanup_status)
             second = instance('2'*32)
             with mock.patch.object(second, 'stage_map_data', side_effect=AssertionError('warm full data mirror')):
                 reused = second.prepare_kings_row_runtime()
             self.assertTrue(reused['preparation']['server_data_cache']['reused'])
+            self.assertEqual(reused['preparation']['server_data_cache']['changed_parent_paths'], ['.'])
             self.assertTrue(reused['preparation']['shared_server_data']['reused_shared_tree'])
             self.assertEqual((reused['runtime']/'serverdata').resolve(), (king/'serverdata').resolve())
 
