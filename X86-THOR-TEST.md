@@ -86,6 +86,13 @@ APK carries the instrumented MapServer. It skips the data-folder scans and date
 checks for CRC-matching prepared `.bin` files; `trusted_bins` records whether it
 was used. In CI (41605600310 on vs 41610459604 off, same servers) the reopen
 Atlas start fell from 130 s to 94 s; a new character's first start barely moved.
+**The published 0.13.48 keeps the shipping MapServer, so this option has no
+effect there** (`trusted_bins.reason` `no_metrics_mapserver`). The instrumented
+MapServer changes `textparser.c`, so the prepared server caches refuse it
+(`prepared_server_caches` `skipped_native_fallback`, `Monorail native identity
+differs`, CI 41630365042). Every fresh server-data mirror would then re-parse
+spawn definitions, story arcs and definitions from text (about 230 s in CI). On
+.44 the shipping MapServer installed those caches, King's Row included.
 `Raise the frame cap to 60 FPS in the world` (on by default) sends the
 sidebar's `/maxfps 60` once, quietly, when a reopened character's world views
 are captured; the report records `gameplay_60fps_requested` and the lifecycle
