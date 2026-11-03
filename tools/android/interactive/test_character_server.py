@@ -11,10 +11,11 @@ import unittest
 from unittest.mock import Mock, call, patch
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(ROOT / 'android/guest'))
+sys.path[:0] = [str(ROOT / 'android/guest'), str(ROOT / 'tools')]
 import local_character_server as server
 import atlas_world_assets as world_assets
 import character_avatar_assets as avatar_assets
+from test_package_reference_runtime import pe_file
 
 
 def fixture():
@@ -174,6 +175,9 @@ class CharacterLifecycleTests(unittest.TestCase):
         owner = SimpleNamespace(ctx=SimpleNamespace(report={}), root=Path('/private'),
                                 args=SimpleNamespace(session_id=SESSION, state=Path(directory)))
         value = server.LocalCharacterServer(owner)
+        # Admission is outside this lifecycle fixture; model the already
+        # admitted, uninstrumented donor explicitly, as in saved-map startup.
+        value.map_package = {}
         rows, inventory, attributes = fixture()
         value.schema = {'expected_attributes': attributes}
         value.baseline = []; value.auth_id = 77
@@ -201,11 +205,17 @@ class CharacterLifecycleTests(unittest.TestCase):
             return {'available': True, 'tick_completed': number, 'unchanged_seconds': 0}
         value.sample_progress.side_effect = [None, tick(0), None, tick(1), tick(2), None, tick(3), tick(4)]
         bindings = {'loopback_only': True, 'udp_port': 7001}
+        # Advance at lifecycle checks, so optional timing observations do not
+        # consume the finite sequence of readiness polling times.
+        now, polls = [0], iter((1, 7, 68))
+        def poll_check():
+            now[0] = next(polls)
+        value.ctx.check.side_effect = poll_check
         with patch.object(server.login.LocalLoginServer, 'start') as parent, \
                 patch.object(server.game, 'check_game_port') as port, \
                 patch.object(server.evidence, 'game_listener_bindings', return_value=bindings), \
                 patch.object(server.progress, 'compare_records') as compare, \
-                patch.object(server.time, 'monotonic', side_effect=[0, 1, 7, 68]), \
+                patch.object(server.time, 'monotonic', side_effect=lambda: now[0]), \
                 patch.object(server.time, 'sleep'):
             value.start()
         parent.assert_called_once_with()
@@ -418,8 +428,14 @@ class CharacterLifecycleTests(unittest.TestCase):
 
     def test_map_manifest_must_match_qualified_donor(self):
         with tempfile.TemporaryDirectory() as directory:
-            path=Path(directory); (path/'game-package.json').write_text('{}')
-            with self.assertRaises(server.base.DiagnosticError): server.LocalCharacterServer.verify_map_payload(path)
+            path = Path(directory)
+            binary = path / 'MapServer.exe'
+            binary.write_bytes(pe_file())  # Header-only parser fixture, never native proof.
+            (path / 'game-package.json').write_text(json.dumps({'files': {
+                'MapServer.exe': {'bytes': binary.stat().st_size,
+                                  'sha256': server.base.file_hash(binary)}}}))
+            with self.assertRaisesRegex(server.base.DiagnosticError, 'device-qualified progress donor'):
+                server.LocalCharacterServer.verify_map_payload(path)
 
 
 if __name__ == '__main__': unittest.main()

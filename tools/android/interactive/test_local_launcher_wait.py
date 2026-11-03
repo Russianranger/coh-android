@@ -264,8 +264,11 @@ class GuestManualWaitTests(unittest.TestCase):
             service.prepare_runtime = Mock(); service.health = Mock()
             service.schema_snapshot = Mock(return_value={'schema': 'verified'})
             context.start.return_value = SimpleNamespace(text=Mock(return_value=character.MANUAL_ATLAS_ACK + '\n'))
-            with patch.object(login.base, 'verify_pe32'), patch.object(login.base, 'private_write'), \
-                 patch.object(login.base, 'validate_odbc_driver', return_value={'driver_name': 'odbc'}), \
+            # Driver installation/reuse has its own production-helper tests;
+            # this fixture controls that dependency to isolate native ACK,
+            # dispatch progress and listener readiness below.
+            with patch.object(login, 'ensure_local_odbc', return_value={'driver_name': 'odbc'}) as odbc, \
+                 patch.object(login.base, 'private_write'), \
                  patch.object(login.game, 'game_config', return_value='cfg'), \
                  patch.object(login.game, 'check_game_port'), \
                  patch.object(login.game, 'fixed_inputs_acknowledgement', side_effect=[False, True, True]), \
@@ -274,6 +277,7 @@ class GuestManualWaitTests(unittest.TestCase):
                  patch.object(login.dispatch, 'read_dispatch_record', side_effect=[{'loop_count': 0}, {'loop_count': 1}]) as progress_read, \
                  patch.object(login.time, 'monotonic', return_value=0), patch.object(login.time, 'sleep') as sleeping:
                 login.LocalLoginServer.start(service)
+            odbc.assert_called_once_with(service.owner)
             self.assertEqual(sleeping.call_count, 2)
             self.assertEqual(progress_read.call_count, 2)
             self.assertTrue(service.report['server_ready'])

@@ -35,6 +35,10 @@ class KingsPreparationBudgetTests(unittest.TestCase):
         self.enterContext(patch.object(zoning.time, 'monotonic', side_effect=lambda: self.clock.now))
         self.enterContext(patch.object(zoning.time, 'time', side_effect=self.clock.utc))
         value = object.__new__(zoning.LocalCharacterZoningServer)
+        # Payload admission is outside the clock/readiness boundary exercised
+        # here. Explicitly model an already admitted uninstrumented package.
+        value.map_package = {}
+        value.map_launch_history = zoning.MapLaunchHistory(SESSION)
         value.runtime = root / 'atlas'
         value.runtime.mkdir()
         value.owner = SimpleNamespace(args=SimpleNamespace(state=root, session_id=SESSION, wine='wine'),
