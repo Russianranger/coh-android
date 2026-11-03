@@ -350,10 +350,13 @@ def guest_timing_summary(evidence):
         if path.is_file():
             with zipfile.ZipFile(path) as archive:
                 names = set(archive.namelist())
-                client = 'client-evidence/client-console.log'
-                if client in names and archive.getinfo(client).file_size <= 16 * 1024 * 1024:
-                    result['client_folder_cache'] = client_folder_cache(
-                        archive.read(client).decode('utf-8', errors='replace'))
+                # The ARM64 client writes its phase lines to armport_stdio.txt.
+                for client in ('client-evidence/armport_stdio.txt', 'client-evidence/client-console.log'):
+                    if client in names and archive.getinfo(client).file_size <= 16 * 1024 * 1024:
+                        lines = client_folder_cache(archive.read(client).decode('utf-8', errors='replace'))
+                        if lines:
+                            result['client_folder_cache'] = lines
+                            break
                 member = 'client-evidence/character-atlas-console.txt'
                 if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
                     console = archive.read(member).decode('utf-8', errors='replace')

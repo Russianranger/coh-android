@@ -96,6 +96,15 @@ class MapServerPhaseTests(unittest.TestCase):
             result = interactive_host.guest_timing_summary(evidence)
         self.assertEqual(result['stage_timeline'], [['guest_start', 0.0, 30.5], ['client_login', 60.0, None]])
         self.assertEqual(result['client_folder_cache'], ['phase=scan files=212496 folders=9000 seconds=142.000'])
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary)
+            with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/client-console.log', 'no phase lines\n')
+                archive.writestr('client-evidence/armport_stdio.txt',
+                    'ARMPORT_FOLDER_CACHE_V1 phase=scan files=160000 folders=9000 seconds=90.000\n'
+                    'ARMPORT_FOLDER_CACHE_V1 phase=skip folders=2 list=scripts.loc,server\n')
+            self.assertEqual(interactive_host.guest_timing_summary(evidence)['client_folder_cache'],
+                ['phase=scan files=160000 folders=9000 seconds=90.000', 'phase=skip folders=2 list=scripts.loc,server'])
         self.assertEqual(result['proot_mode'], {'format': 1})
         caches = result['character_creation']['prepared_server_caches']
         self.assertEqual((caches['status'], len(caches['reason']), caches['installed_files']),
