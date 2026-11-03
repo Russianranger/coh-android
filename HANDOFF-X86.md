@@ -276,20 +276,41 @@ and closing the four draft PRs, this agent stops. Claude continues development.
 
 ## Performance rounds (Claude, 2026-11-03)
 
-Draft PR #11 (`x86/perf-round1` → `x86-track`); round-2 work on
-`x86/perf-round2` until it is fast-forwarded into round 1. Evidence and
-numbers: [PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md) and issue #10.
+PR #11 (`x86/perf-round1` → `x86-track`); `x86/perf-round3` is the working
+branch and is merged into round 1 for each release. Evidence and numbers:
+[PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md) and issue #10.
 
+- **Published:** 0.13.48 pre-release
+  ([coh-atlas-gameplay-v0.13.48](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.48),
+  APK run 41636249551, sha256 `0da7621b…`). 0.13.49 (64) adds read-only device
+  evidence; its chain is a runtime at the release head that reuses build
+  41616229359 (no native patch changed), then the shipping-server APK.
 - Fast mode (PRoot seccomp) is on by default from 0.13.48. In CI it cut MapServer
   startup by 26-32% (41588867344 off vs 41584980465 on).
-- Trusted prepared bins (`patches/mapserver-trusted-bins/0001`) is a switch in
-  the instrumented MapServer only, on by default in the app from 0.13.48. CI A/B
-  on the same servers (41610459604 off, 41605600310 on): reopen Atlas 130→94 s,
-  creation 381→353 s. A cold mirror still re-parses spawn definitions and story
-  arcs, because those `.bin` files are missing or rejected.
+- **Servers in the published APKs:** the shipping MapServer that ran on .44,
+  where the prepared server caches installed. Trusted prepared bins
+  (`patches/mapserver-trusted-bins/0001`) need the instrumented MapServer, so
+  they have no effect there. CI A/B with the instrumented retained-progress
+  variant (41610459604 off, 41605600310 on): reopen Atlas 130→94 s.
+- **CI's fresh-character re-parse is CI-only.** CI executes the retained-progress
+  metrics variant, which has no startup receipt, so `verify_mapserver_compatibility`
+  falls through to the monorail check and refuses the prepared caches
+  (`Monorail native identity differs`, 41630365042). The MapServer then rewrites
+  106 bins, including the archive's `spawndefs`/`storyarc`/`contacts`. A metrics
+  APK would embed `thor_certified_startup`, which the startup contract accepts,
+  but that variant has never run.
 - Background King's Row start, idle priority for a resident MapServer,
   stranded-cache recovery and the 60 FPS world-entry cap; see X86-THOR-TEST.md.
-- Next: name the bins a cold MapServer rewrites (`bin writes` notice) and ship
-  them as prepared caches; the shared read-only server tree (design in
-  PERFORMANCE-PATH.md); a device check of idle priority; a native 60 FPS
-  launch cap with the next client rebuild; an x86 FPS baseline on the Thor.
+- Shared read-only tree: CI probe `serverdata_probe` (see PERFORMANCE-PATH.md);
+  result on issue #10.
+- Leads from source reading, with evidence in 0.13.49: the dev-mode client asks
+  for `IDLE_PRIORITY_CLASS`, which wineserver turns into about nice +11 when
+  `RLIMIT_NICE` allows (the Thor reports 40) (`character_zoning.wine_priorities`);
+  the client loads its data folders before choosing the on-demand folder-cache
+  mode (full 141 s scan; fix needs a client rebuild); the cleanup defect's
+  failing /proc read (`live_lineage_observation.unavailable_by_operation`).
+- Next: the Thor test of 0.13.48/0.13.49; the shared tree beyond the probe; a
+  client-priority fix if the samples show it; a cache-compatibility path for
+  the retained-progress variant so CI creation matches the device; a native
+  60 FPS launch cap and the folder-cache order with the next client rebuild; an
+  x86 FPS baseline on the Thor.
