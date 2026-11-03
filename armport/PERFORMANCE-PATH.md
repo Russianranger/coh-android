@@ -164,6 +164,34 @@ start went from 183 s (41588867344, neither) to 94 s.
   copies it to the CPU → X11 socket to Xtigervnc → Raw RFB encode → second
   socket → Java decode → SurfaceView. Two full-frame copies through two sockets.
 
+### Client priority under Wine: lead (2026-11-03, source reading, unmeasured)
+
+- With no `piggs/texts.pigg`, `fileIsUsingDevData()` is true, and
+  `game_beforeParseArgs` (game.c) calls `SetPriorityClass(IDLE_PRIORITY_CLASS)`.
+- Wineserver turns Windows priorities into Linux nice values only when
+  `RLIMIT_NICE` lets it raise priority again ([Wine MR !4551](https://list.winehq.org/archives/list/wine-gitlab@list.winehq.org/thread/5XP6EMRUEC3O37JFPYJCWSZKZWKAULQL)).
+  The Thor guest reports `RLIMIT_NICE` 40 (0.13.44 scheduler capability), so the
+  mapping is active. By its formula, an IDLE-class normal thread gets about
+  nice +11, against 0 for the MapServers (0.13.44 samples: `original_nice` 0).
+- Part 1 of that change does not re-apply a class change to existing threads.
+  So the threads the client creates after that call would run at a lower
+  weight than the servers whenever cores are contended. This fits "frames wait
+  rather than compute". CI runners usually have `RLIMIT_NICE` 0, which turns
+  the mapping off, so CI cannot show this.
+- Evidence (x86/perf-round3 fdab328c4, from the next APK on):
+  `character_zoning.wine_priorities` samples each Wine program's thread count
+  per nice value six times during play. If the client's threads sit near +11,
+  a candidate fix is an `RLIMIT_NICE` of 20 for the client's Wine. That keeps
+  every thread at nice 0 and still lets the zoning scheduler restore to 0.
+- The same early order explains the client's full folder scan: it calls
+  `FolderCacheChooseMode()` only in `game_beforeParseArgs`, after
+  `game_beforeFolderCacheIgnore`, `LWC_Init` and `parseArgs0`. The 0.13.40
+  ARM64 Thor log (2026-10-27) shows `phase=scan files=212496 seconds=140.898` for `./data`, so the
+  folders were loaded before the on-demand mode was chosen. Moving the call
+  earlier needs a client rebuild (the x86 Game is a byte-identical donor
+  member). It would also make the scan's 141 s on-demand; measure what that
+  costs during loading first.
+
 ### Memory, 0.13.44 zoning session
 
 Each MapServer peaks at 1.8-1.9 GB while loading. Idle Atlas sat at 0.8 GB
@@ -328,6 +356,15 @@ Rules and work:
   CI-only probe: a runtime where `tools/` exists and `serverdata/` holds one
   moved definition folder, checked by the console's
   `Using game data dir` line and a normal map start.
+- The probe is `armport-app-runtime` `serverdata_probe=true` (x86/perf-round3
+  06e219217; the app never sets it). Atlas's private tree omits `scripts.loc`.
+  `runtime/serverdata` links one shared tree, built once per data identity,
+  with read-only directories. Its cache generation is keyed apart from normal
+  ones. No guest proof or cache identity reads `scripts.loc`, and a fresh
+  mirror re-parses it from text. So the creation console's
+  `470 arcs, 957 contacts, 3528 tasks` line shows whether the engine read the
+  sources through the link. The runtime notice prints `serverdata_probe` and
+  `story_arc_counts`.
 
 ### Phase 3: close the cold-start gap on the x86 track
 
