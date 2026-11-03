@@ -1,0 +1,331 @@
+{
+  "format": 1,
+  "recorded_local_date": "2026-11-02",
+  "timezone": "America/Chicago",
+  "heads": {
+    "production": {
+      "sha": "e52185660025d365dca15f4f8146086ea593b1df",
+      "tree": "69d572483ae8e75989f530471dc15dbf40638b8b"
+    },
+    "source": {
+      "sha": "c34600ed3e62e1588f90851ae9944cf384cf22ce",
+      "tree": "582106762cabf6090904f82548b94d67a2120489"
+    },
+    "interactive_invocation": {
+      "sha": "84ce6fcd7ea5242efb4cb0d3a9368f40f35762a2",
+      "tree": "ca3a89b0683e518a6a073267a1f8296be74aa9d6"
+    }
+  },
+  "final_delivery_head_and_tree": "Recorded in issue10 completion/CI-request comment after committing this evidence; no self-referential hash claim",
+  "production_paths_unchanged_after_production_checkpoint": true,
+  "interactive_invocation_to_production_paths_unchanged": true,
+  "suites": [
+    {
+      "name": "ArmPort full",
+      "run": 445,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 33.38,
+      "head": "e52185660025d365dca15f4f8146086ea593b1df",
+      "command": "ARMPORT_SERVER_BASELINE_ROOT=<pristine-c86> python3 -m unittest discover -s armport/tests -p 'test_*.py' -v"
+    },
+    {
+      "name": "Modern runtime controls",
+      "run": 53,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.061,
+      "head": "e52185660025d365dca15f4f8146086ea593b1df",
+      "command": "COH_CANDIDATE_ROOT=<repo> ARMPORT_SERVER_BASELINE_ROOT=<pristine-c86> python3 -m unittest discover -s armport/modern-runtime -p 'test_*.py' -v"
+    },
+    {
+      "name": "Client guest",
+      "run": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "command": "python3 -m unittest discover -s tools/android/client -p 'test_guest.py' -v"
+    },
+    {
+      "name": "Game device lifecycle",
+      "run": 64,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "command": "python3 -m unittest discover -s tools/android/atlasgame -p 'test_game_device_diagnostic.py' -v"
+    },
+    {
+      "name": "Host device smoke",
+      "run": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "command": "python3 -m unittest discover -s tools/android/atlasgame -p 'test_host_device_smoke.py' -v"
+    },
+    {
+      "name": "Cleanup lineage full host proc",
+      "run": 29,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "command": "python3 -m unittest discover -s tools/android/atlasgame -p 'test_device*.py' -v",
+      "limitation": "Unrelated same-UID nondumpable host PID namespace EACCES; unchanged whole-proc test controlled reproduction fails at pristine c86 and merged source. No ownership check weakened."
+    },
+    {
+      "name": "Interactive/Java full before test adapter repairs",
+      "run": 3048,
+      "failures": 69,
+      "errors": 28,
+      "skipped": 31,
+      "seconds": 717.383,
+      "head_at_invocation": "84ce6fcd7ea5242efb4cb0d3a9368f40f35762a2",
+      "head_at_completion": "e52185660025d365dca15f4f8146086ea593b1df",
+      "command": "python3 -m unittest discover -s tools/android/interactive -p 'test_*.py' -v",
+      "green": false
+    },
+    {
+      "name": "Merged affected modules after adapter repairs",
+      "run": 138,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 13.571,
+      "head": "c34600ed3e62e1588f90851ae9944cf384cf22ce",
+      "command": "PYTHONPATH=tools/android/interactive python3 -m unittest test_character_server test_kings_preparation_budgets test_saved_map_preparation test_local_launcher_wait test_client_capture_metrics test_client_gpu_repair_evidence test_storage_ui -v",
+      "remaining_failures": [
+        "test_client_gpu_repair_evidence.GPURepairEvidenceTests.test_legacy_short_observation_stays_accepted",
+        "test_client_gpu_repair_evidence.GPURepairEvidenceTests.test_physical_0_13_20_software_report_uses_verified_connection_budget"
+      ],
+      "limitation": "Old bounded .20 report positive expectations fail current manual-reopen policy; production and old report bytes/assertions retained."
+    }
+  ],
+  "baseline_commit": "c86a57962363dbe2dc2091dadde6abdfaa2e1e1c",
+  "environment": [
+    "Installed OpenJDK17 compiler module exposed through scratch javac launcher",
+    "Historical server baseline checked clean before/after",
+    "No new CI chain, APK build, signing or release in this task"
+  ],
+  "limitations": [
+    "Full interactive suite is not green and was not rerun wholesale after test-only corrections; affected138 cases rerun at final source checkpoint",
+    "Authenticated historical APK/build receipt/current MapServer fixtures absent",
+    "Host Vulkan CPU ICD and PostgreSQL fixture gates unavailable",
+    "Obsolete historical publication-path/loader-count/appearance-producer assertions remain",
+    "Not every remaining failure independently reproduced",
+    "No physical Thor or integrated runtime/native execution; performance and60second target unmeasured"
+  ],
+  "new_ci": {
+    "status": "request_for_Claude",
+    "run_ids": [],
+    "branch": "x86-track",
+    "stages": [
+      {
+        "workflow": "armport-build.yml",
+        "inputs": {
+          "build_server_metrics": true
+        }
+      },
+      {
+        "workflow": "armport-app-runtime.yml",
+        "inputs": {
+          "client_run_id": "same successful build ID",
+          "data_run_id": "same successful build ID",
+          "server_run_id": "same successful build ID"
+        }
+      }
+    ],
+    "apk_stage": false
+  },
+  "logs": {
+    "armport-final.log.gz": {
+      "raw_bytes": 70918,
+      "raw_sha256": "f4c5c5c6752542f1f5991bf5b25aca62da5dfc7d34b151a6fdea13dceb03e00d",
+      "gzip_bytes": 12269,
+      "gzip_sha256": "02458c56af84c7ebf7e69f01d384d0d51e5d11d1be3999d028ddc9055e6715b3",
+      "summary": [
+        "Ran 445 tests in 33.380s",
+        "OK"
+      ]
+    },
+    "modern-runtime-final.log.gz": {
+      "raw_bytes": 8503,
+      "raw_sha256": "85c2eb0089e6c6647422727b9e189c0a58cc5cfe44b6f9ecee1c1b34028369ea",
+      "gzip_bytes": 1700,
+      "gzip_sha256": "4487a4d544c739c780e907c1f3524d3525851e951eccff157c37f1384a668950",
+      "summary": [
+        "Ran 53 tests in 0.061s",
+        "OK"
+      ]
+    },
+    "guest-client-full.log.gz": {
+      "raw_bytes": 4007,
+      "raw_sha256": "b09a9954bb15895ce6df86d8dd66bfbf879320c1603da3fb062211d306f57b49",
+      "gzip_bytes": 951,
+      "gzip_sha256": "f210c3335ec98f3182d543024c7ed439be9fb5a67d521e670b06d2c14dbb11a0",
+      "summary": [
+        "Ran 27 tests in 1.114s",
+        "OK"
+      ]
+    },
+    "guest-game-device-full.log.gz": {
+      "raw_bytes": 12627,
+      "raw_sha256": "d6d6d200175da27626058187879bc04129f13f1952fec9725d772473ee4d0bef",
+      "gzip_bytes": 2448,
+      "gzip_sha256": "900f5e88c6231a93bf611233d475a545bb3da095fb4b6961a33afdf969c271fc",
+      "summary": [
+        "Ran 64 tests in 1.860s",
+        "OK"
+      ]
+    },
+    "guest-host-device-smoke.log.gz": {
+      "raw_bytes": 2996,
+      "raw_sha256": "5476cc6feb9d6e0ebf379cc323795090bbdaf9ffb2b45c1ee04a4ca8180a9569",
+      "gzip_bytes": 700,
+      "gzip_sha256": "9cc6c8e7b5f085db7b5e8bc3354931d0084b506446d8642dfe951a805ca12546",
+      "summary": [
+        "Ran 17 tests in 0.135s",
+        "OK"
+      ]
+    },
+    "guest-device-lifecycle.log.gz": {
+      "raw_bytes": 8731,
+      "raw_sha256": "7f870370f1905120e1adf072b2c9591e332ac669d2a66719e79c17804e731897",
+      "gzip_bytes": 1644,
+      "gzip_sha256": "6ecd26207abeabc5739167f4a001c1b86906f3a10e4a93496be01dcc6c61a009",
+      "summary": [
+        "Ran 29 tests in 3.323s",
+        "FAILED (errors=1)"
+      ]
+    },
+    "guest-proc-controlled-baseline.log.gz": {
+      "raw_bytes": 3254,
+      "raw_sha256": "8f201902dbf00a1e6b63a3e7f6da59a1fd49ef87aa53cb9a6fcb83cbdafcdf47",
+      "gzip_bytes": 806,
+      "gzip_sha256": "901dc2ee7d0071ca46c9130584ab625f47cd54854b8d89ef5cf93d4f20ef57a8",
+      "summary": [
+        "FAILED (errors=1)"
+      ]
+    },
+    "guest-proc-controlled-merged.log.gz": {
+      "raw_bytes": 3410,
+      "raw_sha256": "b6048f4185badcec9097444feaf94c5cb066972c685420d7c5613b2e22fba220",
+      "gzip_bytes": 822,
+      "gzip_sha256": "7ab1c61b08180d85114e25690d007bf612de39607b5b2a1724d8cefb710dbabd",
+      "summary": [
+        "FAILED (errors=1)"
+      ]
+    },
+    "interactive-full.log.gz": {
+      "raw_bytes": 700534,
+      "raw_sha256": "6cdd0f69b26e80a456865f33dd2bb49c8751448b89729fd7092b30c9135ff696",
+      "gzip_bytes": 93833,
+      "gzip_sha256": "e48ab8ac6fcbc70e7da4da5e52457e20131cce781624cccc88aaba85b2d486b6",
+      "summary": [
+        "Ran 3048 tests in 717.383s",
+        "FAILED (failures=69, errors=28, skipped=31)"
+      ]
+    },
+    "merged-focused-final.log.gz": {
+      "raw_bytes": 27191,
+      "raw_sha256": "d38956d3bb6b9334843ba9f92d3a9e56dbf928c408b57af20e52a7e6b367d485",
+      "gzip_bytes": 4467,
+      "gzip_sha256": "cf77fc3f7e18822009d1442a78d80dd400ffd63f02255edab7e2397598aabefc",
+      "summary": [
+        "Ran 138 tests in 13.571s",
+        "FAILED (failures=2)"
+      ]
+    },
+    "preintegration-focused-92bc140f.log.gz": {
+      "raw_bytes": 2826,
+      "raw_sha256": "1d5db41e308d7beb4c383ef9801d153d6597b027c9c6cb6b747768ba55162e6c",
+      "gzip_bytes": 634,
+      "gzip_sha256": "f15f3e2d00a4756edf667923daaeb385912bb8ddbe097630ac963f98e2c85431",
+      "summary": [
+        "Ran 2 tests in 0.001s",
+        "FAILED (failures=2)"
+      ]
+    },
+    "preintegration-focused-merged.log.gz": {
+      "raw_bytes": 2798,
+      "raw_sha256": "9f726a4abac0606403c9182845322a36476ed9c06190db2845c0a9c0fe954c42",
+      "gzip_bytes": 627,
+      "gzip_sha256": "b141fccea5869beda985d51a6f4965f6ee300cbf4fee750d04a34b9890c1d184",
+      "summary": [
+        "Ran 2 tests in 0.001s",
+        "FAILED (failures=2)"
+      ]
+    },
+    "preintegration-focused-comparison.log.gz": {
+      "raw_bytes": 1032,
+      "raw_sha256": "921d47d1252f71d159147b11e426b58a6e62920d4af8e862ba5baa6258669b60",
+      "gzip_bytes": 557,
+      "gzip_sha256": "3e0d6b1b2088bde28faed7b27400b10b79a04a7de739d88dbf9de9bb9051e7ac",
+      "summary": []
+    },
+    "failure-merged-nonpackage.log.gz": {
+      "raw_bytes": 36827,
+      "raw_sha256": "85c9a52e8042461625a7fecc1f79d709588be437fb12fcf2c16a5f04fdc82e51",
+      "gzip_bytes": 5218,
+      "gzip_sha256": "eaeda35899548ba99fa16bd8c6080945d7fa56487b5297f7232dff31dd34023b",
+      "summary": [
+        "Ran 150 tests in 4.619s",
+        "FAILED (failures=1, errors=3, skipped=14)"
+      ]
+    },
+    "failure-startup-1f75894d-nonpackage.log.gz": {
+      "raw_bytes": 36927,
+      "raw_sha256": "86d85d9b03dcb792433bb7e34a7b75d3d310ca54486d05a5d5e42207df65c7a4",
+      "gzip_bytes": 5213,
+      "gzip_sha256": "f82b248fa909f088d572a887af622c3d378f7320c4d0c4707f20321a95aa7088",
+      "summary": [
+        "Ran 150 tests in 6.021s",
+        "FAILED (failures=1, errors=3, skipped=14)"
+      ]
+    },
+    "java-fixtures-before.log.gz": {
+      "raw_bytes": 5675,
+      "raw_sha256": "752204da4c86b299e162991f63807cf9869ccae684edb1f00e3533f5e6b91332",
+      "gzip_bytes": 1161,
+      "gzip_sha256": "1dd980843c7092c3a0ce2a6b3dddeebd34ed115afc50463ec2d0b820a70b6602",
+      "summary": [
+        "Ran 0 tests in 2.676s",
+        "FAILED (errors=3)"
+      ]
+    },
+    "java-fixtures-after.log.gz": {
+      "raw_bytes": 10273,
+      "raw_sha256": "95336aef5ba4a4f3a2442662ba26c278d7941685e270c47a27d4b7ae16b33176",
+      "gzip_bytes": 1910,
+      "gzip_sha256": "2e45350a7f86e71148e0491a2a5a10fa989d84e81cc2d00ea6f13b9b77825a53",
+      "summary": [
+        "Ran 51 tests in 7.465s",
+        "FAILED (failures=2)"
+      ]
+    },
+    "guest-fixtures-ef4633bd2.log.gz": {
+      "raw_bytes": 17039,
+      "raw_sha256": "a46ec77c3f4cb65c787c80356a7aab3f7bc71da1aadab6db063a109e18c0d953",
+      "gzip_bytes": 2836,
+      "gzip_sha256": "0c2057452dc05141222ecf685c7a7c0fd976622fabd1d344ab4f2b613b907541",
+      "summary": [
+        "Ran 87 tests in 5.786s",
+        "OK"
+      ]
+    }
+  },
+  "publication": {
+    "record": "publication-map.json",
+    "method": "GitHub connector Git data API; terminal git push had no credentials",
+    "ordered_parents_preserved": true,
+    "source_trees_byte_identical": true,
+    "published_source_checkpoint": {
+      "sha": "6a9ccc5b7de531b7dd8b1ba1e6247e71ed05da31",
+      "tree": "582106762cabf6090904f82548b94d67a2120489"
+    },
+    "published_production_checkpoint": {
+      "sha": "263acad1f57faff91505afcbb517494a8fc9841e",
+      "tree": "69d572483ae8e75989f530471dc15dbf40638b8b"
+    }
+  }
+}

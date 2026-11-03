@@ -21,6 +21,12 @@ Default branch remains main; no release, APK handoff or repository setting chang
 - Startup instrumentation/ODBC reuse included; gain and ≤60 s remain unmeasured.
   Historical build41363927704 passed; runtime41372922907 rejected old 0119 pin
   before guest launch. Corrected pin and regression are included.
-- .37 app/guest work assessed without joining unrelated histories.
-- Final port/skip list, local suites, source identity and CI request: HANDOFF-X86.md
-  and the x86 integration issue. Use X86-THOR-TEST.md for the next device lane.
+- .37 cleanup hardening ported at e50a0e42e; packaging admission at 263acad1f.
+  Manual policy already superseded; dormant metadata/promotion chain skipped.
+- Local ArmPort445/modern53 and guest27/64/17 pass. Cleanup whole-/proc has one
+  inherited host EACCES error, reproduced on pristine c86; guards remain intact.
+- Full interactive:3048 run/69 failures/28 errors/31 skips before fixture repair.
+  Affected rerun138:2 legacy GPU-policy failures, no errors/skips; full is not green.
+- Exact source, preserved logs, skips, runtime pins and pending frozen-head CI
+  request: HANDOFF-X86.md and issue10. No new CI/APK chain was started here.
+- Use X86-THOR-TEST.md for Claude's next reviewed x86 device baseline.

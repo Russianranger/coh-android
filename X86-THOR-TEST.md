@@ -10,7 +10,7 @@ explicitly select it because an existing installation can retain an earlier
 ARM64 preference. `ARM64 client (experimental)` remains available and shelved.
 The x86 Win32 servers retain PhysX/ragdolls. Do not use historical ARM64
 FPS figures as an x86 gameplay baseline. Sources: `ClientActivity.java`'s
-architecture selector, `ClientRuntime.getClientArchitecture`, and
+architecture selector, `ClientRuntime.clientArchitecture(Context)`, and
 [armport/PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md).
 
 ## Setup and retained state

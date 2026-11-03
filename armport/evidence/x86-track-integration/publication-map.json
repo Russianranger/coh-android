@@ -1,0 +1,117 @@
+{
+  "format": 1,
+  "method": "GitHub connector Git data API; terminal git push had no credentials",
+  "scope": "Only new unpublished integration objects; existing branch histories unchanged",
+  "ordered_parents_preserved": true,
+  "source_trees_byte_identical": true,
+  "commits": [
+    {
+      "local_audit_commit": "36998008aed1b1d394ae69d07c65c3d672266621",
+      "published_commit": "ce359256d0e7e1bb9872698c5ab9da6e91e84b7b",
+      "tree": "adca8b9f9934742901c6c59894efc18481da5fea",
+      "local_parents": [
+        "8dc2a66d72477b3c62227e572538b13f0e4f912b",
+        "1f75894db9117f3567b76d087d7cc5ddce87b3e6"
+      ],
+      "published_parents": [
+        "8dc2a66d72477b3c62227e572538b13f0e4f912b",
+        "1f75894db9117f3567b76d087d7cc5ddce87b3e6"
+      ]
+    },
+    {
+      "local_audit_commit": "8e9006c752f399209a8a2a8e25b565754bde2e52",
+      "published_commit": "fb9fce3c33f480cd78ad4aa9efcb439b8fd87547",
+      "tree": "83e003bfa6428c399b10db2859687ca3665f38f6",
+      "local_parents": [
+        "36998008aed1b1d394ae69d07c65c3d672266621",
+        "84c79f336b94442dc151b06df6e993823746154c"
+      ],
+      "published_parents": [
+        "ce359256d0e7e1bb9872698c5ab9da6e91e84b7b",
+        "84c79f336b94442dc151b06df6e993823746154c"
+      ]
+    },
+    {
+      "local_audit_commit": "bf008fd0864ad6d3b852676e480374fe74f49eea",
+      "published_commit": "28234c9a29556768405357bfd6bf1e1235ce2eef",
+      "tree": "ab3b7ee3cee666a415287fbfb1edb3aa37afbb92",
+      "local_parents": [
+        "8e9006c752f399209a8a2a8e25b565754bde2e52",
+        "b7806a6bdfc3cf159f743786fc9ed6aab94ce801"
+      ],
+      "published_parents": [
+        "fb9fce3c33f480cd78ad4aa9efcb439b8fd87547",
+        "b7806a6bdfc3cf159f743786fc9ed6aab94ce801"
+      ]
+    },
+    {
+      "local_audit_commit": "92bc140fecfa9ac1b8d979e69c660a8d134bcc79",
+      "published_commit": "9c4c8124c4732a49e6890c57cf6c92a87353573b",
+      "tree": "aba1d3dadbbfd815f9fd2441cdcb9902e866b6aa",
+      "local_parents": [
+        "bf008fd0864ad6d3b852676e480374fe74f49eea",
+        "365ab195e29120d1cf2c862a5a5db05a361ed2f9"
+      ],
+      "published_parents": [
+        "28234c9a29556768405357bfd6bf1e1235ce2eef",
+        "365ab195e29120d1cf2c862a5a5db05a361ed2f9"
+      ]
+    },
+    {
+      "local_audit_commit": "84ce6fcd7ea5242efb4cb0d3a9368f40f35762a2",
+      "published_commit": "e50a0e42e1dc489f540ccecb788266e39fd3ed70",
+      "tree": "ca3a89b0683e518a6a073267a1f8296be74aa9d6",
+      "local_parents": [
+        "92bc140fecfa9ac1b8d979e69c660a8d134bcc79"
+      ],
+      "published_parents": [
+        "9c4c8124c4732a49e6890c57cf6c92a87353573b"
+      ]
+    },
+    {
+      "local_audit_commit": "e5cb0f8462f046bc88ee751c20db6b4b04f642ff",
+      "published_commit": "556193f7ea1fce317af6d253199686979cf711ca",
+      "tree": "68db681a274f2d384e90184e4c7424fc75a8aef5",
+      "local_parents": [
+        "84ce6fcd7ea5242efb4cb0d3a9368f40f35762a2"
+      ],
+      "published_parents": [
+        "e50a0e42e1dc489f540ccecb788266e39fd3ed70"
+      ]
+    },
+    {
+      "local_audit_commit": "e52185660025d365dca15f4f8146086ea593b1df",
+      "published_commit": "263acad1f57faff91505afcbb517494a8fc9841e",
+      "tree": "69d572483ae8e75989f530471dc15dbf40638b8b",
+      "local_parents": [
+        "e5cb0f8462f046bc88ee751c20db6b4b04f642ff"
+      ],
+      "published_parents": [
+        "556193f7ea1fce317af6d253199686979cf711ca"
+      ]
+    },
+    {
+      "local_audit_commit": "17f843de79ad326d06bdb5efa6172b424e71b667",
+      "published_commit": "2bf52f2cfd7040306e0c297d3cd424965d102b5d",
+      "tree": "60dab9b52bcfd487eba78fe4024cad970e99e630",
+      "local_parents": [
+        "e52185660025d365dca15f4f8146086ea593b1df"
+      ],
+      "published_parents": [
+        "263acad1f57faff91505afcbb517494a8fc9841e"
+      ]
+    },
+    {
+      "local_audit_commit": "c34600ed3e62e1588f90851ae9944cf384cf22ce",
+      "published_commit": "6a9ccc5b7de531b7dd8b1ba1e6247e71ed05da31",
+      "tree": "582106762cabf6090904f82548b94d67a2120489",
+      "local_parents": [
+        "17f843de79ad326d06bdb5efa6172b424e71b667"
+      ],
+      "published_parents": [
+        "2bf52f2cfd7040306e0c297d3cd424965d102b5d"
+      ]
+    }
+  ],
+  "final_delivery_head_and_tree": "Issue10 completion/CI request; final metadata commits cannot embed their own hashes"
+}

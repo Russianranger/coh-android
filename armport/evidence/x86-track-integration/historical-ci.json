@@ -1,0 +1,87 @@
+{
+  "source": "1f75894db9117f3567b76d087d7cc5ddce87b3e6",
+  "coordinator": 41378023882,
+  "coordinator_job": 125062478666,
+  "build": 41378036783,
+  "runtime": 41385774100,
+  "apk_historical_only": 41389970347,
+  "coordinator_stage_lines": [
+    "2026-11-02T02:29:53.4454964Z armport-build.yml: https://github.com/Russianranger/coh-android/actions/runs/41378036783",
+    "2026-11-02T02:29:53.6970312Z armport-build.yml: ('queued', None)",
+    "2026-11-02T02:30:13.9605088Z armport-build.yml: ('in_progress', None)",
+    "2026-11-02T02:33:56.7945549Z armport-build.yml: ('queued', None)",
+    "2026-11-02T02:34:57.5172227Z armport-build.yml: ('in_progress', None)",
+    "2026-11-02T03:40:48.1060716Z armport-build.yml: ('queued', None)",
+    "2026-11-02T03:41:08.3452744Z armport-build.yml: ('in_progress', None)",
+    "2026-11-02T03:57:00.6944992Z armport-build.yml: ('completed', 'success')",
+    "2026-11-02T03:57:05.9062244Z armport-app-runtime.yml: https://github.com/Russianranger/coh-android/actions/runs/41385774100",
+    "2026-11-02T03:57:06.2616022Z armport-app-runtime.yml: ('queued', None)",
+    "2026-11-02T03:57:26.5858421Z armport-app-runtime.yml: ('in_progress', None)",
+    "2026-11-02T03:57:46.8074895Z armport-app-runtime.yml: ('queued', None)",
+    "2026-11-02T03:58:07.0504374Z armport-app-runtime.yml: ('in_progress', None)",
+    "2026-11-02T04:42:40.2389570Z armport-app-runtime.yml: ('completed', 'success')",
+    "2026-11-02T04:42:47.5144913Z armport-thor-apk.yml: https://github.com/Russianranger/coh-android/actions/runs/41389970347",
+    "2026-11-02T04:42:47.7867387Z armport-thor-apk.yml: ('queued', None)",
+    "2026-11-02T04:43:08.0014007Z armport-thor-apk.yml: ('in_progress', None)",
+    "2026-11-02T04:44:49.4737557Z armport-thor-apk.yml: ('completed', 'success')",
+    "2026-11-02T04:44:50.1067828Z {\"source\": \"1f75894db9117f3567b76d087d7cc5ddce87b3e6\", \"build\": 41378036783, \"runtime\": 41385774100, \"apk\": 41389970347, \"modern_thor_runtime_qualified\": false, \"thor_60_second_target_proven\": false}"
+  ],
+  "runtime_jobs": [
+    {
+      "id": 125086158836,
+      "name": "app-sources",
+      "conclusion": "success"
+    },
+    {
+      "id": 125086159015,
+      "name": "assets",
+      "conclusion": "success"
+    },
+    {
+      "id": 125086334535,
+      "name": "guest-boot",
+      "conclusion": "success"
+    },
+    {
+      "id": 125087691362,
+      "name": "interactive-guest",
+      "conclusion": "success"
+    }
+  ],
+  "failed_prior_runtime": {
+    "run": 41372922907,
+    "jobs": [
+      {
+        "id": 125047061534,
+        "name": "app-sources",
+        "conclusion": "success",
+        "failed_steps": []
+      },
+      {
+        "id": 125047061932,
+        "name": "assets",
+        "conclusion": "success",
+        "failed_steps": []
+      },
+      {
+        "id": 125047219546,
+        "name": "guest-boot",
+        "conclusion": "success",
+        "failed_steps": []
+      },
+      {
+        "id": 125048624332,
+        "name": "interactive-guest",
+        "conclusion": "failure",
+        "failed_steps": [
+          {
+            "name": "Create, save, restart and reopen through the selected ARM64 app guest",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 13
+          }
+        ]
+      }
+    ]
+  }
+}

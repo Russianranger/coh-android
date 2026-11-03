@@ -1,0 +1,390 @@
+[
+  {
+    "case": "ERROR: setUpClass (test_animation_runtime_compatibility.AnimationRuntimeCompatibilityTests)",
+    "message": "AssertionError: Stage the authenticated public .29 APK via COH_ANIMATION_TEST_DONOR_APK; actual native validation must never skip"
+  },
+  {
+    "case": "ERROR: test_character_map_uses_native_production_grouping_and_retains_live_readiness_guards (test_character_server.CharacterLifecycleTests.test_character_map_uses_native_production_grouping_and_retains_live_readiness_guards)",
+    "message": "AttributeError: 'LocalCharacterServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_map_manifest_must_match_qualified_donor (test_character_server.CharacterLifecycleTests.test_map_manifest_must_match_qualified_donor)",
+    "message": "KeyError: 'files'"
+  },
+  {
+    "case": "ERROR: setUpClass (test_client_capture_metrics.CaptureMetricsTests)",
+    "message": "subprocess.CalledProcessError: Command '['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8', '-d', '/tmp/tmpj0udb_pt', '/tmp/tmpj0udb_pt/CaptureMetricsHost.java']' returned non-zero exit status 1."
+  },
+  {
+    "case": "ERROR: setUpClass (test_client_gpu_repair_evidence.GPURepairEvidenceTests)",
+    "message": "AssertionError: /tmp/coh-gpu-repair-evidence-fvj86iuv/GPURepairEvidenceHost.java:73: error: cannot find symbol"
+  },
+  {
+    "case": "ERROR: test_saved_map_sql_receipt_requires_all_readonly_fixtures_and_truthful_native_boundary (test_client_manual_session_package.ManualSessionPackageTests.test_saved_map_sql_receipt_requires_all_readonly_fixtures_and_truthful_native_boundary)",
+    "message": "RuntimeError: Actual saved-map PostgreSQL fixture proof differs"
+  },
+  {
+    "case": "ERROR: test_saved_map_sql_receipt_requires_all_readonly_fixtures_and_truthful_native_boundary (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_saved_map_sql_receipt_requires_all_readonly_fixtures_and_truthful_native_boundary)",
+    "message": "RuntimeError: Actual saved-map PostgreSQL fixture proof differs"
+  },
+  {
+    "case": "ERROR: test_guest_ast_delta_cannot_change_imports_unrelated_functions_or_verifier_hash_checks (test_client_startup_followup_package.ClientStartupFollowupPackagingTests.test_guest_ast_delta_cannot_change_imports_unrelated_functions_or_verifier_hash_checks)",
+    "message": "Traceback (most recent call last):\n  File \"/workspace/scratch/a5bd1da96468/coh-android/tools/android/interactive/test_client_startup_followup_package.py\", line 254, in test_guest_ast_delta_cannot_change_imports_unrelated_functions_or_verifier_hash_checks\n    path = next(path for path in (package.ROOT/'out/public'/package.DONOR_APK_NAME,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nStopIteration\n"
+  },
+  {
+    "case": "ERROR: setUpClass (test_coh_vulkan_gpu_probe.NativeVulkanProbeTests)",
+    "message": "RuntimeError: Actual host CPU Vulkan ICD required (mesa-vulkan-drivers)"
+  },
+  {
+    "case": "ERROR: test_candidate_serialized_proof_reauthenticates_full_wrapper_and_fx_phases (test_full_startup_preflight.FullStartupPreflightTests.test_candidate_serialized_proof_reauthenticates_full_wrapper_and_fx_phases)",
+    "message": "ValueError: Current MapServer must be a regular owned payload"
+  },
+  {
+    "case": "ERROR: test_completed_tick_with_wrong_or_notready_endpoint_cannot_publish_ready (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_completed_tick_with_wrong_or_notready_endpoint_cannot_publish_ready) (text='5 maps/City_Zones/City_01_02/City_01_02.txt S: 1 / 2 Ip: 127.0.0.1:7001 Mem: 100\\n')",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_completed_tick_with_wrong_or_notready_endpoint_cannot_publish_ready (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_completed_tick_with_wrong_or_notready_endpoint_cannot_publish_ready) (text='5 maps/City_Zones/City_01_02/City_01_02.txt NotReady 1 (Not started) Info\\n')",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_deadline_while_staging_station_reply_cannot_publish_authorization (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_deadline_while_staging_station_reply_cannot_publish_authorization)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_device_376_python_plus_274_native_is_separate_bounded_work (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_device_376_python_plus_274_native_is_separate_bounded_work)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_native_request_age_is_not_granted_again_after_observation (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_native_request_age_is_not_granted_again_after_observation)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_native_status_without_completed_tick_cannot_publish_ready (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_native_status_without_completed_tick_cannot_publish_ready)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_progress_becoming_stale_during_ready_evidence_cannot_publish_ready (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_progress_becoming_stale_during_ready_evidence_cannot_publish_ready)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_protocol_completion_after_deadline_cannot_publish_ready_or_arrival (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_protocol_completion_after_deadline_cannot_publish_ready_or_arrival)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_scheduler_restore_consuming_remaining_time_cannot_publish_ready (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_scheduler_restore_consuming_remaining_time_cannot_publish_ready)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_unused_python_time_cannot_extend_native_or_hard_total_cap (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_unused_python_time_cannot_extend_native_or_hard_total_cap) (python_seconds=10)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: test_unused_python_time_cannot_extend_native_or_hard_total_cap (test_kings_preparation_budgets.KingsPreparationBudgetTests.test_unused_python_time_cannot_extend_native_or_hard_total_cap) (python_seconds=400)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: setUpClass (test_kings_row_runtime_dependencies.KingsNativeDependencyTests)",
+    "message": "AssertionError: Actual authenticated public .30 APK required; native dependency tests never skip"
+  },
+  {
+    "case": "ERROR: test_native_ack_does_not_replace_dispatch_progress_or_listener_readiness (test_local_launcher_wait.GuestManualWaitTests.test_native_ack_does_not_replace_dispatch_progress_or_listener_readiness)",
+    "message": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpuoicv_f0/psqlodbc_x86.msi'"
+  },
+  {
+    "case": "ERROR: setUpClass (test_map_startup_cache_reuse.StartupCacheGenerationTests)",
+    "message": "ValueError: Current MapServer must be a regular owned payload"
+  },
+  {
+    "case": "ERROR: setUpClass (test_map_startup_native_contract.MapStartupContractReaderTests)",
+    "message": "ValueError: Current MapServer must be a regular owned payload"
+  },
+  {
+    "case": "ERROR: test_native_atlas_keeps_original_shared_deadline_after_python_preparation (test_saved_map_preparation.DeferredAtlasPreparationGuardTests.test_native_atlas_keeps_original_shared_deadline_after_python_preparation)",
+    "message": "AttributeError: 'LocalCharacterZoningServer' object has no attribute 'map_package'"
+  },
+  {
+    "case": "ERROR: setUpClass (test_storage_ui.StorageUiTests)",
+    "message": "subprocess.CalledProcessError: Command '['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8', '-d', '/tmp/coh-storage-ui-jxfhoc90', '/tmp/coh-storage-ui-jxfhoc90/StorageUiHost.java']' returned non-zero exit status 1."
+  },
+  {
+    "case": "ERROR: test_required_geometry_source_proof_and_cache_key_cannot_be_changed_or_moved_after_checkout (test_ui_beacon_package.UiBeaconPackagingTests.test_required_geometry_source_proof_and_cache_key_cannot_be_changed_or_moved_after_checkout)",
+    "message": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/a5bd1da96468/coh-android/out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk'"
+  },
+  {
+    "case": "FAIL: test_actual_candidate_change_set_routes_only_to_its_dedicated_workflow (test_classify_storage_cleanup_change.StorageRoutingTests.test_actual_candidate_change_set_routes_only_to_its_dedicated_workflow)",
+    "message": "AssertionError: {'android/guest/game_device_diagnostic.py', 'tools/android/atlasgame/test_device_cleanup_lineage.py'} not less than or equal to frozenset({'tools/android/interactive/test_classify_interactive_change.py', 'android/guest/character_creation_diagnostic.py', 'docs/HANDOFF.md', 'tools/android/interactive/classify_storage_cleanup_change.py', 'android/guest/texture_header_index.py', 'android/guest/client_startup_diagnostic.py', 'docs/android-evidence/startup-bundle-0.13.6-publication.json', 'tools/android/interactive/package_startup_bundle_dbserver.py', 'tools/android/interactive/build_startup_bundle_apk.py', 'tools/android/interactive/test_startup_bundle_client.py', 'tools/android/interactive/test_responsiveness_package.py', 'tools/android/interactive/package_startup_bundle_client.py', 'tools/android/interactive/test_classify_storage_cleanup_change.py', 'android/guest/client_interactive_diagnostic.py', 'database/startup-bundle-client/overlay/Game/src/render/coh_texture_header_root.h', 'docs/android-evidence/startup-bundle-0.13.5-device-result.json', 'patches/startup-bundle-client/0001-verified-texture-root.patch', 'android/guest/native_responsiveness_contract.py', 'tools/android/interactive/test_startup_bundle_save.py', 'tools/android/interactive/test_startup_bundle_package.py', 'android/guest/local_character_server.py', 'patches/startup-bundle/0001-pg-cancelled-child-insert.patch', 'android/guest/character_server_data_cache.py', 'tools/android/interactive/test_setup_memory_package.py', '.github/workflows/android-setup-memory.yml', 'tools/android/interactive/test_server_worktree_reuse.py', 'docs/COH-Atlas-Gameplay-0.13.6-testing.txt', 'tools/android/interactive/test_startup_bundle_dbserver.py', 'tools/android/interactive/qualify_startup_bundle.py', 'tools/android/interactive/test_texture_header_index.py', '.github/workflows/android-startup-schedule.yml', '.github/workflows/android-startup-bundle.yml', 'tools/android/interactive/classify_interactive_change.py', 'tools/android/interactive/test_character_readiness.py', 'tools/android/interactive/test_native_client_upgrade.py'}) : Candidate contains an unclassified publication path"
+  },
+  {
+    "case": "FAIL: test_actual_030_historical_payload_and_installer_preflight_are_process_deterministic (test_client_animation_repair_package.AnimationRepairPackageTests.test_actual_030_historical_payload_and_installer_preflight_are_process_deterministic)",
+    "message": "AssertionError: False is not true : Exact public .30 APK and report required; no fixture skip"
+  },
+  {
+    "case": "FAIL: test_actual_public_payloads_have_only_reviewed_helpers_native_launcher_and_manifests (test_client_manual_session_package.ManualSessionPackageTests.test_actual_public_payloads_have_only_reviewed_helpers_native_launcher_and_manifests)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_ancestry_is_appended_without_relabelling_original_report_or_native_producers (test_client_manual_session_package.ManualSessionPackageTests.test_ancestry_is_appended_without_relabelling_original_report_or_native_producers)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_audit_receipt_binds_every_independent_signed_byte_authority_and_disallows_claim_inflation (test_client_manual_session_package.ManualSessionPackageTests.test_audit_receipt_binds_every_independent_signed_byte_authority_and_disallows_claim_inflation)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_every_game_db_map_gpu_wine_fex_asset_and_resource_byte_is_retained (test_client_manual_session_package.ManualSessionPackageTests.test_every_game_db_map_gpu_wine_fex_asset_and_resource_byte_is_retained)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_historical_builders_markers_workflows_and_tests_are_exact_source_bytes (test_client_manual_session_package.ManualSessionPackageTests.test_historical_builders_markers_workflows_and_tests_are_exact_source_bytes)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_missing_or_forged_helper_source_pins_cannot_create_runtime_manifest (test_client_manual_session_package.ManualSessionPackageTests.test_missing_or_forged_helper_source_pins_cannot_create_runtime_manifest)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_monotonic_successor_uses_audited_034_donor_and_original_native_identity (test_client_manual_session_package.ManualSessionPackageTests.test_monotonic_successor_uses_audited_034_donor_and_original_native_identity)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_payload_retention_rejects_unknown_missing_or_native_byte_change (test_client_manual_session_package.ManualSessionPackageTests.test_payload_retention_rejects_unknown_missing_or_native_byte_change)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_retained_contracts_keep_exact_original_nested_suite_source_and_donor_attribution (test_client_manual_session_package.ManualSessionPackageTests.test_retained_contracts_keep_exact_original_nested_suite_source_and_donor_attribution)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_wrong_donor_receipt_and_wrong_apk_are_rejected_before_reconstruction (test_client_manual_session_package.ManualSessionPackageTests.test_wrong_donor_receipt_and_wrong_apk_are_rejected_before_reconstruction)",
+    "message": "AssertionError: Authenticated actual public .34 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_component_serialization_preserves_every_historical_reader_before_preparation (test_client_map_startup_package.MapStartupPackageTests.test_actual_component_serialization_preserves_every_historical_reader_before_preparation)",
+    "message": "AssertionError: False is not true : Actual authenticated .31 APK, receipt and certified native component are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_component_serialization_refuses_changed_retained_metadata_and_native_members (test_client_map_startup_package.MapStartupPackageTests.test_actual_component_serialization_refuses_changed_retained_metadata_and_native_members)",
+    "message": "AssertionError: False is not true : Actual authenticated .31 APK, receipt and certified native component are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_proof_transport_preserves_old_and_new_admissions_across_every_report_boundary (test_client_map_startup_package.MapStartupPackageTests.test_actual_proof_transport_preserves_old_and_new_admissions_across_every_report_boundary)",
+    "message": "AssertionError: False is not true : Actual authenticated .31 APK, receipt and certified native component are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_public_031_and_certified_native_component_complete_cold_warm_kings_preparation (test_client_map_startup_package.MapStartupPackageTests.test_actual_public_031_and_certified_native_component_complete_cold_warm_kings_preparation)",
+    "message": "AssertionError: False is not true : Actual authenticated .31 APK, receipt and certified native component are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_authenticated_030_donor_and_candidate_full_orchestration (test_client_profile_recovery_package.ProfileRecoveryPackageTests.test_actual_authenticated_030_donor_and_candidate_full_orchestration)",
+    "message": "AssertionError: False is not true : Exact .30 public APK/report required; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_published_donor_reconstructs_identically_in_independent_processes (test_client_receipt_repair_package.ReceiptRepairPackageTests.test_actual_published_donor_reconstructs_identically_in_independent_processes)",
+    "message": "AssertionError: False is not true : Stage authenticated .28 or .29 donor for the retained actual serialization gate"
+  },
+  {
+    "case": "FAIL: test_actual_authenticated_report_still_requires_accepted_identity (test_client_report_loading_package.ReportLoadingPackageTests.test_actual_authenticated_report_still_requires_accepted_identity)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_changed_payloads_are_three_helpers_and_two_manifests_only (test_client_report_loading_package.ReportLoadingPackageTests.test_actual_changed_payloads_are_three_helpers_and_two_manifests_only)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_derivative_retains_every_archive_native_component_graphics_and_asset_byte (test_client_report_loading_package.ReportLoadingPackageTests.test_actual_derivative_retains_every_archive_native_component_graphics_and_asset_byte)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_donor_member_and_receipt_authentication (test_client_report_loading_package.ReportLoadingPackageTests.test_actual_donor_member_and_receipt_authentication)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_donor_rejects_changed_apk_or_build_receipt_bytes (test_client_report_loading_package.ReportLoadingPackageTests.test_actual_donor_rejects_changed_apk_or_build_receipt_bytes)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_game_receipt_serialization_and_existing_native_reader_admissions_remain_exact (test_client_report_loading_package.ReportLoadingPackageTests.test_actual_game_receipt_serialization_and_existing_native_reader_admissions_remain_exact)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_payload_boundary_rejects_any_unreviewed_change_addition_loss_or_unapplied_repair (test_client_report_loading_package.ReportLoadingPackageTests.test_actual_payload_boundary_rejects_any_unreviewed_change_addition_loss_or_unapplied_repair)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_current_sources_retain_all_nonreviewed_java_guest_and_native_source_bytes (test_client_report_loading_package.ReportLoadingPackageTests.test_current_sources_retain_all_nonreviewed_java_guest_and_native_source_bytes)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_current_suite_admission_rejects_reduced_counts_even_when_qualification_totals_are_adjusted (test_client_report_loading_package.ReportLoadingPackageTests.test_current_suite_admission_rejects_reduced_counts_even_when_qualification_totals_are_adjusted)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_current_suite_admission_uses_actual_loader_count_without_executing_test_bodies (test_client_report_loading_package.ReportLoadingPackageTests.test_current_suite_admission_uses_actual_loader_count_without_executing_test_bodies)",
+    "message": "AssertionError: 6 != 5"
+  },
+  {
+    "case": "FAIL: test_dependency_block_closure_detects_changed_roles_helpers_and_missing_import_bindings (test_client_report_loading_package.ReportLoadingPackageTests.test_dependency_block_closure_detects_changed_roles_helpers_and_missing_import_bindings)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_historical_032_builder_marker_and_native_qualification_remain_immutable (test_client_report_loading_package.ReportLoadingPackageTests.test_historical_032_builder_marker_and_native_qualification_remain_immutable)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_independent_audit_writes_receipt_only_after_successful_full_signed_byte_admission (test_client_report_loading_package.ReportLoadingPackageTests.test_independent_audit_writes_receipt_only_after_successful_full_signed_byte_admission)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_light_extraction_never_runs_preparation_or_native_component_builds (test_client_report_loading_package.ReportLoadingPackageTests.test_light_extraction_never_runs_preparation_or_native_component_builds)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_light_signed_payload_verification_retains_native_bytes_without_repeating_heavy_preparation (test_client_report_loading_package.ReportLoadingPackageTests.test_light_signed_payload_verification_retains_native_bytes_without_repeating_heavy_preparation)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_manifest_inputs_reject_extra_missing_or_retained_native_and_graphics_helpers (test_client_report_loading_package.ReportLoadingPackageTests.test_manifest_inputs_reject_extra_missing_or_retained_native_and_graphics_helpers)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_manifest_updates_preserve_existing_metadata_order_bindings_and_authority (test_client_report_loading_package.ReportLoadingPackageTests.test_manifest_updates_preserve_existing_metadata_order_bindings_and_authority)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_native_parser_fixture_admits_exact_existing_031_bytes_without_changing_shipping_donor (test_client_report_loading_package.ReportLoadingPackageTests.test_native_parser_fixture_admits_exact_existing_031_bytes_without_changing_shipping_donor)",
+    "message": "AssertionError: False is not true : Actual public .31 parser fixture APK is required; no skips"
+  },
+  {
+    "case": "FAIL: test_native_parser_fixture_rejects_missing_corrupt_032_or_symlink_before_mutating_environment (test_client_report_loading_package.ReportLoadingPackageTests.test_native_parser_fixture_rejects_missing_corrupt_032_or_symlink_before_mutating_environment)",
+    "message": "AssertionError: False is not true : Actual public .31 parser fixture APK is required; no skips"
+  },
+  {
+    "case": "FAIL: test_publication_requires_matching_independent_audit_receipt_before_any_api_call (test_client_report_loading_package.ReportLoadingPackageTests.test_publication_requires_matching_independent_audit_receipt_before_any_api_call)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_retained_binary_fixture_admission_rejects_current_method_and_transitive_dependency_changes (test_client_report_loading_package.ReportLoadingPackageTests.test_retained_binary_fixture_admission_rejects_current_method_and_transitive_dependency_changes)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_retained_binary_fixture_guest_methods_close_over_exact_actual_032_dependencies (test_client_report_loading_package.ReportLoadingPackageTests.test_retained_binary_fixture_guest_methods_close_over_exact_actual_032_dependencies)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_signed_audit_record_binds_every_authority_without_claiming_device_execution (test_client_report_loading_package.ReportLoadingPackageTests.test_signed_audit_record_binds_every_authority_without_claiming_device_execution)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_signed_audit_record_cannot_be_replayed_for_changed_source_or_report_authority (test_client_report_loading_package.ReportLoadingPackageTests.test_signed_audit_record_cannot_be_replayed_for_changed_source_or_report_authority)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_signed_audit_record_rejects_forged_flags_pins_omissions_and_unreviewed_fields (test_client_report_loading_package.ReportLoadingPackageTests.test_signed_audit_record_rejects_forged_flags_pins_omissions_and_unreviewed_fields)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_unreviewed_java_and_guest_source_pin_changes_cannot_enter_derivative (test_client_report_loading_package.ReportLoadingPackageTests.test_unreviewed_java_and_guest_source_pin_changes_cannot_enter_derivative)",
+    "message": "AssertionError: Actual authenticated public .32 APK and build receipt are mandatory; no skips"
+  },
+  {
+    "case": "FAIL: test_actual_public_payloads_have_only_two_reviewed_helper_and_manifest_replacements (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_actual_public_payloads_have_only_two_reviewed_helper_and_manifest_replacements)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_ancestry_is_appended_without_relabelling_original_report_or_native_producers (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_ancestry_is_appended_without_relabelling_original_report_or_native_producers)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_audit_receipt_binds_every_independent_signed_byte_authority_and_disallows_claim_inflation (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_audit_receipt_binds_every_independent_signed_byte_authority_and_disallows_claim_inflation)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_every_native_gpu_wine_fex_asset_descriptor_and_resource_byte_is_retained (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_every_native_gpu_wine_fex_asset_descriptor_and_resource_byte_is_retained)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_historical_032_033_builders_markers_workflows_and_tests_are_exact_source_bytes (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_historical_032_033_builders_markers_workflows_and_tests_are_exact_source_bytes)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_missing_or_forged_helper_source_pins_cannot_create_runtime_manifest (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_missing_or_forged_helper_source_pins_cannot_create_runtime_manifest)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_monotonic_successor_uses_audited_033_donor_and_original_native_identity (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_monotonic_successor_uses_audited_033_donor_and_original_native_identity)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_payload_retention_rejects_unknown_missing_or_native_byte_change (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_payload_retention_rejects_unknown_missing_or_native_byte_change)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_retained_contracts_keep_exact_original_nested_suite_source_and_donor_attribution (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_retained_contracts_keep_exact_original_nested_suite_source_and_donor_attribution)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_wrong_donor_receipt_and_wrong_apk_are_rejected_before_reconstruction (test_client_saved_map_reopen_package.SavedMapReopenPackageTests.test_wrong_donor_receipt_and_wrong_apk_are_rejected_before_reconstruction)",
+    "message": "AssertionError: Authenticated actual public .33 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_frozen_appearance_guest_acceptance_preserves_5476_leaves_and_refuses_stale_donor (test_client_startup_followup_package.ProductionAppearanceBindingTests.test_frozen_appearance_guest_acceptance_preserves_5476_leaves_and_refuses_stale_donor)",
+    "message": "AssertionError: 859075775 != 854341235"
+  },
+  {
+    "case": "FAIL: test_actual_public_payloads_have_only_reviewed_helpers_and_manifests (test_client_startup_latency_package.StartupLatencyPackageTests.test_actual_public_payloads_have_only_reviewed_helpers_and_manifests)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_ancestry_is_appended_without_relabelling_original_report_or_native_producers (test_client_startup_latency_package.StartupLatencyPackageTests.test_ancestry_is_appended_without_relabelling_original_report_or_native_producers)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_audit_receipt_binds_every_independent_signed_byte_authority_and_disallows_claim_inflation (test_client_startup_latency_package.StartupLatencyPackageTests.test_audit_receipt_binds_every_independent_signed_byte_authority_and_disallows_claim_inflation)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_every_game_db_map_gpu_wine_fex_asset_and_resource_byte_is_retained (test_client_startup_latency_package.StartupLatencyPackageTests.test_every_game_db_map_gpu_wine_fex_asset_and_resource_byte_is_retained)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_historical_builders_markers_workflows_and_tests_are_exact_source_bytes (test_client_startup_latency_package.StartupLatencyPackageTests.test_historical_builders_markers_workflows_and_tests_are_exact_source_bytes)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_inherited_launcher_proof_rejects_relabelled_source_run_and_changed_bytes (test_client_startup_latency_package.StartupLatencyPackageTests.test_inherited_launcher_proof_rejects_relabelled_source_run_and_changed_bytes)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_missing_or_forged_helper_source_pins_cannot_create_runtime_manifest (test_client_startup_latency_package.StartupLatencyPackageTests.test_missing_or_forged_helper_source_pins_cannot_create_runtime_manifest)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_monotonic_successor_uses_audited_035_donor_and_original_native_identity (test_client_startup_latency_package.StartupLatencyPackageTests.test_monotonic_successor_uses_audited_035_donor_and_original_native_identity)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_payload_retention_rejects_unknown_missing_or_native_byte_change (test_client_startup_latency_package.StartupLatencyPackageTests.test_payload_retention_rejects_unknown_missing_or_native_byte_change)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_retained_contracts_keep_exact_original_nested_suite_source_and_donor_attribution (test_client_startup_latency_package.StartupLatencyPackageTests.test_retained_contracts_keep_exact_original_nested_suite_source_and_donor_attribution)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_wrong_donor_receipt_and_wrong_apk_are_rejected_before_reconstruction (test_client_startup_latency_package.StartupLatencyPackageTests.test_wrong_donor_receipt_and_wrong_apk_are_rejected_before_reconstruction)",
+    "message": "AssertionError: Authenticated actual public .35 APK and build receipt required; no skips"
+  },
+  {
+    "case": "FAIL: test_guest_ast_delta_retains_all_other_code_and_exact_ancestry_constants (test_levelup_ui_repair_package.LevelupUiRepairPackagingTests.test_guest_ast_delta_retains_all_other_code_and_exact_ancestry_constants)",
+    "message": "AssertionError: False is not true : Exact public donor must be available for qualification"
+  },
+  {
+    "case": "FAIL: test_actual_public_saved_character_helper_delta_is_only_the_native_witness (test_reopen_startup_repair_package.ReopenStartupPackagingTests.test_actual_public_saved_character_helper_delta_is_only_the_native_witness)",
+    "message": "AssertionError: False is not true : Exact public0.13.12 donor must be available"
+  },
+  {
+    "case": "FAIL: test_actual_public_saved_character_delta_is_closed_to_reviewed_normalization_and_beacons (test_ui_beacon_package.UiBeaconPackagingTests.test_actual_public_saved_character_delta_is_closed_to_reviewed_normalization_and_beacons)",
+    "message": "AssertionError: False is not true : Exact public 0.13.13 donor required"
+  }
+]

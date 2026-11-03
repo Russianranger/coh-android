@@ -1,0 +1,78 @@
+{
+  "format": 1,
+  "implementation_head": "e52185660025d365dca15f4f8146086ea593b1df",
+  "implementation_tree": "69d572483ae8e75989f530471dc15dbf40638b8b",
+  "sources": {
+    "armport/sampler-review-fix": "8dc2a66d72477b3c62227e572538b13f0e4f912b",
+    "armport/mapserver-startup-60s": "1f75894db9117f3567b76d087d7cc5ddce87b3e6",
+    "armport/mapserver-modern-runtime-qualification": "84c79f336b94442dc151b06df6e993823746154c",
+    "armport/m5-thor": "b7806a6bdfc3cf159f743786fc9ed6aab94ce801",
+    "armport/performance-path": "365ab195e29120d1cf2c862a5a5db05a361ed2f9"
+  },
+  "source_ancestor_checks": {
+    "armport/sampler-review-fix": true,
+    "armport/mapserver-startup-60s": true,
+    "armport/mapserver-modern-runtime-qualification": true,
+    "armport/m5-thor": true,
+    "armport/performance-path": true
+  },
+  "x86_patches_trees": {
+    "e5218566": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "3570430ce": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "origin/codex/character-persistence-continuation": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "origin/codex/startup-recovery-20261014": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "origin/armport/sampler-review-fix": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "origin/armport/mapserver-startup-60s": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "origin/armport/mapserver-modern-runtime-qualification": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "origin/armport/m5-thor": "ffcb910e17540ea97360b6783b3a2099d485f8bc",
+    "origin/armport/performance-path": "ffcb910e17540ea97360b6783b3a2099d485f8bc"
+  },
+  "upstream_tree": "b343713b3067b4921165323858cd6553cb4301cf",
+  "upstream_unchanged_from_sampler": true,
+  "legacy_pr_heads": {
+    "1": "643d12638210d653e3b28de29b6239baf67da91c",
+    "2": "398b46680c02026714665e4d8864e9ef4af6822e"
+  },
+  "legacy_pr_tip_is_ancestor": {
+    "1": false,
+    "2": false
+  },
+  "actual_common_base": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+  "main_unchanged": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "ports": [
+    "84ce6fcd7ea5242efb4cb0d3a9368f40f35762a2",
+    "e52185660025d365dca15f4f8146086ea593b1df"
+  ],
+  "source_credit": "b46984c78d067705c47d7fdb5bb0cc5a4508d824",
+  "merges": [
+    "e52185660025d365dca15f4f8146086ea593b1df e5cb0f8462f046bc88ee751c20db6b4b04f642ff Admit the ported cleanup helper in app packaging [skip ci]",
+    "e5cb0f8462f046bc88ee751c20db6b4b04f642ff 84ce6fcd7ea5242efb4cb0d3a9368f40f35762a2 Document x86 device lane and retain historical M5 evidence [skip ci]",
+    "84ce6fcd7ea5242efb4cb0d3a9368f40f35762a2 92bc140fecfa9ac1b8d979e69c660a8d134bcc79 Port reviewed .37 Wine namespace cleanup hardening [skip ci]",
+    "92bc140fecfa9ac1b8d979e69c660a8d134bcc79 bf008fd0864ad6d3b852676e480374fe74f49eea 365ab195e29120d1cf2c862a5a5db05a361ed2f9 Merge documented x86 direction and performance path [skip ci]",
+    "bf008fd0864ad6d3b852676e480374fe74f49eea 8e9006c752f399209a8a2a8e25b565754bde2e52 b7806a6bdfc3cf159f743786fc9ed6aab94ce801 Merge M5 Thor evidence and Kings Row handoff into x86-track [skip ci]",
+    "8e9006c752f399209a8a2a8e25b565754bde2e52 36998008aed1b1d394ae69d07c65c3d672266621 84c79f336b94442dc151b06df6e993823746154c Merge modern runtime qualification support into x86-track [skip ci]",
+    "36998008aed1b1d394ae69d07c65c3d672266621 8dc2a66d72477b3c62227e572538b13f0e4f912b 1f75894db9117f3567b76d087d7cc5ddce87b3e6 Merge startup instrumentation and ODBC reuse into x86-track [skip ci]"
+  ],
+  "final_source_checkpoint": {
+    "sha": "c34600ed3e62e1588f90851ae9944cf384cf22ce",
+    "tree": "582106762cabf6090904f82548b94d67a2120489"
+  },
+  "test_fixture_commits": [
+    "17f843de79ad326d06bdb5efa6172b424e71b667",
+    "c34600ed3e62e1588f90851ae9944cf384cf22ce"
+  ],
+  "publication": {
+    "record": "publication-map.json",
+    "method": "GitHub connector Git data API; terminal git push had no credentials",
+    "ordered_parents_preserved": true,
+    "source_trees_byte_identical": true,
+    "published_source_checkpoint": {
+      "sha": "6a9ccc5b7de531b7dd8b1ba1e6247e71ed05da31",
+      "tree": "582106762cabf6090904f82548b94d67a2120489"
+    },
+    "published_production_checkpoint": {
+      "sha": "263acad1f57faff91505afcbb517494a8fc9841e",
+      "tree": "69d572483ae8e75989f530471dc15dbf40638b8b"
+    }
+  }
+}
