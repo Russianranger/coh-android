@@ -285,8 +285,12 @@ def guest_timing_summary(evidence):
                     continue
                 rows = [row for row in section.get('map_startup_timing', []) if isinstance(row, dict)][:4]
                 observed = section.get('map_startup_observation')
+                caches = section.get('prepared_server_caches')
                 result[key] = {'map_startup': [{name: row.get(name) for name in TIMING_FIELDS} for row in rows],
                                'preparation_phase_seconds': section.get('server_preparation_phase_seconds'),
+                               'prepared_server_caches': {name: (str(caches.get(name))[:200] if name == 'reason'
+                                   else caches.get(name)) for name in ('status', 'reason', 'installed_files',
+                                   'preserved_existing_files')} if isinstance(caches, dict) else None,
                                'native_bin_writes': {map_id: (value or {}).get('native_bin_writes')
                                    for map_id, value in list(observed.items())[:4]}
                                    if isinstance(observed, dict) else None}

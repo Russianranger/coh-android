@@ -82,11 +82,17 @@ class MapServerPhaseTests(unittest.TestCase):
         import interactive_host
         with tempfile.TemporaryDirectory() as temporary:
             evidence = Path(temporary)
-            (evidence / 'latest-report.json').write_text(json.dumps({'proot_mode': {'format': 1}}))
+            (evidence / 'latest-report.json').write_text(json.dumps({'proot_mode': {'format': 1},
+                'character_creation': {'prepared_server_caches': {'status': 'skipped_native_fallback',
+                    'reason': 'x' * 400, 'installed_files': 0, 'archive': {'bytes': 1}}}}))
             with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
                 archive.writestr('client-evidence/character-atlas-console.txt', CONSOLE)
             result = interactive_host.guest_timing_summary(evidence)
         self.assertEqual(result['proot_mode'], {'format': 1})
+        caches = result['character_creation']['prepared_server_caches']
+        self.assertEqual((caches['status'], len(caches['reason']), caches['installed_files']),
+                         ('skipped_native_fallback', 200, 0))
+        self.assertNotIn('archive', caches)
         phases = result['atlas_mapserver_phases']
         self.assertIn(93.93, [row[0] for row in phases['slowest_untimed_gaps']])
         self.assertLessEqual(len(phases['slowest_self_timed']), 6)
