@@ -37,4 +37,4 @@ Default branch remains main; no repository setting change.
   Atlas MapServer ready 204/222 s (.44: 287 s); King's Row failed (420 s Python budget, cold mirror).
 - 0.13.50 (ARM64 primary): shared server data for both zones, client scan skips scripts.loc/server
   (patch 0120), recovery race fix; runtime 41704290931 passed (reopen bin writes 0, Atlas
-  private mirror 31 s vs 99.5-106 s, client start 81.7 → 71.8 s). Test sheet THOR-TEST-0.13.50.md.
+  private mirror 31 s vs 99.5-106 s, client start 81.7 → 71.8 s). Published APK 41712293048; THOR-TEST-0.13.50.md.

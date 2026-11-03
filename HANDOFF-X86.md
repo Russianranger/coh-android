@@ -304,6 +304,9 @@ reversion path. Test sheet: [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
   were missing from `build_thor_apk.CHANGED_RUNTIME` (the only guest files changed
   since 0.13.49 that were not listed). Added; the APK is rebuilt from the same
   runtime, since guest payloads are byte-identical to `0bf0c1c4b`.
+- **Published:** [coh-atlas-gameplay-v0.13.50](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.50)
+  (pre-release), APK 41712293048 at `ef7d2d3dc`, 80,956,326 bytes, sha256
+  `a789355404a594a34eb5146eba2efb6c560a8afd784743b53b10bae21bb00472`, version code 65.
 - Runtime 41704290931 evidence: 15 folders shared (128,765 files, 3,524
   read-only directories), reused on reopen (link 0.004 s); reopen bin writes 0;
   story arcs 470/957/3528 both sessions; sequencer gap 40.7 s (level-1 probe
