@@ -6,7 +6,7 @@ runs a stock SQL probe, drops a database, or starts a MapServer.
 """
 import json
 import os
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import secrets
 import shutil
@@ -29,6 +29,81 @@ PROFILE_IDENTITY = {'format': 1, 'purpose': 'persistent_local_login', 'profile':
     'data_commit': 'd51533ec8e6a9cf726b9214968077a05fdcf19f3',
     'package_manifest_sha256': dbserver.DEVICE_PACKAGE_MANIFEST,
     'schema_manifest_sha256': dbserver.DEVICE_SCHEMA_MANIFEST}
+
+
+def odbc_dll_path(prefix, driver):
+    """Map a regular, prefix-contained C: driver to its actual bytes."""
+    windows = PureWindowsPath(driver['driver_path'])
+    require(windows.drive.casefold() == 'c:' and windows.root == '\\'
+            and all(part not in ('.', '..') and ':' not in part for part in windows.parts[1:]),
+            'ODBC cache driver path is outside the prefix')
+    require(not (prefix / 'drive_c').is_symlink(), 'ODBC cache C: drive is linked')
+    prefix_root = prefix.resolve(strict=True)
+    root = (prefix / 'drive_c').resolve(strict=True)
+    require(prefix_root in root.parents, 'ODBC cache C: drive is outside the prefix')
+    path = root.joinpath(*windows.parts[1:]).resolve(strict=True)
+    require(root in path.parents and path.is_file(), 'ODBC cache driver is not a prefix file')
+    base.verify_pe32(path)
+    return path
+
+
+def ensure_local_odbc(owner):
+    """Avoid redundant MSI work; execute the native load/export probe anew.
+
+    This disposable installation cache cannot authorize a driver. Changed
+    installer/probe/DLL bytes, malformed cache or a failed probe take the
+    original install-then-probe path. No database is opened by this helper.
+    """
+    started = time.monotonic()
+    cache_path = owner.wineprefix / 'coh-local-odbc-cache.json'
+    assets = owner.args.assets
+    identity = {name: base.file_hash(assets / name)
+                for name in ('psqlodbc_x86.msi', 'runtime-probe.exe')}
+    command = [owner.args.wine, base.windows_path(assets / 'runtime-probe.exe'), '--odbc-driver']
+    cached, driver, reused = None, None, False
+    try:
+        if (cache_path.is_file() and not cache_path.is_symlink()
+                and cache_path.stat().st_size <= 4096):
+            cached = json.loads(cache_path.read_text())
+            require(isinstance(cached, dict) and cached.get('format') == 1
+                    and cached.get('assets') == identity, 'ODBC cache generation differs')
+            require(base.file_hash(odbc_dll_path(owner.wineprefix, cached['driver'])) == cached['dll_sha256'],
+                    'ODBC cached DLL differs')
+        else:
+            cached = None
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError, base.DiagnosticError):
+        cached = None
+    if cached is not None:
+        # Cancellation, timeout and overflow remain errors. An ordinary failed
+        # probe may use the original installation path to repair registration.
+        result = owner.ctx.run('local-odbc-driver-reuse', command,
+                               timeout=60, env=owner.wine_env, check=False)
+        if result['exit_code'] == 0:
+            try:
+                driver = base.validate_odbc_driver(result['output'])
+                reused = (driver == cached['driver'] and base.file_hash(
+                    odbc_dll_path(owner.wineprefix, driver)) == cached['dll_sha256'])
+            except (OSError, KeyError, TypeError, RuntimeError, base.DiagnosticError):
+                reused = False
+    if not reused:
+        installer = owner.wineprefix / 'drive_c/windows/syswow64/msiexec.exe'
+        base.verify_pe32(installer)
+        owner.ctx.run('local-install-x86-psqlodbc', [owner.args.wine,
+            r'C:\windows\syswow64\msiexec.exe', '/i', base.windows_path(assets / 'psqlodbc_x86.msi'),
+            '/qn', '/norestart'], timeout=150, env=owner.wine_env)
+        result = owner.ctx.run('local-odbc-driver', command, timeout=60, env=owner.wine_env)
+        driver = base.validate_odbc_driver(result['output'])
+    cache_status = 'stored'
+    try:
+        document = {'format': 1, 'assets': identity, 'driver': driver,
+                    'dll_sha256': base.file_hash(odbc_dll_path(owner.wineprefix, driver))}
+        base.private_write(cache_path, json.dumps(document, sort_keys=True) + '\n')
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError, base.DiagnosticError):
+        cache_status = 'unavailable'
+    owner.ctx.report['odbc_setup'] = {'format': 1, 'installer_reused': reused,
+        'native_driver_probe_executed': True, 'cache_status': cache_status,
+        'elapsed_seconds': round(time.monotonic() - started, 6)}
+    return driver
 
 
 def extract_regular(archive_path, destination):
@@ -214,13 +289,7 @@ class LocalLoginServer:
     def start(self):
         d = self.owner
         self.ctx.stage('local_login_odbc')
-        installer = d.wineprefix / 'drive_c/windows/syswow64/msiexec.exe'
-        base.verify_pe32(installer)
-        self.ctx.run('local-install-x86-psqlodbc', [d.args.wine, r'C:\windows\syswow64\msiexec.exe', '/i',
-            base.windows_path(d.args.assets / 'psqlodbc_x86.msi'), '/qn', '/norestart'], timeout=150, env=d.wine_env)
-        result = self.ctx.run('local-odbc-driver', [d.args.wine, base.windows_path(d.args.assets / 'runtime-probe.exe'),
-            '--odbc-driver'], timeout=60, env=d.wine_env)
-        driver = base.validate_odbc_driver(result['output'])
+        driver = ensure_local_odbc(d)
         self.ctx.report['odbc_driver'] = driver
         connection = ('Driver={' + driver['driver_name'] + '};Servername=127.0.0.1;Port=' + str(d.port)
             + ';Database=' + DATABASE + ';Username=cohtest;Password=' + d.credentials['cohtest']

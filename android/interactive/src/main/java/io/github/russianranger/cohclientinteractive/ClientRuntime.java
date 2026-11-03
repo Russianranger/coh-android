@@ -208,6 +208,8 @@ public final class ClientRuntime {
     private static Object setupFinalizationOwner;
     private Object setupReservation;
     private long startedUptime, endedUptime;
+    private ClientAcceptance.StartupTiming startupTiming;
+    private Map<String, Object> startupServiceThermal, startupReadyThermal;
     private int processExit = -1;
 
     public ClientRuntime(Context context, Listener listener) {
@@ -421,6 +423,67 @@ public final class ClientRuntime {
         } }
     }
     public File getLatestReport() { return latestReport; }
+
+    public synchronized void attachStartupTiming(long serviceReceiptElapsedRealtime, long uiActionElapsedRealtime,
+            Map<String, Object> serviceThermal) {
+        if (startupTiming == null) {
+            startupTiming = new ClientAcceptance.StartupTiming(serviceReceiptElapsedRealtime, uiActionElapsedRealtime);
+            startupServiceThermal = serviceThermal == null ? Collections.emptyMap() : new LinkedHashMap<>(serviceThermal);
+        }
+    }
+
+    private synchronized JSONObject startupTimingReport() {
+        Map<String, Object> result = startupTiming == null ? new LinkedHashMap<>() : startupTiming.report();
+        Map<String, Object> thermal = new LinkedHashMap<>();
+        thermal.put("service_receipt", startupServiceThermal);
+        thermal.put("map_ready_receipt", startupReadyThermal);
+        result.put("thermal_observations", thermal);
+        return new JSONObject(result);
+    }
+
+    /** Sparse public Android observations; battery temperature is not CPU temperature. */
+    static Map<String, Object> startupThermalSnapshot(Context context) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("observed_elapsed_realtime_ms", SystemClock.elapsedRealtime());
+        result.put("thermal_status", null);
+        result.put("battery_temperature_deci_celsius", null);
+        result.put("thermal_status_is_temperature", false);
+        result.put("battery_temperature_is_cpu_temperature", false);
+        try {
+            if (Build.VERSION.SDK_INT >= 29) {
+                Object power = context.getSystemService(Context.POWER_SERVICE);
+                if (power instanceof android.os.PowerManager)
+                    result.put("thermal_status", ((android.os.PowerManager) power).getCurrentThermalStatus());
+            }
+        } catch (RuntimeException unavailable) { result.put("thermal_status_error", unavailable.getClass().getSimpleName()); }
+        try {
+            android.content.Intent battery = context.registerReceiver(null,
+                new android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED));
+            if (battery != null && battery.hasExtra("temperature"))
+                result.put("battery_temperature_deci_celsius", battery.getIntExtra("temperature", 0));
+        } catch (RuntimeException unavailable) { result.put("battery_temperature_error", unavailable.getClass().getSimpleName()); }
+        result.put("thermal_status_available", result.get("thermal_status") != null);
+        result.put("battery_temperature_available", result.get("battery_temperature_deci_celsius") != null);
+        return result;
+    }
+
+    private synchronized void observeMapServerReady(JSONObject event) {
+        if (startupTiming == null) return;
+        try {
+            Map<Object, Object> value = new LinkedHashMap<>((Map<?, ?>) jsonValue(event));
+            // jsonValue retains JSONObject.NULL for existing acceptance readers.
+            if (event.has("epoch") && event.isNull("epoch")) value.put("epoch", null);
+            if (startupTiming.observeMapReady(value, session, SystemClock.elapsedRealtime())) {
+                startupReadyThermal = startupThermalSnapshot(context);
+                recordLifecycle("map_server_ready_receipt_observed map_id=" + event.optInt("map_id", -1));
+                checkpoint(); // Preserve timing even if the bounded lifecycle log is full.
+            }
+        } catch (Exception ignored) { /* Optional timing cannot change guest readiness or input. */ }
+    }
+
+    private synchronized void observeStartupWorldReady() {
+        if (startupTiming != null) startupTiming.observeWorldReady(SystemClock.elapsedRealtime());
+    }
 
     public Result setup() throws Exception {
         boolean ready = false;
@@ -1705,6 +1768,7 @@ public final class ClientRuntime {
                 .put("session_id",session==null?JSONObject.NULL:session).put("app_version",appVersion())
                 .put("runtime_manifest_sha256",manifestHash).put("client_pid",observedClientPid)
                 .put("started_uptime_ms",startedUptime).put("checkpoint_uptime_ms",SystemClock.uptimeMillis())
+                .put("android_startup_timing",startupTimingReport())
                 .put("checkpoint_utc_ms",System.currentTimeMillis()).put("passed",false).put("interrupted_unverified",true)
                 .put("manual_test_events",new JSONArray(manualTestEvents)).put("manual_test_active",manualTestActive)
                 .put("finish_requested",finishRequested).put("save_logout_requested",saveLogoutRequested)
@@ -1806,6 +1870,7 @@ public final class ClientRuntime {
                     if (!omitted) try {
                         JSONObject event = new JSONObject(text);
                         observeFailedGuestResult(event);
+                        if ("map_server_ready_observed".equals(event.optString("type"))) observeMapServerReady(event);
                         if ("client_display_ready".equals(event.optString("type"))
                                 && session.equals(event.optString("session_id"))
                                 && event.optInt("width", -1) == 800 && event.optInt("height", -1) == 600
@@ -1871,6 +1936,7 @@ public final class ClientRuntime {
                             synchronized (this) {
                                 characterConnectedEvent = event;
                                 connectedObservedUptime = SystemClock.uptimeMillis();
+                                observeStartupWorldReady();
                                 connectedFrameWatermark = decodedFrames;
                                 connectedSamples.clear(); connectedPngs.clear(); connectedCapturedReady = false;
                             }
@@ -2320,6 +2386,7 @@ public final class ClientRuntime {
                     .put("abis", new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                     .put("runtime_manifest_sha256", manifestHash).put("started_uptime_ms", startedUptime)
                     .put("finished_uptime_ms", endedUptime).put("process_exit_code", processExit)
+                    .put("android_startup_timing",startupTimingReport())
                     .put("checkpoint_error",checkpointFailure==null?JSONObject.NULL:checkpointFailure)
                     .put("passed", passed).put("android_surface_validated", passed).put("interaction_session_completed", passed)
                     .put("menu_visual_validated", false).put("cleanup_verified", cleanup)
@@ -2537,6 +2604,7 @@ public final class ClientRuntime {
                     .put("app_error",previous==null?JSONObject.NULL:previous).put("cleanup_verified",cleanup)
                     .put("cleanup_blocked",isCleanupBlocked()).put("cancelled",cancelled)
                     .put("started_uptime_ms",startedUptime).put("finished_uptime_ms",endedUptime)
+                    .put("android_startup_timing",startupTimingReport())
                     .put("finalized_utc_ms",System.currentTimeMillis())
                     .put("process_exit_code",processExit).put("character_save_qualification",false)
                     .put("committed_save_observation_available",saveObservation!=null)

@@ -23,6 +23,7 @@ import org.json.JSONObject;
 /** Foreground ownership for runtime setup, verified asset import and bounded client startup. */
 public final class ClientService extends Service {
     public static final String SETUP="coh.client.SETUP", RUN="coh.client.RUN", CREATE="coh.client.CREATE", RESUME_FIRST_CREATION="coh.client.RESUME_FIRST_CREATION", IMPORT="coh.client.IMPORT", STOP="coh.client.STOP", FINISH="coh.client.FINISH", STORAGE_SCAN="coh.client.STORAGE_SCAN", STORAGE_CLEAN="coh.client.STORAGE_CLEAN", EXPORT_REPORT="coh.client.EXPORT_REPORT", RECOVER_REPORTS="coh.client.RECOVER_REPORTS";
+    public static final String EXTRA_STARTUP_UI_ACTION_ELAPSED_REALTIME="coh.client.STARTUP_UI_ACTION_ELAPSED_REALTIME";
     private static final String CHANNEL="client", PREFS="client_ui";
     private static final int NOTICE=61;
     public interface Listener { void onState(State state); void onFrame(int[] pixels,int width,int height,long sequence); }
@@ -753,7 +754,10 @@ public final class ClientService extends Service {
         });}catch(RuntimeException e){ClientRuntime.releaseStorage(owner);if(storageWake.isHeld())storageWake.release();storageBusy=false;storageStatus="Could not start storage work. Reopen this screen and retry.";stopForeground(STOP_FOREGROUND_REMOVE);publish();}
     }
     @Override public int onStartCommand(Intent intent,int flags,int startId){
+        final long serviceReceiptElapsedRealtime = SystemClock.elapsedRealtime();
         String action=intent==null?null:intent.getAction();
+        Map<String, Object> serviceThermal = RUN.equals(action)||CREATE.equals(action)||RESUME_FIRST_CREATION.equals(action)
+                ? ClientRuntime.startupThermalSnapshot(this) : null;
         if(EXPORT_REPORT.equals(action)){startReportExport(intent);return START_NOT_STICKY;}
         if(RECOVER_REPORTS.equals(action)){recoverReports();return START_NOT_STICKY;}
         if(STORAGE_SCAN.equals(action)||STORAGE_CLEAN.equals(action)){startStorage(intent,STORAGE_CLEAN.equals(action));return START_NOT_STICKY;}
@@ -797,6 +801,8 @@ public final class ClientService extends Service {
             @Override public void onInputState(boolean ready,boolean ending,boolean saved,boolean returnAvailable,boolean saveAvailable,long sent,long failed,long deadline,String phase,long saveDeadline,long movementDeadline){main.post(()->{if(!busy||destroyed)return;boolean noticeChanged=inputReady!=ready||finishing!=ending||characterSaved!=saved;inputReady=ready;finishing=ending;characterSaved=saved;canReturnGround=returnAvailable;canSaveLogout=saveAvailable;inputSent=sent;inputFailed=failed;readyDeadlineUptimeMillis=deadline;sessionPhase=phase;saveDeadlineUptimeMillis=saveDeadline;movementDeadlineUptimeMillis=movementDeadline;publish();if(noticeChanged)notifyStatus();});}
         });
         if(setup)instance.attachSetupReservation(setupOwner);
+        if(RUN.equals(action)||creating)instance.attachStartupTiming(serviceReceiptElapsedRealtime,
+                intent.getLongExtra(EXTRA_STARTUP_UI_ACTION_ELAPSED_REALTIME,-1),serviceThermal);
         runtime=instance;instance.setUiVisible(uiVisible);instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
         worker.execute(()->{
             ClientRuntime.Result result=null;Exception failure=null;

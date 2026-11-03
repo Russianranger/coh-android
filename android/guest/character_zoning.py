@@ -619,6 +619,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         else:
             # Retain the accepted stage identifier while displaying the exact
             # PostgreSQL-selected destination and independently proving it.
+            timing = self.map_startup_timing(self.active_map_id)
+            self.mark_startup_timing(timing, 'map_baseline_check_started')
             self.ctx.stage('local_atlas_startup')
             target = self.active_map_id
             destination = MAPS[target]
@@ -629,6 +631,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             baseline = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-baseline'),
                                         target, allow_missing=True)
             require(baseline.get('not_started') is True, 'Saved destination already has an unowned MapServer')
+            timing['baseline_destination_not_started'] = True
             self._spawn_map(target)
             launched = self.maps[target]
             self.creation_report['map_ready'] = False
@@ -689,6 +692,18 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return True
 
     def poll_initial_map_startup(self):
+        try:
+            return self._poll_initial_map_startup()
+        except BaseException as failure:
+            # Overlapped client initialization joins this method after start()
+            # returned. Preserve that failed attempt without swallowing or
+            # reclassifying its existing lifecycle exception.
+            timing = self.map_startup_timing((getattr(self, 'initial_map_startup', None) or {}).get('map_id'))
+            if timing['status'] != 'map_readiness_observed':
+                timing.update(status='failed_before_map_readiness', failure_type=type(failure).__name__)
+            raise
+
+    def _poll_initial_map_startup(self):
         """Main-thread readiness join; never grant entry from process launch alone."""
         startup = getattr(self, 'initial_map_startup', None)
         if startup is None:
@@ -715,6 +730,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     'requires_completed_tick_before_protocol': True})
                 startup['ready'] = True
                 completed = time.monotonic()
+                self.mark_startup_timing(self.map_startup_timing(target), 'map_ready_observed', now=completed)
                 saved = self.zoning_report.get('saved_startup')
                 if saved is not None:
                     saved.update(native_ready_verified=True, native_map=sample,
@@ -782,6 +798,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def _spawn_map(self, map_id):
         require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2,
                 'Duplicate or unreviewed zoning MapServer launch')
+        timing = self.map_startup_timing(map_id)
         def prepare_destination():
             if map_id != 5:
                 return self.prepare_atlas_runtime()
@@ -857,6 +874,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         environment = self.map_metrics_environment(environment, map_runtime)
         launch_ms = int(time.time() * 1000)
         launch_monotonic = time.monotonic()
+        self.mark_startup_timing(timing, 'map_spawn_requested', now=launch_monotonic, utc_ms=launch_ms)
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
             self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
             '-nosharedmemory', '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0', '-map_id', str(map_id),
@@ -1064,6 +1082,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return label, child.text()
 
     def _accept_prepare(self, value, now_ms):
+        request_observed_at, request_observed_utc_ms = time.monotonic(), int(time.time() * 1000)
         validate_request(value, session=self.owner.args.session_id, client_pid=self.creation_report['client_pid'],
             epoch=self.epoch + 1, origin=self.active_map_id, action='prepare', now_ms=now_ms)
         require(self.pending is None and self.creation_report.get('verified') is not True,
@@ -1105,6 +1124,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             preparation_kind='resident_warm' if resident else 'cold',
             preparation_phase='python_inputs' if budgets['python_preparation_budget_seconds'] else 'native_readiness')
         self.pending.update(budgets)
+        self.pending['startup_timing'] = self.begin_startup_timing('zoning_supervisor_request',
+            map_id=target, epoch=self.epoch, resident=resident,
+            now=request_observed_at, utc_ms=request_observed_utc_ms)
         if budgets['python_preparation_budget_seconds']:
             self.pending.update(python_preparation_started_utc_ms=now_ms,
                 python_preparation_deadline_utc_ms=now_ms + round(initial_seconds * 1000))
@@ -1120,6 +1142,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if target in self.maps:
             self.pending['phase'] = 'map_ready'
         else:
+            self.mark_startup_timing(self.pending['startup_timing'], 'map_baseline_check_started', now=now, utc_ms=now_ms)
             self._query_start(['-getstatus', '1', str(target)], 'baseline')
 
     def _accept_delivery(self, value, now_ms):
@@ -1219,6 +1242,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 character_identity_preserved=True, native_ready_utc_ms=native['utc_ms'],
                 native_transfer_observed_ms=leg['native_transfer_observed_ms'],
                 total_to_native_arrival_ms=leg['total_to_native_arrival_ms'])
+            self.mark_startup_timing(pending.get('startup_timing'), 'client_world_ready_observed', utc_ms=now_ms)
             self.pending = None
             return
         if self.zoning_query is None and time.monotonic() >= pending['next_query']:
@@ -1289,6 +1313,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             if result is not None and result[0] == 'baseline':
                 baseline = parse_map_status(result[1], target, allow_missing=True)
                 require(baseline.get('not_started') is True, 'Zoning destination already belongs to another process')
+                self.map_startup_timing(target)['baseline_destination_not_started'] = True
                 pending['baseline'] = baseline
                 self._spawn_map(target)
                 now = self._check_preparation_deadline()
@@ -1316,6 +1341,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                         require(self.live_progress(current), 'Destination progress became stale before readiness')
                         ready_now = self._check_preparation_deadline()
                         ready_now_ms = int(time.time() * 1000)
+                        self.mark_startup_timing(self.map_startup_timing(target), 'map_ready_observed',
+                            now=ready_now, utc_ms=ready_now_ms)
                         self.maps[target]['ready'] = True
                         pending.update(phase='ready', ready_utc_ms=ready_now_ms, destination_status=sample,
                             prior_ready_hashes=[prior['line_sha256']] if prior else [],
@@ -1351,6 +1378,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.zoning_report['failure'] = {'message': str(failure)[:300], 'transfer_requested': uncertain}
             if self.pending is not None:
                 failed_now = time.monotonic()
+                timing = self.pending.get('startup_timing')
+                if timing is not None and timing['status'] != 'map_readiness_observed':
+                    timing.update(status='failed_before_map_readiness', failure_type=type(failure).__name__)
                 self.zoning_report['failure'].update(
                     preparation_phase=self.pending.get('preparation_phase', 'native_readiness'),
                     elapsed_since_preparation_started_ms=max(0, round((failed_now

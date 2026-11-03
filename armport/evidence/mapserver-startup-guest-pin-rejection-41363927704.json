@@ -1,0 +1,23 @@
+{
+  "actual_source_patch_pin": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f",
+  "archive_payload_execution": false,
+  "frozen_source": "e563fe5664cd13570899800695c7e9680ac68877",
+  "guest_patch_pin": "49c0f73d9ea0a0ecb8d2f1de9a48ec1d5b20dc3c641e058bc8c1a5947440c387",
+  "scope": "real_native_metadata_guest_admission_pin_regression",
+  "variants": {
+    "retained_progress": {
+      "actual_native_build_patch_pin": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f",
+      "corrected_pin_alone_admits_native_metadata": true,
+      "game_archive_pin_is_placeholder": true,
+      "original_pin_rejected": true,
+      "original_rejection": "Metrics source scope or extracted-source report differs"
+    },
+    "thor_certified_startup": {
+      "actual_native_build_patch_pin": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f",
+      "corrected_pin_alone_admits_native_metadata": true,
+      "game_archive_pin_is_placeholder": true,
+      "original_pin_rejected": true,
+      "original_rejection": "Metrics source scope or extracted-source report differs"
+    }
+  }
+}

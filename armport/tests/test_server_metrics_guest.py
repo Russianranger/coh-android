@@ -5,6 +5,7 @@ The trusted-binding fixture models a completed producer gate; it does not build
 or execute Windows code, and cannot qualify a real shipping server artifact.
 """
 import copy
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -95,6 +96,13 @@ class GuestMetrics(unittest.TestCase):
             'files': {contract.BINDING: contract.pin(raw), 'game-package.tar.gz': self.binding['game_archive']},
             contract.WRAPPER: contract.summary(self.binding)}
         (self.assets/'runtime-manifest.json').write_text(json.dumps(runtime))
+
+    def test_guest_patch_pin_matches_actual_normalized_source_patch(self):
+        # Synthetic receipts below intentionally exercise the reader in
+        # isolation. Bind its independent pin to the actual producer input too.
+        patch = ROOT / 'armport/patches/0119-armport-server-tick-file-metrics.patch'
+        actual = hashlib.sha256(patch.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
+        self.assertEqual(contract.PATCH, actual)
 
     def test_each_lineage_checks_actual_pe_then_returns_exact_ancestry(self):
         for variant in sorted(contract.VARIANTS):

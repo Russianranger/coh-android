@@ -1,0 +1,241 @@
+{
+  "candidate_source": "e563fe5664cd13570899800695c7e9680ac68877",
+  "format": 1,
+  "native_build_run_id": 41363927704,
+  "outer_artifact": {
+    "bytes": 6163033,
+    "sha256": "d54b90f27f6bab463d6304f68dc91286a31305bd6db819055b5027bacc293d7c"
+  },
+  "physical_device_validated": false,
+  "runtime_executed": false,
+  "scope": "static_exact_candidate_native_packages_byte_source_and_PE_audit",
+  "startup_performance_validated": false,
+  "validator_and_patch_frozen_git_pins": {
+    "android/guest/native_map_startup_contract.py": {
+      "bytes": 14378,
+      "sha256": "8d5f650611238b5ee05d07eecf4ab43321b99c0bdd0fb45d58c7ab734049689e"
+    },
+    "armport/app/server_package.py": {
+      "bytes": 24520,
+      "sha256": "5a1c72c387b839e5538df7c6fdac7788b0ad918733e0ef15aeaaf279afe6aed1"
+    },
+    "armport/patches/0119-armport-server-tick-file-metrics.patch": {
+      "bytes": 16629,
+      "sha256": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f"
+    },
+    "armport/scripts/prepare_server_metrics_source.py": {
+      "bytes": 24248,
+      "sha256": "4b570e05dd684460d5651f8c844ba7a6dc93923a466d0fafea2d2a0b9bc10b3b"
+    },
+    "tools/package_reference_runtime.py": {
+      "bytes": 12340,
+      "sha256": "53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59"
+    }
+  },
+  "variants": {
+    "retained_progress": {
+      "actual_PE32_and_import_closure_verified": true,
+      "architecture": "Win32",
+      "archive": {
+        "bytes": 2929519,
+        "filename": "server-metrics-retained-progress.zip",
+        "sha256": "598d1640d0cbd559c1efcb28e03c39f1ac516527c8282a8284ee61a7a1028aea"
+      },
+      "baseline_receipt_name": "mapserver-progress-build-input.json",
+      "baseline_receipt_sha256": "6b367d9c4c3570f2800598e88f8738e558ca8d3d2b1047d9349e93ab8242f657",
+      "build_manifest": {
+        "bytes": 15687,
+        "sha256": "27ed8e37e839ea0fc2fc4d260146c8bdb575698d467d93ad16882f33eb9cf7fa"
+      },
+      "configuration": "OptDebug",
+      "mapserver": {
+        "bytes": 6904832,
+        "delay_imports": [],
+        "imports": [
+          "ADVAPI32.dll",
+          "COMDLG32.dll",
+          "GDI32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "PhysXCooking.dll",
+          "PhysXLoader.dll",
+          "SHELL32.dll",
+          "USER32.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "0f779d95693e4dad9e8beeaf1e1ec8ebcecc2a282936edf816d3e6a7fb45a70d"
+      },
+      "patched_source_sha256": {
+        "MapServer/src/svr/svr_init.c": "d06ff1ecea746a4b277dbf77b6d6e64876f524895c5af0727fb1d0f6d9d7f521",
+        "libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h": "7f10c993614ee0756c408627b4698c3b107d1a3875184f85ff231fadad170813",
+        "libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h": "807969ff3d923fbf3d6a8188150b387ff93eecb0b4b621cdbf4b0435d61f1c7b",
+        "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71"
+      },
+      "postgresql_persistence_fixture": false,
+      "predecessor_manifest": {
+        "bytes": 181680,
+        "sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd"
+      },
+      "predecessor_mapserver": {
+        "bytes": 6914048,
+        "delay_imports": [],
+        "imports": [
+          "ADVAPI32.dll",
+          "COMDLG32.dll",
+          "GDI32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "PhysXCooking.dll",
+          "PhysXLoader.dll",
+          "SHELL32.dll",
+          "USER32.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+      },
+      "source_build_input_sha256": "718c1b6282fff45059aae9a7aac469b0e5ec9be2c875eaa73cfe9ac60514bb21",
+      "source_certificate_validated_against_clean_c86_baseline": true,
+      "source_checks": {
+        "bytes": 1762,
+        "sha256": "9a13f35e9be2660f02abba848ad35e1584cd25e89f5afb7b0087f0e35899c4a5"
+      },
+      "source_checks_status": "passed",
+      "source_patch": {
+        "path": "armport/patches/0119-armport-server-tick-file-metrics.patch",
+        "sha256": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f"
+      },
+      "startup_instrumentation_static_check": {
+        "execution_proven": false,
+        "literals": {
+          "ARMPORT_SERVER_STARTUP_V1 status=ok": true,
+          "args_parsed": true,
+          "db_connect_begin": true,
+          "db_connected": true,
+          "db_setup_done": true,
+          "definitions_done": true,
+          "directory_cache_begin": true,
+          "directory_cache_done": true,
+          "encounter_scripts_done": true,
+          "group_load_begin": true,
+          "group_load_done": true,
+          "main_loop_begin": true,
+          "map_metadata_done": true,
+          "player_animations_done": true,
+          "ready_published": true,
+          "sequencer_info_done": true,
+          "server_state_done": true,
+          "sys_init_done": true
+        },
+        "method": "ASCII_literal_presence_in_actual_MapServer_PE",
+        "passed": true,
+        "performed": true
+      }
+    },
+    "thor_certified_startup": {
+      "actual_PE32_and_import_closure_verified": true,
+      "architecture": "Win32",
+      "archive": {
+        "bytes": 3240315,
+        "filename": "server-metrics-thor-certified-startup.zip",
+        "sha256": "5d63d123ade2c1af4c2f8e09b4d4e6f225a75d89bd86541296ddad17559c6183"
+      },
+      "baseline_receipt_name": "map-startup-build-input.json",
+      "baseline_receipt_sha256": "972fb8402474958da30e8047b352db55afaa70a6404192c15d487f5467f194aa",
+      "build_manifest": {
+        "bytes": 45045,
+        "sha256": "6cd8dcbbf0adb27c00ce3b982c96db5b041a29ba51c9fcaf926978039989aa32"
+      },
+      "configuration": "OptDebug",
+      "mapserver": {
+        "bytes": 7494656,
+        "delay_imports": [],
+        "imports": [
+          "ADVAPI32.dll",
+          "COMDLG32.dll",
+          "GDI32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "PhysXCooking.dll",
+          "PhysXLoader.dll",
+          "SHELL32.dll",
+          "USER32.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "f893cee6cd6c4dc8b7c45c8b5f7c07572aaabbe50ee5b8730b9ddd3da12dac94"
+      },
+      "patched_source_sha256": {
+        "MapServer/src/svr/svr_init.c": "97c148c3232d1ce4e530a06b91f30f58779e6e293d02118b565298624b64de43",
+        "libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h": "7f10c993614ee0756c408627b4698c3b107d1a3875184f85ff231fadad170813",
+        "libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h": "807969ff3d923fbf3d6a8188150b387ff93eecb0b4b621cdbf4b0435d61f1c7b",
+        "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71"
+      },
+      "postgresql_persistence_fixture": false,
+      "predecessor_manifest": {
+        "bytes": 314572,
+        "sha256": "188be5d84cd44a6ae0fda6c954c4f4a0b7e0f1e1ddf5633a45ffb5416b92930a"
+      },
+      "predecessor_mapserver": {
+        "bytes": 7475200,
+        "delay_imports": [],
+        "imports": [
+          "ADVAPI32.dll",
+          "COMDLG32.dll",
+          "GDI32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "PhysXCooking.dll",
+          "PhysXLoader.dll",
+          "SHELL32.dll",
+          "USER32.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+      },
+      "source_build_input_sha256": "8d8ad6f8caf846020b78ce9ba1c908eb8287b206fda0be2a2f62c123b7b6c78d",
+      "source_certificate_validated_against_clean_c86_baseline": true,
+      "source_checks": {
+        "bytes": 1767,
+        "sha256": "8af7ba3cae1c54690ec3b0c0700529c582ce93d0c405c5462d5c5d4ed7ed8ab8"
+      },
+      "source_checks_status": "passed",
+      "source_patch": {
+        "path": "armport/patches/0119-armport-server-tick-file-metrics.patch",
+        "sha256": "5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f"
+      },
+      "startup_instrumentation_static_check": {
+        "execution_proven": false,
+        "literals": {
+          "ARMPORT_SERVER_STARTUP_V1 status=ok": true,
+          "args_parsed": true,
+          "db_connect_begin": true,
+          "db_connected": true,
+          "db_setup_done": true,
+          "definitions_done": true,
+          "directory_cache_begin": true,
+          "directory_cache_done": true,
+          "encounter_scripts_done": true,
+          "group_load_begin": true,
+          "group_load_done": true,
+          "main_loop_begin": true,
+          "map_metadata_done": true,
+          "player_animations_done": true,
+          "ready_published": true,
+          "sequencer_info_done": true,
+          "server_state_done": true,
+          "sys_init_done": true
+        },
+        "method": "ASCII_literal_presence_in_actual_MapServer_PE",
+        "passed": true,
+        "performed": true
+      }
+    }
+  }
+}

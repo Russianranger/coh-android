@@ -1,39 +1,38 @@
-# COH-ArmPort status
+# MapServer startup experiment status
 
-Updated 2026-10-29 CDT. Experimental server metrics + review fixes; PR #8 remains draft, M5 unaccepted.
-Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
+Updated 2026-11-01 America/Chicago. Thor <=60 seconds remains UNPROVEN.
+Branch armport/mapserver-startup-60s; base8dc2a66d72477b3c62227e572538b13f0e4f912b.
+Exact qualification head is frozen by the coordinator-only kickoff; see git HEAD
+and live draft PR9. No protected branch, merge, release or repository setting changed.
 
-- M3 merged (PR #6): final build 40407492746/replay 40407492734 passed partial
-  state scope; world rendered, completeness false, textures incomplete.
-- M4 app runtime accepted/merged (PR #7, review 5660940046); armport/M4-REPORT.md.
-- Last device-tested candidate: 0.13.44, APK run 40743596575/artifact 12840043807,
-  sha256 2cf80a03a0161fc42581147f0c75d8f22ea2ad93fc8884c9abab5c72388e5c1b.
-  Build 40724321192/requalification 40736589404 passed; review 5687848443 approved
-  that APK only. Retained 0.10 CI is not full 0.13.x runtime/device validation.
-- Thor results recorded by previous lead: combat, defeats, zoning, save work;
-  12–30 FPS (window mean 22.8); ~12 min warm startup, MapServer 9.5 min critical path.
-  King's Row NPC/car stutter remains; server contention is a hypothesis to measure.
-- Task A audit posted: PR #8 comment 6480628043; armport/notes/M5-ASTRA-ANALYSIS.md.
-  Sequencer “Reading” logs precede cache lookup: not proof of disk loads.
-  Java already knows ARM64; confirmed defect is manual/bounded interaction policy.
-- Claude-approved .45/code 60 (review 5692088051) at 0bf31c81b,
-  build 40776745390 (8 jobs), requalification 40786315414 (4), APK 40791416254.
-  Artifact 12860779714; APK 80,919,462 bytes, sha256
-  1ff2252876def6cfeb28d33490d8c2f5d5952c330698d6a719fb67a2197b3959.
-  Host CPU/tick-counter telemetry, manual-session
-  acceptance correction, preservation of both Wine and cache cleanup failures.
-  No native/runtime-pin changes. Longest ticks/file-load/Wine request counts
-  remain unavailable until a separately qualified native producer is integrated.
-- 0.13.46/code 61 development: opt-in serial Win32 producer, exact two-variant
-  qualification, guest admission and bounded native-console export are wired.
-  Build 40805020119: 9 jobs passed; Windows import of fcntl failed before MSVC.
-- Local command: PATH=<javac-wrapper>:$PATH ARMPORT_SERVER_BASELINE_ROOT=<c86>
-  python3 -m unittest discover -s armport/tests -p 'test_*.py': 419 passed; 61 lifecycle tests pass.
-  Extracted retained-source ASan/UBSan controls pass; original control fails.
-- P2/P3 fixed locally; bounded launch history added, retirement stays disabled.
-  Windows host admission and CRLF-cache fixes tested; full revised CI chain pending.
-- Remaining: prior-zone retirement, DbServer wait cost, ARM64 servers, persistent
-  folder cache, late data-stage launch, enhancement additions and cleanup proof.
-  Esync requires a proposal before changing the pinned runtime.
-- Reduced client features remain: no PhysX ragdolls, CgFX effects, runtime DXT.
-  No releases/protected-branch changes. See armport/M5-HANDOFF.md and M5-THOR-TEST.md.
+- Playable Thor comparison: .44/a5bd2bbe3, APK40743596575/artifact12840043807.
+  Latest predecessor APK .46/code61 (build40929292200/runtime40945708189/APK40952408285).
+  Its modern Win32 server was built/source-checked; last formal approval is .45.
+- e563 build41363927704 passed all10 jobs, including both Win32 MapServers.
+  Modern PE SHA f893cee6cd6c4dc8b7c45c8b5f7c07572aaabbe50ee5b8730b9ddd3da12dac94.
+- Actual Windows ACK41372568968 passed unchanged commit/blocked/failed-write
+  checks and postrun binary hashes; this is not gameplay or app-DbServer proof.
+- App runtime41372922907 failed staging after5.419s, before guest/map launch:
+  stale guest0119 hash49c0... versus actual5656... . No APK was dispatched.
+  Coordinator41363909847 and modern/rollback upstream waits failed accordingly.
+- Corrected pin + independent actual-file regression; real packages now admit.
+- Primary Android service-entry→ready-event receipt clock now includes all
+  Android/guest preparation and suspend. UI-action/world and guest/native clocks
+  are separate; ready telemetry changes no input/save/readiness or timeouts.
+- Contiguous PG/Wine/DbServer route + narrower ODBC interval; single owned-launch
+  kernel HWM/RSS and sparse thermal-severity/battery observations have explicit
+  exclusions. Aggregate server peak/PSS/CPU temperature/movable proof stay unknown.
+- ODBC reuse still verifies inputs/actual DLL and executes native probe each launch;
+  cache<4KiB, gain unmeasured. Win32 physics retained; ARM64 SDK closure unresolved.
+- Corrected validation: ArmPort443; Android timing6 +69 existing cases;
+  guest timing16/memory16/saved-map14. Actual official SDK35 all24 Java sources,
+  resources and D8 passed; resources/manifest retained except version metadata.
+- Source/native/ACK/staging failure/repair/SDK evidence: armport/evidence.
+- Next: fresh exact build→retained runtime→signed .47/code62; separately modern
+  full-data Atlas pair + original-server saved-data reopen and actual ACK checks.
+  Refresh supporting cohort IDs; serialize primary then real rollback APK build.
+- No installable .47 APK, modern asset-backed runtime, startup result, physical
+  install/recovery, five-run Atlas/King's or reboot/gameplay acceptance exists.
+- Thor unavailable. Complete CI/APK audits first, then physical capture procedure:
+  armport/THOR-STARTUP-CAPTURE.md; full continuation armport/notes/MAPSERVER-STARTUP-60S.md.
+  Integrate task commits in order after their inherited M5/.46 dependencies.

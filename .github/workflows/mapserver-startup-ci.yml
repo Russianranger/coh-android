@@ -1,0 +1,36 @@
+name: MapServer startup serialized CI
+# Corrected kickoff 2: freeze this exact source through primary and rollback qualification.
+
+# The user explicitly authorized branch-specific CI and this complete chain.
+# This one-file push trigger supplies the unavailable local dispatch capability.
+# No default-branch registration or personal access token is needed.
+on:
+  push:
+    branches: ['armport/mapserver-startup-60s']
+    paths: ['.github/workflows/mapserver-startup-ci.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mapserver-startup-serialized-chain
+  cancel-in-progress: false
+
+jobs:
+  chain:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/armport/mapserver-startup-60s'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          sparse-checkout: armport/scripts/startup_ci_chain.py
+          sparse-checkout-cone-mode: false
+      - name: Dispatch existing workflows serially at this exact source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 armport/scripts/startup_ci_chain.py

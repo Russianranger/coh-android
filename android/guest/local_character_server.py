@@ -1192,6 +1192,62 @@ def observe_animation_counter_bytes(state, output):
     return changed
 
 
+def observe_owned_launch_memory(child, proc_root=Path('/proc')):
+    """Once-only kernel memory observation for the exact owned Linux child.
+
+    VmHWM is this launch process's lifetime peak through this status read. Wine
+    or FEX workers, DbServer and client processes are neither scanned nor added.
+    """
+    result = {'status': 'unavailable', 'observed': False,
+        'scope': 'owned_linux_launch_process_only_at_first_native_ready',
+        'peak_scope': 'kernel_VmHWM_for_this_process_lifetime_to_status_read',
+        'includes_other_wine_fex_workers': False, 'includes_dbserver_or_client': False,
+        'aggregate_mapserver_peak_measured': False, 'pss_measured': False,
+        'linux_pid': None, 'process_starttime_ticks': None,
+        'kernel_vm_hwm_bytes': None, 'vm_rss_bytes': None}
+    try:
+        process = getattr(child, 'process', None)
+        pid, poll = getattr(process, 'pid', None), getattr(process, 'poll', None)
+        if type(pid) is not int or pid <= 0 or not callable(poll):
+            raise ValueError('Owned launch process interface unavailable')
+        result['linux_pid'] = pid
+        if poll() is not None:
+            raise ValueError('Owned launch leader already exited')
+        if base.WineProcessOwner.process_stat(Path(proc_root) / 'self')['pid'] != os.getpid():
+            raise ValueError('Direct owned-launch PID view unavailable; no alternate process guessed')
+        path = Path(proc_root) / str(pid)
+        before = base.WineProcessOwner.process_stat(path)
+        if before['pid'] != pid or before['state'] == 'Z' or before['starttime'] <= 0:
+            raise ValueError('Owned launch process identity unavailable')
+        with (path / 'status').open('rb') as source:
+            raw = source.read(64 * 1024 + 1)
+        if len(raw) > 64 * 1024:
+            raise ValueError('Owned launch status exceeded bound')
+        fields = {}
+        for line in raw.splitlines():
+            name, separator, value = line.partition(b':')
+            if separator and name in (b'Pid', b'VmHWM', b'VmRSS'):
+                tokens = value.split()
+                if (name in fields or len(tokens) != (1 if name == b'Pid' else 2)
+                        or not tokens[0].isdigit() or len(tokens[0]) > 20
+                        or name != b'Pid' and tokens[1] != b'kB'):
+                    raise ValueError('Owned launch status fields malformed')
+                fields[name] = int(tokens[0])
+        if (set(fields) != {b'Pid', b'VmHWM', b'VmRSS'} or fields[b'Pid'] != pid
+                or not 0 < fields[b'VmRSS'] <= fields[b'VmHWM'] <= (2**63 - 1) // 1024):
+            raise ValueError('Owned launch memory fields unavailable or inconsistent')
+        after = base.WineProcessOwner.process_stat(path)
+        if (after['pid'] != pid or after['starttime'] != before['starttime']
+                or after['state'] == 'Z' or poll() is not None):
+            raise ValueError('Owned launch process exited or changed identity')
+        result.update(status='observed_owned_linux_launch_process', observed=True,
+            process_starttime_ticks=before['starttime'], kernel_vm_hwm_bytes=fields[b'VmHWM'] * 1024,
+            vm_rss_bytes=fields[b'VmRSS'] * 1024)
+    except (OSError, ValueError, KeyError, IndexError) as failure:
+        result['reason'] = str(failure)[:200]
+    return result
+
+
 def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_payload):
     """Once-only optional private FX byte observation after native readiness.
 
@@ -1262,6 +1318,7 @@ class LocalCharacterServer(login.LocalLoginServer):
     requires_saved_character = False
     REPORT_KEY = 'character_creation'
     def __init__(self, owner):
+        request_at, request_utc_ms = time.monotonic(), int(time.time() * 1000)
         super().__init__(owner)
         self.map_process = None
         self.map_previous = None
@@ -1278,6 +1335,106 @@ class LocalCharacterServer(login.LocalLoginServer):
             'disconnected_before_sql': False, 'forced_stop_before_save': False,
             'reopen_verified': False, 'gameplay_verified': False, 'map_samples': [], 'character_samples': []}
         self.ctx.report[self.REPORT_KEY] = self.creation_report
+        self.initial_startup_timing = self.begin_startup_timing(
+            'initial_guest_service_request', now=request_at, utc_ms=request_utc_ms)
+
+    def begin_startup_timing(self, kind, *, map_id=None, epoch=None, resident=False, now=None, utc_ms=None):
+        """Observe the existing lifecycle without granting readiness or a budget.
+
+        The initial clock starts when the guest constructs this requested
+        service, before its initialize/PG/Wine/ODBC/preparation work. Android
+        tap-to-guest transport and work before construction are not measured.
+        A zoning clock starts when this supervisor accepts the request, before
+        its baseline protocol query and destination preparation.
+        """
+        row = {'format': 1, 'kind': kind, 'map_id': map_id, 'epoch': epoch,
+            'destination_already_resident': resident, 'status': 'readiness_not_observed',
+            'clock': 'guest_monotonic_seconds', 'clock_valid': True, 'points': {},
+            'request_boundary_observed': True,
+            'android_tap_boundary_measured': False,
+            'dependency_state_at_request': 'already_running_for_zoning' if epoch is not None else 'not_observed',
+            'baseline_destination_not_started': False,
+            'readiness_proof': None, 'client_world_ready_observed': False,
+            'movement_readiness_measured': False, 'physical_60_second_acceptance_validated': False}
+        self.creation_report.setdefault('map_startup_timing', []).append(row)
+        self.mark_startup_timing(row, 'request', now=now, utc_ms=utc_ms)
+        return row
+
+    def mark_startup_timing(self, row, phase, *, now=None, utc_ms=None):
+        """Clock failures are diagnostics only; never alter lifecycle checks."""
+        if row is None or phase in row['points']:
+            return
+        pairs = {'request_to_map_ready_seconds': ('request', 'map_ready_observed'),
+            'process_spawn_to_map_ready_seconds': ('map_spawn_requested', 'map_ready_observed'),
+            'request_to_process_spawn_seconds': ('request', 'map_spawn_requested'),
+            'dependency_start_seconds': ('dependencies_start', 'dependencies_ready'),
+            'runtime_database_route_seconds': ('runtime_database_route_start', 'dependencies_ready'),
+            'request_to_client_world_ready_seconds': ('request', 'client_world_ready_observed')}
+        try:
+            now = time.monotonic() if now is None else now
+            utc_ms = int(time.time() * 1000) if utc_ms is None else utc_ms
+        except (OSError, ValueError, OverflowError):
+            row.update(clock_valid=False, clock_error='clock_unavailable')
+            row.update({name: None for name in pairs})
+            return
+        valid = type(now) in (int, float) and math.isfinite(now)
+        previous = list(row['points'].values())
+        if not valid or previous and now < previous[-1]['monotonic_seconds']:
+            row.update(clock_valid=False, clock_error='nonfinite_or_reversed_monotonic_observation')
+            row.update({name: None for name in pairs})
+            return
+        row['points'][phase] = {'monotonic_seconds': now, 'utc_ms': utc_ms}
+        for name, (start, end) in pairs.items():
+            points = row['points']
+            row[name] = (round(points[end]['monotonic_seconds'] - points[start]['monotonic_seconds'], 6)
+                if row['clock_valid'] and start in points and end in points else None)
+        if phase == 'map_ready_observed':
+            row.update(status='map_readiness_observed',
+                readiness_proof='existing_owned_completed_tick_and_DbServer_endpoint_status',
+                timing_scope='sampled_upper_bound_including_protocol_observer_delay')
+            # Android timestamps receipt on its own monotonic clock. This
+            # reports the existing readiness proof; it grants no lifecycle
+            # transition and never combines the guest and Android clocks.
+            if (row.get('kind') == 'initial_guest_service_request' and row.get('epoch') is None
+                    and row.get('destination_already_resident') is False
+                    and type(row.get('map_id')) is int and row['map_id'] in (1, 5)
+                    and row.get('clock_valid') is True and row.get('request_boundary_observed') is True
+                    and row.get('baseline_destination_not_started') is True
+                    and 'request' in row['points'] and 'map_spawn_requested' in row['points']):
+                event = getattr(self.ctx, 'event', None)
+                if not callable(event):
+                    row['map_server_ready_event_error'] = 'event_unavailable'
+                else:
+                    try:
+                        event('map_server_ready_observed', format=1, session_id=self.owner.args.session_id,
+                            request_kind='initial_guest_service_request', epoch=None, destination_already_resident=False,
+                            map_id=row['map_id'], readiness_proof=row['readiness_proof'],
+                            process_spawn_observed=True, native_ready_observed=True)
+                    except OSError as failure:
+                        row['map_server_ready_event_error'] = type(failure).__name__
+        if phase == 'client_world_ready_observed':
+            row['client_world_ready_observed'] = True
+
+    def map_startup_timing(self, map_id):
+        pending = getattr(self, 'pending', None)
+        if pending is None:
+            row = getattr(self, 'initial_startup_timing', None)
+            if row is None:
+                # Older retained callers/host fixtures can construct the
+                # object without __init__. Never invent their earlier clock.
+                row = self.initial_startup_timing = self.begin_startup_timing('initial_boundary_unavailable')
+                row['points'].pop('request', None)
+                row['request_boundary_observed'] = False
+        else:
+            row = pending.get('startup_timing')
+            if row is None:
+                row = pending['startup_timing'] = self.begin_startup_timing('zoning_supervisor_request',
+                    map_id=map_id, epoch=pending.get('epoch'),
+                    resident=map_id in getattr(self, 'maps', {}),
+                    now=pending.get('preparation_started_monotonic'),
+                    utc_ms=pending.get('preparation_started_utc_ms'))
+        row['map_id'] = map_id
+        return row
 
     def initialize(self):
         """Check the requested operation against SQL before starting Wine.
@@ -1286,6 +1443,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         ever saved a character. Resuming that first creation is explicit and
         never removes or replaces the persistent profile.
         """
+        timing = getattr(self, 'initial_startup_timing', None)
+        if (timing is not None and timing.get('kind') == 'initial_guest_service_request'
+                and timing.get('request_boundary_observed') is True and 'request' in timing['points']):
+            timing['runtime_database_route_scope'] = (
+                'guest private-profile/PostgreSQL initialization through Wine/init and intervening display/setup '
+                'to ODBC/private DbServer preparation and DbServer readiness/schema snapshot; '
+                'contiguous wall-clock route, not exclusive dependency CPU time')
+            self.mark_startup_timing(timing, 'runtime_database_route_start')
         resume = getattr(self.owner.args, 'resume_empty_profile', False)
         require(type(resume) is bool, 'Invalid first-creation resume request')
         self.creation_report['resume_first_creation_requested'] = resume
@@ -1422,6 +1587,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         prepared_at = time.monotonic()
         phase_at, phases = prepared_at, {}
         self.creation_report['server_preparation_phase_seconds'] = phases
+        self.map_startup_timing(None)['preparation_phase_seconds'] = phases
 
         def checkpoint(name):
             nonlocal phase_at
@@ -1693,8 +1859,9 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def persist_startup_observation(self):
         """Retain bounded activation evidence even before character acceptance."""
-        rows = self.creation_report.get('map_startup_observation')
-        if not rows:
+        rows = self.creation_report.get('map_startup_observation') or {}
+        timings = self.creation_report.get('map_startup_timing') or []
+        if not rows and not timings:
             return
         self.ctx.report['map_startup_observation'] = rows
         state = getattr(self.ctx, 'state', None)
@@ -1702,7 +1869,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             return
         value = {'format': 1, 'session_id': self.owner.args.session_id,
             'status': 'observations_only', 'physical_startup_gain_validated': False,
-            'maps': rows}
+            'maps': rows, 'map_startup_timing': timings}
         try:
             raw = json.dumps(base.redacted_value(value, self.ctx.secrets), indent=2) + '\n'
             require(len(raw.encode()) <= 256 * 1024, 'Startup observation exceeded bounded receipt')
@@ -1794,6 +1961,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 row.update(native_ready_verified=True,
                     native_ready_elapsed_seconds=round(now - child.started, 6),
                     native_ready_time_scope='sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded')
+                row['owned_launch_memory_at_first_native_ready'] = observe_owned_launch_memory(child)
                 row['server_fx_provider']['post_native_ready'] = observe_ready_fx_provider(
                     runtime, row['private_runtime_identity'], row['server_fx_provider']['actual_payload'])
                 changed = True
@@ -2170,9 +2338,20 @@ class LocalCharacterServer(login.LocalLoginServer):
         return result
 
     def start(self):
-        super().start()
-        self.capture_baseline()
-        self.start_map()
+        timing = self.map_startup_timing(None)
+        timing['dependency_start_scope'] = ('local_server_start: ODBC installation/probe, private runtime '
+            'preparation, DbServer launch/readiness and schema snapshot; earlier PostgreSQL/Wine '
+            'initialization remains included in request_to_map_ready_seconds')
+        self.mark_startup_timing(timing, 'dependencies_start')
+        try:
+            super().start()
+            self.mark_startup_timing(timing, 'dependencies_ready')
+            timing['dbserver_startup_timing'] = dict(self.report.get('startup_timing', {}))
+            self.capture_baseline()
+            self.start_map()
+        except BaseException as failure:
+            timing.update(status='failed_before_map_readiness', failure_type=type(failure).__name__)
+            raise
 
     def capture_baseline(self):
         self.baseline = self.inventory()
@@ -2195,10 +2374,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         return environment
 
     def start_map(self):
+        timing = self.map_startup_timing(1)
+        self.mark_startup_timing(timing, 'map_baseline_check_started')
         self.ctx.stage('local_atlas_startup')
         game.check_game_port(7001, socket.SOCK_DGRAM)
         baseline = evidence.parse_map_status(self.query(['-getstatus', '1', '1'], 'atlas-baseline'), allow_missing=True)
         require(not baseline.get('ready'), 'Atlas was already running before this owned launch')
+        timing['baseline_destination_not_started'] = (baseline.get('not_started') is True
+            or baseline.get('missing') is True)
         self.map_progress_path = self.runtime / 'character-atlas-progress.bin'
         require(not self.map_progress_path.exists(), 'Stale Atlas progress file')
         environment = dict(self.owner.wine_env, **{evidence.GAME_LOOPBACK_ENV: '1',
@@ -2212,6 +2395,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         environment = self.map_metrics_environment(environment, self.runtime)
         self.map_launch_utc_ms = int(time.time() * 1000)
         self.persist_startup_observation()
+        self.mark_startup_timing(timing, 'map_spawn_requested')
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
             '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
@@ -2248,6 +2432,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     progress.compare_records(after, before)
                     guard['passed'] = True
                     self.creation_report.update(map_ready=True, map_listener=bindings)
+                    self.mark_startup_timing(timing, 'map_ready_observed')
                     self.sample_startup_observation(force=True)
                     self.ctx.passed(atlas_ready=True, map=sample, loopback_only=True)
                     return
@@ -2485,6 +2670,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 self.creation_report.update(connected_on_atlas=True, client_ready_evidence=ready,
                     client_ready_observed_utc=base.utc(), client_ready_observed_utc_ms=int(time.time() * 1000),
                     **self.connection_metadata())
+                self.mark_startup_timing(self.initial_startup_timing, 'client_world_ready_observed')
             if self.creation_report['connected_on_atlas']:
                 self.observe_connected_character()
             return None
@@ -2523,11 +2709,13 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def collect(self, target):
         self.sample_startup_observation(force=True)
-        startup = self.creation_report.get('map_startup_observation')
-        if startup:
+        startup = self.creation_report.get('map_startup_observation') or {}
+        timings = self.creation_report.get('map_startup_timing') or []
+        if startup or timings:
             base.private_write(target / 'map-startup-observation.json',
                 json.dumps(base.redacted_value({'format': 1, 'session_id': self.owner.args.session_id,
-                    'maps': startup, 'physical_startup_gain_validated': False}, self.ctx.secrets), indent=2) + '\n')
+                    'maps': startup, 'map_startup_timing': timings,
+                    'physical_startup_gain_validated': False}, self.ctx.secrets), indent=2) + '\n')
         # Atlas has substantially more diagnostics than the login-only mode.
         # Keep its bounded complete logs in one member of the outer support ZIP.
         # Do not widen the accepted login-only collector's two-MiB limit.

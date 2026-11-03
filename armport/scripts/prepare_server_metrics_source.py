@@ -40,6 +40,15 @@ CONTRACT = {
     'disk_only_measurement': False, 'wineserver_request_counts': False,
     'clock_failure': 'disable_metrics_only_with_status_record',
     'gameplay_decisions_changed': False,
+    'startup': {
+        'record_prefix': 'ARMPORT_SERVER_STARTUP_V1',
+        'scope': 'main_entry_to_checkpoint',
+        'clock': 'QueryPerformanceCounter',
+        'output_begins_after': 'parseArgs1',
+        'loader_and_runtime_preparation_included': False,
+        'readiness_proof': False,
+        'group_load_includes_geometry_collision_and_physics': True,
+    },
 }
 CHILD_RECEIPTS = {
     'postgresql_build_input': 'postgresql-build-input.json',
@@ -82,6 +91,64 @@ def patch_bytes():
     return data
 
 
+def patch_startup(data):
+    """Add observations at actual calls; retain their order and all game work."""
+    replacements = (
+        (b'    memCheckInit();\n',
+         b'    armportServerStartupBegin();\n    memCheckInit();\n'),
+        (b'    // -getcharacter and other -dbquery command lines\n',
+         b'    // -getcharacter and other -dbquery command lines\n'
+         b'    armportServerStartupPhase("args_parsed", db_state.map_id);\n'),
+        (b'        fileDataDir();\n',
+         b'        armportServerStartupPhase("directory_cache_begin", db_state.map_id);\n'
+         b'        fileDataDir();\n'
+         b'        armportServerStartupPhase("directory_cache_done", db_state.map_id);\n'),
+        (b'    sysInit();\n', b'    sysInit();\n'
+         b'    armportServerStartupPhase("sys_init_done", db_state.map_id);\n'),
+        (b'    serverStateInit(argc,argv);\n', b'    serverStateInit(argc,argv);\n'
+         b'    armportServerStartupPhase("server_state_done", db_state.map_id);\n'),
+        (b'    MonorailsLoad();\n', b'    MonorailsLoad();\n'
+         b'    armportServerStartupPhase("map_metadata_done", db_state.map_id);\n'),
+        (b'    seqPreloadSeqInfos(); // Must be *before* groupLoadMap\n',
+         b'    seqPreloadSeqInfos(); // Must be *before* groupLoadMap\n'
+         b'    armportServerStartupPhase("sequencer_info_done", db_state.map_id);\n'),
+        (b'    loadConfigFiles(); // templates get written here.\n',
+         b'    loadConfigFiles(); // templates get written here.\n'
+         b'    armportServerStartupPhase("definitions_done", db_state.map_id);\n'),
+        (b'        ScriptDefLoad();\n', b'        ScriptDefLoad();\n'
+         b'        armportServerStartupPhase("encounter_scripts_done", db_state.map_id);\n'),
+        (b'    // csv dump mode\n',
+         b'    armportServerStartupPhase("player_animations_done", db_state.map_id);\n\n'
+         b'    // csv dump mode\n'),
+        (b'        connectToDbserver(NO_TIMEOUT);\n',
+         b'        armportServerStartupPhase("db_connect_begin", db_state.map_id);\n'
+         b'        connectToDbserver(NO_TIMEOUT);\n'
+         b'        armportServerStartupPhase("db_connected", db_state.map_id);\n'),
+        (b'        groupLoadMap(db_state.map_name,0,!server_state.beaconProcessOnLoad);\n',
+         b'        armportServerStartupPhase("group_load_begin", db_state.map_id);\n'
+         b'        groupLoadMap(db_state.map_name,0,!server_state.beaconProcessOnLoad);\n'
+         b'        armportServerStartupPhase("group_load_done", db_state.map_id);\n'),
+        (b'        dbSetupMap();\n', b'        dbSetupMap();\n'
+         b'        armportServerStartupPhase("db_setup_done", db_state.map_id);\n'),
+        (b'        dbReadyForPlayers();\n', b'        dbReadyForPlayers();\n'
+         b'        armportServerStartupPhase("ready_published", db_state.map_id);\n'),
+        (b'    armportServerMetricsInit(db_state.map_id);\n',
+         b'    armportServerStartupPhase("main_loop_begin", db_state.map_id);\n'
+         b'    armportServerMetricsInit(db_state.map_id);\n'),
+    )
+    for old, new in replacements:
+        if old == b'        dbReadyForPlayers();\n':
+            # An earlier recovery helper also republishes readiness. Observe
+            # only initial main startup, never that independent later path.
+            main = data.index(b'int __cdecl main(int argc,char **argv)')
+            require(data[main:].count(old) == 1, 'Native startup ready anchor differs')
+            data = data[:main] + data[main:].replace(old, new, 1)
+            continue
+        require(data.count(old) == 1, 'Native startup phase anchor differs: ' + old.decode().strip())
+        data = data.replace(old, new, 1)
+    return data
+
+
 def patch_loop(data):
     """Rebase only 0119's four guarded insertions over existing progress hooks."""
     pre_tick = b'        cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);\n'
@@ -105,7 +172,7 @@ def patch_loop(data):
     for old, new in replacements:
         require(data.count(old) == 1, 'Native metric loop anchor differs')
         data = data.replace(old, new, 1)
-    return data
+    return patch_startup(data)
 
 
 def baseline_closure(receipt, name):
@@ -211,9 +278,10 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
+                                   'startup', 'startup_disabled', 'startup_clock',
                                    'progress_markers'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_assertion',
+                'unpatched_control_failure': 'runtime_missing_metrics_and_startup_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

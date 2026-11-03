@@ -2,8 +2,10 @@
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -16,6 +18,115 @@ import native_map_startup_contract as startup
 
 
 class MapStartupObservationTests(unittest.TestCase):
+    def live_child(self):
+        process = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])
+        def cleanup():
+            if process.poll() is None:
+                process.terminate()
+            process.wait(timeout=5)
+        self.addCleanup(cleanup)
+        return SimpleNamespace(process=process)
+
+    def proc_fixture(self, child):
+        temporary = tempfile.TemporaryDirectory(prefix='coh-owned-memory-')
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        process = root / str(child.process.pid); process.mkdir()
+        fields = ['S', '1'] + ['0'] * 17 + ['100']
+        (root / 'self').mkdir()
+        (root / 'self/stat').write_text(str(os.getpid()) + ' (owner) ' + ' '.join(fields))
+        (process / 'stat').write_text(str(child.process.pid) + ' (owned launch) ' + ' '.join(fields))
+        status = process / 'status'
+        status.write_text(f'Name:\towned\nPid:\t{child.process.pid}\nVmHWM:\t512 kB\nVmRSS:\t256 kB\n')
+        return root, process, status
+
+    def test_real_owned_popen_memory_snapshot_has_narrow_scope(self):
+        child = self.live_child()
+        result = server.observe_owned_launch_memory(child)
+        if server.base.WineProcessOwner.process_stat(Path('/proc/self'))['pid'] != os.getpid():
+            self.assertFalse(result['observed'])
+            self.assertIn('PID view unavailable', result['reason'])
+            self.assertIsNone(result['kernel_vm_hwm_bytes'])
+            return
+        self.assertTrue(result['observed'], result)
+        self.assertEqual(result['linux_pid'], child.process.pid)
+        self.assertGreaterEqual(result['kernel_vm_hwm_bytes'], result['vm_rss_bytes'])
+        self.assertGreater(result['vm_rss_bytes'], 0)
+        self.assertFalse(result['aggregate_mapserver_peak_measured'])
+        self.assertFalse(result['pss_measured'])
+        self.assertFalse(result['includes_other_wine_fex_workers'])
+        self.assertFalse(result['includes_dbserver_or_client'])
+
+    def test_real_status_files_decode_kernel_kibibytes_and_bound_read(self):
+        child = self.live_child(); root, _, status = self.proc_fixture(child)
+        result = server.observe_owned_launch_memory(child, root)
+        self.assertTrue(result['observed'])
+        self.assertEqual(result['kernel_vm_hwm_bytes'], 512 * 1024)
+        self.assertEqual(result['vm_rss_bytes'], 256 * 1024)
+        self.assertEqual(result['process_starttime_ticks'], 100)
+        status.write_bytes(status.read_bytes() + b'x' * (64 * 1024))
+        result = server.observe_owned_launch_memory(child, root)
+        self.assertFalse(result['observed']); self.assertIn('exceeded bound', result['reason'])
+        self.assertIsNone(result['kernel_vm_hwm_bytes'])
+
+    def test_missing_malformed_or_wrong_pid_memory_status_stays_unavailable(self):
+        child = self.live_child(); root, _, status = self.proc_fixture(child)
+        original = status.read_text()
+        for text in (original.replace('VmHWM:', 'Other:'), original.replace('512 kB', '512 MB'),
+                     original.replace('512 kB', '128 kB'), original + 'Pid:\t123\n',
+                     original.replace(f'Pid:\t{child.process.pid}', 'Pid:\t1')):
+            with self.subTest(text=text):
+                status.write_text(text)
+                result = server.observe_owned_launch_memory(child, root)
+                self.assertFalse(result['observed']); self.assertIsNone(result['vm_rss_bytes'])
+        status.unlink()
+        self.assertFalse(server.observe_owned_launch_memory(child, root)['observed'])
+
+    def test_changed_starttime_or_exited_owned_leader_never_reports_memory(self):
+        child = self.live_child(); root, path, _ = self.proc_fixture(child)
+        original = server.base.WineProcessOwner.process_stat
+        calls = []
+        def changed(directory):
+            if directory == path:
+                calls.append(directory)
+                if len(calls) == 2:
+                    (path / 'stat').write_text((path / 'stat').read_text().replace(' 100', ' 101'))
+            return original(directory)
+        with mock.patch.object(server.base.WineProcessOwner, 'process_stat', side_effect=changed):
+            result = server.observe_owned_launch_memory(child, root)
+        self.assertFalse(result['observed']); self.assertIsNone(result['kernel_vm_hwm_bytes'])
+        child.process.terminate(); child.process.wait(timeout=5)
+        with mock.patch.object(server.base.WineProcessOwner, 'process_stat') as inspect:
+            self.assertFalse(server.observe_owned_launch_memory(child, root)['observed'])
+        inspect.assert_not_called()
+
+    def test_optional_proc_denial_is_unavailable_but_cancellation_propagates(self):
+        child = self.live_child(); root, _, _ = self.proc_fixture(child)
+        with mock.patch.object(server.base.WineProcessOwner, 'process_stat', side_effect=PermissionError('proc denied')):
+            result = server.observe_owned_launch_memory(child, root)
+        self.assertFalse(result['observed']); self.assertIn('proc denied', result['reason'])
+        failure = server.base.Cancelled('cancelled')
+        with mock.patch.object(server.base.WineProcessOwner, 'process_stat', side_effect=failure):
+            with self.assertRaises(server.base.Cancelled) as raised:
+                server.observe_owned_launch_memory(child, root)
+        self.assertIs(raised.exception, failure)
+
+    def test_owned_leader_exit_during_status_read_discards_snapshot(self):
+        child = self.live_child(); root, path, _ = self.proc_fixture(child)
+        original = server.base.WineProcessOwner.process_stat
+        calls = []
+        def exits(directory):
+            identity = original(directory)
+            if directory == path:
+                calls.append(directory)
+                if len(calls) == 2:
+                    child.process.terminate(); child.process.wait(timeout=5)
+            return identity
+        with mock.patch.object(server.base.WineProcessOwner, 'process_stat', side_effect=exits):
+            result = server.observe_owned_launch_memory(child, root)
+        self.assertFalse(result['observed'])
+        self.assertIsNone(result['kernel_vm_hwm_bytes'])
+
     def line(self, **changes):
         row = dict(opened=5878, certified=5878, fallback=0, crypto_failed=0, raw_bytes=88380730,
             hash_us=123, stock_us=0, skipped_rot_keys=42, skipped_pos_keys=51,
@@ -123,9 +234,15 @@ class MapStartupObservationTests(unittest.TestCase):
         self.assertTrue(row['launch_path_binding_observed'])
         self.assertTrue(row['animation_storage']['native_certificate']['observed'])
         self.assertFalse(row['native_ready_verified'])
+        self.assertNotIn('owned_launch_memory_at_first_native_ready', row)
         value.maps[5]['ready'] = True
-        with mock.patch.object(server.time, 'monotonic', return_value=125): value.sample_startup_observation(force=True)
+        with mock.patch.object(server.time, 'monotonic', return_value=125), \
+                mock.patch.object(server, 'observe_owned_launch_memory', wraps=server.observe_owned_launch_memory) as observe:
+            value.sample_startup_observation(force=True)
+            value.sample_startup_observation(force=True)
+        self.assertEqual(observe.call_count, 1)
         self.assertTrue(row['native_ready_verified'])
+        self.assertFalse(row['owned_launch_memory_at_first_native_ready']['observed'])
         self.assertEqual(row['native_ready_elapsed_seconds'], 25)
         self.assertIn('upper_bound', row['native_ready_time_scope'])
         self.assertFalse(json.loads((root / 'latest-report.json').read_text())['passed'])
