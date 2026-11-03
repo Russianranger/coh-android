@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "scope": "real_preserved_reference_and_schema_host_admission_preflight",
+  "passed": true,
+  "native_candidate_executed": false,
+  "database_started": false,
+  "native_compiler_invoked": false,
+  "candidate_repository_commit": "e563fe5664cd13570899800695c7e9680ac68877",
+  "native_build_run_id": 41363927704,
+  "outer_donor_artifact": {
+    "bytes": 38318191,
+    "sha256": "ce13787e5214335bf63e2e8f097b95f2b10ff3e0d9e5089a2872b1336ac2636e"
+  },
+  "preserved_donors": {
+    "files": 47,
+    "bytes": 52230721,
+    "source_run": 39782080360,
+    "source_artifact": 12428500525,
+    "verified": true
+  },
+  "inner_reference_archive": {
+    "bytes": 14495500,
+    "sha256": "dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa"
+  },
+  "accepted_schema": {
+    "report": {
+      "bytes": 38041,
+      "sha256": "ae73b29e193d34950be2043c8fb0ef41b9055d75d573f83e6059e12d95f1a5bf"
+    },
+    "archive": {
+      "bytes": 682745,
+      "sha256": "a7bb94cd936198850f1a35ac58df925b3638caae29c02f47dca1cb3e21dbc132"
+    },
+    "generated_outputs": 56,
+    "run_id": 36088012666
+  },
+  "original_reference": {
+    "repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+    "dbserver": {
+      "bytes": 1656832,
+      "sha256": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8"
+    },
+    "mapserver": {
+      "bytes": 6905344,
+      "sha256": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4"
+    },
+    "reference_file_count": 29,
+    "fixture_off": true,
+    "import_closure_complete": true,
+    "real_received_ack_marker_present": true
+  },
+  "text_stage": {
+    "runtime_inputs": {
+      "bytes": 677,
+      "sha256": "57426e46fbc5d979706b69a1a925dfda57b17a536c87f7a6f83e7fab3326fdb2"
+    },
+    "accepted_input_files": 62,
+    "sql_table_count": 99,
+    "sql_column_count": 5935,
+    "attribute_row_counts": {
+      "attributes": 56411,
+      "badgestatsattributes": 1771,
+      "pophelpattributes": 90
+    },
+    "optional_inputs": [
+      {
+        "path": "data/server/db/weeklyTF.cfg",
+        "status": "absent_in_pinned_data",
+        "handling": "left absent; missing-file diagnostics captured explicitly"
+      },
+      {
+        "path": "data/server/db/Doors.db",
+        "status": "absent_in_pinned_data",
+        "handling": "left absent; missing-file diagnostics captured explicitly"
+      }
+    ],
+    "source_contract": {
+      "list_id": 23,
+      "table": "miningaccumulator",
+      "field": "name",
+      "containers_per_single_request": 1,
+      "containers_per_batch_request": 2
+    }
+  },
+  "elapsed_seconds": 95.702
+}
