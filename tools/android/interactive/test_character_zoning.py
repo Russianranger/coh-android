@@ -750,8 +750,10 @@ class BackgroundPrestartTests(unittest.TestCase):
         instance.prepare_kings_row_runtime = prepare
         return instance
 
-    def run_until(self, instance, status, start=100):
-        now = start
+    def run_until(self, instance, status, start=None):
+        # Fake clocks stay behind the real monotonic clock, which also stamps
+        # timing points: a CI runner booted under 2 minutes ago saw "reversed".
+        now = time.monotonic() - 100000 if start is None else start
         for _ in range(200):
             instance.tick_prestart(now)
             if instance.prestart is not None and instance.prestart['thread'] is not None:
