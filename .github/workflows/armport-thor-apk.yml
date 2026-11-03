@@ -2,7 +2,8 @@ name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
 # Gameplay 0.13.48, the 0.13.36 app plus the ARM64 client option, for the M5
-# Thor play test. Uploads a workflow artifact only; no release is published.
+# Thor play test. Uploads a workflow artifact; publish_release=true (only for a
+# user-approved candidate) also publishes it as a GitHub pre-release.
 on:
   # Dispatch only, with an explicit package run: a default or push build could
   # silently embed an older client (Sol 5661731725, Astra 5671483734).
@@ -13,6 +14,11 @@ on:
         required: true
       server_metrics:
         description: Include the two-variant server package qualified by this exact runtime run
+        type: boolean
+        required: false
+        default: false
+      publish_release:
+        description: Publish the signed APK as a GitHub pre-release (user-approved candidates only)
         type: boolean
         required: false
         default: false
@@ -162,3 +168,37 @@ jobs:
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
+
+  release:
+    if: inputs.publish_release
+    needs: apk
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-0.13.48-apk
+          path: apk
+      - name: Publish the 0.13.48 pre-release
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          cd apk
+          test -f COH-Atlas-Gameplay-0.13.48.apk
+          sha256sum COH-Atlas-Gameplay-0.13.48.apk > COH-Atlas-Gameplay-0.13.48.apk.sha256
+          cat > notes.md <<EOF
+          COH Atlas Gameplay 0.13.48 (x86 track performance candidate) for the Thor play test.
+
+          Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
+          In-place update over the installed app; it keeps app data, the saved hero and imported assets.
+
+          New launch options: Fast mode (PRoot seccomp) on by default; Raise the frame cap to 60 FPS in the world
+          (on by default); Start King's Row in the background (off); Fast server data loading (trusted bins, off).
+          Test sheet: X86-THOR-TEST.md in the source. CI-only evidence; not yet run on a device.
+          EOF
+          gh release create "coh-atlas-gameplay-v0.13.48" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.48 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.48.apk COH-Atlas-Gameplay-0.13.48.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.48"
