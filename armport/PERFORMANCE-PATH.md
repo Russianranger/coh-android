@@ -277,6 +277,40 @@ cache-miss starts gone.
 Exit targets: start ≤ 5 min; cold MapServer ≤ 2 min; FPS ≥ 30 in 95% of
 gameplay windows.
 
+### Shared read-only server tree: design (2026-11-03, source reading)
+
+The engine already searches layered data folders, so the shared tree needs no
+native change. `fileLoadDataDirs` → `findAutoDataDir` → `searchForDataDir(cwd)`
+accepts a folder that has both `data/` and `tools/`. `addAppropriateDataDirs`
+then adds `localdata/` (searched first) and `serverdata/` (second) when they
+exist, and makes `data/` the main folder: it is searched last, and
+`fileLocateWrite` writes there. `start_game` already runs each MapServer with
+its runtime as the working directory.
+
+Per MapServer runtime:
+- `data/` (private, writable): `bin`, `geobin`, `server` (with `servers.cfg`
+  and the schema), `.dbidmap` files and any writable input. This is the small
+  part to copy or check out.
+- `serverdata/`: one shared tree per data identity. It holds every immutable
+  input except those private roots, and it is never moved or returned.
+- `localdata/`: a per-map overlay, for example King's Row's 52 collision
+  leaves.
+- `tools/`: an empty folder that turns the layered search on.
+
+Rules and work:
+- A private root must not also exist in a folder searched earlier. Otherwise a
+  rewritten `.bin` in `data/bin` is shadowed by the shared copy.
+- The guest proofs that read `runtime/data/<input>` (beacon and collision
+  inputs, cache verification) must resolve through the same three-folder order.
+- `serverdata` as a directory link is a deliberate exception to "no directory
+  links". It needs its own immutability proof (owned, read-only, fingerprinted
+  by identity).
+- Expected effect: no 104-230 s mirror on a miss, King's Row's 218 s first
+  mirror goes, and nothing large is left to strand. Confirm first with a
+  CI-only probe: a runtime where `tools/` exists and `serverdata/` holds one
+  moved definition folder, checked by the console's
+  `Using game data dir` line and a normal map start.
+
 ### Phase 3: close the cold-start gap on the x86 track
 
 With Phases 0-2 measured, the remaining gap to a 60 s cold start is known.
