@@ -72,6 +72,30 @@ fx 32 s, group libraries (3,224 files) 31 s, scripts 21 s, PhysX object
 creation 22 s, maps 9 s; the remaining ~49 s is spread over smaller steps.
 It is data loading through FEX + Wine + PRoot, not simulation.
 
+Launch 1, from `armport/app/mapserver_phases.py` over the Thor consoles
+(stamp to map ready): Atlas 332 s, King's Row 258 s.
+
+| Phase | Atlas | King's Row | What runs (source reading) |
+|---|---|---|---|
+| `sequencers` → folder caching (untimed) | 94 s | 89 s | sequencer tree scan + `sequencers.bin` decode + 5,120 animation attachments (certificate hashing only 1.2 s) |
+| Story arcs | 54 s | 30 s | `Scripts.loc` tree scan (35 s / 17 s gap) and `maps` scan (13 s / 8 s) |
+| Map load | 48 s | 30 s | `scenes`/geometry for the zone |
+| FX info | 42 s | 33 s | `fx` tree scan + `fxinfo.bin` decode |
+| Group libraries | 25 s | 24 s | `object_library`, 3,224 files |
+| PhysX objects | 19 s | 7 s | 2,311 objects |
+
+The servers run in `FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC` (no
+`./piggs/texts.pigg`). In that mode the first use of each top-level folder scans
+its whole tree from disk (`FolderCacheRequestTree`, the `[DEBUG] \tfx`-style
+lines), and `ParserIsPersistNewer` then date-checks every source file against
+each `.bin`. Every scanned entry is a Wine directory read plus `stat` through
+PRoot path translation. Production mode skips the date check, but it also bans
+loose `scenes`, `ent_types`, `object_library` and `geobin` (they must come from
+piggs) and ignores `.bin` CRC differences, so forcing it with a marker file
+alone would break map loading. The two candidates are piggs for the immutable
+data (the shipped configuration the code expects) or a narrow native switch
+that trusts a CRC-matching prepared `.bin` without the tree scan.
+
 ### Zoning, 0.13.44 launch 1
 
 | Transfer | Server side | Client load | Total |
