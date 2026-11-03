@@ -280,11 +280,13 @@ PR #11 (`x86/perf-round1` → `x86-track`); `x86/perf-round3` is the working
 branch and is merged into round 1 for each release. Evidence and numbers:
 [PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md) and issue #10.
 
-- **Published:** 0.13.48 pre-release
-  ([coh-atlas-gameplay-v0.13.48](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.48),
-  APK run 41636249551, sha256 `0da7621b…`). 0.13.49 (64) adds read-only device
-  evidence; its chain is a runtime at the release head that reuses build
-  41616229359 (no native patch changed), then the shipping-server APK.
+- **Published (use 0.13.49):** pre-release
+  [coh-atlas-gameplay-v0.13.49](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.49)
+  (APK 41647713812, qualifying runtime 41642095387 at `0f13f5741`, sha256
+  `9520fb31…`). It is 0.13.48 plus read-only device evidence, and reuses build
+  41616229359 (no native patch changed). Earlier:
+  [0.13.48](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.48)
+  (APK 41636249551). Neither has run on a device.
 - Fast mode (PRoot seccomp) is on by default from 0.13.48. In CI it cut MapServer
   startup by 26-32% (41588867344 off vs 41584980465 on).
 - **Servers in the published APKs:** the shipping MapServer that ran on .44,
@@ -301,15 +303,18 @@ branch and is merged into round 1 for each release. Evidence and numbers:
   but that variant has never run.
 - Background King's Row start, idle priority for a resident MapServer,
   stranded-cache recovery and the 60 FPS world-entry cap; see X86-THOR-TEST.md.
-- Shared read-only tree: CI probe `serverdata_probe` (see PERFORMANCE-PATH.md);
-  result on issue #10.
+- Shared read-only tree, CI probes (PERFORMANCE-PATH.md): level 1 (`scripts.loc`,
+  52,149 files) passed with no side effects, per-start mirror 106 → 74 s
+  (41636702283). The wide level (17 folders, 136,019 files) passed with a 28 s
+  mirror, but it rebuilt `sequencers.bin` and 21 power/salvage bins on every
+  start (sequencer phase 36 → 240 s; 41648097743). Probe the folders one at a time.
 - Leads from source reading, with evidence in 0.13.49: the dev-mode client asks
   for `IDLE_PRIORITY_CLASS`, which wineserver turns into about nice +11 when
   `RLIMIT_NICE` allows (the Thor reports 40) (`character_zoning.wine_priorities`);
   the client loads its data folders before choosing the on-demand folder-cache
   mode (full 141 s scan; fix needs a client rebuild); the cleanup defect's
   failing /proc read (`live_lineage_observation.unavailable_by_operation`).
-- Next: the Thor test of 0.13.48/0.13.49; the shared tree beyond the probe; a
+- Next: the Thor test of 0.13.49; per-folder shared-tree probes; a
   client-priority fix if the samples show it; a cache-compatibility path for
   the retained-progress variant so CI creation matches the device; a native
   60 FPS launch cap and the folder-cache order with the next client rebuild; an
