@@ -378,10 +378,25 @@ Rules and work:
   | Shared tree build / link | 31 s once / — | — / 1 ms |
   | Atlas spawn → map ready | 377 s (364 s) | 129 s (125 s) |
 
-- Next: put every top-level folder that no guest proof reads in the shared
-  tree, and make the proofs that read `runtime/data/<input>` resolve through the
-  same three-folder order. Then replace the move/return cache with a checked-out
-  private `data/` (bin, geobin, server) plus the shared tree.
+- **Wide probe (level 2, CI 41648097743): passed, but slower.** It shared 17
+  folders (136,019 files, 3,932 folders: everything except `bin`, `geobin`,
+  `server`, `defs`, `maps`, `object_library`, `tricks` and `texture_library`).
+  The private mirror fell to 28 s (one-time shared build 86 s; link 4 ms on
+  reopen), and story arcs still read 470/957/3528. But Atlas spawn → ready rose
+  to 593 s on creation and 381 s on reopen (125 s baseline). The gap from
+  `Parsing .txt from sequencers.bin` to `Caching relevant folders` grew from
+  about 36 s to 240 s. On reopen the MapServer rewrote 22 bins, including
+  `bin/sequencers.bin`, `powers`, `powersets`, `classes` and the salvage and
+  recipe bins (level 1 and the baseline rewrite 0). So some sources behind the
+  link fail the bins' source checks, or are much slower to enumerate. Likely
+  `sequencers`/`player_library` (the 5,120 animation attachments) and whatever
+  the power bins list. Not yet known which.
+- Next: probe `sequencers`, `player_library`, `menu` and `texts` one at a
+  time (each against reopen bin rewrites and the sequencer gap), and keep only
+  the folders that leave both unchanged. Make the guest proofs that read
+  `runtime/data/<input>` resolve through the same three-folder order. Then
+  replace the move/return cache with a small checked-out private `data/` plus
+  the shared tree.
 
 ### Phase 3: close the cold-start gap on the x86 track
 
