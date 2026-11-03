@@ -277,5 +277,47 @@ class ActualOwnershipTests(unittest.TestCase):
                 child.stdout.close(); child.stderr.close()
 
 
+class WinePrioritySnapshotTests(unittest.TestCase):
+    """Read-only evidence: thread nice values per Wine program."""
+    def fake_proc(self, root, pid, command, tasks):
+        directory = root / str(pid); (directory / 'task').mkdir(parents=True)
+        (directory / 'cmdline').write_bytes(command)
+        for tid, state, nice in tasks:
+            task = directory / 'task' / str(tid); task.mkdir()
+            fields = [state] + ['0'] * 15 + [str(nice)] + ['0'] * 30
+            (task / 'stat').write_text(str(tid) + ' (wine) name) ' + ' '.join(fields) + '\n')
+
+    def test_counts_threads_per_nice_for_known_programs_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake_proc(root, 10, b'/usr/bin/FEXInterpreter\0C:\\coh\\CityOfHeroes.exe\0-noaudio\0',
+                           [(10, 'S', 0), (11, 'S', 11), (12, 'R', 11), (13, 'Z', 11)])
+            self.fake_proc(root, 20, b'C:\\srv\\MapServer.exe\0', [(20, 'S', 0), (21, 'S', 0)])
+            self.fake_proc(root, 30, b'/opt/wine/bin/wineserver\0', [(30, 'S', 0)])
+            self.fake_proc(root, 40, b'/usr/bin/python3\0guest.py\0', [(40, 'S', 0)])
+            (root / 'self').mkdir()
+            value = scheduler.wine_priority_snapshot(root)
+        self.assertEqual(value['programs']['CityOfHeroes.exe'], {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}})
+        self.assertEqual(value['programs']['MapServer.exe'], {'processes': 1, 'threads': 2, 'nice': {'0': 2}})
+        self.assertEqual(set(value['programs']), {'CityOfHeroes.exe', 'MapServer.exe', 'wineserver'})
+        self.assertEqual(value['processes_scanned'], 4)
+        self.assertFalse(value['truncated'])
+        self.assertEqual(len(value['rlimit_nice']), 2)
+
+    def test_foreign_uid_vanished_and_malformed_entries_are_skipped_and_bounds_hold(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake_proc(root, 10, b'MapServer.exe', [(10, 'S', 0)])
+            (root / '11').mkdir()  # vanished: no cmdline
+            self.fake_proc(root, 12, b'MapServer.exe', [(12, 'S', 0)])
+            (root / '12/task/12/stat').write_text('garbage')
+            value = scheduler.wine_priority_snapshot(root, uid=os.getuid() + 1)
+            self.assertEqual(value['programs'], {})
+            value = scheduler.wine_priority_snapshot(root)
+            self.assertEqual(value['programs']['MapServer.exe']['threads'], 1)
+            with patch.object(scheduler, 'PRIORITY_PROCESS_LIMIT', 1):
+                self.assertTrue(scheduler.wine_priority_snapshot(root)['truncated'])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -50,6 +50,8 @@ PRESTART_THREAD_NICE = 10
 PRESTART_MIN_AVAILABLE_MIB = 3072
 # Idle priority for a resident MapServer the player is not on (launch option).
 IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
+PRIORITY_SAMPLES = 6
+PRIORITY_INTERVAL_SECONDS = 300
 
 
 def available_memory_mib(path=Path('/proc/meminfo')):
@@ -460,6 +462,25 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'policy': 'resident_map_not_occupied_plus_10_nice_restored_before_return_v1',
             'nice_increment': scheduler.IDLE_NICE_INCREMENT, 'periods': [],
             'physical_performance_gain_verified': False}
+        self.priority_next = 0
+        self.zoning_report['wine_priorities'] = {'format': 1,
+            'policy': 'read_only_thread_nice_by_wine_program_v1', 'samples': [],
+            'sample_limit': PRIORITY_SAMPLES, 'interval_seconds': PRIORITY_INTERVAL_SECONDS,
+            'priorities_changed': False}
+
+    def tick_priorities(self, now):
+        """A few read-only samples in play: does Wine run the client at a higher nice?"""
+        report = (getattr(self, 'zoning_report', None) or {}).get('wine_priorities')
+        if report is None or len(report['samples']) >= PRIORITY_SAMPLES or now < self.priority_next:
+            return
+        self.priority_next = now + PRIORITY_INTERVAL_SECONDS
+        try:
+            sample = scheduler.wine_priority_snapshot()
+        except (OSError, base.DiagnosticError) as error:
+            sample = {'error_type': type(error).__name__, 'error': str(error)[:200]}
+        sample.update(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                      active_map_id=self.active_map_id, resident_maps=sorted(self.maps))
+        report['samples'].append(sample)
 
     # Background start of the next zone ------------------------------------
     def prestart_eligible(self):
@@ -1598,6 +1619,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     self._accept_delivery(delivery, now_ms)
             self.tick_prestart(time.monotonic())
             self.tick_idle()
+            self.tick_priorities(time.monotonic())
             if self.pending is None:
                 return
             pending, target = self.pending, self.pending['to_map_id']

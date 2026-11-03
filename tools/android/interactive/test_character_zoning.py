@@ -892,5 +892,37 @@ class BackgroundPrestartTests(unittest.TestCase):
         release.set(); stuck.prestart['thread'].join(5)
 
 
+class WinePriorityTickTests(unittest.TestCase):
+    """A few read-only priority samples during play; nothing is changed."""
+    def test_samples_are_spaced_bounded_and_errors_recorded(self):
+        instance = ZoningServerTests.instance(self)
+        instance.priority_next = 0
+        instance.zoning_report['wine_priorities'] = {'samples': []}
+        instance.maps, instance.active_map_id = {1: {'ready': True}}, 1
+        calls = []
+        def snapshot():
+            calls.append(1)
+            if len(calls) == 2:
+                raise OSError('proc vanished')
+            return {'programs': {'CityOfHeroes.exe': {'processes': 1, 'threads': 2, 'nice': {'11': 2}}}}
+        with patch.object(zoning.scheduler, 'wine_priority_snapshot', snapshot):
+            instance.tick_priorities(100.0)
+            instance.tick_priorities(101.0)     # inside the interval: no sample
+            for step in range(1, 12):
+                instance.tick_priorities(100.0 + step * zoning.PRIORITY_INTERVAL_SECONDS)
+        samples = instance.zoning_report['wine_priorities']['samples']
+        self.assertEqual(len(samples), zoning.PRIORITY_SAMPLES)
+        self.assertEqual(samples[0]['programs']['CityOfHeroes.exe']['nice'], {'11': 2})
+        self.assertEqual((samples[0]['active_map_id'], samples[0]['resident_maps']), (1, [1]))
+        self.assertEqual(samples[1]['error_type'], 'OSError')
+
+    def test_missing_report_is_a_no_op(self):
+        instance = ZoningServerTests.instance(self)
+        instance.zoning_report.pop('wine_priorities', None)
+        instance.priority_next = 0
+        with patch.object(zoning.scheduler, 'wine_priority_snapshot', side_effect=AssertionError):
+            instance.tick_priorities(1.0)
+
+
 if __name__ == '__main__':
     unittest.main()

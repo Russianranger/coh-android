@@ -24,6 +24,10 @@ IDLE_ENVIRONMENT = 'COH_ZONING_IDLE_OWNER'
 IDLE_NICE_INCREMENT = 10
 IDLE_SAMPLE_LIMIT = 24
 TASK_LIMIT = 128
+# Read-only priority evidence (wine_priority_snapshot); never changes a process.
+PRIORITY_PROGRAMS = ('CityOfHeroes.exe', 'MapServer.exe', 'DbServer.exe', 'wineserver')
+PRIORITY_PROCESS_LIMIT = 4096
+PRIORITY_TASK_LIMIT = 1024
 GROUP_LIMIT = 16
 SAMPLE_LIMIT = 160
 
@@ -49,6 +53,64 @@ def pressure_observation(proc_root):
     except (OSError, ValueError, base.DiagnosticError):
         result['vmstat'] = {'unavailable': True}
     return result
+
+
+def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2.0):
+    """Read-only: thread counts per nice value for each known Wine program of this uid.
+
+    Wineserver maps Windows priority classes and thread priorities onto nice
+    only when RLIMIT_NICE lets it raise priority again (Wine MR !4551, Linux).
+    The Thor guest reports RLIMIT_NICE 40, which enables that mapping; the
+    client asks for IDLE_PRIORITY_CLASS in development data mode
+    (game.c game_beforeParseArgs). This records what the kernel actually has.
+    """
+    started = time.monotonic()
+    uid = os.getuid() if uid is None else uid
+    programs, scanned, truncated = {}, 0, False
+    for entry in os.scandir(proc_root):
+        if not entry.name.isdecimal():
+            continue
+        scanned += 1
+        if scanned > PRIORITY_PROCESS_LIMIT or time.monotonic() - started > deadline_seconds:
+            truncated = True
+            break
+        path = Path(entry.path)
+        try:
+            if path.stat().st_uid != uid:
+                continue
+            with open(path / 'cmdline', 'rb') as handle:
+                command = handle.read(4096)
+            name = next((value for value in PRIORITY_PROGRAMS if value.encode() in command), None)
+            if name is None:
+                continue
+            counts, tasks = {}, 0
+            for task in os.scandir(path / 'task'):
+                if not task.name.isdecimal():
+                    continue
+                tasks += 1
+                if tasks > PRIORITY_TASK_LIMIT:
+                    truncated = True
+                    break
+                with open(Path(task.path) / 'stat') as handle:
+                    fields = handle.read(4096).rsplit(') ', 1)[1].split()
+                if fields[0] == 'Z':
+                    continue
+                nice = int(fields[16])  # stat field 19
+                base.require(-20 <= nice <= 19, 'Invalid task nice value')
+                counts[str(nice)] = counts.get(str(nice), 0) + 1
+            row = programs.setdefault(name, {'processes': 0, 'threads': 0, 'nice': {}})
+            row['processes'] += 1
+            row['threads'] += sum(counts.values())
+            for nice, count in counts.items():
+                row['nice'][nice] = row['nice'].get(nice, 0) + count
+        except (OSError, IndexError, ValueError):
+            continue
+    limits = resource.getrlimit(resource.RLIMIT_NICE)
+    for row in programs.values():
+        row['nice'] = dict(sorted(row['nice'].items(), key=lambda item: int(item[0])))
+    return {'programs': dict(sorted(programs.items())), 'rlimit_nice': [limits[0], limits[1]],
+            'processes_scanned': scanned, 'truncated': truncated,
+            'seconds': round(time.monotonic() - started, 3)}
 
 
 def priority_probe():
