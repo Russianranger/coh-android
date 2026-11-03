@@ -194,11 +194,15 @@ jobs:
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New launch options: Fast mode (PRoot seccomp) on by default; Fast server data loading (trusted bins, on);
-          Raise the frame cap to 60 FPS in the world (on); Start King's Row in the background (off);
-          Lower the waiting zone server's priority (off).
+          New launch options: Fast mode (PRoot seccomp) on by default; Raise the frame cap to 60 FPS in
+          the world (on); Start King's Row in the background (off); Lower the waiting zone server's priority (off).
           Test sheet: X86-THOR-TEST.md in the source. CI-only evidence; not yet run on a device.
           EOF
+          if [ "$SERVER_METRICS" = true ]; then
+            echo "Servers: instrumented MapServer; Fast server data loading (trusted bins) is active." >> notes.md
+          else
+            echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server data loading (trusted bins) option has no effect in this build." >> notes.md
+          fi
           gh release create "coh-atlas-gameplay-v0.13.48" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
             --prerelease --title "COH Atlas Gameplay 0.13.48 (performance candidate)" --notes-file notes.md \
             COH-Atlas-Gameplay-0.13.48.apk COH-Atlas-Gameplay-0.13.48.apk.sha256

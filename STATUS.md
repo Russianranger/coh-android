@@ -33,7 +33,8 @@ Default branch remains main; no release, APK handoff or repository setting chang
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode (PRoot seccomp) default on: CI Atlas start −26/−32% (41588867344 vs 41584980465).
-- Trusted bins (default on): reopen Atlas 130→94 s, creation 381→353 s (41610459604 vs 41605600310).
+- Trusted bins: reopen Atlas 130→94 s (41610459604 vs 41605600310); inert in 0.13.48 (shipping MapServer;
+  the instrumented one fails the prepared-cache check, CI 41630365042).
 - Cold creation still re-parses spawn defs/story arcs (~250 s): bins missing or rejected.
 - 0.13.48 adds 60 FPS on world entry (on), background King's Row and idle priority (off).
 - Next: ship rewritten bins, shared read-only server tree, device check, x86 FPS baseline.
