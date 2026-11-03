@@ -166,6 +166,13 @@ public final class ClientRuntime {
     private long zoningDepartureDeadlineUtc;
     private final List<Map<String,Object>> zoningTimings = new ArrayList<>();
     private final ExecutorService checkpointWorker = Executors.newSingleThreadExecutor();
+    /** Android thermal samples through the whole session (0.13.50: 76 C while loading, no record). */
+    static final int THERMAL_SAMPLE_SECONDS = 30, THERMAL_SAMPLE_LIMIT = 360;
+    private final java.util.concurrent.ScheduledExecutorService thermalWorker =
+            Executors.newSingleThreadScheduledExecutor(runnable -> {
+                Thread thread = new Thread(runnable, "coh-thermal-samples"); thread.setDaemon(true); return thread; });
+    private final List<Map<String,Object>> thermalSamples = new ArrayList<>();
+    private boolean thermalSamplesTruncated;
     private final java.util.concurrent.atomic.AtomicReference<byte[]> pendingCheckpoint = new java.util.concurrent.atomic.AtomicReference<>();
     private final java.util.concurrent.atomic.AtomicBoolean checkpointQueued = new java.util.concurrent.atomic.AtomicBoolean();
     private volatile String checkpointFailure;
@@ -235,6 +242,9 @@ public final class ClientRuntime {
                     latestReport = candidate;
             }
         } catch (IOException e) { throw new IllegalStateException("Cannot open private client storage", e); }
+        // One runtime per operation; the daemon sampler ends itself once it has finished.
+        try { thermalWorker.scheduleWithFixedDelay(this::sampleThermal, 0, THERMAL_SAMPLE_SECONDS, TimeUnit.SECONDS); }
+        catch (RejectedExecutionException ignored) { /* Observation only. */ }
     }
 
     /** Compact active installer evidence; does not open or modify runtime files. */
@@ -546,6 +556,43 @@ public final class ClientRuntime {
         result.put("thermal_status_available", result.get("thermal_status") != null);
         result.put("battery_temperature_available", result.get("battery_temperature_deci_celsius") != null);
         return result;
+    }
+
+    /** API 30+: Android's forecast thermal headroom (1.0 = severe throttling); NaN or errors are null. */
+    static Object thermalHeadroom(Context context) {
+        if (Build.VERSION.SDK_INT < 30) return null;
+        try {
+            Object power = context.getSystemService(Context.POWER_SERVICE);
+            if (power instanceof android.os.PowerManager) {
+                float value = ((android.os.PowerManager) power).getThermalHeadroom(10);
+                return Float.isNaN(value) || Float.isInfinite(value) ? null : Math.round(value * 1000.0) / 1000.0;
+            }
+        } catch (RuntimeException unavailable) { return null; }
+        return null;
+    }
+    private void sampleThermal() {
+        if (finished || cancelled) { thermalWorker.shutdown(); return; }
+        Map<String, Object> sample;
+        try {
+            sample = startupThermalSnapshot(context);
+            sample.put("thermal_headroom_10s", thermalHeadroom(context));
+            sample.put("zoning_phase", zoning.phase());
+            sample.put("current_map_id", zoning.currentMap());
+        } catch (RuntimeException | OutOfMemoryError unavailable) { return; }
+        synchronized (this) {
+            sample.put("operation_uptime_ms", startedUptime > 0 ? SystemClock.uptimeMillis() - startedUptime : null);
+            if (thermalSamples.size() < THERMAL_SAMPLE_LIMIT) thermalSamples.add(sample);
+            else thermalSamplesTruncated = true;
+        }
+    }
+    private synchronized JSONObject thermalSamplesReport() {
+        JSONArray rows = new JSONArray();
+        for (Map<String, Object> row : thermalSamples) rows.put(new JSONObject(row));
+        try {
+            return new JSONObject().put("format", 1).put("interval_seconds", THERMAL_SAMPLE_SECONDS)
+                    .put("limit", THERMAL_SAMPLE_LIMIT).put("truncated", thermalSamplesTruncated)
+                    .put("battery_temperature_is_cpu_temperature", false).put("samples", rows);
+        } catch (org.json.JSONException impossible) { return new JSONObject(); }
     }
 
     private synchronized void observeMapServerReady(JSONObject event) {
@@ -1872,7 +1919,7 @@ public final class ClientRuntime {
                 .put("session_id",session==null?JSONObject.NULL:session).put("app_version",appVersion())
                 .put("runtime_manifest_sha256",manifestHash).put("client_pid",observedClientPid)
                 .put("started_uptime_ms",startedUptime).put("checkpoint_uptime_ms",SystemClock.uptimeMillis())
-                .put("android_startup_timing",startupTimingReport())
+                .put("android_startup_timing",startupTimingReport()).put("android_thermal_samples",thermalSamplesReport())
                 .put("checkpoint_utc_ms",System.currentTimeMillis()).put("passed",false).put("interrupted_unverified",true)
                 .put("manual_test_events",new JSONArray(manualTestEvents)).put("manual_test_active",manualTestActive)
                 .put("finish_requested",finishRequested).put("save_logout_requested",saveLogoutRequested)
@@ -2490,7 +2537,7 @@ public final class ClientRuntime {
                     .put("abis", new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                     .put("runtime_manifest_sha256", manifestHash).put("started_uptime_ms", startedUptime)
                     .put("finished_uptime_ms", endedUptime).put("process_exit_code", processExit)
-                    .put("android_startup_timing",startupTimingReport())
+                    .put("android_startup_timing",startupTimingReport()).put("android_thermal_samples",thermalSamplesReport())
                     .put("checkpoint_error",checkpointFailure==null?JSONObject.NULL:checkpointFailure)
                     .put("passed", passed).put("android_surface_validated", passed).put("interaction_session_completed", passed)
                     .put("menu_visual_validated", false).put("cleanup_verified", cleanup)
@@ -2709,7 +2756,7 @@ public final class ClientRuntime {
                     .put("app_error",previous==null?JSONObject.NULL:previous).put("cleanup_verified",cleanup)
                     .put("cleanup_blocked",isCleanupBlocked()).put("cancelled",cancelled)
                     .put("started_uptime_ms",startedUptime).put("finished_uptime_ms",endedUptime)
-                    .put("android_startup_timing",startupTimingReport())
+                    .put("android_startup_timing",startupTimingReport()).put("android_thermal_samples",thermalSamplesReport())
                     .put("finalized_utc_ms",System.currentTimeMillis())
                     .put("process_exit_code",processExit).put("character_save_qualification",false)
                     .put("committed_save_observation_available",saveObservation!=null)
