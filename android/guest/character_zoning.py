@@ -36,6 +36,8 @@ KINGS_PYTHON_PREPARE_SECONDS = 420
 KINGS_NATIVE_READY_SECONDS = 360
 KINGS_TOTAL_PREPARE_SECONDS = 720
 TRANSFER_SECONDS = 180
+REQUEST_AGE_MS = 120000
+NUMBER = character.character_events.NUMBER
 # Optional background start of the next zone (King's Row) beside Atlas Park.
 PRESTART_ENV = 'COH_PRESTART_NEXT_ZONE'
 PRESTART_MAP_ID = 5
@@ -56,8 +58,6 @@ def available_memory_mib(path=Path('/proc/meminfo')):
     except (OSError, ValueError, IndexError):
         return None
     return None
-REQUEST_AGE_MS = 120000
-NUMBER = character.character_events.NUMBER
 PREPARATION_FIELDS = (
     'requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',
     'preparation_elapsed_ms', 'preparation_kind', 'preparation_budget_seconds',
