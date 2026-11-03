@@ -33,10 +33,14 @@ def loopback_state():
     return interfaces
 
 
-def clean_environment(loader, temporary):
-    return {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-            "LANG": "C.UTF-8", "TZ": "UTC", "PYTHONDONTWRITEBYTECODE": "1",
-            "PROOT_LOADER": str(loader), "PROOT_TMP_DIR": str(temporary), "PROOT_NO_SECCOMP": "1"}
+def clean_environment(loader, temporary, seccomp=False):
+    """PRoot traces every syscall unless seccomp is allowed (then only filtered calls stop)."""
+    environment = {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                   "LANG": "C.UTF-8", "TZ": "UTC", "PYTHONDONTWRITEBYTECODE": "1",
+                   "PROOT_LOADER": str(loader), "PROOT_TMP_DIR": str(temporary)}
+    if not seccomp:
+        environment["PROOT_NO_SECCOMP"] = "1"
+    return environment
 
 
 def main():
@@ -48,6 +52,7 @@ def main():
     parser.add_argument("--proot-loader", type=Path, required=True)
     parser.add_argument("--proot-tmp", type=Path, required=True)
     parser.add_argument("--child", action="store_true")
+    parser.add_argument("--proot-seccomp", action="store_true")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
@@ -67,8 +72,9 @@ def main():
                  sys.executable, str(Path(__file__).resolve()), "--child", "--uid", str(args.uid),
                  "--gid", str(args.gid), "--host-netns", args.host_netns,
                  "--receipt", str(args.receipt), "--proot-loader", str(args.proot_loader),
-                 "--proot-tmp", str(args.proot_tmp), "--", *command]
-        os.execve(setpriv, child, clean_environment(args.proot_loader, args.proot_tmp))
+                 "--proot-tmp", str(args.proot_tmp), *(["--proot-seccomp"] if args.proot_seccomp else []),
+                 "--", *command]
+        os.execve(setpriv, child, clean_environment(args.proot_loader, args.proot_tmp, args.proot_seccomp))
     require(os.getuid() == args.uid and os.geteuid() == args.uid
             and os.getgid() == args.gid and os.getegid() == args.gid,
             "The DbServer guest did not drop to the original user/group")
@@ -77,9 +83,10 @@ def main():
                "host_network_namespace": args.host_netns, "guest_network_namespace": network_identity(),
                "distinct_network_namespace": True, "original_uid": args.uid, "original_gid": args.gid,
                "effective_uid": os.geteuid(), "effective_gid": os.getegid(), "interfaces": interfaces,
-               "loopback_up": True, "external_network_disabled": True, "guest_runs_as_root": False}
+               "loopback_up": True, "external_network_disabled": True, "guest_runs_as_root": False,
+               "proot_seccomp": args.proot_seccomp}
     args.receipt.write_text(json.dumps(receipt, indent=2) + "\n")
-    os.execve(command[0], command, clean_environment(args.proot_loader, args.proot_tmp))
+    os.execve(command[0], command, clean_environment(args.proot_loader, args.proot_tmp, args.proot_seccomp))
 
 
 if __name__ == "__main__":

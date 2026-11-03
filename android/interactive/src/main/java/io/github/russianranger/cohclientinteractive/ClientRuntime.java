@@ -203,6 +203,7 @@ public final class ClientRuntime {
     private String graphicsProfileRequested="standard";
     private String gpuProfileRequested="software";
     private String clientArchitectureRequested="x86";
+    private boolean prootFastModeRequested=false;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -247,6 +248,16 @@ public final class ClientRuntime {
     public static void setPerformanceGraphicsEnabled(Context context, boolean enabled) {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("performance-graphics", enabled).apply();
+    }
+    /** Fast mode lets PRoot install its seccomp filter, so only path syscalls stop in the tracer. */
+    public static boolean prootFastModeEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("proot-fast-mode", false);
+    }
+    public static synchronized void setProotFastModeEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("proot-fast-mode", enabled).apply();
     }
     public static String gpuProfileEnabled(Context context) {
         String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
@@ -632,6 +643,7 @@ public final class ClientRuntime {
         clientArchitectureRequested=clientArchitecture(context);
         graphicsProfileRequested="arm64".equals(clientArchitectureRequested)?"standard":performanceGraphicsEnabled(context)?"performance":"standard";
         gpuProfileRequested=gpuProfileEnabled(context);
+        prootFastModeRequested=prootFastModeEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -680,6 +692,7 @@ public final class ClientRuntime {
                     "COH_CLIENT_GRAPHICS_PROFILE="+graphicsProfileRequested,
                     "COH_CLIENT_GPU_PROFILE="+gpuProfileRequested,
                     "COH_CLIENT_ARCH="+clientArchitectureRequested,
+                    "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -691,7 +704,9 @@ public final class ClientRuntime {
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
             builder.environment().put("PROOT_LOADER", loader.getPath());
             builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
-            builder.environment().put("PROOT_NO_SECCOMP", "1");
+            if(prootFastModeRequested)builder.environment().remove("PROOT_NO_SECCOMP");
+            else builder.environment().put("PROOT_NO_SECCOMP", "1");
+            line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)"));
             write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
                     .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
             stage("Starting City of Heroes", "Starting the persistent local database and DbServer, verifying the saved destination, then opening its MapServer and graphical client.");

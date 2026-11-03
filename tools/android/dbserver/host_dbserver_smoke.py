@@ -404,7 +404,15 @@ def make_command(*, work, assets, package, schema, proot, timeout_seconds, devic
     return command
 
 
-def isolate_command(command, *, evidence, proot, work):
+def proot_seccomp_requested():
+    """CI A/B switch: COH_PROOT_SECCOMP=1 lets PRoot use its seccomp filter (sudo drops the env)."""
+    value = os.environ.get("COH_PROOT_SECCOMP", "")
+    require(value in ("", "0", "1"), "COH_PROOT_SECCOMP must be empty, 0 or 1")
+    return value == "1"
+
+
+def isolate_command(command, *, evidence, proot, work, proot_seccomp=None):
+    seccomp = proot_seccomp_requested() if proot_seccomp is None else proot_seccomp is True
     uid, gid = os.getuid(), os.getgid()
     require(uid > 0 and os.geteuid() == uid, "Run the host gate as the original non-root runner")
     host_netns = os.readlink("/proc/self/ns/net")
@@ -414,12 +422,14 @@ def isolate_command(command, *, evidence, proot, work):
                 str(Path(__file__).with_name("run_isolated_network.py").resolve()),
                 "--uid", str(uid), "--gid", str(gid), "--host-netns", host_netns,
                 "--receipt", str(receipt), "--proot-loader", str(proot / "proot-loader"),
-                "--proot-tmp", str(work / "tmp"), "--", *command]
+                "--proot-tmp", str(work / "tmp"), *(["--proot-seccomp"] if seccomp else []), "--", *command]
     # No GitHub credentials or broad sudo environment preservation enter the guest.
     environment = {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
                    "LANG": "C.UTF-8", "TZ": "UTC", "PYTHONDONTWRITEBYTECODE": "1"}
-    return isolated, environment, {"host_network_namespace": host_netns,
-                                   "original_uid": uid, "original_gid": gid}
+    expected = {"host_network_namespace": host_netns, "original_uid": uid, "original_gid": gid}
+    if seccomp:
+        expected["proot_seccomp"] = True   # the receipt must confirm the A/B variant actually ran
+    return isolated, environment, expected
 
 
 def validate_network_receipt(report, expected):

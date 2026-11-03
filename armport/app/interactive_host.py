@@ -255,6 +255,30 @@ def guest_failure_summary(evidence):
     return result
 
 
+TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spawn_to_map_ready_seconds',
+                 'dependency_start_seconds', 'request_to_client_world_ready_seconds')
+
+
+def guest_timing_summary(evidence):
+    """Bounded A/B diagnostic (PRoot mode, map startup, preparation phases); never gates."""
+    result = {}
+    try:
+        path = evidence / 'latest-report.json'
+        if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
+            report = json.loads(path.read_text())
+            result['proot_mode'] = report.get('proot_mode')
+            for key in ('character_creation', 'character_reopen'):
+                section = report.get(key)
+                if not isinstance(section, dict):
+                    continue
+                rows = [row for row in section.get('map_startup_timing', []) if isinstance(row, dict)][:4]
+                result[key] = {'map_startup': [{name: row.get(name) for name in TIMING_FIELDS} for row in rows],
+                               'preparation_phase_seconds': section.get('server_preparation_phase_seconds')}
+    except (OSError, ValueError) as error:
+        result['evidence_read_error'] = str(error)[:300]
+    return result
+
+
 def ci_notice(result):
     text = json.dumps(result, separators=(',', ':'))
     text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
@@ -374,6 +398,8 @@ def main():
         command, _ = character.make_command(args.work, assets, args.proot, first, data, 900)
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_ARCH=arm64')
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_GRAPHICS_PROFILE=standard')
+        if runtime_host.runtime.proot_seccomp_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
         deadline = time.monotonic() + character.OVERALL_SECONDS
         created = run_session(command, args.work, args.evidence / 'creation', args.proot,
                               first, runtime_manifest, client_manifest, deadline)
@@ -401,6 +427,11 @@ def main():
         (args.evidence / 'host-report.json').write_text(json.dumps(result, indent=2) + '\n')
         print(ci_notice({key: result.get(key) for key in
             ('passed', 'm4_complete', 'elapsed_seconds', 'error', 'guest_failures')}), flush=True)
+        # Separate notice; host-report.json keeps its qualified schema.
+        timings = {name: guest_timing_summary(args.evidence / name) for name in ('creation', 'reopen')
+                   if (args.evidence / name).exists()}
+        print(ci_notice(dict(timings, proot_seccomp=runtime_host.runtime.proot_seccomp_requested()))
+              .replace('interactive result', 'guest timings', 1), flush=True)
         print(json.dumps(result), flush=True)
     return 0 if result['passed'] else 1
 

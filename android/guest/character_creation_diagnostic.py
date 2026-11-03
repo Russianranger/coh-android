@@ -422,6 +422,17 @@ def parse_arguments(argv, mode):
     return parser.parse_args(argv)
 
 
+def proot_mode_receipt(calls=5000):
+    """The app's PRoot mode and a cheap syscall cost probe (ptrace stop vs seccomp pass-through)."""
+    started = time.perf_counter()
+    for _ in range(calls):
+        os.getppid()
+    elapsed = time.perf_counter() - started
+    return {'format': 1, 'fast_mode_requested': os.environ.get('COH_PROOT_FAST_MODE') == '1',
+            'probe_syscall': 'getppid', 'probe_calls': calls,
+            'probe_microseconds_per_call': round(elapsed * 1e6 / calls, 3)}
+
+
 def run(argv, diagnostic_type, scope, mode):
     args = parse_arguments(argv, mode)
     base.OUTPUT_LIMIT = interactive.CLIENT_OUTPUT_LIMIT
@@ -433,7 +444,7 @@ def run(argv, diagnostic_type, scope, mode):
         android_surface_validated=False, hardware_acceleration_validated=False,
         client_process_started=False, startup_observed=False, interaction_session_completed=False,
         input_effect_verified=False, interaction_timeout_seconds=args.interaction_seconds,
-        resume_first_creation_requested=args.resume_empty_profile)
+        resume_first_creation_requested=args.resume_empty_profile, proot_mode=proot_mode_receipt())
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda _sig, _frame: setattr(context, 'cancel_requested', True))
     diagnostic, validated = None, False
