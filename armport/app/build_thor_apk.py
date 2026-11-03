@@ -64,7 +64,7 @@ ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'a
                            'client_stdio.py', 'server_metrics.py'})
 CHANGED_RUNTIME = frozenset({'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_login_server.py', 'local_character_server.py', 'character_zoning.py',
                              'runtime-manifest.json', 'client-manifest.json',
-                             'game_diagnostic.py', 'atlas_beacon_package.py',
+                             'game_diagnostic.py', 'game_device_diagnostic.py', 'atlas_beacon_package.py',
                              'native_map_startup_contract.py', 'native_monorail_contract.py',
                              'server_cache_package.py', 'server_fx_catalog.py', 'server_animation_package.py'})
 SERVER_ADDED_RUNTIME = frozenset({'armport_server_metrics_contract.py', 'armport-server-metrics-binding.json'})
