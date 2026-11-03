@@ -138,7 +138,7 @@ def execute(args):
     donor, apk = zip_bytes(donor_raw), zip_bytes(apk_raw)
     signed = signature(args.apk, args.tools)
     badging = sdk(args.tools / 'aapt2', 'dump', 'badging', args.apk)
-    version, code = ('0.13.36', 51) if args.mode == 'donor' else ('0.13.49', 64)
+    version, code = ('0.13.36', 51) if args.mode == 'donor' else ('0.13.50', 65)
     need(re.search(r"^package: name='" + re.escape(APP) + "' versionCode='" + str(code) + "' versionName='" + re.escape(version) + "'", badging, re.M), 'Application/version differs')
     need("minSdkVersion:'26'" in badging and "targetSdkVersion:'35'" in badging, 'SDK bounds changed')
     need(manifest_tree(args.apk, args.tools) == manifest_tree(args.donor, args.tools), 'Manifest changed beyond version')

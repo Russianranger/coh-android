@@ -1,5 +1,9 @@
 # x86 client: next Thor device baseline
 
+> **Shelved (user decision 2026-11-03):** the ARM64 client is the main client from
+> 0.13.50; the current test sheet is [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
+> Keep this sheet for an x86 reversion.
+
 This is the device-test target after the `x86-track` integration. It is a test
 sheet for Claude's next reviewed build, **not an APK handoff or evidence that the
 integration head has run on the device**. See [HANDOFF-X86.md](HANDOFF-X86.md) and
