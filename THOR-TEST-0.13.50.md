@@ -20,7 +20,10 @@ King's Row zoning is not exercised in CI, so the trip is the main thing to test.
 ## Steps
 
 1. Install 0.13.50 over 0.13.49 (in-place update; keeps the hero, database and
-   imported assets). Open the options and check: `ARM64 client`, `Fast mode`,
+   imported assets). Tap **Set up / update runtime** once and wait for it to
+   finish (about 2.5 minutes on 0.13.49): the new APK carries a new runtime, and
+   Reopen refuses to start until it is installed. No asset re-import is needed.
+   Then open the options and check: `ARM64 client`, `Fast mode`,
    `Raise the frame cap to 60 FPS`, `Share server data between zones` and
    `Skip server-only folders` are ticked. Leave `Start King's Row in the
    background` and `Lower the waiting zone server's priority` unticked, so a
