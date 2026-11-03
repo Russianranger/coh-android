@@ -87,12 +87,14 @@ checks for CRC-matching prepared `.bin` files; `trusted_bins` records whether it
 was used. In CI (41605600310 on vs 41610459604 off, same servers) the reopen
 Atlas start fell from 130 s to 94 s; a new character's first start barely moved.
 **The published 0.13.48 keeps the shipping MapServer, so this option has no
-effect there** (`trusted_bins.reason` `no_metrics_mapserver`). The instrumented
-MapServer changes `textparser.c`, so the prepared server caches refuse it
-(`prepared_server_caches` `skipped_native_fallback`, `Monorail native identity
-differs`, CI 41630365042). Every fresh server-data mirror would then re-parse
-spawn definitions, story arcs and definitions from text (about 230 s in CI). On
-.44 the shipping MapServer installed those caches, King's Row included.
+effect there** (`trusted_bins.reason` `no_metrics_mapserver`). That MapServer
+ran on the Thor in .44, where the prepared server caches installed (King's Row
+included). The instrumented Thor variant a metrics APK would carry has never
+run: CI executes only the retained-progress variant. That CI variant fails the
+prepared-cache check (`skipped_native_fallback`, `Monorail native identity
+differs`, CI 41630365042), so CI's fresh-character start re-parses spawn
+definitions, story arcs and definitions (106 bins rewritten, about 230 s). The
+Thor variant passes that check by its startup receipt; this is a CI-only cost.
 `Raise the frame cap to 60 FPS in the world` (on by default) sends the
 sidebar's `/maxfps 60` once, quietly, when a reopened character's world views
 are captured; the report records `gameplay_60fps_requested` and the lifecycle
