@@ -1,0 +1,83 @@
+from pathlib import Path
+import io
+import json
+import sys
+import tempfile
+import unittest
+import zipfile
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path[:0] = [str(ROOT / 'armport/app')]
+import mapserver_phases
+
+# Shape copied from the 0.13.44 Thor Atlas console (session id replaced).
+CONSOLE = """started 2026-10-28 19:41:29
+Caching directory tree and misc startup...                            (0.17)
+more miscellany..[2026-10-28 19:41:30.441] [DEBUG] \tParsing .statebits from seqstatebits.bin
+done                                                 (1.54)
+[2026-10-28 19:41:31.287] [DEBUG] \tsequencers
+COH_ANIM_CERT_V1 schema=1 pack=00 opened=1024 certified=1024 fallback=0
+COH_ANIM_CERT_V1 schema=1 pack=00 opened=5120 certified=5120 fallback=0
+Caching relevant folders.. [2026-10-28 19:43:05.214] [DEBUG] Caching relevant folders
+done                                       (11.37)
+Loading story arcs.. [2026-10-28 19:44:41.615] [DEBUG] \tParsing .sc from SouvenirClues.bin
+470 arcs, 957 contacts, 3528 tasks               (53.58)
+loading map: maps/City_Zones/City_01_01/City_01_01.txt..[2026-10-28 19:46:30.507] [DEBUG] \tSet folder cache callback for scenes/*.txt
+done          (47.67)
+Loading Costume...[2026-10-28 19:46:31.000] [DEBUG] \tParsing costume.ctm from costume.bin
+                                                    (0.73)
+Starting novodex...[2026-10-28 19:46:42.488] [DEBUG] Loading PhysX objects
+[2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects
+success                                            (18.84)
+Verifying SG permission tables.. done                                 (0.00)
+[2026-10-28 19:50:36.000] [DEBUG] \tReading player.txt from 623e484ce0c9459aa725b497fad0329a
+"""
+
+
+class MapServerPhaseTests(unittest.TestCase):
+    def test_self_timed_labels_use_the_phase_opener(self):
+        result = mapserver_phases.summary(CONSOLE)
+        timed = dict(result['slowest_self_timed'])
+        self.assertEqual(timed['Loading story arcs'], 53.58)
+        self.assertEqual(timed['loading map: maps/City_Zones/City_01_01/City_01_01.txt'], 47.67)
+        self.assertEqual(timed['Starting novodex'], 18.84)
+        self.assertEqual(timed['more miscellany'], 1.54)
+        self.assertEqual(timed['Loading Costume'], 0.73)
+        self.assertEqual(timed['Caching directory tree and misc startup'], 0.17)
+        self.assertEqual(result['slowest_self_timed'][0][0], 'Loading story arcs')
+        self.assertEqual(result['animation_files_opened'], 5120)
+
+    def test_untimed_animation_gap_is_reported_and_post_ready_waits_are_not(self):
+        result = mapserver_phases.summary(CONSOLE)
+        gap = [row for row in result['slowest_untimed_gaps'] if 'sequencers' in row[1]][0]
+        self.assertEqual(gap[0], 93.93)
+        self.assertIn('Caching relevant folders', gap[2])
+        self.assertEqual([row[0] for row in result['slowest_untimed_gaps']],
+                         sorted((row[0] for row in result['slowest_untimed_gaps']), reverse=True))
+        # Startup ends at the permission check; the later client wait is excluded.
+        self.assertEqual(result['stamped_span_seconds'], 330.84)
+        self.assertNotIn('623e484ce0c9459aa725b497fad0329a', json.dumps(result))
+
+    def test_bounded_on_empty_or_unstamped_text(self):
+        result = mapserver_phases.summary('no timing here\n')
+        self.assertIsNone(result['stamped_span_seconds'])
+        self.assertEqual(result['slowest_self_timed'], [])
+        self.assertEqual(result['slowest_untimed_gaps'], [])
+
+    def test_guest_timing_summary_reads_the_atlas_console_from_report_zip(self):
+        sys.path[:0] = [str(ROOT / 'armport/app')]
+        import interactive_host
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary)
+            (evidence / 'latest-report.json').write_text(json.dumps({'proot_mode': {'format': 1}}))
+            with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/character-atlas-console.txt', CONSOLE)
+            result = interactive_host.guest_timing_summary(evidence)
+        self.assertEqual(result['proot_mode'], {'format': 1})
+        phases = result['atlas_mapserver_phases']
+        self.assertIn(93.93, [row[0] for row in phases['slowest_untimed_gaps']])
+        self.assertLessEqual(len(phases['slowest_self_timed']), 6)
+
+
+if __name__ == '__main__':
+    unittest.main()

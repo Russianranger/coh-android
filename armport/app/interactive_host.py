@@ -15,6 +15,7 @@ import subprocess
 import time
 import zipfile
 
+import mapserver_phases
 import retained_assets
 import stage_app_assets
 import runtime_host
@@ -274,7 +275,15 @@ def guest_timing_summary(evidence):
                 rows = [row for row in section.get('map_startup_timing', []) if isinstance(row, dict)][:4]
                 result[key] = {'map_startup': [{name: row.get(name) for name in TIMING_FIELDS} for row in rows],
                                'preparation_phase_seconds': section.get('server_preparation_phase_seconds')}
-    except (OSError, ValueError) as error:
+        path = evidence / 'report.zip'
+        if path.is_file():
+            with zipfile.ZipFile(path) as archive:
+                names = set(archive.namelist())
+                member = 'client-evidence/character-atlas-console.txt'
+                if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
+                    result['atlas_mapserver_phases'] = mapserver_phases.summary(
+                        archive.read(member).decode('utf-8', errors='replace'), top=6)
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
         result['evidence_read_error'] = str(error)[:300]
     return result
 
