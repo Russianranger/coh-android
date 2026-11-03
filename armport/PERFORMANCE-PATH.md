@@ -112,6 +112,23 @@ a build. It accepts that only for this reviewed, default-off switch.
 | Atlas → King's Row (cold) | 563 s: Python prep 291 s (data mirror 218 s, beacon graph 57 s) + native start 271 s | 17.8 s | ~9.7 min |
 | King's Row → Atlas (Atlas still running) | 7.6 s | 21.7 s | ~29 s |
 
+### PRoot fast mode A/B, CI (2026-11-03)
+
+Runs 41588867344 (off) and 41584980465 (on): same branch and build inputs,
+shipping MapServers, ARM64 runner. Both passed.
+
+| | Off | On |
+|---|---|---|
+| `getppid` probe | 27.1 µs | 0.31 µs |
+| Creation: Atlas spawn → ready | 489 s | 360 s |
+| Reopen: Atlas spawn → ready | 183 s | 124 s |
+| Reopen: request → client in world | 524 s | 397 s |
+| Whole job | 2179 s | 1818 s |
+
+On the fresh data mirror (creation), the MapServer re-parses source text that
+the reused cache (reopen) loads from `.bin`: spawn definitions 154 s vs 2 s,
+story arcs 85 s vs 17 s, definitions 67 s vs 3 s (fast mode off).
+
 ### Frame rate, 0.13.44
 
 - Game-measured FPS 12-30, mean 22.8, capped at 30 (patch 0113). With a cap of
