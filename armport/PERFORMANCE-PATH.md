@@ -365,6 +365,23 @@ Rules and work:
   `470 arcs, 957 contacts, 3528 tasks` line shows whether the engine read the
   sources through the link. The runtime notice prints `serverdata_probe` and
   `story_arc_counts`.
+- **Probe result (CI 41636702283, `x86/perf-round3` @b90abb1eb, shipping
+  servers, fast mode): passed creation and reopen.** Wine and the engine accept
+  a directory link at the `serverdata` root, and nothing tried to write into
+  the read-only tree.
+
+  | | Creation | Reopen |
+  |---|---|---|
+  | `scripts.loc` served from the shared tree | 52,149 files, 339 folders | same tree, reused |
+  | Story arcs read (console) | 470 arcs, 957 contacts, 3528 tasks | same |
+  | Private mirror | 74 s (106 s full, 41630365042) | cache reuse 2 s |
+  | Shared tree build / link | 31 s once / — | — / 1 ms |
+  | Atlas spawn → map ready | 377 s (364 s) | 129 s (125 s) |
+
+- Next: put every top-level folder that no guest proof reads in the shared
+  tree, and make the proofs that read `runtime/data/<input>` resolve through the
+  same three-folder order. Then replace the move/return cache with a checked-out
+  private `data/` (bin, geobin, server) plus the shared tree.
 
 ### Phase 3: close the cold-start gap on the x86 track
 
