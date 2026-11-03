@@ -104,6 +104,30 @@ class MapServerPhaseTests(unittest.TestCase):
         phases = result['atlas_mapserver_phases']
         self.assertIn(93.93, [row[0] for row in phases['slowest_untimed_gaps']])
         self.assertLessEqual(len(phases['slowest_self_timed']), 6)
+        self.assertIsNone(result['serverdata_probe'])
+        self.assertEqual(result['story_arc_counts'], [[470, 957, 3528]])
+
+    def test_serverdata_probe_and_story_arc_counts_are_reported(self):
+        sys.path[:0] = [str(ROOT / 'armport/app')]
+        import interactive_host
+        console = CONSOLE.replace('470 arcs, 957 contacts', '0 arcs, 0 contacts', 1)
+        probe = {'format': 1, 'shared_top_level': ['scripts.loc'], 'reused_shared_tree': False}
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary)
+            (evidence / 'latest-report.json').write_text(json.dumps({'character_creation': {'serverdata_probe': probe}}))
+            with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/character-atlas-console.txt', console)
+            result = interactive_host.guest_timing_summary(evidence)
+        self.assertEqual(result['serverdata_probe'], probe)
+        self.assertEqual(result['story_arc_counts'], [[0, 0, 3528]])
+        self.assertEqual(interactive_host.story_arc_counts('x\n1 arcs, 2 contacts, 3 tasks\n' * 9), [[1, 2, 3]] * 4)
+        import os
+        from unittest.mock import patch
+        for value, expected in (('', False), ('1', True)):
+            with patch.dict(os.environ, {'COH_SERVERDATA_PROBE': value}):
+                self.assertIs(interactive_host.serverdata_probe_requested(), expected)
+        with patch.dict(os.environ, {'COH_SERVERDATA_PROBE': 'on'}), self.assertRaises(Exception):
+            interactive_host.serverdata_probe_requested()
 
     def test_timing_notices_split_sessions_and_bin_writes_under_the_annotation_limit(self):
         sys.path[:0] = [str(ROOT / 'armport/app')]

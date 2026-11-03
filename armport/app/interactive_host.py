@@ -10,6 +10,7 @@ import math
 import os
 from pathlib import Path
 import platform
+import re
 import secrets
 import shutil
 import socket
@@ -291,6 +292,21 @@ def trusted_bins_requested():
     return value == '1'
 
 
+def serverdata_probe_requested():
+    """CI-only probe: Atlas reads scripts.loc through a linked shared runtime/serverdata tree."""
+    value = os.environ.get('COH_SERVERDATA_PROBE', '')
+    require(value in ('', '0', '1'), 'COH_SERVERDATA_PROBE must be empty, 0 or 1')
+    return value == '1'
+
+
+STORY_ARC_COUNTS = re.compile(r'(?m)^(\d+) arcs, (\d+) contacts, (\d+) tasks\b')
+
+
+def story_arc_counts(text, limit=4):
+    """MapServer story arc totals, e.g. Thor 0.13.x Atlas: 470 arcs, 957 contacts, 3528 tasks."""
+    return [[int(value) for value in match.groups()] for match in STORY_ARC_COUNTS.finditer(text)][:limit]
+
+
 def guest_timing_summary(evidence):
     """Bounded A/B diagnostic (PRoot mode, map startup, preparation phases); never gates."""
     result = {}
@@ -299,6 +315,10 @@ def guest_timing_summary(evidence):
         if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
             report = json.loads(path.read_text())
             result['proot_mode'] = report.get('proot_mode')
+            result['serverdata_probe'] = next((section.get('serverdata_probe') for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('serverdata_probe') is not None),
+                report.get('serverdata_probe'))
             result['stage_timeline'] = stage_timeline(report)
             result['trusted_bins'] = next((section.get('trusted_bins') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
@@ -328,8 +348,9 @@ def guest_timing_summary(evidence):
                         archive.read(client).decode('utf-8', errors='replace'))
                 member = 'client-evidence/character-atlas-console.txt'
                 if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
-                    result['atlas_mapserver_phases'] = mapserver_phases.summary(
-                        archive.read(member).decode('utf-8', errors='replace'), top=6)
+                    console = archive.read(member).decode('utf-8', errors='replace')
+                    result['atlas_mapserver_phases'] = mapserver_phases.summary(console, top=6)
+                    result['story_arc_counts'] = story_arc_counts(console)
     except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
         result['evidence_read_error'] = str(error)[:300]
     return result
@@ -483,6 +504,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
         if trusted_bins_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
+        if serverdata_probe_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_SERVERDATA_PROBE=1')
         deadline = time.monotonic() + character.OVERALL_SECONDS
         created = run_session(command, args.work, args.evidence / 'creation', args.proot,
                               first, runtime_manifest, client_manifest, deadline)

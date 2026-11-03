@@ -150,4 +150,92 @@ class CharacterMapDataTests(unittest.TestCase):
                 self.value.stage_map_data(self.source, self.target)
 
 
+class ServerdataProbeTests(unittest.TestCase):
+    """CI-only shared read-only serverdata probe (COH_SERVERDATA_PROBE)."""
+    immutable = CharacterMapDataTests.immutable
+
+    def setUp(self):
+        CharacterMapDataTests.setUp(self)
+        self.value.owner.root = self.root / 'owner'; self.value.owner.root.mkdir()
+        self.runtime = self.root / 'runtime'
+        for name in ('data', 'tools'):
+            (self.runtime / name).mkdir(parents=True, exist_ok=True)
+        self.identity = {'format': 2, 'serverdata_probe': {'format': 1, 'shared_top_level': ['scripts.loc']}}
+        self.addCleanup(self.writable_again)
+
+    def writable_again(self):
+        for current, _directories, _files in os.walk(self.value.owner.root):
+            os.chmod(current, 0o700)
+
+    def test_switch_accepts_only_empty_zero_or_one(self):
+        for value, expected in (('', False), ('0', False), ('1', True)):
+            with self.subTest(value=value), patch.dict(os.environ, {server.SERVERDATA_PROBE_ENV: value}):
+                self.assertIs(server.serverdata_probe_requested(), expected)
+        with patch.dict(os.environ, {server.SERVERDATA_PROBE_ENV: 'yes'}):
+            with self.assertRaises(server.base.DiagnosticError):
+                server.serverdata_probe_requested()
+
+    def test_split_mirror_skips_and_selects_top_level_folders_only(self):
+        for name in ('scripts.loc/arcs/a.storyarc', 'Scripts.loc/b.taskset', 'defs/a.def', 'maps/scripts.loc/x.txt'):
+            self.immutable(name)
+        private = self.value.stage_map_data(self.source, self.target, skip_top_level=('scripts.loc',))
+        self.assertFalse((self.target / 'scripts.loc').exists())
+        self.assertFalse((self.target / 'Scripts.loc').exists())
+        self.assertTrue((self.target / 'maps/scripts.loc/x.txt').is_symlink())
+        self.assertEqual(private['files'], 2)
+        shared = self.root / 'shared'
+        selected = self.value.stage_map_data(self.source, shared, only_top_level=('scripts.loc',))
+        self.assertEqual(selected['files'], 2)
+        self.assertFalse((shared / 'defs').exists()); self.assertFalse((shared / 'maps').exists())
+        self.assertTrue((shared / 'scripts.loc/arcs/a.storyarc').is_symlink())
+
+    def test_shared_tree_is_built_once_sealed_read_only_and_linked(self):
+        original = self.immutable('scripts.loc/arcs/a.storyarc')
+        self.immutable('defs/a.def')
+        self.value.creation_report['cold_mirror_input_resolution'] = {'resolved_leaves': 7}
+        first = self.value.link_shared_server_data(self.runtime, self.identity)
+        self.assertEqual(self.value.creation_report['cold_mirror_input_resolution'], {'resolved_leaves': 7})
+        link = self.runtime / 'serverdata'
+        self.assertTrue(link.is_symlink())
+        self.assertEqual((link / 'scripts.loc/arcs/a.storyarc').resolve(), original)
+        shared = link.resolve()
+        self.assertEqual(shared.parent, self.value.owner.root)
+        self.assertFalse((shared / 'defs').exists())
+        for current, _directories, _files in os.walk(shared):
+            self.assertEqual(os.stat(current).st_mode & 0o777, 0o500)
+        self.assertFalse(first['reused_shared_tree']); self.assertEqual(first['shared_files'], 1)
+        self.assertFalse(first['native_resolution_verified']); self.assertFalse(first['physical_gain_validated'])
+        second_runtime = self.root / 'runtime-2'
+        for name in ('data', 'tools'):
+            (second_runtime / name).mkdir(parents=True)
+        second = self.value.link_shared_server_data(second_runtime, self.identity)
+        self.assertTrue(second['reused_shared_tree']); self.assertEqual(second['shared_tree'], first['shared_tree'])
+        self.assertEqual((second_runtime / 'serverdata').resolve(), shared)
+
+    def test_private_copy_existing_link_or_missing_tools_is_refused(self):
+        self.immutable('scripts.loc/a.storyarc')
+        (self.runtime / 'data/scripts.loc').mkdir()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'still holds a probed shared folder'):
+            self.value.link_shared_server_data(self.runtime, self.identity)
+        (self.runtime / 'data/scripts.loc').rmdir()
+        (self.runtime / 'serverdata').mkdir()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'already has serverdata'):
+            self.value.link_shared_server_data(self.runtime, self.identity)
+        (self.runtime / 'serverdata').rmdir(); (self.runtime / 'tools').rmdir()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'data/ and tools/ layout'):
+            self.value.link_shared_server_data(self.runtime, self.identity)
+
+    def test_changed_marker_or_unsealed_tree_is_refused(self):
+        self.immutable('scripts.loc/a.storyarc')
+        self.value.link_shared_server_data(self.runtime, self.identity)
+        marker = next(self.value.owner.root.glob('shared-server-data-probe-*.json'))
+        marker.write_text('{"format": 1, "key": "other", "roots": ["scripts.loc"], "stats": {}}')
+        (self.runtime / 'serverdata').unlink()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'marker differs'):
+            self.value.link_shared_server_data(self.runtime, self.identity)
+        marker.unlink()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'Unsealed shared server data probe tree'):
+            self.value.link_shared_server_data(self.runtime, self.identity)
+
+
 if __name__ == '__main__': unittest.main()
