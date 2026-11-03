@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+import threading
 import time
 from types import SimpleNamespace
 import unittest
@@ -632,6 +633,182 @@ class ZoningServerTests(unittest.TestCase):
             instance._spawn_map.assert_not_called()
             instance._query_start.assert_not_called()
             self.assertIsNone(instance.pending)
+
+
+class BackgroundPrestartTests(unittest.TestCase):
+    """Optional King's Row start beside Atlas: low-priority Python preparation, then native load."""
+    def setUp(self):
+        self.real_available = zoning.available_memory_mib
+        patcher = patch.object(zoning, 'available_memory_mib', return_value=8192)
+        self.memory = patcher.start(); self.addCleanup(patcher.stop)
+
+    def instance(self, requested=True):
+        instance = ZoningServerTests.instance(self)
+        events = []
+        instance.ctx.check = Mock()
+        instance.ctx.event = lambda kind, **fields: events.append((kind, threading.current_thread().name))
+        instance.ctx.cancelled = Mock(return_value=False)
+        instance.events = events
+        instance.monorail_qualified = True
+        instance.prestart = None
+        instance.zoning_report['background_prestart'] = {'requested': requested, 'status': 'not_started'}
+        progress = Path(instance.owner.args.state) / 'character-zoning-5-progress.bin'
+        def spawn(map_id):
+            progress.write_bytes(b'x')
+            process = SimpleNamespace(process=Mock())
+            process.process.poll.return_value = None
+            instance.maps[map_id] = {'process': process, 'progress_path': progress, 'ready': False}
+        instance._spawn_map = Mock(side_effect=spawn)
+        instance.prepared = []
+        def prepare():
+            instance.ctx.event('stage', status='running')
+            instance.ctx.event('character_zoning_preparation')
+            instance.prepared.append(threading.current_thread().name)
+            instance.kings_row_prepared = {'runtime': Path('/kings')}
+            return instance.kings_row_prepared
+        instance.prepare_kings_row_runtime = prepare
+        return instance
+
+    def run_until(self, instance, status, start=100):
+        now = start
+        for _ in range(200):
+            instance.tick_prestart(now)
+            if instance.prestart is not None and instance.prestart['thread'] is not None:
+                instance.prestart['thread'].join(5)
+            if instance.zoning_report['background_prestart']['status'] == status:
+                return now
+            now += 6
+        self.fail('pre-start never reached ' + status + ': ' + str(instance.zoning_report['background_prestart']))
+
+    def test_disabled_by_default_and_waits_for_the_settle_delay(self):
+        instance = self.instance(requested=False)
+        instance.tick_prestart(1000)
+        self.assertIsNone(instance.prestart)
+        instance = self.instance()
+        instance.tick_prestart(100)
+        instance.tick_prestart(100 + zoning.PRESTART_DELAY_SECONDS - 1)
+        self.assertIsNone(instance.prestart)
+        instance.tick_prestart(100 + zoning.PRESTART_DELAY_SECONDS)
+        self.assertIsNotNone(instance.prestart)
+
+    def test_low_or_unknown_available_memory_skips_without_preparing(self):
+        for value in (1024, None):
+            with self.subTest(value=value):
+                self.memory.return_value = value
+                instance = self.instance()
+                instance.tick_prestart(100); instance.tick_prestart(1000); instance.tick_prestart(2000)
+                self.assertIsNone(instance.prestart)
+                report = instance.zoning_report['background_prestart']
+                self.assertEqual((report['status'], report['available_memory_mib_at_start']), ('skipped_low_memory', value))
+        with tempfile.TemporaryDirectory() as temporary:
+            meminfo = Path(temporary) / 'meminfo'
+            meminfo.write_text('MemTotal:       16000000 kB\nMemAvailable:    4194304 kB\n')
+            self.assertEqual(self.real_available(meminfo), 4096)
+            meminfo.write_text('MemTotal:       16000000 kB\n')
+            self.assertIsNone(self.real_available(meminfo))
+            self.assertIsNone(self.real_available(Path(temporary) / 'missing'))
+
+    def test_never_starts_beside_a_pending_trip_or_away_from_atlas(self):
+        for change in ({'pending': {'to_map_id': 5}}, {'active_map_id': 5}, {'monorail_qualified': False},
+                       {'kings_row_prepared': {'runtime': Path('/kings')}}):
+            with self.subTest(change=change):
+                instance = self.instance()
+                for name, value in change.items():
+                    setattr(instance, name, value)
+                instance.tick_prestart(100); instance.tick_prestart(1000)
+                self.assertIsNone(instance.prestart)
+
+    def test_prepares_off_thread_then_spawns_and_observes_first_tick(self):
+        instance = self.instance()
+        self.run_until(instance, 'native_ticking')
+        self.assertEqual(instance.prepared, ['kings-row-prestart'])
+        instance._spawn_map.assert_called_once_with(5)
+        self.assertTrue(instance.maps[5]['prestarted'] and instance.maps[5]['native_ticking'])
+        # Background 'stage' progress never reaches the Android stage stream.
+        self.assertEqual([kind for kind, name in instance.events if name == 'kings-row-prestart'],
+                         ['character_zoning_preparation'])
+        row = instance.prestart_timing
+        self.assertEqual((row['kind'], row['map_id']), ('background_prestart', 5))
+        self.assertIn('first_completed_tick_observed', row['points'])
+        self.assertEqual(instance.zoning_next, 0)
+
+    def test_trip_during_native_loading_uses_native_budget_then_warm_once_ticking(self):
+        instance = self.instance()
+        instance.live_progress = Mock(return_value=False)
+        self.run_until(instance, 'native_loading')
+        instance.owner.session_budget.deadline = time.monotonic() + 5000
+        instance._accept_prepare(request(to_map_id=5), NOW)
+        self.assertEqual(instance.pending['preparation_kind'], 'prestarted_loading')
+        self.assertEqual(instance.pending['preparation_budget_seconds'], zoning.KINGS_NATIVE_READY_SECONDS)
+        self.assertEqual(instance.pending['python_preparation_budget_seconds'], 0)
+        self.assertEqual(instance.pending['phase'], 'map_ready')
+        instance._query_start.assert_not_called()
+        self.assertEqual(instance._spawn_map.call_count, 1)
+        warm = self.instance()
+        self.run_until(warm, 'native_ticking')
+        warm._accept_prepare(request(to_map_id=5), NOW)
+        self.assertEqual(warm.pending['preparation_kind'], 'resident_warm')
+
+    def test_zoning_request_while_preparing_waits_and_reuses_or_reraises(self):
+        instance = self.instance()
+        gate = threading.Event()
+        original = instance.prepare_kings_row_runtime
+        instance.prepare_kings_row_runtime = lambda: (gate.wait(5), original())[1]
+        instance.tick_prestart(100); instance.tick_prestart(200)
+        self.assertTrue(instance.prestart['thread'].is_alive())
+        threading.Timer(.2, gate.set).start()
+        instance.wait_background_prestart()
+        self.assertEqual(instance.prepared, ['kings-row-prestart'])
+        self.assertTrue(instance.zoning_report['background_prestart']['joined_by_zoning_request'])
+        failing = self.instance()
+        failing.prepare_kings_row_runtime = Mock(side_effect=ERROR('collision package differs'))
+        failing.tick_prestart(100); failing.tick_prestart(200); failing.prestart['thread'].join(5)
+        with self.assertRaisesRegex(ERROR, 'collision package differs'):
+            failing.wait_background_prestart()
+
+    def test_preparation_failure_is_reported_without_disabling_zoning(self):
+        instance = self.instance()
+        instance.prepare_kings_row_runtime = Mock(side_effect=ERROR('beacon graph differs'))
+        self.run_until(instance, 'failed')
+        report = instance.zoning_report['background_prestart']
+        self.assertEqual((report['failure_phase'], report['failure']), ('preparing', 'beacon graph differs'))
+        instance._spawn_map.assert_not_called()
+        self.assertEqual(instance.zoning_next, 0)
+        self.assertIsNone(instance.pending)
+
+    def test_native_crash_while_loading_discards_the_map_for_a_later_cold_trip(self):
+        instance = self.instance()
+        instance.live_progress = Mock(return_value=False)
+        self.run_until(instance, 'native_loading')
+        owned = instance.maps[5]
+        instance._map_progress = Mock(side_effect=ERROR('Owned zoning MapServer crashed'))
+        self.run_until(instance, 'failed', start=1000)
+        self.assertNotIn(5, instance.maps)
+        owned['process'].process.terminate.assert_called_once_with()
+        self.assertFalse(owned['progress_path'].exists())
+        self.assertTrue(owned['progress_path'].with_name(owned['progress_path'].name + '.prestart-failed').exists())
+
+    def test_cleanup_stops_the_thread_and_never_returns_a_tree_it_may_still_write(self):
+        instance = self.instance()
+        started, release = threading.Event(), threading.Event()
+        def prepare():
+            started.set()
+            while not release.is_set():
+                instance.ctx.check()      # the private stop flag applies only to this thread
+                time.sleep(.01)
+        instance.prepare_kings_row_runtime = prepare
+        instance.tick_prestart(100); instance.tick_prestart(200)
+        self.assertTrue(started.wait(5))
+        instance.ctx.check()              # foreground check is unaffected
+        self.assertTrue(instance.stop_background_prestart(timeout=5))
+        self.assertIsInstance(instance.prestart['error'], zoning.base.Cancelled)
+        stuck = self.instance()
+        stuck.kings_row_data_cache = object()
+        stuck.prepare_kings_row_runtime = lambda: release.wait(5)
+        stuck.tick_prestart(100); stuck.tick_prestart(200)
+        self.assertFalse(stuck.stop_background_prestart(timeout=.1))
+        self.assertFalse(hasattr(stuck, 'kings_row_data_cache'))
+        release.set(); stuck.prestart['thread'].join(5)
 
 
 if __name__ == '__main__':

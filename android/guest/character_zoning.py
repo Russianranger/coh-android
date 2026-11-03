@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 import socket
 import stat
+import threading
 import time
 from types import MappingProxyType
 
@@ -35,6 +36,26 @@ KINGS_PYTHON_PREPARE_SECONDS = 420
 KINGS_NATIVE_READY_SECONDS = 360
 KINGS_TOTAL_PREPARE_SECONDS = 720
 TRANSFER_SECONDS = 180
+# Optional background start of the next zone (King's Row) beside Atlas Park.
+PRESTART_ENV = 'COH_PRESTART_NEXT_ZONE'
+PRESTART_MAP_ID = 5
+PRESTART_DELAY_SECONDS = 20
+PRESTART_OBSERVE_SECONDS = 5
+PRESTART_JOIN_SECONDS = 120
+PRESTART_THREAD_NICE = 10
+# King's Row preparation peaked at 1772 MiB RSS on Thor (.44); keep headroom.
+PRESTART_MIN_AVAILABLE_MIB = 3072
+
+
+def available_memory_mib(path=Path('/proc/meminfo')):
+    """MemAvailable in MiB, or None when the kernel does not report it."""
+    try:
+        for line in path.read_text().splitlines()[:64]:
+            if line.startswith('MemAvailable:'):
+                return int(line.split()[1]) // 1024
+    except (OSError, ValueError, IndexError):
+        return None
+    return None
 REQUEST_AGE_MS = 120000
 NUMBER = character.character_events.NUMBER
 PREPARATION_FIELDS = (
@@ -81,6 +102,14 @@ def preparation_budgets(map_id, resident):
             'preparation_budget_seconds': (KINGS_TOTAL_PREPARE_SECONDS if python_seconds
                                            else native_seconds),
             'preparation_budget_policy': 'bounded_python_then_native_ready_v1'}
+
+
+def prestarted_loading_budgets(map_id):
+    """A prestarted destination already finished Python preparation; only native readiness remains."""
+    budgets = preparation_budgets(map_id, False)
+    native = budgets['native_ready_budget_seconds']
+    return dict(budgets, python_preparation_budget_seconds=0, preparation_budget_seconds=native,
+                preparation_budget_policy='prestarted_native_ready_v1')
 
 
 def scan_new_console(owned):
@@ -417,6 +446,185 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             preparation_phase_observations=[])
         self.ctx.report['character_zoning'] = self.zoning_report
         self.creation_report.update(zoning_enabled=True, connected_on_supported_map=False)
+        self.prestart = None
+        self.zoning_report['background_prestart'] = {'format': 1,
+            'requested': os.environ.get(PRESTART_ENV) == '1', 'map_id': PRESTART_MAP_ID,
+            'status': 'not_started', 'policy': 'prepare_then_start_next_zone_beside_current_v1',
+            'preparation_thread_nice': PRESTART_THREAD_NICE, 'mapserver_priority_lowered': False}
+
+    # Background start of the next zone ------------------------------------
+    def prestart_eligible(self):
+        return (self.pending is None and self.active_map_id == 1 and self.monorail_enabled()
+                and PRESTART_MAP_ID not in self.maps and len(self.maps) == 1
+                and getattr(self, 'kings_row_prepared', None) is None)
+
+    def start_background_prestart(self, now):
+        """Run the King's Row Python preparation on a low-priority thread.
+
+        The thread's ctx.check also honours a private stop flag, and its
+        'stage' progress events are dropped so the foreground stage and the
+        Android overlay stay on the live session. Other events are serialized.
+        """
+        report = self.zoning_report['background_prestart']
+        state = {'phase': 'preparing', 'started_monotonic': now, 'cancel': False, 'error': None,
+                 'thread': None}
+        original_check, original_event, lock = self.ctx.check, self.ctx.event, threading.Lock()
+
+        def check():
+            original_check()
+            if threading.current_thread() is state['thread'] and state['cancel']:
+                raise base.Cancelled("Background King's Row preparation stopped")
+
+        def event(kind, **fields):
+            if threading.current_thread() is state['thread'] and kind == 'stage':
+                return
+            with lock:
+                original_event(kind, **fields)
+
+        def run():
+            try:
+                try:
+                    os.setpriority(os.PRIO_PROCESS, threading.get_native_id(), PRESTART_THREAD_NICE)
+                    report['preparation_thread_niced'] = True
+                except (AttributeError, OSError):
+                    report['preparation_thread_niced'] = False
+                self.prepare_kings_row_runtime()
+            except BaseException as error:   # reported by the supervisor thread
+                state['error'] = error
+            finally:
+                state['finished_monotonic'] = time.monotonic()
+
+        self.ctx.check, self.ctx.event = check, event
+        state['thread'] = threading.Thread(target=run, name='kings-row-prestart', daemon=True)
+        self.prestart = state
+        self.prestart_timing = self.begin_startup_timing('background_prestart', map_id=PRESTART_MAP_ID,
+                                                         now=now, utc_ms=int(time.time() * 1000))
+        report.update(status='preparing', started_utc_ms=int(time.time() * 1000))
+        state['thread'].start()
+
+    def wait_background_prestart(self):
+        """A zoning request during background preparation waits for, then reuses, its result."""
+        state = getattr(self, 'prestart', None)
+        if state is None or state['thread'] is None or state['phase'] != 'preparing':
+            return
+        while state['thread'].is_alive():
+            state['thread'].join(.25)
+            self.ctx.check()
+        self.zoning_report['background_prestart']['joined_by_zoning_request'] = True
+        if state['error'] is not None:
+            raise state['error']
+
+    def discard_prestarted_map(self, failure):
+        owned = self.maps.pop(PRESTART_MAP_ID, None)
+        report = self.zoning_report['background_prestart']
+        report.update(status='failed', failure_phase='native_loading',
+                      failure=str(failure)[:300], failure_type=type(failure).__name__)
+        if owned is None:
+            return
+        if owned['process'].process.poll() is None:
+            owned['process'].process.terminate()
+        path = owned['progress_path']
+        if path.exists() or path.is_symlink():
+            # A later cold zoning spawn requires a fresh progress file.
+            path.rename(path.with_name(path.name + '.prestart-failed'))
+
+    def tick_prestart(self, now):
+        report = self.zoning_report.get('background_prestart')
+        if not isinstance(report, dict) or report.get('requested') is not True:
+            return
+        state = getattr(self, 'prestart', None)
+        try:
+            if state is None:
+                if report['status'] != 'not_started' or not self.prestart_eligible():
+                    return
+                eligible = report.setdefault('eligible_monotonic', now + PRESTART_DELAY_SECONDS)
+                if now < eligible:
+                    return
+                available = available_memory_mib()
+                report.update(available_memory_mib_at_start=available,
+                              minimum_available_memory_mib=PRESTART_MIN_AVAILABLE_MIB)
+                if available is None or available < PRESTART_MIN_AVAILABLE_MIB:
+                    report['status'] = 'skipped_low_memory'
+                    return
+                self.start_background_prestart(now)
+                return
+            if state['phase'] == 'preparing':
+                if state['thread'].is_alive():
+                    return
+                state['phase'] = 'prepared'
+                report['preparation_seconds'] = round(state.get('finished_monotonic', now) - state['started_monotonic'], 3)
+                if state['error'] is not None:
+                    if isinstance(state['error'], base.Cancelled) and self.ctx.cancelled():
+                        raise state['error']
+                    state['phase'] = 'done'
+                    report.update(status='failed', failure_phase='preparing', failure=str(state['error'])[:300],
+                                  failure_type=type(state['error']).__name__)
+                    return
+            if state['phase'] == 'prepared':
+                if self.pending is not None or PRESTART_MAP_ID in self.maps or self.active_map_id != 1:
+                    state['phase'] = 'done'
+                    report['status'] = 'prepared_then_used_by_zoning'
+                    return
+                self._spawn_map(PRESTART_MAP_ID)   # reuses the prepared runtime
+                self.maps[PRESTART_MAP_ID]['prestarted'] = True
+                self.mark_startup_timing(self.prestart_timing, 'map_spawn_requested')
+                state.update(phase='loading', next_observation=now + PRESTART_OBSERVE_SECONDS)
+                report.update(status='native_loading', native_spawn_seconds=round(now - state['started_monotonic'], 3))
+                return
+            if state['phase'] == 'loading':
+                owned = self.maps.get(PRESTART_MAP_ID)
+                if owned is None or self.pending is not None:
+                    state['phase'] = 'done'
+                    report['status'] = 'loading_handed_to_zoning'
+                    return
+                if now < state['next_observation']:
+                    return
+                state['next_observation'] = now + PRESTART_OBSERVE_SECONDS
+                try:
+                    current = self._map_progress(PRESTART_MAP_ID)
+                except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                    state['phase'] = 'done'
+                    self.discard_prestarted_map(failure)
+                    return
+                if self.live_progress(current):
+                    owned['native_ticking'] = True
+                    self.mark_startup_timing(self.prestart_timing, 'first_completed_tick_observed')
+                    state['phase'] = 'done'
+                    report.update(status='native_ticking',
+                                  native_ticking_seconds=round(now - state['started_monotonic'], 3))
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            # Background work never disables foreground zoning.
+            if state is not None:
+                state['phase'] = 'done'
+            report.update(status='failed', failure=str(failure)[:300], failure_type=type(failure).__name__)
+
+    def stop_background_prestart(self, timeout=PRESTART_JOIN_SECONDS):
+        """Cleanup stops and joins the preparation thread before any cache return."""
+        state = getattr(self, 'prestart', None)
+        if state is None or state['thread'] is None:
+            return True
+        state['cancel'] = True
+        state['thread'].join(timeout)
+        alive = state['thread'].is_alive()
+        self.zoning_report['background_prestart'].update(stopped_for_cleanup=True, thread_joined=not alive)
+        if alive and hasattr(self, 'kings_row_data_cache'):
+            # Never return a data tree another thread may still be writing.
+            del self.kings_row_data_cache
+        return not alive
+
+    def cleanup_config(self):
+        # The preparation thread starts no processes; join it before the
+        # inherited cache return so no tree is returned while being written.
+        self.stop_background_prestart()
+        super().cleanup_config()
+
+    def map_startup_timing(self, map_id):
+        row = getattr(self, 'prestart_timing', None)
+        if row is not None and self.pending is None and map_id == PRESTART_MAP_ID:
+            return row
+        return super().map_startup_timing(map_id)
 
     def monorail_enabled(self):
         return getattr(self, 'monorail_qualified', False) is True
@@ -802,6 +1010,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         def prepare_destination():
             if map_id != 5:
                 return self.prepare_atlas_runtime()
+            self.wait_background_prestart()
             prepared = self.prepare_kings_row_runtime()
             require(prepared.get('graph', {}).get('verified') is True
                     and prepared['graph'].get('map_id') == 5, 'Kings Row native graph installation failed')
@@ -1094,7 +1303,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         target = value['to_map_id']
         require(target != 5 or self.monorail_enabled(), 'Kings Row assets/native route are not qualified')
         resident = target in self.maps
-        budgets = preparation_budgets(target, resident)
+        loading = (resident and self.maps[target].get('prestarted') is True
+                   and self.maps[target].get('native_ticking') is not True)
+        budgets = prestarted_loading_budgets(target) if loading else preparation_budgets(target, resident)
         now = time.monotonic()
         window = travel_window(getattr(getattr(self.owner, 'session_budget', None), 'deadline', None),
             now, now_ms, budgets['preparation_budget_seconds'],
@@ -1121,7 +1332,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             preparation_request_age_ms=request_age_ms,
             departure_deadline_monotonic=(float('inf') if window.get('manual_session') else
                 now + (window['departure_deadline_utc_ms'] - now_ms) / 1000),
-            preparation_kind='resident_warm' if resident else 'cold',
+            preparation_kind='prestarted_loading' if loading else 'resident_warm' if resident else 'cold',
             preparation_phase='python_inputs' if budgets['python_preparation_budget_seconds'] else 'native_readiness')
         self.pending.update(budgets)
         self.pending['startup_timing'] = self.begin_startup_timing('zoning_supervisor_request',
@@ -1296,6 +1507,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 else:
                     unseen_delivery = True
                     self._accept_delivery(delivery, now_ms)
+            self.tick_prestart(time.monotonic())
             if self.pending is None:
                 return
             pending, target = self.pending, self.pending['to_map_id']

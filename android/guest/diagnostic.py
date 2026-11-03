@@ -72,10 +72,12 @@ def redacted_value(value, secrets):
     # Redact before encoding; editing JSON text can consume closing delimiters.
     if isinstance(value, str):
         return redact(value, secrets)
+    # list() snapshots each container in one C call, so a background
+    # preparation thread adding report keys cannot break this copy.
     if isinstance(value, dict):
-        return {key: redacted_value(item, secrets) for key, item in value.items()}
+        return {key: redacted_value(item, secrets) for key, item in list(value.items())}
     if isinstance(value, list):
-        return [redacted_value(item, secrets) for item in value]
+        return [redacted_value(item, secrets) for item in list(value)]
     return value
 
 
