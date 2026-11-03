@@ -1,5 +1,28 @@
 # COH Atlas Gameplay 0.13.45: CI-qualified candidate (ARM64 client)
 
+## Device feedback recorded 2026-11-02 — development paused
+
+The supplied `20261103-010459.zip` and `-010516.zip` both identify **0.13.44**.
+The first contains reopen/zoning/save; the second is setup-only with zero frames.
+They do not validate .45 or .46. The user reports that **King's Row is still
+functioning poorly, worse than before the ARM port**. M5 acceptance remains open.
+
+King's Row required 656.024 s cold preparation and 711.056 s from request to
+observed arrival. Eleven complete loaded-zone render windows averaged 25.63 FPS
+(19.95–29.94); rendered FPS does not measure server/NPC update smoothness.
+Both maps still use x86 MapServers and Atlas remains resident. A committed save
+after zoning succeeded; the final result was cleanup_failed because owned worker
+cleanup could not be proved. See [the dated evidence and diagnosis](notes/M5-THOR-20261102-RESULTS.md).
+
+The .46 chain has separately passed build 40929292200, retained runtime
+40945708189 and APK 40952408285 at `8dc2a66d`; comment 6508052528 explicitly
+does not approve its handoff. No newer formal candidate review or device result
+is present. The existing test procedure below is retained for reference;
+**no new test, build or development is requested while paused**.
+
+---
+
+
 **Approved for Thor handoff by Claude, review [5692088051](https://github.com/Russianranger/coh-android/pull/8#pullrequestreview-5692088051).** VersionCode 60, tested source
 `0bf31c81b1b5a9f8427b4692c623702b30e7029e`. All three serialized CI stages passed.
 0.13.44 below remains the last device-tested candidate. This documentation update

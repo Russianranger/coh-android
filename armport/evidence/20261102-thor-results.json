@@ -1,0 +1,135 @@
+{
+  "format": 1,
+  "recorded_local_date": "2026-11-02",
+  "timezone": "America/Chicago",
+  "user_report": "Kings row is still functioning poorly, worse than before the arm port.",
+  "development_state": "paused_by_user_diagnosis_and_documentation_only",
+  "inputs": [
+    {
+      "name": "coh-atlas-gameplay-20261103-010459.zip",
+      "bytes": 17218519,
+      "sha256": "d9420a3219737f309ed6737408e63aa5ecf134569a46de32e3e5cecfc3ca5205",
+      "operation": "character_reopen",
+      "app_version": "0.13.44",
+      "session_id": "d2ae95388c54479384dac85ef23bb073",
+      "library_file_id": "libfile_a281fa85c9b48191a5e779facbb46dda"
+    },
+    {
+      "name": "coh-atlas-gameplay-20261103-010516.zip",
+      "bytes": 2369446,
+      "sha256": "de3c0c29a4927e79b8e9d99bf22ed2941c396c79bd38a43f924cc1e83a8448d6",
+      "operation": "setup",
+      "app_version": "0.13.44",
+      "session_id": null,
+      "decoded_frames": 0,
+      "library_file_id": "libfile_2d0d30b01ee8819194a5df0e9a011cb5"
+    }
+  ],
+  "client": {
+    "architecture": "arm64",
+    "graphics_profile": "standard",
+    "gpu_profile": "turnip",
+    "renderer": "zink (Turnip Adreno (TM) 740)",
+    "surface": [
+      800,
+      600
+    ],
+    "tap_to_connected_seconds": 604.299,
+    "folder_scan_seconds": 217.712,
+    "folder_scan_files": 212496,
+    "folder_scan_folders": 10639
+  },
+  "zone": {
+    "destination_map_id": 5,
+    "cold_preparation_seconds": 656.024,
+    "python_preparation_seconds": 304.188,
+    "native_readiness_phase_seconds": 349.794,
+    "transfer_seconds": 54.908,
+    "request_to_observed_arrival_seconds": 711.056,
+    "resident_atlas_return": {
+      "preparation_seconds": 8.444,
+      "transfer_seconds": 50.413,
+      "request_to_observed_arrival_seconds": 59.13
+    },
+    "x86_mapserver": {
+      "bytes": 7475200,
+      "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+    },
+    "atlas_still_resident": true
+  },
+  "frame_windows": {
+    "source": "guest/client-evidence/armport_stdio.txt",
+    "method": "Complete ARMPORT_FRAME_RATE_V1 windows after zone ready marker; exclude first partial sample",
+    "kings_row": {
+      "first_line": 760,
+      "last_line": 781,
+      "windows": 11,
+      "frames": 1423,
+      "seconds": 55.53,
+      "weighted_fps": 25.62578786241671,
+      "minimum_window_fps": 19.95,
+      "maximum_window_fps": 29.94
+    },
+    "atlas_return": {
+      "first_line": 801,
+      "last_line": 812,
+      "windows": 6,
+      "frames": 740,
+      "seconds": 30.09,
+      "weighted_fps": 24.59288800265869,
+      "minimum_window_fps": 21.55,
+      "maximum_window_fps": 26.13
+    }
+  },
+  "preparation_only_resources": {
+    "source": "guest/latest-report.json character_zoning.preparation_schedulers[0]",
+    "samples": 68,
+    "wall_seconds": 343.878,
+    "sampled_task_cpu_increase_seconds": 115.41,
+    "rss_first_mib": 207.8,
+    "rss_last_mib": 1768.07,
+    "rss_peak_mib": 1772.25,
+    "systemwide_swap_in_pages_delta": 17747,
+    "systemwide_swap_out_pages_delta": 289318,
+    "systemwide_major_faults_delta": 18104,
+    "priority_restore_complete": true,
+    "limitations": [
+      "ends_before_departure",
+      "systemwide_memory_counters_not_attributed_to_app",
+      "rss_includes_shared_pages_not_pss",
+      "android_swap_may_be_zram",
+      "no_post_arrival_process_cpu_rate"
+    ]
+  },
+  "save": {
+    "committed": true,
+    "after_zoning": true,
+    "character_identity_powers_costume_enhancements_preserved": true,
+    "forced_stop_before_save": false
+  },
+  "cleanup": {
+    "verified": false,
+    "persistent_worker_permission_denied": true,
+    "failure": "Atlas data cache return lacks proved owned Wine cleanup",
+    "observation_failure": "Cache inventory: Linked private cache directory refused"
+  },
+  "unknown": [
+    "matched_pre_port_gameplay_comparison",
+    "kings_row_tick_rate_and_longest_tick",
+    "gameplay_file_load_durations",
+    "gameplay_process_cpu_rates",
+    "wineserver_request_counts",
+    "thermal_throttling",
+    "exact_cause_of_reported_regression"
+  ],
+  "acceptance": {
+    "m5_accepted": false,
+    "kings_row_experience_failure_open": true,
+    "new_apk_tested": false
+  },
+  "scope": {
+    "code_changed": false,
+    "workflows_dispatched": false,
+    "development_resumed": false
+  }
+}

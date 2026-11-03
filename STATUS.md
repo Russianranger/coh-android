@@ -1,39 +1,32 @@
 # COH-ArmPort status
 
-Updated 2026-10-28 CDT. Branch armport/m5-thor; PR #8 remains draft, M5 unaccepted.
-Original client runs as an ARM64 Windows program in the app's ARM64 Wine.
+Updated 2026-11-02 America/Chicago. User paused development; documentation only.
+PR #8 remains draft; M5 is unaccepted.
 
-- M0/M1/M2 merged (PRs #3/#4/#5); details: armport/M1-REPORT.md and M2-REPORT.md.
-- M3 merged (PR #6): final build 40407492746/replay 40407492734 passed partial
-  state scope; world rendered, completeness false, textures incomplete.
-- M4 app runtime accepted/merged (PR #7, review 5660940046); armport/M4-REPORT.md.
-- Last device-tested candidate: 0.13.44, APK run 40743596575/artifact 12840043807,
-  sha256 2cf80a03a0161fc42581147f0c75d8f22ea2ad93fc8884c9abab5c72388e5c1b.
-  Build 40724321192/requalification 40736589404 passed; review 5687848443 approved
-  that APK only. Retained 0.10 CI is not full 0.13.x runtime/device validation.
-- Thor results recorded by previous lead: combat, defeats, zoning, save work;
-  12–30 FPS (window mean 22.8); ~12 min warm startup, MapServer 9.5 min critical path.
-  King's Row NPC/car stutter remains; server contention is a hypothesis to measure.
-- Task A audit posted: PR #8 comment 6480628043; armport/notes/M5-ASTRA-ANALYSIS.md.
-  Sequencer “Reading” logs precede cache lookup: not proof of disk loads.
-  Java already knows ARM64; confirmed defect is manual/bounded interaction policy.
-- Claude-approved for Thor handoff (review 5692088051): 0.13.45/code 60 at 0bf31c81b,
-  build 40776745390 (8 jobs), requalification 40786315414 (4), APK 40791416254.
-  Artifact 12860779714; APK 80,919,462 bytes, sha256
-  1ff2252876def6cfeb28d33490d8c2f5d5952c330698d6a719fb67a2197b3959.
-  Host CPU/tick-counter telemetry, manual-session
-  acceptance correction, preservation of both Wine and cache cleanup failures.
-  No native/runtime-pin changes. Longest ticks/file-load/Wine request counts
-  remain unavailable until a separately qualified native producer is integrated.
-- Review P2: budget-edge PID discovery can starve the new zone; fix before next
-  candidate. P3: whole-registry observer copies exceed the cooperative budget.
-- Native 0119 timing producer held in isolated patchwork/server-metrics branch;
-  extracted ASan/UBSan controls pass, upstream negative fails as expected.
-  Packaging must preserve distinct retained 0.10 and Thor server ancestry.
-- Next: approved .45 baseline Thor test; sampler fixes in parallel with native
-  build 40805020119 at dd9d755bd. Runtime/APK chain held: comment 6486287635.
-- Remaining: prior-zone retirement, DbServer wait cost, ARM64 servers, persistent
-  folder cache, late data-stage launch, enhancement additions and cleanup proof.
-  Esync requires a proposal before changing the pinned runtime.
-- Reduced client features remain: no PhysX ragdolls, CgFX effects, runtime DXT.
-  No releases/protected-branch changes. See armport/M5-HANDOFF.md and M5-THOR-TEST.md.
+- M3 merged (PR #6): build 40407492746/replay 40407492734 passed partial scope.
+- M4 accepted/merged (PR #7, review 5660940046); armport/M4-REPORT.md.
+- Last device-tested app: 0.13.44; ARM64 client, Turnip/Zink, x86 MapServers.
+  APK run 40743596575/artifact 12840043807, sha256
+  2cf80a03a0161fc42581147f0c75d8f22ea2ad93fc8884c9abab5c72388e5c1b.
+- New exports: 20261103-010459 (reopen/zoning/save) and -010516 (setup only).
+  User: King's Row still performs poorly, worse than before the ARM port.
+  Cold destination prep 656.024 s; request→arrival 711.056 s; Atlas return 59.130 s.
+  Loaded King's Row: 25.63 weighted render FPS across 11 complete windows.
+  This is not a server tick rate; no matched pre-port gameplay run is supplied.
+- Both zone servers remain x86; Atlas stays resident. Contention is plausible.
+  Preparation-only RSS/swap observations do not establish gameplay causation.
+  Server tick/file-duration, gameplay CPU and thermal measurements are absent.
+- Committed save after zoning preserved state; owned cleanup failed on worker
+  permission checks and blocked cache return. No unhandled client fault recorded.
+  Details: armport/notes/M5-THOR-20261102-RESULTS.md and
+  armport/evidence/20261102-thor-results.json; source ZIP digests are recorded.
+- .45 approved for handoff by Claude 5692088051; no .45 device result supplied.
+- .46 at 8dc2a66d: build 40929292200, runtime 40945708189, APK 40952408285 passed.
+  Artifact 12931682996; Claude comment 6508052528 is CI evidence, not review.
+  Thor server built/source-checked; retained CI is a different server lineage.
+  No newer formal handoff approval or .46 device validation is recorded.
+- P2/P3 sampler fixes and Windows producer fixes are on armport/sampler-review-fix.
+  Old failed build 40805020119 is superseded; no dispatch is requested here.
+- Next implementation waits for user instruction. Future diagnosis needs matched
+  baseline runs and zone tick/CPU evidence; retirement/esync remain unproven.
+  No code, native patch, runtime, APK, merge or release changed for this update.
