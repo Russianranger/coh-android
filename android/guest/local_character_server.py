@@ -83,12 +83,27 @@ SERVER_TEXTURE_EXCLUSION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e036
 # in the MapServer console are the evidence). Never set by the app.
 SERVERDATA_PROBE_ENV = 'COH_SERVERDATA_PROBE'
 SERVERDATA_PROBE_ROOTS = ('scripts.loc',)
+# Level 2 ("wide"): every top-level folder except the private roots, the folders
+# a guest proof or cache identity reads, and the natively excluded textures.
+SERVERDATA_PROBE_KEEP = frozenset({'bin', 'geobin', 'server', 'defs', 'maps', 'object_library',
+                                   'tricks', 'texture_library'})
 
 
 def serverdata_probe_requested():
+    """0 (off), 1 (scripts.loc only) or 2 (every folder no guest proof reads)."""
     value = os.environ.get(SERVERDATA_PROBE_ENV, '')
-    require(value in ('', '0', '1'), SERVERDATA_PROBE_ENV + ' must be empty, 0 or 1')
-    return value == '1'
+    require(value in ('', '0', '1', '2'), SERVERDATA_PROBE_ENV + ' must be empty, 0, 1 or 2')
+    return int(value or 0)
+
+
+def serverdata_probe_roots(level, source):
+    if level == 1:
+        return list(SERVERDATA_PROBE_ROOTS)
+    with os.scandir(source) as entries:
+        names = sorted(entry.name for entry in entries
+                       if entry.is_dir(follow_symlinks=False) and entry.name.casefold() not in SERVERDATA_PROBE_KEEP)
+    require(0 < len(names) <= 64, 'Wide serverdata probe folder set is empty or oversized')
+    return names
 
 
 def LOCAL_CLIENT_LINK_OPTIONS():
@@ -1695,9 +1710,11 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'files': cache_native_package['files']})).hexdigest()}
         if required_geometry is not None:
             identity['required_geometry'] = required_geometry
-        if serverdata_probe_requested():
+        level = serverdata_probe_requested()
+        if level:
             # A probe generation lacks these folders; never share it with a normal run.
-            identity['serverdata_probe'] = {'format': 1, 'shared_top_level': list(SERVERDATA_PROBE_ROOTS)}
+            identity['serverdata_probe'] = {'format': 1, 'level': level,
+                                            'shared_top_level': serverdata_probe_roots(level, source)}
         projection = server_input_projection(self.map_package, self.map_package_dir / 'MapServer.exe')
         if projection is not None:
             identity['server_input_projection'] = {key: value for key, value in projection.items()
@@ -1788,7 +1805,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                           copied_private_files=0, preserved_schema_files=len(self.schema['files']))
             checkpoint('warm_schema_restore')
         else:
-            probe_roots = SERVERDATA_PROBE_ROOTS if 'serverdata_probe' in identity else ()
+            probe_roots = identity['serverdata_probe']['shared_top_level'] if 'serverdata_probe' in identity else ()
             staged = self.stage_map_data(source, runtime / 'data', cache_recorder=self.data_cache,
                                          skip_top_level=probe_roots)
             checkpoint('cold_server_data_mirror')
@@ -2410,7 +2427,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         key = hashlib.sha256(server_data_cache.canonical(identity)).hexdigest()[:24]
         shared = self.owner.root / ('shared-server-data-probe-' + key)
         marker = self.owner.root / (shared.name + '.json')
-        roots = list(SERVERDATA_PROBE_ROOTS)
+        roots = list(identity['serverdata_probe']['shared_top_level'])
         reused = marker.exists() or marker.is_symlink()
         if reused:
             info = marker.lstat()
@@ -2447,7 +2464,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'serverdata needs the data/ and tools/ layout')
         link.symlink_to(shared, target_is_directory=True)
         return {'format': 1, 'policy': 'ci_probe_shared_readonly_serverdata_link_v1',
-            'shared_top_level': roots, 'shared_tree': shared.name, 'reused_shared_tree': reused,
+            'level': identity['serverdata_probe'].get('level', 1), 'shared_top_level': roots, 'shared_tree': shared.name, 'reused_shared_tree': reused,
             'shared_files': stats.get('files'), 'shared_directories': stats.get('directories'),
             'directories_read_only': True, 'private_copy_absent': True,
             'engine_search_order': ['localdata', 'serverdata', 'data'],

@@ -293,10 +293,11 @@ def trusted_bins_requested():
 
 
 def serverdata_probe_requested():
-    """CI-only probe: Atlas reads scripts.loc through a linked shared runtime/serverdata tree."""
+    """CI-only probe level: 1 serves scripts.loc, 2 every folder no guest proof reads,
+    through a linked shared read-only runtime/serverdata tree. 0 is off."""
     value = os.environ.get('COH_SERVERDATA_PROBE', '')
-    require(value in ('', '0', '1'), 'COH_SERVERDATA_PROBE must be empty, 0 or 1')
-    return value == '1'
+    require(value in ('', '0', '1', '2'), 'COH_SERVERDATA_PROBE must be empty, 0, 1 or 2')
+    return int(value or 0)
 
 
 STORY_ARC_COUNTS = re.compile(r'(?m)^(\d+) arcs, (\d+) contacts, (\d+) tasks\b')
@@ -505,7 +506,8 @@ def main():
         if trusted_bins_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
         if serverdata_probe_requested():
-            command.insert(command.index('/usr/bin/python3'), 'COH_SERVERDATA_PROBE=1')
+            command.insert(command.index('/usr/bin/python3'),
+                           'COH_SERVERDATA_PROBE=' + str(serverdata_probe_requested()))
         deadline = time.monotonic() + character.OVERALL_SECONDS
         created = run_session(command, args.work, args.evidence / 'creation', args.proot,
                               first, runtime_manifest, client_manifest, deadline)

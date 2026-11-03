@@ -168,12 +168,23 @@ class ServerdataProbeTests(unittest.TestCase):
             os.chmod(current, 0o700)
 
     def test_switch_accepts_only_empty_zero_or_one(self):
-        for value, expected in (('', False), ('0', False), ('1', True)):
+        for value, expected in (('', 0), ('0', 0), ('1', 1), ('2', 2)):
             with self.subTest(value=value), patch.dict(os.environ, {server.SERVERDATA_PROBE_ENV: value}):
-                self.assertIs(server.serverdata_probe_requested(), expected)
+                self.assertEqual(server.serverdata_probe_requested(), expected)
         with patch.dict(os.environ, {server.SERVERDATA_PROBE_ENV: 'yes'}):
             with self.assertRaises(server.base.DiagnosticError):
                 server.serverdata_probe_requested()
+
+    def test_wide_level_keeps_private_and_proof_read_folders_in_the_private_tree(self):
+        for name in ('bin/a.bin', 'Geobin/g.bin', 'server/db/x.cfg', 'defs/a.def', 'maps/m.txt',
+                     'object_library/o.geo', 'tricks/t.txt', 'texture_library/t.texture',
+                     'fx/f.fx', 'scripts.loc/s.storyarc', 'sequencers/q.txt', 'top.txt'):
+            self.immutable(name)
+        self.assertEqual(server.serverdata_probe_roots(1, self.source), ['scripts.loc'])
+        self.assertEqual(server.serverdata_probe_roots(2, self.source), ['fx', 'scripts.loc', 'sequencers'])
+        empty = self.root / 'empty'; empty.mkdir()
+        with self.assertRaises(server.base.DiagnosticError):
+            server.serverdata_probe_roots(2, empty)
 
     def test_split_mirror_skips_and_selects_top_level_folders_only(self):
         for name in ('scripts.loc/arcs/a.storyarc', 'Scripts.loc/b.taskset', 'defs/a.def', 'maps/scripts.loc/x.txt'):

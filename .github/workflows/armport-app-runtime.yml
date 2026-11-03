@@ -30,6 +30,11 @@ on:
         type: boolean
         required: false
         default: false
+      serverdata_probe_wide:
+        description: CI probe - as serverdata_probe, for every top-level folder no guest proof reads
+        type: boolean
+        required: false
+        default: false
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
@@ -46,7 +51,7 @@ env:
   SERVER_RUN_ID: ${{ inputs.server_run_id }}
   COH_PROOT_SECCOMP: ${{ inputs.proot_seccomp && '1' || '' }}
   COH_TRUSTED_BINS: ${{ inputs.trusted_bins && '1' || '' }}
-  COH_SERVERDATA_PROBE: ${{ inputs.serverdata_probe && '1' || '' }}
+  COH_SERVERDATA_PROBE: ${{ inputs.serverdata_probe_wide && '2' || inputs.serverdata_probe && '1' || '' }}
 
 jobs:
   app-sources:

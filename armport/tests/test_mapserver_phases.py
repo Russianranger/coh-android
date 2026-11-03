@@ -123,9 +123,9 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertEqual(interactive_host.story_arc_counts('x\n1 arcs, 2 contacts, 3 tasks\n' * 9), [[1, 2, 3]] * 4)
         import os
         from unittest.mock import patch
-        for value, expected in (('', False), ('1', True)):
+        for value, expected in (('', 0), ('1', 1), ('2', 2)):
             with patch.dict(os.environ, {'COH_SERVERDATA_PROBE': value}):
-                self.assertIs(interactive_host.serverdata_probe_requested(), expected)
+                self.assertEqual(interactive_host.serverdata_probe_requested(), expected)
         with patch.dict(os.environ, {'COH_SERVERDATA_PROBE': 'on'}), self.assertRaises(Exception):
             interactive_host.serverdata_probe_requested()
 
