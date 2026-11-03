@@ -318,6 +318,45 @@ reversion path. Test sheet: [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
 - Known: `test_classify_storage_cleanup_change` keys on the last commit's file
   list and fails for multi-area commits; not a behaviour regression.
 
+## 0.13.51: cache reuse fix, station frame cap, thermal and tick evidence (Claude, 2026-11-03)
+
+User follow-up to 0.13.50: in King's Row, NPCs, cars and the monorail train
+jump from spot to spot; Atlas is fluid on first load and on return. The 76 °C is
+the device's own reading (it idles at 40-43 °C). User approved the cache fix,
+the station cap and evidence, and an earlier client start. Test sheet:
+[THOR-TEST-0.13.51.md](THOR-TEST-0.13.51.md).
+
+- **Cache reuse** (`38cb5dee8`): `verify_changed_directories` skips the shared
+  top-level folders at the root when the generation did not record them; a
+  private copy of one is still refused. Atlas and King's Row tests reproduce the
+  0.13.50 refusal without the fix.
+- **Station frame cap** (ArmPort patch 0121, `2f893d9b8`): the client polls
+  `ARMPORT_FPS_CAP_FILE` once a second with Win32 calls; zoning writes 10 in the
+  `baseline` and `map_ready` phases (before the blocking Python preparation) and
+  removes it at ready, arrival, failure and cleanup. `/maxfps` changes during
+  the cap are kept. Native behaviour test with stubs; ARM64 syntax check.
+- **Evidence:** `android_thermal_samples` (30 s, API 30 headroom);
+  `character_zoning.tick_probe` (every 30 s, 4 s at 50 Hz of completed-tick gaps
+  for the occupied map); `wine_priorities` now 12 samples every 120 s with
+  `last_cpu` per program and `cpu_max_khz`.
+- **NPC jumping, source reading** (Ouroboros, file:line in the review notes of
+  this round): the server sends entity updates 4 times a second, and NPCs and
+  cars are simulated and sent only every 15th tick (2 per second,
+  entaiInstance.c:1605-1646, entsend.c:1284). The client draws them 2 x
+  `auto_delay` (0.3 s) in the past (entrecv.c:4086, 4153), so 0.1 s of slack; a
+  late update freezes them and they catch up (entrecv.c:4019). Ticks over 2/30 s
+  also drop game time (svr_init.c:212) and make the client re-sync its clock
+  (entrecv.c:3673). Likely: the King's Row NPC/car tick overruns under FEX, or
+  FEX is still compiling that code right after the zone starts (the visit began
+  within a minute of ready). No send rate or delay setting exists; the ARM64
+  patches change none of this.
+- **Not built: earlier client preparation.** With the cache reused, the 0.13.49
+  and 0.13.50 phases put the client (about 311 s to login) and Atlas (about
+  311 s to ready) within about 15 s of each other. The client's asset installs
+  write into the x86 client-work tree that the server's data copy reads, so an
+  overlap needs a new concurrency proof for at most 15 s. Next big items instead:
+  Atlas MapServer start (228-242 s) and a saved client folder scan (105-114 s).
+
 ## Thor test of 0.13.50 (user, 2026-11-03; exports 20261103-215454 and -220758)
 
 Two sessions, both passed with proved cleanup; export -215435 is the runtime

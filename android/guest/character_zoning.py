@@ -61,10 +61,10 @@ STATION_FPS_CAP_PHASES = ('baseline', 'map_ready')
 # tick durations). NPCs and cars are simulated and sent only every 15th tick
 # (2 per second) and drawn 0.6 s in the past; a long tick there, or any tick
 # over 2/30 s (lost game time), makes them stop and jump. 0.13.50 King's Row.
-TICK_PROBE_INTERVAL_SECONDS = 45
+TICK_PROBE_INTERVAL_SECONDS = 30
 TICK_PROBE_SECONDS = 4.0
 TICK_PROBE_PERIOD_SECONDS = 0.02
-TICK_PROBE_LIMIT = 90
+TICK_PROBE_LIMIT = 120
 TICK_PROBE_JOIN_SECONDS = 8
 
 
