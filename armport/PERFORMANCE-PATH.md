@@ -157,6 +157,16 @@ screen at 374 s, so the client is the critical path. Cold mirror 360 s (first
 start after the update, from a stranded-recovery race). King's Row failed on its
 420 s Python budget.
 
+### 0.13.50 in CI (runtime 41704290931, build 41689729437)
+
+Fifteen folders behind the shared read-only tree (128,765 files): the Atlas
+private copy took 31 s instead of 99.5-106 s, reopen rewrote no bins, story arcs
+470/957/3528, sequencer gap 40.7 s (level-1 probe 40.8 s). The tree is built
+once per data identity (79 s in CI) and reused (0.004 s). Client scan with
+`scripts.loc` and `server/` skipped (patch 0120): 123,633 files in 44 s; client
+start 81.7 → 71.8 s against 41642095387. Reopen Atlas start unchanged (129.6 s).
+King's Row zoning and the device client paths need the Thor test.
+
 ### Frame rate, 0.13.44
 
 - Game-measured FPS 12-30, mean 22.8, capped at 30 (patch 0113). With a cap of
@@ -175,6 +185,12 @@ start after the update, from a stranded-recovery race). King's Row failed on its
   socket → Java decode → SurfaceView. Two full-frame copies through two sockets.
 
 ### Client priority under Wine: lead (2026-11-03, source reading, unmeasured)
+
+Correction after the 0.13.49 Thor samples: the ARM64 client runs in production
+mode reading loose files (patch 0042), so it does not take the IDLE class below.
+Its 7 nice-19 threads are ones it sets to idle priority itself, and FPS already
+meets the goal. The folder scan is cut by patch 0120's skip list instead of the
+mode change described at the end of this section.
 
 - With no `piggs/texts.pigg`, `fileIsUsingDevData()` is true, and
   `game_beforeParseArgs` (game.c) calls `SetPriorityClass(IDLE_PRIORITY_CLASS)`.

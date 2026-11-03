@@ -3,15 +3,17 @@
 The ARM64 client is the main client from 0.13.50 (user decision, 2026-11-03).
 `x86 client (fallback)` stays selectable in case an ARM64-only game-breaking
 bug needs a reversion. Evidence for each change: [HANDOFF-X86.md](HANDOFF-X86.md)
-and [armport/PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md).
+and [armport/PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md). Qualifying CI
+runtime 41704290931 (passed; no bin rebuilds on reopen, story arcs 470/957/3528).
+King's Row zoning is not exercised in CI, so the trip is the main thing to test.
 
 ## What changed since 0.13.49
 
 | Change | Default | Expected effect |
 |---|---|---|
 | ARM64 client is the default client | ARM64 | Same FPS as the 0.13.49 test (mean 45-48 in world) |
-| Share server data between zones | on | Atlas and King's Row read one read-only copy of 15 data folders; King's Row's first preparation copies far fewer files, so it fits the 420 s limit |
-| Skip server-only folders in the client's file scan | on | The client's upfront scan leaves out `scripts.loc` and `server/` (52,149+ of 212,496 files): about 40 s less to the login screen |
+| Share server data between zones | on | Atlas and King's Row read one read-only copy of 15 data folders (128,765 files). CI: the private copy took 31 s instead of 99.5-106 s, so King's Row's first preparation (360 s+ on 0.13.49) should fit the 420 s limit |
+| Skip server-only folders in the client's file scan | on | The client's upfront scan leaves out `scripts.loc` and `server/`. CI: client start 81.7 → 71.8 s; the Thor scan is about 3x slower than CI's, so expect roughly 20-30 s less to the login screen |
 | Client asset checks | always | Unchanged supplements are checked once, not twice: about 40 s less |
 | Stale-cache recovery fix | always | A cache left by an unproved cleanup is reused instead of rebuilt (the 6 min first start of 0.13.49) |
 

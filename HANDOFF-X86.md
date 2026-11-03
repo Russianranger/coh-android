@@ -298,9 +298,20 @@ reversion path. Test sheet: [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
 - Correction to the 0.13.49 priority note: the ARM64 client is in production
   mode, so the 7 nice-19 threads are threads it sets to idle priority itself,
   not an IDLE process class.
-- Chain: build 41689729437 (client with 0120), then a runtime at the release
-  head with shipping servers, fast mode, shared data and the skip on, then the
-  shipping-server APK.
+- Chain: build 41689729437 (client with 0120), runtime 41704290931 at
+  `0bf0c1c4b` (shipping servers, fast mode, shared data and skip on; passed).
+  APK 41711575113 failed: `zone_asset_package.py` and `client_visual_assets.py`
+  were missing from `build_thor_apk.CHANGED_RUNTIME` (the only guest files changed
+  since 0.13.49 that were not listed). Added; the APK is rebuilt from the same
+  runtime, since guest payloads are byte-identical to `0bf0c1c4b`.
+- Runtime 41704290931 evidence: 15 folders shared (128,765 files, 3,524
+  read-only directories), reused on reopen (link 0.004 s); reopen bin writes 0;
+  story arcs 470/957/3528 both sessions; sequencer gap 40.7 s (level-1 probe
+  40.8 s, 0.13.49 runtime 36.8 s; the wide set was 240 s). Creation: private
+  mirror 31 s (was 99.5-106 s) plus 79 s to build the shared tree once.
+  Client: `phase=skip folders=2`, scan 123,633 files in 44 s; client start
+  81.7 → 71.8 s against runtime 41642095387. Reopen Atlas 129.6 s (unchanged).
+  CI has no imported supplements, so the asset-pass trim is unmeasured there.
 - Known: `test_classify_storage_cleanup_change` keys on the last commit's file
   list and fails for multi-area commits; not a behaviour regression.
 

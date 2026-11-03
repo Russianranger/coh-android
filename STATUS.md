@@ -32,9 +32,9 @@ Default branch remains main; no repository setting change.
 - Use X86-THOR-TEST.md for Claude's next reviewed x86 device baseline.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
-- Fast mode (PRoot seccomp) default on: CI Atlas start −26/−32% (41588867344 vs 41584980465).
-- CI creation re-parses ~230 s: CI's retained-progress MapServer fails the cache check (41630365042).
+- Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
 - 0.13.49 on the Thor (2 sessions, ARM64 client): in-world FPS mean 45-48, 91-97% windows ≥30;
   Atlas MapServer ready 204/222 s (.44: 287 s); King's Row failed (420 s Python budget, cold mirror).
 - 0.13.50 (ARM64 primary): shared server data for both zones, client scan skips scripts.loc/server
-  (patch 0120), recovery race fix; build 41689729437. Test sheet THOR-TEST-0.13.50.md.
+  (patch 0120), recovery race fix; runtime 41704290931 passed (reopen bin writes 0, Atlas
+  private mirror 31 s vs 99.5-106 s, client start 81.7 → 71.8 s). Test sheet THOR-TEST-0.13.50.md.
