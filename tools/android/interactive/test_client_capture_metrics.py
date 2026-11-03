@@ -27,6 +27,7 @@ class ClientSurface {static class Capture {
     byte[] png=null;
     long pixelCopyWallMs=7,encodingWallMs=90,encodingCpuMs=80,presentationFreezeMs=7,encodeQueueWallMs=2;
     boolean encodingOnUiThread=false;int pendingFramesPeak=1,framesCoalescedDuringCopy=3;
+    long renderedFrames=1,renderMsSum=2,renderMsMax=2;boolean hardwareCanvas=false;
 }}
 class ClientService {
     ClientRuntime runtime=new ClientRuntime();boolean busy=true;String session="owned";int certified,published;

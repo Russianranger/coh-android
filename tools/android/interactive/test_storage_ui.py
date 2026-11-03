@@ -42,6 +42,9 @@ import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 class Context {public void onDestroy(){}}
+// Optional startup observations precede the dispatch prefix exercised here.
+// Their measurement contract is covered by test_android_startup_timing.
+class SystemClock {static long elapsedRealtime(){return 1000;}}
 class ClientActivity {}class ClientService {}
 class android {static class R {static class drawable {static final int ic_menu_view=1;}}}
 class PendingIntent {
@@ -71,6 +74,7 @@ class ClientRuntime {
     static Object setupFinalizationOwner;
     static ProfileState profile=ProfileState.ABSENT;
     static final String BLOCK_MESSAGE="blocked";
+    static Map<String,Object> startupThermalSnapshot(Context context){return Collections.emptyMap();}
     static boolean cleanupBlocked(Context context){return blocked;}
     static ProfileState characterProfileState(Context context){return profile;}
     static String profileRecoveryMessage(ProfileState value){return value.name();}
