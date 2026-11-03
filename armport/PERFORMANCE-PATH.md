@@ -129,6 +129,24 @@ On the fresh data mirror (creation), the MapServer re-parses source text that
 the reused cache (reopen) loads from `.bin`: spawn definitions 154 s vs 2 s,
 story arcs 85 s vs 17 s, definitions 67 s vs 3 s (fast mode off).
 
+### Trusted prepared bins A/B, CI (2026-11-03)
+
+Build 41593619489 (instrumented MapServers with the switch), fast mode on in
+both runs; only `trusted_bins` differs. Both passed creation and reopen.
+
+| | Off (41610459604) | On (41605600310) |
+|---|---|---|
+| Creation: Atlas spawn → ready | 381 s | 353 s |
+| Reopen: Atlas spawn → ready | 130 s | 94 s |
+| Reopen: request → client in world | 409 s | 367 s |
+| Reopen: story arcs | 17.0 s | 2.1 s |
+| Creation: spawn definitions | 116 s | 115 s |
+
+On the fresh mirror only 38 bins reached the trusted path; spawn definitions,
+story arcs and definitions are parsed from text either way, so those `.bin`
+files are missing or rejected there. Combined with fast mode, the reopen Atlas
+start went from 183 s (41588867344, neither) to 94 s.
+
 ### Frame rate, 0.13.44
 
 - Game-measured FPS 12-30, mean 22.8, capped at 30 (patch 0113). With a cap of

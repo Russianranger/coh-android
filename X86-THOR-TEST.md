@@ -81,9 +81,11 @@ the other zone (also a background-started King's Row once it ticks), and
 restores them before a trip back. Periods and restore results are in
 `character_zoning.idle_resident_maps`. Compare NPC/car smoothness with it on
 and off.
-`Fast server data loading (trusted bins, experimental)` (off by default) only
-acts when the APK carries the instrumented MapServer. It skips the data-folder
-scans for prepared `.bin` files; `trusted_bins` records whether it was used.
+`Fast server data loading (trusted bins)` (on by default) only acts when the
+APK carries the instrumented MapServer. It skips the data-folder scans and date
+checks for CRC-matching prepared `.bin` files; `trusted_bins` records whether it
+was used. In CI (41605600310 on vs 41610459604 off, same servers) the reopen
+Atlas start fell from 130 s to 94 s; a new character's first start barely moved.
 `Raise the frame cap to 60 FPS in the world` (on by default) sends the
 sidebar's `/maxfps 60` once, quietly, when a reopened character's world views
 are captured; the report records `gameplay_60fps_requested` and the lifecycle

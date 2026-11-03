@@ -282,13 +282,14 @@ numbers: [PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md) and issue #10.
 
 - Fast mode (PRoot seccomp) is on by default from 0.13.48. In CI it cut MapServer
   startup by 26-32% (41588867344 off vs 41584980465 on).
-- Trusted prepared bins (`patches/mapserver-trusted-bins/0001`) is an opt-in
-  switch in the instrumented MapServer only. It does not help a cold mirror,
-  where the `.bin` files are missing or rejected; warm reopen is in the A/B
-  (41605600310 on, 41610459604 off).
-- Background King's Row start, stranded-cache recovery and the 60 FPS
-  world-entry cap are launch options; see X86-THOR-TEST.md.
+- Trusted prepared bins (`patches/mapserver-trusted-bins/0001`) is a switch in
+  the instrumented MapServer only, on by default in the app from 0.13.48. CI A/B
+  on the same servers (41610459604 off, 41605600310 on): reopen Atlas 130→94 s,
+  creation 381→353 s. A cold mirror still re-parses spawn definitions and story
+  arcs, because those `.bin` files are missing or rejected.
+- Background King's Row start, idle priority for a resident MapServer,
+  stranded-cache recovery and the 60 FPS world-entry cap; see X86-THOR-TEST.md.
 - Next: name the bins a cold MapServer rewrites (`bin writes` notice) and ship
   them as prepared caches; the shared read-only server tree (design in
-  PERFORMANCE-PATH.md); idle priority for resident MapServers; a native 60 FPS
+  PERFORMANCE-PATH.md); a device check of idle priority; a native 60 FPS
   launch cap with the next client rebuild; an x86 FPS baseline on the Thor.

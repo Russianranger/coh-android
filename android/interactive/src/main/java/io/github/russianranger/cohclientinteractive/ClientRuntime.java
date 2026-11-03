@@ -264,10 +264,11 @@ public final class ClientRuntime {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("proot-fast-mode", enabled).apply();
     }
-    /** Let an instrumented MapServer trust CRC-matching prepared .bin files (no source tree scan). */
+    /** Let an instrumented MapServer trust CRC-matching prepared .bin files (no source tree scan).
+     * On by default: CI A/B 41605600310 vs 41610459604 cut the reopen Atlas start 130 s -> 94 s. */
     public static boolean trustedBinsEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("trusted-bins", false);
+                .getBoolean("trusted-bins", true);
     }
     public static synchronized void setTrustedBinsEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;

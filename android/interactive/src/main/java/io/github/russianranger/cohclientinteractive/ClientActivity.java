@@ -110,7 +110,7 @@ public final class ClientActivity extends Activity {
         idleResidentMaps.setChecked(ClientRuntime.idleResidentMapsEnabled(this));
         idleResidentMaps.setOnCheckedChangeListener((button,checked)->ClientRuntime.setIdleResidentMapsEnabled(this,checked));
         controls.addView(idleResidentMaps);
-        trustedBins=new CheckBox(this);trustedBins.setText("Fast server data loading (trusted bins, experimental)");
+        trustedBins=new CheckBox(this);trustedBins.setText("Fast server data loading (trusted bins)");
         trustedBins.setTextColor(Color.rgb(221,234,245));trustedBins.setTextSize(13);
         trustedBins.setChecked(ClientRuntime.trustedBinsEnabled(this));
         trustedBins.setOnCheckedChangeListener((button,checked)->ClientRuntime.setTrustedBinsEnabled(this,checked));

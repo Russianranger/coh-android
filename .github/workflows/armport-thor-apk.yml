@@ -194,9 +194,9 @@ jobs:
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New launch options: Fast mode (PRoot seccomp) on by default; Raise the frame cap to 60 FPS in the world
-          (on by default); Start King's Row in the background (off); Lower the waiting zone server's priority (off);
-          Fast server data loading (trusted bins, off).
+          New launch options: Fast mode (PRoot seccomp) on by default; Fast server data loading (trusted bins, on);
+          Raise the frame cap to 60 FPS in the world (on); Start King's Row in the background (off);
+          Lower the waiting zone server's priority (off).
           Test sheet: X86-THOR-TEST.md in the source. CI-only evidence; not yet run on a device.
           EOF
           gh release create "coh-atlas-gameplay-v0.13.48" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
