@@ -30,3 +30,10 @@ Default branch remains main; no release, APK handoff or repository setting chang
 - Exact source, preserved logs, skips, runtime pins and pending frozen-head CI
   request: HANDOFF-X86.md and issue10. No new CI/APK chain was started here.
 - Use X86-THOR-TEST.md for Claude's next reviewed x86 device baseline.
+
+## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
+- Fast mode (PRoot seccomp) default on: CI Atlas start −26/−32% (41588867344 vs 41584980465).
+- Trusted bins (opt-in): reopen Atlas 94 s on (41605600310); off control 41610459604 pending.
+- Cold creation still re-parses spawn defs/story arcs (~250 s): bins missing or rejected.
+- 0.13.48 adds 60 FPS on world entry (default on) and background King's Row (off).
+- Next: ship rewritten bins, shared read-only server tree, idle priority, x86 FPS baseline.
