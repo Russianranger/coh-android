@@ -19,6 +19,10 @@ import diagnostic as base
 
 ENVIRONMENT = 'COH_ZONING_PREPARATION_OWNER'
 NICE_INCREMENT = 5
+# A resident MapServer the player has left: lower it more, restore before return.
+IDLE_ENVIRONMENT = 'COH_ZONING_IDLE_OWNER'
+IDLE_NICE_INCREMENT = 10
+IDLE_SAMPLE_LIMIT = 24
 TASK_LIMIT = 128
 GROUP_LIMIT = 16
 SAMPLE_LIMIT = 160
@@ -91,17 +95,24 @@ def checked_probe():
 
 
 class PreparationScheduler:
-    """Lower only a new destination's tasks, restoring before readiness publication."""
-    def __init__(self, owner, map_id, *, probe=None):
+    """Lower only a new destination's tasks, restoring before readiness publication.
+
+    With token/environment_name/increment, the same proofs weight an idle
+    resident map that was launched with that token (IdleScheduler)."""
+    def __init__(self, owner, map_id, *, probe=None, token=None, environment_name=ENVIRONMENT,
+                 increment=NICE_INCREMENT, policy='temporary_plus_5_nice_exact_destination_threads',
+                 sample_limit=SAMPLE_LIMIT):
         self.owner = owner
         self.scanner = copy.copy(owner.wine_owner)
         self.scanner.initialized = False
         self.scanner.receipt = copy.deepcopy(owner.wine_owner.receipt)
         self.scanner.dead_leaders, self.scanner.owned_workers = set(), set()
-        self.token = secrets.token_hex(32)
-        owner.ctx.secrets.append(self.token)
-        self.needle = (ENVIRONMENT + '=' + self.token).encode()
-        self.environment = {ENVIRONMENT: self.token}
+        self.increment, self.sample_limit = increment, sample_limit
+        self.token = secrets.token_hex(32) if token is None else token
+        if self.token not in owner.ctx.secrets:
+            owner.ctx.secrets.append(self.token)
+        self.needle = (environment_name + '=' + self.token).encode()
+        self.environment = {environment_name: self.token}
         self.changed = {}
         self.groups = {}
         self.unresolved_inheritance = False
@@ -110,7 +121,7 @@ class PreparationScheduler:
         self.restored = False
         self.capability = checked_probe() if probe is None else probe
         self.report = {'format': 1, 'map_id': map_id,
-            'policy': 'temporary_plus_5_nice_exact_destination_threads',
+            'policy': policy, 'nice_increment': increment,
             'ownership': 'diagnostic_and_unique_map_tokens_real_uid_group_and_thread_starttimes',
             'capability': self.capability, 'samples': [], 'changed_threads': 0,
             'restored_threads': 0, 'exited_threads': 0, 'unavailable_samples': 0,
@@ -142,7 +153,7 @@ class PreparationScheduler:
             if parent_original is not None and any(k[:2] == parent_key for k in self.changed):
                 current = self.scanner.process_stat(self.scanner.proc_root / str(parent['proc_pid']))
                 base.require(current['starttime'] == parent['starttime'], 'Destination parent identity changed')
-                if original == min(19, parent_original + NICE_INCREMENT):
+                if original == min(19, parent_original + self.increment):
                     original, inherited = parent_original, True
         if not inherited and any(original == record[5] for record in self.changed.values()):
             self.unresolved_inheritance = True
@@ -151,7 +162,7 @@ class PreparationScheduler:
         if inherited:
             for task, info, tid in tasks:
                 self.changed[(*key, info['pid'], info['starttime'])] = (
-                    identity, task, info, tid, original, min(19, original + NICE_INCREMENT))
+                    identity, task, info, tid, original, min(19, original + self.increment))
             self.report['changed_threads'] = len(self.changed)
         return original
 
@@ -255,7 +266,7 @@ class PreparationScheduler:
                     for task, info, tid in tasks:
                         key = (*group_key, info['pid'], info['starttime'])
                         before = os.getpriority(os.PRIO_PROCESS, tid)
-                        target = min(19, group_original + NICE_INCREMENT) if group_original is not None else None
+                        target = min(19, group_original + self.increment) if group_original is not None else None
                         limit = self.capability.get('rlimit_nice_soft', 0)
                         restorable = limit == resource.RLIM_INFINITY or 20 - limit <= before
                         if (self.capability.get('supported') is True and group_original is not None
@@ -265,7 +276,7 @@ class PreparationScheduler:
                             # original weight, never to a guessed global default.
                             original = group_original if before == target and any(
                                 k[:2] == group_key for k in self.changed) else before
-                            lower = min(19, original + NICE_INCREMENT)
+                            lower = min(19, original + self.increment)
                             self._check_task(identity, task, info, deadline)
                             if before != lower:
                                 os.setpriority(os.PRIO_PROCESS, tid, lower)
@@ -292,7 +303,7 @@ class PreparationScheduler:
                 except (FileNotFoundError, ProcessLookupError):
                     continue
             self.report['changed_threads'] = len(self.changed)
-            if len(self.report['samples']) < SAMPLE_LIMIT:
+            if len(self.report['samples']) < self.sample_limit:
                 pressure = pressure_observation(self.scanner.proc_root)
                 self.report['samples'].append({'utc_ms': int(time.time() * 1000),
                     'monotonic_ms': int(now * 1000), 'processes': rows,
@@ -339,7 +350,7 @@ class PreparationScheduler:
                         live.add(key)
                         if key not in self.changed and any(k[:2] == group_key for k in self.changed):
                             current = os.getpriority(os.PRIO_PROCESS, tid)
-                            if current == min(19, original + NICE_INCREMENT):
+                            if current == min(19, original + self.increment):
                                 self.changed[key] = (identity, task, info, tid, original, current)
                                 self.report['changed_threads'] = len(self.changed)
                 except (FileNotFoundError, ProcessLookupError):

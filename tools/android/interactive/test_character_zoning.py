@@ -635,6 +635,87 @@ class ZoningServerTests(unittest.TestCase):
             self.assertIsNone(instance.pending)
 
 
+class IdleResidentMapTests(unittest.TestCase):
+    """Optional: a resident map the player left is weighted down, restored before return."""
+    def instance(self, requested=True):
+        instance = ZoningServerTests.instance(self)
+        instance.ctx.secrets = []
+        instance.idle_capability = None
+        instance.zoning_report['idle_resident_maps'] = {'requested': requested, 'periods': []}
+        instance.maps = {1: {'ready': True, 'idle_token': 'b' * 64}, 5: {'ready': True, 'idle_token': 'c' * 64}}
+        instance.active_map_id = 5
+        self.made = []
+        test = self
+        class Fake:
+            def __init__(self, owner, map_id, **options):
+                self.options, self.map_id = options, map_id
+                self.capability = {'supported': True}
+                self.report = {'changed_threads': 0, 'restored_threads': 0}
+                self.samples = self.restores = 0
+                test.made.append(self)
+            def sample(self):
+                self.samples += 1; self.report['changed_threads'] = 3
+            def restore(self):
+                self.restores += 1; self.report['restored_threads'] = 3
+        self.patch = patch.object(zoning.scheduler, 'PreparationScheduler', Fake)
+        self.patch.start(); self.addCleanup(self.patch.stop)
+        return instance
+
+    def test_disabled_by_default_never_weights(self):
+        instance = self.instance(requested=False)
+        instance.idle_lower(1, 'player_left')
+        self.assertEqual(self.made, [])
+        self.assertIsNone(instance.idle_token())      # the default launch environment is unchanged
+        self.assertEqual(instance.ctx.secrets, [])
+
+    def test_requested_launch_token_is_unique_and_redacted(self):
+        instance = self.instance()
+        first, second = instance.idle_token(), instance.idle_token()
+        self.assertTrue(len(first) == len(second) == 64 and first != second)
+        self.assertEqual(instance.ctx.secrets, [first, second])
+
+    def test_left_map_is_weighted_with_its_spawn_token_then_restored_on_travel_back(self):
+        instance = self.instance()
+        instance.idle_lower(1, 'player_left')
+        instance.idle_lower(5, 'player_left')            # the active map is never weighted
+        instance.idle_lower(1, 'player_left')            # already idle: no second scheduler
+        self.assertEqual(len(self.made), 1)
+        idle = self.made[0]
+        self.assertEqual((idle.map_id, idle.options['token'], idle.options['environment_name'], idle.options['increment']),
+                         (1, 'b' * 64, 'COH_ZONING_IDLE_OWNER', 10))
+        instance.tick_idle()
+        self.assertEqual(idle.samples, 2)
+        instance.active_map_id = 5
+        instance._accept_prepare(request(to_map_id=1, from_map_id=5, epoch=1), NOW)
+        self.assertEqual(idle.restores, 1)
+        self.assertIsNone(instance.maps[1]['idle'])
+        period = instance.zoning_report['idle_resident_maps']['periods'][0]
+        self.assertEqual((period['status'], period['restore_reason'], period['restored_threads']),
+                         ('restored', 'travel_requested', 3))
+
+    def test_restore_failure_is_reported_and_cleanup_restores_every_idle_map(self):
+        instance = self.instance()
+        instance.idle_lower(1, 'player_left')
+        self.made[0].restore = Mock(side_effect=zoning.base.DiagnosticError('readback differs'))
+        self.assertFalse(instance.restore_idle_maps('cleanup'))
+        period = instance.zoning_report['idle_resident_maps']['periods'][0]
+        self.assertEqual((period['status'], period['failure_type']), ('restore_failed', 'DiagnosticError'))
+        self.assertTrue(instance.restore_idle_maps('cleanup'))   # nothing left to restore
+
+    def test_observation_error_restores_and_a_map_that_became_active_is_restored(self):
+        instance = self.instance()
+        instance.idle_lower(1, 'player_left')
+        instance.active_map_id = 1
+        instance.tick_idle()
+        self.assertEqual(self.made[0].restores, 1)
+        instance.active_map_id = 5
+        instance.idle_lower(1, 'player_left')
+        self.made[1].sample = Mock(side_effect=OSError('gone'))
+        instance.tick_idle()
+        self.assertEqual(self.made[1].restores, 1)
+        self.assertEqual(instance.zoning_report['idle_resident_maps']['periods'][1]['restore_reason'], 'observation_error')
+
+
 class BackgroundPrestartTests(unittest.TestCase):
     """Optional King's Row start beside Atlas: low-priority Python preparation, then native load."""
     def setUp(self):

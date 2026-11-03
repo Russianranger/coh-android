@@ -10,6 +10,7 @@ import math
 import os
 from pathlib import Path
 import re
+import secrets
 import socket
 import stat
 import threading
@@ -47,6 +48,8 @@ PRESTART_JOIN_SECONDS = 120
 PRESTART_THREAD_NICE = 10
 # King's Row preparation peaked at 1772 MiB RSS on Thor (.44); keep headroom.
 PRESTART_MIN_AVAILABLE_MIB = 3072
+# Idle priority for a resident MapServer the player is not on (launch option).
+IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
 
 
 def available_memory_mib(path=Path('/proc/meminfo')):
@@ -451,6 +454,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'requested': os.environ.get(PRESTART_ENV) == '1', 'map_id': PRESTART_MAP_ID,
             'status': 'not_started', 'policy': 'prepare_then_start_next_zone_beside_current_v1',
             'preparation_thread_nice': PRESTART_THREAD_NICE, 'mapserver_priority_lowered': False}
+        self.idle_capability = None
+        self.zoning_report['idle_resident_maps'] = {'format': 1,
+            'requested': os.environ.get(IDLE_ENV) == '1',
+            'policy': 'resident_map_not_occupied_plus_10_nice_restored_before_return_v1',
+            'nice_increment': scheduler.IDLE_NICE_INCREMENT, 'periods': [],
+            'physical_performance_gain_verified': False}
 
     # Background start of the next zone ------------------------------------
     def prestart_eligible(self):
@@ -528,6 +537,74 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             # A later cold zoning spawn requires a fresh progress file.
             path.rename(path.with_name(path.name + '.prestart-failed'))
 
+    # Idle priority for resident maps --------------------------------------
+    def idle_token(self):
+        """Only a requested idle policy adds a launch token; the default launch is unchanged."""
+        report = getattr(self, 'zoning_report', {}).get('idle_resident_maps')
+        if not isinstance(report, dict) or report.get('requested') is not True:
+            return None
+        token = secrets.token_hex(32)
+        self.ctx.secrets.append(token)
+        return token
+
+    def idle_lower(self, map_id, reason):
+        """Weight a ready resident map the player is not on; never fails zoning."""
+        report = self.zoning_report.get('idle_resident_maps')
+        owned = self.maps.get(map_id)
+        if (not isinstance(report, dict) or report.get('requested') is not True or owned is None or map_id == self.active_map_id
+                or owned.get('idle') is not None or not owned.get('idle_token')
+                or len(report['periods']) >= 16):
+            return
+        period = {'map_id': map_id, 'reason': reason, 'lowered_utc_ms': int(time.time() * 1000)}
+        report['periods'].append(period)
+        try:
+            idle = scheduler.PreparationScheduler(self.owner, map_id, probe=self.idle_capability,
+                token=owned['idle_token'], environment_name=scheduler.IDLE_ENVIRONMENT,
+                increment=scheduler.IDLE_NICE_INCREMENT, policy='idle_resident_plus_10_nice',
+                sample_limit=scheduler.IDLE_SAMPLE_LIMIT)
+            self.idle_capability = idle.capability
+            period['scheduler'] = idle.report
+            owned['idle'] = idle
+            idle.sample()
+            period['changed_threads'] = idle.report['changed_threads']
+        except (base.DiagnosticError, OSError, ValueError) as failure:
+            period.update(status='lower_failed', failure=str(failure)[:300], failure_type=type(failure).__name__)
+
+    def idle_restore(self, map_id, reason):
+        """Restore before the player returns (or cleanup); a failure is reported, not hidden."""
+        owned = self.maps.get(map_id)
+        idle = None if owned is None else owned.get('idle')
+        if idle is None:
+            return True
+        owned['idle'] = None
+        period = next((row for row in reversed(self.zoning_report.get('idle_resident_maps', {}).get('periods', []))
+                       if row.get('map_id') == map_id and 'restored_utc_ms' not in row), {})
+        try:
+            idle.restore()
+            period.update(status='restored', restored_utc_ms=int(time.time() * 1000), restore_reason=reason,
+                          restored_threads=idle.report['restored_threads'])
+            return True
+        except (base.DiagnosticError, OSError, ValueError) as failure:
+            period.update(status='restore_failed', restored_utc_ms=int(time.time() * 1000), restore_reason=reason,
+                          failure=str(failure)[:300], failure_type=type(failure).__name__)
+            return False
+
+    def tick_idle(self):
+        for map_id, owned in list(self.maps.items()):
+            idle = owned.get('idle')
+            if idle is None:
+                continue
+            if map_id == self.active_map_id:
+                self.idle_restore(map_id, 'became_active')
+                continue
+            try:
+                idle.sample()   # bounded: every 5 s, discovers new threads every 15 s
+            except (base.DiagnosticError, OSError, ValueError):
+                self.idle_restore(map_id, 'observation_error')
+
+    def restore_idle_maps(self, reason):
+        return all([self.idle_restore(map_id, reason) for map_id in list(self.maps)])
+
     def tick_prestart(self, now):
         report = self.zoning_report.get('background_prestart')
         if not isinstance(report, dict) or report.get('requested') is not True:
@@ -592,6 +669,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     state['phase'] = 'done'
                     report.update(status='native_ticking',
                                   native_ticking_seconds=round(now - state['started_monotonic'], 3))
+                    self.idle_lower(PRESTART_MAP_ID, 'prestarted_ready')
         except base.Cancelled:
             raise
         except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
@@ -618,6 +696,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         # The preparation thread starts no processes; join it before the
         # inherited cache return so no tree is returned while being written.
         self.stop_background_prestart()
+        self.restore_idle_maps('cleanup')
         super().cleanup_config()
 
     def map_startup_timing(self, map_id):
@@ -811,8 +890,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def start_map(self):
         if self.active_map_id == 1 and getattr(self, 'overlap_client_initialization', False) is not True:
             original = self.owner.wine_env
+            initial_idle_token = self.idle_token()
+            if initial_idle_token is not None:
+                self.owner.wine_env = dict(original, **{scheduler.IDLE_ENVIRONMENT: initial_idle_token})
             if self.monorail_enabled():
-                self.owner.wine_env = dict(original, **self.monorail_environment(1))
+                self.owner.wine_env = dict(self.owner.wine_env, **self.monorail_environment(1))
             try:
                 super().start_map()
             finally:
@@ -824,6 +906,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                         'progress_path': getattr(self, 'map_progress_path', None),
                         'launch_utc_ms': getattr(self, 'map_launch_utc_ms', None)}, self.epoch)
             self._remember_active()
+            self.maps[self.active_map_id]['idle_token'] = initial_idle_token
         else:
             # Retain the accepted stage identifier while displaying the exact
             # PostgreSQL-selected destination and independently proving it.
@@ -1065,6 +1148,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(not path.exists() and not path.is_symlink(), 'Stale zoning map progress file')
         environment = dict(self.owner.wine_env, **{character.evidence.GAME_LOOPBACK_ENV: '1',
             character.progress.ENVIRONMENT: base.windows_path(path)})
+        idle_token = self.idle_token()
+        if idle_token is not None:
+            environment[scheduler.IDLE_ENVIRONMENT] = idle_token
         pacing = None
         if self.pending is not None:
             pacing = scheduler.PreparationScheduler(self.owner, map_id)
@@ -1090,6 +1176,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS()], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
+                             'idle_token': idle_token,
                              'runtime': map_runtime, 'launch_monotonic': launch_monotonic,
                              'server_metrics_enabled': self.server_metrics_enabled}
         self.map_launch_history.observe(map_id, self.maps[map_id], self.epoch)
@@ -1302,6 +1389,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'Finish the current recovery/save session before testing zoning')
         target = value['to_map_id']
         require(target != 5 or self.monorail_enabled(), 'Kings Row assets/native route are not qualified')
+        self.idle_restore(target, 'travel_requested')
         resident = target in self.maps
         loading = (resident and self.maps[target].get('prestarted') is True
                    and self.maps[target].get('native_ticking') is not True)
@@ -1455,6 +1543,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 total_to_native_arrival_ms=leg['total_to_native_arrival_ms'])
             self.mark_startup_timing(pending.get('startup_timing'), 'client_world_ready_observed', utc_ms=now_ms)
             self.pending = None
+            self.idle_lower(pending.get('from_map_id'), 'player_left')
             return
         if self.zoning_query is None and time.monotonic() >= pending['next_query']:
             if self.monorail_enabled():
@@ -1508,6 +1597,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     unseen_delivery = True
                     self._accept_delivery(delivery, now_ms)
             self.tick_prestart(time.monotonic())
+            self.tick_idle()
             if self.pending is None:
                 return
             pending, target = self.pending, self.pending['to_map_id']

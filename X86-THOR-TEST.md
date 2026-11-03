@@ -75,6 +75,12 @@ launches King's Row about 20 s after Atlas is live, but only with at least
 3 GiB of memory available (else `skipped_low_memory`). The phases are recorded
 in `character_zoning.background_prestart`. A trip during native loading is
 labelled `prestarted_loading`.
+`Lower the waiting zone server's priority (zoning, experimental)` (off by
+default) weights a resident MapServer's threads +10 nice while the player is in
+the other zone (also a background-started King's Row once it ticks), and
+restores them before a trip back. Periods and restore results are in
+`character_zoning.idle_resident_maps`. Compare NPC/car smoothness with it on
+and off.
 `Fast server data loading (trusted bins, experimental)` (off by default) only
 acts when the APK carries the instrumented MapServer. It skips the data-folder
 scans for prepared `.bin` files; `trusted_bins` records whether it was used.

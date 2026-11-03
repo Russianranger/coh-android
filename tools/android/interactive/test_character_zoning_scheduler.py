@@ -71,6 +71,30 @@ class SchedulerTests(unittest.TestCase):
         control.scanner.identities.append({'proc_pid': pid, 'pid': pid, 'starttime': pid * 10})
         return path
 
+    def test_idle_token_weights_only_its_resident_map_by_ten_and_restores(self):
+        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        owner = SimpleNamespace(wine_owner=SimpleNamespace(receipt={}), ctx=SimpleNamespace(secrets=['a' * 64]))
+        probe = {'supported': True, 'original_nice': 0, 'rlimit_nice_soft': 40, 'lowered_nice': 5, 'restored_nice': 0}
+        self.create()   # installs the priority patches
+        control = scheduler.PreparationScheduler(owner, 1, probe=probe, token='a' * 64,
+            environment_name=scheduler.IDLE_ENVIRONMENT, increment=scheduler.IDLE_NICE_INCREMENT,
+            policy='idle_resident_plus_10_nice', sample_limit=scheduler.IDLE_SAMPLE_LIMIT)
+        control.scanner = FakeScanner(Path(temporary.name))
+        self.assertEqual(owner.ctx.secrets, ['a' * 64])
+        self.assertEqual(control.needle, b'COH_ZONING_IDLE_OWNER=' + b'a' * 64)
+        self.group(control, 81001, tids=(81002,))
+        foreign = self.group(control, 82001)
+        (foreign / 'environ').write_bytes(b'COH_ZONING_PREPARATION_OWNER=' + b'a' * 64 + b'\0')
+        control.sample()
+        self.assertCountEqual(self.writes, [(81001, 10), (81002, 10)])
+        self.assertEqual((control.report['policy'], control.report['nice_increment']), ('idle_resident_plus_10_nice', 10))
+        control.restore()
+        self.assertEqual([self.nice[p] for p in (81001, 81002, 82001)], [0, 0, 0])
+        self.assertTrue(control.report['restore_complete'])
+        for _ in range(40):
+            control.next_sample = 0; control.sample()
+        self.assertLessEqual(len(control.report['samples']), scheduler.IDLE_SAMPLE_LIMIT)
+
     def test_unsupported_probe_does_not_change_any_task(self):
         control = self.create(False)
         self.group(control, 81001, tids=(81002,))

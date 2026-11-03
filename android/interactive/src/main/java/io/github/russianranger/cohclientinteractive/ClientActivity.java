@@ -31,7 +31,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -105,6 +105,11 @@ public final class ClientActivity extends Activity {
         prestartNextZone.setChecked(ClientRuntime.prestartNextZoneEnabled(this));
         prestartNextZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPrestartNextZoneEnabled(this,checked));
         controls.addView(prestartNextZone);
+        idleResidentMaps=new CheckBox(this);idleResidentMaps.setText("Lower the waiting zone server's priority (zoning, experimental)");
+        idleResidentMaps.setTextColor(Color.rgb(221,234,245));idleResidentMaps.setTextSize(13);
+        idleResidentMaps.setChecked(ClientRuntime.idleResidentMapsEnabled(this));
+        idleResidentMaps.setOnCheckedChangeListener((button,checked)->ClientRuntime.setIdleResidentMapsEnabled(this,checked));
+        controls.addView(idleResidentMaps);
         trustedBins=new CheckBox(this);trustedBins.setText("Fast server data loading (trusted bins, experimental)");
         trustedBins.setTextColor(Color.rgb(221,234,245));trustedBins.setTextSize(13);
         trustedBins.setChecked(ClientRuntime.trustedBinsEnabled(this));
@@ -346,7 +351,7 @@ public final class ClientActivity extends Activity {
         state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
-        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
+        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
