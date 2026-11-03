@@ -30,7 +30,7 @@ public final class ClientActivity extends Activity {
     private Button travelZone, recoverReports;
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
-    private Button enterKey,showFps,fps10,fps30;
+    private Button enterKey,showFps,fps10,fps30,fps60;
     private CheckBox performanceGraphics;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
@@ -147,8 +147,10 @@ public final class ClientActivity extends Activity {
         LinearLayout fpsRow=new LinearLayout(this);
         fps10=button("10 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_10));
         fps30=button("30 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_30));
+        fps60=button("60 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_60));
         fpsRow.addView(fps10,new LinearLayout.LayoutParams(0,-2,1));
-        fpsRow.addView(fps30,new LinearLayout.LayoutParams(0,-2,1));controls.addView(fpsRow);
+        fpsRow.addView(fps30,new LinearLayout.LayoutParams(0,-2,1));
+        fpsRow.addView(fps60,new LinearLayout.LayoutParams(0,-2,1));controls.addView(fpsRow);
         controls.addView(text("Atlas movement · hold a button",12,true));
         addMovementRow(controls,"Forward",'w',"Back",'s',120001);
         addMovementRow(controls,"Left",'a',"Right",'d',120003);
@@ -215,6 +217,7 @@ public final class ClientActivity extends Activity {
         if(showFps!=null)showFps.setEnabled(available);
         if(fps10!=null)fps10.setEnabled(available);
         if(fps30!=null)fps30.setEnabled(available);
+        if(fps60!=null)fps60.setEnabled(available);
         if(enterKey!=null)enterKey.setEnabled(ownedInputOpen());
     }
     private void refreshZoningControls(){

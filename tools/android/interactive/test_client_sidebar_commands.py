@@ -81,7 +81,7 @@ class Surface {
 class HostActivity extends BaseActivity {
     ClientService service=new ClientService();ClientService.State state=new ClientService.State();
     Surface display=new Surface(this);
-    Button enterKey,showFps,fps10,fps30,typeText;
+    Button enterKey,showFps,fps10,fps30,fps60,typeText;
     Button captureContact=new Button("",()->{}),openTaskContact=new Button("",()->{}),captureAcceptedTask=new Button("",()->{});
     Button completeTask=new Button("",()->{}),captureCompletedTask=new Button("",()->{}),saveLogout=new Button("",()->{});
     boolean inputActive=true,textDialogVisible,movementSuppressed,deadlineMovementSuppressed,orderedInputRelease;
@@ -110,19 +110,20 @@ public class SidebarHost {
         switch(args[0]) {
         case "buttons":
             need(ui.enterKey.label.equals("Enter / Start")&&ui.showFps.label.equals("Show FPS"));
-            need(ui.fps10.label.equals("10 FPS")&&ui.fps30.label.equals("30 FPS"));
+            need(ui.fps10.label.equals("10 FPS")&&ui.fps30.label.equals("30 FPS")&&ui.fps60.label.equals("60 FPS"));
             ui.showFps.tap();need(ui.service.commands.equals(Arrays.asList(ClientInput.PerformanceCommand.SHOW_FPS)));
             ui.service.pending=false;ui.refresh();ui.fps10.tap();
             ui.service.pending=false;ui.refresh();ui.fps30.tap();
+            ui.service.pending=false;ui.refresh();ui.fps60.tap();
             need(ui.service.commands.equals(Arrays.asList(ClientInput.PerformanceCommand.SHOW_FPS,
-                ClientInput.PerformanceCommand.FPS_10,ClientInput.PerformanceCommand.FPS_30)));break;
+                ClientInput.PerformanceCommand.FPS_10,ClientInput.PerformanceCommand.FPS_30,ClientInput.PerformanceCommand.FPS_60)));break;
         case "login":
             ui.state.sessionPhase="menu";ui.state.canSaveLogout=false;ui.refresh();
-            need(!ui.showFps.enabled&&!ui.fps10.enabled&&!ui.fps30.enabled&&ui.enterKey.enabled);
+            need(!ui.showFps.enabled&&!ui.fps10.enabled&&!ui.fps30.enabled&&!ui.fps60.enabled&&ui.enterKey.enabled);
             ui.command(ClientInput.PerformanceCommand.FPS_30);noCommands(ui);
             ui.enterKey.tap();need(ui.service.enterRequests==1);break;
         case "world_capability":
-            ui.state.canSaveLogout=false;ui.refresh();need(ui.showFps.enabled&&ui.fps10.enabled&&ui.fps30.enabled);
+            ui.state.canSaveLogout=false;ui.refresh();need(ui.showFps.enabled&&ui.fps10.enabled&&ui.fps30.enabled&&ui.fps60.enabled);
             ui.state.sessionPhase="grounded";ui.refresh();need(ui.showFps.enabled);break;
         case "gates":
             for(int flag=0;flag<13;++flag){ui=new HostActivity();
@@ -190,10 +191,11 @@ public class SidebarHost {
             need(ui.service.keys.equals(Arrays.asList("65293:true","65293:false")));
             need(ui.service.enterRequests==0);break;
         case "allowlist":
-            need(ClientInput.PerformanceCommand.values().length==3);
+            need(ClientInput.PerformanceCommand.values().length==4);
             need(ClientInput.PerformanceCommand.SHOW_FPS.safeName.equals("show_fps"));
             need(ClientInput.PerformanceCommand.FPS_10.safeName.equals("cap_10"));
             need(ClientInput.PerformanceCommand.FPS_30.safeName.equals("cap_30"));
+            need(ClientInput.PerformanceCommand.FPS_60.safeName.equals("cap_60"));
             ClientInput.StartButton start=new ClientInput.StartButton();need(!start.press(1)&&!start.press(0));
             start.release();need(start.press(0)&&!start.press(0));start.reset();need(!start.press(2));break;
         default:throw new AssertionError("Unknown sidebar scenario");

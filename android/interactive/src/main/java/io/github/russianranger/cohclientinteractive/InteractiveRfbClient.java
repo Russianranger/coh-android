@@ -303,6 +303,7 @@ public final class InteractiveRfbClient implements Closeable {
         if ("show_fps".equals(safeName)) command = "/showfps 1";
         else if ("cap_10".equals(safeName)) command = "/maxfps 10";
         else if ("cap_30".equals(safeName)) command = "/maxfps 30";
+        else if ("cap_60".equals(safeName)) command = "/maxfps 60";
         else throw new IOException("Performance command is unavailable");
         sendChatCommand(command, expectedEpoch);
     }

@@ -72,6 +72,7 @@ SERVER_CHANGED_RUNTIME = frozenset({'game-package.tar.gz'})
 REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
