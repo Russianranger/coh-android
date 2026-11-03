@@ -209,6 +209,7 @@ public final class ClientRuntime {
     private boolean gameplay60Requested=false, gameplay60Queued=false;
     private boolean idleResidentMapsRequested=false;
     private boolean sharedServerDataRequested=false;
+    private boolean clientSkipServerFoldersRequested=false;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -306,6 +307,16 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("shared-server-data", enabled).apply();
+    }
+    /** ARM64 client: its upfront file scan skips server-only folders (patch 0120). */
+    public static boolean clientSkipServerFoldersEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("client-skip-server-folders", true);
+    }
+    public static synchronized void setClientSkipServerFoldersEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("client-skip-server-folders", enabled).apply();
     }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
@@ -708,6 +719,7 @@ public final class ClientRuntime {
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
         idleResidentMapsRequested=idleResidentMapsEnabled(context);
         sharedServerDataRequested=sharedServerDataEnabled(context);
+        clientSkipServerFoldersRequested=clientSkipServerFoldersEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -761,6 +773,7 @@ public final class ClientRuntime {
                     "COH_TRUSTED_BINS="+(trustedBinsRequested?"1":"0"),
                     "COH_IDLE_RESIDENT_MAPS="+(idleResidentMapsRequested?"1":"0"),
                     "COH_SHARED_SERVER_DATA="+(sharedServerDataRequested?"1":"0"),
+                    "COH_CLIENT_SKIP_SERVER_FOLDERS="+(clientSkipServerFoldersRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -2521,7 +2534,7 @@ public final class ClientRuntime {
                     .put("character_connected_event", characterConnectedEvent == null ? JSONObject.NULL : characterConnectedEvent)
                     .put("character_relocated_event", characterRelocatedEvent == null ? JSONObject.NULL : characterRelocatedEvent)
                     .put("stuck_requested", stuckRequested)
-                    .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested)
+                    .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

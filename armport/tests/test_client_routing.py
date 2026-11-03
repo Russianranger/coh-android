@@ -186,5 +186,33 @@ class ClientRoutingTests(unittest.TestCase):
             self.assertFalse(value.ctx.report['armport_client']['x86_bins_reused'])
 
 
+class ClientFolderSkipTests(unittest.TestCase):
+    """Patch 0120: the ARM64 client's scan skips server-only folders unless the app opts out."""
+    def launch(self, value):
+        captured = {}
+        class Selected(armport.ArmPortClient):
+            pass
+        client = Selected.__new__(Selected)
+        client.wine_env = {'WINEPREFIX': '/x'}
+        client.armport_work = Path('/arm64')
+        client.launcher_command = lambda: ['launcher']
+        client.armport_gpu_environment = lambda environment, label: environment
+        client.armport_gameplay_fps = lambda environment: environment
+        client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env))
+        with patch.dict(os.environ, {'COH_CLIENT_SKIP_SERVER_FOLDERS': value}), \
+                patch.object(armport, 'LoggedClient', lambda child, log: child):
+            client.launch_client_attempt()
+        return captured['env']
+
+    def test_default_and_on_skip_scripts_loc_and_server_and_off_keeps_the_full_scan(self):
+        self.assertEqual(self.launch('')['ARMPORT_FOLDER_CACHE_SKIP'], 'scripts.loc,server')
+        self.assertEqual(self.launch('1')['ARMPORT_FOLDER_CACHE_SKIP'], 'scripts.loc,server')
+        environment = self.launch('0')
+        self.assertNotIn('ARMPORT_FOLDER_CACHE_SKIP', environment)
+        self.assertEqual(environment['ARMPORT_LOOSE_DATA'], '1')
+        with patch.dict(os.environ, {'COH_CLIENT_SKIP_SERVER_FOLDERS': 'yes'}), self.assertRaises(Exception):
+            armport.client_skips_server_folders()
+
+
 if __name__ == '__main__':
     unittest.main()

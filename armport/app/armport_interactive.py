@@ -14,6 +14,15 @@ import client_startup_diagnostic as startup
 from client_stdio import read_stdio
 
 base, require = startup.base, startup.require
+# Patch 0120 skip list for the client's folder scan; COH_CLIENT_SKIP_SERVER_FOLDERS=0
+# (the app option unticked) keeps the full scan.
+CLIENT_SKIPPED_FOLDERS = 'scripts.loc,server'
+
+
+def client_skips_server_folders():
+    value = os.environ.get('COH_CLIENT_SKIP_SERVER_FOLDERS', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_SKIP_SERVER_FOLDERS must be empty, 0 or 1')
+    return value != '0'
 
 
 class LoggedClient:
@@ -163,6 +172,10 @@ class ArmPortClient:
                            ARMPORT_FIXED_DATA='1',
                            # Patch 0114: the game's own frame rate every 5 s.
                            ARMPORT_FPS_LOG='1')
+        if client_skips_server_folders():
+            # Patch 0120: the client never reads these server-only folders
+            # (52,149 scripts.loc files of 212,496); its upfront scan skips them.
+            environment['ARMPORT_FOLDER_CACHE_SKIP'] = CLIENT_SKIPPED_FOLDERS
         environment = self.armport_gpu_environment(environment, label)
         environment = self.armport_gameplay_fps(environment)
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
