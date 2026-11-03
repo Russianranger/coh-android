@@ -2491,11 +2491,18 @@ class LocalCharacterServer(login.LocalLoginServer):
                 self.remove_shared_tree(shared)
                 removed['unsealed_trees'] += 1
             for other in sorted(self.owner.root.iterdir()):
-                if (other.name.startswith(SHARED_TREE_PREFIX) and other != shared and other != marker
-                        and not other.name.endswith('.json')):
-                    self.remove_shared_tree(other)
-                    (self.owner.root / (other.name + '.json')).unlink(missing_ok=True)
-                    removed['other_identity_trees'] += 1
+                if not other.name.startswith(SHARED_TREE_PREFIX) or other in (shared, marker):
+                    continue
+                if other.name.endswith('.json'):
+                    # A marker whose tree is gone (or another identity's) carries no data.
+                    if not (self.owner.root / other.name[:-len('.json')]).exists():
+                        other.unlink(missing_ok=True)
+                    continue
+                if other.is_symlink() or not other.is_dir():
+                    continue                      # never ours; leave it alone
+                self.remove_shared_tree(other)
+                (self.owner.root / (other.name + '.json')).unlink(missing_ok=True)
+                removed['other_identity_trees'] += 1
             report = getattr(self, 'creation_report', {})
             previous = report.get('cold_mirror_input_resolution')
             stats = self.stage_map_data(self.owner.work / 'data', shared, only_top_level=roots)

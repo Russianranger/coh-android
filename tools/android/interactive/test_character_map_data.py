@@ -257,8 +257,12 @@ class ServerdataProbeTests(unittest.TestCase):
         other = self.root / 'runtime-3'
         for name in ('data', 'tools'):
             (other / name).mkdir(parents=True)
+        stray = self.value.owner.root / 'shared-server-data-notes.txt'; stray.write_text('not a tree')
+        orphan = self.value.owner.root / 'shared-server-data-gone.json'; orphan.write_text('{}')
         newer = dict(self.identity, format=3)
         result = self.value.link_shared_server_data(other, newer)
+        self.assertTrue(stray.exists()); self.assertFalse(orphan.exists())
+        stray.unlink()
         self.assertEqual(result['removed']['other_identity_trees'], 1)
         self.assertFalse(old.exists()); self.assertFalse((self.value.owner.root / (old.name + '.json')).exists())
         self.assertEqual(original.read_text(), 'accepted')
