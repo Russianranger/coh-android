@@ -787,6 +787,75 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         third = self.make(3); self.assertTrue(self.prepare(third)['server_data_cache']['reused'])
         self.close(third)
 
+    def test_stranded_tree_is_recovered_only_when_no_process_outside_the_guest_survives(self):
+        first = self.make(1); self.prepare(first)
+        first.owner.cleanup_status['owned_processes_reaped'] = False
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'proved owned Wine cleanup'):
+            self.close(first)
+        stranded = first.runtime / 'data'; inode = stranded.stat().st_ino
+        (stranded / 'bin/native.bin').write_bytes(b'native generated body')
+        (stranded / cache.CONFIG).write_text('old session credential')
+        survivor = [{'pid': 4242, 'name': 'wine64-preload'}]
+        with patch.object(cache, 'foreign_processes', return_value=survivor):
+            refused = self.prepare(self.make(2))
+        self.assertFalse(refused['server_data_cache']['reused'])
+        self.assertEqual(refused['server_data_cache']['stranded_recovery_survivors'], survivor)
+        self.assertEqual(stranded.stat().st_ino, inode)  # never moved while a survivor may use it
+        third = self.make(3)
+        with patch.object(cache, 'foreign_processes', return_value=[]):
+            with patch.object(third, 'stage_map_data', side_effect=AssertionError('recovery must not mirror inputs')):
+                recovered = self.prepare(third)
+        summary = recovered['server_data_cache']
+        self.assertTrue(summary['reused'] and summary['stranded_generation_recovered'])
+        self.assertEqual(summary['stranded_owner_session'], f'{1:032x}')
+        self.assertEqual((third.runtime / 'data').stat().st_ino, inode)
+        self.assertEqual((third.runtime / 'data/bin/native.bin').read_bytes(), b'native generated body')
+        self.assertFalse(stranded.exists())
+        for name in self.schema_files:   # the stranded credential file is never reused
+            self.assertEqual((third.runtime / name).read_bytes(), (self.schema_dir / name).read_bytes())
+        self.close(third)
+        fourth = self.make(4)
+        with patch.object(cache, 'foreign_processes', side_effect=AssertionError('closed reuse needs no recovery')):
+            self.assertTrue(self.prepare(fourth)['server_data_cache']['reused'])
+        self.close(fourth)
+
+    def test_stranded_recovery_refuses_moved_tree_and_outside_ptrace(self):
+        first = self.make(1); self.prepare(first)
+        first.owner.cleanup_status['wine_prefix_stopped'] = False
+        with self.assertRaises(server.base.DiagnosticError):
+            self.close(first)
+        moved = first.runtime / 'data'
+        replacement = first.runtime / 'replaced'; moved.rename(replacement); moved.mkdir()
+        with patch.object(cache, 'foreign_processes', return_value=[]):
+            result = self.prepare(self.make(2))
+        self.assertFalse(result['server_data_cache']['reused'])
+        self.assertIn('changed identity', result['server_data_cache']['stranded_recovery_refused'])
+        moved.rmdir(); replacement.rename(moved)
+        result = self.prepare(self.make(3))     # host tests run without a PRoot tracer
+        self.assertFalse(result['server_data_cache']['reused'])
+        self.assertIn('PRoot tracer', result['server_data_cache']['stranded_recovery_refused'])
+
+    def test_foreign_process_proof_ignores_our_ancestors_tracees_zombies_and_other_users(self):
+        proc = self.root / 'proc'
+        def task(pid, ppid, uid, tracer, state='S (sleeping)', name='x'):
+            (proc / str(pid)).mkdir(parents=True)
+            (proc / str(pid) / 'status').write_text(f'Name:\t{name}\nState:\t{state}\nPPid:\t{ppid}\n'
+                                                    f'TracerPid:\t{tracer}\nUid:\t{uid}\t{uid}\t{uid}\t{uid}\n')
+        task(1, 0, 0, 0, name='init'); task(300, 1, 0, 0, name='zygote64')
+        task(400, 300, 10234, 0, name='app'); task(500, 400, 10234, 0, name='proot')
+        task(600, 500, 10234, 500, name='python3')                    # this guest
+        task(610, 600, 10234, 500, name='wineserver')                 # traced by our PRoot
+        task(620, 1, 10234, 0, state='Z (zombie)', name='old')        # finished
+        task(630, 300, 10111, 0, name='other-app')                    # another uid
+        (proc / 'self').mkdir()
+        self.assertEqual(cache.foreign_processes(proc, 600), [])
+        task(640, 1, 10234, 0, name='wine64-preload')                 # an earlier session survivor
+        task(650, 1, 10234, 777, name='MapServer.exe')                # traced by another PRoot
+        self.assertEqual(sorted(row['pid'] for row in cache.foreign_processes(proc, 600)), [640, 650])
+        (proc / '600' / 'status').write_text('Name:\tpython3\nPPid:\t500\nTracerPid:\t0\nUid:\t10234\n')
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'PRoot tracer'):
+            cache.foreign_processes(proc, 600)
+
     def test_changed_input_identity_uses_original_staging_without_adopting_prior_tree(self):
         first = self.make(1); self.prepare(first); self.close(first)
         old = first.data_cache.path

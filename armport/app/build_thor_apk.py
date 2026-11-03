@@ -62,7 +62,7 @@ EXTRA_SOURCES = ('android/zoning/src/main/java/io/github/russianranger/cohclient
 # Runtime payloads the ARM64 option may add or change. Everything else is retained.
 ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py',
                            'client_stdio.py', 'server_metrics.py'})
-CHANGED_RUNTIME = frozenset({'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_login_server.py', 'local_character_server.py', 'character_zoning.py',
+CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_login_server.py', 'local_character_server.py', 'character_zoning.py',
                              'runtime-manifest.json', 'client-manifest.json',
                              'game_diagnostic.py', 'game_device_diagnostic.py', 'atlas_beacon_package.py',
                              'native_map_startup_contract.py', 'native_monorail_contract.py',

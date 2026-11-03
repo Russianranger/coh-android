@@ -22,6 +22,9 @@ PRIVATE_ROOTS = ('bin', 'geobin', 'server')
 CONFIG = 'server/db/servers.cfg'
 STATS = {'files', 'bytes', 'directories', 'linked_immutable_files',
          'copied_private_files', 'preserved_schema_files'}
+PROCESS_LIMIT = 4096
+MARKER_FIELDS = {'format', 'policy', 'identity', 'key', 'status', 'owner', 'data_identity',
+                 'directories', 'private_files', 'anchors', 'stats'}
 
 
 def canonical(value):
@@ -57,6 +60,54 @@ def real_path(root, name, *, directory=False):
     if directory:
         fingerprint(current, directory=True)
     return current
+
+
+def process_status(directory):
+    fields = {}
+    for line in (Path(directory) / 'status').read_text(errors='replace').splitlines()[:128]:
+        name, _, value = line.partition(':')
+        fields[name] = value.strip()
+    return fields
+
+
+def foreign_processes(proc=Path('/proc'), pid=None):
+    """Live same-uid processes outside this guest: neither our ancestors nor traced by our PRoot.
+
+    PRoot runs with --kill-on-exit, so a finished session leaves no tracees;
+    anything else with our real uid could still hold a stranded tree. Unreadable
+    entries count as foreign. Outside PRoot (no tracer) nothing can be proved.
+    """
+    pid = os.getpid() if pid is None else pid
+    own = process_status(proc / str(pid))
+    uid, tracer = own['Uid'].split()[0], int(own['TracerPid'])
+    require(tracer > 0, 'Stranded cache recovery needs this guest\'s PRoot tracer identity')
+    ancestors, current = set(), pid
+    while current > 1 and current not in ancestors and len(ancestors) < 256:
+        ancestors.add(current)
+        current = int(process_status(proc / str(current))['PPid'])
+    foreign, count = [], 0
+    with os.scandir(proc) as entries:
+        for entry in entries:
+            if not entry.name.isdigit():
+                continue
+            count += 1
+            require(count <= PROCESS_LIMIT, 'Process table exceeded the recovery bound')
+            other = int(entry.name)
+            if other in ancestors or other == tracer:
+                continue
+            try:
+                status = process_status(entry.path)
+            except (FileNotFoundError, ProcessLookupError):
+                continue
+            except (OSError, ValueError):
+                foreign.append({'pid': other, 'name': None})
+                continue
+            if status.get('Uid', '').split()[:1] != [uid] or status.get('State', '').startswith(('Z', 'X')):
+                continue
+            if status.get('TracerPid') == str(tracer):
+                continue
+            foreign.append({'pid': other, 'name': status.get('Name')})
+    return foreign
 
 
 class CheckedInputResolver:
@@ -212,6 +263,53 @@ class ServerDataCache:
               and resolved.stat().st_size <= 1024**2):
             # One bounded read-only leaf per top-level input directory.
             self.anchor_names.setdefault(relative.parts[0], name)
+
+    def recover_stranded(self):
+        """Adopt a generation whose earlier session never returned it (e.g. unproved Wine cleanup).
+
+        Only an exact marker for this identity, checked out by a different
+        session whose tree still has the recorded identity, qualifies, and only
+        while no process outside this guest is alive. The tree's credential
+        file is removed and the normal read/verify then runs unchanged.
+        """
+        try:
+            info = self.marker.lstat()
+            require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+                    and 0 < info.st_size <= MARKER_LIMIT, 'Invalid Atlas cache marker')
+            record = json.loads(self.marker.read_text())
+        except (OSError, ValueError):
+            return False
+        owner = record.get('owner') if isinstance(record, dict) else None
+        if not (isinstance(record, dict) and set(record) == MARKER_FIELDS and record['format'] == 1
+                and record['policy'] == POLICY and record['identity'] == self.identity
+                and record['key'] == self.key and record['status'] == 'checked_out'
+                and isinstance(owner, dict) and set(owner) == {'session_id', 'target'}
+                and isinstance(owner['session_id'], str)
+                and re.fullmatch('[0-9a-f]{32}', owner['session_id'])
+                and owner['session_id'] != self.session and isinstance(owner['target'], str)):
+            return False
+        target = Path(owner['target'])
+        require(target.is_absolute() and target.name == 'data' and self.root in target.parents
+                and '..' not in target.parts, 'Stranded Atlas cache target escaped the owner root')
+        require(not (self.path / 'data').exists() and not (self.path / 'data').is_symlink(),
+                'Stranded Atlas cache already has a returned tree')
+        require(fingerprint(target, directory=True) == record['data_identity'],
+                'Stranded Atlas cache tree changed identity')
+        survivors = foreign_processes()
+        if survivors:
+            self.summary.update(stranded_recovery_refused='processes_outside_this_guest',
+                                stranded_recovery_survivors=survivors[:8])
+            return False
+        config = real_path(target, CONFIG)
+        if config.exists() or config.is_symlink():
+            fingerprint(config)
+            config.unlink()
+        target.rename(self.path / 'data')
+        record.update(status='closed', owner=None)
+        self.write(record)
+        self.summary.update(stranded_generation_recovered=True, stranded_owner_session=owner['session_id'],
+                            stranded_credential_config_removed=True)
+        return True
 
     def write(self, record):
         payload = json.dumps(record, sort_keys=True) + '\n'
@@ -506,7 +604,17 @@ class ServerDataCache:
                 self.summary['reuse_refused'] = 'cache_generation_limit_reached'
             return False
         try:
-            record = self.read()
+            try:
+                record = self.read()
+            except base.DiagnosticError as refused:
+                try:
+                    recovered = self.recover_stranded()
+                except (base.DiagnosticError, OSError, ValueError, TypeError, KeyError) as failure:
+                    self.summary['stranded_recovery_refused'] = str(failure)[:300]
+                    recovered = False
+                if not recovered:
+                    raise refused
+                record = self.read()
             cached = self.path / 'data'
             self.verify(cached, record)
         except base.Cancelled:
