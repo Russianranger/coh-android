@@ -64,7 +64,7 @@ The integration's namespace/disappearing-task port is not evidence that the
 Thor EACCES defect is fixed. No ≤60-second cold-start, FPS, thermal or memory
 improvement is measured at this integration head.
 
-## Performance options (0.13.48 candidate, branch `x86/perf-round2`)
+## Performance options (0.13.48 and 0.13.49 pre-releases, PR #11)
 
 `Fast mode (PRoot seccomp, experimental)` is now **on** by default. In CI
 (41584980465 vs 41588867344) it made MapServer startup 26-32% faster with no
@@ -105,3 +105,15 @@ A cache left behind by a cleanup that could not prove it finished is reused in
 a later session only when no same-uid process outside that guest is alive
 (`stranded_generation_recovered`). The earlier session's failed cleanup is
 still reported as failed.
+
+## 0.13.49 additions (read-only evidence; same options and servers as 0.13.48)
+
+Keep the exported report. Two new records answer open questions:
+- `character_zoning.wine_priorities`: six samples during play, five minutes
+  apart, of the thread count per nice value for `CityOfHeroes.exe`,
+  `MapServer.exe`, `DbServer.exe` and `wineserver`, plus `RLIMIT_NICE`. It tests
+  whether Wine runs the client's threads at a higher nice than the servers (a
+  lead for low FPS; see `armport/PERFORMANCE-PATH.md`). Nothing is changed.
+- `wine_process_cleanup.live_lineage_observation.unavailable_by_operation` and
+  `first_unavailable`: which /proc read fails when cleanup cannot prove a Wine
+  worker is ours (the open `persistent_live_permission_denied` defect).
