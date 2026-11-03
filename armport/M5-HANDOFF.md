@@ -4,37 +4,64 @@ Written 2026-10-28 at the end of the M5 Thor iteration (PR #8, branch
 `armport/m5-thor`, head after this file). All scheduled checks were cancelled
 at the user's request. The historical measurements below describe that handoff.
 
-## Current development checkpoint (2026-10-28)
+## Latest device result and pause — 2026-11-02
 
-0.13.45/code 60 at `0bf31c81b1b5a9f8427b4692c623702b30e7029e` passed build
-40776745390, retained-runtime requalification 40786315414 and APK 40791416254.
-Artifact 12860779714 is approved for Thor handoff by Claude review 5692088051.
-The earlier dispatch/results comments were not approval; this review is. Exact digests,
-limits and the proposed two-launch Thor procedure are in `M5-THOR-TEST.md`.
-There is no 0.13.45 device result and no M5 acceptance/merge request.
+**Development is paused at the user's request.** Record and diagnose only;
+do not treat this handoff update as authorization to resume implementation,
+dispatch CI, hand off an APK or request acceptance.
 
-Parallel development on `armport/server-metrics` now wires the 0.13.46/code 61
-candidate: native 0119 source fixtures and sequential Win32 builds, two-variant
-package qualification, authenticated guest compatibility and bounded console
-metrics ingestion. The previous bounded enhancement-addition work is included.
-These are not in 0.13.45. Build 40805020119 is running at frozen dd9d755bd;
-its downstream runtime/APK chain is held by PR comment 6486287635 until the
-review P2 discovery-starvation fix is incorporated. No .46 runtime/APK/device
-result exists at this checkpoint. Follow `notes/SERVER-METRICS-DEVELOPMENT.md` for exact
-opt-in inputs and limitations; no esync/runtime pin change is included.
+The user reports: **“Kings row is still functioning poorly, worse than before
+the arm port.”** This remains an M5 experience/acceptance failure. The supplied
+exports are `coh-atlas-gameplay-20261103-010459.zip` (gameplay) and
+`-010516.zip` (setup only). Both identify **0.13.44**; this is not a test of
+the .45/.46 changes and is not an ARM64-versus-x86 gameplay comparison.
 
-The separate `armport/sampler-review-fix` revision addresses review 5692088051:
-budget-edge process discovery gets one fresh-window retry, even after an empty
-callback; cleanup registries are replaced with bounded private per-group
-snapshots. It also adds bounded immutable MapServer launch observations and
-unique console tails, with retirement disabled. 415 ArmPort and 61 existing
-lifecycle tests pass locally. See `notes/M5-SAMPLER-REVIEW.md`. The running dd9
-build does not contain these fixes; wait for it before requesting revised CI.
+Measured in this session:
 
-This lead session can commit through the GitHub connector but cannot dispatch
-workflows. Claude has offered to dispatch a PR #8 `CI request: build at <sha>`
-with explicit stages. Keep the serialized build→app-runtime→thor-apk sequence;
-do not use push-trigger workarounds or start duplicate runs.
+- Tap to connected: **604.299 s**; client folder scan **217.712 s**.
+- Atlas → King's Row: **656.024 s cold preparation**, **54.908 s transfer**,
+  **711.056 s request to observed arrival** (about 11 min 51 s).
+- Once loaded, eleven complete King's Row render windows cover 55.53 s:
+  **19.95–29.94 FPS**, **25.63 FPS weighted**. This does not measure NPC/update
+  smoothness or establish the server tick rate.
+- Both maps still use the retained **x86 MapServer** under the translated runtime;
+  Atlas remains resident. Preparation records large destination RSS growth and
+  system-wide swapping; contention is plausible but not proven as the cause of
+  post-arrival stutter.
+- Save after returning to Atlas committed with character state preserved.
+  Overall session failed at owned cleanup: repeated worker-environment EACCES,
+  with cache return blocked. A linked private-cache observation also failed.
+- No server tick/file-duration samples, gameplay CPU deltas, thermal data or
+  matched pre-port run establish the precise regression cause.
+
+Detailed evidence, caveats and source locations:
+[2026-11-02 Thor results](notes/M5-THOR-20261102-RESULTS.md) and
+[evidence summary](evidence/20261102-thor-results.json).
+Do not turn the earlier “server-side” hypothesis into a confirmed diagnosis.
+
+## Published candidate state — read-only reconciliation
+
+0.13.45/code 60 at `0bf31c81b` passed build 40776745390, retained-runtime
+requalification 40786315414 and APK 40791416254. Claude review 5692088051
+approves artifact 12860779714 for handoff. There is no .45 device result here.
+
+The P2/P3 sampler fixes, launch-history groundwork and Windows packaging fixes
+are published separately on `armport/sampler-review-fix` at
+`8dc2a66d72477b3c62227e572538b13f0e4f912b`. Its **0.13.46/code 61** chain
+completed successfully: build **40929292200**, retained runtime **40945708189**,
+APK **40952408285**. Claude comment **6508052528** reports artifact
+**12931682996** and explicitly says these are CI results, not review approval.
+The Thor server variant was built/source-checked; retained CI executes a
+different server lineage. There is no .46 Thor validation or newer formal
+handoff approval on PR #8. Do not hand off that APK on the basis of CI alone.
+
+Build 40805020119 at `dd9d755bd` is historical: nine jobs passed, then its
+Windows host import of fcntl failed before MSVC. The corrected chain above
+supersedes that failure; do not retain “running” as its state.
+
+Separate startup research branches exist (`armport/mapserver-startup-60s` and
+`armport/mapserver-modern-runtime-qualification`). The supplied reports do not
+test them. This session made no implementation changes or CI requests.
 
 ## Lead audit correction (2026-10-28)
 
@@ -56,7 +83,7 @@ and all PR reviews/comments were audited in PR comment 6480628043, mirrored in
 - 0.13.45 first adds bounded host tick-counter/CPU observations and honest cleanup
   errors. A separate native timing producer/package follows; no esync change yet.
 
-## Where things stand
+## Historical device snapshot — 2026-10-28
 
 **0.13.44 on the AYN Thor is playable on the ARM64 client.** The user's exports
 of 2026-10-28 (`coh-atlas-gameplay-20261028-202049` with zoning,
@@ -101,31 +128,28 @@ ARM64 observer validator.
 
 ## Findings from the last exports
 
-### NPC and car stutter in the second zone (server-side)
+### NPC and car stutter in the second zone — cause unmeasured
 
-The player moves smoothly because the client predicts its own movement; NPCs
-and cars move only as fast as the King's Row MapServer sends updates. The
-evidence points at the servers, not the client (client 12-30 FPS throughout):
+The previous lead inferred server/update-path stutter from smooth predicted
+player movement and jerky remote entities. The 2026-11-02 user report confirms
+poor King's Row experience, but neither report establishes the exact cause.
 
-- **One wineserver serves everything** (client, DbServer, two MapServers), and
-  PRoot traps every syscall on both sides. At capture, `wineserver` had 478 s
-  of system time and `DbServer.exe` (67 threads) 428 s, more than the client's
-  317 s. Wine 10 here has no esync/fsync/ntsync, so every wait, event and
-  mutex is a wineserver request.
-- **Two x86 MapServers ran under FEX at the same time.** Atlas stays up after
-  the player leaves (by design: the reopen overlap). King's Row used 233 s of
-  CPU in its first ~15 minutes, much of it the 259 s startup.
-- **Both MapServers load sequencer definitions on demand while playing**:
-  repeated `Reading player.txt`, `Car_Compact.txt`, `zombie.txt`, `BF.txt` as
-  NPCs and cars appear. That is 4,035 reads after ready in King's Row and 2,476 in
-  Atlas (`character-*-console.txt`). Under FEX and PRoot each read can stall a
-  server's main loop. Because Atlas also does it without visible stutter, this
-  alone does not explain the second zone. The difference is that King's Row ran
-  while Atlas was still up, and King's Row has more traffic (cars) to read.
-- **Not measured:** the King's Row server tick rate. The only tick counts are
-  14 at King's Row ready and 46,749 for Atlas at 20:13:44 (roughly 30 ticks/s
-  averaged since its start, assuming about 6 minutes of startup). A per-window
-  tick log is the first thing to add.
+Both maps run x86 MapServers under the translated Wine/PRoot stack, and Atlas
+remains resident after transfer. This is a plausible source of contention.
+The prior 478 s wineserver and 428 s DbServer system-time figures were cumulative
+capture totals, not request counts or identified hot-thread measurements.
+Not every Wine wait necessarily sends a wineserver request. DbServer's 64 SQL
+workers normally block; thread count alone does not prove polling.
+
+Sequencer “Reading” output precedes the cache lookup and does not prove a disk
+load. Startup already preloads sequencer definitions. Measure actual file work
+before attributing stutter to those messages or adding another preload.
+
+The new export shows roughly 25.6 rendered FPS over a short loaded King's Row
+interval, while the user still reports poor play. This supports investigating
+simulation/update timing separately from rendered frames. Native longest-tick
+and file-load time, gameplay CPU and a matched pre-port baseline remain missing.
+See the dated results note for preparation-only memory/pressure observations.
 
 ### Startup (about 12 minutes warm)
 
@@ -152,7 +176,7 @@ with it, so the folder scan only matters once the server is faster.
   "current-session client evidence did not match this APK". The Java check
   expects the x86 client's evidence and does not know the ARM64 lane.
 
-## Next steps, in order
+## Historical future-work plan — paused; apply audit corrections first
 
 ### 1. Measure the servers (small, do first)
 
@@ -161,9 +185,9 @@ with it, so the folder scan only matters once the server is faster.
   MapServer is the app's x86 build; add it through the same patch series and
   build the i686 server from it, or as an app-side producer if the server
   binaries must stay pinned. Check with the reviewers which one is acceptable.
-- Log per-process CPU and wineserver request counts per window for client,
-  DbServer and each MapServer (a periodic `/proc` sample from the guest
-  runner is enough).
+- Log per-process CPU deltas per window for client, DbServer and each MapServer
+  using periodic `/proc` samples. Wine request counts require separate protocol
+  instrumentation; CPU counters do not supply them.
 - Repeat the King's Row test with Atlas stopped after the transfer, to separate
   "two MapServers" from "wineserver contention" from "on-demand loads".
 
@@ -171,14 +195,14 @@ with it, so the folder scan only matters once the server is faster.
 
 - **Stop or idle the previous zone's MapServer** once the transfer is
   confirmed, keeping reopen overlap only for the zone being entered. This is
-  the most likely cause of the second-zone-only stutter, and the cheapest to
-  test.
-- **Preload sequencer and entity definitions for every supported zone** at
-  MapServer start (or ship them in the server-animation/server-cache packs that
-  already exist for Atlas), so nothing is read from disk while playing.
-- **Find why DbServer burns 428 s of system time** with 67 threads at idle:
-  probably polling waits that each cost a wineserver round trip. Treat it like
-  0116: find the waits, bound polling or lengthen timeouts.
+  a hypothesis to test for second-zone stutter, not an established cause.
+  Preserve character save, process ownership and safe restart requirements.
+- **Measure actual post-ready definition loads** before changing preload.
+  Startup already calls `seqPreloadSeqInfos`; “Reading” messages do not prove
+  disk I/O. Any additional preload requires evidence of a missed load path.
+- **Investigate the historical DbServer system-time totals**:
+  measure per-thread CPU and wait paths first. The 64 SQL workers normally
+  block; neither the thread count nor cumulative CPU proves polling.
 - **Wine synchronization:** esync (wine-staging; eventfd and shared memory,
   available on Android kernels) would remove most wineserver round trips for
   all four processes at once. ntsync needs `/dev/ntsync`, which Android does
@@ -236,10 +260,9 @@ servers are fixed.
   issue comment on PR #8, including ones posted before your request.
 - No protected-branch changes, history rewrites, secret or signing misuse;
   releases need the user's approval.
-- From the cloud session, Actions logs and artifacts cannot be downloaded (the
-  proxy blocks the storage host). Use check-run annotations, and
-  `armport-symbolize.yml` (`run_id`, exe `sha256`, `addresses`) for device
-  fault addresses (image base 0x140000000).
+- Inspect actual Actions logs/artifacts when accessible; distinguish annotations
+  from independently downloaded evidence. Use `armport-symbolize.yml` (`run_id`,
+  exe `sha256`, `addresses`) for device fault addresses (image base 0x140000000).
 - Thor exports: `guest-report.zip` → `client-evidence/armport_stdio.txt`
   (FPS, worker and folder-cache lines, zone markers), `client-console.log`
   (faults, exit), `character-zoning*.json`/`-console.txt`,

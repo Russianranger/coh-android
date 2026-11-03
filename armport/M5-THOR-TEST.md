@@ -1,5 +1,28 @@
 # COH Atlas Gameplay 0.13.45: CI-qualified candidate (ARM64 client)
 
+## Device feedback recorded 2026-11-02 — development paused
+
+The supplied `20261103-010459.zip` and `-010516.zip` both identify **0.13.44**.
+The first contains reopen/zoning/save; the second is setup-only with zero frames.
+They do not validate .45 or .46. The user reports that **King's Row is still
+functioning poorly, worse than before the ARM port**. M5 acceptance remains open.
+
+King's Row required 656.024 s cold preparation and 711.056 s from request to
+observed arrival. Eleven complete loaded-zone render windows averaged 25.63 FPS
+(19.95–29.94); rendered FPS does not measure server/NPC update smoothness.
+Both maps still use x86 MapServers and Atlas remains resident. A committed save
+after zoning succeeded; the final result was cleanup_failed because owned worker
+cleanup could not be proved. See [the dated evidence and diagnosis](notes/M5-THOR-20261102-RESULTS.md).
+
+The .46 chain has separately passed build 40929292200, retained runtime
+40945708189 and APK 40952408285 at `8dc2a66d`; comment 6508052528 explicitly
+does not approve its handoff. No newer formal candidate review or device result
+is present. The existing test procedure below is retained for reference;
+**no new test, build or development is requested while paused**.
+
+---
+
+
 **Approved for Thor handoff by Claude, review [5692088051](https://github.com/Russianranger/coh-android/pull/8#pullrequestreview-5692088051).** VersionCode 60, tested source
 `0bf31c81b1b5a9f8427b4692c623702b30e7029e`. All three serialized CI stages passed.
 0.13.44 below remains the last device-tested candidate. This documentation update
@@ -178,50 +201,3 @@ about 12 minutes. Next steps: `armport/M5-HANDOFF.md`. M5 is not complete.
 ## If something fails
 
 Export the ZIP, then switch back to x86. Do not recreate the character.
-
-## 0.13.46 development reservation — no APK available
-
-Version/code 0.13.46/61 is reserved for the revised sampler/server-metrics branch.
-It adds an optional modern Win32 MapServer with 0119 timing and bounded native
-console ingestion. The paired retained-progress executable runs in retained
-0.10 CI; that does not execute the modern Thor executable. Exact same-head
-build/runtime/package checks keep those scopes separate. Build, runtime and APK
-run IDs, artifact/digests and reviewer approval are pending. Do not replace the
-0.13.45 candidate instructions above with an assumed .46 qualification.
-
-## Sampler review fix and launch history — qualification pending
-
-The revised .46 development head fixes new-PID discovery at the sample deadline
-and removes whole-registry copies. Tests force both target-first and costly-prefix
-directory orders, including a callback with no remaining budget. Oversized cached
-worker history is omitted explicitly while fresh ownership checks may still
-supply process totals. No deadline is claimed to bound a blocking OS read.
-
-Zoning exports add `launch_history` and unique generation console tails (at most
-five, 256 KiB each). Resident returns keep the same generation; records refer to
-owned launcher objects and are not native PID authentication or shutdown proof.
-Retirement, restart/control paths and existing save/cleanup rules are unchanged.
-This revision is not yet CI-qualified; no new APK is approved or available.
-
-## Windows producer correction — 2026-10-29 CDT
-
-Build [40805020119](https://github.com/Russianranger/coh-android/actions/runs/40805020119)
-at `dd9d755bd` passed nine jobs, including both real prepared-source positive and
-original-code negative controls. Windows job 123247607771 failed before MSVC:
-retained donor admission imported POSIX lifecycle code requiring `fcntl`.
-No runtime or APK stage was dispatched, and no .46 executable was produced.
-
-The revision keeps the sampler/launch-history fixes and removes that host-only
-import while retaining the exact raw donor and producer pins. It also accepts
-Windows CRLF CMake cache lines without changing raw cache hashing or the unique
-`COH_PG_PERSISTENCE_TESTS:BOOL=OFF` requirement. Windows CI now runs portable donor
-regressions and retains preflight logs even if compilation cannot start.
-
-Local verification: 419 ArmPort tests and 61 lifecycle tests passed; both real
-donors pass in fresh processes with POSIX imports blocked. The original retained
-reader reproduces the missing-fcntl failure. Downloaded source artifact
-12870633271 matches ZIP SHA-256
-`3a4da8ad601b1fdc22651e7967ca0060552afc11dd1f80bebb8cd2b9394e4654`;
-its complete bundle extracts/verifies with the fixed code on Linux. This is not
-Windows execution. See [failure and correction](notes/M5-WINDOWS-PRODUCER-FIX.md).
-The full revised build/runtime/APK chain and Claude approval remain required.

@@ -1,38 +1,26 @@
-# MapServer startup experiment status
+# x86 track integration
 
-Updated 2026-11-01 America/Chicago. Thor <=60 seconds remains UNPROVEN.
-Branch armport/mapserver-startup-60s; base8dc2a66d72477b3c62227e572538b13f0e4f912b.
-Exact qualification head is frozen by the coordinator-only kickoff; see git HEAD
-and live draft PR9. No protected branch, merge, release or repository setting changed.
+Updated 2026-11-02 America/Chicago. Integration/handoff only; Claude leads next.
+The x86 client is primary; ARM64 stays experimental and shelved.
+Keep x86 Win32 servers, PhysX and ragdolls; cold-start goals remain unmeasured here.
+Default branch remains main; no release, APK handoff or repository setting change.
 
-- Playable Thor comparison: .44/a5bd2bbe3, APK40743596575/artifact12840043807.
-  Latest predecessor APK .46/code61 (build40929292200/runtime40945708189/APK40952408285).
-  Its modern Win32 server was built/source-checked; last formal approval is .45.
-- e563 build41363927704 passed all10 jobs, including both Win32 MapServers.
-  Modern PE SHA f893cee6cd6c4dc8b7c45c8b5f7c07572aaabbe50ee5b8730b9ddd3da12dac94.
-- Actual Windows ACK41372568968 passed unchanged commit/blocked/failed-write
-  checks and postrun binary hashes; this is not gameplay or app-DbServer proof.
-- App runtime41372922907 failed staging after5.419s, before guest/map launch:
-  stale guest0119 hash49c0... versus actual5656... . No APK was dispatched.
-  Coordinator41363909847 and modern/rollback upstream waits failed accordingly.
-- Corrected pin + independent actual-file regression; real packages now admit.
-- Primary Android service-entry→ready-event receipt clock now includes all
-  Android/guest preparation and suspend. UI-action/world and guest/native clocks
-  are separate; ready telemetry changes no input/save/readiness or timeouts.
-- Contiguous PG/Wine/DbServer route + narrower ODBC interval; single owned-launch
-  kernel HWM/RSS and sparse thermal-severity/battery observations have explicit
-  exclusions. Aggregate server peak/PSS/CPU temperature/movable proof stay unknown.
-- ODBC reuse still verifies inputs/actual DLL and executes native probe each launch;
-  cache<4KiB, gain unmeasured. Win32 physics retained; ARM64 SDK closure unresolved.
-- Corrected validation: ArmPort443; Android timing6 +69 existing cases;
-  guest timing16/memory16/saved-map14. Actual official SDK35 all24 Java sources,
-  resources and D8 passed; resources/manifest retained except version metadata.
-- Source/native/ACK/staging failure/repair/SDK evidence: armport/evidence.
-- Next: fresh exact build→retained runtime→signed .47/code62; separately modern
-  full-data Atlas pair + original-server saved-data reopen and actual ACK checks.
-  Refresh supporting cohort IDs; serialize primary then real rollback APK build.
-- No installable .47 APK, modern asset-backed runtime, startup result, physical
-  install/recovery, five-run Atlas/King's or reboot/gameplay acceptance exists.
-- Thor unavailable. Complete CI/APK audits first, then physical capture procedure:
-  armport/THOR-STARTUP-CAPTURE.md; full continuation armport/notes/MAPSERVER-STARTUP-60S.md.
-  Integrate task commits in order after their inherited M5/.46 dependencies.
+- Merge order: sampler-review-fix → startup-60s → modern-runtime-qualification
+  → m5-thor (b7806a6bd King's Row docs) → performance-path docs.
+- P2/P3 sampler and Windows producer fixes included through 8dc2a66d72477b3c62227e572538b13f0e4f912b.
+  See armport/notes/M5-SAMPLER-REVIEW.md and HANDOFF-X86.md.
+- Last device result is .44: King's Row cold prep 656.024 s, request→arrival
+  711.056 s, loaded render mean 25.63 FPS (11 complete windows).
+  See armport/notes/M5-THOR-20261102-RESULTS.md and its export evidence.
+- Both zone servers are x86; Atlas stays resident. Preparation swap pressure
+  does not prove gameplay causation. No matched pre-port x86 baseline is supplied.
+- Save committed, but Wine worker EACCES prevented proved owned cleanup;
+  Atlas cache return failed and the data cache remained stranded.
+- Historical .46 build40929292200/runtime40945708189/APK40952408285 succeeded;
+  modern Thor build checks and retained-runtime execution have different scope.
+- Startup instrumentation/ODBC reuse included; gain and ≤60 s remain unmeasured.
+  Historical build41363927704 passed; runtime41372922907 rejected old 0119 pin
+  before guest launch. Corrected pin and regression are included.
+- .37 app/guest work assessed without joining unrelated histories.
+- Final port/skip list, local suites, source identity and CI request: HANDOFF-X86.md
+  and the x86 integration issue. Use X86-THOR-TEST.md for the next device lane.
