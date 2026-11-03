@@ -31,7 +31,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -110,6 +110,11 @@ public final class ClientActivity extends Activity {
         idleResidentMaps.setChecked(ClientRuntime.idleResidentMapsEnabled(this));
         idleResidentMaps.setOnCheckedChangeListener((button,checked)->ClientRuntime.setIdleResidentMapsEnabled(this,checked));
         controls.addView(idleResidentMaps);
+        sharedServerData=new CheckBox(this);sharedServerData.setText("Share server data between zones (faster zone preparation)");
+        sharedServerData.setTextColor(Color.rgb(221,234,245));sharedServerData.setTextSize(13);
+        sharedServerData.setChecked(ClientRuntime.sharedServerDataEnabled(this));
+        sharedServerData.setOnCheckedChangeListener((button,checked)->ClientRuntime.setSharedServerDataEnabled(this,checked));
+        controls.addView(sharedServerData);
         trustedBins=new CheckBox(this);trustedBins.setText("Fast server data loading (trusted bins)");
         trustedBins.setTextColor(Color.rgb(221,234,245));trustedBins.setTextSize(13);
         trustedBins.setChecked(ClientRuntime.trustedBinsEnabled(this));
@@ -124,7 +129,7 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
         clientArchitecture.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"x86 client", "ARM64 client (experimental)"}));
+                new String[]{"x86 client (fallback)", "ARM64 client"}));
         clientArchitecture.setSelection("arm64".equals(ClientRuntime.clientArchitecture(this))?1:0);
         clientArchitecture.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override public void onItemSelected(AdapterView<?> parent,View view,int position,long id){
@@ -351,7 +356,7 @@ public final class ClientActivity extends Activity {
         state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
-        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
+        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}

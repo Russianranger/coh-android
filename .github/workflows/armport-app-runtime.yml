@@ -25,6 +25,11 @@ on:
         type: boolean
         required: false
         default: false
+      shared_server_data:
+        description: Both zone servers read the shared folders through a linked read-only runtime/serverdata tree (app default on)
+        type: boolean
+        required: false
+        default: true
       serverdata_probe:
         description: CI probe - Atlas reads scripts.loc only through a linked shared read-only runtime/serverdata tree
         type: boolean
@@ -51,6 +56,7 @@ env:
   SERVER_RUN_ID: ${{ inputs.server_run_id }}
   COH_PROOT_SECCOMP: ${{ inputs.proot_seccomp && '1' || '' }}
   COH_TRUSTED_BINS: ${{ inputs.trusted_bins && '1' || '' }}
+  COH_SHARED_SERVER_DATA: ${{ inputs.shared_server_data == false && '0' || '1' }}
   COH_SERVERDATA_PROBE: ${{ inputs.serverdata_probe_wide && '2' || inputs.serverdata_probe && '1' || '' }}
 
 jobs:

@@ -300,6 +300,13 @@ def serverdata_probe_requested():
     return int(value or 0)
 
 
+def shared_server_requested():
+    """App default (on): both zone servers read the shared folders through runtime/serverdata."""
+    value = os.environ.get('COH_SHARED_SERVER_DATA', '')
+    require(value in ('', '0', '1'), 'COH_SHARED_SERVER_DATA must be empty, 0 or 1')
+    return value == '1'
+
+
 STORY_ARC_COUNTS = re.compile(r'(?m)^(\d+) arcs, (\d+) contacts, (\d+) tasks\b')
 
 
@@ -316,10 +323,10 @@ def guest_timing_summary(evidence):
         if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
             report = json.loads(path.read_text())
             result['proot_mode'] = report.get('proot_mode')
-            result['serverdata_probe'] = next((section.get('serverdata_probe') for section in
+            result['shared_server_data'] = next((section.get('shared_server_data') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
-                if isinstance(section, dict) and section.get('serverdata_probe') is not None),
-                report.get('serverdata_probe'))
+                if isinstance(section, dict) and section.get('shared_server_data') is not None),
+                report.get('shared_server_data'))
             result['stage_timeline'] = stage_timeline(report)
             result['trusted_bins'] = next((section.get('trusted_bins') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
@@ -505,6 +512,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
         if trusted_bins_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
+        if shared_server_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():
             command.insert(command.index('/usr/bin/python3'),
                            'COH_SERVERDATA_PROBE=' + str(serverdata_probe_requested()))

@@ -74,19 +74,26 @@ STOCK_DAYJOB_DATA_INPUTS = {
 # different future consumer keeps the complete mirror until separately proved.
 SERVER_TEXTURE_EXCLUSION_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
 SERVER_TEXTURE_EXCLUSION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d'
-# CI-only probe of the shared read-only server tree (armport/PERFORMANCE-PATH.md).
-# file.c addAppropriateDataDirs searches <cwd>/serverdata before <cwd>/data once
-# both data/ and tools/ exist; writes still go to data/. With the switch, Atlas's
-# private tree omits these top-level folders and runtime/serverdata links one
-# shared, read-only tree that holds them. scripts.loc: no guest proof or cache
-# identity reads it, and a fresh mirror re-parses it from text (story arc counts
-# in the MapServer console are the evidence). Never set by the app.
+# Shared read-only server data (armport/PERFORMANCE-PATH.md, "Shared read-only
+# server tree"). file.c addAppropriateDataDirs searches <cwd>/serverdata before
+# <cwd>/data once both data/ and tools/ exist; writes still go to data/. With it,
+# each MapServer's private tree omits SHARED_SERVER_FOLDERS, and runtime/serverdata
+# links one shared tree per data identity (real directories, per-file links,
+# read-only directories), used by Atlas and King's Row alike.
+# CI: scripts.loc alone passed with no side effects (41636702283). Sharing every
+# folder no guest proof reads (41648097743) rebuilt sequencers.bin and 21 power
+# and salvage bins on every start, so sequencers and player_library stay private.
+SHARED_SERVER_ENV = 'COH_SHARED_SERVER_DATA'
+SHARED_SERVER_FOLDERS = frozenset({'accountserver', 'aiscript', 'cloth', 'ent_types', 'fonts', 'fx', 'lods',
+                                   'menu', 'scenes', 'scripts', 'scripts.loc', 'shaders', 'sound', 'specs',
+                                   'texts'})
+# CI-only override: 1 = scripts.loc, 2 = every folder except SERVERDATA_PROBE_KEEP.
 SERVERDATA_PROBE_ENV = 'COH_SERVERDATA_PROBE'
 SERVERDATA_PROBE_ROOTS = ('scripts.loc',)
-# Level 2 ("wide"): every top-level folder except the private roots, the folders
-# a guest proof or cache identity reads, and the natively excluded textures.
+# Private roots, folders a guest proof or cache identity reads, natively excluded textures.
 SERVERDATA_PROBE_KEEP = frozenset({'bin', 'geobin', 'server', 'defs', 'maps', 'object_library',
                                    'tricks', 'texture_library'})
+SHARED_TREE_PREFIX = 'shared-server-data-'
 
 
 def serverdata_probe_requested():
@@ -94,6 +101,12 @@ def serverdata_probe_requested():
     value = os.environ.get(SERVERDATA_PROBE_ENV, '')
     require(value in ('', '0', '1', '2'), SERVERDATA_PROBE_ENV + ' must be empty, 0, 1 or 2')
     return int(value or 0)
+
+
+def shared_server_requested():
+    value = os.environ.get(SHARED_SERVER_ENV, '')
+    require(value in ('', '0', '1'), SHARED_SERVER_ENV + ' must be empty, 0 or 1')
+    return value == '1'
 
 
 def serverdata_probe_roots(level, source):
@@ -104,6 +117,23 @@ def serverdata_probe_roots(level, source):
                        if entry.is_dir(follow_symlinks=False) and entry.name.casefold() not in SERVERDATA_PROBE_KEEP)
     require(0 < len(names) <= 64, 'Wide serverdata probe folder set is empty or oversized')
     return names
+
+
+def shared_server_selection(source):
+    """The shared-tree identity record for this start, or None (private mirror only)."""
+    level = serverdata_probe_requested()
+    if level:
+        return {'format': 1, 'selection': 'ci_probe', 'level': level,
+                'shared_top_level': serverdata_probe_roots(level, source)}
+    if not shared_server_requested():
+        return None
+    with os.scandir(source) as entries:
+        names = sorted(entry.name for entry in entries
+                       if entry.is_dir(follow_symlinks=False) and entry.name.casefold() in SHARED_SERVER_FOLDERS)
+    require(len({name.casefold() for name in names}) == len(names), 'Case-conflicting shared server folders')
+    if not names:
+        return None
+    return {'format': 1, 'selection': 'app_default_folders_v1', 'shared_top_level': names}
 
 
 def LOCAL_CLIENT_LINK_OPTIONS():
@@ -1710,11 +1740,10 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'files': cache_native_package['files']})).hexdigest()}
         if required_geometry is not None:
             identity['required_geometry'] = required_geometry
-        level = serverdata_probe_requested()
-        if level:
-            # A probe generation lacks these folders; never share it with a normal run.
-            identity['serverdata_probe'] = {'format': 1, 'level': level,
-                                            'shared_top_level': serverdata_probe_roots(level, source)}
+        selection = shared_server_selection(source)
+        if selection is not None:
+            # A generation without these folders must never serve a private-only start.
+            identity['shared_server_data'] = selection
         projection = server_input_projection(self.map_package, self.map_package_dir / 'MapServer.exe')
         if projection is not None:
             identity['server_input_projection'] = {key: value for key, value in projection.items()
@@ -1805,16 +1834,16 @@ class LocalCharacterServer(login.LocalLoginServer):
                           copied_private_files=0, preserved_schema_files=len(self.schema['files']))
             checkpoint('warm_schema_restore')
         else:
-            probe_roots = identity['serverdata_probe']['shared_top_level'] if 'serverdata_probe' in identity else ()
+            probe_roots = identity['shared_server_data']['shared_top_level'] if 'shared_server_data' in identity else ()
             staged = self.stage_map_data(source, runtime / 'data', cache_recorder=self.data_cache,
                                          skip_top_level=probe_roots)
             checkpoint('cold_server_data_mirror')
             self.data_cache.seal(runtime / 'data', staged)
             checkpoint('cold_server_data_receipt_seal')
-        if 'serverdata_probe' in identity:
-            self.creation_report['serverdata_probe'] = self.link_shared_server_data(runtime, identity)
-            self.ctx.report['serverdata_probe'] = self.creation_report['serverdata_probe']
-            checkpoint('serverdata_probe_link')
+        if 'shared_server_data' in identity:
+            self.creation_report['shared_server_data'] = self.link_shared_server_data(runtime, identity)
+            self.ctx.report['shared_server_data'] = self.creation_report['shared_server_data']
+            checkpoint('shared_server_data_link')
         if self.map_package.get('native_monorail') is not None:
             # A reviewed MapServer-only bridge must retain the exact parser and
             # schema ancestry before donor caches can accelerate a fresh install.
@@ -2215,6 +2244,15 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.kings_row_runtime = target
         source_identity = (self.server_data_identity if hasattr(self, 'server_data_identity')
                            else self.data_cache.identity)
+        shared_selection = source_identity.get('shared_server_data')
+        shared_folders = tuple(shared_selection['shared_top_level']) if shared_selection else ()
+        if shared_folders:
+            # The engine searches serverdata/ only when both data/ and tools/ exist.
+            (target / 'tools').mkdir(mode=0o700)
+            overlay_roots = {name.split('/')[1].casefold() for name in self.zone_asset_document['kings_row_collision_files']
+                             if name.startswith('data/') and name.count('/') >= 2}
+            require(not overlay_roots & {name.casefold() for name in shared_folders},
+                    'Kings Row collision overlay would land in a shared server folder')
         identity = dict(source_identity,
             map_id=5, kings_collision_sha256=self.zone_asset_document['kings_row_collision_files_sha256'],
             kings_graph_manifest=self.kings_row_beacon_lock['manifest'])
@@ -2232,7 +2270,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         if reused:
             staged = dict(cache.record['stats'], linked_immutable_files=0, copied_private_files=0)
         else:
-            staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache)
+            staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache,
+                                         skip_top_level=shared_folders)
         checkpoint('warm_schema_restore' if reused else 'cold_server_data_mirror')
         geometry = zone_asset_package.install(target, self.owner.args.assets, self.ctx, collision_only=True)
         checkpoint('required_original_collision_geometry')
@@ -2254,6 +2293,11 @@ class LocalCharacterServer(login.LocalLoginServer):
             staged['copied_private_files'] += len(targets)
             cache.seal(target / 'data', staged)
         checkpoint('server_data_receipt_seal')
+        shared_link = None
+        if shared_folders:
+            # Same tree as Atlas: keyed by the Atlas source identity.
+            shared_link = self.link_shared_server_data(target, source_identity, map_label='Kings Row')
+            checkpoint('shared_server_data_link')
         dependencies = self.copy_kings_native_dependencies(target)
         # Preserve the current private DbServer connection, including its stock
         # logging policy. Never reuse a cached session's credential file.
@@ -2285,6 +2329,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
             'native_dependencies': dependencies,
             'server_data_cache': cache.summary, 'prepared_server_caches': prepared_caches,
+            'shared_server_data': shared_link,
             'server_cache_native_compatibility': cache_compatibility,
             'animation': animation, 'server_fx_catalog': fx_catalog,
             'phase_seconds': dict(phases), 'elapsed_seconds': round(time.monotonic() - started, 6)}
@@ -2415,61 +2460,92 @@ class LocalCharacterServer(login.LocalLoginServer):
         getattr(self, 'creation_report', {})['cold_mirror_input_resolution'] = resolution
         return result
 
-    def link_shared_server_data(self, runtime, identity):
-        """CI-only probe: serve SERVERDATA_PROBE_ROOTS from one shared tree via runtime/serverdata.
+    def link_shared_server_data(self, runtime, identity, *, map_label='Atlas'):
+        """Serve the selected folders from one shared read-only tree via runtime/serverdata.
 
-        The shared tree is built once per data identity (real directories and
-        per-file links, like the private mirror), sealed with read-only
-        directories, and reused by later sessions. Only the root is a directory
-        link; Wine follows it as a path component and never enumerates it.
+        The tree is keyed by the Atlas source identity, so Atlas and King's Row
+        share it. It is built once (real directories, per-file links, like the
+        private mirror), sealed with read-only directories and a marker, and
+        reused by later sessions. A tree left without its marker (a stopped
+        build) holds only directories and links and is rebuilt; trees of other
+        identities are removed when a new one is built. Only the root is a
+        directory link; Wine follows it as a path component.
         """
         started = time.monotonic()
         key = hashlib.sha256(server_data_cache.canonical(identity)).hexdigest()[:24]
-        shared = self.owner.root / ('shared-server-data-probe-' + key)
+        shared = self.owner.root / (SHARED_TREE_PREFIX + key)
         marker = self.owner.root / (shared.name + '.json')
-        roots = list(identity['serverdata_probe']['shared_top_level'])
+        roots = list(identity['shared_server_data']['shared_top_level'])
         reused = marker.exists() or marker.is_symlink()
+        removed = {'unsealed_trees': 0, 'other_identity_trees': 0}
         if reused:
             info = marker.lstat()
             require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_size <= 4096,
-                    'Invalid shared server data probe marker')
+                    'Invalid shared server data marker')
             record = json.loads(marker.read_text())
             require(isinstance(record, dict) and record.get('key') == key and record.get('roots') == roots
-                    and isinstance(record.get('stats'), dict), 'Shared server data probe marker differs')
+                    and isinstance(record.get('stats'), dict), 'Shared server data marker differs')
             stats = record['stats']
         else:
-            require(not shared.exists() and not shared.is_symlink(), 'Unsealed shared server data probe tree')
+            if shared.exists() or shared.is_symlink():
+                self.remove_shared_tree(shared)
+                removed['unsealed_trees'] += 1
+            for other in sorted(self.owner.root.iterdir()):
+                if (other.name.startswith(SHARED_TREE_PREFIX) and other != shared and other != marker
+                        and not other.name.endswith('.json')):
+                    self.remove_shared_tree(other)
+                    (self.owner.root / (other.name + '.json')).unlink(missing_ok=True)
+                    removed['other_identity_trees'] += 1
             report = getattr(self, 'creation_report', {})
             previous = report.get('cold_mirror_input_resolution')
             stats = self.stage_map_data(self.owner.work / 'data', shared, only_top_level=roots)
             stats = dict(stats, input_resolution=report.pop('cold_mirror_input_resolution', None))
             if previous is not None:
                 report['cold_mirror_input_resolution'] = previous
-            require(stats['copied_private_files'] == 0, 'Shared server data probe tree needs private copies')
+            require(stats['copied_private_files'] == 0, 'Shared server data tree needs private copies')
             for current, _directories, _files in os.walk(shared, followlinks=False):
                 os.chmod(current, 0o500)
             base.private_write(marker, json.dumps({'format': 1, 'key': key, 'roots': roots,
                 'stats': stats}, sort_keys=True) + '\n')
         info = shared.lstat()
         require(stat.S_ISDIR(info.st_mode) and stat.S_IMODE(info.st_mode) == 0o500
-                and info.st_uid == os.getuid(), 'Shared server data probe tree is not owned and read-only')
+                and info.st_uid == os.getuid(), 'Shared server data tree is not owned and read-only')
         for name in roots:
             require(not (runtime / 'data' / name).exists() and not (runtime / 'data' / name).is_symlink(),
-                    'Private Atlas data still holds a probed shared folder: ' + name)
+                    map_label + ' private data still holds a shared folder: ' + name)
             require((shared / name).is_dir() and not (shared / name).is_symlink(),
-                    'Shared server data probe folder is missing: ' + name)
+                    'Shared server data folder is missing: ' + name)
         link = runtime / 'serverdata'
-        require(not link.exists() and not link.is_symlink(), 'Atlas runtime already has serverdata')
+        require(not link.exists() and not link.is_symlink(), map_label + ' runtime already has serverdata')
         require((runtime / 'data').is_dir() and (runtime / 'tools').is_dir(),
                 'serverdata needs the data/ and tools/ layout')
         link.symlink_to(shared, target_is_directory=True)
-        return {'format': 1, 'policy': 'ci_probe_shared_readonly_serverdata_link_v1',
-            'level': identity['serverdata_probe'].get('level', 1), 'shared_top_level': roots, 'shared_tree': shared.name, 'reused_shared_tree': reused,
+        return {'format': 1, 'policy': 'shared_readonly_serverdata_link_v1',
+            'selection': identity['shared_server_data'].get('selection'),
+            'level': identity['shared_server_data'].get('level'), 'shared_top_level': roots,
+            'shared_tree': shared.name, 'reused_shared_tree': reused, 'removed': removed,
             'shared_files': stats.get('files'), 'shared_directories': stats.get('directories'),
             'directories_read_only': True, 'private_copy_absent': True,
             'engine_search_order': ['localdata', 'serverdata', 'data'],
             'link_seconds': round(time.monotonic() - started, 6),
             'native_resolution_verified': False, 'physical_gain_validated': False}
+
+    def remove_shared_tree(self, path):
+        """Remove a shared tree: it may hold only owned directories and links, never data."""
+        root = Path(path)
+        info = root.lstat()
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid()
+                and root.parent == self.owner.root and root.name.startswith(SHARED_TREE_PREFIX),
+                'Refusing to remove an unexpected shared server data path')
+        for current, directories, files in os.walk(root, followlinks=False):
+            self.ctx.check()
+            os.chmod(current, 0o700)
+            for name in files:
+                leaf = Path(current) / name
+                require(leaf.is_symlink(), 'Shared server data tree holds a regular file: ' + str(leaf))
+            for name in directories:
+                require(not (Path(current) / name).is_symlink(), 'Shared server data tree holds a linked folder')
+        shutil.rmtree(root)
 
     def start(self):
         timing = self.map_startup_timing(None)

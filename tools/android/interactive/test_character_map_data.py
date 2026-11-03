@@ -160,7 +160,7 @@ class ServerdataProbeTests(unittest.TestCase):
         self.runtime = self.root / 'runtime'
         for name in ('data', 'tools'):
             (self.runtime / name).mkdir(parents=True, exist_ok=True)
-        self.identity = {'format': 2, 'serverdata_probe': {'format': 1, 'shared_top_level': ['scripts.loc']}}
+        self.identity = {'format': 2, 'shared_server_data': {'format': 1, 'shared_top_level': ['scripts.loc']}}
         self.addCleanup(self.writable_again)
 
     def writable_again(self):
@@ -226,7 +226,7 @@ class ServerdataProbeTests(unittest.TestCase):
     def test_private_copy_existing_link_or_missing_tools_is_refused(self):
         self.immutable('scripts.loc/a.storyarc')
         (self.runtime / 'data/scripts.loc').mkdir()
-        with self.assertRaisesRegex(server.base.DiagnosticError, 'still holds a probed shared folder'):
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'still holds a shared folder'):
             self.value.link_shared_server_data(self.runtime, self.identity)
         (self.runtime / 'data/scripts.loc').rmdir()
         (self.runtime / 'serverdata').mkdir()
@@ -236,17 +236,63 @@ class ServerdataProbeTests(unittest.TestCase):
         with self.assertRaisesRegex(server.base.DiagnosticError, 'data/ and tools/ layout'):
             self.value.link_shared_server_data(self.runtime, self.identity)
 
-    def test_changed_marker_or_unsealed_tree_is_refused(self):
-        self.immutable('scripts.loc/a.storyarc')
+    def test_changed_marker_is_refused_and_an_unsealed_tree_is_rebuilt(self):
+        original = self.immutable('scripts.loc/a.storyarc')
         self.value.link_shared_server_data(self.runtime, self.identity)
-        marker = next(self.value.owner.root.glob('shared-server-data-probe-*.json'))
+        marker = next(self.value.owner.root.glob('shared-server-data-*.json'))
         marker.write_text('{"format": 1, "key": "other", "roots": ["scripts.loc"], "stats": {}}')
         (self.runtime / 'serverdata').unlink()
         with self.assertRaisesRegex(server.base.DiagnosticError, 'marker differs'):
             self.value.link_shared_server_data(self.runtime, self.identity)
-        marker.unlink()
-        with self.assertRaisesRegex(server.base.DiagnosticError, 'Unsealed shared server data probe tree'):
-            self.value.link_shared_server_data(self.runtime, self.identity)
+        marker.unlink()                                   # a build stopped before its marker
+        rebuilt = self.value.link_shared_server_data(self.runtime, self.identity)
+        self.assertEqual(rebuilt['removed'], {'unsealed_trees': 1, 'other_identity_trees': 0})
+        self.assertFalse(rebuilt['reused_shared_tree'])
+        self.assertEqual((self.runtime / 'serverdata/scripts.loc/a.storyarc').resolve(), original)
+
+    def test_a_new_identity_removes_older_trees_and_never_their_targets(self):
+        original = self.immutable('scripts.loc/a.storyarc')
+        self.value.link_shared_server_data(self.runtime, self.identity)
+        old = next(path for path in self.value.owner.root.iterdir() if not path.name.endswith('.json'))
+        other = self.root / 'runtime-3'
+        for name in ('data', 'tools'):
+            (other / name).mkdir(parents=True)
+        newer = dict(self.identity, format=3)
+        result = self.value.link_shared_server_data(other, newer)
+        self.assertEqual(result['removed']['other_identity_trees'], 1)
+        self.assertFalse(old.exists()); self.assertFalse((self.value.owner.root / (old.name + '.json')).exists())
+        self.assertEqual(original.read_text(), 'accepted')
+        self.assertEqual(sorted(path.name.endswith('.json') for path in self.value.owner.root.iterdir()), [False, True])
+
+    def test_tree_removal_refuses_regular_files_and_foreign_paths(self):
+        self.immutable('scripts.loc/a.storyarc')
+        self.value.link_shared_server_data(self.runtime, self.identity)
+        shared = (self.runtime / 'serverdata').resolve()
+        os.chmod(shared / 'scripts.loc', 0o700)
+        (shared / 'scripts.loc/real.txt').write_text('data')
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'regular file'):
+            self.value.remove_shared_tree(shared)
+        self.assertTrue((shared / 'scripts.loc/real.txt').exists())
+        elsewhere = self.root / 'shared-server-data-elsewhere'; elsewhere.mkdir()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'unexpected shared server data path'):
+            self.value.remove_shared_tree(elsewhere)
+
+    def test_app_selection_is_off_by_default_and_ci_probe_overrides_it(self):
+        for name in ('scripts.loc/s.storyarc', 'fx/f.fx', 'sequencers/q.txt', 'player_library/p.txt',
+                     'defs/a.def', 'Texts/t.ms'):
+            self.immutable(name)
+        with patch.dict(os.environ, {server.SHARED_SERVER_ENV: '', server.SERVERDATA_PROBE_ENV: ''}):
+            self.assertIsNone(server.shared_server_selection(self.source))
+        with patch.dict(os.environ, {server.SHARED_SERVER_ENV: '1', server.SERVERDATA_PROBE_ENV: ''}):
+            value = server.shared_server_selection(self.source)
+        self.assertEqual(value['shared_top_level'], ['Texts', 'fx', 'scripts.loc'])
+        self.assertEqual(value['selection'], 'app_default_folders_v1')
+        with patch.dict(os.environ, {server.SHARED_SERVER_ENV: '1', server.SERVERDATA_PROBE_ENV: '1'}):
+            self.assertEqual(server.shared_server_selection(self.source)['shared_top_level'], ['scripts.loc'])
+        with patch.dict(os.environ, {server.SHARED_SERVER_ENV: 'yes'}), self.assertRaises(server.base.DiagnosticError):
+            server.shared_server_requested()
+        self.assertTrue({'sequencers', 'player_library'}.isdisjoint(server.SHARED_SERVER_FOLDERS))
+        self.assertTrue(server.SERVERDATA_PROBE_KEEP.isdisjoint(server.SHARED_SERVER_FOLDERS))
 
 
 if __name__ == '__main__': unittest.main()

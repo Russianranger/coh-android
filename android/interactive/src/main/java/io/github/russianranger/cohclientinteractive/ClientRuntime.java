@@ -202,12 +202,13 @@ public final class ClientRuntime {
     private String manifestHash, session, operation, runId, error;
     private String graphicsProfileRequested="standard";
     private String gpuProfileRequested="software";
-    private String clientArchitectureRequested="x86";
+    private String clientArchitectureRequested="arm64";
     private boolean prootFastModeRequested=false;
     private boolean prestartNextZoneRequested=false;
     private boolean trustedBinsRequested=false;
     private boolean gameplay60Requested=false, gameplay60Queued=false;
     private boolean idleResidentMapsRequested=false;
+    private boolean sharedServerDataRequested=false;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -296,6 +297,16 @@ public final class ClientRuntime {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("idle-resident-maps", enabled).apply();
     }
+    /** Both zone servers read the shared folders from one read-only tree (no per-zone copy). */
+    public static boolean sharedServerDataEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("shared-server-data", true);
+    }
+    public static synchronized void setSharedServerDataEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("shared-server-data", enabled).apply();
+    }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
@@ -311,10 +322,11 @@ public final class ClientRuntime {
                 .getString("gpu-profile", "software");
         return "turnip".equals(selected)?"turnip":"software";
     }
+    /** ARM64 is the main client from 0.13.50 (user decision 2026-11-03); x86 stays as the fallback. */
     public static String clientArchitecture(Context context) {
         String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getString("client-architecture", "x86");
-        return "arm64".equals(selected)?"arm64":"x86";
+                .getString("client-architecture", "arm64");
+        return "x86".equals(selected)?"x86":"arm64";
     }
     public static synchronized void setClientArchitecture(Context context, String selected) {
         if(!"x86".equals(selected)&&!"arm64".equals(selected))throw new IllegalArgumentException("Unknown client architecture");
@@ -695,6 +707,7 @@ public final class ClientRuntime {
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
         idleResidentMapsRequested=idleResidentMapsEnabled(context);
+        sharedServerDataRequested=sharedServerDataEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -747,6 +760,7 @@ public final class ClientRuntime {
                     "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
                     "COH_TRUSTED_BINS="+(trustedBinsRequested?"1":"0"),
                     "COH_IDLE_RESIDENT_MAPS="+(idleResidentMapsRequested?"1":"0"),
+                    "COH_SHARED_SERVER_DATA="+(sharedServerDataRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -2507,7 +2521,7 @@ public final class ClientRuntime {
                     .put("character_connected_event", characterConnectedEvent == null ? JSONObject.NULL : characterConnectedEvent)
                     .put("character_relocated_event", characterRelocatedEvent == null ? JSONObject.NULL : characterRelocatedEvent)
                     .put("stuck_requested", stuckRequested)
-                    .put("gameplay_60fps_requested", gameplay60Requested)
+                    .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)
