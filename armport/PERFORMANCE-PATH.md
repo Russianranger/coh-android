@@ -147,6 +147,16 @@ story arcs and definitions are parsed from text either way, so those `.bin`
 files are missing or rejected there. Combined with fast mode, the reopen Atlas
 start went from 183 s (41588867344, neither) to 94 s.
 
+### Thor 0.13.49 (user test, 2026-11-03; ARM64 client)
+
+Details and the full table: HANDOFF-X86.md, "Thor test of 0.13.49". In-world
+FPS with the 60 cap: mean 48 and 45, at least 91% of 5 s windows at 30 or more
+(.44: 25.6). Atlas MapServer ready in 204 s and 222 s (.44: 287 s, so fast mode
+gave about −25% on the device). Warm start: Atlas ready at 297 s, client login
+screen at 374 s, so the client is the critical path. Cold mirror 360 s (first
+start after the update, from a stranded-recovery race). King's Row failed on its
+420 s Python budget.
+
 ### Frame rate, 0.13.44
 
 - Game-measured FPS 12-30, mean 22.8, capped at 30 (patch 0113). With a cap of

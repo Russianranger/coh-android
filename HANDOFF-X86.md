@@ -274,6 +274,58 @@ into main as part of the handoff.
 After posting the final source/tree, local results, port/skip list and CI request
 and closing the four draft PRs, this agent stops. Claude continues development.
 
+## Thor test of 0.13.49 (user, 2026-11-03; exports 20261103-162813 and -165322)
+
+Two sessions on 0.13.49, both passed with proved cleanup. **They ran the ARM64
+client** (`client_architecture_requested: arm64`, standard graphics, Turnip),
+not the x86 client. Fast mode on; King's Row background start and idle priority
+off. Export 20261103-162800 is only the post-update runtime setup (153 s).
+
+| | Session 1 (first start after the update) | Session 2 (warm) |
+|---|---|---|
+| Tap → Atlas map ready | 728 s | 302 s |
+| Atlas preparation (Python) | cold mirror 360 s, beacon graph 77 s | cache checkout 9 s, beacon graph 25 s |
+| Atlas MapServer "Server ready (took …)" | 204 s | 222 s (.44: 287 s) |
+| Client at login screen, from guest start | 850 s | 374 s |
+| Client folder scan (212,496 files) | 127 s | 138 s |
+| In-world FPS, 60 cap (windows above the 10 FPS inactive cap) | mean 48, median 49, 91% ≥ 30 | mean 45, median 42, 97% ≥ 30 |
+| King's Row trip | failed | failed |
+
+- **FPS goal met on the ARM64 client** (.44 ARM64: 25.6 FPS mean). The 60 FPS
+  world-entry cap applied (`maxfps=60` windows). The x86 client is still
+  unmeasured.
+- **King's Row:** both trips failed with "Kings Row Python preparation timed out
+  before native startup" at the 420 s Python budget (`python_inputs`). It was a
+  cold King's Row mirror both times. Session 1 timed out mid-mirror, so no King's
+  Row cache generation was sealed for session 2. Not caused by an unchecked
+  option. The background start option has no 420 s cap until a trip is
+  requested, so it is the stopgap.
+- **Why session 1 was cold:** a generation for this exact identity existed
+  (refused `…-6c6678d9…`, prior owner did not prove cleanup). Stranded recovery
+  refused with `[Errno 2] … '/proc/26417/status'`: an ancestor exited during
+  `foreign_processes`' parent walk. Fix: end the ancestor walk at a vanished
+  ancestor (unwalked ancestors still count as foreign, so it stays fail-safe).
+- **Mirror cost on the Thor:** cold mirror 360 s against 218-230 s on .44; CI
+  shows fast mode does not speed the mirror (99.5 s off, 103.7 s on). The shared
+  read-only tree removes it.
+- **Prepared caches load on the device** with the shipping MapServer: spawn
+  definitions 4 s (CI's retained-progress variant: 110 s).
+- **Warm critical path is the client.** Session 2: Atlas ready at 297 s from
+  guest start, client login screen at 374 s. The client waits for Atlas's Python
+  preparation (client assets start at +70 s), then spends about 117 s on
+  per-session asset installs (visual 28 s, animation 10 s, all-zone assets 48 s,
+  audio 4 s, client data 8 s), then 190 s to start (138 s folder scan).
+- **Wine priorities** (`character_zoning.wine_priorities`, one sample each,
+  `RLIMIT_NICE` 40): `CityOfHeroes.exe` 14 threads at nice 0 and **7 at nice 19**;
+  MapServer, DbServer and wineserver all at 0. Wine applies the dev-mode IDLE
+  class to the client's later threads (likely loaders), not to its main thread.
+  FPS is already good; the lead now concerns loading. Only one sample was taken,
+  because the zoning tick stops calling it after a failed trip.
+- **Cleanup:** complete in both sessions (5 dead leaders with live tasks, all
+  signalled). The fallback lineage sampler mostly fails on its own 1 s budget
+  ("Wine ownership task inspection timed out", 854 and 561 times), but still
+  authenticated 19 and 14 groups.
+
 ## Performance rounds (Claude, 2026-11-03)
 
 PR #11 (`x86/perf-round1` → `x86-track`); `x86/perf-round3` is the working
