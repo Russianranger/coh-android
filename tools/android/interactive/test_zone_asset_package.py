@@ -97,9 +97,24 @@ class ZonePackageTests(unittest.TestCase):
             path = self.work/name
             self.assertEqual(path.read_bytes(), raw)
             self.assertEqual(path.stat().st_mode & 0o777, 0o444)
-        with mock.patch.object(zones.zipfile, 'ZipFile', side_effect=AssertionError('warm ZIP read')):
+        with mock.patch.object(zones.zipfile, 'ZipFile', side_effect=AssertionError('warm ZIP read')), \
+                mock.patch.object(zones.world, 'output_state', wraps=zones.world.output_state) as states:
             reused = zones.install(self.work, self.assets, self.ctx)
         self.assertTrue(reused['fingerprint_reused']); self.assertEqual(reused['installed_files'], 0)
+        self.assertEqual(states.call_count, 1)        # one leaf pass when nothing is written
+
+    def test_fresh_install_and_rebound_keep_the_second_leaf_pass(self):
+        with mock.patch.object(zones.world, 'output_state', wraps=zones.world.output_state) as states:
+            zones.install(self.work, self.assets, self.ctx)
+        self.assertEqual(states.call_count, 2)
+        for name in (zones.ARCHIVE, zones.MANIFEST):
+            path = self.assets / name; raw = path.read_bytes()
+            path.unlink(); path.write_bytes(raw)
+            client._VERIFIED_ASSET_STATES[str(path)] = (self.pin(raw), client.asset_fingerprint(path))
+        with mock.patch.object(zones.world, 'output_state', wraps=zones.world.output_state) as states:
+            result = zones.install(self.work, self.assets, self.ctx)
+        self.assertTrue(result['source_generation_rebound'])
+        self.assertEqual(states.call_count, 2)
 
     def test_new_runtime_sources_rebind_exact_world_and_audio_output_proofs(self):
         self.publish_audio()

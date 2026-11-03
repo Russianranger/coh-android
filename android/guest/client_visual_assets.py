@@ -408,12 +408,19 @@ def install(worktree, assets, context):
         finally:
             os.close(descriptor)
     context.check()
-    require(source_state(assets) == inputs and world.resolve_targets(worktree, files, context) == targets,
-        'Client visual sources or destination changed during preparation')
-    after = world.output_state(worktree, targets, files, context)
-    require(all(row['stat'] is not None for row in after.values()), 'Client visual installed payload disappeared')
-    require(all(before[name]['stat'] is None or after[name] == before[name] for name in files),
-        'Existing client visual file changed during preparation')
+    if reused and not rebound:
+        # Nothing was written and the marker matched this fresh leaf state, so a
+        # second full resolve/stat pass adds no proof (Thor 0.13.49: 27.7 s for
+        # 10,401 unchanged files). Sources and the client identity are rechecked.
+        require(source_state(assets) == inputs, 'Client visual sources changed during preparation')
+        after = before
+    else:
+        require(source_state(assets) == inputs and world.resolve_targets(worktree, files, context) == targets,
+            'Client visual sources or destination changed during preparation')
+        after = world.output_state(worktree, targets, files, context)
+        require(all(row['stat'] is not None for row in after.values()), 'Client visual installed payload disappeared')
+        require(all(before[name]['stat'] is None or after[name] == before[name] for name in files),
+            'Existing client visual file changed during preparation')
     final = {'identity': identity, 'inputs': inputs, 'outputs': after}
     require(identity['client_work_sha256'] == hashlib.sha256(
         world.read_regular(worktree / 'client-work.json', 1024**2)).hexdigest(), 'Verified client identity changed')

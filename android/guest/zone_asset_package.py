@@ -222,9 +222,15 @@ def install(worktree, assets, context, *, collision_only=False, audio=False):
             os.close(descriptor)
     require(document['inputs'] == {name: source_state(assets / name, archive_limit if name == archive_name else MAX_MANIFEST)
                                   for name in (archive_name, manifest_name)}, 'Zone package changed during installation')
-    after = world.output_state(worktree, targets, files, context)
-    require(all(row['stat'] is not None for row in after.values()) and all(before[name]['stat'] is None
-            or after[name] == before[name] for name in files), 'Zone output changed or disappeared')
+    if reused and not rebound:
+        # Nothing was written and the receipt matched this fresh leaf state, so a
+        # second stat pass adds no proof (Thor 0.13.49: 47.6 s for 23,876
+        # unchanged files). The package inputs are rechecked above.
+        after = before
+    else:
+        after = world.output_state(worktree, targets, files, context)
+        require(all(row['stat'] is not None for row in after.values()) and all(before[name]['stat'] is None
+                or after[name] == before[name] for name in files), 'Zone output changed or disappeared')
     if not reused or rebound:
         previous = world.file_state(marker, MAX_RECEIPT, installed=True) if os.path.lexists(marker) else None
         fd, name = tempfile.mkstemp(prefix='.zone-receipt-', dir=worktree)
