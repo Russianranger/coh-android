@@ -1248,6 +1248,35 @@ def observe_owned_launch_memory(child, proc_root=Path('/proc')):
     return result
 
 
+def native_bin_writes(runtime, since_utc_ms, limit=48):
+    """Diagnostic: .bin files this MapServer wrote while starting (text re-parse).
+
+    A development-mode MapServer rewrites a .bin after parsing its source text
+    because the prepared .bin was missing or judged stale. Bounded; never gates.
+    """
+    if runtime is None or type(since_utc_ms) is not int:
+        return None
+    names, total = [], 0
+    for relative in ('data/bin', 'data/server/bin'):
+        try:
+            entries = list(os.scandir(Path(runtime) / relative))
+        except OSError:
+            continue
+        for entry in entries[:4096]:
+            if not entry.name.lower().endswith('.bin'):
+                continue
+            try:
+                info = entry.stat(follow_symlinks=False)
+            except OSError:
+                continue
+            if stat.S_ISREG(info.st_mode) and info.st_mtime_ns // 1000000 >= since_utc_ms:
+                total += 1
+                if len(names) < limit:
+                    names.append(relative[5:] + '/' + entry.name)
+    return {'format': 1, 'count': total, 'names': sorted(names), 'limit': limit,
+            'since_utc_ms': since_utc_ms}
+
+
 def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_payload):
     """Once-only optional private FX byte observation after native readiness.
 
@@ -1962,6 +1991,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     native_ready_elapsed_seconds=round(now - child.started, 6),
                     native_ready_time_scope='sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded')
                 row['owned_launch_memory_at_first_native_ready'] = observe_owned_launch_memory(child)
+                row['native_bin_writes'] = native_bin_writes(runtime, row.get('launch_utc_ms'))
                 row['server_fx_provider']['post_native_ready'] = observe_ready_fx_provider(
                     runtime, row['private_runtime_identity'], row['server_fx_provider']['actual_payload'])
                 changed = True

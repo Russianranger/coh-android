@@ -282,8 +282,12 @@ def guest_timing_summary(evidence):
                 if not isinstance(section, dict):
                     continue
                 rows = [row for row in section.get('map_startup_timing', []) if isinstance(row, dict)][:4]
+                observed = section.get('map_startup_observation')
                 result[key] = {'map_startup': [{name: row.get(name) for name in TIMING_FIELDS} for row in rows],
-                               'preparation_phase_seconds': section.get('server_preparation_phase_seconds')}
+                               'preparation_phase_seconds': section.get('server_preparation_phase_seconds'),
+                               'native_bin_writes': {map_id: (value or {}).get('native_bin_writes')
+                                   for map_id, value in list(observed.items())[:4]}
+                                   if isinstance(observed, dict) else None}
         path = evidence / 'report.zip'
         if path.is_file():
             with zipfile.ZipFile(path) as archive:
