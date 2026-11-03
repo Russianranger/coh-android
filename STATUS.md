@@ -1,9 +1,9 @@
 # x86 track integration
 
-Updated 2026-11-02 America/Chicago. Integration/handoff only; Claude leads next.
-The x86 client is primary; ARM64 stays experimental and shelved.
-Keep x86 Win32 servers, PhysX and ragdolls; cold-start goals remain unmeasured here.
-Default branch remains main; no release, APK handoff or repository setting change.
+Updated 2026-11-03 America/Chicago. Claude leads development (PR #11, issue #10).
+The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
+Keep x86 Win32 servers, PhysX and ragdolls. Pre-releases are user-approved.
+Default branch remains main; no repository setting change.
 
 - Merge order: sampler-review-fix → startup-60s → modern-runtime-qualification
   → m5-thor (b7806a6bd King's Row docs) → performance-path docs.
@@ -33,8 +33,8 @@ Default branch remains main; no release, APK handoff or repository setting chang
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode (PRoot seccomp) default on: CI Atlas start −26/−32% (41588867344 vs 41584980465).
-- Trusted bins: reopen Atlas 130→94 s (41610459604 vs 41605600310); inert with the shipping MapServer.
 - CI creation re-parses ~230 s: CI's retained-progress MapServer fails the cache check (41630365042).
 - 0.13.49 on the Thor (2 sessions, ARM64 client): in-world FPS mean 45-48, 91-97% windows ≥30;
   Atlas MapServer ready 204/222 s (.44: 287 s); King's Row failed (420 s Python budget, cold mirror).
-- Shared-tree probes: scripts.loc clean, mirror 106→74 s (41636702283); wide set rebuilds bins (41648097743).
+- 0.13.50 (ARM64 primary): shared server data for both zones, client scan skips scripts.loc/server
+  (patch 0120), recovery race fix; build 41689729437. Test sheet THOR-TEST-0.13.50.md.

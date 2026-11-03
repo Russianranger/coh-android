@@ -274,6 +274,36 @@ into main as part of the handoff.
 After posting the final source/tree, local results, port/skip list and CI request
 and closing the four draft PRs, this agent stops. Claude continues development.
 
+## 0.13.50: ARM64 client primary, King's Row and client start (Claude, 2026-11-03)
+
+User decision (2026-11-03 11:38 CST): keep the ARM64 client, shelve x86 as the
+reversion path. Test sheet: [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
+
+- **ARM64 is the default client**; `x86 client (fallback)` stays selectable.
+- **Shared read-only server data** (option, on): both zone servers omit 15
+  folders from their private trees and read them from one tree per Atlas data
+  identity through `runtime/serverdata` (King's Row's runtime now has `tools/`).
+  `sequencers` and `player_library` stay private: the wide CI probe rebuilt
+  `sequencers.bin` and 21 power/salvage bins with them shared. A tree without
+  its marker is rebuilt; older identities' trees are removed (directories and
+  links only, checked first). The overlay's 52 files are all `object_library`.
+- **Stranded-cache recovery race fixed** (0.13.49 session 1's 360 s cold mirror).
+- **Client folder scan**: ArmPort patch 0120 (`ARMPORT_FOLDER_CACHE_SKIP`); the
+  guest skips `scripts.loc` and `server/` for the ARM64 client (option, on). The
+  ARM64 client is a production-mode client reading loose files (patch 0042), so
+  it scans every folder upfront; switching it to the on-demand dev mode was
+  rejected (different mode). The client source never reads either folder.
+- **Client asset installs**: an unchanged reused install does one leaf pass, not
+  two (visual 27.7 s, zones 47.6 s, audio 4.1 s on 0.13.49).
+- Correction to the 0.13.49 priority note: the ARM64 client is in production
+  mode, so the 7 nice-19 threads are threads it sets to idle priority itself,
+  not an IDLE process class.
+- Chain: build 41689729437 (client with 0120), then a runtime at the release
+  head with shipping servers, fast mode, shared data and the skip on, then the
+  shipping-server APK.
+- Known: `test_classify_storage_cleanup_change` keys on the last commit's file
+  list and fails for multi-area commits; not a behaviour regression.
+
 ## Thor test of 0.13.49 (user, 2026-11-03; exports 20261103-162813 and -165322)
 
 Two sessions on 0.13.49, both passed with proved cleanup. **They ran the ARM64
