@@ -12,6 +12,7 @@ import mapserver_phases
 
 # Shape copied from the 0.13.44 Thor Atlas console (session id replaced).
 CONSOLE = """started 2026-10-28 19:41:29
+ARMPORT_SERVER_STARTUP_V1 status=ok map_id=1 pid=556 sequence=6 phase=sequencer_info_done elapsed_ms=96000.000 phase_ms=93930.000 scope=main_entry_to_checkpoint
 Caching directory tree and misc startup...                            (0.17)
 more miscellany..[2026-10-28 19:41:30.441] [DEBUG] \tParsing .statebits from seqstatebits.bin
 done                                                 (1.54)
@@ -30,6 +31,8 @@ Starting novodex...[2026-10-28 19:46:42.488] [DEBUG] Loading PhysX objects
 [2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects
 success                                            (18.84)
 Verifying SG permission tables.. done                                 (0.00)
+ARMPORT_SERVER_STARTUP_V1 status=ok map_id=1 pid=556 sequence=14 phase=ready_published elapsed_ms=330120.500 phase_ms=0.250 scope=main_entry_to_checkpoint
+ARMPORT_SERVER_STARTUP_V1 status=ok map_id=1 pid=556 sequence=15 phase=main_loop_begin elapsed_ms=330200.000 phase_ms=79.500 scope=main_entry_to_checkpoint
 [2026-10-28 19:50:36.000] [DEBUG] \tReading player.txt from 623e484ce0c9459aa725b497fad0329a
 """
 
@@ -57,6 +60,13 @@ class MapServerPhaseTests(unittest.TestCase):
         # Startup ends at the permission check; the later client wait is excluded.
         self.assertEqual(result['stamped_span_seconds'], 330.84)
         self.assertNotIn('623e484ce0c9459aa725b497fad0329a', json.dumps(result))
+
+    def test_native_checkpoints_are_read_even_after_ready(self):
+        checkpoints = mapserver_phases.summary(CONSOLE)['native_checkpoint_seconds']
+        self.assertEqual(checkpoints['sequencer_info_done'], 93.93)
+        self.assertEqual(checkpoints['main_loop_begin'], 0.08)
+        self.assertEqual(checkpoints['elapsed_to_main_loop'], 330.2)
+        self.assertIsNone(mapserver_phases.summary('x\n')['native_checkpoint_seconds'])
 
     def test_bounded_on_empty_or_unstamped_text(self):
         result = mapserver_phases.summary('no timing here\n')

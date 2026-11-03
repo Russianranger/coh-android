@@ -16,6 +16,9 @@ import sys
 STAMP = re.compile(r'\[(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d{3})\]')
 SELF_TIMED = re.compile(r'\((\d{1,5}\.\d\d)\)\s*$')
 ANIMATION = re.compile(r'^COH_ANIM_CERT_V1 .*?\bopened=(\d+)')
+# Native patch 0119 (instrumented CI MapServer) checkpoints, when present.
+STARTUP = re.compile(r'ARMPORT_SERVER_STARTUP_V1 status=ok .*?\bphase=([a-z_]{1,40}) '
+                     r'elapsed_ms=(\d+(?:\.\d+)?) phase_ms=(\d+(?:\.\d+)?)')
 SESSION = re.compile(r'[0-9a-f]{32}')
 # The last startup line before the map serves; later gaps are client waits.
 READY = 'Verifying SG permission tables'
@@ -38,11 +41,20 @@ def summary(text, top=8):
     timed, gaps = [], []
     first = last = None
     animations = None
+    checkpoints, ready = {}, False
     for index, line in enumerate(text.splitlines()):
         if index >= LINE_LIMIT:
             break
+        match = STARTUP.search(line)
+        if match and len(checkpoints) < 32:
+            checkpoints.setdefault(match.group(1), round(float(match.group(3)) / 1000, 2))
+            if match.group(1) == 'main_loop_begin':
+                checkpoints.setdefault('elapsed_to_main_loop', round(float(match.group(2)) / 1000, 2))
+            continue
         if READY in line or (line.startswith('COH_') and 'kind=ready' in line):
-            break
+            ready = True
+        if ready:
+            continue
         match = ANIMATION.match(line)
         if match:
             animations = int(match.group(1))
@@ -75,7 +87,8 @@ def summary(text, top=8):
             'self_timed_total_seconds': round(sum(row[1] for row in timed), 2),
             'slowest_self_timed': timed[:top],
             'slowest_untimed_gaps': gaps[:top],
-            'animation_files_opened': animations}
+            'animation_files_opened': animations,
+            'native_checkpoint_seconds': checkpoints or None}
 
 
 if __name__ == '__main__':
