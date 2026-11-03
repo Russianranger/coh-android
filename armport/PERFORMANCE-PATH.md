@@ -132,6 +132,13 @@ below and is the first thing to measure (Phase 0).
      again: about 4 minutes lost to one imperfect shutdown.
    - The engine already reads `.pigg` archives: the server animation pack is
      one.
+   - Lead (2026-11-02, source reading only): `FolderCacheAddFolder` skips the
+     upfront scan in `FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC` and resolves files
+     on demand (`FolderCacheQuery`); `FolderCacheChooseMode` picks it only when
+     `./piggs/texts.pigg` is absent. The logged `phase=scan` shows the clients
+     ran a full scan instead. Dev mode also lowers client priority
+     (`game_beforeParseArgs`) and changes `fileScanAllDataDirs`, so measure
+     before relying on it. Round-1 cache recovery (PR #11) covers the stranding.
 3. **x86 MapServer under FEX doing file-heavy start-up**, every session, plus
    per-session Python preparation (beacon graphs 15-57 s, ODBC setup; the x86
    app line also paid a ~70 s Wine GPU probe each launch).
