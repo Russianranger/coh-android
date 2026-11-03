@@ -7,13 +7,47 @@ Written 2026-11-02 by Claude (reviewer) at the user's request, after reading
 Thor exports (0.13.44, 2026-10-28). Numbers come from those exports unless a run
 is named; estimates are marked as estimates.
 
+## Direction (decided by the user, 2026-11-02)
+
+- **The x86 track is primary again. ArmPort (the ARM64 client) is shelved and
+  stays secondary**: no further ARM64-specific investment. The ARM64 option can
+  remain in the app as experimental.
+- **Keep ragdoll physics.** The servers stay x86 Win32 with PhysX, as in the
+  x86 version. A native ARM64 MapServer is off the table.
+- **Servers may stay running, with an idle/stasis mode or shutdown** that cuts
+  resource use while idle. The goals should still be met from a **cold start**;
+  resident servers are an addition, not a substitute.
+- **The default branch stays `main`.** Workflows keep being dispatched through
+  Astra's branch coordinator or by the reviewer on request.
+
+What this changes in practice:
+- Almost nothing on the server side. The DbServer and MapServers are x86 in
+  both lanes, so every server, data and runtime figure below applies as is.
+- The client figures below come from the ARM64 client lane. **The x86 client's
+  gameplay FPS has never been measured on the Thor** (every x86-era report has
+  `native_fps_measurement: false`). The x86 client runs through FEX, so its FPS
+  needs its own baseline before any FPS work.
+- The x86 client source is not behind. Its native patch series (`patches/`,
+  tree `ffcb910e1`) is byte-identical in the 0.13.36 release, the `codex/*`
+  branches, `COH-ArmPort` and Astra's newest branch. It already has
+  render-worker wake coalescing (`client-render-queue`) and a texture-header
+  index (`client-texture-index`), the x86 counterparts of ArmPort 0116 and
+  0109.
+- The lines differ in the app and guest runtime only:
+  - The `codex/*` branches (PRs #1 and #2) hold ~1,900 lines of unreleased
+    0.13.37 app/guest work on top of release commit `3570430ce`.
+  - Astra's line holds the newer startup instrumentation, ODBC reuse, server
+    metrics, zoning and display-path work.
+  - Continuing on Astra's line with the x86 lane as the target, and reviewing
+    the 0.13.37 work for merge, loses nothing.
+
 ## Goals
 
 | # | Goal | Today on Thor (0.13.44) | Gap |
 |---|---|---|---|
 | 1 | Server and client start under 5 min | Client window ready 8.9 min after the tap with a warm server-data cache, 10.9 min on a cache miss; in the world at ~12 min either way | ~2x |
 | 2 | Zoning under 30 s | ~29 s when the destination MapServer is already running; ~9.7 min (563 s server + 18 s client) when it is cold | met only for resident servers |
-| 3 | Steady 30 FPS or higher | 12-30 FPS in gameplay, mean 22.8; 226 of 227 five-second gameplay windows under 30 | needs headroom, not just the cap |
+| 3 | Steady 30 FPS or higher | ARM64 client: 12-30 FPS in gameplay, mean 22.8; 226 of 227 five-second gameplay windows under 30. x86 client: never measured | needs headroom, not just the cap |
 | 4 | Any MapServer cold start under 1 min | Atlas 287-339 s native start (plus 26-276 s preparation); King's Row 271 s native (plus 291 s preparation) | ~5x on native start alone |
 
 Definition used below: "start" is tap to the client window being ready to log
@@ -127,7 +161,9 @@ below and is the first thing to measure (Phase 0).
 | Keep destination MapServers resident; pre-start the next zone once the current one is ready | 2 | Zoning becomes the measured ~29 s case | Small-medium | Memory (0.8-1.9 GB per server) and CPU contention during play | Measured for the resident case; needs a memory cap and low-priority start |
 | Keep the server stack running between sessions (foreground service) | 1 | Second and later starts near client-only time | Medium | Battery, Android process limits, save safety | Design work; doesn't help the cold-start goal |
 | Cooked PhysX mesh cache | 4 | Part of the 22 s PhysX phase | Medium | Cache correctness | Measure with 0119 phases first |
-| Native ARM64 MapServer (Windows ARM64 under Wine, like the client) | 4 2 1 | Removes FEX from server start-up and simulation | Large | PhysX 2.8.4 has no ARM64 build. Options: run without server physics (ragdolls only, which the ARM64 client already discards) or migrate physics. The client's 64-bit defect classes all apply | Gain unknown until 1-3 are done and measured; decide then |
+| Native ARM64 MapServer | 4 2 1 | Would remove FEX from the servers | Large | PhysX 2.8.4 has no ARM64 build | **Shelved by the user's decision** (keep ragdoll physics; x86 track) |
+| FEX tuning for the x86 servers and client (TSO, SMC and block settings per process) | 1 2 3 4 | Unknown; FEX runs entirely on defaults today | Small to try | Correctness: memory-ordering settings must stay safe for multithreaded processes | Untried. A/B per setting in CI, server first |
+| Idle/stasis for resident servers (lower tick rate when empty, or freeze and thaw) | 2 | Keeps resident zoning (~29 s) while idle servers use little CPU and battery | Medium | DbServer heartbeats and timeouts must tolerate a frozen map; thaw must be quick | Design and measure; the user wants this as an addition to cold-start goals |
 | Raise FPS cap to 60 (GPU profile) | 3 | Lets the average rise above 30 so dips stay above 30 | Trivial | Thermal/battery | Only useful once frames take well under 33 ms |
 | Zero-copy display: X server with DRI3/Present on AHardwareBuffer, drop `MESA_VK_WSI_DEBUG=sw` | 3 | Removes CPU readback and both frame copies | Large | Integration and licence (Termux:X11, the proven open-source example, is GPL-3.0) | Measure SwapBuffers share first; seccomp may already recover much of the socket cost |
 | Drop PRoot entirely (Wine + FEX built for Android bionic) | all | Removes the remaining path-call cost | Very large | Whole runtime rebuild | Only if seccomp + data layout leave a large gap |
@@ -148,11 +184,13 @@ the goals.
 - CI A/B, one variable: `server-run` with and without `PROOT_NO_SECCOMP`,
   recording MapServer "Server ready (took …)", the client folder-scan time and
   client FPS.
-- Add a frame-time split to `ARMPORT_FRAME_RATE_V1`: time inside SwapBuffers
-  versus the rest.
+- Get an x86 client FPS baseline on the Thor: per-window game FPS (the x86
+  equivalent of ArmPort's `ARMPORT_FRAME_RATE_V1`, as an x86 `patches/` change)
+  next to the existing `COH_CLIENT_RENDER_QUEUE_V1` timing, with time inside
+  SwapBuffers split from the rest of the frame.
 
 Exit: a phase table for the MapServer with FEX/Wine/PRoot shares understood,
-and a seccomp yes/no.
+a seccomp yes/no, and the x86 client's FPS and frame-time split.
 
 ### Phase 1: broad, low-risk wins (1-2 weeks)
 
@@ -182,14 +220,19 @@ cache-miss starts gone.
 Exit targets: start ≤ 5 min; cold MapServer ≤ 2 min; FPS ≥ 30 in 95% of
 gameplay windows.
 
-### Phase 3: decide on the native ARM64 MapServer
+### Phase 3: close the cold-start gap on the x86 track
 
 With Phases 0-2 measured, the remaining gap to a 60 s cold start is known.
-If it is mostly CPU time in parsing and simulation under FEX, port the
-MapServer to ARM64 Windows with the client's toolchain and patch process. Make
-the physics decision explicitly: run without server ragdoll physics to match
-what the ARM64 client shows, or migrate. If the gap is still mostly file
-syscalls, consider the bionic runtime instead.
+The levers left on the x86 track, in order:
+1. FEX tuning per process, starting with the MapServer.
+2. Removing remaining per-start work found in the 0119 phase timing (for
+   example cooked physics, definition parsing that can be cached by data
+   identity).
+3. If file syscalls still dominate: the bionic runtime (Wine + FEX without
+   PRoot).
+
+Alongside, ship resident servers with an idle/stasis mode for zoning and
+restarts, without relying on them for the goals.
 
 Exit target: cold MapServer ≤ 60 s, which also makes cold zoning about
 60 s + ~20 s client load. Resident zoning stays the 30 s path.
@@ -201,14 +244,16 @@ Exit target: cold MapServer ≤ 60 s, which also makes cold zoning about
   A developer APK flavour with runtime toggles (seccomp, FPS cap, pre-start)
   that is device-tested for numbers, not qualified for saves. Keep the full
   qualification for candidates handed to the user as playable.
-- **Make the workflows dispatchable from the UI.** Either set the default
-  branch to `COH-ArmPort` or put the workflow files on `main`. This is a
-  repository setting for the user to decide.
+- **Dispatch.** The default branch stays `main` (user decision), so the
+  workflows can't be started from the GitHub UI. Astra's branch coordinator
+  and reviewer dispatch on request remain the route.
 - **Consolidate branches.**
   - `main` stopped on 2026-09-25 and shares no history with `COH-ArmPort`.
   - The 26 `codex/*` app-line branches were last active between 2026-09-28 and
-    2026-10-14 (`codex/cloud-foundation-20261029` is tooling). `native-android`
-    is frozen. All of these are historical.
+    2026-10-14 (`codex/cloud-foundation-20261029` is tooling). They are
+    historical except the unreleased 0.13.37 app/guest work in PRs #1 and #2,
+    which should be reviewed for merge into the x86 track. `native-android` is
+    frozen.
   - Live work forks at `0bf31c81b` (0.13.45 code). `armport/m5-thor` adds 2
     documentation commits. `armport/server-metrics` → `armport/sampler-review-fix`
     (0.13.46) → `armport/mapserver-startup-60s` is one line, and
@@ -220,16 +265,7 @@ Exit target: cold MapServer ≤ 60 s, which also makes cold zoning about
 
 ## What I would not do now
 
-- Start the ARM64 MapServer port before Phase 0-1 numbers exist. Its gain is
-  unknown and probably smaller than PRoot and data-layout costs, and it carries
-  a physics decision.
+- Further ARM64-client work (shelved), or an ARM64 MapServer (ragdoll physics
+  must stay).
 - Resume `native-android` for these goals.
 - Rebuild the runtime on bionic before the seccomp result is in.
-
-## Open questions for the user
-
-1. Is running the server without ragdoll physics acceptable for an ARM64 server
-   (the ARM64 client already doesn't show ragdolls)?
-2. Should the server stack stay running while the app is open (faster
-   restarts, more battery use)?
-3. Default branch: switch to `COH-ArmPort`, or copy the workflows to `main`?
