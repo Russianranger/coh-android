@@ -34,9 +34,14 @@ value is refused (no maps start) rather than silently falling back.
    <free port> -tcp 0 -map_id N -cookie C -donotautogroup ...` plus
    `-transient` when the record says so, never the record's `-launcher`.
    Ports: 7001 upward, as `-udp -1` would choose.
-3. Zone data: the zone's tree (shared read-only folders + private `bin`,
-   `geobin`, `server`), prepared caches sealed after the first visit. Atlas and
-   King's Row keep their verified packages.
+3. Zone data: one shared tree for every on-demand zone, laid out like a PC
+   install (shared read-only folders + one private `bin`, `geobin`, `server`),
+   so a spare can do its shared loading before it knows its zone. Per-zone
+   files are already separated by path (`geobin/maps/<zone>`,
+   `server/maps/<zone>/*.bcn`). Prepared bins are trusted so concurrent
+   servers do not rewrite them. Atlas and King's Row keep their own verified
+   trees until the shared tree is proven; a second server writing into the
+   Atlas tree would invalidate its sealed cache (compare 0.13.50 session 2).
 4. Timeout and failure: a process that exits before registering, or is not
    ready within its budget, is stopped and the map delinked.
 5. Memory policy (defaults, all settings in the app): the current zone; the
@@ -95,5 +100,13 @@ is untested under Wine/FEX; a later experiment.
 - Done: the two studies; the DbServer overlay and patch with
   `armport/tests/external_map_requests.py` (5 modes, escaped records, overflow
   refused, patch applies to the reconstructed staged sources).
-- Next: put the layer into the startup-bundle DbServer build and its package
-  contract; then the supervisor side.
+- Next, the build pipeline for the layer: the device DbServer is
+  `startup-dbserver.exe` + `startup-dbserver-manifest.json` from
+  `android-startup-bundle.yml` (Windows, MSVC; layers PostgreSQL → Wine ODBC →
+  manual Atlas → save emission, each with a receipt checked by
+  `package_startup_bundle_dbserver.py` and by the guest). Add the external-map
+  layer as a fifth receipt, build and package it there, admit the two replaced
+  payloads in `build_thor_apk.py` behind an APK option, and accept the new
+  role in the guest. Then the supervisor (request polling, process start with
+  cookie, delink on failure), first observe-and-delink, then King's Row on
+  request, then the shared zone tree.
