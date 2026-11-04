@@ -1,9 +1,8 @@
 # x86 track integration
 
-Updated 2026-11-03 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-04 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
-Keep x86 Win32 servers, PhysX and ragdolls. Pre-releases are user-approved.
-Default branch remains main; no repository setting change.
+Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
 - Merge order: sampler-review-fix → startup-60s → modern-runtime-qualification
   → m5-thor (b7806a6bd King's Row docs) → performance-path docs.
@@ -37,4 +36,5 @@ Default branch remains main; no repository setting change.
   cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.
 - 0.13.51 Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
 - 0.13.52 published (APK 41791858823, runtimes 41783448453/41787724875 passed, index hit 0.127 s): clock wrap 0123, 0122.
-- 0.13.53: game audio (TRASC ALSA plugin + AudioTrack bridge, option on), per-process RSS. Zone study: HANDOFF-X86.md.
+- 0.13.53: game audio (TRASC plugin + AudioTrack bridge), RSS. Tone probe PASS 71,986/71,987 non-zero (41838960420);
+  runtimes 41832716509/41838960420 failed logout: modal "Sound Script Errors" dialog (no CI sounds) → patch 0124.

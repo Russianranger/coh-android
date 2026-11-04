@@ -467,6 +467,27 @@ for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
   (or takes audio focus) for the x86 client. Left: push-triggered runtime runs
   read `client_audio` as off (same as `shared_server_data`; the chain
   dispatches). First run of the client's sound engine on ARM64 is the Thor test.
+- **CI, 2026-11-04 (build 41819619887 at b6bf8dc64):** plugin native check
+  PASS. Runtime 41832716509: the game opened one stream through the plugin
+  (20.9 M frames, no protocol fault) but every sample was zero, because the CI
+  client data has no sound files (reference assets, Atlas and reviewed zone
+  supplements: none; "Loading sounds" takes 3 ms). Its creation session then
+  failed the save window: logout typed, no save in 120 s (then the usual
+  ownership-inspection cleanup symptom). Runtime 41838960420 at 6a8d7a08e
+  added a **DirectSound tone probe** to the boot run (`armport/audio/dsound_tone.c`,
+  the client's exact audio settings, packaged plugin, CI-only): **PASS, 1 stream,
+  71,986 / 71,987 non-zero samples left/right** (1.5 s at 48 kHz). Its creation
+  session failed the same way; the new failure-detail notice showed the client's
+  last output "Could not find sound Element_Siren_02 … Element_Vehicle_03" and
+  its frame rate falling from the 10 FPS cap to 3 and 2 FPS.
+- **Cause and fix (patch 0124):** with DirectSound working, `loadSoundScripts`
+  (sound_ambient.c) parses Atlas's ambient sound scripts; each script naming a
+  sound the data lacks opens `winErrorDialog("Sound Script Errors")`, a modal
+  dialog that stops the game's input. With audio off (all earlier runs) the
+  loader returns first. The device holds all 6,219 original sounds, but a
+  missing or renamed sound must never stop play: 0124 logs the errors
+  (`ARMPORT_SOUND_SCRIPT_ERRORS_V1`) and bounds the 1,024-byte error text (a
+  script naming many missing sounds overflowed it). Chain restarted at 7f0a59664.
 
 ## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
 
