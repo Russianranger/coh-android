@@ -147,5 +147,14 @@ MapServers, shared heap on, in CI and then on the Thor.
   arguments are planned (`-cookie`, no `-launcher`, `-locale 0` dropped), but
   no map is started yet. `armport/tests/test_external_map_supervisor.py` reads
   records written by the overlay itself (POSIX stand-in).
-- Next: run the DbServer workflow when no other chain runs; then King's Row on
-  request (start with the cookie, delink on timeout), then the shared zone tree.
+- Built (2026-11-04, run 41883310382 at b169c5e84, first run through the
+  workflow's narrow push trigger): MSVC contracts PASS (the request records
+  under the real Win32 API, plus the retained launcher-wait, cancelled-child
+  save and level-up contracts); `DbServer.exe` 1,667,584 bytes (level-up donor
+  1,664,512), sha256 `5d9b2f014be4f8e298cfa8ba73cffb336fd632a5a57699bfa3ff317407d7f187`,
+  no unresolved imports; artifact `armport-external-maps-dbserver` (90 days).
+  Not run in a guest yet.
+- Next: a CI runtime with this DbServer and `COH_EXTERNAL_MAPS=1` (the CI guest
+  stages its DbServer from the retained 0.10.0 app, so the runtime needs its
+  own admission path), then King's Row on request (start with the cookie,
+  delink on timeout), then the shared zone tree.
