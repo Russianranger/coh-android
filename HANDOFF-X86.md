@@ -375,6 +375,47 @@ the station cap and evidence, and an earlier client start. Test sheet:
   `stage_app_assets.py`; the app's default has been ARM64 since 0.13.50
   (`ClientRuntime.clientArchitecture`).
 
+## 0.13.52 (staged, not published): saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
+
+User, 19:24 CST: "Work on 1 and 2 and 3, stage the update, wait for my results
+to add more". So the APK is built (`publish_release=false`) and published only
+after the 0.13.51 results.
+
+- **Saved client file list** (ArmPort patch 0122, app option on,
+  `COH_CLIENT_FOLDER_INDEX`). `FolderCacheAddFolder("./data")` saves its scan
+  to `<root>/armport-folder-cache-index.bin` and rebuilds the same nodes when
+  `ARMPORT_FOLDER_CACHE_ID` matches. The identity (`armport_client_package.
+  folder_cache_identity`) hashes the per-launch link validation digests (every
+  source directory and link-target directory: device, inode, mtime, ctime),
+  the link count, the overlay archive and executable, and the skip list.
+  Installs publish new files, so any change moves a directory identity. The
+  client also refuses on header, length, checksum or record errors, or when
+  one of 64 sampled files changed size or time, and always scans the overlay's
+  root `bin/` live (fresh mtimes every launch). Log: `phase=index result=hit|miss
+  reason=...` and `result=written`. `armport/tests/folder_cache_index.py` runs
+  the extracted prepared code natively (18 checks; upstream fails) as a build
+  step. 160k-file fixture: 5.2 MB index, identical tree, 2 listings vs 1,642.
+- **First-lookup links** (`COH_SERVERDATA_FIRST_LOOKUP`, on). `runtime/serverdata`
+  is now a directory of folder links (15 shared) plus `bin`, `geobin` and
+  `server` linked to `../data/`. The Atlas console requests trees for 14 roots,
+  none of these three, so they are looked up one file at a time and each first
+  missed in `serverdata/`. Expected: some of the 5-6 s, measured only on the
+  device (CI +0.8 s). Writes still land in `data/` through the links.
+- **Opt-in test server** (`server_option` APK input, app option "Fast server
+  start (test server)", off by default under a new key; the old `trusted-bins`
+  key defaulted on). The APK keeps `game-package.tar.gz` byte-identical
+  (`build_thor_apk` admits no change to it in this mode) and adds the admitted
+  `thor_certified_startup` metrics server (0119 + trusted bins) as
+  `game-package-trusted.tar.gz`. `select_game_archive` uses it only with
+  `COH_TRUSTED_BINS=1`; the binding then pins that archive and requires the
+  Thor variant with the reviewed switch. This server has never run anywhere
+  (CI runs `retained_progress`); its first run is the Thor test. The data
+  cache identity maps it to its shipping predecessor, so the mirror is reused.
+- Chain (one at a time): `armport-build` with `build_server_metrics=true` →
+  runtime with the default server (evidence for the file list and links) →
+  runtime with `server_run_id`, `trusted_bins=true` (qualifies the server
+  package) → APK with `server_metrics`, `server_option`, no publish.
+
 ## Thor test of 0.13.50 (user, 2026-11-03; exports 20261103-215454 and -220758)
 
 Two sessions, both passed with proved cleanup; export -215435 is the runtime
@@ -404,7 +445,10 @@ look laggy while the client is smooth; loading still long.
 - **Shared tree lookup cost on the device:** Atlas `loading map` 34.1 s and
   King's Row 35.7 s, against 20.8 s on 0.13.49 (CI: +0.8 s). The engine searches
   `serverdata/` first, so every map-geometry open misses there first. Other
-  phases are unchanged (story arcs 43-45 s, fx gap 35-36 s).
+  phases are unchanged (story arcs 43-45 s, fx gap 35-36 s). *Correction
+  (0.13.52 work): 20.8 s was 0.13.49's warm checkout; its cold copy (export
+  -162813) took 29.0 s, and both 0.13.50 sessions were cold copies. The shared
+  tree costs about 5-6 s per load, not 13 s.*
 - **Client:** the skip saves 24-33 s of scan; the single-pass installs save
   about 42 s. Client preparation still starts only after Atlas's Python preparation.
 - **NPC lag:** the King's Row MapServer ticked at 29/s throughout (same as

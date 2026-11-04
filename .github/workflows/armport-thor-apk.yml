@@ -206,11 +206,13 @@ jobs:
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
           ARM64 client by default (x86 client kept as the fallback). On by default: Fast mode (PRoot seccomp),
-          60 FPS in the world, Share server data between zones, Skip server-only folders in the client's scan.
-          Off: King's Row background start, idle priority.
-          New: the prepared Atlas and King's Row data is reused again after a session (0.13.50 rebuilt it);
-          10 FPS while waiting at the monorail for the next zone; thermal samples and server tick timing in
-          the export. Test sheet: THOR-TEST-0.13.52.md in the source. CI-only evidence for the new changes.
+          60 FPS in the world, Share server data between zones, Skip server-only folders in the client's scan,
+          Reuse the client's saved file list. Off: King's Row background start, idle priority, Fast server start
+          (test server).
+          New: the client reuses its saved file list while the game data is unchanged (on; a full scan
+          otherwise); zone servers find their private bins and map geometry on the first lookup; optional
+          test server with fast data loading (off by default). Test sheet: THOR-TEST-0.13.52.md in the source.
+          CI-only evidence for the new changes.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead; that server has not run on a device before." >> notes.md
