@@ -410,6 +410,43 @@ def story_arc_counts(text, limit=4):
     return [[int(value) for value in match.groups()] for match in STORY_ARC_COUNTS.finditer(text)][:limit]
 
 
+EXTERNAL_MAPS_WORKFLOW = '.github/workflows/armport-external-maps-dbserver.yml'
+
+
+def external_maps_build_run(run_json, directory):
+    """The package comes from one successful run of its own workflow at its own commit."""
+    run = json.loads(run_json.read_text())
+    manifest = json.loads((directory / 'startup-dbserver-manifest.json').read_text())
+    require(run.get('path') == EXTERNAL_MAPS_WORKFLOW and run.get('status') == 'completed'
+            and run.get('conclusion') == 'success'
+            and re.fullmatch('[0-9a-f]{40}', run.get('head_sha') or '')
+            and run.get('head_sha') == manifest.get('repository_commit'),
+            'External map DbServer package is not from one successful build run at its own commit')
+    return {'run_id': run.get('id'), 'head_sha': run['head_sha']}
+
+
+def external_maps_summary(section):
+    """Bounded view of the supervisor report and the installed DbServer layer."""
+    record = section.get('external_maps')
+    if not isinstance(record, dict):
+        return None
+    summary = {key: record.get(key) for key in ('requested', 'enabled', 'reason', 'dbserver_layer')}
+    supervisor = record.get('supervisor')
+    if isinstance(supervisor, dict):
+        summary.update({key: supervisor.get(key) for key in ('acknowledgement_observed', 'stopped', 'counts',
+                                                             'session_maps', 'map_starts_executed')})
+        requests = supervisor.get('requests') if isinstance(supervisor.get('requests'), list) else []
+        summary['requests'] = [{key: item.get(key) for key in ('map_id', 'is_static', 'decision', 'reason')}
+                               | {'delink_passed': (item.get('delink') or {}).get('passed')}
+                               for item in requests[:6] if isinstance(item, dict)]
+        anomalies = supervisor.get('anomalies') if isinstance(supervisor.get('anomalies'), list) else []
+        summary['anomalies'] = [str(item)[:160] for item in anomalies[:4]]
+    manual = section.get('manual_atlas_startup')
+    if isinstance(manual, dict):
+        summary['manual_atlas_ack'] = manual.get('native_ack_observed')
+    return summary
+
+
 def guest_timing_summary(evidence):
     """Bounded A/B diagnostic (PRoot mode, map startup, preparation phases); never gates."""
     result = {}
@@ -429,6 +466,9 @@ def guest_timing_summary(evidence):
             result['shared_heap'] = next((section.get('shared_heap') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('shared_heap') is not None), None)
+            result['external_maps'] = next((external_maps_summary(section) for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('external_maps') is not None), None)
             for key in ('character_creation', 'character_reopen'):
                 section = report.get(key)
                 if not isinstance(section, dict):
@@ -476,7 +516,7 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
     for name, original in timings.items():
         summary, writes = {}, {}
         detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts',
-                                                 'shared_heap')
+                                                 'shared_heap', 'external_maps')
                   if original.get(key)}
         for key, value in original.items():
             if key in detail:
@@ -570,9 +610,17 @@ def main():
     parser.add_argument('--server-archive', type=Path)
     parser.add_argument('--server-run-id', type=int)
     parser.add_argument('--baseline-root', type=Path)
+    parser.add_argument('--external-maps-dbserver', type=Path,
+                        help='armport-external-maps-dbserver package: added to the CI donor and enabled')
+    parser.add_argument('--external-maps-run-json', type=Path,
+                        help='GitHub API record of the run that built --external-maps-dbserver')
     args = parser.parse_args()
     require((args.server_archive is None) == (args.server_run_id is None) == (args.baseline_root is None),
             'Server archive, exact build run and pinned baseline must be provided together')
+    require((args.external_maps_dbserver is None) == (args.external_maps_run_json is None),
+            'External map DbServer package and its build run must be provided together')
+    if args.external_maps_dbserver is not None:
+        external_maps_build_run(args.external_maps_run_json, args.external_maps_dbserver)
     for name, value in vars(args).items():
         if isinstance(value, Path): setattr(args, name, value.resolve())
     baseline = server_pipeline.native.baseline_root(args.baseline_root) if args.server_archive else ROOT
@@ -593,8 +641,11 @@ def main():
         result['armport_client'] = stage_app_assets.stage(donor / 'runtime', args.armport,
             assets, args.repository_commit, server_archive=args.server_archive,
             server_variant='retained_progress' if args.server_archive else None,
-            server_run_id=args.server_run_id, upstream_root=baseline)
+            server_run_id=args.server_run_id, upstream_root=baseline,
+            dbserver=args.external_maps_dbserver, dbserver_ci_runtime=args.external_maps_dbserver is not None)
         runtime_manifest = json.loads((assets / 'runtime-manifest.json').read_text())
+        if args.external_maps_dbserver is not None:
+            result['external_maps_dbserver'] = runtime_manifest[stage_app_assets.EXTERNAL_MAPS_KEY]
         client_manifest = json.loads((assets / 'client-manifest.json').read_text())
         if args.server_archive:
             binding = json.loads((assets / 'armport-server-metrics-binding.json').read_text())
@@ -632,6 +683,10 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
         if shared_heap_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_HEAP=1')
+        if args.external_maps_dbserver is not None:
+            # The supervisor observes the DbServer's map requests and delinks
+            # the ones this flow does not start itself (milestone 1).
+            command.insert(command.index('/usr/bin/python3'), 'COH_EXTERNAL_MAPS=1')
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():

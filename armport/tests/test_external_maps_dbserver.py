@@ -152,6 +152,67 @@ class ExternalMapsApkAdmissionTests(unittest.TestCase):
                         self.assertRaisesRegex(ValueError, 'does not sit on the donor'):
                     stage_app_assets.external_maps_dbserver(source, package)
 
+    def test_ci_runtime_adds_the_two_payloads_to_a_donor_without_a_startup_dbserver(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            stage_app_assets, source, package, base_pin, value = self.fixture(Path(temporary))
+            for name in stage_app_assets.DBSERVER_PAYLOADS:
+                (source / name).unlink()
+            with patch.object(external, 'validate_package', return_value=value) as validate:
+                generated, record = stage_app_assets.external_maps_dbserver(source, package, ci_runtime=True)
+            validate.assert_called_once_with(package, 'b' * 40)
+            self.assertEqual(set(generated), set(stage_app_assets.DBSERVER_PAYLOADS))
+            self.assertEqual(record['admission'], 'ci_runtime_addition')
+            self.assertFalse(record['enabled_by_default'])
+            # A donor that does carry a startup DbServer takes the APK path only.
+            (source / 'startup-dbserver.exe').write_bytes(b'donor level-up DbServer')
+            with patch.object(external, 'validate_package', return_value=value), \
+                    self.assertRaisesRegex(ValueError, 'unexpectedly carries'):
+                stage_app_assets.external_maps_dbserver(source, package, ci_runtime=True)
+
+    def test_ci_runtime_package_comes_from_its_own_successful_build_run(self):
+        import interactive_host
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            (directory / 'startup-dbserver-manifest.json').write_text(json.dumps({'repository_commit': 'c' * 40}))
+            run = {'id': 41883310382, 'path': interactive_host.EXTERNAL_MAPS_WORKFLOW, 'status': 'completed',
+                   'conclusion': 'success', 'head_sha': 'c' * 40}
+            path = directory / 'run.json'
+            path.write_text(json.dumps(run))
+            self.assertEqual(interactive_host.external_maps_build_run(path, directory)['run_id'], 41883310382)
+            for change in ({'conclusion': 'failure'}, {'head_sha': 'd' * 40},
+                           {'path': '.github/workflows/armport-app-runtime.yml'}, {'status': 'in_progress'}):
+                with self.subTest(change=change):
+                    path.write_text(json.dumps(dict(run, **change)))
+                    with self.assertRaisesRegex(ValueError, 'not from one successful build run'):
+                        interactive_host.external_maps_build_run(path, directory)
+        workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()
+        self.assertIn('external_maps_run_id:', workflow)
+        self.assertIn('name: armport-external-maps-dbserver', workflow)
+        self.assertIn('--external-maps-dbserver "$RUNNER_TEMP/external-maps-dbserver" '
+                      '--external-maps-run-json "$RUNNER_TEMP/external-maps-run.json"', workflow)
+        # An experiment runtime never produces the qualified servers an APK build consumes.
+        self.assertEqual(workflow.count("if: env.SERVER_RUN_ID != '' && env.EXTERNAL_MAPS_RUN_ID == ''"), 2)
+
+    def test_ci_notice_summarises_the_supervisor_report(self):
+        import interactive_host
+        section = {'manual_atlas_startup': {'native_ack_observed': True},
+                   'external_maps': {'format': 1, 'requested': True, 'enabled': True, 'reason': None,
+                                     'dbserver_layer': character.EXTERNAL_MAPS_BUILD_INPUT_SHA256,
+                                     'supervisor': {'acknowledgement_observed': True, 'stopped': None,
+                                                    'counts': {'delink_finished': 1}, 'session_maps': [1],
+                                                    'map_starts_executed': False, 'anomalies': [],
+                                                    'requests': [{'map_id': 5, 'cookie': 7, 'is_static': 1,
+                                                                  'decision': 'delink', 'reason': 'not_served',
+                                                                  'map_name': 'x' * 120,
+                                                                  'delink': {'passed': True}}]}}}
+        summary = interactive_host.external_maps_summary(section)
+        self.assertTrue(summary['enabled'])
+        self.assertTrue(summary['manual_atlas_ack'])
+        self.assertEqual(summary['requests'], [{'map_id': 5, 'is_static': 1, 'decision': 'delink',
+                                                'reason': 'not_served', 'delink_passed': True}])
+        self.assertLess(len(json.dumps(summary)), 1500)
+        self.assertIsNone(interactive_host.external_maps_summary({}))
+
     def test_apk_builder_admits_exactly_the_two_payloads(self):
         import build_thor_apk
         source = (ROOT / 'armport/app/build_thor_apk.py').read_text()

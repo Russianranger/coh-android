@@ -165,7 +165,17 @@ MapServers, shared heap on, in CI and then on the Thor.
   1,664,512), sha256 `5d9b2f014be4f8e298cfa8ba73cffb336fd632a5a57699bfa3ff317407d7f187`,
   no unresolved imports; artifact `armport-external-maps-dbserver` (90 days).
   Not run in a guest yet.
-- Next: a CI runtime with this DbServer and `COH_EXTERNAL_MAPS=1` (the CI guest
-  stages its DbServer from the retained 0.10.0 app, so the runtime needs its
-  own admission path), then King's Row on request (start with the cookie,
-  delink on timeout), then the shared zone tree.
+- Ready (not yet run): CI admission. The CI guest's retained 0.10.0 donor has
+  no startup DbServer (it runs the stock package DbServer, which waits for a
+  Launcher; the device runs the manual Atlas level-up lineage). Runtime input
+  `external_maps_run_id` downloads that run's `armport-external-maps-dbserver`,
+  `interactive_host.py --external-maps-dbserver` checks the run (this workflow,
+  success, head = the package's commit), adds the two payloads
+  (`stage_app_assets.external_maps_dbserver(ci_runtime=True)`; the package's own
+  five-layer receipt is the contract and the guest re-checks it) and sets
+  `COH_EXTERNAL_MAPS=1`. The 'startup detail' notices carry `external_maps`
+  (requests, decisions, delinks, manual Atlas acknowledgement). Such a runtime
+  never qualifies servers for an APK. First CI run of the device DbServer
+  lineage in a guest, so creation may surface differences.
+- Next: King's Row on request (start with the cookie, delink on timeout), then
+  the shared zone tree.

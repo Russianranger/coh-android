@@ -50,6 +50,10 @@ on:
         type: boolean
         required: false
         default: false
+      external_maps_run_id:
+        description: Optional successful armport-external-maps-dbserver run - its DbServer is added and map requests observed
+        required: false
+        default: ''
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', 'armport/audio/**', 'armport/tests/test_client*.py', 'android/interactive/**',
@@ -70,6 +74,7 @@ env:
   COH_SERVERDATA_PROBE: ${{ inputs.serverdata_probe_wide && '2' || inputs.serverdata_probe && '1' || '' }}
   COH_CLIENT_AUDIO: ${{ inputs.client_audio == false && '0' || '1' }}
   COH_SHARED_HEAP: ${{ inputs.shared_heap && '1' || '' }}
+  EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
 
 jobs:
   app-sources:
@@ -313,6 +318,17 @@ jobs:
           path: ${{ runner.temp }}/retained-app
           run-id: 36920583713
           github-token: ${{ github.token }}
+      - name: Record the on-demand zone DbServer build run
+        if: env.EXTERNAL_MAPS_RUN_ID != ''
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: gh api "repos/$GITHUB_REPOSITORY/actions/runs/$EXTERNAL_MAPS_RUN_ID" > "$RUNNER_TEMP/external-maps-run.json"
+      - uses: actions/download-artifact@v4
+        if: env.EXTERNAL_MAPS_RUN_ID != ''
+        with:
+          name: armport-external-maps-dbserver
+          path: ${{ runner.temp }}/external-maps-dbserver
+          run-id: ${{ env.EXTERNAL_MAPS_RUN_ID }}
+          github-token: ${{ github.token }}
       - uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/reference-assets.zip
@@ -324,6 +340,9 @@ jobs:
           if [ -n "$SERVER_RUN_ID" ]; then
             server_args=(--server-archive "$RUNNER_TEMP/server-metrics-native/server-metrics-retained-progress.zip" --server-run-id "$SERVER_RUN_ID" --baseline-root "$GITHUB_WORKSPACE/server-baseline")
           fi
+          if [ -n "$EXTERNAL_MAPS_RUN_ID" ]; then
+            server_args+=(--external-maps-dbserver "$RUNNER_TEMP/external-maps-dbserver" --external-maps-run-json "$RUNNER_TEMP/external-maps-run.json")
+          fi
           armport/scripts/step.sh "ArmPort app interactive guest" python3 armport/app/interactive_host.py \
             --apk "$RUNNER_TEMP/retained-app/COH-Character-Reopen-0.10.0.apk" \
             --build-report "$RUNNER_TEMP/retained-app/interactive-apk-build-report.json" \
@@ -332,7 +351,8 @@ jobs:
             --work "$RUNNER_TEMP/interactive-work" --evidence "$RUNNER_TEMP/interactive-evidence" \
             --repository-commit "$GITHUB_SHA" "${server_args[@]}"
       - name: Bind the exact server packages to the successful retained guest sessions
-        if: env.SERVER_RUN_ID != ''
+        # A runtime with the on-demand zone DbServer is an experiment: it never qualifies servers for an APK.
+        if: env.SERVER_RUN_ID != '' && env.EXTERNAL_MAPS_RUN_ID == ''
         run: |
           python3 armport/app/server_pipeline.py qualify \
             --build-run-json "$RUNNER_TEMP/server-build-run.json" \
@@ -343,7 +363,7 @@ jobs:
             --host-report "$RUNNER_TEMP/interactive-evidence/host-report.json" \
             --source "$RUNNER_TEMP/server-metrics-native" --output "$RUNNER_TEMP/qualified-server-metrics"
       - uses: actions/upload-artifact@v4
-        if: env.SERVER_RUN_ID != ''
+        if: env.SERVER_RUN_ID != '' && env.EXTERNAL_MAPS_RUN_ID == ''
         with:
           name: armport-app-server-metrics
           path: ${{ runner.temp }}/qualified-server-metrics/

@@ -98,13 +98,19 @@ DBSERVER_PAYLOADS = ('startup-dbserver.exe', 'startup-dbserver-manifest.json')
 EXTERNAL_MAPS_KEY = 'armport_external_maps_dbserver'
 
 
-def external_maps_dbserver(source, directory):
+def external_maps_dbserver(source, directory, ci_runtime=False):
     """On-demand zone DbServer (armport/server/package_external_maps_dbserver.py).
 
     Replaces only the two DbServer payloads. The package must validate against
     its own build commit and sit on exactly the donor's level-up DbServer (same
     executable pin and the same five-layer ancestry). It installs inert: map
     requests are published only when the supervisor sets COH_WINE_DB_EXTERNAL_MAPS=1.
+
+    ci_runtime: the CI guest's retained 0.10.0 donor predates the startup
+    DbServer layers, so there is no donor level-up DbServer to compare with.
+    The package's own validated five-layer ancestry is then the contract (the
+    guest re-checks every layer before it replaces DbServer.exe) and the
+    payloads are added, never shipped: only armport-app-runtime uses this.
     """
     import sys
     sys.path.insert(0, str(ROOT / 'armport/server'))
@@ -112,14 +118,18 @@ def external_maps_dbserver(source, directory):
     raw = (directory / external_maps.MANIFEST).read_bytes()
     value = json.loads(raw)
     external_maps.validate_package(directory, value.get('repository_commit', ''))
-    donor = json.loads((source / 'startup-dbserver-manifest.json').read_text())
-    package.require(pin(source / 'startup-dbserver.exe') == external_maps.BASE_LEVELUP_EXECUTABLE
-                    and donor.get('role') == 'manual_atlas_dbserver_levelup_ui_repair'
-                    and {key: donor.get('files', {}).get('DbServer.exe', {}).get(key) for key in ('bytes', 'sha256')}
-                        == external_maps.BASE_LEVELUP_EXECUTABLE
-                    and all(donor.get(key) == value.get(key) for key in
-                            ('build_input', 'startup_bundle_build_input', 'levelup_ui_repair_build_input')),
-                    'The external map DbServer does not sit on the donor level-up DbServer')
+    if ci_runtime:
+        package.require(not any((source / name).exists() for name in DBSERVER_PAYLOADS),
+                        'The CI donor unexpectedly carries a startup DbServer')
+    else:
+        donor = json.loads((source / 'startup-dbserver-manifest.json').read_text())
+        package.require(pin(source / 'startup-dbserver.exe') == external_maps.BASE_LEVELUP_EXECUTABLE
+                        and donor.get('role') == 'manual_atlas_dbserver_levelup_ui_repair'
+                        and {key: donor.get('files', {}).get('DbServer.exe', {}).get(key) for key in ('bytes', 'sha256')}
+                            == external_maps.BASE_LEVELUP_EXECUTABLE
+                        and all(donor.get(key) == value.get(key) for key in
+                                ('build_input', 'startup_bundle_build_input', 'levelup_ui_repair_build_input')),
+                        'The external map DbServer does not sit on the donor level-up DbServer')
     generated = {'startup-dbserver.exe': (directory / 'DbServer.exe').read_bytes(), 'startup-dbserver-manifest.json': raw}
     record = {'role': value['role'], 'repository_commit': value['repository_commit'],
               'executable': {'bytes': value['files']['DbServer.exe']['bytes'],
@@ -127,13 +137,14 @@ def external_maps_dbserver(source, directory):
               'base_executable': external_maps.BASE_LEVELUP_EXECUTABLE,
               'build_input_sha256': hashlib.sha256(json.dumps(value['external_maps_build_input'], sort_keys=True,
                                                    separators=(',', ':')).encode()).hexdigest(),
-              'enabled_by_default': False}
+              'enabled_by_default': False,
+              'admission': 'ci_runtime_addition' if ci_runtime else 'donor_levelup_replacement'}
     return generated, record
 
 
 def stage(source, armport, output, repository_commit, external=None, *,
           server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
-          server_option=False, dbserver=None):
+          server_option=False, dbserver=None, dbserver_ci_runtime=False):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -183,10 +194,15 @@ def stage(source, armport, output, repository_commit, external=None, *,
         if server_option:
             runtime[contract.OPTION] = contract.option_record()
     dbserver_record = None
+    package.require(dbserver is not None or not dbserver_ci_runtime, 'CI DbServer addition needs a package')
     if dbserver is not None:
-        package.require(all(name in runtime['files'] and name not in external for name in DBSERVER_PAYLOADS),
-                        'The donor carries no packaged DbServer to replace')
-        replaced, dbserver_record = external_maps_dbserver(source, dbserver)
+        if dbserver_ci_runtime:
+            package.require(not any(name in runtime['files'] for name in DBSERVER_PAYLOADS),
+                            'The CI donor already lists a startup DbServer')
+        else:
+            package.require(all(name in runtime['files'] and name not in external for name in DBSERVER_PAYLOADS),
+                            'The donor carries no packaged DbServer to replace')
+        replaced, dbserver_record = external_maps_dbserver(source, dbserver, ci_runtime=dbserver_ci_runtime)
         generated.update(replaced)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
