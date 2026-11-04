@@ -40,9 +40,14 @@ on:
         type: boolean
         required: false
         default: false
+      client_audio:
+        description: Game audio (app default on) - the client plays through the guest ALSA plugin to a CI protocol sink
+        type: boolean
+        required: false
+        default: true
   push:
     branches: ['armport/m4-runtime']
-    paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
+    paths: ['armport/app/**', 'armport/audio/**', 'armport/tests/test_client*.py', 'android/interactive/**',
             'android/native/client-launcher.c', 'android/guest/character_creation_diagnostic.py',
             '.github/workflows/armport-app-runtime.yml']
 
@@ -58,6 +63,7 @@ env:
   COH_TRUSTED_BINS: ${{ inputs.trusted_bins && '1' || '' }}
   COH_SHARED_SERVER_DATA: ${{ inputs.shared_server_data == false && '0' || '1' }}
   COH_SERVERDATA_PROBE: ${{ inputs.serverdata_probe_wide && '2' || inputs.serverdata_probe && '1' || '' }}
+  COH_CLIENT_AUDIO: ${{ inputs.client_audio == false && '0' || '1' }}
 
 jobs:
   app-sources:
@@ -202,11 +208,17 @@ jobs:
           tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C "$RUNNER_TEMP/llvm"
           "$RUNNER_TEMP/llvm/bin/aarch64-w64-mingw32-clang" -O2 -Wall -Wextra -DCOH_ARMPORT_LAUNCHER \
             android/native/client-launcher.c -luser32 -o "$RUNNER_TEMP/m4-client/armport-launcher.exe"
+      - name: Build the guest ALSA audio plugin and check it against real alsa-lib
+        run: |
+          # bookworm (the guest rootfs release); conversion, clock, pause, drain, reconnect.
+          out=$(armport/scripts/step.sh "ArmPort audio plugin" armport/audio/build.sh "$RUNNER_TEMP/audio")
+          echo "::notice title=ArmPort audio plugin::${out##*$'\n'} $(tr -d '\n' < "$RUNNER_TEMP/audio/audio-bundle.json")"
       - name: Package and stage the separate ARM64 client overlay
         run: |
           python3 armport/app/armport_client_package.py --client "$RUNNER_TEMP/client-bin" \
             --bins "$RUNNER_TEMP/client-bins/bin" --shaders "$RUNNER_TEMP/cg-arb" \
             --launcher "$RUNNER_TEMP/m4-client/armport-launcher.exe" \
+            --audio-plugin "$RUNNER_TEMP/audio/libasound_module_pcm_trasc.so" \
             --client-run "$CLIENT_RUN_ID" --data-run "$DATA_RUN_ID" \
             --output "$RUNNER_TEMP/armport-client.zip" \
             --source-data "$RUNNER_TEMP/m4-client/data" --stage "$RUNNER_TEMP/m4-packaged-client"

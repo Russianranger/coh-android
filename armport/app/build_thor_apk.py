@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.52 with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.53 with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -16,7 +16,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.52 / 67, and the binary manifest is checked
+- version metadata becomes 0.13.53 / 68, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries and the explicitly listed guest helpers;
@@ -44,8 +44,8 @@ import server_pipeline
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.52', 67
-APK_NAME = 'COH-Atlas-Gameplay-0.13.52.apk'
+VERSION_NAME, VERSION_CODE = '0.13.53', 68
+APK_NAME = 'COH-Atlas-Gameplay-0.13.53.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -76,6 +76,7 @@ SERVER_OPTION_ADDED_RUNTIME = SERVER_ADDED_RUNTIME | {'game-package-trusted.tar.
 REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAudio.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java',
@@ -116,7 +117,9 @@ def java_sources(main_dir, generated):
     diagnostic = ROOT / 'android/app/src/main/java/io/github/russianranger/cohdiagnostic'
     sources += [diagnostic / (name + '.java') for name in HELPERS]
     sources += [ROOT / name for name in EXTRA_SOURCES]
-    require(len([p for p in sources if not p.is_relative_to(generated)]) == 24, 'Donor 24-source set differs')
+    # The donor's 24 sources plus ClientAudio.java (game audio bridge, 0.13.53).
+    require(len([p for p in sources if not p.is_relative_to(generated)]) == 25, 'Donor 24-source set plus ClientAudio differs')
+    require(any(p.name == 'ClientAudio.java' for p in sources), 'Game audio bridge source missing')
     require(len(sources) == len(set(sources)) and all(p.is_file() and not p.is_symlink() for p in sources),
             'Missing, linked or duplicated Java source')
     return sources

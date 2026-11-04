@@ -25,6 +25,9 @@ import runtime_host
 import server_pipeline
 
 ROOT = Path(__file__).resolve().parents[2]
+import sys
+sys.path.insert(0, str(ROOT / 'armport/audio'))
+import audio_receiver
 spec = importlib.util.spec_from_file_location('armport_existing_reopen_host',
     ROOT / 'tools/android/interactive/character_reopen_host_smoke.py')
 reopen = importlib.util.module_from_spec(spec)
@@ -300,6 +303,26 @@ def serverdata_probe_requested():
     return int(value or 0)
 
 
+def client_audio_requested():
+    """Game audio (app default on): the guest plays through the plugin to a protocol sink.
+
+    CI has no audio device; audio_receiver models the Android bridge with a
+    real-time playback head. It is not evidence of audible Thor playback.
+    """
+    value = os.environ.get('COH_CLIENT_AUDIO', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_AUDIO must be empty, 0 or 1')
+    return value == '1'
+
+
+def audio_summary(snapshot):
+    streams = snapshot['streams']
+    return {'format': 1, 'scope': 'ci_protocol_sink_not_audible_playback', 'streams': len(streams),
+            'frames': sum(s['frames'] for s in streams),
+            'nonzero_samples': sum(s['nonzero_samples'] for s in streams),
+            'stereo_streams': sum(1 for s in streams if s['left_nonzero'] and s['right_nonzero']),
+            'starts': sum(s['starts'] for s in streams), 'errors': snapshot['errors']}
+
+
 def shared_server_requested():
     """App default (on): both zone servers read the shared folders through runtime/serverdata."""
     value = os.environ.get('COH_SHARED_SERVER_DATA', '')
@@ -476,6 +499,7 @@ def main():
               'm4_complete': False, 'apk_built': False, 'android_surface_validated': False,
               'repository_commit': args.repository_commit}
     started = time.monotonic()
+    receiver = None
     try:
         donor = args.work / 'donor-assets'
         result['donor'] = retained_assets.extract(args.apk, args.build_report, donor)
@@ -509,6 +533,11 @@ def main():
         first, second = secrets.token_hex(16), secrets.token_hex(16)
         require(first != second, 'Distinct session identities required')
         command, _ = character.make_command(args.work, assets, args.proot, first, data, 900)
+        if client_audio_requested():
+            # The guest's /presentation-socket is work/socket (0700, created above).
+            receiver = audio_receiver.Receiver(args.work / 'socket/audio.sock')
+            command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_AUDIO=1')
+            command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_AUDIO_SOCKET=/presentation-socket/audio.sock')
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_ARCH=arm64')
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_GRAPHICS_PROFILE=standard')
         if runtime_host.runtime.proot_seccomp_requested():
@@ -531,6 +560,11 @@ def main():
                                second, runtime_manifest, client_manifest, deadline, reopening=True)
         after = reopen.persistent_profile_identity(args.work)
         reopen.validate_continuity(created, reopened, before, after)
+        if receiver is not None:
+            audio = audio_summary(receiver.snapshot())
+            (args.evidence / 'audio-report.json').write_text(json.dumps(audio, indent=2) + '\n')
+            require(not audio['errors'] and audio['streams'] >= 1 and audio['nonzero_samples'] > 0,
+                    'Game audio reached no protocol sink: ' + json.dumps(audio))
         if args.server_archive:
             result['server_metrics_native_execution'] = {
                 'creation': server_pipeline.guest_admission(created, runtime_manifest),
@@ -540,6 +574,13 @@ def main():
     except Exception as error:
         result['error'] = {'type': type(error).__name__, 'message': str(error)}
     finally:
+        if receiver is not None:
+            if not (args.evidence / 'audio-report.json').exists():
+                (args.evidence / 'audio-report.json').write_text(
+                    json.dumps(audio_summary(receiver.snapshot()), indent=2) + '\n')
+            receiver.close()
+            print('::notice title=ArmPort game audio (CI protocol sink)::'
+                  + (args.evidence / 'audio-report.json').read_text().replace('\n', ' '), flush=True)
         result['elapsed_seconds'] = round(time.monotonic() - started, 3)
         result['guest_failures'] = {name: guest_failure_summary(args.evidence / name)
                                     for name in ('creation', 'reopen')

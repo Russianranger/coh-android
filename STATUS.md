@@ -21,8 +21,7 @@ Default branch remains main; no repository setting change.
 - Startup instrumentation/ODBC reuse included; gain and ≤60 s remain unmeasured.
   Historical build41363927704 passed; runtime41372922907 rejected old 0119 pin
   before guest launch. Corrected pin and regression are included.
-- .37 cleanup hardening ported at e50a0e42e; packaging admission at 263acad1f.
-  Manual policy already superseded; dormant metadata/promotion chain skipped.
+- .37 cleanup hardening ported at e50a0e42e; packaging admission at 263acad1f (dormant chain skipped).
 - Local ArmPort445/modern53 and guest27/64/17 pass. Cleanup whole-/proc has one
   inherited host EACCES error, reproduced on pristine c86; guards remain intact.
 - Full interactive:3048 run/69 failures/28 errors/31 skips before fixture repair.
@@ -38,3 +37,4 @@ Default branch remains main; no repository setting change.
   cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.
 - 0.13.51 Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
 - 0.13.52: interpolation clock wrap (0123, King's Row NPCs), saved file list (0122), first-lookup links, opt-in test server.
+- 0.13.53 (after 0.13.52's chain): game audio via the TRASC ALSA plugin and an AudioTrack bridge (option on).

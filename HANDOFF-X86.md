@@ -375,6 +375,47 @@ the station cap and evidence, and an earlier client start. Test sheet:
   `stage_app_assets.py`; the app's default has been ARM64 since 0.13.50
   (`ClientRuntime.clientArchitecture`).
 
+## 0.13.53: game audio (Claude, 2026-11-03)
+
+User, 21:57 CST: "audio doesn't seem to be working and don't think it ever did
+for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
+
+- **Cause:** the guest has no playback device. Wine's ALSA driver finds none
+  ("Unknown PCM default"), so `DirectSoundCreate` fails and the client logs
+  "Couldn't start DirectSound, continuing without audio" (every export since
+  2026-10-27). The launcher's `-noaudio 1` is inert: `parseArgs` raises the
+  command access level to 9 only in development mode, and the client runs in
+  production (pigg) mode, so it is left unchanged.
+- **Bridge (reused, device-proven):** the owner's TRASC ALSA plugin and
+  protocol, `armport/audio/` (unchanged copies of `native/pcm_trasc.c`,
+  `audio-LICENSE` MIT, `tests/audio_receiver.py`, `tests/check_audio_native.py`
+  from trasc-server-android@99e8c86; also used by lsb-android on the Thor).
+  ALSA `plug` converts to 48 kHz stereo S16_LE; the Android AudioTrack playback
+  head is the clock; writes never block.
+- **Build:** `armport/audio/build.sh` (runtime workflow, `guest-boot` job) builds
+  it in `debian:bookworm-slim` (the guest rootfs release) and runs the native
+  check against real alsa-lib (conversion, pause that empties the ring, drain,
+  reconnect). Local x86-64 check against alsa-lib 1.2.11: PASS. The plugin
+  rides in `armport-client.zip` as `armport-audio/libasound_module_pcm_trasc.so`
+  (optional member, AArch64 ELF check on package and unpack).
+- **Guest:** `ArmPortClient.client_audio_environment` (with `COH_CLIENT_AUDIO=1`
+  and a listening `COH_CLIENT_AUDIO_SOCKET`) writes `armport-asound.conf`
+  (includes `/usr/share/alsa/alsa.conf`, then `pcm.!default` → plug → trasc)
+  and sets `ALSA_CONFIG_PATH`, `TRASC_AUDIO_SOCKET` and `winepulse.drv=d` for
+  the client launch only. Any missing piece leaves audio off and is recorded in
+  `client_audio`; it never fails the session.
+- **App:** `ClientAudio.java` (lsb-android `AudioBridge`/`AudioPcmSession`/
+  `AudioBufferPolicy`, statistics on a leaf lock, no log file) binds
+  `<app>/s/audio.sock` (guest `/presentation-socket/audio.sock`, 0600, peer UID
+  checked, at most 8 streams), requests game audio focus and reports
+  `client_audio_bridge` in the Android report. Option "Game audio" (key
+  `client-audio`, default on). The APK builder admits the one new source (25).
+- **CI:** `interactive_host.py` runs the TRASC protocol sink (real-time playback
+  head) on `work/socket/audio.sock` with `COH_CLIENT_AUDIO=1` (runtime input
+  `client_audio`, default true), writes `audio-report.json`, and fails unless at
+  least one stream with non-zero samples and no protocol error arrived. This is
+  not evidence of audible playback.
+
 ## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
 
 User, 19:24 CST: "Work on 1 and 2 and 3, stage the update, wait for my results

@@ -218,6 +218,10 @@ public final class ClientRuntime {
     private boolean sharedServerDataRequested=false;
     private boolean clientSkipServerFoldersRequested=false;
     private boolean clientFolderIndexRequested=false;
+    // Game audio (0.13.53): the ALSA-to-AudioTrack bridge of the current session.
+    private boolean clientAudioRequested=false;
+    private ClientAudio audio;
+    private JSONObject clientAudioReport;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -340,6 +344,16 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("client-folder-index", enabled).apply();
+    }
+    /** Game audio: route the client's DirectSound (Wine ALSA) to Android (0.13.53). */
+    public static boolean clientAudioEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("client-audio", true);
+    }
+    public static synchronized void setClientAudioEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("client-audio", enabled).apply();
     }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
@@ -781,6 +795,7 @@ public final class ClientRuntime {
         sharedServerDataRequested=sharedServerDataEnabled(context);
         clientSkipServerFoldersRequested=clientSkipServerFoldersEnabled(context);
         clientFolderIndexRequested=clientFolderIndexEnabled(context);
+        clientAudioRequested=clientAudioEnabled(context);clientAudioReport=null;
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -807,6 +822,15 @@ public final class ClientRuntime {
                 recordLifecycle("dead_owned_display_socket_recovered");
             ClientReports.preservePrevious(home.getParentFile());
             removePreviousGuestOutput();
+            if (clientAudioRequested) {
+                // A missing bridge keeps the session (the client continues without audio).
+                try { audio = ClientAudio.start(context, new File(socketDir, "audio.sock")); }
+                catch (Exception unavailable) {
+                    audio = null;
+                    clientAudioReport = new JSONObject().put("format", 1).put("error", unavailable.getClass().getSimpleName() + ": " + unavailable.getMessage());
+                    line("Game audio unavailable: " + unavailable.getMessage());
+                }
+            }
             File root = new File(generation, "rootfs"); new File(root, "presentation-socket").mkdirs();
             new File(root, "game-import").mkdirs();
             String nativeDir = context.getApplicationInfo().nativeLibraryDir;
@@ -836,6 +860,7 @@ public final class ClientRuntime {
                     "COH_SHARED_SERVER_DATA="+(sharedServerDataRequested?"1":"0"),
                     "COH_CLIENT_SKIP_SERVER_FOLDERS="+(clientSkipServerFoldersRequested?"1":"0"),
                     "COH_CLIENT_FOLDER_INDEX="+(clientFolderIndexRequested?"1":"0"),
+                    "COH_CLIENT_AUDIO="+(audio!=null?"1":"0"), "COH_CLIENT_AUDIO_SOCKET="+ClientAudio.GUEST_SOCKET,
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -882,6 +907,11 @@ public final class ClientRuntime {
                 } catch (InterruptedException e) { process.destroyForcibly(); }
             }
             closingReceiver = true; closeReceiver();
+            ClientAudio bridge = audio; audio = null;
+            if (bridge != null) {
+                try { clientAudioReport = bridge.summary(); } catch (Exception summary) { clientAudioReport = null; }
+                bridge.close();
+            }
             try { inputWorker.awaitTermination(3, TimeUnit.SECONDS); } catch (InterruptedException ignored) {}
             join(receiver, 3000); join(output, 2000);
             boolean forcedCaptureClose = output != null && output.isAlive();
@@ -2597,6 +2627,7 @@ public final class ClientRuntime {
                     .put("character_relocated_event", characterRelocatedEvent == null ? JSONObject.NULL : characterRelocatedEvent)
                     .put("stuck_requested", stuckRequested)
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
+                    .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

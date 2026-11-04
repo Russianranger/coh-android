@@ -21,6 +21,9 @@ import zipfile
 ARCHIVE = 'armport-client.zip'
 MANIFEST = 'client-package.json'
 BINARIES = {'CityOfHeroes.exe', 'libc++.dll', 'libunwind.dll', 'armport-launcher.exe'}
+# Optional (0.13.53): the guest ALSA playback plugin (armport/audio), an
+# AArch64 glibc ELF that Wine's ALSA driver loads inside the client process.
+AUDIO_PLUGIN = 'armport-audio/libasound_module_pcm_trasc.so'
 MAX_BYTES = 512 * 1024 * 1024
 
 
@@ -48,8 +51,16 @@ def arm64_pe(path):
             'Expected ARM64 PE32+: ' + path.name)
 
 
+def arm64_elf_shared_object(path):
+    with path.open('rb') as stream:
+        header = stream.read(20)
+    require(len(header) == 20 and header[:6] == b'\x7fELF\x02\x01'
+            and struct.unpack_from('<HH', header, 16) == (3, 183),
+            'Expected an AArch64 little-endian ELF64 shared object: ' + path.name)
+
+
 def allowed(name):
-    if name in BINARIES:
+    if name in BINARIES or name == AUDIO_PLUGIN:
         return True
     path = PurePosixPath(name)
     return ((len(path.parts) == 3 and path.parts[:2] == ('data', 'bin')
@@ -58,7 +69,7 @@ def allowed(name):
              and path.suffix == '.arb')) and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', name))
 
 
-def package(client, bins, shaders, launcher, output, client_run, data_run):
+def package(client, bins, shaders, launcher, output, client_run, data_run, audio_plugin=None):
     require(not output.exists(), 'Package output already exists')
     require({p.name for p in client.iterdir()} == BINARIES - {'armport-launcher.exe'},
             'Expected the exact ARM64 Release artifact binary closure')
@@ -67,6 +78,10 @@ def package(client, bins, shaders, launcher, output, client_run, data_run):
     for binary in sources.values():
         require(binary.is_file() and not binary.is_symlink(), 'Invalid binary')
         arm64_pe(binary)
+    if audio_plugin is not None:
+        require(audio_plugin.is_file() and not audio_plugin.is_symlink(), 'Invalid audio plugin')
+        arm64_elf_shared_object(audio_plugin)
+        sources[AUDIO_PLUGIN] = audio_plugin
     for root, prefix, suffix in ((bins, 'data/bin/', '.bin'), (shaders, 'armport_cg/', '.arb')):
         selected = sorted(root.glob('*' + suffix))
         require(selected, 'Missing bins or shaders')
@@ -119,6 +134,8 @@ def unpack(archive_path, destination):
             require(digest(target) == expected['sha256'], 'Overlay digest differs: ' + name)
         for name in BINARIES:
             arm64_pe(destination / name)
+        if AUDIO_PLUGIN in files:
+            arm64_elf_shared_object(destination / AUDIO_PLUGIN)
     return document
 
 
@@ -383,6 +400,7 @@ def main():
         parser.add_argument('--' + name, type=int, required=True)
     parser.add_argument('--source-data', type=Path)
     parser.add_argument('--stage', type=Path)
+    parser.add_argument('--audio-plugin', type=Path, help='guest ALSA plugin (armport/audio/build.sh)')
     args = vars(parser.parse_args())
     source_data, stage = args.pop('source_data'), args.pop('stage')
     require(bool(source_data) == bool(stage), '--source-data and --stage must be used together')

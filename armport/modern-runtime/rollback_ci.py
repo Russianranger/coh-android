@@ -26,9 +26,9 @@ OWN_WORKFLOW = Path(OWN_PATH).name
 OWN_WORKFLOW_REF = REPOSITORY + '/' + OWN_PATH + '@refs/heads/' + SUPPORT_BRANCH
 APK_PATH = '.github/workflows/armport-thor-apk.yml'
 APK_WORKFLOW = 'armport-thor-apk.yml'
-ARTIFACT = 'coh-atlas-gameplay-0.13.52-apk'
+ARTIFACT = 'coh-atlas-gameplay-0.13.53-apk'
 METRICS_STEP = 'Authenticate server qualification and both variant byte inventories'
-SIGN_STEP = 'Build and sign COH Atlas Gameplay 0.13.52'
+SIGN_STEP = 'Build and sign COH Atlas Gameplay 0.13.53'
 ROLLBACK_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
 require = upstream.require
 

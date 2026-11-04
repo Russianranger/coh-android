@@ -241,6 +241,52 @@ class StationFpsCapFileTests(unittest.TestCase):
         self.assertIn('0121-armport-station-fps-cap-file.patch', series)
 
 
+class ClientAudioTests(unittest.TestCase):
+    """0.13.53: Wine's ALSA driver plays through the overlay's plugin to the app bridge."""
+    def client(self, root):
+        client = armport.ArmPortClient.__new__(armport.ArmPortClient)
+        client.armport_work = root / 'work'
+        (client.armport_work / 'armport-audio').mkdir(parents=True)
+        client.ctx = SimpleNamespace(report={})
+        return client
+
+    def test_environment_needs_the_listening_bridge_and_the_plugin(self):
+        import socket
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            client = self.client(root)
+            system = root / 'alsa.conf'
+            system.write_text('# system\n')
+            path = root / 'audio.sock'
+            base = {'WINEDLLOVERRIDES': 'mscoree=;winedbg.exe='}
+            with patch.object(armport, 'ALSA_SYSTEM_CONFIG', system):
+                with patch.dict(os.environ, {'COH_CLIENT_AUDIO': '0'}):
+                    self.assertEqual(client.client_audio_environment(base), {})
+                self.assertEqual(client.ctx.report['client_audio'], {'format': 1, 'requested': False, 'enabled': False})
+                request = {'COH_CLIENT_AUDIO': '1', 'COH_CLIENT_AUDIO_SOCKET': str(path)}
+                with patch.dict(os.environ, request):
+                    # No listener yet: the client starts without audio and says why.
+                    self.assertEqual(client.client_audio_environment(base), {})
+                    self.assertIn('FileNotFoundError', client.ctx.report['client_audio']['error'])
+                    with socket.socket(socket.AF_UNIX) as server:
+                        server.bind(str(path))
+                        self.assertEqual(client.client_audio_environment(base), {})
+                        self.assertIn('no audio plugin', client.ctx.report['client_audio']['error'])
+                        plugin = client.armport_work / armport.package.AUDIO_PLUGIN
+                        plugin.write_bytes(b'\x7fELF')
+                        environment = client.client_audio_environment(base)
+                record = client.ctx.report['client_audio']
+                self.assertTrue(record['enabled'])
+                self.assertEqual(environment['TRASC_AUDIO_SOCKET'], str(path))
+                self.assertEqual(environment['WINEDLLOVERRIDES'], 'mscoree=;winedbg.exe=;winepulse.drv=d')
+                config = Path(environment['ALSA_CONFIG_PATH']).read_text()
+                self.assertTrue(config.startswith('<' + str(system) + '>\n'))
+                self.assertIn('pcm_type.trasc { lib "' + str(plugin) + '" }', config)
+                self.assertIn('pcm.!default { type plug slave { pcm "trasc" format S16_LE rate 48000 channels 2 } }', config)
+        with patch.dict(os.environ, {'COH_CLIENT_AUDIO': 'yes'}), self.assertRaises(Exception):
+            armport.client_audio_requested()
+
+
 class ClientFolderIndexTests(unittest.TestCase):
     """Patch 0122: the saved file list is keyed by the verified data view and the overlay."""
     def tree(self, root):
