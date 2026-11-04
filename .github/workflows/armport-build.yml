@@ -307,6 +307,7 @@ jobs:
             /database/
             /docs/android-evidence/client-map-startup-0.13.32-publication.json
             /docs/android-evidence/mapserver-progress-package-36630872719.json
+            /docs/android-evidence/dbserver-package-36460867428.json
             /tools/android/interactive/prepare_atlas_world_assets.py
             /assets/catalog.json
             /assets/zones-audio-metadata.json
