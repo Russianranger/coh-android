@@ -22,6 +22,7 @@ import character_server_data_cache as server_data_cache
 import server_cache_package
 import server_fx_catalog
 import native_character_events as character_events
+import external_map_supervisor as external_maps
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
 PROFILE, ACCOUNT, CHARACTER = login.PROFILE, login.ACCOUNT, 'THORHERO'
@@ -1464,6 +1465,8 @@ class LocalCharacterServer(login.LocalLoginServer):
     require_empty_account = False
     requires_saved_character = False
     REPORT_KEY = 'character_creation'
+    # Maps this flow starts itself; external requests for them are left alone.
+    EXTERNAL_SESSION_MAPS = frozenset({1})
     def __init__(self, owner):
         request_at, request_utc_ms = time.monotonic(), int(time.time() * 1000)
         super().__init__(owner)
@@ -1476,6 +1479,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.snapshot = None
         self.auth_id = None
         self.manual_atlas_startup = None
+        self.external_maps = None
+        self.external_maps_query = None
+        self.external_maps_next = 0
         self.creation_report = {'session_id': owner.args.session_id, 'account': ACCOUNT,
             'name': CHARACTER, 'map_id': 1, 'verified': False, 'connected_on_atlas': False,
             'committed_sql_verified': False, 'requested_logout_observed': False, 'logout_timer_observed': False,
@@ -2151,9 +2157,90 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def dbserver_environment(self, environment):
         environment = super().dbserver_environment(environment)
+        environment.pop(external_maps.DB_ENVIRONMENT, None)
+        environment.pop(external_maps.DB_DIRECTORY_ENVIRONMENT, None)
         if self.manual_atlas_startup is not None:
             environment[MANUAL_ATLAS_ENVIRONMENT] = '1'
+            self.external_maps_environment(environment)
         return environment
+
+    def external_maps_environment(self, environment):
+        """On-demand zone requests (launch option), only with the exact DbServer layer.
+
+        Off unless COH_EXTERNAL_MAPS=1 and the installed DbServer is the
+        external-maps layer; otherwise the DbServer behaves as before.
+        """
+        if self.external_maps is not None:
+            # One supervisor per DbServer process; a relaunch keeps Launcher behaviour.
+            self.creation_report['external_maps']['later_dbserver_launch_without_requests'] = True
+            return
+        requested = os.environ.get(external_maps.ENABLE_ENVIRONMENT) == '1'
+        layer = (self.manual_atlas_startup or {}).get('external_maps')
+        record = {'format': 1, 'requested': requested, 'enabled': False,
+                  'dbserver_layer': None if layer is None else layer.get('build_input_sha256')}
+        self.creation_report['external_maps'] = record
+        if not requested or layer is None:
+            record['reason'] = 'not_requested' if not requested else 'dbserver_without_external_maps_layer'
+            return
+        parent = self.owner.args.state
+        name = 'external-map-requests-' + self.owner.args.session_id
+        windows = base.windows_path(parent / name)
+        if len(windows) > external_maps.DIRECTORY_LIMIT or '"' in windows:
+            record['reason'] = 'request_directory_path_too_long'
+            return
+        self.external_maps = external_maps.ExternalMapSupervisor.create(
+            parent, name, session_maps=self.EXTERNAL_SESSION_MAPS)
+        environment[external_maps.DB_ENVIRONMENT] = '1'
+        environment[external_maps.DB_DIRECTORY_ENVIRONMENT] = windows
+        record.update(enabled=True, reason=None, supervisor=self.external_maps.report())
+
+    def tick_external_maps(self):
+        """Read new map requests; delink the ones no process serves (one query at a time)."""
+        supervisor = self.external_maps
+        if supervisor is None or self.process is None:
+            return
+        now = time.monotonic()
+        if now < self.external_maps_next:
+            return
+        self.external_maps_next = now + 1
+        query = self.external_maps_query
+        if query is not None:
+            entry, child, deadline = query
+            if child.process.poll() is None or child.reader.is_alive():
+                if now < deadline:
+                    return
+                supervisor.delink_finished(entry, exit_code=None, timed_out=True,
+                                           elapsed_seconds=now - child.started)
+            else:
+                supervisor.delink_finished(entry, exit_code=child.process.poll(),
+                                           elapsed_seconds=now - child.started)
+                self.ctx.record(child)
+            self.external_maps_query = None
+        supervisor.poll(self.process.text(), now)
+        entry = supervisor.next_delink()
+        if entry is not None:
+            self.query_count += 1
+            require(self.query_count <= 160, 'Character protocol query budget exceeded')
+            child = self.ctx.start('external-map-delink-' + str(entry['map_id']), ['/usr/bin/env',
+                '--chdir=' + str(self.runtime), self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
+                '-nogui', '-db', '127.0.0.1', '-dbquery', '-timeout', '10000', '-delink', str(entry['map_id'])],
+                env=self.owner.wine_env)
+            self.external_maps_query = (entry, child, now + external_maps.DELINK_SECONDS)
+        self.creation_report['external_maps']['supervisor'] = supervisor.report()
+
+    def cleanup_external_maps(self):
+        supervisor = self.external_maps
+        if supervisor is None:
+            return
+        try:
+            names = sorted(os.listdir(supervisor.directory))
+            if all(external_maps.FILE_NAME.match(name) or external_maps.TEMPORARY_NAME.match(name)
+                   for name in names) and len(names) <= external_maps.MAX_ENTRIES:
+                for name in names:
+                    (supervisor.directory / name).unlink()
+                supervisor.directory.rmdir()
+        except OSError:
+            pass
 
     def dbserver_startup_policy_ready(self, console):
         if self.manual_atlas_startup is None:
@@ -2252,6 +2339,7 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def cleanup_config(self):
         super().cleanup_config()
+        self.cleanup_external_maps()
         if hasattr(self, 'data_cache'):
             self.data_cache.release(getattr(self, 'atlas_map_runtime', self.runtime) / 'data', self.owner.cleanup_status)
         if hasattr(self, 'kings_row_data_cache'):
@@ -2921,6 +3009,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             positions=None if values is None else character_events.positions_after_ready(values))
 
     def character_evidence(self):
+        self.tick_external_maps()
         if self.creation_report['verified']: return self.creation_report
         now = time.monotonic()
         if now < self.character_next: return None

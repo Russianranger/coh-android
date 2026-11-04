@@ -116,9 +116,18 @@ class MapServerPhaseTests(unittest.TestCase):
                 archive.writestr('client-evidence/client-console.log', 'no phase lines\n')
                 archive.writestr('client-evidence/armport_stdio.txt',
                     'ARMPORT_FOLDER_CACHE_V1 phase=scan files=160000 folders=9000 seconds=90.000\n'
-                    'ARMPORT_FOLDER_CACHE_V1 phase=skip folders=2 list=scripts.loc,server\n')
-            self.assertEqual(interactive_host.guest_timing_summary(evidence)['client_folder_cache'],
+                    'ARMPORT_FOLDER_CACHE_V1 phase=skip folders=2 list=scripts.loc,server\n'
+                    'ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/ambient.ms\nmissing x.ogg\n'
+                    + 'ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/other.ms\nmissing y.ogg\n' * 2)
+            summary = interactive_host.guest_timing_summary(evidence)
+            self.assertEqual(summary['client_folder_cache'],
                 ['phase=scan files=160000 folders=9000 seconds=90.000', 'phase=skip folders=2 list=scripts.loc,server'])
+            # Patch 0124: logged, not a dialog; bounded to two lines in the notice.
+            self.assertEqual(summary['client_sound_scripts'], {'reports': 3, 'modal_dialog_text': False,
+                'first': ['ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/ambient.ms',
+                          'ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/other.ms']})
+            self.assertIn('client_sound_scripts', json.loads(interactive_host.timing_notices(
+                {'creation': summary}, False, False)[-1].split('::', 2)[2]))
         self.assertEqual(result['proot_mode'], {'format': 1})
         caches = result['character_creation']['prepared_server_caches']
         self.assertEqual((caches['status'], len(caches['reason']), caches['installed_files']),

@@ -119,6 +119,19 @@ is untested under Wine/FEX; a later experiment.
   (`stage_app_assets.external_maps_dbserver`): only `startup-dbserver.exe` and
   its manifest change, the package must validate and sit on the donor's exact
   level-up executable and ancestry; recorded as `armport_external_maps_dbserver`.
-- Next: run the workflow when no other chain runs; then the supervisor (request
-  polling, process start with cookie, delink on failure), first
-  observe-and-delink, then King's Row on request, then the shared zone tree.
+- Done (milestone 1, observe and delink): `android/guest/external_map_supervisor.py`,
+  shipped as a guest dependency and inert unless `COH_EXTERNAL_MAPS=1` and the
+  installed DbServer is the external-maps layer. The character server then
+  gives the DbServer a fresh private request directory
+  (`state/external-map-requests-<session>`), reads each record once (exact
+  fields, ASCII, size bound; only after the DbServer's own acknowledgement and
+  request marker line; one `db_process_id`; increasing sequence), leaves the
+  maps its flow starts itself alone (1; zoning: 1, 101, 5) and delinks every
+  other request, one owned `-dbquery -delink` at a time (16 at most per
+  session). Anything unexpected stops it instead of acting. The record
+  command's game options are checked against an allowlist and the start
+  arguments are planned (`-cookie`, no `-launcher`, `-locale 0` dropped), but
+  no map is started yet. `armport/tests/test_external_map_supervisor.py` reads
+  records written by the overlay itself (POSIX stand-in).
+- Next: run the DbServer workflow when no other chain runs; then King's Row on
+  request (start with the cookie, delink on timeout), then the shared zone tree.

@@ -32,6 +32,9 @@ GUEST_DEPENDENCIES = (
     # Cache ancestry validation imports these before rejecting unsupported
     # producers and taking its existing original-loader fallback.
     'native_monorail_contract.py', 'native_map_startup_contract.py',
+    # On-demand zone requests (inert unless COH_EXTERNAL_MAPS=1 and the
+    # external-maps DbServer layer is installed); imported by the server.
+    'external_map_supervisor.py',
 )
 
 WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',

@@ -333,6 +333,15 @@ def client_folder_cache(text, limit=8):
             if 'ARMPORT_FOLDER_CACHE_V1 ' in line][:limit]
 
 
+SOUND_SCRIPT_MARKER = 'ARMPORT_SOUND_SCRIPT_ERRORS_V1'
+
+
+def client_sound_scripts(text, limit=2):
+    """Patch 0124: sound script errors the client logged instead of a modal dialog (bounded)."""
+    lines = [line[:160] for line in text.splitlines() if line.startswith(SOUND_SCRIPT_MARKER)]
+    return {'reports': len(lines), 'first': lines[:limit], 'modal_dialog_text': 'Sound Script Errors' in text}
+
+
 TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spawn_to_map_ready_seconds',
                  'dependency_start_seconds', 'request_to_client_world_ready_seconds')
 
@@ -436,6 +445,10 @@ def guest_timing_summary(evidence):
                         if lines:
                             result['client_folder_cache'] = lines
                             break
+                member = 'client-evidence/armport_stdio.txt'
+                if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
+                    result['client_sound_scripts'] = client_sound_scripts(
+                        archive.read(member).decode('utf-8', errors='replace'))
                 member = 'client-evidence/character-atlas-console.txt'
                 if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
                     console = archive.read(member).decode('utf-8', errors='replace')
@@ -452,7 +465,8 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
     lines = []
     for name, original in timings.items():
         summary, writes = {}, {}
-        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache') if original.get(key)}
+        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts')
+                  if original.get(key)}
         for key, value in original.items():
             if key in detail:
                 continue

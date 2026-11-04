@@ -479,6 +479,8 @@ class MapLaunchHistory:
 
 class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     """At most two owned static map processes, started only when requested."""
+    # Atlas, its second instance and King's Row are started by this flow.
+    EXTERNAL_SESSION_MAPS = frozenset(MAPS)
     def __init__(self, owner):
         super().__init__(owner)
         self.active_map_id = 1
@@ -1879,6 +1881,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def character_evidence(self):
         self.remember_reward_connection()
         self.tick_zoning()
+        self.tick_external_maps()
         if self.pending is not None and (self.pending.get('transfer_requested')
                 or self.pending.get('native_authorization_issued')):
             return None
