@@ -20,6 +20,13 @@ CLIENT_SKIPPED_FOLDERS = 'scripts.loc,server'
 FPS_CAP_FILE = 'armport-fps-cap.txt'
 
 
+def client_uses_folder_index():
+    """Patch 0122: reuse the client's saved file list; COH_CLIENT_FOLDER_INDEX=0 turns it off."""
+    value = os.environ.get('COH_CLIENT_FOLDER_INDEX', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_FOLDER_INDEX must be empty, 0 or 1')
+    return value != '0'
+
+
 def client_skips_server_folders():
     value = os.environ.get('COH_CLIENT_SKIP_SERVER_FOLDERS', '')
     require(value in ('', '0', '1'), 'COH_CLIENT_SKIP_SERVER_FOLDERS must be empty, 0 or 1')
@@ -177,6 +184,7 @@ class ArmPortClient:
             # Patch 0120: the client never reads these server-only folders
             # (52,149 scripts.loc files of 212,496); its upfront scan skips them.
             environment['ARMPORT_FOLDER_CACHE_SKIP'] = CLIENT_SKIPPED_FOLDERS
+        environment.update(self.client_folder_index_environment(environment.get('ARMPORT_FOLDER_CACHE_SKIP', '')))
         # Patch 0121: zoning writes a lower frame cap here while a trip is
         # prepared (relative to the client's working directory).
         self.armport_fps_cap_file = self.armport_work / FPS_CAP_FILE
@@ -187,6 +195,25 @@ class ArmPortClient:
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
         child = self.ctx.start(label, command, env=environment)
         self.client = LoggedClient(child, self.armport_work / 'armport_stdio.txt')
+
+    def client_folder_index_environment(self, skip):
+        """Patch 0122: the saved file list lives beside the per-session worktrees."""
+        index = self.root / package.FOLDER_INDEX
+        record = {'format': 1, 'requested': client_uses_folder_index(), 'index': index.name,
+                  'present_before_launch': index.is_file() and not index.is_symlink(),
+                  'identity_sha256': None, 'error': None}
+        self.ctx.report['client_folder_index'] = record
+        if not record['requested']:
+            return {}
+        require(not index.is_symlink(), 'Linked client folder index refused')
+        try:
+            record['identity_sha256'] = package.folder_cache_identity(self.ctx.report['armport_client'], skip)
+        except (KeyError, TypeError, ValueError) as exc:
+            # Without a complete identity the client scans as before.
+            record['error'] = type(exc).__name__
+            return {}
+        return {'ARMPORT_FOLDER_CACHE_INDEX': base.windows_path(index),
+                'ARMPORT_FOLDER_CACHE_ID': record['identity_sha256']}
 
     def armport_gameplay_fps(self, environment):
         """Gameplay frame cap (patch 0113, the app's reviewed opt-in hook).

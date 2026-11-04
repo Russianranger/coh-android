@@ -437,6 +437,14 @@ jobs:
           fi
           echo "::notice title=ArmPort ragdoll without physics::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/ragdoll-original.txt")"
 
+      - name: Saved folder-cache index rebuilds the scanned tree and refuses stale data (patch 0122)
+        run: |
+          out=$(armport/scripts/step.sh "ArmPort folder-cache index" python3 armport/tests/folder_cache_index.py --source "$RUNNER_TEMP/armport/src" | tail -1)
+          if python3 armport/tests/folder_cache_index.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/folder-index-original.txt" 2>&1; then
+            echo "::error title=ArmPort folder-cache index::the original scan unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort folder-cache index::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/folder-index-original.txt")"
+
       - name: MapServer tick and file timing uses actual prepared code (patch 0119)
         run: |
           python3 armport/tests/server_metrics_native.py --source "$RUNNER_TEMP/armport/src"

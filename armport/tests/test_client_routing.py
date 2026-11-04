@@ -195,10 +195,11 @@ class ClientFolderSkipTests(unittest.TestCase):
         client = Selected.__new__(Selected)
         client.wine_env = {'WINEPREFIX': '/x'}
         client.armport_work = Path('/arm64')
+        client.root = Path('/arm64-root-absent')
         client.launcher_command = lambda: ['launcher']
         client.armport_gpu_environment = lambda environment, label: environment
         client.armport_gameplay_fps = lambda environment: environment
-        client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env))
+        client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env), report={})
         with patch.dict(os.environ, {'COH_CLIENT_SKIP_SERVER_FOLDERS': value}), \
                 patch.object(armport, 'LoggedClient', lambda child, log: child):
             client.launch_client_attempt()
@@ -223,11 +224,12 @@ class StationFpsCapFileTests(unittest.TestCase):
             client = armport.ArmPortClient.__new__(armport.ArmPortClient)
             client.wine_env = {'WINEPREFIX': '/x'}
             client.armport_work = Path(temporary)
+            client.root = Path(temporary)
             (client.armport_work / armport.FPS_CAP_FILE).write_text('10\n')
             client.launcher_command = lambda: ['launcher']
             client.armport_gpu_environment = lambda environment, label: environment
             client.armport_gameplay_fps = lambda environment: environment
-            client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env))
+            client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env), report={})
             with patch.object(armport, 'LoggedClient', lambda child, log: child):
                 client.launch_client_attempt()
             self.assertEqual(captured['env']['ARMPORT_FPS_CAP_FILE'], 'armport-fps-cap.txt')
@@ -235,6 +237,87 @@ class StationFpsCapFileTests(unittest.TestCase):
             self.assertFalse(client.armport_fps_cap_file.exists())
         series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
         self.assertIn('0121-armport-station-fps-cap-file.patch', series)
+
+
+class ClientFolderIndexTests(unittest.TestCase):
+    """Patch 0122: the saved file list is keyed by the verified data view and the overlay."""
+    def tree(self, root):
+        source = root / 'source'
+        for name in ('maps/City', 'texts'):
+            (source / name).mkdir(parents=True)
+        (source / 'texts/a.ms').write_text('a')
+        imports = root / 'imports'; imports.mkdir()
+        (imports / 'geo.txt').write_text('g')
+        (source / 'maps/City/geo.txt').symlink_to(imports / 'geo.txt')
+        return source
+
+    def test_link_validation_reports_the_same_digests_whether_it_checks_or_reuses(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); source = self.tree(root); receipt = root / 'receipt.json'
+            first = armport.package.merge_links(source, root / 'view-1', receipt)['validation']
+            second = armport.package.merge_links(source, root / 'view-2', receipt)['validation']
+            self.assertEqual((first['mode'], second['mode']), ('complete_link_check', 'unchanged_directory_receipt'))
+            for key in ('tree_sha256', 'targets_sha256', 'links'):
+                self.assertEqual(first[key], second[key])
+            (root / 'imports/new.txt').write_text('n')          # a link target directory changed
+            third = armport.package.merge_links(source, root / 'view-3', receipt)['validation']
+            self.assertNotEqual(third['targets_sha256'], first['targets_sha256'])
+            (source / 'texts/b.ms').write_text('b')               # a source directory changed
+            fourth = armport.package.merge_links(source, root / 'view-4', receipt)['validation']
+            self.assertNotEqual(fourth['tree_sha256'], third['tree_sha256'])
+
+    def client(self, **changes):
+        validation = {'tree_sha256': '1' * 64, 'targets_sha256': '2' * 64, 'links': 3}
+        value = {'data_validation': validation, 'archive_sha256': '4' * 64, 'executable_sha256': '5' * 64}
+        for key, item in changes.items():
+            (validation if key in validation else value)[key] = item
+        return value
+
+    def test_identity_changes_with_every_input_and_needs_every_digest(self):
+        identity = armport.package.folder_cache_identity
+        base = identity(self.client(), 'scripts.loc,server')
+        self.assertRegex(base, '^[0-9a-f]{64}$')
+        self.assertEqual(identity(self.client(), 'scripts.loc,server'), base)
+        for change in ({'tree_sha256': '6' * 64}, {'targets_sha256': '6' * 64}, {'links': 4},
+                       {'archive_sha256': '6' * 64}, {'executable_sha256': '6' * 64}):
+            self.assertNotEqual(identity(self.client(**change), 'scripts.loc,server'), base, change)
+        self.assertNotEqual(identity(self.client(), ''), base)
+        with self.assertRaises(ValueError):
+            identity(self.client(tree_sha256=None), '')
+
+    def environment(self, value, report, root):
+        client = armport.ArmPortClient.__new__(armport.ArmPortClient)
+        client.root = root
+        client.ctx = SimpleNamespace(report=report)
+        with patch.dict(os.environ, {'COH_CLIENT_FOLDER_INDEX': value}):
+            return client.client_folder_index_environment('scripts.loc,server')
+
+    def test_launch_names_the_index_and_identity_unless_turned_off(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            report = {'armport_client': self.client()}
+            environment = self.environment('', report, root)
+            self.assertEqual(environment['ARMPORT_FOLDER_CACHE_ID'],
+                             armport.package.folder_cache_identity(self.client(), 'scripts.loc,server'))
+            self.assertTrue(environment['ARMPORT_FOLDER_CACHE_INDEX'].endswith('armport-folder-cache-index.bin'))
+            self.assertEqual(report['client_folder_index']['present_before_launch'], False)
+            (root / armport.package.FOLDER_INDEX).write_bytes(b'x')
+            self.assertEqual(self.environment('1', report, root).keys(), environment.keys())
+            self.assertTrue(report['client_folder_index']['present_before_launch'])
+            self.assertEqual(self.environment('0', report, root), {})
+            self.assertFalse(report['client_folder_index']['requested'])
+            # An incomplete identity scans as before and says why.
+            incomplete = {'armport_client': {'archive_sha256': '4' * 64}}
+            self.assertEqual(self.environment('1', incomplete, root), {})
+            self.assertEqual(incomplete['client_folder_index']['error'], 'KeyError')
+            (root / armport.package.FOLDER_INDEX).unlink()
+            (root / armport.package.FOLDER_INDEX).symlink_to(root / 'elsewhere')
+            with self.assertRaises(Exception):
+                self.environment('1', report, root)
+            with patch.dict(os.environ, {'COH_CLIENT_FOLDER_INDEX': 'yes'}), self.assertRaises(Exception):
+                armport.client_uses_folder_index()
+        series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
+        self.assertEqual(series[-1], '0122-armport-folder-cache-index.patch')
 
 
 if __name__ == '__main__':

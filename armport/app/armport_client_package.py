@@ -159,7 +159,8 @@ def validate_links(source_data, links, tree, receipt):
                 targets = [[name, *identity(name)] for name in saved['target_directories']]
                 if identity_digest(targets) == saved.get('targets'):
                     return {'mode': 'unchanged_directory_receipt', 'links_checked': 0,
-                            'target_directories': len(targets)}
+                            'target_directories': len(targets), 'tree_sha256': tree,
+                            'targets_sha256': saved['targets'], 'links': len(links)}
         except (OSError, ValueError, KeyError, TypeError):
             pass
     directories = set()
@@ -185,13 +186,38 @@ def validate_links(source_data, links, tree, receipt):
         directories.add(os.path.dirname(target))
     names = sorted(directories)
     targets = [[name, *identity(name)] for name in names]
+    targets_sha256 = identity_digest(targets)
     if receipt is not None:
         pending = receipt.with_name(receipt.name + '.pending')
         pending.write_text(json.dumps({'format': VALIDATION_FORMAT, 'policy': VALIDATION_POLICY,
             'source': str(source_data), 'tree': tree,
-            'links': len(links), 'target_directories': names, 'targets': identity_digest(targets)}))
+            'links': len(links), 'target_directories': names, 'targets': targets_sha256}))
         pending.replace(receipt)
-    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names)}
+    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names),
+            'tree_sha256': tree, 'targets_sha256': targets_sha256, 'links': len(links)}
+
+
+FOLDER_INDEX = 'armport-folder-cache-index.bin'
+
+
+def folder_cache_identity(client, skip):
+    """Identity of the client's data view for its saved file list (patch 0122).
+
+    The view is the verified app data (every source directory's device, inode,
+    mtime and ctime, plus every directory the links point into) and the ARM64
+    overlay. Adding, removing, renaming or replacing any entry changes one of
+    these; installs publish new files, never rewrite one. The client also
+    checks sampled files and keeps scanning live the overlay's bin/.
+    """
+    validation = client['data_validation']
+    record = {'format': 1, 'policy': 'armport_folder_cache_index_v1',
+              'tree_sha256': validation['tree_sha256'], 'targets_sha256': validation['targets_sha256'],
+              'links': validation['links'], 'archive_sha256': client['archive_sha256'],
+              'executable_sha256': client['executable_sha256'], 'skip': skip}
+    require(all(isinstance(record[key], str) and re.fullmatch('[0-9a-f]{64}', record[key])
+                for key in ('tree_sha256', 'targets_sha256', 'archive_sha256', 'executable_sha256')),
+            'Client folder index identity needs every digest')
+    return hashlib.sha256(json.dumps(record, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
 def merge_links(source_data, target_root, receipt=None):
