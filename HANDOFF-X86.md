@@ -414,6 +414,21 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.54: save check for ordinary play, shared server memory experiment (Claude, 2026-11-04)
+
+- **Save check** (e6829cbae): `gameplay_progress()` composes the narrow reopen
+  verifiers for ordinary play (training with its BuyPower records, automatic
+  Inherent powers, temporary powers granted or expired, Inherent set-level
+  normalization, slots with a level, experience/influence); see the 0.13.53
+  Thor bullet below and `armport/tests/test_gameplay_progress.py` (exact rows).
+- **Shared server memory** (3f725c8c9, owner's choice over the spare server):
+  `COH_SHARED_HEAP=1` omits `-nosharedmemory` at both MapServer launches; app
+  option off; CI input `shared_heap`; `pss_kib` per server every 30 s; console
+  decision in `creation_report.shared_heap` / `zoning_report.shared_heap_consoles`.
+  Notes: `armport/notes/ON-DEMAND-ZONES.md`.
+- Chain at 3f725c8c9 (`r54.sh`): build 41906219190 → default runtime → trusted
+  runtime → shared-heap runtime (experiment, does not block) → APK.
+
 ## 0.13.53: game audio (Claude, 2026-11-03)
 
 User, 21:57 CST: "audio doesn't seem to be working and don't think it ever did

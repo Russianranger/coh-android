@@ -75,7 +75,18 @@ about 4 minutes, at the memory cost of one extra MapServer. Measure that cost
 mode (`ParserLoadFilesShared`) could let processes share the parsed data but
 is untested under Wine/FEX; a later experiment.
 
-## Shared memory (candidate measurement, not started)
+## Shared memory (owner's choice 2026-11-04: first; spare server on hold)
+
+Device figures (0.13.53, rss_kib): client 2.1-2.3 GB, Atlas MapServer 1.8 GB,
+King's Row 1.9 GB, DbServer 0.4 GB, total 6.2-6.3 GB with both zones; Android
+reported 6.9 GB available when King's Row started. A spare server would idle at
+most of another 1.9 GB. 0.13.54 adds the switch (`COH_SHARED_HEAP`, app option
+"Shared server memory", off; CI input `shared_heap`), per-server PSS every 30 s,
+and the native decision from each MapServer console. CI starts only Atlas, so CI
+shows whether the shared heap reserves and Atlas still passes; the second
+server mapping the first one's data is a device measurement (King's Row
+`sequencer_info` 60 s + `definitions` 45 s of its 143 s are the candidates).
+
 
 Every device MapServer runs with `-nosharedmemory`, so each one parses and holds
 its own copy of the shared definitions (the 198-211 s shared phase, and most of
