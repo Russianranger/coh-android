@@ -505,6 +505,33 @@ for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
   (APK run 41881826170 from runtime 41875359508, `COH-Atlas-Gameplay-0.13.53.apk`,
   92,249,277 bytes, code 68, sha256
   `e49b88e0faf003133a708eac8d6fbe1799fe3d01a59f119705a5d84217a02363`).
+- **Thor, 2026-11-04 (exports 20261104-193441 and -195518, plus the startup
+  export -193423):** the owner reports audio working well, King's Row fixed,
+  the second start within target, temperatures mostly under 70 °C (the second
+  session reached the low-mid 70s, then fell). Evidence: `ARMPORT_NET_CLOCK_V1`
+  16 / 26 lines, King's Row lag 254-357 ms and 19-263 ms, one wrapped bias
+  (4294317285) rendered correctly; no `ARMPORT_SOUND_SCRIPT_ERRORS_V1` on the
+  device (all sounds present); folder index miss/scan 126.65 s (160,114 files)
+  then **hit in 0.257 s**, client start 166.96 s → **40.60 s**; Atlas native
+  ready 204.2 s / 149.6 s. King's Row prestart: session 1 rode after 48 s
+  (prestarted loading, 134 s), session 2 found it resident (9.3 s to ready,
+  return 5.9 s). In-world FPS median 53.2 / 39.2, p10 27.1 / 29.6 (0.13.52:
+  36.6 / 43.1). Battery 29-35 °C / 35-38 °C, thermal status 0 throughout.
+  **Memory (`rss_kib`, first device figures):** client 2,257 / 2,139 MiB, Atlas
+  MapServer 1,814 / 1,782, King's Row 1,875 / 1,877, DbServer 415 / 417,
+  wineserver 15; total peak 6,161 / 6,339 MiB with both zones; Android reported
+  6,929 / 6,938 MiB available when King's Row started. So each further resident
+  zone costs about 1.9 GB.
+- **Both sessions report "failed" with the saves correct:** `Committed existing
+  character rows changed after reopen: ents` (session 1: trained to level 2,
+  bought `805/773`, got 7 stock automatic powers (Walk, Rest, Fitness_Fix,
+  the four Fitness), a Day Job temporary
+  power `temporary_powers.day_job_powers.day_job_movement_increase_lesser`, and
+  XP/influence in the same session) and `: powers` (session 2: that Day Job power
+  expired and the stock level-2 auto-set `powersetlevelbought` normalization
+  ran). Each change has its own narrow verifier (training, temporary grants,
+  normalization, rewards), but no combination is accepted, and expiry is not.
+  Not a save failure; fix the comparator before the next APK.
 
 ## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
 

@@ -32,9 +32,9 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.49 Thor (ARM64 client): FPS mean 45-48; Atlas ready 204/222 s (.44: 287 s); King's Row failed (cold mirror).
 - 0.13.50 (APK 41712293048) Thor: King's Row reached (cold trip 562 s, return 50 s); session 2 Atlas cache
   refused (shared folders missing from the changed-root check): Atlas ready 444 s vs 297 s on .49.
-- 0.13.51 published (APK 41750489814; build 41735032151, runtime 41745666658 passed, reopen bin writes 0):
-  cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.
-- 0.13.51 Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
+- 0.13.51 published (APK 41750489814, runtime 41745666658): cache reuse fix, 10 FPS station cap (0121), thermal/tick/CPU
+  evidence. Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
 - 0.13.52 published (APK 41791858823, runtimes 41783448453/41787724875 passed, index hit 0.127 s): clock wrap 0123, 0122.
 - 0.13.53: game audio (TRASC plugin + AudioTrack bridge), RSS. 41832716509/41838960420 failed logout: modal
-  "Sound Script Errors" dialog → 0124. With 0124: runtimes 41868387083/41875359508 pass; published (APK run 41881826170).
+  "Sound Script Errors" dialog → 0124. Published (APK run 41881826170). Thor: audio, King's Row, 2nd start 40.6 s OK;
+  RSS client 2.2 GB, MapServer 1.8-1.9 GB each, total 6.3 GB; reopen check rejects training+Day Job combos (saves fine).
