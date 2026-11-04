@@ -212,7 +212,8 @@ jobs:
           New: game audio. The client's DirectSound plays through Wine's ALSA driver and a guest playback
           plugin to an Android AudioTrack (the bridge used by the owner's TRASC/LSB apps); untick Game audio
           to start without it. Everything from 0.13.52 is kept (King's Row interpolation fix, saved client
-          file list, first-lookup links, optional test server). Test sheet: THOR-TEST-0.13.53.md in the source.
+          file list, first-lookup links, optional test server). The export now records each server
+          process's memory. Test sheet: THOR-TEST-0.13.53.md in the source.
           CI evidence reaches a protocol sink only; audible playback is a device check.
           EOF
           if [ "$SERVER_OPTION" = true ]; then

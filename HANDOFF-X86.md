@@ -375,6 +375,45 @@ the station cap and evidence, and an earlier client start. Test sheet:
   `stage_app_assets.py`; the app's default has been ARM64 since 0.13.50
   (`ClientRuntime.clientArchitecture`).
 
+## Other zones: start-up anatomy and on-demand starts (study, Claude, 2026-11-04)
+
+User, 23:57 CST: "1 and 2 are approved for development"; memory must stay well
+under 16 GB (their PC "start everything" script exceeds 30 GB). Two
+source-reading studies (upstream/ouroboros, with file:line evidence):
+
+- **Zone server start-up splits cleanly.** The MapServer learns its map only at
+  `connectToDbserver` → `dbRegister` (svr_init.c:2137; dbcomm.c:250-289), after
+  every shared phase. The map name, static flag and mission info arrive in the
+  DbServer's reply (dbcontainer.c:152-197). Device times (0.13.51 exports):
+  shared 211 s (Atlas) / 198 s (King's Row) — sequencers 52-67 s, FX 43-49 s,
+  story arcs 49 s, object library 15-18 s, config 12-17 s; map-specific 49 s /
+  33 s (`groupLoadMap` 17-22 s, PhysX setup 6-17 s, collision, beacons, initMap).
+  A pre-loaded spare can block before `connectToDbserver`, receive its map id
+  and cookie, re-run the `base_map_id`/`instance_id` lookup
+  (staticMapInfo.c:590-605) and continue: ready about 33-49 s after assignment
+  instead of 231-260 s. Precedent: `-tsr` parks after the shared loads. A
+  spare holds a full private copy of the shared data under `-nosharedmemory`;
+  the stock shared-memory path (`ParserLoadFilesShared`) is untested under Wine.
+- **DbServer map starts have one choke point.** Login (`findBestMapByBaseId`),
+  zone doors/trains (`handleMapXferRequest` → `startMapIfStatic`), instances
+  and missions (`teamStartMap` → `handleContainerSet`) all call
+  `launcherCommStartProcess` (launchercomm.c:1496-1642), which builds
+  `mapserver.exe -db <host> -udp -1 -map_id <id> -launcher -cookie <n>` and
+  sends it to a Launcher. With no Launcher (our case) a static zone's
+  container is deleted (mapxfer.c:312), so that zone is gone until restart;
+  missions fail. Proposed hook: an overlay gated by an environment variable
+  publishes a request record (map id, cookie, base map, name, mission info,
+  command) instead, keeps `starting=1`, and never deletes a static container;
+  the supervisor starts (or assigns a spare to) the map with that id and
+  cookie, and delinks it (`-dbquery -delink`) on failure. The DbServer then
+  waits as it does for a Launcher (waiting list, cookie-checked register,
+  ready-for-players). maps.db has 901 containers (66 base maps + 835 clones).
+- **Risks noted:** character select waits 90 s for a map (client `-notimeout`
+  or pre-starting the saved zone); mission doors and contact lookups need door
+  records from every static zone (`Doors.db`, none shipped); no upstream start
+  timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
+  process to `server-metrics.jsonl`).
+
 ## 0.13.53: game audio (Claude, 2026-11-03)
 
 User, 21:57 CST: "audio doesn't seem to be working and don't think it ever did
@@ -416,6 +455,9 @@ for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
   least one stream connected without a protocol fault (non-zero samples are
   reported; they depend on what the scripted screens play). This is not
   evidence of audible playback.
+- **Memory evidence:** `server-metrics.jsonl` process rows gain `rss_kib`
+  (field 24 of `/proc/<pid>/stat` × page size) for the zone servers, DbServer,
+  client and wineserver.
 - **Independent review (before CI):** nothing serious in the session path.
   Fixed: the sink counted the client's shutdown disconnects (errno 32/104,
   simulated in about 5-67% of kills) as faults, which would have failed the
@@ -502,6 +544,19 @@ included) was stopped before its runtimes and restarted with patch 0123.
   runtime with the default server (evidence for the file list and links) →
   runtime with `server_run_id`, `trusted_bins=true` (qualifies the server
   package) → APK with `server_metrics`, `server_option`, published when qualified.
+- **Published:** [coh-atlas-gameplay-v0.13.52](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.52),
+  all at `424228d68`: build 41772928339 (interpolation clock notice: patched
+  King's Row lag 197 ms; original `lag_ms=0 ... FAIL: no interpolation delay`
+  on the AArch64 runner; folder-cache index 20 checks), runtime 41783448453
+  (default server; passed; reopen bin writes 0; `phase=index result=written
+  bytes=4651426` on creation, `result=hit reason=match seconds=0.127` for
+  123,633 files on reopen; `first_lookup_private_folders` bin/geobin/server),
+  runtime 41787724875 (`trusted_bins` applied; passed), APK 41791858823
+  (`COH-Atlas-Gameplay-0.13.52.apk`, 92,236,989 bytes, code 67, sha256
+  `047b0f4115e2c6ebfd51ec41ef40e6ce7c18fdcd17db04cb023086d48824f6a1`). The
+  first chain (41760267957, `0395e3c16`) was stopped before its runtimes; a
+  chain-script bug (the dispatch helper captured `gh workflow run`'s stdout
+  as the run id) stalled the second after its build, and it was resumed from it.
 
 ## Thor test of 0.13.51 (user, 2026-11-03; exports 20261104-032856 and -035206)
 

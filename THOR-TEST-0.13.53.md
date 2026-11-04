@@ -34,4 +34,6 @@ apply; see [THOR-TEST-0.13.52.md](THOR-TEST-0.13.52.md).
 What you heard (or did not), FPS or loading changes you noticed with audio on,
 and the exports. Fields I will read: `client_audio_bridge` in the Android
 report (streams, frames, non-zero samples, underruns, events), `client_audio`
-in the guest report, and the client log's `ARMPORT_NET_CLOCK_V1` lines.
+in the guest report, the client log's `ARMPORT_NET_CLOCK_V1` lines, and each
+server process's memory (`rss_kib` in `server-metrics.jsonl`), which decides
+how many zones can stay loaded on the Thor.

@@ -209,6 +209,20 @@ def parse_stat(raw):
     return value
 
 
+def stat_rss_kib(raw):
+    """Resident set (field 24 of /proc stat) in KiB; None when absent or invalid.
+
+    Memory per process decides how many zone servers fit on a 16 GB device.
+    """
+    try:
+        text = raw.decode('utf-8', 'replace') if isinstance(raw, bytes) else raw
+        fields = text.rsplit(') ', 1)[1].split()
+        pages = int(fields[21])
+        return pages * os.sysconf('SC_PAGE_SIZE') // 1024 if pages >= 0 else None
+    except (IndexError, ValueError, OSError):
+        return None
+
+
 def process_role(raw):
     """Export an allowlisted role and map number only, never executable args."""
     parts = raw.lower().split(b'\0')
@@ -440,7 +454,8 @@ class ServerMetrics:
                     return
                 if self.clock() >= deadline:
                     raise TimeoutError('sample budget exhausted')
-                value = parse_stat(bounded_read(path / 'stat'))
+                raw_stat = bounded_read(path / 'stat')
+                value = parse_stat(raw_stat)
                 if self.clock() >= deadline:
                     raise TimeoutError('sample budget exhausted')
                 role, map_id = process_role(bounded_read(path / 'cmdline'))
@@ -453,6 +468,7 @@ class ServerMetrics:
                     raise TimeoutError('sample budget exhausted')
                 value['observed_monotonic'] = self.clock()
                 rows.append({**value, 'pid': before['pid'], 'role': role, 'map_id': map_id,
+                    'rss_kib': stat_rss_kib(raw_stat),
                     **cpu_delta(value, self.process_previous.get(pid), self.hz),
                     'thread_cpu': [], 'thread_sampling': {'complete': False, 'unavailable_reason': 'budget_or_role'},
                     'ownership_rechecked_before_and_after': True})

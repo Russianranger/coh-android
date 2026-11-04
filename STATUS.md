@@ -36,5 +36,5 @@ Default branch remains main; no repository setting change.
 - 0.13.51 published (APK 41750489814; build 41735032151, runtime 41745666658 passed, reopen bin writes 0):
   cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.
 - 0.13.51 Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
-- 0.13.52: interpolation clock wrap (0123, King's Row NPCs), saved file list (0122), first-lookup links, opt-in test server.
-- 0.13.53 (after 0.13.52's chain): game audio via the TRASC ALSA plugin and an AudioTrack bridge (option on).
+- 0.13.52 published (APK 41791858823, runtimes 41783448453/41787724875 passed, index hit 0.127 s): clock wrap 0123, 0122.
+- 0.13.53: game audio (TRASC ALSA plugin + AudioTrack bridge, option on), per-process RSS. Zone study: HANDOFF-X86.md.

@@ -89,6 +89,15 @@ class MetricsTests(unittest.TestCase):
             with self.assertRaises((ValueError, IndexError)):
                 metrics.parse_stat(invalid)
 
+    def test_resident_memory_reads_stat_field_24_in_kib(self):
+        fields = ['0'] * 24
+        fields[0], fields[21] = 'S', '1000'
+        page = metrics.os.sysconf('SC_PAGE_SIZE')
+        self.assertEqual(metrics.stat_rss_kib(b'9 (Map Server.exe) ' + ' '.join(fields).encode()), 1000 * page // 1024)
+        # The CPU fixtures carry fewer fields; those rows simply have no figure.
+        self.assertIsNone(metrics.stat_rss_kib(stat_text(9)))
+        self.assertIsNone(metrics.stat_rss_kib('garbage'))
+
     def test_cpu_delta_clock_resets_and_pid_reuse(self):
         old = dict(proc_pid=12, starttime=20, user_ticks=100, system_ticks=50, observed_monotonic=10)
         new = dict(old, user_ticks=200, system_ticks=75, observed_monotonic=15)
