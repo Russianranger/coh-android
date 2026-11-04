@@ -77,6 +77,20 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertEqual(result['slowest_self_timed'], [])
         self.assertEqual(result['slowest_untimed_gaps'], [])
 
+    def test_audio_sink_summary_separates_shutdown_disconnects_from_protocol_faults(self):
+        # 0.13.53: guest cleanup kills the client mid-stream; only protocol faults fail CI.
+        sys.path[:0] = [str(ROOT / 'armport/app')]
+        import interactive_host
+        stream = {'frames': 480, 'nonzero_samples': 900, 'left_nonzero': 450, 'right_nonzero': 450, 'starts': 1, 'resets': 1}
+        summary = interactive_host.audio_summary({'streams': [stream, dict(stream, nonzero_samples=0, left_nonzero=0)],
+            'errors': ['[Errno 32] Broken pipe', '[Errno 104] Connection reset by peer', "('unknown command', 9)"]})
+        self.assertEqual(summary['streams'], 2)
+        self.assertEqual(summary['frames'], 960)
+        self.assertEqual(summary['nonzero_samples'], 900)
+        self.assertEqual(summary['stereo_streams'], 1)
+        self.assertEqual(summary['teardown_disconnects'], 2)
+        self.assertEqual(summary['errors'], ["('unknown command', 9)"])
+
     def test_guest_timing_summary_reads_the_atlas_console_from_report_zip(self):
         sys.path[:0] = [str(ROOT / 'armport/app')]
         import interactive_host

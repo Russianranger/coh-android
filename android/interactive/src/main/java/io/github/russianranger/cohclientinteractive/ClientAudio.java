@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.system.Os;
+import android.system.OsConstants;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -90,9 +91,16 @@ final class ClientAudio implements AutoCloseable {
         record("bridge=alsa-audiotrack protocol=1 rate=48000 channels=2 focus=" + focusResult
                 + " media_volume=" + manager.getStreamVolume(AudioManager.STREAM_MUSIC));
         Thread listener = new Thread(() -> {
-            try {
-                while (!closed) {
-                    LocalSocket socket = server.accept();
+            while (!closed) {
+                LocalSocket socket;
+                try { socket = server.accept(); }
+                catch (Exception e) {
+                    // close() shuts the listening socket down, which ends accept() here.
+                    if (!closed) { synchronized (stats) { listenerError = e.getClass().getSimpleName(); } record("listener_error=" + e); }
+                    return;
+                }
+                // One bad connection never stops later streams of the session.
+                try {
                     synchronized (connections) {
                         if (closed || connections.size() >= MAX_STREAMS
                                 || socket.getPeerCredentials().getUid() != android.os.Process.myUid()) {
@@ -103,9 +111,11 @@ final class ClientAudio implements AutoCloseable {
                         synchronized (stats) { opened++; }
                         Thread worker = new Thread(c, "coh-client-audio-playback"); worker.setDaemon(true); worker.start();
                     }
+                } catch (Exception e) {
+                    synchronized (stats) { refusedStreams++; }
+                    record("stream_refused=" + e);
+                    try { socket.close(); } catch (IOException ignored) {}
                 }
-            } catch (Exception e) {
-                if (!closed) { synchronized (stats) { listenerError = e.getClass().getSimpleName(); } record("listener_error=" + e); }
             }
         }, "coh-client-audio-listener");
         listener.setDaemon(true); listener.start();
@@ -220,6 +230,9 @@ final class ClientAudio implements AutoCloseable {
     public void close() {
         if (closed) return;
         closed = true;
+        // A LocalServerSocket built on a descriptor ignores close(), and closing the
+        // descriptor does not wake accept(); shutdown() does, so the listener exits.
+        try { Os.shutdown(bound.getFileDescriptor(), OsConstants.SHUT_RDWR); } catch (Exception ignored) {}
         try { if (server != null) server.close(); } catch (IOException ignored) {}
         try { bound.close(); } catch (IOException ignored) {}
         synchronized (connections) { for (Connection c : connections) c.close(); }

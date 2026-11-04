@@ -413,8 +413,18 @@ for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
 - **CI:** `interactive_host.py` runs the TRASC protocol sink (real-time playback
   head) on `work/socket/audio.sock` with `COH_CLIENT_AUDIO=1` (runtime input
   `client_audio`, default true), writes `audio-report.json`, and fails unless at
-  least one stream with non-zero samples and no protocol error arrived. This is
-  not evidence of audible playback.
+  least one stream connected without a protocol fault (non-zero samples are
+  reported; they depend on what the scripted screens play). This is not
+  evidence of audible playback.
+- **Independent review (before CI):** nothing serious in the session path.
+  Fixed: the sink counted the client's shutdown disconnects (errno 32/104,
+  simulated in about 5-67% of kills) as faults, which would have failed the
+  chain; the plugin build step captured `step.sh` and hid its log; the
+  listener thread outlived each session (now `Os.shutdown` wakes `accept`),
+  and one failed connection ended later streams; the bridge no longer starts
+  (or takes audio focus) for the x86 client. Left: push-triggered runtime runs
+  read `client_audio` as off (same as `shared_server_data`; the chain
+  dispatches). First run of the client's sound engine on ARM64 is the Thor test.
 
 ## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
 

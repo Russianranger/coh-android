@@ -211,8 +211,9 @@ jobs:
       - name: Build the guest ALSA audio plugin and check it against real alsa-lib
         run: |
           # bookworm (the guest rootfs release); conversion, clock, pause, drain, reconnect.
-          out=$(armport/scripts/step.sh "ArmPort audio plugin" armport/audio/build.sh "$RUNNER_TEMP/audio")
-          echo "::notice title=ArmPort audio plugin::${out##*$'\n'} $(tr -d '\n' < "$RUNNER_TEMP/audio/audio-bundle.json")"
+          # Not captured, so a failure keeps its log and step.sh's ::error annotation.
+          armport/scripts/step.sh "ArmPort audio plugin" armport/audio/build.sh "$RUNNER_TEMP/audio"
+          echo "::notice title=ArmPort audio plugin::$(tail -1 "$RUNNER_TEMP/audio/native-check.txt" | cut -c1-600) $(tr -d '\n' < "$RUNNER_TEMP/audio/audio-bundle.json")"
       - name: Package and stage the separate ARM64 client overlay
         run: |
           python3 armport/app/armport_client_package.py --client "$RUNNER_TEMP/client-bin" \

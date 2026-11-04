@@ -12,7 +12,7 @@ container=$(docker create coh-armport-audio:1)
 trap 'docker rm -f "$container" >/dev/null 2>&1 || true' EXIT
 docker cp "$container:/out/libasound_module_pcm_trasc.so" "$out/"
 docker run --rm --network none -v "$here:/audio:ro" coh-armport-audio:1 \
-  python3 /audio/check_audio_native.py /out/libasound_module_pcm_trasc.so
+  python3 /audio/check_audio_native.py /out/libasound_module_pcm_trasc.so | tee "$out/native-check.txt"
 image=$(docker image inspect coh-armport-audio:1 --format '{{.Id}}')
 python3 - "$out" "$image" <<'PY'
 import hashlib, json, pathlib, struct, sys

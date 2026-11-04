@@ -822,7 +822,9 @@ public final class ClientRuntime {
                 recordLifecycle("dead_owned_display_socket_recovered");
             ClientReports.preservePrevious(home.getParentFile());
             removePreviousGuestOutput();
-            if (clientAudioRequested) {
+            // Only the ARM64 client routes its ALSA output to the bridge; the x86
+            // client never connects, so do not take audio focus for it.
+            if (clientAudioRequested && "arm64".equals(clientArchitectureRequested)) {
                 // A missing bridge keeps the session (the client continues without audio).
                 try { audio = ClientAudio.start(context, new File(socketDir, "audio.sock")); }
                 catch (Exception unavailable) {
