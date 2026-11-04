@@ -500,7 +500,11 @@ for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
   (trusted) against 0.13.52's 1059/352 s and 1032/315 s. Build 41843958974 at
   7f0a59664 had failed its unit tests only (the sparse checkout lacked the
   qualified base DbServer manifest that the external-maps receipt test reads).
-  APK 41881139424 (not published), then published from runtime 41875359508.
+  APK 41881139424 (not published), then **published:**
+  [coh-atlas-gameplay-v0.13.53](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.53)
+  (APK run 41881826170 from runtime 41875359508, `COH-Atlas-Gameplay-0.13.53.apk`,
+  92,249,277 bytes, code 68, sha256
+  `e49b88e0faf003133a708eac8d6fbe1799fe3d01a59f119705a5d84217a02363`).
 
 ## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
 
