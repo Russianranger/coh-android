@@ -33,8 +33,8 @@ Default branch remains main; no repository setting change.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
-- 0.13.49 on the Thor (2 sessions, ARM64 client): in-world FPS mean 45-48, 91-97% windows ≥30;
-  Atlas MapServer ready 204/222 s (.44: 287 s); King's Row failed (420 s Python budget, cold mirror).
+- 0.13.49 Thor (ARM64 client): FPS mean 45-48; Atlas ready 204/222 s (.44: 287 s); King's Row failed (cold mirror).
 - 0.13.50 (APK 41712293048) Thor: King's Row reached (cold trip 562 s, return 50 s); session 2 Atlas cache
   refused (shared folders missing from the changed-root check): Atlas ready 444 s vs 297 s on .49.
-- 0.13.51: cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.
+- 0.13.51 published (APK 41750489814; build 41735032151, runtime 41745666658 passed, reopen bin writes 0):
+  cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.

@@ -356,6 +356,24 @@ the station cap and evidence, and an earlier client start. Test sheet:
   write into the x86 client-work tree that the server's data copy reads, so an
   overlap needs a new concurrency proof for at most 15 s. Next big items instead:
   Atlas MapServer start (228-242 s) and a saved client folder scan (105-114 s).
+- Chain: build 41734472082 failed in "ArmPort zoning guards":
+  `test_prepares_off_thread_then_spawns_and_observes_first_tick` used fake time
+  124 s, read as a reversed clock on a runner up for under 124 s (reproduced with
+  a 60 s monotonic clock; fixed in `e5c15c3b4`, test-only). Build 41735032151
+  (client with 0121) passed; runtime 41745666658 at `e5c15c3b4` passed (shipping
+  servers, fast mode, shared data, skip on, seccomp).
+- Runtime 41745666658 evidence: reopen bin writes 0; story arcs 470/957/3528 both
+  sessions; reopen data cache checkout 1.4 s with no cold mirror; shared tree
+  reused (link 0.004 s); reopen Atlas spawn → ready 133.6 s; client scan
+  123,633 files in 47 s, `phase=skip folders=2`. CI takes no monorail trip, so
+  the frame cap and the tick probe are covered by unit tests only.
+- **Published:** [coh-atlas-gameplay-v0.13.51](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.51)
+  (pre-release), APK 41750489814 at `e5c15c3b4`, 80,960,422 bytes, sha256
+  `7ce19258a588de3c2d740ffd6b9713c28f785c99fe8811aabc12aeb6fe5dc7ce`, version
+  code 66, client run 41735032151. The package record's
+  `armport_client.default_architecture: x86` is a stale label from
+  `stage_app_assets.py`; the app's default has been ARM64 since 0.13.50
+  (`ClientRuntime.clientArchitecture`).
 
 ## Thor test of 0.13.50 (user, 2026-11-03; exports 20261103-215454 and -220758)
 
