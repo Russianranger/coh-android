@@ -115,7 +115,10 @@ is untested under Wine/FEX; a later experiment.
   receipt digest above the exact shipped level-up layer, installs it inert
   (`external_maps.enabled: false`) and keeps the level-up contracts
   (`armport/tests/test_external_maps_dbserver.py`).
-- Next: run the workflow when no other chain runs; admit the two payloads in
-  `build_thor_apk.py` behind an APK option; then the supervisor (request
+- Done: APK admission behind `build_thor_apk.py --external-maps-dbserver DIR`
+  (`stage_app_assets.external_maps_dbserver`): only `startup-dbserver.exe` and
+  its manifest change, the package must validate and sit on the donor's exact
+  level-up executable and ancestry; recorded as `armport_external_maps_dbserver`.
+- Next: run the workflow when no other chain runs; then the supervisor (request
   polling, process start with cookie, delink on failure), first
   observe-and-delink, then King's Row on request, then the shared zone tree.

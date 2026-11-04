@@ -183,6 +183,10 @@ def build(args):
     else:
         added_runtime = ADDED_RUNTIME | (SERVER_ADDED_RUNTIME if server_qualification else frozenset())
         changed_runtime = CHANGED_RUNTIME | (SERVER_CHANGED_RUNTIME if server_qualification else frozenset())
+    dbserver = getattr(args, 'external_maps_dbserver', None)
+    if dbserver is not None:
+        # On-demand zones (inert until the supervisor enables it): only the two DbServer payloads change.
+        changed_runtime = changed_runtime | frozenset(stage_app_assets.DBSERVER_PAYLOADS)
     require(pin(args.donor_apk) == DONOR_APK, 'Donor 0.13.36 APK bytes differ from the public release')
     require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh output required')
     for tool in (args.android_jar, args.build_tools / 'aapt2', args.build_tools / 'zipalign',
@@ -216,7 +220,9 @@ def build(args):
                             if server_qualification else None),
             server_variant='thor_certified_startup' if server_qualification else None,
             server_run_id=server_qualification['native_build_run_id'] if server_qualification else None,
-            upstream_root=baseline, server_option=server_option)
+            upstream_root=baseline, server_option=server_option, dbserver=dbserver)
+        dbserver_record = json.loads((staged / 'runtime-manifest.json').read_text()).get(stage_app_assets.EXTERNAL_MAPS_KEY)
+        require((dbserver_record is not None) == (dbserver is not None), 'External map DbServer record mismatch')
         if server_qualification:
             require(armport['client_run_id'] == armport['data_run_id'] == server_qualification['native_build_run_id'],
                     'APK client/data and metrics servers came from different builds')
@@ -314,6 +320,8 @@ def build(args):
                         'Keeps the saved character, private database, imported assets and Wine prefix.',
         'device_validated': False, 'gameplay_validated': False, 'm5_complete': False,
     }
+    if dbserver_record is not None:
+        report['external_maps_dbserver'] = dbserver_record
     if server_qualification:
         report['server_metrics_qualification'] = server_qualification
         report['server_metrics_variant'] = 'thor_certified_startup'
@@ -339,11 +347,15 @@ def main():
     parser.add_argument('--baseline-root', type=Path)
     parser.add_argument('--server-option', action='store_true',
                         help='Carry the metrics server as an opt-in second archive (default server unchanged)')
+    parser.add_argument('--external-maps-dbserver', type=Path,
+                        help='On-demand zone DbServer package (armport-external-maps-dbserver artifact); inert by default')
     args = parser.parse_args()
     for key in ('donor_apk', 'armport', 'android_jar', 'build_tools', 'keystore', 'output'):
         setattr(args, key, getattr(args, key).absolute())
     if args.server_metrics is not None:
         args.server_metrics = args.server_metrics.absolute()
+    if args.external_maps_dbserver is not None:
+        args.external_maps_dbserver = args.external_maps_dbserver.absolute()
     build(args)
 
 

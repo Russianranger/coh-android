@@ -2,6 +2,7 @@
 """Add the ARM64 option to extracted app assets; never builds/signs an APK."""
 import argparse
 import ast
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -90,9 +91,46 @@ def encoded(value):
     return (json.dumps(value, sort_keys=True, indent=2) + '\n').encode()
 
 
+DBSERVER_PAYLOADS = ('startup-dbserver.exe', 'startup-dbserver-manifest.json')
+EXTERNAL_MAPS_KEY = 'armport_external_maps_dbserver'
+
+
+def external_maps_dbserver(source, directory):
+    """On-demand zone DbServer (armport/server/package_external_maps_dbserver.py).
+
+    Replaces only the two DbServer payloads. The package must validate against
+    its own build commit and sit on exactly the donor's level-up DbServer (same
+    executable pin and the same five-layer ancestry). It installs inert: map
+    requests are published only when the supervisor sets COH_WINE_DB_EXTERNAL_MAPS=1.
+    """
+    import sys
+    sys.path.insert(0, str(ROOT / 'armport/server'))
+    import package_external_maps_dbserver as external_maps
+    raw = (directory / external_maps.MANIFEST).read_bytes()
+    value = json.loads(raw)
+    external_maps.validate_package(directory, value.get('repository_commit', ''))
+    donor = json.loads((source / 'startup-dbserver-manifest.json').read_text())
+    package.require(pin(source / 'startup-dbserver.exe') == external_maps.BASE_LEVELUP_EXECUTABLE
+                    and donor.get('role') == 'manual_atlas_dbserver_levelup_ui_repair'
+                    and {key: donor.get('files', {}).get('DbServer.exe', {}).get(key) for key in ('bytes', 'sha256')}
+                        == external_maps.BASE_LEVELUP_EXECUTABLE
+                    and all(donor.get(key) == value.get(key) for key in
+                            ('build_input', 'startup_bundle_build_input', 'levelup_ui_repair_build_input')),
+                    'The external map DbServer does not sit on the donor level-up DbServer')
+    generated = {'startup-dbserver.exe': (directory / 'DbServer.exe').read_bytes(), 'startup-dbserver-manifest.json': raw}
+    record = {'role': value['role'], 'repository_commit': value['repository_commit'],
+              'executable': {'bytes': value['files']['DbServer.exe']['bytes'],
+                             'sha256': value['files']['DbServer.exe']['sha256']},
+              'base_executable': external_maps.BASE_LEVELUP_EXECUTABLE,
+              'build_input_sha256': hashlib.sha256(json.dumps(value['external_maps_build_input'], sort_keys=True,
+                                                   separators=(',', ':')).encode()).hexdigest(),
+              'enabled_by_default': False}
+    return generated, record
+
+
 def stage(source, armport, output, repository_commit, external=None, *,
           server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
-          server_option=False):
+          server_option=False, dbserver=None):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -141,6 +179,12 @@ def stage(source, armport, output, repository_commit, external=None, *,
         runtime[contract.WRAPPER] = contract.summary(binding)
         if server_option:
             runtime[contract.OPTION] = contract.option_record()
+    dbserver_record = None
+    if dbserver is not None:
+        package.require(all(name in runtime['files'] and name not in external for name in DBSERVER_PAYLOADS),
+                        'The donor carries no packaged DbServer to replace')
+        replaced, dbserver_record = external_maps_dbserver(source, dbserver)
+        generated.update(replaced)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
@@ -168,7 +212,9 @@ def stage(source, armport, output, repository_commit, external=None, *,
         runtime['files'][name] = client['files'][name] = record
     for name, raw in generated.items():
         (output / name).write_bytes(raw)
-        runtime['files'][name] = client['files'][name] = pin(output / name)
+        runtime['files'][name] = pin(output / name)
+        if name in client['files'] or name not in DBSERVER_PAYLOADS:
+            client['files'][name] = runtime['files'][name]
     package.require(len(client['files']) <= 96, 'Existing client inventory bound exceeded')
     (output / 'client-manifest.json').write_bytes(encoded(client))
     runtime['files']['client-manifest.json'] = pin(output / 'client-manifest.json')
@@ -177,6 +223,8 @@ def stage(source, armport, output, repository_commit, external=None, *,
         'executable_sha256': document['files']['CityOfHeroes.exe']['sha256'],
         'client_run_id': document['client_run_id'], 'data_run_id': document['data_run_id'],
         'machine': 'ARM64', 'default_architecture': 'x86'}
+    if dbserver_record is not None:
+        runtime[EXTERNAL_MAPS_KEY] = dbserver_record
     (output / 'runtime-manifest.json').write_bytes(encoded(runtime))
     return runtime['armport_client']
 
@@ -191,6 +239,7 @@ def main():
     parser.add_argument('--server-run-id', type=int)
     parser.add_argument('--upstream-root', type=Path, default=ROOT)
     parser.add_argument('--server-option', action='store_true')
+    parser.add_argument('--dbserver', type=Path, help='external map DbServer package directory')
     print(json.dumps(stage(**vars(parser.parse_args()))))
 
 

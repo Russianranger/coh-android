@@ -6,9 +6,11 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path[:0] = [str(ROOT / 'armport/server'), str(ROOT / 'tools/android/interactive'), str(ROOT / 'android/guest')]
+sys.path[:0] = [str(ROOT / 'armport/server'), str(ROOT / 'armport/app'), str(ROOT / 'tools/android/interactive'),
+                str(ROOT / 'android/guest')]
 import package_external_maps_dbserver as external  # noqa: E402
 import local_character_server as character  # noqa: E402
 from test_package_reference_runtime import pe_file  # noqa: E402
@@ -97,6 +99,65 @@ class ExternalMapsDbServerTests(unittest.TestCase):
                 with self.assertRaises(character.base.DiagnosticError):
                     character.install_manual_atlas_dbserver(assets, runtime, package)
                 self.assertEqual((runtime / 'DbServer.exe').read_bytes(), original)
+
+
+class ExternalMapsApkAdmissionTests(unittest.TestCase):
+    """build_thor_apk --external-maps-dbserver: only the two DbServer payloads, on the donor's level-up DbServer."""
+    def fixture(self, root):
+        import stage_app_assets
+        source, package = root / 'donor', root / 'package'
+        source.mkdir(); package.mkdir()
+        old_exe, new_exe = b'donor level-up DbServer', b'external map DbServer'
+        (source / 'startup-dbserver.exe').write_bytes(old_exe)
+        base, bundle, levelup = layered_inputs()
+        base_pin = stage_app_assets.pin(source / 'startup-dbserver.exe')
+        donor = {'role': 'manual_atlas_dbserver_levelup_ui_repair', 'build_input': base,
+                 'startup_bundle_build_input': bundle, 'levelup_ui_repair_build_input': levelup,
+                 'files': {'DbServer.exe': dict(base_pin, pe_machine=332)}}
+        (source / 'startup-dbserver-manifest.json').write_text(json.dumps(donor))
+        (package / 'DbServer.exe').write_bytes(new_exe)
+        value = dict(donor, role=external.ROLE, repository_commit='b' * 40,
+                     external_maps_build_input=external.expected_receipt(ROOT),
+                     files={'DbServer.exe': {'bytes': len(new_exe), 'sha256': hashlib.sha256(new_exe).hexdigest()}})
+        (package / external.MANIFEST).write_text(json.dumps(value))
+        return stage_app_assets, source, package, base_pin, value
+
+    def test_admission_replaces_two_payloads_and_records_the_layer_inert(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            stage_app_assets, source, package, base_pin, value = self.fixture(Path(temporary))
+            with patch.object(external, 'BASE_LEVELUP_EXECUTABLE', base_pin), \
+                    patch.object(external, 'validate_package', return_value=value) as validate:
+                generated, record = stage_app_assets.external_maps_dbserver(source, package)
+            validate.assert_called_once_with(package, 'b' * 40)
+            self.assertEqual(set(generated), set(stage_app_assets.DBSERVER_PAYLOADS))
+            self.assertEqual(generated['startup-dbserver.exe'], b'external map DbServer')
+            self.assertEqual(record['role'], external.ROLE)
+            self.assertFalse(record['enabled_by_default'])
+            self.assertEqual(record['build_input_sha256'], character.EXTERNAL_MAPS_BUILD_INPUT_SHA256)
+
+    def test_admission_refuses_another_donor_dbserver_or_ancestry(self):
+        for change in ('executable', 'role', 'ancestry'):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as temporary:
+                stage_app_assets, source, package, base_pin, value = self.fixture(Path(temporary))
+                donor = json.loads((source / 'startup-dbserver-manifest.json').read_text())
+                if change == 'executable':
+                    (source / 'startup-dbserver.exe').write_bytes(b'another DbServer')
+                elif change == 'role':
+                    donor['role'] = 'manual_atlas_dbserver_startup_bundle'
+                else:
+                    donor['levelup_ui_repair_build_input'] = dict(donor['levelup_ui_repair_build_input'], patch_sha256='f' * 64)
+                (source / 'startup-dbserver-manifest.json').write_text(json.dumps(donor))
+                with patch.object(external, 'BASE_LEVELUP_EXECUTABLE', base_pin), \
+                        patch.object(external, 'validate_package', return_value=value), \
+                        self.assertRaisesRegex(ValueError, 'does not sit on the donor'):
+                    stage_app_assets.external_maps_dbserver(source, package)
+
+    def test_apk_builder_admits_exactly_the_two_payloads(self):
+        import build_thor_apk
+        source = (ROOT / 'armport/app/build_thor_apk.py').read_text()
+        self.assertIn('changed_runtime | frozenset(stage_app_assets.DBSERVER_PAYLOADS)', source)
+        self.assertIn("'--external-maps-dbserver'", source)
+        self.assertFalse(set(build_thor_apk.CHANGED_RUNTIME) & {'startup-dbserver.exe', 'startup-dbserver-manifest.json'})
 
 
 if __name__ == '__main__':
