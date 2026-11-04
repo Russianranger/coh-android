@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.
 - 0.13.51 Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
 - 0.13.52 published (APK 41791858823, runtimes 41783448453/41787724875 passed, index hit 0.127 s): clock wrap 0123, 0122.
-- 0.13.53: game audio (TRASC plugin + AudioTrack bridge), RSS. Tone probe PASS 71,986/71,987 non-zero (41838960420);
-  runtimes 41832716509/41838960420 failed logout: modal "Sound Script Errors" dialog (no CI sounds) → patch 0124.
+- 0.13.53: game audio (TRASC plugin + AudioTrack bridge), RSS. 41832716509/41838960420 failed logout: modal
+  "Sound Script Errors" dialog → 0124. With 0124: runtimes 41868387083/41875359508 pass (tone 71,986/71,987), APK 41881139424.

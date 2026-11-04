@@ -488,6 +488,19 @@ for the ARM client". Built on 0.13.52; its chain runs after 0.13.52's.
   missing or renamed sound must never stop play: 0124 logs the errors
   (`ARMPORT_SOUND_SCRIPT_ERRORS_V1`) and bounds the 1,024-byte error text (a
   script naming many missing sounds overflowed it). Chain restarted at 7f0a59664.
+- **CI with 0124 (build 41845880444 at c1b7097e1):** runtime 41868387083
+  (default) and 41875359508 (trusted bins) **passed creation and reopen with
+  game audio on**. Both: tone probe PASS (71,986 / 71,987 non-zero samples), the
+  game opened 2 streams (38.6 M / 38.8 M frames, all silent: no CI sounds) with
+  no protocol or teardown faults. The save windows that failed before 0124 now
+  pass. The logged `ARMPORT_SOUND_SCRIPT_ERRORS_V1` lines are inside the report
+  artifact, which cannot be downloaded here; from fd73bc165 the startup-detail
+  notice reports them. Audio costs nothing measurable in CI: Atlas
+  request→client world ready, creation/reopen, 1035/350 s and 1020/313 s
+  (trusted) against 0.13.52's 1059/352 s and 1032/315 s. Build 41843958974 at
+  7f0a59664 had failed its unit tests only (the sparse checkout lacked the
+  qualified base DbServer manifest that the external-maps receipt test reads).
+  APK 41881139424 (not published), then published from runtime 41875359508.
 
 ## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
 

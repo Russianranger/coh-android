@@ -8,11 +8,15 @@ sheet covers both. Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.53".
 | Change | Default | Expected effect |
 |---|---|---|
 | Game audio | on (`Game audio (sound and music through Android)`) | Login music, zone ambience, footsteps and power sounds through the Thor's speakers or headphones, at the media volume. Untick it to start without audio, as before |
+| Sound script errors are logged (patch 0124) | always | A zone sound script that names a missing sound no longer opens the game's "Sound Script Errors" window, which stopped all input (CI has no sound files and hit it on the first save). Your device has all the sounds, so you should never have seen it; if a sound is missing, the client log gets an `ARMPORT_SOUND_SCRIPT_ERRORS_V1` line instead |
 
 How it works: the game's DirectSound goes through Wine's ALSA driver to a small
 playback plugin in the guest, which hands the sound to an Android AudioTrack
 in the app. It is the same bridge as your TRASC/LSB apps. In CI the sound only
-reaches a test receiver; hearing it is the device check.
+reaches a test receiver; hearing it is the device check. CI (runtimes
+41868387083 and 41875359508): a DirectSound test tone arrived on both
+channels, the game opened its audio streams without a fault, and both the
+creation and reopen sessions passed with audio on, as fast as 0.13.52.
 
 ## Steps
 
