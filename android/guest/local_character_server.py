@@ -2509,8 +2509,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         private mirror), sealed with read-only directories and a marker, and
         reused by later sessions. A tree left without its marker (a stopped
         build) holds only directories and links and is rebuilt; trees of other
-        identities are removed when a new one is built. Only the root is a
-        directory link; Wine follows it as a path component.
+        identities are removed when a new one is built. runtime/serverdata is a
+        real directory holding one directory link per shared folder (and, from
+        0.13.52, links to the private bin, geobin and server folders); Wine
+        follows each link as a path component.
         """
         started = time.monotonic()
         key = hashlib.sha256(server_data_cache.canonical(identity)).hexdigest()[:24]

@@ -4,9 +4,12 @@ Extracts FolderNodeAdd (FolderCacheNode.c) and the scan, index and
 FolderCacheAddFolder code (FolderCache.c) from --source, compiles them with
 folder_cache_index_fixture.c (POSIX stand-ins for the Win32 calls) and checks:
 the index is written after a full scan and rebuilds the identical tree (names,
-sizes, timestamps, flags) while listing only the root and the live root bin/;
-a changed identity, skip list, sampled size or time, checksum, length or an
-unsafe record name each fall back to the full scan and rewrite the index.
+sizes, timestamps, flags) while listing only the root and the live roots (bin/
+and ARMPORT_FOLDER_CACHE_LIVE, where a file rewritten in place shows its new
+size; a skipped live root stays skipped and is counted once); a changed
+identity, skip or live list, sampled size or time, checksum, length or an
+unsafe record name (separator, NUL) each fall back to the full scan and
+rewrite the index.
 --original (unpatched upstream/ouroboros) has no index code and must fail.
 """
 from pathlib import Path
@@ -50,6 +53,16 @@ extracted = '\n'.join([
     function(cache, 'void FolderCacheAddFolder(FolderCache *fc')]) + '\n'
 
 failures, checks = [], []
+# ArmportFciHeader: magic 8, version and virtual_location 4+4, id 72, basepath 64,
+# skip 160, live 160, nine U32 fields (checksum last).
+HEADER = 8 + 8 + 72 + 64 + 160 + 160 + 9 * 4
+
+
+def fnv(data):
+    value = 2166136261
+    for byte in bytes(data):
+        value = ((value ^ byte) * 16777619) & 0xffffffff
+    return value
 
 
 def check(actual, expected, label):
@@ -69,17 +82,19 @@ with tempfile.TemporaryDirectory(prefix='armport-fci-') as temporary:
                     str(Path(__file__).with_name('folder_cache_index_fixture.c'))], check=True)
     tree = work / 'tree'
     data = tree / 'data'
-    for name in ('bin', 'maps/bin', 'maps/City', 'texts', 'scripts.loc', 'Defs/deep/er'):
+    for name in ('bin', 'maps/bin', 'maps/City', 'texts', 'scripts.loc', 'Defs/deep/er', 'geobin/maps'):
         (data / name).mkdir(parents=True)
     for i in (1, 2, 3):
         (data / ('maps/City/geo%d.txt' % i)).write_bytes(b'\0' * (7 * i))
     for name, text in (('bin/a.bin', 'a'), ('maps/bin/n.bin', 'nested'), ('texts/T.ms', 't'),
-                       ('scripts.loc/x.storyarc', 's'), ('Defs/deep/er/z.def', 'd'), ('texts/ro.txt', 'ro')):
+                       ('scripts.loc/x.storyarc', 's'), ('Defs/deep/er/z.def', 'd'), ('texts/ro.txt', 'ro'),
+                       ('geobin/maps/g.bin', 'g')):
         (data / name).write_text(text + '\n')
     os.chmod(data / 'texts/ro.txt', 0o444)
     os.utime(data / 'maps/City/geo1.txt', (1577836800, 1577836800))
     index = tree / 'index.bin'
-    base_env = dict(os.environ, ARMPORT_LOOSE_DATA='1', ARMPORT_FOLDER_CACHE_SKIP='scripts.loc')
+    base_env = dict(os.environ, ARMPORT_LOOSE_DATA='1', ARMPORT_FOLDER_CACHE_SKIP='scripts.loc',
+                    ARMPORT_FOLDER_CACHE_LIVE='geobin,scripts.loc')
     for key in ('ARMPORT_FOLDER_CACHE_INDEX', 'ARMPORT_FOLDER_CACHE_ID'):
         base_env.pop(key, None)
     index_env = dict(base_env, ARMPORT_FOLDER_CACHE_INDEX=str(index), ARMPORT_FOLDER_CACHE_ID='abc123')
@@ -93,8 +108,8 @@ with tempfile.TemporaryDirectory(prefix='armport-fci-') as temporary:
                    for line in lines]
         return cleaned, (tree / name).read_text()
 
-    full = ['RESULT files=8 folders=8 skipped=1 listings=9']
-    rescan = lambda reason, result='files=9 folders=8 skipped=1 listings=9': [
+    full = ['RESULT files=9 folders=10 skipped=1 listings=11']
+    rescan = lambda reason, result='files=10 folders=10 skipped=1 listings=11': [
         'phase=index result=miss reason=' + reason, 'phase=index result=written', 'RESULT ' + result]
     plain, plain_tree = run('plain.txt', base_env)
     check(plain, full, 'no index variables: the original full scan only')
@@ -103,18 +118,27 @@ with tempfile.TemporaryDirectory(prefix='armport-fci-') as temporary:
           'no index yet: full scan, then the index is written')
     check(first_tree, plain_tree, 'scan with the index enabled builds the original tree')
     hit, hit_tree = run('hit.txt', index_env)
-    check(hit, ['phase=index result=hit reason=match', 'RESULT files=8 folders=8 skipped=1 listings=2'],
-          'same identity: nodes from the index, only the root and bin/ listed')
+    check(hit, ['phase=index result=hit reason=match', 'RESULT files=9 folders=10 skipped=1 listings=4'],
+          'same identity: nodes from the index; only the root, bin/, geobin/ and geobin/maps listed')
     check(hit_tree, plain_tree, 'the index rebuilds the identical tree (names, sizes, times, flags)')
     (data / 'bin/b.bin').write_text('new\n')
+    geobin = data / 'geobin/maps/g.bin'
+    before = os.stat(geobin.parent)
+    with open(geobin, 'r+b') as stream:                    # rewritten in place, same directory
+        stream.write(b'0123456789abcdef'); stream.truncate()
+    os.utime(geobin.parent, ns=(before.st_atime_ns, before.st_mtime_ns))
     live, live_tree = run('live.txt', index_env)
-    check(live[-1], 'RESULT files=9 folders=8 skipped=1 listings=2', 'the root bin/ (overlay) is scanned live')
-    check(('/bin/b.bin 0' in live_tree, '/maps/bin/n.bin 0' in live_tree), (True, True),
-          'a new overlay bin is visible; a nested bin/ comes from the index')
+    check(live[-1], 'RESULT files=10 folders=10 skipped=1 listings=4',
+          'live roots are scanned on a hit; a skipped live root stays skipped and is counted once')
+    check(('/bin/b.bin 0' in live_tree, '/maps/bin/n.bin 0' in live_tree,
+           '/geobin/maps/g.bin 0 16 ' in live_tree, '/scripts.loc' in live_tree), (True, True, True, False),
+          'new overlay bin and in-place geobin rewrite visible; nested bin/ from the index')
     check(run('id.txt', dict(index_env, ARMPORT_FOLDER_CACHE_ID='other'))[0], rescan('header'),
           'changed identity: full scan')
     check(run('skip.txt', dict(index_env, ARMPORT_FOLDER_CACHE_ID='other', ARMPORT_FOLDER_CACHE_SKIP=''))[0],
-          rescan('header', 'files=10 folders=9 skipped=0 listings=10'), 'changed skip list: full scan')
+          rescan('header', 'files=11 folders=11 skipped=0 listings=12'), 'changed skip list: full scan')
+    check(run('live2.txt', dict(index_env, ARMPORT_FOLDER_CACHE_LIVE='geobin'))[0], rescan('header'),
+          'changed live list: full scan')
     check(run('back.txt', index_env)[0], rescan('header'), 'the index belongs to the last identity')
     (data / 'maps/City/geo2.txt').write_bytes(b'\0' * 99)
     stale, stale_tree = run('stale.txt', index_env)
@@ -127,13 +151,14 @@ with tempfile.TemporaryDirectory(prefix='armport-fci-') as temporary:
     index.write_bytes(index.read_bytes()[:-5])
     check(run('short.txt', index_env)[0], rescan('header'), 'truncated index: length refusal')
     raw = bytearray(index.read_bytes()); at = raw.index(b'T.ms'); raw[at:at + 4] = b'T/ms'
-    checksum = 2166136261
-    for byte in bytes(raw[348:]):
-        checksum = ((checksum ^ byte) * 16777619) & 0xffffffff
-    raw[344:348] = checksum.to_bytes(4, 'little'); index.write_bytes(raw)
-    check(run('records.txt', index_env)[0], rescan('records'), 'an unsafe record name is refused')
+    checksum = fnv(raw[HEADER:])
+    raw[HEADER - 4:HEADER] = checksum.to_bytes(4, 'little'); index.write_bytes(raw)
+    check(run('records.txt', index_env)[0], rescan('records'), 'a record name with a separator is refused')
+    raw = bytearray(index.read_bytes()); at = raw.index(b'T.ms'); raw[at + 1] = 0
+    raw[HEADER - 4:HEADER] = fnv(raw[HEADER:]).to_bytes(4, 'little'); index.write_bytes(raw)
+    check(run('nul.txt', index_env)[0], rescan('records'), 'a record name with a NUL is refused')
     final, final_tree = run('final.txt', index_env)
-    check(final, ['phase=index result=hit reason=match', 'RESULT files=9 folders=8 skipped=1 listings=2'],
+    check(final, ['phase=index result=hit reason=match', 'RESULT files=10 folders=10 skipped=1 listings=4'],
           'the rewritten index hits again')
     check(final_tree, run('last.txt', base_env)[1], 'and equals a fresh full scan')
     check(Path(str(index) + '.tmp').exists(), False, 'no temporary index is left behind')

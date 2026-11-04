@@ -217,7 +217,7 @@ jobs:
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead; that server has not run on a device before." >> notes.md
           elif [ "$SERVER_METRICS" = true ]; then
-            echo "Servers: instrumented MapServer; Fast server data loading (trusted bins) is active." >> notes.md
+            echo "Servers: instrumented MapServer; trusted bins apply when Fast server start (test server) is ticked (off by default)." >> notes.md
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server start (test server) option has no effect in this build." >> notes.md
           fi

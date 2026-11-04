@@ -439,7 +439,9 @@ jobs:
 
       - name: Saved folder-cache index rebuilds the scanned tree and refuses stale data (patch 0122)
         run: |
-          out=$(armport/scripts/step.sh "ArmPort folder-cache index" python3 armport/tests/folder_cache_index.py --source "$RUNNER_TEMP/armport/src" | tail -1)
+          # No pipe: the step's exit status must be the check's (bash -e, no pipefail).
+          out=$(armport/scripts/step.sh "ArmPort folder-cache index" python3 armport/tests/folder_cache_index.py --source "$RUNNER_TEMP/armport/src")
+          out=${out##*$'\n'}
           if python3 armport/tests/folder_cache_index.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/folder-index-original.txt" 2>&1; then
             echo "::error title=ArmPort folder-cache index::the original scan unexpectedly passed"; exit 1
           fi

@@ -200,22 +200,26 @@ def validate_links(source_data, links, tree, receipt):
 FOLDER_INDEX = 'armport-folder-cache-index.bin'
 
 
-def folder_cache_identity(client, skip):
+def folder_cache_identity(client, skip, live=''):
     """Identity of the client's data view for its saved file list (patch 0122).
 
     The view is the verified app data (every source directory's device, inode,
     mtime and ctime, plus every directory the links point into) and the ARM64
     overlay. Adding, removing, renaming or replacing any entry changes one of
-    these; installs publish new files, never rewrite one. The client also
-    checks sampled files and keeps scanning live the overlay's bin/.
+    these; installs publish new files, never rewrite one. Root folders that may
+    be rewritten in place (the overlay's bin/ and the writable cache roots in
+    `live`) are scanned live by the client, which also checks sampled files.
     """
     validation = client['data_validation']
-    record = {'format': 1, 'policy': 'armport_folder_cache_index_v1',
+    record = {'format': 2, 'policy': 'armport_folder_cache_index_v1',
+              # The code that builds the view: a changed layout must not reuse a list.
+              'view_code_sha256': digest(Path(__file__).resolve()),
               'tree_sha256': validation['tree_sha256'], 'targets_sha256': validation['targets_sha256'],
               'links': validation['links'], 'archive_sha256': client['archive_sha256'],
-              'executable_sha256': client['executable_sha256'], 'skip': skip}
+              'executable_sha256': client['executable_sha256'], 'skip': skip, 'live': live}
     require(all(isinstance(record[key], str) and re.fullmatch('[0-9a-f]{64}', record[key])
-                for key in ('tree_sha256', 'targets_sha256', 'archive_sha256', 'executable_sha256')),
+                for key in ('tree_sha256', 'targets_sha256', 'archive_sha256', 'executable_sha256',
+                            'view_code_sha256')),
             'Client folder index identity needs every digest')
     return hashlib.sha256(json.dumps(record, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 

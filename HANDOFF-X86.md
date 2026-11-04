@@ -387,14 +387,23 @@ after the 0.13.51 results.
   `ARMPORT_FOLDER_CACHE_ID` matches. The identity (`armport_client_package.
   folder_cache_identity`) hashes the per-launch link validation digests (every
   source directory and link-target directory: device, inode, mtime, ctime),
-  the link count, the overlay archive and executable, and the skip list.
-  Installs publish new files, so any change moves a directory identity. The
-  client also refuses on header, length, checksum or record errors, or when
-  one of 64 sampled files changed size or time, and always scans the overlay's
-  root `bin/` live (fresh mtimes every launch). Log: `phase=index result=hit|miss
-  reason=...` and `result=written`. `armport/tests/folder_cache_index.py` runs
-  the extracted prepared code natively (18 checks; upstream fails) as a build
-  step. 160k-file fixture: 5.2 MB index, identical tree, 2 listings vs 1,642.
+  the link count, the overlay archive and executable, the skip and live lists,
+  and the view-building code (`armport_client_package.py`). Installs publish
+  new files, so any change moves a directory identity. The client also refuses
+  on header, length, checksum or record errors (separators, NUL, long names),
+  or when one of 64 sampled files changed size or time. It always scans live the
+  overlay's root `bin/` (fresh mtimes every launch) and the writable cache roots
+  `geobin` and `server` (`ARMPORT_FOLDER_CACHE_LIVE`; their files can be
+  rewritten in place without a directory change), with the full scan's skip
+  and exclusion rules. Log: `phase=index result=hit|miss reason=...` and
+  `result=written`. `armport/tests/folder_cache_index.py` runs the extracted
+  prepared code natively (20 checks; upstream fails) as a build step.
+  160k-file fixture: 5.2 MB index, identical tree, 2 listings vs 1,642.
+  Independent review (before CI): no serious defect; the CI step's pipe hid a
+  failure, the in-place rewrite gap and the view-code identity were fixed.
+  Left as is: merged directories carry the previous launch's folder times on a
+  hit (nothing found that reads folder times), and the second server archive
+  is in the client manifest, so it is hashed every launch.
 - **First-lookup links** (`COH_SERVERDATA_FIRST_LOOKUP`, on). `runtime/serverdata`
   is now a directory of folder links (15 shared) plus `bin`, `geobin` and
   `server` linked to `../data/`. The Atlas console requests trees for 14 roots,

@@ -1,8 +1,8 @@
 diff --git a/libs/UtilitiesLib/src/utils/FolderCache.c b/libs/UtilitiesLib/src/utils/FolderCache.c
-index 37cdf82..7bf095e 100644
+index 37cdf82..adff762 100644
 --- a/libs/UtilitiesLib/src/utils/FolderCache.c
 +++ b/libs/UtilitiesLib/src/utils/FolderCache.c
-@@ -396,6 +396,380 @@ static int armportFixedData(void)
+@@ -396,6 +396,431 @@ static int armportFixedData(void)
      return fixed;
  }
  
@@ -12,8 +12,11 @@ index 37cdf82..7bf095e 100644
 +// ARMPORT_FOLDER_CACHE_ID gives the Android guest's identity of the data tree
 +// (it changes whenever a source directory or link target changes, the ARM64
 +// overlay or the skip list), the scan result is saved there and the next
-+// start with the same identity rebuilds the same nodes from it. The root bin/
-+// folder (the overlay, unpacked fresh every launch) is always scanned live.
++// start with the same identity rebuilds the same nodes from it. Root folders
++// that change without their directory changing are always scanned live: bin/
++// (the overlay, unpacked fresh every launch) and those named in
++// ARMPORT_FOLDER_CACHE_LIVE (comma-separated, at most 8; the guest names the
++// writable cache roots geobin and server).
 +// The header must match exactly, the payload checksum and bounds must hold,
 +// and up to 64 sampled files must still have their recorded size and
 +// timestamp; otherwise the full scan runs and rewrites the index.
@@ -25,7 +28,7 @@ index 37cdf82..7bf095e 100644
 +typedef struct ArmportFciHeader {
 +    char magic[8];
 +    U32 version, virtual_location;
-+    char id[72], basepath[64], skip[160];
++    char id[72], basepath[64], skip[160], live[160];
 +    U32 loose, devdata, exclusion;
 +    U32 files, folders, skipped, root_count, payload_bytes, checksum;
 +} ArmportFciHeader;
@@ -56,14 +59,59 @@ index 37cdf82..7bf095e 100644
 +    return hash;
 +}
 +
++static int armportFciLiveRoot(const char *name)
++{
++    static int parsed = 0, count = 0;
++    static char names[8][64];
++    int i;
++    if (!parsed) {
++        const char *value = getenv("ARMPORT_FOLDER_CACHE_LIVE");
++        parsed = 1;
++        while (value && *value && count < 8) {
++            const char *end = strchr(value, ',');
++            size_t len = end ? (size_t)(end - value) : strlen(value);
++            if (len > 0 && len < sizeof(names[0])) {
++                memcpy(names[count], value, len);
++                names[count][len] = 0;
++                count++;
++            }
++            if (!end)
++                break;
++            value = end + 1;
++        }
++    }
++    if (stricmp(name, "bin") == 0)
++        return 1;
++    for (i = 0; i < count; i++)
++        if (stricmp(name, names[i]) == 0)
++            return 1;
++    return 0;
++}
++
 +static int armportFciRootBin(FolderNode *parent, const char *name)
 +{
-+    return parent == NULL && stricmp(name, "bin") == 0;
++    return parent == NULL && armportFciLiveRoot(name);
++}
++
++// The full scan's root-level folder rules (skip list and exclusion).
++static int armportFciRootAllowed(const char *name)
++{
++    if (armportSkippedRootFolder(name))
++        return 0;
++    switch (folder_cache_exclusion) {
++        xcase FOLDER_CACHE_EXCLUDE_FOLDER:
++            return !(folder_cache_exclusion_folder && stricmp(name, folder_cache_exclusion_folder) == 0);
++        xcase FOLDER_CACHE_ONLY_FOLDER:
++            return !(folder_cache_exclusion_folder && stricmp(name, folder_cache_exclusion_folder) != 0);
++        xdefault:
++            return 1;
++    }
 +}
 +
 +static void armportFciHeaderFill(ArmportFciHeader *header, const char *basepath, int virtual_location)
 +{
 +    const char *skip = getenv("ARMPORT_FOLDER_CACHE_SKIP");
++    const char *live = getenv("ARMPORT_FOLDER_CACHE_LIVE");
 +    memset(header, 0, sizeof(*header));
 +    memcpy(header->magic, ARMPORT_FCI_MAGIC, 8);
 +    header->version = ARMPORT_FCI_VERSION;
@@ -71,6 +119,7 @@ index 37cdf82..7bf095e 100644
 +    strncpy(header->id, getenv("ARMPORT_FOLDER_CACHE_ID"), sizeof(header->id) - 1);
 +    strncpy(header->basepath, basepath, sizeof(header->basepath) - 1);
 +    strncpy(header->skip, skip ? skip : "", sizeof(header->skip) - 1);
++    strncpy(header->live, live ? live : "", sizeof(header->live) - 1);
 +    header->loose = getenv("ARMPORT_LOOSE_DATA") != NULL;
 +    header->devdata = fileIsUsingDevData() ? 1 : 0;
 +    header->exclusion = (U32)folder_cache_exclusion;
@@ -221,11 +270,11 @@ index 37cdf82..7bf095e 100644
 +        FolderNode *node;
 +        int created;
 +        if (!armportFciTake(reader, &flags, 1) || !armportFciTake(reader, &length, 2)
-+                || length == 0 || length >= MAX_PATH || (flags & ~15)
-+                || !armportFciTake(reader, name, length))
++                || length == 0 || length >= MAX_PATH - 2 || (flags & ~15)
++                || !armportFciTake(reader, name, length) || memchr(name, 0, length))
 +            return 0;
 +        name[length] = 0;
-+        if (strchr(name, '/') || strchr(name, '\\') || name[0] == '.' || (depth == 0 && stricmp(name, "bin") == 0)
++        if (strchr(name, '/') || strchr(name, '\\') || name[0] == '.' || (depth == 0 && armportFciLiveRoot(name))
 +                || path_length + 1 + length >= sizeof(reader->path)
 +                || !armportFciTake(reader, &size, 4) || !armportFciTake(reader, &timestamp, 4))
 +            return 0;
@@ -294,8 +343,9 @@ index 37cdf82..7bf095e 100644
 +    CloseHandle(file);
 +}
 +
-+// Rebuild the live root bin/ folder exactly as the scan does (one root entry).
-+static void armportFciScanRootBin(FolderCache *fc, const char *basepath, int virtual_location)
++// Rebuild the live root folders exactly as the scan does. Their skip count is
++// already in the index header, so a skipped one is not counted again.
++static void armportFciScanLiveRoots(FolderCache *fc, const char *basepath, int virtual_location)
 +{
 +    char buffer[1024];
 +    WIN32_FIND_DATAA wfd;
@@ -307,7 +357,8 @@ index 37cdf82..7bf095e 100644
 +        __time32_t utc_time;
 +        FolderNode *node;
 +        int created;
-+        if (!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) || !armportFciRootBin(NULL, wfd.cFileName))
++        if (wfd.cFileName[0] == '.' || !(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
++                || !armportFciLiveRoot(wfd.cFileName) || !armportFciRootAllowed(wfd.cFileName))
 +            continue;
 +        _FileTimeToUnixTime(&wfd.ftLastWriteTime, &utc_time, FALSE);
 +        STR_COMBINE_SS(buffer, wfd.cFileName, "/");
@@ -362,7 +413,7 @@ index 37cdf82..7bf095e 100644
 +                                            virtual_location, 1, 0)) {
 +                        armport_skipped_folders = (int)header.skipped;
 +                        free(data);
-+                        armportFciScanRootBin(fc, basepath, virtual_location);
++                        armportFciScanLiveRoots(fc, basepath, virtual_location);
 +                        *reason = "match";
 +                        return 1;
 +                    }
@@ -383,7 +434,7 @@ index 37cdf82..7bf095e 100644
  void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_location) {
      DirectoryUpdateContext *context=NULL;
      int timer;
-@@ -440,11 +814,24 @@ void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_loc
+@@ -440,11 +865,24 @@ void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_loc
          count_file=0;
          count_folder=0;
  

@@ -17,6 +17,9 @@ base, require = startup.base, startup.require
 # Patch 0120 skip list for the client's folder scan; COH_CLIENT_SKIP_SERVER_FOLDERS=0
 # (the app option unticked) keeps the full scan.
 CLIENT_SKIPPED_FOLDERS = 'scripts.loc,server'
+# Patch 0122: root folders the client always scans live beside its saved list:
+# the writable cache roots (bin/ is the ARM64 overlay and is always live).
+CLIENT_LIVE_FOLDERS = ','.join(sorted({Path(name).parts[0] for name in startup.PRIVATE_CACHE_ROOTS} - {'bin'}))
 FPS_CAP_FILE = 'armport-fps-cap.txt'
 
 
@@ -207,13 +210,15 @@ class ArmPortClient:
             return {}
         require(not index.is_symlink(), 'Linked client folder index refused')
         try:
-            record['identity_sha256'] = package.folder_cache_identity(self.ctx.report['armport_client'], skip)
+            record['identity_sha256'] = package.folder_cache_identity(self.ctx.report['armport_client'], skip,
+                                                                      CLIENT_LIVE_FOLDERS)
         except (KeyError, TypeError, ValueError) as exc:
             # Without a complete identity the client scans as before.
             record['error'] = type(exc).__name__
             return {}
         return {'ARMPORT_FOLDER_CACHE_INDEX': base.windows_path(index),
-                'ARMPORT_FOLDER_CACHE_ID': record['identity_sha256']}
+                'ARMPORT_FOLDER_CACHE_ID': record['identity_sha256'],
+                'ARMPORT_FOLDER_CACHE_LIVE': CLIENT_LIVE_FOLDERS}
 
     def armport_gameplay_fps(self, environment):
         """Gameplay frame cap (patch 0113, the app's reviewed opt-in hook).

@@ -282,6 +282,10 @@ class ClientFolderIndexTests(unittest.TestCase):
                        {'archive_sha256': '6' * 64}, {'executable_sha256': '6' * 64}):
             self.assertNotEqual(identity(self.client(**change), 'scripts.loc,server'), base, change)
         self.assertNotEqual(identity(self.client(), ''), base)
+        self.assertNotEqual(identity(self.client(), 'scripts.loc,server', 'geobin'), base)
+        with patch.object(armport.package, 'digest', side_effect=lambda path: '7' * 64
+                          if Path(path).name == 'armport_client_package.py' else armport.package.digest(path)):
+            self.assertNotEqual(identity(self.client(), 'scripts.loc,server'), base)   # view code changed
         with self.assertRaises(ValueError):
             identity(self.client(tree_sha256=None), '')
 
@@ -298,8 +302,11 @@ class ClientFolderIndexTests(unittest.TestCase):
             report = {'armport_client': self.client()}
             environment = self.environment('', report, root)
             self.assertEqual(environment['ARMPORT_FOLDER_CACHE_ID'],
-                             armport.package.folder_cache_identity(self.client(), 'scripts.loc,server'))
+                             armport.package.folder_cache_identity(self.client(), 'scripts.loc,server',
+                                                                   'geobin,server'))
             self.assertTrue(environment['ARMPORT_FOLDER_CACHE_INDEX'].endswith('armport-folder-cache-index.bin'))
+            # The writable cache roots are scanned live beside the saved list.
+            self.assertEqual(environment['ARMPORT_FOLDER_CACHE_LIVE'], 'geobin,server')
             self.assertEqual(report['client_folder_index']['present_before_launch'], False)
             (root / armport.package.FOLDER_INDEX).write_bytes(b'x')
             self.assertEqual(self.environment('1', report, root).keys(), environment.keys())
