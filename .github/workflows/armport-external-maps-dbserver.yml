@@ -1,0 +1,105 @@
+name: ArmPort on-demand zone DbServer
+# The device DbServer (level-up layer, 0.13.36 donor) plus external map requests
+# (database/external-maps, patches/external-maps/0001), off by default. Builds
+# and packages startup-dbserver.exe + startup-dbserver-manifest.json only; no
+# APK, no device change. Dispatch only, one CI chain at a time.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: armport-external-maps-dbserver
+  cancel-in-progress: false
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          lfs: false
+      - name: Request records and patch fit (POSIX stand-in), expected layer receipt
+        run: |
+          python3 armport/tests/external_map_requests.py
+          python3 armport/server/package_external_maps_dbserver.py receipt > "$RUNNER_TEMP/receipt.json"
+          echo "::notice title=ArmPort external maps receipt::$(python3 -c 'import json,sys; v=json.load(open(sys.argv[1])); print(json.dumps({k: v[k] for k in ("build_role","patch_sha256","source_sha256","patched_sha256","overlay_sha256")}))' "$RUNNER_TEMP/receipt.json")"
+  dbserver:
+    needs: contract
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/base-dbserver
+          run-id: 36460867428
+          github-token: ${{ github.token }}
+      - name: Stage the shipped layers and the external map requests
+        shell: pwsh
+        run: |
+          python armport/server/package_external_maps_dbserver.py stage --output out/external-maps-db-source --base-manifest out/base-dbserver/package-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'External map DbServer staging failed' }
+      - name: Retained native contracts and the request records under MSVC
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_local_launcher_wait.py --require-windows
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_startup_bundle_save.py
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_levelup_ui_repair_dbserver.py
+          if errorlevel 1 exit /b 1
+          python armport/tests/external_map_requests.py
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/external-maps.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\external-maps.cmd 2>&1 | Tee-Object out/contracts/external-maps.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Native contracts failed' }
+          $pass = (Select-String -Path out/contracts/external-maps.txt -Pattern '^PASS: external map requests' | Select-Object -Last 1).Line
+          Write-Output "::notice title=ArmPort external maps (MSVC)::$pass"
+      - name: Build only the DbServer
+        working-directory: out/external-maps-db-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'External map DbServer configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw 'External map DbServer build failed' }
+      - name: Package the DbServer with its five source receipts
+        shell: pwsh
+        run: |
+          python armport/server/package_external_maps_dbserver.py package --source out/external-maps-db-source --binary out/external-maps-db-source/out/build/vs2026/bin/OptDebug/DbServer.exe --cache out/external-maps-db-source/out/build/vs2026/CMakeCache.txt --base-manifest out/base-dbserver/package-manifest.json --repository-commit "$env:GITHUB_SHA" --output out/external-maps-dbserver
+          if ($LASTEXITCODE -ne 0) { throw 'External map DbServer packaging failed' }
+          $summary = python -c "import json; v=json.load(open('out/external-maps-dbserver/startup-dbserver-manifest.json')); print(json.dumps({'role': v['role'], 'DbServer.exe': v['files']['DbServer.exe']['sha256'], 'bytes': v['files']['DbServer.exe']['bytes'], 'unresolved': v['dependency_report']['unresolved']}))"
+          Write-Output "::notice title=ArmPort external maps DbServer::$summary"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: armport-external-maps-dbserver
+          path: out/external-maps-dbserver/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: armport-external-maps-dbserver-build-evidence
+          path: |
+            out/contracts/
+            out/external-maps-db-source/*build-input.json
+            out/external-maps-db-source/out/build/vs2026/CMakeCache.txt
+            out/external-maps-db-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+          if-no-files-found: warn
+          retention-days: 90

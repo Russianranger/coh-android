@@ -637,6 +637,26 @@ def levelup_ui_repair_build_input(build_input, bundle):
  'runtime_validation': 'unverified'}
 
 
+EXTERNAL_MAPS_ROLE = 'manual_atlas_dbserver_external_maps'
+# The level-up DbServer the device runs (0.13.36 donor) and the exact receipt
+# of the on-demand zone layer above it (armport/server/package_external_maps_dbserver.py).
+EXTERNAL_MAPS_BASE_EXECUTABLE = {'bytes': 1664512, 'sha256': 'ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba'}
+EXTERNAL_MAPS_BASE_LEVELUP_SHA256 = '034734e976f55ad1cddb360126b4455a204b58f329a3ea5f364ce7f62bd849cc'
+EXTERNAL_MAPS_BUILD_INPUT_SHA256 = 'b9cb4391435b750e54889fd537006cb4574ef1e6956a21022eadfaba8e59b961'
+
+
+def external_maps_build_input(build_input, bundle, levelup, external):
+    """Accept only the qualified request layer above the exact shipped level-up layer."""
+    require(levelup == levelup_ui_repair_build_input(build_input, bundle)
+            and digest_json(levelup) == EXTERNAL_MAPS_BASE_LEVELUP_SHA256
+            and isinstance(external, dict) and digest_json(external) == EXTERNAL_MAPS_BUILD_INPUT_SHA256
+            and external.get('build_role') == EXTERNAL_MAPS_ROLE
+            and external.get('base_levelup_ui_repair_build_input_canonical_sha256') == EXTERNAL_MAPS_BASE_LEVELUP_SHA256
+            and external.get('request_contract', {}).get('disabled_by_default') is True,
+            'External map DbServer layer or its level-up ancestry differs')
+    return external
+
+
 def install_manual_atlas_dbserver(assets, runtime, package):
     """Replace only the fresh owned DbServer after verifying its donor closure."""
     binary = assets / 'startup-dbserver.exe'
@@ -647,7 +667,8 @@ def install_manual_atlas_dbserver(assets, runtime, package):
             and not manifest.is_symlink(), 'Incomplete or linked manual Atlas DbServer supplement')
     value = dbserver.load_json(manifest, 2 * 1024 * 1024)
     require(value.get('format') == 1 and value.get('role') in
-            ('manual_atlas_dbserver_startup_supplement', STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE)
+            ('manual_atlas_dbserver_startup_supplement', STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE,
+             EXTERNAL_MAPS_ROLE)
             and dbserver.COMMIT.fullmatch(value.get('repository_commit', ''))
             and value.get('source_commit') == package['source_commit']
             and value.get('base_package_manifest_sha256') == dbserver.DEVICE_PACKAGE_MANIFEST
@@ -684,7 +705,9 @@ def install_manual_atlas_dbserver(assets, runtime, package):
                                    *build_input['patched_sha256'].values(),
                                    *build_input['overlay_sha256'].values()]),
             'Manual Atlas DbServer source hashes differ')
-    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
+    layered = (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE, EXTERNAL_MAPS_ROLE)
+    reading = (LEVELUP_UI_REPAIR_ROLE, EXTERNAL_MAPS_ROLE)
+    if value['role'] in layered:
         require(value.get('base_startup_executable') == STARTUP_BUNDLE_BASE_EXECUTABLE
                 and dbserver.exact_contract(value.get('startup_bundle_build_input'),
                     startup_bundle_build_input(build_input)),
@@ -692,7 +715,7 @@ def install_manual_atlas_dbserver(assets, runtime, package):
     else:
         require('startup_bundle_build_input' not in value,
                 'Legacy manual Atlas supplement contains an unqualified save layer')
-    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+    if value['role'] in reading:
         require(value.get('base_startup_bundle_executable') == LEVELUP_UI_REPAIR_BASE_EXECUTABLE
                 and dbserver.exact_contract(value.get('levelup_ui_repair_build_input'),
                     levelup_ui_repair_build_input(build_input, value['startup_bundle_build_input'])),
@@ -701,6 +724,15 @@ def install_manual_atlas_dbserver(assets, runtime, package):
         require('levelup_ui_repair_build_input' not in value
                 and 'base_startup_bundle_executable' not in value,
                 'Legacy manual Atlas supplement contains an unqualified read layer')
+    if value['role'] == EXTERNAL_MAPS_ROLE:
+        require(value.get('base_levelup_ui_repair_executable') == EXTERNAL_MAPS_BASE_EXECUTABLE
+                and dbserver.exact_contract(value.get('external_maps_build_input'), external_maps_build_input(
+                    build_input, value['startup_bundle_build_input'], value['levelup_ui_repair_build_input'],
+                    value.get('external_maps_build_input'))),
+                'External map layer or retained executable differs')
+    else:
+        require('external_maps_build_input' not in value and 'base_levelup_ui_repair_executable' not in value,
+                'Manual Atlas supplement contains an unqualified external map layer')
     files = value.get('files', {})
     require(set(files) == {'DbServer.exe'}, 'Manual Atlas supplement contains another native target')
     record = files['DbServer.exe']
@@ -709,12 +741,15 @@ def install_manual_atlas_dbserver(assets, runtime, package):
             and record['sha256'] != original['files']['DbServer.exe']['sha256']
             and value.get('dependency_report', {}).get('unresolved') == [],
             'Manual Atlas executable bytes or imports differ')
-    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
+    if value['role'] in layered:
         require(record['sha256'] != STARTUP_BUNDLE_BASE_EXECUTABLE['sha256'],
                 'Startup bundle executable is unchanged from the retained startup supplement')
-    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+    if value['role'] in reading:
         require(record['sha256'] != LEVELUP_UI_REPAIR_BASE_EXECUTABLE['sha256'],
                 'Level-up read executable is unchanged from the retained startup bundle')
+    if value['role'] == EXTERNAL_MAPS_ROLE:
+        require(record['sha256'] != EXTERNAL_MAPS_BASE_EXECUTABLE['sha256'],
+                'External map executable is unchanged from the shipped level-up DbServer')
     require(set(value.get('odbc_imports', [])) >= {'SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare',
             'SQLGetDiagRecA', 'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW'}
             and not set(value['odbc_imports']).intersection({'SQLDriverConnectA', 'SQLExecDirectA',
@@ -737,10 +772,16 @@ def install_manual_atlas_dbserver(assets, runtime, package):
         'repository_commit': value['repository_commit'], 'contract': build_input['launcher_wait'],
         'base_package_archive_changed': False, 'other_native_targets_changed': False,
         'ordinary_fixed_inputs_loopback_dispatch_and_map_readiness_required': True}
-    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
+    if value['role'] in layered:
         installed['startup_bundle_save'] = value['startup_bundle_build_input']['save_contract']
         installed['startup_bundle_build_input_sha256'] = digest_json(value['startup_bundle_build_input'])
-    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+    if value['role'] == EXTERNAL_MAPS_ROLE:
+        # Present but inert: requests are published only when the supervisor sets
+        # COH_WINE_DB_EXTERNAL_MAPS=1; otherwise this is the level-up DbServer.
+        installed['external_maps'] = {'build_input_sha256': digest_json(value['external_maps_build_input']),
+                                      'request_contract': value['external_maps_build_input']['request_contract'],
+                                      'enabled': False}
+    if value['role'] in reading:
         installed['levelup_ui_repair_save'] = value['levelup_ui_repair_build_input']['save_contract']
         installed['startup_thread_name'] = value['levelup_ui_repair_build_input']['startup_thread_name_contract']
         installed['levelup_ui_repair_build_input_sha256'] = digest_json(value['levelup_ui_repair_build_input'])

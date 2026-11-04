@@ -99,14 +99,23 @@ is untested under Wine/FEX; a later experiment.
 
 - Done: the two studies; the DbServer overlay and patch with
   `armport/tests/external_map_requests.py` (5 modes, escaped records, overflow
-  refused, patch applies to the reconstructed staged sources).
-- Next, the build pipeline for the layer: the device DbServer is
-  `startup-dbserver.exe` + `startup-dbserver-manifest.json` from
-  `android-startup-bundle.yml` (Windows, MSVC; layers PostgreSQL → Wine ODBC →
-  manual Atlas → save emission, each with a receipt checked by
-  `package_startup_bundle_dbserver.py` and by the guest). Add the external-map
-  layer as a fifth receipt, build and package it there, admit the two replaced
-  payloads in `build_thor_apk.py` behind an APK option, and accept the new
-  role in the guest. Then the supervisor (request polling, process start with
-  cookie, delink on failure), first observe-and-delink, then King's Row on
-  request, then the shared zone tree.
+  refused, patch applies to the staged sources; POSIX stand-in, and MSVC with
+  the real Win32 API inside the Windows workflow).
+- Done (not yet run in CI): the build pipeline. The device DbServer is
+  `startup-dbserver.exe` + `startup-dbserver-manifest.json`, role
+  `manual_atlas_dbserver_levelup_ui_repair` (0.13.36 donor: 1,664,512 bytes,
+  `ea1d43d7…`). `armport/server/package_external_maps_dbserver.py` stages the
+  same five layers (PostgreSQL → Wine ODBC → manual Atlas → cancelled-child save
+  → level-up read; their receipts equal the donor manifest's) and adds this one
+  as a sixth receipt (`external-maps-dbserver-build-input.json`, role
+  `manual_atlas_dbserver_external_maps`). `.github/workflows/armport-external-maps-dbserver.yml`
+  (dispatch only) runs the retained native contracts plus ours under MSVC,
+  builds only DbServer (2 compiler processes) and packages it. Local staging of
+  the full source tree passes. The guest accepts the role only with the exact
+  receipt digest above the exact shipped level-up layer, installs it inert
+  (`external_maps.enabled: false`) and keeps the level-up contracts
+  (`armport/tests/test_external_maps_dbserver.py`).
+- Next: run the workflow when no other chain runs; admit the two payloads in
+  `build_thor_apk.py` behind an APK option; then the supervisor (request
+  polling, process start with cookie, delink on failure), first
+  observe-and-delink, then King's Row on request, then the shared zone tree.

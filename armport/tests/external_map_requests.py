@@ -100,18 +100,33 @@ def run(exe, environment, *arguments):
     return result.stdout
 
 
+def build(work):
+    """POSIX: the overlay against the stand-in above. Windows (CI, inside vcvars32):
+    the unchanged overlay against the real Win32 API with MSVC, as the DbServer builds it."""
+    source = work / 'fixture.c'
+    overlay = (OVERLAY / 'wine_external_maps.c').read_text()
+    if os.name == 'nt':
+        source.write_text(overlay + '\n#include <stdlib.h>\n' + MAIN)
+        exe = work / 'fixture.exe'
+        subprocess.run(['cl', '/nologo', '/W3', '/WX', '/wd4996', '/I', str(OVERLAY), str(source),
+                        '/Fe' + str(exe)], check=True, cwd=work)
+        return exe
+    source.write_text(SHIM + '#include "wine_external_maps.h"\n' + overlay.replace('#include <windows.h>\n', '') + MAIN)
+    exe = work / 'fixture'
+    subprocess.run(['cc', '-std=gnu11', '-O1', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                    '-I', str(OVERLAY), str(source), '-o', str(exe)], check=True)
+    return exe
+
+
 def main():
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
-        source = work / 'fixture.c'
-        overlay = (OVERLAY / 'wine_external_maps.c').read_text().replace('#include <windows.h>\n', '')
-        source.write_text(SHIM + '#include "wine_external_maps.h"\n' + overlay + MAIN)
-        exe = work / 'fixture'
-        subprocess.run(['cc', '-std=gnu11', '-O1', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
-                        '-I', str(OVERLAY), str(source), '-o', str(exe)], check=True)
+        exe = build(work)
         requests = work / 'requests'
         requests.mkdir()
         base = {'PATH': os.environ.get('PATH', '/usr/bin:/bin')}
+        if os.name == 'nt':
+            base.update({name: os.environ[name] for name in ('SYSTEMROOT', 'TEMP', 'TMP') if name in os.environ})
         on = dict(base, COH_WINE_DB_EXTERNAL_MAPS='1', COH_WINE_DB_MANUAL_ATLAS='1',
                   COH_WINE_DB_EXTERNAL_MAPS_DIR=str(requests))
         cases = {
@@ -148,10 +163,14 @@ def main():
         for name in ('DBServer/CMakeLists.txt', 'DBServer/src/launchercomm.c', 'DBServer/src/mapxfer.c'):
             (staged / name).parent.mkdir(parents=True, exist_ok=True)
             (staged / name).write_bytes((upstream / name).read_bytes())
+        def lf(path):   # Windows checkouts may hold the patches with CRLF
+            return path.read_bytes().replace(b'\r\n', b'\n')
+        git = ['git', '-c', 'core.autocrlf=false', 'apply']
         for layer in LAYERS:
-            subprocess.run(['git', 'apply', '--include=DBServer/CMakeLists.txt', str(ROOT / layer)], cwd=staged, check=True)
-        subprocess.run(['git', 'apply', '--check', str(PATCH)], cwd=staged, check=True)
-        print('PASS: external map requests: 5 modes, escaped JSON records, overflow refused, patch applies to the staged sources')
+            subprocess.run(git + ['--include=DBServer/CMakeLists.txt', '-'], input=lf(ROOT / layer), cwd=staged, check=True)
+        subprocess.run(git + ['--check', '-'], input=lf(PATCH), cwd=staged, check=True)
+        print('PASS: external map requests (' + ('MSVC, Win32' if os.name == 'nt' else 'POSIX stand-in')
+              + '): 5 modes, escaped JSON records, overflow refused, patch applies to the staged sources')
 
 
 if __name__ == '__main__':
