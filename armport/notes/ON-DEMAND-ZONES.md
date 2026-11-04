@@ -75,6 +75,20 @@ about 4 minutes, at the memory cost of one extra MapServer. Measure that cost
 mode (`ParserLoadFilesShared`) could let processes share the parsed data but
 is untested under Wine/FEX; a later experiment.
 
+## Shared memory (candidate measurement, not started)
+
+Every device MapServer runs with `-nosharedmemory`, so each one parses and holds
+its own copy of the shared definitions (the 198-211 s shared phase, and most of
+King's Row's 1.7 GB peak). The stock deployment loads them once into a shared
+heap (`ParserLoadFilesShared`, `reserveSharedHeapSpace`) that later MapServers
+map instead of parsing; `-tsr` exists only to keep that heap alive
+(`checkTsr`, svr_init.c:1810). If that works under Wine and FEX, it would cut
+both the start time and the memory of every zone after the first, which the
+spare server does not. It needs fixed-address mappings shared across Wine
+processes; untested, and earlier notes kept it off for the ARM MapServer study
+(MAPSERVER-STARTUP-60S.md). Measure after the 0.13.53 `rss_kib` figures: two
+MapServers, shared heap on, in CI and then on the Thor.
+
 ## Data every zone needs (later)
 
 - NPC pathing graphs (`.bcn`): only Atlas and King's Row have them (asset pack).
