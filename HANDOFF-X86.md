@@ -375,11 +375,38 @@ the station cap and evidence, and an earlier client start. Test sheet:
   `stage_app_assets.py`; the app's default has been ARM64 since 0.13.50
   (`ClientRuntime.clientArchitecture`).
 
-## 0.13.52 (staged, not published): saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
+## 0.13.52: King's Row interpolation fix, saved client file list, first-lookup links, opt-in test server (Claude, 2026-11-03)
 
 User, 19:24 CST: "Work on 1 and 2 and 3, stage the update, wait for my results
-to add more". So the APK is built (`publish_release=false`) and published only
-after the 0.13.51 results.
+to add more". 21:57 CST, with the 0.13.51 results: "Look through the reports,
+see if there are additional fixes that can be made and integrate that into the
+next apk in conjunction with the other updates you worked on". The staging
+chain (build 41760267957 at `0395e3c16`, passed, folder-cache index check
+included) was stopped before its runtimes and restarted with patch 0123.
+
+- **King's Row NPC jumps** (ArmPort patch 0123, always on). Root cause found in
+  `entrecv.c`: `local_time_bias` (U32) maps the client's clock onto the
+  server's `abs_time`, and other entities are drawn at `client_abs`,
+  `auto_delay` behind the newest update. `doMapXfer` resets the bias to 0; for
+  a zone server younger than the client's clock (King's Row, started after
+  the client was in Atlas) the correction `local_time_bias += dt * 3000.f` is
+  negative. x86 converts that float to U32 modulo 2^32; AArch64 `fcvtzu`
+  saturates to 0, so the bias stayed 0, `client_abs` was clamped to the
+  newest update and entities jumped at the server's 4 updates per second.
+  Atlas started before the client, so its correction was positive (matches
+  the report: Atlas smooth on entry and return, King's Row jumpy on both
+  trips, never on x86). With 0122 the client can reach its main loop before
+  Atlas is ready, which would have exposed Atlas too. Fix:
+  `armportWrapFloatToU32` (64-bit signed conversion, then modulo) for the
+  bias correction and both `client_abs` computations; `ARMPORT_NET_CLOCK_LOG=1`
+  (set by the guest) logs `ARMPORT_NET_CLOCK_V1 ... lag_ms=` every 30 s.
+  `armport/tests/net_clock_interpolation.py` simulates Atlas → King's Row →
+  Atlas with the extracted code (build step on the AArch64 runner; the
+  original must lose the delay there; under `-fsanitize=float-cast-overflow`
+  the original reports the -1.68e6 King's Row correction on any host).
+  Audit: an IR scan of the ARM64 client and UtilitiesLib found 363 `fptoui`
+  sites; the time, network, entity, sound and player ones were read and only
+  this clock depends on the wrap (the rest are colours, sizes and UI values).
 
 - **Saved client file list** (ArmPort patch 0122, app option on,
   `COH_CLIENT_FOLDER_INDEX`). `FolderCacheAddFolder("./data")` saves its scan
@@ -420,10 +447,40 @@ after the 0.13.51 results.
   Thor variant with the reviewed switch. This server has never run anywhere
   (CI runs `retained_progress`); its first run is the Thor test. The data
   cache identity maps it to its shipping predecessor, so the mirror is reused.
-- Chain (one at a time): `armport-build` with `build_server_metrics=true` →
+- Chain (one at a time, one head): `armport-build` with `build_server_metrics=true` →
   runtime with the default server (evidence for the file list and links) →
   runtime with `server_run_id`, `trusted_bins=true` (qualifies the server
-  package) → APK with `server_metrics`, `server_option`, no publish.
+  package) → APK with `server_metrics`, `server_option`, published when qualified.
+
+## Thor test of 0.13.51 (user, 2026-11-03; exports 20261104-032856 and -035206)
+
+Two sessions, both passed with proved cleanup; export -032851 is the runtime
+setup. User: King's Row NPCs still "porting point to point" on both trips;
+device temperature only into the 60s °C (0.13.50: 76 °C); no audio on the
+ARM64 client (the x86 game they played before had audio and smooth King's Row).
+
+| | Session 1 | Session 2 |
+|---|---|---|
+| Guest start → client launched (`startup_elapsed`) | 142 s | 161 s |
+| King's Row trip (cold): Python / native ready / transfer | 51 / 238 / 45 s | 51 / 218 / 35 s |
+| Return to Atlas (resident) | 8 + 40 s | 5 + 40 s |
+| In-world FPS (windows above the 10 FPS cap) | mean 40, 77/111 ≥ 30 | mean 47, 70/72 ≥ 30 |
+
+- **Tick probe:** King's Row completed 117-118 ticks per 4 s window in every
+  sample (max gap 64-69 ms, 0-1 gaps over 67 ms), Atlas the same with max
+  48 ms. The server was not starving; this led to the client clock (0123).
+- **Station cap:** applied and removed twice per session, no error.
+- **Priorities and CPUs:** MapServer threads at nice 0 (5 during preparation),
+  client 7 of 21 threads at nice 19; CPU clusters 2.0/2.8/3.2 GHz.
+- **Audio:** never worked in this app. The launcher passes `-noaudio 1`, yet
+  the client still reaches `DirectSoundCreate` in `sndSysInit`, and Wine's ALSA
+  driver finds no device in the guest ("Unknown PCM default"; "Couldn't start
+  DirectSound, continuing without audio"). Every export since 2026-10-27
+  shows the same. A sound path from the guest to Android is needed
+  (planned: an ALSA plugin that hands PCM to an AudioTrack in the app); not in
+  0.13.52.
+- Pre-existing observation note in both sessions (and on 0.13.49/0.13.50):
+  `Cache inventory: Linked private cache directory refused`.
 
 ## Thor test of 0.13.50 (user, 2026-11-03; exports 20261103-215454 and -220758)
 

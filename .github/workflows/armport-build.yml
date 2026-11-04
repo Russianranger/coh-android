@@ -447,6 +447,20 @@ jobs:
           fi
           echo "::notice title=ArmPort folder-cache index::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/folder-index-original.txt")"
 
+      - name: Entity interpolation keeps its delay after zoning to a younger zone server (patch 0123)
+        run: |
+          # AArch64 runner: the original's saturating float-to-U32 conversion
+          # must reproduce the lost delay (King's Row NPCs jumping on the Thor).
+          out=$(armport/scripts/step.sh "ArmPort interpolation clock" python3 armport/tests/net_clock_interpolation.py --source "$RUNNER_TEMP/armport/src")
+          out=${out##*$'\n'}
+          if python3 armport/tests/net_clock_interpolation.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/net-clock-original.txt" 2>&1; then
+            echo "::error title=ArmPort interpolation clock::the original clock unexpectedly passed"; exit 1
+          fi
+          if ! grep -q 'FAIL: no interpolation delay' "$RUNNER_TEMP/net-clock-original.txt"; then
+            echo "::error title=ArmPort interpolation clock::the original did not lose the delay on this host: $(tail -1 "$RUNNER_TEMP/net-clock-original.txt")"; exit 1
+          fi
+          echo "::notice title=ArmPort interpolation clock::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/net-clock-original.txt")"
+
       - name: MapServer tick and file timing uses actual prepared code (patch 0119)
         run: |
           python3 armport/tests/server_metrics_native.py --source "$RUNNER_TEMP/armport/src"

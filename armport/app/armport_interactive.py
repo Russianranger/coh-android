@@ -182,7 +182,9 @@ class ArmPortClient:
                            # (patch 0111: no recursive change monitor).
                            ARMPORT_FIXED_DATA='1',
                            # Patch 0114: the game's own frame rate every 5 s.
-                           ARMPORT_FPS_LOG='1')
+                           ARMPORT_FPS_LOG='1',
+                           # Patch 0123: the entity interpolation clock every 30 s.
+                           ARMPORT_NET_CLOCK_LOG='1')
         if client_skips_server_folders():
             # Patch 0120: the client never reads these server-only folders
             # (52,149 scripts.loc files of 212,496); its upfront scan skips them.

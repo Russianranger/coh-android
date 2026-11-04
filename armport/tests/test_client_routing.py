@@ -233,6 +233,8 @@ class StationFpsCapFileTests(unittest.TestCase):
             with patch.object(armport, 'LoggedClient', lambda child, log: child):
                 client.launch_client_attempt()
             self.assertEqual(captured['env']['ARMPORT_FPS_CAP_FILE'], 'armport-fps-cap.txt')
+            # Patch 0123: the interpolation clock is logged for device exports.
+            self.assertEqual(captured['env']['ARMPORT_NET_CLOCK_LOG'], '1')
             self.assertEqual(client.armport_fps_cap_file, Path(temporary) / 'armport-fps-cap.txt')
             self.assertFalse(client.armport_fps_cap_file.exists())
         series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
@@ -324,7 +326,8 @@ class ClientFolderIndexTests(unittest.TestCase):
             with patch.dict(os.environ, {'COH_CLIENT_FOLDER_INDEX': 'yes'}), self.assertRaises(Exception):
                 armport.client_uses_folder_index()
         series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
-        self.assertEqual(series[-1], '0122-armport-folder-cache-index.patch')
+        self.assertIn('0122-armport-folder-cache-index.patch', series)
+        self.assertEqual(series[-1], '0123-armport-entity-interpolation-clock-wrap.patch')
 
 
 if __name__ == '__main__':

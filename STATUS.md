@@ -27,8 +27,7 @@ Default branch remains main; no repository setting change.
   inherited host EACCES error, reproduced on pristine c86; guards remain intact.
 - Full interactive:3048 run/69 failures/28 errors/31 skips before fixture repair.
   Affected rerun138:2 legacy GPU-policy failures, no errors/skips; full is not green.
-- Exact source, preserved logs, skips, runtime pins and pending frozen-head CI
-  request: HANDOFF-X86.md and issue10. No new CI/APK chain was started here.
+- Exact source, preserved logs, skips, runtime pins, CI request: HANDOFF-X86.md and issue10.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
@@ -37,4 +36,5 @@ Default branch remains main; no repository setting change.
   refused (shared folders missing from the changed-root check): Atlas ready 444 s vs 297 s on .49.
 - 0.13.51 published (APK 41750489814; build 41735032151, runtime 41745666658 passed, reopen bin writes 0):
   cache reuse fix, 10 FPS station cap (patch 0121), thermal/tick/CPU evidence. THOR-TEST-0.13.51.md.
-- 0.13.52 staged (not published): saved client file list (0122), first-lookup links, opt-in test server.
+- 0.13.51 Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
+- 0.13.52: interpolation clock wrap (0123, King's Row NPCs), saved file list (0122), first-lookup links, opt-in test server.

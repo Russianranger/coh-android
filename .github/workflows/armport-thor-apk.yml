@@ -209,9 +209,11 @@ jobs:
           60 FPS in the world, Share server data between zones, Skip server-only folders in the client's scan,
           Reuse the client's saved file list. Off: King's Row background start, idle priority, Fast server start
           (test server).
-          New: the client reuses its saved file list while the game data is unchanged (on; a full scan
-          otherwise); zone servers find their private bins and map geometry on the first lookup; optional
-          test server with fast data loading (off by default). Test sheet: THOR-TEST-0.13.52.md in the source.
+          New: NPCs, cars and trains move smoothly again after zoning to King's Row (ARM64 client
+          interpolation clock fix, patch 0123); the client reuses its saved file list while the game data is
+          unchanged (on; a full scan otherwise); zone servers find their private bins and map geometry on the
+          first lookup; optional test server with fast data loading (off by default).
+          Test sheet: THOR-TEST-0.13.52.md in the source.
           CI-only evidence for the new changes.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
