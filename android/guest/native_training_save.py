@@ -50,6 +50,10 @@ PURCHASE = re.compile(contact.PREFIX + r'BuyPower Click (?P<power>[A-Za-z0-9_]+\
 ROUTE = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
     r'(?:(?P<local_level>1)|(?P<map_instance>(?i:City_01_01)_1):127\.0\.0\.1:127\.0\.0\.1) +'
     r'(?P<message>[^\r\n]+)$')
+# Any owned static zone instance (Atlas City_01_01, King's Row City_01_02, ...).
+GENERAL_ROUTE = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
+    r'(?:(?P<local_level>1)|(?P<map_instance>[A-Za-z0-9_]{1,64}_[0-9]{1,3}):127\.0\.0\.1:127\.0\.0\.1) +'
+    r'(?P<message>[^\r\n]+)$')
 
 
 def _zero(value):
@@ -102,6 +106,68 @@ def _purchase(logs, start_ms, end_ms):
             if len(found) > 1:
                 return None  # Ambiguous or mirrored positive purchases fail closed.
     return found[0] if len(found) == 1 else None
+
+
+SESSION_PURCHASE_LIMIT = 16
+
+
+def session_purchases(logs, start_ms, end_ms):
+    """Every stock BuyPower record for THORHERO inside the window, in order.
+
+    The general counterpart of _purchase for ordinary play (any archetype,
+    level and power). A malformed, unparsable or bounded-out record fails
+    closed (None). The local MapServer log and the embedded DbServer log may
+    both carry the same records; they must then agree exactly.
+    """
+    if not (type(logs) in (list, tuple) and len(logs) <= server.SERVER_LOG_COUNT_LIMIT
+            and type(start_ms) is int and type(end_ms) is int and start_ms <= end_ms):
+        return None
+    total, routes = 0, {'local_mapserver': [], 'embedded_dbserver_logserver': []}
+    for item in logs:
+        if not (type(item) in (list, tuple) and len(item) == 2
+                and type(item[0]) is str and type(item[1]) is str):
+            return None
+        name, text = item
+        size = len(text.encode(errors='surrogateescape')); total += size
+        if size > server.SERVER_LOG_FILE_LIMIT or total > server.SERVER_LOG_TOTAL_LIMIT:
+            return None
+        path = Path(name)
+        local = path.parent == Path('logs/mapserver') and path.name == 'entity.log'
+        embedded = path.parent == Path('logs/dbserver') and re.fullmatch(r'entity_[0-9][0-9_-]*\.log', path.name)
+        if not local and not embedded:
+            continue
+        tail = text[text.rfind('\n') + 1:]
+        if re.search(r'"THORHERO:COHLOCAL" -?\d+ BuyPower(?: |$)', tail):
+            return None
+        found = routes['local_mapserver' if local else 'embedded_dbserver_logserver']
+        for line in text[:text.rfind('\n') + 1].splitlines():
+            routed = GENERAL_ROUTE.fullmatch(line)
+            if routed is None or (routed['local_level'] is not None) != bool(local):
+                continue
+            message = routed['message']
+            if not re.match(contact.PREFIX + r'BuyPower(?: |$)', message):
+                continue
+            try:
+                stamp = int(time.mktime(time.strptime(routed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+            except (ValueError, OverflowError):
+                return None
+            if not start_ms <= stamp <= end_ms:
+                continue
+            parsed = PURCHASE.fullmatch(message)
+            if (parsed is None or len(message) > 2048 or parsed['incarnate'] != '0'
+                    or not -0x80000000 <= int(parsed['teamup']) <= 0x7fffffff):
+                return None
+            found.append({'power': parsed['power'], 'displayed_level': int(parsed['level']),
+                'archetype': parsed['archetype'], 'utc_ms': stamp, 'log_timestamp': routed['timestamp'],
+                'line_sha256': hashlib.sha256(line.encode(errors='surrogateescape')).hexdigest()})
+            if len(found) > SESSION_PURCHASE_LIMIT:
+                return None
+    local, embedded = routes['local_mapserver'], routes['embedded_dbserver_logserver']
+    if local and embedded:
+        strip = lambda rows: [{k: v for k, v in row.items() if k != 'line_sha256'} for row in rows]
+        if strip(local) != strip(embedded):
+            return None
+    return local or embedded
 
 
 def verify(logs, proof, delivery, logout, previous, current, attributes, *, session, client_pid, now_utc_ms):

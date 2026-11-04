@@ -330,6 +330,136 @@ def enhancement_semantics(boosts, powers, attributes):
     return sorted(result, key=digest_json)
 
 
+PROGRESS_POLICY = 'arm64_native_gameplay_progress_v1'
+PROGRESS_ENTS_FIELDS = frozenset({'level', 'experiencepoints', 'influencepoints', 'logincount'})
+MAX_INTERNAL_LEVEL = 49
+# Training assigns at most three enhancement slots per level (stock schedule).
+SLOTS_PER_LEVEL = 3
+
+
+def gameplay_progress(previous, current, attributes, purchases):
+    """ARM64: classify a reopen's saved changes as ordinary native play, or say why not.
+
+    Each accepted kind of change is one stock play makes on its own; the narrow
+    verifiers above accept them one at a time, ordinary play combines them
+    (Thor 0.13.53: training, a Day Job grant and experience in one session; the
+    grant's expiry and the auto-set normalization in the next):
+
+    - experience (never lower), influence, login count;
+    - a trained level, never lower, with exactly the stock BuyPower records of
+      the powers bought at the new levels (at most one per level gained), the
+      automatic Inherent powers available by then, and slots bought (at most
+      three per level gained);
+    - temporary powers granted or expired;
+    - the stock auto-set PowerSetLevelBought normalization of Inherent rows.
+
+    ents2, costume parts and every other selected field stay exact, and no
+    other prior power may disappear or change. Enhancements keep their own
+    preservation check. This reads SQL rows and logs only.
+    """
+    result = {'format': 1, 'policy': PROGRESS_POLICY, 'accepted': False,
+              'sql_game_mutations_performed': False, 'native_award_causality_verified': False}
+
+    def refuse(reason):
+        return dict(result, reason=reason)
+
+    if not (type(previous) is dict and type(current) is dict
+            and set(previous) == set(current) == set(evidence.SELECTED)):
+        return refuse('selected_tables')
+    for table in evidence.SELECTED:
+        if table not in ('ents', 'powers') and not evidence._same(previous[table], current[table]):
+            return refuse('changed_' + table)
+    if not (type(previous['ents']) is list and type(current['ents']) is list
+            and len(previous['ents']) == len(current['ents']) == 1):
+        return refuse('ents_rows')
+    before, after = previous['ents'][0], current['ents'][0]
+    if type(before) is not dict or type(after) is not dict or set(before) != set(after):
+        return refuse('ents_fields')
+    if any(not evidence._same(before[key], after[key]) for key in before if key not in PROGRESS_ENTS_FIELDS):
+        return refuse('ents_identity')
+    values = {}
+    for key in ('level', 'experiencepoints', 'influencepoints', 'logincount'):
+        pair = []
+        for row in (before, after):
+            value = row.get(key)
+            value = 0 if value is None else value
+            if type(value) is not int or not 0 <= value <= 0x7fffffff:
+                return refuse('ents_value_' + key)
+            pair.append(value)
+        values[key] = pair
+    (level0, level1), (xp0, xp1) = values['level'], values['experiencepoints']
+    if not level0 <= level1 <= MAX_INTERNAL_LEVEL:
+        return refuse('level')
+    if xp1 < xp0:
+        return refuse('experience_decreased')
+    if values['logincount'][1] < values['logincount'][0]:
+        return refuse('logincount')
+    delta = stock_power_delta(previous['powers'], current['powers'], attributes)
+    if delta.get('status') != 'observed' or delta.get('current_native_indexes_contiguous') is not True:
+        return refuse('power_rows')
+    names = {item['id']: item['name'] for item in attributes}
+
+    def resolve(row):
+        return '.'.join(names[row[key]] for key in ('categoryname', 'powersetname', 'powername'))
+
+    prior = {row['uniqueid']: row for row in previous['powers']}
+    saved = {row['uniqueid']: row for row in current['powers']}
+    expired = []
+    for uid in delta['deleted_uniqueids']:
+        power = resolve(prior[uid])
+        if not power.casefold().startswith('temporary_powers.'):
+            return refuse('prior_power_removed')
+        expired.append({'uniqueid': uid, 'power': power})
+    normalized, slots = [], 0
+    for change in delta['changed_prior_powers']:
+        uid, fields = change['uniqueid'], set(change['changed_fields'])
+        old, new = prior[uid], saved[uid]
+        if not fields <= {'powersetlevelbought', 'powernumboostsbought'}:
+            return refuse('prior_power_changed')
+        if 'powersetlevelbought' in fields:
+            value, was = new['powersetlevelbought'], old['powersetlevelbought'] or 0
+            if (not resolve(new).casefold().startswith('inherent.') or type(value) is not int
+                    or not was <= value <= level1):
+                return refuse('prior_power_set_level')
+            normalized.append(uid)
+        if 'powernumboostsbought' in fields:
+            value, was = new['powernumboostsbought'] or 0, old['powernumboostsbought'] or 0
+            if level1 == level0 or value < was:
+                return refuse('prior_power_slots')
+            slots += value - was
+    if slots > SLOTS_PER_LEVEL * (level1 - level0):
+        return refuse('slots_exceed_levels')
+    granted, automatic, purchased = [], [], []
+    owned = {(row['categoryname'], row['powersetname']) for row in previous['powers']}
+    for item in delta['added_powers']:
+        row, power = item['selected_row'], item['resolved_power']
+        folded, bought = power.casefold(), row['powerlevelbought'] or 0
+        if folded.startswith('temporary_powers.'):
+            granted.append(power)
+        elif folded.startswith('inherent.') and bought <= level1:
+            automatic.append(power)
+        elif (level0 < bought <= level1 and not row['powernumboostsbought'] and not row['buildnum']
+              and ((row['categoryname'], row['powersetname']) in owned or folded.startswith('pool.'))):
+            purchased.append({'power': power, 'internal_level': bought})
+        else:
+            return refuse('added_power_unclassified')
+    if len(purchased) > level1 - level0:
+        return refuse('purchases_exceed_levels')
+    if type(purchases) is not list:
+        return refuse('purchase_records_unavailable')
+    expected = sorted((item['power'].casefold(), item['internal_level'] + 1) for item in purchased)
+    observed = sorted((record['power'].casefold(), record['displayed_level']) for record in purchases)
+    if expected != observed:
+        return refuse('purchases_differ_from_native_records')
+    return dict(result, accepted=True, reason=None,
+        internal_level=[level0, level1], experience=[xp0, xp1], influence=values['influencepoints'],
+        purchased_powers=purchased, native_purchase_records=purchases, automatic_powers=sorted(automatic),
+        granted_temporary_powers=sorted(granted), expired_temporary_powers=expired,
+        normalized_set_level_uniqueids=sorted(normalized), slots_bought=slots,
+        before_power_rows_sha256=delta['before_power_rows_sha256'],
+        saved_power_rows_sha256=delta['after_power_rows_sha256'])
+
+
 def additive_inventory_enhancements(previous, current, attributes):
     """Describe only new, unmodified inventory rows after semantic validation.
 
@@ -3646,6 +3776,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                     client_pid=self.creation_report.get('client_pid'), now_utc_ms=now_ms)
         if not evidence._same(before['rows']['powers'], after['rows']['powers']):
             self.native_stock_power_preservation = self.stock_power_preservation_evidence(before, after)
+        progress = False
         for table in evidence.SELECTED:
             previous = before['rows'][table]
             current = after['rows'][table]
@@ -3655,6 +3786,11 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             if (table == 'powers' and not self.saved_selected_rows_match(table, previous, current)
                     and self.accept_added_temporary_powers(before, after)):
                 continue
+            if table in ('ents', 'powers') and not self.saved_selected_rows_match(table, previous, current):
+                if progress is False:   # evaluated once, for both tables together
+                    progress = self.accept_gameplay_progress(before, after)
+                if progress:
+                    continue
             if not self.saved_selected_rows_match(table, previous, current):
                 # A typed SQL snapshot after logout is evidence of the observed
                 # difference, not a successful persistence proof. Preserve it
@@ -3680,6 +3816,34 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             committed_native_position_verified=True,
             committed_safe_position_verified=location['requested_recovery_verified'])
         return after
+
+    def accept_gameplay_progress(self, before, after):
+        """ARM64: accept a reopen whose saved changes are only ordinary native play.
+
+        Same preconditions as the inventory policy (ordinary logout observed,
+        disconnect before the SQL read, no forced stop, no task profile). The
+        result is recorded either way; only an accepted one changes the outcome.
+        """
+        proof = self.creation_report
+        if (os.environ.get('COH_CLIENT_ARCH', 'x86') != 'arm64'
+                or proof.get('task_gate_required') is True
+                or not all(proof.get(key) is True for key in
+                    ('disconnected_before_sql', 'requested_logout_observed', 'logout_timer_observed'))
+                or proof.get('forced_stop_before_save') is not False):
+            return None
+        now_ms = int(time.time() * 1000)
+        binding = reopen_connection_binding(proof, self.owner.args.session_id, proof.get('client_pid'), now_ms)
+        if binding is None:
+            return None
+        import native_training_save
+        start = proof.get('client_ready_observed_utc_ms')
+        purchases = (native_training_save.session_purchases(self.current_logs(), start, now_ms)
+                     if type(start) is int else None)
+        result = gameplay_progress(before['rows'], after['rows'],
+                                   self.schema['expected_attributes']['attributes'], purchases)
+        result['connection'] = binding
+        proof['gameplay_progress'] = result
+        return result if result['accepted'] else None
 
     def accept_added_inventory_enhancements(self, semantic):
         """ARM64: accept committed additions without asserting their loot cause.
