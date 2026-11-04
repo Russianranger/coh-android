@@ -276,16 +276,18 @@ public final class ClientRuntime {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("proot-fast-mode", enabled).apply();
     }
-    /** Let an instrumented MapServer trust CRC-matching prepared .bin files (no source tree scan).
-     * On by default: CI A/B 41605600310 vs 41610459604 cut the reopen Atlas start 130 s -> 94 s. */
+    /** 0.13.52: run the APK's second, instrumented Thor MapServer, which trusts CRC-matching
+     * prepared .bin files (CI A/B 41605600310 vs 41610459604: reopen Atlas 130 s -> 94 s).
+     * Off by default under a new key, so older installs that had "trusted-bins" on keep the
+     * device-proven shipping MapServer until the option is ticked. */
     public static boolean trustedBinsEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("trusted-bins", true);
+                .getBoolean("trusted-bins-test-server", false);
     }
     public static synchronized void setTrustedBinsEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .edit().putBoolean("trusted-bins", enabled).apply();
+                .edit().putBoolean("trusted-bins-test-server", enabled).apply();
     }
     /** Raise the gameplay frame cap to 60 once the reopened character is in the world.
      * Uses the sidebar's /maxfps 60 command; the native launch cap stays 30/10. */

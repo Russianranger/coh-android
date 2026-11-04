@@ -70,6 +70,9 @@ CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 
                              'server_cache_package.py', 'server_fx_catalog.py', 'server_animation_package.py'})
 SERVER_ADDED_RUNTIME = frozenset({'armport_server_metrics_contract.py', 'armport-server-metrics-binding.json'})
 SERVER_CHANGED_RUNTIME = frozenset({'game-package.tar.gz'})
+# --server-option (0.13.52): the donor game archive stays byte-identical and the
+# admitted Thor server is added beside it, used only when the launch option asks.
+SERVER_OPTION_ADDED_RUNTIME = SERVER_ADDED_RUNTIME | {'game-package-trusted.tar.gz'}
 REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java',
@@ -169,8 +172,14 @@ def build(args):
     baseline = server_pipeline.native.baseline_root(baseline_directory) if server_directory else ROOT
     server_qualification = (server_pipeline.read_qualification(server_directory,
         args.repository_commit, runtime_run_id, baseline) if server_directory is not None else None)
-    added_runtime = ADDED_RUNTIME | (SERVER_ADDED_RUNTIME if server_qualification else frozenset())
-    changed_runtime = CHANGED_RUNTIME | (SERVER_CHANGED_RUNTIME if server_qualification else frozenset())
+    server_option = bool(getattr(args, 'server_option', False))
+    require(not server_option or server_qualification, 'The server option requires a qualified metrics server')
+    if server_option:
+        added_runtime = ADDED_RUNTIME | SERVER_OPTION_ADDED_RUNTIME
+        changed_runtime = CHANGED_RUNTIME
+    else:
+        added_runtime = ADDED_RUNTIME | (SERVER_ADDED_RUNTIME if server_qualification else frozenset())
+        changed_runtime = CHANGED_RUNTIME | (SERVER_CHANGED_RUNTIME if server_qualification else frozenset())
     require(pin(args.donor_apk) == DONOR_APK, 'Donor 0.13.36 APK bytes differ from the public release')
     require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh output required')
     for tool in (args.android_jar, args.build_tools / 'aapt2', args.build_tools / 'zipalign',
@@ -204,7 +213,7 @@ def build(args):
                             if server_qualification else None),
             server_variant='thor_certified_startup' if server_qualification else None,
             server_run_id=server_qualification['native_build_run_id'] if server_qualification else None,
-            upstream_root=baseline)
+            upstream_root=baseline, server_option=server_option)
         if server_qualification:
             require(armport['client_run_id'] == armport['data_run_id'] == server_qualification['native_build_run_id'],
                     'APK client/data and metrics servers came from different builds')
@@ -306,6 +315,8 @@ def build(args):
         report['server_metrics_qualification'] = server_qualification
         report['server_metrics_variant'] = 'thor_certified_startup'
         report['server_metrics_runtime_validated'] = False
+        report['server_metrics_placement'] = ('launch_option_second_archive' if server_option
+                                              else 'replaces_game_archive')
     report_path = args.output.with_name('thor-apk-build-report.json')
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
     args.output.with_suffix('.apk.sha256').write_text(report['sha256'] + '  ' + APK_NAME + '\n')
@@ -323,6 +334,8 @@ def main():
     parser.add_argument('--server-metrics', type=Path)
     parser.add_argument('--runtime-run-id', type=int)
     parser.add_argument('--baseline-root', type=Path)
+    parser.add_argument('--server-option', action='store_true',
+                        help='Carry the metrics server as an opt-in second archive (default server unchanged)')
     args = parser.parse_args()
     for key in ('donor_apk', 'armport', 'android_jar', 'build_tools', 'keystore', 'output'):
         setattr(args, key, getattr(args, key).absolute())

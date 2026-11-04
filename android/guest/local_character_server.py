@@ -94,6 +94,24 @@ SERVERDATA_PROBE_ROOTS = ('scripts.loc',)
 SERVERDATA_PROBE_KEEP = frozenset({'bin', 'geobin', 'server', 'defs', 'maps', 'object_library',
                                    'tricks', 'texture_library'})
 SHARED_TREE_PREFIX = 'shared-server-data-'
+# 0.13.52: runtime/serverdata is a real directory of folder links (one per
+# shared folder) instead of one link to the shared tree. The engine checks
+# serverdata/ before data/ for every file it has not seen, so each private file
+# looked up one at a time (bin, geobin, server: never tree-scanned in the Atlas
+# console) first missed there; on the Thor `loading map` took 34-35 s with a cold
+# private copy against 29 s on 0.13.49. Linking those private folders here too
+# makes the first check hit; writes still land in data/ (the link targets).
+# Tree-scanned private folders (defs, maps, object_library, ...) are never linked:
+# FolderCacheRequestTree scans every data folder, so they would be listed twice.
+SERVERDATA_FIRST_LOOKUP_FOLDERS = ('bin', 'geobin', 'server')
+SERVERDATA_FIRST_LOOKUP_ENV = 'COH_SERVERDATA_FIRST_LOOKUP'
+
+
+def serverdata_first_lookup_enabled():
+    """On unless the environment sets it to 0 (CI A/B)."""
+    value = os.environ.get(SERVERDATA_FIRST_LOOKUP_ENV, '1')
+    require(value in ('0', '1'), SERVERDATA_FIRST_LOOKUP_ENV + ' must be 0 or 1')
+    return value == '1'
 
 
 def serverdata_probe_requested():
@@ -1611,13 +1629,11 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def payloads(self):
         super().payloads()
-        archive = self.owner.args.assets / 'game-package.tar.gz'
         receipt_path = self.owner.args.assets / 'native-responsiveness.json'
         candidate_receipt = dbserver.load_json(receipt_path, 4 * 1024 * 1024) if receipt_path.exists() else None
-        metrics = (self.owner.args.assets / 'armport-server-metrics-binding.json').exists()
-        runtime_manifest = self.owner.args.assets / 'runtime-manifest.json'
-        declared_metrics = runtime_manifest.is_file() and 'armport_server_metrics' in dbserver.load_json(runtime_manifest)
-        require(metrics == declared_metrics, 'Metrics admission and runtime inventory must be installed together')
+        archive, metrics, option = self.select_game_archive(self.owner.args.assets, os.environ)
+        if option is not None:
+            self.creation_report['server_option'] = option
         if metrics:
             import armport_server_metrics_contract as observer
             observer.verify_archive(archive)
@@ -1637,6 +1653,31 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_manifest_sha256 = base.file_hash(destination / 'game-package.json')
         self.map_contract = game.mapserver_progress_contract(self.map_package, destination / 'MapServer.exe')
         self.creation_report['mapserver_producer'] = self.map_contract['producer']
+
+    @staticmethod
+    def select_game_archive(assets, environ):
+        """Return (archive, metrics, option report) for this runtime inventory.
+
+        0.13.52: an APK may carry the admitted metrics server as a second archive
+        (armport_server_option). Without the launch option the unchanged
+        device-proven game-package.tar.gz runs and no metrics path is taken.
+        """
+        archive = assets / 'game-package.tar.gz'
+        metrics = (assets / 'armport-server-metrics-binding.json').exists()
+        runtime_manifest = assets / 'runtime-manifest.json'
+        inventory = dbserver.load_json(runtime_manifest) if runtime_manifest.is_file() else {}
+        require(metrics == ('armport_server_metrics' in inventory),
+                'Metrics admission and runtime inventory must be installed together')
+        if 'armport_server_option' not in inventory:
+            return archive, metrics, None
+        import armport_server_metrics_contract as observer
+        option = observer.admitted_archive_name(inventory)
+        require(metrics, 'Server option requires its runtime binding')
+        requested = environ.get(observer.OPTION_REQUEST) == '1'
+        if requested:
+            archive = assets / option
+        return archive, requested, {'format': 1, 'offered': True, 'requested': requested,
+            'archive': archive.name, 'default_archive': observer.GAME_ARCHIVE}
 
     @staticmethod
     def verify_map_payload(directory, candidate_receipt=None):
@@ -2526,8 +2567,24 @@ class LocalCharacterServer(login.LocalLoginServer):
         require(not link.exists() and not link.is_symlink(), map_label + ' runtime already has serverdata')
         require((runtime / 'data').is_dir() and (runtime / 'tools').is_dir(),
                 'serverdata needs the data/ and tools/ layout')
-        link.symlink_to(shared, target_is_directory=True)
-        return {'format': 1, 'policy': 'shared_readonly_serverdata_link_v1',
+        # A real directory of folder links; Wine follows each as a path component.
+        link.mkdir()
+        for name in roots:
+            (link / name).symlink_to(shared / name, target_is_directory=True)
+        first_lookup = []
+        if serverdata_first_lookup_enabled():
+            shared_names = {name.casefold() for name in roots}
+            private = {child.name.casefold(): child for child in (runtime / 'data').iterdir()}
+            for name in SERVERDATA_FIRST_LOOKUP_FOLDERS:
+                child = private.get(name)
+                if child is None or child.is_symlink() or not child.is_dir():
+                    continue
+                require(name not in shared_names, 'A first-lookup folder is also shared: ' + child.name)
+                # Relative, on-disk spelling: the link resolves inside this runtime only.
+                (link / child.name).symlink_to(Path('..') / 'data' / child.name, target_is_directory=True)
+                first_lookup.append(child.name)
+        return {'format': 2, 'policy': 'shared_readonly_serverdata_folder_links_v2',
+            'first_lookup_private_folders': first_lookup,
             'selection': identity['shared_server_data'].get('selection'),
             'level': identity['shared_server_data'].get('level'), 'shared_top_level': roots,
             'shared_tree': shared.name, 'reused_shared_tree': reused, 'removed': removed,

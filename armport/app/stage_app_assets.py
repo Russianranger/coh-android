@@ -91,7 +91,8 @@ def encoded(value):
 
 
 def stage(source, armport, output, repository_commit, external=None, *,
-          server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT):
+          server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
+          server_option=False):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -99,6 +100,10 @@ def stage(source, armport, output, repository_commit, external=None, *,
     metrics = server_archive is not None
     package.require(metrics == (server_variant is not None) == (server_run_id is not None),
                     'Metrics staging requires archive, variant and build run together')
+    # server_option (0.13.52): keep the donor game archive byte-identical and add
+    # the admitted Thor server as a second archive that only the launch option uses.
+    package.require(not server_option or (metrics and server_variant == 'thor_certified_startup'),
+                    'The server option carries only the admitted Thor server')
     package.require(re.fullmatch('[0-9a-f]{40}', repository_commit), 'Exact repository commit required')
     package.require(not output.exists(), 'Fresh app asset output required')
     runtime = json.loads((source / 'runtime-manifest.json').read_text())
@@ -131,8 +136,11 @@ def stage(source, armport, output, repository_commit, external=None, *,
             binding = server_package.runtime_binding(server_archive, staged_game,
                 variant=server_variant, repository_commit=repository_commit, run_id=server_run_id,
                 upstream_root=upstream_root)
-            generated = {'game-package.tar.gz': staged_game.read_bytes(), contract.BINDING: encoded(binding)}
+            archive_name = contract.OPTION_ARCHIVE if server_option else 'game-package.tar.gz'
+            generated = {archive_name: staged_game.read_bytes(), contract.BINDING: encoded(binding)}
         runtime[contract.WRAPPER] = contract.summary(binding)
+        if server_option:
+            runtime[contract.OPTION] = contract.option_record()
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
@@ -182,6 +190,7 @@ def main():
     parser.add_argument('--server-variant', choices=('retained_progress', 'thor_certified_startup'))
     parser.add_argument('--server-run-id', type=int)
     parser.add_argument('--upstream-root', type=Path, default=ROOT)
+    parser.add_argument('--server-option', action='store_true')
     print(json.dumps(stage(**vars(parser.parse_args()))))
 
 

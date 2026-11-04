@@ -28,6 +28,26 @@ THOR_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
 # Opt-in ARMPORT_TRUSTED_BINS switch (patch 0120), off unless the guest sets it.
 TRUSTED_PATCH = '906433c1e6266f9ee4e6fa41e426676bdde45c9efc9df26dddadfbc2e34f6779'
 TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+GAME_ARCHIVE = 'game-package.tar.gz'
+# 0.13.52: an APK may carry the admitted Thor metrics server (with the trusted
+# bins switch) as a second archive beside the unchanged device-proven one. The
+# guest uses it only when the launch option asks for it.
+OPTION = 'armport_server_option'
+OPTION_ARCHIVE = 'game-package-trusted.tar.gz'
+OPTION_REQUEST = 'COH_TRUSTED_BINS'
+
+
+def option_record():
+    return {'format': 1, 'archive': OPTION_ARCHIVE, 'default_archive': GAME_ARCHIVE,
+            'request_environment': OPTION_REQUEST, 'default_selected': False}
+
+
+def admitted_archive_name(runtime):
+    """The archive the runtime binding pins: the option archive when offered."""
+    if OPTION not in runtime:
+        return GAME_ARCHIVE
+    require(canonical(runtime[OPTION]) == canonical(option_record()), 'Server option record differs')
+    return OPTION_ARCHIVE
 
 
 def require(condition, message):
@@ -147,8 +167,12 @@ def load_binding():
     value = parse(raw)
     build, previous, report = validate_binding(value)
     runtime = parse(read_file(ASSETS / 'runtime-manifest.json'))
+    archive = admitted_archive_name(runtime)
+    # The option is only for the Thor lineage with the reviewed switch.
+    require(archive == GAME_ARCHIVE or (build['variant'] == 'thor_certified_startup' and parser_changed(build)),
+            'Server option requires the Thor server with the trusted bins switch')
     require(runtime.get('files', {}).get(BINDING) == pin(raw)
-            and runtime['files'].get('game-package.tar.gz') == value['game_archive']
+            and runtime['files'].get(archive) == value['game_archive']
             and runtime.get('repository_commit') == build['repository_commit']
             and canonical(runtime.get(WRAPPER)) == canonical(summary(value)),
             'Metrics binding differs from the authenticated runtime inventory')

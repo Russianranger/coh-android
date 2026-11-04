@@ -1,5 +1,6 @@
 """Wine-visible real directories and isolated writable Atlas data."""
 import os
+import shutil
 from pathlib import Path
 import sys
 import tempfile
@@ -207,9 +208,12 @@ class ServerdataProbeTests(unittest.TestCase):
         first = self.value.link_shared_server_data(self.runtime, self.identity)
         self.assertEqual(self.value.creation_report['cold_mirror_input_resolution'], {'resolved_leaves': 7})
         link = self.runtime / 'serverdata'
-        self.assertTrue(link.is_symlink())
+        # 0.13.52: a real directory with one link per shared folder.
+        self.assertTrue(link.is_dir() and not link.is_symlink())
+        self.assertEqual(sorted(child.name for child in link.iterdir()), ['scripts.loc'])
+        self.assertTrue((link / 'scripts.loc').is_symlink())
         self.assertEqual((link / 'scripts.loc/arcs/a.storyarc').resolve(), original)
-        shared = link.resolve()
+        shared = (link / 'scripts.loc').resolve().parent
         self.assertEqual(shared.parent, self.value.owner.root)
         self.assertFalse((shared / 'defs').exists())
         for current, _directories, _files in os.walk(shared):
@@ -221,7 +225,33 @@ class ServerdataProbeTests(unittest.TestCase):
             (second_runtime / name).mkdir(parents=True)
         second = self.value.link_shared_server_data(second_runtime, self.identity)
         self.assertTrue(second['reused_shared_tree']); self.assertEqual(second['shared_tree'], first['shared_tree'])
-        self.assertEqual((second_runtime / 'serverdata').resolve(), shared)
+        self.assertEqual((second_runtime / 'serverdata/scripts.loc').resolve().parent, shared)
+
+    def test_private_folders_looked_up_one_file_at_a_time_hit_serverdata_first(self):
+        self.immutable('scripts.loc/arcs/a.storyarc')
+        data = self.runtime / 'data'
+        for name in ('Bin', 'geobin/maps', 'server/bin', 'defs', 'maps'):
+            (data / name).mkdir(parents=True)
+        (data / 'geobin/maps/a.bin').write_bytes(b'geobin')
+        with patch.dict(os.environ):
+            os.environ.pop(server.SERVERDATA_FIRST_LOOKUP_ENV, None)      # default: on
+            result = self.value.link_shared_server_data(self.runtime, self.identity)
+        link = self.runtime / 'serverdata'
+        self.assertEqual(result['first_lookup_private_folders'], ['Bin', 'geobin', 'server'])
+        self.assertEqual(sorted(child.name for child in link.iterdir()), ['Bin', 'geobin', 'scripts.loc', 'server'])
+        self.assertEqual(os.readlink(link / 'geobin'), '../data/geobin')
+        self.assertEqual((link / 'geobin/maps/a.bin').resolve(), (data / 'geobin/maps/a.bin').resolve())
+        # Tree-scanned private folders would be listed twice; they stay out.
+        self.assertFalse((link / 'defs').exists()); self.assertFalse((link / 'maps').exists())
+        shutil.rmtree(link)
+        with patch.dict(os.environ, {server.SERVERDATA_FIRST_LOOKUP_ENV: '0'}):
+            result = self.value.link_shared_server_data(self.runtime, self.identity)
+        self.assertEqual(result['first_lookup_private_folders'], [])
+        self.assertEqual(sorted(child.name for child in link.iterdir()), ['scripts.loc'])
+        shutil.rmtree(link)
+        with patch.dict(os.environ, {server.SERVERDATA_FIRST_LOOKUP_ENV: 'yes'}), \
+                self.assertRaisesRegex(server.base.DiagnosticError, 'must be 0 or 1'):
+            self.value.link_shared_server_data(self.runtime, self.identity)
 
     def test_private_copy_existing_link_or_missing_tools_is_refused(self):
         self.immutable('scripts.loc/a.storyarc')
@@ -241,7 +271,7 @@ class ServerdataProbeTests(unittest.TestCase):
         self.value.link_shared_server_data(self.runtime, self.identity)
         marker = next(self.value.owner.root.glob('shared-server-data-*.json'))
         marker.write_text('{"format": 1, "key": "other", "roots": ["scripts.loc"], "stats": {}}')
-        (self.runtime / 'serverdata').unlink()
+        shutil.rmtree(self.runtime / 'serverdata')
         with self.assertRaisesRegex(server.base.DiagnosticError, 'marker differs'):
             self.value.link_shared_server_data(self.runtime, self.identity)
         marker.unlink()                                   # a build stopped before its marker
@@ -271,7 +301,7 @@ class ServerdataProbeTests(unittest.TestCase):
     def test_tree_removal_refuses_regular_files_and_foreign_paths(self):
         self.immutable('scripts.loc/a.storyarc')
         self.value.link_shared_server_data(self.runtime, self.identity)
-        shared = (self.runtime / 'serverdata').resolve()
+        shared = (self.runtime / 'serverdata/scripts.loc').resolve().parent
         os.chmod(shared / 'scripts.loc', 0o700)
         (shared / 'scripts.loc/real.txt').write_text('data')
         with self.assertRaisesRegex(server.base.DiagnosticError, 'regular file'):

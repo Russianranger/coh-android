@@ -17,6 +17,11 @@ on:
         type: boolean
         required: false
         default: false
+      server_option:
+        description: With server_metrics, keep the shipping MapServer and add the Thor metrics server as an opt-in second archive
+        type: boolean
+        required: false
+        default: false
       publish_release:
         description: Publish the signed APK as a GitHub pre-release (user-approved candidates only)
         type: boolean
@@ -34,6 +39,7 @@ concurrency:
 env:
   M4_RUN_ID: ${{ inputs.m4_run_id }}
   SERVER_METRICS: ${{ inputs.server_metrics }}
+  SERVER_OPTION: ${{ inputs.server_option }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 
@@ -62,6 +68,9 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$M4_RUN_ID"
+          if [ "$SERVER_OPTION" = true ] && [ "$SERVER_METRICS" != true ]; then
+            echo '::error::server_option needs server_metrics (its qualified runtime run)'; exit 1
+          fi
           R="$GITHUB_REPOSITORY"
           q=$(gh api "repos/$R/actions/runs/$M4_RUN_ID" --jq '[.path,.status,.conclusion]|join(" ")')
           [ "$q" = ".github/workflows/armport-app-runtime.yml completed success" ] || {
@@ -138,6 +147,7 @@ jobs:
           server_args=()
           if [ "$SERVER_METRICS" = true ]; then
             server_args=(--server-metrics "$RUNNER_TEMP/qualified-server-metrics" --runtime-run-id "$M4_RUN_ID" --baseline-root "$GITHUB_WORKSPACE/server-baseline")
+            if [ "$SERVER_OPTION" = true ]; then server_args+=(--server-option); fi
           fi
           armport/scripts/step.sh "ArmPort Thor APK build" python3 armport/app/build_thor_apk.py \
             --donor-apk "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" \
@@ -160,6 +170,7 @@ jobs:
           if 'server_metrics_qualification' in r:
               keep['server_metrics_qualification'] = r['server_metrics_qualification']
               keep['server_metrics_runtime_validated'] = r['server_metrics_runtime_validated']
+              keep['server_metrics_placement'] = r['server_metrics_placement']
           print('::notice title=ArmPort Thor APK::' + json.dumps(keep))
           EOF
       - uses: actions/upload-artifact@v4
@@ -201,10 +212,12 @@ jobs:
           10 FPS while waiting at the monorail for the next zone; thermal samples and server tick timing in
           the export. Test sheet: THOR-TEST-0.13.52.md in the source. CI-only evidence for the new changes.
           EOF
-          if [ "$SERVER_METRICS" = true ]; then
+          if [ "$SERVER_OPTION" = true ]; then
+            echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead; that server has not run on a device before." >> notes.md
+          elif [ "$SERVER_METRICS" = true ]; then
             echo "Servers: instrumented MapServer; Fast server data loading (trusted bins) is active." >> notes.md
           else
-            echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server data loading (trusted bins) option has no effect in this build." >> notes.md
+            echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server start (test server) option has no effect in this build." >> notes.md
           fi
           gh release create "coh-atlas-gameplay-v0.13.52" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
             --prerelease --title "COH Atlas Gameplay 0.13.52 (performance candidate)" --notes-file notes.md \

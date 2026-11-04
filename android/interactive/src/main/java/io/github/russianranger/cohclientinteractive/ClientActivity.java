@@ -120,7 +120,7 @@ public final class ClientActivity extends Activity {
         clientSkipServerFolders.setChecked(ClientRuntime.clientSkipServerFoldersEnabled(this));
         clientSkipServerFolders.setOnCheckedChangeListener((button,checked)->ClientRuntime.setClientSkipServerFoldersEnabled(this,checked));
         controls.addView(clientSkipServerFolders);
-        trustedBins=new CheckBox(this);trustedBins.setText("Fast server data loading (trusted bins)");
+        trustedBins=new CheckBox(this);trustedBins.setText("Fast server start (test server with trusted bins; first device run)");
         trustedBins.setTextColor(Color.rgb(221,234,245));trustedBins.setTextSize(13);
         trustedBins.setChecked(ClientRuntime.trustedBinsEnabled(this));
         trustedBins.setOnCheckedChangeListener((button,checked)->ClientRuntime.setTrustedBinsEnabled(this,checked));

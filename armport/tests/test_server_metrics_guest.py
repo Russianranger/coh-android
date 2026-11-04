@@ -309,7 +309,63 @@ class GuestMetrics(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'Current metrics MapServer bytes'):
                     local.LocalCharacterServer.verify_map_payload(self.runtime, receipt)
 
-    def stage_fixture(self, *, metrics=True, failure=False):
+    def publish_option(self):
+        """0.13.52 layout: unchanged donor archive plus the admitted second archive."""
+        raw = (json.dumps(self.binding, indent=2)+'\n').encode()
+        (self.assets/contract.BINDING).write_bytes(raw)
+        (self.assets/'game-package.tar.gz').write_bytes(b'device-proven donor')
+        (self.assets/contract.OPTION_ARCHIVE).write_bytes(b'game-fixture')
+        runtime = {'format': 1, 'repository_commit': self.build['repository_commit'],
+            'files': {contract.BINDING: contract.pin(raw),
+                      'game-package.tar.gz': contract.pin(b'device-proven donor'),
+                      contract.OPTION_ARCHIVE: self.binding['game_archive']},
+            contract.WRAPPER: contract.summary(self.binding), contract.OPTION: contract.option_record()}
+        (self.assets/'runtime-manifest.json').write_text(json.dumps(runtime))
+        return runtime
+
+    def test_server_option_binds_only_the_second_archive_of_a_thor_switch_build(self):
+        runtime = self.publish_option()
+        # This fixture's build has no textparser change, so it cannot be offered.
+        with self.assertRaisesRegex(ValueError, 'trusted bins switch'):
+            contract.verify_archive(self.assets/contract.OPTION_ARCHIVE)
+        with mock.patch.object(contract, 'parser_changed', return_value=True):
+            contract.verify_archive(self.assets/contract.OPTION_ARCHIVE)
+            with self.assertRaisesRegex(ValueError, 'game archive differs'):
+                contract.verify_archive(self.assets/'game-package.tar.gz')
+            self.assertEqual(contract.verify_current_map(self.path, self.game)['run_id'], 123)
+            changed = dict(runtime, **{contract.OPTION: dict(contract.option_record(), default_selected=True)})
+            (self.assets/'runtime-manifest.json').write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError, 'option record differs'):
+                contract.load_binding()
+        self.select('retained_progress'); self.publish_option()
+        with mock.patch.object(contract, 'parser_changed', return_value=True), \
+                self.assertRaisesRegex(ValueError, 'Thor server'):
+            contract.load_binding()
+
+    def test_server_option_selects_the_second_archive_only_when_requested(self):
+        self.publish_option()
+        select = local.LocalCharacterServer.select_game_archive
+        for environ in ({}, {'COH_TRUSTED_BINS': '0'}):
+            archive, metrics, report = select(self.assets, environ)
+            self.assertEqual((archive.name, metrics), ('game-package.tar.gz', False))
+            self.assertEqual(report, {'format': 1, 'offered': True, 'requested': False,
+                                      'archive': 'game-package.tar.gz', 'default_archive': 'game-package.tar.gz'})
+        archive, metrics, report = select(self.assets, {'COH_TRUSTED_BINS': '1'})
+        self.assertEqual((archive.name, metrics, report['archive']),
+                         (contract.OPTION_ARCHIVE, True, contract.OPTION_ARCHIVE))
+        # A runtime without the option keeps the earlier behaviour exactly.
+        self.publish()
+        self.assertEqual(select(self.assets, {'COH_TRUSTED_BINS': '1'}),
+                         (self.assets/'game-package.tar.gz', True, None))
+        # An option record without its binding is refused.
+        runtime = json.loads((self.assets/'runtime-manifest.json').read_text())
+        runtime.pop(contract.WRAPPER); runtime[contract.OPTION] = contract.option_record()
+        (self.assets/'runtime-manifest.json').write_text(json.dumps(runtime))
+        (self.assets/contract.BINDING).unlink()
+        with self.assertRaisesRegex(local.base.DiagnosticError, 'requires its runtime binding'):
+            select(self.assets, {'COH_TRUSTED_BINS': '1'})
+
+    def stage_fixture(self, *, metrics=True, failure=False, option=False):
         import stage_app_assets as stage
         source = self.work/'donor'; source.mkdir()
         (source/'game-package.tar.gz').write_bytes(b'original donor archive')
@@ -334,6 +390,7 @@ class GuestMetrics(unittest.TestCase):
              mock.patch.object(producer, 'runtime_binding', return_value=self.binding):
             options = {'server_archive': self.work/'native.zip', 'server_variant': self.variant,
                        'server_run_id': 123} if metrics else {}
+            if option: options['server_option'] = True
             if failure:
                 with self.assertRaisesRegex(ValueError, 'unqualified native input'):
                     stage.stage(source, armport, destination, '2'*40, **options)
@@ -355,6 +412,38 @@ class GuestMetrics(unittest.TestCase):
         self.assertEqual(runtime[contract.WRAPPER], contract.summary(self.binding))
         with mock.patch.object(contract, 'ASSETS', destination):
             self.assertEqual(contract.verify_current_map(self.path, self.game)['run_id'], 123)
+
+    def test_staging_the_server_option_keeps_the_donor_archive_and_adds_the_second(self):
+        destination = self.stage_fixture(option=True)
+        self.assertEqual((destination/'game-package.tar.gz').read_bytes(), b'original donor archive')
+        self.assertEqual((destination/contract.OPTION_ARCHIVE).read_bytes(), b'game-fixture')
+        runtime = json.loads((destination/'runtime-manifest.json').read_text())
+        client = json.loads((destination/'client-manifest.json').read_text())
+        for name in ('game-package.tar.gz', contract.OPTION_ARCHIVE, contract.BINDING):
+            actual = contract.pin((destination/name).read_bytes())
+            self.assertEqual(runtime['files'][name], actual)
+            self.assertEqual(client['files'][name], actual)
+        self.assertEqual(runtime[contract.OPTION], contract.option_record())
+        with mock.patch.object(contract, 'ASSETS', destination), \
+                mock.patch.object(contract, 'parser_changed', return_value=True):
+            self.assertEqual(contract.verify_current_map(self.path, self.game)['run_id'], 123)
+
+    def test_apk_builder_admits_the_option_archive_and_leaves_the_donor_archive_unchanged(self):
+        import build_thor_apk as apk
+        self.assertEqual(apk.SERVER_OPTION_ADDED_RUNTIME,
+                         {contract.OPTION_ARCHIVE, contract.BINDING, 'armport_server_metrics_contract.py'})
+        self.assertNotIn(contract.GAME_ARCHIVE, apk.CHANGED_RUNTIME)
+        self.assertEqual(apk.SERVER_CHANGED_RUNTIME, {contract.GAME_ARCHIVE})
+
+    def test_the_server_option_never_carries_the_retained_variant(self):
+        import stage_app_assets as stage
+        self.select('retained_progress')
+        with self.assertRaisesRegex(ValueError, 'only the admitted Thor server'):
+            stage.stage(self.work/'none', self.work/'none.zip', self.work/'out', '2'*40,
+                        server_archive=self.work/'native.zip', server_variant='retained_progress',
+                        server_run_id=123, server_option=True)
+        with self.assertRaisesRegex(ValueError, 'only the admitted Thor server'):
+            stage.stage(self.work/'none', self.work/'none.zip', self.work/'out', '2'*40, server_option=True)
 
     def test_rejected_server_input_leaves_no_staged_output(self):
         self.stage_fixture(failure=True)

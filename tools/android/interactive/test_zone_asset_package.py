@@ -378,7 +378,8 @@ class ZonePackageTests(unittest.TestCase):
             self.assertTrue(reused['preparation']['server_data_cache']['reused'])
             self.assertEqual(reused['preparation']['server_data_cache']['changed_parent_paths'], ['.'])
             self.assertTrue(reused['preparation']['shared_server_data']['reused_shared_tree'])
-            self.assertEqual((reused['runtime']/'serverdata').resolve(), (king/'serverdata').resolve())
+            self.assertEqual((reused['runtime']/'serverdata/scripts.loc').resolve(),
+                             (king/'serverdata/scripts.loc').resolve())
 
 
 if __name__ == '__main__':
