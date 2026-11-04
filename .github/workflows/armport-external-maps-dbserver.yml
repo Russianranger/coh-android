@@ -6,6 +6,11 @@ name: ArmPort on-demand zone DbServer
 # reads its requests with android/guest/external_map_supervisor.py.
 on:
   workflow_dispatch:
+  # A workflow that exists only off the default branch is dispatchable after
+  # its first run; this narrow push trigger (this file, this branch) is that run.
+  push:
+    branches: ['x86/perf-round3']
+    paths: ['.github/workflows/armport-external-maps-dbserver.yml']
 permissions:
   contents: read
   actions: read
