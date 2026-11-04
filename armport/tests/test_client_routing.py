@@ -393,7 +393,25 @@ class ClientFolderIndexTests(unittest.TestCase):
                 armport.client_uses_folder_index()
         series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
         self.assertIn('0122-armport-folder-cache-index.patch', series)
-        self.assertEqual(series[-1], '0123-armport-entity-interpolation-clock-wrap.patch')
+        self.assertIn('0123-armport-entity-interpolation-clock-wrap.patch', series)
+
+    def test_sound_script_errors_are_logged_not_a_modal_dialog(self):
+        """Patch 0124: with audio on, a script naming a missing sound opened a modal
+        "Sound Script Errors" dialog that stopped the game's input (runtimes
+        41832716509 and 41838960420: logout never processed). It is logged, bounded."""
+        root = Path(armport.__file__).resolve().parents[1]
+        series = (root / 'patches/series').read_text().split()
+        self.assertEqual(series[-1], '0124-armport-sound-script-errors-logged.patch')
+        text = (root / 'patches' / series[-1]).read_text()
+        removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertTrue(any('winErrorDialog(errorMsg,"Sound Script Errors"' in line for line in removed))
+        self.assertFalse(any('winErrorDialog' in line for line in added))
+        self.assertEqual(sum('sprintf(errors+strlen(errors)' in line for line in removed), 4)
+        self.assertFalse(any('sprintf(errors+strlen(errors)' in line for line in added))
+        self.assertTrue(any('ARMPORT_SOUND_SCRIPT_ERRORS_V1' in line for line in added))
+        upstream = (root.parent / 'upstream/ouroboros/Game/src/sound/sound_ambient.c').read_text(encoding='latin-1')
+        self.assertEqual(upstream.count('winErrorDialog('), 1)   # the only dialog in this file
 
 
 if __name__ == '__main__':
