@@ -2,7 +2,8 @@ name: ArmPort on-demand zone DbServer
 # The device DbServer (level-up layer, 0.13.36 donor) plus external map requests
 # (database/external-maps, patches/external-maps/0001), off by default. Builds
 # and packages startup-dbserver.exe + startup-dbserver-manifest.json only; no
-# APK, no device change. Dispatch only, one CI chain at a time.
+# APK, no device change. Dispatch only, one CI chain at a time. The guest
+# reads its requests with android/guest/external_map_supervisor.py.
 on:
   workflow_dispatch:
 permissions:
