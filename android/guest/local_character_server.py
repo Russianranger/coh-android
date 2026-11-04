@@ -2170,7 +2170,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         Off unless COH_EXTERNAL_MAPS=1 and the installed DbServer is the
         external-maps layer; otherwise the DbServer behaves as before.
         """
-        if self.external_maps is not None:
+        if getattr(self, 'external_maps', None) is not None:
             # One supervisor per DbServer process; a relaunch keeps Launcher behaviour.
             self.creation_report['external_maps']['later_dbserver_launch_without_requests'] = True
             return
@@ -2196,8 +2196,8 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def tick_external_maps(self):
         """Read new map requests; delink the ones no process serves (one query at a time)."""
-        supervisor = self.external_maps
-        if supervisor is None or self.process is None:
+        supervisor = getattr(self, 'external_maps', None)
+        if supervisor is None or getattr(self, 'process', None) is None:
             return
         now = time.monotonic()
         if now < self.external_maps_next:
@@ -2229,7 +2229,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report['external_maps']['supervisor'] = supervisor.report()
 
     def cleanup_external_maps(self):
-        supervisor = self.external_maps
+        supervisor = getattr(self, 'external_maps', None)
         if supervisor is None:
             return
         try:
