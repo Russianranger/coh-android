@@ -296,6 +296,8 @@ def failure_detail(evidence, work, observer):
                 if stdio is not None:
                     result['client_fps_tail'] = tail([l for l in stdio if l.startswith('ARMPORT_FRAME_RATE_V1')], 6)
                     result['client_stdio_tail'] = tail([l for l in stdio if not l.startswith('ARMPORT_FRAME_RATE_V1')], 6)
+                    dialogs = [l for l in stdio if l.startswith('ArmPort dialog:')]
+                    result['client_dialogs'] = {'count': len(dialogs), 'last': [l[:120] for l in dialogs[-3:]]}
                 console = text('client-evidence/client-console.log')
                 if console is not None:
                     audio = [line for line in console if FAILURE_AUDIO_LINE.search(line)]
@@ -510,16 +512,17 @@ def guest_timing_summary(evidence):
 
 
 def timing_notices(timings, proot_seccomp, trusted_bins):
-    """Per session: a timings notice, then a detail notice (stage timeline, client
-    folder-cache phases, rewritten bins). Each stays under the 4 KiB annotation limit."""
+    """Per session: a timings notice, then detail notices (stage timeline and client
+    folder-cache phases; rewritten bins; zone servers: shared heap decision and
+    on-demand map requests). Each stays under the 4 KiB annotation limit."""
     lines = []
     for name, original in timings.items():
         summary, writes = {}, {}
-        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts',
-                                                 'shared_heap', 'external_maps')
+        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts')
                   if original.get(key)}
+        servers = {key: original[key] for key in ('shared_heap', 'external_maps') if original.get(key)}
         for key, value in original.items():
-            if key in detail:
+            if key in detail or key in servers:
                 continue
             if key in ('character_creation', 'character_reopen') and isinstance(value, dict):
                 value = dict(value)
@@ -533,6 +536,9 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         if detail:
             lines.append(ci_notice(dict(detail, session=name))
                          .replace('interactive result', 'startup detail ' + name, 1))
+        if servers:
+            lines.append(ci_notice(dict(servers, session=name))
+                         .replace('interactive result', 'zone servers ' + name, 1))
     return lines
 
 

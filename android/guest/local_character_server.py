@@ -337,12 +337,19 @@ SHARED_HEAP_ENVIRONMENT = 'COH_SHARED_HEAP'
 # measured; the native code falls back to private memory when it cannot map.
 SHARED_HEAP_LINES = (
     ('disabled_by_option', 'Not using shared memory due to -nosharedmemory'),
-    ('heap_reserved', 'reserving shared heap space... reserved'),
-    ('heap_unavailable', 'reserving shared heap space... failed'),
+    ('reserve_started', 'reserving shared heap space...'),
+    ('first_caller', 'initSharedHeapMemoryManager: SMAR_FirstCaller'),
+    ('heap_disabled', 'Shared heap disabled: '),
     ('address_outside_space', 'Program address space does not include our desired address'),
     ('address_not_free', 'Our desired address is not free in this process space'),
     ('manager_unavailable', 'Error acquiring shared memory for the memory manager'),
 )
+# loadend_printf appends the outcome to the "reserving" line, but anything the
+# reservation prints itself (the first caller announces SMAR_FirstCaller) moves
+# it to a later line, so the outcome is searched in a window after the marker.
+SHARED_HEAP_OUTCOME_WINDOW = 4096
+SHARED_HEAP_RESERVED = re.compile(r'\breserved (\d{1,6}) MB')
+SHARED_HEAP_FAILED = 'failed: no shared heap'
 
 
 def shared_heap_requested():
@@ -354,15 +361,30 @@ def mapserver_memory_arguments():
     return [] if shared_heap_requested() else ['-nosharedmemory']
 
 
+def console_excerpt_line(line, limit=160):
+    return ''.join(c if ' ' <= c <= '~' else '?' for c in line.strip())[:limit]
+
+
 def shared_heap_console(text):
     """Bounded evidence of the native shared-memory decision in one MapServer console."""
     head = text[:1024 * 1024]
     found = {name: head.count(marker) for name, marker in SHARED_HEAP_LINES}
-    reserved = re.search(r'reserving shared heap space\.\.\. reserved (\d+) MB', head)
-    return {'format': 1, 'requested': shared_heap_requested(), 'lines': found,
+    marker = head.find('reserving shared heap space...')
+    window = head[marker:marker + SHARED_HEAP_OUTCOME_WINDOW] if marker >= 0 else ''
+    reserved = SHARED_HEAP_RESERVED.search(window)
+    failed = window.find(SHARED_HEAP_FAILED)
+    if reserved and 0 <= failed < reserved.start():
+        reserved = None
+    found['heap_reserved'] = 1 if reserved else 0
+    found['heap_unavailable'] = 1 if failed >= 0 and not reserved else 0
+    reasons = [console_excerpt_line(line.split('Shared heap disabled: ', 1)[1], 120)
+               for line in head.splitlines() if 'Shared heap disabled: ' in line][:3]
+    excerpt = [console_excerpt_line(line) for line in window.splitlines()[:6]]
+    return {'format': 2, 'requested': shared_heap_requested(), 'lines': found,
             'reserved_mib': int(reserved.group(1)) if reserved else None,
+            'disabled_reasons': reasons, 'excerpt': excerpt,
             'shared_heap_active': found['heap_reserved'] == 1 and not any(
-                found[name] for name in ('disabled_by_option', 'address_outside_space',
+                found[name] for name in ('disabled_by_option', 'heap_disabled', 'address_outside_space',
                                          'address_not_free', 'manager_unavailable'))}
 
 

@@ -426,8 +426,28 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   option off; CI input `shared_heap`; `pss_kib` per server every 30 s; console
   decision in `creation_report.shared_heap` / `zoning_report.shared_heap_consoles`.
   Notes: `armport/notes/ON-DEMAND-ZONES.md`.
-- Chain at 3f725c8c9 (`r54.sh`): build 41906219190 → default runtime → trusted
-  runtime → shared-heap runtime (experiment, does not block) → APK.
+- Chain at 3f725c8c9 (`r54.sh`): build 41906219190, default runtime 41920974522
+  and trusted runtime 41926582700 passed creation and reopen. Shared-heap runtime
+  41931773800 failed creation: "Character logout delivery does not match this
+  ready client or its save window" (no Atlas logout line in 120 s; server ticks
+  normal, client 0.26 FPS for 15 s after the quit; new-character welcome dialog
+  twice in the stdio tail). Its console decision read all zeros: the first
+  caller prints `initSharedHeapMemoryManager: SMAR_FirstCaller` inside the
+  `reserving shared heap space...` load line, so the outcome lands on a later
+  line. Cause of the logout miss unknown (shared heap or timing).
+- APK 41935584201 failed before signing: "Unexpected runtime additions or
+  removals" — `external_map_supervisor.py` (new guest dependency, fd73bc165) and
+  `native_training_save.py` (changed) were not in `build_thor_apk`'s reviewed
+  lists. Fixed, with `armport/tests/test_thor_apk_runtime_review.py` checking the
+  lists against pinned 0.13.36 donor contents (`tests/fixtures/donor-0.13.36-runtime-pins.json`);
+  it fails on 3f725c8c9 and passes now. Release notes' version slips corrected.
+- Shared-heap evidence v2: the outcome is searched in a 4 KiB window after the
+  marker, plus `first_caller`, `disabled_reasons` and a 6-line excerpt; zone
+  server evidence (`shared_heap`, `external_maps`) moves to its own CI notice
+  "zone servers <session>"; failure detail adds `client_dialogs`.
+- Rerun chain (`r54b.sh`) on the new head: build → default → trusted →
+  shared heap (does not block) → APK published → external-maps runtime
+  (`external_maps_run_id=41883310382`, does not block).
 
 ## 0.13.53: game audio (Claude, 2026-11-03)
 

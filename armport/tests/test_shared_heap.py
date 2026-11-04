@@ -30,10 +30,11 @@ class SharedHeap(unittest.TestCase):
     def test_console_markers_are_the_native_strings(self):
         sources = ''.join((UPSTREAM / path).read_text(errors='replace') for path in (
             'MapServer/src/svr/svr_init.c', 'libs/UtilitiesLib/src/components/SharedMemory.c'))
+        sources += (UPSTREAM / 'libs/UtilitiesLib/src/components/SharedHeap.c').read_text(errors='replace')
         for _, marker in character.SHARED_HEAP_LINES:
-            self.assertIn(marker.replace('... reserved', '...').replace('... failed', '...'), sources)
+            self.assertIn(marker, sources)
         self.assertIn('" reserved %d MB"', sources)
-        self.assertIn('" failed: no shared heap"', sources)
+        self.assertIn('" ' + character.SHARED_HEAP_FAILED + '"', sources)
 
     def test_console_summary(self):
         off = character.shared_heap_console(OFF)
@@ -45,6 +46,29 @@ class SharedHeap(unittest.TestCase):
         fallback = character.shared_heap_console(
             'Program address space does not include our desired address!  Running in non-SharedMemory mode.\n' + ON)
         self.assertFalse(fallback['shared_heap_active'])
+        self.assertEqual(off['lines']['heap_unavailable'], 1)
+
+    def test_first_caller_output_splits_the_reservation_line(self):
+        # CI run 41931773800 (shared heap on): the first caller prints inside the
+        # reservation, so the outcome lands on a later line and v1 matched nothing.
+        split = ('reserving shared heap space...initSharedHeapMemoryManager: SMAR_FirstCaller\n'
+                 ' reserved 1024 MB                 (0.02)\n')
+        on = character.shared_heap_console('header\n' + split + 'more miscellany..done\n')
+        self.assertTrue(on['shared_heap_active'])
+        self.assertEqual((on['reserved_mib'], on['lines']['first_caller'], on['lines']['reserve_started']), (1024, 1, 1))
+        self.assertEqual(on['excerpt'][0], 'reserving shared heap space...initSharedHeapMemoryManager: SMAR_FirstCaller')
+        failed = character.shared_heap_console(
+            'reserving shared heap space...initSharedHeapMemoryManager: SMAR_FirstCaller\n'
+            'Shared heap disabled: Failed to reserve any shared heap space\n failed: no shared heap   (0.00)\n'
+            'later: reserved 5 MB of something else\n')
+        self.assertFalse(failed['shared_heap_active'])
+        self.assertEqual((failed['reserved_mib'], failed['lines']['heap_unavailable']), (None, 1))
+        self.assertEqual(failed['disabled_reasons'], ['Failed to reserve any shared heap space'])
+        silent = character.shared_heap_console('no marker here\n reserved 64 MB\n')
+        self.assertEqual((silent['reserved_mib'], silent['excerpt'], silent['shared_heap_active']), (None, [], False))
+        bounded = character.shared_heap_console('reserving shared heap space...\x1b[31m' + 'q' * 900 + '\n' * 40)
+        self.assertLessEqual(len(bounded['excerpt']), 6)
+        self.assertTrue(all(len(line) <= 160 and line.isprintable() for line in bounded['excerpt']))
 
     def test_both_launch_sites_use_the_switch(self):
         for path in ('android/guest/local_character_server.py', 'android/guest/character_zoning.py'):

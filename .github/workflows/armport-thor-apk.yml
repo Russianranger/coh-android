@@ -211,13 +211,13 @@ jobs:
           Fast server start (test server), Shared server memory.
           New: the save check accepts ordinary play combined in one session (training a level with its power
           pick, the level's automatic powers, Day Job powers granted or expiring, experience and influence);
-          0.13.54 marked such sessions failed although the saves were correct. New option, off: Shared server
-          memory (experiment), which lets a second zone server map the game data the first one already
-          loaded instead of loading its own copy; the export records the outcome and each server's
-          proportional memory (PSS). Everything from 0.13.54 is kept. Test sheet: THOR-TEST-0.13.54.md.
+          0.13.53 marked such sessions failed although the saves were correct. New option, off: Shared server
+          memory (experiment, not yet run on the device), which lets a second zone server map the game data
+          the first one already loaded instead of loading its own copy; the export records the outcome and
+          each server's proportional memory (PSS). Everything from 0.13.53 is kept. Test sheet: THOR-TEST-0.13.54.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
-            echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.54)." >> notes.md
+            echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.53)." >> notes.md
           elif [ "$SERVER_METRICS" = true ]; then
             echo "Servers: instrumented MapServer; trusted bins apply when Fast server start (test server) is ticked (off by default)." >> notes.md
           else

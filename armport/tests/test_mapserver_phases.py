@@ -190,6 +190,18 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertEqual((first['session'], first['proot_seccomp'], first['trusted_bins_requested']), ('creation', True, True))
         self.assertIn('native_bin_writes', timings['creation']['character_creation'])
         self.assertEqual(interactive_host.timing_notices({'reopen': {'proot_mode': None}}, False, False)[0].count('bin writes'), 0)
+        # Zone-server evidence has its own notice so the bounded console excerpt and
+        # the on-demand map requests never push the startup detail over the limit.
+        heap = {'format': 1, 'requested': True, 'active_console': {
+            'format': 2, 'excerpt': ['x' * 160] * 6, 'disabled_reasons': ['y' * 120] * 3}}
+        maps = {'requested': True, 'requests': [{'map_id': 9, 'reason': 'z' * 160}] * 6, 'anomalies': ['a' * 160] * 4}
+        lines = interactive_host.timing_notices({'creation': dict(timings['creation'], shared_heap=heap,
+                                                                  external_maps=maps)}, True, True)
+        self.assertEqual(lines[-1].split('::')[1], 'notice title=ArmPort M4 zone servers creation')
+        servers = json.loads(lines[-1].split('::', 2)[2])
+        self.assertEqual(sorted(servers), ['external_maps', 'session', 'shared_heap'])
+        self.assertNotIn('shared_heap', json.loads(lines[-2].split('::', 2)[2]))
+        self.assertTrue(all(len(line.split('::', 2)[2]) < 4096 for line in lines))
 
 
 if __name__ == '__main__':

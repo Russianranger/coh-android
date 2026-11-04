@@ -145,7 +145,8 @@ class InteractiveEvidence(unittest.TestCase):
             (work / 'state/character-logout.json').write_text(json.dumps({'action': 'quittologin', 'sent_utc_ms': 5}))
             fps = ['ARMPORT_FRAME_RATE_V1 fps=%d.00 frames=1 seconds=5.00 maxfps=30 menu=0' % n for n in range(9)]
             with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
-                archive.writestr('client-evidence/armport_stdio.txt', '\n'.join(fps + ['ArmPort login: stage 3', 'x' * 900]))
+                archive.writestr('client-evidence/armport_stdio.txt', '\n'.join(fps + ['ArmPort dialog: Welcome! ' + 'w' * 200,
+                                                                  'ArmPort login: stage 3', 'x' * 900]))
                 archive.writestr('client-evidence/client-console.log',
                                  '\n'.join(['ALSA lib pcm.c:1 underrun'] * 7 + ['last line']))
                 archive.writestr('client-evidence/character-atlas-console.txt', 'Player logout timer 30\nother\n')
@@ -154,6 +155,7 @@ class InteractiveEvidence(unittest.TestCase):
             self.assertEqual(len(detail['client_fps_tail']), 6)
             self.assertTrue(detail['client_fps_tail'][-1].startswith('ARMPORT_FRAME_RATE_V1 fps=8.00'))
             self.assertEqual(len(detail['client_stdio_tail'][-1]), 240)
+            self.assertEqual((detail['client_dialogs']['count'], len(detail['client_dialogs']['last'][0])), (1, 120))
             self.assertEqual(detail['client_console_audio']['count'], 7)
             self.assertEqual(len(detail['client_console_audio']['first']), 4)
             self.assertEqual(detail['client_console_tail'][-1], 'last line')

@@ -15,11 +15,9 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   does not prove gameplay causation. No matched pre-port x86 baseline is supplied.
 - Save committed, but Wine worker EACCES prevented proved owned cleanup;
   Atlas cache return failed and the data cache remained stranded.
-- Historical .46 build40929292200/runtime40945708189/APK40952408285 succeeded;
-  modern Thor build checks and retained-runtime execution have different scope.
-- Startup instrumentation/ODBC reuse included; gain and ≤60 s remain unmeasured.
-  Historical build41363927704 passed; runtime41372922907 rejected old 0119 pin
-  before guest launch. Corrected pin and regression are included.
+- Historical .46 build40929292200/runtime40945708189/APK40952408285 succeeded (scope differs from modern Thor checks).
+- Startup instrumentation/ODBC reuse included; gain and ≤60 s unmeasured. Historical build41363927704
+  passed; runtime41372922907 rejected old 0119 pin before guest launch; corrected pin and regression included.
 - .37 cleanup hardening ported at e50a0e42e; packaging admission at 263acad1f (dormant chain skipped).
 - Local ArmPort445/modern53 and guest27/64/17 pass. Cleanup whole-/proc has one
   inherited host EACCES error, reproduced on pristine c86; guards remain intact.
@@ -38,3 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.53: game audio (TRASC plugin + AudioTrack bridge), RSS. 41832716509/41838960420 failed logout: modal
   "Sound Script Errors" dialog → 0124. Published (APK run 41881826170). Thor: audio, King's Row, 2nd start 40.6 s OK;
   RSS client 2.2 GB, MapServer 1.8-1.9 GB each, total 6.3 GB; reopen check rejects training+Day Job combos (saves fine).
+- 0.13.54 at 3f725c8c9: runtimes 41920974522/41926582700 passed; shared heap 41931773800 failed logout; APK 41935584201
+  rejected 2 unreviewed helpers → fixed + donor-pin test; rerun chain r54b (HANDOFF-X86.md "0.13.54").
