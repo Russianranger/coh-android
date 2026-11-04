@@ -23,6 +23,12 @@ from client_stdio import read_stdio
 
 base, require = presentation.base, presentation.require
 
+# CI only: the host supplies these to prove the Wine DirectSound -> ALSA ->
+# ArmPort plugin path carries sound (the CI client data has no sound files).
+AUDIO_PROBE = Path('/opt/armport/dsound-tone.exe')
+AUDIO_CONFIG = Path('/opt/armport/armport-asound.conf')
+AUDIO_SOCKET = Path('/presentation-socket/audio.sock')
+
 
 def arm64_pe(path):
     with path.open('rb') as stream:
@@ -114,8 +120,31 @@ class ArmPortRuntime(presentation.PresentationDiagnostic):
             self.ctx.report['client_alive_after_frame'] = child.process.poll() is None
             require(self.ctx.report['client_alive_after_frame'], 'Client exited after external frame')
             self.ctx.passed(login_stage=0, client_alive=True, rfb_frame_acknowledged=True)
+            self.audio_probe()
         finally:
             observer.close()
+
+    def audio_probe(self):
+        """Play the host's known tone with the client's audio settings (the sink checks the samples)."""
+        if not AUDIO_PROBE.exists():
+            return
+        self.ctx.stage('armport_audio_probe')
+        require(AUDIO_PROBE.is_file() and not AUDIO_PROBE.is_symlink()
+                and AUDIO_CONFIG.is_file() and not AUDIO_CONFIG.is_symlink(), 'Incomplete audio probe')
+        arm64_pe(AUDIO_PROBE)
+        require(stat.S_ISSOCK(AUDIO_SOCKET.lstat().st_mode), 'The audio sink is not listening')
+        overrides = self.wine_env.get('WINEDLLOVERRIDES', '')
+        # The same three settings as ArmPortClient.client_audio_environment.
+        environment = dict(self.wine_env, ALSA_CONFIG_PATH=str(AUDIO_CONFIG), TRASC_AUDIO_SOCKET=str(AUDIO_SOCKET),
+                           WINEDLLOVERRIDES=(overrides + ';' if overrides else '') + 'winepulse.drv=d')
+        result = self.ctx.run('armport-audio-probe', ['/usr/bin/env', '-C', '/opt/armport', str(self.args.wine),
+                              base.windows_path(AUDIO_PROBE)], timeout=60, env=environment, check=False)
+        lines = re.findall(r'^ARMPORT_DSOUND_TONE_V1 .*$', result['output'], re.M)
+        self.ctx.report['audio_probe'] = {'exit_code': result['exit_code'], 'result': lines[-1:] or None,
+                                          'output_tail': result['output'][-1200:]}
+        require(result['exit_code'] == 0 and lines and ' result=pass ' in lines[-1] + ' ',
+                'DirectSound tone probe failed: ' + result['output'][-1200:])
+        self.ctx.passed(audio_probe=lines[-1])
 
 
 def main():

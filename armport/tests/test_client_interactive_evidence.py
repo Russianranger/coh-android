@@ -136,6 +136,33 @@ class InteractiveEvidence(unittest.TestCase):
             self.assertIn('%25', host.ci_notice({'error': '50% failed'}))
             self.assertNotIn('\n', host.ci_notice({'error': 'a\nb'}))
 
+    def test_failure_detail_is_bounded_and_separate_from_the_qualified_summary(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            work, evidence = root / 'work', root / 'evidence'
+            (work / 'state').mkdir(parents=True)
+            evidence.mkdir()
+            (work / 'state/character-logout.json').write_text(json.dumps({'action': 'quittologin', 'sent_utc_ms': 5}))
+            fps = ['ARMPORT_FRAME_RATE_V1 fps=%d.00 frames=1 seconds=5.00 maxfps=30 menu=0' % n for n in range(9)]
+            with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/armport_stdio.txt', '\n'.join(fps + ['ArmPort login: stage 3', 'x' * 900]))
+                archive.writestr('client-evidence/client-console.log',
+                                 '\n'.join(['ALSA lib pcm.c:1 underrun'] * 7 + ['last line']))
+                archive.writestr('client-evidence/character-atlas-console.txt', 'Player logout timer 30\nother\n')
+            detail = host.failure_detail(evidence, work, {'steps': [{'action': n} for n in 'abcdef']})
+            self.assertEqual(detail['logout_request']['sent_utc_ms'], 5)
+            self.assertEqual(len(detail['client_fps_tail']), 6)
+            self.assertTrue(detail['client_fps_tail'][-1].startswith('ARMPORT_FRAME_RATE_V1 fps=8.00'))
+            self.assertEqual(len(detail['client_stdio_tail'][-1]), 240)
+            self.assertEqual(detail['client_console_audio']['count'], 7)
+            self.assertEqual(len(detail['client_console_audio']['first']), 4)
+            self.assertEqual(detail['client_console_tail'][-1], 'last line')
+            self.assertEqual(detail['atlas_logout_lines'], ['Player logout timer 30'])
+            self.assertEqual(len(detail['observer_last_steps']), 4)
+            # The qualified per-session summary keeps exactly its three keys.
+            (evidence / 'latest-report.json').write_text(json.dumps({'failures': [], 'stages': []}))
+            self.assertEqual(set(host.guest_failure_summary(evidence)), {'failures', 'failed_stages', 'client_faults'})
+
     def test_current_helpers_import_from_retained_donor_closure(self):
         tree = ast.parse((ROOT / 'tools/android/interactive/prepare_assets.py').read_text())
         names = next(ast.literal_eval(node.value) for node in tree.body if isinstance(node, ast.Assign)

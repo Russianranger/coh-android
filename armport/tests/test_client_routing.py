@@ -286,6 +286,26 @@ class ClientAudioTests(unittest.TestCase):
         with patch.dict(os.environ, {'COH_CLIENT_AUDIO': 'yes'}), self.assertRaises(Exception):
             armport.client_audio_requested()
 
+    def test_boot_tone_probe_uses_the_client_settings_and_needs_sound_on_both_channels(self):
+        """CI has no sound files: a DirectSound tone proves the Wine, ALSA and plugin path."""
+        import runtime_host
+        import runtime_guest
+        with patch.object(armport, 'ALSA_SYSTEM_CONFIG', Path('/usr/share/alsa/alsa.conf')):
+            self.assertEqual(runtime_host.probe_alsa_config(),
+                             armport.alsa_config(Path(runtime_host.GUEST_AUDIO_PLUGIN)))
+        self.assertEqual(runtime_host.GUEST_AUDIO_PLUGIN, '/opt/armport-client/' + armport.package.AUDIO_PLUGIN)
+        java = next((ROOT / 'android/interactive').rglob('ClientAudio.java')).read_text()
+        self.assertIn('GUEST_SOCKET = "' + str(runtime_guest.AUDIO_SOCKET) + '"', java)
+        tone = {'frames': 72000, 'nonzero_samples': 143000, 'left_nonzero': 71500, 'right_nonzero': 71500}
+        accepted = runtime_host.probe_summary({'streams': [tone], 'errors': []})
+        self.assertTrue(accepted['passed'])
+        self.assertEqual((accepted['streams'], accepted['left_nonzero']), (1, 71500))
+        for snapshot in ({'streams': [dict(tone, nonzero_samples=0, left_nonzero=0, right_nonzero=0)], 'errors': []},
+                         {'streams': [dict(tone, right_nonzero=0)], 'errors': []},
+                         {'streams': [tone], 'errors': ['unknown command']},
+                         {'streams': [], 'errors': []}):
+            self.assertFalse(runtime_host.probe_summary(snapshot)['passed'], snapshot)
+
 
 class ClientFolderIndexTests(unittest.TestCase):
     """Patch 0122: the saved file list is keyed by the verified data view and the overlay."""

@@ -262,6 +262,55 @@ def guest_failure_summary(evidence):
     return result
 
 
+FAILURE_AUDIO_LINE = re.compile(r'(?i)alsa|dsound|winealsa|mmdevapi|audio')
+FAILURE_LOGOUT_LINE = re.compile(r'(?i)logout|quit|disconnect|saving|saved')
+
+
+def failure_detail(evidence, work, observer):
+    """Failed sessions only: what the client, Atlas and the host input did last.
+
+    A separate notice (never part of host-report.json, whose guest_failures
+    schema is qualified): the client's last frame-rate windows and output, its
+    audio lines, the logout request against the time of this summary, and the
+    Atlas MapServer's last logout/save lines. Every field is bounded.
+    """
+    def tail(lines, count, width=240):
+        return [line[:width] for line in lines if line.strip()][-count:]
+    result = {'summary_utc_ms': int(time.time() * 1000)}
+    try:
+        path = work / 'state/character-logout.json'
+        if path.is_file() and not path.is_symlink() and path.stat().st_size <= 2048:
+            result['logout_request'] = json.loads(path.read_text())
+        if isinstance(observer, dict):
+            steps = observer.get('steps')
+            result['observer_last_steps'] = [str(step)[:300] for step in steps[-4:]] if isinstance(steps, list) else None
+        path = evidence / 'report.zip'
+        if path.is_file():
+            with zipfile.ZipFile(path) as archive:
+                names = set(archive.namelist())
+                def text(member):
+                    if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
+                        return archive.read(member).decode('utf-8', errors='replace').splitlines()
+                    return None
+                stdio = text('client-evidence/armport_stdio.txt')
+                if stdio is not None:
+                    result['client_fps_tail'] = tail([l for l in stdio if l.startswith('ARMPORT_FRAME_RATE_V1')], 6)
+                    result['client_stdio_tail'] = tail([l for l in stdio if not l.startswith('ARMPORT_FRAME_RATE_V1')], 6)
+                console = text('client-evidence/client-console.log')
+                if console is not None:
+                    audio = [line for line in console if FAILURE_AUDIO_LINE.search(line)]
+                    result['client_console_audio'] = {'count': len(audio), 'first': [l[:240] for l in audio[:4]],
+                                                      'last': tail(audio, 2)}
+                    result['client_console_tail'] = tail(console, 6)
+                atlas = text('client-evidence/character-atlas-console.txt')
+                if atlas is not None:
+                    result['atlas_logout_lines'] = tail([l for l in atlas if FAILURE_LOGOUT_LINE.search(l)], 6)
+                    result['atlas_console_tail'] = tail(atlas, 4)
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        result['evidence_read_error'] = str(error)[:300]
+    return result
+
+
 def stage_timeline(report, limit=24):
     """[stage, start offset s, duration s] from the guest's own UTC stage stamps; bounded."""
     rows, first = [], None
@@ -480,6 +529,11 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 'session_id': session, 'passed': failure is None, 'failure': failure,
                 'external_observer': observer, 'host_cleanup': cleanup,
                 'guest_evidence_export': exported, 'guest_failure': guest_failure_summary(evidence)}, indent=2) + '\n')
+            if failure is not None:
+                detail = failure_detail(evidence, work, observer)
+                (evidence / 'failure-detail.json').write_text(json.dumps(detail, indent=2) + '\n')
+                print(ci_notice(dict(detail, session='reopen' if reopening else 'creation'))
+                      .replace('interactive result', 'failure detail', 1), flush=True)
     return report
 
 
