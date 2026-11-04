@@ -45,6 +45,11 @@ on:
         type: boolean
         required: false
         default: true
+      shared_heap:
+        description: Experiment - MapServers run without -nosharedmemory (stock shared memory and shared heap)
+        type: boolean
+        required: false
+        default: false
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', 'armport/audio/**', 'armport/tests/test_client*.py', 'android/interactive/**',
@@ -64,6 +69,7 @@ env:
   COH_SHARED_SERVER_DATA: ${{ inputs.shared_server_data == false && '0' || '1' }}
   COH_SERVERDATA_PROBE: ${{ inputs.serverdata_probe_wide && '2' || inputs.serverdata_probe && '1' || '' }}
   COH_CLIENT_AUDIO: ${{ inputs.client_audio == false && '0' || '1' }}
+  COH_SHARED_HEAP: ${{ inputs.shared_heap && '1' || '' }}
 
 jobs:
   app-sources:

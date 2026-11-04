@@ -1309,7 +1309,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.mark_startup_timing(timing, 'map_spawn_requested', now=launch_monotonic, utc_ms=launch_ms)
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
             self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
-            '-nosharedmemory', '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0', '-map_id', str(map_id),
+            *character.mapserver_memory_arguments(), '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0',
+            '-map_id', str(map_id),
             '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS()], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
@@ -1915,6 +1916,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             raw = base.redact(owned['process'].text(), self.ctx.secrets)
             require(len(raw.encode()) <= 16 * 1024 * 1024, 'Zoning server console export exceeded bound')
             base.private_write(target / ('character-zoning-map-' + str(map_id) + '-console.txt'), raw)
+            self.zoning_report.setdefault('shared_heap_consoles', {})[str(map_id)] = character.shared_heap_console(raw)
         try:
             self.zoning_report['launch_history'] = self.map_launch_history.collect(
                 target, self.maps, self.map_process, self.ctx.secrets)

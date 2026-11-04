@@ -330,6 +330,42 @@ def enhancement_semantics(boosts, powers, attributes):
     return sorted(result, key=digest_json)
 
 
+SHARED_HEAP_ENVIRONMENT = 'COH_SHARED_HEAP'
+# Stock MapServer shared memory (SharedMemory.c, SharedHeap.c): the first map
+# server parses the shared definitions into named mappings at 0x80000000 and
+# later ones map them read-only instead of parsing. Off on the device until
+# measured; the native code falls back to private memory when it cannot map.
+SHARED_HEAP_LINES = (
+    ('disabled_by_option', 'Not using shared memory due to -nosharedmemory'),
+    ('heap_reserved', 'reserving shared heap space... reserved'),
+    ('heap_unavailable', 'reserving shared heap space... failed'),
+    ('address_outside_space', 'Program address space does not include our desired address'),
+    ('address_not_free', 'Our desired address is not free in this process space'),
+    ('manager_unavailable', 'Error acquiring shared memory for the memory manager'),
+)
+
+
+def shared_heap_requested():
+    return os.environ.get(SHARED_HEAP_ENVIRONMENT) == '1'
+
+
+def mapserver_memory_arguments():
+    """['-nosharedmemory'] unless the shared-memory experiment is requested."""
+    return [] if shared_heap_requested() else ['-nosharedmemory']
+
+
+def shared_heap_console(text):
+    """Bounded evidence of the native shared-memory decision in one MapServer console."""
+    head = text[:1024 * 1024]
+    found = {name: head.count(marker) for name, marker in SHARED_HEAP_LINES}
+    reserved = re.search(r'reserving shared heap space\.\.\. reserved (\d+) MB', head)
+    return {'format': 1, 'requested': shared_heap_requested(), 'lines': found,
+            'reserved_mib': int(reserved.group(1)) if reserved else None,
+            'shared_heap_active': found['heap_reserved'] == 1 and not any(
+                found[name] for name in ('disabled_by_option', 'address_outside_space',
+                                         'address_not_free', 'manager_unavailable'))}
+
+
 PROGRESS_POLICY = 'arm64_native_gameplay_progress_v1'
 PROGRESS_ENTS_FIELDS = frozenset({'level', 'experiencepoints', 'influencepoints', 'logincount'})
 MAX_INTERNAL_LEVEL = 49
@@ -2953,9 +2989,11 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.mark_startup_timing(timing, 'map_spawn_requested')
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
-            '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
-            '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS()],
+            '-nogui', '-db', '127.0.0.1', *mapserver_memory_arguments(), '-nostats', '-udp', '7001', '-tcp', '0',
+            '-map_id', '1', '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS()],
             env=environment)
+        self.creation_report['shared_heap'] = {'format': 1, 'requested': shared_heap_requested(),
+            'environment_variable': SHARED_HEAP_ENVIRONMENT, 'native_option_omitted': shared_heap_requested()}
         # Use the native production grouping policy. The stock world packet
         # delivers this same flag to the client before it loads Atlas; geometry,
         # collision initialization and CLIENT_READY validation remain required.
@@ -3283,6 +3321,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             raw = base.redact(self.map_process.text(), self.ctx.secrets).encode()
             require(len(raw) <= 16 * 1024 * 1024, 'Atlas console evidence exceeded export bound')
             base.private_write(target / 'character-atlas-console.txt', raw.decode())
+            heap = self.creation_report.setdefault('shared_heap', {'format': 1, 'requested': shared_heap_requested()})
+            heap['active_console'] = shared_heap_console(raw.decode())
         if self.snapshot is not None:
             base.private_write(target / 'character-saved-snapshot.json', json.dumps(self.snapshot, indent=2) + '\n')
         self.collect_server_logs(target)

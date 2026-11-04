@@ -353,6 +353,13 @@ def trusted_bins_requested():
     return value == '1'
 
 
+def shared_heap_requested():
+    """Experiment (app default off): MapServers run without -nosharedmemory."""
+    value = os.environ.get('COH_SHARED_HEAP', '')
+    require(value in ('', '0', '1'), 'COH_SHARED_HEAP must be empty, 0 or 1')
+    return value == '1'
+
+
 def serverdata_probe_requested():
     """CI-only probe level: 1 serves scripts.loc, 2 every folder no guest proof reads,
     through a linked shared read-only runtime/serverdata tree. 0 is off."""
@@ -419,6 +426,9 @@ def guest_timing_summary(evidence):
             result['trusted_bins'] = next((section.get('trusted_bins') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('trusted_bins') is not None), None)
+            result['shared_heap'] = next((section.get('shared_heap') for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('shared_heap') is not None), None)
             for key in ('character_creation', 'character_reopen'):
                 section = report.get(key)
                 if not isinstance(section, dict):
@@ -465,7 +475,8 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
     lines = []
     for name, original in timings.items():
         summary, writes = {}, {}
-        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts')
+        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts',
+                                                 'shared_heap')
                   if original.get(key)}
         for key, value in original.items():
             if key in detail:
@@ -619,6 +630,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
         if trusted_bins_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
+        if shared_heap_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_HEAP=1')
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():

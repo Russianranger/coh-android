@@ -223,6 +223,27 @@ def stat_rss_kib(raw):
         return None
 
 
+PSS_ROLES = frozenset({'mapserver', 'client', 'dbserver'})
+PSS_INTERVAL_SECONDS = 30
+
+
+def smaps_rollup_pss_kib(raw):
+    """Proportional set size (smaps_rollup "Pss:") in KiB; None when absent or invalid.
+
+    RSS counts a page shared by two zone servers in both; PSS splits it, so
+    the shared-memory experiment's saving is visible in the sum.
+    """
+    try:
+        text = raw.decode('utf-8', 'replace') if isinstance(raw, bytes) else raw
+        for line in text.splitlines():
+            if line.startswith('Pss:'):
+                value, unit = line.split()[1:3]
+                return int(value) if unit == 'kB' and int(value) >= 0 else None
+    except (IndexError, ValueError):
+        return None
+    return None
+
+
 def process_role(raw):
     """Export an allowlisted role and map number only, never executable args."""
     parts = raw.lower().split(b'\0')
@@ -309,6 +330,7 @@ class ServerMetrics:
         self._lineage_entries = self._lineage_groups = None
         self.stopped = False
         self.process_previous, self.thread_previous, self.map_previous = {}, {}, {}
+        self.pss_next = {}
         self.native_context, self.native_tails = {}, {}
         self.native_cursor = 0
         self.hz = int(os.sysconf('SC_CLK_TCK'))
@@ -467,8 +489,17 @@ class ServerMetrics:
                 if self.clock() >= deadline:
                     raise TimeoutError('sample budget exhausted')
                 value['observed_monotonic'] = self.clock()
+                pss = None
+                key = (pid, value['starttime'])
+                if role in PSS_ROLES and value['observed_monotonic'] >= self.pss_next.get(key, 0):
+                    # Walking page tables costs more than stat: every 30 s per process.
+                    self.pss_next[key] = value['observed_monotonic'] + PSS_INTERVAL_SECONDS
+                    try:
+                        pss = smaps_rollup_pss_kib(bounded_read(path / 'smaps_rollup'))
+                    except (OSError, ValueError):
+                        pss = None
                 rows.append({**value, 'pid': before['pid'], 'role': role, 'map_id': map_id,
-                    'rss_kib': stat_rss_kib(raw_stat),
+                    'rss_kib': stat_rss_kib(raw_stat), 'pss_kib': pss,
                     **cpu_delta(value, self.process_previous.get(pid), self.hz),
                     'thread_cpu': [], 'thread_sampling': {'complete': False, 'unavailable_reason': 'budget_or_role'},
                     'ownership_rechecked_before_and_after': True})

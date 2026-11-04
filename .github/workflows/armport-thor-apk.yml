@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.53, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.54, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -140,7 +140,7 @@ jobs:
           path: ${{ runner.temp }}/coh-retained-signing
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
-      - name: Build and sign COH Atlas Gameplay 0.13.53
+      - name: Build and sign COH Atlas Gameplay 0.13.54
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -155,7 +155,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.53.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.54.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -175,7 +175,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.53-apk
+          name: coh-atlas-gameplay-0.13.54-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -190,17 +190,17 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.53-apk
+          name: coh-atlas-gameplay-0.13.54-apk
           path: apk
-      - name: Publish the 0.13.53 pre-release
+      - name: Publish the 0.13.54 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.53.apk
-          sha256sum COH-Atlas-Gameplay-0.13.53.apk > COH-Atlas-Gameplay-0.13.53.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.54.apk
+          sha256sum COH-Atlas-Gameplay-0.13.54.apk > COH-Atlas-Gameplay-0.13.54.apk.sha256
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.53 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.54 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
@@ -208,22 +208,22 @@ jobs:
           ARM64 client by default (x86 client kept as the fallback). On by default: Fast mode (PRoot seccomp),
           60 FPS in the world, Share server data between zones, Skip server-only folders in the client's scan,
           Reuse the client's saved file list, Game audio. Off: King's Row background start, idle priority,
-          Fast server start (test server).
-          New: game audio. The client's DirectSound plays through Wine's ALSA driver and a guest playback
-          plugin to an Android AudioTrack (the bridge used by the owner's TRASC/LSB apps); untick Game audio
-          to start without it. Everything from 0.13.52 is kept (King's Row interpolation fix, saved client
-          file list, first-lookup links, optional test server). The export now records each server
-          process's memory. Test sheet: THOR-TEST-0.13.53.md in the source.
-          CI evidence reaches a protocol sink only; audible playback is a device check.
+          Fast server start (test server), Shared server memory.
+          New: the save check accepts ordinary play combined in one session (training a level with its power
+          pick, the level's automatic powers, Day Job powers granted or expiring, experience and influence);
+          0.13.54 marked such sessions failed although the saves were correct. New option, off: Shared server
+          memory (experiment), which lets a second zone server map the game data the first one already
+          loaded instead of loading its own copy; the export records the outcome and each server's
+          proportional memory (PSS). Everything from 0.13.54 is kept. Test sheet: THOR-TEST-0.13.54.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
-            echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead; that server has not run on a device before." >> notes.md
+            echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.54)." >> notes.md
           elif [ "$SERVER_METRICS" = true ]; then
             echo "Servers: instrumented MapServer; trusted bins apply when Fast server start (test server) is ticked (off by default)." >> notes.md
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server start (test server) option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.53" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.53 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.53.apk COH-Atlas-Gameplay-0.13.53.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.53"
+          gh release create "coh-atlas-gameplay-v0.13.54" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.54 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.54.apk COH-Atlas-Gameplay-0.13.54.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.54"

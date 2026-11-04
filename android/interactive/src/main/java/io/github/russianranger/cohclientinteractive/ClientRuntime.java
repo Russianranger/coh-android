@@ -220,6 +220,8 @@ public final class ClientRuntime {
     private boolean clientFolderIndexRequested=false;
     // Game audio (0.13.53): the ALSA-to-AudioTrack bridge of the current session.
     private boolean clientAudioRequested=false;
+    // Shared server memory (0.13.54 experiment): zone servers share parsed game data.
+    private boolean sharedHeapRequested=false;
     private ClientAudio audio;
     private JSONObject clientAudioReport;
     private File generation, operationDir;
@@ -354,6 +356,19 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("client-audio", enabled).apply();
+    }
+    /**
+     * Shared server memory (experiment, off): omit -nosharedmemory so the stock MapServer
+     * maps the shared definitions another zone server already parsed.
+     */
+    public static boolean sharedHeapEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("shared-server-memory", false);
+    }
+    public static synchronized void setSharedHeapEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("shared-server-memory", enabled).apply();
     }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
@@ -796,6 +811,7 @@ public final class ClientRuntime {
         clientSkipServerFoldersRequested=clientSkipServerFoldersEnabled(context);
         clientFolderIndexRequested=clientFolderIndexEnabled(context);
         clientAudioRequested=clientAudioEnabled(context);clientAudioReport=null;
+        sharedHeapRequested=sharedHeapEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -863,6 +879,7 @@ public final class ClientRuntime {
                     "COH_CLIENT_SKIP_SERVER_FOLDERS="+(clientSkipServerFoldersRequested?"1":"0"),
                     "COH_CLIENT_FOLDER_INDEX="+(clientFolderIndexRequested?"1":"0"),
                     "COH_CLIENT_AUDIO="+(audio!=null?"1":"0"), "COH_CLIENT_AUDIO_SOCKET="+ClientAudio.GUEST_SOCKET,
+                    "COH_SHARED_HEAP="+(sharedHeapRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -2630,6 +2647,7 @@ public final class ClientRuntime {
                     .put("stuck_requested", stuckRequested)
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
+                    .put("shared_heap_requested", sharedHeapRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)
