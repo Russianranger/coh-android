@@ -2170,17 +2170,20 @@ class LocalCharacterServer(login.LocalLoginServer):
         Off unless COH_EXTERNAL_MAPS=1 and the installed DbServer is the
         external-maps layer; otherwise the DbServer behaves as before.
         """
+        report = getattr(self, 'creation_report', None)
         if getattr(self, 'external_maps', None) is not None:
             # One supervisor per DbServer process; a relaunch keeps Launcher behaviour.
-            self.creation_report['external_maps']['later_dbserver_launch_without_requests'] = True
+            report['external_maps']['later_dbserver_launch_without_requests'] = True
             return
         requested = os.environ.get(external_maps.ENABLE_ENVIRONMENT) == '1'
         layer = (self.manual_atlas_startup or {}).get('external_maps')
         record = {'format': 1, 'requested': requested, 'enabled': False,
                   'dbserver_layer': None if layer is None else layer.get('build_input_sha256')}
-        self.creation_report['external_maps'] = record
-        if not requested or layer is None:
-            record['reason'] = 'not_requested' if not requested else 'dbserver_without_external_maps_layer'
+        if isinstance(report, dict):
+            report['external_maps'] = record
+        if not requested or layer is None or not isinstance(report, dict):
+            record['reason'] = ('not_requested' if not requested else 'dbserver_without_external_maps_layer'
+                                if layer is None else 'no_session_report')
             return
         parent = self.owner.args.state
         name = 'external-map-requests-' + self.owner.args.session_id
