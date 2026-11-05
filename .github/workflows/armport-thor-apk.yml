@@ -226,16 +226,15 @@ jobs:
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          ARM64 client by default (x86 client kept as the fallback). On by default: Fast mode (PRoot seccomp),
-          60 FPS in the world, Share server data between zones, Skip server-only folders in the client's scan,
-          Reuse the client's saved file list, Game audio. Off: King's Row background start, idle priority,
-          Fast server start (test server), Shared server memory.
-          New: the save check accepts ordinary play combined in one session (training a level with its power
-          pick, the level's automatic powers, Day Job powers granted or expiring, experience and influence);
-          0.13.53 marked such sessions failed although the saves were correct. New option, off: Shared server
-          memory (experiment, not yet run on the device), which lets a second zone server map the game data
-          the first one already loaded instead of loading its own copy; the export records the outcome and
-          each server's proportional memory (PSS). Everything from 0.13.53 is kept. Test sheet: THOR-TEST-0.13.55.md.
+          New, on by default: the game's own zone travel. Zone tunnels, zone doors and the monorail show the
+          loading screen at once and take the hero out of the world (frozen, untargetable, invincible) until the
+          destination is ready; the station wait is gone. Every zone the game allows the hero can be reached;
+          Atlas Park and King's Row keep their own server files, every other zone uses one shared set prepared
+          on its first visit. At most two zone servers stay loaded. A zone that is not running yet takes about
+          3-4 minutes on the loading screen (a pre-loaded spare server is the next step). NPCs outside Atlas Park
+          and King's Row do not move yet (no pathing data). Missions and instanced maps are not served yet: the
+          game reports that the map failed and the hero stays put. Untick the option for 0.13.54's station travel.
+          Everything else from 0.13.54 is kept. Test sheet: THOR-TEST-0.13.55.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.53)." >> notes.md
