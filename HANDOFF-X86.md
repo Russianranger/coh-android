@@ -445,9 +445,29 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   marker, plus `first_caller`, `disabled_reasons` and a 6-line excerpt; zone
   server evidence (`shared_heap`, `external_maps`) moves to its own CI notice
   "zone servers <session>"; failure detail adds `client_dialogs`.
-- Rerun chain (`r54b.sh`) on the new head: build → default → trusted →
-  shared heap (does not block) → APK published → external-maps runtime
-  (`external_maps_run_id=41883310382`, does not block).
+- **Published** (rerun chain `r54b.sh` at a66b533f6): build 41937339905, default
+  runtime 41948749075 and trusted runtime 41952941661 passed creation and reopen;
+  APK 41960891294 → release `coh-atlas-gameplay-v0.13.54` (prerelease, APK
+  sha256 `9c24ef9e25cf1b35…`, version code 69).
+- **Shared heap, CI verdict: not safe.** Runtime 41956900853 (v2 evidence):
+  the first caller reserved the shared heap (`reserved 1024 MB`, active), Atlas
+  ready 372.5 s / 106.5 s (creation / reopen) vs 357.1 s / 94.0 s without it.
+  Creation passed; reopen failed "Ordinary stuck recovery lacked native
+  stable-position proof within 180 seconds": client 0.04 FPS for 267 s, then the
+  new-character welcome dialog 30 times; server ticks normal (max 27 ms), no
+  logout line. With 41931773800 (creation logout lost) that is 2 of 2 shared-heap
+  runs failing in session vs 4 of 4 passing without it. The option stays in the
+  app, off; the test sheet says leave it off. Likely cause to study: the shared
+  (read-only after load) definitions differ in use from private ones; repeated
+  map-entry dialogs suggest the server re-sends the player's entry.
+- **External-maps DbServer in a CI guest** (runtime 41961253764,
+  `external_maps_run_id=41883310382`): the device lineage (manual Atlas level-up
+  + map-request hook, layer `b9cb4391…`) passed creation and reopen; supervisor
+  enabled, `manual_atlas_ack` true, 0 requests, no anomalies. The DbServer prints
+  its acknowledgement only when it decides its mode at the first map start
+  (`wine_external_maps.c`), and nothing asked for one (Atlas is the
+  supervisor's own start), so `acknowledgement_observed: false` is expected.
+  Requests need a zoning flow (CI monorail/zoning check or the Thor).
 
 ## 0.13.53: game audio (Claude, 2026-11-03)
 

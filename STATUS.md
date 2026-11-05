@@ -18,12 +18,11 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - Historical .46 build40929292200/runtime40945708189/APK40952408285 succeeded (scope differs from modern Thor checks).
 - Startup instrumentation/ODBC reuse included; gain and ≤60 s unmeasured. Historical build41363927704
   passed; runtime41372922907 rejected old 0119 pin before guest launch; corrected pin and regression included.
-- .37 cleanup hardening ported at e50a0e42e; packaging admission at 263acad1f (dormant chain skipped).
 - Local ArmPort445/modern53 and guest27/64/17 pass. Cleanup whole-/proc has one
   inherited host EACCES error, reproduced on pristine c86; guards remain intact.
 - Full interactive:3048 run/69 failures/28 errors/31 skips before fixture repair.
   Affected rerun138:2 legacy GPU-policy failures, no errors/skips; full is not green.
-- Exact source, preserved logs, skips, runtime pins, CI request: HANDOFF-X86.md and issue10.
+- .37 cleanup hardening e50a0e42e, packaging admission 263acad1f. Source, logs, skips, pins: HANDOFF-X86.md, issue10.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
@@ -36,5 +35,6 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.53: game audio (TRASC plugin + AudioTrack bridge), RSS. 41832716509/41838960420 failed logout: modal
   "Sound Script Errors" dialog → 0124. Published (APK run 41881826170). Thor: audio, King's Row, 2nd start 40.6 s OK;
   RSS client 2.2 GB, MapServer 1.8-1.9 GB each, total 6.3 GB; reopen check rejects training+Day Job combos (saves fine).
-- 0.13.54 at 3f725c8c9: runtimes 41920974522/41926582700 passed; shared heap 41931773800 failed logout; APK 41935584201
-  rejected 2 unreviewed helpers → fixed + donor-pin test; rerun chain r54b (HANDOFF-X86.md "0.13.54").
+- 0.13.54 published (APK 41960891294 at a66b533f6; runtimes 41948749075/41952941661 passed): save check for ordinary play,
+  pss_kib. Shared heap reserves 1 GB but 2/2 runs failed in session (41931773800, 41956900853) → keep off.
+  External-maps DbServer passed creation/reopen in CI (41961253764). First APK 41935584201: 2 unreviewed helpers, fixed.

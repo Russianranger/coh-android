@@ -177,5 +177,13 @@ MapServers, shared heap on, in CI and then on the Thor.
   (requests, decisions, delinks, manual Atlas acknowledgement). Such a runtime
   never qualifies servers for an APK. First CI run of the device DbServer
   lineage in a guest, so creation may surface differences.
+- CI run (2026-11-05, runtime 41961253764 at a66b533f6): creation and reopen
+  pass with the device DbServer lineage plus this layer; supervisor enabled,
+  manual Atlas acknowledged, 0 requests (Atlas is started by the supervisor;
+  the DbServer prints its own acknowledgement only at its first map start).
+- Shared memory, CI verdict (0.13.54): the heap reserves (1024 MB) but 2 of 2
+  sessions failed after login (lost logout; 267 s client stall with repeated
+  welcome dialogs). Off; not a basis for zone memory savings yet. The device
+  `pss_kib` figures decide whether a spare server fits.
 - Next: King's Row on request (start with the cookie, delink on timeout), then
   the shared zone tree.
