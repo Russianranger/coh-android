@@ -253,6 +253,23 @@ class NativeEvidenceTests(unittest.TestCase):
             self.assertIsNone(zoning.terminal_position(logs(changed), 101,
                 {'sent_utc_ms': timer-6000}, timer-100000, timer+5000))
 
+    def test_stock_travel_maps_skip_the_two_stage_transfer_so_the_loading_screen_comes_at_once(self):
+        instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        instance.stock = {'requested': True}
+        instance.manual_atlas_startup = {'external_maps': {'build_input_sha256': 'b' * 64}}
+        self.assertEqual(instance.session_map_options(), ['-notwostagemapxfer'])
+        instance.manual_atlas_startup = {}
+        self.assertEqual(instance.session_map_options(), [])
+        instance.manual_atlas_startup = {'external_maps': {}}
+        instance.stock = {'requested': False}
+        self.assertEqual(instance.session_map_options(), [])
+        base = zoning.character.LocalCharacterServer.__new__(zoning.character.LocalCharacterServer)
+        self.assertEqual(base.session_map_options(), [])
+        source = (Path(__file__).parents[3] / 'upstream/ouroboros/MapServer/src/svr/svr_init.c').read_text()
+        self.assertIn('strcmp(argv[i], "-notwostagemapxfer")==0', source)
+        guest = Path(zoning.__file__).read_text() + Path(zoning.character.__file__).read_text()
+        self.assertEqual(guest.count('*self.session_map_options()'), 2)   # Atlas and every zoning spawn
+
     def test_legacy_atlas_ready_is_the_newest_after_the_launch_on_either_route(self):
         # Retained legacy MapServer (CI donor): no events contract, second-resolution log times.
         line = '%s %s "THORHERO:COHLOCAL" 7 Connection:ResumeCharacter from 127.0.0.1:%d AuthName "COHLOCAL"\n'

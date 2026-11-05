@@ -152,9 +152,9 @@ class InteractiveEvidence(unittest.TestCase):
                 archive.writestr('client-evidence/character-atlas-console.txt', 'Player logout timer 30\nother\n')
             detail = host.failure_detail(evidence, work, {'steps': [{'action': n} for n in 'abcdef']})
             self.assertEqual(detail['logout_request']['sent_utc_ms'], 5)
-            self.assertEqual(len(detail['client_fps_tail']), 6)
+            self.assertEqual(len(detail['client_fps_tail']), 3)
             self.assertTrue(detail['client_fps_tail'][-1].startswith('ARMPORT_FRAME_RATE_V1 fps=8.00'))
-            self.assertEqual(len(detail['client_stdio_tail'][-1]), 240)
+            self.assertEqual(len(detail['client_stdio_tail'][-1]), 160)
             self.assertEqual((detail['client_dialogs']['count'], len(detail['client_dialogs']['last'][0])), (1, 120))
             self.assertEqual(detail['client_console_audio']['count'], 7)
             self.assertEqual(len(detail['client_console_audio']['first']), 4)
@@ -178,6 +178,38 @@ class InteractiveEvidence(unittest.TestCase):
             subprocess.run([sys.executable, '-I', '-c',
                 'import sys; sys.path.insert(0,sys.argv[1]); import character_creation_diagnostic, '
                 'character_reopen_diagnostic, armport_interactive', temporary], check=True)
+
+
+
+class ZoneDiagnostics(unittest.TestCase):
+    """Failed stock-travel runs print what the DbServer, zone servers and logs said, in bounded parts."""
+    def test_parts_carry_signal_lines_and_stay_under_the_annotation_limit(self):
+        import io
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary)
+            inner = io.BytesIO()
+            with zipfile.ZipFile(inner, 'w') as archive:
+                archive.writestr('logs/dbserver/error_2026-11-05.log',
+                                 '261105 23:00:00 -1 COMMAND: ALTER\n261105 23:01:00 1 MapXfer(1/1 : 101) failed\n')
+            with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/local-dbserver-console.txt',
+                                 "Can't connect to dbserver\nDbServer Ready.\n0x3000:1: Token\n"
+                                 "Received connection from a MapServer with an invalid cookie (2, expected 3)\n")
+                archive.writestr('client-evidence/character-atlas-console.txt',
+                                 '[DEBUG] \tReading Car.txt\nError: dbAsyncMapMoveEx failed\n')
+                archive.writestr('client-evidence/character-zoning-map-101-console.txt',
+                                 ''.join('noise %s\n' % ('x' * 150) for _ in range(400)) + 'Connected to dbserver\n')
+                archive.writestr('client-evidence/character-server-logs.zip', inner.getvalue())
+            parts = host.zone_diagnostics(evidence)
+        self.assertTrue(parts and all(len(json.dumps(part)) <= 3800 for part in parts))
+        merged = {key: value for part in parts for key, value in part.items()}
+        self.assertEqual(merged['dbserver_console'][-1][:40], 'Received connection from a MapServer wit')
+        self.assertNotIn("Can't connect to dbserver", json.dumps(merged))
+        self.assertEqual(merged['atlas_signal'], ['Error: dbAsyncMapMoveEx failed'])
+        self.assertEqual(merged['character-zoning-map-101_signal'], ['Connected to dbserver'])
+        self.assertEqual(merged['server_logs_signal'], ['error: 261105 23:01:00 1 MapXfer(1/1 : 101) failed'])
+        self.assertEqual(host.zone_diagnostics(Path('/nonexistent')), [{'read_error': host.zone_diagnostics(
+            Path('/nonexistent'))[0]['read_error']}])
 
 
 if __name__ == '__main__':

@@ -209,7 +209,8 @@ class ExternalMapsApkAdmissionTests(unittest.TestCase):
         self.assertTrue(summary['enabled'])
         self.assertTrue(summary['manual_atlas_ack'])
         self.assertEqual(summary['requests'], [{'map_id': 5, 'is_static': 1, 'decision': 'delink',
-                                                'reason': 'not_served', 'delink_passed': True}])
+                                                'reason': 'not_served', 'refused_option': None,
+                                            'delink_passed': True}])
         self.assertLess(len(json.dumps(summary)), 1500)
         self.assertIsNone(interactive_host.external_maps_summary({}))
 

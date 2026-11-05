@@ -2394,6 +2394,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         record.update(enabled=True, reason=None, supervisor=self.external_maps.report(),
                       weekly_tf_config=self.write_weekly_tf_config())
 
+    def session_map_options(self):
+        """Extra arguments for every MapServer this session owns; none by default."""
+        return []
+
     def write_weekly_tf_config(self):
         """The one config every DbServer map start reads; absent from the pinned data."""
         path = self.runtime / WEEKLY_TF_CONFIG_PATH
@@ -3148,7 +3152,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
             '-nogui', '-db', '127.0.0.1', *mapserver_memory_arguments(), '-nostats', '-udp', '7001', '-tcp', '0',
-            '-map_id', '1', '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS()],
+            '-map_id', '1', '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS(), *self.session_map_options()],
             env=environment)
         self.creation_report['shared_heap'] = {'format': 1, 'requested': shared_heap_requested(),
             'environment_variable': SHARED_HEAP_ENVIRONMENT, 'native_option_omitted': shared_heap_requested()}

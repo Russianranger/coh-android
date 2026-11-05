@@ -298,8 +298,10 @@ def failure_detail(evidence, work, observer):
                     return None
                 stdio = text('client-evidence/armport_stdio.txt')
                 if stdio is not None:
-                    result['client_fps_tail'] = tail([l for l in stdio if l.startswith('ARMPORT_FRAME_RATE_V1')], 6)
-                    result['client_stdio_tail'] = tail([l for l in stdio if not l.startswith('ARMPORT_FRAME_RATE_V1')], 6)
+                    result['client_fps_tail'] = tail([l for l in stdio if l.startswith('ARMPORT_FRAME_RATE_V1')], 3)
+                    unique = [l for i, l in enumerate(stdio) if not l.startswith('ARMPORT_FRAME_RATE_V1')
+                              and (i == 0 or l != stdio[i - 1])]
+                    result['client_stdio_tail'] = tail(unique, 6, 160)
                     dialogs = [l for l in stdio if l.startswith('ArmPort dialog:')]
                     result['client_dialogs'] = {'count': len(dialogs), 'last': [l[:120] for l in dialogs[-3:]]}
                 console = text('client-evidence/client-console.log')
@@ -323,6 +325,65 @@ def failure_detail(evidence, work, observer):
     except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
         result['evidence_read_error'] = str(error)[:300]
     return result
+
+
+ZONE_NOISE = re.compile(r"Can't connect to dbserver|^0x[0-9a-f]+:|\[DEBUG\]|ARMPORT_SERVER_METRICS_V1|^\s*$")
+ZONE_SIGNAL = re.compile(r'xfer|map ?ready|cookie|delink|MapFailed|MapNotRunning|Sending char|starting|'
+                         r'connect|assert|error|\b101\b|Step [0-9]', re.I)
+ZONE_LOG_NOISE = re.compile(r'SQLERROR|COMMAND:|StackWalk|Heap is NOT|Pigg Error|No windows SYSTEM')
+
+
+def zone_diagnostics(evidence, limit=3800, parts=3):
+    """Failed stock-travel sessions: what the DbServer, the zone servers and their logs said.
+
+    Separate notices (each GitHub annotation keeps about 4 KB): the DbServer
+    console's own last lines, every zone server console's last and signal lines,
+    Atlas's transfer lines, and the exported server logs' transfer lines.
+    """
+    def clip(lines, count, width=170):
+        return [line.strip()[:width] for line in lines][-count:]
+    sections = []
+    try:
+        with zipfile.ZipFile(evidence / 'report.zip') as archive:
+            names = set(archive.namelist())
+            def text(member):
+                if member in names and archive.getinfo(member).file_size <= 32 * 1024 * 1024:
+                    return archive.read(member).decode('utf-8', errors='replace').splitlines()
+                return []
+            quiet = lambda lines: [line for line in lines if not ZONE_NOISE.search(line)]
+            sections.append(('dbserver_console', clip(quiet(text('client-evidence/local-dbserver-console.txt')), 12)))
+            atlas = quiet(text('client-evidence/character-atlas-console.txt'))
+            sections.append(('atlas_signal', clip([l for l in atlas if ZONE_SIGNAL.search(l)], 8)))
+            for name in sorted(n for n in names if re.fullmatch(
+                    r'client-evidence/character-zoning-map-\d+-console\.txt', n))[:3]:
+                lines = quiet(text(name))
+                label = name.split('/')[-1][:-len('-console.txt')]
+                sections.append((label + '_last', clip(lines, 6)))
+                sections.append((label + '_signal', clip([l for l in lines if ZONE_SIGNAL.search(l)], 8)))
+            logs = 'client-evidence/character-server-logs.zip'
+            if logs in names and archive.getinfo(logs).file_size <= 32 * 1024 * 1024:
+                import io
+                with zipfile.ZipFile(io.BytesIO(archive.read(logs))) as inner:
+                    rows = []
+                    for member in sorted(inner.namelist()):
+                        if member.endswith('.log') and inner.getinfo(member).file_size <= 32 * 1024 * 1024:
+                            for line in inner.read(member).decode('utf-8', errors='replace').splitlines():
+                                if ZONE_SIGNAL.search(line) and not ZONE_LOG_NOISE.search(line):
+                                    rows.append(member.split('/')[-1].split('_')[0] + ': ' + line)
+                    sections.append(('server_logs_signal', clip(rows, 16)))
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        sections.append(('read_error', [str(error)[:300]]))
+    result, current = [], {}
+    for key, lines in sections:
+        if len(json.dumps(dict(current, **{key: lines}))) > limit and current:
+            result.append(current)
+            current = {}
+        while lines and len(json.dumps({key: lines})) > limit:
+            lines = lines[1:]
+        current[key] = lines
+    if current:
+        result.append(current)
+    return result[:parts]
 
 
 def stage_timeline(report, limit=24):
@@ -648,6 +709,10 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 (evidence / 'failure-detail.json').write_text(json.dumps(detail, indent=2) + '\n')
                 print(ci_notice(dict(detail, session='reopen' if reopening else 'creation'))
                       .replace('interactive result', 'failure detail', 1), flush=True)
+                if stock_travel_requested():
+                    for index, part in enumerate(zone_diagnostics(evidence), 1):
+                        print(ci_notice(part).replace('interactive result', 'zone diagnostics %d' % index, 1),
+                              flush=True)
     return report
 
 

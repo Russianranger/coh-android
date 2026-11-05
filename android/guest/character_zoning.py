@@ -900,6 +900,18 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         """The station queue; off when the game's own zone travel is active."""
         return getattr(self, 'monorail_qualified', False) is True and not self.stock_travel_active()
 
+    def session_map_options(self):
+        """The game's own zone travel: the loading screen comes at once (owner, 2026-11-05).
+
+        The stock MapServer defaults to a two-stage transfer (dbmapxfer.c,
+        s_UseTwoStageMapXfer): the hero stays in the world, targetable, until the
+        destination has started, which takes minutes here. -notwostagemapxfer
+        (svr_init.c) sends SERVER_MAP_XFER_WAIT immediately: frozen,
+        untargetable, invincible, loading screen; then the transfer completes
+        when the DbServer reports the destination ready, or is undone.
+        """
+        return ['-notwostagemapxfer'] if self.stock_travel_active() else []
+
     def stock_travel_active(self):
         """COH_STOCK_TRAVEL=1 with the external-maps DbServer layer installed."""
         stock = getattr(self, 'stock', None)
@@ -1387,7 +1399,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
             *character.mapserver_memory_arguments(), '-nostats', '-udp', str(port), '-tcp', '0',
             '-map_id', str(map_id), *(('-cookie', str(cookie)) if cookie is not None else ()),
-            '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS(), *options],
+            '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS(),
+            *self.session_map_options(), *options],
             env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
