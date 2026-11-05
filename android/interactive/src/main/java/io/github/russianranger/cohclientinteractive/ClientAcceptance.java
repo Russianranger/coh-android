@@ -165,8 +165,14 @@ final class ClientAcceptance {
     /** Map titles remain bound to this session's accepted initial/final maps. */
     static boolean clientWindowAccepted(Object value, Object clientPid, int initialMap,
             int currentMap, boolean monorailQualified) {
-        if (!windowMapSupported(initialMap, monorailQualified)
-                || !windowMapSupported(currentMap, monorailQualified)) return false;
+        return clientWindowAccepted(value, clientPid, initialMap, currentMap, monorailQualified, false);
+    }
+
+    /** With the game's own zone travel, any maps.db static zone (ClientZoning.staticZone). */
+    static boolean clientWindowAccepted(Object value, Object clientPid, int initialMap,
+            int currentMap, boolean monorailQualified, boolean stockTravel) {
+        if (!windowMapSupported(initialMap, monorailQualified, stockTravel)
+                || !windowMapSupported(currentMap, monorailQualified, stockTravel)) return false;
         Map<?, ?> window = object(value);
         Object title = window.get("title"), width = window.get("width"), height = window.get("height");
         if (!positiveInteger(clientPid) || ((Number) clientPid).longValue() >= (1L << 32)
@@ -180,17 +186,29 @@ final class ClientAcceptance {
                     ((Number) clientPid).longValue(), currentMap);
     }
 
-    private static boolean windowMapSupported(int map, boolean monorailQualified) {
-        return map == 1 || map == 101 || map == 5 && monorailQualified;
+    private static boolean windowMapSupported(int map, boolean monorailQualified, boolean stockTravel) {
+        return map == 1 || map == 101 || map == 5 && (monorailQualified || stockTravel)
+                || stockTravel && ClientZoning.staticZone(map);
     }
 
     private static boolean windowTitle(String title, long pid, int map) {
+        if (map != 1 && map != 101 && map != 5) {
+            // Another static zone (game's own travel): its own zone folder and world name.
+            return title.matches("City of Heroes[ \\t]+:[ \\t]+"
+                + "(?:[A-Za-z0-9_]{1,40}[\\\\/][A-Za-z0-9_]{1,64}[\\\\/][A-Za-z0-9_]{1,64}\\.txt[ \\t]+)?PID:[ \\t]+"
+                + pid);
+        }
         String world = map == 5 ? "City_01_02" : "City_01_01";
         return title.matches("City of Heroes[ \\t]+:[ \\t]+"
                 + "(?:City_Zones[\\\\/]" + world + "[\\\\/]" + world + "\\.txt[ \\t]+)?PID:[ \\t]+" + pid);
     }
 
     static boolean savedDestinationEvent(Object value, String session, boolean monorailQualified) {
+        return savedDestinationEvent(value, session, monorailQualified, false);
+    }
+
+    static boolean savedDestinationEvent(Object value, String session, boolean monorailQualified,
+            boolean stockTravel) {
         Map<?, ?> event = object(value);
         if (session == null || !session.matches("[0-9a-f]{32}")
                 || !"saved_character_destination".equals(event.get("type"))
@@ -204,7 +222,14 @@ final class ClientAcceptance {
                 || (number(event.get("map_id"), 101) && number(event.get("port"), 7002)
                     && "City_01_01".equals(event.get("world")))
                 || (monorailQualified && number(event.get("map_id"), 5) && number(event.get("port"), 7003)
-                    && "City_01_02".equals(event.get("world")));
+                    && "City_01_02".equals(event.get("world")))
+                || (stockTravel && event.get("map_id") instanceof Number
+                    && ClientZoning.staticZone(((Number) event.get("map_id")).longValue())
+                    && !number(event.get("map_id"), 1) && !number(event.get("map_id"), 101)
+                    && event.get("port") instanceof Number && ((Number) event.get("port")).longValue() >= 7003
+                    && ((Number) event.get("port")).longValue() <= 7099
+                    && event.get("world") instanceof String
+                    && ((String) event.get("world")).matches("[A-Za-z0-9_]{1,64}"));
     }
 
     static boolean localLoginVerified(Object value, String session, long clientPid) {

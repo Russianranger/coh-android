@@ -145,8 +145,29 @@ public final class ZoningHost {
   for(int epoch=3;epoch<12;epoch++){int to=epoch%2==1?6:1;need(z.accept(stock("arrived",epoch,to,to==6?1:6,1000+epoch*10),SESSION,73,1,1000+epoch*10,10,1,true));}
   need(z.epoch()==11);   // no four-trip limit
  }
+ static void stockAcceptance(){
+  Map<String,Object> w=new LinkedHashMap<>();w.put("mapped",true);w.put("width",800);w.put("height",600);
+  w.put("title","City of Heroes : City_Zones/City_02_01/City_02_01.txt PID: 77");
+  need(!ClientAcceptance.clientWindowAccepted(w,77L,1,6,true));
+  need(ClientAcceptance.clientWindowAccepted(w,77L,1,6,true,true));
+  w.put("title","City of Heroes : Hazard_Zones/Hazard_01_01/Hazard_01_01.txt PID: 77");
+  need(ClientAcceptance.clientWindowAccepted(w,77L,12,12,false,true));
+  need(!ClientAcceptance.clientWindowAccepted(w,78L,12,12,false,true));
+  need(!ClientAcceptance.clientWindowAccepted(w,77L,1000,1000,false,true));
+  w.put("title","City of Heroes : City_Zones/City_01_02/City_01_02.txt PID: 77");
+  need(ClientAcceptance.clientWindowAccepted(w,77L,1,5,false,true));
+  Map<String,Object> d=new LinkedHashMap<>();d.put("type","saved_character_destination");d.put("session_id",SESSION);
+  d.put("character_id",1);d.put("auth_id",9);d.put("name","THORHERO");d.put("account","COHLOCAL");
+  d.put("existing_character_verified",true);d.put("saved_location_verified",true);d.put("sql_game_mutations_performed",false);
+  d.put("map_id",6);d.put("port",7004);d.put("world","city_02_01");
+  need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true));
+  need(ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
+  d.put("port",7001);need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
+  d.put("port",7004);d.put("world","../x");need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
+  d.put("world","city_01_02");d.put("map_id",5);d.put("port",7003);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+ }
  public static void main(String[] args)throws Exception {
-  switch(args[0]){case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
+  switch(args[0]){case "stockacceptance":stockAcceptance();break;case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
   System.out.println("PASS");
  }
 }
@@ -165,6 +186,7 @@ class ClientZoningJavaTests(unittest.TestCase):
         self.assertEqual(result.stdout.strip(),'PASS')
     def test_four_transfers_require_fresh_native_event_and_three_views(self):self.run_host('roundtrip')
     def test_stock_travel_follows_any_static_zone_without_trip_limit(self):self.run_host('stock')
+    def test_stock_travel_accepts_any_static_zone_window_and_saved_destination(self):self.run_host('stockacceptance')
     def test_stale_future_and_pre_delivery_arrivals_rejected(self):self.run_host('stale')
     def test_preparation_failure_preserves_save_but_transfer_failure_blocks(self):self.run_host('fail')
     def test_map101_connection_requires_opt_in_and_supported_map_proof(self):self.run_host('connection')
