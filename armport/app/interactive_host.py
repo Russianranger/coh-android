@@ -362,6 +362,13 @@ def shared_heap_requested():
     return value == '1'
 
 
+def stock_travel_requested():
+    """The game's own zone travel: needs the external-maps DbServer; the reopen runs the zoning flow."""
+    value = os.environ.get('COH_STOCK_TRAVEL', '')
+    require(value in ('', '0', '1'), 'COH_STOCK_TRAVEL must be empty, 0 or 1')
+    return value == '1'
+
+
 def serverdata_probe_requested():
     """CI-only probe level: 1 serves scripts.loc, 2 every folder no guest proof reads,
     through a linked shared read-only runtime/serverdata tree. 0 is off."""
@@ -412,19 +419,28 @@ def story_arc_counts(text, limit=4):
     return [[int(value) for value in match.groups()] for match in STORY_ARC_COUNTS.finditer(text)][:limit]
 
 
-EXTERNAL_MAPS_WORKFLOW = '.github/workflows/armport-external-maps-dbserver.yml'
+EXTERNAL_MAPS_WORKFLOW = stage_app_assets.EXTERNAL_MAPS_WORKFLOW
 
 
 def external_maps_build_run(run_json, directory):
     """The package comes from one successful run of its own workflow at its own commit."""
-    run = json.loads(run_json.read_text())
-    manifest = json.loads((directory / 'startup-dbserver-manifest.json').read_text())
-    require(run.get('path') == EXTERNAL_MAPS_WORKFLOW and run.get('status') == 'completed'
-            and run.get('conclusion') == 'success'
-            and re.fullmatch('[0-9a-f]{40}', run.get('head_sha') or '')
-            and run.get('head_sha') == manifest.get('repository_commit'),
-            'External map DbServer package is not from one successful build run at its own commit')
-    return {'run_id': run.get('id'), 'head_sha': run['head_sha']}
+    return stage_app_assets.external_maps_build_run(run_json, directory)
+
+
+def stock_travel_summary(report):
+    """Bounded view of the game's own zone travel in the zoning report."""
+    zoning = report.get('character_zoning')
+    stock = zoning.get('stock_travel') if isinstance(zoning, dict) else None
+    if not isinstance(stock, dict):
+        return None
+    keep = ('map_id', 'tree', 'port', 'evicted', 'ready', 'ready_seconds', 'failure', 'failed_seconds')
+    return {'requested': stock.get('requested'), 'enabled': stock.get('enabled'),
+            'arrivals': stock.get('arrivals'), 'transfer_wait_observed': stock.get('transfer_wait_observed'),
+            'starts': [{key: row.get(key) for key in keep if key in row}
+                       for row in stock.get('starts', [])[:6] if isinstance(row, dict)],
+            'evictions': [row for row in stock.get('evictions', [])[:4] if isinstance(row, dict)],
+            'decisions': [row for row in stock.get('decisions', [])[:6] if isinstance(row, dict)],
+            'zone_tree_seconds': (report.get('zone_tree_preparation') or {}).get('elapsed_seconds')}
 
 
 def external_maps_summary(section):
@@ -471,6 +487,7 @@ def guest_timing_summary(evidence):
             result['external_maps'] = next((external_maps_summary(section) for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('external_maps') is not None), None)
+            result['stock_travel'] = stock_travel_summary(report)
             for key in ('character_creation', 'character_reopen'):
                 section = report.get(key)
                 if not isinstance(section, dict):
@@ -520,7 +537,8 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         summary, writes = {}, {}
         detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts')
                   if original.get(key)}
-        servers = {key: original[key] for key in ('shared_heap', 'external_maps') if original.get(key)}
+        servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel')
+                   if original.get(key)}
         for key, value in original.items():
             if key in detail or key in servers:
                 continue
@@ -693,6 +711,9 @@ def main():
             # The supervisor observes the DbServer's map requests and delinks
             # the ones this flow does not start itself (milestone 1).
             command.insert(command.index('/usr/bin/python3'), 'COH_EXTERNAL_MAPS=1')
+        if stock_travel_requested():
+            require(args.external_maps_dbserver is not None, 'Stock travel needs the external-maps DbServer')
+            command.insert(command.index('/usr/bin/python3'), 'COH_STOCK_TRAVEL=1')
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():
@@ -705,6 +726,9 @@ def main():
         reopen.archive_completed_reports(args.work / 'state', first)
         reopen.reset_session_requests(args.work / 'state')
         next_command = reopen.reopen_command(command, first, second)
+        if stock_travel_requested():
+            # The device's reopen: the zoning flow with the supervisor's start policy.
+            next_command.insert(next_command.index('/opt/coh/character_reopen_diagnostic.py') + 1, '--zoning')
         reopened = run_session(next_command, args.work, args.evidence / 'reopen', args.proot,
                                second, runtime_manifest, client_manifest, deadline, reopening=True)
         after = reopen.persistent_profile_identity(args.work)

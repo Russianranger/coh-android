@@ -54,6 +54,11 @@ on:
         description: Optional successful armport-external-maps-dbserver run - its DbServer is added and map requests observed
         required: false
         default: ''
+      stock_travel:
+        description: With external_maps_run_id - the game's own zone travel (reopen runs the zoning flow; requested zones are started)
+        type: boolean
+        required: false
+        default: false
   push:
     branches: ['armport/m4-runtime']
     paths: ['armport/app/**', 'armport/audio/**', 'armport/tests/test_client*.py', 'android/interactive/**',
@@ -75,6 +80,7 @@ env:
   COH_CLIENT_AUDIO: ${{ inputs.client_audio == false && '0' || '1' }}
   COH_SHARED_HEAP: ${{ inputs.shared_heap && '1' || '' }}
   EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
+  COH_STOCK_TRAVEL: ${{ inputs.stock_travel && '1' || '' }}
 
 jobs:
   app-sources:

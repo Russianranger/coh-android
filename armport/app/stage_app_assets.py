@@ -104,6 +104,21 @@ DBSERVER_PAYLOADS = ('startup-dbserver.exe', 'startup-dbserver-manifest.json')
 EXTERNAL_MAPS_KEY = 'armport_external_maps_dbserver'
 
 
+EXTERNAL_MAPS_WORKFLOW = '.github/workflows/armport-external-maps-dbserver.yml'
+
+
+def external_maps_build_run(run_json, directory):
+    """The package comes from one successful run of its own workflow at its own commit."""
+    run = json.loads(Path(run_json).read_text())
+    manifest = json.loads((Path(directory) / 'startup-dbserver-manifest.json').read_text())
+    package.require(run.get('path') == EXTERNAL_MAPS_WORKFLOW and run.get('status') == 'completed'
+                    and run.get('conclusion') == 'success'
+                    and re.fullmatch('[0-9a-f]{40}', run.get('head_sha') or '')
+                    and run.get('head_sha') == manifest.get('repository_commit'),
+                    'External map DbServer package is not from one successful build run at its own commit')
+    return {'run_id': run.get('id'), 'head_sha': run['head_sha']}
+
+
 def external_maps_dbserver(source, directory, ci_runtime=False):
     """On-demand zone DbServer (armport/server/package_external_maps_dbserver.py).
 

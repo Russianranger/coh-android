@@ -329,7 +329,8 @@ def build(args):
         'device_validated': False, 'gameplay_validated': False, 'm5_complete': False,
     }
     if dbserver_record is not None:
-        report['external_maps_dbserver'] = dbserver_record
+        report['external_maps_dbserver'] = dict(dbserver_record,
+                                                build_run=getattr(args, 'external_maps_build_run', None))
     if server_qualification:
         report['server_metrics_qualification'] = server_qualification
         report['server_metrics_variant'] = 'thor_certified_startup'
@@ -357,13 +358,19 @@ def main():
                         help='Carry the metrics server as an opt-in second archive (default server unchanged)')
     parser.add_argument('--external-maps-dbserver', type=Path,
                         help='On-demand zone DbServer package (armport-external-maps-dbserver artifact); inert by default')
+    parser.add_argument('--external-maps-run-json', type=Path,
+                        help='The armport-external-maps-dbserver run that built --external-maps-dbserver')
     args = parser.parse_args()
     for key in ('donor_apk', 'armport', 'android_jar', 'build_tools', 'keystore', 'output'):
         setattr(args, key, getattr(args, key).absolute())
     if args.server_metrics is not None:
         args.server_metrics = args.server_metrics.absolute()
+    if (args.external_maps_dbserver is None) != (args.external_maps_run_json is None):
+        parser.error('--external-maps-dbserver and --external-maps-run-json go together')
     if args.external_maps_dbserver is not None:
         args.external_maps_dbserver = args.external_maps_dbserver.absolute()
+        args.external_maps_build_run = stage_app_assets.external_maps_build_run(
+            args.external_maps_run_json, args.external_maps_dbserver)
     build(args)
 
 
