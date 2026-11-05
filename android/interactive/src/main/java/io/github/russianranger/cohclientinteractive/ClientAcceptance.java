@@ -186,9 +186,14 @@ final class ClientAcceptance {
                     ((Number) clientPid).longValue(), currentMap);
     }
 
+    /** maps.db static zones (ids 1-999); the same bound as ClientZoning.staticZone. */
+    private static boolean staticZone(long map) {
+        return map >= 1 && map <= 999;
+    }
+
     private static boolean windowMapSupported(int map, boolean monorailQualified, boolean stockTravel) {
         return map == 1 || map == 101 || map == 5 && (monorailQualified || stockTravel)
-                || stockTravel && ClientZoning.staticZone(map);
+                || stockTravel && staticZone(map);
     }
 
     private static boolean windowTitle(String title, long pid, int map) {
@@ -224,7 +229,7 @@ final class ClientAcceptance {
                 || (monorailQualified && number(event.get("map_id"), 5) && number(event.get("port"), 7003)
                     && "City_01_02".equals(event.get("world")))
                 || (stockTravel && event.get("map_id") instanceof Number
-                    && ClientZoning.staticZone(((Number) event.get("map_id")).longValue())
+                    && staticZone(((Number) event.get("map_id")).longValue())
                     && !number(event.get("map_id"), 1) && !number(event.get("map_id"), 101)
                     && event.get("port") instanceof Number && ((Number) event.get("port")).longValue() >= 7003
                     && ((Number) event.get("port")).longValue() <= 7099

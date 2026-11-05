@@ -222,6 +222,7 @@ public final class ClientRuntime {
     private boolean clientAudioRequested=false;
     // Shared server memory (0.13.54 experiment): zone servers share parsed game data.
     private boolean sharedHeapRequested=false;
+    private boolean stockTravelRequested=false;
     private ClientAudio audio;
     private JSONObject clientAudioReport;
     private File generation, operationDir;
@@ -361,6 +362,19 @@ public final class ClientRuntime {
      * Shared server memory (experiment, off): omit -nosharedmemory so the stock MapServer
      * maps the shared definitions another zone server already parsed.
      */
+    /**
+     * The game's own zone travel (default on): zone doors, tunnels and the monorail take the stock
+     * path (loading screen at once) and the guest starts any requested zone (external-maps DbServer).
+     */
+    public static boolean stockTravelEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("stock-zone-travel", true);
+    }
+    public static synchronized void setStockTravelEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("stock-zone-travel", enabled).apply();
+    }
     public static boolean sharedHeapEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getBoolean("shared-server-memory", false);
@@ -812,6 +826,7 @@ public final class ClientRuntime {
         clientFolderIndexRequested=clientFolderIndexEnabled(context);
         clientAudioRequested=clientAudioEnabled(context);clientAudioReport=null;
         sharedHeapRequested=sharedHeapEnabled(context);
+        stockTravelRequested=stockTravelEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -880,6 +895,7 @@ public final class ClientRuntime {
                     "COH_CLIENT_FOLDER_INDEX="+(clientFolderIndexRequested?"1":"0"),
                     "COH_CLIENT_AUDIO="+(audio!=null?"1":"0"), "COH_CLIENT_AUDIO_SOCKET="+ClientAudio.GUEST_SOCKET,
                     "COH_SHARED_HEAP="+(sharedHeapRequested?"1":"0"),
+                    "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -1095,6 +1111,8 @@ public final class ClientRuntime {
         if(!zoningEnabled())return "Zone travel becomes available after runtime update and Reopen.";
         if(stuckRequested)return "Safe-ground recovery selected · Save and reopen before zoning.";
         if(!zoning.enabled())return "Waiting for the saved character and destination controller.";
+        if(zoning.stockTravel())return zoning.currentName()+" · the game's own zone travel: doors, tunnels and the monorail; "
+                +zoning.epoch()+" trips";
         String phase=zoning.phase();String elapsed="";
         if(!zoningTimings.isEmpty()) {
             Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);
@@ -2137,10 +2155,12 @@ public final class ClientRuntime {
                             stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character." : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
                         }
                         if (reopen && zoningEnabled() && ClientAcceptance.savedDestinationEvent(jsonValue(event), session,
-                                Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))
+                                Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")), stockTravelRequested)
                                 && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
                             stage("Saved destination verified", "THORHERO is saved in "
-                                + ClientZoning.name(event.optInt("map_id", -1)) + ". Preparing its native MapServer on port "
+                                + (ClientZoning.supported(event.optInt("map_id", -1)) ? ClientZoning.name(event.optInt("map_id", -1))
+                                   : "zone " + event.optInt("map_id", -1) + " (" + event.optString("map_name", "") + ")")
+                                + ". Preparing its native MapServer on port "
                                 + event.optInt("port", -1) + "; existing character data is preserved.");
                             recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
                                 + " port=" + event.optInt("port", -1));
@@ -2168,9 +2188,9 @@ public final class ClientRuntime {
                         if (zoningEnabled() && "character_zoning".equals(event.optString("type"))
                                 && characterConnectedEvent!=null && !saveLogoutRequested && !cancelled && !finished && !producerCompleted) {
                             synchronized(this) {
-                                if(zoningEvents.size()<32 && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
+                                if(zoningEvents.size()<(zoning.stockTravel()?256:32) && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
                                         characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames,
-                                        Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))) {
+                                        Boolean.TRUE.equals(manifest.opt("character_monorail_enabled"))||stockTravelRequested)) {
                                     zoningEvents.add((Map<String,Object>)jsonValue(event));
                                     if(zoning.stockMonorail()&&"preparing".equals(zoning.phase())) {
                                         automaticTravel=false;
@@ -2436,7 +2456,7 @@ public final class ClientRuntime {
             boolean monorailQualified = zoningEnabled() && Boolean.TRUE.equals(manifest.opt("character_monorail_enabled"))
                     && character != null && Boolean.TRUE.equals(character.opt("monorail_enabled"));
             if (ClientAcceptance.clientWindowAccepted(jsonValue(window), observedClientPid,
-                    initialMap, currentMap, monorailQualified)) actualWindow = true;
+                    initialMap, currentMap, monorailQualified, stockTravelRequested)) actualWindow = true;
         }
         if (!actualWindow) return false;
         JSONObject hashes = report.optJSONObject("asset_sha256"), pins = manifest.getJSONObject("files");
@@ -2647,7 +2667,7 @@ public final class ClientRuntime {
                     .put("stuck_requested", stuckRequested)
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
-                    .put("shared_heap_requested", sharedHeapRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

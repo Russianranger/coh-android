@@ -85,5 +85,32 @@ class ZoneIndex(unittest.TestCase):
         self.assertFalse(budget.static_zone(2) or budget.static_zone(True) or budget.static_zone('6'))
 
 
+
+class AppOptionAndCi(unittest.TestCase):
+    def test_app_option_default_on_sets_both_guest_switches(self):
+        java = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive'
+        runtime = (java / 'ClientRuntime.java').read_text()
+        self.assertIn('.getBoolean("stock-zone-travel", true)', runtime)
+        self.assertIn('"COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), '
+                      '"COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0")', runtime)
+        self.assertIn('ClientRuntime.stockTravelEnabled(this)', (java / 'ClientActivity.java').read_text())
+        import external_map_supervisor
+        self.assertEqual((external_map_supervisor.ENABLE_ENVIRONMENT, zone_travel.ENABLE_ENVIRONMENT),
+                         ('COH_EXTERNAL_MAPS', 'COH_STOCK_TRAVEL'))
+
+    def test_ci_input_requires_the_external_maps_dbserver(self):
+        import os
+        from unittest.mock import patch
+        sys.path.insert(0, str(ROOT / 'armport/app'))
+        import interactive_host
+        workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()
+        self.assertIn("COH_STOCK_TRAVEL: ${{ inputs.stock_travel && '1' || '' }}", workflow)
+        for value, expected in (('', False), ('0', False), ('1', True)):
+            with patch.dict(os.environ, {'COH_STOCK_TRAVEL': value}):
+                self.assertEqual(interactive_host.stock_travel_requested(), expected)
+        with patch.dict(os.environ, {'COH_STOCK_TRAVEL': 'yes'}), self.assertRaises(ValueError):
+            interactive_host.stock_travel_requested()
+
+
 if __name__ == '__main__':
     unittest.main()
