@@ -90,6 +90,14 @@ REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java'})
+# Overlay menu and controller mapping (ported from the owner's TRASC launcher); Java only, no resources.
+ADDED_JAVA_SOURCES = frozenset({
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientOverlayPosition.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerBridge.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerDialog.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerInput.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerManager.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerProfile.java'})
 
 
 def require(condition, message):
@@ -125,8 +133,12 @@ def java_sources(main_dir, generated):
     diagnostic = ROOT / 'android/app/src/main/java/io/github/russianranger/cohdiagnostic'
     sources += [diagnostic / (name + '.java') for name in HELPERS]
     sources += [ROOT / name for name in EXTRA_SOURCES]
-    # The donor's 24 sources plus ClientAudio.java (game audio bridge, 0.13.53).
-    require(len([p for p in sources if not p.is_relative_to(generated)]) == 25, 'Donor 24-source set plus ClientAudio differs')
+    # The donor's 24 sources plus ClientAudio.java (game audio bridge, 0.13.53) and the
+    # overlay/controller sources.
+    added = {p.relative_to(ROOT).as_posix() for p in sources if p.is_relative_to(ROOT)} & ADDED_JAVA_SOURCES
+    require(added == ADDED_JAVA_SOURCES, 'Overlay/controller sources missing')
+    require(len([p for p in sources if not p.is_relative_to(generated)]) == 25 + len(ADDED_JAVA_SOURCES),
+            'Donor 24-source set plus ClientAudio and overlay/controller sources differs')
     require(any(p.name == 'ClientAudio.java' for p in sources), 'Game audio bridge source missing')
     require(len(sources) == len(set(sources)) and all(p.is_file() and not p.is_symlink() for p in sources),
             'Missing, linked or duplicated Java source')

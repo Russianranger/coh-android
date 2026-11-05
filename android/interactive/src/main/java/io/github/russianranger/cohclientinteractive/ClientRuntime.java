@@ -1035,6 +1035,11 @@ public final class ClientRuntime {
         if (keysym <= 0) return false;
         return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch), down);
     }
+    /** One paired wheel tick (RFB button 4 or 5); ordinary pointer masks remain 0-7. */
+    public boolean sendWheel(String selectedSession, int x, int y, boolean up) {
+        if (x < 0 || y < 0) return false;
+        return queueInput(selectedSession, (active, epoch) -> active.sendWheel(x, y, up, epoch), true);
+    }
     /** Keep field replacement and paced characters in one owned worker task. */
     public synchronized boolean sendText(String selectedSession, String value, boolean replace) {
         if (!ClientInput.validText(value)) return false;

@@ -139,6 +139,10 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
                 &&active.sendPointer(selectedSession,x,y,mask);
     }
+    public boolean sendWheel(String selectedSession,int x,int y,boolean up){
+        ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
+                &&active.sendWheel(selectedSession,x,y,up);
+    }
     public boolean requestEnter(){
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null

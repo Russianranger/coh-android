@@ -234,7 +234,10 @@ jobs:
           3-4 minutes on the loading screen (a pre-loaded spare server is the next step). NPCs outside Atlas Park
           and King's Row do not move yet (no pathing data). Missions and instanced maps are not served yet: the
           game reports that the map failed and the hero stays put. Untick the option for 0.13.54's station travel.
-          Everything else from 0.13.54 is kept. Test sheet: THOR-TEST-0.13.55.md.
+          Interface: the game fills the screen (drawn at 800x600, scaled); the launcher options moved into a
+          movable gear button (tap to open, drag to move, Back toggles); controller mapping (Menu > Controller
+          mappings: keys, mouse buttons, cursor, wheel, layers, deadzone, speed), defaults equal to 0.13.54's
+          buttons. Everything else from 0.13.54 is kept. Test sheet: THOR-TEST-0.13.55.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.53)." >> notes.md

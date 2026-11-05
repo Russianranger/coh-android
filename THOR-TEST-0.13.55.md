@@ -1,8 +1,8 @@
 # Thor test: COH Atlas Gameplay 0.13.55 (ARM64 client): the game's own zone travel
 
 0.13.55 replaces the station wait with the game's own zone travel, opens every
-zone the game allows your hero, and moves the launcher options into a floating
-button. Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.55";
+zone the game allows your hero, fills the screen with the game, moves the
+launcher options into a floating gear button and adds controller mapping. Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.55";
 design: [armport/notes/ON-DEMAND-ZONES.md](armport/notes/ON-DEMAND-ZONES.md).
 
 ## What changed since 0.13.54
@@ -14,7 +14,8 @@ design: [armport/notes/ON-DEMAND-ZONES.md](armport/notes/ON-DEMAND-ZONES.md).
 | Two zone servers | always | The zone you are in plus one more stay loaded (about 1.8 GB each). Going to a third zone stops the one you left before it |
 | First start of a zone | once per zone server start | About 3–4 minutes on the loading screen (King's Row took 191 s in 0.13.54). The very first zone other than Atlas Park and King's Row also prepares the shared zone files once (about a minute more). The pre-loaded spare that brings this to about 1 minute is the next step |
 | NPCs outside Atlas Park and King's Row | — | They spawn but stand still (no pathing data yet). Generating it for every zone is a later step |
-| Floating options button | always | CONTROLS_SUMMARY |
+| Full-window view and floating options button | always | The game fills the screen (still drawn at 800x600 and scaled; true 1280x720 is next). The launcher options moved into a gear button: tap it to open or close the menu, drag it to move it (it remembers where), Back also toggles it. While the menu is open the game gets no input |
+| Controller mapping | default = today's buttons | Menu → Controller mappings: assign each button, stick and trigger to a key, mouse button, cursor direction or wheel, up to 6 layers, deadzone and cursor speed. The defaults are exactly today's mapping (triggers and Y unbound). Preset "COH power trays": hold LT and A/B/X/Y, the D-pad and LB/RB become 1–0; Select opens the menu |
 
 CI: CI_SUMMARY
 
@@ -29,6 +30,10 @@ CI: CI_SUMMARY
    move there). Note the time.
 5. Return to Atlas Park by monorail. Save/logout, Finish, **export**.
 6. Optional: reopen once more. You start in the zone you saved in.
+7. Interface: drag the gear somewhere comfortable; open Controller mappings,
+   try the "COH power trays" preset (hold LT + A fires tray slot 1), and try
+   the mouse wheel binding for camera zoom if you assign one. Note anything
+   that feels different from 0.13.54 with the default mapping.
 
 ## Report
 
