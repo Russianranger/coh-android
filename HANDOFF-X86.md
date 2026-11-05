@@ -414,6 +414,32 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.56: zone starts no longer stop the DbServer; CI zone trip (Claude, 2026-11-05)
+
+User, 14:30 CST (export 20261105-202806): logged in, took the monorail to
+King's Row; "the client crashed immediately after the character boarded".
+Evidence: the box was the **DbServer's** assertion (`weeklyTFcfg.c:120`,
+`currentWeek`; built path `out\ex…` = the external-maps layer); the guest then
+failed "Local DbServer exited during login"; the supervisor saw 0 requests.
+`launcherCommStartProcess` builds every MapServer command with
+`WeeklyTFCfg_getCurrentWeek` (launchercomm.c:1619), which devasserts when
+`server/db/weeklyTF.cfg` has no entry; the pinned data lacks the file (schema
+receipt `absent_in_pinned_data`). No CI run had ever made the DbServer start a
+zone, so CI never reached it.
+
+- **Fix** (`local_character_server.write_weekly_tf_config`): with the
+  external-maps layer enabled, write one past week, no tokens (no
+  `-WeeklyTFTokens`); recorded as `external_maps.weekly_tf_config`.
+- **CI zone trip**: the stock-travel reopen (`StockTravelReopenInteraction`)
+  types `/mapmove 101`, so the DbServer starts Atlas Park instance 2 through the
+  same start path as a door or the monorail and publishes it to the supervisor;
+  the host waits for the guest's `stock_travel` arrival (900 s), returns with
+  `/mapmove 1`, then runs stuck/logout/save. On the CI donor's legacy MapServer
+  the zoning flow reads Atlas CLIENT_READY with its log time (`legacy_ready`);
+  the device keeps its immediate events. The failure notice adds the DbServer
+  console tail and zone console tails.
+- Version 0.13.56 (71); test sheet `THOR-TEST-0.13.56.md`.
+
 ## 0.13.55: the game's own zone travel, every zone (Claude, 2026-11-05)
 
 User, 22:46 CST (0.13.54 test passed, temps high 50s/low 60s): a zone trigger
