@@ -253,10 +253,31 @@ class NativeEvidenceTests(unittest.TestCase):
             self.assertIsNone(zoning.terminal_position(logs(changed), 101,
                 {'sent_utc_ms': timer-6000}, timer-100000, timer+5000))
 
+    def test_legacy_atlas_ready_is_the_newest_after_the_launch_on_either_route(self):
+        # Retained legacy MapServer (CI donor): no events contract, second-resolution log times.
+        line = '%s %s "THORHERO:COHLOCAL" 7 Connection:ResumeCharacter from 127.0.0.1:%d AuthName "COHLOCAL"\n'
+        early = time.strftime('%y%m%d %H:%M:%S', time.localtime((NOW - 60000) / 1000))
+        raw = (line % (early, 'City_01_01_1:127.0.0.1:127.0.0.1', 5001)
+               + line % (STAMP, 'City_01_01_1:127.0.0.1:127.0.0.1', 5002))
+        record = zoning.legacy_ready(logs(raw), NOW - 999, NOW + 5000)
+        self.assertEqual((record['port'], record['utc_ms'], record['log_route']),
+                         (5002, NOW, 'embedded_dbserver_logserver'))
+        self.assertEqual(zoning.legacy_ready(logs(raw), NOW - 120000, NOW + 5000)['port'], 5002)
+        self.assertIsNone(zoning.legacy_ready(logs(raw), NOW + 1000, NOW + 5000))
+        self.assertIsNone(zoning.legacy_ready(logs(raw.replace('City_01_01_1', 'City_01_01_2')), 0, NOW + 5000))
+        local = line % (STAMP, '0', 5003)
+        self.assertEqual(zoning.legacy_ready(logs(local, 'logs/mapserver/entity.log'), 0, NOW + 5000)['port'], 5003)
+        instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        instance.active_map_id, instance.ready_floor_ms = 1, NOW - 999
+        with patch.object(zoning.LocalCharacterZoningServer, 'current_logs', return_value=logs(raw)), \
+                patch.object(zoning.LocalCharacterZoningServer, 'monorail_enabled', return_value=False):
+            self.assertEqual(instance.native_ready_record()['port'], 5002)
+
     def test_native_immediate_ready_on_return_must_be_newer_than_delivery(self):
         instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
         instance.active_map_id = 1
         instance.ready_floor_ms = NOW
+        instance.map_package = {'inputs': {'mapserver_progress': {'events_contract': {'format': 1}}}}
         parent = zoning.character.LocalCharacterReopenServer
         with patch.object(parent, 'native_ready_record', return_value={'utc_ms': NOW-1}):
             self.assertIsNone(instance.native_ready_record())

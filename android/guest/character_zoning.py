@@ -350,6 +350,28 @@ def stock_ready(logs, map_id, minimum_ms, now_ms):
     return max(result, key=lambda r: (r['utc_ms'], r['line_ordinal'])) if result else None
 
 
+def legacy_ready(logs, minimum_ms, now_ms):
+    """Atlas CLIENT_READY from either stock log route of a legacy MapServer, newest first.
+
+    character.ready_record returns the first match without a time; a zoning
+    session needs the one after the current launch (second-resolution log time).
+    """
+    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+                         r'127\.0\.0\.1:([1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
+    result = []
+    for ordinal, (message, record) in enumerate(character.entity_records(logs, map_id=1)):
+        match = pattern.fullmatch(message)
+        if match is None or int(match[1]) > 65535:
+            continue
+        utc_ms = int(time.mktime(time.strptime(record['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+        if utc_ms < minimum_ms or utc_ms > now_ms + 999:
+            continue
+        result.append(dict(record, utc_ms=utc_ms, line_ordinal=ordinal, map_id=1, port=int(match[1]),
+                           account=character.ACCOUNT, name=character.CHARACTER, loaded_world_assets=True,
+                           source='current_owned_mapserver_CLIENT_READY_resumeCharacter_success'))
+    return max(result, key=lambda r: (r['utc_ms'], r['line_ordinal'])) if result else None
+
+
 def stock_positions(logs, map_id, minimum_ms, now_ms):
     pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ PeriodicInfo pos=<('
                          + NUMBER + '),(' + NUMBER + '),(' + NUMBER + r')> [^\r\n]+$')
@@ -1500,6 +1522,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             value = monorail_events.latest_ready(self.current_native_events())
             return value if value is not None and value['utc_ms'] >= self.ready_floor_ms else None
         if self.active_map_id == 1:
+            if self.immediate_event_contract() is None:
+                # Retained legacy MapServer (the CI donor): its first log match
+                # has no time; take the newest CLIENT_READY after this launch.
+                return legacy_ready(self.current_logs(), self.ready_floor_ms, int(time.time() * 1000))
             value = super().native_ready_record()
             if value is not None and value.get('utc_ms', 0) >= self.ready_floor_ms:
                 return value

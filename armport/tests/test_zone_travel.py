@@ -86,6 +86,34 @@ class ZoneIndex(unittest.TestCase):
 
 
 
+class WeeklyTaskForceConfig(unittest.TestCase):
+    """Every DbServer map start reads weeklyTF.cfg; the pinned data lacks it (Thor 0.13.55 assert)."""
+    def test_config_matches_the_dbserver_grammar_and_is_written_once(self):
+        import re
+        import tempfile
+        import types
+        import local_character_server as server
+        source = (ROOT / 'upstream/ouroboros/DBServer/src/weeklyTFcfg.c').read_text()
+        self.assertIn('char*    relFilename = "server/db/weeklyTF.cfg";', source)
+        self.assertIn('{ "EpochStartTime",        TOK_OPTIONALSTRUCT(WeeklyTFCfg,dateTime, ParseDateTime), },', source)
+        self.assertIn('devassert(currentWeek);', source)
+        match = re.fullmatch(r'WeeklyTF\n\{\n\tEpochStartTime "(\d{4})-(\d{2})-(\d{2})" "(\d{2}):(\d{2}):(\d{2})"\n\}\n',
+                             server.WEEKLY_TF_CONFIG)
+        self.assertIsNotNone(match)
+        self.assertLess(int(match[1]), 2026)                    # a past week: the lookup always finds it
+        self.assertNotIn('WeeklyTFTokens', server.WEEKLY_TF_CONFIG)  # no -WeeklyTFTokens on map starts
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = Path(temporary)
+            (runtime / 'data/server/db').mkdir(parents=True)
+            owner = types.SimpleNamespace(runtime=runtime)
+            first = server.LocalCharacterServer.write_weekly_tf_config(owner)
+            self.assertEqual((first['path'], first['written']), ('data/server/db/weeklyTF.cfg', True))
+            self.assertEqual((runtime / first['path']).read_text(), server.WEEKLY_TF_CONFIG)
+            self.assertEqual(server.LocalCharacterServer.write_weekly_tf_config(owner)['written'], False)
+        guest = (ROOT / 'android/guest/local_character_server.py').read_text()
+        self.assertIn('weekly_tf_config=self.write_weekly_tf_config())', guest)
+
+
 class AppOptionAndCi(unittest.TestCase):
     def test_app_option_default_on_sets_both_guest_switches(self):
         java = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive'

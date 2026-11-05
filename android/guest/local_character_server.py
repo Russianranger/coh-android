@@ -43,6 +43,14 @@ SERVER_LOG_COUNT_LIMIT = 128
 NATIVE_FALL_FLOOR_Y = -2000.0
 FALL_FLOOR_CLEARANCE = 1.0
 MANUAL_ATLAS_ENVIRONMENT = 'COH_WINE_DB_MANUAL_ATLAS'
+# Every DbServer map start builds its MapServer command with
+# WeeklyTFCfg_getCurrentWeek (launchercomm.c:1619), which devasserts when
+# server/db/weeklyTF.cfg has no entry. The pinned data has no such file
+# (schema receipt: absent_in_pinned_data), so the external-maps DbServer's
+# first zone start stopped on a modal assertion (Thor, 0.13.55). One past week
+# with no tokens: the lookup succeeds and no -WeeklyTFTokens are passed.
+WEEKLY_TF_CONFIG_PATH = 'data/server/db/weeklyTF.cfg'
+WEEKLY_TF_CONFIG = 'WeeklyTF\n{\n\tEpochStartTime "2012-01-03" "00:00:00"\n}\n'
 MANUAL_ATLAS_ACK = ('COH_WINE_DB_MANUAL_ATLAS=1 active: unused Launcher connection wait skipped; '
                     'manual Atlas launch; ordinary DbServer readiness required')
 POWER_DELTA_LIMIT = 128
@@ -2383,7 +2391,18 @@ class LocalCharacterServer(login.LocalLoginServer):
             parent, name, **self.external_maps_options())
         environment[external_maps.DB_ENVIRONMENT] = '1'
         environment[external_maps.DB_DIRECTORY_ENVIRONMENT] = windows
-        record.update(enabled=True, reason=None, supervisor=self.external_maps.report())
+        record.update(enabled=True, reason=None, supervisor=self.external_maps.report(),
+                      weekly_tf_config=self.write_weekly_tf_config())
+
+    def write_weekly_tf_config(self):
+        """The one config every DbServer map start reads; absent from the pinned data."""
+        path = self.runtime / WEEKLY_TF_CONFIG_PATH
+        require(path.parent.is_dir() and not path.parent.is_symlink(), 'DbServer config folder is missing')
+        existing = path.exists() or path.is_symlink()
+        if not existing:
+            base.private_write(path, WEEKLY_TF_CONFIG)
+        require(path.is_file() and not path.is_symlink(), 'Weekly task force config is not a private file')
+        return {'path': WEEKLY_TF_CONFIG_PATH, 'written': not existing, 'sha256': base.file_hash(path)}
 
     def external_maps_options(self):
         """Supervisor options: the maps this flow starts itself; the zoning flow may add a start policy."""

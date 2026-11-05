@@ -270,6 +270,7 @@ class ServerIntegration(unittest.TestCase):
         server.external_maps_next = 0
         server.query_count = 0
         server.runtime = root / 'runtime'
+        (server.runtime / 'data/server/db').mkdir(parents=True)
         return character, server
 
     def test_environment_only_with_the_option_and_the_layer(self):
@@ -282,7 +283,9 @@ class ServerIntegration(unittest.TestCase):
                 self.assertEqual(server.creation_report['external_maps']['enabled'], enabled)
                 self.assertEqual(environment.get(supervisor.DB_ENVIRONMENT), '1' if enabled else None)
                 self.assertEqual((Path(temporary) / 'external-map-requests-s1').is_dir(), enabled)
+                self.assertEqual((server.runtime / 'data/server/db/weeklyTF.cfg').is_file(), enabled)
                 if enabled:
+                    self.assertTrue(server.creation_report['external_maps']['weekly_tf_config']['written'])
                     self.assertTrue(environment[supervisor.DB_DIRECTORY_ENVIRONMENT].endswith('external-map-requests-s1'))
                     server.cleanup_external_maps()
                     self.assertFalse((Path(temporary) / 'external-map-requests-s1').exists())

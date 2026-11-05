@@ -282,8 +282,12 @@ def failure_detail(evidence, work, observer):
         if path.is_file() and not path.is_symlink() and path.stat().st_size <= 2048:
             result['logout_request'] = json.loads(path.read_text())
         if isinstance(observer, dict):
-            steps = observer.get('steps')
+            script = observer.get('interaction_script') if isinstance(observer.get('interaction_script'), dict) else {}
+            steps = script.get('steps', observer.get('steps'))
             result['observer_last_steps'] = [str(step)[:300] for step in steps[-4:]] if isinstance(steps, list) else None
+            arrivals = script.get('stock_travel_arrivals')
+            if isinstance(arrivals, list):
+                result['stock_travel_arrivals'] = [str(item)[:300] for item in arrivals[:4]]
         path = evidence / 'report.zip'
         if path.is_file():
             with zipfile.ZipFile(path) as archive:
@@ -308,6 +312,14 @@ def failure_detail(evidence, work, observer):
                 if atlas is not None:
                     result['atlas_logout_lines'] = tail([l for l in atlas if FAILURE_LOGOUT_LINE.search(l)], 6)
                     result['atlas_console_tail'] = tail(atlas, 4)
+                dbserver = text('client-evidence/local-dbserver-console.txt')
+                if dbserver is not None:
+                    # Skip the connect retries and Wine object dumps; keep its own last words.
+                    result['dbserver_console_tail'] = tail([l for l in dbserver if "Can't connect to dbserver" not in l
+                                                            and not l.startswith('0x')], 8)
+                zones = sorted(name for name in names if re.fullmatch(
+                    r'client-evidence/character-zoning-generation-\d+-map-\d+-console-tail\.txt', name))
+                result['zone_console_tails'] = {name.split('/')[-1][:80]: tail(text(name) or [], 3) for name in zones[-4:]}
     except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
         result['evidence_read_error'] = str(error)[:300]
     return result
@@ -448,7 +460,7 @@ def external_maps_summary(section):
     record = section.get('external_maps')
     if not isinstance(record, dict):
         return None
-    summary = {key: record.get(key) for key in ('requested', 'enabled', 'reason', 'dbserver_layer')}
+    summary = {key: record.get(key) for key in ('requested', 'enabled', 'reason', 'dbserver_layer', 'weekly_tf_config')}
     supervisor = record.get('supervisor')
     if isinstance(supervisor, dict):
         summary.update({key: supervisor.get(key) for key in ('acknowledgement_observed', 'stopped', 'counts',
@@ -584,10 +596,12 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
                 connection.settimeout(90)
                 connection.connect(str(endpoint))
+                travel = reopening and stock_travel_requested()
                 observer = character.observe_rfb(connection, session, process, deadline, evidence,
                     evidence / 'host-client.log', work / 'state/interaction-finish.json',
-                    reopen.ReopenInteraction if reopening else ArmPortCharacterInteraction,
-                    reopen.ReopenEvents if reopening else None)
+                    (reopen.StockTravelReopenInteraction if travel else reopen.ReopenInteraction)
+                    if reopening else ArmPortCharacterInteraction,
+                    (reopen.StockTravelReopenEvents if travel else reopen.ReopenEvents) if reopening else None)
             require(observer.get('failure') is None, observer.get('failure') or 'ARM64 RFB observer failed')
             require(process.wait(timeout=max(1, deadline - time.monotonic())) == 0,
                     'ARM64 interactive guest exited unsuccessfully')
@@ -603,7 +617,11 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 character.validate_report(projected, session, checked_manifest)
             if not reopening:
                 reopen.validate_world_supplement(projected, checked_manifest)
-            (reopen.validate_observer if reopening else armport_validate_observer)(observer, report)
+            if reopening:
+                reopen.validate_observer(observer, report, reopen.StockTravelReopenInteraction
+                                         if stock_travel_requested() else reopen.ReopenInteraction)
+            else:
+                armport_validate_observer(observer, report)
             require(not endpoint.exists(), 'Private display survived guest cleanup')
             runtime_host.runtime.validate_network_receipt(
                 json.loads((evidence / 'network-isolation.json').read_text()), expected_network)
