@@ -100,6 +100,50 @@ processes; untested, and earlier notes kept it off for the ARM MapServer study
 (MAPSERVER-STARTUP-60S.md). Measure after the 0.13.53 `rss_kib` figures: two
 MapServers, shared heap on, in CI and then on the Thor.
 
+## Owner's decisions 2026-11-05 and the plan from here
+
+User (0.13.54 test, 22:46 CST): a zone trigger (door, tunnel) should show a
+loading screen and take the character out of the world; the monorail should
+board immediately, then load; open the whole zone list; full screen 1280x720,
+launcher options in a floating movable touch icon, controller mapping like the
+trasc launcher; "The biggest priority is nailing the map/zone server ... for
+seamless travel with reduced overhead." Answers: **current zone + one spare**
+(two zone servers); **open all zones now** under the game's own rules, NPC
+pathing following zone by zone.
+
+Evidence (0.13.54 export 20261105-043833): King's Row cold 191 s (Python 53 s
++ native 138 s) with the player waiting at the station; trip departure → ready
+on the new map 30.6 s / 30.9 s (about 12 s hand-off + 18 s client map load);
+return to resident Atlas 9 s; RSS ≈ PSS per server (Atlas 1.78 GB, King's Row
+1.90 GB: nothing shared); device total 16.0 GB, 10.2 GB available at setup.
+
+Stock zoning already does what the owner asks (dbmapxfer.c): at
+MAPXFER_TELL_CLIENT_IDLE the player is controlsFrozen, UNTARGETABLE_TRANSFERING
+and INVINCIBLE_TRANSFERING; the client gets SERVER_MAP_XFER_WAIT and shows its
+load screen at once (commServerWaitOK); the DbServer keeps the player waiting
+(waitingEntities.c) until the map is active or fails ("MapFailed" →
+dbUndoMapXfer, player back in the old map). No client timeout applies while
+waiting (the 60 s DEFAULT_TIMEOUT phases start after SERVER_MAP_XFER). The
+station queue (patches/monorail, "Stay near the station") was a workaround for
+multi-minute starts and is dropped in stock travel mode.
+
+Steps:
+1. **Stock travel** (`COH_STOCK_TRAVEL=1`, guest `zone_travel.py`): no monorail
+   environment (stock door/monorail/tunnel path); the external-maps DbServer
+   publishes each start; the supervisor's start policy starts it with the
+   cookie (`-cookie C`, no `-launcher`), at most two zone servers (a third
+   request stops the idle resident zone, never the current or a starting one);
+   a start not ready in 900 s or that exits is stopped and delinked. Arrival is
+   read from the character status (map changes while connected). Trees: Atlas
+   (1, 101), King's Row (5), then one shared tree for every other zone.
+2. **Pre-loaded spare** (MapServer layer like trusted bins, Thor server only):
+   shared loading first, then block before `connectToDbserver` until assigned.
+3. **NPC pathing** for every zone in CI; door records.
+4. **Interface** (Java first): full-window immersive view, floating gear with
+   the launcher options, controller mapping ported from trasc
+   (ControllerInput/Manager/Dialog), mouse wheel; then true 1280x720
+   (client-launcher.c `-screen 800 600`, Xtigervnc geometry, Java limits).
+
 ## Data every zone needs (later)
 
 - NPC pathing graphs (`.bcn`): only Atlas and King's Row have them (asset pack).
