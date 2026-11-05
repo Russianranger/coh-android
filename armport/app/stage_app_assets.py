@@ -43,6 +43,12 @@ GUEST_DEPENDENCIES = (
     'zone_index.py',
 )
 
+# The device's reopen runs the zoning flow (the Thor APK's runtime manifest sets
+# character_zoning_enabled). The CI guest's retained 0.10.0 donor predates it,
+# so a CI run of the game's own zone travel adds the flow's modules and sets the
+# flag (interactive_host, COH_STOCK_TRAVEL=1); the shipped APK never uses this.
+ZONING_HELPERS = ('character_zoning.py', 'character_zoning_scheduler.py', 'native_monorail_events.py')
+
 WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',
                         'PAYLOAD_BYTES', 'FILE_COUNT', 'FILES_SHA256'))
 
@@ -165,7 +171,7 @@ def external_maps_dbserver(source, directory, ci_runtime=False):
 
 def stage(source, armport, output, repository_commit, external=None, *,
           server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
-          server_option=False, dbserver=None, dbserver_ci_runtime=False):
+          server_option=False, dbserver=None, dbserver_ci_runtime=False, zoning=False):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -216,6 +222,9 @@ def stage(source, armport, output, repository_commit, external=None, *,
             runtime[contract.OPTION] = contract.option_record()
     dbserver_record = None
     package.require(dbserver is not None or not dbserver_ci_runtime, 'CI DbServer addition needs a package')
+    package.require(not zoning or dbserver_ci_runtime, 'The CI zoning flow needs the CI external-maps DbServer')
+    package.require(not zoning or 'character_zoning_enabled' not in runtime,
+                    'The donor already carries a zoning runtime profile')
     if dbserver is not None:
         if dbserver_ci_runtime:
             package.require(not any(name in runtime['files'] for name in DBSERVER_PAYLOADS),
@@ -233,7 +242,9 @@ def stage(source, armport, output, repository_commit, external=None, *,
                     'character_creation_diagnostic.py': ROOT / 'android/guest/character_creation_diagnostic.py'}
     if metrics:
         replacements['armport_server_metrics_contract.py'] = ROOT / 'android/guest/armport_server_metrics_contract.py'
-    for name in set(client['files']) | set(GUEST_DEPENDENCIES):
+    if zoning:
+        runtime['character_zoning_enabled'] = True
+    for name in set(client['files']) | set(GUEST_DEPENDENCIES) | set(ZONING_HELPERS if zoning else ()):
         source_helper = ROOT / 'android/guest' / name
         if name.endswith('.py') and source_helper.is_file():
             replacements[name] = source_helper

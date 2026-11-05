@@ -666,7 +666,8 @@ def main():
             assets, args.repository_commit, server_archive=args.server_archive,
             server_variant='retained_progress' if args.server_archive else None,
             server_run_id=args.server_run_id, upstream_root=baseline,
-            dbserver=args.external_maps_dbserver, dbserver_ci_runtime=args.external_maps_dbserver is not None)
+            dbserver=args.external_maps_dbserver, dbserver_ci_runtime=args.external_maps_dbserver is not None,
+            zoning=stock_travel_requested())
         runtime_manifest = json.loads((assets / 'runtime-manifest.json').read_text())
         if args.external_maps_dbserver is not None:
             result['external_maps_dbserver'] = runtime_manifest[stage_app_assets.EXTERNAL_MAPS_KEY]

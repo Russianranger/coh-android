@@ -98,6 +98,34 @@ class AppOptionAndCi(unittest.TestCase):
         self.assertEqual((external_map_supervisor.ENABLE_ENVIRONMENT, zone_travel.ENABLE_ENVIRONMENT),
                          ('COH_EXTERNAL_MAPS', 'COH_STOCK_TRAVEL'))
 
+    def test_ci_zoning_reopen_stages_every_module_the_flow_imports(self):
+        # The CI donor (0.10.0) predates the zoning flow; its reopen must still import.
+        import ast
+        sys.path.insert(0, str(ROOT / 'armport/app'))
+        import stage_app_assets
+        guest = ROOT / 'android/guest'
+        local = {path.stem for path in guest.glob('*.py')}
+
+        def closure(roots):
+            seen, stack = set(), list(roots)
+            while stack:
+                name = stack.pop()
+                if name in seen:
+                    continue
+                seen.add(name)
+                for node in ast.parse((guest / (name + '.py')).read_text()).body:
+                    for item in ast.walk(node) if isinstance(node, (ast.Try, ast.If)) else (node,):
+                        if isinstance(item, ast.Import):
+                            stack += [a.name for a in item.names if a.name in local]
+                        elif isinstance(item, ast.ImportFrom) and item.module in local:
+                            stack.append(item.module)
+            return seen
+        added = closure(['character_zoning']) - closure(['character_reopen_diagnostic'])
+        staged = set(stage_app_assets.GUEST_DEPENDENCIES) | set(stage_app_assets.ZONING_HELPERS)
+        self.assertLessEqual({name + '.py' for name in added}, staged)
+        host = (ROOT / 'armport/app/interactive_host.py').read_text()
+        self.assertIn('zoning=stock_travel_requested())', host)
+
     def test_ci_input_requires_the_external_maps_dbserver(self):
         import os
         from unittest.mock import patch
