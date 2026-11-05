@@ -35,6 +35,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         void onPointer(String session, int x, int y, int buttons);
         void onReleaseAll(String session);
         void onCursor(float x, float y, boolean visible);
+        /** One mouse-wheel tick at the cursor (RFB button 4 up, 5 down). */
+        default void onWheel(String session, int x, int y, boolean up) {}
     }
 
     public static final class Capture {
@@ -541,6 +543,14 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         if (controllerButtons == buttons) return;
         controllerButtons = buttons;
         sendPointer();
+    }
+    /** Controller wheel actions: at most ten ticks per call, at the current cursor. */
+    public void wheel(int amount) {
+        if (!inputEnabled || !ready || amount == 0) return;
+        Session selected = session;
+        if (selected == null || inputListener == null) return;
+        for (int i = 0; i < Math.min(10, Math.abs(amount)); i++)
+            inputListener.onWheel(selected.id, (int) pointerX, (int) pointerY, amount > 0);
     }
     public void releaseInput() {
         boolean wasHeld = touchHeld || controllerButtons != 0;

@@ -1,4 +1,8 @@
-"""Execute shipped sidebar readiness and controller edges against host UI adapters."""
+"""Execute shipped sidebar readiness and controller edges against host UI adapters.
+
+Controller buttons reach the game through the shipped ControllerInput model, its default
+profile and the activity's ControllerBridge target; only the Android device adapter is a stub.
+"""
 from pathlib import Path
 import subprocess
 import sys
@@ -13,6 +17,8 @@ from test_storage_ui import production_method
 HOST = r'''
 import java.util.*;
 import io.github.russianranger.cohclientinteractive.ClientInput;
+import io.github.russianranger.cohclientinteractive.ControllerBridge;
+import io.github.russianranger.cohclientinteractive.ControllerInput;
 class SystemClock {static long now=100;static long uptimeMillis(){return now;}}
 class Toast {static final int LENGTH_SHORT=0;static Toast makeText(Object owner,String text,int length){return new Toast();}void show(){}}
 class Button {
@@ -39,6 +45,20 @@ class KeyEvent {
     KeyEvent(int code,int action,int repeat,int source,int unicode){this.code=code;this.action=action;this.repeat=repeat;this.source=source;this.unicode=unicode;}
     int getKeyCode(){return code;}int getAction(){return action;}int getRepeatCount(){return repeat;}
     int getSource(){return source;}int getUnicodeChar(){return unicode;}
+}
+// The Android adapter's key path: mapped controller buttons only, repeats dropped.
+class ControllerManager {
+    final ControllerInput input;
+    ControllerManager(ControllerInput.Sink sink){input=new ControllerInput(sink);}
+    void capture(boolean active){input.activate(false);input.activate(active);}
+    int layerCount(){return input.layerCount();}
+    boolean key(KeyEvent event){
+        if((event.getSource()&InputDevice.SOURCE_GAMEPAD)!=InputDevice.SOURCE_GAMEPAD||!input.active())return false;
+        String source=ControllerInput.keySource(event.getKeyCode());
+        if(source==null)return false;
+        if(event.getAction()==KeyEvent.ACTION_DOWN&&event.getRepeatCount()>0)return true;
+        input.value(source,event.getAction()==KeyEvent.ACTION_DOWN?1:0);return true;
+    }
 }
 class BaseActivity {
     boolean focus=true;boolean hasWindowFocus(){return focus;}
@@ -75,6 +95,7 @@ class Surface {
     final HostActivity ui;boolean enabled=true;int buttons;
     Surface(HostActivity value){ui=value;}
     void setControllerButtons(int value){buttons=value;}
+    void movePointer(float dx,float dy){}void wheel(int amount){}
     void setInputEnabled(boolean value){if(enabled&&!value)releaseInput();enabled=value;}
     void releaseInput(){ui.onReleaseAll(ui.shownSession);}
 }
@@ -91,10 +112,13 @@ class HostActivity extends BaseActivity {
     final ClientInput.StartButton startButton=new ClientInput.StartButton();
     final Set<Integer> heldButtons=new HashSet<>();
     final List<Button> movementButtons=new ArrayList<>();
+    ControllerManager controller;final ControllerBridge controllerOutput=new ControllerBridge(controllerTarget());
+    boolean controllerCapturing,mappingsOpen,menuOpen,controlsDragging;
+    void setMenuOpen(boolean open){menuOpen=open;}void immersive(){}void cancelControlsGesture(){}void showLayer(int index,String name){}
     Button button(String name,Runnable action){return new Button(name,action);}
     void showTextInput(){++textRequests;}
     void refreshZoningControls(){}
-    HostActivity(){LinearLayout controls=new LinearLayout(this);BUILD_CONTROLS}
+    HostActivity(){LinearLayout controls=new LinearLayout(this);BUILD_CONTROLS controller=new ControllerManager(controllerOutput);refreshControllerCapture();}
     PRODUCTION_METHODS
     void refresh(){refreshDeadlineControls();}
     void command(ClientInput.PerformanceCommand value){sendPerformanceCommand(value);}
@@ -219,7 +243,9 @@ class SidebarCommandTests(unittest.TestCase):
             'private void releaseRemoteInputs(', 'private void resetLocalInputs(',
             'private void releaseControls()', 'private void releaseControls(boolean',
             '@Override public boolean dispatchKeyEvent(', '@Override public void onWindowFocusChanged(',
-            '@Override public void onReleaseAll(String session)')]
+            '@Override public void onReleaseAll(String session)', 'private ControllerBridge.Target controllerTarget(',
+            'private void controllerCommand(', 'private boolean controllerCaptures(', 'private void refreshControllerCapture(',
+            'private boolean controllerKey(')]
         start = text.index('        typeText=button("Send text / L3"')
         end = text.index('        controls.addView(text("Atlas movement', start)
         cls.directory = tempfile.TemporaryDirectory(prefix='coh-sidebar-ui-')
@@ -228,7 +254,8 @@ class SidebarCommandTests(unittest.TestCase):
         host.write_text(HOST.replace('PRODUCTION_METHODS', '\n'.join(methods))
             .replace('BUILD_CONTROLS', text[start:end]))
         subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
-            '-d', str(cls.path), str(JAVA/'ClientInput.java'), str(host)],
+            '-d', str(cls.path), str(JAVA/'ClientInput.java'), str(JAVA/'ControllerInput.java'),
+            str(JAVA/'ControllerBridge.java'), str(host)],
             check=True, capture_output=True, text=True)
 
     @classmethod

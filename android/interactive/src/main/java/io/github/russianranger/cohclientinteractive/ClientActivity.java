@@ -3,8 +3,16 @@ package io.github.russianranger.cohclientinteractive;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.content.*;
@@ -20,7 +28,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import io.github.russianranger.cohdiagnostic.AssetPackStore;
 
-/** Bounded touch, keyboard and Thor controller session for initial Atlas gameplay. */
+/** Bounded touch, keyboard and Thor controller session for initial Atlas gameplay.
+ * The game fills the window; launcher options live in a movable gear's overlay menu. */
 public final class ClientActivity extends Activity {
     private static final int EXPORT=11,NOTIFY=12,IMPORT=13,STORAGE_EXPORT=14;
     private ClientService service;
@@ -36,20 +45,34 @@ public final class ClientActivity extends Activity {
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
     private final ClientInput.KeyOwners heldKeys=new ClientInput.KeyOwners();
-    private final ClientInput.WalkingKeys walkingKeys=new ClientInput.WalkingKeys();
-    private final ClientInput.StartButton startButton=new ClientInput.StartButton();
     private final List<Button> movementButtons=new ArrayList<>();
+    /** RFB button bits (1 left, 2 middle, 4 right) currently held by the controller. */
     private final Set<Integer> heldButtons=new HashSet<>();
-    private float rightX,rightY;
     private boolean inputActive,textDialogVisible,movementSuppressed,deadlineMovementSuppressed;
     private boolean orderedInputRelease;
     private AlertDialog activeTextDialog;
-    private long lastTick;
     private final Runnable inputTick=new Runnable(){@Override public void run(){
-        long now=SystemClock.uptimeMillis();float elapsed=Math.min(64,Math.max(0,now-lastTick));lastTick=now;
-        if(gameInputOpen()&&hasWindowFocus()&&!textDialogVisible&&(rightX!=0||rightY!=0))display.movePointer(rightX*elapsed*0.55f,rightY*elapsed*0.55f);
-        refreshDeadlineControls();refreshTestControls();updateCounter();inputHandler.postDelayed(this,32);
+        refreshDeadlineControls();refreshTestControls();updateCounter();controllerOutput.refresh();inputHandler.postDelayed(this,32);
     }};
+    // Saved controller profile (controller.json) and its COH output; capture follows the game view.
+    private ControllerManager controller;
+    private final ControllerBridge controllerOutput=new ControllerBridge(controllerTarget());
+    private boolean controllerCapturing,mappingsOpen;
+    // Floating gear and overlay menu (ported from TRASC's ClientActivity).
+    private static final String CONTROLS_PREFIX="coh.";
+    private FrameLayout controlsHost,menuLayer;
+    private LinearLayout menuPanel;
+    private ImageButton gear;
+    private Button resumeGame;
+    private TextView layerBanner;
+    private FrameLayout.LayoutParams gearPosition;
+    private SharedPreferences controlsPreferences;
+    private float controlsX=1f,controlsY;
+    private int controlsInsetLeft,controlsInsetTop,controlsInsetRight,controlsInsetBottom;
+    private boolean menuOpen,controlsDragging;
+    private String menuClosedSession="";
+    private ClientOverlayPosition.Drag controlsDrag;
+    private final Runnable hideLayer=()->{if(layerBanner!=null)layerBanner.animate().alpha(0f).setDuration(250).start();};
     private boolean bound,exporting,captureEnabled,importWaiting;
     private Button startTest,stopTest;
     private TextView assetPackStatus;
@@ -72,19 +95,37 @@ public final class ClientActivity extends Activity {
     };
     private final ServiceConnection connection=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();dispatchPendingExport();}
-        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);startButton.reset();inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;refreshPerformanceControls();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
+        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;refreshPerformanceControls();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");refreshOverlayMenu();}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if(saved!=null){pendingExport=saved.getString("export");pendingStorageExport=saved.getString("storage_export");pendingExportSource=saved.getString("export_source");String destination=saved.getString("export_destination");if(destination!=null)pendingExportDestination=android.net.Uri.parse(destination);pendingAction=saved.getString("action");importWaiting=saved.getBoolean("import_waiting",false);String selected=saved.getString("import_uri");if(selected!=null)pendingImport=android.net.Uri.parse(selected);}
-        LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.HORIZONTAL);root.setBackgroundColor(Color.rgb(9,19,30));root.setPadding(dp(12),dp(8),dp(12),dp(8));
-        root.setOnApplyWindowInsetsListener((v,insets)->{v.setPadding(dp(12)+insets.getSystemWindowInsetLeft(),dp(8)+insets.getSystemWindowInsetTop(),dp(12)+insets.getSystemWindowInsetRight(),dp(8)+insets.getSystemWindowInsetBottom());return insets;});
-        LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
-        ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
+        // The 800x600 client is aspect-fitted into the whole window. The former sidebar's
+        // controls are unchanged inside the gear's scrolling menu panel.
+        FrameLayout root=new FrameLayout(this);root.setBackgroundColor(Color.BLACK);controlsHost=root;
+        controlsPreferences=getSharedPreferences("client-controls",MODE_PRIVATE);
+        controlsX=ClientOverlayPosition.normalized(controlsPreferences.getFloat(CONTROLS_PREFIX+"x",1f),1f);
+        controlsY=ClientOverlayPosition.normalized(controlsPreferences.getFloat(CONTROLS_PREFIX+"y",0f),0f);
+        controlsDrag=new ClientOverlayPosition.Drag(ViewConfiguration.get(this).getScaledTouchSlop());
+        display=new ClientSurface(this);root.addView(display,new FrameLayout.LayoutParams(-1,-1));
+        cursor=new CursorOverlay();root.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
+        // A separate overlay never changes the client's size or touch map.
+        menuLayer=new FrameLayout(this);menuLayer.setVisibility(View.GONE);menuLayer.setOnClickListener(v->setMenuOpen(false));
+        root.addView(menuLayer,new FrameLayout.LayoutParams(-1,-1));
+        LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(dp(12),dp(8),dp(12),dp(12));
+        controls.setBackground(panelBackground(0xf0091320));controls.setOnClickListener(v->{});menuPanel=controls;
+        ScrollView scroll=new ScrollView(this);scroll.addView(controls);
+        final FrameLayout.LayoutParams panel=new FrameLayout.LayoutParams(dp(300),-2,Gravity.TOP|Gravity.RIGHT);
+        panel.setMargins(dp(12),dp(68),dp(12),dp(12));menuLayer.addView(scroll,panel);
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
         String version="unknown";
         try{version=getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(PackageManager.NameNotFoundException ignored){}
         controls.addView(text("Persistent local server · v"+version,12,false));
+        resumeGame=button("Resume game",()->setMenuOpen(false));resumeGame.setEnabled(false);controls.addView(resumeGame);
+        controls.addView(button("Controller mappings",this::controllerDialog));
+        controls.addView(text("Default controller: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter. Triggers are unbound. The COH power trays preset adds hold LT for 1–0 and Select for this menu; Back or the gear also opens it.",12,false));
+        controls.addView(button("Move options button",this::controlsPositionDialog));
+        controls.addView(button("Reset options button position",()->{controlsX=1f;controlsY=0f;positionControls();saveControlsPosition();}));
         controls.addView(text("Reopen THORHERO and test the Atlas Park–Kings Row monorail. Keep the accepted graphics settings, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import asset pack part",this::chooseImport);controls.addView(importAssets);
@@ -214,19 +255,17 @@ public final class ClientActivity extends Activity {
         counter=text("Waiting for the client",12,false);controls.addView(counter);
         controls.addView(text("Import every required asset-pack part, then apply Set up / update runtime. On a fresh install, create THORHERO and complete its ordinary save before Reopen. Use COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Reopen starts in THORHERO's saved destination. Use the actual monorail when ready to travel; preparation happens on demand. Tap Start test when ready and Stop test when finished; neither starts a countdown. When ready to save, release controls, Save character / log out, wait for Saved character verified, then Finish and Reports / export. Recover interrupted reports after an interruption. Export early if loading stalls; Reopen resumes the last verified save.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
-        LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
-        TextView caption=text("CITY OF HEROES · PARAGON CITY",12,true);right.addView(caption);
-        FrameLayout viewport=new FrameLayout(this);right.addView(viewport,new LinearLayout.LayoutParams(-1,0,1));
-        display=new ClientSurface(this);viewport.addView(display,new FrameLayout.LayoutParams(-1,-1));
-        cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
         display.setInputListener(new ClientSurface.InputListener(){
             @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
             @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!orderedInputRelease&&!textDialogVisible&&!movementSuppressed&&!commandInputBusy());}
             @Override public void onCursor(float x,float y,boolean visible){cursor.move(x,y,visible);}
+            @Override public void onWheel(String session,int x,int y,boolean up){if(service!=null)service.sendWheel(session,x,y,up);}
         });
-        right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter",12,false));
+        buildOverlay(root,scroll,panel);
+        controller=new ControllerManager(this,new File(getFilesDir(),ControllerProfile.FILE_NAME),controllerOutput);
+        if(!controller.loadError().isEmpty())Toast.makeText(this,controller.loadError()+" · using the default bindings",Toast.LENGTH_LONG).show();
 
-        startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
+        startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();immersive();setMenuOpen(true);setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -319,8 +358,11 @@ public final class ClientActivity extends Activity {
     }
     private void refreshMovementControls(){
         boolean enabled=canWalk();
-        if(!enabled){walkingKeys.update(0,0,false,heldKeys,this::sendOwnedKey);for(int owner=120001;owner<=120005;owner++)releaseKey(owner);releaseKey(KeyEvent.KEYCODE_BUTTON_X);}
+        if(!enabled)for(int owner=120001;owner<=120005;owner++)releaseKey(owner);
+        // Controller walking keys and jump follow the same gate (see ControllerBridge.refresh).
+        controllerOutput.refresh();
         for(Button b:movementButtons){b.setEnabled(enabled);if(!enabled)b.setPressed(false);}
+        refreshControllerCapture();
     }
     private void saveCharacter(){
         if(commandInputBusy())return;
@@ -328,8 +370,8 @@ public final class ClientActivity extends Activity {
         if(service==null||!service.requestSaveLogout()){movementSuppressed=before;refreshMovementControls();}
     }
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
-    @Override protected void onStart(){super.onStart();lastTick=SystemClock.uptimeMillis();inputHandler.post(inputTick);bound=bindService(new Intent(this,ClientService.class),connection,BIND_AUTO_CREATE);}
-    @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls(true);startButton.reset();display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
+    @Override protected void onStart(){super.onStart();inputHandler.post(inputTick);bound=bindService(new Intent(this,ClientService.class),connection,BIND_AUTO_CREATE);}
+    @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);cancelControlsGesture();releaseControls(true);stopControllerCapture();display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
     private boolean profileIdle(ClientService.State next){
         return next!=null&&service!=null&&!next.busy&&!next.storageBusy&&!next.reportExporting
                 &&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();
@@ -383,7 +425,7 @@ public final class ClientActivity extends Activity {
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
         if(inputActive&&!enabled)releaseControls();inputActive=enabled;display.setInputEnabled(enabled);
         finish.setEnabled(enabled&&next.characterSaved);typeText.setEnabled(enabled);returnGround.setEnabled(enabled&&next.canReturnGround);saveLogout.setEnabled(enabled&&next.canSaveLogout&&service!=null&&service.canRequestSaveLogout());
-        refreshMovementControls();refreshDeadlineControls();
+        refreshMovementControls();refreshDeadlineControls();refreshOverlayMenu();
     }
     private void setTextIfChanged(TextView view,String value){if(!android.text.TextUtils.equals(view.getText(),value))view.setText(value);}
     /** Failed-session diagnostics stay accessible; live ownership still excludes file work. */
@@ -464,7 +506,7 @@ public final class ClientActivity extends Activity {
     }
     private void releaseControls(){releaseControls(!textDialogVisible);}
     private void resetLocalInputs(){
-        rightX=rightY=0;walkingKeys.reset();heldKeys.clear();heldButtons.clear();for(Button b:movementButtons)b.setPressed(false);
+        heldKeys.clear();heldButtons.clear();for(Button b:movementButtons)b.setPressed(false);
     }
     private void releaseControls(boolean discardPending){
         resetLocalInputs();
@@ -474,28 +516,15 @@ public final class ClientActivity extends Activity {
         try{if(display!=null)display.releaseInput();}finally{orderedInputRelease=previous;}
         releaseRemoteInputs(shownSession,discardPending);
     }
-    @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(!focus){releaseControls();startButton.reset();}refreshMovementControls();refreshPerformanceControls();}
+    @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(!focus){cancelControlsGesture();releaseControls();}else if(!textDialogVisible)immersive();refreshMovementControls();refreshPerformanceControls();}
     @Override public boolean dispatchKeyEvent(KeyEvent event){
-        if((event.getSource()&InputDevice.SOURCE_GAMEPAD)==InputDevice.SOURCE_GAMEPAD
-                &&event.getKeyCode()==KeyEvent.KEYCODE_BUTTON_START){
-            if(event.getAction()==KeyEvent.ACTION_UP){startButton.release();return true;}
-            if(event.getAction()==KeyEvent.ACTION_DOWN){
-                if(startButton.press(event.getRepeatCount())&&ownedInputOpen())sendEnter();
-                return true;
-            }
-        }
-        if(!gameInputOpen()||textDialogVisible||service==null)return super.dispatchKeyEvent(event);
+        // The first controller follows the saved profile (default: the earlier fixed mapping).
+        if(controllerKey(event))return true;
+        // The open overlay menu suspends game keys; Back toggles the menu.
+        if(menuOpen||!gameInputOpen()||textDialogVisible||service==null)return super.dispatchKeyEvent(event);
         int code=event.getKeyCode();boolean down=event.getAction()==KeyEvent.ACTION_DOWN;
         if(event.getAction()!=KeyEvent.ACTION_DOWN&&event.getAction()!=KeyEvent.ACTION_UP)return super.dispatchKeyEvent(event);
         boolean gamepad=(event.getSource()&InputDevice.SOURCE_GAMEPAD)==InputDevice.SOURCE_GAMEPAD;
-        if(gamepad&&(code==KeyEvent.KEYCODE_BUTTON_A||code==KeyEvent.KEYCODE_BUTTON_L1||code==KeyEvent.KEYCODE_BUTTON_R1)){
-            if(down)heldButtons.add(code);else heldButtons.remove(code);
-            int buttons=(heldButtons.contains(KeyEvent.KEYCODE_BUTTON_A)?1:0)
-                    |((heldButtons.contains(KeyEvent.KEYCODE_BUTTON_L1)||heldButtons.contains(KeyEvent.KEYCODE_BUTTON_R1))?4:0);
-            display.setControllerButtons(buttons);return true;
-        }
-        if(gamepad&&code==KeyEvent.KEYCODE_BUTTON_THUMBL){if(down&&event.getRepeatCount()==0)showTextInput();return true;}
-        if(gamepad&&code==KeyEvent.KEYCODE_BUTTON_X){if(down&&canWalk())pressKey(code,' ');else releaseKey(code);return true;}
         int keysym=0;
         switch(code){
             case KeyEvent.KEYCODE_DPAD_LEFT:keysym=0xff51;break;case KeyEvent.KEYCODE_DPAD_UP:keysym=0xff52;break;
@@ -513,21 +542,162 @@ public final class ClientActivity extends Activity {
         if(keysym==0)return super.dispatchKeyEvent(event);
         if(down)pressKey(code,keysym);else releaseKey(code);return true;
     }
-    @Override public boolean onGenericMotionEvent(MotionEvent event){
-        if(!gameInputOpen()||textDialogVisible||(event.getSource()&InputDevice.SOURCE_JOYSTICK)!=InputDevice.SOURCE_JOYSTICK)
-            return super.onGenericMotionEvent(event);
-        InputDevice device=event.getDevice();
-        int xAxis=device!=null&&device.getMotionRange(MotionEvent.AXIS_Z,event.getSource())!=null?MotionEvent.AXIS_Z:MotionEvent.AXIS_RX;
-        int yAxis=device!=null&&device.getMotionRange(MotionEvent.AXIS_RZ,event.getSource())!=null?MotionEvent.AXIS_RZ:MotionEvent.AXIS_RY;
-        rightX=ClientInput.axis(event.getAxisValue(xAxis));rightY=ClientInput.axis(event.getAxisValue(yAxis));
-        walkingKeys.update(event.getAxisValue(MotionEvent.AXIS_X),event.getAxisValue(MotionEvent.AXIS_Y),canWalk(),heldKeys,this::sendOwnedKey);
-        updateHat(100001,0xff51,event.getAxisValue(MotionEvent.AXIS_HAT_X)<-0.5f);
-        updateHat(100002,0xff53,event.getAxisValue(MotionEvent.AXIS_HAT_X)>0.5f);
-        updateHat(100003,0xff52,event.getAxisValue(MotionEvent.AXIS_HAT_Y)<-0.5f);
-        updateHat(100004,0xff54,event.getAxisValue(MotionEvent.AXIS_HAT_Y)>0.5f);
-        return true;
+    @Override public boolean dispatchGenericMotionEvent(MotionEvent event){
+        if(controllerCapturing&&controller!=null&&controller.motion(event))return true;
+        return super.dispatchGenericMotionEvent(event);
     }
-    private void updateHat(int physical,int key,boolean down){if(down)pressKey(physical,key);else releaseKey(physical);}
+    @Override public void onBackPressed(){
+        if(!menuOpen){setMenuOpen(true);return;}
+        if(gameSessionRunning()){setMenuOpen(false);return;}
+        super.onBackPressed();
+    }
+    /** ControllerInput outputs for COH: today's key owners, Surface buttons/cursor and the wheel. */
+    private ControllerBridge.Target controllerTarget(){return new ControllerBridge.Target(){
+        @Override public boolean keysOpen(){return gameInputOpen()&&!textDialogVisible&&service!=null;}
+        @Override public boolean walkOpen(){return canWalk();}
+        @Override public boolean holds(int owner){return heldKeys.contains(owner);}
+        @Override public void press(int owner,int keysym){pressKey(owner,keysym);}
+        @Override public void release(int owner){releaseKey(owner);}
+        @Override public void mouse(int button,boolean down){
+            if(down)heldButtons.add(button);else heldButtons.remove(button);
+            int mask=0;for(int held:heldButtons)mask|=held&7;
+            display.setControllerButtons(mask);
+        }
+        @Override public void pointer(float dx,float dy){if(gameInputOpen()&&hasWindowFocus()&&!textDialogVisible)display.movePointer(dx,dy);}
+        @Override public void wheel(int amount){if(gameInputOpen()&&hasWindowFocus()&&!textDialogVisible)display.wheel(amount);}
+        @Override public void command(String action){controllerCommand(action);}
+        @Override public void layer(int index,String name){showLayer(index,name);}
+    };}
+    private void controllerCommand(String action){
+        if("ClientMenu".equals(action))setMenuOpen(true);
+        else if("TextEntry".equals(action))showTextInput();
+        else if("SendEnter".equals(action)&&ownedInputOpen())sendEnter();
+    }
+    /** Capture only while the game view is in front: no menu, dialog or gear drag. */
+    private boolean controllerCaptures(){return hasWindowFocus()&&!menuOpen&&!textDialogVisible&&!mappingsOpen&&!controlsDragging;}
+    private void refreshControllerCapture(){
+        boolean capture=controllerCaptures();
+        if(capture==controllerCapturing)return;
+        controllerCapturing=capture;if(controller!=null)controller.capture(capture);
+    }
+    private void stopControllerCapture(){if(controllerCapturing){controllerCapturing=false;if(controller!=null)controller.capture(false);}}
+    private boolean controllerKey(KeyEvent event){return controllerCapturing&&controller!=null&&controller.key(event);}
+    private void controllerDialog(){
+        if(controller==null||mappingsOpen)return;
+        mappingsOpen=true;refreshControllerCapture();
+        try{new ControllerDialog(this,controller,()->{mappingsOpen=false;refreshControllerCapture();if(hasWindowFocus())immersive();}).show();}
+        catch(RuntimeException failure){mappingsOpen=false;refreshControllerCapture();Toast.makeText(this,"Could not open controller mappings.",Toast.LENGTH_SHORT).show();}
+    }
+    private void showLayer(int index,String name){
+        if(layerBanner==null||controller==null||controller.layerCount()<2)return;
+        inputHandler.removeCallbacks(hideLayer);layerBanner.animate().cancel();layerBanner.setText("Layer "+(index+1)+" · "+name);layerBanner.setAlpha(1f);
+        inputHandler.postDelayed(hideLayer,1500);
+    }
+
+    /** True while a client session can show frames; otherwise the menu stays open as the launcher. */
+    private boolean gameSessionRunning(){return service!=null&&state!=null&&state.busy&&!state.session.isEmpty();}
+    /** Close the menu once when a session's input first opens; reopen it when the session ends. */
+    private void refreshOverlayMenu(){
+        boolean running=gameSessionRunning();
+        if(running&&inputActive&&!shownSession.isEmpty()&&!shownSession.equals(menuClosedSession)){menuClosedSession=shownSession;setMenuOpen(false);}
+        else if(!running&&!menuOpen)setMenuOpen(true);
+        if(resumeGame!=null)resumeGame.setEnabled(running);
+    }
+    private void setMenuOpen(boolean open){
+        if(!open&&!gameSessionRunning())open=true;
+        boolean changed=open!=menuOpen;menuOpen=open;
+        if(menuLayer!=null)menuLayer.setVisibility(open?View.VISIBLE:View.GONE);
+        if(gear!=null){gear.setContentDescription((open?"Close options":"Open options")+". Drag to move.");gear.setAlpha(open?1f:.78f);}
+        if(resumeGame!=null)resumeGame.setEnabled(gameSessionRunning());
+        // Opening releases held game input in order (a queued field tap still lands first).
+        if(open&&changed)releaseControls(false);
+        refreshControllerCapture();
+        if(open&&changed&&menuPanel!=null){if(resumeGame!=null&&resumeGame.isEnabled())resumeGame.requestFocus();else menuPanel.requestFocus();}
+        else if(!open&&changed&&display!=null)display.requestFocus();
+    }
+    private void buildOverlay(FrameLayout root,ScrollView scroll,FrameLayout.LayoutParams panel){
+        gear=new ImageButton(this);gear.setImageDrawable(new GearDrawable(dp(24)));gear.setPadding(dp(12),dp(12),dp(12),dp(12));
+        gear.setContentDescription("Open options. Drag to move.");gear.setTooltipText("Options · drag to move");
+        gear.setBackground(new RippleDrawable(ColorStateList.valueOf(0x55ffffff),panelBackground(0x6010191c),null));
+        gear.setOnClickListener(v->setMenuOpen(!menuOpen));
+        gear.setOnTouchListener((view,event)->dragControls(event));
+        gearPosition=new FrameLayout.LayoutParams(dp(48),dp(48),Gravity.TOP|Gravity.LEFT);
+        root.addView(gear,gearPosition);
+        root.addOnLayoutChangeListener((view,l,t,r,b,oldL,oldT,oldR,oldB)->{if(r-l!=oldR-oldL||b-t!=oldB-oldT){cancelControlsGesture();positionControls();}});
+        layerBanner=new TextView(this);layerBanner.setTextColor(0xb3ffffff);layerBanner.setTextSize(16);layerBanner.setGravity(Gravity.CENTER);layerBanner.setPadding(dp(12),dp(6),dp(12),dp(6));
+        layerBanner.setBackground(panelBackground(0x28081010));layerBanner.setShadowLayer(dp(2),0,dp(1),0x66000000);layerBanner.setAlpha(0f);layerBanner.setMaxLines(1);layerBanner.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        layerBanner.setClickable(false);layerBanner.setFocusable(false);
+        final FrameLayout.LayoutParams layerPosition=new FrameLayout.LayoutParams(-2,-2,Gravity.TOP|Gravity.CENTER_HORIZONTAL);layerPosition.topMargin=dp(12);root.addView(layerBanner,layerPosition);
+        // Keep the gear and menu clear of display cutouts and temporarily revealed bars.
+        root.setOnApplyWindowInsetsListener((view,insets)->{
+            int left=insets.getSystemWindowInsetLeft(),top=insets.getSystemWindowInsetTop(),right=insets.getSystemWindowInsetRight(),bottom=insets.getSystemWindowInsetBottom();
+            if(Build.VERSION.SDK_INT>=28&&insets.getDisplayCutout()!=null){DisplayCutout cutout=insets.getDisplayCutout();left=Math.max(left,cutout.getSafeInsetLeft());top=Math.max(top,cutout.getSafeInsetTop());right=Math.max(right,cutout.getSafeInsetRight());bottom=Math.max(bottom,cutout.getSafeInsetBottom());}
+            if(controlsInsetLeft!=left||controlsInsetTop!=top||controlsInsetRight!=right||controlsInsetBottom!=bottom)cancelControlsGesture();
+            controlsInsetLeft=left;controlsInsetTop=top;controlsInsetRight=right;controlsInsetBottom=bottom;positionControls();
+            panel.setMargins(dp(12)+left,dp(68)+top,dp(12)+right,dp(12)+bottom);scroll.setLayoutParams(panel);
+            layerPosition.topMargin=dp(12)+top;layerBanner.setMaxWidth(Math.max(dp(1),getResources().getDisplayMetrics().widthPixels-dp(140)-left-right));layerBanner.setLayoutParams(layerPosition);
+            return insets;
+        });
+    }
+    private ClientOverlayPosition.Area controlsArea(){return new ClientOverlayPosition.Area(controlsHost.getWidth(),controlsHost.getHeight(),controlsInsetLeft,controlsInsetTop,controlsInsetRight,controlsInsetBottom,dp(12),dp(48),dp(48));}
+    private void positionControls(){
+        if(gear==null||controlsHost==null||controlsHost.getWidth()==0||controlsHost.getHeight()==0)return;
+        ClientOverlayPosition.Placement position=controlsArea().place(controlsX,controlsY,0,dp(12),false);
+        if(gearPosition.leftMargin!=position.gearLeft||gearPosition.topMargin!=position.gearTop){gearPosition.setMargins(position.gearLeft,position.gearTop,0,0);gear.setLayoutParams(gearPosition);}
+    }
+    private void saveControlsPosition(){controlsPreferences.edit().putFloat(CONTROLS_PREFIX+"x",controlsX).putFloat(CONTROLS_PREFIX+"y",controlsY).apply();}
+    private boolean dragControls(MotionEvent event){
+        switch(event.getActionMasked()){
+            case MotionEvent.ACTION_DOWN:
+                controlsDrag.start(event.getRawX(),event.getRawY(),gearPosition.leftMargin,gearPosition.topMargin);gear.setPressed(true);return true;
+            case MotionEvent.ACTION_MOVE:
+                if(controlsDrag.move(event.getRawX(),event.getRawY())){
+                    if(!controlsDragging){controlsDragging=true;gear.setPressed(false);setMenuOpen(false);refreshControllerCapture();}
+                    ClientOverlayPosition.Point point=controlsDrag.position(event.getRawX(),event.getRawY());ClientOverlayPosition.Point normalized=controlsArea().normalize(point.x,point.y);controlsX=normalized.x;controlsY=normalized.y;positionControls();
+                }
+                return true;
+            case MotionEvent.ACTION_UP:
+                boolean click=controlsDrag.finish();gear.setPressed(false);finishControlsDrag();if(click)gear.performClick();return true;
+            case MotionEvent.ACTION_CANCEL:case MotionEvent.ACTION_POINTER_DOWN:case MotionEvent.ACTION_POINTER_UP:
+                cancelControlsGesture();return true;
+            default:return true;
+        }
+    }
+    private void finishControlsDrag(){if(controlsDragging){controlsDragging=false;saveControlsPosition();refreshControllerCapture();}}
+    private void cancelControlsGesture(){if(controlsDrag!=null)controlsDrag.cancel();if(gear!=null)gear.setPressed(false);finishControlsDrag();}
+    private void controlsPositionDialog(){
+        new AlertDialog.Builder(this).setTitle("Move options button").setItems(new String[]{"Upper left","Upper right","Lower left","Lower right","Center"},(dialog,which)->{
+            controlsX=which==4?.5f:which%2==0?0f:1f;controlsY=which==4?.5f:which<2?0f:1f;positionControls();saveControlsPosition();
+        }).setNegativeButton("Cancel",null).show();
+    }
+    private GradientDrawable panelBackground(int color){GradientDrawable background=new GradientDrawable();background.setColor(color);background.setCornerRadius(dp(16));return background;}
+    private void immersive(){
+        if(Build.VERSION.SDK_INT>=30){
+            getWindow().setDecorFitsSystemWindows(false);
+            WindowInsetsController insets=getWindow().getInsetsController();
+            if(insets!=null){insets.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);insets.hide(WindowInsets.Type.systemBars());}
+        }else getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+    }
+    /** TRASC's ic_client_gear vector (24-unit path, even-odd hole), drawn in code so the APK's
+     * resource table stays identical to the donor's. */
+    private static final class GearDrawable extends Drawable {
+        private static final float[] OUTLINE={10,2,14,2,14.6f,5,16,5.8f,18.9f,4.8f,21,8.3f,18.7f,10.3f,18.7f,13.7f,21,15.7f,18.9f,19.2f,16,18.2f,14.6f,19,14,22,
+            10,22,9.4f,19,8,18.2f,5.1f,19.2f,3,15.7f,5.3f,13.7f,5.3f,10.3f,3,8.3f,5.1f,4.8f,8,5.8f,9.4f,5};
+        private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);private final Path path=new Path();private final int size;
+        GearDrawable(int size){this.size=size;paint.setColor(0xE6FFFFFF);paint.setStyle(Paint.Style.FILL);}
+        @Override protected void onBoundsChange(Rect bounds){
+            path.reset();path.setFillType(Path.FillType.EVEN_ODD);
+            float scale=Math.min(bounds.width(),bounds.height())/24f,left=bounds.exactCenterX()-12*scale,top=bounds.exactCenterY()-12*scale;
+            for(int i=0;i<OUTLINE.length;i+=2){float x=left+OUTLINE[i]*scale,y=top+OUTLINE[i+1]*scale;if(i==0)path.moveTo(x,y);else path.lineTo(x,y);}
+            path.close();path.addCircle(left+12*scale,top+12*scale,4*scale,Path.Direction.CW);
+        }
+        @Override public void draw(Canvas canvas){canvas.drawPath(path,paint);}
+        @Override public void setAlpha(int alpha){paint.setAlpha(alpha*0xE6/255);invalidateSelf();}
+        @Override public void setColorFilter(ColorFilter filter){paint.setColorFilter(filter);invalidateSelf();}
+        @Override public int getOpacity(){return PixelFormat.TRANSLUCENT;}
+        @Override public int getIntrinsicWidth(){return size;}
+        @Override public int getIntrinsicHeight(){return size;}
+    }
     /** Overlay is outside SurfaceView; it is not included in client PixelCopy evidence. */
     private final class CursorOverlay extends View{
         private final Paint paint=new Paint();private float x,y;private boolean visible;
@@ -672,5 +842,5 @@ public final class ClientActivity extends Activity {
         }catch(RuntimeException failure){Toast.makeText(this,"Export could not start. The private report is retained.",Toast.LENGTH_LONG).show();}
     }
     @Override protected void onSaveInstanceState(Bundle out){out.putString("export",pendingExport);out.putString("storage_export",pendingStorageExport);out.putString("export_source",pendingExportSource);out.putString("export_destination",pendingExportDestination==null?null:pendingExportDestination.toString());out.putString("action",pendingAction);out.putString("import_uri",pendingImport==null?null:pendingImport.toString());out.putBoolean("import_waiting",importWaiting);super.onSaveInstanceState(out);}
-    @Override protected void onDestroy(){if(activeTextDialog!=null)activeTextDialog.dismiss();if(storageDialog!=null)storageDialog.dismiss();super.onDestroy();}
+    @Override protected void onDestroy(){if(activeTextDialog!=null)activeTextDialog.dismiss();if(storageDialog!=null)storageDialog.dismiss();inputHandler.removeCallbacks(hideLayer);if(layerBanner!=null)layerBanner.animate().cancel();if(controller!=null)controller.close();super.onDestroy();}
 }
