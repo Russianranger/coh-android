@@ -23,6 +23,7 @@ import character_zoning_scheduler as scheduler
 import native_monorail_events as monorail_events
 import native_monorail_contract as monorail_contract
 import zone_travel
+import zone_index
 
 base, require = character.base, character.require
 MAPS = {1: {'name': 'Atlas Park', 'port': 7001, 'instance': 1, 'world': 'City_01_01'},
@@ -191,6 +192,27 @@ def supported(map_id):
 
 def zone_name(map_id):
     return MAPS[map_id]['name'] if map_id in MAPS else 'Zone %d' % map_id
+
+
+def register_zone(map_id):
+    """A static zone served from the shared zone tree, known for this session.
+
+    Atlas (1, 101) and King's Row (5) keep their fixed entries; every other
+    static map in zone_index gets instance 1 and a port at its first launch.
+    """
+    if map_id in MAPS:
+        return MAPS[map_id]
+    require(type(map_id) is int and map_id in zone_index.ZONES, 'Unknown static zone')
+    key, world, _ = zone_index.ZONES[map_id]
+    MAPS[map_id] = {'name': key, 'port': None, 'instance': 1, 'world': world, 'shared_zone_tree': True}
+    return MAPS[map_id]
+
+
+def free_zone_port(used):
+    for port in range(zone_travel.FIRST_FREE_PORT, zone_travel.LAST_PORT + 1):
+        if port not in used:
+            return port
+    raise base.DiagnosticError('No free zone server port')
 
 
 def connected(sample, map_id):
@@ -989,6 +1011,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
                 'Zoning character position fields differ')
         value = values[0]
+        if (type(value.get('staticmapid')) is int and value['staticmapid'] not in MAPS
+                and value['staticmapid'] in zone_index.ZONES
+                and getattr(self, 'zone_asset_document', None) is not None):
+            register_zone(value['staticmapid'])   # saved in a zone served by the shared tree
         require(type(value['containerid']) is int and value['containerid'] == 1
             and supported(value['staticmapid'])
             and (type(value['mapid']) is int and value['mapid'] == value['staticmapid']
@@ -1023,7 +1049,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     'Initial character connection differs from the saved destination')
             startup['character_world_entry_verified'] = True
         return dict(metadata, connected_on_supported_map=True, zoning_enabled=True,
-                    monorail_enabled=self.monorail_enabled())
+                    monorail_enabled=self.monorail_enabled(),
+                    stock_travel=getattr(self, 'stock', {}).get('enabled') is True)
 
     def _remember_active(self):
         self.maps[self.active_map_id] = {'process': self.map_process, 'progress_path': self.map_progress_path,
@@ -1246,9 +1273,15 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2,
                 'Duplicate or unreviewed zoning MapServer launch')
         require(cookie is None or type(cookie) is int and 0 < cookie < 2 ** 31, 'Invalid map start cookie')
-        port = MAPS[map_id]['port'] if port is None else port
+        if port is None:
+            port = MAPS[map_id]['port'] or free_zone_port({owned.get('port', MAPS.get(other, {}).get('port'))
+                                                          for other, owned in self.maps.items()})
+        if MAPS[map_id].get('shared_zone_tree'):
+            MAPS[map_id]['port'] = port
         timing = self.map_startup_timing(map_id)
         def prepare_destination():
+            if MAPS[map_id].get('shared_zone_tree'):
+                return self.prepare_zone_runtime()['runtime']
             if map_id != 5:
                 return self.prepare_atlas_runtime()
             self.wait_background_prestart()
@@ -1916,8 +1949,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def zone_tree_for(self, map_id):
         if map_id in (1, 101):
             return 'atlas'
-        if map_id == 5 and getattr(self, 'monorail_qualified', False) is True:
-            return 'kings_row'
+        if map_id == 5:
+            return 'kings_row' if getattr(self, 'monorail_qualified', False) is True else None
+        if map_id in zone_index.ZONES and getattr(self, 'zone_asset_document', None) is not None:
+            return 'zones'
         return None
 
     def zone_servers(self):
@@ -1973,6 +2008,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         for other in plan['evict']:
             self._evict_map(other, 'room_for_' + str(map_id))
         started = time.monotonic()
+        if plan['tree'] == 'zones':
+            register_zone(map_id)
         self._spawn_map(map_id, cookie=entry['cookie'], port=plan['port'],
                         options=tuple(entry.get('options', {}).get('kept', ())))
         owned = self.maps[map_id]

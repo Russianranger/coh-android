@@ -117,7 +117,8 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             presentation_ready = getattr(self, 'presentation_ready_monotonic', None)
             require(session_budget.finite_seconds(presentation_ready),
                     'Reopen budget lacks the current owned presentation clock')
-            budget_options = ({'supported_maps': (1, 5, 101) if proof.get('monorail_enabled') is True
+            budget_options = ({'supported_maps': session_budget.STATIC_ZONES if proof.get('stock_travel') is True
+                               else (1, 5, 101) if proof.get('monorail_enabled') is True
                                else (1, 101)} if self.ZONING else {})
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
                 self.launcher_started_monotonic, self.ctx.deadline,

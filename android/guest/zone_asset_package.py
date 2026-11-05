@@ -144,19 +144,32 @@ def package(assets, *, audio=False):
     return result
 
 
-def install(worktree, assets, context, *, collision_only=False, audio=False):
+def install(worktree, assets, context, *, collision_only=False, audio=False, collision_names=None):
+    """Install the client resources, King's Row's collision leaves, or (collision_names)
+    the named collision leaves of the shared zone tree, all from the pinned archive."""
     started = time.monotonic()
     worktree, assets = Path(worktree), Path(assets)
     world.real_directory(worktree); world.real_directory(worktree / 'data')
     require(not (collision_only and audio), 'Audio cannot enter the Kings collision overlay')
+    require(collision_names is None or not (collision_only or audio), 'One collision selection at a time')
     document = package(assets, audio=audio)
     archive_name, manifest_name = document['archive_name'], document['manifest_name']
     archive_limit = MAX_AUDIO_ARCHIVE if audio else MAX_ARCHIVE
-    files = document['kings_row_collision_files'] if collision_only else document['files']
-    marker = worktree / ('kings-row-geometry-installed.json' if collision_only else
+    if collision_names is not None:
+        names = tuple(collision_names)
+        require(0 < len(names) == len(set(names)) <= 4096
+                and all(name in document['files'] and name.startswith('data/object_library/')
+                        and name.endswith('.geo') for name in names),
+                'Shared zone collision leaves are not all in the pinned zone archive')
+        files = {name: document['files'][name] for name in names}
+    else:
+        files = document['kings_row_collision_files'] if collision_only else document['files']
+    marker = worktree / ('zones-collision-installed.json' if collision_names is not None else
+                        'kings-row-geometry-installed.json' if collision_only else
                         'zones-audio-installed.json' if audio else 'zones-world-installed.json')
     identity = {'format': 1, 'version': VERSION, 'manifest': document['pins'][manifest_name],
-        'selection': 'kings_row_required_collision' if collision_only else
+        'selection': 'shared_zone_required_collision' if collision_names is not None else
+                     'kings_row_required_collision' if collision_only else
                      'all_zone_client_audio' if audio else 'all_zone_client_resources',
         'files_sha256': hashlib.sha256(canonical(files)).hexdigest(),
         'root': [[path.stat().st_dev, path.stat().st_ino] for path in (worktree, worktree / 'data')]}

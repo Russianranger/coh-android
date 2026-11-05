@@ -66,10 +66,12 @@ ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'a
                            # and the external-maps DbServer layer is installed.
                            'external_map_supervisor.py',
                            # 0.13.55: the game's own zone travel policy (COH_STOCK_TRAVEL=1).
-                           'zone_travel.py'})
+                           'zone_travel.py', 'zone_index.py'})
 CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_login_server.py', 'local_character_server.py', 'character_zoning.py',
                              'character_zoning_scheduler.py', 'client_visual_assets.py', 'zone_asset_package.py',
                              'native_training_save.py',
+                             # 0.13.55: the reopen budget accepts any static zone in stock travel.
+                             'character_reopen_diagnostic.py', 'character_session_budget.py',
                              'runtime-manifest.json', 'client-manifest.json',
                              'game_diagnostic.py', 'game_device_diagnostic.py', 'atlas_beacon_package.py',
                              'native_map_startup_contract.py', 'native_monorail_contract.py',

@@ -38,6 +38,9 @@ GUEST_DEPENDENCIES = (
     # The game's own zone travel policy (inert unless COH_STOCK_TRAVEL=1 and
     # the external-maps layer is installed); imported by character_zoning.
     'zone_travel.py',
+    # Every static zone and the shared zone tree's collision leaves; imported
+    # by character_zoning and character_session_budget.
+    'zone_index.py',
 )
 
 WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',

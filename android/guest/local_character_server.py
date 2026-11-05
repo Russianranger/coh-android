@@ -2716,6 +2716,115 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.kings_collision_input_proof = None
         return self.kings_row_prepared
 
+    def prepare_zone_runtime(self):
+        """One owned tree for every static zone other than Atlas and King's Row.
+
+        Built like King's Row's (the same mirror, schema, prepared caches, FX
+        catalog, animation pack and shared server folders), with the union of
+        every zone's extra collision leaves (zone_index.py) from the pinned
+        zone archive and no beacon graph yet: NPCs there do not path until
+        their graphs are generated. Each zone writes its own geobin/maps/<world>.
+        """
+        if getattr(self, 'zone_tree_prepared', None) is not None:
+            return self.zone_tree_prepared
+        import zone_asset_package
+        import zone_index
+        require(getattr(self, 'zone_asset_document', None) is not None,
+                'The shared zone tree requires the pinned all-zone package')
+        started = time.monotonic()
+        phase_at, phases = started, {}
+
+        def checkpoint(name):
+            nonlocal phase_at
+            now = time.monotonic()
+            phases[name], phase_at = round(now - phase_at, 6), now
+
+        target = self.runtime.with_name(self.runtime.name + '-zones')
+        require(not target.exists() and not target.is_symlink(), 'Shared zone runtime already exists')
+        target.mkdir(mode=0o700); (target / 'data').mkdir(mode=0o700)
+        self.zone_runtime = target
+        source_identity = (self.server_data_identity if hasattr(self, 'server_data_identity')
+                           else self.data_cache.identity)
+        shared_selection = source_identity.get('shared_server_data')
+        shared_folders = tuple(shared_selection['shared_top_level']) if shared_selection else ()
+        leaves = {name: self.zone_asset_document['files'][name] for name in zone_index.COLLISION_FILES}
+        if shared_folders:
+            (target / 'tools').mkdir(mode=0o700)
+            overlay_roots = {name.split('/')[1].casefold() for name in leaves if name.count('/') >= 2}
+            require(not overlay_roots & {name.casefold() for name in shared_folders},
+                    'Shared zone collision overlay would land in a shared server folder')
+        identity = dict(source_identity, map_scope='shared_static_zones_v1',
+                        zone_collision_sha256=zone_index.COLLISION_FILES_SHA256)
+        receipt = getattr(self, 'server_data_receipt', self.ctx.report.get('client_worktree', {}))
+        cache = server_data_cache.ServerDataCache(self.owner.root, identity,
+            self.owner.args.session_id, self.ctx,
+            legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
+        self.zone_data_cache = cache
+        reused = cache.checkout(target / 'data')
+        checkpoint('server_data_cache_checkout')
+        for name in self.schema['files']:
+            destination = target / name
+            destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name, destination, target)
+        if reused:
+            staged = dict(cache.record['stats'], linked_immutable_files=0, copied_private_files=0)
+        else:
+            staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache,
+                                         skip_top_level=shared_folders)
+        checkpoint('warm_schema_restore' if reused else 'cold_server_data_mirror')
+        geometry = zone_asset_package.install(target, self.owner.args.assets, self.ctx,
+                                              collision_names=zone_index.COLLISION_FILES)
+        checkpoint('shared_zone_collision_geometry')
+        if not reused:
+            known = set(cache.directory_names)
+            targets = world.resolve_targets(target, leaves, self.ctx)
+            for leaf in targets.values():
+                relative = leaf.relative_to(target / 'data')
+                for parent in reversed(relative.parents):
+                    name = '' if parent == Path('.') else parent.as_posix()
+                    if name not in known:
+                        cache.observe(parent, target / 'data' / parent, None, False); known.add(name)
+                        staged['directories'] += 1
+                cache.private_names.append(relative.as_posix())
+            staged['files'] += len(targets)
+            staged['bytes'] += sum(pin['bytes'] for pin in leaves.values())
+            staged['copied_private_files'] += len(targets)
+            cache.seal(target / 'data', staged)
+        checkpoint('server_data_receipt_seal')
+        shared_link = None
+        if shared_folders:
+            shared_link = self.link_shared_server_data(target, source_identity, map_label='shared zones')
+            checkpoint('shared_server_data_link')
+        dependencies = self.copy_kings_native_dependencies(target)
+        config = target / 'data/server/db/servers.cfg'
+        server_data_cache.ServerDataCache.restore_schema(self.runtime / 'data/server/db/servers.cfg', config, target)
+        checkpoint('native_dependencies_and_session_configuration')
+        cache_compatibility = server_cache_package.verify_mapserver_compatibility(target / 'MapServer.exe', self.map_package)
+        donor = server_cache_package.build_expected_identity(target / 'data', target / 'MapServer.exe',
+            mapserver_package=self.map_package)
+        prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
+            target / 'data', donor, context=self.ctx)
+        checkpoint('prepared_server_definition_caches')
+        fx_catalog = server_fx_catalog.install(self.owner.args.assets, target, context=self.ctx,
+            mapserver_package=self.map_package)
+        checkpoint('server_fx_catalog')
+        import server_animation_package
+        animation = server_animation_package.install(self.owner.args.assets / 'server-animations.pigg',
+            self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx,
+            mapserver_package=self.map_package)
+        checkpoint('server_animation_pack')
+        report = {'runtime': target.name, 'geometry': geometry, 'beacon_graph': None,
+            'native_dependencies': dependencies, 'server_data_cache': cache.summary,
+            'prepared_server_caches': prepared_caches, 'shared_server_data': shared_link,
+            'server_cache_native_compatibility': cache_compatibility,
+            'animation': animation, 'server_fx_catalog': fx_catalog,
+            'zone_index_sha256': zone_index.SOURCE_SHA256, 'collision_files': len(leaves),
+            'phase_seconds': dict(phases), 'elapsed_seconds': round(time.monotonic() - started, 6)}
+        self.creation_report['zone_tree_preparation'] = report
+        self.ctx.report['zone_tree_preparation'] = report
+        self.zone_tree_prepared = {'runtime': target, 'preparation': report}
+        return self.zone_tree_prepared
+
     def copy_private_data(self, source, target):
         return self.stage_map_data(source, target, force_private=True)
 

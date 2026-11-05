@@ -157,5 +157,38 @@ class StockTravelTests(unittest.TestCase):
         self.assertEqual(value.active_map_id, 5)
 
 
+
+class SharedZoneTreeTests(unittest.TestCase):
+    def tearDown(self):
+        for map_id in [m for m in zoning.MAPS if m not in (1, 5, 101)]:
+            del zoning.MAPS[map_id]
+
+    def test_other_static_zones_register_with_their_world_and_a_free_port(self):
+        entry = zoning.register_zone(6)
+        self.assertEqual((entry['name'], entry['world'], entry['instance'], entry['port']),
+                         ('steelcanyon', 'city_02_01', 1, None))
+        self.assertTrue(zoning.supported(6))
+        self.assertIs(zoning.register_zone(6), entry)
+        self.assertIs(zoning.register_zone(5), zoning.MAPS[5])
+        with self.assertRaises(zoning.base.DiagnosticError):
+            zoning.register_zone(2)
+        self.assertEqual(zoning.free_zone_port({7004, 7005}), 7006)
+        status = '6 maps/City_Zones/City_02_01/City_02_01.txt S: 1 / 2 Ip: 127.0.0.1:7004 Mem: 100\n'
+        entry['port'] = 7004
+        self.assertTrue(zoning.ready(zoning.parse_map_status(status, 6), 6))
+
+    def test_tree_choice(self):
+        helper = StockTravelTests('test_station_queue_off_and_policy_only_with_the_layer')
+        value = helper.instance()
+        self.addCleanup(helper.doCleanups)
+        value.zone_asset_document = None
+        self.assertEqual([value.zone_tree_for(m) for m in (1, 101, 5, 6)], ['atlas', 'atlas', 'kings_row', None])
+        value.zone_asset_document = {'files': {}}
+        self.assertEqual(value.zone_tree_for(6), 'zones')
+        self.assertIsNone(value.zone_tree_for(2))
+        value.monorail_qualified = False
+        self.assertIsNone(value.zone_tree_for(5))
+
+
 if __name__ == '__main__':
     unittest.main()

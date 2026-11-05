@@ -59,5 +59,31 @@ class Policy(unittest.TestCase):
             zone_travel.ZoneTravelPolicy(tree_for=dict.get, running=dict, occupied=lambda: None, capacity=0)
 
 
+
+class ZoneIndex(unittest.TestCase):
+    def test_index_is_the_all_map_closure(self):
+        import hashlib
+        import json
+        import zone_index
+        source = ROOT / 'docs/android-evidence/zone-assets-1.0.0-all-maps.json'
+        self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), zone_index.SOURCE_SHA256)
+        maps = json.loads(source.read_text())['maps']
+        self.assertEqual({row['map_id'] for row in maps}, set(zone_index.ZONES))
+        union = sorted({name for row in maps for name in row['new_geometry_files']})
+        self.assertEqual(list(zone_index.COLLISION_FILES), union)
+        self.assertEqual(hashlib.sha256(json.dumps(union, separators=(',', ':')).encode()).hexdigest(),
+                         zone_index.COLLISION_FILES_SHA256)
+        for row in maps:
+            key, world, complete = zone_index.ZONES[row['map_id']]
+            self.assertEqual((key, world, complete), (row['key'], row['map'].split('/')[-1][:-4],
+                                                      row['source_graph_complete']))
+        self.assertEqual(zone_index.world(6), 'city_02_01')
+
+    def test_session_budget_accepts_any_static_zone_only_in_stock_travel(self):
+        import character_session_budget as budget
+        self.assertTrue(budget.static_zone(6) and budget.static_zone(101) and budget.static_zone(626))
+        self.assertFalse(budget.static_zone(2) or budget.static_zone(True) or budget.static_zone('6'))
+
+
 if __name__ == '__main__':
     unittest.main()
