@@ -2,11 +2,13 @@ package io.github.russianranger.cohclientinteractive;
 
 import java.util.Map;
 
-/** Finite, session-owned instance and stock monorail transfers. */
+/** Finite, session-owned instance and stock monorail transfers; or the game's own zone travel. */
 public final class ClientZoning {
     private int epoch, currentMap, targetMap, captures;
-    private String phase="disabled", session, lastStatus="";
+    private String phase="disabled", session, lastStatus="", currentName="";
     private boolean monorail;
+    /** The game's own zone travel: doors, tunnels and the monorail move the player; the app only follows. */
+    private boolean stockTravel;
     private boolean monorailRequiresReopen;
     private long stationPid, stationRequest;
     private final java.util.Map<Long,Long> stationSequences=new java.util.HashMap<>();
@@ -17,13 +19,20 @@ public final class ClientZoning {
     public synchronized int captures(){return captures;}
     public synchronized String phase(){return phase;}
     public synchronized boolean enabled(){return !"disabled".equals(phase);}
-    public synchronized boolean blocksInput(){return monorail&&("preparing".equals(phase)||"ready".equals(phase))||"delivering".equals(phase)||"transferring".equals(phase)||"capturing".equals(phase)||"failed".equals(phase);}
+    public synchronized boolean stockTravel(){return stockTravel;}
+    public synchronized String currentName(){return currentName.isEmpty()?name(currentMap):currentName;}
+    public synchronized boolean blocksInput(){return !stockTravel&&(monorail&&("preparing".equals(phase)||"ready".equals(phase))||"delivering".equals(phase)||"transferring".equals(phase)||"capturing".equals(phase)||"failed".equals(phase));}
     public synchronized boolean stockMonorail(){return monorail;}
     public synchronized boolean monorailRequiresReopen(){return monorailRequiresReopen;}
     public synchronized boolean commandInFlight(){return "delivering".equals(phase);}
-    public synchronized boolean canPrepare(){return !monorail&&"idle".equals(phase)&&epoch<4;}
-    public synchronized boolean canTravel(){return !monorail&&"ready".equals(phase);}
+    public synchronized boolean canPrepare(){return !monorail&&!stockTravel&&"idle".equals(phase)&&epoch<4;}
+    public synchronized boolean canTravel(){return !monorail&&!stockTravel&&"ready".equals(phase);}
     public static boolean supported(int map){return map==1||map==5||map==101;}
+    /** maps.db static zones (ids 1-999, Atlas Park instance 2 is 101). */
+    public static boolean staticZone(long map){return map>=1&&map<=999;}
+    private static String zoneName(Object value){
+        return value instanceof String&&((String)value).matches("[A-Za-z0-9_' ]{1,48}")?(String)value:"";
+    }
     public static String name(int map){return map==5?"Kings Row":map==101?"Atlas Park instance 2":"Atlas Park";}
     private static long integer(Object value){return value instanceof Integer||value instanceof Long?((Number)value).longValue():-1;}
     private static boolean yes(Map<?,?> e,String key){return Boolean.TRUE.equals(e.get(key));}
@@ -53,6 +62,25 @@ public final class ClientZoning {
         String next=String.valueOf(e.get("status"));
         if(generated==eventUtc&&next.equals(lastStatus))return false;
         long mapValue=integer(e.get("current_map_id")),targetValue=integer(e.get("target_map_id"));
+        boolean stockEvent="stock_travel".equals(e.get("travel_method"));
+        if(stockEvent||stockTravel){
+            if(!stockEvent||!allowMonorail||!staticZone(mapValue)||targetValue!=mapValue)return false;
+            int map=(int)mapValue;
+            if("enabled".equals(next)){
+                if(enabled()||integer(e.get("epoch"))!=0||map!=connectedMap||!yes(e,"current_map_verified")
+                        ||!yes(e,"zoning_enabled"))return false;
+                stockTravel=true;monorail=false;monorailRequiresReopen=false;
+                session=selectedSession;pid=selectedPid;currentMap=targetMap=map;phase="idle";
+            }else if("arrived".equals(next)){
+                if(!stockTravel||!selectedSession.equals(session)||pid!=selectedPid
+                        ||integer(e.get("epoch"))!=epoch+1||map==currentMap||!"idle".equals(phase)
+                        ||integer(e.get("from_map_id"))!=currentMap
+                        ||!yes(e,"current_map_verified")||!yes(e,"character_identity_preserved"))return false;
+                epoch++;currentMap=targetMap=map;
+            }else return false;
+            currentName=zoneName(e.get("current_map_name"));
+            eventUtc=generated;lastStatus=next;return true;
+        }
         if(mapValue!=1&&mapValue!=101&&!(allowMonorail&&mapValue==5)
                 ||targetValue!=1&&targetValue!=101&&!(allowMonorail&&targetValue==5))return false;
         int map=(int)mapValue,target=(int)targetValue;

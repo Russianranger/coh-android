@@ -125,8 +125,28 @@ public final class ZoningHost {
   for(int map:new int[]{-1,0,2,100,102,Integer.MAX_VALUE}){output.reset();try{r.sendMapMove(map,r.inputEpoch());throw new AssertionError();}catch(IOException expected){}need(output.size()==0);}
   long old=r.inputEpoch();r.cancelPendingInput();output.reset();try{r.sendMapMove(101,old);throw new AssertionError();}catch(InteractiveRfbClient.InputCancelledException expected){}need(output.size()==0);
  }
+ static Map<String,Object> stock(String status,int epoch,int map,int from,long now){
+  Map<String,Object> e=event(status,epoch,map,map,now);e.put("travel_method","stock_travel");
+  e.put("current_map_name",map==6?"steelcanyon":"Atlas Park");if(from>0)e.put("from_map_id",from);return e;
+ }
+ static void stockTravel(){
+  ClientZoning z=new ClientZoning();
+  need(!z.accept(stock("enabled",0,1,0,1000),SESSION,73,1,1000,10,1,false));   // needs the opt-in
+  need(z.accept(stock("enabled",0,1,0,1000),SESSION,73,1,1000,10,1,true));
+  need(z.stockTravel()&&!z.canPrepare()&&!z.canTravel()&&!z.blocksInput()&&z.currentMap()==1);
+  need(!z.accept(event("ready",0,1,101,1001),SESSION,73,1,1001,10,1,true));     // station events refused
+  need(!z.accept(stock("arrived",1,6,5,1002),SESSION,73,1,1002,10,1,true));     // wrong origin
+  need(!z.accept(stock("arrived",2,6,1,1002),SESSION,73,1,1002,10,1,true));     // skipped epoch
+  need(!z.accept(stock("arrived",1,1000,1,1002),SESSION,73,1,1002,10,1,true));  // not a static zone
+  need(z.accept(stock("arrived",1,6,1,1003),SESSION,73,1,1003,10,1,true));
+  need(z.currentMap()==6&&z.epoch()==1&&!z.blocksInput()&&"idle".equals(z.phase())&&z.currentName().equals("steelcanyon"));
+  need(z.accept(stock("arrived",2,1,6,1004),SESSION,73,1,1004,10,1,true));
+  need(z.currentMap()==1&&z.epoch()==2);
+  for(int epoch=3;epoch<12;epoch++){int to=epoch%2==1?6:1;need(z.accept(stock("arrived",epoch,to,to==6?1:6,1000+epoch*10),SESSION,73,1,1000+epoch*10,10,1,true));}
+  need(z.epoch()==11);   // no four-trip limit
+ }
  public static void main(String[] args)throws Exception {
-  switch(args[0]){case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
+  switch(args[0]){case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
   System.out.println("PASS");
  }
 }
@@ -144,6 +164,7 @@ class ClientZoningJavaTests(unittest.TestCase):
         result=subprocess.run(['java','-cp',self.tmp.name,'io.github.russianranger.cohclientinteractive.ZoningHost',mode],check=True,capture_output=True,text=True,timeout=15)
         self.assertEqual(result.stdout.strip(),'PASS')
     def test_four_transfers_require_fresh_native_event_and_three_views(self):self.run_host('roundtrip')
+    def test_stock_travel_follows_any_static_zone_without_trip_limit(self):self.run_host('stock')
     def test_stale_future_and_pre_delivery_arrivals_rejected(self):self.run_host('stale')
     def test_preparation_failure_preserves_save_but_transfer_failure_blocks(self):self.run_host('fail')
     def test_map101_connection_requires_opt_in_and_supported_map_proof(self):self.run_host('connection')
