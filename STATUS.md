@@ -1,6 +1,6 @@
 # x86 track integration
 
-Updated 2026-11-04 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-05 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   pss_kib. Shared heap reserves 1 GB but 2/2 runs failed in session (41931773800, 41956900853) → keep off.
   External-maps DbServer passed creation/reopen in CI (41961253764). First APK 41935584201: 2 unreviewed helpers, fixed.
 - 0.13.54 Thor (export 20261105-043833): save check passed; King's Row cold 191 s at the station, trip 30 s; PSS≈RSS.
-- 0.13.55 (in progress): the game's own zone travel (stock doors/tunnels/monorail, any static zone, two zone servers,
-  shared zone tree, app option default on). Chain r55.sh; HANDOFF-X86.md "0.13.55"; notes ON-DEMAND-ZONES.md.
+- 0.13.55 published (APK 42037755195; build 41980185206, runtimes 41991355281/42020227060 at 81e81ddd0): stock zone travel,
+  any zone, gear menu, controller map. CI zoning reopen unprovable on legacy MapServer (42029819713); HANDOFF "0.13.55".

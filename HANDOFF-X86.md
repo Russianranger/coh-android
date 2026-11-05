@@ -439,6 +439,28 @@ Plan and stock-zoning evidence: `armport/notes/ON-DEMAND-ZONES.md`.
 - **CI/APK**: runtime input `stock_travel` (reopen runs `--zoning`); APK input
   `external_maps_run_id` (run 41883310382) puts the external-maps DbServer in
   the APK. Version 0.13.55 (70). Chain `r55.sh`.
+- **Interface** (merged ac9720c22): the game fills the window (still drawn at
+  800x600 and scaled); launcher options in a draggable gear button
+  (`ClientOverlayPosition`, Back toggles it); controller mapping
+  (`ControllerInput/Profile/Bridge/Manager/Dialog`, 6 layers, deadzone, cursor
+  speed; defaults = the 0.13.54 buttons; preset "COH power trays").
+- **Published**: `coh-atlas-gameplay-v0.13.55` (pre-release), APK run
+  42037755195 at 81e81ddd0, sha256 `bdd05be9…a4f68f00`, built from build
+  41980185206, default runtime 41991355281 and trusted runtime 42020227060 (all
+  passed at 81e81ddd0).
+- **Stock-travel CI run (not a gate)**: r55z 42025310478 passed creation with
+  the external-maps DbServer + `COH_STOCK_TRAVEL=1`, then the reopen failed:
+  "No module named 'character_zoning'" (the CI guest's retained 0.10.0 donor
+  predates the zoning flow). a1434f3ea (CI staging only; `android/` unchanged)
+  adds the flow's modules. r55z2 42029819713: the zoning reopen started with
+  `stock_travel.enabled` true, supervisor `session_maps` "dynamic", Atlas ready
+  192 s, the client reached the world (help dialog), but the connection was
+  never proven and the host's 20-minute bound ended it. Cause: the CI donor's
+  legacy MapServer has no native events contract; the zoning flow's Atlas
+  readiness needs `utc_ms` (`native_ready_record`), which legacy log records
+  lack. The device uses the immediate events (export 20261105-043833,
+  `character_reopen.immediate_native_events.enabled`). CI zoning coverage
+  moves to step 2, which runs the Thor test server (it has the contract).
 - Not covered by CI: an actual trip (needs a CI travel trigger; planned with
   the spare-server MapServer layer).
 

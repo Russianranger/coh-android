@@ -17,7 +17,12 @@ design: [armport/notes/ON-DEMAND-ZONES.md](armport/notes/ON-DEMAND-ZONES.md).
 | Full-window view and floating options button | always | The game fills the screen (still drawn at 800x600 and scaled; true 1280x720 is next). The launcher options moved into a gear button: tap it to open or close the menu, drag it to move it (it remembers where), Back also toggles it. While the menu is open the game gets no input |
 | Controller mapping | default = today's buttons | Menu → Controller mappings: assign each button, stick and trigger to a key, mouse button, cursor direction or wheel, up to 6 layers, deadzone and cursor speed. The defaults are exactly today's mapping (triggers and Y unbound). Preset "COH power trays": hold LT and A/B/X/Y, the D-pad and LB/RB become 1–0; Select opens the menu |
 
-CI: CI_SUMMARY
+CI: build 41980185206, default runtime 41991355281 and trusted runtime
+42020227060 passed at 81e81ddd0; APK 42037755195 published it. A CI run with
+the game's own zone travel passed character creation; its reopen cannot be
+proven on CI's older test server (your Thor uses the newer one), and no CI
+run takes an actual trip yet, so **your test is the first real trip**. If
+travel misbehaves, untick the option to get 0.13.54's station travel back.
 
 ## Steps
 
