@@ -1,23 +1,24 @@
-"""On-demand zone requests from the external-maps DbServer (milestone 1).
+"""On-demand zone requests from the external-maps DbServer.
 
 The DbServer layer `manual_atlas_dbserver_external_maps` (database/external-maps,
 patches/external-maps/0001) publishes every map start as `map-<id>-<cookie>.json`
 in a directory this supervisor owns, prints one request marker per record, and
 keeps the map "starting" exactly as it would for a Launcher.
 
-Milestone 1 reads those requests and acts on each once:
+Each request is read and decided once:
 
-- a map the session flow starts itself (Atlas, and the zoning flow's
-  Atlas instance 2 and King's Row) is left alone: that process registers
-  without a cookie, which the DbServer accepts (dbinit.c);
+- a map the session flow is starting or running itself is left alone: that
+  process registers without a cookie, which the DbServer accepts (dbinit.c);
+- with a start policy (the game's own zone travel, `zone_travel.py`), a map the
+  policy can serve is started by the owner with the request's cookie
+  (`start_arguments`: the record's own game options checked against an
+  allowlist); a start that fails or is not ready in time is delinked;
 - every other request is delinked (`MapServer.exe -dbquery -delink <id>`), so a
-  waiting player is told the map failed instead of waiting out the client's
-  90-second timeout. The layer no longer deletes a static zone that has no
-  Launcher (mapxfer.c), and a delink only resets it (freeMapContainer), so the
-  zone can be served once its data and process start exist.
+  waiting player is told the map failed and stays where they were, instead of
+  waiting on the loading screen. The layer never deletes a static zone that has
+  no Launcher (mapxfer.c), and a delink only resets it (freeMapContainer), so
+  the zone can be requested again.
 
-The start of a requested map with its cookie is planned (`start_arguments`, the
-record's own game options checked against an allowlist) but not executed yet.
 Everything here is bounded; anything unexpected is recorded and refused rather
 than acted on.
 """
@@ -41,6 +42,7 @@ DIRECTORY_LIMIT = 199          # the DbServer refuses a directory of 200 charact
 RECORD_BYTES = 8192
 MAX_REQUESTS = 64
 MAX_DELINKS = 16
+MAX_STARTS = 32
 MAX_ENTRIES = 256
 MARKER_GRACE_SECONDS = 10
 DELINK_SECONDS = 90
@@ -159,17 +161,22 @@ def command_options(record):
 
 
 def start_arguments(record, port, options):
-    """MapServer arguments for this request (milestone 2; not executed yet)."""
+    """MapServer arguments for this request: the owner adds its own memory and link options."""
     refuse(type(port) is int and 1024 < port < 65536, 'port')
-    return ['-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', str(port), '-tcp', '0',
+    return ['-nogui', '-db', '127.0.0.1', '-nostats', '-udp', str(port), '-tcp', '0',
             '-map_id', str(record['map_id']), '-cookie', str(record['cookie']), '-donotautogroup',
             *options['kept']]
 
 
 class ExternalMapSupervisor:
-    def __init__(self, directory, *, session_maps, clock=time.monotonic, utc_ms=None):
+    def __init__(self, directory, *, session_maps, clock=time.monotonic, utc_ms=None, policy=None):
         self.directory = Path(directory)
-        self.session_maps = frozenset(session_maps)
+        # A fixed set, or a callable answering for the maps the session flow
+        # is starting or running right now (the game's own zone travel).
+        self.session_maps = session_maps if callable(session_maps) else frozenset(session_maps)
+        # policy(record, options) -> ('start', details) or ('delink', reason).
+        self.policy = policy
+        self.starts = []
         self.clock = clock
         self.utc_ms = utc_ms or (lambda: int(time.time() * 1000))
         self.requests = {}
@@ -185,7 +192,8 @@ class ExternalMapSupervisor:
         self.console_offset = 0
         self.stopped = None
         self.counts = {'requests': 0, 'session_flow': 0, 'delink': 0, 'refused': 0,
-                       'delink_finished': 0, 'delink_failed': 0}
+                       'delink_finished': 0, 'delink_failed': 0,
+                       'start': 0, 'started': 0, 'start_ready': 0, 'start_failed': 0}
 
     @classmethod
     def create(cls, parent, name, *, session_maps, **keywords):
@@ -203,6 +211,10 @@ class ExternalMapSupervisor:
         if self.stopped is None:
             self.stopped = reason
             self.delinks.clear()
+            self.starts.clear()
+
+    def session_owned(self, map_id):
+        return self.session_maps(map_id) if callable(self.session_maps) else map_id in self.session_maps
 
     def markers(self, console):
         """Acknowledgement and request markers from complete new console lines."""
@@ -314,7 +326,7 @@ class ExternalMapSupervisor:
                 reason = 'sequence_regressed'
             else:
                 self.last_sequence = record['sequence']
-        if key[0] in self.session_maps:
+        if self.session_owned(key[0]):
             # Never delink a map the session flow may be starting itself.
             self.counts['session_flow'] += 1
             return self.entry(key, record, 'session_flow', reason or 'started_by_session_flow')
@@ -325,9 +337,24 @@ class ExternalMapSupervisor:
                 reason = 'zone_not_served_yet'
             except RequestRefused as failure:
                 reason = failure.reason
-        if reason != 'zone_not_served_yet':
+        if reason == 'zone_not_served_yet' and self.policy is not None:
+            decision, detail = self.policy(record, options)
+            if decision == 'start':
+                entry = self.entry(key, record, 'start', 'served', options)
+                entry['plan'] = detail
+                if self.counts['start'] >= MAX_STARTS:
+                    self.anomaly('start_budget', map_id=key[0], cookie=key[1])
+                    return self.schedule_delink(key, entry, 'start_budget')
+                self.counts['start'] += 1
+                self.starts.append(key)
+                return entry
+            reason = detail
+        elif reason != 'zone_not_served_yet':
             self.anomaly(reason, map_id=key[0], cookie=key[1])
-        entry = self.entry(key, record, 'delink', reason, options)
+        return self.schedule_delink(key, self.entry(key, record, 'delink', reason, options), reason)
+
+    def schedule_delink(self, key, entry, reason):
+        entry.update(decision='delink', reason=reason)
         if self.counts['delink'] >= MAX_DELINKS:
             self.stop('delink_budget')
             entry['decision'] = 'refused'
@@ -353,6 +380,30 @@ class ExternalMapSupervisor:
             return None
         return self.requests[self.delinks.pop(0)]
 
+    def next_start(self):
+        if self.stopped is not None or not self.starts:
+            return None
+        return self.requests[self.starts.pop(0)]
+
+    def start_launched(self, entry, **fields):
+        entry['start'] = dict(fields, launched_utc_ms=self.utc_ms())
+        self.counts['started'] += 1
+
+    def start_ready(self, entry, *, elapsed_seconds):
+        entry['start'].update(ready=True, ready_seconds=round(elapsed_seconds, 3), ready_utc_ms=self.utc_ms())
+        self.counts['start_ready'] += 1
+
+    def start_failed(self, entry, reason, *, elapsed_seconds=None):
+        """A start that could not be made or was not ready in time: delink it."""
+        start = entry.setdefault('start', {})
+        start.update(ready=False, failure=str(reason)[:160], failed_utc_ms=self.utc_ms())
+        if elapsed_seconds is not None:
+            start['failed_seconds'] = round(elapsed_seconds, 3)
+        self.counts['start_failed'] += 1
+        key = (entry['map_id'], entry['cookie'])
+        if self.stopped is None:
+            self.schedule_delink(key, entry, 'start_failed')
+
     def delink_finished(self, entry, *, exit_code, elapsed_seconds, timed_out=False):
         passed = exit_code == 0 and not timed_out
         entry['delink'] = {'exit_code': exit_code, 'timed_out': timed_out, 'passed': passed,
@@ -364,6 +415,7 @@ class ExternalMapSupervisor:
     def report(self):
         return {'format': FORMAT, 'directory': self.directory.name, 'acknowledgement_observed': self.ack_observed,
                 'db_process_id': self.db_process_id, 'stopped': self.stopped, 'counts': dict(self.counts),
-                'session_maps': sorted(self.session_maps), 'map_starts_executed': False,
+                'session_maps': 'dynamic' if callable(self.session_maps) else sorted(self.session_maps),
+                'map_starts_executed': self.counts['started'] > 0,
                 'requests': [self.requests[key] for key in self.order[-REPORT_REQUESTS:]],
                 'anomalies': list(self.anomalies)}

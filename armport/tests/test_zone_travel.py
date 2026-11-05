@@ -1,0 +1,63 @@
+"""Which requested zones the device starts, and what it stops to make room."""
+import sys
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'android/guest'))
+import zone_travel  # noqa: E402
+
+
+def record(map_id, cookie=9, static=1):
+    return {'map_id': map_id, 'cookie': cookie, 'is_static': static}
+
+
+class Policy(unittest.TestCase):
+    def setUp(self):
+        self.maps = {}
+        self.current = None
+        self.trees = {1: 'atlas', 101: 'atlas', 5: 'kings_row', 7: 'zones', 8: 'zones'}
+        self.policy = zone_travel.ZoneTravelPolicy(tree_for=self.trees.get, running=lambda: dict(self.maps),
+                                                   occupied=lambda: self.current)
+
+    def test_serves_known_trees_and_delinks_the_rest(self):
+        self.maps = {1: {'ready': True, 'port': 7001}}
+        self.current = 1
+        self.assertEqual(self.policy(record(5), {})[0], 'start')
+        self.assertEqual(self.policy(record(5), {})[1]['port'], 7003)
+        self.assertEqual(self.policy(record(7), {})[1], {'tree': 'zones', 'evict': [], 'port': 7004,
+                                                         'budget_seconds': zone_travel.START_SECONDS})
+        self.assertEqual(self.policy(record(40), {}), ('delink', 'zone_not_served'))
+        self.assertEqual(self.policy(record(5, static=0), {}), ('delink', 'not_static'))
+        self.assertEqual(self.policy(record(1), {}), ('delink', 'already_running'))
+        self.assertEqual([d['decision'] for d in self.policy.report()['decisions']],
+                         ['start', 'start', 'start', 'delink', 'delink', 'delink'])
+
+    def test_third_zone_stops_the_idle_one_never_the_current_or_a_starting_one(self):
+        self.maps = {1: {'ready': True, 'port': 7001, 'last_occupied': 50}, 5: {'ready': True, 'port': 7003,
+                                                                                'last_occupied': 90}}
+        self.current = 5
+        decision, plan = self.policy(record(7), {})
+        self.assertEqual((decision, plan['evict'], plan['port']), ('start', [1], 7004))
+        self.current = 1
+        self.assertEqual(self.policy(record(7), {})[1]['evict'], [5])
+        self.maps[5]['ready'] = False            # still starting: kept
+        self.assertEqual(self.policy(record(7), {}), ('delink', 'capacity'))
+        self.current = None
+        self.assertEqual(self.policy(record(7), {}), ('delink', 'player_zone_unknown'))
+
+    def test_ports_reuse_a_stopped_zones_port(self):
+        self.maps = {1: {'ready': True, 'port': 7001}, 7: {'ready': True, 'port': 7004}}
+        self.current = 1
+        self.assertEqual(self.policy(record(8), {})[1], {'tree': 'zones', 'evict': [7], 'port': 7004,
+                                                         'budget_seconds': zone_travel.START_SECONDS})
+        self.maps = {7: {'ready': True, 'port': 7001}}  # a fixed port held by another map
+        self.assertEqual(self.policy(record(1), {}), ('delink', 'no_port'))
+
+    def test_capacity_is_validated(self):
+        with self.assertRaises(ValueError):
+            zone_travel.ZoneTravelPolicy(tree_for=dict.get, running=dict, occupied=lambda: None, capacity=0)
+
+
+if __name__ == '__main__':
+    unittest.main()

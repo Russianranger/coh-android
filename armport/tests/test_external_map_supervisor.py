@@ -102,7 +102,8 @@ class RecordAndCommand(unittest.TestCase):
                                            '-WeeklyTFTokens', '1700000000:none'])
         self.assertEqual(options['dropped'], ['-nostats', '-logserver', '-locale'])
         argv = supervisor.start_arguments(value, 7004, options)
-        self.assertEqual(argv[:13], ['-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7004',
+        # Memory and link options are the owner's own (mapserver_memory_arguments, client link options).
+        self.assertEqual(argv[:12], ['-nogui', '-db', '127.0.0.1', '-nostats', '-udp', '7004',
                                      '-tcp', '0', '-map_id', '7', '-cookie', '3'])
         self.assertNotIn('-launcher', argv)
         mission = record(transient=1, preload_transient=1,
@@ -156,6 +157,39 @@ class Polling(unittest.TestCase):
         self.assertFalse(report['map_starts_executed'])
         self.assertEqual(report['db_process_id'], 300)
         json.dumps(report)
+
+    def test_start_policy_starts_served_maps_and_delinks_failed_starts(self):
+        decisions = {7: ('start', {'port': 7004, 'tree': 'zones'}), 8: ('delink', 'zone_not_served')}
+        self.value.policy = lambda value, options: decisions[value['map_id']]
+        self.value.session_maps = lambda map_id: map_id == 5
+        self.publish(record(map_id=5, cookie=1, sequence=1))
+        self.publish(record(map_id=7, cookie=2, sequence=2))
+        self.publish(record(map_id=8, cookie=3, sequence=3))
+        added = self.value.poll(self.console)
+        self.assertEqual([(e['map_id'], e['decision'], e['reason']) for e in added],
+                         [(5, 'session_flow', 'started_by_session_flow'), (7, 'start', 'served'),
+                          (8, 'delink', 'zone_not_served')])
+        entry = self.value.next_start()
+        self.assertEqual((entry['map_id'], entry['plan']['port']), (7, 7004))
+        self.assertIsNone(self.value.next_start())
+        self.assertEqual(self.value.next_delink()['map_id'], 8)
+        self.value.start_launched(entry, port=7004)
+        self.assertTrue(self.value.report()['map_starts_executed'])
+        self.value.start_failed(entry, 'not ready in time', elapsed_seconds=900.5)
+        again = self.value.next_delink()
+        self.assertEqual((again['map_id'], again['decision'], again['reason']), (7, 'delink', 'start_failed'))
+        self.assertEqual(again['start']['failed_seconds'], 900.5)
+        counts = self.value.report()['counts']
+        self.assertEqual((counts['start'], counts['started'], counts['start_failed'], counts['delink']), (1, 1, 1, 2))
+        self.assertEqual(self.value.report()['session_maps'], 'dynamic')
+
+    def test_start_budget_falls_back_to_delink(self):
+        self.value.policy = lambda value, options: ('start', {})
+        for index in range(supervisor.MAX_STARTS + 1):
+            self.publish(record(map_id=20 + index, cookie=1, sequence=index + 1))
+        added = self.value.poll(self.console)
+        self.assertEqual([e['decision'] for e in added].count('start'), supervisor.MAX_STARTS)
+        self.assertEqual(added[-1]['reason'], 'start_budget')
 
     def test_unannounced_file_is_never_acted_on(self):
         self.publish(record(), announce=False)
