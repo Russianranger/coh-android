@@ -144,6 +144,29 @@ Steps:
    (ControllerInput/Manager/Dialog), mouse wheel; then true 1280x720
    (client-launcher.c `-screen 800 600`, Xtigervnc geometry, Java limits).
 
+## Step 2 plan: one MapServer layer for the spare and a CI trip
+
+Native changes reach the device only through the Thor (test) server: the
+shipping MapServer's monorail receipt pins `CONTRACT` and its four patched files
+(`native_monorail_contract.py`), so the monorail layer itself must not change.
+Precedent: trusted bins (95be44b46) — a patch under `patches/mapserver-*` applied
+by `armport/scripts/prepare_server_metrics_source.py` after 0119, its files added
+to the metrics receipt, guest admission in `armport_server_metrics_contract.py`.
+
+One layer `patches/mapserver-zone-travel/0001`, default off, env-gated:
+- `ARMPORT_SPARE_FILE=<path>`: run every shared phase, then block before
+  `connectToDbserver` (svr_init.c:2137) until the file names map id, cookie
+  and UDP port; set `db_state.map_id`, `local_server=0`, redo the
+  `staticMapInfosLoad` base/instance lookup, continue. Guest: one spare per
+  session beside the current zone (owner's choice), assigned by the start policy
+  instead of a cold start; a new spare warms at low priority after each trip.
+- `ARMPORT_TEST_TRAVEL=<map_id>` (CI only): after the THORHERO player has been
+  ready 30 s, one `DoorAnimEnter(e, NULL, nowhere, map_id, NULL,
+  "LinkFrom_Monorail_ParagonCity", XFER_STATIC, errmsg)` — the stock path a
+  monorail stop takes — so CI covers request → start → transfer → arrival →
+  save in the destination → reopen there.
+- Zoning events for any static map (today `identity` admits only 1/5/101).
+
 ## Data every zone needs (later)
 
 - NPC pathing graphs (`.bcn`): only Atlas and King's Row have them (asset pack).
