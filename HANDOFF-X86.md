@@ -414,6 +414,34 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.55: the game's own zone travel, every zone (Claude, 2026-11-05)
+
+User, 22:46 CST (0.13.54 test passed, temps high 50s/low 60s): a zone trigger
+should show a loading screen and take the character out of the world; the
+monorail should board at once, then load; open the whole zone list; full
+screen 1280x720, launcher options in a floating movable touch icon, controller
+mapping like trasc; "The biggest priority is nailing the map/zone server".
+Answers: current zone + one spare; open all zones now (game's own rules).
+Plan and stock-zoning evidence: `armport/notes/ON-DEMAND-ZONES.md`.
+
+- **Guest** (`COH_STOCK_TRAVEL=1` + external-maps layer): station queue off;
+  `external_map_supervisor.py` start policy (`zone_travel.py`: two zone
+  servers, stop the idle one, 900 s start budget then stop + delink);
+  `character_zoning` starts a request with `-cookie` and its own game options,
+  follows arrival from the character status (`_observe_stock_move`).
+- **Every zone**: `zone_index.py` (66 maps.db static zones; union of 380 extra
+  collision leaves from the all-map closure evidence, all in the pinned
+  zones-world-supplement); `prepare_zone_runtime` builds one owned tree for
+  every zone other than 1/101/5 (no beacon graph yet); `register_zone`; a hero
+  saved in such a zone starts there; reopen budget `static_zones`.
+- **App**: `ClientZoning` follows `stock_travel` events (any static zone, no
+  four-trip limit, no input block).
+- **CI/APK**: runtime input `stock_travel` (reopen runs `--zoning`); APK input
+  `external_maps_run_id` (run 41883310382) puts the external-maps DbServer in
+  the APK. Version 0.13.55 (70). Chain `r55.sh`.
+- Not covered by CI: an actual trip (needs a CI travel trigger; planned with
+  the spare-server MapServer layer).
+
 ## 0.13.54: save check for ordinary play, shared server memory experiment (Claude, 2026-11-04)
 
 - **Save check** (e6829cbae): `gameplay_progress()` composes the narrow reopen
