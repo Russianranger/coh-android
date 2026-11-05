@@ -67,10 +67,14 @@ PASS_DECIMAL = frozenset({'-xpscale', '-influencescale', '-prestigescale', '-aes
                           '-aeinfluencescale', '-aeprestigescale', '-ticketscale'})
 PASS_PATTERN = {'-blockedmapkeys': re.compile(r'[A-Za-z0-9_]+(,[A-Za-z0-9_]+)*\Z'),
                 '-WeeklyTFTokens': re.compile(r'-?[0-9]{1,10}(:[A-Za-z0-9_.]{1,64}){1,32}\Z')}
-# -productionmode: the shipped servers.cfg's MapServerParams. The session's own
-# MapServers (Atlas, King's Row) run without it, so a started zone does too.
-DROP_FLAGS = frozenset({'-nostats', '-diffdebug', '-cod', '-productionmode'})
-DROP_VALUE = frozenset({'-assertmode', '-logserver', '-beaconusemasterserver'})
+# The shipped servers.cfg adds MapServerParams "-productionmode" and, through
+# servercfg.c, -idleExitTimeout 30 (MapserverIdleExit), -idleUpkeep 30
+# (MapserverIdleUpkeep) and -MARTY_enabled (MARTYEnabled); -IsBetaShard and
+# -dailyUpkeep A B are its other additions. The session's own MapServers
+# (Atlas, King's Row) run without any of them, and the owner decides when a zone
+# stops (its own -idleExitTimeout 0 and eviction), so a started zone drops them.
+DROP_FLAGS = frozenset({'-nostats', '-diffdebug', '-cod', '-productionmode', '-MARTY_enabled', '-IsBetaShard'})
+DROP_VALUE = frozenset({'-assertmode', '-logserver', '-beaconusemasterserver', '-idleExitTimeout', '-idleUpkeep'})
 INTEGER = re.compile(r'-?[0-9]{1,9}\Z')
 DECIMAL = re.compile(r'-?[0-9]{1,6}(\.[0-9]{1,6})?\Z')
 
@@ -151,6 +155,11 @@ def command_options(record):
         elif option in DROP_VALUE:
             refuse(value is not None, 'option_value')
             dropped.append(option); index += 2
+        elif option == '-dailyUpkeep':
+            later = tokens[index + 2] if index + 2 < len(tokens) else None
+            refuse(value is not None and later is not None and INTEGER.match(value) and INTEGER.match(later),
+                   'option_value')
+            dropped.append(option); index += 3
         elif option == '-locale':
             # Always sent; the device runs English (0). Another language is not
             # set up here, and -locale writes the Wine registry (svr_init.c).

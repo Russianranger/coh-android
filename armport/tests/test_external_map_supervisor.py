@@ -83,24 +83,73 @@ class SourceAgreement(unittest.TestCase):
 
 
 class ShippedServerConfig(unittest.TestCase):
-    """The command the device's DbServer builds from the shipped servers.cfg (CI r56z refused it)."""
-    def test_shipped_map_server_params_are_known_options(self):
+    """The command the device's DbServer builds from the shipped servers.cfg (CI r56z, r56z2 refused it)."""
+    @staticmethod
+    def shipped_command(map_id, cookie):
         import shlex
-        config = (ROOT / 'upstream/ouroboros/data/server/db/servers.cfg').read_text()
-        params = [shlex.split(line)[1] for line in config.splitlines()
-                  if line.split() and line.split()[0].lower() == 'mapserverparams']
-        self.assertEqual(params, ['-productionmode'])
-        known = (supervisor.PASS_FLAGS | supervisor.DROP_FLAGS | supervisor.PASS_INTEGER | supervisor.PASS_DECIMAL
-                 | set(supervisor.PASS_PATTERN) | supervisor.DROP_VALUE)
-        for token in ' '.join(params).split():
-            if token.startswith('-'):
-                self.assertIn(token, known)
-        # launchercomm.c order with AssertMode, NoStats 1, MapServerParams, MaxLevel 50, aggrocap 17, Locale en.
-        value = record(command=COMMAND.format(map_id=7, cookie=3) + ' -assertmode 2 -nostats -productionmode'
-                       ' -maxLevel 50 -aggrocap 17 -locale 0')
-        options = supervisor.command_options(value)
+        config = {}
+        for line in (ROOT / 'upstream/ouroboros/data/server/db/servers.cfg').read_text().splitlines():
+            words = shlex.split(line, comments=False) if line.strip() and not line.lstrip().startswith(('//', '#')) else []
+            if words:
+                config[words[0].lower()] = words[1:]
+        # game_diagnostic.game_config overrides (the guest's private copy).
+        config.update(assertmode=['Exit'], nostats=['1'])
+        def number(key, default=0):
+            return int(config.get(key, [default])[0])
+        # Common/dbserver/servercfg.c: map_server_params and its appended options.
+        params = ' '.join(config.get('mapserverparams', []))
+        if number('mapserveridleexit') > 0:
+            params += ' -idleExitTimeout %d' % number('mapserveridleexit')
+        if number('mapserveridleupkeep') > 0:
+            params += ' -idleUpkeep %d' % number('mapserveridleupkeep')
+        if len(config.get('mapserverdailyupkeep', [])) >= 2:
+            begin, end = map(int, config['mapserverdailyupkeep'][:2])
+            if 0 <= begin < end <= 24:
+                params += ' -dailyUpkeep %d %d' % (begin, end)
+        if number('isbetashard'):
+            params += ' -IsBetaShard'
+        if number('martyenabled'):
+            params += ' -MARTY_enabled'
+        # DBServer/src/launchercomm.c launcherCommStartProcess, in order.
+        command = COMMAND.format(map_id=map_id, cookie=cookie) + ' -assertmode 2'
+        if 'logserver' in config:
+            command += ' -logserver ' + config['logserver'][0]
+        if number('nostats'):
+            command += ' -nostats'
+        if params.strip():
+            command += ' ' + params.strip()
+        if number('maxlevel'):
+            command += ' -maxLevel %d' % number('maxlevel')
+        for key, option in (('xpscale', '-xpscale'), ('influencescale', '-influencescale'),
+                            ('prestigescale', '-prestigescale'), ('aescale', '-aescale'),
+                            ('aeinfluencescale', '-aeinfluencescale'), ('aeprestigescale', '-aeprestigescale'),
+                            ('ticketscale', '-ticketscale')):
+            if float(config.get(key, ['1'])[0]) != 1.0:
+                command += ' %s %f' % (option, float(config[key][0]))
+        if number('clientlogouttime', 30) != 30:
+            command += ' -clientlogouttime %d' % number('clientlogouttime')
+        command += ' -aggrocap %d' % max(17, number('aggrocap'))
+        return command + ' -locale 0', config
+
+    def test_shipped_config_command_is_accepted_and_only_game_options_kept(self):
+        command, config = self.shipped_command(101, 3)
+        self.assertEqual(config['mapserverparams'], ['-productionmode'])
+        self.assertIn(' -productionmode -idleExitTimeout 30 -idleUpkeep 30 -MARTY_enabled ', command)
+        options = supervisor.command_options(record(map_id=101, cookie=3, command=command))
         self.assertEqual(options['kept'], ['-maxLevel', '50', '-aggrocap', '17'])
-        self.assertEqual(options['dropped'], ['-assertmode', '-nostats', '-productionmode', '-locale'])
+        self.assertEqual(options['dropped'], ['-assertmode', '-nostats', '-productionmode', '-idleExitTimeout',
+                                              '-idleUpkeep', '-MARTY_enabled', '-locale'])
+        argv = supervisor.start_arguments(record(map_id=101, cookie=3, command=command), 7002, options)
+        self.assertNotIn('-idleExitTimeout', argv)          # the owner's own -idleExitTimeout 0 stands
+        guest = (ROOT / 'android/guest/game_diagnostic.py').read_text()
+        self.assertIn("'assertmode': 'AssertMode Exit', 'nostats': 'NoStats 1'", guest)
+
+    def test_daily_upkeep_takes_two_values(self):
+        base = COMMAND.format(map_id=7, cookie=3)
+        self.assertEqual(supervisor.command_options(record(command=base + ' -dailyUpkeep 3 5 -locale 0'))['dropped'],
+                         ['-dailyUpkeep', '-locale'])
+        with self.assertRaisesRegex(supervisor.RequestRefused, 'option_value'):
+            supervisor.command_options(record(command=base + ' -dailyUpkeep 3 -locale 0'))
 
 
 class RecordAndCommand(unittest.TestCase):
