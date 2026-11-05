@@ -452,7 +452,13 @@ def stock_travel_summary(report):
                        for row in stock.get('starts', [])[:6] if isinstance(row, dict)],
             'evictions': [row for row in stock.get('evictions', [])[:4] if isinstance(row, dict)],
             'decisions': [row for row in stock.get('decisions', [])[:6] if isinstance(row, dict)],
-            'zone_tree_seconds': (report.get('zone_tree_preparation') or {}).get('elapsed_seconds')}
+            'zone_tree_seconds': (report.get('zone_tree_preparation') or {}).get('elapsed_seconds'),
+            # Which log route proved readiness, and where the DbServer last placed the hero.
+            'ready_route': ((report.get('character_reopen') or {}).get('client_ready_evidence') or {}).get('log_route'),
+            'last_samples': [{key: sample.get(key) for key in ('map_id', 'static_map_id', 'connected', 'loaded',
+                                                                'in_map_transfer') if key in sample}
+                             for sample in ((report.get('character_reopen') or {}).get('character_samples') or [])[-3:]
+                             if isinstance(sample, dict)]}
 
 
 def external_maps_summary(section):
@@ -466,7 +472,8 @@ def external_maps_summary(section):
         summary.update({key: supervisor.get(key) for key in ('acknowledgement_observed', 'stopped', 'counts',
                                                              'session_maps', 'map_starts_executed')})
         requests = supervisor.get('requests') if isinstance(supervisor.get('requests'), list) else []
-        summary['requests'] = [{key: item.get(key) for key in ('map_id', 'is_static', 'decision', 'reason')}
+        summary['requests'] = [{key: item.get(key) for key in ('map_id', 'is_static', 'decision', 'reason',
+                                                               'refused_option')}
                                | {'delink_passed': (item.get('delink') or {}).get('passed')}
                                for item in requests[:6] if isinstance(item, dict)]
         anomalies = supervisor.get('anomalies') if isinstance(supervisor.get('anomalies'), list) else []

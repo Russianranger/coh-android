@@ -67,16 +67,19 @@ PASS_DECIMAL = frozenset({'-xpscale', '-influencescale', '-prestigescale', '-aes
                           '-aeinfluencescale', '-aeprestigescale', '-ticketscale'})
 PASS_PATTERN = {'-blockedmapkeys': re.compile(r'[A-Za-z0-9_]+(,[A-Za-z0-9_]+)*\Z'),
                 '-WeeklyTFTokens': re.compile(r'-?[0-9]{1,10}(:[A-Za-z0-9_.]{1,64}){1,32}\Z')}
-DROP_FLAGS = frozenset({'-nostats', '-diffdebug', '-cod'})
+# -productionmode: the shipped servers.cfg's MapServerParams. The session's own
+# MapServers (Atlas, King's Row) run without it, so a started zone does too.
+DROP_FLAGS = frozenset({'-nostats', '-diffdebug', '-cod', '-productionmode'})
 DROP_VALUE = frozenset({'-assertmode', '-logserver', '-beaconusemasterserver'})
 INTEGER = re.compile(r'-?[0-9]{1,9}\Z')
 DECIMAL = re.compile(r'-?[0-9]{1,6}(\.[0-9]{1,6})?\Z')
 
 
 class RequestRefused(ValueError):
-    def __init__(self, reason):
+    def __init__(self, reason, detail=None):
         super().__init__(reason)
         self.reason = reason
+        self.detail = detail
 
 
 def refuse(condition, reason):
@@ -154,7 +157,8 @@ def command_options(record):
             refuse(value == '0', 'unsupported_locale')
             dropped.append(option); index += 2
         else:
-            raise RequestRefused('unrecognized_option')
+            # Name the option in the report (bounded, printable) so the next one is a one-line fix.
+            raise RequestRefused('unrecognized_option', re.sub(r'[^-A-Za-z0-9_.]', '?', option)[:40])
     refuse(('-transient' in kept) == bool(record['transient']), 'transient_mismatch')
     refuse(('-preloadtransient' in kept) == bool(record['preload_transient']), 'preload_mismatch')
     return {'kept': kept, 'dropped': dropped}
@@ -330,13 +334,13 @@ class ExternalMapSupervisor:
             # Never delink a map the session flow may be starting itself.
             self.counts['session_flow'] += 1
             return self.entry(key, record, 'session_flow', reason or 'started_by_session_flow')
-        options = None
+        options = refused = None
         if reason is None:
             try:
                 options = command_options(record)
                 reason = 'zone_not_served_yet'
             except RequestRefused as failure:
-                reason = failure.reason
+                reason, refused = failure.reason, failure.detail
         if reason == 'zone_not_served_yet' and self.policy is not None:
             decision, detail = self.policy(record, options)
             if decision == 'start':
@@ -351,7 +355,10 @@ class ExternalMapSupervisor:
             reason = detail
         elif reason != 'zone_not_served_yet':
             self.anomaly(reason, map_id=key[0], cookie=key[1])
-        return self.schedule_delink(key, self.entry(key, record, 'delink', reason, options), reason)
+        entry = self.entry(key, record, 'delink', reason, options)
+        if refused is not None:
+            entry['refused_option'] = refused
+        return self.schedule_delink(key, entry, reason)
 
     def schedule_delink(self, key, entry, reason):
         entry.update(decision='delink', reason=reason)

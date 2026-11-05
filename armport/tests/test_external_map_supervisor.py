@@ -82,6 +82,27 @@ class SourceAgreement(unittest.TestCase):
             self.assertEqual(value.poll(console), [])
 
 
+class ShippedServerConfig(unittest.TestCase):
+    """The command the device's DbServer builds from the shipped servers.cfg (CI r56z refused it)."""
+    def test_shipped_map_server_params_are_known_options(self):
+        import shlex
+        config = (ROOT / 'upstream/ouroboros/data/server/db/servers.cfg').read_text()
+        params = [shlex.split(line)[1] for line in config.splitlines()
+                  if line.split() and line.split()[0].lower() == 'mapserverparams']
+        self.assertEqual(params, ['-productionmode'])
+        known = (supervisor.PASS_FLAGS | supervisor.DROP_FLAGS | supervisor.PASS_INTEGER | supervisor.PASS_DECIMAL
+                 | set(supervisor.PASS_PATTERN) | supervisor.DROP_VALUE)
+        for token in ' '.join(params).split():
+            if token.startswith('-'):
+                self.assertIn(token, known)
+        # launchercomm.c order with AssertMode, NoStats 1, MapServerParams, MaxLevel 50, aggrocap 17, Locale en.
+        value = record(command=COMMAND.format(map_id=7, cookie=3) + ' -assertmode 2 -nostats -productionmode'
+                       ' -maxLevel 50 -aggrocap 17 -locale 0')
+        options = supervisor.command_options(value)
+        self.assertEqual(options['kept'], ['-maxLevel', '50', '-aggrocap', '17'])
+        self.assertEqual(options['dropped'], ['-assertmode', '-nostats', '-productionmode', '-locale'])
+
+
 class RecordAndCommand(unittest.TestCase):
     def test_exact_record_is_accepted_and_anything_else_refused(self):
         self.assertEqual(supervisor.parse_record(encoded(record()))['map_id'], 7)
@@ -115,6 +136,10 @@ class RecordAndCommand(unittest.TestCase):
         for reason, suffix in refused.items():
             with self.subTest(reason=reason), self.assertRaisesRegex(supervisor.RequestRefused, reason):
                 supervisor.command_options(record(command=COMMAND.format(map_id=7, cookie=3) + suffix))
+        try:
+            supervisor.command_options(record(command=COMMAND.format(map_id=7, cookie=3) + ' -locale 0 -my"st'))
+        except supervisor.RequestRefused as failure:
+            self.assertEqual((failure.reason, failure.detail), ('unrecognized_option', '-my?st'))
         with self.assertRaisesRegex(supervisor.RequestRefused, 'command_prefix'):
             supervisor.command_options(record(command=COMMAND.format(map_id=8, cookie=3) + ' -locale 0'))
 
