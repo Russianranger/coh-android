@@ -2380,13 +2380,20 @@ class LocalCharacterServer(login.LocalLoginServer):
             record['reason'] = 'request_directory_path_too_long'
             return
         self.external_maps = external_maps.ExternalMapSupervisor.create(
-            parent, name, session_maps=self.EXTERNAL_SESSION_MAPS)
+            parent, name, **self.external_maps_options())
         environment[external_maps.DB_ENVIRONMENT] = '1'
         environment[external_maps.DB_DIRECTORY_ENVIRONMENT] = windows
         record.update(enabled=True, reason=None, supervisor=self.external_maps.report())
 
+    def external_maps_options(self):
+        """Supervisor options: the maps this flow starts itself; the zoning flow may add a start policy."""
+        return {'session_maps': self.EXTERNAL_SESSION_MAPS}
+
+    def serve_external_maps(self, supervisor):
+        """Start served requests and follow them (the game's own zone travel); nothing by default."""
+
     def tick_external_maps(self):
-        """Read new map requests; delink the ones no process serves (one query at a time)."""
+        """Read new map requests; serve or delink them (one delink query at a time)."""
         supervisor = getattr(self, 'external_maps', None)
         if supervisor is None or getattr(self, 'process', None) is None:
             return
@@ -2408,6 +2415,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 self.ctx.record(child)
             self.external_maps_query = None
         supervisor.poll(self.process.text(), now)
+        self.serve_external_maps(supervisor)
         entry = supervisor.next_delink()
         if entry is not None:
             self.query_count += 1

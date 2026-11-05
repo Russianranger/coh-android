@@ -64,7 +64,9 @@ ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'a
                            'client_stdio.py', 'server_metrics.py',
                            # 0.13.54: on-demand zone supervisor, inert unless COH_EXTERNAL_MAPS=1
                            # and the external-maps DbServer layer is installed.
-                           'external_map_supervisor.py'})
+                           'external_map_supervisor.py',
+                           # 0.13.55: the game's own zone travel policy (COH_STOCK_TRAVEL=1).
+                           'zone_travel.py'})
 CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_login_server.py', 'local_character_server.py', 'character_zoning.py',
                              'character_zoning_scheduler.py', 'client_visual_assets.py', 'zone_asset_package.py',
                              'native_training_save.py',

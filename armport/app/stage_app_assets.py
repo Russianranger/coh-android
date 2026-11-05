@@ -35,6 +35,9 @@ GUEST_DEPENDENCIES = (
     # On-demand zone requests (inert unless COH_EXTERNAL_MAPS=1 and the
     # external-maps DbServer layer is installed); imported by the server.
     'external_map_supervisor.py',
+    # The game's own zone travel policy (inert unless COH_STOCK_TRAVEL=1 and
+    # the external-maps layer is installed); imported by character_zoning.
+    'zone_travel.py',
 )
 
 WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',
