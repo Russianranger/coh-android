@@ -414,6 +414,48 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.57: a King's Row arrival no longer stops the session (Claude, 2026-11-06)
+
+User, 09:22 CST (exports 20261106-152001/152038, screenshot): reached King's
+Row by monorail, "Map loading, please wait..." stayed on screen, then a crash.
+Evidence (entity log, guest report): Step 1 15:15:07Z (Atlas), supervisor
+start of map 5 (cookie 2, tree `kings_row`, ready 185.6 s after launch),
+Step 2 15:18:12, ResumeCharacter on City_01_02_1 15:18:33 (the trip worked;
+both MapServers ran `-notwostagemapxfer`). The guest read the arrival at
+15:19:40 (stock log route: the MapServer resends logs every 30 s) and 1.7 s
+later failed the session: "Reopen phase budget lacks the current validated
+graphical character".
+
+- **Cause**: `character_zoning.character_identity` kept the station-era rule
+  `map_id != 5 or monorail_enabled`; `_stock_arrival` sets `monorail_enabled`
+  False (station queue off), so King's Row failed and the session was stopped.
+  `SessionBudget.identity` already allowed it (`STATIC_ZONES`); CI's trip goes
+  to map 101 and never reached the rule. Now `stock_travel` also qualifies.
+  Test `test_stock_arrival_in_kings_row_or_another_zone_keeps_the_session`
+  replays the device proof through the real `_stock_arrival` and
+  `interaction_deadline` (fails with the old rule with the device's message).
+- **App side** (same rule, would have failed a save or the next login in King's
+  Row or any other zone): `ClientAcceptance.supportedCharacterMap`, the budget
+  rows, `ClientSessionBudget.apply` and `ClientRuntime`'s proof check accept
+  `stock_travel` with a static zone (1-999); the guest's connected/saved events
+  carry `stock_travel`. Java case `stockarrival`.
+- **Stale "Map loading" text** (patch 0125, ARM64 client): the DbServer sends
+  only "loading on" (mapxfer.c, twice) and the load screen turns it off; with
+  `-notwostagemapxfer` the load screen comes first, the notice arrived during it
+  and stayed over the new zone. It is ignored on the load screen and cleared on
+  the map handoff. The shelved x86 client is unchanged.
+- **Third zone soon after a trip**: the arrival can be read up to ~60 s late, so
+  `active_map_id` may still name the zone the hero left, and the policy could
+  stop the zone the hero is on. `stock_occupied` asks the DbServer once
+  (`-getstatus 3 1`, only when a request needs room; at most up to query 140 of
+  160): the hero's map (still the origin during the request, InMapXfer) is the
+  occupied zone, recorded as an arrival if it was unread; unknown → delink (the
+  game says the map failed, the hero stays). `stock.occupied_probes` counts it.
+- Also: `test_client_gpu_repair_evidence` compiles again (its harness lacked
+  0.13.55's `stockTravelRequested`); two legacy 0.13.20 fixtures in it fail with
+  or without these changes (not investigated).
+- Version 0.13.57 (72); test sheet `THOR-TEST-0.13.57.md`.
+
 ## 0.13.56: zone starts no longer stop the DbServer; CI zone trip (Claude, 2026-11-05)
 
 User, 14:30 CST (export 20261105-202806): logged in, took the monorail to
