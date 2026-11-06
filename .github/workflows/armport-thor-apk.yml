@@ -226,11 +226,14 @@ jobs:
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          Fix: in 0.13.56 the first zone the database server had to start (the monorail to King's Row) stopped
+          Fix: in 0.13.55 the first zone the database server had to start (the monorail to King's Row) stopped
           it on an error box (weeklyTFcfg.c, currentWeek): every zone start reads a weekly task force file the
-          game data does not have. The app now supplies an empty one. CI now takes a real zone trip through the
-          same database-server start (/mapmove to Atlas Park instance 2 and back) before an APK is published.
-          Unchanged from 0.13.56: the game's own zone travel (option on; untick for 0.13.54's station travel),
+          game data does not have; the app now supplies an empty one. Also fixed: the zone starter refused the
+          settings the database server adds to every start, the app missed the hero's arrival, and the hero
+          stayed attackable in the world until the new zone had started (the loading screen now comes at once:
+          frozen, untargetable, invincible). CI now takes a real zone trip through the same database-server
+          start (/mapmove to Atlas Park instance 2 and back, then save) before an APK is published.
+          Unchanged from 0.13.55: the game's own zone travel (option on; untick for 0.13.54's station travel),
           every zone the game allows, at most two zone servers, about 3-4 minutes on the loading screen for a
           zone that is not running yet, NPCs outside Atlas Park and King's Row stand still, missions are not
           served yet; the full-window view, the gear button and controller mapping. Test sheet: THOR-TEST-0.13.56.md.
