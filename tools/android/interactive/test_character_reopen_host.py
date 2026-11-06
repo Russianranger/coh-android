@@ -265,6 +265,18 @@ class CharacterReopenHostTests(unittest.TestCase):
             invalid['interaction_script']['world_after_stuck_captures'][0]['frame_sequence'] = 1
             with self.assertRaisesRegex(ValueError, 'preceded ordinary stuck'): reopen.validate_observer(invalid, report)
 
+    def test_owned_children_accept_the_zoning_flows_atlas_label_but_never_both(self):
+        base = [{'label': name, 'exit_code': 0} for name in
+                ('actual-coh-client', 'runtime-probe', 'private-presentation-x', 'local-dbserver')]
+        character.validate_owned_children(base + [{'label': 'local-character-atlas', 'exit_code': 0}])
+        character.validate_owned_children(base + [{'label': 'local-character-zoning-1', 'exit_code': 0},
+                                                  {'label': 'local-character-zoning-101', 'exit_code': 0}])
+        for children in (base, base + [{'label': 'local-character-atlas'}, {'label': 'local-character-zoning-1'}],
+                         base[1:] + [{'label': 'local-character-atlas'}],
+                         [dict(base[1], exit_code=1)] + base[:1] + base[2:] + [{'label': 'local-character-atlas'}]):
+            with self.subTest(children=[c['label'] for c in children]), self.assertRaises(ValueError):
+                character.validate_owned_children(children)
+
     def test_stock_travel_events_need_the_round_trip_in_order_before_stuck_and_save(self):
         def arrival(epoch, current, origin, **changes):
             return dict({'type': 'character_zoning', 'session_id': SESSION, 'client_pid': PID, 'character_id': 1,

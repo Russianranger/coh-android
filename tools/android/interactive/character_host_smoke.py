@@ -641,10 +641,7 @@ def validate_report(report, session, manifest, *, finish_request=None):
     require(len(children) >= 7 and all(type(child.get('exit_code')) is int
             and child.get('input_closed') is True and child.get('output_capture_closed') is True for child in children),
             'Owned character children did not close')
-    for label in ('actual-coh-client', 'runtime-probe', 'private-presentation-x', 'local-dbserver', 'local-character-atlas'):
-        matching = [child for child in children if child.get('label') == label]
-        require(len(matching) == 1, 'Missing or duplicate owned child: '+label)
-        if label == 'runtime-probe': require(matching[0]['exit_code'] == 0, 'Runtime prerequisite failed')
+    validate_owned_children(children)
     execution = report.get('cleanup_execution', {})
     require(execution == {'diagnostic_initialized': True, 'wine_started': True, 'owned_child_count': len(children)},
             'Cleanup ownership record differs')
@@ -657,6 +654,16 @@ def validate_report(report, session, manifest, *, finish_request=None):
             'Character process/display/database cleanup incomplete')
     require(report.get('asset_sha256') == {name: manifest['files'][name]['sha256'] for name in host.assets_tool.PROBE_FILES},
             'Character guest input hashes differ')
+
+
+def validate_owned_children(children):
+    # Atlas's MapServer: 'local-character-atlas', or 'local-character-zoning-1' when the
+    # zoning flow started it overlapped with the client; exactly one of the two.
+    for labels in (('actual-coh-client',), ('runtime-probe',), ('private-presentation-x',), ('local-dbserver',),
+                   ('local-character-atlas', 'local-character-zoning-1')):
+        matching = [child for child in children if child.get('label') in labels]
+        require(len(matching) == 1, 'Missing or duplicate owned child: '+labels[0])
+        if labels[0] == 'runtime-probe': require(matching[0]['exit_code'] == 0, 'Runtime prerequisite failed')
 
 
 def validate_observer(observer, report):
