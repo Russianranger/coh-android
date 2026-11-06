@@ -253,6 +253,47 @@ class NativeEvidenceTests(unittest.TestCase):
             self.assertIsNone(zoning.terminal_position(logs(changed), 101,
                 {'sent_utc_ms': timer-6000}, timer-100000, timer+5000))
 
+    def test_stock_arrival_is_read_from_the_entity_log_after_the_connection_is_proved(self):
+        # CI r56z4: Step 1/Step 2 on City_01_01_1, then ResumeCharacter on City_01_01_2.
+        def at(offset):
+            return time.strftime('%y%m%d %H:%M:%S', time.localtime((NOW + offset * 1000) / 1000))
+        line = '%s %s:127.0.0.1:127.0.0.1 "THORHERO:COHLOCAL" 0 %s ExpLevel:1, AlignmentNum:0\n'
+        old_resume = line % (at(-300), 'City_01_01_1', 'Connection:ResumeCharacter from 127.0.0.1:5000 AuthName "COHLOCAL"')
+        step = line % (at(0), 'City_01_01_1', 'Step 1: Ent THORHERO moving to map 101, "(null)"')
+        arrive = line % (at(170), 'City_01_01_2', 'Connection:ResumeCharacter from 127.0.0.1:7829 AuthName "COHLOCAL"')
+        back = line % (at(400), 'City_01_01_1', 'Connection:ResumeCharacter from 127.0.0.1:7830 AuthName "COHLOCAL"')
+        rows = zoning.stock_transfers_begun(logs(step), 1, NOW - 1000, NOW + 5000)
+        self.assertEqual([(r['from_map_id'], r['to_map_id'], r['utc_ms']) for r in rows], [(1, 101, NOW)])
+        instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        instance.stock = {'enabled': True, 'transfers_begun': [], 'transfer_wait_observed': 0, 'arrival_source': None}
+        instance.creation_report = {'verified': False, 'connected_on_atlas': True,
+                                    'client_ready_observed_utc_ms': NOW - 290000}
+        instance.active_map_id = 1
+        instance.maps = {1: {'ready': True, 'launch_utc_ms': NOW - 600000},
+                         101: {'ready': True, 'launch_utc_ms': NOW - 1000}}
+        instance.stock_log_next, instance.stock_last_arrival_ms = 0, None
+        moves = []
+        def arrival(target, sample):
+            moves.append((target, sample['resume_utc_ms']))
+            instance.active_map_id = target
+        text = [old_resume + step]
+        with patch.object(zoning.LocalCharacterZoningServer, 'current_logs', lambda self: logs(text[0])), \
+                patch.object(zoning.LocalCharacterZoningServer, '_stock_arrival', lambda self, t, s: arrival(t, s)), \
+                patch.object(zoning.time, 'time', return_value=(NOW + 600000) / 1000):
+            self.assertIsNone(instance._poll_stock_logs(now=100))
+            self.assertEqual(instance.stock['transfer_wait_observed'], 1)
+            self.assertIsNone(instance._poll_stock_logs(now=105))            # bounded to one read per poll
+            text[0] += arrive
+            self.assertEqual(instance._poll_stock_logs(now=200)['map_id'], 101)
+            self.assertEqual(moves, [(101, NOW + 170000)])
+            self.assertIsNone(instance._poll_stock_logs(now=300))            # the old Atlas resume is not a return
+            text[0] += back
+            self.assertEqual(instance._poll_stock_logs(now=400)['map_id'], 1)
+            self.assertEqual(moves[-1], (1, NOW + 400000))
+            self.assertEqual(instance.stock['transfer_wait_observed'], 1)
+        instance.creation_report['connected_on_atlas'] = False
+        self.assertIsNone(instance._poll_stock_logs(now=10 ** 6))
+
     def test_stock_travel_maps_skip_the_two_stage_transfer_so_the_loading_screen_comes_at_once(self):
         instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
         instance.stock = {'requested': True}

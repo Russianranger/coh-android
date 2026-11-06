@@ -372,6 +372,18 @@ def legacy_ready(logs, minimum_ms, now_ms):
     return max(result, key=lambda r: (r['utc_ms'], r['line_ordinal'])) if result else None
 
 
+def stock_transfers_begun(logs, map_id, minimum_ms, now_ms):
+    """dbmapxfer.c "Step 1: Ent THORHERO moving to map N" on map_id's own route."""
+    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Step 1: Ent THORHERO moving to map ([1-9][0-9]{0,4})[, ][^\r\n]*$')
+    rows = []
+    for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms):
+        match = pattern.fullmatch(message)
+        if match is not None:
+            rows.append({'utc_ms': record['utc_ms'], 'from_map_id': map_id, 'to_map_id': int(match[1]),
+                         'line_sha256': record['line_sha256']})
+    return rows
+
+
 def stock_positions(logs, map_id, minimum_ms, now_ms):
     pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ PeriodicInfo pos=<('
                          + NUMBER + '),(' + NUMBER + '),(' + NUMBER + r')> [^\r\n]+$')
@@ -579,8 +591,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.stock = {'format': 1, 'requested': zone_travel.requested(), 'enabled': False,
             'policy': 'stock_doors_tunnels_monorail_two_zone_servers_v1',
             'capacity': zone_travel.MAX_ZONE_SERVERS, 'start_budget_seconds': zone_travel.START_SECONDS,
-            'starts': [], 'evictions': [], 'arrivals': 0, 'transfer_wait_observed': 0, 'decisions': []}
+            'starts': [], 'evictions': [], 'arrivals': 0, 'transfer_wait_observed': 0, 'decisions': [],
+            'transfers_begun': [], 'arrival_source': None}
         self.stock_starts = {}
+        self.stock_log_next = 0
+        self.stock_last_arrival_ms = None
         self.zoning_report['stock_travel'] = self.stock
         self.priority_next = 0
         self.zoning_report['wine_priorities'] = {'format': 1,
@@ -2098,6 +2113,53 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         elif sample.get('in_map_transfer') is True:
             self.stock['transfer_wait_observed'] += 1
 
+    def _poll_stock_logs(self, now=None):
+        """The game's own travel, read from the stock entity log (every POLL_SECONDS).
+
+        Once the connection is proved the base flow stops its translated status
+        probes (steady-state policy), so a zone change must be read where the
+        game writes it: "Step 1: Ent ... moving to map N" on the current map's
+        route, then CLIENT_READY (resumeCharacter) on another owned, ready map's
+        route, newer than the last arrival. CI r56z4: the hero reached map 101
+        (City_01_01_2 ResumeCharacter) while the samples still said map 1.
+        """
+        stock = getattr(self, 'stock', {})
+        if (not stock.get('enabled') or self.creation_report.get('verified')
+                or not self.creation_report.get('connected_on_atlas')):
+            return None
+        now = time.monotonic() if now is None else now
+        if now < self.stock_log_next:
+            return None
+        self.stock_log_next = now + character.POLL_SECONDS
+        now_ms = int(time.time() * 1000)
+        if self.stock_last_arrival_ms is None:
+            self.stock_last_arrival_ms = self.creation_report.get('client_ready_observed_utc_ms') or now_ms
+        logs = self.current_logs()
+        begun = stock_transfers_begun(logs, self.active_map_id, self.stock_last_arrival_ms, now_ms)
+        known = {(row['utc_ms'], row['to_map_id']) for row in stock['transfers_begun']}
+        for row in begun:
+            if (row['utc_ms'], row['to_map_id']) not in known:
+                stock['transfers_begun'].append(row)
+                stock['transfer_wait_observed'] += 1
+        del stock['transfers_begun'][:-16]
+        arrivals = []
+        for map_id, owned in self.maps.items():
+            if map_id == self.active_map_id or owned.get('ready') is not True or not supported(map_id):
+                continue
+            floor = max(self.stock_last_arrival_ms + 1, owned['launch_utc_ms'] - 999)
+            record = stock_ready(logs, map_id, floor, now_ms)
+            if record is not None:
+                arrivals.append(record)
+        if not arrivals:
+            return None
+        record = max(arrivals, key=lambda r: (r['utc_ms'], r['line_ordinal']))
+        self.stock_last_arrival_ms = record['utc_ms']
+        stock['arrival_source'] = 'stock_entity_log_resume_character'
+        self._stock_arrival(record['map_id'], {'source': 'stock_entity_log', 'map_id': record['map_id'],
+                                               'resume_utc_ms': record['utc_ms'], 'log_route': record['log_route'],
+                                               'line_sha256': record['line_sha256']})
+        return record
+
     def _stock_arrival(self, target, sample):
         now, now_ms = time.monotonic(), int(time.time() * 1000)
         origin = self.active_map_id
@@ -2130,6 +2192,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.remember_reward_connection()
         self.tick_zoning()
         self.tick_external_maps()
+        self._poll_stock_logs()
         if self.pending is not None and (self.pending.get('transfer_requested')
                 or self.pending.get('native_authorization_issued')):
             return None
