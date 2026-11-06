@@ -414,6 +414,58 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.58: Atlas Park first, the saved zone at Enter Game (Claude, 2026-11-06)
+
+User, 14:59-15:20 CST: 0.13.57 "crashed during startup ... straight to the
+Android home screen, no messages. The client splash screen had just appeared";
+then "I'm going to completely wipe the app and start fresh ... I want the
+initial map to be dynamic so we don't have an instance of this again."
+Evidence: export 20261106-205910 is the setup report only (written 20:50Z,
+exit history up to 20:47:47Z, reason 10 = the update). Recovered export
+20261106-210545 (`previous-guest/latest-report.json`, status running, last
+write 20:56:10Z): THORHERO saved in King's Row (`saved_startup` map 5, mapid 5,
+staticmapid 5; left there by the 0.13.56 stop); stock travel requested; the
+legacy saved start prepared King's Row (beacon graph 29.8 s, preparation
+42.2 s) and overlapped the client: King's Row native ready 200.96 s
+(20:56:10.258), client launcher started 20:56:09.2, no client window yet. No
+guest failure; the Android process ended (no report finalized). Storage report
+20261106-211807 has no exit history (format 1 inventory), so the Android exit
+reason is unknown; low memory vs a crash is unproven.
+
+- **Dynamic initial map** (`character_zoning`, `DYNAMIC_INITIAL_POLICY`): with
+  stock travel and the ARM64 client, `capture_baseline` keeps the saved zone in
+  `saved_startup` (+ `prepared_map_id` 1, `dynamic_start`) but prepares Atlas
+  Park (`active_map_id` 1), the start of every working session. At Enter Game
+  the DbServer finds the saved static map not running (handleChoosePlayer ->
+  setNewMap(is_gameclient=1) -> startMapIfStatic, no loading message to a game
+  client) and publishes the start; the zone policy starts it like a trip.
+  `tick_dynamic_initial` (each `character_evidence`) activates it once ready
+  and before the first connection (no epoch, no arrival event), so the manual
+  wait's `native_ready_record` reads that zone's stock log; the connection may
+  also come on Atlas Park (findBestMapByBaseId for an Atlas instance).
+  `start_map` refuses a dynamic start without the external-maps layer; a zone
+  the runtime cannot serve stops at baseline. x86 client / station travel keep
+  the legacy saved start.
+- **Patch 0126** (ARM64 client, `initClient.c`): `dbChoosePlayer` waits 900 s
+  (stock 90 s; the DbServer answers only when the map is ready, or with a
+  failure message). The client's main loop is blocked during that wait (stock
+  behaviour): the screen stays still.
+- **Storage** (`ClientRuntime.ownedMountPoint`, `repairRuntimeMountPoints`):
+  `/opt/coh/pgsql` is bound inside the `/opt/coh` bind (runtime `assets`);
+  PRoot created the missing destination unreadable, the scan failed with
+  errno 13 at `m2/runtime-9618983b6f58caae/assets/pgsql`, `complete` false,
+  every category non-removable, 14 older runtimes kept (52.7 GB allocated).
+  The launch now creates it 0700; a scan first repairs it in every runtime
+  (`runtime_mount_points_repaired`) and the scan report carries
+  `android_process_exit_history` (with descriptions).
+- App: the saved-destination stage accepts `dynamic_start` (no port yet) and
+  says the zone starts at Enter Game.
+- Not covered by CI: CI's reopen starts with THORHERO in Atlas Park, so the
+  dynamic path runs only in unit tests (`test_dynamic_initial_map.py`) until the
+  Thor test (sheet step 6). The fresh install is the user's choice (uninstall
+  deletes the hero and assets; asset packs coh-assets-v1.0.0).
+- Version 0.13.58 (73); test sheet `THOR-TEST-0.13.58.md`.
+
 ## 0.13.57: a King's Row arrival no longer stops the session (Claude, 2026-11-06)
 
 User, 09:22 CST (exports 20261106-152001/152038, screenshot): reached King's

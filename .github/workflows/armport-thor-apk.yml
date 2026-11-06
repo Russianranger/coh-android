@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.57, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.58, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -156,7 +156,7 @@ jobs:
           path: ${{ runner.temp }}/coh-retained-signing
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
-      - name: Build and sign COH Atlas Gameplay 0.13.57
+      - name: Build and sign COH Atlas Gameplay 0.13.58
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -174,7 +174,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.57.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.58.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -196,7 +196,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.57-apk
+          name: coh-atlas-gameplay-0.13.58-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -211,32 +211,34 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.57-apk
+          name: coh-atlas-gameplay-0.13.58-apk
           path: apk
-      - name: Publish the 0.13.57 pre-release
+      - name: Publish the 0.13.58 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.57.apk
-          sha256sum COH-Atlas-Gameplay-0.13.57.apk > COH-Atlas-Gameplay-0.13.57.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.58.apk
+          sha256sum COH-Atlas-Gameplay-0.13.58.apk > COH-Atlas-Gameplay-0.13.58.apk.sha256
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.57 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.58 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          Fix: in 0.13.56 the monorail reached King's Row, then the session stopped about a minute later: an
-          old station-monorail rule in the app's own safety check did not count King's Row reached by the game's
-          own travel as a supported zone. King's Row and every other zone now count for arrival, save and the
-          next login there. Also fixed: "Map loading, please wait..." stayed on screen after arriving (the
-          loading notice now ends with the loading screen), and a third zone requested soon after a trip now
-          asks the database server where the hero is before stopping a zone server, so it never stops the
-          zone the hero is on (the game's log of the arrival reaches the app up to a minute late).
-          Unchanged from 0.13.56: the game's own zone travel (option on; untick for 0.13.54's station travel),
+          Fix: in 0.13.57 a hero saved in King's Row made the app close during startup, as the game's first
+          screen appeared (Android ended the app; the old King's Row start prepared King's Row while the game
+          started). A session now always starts Atlas Park first, the start every working session used; a hero
+          saved in another zone is sent there by the game itself when you press Enter Game: the database server
+          asks for that zone and it starts like any trip (the screen can stay still for a few minutes; the game
+          now waits up to 15 minutes there instead of 90 seconds). Also fixed: storage cleanup refused to remove
+          anything (a folder the runtime creates had no permissions, so every scan stopped there), so each update
+          left another runtime behind; the storage report now also records why Android last closed the app.
+          Unchanged from 0.13.57: King's Row and every other zone count for arrival, save and the next login;
+          the game's own zone travel (option on; untick for 0.13.54's station travel),
           every zone the game allows, at most two zone servers, about 3-4 minutes on the loading screen for a
           zone that is not running yet, NPCs outside Atlas Park and King's Row stand still, missions are not
-          served yet; the full-window view, the gear button and controller mapping. Test sheet: THOR-TEST-0.13.57.md.
+          served yet; the full-window view, the gear button and controller mapping. Test sheet: THOR-TEST-0.13.58.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.53)." >> notes.md
@@ -245,7 +247,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server start (test server) option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.57" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.57 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.57.apk COH-Atlas-Gameplay-0.13.57.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.57"
+          gh release create "coh-atlas-gameplay-v0.13.58" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.58 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.58.apk COH-Atlas-Gameplay-0.13.58.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.58"
