@@ -229,14 +229,18 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
         super().initialize()
         self.ctx.report['zoning_enabled'] = True
 
+    # stock_travel: the game's own zone travel; the app accepts King's Row and
+    # the other static zones for a character connected or saved there.
     def connected_event_data(self, proof):
         return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True,
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True)
 
     def saved_event_data(self, proof):
         return dict(super().saved_event_data(proof), zoning_enabled=True,
                     connected_on_supported_map=True, map_id=proof['map_id'],
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True)
 
 
 def parse_reopen_arguments(argv):

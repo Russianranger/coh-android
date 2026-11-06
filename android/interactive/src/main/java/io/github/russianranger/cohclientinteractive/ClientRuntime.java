@@ -2906,7 +2906,8 @@ public final class ClientRuntime {
                 || preparationInteger(connected.get("character_id"))!=id || preparationInteger(login.get("auth_id"))!=auth
                 || !"THORHERO".equals(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
                 || !"android-local-login".equals(login.get("profile")) || preparationInteger(proof.get("map_id"))!=currentMap
-                || !(currentMap==1 || zoning && (currentMap==101 || currentMap==5 && Boolean.TRUE.equals(proof.get("monorail_enabled")))))return false;
+                || !(currentMap==1 || zoning && (currentMap==101 || currentMap==5 && Boolean.TRUE.equals(proof.get("monorail_enabled"))
+                    || Boolean.TRUE.equals(proof.get("stock_travel")) && ClientAcceptance.staticZone(currentMap))))return false;
         for(String name:new String[]{"postgres_started","server_started","mapserver_started"})if(!Boolean.TRUE.equals(report.get(name)))return false;
         for(String name:new String[]{"local_login_verified","local_account_verified","character_list_sent","character_list_response_sent"})
             if(!Boolean.TRUE.equals(login.get(name)))return false;

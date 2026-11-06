@@ -54,6 +54,9 @@ PRESTART_MIN_AVAILABLE_MIB = 3072
 IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
 PRIORITY_SAMPLES = 12
 PRIORITY_INTERVAL_SECONDS = 120
+# The game's own travel: a third zone asks the DbServer where the hero is (one
+# -getstatus process); keep the rest of the 160-query budget for the save proof.
+STOCK_PROBE_QUERY_LIMIT = 140
 # ARM64 client (patch 0121): the frame cap while the player waits for a
 # destination to be prepared. Input is held during that wait, and the 0.13.50
 # Thor test drew Atlas at 30-60 FPS through a 9-minute King's Row preparation.
@@ -1994,7 +1997,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if not self.stock_travel_active():
             return super().external_maps_options()
         self.zone_policy = zone_travel.ZoneTravelPolicy(tree_for=self.zone_tree_for,
-            running=self.zone_servers, occupied=lambda: self.active_map_id)
+            running=self.zone_servers, occupied=self.stock_occupied)
         self.stock['enabled'] = True
         # Maps this flow owns (started at session start or for a request) are
         # never delinked; every other request goes through the policy.
@@ -2008,6 +2011,42 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if map_id in zone_index.ZONES and getattr(self, 'zone_asset_document', None) is not None:
             return 'zones'
         return None
+
+    def stock_occupied(self):
+        """The zone the hero is on, asked of the DbServer when a request needs room.
+
+        The stock entity log reaches the guest 30-60 s late (the MapServer
+        resends logs every 30 s; Thor 0.13.56: ResumeCharacter in King's Row at
+        15:18:33 was read at 15:19:40), so active_map_id can still name the zone
+        the hero just left; stopping the "idle" one would then drop the hero.
+        One -getstatus 3 probe (only for a third zone) gives the DbServer's own
+        answer: during the request the hero is still on the origin map
+        (InMapXfer). An owned, ready map other than active_map_id is recorded as
+        the arrival it is. None (unknown) makes the policy delink: the game
+        says the map failed and the hero stays where they are.
+        """
+        if self.query_count >= STOCK_PROBE_QUERY_LIMIT:
+            return None
+        try:
+            sample = character.evidence.parse_character_status(
+                self.query(['-getstatus', '3', '1'], 'stock-occupied'), 1, character.CHARACTER, character.ACCOUNT,
+                allow_missing=True)
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError):
+            return None
+        self.stock['occupied_probes'] = self.stock.get('occupied_probes', 0) + 1
+        map_id = sample.get('map_id')
+        if (sample.get('loaded') is not True or sample.get('connected') is not True or type(map_id) is not int
+                or sample.get('static_map_id') != map_id or map_id not in self.maps
+                or self.maps[map_id].get('ready') is not True):
+            return None
+        if map_id != self.active_map_id:
+            self._stock_arrival(map_id, {'source': 'stock_occupied_probe', 'map_id': map_id,
+                                         'in_map_transfer': sample.get('in_map_transfer') is True})
+            # Older log lines (this zone's own resume among them) are not a later arrival.
+            self.stock_last_arrival_ms = int(time.time() * 1000)
+        return map_id
 
     def zone_servers(self):
         return {map_id: {'ready': owned.get('ready') is True,
@@ -2242,7 +2281,10 @@ def character_identity(proof, session):
         and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
         and type(proof.get('character_id')) is int and proof['character_id'] == 1
         and type(proof.get('auth_id')) is int and proof['auth_id'] > 0 and supported(proof.get('map_id'))
-        and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True)
+        # King's Row needs its verified package: the station monorail, or the
+        # game's own travel, whose supervisor starts it only from that package
+        # (zone_tree_for). Thor 0.13.56: arrival by stock monorail ended here.
+        and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True or proof.get('stock_travel') is True)
         and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
         and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
         and all(proof.get(k) is True for k in ('zoning_enabled', 'connected_on_atlas',

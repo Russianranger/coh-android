@@ -751,7 +751,7 @@ public final class GPURepairEvidenceHost {
   String generation,sourceCommit,dataCommit;long count,bytes;File dataDirectory=new File("/host/import/data");
  }
  static final class Runtime {
-  boolean reopen=true;String session,gpuProfileRequested="software",clientArchitectureRequested="x86";JSONObject manifest,clientManifest;
+  boolean reopen=true,stockTravelRequested=false;String session,gpuProfileRequested="software",clientArchitectureRequested="x86";JSONObject manifest,clientManifest;
   JSONObject characterConnectedEvent,characterSavedEvent;
   long observedClientPid,clientWindowObservedUptime,clientWindowEndedUptime,launcherBudgetStartedUptime,startedUptime;
   List<Map<String,Object>> sessionBudgetEvents=new ArrayList<>();

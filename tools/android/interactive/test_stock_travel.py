@@ -124,6 +124,8 @@ class StockTravelTests(unittest.TestCase):
         value.maps[5] = owned()
         value.maps[5]['last_occupied'] = 10
         value.zone_tree_for = lambda map_id: {1: 'atlas', 5: 'kings_row', 7: 'zones'}.get(map_id)
+        value.query_count = 0
+        value.query = Mock(return_value='1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 1 SmapId 1 InMapXfer\n')
         sup = self.supervisor(value)
         spawned = []
         value._spawn_map = lambda map_id, **keywords: (spawned.append(map_id),
@@ -135,6 +137,7 @@ class StockTravelTests(unittest.TestCase):
         self.assertEqual(spawned, [7])
         self.assertEqual(set(value.maps), {1, 7})
         self.assertEqual(value.stock['evictions'][0]['map_id'], 5)
+        value.query.assert_called_once_with(['-getstatus', '3', '1'], 'stock-occupied')
 
     def test_arrival_on_another_ready_zone_moves_the_session(self):
         value = self.instance()
@@ -154,6 +157,45 @@ class StockTravelTests(unittest.TestCase):
                          ('arrived', 'stock_travel', 5))
         # A zone that is not ready yet, or not owned, never moves the session.
         value._observe_stock_move(dict(sample, map_id=7, static_map_id=7))
+        self.assertEqual(value.active_map_id, 5)
+
+    def test_a_third_zone_asks_where_the_hero_is_before_stopping_one(self):
+        # Thor 0.13.56: the King's Row arrival was read 67 s after ResumeCharacter.
+        # A third request in that window must not stop the zone the hero is on.
+        value = self.instance()
+        value.zone_tree_for = lambda map_id: {1: 'atlas', 5: 'kings_row', 6: 'zones'}.get(map_id)
+        options = value.external_maps_options()
+        value.maps[5] = owned()
+        value.maps[1]['last_occupied'], value.maps[5]['last_occupied'] = 10, 0
+        value._activate = Mock(side_effect=lambda map_id: setattr(value, 'active_map_id', map_id))
+        value.query_count, value.stock_last_arrival_ms = 30, None
+        answer = ['1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 5 SmapId 5 InMapXfer\n']
+        def query(arguments, label):
+            self.assertEqual((arguments, label), (['-getstatus', '3', '1'], 'stock-occupied'))
+            value.query_count += 1
+            if isinstance(answer[0], Exception):
+                raise answer[0]
+            return answer[0]
+        value.query = query
+        decision = options['policy'](record(6, 3, 1), {})
+        self.assertEqual(decision[0], 'start', decision)
+        self.assertEqual(decision[1]['evict'], [1])                  # Atlas, not King's Row where the hero is
+        self.assertEqual((value.active_map_id, value.stock['arrivals'], value.stock['occupied_probes']), (5, 1, 1))
+        self.assertEqual(value.zoning_report['transfers'][-1]['character_status']['source'], 'stock_occupied_probe')
+        self.assertIsInstance(value.stock_last_arrival_ms, int)
+        # The DbServer's answer already matches: nothing new is recorded.
+        self.assertEqual(value.stock_occupied(), 5)
+        self.assertEqual(value.stock['arrivals'], 1)
+        # Unknown (failed probe, not an owned ready zone, budget kept for the save): delink.
+        for reply, count in ((zoning.base.DiagnosticError('query failed'), 30),
+                             ('1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 9 SmapId 9\n', 30),
+                             ('1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 5 SmapId 5 NoConnect\n', 30),
+                             ('invalid container request\n', 30),
+                             (answer[0], zoning.STOCK_PROBE_QUERY_LIMIT)):
+            answer[0], value.query_count = reply, count
+            with self.subTest(reply=str(reply)[:40]):
+                self.assertIsNone(value.stock_occupied())
+                self.assertEqual(value.zone_policy.decide(record(6, 4, 2)), ('delink', 'player_zone_unknown'))
         self.assertEqual(value.active_map_id, 5)
 
 

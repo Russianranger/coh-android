@@ -187,8 +187,19 @@ final class ClientAcceptance {
     }
 
     /** maps.db static zones (ids 1-999); the same bound as ClientZoning.staticZone. */
-    private static boolean staticZone(long map) {
+    static boolean staticZone(long map) {
         return map >= 1 && map <= 999;
+    }
+
+    /**
+     * The game's own zone travel: the guest marks the character, its events and
+     * its session budget with stock_travel, and then King's Row and every other
+     * static zone are supported without the station monorail (Thor 0.13.56: the
+     * King's Row arrival was rejected as monorail-only).
+     */
+    static boolean stockTravelMap(Map<?, ?> value) {
+        return yes(value.get("stock_travel")) && integer(value.get("map_id"))
+                && staticZone(((Number) value.get("map_id")).longValue());
     }
 
     private static boolean windowMapSupported(int map, boolean monorailQualified, boolean stockTravel) {
@@ -277,7 +288,8 @@ final class ClientAcceptance {
     }
     private static boolean supportedCharacterMap(Map<?,?> value, boolean zoning) {
         return number(value.get("map_id"),1) || (zoning && (number(value.get("map_id"),101)
-                || number(value.get("map_id"),5) && yes(value.get("monorail_enabled")))
+                || number(value.get("map_id"),5) && yes(value.get("monorail_enabled"))
+                || stockTravelMap(value))
                 && yes(value.get("zoning_enabled")) && yes(value.get("connected_on_supported_map")));
     }
     private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key, boolean zoning) {
@@ -438,7 +450,8 @@ final class ClientAcceptance {
                     || !session.equals(row.get("session_id")) || !number(row.get("client_pid"), clientPid)
                     || !number(row.get("format"), 1) || !number(row.get("character_id"), 1)
                     || !(number(row.get("map_id"), 1) || zoning && (number(row.get("map_id"),101)
-                        || number(row.get("map_id"),5) && yes(row.get("monorail_enabled")) && yes(accepted.get("monorail_enabled")))
+                        || number(row.get("map_id"),5) && yes(row.get("monorail_enabled")) && yes(accepted.get("monorail_enabled"))
+                        || stockTravelMap(row) && yes(accepted.get("stock_travel")))
                         && yes(row.get("zoning_enabled")) && yes(accepted.get("zoning_enabled"))) || !number(row.get("revision"), i + 1)
                     || !"THORHERO".equals(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
                     || !(i == 0 ? "connected" : "grounded").equals(row.get("phase"))) return false;

@@ -59,6 +59,49 @@ class ManualSessionGuestTests(unittest.TestCase):
         self.assertEqual(event['deadline_utc_ms'], 0)
         self.assertEqual(event['map_id'], 5)
 
+    def test_stock_arrival_in_kings_row_or_another_zone_keeps_the_session(self):
+        # Thor 0.13.56 (export 20261106-152038): the stock monorail reached King's
+        # Row (ResumeCharacter City_01_02_1), _stock_arrival set map 5 with
+        # monorail_enabled False, and the next deadline check stopped the session:
+        # "Reopen phase budget lacks the current validated graphical character".
+        connected = dict(proof(), zoning_enabled=True, connected_on_supported_map=True,
+                         monorail_enabled=False, stock_travel=True)
+        diagnostic = reopen.ZoningCharacterReopenDiagnostic.__new__(reopen.ZoningCharacterReopenDiagnostic)
+        diagnostic.args = SimpleNamespace(session_id=SESSION)
+        diagnostic.ctx = SimpleNamespace(deadline=math.inf, report={'character_reopen': connected}, event=Mock())
+        diagnostic.connected_announced = True
+        diagnostic.presentation_ready_monotonic = diagnostic.launcher_started_monotonic = 0
+        server = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        server.creation_report = connected
+        server.stock = {'enabled': True, 'starts': [], 'arrivals': 0}
+        server.maps = {1: {}, 5: {}, 6: {}}
+        server.active_map_id, server.epoch = 1, 0
+        server.zoning_report = {'transfers': []}
+        server._activate = lambda map_id: setattr(server, 'active_map_id', map_id)
+        server._emit = Mock()
+        self.addCleanup(zoning.MAPS.pop, 6, None)
+        zoning.register_zone(6)                                       # Steel Canyon on the shared zone tree
+        clock = [86400]
+        def deadline():
+            clock[0] += 60
+            with patch.object(reopen.time, 'monotonic', return_value=clock[0]), \
+                    patch.object(reopen.time, 'time', return_value=UTC_START / 1000 + clock[0]):
+                return diagnostic.interaction_deadline(math.inf, {'pid': PID})
+        self.assertTrue(math.isinf(deadline()))                       # connected on Atlas
+        self.assertTrue(diagnostic.session_budget.supported_maps == budget.STATIC_ZONES)
+        for target in (5, 6, 1):
+            server._stock_arrival(target, {'source': 'stock_entity_log', 'map_id': target})
+            self.assertEqual((connected['map_id'], connected['monorail_enabled']), (target, False))
+            self.assertTrue(math.isinf(deadline()), target)
+            self.assertTrue(zoning.character_identity(connected, SESSION))
+        self.assertEqual(len(diagnostic.ctx.report['character_session_budgets']), 1)
+        # King's Row still needs the stock travel flag or the qualified station monorail.
+        for changes in ({'stock_travel': False}, {'stock_travel': None}):
+            self.assertFalse(zoning.character_identity(dict(connected, map_id=5, **changes), SESSION))
+        self.assertTrue(zoning.character_identity(dict(connected, map_id=5, stock_travel=False,
+                                                       monorail_enabled=True), SESSION))
+        self.assertFalse(zoning.character_identity(dict(connected, map_id=2), SESSION))   # not a served zone
+
     def test_zoning_has_no_remaining_playtime_admission_gate(self):
         for now in (0, 86400, 604800):
             window = zoning.travel_window(math.inf, now, UTC_START+int(now*1000), 720, manual=True)

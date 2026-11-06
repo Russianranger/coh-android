@@ -166,8 +166,50 @@ public final class ZoningHost {
   d.put("port",7004);d.put("world","../x");need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
   d.put("world","city_01_02");d.put("map_id",5);d.put("port",7003);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
  }
+ static void stockArrival(){
+  // Thor 0.13.56 (export 20261106-152038): King's Row reached by the game's own
+  // travel has monorail_enabled false; stock_travel makes it (and every other
+  // static zone) a supported character map for connection, budget and save.
+  Map<String,Object> e=new LinkedHashMap<>();e.put("type","character_connected");e.put("session_id",SESSION);e.put("client_pid",73);
+  e.put("character_id",1);e.put("baseline_character_id",1);e.put("name","THORHERO");e.put("account","COHLOCAL");
+  e.put("map_id",5);e.put("zoning_enabled",true);e.put("connected_on_supported_map",true);e.put("reopen_verified",true);
+  e.put("existing_character_verified",true);e.put("monorail_enabled",false);
+  need(!ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));
+  e.put("stock_travel",true);need(ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));
+  need(!ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,false));
+  e.put("map_id",6);need(ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));
+  for(Object map:new Object[]{1000,0,-5,6.5,"6"}){e.put("map_id",map);need(!ClientAcceptance.characterReopenConnectedEvent(e,SESSION,73,true));}
+  Map<String,Object> b=new LinkedHashMap<>();b.put("type","character_session_budget");b.put("format",1);b.put("session_id",SESSION);b.put("client_pid",73);
+  b.put("character_id",1);b.put("name","THORHERO");b.put("account","COHLOCAL");b.put("map_id",5);b.put("zoning_enabled",true);
+  b.put("native_client_ready_observed",true);b.put("reopen_verified",true);b.put("revision",1);b.put("phase","connected");
+  b.put("generated_utc_ms",1000);b.put("deadline_utc_ms",601000);b.put("save_request_deadline_utc_ms",421000);b.put("movement_deadline_utc_ms",361000);
+  need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,5));
+  b.put("stock_travel",true);need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,false,5));
+  need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,6));   // exact connected map
+  need(new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,5));
+  b.put("map_id",6);need(new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,6));
+  b.put("map_id",1000);need(!new ClientSessionBudget().apply(b,SESSION,73,true,false,0,1000,10,700000,true,1000));
+  for(int destination:new int[]{5,6}){
+   Map<String,Object> connected=new LinkedHashMap<>(),saved=new LinkedHashMap<>(),proof=new LinkedHashMap<>(),login=new LinkedHashMap<>(),report=new LinkedHashMap<>();
+   for(Map<String,Object> item:Arrays.asList(connected,saved,proof,login)){
+    item.put("session_id",SESSION);item.put("client_pid",73);item.put("character_id",1);item.put("name","THORHERO");item.put("account","COHLOCAL");
+    item.put("zoning_enabled",true);item.put("connected_on_supported_map",true);item.put("map_id",destination);
+    item.put("monorail_enabled",false);item.put("stock_travel",true);
+   }
+   connected.put("type","character_connected");connected.put("map_id",1);connected.put("baseline_character_id",1);connected.put("reopen_verified",true);connected.put("existing_character_verified",true);
+   saved.put("type","character_saved");saved.put("committed_sql_verified",true);
+   for(String flag:new String[]{"verified","connected_on_atlas","committed_sql_verified","requested_logout_observed","logout_timer_observed","disconnected_before_sql","reopen_verified","existing_character_verified","preserved_existing_identity","native_client_ready_observed","powers_preserved","costume_preserved","selected_rows_preserved","committed_native_position_verified"})proof.put(flag,true);
+   for(String flag:new String[]{"forced_stop_before_save","recovery_requested","recovery_verified","ordinary_stuck_observed","on_atlas_safe_position","stable_ground_verified","committed_safe_position_verified"})proof.put(flag,false);
+   proof.put("auth_id",2);proof.put("before_character_id",1);proof.put("baseline_character_id",1);
+   login.put("auth_id",2);login.put("profile","android-local-login");for(String flag:new String[]{"local_login_verified","character_list_sent","local_account_verified","character_list_response_sent","database_preserved"})login.put(flag,true);
+   report.put("local_login",login);report.put("character_reopen",proof);
+   need(ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));
+   proof.put("stock_travel",false);need(!ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));proof.put("stock_travel",true);
+   saved.put("map_id",1);need(!ClientAcceptance.characterReopenVerified(report,saved,connected,SESSION,73,true));
+  }
+ }
  public static void main(String[] args)throws Exception {
-  switch(args[0]){case "stockacceptance":stockAcceptance();break;case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
+  switch(args[0]){case "stockarrival":stockArrival();break;case "stockacceptance":stockAcceptance();break;case "stock":stockTravel();break;case "roundtrip":roundtrip();break;case "stale":stale();break;case "fail":fail();break;case "connection":connection();break;case "budget":budget();break;case "saves":saves();break;case "commands":commands();break;default:forged(args[0]);}
   System.out.println("PASS");
  }
 }
@@ -187,6 +229,7 @@ class ClientZoningJavaTests(unittest.TestCase):
     def test_four_transfers_require_fresh_native_event_and_three_views(self):self.run_host('roundtrip')
     def test_stock_travel_follows_any_static_zone_without_trip_limit(self):self.run_host('stock')
     def test_stock_travel_accepts_any_static_zone_window_and_saved_destination(self):self.run_host('stockacceptance')
+    def test_stock_travel_kings_row_and_other_zones_connect_budget_and_save(self):self.run_host('stockarrival')
     def test_stale_future_and_pre_delivery_arrivals_rejected(self):self.run_host('stale')
     def test_preparation_failure_preserves_save_but_transfer_failure_blocks(self):self.run_host('fail')
     def test_map101_connection_requires_opt_in_and_supported_map_proof(self):self.run_host('connection')
