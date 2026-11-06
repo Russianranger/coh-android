@@ -420,8 +420,8 @@ class ClientFolderIndexTests(unittest.TestCase):
         "Map loading, please wait..." stayed over King's Row (Thor 0.13.56)."""
         root = Path(armport.__file__).resolve().parents[1]
         series = (root / 'patches/series').read_text().split()
-        self.assertEqual(series[-1], '0125-armport-map-loading-notice-after-load-screen.patch')
-        text = (root / 'patches' / series[-1]).read_text()
+        self.assertIn('0125-armport-map-loading-notice-after-load-screen.patch', series)
+        text = (root / 'patches' / '0125-armport-map-loading-notice-after-load-screen.patch').read_text()
         self.assertEqual(text.count('+++ b/'), 1)
         self.assertIn('+++ b/Game/src/clientcomm/clientcomm.c', text)
         added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
@@ -436,6 +436,33 @@ class ClientFolderIndexTests(unittest.TestCase):
         dbserver = (upstream / 'DBServer/src/mapxfer.c').read_text(encoding='latin-1')
         self.assertEqual(dbserver.count('sendMapLoadingMessage(link, ent_con->is_gameclient, ent_con->id, 1);'), 2)
         self.assertNotIn('ent_con->id, 0);', dbserver)
+
+
+    def test_enter_game_waits_for_the_dbserver_to_start_the_saved_zone(self):
+        """Patch 0126: with the game's own travel a session prepares Atlas Park and
+        a hero saved in another zone is started by the DbServer at Enter Game
+        (handleChoosePlayer -> setNewMap -> startMapIfStatic), minutes on the Thor;
+        the client gave up after 90 s. The test client and -notimeout are unchanged."""
+        root = Path(armport.__file__).resolve().parents[1]
+        series = (root / 'patches/series').read_text().split()
+        self.assertEqual(series[-1], '0126-armport-enter-game-waits-for-zone-start.patch')
+        text = (root / 'patches' / series[-1]).read_text()
+        self.assertEqual(text.count('+++ b/'), 1)
+        self.assertIn('+++ b/Game/src/gameComm/initClient.c', text)
+        removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertEqual(removed, ['-    return dbChoosePlayer( player_slot, ip, createLocation, '
+                                   'control_state.notimeout?NO_TIMEOUT:90);'])
+        self.assertIn('+    return dbChoosePlayer( player_slot, ip, createLocation, '
+                      'control_state.notimeout?NO_TIMEOUT:900);', added)
+        upstream = root.parent / 'upstream/ouroboros'
+        client = (upstream / 'Game/src/gameComm/initClient.c').read_text(encoding='latin-1')
+        self.assertEqual(client.count('dbChoosePlayer('), 2)       # TEST_CLIENT (240 s) and the game
+        # The game client gets no loading message from the DbServer at login; it waits.
+        dbserver = (upstream / 'DBServer/src/mapxfer.c').read_text(encoding='latin-1')
+        self.assertIn('if (is_gameclient)\n        return;', dbserver)
+        self.assertIn('ret = setNewMap(ent_con,ent_con->map_id,link,1,errmsg,client->char_id != 0);',
+                      (upstream / 'DBServer/src/clientcomm.c').read_text(encoding='latin-1'))
 
 
 if __name__ == '__main__':

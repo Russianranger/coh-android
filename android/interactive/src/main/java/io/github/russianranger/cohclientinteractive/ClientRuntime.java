@@ -366,6 +366,43 @@ public final class ClientRuntime {
      * The game's own zone travel (default on): zone doors, tunnels and the monorail take the stock
      * path (loading screen at once) and the guest starts any requested zone (external-maps DbServer).
      */
+    /**
+     * A bind destination inside another bind (/opt/coh/pgsql inside /opt/coh =
+     * runtime assets). Left missing, PRoot creates it with no permissions, and
+     * the storage scan, which cannot open it, then disables every cleanup
+     * (Thor storage report 2026-11-06: errno 13 at runtime assets/pgsql, 14
+     * older runtimes kept). Create it, or repair it, as a private directory.
+     */
+    static void ownedMountPoint(File directory) throws IOException {
+        java.nio.file.Path path = directory.toPath();
+        if (!Files.exists(path, java.nio.file.LinkOption.NOFOLLOW_LINKS)) Files.createDirectory(path);
+        if (!Files.isDirectory(path, java.nio.file.LinkOption.NOFOLLOW_LINKS))
+            throw new IOException("Runtime mount point is not a private directory");
+        Files.setPosixFilePermissions(path, java.nio.file.attribute.PosixFilePermissions.fromString("rwx------"));
+    }
+
+    /** Before a storage scan: the same repair for every runtime's mount point; returns how many changed. */
+    static int repairRuntimeMountPoints(File files) {
+        File[] runtimes = new File(files, "m2").listFiles();
+        if (runtimes == null) return 0;
+        int repaired = 0;
+        Set<java.nio.file.attribute.PosixFilePermission> owner =
+                java.nio.file.attribute.PosixFilePermissions.fromString("rwx------");
+        for (File runtime : runtimes) {
+            if (!runtime.getName().matches("runtime-[0-9a-f]{16}")) continue;
+            java.nio.file.Path assets = new File(runtime, "assets").toPath(), mount = assets.resolve("pgsql");
+            if (!Files.isDirectory(runtime.toPath(), java.nio.file.LinkOption.NOFOLLOW_LINKS)
+                    || !Files.isDirectory(assets, java.nio.file.LinkOption.NOFOLLOW_LINKS)
+                    || !Files.isDirectory(mount, java.nio.file.LinkOption.NOFOLLOW_LINKS)) continue;
+            try {
+                if (Files.getPosixFilePermissions(mount, java.nio.file.LinkOption.NOFOLLOW_LINKS).containsAll(owner)) continue;
+                Files.setPosixFilePermissions(mount, owner);
+                repaired++;
+            } catch (IOException | RuntimeException ignored) { /* The scan reports what it cannot open. */ }
+        }
+        return repaired;
+    }
+
     public static boolean stockTravelEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getBoolean("stock-zone-travel", true);
@@ -866,6 +903,7 @@ public final class ClientRuntime {
             }
             File root = new File(generation, "rootfs"); new File(root, "presentation-socket").mkdirs();
             new File(root, "game-import").mkdirs();
+            ownedMountPoint(new File(generation, "assets/pgsql"));
             String nativeDir = context.getApplicationInfo().nativeLibraryDir;
             File proot = new File(nativeDir, "libproot.so"), loader = new File(nativeDir, "libproot-loader.so");
             if (!proot.canExecute() || !loader.canExecute()) throw new IOException("The APK process runtime is missing");
@@ -2162,10 +2200,13 @@ public final class ClientRuntime {
                         if (reopen && zoningEnabled() && ClientAcceptance.savedDestinationEvent(jsonValue(event), session,
                                 Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")), stockTravelRequested)
                                 && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
-                            stage("Saved destination verified", "THORHERO is saved in "
-                                + (ClientZoning.supported(event.optInt("map_id", -1)) ? ClientZoning.name(event.optInt("map_id", -1))
-                                   : "zone " + event.optInt("map_id", -1) + " (" + event.optString("map_name", "") + ")")
-                                + ". Preparing its native MapServer on port "
+                            String savedZone = ClientZoning.supported(event.optInt("map_id", -1)) ? ClientZoning.name(event.optInt("map_id", -1))
+                                   : "zone " + event.optInt("map_id", -1) + " (" + event.optString("map_name", "") + ")";
+                            stage("Saved destination verified", event.optBoolean("dynamic_start", false)
+                                ? "THORHERO is saved in " + savedZone + ". Atlas Park starts now; " + savedZone
+                                  + " starts when you press Enter Game, and the screen can stay still for a few minutes"
+                                  + " while it loads. Existing character data is preserved."
+                                : "THORHERO is saved in " + savedZone + ". Preparing its native MapServer on port "
                                 + event.optInt("port", -1) + "; existing character data is preserved.");
                             recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
                                 + " port=" + event.optInt("port", -1));

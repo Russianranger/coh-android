@@ -223,6 +223,11 @@ final class ClientAcceptance {
         return savedDestinationEvent(value, session, monorailQualified, false);
     }
 
+    /**
+     * stockTravel: also another static zone; with dynamic_start the guest
+     * prepares Atlas Park (prepared_map_id 1) and the saved zone is started at
+     * Enter Game by the DbServer's own request, so it has no port yet.
+     */
     static boolean savedDestinationEvent(Object value, String session, boolean monorailQualified,
             boolean stockTravel) {
         Map<?, ?> event = object(value);
@@ -239,6 +244,10 @@ final class ClientAcceptance {
                     && "City_01_01".equals(event.get("world")))
                 || (monorailQualified && number(event.get("map_id"), 5) && number(event.get("port"), 7003)
                     && "City_01_02".equals(event.get("world")))
+                || (stockTravel && yes(event.get("dynamic_start")) && number(event.get("prepared_map_id"), 1)
+                    && integer(event.get("map_id")) && staticZone(((Number) event.get("map_id")).longValue())
+                    && !number(event.get("map_id"), 1) && event.get("world") instanceof String
+                    && ((String) event.get("world")).matches("[A-Za-z0-9_]{1,64}"))
                 || (stockTravel && event.get("map_id") instanceof Number
                     && staticZone(((Number) event.get("map_id")).longValue())
                     && !number(event.get("map_id"), 1) && !number(event.get("map_id"), 101)

@@ -123,3 +123,4 @@
 0123-armport-entity-interpolation-clock-wrap.patch
 0124-armport-sound-script-errors-logged.patch
 0125-armport-map-loading-notice-after-load-screen.patch
+0126-armport-enter-game-waits-for-zone-start.patch

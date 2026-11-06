@@ -165,6 +165,14 @@ public final class ZoningHost {
   d.put("port",7001);need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
   d.put("port",7004);d.put("world","../x");need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,true));
   d.put("world","city_01_02");d.put("map_id",5);d.put("port",7003);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  // 0.13.58 dynamic start: Atlas Park prepared, the saved zone has no port until Enter Game.
+  d.put("map_id",6);d.put("port",null);d.put("world","city_02_01");
+  need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  d.put("dynamic_start",true);d.put("prepared_map_id",1);need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  need(!ClientAcceptance.savedDestinationEvent(d,SESSION,true,false));
+  d.put("prepared_map_id",5);need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  d.put("prepared_map_id",1);d.put("map_id",1);need(!ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
+  d.put("map_id",101);d.put("world","City_01_01");need(ClientAcceptance.savedDestinationEvent(d,SESSION,false,true));
  }
  static void stockArrival(){
   // Thor 0.13.56 (export 20261106-152038): King's Row reached by the game's own
