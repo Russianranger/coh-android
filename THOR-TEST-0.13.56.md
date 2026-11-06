@@ -16,7 +16,12 @@ real trip (Atlas Park → Atlas Park instance 2 → back, then save):
 Everything else is 0.13.55: [THOR-TEST-0.13.55.md](THOR-TEST-0.13.55.md).
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.56".
 
-CI: CI_SUMMARY
+CI: build 42147267395, zone-trip runtime 42157464723, default runtime
+42161824248 and trusted runtime 42165588717 passed at 85a8f9801; APK
+42169364145 published it. The zone-trip run took the game's own trip on CI
+(instance 2 ready 172 s after the DbServer asked for it, hero in the new zone
+345 s after the request, back to Atlas, save passed). CI's older test server
+cannot show the loading screen itself, so **your test is the first look at it**.
 
 ## Steps
 

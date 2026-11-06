@@ -30,11 +30,11 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   refused (shared folders missing from the changed-root check): Atlas ready 444 s vs 297 s on .49.
 - 0.13.51 published (APK 41750489814, runtime 41745666658): cache reuse fix, 10 FPS station cap (0121), thermal/tick/CPU
   evidence. Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
-- 0.13.52 published (APK 41791858823): clock wrap 0123, 0122. 0.13.53 published (APK 41881826170): game audio
-  (TRASC plugin), 0124; Thor: audio, King's Row, RSS 6.3 GB total; reopen check rejected training+Day Job combos.
-- 0.13.54 published (APK 41960891294 at a66b533f6; runtimes 41948749075/41952941661 passed): save check for ordinary play,
-  pss_kib. Shared heap reserves 1 GB but 2/2 runs failed in session (41931773800, 41956900853) → keep off.
-  External-maps DbServer passed creation/reopen in CI (41961253764). First APK 41935584201: 2 unreviewed helpers, fixed.
-- 0.13.54 Thor (export 20261105-043833): save check passed; King's Row cold 191 s at the station, trip 30 s; PSS≈RSS.
+- 0.13.52 (APK 41791858823): clock wrap 0123, 0122. 0.13.53 (APK 41881826170): game audio (TRASC plugin), 0124.
+- 0.13.54 (APK 41960891294 at a66b533f6): save check for ordinary play, pss_kib; shared heap 2/2 failed in session
+  (41931773800, 41956900853) → off; external-maps DbServer passed in CI (41961253764). Thor (export 20261105-043833):
+  save passed; King's Row cold 191 s at the station, trip 30 s; PSS≈RSS.
 - 0.13.55 published (APK 42037755195; build 41980185206, runtimes 41991355281/42020227060 at 81e81ddd0): stock zone travel,
-  any zone, gear menu, controller map. CI zoning reopen unprovable on legacy MapServer (42029819713); HANDOFF "0.13.55".
+  any zone, gear menu, controller map. Thor: monorail → DbServer weeklyTF assert (export 20261105-202806).
+- 0.13.56 published (APK 42169364145; build 42147267395, runtimes 42157464723/42161824248/42165588717 at 85a8f9801):
+  weeklyTF.cfg, supervisor drops servercfg options, -notwostagemapxfer; CI trip 101 ready 172 s, save ok. HANDOFF "0.13.56".
