@@ -401,8 +401,8 @@ class ClientFolderIndexTests(unittest.TestCase):
         41832716509 and 41838960420: logout never processed). It is logged, bounded."""
         root = Path(armport.__file__).resolve().parents[1]
         series = (root / 'patches/series').read_text().split()
-        self.assertEqual(series[-1], '0124-armport-sound-script-errors-logged.patch')
-        text = (root / 'patches' / series[-1]).read_text()
+        self.assertIn('0124-armport-sound-script-errors-logged.patch', series)
+        text = (root / 'patches' / '0124-armport-sound-script-errors-logged.patch').read_text()
         removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
         added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
         self.assertTrue(any('winErrorDialog(errorMsg,"Sound Script Errors"' in line for line in removed))
@@ -412,6 +412,30 @@ class ClientFolderIndexTests(unittest.TestCase):
         self.assertTrue(any('ARMPORT_SOUND_SCRIPT_ERRORS_V1' in line for line in added))
         upstream = (root.parent / 'upstream/ouroboros/Game/src/sound/sound_ambient.c').read_text(encoding='latin-1')
         self.assertEqual(upstream.count('winErrorDialog('), 1)   # the only dialog in this file
+
+
+    def test_map_loading_notice_does_not_outlive_the_load_screen(self):
+        """Patch 0125: with -notwostagemapxfer the load screen comes first and the
+        DbServer's "loading" notice arrives during it; nothing turned it off, so
+        "Map loading, please wait..." stayed over King's Row (Thor 0.13.56)."""
+        root = Path(armport.__file__).resolve().parents[1]
+        series = (root / 'patches/series').read_text().split()
+        self.assertEqual(series[-1], '0125-armport-map-loading-notice-after-load-screen.patch')
+        text = (root / 'patches' / series[-1]).read_text()
+        self.assertEqual(text.count('+++ b/'), 1)
+        self.assertIn('+++ b/Game/src/clientcomm/clientcomm.c', text)
+        added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertIn('+    if (on && game_state.game_mode == SHOW_LOAD_SCREEN)', added)
+        self.assertIn('+    g_showMapLoadingMessage = on;', added)
+        self.assertTrue(any(line.startswith('+    g_showMapLoadingMessage = false;') for line in added))
+        upstream = root.parent / 'upstream/ouroboros'
+        client = (upstream / 'Game/src/clientcomm/clientcomm.c').read_text(encoding='latin-1')
+        self.assertEqual(client.count('g_showMapLoadingMessage = pktGetBits(pak_in, 1);'), 1)
+        self.assertIn('g_showMapLoadingMessage = false;\n    game_state.game_mode = SHOW_LOAD_SCREEN;', client)
+        # The DbServer only ever sends "on" (a new map starting for the player).
+        dbserver = (upstream / 'DBServer/src/mapxfer.c').read_text(encoding='latin-1')
+        self.assertEqual(dbserver.count('sendMapLoadingMessage(link, ent_con->is_gameclient, ent_con->id, 1);'), 2)
+        self.assertNotIn('ent_con->id, 0);', dbserver)
 
 
 if __name__ == '__main__':
