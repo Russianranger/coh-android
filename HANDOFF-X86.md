@@ -438,6 +438,26 @@ zone, so CI never reached it.
   the zoning flow reads Atlas CLIENT_READY with its log time (`legacy_ready`);
   the device keeps its immediate events. The failure notice adds the DbServer
   console tail and zone console tails.
+- **What the CI trip found next** (round3, each run one fix):
+  r56z 42105741978: the DbServer published map 101 (no assertion) but the
+  supervisor refused `-productionmode` (shipped `MapServerParams`); r56z2
+  42113734763: refused `-idleExitTimeout` — servercfg.c appends
+  `-idleExitTimeout 30`, `-idleUpkeep 30`, `-MARTY_enabled` (and on other
+  configs `-IsBetaShard`, `-dailyUpkeep A B`); all dropped, the session's own
+  MapServers run without them (test rebuilds the whole command from the
+  shipped servers.cfg). r56z3 42122856772: 101 started (cookie 2, ready 202 s)
+  but the 4 KB notice hid why the hero stayed → "zone diagnostics" notices.
+  r56z4 42130378619: the game did the trip (entity log: Step 1 00:08:09,
+  Step 2 00:11:01, ResumeCharacter on City_01_01_2) but the guest missed it:
+  after the connection is proved the base flow stops status probes →
+  arrivals are read from the stock entity log (`_poll_stock_logs`). r56z5
+  42136835869: round trip, stuck, logout and save all passed (arrival 101 in
+  258.7 s host time, back in 84.2 s); the host's report check wanted the
+  `local-character-atlas` process label → `local-character-zoning-1` accepted.
+- **Loading screen at once**: the stock MapServer's two-stage transfer kept
+  the hero in the world until the destination started; stock-travel session
+  MapServers run with `-notwostagemapxfer` (svr_init.c): frozen,
+  untargetable, invincible and the loading screen immediately.
 - Version 0.13.56 (71); test sheet `THOR-TEST-0.13.56.md`.
 
 ## 0.13.55: the game's own zone travel, every zone (Claude, 2026-11-05)

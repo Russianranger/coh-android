@@ -1,11 +1,20 @@
 # Thor test: COH Atlas Gameplay 0.13.56 (ARM64 client): zone travel fix
 
-0.13.56 fixes the 0.13.55 monorail crash: the first zone the database server
-had to start stopped it on an error box (`weeklyTFcfg.c`, `currentWeek`).
-Every zone start reads a weekly task force file the game data does not have;
-the app now supplies an empty one. Everything else is 0.13.55: test sheet
-[THOR-TEST-0.13.55.md](THOR-TEST-0.13.55.md). Evidence:
-[HANDOFF-X86.md](HANDOFF-X86.md), "0.13.56".
+0.13.56 makes the game's own zone travel work end to end. 0.13.55's first
+monorail ride stopped the database server on an error box (`weeklyTFcfg.c`,
+`currentWeek`); behind it were three more problems that CI now covers with a
+real trip (Atlas Park → Atlas Park instance 2 → back, then save):
+
+- the database server's zone start command carried settings the zone starter
+  refused (the map would have "failed");
+- the hero stayed in the world, attackable, until the new zone had started;
+  now the loading screen comes **at once** and the hero is frozen,
+  untargetable and invincible until the zone is ready;
+- the app did not notice the hero had arrived; it now reads it from the
+  game's own log.
+
+Everything else is 0.13.55: [THOR-TEST-0.13.55.md](THOR-TEST-0.13.55.md).
+Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.56".
 
 CI: CI_SUMMARY
 
