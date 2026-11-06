@@ -455,6 +455,13 @@ graphical character".
   0.13.55's `stockTravelRequested`); two legacy 0.13.20 fixtures in it fail with
   or without these changes (not investigated).
 - Version 0.13.57 (72); test sheet `THOR-TEST-0.13.57.md`.
+- CI at 8050afca8: build 42246645668, stock-travel runtime 42263546136 (trip to
+  101: instance ready 181.8 s, client world ready 352.1 s after the request, 2
+  arrivals, interactive passed with no failures), default runtime 42270379862,
+  trusted runtime 42276008129; APK 42281556221 published
+  `coh-atlas-gameplay-v0.13.57` (prerelease; sha256 62221a94…f1c07). CI does not
+  reach King's Row or a third zone, so the map-5 rule, `stock_occupied` and patch
+  0125 on screen are unit-tested only until the Thor test.
 
 ## 0.13.56: zone starts no longer stop the DbServer; CI zone trip (Claude, 2026-11-05)
 

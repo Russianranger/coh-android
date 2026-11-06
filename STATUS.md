@@ -1,11 +1,10 @@
 # x86 track integration
 
-Updated 2026-11-05 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-06 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
-- Merge order: sampler-review-fix → startup-60s → modern-runtime-qualification
-  → m5-thor (b7806a6bd King's Row docs) → performance-path docs.
+- Merge order: sampler-review-fix → startup-60s → modern-runtime-qualification → m5-thor (b7806a6bd) → performance-path docs.
 - P2/P3 sampler and Windows producer fixes included through 8dc2a66d72477b3c62227e572538b13f0e4f912b.
   See armport/notes/M5-SAMPLER-REVIEW.md and HANDOFF-X86.md.
 - Last device result is .44: King's Row cold prep 656.024 s, request→arrival
@@ -34,7 +33,8 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.54 (APK 41960891294 at a66b533f6): save check for ordinary play, pss_kib; shared heap 2/2 failed in session
   (41931773800, 41956900853) → off; external-maps DbServer passed in CI (41961253764). Thor (export 20261105-043833):
   save passed; King's Row cold 191 s at the station, trip 30 s; PSS≈RSS.
-- 0.13.55 published (APK 42037755195; build 41980185206, runtimes 41991355281/42020227060 at 81e81ddd0): stock zone travel,
-  any zone, gear menu, controller map. Thor: monorail → DbServer weeklyTF assert (export 20261105-202806).
-- 0.13.56 published (APK 42169364145; build 42147267395, runtimes 42157464723/42161824248/42165588717 at 85a8f9801):
-  weeklyTF.cfg, supervisor drops servercfg options, -notwostagemapxfer; CI trip 101 ready 172 s, save ok. HANDOFF "0.13.56".
+- 0.13.55 (APK 42037755195 at 81e81ddd0): stock zone travel, any zone, gear menu. Thor: monorail → weeklyTF assert (20261105-202806).
+- 0.13.56 (APK 42169364145 at 85a8f9801): weeklyTF.cfg, -notwostagemapxfer; CI trip 101 ready 172 s. Thor (20261106-152038):
+  King's Row reached (~3½ min), then the reopen budget rejected map 5 (monorail-only rule); "Map loading" notice stayed.
+- 0.13.57 published (APK 42281556221; build 42246645668, runtimes 42263546136/42270379862/42276008129 at 8050afca8): stock
+  travel accepts every static zone, patch 0125, occupied probe before eviction; CI trip 101 ready 182 s, passed. HANDOFF "0.13.57".

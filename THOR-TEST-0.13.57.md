@@ -24,7 +24,13 @@ current validated graphical character").
 Everything else is 0.13.56: [THOR-TEST-0.13.56.md](THOR-TEST-0.13.56.md).
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.57".
 
-CI: CI_SUMMARY
+CI: build 42246645668, zone-trip runtime 42263546136, default runtime
+42270379862 and trusted runtime 42276008129 passed at 8050afca8; APK
+42281556221 published it. The zone-trip run took the game's own trip on CI
+(instance 2 ready 182 s after the DbServer asked for it, hero in the new zone
+352 s after the request, back to Atlas, save passed). CI's trip goes to a
+second Atlas Park, not King's Row, and does not ask for a third zone, so **your
+test is the first run of the King's Row and third-zone fixes**.
 
 ## Steps
 
