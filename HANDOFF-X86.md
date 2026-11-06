@@ -429,8 +429,16 @@ legacy saved start prepared King's Row (beacon graph 29.8 s, preparation
 42.2 s) and overlapped the client: King's Row native ready 200.96 s
 (20:56:10.258), client launcher started 20:56:09.2, no client window yet. No
 guest failure; the Android process ended (no report finalized). Storage report
-20261106-211807 has no exit history (format 1 inventory), so the Android exit
-reason is unknown; low memory vs a crash is unproven.
+20261106-211807 has no exit history (format 1 inventory). The user's later
+setup export 20261106-220022 has it: **20:58:39.314Z reason 3 (LOW_MEMORY),
+importance 100 (foreground)**, app process PSS 242,631 KiB / RSS 364,340 KiB,
+pid 32400 (the 20:47:55Z setup service pid), 2.5 min after the client launch.
+Android's low-memory killer ended the foreground app while King's Row's
+preparation and native start overlapped the client's own startup (Android
+reported 10.9 GB available at setup; 0.13.52's per-process figures: client
+~2.2 GB, each zone ~1.9 GB, DbServer ~0.4 GB). The 0.13.56 trip (client in
+game, Atlas and King's Row resident) survived, which supports moving the
+saved zone's start after the client's startup.
 
 - **Dynamic initial map** (`character_zoning`, `DYNAMIC_INITIAL_POLICY`): with
   stock travel and the ARM64 client, `capture_baseline` keeps the saved zone in

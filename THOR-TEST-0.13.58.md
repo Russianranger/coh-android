@@ -4,8 +4,9 @@ In 0.13.57 THORHERO was saved in King's Row (the 0.13.56 stop left the hero
 there). Reopen started King's Row's zone server itself while the game started:
 King's Row was ready at 20:56:10, the game launched a second earlier, and as its
 first screen appeared Android closed the whole app with no message (recovered
-export 20261106-210545). Android's own record of why was not exported; the
-storage report did not carry it.
+export 20261106-210545). Your setup export 20261106-220022 has Android's
+reason: **low memory** (the low-memory killer ended the app while it was on
+screen, 20:58:39 UTC), with King's Row starting at the same time as the game.
 
 0.13.58:
 
@@ -27,11 +28,6 @@ Everything else is 0.13.57: [THOR-TEST-0.13.57.md](THOR-TEST-0.13.57.md).
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.58".
 
 CI: CI_SUMMARY
-
-## Before wiping (optional, 3 minutes)
-
-Android forgets why it closed the app when the app is uninstalled. To keep
-that: tap **Set up / update runtime**, then **Reports / export**, top entry.
 
 ## Steps (fresh install)
 
