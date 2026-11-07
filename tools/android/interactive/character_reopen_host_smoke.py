@@ -29,7 +29,28 @@ ATLAS_HELP_REGION = (345, 270, 680, 490)
 WORLD_CACHE_POLICY = 'once_per_world_manifest_private_atlas_geobin_and_supplemented_object_library_only'
 
 
-def reopen_actions():
+# The game's own zone travel (COH_STOCK_TRAVEL=1 with the external-maps DbServer):
+# /mapmove asks the DbServer for Atlas Park instance 2 (the Atlas tree, one more
+# MapServer start), which publishes the start to the zoning supervisor exactly
+# like a door, tunnel or monorail does; then back to the still-running Atlas.
+STOCK_TRAVEL_MAPS = ((101, 'instance_2'), (1, 'atlas'))
+STOCK_TRAVEL_SECONDS = 900
+
+
+def stock_travel_actions():
+    actions = []
+    for map_id, label in STOCK_TRAVEL_MAPS:
+        actions += [('key', 0xff0d, 'open_travel_chat_'+label),
+                    ('command', '/mapmove %d' % map_id, 'type_stock_travel_'+label),
+                    ('key', 0xff0d, 'submit_stock_travel_'+label),
+                    ('arrived', map_id, 'wait_stock_arrival_'+label),
+                    ('move', (600, 100), 'clear_cursor_after_'+label),
+                    ('optional_ocr_move', None, 'check_travel_help_'+label),
+                    ('optional_ocr_click', None, 'dismiss_travel_help_'+label)]
+    return actions
+
+
+def reopen_actions(stock_travel=False):
     actions = [('login', None, 'wait_existing_character_list'),
         ('move', (600, 100), 'clear_cursor_before_existing_character'),
         ('ocr_move', ('THORHERO', CHARACTER_REGION), 'preposition_existing_character'),
@@ -40,8 +61,10 @@ def reopen_actions():
     for index in range(1, 4):
         actions += [('optional_ocr_move', None, 'check_atlas_help_'+str(index)),
                     ('optional_ocr_click', None, 'dismiss_atlas_help_'+str(index))]
-    actions += [('modal_clear', None, 'verify_atlas_help_dismissed'),
-        ('key', 0xff0d, 'open_stuck_chat'), ('command', '/stuck', 'type_ordinary_stuck'),
+    actions += [('modal_clear', None, 'verify_atlas_help_dismissed')]
+    if stock_travel:
+        actions += stock_travel_actions()
+    actions += [('key', 0xff0d, 'open_stuck_chat'), ('command', '/stuck', 'type_ordinary_stuck'),
         ('key', 0xff0d, 'submit_ordinary_stuck'),
         ('relocated', None, 'wait_world_after_stuck'),
         ('key', 0xff0d, 'open_chat'), ('command', '/quittologin', 'type_ordinary_logout'),
@@ -82,16 +105,17 @@ class ReopenInteraction(character.CharacterInteraction):
         self.modal_position = None
 
     def fixture_text(self, connection, value):
-        if value == '/stuck':
+        if value == '/stuck' or value.startswith('/mapmove '):
             for letter in value: character.key(connection, ord(letter))
         else:
             super().fixture_text(connection, value)
 
     def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
         if kind in ('optional_ocr_move', 'modal_clear'):
+            checks = self.result['travel_help_checks' if name.startswith('check_travel_help') else 'atlas_help_checks']
             match, stem = character.read_button(frame, self.evidence, 'OK', name,
-                len(self.result['atlas_help_checks'])+1, ATLAS_HELP_REGION)
-            self.result['atlas_help_checks'].append({'action': name, 'found': match is not None,
+                len(checks)+1, ATLAS_HELP_REGION)
+            checks.append({'action': name, 'found': match is not None,
                 'label': 'OK', 'evidence': stem, 'frame_sequence': sequence,
                 'frame_generation': frame.generation, 'session_id': self.session, 'client_pid': events.client_pid})
             if kind == 'modal_clear':
@@ -126,6 +150,42 @@ class ReopenInteraction(character.CharacterInteraction):
             self.stuck_delivered_at = time.monotonic()
 
 
+class StockTravelReopenInteraction(ReopenInteraction):
+    """The reopen with one CI trip through the DbServer's own zone start, then back."""
+    ACTIONS = character.CharacterInteraction.LOGIN_ACTIONS + reopen_actions(stock_travel=True)
+
+    def __init__(self, session, evidence, finish_path):
+        super().__init__(session, evidence, finish_path)
+        self.result.update(stock_travel_arrivals=[], travel_help_checks=[])
+        self.travel_sent_at = None
+
+    def arrivals_needed(self):
+        return sum(1 for action in self.ACTIONS[:self.action+1] if action[0] == 'arrived')
+
+    def on_frame(self, connection, frame, events, sequence, captures, now):
+        if (self.action < len(self.ACTIONS) and self.ACTIONS[self.action][0] == 'arrived'
+                and len(events.arrivals) < self.arrivals_needed()):
+            require(self.travel_sent_at is not None and now-self.travel_sent_at < STOCK_TRAVEL_SECONDS,
+                    'Zone travel to map %d did not arrive within %d seconds'
+                    % (self.ACTIONS[self.action][1], STOCK_TRAVEL_SECONDS))
+            require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
+                    'Host character creation exceeded twenty-minute interaction bound')
+            return
+        before = self.action
+        super().on_frame(connection, frame, events, sequence, captures, now)
+        if self.action != before and self.ACTIONS[before][2].startswith('submit_stock_travel_'):
+            self.travel_sent_at = time.monotonic()
+
+    def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
+        if kind == 'arrived':
+            arrival = events.arrivals[self.arrivals_needed()-1]
+            require(arrival['current_map_id'] == value, 'Zone travel arrived on another map')
+            self.result['stock_travel_arrivals'].append(dict(arrival, frame_sequence=sequence,
+                host_seconds=round(now-self.travel_sent_at, 3)))
+            return True
+        return super().custom_action(kind, value, name, connection, frame, events, sequence, now)
+
+
 class ReopenEvents(character.CharacterEvents):
     def __init__(self, path, session):
         super().__init__(path, session)
@@ -151,6 +211,35 @@ class ReopenEvents(character.CharacterEvents):
                 return
             elif event.get('type') == 'character_saved':
                 require(self.relocated_generation == 1, 'Reopened character save preceded stable native relocation')
+        super().consume(event)
+
+
+class StockTravelReopenEvents(ReopenEvents):
+    """Follow the guest's stock_travel arrivals; the save must come after the round trip."""
+    def __init__(self, path, session):
+        super().__init__(path, session)
+        self.arrivals = []
+
+    def consume(self, event):
+        if (event.get('session_id') == self.session and event.get('type') == 'character_zoning'
+                and event.get('status') == 'arrived'):
+            expected = STOCK_TRAVEL_MAPS[len(self.arrivals)][0] if len(self.arrivals) < len(STOCK_TRAVEL_MAPS) else None
+            origin = 1 if not self.arrivals else self.arrivals[-1]['current_map_id']
+            require(self.active and self.connected_generation == 1 and self.saved_generation == 0
+                    and self.relocated_generation == 0 and expected is not None
+                    and event.get('travel_method') == 'stock_travel'
+                    and type(event.get('client_pid')) is int and event['client_pid'] == self.client_pid
+                    and event.get('character_id') == 1 and event.get('epoch') == len(self.arrivals)+1
+                    and event.get('current_map_id') == expected and event.get('target_map_id') == expected
+                    and event.get('from_map_id') == origin
+                    and event.get('current_map_verified') is True
+                    and event.get('character_identity_preserved') is True,
+                    'Zone travel arrival is foreign, out of order or unverified')
+            self.arrivals.append({key: event[key] for key in ('epoch', 'current_map_id', 'from_map_id',
+                                                               'generated_utc_ms')})
+            return
+        if event.get('session_id') == self.session and event.get('type') == 'character_relocated':
+            require(len(self.arrivals) == len(STOCK_TRAVEL_MAPS), 'Stuck recovery preceded the zone travel round trip')
         super().consume(event)
 
 
@@ -244,7 +333,8 @@ def validate_report(report, session, manifest, *, finish_request=None):
                 'Saved '+table+' differ from the pre-reopen baseline')
 
 
-def validate_observer(observer, report):
+def validate_observer(observer, report, interaction=None):
+    interaction = interaction or ReopenInteraction
     require(observer.get('failure') is None and observer.get('terminal_event_observed') is True
             and observer.get('client_pid') == report['client_launch']['pid'], 'Reopen observer did not complete')
     script = observer['interaction_script']
@@ -256,7 +346,7 @@ def validate_observer(observer, report):
                     and check.get('session_id') == report['session_id']
                     and check.get('client_pid') == observer['client_pid'] for index, check in enumerate(checks)),
             'Reopen login lacks exact rendered COHLOCAL evidence')
-    names = [action[2] for action in ReopenInteraction.ACTIONS]
+    names = [action[2] for action in interaction.ACTIONS]
     retry_start, account_check = names.index('preposition_account'), names.index('verify_rendered_account')
     expected = names[:retry_start]+names[retry_start:account_check]*len(checks)+names[account_check:]
     require(script.get('script_completed') is True and [step['action'] for step in script['steps']] == expected
@@ -287,6 +377,16 @@ def validate_observer(observer, report):
                         and item['frame_generation'] == captures[0]['frame_generation'] for item in captures)
                 and captures[-1]['elapsed_since_ready']-captures[0]['elapsed_since_ready'] >= 2,
                 'Missing fresh current-client reopen proof images: '+name)
+    if interaction is StockTravelReopenInteraction:
+        arrivals = script.get('stock_travel_arrivals', [])
+        require([item.get('current_map_id') for item in arrivals] == [m for m, _ in STOCK_TRAVEL_MAPS]
+                and [item.get('epoch') for item in arrivals] == list(range(1, len(STOCK_TRAVEL_MAPS)+1))
+                and all(type(item.get('host_seconds')) is float and 0 <= item['host_seconds'] < STOCK_TRAVEL_SECONDS
+                        for item in arrivals),
+                'Zone travel round trip lacks its guest arrivals')
+        travel = script.get('travel_help_checks', [])
+        require(len(travel) == len(STOCK_TRAVEL_MAPS) and all(type(check.get('found')) is bool for check in travel),
+                'Zone travel help checks are incomplete')
     stuck = next(step['after_frame_sequence'] for step in script['steps'] if step['action'] == 'submit_ordinary_stuck')
     require(min(item['frame_sequence'] for item in script['world_after_stuck_captures']) > stuck,
             'World images preceded ordinary stuck command delivery')

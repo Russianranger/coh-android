@@ -139,6 +139,10 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
                 &&active.sendPointer(selectedSession,x,y,mask);
     }
+    public boolean sendWheel(String selectedSession,int x,int y,boolean up){
+        ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
+                &&active.sendWheel(selectedSession,x,y,up);
+    }
     public boolean requestEnter(){
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null
@@ -728,7 +732,7 @@ public final class ClientService extends Service {
         final Object owner;
         try{owner=cleaning?ClientRuntime.acquireStorage(this):ClientRuntime.acquireReportExport(this);}
         catch(IOException e){storageStatus=e.getMessage();publish();return;}
-        storageStopRequested.set(false);storageBusy=true;storageStatus=cleaning?"Cleaning the selected disposable files…":"Scanning private storage. No files are being changed…";
+        storageStopRequested.set(false);storageBusy=true;storageStatus=cleaning?"Cleaning the selected disposable files…":"Scanning private storage. No files are being removed…";
         final PowerManager.WakeLock storageWake;
         try{storageWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:storage");}
         catch(RuntimeException e){ClientRuntime.releaseStorage(owner);storageBusy=false;storageStatus="Could not start storage work. Reopen this screen and retry.";publish();return;}
@@ -740,7 +744,7 @@ public final class ClientService extends Service {
                 StorageAudit.ProgressListener progress=(phase,entries,path,elapsed)->checkpointStorage(mode,phase,entries,path,elapsed);
                 StorageFiles fs=new StorageFiles(getFilesDir(),getCacheDir());StorageAudit.Limits limits=StorageAudit.Limits.defaults();
                 if(cleaning){StorageAudit.CleanupResult cleanup=StorageAudit.cleanup(fs,reviewed,selected,limits,progress);saved=writeStorageReport(cleanup.toJson());plan=cleanup.afterPlan;result=cleanup.stalePlan?"Storage changed after review. No cleanup was started; review the fresh scan.":cleanup.completed?"Cleanup finished: "+cleanup.deletedCount+" entries removed. Review the fresh totals and export its report.":"Cleanup stopped before all selected files were removed. Review the fresh totals and export its report.";}
-                else{plan=StorageAudit.scan(fs,currentManifestSha(),limits,progress);saved=writeStorageReport(plan.toJson());result=plan.cleanupAllowed?"Storage scan complete. Select disposable categories to review cleanup.":plan.complete?"Storage scan complete. Cleanup is unavailable; export the report for details.":"Storage scan incomplete. Cleanup is unavailable; export the storage report.";}
+                else{int repaired=ClientRuntime.repairRuntimeMountPoints(getFilesDir());plan=StorageAudit.scan(fs,currentManifestSha(),limits,progress);saved=writeStorageReport(new JSONObject(plan.toJson()).put("runtime_mount_points_repaired",repaired).put("android_process_exit_history",storageProcessExits()).toString());result=plan.cleanupAllowed?"Storage scan complete. Select disposable categories to review cleanup.":plan.complete?"Storage scan complete. Cleanup is unavailable; export the report for details.":"Storage scan incomplete. Cleanup is unavailable; export the storage report.";}
             }catch(OutOfMemoryError e){plan=null;storageRecoveryReserve=null;result="Storage operation stopped at its memory limit. Export the storage report.";try{saved=storageFailureReport(result);}catch(Exception ignored){} }
             catch(Exception e){plan=null;result="Storage operation stopped: "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage());try{saved=storageFailureReport(result);}catch(Exception ignored){} }
             finally{

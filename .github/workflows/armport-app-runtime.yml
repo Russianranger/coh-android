@@ -15,9 +15,53 @@ on:
         description: Optional same build run containing both instrumented MapServer variants
         required: false
         default: ''
+      proot_seccomp:
+        description: A/B variant - let PRoot use its seccomp filter (fast mode) instead of tracing every syscall
+        type: boolean
+        required: false
+        default: false
+      trusted_bins:
+        description: A/B variant - metrics MapServer trusts CRC-matching prepared bins (no tree scan/date check)
+        type: boolean
+        required: false
+        default: false
+      shared_server_data:
+        description: Both zone servers read the shared folders through a linked read-only runtime/serverdata tree (app default on)
+        type: boolean
+        required: false
+        default: true
+      serverdata_probe:
+        description: CI probe - Atlas reads scripts.loc only through a linked shared read-only runtime/serverdata tree
+        type: boolean
+        required: false
+        default: false
+      serverdata_probe_wide:
+        description: CI probe - as serverdata_probe, for every top-level folder no guest proof reads
+        type: boolean
+        required: false
+        default: false
+      client_audio:
+        description: Game audio (app default on) - the client plays through the guest ALSA plugin to a CI protocol sink
+        type: boolean
+        required: false
+        default: true
+      shared_heap:
+        description: Experiment - MapServers run without -nosharedmemory (stock shared memory and shared heap)
+        type: boolean
+        required: false
+        default: false
+      external_maps_run_id:
+        description: Optional successful armport-external-maps-dbserver run - its DbServer is added and map requests observed
+        required: false
+        default: ''
+      stock_travel:
+        description: With external_maps_run_id - the game's own zone travel (reopen runs the zoning flow; requested zones are started)
+        type: boolean
+        required: false
+        default: false
   push:
     branches: ['armport/m4-runtime']
-    paths: ['armport/app/**', 'armport/tests/test_client*.py', 'android/interactive/**',
+    paths: ['armport/app/**', 'armport/audio/**', 'armport/tests/test_client*.py', 'android/interactive/**',
             'android/native/client-launcher.c', 'android/guest/character_creation_diagnostic.py',
             '.github/workflows/armport-app-runtime.yml']
 
@@ -29,6 +73,14 @@ env:
   CLIENT_RUN_ID: ${{ inputs.client_run_id || '40407492746' }}
   DATA_RUN_ID: ${{ inputs.data_run_id || '40407492746' }}
   SERVER_RUN_ID: ${{ inputs.server_run_id }}
+  COH_PROOT_SECCOMP: ${{ inputs.proot_seccomp && '1' || '' }}
+  COH_TRUSTED_BINS: ${{ inputs.trusted_bins && '1' || '' }}
+  COH_SHARED_SERVER_DATA: ${{ inputs.shared_server_data == false && '0' || '1' }}
+  COH_SERVERDATA_PROBE: ${{ inputs.serverdata_probe_wide && '2' || inputs.serverdata_probe && '1' || '' }}
+  COH_CLIENT_AUDIO: ${{ inputs.client_audio == false && '0' || '1' }}
+  COH_SHARED_HEAP: ${{ inputs.shared_heap && '1' || '' }}
+  EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
+  COH_STOCK_TRAVEL: ${{ inputs.stock_travel && '1' || '' }}
 
 jobs:
   app-sources:
@@ -173,20 +225,33 @@ jobs:
           tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C "$RUNNER_TEMP/llvm"
           "$RUNNER_TEMP/llvm/bin/aarch64-w64-mingw32-clang" -O2 -Wall -Wextra -DCOH_ARMPORT_LAUNCHER \
             android/native/client-launcher.c -luser32 -o "$RUNNER_TEMP/m4-client/armport-launcher.exe"
+          # CI-only audio probe (not packaged): a known tone through Wine DirectSound.
+          mkdir "$RUNNER_TEMP/audio-probe"
+          "$RUNNER_TEMP/llvm/bin/aarch64-w64-mingw32-clang" -O2 -Wall -Wextra -Werror \
+            armport/audio/dsound_tone.c -ldsound -ldxguid -o "$RUNNER_TEMP/audio-probe/dsound-tone.exe"
+      - name: Build the guest ALSA audio plugin and check it against real alsa-lib
+        run: |
+          # bookworm (the guest rootfs release); conversion, clock, pause, drain, reconnect.
+          # Not captured, so a failure keeps its log and step.sh's ::error annotation.
+          armport/scripts/step.sh "ArmPort audio plugin" armport/audio/build.sh "$RUNNER_TEMP/audio"
+          echo "::notice title=ArmPort audio plugin::$(tail -1 "$RUNNER_TEMP/audio/native-check.txt" | cut -c1-600) $(tr -d '\n' < "$RUNNER_TEMP/audio/audio-bundle.json")"
       - name: Package and stage the separate ARM64 client overlay
         run: |
           python3 armport/app/armport_client_package.py --client "$RUNNER_TEMP/client-bin" \
             --bins "$RUNNER_TEMP/client-bins/bin" --shaders "$RUNNER_TEMP/cg-arb" \
             --launcher "$RUNNER_TEMP/m4-client/armport-launcher.exe" \
+            --audio-plugin "$RUNNER_TEMP/audio/libasound_module_pcm_trasc.so" \
             --client-run "$CLIENT_RUN_ID" --data-run "$DATA_RUN_ID" \
             --output "$RUNNER_TEMP/armport-client.zip" \
             --source-data "$RUNNER_TEMP/m4-client/data" --stage "$RUNNER_TEMP/m4-packaged-client"
       - name: ARM64 client through app PRoot, Xtigervnc and private RFB
         run: |
+          probe=()
+          if [ "$COH_CLIENT_AUDIO" = 1 ]; then probe=(--audio-probe "$RUNNER_TEMP/audio-probe/dsound-tone.exe"); fi
           armport/scripts/step.sh "ArmPort app runtime boot" python3 armport/app/runtime_host.py \
             --client "$RUNNER_TEMP/m4-packaged-client" --link-source "$RUNNER_TEMP/m4-client/data" \
             --proot out/android/native/linux-arm64 --work "$RUNNER_TEMP/m4-work" \
-            --evidence "$RUNNER_TEMP/m4-evidence"
+            --evidence "$RUNNER_TEMP/m4-evidence" "${probe[@]}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -259,6 +324,17 @@ jobs:
           path: ${{ runner.temp }}/retained-app
           run-id: 36920583713
           github-token: ${{ github.token }}
+      - name: Record the on-demand zone DbServer build run
+        if: env.EXTERNAL_MAPS_RUN_ID != ''
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: gh api "repos/$GITHUB_REPOSITORY/actions/runs/$EXTERNAL_MAPS_RUN_ID" > "$RUNNER_TEMP/external-maps-run.json"
+      - uses: actions/download-artifact@v4
+        if: env.EXTERNAL_MAPS_RUN_ID != ''
+        with:
+          name: armport-external-maps-dbserver
+          path: ${{ runner.temp }}/external-maps-dbserver
+          run-id: ${{ env.EXTERNAL_MAPS_RUN_ID }}
+          github-token: ${{ github.token }}
       - uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/reference-assets.zip
@@ -270,6 +346,9 @@ jobs:
           if [ -n "$SERVER_RUN_ID" ]; then
             server_args=(--server-archive "$RUNNER_TEMP/server-metrics-native/server-metrics-retained-progress.zip" --server-run-id "$SERVER_RUN_ID" --baseline-root "$GITHUB_WORKSPACE/server-baseline")
           fi
+          if [ -n "$EXTERNAL_MAPS_RUN_ID" ]; then
+            server_args+=(--external-maps-dbserver "$RUNNER_TEMP/external-maps-dbserver" --external-maps-run-json "$RUNNER_TEMP/external-maps-run.json")
+          fi
           armport/scripts/step.sh "ArmPort app interactive guest" python3 armport/app/interactive_host.py \
             --apk "$RUNNER_TEMP/retained-app/COH-Character-Reopen-0.10.0.apk" \
             --build-report "$RUNNER_TEMP/retained-app/interactive-apk-build-report.json" \
@@ -278,7 +357,8 @@ jobs:
             --work "$RUNNER_TEMP/interactive-work" --evidence "$RUNNER_TEMP/interactive-evidence" \
             --repository-commit "$GITHUB_SHA" "${server_args[@]}"
       - name: Bind the exact server packages to the successful retained guest sessions
-        if: env.SERVER_RUN_ID != ''
+        # A runtime with the on-demand zone DbServer is an experiment: it never qualifies servers for an APK.
+        if: env.SERVER_RUN_ID != '' && env.EXTERNAL_MAPS_RUN_ID == ''
         run: |
           python3 armport/app/server_pipeline.py qualify \
             --build-run-json "$RUNNER_TEMP/server-build-run.json" \
@@ -289,7 +369,7 @@ jobs:
             --host-report "$RUNNER_TEMP/interactive-evidence/host-report.json" \
             --source "$RUNNER_TEMP/server-metrics-native" --output "$RUNNER_TEMP/qualified-server-metrics"
       - uses: actions/upload-artifact@v4
-        if: env.SERVER_RUN_ID != ''
+        if: env.SERVER_RUN_ID != '' && env.EXTERNAL_MAPS_RUN_ID == ''
         with:
           name: armport-app-server-metrics
           path: ${{ runner.temp }}/qualified-server-metrics/

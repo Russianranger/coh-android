@@ -72,12 +72,100 @@ fx 32 s, group libraries (3,224 files) 31 s, scripts 21 s, PhysX object
 creation 22 s, maps 9 s; the remaining ~49 s is spread over smaller steps.
 It is data loading through FEX + Wine + PRoot, not simulation.
 
+Launch 1, from `armport/app/mapserver_phases.py` over the Thor consoles
+(stamp to map ready): Atlas 332 s, King's Row 258 s.
+
+| Phase | Atlas | King's Row | What runs (source reading) |
+|---|---|---|---|
+| `sequencers` → folder caching (untimed) | 94 s | 89 s | sequencer tree scan + `sequencers.bin` decode + 5,120 animation attachments (certificate hashing only 1.2 s) |
+| Story arcs | 54 s | 30 s | `Scripts.loc` tree scan (35 s / 17 s gap) and `maps` scan (13 s / 8 s) |
+| Map load | 48 s | 30 s | `scenes`/geometry for the zone |
+| FX info | 42 s | 33 s | `fx` tree scan + `fxinfo.bin` decode |
+| Group libraries | 25 s | 24 s | `object_library`, 3,224 files |
+| PhysX objects | 19 s | 7 s | 2,311 objects |
+
+The servers run in `FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC` (no
+`./piggs/texts.pigg`). In that mode the first use of each top-level folder scans
+its whole tree from disk (`FolderCacheRequestTree`, the `[DEBUG] \tfx`-style
+lines), and `ParserIsPersistNewer` then date-checks every source file against
+each `.bin`. Every scanned entry is a Wine directory read plus `stat` through
+PRoot path translation. Production mode skips the date check, but it also bans
+loose `scenes`, `ent_types`, `object_library` and `geobin` (they must come from
+piggs) and ignores `.bin` CRC differences, so forcing it with a marker file
+alone would break map loading. The two candidates are piggs for the immutable
+data (the shipped configuration the code expects) or a narrow native switch
+that trusts a CRC-matching prepared `.bin` without the tree scan.
+
+The narrow switch is `patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch`
+(PR #11). It is applied only by the instrumented-MapServer producer
+(`server-metrics-*` jobs, next to 0119) and is off unless the guest sets
+`ARMPORT_TRUSTED_BINS=1`. CI requests it with `armport-app-runtime`
+`trusted_bins=true`, which needs that build's servers (`server_run_id` at the
+same commit). Each trusted `.bin` is logged as `ARMPORT_TRUSTED_BINS_V1`. The
+metrics proof now reports `parser_or_definition_sources_changed: true` for such
+a build. It accepts that only for this reviewed, default-off switch.
+
 ### Zoning, 0.13.44 launch 1
 
 | Transfer | Server side | Client load | Total |
 |---|---|---|---|
 | Atlas → King's Row (cold) | 563 s: Python prep 291 s (data mirror 218 s, beacon graph 57 s) + native start 271 s | 17.8 s | ~9.7 min |
 | King's Row → Atlas (Atlas still running) | 7.6 s | 21.7 s | ~29 s |
+
+### PRoot fast mode A/B, CI (2026-11-03)
+
+Runs 41588867344 (off) and 41584980465 (on): same branch and build inputs,
+shipping MapServers, ARM64 runner. Both passed.
+
+| | Off | On |
+|---|---|---|
+| `getppid` probe | 27.1 µs | 0.31 µs |
+| Creation: Atlas spawn → ready | 489 s | 360 s |
+| Reopen: Atlas spawn → ready | 183 s | 124 s |
+| Reopen: request → client in world | 524 s | 397 s |
+| Whole job | 2179 s | 1818 s |
+
+On the fresh data mirror (creation), the MapServer re-parses source text that
+the reused cache (reopen) loads from `.bin`: spawn definitions 154 s vs 2 s,
+story arcs 85 s vs 17 s, definitions 67 s vs 3 s (fast mode off).
+
+### Trusted prepared bins A/B, CI (2026-11-03)
+
+Build 41593619489 (instrumented MapServers with the switch), fast mode on in
+both runs; only `trusted_bins` differs. Both passed creation and reopen.
+
+| | Off (41610459604) | On (41605600310) |
+|---|---|---|
+| Creation: Atlas spawn → ready | 381 s | 353 s |
+| Reopen: Atlas spawn → ready | 130 s | 94 s |
+| Reopen: request → client in world | 409 s | 367 s |
+| Reopen: story arcs | 17.0 s | 2.1 s |
+| Creation: spawn definitions | 116 s | 115 s |
+
+On the fresh mirror only 38 bins reached the trusted path; spawn definitions,
+story arcs and definitions are parsed from text either way, so those `.bin`
+files are missing or rejected there. Combined with fast mode, the reopen Atlas
+start went from 183 s (41588867344, neither) to 94 s.
+
+### Thor 0.13.49 (user test, 2026-11-03; ARM64 client)
+
+Details and the full table: HANDOFF-X86.md, "Thor test of 0.13.49". In-world
+FPS with the 60 cap: mean 48 and 45, at least 91% of 5 s windows at 30 or more
+(.44: 25.6). Atlas MapServer ready in 204 s and 222 s (.44: 287 s, so fast mode
+gave about −25% on the device). Warm start: Atlas ready at 297 s, client login
+screen at 374 s, so the client is the critical path. Cold mirror 360 s (first
+start after the update, from a stranded-recovery race). King's Row failed on its
+420 s Python budget.
+
+### 0.13.50 in CI (runtime 41704290931, build 41689729437)
+
+Fifteen folders behind the shared read-only tree (128,765 files): the Atlas
+private copy took 31 s instead of 99.5-106 s, reopen rewrote no bins, story arcs
+470/957/3528, sequencer gap 40.7 s (level-1 probe 40.8 s). The tree is built
+once per data identity (79 s in CI) and reused (0.004 s). Client scan with
+`scripts.loc` and `server/` skipped (patch 0120): 123,633 files in 44 s; client
+start 81.7 → 71.8 s against 41642095387. Reopen Atlas start unchanged (129.6 s).
+King's Row zoning and the device client paths need the Thor test.
 
 ### Frame rate, 0.13.44
 
@@ -95,6 +183,40 @@ It is data loading through FEX + Wine + PRoot, not simulation.
 - Each frame: Turnip renders → Zink's software WSI (`MESA_VK_WSI_DEBUG=sw`)
   copies it to the CPU → X11 socket to Xtigervnc → Raw RFB encode → second
   socket → Java decode → SurfaceView. Two full-frame copies through two sockets.
+
+### Client priority under Wine: lead (2026-11-03, source reading, unmeasured)
+
+Correction after the 0.13.49 Thor samples: the ARM64 client runs in production
+mode reading loose files (patch 0042), so it does not take the IDLE class below.
+Its 7 nice-19 threads are ones it sets to idle priority itself, and FPS already
+meets the goal. The folder scan is cut by patch 0120's skip list instead of the
+mode change described at the end of this section.
+
+- With no `piggs/texts.pigg`, `fileIsUsingDevData()` is true, and
+  `game_beforeParseArgs` (game.c) calls `SetPriorityClass(IDLE_PRIORITY_CLASS)`.
+- Wineserver turns Windows priorities into Linux nice values only when
+  `RLIMIT_NICE` lets it raise priority again ([Wine MR !4551](https://list.winehq.org/archives/list/wine-gitlab@list.winehq.org/thread/5XP6EMRUEC3O37JFPYJCWSZKZWKAULQL)).
+  The Thor guest reports `RLIMIT_NICE` 40 (0.13.44 scheduler capability), so the
+  mapping is active. By its formula, an IDLE-class normal thread gets about
+  nice +11, against 0 for the MapServers (0.13.44 samples: `original_nice` 0).
+- Part 1 of that change does not re-apply a class change to existing threads.
+  So the threads the client creates after that call would run at a lower
+  weight than the servers whenever cores are contended. This fits "frames wait
+  rather than compute". CI runners usually have `RLIMIT_NICE` 0, which turns
+  the mapping off, so CI cannot show this.
+- Evidence (x86/perf-round3 fdab328c4, from the next APK on):
+  `character_zoning.wine_priorities` samples each Wine program's thread count
+  per nice value six times during play. If the client's threads sit near +11,
+  a candidate fix is an `RLIMIT_NICE` of 20 for the client's Wine. That keeps
+  every thread at nice 0 and still lets the zoning scheduler restore to 0.
+- The same early order explains the client's full folder scan: it calls
+  `FolderCacheChooseMode()` only in `game_beforeParseArgs`, after
+  `game_beforeFolderCacheIgnore`, `LWC_Init` and `parseArgs0`. The 0.13.40
+  ARM64 Thor log (2026-10-27) shows `phase=scan files=212496 seconds=140.898` for `./data`, so the
+  folders were loaded before the on-demand mode was chosen. Moving the call
+  earlier needs a client rebuild (the x86 Game is a byte-identical donor
+  member). It would also make the scan's 141 s on-demand; measure what that
+  costs during loading first.
 
 ### Memory, 0.13.44 zoning session
 
@@ -132,6 +254,13 @@ below and is the first thing to measure (Phase 0).
      again: about 4 minutes lost to one imperfect shutdown.
    - The engine already reads `.pigg` archives: the server animation pack is
      one.
+   - Lead (2026-11-02, source reading only): `FolderCacheAddFolder` skips the
+     upfront scan in `FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC` and resolves files
+     on demand (`FolderCacheQuery`); `FolderCacheChooseMode` picks it only when
+     `./piggs/texts.pigg` is absent. The logged `phase=scan` shows the clients
+     ran a full scan instead. Dev mode also lowers client priority
+     (`game_beforeParseArgs`) and changes `fileScanAllDataDirs`, so measure
+     before relying on it. Round-1 cache recovery (PR #11) covers the stranding.
 3. **x86 MapServer under FEX doing file-heavy start-up**, every session, plus
    per-session Python preparation (beacon graphs 15-57 s, ODBC setup; the x86
    app line also paid a ~70 s Wine GPU probe each launch).
@@ -219,6 +348,81 @@ cache-miss starts gone.
 
 Exit targets: start ≤ 5 min; cold MapServer ≤ 2 min; FPS ≥ 30 in 95% of
 gameplay windows.
+
+### Shared read-only server tree: design (2026-11-03, source reading)
+
+The engine already searches layered data folders, so the shared tree needs no
+native change. `fileLoadDataDirs` → `findAutoDataDir` → `searchForDataDir(cwd)`
+accepts a folder that has both `data/` and `tools/`. `addAppropriateDataDirs`
+then adds `localdata/` (searched first) and `serverdata/` (second) when they
+exist, and makes `data/` the main folder: it is searched last, and
+`fileLocateWrite` writes there. `start_game` already runs each MapServer with
+its runtime as the working directory.
+
+Per MapServer runtime:
+- `data/` (private, writable): `bin`, `geobin`, `server` (with `servers.cfg`
+  and the schema), `.dbidmap` files and any writable input. This is the small
+  part to copy or check out.
+- `serverdata/`: one shared tree per data identity. It holds every immutable
+  input except those private roots, and it is never moved or returned.
+- `localdata/`: a per-map overlay, for example King's Row's 52 collision
+  leaves.
+- `tools/`: an empty folder that turns the layered search on.
+
+Rules and work:
+- A private root must not also exist in a folder searched earlier. Otherwise a
+  rewritten `.bin` in `data/bin` is shadowed by the shared copy.
+- The guest proofs that read `runtime/data/<input>` (beacon and collision
+  inputs, cache verification) must resolve through the same three-folder order.
+- `serverdata` as a directory link is a deliberate exception to "no directory
+  links". It needs its own immutability proof (owned, read-only, fingerprinted
+  by identity).
+- Expected effect: no 104-230 s mirror on a miss, King's Row's 218 s first
+  mirror goes, and nothing large is left to strand. Confirm first with a
+  CI-only probe: a runtime where `tools/` exists and `serverdata/` holds one
+  moved definition folder, checked by the console's
+  `Using game data dir` line and a normal map start.
+- The probe is `armport-app-runtime` `serverdata_probe=true` (x86/perf-round3
+  06e219217; the app never sets it). Atlas's private tree omits `scripts.loc`.
+  `runtime/serverdata` links one shared tree, built once per data identity,
+  with read-only directories. Its cache generation is keyed apart from normal
+  ones. No guest proof or cache identity reads `scripts.loc`, and a fresh
+  mirror re-parses it from text. So the creation console's
+  `470 arcs, 957 contacts, 3528 tasks` line shows whether the engine read the
+  sources through the link. The runtime notice prints `serverdata_probe` and
+  `story_arc_counts`.
+- **Probe result (CI 41636702283, `x86/perf-round3` @b90abb1eb, shipping
+  servers, fast mode): passed creation and reopen.** Wine and the engine accept
+  a directory link at the `serverdata` root, and nothing tried to write into
+  the read-only tree.
+
+  | | Creation | Reopen |
+  |---|---|---|
+  | `scripts.loc` served from the shared tree | 52,149 files, 339 folders | same tree, reused |
+  | Story arcs read (console) | 470 arcs, 957 contacts, 3528 tasks | same |
+  | Private mirror | 74 s (106 s full, 41630365042) | cache reuse 2 s |
+  | Shared tree build / link | 31 s once / — | — / 1 ms |
+  | Atlas spawn → map ready | 377 s (364 s) | 129 s (125 s) |
+
+- **Wide probe (level 2, CI 41648097743): passed, but slower.** It shared 17
+  folders (136,019 files, 3,932 folders: everything except `bin`, `geobin`,
+  `server`, `defs`, `maps`, `object_library`, `tricks` and `texture_library`).
+  The private mirror fell to 28 s (one-time shared build 86 s; link 4 ms on
+  reopen), and story arcs still read 470/957/3528. But Atlas spawn → ready rose
+  to 593 s on creation and 381 s on reopen (125 s baseline). The gap from
+  `Parsing .txt from sequencers.bin` to `Caching relevant folders` grew from
+  about 36 s to 240 s. On reopen the MapServer rewrote 22 bins, including
+  `bin/sequencers.bin`, `powers`, `powersets`, `classes` and the salvage and
+  recipe bins (level 1 and the baseline rewrite 0). So some sources behind the
+  link fail the bins' source checks, or are much slower to enumerate. Likely
+  `sequencers`/`player_library` (the 5,120 animation attachments) and whatever
+  the power bins list. Not yet known which.
+- Next: probe `sequencers`, `player_library`, `menu` and `texts` one at a
+  time (each against reopen bin rewrites and the sequencer gap), and keep only
+  the folders that leave both unchanged. Make the guest proofs that read
+  `runtime/data/<input>` resolve through the same three-folder order. Then
+  replace the move/return cache with a small checked-out private `data/` plus
+  the shared tree.
 
 ### Phase 3: close the cold-start gap on the x86 track
 

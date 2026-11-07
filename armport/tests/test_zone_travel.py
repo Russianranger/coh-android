@@ -1,0 +1,186 @@
+"""Which requested zones the device starts, and what it stops to make room."""
+import sys
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'android/guest'))
+import zone_travel  # noqa: E402
+
+
+def record(map_id, cookie=9, static=1):
+    return {'map_id': map_id, 'cookie': cookie, 'is_static': static}
+
+
+class Policy(unittest.TestCase):
+    def setUp(self):
+        self.maps = {}
+        self.current = None
+        self.trees = {1: 'atlas', 101: 'atlas', 5: 'kings_row', 7: 'zones', 8: 'zones'}
+        self.policy = zone_travel.ZoneTravelPolicy(tree_for=self.trees.get, running=lambda: dict(self.maps),
+                                                   occupied=lambda: self.current)
+
+    def test_serves_known_trees_and_delinks_the_rest(self):
+        self.maps = {1: {'ready': True, 'port': 7001}}
+        self.current = 1
+        self.assertEqual(self.policy(record(5), {})[0], 'start')
+        self.assertEqual(self.policy(record(5), {})[1]['port'], 7003)
+        self.assertEqual(self.policy(record(7), {})[1], {'tree': 'zones', 'evict': [], 'port': 7004,
+                                                         'budget_seconds': zone_travel.START_SECONDS})
+        self.assertEqual(self.policy(record(40), {}), ('delink', 'zone_not_served'))
+        self.assertEqual(self.policy(record(5, static=0), {}), ('delink', 'not_static'))
+        self.assertEqual(self.policy(record(1), {}), ('delink', 'already_running'))
+        self.assertEqual([d['decision'] for d in self.policy.report()['decisions']],
+                         ['start', 'start', 'start', 'delink', 'delink', 'delink'])
+
+    def test_third_zone_stops_the_idle_one_never_the_current_or_a_starting_one(self):
+        self.maps = {1: {'ready': True, 'port': 7001, 'last_occupied': 50}, 5: {'ready': True, 'port': 7003,
+                                                                                'last_occupied': 90}}
+        self.current = 5
+        decision, plan = self.policy(record(7), {})
+        self.assertEqual((decision, plan['evict'], plan['port']), ('start', [1], 7004))
+        self.current = 1
+        self.assertEqual(self.policy(record(7), {})[1]['evict'], [5])
+        self.maps[5]['ready'] = False            # still starting: kept
+        self.assertEqual(self.policy(record(7), {}), ('delink', 'capacity'))
+        self.current = None
+        self.assertEqual(self.policy(record(7), {}), ('delink', 'player_zone_unknown'))
+
+    def test_ports_reuse_a_stopped_zones_port(self):
+        self.maps = {1: {'ready': True, 'port': 7001}, 7: {'ready': True, 'port': 7004}}
+        self.current = 1
+        self.assertEqual(self.policy(record(8), {})[1], {'tree': 'zones', 'evict': [7], 'port': 7004,
+                                                         'budget_seconds': zone_travel.START_SECONDS})
+        self.maps = {7: {'ready': True, 'port': 7001}}  # a fixed port held by another map
+        self.assertEqual(self.policy(record(1), {}), ('delink', 'no_port'))
+
+    def test_admission_is_asked_first_and_refuses_without_starting(self):
+        asked = []
+
+        def admit(map_id):
+            asked.append(map_id)
+            return None if map_id == 5 else 'not_the_saved_zone'
+        policy = zone_travel.ZoneTravelPolicy(tree_for=self.trees.get, running=lambda: dict(self.maps),
+                                              occupied=lambda: self.current, admit=admit)
+        self.assertEqual(policy(record(1), {}), ('delink', 'not_the_saved_zone'))
+        self.assertEqual(policy(record(40), {}), ('delink', 'not_the_saved_zone'))   # before the tree check
+        self.assertEqual(policy(record(5), {})[0], 'start')
+        self.assertEqual(policy(record(5, static=0), {}), ('delink', 'not_static'))  # not asked
+        self.assertEqual(asked, [1, 40, 5])
+
+    def test_capacity_is_validated(self):
+        with self.assertRaises(ValueError):
+            zone_travel.ZoneTravelPolicy(tree_for=dict.get, running=dict, occupied=lambda: None, capacity=0)
+
+
+
+class ZoneIndex(unittest.TestCase):
+    def test_index_is_the_all_map_closure(self):
+        import hashlib
+        import json
+        import zone_index
+        source = ROOT / 'docs/android-evidence/zone-assets-1.0.0-all-maps.json'
+        self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), zone_index.SOURCE_SHA256)
+        maps = json.loads(source.read_text())['maps']
+        self.assertEqual({row['map_id'] for row in maps}, set(zone_index.ZONES))
+        union = sorted({name for row in maps for name in row['new_geometry_files']})
+        self.assertEqual(list(zone_index.COLLISION_FILES), union)
+        self.assertEqual(hashlib.sha256(json.dumps(union, separators=(',', ':')).encode()).hexdigest(),
+                         zone_index.COLLISION_FILES_SHA256)
+        for row in maps:
+            key, world, complete = zone_index.ZONES[row['map_id']]
+            self.assertEqual((key, world, complete), (row['key'], row['map'].split('/')[-1][:-4],
+                                                      row['source_graph_complete']))
+        self.assertEqual(zone_index.world(6), 'city_02_01')
+
+    def test_session_budget_accepts_any_static_zone_only_in_stock_travel(self):
+        import character_session_budget as budget
+        self.assertTrue(budget.static_zone(6) and budget.static_zone(101) and budget.static_zone(626))
+        self.assertFalse(budget.static_zone(2) or budget.static_zone(True) or budget.static_zone('6'))
+
+
+
+class WeeklyTaskForceConfig(unittest.TestCase):
+    """Every DbServer map start reads weeklyTF.cfg; the pinned data lacks it (Thor 0.13.55 assert)."""
+    def test_config_matches_the_dbserver_grammar_and_is_written_once(self):
+        import re
+        import tempfile
+        import types
+        import local_character_server as server
+        source = (ROOT / 'upstream/ouroboros/DBServer/src/weeklyTFcfg.c').read_text()
+        self.assertIn('char*    relFilename = "server/db/weeklyTF.cfg";', source)
+        self.assertIn('{ "EpochStartTime",        TOK_OPTIONALSTRUCT(WeeklyTFCfg,dateTime, ParseDateTime), },', source)
+        self.assertIn('devassert(currentWeek);', source)
+        match = re.fullmatch(r'WeeklyTF\n\{\n\tEpochStartTime "(\d{4})-(\d{2})-(\d{2})" "(\d{2}):(\d{2}):(\d{2})"\n\}\n',
+                             server.WEEKLY_TF_CONFIG)
+        self.assertIsNotNone(match)
+        self.assertLess(int(match[1]), 2026)                    # a past week: the lookup always finds it
+        self.assertNotIn('WeeklyTFTokens', server.WEEKLY_TF_CONFIG)  # no -WeeklyTFTokens on map starts
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = Path(temporary)
+            (runtime / 'data/server/db').mkdir(parents=True)
+            owner = types.SimpleNamespace(runtime=runtime)
+            first = server.LocalCharacterServer.write_weekly_tf_config(owner)
+            self.assertEqual((first['path'], first['written']), ('data/server/db/weeklyTF.cfg', True))
+            self.assertEqual((runtime / first['path']).read_text(), server.WEEKLY_TF_CONFIG)
+            self.assertEqual(server.LocalCharacterServer.write_weekly_tf_config(owner)['written'], False)
+        guest = (ROOT / 'android/guest/local_character_server.py').read_text()
+        self.assertIn('weekly_tf_config=self.write_weekly_tf_config())', guest)
+
+
+class AppOptionAndCi(unittest.TestCase):
+    def test_app_option_default_on_sets_both_guest_switches(self):
+        java = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive'
+        runtime = (java / 'ClientRuntime.java').read_text()
+        self.assertIn('.getBoolean("stock-zone-travel", true)', runtime)
+        self.assertIn('"COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), '
+                      '"COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0")', runtime)
+        self.assertIn('ClientRuntime.stockTravelEnabled(this)', (java / 'ClientActivity.java').read_text())
+        import external_map_supervisor
+        self.assertEqual((external_map_supervisor.ENABLE_ENVIRONMENT, zone_travel.ENABLE_ENVIRONMENT),
+                         ('COH_EXTERNAL_MAPS', 'COH_STOCK_TRAVEL'))
+
+    def test_ci_zoning_reopen_stages_every_module_the_flow_imports(self):
+        # The CI donor (0.10.0) predates the zoning flow; its reopen must still import.
+        import ast
+        sys.path.insert(0, str(ROOT / 'armport/app'))
+        import stage_app_assets
+        guest = ROOT / 'android/guest'
+        local = {path.stem for path in guest.glob('*.py')}
+
+        def closure(roots):
+            seen, stack = set(), list(roots)
+            while stack:
+                name = stack.pop()
+                if name in seen:
+                    continue
+                seen.add(name)
+                for node in ast.parse((guest / (name + '.py')).read_text()).body:
+                    for item in ast.walk(node) if isinstance(node, (ast.Try, ast.If)) else (node,):
+                        if isinstance(item, ast.Import):
+                            stack += [a.name for a in item.names if a.name in local]
+                        elif isinstance(item, ast.ImportFrom) and item.module in local:
+                            stack.append(item.module)
+            return seen
+        added = closure(['character_zoning']) - closure(['character_reopen_diagnostic'])
+        staged = set(stage_app_assets.GUEST_DEPENDENCIES) | set(stage_app_assets.ZONING_HELPERS)
+        self.assertLessEqual({name + '.py' for name in added}, staged)
+        host = (ROOT / 'armport/app/interactive_host.py').read_text()
+        self.assertIn('zoning=stock_travel_requested())', host)
+
+    def test_ci_input_requires_the_external_maps_dbserver(self):
+        import os
+        from unittest.mock import patch
+        sys.path.insert(0, str(ROOT / 'armport/app'))
+        import interactive_host
+        workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()
+        self.assertIn("COH_STOCK_TRAVEL: ${{ inputs.stock_travel && '1' || '' }}", workflow)
+        for value, expected in (('', False), ('0', False), ('1', True)):
+            with patch.dict(os.environ, {'COH_STOCK_TRAVEL': value}):
+                self.assertEqual(interactive_host.stock_travel_requested(), expected)
+        with patch.dict(os.environ, {'COH_STOCK_TRAVEL': 'yes'}), self.assertRaises(ValueError):
+            interactive_host.stock_travel_requested()
+
+
+if __name__ == '__main__':
+    unittest.main()

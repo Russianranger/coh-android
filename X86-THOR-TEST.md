@@ -1,5 +1,9 @@
 # x86 client: next Thor device baseline
 
+> **Shelved (user decision 2026-11-03):** the ARM64 client is the main client from
+> 0.13.50; the current test sheet is [THOR-TEST-0.13.50.md](THOR-TEST-0.13.50.md).
+> Keep this sheet for an x86 reversion.
+
 This is the device-test target after the `x86-track` integration. It is a test
 sheet for Claude's next reviewed build, **not an APK handoff or evidence that the
 integration head has run on the device**. See [HANDOFF-X86.md](HANDOFF-X86.md) and
@@ -63,3 +67,57 @@ not weaken ownership proof or recycle that cache as though cleanup succeeded.
 The integration's namespace/disappearing-task port is not evidence that the
 Thor EACCES defect is fixed. No ≤60-second cold-start, FPS, thermal or memory
 improvement is measured at this integration head.
+
+## Performance options (0.13.48 and 0.13.49 pre-releases, PR #11)
+
+`Fast mode (PRoot seccomp, experimental)` is now **on** by default. In CI
+(41584980465 vs 41588867344) it made MapServer startup 26-32% faster with no
+failures. Uncheck it to get the old compatible mode back. The guest report's
+`proot_mode` records the mode and the cost of a test system call.
+`Start King's Row in the background (zoning)` (off by default) prepares and
+launches King's Row about 20 s after Atlas is live, but only with at least
+3 GiB of memory available (else `skipped_low_memory`). The phases are recorded
+in `character_zoning.background_prestart`. A trip during native loading is
+labelled `prestarted_loading`.
+`Lower the waiting zone server's priority (zoning, experimental)` (off by
+default) weights a resident MapServer's threads +10 nice while the player is in
+the other zone (also a background-started King's Row once it ticks), and
+restores them before a trip back. Periods and restore results are in
+`character_zoning.idle_resident_maps`. Compare NPC/car smoothness with it on
+and off.
+`Fast server data loading (trusted bins)` (on by default) only acts when the
+APK carries the instrumented MapServer. It skips the data-folder scans and date
+checks for CRC-matching prepared `.bin` files; `trusted_bins` records whether it
+was used. In CI (41605600310 on vs 41610459604 off, same servers) the reopen
+Atlas start fell from 130 s to 94 s; a new character's first start barely moved.
+**The published 0.13.48 keeps the shipping MapServer, so this option has no
+effect there** (`trusted_bins.reason` `no_metrics_mapserver`). That MapServer
+ran on the Thor in .44, where the prepared server caches installed (King's Row
+included). The instrumented Thor variant a metrics APK would carry has never
+run: CI executes only the retained-progress variant. That CI variant fails the
+prepared-cache check (`skipped_native_fallback`, `Monorail native identity
+differs`, CI 41630365042), so CI's fresh-character start re-parses spawn
+definitions, story arcs and definitions (106 bins rewritten, about 230 s). The
+Thor variant passes that check by its startup receipt; this is a CI-only cost.
+`Raise the frame cap to 60 FPS in the world` (on by default) sends the
+sidebar's `/maxfps 60` once, quietly, when a reopened character's world views
+are captured; the report records `gameplay_60fps_requested` and the lifecycle
+line `gameplay_60fps_auto`. The native launch cap stays 30/10 until a client
+rebuild. A higher client frame rate takes CPU from the MapServers: if NPCs or
+cars stutter, uncheck it, or tap `30 FPS`, and note which setting was used.
+A cache left behind by a cleanup that could not prove it finished is reused in
+a later session only when no same-uid process outside that guest is alive
+(`stranded_generation_recovered`). The earlier session's failed cleanup is
+still reported as failed.
+
+## 0.13.49 additions (read-only evidence; same options and servers as 0.13.48)
+
+Keep the exported report. Two new records answer open questions:
+- `character_zoning.wine_priorities`: six samples during play, five minutes
+  apart, of the thread count per nice value for `CityOfHeroes.exe`,
+  `MapServer.exe`, `DbServer.exe` and `wineserver`, plus `RLIMIT_NICE`. It tests
+  whether Wine runs the client's threads at a higher nice than the servers (a
+  lead for low FPS; see `armport/PERFORMANCE-PATH.md`). Nothing is changed.
+- `wine_process_cleanup.live_lineage_observation.unavailable_by_operation` and
+  `first_unavailable`: which /proc read fails when cleanup cannot prove a Wine
+  worker is ours (the open `persistent_live_permission_denied` defect).

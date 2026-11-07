@@ -86,7 +86,8 @@ def guest_admission(report, runtime_manifest):
             and proof.get('actual_mapserver_sha256') == expected['mapserver']['sha256']
             and proof.get('previous_mapserver_sha256') == build['predecessor']['mapserver']['sha256']
             and proof.get('package_receipt_sha256') == native.digest(native.canonical(build))
-            and proof.get('parser_or_definition_sources_changed') is False
+            and proof.get('parser_or_definition_sources_changed') is (
+                'libs/UtilitiesLib/src/utils/textparser.c' in build['build_input'].get('patched_sha256', {}))
             and proof.get('gameplay_decisions_changed') is False,
             'Guest metrics MapServer admission differs from the staged native build')
     return {'session_id': session, 'producer': copy.deepcopy(proof)}
@@ -119,8 +120,9 @@ def check_sessions(sessions, packages, repository_commit, run_id, *,
                 and proof.get('previous_mapserver_sha256') == expected['previous_mapserver_sha256']
                 and proof.get('policy') == 'authenticated_metrics_only_overlay'
                 and all(proof.get(key) is False for key in ('runtime_execution_validated',
-                    'physical_device_validated', 'parser_or_definition_sources_changed',
-                    'gameplay_decisions_changed')),
+                    'physical_device_validated', 'gameplay_decisions_changed'))
+                # Exact per build in guest_admission; True only for the default-off trusted-bin switch.
+                and type(proof.get('parser_or_definition_sources_changed')) is bool,
                 'Retained session evidence does not bind the exact metrics server')
 
 

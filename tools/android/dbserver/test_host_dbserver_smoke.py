@@ -125,6 +125,40 @@ class NetworkIsolationTests(unittest.TestCase):
                                            "PROOT_LOADER", "PROOT_TMP_DIR", "PROOT_NO_SECCOMP"})
         self.assertNotIn("private", environment.values())
 
+    def test_seccomp_variant_only_drops_the_no_seccomp_switch(self):
+        default = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"))
+        fast = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"), True)
+        self.assertEqual(default["PROOT_NO_SECCOMP"], "1")
+        self.assertEqual(fast, {name: value for name, value in default.items() if name != "PROOT_NO_SECCOMP"})
+
+    def test_seccomp_request_reaches_the_launcher_and_must_be_receipted(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            identity = (mock.patch.object(host.os, "getuid", return_value=1001),
+                        mock.patch.object(host.os, "geteuid", return_value=1001),
+                        mock.patch.object(host.os, "getgid", return_value=1001),
+                        mock.patch.object(host.os, "readlink", return_value="net:[100]"))
+            for patch in identity:
+                patch.start()
+            self.addCleanup(mock.patch.stopall)
+            for value, seccomp in (("", False), ("0", False), ("1", True)):
+                with self.subTest(value=value), mock.patch.dict(host.os.environ, {"COH_PROOT_SECCOMP": value}):
+                    command, _, expected = host.isolate_command(["/owned/proot"], evidence=root, proot=root, work=root)
+                    launcher = command[:command.index("--", 6)]
+                    self.assertEqual("--proot-seccomp" in launcher, seccomp)
+                    self.assertEqual(expected.get("proot_seccomp"), True if seccomp else None)
+            command, _, expected = host.isolate_command(["/owned/proot"], evidence=root, proot=root, work=root,
+                                                        proot_seccomp=True)
+            self.assertIn("--proot-seccomp", command)
+            receipt = dict(self.receipt(), proot_seccomp=False)
+            with self.assertRaises(RuntimeError):
+                host.validate_network_receipt(receipt, dict(self.expected(), **{"proot_seccomp": True}))
+            host.validate_network_receipt(dict(receipt, proot_seccomp=True),
+                                          dict(self.expected(), **{"proot_seccomp": True}))
+            with mock.patch.dict(host.os.environ, {"COH_PROOT_SECCOMP": "yes"}), \
+                    self.assertRaisesRegex(RuntimeError, "COH_PROOT_SECCOMP"):
+                host.isolate_command(["/owned/proot"], evidence=root, proot=root, work=root)
+
     def test_controlled_hosts_resolves_localhost_and_kernel_names_to_loopback(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

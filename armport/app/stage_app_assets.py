@@ -2,6 +2,7 @@
 """Add the ARM64 option to extracted app assets; never builds/signs an APK."""
 import argparse
 import ast
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -31,7 +32,22 @@ GUEST_DEPENDENCIES = (
     # Cache ancestry validation imports these before rejecting unsupported
     # producers and taking its existing original-loader fallback.
     'native_monorail_contract.py', 'native_map_startup_contract.py',
+    # On-demand zone requests (inert unless COH_EXTERNAL_MAPS=1 and the
+    # external-maps DbServer layer is installed); imported by the server.
+    'external_map_supervisor.py',
+    # The game's own zone travel policy (inert unless COH_STOCK_TRAVEL=1 and
+    # the external-maps layer is installed); imported by character_zoning.
+    'zone_travel.py',
+    # Every static zone and the shared zone tree's collision leaves; imported
+    # by character_zoning and character_session_budget.
+    'zone_index.py',
 )
+
+# The device's reopen runs the zoning flow (the Thor APK's runtime manifest sets
+# character_zoning_enabled). The CI guest's retained 0.10.0 donor predates it,
+# so a CI run of the game's own zone travel adds the flow's modules and sets the
+# flag (interactive_host, COH_STOCK_TRAVEL=1); the shipped APK never uses this.
+ZONING_HELPERS = ('character_zoning.py', 'character_zoning_scheduler.py', 'native_monorail_events.py')
 
 WORLD_PINS = frozenset(('MANIFEST_SHA256', 'ARCHIVE_SHA256', 'ARCHIVE_BYTES',
                         'PAYLOAD_BYTES', 'FILE_COUNT', 'FILES_SHA256'))
@@ -90,8 +106,72 @@ def encoded(value):
     return (json.dumps(value, sort_keys=True, indent=2) + '\n').encode()
 
 
+DBSERVER_PAYLOADS = ('startup-dbserver.exe', 'startup-dbserver-manifest.json')
+EXTERNAL_MAPS_KEY = 'armport_external_maps_dbserver'
+
+
+EXTERNAL_MAPS_WORKFLOW = '.github/workflows/armport-external-maps-dbserver.yml'
+
+
+def external_maps_build_run(run_json, directory):
+    """The package comes from one successful run of its own workflow at its own commit."""
+    run = json.loads(Path(run_json).read_text())
+    manifest = json.loads((Path(directory) / 'startup-dbserver-manifest.json').read_text())
+    package.require(run.get('path') == EXTERNAL_MAPS_WORKFLOW and run.get('status') == 'completed'
+                    and run.get('conclusion') == 'success'
+                    and re.fullmatch('[0-9a-f]{40}', run.get('head_sha') or '')
+                    and run.get('head_sha') == manifest.get('repository_commit'),
+                    'External map DbServer package is not from one successful build run at its own commit')
+    return {'run_id': run.get('id'), 'head_sha': run['head_sha']}
+
+
+def external_maps_dbserver(source, directory, ci_runtime=False):
+    """On-demand zone DbServer (armport/server/package_external_maps_dbserver.py).
+
+    Replaces only the two DbServer payloads. The package must validate against
+    its own build commit and sit on exactly the donor's level-up DbServer (same
+    executable pin and the same five-layer ancestry). It installs inert: map
+    requests are published only when the supervisor sets COH_WINE_DB_EXTERNAL_MAPS=1.
+
+    ci_runtime: the CI guest's retained 0.10.0 donor predates the startup
+    DbServer layers, so there is no donor level-up DbServer to compare with.
+    The package's own validated five-layer ancestry is then the contract (the
+    guest re-checks every layer before it replaces DbServer.exe) and the
+    payloads are added, never shipped: only armport-app-runtime uses this.
+    """
+    import sys
+    sys.path.insert(0, str(ROOT / 'armport/server'))
+    import package_external_maps_dbserver as external_maps
+    raw = (directory / external_maps.MANIFEST).read_bytes()
+    value = json.loads(raw)
+    external_maps.validate_package(directory, value.get('repository_commit', ''))
+    if ci_runtime:
+        package.require(not any((source / name).exists() for name in DBSERVER_PAYLOADS),
+                        'The CI donor unexpectedly carries a startup DbServer')
+    else:
+        donor = json.loads((source / 'startup-dbserver-manifest.json').read_text())
+        package.require(pin(source / 'startup-dbserver.exe') == external_maps.BASE_LEVELUP_EXECUTABLE
+                        and donor.get('role') == 'manual_atlas_dbserver_levelup_ui_repair'
+                        and {key: donor.get('files', {}).get('DbServer.exe', {}).get(key) for key in ('bytes', 'sha256')}
+                            == external_maps.BASE_LEVELUP_EXECUTABLE
+                        and all(donor.get(key) == value.get(key) for key in
+                                ('build_input', 'startup_bundle_build_input', 'levelup_ui_repair_build_input')),
+                        'The external map DbServer does not sit on the donor level-up DbServer')
+    generated = {'startup-dbserver.exe': (directory / 'DbServer.exe').read_bytes(), 'startup-dbserver-manifest.json': raw}
+    record = {'role': value['role'], 'repository_commit': value['repository_commit'],
+              'executable': {'bytes': value['files']['DbServer.exe']['bytes'],
+                             'sha256': value['files']['DbServer.exe']['sha256']},
+              'base_executable': external_maps.BASE_LEVELUP_EXECUTABLE,
+              'build_input_sha256': hashlib.sha256(json.dumps(value['external_maps_build_input'], sort_keys=True,
+                                                   separators=(',', ':')).encode()).hexdigest(),
+              'enabled_by_default': False,
+              'admission': 'ci_runtime_addition' if ci_runtime else 'donor_levelup_replacement'}
+    return generated, record
+
+
 def stage(source, armport, output, repository_commit, external=None, *,
-          server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT):
+          server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
+          server_option=False, dbserver=None, dbserver_ci_runtime=False, zoning=False):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -99,6 +179,10 @@ def stage(source, armport, output, repository_commit, external=None, *,
     metrics = server_archive is not None
     package.require(metrics == (server_variant is not None) == (server_run_id is not None),
                     'Metrics staging requires archive, variant and build run together')
+    # server_option (0.13.52): keep the donor game archive byte-identical and add
+    # the admitted Thor server as a second archive that only the launch option uses.
+    package.require(not server_option or (metrics and server_variant == 'thor_certified_startup'),
+                    'The server option carries only the admitted Thor server')
     package.require(re.fullmatch('[0-9a-f]{40}', repository_commit), 'Exact repository commit required')
     package.require(not output.exists(), 'Fresh app asset output required')
     runtime = json.loads((source / 'runtime-manifest.json').read_text())
@@ -131,8 +215,25 @@ def stage(source, armport, output, repository_commit, external=None, *,
             binding = server_package.runtime_binding(server_archive, staged_game,
                 variant=server_variant, repository_commit=repository_commit, run_id=server_run_id,
                 upstream_root=upstream_root)
-            generated = {'game-package.tar.gz': staged_game.read_bytes(), contract.BINDING: encoded(binding)}
+            archive_name = contract.OPTION_ARCHIVE if server_option else 'game-package.tar.gz'
+            generated = {archive_name: staged_game.read_bytes(), contract.BINDING: encoded(binding)}
         runtime[contract.WRAPPER] = contract.summary(binding)
+        if server_option:
+            runtime[contract.OPTION] = contract.option_record()
+    dbserver_record = None
+    package.require(dbserver is not None or not dbserver_ci_runtime, 'CI DbServer addition needs a package')
+    package.require(not zoning or dbserver_ci_runtime, 'The CI zoning flow needs the CI external-maps DbServer')
+    package.require(not zoning or 'character_zoning_enabled' not in runtime,
+                    'The donor already carries a zoning runtime profile')
+    if dbserver is not None:
+        if dbserver_ci_runtime:
+            package.require(not any(name in runtime['files'] for name in DBSERVER_PAYLOADS),
+                            'The CI donor already lists a startup DbServer')
+        else:
+            package.require(all(name in runtime['files'] and name not in external for name in DBSERVER_PAYLOADS),
+                            'The donor carries no packaged DbServer to replace')
+        replaced, dbserver_record = external_maps_dbserver(source, dbserver, ci_runtime=dbserver_ci_runtime)
+        generated.update(replaced)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
@@ -141,7 +242,9 @@ def stage(source, armport, output, repository_commit, external=None, *,
                     'character_creation_diagnostic.py': ROOT / 'android/guest/character_creation_diagnostic.py'}
     if metrics:
         replacements['armport_server_metrics_contract.py'] = ROOT / 'android/guest/armport_server_metrics_contract.py'
-    for name in set(client['files']) | set(GUEST_DEPENDENCIES):
+    if zoning:
+        runtime['character_zoning_enabled'] = True
+    for name in set(client['files']) | set(GUEST_DEPENDENCIES) | set(ZONING_HELPERS if zoning else ()):
         source_helper = ROOT / 'android/guest' / name
         if name.endswith('.py') and source_helper.is_file():
             replacements[name] = source_helper
@@ -160,7 +263,9 @@ def stage(source, armport, output, repository_commit, external=None, *,
         runtime['files'][name] = client['files'][name] = record
     for name, raw in generated.items():
         (output / name).write_bytes(raw)
-        runtime['files'][name] = client['files'][name] = pin(output / name)
+        runtime['files'][name] = pin(output / name)
+        if name in client['files'] or name not in DBSERVER_PAYLOADS:
+            client['files'][name] = runtime['files'][name]
     package.require(len(client['files']) <= 96, 'Existing client inventory bound exceeded')
     (output / 'client-manifest.json').write_bytes(encoded(client))
     runtime['files']['client-manifest.json'] = pin(output / 'client-manifest.json')
@@ -169,6 +274,8 @@ def stage(source, armport, output, repository_commit, external=None, *,
         'executable_sha256': document['files']['CityOfHeroes.exe']['sha256'],
         'client_run_id': document['client_run_id'], 'data_run_id': document['data_run_id'],
         'machine': 'ARM64', 'default_architecture': 'x86'}
+    if dbserver_record is not None:
+        runtime[EXTERNAL_MAPS_KEY] = dbserver_record
     (output / 'runtime-manifest.json').write_bytes(encoded(runtime))
     return runtime['armport_client']
 
@@ -182,6 +289,8 @@ def main():
     parser.add_argument('--server-variant', choices=('retained_progress', 'thor_certified_startup'))
     parser.add_argument('--server-run-id', type=int)
     parser.add_argument('--upstream-root', type=Path, default=ROOT)
+    parser.add_argument('--server-option', action='store_true')
+    parser.add_argument('--dbserver', type=Path, help='external map DbServer package directory')
     print(json.dumps(stage(**vars(parser.parse_args()))))
 
 

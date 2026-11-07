@@ -146,11 +146,11 @@ public class InputHarness {
           ref[0].sendPerformanceCommand(name,ref[0].inputEpoch());
         } else if(mode.equals("reject_performance")) {
           int before=output.size(),rejected=0;
-          for(String name:new String[]{null,"","showfps","/maxfps 30","cap_60","CAP_30","cap_30\n"}) {
+          for(String name:new String[]{null,"","showfps","/maxfps 30","cap_120","CAP_60","cap_60\n","CAP_30","cap_30\n"}) {
             try{ref[0].sendPerformanceCommand(name,ref[0].inputEpoch());}
             catch(IOException expected){rejected++;}
           }
-          check(rejected==7&&output.size()==before);
+          check(rejected==9&&output.size()==before);
           long stale=ref[0].inputEpoch();ref[0].cancelPendingInput();
           try{ref[0].sendPerformanceCommand("cap_30",stale);throw new AssertionError();}
           catch(InteractiveRfbClient.InputCancelledException expected){}
@@ -367,7 +367,7 @@ class InputTests(unittest.TestCase):
 
     def test_fixed_performance_commands_release_held_control_then_type_atomic_chat(self):
         control=[struct.pack('>BBHI',4,down,0,0xffe3) for down in (1,0)]
-        for name,command in [('show_fps','/showfps 1'),('cap_10','/maxfps 10'),('cap_30','/maxfps 30')]:
+        for name,command in [('show_fps','/showfps 1'),('cap_10','/maxfps 10'),('cap_30','/maxfps 30'),('cap_60','/maxfps 60')]:
             with self.subTest(name=name):
                 keys=[0xff0d]+list(map(ord,command))+[0xff0d]
                 expected=control+[struct.pack('>BBHI',4,down,0,key) for key in keys for down in (1,0)]

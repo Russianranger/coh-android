@@ -186,5 +186,284 @@ class ClientRoutingTests(unittest.TestCase):
             self.assertFalse(value.ctx.report['armport_client']['x86_bins_reused'])
 
 
+class ClientFolderSkipTests(unittest.TestCase):
+    """Patch 0120: the ARM64 client's scan skips server-only folders unless the app opts out."""
+    def launch(self, value):
+        captured = {}
+        class Selected(armport.ArmPortClient):
+            pass
+        client = Selected.__new__(Selected)
+        client.wine_env = {'WINEPREFIX': '/x'}
+        client.armport_work = Path('/arm64')
+        client.root = Path('/arm64-root-absent')
+        client.launcher_command = lambda: ['launcher']
+        client.armport_gpu_environment = lambda environment, label: environment
+        client.armport_gameplay_fps = lambda environment: environment
+        client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env), report={})
+        with patch.dict(os.environ, {'COH_CLIENT_SKIP_SERVER_FOLDERS': value}), \
+                patch.object(armport, 'LoggedClient', lambda child, log: child):
+            client.launch_client_attempt()
+        return captured['env']
+
+    def test_default_and_on_skip_scripts_loc_and_server_and_off_keeps_the_full_scan(self):
+        self.assertEqual(self.launch('')['ARMPORT_FOLDER_CACHE_SKIP'], 'scripts.loc,server')
+        self.assertEqual(self.launch('1')['ARMPORT_FOLDER_CACHE_SKIP'], 'scripts.loc,server')
+        environment = self.launch('0')
+        self.assertNotIn('ARMPORT_FOLDER_CACHE_SKIP', environment)
+        self.assertEqual(environment['ARMPORT_LOOSE_DATA'], '1')
+        with patch.dict(os.environ, {'COH_CLIENT_SKIP_SERVER_FOLDERS': 'yes'}), self.assertRaises(Exception):
+            armport.client_skips_server_folders()
+
+
+class StationFpsCapFileTests(unittest.TestCase):
+    """Patch 0121: the launcher names the cap file and clears a stale one."""
+    def test_cap_file_is_relative_to_the_client_and_stale_caps_are_removed(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temporary:
+            captured = {}
+            client = armport.ArmPortClient.__new__(armport.ArmPortClient)
+            client.wine_env = {'WINEPREFIX': '/x'}
+            client.armport_work = Path(temporary)
+            client.root = Path(temporary)
+            (client.armport_work / armport.FPS_CAP_FILE).write_text('10\n')
+            client.launcher_command = lambda: ['launcher']
+            client.armport_gpu_environment = lambda environment, label: environment
+            client.armport_gameplay_fps = lambda environment: environment
+            client.ctx = SimpleNamespace(start=lambda label, command, env: captured.setdefault('env', env), report={})
+            with patch.object(armport, 'LoggedClient', lambda child, log: child):
+                client.launch_client_attempt()
+            self.assertEqual(captured['env']['ARMPORT_FPS_CAP_FILE'], 'armport-fps-cap.txt')
+            # Patch 0123: the interpolation clock is logged for device exports.
+            self.assertEqual(captured['env']['ARMPORT_NET_CLOCK_LOG'], '1')
+            self.assertEqual(client.armport_fps_cap_file, Path(temporary) / 'armport-fps-cap.txt')
+            self.assertFalse(client.armport_fps_cap_file.exists())
+        series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
+        self.assertIn('0121-armport-station-fps-cap-file.patch', series)
+
+
+class ClientAudioTests(unittest.TestCase):
+    """0.13.53: Wine's ALSA driver plays through the overlay's plugin to the app bridge."""
+    def client(self, root):
+        client = armport.ArmPortClient.__new__(armport.ArmPortClient)
+        client.armport_work = root / 'work'
+        (client.armport_work / 'armport-audio').mkdir(parents=True)
+        client.ctx = SimpleNamespace(report={})
+        return client
+
+    def test_environment_needs_the_listening_bridge_and_the_plugin(self):
+        import socket
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            client = self.client(root)
+            system = root / 'alsa.conf'
+            system.write_text('# system\n')
+            path = root / 'audio.sock'
+            base = {'WINEDLLOVERRIDES': 'mscoree=;winedbg.exe='}
+            with patch.object(armport, 'ALSA_SYSTEM_CONFIG', system):
+                with patch.dict(os.environ, {'COH_CLIENT_AUDIO': '0'}):
+                    self.assertEqual(client.client_audio_environment(base), {})
+                self.assertEqual(client.ctx.report['client_audio'], {'format': 1, 'requested': False, 'enabled': False})
+                request = {'COH_CLIENT_AUDIO': '1', 'COH_CLIENT_AUDIO_SOCKET': str(path)}
+                with patch.dict(os.environ, request):
+                    # No listener yet: the client starts without audio and says why.
+                    self.assertEqual(client.client_audio_environment(base), {})
+                    self.assertIn('FileNotFoundError', client.ctx.report['client_audio']['error'])
+                    with socket.socket(socket.AF_UNIX) as server:
+                        server.bind(str(path))
+                        self.assertEqual(client.client_audio_environment(base), {})
+                        self.assertIn('no audio plugin', client.ctx.report['client_audio']['error'])
+                        plugin = client.armport_work / armport.package.AUDIO_PLUGIN
+                        plugin.write_bytes(b'\x7fELF')
+                        environment = client.client_audio_environment(base)
+                record = client.ctx.report['client_audio']
+                self.assertTrue(record['enabled'])
+                self.assertEqual(environment['TRASC_AUDIO_SOCKET'], str(path))
+                self.assertEqual(environment['WINEDLLOVERRIDES'], 'mscoree=;winedbg.exe=;winepulse.drv=d')
+                config = Path(environment['ALSA_CONFIG_PATH']).read_text()
+                self.assertTrue(config.startswith('<' + str(system) + '>\n'))
+                self.assertIn('pcm_type.trasc { lib "' + str(plugin) + '" }', config)
+                self.assertIn('pcm.!default { type plug slave { pcm "trasc" format S16_LE rate 48000 channels 2 } }', config)
+        with patch.dict(os.environ, {'COH_CLIENT_AUDIO': 'yes'}), self.assertRaises(Exception):
+            armport.client_audio_requested()
+
+    def test_boot_tone_probe_uses_the_client_settings_and_needs_sound_on_both_channels(self):
+        """CI has no sound files: a DirectSound tone proves the Wine, ALSA and plugin path."""
+        import runtime_host
+        import runtime_guest
+        with patch.object(armport, 'ALSA_SYSTEM_CONFIG', Path('/usr/share/alsa/alsa.conf')):
+            self.assertEqual(runtime_host.probe_alsa_config(),
+                             armport.alsa_config(Path(runtime_host.GUEST_AUDIO_PLUGIN)))
+        self.assertEqual(runtime_host.GUEST_AUDIO_PLUGIN, '/opt/armport-client/' + armport.package.AUDIO_PLUGIN)
+        java = next((ROOT / 'android/interactive').rglob('ClientAudio.java')).read_text()
+        self.assertIn('GUEST_SOCKET = "' + str(runtime_guest.AUDIO_SOCKET) + '"', java)
+        tone = {'frames': 72000, 'nonzero_samples': 143000, 'left_nonzero': 71500, 'right_nonzero': 71500}
+        accepted = runtime_host.probe_summary({'streams': [tone], 'errors': []})
+        self.assertTrue(accepted['passed'])
+        self.assertEqual((accepted['streams'], accepted['left_nonzero']), (1, 71500))
+        for snapshot in ({'streams': [dict(tone, nonzero_samples=0, left_nonzero=0, right_nonzero=0)], 'errors': []},
+                         {'streams': [dict(tone, right_nonzero=0)], 'errors': []},
+                         {'streams': [tone], 'errors': ['unknown command']},
+                         {'streams': [], 'errors': []}):
+            self.assertFalse(runtime_host.probe_summary(snapshot)['passed'], snapshot)
+
+
+class ClientFolderIndexTests(unittest.TestCase):
+    """Patch 0122: the saved file list is keyed by the verified data view and the overlay."""
+    def tree(self, root):
+        source = root / 'source'
+        for name in ('maps/City', 'texts'):
+            (source / name).mkdir(parents=True)
+        (source / 'texts/a.ms').write_text('a')
+        imports = root / 'imports'; imports.mkdir()
+        (imports / 'geo.txt').write_text('g')
+        (source / 'maps/City/geo.txt').symlink_to(imports / 'geo.txt')
+        return source
+
+    def test_link_validation_reports_the_same_digests_whether_it_checks_or_reuses(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); source = self.tree(root); receipt = root / 'receipt.json'
+            first = armport.package.merge_links(source, root / 'view-1', receipt)['validation']
+            second = armport.package.merge_links(source, root / 'view-2', receipt)['validation']
+            self.assertEqual((first['mode'], second['mode']), ('complete_link_check', 'unchanged_directory_receipt'))
+            for key in ('tree_sha256', 'targets_sha256', 'links'):
+                self.assertEqual(first[key], second[key])
+            (root / 'imports/new.txt').write_text('n')          # a link target directory changed
+            third = armport.package.merge_links(source, root / 'view-3', receipt)['validation']
+            self.assertNotEqual(third['targets_sha256'], first['targets_sha256'])
+            (source / 'texts/b.ms').write_text('b')               # a source directory changed
+            fourth = armport.package.merge_links(source, root / 'view-4', receipt)['validation']
+            self.assertNotEqual(fourth['tree_sha256'], third['tree_sha256'])
+
+    def client(self, **changes):
+        validation = {'tree_sha256': '1' * 64, 'targets_sha256': '2' * 64, 'links': 3}
+        value = {'data_validation': validation, 'archive_sha256': '4' * 64, 'executable_sha256': '5' * 64}
+        for key, item in changes.items():
+            (validation if key in validation else value)[key] = item
+        return value
+
+    def test_identity_changes_with_every_input_and_needs_every_digest(self):
+        identity = armport.package.folder_cache_identity
+        base = identity(self.client(), 'scripts.loc,server')
+        self.assertRegex(base, '^[0-9a-f]{64}$')
+        self.assertEqual(identity(self.client(), 'scripts.loc,server'), base)
+        for change in ({'tree_sha256': '6' * 64}, {'targets_sha256': '6' * 64}, {'links': 4},
+                       {'archive_sha256': '6' * 64}, {'executable_sha256': '6' * 64}):
+            self.assertNotEqual(identity(self.client(**change), 'scripts.loc,server'), base, change)
+        self.assertNotEqual(identity(self.client(), ''), base)
+        self.assertNotEqual(identity(self.client(), 'scripts.loc,server', 'geobin'), base)
+        with patch.object(armport.package, 'digest', side_effect=lambda path: '7' * 64
+                          if Path(path).name == 'armport_client_package.py' else armport.package.digest(path)):
+            self.assertNotEqual(identity(self.client(), 'scripts.loc,server'), base)   # view code changed
+        with self.assertRaises(ValueError):
+            identity(self.client(tree_sha256=None), '')
+
+    def environment(self, value, report, root):
+        client = armport.ArmPortClient.__new__(armport.ArmPortClient)
+        client.root = root
+        client.ctx = SimpleNamespace(report=report)
+        with patch.dict(os.environ, {'COH_CLIENT_FOLDER_INDEX': value}):
+            return client.client_folder_index_environment('scripts.loc,server')
+
+    def test_launch_names_the_index_and_identity_unless_turned_off(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            report = {'armport_client': self.client()}
+            environment = self.environment('', report, root)
+            self.assertEqual(environment['ARMPORT_FOLDER_CACHE_ID'],
+                             armport.package.folder_cache_identity(self.client(), 'scripts.loc,server',
+                                                                   'geobin,server'))
+            self.assertTrue(environment['ARMPORT_FOLDER_CACHE_INDEX'].endswith('armport-folder-cache-index.bin'))
+            # The writable cache roots are scanned live beside the saved list.
+            self.assertEqual(environment['ARMPORT_FOLDER_CACHE_LIVE'], 'geobin,server')
+            self.assertEqual(report['client_folder_index']['present_before_launch'], False)
+            (root / armport.package.FOLDER_INDEX).write_bytes(b'x')
+            self.assertEqual(self.environment('1', report, root).keys(), environment.keys())
+            self.assertTrue(report['client_folder_index']['present_before_launch'])
+            self.assertEqual(self.environment('0', report, root), {})
+            self.assertFalse(report['client_folder_index']['requested'])
+            # An incomplete identity scans as before and says why.
+            incomplete = {'armport_client': {'archive_sha256': '4' * 64}}
+            self.assertEqual(self.environment('1', incomplete, root), {})
+            self.assertEqual(incomplete['client_folder_index']['error'], 'KeyError')
+            (root / armport.package.FOLDER_INDEX).unlink()
+            (root / armport.package.FOLDER_INDEX).symlink_to(root / 'elsewhere')
+            with self.assertRaises(Exception):
+                self.environment('1', report, root)
+            with patch.dict(os.environ, {'COH_CLIENT_FOLDER_INDEX': 'yes'}), self.assertRaises(Exception):
+                armport.client_uses_folder_index()
+        series = (Path(armport.__file__).resolve().parents[1] / 'patches/series').read_text().split()
+        self.assertIn('0122-armport-folder-cache-index.patch', series)
+        self.assertIn('0123-armport-entity-interpolation-clock-wrap.patch', series)
+
+    def test_sound_script_errors_are_logged_not_a_modal_dialog(self):
+        """Patch 0124: with audio on, a script naming a missing sound opened a modal
+        "Sound Script Errors" dialog that stopped the game's input (runtimes
+        41832716509 and 41838960420: logout never processed). It is logged, bounded."""
+        root = Path(armport.__file__).resolve().parents[1]
+        series = (root / 'patches/series').read_text().split()
+        self.assertIn('0124-armport-sound-script-errors-logged.patch', series)
+        text = (root / 'patches' / '0124-armport-sound-script-errors-logged.patch').read_text()
+        removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertTrue(any('winErrorDialog(errorMsg,"Sound Script Errors"' in line for line in removed))
+        self.assertFalse(any('winErrorDialog' in line for line in added))
+        self.assertEqual(sum('sprintf(errors+strlen(errors)' in line for line in removed), 4)
+        self.assertFalse(any('sprintf(errors+strlen(errors)' in line for line in added))
+        self.assertTrue(any('ARMPORT_SOUND_SCRIPT_ERRORS_V1' in line for line in added))
+        upstream = (root.parent / 'upstream/ouroboros/Game/src/sound/sound_ambient.c').read_text(encoding='latin-1')
+        self.assertEqual(upstream.count('winErrorDialog('), 1)   # the only dialog in this file
+
+
+    def test_map_loading_notice_does_not_outlive_the_load_screen(self):
+        """Patch 0125: with -notwostagemapxfer the load screen comes first and the
+        DbServer's "loading" notice arrives during it; nothing turned it off, so
+        "Map loading, please wait..." stayed over King's Row (Thor 0.13.56)."""
+        root = Path(armport.__file__).resolve().parents[1]
+        series = (root / 'patches/series').read_text().split()
+        self.assertIn('0125-armport-map-loading-notice-after-load-screen.patch', series)
+        text = (root / 'patches' / '0125-armport-map-loading-notice-after-load-screen.patch').read_text()
+        self.assertEqual(text.count('+++ b/'), 1)
+        self.assertIn('+++ b/Game/src/clientcomm/clientcomm.c', text)
+        added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertIn('+    if (on && game_state.game_mode == SHOW_LOAD_SCREEN)', added)
+        self.assertIn('+    g_showMapLoadingMessage = on;', added)
+        self.assertTrue(any(line.startswith('+    g_showMapLoadingMessage = false;') for line in added))
+        upstream = root.parent / 'upstream/ouroboros'
+        client = (upstream / 'Game/src/clientcomm/clientcomm.c').read_text(encoding='latin-1')
+        self.assertEqual(client.count('g_showMapLoadingMessage = pktGetBits(pak_in, 1);'), 1)
+        self.assertIn('g_showMapLoadingMessage = false;\n    game_state.game_mode = SHOW_LOAD_SCREEN;', client)
+        # The DbServer only ever sends "on" (a new map starting for the player).
+        dbserver = (upstream / 'DBServer/src/mapxfer.c').read_text(encoding='latin-1')
+        self.assertEqual(dbserver.count('sendMapLoadingMessage(link, ent_con->is_gameclient, ent_con->id, 1);'), 2)
+        self.assertNotIn('ent_con->id, 0);', dbserver)
+
+
+    def test_enter_game_waits_for_the_dbserver_to_start_the_saved_zone(self):
+        """Patch 0126: with the game's own travel a session prepares Atlas Park and
+        a hero saved in another zone is started by the DbServer at Enter Game
+        (handleChoosePlayer -> setNewMap -> startMapIfStatic), minutes on the Thor;
+        the client gave up after 90 s. The test client and -notimeout are unchanged."""
+        root = Path(armport.__file__).resolve().parents[1]
+        series = (root / 'patches/series').read_text().split()
+        self.assertEqual(series[-1], '0126-armport-enter-game-waits-for-zone-start.patch')
+        text = (root / 'patches' / series[-1]).read_text()
+        self.assertEqual(text.count('+++ b/'), 1)
+        self.assertIn('+++ b/Game/src/gameComm/initClient.c', text)
+        removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertEqual(removed, ['-    return dbChoosePlayer( player_slot, ip, createLocation, '
+                                   'control_state.notimeout?NO_TIMEOUT:90);'])
+        self.assertIn('+    return dbChoosePlayer( player_slot, ip, createLocation, '
+                      'control_state.notimeout?NO_TIMEOUT:900);', added)
+        upstream = root.parent / 'upstream/ouroboros'
+        client = (upstream / 'Game/src/gameComm/initClient.c').read_text(encoding='latin-1')
+        self.assertEqual(client.count('dbChoosePlayer('), 2)       # TEST_CLIENT (240 s) and the game
+        # The game client gets no loading message from the DbServer at login; it waits.
+        dbserver = (upstream / 'DBServer/src/mapxfer.c').read_text(encoding='latin-1')
+        self.assertIn('if (is_gameclient)\n        return;', dbserver)
+        self.assertIn('ret = setNewMap(ent_con,ent_con->map_id,link,1,errmsg,client->char_id != 0);',
+                      (upstream / 'DBServer/src/clientcomm.c').read_text(encoding='latin-1'))
+
+
 if __name__ == '__main__':
     unittest.main()

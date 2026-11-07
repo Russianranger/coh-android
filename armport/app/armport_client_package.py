@@ -21,6 +21,9 @@ import zipfile
 ARCHIVE = 'armport-client.zip'
 MANIFEST = 'client-package.json'
 BINARIES = {'CityOfHeroes.exe', 'libc++.dll', 'libunwind.dll', 'armport-launcher.exe'}
+# Optional (0.13.53): the guest ALSA playback plugin (armport/audio), an
+# AArch64 glibc ELF that Wine's ALSA driver loads inside the client process.
+AUDIO_PLUGIN = 'armport-audio/libasound_module_pcm_trasc.so'
 MAX_BYTES = 512 * 1024 * 1024
 
 
@@ -48,8 +51,16 @@ def arm64_pe(path):
             'Expected ARM64 PE32+: ' + path.name)
 
 
+def arm64_elf_shared_object(path):
+    with path.open('rb') as stream:
+        header = stream.read(20)
+    require(len(header) == 20 and header[:6] == b'\x7fELF\x02\x01'
+            and struct.unpack_from('<HH', header, 16) == (3, 183),
+            'Expected an AArch64 little-endian ELF64 shared object: ' + path.name)
+
+
 def allowed(name):
-    if name in BINARIES:
+    if name in BINARIES or name == AUDIO_PLUGIN:
         return True
     path = PurePosixPath(name)
     return ((len(path.parts) == 3 and path.parts[:2] == ('data', 'bin')
@@ -58,7 +69,7 @@ def allowed(name):
              and path.suffix == '.arb')) and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', name))
 
 
-def package(client, bins, shaders, launcher, output, client_run, data_run):
+def package(client, bins, shaders, launcher, output, client_run, data_run, audio_plugin=None):
     require(not output.exists(), 'Package output already exists')
     require({p.name for p in client.iterdir()} == BINARIES - {'armport-launcher.exe'},
             'Expected the exact ARM64 Release artifact binary closure')
@@ -67,6 +78,10 @@ def package(client, bins, shaders, launcher, output, client_run, data_run):
     for binary in sources.values():
         require(binary.is_file() and not binary.is_symlink(), 'Invalid binary')
         arm64_pe(binary)
+    if audio_plugin is not None:
+        require(audio_plugin.is_file() and not audio_plugin.is_symlink(), 'Invalid audio plugin')
+        arm64_elf_shared_object(audio_plugin)
+        sources[AUDIO_PLUGIN] = audio_plugin
     for root, prefix, suffix in ((bins, 'data/bin/', '.bin'), (shaders, 'armport_cg/', '.arb')):
         selected = sorted(root.glob('*' + suffix))
         require(selected, 'Missing bins or shaders')
@@ -119,6 +134,8 @@ def unpack(archive_path, destination):
             require(digest(target) == expected['sha256'], 'Overlay digest differs: ' + name)
         for name in BINARIES:
             arm64_pe(destination / name)
+        if AUDIO_PLUGIN in files:
+            arm64_elf_shared_object(destination / AUDIO_PLUGIN)
     return document
 
 
@@ -159,7 +176,8 @@ def validate_links(source_data, links, tree, receipt):
                 targets = [[name, *identity(name)] for name in saved['target_directories']]
                 if identity_digest(targets) == saved.get('targets'):
                     return {'mode': 'unchanged_directory_receipt', 'links_checked': 0,
-                            'target_directories': len(targets)}
+                            'target_directories': len(targets), 'tree_sha256': tree,
+                            'targets_sha256': saved['targets'], 'links': len(links)}
         except (OSError, ValueError, KeyError, TypeError):
             pass
     directories = set()
@@ -185,13 +203,42 @@ def validate_links(source_data, links, tree, receipt):
         directories.add(os.path.dirname(target))
     names = sorted(directories)
     targets = [[name, *identity(name)] for name in names]
+    targets_sha256 = identity_digest(targets)
     if receipt is not None:
         pending = receipt.with_name(receipt.name + '.pending')
         pending.write_text(json.dumps({'format': VALIDATION_FORMAT, 'policy': VALIDATION_POLICY,
             'source': str(source_data), 'tree': tree,
-            'links': len(links), 'target_directories': names, 'targets': identity_digest(targets)}))
+            'links': len(links), 'target_directories': names, 'targets': targets_sha256}))
         pending.replace(receipt)
-    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names)}
+    return {'mode': 'complete_link_check', 'links_checked': len(links), 'target_directories': len(names),
+            'tree_sha256': tree, 'targets_sha256': targets_sha256, 'links': len(links)}
+
+
+FOLDER_INDEX = 'armport-folder-cache-index.bin'
+
+
+def folder_cache_identity(client, skip, live=''):
+    """Identity of the client's data view for its saved file list (patch 0122).
+
+    The view is the verified app data (every source directory's device, inode,
+    mtime and ctime, plus every directory the links point into) and the ARM64
+    overlay. Adding, removing, renaming or replacing any entry changes one of
+    these; installs publish new files, never rewrite one. Root folders that may
+    be rewritten in place (the overlay's bin/ and the writable cache roots in
+    `live`) are scanned live by the client, which also checks sampled files.
+    """
+    validation = client['data_validation']
+    record = {'format': 2, 'policy': 'armport_folder_cache_index_v1',
+              # The code that builds the view: a changed layout must not reuse a list.
+              'view_code_sha256': digest(Path(__file__).resolve()),
+              'tree_sha256': validation['tree_sha256'], 'targets_sha256': validation['targets_sha256'],
+              'links': validation['links'], 'archive_sha256': client['archive_sha256'],
+              'executable_sha256': client['executable_sha256'], 'skip': skip, 'live': live}
+    require(all(isinstance(record[key], str) and re.fullmatch('[0-9a-f]{64}', record[key])
+                for key in ('tree_sha256', 'targets_sha256', 'archive_sha256', 'executable_sha256',
+                            'view_code_sha256')),
+            'Client folder index identity needs every digest')
+    return hashlib.sha256(json.dumps(record, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
 def merge_links(source_data, target_root, receipt=None):
@@ -353,6 +400,7 @@ def main():
         parser.add_argument('--' + name, type=int, required=True)
     parser.add_argument('--source-data', type=Path)
     parser.add_argument('--stage', type=Path)
+    parser.add_argument('--audio-plugin', type=Path, help='guest ALSA plugin (armport/audio/build.sh)')
     args = vars(parser.parse_args())
     source_data, stage = args.pop('source_data'), args.pop('stage')
     require(bool(source_data) == bool(stage), '--source-data and --stage must be used together')

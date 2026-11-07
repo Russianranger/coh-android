@@ -117,7 +117,8 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             presentation_ready = getattr(self, 'presentation_ready_monotonic', None)
             require(session_budget.finite_seconds(presentation_ready),
                     'Reopen budget lacks the current owned presentation clock')
-            budget_options = ({'supported_maps': (1, 5, 101) if proof.get('monorail_enabled') is True
+            budget_options = ({'supported_maps': session_budget.STATIC_ZONES if proof.get('stock_travel') is True
+                               else (1, 5, 101) if proof.get('monorail_enabled') is True
                                else (1, 101)} if self.ZONING else {})
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
                 self.launcher_started_monotonic, self.ctx.deadline,
@@ -228,14 +229,22 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
         super().initialize()
         self.ctx.report['zoning_enabled'] = True
 
+    # stock_travel: the game's own zone travel; the app accepts King's Row and
+    # the other static zones for a character connected or saved there.
     def connected_event_data(self, proof):
+        import character_zoning
         return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True,
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True,
+                    map_name=character_zoning.zone_name(proof['map_id']))
 
     def saved_event_data(self, proof):
+        import character_zoning
         return dict(super().saved_event_data(proof), zoning_enabled=True,
                     connected_on_supported_map=True, map_id=proof['map_id'],
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    map_name=character_zoning.zone_name(proof['map_id']),
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True)
 
 
 def parse_reopen_arguments(argv):

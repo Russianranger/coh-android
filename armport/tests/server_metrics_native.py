@@ -20,11 +20,91 @@ CASES = ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
          'startup', 'startup_disabled', 'startup_clock']
 NEGATIVE_ASSERTION = 's->ticks == 4 && s->file_calls == 4 && s->window_start == 0'
 STARTUP_NEGATIVE_ASSERTION = 'startup->enabled && startup->sequence == 17'
+TRUSTED_NEGATIVE_ASSERTION = 'scans == 0 && list_reads == 0'
+TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+TRUSTED_CASES = ['trusted_bins', 'trusted_bins_disabled']
 
 
 def test_cases(source):
     text = (source / 'MapServer/src/svr/svr_init.c').read_text()
-    return CASES + (['progress_markers'] if 'cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);' in text else [])
+    parser = (source / TEXTPARSER).read_text()
+    return (CASES + (['progress_markers'] if 'cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);' in text else [])
+            + (TRUSTED_CASES if 'static int armportTrustedBin(' in parser else []))
+
+
+def trusted_fixture(source):
+    """Run the shipping ParserIsPersistNewer body over recorded parser shims."""
+    text = (source / TEXTPARSER).read_text()
+    helper = function(text, 'static int armportTrustedBin(') if 'static int armportTrustedBin(' in text else ''
+    body = function(text, 'SimpleBufHandle ParserIsPersistNewer(')
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef int __time32_t;
+typedef struct SimpleBuf { int pos; } *SimpleBufHandle;
+typedef struct ParseTable { int unused; } ParseTable;
+typedef struct DefineContext DefineContext;
+typedef struct FileEntry { const char *path; __time32_t date; int seen; } FileEntry;
+typedef FileEntry **FileList;
+struct _finddata32_t { unsigned attrib; char name[260]; __time32_t time_write; };
+typedef int FileScanAction;
+#define PARSE_SIG "Parse6"
+#define verbose_printf(...) ((void)0)
+static struct SimpleBuf bin_buffer;
+static FileList lf_filedates;
+static int scans, list_reads, closes, production, crc_matches = 1;
+static const char *g_StdAdditionalFilePrefixes[] = {""};
+static int ParseTableCRC(ParseTable pti[], DefineContext *defines) { (void)pti; (void)defines; return 7; }
+static SimpleBufHandle SerializeReadOpen(const char *name, const char *type, int crc, int ignore_crc) {
+    (void)name; (void)type; return (crc_matches && (crc == 7 || ignore_crc)) ? &bin_buffer : NULL; }
+static int isProductionMode(void) { return production; }
+static int SimpleBufTell(SimpleBufHandle h) { return h->pos; }
+static void SimpleBufSeek(SimpleBufHandle h, int pos, int whence) { (void)whence; h->pos = pos; }
+static void SerializeClose(SimpleBufHandle h) { (void)h; ++closes; }
+static int FileListRead(FileList *list, SimpleBufHandle h) { (void)h; ++list_reads; *list = NULL; return 1; }
+static void FileListCreate(FileList *list) { *list = NULL; }
+static void FileListDestroy(FileList *list) { *list = NULL; }
+static void FileListInsert(FileList *list, const char *path, __time32_t date) { (void)list; (void)path; (void)date; }
+static FileEntry *FileListFind(FileList *list, const char *path) { (void)list; (void)path; return NULL; }
+static int eaSize(FileList *list) { (void)list; return 0; }
+static char *addFilePrefix(const char *mask, const char *prefix) { (void)prefix; return (char *)mask; }
+static FileScanAction DateCheckCallback(char *dir, struct _finddata32_t *data) { (void)dir; (void)data; return 0; }
+static void fileScanAllDataDirs(const char *dir, FileScanAction (*callback)(char *, struct _finddata32_t *)) {
+    (void)dir; (void)callback; ++scans; }
+static int fileDatesEqual(__time32_t a, __time32_t b, bool exact) { (void)exact; return a == b; }
+static __time32_t fileLastChanged(const char *path) { (void)path; return 0; }
+static int fileExists(const char *path) { (void)path; return 0; }
+''' + helper + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    ParseTable pti[1] = {{0}};
+    int i;
+    const char *mode = argc > 1 ? argv[1] : "";
+    if (!strcmp(mode, "trusted_bins")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        CHECK(ParserIsPersistNewer("fx", NULL, "bin/fxinfo.bin", pti, NULL) == &bin_buffer);
+        CHECK(scans == 0 && list_reads == 0);
+        crc_matches = 0;
+        CHECK(ParserIsPersistNewer("fx", NULL, "bin/fxinfo.bin", pti, NULL) == NULL);
+        crc_matches = 1;
+        for (i = 0; i < 300; ++i)
+            CHECK(ParserIsPersistNewer("maps", NULL, "bin/minimap.bin", pti, NULL) == &bin_buffer);
+        CHECK(scans == 0 && list_reads == 0 && closes == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "trusted_bins_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        CHECK(ParserIsPersistNewer("fx", NULL, "bin/fxinfo.bin", pti, NULL) == &bin_buffer);
+        CHECK(scans == 1 && list_reads == 1);
+        return 0;
+    }
+    return 2;
+}
+'''
 
 
 def function(text, signature):
@@ -292,13 +372,22 @@ def run(source, original=None, expect_control_failure=False):
                         '-Wno-unused-but-set-variable',  # upstream fileAllocEx original_total
                         '-fsanitize=address,undefined', '-pthread', '-I', str(work),
                         str(work / 'control.c'), '-o', str(exe)], check=True)
-        for mode in (['window', 'startup'] if original and expect_control_failure else
+        trusted_root = original or source
+        trusted = work / 'trusted'
+        (work / 'trusted.c').write_text(trusted_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror',
+                        '-Wno-unused-label', '-fsanitize=address,undefined',
+                        str(work / 'trusted.c'), '-o', str(trusted)], check=True)
+        control += trusted_fixture(trusted_root)
+        for mode in (['window', 'startup', 'trusted_bins'] if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
-            result = subprocess.run([str(exe), mode], capture_output=True, text=True,
+            result = subprocess.run([str(trusted if mode in TRUSTED_CASES else exe), mode],
+                                    capture_output=True, text=True,
                                     env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'})
             print(mode + ': ' + ' | '.join(result.stdout.splitlines()))
             if expect_control_failure:
-                assertion = NEGATIVE_ASSERTION if mode == 'window' else STARTUP_NEGATIVE_ASSERTION
+                assertion = {'window': NEGATIVE_ASSERTION, 'trusted_bins': TRUSTED_NEGATIVE_ASSERTION}.get(
+                    mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -332,6 +421,14 @@ def run(source, original=None, expect_control_failure=False):
                                       'scope': 'main_entry_to_checkpoint'}, row
             if mode == 'startup_disabled':
                 assert 'ARMPORT_SERVER_STARTUP_V1' not in result.stdout
+            if mode == 'trusted_bins':
+                rows = result.stdout.splitlines()
+                assert len(rows) == 256, len(rows)
+                assert rows[0] == 'ARMPORT_TRUSTED_BINS_V1 status=trusted ordinal=1 bin=bin/fxinfo.bin', rows[0]
+                assert rows[1] == 'ARMPORT_TRUSTED_BINS_V1 status=trusted ordinal=2 bin=bin/minimap.bin', rows[1]
+                assert rows[-1].endswith('ordinal=256 bin=bin/minimap.bin'), rows[-1]
+            if mode == 'trusted_bins_disabled':
+                assert 'ARMPORT_TRUSTED_BINS_V1' not in result.stdout
             if mode == 'startup_clock':
                 rows = result.stdout.splitlines()
                 assert len(rows) == 3 and all('status=clock_error' in row for row in rows), rows
@@ -375,13 +472,13 @@ def main():
                     'build_input_sha256': staging.digest(staging.canonical(receipt)),
                     'source_sha256': receipt['patched_sha256'],
                     'original_sha256': {name: staging.digest((args.negative_control / name).read_bytes())
-                                        for name in (staging.SVR, staging.FILE)},
+                                        for name in (staging.SVR, staging.FILE, staging.TEXTPARSER)},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_and_startup_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_and_trusted_bin_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

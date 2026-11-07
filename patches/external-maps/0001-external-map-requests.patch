@@ -1,0 +1,120 @@
+diff --git a/DBServer/CMakeLists.txt b/DBServer/CMakeLists.txt
+index 1ef02ba..c636d91 100644
+--- a/DBServer/CMakeLists.txt
++++ b/DBServer/CMakeLists.txt
+@@ -164,7 +164,7 @@ set_source_files_properties(${DbServer_GENERATED} PROPERTIES
+ add_executable(DbServer
+ 	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
+ # Isolated Wine variant: the stock PostgreSQL source preparation is unchanged.
+-target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c src/wine_loopback.c src/wine_manual_atlas.c)
++target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c src/wine_loopback.c src/wine_manual_atlas.c src/wine_external_maps.c)
+ target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)
+ option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
+ if(COH_PG_PERSISTENCE_TESTS)
+diff --git a/DBServer/src/launchercomm.c b/DBServer/src/launchercomm.c
+index 17a893f..9529112 100644
+--- a/DBServer/src/launchercomm.c
++++ b/DBServer/src/launchercomm.c
+@@ -1,3 +1,4 @@
++#include "wine_external_maps.h"
+ #include <stdio.h>
+ #include <utilitieslib/stdtypes.h>
+ #include <utilitieslib/utils/file.h>
+@@ -1496,7 +1497,10 @@ int launcherCommStartServerProcess(const char *command, U32 host_ip, ServerAppCo
+ int launcherCommStartProcess(const char* db_hostname, U32 host_ip, MapCon* map_con, bool preload_transient)
+ {
+     NetLink            *best_link=0;
+-    LauncherLink    *client;
++    LauncherLink    *client = 0;
++    // ArmPort: with no Launcher, the device supervisor starts every map from a
++    // published request (wine_external_maps.h). -1 (malformed) never starts maps.
++    int                external = cohDbExternalMapsMode();
+ 
+     static char*    cmd;
+     LaunchType        launch_type;
+@@ -1509,15 +1513,20 @@ int launcherCommStartProcess(const char* db_hostname, U32 host_ip, MapCon* map_c
+     }
+ 
+     launch_type = map_con->is_static?LT_STATICMAP:LT_MISSIONMAP;
+-    best_link = s_BestLauncherLink( host_ip, launch_type );
++    if (external < 0)
++    {
++        LOG_OLD_ERR( "ERROR!  %s is malformed; refusing to start maps\n", COH_DB_EXTERNAL_MAPS_ENVIRONMENT);
++        return 0;
++    }
++    best_link = external ? 0 : s_BestLauncherLink( host_ip, launch_type );
+     
+-    if (!best_link)
++    if (!best_link && !external)
+     {
+         LOG_OLD_ERR( "ERROR!  No launchers or all launchers at capacity or suspended! Can't start maps!\n");
+         return 0;
+     }
+ 
+-    if (launcher_log) 
++    if (launcher_log && best_link)
+     {
+         LOG_OLD( "Decided on %s for map %d", makeIpStr(best_link->addr.sin_addr.S_un.S_addr), map_con->id);
+     }
+@@ -1528,7 +1537,8 @@ int launcherCommStartProcess(const char* db_hostname, U32 host_ip, MapCon* map_c
+         next_cookie = 1;
+ 
+     map_con->cookie = next_cookie;
+-    client = best_link->userData;
++    if (best_link)
++        client = best_link->userData;
+     estrPrintf(&cmd,".\\mapserver.exe -db %s -udp %d -map_id %d -launcher -cookie %d",
+         db_hostname,-1/*client->port_id*/,map_con->id, map_con->cookie);
+     if (map_con->transient) {
+@@ -1632,9 +1642,24 @@ int launcherCommStartProcess(const char* db_hostname, U32 host_ip, MapCon* map_c
+     // which has a different default locale than us.
+     estrConcatf(&cmd, " -locale %d", server_cfg.locale_id);
+ 
+-    launcherSendStartProcess(best_link, map_con->id, cmd, map_con->cookie, launch_type, 0, 0);
+-    map_con->launcher_id = client->container->id;
+-    strcpy(map_con->remote_process_info.hostname, client->container->remote_process_info.hostname);
++    if (external)
++    {
++        if (!cohDbPublishMapRequest(map_con->id, map_con->cookie, map_con->base_map_id, map_con->is_static,
++                map_con->transient, map_con->dontAutoStart, preload_transient, map_con->map_name,
++                map_con->mission_info, cmd))
++        {
++            LOG_OLD_ERR( "ERROR!  Could not publish the start request for map %d\n", map_con->id);
++            return 0;
++        }
++        map_con->launcher_id = 0;
++        strcpy(map_con->remote_process_info.hostname, "localhost");
++    }
++    else
++    {
++        launcherSendStartProcess(best_link, map_con->id, cmd, map_con->cookie, launch_type, 0, 0);
++        map_con->launcher_id = client->container->id;
++        strcpy(map_con->remote_process_info.hostname, client->container->remote_process_info.hostname);
++    }
+     map_con->starting = 1;
+     map_con->lastRecvTime = timerCpuSeconds();
+     containerBroadcast(CONTAINER_MAPS,map_con->id,0,0,0);
+diff --git a/DBServer/src/mapxfer.c b/DBServer/src/mapxfer.c
+index 95ec55a..3efed38 100644
+--- a/DBServer/src/mapxfer.c
++++ b/DBServer/src/mapxfer.c
+@@ -1,3 +1,4 @@
++#include "wine_external_maps.h"
+ #include "mapxfer.h"
+ #include "comm_backend.h"
+ #include "launchercomm.h"
+@@ -307,6 +308,14 @@ MapCon *startMapIfStatic(NetLink *link, EntCon* ent_con, int map_id, char *errms
+                     sprintf(errmsg,"MapFailedOverloadProtection");
+                 }
+             }
++            else if (cohDbExternalMapsMode())
++            {
++                // ArmPort: the zone stays known; the supervisor can start it on the next request.
++                if(errmsg)
++                {
++                    sprintf(errmsg,"NoLaunchersRunning");
++                }
++            }
+             else
+             {
+                 containerDelete(map_con);

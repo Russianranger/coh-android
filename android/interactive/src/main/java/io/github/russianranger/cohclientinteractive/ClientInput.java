@@ -12,7 +12,8 @@ public final class ClientInput {
     public enum PerformanceCommand {
         SHOW_FPS("show_fps"),
         FPS_10("cap_10"),
-        FPS_30("cap_30");
+        FPS_30("cap_30"),
+        FPS_60("cap_60");
         public final String safeName;
         PerformanceCommand(String safeName) {
             this.safeName = safeName;

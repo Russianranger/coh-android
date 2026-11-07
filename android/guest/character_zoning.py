@@ -10,8 +10,10 @@ import math
 import os
 from pathlib import Path
 import re
+import secrets
 import socket
 import stat
+import threading
 import time
 from types import MappingProxyType
 
@@ -20,6 +22,8 @@ import character_session_budget as session_budget
 import character_zoning_scheduler as scheduler
 import native_monorail_events as monorail_events
 import native_monorail_contract as monorail_contract
+import zone_travel
+import zone_index
 
 base, require = character.base, character.require
 MAPS = {1: {'name': 'Atlas Park', 'port': 7001, 'instance': 1, 'world': 'City_01_01'},
@@ -37,6 +41,108 @@ KINGS_TOTAL_PREPARE_SECONDS = 720
 TRANSFER_SECONDS = 180
 REQUEST_AGE_MS = 120000
 NUMBER = character.character_events.NUMBER
+# Optional background start of the next zone (King's Row) beside Atlas Park.
+PRESTART_ENV = 'COH_PRESTART_NEXT_ZONE'
+PRESTART_MAP_ID = 5
+PRESTART_DELAY_SECONDS = 20
+PRESTART_OBSERVE_SECONDS = 5
+PRESTART_JOIN_SECONDS = 120
+PRESTART_THREAD_NICE = 10
+# King's Row preparation peaked at 1772 MiB RSS on Thor (.44); keep headroom.
+PRESTART_MIN_AVAILABLE_MIB = 3072
+# Idle priority for a resident MapServer the player is not on (launch option).
+IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
+PRIORITY_SAMPLES = 12
+PRIORITY_INTERVAL_SECONDS = 120
+# The game's own travel: a third zone asks the DbServer where the hero is (one
+# -getstatus process); keep the rest of the 160-query budget for the save proof.
+STOCK_PROBE_QUERY_LIMIT = 140
+# The game's own travel (ARM64 client): no zone server runs before Enter Game.
+# The zone the character is in, or a new character's starting zone, is started
+# when the DbServer asks for it (dynamic_initial_requested); no other zone is
+# admitted before the character first enters the world (owner, 2026-11-07:
+# "Under no circumstances should characters be transported to Atlas Park
+# unless they exist in that zone already").
+DYNAMIC_INITIAL_POLICY = 'character_zone_started_by_dbserver_request_at_enter_game_v2'
+# Display names for the static zones the shared zone tree serves (zone_index).
+ZONE_DISPLAY_NAMES = {
+    1: 'Atlas Park', 3: 'Cimerora', 4: 'Midnighter Club', 5: "King's Row", 6: 'Steel Canyon',
+    7: 'Skyway City', 8: 'Talos Island', 9: 'Independence Port', 10: "Founders' Falls",
+    11: 'Brickstown', 12: 'Perez Park', 13: 'Boomtown', 14: 'Dark Astoria (old)', 15: "Crey's Folly",
+    16: 'Ouroboros', 17: 'Ouroboros', 18: 'Abandoned Sewer Network', 19: 'Faultline (old)',
+    20: 'Terra Volta', 21: 'Eden', 22: 'The Hive', 23: 'Sewer Network', 24: 'Outbreak',
+    29: 'Galaxy City', 36: 'Nova Praetoria', 37: 'Imperial City', 38: 'Neutropolis',
+    39: 'Underground Nova', 40: 'Precinct Five', 41: 'Destroyed Galaxy City', 42: 'Underground Imperial',
+    43: 'Dark Astoria', 49: 'First Ward', 51: 'Underground Neutropolis', 52: 'Night Ward',
+    60: 'Rikti Crash Site', 61: 'Peregrine Island', 62: 'The Hollows', 65: 'Cascade Archipelago',
+    66: 'The Chantry', 67: 'The Storm Palace', 68: 'Paragon Dance Party', 69: 'Striga Isle',
+    70: 'Breakout', 71: 'Mercy Island', 72: 'Port Oakes', 73: 'Cap au Diable', 74: 'Sharkhead Isle',
+    75: 'Nerva Archipelago', 76: 'St. Martial', 77: 'Grandville', 82: 'Croatoa', 83: 'Pocket D',
+    84: 'Faultline', 85: 'Rikti War Zone', 86: 'The Abyss', 87: 'Monster Island', 626: 'Echo: Galaxy City'}
+# ARM64 client (patch 0121): the frame cap while the player waits for a
+# destination to be prepared. Input is held during that wait, and the 0.13.50
+# Thor test drew Atlas at 30-60 FPS through a 9-minute King's Row preparation.
+STATION_FPS_CAP = 10
+STATION_FPS_CAP_PHASES = ('baseline', 'map_ready')
+# Read-only tick timing of the occupied MapServer (shipping binaries report no
+# tick durations). NPCs and cars are simulated and sent only every 15th tick
+# (2 per second) and drawn 0.6 s in the past; a long tick there, or any tick
+# over 2/30 s (lost game time), makes them stop and jump. 0.13.50 King's Row.
+TICK_PROBE_INTERVAL_SECONDS = 30
+TICK_PROBE_SECONDS = 4.0
+TICK_PROBE_PERIOD_SECONDS = 0.02
+TICK_PROBE_LIMIT = 120
+TICK_PROBE_JOIN_SECONDS = 8
+
+
+def tick_gap_probe(path, *, seconds=TICK_PROBE_SECONDS, period=TICK_PROBE_PERIOD_SECONDS,
+                   clock=time.monotonic, sleep=time.sleep, read=None):
+    """Sample one MapServer progress record at ~50 Hz and summarise completed-tick gaps.
+
+    A gap is the time between two observed changes of tick_completed. With
+    33 ms ticks and 20 ms sampling, normal gaps are 20-40 ms; a gap over
+    67 ms is a tick that overran 2/30 s. Bounded, read-only, never a proof.
+    """
+    read = read or character.progress.read_record
+    previous = last_tick = last_change = None
+    gaps, reads, errors = [], 0, 0
+    started = clock()
+    end = started + seconds
+    while clock() < end:
+        try:
+            previous = read(path, previous)
+            reads += 1
+        except (character.progress.PublicationPending, OSError):
+            errors += 1
+            sleep(period)
+            continue
+        now, tick = clock(), previous.get('tick_completed')
+        if type(tick) is int:
+            if last_tick is None or tick < last_tick:
+                last_tick, last_change = tick, now
+            elif tick != last_tick:
+                gaps.append(((now - last_change) * 1000, tick - last_tick))
+                last_tick, last_change = tick, now
+        sleep(period)
+    durations = sorted(gap for gap, _count in gaps)
+    def over(limit):
+        return sum(1 for gap in durations if gap > limit)
+    return {'reads': reads, 'read_errors': errors, 'window_seconds': round(clock() - started, 3),
+            'ticks': sum(count for _gap, count in gaps), 'gaps': len(durations),
+            'max_gap_ms': round(durations[-1], 1) if durations else None,
+            'p90_gap_ms': round(durations[int(len(durations) * .9)], 1) if durations else None,
+            'gaps_over_67ms': over(1000 * 2 / 30), 'gaps_over_150ms': over(150), 'gaps_over_300ms': over(300)}
+
+
+def available_memory_mib(path=Path('/proc/meminfo')):
+    """MemAvailable in MiB, or None when the kernel does not report it."""
+    try:
+        for line in path.read_text().splitlines()[:64]:
+            if line.startswith('MemAvailable:'):
+                return int(line.split()[1]) // 1024
+    except (OSError, ValueError, IndexError):
+        return None
+    return None
 PREPARATION_FIELDS = (
     'requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',
     'preparation_elapsed_ms', 'preparation_kind', 'preparation_budget_seconds',
@@ -83,6 +189,14 @@ def preparation_budgets(map_id, resident):
             'preparation_budget_policy': 'bounded_python_then_native_ready_v1'}
 
 
+def prestarted_loading_budgets(map_id):
+    """A prestarted destination already finished Python preparation; only native readiness remains."""
+    budgets = preparation_budgets(map_id, False)
+    native = budgets['native_ready_budget_seconds']
+    return dict(budgets, python_preparation_budget_seconds=0, preparation_budget_seconds=native,
+                preparation_budget_policy='prestarted_native_ready_v1')
+
+
 def scan_new_console(owned):
     """Scan each appended byte once, retaining overlap for split crash markers."""
     output = owned['process'].output
@@ -99,6 +213,52 @@ def scan_new_console(owned):
 
 def supported(map_id):
     return type(map_id) is int and map_id in MAPS
+
+
+def zone_name(map_id):
+    if map_id in MAPS:
+        return MAPS[map_id]['name']
+    return ZONE_DISPLAY_NAMES.get(map_id, 'Zone %s' % map_id)
+
+
+def register_zone(map_id):
+    """A static zone served from the shared zone tree, known for this session.
+
+    Atlas (1, 101) and King's Row (5) keep their fixed entries; every other
+    static map in zone_index gets instance 1 and a port at its first launch.
+    """
+    if map_id in MAPS:
+        return MAPS[map_id]
+    require(type(map_id) is int and map_id in zone_index.ZONES, 'Unknown static zone')
+    key, world, _ = zone_index.ZONES[map_id]
+    MAPS[map_id] = {'name': ZONE_DISPLAY_NAMES.get(map_id, key), 'port': None, 'instance': 1, 'world': world,
+                    'shared_zone_tree': True}
+    return MAPS[map_id]
+
+
+def zone_world(map_id):
+    """The world a static map shows (Atlas Park's two instances share City_01_01)."""
+    if type(map_id) is not int:
+        return None
+    if map_id in MAPS:
+        return MAPS[map_id]['world'].casefold()
+    if map_id in zone_index.ZONES:
+        return zone_index.ZONES[map_id][1].casefold()
+    return None
+
+
+def same_zone(first, second):
+    """One zone: the same map, or another instance of its world (Atlas Park 1 and 101)."""
+    world = zone_world(first)
+    return (type(first) is int and type(second) is int
+            and (first == second or world is not None and world == zone_world(second)))
+
+
+def free_zone_port(used):
+    for port in range(zone_travel.FIRST_FREE_PORT, zone_travel.LAST_PORT + 1):
+        if port not in used:
+            return port
+    raise base.DiagnosticError('No free zone server port')
 
 
 def connected(sample, map_id):
@@ -234,6 +394,40 @@ def stock_ready(logs, map_id, minimum_ms, now_ms):
                 port=int(match[1]), loaded_world_assets=True,
                 source='current_target_stock_CLIENT_READY_resumeCharacter_success'))
     return max(result, key=lambda r: (r['utc_ms'], r['line_ordinal'])) if result else None
+
+
+def legacy_ready(logs, minimum_ms, now_ms):
+    """Atlas CLIENT_READY from either stock log route of a legacy MapServer, newest first.
+
+    character.ready_record returns the first match without a time; a zoning
+    session needs the one after the current launch (second-resolution log time).
+    """
+    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+                         r'127\.0\.0\.1:([1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
+    result = []
+    for ordinal, (message, record) in enumerate(character.entity_records(logs, map_id=1)):
+        match = pattern.fullmatch(message)
+        if match is None or int(match[1]) > 65535:
+            continue
+        utc_ms = int(time.mktime(time.strptime(record['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+        if utc_ms < minimum_ms or utc_ms > now_ms + 999:
+            continue
+        result.append(dict(record, utc_ms=utc_ms, line_ordinal=ordinal, map_id=1, port=int(match[1]),
+                           account=character.ACCOUNT, name=character.CHARACTER, loaded_world_assets=True,
+                           source='current_owned_mapserver_CLIENT_READY_resumeCharacter_success'))
+    return max(result, key=lambda r: (r['utc_ms'], r['line_ordinal'])) if result else None
+
+
+def stock_transfers_begun(logs, map_id, minimum_ms, now_ms):
+    """dbmapxfer.c "Step 1: Ent THORHERO moving to map N" on map_id's own route."""
+    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Step 1: Ent THORHERO moving to map ([1-9][0-9]{0,4})[, ][^\r\n]*$')
+    rows = []
+    for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms):
+        match = pattern.fullmatch(message)
+        if match is not None:
+            rows.append({'utc_ms': record['utc_ms'], 'from_map_id': map_id, 'to_map_id': int(match[1]),
+                         'line_sha256': record['line_sha256']})
+    return rows
 
 
 def stock_positions(logs, map_id, minimum_ms, now_ms):
@@ -392,6 +586,8 @@ class MapLaunchHistory:
 
 class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     """At most two owned static map processes, started only when requested."""
+    # Atlas, its second instance and King's Row are started by this flow.
+    EXTERNAL_SESSION_MAPS = frozenset(MAPS)
     def __init__(self, owner):
         super().__init__(owner)
         self.active_map_id = 1
@@ -417,33 +613,567 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             preparation_phase_observations=[])
         self.ctx.report['character_zoning'] = self.zoning_report
         self.creation_report.update(zoning_enabled=True, connected_on_supported_map=False)
+        self.prestart = None
+        self.zoning_report['background_prestart'] = {'format': 1,
+            'requested': os.environ.get(PRESTART_ENV) == '1', 'map_id': PRESTART_MAP_ID,
+            'status': 'not_started', 'policy': 'prepare_then_start_next_zone_beside_current_v1',
+            'preparation_thread_nice': PRESTART_THREAD_NICE, 'mapserver_priority_lowered': False}
+        self.idle_capability = None
+        self.zoning_report['idle_resident_maps'] = {'format': 1,
+            'requested': os.environ.get(IDLE_ENV) == '1',
+            'policy': 'resident_map_not_occupied_plus_10_nice_restored_before_return_v1',
+            'nice_increment': scheduler.IDLE_NICE_INCREMENT, 'periods': [],
+            'physical_performance_gain_verified': False}
+        self.station_fps_cap = {'format': 1, 'policy': 'client_cap_while_trip_is_prepared_v1',
+            'cap': STATION_FPS_CAP, 'client_supported': False, 'applied': 0, 'removed': 0, 'error': None}
+        self.zoning_report['station_fps_cap'] = self.station_fps_cap
+        self.tick_probe = None
+        self.active_since_monotonic = None
+        self.zoning_report['tick_probe'] = {'format': 1,
+            'policy': 'read_only_occupied_map_completed_tick_gaps_v1',
+            'interval_seconds': TICK_PROBE_INTERVAL_SECONDS, 'window_seconds': TICK_PROBE_SECONDS,
+            'sample_period_seconds': TICK_PROBE_PERIOD_SECONDS, 'limit': TICK_PROBE_LIMIT,
+            'samples': [], 'skipped_busy': 0, 'error': None, 'is_success_proof': False}
+        self.stock = {'format': 1, 'requested': zone_travel.requested(), 'enabled': False,
+            'policy': 'stock_doors_tunnels_monorail_two_zone_servers_v1',
+            'capacity': zone_travel.MAX_ZONE_SERVERS, 'start_budget_seconds': zone_travel.START_SECONDS,
+            'starts': [], 'evictions': [], 'arrivals': 0, 'transfer_wait_observed': 0, 'decisions': [],
+            'transfers_begun': [], 'arrival_source': None}
+        self.stock_starts = {}
+        self.stock_log_next = 0
+        self.stock_last_arrival_ms = None
+        self.zoning_report['stock_travel'] = self.stock
+        # The zone the character first enters, started at Enter Game (begin_initial_zone).
+        self.initial_zone = None
+        self.priority_next = 0
+        self.zoning_report['wine_priorities'] = {'format': 1,
+            'policy': 'read_only_thread_nice_by_wine_program_v1', 'samples': [],
+            'sample_limit': PRIORITY_SAMPLES, 'interval_seconds': PRIORITY_INTERVAL_SECONDS,
+            'priorities_changed': False}
+
+    def start_tick_probe(self):
+        """One daemon thread; it only reads the occupied map's progress file."""
+        report = (getattr(self, 'zoning_report', None) or {}).get('tick_probe')
+        if report is None or getattr(self, 'tick_probe', None) is not None:
+            return
+        if getattr(self, 'active_since_monotonic', None) is None:
+            self.active_since_monotonic = time.monotonic()
+        stop = threading.Event()
+
+        def run():
+            try:
+                while not stop.wait(TICK_PROBE_INTERVAL_SECONDS) and len(report['samples']) < TICK_PROBE_LIMIT:
+                    map_id, path = self.active_map_id, getattr(self, 'map_progress_path', None)
+                    since = self.active_since_monotonic
+                    if self.pending is not None or path is None:
+                        report['skipped_busy'] += 1
+                        continue
+                    started_utc_ms = int(time.time() * 1000)
+                    sample = tick_gap_probe(path)
+                    if (self.pending is not None or self.active_map_id != map_id
+                            or self.active_since_monotonic != since):
+                        report['skipped_busy'] += 1
+                        continue
+                    sample.update(map_id=map_id, started_utc_ms=started_utc_ms,
+                                  seconds_since_map_active=round(time.monotonic() - since, 1) if since else None)
+                    report['samples'].append(sample)
+            except Exception as error:   # observation only; never affects zoning
+                report['error'] = type(error).__name__ + ': ' + str(error)[:160]
+
+        thread = threading.Thread(target=run, name='coh-tick-probe', daemon=True)
+        self.tick_probe = {'stop': stop, 'thread': thread}
+        thread.start()
+
+    def stop_tick_probe(self, timeout=TICK_PROBE_JOIN_SECONDS):
+        probe = getattr(self, 'tick_probe', None)
+        if probe is None:
+            return True
+        probe['stop'].set()
+        probe['thread'].join(timeout)
+        alive = probe['thread'].is_alive()
+        self.zoning_report['tick_probe']['thread_joined'] = not alive
+        return not alive
+
+    def tick_priorities(self, now):
+        """A few read-only samples in play: does Wine run the client at a higher nice?"""
+        report = (getattr(self, 'zoning_report', None) or {}).get('wine_priorities')
+        if report is None or len(report['samples']) >= PRIORITY_SAMPLES or now < self.priority_next:
+            return
+        self.priority_next = now + PRIORITY_INTERVAL_SECONDS
+        try:
+            sample = scheduler.wine_priority_snapshot()
+        except (OSError, base.DiagnosticError) as error:
+            sample = {'error_type': type(error).__name__, 'error': str(error)[:200]}
+        sample.update(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                      active_map_id=self.active_map_id, resident_maps=sorted(self.maps))
+        report['samples'].append(sample)
+
+    # Background start of the next zone ------------------------------------
+    def prestart_eligible(self):
+        return (self.pending is None and self.active_map_id == 1 and self.monorail_enabled()
+                and PRESTART_MAP_ID not in self.maps and len(self.maps) == 1
+                and getattr(self, 'kings_row_prepared', None) is None)
+
+    def start_background_prestart(self, now):
+        """Run the King's Row Python preparation on a low-priority thread.
+
+        The thread's ctx.check also honours a private stop flag, and its
+        'stage' progress events are dropped so the foreground stage and the
+        Android overlay stay on the live session. Other events are serialized.
+        """
+        report = self.zoning_report['background_prestart']
+        state = {'phase': 'preparing', 'started_monotonic': now, 'cancel': False, 'error': None,
+                 'thread': None}
+        original_check, original_event, lock = self.ctx.check, self.ctx.event, threading.Lock()
+
+        def check():
+            original_check()
+            if threading.current_thread() is state['thread'] and state['cancel']:
+                raise base.Cancelled("Background King's Row preparation stopped")
+
+        def event(kind, **fields):
+            if threading.current_thread() is state['thread'] and kind == 'stage':
+                return
+            with lock:
+                original_event(kind, **fields)
+
+        def run():
+            try:
+                try:
+                    os.setpriority(os.PRIO_PROCESS, threading.get_native_id(), PRESTART_THREAD_NICE)
+                    report['preparation_thread_niced'] = True
+                except (AttributeError, OSError):
+                    report['preparation_thread_niced'] = False
+                self.prepare_kings_row_runtime()
+            except BaseException as error:   # reported by the supervisor thread
+                state['error'] = error
+            finally:
+                state['finished_monotonic'] = time.monotonic()
+
+        self.ctx.check, self.ctx.event = check, event
+        state['thread'] = threading.Thread(target=run, name='kings-row-prestart', daemon=True)
+        self.prestart = state
+        self.prestart_timing = self.begin_startup_timing('background_prestart', map_id=PRESTART_MAP_ID,
+                                                         now=now, utc_ms=int(time.time() * 1000))
+        report.update(status='preparing', started_utc_ms=int(time.time() * 1000))
+        state['thread'].start()
+
+    def wait_background_prestart(self):
+        """A zoning request during background preparation waits for, then reuses, its result."""
+        state = getattr(self, 'prestart', None)
+        if state is None or state['thread'] is None or state['phase'] != 'preparing':
+            return
+        while state['thread'].is_alive():
+            state['thread'].join(.25)
+            self.ctx.check()
+        self.zoning_report['background_prestart']['joined_by_zoning_request'] = True
+        if state['error'] is not None:
+            raise state['error']
+
+    def discard_prestarted_map(self, failure):
+        owned = self.maps.pop(PRESTART_MAP_ID, None)
+        report = self.zoning_report['background_prestart']
+        report.update(status='failed', failure_phase='native_loading',
+                      failure=str(failure)[:300], failure_type=type(failure).__name__)
+        if owned is None:
+            return
+        if owned['process'].process.poll() is None:
+            owned['process'].process.terminate()
+        path = owned['progress_path']
+        if path.exists() or path.is_symlink():
+            # A later cold zoning spawn requires a fresh progress file.
+            path.rename(path.with_name(path.name + '.prestart-failed'))
+
+    # Idle priority for resident maps --------------------------------------
+    def idle_token(self):
+        """Only a requested idle policy adds a launch token; the default launch is unchanged."""
+        report = getattr(self, 'zoning_report', {}).get('idle_resident_maps')
+        if not isinstance(report, dict) or report.get('requested') is not True:
+            return None
+        token = secrets.token_hex(32)
+        self.ctx.secrets.append(token)
+        return token
+
+    def idle_lower(self, map_id, reason):
+        """Weight a ready resident map the player is not on; never fails zoning."""
+        report = self.zoning_report.get('idle_resident_maps')
+        owned = self.maps.get(map_id)
+        if (not isinstance(report, dict) or report.get('requested') is not True or owned is None or map_id == self.active_map_id
+                or owned.get('idle') is not None or not owned.get('idle_token')
+                or len(report['periods']) >= 16):
+            return
+        period = {'map_id': map_id, 'reason': reason, 'lowered_utc_ms': int(time.time() * 1000)}
+        report['periods'].append(period)
+        try:
+            idle = scheduler.PreparationScheduler(self.owner, map_id, probe=self.idle_capability,
+                token=owned['idle_token'], environment_name=scheduler.IDLE_ENVIRONMENT,
+                increment=scheduler.IDLE_NICE_INCREMENT, policy='idle_resident_plus_10_nice',
+                sample_limit=scheduler.IDLE_SAMPLE_LIMIT)
+            self.idle_capability = idle.capability
+            period['scheduler'] = idle.report
+            owned['idle'] = idle
+            idle.sample()
+            period['changed_threads'] = idle.report['changed_threads']
+        except (base.DiagnosticError, OSError, ValueError) as failure:
+            period.update(status='lower_failed', failure=str(failure)[:300], failure_type=type(failure).__name__)
+
+    def idle_restore(self, map_id, reason):
+        """Restore before the player returns (or cleanup); a failure is reported, not hidden."""
+        owned = self.maps.get(map_id)
+        idle = None if owned is None else owned.get('idle')
+        if idle is None:
+            return True
+        owned['idle'] = None
+        period = next((row for row in reversed(self.zoning_report.get('idle_resident_maps', {}).get('periods', []))
+                       if row.get('map_id') == map_id and 'restored_utc_ms' not in row), {})
+        try:
+            idle.restore()
+            period.update(status='restored', restored_utc_ms=int(time.time() * 1000), restore_reason=reason,
+                          restored_threads=idle.report['restored_threads'])
+            return True
+        except (base.DiagnosticError, OSError, ValueError) as failure:
+            period.update(status='restore_failed', restored_utc_ms=int(time.time() * 1000), restore_reason=reason,
+                          failure=str(failure)[:300], failure_type=type(failure).__name__)
+            return False
+
+    def tick_idle(self):
+        for map_id, owned in list(self.maps.items()):
+            idle = owned.get('idle')
+            if idle is None:
+                continue
+            if map_id == self.active_map_id:
+                self.idle_restore(map_id, 'became_active')
+                continue
+            try:
+                idle.sample()   # bounded: every 5 s, discovers new threads every 15 s
+            except (base.DiagnosticError, OSError, ValueError):
+                self.idle_restore(map_id, 'observation_error')
+
+    def restore_idle_maps(self, reason):
+        return all([self.idle_restore(map_id, reason) for map_id in list(self.maps)])
+
+    def tick_prestart(self, now):
+        report = self.zoning_report.get('background_prestart')
+        if not isinstance(report, dict) or report.get('requested') is not True:
+            return
+        state = getattr(self, 'prestart', None)
+        try:
+            if state is None:
+                if report['status'] != 'not_started' or not self.prestart_eligible():
+                    return
+                eligible = report.setdefault('eligible_monotonic', now + PRESTART_DELAY_SECONDS)
+                if now < eligible:
+                    return
+                available = available_memory_mib()
+                report.update(available_memory_mib_at_start=available,
+                              minimum_available_memory_mib=PRESTART_MIN_AVAILABLE_MIB)
+                if available is None or available < PRESTART_MIN_AVAILABLE_MIB:
+                    report['status'] = 'skipped_low_memory'
+                    return
+                self.start_background_prestart(now)
+                return
+            if state['phase'] == 'preparing':
+                if state['thread'].is_alive():
+                    return
+                state['phase'] = 'prepared'
+                report['preparation_seconds'] = round(state.get('finished_monotonic', now) - state['started_monotonic'], 3)
+                if state['error'] is not None:
+                    if isinstance(state['error'], base.Cancelled) and self.ctx.cancelled():
+                        raise state['error']
+                    state['phase'] = 'done'
+                    report.update(status='failed', failure_phase='preparing', failure=str(state['error'])[:300],
+                                  failure_type=type(state['error']).__name__)
+                    return
+            if state['phase'] == 'prepared':
+                if self.pending is not None or PRESTART_MAP_ID in self.maps or self.active_map_id != 1:
+                    state['phase'] = 'done'
+                    report['status'] = 'prepared_then_used_by_zoning'
+                    return
+                self._spawn_map(PRESTART_MAP_ID)   # reuses the prepared runtime
+                self.maps[PRESTART_MAP_ID]['prestarted'] = True
+                self.mark_startup_timing(self.prestart_timing, 'map_spawn_requested')
+                state.update(phase='loading', next_observation=now + PRESTART_OBSERVE_SECONDS)
+                report.update(status='native_loading', native_spawn_seconds=round(now - state['started_monotonic'], 3))
+                return
+            if state['phase'] == 'loading':
+                owned = self.maps.get(PRESTART_MAP_ID)
+                if owned is None or self.pending is not None:
+                    state['phase'] = 'done'
+                    report['status'] = 'loading_handed_to_zoning'
+                    return
+                if now < state['next_observation']:
+                    return
+                state['next_observation'] = now + PRESTART_OBSERVE_SECONDS
+                try:
+                    current = self._map_progress(PRESTART_MAP_ID)
+                except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                    state['phase'] = 'done'
+                    self.discard_prestarted_map(failure)
+                    return
+                if self.live_progress(current):
+                    owned['native_ticking'] = True
+                    self.mark_startup_timing(self.prestart_timing, 'first_completed_tick_observed')
+                    state['phase'] = 'done'
+                    report.update(status='native_ticking',
+                                  native_ticking_seconds=round(now - state['started_monotonic'], 3))
+                    self.idle_lower(PRESTART_MAP_ID, 'prestarted_ready')
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            # Background work never disables foreground zoning.
+            if state is not None:
+                state['phase'] = 'done'
+            report.update(status='failed', failure=str(failure)[:300], failure_type=type(failure).__name__)
+
+    def stop_background_prestart(self, timeout=PRESTART_JOIN_SECONDS):
+        """Cleanup stops and joins the preparation thread before any cache return."""
+        state = getattr(self, 'prestart', None)
+        if state is None or state['thread'] is None:
+            return True
+        state['cancel'] = True
+        state['thread'].join(timeout)
+        alive = state['thread'].is_alive()
+        self.zoning_report['background_prestart'].update(stopped_for_cleanup=True, thread_joined=not alive)
+        if alive and hasattr(self, 'kings_row_data_cache'):
+            # Never return a data tree another thread may still be writing.
+            del self.kings_row_data_cache
+        return not alive
+
+    def cleanup_config(self):
+        # The preparation thread starts no processes; join it before the
+        # inherited cache return so no tree is returned while being written.
+        self.stop_background_prestart()
+        self.stop_tick_probe()
+        path = getattr(self.owner, 'armport_fps_cap_file', None)
+        if getattr(self, 'station_fps_cap', None) is not None and path is not None:
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
+        self.restore_idle_maps('cleanup')
+        super().cleanup_config()
+
+    def map_startup_timing(self, map_id):
+        row = getattr(self, 'prestart_timing', None)
+        if row is not None and self.pending is None and map_id == PRESTART_MAP_ID:
+            return row
+        # A trip's start has its own row; the first zone's start keeps the initial one.
+        row = getattr(self, 'stock_spawn_timing', None)
+        if row is not None and self.pending is None:
+            row['map_id'] = map_id
+            return row
+        return super().map_startup_timing(map_id)
 
     def monorail_enabled(self):
-        return getattr(self, 'monorail_qualified', False) is True
+        """The station queue; off when the game's own zone travel is active."""
+        return getattr(self, 'monorail_qualified', False) is True and not self.stock_travel_active()
+
+    def session_map_options(self):
+        """The game's own zone travel: the loading screen comes at once (owner, 2026-11-05).
+
+        The stock MapServer defaults to a two-stage transfer (dbmapxfer.c,
+        s_UseTwoStageMapXfer): the hero stays in the world, targetable, until the
+        destination has started, which takes minutes here. -notwostagemapxfer
+        (svr_init.c) sends SERVER_MAP_XFER_WAIT immediately: frozen,
+        untargetable, invincible, loading screen; then the transfer completes
+        when the DbServer reports the destination ready, or is undone.
+        """
+        return ['-notwostagemapxfer'] if self.stock_travel_active() else []
+
+    def stock_travel_active(self):
+        """COH_STOCK_TRAVEL=1 with the external-maps DbServer layer installed."""
+        stock = getattr(self, 'stock', None)
+        layer = (getattr(self, 'manual_atlas_startup', None) or {}).get('external_maps')
+        return isinstance(stock, dict) and stock['requested'] is True and layer is not None
 
     def capture_baseline(self):
         # The inherited baseline checks the complete accepted identity and
         # selected SQL rows before character_position selects the saved map.
         # This event is observational: it cannot authorize relocation or login.
         super().capture_baseline()
-        prepared = getattr(self, 'startup_preparation_map_id', self.active_map_id)
-        require(self.active_map_id == prepared,
+        saved = self.active_map_id
+        require(saved == getattr(self, 'startup_saved_map_id', saved),
                 'Saved destination changed during startup; preserve data and export')
-        destination = MAPS[self.active_map_id]
+        self.startup_saved_map_id = saved
+        dynamic = self.dynamic_initial_requested()
+        if dynamic:
+            # No zone server before Enter Game: the saved zone is started when
+            # the DbServer asks for it, and only that zone is admitted.
+            require(self.zone_tree_for(saved) is not None,
+                    'THORHERO is saved in ' + zone_name(saved) + ', which this runtime cannot start; '
+                    'preserve data and export')
+            self.monorail_requires_reopen = False
+            self.begin_initial_zone(saved)
+        else:
+            prepared = getattr(self, 'startup_preparation_map_id', self.active_map_id)
+            require(self.active_map_id == prepared,
+                    'Saved destination changed during startup; preserve data and export')
+        destination = MAPS[saved]
+        port = None if dynamic else destination['port']
         position = self.creation_report['baseline']['saved_position']
         self.zoning_report['saved_startup'] = {
-            'map_id': self.active_map_id, 'name': destination['name'],
-            'world': destination['world'], 'port': destination['port'],
+            'map_id': saved, 'name': destination['name'],
+            'world': destination['world'], 'port': port,
             'saved_position': dict(position), 'authority': 'preserved_postgresql_ents_staticmapid',
             'sql_game_mutations_performed': False, 'native_ready_verified': False,
             'character_world_entry_verified': False}
+        if dynamic:
+            self.zoning_report['saved_startup']['dynamic_start'] = self.initial_zone
         self.ctx.event('saved_character_destination', session_id=self.owner.args.session_id,
             character_id=self.CHARACTER_ID, auth_id=self.baseline_snapshot['identity']['authid'],
-            name=character.CHARACTER, account=character.ACCOUNT, map_id=self.active_map_id,
-            map_name=destination['name'], world=destination['world'], port=destination['port'],
+            name=character.CHARACTER, account=character.ACCOUNT, map_id=saved,
+            map_name=destination['name'], world=destination['world'], port=port,
             existing_character_verified=True, saved_location_verified=True,
-            sql_game_mutations_performed=False)
+            sql_game_mutations_performed=False, dynamic_start=dynamic)
         self.persist_startup_observation()
+
+    def dynamic_initial_requested(self):
+        """No zone server before Enter Game (the game's own travel, ARM64 client).
+
+        The character reaches its zone the way the game itself does it: at
+        Enter Game the DbServer finds the character's static map not running
+        and asks for it (handleChoosePlayer -> setNewMap -> startMapIfStatic;
+        a new character's starting zone comes from determineStartMapId: Atlas
+        Park, Mercy Island, Nova Praetoria or a tutorial). The supervisor starts
+        it like any trip, and the client waits up to 900 s for the answer
+        (patch 0126). Thor 0.13.57: starting King's Row while the client
+        started ended with Android's low-memory killer closing the app; 0.13.58
+        started Atlas Park first (owner, 2026-11-07: no Atlas Park unless the
+        character is there). The zone now starts while the client waits at its
+        character list, like the destination of a trip.
+        """
+        return (getattr(self, 'stock', {}).get('requested') is True
+                and os.environ.get('COH_CLIENT_ARCH', 'x86') == 'arm64')
+
+    def begin_initial_zone(self, expected):
+        """The record of the first zone; expected is the saved map (None: a new character)."""
+        if self.initial_zone is None:
+            self.initial_zone = {'format': 2, 'policy': DYNAMIC_INITIAL_POLICY,
+                'expected_map_id': expected, 'map_id': expected, 'zone_servers_before_enter_game': 0,
+                'requested': False, 'started': False, 'ready': False, 'activated': False,
+                'attempts': [], 'refused_requests': [], 'sql_game_mutations_performed': False,
+                'available_memory_mib_at_baseline': available_memory_mib()}
+            self.zoning_report['initial_zone'] = self.initial_zone
+        require(self.initial_zone['expected_map_id'] == expected,
+                'Saved destination changed during startup; preserve data and export')
+        return self.initial_zone
+
+    def dynamic_initial(self):
+        value = getattr(self, 'initial_zone', None)
+        return value if isinstance(value, dict) else None
+
+    def initial_zone_pending(self):
+        initial = self.dynamic_initial()
+        return (initial is not None and initial['activated'] is not True
+                and not self.creation_report.get('connected_on_atlas'))
+
+    def admit_zone_request(self, map_id):
+        """Before the character first enters the world, only its own zone may start.
+
+        The DbServer asks for the saved zone at Enter Game (or a new character's
+        starting zone). Any other request then, or a second one while the first
+        is starting, is refused: the game reports that the map failed and the
+        character stays at the character list. Nothing is moved.
+        """
+        if not self.initial_zone_pending():
+            return None
+        initial = self.dynamic_initial()
+        reason = None
+        if any(other != map_id for other in self.maps):
+            reason = 'initial_zone_already_starting'
+        elif initial['expected_map_id'] is not None and not same_zone(map_id, initial['expected_map_id']):
+            reason = 'not_the_saved_zone'
+        if reason is not None:
+            initial['refused_requests'].append({'map_id': map_id, 'reason': reason,
+                                                'utc_ms': int(time.time() * 1000)})
+            del initial['refused_requests'][:-8]
+        return reason
+
+    def initial_zone_wait_seconds(self, now=None):
+        """Seconds spent waiting for the first zone after the game asked for it (bounded)."""
+        initial = self.dynamic_initial()
+        if initial is None:
+            return 0
+        now = time.monotonic() if now is None else now
+        total = 0.0
+        for attempt in initial['attempts']:
+            started = attempt.get('started_monotonic')
+            if type(started) in (int, float):
+                ended = attempt.get('ended_monotonic', now)
+                total += max(0.0, min(ended, now) - started)
+        return min(total, 2 * zone_travel.START_SECONDS)
+
+    def tick_dynamic_initial(self):
+        """Before the first connection, follow the zone the DbServer asked for and activate it."""
+        initial = self.dynamic_initial()
+        if initial is None or not self.initial_zone_pending():
+            return
+        now, now_ms = time.monotonic(), int(time.time() * 1000)
+        attempts = initial['attempts']
+        if attempts and 'ended_monotonic' not in attempts[-1] and attempts[-1]['map_id'] not in self.maps:
+            # The start failed or ran out of time; the game told the client.
+            attempts[-1].update(ended_monotonic=now, ended_utc_ms=now_ms, outcome='not_ready')
+            self.initial_zone_event('not_ready', attempts[-1]['map_id'])
+        target = next((map_id for map_id, owned in self.maps.items() if owned.get('stock')), None)
+        if target is None:
+            return
+        owned = self.maps[target]
+        require(initial['expected_map_id'] is None or same_zone(target, initial['expected_map_id']),
+                'The game started ' + zone_name(target) + ' for THORHERO, not the saved '
+                + zone_name(initial['expected_map_id']) + '; nothing was moved; export this report')
+        launch = [target, owned.get('cookie'), owned.get('launch_utc_ms')]
+        if attempts and 'ended_monotonic' not in attempts[-1] and attempts[-1]['launch'] != launch:
+            attempts[-1].update(ended_monotonic=now, ended_utc_ms=now_ms, outcome='replaced')
+        if not attempts or 'ended_monotonic' in attempts[-1]:
+            row = self._latest_stock_start(target)
+            # The wait counts from the game's request: the zone's preparation came first.
+            attempts.append({'map_id': target, 'launch': launch, 'launch_utc_ms': owned.get('launch_utc_ms'),
+                             'started_monotonic': owned.get('stock_started_monotonic',
+                                                            owned.get('launch_monotonic', now)),
+                             'requested_utc_ms': None if row is None else row.get('requested_utc_ms')})
+            del attempts[:-8]
+            initial.update(requested=True, started=True, map_id=target, map_name=zone_name(target),
+                           started_utc_ms=owned.get('launch_utc_ms'))
+            self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
+        if owned.get('ready') is not True:
+            return
+        self._activate(target)
+        owned['last_occupied'] = now
+        # The character's CLIENT_READY on this zone's route comes after its launch.
+        self.ready_floor_ms = owned['launch_utc_ms'] - 999
+        attempts[-1].update(ended_monotonic=now, ended_utc_ms=now_ms, outcome='ready')
+        initial.update(ready=True, activated=True, activated_utc_ms=now_ms,
+                       zone_servers_at_ready=sorted(self.maps),
+                       available_memory_mib_at_ready=available_memory_mib())
+        row = self._latest_stock_start(target)
+        if row is not None:
+            row['initial_login'] = True
+            initial['request_to_ready_ms'] = (now_ms - row['requested_utc_ms']
+                                              if type(row.get('requested_utc_ms')) is int else None)
+        timing = getattr(self, 'initial_startup_timing', None)
+        if timing is not None:
+            timing.update(map_id=target, initial_zone_started_by_dbserver_request=True)
+            self.mark_startup_timing(timing, 'map_ready_observed', now=now, utc_ms=now_ms)
+        self.creation_report['map_ready'] = True
+        startup = self.zoning_report.get('saved_startup')
+        if startup is not None:
+            startup.update(native_ready_verified=True, native_maps_started=sorted(self.maps))
+        self.initial_zone_event('ready', target)
+        self.sample_startup_observation(force=True)
+
+    INITIAL_ZONE_MESSAGES = {
+        'starting': 'Starting {zone} for THORHERO. The game screen can stay still for a few minutes until it is ready.',
+        'ready': '{zone} is ready; THORHERO is entering it.',
+        'not_ready': '{zone} did not start in time and the game reported it. Press Enter Game again, or export the report.'}
+
+    def initial_zone_event(self, status, map_id):
+        """The app shows this while the client waits for the zone (its screen does not move)."""
+        self.ctx.event('character_initial_zone', format=1, session_id=self.owner.args.session_id, status=status,
+                       map_id=map_id, map_name=zone_name(map_id), generated_utc_ms=int(time.time() * 1000),
+                       message=self.INITIAL_ZONE_MESSAGES[status].format(zone=zone_name(map_id)))
+
+    def _latest_stock_start(self, map_id):
+        return next((row for row in reversed(self.stock['starts']) if row['map_id'] == map_id), None)
 
     def qualify_monorail_preparation(self):
         if 'native_monorail' not in self.map_package:
@@ -464,8 +1194,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         # native world provider to prepare; no SQL writes or default relocation.
         self.qualify_monorail_preparation()
         self.capture_baseline()
-        self.startup_preparation_map_id = self.active_map_id
-        return self.active_map_id
+        # None: no zone is prepared before Enter Game (the DbServer asks for it).
+        self.startup_preparation_map_id = None if self.dynamic_initial() is not None else self.active_map_id
+        return self.startup_preparation_map_id
 
     def prepare_runtime(self):
         super().prepare_runtime()
@@ -548,13 +1279,17 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
                 'Zoning character position fields differ')
         value = values[0]
+        if (type(value.get('staticmapid')) is int and value['staticmapid'] not in MAPS
+                and value['staticmapid'] in zone_index.ZONES
+                and getattr(self, 'zone_asset_document', None) is not None):
+            register_zone(value['staticmapid'])   # saved in a zone served by the shared tree
         require(type(value['containerid']) is int and value['containerid'] == 1
             and supported(value['staticmapid'])
             and (type(value['mapid']) is int and value['mapid'] == value['staticmapid']
                  or allow_unassigned_active_map and value['mapid'] is None)
             and all(type(value[k]) in (int, float) and math.isfinite(value[k]) and abs(value[k]) <= 1000000
                     for k in ('posx', 'posy', 'posz')), 'Saved character is outside the supported local zones')
-        require(value['staticmapid'] != 5 or self.monorail_enabled(),
+        require(value['staticmapid'] != 5 or getattr(self, 'monorail_qualified', False) is True,
                 'Saved Kings Row character requires the verified monorail/zone package')
         if allow_unassigned_active_map:
             self.active_map_id = value['staticmapid']
@@ -567,6 +1302,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return value
 
     def connected_status(self, sample):
+        self._observe_stock_move(sample)
         if sample.get('loaded') and not sample.get('in_map_transfer'):
             require(type(sample.get('map_id')) is int and sample['map_id'] == self.active_map_id
                     and type(sample.get('static_map_id')) is int and sample['static_map_id'] == self.active_map_id,
@@ -576,12 +1312,26 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def connection_metadata(self):
         metadata = super().connection_metadata()
         startup = self.zoning_report.get('saved_startup')
-        if startup is not None:
+        initial = self.dynamic_initial()
+        if initial is not None:
+            self.verify_initial_connection(initial)
+            if startup is not None:
+                startup['character_world_entry_verified'] = True
+        elif startup is not None:
             require(startup['map_id'] == self.active_map_id,
                     'Initial character connection differs from the saved destination')
             startup['character_world_entry_verified'] = True
         return dict(metadata, connected_on_supported_map=True, zoning_enabled=True,
-                    monorail_enabled=self.monorail_enabled())
+                    monorail_enabled=self.monorail_enabled(),
+                    stock_travel=getattr(self, 'stock', {}).get('enabled') is True)
+
+    def verify_initial_connection(self, initial):
+        """The first connection is on the zone the game started: the saved zone, or a new character's start."""
+        require(initial['activated'] is True and self.active_map_id == initial['map_id']
+                and (initial['expected_map_id'] is None or same_zone(self.active_map_id, initial['expected_map_id'])),
+                'Initial character connection differs from the zone the game started; preserve data and export')
+        initial['connected_map_id'] = self.active_map_id
+        initial['connected_utc_ms'] = int(time.time() * 1000)
 
     def _remember_active(self):
         self.maps[self.active_map_id] = {'process': self.map_process, 'progress_path': self.map_progress_path,
@@ -593,6 +1343,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if self.map_process is not None and self.active_map_id in self.maps:
             self.maps[self.active_map_id]['previous'] = self.map_previous
         self.active_map_id = map_id
+        self.active_since_monotonic = time.monotonic()
         owned = self.maps[map_id]
         self.map_process, self.map_progress_path = owned['process'], owned['progress_path']
         self.map_previous, self.map_launch_utc_ms = owned.get('previous'), owned['launch_utc_ms']
@@ -601,10 +1352,16 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.map_launch_history.observe(map_id, owned, self.epoch)
 
     def start_map(self):
+        if self.dynamic_initial() is not None:
+            self.defer_initial_zone()
+            return
         if self.active_map_id == 1 and getattr(self, 'overlap_client_initialization', False) is not True:
             original = self.owner.wine_env
+            initial_idle_token = self.idle_token()
+            if initial_idle_token is not None:
+                self.owner.wine_env = dict(original, **{scheduler.IDLE_ENVIRONMENT: initial_idle_token})
             if self.monorail_enabled():
-                self.owner.wine_env = dict(original, **self.monorail_environment(1))
+                self.owner.wine_env = dict(self.owner.wine_env, **self.monorail_environment(1))
             try:
                 super().start_map()
             finally:
@@ -616,6 +1373,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                         'progress_path': getattr(self, 'map_progress_path', None),
                         'launch_utc_ms': getattr(self, 'map_launch_utc_ms', None)}, self.epoch)
             self._remember_active()
+            self.maps[self.active_map_id]['idle_token'] = initial_idle_token
         else:
             # Retain the accepted stage identifier while displaying the exact
             # PostgreSQL-selected destination and independently proving it.
@@ -666,8 +1424,42 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             startup.update(native_ready_verified=True, native_maps_started=sorted(self.maps))
         self.ready_floor_ms = self.map_launch_utc_ms - 999
 
+    def defer_initial_zone(self):
+        """No zone server before Enter Game; the DbServer asks for the character's zone then.
+
+        The stage keeps its accepted identifier (the app's stage contract) and
+        records that no MapServer was started for it.
+        """
+        initial = self.dynamic_initial()
+        expected = initial['expected_map_id']
+        require(self.stock_travel_active() and self.stock.get('enabled') is True,
+                ('THORHERO is saved in ' + zone_name(expected) + '; starting it' if expected is not None
+                 else "Starting the new character's zone") + " needs the game's own zone travel, which this "
+                'runtime lacks; preserve data and export')
+        self.ctx.stage('local_atlas_startup')
+        self.initial_map_startup = None
+        self.creation_report['map_ready'] = False
+        initial['deferred_utc_ms'] = int(time.time() * 1000)
+        startup = self.zoning_report.get('saved_startup')
+        if startup is not None:
+            startup['native_maps_started'] = []
+        if expected is not None:
+            message = (zone_name(expected) + ' starts when THORHERO enters the game (Enter Game); '
+                       'the game screen can stay still for a few minutes while it loads')
+        else:
+            message = ("The new character's starting zone starts after the character creator (Enter Game); "
+                       'the game screen can stay still for a few minutes while it loads')
+        self.ctx.event('stage', status='running', message=message, map_id=expected,
+                       map_name=None if expected is None else zone_name(expected))
+        self.ctx.passed(map_ready=False, map_id=expected, zone_servers_started=0,
+                        initial_zone='started_by_the_game_at_enter_game', policy=DYNAMIC_INITIAL_POLICY)
+        self.sample_startup_observation(force=True)
+
     def client_startup_assets_allowed(self):
         """Only a completely prepared owned world can overlap client loading."""
+        if self.dynamic_initial() is not None and getattr(self, 'initial_map_startup', None) is None:
+            # No zone server before Enter Game: nothing for client loading to overlap or seal.
+            return True
         startup = getattr(self, 'initial_map_startup', None)
         if not startup or startup['ready'] or startup['overlap_enabled'] is not True:
             return False
@@ -707,7 +1499,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         """Main-thread readiness join; never grant entry from process launch alone."""
         startup = getattr(self, 'initial_map_startup', None)
         if startup is None:
-            return self.creation_report.get('map_ready') is True
+            # A dynamic start has no zone to wait for before the client's input:
+            # the character list and the creator need only the DbServer.
+            return self.creation_report.get('map_ready') is True or self.dynamic_initial() is not None
         if startup['ready']:
             return True
         self.ctx.check()
@@ -795,13 +1589,22 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 first_tick_observation_is_sampled_upper_bound=True,
                 first_tick_alone_grants_readiness=False)
 
-    def _spawn_map(self, map_id):
+    def _spawn_map(self, map_id, *, cookie=None, port=None, options=()):
         require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2,
                 'Duplicate or unreviewed zoning MapServer launch')
+        require(cookie is None or type(cookie) is int and 0 < cookie < 2 ** 31, 'Invalid map start cookie')
+        if port is None:
+            port = MAPS[map_id]['port'] or free_zone_port({owned.get('port', MAPS.get(other, {}).get('port'))
+                                                          for other, owned in self.maps.items()})
+        if MAPS[map_id].get('shared_zone_tree'):
+            MAPS[map_id]['port'] = port
         timing = self.map_startup_timing(map_id)
         def prepare_destination():
+            if MAPS[map_id].get('shared_zone_tree'):
+                return self.prepare_zone_runtime()['runtime']
             if map_id != 5:
                 return self.prepare_atlas_runtime()
+            self.wait_background_prestart()
             prepared = self.prepare_kings_row_runtime()
             require(prepared.get('graph', {}).get('verified') is True
                     and prepared['graph'].get('map_id') == 5, 'Kings Row native graph installation failed')
@@ -851,11 +1654,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self._check_preparation_deadline()
         else:
             map_runtime = prepare_destination()
-        character.game.check_game_port(MAPS[map_id]['port'], socket.SOCK_DGRAM)
+        character.game.check_game_port(port, socket.SOCK_DGRAM)
         path = self.runtime / ('character-zoning-' + str(map_id) + '-progress.bin')
         require(not path.exists() and not path.is_symlink(), 'Stale zoning map progress file')
         environment = dict(self.owner.wine_env, **{character.evidence.GAME_LOOPBACK_ENV: '1',
             character.progress.ENVIRONMENT: base.windows_path(path)})
+        idle_token = self.idle_token()
+        if idle_token is not None:
+            environment[scheduler.IDLE_ENVIRONMENT] = idle_token
         pacing = None
         if self.pending is not None:
             pacing = scheduler.PreparationScheduler(self.owner, map_id)
@@ -877,10 +1683,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.mark_startup_timing(timing, 'map_spawn_requested', now=launch_monotonic, utc_ms=launch_ms)
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
             self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
-            '-nosharedmemory', '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0', '-map_id', str(map_id),
-            '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS()], env=environment)
+            *character.mapserver_memory_arguments(), '-nostats', '-udp', str(port), '-tcp', '0',
+            '-map_id', str(map_id), *(('-cookie', str(cookie)) if cookie is not None else ()),
+            '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS(),
+            *self.session_map_options(), *options],
+            env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
+                             'idle_token': idle_token,
                              'runtime': map_runtime, 'launch_monotonic': launch_monotonic,
                              'server_metrics_enabled': self.server_metrics_enabled}
         self.map_launch_history.observe(map_id, self.maps[map_id], self.epoch)
@@ -1007,10 +1817,16 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return super().current_native_events() if self.active_map_id == 1 else None
 
     def native_ready_record(self):
+        if self.initial_zone_pending() and self.map_process is None:
+            return None   # no zone server yet: the game starts it at Enter Game
         if self.monorail_enabled():
             value = monorail_events.latest_ready(self.current_native_events())
             return value if value is not None and value['utc_ms'] >= self.ready_floor_ms else None
         if self.active_map_id == 1:
+            if self.immediate_event_contract() is None:
+                # Retained legacy MapServer (the CI donor): its first log match
+                # has no time; take the newest CLIENT_READY after this launch.
+                return legacy_ready(self.current_logs(), self.ready_floor_ms, int(time.time() * 1000))
             value = super().native_ready_record()
             if value is not None and value.get('utc_ms', 0) >= self.ready_floor_ms:
                 return value
@@ -1036,17 +1852,18 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return terminal_position(self.current_logs(), self.active_map_id, delivery, ready_utc_ms, now_utc_ms)
 
     def _emit(self, status, **fields):
-        target = self.pending['to_map_id'] if self.pending else (
+        stock = getattr(self, 'stock', {}).get('enabled') is True
+        target = self.pending['to_map_id'] if self.pending else self.active_map_id if stock else (
             (5 if self.monorail_enabled() else 101) if self.active_map_id == 1 else 1)
         value = {'format': 1, 'session_id': self.owner.args.session_id,
             'client_pid': self.creation_report['client_pid'], 'character_id': 1,
             'epoch': self.epoch, 'status': status, 'current_map_id': self.active_map_id,
-            'target_map_id': target, 'current_map_name': MAPS[self.active_map_id]['name'],
-            'target_map_name': MAPS[target]['name'], 'generated_utc_ms': int(time.time() * 1000),
-            'epoch_limit': MAX_EPOCHS, **fields}
+            'target_map_id': target, 'current_map_name': zone_name(self.active_map_id),
+            'target_map_name': zone_name(target), 'generated_utc_ms': int(time.time() * 1000),
+            'epoch_limit': 0 if stock else MAX_EPOCHS, **fields}
         value.update(monorail_enabled=self.monorail_enabled(),
-            travel_method='stock_monorail' if self.monorail_enabled() and self.active_map_id != 101
-                and not getattr(self, 'monorail_requires_reopen', False) else 'mapmove',
+            travel_method='stock_travel' if stock else 'stock_monorail' if self.monorail_enabled()
+                and self.active_map_id != 101 and not getattr(self, 'monorail_requires_reopen', False) else 'mapmove',
             monorail_requires_reopen=getattr(self, 'monorail_requires_reopen', False))
         if self.pending is not None:
             for key in ('native_request_sequence', 'native_station_pid', 'native_station_request_verified',
@@ -1093,8 +1910,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'Finish the current recovery/save session before testing zoning')
         target = value['to_map_id']
         require(target != 5 or self.monorail_enabled(), 'Kings Row assets/native route are not qualified')
+        self.idle_restore(target, 'travel_requested')
         resident = target in self.maps
-        budgets = preparation_budgets(target, resident)
+        loading = (resident and self.maps[target].get('prestarted') is True
+                   and self.maps[target].get('native_ticking') is not True)
+        budgets = prestarted_loading_budgets(target) if loading else preparation_budgets(target, resident)
         now = time.monotonic()
         window = travel_window(getattr(getattr(self.owner, 'session_budget', None), 'deadline', None),
             now, now_ms, budgets['preparation_budget_seconds'],
@@ -1121,7 +1941,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             preparation_request_age_ms=request_age_ms,
             departure_deadline_monotonic=(float('inf') if window.get('manual_session') else
                 now + (window['departure_deadline_utc_ms'] - now_ms) / 1000),
-            preparation_kind='resident_warm' if resident else 'cold',
+            preparation_kind='prestarted_loading' if loading else 'resident_warm' if resident else 'cold',
             preparation_phase='python_inputs' if budgets['python_preparation_budget_seconds'] else 'native_readiness')
         self.pending.update(budgets)
         self.pending['startup_timing'] = self.begin_startup_timing('zoning_supervisor_request',
@@ -1244,6 +2064,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 total_to_native_arrival_ms=leg['total_to_native_arrival_ms'])
             self.mark_startup_timing(pending.get('startup_timing'), 'client_world_ready_observed', utc_ms=now_ms)
             self.pending = None
+            self.idle_lower(pending.get('from_map_id'), 'player_left')
             return
         if self.zoning_query is None and time.monotonic() >= pending['next_query']:
             if self.monorail_enabled():
@@ -1270,6 +2091,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if not self.enabled_announced:
             self.enabled_announced = True
             self._emit('enabled', current_map_verified=True, zoning_enabled=True)
+            self.start_tick_probe()
         # A corrupt/foreign post-send receipt cannot be treated as proof that
         # no command was sent. Only a fully parsed, unchanged historical receipt
         # can clear this conservative uncertainty flag.
@@ -1289,6 +2111,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     require(request == old, 'Accepted zoning preparation receipt changed')
                 else:
                     self._accept_prepare(request, now_ms)
+            # Before this tick can block in the destination's Python preparation.
+            self._sync_station_fps_cap()
             if delivery is not None:
                 old = self.delivery_history.get(delivery.get('epoch'))
                 if old is not None:
@@ -1296,6 +2120,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 else:
                     unseen_delivery = True
                     self._accept_delivery(delivery, now_ms)
+            self.tick_prestart(time.monotonic())
+            self.tick_idle()
+            self.tick_priorities(time.monotonic())
             if self.pending is None:
                 return
             pending, target = self.pending, self.pending['to_map_id']
@@ -1395,10 +2222,308 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.zoning_report['preparation_failed'] = True
             self.pending = None
             self.zoning_next = float('inf')
+        finally:
+            # Ready, arrival, failure or a cancelled request lifts the cap.
+            self._sync_station_fps_cap()
+
+    def _sync_station_fps_cap(self):
+        """Hold the ARM64 client at STATION_FPS_CAP while a trip is prepared.
+
+        The client polls the file once a second (patch 0121) and restores its
+        previous cap when the file is gone, unless /maxfps changed it meanwhile.
+        A failure here never affects zoning; it is reported and the cap is lifted.
+        """
+        path = getattr(self.owner, 'armport_fps_cap_file', None)
+        record = getattr(self, 'station_fps_cap', None)
+        if record is None:
+            return
+        # Only the ARM64 client (armport_interactive) carries patch 0121.
+        record['client_supported'] = path is not None
+        if path is None:
+            return
+        pending = self.pending
+        want = (record['error'] is None and pending is not None
+                and pending.get('phase') in STATION_FPS_CAP_PHASES and not pending.get('transfer_requested'))
+        try:
+            present = path.exists() or path.is_symlink()
+            if want and not present:
+                staged = path.with_name(path.name + '.tmp')
+                staged.unlink(missing_ok=True)
+                staged.write_text(str(STATION_FPS_CAP) + '\n')
+                os.replace(staged, path)
+                record['applied'] += 1
+            elif present and not want:
+                path.unlink()
+                record['removed'] += 1
+        except OSError as failure:
+            record['error'] = type(failure).__name__ + ': ' + str(failure)[:160]
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    # The game's own zone travel (COH_STOCK_TRAVEL=1) -------------------------
+    def external_maps_options(self):
+        if not self.stock_travel_active():
+            return super().external_maps_options()
+        self.zone_policy = zone_travel.ZoneTravelPolicy(tree_for=self.zone_tree_for,
+            running=self.zone_servers, occupied=self.stock_occupied, admit=self.admit_zone_request)
+        self.stock['enabled'] = True
+        # Maps this flow owns (started at session start or for a request) are
+        # never delinked; every other request goes through the policy.
+        return {'session_maps': lambda map_id: map_id in self.maps, 'policy': self.zone_policy}
+
+    def zone_tree_for(self, map_id):
+        if map_id in (1, 101):
+            return 'atlas'
+        if map_id == 5:
+            return 'kings_row' if getattr(self, 'monorail_qualified', False) is True else None
+        if map_id in zone_index.ZONES and getattr(self, 'zone_asset_document', None) is not None:
+            return 'zones'
+        return None
+
+    def stock_occupied(self):
+        """The zone the hero is on, asked of the DbServer when a request needs room.
+
+        The stock entity log reaches the guest 30-60 s late (the MapServer
+        resends logs every 30 s; Thor 0.13.56: ResumeCharacter in King's Row at
+        15:18:33 was read at 15:19:40), so active_map_id can still name the zone
+        the hero just left; stopping the "idle" one would then drop the hero.
+        One -getstatus 3 probe (only for a third zone) gives the DbServer's own
+        answer: during the request the hero is still on the origin map
+        (InMapXfer). An owned, ready map other than active_map_id is recorded as
+        the arrival it is. None (unknown) makes the policy delink: the game
+        says the map failed and the hero stays where they are.
+        """
+        if self.query_count >= STOCK_PROBE_QUERY_LIMIT:
+            return None
+        try:
+            sample = character.evidence.parse_character_status(
+                self.query(['-getstatus', '3', '1'], 'stock-occupied'), 1, character.CHARACTER, character.ACCOUNT,
+                allow_missing=True)
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError):
+            return None
+        self.stock['occupied_probes'] = self.stock.get('occupied_probes', 0) + 1
+        map_id = sample.get('map_id')
+        if (sample.get('loaded') is not True or sample.get('connected') is not True or type(map_id) is not int
+                or sample.get('static_map_id') != map_id or map_id not in self.maps
+                or self.maps[map_id].get('ready') is not True):
+            return None
+        if map_id != self.active_map_id:
+            self._stock_arrival(map_id, {'source': 'stock_occupied_probe', 'map_id': map_id,
+                                         'in_map_transfer': sample.get('in_map_transfer') is True})
+            # Older log lines (this zone's own resume among them) are not a later arrival.
+            self.stock_last_arrival_ms = int(time.time() * 1000)
+        return map_id
+
+    def zone_servers(self):
+        return {map_id: {'ready': owned.get('ready') is True,
+                         'port': owned.get('port', MAPS.get(map_id, {}).get('port')),
+                         'last_occupied': owned.get('last_occupied', 0)}
+                for map_id, owned in self.maps.items()}
+
+    def serve_external_maps(self, supervisor):
+        if not self.stock['enabled']:
+            return
+        self.stock['decisions'] = self.zone_policy.report()['decisions']
+        entry = supervisor.next_start()
+        while entry is not None:
+            try:
+                self._start_stock_map(supervisor, entry)
+            except (base.DiagnosticError, OSError, ValueError, KeyError) as failure:
+                if isinstance(failure, base.Cancelled):
+                    raise
+                supervisor.start_failed(entry, failure)
+                self._stock_row(entry)['failure'] = str(failure)[:200]
+            entry = supervisor.next_start()
+        self._tick_stock_starts(supervisor)
+
+    def _stock_row(self, entry):
+        key = (entry['map_id'], entry['cookie'])
+        for row in self.stock['starts']:
+            if (row['map_id'], row['cookie']) == key:
+                return row
+        row = {'map_id': key[0], 'cookie': key[1], 'map_name': entry.get('map_name'),
+               'requested_utc_ms': entry.get('seen_utc_ms')}
+        self.stock['starts'].append(row)
+        del self.stock['starts'][:-32]
+        return row
+
+    def _evict_map(self, map_id, reason):
+        require(map_id != self.active_map_id and map_id not in self.stock_starts,
+                'Refusing to stop the occupied or a starting zone')
+        owned = self.maps.pop(map_id)
+        if owned['process'].process.poll() is None:
+            owned['process'].process.terminate()
+        path = owned['progress_path']
+        if path.exists() or path.is_symlink():
+            # A later start of this zone needs a fresh progress file.
+            path.rename(path.with_name(path.name + '.stopped-' + str(len(self.stock['evictions']) + 1)))
+        self.stock['evictions'].append({'map_id': map_id, 'reason': reason, 'utc_ms': int(time.time() * 1000)})
+        del self.stock['evictions'][:-32]
+
+    def _start_stock_map(self, supervisor, entry):
+        plan = entry['plan']
+        map_id = entry['map_id']
+        row = self._stock_row(entry)
+        for other in plan['evict']:
+            self._evict_map(other, 'room_for_' + str(map_id))
+        started = time.monotonic()
+        if plan['tree'] == 'zones':
+            register_zone(map_id)
+        # Before 0.13.59 a trip's spawn relabelled the session's initial timing
+        # row (its map_id became the trip's; its times stayed the first zone's).
+        initial = self.initial_zone_pending()
+        timing = (None if initial else self.begin_startup_timing('stock_travel_request',
+                  map_id=map_id, epoch=self.epoch + 1, now=started))
+        if initial:
+            # Announced before the zone's preparation, which runs here and can take minutes.
+            self.initial_zone_event('starting', map_id)
+        self.stock_spawn_timing = timing
+        try:
+            self._spawn_map(map_id, cookie=entry['cookie'], port=plan['port'],
+                            options=tuple(entry.get('options', {}).get('kept', ())))
+        finally:
+            self.stock_spawn_timing = None
+        owned = self.maps[map_id]
+        owned.update(stock=True, cookie=entry['cookie'], port=plan['port'], startup_timing=timing,
+                     stock_started_monotonic=started)
+        self.stock_starts[map_id] = {'entry': entry, 'started': started,
+                                     'deadline': started + plan['budget_seconds']}
+        supervisor.start_launched(entry, port=plan['port'], tree=plan['tree'], evicted=list(plan['evict']))
+        row.update(tree=plan['tree'], port=plan['port'], evicted=list(plan['evict']),
+                   launched_utc_ms=int(time.time() * 1000))
+
+    def _tick_stock_starts(self, supervisor):
+        for map_id, state in list(self.stock_starts.items()):
+            entry, now = state['entry'], time.monotonic()
+            row = self._stock_row(entry)
+            failure = None
+            try:
+                current = self._map_progress(map_id)
+                if self.live_progress(current):
+                    self.maps[map_id]['ready'] = True
+                    del self.stock_starts[map_id]
+                    self.mark_startup_timing(self.maps[map_id].get('startup_timing'), 'map_ready_observed', now=now)
+                    supervisor.start_ready(entry, elapsed_seconds=now - state['started'])
+                    row.update(ready=True, ready_seconds=round(now - state['started'], 3))
+                    continue
+                if now >= state['deadline']:
+                    failure = 'not ready within %d s' % zone_travel.START_SECONDS
+            except base.DiagnosticError as error:
+                if isinstance(error, base.Cancelled):
+                    raise
+                failure = str(error)
+            if failure is not None:
+                del self.stock_starts[map_id]
+                owned = self.maps.pop(map_id, None)
+                if owned is not None and owned['process'].process.poll() is None:
+                    owned['process'].process.terminate()
+                supervisor.start_failed(entry, failure, elapsed_seconds=now - state['started'])
+                row.update(ready=False, failure=failure[:200], failed_seconds=round(now - state['started'], 3))
+
+    def _observe_stock_move(self, sample):
+        """The game's own travel: the character connected on another owned, ready zone."""
+        if not getattr(self, 'stock', {}).get('enabled'):
+            return
+        if self.dynamic_initial() is not None and not self.creation_report.get('connected_on_atlas'):
+            # The first connection after a dynamic start is not a trip.
+            self.tick_dynamic_initial()
+            return
+        if sample.get('loaded') is True and sample.get('connected') is True and sample.get('in_map_transfer') is False:
+            moved = sample.get('map_id')
+            if (type(moved) is int and moved != self.active_map_id and moved in self.maps
+                    and sample.get('static_map_id') == moved and self.maps[moved].get('ready') is True):
+                self._stock_arrival(moved, sample)
+        elif sample.get('in_map_transfer') is True:
+            self.stock['transfer_wait_observed'] += 1
+
+    def _poll_stock_logs(self, now=None):
+        """The game's own travel, read from the stock entity log (every POLL_SECONDS).
+
+        Once the connection is proved the base flow stops its translated status
+        probes (steady-state policy), so a zone change must be read where the
+        game writes it: "Step 1: Ent ... moving to map N" on the current map's
+        route, then CLIENT_READY (resumeCharacter) on another owned, ready map's
+        route, newer than the last arrival. CI r56z4: the hero reached map 101
+        (City_01_01_2 ResumeCharacter) while the samples still said map 1.
+        """
+        stock = getattr(self, 'stock', {})
+        if (not stock.get('enabled') or self.creation_report.get('verified')
+                or not self.creation_report.get('connected_on_atlas')):
+            return None
+        now = time.monotonic() if now is None else now
+        if now < self.stock_log_next:
+            return None
+        self.stock_log_next = now + character.POLL_SECONDS
+        now_ms = int(time.time() * 1000)
+        if self.stock_last_arrival_ms is None:
+            self.stock_last_arrival_ms = self.creation_report.get('client_ready_observed_utc_ms') or now_ms
+        logs = self.current_logs()
+        begun = stock_transfers_begun(logs, self.active_map_id, self.stock_last_arrival_ms, now_ms)
+        known = {(row['utc_ms'], row['to_map_id']) for row in stock['transfers_begun']}
+        for row in begun:
+            if (row['utc_ms'], row['to_map_id']) not in known:
+                stock['transfers_begun'].append(row)
+                stock['transfer_wait_observed'] += 1
+        del stock['transfers_begun'][:-16]
+        arrivals = []
+        for map_id, owned in self.maps.items():
+            if map_id == self.active_map_id or owned.get('ready') is not True or not supported(map_id):
+                continue
+            floor = max(self.stock_last_arrival_ms + 1, owned['launch_utc_ms'] - 999)
+            record = stock_ready(logs, map_id, floor, now_ms)
+            if record is not None:
+                arrivals.append(record)
+        if not arrivals:
+            return None
+        record = max(arrivals, key=lambda r: (r['utc_ms'], r['line_ordinal']))
+        self.stock_last_arrival_ms = record['utc_ms']
+        stock['arrival_source'] = 'stock_entity_log_resume_character'
+        self._stock_arrival(record['map_id'], {'source': 'stock_entity_log', 'map_id': record['map_id'],
+                                               'resume_utc_ms': record['utc_ms'], 'log_route': record['log_route'],
+                                               'line_sha256': record['line_sha256']})
+        return record
+
+    def _stock_arrival(self, target, sample):
+        now, now_ms = time.monotonic(), int(time.time() * 1000)
+        origin = self.active_map_id
+        self.maps[origin]['last_occupied'] = now
+        self._activate(target)
+        self.maps[target]['last_occupied'] = now
+        self.epoch += 1
+        self.stock['arrivals'] += 1
+        self.creation_report.update(connected_on_supported_map=True, map_id=target, zoning_epoch=self.epoch,
+            monorail_enabled=False, recovery_requested=False, recovery_verified=False,
+            ordinary_stuck_observed=False, on_atlas_safe_position=False, stable_ground_verified=False,
+            committed_safe_position_verified=False)
+        # The first zone's own start (initial_login) is not a trip's destination start.
+        start = next((row for row in reversed(self.stock['starts'])
+                      if row['map_id'] == target and row.get('ready') and not row.get('initial_login')), None)
+        leg = {'epoch': self.epoch, 'from_map_id': origin, 'to_map_id': target, 'travel_method': 'stock_travel',
+               'character_status': sample, 'arrival_observed_utc_ms': now_ms,
+               'destination_started_for_request': start is not None and start.get('arrived_utc_ms') is None,
+               'request_to_arrival_ms': (now_ms - start['requested_utc_ms']
+                                         if start is not None and start.get('arrived_utc_ms') is None
+                                         and type(start.get('requested_utc_ms')) is int else None)}
+        if start is not None and start.get('arrived_utc_ms') is None:
+            start['arrived_utc_ms'] = now_ms
+            self.mark_startup_timing(self.maps[target].get('startup_timing'), 'client_world_ready_observed',
+                                     now=now, utc_ms=now_ms)
+        self.zoning_report['transfers'].append(leg)
+        del self.zoning_report['transfers'][:-32]
+        self._emit('arrived', current_map_verified=True, destination_ready=True, travel_method='stock_travel',
+                   arrival_native_verified=False, character_identity_preserved=True,
+                   from_map_id=origin)
 
     def character_evidence(self):
         self.remember_reward_connection()
         self.tick_zoning()
+        self.tick_external_maps()
+        self.tick_dynamic_initial()
+        self._poll_stock_logs()
         if self.pending is not None and (self.pending.get('transfer_requested')
                 or self.pending.get('native_authorization_issued')):
             return None
@@ -1407,9 +2532,15 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return super().character_evidence()
 
     def saved_metadata(self, snapshot):
-        return dict(super().saved_metadata(snapshot), zoning_enabled=True,
-            connected_on_supported_map=True, map_id=self.active_map_id,
+        return dict(super().saved_metadata(snapshot), **self.zoning_saved_metadata())
+
+    def zoning_saved_metadata(self):
+        return dict(zoning_enabled=True, connected_on_supported_map=True, map_id=self.active_map_id,
             monorail_enabled=self.monorail_enabled(), zoning_epoch=self.epoch, ordinary_save_after_native_zoning=True)
+
+    def collect_character(self, target):
+        """The character flow's own evidence (the reopen's; creation overrides it)."""
+        super().collect(target)
 
     def collect(self, target):
         # Keep the retained archive member for older readers, but identify its
@@ -1420,7 +2551,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'map_name': MAPS[self.active_map_id]['name'], 'world': MAPS[self.active_map_id]['world'],
                 'port': MAPS[self.active_map_id]['port'], 'session_id': self.owner.args.session_id,
                 'launch_utc_ms': self.map_launch_utc_ms}
-        super().collect(target)
+        self.collect_character(target)
         self.zoning_report['console_scan_work'] = {
             'destination_bytes': sum(row.get('console_bytes_scanned', 0) for row in self.maps.values()),
             'active_bytes': sum(row.get('console_bytes_scanned', 0)
@@ -1432,6 +2563,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             raw = base.redact(owned['process'].text(), self.ctx.secrets)
             require(len(raw.encode()) <= 16 * 1024 * 1024, 'Zoning server console export exceeded bound')
             base.private_write(target / ('character-zoning-map-' + str(map_id) + '-console.txt'), raw)
+            self.zoning_report.setdefault('shared_heap_consoles', {})[str(map_id)] = character.shared_heap_console(raw)
         try:
             self.zoning_report['launch_history'] = self.map_launch_history.collect(
                 target, self.maps, self.map_process, self.ctx.secrets)
@@ -1442,12 +2574,103 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         base.private_write(target / 'character-zoning.json', json.dumps(self.zoning_report, indent=2) + '\n')
 
 
+class LocalCharacterZoningCreationServer(LocalCharacterZoningServer):
+    """Character creation with the game's own zone travel (ARM64 client).
+
+    No zone server runs before Enter Game. After the creator, the DbServer asks
+    for the new character's starting zone (determineStartMapId: Atlas Park for
+    a Primal hero, Mercy Island for a villain, Nova Praetoria for a Praetorian,
+    or that side's tutorial); the zone policy starts it, the character enters
+    it, and the ordinary creation save is proved there. The creation identity
+    (empty account, THORHERO ID 1, committed rows) is the base creation's.
+    """
+    REPORT_KEY = 'character_creation'
+    requires_saved_character = False
+    # Set by the reopen constructor; a creation report never carries them.
+    REOPEN_FIELDS = ('before_character_id', 'baseline_character_id', 'existing_character_verified',
+        'preserved_existing_identity', 'powers_preserved', 'costume_preserved', 'native_client_ready_observed',
+        'ordinary_stuck_observed', 'on_atlas_safe_position', 'stable_ground_verified', 'recovery_requested',
+        'recovery_verified', 'committed_native_position_verified', 'committed_safe_position_verified', 'operation')
+
+    def __init__(self, owner):
+        super().__init__(owner)
+        for key in self.REOPEN_FIELDS:
+            self.creation_report.pop(key, None)
+        # Unknown until the DbServer asks for the starting zone.
+        self.active_map_id = None
+        self.creation_report['map_id'] = None
+        self.zoning_report['scope'] = 'stock_travel_character_creation_starting_zone'
+
+    def initialize(self):
+        character.LocalCharacterServer.initialize(self)
+
+    def initial_map_preparation(self):
+        self.qualify_monorail_preparation()
+        require(self.dynamic_initial_requested(),
+                "Creating a character with the game's own zone travel needs the ARM64 client")
+        self.begin_initial_zone(None)
+        self.startup_preparation_map_id = None
+        return None
+
+    def capture_baseline(self):
+        character.LocalCharacterServer.capture_baseline(self)
+
+    def login_evidence(self):
+        return character.LocalCharacterServer.login_evidence(self)
+
+    def verify_current_identity(self, identity, inventory):
+        return character.LocalCharacterServer.verify_current_identity(self, identity, inventory)
+
+    def validate_saved_rows(self, rows, inventory):
+        return character.LocalCharacterServer.validate_saved_rows(self, rows, inventory)
+
+    def remember_reward_connection(self):
+        pass
+
+    def observe_connected_character(self):
+        pass
+
+    def connection_metadata(self):
+        initial = self.dynamic_initial()
+        require(initial is not None, 'New character connection lacks its starting zone')
+        self.verify_initial_connection(initial)
+        return {'connected_on_supported_map': True, 'zoning_enabled': True, 'monorail_enabled': False,
+                'stock_travel': self.stock.get('enabled') is True, 'starting_zone_map_id': initial['map_id']}
+
+    def saved_metadata(self, snapshot):
+        return dict(self.zoning_saved_metadata(), stock_travel=self.stock.get('enabled') is True)
+
+    def collect_character(self, target):
+        character.LocalCharacterServer.collect(self, target)
+
+
+def creation_identity(proof, session):
+    """A new THORHERO connected in the starting zone the game started (stock travel)."""
+    return (isinstance(proof, dict) and proof.get('session_id') == session
+        and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
+        and type(proof.get('character_id')) is int and proof['character_id'] == 1
+        and type(proof.get('auth_id')) is int and 0 < proof['auth_id'] <= 4294967295
+        and type(proof.get('map_id')) is int and 1 <= proof['map_id'] <= 999 and supported(proof['map_id'])
+        and all(proof.get(key) is True for key in ('connected_on_atlas', 'connected_on_supported_map',
+                                                   'zoning_enabled', 'stock_travel')))
+
+
+def creation_save_verified(proof, session):
+    return (creation_identity(proof, session) and proof.get('verified') is True
+        and proof.get('committed_sql_verified') is True and proof.get('requested_logout_observed') is True
+        and proof.get('logout_timer_observed') is True
+        and proof.get('disconnected_before_sql') is True and proof.get('forced_stop_before_save') is False)
+
+
 def character_identity(proof, session):
     return (isinstance(proof, dict) and proof.get('session_id') == session
         and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
         and type(proof.get('character_id')) is int and proof['character_id'] == 1
         and type(proof.get('auth_id')) is int and proof['auth_id'] > 0 and supported(proof.get('map_id'))
-        and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True)
+        # King's Row needs its verified package: the station monorail, or the
+        # game's own travel, whose supervisor starts it only from that package
+        # (zone_tree_for). Thor 0.13.56: arrival by stock monorail ended here.
+        and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True or proof.get('stock_travel') is True)
         and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
         and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
         and all(proof.get(k) is True for k in ('zoning_enabled', 'connected_on_atlas',

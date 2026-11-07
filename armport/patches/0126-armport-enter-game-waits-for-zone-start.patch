@@ -1,0 +1,16 @@
+diff --git a/Game/src/gameComm/initClient.c b/Game/src/gameComm/initClient.c
+index 4d1ae10..7b147b4 100644
+--- a/Game/src/gameComm/initClient.c
++++ b/Game/src/gameComm/initClient.c
+@@ -244,7 +244,10 @@ int choosePlayerWrapper(int player_slot, int createLocation)
+     //Therefore, timeout for test clients is set MUCH longer (240 seconds) than the timeout period for regular clients
+     return dbChoosePlayer( player_slot, ip, createLocation, control_state.notimeout?NO_TIMEOUT:240);
+ #else
+-    return dbChoosePlayer( player_slot, ip, createLocation, control_state.notimeout?NO_TIMEOUT:90);
++    // ArmPort: a hero saved in a zone that is not running waits here while the
++    // DbServer starts it (handleChoosePlayer -> setNewMap -> startMapIfStatic),
++    // which takes minutes on a phone; the stock 90 s returned to the login screen.
++    return dbChoosePlayer( player_slot, ip, createLocation, control_state.notimeout?NO_TIMEOUT:900);
+ #endif
+ }
+ 

@@ -25,11 +25,21 @@ def utc_milliseconds(value):
     return type(value) is int and 0 < value < 2**63
 
 
+STATIC_ZONES = 'static_zones'
+
+
+def static_zone(map_id):
+    import zone_index
+    return type(map_id) is int and (map_id == 101 or map_id in zone_index.ZONES)
+
+
 class SessionBudget:
     """Validate connection identity; explicit manual policy has no gameplay deadline."""
     def __init__(self, session_id, client_pid, launcher_started, operation_deadline,
                  *, presentation_ready=None, supported_maps=(1,), manual=False):
-        require(supported_maps in ((1,), (1, 101), (1, 5, 101)), 'Unreviewed reopen budget maps')
+        # 'static_zones': the game's own zone travel; any static zone the shared
+        # tree serves (zone_index), Atlas instance 2 and King's Row included.
+        require(supported_maps in ((1,), (1, 101), (1, 5, 101), STATIC_ZONES), 'Unreviewed reopen budget maps')
         require(type(manual) is bool, 'Invalid manual session policy')
         self.manual = manual
         self.supported_maps = supported_maps
@@ -75,9 +85,12 @@ class SessionBudget:
                 and type(proof.get('character_id')) is int and proof['character_id'] == 1
                 and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
                 and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
-                and type(proof.get('map_id')) is int and proof['map_id'] in self.supported_maps
+                and type(proof.get('map_id')) is int
+                and (static_zone(proof['map_id']) and proof.get('stock_travel') is True
+                     if self.supported_maps == STATIC_ZONES else proof['map_id'] in self.supported_maps)
                 and (self.supported_maps == (1,) or proof.get('zoning_enabled') is True)
-                and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True)
+                and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True
+                     or self.supported_maps == STATIC_ZONES)
                 and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
                 and all(proof.get(key) is True for key in ('connected_on_atlas', 'reopen_verified',
                     'existing_character_verified', 'preserved_existing_identity',
@@ -101,6 +114,8 @@ class SessionBudget:
             value['zoning_enabled'] = True
         if self.supported_maps == (1, 5, 101):
             value['monorail_enabled'] = True
+        if self.supported_maps == STATIC_ZONES:
+            value['stock_travel'] = True
         if phase == 'grounded':
             value.update(recovery_requested=True, recovery_verified=True,
                          ordinary_stuck_observed=True, stable_ground_verified=True)

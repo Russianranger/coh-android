@@ -265,6 +265,91 @@ class CharacterReopenHostTests(unittest.TestCase):
             invalid['interaction_script']['world_after_stuck_captures'][0]['frame_sequence'] = 1
             with self.assertRaisesRegex(ValueError, 'preceded ordinary stuck'): reopen.validate_observer(invalid, report)
 
+    def test_owned_children_accept_the_zoning_flows_atlas_label_but_never_both(self):
+        base = [{'label': name, 'exit_code': 0} for name in
+                ('actual-coh-client', 'runtime-probe', 'private-presentation-x', 'local-dbserver')]
+        character.validate_owned_children(base + [{'label': 'local-character-atlas', 'exit_code': 0}])
+        character.validate_owned_children(base + [{'label': 'local-character-zoning-1', 'exit_code': 0},
+                                                  {'label': 'local-character-zoning-101', 'exit_code': 0}])
+        for children in (base, base + [{'label': 'local-character-atlas'}, {'label': 'local-character-zoning-1'}],
+                         base[1:] + [{'label': 'local-character-atlas'}],
+                         [dict(base[1], exit_code=1)] + base[:1] + base[2:] + [{'label': 'local-character-atlas'}]):
+            with self.subTest(children=[c['label'] for c in children]), self.assertRaises(ValueError):
+                character.validate_owned_children(children)
+
+    def test_stock_travel_events_need_the_round_trip_in_order_before_stuck_and_save(self):
+        def arrival(epoch, current, origin, **changes):
+            return dict({'type': 'character_zoning', 'session_id': SESSION, 'client_pid': PID, 'character_id': 1,
+                         'status': 'arrived', 'travel_method': 'stock_travel', 'epoch': epoch,
+                         'current_map_id': current, 'target_map_id': current, 'from_map_id': origin,
+                         'current_map_verified': True, 'character_identity_preserved': True,
+                         'generated_utc_ms': 1000 + epoch}, **changes)
+        initial = events()
+        good = initial[:3] + [arrival(1, 101, 1), arrival(2, 1, 101)] + initial[3:]
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary)/'events'
+            path.write_text(''.join(json.dumps(item)+'\n' for item in good))
+            proof = reopen.StockTravelReopenEvents(path, SESSION); proof.poll()
+            self.assertEqual([a['current_map_id'] for a in proof.arrivals], [101, 1])
+            self.assertEqual((proof.relocated_generation, proof.saved_generation), (1, 1))
+        for bad in (initial[:3] + [arrival(1, 5, 1)], initial[:3] + [arrival(2, 101, 1)],
+                    initial[:3] + [arrival(1, 101, 1, travel_method='mapmove')],
+                    initial[:3] + [arrival(1, 101, 1, client_pid=PID+1)],
+                    initial[:3] + [arrival(1, 101, 1, character_identity_preserved=False)],
+                    initial[:3] + [arrival(1, 101, 1), arrival(2, 1, 5)],
+                    initial[:3] + [arrival(1, 101, 1), initial[3]], initial[:2] + [arrival(1, 101, 1)]):
+            with self.subTest(bad=bad[-1]), tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary)/'events'
+                path.write_text(''.join(json.dumps(item)+'\n' for item in bad))
+                with self.assertRaises(ValueError): reopen.StockTravelReopenEvents(path, SESSION).poll()
+
+    def test_stock_travel_script_types_mapmove_and_waits_for_each_arrival_with_a_bound(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); finish = root/'finish.json'
+            script = reopen.StockTravelReopenInteraction(SESSION, root, finish)
+            names = [action[2] for action in script.ACTIONS]
+            self.assertLess(names.index('verify_atlas_help_dismissed'), names.index('submit_stock_travel_instance_2'))
+            self.assertLess(names.index('wait_stock_arrival_atlas'), names.index('submit_ordinary_stuck'))
+            self.assertIn(('command', '/mapmove 101', 'type_stock_travel_instance_2'), script.ACTIONS)
+            frame = host.ClientFramebuffer(); frame.pixels[:] = bytes((32,64,96,0))*(800*600)
+            frame.request_login_generation = frame.request_connected_generation = 1
+            frame.request_relocated_generation = frame.request_saved_generation = 0
+            proof = SimpleNamespace(client_pid=PID, character_id=1, login_generation=1, connected_generation=1,
+                relocated_generation=0, saved_generation=0, arrivals=[])
+            connection = Connection(); clock = [0.0]; sequence = [0]
+            def tick(step=2):
+                sequence[0] += 1; clock[0] += step
+                script.on_frame(connection, frame, proof, sequence[0], [{},{},{}], clock[0])
+            with mock.patch.object(host.time, 'monotonic', side_effect=lambda: clock[0]), \
+                    mock.patch.object(host.time, 'time', side_effect=lambda: 1000000+clock[0]), \
+                    mock.patch.object(host.time, 'sleep', side_effect=lambda seconds: clock.__setitem__(0, clock[0]+seconds)), \
+                    mock.patch.object(reopen.time, 'monotonic', side_effect=lambda: clock[0]), \
+                    mock.patch.object(host, 'save_png', side_effect=save), \
+                    mock.patch.object(character, 'read_rendered_account', return_value=(True, 'whole-account-ocr')), \
+                    mock.patch.object(character, 'read_button', side_effect=lambda _f,_e,label,*_args:
+                        (((200,72,95), 'actual-thorhero-ocr') if label == 'THORHERO' else (None, 'no-help-dialog'))):
+                first = names.index('wait_stock_arrival_instance_2')
+                for _ in range(200):
+                    tick()
+                    if script.action == first: break
+                self.assertEqual(script.action, first)
+                typed = b''.join(connection.sent)
+                self.assertIn(struct.pack('!BBHI', 4, 1, 0, ord('/')), typed)
+                for _ in range(5): tick()
+                self.assertEqual(script.action, first)                    # waits for the guest
+                proof.arrivals.append({'epoch': 1, 'current_map_id': 101, 'from_map_id': 1, 'generated_utc_ms': 1})
+                tick(); self.assertGreater(script.action, first)
+                second = names.index('wait_stock_arrival_atlas')
+                for _ in range(40):
+                    tick()
+                    if script.action == second: break
+                self.assertEqual(script.action, second)
+                with self.assertRaisesRegex(ValueError, 'did not arrive within 900 seconds'):
+                    tick(reopen.STOCK_TRAVEL_SECONDS)
+            self.assertEqual(len(script.result['stock_travel_arrivals']), 1)
+            self.assertEqual(script.result['stock_travel_arrivals'][0]['current_map_id'], 101)
+            self.assertEqual(len(script.result['travel_help_checks']), 1)
+
     def test_recovery_wait_is_bounded_and_delivered_receipt_follows_final_return_release(self):
         for fail in (False, True):
             with self.subTest(fail=fail), tempfile.TemporaryDirectory() as temporary:

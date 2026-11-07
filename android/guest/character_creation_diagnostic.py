@@ -401,6 +401,71 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         return {}
 
 
+def dynamic_creation_requested(environ=None):
+    """The game's own zone travel with the ARM64 client: the starting zone starts at Enter Game."""
+    environ = os.environ if environ is None else environ
+    return (environ.get('COH_STOCK_TRAVEL') == '1' and environ.get('COH_EXTERNAL_MAPS') == '1'
+            and environ.get('COH_CLIENT_ARCH', 'x86') == 'arm64')
+
+
+class ZoningCharacterCreationDiagnostic(CharacterCreationDiagnostic):
+    """THORHERO created as a hero, villain or Praetorian starts in its own starting zone.
+
+    No zone server runs before Enter Game; the DbServer asks for the starting
+    zone the creator chose (character_zoning.LocalCharacterZoningCreationServer).
+    """
+    REQUIRED = REQUIRED | {'character_zoning.py', 'character_zoning_scheduler.py'}
+
+    @staticmethod
+    def identity_verified(proof, session):
+        import character_zoning
+        return character_zoning.creation_identity(proof, session)
+
+    @staticmethod
+    def proof_verified(proof, session):
+        import character_zoning
+        return character_zoning.creation_save_verified(proof, session)
+
+    def make_server(self):
+        import character_zoning
+        return character_zoning.LocalCharacterZoningCreationServer(self)
+
+    def initialize(self):
+        for name in ('character-zoning-request.json', 'character-zoning-delivery.json'):
+            path = self.args.state / name
+            require(not path.exists() and not path.is_symlink(), 'Stale zoning request or delivery receipt')
+        manifest = character.dbserver.load_json(self.args.assets / 'runtime-manifest.json', 8 * 1024 * 1024)
+        require(manifest.get('character_zoning_enabled') is True,
+                "The game's own zone travel needs the verified zoning runtime profile")
+        super().initialize()
+        self.ctx.report['zoning_enabled'] = True
+
+    def connected_event_data(self, proof):
+        import character_zoning
+        return {'zoning_enabled': True, 'connected_on_supported_map': True, 'monorail_enabled': False,
+                'stock_travel': proof.get('stock_travel') is True,
+                'map_name': character_zoning.zone_name(proof['map_id'])}
+
+    def saved_event_data(self, proof):
+        import character_zoning
+        return {'zoning_enabled': True, 'connected_on_supported_map': True, 'map_id': proof['map_id'],
+                'map_name': character_zoning.zone_name(proof['map_id']),
+                'monorail_enabled': False, 'stock_travel': proof.get('stock_travel') is True}
+
+    def interaction_deadline(self, deadline, launch):
+        """The starting zone's start after Enter Game does not use up the twenty-minute creator window.
+
+        It has its own bound (zone_travel.START_SECONDS, then the game reports
+        that the map failed); the time the game waited for it is added back.
+        """
+        fixed = getattr(self, 'creation_interaction_deadline', None)
+        if fixed is None:
+            fixed = self.creation_interaction_deadline = deadline
+        wait = self.local_server.initial_zone_wait_seconds()
+        self.ctx.report['starting_zone_wait_seconds'] = round(wait, 3)
+        return fixed + wait
+
+
 def parse_arguments(argv, mode):
     parser = argparse.ArgumentParser(description=__doc__)
     for name, default in [('state', '/state'), ('assets', '/opt/coh'), ('pg-bin', '/opt/coh/pgsql/bin'),
@@ -422,6 +487,17 @@ def parse_arguments(argv, mode):
     return parser.parse_args(argv)
 
 
+def proot_mode_receipt(calls=5000):
+    """The app's PRoot mode and a cheap syscall cost probe (ptrace stop vs seccomp pass-through)."""
+    started = time.perf_counter()
+    for _ in range(calls):
+        os.getppid()
+    elapsed = time.perf_counter() - started
+    return {'format': 1, 'fast_mode_requested': os.environ.get('COH_PROOT_FAST_MODE') == '1',
+            'probe_syscall': 'getppid', 'probe_calls': calls,
+            'probe_microseconds_per_call': round(elapsed * 1e6 / calls, 3)}
+
+
 def run(argv, diagnostic_type, scope, mode):
     args = parse_arguments(argv, mode)
     base.OUTPUT_LIMIT = interactive.CLIENT_OUTPUT_LIMIT
@@ -433,7 +509,7 @@ def run(argv, diagnostic_type, scope, mode):
         android_surface_validated=False, hardware_acceleration_validated=False,
         client_process_started=False, startup_observed=False, interaction_session_completed=False,
         input_effect_verified=False, interaction_timeout_seconds=args.interaction_seconds,
-        resume_first_creation_requested=args.resume_empty_profile)
+        resume_first_creation_requested=args.resume_empty_profile, proot_mode=proot_mode_receipt())
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda _sig, _frame: setattr(context, 'cancel_requested', True))
     diagnostic, validated = None, False
@@ -495,7 +571,8 @@ def run(argv, diagnostic_type, scope, mode):
 
 
 def main(argv=None):
-    return run(argv, CharacterCreationDiagnostic, SCOPE, 'actual_character_creation')
+    diagnostic = ZoningCharacterCreationDiagnostic if dynamic_creation_requested() else CharacterCreationDiagnostic
+    return run(argv, diagnostic, SCOPE, 'actual_character_creation')
 
 
 if __name__ == '__main__': sys.exit(main())

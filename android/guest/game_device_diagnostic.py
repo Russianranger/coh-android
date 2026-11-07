@@ -236,7 +236,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                              'authenticated_dead_leader_workers': 0,
                              'worker_authentication_failures': 0,
                              'direct_pid_status_namespace_observations': 0,
-                             'authenticated_namespace_alias_observations': 0}
+                             'authenticated_namespace_alias_observations': 0,
+                             'unavailable_by_operation': {}, 'first_unavailable': None}
 
     def lineage_stat(self, path):
         def read():
@@ -470,9 +471,22 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
             self.record_lineage_unavailable(exc)
 
     def record_lineage_unavailable(self, error):
+        observation = getattr(error, 'ownership_observation', {})
+        operation = observation.get('operation', 'lineage_authentication')
         self.live_lineage['last_unavailable_type'] = type(error).__name__
-        self.live_lineage['last_unavailable_operation'] = getattr(
-            error, 'ownership_observation', {}).get('operation', 'lineage_authentication')
+        self.live_lineage['last_unavailable_operation'] = operation
+        # Bounded evidence for the Thor cleanup defect: which read fails, how
+        # often, and on a group leader or a worker. It never grants ownership.
+        counts = self.live_lineage.setdefault('unavailable_by_operation', {})
+        key = str(operation)[:48] + ':' + type(error).__name__
+        if key in counts or len(counts) < 16:
+            counts[key] = counts.get(key, 0) + 1
+        if self.live_lineage.get('first_unavailable') is None:
+            self.live_lineage['first_unavailable'] = {'operation': str(operation)[:48],
+                'error_type': type(error).__name__, 'errno': observation.get('errno'),
+                'target': ('worker' if observation.get('worker_tid') is not None else
+                           'group' if observation.get('group_pid') is not None else 'other'),
+                'message': str(error)[:160]}
 
     def remember_readable_worker(self, path, identity, task, worker, deadline):
         """Authenticate an exact live worker before shutdown changes dumpability.

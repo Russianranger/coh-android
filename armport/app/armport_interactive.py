@@ -8,12 +8,54 @@ import os
 from pathlib import Path
 import re
 import shutil
+import stat
 
 import armport_client_package as package
 import client_startup_diagnostic as startup
 from client_stdio import read_stdio
 
 base, require = startup.base, startup.require
+# Patch 0120 skip list for the client's folder scan; COH_CLIENT_SKIP_SERVER_FOLDERS=0
+# (the app option unticked) keeps the full scan.
+CLIENT_SKIPPED_FOLDERS = 'scripts.loc,server'
+# Patch 0122: root folders the client always scans live beside its saved list:
+# the writable cache roots (bin/ is the ARM64 overlay and is always live).
+CLIENT_LIVE_FOLDERS = ','.join(sorted({Path(name).parts[0] for name in startup.PRIVATE_CACHE_ROOTS} - {'bin'}))
+FPS_CAP_FILE = 'armport-fps-cap.txt'
+# Game audio (0.13.53): Wine's ALSA driver plays through the TRASC plugin
+# (armport/audio) to the app's AudioTrack bridge (ClientAudio.java).
+AUDIO_CONFIG = 'armport-asound.conf'
+ALSA_SYSTEM_CONFIG = Path('/usr/share/alsa/alsa.conf')
+
+
+def client_audio_requested():
+    """COH_CLIENT_AUDIO=1: the app's bridge listens on COH_CLIENT_AUDIO_SOCKET."""
+    value = os.environ.get('COH_CLIENT_AUDIO', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_AUDIO must be empty, 0 or 1')
+    return value == '1'
+
+
+def alsa_config(plugin):
+    """ALSA plug converts Wine's format to the plugin's 48 kHz stereo S16_LE."""
+    text = str(plugin)
+    require(plugin.is_absolute() and re.fullmatch(r'[A-Za-z0-9_./-]+', text), 'Unsafe audio plugin path')
+    return ('<' + str(ALSA_SYSTEM_CONFIG) + '>\n'
+            'pcm_type.trasc { lib "' + text + '" }\n'
+            'pcm.trasc { type trasc }\n'
+            'pcm.!default { type plug slave { pcm "trasc" format S16_LE rate 48000 channels 2 } }\n')
+
+
+def client_uses_folder_index():
+    """Patch 0122: reuse the client's saved file list; COH_CLIENT_FOLDER_INDEX=0 turns it off."""
+    value = os.environ.get('COH_CLIENT_FOLDER_INDEX', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_FOLDER_INDEX must be empty, 0 or 1')
+    return value != '0'
+
+
+def client_skips_server_folders():
+    value = os.environ.get('COH_CLIENT_SKIP_SERVER_FOLDERS', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_SKIP_SERVER_FOLDERS must be empty, 0 or 1')
+    return value != '0'
 
 
 class LoggedClient:
@@ -125,6 +167,37 @@ class ArmPortClient:
         self.texture_header_preparation = creation.TextureHeaderPreparation(self)
         self.texture_header_preparation.start()
 
+    def client_audio_environment(self, environment):
+        """Route the client's DirectSound (Wine ALSA) to the app's AudioTrack bridge.
+
+        Any missing piece keeps today's behaviour (the client starts without
+        audio) and is recorded in client_audio; it never fails the session.
+        """
+        record = {'format': 1, 'requested': client_audio_requested(), 'enabled': False}
+        self.ctx.report['client_audio'] = record
+        if not record['requested']:
+            return {}
+        try:
+            socket_path = Path(os.environ.get('COH_CLIENT_AUDIO_SOCKET', ''))
+            require(socket_path.is_absolute() and len(str(socket_path)) < 108
+                    and re.fullmatch(r'[A-Za-z0-9_./-]+', str(socket_path)), 'Invalid audio socket path')
+            require(stat.S_ISSOCK(socket_path.lstat().st_mode), 'The app audio bridge is not listening')
+            plugin = self.armport_work / package.AUDIO_PLUGIN
+            require(plugin.is_file() and not plugin.is_symlink(), 'This client package has no audio plugin')
+            require(ALSA_SYSTEM_CONFIG.is_file(), 'The guest has no ALSA configuration')
+            config = self.armport_work / AUDIO_CONFIG
+            require(not config.is_symlink(), 'Linked audio configuration refused')
+            config.write_text(alsa_config(plugin))
+            overrides = environment.get('WINEDLLOVERRIDES', '')
+            record.update(enabled=True, socket=str(socket_path), plugin=package.AUDIO_PLUGIN,
+                          plugin_sha256=package.digest(plugin), config=config.name)
+            # Wine tries PulseAudio first; the guest has no server, so go straight to ALSA.
+            return {'ALSA_CONFIG_PATH': str(config), 'TRASC_AUDIO_SOCKET': str(socket_path),
+                    'WINEDLLOVERRIDES': (overrides + ';' if overrides else '') + 'winepulse.drv=d'}
+        except (OSError, ValueError, base.DiagnosticError) as exc:
+            record['error'] = type(exc).__name__ + ': ' + str(exc)
+            return {}
+
     def launcher_command(self):
         command = super().launcher_command()
         require(command[-1] in ('--character-manual', '--character-creation'), 'Unsupported ARM64 launch mode')
@@ -162,12 +235,46 @@ class ArmPortClient:
                            # (patch 0111: no recursive change monitor).
                            ARMPORT_FIXED_DATA='1',
                            # Patch 0114: the game's own frame rate every 5 s.
-                           ARMPORT_FPS_LOG='1')
+                           ARMPORT_FPS_LOG='1',
+                           # Patch 0123: the entity interpolation clock every 30 s.
+                           ARMPORT_NET_CLOCK_LOG='1')
+        if client_skips_server_folders():
+            # Patch 0120: the client never reads these server-only folders
+            # (52,149 scripts.loc files of 212,496); its upfront scan skips them.
+            environment['ARMPORT_FOLDER_CACHE_SKIP'] = CLIENT_SKIPPED_FOLDERS
+        environment.update(self.client_folder_index_environment(environment.get('ARMPORT_FOLDER_CACHE_SKIP', '')))
+        environment.update(self.client_audio_environment(environment))
+        # Patch 0121: zoning writes a lower frame cap here while a trip is
+        # prepared (relative to the client's working directory).
+        self.armport_fps_cap_file = self.armport_work / FPS_CAP_FILE
+        self.armport_fps_cap_file.unlink(missing_ok=True)
+        environment['ARMPORT_FPS_CAP_FILE'] = FPS_CAP_FILE
         environment = self.armport_gpu_environment(environment, label)
         environment = self.armport_gameplay_fps(environment)
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
         child = self.ctx.start(label, command, env=environment)
         self.client = LoggedClient(child, self.armport_work / 'armport_stdio.txt')
+
+    def client_folder_index_environment(self, skip):
+        """Patch 0122: the saved file list lives beside the per-session worktrees."""
+        index = self.root / package.FOLDER_INDEX
+        record = {'format': 1, 'requested': client_uses_folder_index(), 'index': index.name,
+                  'present_before_launch': index.is_file() and not index.is_symlink(),
+                  'identity_sha256': None, 'error': None}
+        self.ctx.report['client_folder_index'] = record
+        if not record['requested']:
+            return {}
+        require(not index.is_symlink(), 'Linked client folder index refused')
+        try:
+            record['identity_sha256'] = package.folder_cache_identity(self.ctx.report['armport_client'], skip,
+                                                                      CLIENT_LIVE_FOLDERS)
+        except (KeyError, TypeError, ValueError) as exc:
+            # Without a complete identity the client scans as before.
+            record['error'] = type(exc).__name__
+            return {}
+        return {'ARMPORT_FOLDER_CACHE_INDEX': base.windows_path(index),
+                'ARMPORT_FOLDER_CACHE_ID': record['identity_sha256'],
+                'ARMPORT_FOLDER_CACHE_LIVE': CLIENT_LIVE_FOLDERS}
 
     def armport_gameplay_fps(self, environment):
         """Gameplay frame cap (patch 0113, the app's reviewed opt-in hook).

@@ -1,8 +1,9 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.47, the 0.13.36 app plus the ARM64 client option, for the M5
-# Thor play test. Uploads a workflow artifact only; no release is published.
+# Gameplay 0.13.59, the 0.13.36 app plus the ARM64 client option, for the M5
+# Thor play test. Uploads a workflow artifact; publish_release=true (only for a
+# user-approved candidate) also publishes it as a GitHub pre-release.
 on:
   # Dispatch only, with an explicit package run: a default or push build could
   # silently embed an older client (Sol 5661731725, Astra 5671483734).
@@ -13,6 +14,20 @@ on:
         required: true
       server_metrics:
         description: Include the two-variant server package qualified by this exact runtime run
+        type: boolean
+        required: false
+        default: false
+      server_option:
+        description: With server_metrics, keep the shipping MapServer and add the Thor metrics server as an opt-in second archive
+        type: boolean
+        required: false
+        default: false
+      external_maps_run_id:
+        description: Optional successful armport-external-maps-dbserver run - its DbServer replaces the level-up one (map requests; the game's own zone travel)
+        required: false
+        default: ''
+      publish_release:
+        description: Publish the signed APK as a GitHub pre-release (user-approved candidates only)
         type: boolean
         required: false
         default: false
@@ -28,6 +43,8 @@ concurrency:
 env:
   M4_RUN_ID: ${{ inputs.m4_run_id }}
   SERVER_METRICS: ${{ inputs.server_metrics }}
+  SERVER_OPTION: ${{ inputs.server_option }}
+  EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 
@@ -56,6 +73,9 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$M4_RUN_ID"
+          if [ "$SERVER_OPTION" = true ] && [ "$SERVER_METRICS" != true ]; then
+            echo '::error::server_option needs server_metrics (its qualified runtime run)'; exit 1
+          fi
           R="$GITHUB_REPOSITORY"
           q=$(gh api "repos/$R/actions/runs/$M4_RUN_ID" --jq '[.path,.status,.conclusion]|join(" ")')
           [ "$q" = ".github/workflows/armport-app-runtime.yml completed success" ] || {
@@ -119,19 +139,34 @@ jobs:
             --build-run-json "$RUNNER_TEMP/server-build-run.json" --repository-commit "$GITHUB_SHA" \
             --server-run-id "$server" --client-run-id "$client" --data-run-id "$data"
           echo "::notice title=ArmPort server provenance::native build $server at $GITHUB_SHA; retained runtime $M4_RUN_ID passed; Thor server built/source-checked but not runtime/device validated"
+      - name: Record the on-demand zone DbServer build run
+        if: env.EXTERNAL_MAPS_RUN_ID != ''
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: gh api "repos/$GITHUB_REPOSITORY/actions/runs/$EXTERNAL_MAPS_RUN_ID" > "$RUNNER_TEMP/external-maps-run.json"
+      - uses: actions/download-artifact@v4
+        if: env.EXTERNAL_MAPS_RUN_ID != ''
+        with:
+          name: armport-external-maps-dbserver
+          path: ${{ runner.temp }}/external-maps-dbserver
+          run-id: ${{ env.EXTERNAL_MAPS_RUN_ID }}
+          github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-interactive-signing
           path: ${{ runner.temp }}/coh-retained-signing
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
-      - name: Build and sign COH Atlas Gameplay 0.13.47
+      - name: Build and sign COH Atlas Gameplay 0.13.59
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
           server_args=()
           if [ "$SERVER_METRICS" = true ]; then
             server_args=(--server-metrics "$RUNNER_TEMP/qualified-server-metrics" --runtime-run-id "$M4_RUN_ID" --baseline-root "$GITHUB_WORKSPACE/server-baseline")
+            if [ "$SERVER_OPTION" = true ]; then server_args+=(--server-option); fi
+          fi
+          if [ -n "$EXTERNAL_MAPS_RUN_ID" ]; then
+            server_args+=(--external-maps-dbserver "$RUNNER_TEMP/external-maps-dbserver" --external-maps-run-json "$RUNNER_TEMP/external-maps-run.json")
           fi
           armport/scripts/step.sh "ArmPort Thor APK build" python3 armport/app/build_thor_apk.py \
             --donor-apk "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" \
@@ -139,7 +174,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.47.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.59.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -151,14 +186,67 @@ jobs:
           keep = {k: r[k] for k in ('apk', 'bytes', 'sha256', 'version_name', 'version_code',
                   'signer_certificate_sha256', 'replaced_members', 'added_members', 'changed_runtime_payloads',
                   'retained_members', 'armport_client')}
+          if 'external_maps_dbserver' in r:
+              keep['external_maps_dbserver'] = r['external_maps_dbserver']
           if 'server_metrics_qualification' in r:
               keep['server_metrics_qualification'] = r['server_metrics_qualification']
               keep['server_metrics_runtime_validated'] = r['server_metrics_runtime_validated']
+              keep['server_metrics_placement'] = r['server_metrics_placement']
           print('::notice title=ArmPort Thor APK::' + json.dumps(keep))
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.47-apk
+          name: coh-atlas-gameplay-0.13.59-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
+
+  release:
+    if: inputs.publish_release
+    needs: apk
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-0.13.59-apk
+          path: apk
+      - name: Publish the 0.13.59 pre-release
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          cd apk
+          test -f COH-Atlas-Gameplay-0.13.59.apk
+          sha256sum COH-Atlas-Gameplay-0.13.59.apk > COH-Atlas-Gameplay-0.13.59.apk.sha256
+          cat > notes.md <<EOF
+          COH Atlas Gameplay 0.13.59 (x86 track performance candidate) for the Thor play test.
+
+          Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
+          In-place update over the installed app; it keeps app data, the saved hero and imported assets.
+
+          Fix: no zone starts before you enter the game, and only the zone your character is in. 0.13.58 started
+          Atlas Park first for every session; now nothing starts until Enter Game, and then the game itself starts
+          the zone the character was saved in (King's Row, Atlas Park or any other zone), with no other zone first
+          (a request for another zone is refused before the character has entered its own). A new THORHERO can be
+          a hero, villain or Praetorian: after the character creator the game starts that character's starting
+          zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). While the zone starts the game screen can
+          stay still for a few minutes; the app shows which zone is starting.
+          Unchanged from 0.13.58: the game waits up to 15 minutes at Enter Game; storage cleanup and the storage
+          report's Android exit reasons; the game's own zone travel (option on; untick for 0.13.54's station travel),
+          every zone the game allows, at most two zone servers, NPCs outside Atlas Park and King's Row stand still,
+          missions are not served yet; the full-window view, the gear button and controller mapping. Test sheet:
+          THOR-TEST-0.13.59.md.
+          EOF
+          if [ "$SERVER_OPTION" = true ]; then
+            echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.53)." >> notes.md
+          elif [ "$SERVER_METRICS" = true ]; then
+            echo "Servers: instrumented MapServer; trusted bins apply when Fast server start (test server) is ticked (off by default)." >> notes.md
+          else
+            echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server start (test server) option has no effect in this build." >> notes.md
+          fi
+          gh release create "coh-atlas-gameplay-v0.13.59" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.59 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.59.apk COH-Atlas-Gameplay-0.13.59.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.59"
