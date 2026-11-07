@@ -72,6 +72,9 @@ CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 
                              'native_training_save.py',
                              # 0.13.55: the reopen budget accepts any static zone in stock travel.
                              'character_reopen_diagnostic.py', 'character_session_budget.py',
+                             # 0.13.59: the reopen's early client retry keeps no zone server
+                             # when the zone starts at Enter Game.
+                             'client_attempt_retry.py',
                              'runtime-manifest.json', 'client-manifest.json',
                              'game_diagnostic.py', 'game_device_diagnostic.py', 'atlas_beacon_package.py',
                              'native_map_startup_contract.py', 'native_monorail_contract.py',

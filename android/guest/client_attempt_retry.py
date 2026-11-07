@@ -52,10 +52,26 @@ def directory_identity(path):
             'inode': info.st_ino, 'uid': info.st_uid, 'mode': stat.S_IMODE(info.st_mode)}
 
 
-def service_identity(owner):
+def zone_deferred(server):
+    """0.13.59: with the game's own zone travel no zone server runs before Enter
+    Game (the character's zone starts on the DbServer's request). An early retry
+    happens before the character list is sent, so none can have started."""
+    pending = getattr(server, 'initial_zone_pending', None)
+    return server.map_process is None and callable(pending) and pending() is True
+
+
+def owned_services(owner):
     server = owner.local_server
     processes = {'postgres': owner.pg, 'dbserver': server.process,
                  'atlas': server.map_process, 'display': owner.xserver}
+    if zone_deferred(server):
+        del processes['atlas']
+    return processes
+
+
+def service_identity(owner):
+    server = owner.local_server
+    processes = owned_services(owner)
     require(all(child is not None and child.process.poll() is None for child in processes.values()),
             'Early retry requires the still-live current owned native services')
     return {'processes': {name: child.process.pid for name, child in processes.items()},
@@ -165,8 +181,9 @@ class ClientAttemptRetry:
                 'Previous native client window remains during early retry')
         owner.local_server.health()
         require(service_identity(owner) == self.identity, 'Current owned native services changed before retry')
-        live = owner.local_server.sample_progress(force=True)
-        require(owner.local_server.live_progress(live), 'Atlas completed-tick progress is stale before retry')
+        deferred = 'atlas' not in self.identity['processes']
+        live = None if deferred else owner.local_server.sample_progress(force=True)
+        require(deferred or owner.local_server.live_progress(live), 'Atlas completed-tick progress is stale before retry')
         # No input was enabled for this attempt. Require the committed character
         # inventory and all baseline selected rows to remain exactly unchanged.
         require(owner.local_server.inventory() == owner.local_server.baseline,
@@ -189,7 +206,8 @@ class ClientAttemptRetry:
             native_client_terminated=True, launcher_and_pipes_closed=True, prior_client_window_absent=True,
             console={'path': console_path.name, 'bytes': len(payload),
                      'sha256': hashlib.sha256(payload).hexdigest()}, logs=logs,
-            services_unchanged=True, selected_sql_rows_unchanged=True, atlas_progress=live)
+            services_unchanged=True, selected_sql_rows_unchanged=True, atlas_progress=live,
+            zone_server_deferred_to_enter_game=deferred)
         owner.ctx.record(child, refresh=True)
         self.previous_pid = ended['pid']
         owner.reset_client_startup_inputs()
@@ -207,11 +225,11 @@ class ClientAttemptRetry:
         self.record.update(reuse_count=1, retained_service_identity=self.identity,
             preparation_elapsed_seconds=round(time.monotonic() - preparation_started, 6),
             retained_services_elapsed_seconds={name: round(time.monotonic() - process.started, 6)
-                for name, process in {'postgres': owner.pg, 'dbserver': owner.local_server.process,
-                                      'atlas': owner.local_server.map_process, 'display': owner.xserver}.items()},
+                for name, process in owned_services(owner).items()},
             startup_stages_not_repeated=['postgres_local_login', 'local_dbserver_startup', 'local_atlas_startup'])
         owner.ctx.event('client_retry_started', session_id=owner.args.session_id,
             attempt_id=self.record['current_attempt_id'], previous_client_pid=self.previous_pid,
             original_startup_deadline_monotonic=self.deadline,
-            message='Retrying the client with the current Atlas server still running')
+            message='Retrying the client with the current database server still running; the zone starts '
+                    'at Enter Game' if deferred else 'Retrying the client with the current Atlas server still running')
         return True
