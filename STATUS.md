@@ -25,10 +25,8 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
 - 0.13.49 Thor (ARM64 client): FPS mean 45-48; Atlas ready 204/222 s (.44: 287 s); King's Row failed (cold mirror).
-- 0.13.50 (APK 41712293048) Thor: King's Row reached (cold trip 562 s, return 50 s); session 2 Atlas cache
-  refused (shared folders missing from the changed-root check): Atlas ready 444 s vs 297 s on .49.
-- 0.13.51 published (APK 41750489814, runtime 41745666658): cache reuse fix, 10 FPS station cap (0121), thermal/tick/CPU
-  evidence. Thor: King's Row NPCs jump (Atlas smooth), 60s °C, no audio (never had a device in the guest).
+- 0.13.50 (APK 41712293048) Thor: King's Row reached (cold trip 562 s); session 2 Atlas cache refused (444 s vs 297 s).
+- 0.13.51 (APK 41750489814): cache reuse fix, 10 FPS station cap (0121). Thor: King's Row NPCs jump, no audio.
 - 0.13.52 (APK 41791858823): clock wrap 0123, 0122. 0.13.53 (APK 41881826170): game audio (TRASC plugin), 0124.
 - 0.13.54 (APK 41960891294 at a66b533f6): save check for ordinary play, pss_kib; shared heap 2/2 failed in session
   (41931773800, 41956900853) → off; external-maps DbServer passed in CI (41961253764). Thor (export 20261105-043833):
@@ -36,5 +34,7 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.55 (APK 42037755195 at 81e81ddd0): stock zone travel, any zone, gear menu. Thor: monorail → weeklyTF assert (20261105-202806).
 - 0.13.56 (APK 42169364145 at 85a8f9801): weeklyTF.cfg, -notwostagemapxfer; CI trip 101 ready 172 s. Thor (20261106-152038):
   King's Row reached (~3½ min), then the reopen budget rejected map 5 (monorail-only rule); "Map loading" notice stayed.
-- 0.13.57 published (APK 42281556221; build 42246645668, runtimes 42263546136/42270379862/42276008129 at 8050afca8): stock
-  travel accepts every static zone, patch 0125, occupied probe before eviction; CI trip 101 ready 182 s, passed. HANDOFF "0.13.57".
+- 0.13.57 (APK 42281556221 at 8050afca8): every static zone, 0125, occupied probe; CI trip 101 ready 182 s. Thor (20261106-
+  210545/220022): hero saved in King's Row; its start overlapped the client's → Android low-memory kill (reason 3, foreground).
+- 0.13.58 published (APK 42329179898; build 42300265349, runtimes 42312362966/42316982535/42322788540 at 919e23760): Atlas
+  first, saved zone at Enter Game (0126), storage mount-point repair; CI trip 167 s; r58/r58t passed on re-run. HANDOFF "0.13.58".

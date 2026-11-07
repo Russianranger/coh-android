@@ -472,6 +472,22 @@ saved zone's start after the client's startup.
   dynamic path runs only in unit tests (`test_dynamic_initial_map.py`) until the
   Thor test (sheet step 6). The fresh install is the user's choice (uninstall
   deletes the hero and assets; asset packs coh-assets-v1.0.0).
+- CI at 919e23760 (one chain, x86/perf-round1): build 42300265349 (server
+  metrics) passed; zone-trip runtime 42312362966 (external maps 41883310382,
+  stock travel) passed: `/mapmove 101` start ready 166.6 s (supervisor),
+  request to map ready 192.7 s, to client world 339.6 s, 2 arrivals, save
+  passed. Default runtime 42316982535 attempt 1 failed in creation: "Costume
+  page (HEAD/WEAPONS/Colors) not reached after body_next" (5 OCR checks,
+  144.9-154.7 s after ready, menu 9.8 FPS); attempt 2 (re-run of the failed
+  `interactive-guest` job) passed. Trusted runtime 42322788540 attempt 1
+  failed in reopen: `/quittologin` sent 315 s after ready, no Atlas logout
+  line, "Character logout delivery does not match this ready client or its
+  save window" (120 s), client 2.1 FPS in world; reopen startup timings
+  matched 0.13.57's r57t within 1 s; attempt 2 passed. Neither path changed in
+  0.13.58 (creation UI; non-stock reopen). Both first attempts are open
+  flakes, not proof of stability. APK 42329179898 (server metrics, trusted
+  runtime, external maps) published `coh-atlas-gameplay-v0.13.58`
+  (sha256 4feb75e2cd480f18d88e911c122e7d6c43728addb1c31b6dc77390c01e8dbb87).
 - Version 0.13.58 (73); test sheet `THOR-TEST-0.13.58.md`.
 
 ## 0.13.57: a King's Row arrival no longer stops the session (Claude, 2026-11-06)
