@@ -208,7 +208,12 @@ class SharedZoneTreeTests(unittest.TestCase):
     def test_other_static_zones_register_with_their_world_and_a_free_port(self):
         entry = zoning.register_zone(6)
         self.assertEqual((entry['name'], entry['world'], entry['instance'], entry['port']),
-                         ('steelcanyon', 'city_02_01', 1, None))
+                         ('Steel Canyon', 'city_02_01', 1, None))
+        # A zone without a reviewed display name keeps its zone_index key.
+        self.assertEqual(zoning.register_zone(78)['name'], 'pvp')
+        self.assertEqual((zoning.zone_name(71), zoning.zone_name(2)), ('Mercy Island', 'Zone 2'))
+        self.assertTrue(zoning.same_zone(1, 101) and zoning.same_zone(101, 1) and zoning.same_zone(71, 71))
+        self.assertFalse(zoning.same_zone(1, 5) or zoning.same_zone(1, 71) or zoning.same_zone(1, None))
         self.assertTrue(zoning.supported(6))
         self.assertIs(zoning.register_zone(6), entry)
         self.assertIs(zoning.register_zone(5), zoning.MAPS[5])

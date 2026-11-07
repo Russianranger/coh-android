@@ -12,6 +12,10 @@ Memory (owner's choice, 2026-11-05): at most two zone servers, the player's
 current zone and one more. A third request first stops the resident zone the
 player is not on (the least recently occupied); the current zone and a zone
 still starting are never stopped for it.
+
+No zone runs before Enter Game (0.13.59): the first request is the zone the
+character is in, or a new character's starting zone, and the owner's admit
+hook refuses any other zone until the character has entered that one.
 """
 import os
 
@@ -36,15 +40,18 @@ class ZoneTravelPolicy:
 
     tree_for(map_id) -> a tree label the owner can prepare, or None;
     running() -> {map_id: {'ready': bool, 'port': int, 'last_occupied': float}};
-    occupied() -> the map id the player is on, or None when unknown.
+    occupied() -> the map id the player is on, or None when unknown;
+    admit(map_id) -> None, or the reason a request is refused before anything
+    else is checked (the zone a character first enters: only its own).
     """
 
-    def __init__(self, *, tree_for, running, occupied, capacity=MAX_ZONE_SERVERS):
+    def __init__(self, *, tree_for, running, occupied, capacity=MAX_ZONE_SERVERS, admit=None):
         if type(capacity) is not int or capacity < 1:
             raise ValueError('Invalid zone server capacity')
         self.tree_for = tree_for
         self.running = running
         self.occupied = occupied
+        self.admit = admit
         self.capacity = capacity
         self.decisions = []
 
@@ -69,6 +76,9 @@ class ZoneTravelPolicy:
         map_id = record['map_id']
         if record['is_static'] != 1:
             return 'delink', 'not_static'          # missions and instances: a later milestone
+        refused = self.admit(map_id) if self.admit is not None else None
+        if refused is not None:
+            return 'delink', refused
         tree = self.tree_for(map_id)
         if tree is None:
             return 'delink', 'zone_not_served'

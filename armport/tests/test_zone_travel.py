@@ -54,6 +54,20 @@ class Policy(unittest.TestCase):
         self.maps = {7: {'ready': True, 'port': 7001}}  # a fixed port held by another map
         self.assertEqual(self.policy(record(1), {}), ('delink', 'no_port'))
 
+    def test_admission_is_asked_first_and_refuses_without_starting(self):
+        asked = []
+
+        def admit(map_id):
+            asked.append(map_id)
+            return None if map_id == 5 else 'not_the_saved_zone'
+        policy = zone_travel.ZoneTravelPolicy(tree_for=self.trees.get, running=lambda: dict(self.maps),
+                                              occupied=lambda: self.current, admit=admit)
+        self.assertEqual(policy(record(1), {}), ('delink', 'not_the_saved_zone'))
+        self.assertEqual(policy(record(40), {}), ('delink', 'not_the_saved_zone'))   # before the tree check
+        self.assertEqual(policy(record(5), {})[0], 'start')
+        self.assertEqual(policy(record(5, static=0), {}), ('delink', 'not_static'))  # not asked
+        self.assertEqual(asked, [1, 40, 5])
+
     def test_capacity_is_validated(self):
         with self.assertRaises(ValueError):
             zone_travel.ZoneTravelPolicy(tree_for=dict.get, running=dict, occupied=lambda: None, capacity=0)

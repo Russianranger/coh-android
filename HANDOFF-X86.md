@@ -414,6 +414,71 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.59: only the character's own zone, at Enter Game (Claude, 2026-11-07)
+
+User, 00:28 CST, after the 0.13.58 test sheet: "I think you misunderstood my
+instructions. I want the game to load whatever zone my character is in. Under
+no circumstances should characters be transported to Atlas Park unless they
+exist in that zone already, especially if I have a villain or other origin
+characters that should start in their respective zones." Asked about scope, the
+user chose one character at a time (THORHERO, any side) over several characters.
+0.13.58 did not move the hero (the DbServer still sent it to its saved zone),
+but it started Atlas Park's MapServer for every session and accepted a first
+connection there.
+
+- **No zone before Enter Game** (`character_zoning`, `DYNAMIC_INITIAL_POLICY`
+  v2, `initial_zone` in the zoning report, `saved_startup.dynamic_start` is the
+  same record): with stock travel and the ARM64 client, `initial_map_preparation`
+  returns None for every saved map (Atlas Park included), `prepare_runtime`
+  defers Atlas preparation (`character_zone_started_at_enter_game`), and
+  `start_map` -> `defer_initial_zone` records the `local_atlas_startup` stage
+  (the app's stage contract) with `zone_servers_started` 0. The DbServer's
+  request at Enter Game (handleChoosePlayer -> handlePlayerContainerLoaded ->
+  findBestMapByBaseId -> setNewMap -> startMapIfStatic) starts the zone through
+  the zone policy; `tick_dynamic_initial` activates it once it ticks (attempts
+  with outcomes, `request_to_ready_ms`, `mapserver_started`, startup timing
+  `map_ready_observed`). `native_ready_record` is None until then;
+  `poll_initial_map_startup` and `client_startup_assets_allowed` are true (the
+  character list and the creator need only the DbServer).
+- **Admission** (`zone_travel.ZoneTravelPolicy(admit=...)`,
+  `admit_zone_request`): until the character first enters the world only its
+  own zone may start: the saved zone or another instance of its world
+  (`same_zone`: Atlas Park 1/101), one at a time (`not_the_saved_zone`,
+  `initial_zone_already_starting`, recorded in `refused_requests`); a started
+  zone of another world stops the session ("nothing was moved").
+  `verify_initial_connection` requires the first connection on the activated
+  zone. A failed start (900 s) is recorded and Enter Game may ask again.
+- **Creation** (`LocalCharacterZoningCreationServer`,
+  `character_creation_diagnostic.ZoningCharacterCreationDiagnostic`, chosen when
+  COH_STOCK_TRAVEL=1, COH_EXTERNAL_MAPS=1 and the ARM64 client): the zoning
+  machinery with the base creation identity (empty account, THORHERO ID 1, base
+  rows check); the first request after the creator is the starting zone
+  (determineStartMapId: 1 Atlas Park, 24 Outbreak, 71 Mercy Island, 70
+  Breakout, 40 Precinct Five, 36 Nova Praetoria, 41 Destroyed Galaxy City).
+  `creation_identity`/`creation_save_verified` accept a static zone with
+  stock_travel; the zone's wait is added back to the 1200 s creator window
+  (`initial_zone_wait_seconds`, bounded 1800 s). The legacy creation (x86, or
+  no stock travel) is unchanged.
+- **App**: `savedDestinationEvent` dynamic branch: port null, no
+  `prepared_map_id`, any static zone; `characterConnectedEvent`/
+  `characterCreationVerified`/`characterCreationAccepted` take the
+  stock-travel flag for creation (`ClientRuntime.dynamicCreation`);
+  `character_initial_zone` events show "Starting <zone>…" and keep it over the
+  guest heartbeat until connection; zone display names (`ZONE_DISPLAY_NAMES`,
+  `map_name` on connected/saved events, `ClientRuntime.zoneLabel`); messages
+  for any side.
+- **Trip timing rows**: `_start_stock_map` opens a `stock_travel_request`
+  startup-timing row per trip (map ready at the first tick, client world at
+  the arrival); before, a trip's spawn relabelled the session's initial row
+  (see the 0.13.58 CI bullet). The first zone keeps the initial row
+  (`initial_zone_started_by_dbserver_request`).
+- CI: the zone-trip runtime now exercises the dynamic start for both sessions
+  (CI's hero is a Primal hero, so Atlas Park is started by the DbServer's
+  request after the creator and again at the reopen's Enter Game). Other
+  starting zones and the saved-zone admission are unit-tested only
+  (`test_dynamic_initial_map.py`) until the Thor test.
+- Version 0.13.59 (74); test sheet `THOR-TEST-0.13.59.md`.
+
 ## 0.13.58: Atlas Park first, the saved zone at Enter Game (Claude, 2026-11-06)
 
 User, 14:59-15:20 CST: 0.13.57 "crashed during startup ... straight to the
@@ -474,9 +539,12 @@ saved zone's start after the client's startup.
   deletes the hero and assets; asset packs coh-assets-v1.0.0).
 - CI at 919e23760 (one chain, x86/perf-round1): build 42300265349 (server
   metrics) passed; zone-trip runtime 42312362966 (external maps 41883310382,
-  stock travel) passed: `/mapmove 101` start ready 166.6 s (supervisor),
-  request to map ready 192.7 s, to client world 339.6 s, 2 arrivals, save
-  passed. Default runtime 42316982535 attempt 1 failed in creation: "Costume
+  stock travel) passed: `/mapmove 101` start ready 166.6 s (supervisor), 2
+  arrivals, save passed. (The row labelled map 101, 192.7 s to map ready and
+  339.6 s to client world, was the session's first Atlas Park start: a trip's
+  spawn relabelled the initial timing row. 0.13.56-0.13.58's "client in the
+  zone N s after the request" figures are those first-start times; 0.13.59
+  gives each trip its own `stock_travel_request` row.) Default runtime 42316982535 attempt 1 failed in creation: "Costume
   page (HEAD/WEAPONS/Colors) not reached after body_next" (5 OCR checks,
   144.9-154.7 s after ready, menu 9.8 FPS); attempt 2 (re-run of the failed
   `interactive-guest` job) passed. Trusted runtime 42322788540 attempt 1

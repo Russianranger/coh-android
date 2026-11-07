@@ -168,7 +168,8 @@ class StockTravelReopenInteraction(ReopenInteraction):
             require(self.travel_sent_at is not None and now-self.travel_sent_at < STOCK_TRAVEL_SECONDS,
                     'Zone travel to map %d did not arrive within %d seconds'
                     % (self.ACTIONS[self.action][1], STOCK_TRAVEL_SECONDS))
-            require(now-self.ready_at < INTERACTION_SECONDS, 'Host character creation exceeded twenty-minute interaction bound')
+            require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
+                    'Host character creation exceeded twenty-minute interaction bound')
             return
         before = self.action
         super().on_frame(connection, frame, events, sequence, captures, now)

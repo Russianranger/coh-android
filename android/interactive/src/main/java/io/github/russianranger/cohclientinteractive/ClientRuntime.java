@@ -86,6 +86,9 @@ public final class ClientRuntime {
     private final List<byte[]> characterPngs = new ArrayList<>();
     private volatile long characterObservedUptime = -1, characterFrameWatermark = -1;
     private volatile JSONObject characterSavedEvent, characterConnectedEvent;
+    /** The guest's message while the client waits at Enter Game for the character's zone (its screen holds still). */
+    private volatile String initialZoneStatus;
+    private volatile long initialZoneStartedUptime = -1;
     private volatile boolean saveLogoutRequested;
     private volatile boolean characterSavedReady;
     private boolean manualTestActive,manualTestOpeningCaptured;
@@ -1027,8 +1030,8 @@ public final class ClientRuntime {
                 passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
                         && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);
                 saveRecorded = committedCharacterSaveObserved(jsonValue(report),jsonValue(characterSavedEvent),
-                        jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),
-                        zoningEnabled()?zoning.currentMap():1);
+                        jsonValue(characterConnectedEvent),session,observedClientPid,reopen,characterZoning(),
+                        currentCharacterMap());
                 if (inputFailed > 0 && error == null) error = "Input transport failed; review the exported report.";
                 if (guestPassed && !passed && error == null) error = taskGateRequired()
                         ? "Task gate incomplete: matching native and SQL task completion, accepted/completed task views, ordinary save evidence and fresh Android save captures are required."
@@ -1149,6 +1152,27 @@ public final class ClientRuntime {
     private boolean zoningEnabled() {
         return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
                 && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
+    }
+    /** The guest's creation with the game's own travel (ZoningCharacterCreationDiagnostic): the
+     * new character starts in the zone the game starts for it at Enter Game, whatever its origin. */
+    private boolean dynamicCreation() {
+        return !reopen && stockTravelRequested && "arm64".equals(clientArchitectureRequested)
+                && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"));
+    }
+    private boolean characterZoning() { return zoningEnabled() || dynamicCreation(); }
+    /** The map the character's save must name: the reopen's current zone, or the creation's saved one. */
+    private int currentCharacterMap() {
+        if (zoningEnabled()) return zoning.currentMap();
+        if (!dynamicCreation()) return 1;
+        JSONObject event = characterSavedEvent != null ? characterSavedEvent : characterConnectedEvent;
+        return event == null ? -1 : event.optInt("map_id", -1);
+    }
+    /** A guest display name ("map_name") or the app's own for Atlas Park and King's Row. */
+    static String zoneLabel(JSONObject event) {
+        int map = event == null ? -1 : event.optInt("map_id", -1);
+        String name = event == null || event.isNull("map_name") ? "" : event.optString("map_name", "");
+        if (name.matches("[A-Za-z0-9 .:'()-]{1,64}")) return name;
+        return ClientZoning.supported(map) ? ClientZoning.name(map) : "zone " + map;
     }
     public synchronized String zoningStatus() {
         if(!zoningEnabled())return "Zone travel becomes available after runtime update and Reopen.";
@@ -2195,23 +2219,42 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the logged-in client: " + message(e); }
                             }
                             recordLifecycle("local_login_observed");
-                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character." : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
+                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character."
+                                    : dynamicCreation() ? "The server sent the character list. Create THORHERO as a hero, villain or Praetorian. After Enter Game the game starts THORHERO's starting zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial); the screen can stay still for a few minutes while it loads."
+                                    : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
                         }
                         if (reopen && zoningEnabled() && ClientAcceptance.savedDestinationEvent(jsonValue(event), session,
                                 Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")), stockTravelRequested)
                                 && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
-                            String savedZone = ClientZoning.supported(event.optInt("map_id", -1)) ? ClientZoning.name(event.optInt("map_id", -1))
-                                   : "zone " + event.optInt("map_id", -1) + " (" + event.optString("map_name", "") + ")";
+                            String savedZone = zoneLabel(event);
                             stage("Saved destination verified", event.optBoolean("dynamic_start", false)
-                                ? "THORHERO is saved in " + savedZone + ". Atlas Park starts now; " + savedZone
-                                  + " starts when you press Enter Game, and the screen can stay still for a few minutes"
-                                  + " while it loads. Existing character data is preserved."
+                                ? "THORHERO is saved in " + savedZone + ". " + savedZone + " starts when you press"
+                                  + " Enter Game, and no other zone starts first; the game screen can stay still for a few"
+                                  + " minutes while it loads. Existing character data is preserved."
                                 : "THORHERO is saved in " + savedZone + ". Preparing its native MapServer on port "
                                 + event.optInt("port", -1) + "; existing character data is preserved.");
                             recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
                                 + " port=" + event.optInt("port", -1));
                         }
-                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid))
+                        if ("character_initial_zone".equals(event.optString("type")) && session.equals(event.optString("session_id"))
+                                && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
+                            String status = event.optString("status");
+                            if ("starting".equals(status) || "ready".equals(status) || "not_ready".equals(status)) {
+                                String message = clean(event.optString("message", ""));
+                                initialZoneStatus = "not_ready".equals(status) ? null : message;
+                                long now = SystemClock.uptimeMillis();
+                                if ("starting".equals(status)) initialZoneStartedUptime = now;
+                                else if (initialZoneStartedUptime >= 0) {
+                                    // The guest adds the zone's start back to the creator's twenty minutes.
+                                    if (!reopen && readyDeadlineUptimeMillis > 0)
+                                        readyDeadlineUptimeMillis += Math.max(0, now - initialZoneStartedUptime);
+                                    initialZoneStartedUptime = -1; notifyInputState();
+                                }
+                                recordLifecycle("initial_zone_" + status + " map_id=" + event.optInt("map_id", -1));
+                                stage("not_ready".equals(status) ? "Zone did not start" : "Starting the zone", message);
+                            }
+                        }
+                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid, dynamicCreation()))
                                 && characterConnectedEvent == null && loginObservedUptime >= 0
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
@@ -2227,7 +2270,7 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the reopened character: " + message(e); }
                             }
                             recordLifecycle("character_connected_observed");
-                            stage("Character connected", reopen ? "THORHERO connected to "+ClientZoning.name(event.optInt("map_id",1))+". Waiting for fresh Android views and session ownership verification before movement and Save become available. Gameplay has no countdown." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
+                            stage("Character connected", reopen ? "THORHERO connected to "+zoneLabel(event)+". Waiting for fresh Android views and session ownership verification before movement and Save become available. Gameplay has no countdown." : "THORHERO connected to "+zoneLabel(event)+". Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
                         }
                         if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));
@@ -2350,7 +2393,8 @@ public final class ClientRuntime {
                             interactionReadyObserved = true;
                             if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = reopen ? 0 : SystemClock.uptimeMillis() + 1200000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
-                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
+                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : dynamicCreation() ? "Log in with COHLOCAL / offline. Create THORHERO as a hero, villain or Praetorian; after Enter Game the game starts its starting zone (the screen can stay still for a few minutes). Save, then wait for Saved character verified. Twenty minutes remain for the creator; the zone's start does not count."
+                                    : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
                         }
                         // Keep the actionable save/Finish instruction visible while
                         // the guest continues its generic five-second live heartbeat.
@@ -2358,7 +2402,8 @@ public final class ClientRuntime {
                                 && "running".equals(event.optString("status"))
                                 && "actual_client_interaction".equals(event.optString("stage"));
                         if ("stage".equals(event.optString("type"))
-                                && !(interactionHeartbeat && (characterSavedReady || characterConnectedEvent != null)))
+                                && !(interactionHeartbeat && (characterSavedReady || characterConnectedEvent != null
+                                    || initialZoneStatus != null)))
                             listener.onStage(event.optString("stage", "Checking display"),
                                 clean(event.optString("message", event.optString("detail", ""))));
                     } catch (Exception ignored) {}
@@ -2472,7 +2517,7 @@ public final class ClientRuntime {
                 && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
                 && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
                 && Boolean.TRUE.equals(report.opt("mapserver_started"))
-                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid))
+                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid, dynamicCreation()))
                 && Boolean.FALSE.equals(report.opt("android_surface_validated"))
                 && Boolean.FALSE.equals(report.opt("game_validated")) && Boolean.FALSE.equals(report.opt("gameplay_validated"))
                 && Boolean.FALSE.equals(report.opt("menu_visual_validated"))
@@ -2580,7 +2625,7 @@ public final class ClientRuntime {
                     characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark,zoningEnabled());
             return characterSavedReady && ClientAcceptance.characterCreationAccepted(jsonValue(report), jsonValue(characterSavedEvent),
                     jsonValue(characterConnectedEvent), characterSamples, session, observedClientPid, startedUptime, endedUptime,
-                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
+                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark, dynamicCreation());
         }
     }
     private boolean taskGateRequired() {
@@ -2703,7 +2748,7 @@ public final class ClientRuntime {
                     .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)
                     .put("character_reopen_verified", reopen && passed)
                     .put("committed_save_observed",committedCharacterSaveObserved(jsonValue(guest),jsonValue(characterSavedEvent),
-                            jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1))
+                            jsonValue(characterConnectedEvent),session,observedClientPid,reopen,characterZoning(),currentCharacterMap()))
                     .put("qualification_gates",qualificationGates(guest,passed,cleanup))
                     .put("character_connected_observed_uptime_ms", connectedObservedUptime)
                     .put("character_connected_frame_watermark", connectedFrameWatermark)
@@ -2873,7 +2918,7 @@ public final class ClientRuntime {
         if(finalGuestReport==null)return null;
         try {
             return committedCharacterSaveObserved(jsonValue(finalGuestReport),jsonValue(characterSavedEvent),
-                    jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1);
+                    jsonValue(characterConnectedEvent),session,observedClientPid,reopen,characterZoning(),currentCharacterMap());
         }catch(Exception | OutOfMemoryError unavailable){return null;}
     }
     private File retainFailureReport(Throwable failure,boolean cleanup) throws IOException {
@@ -2939,7 +2984,7 @@ public final class ClientRuntime {
                 || !(reopening?"actual_character_reopen":"actual_character_creation").equals(report.get("diagnostic_mode"))
                 || !ClientAcceptance.characterSavedEvent(saved,selectedSession,pid)
                 || !(reopening?ClientAcceptance.characterReopenConnectedEvent(connected,selectedSession,pid,zoning)
-                    :ClientAcceptance.characterConnectedEvent(connected,selectedSession,pid)))return false;
+                    :ClientAcceptance.characterConnectedEvent(connected,selectedSession,pid,zoning)))return false;
         for(Map<?,?> identity:new Map<?,?>[]{proof,login})
             if(!selectedSession.equals(identity.get("session_id")) || preparationInteger(identity.get("client_pid"))!=pid)return false;
         long id=preparationInteger(proof.get("character_id")),auth=preparationInteger(proof.get("auth_id"));

@@ -126,7 +126,7 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Default controller: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter. Triggers are unbound. The COH power trays preset adds hold LT for 1–0 and Select for this menu; Back or the gear also opens it.",12,false));
         controls.addView(button("Move options button",this::controlsPositionDialog));
         controls.addView(button("Reset options button position",()->{controlsX=1f;controlsY=0f;positionControls();saveControlsPosition();}));
-        controls.addView(text("Reopen THORHERO and test the Atlas Park–Kings Row monorail. Keep the accepted graphics settings, costume and powers.",13,false));
+        controls.addView(text("Reopen THORHERO in the zone it was saved in; with the game's own zone travel only that zone starts, when you press Enter Game. Keep the accepted graphics settings, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import asset pack part",this::chooseImport);controls.addView(importAssets);
         assetPackStatus=text("Checking required asset pack…",12,false);controls.addView(assetPackStatus);
@@ -398,7 +398,7 @@ public final class ClientActivity extends Activity {
     private void confirmFreshProfile(){
         if(!canCreateFreshProfile(state))return;
         new AlertDialog.Builder(this).setTitle("Create fresh THORHERO?")
-                .setMessage("This installation has no saved profile. Runtime setup and asset import do not restore a character database deleted by uninstalling. Start native character creation using your current runtime and imported assets, log in with COHLOCAL / offline and create THORHERO. Save character / log out, then Finish and export. Reopen saved THORHERO resumes task testing after that save.")
+                .setMessage("This installation has no saved profile. Runtime setup and asset import do not restore a character database deleted by uninstalling. Start native character creation using your current runtime and imported assets, log in with COHLOCAL / offline and create THORHERO as a hero, villain or Praetorian. With the game's own zone travel the game starts THORHERO's starting zone after Enter Game (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). Save character / log out, then Finish and export. Reopen saved THORHERO resumes in the zone it was saved in.")
                 .setNegativeButton("Cancel",null).setPositiveButton("Start character creation",(dialog,which)->{
                     // The profile or operation may change while this confirmation is open.
                     if(canCreateFreshProfile(state))request(ClientService.CREATE);

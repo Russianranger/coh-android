@@ -30,8 +30,8 @@ Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.58".
 CI: build 42300265349, zone-trip runtime 42312362966, default runtime
 42316982535 and trusted runtime 42322788540 passed at 919e23760; APK
 42329179898 published it. The zone-trip run took the game's own trip (second
-Atlas Park ready 167 s after the DbServer asked for it, hero there 340 s after
-the request, back to Atlas, save passed). The default and trusted runs each
+Atlas Park ready 167 s after the DbServer asked for it, back to Atlas, save
+passed). The default and trusted runs each
 passed on a re-run of their failed job: the first tries stopped at a
 character-creator screen check and at a logout that was not saved within 2
 minutes, parts 0.13.58 did not change. CI's hero starts in Atlas Park, so the

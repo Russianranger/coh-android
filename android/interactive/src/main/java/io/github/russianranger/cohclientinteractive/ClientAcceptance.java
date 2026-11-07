@@ -224,9 +224,10 @@ final class ClientAcceptance {
     }
 
     /**
-     * stockTravel: also another static zone; with dynamic_start the guest
-     * prepares Atlas Park (prepared_map_id 1) and the saved zone is started at
-     * Enter Game by the DbServer's own request, so it has no port yet.
+     * stockTravel: also another static zone. With dynamic_start no zone server
+     * runs before Enter Game: the saved zone (Atlas Park included) is started by
+     * the DbServer's own request then, so it has no port yet, and no other zone
+     * is prepared first (owner, 2026-11-07).
      */
     static boolean savedDestinationEvent(Object value, String session, boolean monorailQualified,
             boolean stockTravel) {
@@ -244,9 +245,10 @@ final class ClientAcceptance {
                     && "City_01_01".equals(event.get("world")))
                 || (monorailQualified && number(event.get("map_id"), 5) && number(event.get("port"), 7003)
                     && "City_01_02".equals(event.get("world")))
-                || (stockTravel && yes(event.get("dynamic_start")) && number(event.get("prepared_map_id"), 1)
+                || (stockTravel && yes(event.get("dynamic_start")) && event.containsKey("port")
+                    && jsonNull(event.get("port")) && !event.containsKey("prepared_map_id")
                     && integer(event.get("map_id")) && staticZone(((Number) event.get("map_id")).longValue())
-                    && !number(event.get("map_id"), 1) && event.get("world") instanceof String
+                    && event.get("world") instanceof String
                     && ((String) event.get("world")).matches("[A-Za-z0-9_]{1,64}"))
                 || (stockTravel && event.get("map_id") instanceof Number
                     && staticZone(((Number) event.get("map_id")).longValue())
@@ -292,6 +294,20 @@ final class ClientAcceptance {
         return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_creation");
     }
 
+    /**
+     * stockTravel (the game's own travel, ARM64 client): the new character is
+     * proved in the starting zone the game started for it (Atlas Park, Mercy
+     * Island, Nova Praetoria or a tutorial), marked zoning/stock_travel.
+     */
+    static boolean characterCreationVerified(Object value, Object savedEvent, Object connectedEvent, String session,
+            long clientPid, boolean stockTravel) {
+        if (!stockTravel) return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid);
+        Map<?, ?> creation = object(object(value).get("character_creation"));
+        return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_creation", true)
+                && stockTravelMap(creation) && stockTravelMap(object(connectedEvent))
+                && number(creation.get("character_id"), 1);
+    }
+
     private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key) {
         return characterPersistenceVerified(value,savedEvent,connectedEvent,session,clientPid,key,false);
     }
@@ -323,7 +339,15 @@ final class ClientAcceptance {
                                                List<?> samples, String session, long clientPid,
                                                long started, long ended, long savedObserved,
                                                long windowEnded, long frameWatermark) {
-        return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid)
+        return characterCreationAccepted(value, savedEvent, connectedEvent, samples, session, clientPid,
+                started, ended, savedObserved, windowEnded, frameWatermark, false);
+    }
+
+    static boolean characterCreationAccepted(Object value, Object savedEvent, Object connectedEvent,
+                                               List<?> samples, String session, long clientPid,
+                                               long started, long ended, long savedObserved,
+                                               long windowEnded, long frameWatermark, boolean stockTravel) {
+        return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid, stockTravel)
                 && surfaceAccepted(samples, session, started, ended, savedObserved, windowEnded, frameWatermark);
     }
 
@@ -576,6 +600,8 @@ final class ClientAcceptance {
         return value instanceof Map ? (Map<?, ?>) value : Collections.emptyMap();
     }
     private static boolean yes(Object value) { return Boolean.TRUE.equals(value); }
+    /** Java null, or org.json's JSONObject.NULL (which equals null). */
+    private static boolean jsonNull(Object value) { return value == null || value.equals(null); }
     private static boolean integer(Object value) {
         return value instanceof Number && Double.isFinite(((Number) value).doubleValue())
                 && ((Number) value).doubleValue() == ((Number) value).longValue();

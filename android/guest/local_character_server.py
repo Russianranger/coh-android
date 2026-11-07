@@ -2053,16 +2053,19 @@ class LocalCharacterServer(login.LocalLoginServer):
         if self.manual_atlas_startup is not None:
             self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
         checkpoint('native_dependencies_and_manual_atlas')
-        if initial_map == 5 or (initial_map == 1 and self.requires_saved_character
+        if initial_map is None or initial_map == 5 or (initial_map == 1 and self.requires_saved_character
                 and getattr(self, 'overlap_client_initialization', False) is True):
             # The saved location is authoritative before native startup. Both
             # supported saved worlds use the authenticated minimal DbServer
             # layout and their own map runtime. Atlas reuses the same cache
             # generation as an earlier real return trip; the live DbServer's
             # schema/configuration is never moved under the running process.
+            # None: no zone before Enter Game (the game's own travel); Atlas
+            # Park is prepared only if the game asks for it.
             self.atlas_preparation_deferred = True
             self.creation_report['atlas_preparation_deferred'] = {
-                'reason': ('saved_character_starts_in_kings_row' if initial_map == 5 else
+                'reason': ('character_zone_started_at_enter_game' if initial_map is None else
+                           'saved_character_starts_in_kings_row' if initial_map == 5 else
                            'saved_atlas_owned_map_client_initialization'), 'map_id': initial_map,
                 'dbserver_layout': 'authenticated_minimal_private_runtime',
                 'atlas_native_started': False, 'atlas_data_mirror_started': False,
