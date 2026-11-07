@@ -118,7 +118,8 @@ class MapServerPhaseTests(unittest.TestCase):
                     'ARMPORT_FOLDER_CACHE_V1 phase=scan files=160000 folders=9000 seconds=90.000\n'
                     'ARMPORT_FOLDER_CACHE_V1 phase=skip folders=2 list=scripts.loc,server\n'
                     'ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/ambient.ms\nmissing x.ogg\n'
-                    + 'ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/other.ms\nmissing y.ogg\n' * 2)
+                    + 'ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/other.ms\nmissing y.ogg\n' * 2
+                    + 'ARMPORT_LOGOUT_KEY_V1 key=28 pressed_ms_before_quit=4 logout_kept=1\n')
             summary = interactive_host.guest_timing_summary(evidence)
             self.assertEqual(summary['client_folder_cache'],
                 ['phase=scan files=160000 folders=9000 seconds=90.000', 'phase=skip folders=2 list=scripts.loc,server'])
@@ -127,6 +128,11 @@ class MapServerPhaseTests(unittest.TestCase):
                 'first': ['ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/ambient.ms',
                           'ARMPORT_SOUND_SCRIPT_ERRORS_V1 File: sound/other.ms']})
             self.assertIn('client_sound_scripts', json.loads(interactive_host.timing_notices(
+                {'creation': summary}, False, False)[-1].split('::', 2)[2]))
+            # Patch 0127: the Enter that sent /quittologin no longer cancels it.
+            self.assertEqual(summary['client_logout_keys'], {'kept': 1, 'aborted': 0, 'aborted_last': [],
+                'kept_last': ['ARMPORT_LOGOUT_KEY_V1 key=28 pressed_ms_before_quit=4 logout_kept=1']})
+            self.assertIn('client_logout_keys', json.loads(interactive_host.timing_notices(
                 {'creation': summary}, False, False)[-1].split('::', 2)[2]))
         self.assertEqual(result['proot_mode'], {'format': 1})
         caches = result['character_creation']['prepared_server_caches']

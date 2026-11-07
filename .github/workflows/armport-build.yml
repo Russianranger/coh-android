@@ -463,6 +463,20 @@ jobs:
           fi
           echo "::notice title=ArmPort interpolation clock::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/net-clock-original.txt")"
 
+      - name: A logout survives the Enter that sent /quittologin (patch 0127)
+        run: |
+          # The stock client cancelled its own logout on the Enter's late
+          # DirectInput edge at a few frames per second (CI saves lost).
+          out=$(armport/scripts/step.sh "ArmPort logout keys" python3 armport/tests/logout_abort_keys.py --source "$RUNNER_TEMP/armport/src")
+          out=${out##*$'\n'}
+          if python3 armport/tests/logout_abort_keys.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/logout-keys-original.txt" 2>&1; then
+            echo "::error title=ArmPort logout keys::the original abort check unexpectedly kept the logout"; exit 1
+          fi
+          if ! grep -q 'FAIL: the Enter that sent /quittologin cancelled the logout' "$RUNNER_TEMP/logout-keys-original.txt"; then
+            echo "::error title=ArmPort logout keys::the original did not fail as expected: $(tail -1 "$RUNNER_TEMP/logout-keys-original.txt")"; exit 1
+          fi
+          echo "::notice title=ArmPort logout keys::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/logout-keys-original.txt")"
+
       - name: MapServer tick and file timing uses actual prepared code (patch 0119)
         run: |
           python3 armport/tests/server_metrics_native.py --source "$RUNNER_TEMP/armport/src"

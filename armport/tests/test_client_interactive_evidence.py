@@ -146,6 +146,7 @@ class InteractiveEvidence(unittest.TestCase):
             fps = ['ARMPORT_FRAME_RATE_V1 fps=%d.00 frames=1 seconds=5.00 maxfps=30 menu=0' % n for n in range(9)]
             with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
                 archive.writestr('client-evidence/armport_stdio.txt', '\n'.join(fps + ['ArmPort dialog: Welcome! ' + 'w' * 200,
+                                                                  'aborted by key: 28',
                                                                   'ArmPort login: stage 3', 'x' * 900]))
                 archive.writestr('client-evidence/client-console.log',
                                  '\n'.join(['ALSA lib pcm.c:1 underrun'] * 7 + ['last line']))
@@ -156,6 +157,9 @@ class InteractiveEvidence(unittest.TestCase):
             self.assertTrue(detail['client_fps_tail'][-1].startswith('ARMPORT_FRAME_RATE_V1 fps=8.00'))
             self.assertEqual(len(detail['client_stdio_tail'][-1]), 160)
             self.assertEqual((detail['client_dialogs']['count'], len(detail['client_dialogs']['last'][0])), (1, 120))
+            # The stock client cancelling its own logout (before patch 0127) is visible.
+            self.assertEqual(detail['client_logout_keys'], {'kept': 0, 'aborted': 1, 'kept_last': [],
+                                                            'aborted_last': ['aborted by key: 28']})
             self.assertEqual(detail['client_console_audio']['count'], 7)
             self.assertEqual(len(detail['client_console_audio']['first']), 4)
             self.assertEqual(detail['client_console_tail'][-1], 'last line')

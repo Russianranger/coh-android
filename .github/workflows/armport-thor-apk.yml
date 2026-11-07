@@ -233,6 +233,11 @@ jobs:
           a hero, villain or Praetorian: after the character creator the game starts that character's starting
           zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). While the zone starts the game screen can
           stay still for a few minutes; the app shows which zone is starting.
+          Fix: Save could be cancelled by its own Enter key. The game cancels a logout on any key press during its
+          countdown ("Press any key to abort"), and under Wine the Enter that sent /quittologin reached it one
+          frame late; at a low frame rate (a zone that has just started) the character stayed in the zone and was
+          not saved. The ARM64 client now ignores keys pressed before the logout was asked for; a later key still
+          cancels it.
           Unchanged from 0.13.58: the game waits up to 15 minutes at Enter Game; storage cleanup and the storage
           report's Android exit reasons; the game's own zone travel (option on; untick for 0.13.54's station travel),
           every zone the game allows, at most two zone servers, NPCs outside Atlas Park and King's Row stand still,

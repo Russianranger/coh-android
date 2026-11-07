@@ -304,6 +304,7 @@ def failure_detail(evidence, work, observer):
                     result['client_stdio_tail'] = tail(unique, 6, 160)
                     dialogs = [l for l in stdio if l.startswith('ArmPort dialog:')]
                     result['client_dialogs'] = {'count': len(dialogs), 'last': [l[:120] for l in dialogs[-3:]]}
+                    result['client_logout_keys'] = client_logout_keys('\n'.join(stdio))
                 console = text('client-evidence/client-console.log')
                 if console is not None:
                     audio = [line for line in console if FAILURE_AUDIO_LINE.search(line)]
@@ -415,6 +416,18 @@ def client_sound_scripts(text, limit=2):
     """Patch 0124: sound script errors the client logged instead of a modal dialog (bounded)."""
     lines = [line[:160] for line in text.splitlines() if line.startswith(SOUND_SCRIPT_MARKER)]
     return {'reports': len(lines), 'first': lines[:limit], 'modal_dialog_text': 'Sound Script Errors' in text}
+
+
+LOGOUT_KEY_MARKER = 'ARMPORT_LOGOUT_KEY_V1'
+
+
+def client_logout_keys(text, limit=2):
+    """Patch 0127: keys pressed before the client's own quit request that it no
+    longer lets cancel the logout, and the stock cancellations, bounded."""
+    lines = text.splitlines()
+    kept = [line[:120] for line in lines if line.startswith(LOGOUT_KEY_MARKER)]
+    aborted = [line[:40] for line in lines if line.startswith('aborted by key: ')]
+    return {'kept': len(kept), 'aborted': len(aborted), 'kept_last': kept[-limit:], 'aborted_last': aborted[-limit:]}
 
 
 TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spawn_to_map_ready_seconds',
@@ -596,8 +609,9 @@ def guest_timing_summary(evidence):
                             break
                 member = 'client-evidence/armport_stdio.txt'
                 if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
-                    result['client_sound_scripts'] = client_sound_scripts(
-                        archive.read(member).decode('utf-8', errors='replace'))
+                    stdio = archive.read(member).decode('utf-8', errors='replace')
+                    result['client_sound_scripts'] = client_sound_scripts(stdio)
+                    result['client_logout_keys'] = client_logout_keys(stdio)
                 member = 'client-evidence/character-atlas-console.txt'
                 if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
                     console = archive.read(member).decode('utf-8', errors='replace')
@@ -615,8 +629,8 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
     lines = []
     for name, original in timings.items():
         summary, writes = {}, {}
-        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts')
-                  if original.get(key)}
+        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts',
+                                                 'client_logout_keys') if original.get(key)}
         servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel')
                    if original.get(key)}
         for key, value in original.items():

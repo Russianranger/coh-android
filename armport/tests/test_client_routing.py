@@ -445,8 +445,8 @@ class ClientFolderIndexTests(unittest.TestCase):
         the client gave up after 90 s. The test client and -notimeout are unchanged."""
         root = Path(armport.__file__).resolve().parents[1]
         series = (root / 'patches/series').read_text().split()
-        self.assertEqual(series[-1], '0126-armport-enter-game-waits-for-zone-start.patch')
-        text = (root / 'patches' / series[-1]).read_text()
+        self.assertIn('0126-armport-enter-game-waits-for-zone-start.patch', series)
+        text = (root / 'patches' / '0126-armport-enter-game-waits-for-zone-start.patch').read_text()
         self.assertEqual(text.count('+++ b/'), 1)
         self.assertIn('+++ b/Game/src/gameComm/initClient.c', text)
         removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
@@ -463,6 +463,51 @@ class ClientFolderIndexTests(unittest.TestCase):
         self.assertIn('if (is_gameclient)\n        return;', dbserver)
         self.assertIn('ret = setNewMap(ent_con,ent_con->map_id,link,1,errmsg,client->char_id != 0);',
                       (upstream / 'DBServer/src/clientcomm.c').read_text(encoding='latin-1'))
+
+    def test_logout_is_kept_through_the_enter_that_sent_it(self):
+        """Patch 0127: the chat acts on /quittologin's Enter (WM_KEYDOWN) in one frame
+        and Wine's DirectInput edge for it comes the next; at 2 FPS the server's
+        logout timer is back by then and "Press any key to abort" cancelled the
+        logout (r58t 42322788540 attempt 1, r59zc 42397533053: client left in the
+        zone, no save). Keys pressed after the request still cancel. The native
+        behaviour check is armport/tests/logout_abort_keys.py (build workflow)."""
+        root = Path(armport.__file__).resolve().parents[1]
+        name = '0127-armport-logout-kept-through-the-key-that-sent-it.patch'
+        series = (root / 'patches/series').read_text().split()
+        self.assertEqual(series[-1], name)
+        text = (root / 'patches' / name).read_text()
+        self.assertEqual(sorted(line[6:] for line in text.splitlines() if line.startswith('+++ b/')), [
+            'Game/src/clientcomm/clientcomm.c', 'Game/src/game.c', 'Game/src/win/input.c', 'Game/src/win/input.h'])
+        removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        added = [line for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        # Only the abort condition changes; the stock message, cancel packet and dialog stay.
+        self.assertEqual(removed, ['-                if (inpEdge(i))'])
+        self.assertIn('+                if (inpEdge(i) && !armportKeyPressedBeforeQuit(i))', added)
+        self.assertIn('+    armportNoteQuitRequest(abort_quit);', added)
+        self.assertIn('+        g_armport_quit_request_ms = timeGetTime();', added)
+        self.assertEqual(sum(line == '+            inp_edge_times[keyIndex] = timeStamp;' for line in added), 2)
+        self.assertIn('+    if (!g_armport_quit_request_ms || before < 0)', added)
+        self.assertTrue(any('ARMPORT_LOGOUT_KEY_V1' in line for line in added))
+        upstream = root.parent / 'upstream/ouroboros'
+        game = (upstream / 'Game/src/game.c').read_text(encoding='latin-1')
+        # The stock loop: any key edge during the countdown cancels the logout.
+        self.assertEqual(game.count('                if (inpEdge(i))\n                {\n'
+                                    '                    printf("aborted by key: %d\\n",i);\n'
+                                    '                    commSendQuitGame(1);'), 1)
+        self.assertLess(game.index('inpUpdate();'), game.index('windowProcessMessages();'))
+        self.assertLess(game.index('windowProcessMessages();'), game.index('engine_update_net();'))
+        source = (upstream / 'Game/src/win/input.c').read_text(encoding='latin-1')
+        self.assertIn('inpUpdateKey(keyboardData[i].dwOfs, keyboardData[i].dwData, keyboardData[i].dwTimeStamp);',
+                      source)
+        self.assertEqual(source.count('            inp_edges[keyIndex] = 1;\n'), 2)
+        comm = (upstream / 'Game/src/clientcomm/clientcomm.c').read_text(encoding='latin-1')
+        self.assertIn('pktSendBitsPack(pak,1,abort_quit);    // 0 means do it, 1 means abort from disconnect', comm)
+        self.assertIn('timeGetTime()', comm)
+        workflow = (root.parent / '.github/workflows/armport-build.yml').read_text()
+        self.assertIn('python3 armport/tests/logout_abort_keys.py --source "$RUNNER_TEMP/armport/src" '
+                      '--original upstream/ouroboros', workflow)
+        self.assertIn("FAIL: the Enter that sent /quittologin cancelled the logout",
+                      (root / 'tests/logout_abort_keys.py').read_text())
 
 
 if __name__ == '__main__':

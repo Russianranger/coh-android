@@ -477,6 +477,33 @@ connection there.
   request after the creator and again at the reopen's Enter Game). Other
   starting zones and the saved-zone admission are unit-tested only
   (`test_dynamic_initial_map.py`) until the Thor test.
+- **First zone-trip runtime at 18bdea026** (42397533053, 0.13.58 build's client):
+  creation failed "Character logout delivery does not match this ready client
+  or its save window". The dynamic start worked (request map 1 cookie 2, Atlas
+  ready 609.9 s after the request including the deferred Atlas preparation;
+  ResumeCharacter 18:06:22); `/quittologin` sent 18:07:53; at the failure
+  (137 s later) the client was still in the zone at 2.1 FPS (helper dialog
+  still drawn), no logout line. Same picture as r58t 42322788540 attempt 1 and
+  shared-heap 41931773800 (all at ~2 FPS in the world).
+- **Cause (source reading) and patch 0127** (ARM64 client: `game.c`, `input.c`,
+  `input.h`, `clientcomm.c`): `checkLogoutProgress` cancels a logout on any key
+  edge once the server's logout timer is back ("Press any key to abort",
+  `commSendQuitGame(1)`). The frame order is inpUpdate (DirectInput buffer),
+  windowProcessMessages, net, UI, checkLogoutProgress; Wine's dinput keyboard
+  hook (dinput thread, `GetCurrentTime()` stamp) queues a press only while the
+  window messages are pumped, so the Enter that sends `/quittologin` reaches
+  the chat (WM_KEYDOWN) in frame N and becomes a DirectInput edge in frame N+1.
+  At 2 FPS the server's logout update is back by frame N+1 and the stock client
+  cancels its own logout; at 40-60 FPS (Thor) it rarely is. 0127 records the
+  quit request time (`armportNoteQuitRequest`, timeGetTime) and each edge's
+  DirectInput time (`inpEdgeTime`); a key pressed at or before the request
+  does not cancel (`ARMPORT_LOGOUT_KEY_V1 ... logout_kept=1`), later keys still
+  do. Native check `armport/tests/logout_abort_keys.py` (build workflow,
+  extracted code, client frame order): patched keeps the logout, original
+  fails with "aborted by key: 28" at 2 FPS; a later Escape cancels in both; 10
+  FPS with a two-frame reply and Windows order pass in both. CI notices:
+  `client_logout_keys` (kept / aborted) in the startup and failure details.
+  x86 client (patches/ process) not changed yet.
 - Version 0.13.59 (74); test sheet `THOR-TEST-0.13.59.md`.
 
 ## 0.13.58: Atlas Park first, the saved zone at Enter Game (Claude, 2026-11-06)

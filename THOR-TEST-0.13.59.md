@@ -18,6 +18,13 @@ Praetorians. 0.13.59:
 - While the zone starts, the game screen stays still for a few minutes (the
   game waits up to 15 minutes). The app's status line says which zone is
   starting, then when it is ready.
+- **Save is no longer cancelled by its own Enter key.** The game cancels a
+  logout on any key press during its 30-second countdown ("Press any key to
+  abort"); under Wine the Enter that sent `/quittologin` reached that check one
+  frame late, so at a low frame rate (often right after a zone has started)
+  THORHERO stayed in the zone and was not saved. The ARM64 client now ignores
+  keys pressed before the logout was asked for. Leave the movement controls
+  and keys alone during the countdown: a new key press still cancels it.
 
 Everything else is 0.13.58: [THOR-TEST-0.13.58.md](THOR-TEST-0.13.58.md)
 (storage cleanup, Android exit reasons in the storage report). Still the same
@@ -74,4 +81,5 @@ The exports of steps 4-6 and the storage report, the import/setup times, which
 side THORHERO is, the Enter Game to zone times, and anything odd. Fields I will
 read: `character_zoning.initial_zone` (`attempts`, `refused_requests`,
 `request_to_ready_ms`), `stock_travel.starts` (`initial_login`), the zoning
-events, and the storage report's `android_process_exit_history`.
+events, the client's `ARMPORT_LOGOUT_KEY_V1` lines (the kept logouts), and the
+storage report's `android_process_exit_history`.
