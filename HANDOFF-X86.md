@@ -504,6 +504,20 @@ connection there.
   FPS with a two-frame reply and Windows order pass in both. CI notices:
   `client_logout_keys` (kept / aborted) in the startup and failure details.
   x86 client (patches/ process) not changed yet.
+- **Build 42402626384 at 154d8d814** (client with 0127; native check notice
+  "ArmPort logout keys": patched PASS, original FAIL "aborted by key: 28").
+  Zone-trip runtime 42410700974 on it: **creation passed** (DbServer request
+  map 1 cookie 2 after the creator, Atlas ready 588.3 s after the stock start
+  including the deferred preparation, save verified; `client_logout_keys`
+  kept 0 / aborted 0, so the race did not occur that time). The reopen stopped
+  at the client launch: "Early retry requires the still-live current owned
+  native services" (`client_attempt_retry.service_identity` bound the Atlas
+  MapServer, which the dynamic reopen no longer has before Enter Game).
+  825bae059: the identity leaves the MapServer out only while the
+  character's zone is still to start (`initial_zone_pending`) and none runs;
+  the retry skips the Atlas tick check then (`zone_server_deferred_to_enter_game`),
+  a zone started since forbids it; `client_attempt_retry.py` added to
+  `CHANGED_RUNTIME` (`test_thor_apk_runtime_review` caught the omission).
 - Version 0.13.59 (74); test sheet `THOR-TEST-0.13.59.md`.
 
 ## 0.13.58: Atlas Park first, the saved zone at Enter Game (Claude, 2026-11-06)
