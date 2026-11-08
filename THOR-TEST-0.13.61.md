@@ -24,7 +24,16 @@ per install, named THORHERO; at most two zone servers; NPCs outside Atlas Park
 and King's Row stand still; missions are not served. Evidence:
 [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.61".
 
-CI: CI_SUMMARY
+CI at bd27744ed: build 42499066512 (it now also runs the removal on a real
+PostgreSQL database), zone-trip runtime 42506353321, default runtime
+42510220143 and trusted runtime 42513450368 passed; APK 42516615576 published it
+(sha256 `1718a7844d7c1eb8cd16e28afda774938c0b06fbbca186c3142329b7ce4bc88b`).
+The first build, at a4799e843, stopped for an unrelated reason: lua.org timed
+out the second download of the Lua library. The build now reuses the first
+download. CI's sessions start from an empty database, so your Resume is the
+first time the removal runs on a phone. In the zone-trip run Atlas Park was
+again ready 136 s after Enter Game asked for it, and the trip to a second
+Atlas Park took 172 s.
 
 ## Steps (update in place: no uninstall, no new import)
 

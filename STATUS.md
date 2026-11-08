@@ -5,11 +5,9 @@ The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallb
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
 - Merge order: sampler-review-fix → startup-60s → modern-runtime-qualification → m5-thor (b7806a6bd) → performance-path docs.
-- P2/P3 sampler and Windows producer fixes included through 8dc2a66d72477b3c62227e572538b13f0e4f912b.
-  See armport/notes/M5-SAMPLER-REVIEW.md and HANDOFF-X86.md.
-- Last device result is .44: King's Row cold prep 656.024 s, request→arrival
-  711.056 s, loaded render mean 25.63 FPS (11 complete windows).
-  See armport/notes/M5-THOR-20261102-RESULTS.md and its export evidence.
+- P2/P3 sampler and Windows producer fixes included through 8dc2a66d7 (armport/notes/M5-SAMPLER-REVIEW.md, HANDOFF-X86.md).
+- Last x86-track device result (.44): King's Row cold prep 656.024 s, request→arrival 711.056 s, loaded render mean
+  25.63 FPS (11 complete windows); see armport/notes/M5-THOR-20261102-RESULTS.md and its export evidence.
 - Both zone servers are x86. Swap pressure does not prove gameplay causation; no matched pre-port x86 baseline.
 - Save committed, but Wine worker EACCES prevented proved owned cleanup;
   Atlas cache return failed and the data cache remained stranded.
@@ -38,3 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   before Enter Game, only the character's own (any side); Save survives its Enter (0127); CI reopen zone 136 s. HANDOFF "0.13.59".
 - 0.13.60 published (APK 42456241853; build 42442419621, runtimes 42448320432/42451345001/42453750449 at 81b6cdfc0): Thor 0.13.59
   Mercy Island failed (FX step refused the shared `-zones` tree); admitted, failed first-zone starts reported. HANDOFF "0.13.60".
+- 0.13.61 published (APK 42516615576; build 42499066512, runtimes 42506353321/42510220143/42513450368 at bd27744ed): Thor 0.13.60
+  Resume/Reopen hit the unentered THORHERO; Resume removes it. Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.61".

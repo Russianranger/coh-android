@@ -495,7 +495,29 @@ character creation and reopen failed".
   CMake 3.28 replica with upstream CPM 0.40.8, the same declaration and a
   synthetic archive configured, patched, built and ran offline with the
   override, and failed without it. No source, game or app change.
-- Version 0.13.61 (76); test sheet `THOR-TEST-0.13.61.md`.
+- **Chain at bd27744ed** (one chain on x86/perf-round1, each on its first
+  attempt; the first build at a4799e843 failed as above). Build 42499066512:
+  the libraries job started the runner's PostgreSQL 16.15 (`pg_fixture.sh`)
+  and ran `test_character_profile_eligibility.py` with
+  `COH_REQUIRE_POSTGRESQL=1` (34 OK, none skipped). `server-metrics-native`
+  (job 128805749349) found no cached archive, let CMake download Lua for
+  `retained_progress`, configured `thor_certified_startup` with
+  `-DCPM_lua51_SOURCE=.../lua-sources/thor_certified_startup` (its
+  `lua51.lib` built from the patched `CMakeLists.txt`) and saved the cache
+  `armport-lua-5.1.5-2640fc56…`. Zone-trip runtime 42506353321 on it
+  (2260 s): creation, map 1 cookie 2 ready 608.9 s after the stock start (108
+  bins written, spawn to ready 440.4 s); reopen, no zone server before Enter
+  Game (`local_atlas_startup` 0.0 s), map 1 cookie 2 ready 136.1 s after the
+  stock start, `/mapmove 101` (cookie 3) 172.0 s, 2 arrivals, same character
+  ID and profile; `client_logout_keys` kept 0 / aborted 0. Default runtime
+  42510220143 (1831 s); trusted runtime 42513450368 on the build (trusted bins
+  applied, 1716 s); APK 42516615576 published `coh-atlas-gameplay-v0.13.61`
+  (92319145 bytes, sha256
+  1718a7844d7c1eb8cd16e28afda774938c0b06fbbca186c3142329b7ce4bc88b,
+  signer 92955353…, the same as 0.13.50-0.13.60); its
+  `local_character_server.py` and `character_zoning.py` match the commit.
+- Version 0.13.61 (76); test sheet `THOR-TEST-0.13.61.md` (in place: Resume
+  removes the unfinished THORHERO, then a villain in Mercy Island).
 
 ## 0.13.60: zones in the shared tree can start (Claude, 2026-11-07)
 
