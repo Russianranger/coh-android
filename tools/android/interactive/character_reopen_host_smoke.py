@@ -23,7 +23,7 @@ host, require = character.host, character.require
 INTERACTION_SECONDS = character.INTERACTION_SECONDS
 OVERALL_SECONDS = character.OVERALL_SECONDS
 # Pinned Hybrid UI's first selected name row at 800x600. The actual click still
-# comes only from exact recognized THORHERO bounds, never from a fixed point.
+# comes only from exact recognized character-name bounds, never from a fixed point.
 CHARACTER_REGION = (100, 60, 330, 83)
 ATLAS_HELP_REGION = (345, 270, 680, 490)
 WORLD_CACHE_POLICY = 'once_per_world_manifest_private_atlas_geobin_and_supplemented_object_library_only'
@@ -53,7 +53,7 @@ def stock_travel_actions():
 def reopen_actions(stock_travel=False):
     actions = [('login', None, 'wait_existing_character_list'),
         ('move', (600, 100), 'clear_cursor_before_existing_character'),
-        ('ocr_move', ('THORHERO', CHARACTER_REGION), 'preposition_existing_character'),
+        ('ocr_move', (character.CHARACTER, CHARACTER_REGION), 'preposition_existing_character'),
         ('ocr_click', None, 'select_existing_character')]
     actions += character.click_steps('play_existing_character', 757, 579)
     actions += [('connected', None, 'wait_reopened_atlas_connection'),
@@ -197,12 +197,12 @@ class ReopenEvents(character.CharacterEvents):
                 require(event.get('character_id') == 1 and type(event.get('baseline_character_id')) is int
                         and event['baseline_character_id'] == 1
                         and event.get('reopen_verified') is True and event.get('existing_character_verified') is True,
-                        'Connected character differs from the persistent THORHERO baseline')
+                        'Connected character differs from the persistent character baseline')
             elif event.get('type') == 'character_relocated':
                 require(self.active and self.connected_generation == 1 and self.saved_generation == 0
                         and self.relocated_generation == 0 and type(event.get('client_pid')) is int
                         and event['client_pid'] == self.client_pid and event.get('character_id') == self.character_id == 1
-                        and event.get('name') == 'THORHERO' and event.get('account') == 'COHLOCAL'
+                        and event.get('name') == character.CHARACTER and event.get('account') == 'COHLOCAL'
                         and type(event.get('map_id')) is int and event['map_id'] == 1
                         and all(event.get(name) is True for name in ('ordinary_stuck_observed',
                             'on_atlas_safe_position', 'stable_ground_verified')),
@@ -351,7 +351,7 @@ def validate_observer(observer, report, interaction=None):
     expected = names[:retry_start]+names[retry_start:account_check]*len(checks)+names[account_check:]
     require(script.get('script_completed') is True and [step['action'] for step in script['steps']] == expected
             and script.get('finish_request', {}).get('client_pid') == observer['client_pid']
-            and len(script.get('ocr_buttons', [])) == 1 and script['ocr_buttons'][0].get('label') == 'THORHERO',
+            and len(script.get('ocr_buttons', [])) == 1 and script['ocr_buttons'][0].get('label') == character.CHARACTER,
             'Existing-character UI script did not finish')
     modal = script.get('atlas_help_checks', [])
     require(len(modal) == 4 and modal[-1].get('found') is False

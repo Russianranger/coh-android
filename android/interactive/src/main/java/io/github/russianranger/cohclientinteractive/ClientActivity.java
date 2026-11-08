@@ -126,7 +126,7 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Default controller: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter. Triggers are unbound. The COH power trays preset adds hold LT for 1–0 and Select for this menu; Back or the gear also opens it.",12,false));
         controls.addView(button("Move options button",this::controlsPositionDialog));
         controls.addView(button("Reset options button position",()->{controlsX=1f;controlsY=0f;positionControls();saveControlsPosition();}));
-        controls.addView(text("Reopen THORHERO in the zone it was saved in; with the game's own zone travel only that zone starts, when you press Enter Game. Keep the accepted graphics settings, costume and powers.",13,false));
+        controls.addView(text("Reopen your character in the zone it was saved in; with the game's own zone travel only that zone starts, when you press Enter Game. Keep the accepted graphics settings, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import asset pack part",this::chooseImport);controls.addView(importAssets);
         assetPackStatus=text("Checking required asset pack…",12,false);controls.addView(assetPackStatus);
@@ -219,8 +219,8 @@ public final class ClientActivity extends Activity {
         });
         controls.addView(gpuProfile);
         controls.addView(text("GPU test checks the private driver before launch. If unavailable, it starts with Software and records the reason. Change this after finishing a run.",12,false));
-        run=button("2 · Reopen saved THORHERO",()->request(ClientService.RUN));controls.addView(run);
-        createFresh=button("Create fresh THORHERO",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
+        run=button("2 · Reopen saved character",()->request(ClientService.RUN));controls.addView(run);
+        createFresh=button("Create fresh character",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
         resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
         profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
         returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
@@ -233,7 +233,7 @@ public final class ClientActivity extends Activity {
         captureCompletedTask=button("Capture completed task",()->{releaseControls();if(service!=null)service.requestTaskCapture(true);});controls.addView(captureCompletedTask);
         controls.addView(text("Monorail travel",16,true));
         controls.addView(text("Walk to the monorail station in Atlas Park, click its entrance and choose Kings Row. The destination prepares automatically before boarding. Use the Kings Row station to return to Atlas Park. Stay in this app until arrival; loading time includes preparation and fresh destination views.",12,false));
-        zoningStatus=text("Reopen THORHERO to use the monorail.",12,false);controls.addView(zoningStatus);
+        zoningStatus=text("Reopen your character to use the monorail.",12,false);controls.addView(zoningStatus);
         travelZone=button("Return from old Atlas instance",this::travelToZone);travelZone.setVisibility(View.GONE);controls.addView(travelZone);
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
@@ -258,7 +258,7 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Import every required asset-pack part, then apply Set up / update runtime. On a fresh install, create THORHERO and complete its ordinary save before Reopen. Use COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Reopen starts in THORHERO's saved destination. Use the actual monorail when ready to travel; preparation happens on demand. Tap Start test when ready and Stop test when finished; neither starts a countdown. When ready to save, release controls, Save character / log out, wait for Saved character verified, then Finish and Reports / export. Recover interrupted reports after an interruption. Export early if loading stalls; Reopen resumes the last verified save.",12,false));
+        controls.addView(text("Import every required asset-pack part, then apply Set up / update runtime. On a fresh install, create your character (any name the game accepts; one per install) and complete its ordinary save before Reopen. Use COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Reopen starts in the character's saved destination. Use the actual monorail when ready to travel; preparation happens on demand. Tap Start test when ready and Stop test when finished; neither starts a countdown. When ready to save, release controls, Save character / log out, wait for Saved character verified, then Finish and Reports / export. Recover interrupted reports after an interruption. Export early if loading stalls; Reopen resumes the last verified save.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         display.setInputListener(new ClientSurface.InputListener(){
             @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
@@ -295,7 +295,13 @@ public final class ClientActivity extends Activity {
             return true;
         });return b;
     }
-    private boolean canWalk(){return inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved&&!movementSuppressed&&!textDialogVisible&&!commandInputBusy()&&hasWindowFocus()&&movementWindowOpen();}
+    // 0.13.62 (owner, 2026-11-08: "make it so controls aren't locked"): walking (the
+    // on-screen pad, the controller's movement keys and jump) follows the ordinary game
+    // input gate instead of waiting for the guest's proof that the character connected
+    // (canSaveLogout). It still stops while Save / log out runs (moving cancels the game's
+    // logout timer), after the save, during a zone transfer (ClientRuntime refuses gameplay
+    // input) and while a typed command or the text dialog is pending.
+    private boolean canWalk(){return inputActive&&service!=null&&state!=null&&!state.characterSaved&&!movementSuppressed&&!textDialogVisible&&!commandInputBusy()&&hasWindowFocus()&&movementWindowOpen();}
     private boolean movementWindowOpen(){return state!=null&&(state.movementDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.movementDeadlineUptimeMillis);}
     private boolean commandInputBusy(){return service!=null&&service.isPerformanceCommandPending();}
     private boolean gameInputOpen(){return inputActive&&movementWindowOpen()&&!movementSuppressed&&!commandInputBusy();}
@@ -316,7 +322,7 @@ public final class ClientActivity extends Activity {
     }
     private void refreshZoningControls(){
         boolean available=inputActive&&service!=null&&state!=null&&!textDialogVisible&&hasWindowFocus();
-        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen THORHERO to use the monorail.":service.zoningStatus());
+        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen your character to use the monorail.":service.zoningStatus());
         if(travelZone!=null){
             boolean legacy=service!=null&&service.zoningCurrentMap()==101;
             travelZone.setVisibility(legacy?View.VISIBLE:View.GONE);
@@ -397,8 +403,8 @@ public final class ClientActivity extends Activity {
     }
     private void confirmFreshProfile(){
         if(!canCreateFreshProfile(state))return;
-        new AlertDialog.Builder(this).setTitle("Create fresh THORHERO?")
-                .setMessage("This installation has no saved profile. Runtime setup and asset import do not restore a character database deleted by uninstalling. Start native character creation using your current runtime and imported assets, log in with COHLOCAL / offline and create THORHERO as a hero, villain or Praetorian. With the game's own zone travel the game starts THORHERO's starting zone after Enter Game (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). Save character / log out, then Finish and export. Reopen saved THORHERO resumes in the zone it was saved in.")
+        new AlertDialog.Builder(this).setTitle("Create fresh character?")
+                .setMessage("This installation has no saved profile. Runtime setup and asset import do not restore a character database deleted by uninstalling. Start native character creation using your current runtime and imported assets, log in with COHLOCAL / offline and create your character, with any name the game accepts, as a hero, villain or Praetorian. With the game's own zone travel the game starts its starting zone after Enter Game (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). Save character / log out, then Finish and export. Reopen saved character resumes in the zone it was saved in.")
                 .setNegativeButton("Cancel",null).setPositiveButton("Start character creation",(dialog,which)->{
                     // The profile or operation may change while this confirmation is open.
                     if(canCreateFreshProfile(state))request(ClientService.CREATE);
@@ -407,7 +413,7 @@ public final class ClientActivity extends Activity {
     private void confirmResumeCreation(){
         if(!canResumeFirstCreation(state))return;
         new AlertDialog.Builder(this).setTitle("Resume first character creation?")
-                .setMessage("Continue the first creation attempt using the existing initialized profile and imported assets. The database is preserved. Startup checks its real character rows. A THORHERO that was created but never entered the game (its first zone did not start) is removed first, and the report keeps a copy of its rows; any other existing character makes this request stop before the game opens. If THORHERO was already saved, use Reopen saved THORHERO. Log in with COHLOCAL / offline, create THORHERO, then Save character / log out and Finish and export.")
+                .setMessage("Continue the first creation attempt using the existing initialized profile and imported assets. The database is preserved. Startup checks its real character rows. A character that was created but never entered the game (its first zone did not start) is removed first, and the report keeps a copy of its rows; any other existing character makes this request stop before the game opens. If your character was already saved, use Reopen saved character. Log in with COHLOCAL / offline, create your character (any name the game accepts), then Save character / log out and Finish and export.")
                 .setNegativeButton("Cancel",null).setPositiveButton("Resume first creation",(dialog,which)->{
                     if(canResumeFirstCreation(state))request(ClientService.RESUME_FIRST_CREATION);
                 }).show();
@@ -477,7 +483,7 @@ public final class ClientActivity extends Activity {
         CheckBox replace=new CheckBox(this);replace.setText("Replace focused game field (Ctrl+A)");replace.setChecked(true);
         LinearLayout entry=new LinearLayout(this);entry.setOrientation(LinearLayout.VERTICAL);entry.addView(field);entry.addView(replace);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Send text to game")
-                .setMessage("First tap the game field. Account: COHLOCAL. Password: offline. Character name: THORHERO.")
+                .setMessage("First tap the game field. Account: COHLOCAL. Password: offline. Character name: any name the game accepts (one character per install).")
                 .setView(entry).setNegativeButton("Cancel",null).setPositiveButton("Send",(d,w)->{
                     String value=field.getText().toString();
                     if(!ClientInput.validText(value)){Toast.makeText(this,"Use 1–32 printable English characters.",Toast.LENGTH_SHORT).show();return;}

@@ -384,7 +384,7 @@ def entity_records(logs, map_id, *, minimum_ms=0, now_ms=None):
 
 
 def stock_ready(logs, map_id, minimum_ms, now_ms):
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+    pattern = re.compile('^' + character.entity_name_prefix() + r' -?\d+ Connection:ResumeCharacter from '
                          r'127\.0\.0\.1:([1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
     result = []
     for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms):
@@ -402,7 +402,7 @@ def legacy_ready(logs, minimum_ms, now_ms):
     character.ready_record returns the first match without a time; a zoning
     session needs the one after the current launch (second-resolution log time).
     """
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+    pattern = re.compile('^' + character.entity_name_prefix() + r' -?\d+ Connection:ResumeCharacter from '
                          r'127\.0\.0\.1:([1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
     result = []
     for ordinal, (message, record) in enumerate(character.entity_records(logs, map_id=1)):
@@ -419,8 +419,9 @@ def legacy_ready(logs, minimum_ms, now_ms):
 
 
 def stock_transfers_begun(logs, map_id, minimum_ms, now_ms):
-    """dbmapxfer.c "Step 1: Ent THORHERO moving to map N" on map_id's own route."""
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Step 1: Ent THORHERO moving to map ([1-9][0-9]{0,4})[, ][^\r\n]*$')
+    """dbmapxfer.c "Step 1: Ent <name> moving to map N" on map_id's own route."""
+    pattern = re.compile('^' + character.entity_name_prefix() + r' -?\d+ Step 1: Ent ' + re.escape(character.CHARACTER)
+                         + r' moving to map ([1-9][0-9]{0,4})[, ][^\r\n]*$')
     rows = []
     for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms):
         match = pattern.fullmatch(message)
@@ -431,7 +432,7 @@ def stock_transfers_begun(logs, map_id, minimum_ms, now_ms):
 
 
 def stock_positions(logs, map_id, minimum_ms, now_ms):
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ PeriodicInfo pos=<('
+    pattern = re.compile('^' + character.entity_name_prefix() + r' -?\d+ PeriodicInfo pos=<('
                          + NUMBER + '),(' + NUMBER + '),(' + NUMBER + r')> [^\r\n]+$')
     result = {}
     for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms):
@@ -453,17 +454,17 @@ def stock_logout(logs, map_id, minimum_ms, now_ms):
     rows = [dict(record, reason='Logout timer expired', account=character.ACCOUNT,
                  name=character.CHARACTER, source='current_target_stock_logout_timer')
         for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms)
-        if re.fullmatch(r'^"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$', message)]
+        if re.fullmatch('^' + character.entity_name_prefix() + r' -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$', message)]
     return max(rows, key=lambda r: (r['utc_ms'], r['line_ordinal'])) if rows else None
 
 
 def terminal_position(logs, map_id, delivery, minimum_ms, now_ms):
     timer = None
     matches = []
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Logout location : map (\d+) '
+    pattern = re.compile('^' + character.entity_name_prefix() + r' -?\d+ Logout location : map (\d+) '
                         r'\((' + NUMBER + ') (' + NUMBER + ') (' + NUMBER + r')\) [^\r\n]+$')
     for message, record in entity_records(logs, map_id, minimum_ms=minimum_ms, now_ms=now_ms):
-        if re.fullmatch(r'^"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$', message):
+        if re.fullmatch('^' + character.entity_name_prefix() + r' -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$', message):
             timer = record
             continue
         match = pattern.fullmatch(message)
@@ -1000,7 +1001,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             # No zone server before Enter Game: the saved zone is started when
             # the DbServer asks for it, and only that zone is admitted.
             require(self.zone_tree_for(saved) is not None,
-                    'THORHERO is saved in ' + zone_name(saved) + ', which this runtime cannot start; '
+                    character.CHARACTER + ' is saved in ' + zone_name(saved) + ', which this runtime cannot start; '
                     'preserve data and export')
             self.monorail_requires_reopen = False
             self.begin_initial_zone(saved)
@@ -1119,7 +1120,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return
         owned = self.maps[target]
         require(initial['expected_map_id'] is None or same_zone(target, initial['expected_map_id']),
-                'The game started ' + zone_name(target) + ' for THORHERO, not the saved '
+                'The game started ' + zone_name(target) + ' for ' + character.character_label() + ', not the saved '
                 + zone_name(initial['expected_map_id']) + '; nothing was moved; export this report')
         launch = [target, owned.get('cookie'), owned.get('launch_utc_ms')]
         if attempts and 'ended_monotonic' not in attempts[-1] and attempts[-1]['launch'] != launch:
@@ -1162,16 +1163,16 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.sample_startup_observation(force=True)
 
     INITIAL_ZONE_MESSAGES = {
-        'starting': 'Starting {zone} for THORHERO. The game screen can stay still for a few minutes until it is ready.',
-        'ready': '{zone} is ready; THORHERO is entering it.',
+        'starting': 'Starting {zone} for {who}. The game screen can stay still for a few minutes until it is ready.',
+        'ready': '{zone} is ready; {who} is entering it.',
         'not_ready': '{zone} did not start in time and the game reported it. Press Enter Game again, or export the report.',
         'failed': '{zone} could not be started ({reason}). The game reported it and nothing was moved; '
                   'export this report.',
         # 0.13.61: the DbServer keeps a new character whose first zone failed
-        # (unloaded, not deleted); Resume removes that row and creates it again.
+        # (unloaded, not deleted); Resume removes that row so it can be created again.
         'failed_creation': '{zone} could not be started ({reason}). The game reported it; export this report. '
-                           'THORHERO never entered the game: Resume first character creation removes it and '
-                           'creates it again.'}
+                           'The new character never entered the game: Resume first character creation removes '
+                           'it so you can create it again.'}
 
     def initial_zone_event(self, status, map_id, *, failure=None):
         """The app shows this while the client waits for the zone (its screen does not move).
@@ -1183,7 +1184,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         fields = {} if failure is None else {'failure': failure}
         self.ctx.event('character_initial_zone', format=1, session_id=self.owner.args.session_id, status=status,
                        map_id=map_id, map_name=zone_name(map_id), generated_utc_ms=int(time.time() * 1000),
-                       message=self.INITIAL_ZONE_MESSAGES[key].format(zone=zone_name(map_id), reason=failure),
+                       message=self.INITIAL_ZONE_MESSAGES[key].format(zone=zone_name(map_id), reason=failure,
+                                                                      who=character.character_label()),
                        **fields)
 
     def initial_zone_start_failed(self, entry, failure):
@@ -1421,7 +1423,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             target = self.active_map_id
             destination = MAPS[target]
             self.ctx.event('stage', status='running',
-                message='Preparing ' + destination['name'] + ' for saved THORHERO',
+                message='Preparing ' + destination['name'] + ' for saved ' + character.CHARACTER,
                 map_id=target, map_name=destination['name'], world=destination['world'],
                 port=destination['port'])
             baseline = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-baseline'),
@@ -1471,7 +1473,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         initial = self.dynamic_initial()
         expected = initial['expected_map_id']
         require(self.stock_travel_active() and self.stock.get('enabled') is True,
-                ('THORHERO is saved in ' + zone_name(expected) + '; starting it' if expected is not None
+                (character.CHARACTER + ' is saved in ' + zone_name(expected) + '; starting it' if expected is not None
                  else "Starting the new character's zone") + " needs the game's own zone travel, which this "
                 'runtime lacks; preserve data and export')
         self.ctx.stage('local_atlas_startup')
@@ -1482,7 +1484,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if startup is not None:
             startup['native_maps_started'] = []
         if expected is not None:
-            message = (zone_name(expected) + ' starts when THORHERO enters the game (Enter Game); '
+            message = (zone_name(expected) + ' starts when ' + character.CHARACTER + ' enters the game (Enter Game); '
                        'the game screen can stay still for a few minutes while it loads')
         else:
             message = ("The new character's starting zone starts after the character creator (Enter Game); "
@@ -1605,7 +1607,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 return True
         if now >= startup['next_message']:
             self.ctx.event('stage', status='running',
-                message='Starting ' + destination['name'] + (' and City of Heroes' if startup['overlap_enabled'] else ' for saved THORHERO'),
+                message='Starting ' + destination['name'] + (' and City of Heroes' if startup['overlap_enabled']
+                                                             else ' for saved ' + character.CHARACTER),
                 map_id=target, map_name=destination['name'], world=destination['world'], port=destination['port'])
             startup['next_message'] = now + 5
         return False
@@ -2622,7 +2625,7 @@ class LocalCharacterZoningCreationServer(LocalCharacterZoningServer):
     a Primal hero, Mercy Island for a villain, Nova Praetoria for a Praetorian,
     or that side's tutorial); the zone policy starts it, the character enters
     it, and the ordinary creation save is proved there. The creation identity
-    (empty account, THORHERO ID 1, committed rows) is the base creation's.
+    (empty account, character ID 1 under any name, committed rows) is the base creation's.
     """
     REPORT_KEY = 'character_creation'
     requires_saved_character = False
@@ -2685,9 +2688,10 @@ class LocalCharacterZoningCreationServer(LocalCharacterZoningServer):
 
 
 def creation_identity(proof, session):
-    """A new THORHERO connected in the starting zone the game started (stock travel)."""
+    """A new character connected in the starting zone the game started (stock travel)."""
     return (isinstance(proof, dict) and proof.get('session_id') == session
-        and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
+        and character.valid_character_name(proof.get('name')) and proof.get('name') == character.CHARACTER
+        and proof.get('account') == 'COHLOCAL'
         and type(proof.get('character_id')) is int and proof['character_id'] == 1
         and type(proof.get('auth_id')) is int and 0 < proof['auth_id'] <= 4294967295
         and type(proof.get('map_id')) is int and 1 <= proof['map_id'] <= 999 and supported(proof['map_id'])
@@ -2704,7 +2708,8 @@ def creation_save_verified(proof, session):
 
 def character_identity(proof, session):
     return (isinstance(proof, dict) and proof.get('session_id') == session
-        and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
+        and character.valid_character_name(proof.get('name')) and proof.get('name') == character.CHARACTER
+        and proof.get('account') == 'COHLOCAL'
         and type(proof.get('character_id')) is int and proof['character_id'] == 1
         and type(proof.get('auth_id')) is int and proof['auth_id'] > 0 and supported(proof.get('map_id'))
         # King's Row needs its verified package: the station monorail, or the

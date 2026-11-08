@@ -86,6 +86,14 @@ public final class ClientRuntime {
     private final List<byte[]> characterPngs = new ArrayList<>();
     private volatile long characterObservedUptime = -1, characterFrameWatermark = -1;
     private volatile JSONObject characterSavedEvent, characterConnectedEvent;
+    /** The character's own name (0.13.62: any name), from the guest's first verified event. */
+    private volatile String characterName;
+    private String who() { String name = characterName; return name == null ? "your character" : name; }
+    /** One name per session: the guest binds the character to its SQL row. */
+    private boolean sameCharacter(JSONObject event) {
+        String name = characterName;
+        return ClientAcceptance.characterName(event.optString("name", null)) && (name == null || name.equals(event.optString("name")));
+    }
     /** The guest's message while the client waits at Enter Game for the character's zone (its screen holds still). */
     private volatile String initialZoneStatus;
     private volatile long initialZoneStartedUptime = -1;
@@ -538,9 +546,9 @@ public final class ClientRuntime {
     }
     public static String profileRecoveryMessage(ProfileState profile) {
         if (profile == ProfileState.ABSENT)
-            return "No saved character profile is present. After a fresh install, use Create fresh THORHERO once, then save normally. An earlier character requires an external database backup.";
+            return "No saved character profile is present. After a fresh install, use Create fresh character once, then save normally. An earlier character requires an external database backup.";
         if (profile == ProfileState.READY)
-            return "The initialized character profile is available; startup checks for a saved THORHERO. If first creation stopped before a save, or THORHERO's first zone did not start, use Resume first character creation. Saved characters are preserved.";
+            return "The initialized character profile is available; startup checks for the saved character. If first creation stopped before a save, or the new character's first zone did not start, use Resume first character creation. Saved characters are preserved.";
         return "Existing character data is incomplete or unreadable. It has been preserved; export the report. Fresh creation is unavailable while any profile data remains.";
     }
     private void requireCharacterProfile(boolean reopening) throws IOException {
@@ -1047,8 +1055,8 @@ public final class ClientRuntime {
         String summary = passed ? (taskGateRequired()
                 ? "One manually accepted task completed through the stock command and remained committed after ordinary logout, with matching native/SQL evidence, accepted/completed Android views and verified cleanup. Review both task views; combat, mission maps and reward turn-in remain separate."
                 : reopen
-                ? "The existing THORHERO was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the saved world view; rendering and gameplay require separate visual validation."
-                : "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
+                ? "The existing character was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the saved world view; rendering and gameplay require separate visual validation."
+                : "The character was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
                 : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? label + " check stopped. Export the latest report."
                 : saveRecorded ? "Committed character save recorded; Android report checks incomplete. Export the latest report."
                 : guestPassed ? label + " check incomplete. Export the latest report."
@@ -1714,7 +1722,7 @@ public final class ClientRuntime {
     public synchronized boolean requestFinish() {
         if (!inputReady || finished || finishRequested || cancelled || producerCompleted || observedClientPid < 1) return false;
         if (!characterSavedReady) {
-            stage("Waiting for saved character", "Finish becomes available after THORHERO is committed to the database and three fresh Android views are captured.");
+            stage("Waiting for saved character", "Finish becomes available after " + who() + " is committed to the database and three fresh Android views are captured.");
             return false;
         }
         stopManualTest("finish");
@@ -1968,7 +1976,7 @@ public final class ClientRuntime {
                 login.put("post_login_frame_observed", true);
                 loginSamples.add(login); loginPngs.add(png.clone());
                 if (loginSamples.size() == 3)
-                    stage("Local login verified", reopen ? "Select the existing THORHERO and click Enter Game. Keep its existing costume and powers. Do not create or delete a character." : "Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
+                    stage("Local login verified", reopen ? "Select your existing character and click Enter Game. Keep its existing costume and powers. Do not create or delete a character." : "Create your character (any name) as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
             }
             if (connectedSample) {
                 Map<String,Object> connected = new LinkedHashMap<>(sample);
@@ -1980,9 +1988,9 @@ public final class ClientRuntime {
                     connectedCapturedReady = true;
                     retainCheckpointPng(connected,connectedPngs.get(connectedPngs.size()-1));recordLifecycle("character_connected_views_verified");
                     if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
-                        stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
+                        stage("Atlas connected for startup timing", who() + " connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
                     else if(zoningEnabled())stage("Ready for zone travel","Use the monorail station to choose Kings Row or Atlas Park. Preparation happens on demand. Keep current graphics settings; tap Start test and Stop test for optional capture, then use ordinary Save and Finish when ready.");
-                    else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
+                    else stage("Atlas ready for task check", who() + " connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
                     if (gameplay60Requested && !gameplay60Queued) {
                         gameplay60Queued = true;
@@ -2011,7 +2019,7 @@ public final class ClientRuntime {
                 if (characterSamples.size() == 3) {
                     characterSavedReady = true;
                     retainCheckpointPng(saved,characterPngs.get(characterPngs.size()-1));recordLifecycle("character_saved_views_verified");
-                    stage("Saved character verified", "THORHERO was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
+                    stage("Saved character verified", who() + " was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
                     notifyInputState();
                 }
             }
@@ -2219,19 +2227,20 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the logged-in client: " + message(e); }
                             }
                             recordLifecycle("local_login_observed");
-                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character."
-                                    : dynamicCreation() ? "The server sent the character list. Create THORHERO as a hero, villain or Praetorian. After Enter Game the game starts THORHERO's starting zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial); the screen can stay still for a few minutes while it loads."
-                                    : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
+                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select your character and click Enter Game. Do not create or delete a character."
+                                    : dynamicCreation() ? "The server sent the character list. Create your character, with any name the game accepts, as a hero, villain or Praetorian. After Enter Game the game starts its starting zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial); the screen can stay still for a few minutes while it loads."
+                                    : "The server sent the character list. Create your character (any name) as a Primal Earth Hero and skip the tutorial.");
                         }
                         if (reopen && zoningEnabled() && ClientAcceptance.savedDestinationEvent(jsonValue(event), session,
                                 Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")), stockTravelRequested)
                                 && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
                             String savedZone = zoneLabel(event);
+                            characterName = event.optString("name");
                             stage("Saved destination verified", event.optBoolean("dynamic_start", false)
-                                ? "THORHERO is saved in " + savedZone + ". " + savedZone + " starts when you press"
+                                ? who() + " is saved in " + savedZone + ". " + savedZone + " starts when you press"
                                   + " Enter Game, and no other zone starts first; the game screen can stay still for a few"
                                   + " minutes while it loads. Existing character data is preserved."
-                                : "THORHERO is saved in " + savedZone + ". Preparing its native MapServer on port "
+                                : who() + " is saved in " + savedZone + ". Preparing its native MapServer on port "
                                 + event.optInt("port", -1) + "; existing character data is preserved.");
                             recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
                                 + " port=" + event.optInt("port", -1));
@@ -2255,10 +2264,11 @@ public final class ClientRuntime {
                             }
                         }
                         if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid, dynamicCreation()))
-                                && characterConnectedEvent == null && loginObservedUptime >= 0
+                                && characterConnectedEvent == null && loginObservedUptime >= 0 && sameCharacter(event)
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
                                 characterConnectedEvent = event;
+                                characterName = event.optString("name");
                                 connectedObservedUptime = SystemClock.uptimeMillis();
                                 observeStartupWorldReady();
                                 connectedFrameWatermark = decodedFrames;
@@ -2270,7 +2280,7 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the reopened character: " + message(e); }
                             }
                             recordLifecycle("character_connected_observed");
-                            stage("Character connected", reopen ? "THORHERO connected to "+zoneLabel(event)+". Waiting for fresh Android views and session ownership verification before movement and Save become available. Gameplay has no countdown." : "THORHERO connected to "+zoneLabel(event)+". Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
+                            stage("Character connected", reopen ? who()+" connected to "+zoneLabel(event)+". Walking works now; Save becomes available after fresh Android views and session ownership verification. Gameplay has no countdown." : who()+" connected to "+zoneLabel(event)+". Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
                         }
                         if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));
@@ -2344,7 +2354,7 @@ public final class ClientRuntime {
                         }
                         if (ClientAcceptance.characterSavedEvent(jsonValue(event), session, observedClientPid)
                                 && characterObservedUptime < 0 && loginObservedUptime >= 0
-                                && characterConnectedEvent != null
+                                && characterConnectedEvent != null && sameCharacter(event)
                                 && event.getLong("character_id") == characterConnectedEvent.getLong("character_id")
                                 && (!zoningEnabled() || (!zoning.blocksInput() && event.optBoolean("zoning_enabled") && event.optInt("map_id",-1)==zoning.currentMap()))
                                 && !cancelled && !finished && !producerCompleted) {
@@ -2360,10 +2370,10 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the saved character: " + message(e); }
                             }
                             recordLifecycle("character_saved_observed");
-                            stage("Character saved", "THORHERO is committed to the local database. Waiting for three fresh Android views before Finish.");
+                            stage("Character saved", who() + " is committed to the local database. Waiting for three fresh Android views before Finish.");
                         }
                         if (reopen && "character_session_budget".equals(event.optString("type"))
-                                && !cancelled && !finished && !producerCompleted) {
+                                && sameCharacter(event) && !cancelled && !finished && !producerCompleted) {
                             long now = SystemClock.uptimeMillis();
                             // Historical bounds are supplied only for legacy validation.
                             // Manual policy requires exact zero deadlines and owned identity.
@@ -2393,8 +2403,8 @@ public final class ClientRuntime {
                             interactionReadyObserved = true;
                             if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = reopen ? 0 : SystemClock.uptimeMillis() + 1200000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
-                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : dynamicCreation() ? "Log in with COHLOCAL / offline. Create THORHERO as a hero, villain or Praetorian; after Enter Game the game starts its starting zone (the screen can stay still for a few minutes). Save, then wait for Saved character verified. Twenty minutes remain for the creator; the zone's start does not count."
-                                    : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
+                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select your existing character and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : dynamicCreation() ? "Log in with COHLOCAL / offline. Create your character (any name the game accepts) as a hero, villain or Praetorian; after Enter Game the game starts its starting zone (the screen can stay still for a few minutes). Save, then wait for Saved character verified. Twenty minutes remain for the creator; the zone's start does not count."
+                                    : "Log in with COHLOCAL / offline. Create your character (any name) as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
                         }
                         // Keep the actionable save/Finish instruction visible while
                         // the guest continues its generic five-second live heartbeat.
@@ -2743,7 +2753,7 @@ public final class ClientRuntime {
                     .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
                     .put("relocation_sent_utc_ms", relocationSentUtcMillis)
                     .put("deadline_input_suppressed", deadlineInputSuppressed)
-                    .put("scope", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "Saved THORHERO startup and connection timing only; existing tasks are preserved and task qualification is not requested. Stop produces timing evidence, not an ordinary save or gameplay pass." : taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary THORHERO logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
+                    .put("scope", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "Saved character startup and connection timing only; existing tasks are preserved and task qualification is not requested. Stop produces timing evidence, not an ordinary save or gameplay pass." : taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary character logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL character with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of the character with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
                     .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
                     .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)
                     .put("character_reopen_verified", reopen && passed)
@@ -2990,7 +3000,8 @@ public final class ClientRuntime {
         long id=preparationInteger(proof.get("character_id")),auth=preparationInteger(proof.get("auth_id"));
         if(id!=1 || auth<=0 || auth>4294967295L || preparationInteger(saved.get("character_id"))!=id
                 || preparationInteger(connected.get("character_id"))!=id || preparationInteger(login.get("auth_id"))!=auth
-                || !"THORHERO".equals(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
+                || !ClientAcceptance.characterName(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
+                || !proof.get("name").equals(connected.get("name")) || !proof.get("name").equals(saved.get("name"))
                 || !"android-local-login".equals(login.get("profile")) || preparationInteger(proof.get("map_id"))!=currentMap
                 || !(currentMap==1 || zoning && (currentMap==101 || currentMap==5 && Boolean.TRUE.equals(proof.get("monorail_enabled"))
                     || Boolean.TRUE.equals(proof.get("stock_travel")) && ClientAcceptance.staticZone(currentMap))))return false;

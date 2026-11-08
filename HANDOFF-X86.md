@@ -414,6 +414,74 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.62: any character name; walking no longer waits (Claude, 2026-11-08)
+
+Thor 0.13.61 (user, 2026-11-08 14:27 CST, exports 20261108-202601 setup and
+-202611 session): "I was able to create a villain, but please make it so
+controls arent locked and that i can name them something other than Thorhero."
+
+- **What happened**: Resume removed the unfinished THORHERO
+  (`unentered_character.removed`), the user created the Mastermind
+  **Ralakar** (not THORHERO), and the DbServer started Mercy Island at Enter
+  Game: `starting_zone_wait_seconds` 288.3, the first non-Atlas/King's Row zone
+  on the phone, about 27 FPS (`ARMPORT_FRAME_RATE_V1`), Arachnos and Skulls
+  spawned (entity log). The guest's `character_evidence` filtered the inventory
+  by `name == 'THORHERO'`, so it never sampled Ralakar
+  (`character_samples` empty, `connected_on_atlas` false); the app never got
+  `character_connected`, so `canSaveLogout` stayed false. `canWalk` (the
+  on-screen pad and the controller's W/A/S/D/Space, ControllerBridge) and Save
+  required it: the "locked controls". After about 15 minutes the user quit
+  (`ArmPort dialog: QuitNow`, client exit 0), which the session reports as
+  "Actual CoH client exited".
+- **Name** (`local_character_server.py`): `CHARACTER` is THORHERO until the
+  session reads the real name from SQL: Reopen binds the saved row (ID 1 of
+  COHLOCAL, any name) at the profile check before Wine; creation binds the one
+  row the DbServer inserts at Enter Game (`bind_session_character`;
+  `valid_character_name` = validate_name.c: ASCII, 3-20, no outer or double
+  spaces; a session never renames). Every entity-log reader builds its pattern
+  from `entity_name_prefix()` (re.escape): ready, positions, logout timer and
+  location, rewards, BuyPower, contacts, tasks, and the zoning readers
+  (`stock_ready`, `legacy_ready`, `stock_positions`, `stock_logout`,
+  `terminal_position`, "Step 1: Ent <name> moving"). The opt-in native console
+  producers (wine_character_events.c, the monorail producer) report only
+  THORHERO, so for another name `immediate_event_contract()` is None and Atlas
+  Park uses the stock entity logs (the legacy route); station travel refuses
+  another name. Resume removes an unfinished character of any name; its SQL
+  uses `md5(name)` instead of the player's text. Session budget (guest and
+  app) carries the session's own name.
+- **Ordinary-play save outside Atlas**: `reopen_connection_binding` accepted
+  only Atlas (or monorail) ready evidence, so `accept_gameplay_progress`
+  could not accept experience gained in Mercy Island. `stock_zone_binding`
+  binds a reopen whose ready record is the zone's own stock CLIENT_READY line
+  (`current_target_stock_CLIENT_READY_resumeCharacter_success`, embedded log
+  route, same map, name and account).
+- **App**: `ClientAcceptance.characterName` (the same rule) replaces the
+  THORHERO checks; ClientRuntime keeps one name per session
+  (`sameCharacter`) and shows it ("Ralakar is saved in Mercy Island"); texts
+  say "your character". `canWalk` no longer needs `canSaveLogout`: walking
+  follows the ordinary game-input gate and still stops while Save / log out
+  runs (`movementSuppressed`; moving cancels the logout timer), after the save,
+  during a zone transfer (ClientRuntime refuses gameplay input) and while a
+  typed command or the text dialog is pending.
+- **CI**: `armport-app-runtime.yml` gains `character_name` (3-15 capitals,
+  default THORHERO): the host scripts type it and find it by OCR, so a
+  runtime proves the guest with another name (Atlas through the stock logs).
+- **Tests**: `test_character_any_name.py` (13: name rules, binding, every
+  log reader with `Dr. O'Malley` and with Ralakar's own Mercy Island lines
+  from the Thor export, creation binding and save, station-travel refusal,
+  the stock-zone binding, the app's name rule and events, the walking gate);
+  `test_character_profile_eligibility.py` (+2 unit, +2 real PostgreSQL:
+  a named reopen and the md5 removal of an unfinished `Dr. O'Malley`; 38 OK on
+  PostgreSQL 16.15); `test_session_budget_guest.py` (+1). Updated for the new
+  wording or the bound name: `test_dynamic_initial_map.py`,
+  `test_fresh_profile_recovery.py`, `test_manual_session.py`,
+  `test_session_budget_java.py` (an invalid name, "X"). The build runs the
+  any-name and budget modules. `build_thor_apk.CHANGED_RUNTIME` adds
+  `stationary_contact_evidence.py` and `task_gate_evidence.py`
+  (`test_thor_apk_runtime_review`).
+- Version 0.13.62 (77); test sheet `THOR-TEST-0.13.62.md` (in place: Reopen
+  Ralakar in Mercy Island, play, save).
+
 ## 0.13.61: Resume removes a THORHERO that never entered the game (Claude, 2026-11-08)
 
 Thor 0.13.60 (user, 2026-11-08 07:53 CST, exports 20261108-135104 Resume and

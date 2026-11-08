@@ -12,7 +12,7 @@ SHA = 'a' * 40
 BUILD, RUNTIME, APK = 'armport-build.yml', 'armport-app-runtime.yml', 'armport-thor-apk.yml'
 ARTIFACTS = {BUILD: ['armport-server-metrics-native', 'armport-client-Release'],
              RUNTIME: ['armport-app-client-package', 'armport-app-server-metrics'],
-             APK: ['coh-atlas-gameplay-0.13.61-apk']}
+             APK: ['coh-atlas-gameplay-0.13.62-apk']}
 
 
 class FakeGithub:

@@ -32,7 +32,10 @@ LOGIN_STAGE_SECONDS = 180
 OVERALL_SECONDS = 5400
 CLEANUP_GRACE_SECONDS = 180
 CHARACTER_EVIDENCE_LIMIT = 256*1024*1024
-CHARACTER = 'THORHERO'
+# 0.13.62: the guest follows any name the game accepts; a CI runtime may create its
+# character under another name (armport-app-runtime.yml character_name) to prove it.
+CHARACTER = os.environ.get('ARMPORT_CI_CHARACTER_NAME') or 'THORHERO'
+require(re.fullmatch(r'[A-Z]{3,15}', CHARACTER) is not None, 'CI character names are 3-15 capital letters')
 KEY_SETTLE_SECONDS = .3
 ACCOUNT_ENTRY_ATTEMPTS = 3
 ACCOUNT_REGION = (505, 230, 766, 251)

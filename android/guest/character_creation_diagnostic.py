@@ -18,7 +18,9 @@ import character_avatar_assets as avatar
 
 base, require, interactive = login.base, login.require, login.interactive
 SCOPE = 'actual_character_creation_guest'
-CHARACTER_NAME = 'THORHERO'
+# CI's name. Since 0.13.62 the character may have any name the game accepts;
+# the session's name is character.CHARACTER, read from its SQL row.
+CHARACTER_NAME = character.LEGACY_CHARACTER
 INTERACTION_SECONDS = 1200
 OVERALL_SECONDS = 5400
 MAX_CHILDREN = 512
@@ -54,7 +56,8 @@ def positive_int(value):
 
 def character_identity(proof, session):
     return (isinstance(proof, dict) and proof.get('session_id') == session
-        and proof.get('name') == CHARACTER_NAME and proof.get('account') == login.server.ACCOUNT
+        and character.valid_character_name(proof.get('name')) and proof.get('name') == character.CHARACTER
+        and proof.get('account') == login.server.ACCOUNT
         and positive_int(proof.get('character_id')) and positive_int(proof.get('auth_id'))
         and type(proof.get('map_id')) is int and proof['map_id'] == 1
         and proof.get('connected_on_atlas') is True)
@@ -363,7 +366,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             current['client_pid'] = launch['pid']
             self.connected_announced = True
             self.ctx.event('character_connected', session_id=self.args.session_id, client_pid=launch['pid'],
-                character_id=current['character_id'], name=CHARACTER_NAME, account=login.server.ACCOUNT,
+                character_id=current['character_id'], name=character.CHARACTER, account=login.server.ACCOUNT,
                 map_id=current['map_id'], **self.connected_event_data(current))
         if proof is not None:
             require(self.connected_announced and self.proof_verified(proof, self.args.session_id),
@@ -383,7 +386,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                 current.update(proof, client_pid=launch['pid'], verified_utc=base.utc(), client_capture=shot)
                 self.saved_announced = True
                 self.ctx.event('character_saved', session_id=self.args.session_id, client_pid=launch['pid'],
-                    character_id=proof['character_id'], name=CHARACTER_NAME, committed_sql_verified=True,
+                    character_id=proof['character_id'], name=character.CHARACTER, committed_sql_verified=True,
                     **self.saved_event_data(proof))
         return output, launch, console
 
@@ -409,7 +412,7 @@ def dynamic_creation_requested(environ=None):
 
 
 class ZoningCharacterCreationDiagnostic(CharacterCreationDiagnostic):
-    """THORHERO created as a hero, villain or Praetorian starts in its own starting zone.
+    """A new character (any name) created as a hero, villain or Praetorian starts in its own starting zone.
 
     No zone server runs before Enter Game; the DbServer asks for the starting
     zone the creator chose (character_zoning.LocalCharacterZoningCreationServer).

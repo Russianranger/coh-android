@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only proof of THORHERO's first native trained level/power purchase.
+"""Read-only proof of the character's first native trained level/power purchase.
 
 The stock successful BuyPower record precedes svrSendEntListToDb; it alone
 never proves a commit. Only the existing ordinary logout pipeline and selected
@@ -45,8 +45,15 @@ PURCHASABLE = frozenset({
 })
 CANONICAL_POWERS = {name.casefold(): name for name in (*AUTO_POWERS, *PURCHASABLE)}
 ROW_LIMIT = 128
-PURCHASE = re.compile(contact.PREFIX + r'BuyPower Click (?P<power>[A-Za-z0-9_]+\.[A-Za-z0-9_]+\.[A-Za-z0-9_]+)'
-                      + contact.SUFFIX + '$')
+_PURCHASES = {}
+
+
+def purchase_pattern():
+    """The stock BuyPower record of the current character name (0.13.62), compiled once per name."""
+    if server.CHARACTER not in _PURCHASES:
+        _PURCHASES[server.CHARACTER] = re.compile(contact.prefix()
+            + r'BuyPower Click (?P<power>[A-Za-z0-9_]+\.[A-Za-z0-9_]+\.[A-Za-z0-9_]+)' + contact.SUFFIX + '$')
+    return _PURCHASES[server.CHARACTER]
 ROUTE = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
     r'(?:(?P<local_level>1)|(?P<map_instance>(?i:City_01_01)_1):127\.0\.0\.1:127\.0\.0\.1) +'
     r'(?P<message>[^\r\n]+)$')
@@ -78,14 +85,14 @@ def _purchase(logs, start_ms, end_ms):
         if not local and not embedded:
             continue
         tail = text[text.rfind('\n') + 1:]
-        if re.search(r'"THORHERO:COHLOCAL" -?\d+ BuyPower(?: |$)', tail):
+        if re.search(server.entity_name_prefix() + r' -?\d+ BuyPower(?: |$)', tail):
             return None
         for line in text[:text.rfind('\n') + 1].splitlines():
             routed = ROUTE.fullmatch(line)
             if routed is None or (routed['local_level'] is not None) != bool(local):
                 continue
             message = routed['message']
-            if not re.match(contact.PREFIX + r'BuyPower(?: |$)', message):
+            if not re.match(contact.prefix() + r'BuyPower(?: |$)', message):
                 continue
             try:
                 stamp = int(time.mktime(time.strptime(routed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
@@ -93,7 +100,7 @@ def _purchase(logs, start_ms, end_ms):
                 return None
             if not start_ms <= stamp <= end_ms:
                 continue
-            parsed = PURCHASE.fullmatch(message)
+            parsed = purchase_pattern().fullmatch(message)
             if (parsed is None or len(message) > 2048 or parsed['level'] != '2'
                     or parsed['alignment'] != '0' or parsed['archetype'] != 'Class_Blaster'
                     or parsed['incarnate'] != '0' or not -0x80000000 <= int(parsed['teamup']) <= 0x7fffffff):
@@ -112,7 +119,7 @@ SESSION_PURCHASE_LIMIT = 16
 
 
 def session_purchases(logs, start_ms, end_ms):
-    """Every stock BuyPower record for THORHERO inside the window, in order.
+    """Every stock BuyPower record for the character inside the window, in order.
 
     The general counterpart of _purchase for ordinary play (any archetype,
     level and power). A malformed, unparsable or bounded-out record fails
@@ -137,7 +144,7 @@ def session_purchases(logs, start_ms, end_ms):
         if not local and not embedded:
             continue
         tail = text[text.rfind('\n') + 1:]
-        if re.search(r'"THORHERO:COHLOCAL" -?\d+ BuyPower(?: |$)', tail):
+        if re.search(server.entity_name_prefix() + r' -?\d+ BuyPower(?: |$)', tail):
             return None
         found = routes['local_mapserver' if local else 'embedded_dbserver_logserver']
         for line in text[:text.rfind('\n') + 1].splitlines():
@@ -145,7 +152,7 @@ def session_purchases(logs, start_ms, end_ms):
             if routed is None or (routed['local_level'] is not None) != bool(local):
                 continue
             message = routed['message']
-            if not re.match(contact.PREFIX + r'BuyPower(?: |$)', message):
+            if not re.match(contact.prefix() + r'BuyPower(?: |$)', message):
                 continue
             try:
                 stamp = int(time.mktime(time.strptime(routed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
@@ -153,7 +160,7 @@ def session_purchases(logs, start_ms, end_ms):
                 return None
             if not start_ms <= stamp <= end_ms:
                 continue
-            parsed = PURCHASE.fullmatch(message)
+            parsed = purchase_pattern().fullmatch(message)
             if (parsed is None or len(message) > 2048 or parsed['incarnate'] != '0'
                     or not -0x80000000 <= int(parsed['teamup']) <= 0x7fffffff):
                 return None

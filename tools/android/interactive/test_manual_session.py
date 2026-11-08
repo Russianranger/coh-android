@@ -40,7 +40,8 @@ class ManualSessionGuestTests(unittest.TestCase):
         for key, value in [('session_id', 'f'*32), ('client_pid', PID+1), ('map_id', 6),
                            ('name', 'OTHER'), ('native_client_ready_observed', False), ('monorail_enabled', False)]:
             with self.subTest(key=key), self.assertRaises(ValueError):
-                policy = budget.SessionBudget(SESSION, PID, 0, math.inf, manual=True, supported_maps=(1, 5, 101))
+                policy = budget.SessionBudget(SESSION, PID, 0, math.inf, manual=True, supported_maps=(1, 5, 101),
+                                              name='THORHERO')   # 0.13.62: the session's bound name
                 policy.connected(dict(row, **{key:value}), 86400, UTC_START+86400000)
 
     def test_shipping_reopen_uses_manual_launcher_and_scoped_budget(self):
@@ -311,11 +312,11 @@ class ManualSessionJavaTests(unittest.TestCase):
         activity = (JAVA/'ClientActivity.java').read_text()
         service = method((JAVA/'ClientService.java').read_text(), 'public String zoningStatus(')
         runtime = method((JAVA/'ClientRuntime.java').read_text(), 'private void captureOutput(')
-        self.assertIn("Reopen starts in THORHERO's saved destination.", activity)
+        self.assertIn("Reopen starts in the character's saved destination.", activity)
         self.assertIn('Tap Start test when ready and Stop test when finished; neither starts a countdown.', activity)
         self.assertIn('When ready to save, release controls', activity)
         self.assertNotIn('Choose Kings Row at the actual monorail station', activity)
-        self.assertIn('Reopen THORHERO to start in the saved destination.', service)
+        self.assertIn('Reopen your character to start in the saved destination.', service)
         self.assertNotIn('Atlas instance zoning', service)
         self.assertIn('Gameplay has no countdown.', runtime)
         self.assertNotIn('bounded session window', runtime)

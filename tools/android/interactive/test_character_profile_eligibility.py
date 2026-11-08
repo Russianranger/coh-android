@@ -1,5 +1,6 @@
 """Pre-Wine profile eligibility, real SQL, and non-destructive first-create resume."""
 import copy
+import hashlib
 import io
 import json
 import os
@@ -30,6 +31,7 @@ REQUIRED_POSTGRES_FIXTURES = {
     'post_dbserver_character_race_refused', 'post_dbserver_allocator_race_refused',
     'unentered_character_resume_removed', 'unentered_character_reopen_explained',
     'unentered_character_with_badge_refused',
+    'named_character_reopen', 'unentered_named_character_resume_removed',
 }
 
 
@@ -72,6 +74,9 @@ def expected_tables():
 
 
 class EligibilityTests(unittest.TestCase):
+    def tearDown(self):
+        server.reset_character()   # 0.13.62: a session's bound name never leaks into the next test
+
     def instance(self, *, reopen=False, resume=False, profile=True, presence='present', inventory=None):
         state = Path(self.enterContext(tempfile.TemporaryDirectory(prefix='coh-profile-gate-')))
         owner = SimpleNamespace(ctx=SimpleNamespace(report={}, children=[], start=Mock(), event=Mock()), root=state,
@@ -203,7 +208,7 @@ class EligibilityTests(unittest.TestCase):
             state['statements'].append(text)
             if text.startswith('DO $$'):
                 if fail_removal:
-                    raise server.base.DiagnosticError('sql-fixture failed: ERROR:  The unfinished THORHERO rows changed')
+                    raise server.base.DiagnosticError('sql-fixture failed: ERROR:  The unfinished character rows changed')
                 state['removed'], output = True, 'DO'
             elif 'to_regclass' in text:
                 output = 'present'
@@ -249,7 +254,9 @@ class EligibilityTests(unittest.TestCase):
         statement = removal[0]
         self.assertTrue(statement.startswith('DO $$') and statement.endswith('END$$;'))
         for clause in ('DELETE FROM dbo.ents2 WHERE containerid=1 AND subid=0 AND curbuild IS NULL',
-                       "DELETE FROM dbo.ents WHERE containerid=1 AND name='THORHERO' AND authname='COHLOCAL' "
+                       # 0.13.62: the player-chosen name enters SQL only as its digest.
+                       "DELETE FROM dbo.ents WHERE containerid=1 AND md5(name)='"
+                       + hashlib.md5(b'THORHERO').hexdigest() + "' AND authname='COHLOCAL' "
                        'AND authid=1353310574 AND class IS NULL', 'logincount IS NULL',
                        'OR EXISTS (SELECT 1 FROM dbo.ents) OR EXISTS (SELECT 1 FROM dbo.badges WHERE containerid=1)',
                        "setval(pg_get_serial_sequence('dbo.ents', 'containerid'), 1, false)"):
@@ -292,6 +299,44 @@ class EligibilityTests(unittest.TestCase):
             with self.subTest(inventory=name), self.assertRaisesRegex(server.base.DiagnosticError, 'completely empty inventory'):
                 self.initialize_removal(value)
             self.assertFalse(any(text.startswith('DO $$') for text in state['statements']))
+
+    def test_any_name_the_game_accepts_reopens_and_binds_the_session(self):
+        # 0.13.62 (owner, 2026-11-08): the saved character may have any name;
+        # Thor 0.13.61 created the villain Ralakar.
+        for name in ('Ralakar', "Dr. O'Malley", 'Wolf-Spider X'):
+            value = self.instance(reopen=True)
+            value.inventory.return_value[0]['name'] = name
+            value.character_rows.return_value['ents'][0]['name'] = name
+            with self.subTest(name=name):
+                proof = self.initialize_gate(value)
+                self.assertTrue(proof['eligible'] and proof['committed_character_rows_verified'])
+                self.assertEqual((proof['character_name'], server.CHARACTER, server.CHARACTER_BOUND), (name, name, True))
+                self.assertEqual(value.creation_report['name'], name)
+                self.assertIsNone(value.immediate_event_contract())   # THORHERO-only native producer
+        # A name the game cannot have, or one the rows do not share, is refused.
+        for inventory, rows in (('Two  Spaces', 'Two  Spaces'), ('x' * 21, 'x' * 21), ('Ralakar', 'THORHERO')):
+            value = self.instance(reopen=True)
+            value.inventory.return_value[0]['name'] = inventory
+            value.character_rows.return_value['ents'][0]['name'] = rows
+            with self.subTest(refused=inventory), self.assertRaises(server.base.DiagnosticError):
+                self.initialize_gate(value)
+            self.assertFalse(value.creation_report['profile_eligibility']['eligible'])
+
+    def test_resume_removes_an_unfinished_character_of_any_name(self):
+        for name in ('Ralakar', "Dr. O'Malley"):
+            rows = unentered_rows(); rows['ents'][0]['name'] = name
+            value, state = self.unentered(rows=rows, inventory=[dict(UNENTERED_IDENTITY, name=name)])
+            with self.subTest(name=name):
+                proof = self.initialize_removal(value)
+                self.assertIs(proof['unentered_character']['removed'], True)
+                self.assertEqual(proof['unentered_character']['identity']['name'], name)
+                statement = [text for text in state['statements'] if text.startswith('DO $$')][0]
+                # The player's name enters SQL only as its digest (an apostrophe stays harmless).
+                self.assertIn("md5(name)='" + hashlib.md5(name.encode()).hexdigest() + "'", statement)
+                self.assertNotIn(name, statement)
+                self.assertIn('unfinished ' + name, value.ctx.event.call_args.kwargs['message'])
+                # Removing it binds nothing: the new character's name comes from the creator.
+                self.assertFalse(server.CHARACTER_BOUND)
 
     def test_reopen_explains_a_thorhero_that_never_entered_the_game_and_changes_nothing(self):
         value, state = self.unentered(reopen=True)
@@ -401,6 +446,7 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
     instance = EligibilityTests.instance
     initialize_gate = EligibilityTests.initialize_gate
     initialize_removal = EligibilityTests.initialize_removal
+    tearDown = EligibilityTests.tearDown
     @classmethod
     def setUpClass(cls):
         if os.environ.get('PGHOST') not in ('127.0.0.1', 'localhost') or os.environ.get('PGDATABASE') != 'coh_test_startup_bundle':
@@ -524,6 +570,22 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
         self.assertEqual(self.database_sql("SELECT dbo.coh_reserve_id('dbo.ents'::regclass, 1);"), '1')
         self.database_sql('INSERT INTO dbo.ents (containerid) VALUES (1);')
         POSTGRES_FIXTURES_RUN.add('unentered_character_resume_removed')
+
+    def test_pg_named_character_reopen(self):
+        # 0.13.62: a saved character with the player's own name (an apostrophe included).
+        self.real_case('named_character_reopen', allowed=True, reopen=True,
+                       inventory=[dict(saved_fixture()[1][0], name="Dr. O'Malley")])
+        self.assertEqual(server.CHARACTER, "Dr. O'Malley")
+
+    def test_pg_unentered_named_character_resume_removed(self):
+        value = self.actual(unentered=True)
+        self.database_sql("UPDATE dbo.ents SET name='Dr. O''Malley' WHERE containerid=1;")
+        proof = self.initialize_removal(value)
+        self.assertTrue(proof['eligible']); self.assertIs(proof['unentered_character']['removed'], True)
+        self.assertEqual(proof['unentered_character']['identity']['name'], "Dr. O'Malley")
+        self.assertEqual(self.snapshot(), ('[]', '1:false'))
+        self.assertEqual(self.database_sql('SELECT count(*) FROM dbo.ents2;'), '0')
+        POSTGRES_FIXTURES_RUN.add('unentered_named_character_resume_removed')
 
     def test_pg_unentered_character_reopen_explained(self):
         value = self.actual(reopen=True, unentered=True, inventory=[])

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reopen preserved THORHERO and save normally; /stuck is optional recovery."""
+"""Reopen the preserved character (any name since 0.13.62) and save normally; /stuck is optional recovery."""
 from pathlib import Path
 import copy
 import sys
@@ -122,7 +122,8 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                                else (1, 101)} if self.ZONING else {})
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
                 self.launcher_started_monotonic, self.ctx.deadline,
-                presentation_ready=presentation_ready, manual=self.MANUAL_SESSION, **budget_options)
+                presentation_ready=presentation_ready, manual=self.MANUAL_SESSION,
+                name=creation.character.CHARACTER, **budget_options)
         events = [self.session_budget.connected(proof, now, utc_ms)]
         if getattr(self, 'relocated_announced', False):
             if self.session_budget.revision < 2:
@@ -189,7 +190,7 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                         proof['ground_observed_utc_ms'] - samples[-1]['utc_ms'])
             self.ctx.event('character_relocated', session_id=self.args.session_id,
                 client_pid=proof['client_pid'], character_id=proof['character_id'],
-                name=creation.CHARACTER_NAME, account=creation.login.server.ACCOUNT, map_id=1,
+                name=creation.character.CHARACTER, account=creation.login.server.ACCOUNT, map_id=1,
                 recovery_requested=True, recovery_verified=True,
                 ordinary_stuck_observed=True, on_atlas_safe_position=True, stable_ground_verified=True)
         return result

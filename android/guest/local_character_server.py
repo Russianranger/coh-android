@@ -25,7 +25,55 @@ import native_character_events as character_events
 import external_map_supervisor as external_maps
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
-PROFILE, ACCOUNT, CHARACTER = login.PROFILE, login.ACCOUNT, 'THORHERO'
+PROFILE, ACCOUNT = login.PROFILE, login.ACCOUNT
+# 0.13.62 (owner, 2026-11-08: "make it so ... I can name them something other
+# than Thorhero"; Thor 0.13.61 created the villain Ralakar, which this guest did
+# not recognize, so the app never unlocked walking or Save). The one local
+# character is the account's container ID 1 under whatever name its player gave
+# it. CHARACTER is THORHERO (CI's name) until the session reads the real name
+# from SQL: the saved row before Reopen starts Wine, or the row the DbServer
+# inserts at Enter Game (bind_character). The opt-in native console producers
+# (native_character_events, native_monorail_events) still report only THORHERO,
+# so any other name is observed through the stock entity logs.
+LEGACY_CHARACTER = 'THORHERO'
+CHARACTER = LEGACY_CHARACTER
+CHARACTER_BOUND = False
+
+
+def valid_character_name(name):
+    """The game's own player-name rules (validate_name.c ValidateName, MAX_PLAYER_NAME_LEN 20)."""
+    return (type(name) is str and 3 <= len(name) <= 20 and all(32 <= ord(c) <= 126 for c in name)
+            and name == name.strip() and '  ' not in name)
+
+
+def reset_character():
+    """A new session starts unbound (THORHERO until its SQL row names the character)."""
+    global CHARACTER, CHARACTER_BOUND
+    CHARACTER, CHARACTER_BOUND = LEGACY_CHARACTER, False
+
+
+def bind_character(name):
+    """Fix this session's character name from its SQL row; a session never renames it."""
+    global CHARACTER, CHARACTER_BOUND
+    require(valid_character_name(name),
+            'The character name is not one the game accepts (3-20 letters, spaces or punctuation); '
+            'preserve all data and export the report')
+    require(not CHARACTER_BOUND or name == CHARACTER,
+            'The character name changed during this session; preserve all data and export the report')
+    CHARACTER, CHARACTER_BOUND = name, True
+    return name
+
+
+def entity_name_prefix():
+    """This character's stock entity-log identity, "Name:COHLOCAL", as an exact regex."""
+    return '"' + re.escape(CHARACTER) + ':' + re.escape(ACCOUNT) + '"'
+
+
+def character_label():
+    """The character's name once this session has read it from SQL, else a neutral phrase."""
+    return CHARACTER if CHARACTER_BOUND else 'your character'
+
+
 POLL_SECONDS = 15
 MAP_STARTUP_SECONDS = 2400
 SNAPSHOT_LIMIT = 2 * 1024 * 1024
@@ -1033,7 +1081,7 @@ def read_logout_delivery(path, session, client_pid, character_id, ready_utc_ms, 
 def native_position_records(logs):
     """Read current owned Atlas entity physics observations, including bad Y."""
     number = r'-?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?'
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ PeriodicInfo pos=<('
+    pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ PeriodicInfo pos=<('
         + number + '),(' + number + '),(' + number + r')> [^\r\n]+$')
     result = {}
     for message, record in entity_records(logs):
@@ -1121,12 +1169,52 @@ def logout_record(logs, *, map_id=1):
     A normal CLIENT_DISCONNECT and a still-linked stalled client can both take
     this timer path. Explicit command delivery must be bound separately.
     """
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
+    pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
     for message, record in entity_records(logs, map_id=map_id):
         if pattern.fullmatch(message):
             return dict(record, reason='Logout timer expired', account=ACCOUNT, name=CHARACTER,
                 source='current_owned_server_entity_log_live_client_logout_timer')
     return None
+
+
+def stock_zone_binding(proof, ready, session, client_pid, now_utc_ms):
+    """The same binding for a reopen connected in a zone the game's own travel started.
+
+    0.13.62: Thor 0.13.61 played Mercy Island; a reopen there that gains
+    experience has to be able to save, and accept_gameplay_progress needs this
+    binding. The ready record is that zone's own stock CLIENT_READY line
+    (character_zoning.stock_ready) on its embedded log route, which the zoning
+    server accepted only with the owned zone process, the DbServer's character
+    status and the current travel epoch. It recognizes no new readiness itself.
+    """
+    import stationary_contact_evidence as contact
+    map_id = proof.get('map_id') if type(proof) is dict else None
+    if not (type(session) is str and re.fullmatch(r'[0-9a-f]{32}', session)
+            and contact.positive_int(client_pid) and type(now_utc_ms) is int and now_utc_ms > 0
+            and proof.get('session_id') == session and type(proof.get('client_pid')) is int
+            and proof['client_pid'] == client_pid and type(proof.get('character_id')) is int
+            and proof['character_id'] == 1 and type(map_id) is int and 1 <= map_id <= 999
+            and contact.positive_int(proof.get('auth_id'))
+            and proof.get('name') == CHARACTER and proof.get('account') == ACCOUNT
+            and all(proof.get(key) is True for key in ('connected_on_atlas', 'connected_on_supported_map',
+                'zoning_enabled', 'stock_travel', 'existing_character_verified',
+                'preserved_existing_identity', 'reopen_verified', 'native_client_ready_observed'))
+            and type(proof.get('client_ready_observed_utc_ms')) is int
+            and 0 < proof['client_ready_observed_utc_ms'] <= now_utc_ms
+            and type(ready) is dict and ready.get('loaded_world_assets') is True
+            and ready.get('name') == CHARACTER and ready.get('account') == ACCOUNT
+            and ready.get('log_route') == 'embedded_dbserver_logserver'
+            and type(ready.get('map_id')) is int and ready['map_id'] == map_id
+            and type(ready.get('utc_ms')) is int
+            and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']
+            and re.fullmatch(r'[0-9a-f]{64}', str(ready.get('line_sha256', '')))):
+        return None
+    return {'session_id': session, 'client_pid': client_pid, 'character_id': 1,
+            'auth_id': proof['auth_id'], 'map_id': map_id, 'name': CHARACTER, 'account': ACCOUNT,
+            'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
+            'scope': 'previously_validated_current_session_stock_zone_connection',
+            'native_log_contains_character_db_id': False,
+            'native_log_contains_session_or_client_pid': False}
 
 
 def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
@@ -1138,6 +1226,8 @@ def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
     """
     import stationary_contact_evidence as contact
     ready = proof.get('client_ready_evidence') if type(proof) is dict else None
+    if type(ready) is dict and ready.get('source') == 'current_target_stock_CLIENT_READY_resumeCharacter_success':
+        return stock_zone_binding(proof, ready, session, client_pid, now_utc_ms)
     if type(ready) is not dict or ready.get('source') != 'current_owned_mapserver_monorail_ready':
         return contact.binding(proof, session, client_pid, now_utc_ms)
     if not (type(session) is str and re.fullmatch(r'[0-9a-f]{32}', session)
@@ -1239,7 +1329,7 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
     """Bind exact stock point credits to the already validated owned connection.
 
     Native reward lines have neither a character DB ID nor a session/PID. Their
-    THORHERO:COHLOCAL identity and owned Atlas route are bound through the prior
+    Name:COHLOCAL identity and owned Atlas route are bound through the prior
     reopen/ready proof. This reads evidence only; it never awards game points.
     """
     import stationary_contact_evidence as contact
@@ -1287,14 +1377,14 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
             if not local and not embedded:
                 continue
             tail = text[text.rfind('\n') + 1:]
-            if re.search(r'"THORHERO:COHLOCAL" -?\d+ \[Tbl\]:Rcv:Points(?: |$)', tail):
+            if re.search(entity_name_prefix() + r' -?\d+ \[Tbl\]:Rcv:Points(?: |$)', tail):
                 return None  # A pending award line is not a complete credit inventory.
             for line in text[:text.rfind('\n') + 1].splitlines():
                 parsed = route_pattern.fullmatch(line)
                 if parsed is None or (parsed['local_level'] is not None) != local:
                     continue
                 message = parsed['message']
-                if not re.match(contact.PREFIX + r'\[Tbl\]:Rcv:Points(?: |$)', message):
+                if not re.match(contact.prefix() + r'\[Tbl\]:Rcv:Points(?: |$)', message):
                     continue
                 try:
                     stamp = int(time.mktime(time.strptime(parsed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
@@ -1303,7 +1393,7 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
                 if not ready_ms <= stamp <= end_ms:
                     continue
                 candidate_count += 1
-                match = task.PATTERNS['reward'].fullmatch(message)
+                match = task.patterns()['reward'].fullmatch(message)
                 if (candidate_count > task.RECORD_LIMIT or match is None or len(message) > 2048
                         or parsed['local_level'] == '2'
                         or task._int(int(match['teamup']), -0x80000000) is None):
@@ -1354,9 +1444,9 @@ def native_logout_position(logs, delivery, ready_utc_ms, now_utc_ms):
     must agree; this observation alone never proves SQL commit or connection.
     """
     number = character_events.NUMBER
-    timer_pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ '
+    timer_pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ '
         r'\[Disconnect:Logout timer expired\] [^\r\n]+$')
-    position_pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ '
+    position_pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ '
         r'Logout location : map (?P<map_id>[1-9][0-9]*) '
         r'\((?P<x>' + number + r') (?P<y>' + number + r') (?P<z>' + number + r')\) [^\r\n]+$')
     observations = []
@@ -1396,7 +1486,7 @@ def ready_record(logs):
     The earlier DbServer connected flag only records map assignment. This
     current-session marker is emitted after resumeCharacter accepts CLIENT_READY.
     """
-    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+    pattern = re.compile('^' + entity_name_prefix() + r' -?\d+ Connection:ResumeCharacter from '
         r'127\.0\.0\.1:(?P<port>[1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
     for message, record in entity_records(logs):
         match = pattern.fullmatch(message)
@@ -1424,9 +1514,9 @@ UNENTERED_NULL_FIELDS = {
 UNENTERED_RECORD_FIELDS = {
     'ents': ('containerid', 'staticmapid', 'mapid', 'playertype', 'accesslevel', 'active'),
     'ents2': ('containerid', 'subid', 'influencetype', 'praetorianprogress', 'playersubtype')}
-UNENTERED_REOPEN = ('THORHERO was created but never entered the game (its first zone did not start), so there is '
-                    'nothing to reopen. Use Resume first character creation: it removes that unfinished THORHERO '
-                    'and creates it again.')
+UNENTERED_REOPEN = ('{name} was created but never entered the game (its first zone did not start), so there is '
+                    'nothing to reopen. Use Resume first character creation: it removes that unfinished character '
+                    'so you can create it again.')
 
 
 def ents_family_tables(template, expected_tables):
@@ -1703,6 +1793,7 @@ class LocalCharacterServer(login.LocalLoginServer):
     EXTERNAL_SESSION_MAPS = frozenset({1})
     def __init__(self, owner):
         request_at, request_utc_ms = time.monotonic(), int(time.time() * 1000)
+        reset_character()
         super().__init__(owner)
         self.map_process = None
         self.map_previous = None
@@ -1724,6 +1815,28 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.ctx.report[self.REPORT_KEY] = self.creation_report
         self.initial_startup_timing = self.begin_startup_timing(
             'initial_guest_service_request', now=request_at, utc_ms=request_utc_ms)
+
+    def bind_session_character(self, identity):
+        """Name this session's character from its verified SQL row (bind_character).
+
+        The caller has already proved the row is this session's: the preserved
+        ID 1 (Reopen) or the account's newly created character (creation).
+        """
+        require(type(identity) is dict and type(identity.get('containerid')) is int
+                and identity['containerid'] > 0 and identity.get('authname') == ACCOUNT,
+                'The local character is not one of the COHLOCAL account; preserve all data and export the report')
+        name = bind_character(identity.get('name'))
+        self.creation_report['name'] = name
+        events = self.creation_report.get('immediate_native_events')
+        if name != LEGACY_CHARACTER and isinstance(events, dict):
+            events.update(used=False, legacy_sorted_logs_used_for_ready_or_ground=True,
+                          reason='The native console producer reports only THORHERO; '
+                                 'this character is observed through the stock entity logs')
+        if name != LEGACY_CHARACTER and getattr(self, 'monorail_enabled', lambda: False)():
+            raise base.DiagnosticError(
+                "Station travel (Game's own zone travel off) follows only a character named THORHERO. "
+                "Turn Game's own zone travel back on to play " + name + '.')
+        return name
 
     def begin_startup_timing(self, kind, *, map_id=None, epoch=None, resident=False, now=None, utc_ms=None):
         """Observe the existing lifecycle without granting readiness or a budget.
@@ -1829,8 +1942,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         An initialized PostgreSQL profile is not evidence that native creation
         ever saved a character. Resuming that first creation is explicit and
         never removes or replaces the persistent profile; the only row it
-        removes is a THORHERO that never entered the game (unentered_creation,
-        0.13.61), and the report keeps that row.
+        removes is a character that never entered the game (unentered_creation,
+        0.13.61; any name since 0.13.62), and the report keeps that row.
         """
         timing = getattr(self, 'initial_startup_timing', None)
         if (timing is not None and timing.get('kind') == 'initial_guest_service_request'
@@ -1872,24 +1985,25 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.ctx.report['character_profile_eligibility'] = eligibility
         if self.requires_saved_character:
             require(inventory,
-                    'No saved THORHERO exists in this preserved profile. Use Resume first character creation, then save normally before Reopen.')
+                    'No saved character exists in this preserved profile. Use Resume first character creation, then save normally before Reopen.')
             require(all(type(row) is dict and set(row) == set(evidence.IDENTITY_FIELDS)
                         and type(row.get('name')) is str and type(row.get('authname')) is str
                         and type(row.get('containerid')) is int and row['containerid'] > 0
                         and type(row.get('authid')) is int and 0 < row['authid'] <= 4294967295
                         for row in inventory),
                     'Character inventory contains incomplete or invalid identities; preserve all data and export the report')
-            candidates = [row for row in inventory
-                          if row.get('name', '').casefold() == CHARACTER.casefold()
-                          or row.get('containerid') == 1]
-            require(len(candidates) == 1, 'Expected exactly the saved THORHERO ID 1; preserve all characters')
+            # 0.13.62: the saved character is ID 1 of the local account, whatever its name.
+            candidates = [row for row in inventory if row.get('containerid') == 1]
+            require(len(candidates) == 1, 'Expected exactly the saved character ID 1; preserve all characters')
             identity = candidates[0]
             auth_id = identity.get('authid')
-            require(type(identity.get('containerid')) is int and identity['containerid'] == 1
-                    and identity.get('name') == CHARACTER and identity.get('authname') == ACCOUNT
+            require(identity.get('authname') == ACCOUNT
                     and type(auth_id) is int and 0 < auth_id <= 4294967295
                     and [row for row in inventory if row.get('authid') == auth_id] == [identity],
-                    'Saved THORHERO identity differs from the accepted local character; preserve all characters')
+                    'The saved character differs from the accepted local character (ID 1 of COHLOCAL); '
+                    'preserve all characters')
+            name = self.bind_session_character(identity)
+            eligibility['character_name'] = name
             rows = self.character_rows(1)
             parents = rows.get('ents', [])
             committed = (len(parents) == 1 and type(parents[0].get('logincount')) is int
@@ -1897,13 +2011,13 @@ class LocalCharacterServer(login.LocalLoginServer):
             if not committed:
                 # Thor 0.13.60: the row a failed first zone left was reported as
                 # an unexplained missing baseline. Nothing is changed here.
-                require(self.unentered_creation(inventory, rows) is None, UNENTERED_REOPEN)
-            require(committed, 'Saved THORHERO has no committed login baseline; preserve all data and export the report')
+                require(self.unentered_creation(inventory, rows) is None, UNENTERED_REOPEN.format(name=name))
+            require(committed, 'Saved ' + name + ' has no committed login baseline; preserve all data and export the report')
             snapshot = validate_character_rows(rows, inventory, inventory,
                 self.schema['expected_attributes'], auth_id,
                 existing_identity=identity, expected_login_count=parents[0]['logincount'])
             require(snapshot is not None,
-                    'Saved THORHERO powers or costume are incomplete; preserve all data and export the report')
+                    'Saved ' + name + "'s powers or costume are incomplete; preserve all data and export the report")
             eligibility['committed_character_rows_verified'] = True
         else:
             unentered = self.unentered_creation(inventory) if inventory and resume else None
@@ -1914,7 +2028,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 inventory = self.inventory()
                 eligibility.update(character_count=len(inventory), empty_inventory_verified=not inventory)
             require(not inventory,
-                    'First character creation requires a completely empty inventory. Existing characters were preserved; use Reopen for saved THORHERO.')
+                    'First character creation requires a completely empty inventory. Existing characters were preserved; use Reopen for your saved character.')
             high_water = self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True) if presence == 'present' else '0'
             require(high_water == '0',
                     'This empty profile has already allocated character IDs. Creation ID 1 cannot be qualified; preserve all data and export the report instead of resetting it.')
@@ -3370,18 +3484,19 @@ class LocalCharacterServer(login.LocalLoginServer):
         return counts
 
     def unentered_creation(self, inventory, rows=None):
-        """The row of a THORHERO whose first zone never started, or None (read-only).
+        """The row of a character whose first zone never started, or None (read-only).
 
-        Its identity is the accepted local one (ID 1), its rows exist only in
-        Ents and Ents2[0], every field a MapServer writes is still NULL (LoginCount
-        included), it has no powers or costume, and ID 1 is the only ID ever
-        allocated. Any other inventory is a character this never touches.
+        Its identity is the accepted local one (ID 1, any name the game accepts
+        since 0.13.62), its rows exist only in Ents and Ents2[0], every field a
+        MapServer writes is still NULL (LoginCount included), it has no powers or
+        costume, and ID 1 is the only ID ever allocated. Any other inventory is a
+        character this never touches.
         """
         if not (type(inventory) is list and len(inventory) == 1 and type(inventory[0]) is dict):
             return None
         identity = inventory[0]
         if not (set(identity) == set(evidence.IDENTITY_FIELDS) and type(identity.get('containerid')) is int
-                and identity['containerid'] == 1 and identity.get('name') == CHARACTER
+                and identity['containerid'] == 1 and valid_character_name(identity.get('name'))
                 and identity.get('authname') == ACCOUNT and type(identity.get('authid')) is int
                 and 0 < identity['authid'] <= 2147483647):
             return None
@@ -3413,25 +3528,27 @@ class LocalCharacterServer(login.LocalLoginServer):
         """Delete that row and give ID 1 back in one statement (it rolls back whole)."""
         tables = self.ents_tables()
         auth_id = unentered['identity']['authid']
+        name = unentered['identity'].get('name')
         ents2_rows = unentered['row_counts'].get('ents2', 0)
-        require(type(auth_id) is int and 0 < auth_id <= 2147483647 and ents2_rows in (0, 1),
-                'Invalid unfinished THORHERO record')
+        require(type(auth_id) is int and 0 < auth_id <= 2147483647 and ents2_rows in (0, 1)
+                and valid_character_name(name), 'Invalid unfinished character record')
         others = ''.join(' OR EXISTS (SELECT 1 FROM dbo.' + table + ' WHERE containerid=1)'
                          for table in tables if table not in ('ents', 'ents2'))
         self.ctx.event('stage', status='running', message=(
-            'Removing the unfinished THORHERO: it was created, but its first zone never started, so it never '
+            'Removing the unfinished ' + name + ': it was created, but its first zone never started, so it never '
             'entered the game. The report keeps a copy of its rows.'))
         statement = (
             'DO $$DECLARE removed_ents integer; removed_ents2 integer; BEGIN '
             'DELETE FROM dbo.ents2 WHERE containerid=1 AND subid=0'
             + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents2']) + '; '
             'GET DIAGNOSTICS removed_ents2 = ROW_COUNT; '
-            "DELETE FROM dbo.ents WHERE containerid=1 AND name='" + CHARACTER + "' AND authname='" + ACCOUNT
-            + "' AND authid=" + str(auth_id)
+            # The player chose the name (0.13.62), so it enters SQL only as its digest.
+            "DELETE FROM dbo.ents WHERE containerid=1 AND md5(name)='" + hashlib.md5(name.encode()).hexdigest()
+            + "' AND authname='" + ACCOUNT + "' AND authid=" + str(auth_id)
             + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents']) + '; '
             'GET DIAGNOSTICS removed_ents = ROW_COUNT; '
             'IF removed_ents <> 1 OR removed_ents2 <> ' + str(ents2_rows) + ' OR EXISTS (SELECT 1 FROM dbo.ents)'
-            + others + " THEN RAISE EXCEPTION 'The unfinished THORHERO rows changed'; END IF; "
+            + others + " THEN RAISE EXCEPTION 'The unfinished character rows changed'; END IF; "
             # setval is not transactional (001-coh-compat.sql); it runs only after every check passed.
             "PERFORM setval(pg_get_serial_sequence('dbo.ents', 'containerid'), 1, false); "
             "IF dbo.coh_container_high_water('dbo.ents'::regclass) <> 0 THEN "
@@ -3439,12 +3556,12 @@ class LocalCharacterServer(login.LocalLoginServer):
         try:
             output = self.sql(statement, game=True)
         except base.DiagnosticError as failure:
-            raise base.DiagnosticError('The unfinished THORHERO could not be removed and nothing was changed ('
+            raise base.DiagnosticError('The unfinished ' + name + ' could not be removed and nothing was changed ('
                                        + str(failure)[-300:] + '); export this report') from failure
-        require(output == 'DO', 'Unexpected result removing the unfinished THORHERO; export this report')
+        require(output == 'DO', 'Unexpected result removing the unfinished ' + name + '; export this report')
         require(self.inventory() == [] and self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);",
                                                      game=True) == '0',
-                'The unfinished THORHERO is still present after its removal; export this report')
+                'The unfinished ' + name + ' is still present after its removal; export this report')
         return dict(unentered, removed=True, character_id_high_water_after=0)
 
     def validate_saved_rows(self, rows, inventory):
@@ -3475,6 +3592,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         return native_logout_position(self.current_logs(), delivery, ready_utc_ms, now_utc_ms)
 
     def immediate_event_contract(self):
+        if CHARACTER != LEGACY_CHARACTER:
+            # The native producer (wine_character_events.c) reports only THORHERO;
+            # any other name is read from the stock entity logs (0.13.62).
+            return None
         package = getattr(self, 'map_package', {})
         return package.get('inputs', {}).get('mapserver_progress', {}).get('events_contract')
 
@@ -3569,12 +3690,16 @@ class LocalCharacterServer(login.LocalLoginServer):
         before = self.sample_progress(force=True)
         if not self.live_progress(before): return None
         inventory = self.inventory()
-        candidates = [row for row in inventory if row.get('name') == CHARACTER]
-        if not candidates: return None
-        require(len(candidates) == 1, 'Ambiguous THORHERO identity')
-        identity = candidates[0]
+        # 0.13.62: the session's character is the account's one row under
+        # whatever name the player gave it in the creator (the DbServer inserts
+        # it at Enter Game); verify_current_identity checks it is this session's
+        # (new, or the preserved ID 1), and its name binds the session.
+        if not inventory: return None
+        require(len(inventory) == 1, 'More than one character exists; preserve all characters and export the report')
+        identity = inventory[0]
         identifier = identity['containerid']
         self.verify_current_identity(identity, inventory)
+        self.bind_session_character(identity)
         sample = evidence.parse_character_status(self.query(['-getstatus', '3', str(identifier)], 'player-status'),
             identifier, CHARACTER, ACCOUNT, allow_missing=True)
         after = self.sample_progress(force=True)
@@ -3880,16 +4005,15 @@ class LocalCharacterReopenServer(LocalCharacterServer):
 
     def capture_baseline(self):
         self.baseline = self.inventory()
-        candidates = [row for row in self.baseline
-                      if row.get('name', '').casefold() == CHARACTER.casefold()
-                      or row.get('containerid') == self.CHARACTER_ID]
-        require(len(candidates) == 1, 'Expected exactly the existing THORHERO ID 1; preserve all characters')
+        candidates = [row for row in self.baseline if row.get('containerid') == self.CHARACTER_ID]
+        require(len(candidates) == 1, 'Expected exactly the existing character ID 1; preserve all characters')
         identity = candidates[0]
         auth_id = identity.get('authid')
         require(type(identity.get('containerid')) is int and identity['containerid'] == self.CHARACTER_ID
-                and identity.get('name') == CHARACTER and identity.get('authname') == ACCOUNT
+                and identity.get('authname') == ACCOUNT
                 and type(auth_id) is int and 0 < auth_id <= 4294967295,
-                'Preserved THORHERO identity differs from the accepted local character')
+                'Preserved character identity differs from the accepted local character (ID 1 of COHLOCAL)')
+        self.bind_session_character(identity)
         require([row for row in self.baseline if row.get('authid') == auth_id] == [identity],
                 'Reopen requires exactly the existing COHLOCAL character')
         account = self.sql("SELECT containerid || '|' || authname FROM dbo.shardaccounts "

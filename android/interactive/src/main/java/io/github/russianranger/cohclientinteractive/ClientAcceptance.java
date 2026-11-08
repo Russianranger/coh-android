@@ -236,7 +236,7 @@ final class ClientAcceptance {
                 || !"saved_character_destination".equals(event.get("type"))
                 || !session.equals(event.get("session_id")) || !number(event.get("character_id"), 1)
                 || !positiveInteger(event.get("auth_id")) || ((Number) event.get("auth_id")).longValue() > 4294967295L
-                || !"THORHERO".equals(event.get("name"))
+                || !characterName(event.get("name"))
                 || !"COHLOCAL".equals(event.get("account")) || !yes(event.get("existing_character_verified"))
                 || !yes(event.get("saved_location_verified")) || !Boolean.FALSE.equals(event.get("sql_game_mutations_performed"))) return false;
         return (number(event.get("map_id"), 1) && number(event.get("port"), 7001)
@@ -277,7 +277,7 @@ final class ClientAcceptance {
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_connected".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
-                && positiveInteger(event.get("character_id")) && "THORHERO".equals(event.get("name"))
+                && positiveInteger(event.get("character_id")) && characterName(event.get("name"))
                 && "COHLOCAL".equals(event.get("account")) && supportedCharacterMap(event,zoning);
     }
 
@@ -286,7 +286,7 @@ final class ClientAcceptance {
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_saved".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
-                && positiveInteger(event.get("character_id")) && "THORHERO".equals(event.get("name"))
+                && positiveInteger(event.get("character_id")) && characterName(event.get("name"))
                 && yes(event.get("committed_sql_verified"));
     }
 
@@ -325,7 +325,8 @@ final class ClientAcceptance {
                 && yes(character.get("verified")) && session.equals(character.get("session_id"))
                 && number(character.get("client_pid"), clientPid) && positiveInteger(character.get("character_id"))
                 && number(character.get("character_id"), ((Number) event.get("character_id")).longValue())
-                && "THORHERO".equals(character.get("name")) && "COHLOCAL".equals(character.get("account"))
+                && characterName(character.get("name")) && "COHLOCAL".equals(character.get("account"))
+                && character.get("name").equals(event.get("name")) && character.get("name").equals(object(connectedEvent).get("name"))
                 && positiveInteger(character.get("auth_id"))
                 && number(object(report.get("local_login")).get("auth_id"), ((Number) character.get("auth_id")).longValue())
                 && yes(character.get("connected_on_atlas")) && supportedCharacterMap(character,zoning)
@@ -366,7 +367,7 @@ final class ClientAcceptance {
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_relocated".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
-                && number(event.get("character_id"), 1) && "THORHERO".equals(event.get("name"))
+                && number(event.get("character_id"), 1) && characterName(event.get("name"))
                 && "COHLOCAL".equals(event.get("account")) && number(event.get("map_id"), 1)
                 && yes(event.get("recovery_requested")) && yes(event.get("recovery_verified"))
                 && yes(event.get("ordinary_stuck_observed")) && yes(event.get("on_atlas_safe_position"))
@@ -486,7 +487,7 @@ final class ClientAcceptance {
                         || number(row.get("map_id"),5) && yes(row.get("monorail_enabled")) && yes(accepted.get("monorail_enabled"))
                         || stockTravelMap(row) && yes(accepted.get("stock_travel")))
                         && yes(row.get("zoning_enabled")) && yes(accepted.get("zoning_enabled"))) || !number(row.get("revision"), i + 1)
-                    || !"THORHERO".equals(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
+                    || !characterName(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
                     || !(i == 0 ? "connected" : "grounded").equals(row.get("phase"))) return false;
             if (manual != yes(row.get("manual_session")) || manual != yes(accepted.get("manual_session"))
                     || manual && (!number(row.get("deadline_utc_ms"), 0)
@@ -600,6 +601,16 @@ final class ClientAcceptance {
         return value instanceof Map ? (Map<?, ?>) value : Collections.emptyMap();
     }
     private static boolean yes(Object value) { return Boolean.TRUE.equals(value); }
+    /**
+     * Any player name the game accepts (validate_name.c: ASCII, 3-20 characters, no outer or
+     * double spaces). 0.13.62 (owner, 2026-11-08): the character need not be named THORHERO;
+     * the guest binds the one local character (ID 1 of COHLOCAL) to its SQL name.
+     */
+    static boolean characterName(Object value) {
+        if (!(value instanceof String)) return false;
+        String name = (String) value;
+        return name.matches("[\\x20-\\x7e]{3,20}") && name.equals(name.trim()) && !name.contains("  ");
+    }
     /** Java null, or org.json's JSONObject.NULL (which equals null). */
     private static boolean jsonNull(Object value) { return value == null || value.equals(null); }
     private static boolean integer(Object value) {

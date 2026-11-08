@@ -160,7 +160,7 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;
         return command!=null&&canSendPerformanceCommand()&&active!=null&&active.requestPerformanceCommand(command);
     }
-    public String zoningStatus(){ClientRuntime active=runtime;return active==null?"Reopen THORHERO to start in the saved destination.":active.zoningStatus();}
+    public String zoningStatus(){ClientRuntime active=runtime;return active==null?"Reopen your character to start in the saved destination.":active.zoningStatus();}
     public int zoningCurrentMap(){ClientRuntime active=runtime;return active==null?0:active.zoningCurrentMap();}
     public boolean canPrepareZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canPrepareZoning();}
     public boolean canTravelZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canTravelZoning();}
@@ -790,7 +790,7 @@ public final class ClientService extends Service {
         busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
         session=(RUN.equals(action)||creating)?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
-        detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the reviewed COH asset ZIP.":"Opening the persistent database and verifying THORHERO's saved destination before starting its MapServer and client. Native startup may take up to 40 minutes on the Thor.";
+        detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the reviewed COH asset ZIP.":"Opening the persistent database and verifying the saved character's destination before starting its MapServer and client. Native startup may take up to 40 minutes on the Thor.";
         getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).commit();
         selectedSession=session;
         if(setup){setupStartedUtc=System.currentTimeMillis();lastSetupCheckpointUptime=0;lastSetupPhase="";setupFailureReport=null;setupWorkerOwnsWake=true;setupAppVersion=setupAppVersion();String appId=getPackageName();setupAppId=appId.substring(0,Math.min(160,appId.length()));}
