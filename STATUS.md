@@ -1,6 +1,6 @@
 # x86 track integration
 
-Updated 2026-11-06 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-07 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
@@ -28,13 +28,13 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.50 (APK 41712293048) Thor: King's Row reached (cold trip 562 s); session 2 Atlas cache refused (444 s vs 297 s).
 - 0.13.51 (APK 41750489814): cache reuse fix, 10 FPS station cap (0121). Thor: King's Row NPCs jump, no audio.
 - 0.13.52 (APK 41791858823): clock wrap 0123, 0122. 0.13.53 (APK 41881826170): game audio (TRASC plugin), 0124.
-- 0.13.54 (APK 41960891294 at a66b533f6): save check for ordinary play, pss_kib; shared heap 2/2 failed in session
-  (41931773800, 41956900853) → off; external-maps DbServer passed in CI (41961253764). Thor (export 20261105-043833):
-  save passed; King's Row cold 191 s at the station, trip 30 s; PSS≈RSS.
+- 0.13.54 (APK 41960891294 at a66b533f6): ordinary-play save check; shared heap off (41931773800, 41956900853
+  failed); external-maps DbServer CI 41961253764. Thor (20261105-043833): save passed; King's Row cold 191 s, trip 30 s.
 - 0.13.55 (APK 42037755195 at 81e81ddd0): stock zone travel, any zone, gear menu. Thor: monorail → weeklyTF assert (20261105-202806).
-- 0.13.56 (APK 42169364145 at 85a8f9801): weeklyTF.cfg, -notwostagemapxfer; CI trip 101 ready 172 s. Thor (20261106-152038):
-  King's Row reached (~3½ min), then the reopen budget rejected map 5 (monorail-only rule); "Map loading" notice stayed.
+- 0.13.56 (APK 42169364145 at 85a8f9801): weeklyTF.cfg; Thor (20261106-152038): King's Row ~3½ min, reopen rejected map 5.
 - 0.13.57 (APK 42281556221 at 8050afca8): every static zone, 0125, occupied probe; CI trip 101 ready 182 s. Thor (20261106-
   210545/220022): hero saved in King's Row; its start overlapped the client's → Android low-memory kill (reason 3, foreground).
 - 0.13.58 published (APK 42329179898; build 42300265349, runtimes 42312362966/42316982535/42322788540 at 919e23760): Atlas
   first, saved zone at Enter Game (0126), storage mount-point repair; CI trip 167 s; r58/r58t passed on re-run. HANDOFF "0.13.58".
+- 0.13.59 published (APK 42429765739; build 42419983392, runtimes 42413409889/42416994465/42426938668 at 825bae059): no zone
+  before Enter Game, only the character's own (any side); Save survives its Enter (0127); CI reopen zone 136 s. HANDOFF "0.13.59".

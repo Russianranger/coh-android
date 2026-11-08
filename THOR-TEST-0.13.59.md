@@ -32,7 +32,15 @@ limits: one character per install, named THORHERO; at most two zone servers;
 NPCs outside Atlas Park and King's Row stand still; missions are not served.
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.59".
 
-CI: CI_SUMMARY
+CI at 825bae059: build 42419983392, trusted runtime 42426938668, zone-trip
+runtime 42413409889 and default runtime 42416994465 passed; APK 42429765739
+published it (sha256 `aa704cdf8767a9ccc159d3497d9d2e3fc3766a7f63d030569a9fc7781c316ec9`).
+In the zone-trip run (CI's hero is a hero in Atlas Park) the reopen started
+no zone before Enter Game: Atlas Park was ready 136 s after Enter Game asked
+for it, then the game's own trip to a second Atlas Park (172 s) and the save
+passed. The Enter key race did not happen in these runs, so the Save fix is
+proven by the build's native check only (patched client keeps the logout, the
+original cancels it).
 
 ## Steps (fresh install)
 

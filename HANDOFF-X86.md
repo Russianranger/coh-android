@@ -518,6 +518,24 @@ connection there.
   the retry skips the Atlas tick check then (`zone_server_deferred_to_enter_game`),
   a zone started since forbids it; `client_attempt_retry.py` added to
   `CHANGED_RUNTIME` (`test_thor_apk_runtime_review` caught the omission).
+- **Chain at 825bae059** (one chain on x86/perf-round1, all passed on their
+  first attempt). Zone-trip runtime 42413409889 (client/data from build
+  42402626384, same client source), 2232 s. Creation: DbServer request map 1
+  cookie 2 after the creator, ready 579.7 s after the stock start (the
+  install's first MapServer start: 108 bins written, spawn to ready 421.8 s).
+  Reopen, the first CI run of the dynamic reopen: no zone server before Enter
+  Game (`local_atlas_startup` 0.0 s, database server 9.8 s); the DbServer's
+  request at Enter Game (map 1 cookie 2) was ready 136.1 s after the stock
+  start (spawn to ready 133.3 s; the `initial_guest_service_request` row's
+  257.7 s counts from the guest's start, before login); `/mapmove 101` (cookie
+  3) ready 172.2 s, 2 arrivals, save passed. `client_logout_keys` kept 0 /
+  aborted 0 in every session of the chain (the Enter race did not occur, so
+  0127 rests on its native check). Default runtime 42416994465 (1816 s). Build
+  42419983392 (native check again: patched PASS, original FAIL "aborted by
+  key: 28"); trusted runtime 42426938668 on it (trusted bins applied, 1779 s);
+  APK 42429765739 published `coh-atlas-gameplay-v0.13.59` (92315049 bytes,
+  sha256 aa704cdf8767a9ccc159d3497d9d2e3fc3766a7f63d030569a9fc7781c316ec9,
+  signer 92955353…, the same as 0.13.50-0.13.58).
 - Version 0.13.59 (74); test sheet `THOR-TEST-0.13.59.md`.
 
 ## 0.13.58: Atlas Park first, the saved zone at Enter Game (Claude, 2026-11-06)
