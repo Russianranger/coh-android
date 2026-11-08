@@ -336,6 +336,9 @@ class DynamicCreationTests(unittest.TestCase):
         self.assertEqual([event['status'] for event in events], ['starting', 'not_ready'])
         self.assertEqual(events[-1]['failure'], reason)
         self.assertTrue(events[-1]['message'].startswith('Mercy Island could not be started (' + reason + ')'))
+        # 0.13.61: the DbServer keeps the new character (unloaded, not deleted); Resume removes it.
+        self.assertTrue(events[-1]['message'].endswith('Resume first character creation removes it and creates it again.'))
+        self.assertTrue(value.INITIAL_ZONE_MESSAGES['failed'].endswith('nothing was moved; export this report.'))
         value.tick_dynamic_initial()                                     # the failed attempt is closed
         self.assertEqual((len(initial['attempts']), initial['attempts'][0]['outcome']), (1, 'failed'))
         self.assertGreaterEqual(value.initial_zone_wait_seconds(), 0)

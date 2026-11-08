@@ -35,7 +35,9 @@ second Atlas Park took 172 s.
 
 1. Install 0.13.60 over 0.13.59. Your imported assets and the database profile
    stay. The villain from 0.13.59 was not kept: the game deletes a new
-   character whose first zone could not start.
+   character whose first zone could not start. (Correction, 0.13.61: it was
+   kept as an unfinished character, so Resume and Reopen both stopped; see
+   [THOR-TEST-0.13.61.md](THOR-TEST-0.13.61.md).)
 2. Leave the options at their defaults (**Game's own zone travel** on, ARM64
    client).
 3. Press **Resume first character creation**. Log in with `COHLOCAL / offline` and create

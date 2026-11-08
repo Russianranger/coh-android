@@ -1406,6 +1406,44 @@ def ready_record(logs):
     return None
 
 
+# 0.13.61: the row a new character keeps when its first zone never started.
+# At Enter Game the DbServer writes the created character to SQL
+# (handlePlayerContainerLoaded -> updateAuthUserData -> containerUpdate(..., TRUE)
+# clears just_created) before setNewMap asks for its zone. When that start
+# fails, doneWaitingChoosePlayerFailed therefore unloads it instead of deleting
+# it (Thor 0.13.59, Mercy Island: "Someone unloaded a player during map
+# transfer"), and the row stays: name, account and start zone, LoginCount NULL,
+# no class, origin, powers or costume. Only a MapServer writes those, so that
+# character never entered the game. Resume first character creation removes
+# exactly that row; anything else in the inventory is still refused.
+ENTS_TEMPLATE = 'data/server/db/templates/ents.template'
+UNENTERED_NULL_FIELDS = {
+    'ents': ('class', 'origin', 'level', 'experiencepoints', 'influencepoints',
+             'description', 'motto', 'datecreated', 'logincount'),
+    'ents2': ('curbuild', 'originalprimary', 'originalsecondary')}
+UNENTERED_RECORD_FIELDS = {
+    'ents': ('containerid', 'staticmapid', 'mapid', 'playertype', 'accesslevel', 'active'),
+    'ents2': ('containerid', 'subid', 'influencetype', 'praetorianprogress', 'playersubtype')}
+UNENTERED_REOPEN = ('THORHERO was created but never entered the game (its first zone did not start), so there is '
+                    'nothing to reopen. Use Resume first character creation: it removes that unfinished THORHERO '
+                    'and creates it again.')
+
+
+def ents_family_tables(template, expected_tables):
+    """Every table of the DbServer's Ents template, Ents first (what sqlDeleteContainer clears)."""
+    require(isinstance(template, str) and len(template) <= 4 * 1024 * 1024 and isinstance(expected_tables, dict),
+            'Ents template is unreadable')
+    children = sorted({name.lower() for name in
+                       re.findall(r'^[ \t]*([A-Za-z_][A-Za-z0-9_]*)\[[^\]\r\n]+\]\.', template, re.M)})
+    tables = ('ents',) + tuple(children)
+    require('ents' not in children and {'ents2', 'powers', 'costumeparts'} <= set(children) and len(tables) <= 128
+            and all(dbserver.IDENTIFIER.fullmatch(table) and isinstance(expected_tables.get(table), list)
+                    and expected_tables[table][:2] == ['containerid', 'active' if table == 'ents' else 'subid']
+                    for table in tables),
+            'Ents template tables differ from the schema contract')
+    return tables
+
+
 def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
                             existing_identity=None, expected_login_count=1):
     """Reject provisional rows and bind every child to the observed player."""
@@ -1790,7 +1828,9 @@ class LocalCharacterServer(login.LocalLoginServer):
 
         An initialized PostgreSQL profile is not evidence that native creation
         ever saved a character. Resuming that first creation is explicit and
-        never removes or replaces the persistent profile.
+        never removes or replaces the persistent profile; the only row it
+        removes is a THORHERO that never entered the game (unentered_creation,
+        0.13.61), and the report keeps that row.
         """
         timing = getattr(self, 'initial_startup_timing', None)
         if (timing is not None and timing.get('kind') == 'initial_guest_service_request'
@@ -1852,9 +1892,13 @@ class LocalCharacterServer(login.LocalLoginServer):
                     'Saved THORHERO identity differs from the accepted local character; preserve all characters')
             rows = self.character_rows(1)
             parents = rows.get('ents', [])
-            require(len(parents) == 1 and type(parents[0].get('logincount')) is int
-                    and 0 < parents[0]['logincount'] < 2**31 - 1,
-                    'Saved THORHERO has no committed login baseline; preserve all data and export the report')
+            committed = (len(parents) == 1 and type(parents[0].get('logincount')) is int
+                         and 0 < parents[0]['logincount'] < 2**31 - 1)
+            if not committed:
+                # Thor 0.13.60: the row a failed first zone left was reported as
+                # an unexplained missing baseline. Nothing is changed here.
+                require(self.unentered_creation(inventory, rows) is None, UNENTERED_REOPEN)
+            require(committed, 'Saved THORHERO has no committed login baseline; preserve all data and export the report')
             snapshot = validate_character_rows(rows, inventory, inventory,
                 self.schema['expected_attributes'], auth_id,
                 existing_identity=identity, expected_login_count=parents[0]['logincount'])
@@ -1862,6 +1906,13 @@ class LocalCharacterServer(login.LocalLoginServer):
                     'Saved THORHERO powers or costume are incomplete; preserve all data and export the report')
             eligibility['committed_character_rows_verified'] = True
         else:
+            unentered = self.unentered_creation(inventory) if inventory and resume else None
+            if unentered is not None:
+                eligibility['unentered_character'] = dict(unentered, removed=False)
+                eligibility['unentered_character'] = self.remove_unentered_creation(unentered)
+                eligibility['sql_game_mutations_performed'] = True
+                inventory = self.inventory()
+                eligibility.update(character_count=len(inventory), empty_inventory_verified=not inventory)
             require(not inventory,
                     'First character creation requires a completely empty inventory. Existing characters were preserved; use Reopen for saved THORHERO.')
             high_water = self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True) if presence == 'present' else '0'
@@ -3299,6 +3350,102 @@ class LocalCharacterServer(login.LocalLoginServer):
         return {table: self.sql_rows(table, tuple(fields) + (('logincount',) if table == 'ents' else ()),
                 evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
                 for table, fields in evidence.SELECTED.items()}
+
+    def ents_tables(self):
+        path = Path(self.schema_dir) / ENTS_TEMPLATE
+        require(ENTS_TEMPLATE in self.schema['files'] and path.is_file() and not path.is_symlink(),
+                'The verified schema has no Ents template')
+        return ents_family_tables(path.read_text(encoding='utf-8'), self.schema['expected_tables'])
+
+    def container_row_counts(self, tables, identifier):
+        require(type(identifier) is int and identifier > 0 and tables and all(
+            dbserver.IDENTIFIER.fullmatch(table) for table in tables), 'Invalid character row count request')
+        union = ' UNION ALL '.join("SELECT '" + table + "' AS t, count(*)::integer AS n FROM dbo." + table
+                                   + ' WHERE containerid=' + str(identifier) for table in tables)
+        counts = json.loads(self.sql("SELECT coalesce(json_object_agg(t, n),'{}'::json) FROM (" + union + ') x;',
+                                     game=True))
+        require(isinstance(counts, dict) and set(counts) == set(tables)
+                and all(type(count) is int and count >= 0 for count in counts.values()),
+                'Character row counts are unreadable')
+        return counts
+
+    def unentered_creation(self, inventory, rows=None):
+        """The row of a THORHERO whose first zone never started, or None (read-only).
+
+        Its identity is the accepted local one (ID 1), its rows exist only in
+        Ents and Ents2[0], every field a MapServer writes is still NULL (LoginCount
+        included), it has no powers or costume, and ID 1 is the only ID ever
+        allocated. Any other inventory is a character this never touches.
+        """
+        if not (type(inventory) is list and len(inventory) == 1 and type(inventory[0]) is dict):
+            return None
+        identity = inventory[0]
+        if not (set(identity) == set(evidence.IDENTITY_FIELDS) and type(identity.get('containerid')) is int
+                and identity['containerid'] == 1 and identity.get('name') == CHARACTER
+                and identity.get('authname') == ACCOUNT and type(identity.get('authid')) is int
+                and 0 < identity['authid'] <= 2147483647):
+            return None
+        rows = self.character_rows(1) if rows is None else rows
+        ents, ents2 = rows.get('ents'), rows.get('ents2')
+        if not (type(ents) is list and len(ents) == 1 and type(ents[0]) is dict
+                and all(ents[0].get(field) is None for field in UNENTERED_NULL_FIELDS['ents'])
+                and {key: ents[0].get(key) for key in evidence.IDENTITY_FIELDS} == identity
+                and type(ents2) is list and len(ents2) <= 1
+                and all(type(row) is dict and row.get('subid') == 0
+                        and all(row.get(field) is None for field in UNENTERED_NULL_FIELDS['ents2']) for row in ents2)
+                and rows.get('powers') == [] and rows.get('costumeparts') == []):
+            return None
+        tables = self.ents_tables()
+        counts = self.container_row_counts(tables, 1)
+        if not (counts['ents'] == 1 and counts['ents2'] == len(ents2)
+                and all(count == 0 for table, count in counts.items() if table not in ('ents', 'ents2'))):
+            return None
+        if self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True) != '1':
+            return None
+        kept = {table: self.sql_rows(table, fields, evidence.ROW_KEYS[table], 'containerid=1')
+                for table, fields in UNENTERED_RECORD_FIELDS.items()}
+        return {'format': 1, 'policy': 'unentered_first_creation_row_v1', 'identity': dict(identity),
+                'row_counts': {table: count for table, count in counts.items() if count},
+                'tables_checked': len(tables), 'character_id_high_water': 1, 'rows': kept,
+                'start_map_id': kept['ents'][0].get('staticmapid') if len(kept['ents']) == 1 else None}
+
+    def remove_unentered_creation(self, unentered):
+        """Delete that row and give ID 1 back in one statement (it rolls back whole)."""
+        tables = self.ents_tables()
+        auth_id = unentered['identity']['authid']
+        ents2_rows = unentered['row_counts'].get('ents2', 0)
+        require(type(auth_id) is int and 0 < auth_id <= 2147483647 and ents2_rows in (0, 1),
+                'Invalid unfinished THORHERO record')
+        others = ''.join(' OR EXISTS (SELECT 1 FROM dbo.' + table + ' WHERE containerid=1)'
+                         for table in tables if table not in ('ents', 'ents2'))
+        self.ctx.event('stage', status='running', message=(
+            'Removing the unfinished THORHERO: it was created, but its first zone never started, so it never '
+            'entered the game. The report keeps a copy of its rows.'))
+        statement = (
+            'DO $$DECLARE removed_ents integer; removed_ents2 integer; BEGIN '
+            'DELETE FROM dbo.ents2 WHERE containerid=1 AND subid=0'
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents2']) + '; '
+            'GET DIAGNOSTICS removed_ents2 = ROW_COUNT; '
+            "DELETE FROM dbo.ents WHERE containerid=1 AND name='" + CHARACTER + "' AND authname='" + ACCOUNT
+            + "' AND authid=" + str(auth_id)
+            + ''.join(' AND ' + field + ' IS NULL' for field in UNENTERED_NULL_FIELDS['ents']) + '; '
+            'GET DIAGNOSTICS removed_ents = ROW_COUNT; '
+            'IF removed_ents <> 1 OR removed_ents2 <> ' + str(ents2_rows) + ' OR EXISTS (SELECT 1 FROM dbo.ents)'
+            + others + " THEN RAISE EXCEPTION 'The unfinished THORHERO rows changed'; END IF; "
+            # setval is not transactional (001-coh-compat.sql); it runs only after every check passed.
+            "PERFORM setval(pg_get_serial_sequence('dbo.ents', 'containerid'), 1, false); "
+            "IF dbo.coh_container_high_water('dbo.ents'::regclass) <> 0 THEN "
+            "RAISE EXCEPTION 'Character ID 1 stayed allocated'; END IF; END$$;")
+        try:
+            output = self.sql(statement, game=True)
+        except base.DiagnosticError as failure:
+            raise base.DiagnosticError('The unfinished THORHERO could not be removed and nothing was changed ('
+                                       + str(failure)[-300:] + '); export this report') from failure
+        require(output == 'DO', 'Unexpected result removing the unfinished THORHERO; export this report')
+        require(self.inventory() == [] and self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);",
+                                                     game=True) == '0',
+                'The unfinished THORHERO is still present after its removal; export this report')
+        return dict(unentered, removed=True, character_id_high_water_after=0)
 
     def validate_saved_rows(self, rows, inventory):
         return validate_character_rows(rows, self.baseline, inventory,

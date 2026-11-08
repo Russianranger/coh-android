@@ -309,6 +309,7 @@ jobs:
             /docs/android-evidence/mapserver-progress-package-36630872719.json
             /docs/android-evidence/dbserver-package-36460867428.json
             /docs/android-evidence/zone-assets-1.0.0-all-maps.json
+            /docs/schema-generation-evidence/accepted-36088012666.zip
             /tools/android/interactive/prepare_atlas_world_assets.py
             /assets/catalog.json
             /assets/zones-audio-metadata.json
@@ -360,6 +361,10 @@ jobs:
           armport/scripts/step.sh "ArmPort character zone start guards" python3 -m unittest discover -s tools/android/interactive -p 'test_dynamic_initial_map.py'
           armport/scripts/step.sh "ArmPort zone travel guards" python3 -m unittest discover -s tools/android/interactive -p 'test_stock_travel.py'
           armport/scripts/step.sh "ArmPort reopen trip guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_reopen_host.py'
+          # 0.13.61: Resume removes only a THORHERO whose first zone never started (Thor 0.13.60), on a real PostgreSQL.
+          armport/scripts/step.sh "ArmPort PostgreSQL fixture" bash armport/scripts/pg_fixture.sh
+          PGHOST=127.0.0.1 PGPORT=5432 PGUSER=postgres PGPASSWORD=coh-host-fixture PGDATABASE=coh_test_startup_bundle COH_REQUIRE_POSTGRESQL=1 \
+            armport/scripts/step.sh "ArmPort profile eligibility guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_profile_eligibility.py'
 
       - name: Install llvm-mingw (aarch64 host)
         run: |

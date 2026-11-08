@@ -407,7 +407,7 @@ public final class ClientActivity extends Activity {
     private void confirmResumeCreation(){
         if(!canResumeFirstCreation(state))return;
         new AlertDialog.Builder(this).setTitle("Resume first character creation?")
-                .setMessage("Continue the first creation attempt using the existing initialized profile and imported assets. The database is preserved. Startup checks its real character rows; any existing character makes this request stop before the game opens. If THORHERO was already saved, use Reopen saved THORHERO. Log in with COHLOCAL / offline, create THORHERO, then Save character / log out and Finish and export.")
+                .setMessage("Continue the first creation attempt using the existing initialized profile and imported assets. The database is preserved. Startup checks its real character rows. A THORHERO that was created but never entered the game (its first zone did not start) is removed first, and the report keeps a copy of its rows; any other existing character makes this request stop before the game opens. If THORHERO was already saved, use Reopen saved THORHERO. Log in with COHLOCAL / offline, create THORHERO, then Save character / log out and Finish and export.")
                 .setNegativeButton("Cancel",null).setPositiveButton("Resume first creation",(dialog,which)->{
                     if(canResumeFirstCreation(state))request(ClientService.RESUME_FIRST_CREATION);
                 }).show();

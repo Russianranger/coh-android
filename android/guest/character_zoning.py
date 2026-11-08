@@ -1166,7 +1166,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         'ready': '{zone} is ready; THORHERO is entering it.',
         'not_ready': '{zone} did not start in time and the game reported it. Press Enter Game again, or export the report.',
         'failed': '{zone} could not be started ({reason}). The game reported it and nothing was moved; '
-                  'export this report.'}
+                  'export this report.',
+        # 0.13.61: the DbServer keeps a new character whose first zone failed
+        # (unloaded, not deleted); Resume removes that row and creates it again.
+        'failed_creation': '{zone} could not be started ({reason}). The game reported it; export this report. '
+                           'THORHERO never entered the game: Resume first character creation removes it and '
+                           'creates it again.'}
 
     def initial_zone_event(self, status, map_id, *, failure=None):
         """The app shows this while the client waits for the zone (its screen does not move).
@@ -1174,7 +1179,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         A start that failed is sent as not_ready (the app then clears the
         starting line and returns the wait to the creator) with its reason.
         """
-        key = status if failure is None else 'failed'
+        key = status if failure is None else 'failed' if getattr(self, 'requires_saved_character', True) else 'failed_creation'
         fields = {} if failure is None else {'failure': failure}
         self.ctx.event('character_initial_zone', format=1, session_id=self.owner.args.session_id, status=status,
                        map_id=map_id, map_name=zone_name(map_id), generated_utc_ms=int(time.time() * 1000),

@@ -414,6 +414,71 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.61: Resume removes a THORHERO that never entered the game (Claude, 2026-11-08)
+
+Thor 0.13.60 (user, 2026-11-08 07:53 CST, exports 20261108-135104 Resume and
+-135110 Reopen): "Failed to even start the character start, both resume
+character creation and reopen failed".
+
+- **What happened**: both sessions stopped at the profile check before Wine
+  (`character_profile_eligibility`, `checked_before_wine`). The inventory was
+  `{"containerid":1,"authid":1353310574,"authname":"COHLOCAL","name":"THORHERO"}`.
+  Resume: "First character creation requires a completely empty inventory".
+  Reopen read its rows (`ents`: class, origin, level, experience, influence,
+  description, motto, datecreated and logincount NULL; `ents2` subid 0,
+  influencetype 1, no build; no powers, no costume) and stopped with "Saved
+  THORHERO has no committed login baseline". No in-app path remained.
+- **Cause**: 0.13.59's villain was not deleted; the 0.13.60 sheet and the
+  0.13.60 section below said it was. s_finishHandleChoosePlayer allocates the
+  container with `containerUpdate(..., 0)` (just_created stays 1), but
+  handlePlayerContainerLoaded -> updateAuthUserData writes
+  `Ents2[0].AuthUserDataEx` with `containerUpdate(..., TRUE)`, which clears
+  just_created and inserts the whole container (COH_PG_INSERT_CONTAINER
+  reserves ID 1) before setNewMap asks for the zone. When Mercy Island
+  failed, doneWaitingChoosePlayerFailed took its unload branch (0.13.59
+  DbServer error log: "setNewMap failed MapFailed", then "Someone unloaded a
+  player during map transfer", which only containerUnload logs) and kept the
+  row with Active 0. Only a MapServer writes class, origin, powers, costume
+  and LoginCount, so this row never entered the game.
+- **Fix** (`local_character_server.py`): `unentered_creation` (read-only)
+  recognizes exactly that row: the accepted identity (ID 1, THORHERO,
+  COHLOCAL); every field a MapServer writes NULL (`UNENTERED_NULL_FIELDS`,
+  LoginCount included); at most Ents2 subid 0 without a build; no powers or
+  costume; rows for ID 1 only in Ents and Ents2 among all 48 tables of the
+  verified schema's `ents.template` (`ents_family_tables`, the set
+  sqlDeleteContainer clears); ID high water exactly 1. Resume first character
+  creation then runs one DO statement (`remove_unentered_creation`). It
+  deletes those Ents2 and Ents rows under the same conditions and raises
+  (rolling back) unless exactly those rows went and no row for ID 1 or any
+  other character remains. Only then does it run `setval(ents sequence, 1,
+  false)` (setval is not transactional) and require high water 0. The
+  inventory and high water are read again afterwards. The eligibility
+  record gains `unentered_character` (identity, row counts, start map, the
+  kept fields of the removed rows, `removed`) and
+  `sql_game_mutations_performed: true`. Anything else (a logged-in
+  character, one power or badge, a second ID) is refused with the earlier
+  message. Reopen of such a row says it never entered the game and to use
+  Resume, and changes nothing. A creation session whose first zone fails now
+  says Resume will create THORHERO again (`failed_creation`).
+- **Tests**: `test_character_profile_eligibility.py`. Unit: the removal,
+  16 refusals, the Reopen message, a failed removal, and the accepted
+  48-table template (`run_generated_schema.template_columns`). Real
+  PostgreSQL with the guest's own psql invocation: a DbServer-like row is
+  removed (sequence `1:true` -> `1:false`, high water 0, the next DbServer ID
+  is 1); Reopen changes nothing; a badge row refuses. Local PostgreSQL
+  16.15: 34 tests OK, also in a copy limited to the libraries job's sparse
+  checkout. The build now starts the runner's PostgreSQL 16
+  (`armport/scripts/pg_fixture.sh`) and runs the module with
+  `COH_REQUIRE_POSTGRESQL=1`.
+- **App**: the Resume dialog says an unfinished THORHERO is removed first and
+  the report keeps its rows; the ready-profile text mentions a first zone
+  that did not start.
+- Not changed: the DbServer (its unload is upstream behaviour; the guest
+  handles the row at the next Resume). CI's sessions still start from a fresh
+  profile, so the removal is proven on real PostgreSQL in the build, not in an
+  app runtime; Thor is its first device run.
+- Version 0.13.61 (76); test sheet `THOR-TEST-0.13.61.md`.
+
 ## 0.13.60: zones in the shared tree can start (Claude, 2026-11-07)
 
 Thor 0.13.59 (user, 2026-11-07 20:56 CST, exports 20261108-025402 setup and
@@ -431,6 +496,8 @@ Thor 0.13.59 (user, 2026-11-07 20:56 CST, exports 20261108-025402 setup and
   Atlas/Kings server namespace". The start was delinked; the DbServer logged
   `dbid 1 name "THORHERO" setNewMap failed MapFailed`, which deletes a
   just-created character (`doneWaitingChoosePlayerFailed`, `just_created`);
+  (corrected in 0.13.61: it was no longer just_created, so it was unloaded
+  and its row kept; see "0.13.61")
   the client showed "Map failed to start" and exited (code 0) 02:53:46.
   `initial_zone` still said `requested: false, attempts: []`.
 - **Cause**: the FX namespace check (`local-login-server-<32 hex>`

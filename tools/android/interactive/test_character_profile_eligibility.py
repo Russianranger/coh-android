@@ -11,6 +11,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path[:0] = [str(ROOT/'android/guest'), str(Path(__file__).parent)]
@@ -27,6 +28,8 @@ REQUIRED_POSTGRES_FIXTURES = {
     'ambiguous_character_reopen_refused', 'provisional_character_reopen_refused',
     'missing_power_rows_reopen_refused', 'advanced_empty_allocator_resume_refused',
     'post_dbserver_character_race_refused', 'post_dbserver_allocator_race_refused',
+    'unentered_character_resume_removed', 'unentered_character_reopen_explained',
+    'unentered_character_with_badge_refused',
 }
 
 
@@ -39,16 +42,47 @@ def saved_fixture():
     return rows, inventory, attributes
 
 
+# Thor 0.13.60 (exports 20261108-135104/-135110): the row the DbServer kept
+# after a new villain's Mercy Island start failed in 0.13.59.
+UNENTERED_IDENTITY = {'containerid': 1, 'authid': 1353310574, 'authname': 'COHLOCAL', 'name': 'THORHERO'}
+# The DbServer's own write of a created character (s_finishHandleChoosePlayer,
+# setNewMap, updateAuthUserData; COH_PG_INSERT_CONTAINER reserves the ID).
+UNENTERED_ENTS = dict(UNENTERED_IDENTITY, active=0, staticmapid=71, mapid=71, playertype=1, accesslevel=0)
+UNENTERED_ENTS2 = {'containerid': 1, 'subid': 0, 'influencetype': 1, 'praetorianprogress': 0, 'playersubtype': 0}
+# One child table outside the selected evidence stands for the other Ents tables.
+TEMPLATE = ('TeamupsId "int4" indexed\nAuthId "int4" indexed\nName "ansistring[128]" indexed\n'
+            'Ents2[0].InfluenceType "int4"\nPowers[1000].PowerId "int4"\nCostumeParts[1000].Name "ansistring[64]"\n'
+            'Badges[1000].Badge "int4"\n')
+
+
+def unentered_rows():
+    rows = {table: [] for table in server.evidence.SELECTED}
+    rows['ents'] = [dict({field: None for field in server.evidence.SELECTED['ents']}, logincount=None, **UNENTERED_IDENTITY)]
+    rows['ents2'] = [{field: UNENTERED_ENTS2.get(field) for field in server.evidence.SELECTED['ents2']}]
+    return rows
+
+
+def expected_tables():
+    tables = {table: list(fields) + (['logincount'] if table == 'ents' else [])
+              for table, fields in server.evidence.SELECTED.items()}
+    tables['ents'][1:1] = ['active']
+    tables['ents'] += ['staticmapid', 'mapid', 'playertype', 'accesslevel']
+    tables['badges'] = ['containerid', 'subid', 'badge']
+    return tables
+
+
 class EligibilityTests(unittest.TestCase):
     def instance(self, *, reopen=False, resume=False, profile=True, presence='present', inventory=None):
         state = Path(self.enterContext(tempfile.TemporaryDirectory(prefix='coh-profile-gate-')))
-        owner = SimpleNamespace(ctx=SimpleNamespace(report={}, children=[], start=Mock()), root=state,
+        owner = SimpleNamespace(ctx=SimpleNamespace(report={}, children=[], start=Mock(), event=Mock()), root=state,
             args=SimpleNamespace(session_id='1'*32, state=state, resume_empty_profile=resume))
         value = (server.LocalCharacterReopenServer if reopen else server.LocalCharacterServer)(owner)
         rows, saved, attributes = saved_fixture()
-        value.schema = {'expected_attributes': attributes,
-            'expected_tables': {table: list(fields) + (['logincount'] if table == 'ents' else [])
-                for table, fields in server.evidence.SELECTED.items()}}
+        value.schema_dir = state / 'schema'
+        (value.schema_dir / server.ENTS_TEMPLATE).parent.mkdir(parents=True)
+        (value.schema_dir / server.ENTS_TEMPLATE).write_text(TEMPLATE)
+        value.schema = {'expected_attributes': attributes, 'files': {server.ENTS_TEMPLATE: {}},
+            'expected_tables': expected_tables()}
         value.inventory = Mock(return_value=copy.deepcopy(saved if inventory is None and reopen else inventory or []))
         value.character_rows = Mock(return_value=copy.deepcopy(rows))
         value.sql = Mock(side_effect=lambda text, **_: presence if 'to_regclass' in text else '0')
@@ -155,6 +189,146 @@ class EligibilityTests(unittest.TestCase):
             self.assertFalse(value.creation_report['profile_eligibility']['eligible'])
             value.ctx.start.assert_not_called()
 
+    def unentered(self, *, reopen=False, rows=None, counts=None, high_water='1', inventory=None, fail_removal=False):
+        """The SQL a failed first zone leaves (Thor 0.13.60); the removal statement empties it."""
+        value = self.instance(reopen=reopen, resume=not reopen)
+        state = {'removed': False, 'statements': []}
+        current = [dict(UNENTERED_IDENTITY)] if inventory is None else inventory
+        counts = {'ents': 1, 'ents2': 1, 'powers': 0, 'costumeparts': 0, 'badges': 0} if counts is None else counts
+        value.inventory = Mock(side_effect=lambda: [] if state['removed'] else copy.deepcopy(current))
+        value.character_rows = Mock(return_value=unentered_rows() if rows is None else rows)
+        records = {'ents': [{key: UNENTERED_ENTS[key] for key in server.UNENTERED_RECORD_FIELDS['ents']}],
+                   'ents2': [{key: UNENTERED_ENTS2[key] for key in server.UNENTERED_RECORD_FIELDS['ents2']}]}
+        def sql(text, **_kwargs):
+            state['statements'].append(text)
+            if text.startswith('DO $$'):
+                if fail_removal:
+                    raise server.base.DiagnosticError('sql-fixture failed: ERROR:  The unfinished THORHERO rows changed')
+                state['removed'], output = True, 'DO'
+            elif 'to_regclass' in text:
+                output = 'present'
+            elif 'coh_container_high_water' in text:
+                output = '0' if state['removed'] else high_water
+            elif 'json_object_agg' in text:
+                output = json.dumps(counts)
+            else:
+                table = 'ents2' if 'FROM dbo.ents2 WHERE' in text else 'ents' if 'FROM dbo.ents WHERE' in text else None
+                if table is None or 'staticmapid' not in text and 'influencetype' not in text:
+                    raise AssertionError('Unexpected SQL: ' + text[:200])
+                output = json.dumps(records[table])
+            value.ctx.children.append(SimpleNamespace(text=lambda output=output: output))
+            return output
+        value.sql = Mock(side_effect=sql)
+        return value, state
+
+    def initialize_removal(self, value):
+        reused = value.profile.exists()
+        def initialized(current):
+            current.report['profile_reused'] = reused
+        with patch.object(server.login.LocalLoginServer, 'initialize', autospec=True, side_effect=initialized):
+            value.initialize()
+        value.ctx.start.assert_not_called()
+        return value.creation_report['profile_eligibility']
+
+    def test_resume_removes_a_thorhero_that_never_entered_the_game(self):
+        value, state = self.unentered()
+        proof = self.initialize_removal(value)
+        self.assertTrue(proof['eligible']); self.assertTrue(proof['sql_game_mutations_performed'])
+        self.assertTrue(proof['empty_inventory_verified']); self.assertEqual(proof['character_count'], 0)
+        self.assertEqual((proof['character_id_high_water'], proof['supported_first_character_id']), (0, 1))
+        record = proof['unentered_character']
+        self.assertIs(record['removed'], True)
+        self.assertEqual(record['identity'], UNENTERED_IDENTITY)
+        self.assertEqual(record['row_counts'], {'ents': 1, 'ents2': 1})
+        self.assertEqual((record['tables_checked'], record['start_map_id']), (5, 71))
+        self.assertEqual((record['character_id_high_water'], record['character_id_high_water_after']), (1, 0))
+        self.assertEqual(record['rows']['ents2'][0]['influencetype'], 1)
+        self.assertIs(value.ctx.report['character_profile_eligibility'], proof)
+        removal = [text for text in state['statements'] if not text.startswith('SELECT ')]
+        self.assertEqual(len(removal), 1)
+        statement = removal[0]
+        self.assertTrue(statement.startswith('DO $$') and statement.endswith('END$$;'))
+        for clause in ('DELETE FROM dbo.ents2 WHERE containerid=1 AND subid=0 AND curbuild IS NULL',
+                       "DELETE FROM dbo.ents WHERE containerid=1 AND name='THORHERO' AND authname='COHLOCAL' "
+                       'AND authid=1353310574 AND class IS NULL', 'logincount IS NULL',
+                       'OR EXISTS (SELECT 1 FROM dbo.ents) OR EXISTS (SELECT 1 FROM dbo.badges WHERE containerid=1)',
+                       "setval(pg_get_serial_sequence('dbo.ents', 'containerid'), 1, false)"):
+            self.assertIn(clause, statement)
+        # Every check comes before the non-transactional setval.
+        self.assertLess(statement.index("RAISE EXCEPTION 'The unfinished"), statement.index('setval'))
+        self.assertIn('never entered the game', value.ctx.event.call_args.kwargs['message'])
+
+    def test_resume_never_removes_a_character_that_entered_the_game_or_any_other(self):
+        def power(rows, _counts): rows['powers'].append(dict(saved_fixture()[0]['powers'][0]))
+        def costume(rows, _counts): rows['costumeparts'].append(dict(saved_fixture()[0]['costumeparts'][0]))
+        changes = {
+            'login': lambda rows, _: rows['ents'][0].update(logincount=1),
+            'class': lambda rows, _: rows['ents'][0].update({'class': 3}),
+            'origin': lambda rows, _: rows['ents'][0].update(origin=2),
+            'level': lambda rows, _: rows['ents'][0].update(level=0),
+            'created': lambda rows, _: rows['ents'][0].update(datecreated='2026-11-08'),
+            'power': power, 'costume': costume,
+            'build': lambda rows, _: rows['ents2'][0].update(originalprimary=7),
+            'second_build': lambda rows, _: rows['ents2'].append(dict(rows['ents2'][0], subid=1)),
+            'badge': lambda _, counts: counts.update(badges=1),
+            'counted_ents2': lambda _, counts: counts.update(ents2=2),
+        }
+        for name, change in changes.items():
+            rows, counts = unentered_rows(), {'ents': 1, 'ents2': 1, 'powers': 0, 'costumeparts': 0, 'badges': 0}
+            change(rows, counts)
+            value, state = self.unentered(rows=rows, counts=counts)
+            with self.subTest(change=name), self.assertRaisesRegex(server.base.DiagnosticError, 'completely empty inventory'):
+                self.initialize_removal(value)
+            self.assertFalse(any(text.startswith('DO $$') for text in state['statements']))
+            proof = value.creation_report['profile_eligibility']
+            self.assertFalse(proof['sql_game_mutations_performed']); self.assertNotIn('unentered_character', proof)
+        for name, inventory, high_water in (
+                ('allocated_twice', None, '2'),
+                ('other_name', [dict(UNENTERED_IDENTITY, name='OTHER')], '1'),
+                ('other_account', [dict(UNENTERED_IDENTITY, authname='SOMEONE')], '1'),
+                ('other_id', [dict(UNENTERED_IDENTITY, containerid=2)], '1'),
+                ('two', [dict(UNENTERED_IDENTITY), dict(UNENTERED_IDENTITY, containerid=2, name='OTHER')], '1')):
+            value, state = self.unentered(inventory=inventory, high_water=high_water)
+            with self.subTest(inventory=name), self.assertRaisesRegex(server.base.DiagnosticError, 'completely empty inventory'):
+                self.initialize_removal(value)
+            self.assertFalse(any(text.startswith('DO $$') for text in state['statements']))
+
+    def test_reopen_explains_a_thorhero_that_never_entered_the_game_and_changes_nothing(self):
+        value, state = self.unentered(reopen=True)
+        with self.assertRaisesRegex(server.base.DiagnosticError,
+                                    r'never entered the game.*Use Resume first character creation'):
+            self.initialize_removal(value)
+        self.assertTrue(all(text.startswith('SELECT ') for text in state['statements']))
+        rows = unentered_rows(); rows['ents'][0]['class'] = 3
+        value, state = self.unentered(reopen=True, rows=rows)
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'no committed login baseline'):
+            self.initialize_removal(value)
+        self.assertFalse(any('json_object_agg' in text for text in state['statements']))
+
+    def test_a_failed_removal_says_nothing_was_changed(self):
+        value, _ = self.unentered(fail_removal=True)
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'could not be removed and nothing was changed'):
+            self.initialize_removal(value)
+        proof = value.creation_report['profile_eligibility']
+        self.assertFalse(proof['eligible']); self.assertIs(proof['unentered_character']['removed'], False)
+
+    def test_ents_tables_follow_the_accepted_template_and_its_schema(self):
+        sys.path.insert(0, str(ROOT/'database/postgresql/tests'))
+        import run_generated_schema as schema
+        with zipfile.ZipFile(ROOT/'docs/schema-generation-evidence/accepted-36088012666.zip') as outer:
+            with zipfile.ZipFile(io.BytesIO(outer.read('schema-evidence/schema-outputs.zip'))) as inner:
+                text = inner.read('data/server/db/templates/ents.template').decode()
+        tables = schema.template_columns(text, 'ents')
+        family = server.ents_family_tables(text, tables)
+        self.assertEqual((family[0], len(family), set(family)), ('ents', 48, set(tables)))
+        self.assertEqual(server.ents_family_tables(TEMPLATE, expected_tables()),
+                         ('ents', 'badges', 'costumeparts', 'ents2', 'powers'))
+        missing = dict(tables); missing.pop('badges')
+        for broken_text, broken_tables in ((text.replace('Powers[', 'Power['), tables), (text, missing),
+                                           (text, dict(tables, ents=['active'] + tables['ents']))):
+            with self.subTest(), self.assertRaisesRegex(server.base.DiagnosticError, 'Ents template tables differ'):
+                server.ents_family_tables(broken_text, broken_tables)
+
     def test_resume_flag_cannot_enter_reopen(self):
         value = self.instance(reopen=True, resume=True)
         with patch.object(server.login.LocalLoginServer, 'initialize') as native:
@@ -226,6 +400,7 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
     """
     instance = EligibilityTests.instance
     initialize_gate = EligibilityTests.initialize_gate
+    initialize_removal = EligibilityTests.initialize_removal
     @classmethod
     def setUpClass(cls):
         if os.environ.get('PGHOST') not in ('127.0.0.1', 'localhost') or os.environ.get('PGDATABASE') != 'coh_test_startup_bundle':
@@ -242,11 +417,13 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
             raise RuntimeError(result.stderr[:2048])
         return result.stdout.strip()
 
-    def actual(self, *, reopen=False, missing=False, inventory=None, provisional=False, missing_powers=False, advanced=False):
+    def actual(self, *, reopen=False, missing=False, inventory=None, provisional=False, missing_powers=False, advanced=False,
+               unentered=False, badge=False):
         value = self.instance(reopen=reopen, resume=not reopen, inventory=inventory)
         # These tables live solely in the explicitly guarded disposable fixture.
         self.database_sql((ROOT/'database/postgresql/001-coh-compat.sql').read_text())
-        self.database_sql('DROP TABLE IF EXISTS dbo.costumeparts, dbo.powers, dbo.ents2, dbo.ents CASCADE;')
+        self.database_sql('DROP TABLE IF EXISTS ' + ', '.join('dbo.' + table for table in value.schema['expected_tables'])
+                          + ' CASCADE;')
         if not missing:
             text_fields = {'authname', 'name', 'description', 'motto', 'datecreated'}
             for table, fields in value.schema['expected_tables'].items():
@@ -267,8 +444,24 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
                     self.database_sql('INSERT INTO dbo.' + table + ' SELECT * FROM json_populate_record(NULL::dbo.' + table + ", '" + raw + "'::json);")
             if advanced:
                 self.database_sql("SELECT dbo.coh_reserve_id('dbo.ents'::regclass, 1);")
+            if unentered:
+                # The DbServer's own writes for a created character whose first
+                # zone then failed: COH_PG_INSERT_CONTAINER, then its fields.
+                self.database_sql("SELECT dbo.coh_reserve_id('dbo.ents'::regclass, 1);")
+                self.database_sql('INSERT INTO dbo.ents (containerid) VALUES (1);')
+                self.database_sql('UPDATE dbo.ents SET ' + ', '.join(key + '=' + (str(field) if type(field) is int else "'" + field + "'")
+                                  for key, field in UNENTERED_ENTS.items() if key != 'containerid') + ' WHERE containerid=1;')
+                self.database_sql('INSERT INTO dbo.ents2 (' + ','.join(UNENTERED_ENTS2) + ') VALUES ('
+                                  + ','.join(str(field) for field in UNENTERED_ENTS2.values()) + ');')
+            if badge:
+                self.database_sql('INSERT INTO dbo.badges (containerid, subid, badge) VALUES (1, 0, 5);')
         def production_sql(text, **_kwargs):
-            output = self.database_sql(text)
+            # The guest's own psql invocation: no -q, so a DO statement prints its tag.
+            result = subprocess.run([self.psql, '-X', '-w', '-A', '-t', '-v', 'ON_ERROR_STOP=1'], input=text,
+                capture_output=True, text=True, timeout=20)
+            if result.returncode:
+                raise server.base.DiagnosticError('sql-fixture failed: ' + (result.stdout + result.stderr)[-4096:])
+            output = result.stdout.strip()
             value.ctx.children.append(SimpleNamespace(text=lambda: output))
             return output
         value.sql = Mock(side_effect=production_sql)
@@ -315,6 +508,39 @@ class PostgreSQLEligibilityTests(unittest.TestCase):
     def test_pg_advanced_empty_allocator_resume_refused(self): self.real_case('advanced_empty_allocator_resume_refused', advanced=True)
     def test_pg_post_dbserver_character_race_refused(self): self.real_case('post_dbserver_character_race_refused', allowed=True, post_race='character')
     def test_pg_post_dbserver_allocator_race_refused(self): self.real_case('post_dbserver_allocator_race_refused', allowed=True, post_race='allocator')
+
+    def test_pg_unentered_character_resume_removed(self):
+        value = self.actual(unentered=True)
+        self.assertEqual(self.snapshot()[1], '1:true')
+        self.assertEqual(self.database_sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);"), '1')
+        proof = self.initialize_removal(value)
+        self.assertTrue(proof['eligible']); self.assertIs(proof['unentered_character']['removed'], True)
+        self.assertEqual(proof['unentered_character']['rows']['ents'][0]['staticmapid'], 71)
+        self.assertEqual(self.snapshot(), ('[]', '1:false'))
+        self.assertEqual(self.database_sql('SELECT count(*) FROM dbo.ents2;'), '0')
+        value.capture_baseline()  # the post-DbServer recheck accepts the emptied profile
+        # The DbServer's next character (COH_PG_HIGH_WATER + 1, COH_PG_INSERT_CONTAINER) is ID 1 again.
+        self.assertEqual(self.database_sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass) + 1;"), '1')
+        self.assertEqual(self.database_sql("SELECT dbo.coh_reserve_id('dbo.ents'::regclass, 1);"), '1')
+        self.database_sql('INSERT INTO dbo.ents (containerid) VALUES (1);')
+        POSTGRES_FIXTURES_RUN.add('unentered_character_resume_removed')
+
+    def test_pg_unentered_character_reopen_explained(self):
+        value = self.actual(reopen=True, unentered=True, inventory=[])
+        before = self.snapshot()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'never entered the game'):
+            self.initialize_removal(value)
+        self.assertEqual(before, self.snapshot())
+        POSTGRES_FIXTURES_RUN.add('unentered_character_reopen_explained')
+
+    def test_pg_unentered_character_with_badge_refused(self):
+        value = self.actual(unentered=True, badge=True)
+        before = self.snapshot()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'completely empty inventory'):
+            self.initialize_removal(value)
+        self.assertEqual(before, self.snapshot())
+        self.assertEqual(self.database_sql('SELECT count(*) FROM dbo.badges;'), '1')
+        POSTGRES_FIXTURES_RUN.add('unentered_character_with_badge_refused')
 
 
 if __name__ == '__main__': unittest.main()

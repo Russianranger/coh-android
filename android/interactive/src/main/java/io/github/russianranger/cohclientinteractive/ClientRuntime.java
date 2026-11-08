@@ -540,7 +540,7 @@ public final class ClientRuntime {
         if (profile == ProfileState.ABSENT)
             return "No saved character profile is present. After a fresh install, use Create fresh THORHERO once, then save normally. An earlier character requires an external database backup.";
         if (profile == ProfileState.READY)
-            return "The initialized character profile is available; startup checks for a saved THORHERO. If first creation stopped before a save, use Resume first character creation. Existing characters are preserved.";
+            return "The initialized character profile is available; startup checks for a saved THORHERO. If first creation stopped before a save, or THORHERO's first zone did not start, use Resume first character creation. Saved characters are preserved.";
         return "Existing character data is incomplete or unreadable. It has been preserved; export the report. Fresh creation is unavailable while any profile data remains.";
     }
     private void requireCharacterProfile(boolean reopening) throws IOException {
