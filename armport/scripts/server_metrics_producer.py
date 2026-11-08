@@ -7,6 +7,7 @@ workflow, changes upstream, installs a server or qualifies device execution.
 from __future__ import annotations
 import argparse
 import hashlib
+import io
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -33,6 +34,20 @@ MEMBER = 'assets/runtime/game-package.tar.gz'
 MAX_BUNDLE = 1024 * 1024 * 1024
 MAX_INPUT_FILE = 128 * 1024 * 1024
 MAX_ENTRIES = 14000
+# Lua 5.1.5 is the one build dependency CMake fetches from outside GitHub (cmake/dependencies/Lua.cmake,
+# CPM with URL_HASH and the source's own lua-cmake.patch). In build 42488979665 (2026-11-08) www.lua.org
+# served the first variant's download and then timed out every connection for the second, in both
+# attempts. CPM deletes its sub-build before populating, so a pre-placed download is never used; CPM's
+# own override (CPM_lua51_SOURCE) is: the next variant gets a fresh extraction of the archive the first
+# one verified (or the job cache's), and CPM still applies that variant's own patch to it.
+LUA_DECLARATION = 'cmake/dependencies/Lua.cmake'
+LUA_URL = 'https://www.lua.org/ftp/lua-5.1.5.tar.gz'
+LUA_SHA256 = '2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333'
+LUA_DOWNLOAD = 'out/build/vs2026/_deps/lua51-subbuild/lua51-populate-prefix/src/lua-5.1.5.tar.gz'
+LUA_ARCHIVE_NAME = 'lua-5.1.5.tar.gz'
+LUA_TOP = 'lua-5.1.5'
+MAX_LUA_ARCHIVE = 1024 * 1024
+MAX_LUA_MEMBERS = 256
 require = package.require
 
 
@@ -251,13 +266,58 @@ def extract(archive, output, repository_commit, run_id, upstream_root):
     return verify_bundle(output, repository_commit, run_id, upstream_root)
 
 
-def build(directory, output, repository_commit, run_id, upstream_root):
+def declares_lua(prepared):
+    """True when the prepared source fetches exactly the pinned Lua archive."""
+    path = Path(prepared) / LUA_DECLARATION
+    if not path.is_file() or path.is_symlink():
+        return False
+    text = path.read_text(encoding='utf-8')
+    return 'NAME lua51' in text and f'URL "{LUA_URL}"' in text and f'"SHA256={LUA_SHA256}"' in text
+
+
+def verified_lua(path):
+    """The archive bytes at path when they are exactly the pinned Lua archive, else None."""
+    path = Path(path)
+    if not path.is_file() or path.is_symlink() or path.stat().st_size > MAX_LUA_ARCHIVE:
+        return None
+    raw = path.read_bytes()
+    return raw if hashlib.sha256(raw).hexdigest() == LUA_SHA256 else None
+
+
+def extract_lua(raw, target):
+    """ExternalProject's extract step: the archive's single top directory becomes target."""
+    require(hashlib.sha256(raw).hexdigest() == LUA_SHA256, 'Lua archive differs from its pin')
+    target = fresh(target)
+    with tarfile.open(fileobj=io.BytesIO(raw), mode='r:gz') as archive:
+        members = archive.getmembers()
+        require(0 < len(members) <= MAX_LUA_MEMBERS, 'Unexpected Lua archive size')
+        for member in members:
+            parts = PurePosixPath(member.name).parts
+            require(parts and parts[0] == LUA_TOP and all(p not in ('', '.', '..') for p in parts)
+                    and '\\' not in member.name and ':' not in member.name
+                    and (member.isfile() or member.isdir()), 'Unsafe Lua archive member')
+            destination = target.joinpath(*parts[1:])
+            if member.isdir():
+                destination.mkdir(parents=True, exist_ok=True)
+                continue
+            require(len(parts) > 1, 'Unsafe Lua archive member')
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            with archive.extractfile(member) as src, destination.open('xb') as dst:
+                shutil.copyfileobj(src, dst)
+    return target
+
+
+def build(directory, output, repository_commit, run_id, upstream_root, lua_cache=None):
     require(os.name == 'nt' and shutil.which('cl'), 'Initialized genuine Windows MSVC required')
     upstream_root = baseline_root(upstream_root)
     manifest = verify_bundle(directory, repository_commit, run_id, upstream_root)
     directory, output = Path(directory).resolve(), fresh(output)
     env = dict(os.environ, CL='', _CL_='/MP1', CMAKE_BUILD_PARALLEL_LEVEL='1', MSBUILDDISABLENODEREUSE='1')
     evidence = output / 'evidence'; evidence.mkdir()
+    cached = Path(lua_cache).resolve() / LUA_ARCHIVE_NAME if lua_cache is not None else None
+    lua = verified_lua(cached) if cached is not None else None
+    lua_record = {'archive_sha256': LUA_SHA256, 'from_job_cache': lua is not None,
+                  'downloaded_by_cmake': [], 'extracted_for': []}
     # Existing real Windows x86 fixtures run serially, using the exact data that
     # generated the modern prepared source. The fixture binaries are retained.
     run([sys.executable, upstream_root / 'tools/test_map_startup_animation_certificate.py',
@@ -273,8 +333,21 @@ def build(directory, output, repository_commit, run_id, upstream_root):
         inputs = directory / variant
         prepared = inputs / 'source'
         logs = evidence / variant; logs.mkdir()
-        run(['cmake', '--preset', 'vs2026', '-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe',
-             '-DCOH_PG_PERSISTENCE_TESTS=OFF'], logs / 'configure.log', cwd=prepared, env=env)
+        configure = ['cmake', '--preset', 'vs2026', '-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe',
+                     '-DCOH_PG_PERSISTENCE_TESTS=OFF']
+        fetches_lua = declares_lua(prepared)
+        if fetches_lua and lua is not None:
+            lua_source = extract_lua(lua, output / 'lua-sources' / variant)
+            configure.append('-DCPM_lua51_SOURCE=' + lua_source.as_posix())
+            lua_record['extracted_for'].append(variant)
+        run(configure, logs / 'configure.log', cwd=prepared, env=env)
+        if fetches_lua and lua is None:
+            lua = verified_lua(prepared / LUA_DOWNLOAD)
+            if lua is not None:
+                lua_record['downloaded_by_cmake'].append(variant)
+                if cached is not None and verified_lua(cached) is None:
+                    cached.parent.mkdir(parents=True, exist_ok=True)
+                    cached.write_bytes(lua)
         run(['cmake', '--build', 'out/build/vs2026', '--config', 'OptDebug', '--parallel', '1',
              '--target', 'MapServer', '--', '/nr:false', '/v:minimal'],
             logs / 'build.log', cwd=prepared, env=env)
@@ -294,6 +367,7 @@ def build(directory, output, repository_commit, run_id, upstream_root):
               'baseline_commit': BASELINE_COMMIT,
               'variants_built_in_order': list(VARIANTS), 'cmake_build_parallel_level': 1,
               'msvc_appended_options': '/MP1', 'compiler_concurrency_measured': False,
+              'lua_archive': lua_record,
               'packages': {name: value['files'] for name, value in results.items()},
               'shipping_binary_executed': False, 'physical_device_validated': False}
     (evidence / 'producer-execution.json').write_text(json.dumps(record, indent=2) + '\n')
@@ -310,6 +384,8 @@ def main():
     extraction.add_argument('--archive', required=True, type=Path)
     building = sub.add_parser('build')
     building.add_argument('--directory', required=True, type=Path)
+    building.add_argument('--lua-cache', type=Path,
+                          help='Job cache directory for the verified Lua archive (read, and written when empty)')
     for action in (staging, extraction, building):
         action.add_argument('--output', required=True, type=Path)
         action.add_argument('--repository-commit', required=True)

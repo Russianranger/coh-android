@@ -1365,6 +1365,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Portable donor verification tests failed' }
           python armport/scripts/server_metrics_producer.py extract --archive out/source-bundle/server-metrics-input.tar.gz --output C:/ams-input --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline 2>&1 | Tee-Object -FilePath out/server-preflight-evidence/source-extract.log
           if ($LASTEXITCODE -ne 0) { throw 'Server source identity check failed' }
+      # Build 42488979665: www.lua.org timed out the second variant's Lua download (both attempts).
+      # The producer reuses the archive CMake verified (URL_HASH) and keeps it here for later builds.
+      - uses: actions/cache@v4
+        with:
+          path: out/lua-cache
+          key: armport-lua-5.1.5-2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333
       - name: Genuine x86 fixtures then two single-worker MapServer builds
         shell: pwsh
         run: |
@@ -1377,7 +1383,7 @@ jobs:
           @echo off
           call "$installation\VC\Auxiliary\Build\vcvars32.bat"
           if errorlevel 1 exit /b 1
-          python armport/scripts/server_metrics_producer.py build --directory C:/ams-input --output out/server-native --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline
+          python armport/scripts/server_metrics_producer.py build --directory C:/ams-input --output out/server-native --lua-cache out/lua-cache --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline
           if errorlevel 1 exit /b 1
           "@
           Set-Content -Path out/server-native.cmd -Value $batch -Encoding ASCII

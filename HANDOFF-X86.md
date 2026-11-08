@@ -477,6 +477,24 @@ character creation and reopen failed".
   handles the row at the next Resume). CI's sessions still start from a fresh
   profile, so the removal is proven on real PostgreSQL in the build, not in an
   app runtime; Thor is its first device run.
+- **Build fix (Lua download)**: build 42488979665 at a4799e843 passed every
+  job except `server-metrics-native`, which failed in both attempts (job logs
+  128774761485 and 128778888649). That job builds two MapServer variants and
+  CMake fetches Lua 5.1.5 from www.lua.org for each (`Lua.cmake`, CPM,
+  URL_HASH). The first variant's fetch succeeded (4 s, then 15 s); the second,
+  7 minutes later, timed out on all six connections ("Each download failed!").
+  0.13.60's build fetched both in 4 s and 3 s. Placing the archive in the
+  sub-build does not help: CPM deletes the sub-build before populating
+  ("remove timestamps so CMake will re-download"). `server_metrics_producer.py`
+  now gives a later variant a fresh extraction of the archive the first one
+  downloaded (checked against the same SHA-256) through CPM's own override
+  `CPM_lua51_SOURCE`, which still applies that variant's own
+  `lua-cmake.patch`. The job also keeps the archive in an Actions cache
+  (`out/lua-cache`), so later builds need no download at all; the evidence
+  record gains `lua_archive`. Tests: 4 new producer tests (12 OK); a local
+  CMake 3.28 replica with upstream CPM 0.40.8, the same declaration and a
+  synthetic archive configured, patched, built and ran offline with the
+  override, and failed without it. No source, game or app change.
 - Version 0.13.61 (76); test sheet `THOR-TEST-0.13.61.md`.
 
 ## 0.13.60: zones in the shared tree can start (Claude, 2026-11-07)
