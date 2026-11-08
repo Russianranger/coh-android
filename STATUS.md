@@ -1,6 +1,6 @@
 # x86 track integration
 
-Updated 2026-11-07 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-08 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
@@ -24,10 +24,8 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
 - Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
-- 0.13.49 Thor (ARM64 client): FPS mean 45-48; Atlas ready 204/222 s (.44: 287 s); King's Row failed (cold mirror).
-- 0.13.50 (APK 41712293048) Thor: King's Row reached (cold trip 562 s); session 2 Atlas cache refused (444 s vs 297 s).
-- 0.13.51 (APK 41750489814): cache reuse fix, 10 FPS station cap (0121). Thor: King's Row NPCs jump, no audio.
-- 0.13.52 (APK 41791858823): clock wrap 0123, 0122. 0.13.53 (APK 41881826170): game audio (TRASC plugin), 0124.
+- 0.13.49 Thor: FPS mean 45-48, Atlas ready 204/222 s (.44: 287 s). 0.13.50 (APK 41712293048): King's Row cold trip 562 s.
+- 0.13.51-53 (APKs 41750489814/41791858823/41881826170): cache reuse, station cap 0121, clock wrap 0123/0122, audio 0124.
 - 0.13.54 (APK 41960891294 at a66b533f6): ordinary-play save check; shared heap off (41931773800, 41956900853
   failed); external-maps DbServer CI 41961253764. Thor (20261105-043833): save passed; King's Row cold 191 s, trip 30 s.
 - 0.13.55 (APK 42037755195 at 81e81ddd0): stock zone travel, any zone, gear menu. Thor: monorail → weeklyTF assert (20261105-202806).
@@ -38,3 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   first, saved zone at Enter Game (0126), storage mount-point repair; CI trip 167 s; r58/r58t passed on re-run. HANDOFF "0.13.58".
 - 0.13.59 published (APK 42429765739; build 42419983392, runtimes 42413409889/42416994465/42426938668 at 825bae059): no zone
   before Enter Game, only the character's own (any side); Save survives its Enter (0127); CI reopen zone 136 s. HANDOFF "0.13.59".
+- 0.13.60 published (APK 42456241853; build 42442419621, runtimes 42448320432/42451345001/42453750449 at 81b6cdfc0): Thor 0.13.59
+  Mercy Island failed (FX step refused the shared `-zones` tree); admitted, failed first-zone starts reported. HANDOFF "0.13.60".

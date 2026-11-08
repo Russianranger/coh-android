@@ -21,7 +21,15 @@ its own Enter key). Same limits: one character per install, named THORHERO; at
 most two zone servers; NPCs outside Atlas Park and King's Row stand still;
 missions are not served. Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.60".
 
-CI: CI_SUMMARY
+CI at 81b6cdfc0: build 42442419621 (it now also runs the zone start, zone
+travel and trip tests), zone-trip runtime 42448320432, default runtime
+42451345001 and trusted runtime 42453750449 passed; APK 42456241853 published it
+(sha256 `3f2761d824bbef9b83450bd80a794bd51fd5b74317c6e16eaebdbf555fca0b67`).
+CI's hero starts in Atlas Park and CI's copy of the game has no all-zones
+pack, so CI cannot start Mercy Island or any other zone from the shared
+folder: your test is the first start of one. In the zone-trip run Atlas
+Park was again ready 136 s after Enter Game asked for it, and the trip to a
+second Atlas Park took 172 s.
 
 ## Steps (update in place: no uninstall, no new import)
 

@@ -464,6 +464,21 @@ Thor 0.13.59 (user, 2026-11-07 20:56 CST, exports 20261108-025402 setup and
 - Not changed: the zones tree's data cache is never returned at cleanup
   (Atlas and King's Row are); the next session adopts it through
   `recover_stranded` while the old tree exists.
+- **Chain at 81b6cdfc0** (one chain on x86/perf-round1, all passed on their
+  first attempt). Build 42442419621: the libraries job's "Check bounded M3
+  diagnostic reporting" step ran the ArmPort unit tests (`SessionServerTrees`
+  included) and the three guard modules. Zone-trip runtime 42448320432 on it
+  (2266 s): creation, map 1 cookie 2 ready 620.1 s after the stock start (the
+  install's first MapServer start: 108 bins written, spawn to ready 455.8 s);
+  reopen, no zone server before Enter Game (`local_atlas_startup` 0.0 s), map
+  1 cookie 2 ready 135.7 s after the stock start, `/mapmove 101` (cookie 3)
+  171.8 s, 2 arrivals, save passed; `client_logout_keys` kept 0 / aborted 0.
+  Default runtime 42451345001 (1788 s); trusted runtime 42453750449 on the build
+  (trusted bins applied, 1714 s); APK 42456241853 published
+  `coh-atlas-gameplay-v0.13.60` (92315049 bytes, sha256
+  3f2761d824bbef9b83450bd80a794bd51fd5b74317c6e16eaebdbf555fca0b67,
+  signer 92955353…, the same as 0.13.50-0.13.59). Every CI start used the
+  Atlas tree; `-zones` is first prepared on the phone.
 - Version 0.13.60 (75); test sheet `THOR-TEST-0.13.60.md` (in place, Resume
   first character creation as a villain).
 
