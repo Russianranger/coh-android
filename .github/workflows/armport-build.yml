@@ -356,6 +356,10 @@ jobs:
           armport/scripts/step.sh "ArmPort saved-map startup guards" python3 -m unittest discover -s tools/android/interactive -p 'test_saved_map_startup.py'
           armport/scripts/step.sh "ArmPort zoning guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_zoning.py'
           armport/scripts/step.sh "ArmPort monorail guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_monorail.py'
+          # 0.13.60: the character's own zone at Enter Game (Thor 0.13.59: Mercy Island), the game's own travel, the CI trip.
+          armport/scripts/step.sh "ArmPort character zone start guards" python3 -m unittest discover -s tools/android/interactive -p 'test_dynamic_initial_map.py'
+          armport/scripts/step.sh "ArmPort zone travel guards" python3 -m unittest discover -s tools/android/interactive -p 'test_stock_travel.py'
+          armport/scripts/step.sh "ArmPort reopen trip guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_reopen_host.py'
 
       - name: Install llvm-mingw (aarch64 host)
         run: |

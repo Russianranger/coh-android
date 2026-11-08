@@ -1164,13 +1164,46 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     INITIAL_ZONE_MESSAGES = {
         'starting': 'Starting {zone} for THORHERO. The game screen can stay still for a few minutes until it is ready.',
         'ready': '{zone} is ready; THORHERO is entering it.',
-        'not_ready': '{zone} did not start in time and the game reported it. Press Enter Game again, or export the report.'}
+        'not_ready': '{zone} did not start in time and the game reported it. Press Enter Game again, or export the report.',
+        'failed': '{zone} could not be started ({reason}). The game reported it and nothing was moved; '
+                  'export this report.'}
 
-    def initial_zone_event(self, status, map_id):
-        """The app shows this while the client waits for the zone (its screen does not move)."""
+    def initial_zone_event(self, status, map_id, *, failure=None):
+        """The app shows this while the client waits for the zone (its screen does not move).
+
+        A start that failed is sent as not_ready (the app then clears the
+        starting line and returns the wait to the creator) with its reason.
+        """
+        key = status if failure is None else 'failed'
+        fields = {} if failure is None else {'failure': failure}
         self.ctx.event('character_initial_zone', format=1, session_id=self.owner.args.session_id, status=status,
                        map_id=map_id, map_name=zone_name(map_id), generated_utc_ms=int(time.time() * 1000),
-                       message=self.INITIAL_ZONE_MESSAGES[status].format(zone=zone_name(map_id)))
+                       message=self.INITIAL_ZONE_MESSAGES[key].format(zone=zone_name(map_id), reason=failure),
+                       **fields)
+
+    def initial_zone_start_failed(self, entry, failure):
+        """The first zone's start failed before its server ran (its preparation stopped).
+
+        Thor 0.13.59: a new villain's Mercy Island preparation stopped and the
+        report's initial_zone still said nothing had been requested. The game
+        already told the client (the start is delinked); nothing was moved, and
+        Enter Game may ask again.
+        """
+        map_id = entry.get('map_id')
+        if self.dynamic_initial() is None or not self.initial_zone_pending() or map_id in self.maps:
+            return
+        initial = self.dynamic_initial()
+        now, now_ms = time.monotonic(), int(time.time() * 1000)
+        began = getattr(self, 'stock_start_began', None)
+        reason = str(failure)[:200]
+        attempts = initial['attempts']
+        attempts.append({'map_id': map_id, 'launch': [map_id, entry.get('cookie'), None], 'launch_utc_ms': None,
+                         'started_monotonic': began if type(began) in (int, float) else now,
+                         'requested_utc_ms': entry.get('seen_utc_ms'),
+                         'ended_monotonic': now, 'ended_utc_ms': now_ms, 'outcome': 'failed', 'failure': reason})
+        del attempts[:-8]
+        initial.update(requested=True, map_id=map_id, map_name=zone_name(map_id))
+        self.initial_zone_event('not_ready', map_id, failure=reason)
 
     def _latest_stock_start(self, map_id):
         return next((row for row in reversed(self.stock['starts']) if row['map_id'] == map_id), None)
@@ -2337,6 +2370,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     raise
                 supervisor.start_failed(entry, failure)
                 self._stock_row(entry)['failure'] = str(failure)[:200]
+                self.initial_zone_start_failed(entry, failure)
             entry = supervisor.next_start()
         self._tick_stock_starts(supervisor)
 
@@ -2368,9 +2402,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         plan = entry['plan']
         map_id = entry['map_id']
         row = self._stock_row(entry)
+        self.stock_start_began = None
         for other in plan['evict']:
             self._evict_map(other, 'room_for_' + str(map_id))
-        started = time.monotonic()
+        started = self.stock_start_began = time.monotonic()
         if plan['tree'] == 'zones':
             register_zone(map_id)
         # Before 0.13.59 a trip's spawn relabelled the session's initial timing

@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.59, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.60, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -156,7 +156,7 @@ jobs:
           path: ${{ runner.temp }}/coh-retained-signing
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
-      - name: Build and sign COH Atlas Gameplay 0.13.59
+      - name: Build and sign COH Atlas Gameplay 0.13.60
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -174,7 +174,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.59.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.60.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -196,7 +196,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.59-apk
+          name: coh-atlas-gameplay-0.13.60-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -211,38 +211,33 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.59-apk
+          name: coh-atlas-gameplay-0.13.60-apk
           path: apk
-      - name: Publish the 0.13.59 pre-release
+      - name: Publish the 0.13.60 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.59.apk
-          sha256sum COH-Atlas-Gameplay-0.13.59.apk > COH-Atlas-Gameplay-0.13.59.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.60.apk
+          sha256sum COH-Atlas-Gameplay-0.13.60.apk > COH-Atlas-Gameplay-0.13.60.apk.sha256
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.59 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.60 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          Fix: no zone starts before you enter the game, and only the zone your character is in. 0.13.58 started
-          Atlas Park first for every session; now nothing starts until Enter Game, and then the game itself starts
-          the zone the character was saved in (King's Row, Atlas Park or any other zone), with no other zone first
-          (a request for another zone is refused before the character has entered its own). A new THORHERO can be
-          a hero, villain or Praetorian: after the character creator the game starts that character's starting
-          zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial). While the zone starts the game screen can
-          stay still for a few minutes; the app shows which zone is starting.
-          Fix: Save could be cancelled by its own Enter key. The game cancels a logout on any key press during its
-          countdown ("Press any key to abort"), and under Wine the Enter that sent /quittologin reached it one
-          frame late; at a low frame rate (a zone that has just started) the character stayed in the zone and was
-          not saved. The ARM64 client now ignores keys pressed before the logout was asked for; a later key still
-          cancels it.
-          Unchanged from 0.13.58: the game waits up to 15 minutes at Enter Game; storage cleanup and the storage
-          report's Android exit reasons; the game's own zone travel (option on; untick for 0.13.54's station travel),
-          every zone the game allows, at most two zone servers, NPCs outside Atlas Park and King's Row stand still,
-          missions are not served yet; the full-window view, the gear button and controller mapping. Test sheet:
-          THOR-TEST-0.13.59.md.
+          Fix: zones other than Atlas Park and King's Row could not start (Thor 0.13.59: a new villain's Mercy
+          Island ended with "Map failed to start" after several minutes). Every other zone runs from one shared
+          server folder (0.13.57), and one of its setup steps, the server's effects catalog, still accepted only the
+          Atlas Park and King's Row folders. It now accepts the shared folder, so Mercy Island, Nova Praetoria, the
+          tutorials and every other zone can start; CI's zone trip now goes to Mercy Island and back. A first zone
+          that cannot be started is now recorded in the report with its reason.
+          Unchanged from 0.13.59: no zone starts before you enter the game, and then only the zone your character
+          is in (a new THORHERO starts in its own side's zone); Save is not cancelled by its own Enter key; the game
+          waits up to 15 minutes at Enter Game; storage cleanup and the storage report's Android exit reasons; the
+          game's own zone travel (option on; untick for 0.13.54's station travel), at most two zone servers, NPCs
+          outside Atlas Park and King's Row stand still, missions are not served yet; the full-window view, the
+          gear button and controller mapping. Test sheet: THOR-TEST-0.13.60.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the shipping MapServer by default (unchanged). The Fast server start (test server) option uses the instrumented Thor MapServer with trusted bins instead (device-run in 0.13.53)." >> notes.md
@@ -251,7 +246,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server start (test server) option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.59" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.59 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.59.apk COH-Atlas-Gameplay-0.13.59.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.59"
+          gh release create "coh-atlas-gameplay-v0.13.60" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.60 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.60.apk COH-Atlas-Gameplay-0.13.60.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.60"

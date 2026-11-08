@@ -308,6 +308,61 @@ class DynamicCreationTests(unittest.TestCase):
         self.assertTrue(zoning.creation_save_verified(saved_proof, saved.SESSION))
         self.assertEqual(value.saved_metadata(None)['map_id'], 71)
 
+    def test_a_starting_zone_that_cannot_be_prepared_is_recorded_with_its_reason(self):
+        # Thor 0.13.59: a new villain's Mercy Island preparation stopped at the FX
+        # step; the game showed "Map failed to start" while the report's
+        # initial_zone still said nothing had been requested.
+        value = self.instance()
+        value.initial_map_preparation()
+        sup = DynamicInitialMapTests.layer(self, value)
+        value.start_map()
+        reason = 'FX projection is restricted to the owned Atlas/Kings server namespace'
+        value._spawn_map = Mock(side_effect=ValueError(reason))
+        value._map_progress = Mock(return_value={'available': True})
+        value.live_progress = Mock(return_value=False)
+        sup.test_console = '\n' + supervisor.ACK + '\n' + stock.StockTravelTests.publish(None, sup, 71, 1, 1)
+        sup.poll(sup.test_console)
+        value.serve_external_maps(sup)
+        self.assertEqual(value.maps, {})
+        self.assertEqual(value.stock['starts'][-1]['failure'], reason)
+        self.assertEqual(sup.counts['start_failed'], 1)               # delinked: the game reports the failure
+        initial = value.dynamic_initial()
+        self.assertEqual((initial['requested'], initial['started'], initial['activated'], initial['map_id'],
+                          initial['map_name']), (True, False, False, 71, 'Mercy Island'))
+        attempt = initial['attempts'][0]
+        self.assertEqual((attempt['map_id'], attempt['outcome'], attempt['failure']), (71, 'failed', reason))
+        self.assertLessEqual(attempt['started_monotonic'], attempt['ended_monotonic'])
+        events = [call.kwargs for call in value.ctx.event.call_args_list if call.args == ('character_initial_zone',)]
+        self.assertEqual([event['status'] for event in events], ['starting', 'not_ready'])
+        self.assertEqual(events[-1]['failure'], reason)
+        self.assertTrue(events[-1]['message'].startswith('Mercy Island could not be started (' + reason + ')'))
+        value.tick_dynamic_initial()                                     # the failed attempt is closed
+        self.assertEqual((len(initial['attempts']), initial['attempts'][0]['outcome']), (1, 'failed'))
+        self.assertGreaterEqual(value.initial_zone_wait_seconds(), 0)
+        # Enter Game again: the same zone is admitted and starts.
+        self.assertIsNone(value.admit_zone_request(71))
+        DynamicInitialMapTests.serve(self, value, sup, 71, 2, 2)
+        value.tick_dynamic_initial()
+        self.assertEqual(len(initial['attempts']), 2)
+        self.assertNotIn('outcome', initial['attempts'][1])
+        self.assertTrue(initial['started'])
+
+    def test_a_shared_zone_tree_that_failed_reports_its_first_reason_again(self):
+        value = self.instance()
+        reason = 'FX projection is restricted to the owned Atlas/Kings server namespace'
+        value._prepare_zone_runtime = Mock(side_effect=ValueError(reason))
+        with self.assertRaisesRegex(ValueError, 'FX projection'):
+            value.prepare_zone_runtime()
+        with self.assertRaisesRegex(server.base.DiagnosticError,
+                                    r'earlier in this session \(FX projection .*start it again'):
+            value.prepare_zone_runtime()
+        value._prepare_zone_runtime.assert_called_once()
+        value._prepare_zone_runtime = Mock(side_effect=server.base.Cancelled('stopped'))
+        del value.zone_tree_failure
+        with self.assertRaises(server.base.Cancelled):
+            value.prepare_zone_runtime()
+        self.assertFalse(hasattr(value, 'zone_tree_failure'))           # a stop is not a preparation failure
+
     def test_the_creation_diagnostic_is_chosen_from_the_launch_environment(self):
         on = {'COH_STOCK_TRAVEL': '1', 'COH_EXTERNAL_MAPS': '1', 'COH_CLIENT_ARCH': 'arm64'}
         self.assertTrue(creation.dynamic_creation_requested(on))

@@ -182,5 +182,41 @@ class AppOptionAndCi(unittest.TestCase):
             interactive_host.stock_travel_requested()
 
 
+class SessionServerTrees(unittest.TestCase):
+    """Each per-session server tree a zone runs from passes the supplements' namespace checks."""
+
+    def test_fx_projection_admits_every_owned_session_tree_and_nothing_else(self):
+        # Thor 0.13.59: a new villain's Mercy Island start stopped at the FX step
+        # ('FX projection is restricted to the owned Atlas/Kings server namespace'):
+        # the shared tree of every other static zone ('-zones', 0.13.57) was never admitted.
+        import re
+        import tempfile
+        import server_fx_catalog as fx
+        source = (ROOT / 'android/guest/local_character_server.py').read_text()
+        suffixes = set(re.findall(r"self\.runtime\.with_name\(self\.runtime\.name \+ '(-[a-z-]+)'\)", source))
+        self.assertEqual(suffixes, {'-atlas-park', '-kings-row', '-zones'})
+        session = 'local-login-server-' + '1' * 32
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            assets = root / 'assets'
+            assets.mkdir()
+            (assets / fx.PAYLOAD).write_bytes(b'not the qualified payload')
+            (assets / fx.MANIFEST).write_bytes(b'{"format": 0}')
+            for name in [session] + [session + suffix for suffix in sorted(suffixes)]:
+                runtime = root / name
+                runtime.mkdir()
+                with self.subTest(admitted=name), self.assertRaises(ValueError) as raised:
+                    fx.install(assets, runtime, mapserver_package={})
+                # Past the namespace: the unit-test package itself is refused next.
+                self.assertNotIn('server namespace', str(raised.exception))
+            for name in (session + '-zone', session + '-zones-2', session + '-mercy-island',
+                         'local-login-server-' + '1' * 31 + '-zones', 'client-work-' + '1' * 24):
+                runtime = root / name
+                runtime.mkdir()
+                with self.subTest(refused=name), self.assertRaisesRegex(ValueError, 'server namespace'):
+                    fx.install(assets, runtime, mapserver_package={})
+                self.assertFalse((runtime / fx.TARGET).exists())
+
+
 if __name__ == '__main__':
     unittest.main()

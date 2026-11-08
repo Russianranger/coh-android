@@ -414,6 +414,59 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.60: zones in the shared tree can start (Claude, 2026-11-07)
+
+Thor 0.13.59 (user, 2026-11-07 20:56 CST, exports 20261108-025402 setup and
+-025410 session): "Failed to load map when attempting mercy Island".
+
+- **What happened** (operation.log, `character-zoning.json`, DbServer logs):
+  a fresh-install villain; 02:47:20 the DbServer asked for map 71 (Mercy
+  Island, cookie 2) at Enter Game and the dynamic start admitted it (no zone
+  before). `_start_stock_map` -> `prepare_zone_runtime` built
+  `local-login-server-<sid>-zones` (cold private mirror, then the shared
+  server-data tree, 128704 files, "Preparing private map data directories",
+  02:47:25-02:52:16, the guest loop blocked meanwhile), then
+  `server_fx_catalog.install` refused the tree:
+  `stock_travel.starts[0].failure` = "FX projection is restricted to the owned
+  Atlas/Kings server namespace". The start was delinked; the DbServer logged
+  `dbid 1 name "THORHERO" setNewMap failed MapFailed`, which deletes a
+  just-created character (`doneWaitingChoosePlayerFailed`, `just_created`);
+  the client showed "Map failed to start" and exited (code 0) 02:53:46.
+  `initial_zone` still said `requested: false, attempts: []`.
+- **Cause**: the FX namespace check (`local-login-server-<32 hex>`
+  optionally `-kings-row`/`-atlas-park`) predates the shared tree of every
+  other static zone (`-zones`, 5542e3d11, 0.13.57). No session had ever
+  prepared that tree: CI's trip goes to 101 (Atlas tree), and the CI runtime
+  has no all-zone package (`zone_tree_for` serves `zones` only with
+  `zone_asset_document`; the retained 0.10.0 app's client-manifest has no
+  zone package pins), so a CI Mercy Island trip would be delinked as
+  `zone_not_served`. The unit test of a villain's Mercy Island start mocked
+  `_spawn_map`, so preparation never ran there either.
+- **Fix**: `-zones` admitted. `armport/tests/test_zone_travel.py`
+  (`SessionServerTrees`, run by every build) derives the session tree suffixes
+  from `local_character_server.py` and requires each to pass the FX namespace
+  and other names to be refused; the released module fails it with the
+  phone's message. The FX donor tests (`test_server_fx_catalog.py`, excluded
+  from the retained host suites: authenticated public donor) also gain the
+  case.
+- **Reporting**: a first-zone start that fails before its server runs is an
+  `initial_zone.attempts` row (`outcome: failed`, `failure`), `requested`
+  true, and a `not_ready` event (the app clears its starting line and returns
+  the wait) whose message names the reason. `prepare_zone_runtime` remembers
+  its failure; a second Enter Game in the session repeats that reason (the
+  partial tree stays where its data-cache receipt expects it) instead of
+  "Shared zone runtime already exists".
+- **CI**: the build now also runs `test_dynamic_initial_map.py`,
+  `test_stock_travel.py` and `test_character_reopen_host.py` (none ran in CI
+  before). Native coverage of the shared zone tree still needs the all-zone
+  package in the CI runtime (1.9 GB archive plus client-manifest pins); not
+  attempted here, so Mercy Island's server start is first proven on the phone.
+- Not changed: the zones tree's data cache is never returned at cleanup
+  (Atlas and King's Row are); the next session adopts it through
+  `recover_stranded` while the old tree exists.
+- Version 0.13.60 (75); test sheet `THOR-TEST-0.13.60.md` (in place, Resume
+  first character creation as a villain).
+
 ## 0.13.59: only the character's own zone, at Enter Game (Claude, 2026-11-07)
 
 User, 00:28 CST, after the 0.13.58 test sheet: "I think you misunderstood my

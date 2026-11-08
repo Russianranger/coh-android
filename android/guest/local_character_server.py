@@ -2753,6 +2753,20 @@ class LocalCharacterServer(login.LocalLoginServer):
         """
         if getattr(self, 'zone_tree_prepared', None) is not None:
             return self.zone_tree_prepared
+        earlier = getattr(self, 'zone_tree_failure', None)
+        if earlier is not None:
+            # Its partial tree stays where its data cache receipt expects it.
+            raise base.DiagnosticError('The shared zone tree could not be prepared earlier in this session ('
+                                       + earlier + '); finish this session and start it again')
+        try:
+            return self._prepare_zone_runtime()
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            self.zone_tree_failure = str(failure)[:200]
+            raise
+
+    def _prepare_zone_runtime(self):
         import zone_asset_package
         import zone_index
         require(getattr(self, 'zone_asset_document', None) is not None,
