@@ -414,6 +414,57 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.65: Mercy Island's navigation graph (Claude, 2026-11-09)
+
+Thor 0.13.63 (owner, 2026-11-09 09:55 CST): "the pet he summoned would not
+move towards an enemy when ordered to attack, but would move to follow my
+character when ordered, and then would attack if close enough to an enemy".
+Mercy Island's MapServer: "Beacon file not loaded for map:
+maps/City_Zones/V_City_01_01/V_City_01_01.txt" (see "0.13.64").
+
+- **Cause**: every static zone other than Atlas Park and King's Row runs from
+  the shared zone tree (`prepare_zone_runtime`, 0.13.57), built like King's
+  Row's with the union of 380 extra collision leaves (`zone_index.py`) and no
+  beacon graph, so pets and critters there cannot plan a path.
+- **Generator** (24ef62a1b): `patches/zone-beacons/0001` is King's Row's
+  host-only producer with the map from `COH_ZONE_BEACON_MAP` (validated
+  lower-case `maps/city_zones/<world>/<world>.txt`), so one compile serves every
+  zone; it names its map in the native proof (`COH_ZONE_BEACON_MAP_V1`).
+  `generate_zone_beacons.py`: King's Row's generator world with the shared
+  tree's 380 leaves (a superset of King's Row's 52), master/server/sentry/worker
+  roles, then two fresh proofs (cold mirror, reopened world): native CRC,
+  full readback and 32 pathfinder routes; package `zone-beacons-<id>.zip`,
+  manifest, lock and report. Workflow `armport-zone-beacons.yml` (Windows, two
+  compiler processes, 355-minute bound; the compiled generator is kept for
+  reuse with `generator_run_id`).
+- **Guest**: `zone_beacon_package.py` checks a carried graph against the shared
+  tree (exact inventory of `data/object_library` .geo/.txt/.rootnames, the
+  zone's own map folder and `data/tricks`, then every input's hash) and writes
+  it with a marker; `local_character_server.install_zone_beacon_graphs` runs
+  when the tree is prepared (`zone_tree_preparation.beacon_graph`, phase
+  `zone_beacon_graphs`). A graph that does not match is recorded
+  (`not_installed`, `error`) and skipped; the zone starts as before.
+- **APK**: input `zone_beacons_run_id`; `stage_app_assets.zone_beacons` takes
+  the archive, manifest and lock only from a successful run of that workflow
+  whose generator report names the run's own head; runtime files only (outside
+  the bounded client inventory); report `zone_beacons`.
+- **First runs**: dispatch failed ("workflow armport-zone-beacons.yml not found
+  on the default branch"); a narrow push trigger made the first run
+  (42675871153 at e12956ebb), which failed at configure: www.lua.org timed out
+  every connection while CMake fetched Lua 5.1.5 ("Each download failed!"), as
+  in build 42488979665. `tools/pinned_lua_source.py` gives the generator the
+  archive from armport-build's Actions cache (per branch, so the workflow is
+  dispatched on x86/perf-round1) or a verified download (official site, then
+  mirrors; pinned SHA-256), extracted for CPM's own override
+  `-DCPM_lua51_SOURCE`, which still applies `lua-cmake.patch`. The push
+  trigger is gone (61c14b729).
+- **Tests**: `tools/android/interactive/test_zone_beacons.py` (21: package
+  validation, native witness, roles, guest install with read-only leaves, a
+  different or extra leaf refused, the server's install/skip/cancel, and APK
+  admission from its own run only); `tools/test_pinned_lua_source.py` (7). Both
+  run in the build's guard steps and first in the zone job.
+- Version 0.13.65 (80); test sheet `THOR-TEST-0.13.65.md`.
+
 ## 0.13.64: display updates above 1024 rectangles (Claude, 2026-11-09)
 
 Thor 0.13.63 (user, 2026-11-09 09:55 CST, exports 20261109-154935 and

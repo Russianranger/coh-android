@@ -28,13 +28,13 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   210545/220022): hero saved in King's Row; its start overlapped the client's → Android low-memory kill (reason 3, foreground).
 - 0.13.58-59 published (APKs 42329179898 at 919e23760, 42429765739 at 825bae059): saved zone at Enter Game (0126), mount
   repair; then no zone before Enter Game, only the character's own; Save survives its Enter (0127). HANDOFF "0.13.58"/"0.13.59".
-- 0.13.60 published (APK 42456241853; build 42442419621, runtimes 42448320432/42451345001/42453750449 at 81b6cdfc0): Thor 0.13.59
-  Mercy Island failed (FX step refused the shared `-zones` tree); admitted, failed first-zone starts reported. HANDOFF "0.13.60".
-- 0.13.61 published (APK 42516615576; build 42499066512, runtimes 42506353321/42510220143/42513450368 at bd27744ed): Thor 0.13.60
-  Resume/Reopen hit the unentered THORHERO; Resume removes it. Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.61".
+- 0.13.60-61 published (APKs 42456241853 at 81b6cdfc0, 42516615576 at bd27744ed): FX step admits the shared `-zones` tree
+  (Mercy Island start); Resume removes the unentered THORHERO; Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.60"/"0.13.61".
 - 0.13.62 published (APK 42546944715; build 42525269953, runtimes 42532830880/42536520114/42543661576 at 75523980e): Thor
   0.13.61 Ralakar in Mercy Island (first non-Atlas zone); any name, walking unlocked; CI as OTHERHERO. HANDOFF "0.13.62".
 - 0.13.63 published (APK 42566326193; build 42550231650, runtimes 42558801806/42563040886 at e679031ca): Thor 0.13.62
   Reopen of Ralakar refused as station travel (asked before the external-maps layer); check now waits. HANDOFF "0.13.63".
 - 0.13.64 published (APK 42674721584; build 42653524766, runtime 42668990132 at 4f9e8eebe): Thor 0.13.63 fast
   turns closed the game (display update >1024 rectangles); decoder takes the U16 range. Mercy Island: no graph. HANDOFF "0.13.64".
+- 0.13.65 (80) in CI: Mercy Island navigation graph (pets/NPCs path there): zone generator 24ef62a1b, graph run 42678203754
+  (Lua from the job cache; www.lua.org timed out 42675871153); guest checks it against the shared tree. HANDOFF "0.13.65".
