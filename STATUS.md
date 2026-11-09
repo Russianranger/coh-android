@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   0.13.61 Ralakar in Mercy Island (first non-Atlas zone); any name, walking unlocked; CI as OTHERHERO. HANDOFF "0.13.62".
 - 0.13.63 published (APK 42566326193; build 42550231650, runtimes 42558801806/42563040886 at e679031ca): Thor 0.13.62
   Reopen of Ralakar refused as station travel (asked before the external-maps layer); check now waits. HANDOFF "0.13.63".
-- 0.13.64 (79) in CI: Thor 0.13.63 fast camera turns closed the game (one display update above 1024 rectangles);
-  the decoder takes the U16 range. Mercy Island has no beacon graph: pets/NPCs do not path; generator next. HANDOFF "0.13.64".
+- 0.13.64 published (APK 42674721584; build 42653524766, runtime 42668990132 at 4f9e8eebe): Thor 0.13.63 fast
+  turns closed the game (display update >1024 rectangles); decoder takes the U16 range. Mercy Island: no graph. HANDOFF "0.13.64".

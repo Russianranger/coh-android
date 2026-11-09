@@ -24,7 +24,12 @@ graphs. Mercy Island's comes in a later version. Everything else is 0.13.63:
 [THOR-TEST-0.13.63.md](THOR-TEST-0.13.63.md). Evidence:
 [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.64".
 
-CI: CI_SUMMARY
+CI at 4f9e8eebe: build 42653524766 (it runs the new decoder test) and trusted
+runtime 42668990132 passed; APK 42674721584 published it (sha256
+`0201c871b8426f1aa9ed063bfd3de2a91b167f84ba8fcca80ed0d2e1c3d0a0fc`). CI's
+runtimes watch the game through their own display reader, not the app's, so
+the decoder test (updates of 4096 and 65535 rectangles) is its check there,
+and your fast turns are its first run on the phone.
 
 ## Steps (update in place: no uninstall, no new import)
 

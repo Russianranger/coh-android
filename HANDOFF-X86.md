@@ -457,6 +457,17 @@ pet he summoned would not move towards an enemy when ordered to attack".
   counter; on 0.13.63's decoder the first fails with Thor's message. ArmPort
   suite: 539 run, 2 errors (the historical-baseline tests that need CI's
   baseline checkout; the same without this change).
+- **Chain at 4f9e8eebe** (one chain on x86/perf-round1). Build 42653524766: the
+  libraries job's ArmPort unit tests include `test_rfb_rectangle_count.py`.
+  Trusted runtime 42668990132 (1780 s, THORHERO): the APK's runtime
+  qualification; its `app-sources` job compiles the changed Java against the
+  Android SDK. CI's runtimes read the display with their own Python RFB driver
+  (`tools/android/client/host_smoke.py`), not `InteractiveRfbClient`, so the
+  zone-trip and default runtimes were not repeated for this decoder-only
+  change. Every run passed on its first attempt. APK 42674721584 published
+  `coh-atlas-gameplay-v0.13.64` (92323241 bytes, sha256
+  0201c871b8426f1aa9ed063bfd3de2a91b167f84ba8fcca80ed0d2e1c3d0a0fc, signer
+  92955353…, the same as 0.13.50-0.13.63); its guest files match the commit.
 - Version 0.13.64 (79); test sheet `THOR-TEST-0.13.64.md`.
 
 ## 0.13.63: Reopen any name with the game's own travel (Claude, 2026-11-08)
