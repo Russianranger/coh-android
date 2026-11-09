@@ -21,7 +21,14 @@ save after ordinary play in Mercy Island can be verified. Station travel (Game's
 own zone travel unticked) still follows only a character named THORHERO, so
 keep that option on. Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.63".
 
-CI: CI_SUMMARY
+CI at e679031ca: build 42550231650 (it runs the new reopen tests), zone-trip
+runtime 42558801806 (its character named OTHERHERO) and trusted runtime
+42563040886 passed; APK 42566326193 published it (sha256
+`8d748cb7a4b75acd9b92b26c325ee2c721ff40dc0006e04fa500c9db9373b508`). The
+default runtime was not repeated: the trusted runtime covers the same THORHERO
+path. CI has no King's Row package, so it never showed this refusal; the unit
+tests replay your session's order, and your Reopen of Ralakar is the first run
+of the fix.
 
 ## Steps (update in place: no uninstall, no new import)
 

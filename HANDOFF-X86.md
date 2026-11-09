@@ -450,6 +450,24 @@ trying to reopen hero".
   (option off, or on without the layer) still refuses Ralakar once known. On
   the published 0.13.62 guest these tests fail with Thor's message. Full
   interactive suite: 3227 run/86 F/14 E/36 S, the same failures as 0.13.62.
+- **Chain at e679031ca** (one chain on x86/perf-round1). Build 42550231650: the
+  libraries job ran `test_character_any_name.py` (16 OK,
+  `ReopenZoneTravelTests` included). Zone-trip runtime 42558801806 with
+  `character_name=OTHERHERO` (2300 s): creation typed OTHERHERO, and the run
+  passes only when the guest's connected and saved events and its report carry
+  that name; map 1 cookie 2 ready 620.7 s after the stock start (108 bins
+  written, spawn to ready 443.9 s); reopen found OTHERHERO by OCR on the
+  character list, no zone server before Enter Game (`local_atlas_startup` 0.0
+  s), map 1 cookie 2 ready 142.1 s after the stock start, `/mapmove 101`
+  (cookie 3) 177.2 s, 2 arrivals before the save. Trusted runtime 42563040886
+  (1752 s, THORHERO). The default runtime was not repeated: the change only
+  defers a check, and the trusted runtime runs the same THORHERO path (no stock
+  travel) with trusted bins. Every run passed on its first attempt. APK
+  42566326193 published `coh-atlas-gameplay-v0.13.63` (92323241 bytes, sha256
+  8d748cb7a4b75acd9b92b26c325ee2c721ff40dc0006e04fa500c9db9373b508, signer
+  92955353…, the same as 0.13.50-0.13.62); its guest files match the commit. CI
+  has no King's Row package (`monorail_qualified` false), so only the unit
+  tests replay Thor's order.
 - Version 0.13.63 (78); test sheet `THOR-TEST-0.13.63.md`.
 
 ## 0.13.62: any character name; walking no longer waits (Claude, 2026-11-08)

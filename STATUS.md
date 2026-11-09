@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   Resume/Reopen hit the unentered THORHERO; Resume removes it. Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.61".
 - 0.13.62 published (APK 42546944715; build 42525269953, runtimes 42532830880/42536520114/42543661576 at 75523980e): Thor
   0.13.61 Ralakar in Mercy Island (first non-Atlas zone); any name, walking unlocked; CI as OTHERHERO. HANDOFF "0.13.62".
-- 0.13.63 (78) in CI: Thor 0.13.62 Reopen of Ralakar refused as station travel (asked before the external-maps layer was
-  installed; game's own travel was on); the check now waits for the layer. HANDOFF "0.13.63".
+- 0.13.63 published (APK 42566326193; build 42550231650, runtimes 42558801806/42563040886 at e679031ca): Thor 0.13.62
+  Reopen of Ralakar refused as station travel (asked before the external-maps layer); check now waits. HANDOFF "0.13.63".
