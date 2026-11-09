@@ -155,6 +155,65 @@ print('complete portable package passed')
                          ('host_only_zone_beacon_generator', 'COH_ZONE_BEACON_MAP'))
 
 
+class ApkZoneGraphAdmissionTests(unittest.TestCase):
+    """The APK takes a graph only from its own successful generation run (stage_app_assets.zone_beacons)."""
+
+    def setUp(self):
+        sys.path.insert(0, str(host.ROOT / 'armport/app'))
+        import stage_app_assets
+        self.stage = stage_app_assets
+        self.temporary = tempfile.TemporaryDirectory(); self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name); self.value = complete_package(self.root)
+
+    def run_json(self, **change):
+        value = {'id': 42678203754, 'path': '.github/workflows/armport-zone-beacons.yml', 'status': 'completed',
+                 'conclusion': 'success', 'head_sha': 'a' * 40}
+        value.update(change)
+        path = self.root / 'zone-beacons-run.json'; path.write_text(json.dumps(value))
+        return path
+
+    def test_a_successful_run_adds_exactly_its_archive_manifest_and_lock(self):
+        generated, records = self.stage.zone_beacons(self.root, self.run_json())
+        self.assertEqual(set(generated), {NAMES['archive'], NAMES['manifest'], NAMES['lock']})
+        self.assertEqual(generated[NAMES['archive']], (self.root / NAMES['archive']).read_bytes())
+        record = records[str(MAP_ID)]
+        self.assertEqual((record['map'], record['run_id'], record['head_sha'], record['device_validated']),
+                         (NAMES['map'], 42678203754, 'a' * 40, False))
+        self.assertEqual(record['full_world_crc'], self.value['native']['full_world_crc'])
+        # The generator's report stays with the run; the APK carries only what the guest installs.
+        self.assertNotIn(NAMES['report'], generated)
+
+    def test_another_workflow_commit_or_unfinished_run_is_refused(self):
+        for change in ({'conclusion': 'failure'}, {'status': 'in_progress'}, {'head_sha': 'b' * 40},
+                       {'path': '.github/workflows/android-kings-row-native.yml'}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                self.stage.zone_beacons(self.root, self.run_json(**change))
+
+    def test_a_tampered_or_incomplete_package_is_refused(self):
+        run = self.run_json()
+        with zipfile.ZipFile(self.root / NAMES['archive'], 'a') as archive:
+            archive.writestr('data/server/extra.bcn', b'extra')
+        with self.assertRaises(ValueError):
+            self.stage.zone_beacons(self.root, run)
+        complete_package(self.root)
+        (self.root / NAMES['lock']).unlink()
+        with self.assertRaisesRegex(ValueError, 'Incomplete zone graph package'):
+            self.stage.zone_beacons(self.root, run)
+
+    def test_an_artifact_without_a_defined_graph_is_refused(self):
+        for key in ('archive', 'manifest', 'lock'):
+            (self.root / NAMES[key]).unlink()
+        with self.assertRaisesRegex(ValueError, 'holds no graph'):
+            self.stage.zone_beacons(self.root, self.run_json())
+
+    def test_graph_payloads_stay_out_of_the_bounded_client_inventory(self):
+        source = (host.ROOT / 'armport/app/stage_app_assets.py').read_text()
+        self.assertIn("name not in DBSERVER_PAYLOADS + zone_payloads", source)
+        builder = (host.ROOT / 'armport/app/build_thor_apk.py').read_text()
+        self.assertIn('added_runtime | frozenset(stage_app_assets.zone_beacons(*zone_graphs)[0])', builder)
+        self.assertIn("'zone_beacon_package.py'", builder)
+
+
 @unittest.skipIf(os.name == 'nt', 'The guest installer uses Android-side (POSIX) helpers')
 class ZoneGraphInstallTests(unittest.TestCase):
     class Context:
