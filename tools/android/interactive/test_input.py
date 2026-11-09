@@ -451,7 +451,22 @@ _decoder.HARNESS = _decoder.HARNESS.replace('io.github.russianranger.cohpresenta
 
 
 class InteractiveDecoderTests(_decoder.RfbDecoderTests):
-    pass
+    def test_rectangle_count_unknown_encoding_and_server_message_rejected(self):
+        """0.13.64: every U16 rectangle count is a valid update (Thor 0.13.63's fast camera turns
+        exceeded the presentation decoder's 1024); unknown encodings and messages still fail."""
+        init, update, rect = _decoder.init, _decoder.update, _decoder.rect
+        for suffix in [update(rect(0, 0, 1, 1, encoding=5)), b'\1', b'\xff']:
+            frames, end, _ = self.decode(init() + suffix)
+            self.assertEqual([], frames)
+            self.assertIn('IOException', end)
+        # 1025 rectangles over the 2x2 desktop: one frame, each pixel from its last rectangle.
+        frames, end, _ = self.decode(init() + update(*[rect(i % 2, (i // 2) % 2, 1, 1, [i]) for i in range(1025)]))
+        self.assertEqual([(1, 2, 2, [0xff000000 | 1024, 0xff000000 | 1021, 0xff000000 | 1022, 0xff000000 | 1023])], frames)
+        self.assertIn('EOFException', end)
+        # The same count without its rectangles publishes nothing.
+        frames, end, _ = self.decode(init() + update(count=1025))
+        self.assertEqual([], frames)
+        self.assertIn('EOFException', end)
 
 
 if __name__ == '__main__':
