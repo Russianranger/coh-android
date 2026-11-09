@@ -26,6 +26,10 @@ on:
         description: Optional successful armport-external-maps-dbserver run - its DbServer replaces the level-up one (map requests; the game's own zone travel)
         required: false
         default: ''
+      zone_beacons_run_id:
+        description: Optional successful armport-zone-beacons run (map 71) - its graph lets pets and NPCs path in Mercy Island
+        required: false
+        default: ''
       publish_release:
         description: Publish the signed APK as a GitHub pre-release (user-approved candidates only)
         type: boolean
@@ -45,6 +49,7 @@ env:
   SERVER_METRICS: ${{ inputs.server_metrics }}
   SERVER_OPTION: ${{ inputs.server_option }}
   EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
+  ZONE_BEACONS_RUN_ID: ${{ inputs.zone_beacons_run_id }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 
@@ -150,6 +155,17 @@ jobs:
           path: ${{ runner.temp }}/external-maps-dbserver
           run-id: ${{ env.EXTERNAL_MAPS_RUN_ID }}
           github-token: ${{ github.token }}
+      - name: Record the zone beacon graph run
+        if: env.ZONE_BEACONS_RUN_ID != ''
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ZONE_BEACONS_RUN_ID" > "$RUNNER_TEMP/zone-beacons-run.json"
+      - uses: actions/download-artifact@v4
+        if: env.ZONE_BEACONS_RUN_ID != ''
+        with:
+          name: coh-zone-beacons-71
+          path: ${{ runner.temp }}/zone-beacons
+          run-id: ${{ env.ZONE_BEACONS_RUN_ID }}
+          github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-interactive-signing
@@ -167,6 +183,9 @@ jobs:
           fi
           if [ -n "$EXTERNAL_MAPS_RUN_ID" ]; then
             server_args+=(--external-maps-dbserver "$RUNNER_TEMP/external-maps-dbserver" --external-maps-run-json "$RUNNER_TEMP/external-maps-run.json")
+          fi
+          if [ -n "$ZONE_BEACONS_RUN_ID" ]; then
+            server_args+=(--zone-beacons "$RUNNER_TEMP/zone-beacons" --zone-beacons-run-json "$RUNNER_TEMP/zone-beacons-run.json")
           fi
           armport/scripts/step.sh "ArmPort Thor APK build" python3 armport/app/build_thor_apk.py \
             --donor-apk "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" \
@@ -188,6 +207,8 @@ jobs:
                   'retained_members', 'armport_client')}
           if 'external_maps_dbserver' in r:
               keep['external_maps_dbserver'] = r['external_maps_dbserver']
+          if 'zone_beacons' in r:
+              keep['zone_beacons'] = r['zone_beacons']
           if 'server_metrics_qualification' in r:
               keep['server_metrics_qualification'] = r['server_metrics_qualification']
               keep['server_metrics_runtime_validated'] = r['server_metrics_runtime_validated']

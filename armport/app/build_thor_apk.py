@@ -66,7 +66,9 @@ ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'a
                            # and the external-maps DbServer layer is installed.
                            'external_map_supervisor.py',
                            # 0.13.55: the game's own zone travel policy (COH_STOCK_TRAVEL=1).
-                           'zone_travel.py', 'zone_index.py'})
+                           'zone_travel.py', 'zone_index.py',
+                           # 0.13.65: zone beacon graphs for the shared zone tree (inert without them).
+                           'zone_beacon_package.py'})
 CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_login_server.py', 'local_character_server.py', 'character_zoning.py',
                              'character_zoning_scheduler.py', 'client_visual_assets.py', 'zone_asset_package.py',
                              'native_training_save.py',
@@ -212,6 +214,11 @@ def build(args):
     if dbserver is not None:
         # On-demand zones (inert until the supervisor enables it): only the two DbServer payloads change.
         changed_runtime = changed_runtime | frozenset(stage_app_assets.DBSERVER_PAYLOADS)
+    zone_graphs = getattr(args, 'zone_beacons', None)
+    if zone_graphs is not None:
+        # 0.13.65: each carried zone graph adds exactly its archive, manifest and lock.
+        zone_graphs = (zone_graphs, args.zone_beacons_run_json)
+        added_runtime = added_runtime | frozenset(stage_app_assets.zone_beacons(*zone_graphs)[0])
     require(pin(args.donor_apk) == DONOR_APK, 'Donor 0.13.36 APK bytes differ from the public release')
     require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh output required')
     for tool in (args.android_jar, args.build_tools / 'aapt2', args.build_tools / 'zipalign',
@@ -245,8 +252,11 @@ def build(args):
                             if server_qualification else None),
             server_variant='thor_certified_startup' if server_qualification else None,
             server_run_id=server_qualification['native_build_run_id'] if server_qualification else None,
-            upstream_root=baseline, server_option=server_option, dbserver=dbserver)
-        dbserver_record = json.loads((staged / 'runtime-manifest.json').read_text()).get(stage_app_assets.EXTERNAL_MAPS_KEY)
+            upstream_root=baseline, server_option=server_option, dbserver=dbserver, zone_graphs=zone_graphs)
+        staged_manifest = json.loads((staged / 'runtime-manifest.json').read_text())
+        dbserver_record = staged_manifest.get(stage_app_assets.EXTERNAL_MAPS_KEY)
+        zone_record = staged_manifest.get(stage_app_assets.ZONE_BEACONS_KEY)
+        require((zone_record is not None) == (zone_graphs is not None), 'Zone graph record mismatch')
         require((dbserver_record is not None) == (dbserver is not None), 'External map DbServer record mismatch')
         if server_qualification:
             require(armport['client_run_id'] == armport['data_run_id'] == server_qualification['native_build_run_id'],
@@ -348,6 +358,8 @@ def build(args):
     if dbserver_record is not None:
         report['external_maps_dbserver'] = dict(dbserver_record,
                                                 build_run=getattr(args, 'external_maps_build_run', None))
+    if zone_record is not None:
+        report['zone_beacons'] = zone_record
     if server_qualification:
         report['server_metrics_qualification'] = server_qualification
         report['server_metrics_variant'] = 'thor_certified_startup'
@@ -377,6 +389,10 @@ def main():
                         help='On-demand zone DbServer package (armport-external-maps-dbserver artifact); inert by default')
     parser.add_argument('--external-maps-run-json', type=Path,
                         help='The armport-external-maps-dbserver run that built --external-maps-dbserver')
+    parser.add_argument('--zone-beacons', type=Path,
+                        help='Zone graph package directory (armport-zone-beacons artifact): pets and NPCs path there')
+    parser.add_argument('--zone-beacons-run-json', type=Path,
+                        help='The armport-zone-beacons run that generated --zone-beacons')
     args = parser.parse_args()
     for key in ('donor_apk', 'armport', 'android_jar', 'build_tools', 'keystore', 'output'):
         setattr(args, key, getattr(args, key).absolute())
@@ -384,6 +400,10 @@ def main():
         args.server_metrics = args.server_metrics.absolute()
     if (args.external_maps_dbserver is None) != (args.external_maps_run_json is None):
         parser.error('--external-maps-dbserver and --external-maps-run-json go together')
+    if (args.zone_beacons is None) != (args.zone_beacons_run_json is None):
+        parser.error('--zone-beacons and --zone-beacons-run-json go together')
+    if args.zone_beacons is not None:
+        args.zone_beacons, args.zone_beacons_run_json = args.zone_beacons.absolute(), args.zone_beacons_run_json.absolute()
     if args.external_maps_dbserver is not None:
         args.external_maps_dbserver = args.external_maps_dbserver.absolute()
         args.external_maps_build_run = stage_app_assets.external_maps_build_run(

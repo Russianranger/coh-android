@@ -1,0 +1,164 @@
+"""Install source-bound genuine zone graphs into the shared zone tree.
+
+Every static zone other than Atlas Park and King's Row runs from one shared
+tree (prepare_zone_runtime) that had no beacon graph, so NPCs and pets there
+could not walk to a target (Thor 0.13.63, Mercy Island: "Beacon file not loaded
+for map: maps/City_Zones/V_City_01_01/V_City_01_01.txt"). Each graph here was
+generated on the host from exactly that tree's world (generate_zone_beacons.py)
+and the APK carries its archive, manifest and lock. Cold input hashes are
+reused only while immutable world and graph fingerprints still match.
+"""
+from __future__ import annotations
+import hashlib
+import json
+from pathlib import Path
+import re
+import stat
+import struct
+import time
+import zipfile
+import atlas_beacon_package as atlas
+
+ROLE = 'authentic_native_zone_beacon_graph'
+POLICY = 'native_shared_zone_tree_complete_collision_two_fresh_crc_graph_32routes_v1'
+PROFILES = ('cold_world', 'reopened_world')
+# Static zones whose graphs exist (map id: world folder, as zone_index.ZONES).
+WORLDS = {71: 'v_city_01_01'}
+require, canonical, pin = atlas.require, atlas.canonical, atlas.pin
+
+
+def names(map_id):
+    require(map_id in WORLDS, 'No zone graph is defined for map ' + str(map_id))
+    world = WORLDS[map_id]
+    map_name = 'maps/city_zones/' + world + '/' + world + '.txt'
+    graph = 'data/server/' + map_name + '.v8.bcn'
+    prefix = 'zone-beacons-' + str(map_id)
+    return {'world': world, 'map': map_name, 'graph': graph, 'date': graph + '.date',
+            'archive': prefix + '.zip', 'manifest': prefix + '-manifest.json', 'lock': prefix + '-lock.json',
+            'marker': 'data/server/' + prefix + '-installed.json'}
+
+
+def input_name(name, map_id):
+    world = names(map_id)['world']
+    return atlas.safe(name) and (name.startswith('data/object_library/') and name.lower().endswith(('.geo', '.txt', '.rootnames'))
+        or name.startswith('data/maps/city_zones/' + world + '/') and name.lower().endswith('.txt')
+        or name.startswith('data/tricks/') and name.lower().endswith('.txt'))
+
+
+def read_manifest(path, lock_path, map_id):
+    zone = names(map_id)
+    atlas.regular(lock_path, 4096, allow_shared_source=True); lock = json.loads(Path(lock_path).read_bytes())
+    require(lock.get('format') == 1 and lock.get('map_id') == map_id, 'APK zone graph lock differs')
+    atlas.regular(path, atlas.MAX_MANIFEST, allow_shared_source=True)
+    require(pin(path) == lock.get('manifest'), 'Zone graph manifest differs from APK-owned lock')
+    value = json.loads(Path(path).read_bytes()); native = value.get('native', {}); inputs = value.get('input_files', {})
+    require(value.get('format') == 1 and value.get('role') == ROLE
+        and value.get('map') == zone['map'] and value.get('map_id') == map_id
+        and value.get('source_commit') == atlas.SOURCE_COMMIT and value.get('data_commit') == atlas.DATA_COMMIT
+        and value.get('runtime_graph_readback') is True and value.get('physical_zoning_verified') is False,
+        'Zone graph source/role differs')
+    require(100 < len(inputs) <= atlas.MAX_INPUTS and all(input_name(n, map_id) for n in inputs)
+        and 'data/' + zone['map'] in inputs and len({n.casefold() for n in inputs}) == len(inputs)
+        and hashlib.sha256(canonical(inputs)).hexdigest() == value.get('input_files_sha256'),
+        'Zone graph collision input identity differs')
+    files = value.get('files', {})
+    require(set(files) == {zone['graph'], zone['date']} and files[zone['date']].get('bytes') == 12
+        and 18 < files[zone['graph']].get('bytes', 0) <= atlas.MAX_GRAPH, 'Zone native graph file closure differs')
+    for row in [*files.values(), *inputs.values()]:
+        require(isinstance(row, dict) and set(row) == {'bytes', 'sha256'} and type(row['bytes']) is int
+            and 0 < row['bytes'] <= atlas.MAX_GRAPH and re.fullmatch('[0-9a-f]{64}', str(row['sha256'])),
+            'Invalid zone graph payload pin')
+    require(native.get('native_full_graph_readback_verified') is True
+        and native.get('fresh_ordinary_world_crc_verified') is True
+        and native.get('native_collision_load_verified') is True
+        and native.get('missing_groups') == 0 and native.get('missing_root_models') == 0
+        and native.get('native_pathfinder_successes') == 32 and native.get('date_version') == 9
+        and 1000 < native.get('connected_beacons', 0) <= native.get('combat_beacons', 0) <= 1000000
+        and native.get('ground_connections', 0) > 1000 and native.get('grid_blocks', 0) > 0
+        and re.fullmatch('0x[0-9a-f]{8}', str(native.get('full_world_crc'))),
+        'Zone native collision/CRC/graph/path proof incomplete')
+    profiles = value.get('input_profiles', {})
+    require(set(profiles) == set(PROFILES) and all(profiles[p] == {'native': native,
+        'input_files_sha256': value['input_files_sha256']} for p in PROFILES), 'Zone native cold/reopen proofs differ')
+    return value, lock
+
+
+def available(assets):
+    """Map ids whose archive, manifest and lock are all present beside this guest."""
+    assets = Path(assets)
+    return tuple(map_id for map_id in sorted(WORLDS)
+                 if all((assets / names(map_id)[key]).exists() for key in ('archive', 'manifest', 'lock')))
+
+
+def inventory(runtime, value, context, map_id, *, provider_records=None):
+    return atlas.collision_input_snapshot(runtime, value['input_files'],
+        (('data/object_library', ('.geo', '.txt', '.rootnames')),
+         ('data/maps/city_zones/' + names(map_id)['world'], ('.txt',)), ('data/tricks', ('.txt',))),
+        context, zone='zone ' + str(map_id), provider_records=provider_records)
+
+
+def private_target(runtime, name, context, map_id):
+    zone = names(map_id)
+    require(name in (zone['graph'], zone['date'], zone['marker']), 'Zone graph private target scope differs')
+    current = Path(runtime); atlas.world.real_directory(current)
+    target = atlas.actual_targets(current, [name], context)[name]
+    for part in target.relative_to(current).parts[:-1]:
+        current /= part
+        if not current.exists(): current.mkdir(mode=0o700)
+        atlas.world.real_directory(current)
+    require(not target.is_symlink(), 'Linked zone graph target')
+    return target
+
+
+def install(assets, runtime, map_id, *, context, imported_inputs_readonly):
+    """Verify one zone's graph against the shared zone tree and write it there."""
+    started = time.monotonic(); runtime = Path(runtime); assets = Path(assets); zone = names(map_id)
+    require(imported_inputs_readonly is True, 'Qualified readonly zone world required')
+    value, lock = read_manifest(assets / zone['manifest'], assets / zone['lock'], map_id)
+    inputs, input_targets = inventory(runtime, value, context, map_id)
+    targets = {n: private_target(runtime, n, context, map_id) for n in value['files']}
+    marker = private_target(runtime, zone['marker'], context, map_id)
+    result = {'format': 1, 'verified': True, 'map_id': map_id, 'map': zone['map'],
+        'native_graph_readback_qualified': True, 'physical_zoning_verified': False,
+        'full_world_crc': value['native']['full_world_crc'], 'combat_beacons': value['native']['combat_beacons'],
+        'input_files_checked': len(inputs), 'input_validation': 'bounded_single_walk_inventory_and_fingerprints'}
+    prior = None
+    if marker.exists():
+        try: atlas.regular(marker, atlas.MAX_MANIFEST); prior = json.loads(marker.read_bytes())
+        except (OSError, ValueError): pass
+    if isinstance(prior, dict) and prior.get('policy') == POLICY and prior.get('lock') == lock and prior.get('inputs') == inputs:
+        if all(p.exists() for p in targets.values()) and prior.get('graphs') == atlas.fingerprints(runtime, targets, context):
+            return dict(result, status='reused_verified_graph', installed_files=0, input_payload_bytes_hashed=0,
+                        preparation_elapsed_seconds=round(time.monotonic() - started, 6))
+    hashed = 0
+    for name, expected in value['input_files'].items():
+        context.check()
+        require(pin(input_targets[name], context) == expected, 'Zone collision input differs: ' + name); hashed += expected['bytes']
+    require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed during proof')
+    archive = assets / zone['archive']
+    atlas.regular(archive, 2 * atlas.MAX_GRAPH, allow_shared_source=True)
+    require(pin(archive, context) == lock['archive'], 'Zone graph archive differs from APK lock')
+    installed = 0
+    with zipfile.ZipFile(archive) as source:
+        entries = source.infolist(); members = [e.filename for e in entries]
+        require(len(members) == 3 and set(members) == {zone['graph'], zone['date'], zone['manifest']} and all(not e.is_dir()
+            and not e.flag_bits & 1 and stat.S_IFMT(e.external_attr >> 16) in (0, stat.S_IFREG) for e in entries),
+            'Zone graph archive closure unsafe')
+        require(source.read(zone['manifest']) == (assets / zone['manifest']).read_bytes(), 'Zone embedded graph manifest differs')
+        for name, expected in value['files'].items():
+            context.check(); require(source.getinfo(name).file_size == expected['bytes'], 'Zone graph member size differs')
+            raw = source.read(name)
+            require({'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == expected, 'Zone graph member hash differs')
+            if name == zone['date']:
+                version, newest, crc = struct.unpack('<iII', raw)
+                require(version == 9 and f'0x{crc:08x}' == value['native']['full_world_crc'], 'Zone native date CRC differs')
+            target = targets[name]
+            if target.exists():
+                atlas.regular(target, atlas.MAX_GRAPH); require(pin(target, context) == expected, 'Preserve existing different zone graph')
+                target.chmod(0o400)
+            else: atlas.atomic_bytes(target, raw); installed += 1
+    require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed before graph receipt')
+    atlas.atomic_bytes(marker, canonical({'format': 1, 'policy': POLICY, 'lock': lock, 'inputs': inputs,
+        'graphs': atlas.fingerprints(runtime, targets, context)}))
+    return dict(result, status='installed_verified_graph', installed_files=installed, input_payload_bytes_hashed=hashed,
+                preparation_elapsed_seconds=round(time.monotonic() - started, 6))

@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import shutil
 import tempfile
+import zipfile
 
 import armport_client_package as package
 
@@ -41,6 +42,9 @@ GUEST_DEPENDENCIES = (
     # Every static zone and the shared zone tree's collision leaves; imported
     # by character_zoning and character_session_budget.
     'zone_index.py',
+    # Zone beacon graphs for the shared zone tree (0.13.65); installs nothing
+    # unless the graph's archive, manifest and lock are all present.
+    'zone_beacon_package.py',
 )
 
 # The device's reopen runs the zoning flow (the Thor APK's runtime manifest sets
@@ -169,9 +173,61 @@ def external_maps_dbserver(source, directory, ci_runtime=False):
     return generated, record
 
 
+ZONE_BEACONS_KEY = 'armport_zone_beacons'
+ZONE_BEACONS_WORKFLOW = '.github/workflows/armport-zone-beacons.yml'
+
+
+def zone_beacons(directory, run_json):
+    """Zone graphs (tools/android/interactive/generate_zone_beacons.py) from one successful run.
+
+    Thor 0.13.63, Mercy Island: "Beacon file not loaded for map: ...", so its pets
+    and NPCs could not walk to a target. Each graph present in the run's artifact
+    must pass the shipped guest validator (role, map, native CRC/readback/32-route
+    proofs, input identity) against its APK lock, and come from the run's own
+    commit. Its archive, manifest and lock are added to the runtime only; the
+    guest's zone_beacon_package installs them into the shared zone tree.
+    """
+    import sys
+    sys.path.insert(0, str(ROOT / 'tools/android/interactive'))
+    import generate_zone_beacons as zone_graphs
+    directory, run = Path(directory), json.loads(Path(run_json).read_text())
+    package.require(run.get('path') == ZONE_BEACONS_WORKFLOW and run.get('status') == 'completed'
+                    and run.get('conclusion') == 'success' and re.fullmatch('[0-9a-f]{40}', run.get('head_sha') or ''),
+                    'Zone graphs are not from one successful armport-zone-beacons run')
+    guest = zone_graphs.manifest_validator()
+    generated, records = {}, {}
+    for map_id in sorted(guest.WORLDS):
+        names = guest.names(map_id)
+        report_path = directory / ('zone-beacons-%d-generation-report.json' % map_id)
+        present = [(directory / names[key]).is_file() for key in ('archive', 'manifest', 'lock')]
+        if not any(present):
+            continue
+        package.require(all(present) and report_path.is_file(), 'Incomplete zone graph package for map %d' % map_id)
+        report = json.loads(report_path.read_text())
+        value, lock = guest.read_manifest(directory / names['manifest'], directory / names['lock'], map_id)
+        package.require(report.get('status') == 'passed' and report.get('map_id') == map_id
+                        and report.get('repository_commit') == run['head_sha']
+                        and report.get('archive') == lock['archive'] == pin(directory / names['archive'])
+                        and report.get('manifest') == lock['manifest'] and report.get('native') == value['native'],
+                        'Zone graph %d does not match its own generation run' % map_id)
+        with zipfile.ZipFile(directory / names['archive']) as archive:
+            package.require(sorted(archive.namelist()) == sorted((names['graph'], names['date'], names['manifest']))
+                            and archive.read(names['manifest']) == (directory / names['manifest']).read_bytes(),
+                            'Zone graph %d archive closure differs' % map_id)
+        for key in ('archive', 'manifest', 'lock'):
+            generated[names[key]] = (directory / names[key]).read_bytes()
+        records[str(map_id)] = {'map': names['map'], 'run_id': run.get('id'), 'head_sha': run['head_sha'],
+                                'archive': lock['archive'], 'manifest': lock['manifest'],
+                                'full_world_crc': value['native']['full_world_crc'],
+                                'combat_beacons': value['native']['combat_beacons'],
+                                'device_validated': False}
+    package.require(records, 'The zone graph artifact holds no graph this guest defines')
+    return generated, records
+
+
 def stage(source, armport, output, repository_commit, external=None, *,
           server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
-          server_option=False, dbserver=None, dbserver_ci_runtime=False, zoning=False):
+          server_option=False, dbserver=None, dbserver_ci_runtime=False, zoning=False, zone_graphs=None):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -234,6 +290,13 @@ def stage(source, armport, output, repository_commit, external=None, *,
                             'The donor carries no packaged DbServer to replace')
         replaced, dbserver_record = external_maps_dbserver(source, dbserver, ci_runtime=dbserver_ci_runtime)
         generated.update(replaced)
+    zone_records, zone_payloads = None, ()
+    if zone_graphs is not None:
+        graph_payloads, zone_records = zone_beacons(*zone_graphs)
+        package.require(not set(graph_payloads) & (set(runtime['files']) | set(generated)),
+                        'The donor already carries a zone graph payload')
+        generated.update(graph_payloads)
+        zone_payloads = tuple(graph_payloads)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
@@ -264,7 +327,8 @@ def stage(source, armport, output, repository_commit, external=None, *,
     for name, raw in generated.items():
         (output / name).write_bytes(raw)
         runtime['files'][name] = pin(output / name)
-        if name in client['files'] or name not in DBSERVER_PAYLOADS:
+        # Zone graphs stay out of the bounded client inventory (as the DbServer pair).
+        if name in client['files'] or name not in DBSERVER_PAYLOADS + zone_payloads:
             client['files'][name] = runtime['files'][name]
     package.require(len(client['files']) <= 96, 'Existing client inventory bound exceeded')
     (output / 'client-manifest.json').write_bytes(encoded(client))
@@ -276,6 +340,8 @@ def stage(source, armport, output, repository_commit, external=None, *,
         'machine': 'ARM64', 'default_architecture': 'x86'}
     if dbserver_record is not None:
         runtime[EXTERNAL_MAPS_KEY] = dbserver_record
+    if zone_records is not None:
+        runtime[ZONE_BEACONS_KEY] = zone_records
     (output / 'runtime-manifest.json').write_bytes(encoded(runtime))
     return runtime['armport_client']
 

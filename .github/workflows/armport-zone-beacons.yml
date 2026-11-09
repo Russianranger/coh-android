@@ -1,0 +1,172 @@
+name: ArmPort zone beacon graph
+
+# One shared-zone-tree static zone's genuine native beacon graph (Mercy Island,
+# map 71, first: Thor 0.13.63 "Beacon file not loaded for map:
+# maps/City_Zones/V_City_01_01/V_City_01_01.txt"; its pets and NPCs could not walk
+# to a target). The host-only generator is King's Row's with the map taken from
+# COH_ZONE_BEACON_MAP, so one compile serves every zone (generator_run_id reuses
+# it). The world is King's Row's generator world with the shared zone tree's
+# collision leaves (zone_index.COLLISION_FILES). Nothing here signs or publishes;
+# the APK workflow takes the graph from this run's artifact.
+on:
+  workflow_dispatch:
+    inputs:
+      map_id:
+        description: Static zone map id with a graph defined in android/guest/zone_beacon_package.py
+        required: true
+        default: '71'
+      resource_run_id:
+        description: Run holding coh-assets-resource-inputs (donor APK, reference archive, zone archive)
+        required: true
+        default: '38112251836'
+      generator_run_id:
+        description: Optional earlier run of this workflow whose compiled zone generator to reuse
+        required: false
+        default: ''
+      generator_commit:
+        description: That run's head commit (required with generator_run_id)
+        required: false
+        default: ''
+permissions:
+  contents: read
+  actions: read
+jobs:
+  beacons:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 300
+    env:
+      MAP_ID: ${{ inputs.map_id }}
+    steps:
+      - name: Preserve exact source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Prove the portable package validation before native generation
+        shell: pwsh
+        working-directory: tools/android/interactive
+        run: |
+          python test_zone_beacons.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Windows zone package validation fixtures failed' }
+          python -c "import generate_zone_beacons as g; print(g.zone(int('$env:MAP_ID')))"
+          if ($LASTEXITCODE -ne 0) { throw 'No zone graph is defined for this map' }
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          path: out/resources
+          run-id: ${{ inputs.resource_run_id }}
+          github-token: ${{ github.token }}
+      - name: Recover the exact completed zone generator compile
+        if: inputs.generator_run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-zone-host-generator
+          path: C:/zone-bcn-src
+          run-id: ${{ inputs.generator_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify the retained generator's source receipt before execution
+        if: inputs.generator_run_id != ''
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ('${{ inputs.generator_commit }}' -notmatch '^[0-9a-f]{40}$') { throw 'generator_commit is required with generator_run_id' }
+          $run = gh api "repos/${{ github.repository }}/actions/runs/${{ inputs.generator_run_id }}" | ConvertFrom-Json
+          if ($run.path -ne '.github/workflows/armport-zone-beacons.yml' -or $run.head_sha -ne '${{ inputs.generator_commit }}') { throw 'The generator run is not this workflow at generator_commit' }
+          python -c "import json,sys; sys.path.insert(0,'tools'); import prepare_zone_beacon_generator_source as p; v=json.load(open('C:/zone-bcn-src/'+p.RECEIPT)); assert v==p.expected(), 'Zone generator receipt differs'; print('receipt matches')"
+          if ($LASTEXITCODE -ne 0) { throw 'Retained zone generator receipt differs' }
+      - name: Stage the separate nonshippable zone producer
+        if: inputs.generator_run_id == ''
+        shell: pwsh
+        run: |
+          python tools/prepare_zone_beacon_generator_source.py --output C:/zone-bcn-src
+          if ($LASTEXITCODE -ne 0) { throw 'Zone host generator staging failed' }
+      - name: Compile the host-only generator (two compiler processes)
+        if: inputs.generator_run_id == ''
+        working-directory: C:/zone-bcn-src
+        shell: pwsh
+        # At most two projects at once (msbuild /m:2), each cl.exe single-process (/MP1).
+        env:
+          _CL_: '/MP1'
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Zone host generator configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel 2 --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Zone host generator compile failed' }
+      - name: Retain the completed host compile for reuse by later zones
+        if: inputs.generator_run_id == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: coh-zone-host-generator
+          path: |
+            C:/zone-bcn-src/zone-beacon-generator-build-input.json
+            C:/zone-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
+            C:/zone-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.pdb
+          if-no-files-found: error
+          retention-days: 90
+      - name: Generate the collision-complete graph and run two fresh native CRC/readback/32-route proofs
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/generate_zone_beacons.py --map-id $env:MAP_ID
+          --donor-apk out/resources/donor.apk --asset-archive out/resources/reference.zip
+          --zones-archive out/resources/zones-world-supplement.zip
+          --zones-manifest out/resources/zones-world-supplement-manifest.json
+          --generator C:/zone-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
+          --build-input C:/zone-bcn-src/zone-beacon-generator-build-input.json
+          --repository-commit "${{ github.sha }}" --work C:/zone-bcn-run
+          --output out/zone-beacons --timeout-seconds 14400
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-zone-beacons-${{ inputs.map_id }}
+          path: |
+            out/zone-beacons/zone-beacons-${{ inputs.map_id }}.zip
+            out/zone-beacons/zone-beacons-${{ inputs.map_id }}-manifest.json
+            out/zone-beacons/zone-beacons-${{ inputs.map_id }}-lock.json
+            out/zone-beacons/zone-beacons-${{ inputs.map_id }}-generation-report.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Summarize the graph
+        shell: pwsh
+        run: |
+          $report = Get-Content -Raw "out/zone-beacons/zone-beacons-$env:MAP_ID-generation-report.json" | ConvertFrom-Json
+          $summary = [ordered]@{ map_id = $report.map_id; map = $report.map; native = $report.native; archive = $report.archive;
+                                 manifest = $report.manifest; generation_seconds = $report.generation_seconds; elapsed_seconds = $report.elapsed_seconds }
+          $line = ($summary | ConvertTo-Json -Compress -Depth 6)
+          Write-Output "::notice title=ArmPort zone beacon graph::$line"
+      - name: Preserve owned native diagnostics even on failure
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/zone-beacons/native-build -Force | Out-Null
+          foreach ($name in @('zone-beacon-generator-build-input.json', 'out/build/vs2026/CMakeCache.txt', 'out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml')) {
+            $source = Join-Path C:/zone-bcn-src $name
+            if (Test-Path $source) { Copy-Item $source out/zone-beacons/native-build/ }
+          }
+          foreach ($tree in @('C:/zone-bcn-run/r', 'C:/zone-bcn-run/c')) {
+            if (Test-Path $tree) {
+              $tag = Split-Path $tree -Leaf
+              Get-ChildItem -LiteralPath $tree -Filter 'errorLogLastRun*' -File | ForEach-Object {
+                if ($_.Length -lt 134217728) { Copy-Item $_.FullName "out/zone-beacons/native-build/$tag-$($_.Name)" }
+              }
+            }
+          }
+          if (Test-Path out/zone-beacons/evidence) {
+            Get-ChildItem out/zone-beacons/evidence -File | ForEach-Object {
+              $tail = Get-Content -LiteralPath $_.FullName -Tail 40 -ErrorAction SilentlyContinue
+              Write-Output "=== $($_.Name) (last 40 lines)"; $tail | ForEach-Object { Write-Output $_ }
+            }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-zone-beacon-evidence-${{ inputs.map_id }}
+          path: |
+            out/zone-beacons/evidence/
+            out/zone-beacons/native-build/
+          if-no-files-found: warn
+          retention-days: 90

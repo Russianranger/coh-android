@@ -3039,7 +3039,9 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx,
             mapserver_package=self.map_package)
         checkpoint('server_animation_pack')
-        report = {'runtime': target.name, 'geometry': geometry, 'beacon_graph': None,
+        graphs = self.install_zone_beacon_graphs(target)
+        checkpoint('zone_beacon_graphs')
+        report = {'runtime': target.name, 'geometry': geometry, 'beacon_graph': graphs or None,
             'native_dependencies': dependencies, 'server_data_cache': cache.summary,
             'prepared_server_caches': prepared_caches, 'shared_server_data': shared_link,
             'server_cache_native_compatibility': cache_compatibility,
@@ -3050,6 +3052,26 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.ctx.report['zone_tree_preparation'] = report
         self.zone_tree_prepared = {'runtime': target, 'preparation': report}
         return self.zone_tree_prepared
+
+    def install_zone_beacon_graphs(self, target):
+        """Every zone graph the APK carries, verified against this shared zone tree.
+
+        Thor 0.13.63, Mercy Island: "Beacon file not loaded for map: ...", so pets
+        and NPCs could not walk to a target. A graph that does not match the tree
+        is not installed: its zone still starts as before, without pathing.
+        """
+        import zone_beacon_package
+        graphs = {}
+        for map_id in zone_beacon_package.available(self.owner.args.assets):
+            try:
+                graphs[str(map_id)] = zone_beacon_package.install(self.owner.args.assets, target, map_id,
+                    context=self.ctx, imported_inputs_readonly=True)
+            except base.Cancelled:
+                raise
+            except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile) as failure:
+                graphs[str(map_id)] = {'format': 1, 'verified': False, 'map_id': map_id,
+                                       'status': 'not_installed', 'error': str(failure)[:300]}
+        return graphs
 
     def copy_private_data(self, source, target):
         return self.stage_map_data(source, target, force_private=True)

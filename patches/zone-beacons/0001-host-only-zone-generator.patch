@@ -1,0 +1,159 @@
+--- a/MapServer/src/beacon/beaconClientServer.c
++++ b/MapServer/src/beacon/beaconClientServer.c
+@@ -2848,7 +2848,7 @@
+     /* -nogui skips console stdio setup; use the native FileWrapper API. */
+     setvbuf(fileGetStdout(), NULL, _IONBF, 0);
+     if(!beaconizerInit.clientServerType || beaconIsProductionMode()){
+-        FatalErrorf("Host Atlas beacon producer requires nonproduction native beacon roles");
++        FatalErrorf("Host zone beacon producer requires nonproduction native beacon roles");
+         exit(2);
+     }
+     
+--- a/MapServer/src/beacon/beaconServer.c
++++ b/MapServer/src/beacon/beaconServer.c
+@@ -2610,11 +2610,28 @@
+     }
+ }
+ 
++/* Host-only: the one lower-case maps/city_zones/<world>/<world>.txt the driver names. */
++static const char* beaconHostZoneMap(void){
++    const char* map = getenv("COH_ZONE_BEACON_MAP");
++    size_t i, n = map ? strlen(map) : 0;
++    if(n < 24 || n > 96 || strncmp(map, "maps/city_zones/", 16) || strcmp(map + n - 4, ".txt")){
++        FatalErrorf("Host zone beacon producer requires COH_ZONE_BEACON_MAP");
++        exit(2);
++    }
++    for(i = 0; i < n; i++){
++        char c = map[i];
++        if(!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_' || c == '/' || c == '.')){
++            FatalErrorf("Host zone beacon producer map is not a lower-case zone path");
++            exit(2);
++        }
++    }
++    return map;
++}
++
+ static void beaconServerLoadMapFileList(S32 justLocal){
+-    /* Finite native Atlas graph producer; no personal or global map lists. */
++    /* Finite native zone graph producer; no personal or global map lists. */
+     eaClearEx(&beacon_server.mapList, NULL);
+-    eaPush(&beacon_server.mapList,
+-           strdup("maps/city_zones/city_01_01/city_01_01.txt"));
++    eaPush(&beacon_server.mapList, strdup(beaconHostZoneMap()));
+     beacon_server.mapCount = 1;
+     beacon_server.curMapIndex = -1;
+ }
+@@ -2913,18 +2930,22 @@
+ 
+ static void beaconHostRequire(S32 condition, const char* reason){
+     if(!condition){
+-        FatalErrorf("Host Atlas beacon qualification failed: %s", reason);
++        FatalErrorf("Host zone beacon qualification failed: %s", reason);
+         exit(2);
+     }
+ }
+ 
+-static void beaconHostVerifyCurrentAtlasGraph(void){
++static void beaconHostVerifyCurrentZoneGraph(void){
+     S32 i, connected = 0, ground = 0, raised = 0, paths = 0;
+     S32 mapMatches;
+     U32 freshWorldCRC;
+-    char freshMapName[] = "maps/city_zones/city_01_01/city_01_01.txt";
++    char freshMapName[128];
+     NavSearch* search;
++    strcpy(freshMapName, beaconHostZoneMap());
+     groupLoadMap(freshMapName, 0, 0);
++    printf("COH_ZONE_BEACON_MAP_V1 map=%s\n", freshMapName);
++    printf("COH_ZONE_COLLISION_LOAD_V1 missing_groups=0 missing_root_models=0\n");
++    fflush(fileGetStdout());
+     /* The matcher freshly traverses the ordinary loaded world and compares
+        its full CRC with the native date sidecar. Capture that proof before
+        graph readback/path operations change runtime state. Never put this
+@@ -2932,7 +2953,7 @@
+     mapMatches = beaconDoesTheBeaconFileMatchTheMap(1);
+     beaconHostRequire(mapMatches, "fresh ordinary world/date CRC mismatch");
+     freshWorldCRC = beacon_process.fullMapCRC;
+-    printf("COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=0x%08x\n", freshWorldCRC);
++    printf("COH_ZONE_BEACON_FRESH_WORLD_V1 crc=0x%08x\n", freshWorldCRC);
+     fflush(fileGetStdout());
+     beaconReload();
+     beaconHostRequire(beaconGetReadFileVersion() == 8, "native graph reader version");
+@@ -2963,7 +2984,7 @@
+     }
+     destroyNavSearch(search);
+     beaconHostRequire(paths == 32, "32 native pathfinder routes");
+-    printf("COH_ATLAS_BEACON_NATIVE_V1 crc=0x%08x combat=%d connected=%d ground=%d raised=%d blocks=%d paths=%d\n",
++    printf("COH_ZONE_BEACON_NATIVE_V1 crc=0x%08x combat=%d connected=%d ground=%d raised=%d blocks=%d paths=%d\n",
+            freshWorldCRC, combatBeaconArray.size, connected,
+            ground, raised, combatBeaconGridBlockArray.size, paths);
+     fflush(fileGetStdout());
+@@ -5898,7 +5919,7 @@
+         printf("Writing file: ");
+         beaconWriteCurrentFile(false);
+         printf("Done!\n");
+-        beaconHostVerifyCurrentAtlasGraph();
++        beaconHostVerifyCurrentZoneGraph();
+     }else{
+         beaconServerUpdateTitle("Writing beacon file to memory!");
+ 
+@@ -6702,11 +6723,11 @@
+ void beaconServer(BeaconizerType beaconizerType, const char* masterServerName, S32 noNetStart, S32 onePassOnly, S32 forceRebuild){
+     beaconServerStartup(beaconizerType, masterServerName, noNetStart, onePassOnly, forceRebuild);
+     {
+-        const char* verifyOnly = getenv("COH_ATLAS_BEACON_VERIFY_ONLY");
++        const char* verifyOnly = getenv("COH_ZONE_BEACON_VERIFY_ONLY");
+         if(verifyOnly){
+             beaconHostRequire(!strcmp(verifyOnly, "1"), "verify-only environment value");
+             beaconHostRequire(!beacon_server.isMasterServer && !beacon_server.isRequestServer && noNetStart, "isolated verify-only role");
+-            beaconHostVerifyCurrentAtlasGraph();
++            beaconHostVerifyCurrentZoneGraph();
+             exit(0);
+         }
+     }
+--- a/Common/group/groupfileload.c
++++ b/Common/group/groupfileload.c
+@@ -1043,7 +1043,7 @@
+                 if (!entry->def)
+                 {
+                     if (!stashFindPointer(futureDefs,newname,NULL) && stricmp(groupLoad->name,"object_library/Omni/NAVCMBT")!=0 && stricmp(groupLoad->name,"object_library/Omni/_NAVCMBT")!=0)
+-                        ErrorFilenamef( fname, "Group %s\ncan't find member %s\n", def->name, groupLoad->name );
++                        { FatalErrorf("Host zone collision missing group %s in %s", groupLoad->name, fname); exit(2); }
+                     entry->def = groupDefFuture(newname);
+                 }
+             }
+@@ -1062,7 +1062,7 @@
+         else
+         {
+             if (!stashFindPointer(futureDefs,newname,NULL) && stricmp(groupLoad->name,"object_library/Omni/NAVCMBT")!=0 && stricmp(groupLoad->name,"object_library/Omni/_NAVCMBT")!=0)
+-                ErrorFilenamef( fname, "Group %s\ncan't find member %s\n", def->name, groupLoad->name );
++                { FatalErrorf("Host zone collision missing group %s in %s", groupLoad->name, fname); exit(2); }
+             #if SERVER
+             if (server_state.prune)
+             {
+@@ -1299,7 +1299,7 @@
+     {
+         def->model = groupModelFind(defload->obj_name);
+         if (!def->model)
+-            Errorf("Cant find root geo %s",defload->obj_name);
++            { FatalErrorf("Host zone collision missing root geometry %s", defload->obj_name); exit(2); }
+         groupSetTrickFlags(def);
+     }
+     groupDefName(def,file->fullname,newname); //TO DO how exactly this work?
+@@ -1396,7 +1396,7 @@
+     def = loadDef(newname);
+     if (!def)
+     {
+-        Errorf("Missing reference: %s\n",newname);
++        { FatalErrorf("Host zone collision missing reference %s", newname); exit(2); }
+         return 0;
+     }
+     #else
+@@ -1407,7 +1407,7 @@
+         def = groupDefFind(newname);
+         if (!def)
+         {
+-            Errorf("Missing reference: %s\n",newname);
++            { FatalErrorf("Host zone collision missing reference %s", newname); exit(2); }
+             def = groupDefFuture(newname);
+         }
+     }
