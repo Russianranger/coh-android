@@ -9,6 +9,13 @@ name: ArmPort zone beacon graph
 # collision leaves (zone_index.COLLISION_FILES). Nothing here signs or publishes;
 # the APK workflow takes the graph from this run's artifact.
 on:
+  # A workflow that exists only off the default branch is dispatchable after its
+  # first run (dispatch of 2026-11-09: "workflow armport-zone-beacons.yml not found
+  # on the default branch"); this narrow push trigger (this file, this branch) is
+  # that run, and it generates the defaults below (Mercy Island).
+  push:
+    branches: ['x86/perf-round3']
+    paths: ['.github/workflows/armport-zone-beacons.yml']
   workflow_dispatch:
     inputs:
       map_id:
@@ -30,6 +37,9 @@ on:
 permissions:
   contents: read
   actions: read
+concurrency:
+  group: armport-zone-beacons
+  cancel-in-progress: false
 jobs:
   beacons:
     runs-on: windows-2025-vs2026
@@ -37,7 +47,10 @@ jobs:
     # two-process compile took about 7 minutes (run 39365299854). Hosted jobs stop at 360.
     timeout-minutes: 355
     env:
-      MAP_ID: ${{ inputs.map_id }}
+      # A push run has no inputs: it takes the dispatch defaults.
+      MAP_ID: ${{ inputs.map_id || '71' }}
+      RESOURCE_RUN_ID: ${{ inputs.resource_run_id || '38112251836' }}
+      GENERATOR_RUN_ID: ${{ inputs.generator_run_id || '' }}
     steps:
       - name: Preserve exact source bytes
         shell: pwsh
@@ -61,35 +74,35 @@ jobs:
         with:
           name: coh-assets-resource-inputs
           path: out/resources
-          run-id: ${{ inputs.resource_run_id }}
+          run-id: ${{ env.RESOURCE_RUN_ID }}
           github-token: ${{ github.token }}
       - name: Recover the exact completed zone generator compile
-        if: inputs.generator_run_id != ''
+        if: env.GENERATOR_RUN_ID != ''
         uses: actions/download-artifact@v4
         with:
           name: coh-zone-host-generator
           path: C:/zone-bcn-src
-          run-id: ${{ inputs.generator_run_id }}
+          run-id: ${{ env.GENERATOR_RUN_ID }}
           github-token: ${{ github.token }}
       - name: Verify the retained generator's source receipt before execution
-        if: inputs.generator_run_id != ''
+        if: env.GENERATOR_RUN_ID != ''
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           if ('${{ inputs.generator_commit }}' -notmatch '^[0-9a-f]{40}$') { throw 'generator_commit is required with generator_run_id' }
-          $run = gh api "repos/${{ github.repository }}/actions/runs/${{ inputs.generator_run_id }}" | ConvertFrom-Json
+          $run = gh api "repos/${{ github.repository }}/actions/runs/$env:GENERATOR_RUN_ID" | ConvertFrom-Json
           if ($run.path -ne '.github/workflows/armport-zone-beacons.yml' -or $run.head_sha -ne '${{ inputs.generator_commit }}') { throw 'The generator run is not this workflow at generator_commit' }
           python -c "import json,sys; sys.path.insert(0,'tools'); import prepare_zone_beacon_generator_source as p; v=json.load(open('C:/zone-bcn-src/'+p.RECEIPT)); assert v==p.expected(), 'Zone generator receipt differs'; print('receipt matches')"
           if ($LASTEXITCODE -ne 0) { throw 'Retained zone generator receipt differs' }
       - name: Stage the separate nonshippable zone producer
-        if: inputs.generator_run_id == ''
+        if: env.GENERATOR_RUN_ID == ''
         shell: pwsh
         run: |
           python tools/prepare_zone_beacon_generator_source.py --output C:/zone-bcn-src
           if ($LASTEXITCODE -ne 0) { throw 'Zone host generator staging failed' }
       - name: Compile the host-only generator (two compiler processes)
-        if: inputs.generator_run_id == ''
+        if: env.GENERATOR_RUN_ID == ''
         working-directory: C:/zone-bcn-src
         shell: pwsh
         # At most two projects at once (msbuild /m:2), each cl.exe single-process (/MP1).
@@ -101,7 +114,7 @@ jobs:
           cmake --build out/build/vs2026 --config OptDebug --parallel 2 --target MapServer
           if ($LASTEXITCODE -ne 0) { throw 'Zone host generator compile failed' }
       - name: Retain the completed host compile for reuse by later zones
-        if: inputs.generator_run_id == ''
+        if: env.GENERATOR_RUN_ID == ''
         uses: actions/upload-artifact@v4
         with:
           name: coh-zone-host-generator
@@ -124,12 +137,12 @@ jobs:
           --output out/zone-beacons --timeout-seconds 14400
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-zone-beacons-${{ inputs.map_id }}
+          name: coh-zone-beacons-${{ env.MAP_ID }}
           path: |
-            out/zone-beacons/zone-beacons-${{ inputs.map_id }}.zip
-            out/zone-beacons/zone-beacons-${{ inputs.map_id }}-manifest.json
-            out/zone-beacons/zone-beacons-${{ inputs.map_id }}-lock.json
-            out/zone-beacons/zone-beacons-${{ inputs.map_id }}-generation-report.json
+            out/zone-beacons/zone-beacons-${{ env.MAP_ID }}.zip
+            out/zone-beacons/zone-beacons-${{ env.MAP_ID }}-manifest.json
+            out/zone-beacons/zone-beacons-${{ env.MAP_ID }}-lock.json
+            out/zone-beacons/zone-beacons-${{ env.MAP_ID }}-generation-report.json
           if-no-files-found: error
           retention-days: 90
       - name: Summarize the graph
@@ -166,7 +179,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coh-zone-beacon-evidence-${{ inputs.map_id }}
+          name: coh-zone-beacon-evidence-${{ env.MAP_ID }}
           path: |
             out/zone-beacons/evidence/
             out/zone-beacons/native-build/
