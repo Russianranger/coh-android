@@ -1814,6 +1814,7 @@ public final class ClientRuntime {
         presentationWindowFrames++;
     }
     private long retainedRects, retainedReadNanosSum, retainedReadNanosMax, retainedConvertNanosSum, retainedConvertNanosMax;
+    private int retainedUpdateRectsMax;
     // The most recent decoder, kept after closeReceiver() drops `decoder`. Only
     // its receiver thread retires its totals, after run() has stopped writing
     // them; until then the report adds its live totals and says they are partial.
@@ -1825,6 +1826,7 @@ public final class ClientRuntime {
         retainedReadNanosSum += retiring.readNanosSum(); retainedConvertNanosSum += retiring.convertNanosSum();
         retainedReadNanosMax = Math.max(retainedReadNanosMax, retiring.readNanosMax());
         retainedConvertNanosMax = Math.max(retainedConvertNanosMax, retiring.convertNanosMax());
+        retainedUpdateRectsMax = Math.max(retainedUpdateRectsMax, retiring.updateRectsMax());
     }
     private synchronized Map<String,Object> presentationTiming() {
         Map<String,Object> result = new LinkedHashMap<>();
@@ -1833,14 +1835,18 @@ public final class ClientRuntime {
         result.put("windows_limit_reached", presentationWindows.size() >= MAX_PRESENTATION_WINDOWS);
         long rects = retainedRects, readSum = retainedReadNanosSum, readMax = retainedReadNanosMax,
             convertSum = retainedConvertNanosSum, convertMax = retainedConvertNanosMax;
+        int updateRectsMax = retainedUpdateRectsMax;
         InteractiveRfbClient current = lastDecoder;
         boolean live = current != null && !current.totalsRetired();
         if (live) {
             rects += current.decodedRects(); readSum += current.readNanosSum(); convertSum += current.convertNanosSum();
             readMax = Math.max(readMax, current.readNanosMax()); convertMax = Math.max(convertMax, current.convertNanosMax());
+            updateRectsMax = Math.max(updateRectsMax, current.updateRectsMax());
         }
         result.put("rfb_totals_final", !live);
         result.put("rfb_decoded_rectangles", rects);
+        // Largest rectangle count of one update (0.13.64; 0.13.63's decoder stopped above 1024).
+        result.put("rfb_update_rectangles_max", updateRectsMax);
         result.put("rfb_read_ms_sum", readSum / 1000000); result.put("rfb_read_ms_max", readMax / 1000000);
         result.put("rfb_convert_ms_sum", convertSum / 1000000); result.put("rfb_convert_ms_max", convertMax / 1000000);
         result.put("scope", "Delivered RFB frames per window; Raw read (socket wait plus copy) and pixel conversion time, retained across receiver teardown; displayed-frame render totals are in each surface capture record.");

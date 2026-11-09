@@ -18,7 +18,13 @@ public final class InteractiveRfbClient implements Closeable {
 
     public static final int MAX_WIDTH = 1024;
     public static final int MAX_HEIGHT = 768;
-    private static final int MAX_RECTS = 1024;
+    // FramebufferUpdate's count is a U16. This client advertises no LastRect, so
+    // TigerVNC counts its whole changed region into one update; fast camera turns
+    // fragment that region. Thor 0.13.63 (export 20261109-154935, 176 rectangles per
+    // update on average) ended its session when one update exceeded the earlier 1024
+    // limit. Accept the protocol's whole range; every rectangle is still bounded by
+    // the framebuffer below.
+    static final int MAX_RECTS = 0xFFFF;
     private static final int MAX_TEXT = 4096;
     private static final int DESKTOP_SIZE = -223;
     private final DataInputStream input;
@@ -51,7 +57,10 @@ public final class InteractiveRfbClient implements Closeable {
     // blocking socket wait plus copy for Raw pixel bytes; convert time is the
     // pixel conversion alone.
     private volatile long readNanosSum, readNanosMax, convertNanosSum, convertNanosMax, decodedRects;
+    private volatile int updateRectsMax;
     private final java.util.concurrent.atomic.AtomicBoolean totalsRetired = new java.util.concurrent.atomic.AtomicBoolean();
+    /** The largest rectangle count of one accepted FramebufferUpdate. */
+    public int updateRectsMax() { return updateRectsMax; }
     public long readNanosSum() { return readNanosSum; }
     public long readNanosMax() { return readNanosMax; }
     public long convertNanosSum() { return convertNanosSum; }
@@ -163,6 +172,7 @@ public final class InteractiveRfbClient implements Closeable {
         input.readUnsignedByte();
         int count = input.readUnsignedShort();
         if (count > MAX_RECTS) throw new IOException("RFB rectangle count exceeds limit");
+        if (count > updateRectsMax) updateRectsMax = count;
         boolean changed = false;
         boolean resized = false;
         for (int i = 0; i < count; i++) {

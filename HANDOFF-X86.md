@@ -414,6 +414,51 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.64: display updates above 1024 rectangles (Claude, 2026-11-09)
+
+Thor 0.13.63 (user, 2026-11-09 09:55 CST, exports 20261109-154935 and
+20261109-154946): Ralakar reopened in Mercy Island, moved and fought; then "a
+sudden crash when my character was looking around with the camera rapidly";
+the app seemed frozen and the gear lit up but did not open the menu; also "the
+pet he summoned would not move towards an enemy when ordered to attack".
+
+- **What happened**: the reopen connected on map 71 at 15:40:13 UTC
+  (`character_connected_event`, name Ralakar). After the guest's last heartbeat
+  at 15:46:21.7 the app logged "Client operation: Local display connection
+  failed: RFB rectangle count exceeds limit" (`receiver_error`), stopped the
+  guest (`postgres-graceful-stop` 15:46:29.9, guest result `cancelled`
+  15:46:32.07) and finished the operation at 15:46:32 (run start 15:27:37.5 plus
+  1134.6 s). No save in that session (`character_saved_event` null,
+  `committed_sql_verified` false). `presentation_timing`: 19080 frames and
+  3,359,190 Raw rectangles (176 per update), ~60 frames/s in the last minute.
+  The second export is the preceding Set up / update runtime report
+  (`setup_complete`).
+- **Cause**: `InteractiveRfbClient` refused a FramebufferUpdate above 1024
+  rectangles (`MAX_RECTS`). Xtigervnc (TigerVNC 1.12) counts its whole changed
+  region into one update because the client advertises no LastRect; fast turns
+  fragment that region.
+- **Fix**: `MAX_RECTS = 0xFFFF`, the protocol's U16 range; each rectangle is
+  still bounded by the framebuffer. New `presentation_timing.rfb_update_rectangles_max`
+  (largest count of one update, kept across receiver teardown).
+- **Gear**: not explained by the report. When the operation ends the menu
+  reopens by itself (`refreshOverlayMenu`), and during the ~10 s shutdown the
+  gear's click calls only `setMenuOpen` and the input release; no blocking call
+  was found on that path.
+- **Pets**: Mercy Island's MapServer console (`character-zoning-generation-1-map-71-console-tail.txt`):
+  "loading beacons.. Beacon file not loaded for map:
+  maps/City_Zones/V_City_01_01/V_City_01_01.txt". The shared zone tree has no
+  graph (`prepare_zone_runtime`: "NPCs there do not path until their graphs are
+  generated"); Atlas Park and King's Row use their generated graphs. A pet
+  follows its owner but cannot walk to an attack target there. Next: a
+  generator per map like King's Row's (`android-kings-row-native.yml`).
+- **Tests**: `armport/tests/test_rfb_rectangle_count.py` (2): updates of 4096
+  and 65535 1x1 rectangles decode with exact pixels and the largest count, a
+  rectangle outside the framebuffer is still refused, the report keeps the
+  counter; on 0.13.63's decoder the first fails with Thor's message. ArmPort
+  suite: 539 run, 2 errors (the historical-baseline tests that need CI's
+  baseline checkout; the same without this change).
+- Version 0.13.64 (79); test sheet `THOR-TEST-0.13.64.md`.
+
 ## 0.13.63: Reopen any name with the game's own travel (Claude, 2026-11-08)
 
 Thor 0.13.62 (user, 2026-11-08 19:56 CST, export 20261109-015537): "Failed when

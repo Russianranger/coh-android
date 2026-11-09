@@ -1,6 +1,6 @@
 # x86 track integration
 
-Updated 2026-11-08 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-09 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
@@ -26,10 +26,8 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.55-56 (APKs 42037755195/42169364145): stock travel, any zone, gear menu; weeklyTF.cfg. Thor: King's Row ~3½ min.
 - 0.13.57 (APK 42281556221 at 8050afca8): every static zone, 0125, occupied probe; CI trip 101 ready 182 s. Thor (20261106-
   210545/220022): hero saved in King's Row; its start overlapped the client's → Android low-memory kill (reason 3, foreground).
-- 0.13.58 published (APK 42329179898; build 42300265349, runtimes 42312362966/42316982535/42322788540 at 919e23760): Atlas
-  first, saved zone at Enter Game (0126), storage mount-point repair; CI trip 167 s; r58/r58t passed on re-run. HANDOFF "0.13.58".
-- 0.13.59 published (APK 42429765739; build 42419983392, runtimes 42413409889/42416994465/42426938668 at 825bae059): no zone
-  before Enter Game, only the character's own (any side); Save survives its Enter (0127); CI reopen zone 136 s. HANDOFF "0.13.59".
+- 0.13.58-59 published (APKs 42329179898 at 919e23760, 42429765739 at 825bae059): saved zone at Enter Game (0126), mount
+  repair; then no zone before Enter Game, only the character's own; Save survives its Enter (0127). HANDOFF "0.13.58"/"0.13.59".
 - 0.13.60 published (APK 42456241853; build 42442419621, runtimes 42448320432/42451345001/42453750449 at 81b6cdfc0): Thor 0.13.59
   Mercy Island failed (FX step refused the shared `-zones` tree); admitted, failed first-zone starts reported. HANDOFF "0.13.60".
 - 0.13.61 published (APK 42516615576; build 42499066512, runtimes 42506353321/42510220143/42513450368 at bd27744ed): Thor 0.13.60
@@ -38,3 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   0.13.61 Ralakar in Mercy Island (first non-Atlas zone); any name, walking unlocked; CI as OTHERHERO. HANDOFF "0.13.62".
 - 0.13.63 published (APK 42566326193; build 42550231650, runtimes 42558801806/42563040886 at e679031ca): Thor 0.13.62
   Reopen of Ralakar refused as station travel (asked before the external-maps layer); check now waits. HANDOFF "0.13.63".
+- 0.13.64 (79) in CI: Thor 0.13.63 fast camera turns closed the game (one display update above 1024 rectangles);
+  the decoder takes the U16 range. Mercy Island has no beacon graph: pets/NPCs do not path; generator next. HANDOFF "0.13.64".
