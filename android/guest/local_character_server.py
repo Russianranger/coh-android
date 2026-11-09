@@ -1517,6 +1517,8 @@ UNENTERED_RECORD_FIELDS = {
 UNENTERED_REOPEN = ('{name} was created but never entered the game (its first zone did not start), so there is '
                     'nothing to reopen. Use Resume first character creation: it removes that unfinished character '
                     'so you can create it again.')
+STATION_TRAVEL_NAME = ("Station travel (Game's own zone travel off) follows only a character named THORHERO. "
+                       "Turn Game's own zone travel back on to play {name}.")
 
 
 def ents_family_tables(template, expected_tables):
@@ -1804,6 +1806,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.snapshot = None
         self.auth_id = None
         self.manual_atlas_startup = None
+        self.zone_travel_decided = False
         self.external_maps = None
         self.external_maps_query = None
         self.external_maps_next = 0
@@ -1832,11 +1835,28 @@ class LocalCharacterServer(login.LocalLoginServer):
             events.update(used=False, legacy_sorted_logs_used_for_ready_or_ground=True,
                           reason='The native console producer reports only THORHERO; '
                                  'this character is observed through the stock entity logs')
-        if name != LEGACY_CHARACTER and getattr(self, 'monorail_enabled', lambda: False)():
-            raise base.DiagnosticError(
-                "Station travel (Game's own zone travel off) follows only a character named THORHERO. "
-                "Turn Game's own zone travel back on to play " + name + '.')
+        self.require_station_travel_name()
         return name
+
+    def require_station_travel_name(self):
+        """Station travel (Game's own zone travel off) follows only THORHERO.
+
+        The native monorail producer reports only THORHERO. Which travel this
+        session uses is known once prepare_runtime has installed the DbServer
+        layer (the game's own travel needs the external-maps layer). Thor
+        0.13.62: Reopen binds the name in its baseline, before that layer;
+        asking then read "no layer" as station travel and refused Ralakar
+        with Game's own zone travel on.
+        """
+        if (CHARACTER_BOUND and CHARACTER != LEGACY_CHARACTER
+                and getattr(self, 'zone_travel_decided', False) is True
+                and getattr(self, 'monorail_enabled', lambda: False)()):
+            raise base.DiagnosticError(STATION_TRAVEL_NAME.format(name=CHARACTER))
+
+    def decide_zone_travel(self):
+        """The DbServer layer is installed: station or the game's own travel is fixed for this session."""
+        self.zone_travel_decided = True
+        self.require_station_travel_name()
 
     def begin_startup_timing(self, kind, *, map_id=None, epoch=None, resident=False, now=None, utc_ms=None):
         """Observe the existing lifecycle without granting readiness or a budget.
@@ -2217,6 +2237,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.manual_atlas_startup = install_manual_atlas_dbserver(self.owner.args.assets, self.runtime, self.package)
         if self.manual_atlas_startup is not None:
             self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
+        self.decide_zone_travel()
         checkpoint('native_dependencies_and_manual_atlas')
         if initial_map is None or initial_map == 5 or (initial_map == 1 and self.requires_saved_character
                 and getattr(self, 'overlap_client_initialization', False) is True):

@@ -11,11 +11,10 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - Both zone servers are x86. Swap pressure does not prove gameplay causation; no matched pre-port x86 baseline.
 - Save committed, but Wine worker EACCES prevented proved owned cleanup; Atlas cache return failed, data cache stranded.
 - Historical .46 build40929292200/runtime40945708189/APK40952408285 succeeded (scope differs from modern Thor checks).
-- Startup instrumentation/ODBC reuse included; gain and ≤60 s unmeasured. Historical build41363927704
-  passed; runtime41372922907 rejected old 0119 pin before guest launch; corrected pin and regression included.
+- Startup instrumentation/ODBC reuse included (build41363927704); gain/≤60 s unmeasured; old 0119 pin (runtime41372922907) fixed.
 - Local ArmPort445/modern53, guest27/64/17 pass; whole-/proc cleanup: one inherited host EACCES (pristine c86), guards intact.
-- Full interactive (unittest discover -s tools/android/interactive): 3224 run/86 failures/14 errors/36 skips; not green.
-  Its failures are a subset of c07d94895's (3206/87/14/34); 0.13.62's own modules pass (HANDOFF "0.13.62").
+- Full interactive (unittest discover -s tools/android/interactive): 3227 run/86 failures/14 errors/36 skips; not green.
+  Same failures as 0.13.62, a subset of c07d94895's (3206/87/14/34); 0.13.63's modules pass (HANDOFF "0.13.63").
 - .37 cleanup hardening e50a0e42e, packaging admission 263acad1f. Source, logs, skips, pins: HANDOFF-X86.md, issue10.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
@@ -24,8 +23,7 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.51-53 (APKs 41750489814/41791858823/41881826170): cache reuse, station cap 0121, clock wrap 0123/0122, audio 0124.
 - 0.13.54 (APK 41960891294 at a66b533f6): ordinary-play save check; shared heap off (41931773800, 41956900853
   failed); external-maps DbServer CI 41961253764. Thor (20261105-043833): save passed; King's Row cold 191 s, trip 30 s.
-- 0.13.55 (APK 42037755195 at 81e81ddd0): stock zone travel, any zone, gear menu. Thor: monorail → weeklyTF assert (20261105-202806).
-- 0.13.56 (APK 42169364145 at 85a8f9801): weeklyTF.cfg; Thor (20261106-152038): King's Row ~3½ min, reopen rejected map 5.
+- 0.13.55-56 (APKs 42037755195/42169364145): stock travel, any zone, gear menu; weeklyTF.cfg. Thor: King's Row ~3½ min.
 - 0.13.57 (APK 42281556221 at 8050afca8): every static zone, 0125, occupied probe; CI trip 101 ready 182 s. Thor (20261106-
   210545/220022): hero saved in King's Row; its start overlapped the client's → Android low-memory kill (reason 3, foreground).
 - 0.13.58 published (APK 42329179898; build 42300265349, runtimes 42312362966/42316982535/42322788540 at 919e23760): Atlas
@@ -38,3 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   Resume/Reopen hit the unentered THORHERO; Resume removes it. Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.61".
 - 0.13.62 published (APK 42546944715; build 42525269953, runtimes 42532830880/42536520114/42543661576 at 75523980e): Thor
   0.13.61 Ralakar in Mercy Island (first non-Atlas zone); any name, walking unlocked; CI as OTHERHERO. HANDOFF "0.13.62".
+- 0.13.63 (78) in CI: Thor 0.13.62 Reopen of Ralakar refused as station travel (asked before the external-maps layer was
+  installed; game's own travel was on); the check now waits for the layer. HANDOFF "0.13.63".

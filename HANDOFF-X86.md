@@ -414,6 +414,44 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.63: Reopen any name with the game's own travel (Claude, 2026-11-08)
+
+Thor 0.13.62 (user, 2026-11-08 19:56 CST, export 20261109-015537): "Failed when
+trying to reopen hero".
+
+- **What happened**: Reopen of Ralakar (saved in Mercy Island) passed the
+  profile check before Wine (`character_profile_eligibility`: eligible,
+  `character_name` Ralakar) and stopped in `local_dbserver_startup`: "Station
+  travel (Game's own zone travel off) follows only a character named THORHERO.
+  Turn Game's own zone travel back on to play Ralakar." The option was on
+  (app report `stock_travel_requested` true; guest
+  `character_zoning.stock_travel.requested` true). `prepare_runtime` calls
+  `initial_map_preparation`, which qualifies the King's Row station route
+  (`monorail_qualified`; the all-zone package is installed) and then captures
+  the baseline, which binds the name (`bind_session_character`). 0.13.62's
+  refusal asked `monorail_enabled()` there, but `stock_travel_active()` needs
+  the external-maps DbServer layer, which `install_manual_atlas_dbserver`
+  installs only after `initial_map_preparation` returns, so
+  `monorail_enabled()` still read True. No SQL game mutation
+  (`sql_game_mutations_performed` false); the profile is unchanged. CI's
+  zone-trip runtime (OTHERHERO) has no King's Row package (`monorail_qualified`
+  false), so it passed.
+- **Fix** (`local_character_server.py`): `require_station_travel_name()`
+  refuses another name only after `decide_zone_travel()`, which
+  `prepare_runtime` calls right after installing the layer; every later bind
+  (start()'s second baseline, creation's Enter Game) checks again. The message
+  is unchanged (`STATION_TRAVEL_NAME`).
+- **Tests**: `test_character_any_name.py` (16): a bind before the layer no
+  longer refuses; `ReopenZoneTravelTests` drives the real zoning server in
+  Thor's order (Ralakar saved in Mercy Island, King's Row qualified, the game's
+  own travel): baseline, layer, decision, second baseline, the DbServer's Enter
+  Game request for map 71, ready, connection metadata (`monorail_enabled`
+  false, `stock_travel` true) and the reopen identity proof; station travel
+  (option off, or on without the layer) still refuses Ralakar once known. On
+  the published 0.13.62 guest these tests fail with Thor's message. Full
+  interactive suite: 3227 run/86 F/14 E/36 S, the same failures as 0.13.62.
+- Version 0.13.63 (78); test sheet `THOR-TEST-0.13.63.md`.
+
 ## 0.13.62: any character name; walking no longer waits (Claude, 2026-11-08)
 
 Thor 0.13.61 (user, 2026-11-08 14:27 CST, exports 20261108-202601 setup and

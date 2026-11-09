@@ -28,6 +28,7 @@ import stationary_contact_evidence as contact
 import task_gate_evidence as task
 import native_training_save as training
 import test_character_server as lifecycle
+import test_dynamic_initial_map as dynamic_start
 
 NAME = "Dr. O'Malley"           # a period, a space and an apostrophe: regex and SQL metacharacters
 JAVA = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive'
@@ -199,8 +200,108 @@ class CreationBindingTests(unittest.TestCase):
     def test_station_travel_follows_only_thorhero(self):
         value = self.named_instance()
         value.monorail_enabled = lambda: True
+        identity = {'containerid': 1, 'authname': 'COHLOCAL', 'name': 'Ralakar'}
+        # Before the DbServer layer is installed the travel is not yet known (Thor 0.13.62).
+        self.assertEqual(value.bind_session_character(identity), 'Ralakar')
+        with self.assertRaisesRegex(server.base.DiagnosticError, "Turn Game's own zone travel back on to play Ralakar"):
+            value.decide_zone_travel()
         with self.assertRaisesRegex(server.base.DiagnosticError, "Turn Game's own zone travel back on"):
-            value.bind_session_character({'containerid': 1, 'authname': 'COHLOCAL', 'name': 'Ralakar'})
+            value.bind_session_character(identity)
+        value.monorail_enabled = lambda: False      # the game's own travel
+        self.assertEqual(value.bind_session_character(identity), 'Ralakar')
+        value.decide_zone_travel()
+        server.reset_character()
+        value.monorail_enabled = lambda: True
+        self.assertEqual(value.bind_session_character(dict(identity, name='THORHERO')), 'THORHERO')
+        value.decide_zone_travel()
+
+
+class ReopenZoneTravelTests(unittest.TestCase):
+    """Thor 0.13.62 (export 20261109-015537): Reopen of Ralakar, Game's own zone travel on.
+
+    The session stopped before Wine's client with "Station travel (Game's own
+    zone travel off) follows only a character named THORHERO": the baseline
+    binds the name during initial_map_preparation, after the King's Row
+    station route qualified but before prepare_runtime installed the
+    external-maps DbServer layer, so monorail_enabled() still read True.
+    CI's runtime has no King's Row package, so its OTHERHERO reopen passed.
+    """
+    instance = dynamic_start.saved.SavedMapStartupTests.instance
+    layer = dynamic_start.DynamicInitialMapTests.layer
+    serve = dynamic_start.DynamicInitialMapTests.serve
+
+    def setUp(self):
+        self.addCleanup(server.reset_character)
+        self.addCleanup(lambda: [zoning.MAPS.pop(map_id) for map_id in list(zoning.MAPS)
+                                 if map_id not in (1, 5, 101)])
+
+    def reopen(self, environment, map_id=5):
+        patcher = patch.dict('os.environ', environment)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        value = self.instance(map_id)
+        value.zone_asset_document = {'files': {}}       # Thor: the all-zone package is installed
+        self.rows['ents'][0]['name'] = self.inventory[0]['name'] = 'Ralakar'
+        self.assertTrue(value.monorail_qualified)
+        value.initial_map_preparation()                  # binds Ralakar in the baseline, before the layer
+        self.assertEqual((server.CHARACTER, value.creation_report['name']), ('Ralakar', 'Ralakar'))
+        return value
+
+    def test_ralakar_reopens_in_mercy_island(self):
+        value = self.reopen(dynamic_start.DYNAMIC_ENVIRONMENT, 71)
+        self.assertEqual((value.active_map_id, value.startup_preparation_map_id), (71, None))
+        event = value.ctx.event.call_args.kwargs
+        self.assertEqual((event['name'], event['map_id'], event['map_name'], event['dynamic_start']),
+                         ('Ralakar', 71, 'Mercy Island', True))
+        sup = self.layer(value)
+        value.decide_zone_travel()
+        value.capture_baseline()
+        value._activate = Mock(wraps=lambda map_id: setattr(value, 'active_map_id', map_id)
+                               or value.creation_report.update(map_id=map_id))
+        self.serve(value, sup, 71, 2, 1)                 # Enter Game: the DbServer asks for Mercy Island
+        self.assertEqual(value._spawn_map.call_args.args, (71,))
+        statuses = [call.kwargs for call in value.ctx.event.call_args_list if call.args == ('character_initial_zone',)]
+        self.assertIn('Starting Mercy Island for Ralakar', statuses[0]['message'])
+        value.tick_dynamic_initial()
+        value.live_progress = Mock(return_value=True)
+        value.serve_external_maps(sup)
+        value.tick_dynamic_initial()
+        value._activate.assert_called_once_with(71)
+        self.assertTrue(value.connected_status(dynamic_start.connected(71)))
+        metadata = value.connection_metadata()
+        self.assertEqual((metadata['monorail_enabled'], metadata['stock_travel']), (False, True))
+        proof = {'session_id': dynamic_start.saved.SESSION, 'name': 'Ralakar', 'account': 'COHLOCAL',
+                 'character_id': 1, 'auth_id': 77, 'map_id': 71, 'before_character_id': 1, 'baseline_character_id': 1,
+                 **metadata, **{key: True for key in ('connected_on_atlas', 'existing_character_verified',
+                     'reopen_verified', 'preserved_existing_identity', 'native_client_ready_observed')}}
+        self.assertTrue(zoning.character_identity(proof, dynamic_start.saved.SESSION))
+        self.assertFalse(zoning.character_identity(dict(proof, name='THORHERO'), dynamic_start.saved.SESSION))
+
+    def test_game_s_own_travel_reopens_any_name(self):
+        value = self.reopen(dynamic_start.DYNAMIC_ENVIRONMENT)
+        self.assertIsNone(value.startup_preparation_map_id)    # the saved zone starts at Enter Game
+        self.layer(value)                                       # prepare_runtime installs the layer
+        value.decide_zone_travel()
+        self.assertTrue(value.stock_travel_active())
+        self.assertFalse(value.monorail_enabled())
+        value.capture_baseline()                                # start() repeats the baseline
+        self.assertEqual(server.CHARACTER, 'Ralakar')
+
+    def test_station_travel_still_refuses_another_name_once_known(self):
+        # Game's own zone travel off; or on but without the external-maps layer (start_map refuses that too).
+        station = {dynamic_start.zone_travel.ENABLE_ENVIRONMENT: '0', 'COH_CLIENT_ARCH': 'arm64'}
+        for environment, layer in ((station, True), (dynamic_start.DYNAMIC_ENVIRONMENT, False)):
+            with self.subTest(environment=environment, layer=layer):
+                server.reset_character()
+                value = self.reopen(environment)
+                if layer:
+                    self.layer(value)
+                self.assertTrue(value.monorail_enabled())
+                with self.assertRaisesRegex(server.base.DiagnosticError,
+                                            "Turn Game's own zone travel back on to play Ralakar"):
+                    value.decide_zone_travel()
+                with self.assertRaisesRegex(server.base.DiagnosticError, 'follows only a character named THORHERO'):
+                    value.capture_baseline()
 
 
 class StockZoneBindingTests(unittest.TestCase):
