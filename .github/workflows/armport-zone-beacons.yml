@@ -9,13 +9,11 @@ name: ArmPort zone beacon graph
 # collision leaves (zone_index.COLLISION_FILES). Nothing here signs or publishes;
 # the APK workflow takes the graph from this run's artifact.
 on:
-  # A workflow that exists only off the default branch is dispatchable after its
-  # first run (dispatch of 2026-11-09: "workflow armport-zone-beacons.yml not found
-  # on the default branch"); this narrow push trigger (this file, this branch) is
-  # that run, and it generates the defaults below (Mercy Island).
-  push:
-    branches: ['x86/perf-round3']
-    paths: ['.github/workflows/armport-zone-beacons.yml']
+  # Dispatch only. A workflow that exists only off the default branch is
+  # dispatchable after its first run ("workflow armport-zone-beacons.yml not found
+  # on the default branch", 2026-11-09); a narrow push trigger on x86/perf-round3
+  # made that run (42675871153, e12956ebb) and is gone. Dispatch on
+  # x86/perf-round1: the Lua archive cache below belongs to that branch.
   workflow_dispatch:
     inputs:
       map_id:
@@ -47,7 +45,7 @@ jobs:
     # two-process compile took about 7 minutes (run 39365299854). Hosted jobs stop at 360.
     timeout-minutes: 355
     env:
-      # A push run has no inputs: it takes the dispatch defaults.
+      # The first (push) run had no inputs; the same defaults apply.
       MAP_ID: ${{ inputs.map_id || '71' }}
       RESOURCE_RUN_ID: ${{ inputs.resource_run_id || '38112251836' }}
       GENERATOR_RUN_ID: ${{ inputs.generator_run_id || '' }}
@@ -64,6 +62,8 @@ jobs:
         run: |
           python test_zone_beacons.py -v
           if ($LASTEXITCODE -ne 0) { throw 'Windows zone package validation fixtures failed' }
+          python ../../test_pinned_lua_source.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned Lua source fixtures failed' }
           python -c "import generate_zone_beacons as g; print(g.zone(int('$env:MAP_ID')))"
           if ($LASTEXITCODE -ne 0) { throw 'No zone graph is defined for this map' }
       - uses: actions/setup-java@v4
@@ -101,6 +101,20 @@ jobs:
         run: |
           python tools/prepare_zone_beacon_generator_source.py --output C:/zone-bcn-src
           if ($LASTEXITCODE -ne 0) { throw 'Zone host generator staging failed' }
+      # Run 42675871153: www.lua.org timed out every connection while CMake fetched Lua
+      # 5.1.5 at configure ("Each download failed!"), as in armport-build 42488979665.
+      # Same cache as armport-build's server-metrics job (caches are per branch).
+      - uses: actions/cache@v4
+        if: env.GENERATOR_RUN_ID == ''
+        with:
+          path: out/lua-cache
+          key: armport-lua-5.1.5-2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333
+      - name: Provide the pinned Lua 5.1.5 source (job cache, else verified downloads)
+        if: env.GENERATOR_RUN_ID == ''
+        shell: pwsh
+        run: |
+          python tools/pinned_lua_source.py --prepared C:/zone-bcn-src --cache out/lua-cache --output C:/zone-lua/lua51 --record out/zone-lua/lua-source.json
+          if ($LASTEXITCODE -ne 0) { throw 'No verified Lua 5.1.5 archive' }
       - name: Compile the host-only generator (two compiler processes)
         if: env.GENERATOR_RUN_ID == ''
         working-directory: C:/zone-bcn-src
@@ -109,7 +123,8 @@ jobs:
         env:
           _CL_: '/MP1'
         run: |
-          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          # CPM's own override: a fresh extraction, still patched by the source's lua-cmake.patch.
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF -DCPM_lua51_SOURCE=C:/zone-lua/lua51
           if ($LASTEXITCODE -ne 0) { throw 'Zone host generator configure failed' }
           cmake --build out/build/vs2026 --config OptDebug --parallel 2 --target MapServer
           if ($LASTEXITCODE -ne 0) { throw 'Zone host generator compile failed' }
@@ -181,6 +196,7 @@ jobs:
         with:
           name: coh-zone-beacon-evidence-${{ env.MAP_ID }}
           path: |
+            out/zone-lua/
             out/zone-beacons/evidence/
             out/zone-beacons/native-build/
           if-no-files-found: warn

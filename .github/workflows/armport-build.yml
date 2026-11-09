@@ -368,6 +368,7 @@ jobs:
           # 0.13.62: any character name the game accepts (Thor 0.13.61 created Ralakar); unlocked walking.
           armport/scripts/step.sh "ArmPort any-name guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_any_name.py'
           armport/scripts/step.sh "ArmPort zone graph guards" python3 -m unittest discover -s tools/android/interactive -p 'test_zone_beacons.py'
+          armport/scripts/step.sh "ArmPort pinned Lua source guards" python3 tools/test_pinned_lua_source.py
           armport/scripts/step.sh "ArmPort session budget guards" python3 -m unittest discover -s tools/android/interactive -p 'test_session_budget_guest.py'
 
       - name: Install llvm-mingw (aarch64 host)
