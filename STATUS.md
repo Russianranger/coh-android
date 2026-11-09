@@ -9,15 +9,13 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - Last x86-track device result (.44): King's Row cold prep 656.024 s, request→arrival 711.056 s, loaded render mean
   25.63 FPS (11 complete windows); see armport/notes/M5-THOR-20261102-RESULTS.md and its export evidence.
 - Both zone servers are x86. Swap pressure does not prove gameplay causation; no matched pre-port x86 baseline.
-- Save committed, but Wine worker EACCES prevented proved owned cleanup;
-  Atlas cache return failed and the data cache remained stranded.
+- Save committed, but Wine worker EACCES prevented proved owned cleanup; Atlas cache return failed, data cache stranded.
 - Historical .46 build40929292200/runtime40945708189/APK40952408285 succeeded (scope differs from modern Thor checks).
 - Startup instrumentation/ODBC reuse included; gain and ≤60 s unmeasured. Historical build41363927704
   passed; runtime41372922907 rejected old 0119 pin before guest launch; corrected pin and regression included.
-- Local ArmPort445/modern53 and guest27/64/17 pass. Cleanup whole-/proc has one
-  inherited host EACCES error, reproduced on pristine c86; guards remain intact.
-- Full interactive:3048 run/69 failures/28 errors/31 skips before fixture repair.
-  Affected rerun138:2 legacy GPU-policy failures, no errors/skips; full is not green.
+- Local ArmPort445/modern53, guest27/64/17 pass; whole-/proc cleanup: one inherited host EACCES (pristine c86), guards intact.
+- Full interactive (unittest discover -s tools/android/interactive): 3224 run/86 failures/14 errors/36 skips; not green.
+  Its failures are a subset of c07d94895's (3206/87/14/34); 0.13.62's own modules pass (HANDOFF "0.13.62").
 - .37 cleanup hardening e50a0e42e, packaging admission 263acad1f. Source, logs, skips, pins: HANDOFF-X86.md, issue10.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
@@ -38,3 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   Mercy Island failed (FX step refused the shared `-zones` tree); admitted, failed first-zone starts reported. HANDOFF "0.13.60".
 - 0.13.61 published (APK 42516615576; build 42499066512, runtimes 42506353321/42510220143/42513450368 at bd27744ed): Thor 0.13.60
   Resume/Reopen hit the unentered THORHERO; Resume removes it. Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.61".
+- 0.13.62 published (APK 42546944715; build 42525269953, runtimes 42532830880/42536520114/42543661576 at 75523980e): Thor
+  0.13.61 Ralakar in Mercy Island (first non-Atlas zone); any name, walking unlocked; CI as OTHERHERO. HANDOFF "0.13.62".

@@ -26,7 +26,15 @@ that option on. A creation session still ends 20 minutes after the game opens
 (plus the zone's start), so save soon after you are in the world; Reopen has no
 time limit. Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.62".
 
-CI: CI_SUMMARY
+CI at 75523980e: build 42525269953 (it now also runs the any-name tests),
+zone-trip runtime 42532830880, default runtime 42536520114 (third try; the
+first two hit known CI slowdowns, in the log-out and in the character creator)
+and trusted runtime 42543661576 passed; APK 42546944715 published it (sha256
+`4151d44816333900a39889bd94b3451c5ec34ad895a13faa0e59203fad519eef`). The
+zone-trip runtime created, saved and reopened its character as OTHERHERO, not
+THORHERO, and travelled to a second Atlas Park and back; the other two
+runtimes kept THORHERO. CI still cannot start Mercy Island, so your Reopen of
+Ralakar is its first run there.
 
 ## Steps (update in place: no uninstall, no new import)
 

@@ -479,6 +479,32 @@ controls arent locked and that i can name them something other than Thorhero."
   any-name and budget modules. `build_thor_apk.CHANGED_RUNTIME` adds
   `stationary_contact_evidence.py` and `task_gate_evidence.py`
   (`test_thor_apk_runtime_review`).
+- **Chain at 75523980e** (one chain on x86/perf-round1). Build 42525269953: the
+  libraries job ran `test_character_any_name.py` (13 OK) and
+  `test_session_budget_guest.py` (24 OK) after the real-PostgreSQL eligibility
+  module (38 OK, PostgreSQL 16.15). Zone-trip runtime 42532830880 with
+  `character_name=OTHERHERO` (2257 s): creation typed OTHERHERO, and the run
+  passes only when the guest's connected and saved events and its report carry
+  that name; map 1 cookie 2 ready 608.1 s after the stock start (108 bins
+  written, spawn to ready 438.2 s); reopen found OTHERHERO by OCR on the
+  character list, and its connected and saved events carried that name; no zone
+  server before Enter Game (`local_atlas_startup` 0.0 s), map 1 cookie 2 ready
+  141.2 s after the stock start; `/mapmove 101` (cookie 3) 171.8 s, 2 arrivals
+  before the save; `client_logout_keys` kept 0 / aborted 0. Default runtime
+  42536520114 (1792 s) and trusted runtime 42543661576 (1737 s) kept THORHERO.
+  Default runtime attempts 1 and 2 failed in creation with CI's known flakes.
+  Attempt 1, the slow logout (as trusted runtime 42322788540's attempt 1 and
+  zone-trip runtime 42397533053): `/quittologin` sent 285 s after the client
+  was ready, no Atlas logout line, "Character logout delivery does not match
+  this ready client or its save window" (120 s), client 2.1 FPS in the world
+  with the new-character help dialog drawn, `client_logout_keys` kept 0 /
+  aborted 0 (not the 0127 key race). Attempt 2, the creator (as default runtime
+  42316982535's attempt 1): "Costume page (HEAD/WEAPONS/Colors) not reached
+  after body_next", OCR checks 144-156 s after ready at 9.4 FPS. Attempt 3, a
+  second re-run of the failed `interactive-guest` job, passed. APK 42546944715
+  published `coh-atlas-gameplay-v0.13.62` (92323241 bytes, sha256
+  4151d44816333900a39889bd94b3451c5ec34ad895a13faa0e59203fad519eef, signer
+  92955353…, the same as 0.13.50-0.13.61); its guest files match the commit.
 - Version 0.13.62 (77); test sheet `THOR-TEST-0.13.62.md` (in place: Reopen
   Ralakar in Mercy Island, play, save).
 
