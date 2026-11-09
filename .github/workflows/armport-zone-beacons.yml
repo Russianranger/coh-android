@@ -33,7 +33,9 @@ permissions:
 jobs:
   beacons:
     runs-on: windows-2025-vs2026
-    timeout-minutes: 300
+    # Generation is bounded at 14400 s and each of the two proofs at 900 s; the
+    # two-process compile took about 7 minutes (run 39365299854). Hosted jobs stop at 360.
+    timeout-minutes: 355
     env:
       MAP_ID: ${{ inputs.map_id }}
     steps:
