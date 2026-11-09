@@ -15,7 +15,8 @@ your phone and then installs it; this check reads every collision file once,
 so the first Mercy Island start of a session may take up to about a minute
 longer. If the graph and the world differ, the app skips the graph, records
 why, and Mercy Island starts as in 0.13.64 (pets still follow but do not walk
-to a target).
+to a target). The graph is about half again as large as King's Row's, so
+Mercy Island's map server now uses more memory than in 0.13.64.
 
 Other zones (except Atlas Park and King's Row) still have no graph. Everything
 else is 0.13.64: [THOR-TEST-0.13.64.md](THOR-TEST-0.13.64.md). Evidence:
