@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   Reopen of Ralakar refused as station travel (asked before the external-maps layer); check now waits. HANDOFF "0.13.63".
 - 0.13.64 published (APK 42674721584; build 42653524766, runtime 42668990132 at 4f9e8eebe): Thor 0.13.63 fast
   turns closed the game (display update >1024 rectangles); decoder takes the U16 range. Mercy Island: no graph. HANDOFF "0.13.64".
-- 0.13.65 (80) in CI: Mercy Island navigation graph (pets/NPCs path there): zone generator 24ef62a1b, graph run 42678203754
-  (Lua from the job cache; www.lua.org timed out 42675871153); guest checks it against the shared tree. HANDOFF "0.13.65".
+- 0.13.65 published (APK 42724564742; build 42705346414, runtime 42719564293 at caf52c828; graph 42678203754):
+  Mercy Island navigation graph (407,100 beacons, CRC 0x086f500e) so pets/NPCs path there. HANDOFF "0.13.65".

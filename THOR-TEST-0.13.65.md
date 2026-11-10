@@ -6,23 +6,31 @@ Mercy Island's map server said "Beacon file not loaded for map:
 maps/City_Zones/V_City_01_01/V_City_01_01.txt".
 
 Pets and NPCs plan their way with the zone's navigation graph (the game's
-"beacons"). Atlas Park and King's Row have graphs. Every other zone starts from
-one shared world on the phone, which had none, so nothing there could plan a
-path. 0.13.65 carries Mercy Island's graph. The game's own map server generated
-it on a Windows build machine from exactly that shared world (GRAPH_SUMMARY).
-When Mercy Island starts, the app first checks the graph against the world on
-your phone and then installs it; this check reads every collision file once,
-so the first Mercy Island start of a session may take up to about a minute
-longer. If the graph and the world differ, the app skips the graph, records
-why, and Mercy Island starts as in 0.13.64 (pets still follow but do not walk
-to a target). The graph is about half again as large as King's Row's, so
-Mercy Island's map server now uses more memory than in 0.13.64.
+"beacons"). Atlas Park and King's Row have graphs. Every other zone starts
+from one shared world on the phone, which had none, so nothing there could
+plan a path. 0.13.65 carries Mercy Island's graph. The game's own map server
+generated it on a Windows build machine from exactly that shared world
+(407,100 connected beacons, world checksum 0x086f500e; two fresh checks read
+the graph back and found all 32 test routes). When Mercy Island starts, the
+app first checks the graph against the world on your phone and then installs
+it; this check reads every collision file once, so the first Mercy Island
+start of a session may take up to about a minute longer. If the graph and the
+world differ, the app skips the graph, records why, and Mercy Island starts as
+in 0.13.64 (pets still follow but do not walk to a target). The graph is about
+half again as large as King's Row's, so Mercy Island's map server now uses
+more memory than in 0.13.64.
 
 Other zones (except Atlas Park and King's Row) still have no graph. Everything
 else is 0.13.64: [THOR-TEST-0.13.64.md](THOR-TEST-0.13.64.md). Evidence:
 [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.65".
 
-CI: CI_SUMMARY
+CI: graph run 42678203754 at 61c14b729 (generation 140 min); at caf52c828:
+build 42705346414 (it runs the zone graph tests) and trusted runtime
+42719564293 passed; APK 42724564742 published it (sha256
+`f34229b0292fe271fbd80a4e54eae347449f2af2d56bdcaf135e85252e95ca97`). CI's
+runtimes cannot start Mercy Island (they lack the 1.9 GB all-zone package), so
+the app's check of the graph against your phone's world, and the pet itself,
+run first on your phone.
 
 ## Steps (update in place: no uninstall, no new import)
 

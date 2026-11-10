@@ -463,6 +463,31 @@ maps/City_Zones/V_City_01_01/V_City_01_01.txt" (see "0.13.64").
   different or extra leaf refused, the server's install/skip/cancel, and APK
   admission from its own run only); `tools/test_pinned_lua_source.py` (7). Both
   run in the build's guard steps and first in the zone job.
+- **Graph run 42678203754** at 61c14b729 (x86/perf-round1, map 71): Lua 5.1.5
+  came from armport-build's job cache ("Cache hit"; `from_job_cache` true, no
+  download attempts). The two-process compile took 6 min; generation 8413 s,
+  8450 s with both proofs. Native witness: 407,225 combat / 407,100 connected
+  beacons, 4,683,678 ground connections, world CRC 0x086f500e, full readback,
+  32/32 routes, missing groups and root models 0, cold and reopened worlds
+  identical. Graph 93,662,230 bytes, archive 41,575,415 bytes, 8,711 pinned
+  inputs. King's Row's graph: 281,178 combat beacons, archive 23,708,626 bytes.
+- **Chain at caf52c828** (one chain on x86/perf-round1). Build 42705346414: the
+  libraries job's guard steps ran `test_zone_beacons.py` (21) and
+  `test_pinned_lua_source.py` (7). Trusted runtime 42719564293 (1743 s,
+  THORHERO): the APK's runtime qualification. CI's runtimes start only Atlas
+  Park trees (no all-zone package), so the shared tree, the graph's install and
+  a pet's path are first exercised on the phone; the zone-trip and default
+  runtimes were not repeated (guest change on the shared-tree path only). Build
+  42704278399 at fc3a018a2 failed in the libraries job's first run of the zone
+  graph guards (12 of 21 tests could not read `source-target.json`, which that
+  job's sparse checkout left out; the zone workflow checks out the whole tree)
+  and was cancelled; 37d484a7b adds the file to the checkout, and the chain
+  restarted at caf52c828. APK 42724564742 published
+  `coh-atlas-gameplay-v0.13.65` (134381308 bytes, sha256
+  f34229b0292fe271fbd80a4e54eae347449f2af2d56bdcaf135e85252e95ca97, signer
+  92955353…, the same as 0.13.50-0.13.64) with
+  `zone_beacons_run_id=42678203754`; its guest files and graph files match the
+  commit and the run.
 - Version 0.13.65 (80); test sheet `THOR-TEST-0.13.65.md`.
 
 ## 0.13.64: display updates above 1024 rectangles (Claude, 2026-11-09)
