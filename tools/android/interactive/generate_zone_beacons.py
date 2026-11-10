@@ -54,7 +54,7 @@ def manifest_validator():
          'require', 'canonical', 'regular', 'pin', 'safe'}, dict(namespace))
     return kings.portable_definitions(ROOT / 'android/guest/zone_beacon_package.py',
         {'ROLE', 'PROFILES', 'WORLDS', 'MAX_GRAPH', 'MAX_BEACONS', 'require', 'canonical', 'pin', 'names',
-         'input_name', 'read_manifest'},
+         'input_name', 'read_lock', 'read_manifest'},
         dict(namespace, atlas=atlas))
 
 

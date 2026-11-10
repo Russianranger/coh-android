@@ -1642,7 +1642,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         timing = self.map_startup_timing(map_id)
         def prepare_destination():
             if MAPS[map_id].get('shared_zone_tree'):
-                return self.prepare_zone_runtime()['runtime']
+                runtime = self.prepare_zone_runtime()['runtime']
+                # Its navigation graph, before its MapServer loads the map (pets and NPCs path).
+                self.install_zone_beacon_graph(map_id, runtime)
+                return runtime
             if map_id != 5:
                 return self.prepare_atlas_runtime()
             self.wait_background_prestart()

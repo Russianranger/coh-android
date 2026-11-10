@@ -11,6 +11,7 @@ reused only while immutable world and graph fingerprints still match.
 from __future__ import annotations
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import stat
@@ -44,7 +45,16 @@ WORLDS = {
 # have far fewer beacons than Atlas Park. The native proofs below still apply.
 MAX_GRAPH = 512 * 1024 * 1024
 MAX_BEACONS = 4000000
+# All zones' graphs (owner, 2026-11-09) come as a separate pack the app imports, like
+# the asset pack: the APK carries its descriptor (this file beside the guest) and the
+# app binds the imported objects (named by SHA-256) at /opt/coh-navigation.
+NAVIGATION_PACK_ID = 'coh-navigation-maps'
+NAVIGATION_DESCRIPTOR = 'navigation-maps-manifest.json'
+NAVIGATION_ROOT = '/opt/coh-navigation'
 require, canonical, pin = atlas.require, atlas.canonical, atlas.pin
+# Collision inputs proven in this process: path -> (sha256, bytes, inode state). Zones share
+# the object library, so a second zone's graph hashes only inputs not proven before.
+_VERIFIED_INPUTS = {}
 
 
 def names(map_id):
@@ -65,10 +75,24 @@ def input_name(name, map_id):
         or name.startswith('data/tricks/') and name.lower().endswith('.txt'))
 
 
+def pack_member(map_id, key):
+    return 'runtime/' + names(map_id)[key]
+
+
+def read_lock(lock, map_id):
+    """The APK-owned pins of one zone graph: its lock file, or the APK's navigation map descriptor's."""
+    if not isinstance(lock, dict):
+        atlas.regular(lock, 4096, allow_shared_source=True); lock = json.loads(Path(lock).read_bytes())
+    require(isinstance(lock, dict) and lock.get('format') == 1 and lock.get('map_id') == map_id
+        and all(isinstance(lock.get(key), dict) and set(lock[key]) == {'bytes', 'sha256'} and type(lock[key]['bytes']) is int
+                and 0 < lock[key]['bytes'] <= 2 * MAX_GRAPH and re.fullmatch('[0-9a-f]{64}', str(lock[key]['sha256']))
+                for key in ('archive', 'manifest')), 'APK zone graph lock differs')
+    return lock
+
+
 def read_manifest(path, lock_path, map_id):
     zone = names(map_id)
-    atlas.regular(lock_path, 4096, allow_shared_source=True); lock = json.loads(Path(lock_path).read_bytes())
-    require(lock.get('format') == 1 and lock.get('map_id') == map_id, 'APK zone graph lock differs')
+    lock = read_lock(lock_path, map_id)
     atlas.regular(path, atlas.MAX_MANIFEST, allow_shared_source=True)
     require(pin(path) == lock.get('manifest'), 'Zone graph manifest differs from APK-owned lock')
     value = json.loads(Path(path).read_bytes()); native = value.get('native', {}); inputs = value.get('input_files', {})
@@ -110,6 +134,57 @@ def available(assets):
                  if all((assets / names(map_id)[key]).exists() for key in ('archive', 'manifest', 'lock')))
 
 
+def navigation_descriptor(assets):
+    """The navigation map pack descriptor this APK pins, or None when it names no pack."""
+    path = Path(assets) / NAVIGATION_DESCRIPTOR
+    if not path.exists():
+        return None
+    atlas.regular(path, 1024 * 1024, allow_shared_source=True)
+    value = json.loads(path.read_bytes())
+    require(isinstance(value, dict) and value.get('format') == 1 and value.get('id') == NAVIGATION_PACK_ID
+        and re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', str(value.get('version'))) and isinstance(value.get('files'), dict)
+        and isinstance(value.get('volumes'), dict), 'Navigation map pack descriptor differs')
+    return value
+
+
+def sources(assets, navigation=None):
+    """Each zone's graph: the imported navigation map pack's (pinned by the APK's descriptor;
+    objects named by SHA-256 under `navigation`), else one the APK carries itself (0.13.65)."""
+    assets = Path(assets); found = {}
+    for map_id in available(assets):
+        zone = names(map_id)
+        found[map_id] = {'origin': 'apk', 'archive': assets / zone['archive'], 'manifest': assets / zone['manifest'],
+                         'lock': assets / zone['lock']}
+    descriptor = None if navigation is None else navigation_descriptor(assets)
+    if descriptor is None:
+        return found
+    root = Path(navigation)
+    require(root.is_dir() and not root.is_symlink(), 'Navigation map objects are not a real directory')
+    for map_id in sorted(WORLDS):
+        archive, manifest = (descriptor['files'].get(pack_member(map_id, key)) for key in ('archive', 'manifest'))
+        if not (isinstance(archive, dict) and isinstance(manifest, dict)):
+            continue
+        lock = read_lock({'format': 1, 'map_id': map_id, 'archive': archive, 'manifest': manifest}, map_id)
+        paths = {key: root / lock[key]['sha256'] for key in ('archive', 'manifest')}
+        if all(p.is_file() and not p.is_symlink() and p.stat().st_size == lock[key]['bytes'] for key, p in paths.items()):
+            found[map_id] = {'origin': 'navigation_map_pack', 'version': descriptor['version'], **paths, 'lock': lock}
+    return found
+
+
+def proven_input(path, expected, context):
+    """Hash one collision input unless this process proved the same inode state before; bytes hashed."""
+    def state():
+        info = os.lstat(path)
+        require(stat.S_ISREG(info.st_mode), 'Zone collision input is not a regular file')
+        return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_mode)
+    key, before = str(path), state()
+    if _VERIFIED_INPUTS.get(key) == (expected['sha256'], expected['bytes'], before):
+        return 0
+    require(pin(path, context) == expected and state() == before, 'Zone collision input differs: ' + key)
+    _VERIFIED_INPUTS[key] = (expected['sha256'], expected['bytes'], before)
+    return expected['bytes']
+
+
 def inventory(runtime, value, context, map_id, *, provider_records=None):
     return atlas.collision_input_snapshot(runtime, value['input_files'],
         (('data/object_library', ('.geo', '.txt', '.rootnames')),
@@ -130,15 +205,15 @@ def private_target(runtime, name, context, map_id):
     return target
 
 
-def install(assets, runtime, map_id, *, context, imported_inputs_readonly):
-    """Verify one zone's graph against the shared zone tree and write it there."""
-    started = time.monotonic(); runtime = Path(runtime); assets = Path(assets); zone = names(map_id)
+def install(source, runtime, map_id, *, context, imported_inputs_readonly):
+    """Verify one zone's graph (a `sources` entry) against the shared zone tree and write it there."""
+    started = time.monotonic(); runtime = Path(runtime); zone = names(map_id)
     require(imported_inputs_readonly is True, 'Qualified readonly zone world required')
-    value, lock = read_manifest(assets / zone['manifest'], assets / zone['lock'], map_id)
+    value, lock = read_manifest(source['manifest'], source['lock'], map_id)
     inputs, input_targets = inventory(runtime, value, context, map_id)
     targets = {n: private_target(runtime, n, context, map_id) for n in value['files']}
     marker = private_target(runtime, zone['marker'], context, map_id)
-    result = {'format': 1, 'verified': True, 'map_id': map_id, 'map': zone['map'],
+    result = {'format': 1, 'verified': True, 'map_id': map_id, 'map': zone['map'], 'origin': source['origin'],
         'native_graph_readback_qualified': True, 'physical_zoning_verified': False,
         'full_world_crc': value['native']['full_world_crc'], 'combat_beacons': value['native']['combat_beacons'],
         'input_files_checked': len(inputs), 'input_validation': 'bounded_single_walk_inventory_and_fingerprints'}
@@ -153,21 +228,23 @@ def install(assets, runtime, map_id, *, context, imported_inputs_readonly):
     hashed = 0
     for name, expected in value['input_files'].items():
         context.check()
-        require(pin(input_targets[name], context) == expected, 'Zone collision input differs: ' + name); hashed += expected['bytes']
+        hashed += proven_input(input_targets[name], expected, context)
     require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed during proof')
-    archive = assets / zone['archive']
+    archive = Path(source['archive']); manifest_bytes = Path(source['manifest']).read_bytes()
+    require({'bytes': len(manifest_bytes), 'sha256': hashlib.sha256(manifest_bytes).hexdigest()} == lock['manifest'],
+            'Zone graph manifest changed after validation')
     atlas.regular(archive, 2 * MAX_GRAPH, allow_shared_source=True)
     require(pin(archive, context) == lock['archive'], 'Zone graph archive differs from APK lock')
     installed = 0
-    with zipfile.ZipFile(archive) as source:
-        entries = source.infolist(); members = [e.filename for e in entries]
+    with zipfile.ZipFile(archive) as packed:
+        entries = packed.infolist(); members = [e.filename for e in entries]
         require(len(members) == 3 and set(members) == {zone['graph'], zone['date'], zone['manifest']} and all(not e.is_dir()
             and not e.flag_bits & 1 and stat.S_IFMT(e.external_attr >> 16) in (0, stat.S_IFREG) for e in entries),
             'Zone graph archive closure unsafe')
-        require(source.read(zone['manifest']) == (assets / zone['manifest']).read_bytes(), 'Zone embedded graph manifest differs')
+        require(packed.read(zone['manifest']) == manifest_bytes, 'Zone embedded graph manifest differs')
         for name, expected in value['files'].items():
-            context.check(); require(source.getinfo(name).file_size == expected['bytes'], 'Zone graph member size differs')
-            raw = source.read(name)
+            context.check(); require(packed.getinfo(name).file_size == expected['bytes'], 'Zone graph member size differs')
+            raw = packed.read(name)
             require({'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == expected, 'Zone graph member hash differs')
             if name == zone['date']:
                 version, newest, crc = struct.unpack('<iII', raw)

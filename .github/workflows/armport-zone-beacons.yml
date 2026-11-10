@@ -39,6 +39,19 @@ on:
         description: That run's head commit (required with generator_run_id)
         required: false
         default: ''
+      pack_runs:
+        description: Instead of generating, pack the passed maps of these runs (comma separated; a later run wins)
+        required: false
+        default: ''
+      pack_version:
+        description: Navigation map pack version (with pack_runs)
+        required: false
+        default: '1.0.0'
+      publish_pack:
+        description: Publish the navigation map pack as pre-release coh-navigation-maps-v<pack_version>
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -62,13 +75,20 @@ jobs:
         env:
           MAP_IDS: ${{ inputs.map_ids }}
           WORKERS: ${{ inputs.workers }}
+          PACK_RUNS: ${{ inputs.pack_runs }}
         run: |
           python3 - <<'PYCONTROL' >> "$GITHUB_OUTPUT"
           import json, os, re
           import generate_zone_beacons as g
           slots = sorted(g.manifest_validator().WORLDS)
           text = os.environ['MAP_IDS'].strip()
-          if text == 'all':
+          if os.environ['PACK_RUNS'].strip():
+              # Pack mode generates nothing.
+              assert re.fullmatch(r'[0-9]+( *, *[0-9]+)*', os.environ['PACK_RUNS'].strip()), 'pack_runs: run ids'
+              text = 'none'
+          if text == 'none':
+              maps = []
+          elif text == 'all':
               maps = slots
           else:
               assert re.fullmatch(r'[0-9]+( *, *[0-9]+)*', text), 'map_ids: comma-separated numbers or all'
@@ -85,6 +105,8 @@ jobs:
           cat "$GITHUB_OUTPUT"
 
   generator:
+    needs: plan
+    if: needs.plan.outputs.maps != '[]'
     runs-on: windows-2025-vs2026
     # The two-process compile took about 6-7 minutes (runs 39365299854, 42678203754).
     timeout-minutes: 90
@@ -189,6 +211,7 @@ jobs:
 
   beacons:
     needs: [plan, generator]
+    if: needs.plan.outputs.maps != '[]'
     runs-on: windows-2025-vs2026
     name: beacons (${{ matrix.map }})
     # Generation is bounded at 14400 s and each of the two proofs at 900 s. Hosted jobs stop at 360.
@@ -294,3 +317,76 @@ jobs:
             out/zone-beacons/native-build/
           if-no-files-found: warn
           retention-days: 90
+
+  # Owner, 2026-11-09: the maps reach the phone as a separate pack to import, like the
+  # asset pack. Only maps whose own map job passed enter it (package_navigation_maps.py).
+  pack:
+    needs: plan
+    if: inputs.pack_runs != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: write
+      actions: read
+    env:
+      PACK_RUNS: ${{ inputs.pack_runs }}
+      PACK_VERSION: ${{ inputs.pack_version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Prove the pack builder and the app's importer on fixtures
+        working-directory: tools/android/interactive
+        run: python3 -m unittest test_navigation_maps test_zone_beacons
+      - name: Collect each listed run's record, map jobs and map artifacts
+        run: |
+          set -euo pipefail
+          order=$(echo "$PACK_RUNS" | tr -d ' ')
+          echo "PACK_ORDER=$order" >> "$GITHUB_ENV"
+          for run in ${order//,/ }; do
+            mkdir -p "out/pack-runs/$run"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" > "out/pack-runs/$run/run.json"
+            gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" --jq '.jobs[]' \
+              | jq -s '{jobs: .}' > "out/pack-runs/$run/jobs.json"
+            gh run download "$run" --repo "$GITHUB_REPOSITORY" --pattern 'coh-zone-beacons-*' --dir "out/pack-runs/$run"
+            ls "out/pack-runs/$run"
+          done
+          df -h . | tail -1
+      - name: Build the navigation map pack from passed maps only
+        run: |
+          set -euo pipefail
+          python3 tools/android/interactive/package_navigation_maps.py --runs out/pack-runs --order "$PACK_ORDER" \
+            --version "$PACK_VERSION" --output out/navigation-maps | tee out/navigation-maps-build.json
+          python3 - <<'PYCONTROL'
+          import json, pathlib
+          report = json.loads(pathlib.Path('out/navigation-maps/navigation-maps-build-report.json').read_bytes())
+          summary = {'version': report['version'], 'maps': report['map_count'], 'maps_without_graph': report['maps_without_graph'],
+                     'descriptor': report['descriptor'], 'volumes': report['volumes']}
+          print('::notice title=ArmPort navigation map pack::' + json.dumps(summary, sort_keys=True))
+          PYCONTROL
+      - uses: actions/upload-artifact@v4
+        with:
+          # The APK pins this descriptor; the volumes go to the release.
+          name: coh-navigation-maps
+          path: |
+            out/navigation-maps/navigation-maps-manifest.json
+            out/navigation-maps/navigation-maps-build-report.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish the navigation map pack as a pre-release
+        if: inputs.publish_pack
+        run: |
+          set -euo pipefail
+          cd out/navigation-maps
+          maps=$(python3 -c "import json; print(json.load(open('navigation-maps-build-report.json'))['map_count'])")
+          cat > notes.md <<EOF
+          COH Navigation Maps ${PACK_VERSION}: native navigation graphs (beacons) for ${maps} zones, so pets and NPCs can walk to a target there.
+
+          Import it in COH Atlas Gameplay with the asset import button, like the asset pack. Each map is checked against your phone's zone world before that zone starts; a map that does not match is skipped and the zone starts without it.
+          Atlas Park and King's Row keep their own graphs (in the asset pack). Source ${GITHUB_SHA}; pack run ${GITHUB_RUN_ID}; generation runs ${PACK_ORDER}.
+          EOF
+          gh release create "coh-navigation-maps-v${PACK_VERSION}" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Navigation Maps ${PACK_VERSION}" --notes-file notes.md \
+            COH-Navigation-Maps-*.zip COH-Navigation-Maps-*.zip.sha256 navigation-maps-manifest.json navigation-maps-build-report.json
+          echo "::notice title=ArmPort navigation map release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-navigation-maps-v${PACK_VERSION}"

@@ -192,10 +192,14 @@ print('complete portable package passed')
         with tempfile.TemporaryDirectory() as td:
             root = Path(td); manifest = root / NAMES['manifest']; lock = root / NAMES['lock']
             manifest.write_text('{}')
-            lock.write_text(json.dumps({'format': 1, 'map_id': MAP_ID, 'manifest': host.pin(manifest), 'archive': {}}))
+            lock.write_text(json.dumps({'format': 1, 'map_id': MAP_ID, 'manifest': host.pin(manifest),
+                                        'archive': pin(b'archive')}))
             manifest.write_text('{"changed":true}')
             with self.assertRaisesRegex(ValueError, 'APK-owned lock'):
                 guest.read_manifest(manifest, lock, MAP_ID)
+            for bad in ({}, {'format': 1, 'map_id': 72}, {'format': 1, 'map_id': MAP_ID, 'manifest': {}}):
+                with self.subTest(lock=bad), self.assertRaisesRegex(ValueError, 'lock differs'):
+                    guest.read_manifest(manifest, bad, MAP_ID)
 
     def test_input_paths_do_not_admit_other_maps_or_traversal(self):
         self.assertTrue(guest.input_name('data/' + NAMES['map'], MAP_ID))
@@ -283,10 +287,11 @@ class ZoneGraphInstallTests(unittest.TestCase):
         sys.path.insert(0, str(host.ROOT / 'android/guest'))
         import zone_beacon_package
         self.package = zone_beacon_package
+        self.package._VERIFIED_INPUTS.clear()
         self.temporary = tempfile.TemporaryDirectory(); self.addCleanup(self.temporary.cleanup)
         base = Path(self.temporary.name)
-        self.runtime, self.assets = base / 'runtime', base / 'assets'
-        (self.runtime / 'data/server').mkdir(parents=True); self.assets.mkdir()
+        self.runtime, self.assets, self.objects = base / 'runtime', base / 'assets', base / 'objects'
+        (self.runtime / 'data/server').mkdir(parents=True); self.assets.mkdir(); self.objects.mkdir()
         inputs = {}
         for i in range(101):
             name = 'data/object_library/zone/part%03d.geo' % i
@@ -302,35 +307,103 @@ class ZoneGraphInstallTests(unittest.TestCase):
         path.write_bytes(raw); path.chmod(0o444)
         return pin(raw)
 
+    def install(self, source=None):
+        source = source or self.package.sources(self.assets)[MAP_ID]
+        return self.package.install(source, self.runtime, MAP_ID, context=self.Context(), imported_inputs_readonly=True)
+
+    def as_navigation_pack(self, *, version='1.0.0'):
+        """The APK carries only the pack descriptor; the app binds the imported objects by SHA-256."""
+        files = {}
+        for key in ('archive', 'manifest'):
+            raw = (self.assets / NAMES[key]).read_bytes(); files['runtime/' + NAMES[key]] = pin(raw)
+            (self.objects / pin(raw)['sha256']).write_bytes(raw)
+        for key in ('archive', 'manifest', 'lock'):
+            (self.assets / NAMES[key]).unlink()
+        descriptor = {'format': 1, 'id': 'coh-navigation-maps', 'version': version, 'files': files,
+                      'volumes': {'maps': sorted(files)}}
+        (self.assets / 'navigation-maps-manifest.json').write_bytes(host.canonical(descriptor))
+        return files
+
     def test_graph_installs_into_the_shared_zone_tree(self):
         self.assertEqual(self.package.available(self.assets), (MAP_ID,))
-        result = self.package.install(self.assets, self.runtime, MAP_ID, context=self.Context(), imported_inputs_readonly=True)
-        self.assertEqual((result['status'], result['installed_files'], result['map_id']), ('installed_verified_graph', 2, MAP_ID))
+        result = self.install()
+        self.assertEqual((result['status'], result['installed_files'], result['map_id'], result['origin']),
+                         ('installed_verified_graph', 2, MAP_ID, 'apk'))
         self.assertEqual((self.runtime / NAMES['graph']).read_bytes(), b'complete native graph fixture')
         self.assertEqual((self.runtime / NAMES['date']).read_bytes(), DATE)
-        again = self.package.install(self.assets, self.runtime, MAP_ID, context=self.Context(), imported_inputs_readonly=True)
+        again = self.install()
         self.assertEqual(again['status'], 'reused_verified_graph')
+
+    def test_the_imported_navigation_pack_supplies_the_graph(self):
+        files = self.as_navigation_pack()
+        self.assertEqual(self.package.sources(self.assets), {})  # without the app's bind, no pack graph
+        found = self.package.sources(self.assets, self.objects)
+        self.assertEqual(set(found), {MAP_ID})
+        self.assertEqual((found[MAP_ID]['origin'], found[MAP_ID]['version']), ('navigation_map_pack', '1.0.0'))
+        self.assertEqual(found[MAP_ID]['lock']['archive'], files['runtime/' + NAMES['archive']])
+        result = self.install(found[MAP_ID])
+        self.assertEqual((result['status'], result['origin']), ('installed_verified_graph', 'navigation_map_pack'))
+        self.assertEqual((self.runtime / NAMES['graph']).read_bytes(), b'complete native graph fixture')
+
+    def test_a_missing_or_short_pack_object_leaves_the_zone_without_a_graph(self):
+        files = self.as_navigation_pack()
+        archive = self.objects / files['runtime/' + NAMES['archive']]['sha256']
+        archive.write_bytes(archive.read_bytes()[:-1])
+        self.assertEqual(self.package.sources(self.assets, self.objects), {})
+        archive.unlink()
+        self.assertEqual(self.package.sources(self.assets, self.objects), {})
+
+    def test_a_pack_object_with_other_bytes_is_refused(self):
+        files = self.as_navigation_pack()
+        archive = self.objects / files['runtime/' + NAMES['archive']]['sha256']
+        raw = bytearray(archive.read_bytes()); raw[-1] ^= 1; archive.write_bytes(bytes(raw))
+        found = self.package.sources(self.assets, self.objects)
+        with self.assertRaisesRegex(ValueError, 'archive differs'):
+            self.install(found[MAP_ID])
+        self.assertFalse((self.runtime / NAMES['graph']).exists())
+
+    def test_another_descriptor_is_refused(self):
+        self.as_navigation_pack()
+        path = self.assets / 'navigation-maps-manifest.json'
+        value = json.loads(path.read_bytes()); value['id'] = 'coh-assets'; path.write_bytes(host.canonical(value))
+        with self.assertRaisesRegex(ValueError, 'descriptor differs'):
+            self.package.sources(self.assets, self.objects)
+
+    def test_a_second_zone_reuses_this_sessions_input_proofs(self):
+        first = self.install()
+        self.assertGreater(first['input_payload_bytes_hashed'], 0)
+        for key in ('graph', 'date', 'marker'):
+            target = self.runtime / NAMES[key]; target.chmod(0o644); target.unlink()
+        second = self.install()
+        self.assertEqual((second['status'], second['input_payload_bytes_hashed']), ('installed_verified_graph', 0))
+        # A changed inode is hashed again (and refused when its bytes differ).
+        for key in ('graph', 'date', 'marker'):
+            target = self.runtime / NAMES[key]; target.chmod(0o644); target.unlink()
+        self.write('data/object_library/zone/part007.geo', b'other geometry')
+        with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
+            self.install()
 
     def test_a_different_tree_installs_nothing(self):
         self.write('data/object_library/zone/part007.geo', b'other geometry')
         with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
-            self.package.install(self.assets, self.runtime, MAP_ID, context=self.Context(), imported_inputs_readonly=True)
+            self.install()
         self.assertFalse((self.runtime / NAMES['graph']).exists())
 
     def test_an_extra_leaf_in_the_tree_is_refused(self):
         self.write('data/object_library/zone/extra.geo', b'extra')
         with self.assertRaises(ValueError):
-            self.package.install(self.assets, self.runtime, MAP_ID, context=self.Context(), imported_inputs_readonly=True)
+            self.install()
         self.assertFalse((self.runtime / NAMES['graph']).exists())
 
     def test_without_the_archive_no_graph_is_available(self):
         (self.assets / NAMES['archive']).unlink()
         self.assertEqual(self.package.available(self.assets), ())
+        self.assertEqual(self.package.sources(self.assets), {})
 
 
 @unittest.skipIf(os.name == 'nt', 'The guest server uses Android-side (POSIX) helpers')
 class ZoneTreeGraphTests(unittest.TestCase):
-    """The shared zone tree installs every carried graph; one that does not match is skipped, not fatal."""
+    """Each zone's graph is installed when that zone starts; one that does not match is skipped, not fatal."""
 
     def setUp(self):
         sys.path.insert(0, str(host.ROOT / 'android/guest'))
@@ -338,24 +411,49 @@ class ZoneTreeGraphTests(unittest.TestCase):
         import zone_beacon_package
         self.server, self.package = local_character_server, zone_beacon_package
         self.owner = unittest.mock.Mock(); self.owner.owner.args.assets = Path('/assets')
+        self.owner.zone_tree_prepared = {'runtime': Path('/tree'), 'preparation': {'beacon_graph': {}}}
+        self.sources = {MAP_ID: {'origin': 'navigation_map_pack'}}
 
-    def run_install(self, install):
-        with unittest.mock.patch.object(self.package, 'available', return_value=(MAP_ID,)), \
-                unittest.mock.patch.object(self.package, 'install', side_effect=install):
-            return self.server.LocalCharacterServer.install_zone_beacon_graphs(self.owner, Path('/tree'))
+    def run_install(self, install, map_id=MAP_ID, environment=None):
+        environment = {'COH_NAVIGATION_MAPS': '/opt/coh-navigation'} if environment is None else environment
+        with unittest.mock.patch.object(self.package, 'sources', return_value=self.sources) as sources, \
+                unittest.mock.patch.object(self.package, 'install', side_effect=install), \
+                unittest.mock.patch.dict(self.server.os.environ, environment, clear=False):
+            if 'COH_NAVIGATION_MAPS' not in environment:
+                self.server.os.environ.pop('COH_NAVIGATION_MAPS', None)
+            result = self.server.LocalCharacterServer.install_zone_beacon_graph(self.owner, map_id, Path('/tree'))
+            return result, sources
 
-    def test_a_verified_graph_is_reported_by_map(self):
-        graphs = self.run_install(lambda assets, tree, map_id, **kwargs: {'verified': True, 'map_id': map_id,
-                                                                          'status': 'installed_verified_graph'})
-        self.assertEqual(graphs, {'71': {'verified': True, 'map_id': 71, 'status': 'installed_verified_graph'}})
+    def test_a_verified_graph_is_reported_by_map_once_per_session(self):
+        calls = []
+        def install(source, tree, map_id, **kwargs):
+            calls.append(map_id)
+            return {'verified': True, 'map_id': map_id, 'status': 'installed_verified_graph'}
+        result, sources = self.run_install(install)
+        self.assertEqual((result['status'], result['navigation_map_pack']), ('installed_verified_graph', 'bound'))
+        sources.assert_called_once_with(Path('/assets'), '/opt/coh-navigation')
+        self.assertIs(self.owner.zone_tree_prepared['preparation']['beacon_graph']['71'], result)
+        again, _ = self.run_install(install)
+        self.assertIs(again, result)
+        self.assertEqual(calls, [MAP_ID])
+
+    def test_a_zone_without_a_graph_starts_as_before(self):
+        result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), map_id=72, environment={})
+        self.assertEqual((result['status'], result['verified'], result['navigation_map_pack']),
+                         ('no_graph', False, 'not_imported'))
 
     def test_a_mismatched_graph_leaves_the_zone_without_pathing(self):
         def mismatch(*args, **kwargs):
             raise ValueError('Zone collision input differs: data/object_library/a.geo')
-        graphs = self.run_install(mismatch)
-        self.assertEqual(graphs['71']['status'], 'not_installed')
-        self.assertFalse(graphs['71']['verified'])
-        self.assertIn('Zone collision input differs', graphs['71']['error'])
+        result, _ = self.run_install(mismatch)
+        self.assertEqual((result['status'], result['verified']), ('not_installed', False))
+        self.assertIn('Zone collision input differs', result['error'])
+
+    def test_an_unexpected_pack_location_is_refused_without_stopping_the_zone(self):
+        result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'),
+                                     environment={'COH_NAVIGATION_MAPS': '/tmp/elsewhere'})
+        self.assertEqual(result['status'], 'not_installed')
+        self.assertIn('Unexpected navigation map location', result['error'])
 
     def test_cancellation_still_stops_the_session(self):
         def cancelled(*args, **kwargs):
@@ -363,9 +461,18 @@ class ZoneTreeGraphTests(unittest.TestCase):
         with self.assertRaises(self.server.base.Cancelled):
             self.run_install(cancelled)
 
-    def test_no_carried_graph_changes_nothing(self):
-        with unittest.mock.patch.object(self.package, 'available', return_value=()):
-            self.assertEqual(self.server.LocalCharacterServer.install_zone_beacon_graphs(self.owner, Path('/tree')), {})
+    def test_atlas_and_kings_row_are_not_shared_tree_zones(self):
+        for map_id in (1, 5):
+            result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), map_id=map_id)
+            self.assertIsNone(result)
+
+    def test_each_shared_tree_zone_start_installs_its_graph_first(self):
+        source = (host.ROOT / 'android/guest/character_zoning.py').read_text()
+        self.assertIn("runtime = self.prepare_zone_runtime()['runtime']\n"
+                      "                # Its navigation graph, before its MapServer loads the map (pets and NPCs path).\n"
+                      "                self.install_zone_beacon_graph(map_id, runtime)", source)
+        server = (host.ROOT / 'android/guest/local_character_server.py').read_text()
+        self.assertNotIn('self.install_zone_beacon_graphs(target)', server)
 
 
 if __name__ == '__main__':

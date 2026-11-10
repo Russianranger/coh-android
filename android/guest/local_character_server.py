@@ -3039,9 +3039,9 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx,
             mapserver_package=self.map_package)
         checkpoint('server_animation_pack')
-        graphs = self.install_zone_beacon_graphs(target)
-        checkpoint('zone_beacon_graphs')
-        report = {'runtime': target.name, 'geometry': geometry, 'beacon_graph': graphs or None,
+        # Each zone's graph is installed when that zone starts (install_zone_beacon_graph): with a
+        # graph for every zone (navigation map pack), checking all of them here would delay the first.
+        report = {'runtime': target.name, 'geometry': geometry, 'beacon_graph': {},
             'native_dependencies': dependencies, 'server_data_cache': cache.summary,
             'prepared_server_caches': prepared_caches, 'shared_server_data': shared_link,
             'server_cache_native_compatibility': cache_compatibility,
@@ -3053,25 +3053,41 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.zone_tree_prepared = {'runtime': target, 'preparation': report}
         return self.zone_tree_prepared
 
-    def install_zone_beacon_graphs(self, target):
-        """Every zone graph the APK carries, verified against this shared zone tree.
+    def install_zone_beacon_graph(self, map_id, target):
+        """This zone's navigation graph, verified against the shared zone tree before its MapServer starts.
 
-        Thor 0.13.63, Mercy Island: "Beacon file not loaded for map: ...", so pets
-        and NPCs could not walk to a target. A graph that does not match the tree
-        is not installed: its zone still starts as before, without pathing.
+        Thor 0.13.63, Mercy Island: "Beacon file not loaded for map: ...", so pets and NPCs
+        could not walk to a target. Every zone's graph comes from the imported navigation map
+        pack (or, as in 0.13.65, from the APK). A graph that does not match the tree is not
+        installed: its zone still starts as before, without pathing. Once per zone and session;
+        collision inputs another zone already proved in this session are not hashed again.
         """
         import zone_beacon_package
-        graphs = {}
-        for map_id in zone_beacon_package.available(self.owner.args.assets):
-            try:
-                graphs[str(map_id)] = zone_beacon_package.install(self.owner.args.assets, target, map_id,
-                    context=self.ctx, imported_inputs_readonly=True)
-            except base.Cancelled:
-                raise
-            except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile) as failure:
-                graphs[str(map_id)] = {'format': 1, 'verified': False, 'map_id': map_id,
-                                       'status': 'not_installed', 'error': str(failure)[:300]}
-        return graphs
+        prepared = getattr(self, 'zone_tree_prepared', None)
+        require(prepared is not None and Path(target) == prepared['runtime'], 'Zone graph outside the prepared shared zone tree')
+        graphs = prepared['preparation'].setdefault('beacon_graph', {})
+        key = str(map_id)
+        if key in graphs or map_id not in zone_beacon_package.WORLDS:
+            return graphs.get(key)
+        started = time.monotonic()
+        navigation = os.environ.get('COH_NAVIGATION_MAPS')
+        try:
+            require(navigation in (None, zone_beacon_package.NAVIGATION_ROOT), 'Unexpected navigation map location')
+            found = zone_beacon_package.sources(self.owner.args.assets, navigation)
+            if map_id in found:
+                result = zone_beacon_package.install(found[map_id], target, map_id,
+                                                     context=self.ctx, imported_inputs_readonly=True)
+            else:
+                result = {'format': 1, 'verified': False, 'map_id': map_id, 'status': 'no_graph'}
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile) as failure:
+            result = {'format': 1, 'verified': False, 'map_id': map_id,
+                      'status': 'not_installed', 'error': str(failure)[:300]}
+        result['navigation_map_pack'] = 'bound' if navigation else 'not_imported'
+        result['elapsed_seconds'] = round(time.monotonic() - started, 6)
+        graphs[key] = result
+        return result
 
     def copy_private_data(self, source, target):
         return self.stage_map_data(source, target, force_private=True)
