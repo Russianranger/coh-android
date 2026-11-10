@@ -414,6 +414,82 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## Thor test of 0.13.66 (user, 2026-11-10; observations only)
+
+Owner, 15:42 CST, with exports 20261110-213045 (session) and -213101 (setup)
+and storage report 20261110-214039: "Mercy island did not seem to have the nav
+data, pet did not move to attack and npcs were rooted in place." and "Do not
+develop further just yet, only analyze and log observations." No code changed;
+this section records what the exports show.
+
+- **Session** (Reopen of Ralakar, saved in Mercy Island). Runtime setup
+  21:07:53-21:10:26 UTC (153 s, setup export). Session start 21:13:47,
+  DbServer ready 21:14:44, client attempt 21:17:15, client main loop 21:20:07
+  (172 s). The character list and the map 71 request (Enter Game) were
+  observed together at 21:20:37; MapServer spawn 21:22:30 (112.5 s of
+  preparation), map ready 21:26:17 (`ready_seconds` 339.3; spawn to ready
+  226.8 s), Ralakar connected 21:27:49 (92.3 s after ready), `/quittologin`
+  21:29:01, save verified 21:30:06 (`committed_sql_verified`), report passed.
+- **The pack was bound.** App report `navigation_map_pack`: complete, no
+  missing parts, `bound` true, descriptor sha256 0f5fc5ee… (the published one).
+- **Mercy Island's graph was refused.** Guest report
+  `zone_tree_preparation.beacon_graph["71"]`: `status` `not_installed`,
+  `error` "Zone collision input is not a regular file",
+  `navigation_map_pack` `bound`, `elapsed_seconds` 20.585. Its MapServer
+  console (`character-zoning-generation-1-map-71-console-tail.txt` line 383):
+  "loading beacons.. Beacon file not loaded for map:
+  maps/City_Zones/V_City_01_01/V_City_01_01.txt". Without a graph a pet cannot
+  walk to its target and NPCs stand still, as reported.
+- **Cause (code reading; not yet reproduced in a test).** f7738814e (0.13.66)
+  added `zone_beacon_package.proven_input`, which hashes each input once per
+  process and first requires `stat.S_ISREG(os.lstat(path).st_mode)`. On the
+  phone the shared zone tree holds every read-only input as a per-file
+  symlink: `stage_map_data` writes `destination.symlink_to(resolved)`
+  (local_character_server.py:3194). `atlas_beacon_package.collision_input_snapshot`
+  accepts such links (lines 209-230: it follows each one and requires a
+  read-only regular target) and returns the link path, which `proven_input`
+  then refuses on its own lstat. Mercy Island's graph lists 8,711 inputs
+  (565 MB: 7,098 `object_library`, 1,585 `tricks`, 28 map files; the 0.13.65
+  APK's manifest), the first being the map's own `.txt`. 0.13.65's install
+  hashed each input with `pin()`, which follows links, and had no such check;
+  there is no 0.13.65 phone report, so whether its Mercy Island graph
+  installed is unknown.
+- **Why CI missed it.** `tools/android/interactive/test_zone_beacons.py`
+  builds its zone tree from regular read-only files (line 338: "as the phone's
+  tree keeps them"), not links. CI's runtimes start only Atlas trees. The pack
+  check (`guestcheck66.py`) ran `sources()` and `read_manifest` on the
+  imported objects, not `install` against a phone-shaped tree.
+- **Other observations.**
+  - The 112.5 s before the spawn ran inside the guest loop (its heartbeat
+    `elapsed_seconds` jumped from 201 to 314 at 21:22:30): the private map
+    data mirror (progress 21:20:42-21:21:48, 36,595 files by then), required
+    geometry 6.7 s, then the refused graph check 20.6 s. The server data cache
+    was not reused (`reuse_refused` "Atlas cache identity differs or prior
+    owner did not prove cleanup"; `stranded_recovery_refused`
+    `processes_outside_this_guest`, survivor pid 28974 `exe`), so the mirror
+    was rebuilt.
+  - Frame rate in Mercy Island (`ARMPORT_FRAME_RATE_V1`, 5 s windows): 15
+    windows under a 30 FPS cap, mean 28.2; then 14 under the 60 FPS cap, mean
+    33.0 (26.5-42.0). The wait for the zone was one 356 s window at 0.03 FPS;
+    menus ran at their 10 FPS cap.
+  - Memory peaks (`server-metrics.jsonl` RSS): client 1,930 MiB, Mercy
+    Island's MapServer 1,596 MiB, DbServer 422 MiB; 11.27 GB of 16.0 GB
+    available at setup. Thermal status 0 throughout, battery 30-32 °C. No new
+    Android process exit (newest record 2026-11-09 17:24 UTC).
+  - Tick probe (4 samples, 130-232 s after the map became active): p90 gap
+    44 ms, max 115 ms, none over 150 ms.
+  - Storage report: 37.65 GB allocated in app storage. Its cleanup removed
+    19,429 entries (3.50 GB, one older runtime) and stopped with "A cleanup
+    candidate changed. Scan again."; still reclaimable 11.22 GB (three older
+    runtimes 10.50 GB, download cache 0.67 GB, old reports 0.05 GB). Packs
+    6.23 GB, character, server, Wine and client state 13.22 GB, imported
+    assets 3.45 GB, current runtime 3.50 GB.
+- **Next (not started; analysis only, per the owner).** Let `proven_input`
+  accept a link the inventory already accepted (check the followed target:
+  regular, read-only, inside the verified roots) and key its once-per-process
+  proof on the target's identity; add a test whose zone tree uses per-file
+  links the way `stage_map_data` makes them; then re-test Mercy Island.
+
 ## 0.13.66: navigation maps for every zone (Claude, 2026-11-09)
 
 Owner, 2026-11-09 (18:33 CST): "Please work on a solution for every single map

@@ -1,6 +1,6 @@
 # x86 track integration
 
-Updated 2026-11-09 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-10 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   turns closed the game (display update >1024 rectangles); decoder takes the U16 range. Mercy Island: no graph. HANDOFF "0.13.64".
 - 0.13.65 published (APK 42724564742; build 42705346414, runtime 42719564293 at caf52c828; graph 42678203754):
   Mercy Island navigation graph (407,100 beacons, CRC 0x086f500e) so pets/NPCs path there. HANDOFF "0.13.65".
-- 0.13.66 published (APK 42827583406; build 42809195810, runtime 42821819932 at d8f417ea8): navigation map pack
-  coh-navigation-maps-v1.0.0 (64 zones; pack 42808590462; map runs 42731367743/42743592550/42798595431). HANDOFF "0.13.66".
+- 0.13.66 published (APK 42827583406; build 42809195810, runtime 42821819932 at d8f417ea8): map pack coh-navigation-maps-v1.0.0
+  (64 zones). Thor 20261110-213045: pack bound, Mercy graph refused (linked inputs vs new lstat check). HANDOFF "Thor test of 0.13.66".
