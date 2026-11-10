@@ -13,8 +13,8 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - Historical .46 build40929292200/runtime40945708189/APK40952408285 succeeded (scope differs from modern Thor checks).
 - Startup instrumentation/ODBC reuse included (build41363927704); gain/≤60 s unmeasured; old 0119 pin (runtime41372922907) fixed.
 - Local ArmPort445/modern53, guest27/64/17 pass; whole-/proc cleanup: one inherited host EACCES (pristine c86), guards intact.
-- Full interactive (unittest discover -s tools/android/interactive): 3227 run/86 failures/14 errors/36 skips; not green.
-  Same failures as 0.13.62, a subset of c07d94895's (3206/87/14/34); 0.13.63's modules pass (HANDOFF "0.13.63").
+- Full interactive (unittest discover -s tools/android/interactive): 3289 run/86 failures/13 errors/36 skips at 0.13.67;
+  not green. None new against 08c4b9c79 (3273/87/14/36 in a clean worktree); HANDOFF "0.13.67".
 - .37 cleanup hardening e50a0e42e, packaging admission 263acad1f. Source, logs, skips, pins: HANDOFF-X86.md, issue10.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
@@ -32,9 +32,9 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   (Mercy Island start); Resume removes the unentered THORHERO; Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.60"/"0.13.61".
 - 0.13.62-63 published (APKs 42546944715 at 75523980e, 42566326193 at e679031ca): Ralakar in Mercy Island; any name,
   walking unlocked; Reopen no longer refused as station travel (check waits). HANDOFF "0.13.62"/"0.13.63".
-- 0.13.64 published (APK 42674721584; build 42653524766, runtime 42668990132 at 4f9e8eebe): Thor 0.13.63 fast
-  turns closed the game (display update >1024 rectangles); decoder takes the U16 range. Mercy Island: no graph. HANDOFF "0.13.64".
-- 0.13.65 published (APK 42724564742; build 42705346414, runtime 42719564293 at caf52c828; graph 42678203754):
-  Mercy Island navigation graph (407,100 beacons, CRC 0x086f500e) so pets/NPCs path there. HANDOFF "0.13.65".
+- 0.13.64-65 published (APKs 42674721584 at 4f9e8eebe, 42724564742 at caf52c828): display updates above 1024
+  rectangles (fast turns closed the game); Mercy Island navigation graph (run 42678203754). HANDOFF "0.13.64"/"0.13.65".
 - 0.13.66 published (APK 42827583406; build 42809195810, runtime 42821819932 at d8f417ea8): map pack coh-navigation-maps-v1.0.0
   (64 zones). Thor 20261110-213045: pack bound, Mercy graph refused (linked inputs vs new lstat check). HANDOFF "Thor test of 0.13.66".
+- 0.13.67 (82) in CI: Mercy graph check follows the phone's file links; launch receipts, folder index kept across
+  updates, zone data cache returned, 60 cap from launch (0128). Phone gains unmeasured. HANDOFF "0.13.67".

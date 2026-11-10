@@ -54,6 +54,8 @@ PRESTART_MIN_AVAILABLE_MIB = 3072
 IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
 PRIORITY_SAMPLES = 12
 PRIORITY_INTERVAL_SECONDS = 120
+MEMORY_TRACE_SAMPLES = 360
+MEMORY_TRACE_INTERVAL_SECONDS = 10
 # The game's own travel: a third zone asks the DbServer where the hero is (one
 # -getstatus process); keep the rest of the 160-query budget for the save proof.
 STOCK_PROBE_QUERY_LIMIT = 140
@@ -647,6 +649,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         # The zone the character first enters, started at Enter Game (begin_initial_zone).
         self.initial_zone = None
         self.priority_next = 0
+        self.memory_trace_next = 0
+        self.zoning_report['memory_trace'] = {'format': 1, 'policy': 'read_only_meminfo_and_pressure_v1',
+            'unit': 'MiB', 'interval_seconds': MEMORY_TRACE_INTERVAL_SECONDS,
+            'sample_limit': MEMORY_TRACE_SAMPLES, 'samples': []}
         self.zoning_report['wine_priorities'] = {'format': 1,
             'policy': 'read_only_thread_nice_by_wine_program_v1', 'samples': [],
             'sample_limit': PRIORITY_SAMPLES, 'interval_seconds': PRIORITY_INTERVAL_SECONDS,
@@ -694,6 +700,22 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         alive = probe['thread'].is_alive()
         self.zoning_report['tick_probe']['thread_joined'] = not alive
         return not alive
+
+    def tick_memory_trace(self, now):
+        """Read-only: free memory, swap and memory pressure every 10 s through the session.
+
+        Thor 0.13.57: Android's low-memory killer closed the app while a zone start
+        overlapped the client's own start, and no memory figure was on record. The
+        spare zone server needs these numbers before it may load beside the client.
+        """
+        report = (getattr(self, 'zoning_report', None) or {}).get('memory_trace')
+        if report is None or len(report['samples']) >= MEMORY_TRACE_SAMPLES or now < self.memory_trace_next:
+            return
+        self.memory_trace_next = now + MEMORY_TRACE_INTERVAL_SECONDS
+        sample = scheduler.memory_snapshot()
+        sample.update(utc_ms=int(time.time() * 1000), zone_servers=sorted(self.maps),
+                      client_connected=bool(self.creation_report.get('connected_on_atlas')))
+        report['samples'].append(sample)
 
     def tick_priorities(self, now):
         """A few read-only samples in play: does Wine run the client at a higher nice?"""
@@ -1524,6 +1546,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return True
 
     def poll_initial_map_startup(self):
+        self.tick_memory_trace(time.monotonic())
         try:
             return self._poll_initial_map_startup()
         except BaseException as failure:
@@ -2565,6 +2588,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                    from_map_id=origin)
 
     def character_evidence(self):
+        self.tick_memory_trace(time.monotonic())
         self.remember_reward_connection()
         self.tick_zoning()
         self.tick_external_maps()

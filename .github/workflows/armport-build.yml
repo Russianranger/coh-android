@@ -371,6 +371,8 @@ jobs:
           # 0.13.65: zone graphs (Thor 0.13.63: Mercy Island's pet would not walk to a target). The generator's build
           # input names the source commit from /source-target.json, so the checkout above includes it (build 42704278399).
           armport/scripts/step.sh "ArmPort zone graph guards" python3 -m unittest discover -s tools/android/interactive -p 'test_zone_beacons.py'
+          # 0.13.67: launch receipts (Thor 0.13.66 re-checked 39,358 unchanged leaves at every launch).
+          armport/scripts/step.sh "ArmPort launch receipt guards" python3 -m unittest discover -s tools/android/interactive -p 'test_launch_receipts.py'
           armport/scripts/step.sh "ArmPort pinned Lua source guards" python3 tools/test_pinned_lua_source.py
           armport/scripts/step.sh "ArmPort session budget guards" python3 -m unittest discover -s tools/android/interactive -p 'test_session_budget_guest.py'
 

@@ -45,6 +45,11 @@ def alsa_config(plugin):
             'pcm.!default { type plug slave { pcm "trasc" format S16_LE rate 48000 channels 2 } }\n')
 
 
+# What join_texture_header_preparation publishes (character_creation_diagnostic).
+TEXTURE_INDEX_ENVIRONMENT = ('COH_TEXTURE_HEADER_PACK', 'COH_TEXTURE_HEADER_ID', 'COH_TEXTURE_DIAGNOSTIC_DEDUP',
+                             'COH_TEXTURE_HEADER_ROOT', 'COH_STARTUP_DIAGNOSTIC_BOUND')
+
+
 def client_uses_folder_index():
     """Patch 0122: reuse the client's saved file list; COH_CLIENT_FOLDER_INDEX=0 turns it off."""
     value = os.environ.get('COH_CLIENT_FOLDER_INDEX', '')
@@ -211,9 +216,9 @@ class ArmPortClient:
             timeout=8, env=self.wine_env, check=False)['output']
 
     def reset_client_startup_inputs(self):
-        join = getattr(self, 'join_texture_header_preparation', None)
-        if callable(join):
-            join()
+        # 0.13.67: the texture header worker is joined in launch_client_attempt, after the GPU
+        # probes. Thor 0.13.66 waited 19.7 s for it here and then 30.9 s for the probes; the
+        # worker reads only the client's texture folders, so the two now overlap.
         # The original server's verified x86 data tree remains untouched.
         self.ctx.run('armport-progress-reset', [self.args.wine, 'reg', 'delete',
             r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/f', '/reg:64'],
@@ -251,6 +256,14 @@ class ArmPortClient:
         environment['ARMPORT_FPS_CAP_FILE'] = FPS_CAP_FILE
         environment = self.armport_gpu_environment(environment, label)
         environment = self.armport_gameplay_fps(environment)
+        join = getattr(self, 'join_texture_header_preparation', None)
+        if callable(join):
+            # Publishes the index into self.wine_env once (a retry finds it already there).
+            join()
+            for key in TEXTURE_INDEX_ENVIRONMENT:
+                environment.pop(key, None)
+                if key in self.wine_env:
+                    environment[key] = self.wine_env[key]
         command = ['/usr/bin/env', '-C', str(self.armport_work), *self.launcher_command()]
         child = self.ctx.start(label, command, env=environment)
         self.client = LoggedClient(child, self.armport_work / 'armport_stdio.txt')
@@ -287,6 +300,11 @@ class ArmPortClient:
         """
         gpu = self.ctx.report.get('client_gpu_profile') or {}
         fps = '30' if gpu.get('selected') == 'turnip' else '10'
+        # 0.13.67: with the app's "60 FPS in the world" option the GPU renderer starts gameplay
+        # at 60 (patch 0128). Thor 0.13.66 drew its first 75 s in the world at the 30 cap,
+        # until the app had confirmed the connection and typed /maxfps 60.
+        if fps == '30' and os.environ.get('COH_CLIENT_GAMEPLAY_60') == '1':
+            fps = '60'
         environment = dict(environment, COH_CLIENT_GAMEPLAY_FPS=fps, COH_CLIENT_BOUNDED_TEXTURE_ERRORS='1')
         self.ctx.report['armport_gameplay_fps'] = {'format': 1, 'requested_cap': int(fps),
             'renderer_selected': gpu.get('selected', 'software'), 'menu_and_background_cap': 10,

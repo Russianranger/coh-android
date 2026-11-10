@@ -52,9 +52,14 @@ NAVIGATION_PACK_ID = 'coh-navigation-maps'
 NAVIGATION_DESCRIPTOR = 'navigation-maps-manifest.json'
 NAVIGATION_ROOT = '/opt/coh-navigation'
 require, canonical, pin = atlas.require, atlas.canonical, atlas.pin
-# Collision inputs proven in this process: path -> (sha256, bytes, inode state). Zones share
-# the object library, so a second zone's graph hashes only inputs not proven before.
+# Collision inputs proven by a full hash: "device:inode" of the file an input resolves to ->
+# [sha256, bytes, that file's state]. Zones share the object library, so a second zone's graph
+# hashes only inputs not proven before; a proof file keeps them for later sessions.
 _VERIFIED_INPUTS = {}
+_LOADED_PROOFS = set()
+PROOF_POLICY = 'resolved_input_inode_state_v1'
+MAX_PROOFS = 200000
+MAX_PROOF_BYTES = 64 * 1024 * 1024
 
 
 def names(map_id):
@@ -178,18 +183,59 @@ def sources(assets, navigation=None):
     return found
 
 
+def input_state(path):
+    """The file a collision input resolves to: its identity, size, times and mode.
+
+    Thor 0.13.66: the shared zone tree holds every read-only input as a link to the imported
+    data (local_character_server.stage_map_data), and a no-follow check here refused Mercy
+    Island's graph ("Zone collision input is not a regular file"). The inventory has already
+    accepted each link and its read-only regular target; the hash below reads that target.
+    """
+    info = os.stat(path)
+    require(stat.S_ISREG(info.st_mode) and not info.st_mode & 0o222,
+            'Zone collision input is not a read-only regular file')
+    return [info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_mode]
+
+
 def proven_input(path, expected, context):
-    """Hash one collision input unless this process proved the same inode state before; bytes hashed."""
-    def state():
-        info = os.lstat(path)
-        require(stat.S_ISREG(info.st_mode), 'Zone collision input is not a regular file')
-        return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_mode)
-    key, before = str(path), state()
-    if _VERIFIED_INPUTS.get(key) == (expected['sha256'], expected['bytes'], before):
+    """Hash one collision input unless the same file state was proven before; bytes hashed."""
+    before = input_state(path)
+    key, proof = '%d:%d' % (before[0], before[1]), [expected['sha256'], expected['bytes'], before]
+    if _VERIFIED_INPUTS.get(key) == proof:
         return 0
-    require(pin(path, context) == expected and state() == before, 'Zone collision input differs: ' + key)
-    _VERIFIED_INPUTS[key] = (expected['sha256'], expected['bytes'], before)
+    require(pin(path, context) == expected and input_state(path) == before, 'Zone collision input differs: ' + str(path))
+    _VERIFIED_INPUTS[key] = proof
     return expected['bytes']
+
+
+def load_proofs(path):
+    """Add the proofs an earlier session saved; an unusable file only costs the hashes again."""
+    path = Path(path)
+    if str(path) in _LOADED_PROOFS:
+        return 0
+    _LOADED_PROOFS.add(str(path))
+    try:
+        atlas.regular(path, MAX_PROOF_BYTES)
+        value = json.loads(path.read_bytes())
+        rows = value['proofs']
+        require(value.get('format') == 1 and value.get('policy') == PROOF_POLICY and isinstance(rows, dict)
+                and len(rows) <= MAX_PROOFS and all(
+                    re.fullmatch('[0-9]+:[0-9]+', key) and isinstance(row, list) and len(row) == 3
+                    and re.fullmatch('[0-9a-f]{64}', str(row[0])) and type(row[1]) is int
+                    and isinstance(row[2], list) and len(row[2]) == 6 and all(type(n) is int for n in row[2])
+                    and key == '%d:%d' % (row[2][0], row[2][1]) for key, row in rows.items()),
+                'Zone collision input proofs differ')
+    except Exception:  # any unusable proof file: hash again
+        return 0
+    for key, row in rows.items():
+        _VERIFIED_INPUTS.setdefault(key, row)
+    return len(rows)
+
+
+def save_proofs(path):
+    raw = canonical({'format': 1, 'policy': PROOF_POLICY, 'proofs': _VERIFIED_INPUTS})
+    if len(_VERIFIED_INPUTS) <= MAX_PROOFS and len(raw) <= MAX_PROOF_BYTES:
+        atlas.atomic_bytes(Path(path), raw)
 
 
 def inventory(runtime, value, context, map_id, *, provider_records=None):
@@ -212,8 +258,12 @@ def private_target(runtime, name, context, map_id):
     return target
 
 
-def install(source, runtime, map_id, *, context, imported_inputs_readonly):
-    """Verify one zone's graph (a `sources` entry) against the shared zone tree and write it there."""
+def install(source, runtime, map_id, *, context, imported_inputs_readonly, proofs=None):
+    """Verify one zone's graph (a `sources` entry) against the shared zone tree and write it there.
+
+    `proofs` names a file that keeps the input hashes across sessions (565 MB for Mercy
+    Island): an input is hashed again only when the file it resolves to has changed.
+    """
     started = time.monotonic(); runtime = Path(runtime); zone = names(map_id)
     require(imported_inputs_readonly is True, 'Qualified readonly zone world required')
     value, lock = read_manifest(source['manifest'], source['lock'], map_id)
@@ -232,11 +282,16 @@ def install(source, runtime, map_id, *, context, imported_inputs_readonly):
         if all(p.exists() for p in targets.values()) and prior.get('graphs') == atlas.fingerprints(runtime, targets, context):
             return dict(result, status='reused_verified_graph', installed_files=0, input_payload_bytes_hashed=0,
                         preparation_elapsed_seconds=round(time.monotonic() - started, 6))
-    hashed = 0
+    hashed = hashed_files = 0
+    if proofs is not None:
+        load_proofs(proofs)
     for name, expected in value['input_files'].items():
         context.check()
-        hashed += proven_input(input_targets[name], expected, context)
+        size = proven_input(input_targets[name], expected, context)
+        hashed += size; hashed_files += bool(size)
     require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed during proof')
+    if proofs is not None and hashed_files:
+        save_proofs(proofs)
     archive = Path(source['archive']); manifest_bytes = Path(source['manifest']).read_bytes()
     require({'bytes': len(manifest_bytes), 'sha256': hashlib.sha256(manifest_bytes).hexdigest()} == lock['manifest'],
             'Zone graph manifest changed after validation')
@@ -265,4 +320,4 @@ def install(source, runtime, map_id, *, context, imported_inputs_readonly):
     atlas.atomic_bytes(marker, canonical({'format': 1, 'policy': POLICY, 'lock': lock, 'inputs': inputs,
         'graphs': atlas.fingerprints(runtime, targets, context)}))
     return dict(result, status='installed_verified_graph', installed_files=installed, input_payload_bytes_hashed=hashed,
-                preparation_elapsed_seconds=round(time.monotonic() - started, 6))
+                input_files_hashed=hashed_files, preparation_elapsed_seconds=round(time.monotonic() - started, 6))

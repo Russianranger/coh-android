@@ -285,7 +285,9 @@ class WinePrioritySnapshotTests(unittest.TestCase):
         for tid, state, nice, *cpu in tasks:
             task = directory / 'task' / str(tid); task.mkdir()
             # stat fields 3.., nice is field 19 (index 16), processor field 39 (index 36).
-            fields = [state] + ['0'] * 15 + [str(nice)] + ['0'] * 19 + [str(cpu[0] if cpu else 0)] + ['0'] * 10
+            # utime and stime are fields 14 and 15 (indexes 11 and 12): tid ticks of each here.
+            fields = ([state] + ['0'] * 10 + [str(tid), str(tid)] + ['0'] * 3 + [str(nice)] + ['0'] * 19
+                      + [str(cpu[0] if cpu else 0)] + ['0'] * 10)
             (task / 'stat').write_text(str(tid) + ' (wine) name) ' + ' '.join(fields) + '\n')
 
     def test_counts_threads_per_nice_for_known_programs_only(self):
@@ -297,11 +299,24 @@ class WinePrioritySnapshotTests(unittest.TestCase):
             self.fake_proc(root, 30, b'/opt/wine/bin/wineserver\0', [(30, 'S', 0)])
             self.fake_proc(root, 40, b'/usr/bin/python3\0guest.py\0', [(40, 'S', 0)])
             (root / 'self').mkdir()
+            # 0.13.67: where each program may run, and which threads use the CPU.
+            (root / '10/status').write_text('Name:\twine\nCpus_allowed:\t7f\nCpus_allowed_list:\t0-6\n')
+            (root / '10/cgroup').write_text('3:cpuset:/foreground\n1:cpu:/\n')
+            (root / 'self/status').write_text('Name:\tpython3\nCpus_allowed_list:\t0-7\n')
+            (root / 'meminfo').write_text('MemTotal:       15620000 kB\nMemAvailable:   10240000 kB\n'
+                                          'SwapTotal:       8388604 kB\nSwapFree:        4194302 kB\n')
             value = scheduler.wine_priority_snapshot(root)
         self.assertEqual(value['programs']['CityOfHeroes.exe'],
-                         {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}, 'last_cpu': {'0': 3}})
+                         {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}, 'last_cpu': {'0': 3},
+                          'busiest_threads': [[24, 'wine) name', 0, 11], [22, 'wine) name', 0, 11], [20, 'wine) name', 0, 0]],
+                          'cpus_allowed': ['0-6'], 'cgroup': ['3:cpuset:/foreground']})
         self.assertEqual(value['programs']['MapServer.exe'],
-                         {'processes': 1, 'threads': 2, 'nice': {'0': 2}, 'last_cpu': {'2': 1, '7': 1}})
+                         {'processes': 1, 'threads': 2, 'nice': {'0': 2}, 'last_cpu': {'2': 1, '7': 1},
+                          'busiest_threads': [[42, 'wine) name', 2, 0], [40, 'wine) name', 7, 0]],
+                          'cpus_allowed': [], 'cgroup': []})
+        self.assertEqual(value['guest'], {'cpus_allowed': '0-7', 'cgroup': None})
+        self.assertEqual(value['memory'], {'MemTotal': 15253, 'MemAvailable': 10000, 'SwapTotal': 8191,
+                                           'SwapFree': 4095, 'pressure': None})
         self.assertEqual(set(value['programs']), {'CityOfHeroes.exe', 'MapServer.exe', 'wineserver'})
         self.assertEqual(value['processes_scanned'], 4)
         self.assertFalse(value['truncated'])

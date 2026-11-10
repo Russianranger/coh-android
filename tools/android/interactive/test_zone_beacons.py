@@ -321,7 +321,7 @@ class ZoneGraphInstallTests(unittest.TestCase):
         sys.path.insert(0, str(host.ROOT / 'android/guest'))
         import zone_beacon_package
         self.package = zone_beacon_package
-        self.package._VERIFIED_INPUTS.clear()
+        self.package._VERIFIED_INPUTS.clear(); self.package._LOADED_PROOFS.clear()
         self.temporary = tempfile.TemporaryDirectory(); self.addCleanup(self.temporary.cleanup)
         base = Path(self.temporary.name)
         self.runtime, self.assets, self.objects = base / 'runtime', base / 'assets', base / 'objects'
@@ -417,6 +417,75 @@ class ZoneGraphInstallTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
             self.install()
 
+    def link_inputs(self):
+        """The phone's shared zone tree: every read-only input is a link to the imported data
+        (local_character_server.stage_map_data: destination.symlink_to(resolved))."""
+        imported = Path(self.temporary.name) / 'import'
+        for name in self.value['input_files']:
+            path = self.runtime / name; source = imported / name
+            source.parent.mkdir(parents=True, exist_ok=True)
+            path.rename(source); path.symlink_to(source)
+        return imported
+
+    def forget(self, *, graph=True):
+        self.package._VERIFIED_INPUTS.clear(); self.package._LOADED_PROOFS.clear()
+        for key in ('graph', 'date', 'marker') if graph else ():
+            target = self.runtime / NAMES[key]; target.chmod(0o644); target.unlink()
+
+    def test_a_tree_of_per_file_links_installs_as_on_the_phone(self):
+        # Thor 0.13.66: "Zone collision input is not a regular file" left Mercy Island without a graph.
+        self.link_inputs()
+        self.assertTrue((self.runtime / 'data' / NAMES['map']).is_symlink())
+        result = self.install()
+        self.assertEqual((result['status'], result['input_files_hashed']), ('installed_verified_graph', 103))
+        self.assertEqual((self.runtime / NAMES['graph']).read_bytes(), b'complete native graph fixture')
+
+    def test_a_link_to_other_bytes_is_refused(self):
+        imported = self.link_inputs()
+        source = imported / 'data/object_library/zone/part007.geo'
+        source.chmod(0o644); source.write_bytes(b'other geometry'); source.chmod(0o444)
+        with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
+            self.install()
+        self.assertFalse((self.runtime / NAMES['graph']).exists())
+
+    def test_saved_proofs_spare_a_later_session_the_hashes(self):
+        imported = self.link_inputs()
+        proofs = Path(self.temporary.name) / 'zone-collision-input-proofs.json'
+        source = self.package.sources(self.assets)[MAP_ID]
+        def install():
+            return self.package.install(source, self.runtime, MAP_ID, context=self.Context(),
+                                        imported_inputs_readonly=True, proofs=proofs)
+        first = install()
+        self.assertEqual((first['status'], first['input_files_hashed']), ('installed_verified_graph', 103))
+        self.assertEqual(len(json.loads(proofs.read_bytes())['proofs']), 103)
+        self.forget()                                     # a later session with a new zone tree
+        second = install()
+        self.assertEqual((second['status'], second['input_files_hashed'], second['input_payload_bytes_hashed']),
+                         ('installed_verified_graph', 0, 0))
+        # A replaced input is hashed again, and refused when its bytes differ.
+        self.forget()
+        replaced = imported / 'data/tricks/zone.txt'
+        replaced.unlink(); replaced.write_bytes(b'other'); replaced.chmod(0o444)
+        with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
+            install()
+        # The same bytes in a new file are hashed (one file) and accepted.
+        replaced.unlink(); replaced.write_bytes(b'trick'); replaced.chmod(0o444)
+        third = install()
+        self.assertEqual((third['status'], third['input_files_hashed']), ('installed_verified_graph', 1))
+
+    def test_an_unusable_proof_file_only_costs_the_hashes(self):
+        self.link_inputs()
+        proofs = Path(self.temporary.name) / 'zone-collision-input-proofs.json'
+        source = self.package.sources(self.assets)[MAP_ID]
+        for raw in (b'not json', b'{"format":1,"policy":"other","proofs":{}}',
+                    b'{"format":1,"policy":"resolved_input_inode_state_v1","proofs":{"1:2":["x",1,[1,2,3,4,5,6]]}}'):
+            self.forget(graph=proofs.exists())
+            if proofs.exists(): proofs.chmod(0o644)
+            proofs.write_bytes(raw)
+            result = self.package.install(source, self.runtime, MAP_ID, context=self.Context(),
+                                          imported_inputs_readonly=True, proofs=proofs)
+            self.assertEqual((result['status'], result['input_files_hashed']), ('installed_verified_graph', 103))
+
     def test_a_different_tree_installs_nothing(self):
         self.write('data/object_library/zone/part007.geo', b'other geometry')
         with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
@@ -445,6 +514,7 @@ class ZoneTreeGraphTests(unittest.TestCase):
         import zone_beacon_package
         self.server, self.package = local_character_server, zone_beacon_package
         self.owner = unittest.mock.Mock(); self.owner.owner.args.assets = Path('/assets')
+        self.owner.owner.root = Path('/state/diagnostic')
         self.owner.zone_tree_prepared = {'runtime': Path('/tree'), 'preparation': {'beacon_graph': {}}}
         self.sources = {MAP_ID: {'origin': 'navigation_map_pack'}}
 
@@ -462,6 +532,7 @@ class ZoneTreeGraphTests(unittest.TestCase):
         calls = []
         def install(source, tree, map_id, **kwargs):
             calls.append(map_id)
+            self.assertEqual(kwargs['proofs'], Path('/state/diagnostic/zone-collision-input-proofs.json'))
             return {'verified': True, 'map_id': map_id, 'status': 'installed_verified_graph'}
         result, sources = self.run_install(install)
         self.assertEqual((result['status'], result['navigation_map_pack']), ('installed_verified_graph', 'bound'))

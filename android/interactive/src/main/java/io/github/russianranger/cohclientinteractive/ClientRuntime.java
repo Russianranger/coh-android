@@ -1019,6 +1019,9 @@ public final class ClientRuntime {
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
                     "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
                     "COH_TRUSTED_BINS="+(trustedBinsRequested?"1":"0"),
+                    // 0.13.67: the client starts gameplay at the 60 cap (patch 0128); 0.13.66 typed
+                    // /maxfps 60 only 75 s after the world was drawn, when the connection was confirmed.
+                    "COH_CLIENT_GAMEPLAY_60="+(gameplay60Requested?"1":"0"),
                     "COH_IDLE_RESIDENT_MAPS="+(idleResidentMapsRequested?"1":"0"),
                     "COH_SHARED_SERVER_DATA="+(sharedServerDataRequested?"1":"0"),
                     "COH_CLIENT_SKIP_SERVER_FOLDERS="+(clientSkipServerFoldersRequested?"1":"0"),

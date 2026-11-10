@@ -414,6 +414,86 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.67: launch work is not repeated; Mercy Island graph fix (Claude, 2026-11-10)
+
+Owner, 16:17 and 16:26 CST: "evaluate the COH Android repo ... identify
+optimizations ... that can meet or exceed the goals set in the repo", then
+"Add to the roadmap and execute all recommended steps, you are free to develop
+and integrate these changes". The evaluation is in
+[armport/PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md), "Evaluation after
+Thor 0.13.66"; its cost model: one path lookup through PRoot costs about
+0.8-1 ms on the phone, hashing runs at GB/s, so per-file checks dominate.
+Scope is single-player (owner, 2026-11-10). No `upstream/` edit; one new client
+patch (0128, made with patchwork).
+
+- **Mercy Island graph (the 0.13.66 defect).** `zone_beacon_package.input_state`
+  now follows the per-file link (`os.stat`) and requires a read-only regular
+  target, as `collision_input_snapshot` already did. Proofs are keyed by the
+  resolved device:inode with size, mtime, ctime and mode, and saved to
+  `zone-collision-input-proofs.json` in the session state root, so a later
+  start of the zone hashes only inputs whose state changed (`input_files_hashed`
+  in the result). 0.13.66's 20.6 s there was the manifest read and the folder
+  walk; it refused the first input before hashing anything. That walk remains
+  (twice per install), and the first hash of 565 MB is unmeasured on the phone. Tests now build the phone's shape (links into a read-only
+  store): `test_zone_beacons.py` 39 pass.
+- **Launch receipts** (`android/guest/launch_receipts.py`, new). The Atlas
+  world, client visual, zone resources and zone audio steps each re-checked
+  every installed leaf (21.7 + 25.2 + 43.0 + 3.0 s in export 20261110-213045,
+  0 files installed). A step that passes in full is recorded after every step
+  has finished: its pinned inputs (`asset_sha256` of its archive, manifest and
+  code), the worktree's identity, and one row per directory down to its leaves
+  (leaf directories: identity, mtime, ctime and a hash of the listing's names,
+  inodes and types). A later launch reads those directories and no leaf.
+  Stated limit: an in-place rewrite of a leaf (same inode) is not seen; leaves
+  are read-only and a receipt expires after 30 days. The report's
+  `launch_receipts[step]` gives `reused` or `ran_in_full` with a `reason`.
+  A reused Atlas world reports `reuse_validation`
+  `unchanged_filesystem_receipt` (a value CI's host validator already accepts).
+  `test_launch_receipts.py` 11 pass; a guard step runs it in the build workflow.
+- **Folder index identity** (`armport_client_package.folder_cache_identity`,
+  format 3). It no longer includes the ARM64 archive's, the executable's and
+  this file's hashes, which changed with every APK and cost a 133.8 s scan of
+  160,114 files after each update (`reason=header`). The archive adds only
+  `data/bin`, which the client scans live; `VIEW_LAYOUT` names the layout.
+  The first 0.13.67 launch still misses once (the identity's format changed).
+- **Zone data cache.** `cleanup_config` releases `zone_data_cache` when the
+  zone tree was prepared (only Atlas and King's Row were released before, so
+  each zone session mirrored the data again, 75.3 s, and left a stranded
+  copy). `foreign_processes` no longer counts a process whose parent chain
+  reaches our PRoot: exports 20261108-202611, 20261109-154935 and
+  20261110-213045 each show one untraced "exe" 4-5 pids after PostgreSQL
+  refusing the recovery. Foreign rows now carry `parent` and `tracer`.
+  `test_server_worktree_reuse.py` 39 pass. Whether the returned tree passes
+  `verify()` at the next checkout is unmeasured until the phone runs it.
+- **Overlap and polling.** The texture header worker is joined after the GPU
+  probes instead of before them (19.7 s then 30.9 s in 0.13.66). The
+  stop-request file is looked up at most every 0.1 s instead of on every
+  loop iteration.
+- **60 cap from launch.** Patch 0128 lets `COH_CLIENT_GAMEPLAY_FPS=60`
+  through; the app passes `COH_CLIENT_GAMEPLAY_60`, and the guest asks for 60
+  only with Turnip selected and that option on. 0.13.66 typed `/maxfps 60`
+  75 s after the world was drawn (the connection is confirmed from a flushed
+  log on a 15 s poll). `armport/tests/test_client_routing.py` 21 pass.
+- **Read-only records for the next round.** `wine_priorities` samples gain
+  `busiest_threads` (top 8 by CPU ticks with last CPU and nice),
+  `cpus_allowed`, `cgroup`, `guest` and `memory`; `memory_trace` samples
+  MemAvailable, swap and pressure every 10 s (360 samples); `state_inventory`
+  counts what earlier sessions left in the state root.
+- **Not in 0.13.67** (PERFORMANCE-PATH has the reasons): fast server by
+  default (the sheet asks for one optional phone run first), spare zone server
+  and zone start before Enter Game, cooked PhysX cache, Mesa 26 OpenGL layer,
+  fastest-core placement, zero-copy display.
+- **Local evidence.** Full interactive suite (`unittest discover -s
+  tools/android/interactive`): 3289 run / 86 failures / 13 errors / 36 skips;
+  HEAD 08c4b9c79 in a clean worktree: 3273 / 87 / 14 / 36. No failure is new to
+  this change (two baseline failures, timing-dependent, did not recur when the
+  suite ran alone; scratchpad `ut67-base.txt`, `ut67-new2.txt`). ArmPort
+  (`discover -s armport/tests`): 540 run, the same 2 local-only errors as
+  0.13.66. A first full run caught 14 errors in the startup-schedule tests,
+  whose stand-in step modules name no manifest; such a step now runs in full
+  (`inputs_not_pinned`), with a test.
+- **Chain.** CHAIN_EVIDENCE_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+
 ## Thor test of 0.13.66 (user, 2026-11-10; observations only)
 
 Owner, 15:42 CST, with exports 20261110-213045 (session) and -213101 (setup)

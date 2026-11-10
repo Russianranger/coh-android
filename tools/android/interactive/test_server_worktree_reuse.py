@@ -888,6 +888,25 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         with self.assertRaisesRegex(server.base.DiagnosticError, 'PRoot tracer'):
             cache.foreign_processes(proc, 600)
 
+    def test_a_helper_our_own_proot_started_is_not_foreign(self):
+        # Thor 0.13.61/0.13.63/0.13.66: an untraced "exe" a few pids after PostgreSQL refused every recovery.
+        proc = self.root / 'proc'
+        def task(pid, ppid, uid, tracer, name='x'):
+            (proc / str(pid)).mkdir(parents=True)
+            (proc / str(pid) / 'status').write_text(f'Name:\t{name}\nState:\tS (sleeping)\nPPid:\t{ppid}\n'
+                                                    f'TracerPid:\t{tracer}\nUid:\t{uid}\t{uid}\t{uid}\t{uid}\n')
+        task(1, 0, 0, 0, name='init'); task(400, 1, 10234, 0, name='app'); task(500, 400, 10234, 0, name='proot')
+        task(600, 500, 10234, 500, name='python3')                    # this guest
+        task(28969, 600, 10234, 500, name='postgres')
+        task(28974, 500, 10234, 0, name='exe')                        # PRoot's own untraced helper
+        task(28975, 28974, 10234, 0, name='exe')                      # and that helper's child
+        (proc / 'self').mkdir()
+        self.assertEqual(cache.foreign_processes(proc, 600), [])
+        task(700, 1, 10234, 0, name='exe')                            # the same name, not ours
+        task(710, 705, 10234, 0, name='exe')                          # its parent has exited
+        rows = sorted(cache.foreign_processes(proc, 600), key=lambda row: row['pid'])
+        self.assertEqual([(row['pid'], row['parent'], row['tracer']) for row in rows], [(700, '1', '0'), (710, '705', '0')])
+
     def test_ancestor_exiting_during_the_walk_is_not_a_refusal_and_stays_fail_safe(self):
         proc = self.root / 'proc'
         def task(pid, ppid, uid, tracer, name='x'):

@@ -83,7 +83,7 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
             name = next((value for value in PRIORITY_PROGRAMS if value.encode() in command), None)
             if name is None:
                 continue
-            counts, cpus, tasks = {}, {}, 0
+            counts, cpus, tasks, busiest = {}, {}, 0, []
             for task in os.scandir(path / 'task'):
                 if not task.name.isdecimal():
                     continue
@@ -92,7 +92,8 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
                     truncated = True
                     break
                 with open(Path(task.path) / 'stat') as handle:
-                    fields = handle.read(4096).rsplit(') ', 1)[1].split()
+                    head, _, tail = handle.read(4096).rpartition(') ')
+                fields = tail.split()
                 if fields[0] == 'Z':
                     continue
                 nice = int(fields[16])  # stat field 19
@@ -103,7 +104,19 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
                 cpu = fields[36] if len(fields) > 36 and fields[36].isdecimal() else None
                 if cpu is not None and int(cpu) < 64:
                     cpus[cpu] = cpus.get(cpu, 0) + 1
-            row = programs.setdefault(name, {'processes': 0, 'threads': 0, 'nice': {}, 'last_cpu': {}})
+                # 0.13.67: which threads use the CPU (stat fields 14 and 15, clock ticks since
+                # the thread started), and where they last ran. Thor 0.13.66: the client used
+                # 1.65 cores at 28-33 FPS and no sampled thread had run on the fastest core.
+                if fields[11].isdecimal() and fields[12].isdecimal():
+                    busiest.append([int(fields[11]) + int(fields[12]), head.partition('(')[2][:15],
+                                    None if cpu is None else int(cpu), nice])
+            row = programs.setdefault(name, {'processes': 0, 'threads': 0, 'nice': {}, 'last_cpu': {},
+                                             'busiest_threads': [], 'cpus_allowed': [], 'cgroup': []})
+            row['busiest_threads'] = sorted(row['busiest_threads'] + busiest, key=lambda item: -item[0])[:8]
+            placement = process_placement(path)
+            for key in ('cpus_allowed', 'cgroup'):
+                if placement[key] is not None and placement[key] not in row[key] and len(row[key]) < 4:
+                    row[key].append(placement[key])
             row['processes'] += 1
             row['threads'] += sum(counts.values())
             for nice, count in counts.items():
@@ -117,8 +130,48 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
         row['nice'] = dict(sorted(row['nice'].items(), key=lambda item: int(item[0])))
         row['last_cpu'] = dict(sorted(row['last_cpu'].items(), key=lambda item: int(item[0])))
     return {'programs': dict(sorted(programs.items())), 'rlimit_nice': [limits[0], limits[1]],
-            'cpu_max_khz': cpu_max_khz(), 'processes_scanned': scanned, 'truncated': truncated,
+            'cpu_max_khz': cpu_max_khz(), 'guest': process_placement(proc_root / 'self'),
+            'memory': memory_snapshot(proc_root), 'processes_scanned': scanned, 'truncated': truncated,
             'seconds': round(time.monotonic() - started, 3)}
+
+
+def process_placement(path):
+    """Read-only: the CPUs a process may run on and its cpuset/cgroup (None when hidden)."""
+    result = {'cpus_allowed': None, 'cgroup': None}
+    try:
+        with open(Path(path) / 'status') as handle:
+            for line in handle.read(8192).splitlines():
+                if line.startswith('Cpus_allowed_list:'):
+                    result['cpus_allowed'] = line.split(':', 1)[1].strip()[:64]
+    except OSError:
+        pass
+    try:
+        with open(Path(path) / 'cgroup') as handle:
+            lines = handle.read(4096).splitlines()
+        chosen = [line for line in lines if ':cpuset:' in line or line.startswith('0::')] or lines
+        result['cgroup'] = ' | '.join(line[:80] for line in chosen[:3]) or None
+    except OSError:
+        pass
+    return result
+
+
+def memory_snapshot(proc_root=Path('/proc')):
+    """Read-only: free memory, swap and memory pressure as the kernel reports them (MiB)."""
+    result = {}
+    try:
+        with open(Path(proc_root) / 'meminfo') as handle:
+            for line in handle.read(8192).splitlines():
+                name, _, value = line.partition(':')
+                if name in ('MemTotal', 'MemAvailable', 'SwapTotal', 'SwapFree', 'Cached'):
+                    result[name] = int(value.split()[0]) // 1024
+    except (OSError, ValueError, IndexError):
+        pass
+    try:
+        with open(Path(proc_root) / 'pressure/memory') as handle:
+            result['pressure'] = handle.read(512).strip().replace('\n', ' | ')[:240]
+    except OSError:
+        result['pressure'] = None
+    return result
 
 
 def cpu_max_khz(root=Path('/sys/devices/system/cpu')):

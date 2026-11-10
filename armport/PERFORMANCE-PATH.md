@@ -441,6 +441,71 @@ restarts, without relying on them for the goals.
 Exit target: cold MapServer ≤ 60 s, which also makes cold zoning about
 60 s + ~20 s client load. Resident zoning stays the 30 s path.
 
+## Evaluation after Thor 0.13.66 (Claude, 2026-11-10)
+
+At the owner's request ("identify optimizations ... that can meet or exceed
+the goals set in the repo"; then "execute all recommended steps"). Scope is
+single-player (owner, 2026-11-10). Numbers are from exports 20261110-213045
+and -213101 unless a run is named; savings are estimates until a phone run.
+
+### Where 0.13.66 stands against the goals
+
+| # | Goal | 0.13.66 on Thor | Gap |
+|---|---|---|---|
+| 1 | Start under 5 min | Session start to the client's main loop 6 min 20 s; tap to in the world 12 min 43 s (Mercy Island) | 1.3x to login, 2.5x to the world |
+| 2 | Zoning under 30 s | Not run in this session; 0.13.54: King's Row trip 30 s with the server running, 191 s cold | cold zones |
+| 3 | 30 FPS or higher | 28-33 at the 30 cap, client at 1.65 cores; 0.13.49: mean 45-48 at the 60 cap | at the line; headroom unproven in Mercy Island |
+| 4 | MapServer cold start under 1 min | 113 s preparation + 227 s spawn to ready | ~4-6x |
+
+### Cost model
+
+One path lookup through PRoot costs about 0.8-1 ms on the phone; hashing runs
+at GB/s. A step that stats 24,000 files costs 40 s even when nothing changed,
+so the launch is dominated by work that is repeated, not by work that is hard.
+
+| Part of the 0.13.66 session | Time | Repeated without need |
+|---|---|---|
+| Database, Wine, DbServer | 57 s | no |
+| Installed-file re-checks (4 steps, 0 files installed) | 93 s | yes |
+| Texture inventory, then GPU probes | 19.8 s + 24.6-31 s | serial without need |
+| Client start (file scan 133.8 s of 172 s) | 172 s | after every APK update |
+| Login and character list | 30 s | no |
+| Zone preparation (data mirror 75.3 s, graph check 20.6 s) | 113 s | yes |
+| MapServer shared load (sequencers 54.5, story arcs 36.6, FX 35.2, object library 19.1) | 174 s | every zone start |
+| MapServer map-specific load (map 32.4, PhysX 10.3) | 50 s | per zone |
+| Client map load | 13 s | no |
+
+### Recommended steps, in order
+
+| # | Step | Expected gain | Status |
+|---|---|---|---|
+| 1 | Follow per-file links in the navigation map input check; remember checked inputs | Mercy Island pathing; 565 MB hashed once, not per zone start (the ~20 s folder walk remains) | 0.13.67 |
+| 2 | Launch receipts: skip an install step whose inputs and folders are unchanged | ~90 s per launch | 0.13.67 |
+| 3 | Folder index identity without per-APK hashes | ~134 s on the first launch after each update | 0.13.67 |
+| 4 | Return the zone data cache; accept PRoot's own helper during recovery | ~75 s per zone start | 0.13.67 (reuse unproven on the phone) |
+| 5 | Build the texture list during the GPU probes; look up the stop file every 0.1 s | ~20 s per launch | 0.13.67 |
+| 6 | Start the world at the 60 cap (patch 0128) | 75 s at 30 FPS per session | 0.13.67 |
+| 7 | Record busiest threads, allowed CPUs, cgroup, memory every 10 s, leftover state | evidence for steps 9-12 | 0.13.67 |
+| 8 | Fast server (trusted bins) by default | CI Atlas reopen 130 to 94 s; phone unmeasured since 0.13.53 | after one phone run in 0.13.67 |
+| 9 | Spare zone server: load the shared 174 s once, before a zone is needed (also starts the saved zone before Enter Game) | goals 2 and 4 for cold zones | next; needs the memory trace (0.13.57 was killed for memory) |
+| 10 | Cooked PhysX cache per map | ~10 s per zone start | later |
+| 11 | Fastest core for the client's main thread | FPS headroom; none of ~200 samples ran on cpu 7 | after step 7's data |
+| 12 | Mesa 26 OpenGL layer (Zink) behind an option | FPS headroom, unmeasured | later |
+| 13 | Zero-copy display instead of the software copy through VNC | FPS headroom at higher resolutions | needs the thread profile and a licence decision (Termux:X11 is GPL-3.0) |
+
+Left as they are: the GPU probe cache (refused with "Prior GPU prefix
+process-age authority differs"; the probes now overlap the texture list) and
+the texture inventory walk itself.
+
+If steps 1-5 hold on the phone, a second launch into a zone visited before
+saves about 320 s of the 763 s measured (93 + 134 + 75 + 20; the 134 s only
+applied to the first launch after an update), an estimate that puts the world
+at about 7 min 20 s. The navigation map check is not in that sum: 0.13.66
+spent 20.6 s on the folder walk and refused the map before hashing anything;
+0.13.67 walks the folders twice per install and hashes the inputs once, which
+is unmeasured on the phone. Steps 8 and 9 are what bring the zone server
+toward goal 4.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

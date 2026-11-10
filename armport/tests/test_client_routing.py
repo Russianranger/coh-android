@@ -115,7 +115,30 @@ class ClientRoutingTests(unittest.TestCase):
             probe.args = SimpleNamespace(wine='wine')
             with tempfile.TemporaryDirectory() as temporary:
                 probe.armport_work = Path(temporary)
+                probe.root = Path(temporary)
                 probe.reset_client_startup_inputs()
+                # 0.13.67: the worker is joined after the GPU probes, at the launch itself
+                # (Thor 0.13.66 waited 19.7 s for it and then 30.9 s for the probes).
+                self.assertNotIn('COH_TEXTURE_HEADER_PACK', probe.wine_env)
+                order, captured = [], {}
+                probe.wine_env['COH_TEXTURE_HEADER_ID'] = 'stale'
+                def probes(environment, label):
+                    order.append(('gpu', probe.texture_header_preparation is not None)); return environment
+                probe.armport_gpu_environment = probes
+                probe.armport_gameplay_fps = lambda environment: environment
+                probe.launcher_command = lambda: ['launcher']
+                probe.texture_header_preparation = object()
+                def joined():
+                    order.append(('join', True)); probe.wine_env.pop('COH_TEXTURE_HEADER_ID', None)
+                    probe.wine_env['COH_TEXTURE_HEADER_PACK'] = 'Z:\\pack'
+                    probe.texture_header_preparation = None
+                probe.join_texture_header_preparation = joined
+                probe.ctx.start = lambda label, command, env: captured.setdefault('env', env)
+                with patch.object(armport, 'LoggedClient', lambda child, log: child):
+                    probe.launch_client_attempt()
+                self.assertEqual(order, [('gpu', True), ('join', True)])
+                self.assertEqual(captured['env']['COH_TEXTURE_HEADER_PACK'], 'Z:\\pack')
+                self.assertNotIn('COH_TEXTURE_HEADER_ID', captured['env'])   # only what the join published
         self.assertEqual(probe.wine_env['COH_TEXTURE_HEADER_PACK'], 'Z:\\pack')
         empty = Probe(); empty.ctx.report = {}
         with patch.object(creation, 'TextureHeaderPreparation', Worker):
@@ -126,12 +149,20 @@ class ClientRoutingTests(unittest.TestCase):
         class Probe(armport.ArmPortClient, CharacterCreationDiagnostic):
             def __init__(self, gpu):
                 self.ctx = SimpleNamespace(report={} if gpu is None else {'client_gpu_profile': {'selected': gpu}})
-        for gpu, fps in (('turnip', '30'), ('software', '10'), (None, '10')):
-            with self.subTest(gpu=gpu):
+        # 0.13.67: the app's 60 FPS option starts the GPU renderer's gameplay at 60 (patch 0128).
+        for gpu, option, fps in (('turnip', None, '30'), ('software', None, '10'), (None, None, '10'),
+                                 ('turnip', '0', '30'), ('turnip', '1', '60'), ('software', '1', '10'), (None, '1', '10')):
+            with self.subTest(gpu=gpu, option=option):
                 probe = Probe(gpu)
-                env = probe.armport_gameplay_fps({'WINEDEBUG': 'x'})
+                with patch.dict(os.environ, {} if option is None else {'COH_CLIENT_GAMEPLAY_60': option}):
+                    if option is None:
+                        os.environ.pop('COH_CLIENT_GAMEPLAY_60', None)
+                    env = probe.armport_gameplay_fps({'WINEDEBUG': 'x'})
                 self.assertEqual((env['COH_CLIENT_GAMEPLAY_FPS'], env['WINEDEBUG']), (fps, 'x'))
                 self.assertEqual(probe.ctx.report['armport_gameplay_fps']['requested_cap'], int(fps))
+        patch_text = (Path(armport.__file__).resolve().parents[1]
+                      / 'patches/0128-armport-gameplay-cap-60-from-launch.patch').read_text()
+        self.assertIn('strcmp(value, "60") == 0) requested = 60;', patch_text)
 
     def test_arm64_requests_overlap_only_from_a_server_that_supervises_it(self):
         class Server:
@@ -346,14 +377,18 @@ class ClientFolderIndexTests(unittest.TestCase):
         base = identity(self.client(), 'scripts.loc,server')
         self.assertRegex(base, '^[0-9a-f]{64}$')
         self.assertEqual(identity(self.client(), 'scripts.loc,server'), base)
-        for change in ({'tree_sha256': '6' * 64}, {'targets_sha256': '6' * 64}, {'links': 4},
-                       {'archive_sha256': '6' * 64}, {'executable_sha256': '6' * 64}):
+        for change in ({'tree_sha256': '6' * 64}, {'targets_sha256': '6' * 64}, {'links': 4}):
             self.assertNotEqual(identity(self.client(**change), 'scripts.loc,server'), base, change)
         self.assertNotEqual(identity(self.client(), ''), base)
         self.assertNotEqual(identity(self.client(), 'scripts.loc,server', 'geobin'), base)
-        with patch.object(armport.package, 'digest', side_effect=lambda path: '7' * 64
-                          if Path(path).name == 'armport_client_package.py' else armport.package.digest(path)):
-            self.assertNotEqual(identity(self.client(), 'scripts.loc,server'), base)   # view code changed
+        # Thor 0.13.66: a new client build (every APK) must keep the list: the archive's only
+        # data is bin/, which the client scans live.
+        for change in ({'archive_sha256': '6' * 64}, {'executable_sha256': '6' * 64}):
+            self.assertEqual(identity(self.client(**change), 'scripts.loc,server'), base, change)
+        self.assertTrue(all(armport.package.allowed(name) == expected for name, expected in
+                            (('data/bin/powers.bin', True), ('data/texts/a.ms', False), ('data/bin/sub/a.bin', False))))
+        with patch.object(armport.package, 'VIEW_LAYOUT', armport.package.VIEW_LAYOUT + 1):
+            self.assertNotEqual(identity(self.client(), 'scripts.loc,server'), base)   # the view's layout changed
         with self.assertRaises(ValueError):
             identity(self.client(tree_sha256=None), '')
 
@@ -474,7 +509,7 @@ class ClientFolderIndexTests(unittest.TestCase):
         root = Path(armport.__file__).resolve().parents[1]
         name = '0127-armport-logout-kept-through-the-key-that-sent-it.patch'
         series = (root / 'patches/series').read_text().split()
-        self.assertEqual(series[-1], name)
+        self.assertIn(name, series)   # 0128 (0.13.67) follows it
         text = (root / 'patches' / name).read_text()
         self.assertEqual(sorted(line[6:] for line in text.splitlines() if line.startswith('+++ b/')), [
             'Game/src/clientcomm/clientcomm.c', 'Game/src/game.c', 'Game/src/win/input.c', 'Game/src/win/input.h'])

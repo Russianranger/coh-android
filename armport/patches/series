@@ -125,3 +125,4 @@
 0125-armport-map-loading-notice-after-load-screen.patch
 0126-armport-enter-game-waits-for-zone-start.patch
 0127-armport-logout-kept-through-the-key-that-sent-it.patch
+0128-armport-gameplay-cap-60-from-launch.patch

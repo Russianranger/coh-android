@@ -40,6 +40,16 @@ CHARACTER = LEGACY_CHARACTER
 CHARACTER_BOUND = False
 
 
+def state_inventory(root):
+    """Entry counts of the private state folder by name, with session and cache keys folded to *."""
+    counts = {}
+    with os.scandir(root) as entries:
+        for entry in entries:
+            name = re.sub(r'[0-9a-f]{16,}', '*', entry.name)[:64]
+            counts[name] = counts.get(name, 0) + 1
+    return dict(sorted(counts.items(), key=lambda item: (-item[1], item[0]))[:64])
+
+
 def valid_character_name(name):
     """The game's own player-name rules (validate_name.c ValidateName, MAX_PLAYER_NAME_LEN 20)."""
     return (type(name) is str and 3 <= len(name) <= 20 and all(32 <= ord(c) <= 126 for c in name)
@@ -2153,6 +2163,12 @@ class LocalCharacterServer(login.LocalLoginServer):
 
         super().prepare_runtime()
         checkpoint('base_schema_and_native_runtime')
+        # 0.13.67, read-only: what earlier sessions left in the private state folder
+        # (Thor 0.13.66: 13.2 GB of state; zone sessions never returned their data tree).
+        try:
+            self.ctx.report['state_inventory'] = state_inventory(self.owner.root)
+        except OSError as failure:
+            self.ctx.report['state_inventory'] = {'error': type(failure).__name__}
         source = self.owner.work / 'data'
         require(source.is_dir() and not source.is_symlink(), 'Verified private client data is missing')
         receipt = self.ctx.report.get('client_worktree', {})
@@ -2755,6 +2771,14 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.data_cache.release(getattr(self, 'atlas_map_runtime', self.runtime) / 'data', self.owner.cleanup_status)
         if hasattr(self, 'kings_row_data_cache'):
             self.kings_row_data_cache.release(self.kings_row_runtime / 'data', self.owner.cleanup_status)
+        if hasattr(self, 'zone_data_cache') and getattr(self, 'zone_tree_prepared', None) is not None:
+            # Thor 0.13.61-0.13.66: the shared zone tree's data was never returned, so
+            # every session mirrored it again (75 s) and left one more stranded copy.
+            # A refused return costs only the next session's mirror, as before.
+            try:
+                self.zone_data_cache.release(self.zone_runtime / 'data', self.owner.cleanup_status)
+            except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                self.zone_data_cache.summary['return_refused'] = str(failure)[:300]
 
     def copy_kings_native_dependencies(self, target):
         """Keep Atlas's qualified DbServer replacement scoped to Atlas only."""
@@ -3076,7 +3100,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             found = zone_beacon_package.sources(self.owner.args.assets, navigation)
             if map_id in found:
                 result = zone_beacon_package.install(found[map_id], target, map_id,
-                                                     context=self.ctx, imported_inputs_readonly=True)
+                    context=self.ctx, imported_inputs_readonly=True,
+                    proofs=self.owner.root / 'zone-collision-input-proofs.json')
             else:
                 result = {'format': 1, 'verified': False, 'map_id': map_id, 'status': 'no_graph'}
         except base.Cancelled:

@@ -71,11 +71,17 @@ def process_status(directory):
 
 
 def foreign_processes(proc=Path('/proc'), pid=None):
-    """Live same-uid processes outside this guest: neither our ancestors nor traced by our PRoot.
+    """Live same-uid processes outside this guest: neither our ancestors, nor traced by
+    our PRoot, nor started by that PRoot itself.
 
     PRoot runs with --kill-on-exit, so a finished session leaves no tracees;
     anything else with our real uid could still hold a stranded tree. Unreadable
     entries count as foreign. Outside PRoot (no tracer) nothing can be proved.
+
+    Thor 0.13.61, 0.13.63 and 0.13.66: every recovery was refused by one untraced
+    process named "exe", 4 or 5 pids after this session's PostgreSQL (PRoot's own
+    helper for System V shared memory, started when the database starts). A process
+    whose parent chain reaches our tracer belongs to this session.
     """
     pid = os.getpid() if pid is None else pid
     own = process_status(proc / str(pid))
@@ -112,7 +118,17 @@ def foreign_processes(proc=Path('/proc'), pid=None):
                 continue
             if status.get('TracerPid') == str(tracer):
                 continue
-            foreign.append({'pid': other, 'name': status.get('Name')})
+            parent, steps = status.get('PPid'), 0
+            while parent is not None and parent.isdigit() and int(parent) > 1 and int(parent) != tracer and steps < 64:
+                steps += 1
+                try:
+                    parent = process_status(proc / parent).get('PPid')
+                except (OSError, ValueError):
+                    parent = None
+            if parent is not None and parent.isdigit() and int(parent) == tracer:
+                continue
+            foreign.append({'pid': other, 'name': status.get('Name'), 'parent': status.get('PPid'),
+                            'tracer': status.get('TracerPid')})
     return foreign
 
 

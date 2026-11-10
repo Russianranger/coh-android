@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.66 with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.67 with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -16,7 +16,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.66 / 81, and the binary manifest is checked
+- version metadata becomes 0.13.67 / 82, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries and the explicitly listed guest helpers;
@@ -44,8 +44,8 @@ import server_pipeline
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.66', 81
-APK_NAME = 'COH-Atlas-Gameplay-0.13.66.apk'
+VERSION_NAME, VERSION_CODE = '0.13.67', 82
+APK_NAME = 'COH-Atlas-Gameplay-0.13.67.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -68,7 +68,9 @@ ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'a
                            # 0.13.55: the game's own zone travel policy (COH_STOCK_TRAVEL=1).
                            'zone_travel.py', 'zone_index.py',
                            # 0.13.65: zone beacon graphs for the shared zone tree (inert without them).
-                           'zone_beacon_package.py'})
+                           'zone_beacon_package.py',
+                           # 0.13.67: launch receipts (an unchanged install step is not re-checked leaf by leaf).
+                           'launch_receipts.py'})
 CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 'client_login_diagnostic.py', 'character_creation_diagnostic.py', 'local_login_server.py', 'local_character_server.py', 'character_zoning.py',
                              'character_zoning_scheduler.py', 'client_visual_assets.py', 'zone_asset_package.py',
                              'native_training_save.py',

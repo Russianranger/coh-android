@@ -1,0 +1,15 @@
+diff --git a/Game/src/cohClientGameplayPerformance.h b/Game/src/cohClientGameplayPerformance.h
+index 1a660b6..8f1cacd 100644
+--- a/Game/src/cohClientGameplayPerformance.h
++++ b/Game/src/cohClientGameplayPerformance.h
+@@ -70,6 +70,10 @@ static void cohGpApplyProfile(int *maxfps, int create_bins, int menu_cap, int in
+     value = cohGpEnvironment("COH_CLIENT_GAMEPLAY_FPS");
+     if (value && strcmp(value, "10") == 0) requested = 10;
+     else if (value && strcmp(value, "30") == 0) requested = 30;
++    /* Thor 0.13.66: the app typed /maxfps 60 only once it had confirmed the
++     * connection, 75 s after the world was drawn (15 five-second windows at
++     * the 30 cap). With the app's 60 FPS option on, the guest asks for 60 here. */
++    else if (value && strcmp(value, "60") == 0) requested = 60;
+     if (requested) *maxfps = requested;
+     coh_gp_state.profile_reported = 1;
+     texture_option = cohGpEnvironment("COH_CLIENT_BOUNDED_TEXTURE_ERRORS");

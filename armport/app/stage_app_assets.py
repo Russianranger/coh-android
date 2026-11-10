@@ -45,6 +45,9 @@ GUEST_DEPENDENCIES = (
     # Zone beacon graphs for the shared zone tree (0.13.65); installs nothing
     # unless the graph's archive, manifest and lock are all present.
     'zone_beacon_package.py',
+    # 0.13.67: an unchanged install step is skipped by its launch receipt; imported
+    # by character_creation_diagnostic.
+    'launch_receipts.py',
 )
 
 # The device's reopen runs the zoning flow (the Thor APK's runtime manifest sets

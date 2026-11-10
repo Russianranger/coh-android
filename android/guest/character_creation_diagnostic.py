@@ -157,6 +157,10 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.saved_announced = False
         self.connected_identity = None
         self.texture_header_preparation = None
+        self.pending_launch_receipts = []
+
+    # Steps that ran in full this launch and are not recorded yet (record_launch_receipts).
+    pending_launch_receipts = ()
 
     def launcher_command(self):
         return interactive.ClientInteractiveDiagnostic.launcher_command(self) + ['--character-creation']
@@ -171,7 +175,70 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         # Missing world inputs are installed in this private client tree. Atlas
         # staging mirrors them into the private server tree before map launch.
         import atlas_world_assets as world
-        self.ctx.report['atlas_world_supplement'] = world.install(self.work, self.args.assets, self.ctx)
+        self.ctx.report['atlas_world_supplement'] = self.receipted_step(
+            'atlas_world', lambda: ('atlas_world_assets.py', world.MANIFEST, world.ARCHIVE),
+            lambda: world.package(self.args.assets)['files'],
+            lambda: world.install(self.work, self.args.assets, self.ctx))
+
+    def receipted_step(self, step, pins, files, run):
+        """One install step into the client worktree, or its last full result while its pinned
+        inputs and the directories that hold its leaves are unchanged (launch_receipts.py).
+
+        Thor 0.13.66 spent 93 s of every launch re-checking 39,358 unchanged leaves. A step
+        that runs in full is recorded by record_launch_receipts once every step has finished,
+        so a later step's new files cannot outdate an earlier step's receipt. `pins` returns
+        the names of the step's inputs in the session's `asset_sha256`; a step whose inputs
+        are not all pinned there always runs in full.
+        """
+        import launch_receipts
+        started = time.monotonic()
+        record = {'status': 'ran_in_full', 'reason': None}
+        self.ctx.report.setdefault('launch_receipts', {})[step] = record
+        identity = None
+        try:
+            hashes = self.ctx.report.get('asset_sha256') or {}
+            try:
+                pins = tuple(pins())
+            except AttributeError:
+                pins = (None,)
+            require(all(name in hashes for name in pins), 'inputs_not_pinned')
+            identity = {'format': 1, 'step': step, 'worktree': str(self.work),
+                        'worktree_identity': [[info.st_dev, info.st_ino] for info in
+                                              (os.lstat(self.work), os.lstat(self.work / 'data'))],
+                        'inputs': {name: hashes[name] for name in pins}}
+        except (base.DiagnosticError, OSError) as failure:
+            record['reason'] = str(failure)[:200]
+        if identity is not None:
+            result, record['reason'] = launch_receipts.reusable(
+                self.root / 'launch-receipts', step, identity, self.work, self.ctx)
+            if result is not None:
+                elapsed = time.monotonic() - started
+                record.update(status='reused', elapsed_seconds=round(elapsed, 6))
+                return launch_receipts.as_reused(result, elapsed)
+        result = run()
+        record['elapsed_seconds'] = round(time.monotonic() - started, 6)
+        if identity is not None:
+            self.pending_launch_receipts = [*self.pending_launch_receipts, (step, identity, files, result)]
+        return result
+
+    def record_launch_receipts(self):
+        pending, self.pending_launch_receipts = list(self.pending_launch_receipts), []
+        if not pending:
+            return
+        import atlas_world_assets as world
+        import launch_receipts
+        for step, identity, files, result in pending:
+            record = self.ctx.report['launch_receipts'][step]
+            try:
+                targets = world.resolve_targets(self.work, files(), self.ctx)
+                record['directories'] = launch_receipts.record(self.root / 'launch-receipts', step, identity,
+                                                               self.work, targets.values(), result, self.ctx)
+                record['recorded'] = True
+            except base.Cancelled:
+                raise
+            except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                # A receipt only saves time; without one the step runs in full next time.
+                record.update(recorded=False, record_error=str(failure)[:200])
 
     def start_wine(self):
         if (self.ctx.report.get('native_responsiveness_candidate')
@@ -224,6 +291,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         present = {name for name in names
                    if (self.args.assets / name).exists() or (self.args.assets / name).is_symlink()}
         if not present:
+            self.record_launch_receipts()
             return
         require(present == names, 'Incomplete client visual/animation asset bundle')
         require(names | {'server-animations.pigg', 'server-animation-manifest.json'}
@@ -235,7 +303,11 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         import client_visual_assets
         import client_animation_package
         self.ctx.stage('client_visual_assets')
-        visual = client_visual_assets.install(self.work, self.args.assets, self.ctx)
+        visual = self.receipted_step(
+            'client_visual', lambda: ('client_visual_assets.py', 'atlas_world_assets.py',
+                                      client_visual_assets.MANIFEST, client_visual_assets.ARCHIVE),
+            lambda: client_visual_assets.package(self.args.assets)['files'],
+            lambda: client_visual_assets.install(self.work, self.args.assets, self.ctx))
         self.ctx.report['client_visual_supplement'] = visual
         self.ctx.passed(**visual)
         self.ctx.stage('client_animation_pack')
@@ -248,14 +320,23 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         import zone_asset_package
         if zone_asset_package.present(self.args.assets):
             self.ctx.stage('client_all_zone_assets')
-            zones = zone_asset_package.install(self.work, self.args.assets, self.ctx)
+            zones = self.receipted_step(
+                'zone_resources', lambda: ('zone_asset_package.py', 'atlas_world_assets.py',
+                                           zone_asset_package.MANIFEST, zone_asset_package.ARCHIVE),
+                lambda: zone_asset_package.package(self.args.assets)['files'],
+                lambda: zone_asset_package.install(self.work, self.args.assets, self.ctx))
             self.ctx.report['client_zone_supplement'] = zones
             self.ctx.passed(**zones)
         if zone_asset_package.present(self.args.assets, audio=True):
             self.ctx.stage('client_all_zone_audio')
-            audio = zone_asset_package.install(self.work, self.args.assets, self.ctx, audio=True)
+            audio = self.receipted_step(
+                'zone_audio', lambda: ('zone_asset_package.py', 'atlas_world_assets.py',
+                                       zone_asset_package.AUDIO_MANIFEST, zone_asset_package.AUDIO_ARCHIVE),
+                lambda: zone_asset_package.package(self.args.assets, audio=True)['files'],
+                lambda: zone_asset_package.install(self.work, self.args.assets, self.ctx, audio=True))
             self.ctx.report['client_zone_audio_supplement'] = audio
             self.ctx.passed(**audio)
+        self.record_launch_receipts()
 
     def prepare_texture_header_index(self, context):
         import texture_header_index
