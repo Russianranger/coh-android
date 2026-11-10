@@ -3,8 +3,9 @@
 Pets and NPCs plan their way with each zone's navigation map (the game's
 "beacons"). 0.13.65 had maps for Atlas Park, King's Row and Mercy Island only.
 0.13.66 takes them from a separate navigation map pack that covers every zone
-(PACK_SUMMARY). You import it once, like the asset pack, and it stays imported
-across later APK updates while its version stays the same.
+(64 zones: every static zone except Atlas Park and King's Row, which keep
+their own maps). You import it once, like the asset pack, and it stays
+imported across later APK updates while its version stays the same.
 
 The app checks the pack against hashes this APK carries. Each zone's map is
 installed when that zone first starts in a session, after the app checks it
@@ -19,17 +20,19 @@ Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.66".
 
 CI: CI_SUMMARY
 
-## Steps (update in place: no uninstall, no new asset import)
+## Steps (update in place: no uninstall; the asset pack stays imported)
 
-1. On the phone, download the navigation map pack from
-   https://github.com/Russianranger/coh-android/releases/tag/PACK_TAG
-   (PACK_FILES). Keep it in Downloads.
+1. On the phone, download `COH-Navigation-Maps-1.0.0.zip` (1.44 GB, one file)
+   from https://github.com/Russianranger/coh-android/releases/tag/coh-navigation-maps-v1.0.0
+   and keep it in Downloads.
 2. Install 0.13.66 over 0.13.65. Your imported assets and the database profile
    (with Ralakar) stay.
-3. Open the app. Below the asset line it shows **Navigation maps PACK_VERSION ·
+3. Open the app. Below the asset line it shows **Navigation maps 1.0.0 ·
    import maps part(s)**. Tap **Import asset or map pack part** and pick the
-   downloaded file (PACK_PICK). Wait for **Navigation maps PACK_VERSION
-   verified**. The import needs about PACK_SPACE of free storage while it runs.
+   downloaded zip. Wait for **Navigation maps 1.0.0 verified**; the line then
+   reads **Navigation maps 1.0.0 · verified; reusable with this APK**. The
+   import needs about 3.4 GB of free storage while it runs; afterwards the maps
+   take 1.44 GB and you can delete the zip from Downloads.
 4. Leave the options at their defaults (**Game's own zone travel** on, ARM64
    client).
 5. **2 · Reopen saved character**. Log in with `COHLOCAL / offline`, select

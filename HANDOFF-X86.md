@@ -435,7 +435,11 @@ phone as a separate pack to import, like the asset pack.
   be up to 512 MiB with at least one connected beacon. The six zones whose
   audited source graph lacks sky/moon models or one encounter group are no
   longer refused up front: the native collision load must still report
-  `missing_groups=0 missing_root_models=0`.
+  `missing_groups=0 missing_root_models=0`. Only an `Omni/EncounterSpawns/...`
+  group the data lacks loads as the empty placeholder the shipping MapServer
+  makes (7cdf9a879; named in the witness as `noncollision_missing_groups`,
+  which the guest checks); any other missing group, reference or root model
+  stays fatal.
 - **Workflow** `armport-zone-beacons.yml`: `map_ids` (comma separated or
   `all`) and `workers`; job `plan`, one `generator` compile (two compiler
   processes) for all map jobs, matrix `beacons (<map>)` with max-parallel 8
@@ -462,7 +466,7 @@ phone as a separate pack to import, like the asset pack.
   starts (`install_zone_beacon_graph`, once per zone and session, recorded in
   `zone_tree_preparation.beacon_graph[<map>]`); inputs another zone proved in
   the same process (same inode state) are not hashed again.
-- **Tests**: `test_zone_beacons.py` (33), `test_navigation_maps.py` (11, one
+- **Tests**: `test_zone_beacons.py` (35), `test_navigation_maps.py` (11, one
   imports a built volume with the app's own `AssetPackArchive` on a JVM).
 - **Pilot run 42731367743** at f8b44fcef (x86/perf-round1, maps 55, 71, 72;
   3 workers): one compile (generator job 00:50-01:01), then three map jobs
