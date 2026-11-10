@@ -414,6 +414,58 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.66: navigation maps for every zone (Claude, 2026-11-09)
+
+Owner, 2026-11-09 (18:33 CST): "Please work on a solution for every single map
+to have a navmap while i test this". Choices (asked): one workflow run with up
+to 8 map jobs at once and nothing else running alongside; the maps reach the
+phone as a separate pack to import, like the asset pack.
+
+- **Throughput** (f8b44fcef): Mercy Island's single-worker graph took 8413 s
+  (run 42678203754): about 15 min of block generation, then two hours of
+  "Assigning 20 beacons" batches to the one worker. The host patch fixed the
+  sentry's cpuCount at 1 and the sentry ends any client beyond cpuCount + 1.
+  `patches/zone-beacons/0001` now takes the owned worker count from
+  `COH_ZONE_BEACON_WORKERS` (one digit 1-8; `COH_ZONE_BEACON_WORKERS_V1` in
+  the sentry log); `generate_zone_beacons.py --workers` (default 3) starts
+  worker, worker2... and records each one's blocks and batches
+  (`worker_work`).
+- **Every zone**: `zone_beacon_package.WORLDS` holds all 64 shared-tree zones
+  (every static zone except Atlas Park 1 and King's Row 5); zone graphs may
+  be up to 512 MiB with at least one connected beacon. The six zones whose
+  audited source graph lacks sky/moon models or one encounter group are no
+  longer refused up front: the native collision load must still report
+  `missing_groups=0 missing_root_models=0`.
+- **Workflow** `armport-zone-beacons.yml`: `map_ids` (comma separated or
+  `all`) and `workers`; job `plan`, one `generator` compile (two compiler
+  processes) for all map jobs, matrix `beacons (<map>)` with max-parallel 8
+  and fail-fast off. Pack mode (`pack_runs`, `pack_version`,
+  `publish_pack`): job `pack` builds the pack from the passed map jobs of
+  the listed runs and can publish `coh-navigation-maps-v<version>`.
+- **Pack** (f7738814e): `tools/android/interactive/package_navigation_maps.py`
+  (descriptor id `coh-navigation-maps`, `navigation-maps-manifest.json`)
+  uses the asset pack's volume format: the descriptor first in every volume,
+  stored members under `payloads/runtime/zone-beacons-<map>{.zip,-manifest.json}`,
+  at most 256 files, volumes under 2 GiB (`maps`, or `maps-1`, `maps-2`...).
+  Each map must come from its own passed map job and pass the guest's
+  validator, its report and lock, and its archive closure.
+- **App** (fe1d9164a): `AssetPackStore.Kind` (`ASSETS`, `NAVIGATION_MAPS`:
+  runtime record `navigation_map_pack`, `runtime/navigation-maps-manifest.json`,
+  `files/navigation-packs`); "Import asset or map pack part" routes a volume
+  by its descriptor's id; a session binds the imported objects at
+  `/opt/coh-navigation` with `COH_NAVIGATION_MAPS` only when the APK pins the
+  pack and it is fully imported (report `navigation_map_pack`). The APK adds
+  only the descriptor (`--navigation-maps`, `navigation_maps_run_id`).
+- **Guest**: `sources()` takes each zone's graph from the pack (objects named
+  by SHA-256, pins from the APK's descriptor) or, as in 0.13.65, from the
+  APK; `_spawn_map` installs the zone's own graph before its MapServer
+  starts (`install_zone_beacon_graph`, once per zone and session, recorded in
+  `zone_tree_preparation.beacon_graph[<map>]`); inputs another zone proved in
+  the same process (same inode state) are not hashed again.
+- **Tests**: `test_zone_beacons.py` (33), `test_navigation_maps.py` (11, one
+  imports a built volume with the app's own `AssetPackArchive` on a JVM).
+- Version 0.13.66 (81); test sheet `THOR-TEST-0.13.66.md`.
+
 ## 0.13.65: Mercy Island's navigation graph (Claude, 2026-11-09)
 
 Thor 0.13.63 (owner, 2026-11-09 09:55 CST): "the pet he summoned would not
