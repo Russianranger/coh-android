@@ -262,6 +262,8 @@ jobs:
           cd apk
           test -f COH-Atlas-Gameplay-0.13.66.apk
           sha256sum COH-Atlas-Gameplay-0.13.66.apk > COH-Atlas-Gameplay-0.13.66.apk.sha256
+          # The pack this APK pins (its build report's record names the pack's release).
+          pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
           COH Atlas Gameplay 0.13.66 (x86 track performance candidate) for the Thor play test.
 
@@ -269,12 +271,12 @@ jobs:
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
           New (owner, 2026-11-09): navigation maps for every zone, so pets and NPCs can walk to a target there.
-          They come as a separate pack, imported like the asset pack: download the navigation map pack from its
-          release (see the test sheet) and import it with "Import asset or map pack part". The app checks the
+          They come as a separate pack, imported like the asset pack: download the navigation map pack from
+          ${pack} and import it with "Import asset or map pack part". The app checks the
           pack against hashes this APK carries; each zone's map is then checked against your phone's zone world
           when that zone first starts in a session, and a map that does not match is skipped and recorded.
           Without the pack, zones other than Atlas Park and King's Row start without pathing (Mercy Island's
-          map, carried by 0.13.66, is in the pack now).
+          map, carried by 0.13.65, is in the pack now).
           Unchanged from 0.13.65: fast camera turns keep the picture moving; Reopen works for any name with Game's
           own zone travel on; any character name the game accepts, one character per install; walking is not
           locked (it pauses only while a save / log-out runs and during a zone transfer); every zone can start;
