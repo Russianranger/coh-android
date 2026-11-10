@@ -23,13 +23,104 @@ STARTUP_NEGATIVE_ASSERTION = 'startup->enabled && startup->sequence == 17'
 TRUSTED_NEGATIVE_ASSERTION = 'scans == 0 && list_reads == 0'
 TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
 TRUSTED_CASES = ['trusted_bins', 'trusted_bins_disabled']
+SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
+SPARE_NEGATIVE_ASSERTION = 'reads == 3 && sleeps == 2 && db_state.map_id == 5001'
+SPARE_CASES = ['spare_server', 'spare_server_disabled', 'spare_server_invalid']
 
 
 def test_cases(source):
     text = (source / 'MapServer/src/svr/svr_init.c').read_text()
     parser = (source / TEXTPARSER).read_text()
     return (CASES + (['progress_markers'] if 'cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);' in text else [])
-            + (TRUSTED_CASES if 'static int armportTrustedBin(' in parser else []))
+            + (TRUSTED_CASES if 'static int armportTrustedBin(' in parser else [])
+            + (SPARE_CASES if (source / SPARE_HEADER).is_file() else []))
+
+
+def spare_fixture(source):
+    """Run the shipping spare-server header over recorded Win32 file, clock and map-list shims."""
+    svr = (source / 'MapServer/src/svr/svr_init.c').read_text()
+    header = source / SPARE_HEADER
+    if header.is_file():
+        # The shipping call site: after every shared load, before any DbServer traffic.
+        main = svr[svr.index('int __cdecl main(int argc,char **argv)'):]
+        order = [main.index(text) for text in ('    checkTsr();', '        cmdCfgLoad();\n        armportSpareWait();\n',
+                                               '        connectToDbserver(NO_TIMEOUT);')]
+        assert order == sorted(order) and svr.count('armportSpareWait();') == 1, order
+        assert svr.index('#include <utilitieslib/utils/wininclude.h>') < svr.index('#include "armport_spare_server.h"')
+        body = header.read_text()
+    else:
+        assert 'armportSpare' not in svr
+        body = 'static void armportSpareWait(void) {}\n'
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef uint32_t DWORD; typedef void *HANDLE;
+#define INVALID_HANDLE_VALUE ((HANDLE)-1)
+#define GENERIC_READ 1
+#define FILE_SHARE_READ 1
+#define FILE_SHARE_WRITE 2
+#define FILE_SHARE_DELETE 4
+#define OPEN_EXISTING 3
+#define FILE_ATTRIBUTE_NORMAL 0
+typedef struct StaticMapInfo { int mapID, baseMapID, instanceID; } StaticMapInfo;
+static struct { int map_id, base_map_id, instance_id, cookie, local_server; } db_state;
+static const char *contents[8]; static const char *opened; static int reads, sleeps, ticks;
+static HANDLE CreateFileA(const char *path, int access, int share, void *security, int disposition, int flags, void *template) {
+    (void)access; (void)share; (void)security; (void)disposition; (void)flags; (void)template;
+    opened = path; return contents[reads] ? (HANDLE)1 : (++reads, INVALID_HANDLE_VALUE); }
+static int ReadFile(HANDLE handle, char *buffer, DWORD wanted, DWORD *got, void *overlapped) {
+    const char *text = contents[reads++]; size_t length = strlen(text);
+    (void)handle; (void)overlapped;
+    if (length > wanted) length = wanted;
+    memcpy(buffer, text, length); *got = (DWORD)length; return 1; }
+static void CloseHandle(HANDLE handle) { (void)handle; }
+static void Sleep(int milliseconds) { sleeps += milliseconds == 100; }
+static DWORD GetTickCount(void) { return (DWORD)(ticks += 250); }
+static DWORD GetCurrentProcessId(void) { return 42; }
+static StaticMapInfo clone = {5001, 50, 2};
+static StaticMapInfo *staticMapInfoFind(int id) { return id == 5001 ? &clone : NULL; }
+#define fileGetStdout() stdout      /* svr_init.c flushes its console this way */
+''' + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    (void)contents; (void)opened; (void)clone; (void)staticMapInfoFind; (void)CreateFileA; (void)ReadFile;
+    (void)CloseHandle; (void)Sleep; (void)GetTickCount; (void)GetCurrentProcessId;
+    db_state.map_id = 71; db_state.base_map_id = 71;
+    if (!strcmp(mode, "spare_server")) {
+        CHECK(setenv("ARMPORT_SPARE_FILE", "Z:\\state\\spare-assign", 1) == 0);
+        contents[2] = "ARMPORT_SPARE_ASSIGN_V1 map_id=5001 cookie=7\n";      /* absent twice, then published */
+        armportSpareWait();
+        CHECK(reads == 3 && sleeps == 2 && db_state.map_id == 5001);
+        CHECK(db_state.base_map_id == 50 && db_state.instance_id == 2 && db_state.cookie == 7);
+        CHECK(opened && !strcmp(opened, "Z:\\state\\spare-assign"));
+        reads = 0; contents[0] = "ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=2147483647\n"; contents[2] = NULL;
+        armportSpareWait();                                                  /* a zone without a base map */
+        CHECK(db_state.map_id == 71 && db_state.base_map_id == 71 && db_state.instance_id == 0);
+        CHECK(db_state.cookie == 2147483647);
+        return 0;
+    }
+    if (!strcmp(mode, "spare_server_disabled")) {
+        unsetenv("ARMPORT_SPARE_FILE");
+        armportSpareWait();
+        CHECK(setenv("ARMPORT_SPARE_FILE", "", 1) == 0);
+        armportSpareWait();
+        CHECK(reads == 0 && sleeps == 0 && db_state.map_id == 71 && db_state.cookie == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "spare_server_invalid")) {
+        CHECK(setenv("ARMPORT_SPARE_FILE", "assign", 1) == 0);
+        contents[0] = argc > 2 ? argv[2] : "";
+        db_state.local_server = argc > 3;
+        armportSpareWait();                                                  /* must exit(3) itself */
+        return 0;
+    }
+    return 2;
+}
+'''
 
 
 def trusted_fixture(source):
@@ -379,15 +470,41 @@ def run(source, original=None, expect_control_failure=False):
                         '-Wno-unused-label', '-fsanitize=address,undefined',
                         str(work / 'trusted.c'), '-o', str(trusted)], check=True)
         control += trusted_fixture(trusted_root)
-        for mode in (['window', 'startup', 'trusted_bins'] if original and expect_control_failure else
+        spare = work / 'spare'
+        (work / 'spare.c').write_text(spare_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror',
+                        '-Wno-unused-function', '-fsanitize=address,undefined',
+                        str(work / 'spare.c'), '-o', str(spare)], check=True)
+        control += spare_fixture(trusted_root)
+        environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
+        for mode in (['window', 'startup', 'trusted_bins', 'spare_server'] if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
-            result = subprocess.run([str(trusted if mode in TRUSTED_CASES else exe), mode],
-                                    capture_output=True, text=True,
-                                    env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'})
+            if mode == 'spare_server_invalid':
+                # Every malformed assignment, and a server in local mode, ends the process with
+                # status 3 before it has touched its map id or the DbServer.
+                invalid = ['ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1', 'ARMPORT_SPARE_ASSIGN_V1 map_id=0 cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=071 cookie=1\n', 'ARMPORT_SPARE_ASSIGN_V1 map_id=100000 cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=2147483648\n', 'ARMPORT_SPARE_ASSIGN_V1 map_id=71  cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1 \n', 'ARMPORT_SPARE_ASSIGN_V2 map_id=71 cookie=1\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=-1 cookie=1\n', 'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=\n',
+                           'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1\nmore\n', '\n', 'x' * 200 + '\n']
+                for text in invalid:
+                    result = subprocess.run([str(spare), mode, text], capture_output=True, text=True, env=environment)
+                    assert result.returncode == 3 and result.stdout.splitlines() == [
+                        'ARMPORT_SPARE_V1 status=waiting pid=42 placeholder_map_id=71',
+                        'ARMPORT_SPARE_V1 status=refused pid=42 reason=invalid_assignment'], (text, result)
+                result = subprocess.run([str(spare), mode, 'ARMPORT_SPARE_ASSIGN_V1 map_id=71 cookie=1\n', 'local'],
+                                        capture_output=True, text=True, env=environment)
+                assert result.returncode == 3 and result.stdout.splitlines()[-1] == \
+                    'ARMPORT_SPARE_V1 status=refused pid=42 reason=local_server', result
+                print(mode + ': %d malformed assignments and local mode refused' % len(invalid))
+                continue
+            program = trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES else exe
+            result = subprocess.run([str(program), mode], capture_output=True, text=True, env=environment)
             print(mode + ': ' + ' | '.join(result.stdout.splitlines()))
             if expect_control_failure:
-                assertion = {'window': NEGATIVE_ASSERTION, 'trusted_bins': TRUSTED_NEGATIVE_ASSERTION}.get(
-                    mode, STARTUP_NEGATIVE_ASSERTION)
+                assertion = {'window': NEGATIVE_ASSERTION, 'trusted_bins': TRUSTED_NEGATIVE_ASSERTION,
+                             'spare_server': SPARE_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -429,6 +546,14 @@ def run(source, original=None, expect_control_failure=False):
                 assert rows[-1].endswith('ordinal=256 bin=bin/minimap.bin'), rows[-1]
             if mode == 'trusted_bins_disabled':
                 assert 'ARMPORT_TRUSTED_BINS_V1' not in result.stdout
+            if mode == 'spare_server':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_SPARE_V1 status=waiting pid=42 placeholder_map_id=71',
+                    'ARMPORT_SPARE_V1 status=assigned pid=42 map_id=5001 base_map_id=50 instance_id=2 waited_ms=250',
+                    'ARMPORT_SPARE_V1 status=waiting pid=42 placeholder_map_id=5001',
+                    'ARMPORT_SPARE_V1 status=assigned pid=42 map_id=71 base_map_id=71 instance_id=0 waited_ms=250'], result.stdout
+            if mode == 'spare_server_disabled':
+                assert 'ARMPORT_SPARE_V1' not in result.stdout
             if mode == 'startup_clock':
                 rows = result.stdout.splitlines()
                 assert len(rows) == 3 and all('status=clock_error' in row for row in rows), rows
@@ -478,7 +603,7 @@ def main():
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_and_trusted_bin_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_and_spare_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

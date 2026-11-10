@@ -27,7 +27,12 @@ METRIC_FILES = (SVR, FILE, HEADER, IMPL)
 # Opt-in trusted prepared bins (ARMPORT_TRUSTED_BINS=1), off by default.
 TRUSTED_PATCH = 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch'
 TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
-FILES = METRIC_FILES + (TEXTPARSER,)
+# Opt-in early zone server (ARMPORT_SPARE_FILE=<path>), off by default: every shared
+# load, then a wait before connectToDbserver for the map id and cookie.
+SPARE_PATCH = 'patches/mapserver-zone-travel/0001-spare-zone-server.patch'
+SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
+FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER)
+ADDED_FILES = (HEADER, IMPL, SPARE_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
 CONTRACT = {
@@ -51,6 +56,15 @@ CONTRACT = {
         'skipped_when_enabled': ['source_tree_scan', 'per_file_date_check'],
         'still_required': ['bin_signature', 'parse_table_crc'],
         'text_fallback_retained': ['missing_bin', 'signature_or_crc_mismatch', 'binary_read_failure'],
+    },
+    'spare_server': {
+        'environment_variable': 'ARMPORT_SPARE_FILE', 'disabled_by_default': True,
+        'record_prefix': 'ARMPORT_SPARE_V1', 'assignment_prefix': 'ARMPORT_SPARE_ASSIGN_V1',
+        'assignment_fields': ['map_id', 'cookie'], 'waits_before': 'connectToDbserver',
+        'shared_loading_before_wait': True, 'poll_milliseconds': 100,
+        'sets': ['db_state.map_id', 'db_state.cookie', 'db_state.base_map_id', 'db_state.instance_id'],
+        'invalid_assignment': 'exit_3_before_any_dbserver_connection',
+        'gameplay_decisions_changed': False,
     },
     'startup': {
         'record_prefix': 'ARMPORT_SERVER_STARTUP_V1',
@@ -107,6 +121,26 @@ def trusted_patch_bytes():
     data = (ROOT / TRUSTED_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [TEXTPARSER], 'Trusted-bin patch file set differs')
+    return data
+
+
+def spare_patch_bytes():
+    data = (ROOT / SPARE_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [SPARE_HEADER, SVR], 'Spare zone server patch file set differs')
+    return data
+
+
+def patch_spare(data):
+    """Rebase the spare patch's two insertions in svr_init.c over a metrics-patched loop."""
+    replacements = (
+        (b'#include <utilitieslib/utils/wininclude.h>\n',
+         b'#include <utilitieslib/utils/wininclude.h>\n#include "armport_spare_server.h"\n'),
+        (b'        cmdCfgLoad();\n', b'        cmdCfgLoad();\n        armportSpareWait();\n'),
+    )
+    for old, new in replacements:
+        require(data.count(old) == 1, 'Spare zone server anchor differs: ' + old.decode().strip())
+        data = data.replace(old, new, 1)
     return data
 
 
@@ -237,8 +271,10 @@ def native_images(variant, baseline_receipt, root):
         target.write_bytes((root / 'upstream/ouroboros' / TEXTPARSER).read_bytes())
         apply_patch(stage, patch_bytes())
         apply_patch(stage, trusted_patch_bytes())
+        apply_patch(stage, spare_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
-        require(images[SVR] == patch_loop(original_loop), 'Loop rebase differs from exported native patch')
+        require(images[SVR] == patch_spare(patch_loop(original_loop)),
+                'Loop rebase differs from exported native patches')
     with tempfile.TemporaryDirectory(prefix='coh-server-metrics-base-') as directory:
         stage = Path(directory)
         patches = [progress.game.patch_bytes(root), progress.patch_bytes(root)]
@@ -255,7 +291,7 @@ def native_images(variant, baseline_receipt, root):
         inputs = {SVR: (stage / SVR).read_bytes(),
                   FILE: (root / 'upstream/ouroboros' / FILE).read_bytes(),
                   TEXTPARSER: (root / 'upstream/ouroboros' / TEXTPARSER).read_bytes()}
-    images[SVR] = patch_loop(inputs[SVR])
+    images[SVR] = patch_spare(patch_loop(inputs[SVR]))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
     require(FILE not in closure or closure[FILE] == digest(inputs[FILE]), 'Baseline file loader preimage differs')
@@ -275,6 +311,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'baseline_receipts_sha256': {name: digest(canonical(value)) for name, value in receipts.items()},
             'patch': {'path': PATCH, 'sha256': digest(patch_bytes())},
             'trusted_bins_patch': {'path': TRUSTED_PATCH, 'sha256': digest(trusted_patch_bytes())},
+            'spare_server_patch': {'path': SPARE_PATCH, 'sha256': digest(spare_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -306,9 +343,10 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
                                    'startup', 'startup_disabled', 'startup_clock',
-                                   'progress_markers', 'trusted_bins', 'trusted_bins_disabled'],
+                                   'progress_markers', 'trusted_bins', 'trusted_bins_disabled',
+                                   'spare_server', 'spare_server_disabled', 'spare_server_invalid'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_startup_and_trusted_bin_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_and_spare_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')
@@ -369,7 +407,7 @@ def apply_metrics(source, variant, upstream_root=ROOT, required_baseline_receipt
     check_baseline_receipts(source, receipt)
     for name, expected in {**receipt['retained_sha256'], **receipt['source_sha256']}.items():
         check_file(source, name, expected)
-    for name in (HEADER, IMPL):
+    for name in ADDED_FILES:
         path = source / name
         require(not path.exists() and not path.is_symlink() and not any(p.is_symlink() for p in path.parents),
                 'Native metrics addition already exists or is linked: ' + name)

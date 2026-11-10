@@ -3,13 +3,14 @@
   "role": "armport_server_metrics_source_checks",
   "status": "passed",
   "variant": "retained_progress",
-  "build_input_sha256": "70ac908aa941f44d036a9f8a285045001accdc481fc17116b99d6245086b2567",
+  "build_input_sha256": "a78c1ce222b22cbbdfbca22bd50a55456ace20f91bab9b3a1fd3b7bda3e73823",
   "source_sha256": {
-    "MapServer/src/svr/svr_init.c": "d06ff1ecea746a4b277dbf77b6d6e64876f524895c5af0727fb1d0f6d9d7f521",
+    "MapServer/src/svr/svr_init.c": "5b8cddb66687c6304bf2cd2bd6a708d3cc4f08da377d140e2e1d89830349d217",
     "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71",
     "libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h": "7f10c993614ee0756c408627b4698c3b107d1a3875184f85ff231fadad170813",
     "libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h": "807969ff3d923fbf3d6a8188150b387ff93eecb0b4b621cdbf4b0435d61f1c7b",
-    "libs/UtilitiesLib/src/utils/textparser.c": "6aba68fc54a81081048dfbc2920d67d074169d4956cb9f30daa720bf57951bc6"
+    "libs/UtilitiesLib/src/utils/textparser.c": "6aba68fc54a81081048dfbc2920d67d074169d4956cb9f30daa720bf57951bc6",
+    "MapServer/src/svr/armport_spare_server.h": "bc9bb1f713d2d9a7f13fbe12f0a39c693fdfa48ca708e77764db85a317331244"
   },
   "original_sha256": {
     "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
@@ -17,10 +18,10 @@
     "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
   },
   "fixture_sha256": {
-    "positive": "63d3c4cbb20b166bc31f957866b8ee7be595dda6be293ccd6cb9bd13f962587a",
-    "negative": "050fb0fd9e8e901281b4551a16c8db8a26ac959d4b7df4c8d5b888963ad64346"
+    "positive": "c63f9190f666c77a1e3b4c7ee2df4fdcfa8e6d40d7cbe0976b3443bff7f419f8",
+    "negative": "462a3e5a61a105a07019f5b845a91fdd314ae2140959a011ab487605736507a6"
   },
-  "test_script_sha256": "33376b59f6d600e35605545b744129e3c1a2f8115f208b0aadc314edaef6c784",
+  "test_script_sha256": "1c8b0d3fdd07afeb8ff0d9190e99a388266899c185271e357cee6078e1e775e6",
   "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "execution_environment": "posix_host_with_windows_clock_and_file_io_shims",
   "positive_cases": [
@@ -36,9 +37,12 @@
     "startup_clock",
     "progress_markers",
     "trusted_bins",
-    "trusted_bins_disabled"
+    "trusted_bins_disabled",
+    "spare_server",
+    "spare_server_disabled",
+    "spare_server_invalid"
   ],
   "unpatched_control_failed": true,
-  "unpatched_control_failure": "runtime_missing_metrics_startup_and_trusted_bin_assertions",
+  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_and_spare_assertions",
   "shipping_binary_executed": false
 }
