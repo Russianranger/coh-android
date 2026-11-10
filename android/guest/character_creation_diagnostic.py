@@ -260,6 +260,11 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.ctx.check()
         self.prepare_client_visual_inputs()
         self.texture_header_preparation = TextureHeaderPreparation(self)
+        # 0.13.68: with the client's inputs installed, the saved character's own zone may start
+        # now, beside the texture list, the GPU probes and the client's start (COH_EARLY_ZONE).
+        early = getattr(self.local_server, 'start_early_zone', None)
+        if callable(early):
+            early()
         self.texture_header_preparation.start()
 
     def client_preparation_server_ready(self):

@@ -50,7 +50,8 @@ class DynamicInitialMapTests(unittest.TestCase):
         self.addCleanup(patcher.stop)
         value = self.instance(map_id)
         prepared = value.initial_map_preparation()
-        self.assertEqual(prepared, None if environment is DYNAMIC_ENVIRONMENT else map_id)
+        dynamic = (environment.get(zone_travel.ENABLE_ENVIRONMENT), environment.get('COH_CLIENT_ARCH')) == ('1', 'arm64')
+        self.assertEqual(prepared, None if dynamic else map_id)
         return value
 
     def layer(self, value):
@@ -202,6 +203,165 @@ class DynamicInitialMapTests(unittest.TestCase):
         self.assertEqual(value.active_map_id, 1)
         value.connection_metadata()
         self.assertEqual(value.dynamic_initial()['connected_map_id'], 1)
+
+    # 0.13.68: the saved zone may start beside the client (COH_EARLY_ZONE=1).
+    EARLY_ENVIRONMENT = dict(DYNAMIC_ENVIRONMENT, **{zoning.EARLY_ZONE_ENV: '1'})
+
+    def early(self, map_id=5, *, memory=8000, spawn_error=None):
+        value = self.dynamic(map_id, self.EARLY_ENVIRONMENT)
+        sup = self.layer(value)
+        value._activate = Mock(wraps=lambda target: setattr(value, 'active_map_id', target)
+                               or value.creation_report.update(map_id=target))
+        launched = int(time.time() * 1000)
+
+        def spawn(target, **keywords):
+            if spawn_error is not None:
+                raise spawn_error
+            value.maps[target] = dict(stock.owned(ready=False), launch_utc_ms=launched,
+                                      launch_monotonic=time.monotonic())
+        value._spawn_map = Mock(side_effect=spawn)
+        value._map_progress = Mock(return_value={'available': True})
+        value.live_progress = Mock(return_value=False)
+        value.start_map()                                      # the map stage starts nothing (0.13.59)
+        value._spawn_map.assert_not_called()
+        self.assertEqual(value.ctx.passed.call_args.kwargs['zone_servers_started'], 0)
+        self.assertNotIn('early_start', value.dynamic_initial())
+        with patch.object(zoning, 'available_memory_mib', return_value=memory):
+            record = value.start_early_zone()                  # after the client's install steps
+        self.assertIs(record, value.dynamic_initial()['early_start'])
+        self.assertIsNone(value.start_early_zone())            # once per session
+        return value, sup, launched
+
+    def initial_events(self, value):
+        return [(call.kwargs['status'], call.kwargs['message']) for call in value.ctx.event.call_args_list
+                if call.args == ('character_initial_zone',)]
+
+    def ask(self, value, sup, map_id, cookie, sequence):
+        console = getattr(sup, 'test_console', '\n' + supervisor.ACK + '\n')
+        sup.test_console = console + stock.StockTravelTests.publish(None, sup, map_id, cookie, sequence)
+        sup.poll(sup.test_console)
+        value.serve_external_maps(sup)
+
+    def test_the_saved_zone_starts_beside_the_client_and_is_ready_before_enter_game(self):
+        value, sup, launched = self.early()
+        value._spawn_map.assert_called_once_with(5)
+        stage = value.ctx.event.call_args_list[-1]
+        self.assertEqual(stage.args, ('stage',))
+        self.assertIn("King's Row is starting for THORHERO while the game starts", stage.kwargs['message'])
+        initial = value.dynamic_initial()
+        record = initial['early_start']
+        self.assertEqual((record['started'], record['reason'], record['port'], initial['zone_servers_before_enter_game']),
+                         (True, None, 7003, 1))
+        self.assertTrue(value.maps[5]['early'])
+        self.assertEqual(value.zoning_report['saved_startup']['native_maps_started'], [5])
+        # The client needs only the DbServer; nothing is announced or activated while the zone loads.
+        self.assertTrue(value.poll_initial_map_startup() and value.client_startup_assets_allowed())
+        value.serve_external_maps(sup)
+        value.tick_dynamic_initial()
+        self.assertEqual((initial['attempts'], initial['activated'], self.initial_events(value)), ([], False, []))
+        self.assertEqual(value.initial_zone_wait_seconds(), 0)
+        # No other zone may start beside it, and a second request for it starts nothing.
+        self.assertEqual(value.zone_policy.decide(stock.record(1, 3, 1)), ('delink', 'initial_zone_already_starting'))
+        value.live_progress = Mock(return_value=True)
+        value.serve_external_maps(sup)
+        self.assertTrue(record['ready'] and record['ready_before_the_game_asked'])
+        value.tick_dynamic_initial()
+        value._activate.assert_called_once_with(5)
+        self.assertEqual((value.active_map_id, value.ready_floor_ms), (5, launched - 999))
+        self.assertTrue(initial['activated'] and value.creation_report['map_ready'])
+        self.assertFalse(initial['requested'])                 # the game never had to ask
+        self.assertEqual(initial['attempts'][-1]['outcome'], 'ready')
+        events = self.initial_events(value)
+        self.assertEqual([status for status, _ in events], ['ready'])
+        self.assertIn("King's Row is ready for THORHERO; Enter Game goes straight in", events[0][1])
+        self.assertLess(value.initial_zone_wait_seconds(), 1)
+        value.serve_external_maps(sup)
+        self.assertTrue(record['ended'])
+        # Enter Game: the connection follows the zone as for a zone the game started.
+        self.assertTrue(value.connected_status(connected(5)))
+        value.connection_metadata()
+        self.assertEqual(initial['connected_map_id'], 5)
+        value._spawn_map.assert_called_once_with(5)
+
+    def test_enter_game_while_the_early_zone_loads_waits_for_that_same_server(self):
+        value, sup, launched = self.early()
+        self.ask(value, sup, 5, 9, 1)
+        entry = sup.requests[(5, 9)]
+        self.assertEqual((entry['decision'], sup.delinks, value.stock['starts']), ('session_flow', [], []))
+        value._spawn_map.assert_called_once_with(5)            # no second server for the request
+        record = value.dynamic_initial()['early_start']
+        self.assertIn('requested_by_the_game_utc_ms', record)
+        events = self.initial_events(value)
+        self.assertEqual([status for status, _ in events], ['starting'])
+        self.assertIn("Starting King's Row for THORHERO", events[0][1])
+        value.tick_dynamic_initial()
+        initial = value.dynamic_initial()
+        self.assertTrue(initial['requested'] and initial['started'] and not initial['activated'])
+        self.assertEqual(initial['attempts'][-1]['started_monotonic'], value.maps[5]['early_requested_monotonic'])
+        value.live_progress = Mock(return_value=True)
+        value.serve_external_maps(sup)
+        value.tick_dynamic_initial()
+        value._activate.assert_called_once_with(5)
+        self.assertFalse(record['ready_before_the_game_asked'])
+        events = self.initial_events(value)
+        self.assertEqual([status for status, _ in events], ['starting', 'ready'])
+        self.assertIn("King's Row is ready; THORHERO is entering it", events[1][1])
+
+    def test_the_early_start_is_refused_without_the_option_memory_or_a_known_single_zone(self):
+        value = self.dynamic()                                 # the option is off: 0.13.59's path
+        self.layer(value)
+        value._spawn_map = Mock()
+        value.start_map()
+        self.assertEqual(value.start_early_zone()['reason'], 'not_requested')
+        value._spawn_map.assert_not_called()
+        self.assertEqual(value.dynamic_initial()['zone_servers_before_enter_game'], 0)
+        for memory, reason in ((zoning.EARLY_ZONE_MIN_AVAILABLE_MIB - 1, 'low_memory'), (None, 'available_memory_unknown')):
+            with self.subTest(reason=reason):
+                value, sup, _ = self.early(memory=memory)
+                value._spawn_map.assert_not_called()
+                record = value.dynamic_initial()['early_start']
+                self.assertEqual((record['started'], record['reason']), (False, reason))
+                self.assertEqual((value.maps, value.dynamic_initial()['zone_servers_before_enter_game']), ({}, 0))
+                self.ask(value, sup, 5, 9, 1)                  # Enter Game starts it the ordinary way
+                value._spawn_map.assert_called_once_with(5, cookie=9, port=7003, options=('-aggrocap', '17'))
+        value, _, _ = self.early(101)                          # the game may ask for Atlas Park 1 instead
+        value._spawn_map.assert_not_called()
+        self.assertEqual(value.dynamic_initial()['early_start']['reason'], 'instance_chosen_by_the_game')
+        value, _, _ = self.early(1)
+        value._spawn_map.assert_called_once_with(1)
+
+    def test_an_early_start_that_cannot_be_prepared_leaves_the_enter_game_path(self):
+        value, sup, _ = self.early(spawn_error=server.base.DiagnosticError('Zone world differs'))
+        record = value.dynamic_initial()['early_start']
+        self.assertEqual((record['started'], record['reason'], record['failure']),
+                         (False, 'start_failed', 'Zone world differs'))
+        self.assertEqual((value.maps, value.dynamic_initial()['zone_servers_before_enter_game']), ({}, 0))
+        self.assertEqual(self.initial_events(value), [])
+
+    def test_an_early_zone_that_dies_is_reported_to_the_game_and_can_start_again(self):
+        value, sup, _ = self.early()
+        self.ask(value, sup, 5, 9, 1)
+        process = value.maps[5]['process'].process
+        value._map_progress = Mock(side_effect=server.base.DiagnosticError('Owned zoning MapServer exited or overflowed'))
+        value.serve_external_maps(sup)
+        process.terminate.assert_called_once_with()
+        record = value.dynamic_initial()['early_start']
+        self.assertEqual((value.maps, record['ended'], record['ready']), ({}, True, False))
+        self.assertIn('exited', record['failure'])
+        self.assertEqual((sup.delinks, sup.requests[(5, 9)]['reason']), ([(5, 9)], 'early_zone_failed'))
+        self.assertEqual([status for status, _ in self.initial_events(value)], ['starting', 'not_ready'])
+        self.assertEqual(value.dynamic_initial()['zone_servers_before_enter_game'], 0)
+        # Enter Game again: a new request, started the ordinary way.
+        self.serve(value, sup, 5, 10, 2)
+        value._spawn_map.assert_called_once_with(5, cookie=10, port=7003, options=('-aggrocap', '17'))
+        # Before the game asked, a failure is only recorded (nothing to tell the game).
+        value, sup, _ = self.early()
+        value._map_progress = Mock(side_effect=server.base.DiagnosticError('Owned zoning MapServer exited or overflowed'))
+        value.serve_external_maps(sup)
+        self.assertEqual((value.maps, sup.delinks), ({}, []))
+        events = self.initial_events(value)
+        self.assertEqual([status for status, _ in events], ['not_ready'])
+        self.assertIn('it starts at Enter Game instead', events[0][1])
 
     def test_another_zone_than_the_saved_one_is_refused_even_if_it_started(self):
         value = self.dynamic()

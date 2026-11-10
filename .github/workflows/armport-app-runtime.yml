@@ -59,6 +59,11 @@ on:
         type: boolean
         required: false
         default: false
+      early_zone:
+        description: With stock_travel - the reopened character's saved zone starts beside the client (0.13.68)
+        type: boolean
+        required: false
+        default: false
       character_name:
         description: CI creates and reopens its character under this name (0.13.62 - any name the game accepts; 3-15 capital letters here)
         required: false
@@ -85,6 +90,7 @@ env:
   COH_SHARED_HEAP: ${{ inputs.shared_heap && '1' || '' }}
   EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
   COH_STOCK_TRAVEL: ${{ inputs.stock_travel && '1' || '' }}
+  COH_EARLY_ZONE: ${{ inputs.early_zone && '1' || '' }}
   ARMPORT_CI_CHARACTER_NAME: ${{ inputs.character_name || 'THORHERO' }}
 
 jobs:

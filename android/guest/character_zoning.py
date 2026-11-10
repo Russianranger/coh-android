@@ -66,6 +66,12 @@ STOCK_PROBE_QUERY_LIMIT = 140
 # "Under no circumstances should characters be transported to Atlas Park
 # unless they exist in that zone already").
 DYNAMIC_INITIAL_POLICY = 'character_zone_started_by_dbserver_request_at_enter_game_v2'
+# 0.13.68: the saved character's own zone may start while the client starts (one zone
+# server, never two; never another zone). Thor 0.13.66: the zone took 113 s to prepare
+# and 227 s to start, all of it after Enter Game.
+EARLY_ZONE_ENV = 'COH_EARLY_ZONE'
+EARLY_ZONE_POLICY = 'saved_zone_started_beside_the_client_single_zone_server_v1'
+EARLY_ZONE_MIN_AVAILABLE_MIB = PRESTART_MIN_AVAILABLE_MIB
 # Display names for the static zones the shared zone tree serves (zone_index).
 ZONE_DISPLAY_NAMES = {
     1: 'Atlas Park', 3: 'Cimerora', 4: 'Midnighter Club', 5: "King's Row", 6: 'Steel Canyon',
@@ -1137,10 +1143,16 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             # The start failed or ran out of time; the game told the client.
             attempts[-1].update(ended_monotonic=now, ended_utc_ms=now_ms, outcome='not_ready')
             self.initial_zone_event('not_ready', attempts[-1]['map_id'])
-        target = next((map_id for map_id, owned in self.maps.items() if owned.get('stock')), None)
+        target = next((map_id for map_id, owned in self.maps.items()
+                       if owned.get('stock') or owned.get('early')), None)
         if target is None:
             return
         owned = self.maps[target]
+        early = owned.get('early') is True
+        asked = owned.get('early_requested_monotonic')
+        if early and asked is None and owned.get('ready') is not True:
+            # Loading beside the client; the game has not asked for it yet.
+            return
         require(initial['expected_map_id'] is None or same_zone(target, initial['expected_map_id']),
                 'The game started ' + zone_name(target) + ' for ' + character.character_label() + ', not the saved '
                 + zone_name(initial['expected_map_id']) + '; nothing was moved; export this report')
@@ -1150,13 +1162,16 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if not attempts or 'ended_monotonic' in attempts[-1]:
             row = self._latest_stock_start(target)
             # The wait counts from the game's request: the zone's preparation came first.
+            # An early start is waited for only from the moment the game asked (if it has).
+            waited_from = ((now if asked is None else asked) if early else
+                           owned.get('stock_started_monotonic', owned.get('launch_monotonic', now)))
             attempts.append({'map_id': target, 'launch': launch, 'launch_utc_ms': owned.get('launch_utc_ms'),
-                             'started_monotonic': owned.get('stock_started_monotonic',
-                                                            owned.get('launch_monotonic', now)),
-                             'requested_utc_ms': None if row is None else row.get('requested_utc_ms')})
+                             'started_monotonic': waited_from,
+                             'requested_utc_ms': (owned.get('early_requested_utc_ms') if early
+                                                  else None if row is None else row.get('requested_utc_ms'))})
             del attempts[:-8]
-            initial.update(requested=True, started=True, map_id=target, map_name=zone_name(target),
-                           started_utc_ms=owned.get('launch_utc_ms'))
+            initial.update(requested=not early or asked is not None, started=True, map_id=target,
+                           map_name=zone_name(target), started_utc_ms=owned.get('launch_utc_ms'))
             self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
         if owned.get('ready') is not True:
             return
@@ -1181,12 +1196,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         startup = self.zoning_report.get('saved_startup')
         if startup is not None:
             startup.update(native_ready_verified=True, native_maps_started=sorted(self.maps))
-        self.initial_zone_event('ready', target)
+        self.initial_zone_event('ready', target, key='ready_early' if early and asked is None else None)
         self.sample_startup_observation(force=True)
 
     INITIAL_ZONE_MESSAGES = {
         'starting': 'Starting {zone} for {who}. The game screen can stay still for a few minutes until it is ready.',
         'ready': '{zone} is ready; {who} is entering it.',
+        'ready_early': '{zone} is ready for {who}; Enter Game goes straight in.',
+        'early_failed': '{zone} could not be started ahead of time ({reason}); it starts at Enter Game instead.',
         'not_ready': '{zone} did not start in time and the game reported it. Press Enter Game again, or export the report.',
         'failed': '{zone} could not be started ({reason}). The game reported it and nothing was moved; '
                   'export this report.',
@@ -1196,13 +1213,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                            'The new character never entered the game: Resume first character creation removes '
                            'it so you can create it again.'}
 
-    def initial_zone_event(self, status, map_id, *, failure=None):
+    def initial_zone_event(self, status, map_id, *, failure=None, key=None):
         """The app shows this while the client waits for the zone (its screen does not move).
 
         A start that failed is sent as not_ready (the app then clears the
         starting line and returns the wait to the creator) with its reason.
         """
-        key = status if failure is None else 'failed' if getattr(self, 'requires_saved_character', True) else 'failed_creation'
+        if key is None:
+            key = status if failure is None else 'failed' if getattr(self, 'requires_saved_character', True) else 'failed_creation'
         fields = {} if failure is None else {'failure': failure}
         self.ctx.event('character_initial_zone', format=1, session_id=self.owner.args.session_id, status=status,
                        map_id=map_id, map_name=zone_name(map_id), generated_utc_ms=int(time.time() * 1000),
@@ -1516,6 +1534,146 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.ctx.passed(map_ready=False, map_id=expected, zone_servers_started=0,
                         initial_zone='started_by_the_game_at_enter_game', policy=DYNAMIC_INITIAL_POLICY)
         self.sample_startup_observation(force=True)
+
+    def start_early_zone(self):
+        """Called once, when the client's own inputs are installed and before the client starts.
+
+        Thor 0.13.66: the map stage (local_atlas_startup) runs before the client's install
+        steps (client_visual_assets, client_all_zone_assets, client_all_zone_audio), and the
+        shared zone tree mirrors the client worktree those steps complete. A zone tree that
+        cannot be prepared is latched for the session, so nothing is prepared before them.
+        """
+        initial = self.dynamic_initial()
+        if initial is None or 'early_start' in initial or not self.initial_zone_pending():
+            return None
+        expected = initial['expected_map_id']
+        record = self.begin_early_zone(expected)
+        if record['started'] is True:
+            startup = self.zoning_report.get('saved_startup')
+            if startup is not None:
+                startup['native_maps_started'] = [expected]
+            self.ctx.event('stage', status='running', map_id=expected, map_name=zone_name(expected),
+                           message=zone_name(expected) + ' is starting for ' + character.CHARACTER
+                           + ' while the game starts')
+            self.sample_startup_observation(force=True)
+        return record
+
+    def begin_early_zone(self, expected):
+        """Start the saved character's own zone now, beside the client's start (COH_EARLY_ZONE=1).
+
+        Thor 0.13.66: Ralakar's Mercy Island took 113 s to prepare and 227 s to start, all after
+        Enter Game, while the client's own start and the login had taken longer than that. The
+        zone server registers with the DbServer without a cookie, as a server started by hand
+        does (registerDbClient accepts cookie 0 for a static map); a request the game makes
+        while it loads is the session's own (external_map_supervisor: session_flow).
+
+        Only the saved zone, only one zone server, and only with enough free memory: 0.13.57
+        started a second zone beside the client and Android's low-memory killer closed the app.
+        Anything that stops the early start leaves the 0.13.59 path: the zone starts at Enter Game.
+        """
+        initial = self.dynamic_initial()
+        record = initial['early_start'] = {'format': 1, 'policy': EARLY_ZONE_POLICY, 'map_id': expected,
+            'requested': os.environ.get(EARLY_ZONE_ENV) == '1', 'started': False, 'reason': None,
+            'available_memory_mib': available_memory_mib(),
+            'minimum_available_memory_mib': EARLY_ZONE_MIN_AVAILABLE_MIB}
+        reason = None
+        if record['requested'] is not True:
+            reason = 'not_requested'
+        elif expected is None:
+            reason = 'new_character_zone_unknown'
+        elif self.maps:
+            reason = 'a_zone_server_is_already_running'
+        elif any(other < expected and same_zone(other, expected) for other in set(MAPS) | set(zone_index.ZONES)):
+            # Atlas Park 101: the game picks the instance at Enter Game (it may ask for 1).
+            reason = 'instance_chosen_by_the_game'
+        elif self.zone_tree_for(expected) is None:
+            reason = 'zone_not_served'
+        elif record['available_memory_mib'] is None:
+            reason = 'available_memory_unknown'
+        elif record['available_memory_mib'] < EARLY_ZONE_MIN_AVAILABLE_MIB:
+            reason = 'low_memory'
+        if reason is not None:
+            record['reason'] = reason
+            return record
+        started = time.monotonic()
+        try:
+            if self.zone_tree_for(expected) == 'zones':
+                register_zone(expected)
+            self._spawn_map(expected)
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError) as failure:
+            owned = self.maps.pop(expected, None)
+            if owned is not None and owned['process'].process.poll() is None:
+                owned['process'].process.terminate()
+            record.update(reason='start_failed', failure=str(failure)[:200],
+                          preparation_seconds=round(time.monotonic() - started, 3))
+            return record
+        owned = self.maps[expected]
+        owned.update(early=True, port=MAPS[expected]['port'], early_requested_monotonic=None)
+        record.update(started=True, started_utc_ms=owned['launch_utc_ms'], port=owned['port'],
+                      preparation_seconds=round(owned['launch_monotonic'] - started, 3),
+                      started_monotonic=owned['launch_monotonic'],
+                      deadline=owned['launch_monotonic'] + zone_travel.START_SECONDS, ready=False)
+        initial['zone_servers_before_enter_game'] = 1
+        return record
+
+    def _tick_early_zone(self, supervisor):
+        """Follow the early zone server: the game's request for it, its first tick, or its failure."""
+        initial = self.dynamic_initial()
+        record = None if initial is None else initial.get('early_start')
+        if record is None or record.get('started') is not True or record.get('ended') is True:
+            return
+        map_id = record['map_id']
+        owned = self.maps.get(map_id)
+        if owned is None or owned.get('early') is not True:
+            record['ended'] = True
+            return
+        now, now_ms = time.monotonic(), int(time.time() * 1000)
+        asked = [(key, entry) for key, entry in supervisor.requests.items()
+                 if key[0] == map_id and entry.get('decision') == 'session_flow']
+        if asked and owned.get('early_requested_monotonic') is None:
+            owned.update(early_requested_monotonic=now, early_requested_utc_ms=asked[0][1].get('seen_utc_ms', now_ms))
+            record.update(requested_by_the_game_utc_ms=owned['early_requested_utc_ms'],
+                          requested_after_seconds=round(now - record['started_monotonic'], 3))
+            if owned.get('ready') is not True:
+                self.initial_zone_event('starting', map_id)
+        if owned.get('ready') is True:
+            if self.initial_zone_pending() is not True:
+                record['ended'] = True
+            return
+        failure = None
+        try:
+            if self.live_progress(self._map_progress(map_id)):
+                owned['ready'] = True
+                record.update(ready=True, ready_utc_ms=now_ms, ready_seconds=round(now - record['started_monotonic'], 3),
+                              ready_before_the_game_asked=owned.get('early_requested_monotonic') is None,
+                              available_memory_mib_at_ready=available_memory_mib())
+                return
+            if now >= record['deadline']:
+                failure = 'not ready within %d s' % zone_travel.START_SECONDS
+        except base.DiagnosticError as error:
+            if isinstance(error, base.Cancelled):
+                raise
+            failure = str(error)
+        if failure is None:
+            return
+        # The early server is gone: the game is told about any request it made for it, and the
+        # next Enter Game starts the zone the ordinary way.
+        self.maps.pop(map_id, None)
+        if owned['process'].process.poll() is None:
+            owned['process'].process.terminate()
+        path = owned['progress_path']
+        if path.exists() or path.is_symlink():
+            path.rename(path.with_name(path.name + '.early-stopped'))
+        for key, entry in asked:
+            if 'delink' not in entry:
+                supervisor.schedule_delink(key, entry, 'early_zone_failed')
+        record.update(ended=True, ready=False, failure=failure[:200],
+                      failed_seconds=round(now - record['started_monotonic'], 3))
+        initial['zone_servers_before_enter_game'] = 0
+        self.initial_zone_event('not_ready', map_id, failure=failure[:200],
+                                key='failed' if asked else 'early_failed')
 
     def client_startup_assets_allowed(self):
         """Only a completely prepared owned world can overlap client loading."""
@@ -2395,6 +2553,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if not self.stock['enabled']:
             return
         self.stock['decisions'] = self.zone_policy.report()['decisions']
+        self._tick_early_zone(supervisor)
         entry = supervisor.next_start()
         while entry is not None:
             try:
