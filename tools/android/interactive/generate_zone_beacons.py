@@ -124,14 +124,27 @@ def geometry_inputs(runtime, names):
     return dict(sorted(records.items()))
 
 
+NONCOLLISION_LINE = re.compile(rb'COH_ZONE_NONCOLLISION_MISSING_V1 group=([^\r\n]+)\r?\n')
+# Encounter spawn groups are spawn markers without geometry; the data lacks one of them (Rikti War
+# Zone, run 42743592550), which the shipping MapServer loads as an empty placeholder.
+NONCOLLISION_PREFIXES = ('omni/encounterspawns/', 'object_library/omni/encounterspawns/')
+
+
 def native_evidence(log, date, names):
     # Share the v8 reader / v9 CRC / 32-path parser, never an Atlas graph or pin.
     require(MAP_LINE.findall(log) == [names['map'].encode()], 'Native graph proof names another map')
     require(log.count(b'COH_ZONE_COLLISION_LOAD_V1 missing_groups=0 missing_root_models=0') == 1,
             'Fresh collision load failed or lacks missing-input refusal witness')
     require(b'Host zone collision missing' not in log, 'Native world collision input missing')
+    placeholders = sorted({value.decode('ascii') for value in NONCOLLISION_LINE.findall(log)})
+    require(len(placeholders) <= 16 and all(re.fullmatch(r'[A-Za-z0-9_./-]{1,200}', name)
+            and name.casefold().startswith(NONCOLLISION_PREFIXES) for name in placeholders),
+            'Only encounter spawn groups may load as empty placeholders')
     result = shared.native_evidence(log.replace(b'COH_ZONE_BEACON_', b'COH_ATLAS_BEACON_'), date)
-    return dict(result, missing_groups=0, missing_root_models=0, native_collision_load_verified=True)
+    result = dict(result, missing_groups=0, missing_root_models=0, native_collision_load_verified=True)
+    if placeholders:
+        result['noncollision_missing_groups'] = placeholders
+    return result
 
 
 DEFAULT_WORKERS = 3

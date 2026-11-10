@@ -113,6 +113,40 @@ print('complete portable package passed')
         with self.assertRaises(ValueError):
             host.native_evidence(LOG, struct.pack('<iII', 9, 0, 0x12345679), NAMES)
 
+    def test_only_encounter_spawn_groups_may_load_as_empty_placeholders(self):
+        # Rikti War Zone (run 42743592550): its beacons layer names an encounter group the data lacks.
+        group = b'Omni/EncounterSpawns/Universal/EG_DJ_Architect_H_Universal'
+        log = LOG + b'COH_ZONE_NONCOLLISION_MISSING_V1 group=' + group + b'\n'
+        witness = host.native_evidence(log + b'COH_ZONE_NONCOLLISION_MISSING_V1 group=' + group + b'\r\n', DATE, NAMES)
+        self.assertEqual(witness['noncollision_missing_groups'], [group.decode()])
+        self.assertEqual(witness['missing_groups'], 0)
+        self.assertNotIn('noncollision_missing_groups', host.native_evidence(LOG, DATE, NAMES))
+        for other in (b'Omni/Buildings/Tower', b'object_library/city_zones/wall', b'Omni/EncounterSpawns/../x y'):
+            with self.subTest(group=other), self.assertRaises(ValueError):
+                host.native_evidence(LOG + b'COH_ZONE_NONCOLLISION_MISSING_V1 group=' + other + b'\n', DATE, NAMES)
+        patch = (host.ROOT / host.producer.PATCH).read_text()
+        self.assertIn('static void beaconHostMissingGroup(const char* name, const char* fname)', patch)
+        self.assertIn('!strnicmp(name, "Omni/EncounterSpawns/", 21)', patch)
+        self.assertEqual(patch.count('+                        beaconHostMissingGroup(groupLoad->name, fname);'), 1)
+        self.assertEqual(patch.count('+                beaconHostMissingGroup(groupLoad->name, fname);'), 1)
+        # Missing root geometry and references stay fatal.
+        self.assertIn('FatalErrorf("Host zone collision missing root geometry %s"', patch)
+        self.assertEqual(patch.count('FatalErrorf("Host zone collision missing reference %s"'), 2)
+
+    def test_the_guest_accepts_only_encounter_placeholders(self):
+        def native(value):
+            return lambda manifest: (manifest['native'].update(noncollision_missing_groups=value),
+                                     [p['native'].update(noncollision_missing_groups=value)
+                                      for p in manifest['input_profiles'].values()])
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            complete_package(root, change=native(['Omni/EncounterSpawns/Universal/EG_DJ_Architect_H_Universal']))
+            guest.read_manifest(root / NAMES['manifest'], root / NAMES['lock'], MAP_ID)
+            for bad in ([], ['Omni/Buildings/Tower'], ['Omni/EncounterSpawns/b', 'Omni/EncounterSpawns/a'], 'Omni/EncounterSpawns/a'):
+                complete_package(root, change=native(bad))
+                with self.subTest(value=bad), self.assertRaises(ValueError):
+                    guest.read_manifest(root / NAMES['manifest'], root / NAMES['lock'], MAP_ID)
+
     def test_roles_name_the_map_and_only_proofs_verify(self):
         with unittest.mock.patch.dict(host.os.environ, {'COH_ZONE_BEACON_VERIFY_ONLY': '1', 'COH_KINGS_ROW_BEACON_VERIFY_ONLY': '1',
                                                          'COH_ATLAS_BEACON_VERIFY_ONLY': '1'}):

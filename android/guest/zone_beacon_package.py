@@ -121,6 +121,13 @@ def read_manifest(path, lock_path, map_id):
         and native.get('ground_connections', 0) > 0 and native.get('grid_blocks', 0) > 0
         and re.fullmatch('0x[0-9a-f]{8}', str(native.get('full_world_crc'))),
         'Zone native collision/CRC/graph/path proof incomplete')
+    # Only encounter spawn groups (markers, no geometry) may have loaded as empty placeholders.
+    placeholders = native.get('noncollision_missing_groups', [])
+    require(isinstance(placeholders, list) and len(placeholders) <= 16 and placeholders == sorted(set(placeholders))
+        and ('noncollision_missing_groups' not in native or placeholders)
+        and all(isinstance(name, str) and re.fullmatch(r'[A-Za-z0-9_./-]{1,200}', name)
+                and name.casefold().startswith(('omni/encounterspawns/', 'object_library/omni/encounterspawns/'))
+                for name in placeholders), 'Zone graph names a missing collision group')
     profiles = value.get('input_profiles', {})
     require(set(profiles) == set(PROFILES) and all(profiles[p] == {'native': native,
         'input_files_sha256': value['input_files_sha256']} for p in PROFILES), 'Zone native cold/reopen proofs differ')
