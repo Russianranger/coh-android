@@ -267,6 +267,28 @@ class GuestMetrics(unittest.TestCase):
             contract={'trusted_bins': {'disabled_by_default': True}})
         self.assertTrue(contract.parser_changed(build))
 
+    def test_early_zone_server_claim_is_exact_and_limited_to_the_reviewed_layer(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.spare_server_changed(build))
+        build['build_input']['patched_sha256'][contract.SPARE_HEADER] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed early zone server layer'):
+            contract.spare_server_changed(build)
+        build['build_input'].update(
+            spare_server_patch={'path': 'patches/mapserver-zone-travel/0001-spare-zone-server.patch',
+                                'sha256': contract.SPARE_PATCH},
+            contract={'spare_server': {'disabled_by_default': True, 'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.spare_server_changed(build))
+        build['build_input']['spare_server_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed early zone server layer'):
+            contract.spare_server_changed(build)
+        # The pin is the patch in this tree, and the producer's contract states the same switch.
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.spare_patch_bytes()), contract.SPARE_PATCH)
+        self.assertEqual(producer.SPARE_HEADER, contract.SPARE_HEADER)
+        self.assertIs(producer.CONTRACT['spare_server']['disabled_by_default'], True)
+        self.assertIs(producer.CONTRACT['spare_server']['gameplay_decisions_changed'], False)
+
     def test_fx_installer_binds_original_qualified_consumer_separately_from_new_pe(self):
         (self.assets/fx.PAYLOAD).write_bytes(b'fixture marker')
         target = self.runtime/fx.TARGET; target.parent.mkdir(parents=True)

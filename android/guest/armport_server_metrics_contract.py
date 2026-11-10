@@ -28,6 +28,10 @@ THOR_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
 # Opt-in ARMPORT_TRUSTED_BINS switch (patch 0120), off unless the guest sets it.
 TRUSTED_PATCH = '906433c1e6266f9ee4e6fa41e426676bdde45c9efc9df26dddadfbc2e34f6779'
 TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+# Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
+# the guest sets the variable: shared loading first, then a wait for the map id and cookie.
+SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
+SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
 GAME_ARCHIVE = 'game-package.tar.gz'
 # 0.13.52: an APK may carry the admitted Thor metrics server (with the trusted
 # bins switch) as a second archive beside the unchanged device-proven one. The
@@ -219,6 +223,7 @@ def _authenticate(path, package):
         baseline = startup.embedded_receipt(previous)['build_input']
     require(canonical(build['build_input']['baseline_receipt']) == canonical(baseline),
             'Metrics source baseline does not match retained ancestry')
+    spare_server_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -241,6 +246,27 @@ def parser_changed(build):
             and source.get('contract', {}).get('trusted_bins', {}).get('disabled_by_default') is True),
             'Metrics build changed the text parser outside the reviewed trusted-bin switch')
     return changed
+
+
+def spare_server_changed(build):
+    """True only for the reviewed default-off early zone server layer."""
+    source = build.get('build_input', {})
+    changed = SPARE_HEADER in source.get('patched_sha256', {})
+    require(not changed or (source.get('spare_server_patch') == {
+                'path': 'patches/mapserver-zone-travel/0001-spare-zone-server.patch', 'sha256': SPARE_PATCH}
+            and source.get('contract', {}).get('spare_server', {}).get('disabled_by_default') is True
+            and source['contract']['spare_server'].get('gameplay_decisions_changed') is False),
+            'Metrics build changed MapServer startup outside the reviewed early zone server layer')
+    return changed
+
+
+def spare_server_available():
+    """Whether the admitted metrics MapServer can wait for its map id and cookie."""
+    try:
+        _, build, _, _ = load_binding()
+        return spare_server_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def trusted_bins_available():
