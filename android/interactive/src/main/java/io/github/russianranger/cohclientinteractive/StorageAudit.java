@@ -187,7 +187,7 @@ public final class StorageAudit {
             add("runtime_other","Unverified runtime files and staging",false);add("downloads","Runtime download cache",true);
             add("old_reports","Older completed test reports",true);add("reports_kept","Recent and protected test reports",false);
             add("client_state","Character, server data, Wine and client caches",false);add("client_import","Imported client and server assets",false);
-            add("asset_packs","Shared asset packs and import staging",false);
+            add("asset_packs","Shared asset and navigation map packs and import staging",false);
             add("other","Other protected app files",false);
         }
         void add(String id,String label,boolean removable){tallies.put(id,new Tally(id,label,removable));}
@@ -393,7 +393,9 @@ public final class StorageAudit {
             }
         }
         String category(String path) {
-            if(path.equals("asset-packs")||path.startsWith("asset-packs/"))return "asset_packs";
+            // The navigation map pack (owner, 2026-11-09) is imported and protected like the asset pack.
+            if(path.equals("asset-packs")||path.startsWith("asset-packs/")
+                    ||path.equals("navigation-packs")||path.startsWith("navigation-packs/"))return "asset_packs";
             if(path.equals("client-import")||path.startsWith("client-import/"))return "client_import";
             if(path.equals("client/state")||path.startsWith("client/state/"))return "client_state";
             if(path.equals("client/reports")||path.startsWith("client/reports/"))return "reports_kept";

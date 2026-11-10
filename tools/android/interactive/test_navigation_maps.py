@@ -225,6 +225,8 @@ class ApkNavigationMapAdmissionTests(unittest.TestCase):
         self.assertIn('"COH_NAVIGATION_MAPS=/opt/coh-navigation"', runtime)
         self.assertIn('if (!maps.isAccepted()) {', runtime)
         self.assertIn('AssetPackStore.NAVIGATION_MAPS.id.equals(selectedPackId(selected))', runtime)
+        audit = (ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java').read_text()
+        self.assertIn('||path.equals("navigation-packs")||path.startsWith("navigation-packs/"))return "asset_packs";', audit)
         store = (ROOT / 'android/app/src/main/java/io/github/russianranger/cohdiagnostic/AssetPackStore.java').read_text()
         self.assertIn('"navigation_map_pack","runtime/navigation-maps-manifest.json",\n            "coh-navigation-maps","navigation-packs"', store)
 
