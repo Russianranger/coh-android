@@ -21,8 +21,12 @@ ROOT = Path(__file__).resolve().parents[1]
 PATCH = 'patches/zone-beacons/0001-host-only-zone-generator.patch'
 RECEIPT = 'zone-beacon-generator-build-input.json'
 MAP_ENVIRONMENT = 'COH_ZONE_BEACON_MAP'
+# All zones (owner, 2026-11-09): one map took 2 h 20 min with one worker client
+# (Mercy Island, run 42678203754). The sentry wants cpuCount + 1 clients and ends
+# any extra one, so it takes the orchestrator's owned worker count (1-8) from here.
+WORKER_ENVIRONMENT = 'COH_ZONE_BEACON_WORKERS'
 FILES = ('MapServer/src/beacon/beaconClientServer.c', 'MapServer/src/beacon/beaconServer.c',
-         'Common/group/groupfileload.c')
+         'Common/group/groupfileload.c', 'MapServer/src/beacon/beaconClient.c')
 RETAINED = tuple(name for name in atlas.RETAINED if name not in FILES)
 
 
@@ -42,6 +46,7 @@ def expected(root=ROOT):
         apply_patch(stage, patch)
         outputs = {name: atlas.progress.sha256(stage / name) for name in FILES}
     contract = dict(base['contract'], map=None, map_id=None, map_environment=MAP_ENVIRONMENT,
+                    worker_environment=WORKER_ENVIRONMENT, owned_workers='1-8, started and stopped by the orchestrator',
                     missing_group_or_root_geometry='fatal_before_acceptance',
                     fresh_process_input_profiles=['cold_world', 'reopened_world'])
     return {'format': 1, 'build_role': 'host_only_zone_beacon_generator',

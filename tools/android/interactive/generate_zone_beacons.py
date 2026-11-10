@@ -53,16 +53,23 @@ def manifest_validator():
         {'SOURCE_COMMIT', 'DATA_COMMIT', 'MAX_MANIFEST', 'MAX_GRAPH', 'MAX_INPUTS',
          'require', 'canonical', 'regular', 'pin', 'safe'}, dict(namespace))
     return kings.portable_definitions(ROOT / 'android/guest/zone_beacon_package.py',
-        {'ROLE', 'PROFILES', 'WORLDS', 'require', 'canonical', 'pin', 'names', 'input_name', 'read_manifest'},
+        {'ROLE', 'PROFILES', 'WORLDS', 'MAX_GRAPH', 'MAX_BEACONS', 'require', 'canonical', 'pin', 'names',
+         'input_name', 'read_manifest'},
         dict(namespace, atlas=atlas))
 
 
 def zone(map_id):
-    """Names of one zone whose graph the guest accepts; never Atlas Park or King's Row."""
+    """Names of one zone whose graph the guest accepts; never Atlas Park or King's Row.
+
+    Six zones' audited source graphs name sky/moon models or one encounter group
+    that the data lacks (zone_index.ZONES[...][2] False); they are not refused
+    here because the native collision load itself must still report no missing
+    group or root model before any graph is accepted.
+    """
     guest = manifest_validator()
-    require(map_id in zone_index.ZONES and map_id not in (1, 5) and zone_index.ZONES[map_id][2]
+    require(map_id in zone_index.ZONES and map_id not in (1, 5)
             and map_id in guest.WORLDS and guest.WORLDS[map_id] == zone_index.world(map_id),
-            'A shared-zone-tree static zone with a complete source graph is required')
+            'A static zone of the shared zone tree is required')
     value = guest.names(map_id)
     return dict(value, map_id=map_id, report='zone-beacons-%d-generation-report.json' % map_id)
 
@@ -127,26 +134,49 @@ def native_evidence(log, date, names):
     return dict(result, missing_groups=0, missing_root_models=0, native_collision_load_verified=True)
 
 
-def role_environment(names, verify=False):
+DEFAULT_WORKERS = 3
+MAX_WORKERS = 8
+
+
+def worker_roles(workers):
+    """The owned worker clients: 'worker', then 'worker2'... (one Mercy Island worker took 2 h 20 min)."""
+    require(type(workers) is int and 1 <= workers <= MAX_WORKERS, 'Owned worker count must be 1-8')
+    return tuple('worker' if index == 1 else 'worker%d' % index for index in range(1, workers + 1))
+
+
+def role_environment(names, verify=False, workers=None):
     env = shared.role_environment()
     env.pop('COH_ZONE_BEACON_VERIFY_ONLY', None); env.pop('COH_KINGS_ROW_BEACON_VERIFY_ONLY', None)
+    env.pop(producer.WORKER_ENVIRONMENT, None)
     env['COH_ZONE_BEACON_MAP'] = names['map']
     if verify: env['COH_ZONE_BEACON_VERIFY_ONLY'] = '1'
+    if workers is not None:
+        worker_roles(workers); env[producer.WORKER_ENVIRONMENT] = str(workers)
     return env
 
 
-def run_generation(runtime, generator, evidence, timeout, names):
+def worker_summary(evidence, workers):
+    """How much of the native work each owned worker did (blocks and beacon batches)."""
+    summary = {}
+    for role in worker_roles(workers):
+        raw = (evidence / (role + '.log')).read_bytes()
+        summary[role] = {'log_bytes': len(raw), 'blocks': raw.count(b'Processing '), 'beacon_batches': raw.count(b'Connecting ')}
+    return summary
+
+
+def run_generation(runtime, generator, evidence, timeout, names, workers=DEFAULT_WORKERS):
     common = ['-nogui', '-nopigs', '-noencrypt', '-beaconallownovodex', '-beacondatatoolsrootpath', str(runtime)]
+    client = ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity']
     roles = [('master', ['-beaconmasterserver', '-beaconrequestcachedir', str(runtime.parent / 'requests')]),
              ('server', ['-beaconserver', '127.0.0.1', '-beacononepassonly', '-beaconforcerebuild']),
-             ('sentry', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity']),
-             ('worker', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity'])]
+             ('sentry', client), *((role, client) for role in worker_roles(workers))]
+    environment = role_environment(names, workers=workers)
     processes, logs, commands = {}, {}, {}; started = time.monotonic(); failure = None
     try:
         for role, flags in roles:
             command = [str(generator), *common, *flags]; commands[role] = command
             logs[role] = (evidence / (role + '.log')).open('wb')
-            processes[role] = subprocess.Popen(command, cwd=runtime, env=role_environment(names), stdin=subprocess.DEVNULL,
+            processes[role] = subprocess.Popen(command, cwd=runtime, env=environment, stdin=subprocess.DEVNULL,
                                                stdout=logs[role], stderr=subprocess.STDOUT)
             if role in ('master', 'sentry'):
                 marker = b'BEACON MASTER SERVER RUNNING' if role == 'master' else b"I'm the sentry!!!"
@@ -155,6 +185,10 @@ def run_generation(runtime, generator, evidence, timeout, names):
                     require((evidence / (role + '.log')).stat().st_size <= shared.MAX_LOG, 'Native startup log limit')
                     require(processes[role].poll() is None and time.monotonic() < deadline, 'Native role failed: ' + role)
                     time.sleep(.5)
+                if role == 'sentry':
+                    # The native sentry names the owned count it accepts; it ends any client beyond it.
+                    require((evidence / 'sentry.log').read_bytes().count(
+                        b'COH_ZONE_BEACON_WORKERS_V1 workers=%d' % workers) == 1, 'Native sentry worker count differs')
         heartbeat = 0
         while processes['server'].poll() is None:
             require(time.monotonic() - started < timeout, 'Zone generation time bound exceeded')
@@ -233,7 +267,7 @@ def generate(args):
     require(os.name == 'nt', 'Genuine native generation requires Windows')
     require(60 <= args.timeout_seconds <= MAX_GENERATION_SECONDS and re.fullmatch('[0-9a-f]{40}', args.repository_commit),
             'Bounded exact source invocation required')
-    names = zone(args.map_id)
+    names = zone(args.map_id); worker_roles(args.workers)
     for name in ('donor_apk', 'asset_archive', 'zones_archive', 'zones_manifest', 'generator', 'build_input', 'work', 'output'):
         setattr(args, name, Path(getattr(args, name)).resolve())
     require(not args.work.exists() and not args.output.exists(), 'Fresh native owned directories required')
@@ -264,8 +298,9 @@ def generate(args):
     mirror.update(created_before_generation=True, required_geometry_installed_before_mirror=True)
     generator = runtime / 'ZoneBeaconGenerator.exe'; shutil.copyfile(args.generator, generator)
     (runtime / 'tools').mkdir(exist_ok=True)
-    started = time.monotonic(); commands = run_generation(runtime, generator, evidence, args.timeout_seconds, names)
-    generated_at = round(time.monotonic() - started, 3)
+    started = time.monotonic()
+    commands = run_generation(runtime, generator, evidence, args.timeout_seconds, names, args.workers)
+    generated_at = round(time.monotonic() - started, 3); workers = worker_summary(evidence, args.workers)
     require(all((runtime / n).is_file() for n in (names['graph'], names['date'])), 'Native graph/date absent')
     witness = native_evidence((evidence / 'server.log').read_bytes(), (runtime / names['date']).read_bytes(), names)
     profiles = {}
@@ -292,7 +327,8 @@ def generate(args):
               'generator': pin(generator), 'donor': kings.DONOR, 'archive': pin(args.output / names['archive']),
               'manifest': pin(args.output / names['manifest']), 'native': witness, 'profile_proofs': profiles,
               'commands': commands, 'cleanup_complete': True, 'owned_roles': 0,
-              'native_worker_spawning_allowed': False, 'physical_zoning_verified': False, 'cold_mirror': mirror,
+              'native_worker_spawning_allowed': False, 'owned_workers': args.workers, 'worker_work': workers,
+              'physical_zoning_verified': False, 'cold_mirror': mirror,
               'collision_leaves_installed': collision['installed'],
               'source_files': {n: pin(ROOT / n) for n in SOURCE_FILES}, 'generation_seconds': generated_at,
               'elapsed_seconds': round(time.monotonic() - started, 3)}
@@ -310,4 +346,6 @@ if __name__ == '__main__':
     parser.add_argument('--map-id', required=True, type=int)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--timeout-seconds', type=int, default=5400)
+    parser.add_argument('--workers', type=int, default=DEFAULT_WORKERS,
+                        help='Owned native worker clients (1-8); the sentry accepts exactly this many')
     generate(parser.parse_args())

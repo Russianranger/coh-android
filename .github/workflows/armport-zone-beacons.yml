@@ -1,13 +1,16 @@
 name: ArmPort zone beacon graph
 
-# One shared-zone-tree static zone's genuine native beacon graph (Mercy Island,
-# map 71, first: Thor 0.13.63 "Beacon file not loaded for map:
+# Genuine native beacon graphs for the static zones of the shared zone tree
+# (every static zone except Atlas Park and King's Row). Mercy Island (map 71)
+# first: Thor 0.13.63 "Beacon file not loaded for map:
 # maps/City_Zones/V_City_01_01/V_City_01_01.txt"; its pets and NPCs could not walk
-# to a target). The host-only generator is King's Row's with the map taken from
-# COH_ZONE_BEACON_MAP, so one compile serves every zone (generator_run_id reuses
-# it). The world is King's Row's generator world with the shared zone tree's
-# collision leaves (zone_index.COLLISION_FILES). Nothing here signs or publishes;
-# the APK workflow takes the graph from this run's artifact.
+# to a target. Every zone next (owner, 2026-11-09): one run, up to 8 map jobs at
+# once, nothing else running alongside. The host-only generator is King's Row's
+# with the map taken from COH_ZONE_BEACON_MAP and the owned worker count from
+# COH_ZONE_BEACON_WORKERS, so one compile (job `generator`) serves every map job
+# (generator_run_id reuses an earlier one). The world is King's Row's generator
+# world with the shared zone tree's collision leaves (zone_index.COLLISION_FILES).
+# Nothing here signs or publishes; each map's graph is this run's artifact.
 on:
   # Dispatch only. A workflow that exists only off the default branch is
   # dispatchable after its first run ("workflow armport-zone-beacons.yml not found
@@ -16,10 +19,14 @@ on:
   # x86/perf-round1: the Lua archive cache below belongs to that branch.
   workflow_dispatch:
     inputs:
-      map_id:
-        description: Static zone map id with a graph defined in android/guest/zone_beacon_package.py
+      map_ids:
+        description: Map ids with a graph slot in android/guest/zone_beacon_package.py, comma separated, or all
         required: true
         default: '71'
+      workers:
+        description: Owned native worker clients per map (1-8; one Mercy Island worker took 2 h 20 min)
+        required: true
+        default: '3'
       resource_run_id:
         description: Run holding coh-assets-resource-inputs (donor APK, reference archive, zone archive)
         required: true
@@ -39,14 +46,49 @@ concurrency:
   group: armport-zone-beacons
   cancel-in-progress: false
 jobs:
-  beacons:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      maps: ${{ steps.maps.outputs.maps }}
+      workers: ${{ steps.maps.outputs.workers }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Choose the maps (every one must have a graph slot) and the owned worker count
+        id: maps
+        working-directory: tools/android/interactive
+        env:
+          MAP_IDS: ${{ inputs.map_ids }}
+          WORKERS: ${{ inputs.workers }}
+        run: |
+          python3 - <<'PYCONTROL' >> "$GITHUB_OUTPUT"
+          import json, os, re
+          import generate_zone_beacons as g
+          slots = sorted(g.manifest_validator().WORLDS)
+          text = os.environ['MAP_IDS'].strip()
+          if text == 'all':
+              maps = slots
+          else:
+              assert re.fullmatch(r'[0-9]+( *, *[0-9]+)*', text), 'map_ids: comma-separated numbers or all'
+              maps = [int(value) for value in text.split(',')]
+              assert len(set(maps)) == len(maps), 'Duplicate map id'
+          for map_id in maps:
+              g.zone(map_id)
+          workers = os.environ['WORKERS'].strip()
+          assert re.fullmatch('[1-8]', workers), 'workers: 1-8'
+          g.worker_roles(int(workers))
+          print('maps=' + json.dumps(maps, separators=(',', ':')))
+          print('workers=' + workers)
+          PYCONTROL
+          cat "$GITHUB_OUTPUT"
+
+  generator:
     runs-on: windows-2025-vs2026
-    # Generation is bounded at 14400 s and each of the two proofs at 900 s; the
-    # two-process compile took about 7 minutes (run 39365299854). Hosted jobs stop at 360.
-    timeout-minutes: 355
+    # The two-process compile took about 6-7 minutes (runs 39365299854, 42678203754).
+    timeout-minutes: 90
     env:
-      # The first (push) run had no inputs; the same defaults apply.
-      MAP_ID: ${{ inputs.map_id || '71' }}
       RESOURCE_RUN_ID: ${{ inputs.resource_run_id || '38112251836' }}
       GENERATOR_RUN_ID: ${{ inputs.generator_run_id || '' }}
     steps:
@@ -56,7 +98,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Prove the portable package validation before native generation
+      - name: Prove the portable package validation before the compile
         shell: pwsh
         working-directory: tools/android/interactive
         run: |
@@ -64,18 +106,6 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Windows zone package validation fixtures failed' }
           python ../../test_pinned_lua_source.py -v
           if ($LASTEXITCODE -ne 0) { throw 'Pinned Lua source fixtures failed' }
-          python -c "import generate_zone_beacons as g; print(g.zone(int('$env:MAP_ID')))"
-          if ($LASTEXITCODE -ne 0) { throw 'No zone graph is defined for this map' }
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-      - uses: actions/download-artifact@v4
-        with:
-          name: coh-assets-resource-inputs
-          path: out/resources
-          run-id: ${{ env.RESOURCE_RUN_ID }}
-          github-token: ${{ github.token }}
       - name: Recover the exact completed zone generator compile
         if: env.GENERATOR_RUN_ID != ''
         uses: actions/download-artifact@v4
@@ -128,8 +158,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Zone host generator configure failed' }
           cmake --build out/build/vs2026 --config OptDebug --parallel 2 --target MapServer
           if ($LASTEXITCODE -ne 0) { throw 'Zone host generator compile failed' }
-      - name: Retain the completed host compile for reuse by later zones
-        if: env.GENERATOR_RUN_ID == ''
+      - name: Keep the compiled generator for this run's map jobs and later runs
         uses: actions/upload-artifact@v4
         with:
           name: coh-zone-host-generator
@@ -139,10 +168,78 @@ jobs:
             C:/zone-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.pdb
           if-no-files-found: error
           retention-days: 90
+      - name: Preserve compile diagnostics even on failure
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/zone-generator -Force | Out-Null
+          foreach ($name in @('zone-beacon-generator-build-input.json', 'out/build/vs2026/CMakeCache.txt', 'out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml')) {
+            $source = Join-Path C:/zone-bcn-src $name
+            if (Test-Path $source) { Copy-Item $source out/zone-generator/ }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-zone-generator-evidence
+          path: |
+            out/zone-lua/
+            out/zone-generator/
+          if-no-files-found: warn
+          retention-days: 90
+
+  beacons:
+    needs: [plan, generator]
+    runs-on: windows-2025-vs2026
+    name: beacons (${{ matrix.map }})
+    # Generation is bounded at 14400 s and each of the two proofs at 900 s. Hosted jobs stop at 360.
+    timeout-minutes: 355
+    strategy:
+      # Owner, 2026-11-09: one run, up to 8 map jobs at once; a failed map does not stop the others.
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        map: ${{ fromJSON(needs.plan.outputs.maps) }}
+    env:
+      MAP_ID: ${{ matrix.map }}
+      WORKERS: ${{ needs.plan.outputs.workers }}
+      RESOURCE_RUN_ID: ${{ inputs.resource_run_id || '38112251836' }}
+    steps:
+      - name: Preserve exact source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Name the map before native generation
+        shell: pwsh
+        working-directory: tools/android/interactive
+        run: |
+          python -c "import generate_zone_beacons as g; print(g.zone(int('$env:MAP_ID')))"
+          if ($LASTEXITCODE -ne 0) { throw 'No zone graph is defined for this map' }
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          path: out/resources
+          run-id: ${{ env.RESOURCE_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Take this run's compiled generator
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-zone-host-generator
+          path: C:/zone-bcn-src
+      - name: Verify the generator's source receipt before execution
+        shell: pwsh
+        run: |
+          python -c "import json,sys; sys.path.insert(0,'tools'); import prepare_zone_beacon_generator_source as p; v=json.load(open('C:/zone-bcn-src/'+p.RECEIPT)); assert v==p.expected(), 'Zone generator receipt differs'; print('receipt matches')"
+          if ($LASTEXITCODE -ne 0) { throw 'Zone generator receipt differs' }
       - name: Generate the collision-complete graph and run two fresh native CRC/readback/32-route proofs
         shell: pwsh
         run: >-
-          python tools/android/interactive/generate_zone_beacons.py --map-id $env:MAP_ID
+          python tools/android/interactive/generate_zone_beacons.py --map-id $env:MAP_ID --workers $env:WORKERS
           --donor-apk out/resources/donor.apk --asset-archive out/resources/reference.zip
           --zones-archive out/resources/zones-world-supplement.zip
           --zones-manifest out/resources/zones-world-supplement-manifest.json
@@ -165,18 +262,15 @@ jobs:
         run: |
           $report = Get-Content -Raw "out/zone-beacons/zone-beacons-$env:MAP_ID-generation-report.json" | ConvertFrom-Json
           $summary = [ordered]@{ map_id = $report.map_id; map = $report.map; native = $report.native; archive = $report.archive;
-                                 manifest = $report.manifest; generation_seconds = $report.generation_seconds; elapsed_seconds = $report.elapsed_seconds }
+                                 manifest = $report.manifest; owned_workers = $report.owned_workers; worker_work = $report.worker_work;
+                                 generation_seconds = $report.generation_seconds; elapsed_seconds = $report.elapsed_seconds }
           $line = ($summary | ConvertTo-Json -Compress -Depth 6)
-          Write-Output "::notice title=ArmPort zone beacon graph::$line"
+          Write-Output "::notice title=ArmPort zone beacon graph $env:MAP_ID::$line"
       - name: Preserve owned native diagnostics even on failure
         if: always()
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path out/zone-beacons/native-build -Force | Out-Null
-          foreach ($name in @('zone-beacon-generator-build-input.json', 'out/build/vs2026/CMakeCache.txt', 'out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml')) {
-            $source = Join-Path C:/zone-bcn-src $name
-            if (Test-Path $source) { Copy-Item $source out/zone-beacons/native-build/ }
-          }
           foreach ($tree in @('C:/zone-bcn-run/r', 'C:/zone-bcn-run/c')) {
             if (Test-Path $tree) {
               $tag = Split-Path $tree -Leaf
@@ -196,7 +290,6 @@ jobs:
         with:
           name: coh-zone-beacon-evidence-${{ env.MAP_ID }}
           path: |
-            out/zone-lua/
             out/zone-beacons/evidence/
             out/zone-beacons/native-build/
           if-no-files-found: warn

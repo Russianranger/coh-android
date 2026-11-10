@@ -157,3 +157,39 @@
              def = groupDefFuture(newname);
          }
      }
+--- a/MapServer/src/beacon/beaconClient.c
++++ b/MapServer/src/beacon/beaconClient.c
+@@ -2125,6 +2125,22 @@
+     }
+ }
+ 
++/* Host-only zone producer: the number of worker clients the orchestrator owns
++   (COH_ZONE_BEACON_WORKERS, one digit 1-8; unset means one, as for Atlas). */
++static S32 beaconHostZoneWorkerCount(void){
++    const char* value = getenv("COH_ZONE_BEACON_WORKERS");
++    
++    if(!value || !value[0]){
++        return 1;
++    }
++    if(value[1] || value[0] < '1' || value[0] > '8'){
++        FatalErrorf("COH_ZONE_BEACON_WORKERS must be one digit from 1 to 8");
++        exit(2);
++    }
++    printf("COH_ZONE_BEACON_WORKERS_V1 workers=%c\n", value[0]);
++    return value[0] - '0';
++}
++
+ static void beaconClientStartup(const char* masterServerName, const char* subServerName){
+     pktSetDebugInfo();
+     
+@@ -2189,7 +2205,9 @@
+         
+         GetSystemInfo(&si);
+ 
+-        beacon_client.cpuCount = 1; /* The orchestrator starts exactly one worker. */
++        /* The orchestrator starts and owns exactly this many workers; with
++           cpuCount + 1 desired clients the sentry neither spawns nor ends one. */
++        beacon_client.cpuCount = beaconHostZoneWorkerCount();
+         
+         consoleSetColor(COLOR_BRIGHT|COLOR_GREEN, 0);
+         printf("I'm the sentry!!!  (%d CPU%s)\n", beacon_client.cpuCount, beacon_client.cpuCount > 1 ? "s" : "");

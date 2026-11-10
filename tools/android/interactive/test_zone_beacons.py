@@ -123,11 +123,70 @@ print('complete portable package passed')
             self.assertEqual(host.role_environment(NAMES, True)['COH_ZONE_BEACON_VERIFY_ONLY'], '1')
 
     def test_only_defined_shared_tree_zones_are_accepted(self):
-        for map_id in (1, 5, 3, 0, 9999):
+        for map_id in (1, 5, 0, 2, 9999):
             with self.subTest(map_id=map_id), self.assertRaises(ValueError):
                 host.zone(map_id)
         self.assertEqual(NAMES['graph'], 'data/server/maps/city_zones/v_city_01_01/v_city_01_01.txt.v8.bcn')
         self.assertEqual(NAMES['archive'], 'zone-beacons-71.zip')
+
+    def test_every_shared_tree_zone_has_a_graph_slot(self):
+        # All zones (owner, 2026-11-09): every static zone except Atlas Park and King's Row.
+        expected = {map_id: row[1] for map_id, row in host.zone_index.ZONES.items() if map_id not in (1, 5)}
+        self.assertEqual(guest.WORLDS, expected)
+        self.assertEqual(len(guest.WORLDS), 64)
+        for map_id in (3, 14, 85, 626):
+            zone = host.zone(map_id)
+            world = host.zone_index.world(map_id)
+            self.assertEqual(zone['map'], 'maps/city_zones/%s/%s.txt' % (world, world))
+            self.assertEqual(zone['archive'], 'zone-beacons-%d.zip' % map_id)
+
+    def test_small_and_large_zone_graphs_fit_their_bounds(self):
+        def native(**change):
+            return lambda value: (value['native'].update(change), [p['native'].update(change)
+                                  for p in value['input_profiles'].values()])
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            complete_package(root, change=native(connected_beacons=40, combat_beacons=42, ground_connections=90))
+            guest.read_manifest(root / NAMES['manifest'], root / NAMES['lock'], MAP_ID)
+            for bad in (dict(connected_beacons=0), dict(ground_connections=0),
+                        dict(combat_beacons=guest.MAX_BEACONS + 1, connected_beacons=guest.MAX_BEACONS + 1)):
+                complete_package(root, change=native(**bad))
+                with self.subTest(bad=bad), self.assertRaises(ValueError):
+                    guest.read_manifest(root / NAMES['manifest'], root / NAMES['lock'], MAP_ID)
+            def size(limit):
+                return lambda value: value['files'][NAMES['graph']].update(bytes=limit)
+            complete_package(root, change=size(200 * 1024 * 1024))  # above the Atlas-sized 128 MiB bound
+            guest.read_manifest(root / NAMES['manifest'], root / NAMES['lock'], MAP_ID)
+            complete_package(root, change=size(guest.MAX_GRAPH + 1))
+            with self.assertRaises(ValueError):
+                guest.read_manifest(root / NAMES['manifest'], root / NAMES['lock'], MAP_ID)
+
+    def test_owned_worker_count_is_bounded_and_given_to_the_native_sentry(self):
+        self.assertEqual(host.worker_roles(1), ('worker',))
+        self.assertEqual(host.worker_roles(3), ('worker', 'worker2', 'worker3'))
+        for invalid in (0, 9, True, '3', 3.0):
+            with self.subTest(workers=invalid), self.assertRaises(ValueError):
+                host.worker_roles(invalid)
+        self.assertEqual(host.role_environment(NAMES, workers=3)['COH_ZONE_BEACON_WORKERS'], '3')
+        with unittest.mock.patch.dict(host.os.environ, {'COH_ZONE_BEACON_WORKERS': '7'}):
+            self.assertNotIn('COH_ZONE_BEACON_WORKERS', host.role_environment(NAMES))
+            self.assertNotIn('COH_ZONE_BEACON_WORKERS', host.role_environment(NAMES, True))
+        patch = (host.ROOT / host.producer.PATCH).read_text()
+        self.assertIn('getenv("COH_ZONE_BEACON_WORKERS")', patch)
+        self.assertIn('-        beacon_client.cpuCount = 1; /* The orchestrator starts exactly one worker. */', patch)
+        self.assertIn('+        beacon_client.cpuCount = beaconHostZoneWorkerCount();', patch)
+        self.assertIn("value[0] > '8'", patch)
+        self.assertEqual(host.producer.expected()['contract']['worker_environment'], 'COH_ZONE_BEACON_WORKERS')
+        self.assertIn('MapServer/src/beacon/beaconClient.c', host.producer.FILES)
+
+    def test_worker_summary_counts_each_workers_native_work(self):
+        with tempfile.TemporaryDirectory() as td:
+            evidence = Path(td)
+            (evidence / 'worker.log').write_bytes(b'Processing  511 legal areas\nConnecting  20: ..\nConnecting  20: .\n')
+            (evidence / 'worker2.log').write_bytes(b'Processing 1110 legal areas\n')
+            self.assertEqual(host.worker_summary(evidence, 2), {
+                'worker': {'log_bytes': 65, 'blocks': 1, 'beacon_batches': 2},
+                'worker2': {'log_bytes': 28, 'blocks': 1, 'beacon_batches': 0}})
 
     def test_runtime_lock_refuses_modified_manifest(self):
         with tempfile.TemporaryDirectory() as td:

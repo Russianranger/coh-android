@@ -22,8 +22,28 @@ import atlas_beacon_package as atlas
 ROLE = 'authentic_native_zone_beacon_graph'
 POLICY = 'native_shared_zone_tree_complete_collision_two_fresh_crc_graph_32routes_v1'
 PROFILES = ('cold_world', 'reopened_world')
-# Static zones whose graphs exist (map id: world folder, as zone_index.ZONES).
-WORLDS = {71: 'v_city_01_01'}
+# Every static zone of the shared zone tree (map id: world folder, as zone_index.ZONES
+# without Atlas Park 1 and King's Row 5, which keep their own trees and graphs).
+# Mercy Island (71) first (0.13.65); every zone next (owner, 2026-11-09).
+WORLDS = {
+    3: 'city_03_04', 4: 'coop_02_01', 6: 'city_02_01', 7: 'city_02_02', 8: 'city_03_01', 9: 'city_03_02',
+    10: 'city_04_01', 11: 'city_04_02', 12: 'hazard_01_01', 13: 'hazard_02_01', 14: 'hazard_03_01',
+    15: 'hazard_04_01', 16: 'city_06_01', 17: 'v_city_06_01', 18: 'trial_01_01', 19: 'trial_02_01',
+    20: 'trial_03_01', 21: 'trial_04_01', 22: 'trial_04_02', 23: 'trial_01_02', 24: 'city_00_01',
+    29: 'city_01_03', 36: 'p_city_00_01', 37: 'p_city_00_02', 38: 'p_city_00_03', 39: 'p_city_00_06',
+    40: 'p_city_00_05', 41: 'n_city_00_01', 42: 'p_city_00_07', 43: 'coop_06_01', 49: 'p_city_00_04',
+    51: 'p_city_00_08', 52: 'p_city_00_09', 55: 'city_06_02', 56: 'v_city_06_02', 60: 'trial_05_01',
+    61: 'city_05_01', 62: 'hazard_01_02', 63: 'hazard_01_03', 64: 'hazard_06_01', 65: 'hazard_06_02',
+    66: 'hazard_06_03', 67: 'trial_06_01', 68: 'city_02_03', 69: 'hazard_03_02', 70: 'v_city_00_01',
+    71: 'v_city_01_01', 72: 'v_city_01_02', 73: 'v_city_02_01', 74: 'v_city_03_01', 75: 'v_city_03_02',
+    76: 'v_city_04_01', 77: 'v_city_05_01', 78: 'v_pvp_02_01', 79: 'v_pvp_03_01', 80: 'v_pvp_04_01',
+    81: 'v_pvp_05_01', 82: 'city_03_03', 83: 'city_02_04', 84: 'city_02_05', 85: 'war_05_01',
+    86: 'v_trial_04_02', 87: 'v_trial_04_03', 626: 'city_01_04'}
+# A zone graph grows with its walkable area (Mercy Island: 407,225 beacons, 93,662,230
+# bytes), so the largest zones may exceed the Atlas-sized bound; small indoor zones
+# have far fewer beacons than Atlas Park. The native proofs below still apply.
+MAX_GRAPH = 512 * 1024 * 1024
+MAX_BEACONS = 4000000
 require, canonical, pin = atlas.require, atlas.canonical, atlas.pin
 
 
@@ -63,18 +83,18 @@ def read_manifest(path, lock_path, map_id):
         'Zone graph collision input identity differs')
     files = value.get('files', {})
     require(set(files) == {zone['graph'], zone['date']} and files[zone['date']].get('bytes') == 12
-        and 18 < files[zone['graph']].get('bytes', 0) <= atlas.MAX_GRAPH, 'Zone native graph file closure differs')
-    for row in [*files.values(), *inputs.values()]:
+        and 18 < files[zone['graph']].get('bytes', 0) <= MAX_GRAPH, 'Zone native graph file closure differs')
+    for row, limit in [*((row, MAX_GRAPH) for row in files.values()), *((row, atlas.MAX_GRAPH) for row in inputs.values())]:
         require(isinstance(row, dict) and set(row) == {'bytes', 'sha256'} and type(row['bytes']) is int
-            and 0 < row['bytes'] <= atlas.MAX_GRAPH and re.fullmatch('[0-9a-f]{64}', str(row['sha256'])),
+            and 0 < row['bytes'] <= limit and re.fullmatch('[0-9a-f]{64}', str(row['sha256'])),
             'Invalid zone graph payload pin')
     require(native.get('native_full_graph_readback_verified') is True
         and native.get('fresh_ordinary_world_crc_verified') is True
         and native.get('native_collision_load_verified') is True
         and native.get('missing_groups') == 0 and native.get('missing_root_models') == 0
         and native.get('native_pathfinder_successes') == 32 and native.get('date_version') == 9
-        and 1000 < native.get('connected_beacons', 0) <= native.get('combat_beacons', 0) <= 1000000
-        and native.get('ground_connections', 0) > 1000 and native.get('grid_blocks', 0) > 0
+        and 0 < native.get('connected_beacons', 0) <= native.get('combat_beacons', 0) <= MAX_BEACONS
+        and native.get('ground_connections', 0) > 0 and native.get('grid_blocks', 0) > 0
         and re.fullmatch('0x[0-9a-f]{8}', str(native.get('full_world_crc'))),
         'Zone native collision/CRC/graph/path proof incomplete')
     profiles = value.get('input_profiles', {})
@@ -136,7 +156,7 @@ def install(assets, runtime, map_id, *, context, imported_inputs_readonly):
         require(pin(input_targets[name], context) == expected, 'Zone collision input differs: ' + name); hashed += expected['bytes']
     require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed during proof')
     archive = assets / zone['archive']
-    atlas.regular(archive, 2 * atlas.MAX_GRAPH, allow_shared_source=True)
+    atlas.regular(archive, 2 * MAX_GRAPH, allow_shared_source=True)
     require(pin(archive, context) == lock['archive'], 'Zone graph archive differs from APK lock')
     installed = 0
     with zipfile.ZipFile(archive) as source:
@@ -154,7 +174,7 @@ def install(assets, runtime, map_id, *, context, imported_inputs_readonly):
                 require(version == 9 and f'0x{crc:08x}' == value['native']['full_world_crc'], 'Zone native date CRC differs')
             target = targets[name]
             if target.exists():
-                atlas.regular(target, atlas.MAX_GRAPH); require(pin(target, context) == expected, 'Preserve existing different zone graph')
+                atlas.regular(target, MAX_GRAPH); require(pin(target, context) == expected, 'Preserve existing different zone graph')
                 target.chmod(0o400)
             else: atlas.atomic_bytes(target, raw); installed += 1
     require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed before graph receipt')
