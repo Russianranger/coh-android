@@ -18,7 +18,15 @@ starts without pathing, Mercy Island included (its map moved into the pack).
 Everything else is 0.13.65: [THOR-TEST-0.13.65.md](THOR-TEST-0.13.65.md).
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.66".
 
-CI: CI_SUMMARY
+CI: zone maps from runs 42731367743, 42743592550, 42798595431, each made by
+the game's own map server code and checked fresh (world checksum, full
+read-back, 32 test routes); pack run 42808590462 published
+`coh-navigation-maps-v1.0.0`, and the downloaded zip imports with the app's
+own importer; at d8f417ea8: build 42809195810 and trusted runtime 42821819932
+passed; APK 42827583406 published 0.13.66 (sha256
+`f96b0d9b0dd35373c7dacf4bc91f4d69cd15fe8f784278ab6a0576cfb951dcc7`). CI's
+runtimes cannot start the zones that use these maps (no all-zone package
+there), so the import and the pets run first on your phone.
 
 ## Steps (update in place: no uninstall; the asset pack stays imported)
 

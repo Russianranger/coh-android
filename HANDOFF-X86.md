@@ -479,6 +479,37 @@ phone as a separate pack to import, like the asset pack.
   block edges; both graphs pass the native readback and 32-route proofs.
   Each large map job takes about 90 min including about 12 min of setup.
 - **Full run 42743592550** at 089f712d2 (61 maps: every slot but 55, 71, 72).
+- **Full run 42743592550** results: 60 of 61 maps passed in one run (8 jobs at
+  once). Rikti War Zone (85) failed: its beacons layer names an encounter spawn
+  group the data lacks. Rerun 42798595431 at 7cdf9a879 (the placeholder fix)
+  passed: 290,332 combat beacons in 2610 s, two
+  `Omni/EncounterSpawns/Universal/...` placeholders named in the witness. With
+  the pilot's 3: 64 of 64 shared-tree zones, 13,288,584 combat beacons in all.
+  Largest graph: The Chantry (66), 552,758 combat beacons. Native generation
+  summed to about 44.3 h across the jobs.
+- **Pack run 42808590462** (pack mode: runs
+  42731367743,42743592550,42798595431) published `coh-navigation-maps-v1.0.0`:
+  `COH-Navigation-Maps-1.0.0.zip` 1,440,488,085 bytes, sha256
+  527962038726a4548c7259196820ecad91aa20f07b3d9bcb66c7b1ce6ac586b5; descriptor
+  21,102 bytes, sha256
+  0f5fc5ee83df63e79c5bbf468e0c03979aa3c5f1bb85594981321960cbb9040e. The
+  downloaded zip matched GitHub's digest, passed `verify_volume` and imported
+  with the app's own `AssetPackArchive` on a JVM (accepted, no missing part);
+  the guest's `sources()` found all 64 maps in the imported objects and
+  `read_manifest` accepted each (scratchpad `verifypack.py`,
+  `guestcheck66.py`).
+- **Chain at d8f417ea8** (one chain on x86/perf-round1). Build 42809195810;
+  trusted runtime 42821819932 (1761 s, THORHERO; its app-sources job compiled
+  the changed Java). APK 42827583406 published `coh-atlas-gameplay-v0.13.66`
+  (92339798 bytes, sha256
+  f96b0d9b0dd35373c7dacf4bc91f4d69cd15fe8f784278ab6a0576cfb951dcc7, signer
+  92955353…, the same as 0.13.50-0.13.65) with
+  `navigation_maps_run_id=42808590462`; it carries the published descriptor
+  byte for byte and no zone graph; its guest files match the commit. Against
+  0.13.65's APK, only Mercy Island's graph (`zone-beacons-71*`, 42,052,244
+  compressed bytes) left and `navigation-maps-manifest.json` came in. Every
+  run passed on its first attempt; the runtime's app-sources javac printed the
+  same notes as 0.13.65's runtime 42719564293.
 - Version 0.13.66 (81); test sheet `THOR-TEST-0.13.66.md`.
 
 ## 0.13.65: Mercy Island's navigation graph (Claude, 2026-11-09)

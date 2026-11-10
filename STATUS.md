@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   turns closed the game (display update >1024 rectangles); decoder takes the U16 range. Mercy Island: no graph. HANDOFF "0.13.64".
 - 0.13.65 published (APK 42724564742; build 42705346414, runtime 42719564293 at caf52c828; graph 42678203754):
   Mercy Island navigation graph (407,100 beacons, CRC 0x086f500e) so pets/NPCs path there. HANDOFF "0.13.65".
-- 0.13.66 (81) in CI: every zone's navigation map as an importable pack (owner 2026-11-09: one run, <=8 jobs). 3 workers:
-  Mercy 4596 s vs 8413 s (pilot 42731367743: maps 55/71/72 passed); full run 42743592550 (61 maps). HANDOFF "0.13.66".
+- 0.13.66 published (APK 42827583406; build 42809195810, runtime 42821819932 at d8f417ea8): navigation map pack
+  coh-navigation-maps-v1.0.0 (64 zones; pack 42808590462; map runs 42731367743/42743592550/42798595431). HANDOFF "0.13.66".
