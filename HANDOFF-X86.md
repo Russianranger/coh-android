@@ -464,6 +464,17 @@ phone as a separate pack to import, like the asset pack.
   the same process (same inode state) are not hashed again.
 - **Tests**: `test_zone_beacons.py` (33), `test_navigation_maps.py` (11, one
   imports a built volume with the app's own `AssetPackArchive` on a JVM).
+- **Pilot run 42731367743** at f8b44fcef (x86/perf-round1, maps 55, 71, 72;
+  3 workers): one compile (generator job 00:50-01:01), then three map jobs
+  in parallel. Map 55 (`city_06_02`): 1,896 beacons, 13 s of generation, all
+  three workers took batches (45/35/35). Port Oakes (72): 411,083 combat
+  beacons, CRC 0xecd93487, 4601 s (batches 6932/6914/6919). Mercy Island (71):
+  4596 s against 8413 s with one worker (1.8x; the hosted runner's 4 vCPUs
+  also run the server), the same world CRC 0x086f500e, 407,059 combat beacons
+  against 407,225 with one worker: the split work changes a few beacons at
+  block edges; both graphs pass the native readback and 32-route proofs.
+  Each large map job takes about 90 min including about 12 min of setup.
+- **Full run 42743592550** at 089f712d2 (61 maps: every slot but 55, 71, 72).
 - Version 0.13.66 (81); test sheet `THOR-TEST-0.13.66.md`.
 
 ## 0.13.65: Mercy Island's navigation graph (Claude, 2026-11-09)
