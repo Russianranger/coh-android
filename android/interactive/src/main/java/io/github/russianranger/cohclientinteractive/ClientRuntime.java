@@ -224,6 +224,7 @@ public final class ClientRuntime {
     private String clientArchitectureRequested="arm64";
     private boolean prootFastModeRequested=false;
     private boolean prestartNextZoneRequested=false;
+    private boolean earlyZoneRequested=false;
     private boolean trustedBinsRequested=false;
     private boolean gameplay60Requested=false, gameplay60Queued=false;
     private boolean idleResidentMapsRequested=false;
@@ -434,6 +435,21 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("shared-server-memory", enabled).apply();
+    }
+    /**
+     * 0.13.68: on Reopen, start the saved character's own zone while the game starts (one zone
+     * server, and only with enough free memory). Thor 0.13.66: the zone took 113 s to prepare and
+     * 227 s to start, all after Enter Game. On by default; the guest refuses it and starts the zone
+     * at Enter Game, as before, whenever its conditions are not met.
+     */
+    public static boolean earlyZoneEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("early-saved-zone", true);
+    }
+    public static synchronized void setEarlyZoneEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("early-saved-zone", enabled).apply();
     }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
@@ -947,6 +963,7 @@ public final class ClientRuntime {
         gpuProfileRequested=gpuProfileEnabled(context);
         prootFastModeRequested=prootFastModeEnabled(context);
         prestartNextZoneRequested=prestartNextZoneEnabled(context);
+        earlyZoneRequested=earlyZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
         idleResidentMapsRequested=idleResidentMapsEnabled(context);
@@ -1018,6 +1035,7 @@ public final class ClientRuntime {
                     "COH_CLIENT_ARCH="+clientArchitectureRequested,
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
                     "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
+                    "COH_EARLY_ZONE="+(earlyZoneRequested?"1":"0"),
                     "COH_TRUSTED_BINS="+(trustedBinsRequested?"1":"0"),
                     // 0.13.67: the client starts gameplay at the 60 cap (patch 0128); 0.13.66 typed
                     // /maxfps 60 only 75 s after the world was drawn, when the connection was confirmed.
@@ -2866,7 +2884,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

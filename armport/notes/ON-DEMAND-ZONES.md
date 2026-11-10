@@ -167,6 +167,41 @@ One layer `patches/mapserver-zone-travel/0001`, default off, env-gated:
   save in the destination → reopen there.
 - Zoning events for any static map (today `identity` admits only 1/5/101).
 
+## 0.13.68: the saved zone starts beside the client; the spare layer is built (2026-11-10)
+
+Thor 0.13.66 (export 20261110-213045): Mercy Island took 113 s to prepare and
+227 s to start, all after Enter Game; the console shows every shared load
+(174 s) finishing before "Connecting to dbserver", so the design above still
+holds. Two parts, built separately:
+
+1. **Early start of the saved zone** (`COH_EARLY_ZONE=1`, app option "Start my
+   saved zone while the game starts (Reopen)", on by default; CI input
+   `early_zone`). `begin_early_zone` starts the saved character's own zone at
+   the session's map stage, before the client starts, with no cookie:
+   `registerDbClient` (DBServer/src/dbinit.c) refuses a cookie only when the
+   server sends one that differs, so a static zone started by hand registers
+   as Atlas Park and King's Row did in 0.13.50-0.13.58. A request the game
+   makes for it while it loads is the session's own (`session_flow`): nothing
+   is started twice and nothing is delinked. `_tick_early_zone` follows it:
+   ready (first completed tick), asked for by the game, or failed. A failure
+   after the game asked delinks that request, so the game reports it and the
+   next Enter Game starts the zone the ordinary way.
+   Limits: only a saved character (a new one has no zone yet), only the lowest
+   map id of a world (a hero saved in Atlas Park 101 may be sent to 1), no
+   other zone server running, and MemAvailable of at least 3072 MiB (0.13.57
+   started a second zone beside the client and Android closed the app; one
+   zone beside the client is what 0.13.50-0.13.56 ran). The report's
+   `initial_zone.early_start` gives the decision and the times.
+   This needs no MapServer change and helps only the first zone of a Reopen.
+2. **Spare layer for trips** (`patches/mapserver-zone-travel/0001`,
+   `ARMPORT_SPARE_FILE`): the wait before `connectToDbserver` described above,
+   for a zone that is not known in advance (a trip's destination, a new
+   character's starting zone, a mission). Built into the instrumented
+   MapServer and covered by the host fixture; no supervisor uses it yet. The
+   supervisor part (one spare beside the current zone, assigned at the
+   DbServer's request, a new spare after each trip) needs the 0.13.67 memory
+   trace first.
+
 ## Data every zone needs (later)
 
 - NPC pathing graphs (`.bcn`): only Atlas and King's Row have them (asset pack).
