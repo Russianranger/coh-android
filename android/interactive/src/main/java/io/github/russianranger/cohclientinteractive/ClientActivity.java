@@ -75,7 +75,7 @@ public final class ClientActivity extends Activity {
     private final Runnable hideLayer=()->{if(layerBanner!=null)layerBanner.animate().alpha(0f).setDuration(250).start();};
     private boolean bound,exporting,captureEnabled,importWaiting;
     private Button startTest,stopTest;
-    private TextView assetPackStatus;
+    private TextView assetPackStatus,navigationMapStatus;
     private boolean assetStatusChecking,assetStatusLoaded,assetStatusDirty;
     private String pendingExport,pendingAction,shownSession="";
     private long pendingStartupUiActionElapsedRealtime = -1;
@@ -128,8 +128,10 @@ public final class ClientActivity extends Activity {
         controls.addView(button("Reset options button position",()->{controlsX=1f;controlsY=0f;positionControls();saveControlsPosition();}));
         controls.addView(text("Reopen your character in the zone it was saved in; with the game's own zone travel only that zone starts, when you press Enter Game. Keep the accepted graphics settings, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
-        importAssets=button("Import asset pack part",this::chooseImport);controls.addView(importAssets);
+        importAssets=button("Import asset or map pack part",this::chooseImport);controls.addView(importAssets);
         assetPackStatus=text("Checking required asset pack…",12,false);controls.addView(assetPackStatus);
+        // Owner, 2026-11-09: every zone's navigation map, imported with the same button (optional).
+        navigationMapStatus=text("Checking navigation maps…",12,false);controls.addView(navigationMapStatus);
         controls.addView(text("Fresh install: import every ZIP part from the compatible versioned Assets release, then Set up / update runtime. Each completed part is retained; the app shows any missing parts. Keep these ZIPs for reinstalling. Future APK updates reuse compatible imported assets.",12,false));
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
         performanceGraphics.setTextColor(Color.rgb(221,234,245));performanceGraphics.setTextSize(13);
@@ -736,9 +738,10 @@ public final class ClientActivity extends Activity {
         final Context application=getApplicationContext();
         Thread worker=new Thread(()->{
             final String text=AssetPackStore.status(application);
+            final String maps=AssetPackStore.status(application,AssetPackStore.NAVIGATION_MAPS);
             runOnUiThread(()->{
                 assetStatusChecking=false;assetStatusLoaded=true;
-                if(!isDestroyed())assetPackStatus.setText(text);
+                if(!isDestroyed()){assetPackStatus.setText(text);navigationMapStatus.setText(maps);}
             });
         },"coh-asset-status");
         worker.setDaemon(true);worker.start();

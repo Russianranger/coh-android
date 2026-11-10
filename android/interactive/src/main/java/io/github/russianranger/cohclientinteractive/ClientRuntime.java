@@ -25,6 +25,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /** Runs the pinned CoH client with a persistent local PostgreSQL and DbServer profile. */
@@ -236,6 +237,8 @@ public final class ClientRuntime {
     private boolean stockTravelRequested=false;
     private ClientAudio audio;
     private JSONObject clientAudioReport;
+    /** The navigation map pack this session binds for the guest (owner, 2026-11-09), or why none is bound. */
+    private JSONObject navigationMapReport;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -783,8 +786,86 @@ public final class ClientRuntime {
                 total>0?bytes/1048576+" / "+total/1048576+" MiB":bytes>0?bytes/1048576+" MiB":phase));
     }
 
+    private AssetPackStore navigationMaps() throws Exception {
+        return new AssetPackStore(context,manifest,AssetPackStore.NAVIGATION_MAPS,this::check,(phase,bytes,total)->listener.onStage(phase,
+                total>0?bytes/1048576+" / "+total/1048576+" MiB":bytes>0?bytes/1048576+" MiB":phase));
+    }
+
+    /** The id named by a selected pack ZIP's first member (every volume starts with its descriptor), or null. */
+    private String selectedPackId(Uri selected) {
+        try (InputStream raw = context.getContentResolver().openInputStream(selected)) {
+            if (raw == null) return null;
+            ZipInputStream zip = new ZipInputStream(new BufferedInputStream(raw));
+            ZipEntry first = zip.getNextEntry();
+            if (first == null || !"asset-pack-manifest.json".equals(first.getName())) return null;
+            return new JSONObject(new String(read(zip, 1024 * 1024), StandardCharsets.UTF_8)).optString("id", null);
+        } catch (Exception unreadable) {
+            return null;
+        }
+    }
+
+    /** Owner, 2026-11-09: every zone's navigation map comes as its own pack, imported with the same button. */
+    private Result importNavigationMaps(Uri selected) throws Exception {
+        begin("import", null);
+        JSONObject report = new JSONObject();
+        boolean ready = false;
+        String success = null;
+        AssetPackStore maps = null;
+        try {
+            loadManifest(); check();
+            if (!manifest.has(AssetPackStore.NAVIGATION_MAPS.runtimeKey))
+                throw new IOException("This APK pins no navigation map pack; install the APK that names it");
+            maps = navigationMaps();
+            InputStream input = context.getContentResolver().openInputStream(selected);
+            if (input == null) throw new IOException("The selected navigation map pack could not be opened");
+            String part = maps.importVolume(input); check();
+            ready = true;
+            success = maps.isAccepted()
+                    ? "Navigation maps " + maps.version + " verified. Pets and NPCs can now walk to targets in every zone the pack covers; each map is checked against your zone world when that zone starts."
+                    : "Navigation maps " + maps.version + " part " + part + " verified. " + maps.status();
+            report.put("status", maps.isAccepted() ? "navigation_map_pack_complete" : "navigation_map_pack_part_complete")
+                    .put("passed", false).put("scope", "Verified navigation map pack import only; no game execution claimed");
+            listener.onStage("Navigation maps imported", success);
+        } catch (Exception e) {
+            error = message(e);
+            report.put("status", cancelled ? "cancelled" : "failed").put("passed", false).put("error", error);
+        } finally {
+            if (maps != null) try { report.put("navigation_map_pack", maps.receipt()); } catch (Exception ignored) {}
+            synchronized (this) { finished = true; importControl = null; }
+            endedUptime = SystemClock.uptimeMillis();
+            try { publish(report, false, false); } finally { endOperation(); }
+        }
+        return new Result(ready, latestReport, ready ? success
+                : cancelled ? "Navigation map import stopped; previously imported maps are preserved."
+                : "Navigation map import failed: " + error);
+    }
+
+    /** The imported navigation map pack's verified objects for this session, or null (recorded either way). */
+    private File navigationMapObjects() {
+        try {
+            if (manifest == null || !manifest.has(AssetPackStore.NAVIGATION_MAPS.runtimeKey)) {
+                navigationMapReport = new JSONObject().put("format", 1).put("bound", false).put("reason", "not_pinned_by_this_apk");
+                return null;
+            }
+            AssetPackStore maps = navigationMaps();
+            navigationMapReport = maps.receipt().put("bound", maps.isAccepted());
+            if (!maps.isAccepted()) {
+                navigationMapReport.put("reason", "not_imported");
+                line("Navigation maps not imported: zones other than Atlas Park and King's Row start without pathing");
+                return null;
+            }
+            return maps.objects();
+        } catch (Exception unavailable) {
+            try { navigationMapReport = new JSONObject().put("format", 1).put("bound", false).put("error", message(unavailable)); }
+            catch (Exception ignored) { navigationMapReport = null; }
+            line("Navigation maps unavailable: " + unavailable.getMessage());
+            return null;
+        }
+    }
+
     public Result importAssets(Uri selected) throws Exception {
         if (selected == null) throw new IOException("Select the required versioned asset pack ZIP first");
+        if (AssetPackStore.NAVIGATION_MAPS.id.equals(selectedPackId(selected))) return importNavigationMaps(selected);
         begin("import", null);
         JSONObject report = new JSONObject();
         boolean ready = false;
@@ -872,7 +953,7 @@ public final class ClientRuntime {
         sharedServerDataRequested=sharedServerDataEnabled(context);
         clientSkipServerFoldersRequested=clientSkipServerFoldersEnabled(context);
         clientFolderIndexRequested=clientFolderIndexEnabled(context);
-        clientAudioRequested=clientAudioEnabled(context);clientAudioReport=null;
+        clientAudioRequested=clientAudioEnabled(context);clientAudioReport=null;navigationMapReport=null;
         sharedHeapRequested=sharedHeapEnabled(context);
         stockTravelRequested=stockTravelEnabled(context);
         JSONObject report = new JSONObject();
@@ -953,6 +1034,13 @@ public final class ClientRuntime {
             if (!reopen && resumeFirstCreation) command.add("--resume-empty-profile");
             if (reopen && Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))) command.add("--startup-only");
             if (zoningEnabled()) command.add("--zoning");
+            File navigationObjects = navigationMapObjects();
+            if (navigationObjects != null) {
+                // Owner, 2026-11-09: every zone's navigation map, imported like the asset pack. The guest
+                // installs each zone's map (pinned by the APK's descriptor) when that zone starts.
+                command.addAll(command.indexOf("-w"), Arrays.asList("-b", navigationObjects.getPath() + ":/opt/coh-navigation"));
+                command.add(command.indexOf("/usr/bin/python3"), "COH_NAVIGATION_MAPS=/opt/coh-navigation");
+            }
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
             builder.environment().put("PROOT_LOADER", loader.getPath());
             builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
@@ -2774,6 +2862,7 @@ public final class ClientRuntime {
                     .put("stuck_requested", stuckRequested)
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
+                    .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
                     .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)

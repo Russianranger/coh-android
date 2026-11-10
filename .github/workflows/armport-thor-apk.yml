@@ -30,6 +30,10 @@ on:
         description: Optional successful armport-zone-beacons run (map 71) - its graph lets pets and NPCs path in Mercy Island
         required: false
         default: ''
+      navigation_maps_run_id:
+        description: Optional successful armport-zone-beacons pack run - the APK pins its navigation map pack (imported like the asset pack)
+        required: false
+        default: ''
       publish_release:
         description: Publish the signed APK as a GitHub pre-release (user-approved candidates only)
         type: boolean
@@ -50,6 +54,7 @@ env:
   SERVER_OPTION: ${{ inputs.server_option }}
   EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
   ZONE_BEACONS_RUN_ID: ${{ inputs.zone_beacons_run_id }}
+  NAVIGATION_MAPS_RUN_ID: ${{ inputs.navigation_maps_run_id }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 
@@ -166,6 +171,17 @@ jobs:
           path: ${{ runner.temp }}/zone-beacons
           run-id: ${{ env.ZONE_BEACONS_RUN_ID }}
           github-token: ${{ github.token }}
+      - name: Record the navigation map pack run
+        if: env.NAVIGATION_MAPS_RUN_ID != ''
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: gh api "repos/$GITHUB_REPOSITORY/actions/runs/$NAVIGATION_MAPS_RUN_ID" > "$RUNNER_TEMP/navigation-maps-run.json"
+      - uses: actions/download-artifact@v4
+        if: env.NAVIGATION_MAPS_RUN_ID != ''
+        with:
+          name: coh-navigation-maps
+          path: ${{ runner.temp }}/navigation-maps
+          run-id: ${{ env.NAVIGATION_MAPS_RUN_ID }}
+          github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-interactive-signing
@@ -186,6 +202,9 @@ jobs:
           fi
           if [ -n "$ZONE_BEACONS_RUN_ID" ]; then
             server_args+=(--zone-beacons "$RUNNER_TEMP/zone-beacons" --zone-beacons-run-json "$RUNNER_TEMP/zone-beacons-run.json")
+          fi
+          if [ -n "$NAVIGATION_MAPS_RUN_ID" ]; then
+            server_args+=(--navigation-maps "$RUNNER_TEMP/navigation-maps" --navigation-maps-run-json "$RUNNER_TEMP/navigation-maps-run.json")
           fi
           armport/scripts/step.sh "ArmPort Thor APK build" python3 armport/app/build_thor_apk.py \
             --donor-apk "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" \
@@ -209,6 +228,8 @@ jobs:
               keep['external_maps_dbserver'] = r['external_maps_dbserver']
           if 'zone_beacons' in r:
               keep['zone_beacons'] = r['zone_beacons']
+          if 'navigation_map_pack' in r:
+              keep['navigation_map_pack'] = r['navigation_map_pack']
           if 'server_metrics_qualification' in r:
               keep['server_metrics_qualification'] = r['server_metrics_qualification']
               keep['server_metrics_runtime_validated'] = r['server_metrics_runtime_validated']

@@ -161,5 +161,73 @@ public final class NavigationPackHost {
         self.assertEqual(result.stdout.split(), ['maps', 'true', '[]', str(descriptor['files'][archive_name]['bytes'])])
 
 
+
+class ApkNavigationMapAdmissionTests(unittest.TestCase):
+    """The APK pins only the pack's descriptor, and only from one successful pack run (stage_app_assets.navigation_maps)."""
+
+    def setUp(self):
+        import sys
+        sys.path.insert(0, str(ROOT / 'armport/app'))
+        import stage_app_assets
+        self.stage = stage_app_assets
+        self.temporary = tempfile.TemporaryDirectory(); self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        run_folder(self.root / 'runs', 1001)
+        pack.build(self.root / 'runs', [1001], self.root / 'pack', '1.0.0')
+        self.artifact = self.root / 'artifact'; self.artifact.mkdir()
+        for name in (pack.DESCRIPTOR, 'navigation-maps-build-report.json'):
+            shutil.copyfile(self.root / 'pack' / name, self.artifact / name)
+
+    def run_json(self, **change):
+        value = {'id': 42800000001, 'path': '.github/workflows/armport-zone-beacons.yml', 'status': 'completed',
+                 'conclusion': 'success', 'head_sha': 'c' * 40}
+        value.update(change)
+        path = self.root / 'pack-run.json'; path.write_text(json.dumps(value))
+        return path
+
+    def test_the_descriptor_and_its_identity_are_admitted(self):
+        payload, record = self.stage.navigation_maps(self.artifact, self.run_json())
+        raw = (self.artifact / pack.DESCRIPTOR).read_bytes()
+        self.assertEqual(payload, {pack.DESCRIPTOR: raw})
+        self.assertEqual((record['id'], record['version'], record['manifest_bytes'], record['manifest_sha256']),
+                         ('coh-navigation-maps', '1.0.0', len(raw), hashlib.sha256(raw).hexdigest()))
+        self.assertEqual((record['release_tag'], record['maps'], record['volumes']),
+                         ('coh-navigation-maps-v1.0.0', [MAP_ID], {'COH-Navigation-Maps-1.0.0.zip': 'maps'}))
+        self.assertEqual((record['pack_run_id'], record['pack_head_sha'], record['device_validated']),
+                         (42800000001, 'c' * 40, False))
+        self.assertEqual(len(record['maps_without_graph']), 63)
+
+    def test_other_runs_or_changed_artifacts_are_refused(self):
+        for change in ({'conclusion': 'failure'}, {'status': 'in_progress'}, {'path': '.github/workflows/other.yml'},
+                       {'head_sha': 'xyz'}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                self.stage.navigation_maps(self.artifact, self.run_json(**change))
+        (self.artifact / 'extra.json').write_text('{}')
+        with self.assertRaisesRegex(ValueError, 'other files'):
+            self.stage.navigation_maps(self.artifact, self.run_json())
+        (self.artifact / 'extra.json').unlink()
+        descriptor = self.artifact / pack.DESCRIPTOR
+        descriptor.write_bytes(json.dumps(json.loads(descriptor.read_bytes()), indent=1).encode())
+        with self.assertRaisesRegex(ValueError, 'not canonical'):
+            self.stage.navigation_maps(self.artifact, self.run_json())
+
+    def test_the_descriptor_stays_out_of_the_bounded_client_inventory(self):
+        source = (ROOT / 'armport/app/stage_app_assets.py').read_text()
+        self.assertIn('zone_payloads = zone_payloads + tuple(descriptor_payload)', source)
+        builder = (ROOT / 'armport/app/build_thor_apk.py').read_text()
+        self.assertIn('added_runtime | frozenset(stage_app_assets.navigation_maps(*navigation)[0])', builder)
+        workflow = (ROOT / '.github/workflows/armport-thor-apk.yml').read_text()
+        self.assertIn('--navigation-maps "$RUNNER_TEMP/navigation-maps"', workflow)
+
+    def test_the_app_binds_the_pack_only_when_imported(self):
+        runtime = (ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java').read_text()
+        self.assertIn('navigationObjects.getPath() + ":/opt/coh-navigation"', runtime)
+        self.assertIn('"COH_NAVIGATION_MAPS=/opt/coh-navigation"', runtime)
+        self.assertIn('if (!maps.isAccepted()) {', runtime)
+        self.assertIn('AssetPackStore.NAVIGATION_MAPS.id.equals(selectedPackId(selected))', runtime)
+        store = (ROOT / 'android/app/src/main/java/io/github/russianranger/cohdiagnostic/AssetPackStore.java').read_text()
+        self.assertIn('"navigation_map_pack","runtime/navigation-maps-manifest.json",\n            "coh-navigation-maps","navigation-packs"', store)
+
+
 if __name__ == '__main__':
     unittest.main()

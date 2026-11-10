@@ -225,9 +225,51 @@ def zone_beacons(directory, run_json):
     return generated, records
 
 
+NAVIGATION_MAPS_KEY = 'navigation_map_pack'
+
+
+def navigation_maps(directory, run_json):
+    """The navigation map pack's descriptor (package_navigation_maps.py) from one successful pack run.
+
+    Owner, 2026-11-09: every zone's navigation map reaches the phone as a separate
+    pack to import, like the asset pack. The APK carries only the pack's descriptor,
+    the trust root of every imported map, and records its identity; the app imports
+    and binds the pack and the guest installs each zone's map when that zone starts.
+    """
+    import sys
+    sys.path.insert(0, str(ROOT / 'tools/android/interactive'))
+    import package_navigation_maps as maps_pack
+    directory, run = Path(directory), json.loads(Path(run_json).read_text())
+    package.require(run.get('path') == ZONE_BEACONS_WORKFLOW and run.get('status') == 'completed'
+                    and run.get('conclusion') == 'success' and re.fullmatch('[0-9a-f]{40}', run.get('head_sha') or ''),
+                    'The navigation map pack is not from one successful armport-zone-beacons pack run')
+    package.require(sorted(p.name for p in directory.iterdir()) == sorted([maps_pack.DESCRIPTOR,
+                    'navigation-maps-build-report.json']), 'The navigation map artifact holds other files')
+    raw = (directory / maps_pack.DESCRIPTOR).read_bytes()
+    descriptor = maps_pack.validate_descriptor(json.loads(raw))
+    package.require(raw == maps_pack.encoded(descriptor), 'The navigation map descriptor is not canonical')
+    report = json.loads((directory / 'navigation-maps-build-report.json').read_bytes())
+    digest = hashlib.sha256(raw).hexdigest()
+    package.require(report.get('id') == maps_pack.PACK_ID and report.get('version') == descriptor['version']
+                    and report.get('descriptor') == {'bytes': len(raw), 'sha256': digest}
+                    and sorted(report.get('volumes', {}).get(name, {}).get('volume') for name in report.get('volumes', {}))
+                    == sorted(descriptor['volumes']), 'The navigation map report differs from its descriptor')
+    maps = sorted(int(m) for m in report['maps'])
+    guest = maps_pack.zone_graphs.manifest_validator()
+    package.require(maps and all(('runtime/' + guest.names(m)['archive']) in descriptor['files'] for m in maps)
+                    and len(descriptor['files']) == 2 * len(maps), 'The navigation map report names other maps')
+    record = {'format': 1, 'id': descriptor['id'], 'version': descriptor['version'], 'manifest_bytes': len(raw),
+              'manifest_sha256': digest, 'release_tag': 'coh-navigation-maps-v' + descriptor['version'],
+              'volumes': {name: row['volume'] for name, row in sorted(report['volumes'].items())},
+              'pack_run_id': run.get('id'), 'pack_head_sha': run['head_sha'], 'maps': maps,
+              'maps_without_graph': report.get('maps_without_graph', []), 'device_validated': False}
+    return {maps_pack.DESCRIPTOR: raw}, record
+
+
 def stage(source, armport, output, repository_commit, external=None, *,
           server_archive=None, server_variant=None, server_run_id=None, upstream_root=ROOT,
-          server_option=False, dbserver=None, dbserver_ci_runtime=False, zoning=False, zone_graphs=None):
+          server_option=False, dbserver=None, dbserver_ci_runtime=False, zoning=False, zone_graphs=None,
+          navigation=None):
     """external: payloads the app installs from its external asset pack (0.13.x
     apps). They are listed in the runtime manifest but not packaged; each must
     match the pack manifest's pin and is neither required on disk nor copied."""
@@ -297,6 +339,14 @@ def stage(source, armport, output, repository_commit, external=None, *,
                         'The donor already carries a zone graph payload')
         generated.update(graph_payloads)
         zone_payloads = tuple(graph_payloads)
+    navigation_record = None
+    if navigation is not None:
+        # The descriptor stays out of the bounded client inventory, as the zone graphs.
+        descriptor_payload, navigation_record = navigation_maps(*navigation)
+        package.require(not set(descriptor_payload) & (set(runtime['files']) | set(generated)),
+                        'The donor already carries a navigation map descriptor')
+        generated.update(descriptor_payload)
+        zone_payloads = zone_payloads + tuple(descriptor_payload)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
@@ -342,6 +392,8 @@ def stage(source, armport, output, repository_commit, external=None, *,
         runtime[EXTERNAL_MAPS_KEY] = dbserver_record
     if zone_records is not None:
         runtime[ZONE_BEACONS_KEY] = zone_records
+    if navigation_record is not None:
+        runtime[NAVIGATION_MAPS_KEY] = navigation_record
     (output / 'runtime-manifest.json').write_bytes(encoded(runtime))
     return runtime['armport_client']
 

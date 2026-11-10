@@ -219,6 +219,11 @@ def build(args):
         # 0.13.65: each carried zone graph adds exactly its archive, manifest and lock.
         zone_graphs = (zone_graphs, args.zone_beacons_run_json)
         added_runtime = added_runtime | frozenset(stage_app_assets.zone_beacons(*zone_graphs)[0])
+    navigation = getattr(args, 'navigation_maps', None)
+    if navigation is not None:
+        # Every zone's navigation map (owner, 2026-11-09): the APK adds only the pack's descriptor.
+        navigation = (navigation, args.navigation_maps_run_json)
+        added_runtime = added_runtime | frozenset(stage_app_assets.navigation_maps(*navigation)[0])
     require(pin(args.donor_apk) == DONOR_APK, 'Donor 0.13.36 APK bytes differ from the public release')
     require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh output required')
     for tool in (args.android_jar, args.build_tools / 'aapt2', args.build_tools / 'zipalign',
@@ -252,11 +257,14 @@ def build(args):
                             if server_qualification else None),
             server_variant='thor_certified_startup' if server_qualification else None,
             server_run_id=server_qualification['native_build_run_id'] if server_qualification else None,
-            upstream_root=baseline, server_option=server_option, dbserver=dbserver, zone_graphs=zone_graphs)
+            upstream_root=baseline, server_option=server_option, dbserver=dbserver, zone_graphs=zone_graphs,
+            navigation=navigation)
         staged_manifest = json.loads((staged / 'runtime-manifest.json').read_text())
         dbserver_record = staged_manifest.get(stage_app_assets.EXTERNAL_MAPS_KEY)
         zone_record = staged_manifest.get(stage_app_assets.ZONE_BEACONS_KEY)
         require((zone_record is not None) == (zone_graphs is not None), 'Zone graph record mismatch')
+        navigation_record = staged_manifest.get(stage_app_assets.NAVIGATION_MAPS_KEY)
+        require((navigation_record is not None) == (navigation is not None), 'Navigation map record mismatch')
         require((dbserver_record is not None) == (dbserver is not None), 'External map DbServer record mismatch')
         if server_qualification:
             require(armport['client_run_id'] == armport['data_run_id'] == server_qualification['native_build_run_id'],
@@ -360,6 +368,8 @@ def build(args):
                                                 build_run=getattr(args, 'external_maps_build_run', None))
     if zone_record is not None:
         report['zone_beacons'] = zone_record
+    if navigation_record is not None:
+        report['navigation_map_pack'] = navigation_record
     if server_qualification:
         report['server_metrics_qualification'] = server_qualification
         report['server_metrics_variant'] = 'thor_certified_startup'
@@ -393,6 +403,10 @@ def main():
                         help='Zone graph package directory (armport-zone-beacons artifact): pets and NPCs path there')
     parser.add_argument('--zone-beacons-run-json', type=Path,
                         help='The armport-zone-beacons run that generated --zone-beacons')
+    parser.add_argument('--navigation-maps', type=Path,
+                        help='Navigation map pack descriptor and report (armport-zone-beacons pack artifact)')
+    parser.add_argument('--navigation-maps-run-json', type=Path,
+                        help='The armport-zone-beacons pack run that built --navigation-maps')
     args = parser.parse_args()
     for key in ('donor_apk', 'armport', 'android_jar', 'build_tools', 'keystore', 'output'):
         setattr(args, key, getattr(args, key).absolute())
@@ -402,6 +416,11 @@ def main():
         parser.error('--external-maps-dbserver and --external-maps-run-json go together')
     if (args.zone_beacons is None) != (args.zone_beacons_run_json is None):
         parser.error('--zone-beacons and --zone-beacons-run-json go together')
+    if (args.navigation_maps is None) != (args.navigation_maps_run_json is None):
+        parser.error('--navigation-maps and --navigation-maps-run-json go together')
+    if args.navigation_maps is not None:
+        args.navigation_maps, args.navigation_maps_run_json = (args.navigation_maps.absolute(),
+                                                               args.navigation_maps_run_json.absolute())
     if args.zone_beacons is not None:
         args.zone_beacons, args.zone_beacons_run_json = args.zone_beacons.absolute(), args.zone_beacons_run_json.absolute()
     if args.external_maps_dbserver is not None:
