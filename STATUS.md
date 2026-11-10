@@ -1,7 +1,7 @@
 # x86 track integration
 
 Updated 2026-11-10 America/Chicago. Claude leads development (PR #11, issue #10).
-The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback.
+The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback. Scope: single-player only (2026-11-10).
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
 - Merge order: sampler-review-fix → startup-60s → modern-runtime-qualification → m5-thor (b7806a6bd) → performance-path docs.
