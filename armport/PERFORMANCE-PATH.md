@@ -554,6 +554,50 @@ the next phone export states the cost on the Thor itself. On the phone the
 patched PRoot is a second program in the APK behind a launch option (off); the
 default launch keeps the 0.13.36 PRoot binary.
 
+Which calls are left (2026-11-11, run 43091944698 at 22d90d987: creation and
+reopen with the ioctl switch on, sampler reading as root so Wine's own
+processes are readable; 7,640 rounds, 4,325 samples of a task stopped for
+PRoot). No sample was an ioctl. By call (ARM64 numbers from the log):
+
+| Call | Samples | Mostly from | Why PRoot stops it |
+|---|---|---|---|
+| `newfstatat` (79; glibc's `fstat` is this call with an empty path) | 966 | MapServer 473, guest Python 400, client 82 | path translation; with `-i 1000:1000` a second stop to rewrite the owner |
+| left the stop before it could be read | 1,001 | wineserver 346, Python 290, client 186, MapServer 159 | unknown |
+| `readlinkat` (78) | 475 | wineserver 429 | path translation; likely wineserver's `realpath` of each opened file, one call per path component (Wine `server/fd.c`, from memory; not traced) |
+| `accept` (202) | 371 | wineserver, in every window | peer address fix-up for Unix sockets; likely the servers polling their listening sockets, which Wine serves in wineserver (not traced) |
+| `getsockopt` (209) | 197 | MapServer 100, DbServer 72, client 25 | only `SO_PEERCRED` is rewritten (fake id) |
+| `recvmsg` (212), `sendto` (206), `recvfrom` (207) | 373 | client 295 | only netlink sockets are acted on |
+| `openat` (56), `close` (57), `getxattr` (8), `wait4` (260) | 259 | Python, MapServer | path translation; `close` for netlink and pipe bookkeeping |
+| rows below a window's top twelve | 583 | | |
+
+By program: wineserver 1,203, guest Python 914, MapServer 862, client 621,
+DbServer 97. Samples count time spent stopped, not calls, and CI's host is not
+the phone: on the Thor the ioctl share is unknown until a 0.13.69 export.
+
+Next parts of step 14, cheapest and safest first (none built yet):
+
+1. Count stops inside the patched PRoot (per call number, written at exit to a
+   file named by an environment variable), so a phone launch with the option
+   on reports exact counts instead of CI samples.
+2. `getsockopt`: stop only for `SOL_SOCKET`/`SO_PEERCRED` (an argument test in
+   the filter, exact like the ioctl list).
+3. Guest Python: the supervisor's 0.1 s loop and its `/proc` readers are the
+   second largest source of stops in CI; batch or slow what the phone does not
+   need.
+4. `sendto`, `recvfrom`, `recvmsg`, `sendmsg`: PRoot acts only on netlink
+   route sockets. Move those to descriptor numbers at or above a fixed bound
+   when they are created (PRoot already stops `socket`), and stop the four
+   calls only for descriptors at or above it.
+5. Launch without `-i 1000:1000` (the guest then sees the app's real user id,
+   which is also what every file is owned by): removes the second stop of
+   every `stat` and the id, `getsockopt` and `prctl` stops. Needs a passwd
+   entry for that id and a CI pass of PostgreSQL and Wine under it.
+6. `accept`: not stopping it leaves a Unix-socket peer's bound path
+   untranslated; nothing in this guest reads it. `fstat` by descriptor
+   (`AT_EMPTY_PATH`) needs no path work once part 5 holds.
+7. wineserver's `realpath` per opened file: a preloaded replacement that
+   remembers resolved folders, or a Wine patch.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack
