@@ -1,5 +1,12 @@
 # Thor test: COH Atlas Gameplay 0.13.68 (ARM64 client): your zone starts while the game starts
 
+> **Superseded: please test 0.13.69 instead.** After publishing I found that
+> 0.13.68's early zone start never runs with the ARM64 client (its call sat in
+> the x86 client's launch sequence; the CI run passed without a record of it).
+> 0.13.68 behaves as 0.13.67. The steps below still work, but launch A will
+> not show the change this sheet describes. Evidence: HANDOFF-X86.md,
+> "0.13.68", "Defect found after publishing".
+
 0.13.68 is 0.13.67 plus one change: on **Reopen saved character**, the zone
 your character is saved in now starts while the game itself starts, instead of
 after **Enter Game**. In your 0.13.66 session Mercy Island took 113 s to
@@ -19,10 +26,9 @@ except in launch D. It is for the next step (a zone you travel to starting in
 about a minute instead of four or five); launch D below tries it if you want.
 
 Your 0.13.67 launch (export 20261111-035325) did the one-time work and
-recorded it, so the first launch on 0.13.68 should already skip most of it
-(the install checks, the client's file list, the zone's server data). One
-thing is rebuilt once more, about 45 s: the texture list, because the client
-program is a new build.
+recorded it, so the first launch on 0.13.68 should already skip it (the
+install checks, the client's file list, the texture list, the zone's server
+data): the client program in 0.13.68 is the same build as in 0.13.67.
 
 That launch also showed where the time goes: the Linux layer's one helper
 thread, which every file lookup of every process waits for. The zone server
@@ -31,7 +37,14 @@ of those lookups, so launch B below is the measurement I most need.
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.68".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI at 42728face: build 42945013269 passed; stock-travel runtime 42955090151
+(`early_zone=true`, two trips; no early start was decided, see below); trusted
+runtime 42959924053 created and reopened a character (its interactive job took
+1873 s); APK 42963857636 published 0.13.68 (sha256
+`75272fe931a6e8d6912cf6679f92dd7d136babebee8b2404e1d541c869e6f08a`). The
+stock-travel run held no `early_start` record: the ARM64 launch never reached
+the call (fixed in aad238554 for 0.13.69, where CI requires the record). Atlas
+Park's MapServer, spawn to ready: 139.3 s stock, 98.7 s with trusted bins.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

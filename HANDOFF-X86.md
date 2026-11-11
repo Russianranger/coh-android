@@ -546,7 +546,34 @@ cookie to register; design in
   (`discover -s armport/tests`): 541 run, the same 2 local-only errors. Focused
   on the merged tree: `test_dynamic_initial_map` 22, `test_stock_travel` 15,
   `test_character_reopen_host` 16 and five more modules, 183 pass.
-- **Chain.** CHAIN68_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Defect found after publishing (2026-11-10): the early start never runs with
+  the ARM64 client.** `start_early_zone` was called only from
+  `character_creation_diagnostic.start_wine`, after that method's early return
+  for launches without `native_responsiveness_candidate`; the ARM64 launch has
+  its own `start_wine` (armport/app/armport_interactive.py) and installs the
+  client inputs itself. Evidence: the chain's stock-travel run 42955090151
+  (`early_zone=true`) passed, its guest-timings notice has no `early_zone` key
+  (written whenever `initial_zone.early_start` exists), and its zone-servers
+  notice shows map 1 started by the game's request (cookie 2, `decision:
+  start`). 0.13.68 therefore behaves as 0.13.67 on the phone. Fixed in
+  aad238554: `armport_interactive.start_wine` calls it after
+  `prepare_client_visual_inputs`, and
+  `interactive_host.require_early_zone_decision` fails a run that asked for the
+  early start and holds no decision.
+- **Chain at 42728face** (one chain on x86/perf-round1). Build 42945013269;
+  stock-travel runtime 42955090151 (`early_zone=true`, two trips; no early
+  start was decided, see below); trusted runtime 42959924053 (interactive job
+  1873 s, THORHERO; its app-sources job compiled the changed Java). Build
+  42943406481 at af208ee1c stopped in its unit tests (the certified-startup
+  source test predated the spare layer); fixed in 42728face. APK 42963857636
+  published `coh-atlas-gameplay-v0.13.68` (92356261 bytes, sha256
+  75272fe931a6e8d6912cf6679f92dd7d136babebee8b2404e1d541c869e6f08a, signer
+  92955353…, the same as 0.13.50-0.13.66); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. The
+  stock-travel run held no `early_start` record: the ARM64 launch never reached
+  the call (fixed in aad238554 for 0.13.69, where CI requires the record).
+  Atlas Park's MapServer, spawn to ready: 139.3 s stock, 98.7 s with trusted
+  bins.
 
 ## 0.13.67: launch work is not repeated; Mercy Island graph fix (Claude, 2026-11-10)
 
