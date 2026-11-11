@@ -526,6 +526,21 @@ it adds to the cost model:
 - Android's tap-to-world receipt is 72-79 s later than the client's own
   connection line; goal tracking uses the client's line.
 
+### What PRoot intercepts (2026-11-11, source and CI sampler)
+
+The pinned PRoot (termux 7266fb3e) traces more than path calls: `close`,
+`recvfrom`, `recvmsg`, `sendmsg`, `sendto`, `socket`, `clone`, `prctl`,
+`getxattr`, `wait4`; with `-i 1000:1000` also `fstat`, `getsockopt` and the id
+calls; and in Android builds every `ioctl`, entry and exit. Each traced call
+stops its thread until PRoot's one thread has served it. For this game that
+means every GPU ioctl of the renderer, every datagram a server sends or
+receives, every X11 reply, and three or four stops per opened file where one is
+needed. CI run 42964556839 (sampler): wineserver is the task most often
+stopped; `getsockopt` and `recvmsg` of the servers follow the path calls. Step
+14 (new, ahead of 10-13): a PRoot patch that does not trace these calls when
+their arguments need no fix-up, measured first with the sampler in CI, then as
+an option on the phone.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

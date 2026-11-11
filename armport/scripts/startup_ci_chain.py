@@ -96,7 +96,7 @@ class Chain:
             'data_run_id': str(build), 'server_run_id': str(build)},
             ['armport-app-client-package', 'armport-app-server-metrics'])
         apk = self.stage('armport-thor-apk.yml', {'m4_run_id': str(runtime), 'server_metrics': True},
-                         ['coh-atlas-gameplay-0.13.68-apk'])
+                         ['coh-atlas-gameplay-0.13.69-apk'])
         print(json.dumps({'source': self.sha, 'build': build, 'runtime': runtime, 'apk': apk,
                           'modern_thor_runtime_qualified': False, 'thor_60_second_target_proven': False}), flush=True)
         return build, runtime, apk

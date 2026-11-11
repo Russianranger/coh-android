@@ -414,6 +414,86 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.69: the early zone start runs on ARM64; fixes from Thor 0.13.67 (Claude, 2026-11-10)
+
+Owner, 2026-11-10 21:56 CST: "Check the logs to confirm and continue
+progressing the project to the goals i laid out before". The log is in "Thor
+test of 0.13.67" below; 0.13.68's defect is in its own section.
+
+- **Early zone start.** `armport_interactive.start_wine` calls
+  `start_early_zone` after `prepare_client_visual_inputs` (0.13.68 called it
+  only from the x86 sequence). `interactive_host.require_early_zone_decision`:
+  with the `early_zone` input a reopened session without an `early_start`
+  record, or with a refusal other than memory, fails the run
+  (`armport/tests/test_early_zone_gate.py`).
+- **Quick check before the chain.** Run 42964556839 at aad238554 with 0.13.68's
+  build 42945013269 (`early_zone=true`, `trap_sampler=true`) passed. Reopen:
+  `early_start` `started` true, preparation 1.936 s, ready 170.5 s after its
+  start; the game asked for the zone 109.8 s after the start and that request
+  was `session_flow` (the zone-servers notice lists a start only for map 101),
+  so the zone was ready 60.7 s after Enter Game (0.13.68's run 42955090151:
+  141.7 s after the request). The MapServer took 170.5 s from spawn to ready
+  beside the client's start, 139.3 s alone: the two share PRoot's tracer.
+  MemAvailable 13975 MiB at the decision, 10870 MiB at ready. Creation:
+  refused, `new_character_zone_unknown`. Both trips and the save passed; the
+  job compiled the changed Java.
+- **Stranded cache recovery.** `character_server_data_cache.proot_helper`: an
+  untraced process named `exe` whose parent is init is our PRoot's own helper
+  when its program file is the tracer's and it started no earlier than the
+  tracer; then it is not foreign. Thor 0.13.67 recorded `{"name": "exe",
+  "parent": "1", "tracer": "0"}`. Anything unreadable or different stays
+  foreign, with the check's facts in
+  `stranded_recovery_survivors[].helper_check`. Not yet seen on the phone.
+- **Animation step receipt.** `client_animation_pack` runs through
+  `receipted_step('client_animation', ...)`: pins
+  `client_animation_package.py`, the pigg, its manifest and
+  `client-runtime.zip`; bound to the import generation; leaves are the 5878
+  loose links (Thor 0.13.67: 13.6 s on every launch, before the saved zone may
+  start). `receipted_step` takes leaf paths and `bound` facts.
+- **Read-only records.** `wine_priorities.loading_samples` (up to 8, 45 s
+  apart, while a zone server loads before the character is in the world) and
+  voluntary/involuntary context switches for each program's busiest threads
+  (`busiest_threads` rows gain two numbers).
+- **Experiment, off.** App option "Draw on the game's own thread (frame rate
+  experiment)" (`client-gl-direct`, `COH_CLIENT_GL_DIRECT`):
+  `mesa_glthread=false` for the GPU renderer (`armport_gl_threads`). Thor
+  0.13.67: the game's two threads and Mesa's `gl0` and `gdrv0` at about 30%
+  each, their busy time adding up to the frame time.
+- **CI sampler.** `armport/app/trap_sampler.py`, input `trap_sampler` on
+  `armport-app-runtime`: on the host, outside PRoot, bursts of /proc reads of
+  every guest task; one `TRAP_SAMPLER_V1` line per minute in the job log with
+  task states per program and the system calls of tasks in a tracing stop.
+- **What the sampler showed (run 42964556839, 35 one-minute lines, 7471
+  rounds).** Tasks found in a tracing stop, by program and call: wineserver
+  1316 and the client 615 (their /proc `syscall` files are not readable),
+  MapServer `newfstatat` 414, guest Python `newfstatat` 388 (and 323 outside a
+  call), `getsockopt` 153 (MapServer 77, DbServer 76), `recvmsg` 134 (Xtigervnc
+  59, MapServer 40, DbServer 30), `openat` 116, `close` 72, `readlinkat` 54,
+  `wait4` 46, `getxattr` 43. The tracer was running in 60-70% of samples while
+  a MapServer loaded and 22-32% with the character in the world. wineserver,
+  one thread that every Wine process waits for, is the task most often stopped.
+- **Why those calls stop (PRoot source, pinned commit 7266fb3e,
+  `src/syscall/seccomp.c`).** Besides path calls the base filter traces `close`
+  (pipe shadow), `recvfrom`, `recvmsg`, `sendmsg`, `sendto`, `socket`, `clone`,
+  `prctl`, `getxattr`, `wait4` and, in Android builds only, every `ioctl` on
+  entry and exit (terminal and SIOCGIFINDEX fix-ups); `-i 1000:1000` (fake_id0)
+  adds `fstat`, `getsockopt`, `sendmsg` and the id calls. On the phone that
+  includes each GPU (KGSL) ioctl of the renderer, each datagram of the servers
+  and each X11 reply. CI's Linux build does not trace `ioctl`, so the phone's
+  tracer load in the world (52% of a core) is higher than CI's. A PRoot patch
+  that leaves these calls untraced where their arguments need no fix-up is the
+  next step (0.13.70); nothing in PRoot changed in 0.13.69.
+- **Local evidence.** `armport/tests` 551 pass with
+  `ARMPORT_SERVER_BASELINE_ROOT`. Interactive suite: 3304 run, 86 failures, 13
+  errors, 36 skips before the last additions, the same 99 as at 0.13.67 (`comm`
+  of the sorted lists); the modules changed afterwards (`test_launch_receipts`
+  13, `test_character_zoning_scheduler` 19, `test_client_sidebar_runtime`,
+  `test_client_controller_java`, `test_server_worktree_reuse`,
+  `test_character_zoning`) pass. Java: `javac` against the local stubs reports
+  no new kind of error; CI's app-sources job compiled it (42964556839).
+
+- **Chain.** CHAIN69_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+
 ## Thor test of 0.13.67 (user, 2026-11-10; export 20261111-035325)
 
 Owner, 21:56 CST, with exports 20261111-035325 (session) and -035317 (setup):

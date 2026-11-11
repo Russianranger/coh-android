@@ -26,15 +26,15 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   210545/220022): hero saved in King's Row; its start overlapped the client's → Android low-memory kill (reason 3, foreground).
 - 0.13.58-59 published (APKs 42329179898 at 919e23760, 42429765739 at 825bae059): saved zone at Enter Game (0126), mount
   repair; then no zone before Enter Game, only the character's own; Save survives its Enter (0127). HANDOFF "0.13.58"/"0.13.59".
-- 0.13.60-61 published (APKs 42456241853 at 81b6cdfc0, 42516615576 at bd27744ed): FX step admits the shared `-zones` tree
-  (Mercy Island start); Resume removes the unentered THORHERO; Lua fetch timeout (42488979665) fixed. HANDOFF "0.13.60"/"0.13.61".
-- 0.13.62-63 published (APKs 42546944715 at 75523980e, 42566326193 at e679031ca): Ralakar in Mercy Island; any name,
-  walking unlocked; Reopen no longer refused as station travel (check waits). HANDOFF "0.13.62"/"0.13.63".
+- 0.13.60-63 published (APKs 42456241853, 42516615576, 42546944715, 42566326193): shared `-zones` tree admitted (Mercy Island start);
+  Resume removes the unentered THORHERO; any name, walking unlocked; Reopen not refused as station travel. HANDOFF "0.13.60".."0.13.63".
 - 0.13.64-65 published (APKs 42674721584 at 4f9e8eebe, 42724564742 at caf52c828): display updates above 1024
   rectangles (fast turns closed the game); Mercy Island navigation graph (run 42678203754). HANDOFF "0.13.64"/"0.13.65".
 - 0.13.66 published (APK 42827583406; build 42809195810, runtime 42821819932 at d8f417ea8): map pack coh-navigation-maps-v1.0.0
   (64 zones). Thor 20261110-213045: pack bound, Mercy graph refused (linked inputs vs new lstat check). HANDOFF "Thor test of 0.13.66".
 - 0.13.67 published (APK 42940665672; build 42922800561, runtime 42936024060 at 0c37bef41): Mercy graph check follows the phone's file links; launch receipts, folder index
   kept across updates, cache return, 60 cap (0128). Thor 20261111-035325 (first launch): graph verified, pets path; in world 923 s, FPS mean 30; PRoot tracer 647 s CPU. HANDOFF "Thor test of 0.13.67".
-- 0.13.68 published (APK 42963857636; build 42945013269, runtime 42959924053 at 42728face): early zone start (COH_EARLY_ZONE) INERT on ARM64: its call sat in the x86 launch
-  sequence (no early_start record in 42955090151); fixed aad238554 for 0.13.69. Spare zone server built, off. HANDOFF "0.13.68".
+- 0.13.68 published (APK 42963857636 at 42728face): early zone start INERT on ARM64 (call in the x86 launch sequence; 42955090151
+  held no early_start record); spare zone server built, off. HANDOFF "0.13.68".
+- 0.13.69 (84) in CI: early start called from the ARM64 launch (aad238554), CI requires its record; helper recognition,
+  animation receipt, trap sampler, GL-direct option (off). HANDOFF "0.13.69".
