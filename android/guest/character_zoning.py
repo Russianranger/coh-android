@@ -2721,6 +2721,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         row.update(fields)
         return row
 
+    def _spare_event(self, status, spare, **fields):
+        """For the app's log and CI's trip (which waits for a warm spare before it travels)."""
+        self.ctx.event('character_spare_zone', format=1, session_id=self.owner.args.session_id, status=status,
+                       ordinal=spare['ordinal'], tree=spare['tree'], generated_utc_ms=int(time.time() * 1000),
+                       **fields)
+
     def _drop_spare(self, reason):
         spare, self.spare = self.spare, None
         if spare['process'].process.poll() is None:
@@ -2732,6 +2738,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             except OSError:
                 pass
         self._spare_row(spare, outcome='dropped', reason=reason, ended_utc_ms=int(time.time() * 1000))
+        self._spare_event('dropped', spare, reason=reason)
 
     def _spawn_spare(self, tree, runtime):
         """A zone server that loads everything zones share, then waits for its map id and cookie."""
@@ -2775,6 +2782,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'launch_utc_ms': launch_ms, 'beside_map_id': self.active_map_id,
             'available_memory_mib': available_memory_mib(), 'warm': False, 'outcome': None})
         del self.spare_report['starts'][:-SPARE_START_LIMIT]
+        self._spare_event('loading', self.spare)
 
     def _assign_spare(self, map_id, cookie):
         """Give the spare its zone: its navigation graph, then the assignment the server waits for."""
@@ -2805,6 +2813,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.map_launch_history.observe(map_id, self.maps[map_id], self.epoch)
         self._spare_row(spare, outcome='assigned', map_id=map_id, assigned_utc_ms=now_ms,
                         loaded_seconds_before_request=spare['loaded_seconds'], warm=spare['warm'])
+        self._spare_event('assigned', spare, map_id=map_id, warm=spare['warm'])
         return spare
 
     def _spare_layer_available(self):
@@ -2841,6 +2850,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     spare['warm'] = True
                     self._spare_row(spare, warm=True, warm_seconds=round(now - spare['launch_monotonic'], 3),
                                     available_memory_mib_when_warm=available_memory_mib())
+                    self._spare_event('warm', spare, warm_seconds=round(now - spare['launch_monotonic'], 3))
                 spare['waiting_scan_offset'] = len(output)
             return
         reason = self._spare_wait_reason(now)

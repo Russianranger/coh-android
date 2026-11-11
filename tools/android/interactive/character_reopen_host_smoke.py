@@ -35,6 +35,9 @@ WORLD_CACHE_POLICY = 'once_per_world_manifest_private_atlas_geobin_and_supplemen
 # like a door, tunnel or monorail does; then back to the still-running Atlas.
 STOCK_TRAVEL_MAPS = ((101, 'instance_2'), (1, 'atlas'))
 STOCK_TRAVEL_SECONDS = 900
+# 0.13.69, COH_SPARE_ZONE=1: the first trip waits (bounded) for the guest's spare zone server to
+# be warm, so the run measures a zone started from the spare. Without one it travels anyway.
+SPARE_WARM_SECONDS = 480
 
 
 def stock_travel_actions():
@@ -158,6 +161,25 @@ class StockTravelReopenInteraction(ReopenInteraction):
         super().__init__(session, evidence, finish_path)
         self.result.update(stock_travel_arrivals=[], travel_help_checks=[])
         self.travel_sent_at = None
+        self.spare_wait_started = None
+        self.spare_wait = (None if os.environ.get('COH_SPARE_ZONE') != '1' else
+                           {'waited_seconds': None, 'status_at_travel': None, 'bound_seconds': SPARE_WARM_SECONDS})
+        if self.spare_wait is not None:
+            self.result['spare_zone_wait'] = self.spare_wait
+
+    def holding_for_spare(self, events, now):
+        """True while the first trip should still wait for a warm spare zone server."""
+        wait = self.spare_wait
+        if (wait is None or wait['waited_seconds'] is not None or self.action >= len(self.ACTIONS)
+                or self.ACTIONS[self.action][2] != 'open_travel_chat_' + STOCK_TRAVEL_MAPS[0][1]):
+            return False
+        if self.spare_wait_started is None:
+            self.spare_wait_started = now
+        status = getattr(events, 'spare_status', None)
+        if status != 'warm' and now - self.spare_wait_started < SPARE_WARM_SECONDS:
+            return True
+        wait.update(waited_seconds=round(now - self.spare_wait_started, 3), status_at_travel=status)
+        return False
 
     def arrivals_needed(self):
         return sum(1 for action in self.ACTIONS[:self.action+1] if action[0] == 'arrived')
@@ -168,6 +190,10 @@ class StockTravelReopenInteraction(ReopenInteraction):
             require(self.travel_sent_at is not None and now-self.travel_sent_at < STOCK_TRAVEL_SECONDS,
                     'Zone travel to map %d did not arrive within %d seconds'
                     % (self.ACTIONS[self.action][1], STOCK_TRAVEL_SECONDS))
+            require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
+                    'Host character creation exceeded twenty-minute interaction bound')
+            return
+        if self.holding_for_spare(events, now):
             require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
                     'Host character creation exceeded twenty-minute interaction bound')
             return
@@ -219,8 +245,13 @@ class StockTravelReopenEvents(ReopenEvents):
     def __init__(self, path, session):
         super().__init__(path, session)
         self.arrivals = []
+        self.spare_status = None
 
     def consume(self, event):
+        if event.get('session_id') == self.session and event.get('type') == 'character_spare_zone':
+            if event.get('status') in ('loading', 'warm', 'assigned', 'dropped'):
+                self.spare_status = event['status']
+            return
         if (event.get('session_id') == self.session and event.get('type') == 'character_zoning'
                 and event.get('status') == 'arrived'):
             expected = STOCK_TRAVEL_MAPS[len(self.arrivals)][0] if len(self.arrivals) < len(STOCK_TRAVEL_MAPS) else None
