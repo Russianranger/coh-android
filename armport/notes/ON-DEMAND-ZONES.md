@@ -195,12 +195,28 @@ holds. Two parts, built separately:
    This needs no MapServer change and helps only the first zone of a Reopen.
 2. **Spare layer for trips** (`patches/mapserver-zone-travel/0001`,
    `ARMPORT_SPARE_FILE`): the wait before `connectToDbserver` described above,
-   for a zone that is not known in advance (a trip's destination, a new
-   character's starting zone, a mission). Built into the instrumented
-   MapServer and covered by the host fixture; no supervisor uses it yet. The
-   supervisor part (one spare beside the current zone, assigned at the
-   DbServer's request, a new spare after each trip) needs the 0.13.67 memory
-   trace first.
+   for a zone that is not known in advance (a trip's destination, a mission).
+   Built into the instrumented MapServer and covered by the host fixture.
+3. **Spare supervisor** (`COH_SPARE_ZONE=1`, app option "Keep a spare zone
+   server loaded for travel (needs Fast server start)", off by default; CI
+   input `spare_zone`). `tick_spare` starts one spare (`-map_id 0`, no cookie,
+   `ARMPORT_SPARE_FILE`) once the hero has been in a zone for 30 s, in a tree
+   that is already prepared (the shared zone tree after one of its zones has
+   run; the Atlas tree for a hero in Atlas Park), with the game options the
+   DbServer adds to every request (`-maxLevel 50 -aggrocap 17 -targetcapmode
+   1` on the Thor; remembered in `zone-request-options.json`, since the
+   DbServer builds them from its configuration) and MemAvailable of at least
+   3072 MiB. `_start_stock_map` gives a request of that tree and those
+   options to the spare: the zone's navigation graph is installed, then the
+   assignment is published, and the server registers with the request's
+   cookie; readiness, failure and the 900 s bound are the ordinary start's.
+   Any other request drops the spare and starts the ordinary way. With two
+   zone servers running (after a trip), the zone the hero left gives way to
+   the next spare only after the DbServer itself says where the hero is
+   (`stock_occupied`; the entity log lags by up to a minute). The spare's
+   ports come from the top of the range. CI's trip (Atlas Park 1 to 101)
+   waits up to 480 s for a warm spare when the input is on. Not run in CI or
+   on a phone yet; report `character_zoning.spare_zone`.
 
 ## Data every zone needs (later)
 

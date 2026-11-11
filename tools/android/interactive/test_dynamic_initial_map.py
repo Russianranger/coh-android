@@ -288,6 +288,8 @@ class DynamicInitialMapTests(unittest.TestCase):
         self.ask(value, sup, 5, 9, 1)
         entry = sup.requests[(5, 9)]
         self.assertEqual((entry['decision'], sup.delinks, value.stock['starts']), ('session_flow', [], []))
+        # The request's game options are kept for a later spare zone server (0.13.69).
+        self.assertEqual((entry['options']['kept'], value.stock_request_options), (['-aggrocap', '17'], ('-aggrocap', '17')))
         value._spawn_map.assert_called_once_with(5)            # no second server for the request
         record = value.dynamic_initial()['early_start']
         self.assertIn('requested_by_the_game_utc_ms', record)

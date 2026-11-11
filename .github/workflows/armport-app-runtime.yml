@@ -64,6 +64,11 @@ on:
         type: boolean
         required: false
         default: false
+      spare_zone:
+        description: With stock_travel and the instrumented MapServer - one pre-loaded spare zone server (0.13.69)
+        type: boolean
+        required: false
+        default: false
       character_name:
         description: CI creates and reopens its character under this name (0.13.62 - any name the game accepts; 3-15 capital letters here)
         required: false
@@ -91,6 +96,7 @@ env:
   EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
   COH_STOCK_TRAVEL: ${{ inputs.stock_travel && '1' || '' }}
   COH_EARLY_ZONE: ${{ inputs.early_zone && '1' || '' }}
+  COH_SPARE_ZONE: ${{ inputs.spare_zone && '1' || '' }}
   ARMPORT_CI_CHARACTER_NAME: ${{ inputs.character_name || 'THORHERO' }}
 
 jobs:

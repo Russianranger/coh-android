@@ -40,7 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -183,6 +183,11 @@ public final class ClientActivity extends Activity {
         earlyZone.setChecked(ClientRuntime.earlyZoneEnabled(this));
         earlyZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setEarlyZoneEnabled(this,checked));
         controls.addView(earlyZone);
+        spareZone=new CheckBox(this);spareZone.setText("Keep a spare zone server loaded for travel (needs Fast server start)");
+        spareZone.setTextColor(Color.rgb(221,234,245));spareZone.setTextSize(13);
+        spareZone.setChecked(ClientRuntime.spareZoneEnabled(this));
+        spareZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setSpareZoneEnabled(this,checked));
+        controls.addView(spareZone);
         sharedHeap=new CheckBox(this);sharedHeap.setText("Shared server memory (experiment: zone servers share game data)");
         sharedHeap.setTextColor(Color.rgb(221,234,245));sharedHeap.setTextSize(13);
         sharedHeap.setChecked(ClientRuntime.sharedHeapEnabled(this));
@@ -436,7 +441,7 @@ public final class ClientActivity extends Activity {
         state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
-        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);clientSkipServerFolders.setEnabled(idle);clientFolderIndex.setEnabled(idle);clientAudio.setEnabled(idle);sharedHeap.setEnabled(idle);stockTravel.setEnabled(idle);earlyZone.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
+        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);clientSkipServerFolders.setEnabled(idle);clientFolderIndex.setEnabled(idle);clientAudio.setEnabled(idle);sharedHeap.setEnabled(idle);stockTravel.setEnabled(idle);earlyZone.setEnabled(idle);spareZone.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}

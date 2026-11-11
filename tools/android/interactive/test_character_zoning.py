@@ -309,7 +309,7 @@ class NativeEvidenceTests(unittest.TestCase):
         source = (Path(__file__).parents[3] / 'upstream/ouroboros/MapServer/src/svr/svr_init.c').read_text()
         self.assertIn('strcmp(argv[i], "-notwostagemapxfer")==0', source)
         guest = Path(zoning.__file__).read_text() + Path(zoning.character.__file__).read_text()
-        self.assertEqual(guest.count('*self.session_map_options()'), 2)   # Atlas and every zoning spawn
+        self.assertEqual(guest.count('*self.session_map_options()'), 3)   # Atlas, every zoning spawn, the spare
 
     def test_legacy_atlas_ready_is_the_newest_after_the_launch_on_either_route(self):
         # Retained legacy MapServer (CI donor): no events contract, second-resolution log times.

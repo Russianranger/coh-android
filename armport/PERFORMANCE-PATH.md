@@ -488,7 +488,7 @@ so the launch is dominated by work that is repeated, not by work that is hard.
 | 7 | Record busiest threads, allowed CPUs, cgroup, memory every 10 s, leftover state | evidence for steps 9-12 | 0.13.67 |
 | 8 | Fast server (trusted bins) by default | CI Atlas reopen 130 to 94 s; phone unmeasured since 0.13.53 | after one phone run in 0.13.67 |
 | 9a | Start the saved zone beside the client on Reopen (no MapServer change: a static zone registers without a cookie) | est. 2 min off tap to world; with step 8, about 4.6 min | 0.13.68 (option, on by default; CI input `early_zone`) |
-| 9b | Spare zone server for trips: load the shared 174 s before the destination is known | goals 2 and 4 for cold zones | MapServer layer built (0.13.68, unused); supervisor needs the memory trace (0.13.57 was killed for memory) |
+| 9b | Spare zone server for trips: load the shared 174 s before the destination is known | goals 2 and 4 for cold zones | 0.13.68: MapServer layer and supervisor built, option off by default; not run in CI or on a phone yet |
 | 10 | Cooked PhysX cache per map | ~10 s per zone start | later |
 | 11 | Fastest core for the client's main thread | FPS headroom; none of ~200 samples ran on cpu 7 | after step 7's data |
 | 12 | Mesa 26 OpenGL layer (Zink) behind an option | FPS headroom, unmeasured | later |

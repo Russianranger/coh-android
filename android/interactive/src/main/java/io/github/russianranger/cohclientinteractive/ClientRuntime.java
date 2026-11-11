@@ -225,6 +225,7 @@ public final class ClientRuntime {
     private boolean prootFastModeRequested=false;
     private boolean prestartNextZoneRequested=false;
     private boolean earlyZoneRequested=false;
+    private boolean spareZoneRequested=false;
     private boolean trustedBinsRequested=false;
     private boolean gameplay60Requested=false, gameplay60Queued=false;
     private boolean idleResidentMapsRequested=false;
@@ -450,6 +451,20 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("early-saved-zone", enabled).apply();
+    }
+    /**
+     * 0.13.69: keep one zone server that has loaded everything zones share and waits for its zone
+     * (owner, 2026-11-05: the current zone and one spare). Needs the test server ("Fast server
+     * start") and enough free memory; off by default until it has run on a phone.
+     */
+    public static boolean spareZoneEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("spare-zone-server", false);
+    }
+    public static synchronized void setSpareZoneEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("spare-zone-server", enabled).apply();
     }
     /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
     public static boolean prestartNextZoneEnabled(Context context) {
@@ -964,6 +979,7 @@ public final class ClientRuntime {
         prootFastModeRequested=prootFastModeEnabled(context);
         prestartNextZoneRequested=prestartNextZoneEnabled(context);
         earlyZoneRequested=earlyZoneEnabled(context);
+        spareZoneRequested=spareZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
         idleResidentMapsRequested=idleResidentMapsEnabled(context);
@@ -1036,6 +1052,7 @@ public final class ClientRuntime {
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
                     "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
                     "COH_EARLY_ZONE="+(earlyZoneRequested?"1":"0"),
+                    "COH_SPARE_ZONE="+(spareZoneRequested?"1":"0"),
                     "COH_TRUSTED_BINS="+(trustedBinsRequested?"1":"0"),
                     // 0.13.67: the client starts gameplay at the 60 cap (patch 0128); 0.13.66 typed
                     // /maxfps 60 only 75 s after the world was drawn, when the connection was confirmed.
@@ -2884,7 +2901,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

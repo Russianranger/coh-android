@@ -462,6 +462,13 @@ def early_zone_requested():
     return value == '1'
 
 
+def spare_zone_requested():
+    """0.13.69: one pre-loaded zone server beside the current zone (needs stock travel and trusted bins' server)."""
+    value = os.environ.get('COH_SPARE_ZONE', '')
+    require(value in ('', '0', '1'), 'COH_SPARE_ZONE must be empty, 0 or 1')
+    return value == '1'
+
+
 def serverdata_probe_requested():
     """CI-only probe level: 1 serves scripts.loc, 2 every folder no guest proof reads,
     through a linked shared read-only runtime/serverdata tree. 0 is off."""
@@ -588,6 +595,13 @@ def guest_timing_summary(evidence):
                     'requested', 'started', 'reason', 'failure', 'preparation_seconds', 'ready', 'ready_seconds',
                     'ready_before_the_game_asked', 'requested_after_seconds', 'available_memory_mib',
                     'available_memory_mib_at_ready') if early.get(key) is not None}
+            spare = zoning.get('spare_zone') if isinstance(zoning, dict) else None
+            if isinstance(spare, dict) and spare.get('requested') is True:
+                result['spare_zone'] = {'layer_available': spare.get('layer_available'),
+                    'waiting_reason': spare.get('waiting_reason'),
+                    'starts': [{key: row.get(key) for key in ('ordinal', 'tree', 'warm', 'warm_seconds', 'outcome',
+                                'reason', 'map_id', 'loaded_seconds_before_request') if row.get(key) is not None}
+                               for row in (spare.get('starts') or [])[:4]]}
             result['shared_heap'] = next((section.get('shared_heap') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('shared_heap') is not None), None)
@@ -836,6 +850,9 @@ def main():
         if early_zone_requested():
             require(stock_travel_requested(), "The early zone start needs the game's own zone travel")
             command.insert(command.index('/usr/bin/python3'), 'COH_EARLY_ZONE=1')
+        if spare_zone_requested():
+            require(stock_travel_requested(), "The spare zone server needs the game's own zone travel")
+            command.insert(command.index('/usr/bin/python3'), 'COH_SPARE_ZONE=1')
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():

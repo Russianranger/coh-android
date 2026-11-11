@@ -342,7 +342,14 @@ class ExternalMapSupervisor:
         if self.session_owned(key[0]):
             # Never delink a map the session flow may be starting itself.
             self.counts['session_flow'] += 1
-            return self.entry(key, record, 'session_flow', reason or 'started_by_session_flow')
+            options = None
+            if record is not None and reason is None:
+                # Recorded only (0.13.69: the game options a spare zone server starts with).
+                try:
+                    options = command_options(record)
+                except RequestRefused:
+                    options = None
+            return self.entry(key, record, 'session_flow', reason or 'started_by_session_flow', options)
         options = refused = None
         if reason is None:
             try:

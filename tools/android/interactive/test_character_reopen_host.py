@@ -350,6 +350,41 @@ class CharacterReopenHostTests(unittest.TestCase):
             self.assertEqual(script.result['stock_travel_arrivals'][0]['current_map_id'], 101)
             self.assertEqual(len(script.result['travel_help_checks']), 1)
 
+    def test_with_a_spare_zone_server_the_first_trip_waits_for_it_to_be_warm_with_a_bound(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            plain = reopen.StockTravelReopenInteraction(SESSION, root, root/'finish.json')
+            self.assertIsNone(plain.spare_wait)
+            self.assertNotIn('spare_zone_wait', plain.result)
+            names = [action[2] for action in plain.ACTIONS]
+            travel = names.index('open_travel_chat_instance_2')
+            plain.action = travel
+            self.assertFalse(plain.holding_for_spare(SimpleNamespace(spare_status=None), 5.0))
+            for status, waited, expected in (('warm', 40.0, 'warm'), (None, reopen.SPARE_WARM_SECONDS, None),
+                                             ('loading', reopen.SPARE_WARM_SECONDS + 1.0, 'loading')):
+                with self.subTest(status=status), mock.patch.dict(reopen.os.environ, {'COH_SPARE_ZONE': '1'}):
+                    script = reopen.StockTravelReopenInteraction(SESSION, root, root/'finish.json')
+                    proof = SimpleNamespace(spare_status=None)
+                    script.action = travel - 1
+                    self.assertFalse(script.holding_for_spare(proof, 1.0))        # not at the trip yet
+                    script.action = travel
+                    self.assertTrue(script.holding_for_spare(proof, 10.0))
+                    proof.spare_status = 'loading'
+                    self.assertTrue(script.holding_for_spare(proof, 20.0))
+                    proof.spare_status = status
+                    self.assertFalse(script.holding_for_spare(proof, 10.0 + waited))
+                    self.assertEqual(script.result['spare_zone_wait'], {'waited_seconds': waited,
+                        'status_at_travel': expected, 'bound_seconds': reopen.SPARE_WARM_SECONDS})
+                    proof.spare_status = 'loading'                                # decided once
+                    self.assertFalse(script.holding_for_spare(proof, 11.0 + waited))
+            path = root/'events'
+            path.write_text(''.join(json.dumps(item)+'\n' for item in events()[:3] + [
+                {'type': 'character_spare_zone', 'session_id': SESSION, 'status': 'loading', 'ordinal': 1},
+                {'type': 'character_spare_zone', 'session_id': '0'*32, 'status': 'warm', 'ordinal': 1},
+                {'type': 'character_spare_zone', 'session_id': SESSION, 'status': 'unknown', 'ordinal': 1}]))
+            proof = reopen.StockTravelReopenEvents(path, SESSION); proof.poll()
+            self.assertEqual(proof.spare_status, 'loading')
+
     def test_recovery_wait_is_bounded_and_delivered_receipt_follows_final_return_release(self):
         for fail in (False, True):
             with self.subTest(fail=fail), tempfile.TemporaryDirectory() as temporary:

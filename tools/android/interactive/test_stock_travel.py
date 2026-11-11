@@ -119,6 +119,229 @@ class StockTravelTests(unittest.TestCase):
         self.assertEqual((entry['map_id'], entry['reason']), (5, 'start_failed'))
         self.assertFalse(value.stock['starts'][0]['ready'])
 
+    # ---- 0.13.69: the spare zone server -----------------------------------------------------
+
+    OPTIONS = ('-aggrocap', '17')            # what this fixture's requests carry (record())
+
+    def spare_instance(self, *, tree='zones', memory=8000):
+        value = self.instance()
+        value.owner.root = value.owner.args.state
+        value.owner.wine_env = {}
+        value.owner.args.wine = '/opt/wine/bin/wine'
+        value.runtime = value.owner.args.state
+        value.spare = None
+        value.spare_next = value.spare_room_next = 0
+        value.spare_report = {'format': 1, 'policy': zoning.SPARE_ZONE_POLICY, 'requested': True,
+                              'layer_available': True, 'starts': [], 'waiting_reason': None}
+        value.server_metrics_enabled = True
+        value.stock['enabled'] = True
+        value.creation_report['connected_on_atlas'] = True
+        value.initial_zone = None
+        value.active_since_monotonic = time.monotonic() - zoning.SPARE_SETTLE_SECONDS - 1
+        value.zone_tree_prepared = {'runtime': Path('/zones')} if tree == 'zones' else None
+        value.zone_tree_for = lambda map_id: {1: 'atlas', 101: 'atlas', 5: 'kings_row'}.get(map_id, tree if map_id == 7 else None)
+        value.maps[1]['runtime'] = Path('/atlas')
+        value.map_metrics_environment = lambda environment, runtime: dict(environment, ARMPORT_SERVER_METRICS='1')
+        value.session_map_options = lambda: ['-notwostagemapxfer']
+        value.install_zone_beacon_graph = Mock()
+        value.mark_startup_timing = Mock()
+        value.map_startup_timing = Mock(return_value=None)
+        value.begin_startup_timing = Mock(return_value=None)
+        value.stock_request_options = self.OPTIONS
+        started = []
+
+        def start(label, command, env):
+            process = SimpleNamespace(process=Mock(), overflow=False, output=bytearray())
+            process.process.poll.return_value = None
+            started.append((label, command, env, process))
+            return process
+        value.ctx.start = start
+        patches = [patch.object(zoning, 'available_memory_mib', return_value=memory),
+                   patch.object(zoning.character.game, 'check_game_port'),
+                   patch.object(zoning.character, 'mapserver_memory_arguments', return_value=['-nosharedmemory']),
+                   patch.object(zoning.character, 'LOCAL_CLIENT_LINK_OPTIONS', return_value=[]),
+                   patch.object(zoning.base, 'windows_path', side_effect=lambda path: 'Z:' + str(path))]
+        for item in patches:
+            item.start(); self.addCleanup(item.stop)
+        return value, started
+
+    def tick(self, value):
+        value.spare_next = 0
+        value.tick_spare()
+
+    def test_a_spare_loads_beside_the_current_zone_and_takes_the_next_request(self):
+        value, started = self.spare_instance()
+        self.tick(value)
+        self.assertEqual(len(started), 1)
+        label, command, env, process = started[0]
+        self.assertEqual(label, 'local-character-zoning-spare-1')
+        # No zone and no cookie yet; the request's own options; the shared tree; its own files.
+        self.assertEqual(command[command.index('-map_id') + 1], '0')
+        self.assertNotIn('-cookie', command)
+        self.assertEqual(tuple(command[-2:]), self.OPTIONS)
+        self.assertIn('--chdir=/zones', command)
+        assign = value.owner.args.state / 'character-zoning-spare-1-assign.txt'
+        self.assertEqual(env[zoning.SPARE_FILE_ENVIRONMENT], 'Z:' + str(assign))
+        self.assertEqual(env['ARMPORT_SERVER_METRICS'], '1')
+        port = value.spare['port']
+        self.assertEqual(port, zone_travel.LAST_PORT)          # the start policy hands out ports from the bottom
+        row = value.spare_report['starts'][0]
+        self.assertEqual((row['tree'], row['warm'], row['outcome'], row['beside_map_id']), ('zones', False, None, 1))
+        self.tick(value)                                      # one spare only
+        self.assertEqual(len(started), 1)
+        process.output += b'loading sequencers...done\nARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
+        self.tick(value)
+        self.assertTrue(value.spare['warm'] and row['warm'])
+        # The game asks for a zone of that tree: the spare gets it, nothing new is started.
+        sup = self.supervisor(value)
+        value._spawn_map = Mock()
+        value.live_progress = Mock(return_value=False)
+        sup.poll('\n' + supervisor.ACK + '\n' + self.publish(sup, 7, 88, 1))
+        with patch.dict(zoning.MAPS, {7: {'name': 'Zone 7', 'port': None, 'instance': 1, 'world': 'City_07',
+                                          'shared_zone_tree': True}}):
+            value.serve_external_maps(sup)
+            value._spawn_map.assert_not_called()
+            self.assertEqual(assign.read_text(), 'ARMPORT_SPARE_ASSIGN_V1 map_id=7 cookie=88\n')
+            value.install_zone_beacon_graph.assert_called_once_with(7, Path('/zones'))
+            self.assertIsNone(value.spare)
+            owned7 = value.maps[7]
+            self.assertIs(owned7['process'], process)
+            self.assertEqual((owned7['cookie'], owned7['port'], owned7['stock'], owned7['ready']), (88, port, True, False))
+            self.assertEqual(zoning.MAPS[7]['port'], port)
+            self.assertEqual((row['outcome'], row['map_id']), ('assigned', 7))
+            start = value.stock['starts'][0]
+            self.assertEqual((start['port'], start['spare']['warm'], start['spare']['ordinal']), (port, True, 1))
+            self.assertEqual(sup.requests[(7, 88)]['start']['port'], port)
+            # Readiness, failure and the deadline are the ordinary start's from here.
+            value.live_progress = Mock(return_value=True)
+            value.serve_external_maps(sup)
+            self.assertTrue(value.maps[7]['ready'])
+            # Two zone servers now: no new spare until the zone the hero left has given way.
+            self.assertEqual(len(started), 1)
+
+    def test_no_spare_until_the_session_allows_it(self):
+        cases = [(lambda v: v.spare_report.update(requested=False), None),
+                 (lambda v: v.creation_report.update(connected_on_atlas=False), 'character_not_in_the_world'),
+                 (lambda v: setattr(v, 'pending', {'to_map_id': 5}), 'a_zone_is_starting'),
+                 (lambda v: v.stock_starts.update({5: {}}), 'a_zone_is_starting'),
+                 (lambda v: (v.owner.args.state / 'character-logout.json').write_text('{}'), 'saving'),
+                 (lambda v: setattr(v, 'active_since_monotonic', time.monotonic()), 'settling_in_the_zone'),
+                 (lambda v: v.spare_report.update(layer_available=False), 'server_without_the_spare_layer'),
+                 (lambda v: setattr(v, 'stock_request_options', None), 'request_options_unknown'),
+                 (lambda v: v.spare_report.update(started=zoning.SPARE_START_LIMIT), 'start_limit'),
+                 (lambda v: setattr(v, 'zone_tree_prepared', None) or setattr(v, 'active_map_id', 5)
+                  or v.maps.update({5: v.maps.pop(1)}), 'no_prepared_tree')]
+        for change, reason in cases:
+            with self.subTest(reason=reason):
+                value, started = self.spare_instance()
+                change(value)
+                self.tick(value)
+                self.assertEqual((started, value.spare), ([], None))
+                self.assertEqual(value.spare_report['waiting_reason'], reason)
+        value, started = self.spare_instance(memory=zoning.SPARE_MIN_AVAILABLE_MIB - 1)
+        self.tick(value)
+        self.assertEqual((started, value.spare_report['waiting_reason']), ([], 'low_memory'))
+
+    def test_a_request_the_spare_cannot_take_starts_the_ordinary_way_and_frees_the_spare(self):
+        for name, change in (('another tree', lambda v: None),
+                             ('other options', lambda v: v.spare.update(options=('-aggrocap', '20')))):
+            with self.subTest(name):
+                value, started = self.spare_instance()
+                self.tick(value)
+                process = started[0][3]
+                change(value)
+                sup = self.supervisor(value)
+                spawned = []
+                value._spawn_map = lambda map_id, **keywords: (spawned.append((map_id, keywords)),
+                                                               value.maps.__setitem__(map_id, owned(ready=False)))
+                target = 5 if name == 'another tree' else 7
+                sup.poll('\n' + supervisor.ACK + '\n' + self.publish(sup, target, 3, 1))
+                with patch.dict(zoning.MAPS, {7: {'name': 'Zone 7', 'port': None, 'instance': 1, 'world': 'City_07',
+                                                  'shared_zone_tree': True}}):
+                    value.serve_external_maps(sup)
+                self.assertEqual([item[0] for item in spawned], [target])
+                process.process.terminate.assert_called_once_with()
+                self.assertIsNone(value.spare)
+                row = value.spare_report['starts'][0]
+                self.assertEqual((row['outcome'], row['reason']), ('dropped', 'request_for_another_tree'))
+                self.assertFalse((value.owner.args.state / 'character-zoning-spare-1-assign.txt').exists())
+
+    def test_a_spare_that_exits_is_dropped_and_another_may_start(self):
+        value, started = self.spare_instance()
+        self.tick(value)
+        started[0][3].process.poll.return_value = 3           # the layer's own exit for a bad assignment
+        self.tick(value)
+        self.assertIsNone(value.spare)
+        self.assertEqual(value.spare_report['starts'][0]['outcome'], 'dropped')
+        self.assertIn('exited', value.spare_report['starts'][0]['reason'])
+        self.tick(value)
+        self.assertEqual([item[0] for item in started], ['local-character-zoning-spare-1', 'local-character-zoning-spare-2'])
+        started[1][3].output += b'Program crash detected\n'
+        self.tick(value)
+        self.assertIn('crashed', value.spare_report['starts'][1]['reason'])
+
+    def test_the_zone_the_hero_left_gives_way_to_the_spare_only_on_the_dbservers_word(self):
+        value, started = self.spare_instance()
+        value.maps[5] = owned()
+        value.query_count = 0
+        value.query = Mock(return_value='1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 5 SmapId 5\n')
+        value._stock_arrival = Mock(side_effect=lambda target, sample: setattr(value, 'active_map_id', target))
+        old = value.maps[5]['process'].process
+        first = value.maps[1]['process'].process
+        self.tick(value)                                      # the DbServer says the hero is in 5, not 1
+        self.assertEqual((started, value.spare_report['waiting_reason']), ([], 'hero_zone_changed'))
+        self.assertEqual(value.active_map_id, 5)              # the probe recorded that arrival
+        old.terminate.assert_not_called(); first.terminate.assert_not_called()
+        self.tick(value)                                      # asked at most every two minutes
+        self.assertEqual(value.spare_report['waiting_reason'], 'resident_zone_still_running')
+        self.assertEqual(value.query.call_count, 1)
+        value.spare_room_next = 0
+        value.query = Mock(return_value='garbage\n')          # no answer: nothing is stopped
+        self.tick(value)
+        self.assertEqual(value.spare_report['waiting_reason'], 'hero_zone_unconfirmed')
+        old.terminate.assert_not_called(); first.terminate.assert_not_called()
+        value.spare_room_next = 0
+        value.active_map_id = 1
+        value.query = Mock(return_value='1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 1 SmapId 1\n')
+        self.tick(value)
+        old.terminate.assert_called_once_with()
+        self.assertEqual((set(value.maps), value.stock['evictions'][-1]['reason']), ({1}, 'room_for_the_spare'))
+        self.assertEqual(value.spare_report['waiting_reason'], 'made_room')
+        self.tick(value)
+        self.assertEqual(len(started), 1)
+
+    def test_the_atlas_tree_spare_takes_atlas_parks_other_instance_on_its_fixed_port(self):
+        value, started = self.spare_instance(tree=None)
+        self.tick(value)
+        self.assertIn('--chdir=/atlas', started[0][1])
+        self.assertEqual((value.spare['tree'], value.spare['port']), ('atlas', zone_travel.FIXED_PORTS[101]))
+        sup = self.supervisor(value)
+        value._spawn_map = Mock()
+        value.live_progress = Mock(return_value=False)
+        sup.poll('\n' + supervisor.ACK + '\n' + self.publish(sup, 101, 4, 1))
+        value.serve_external_maps(sup)
+        value._spawn_map.assert_not_called()
+        value.install_zone_beacon_graph.assert_not_called()
+        self.assertEqual(value.maps[101]['port'], zone_travel.FIXED_PORTS[101])
+
+    def test_request_options_are_remembered_for_the_next_sessions_first_spare(self):
+        value, _ = self.spare_instance()
+        value.stock_request_options = None
+        self.assertIsNone(value._request_options())
+        value._remember_request_options(('-maxLevel', '50', '-aggrocap', '17'))
+        path = value.owner.root / zoning.SPARE_OPTIONS_FILE
+        self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+        later, _ = self.spare_instance()
+        later.owner.root = value.owner.root
+        later.stock_request_options = None
+        self.assertEqual(later._request_options(), ('-maxLevel', '50', '-aggrocap', '17'))
+        for damage in ('not json', '{"format": 1, "kept": ["-ok", "; rm -rf /"]}', '{"format": 2, "kept": []}'):
+            path.write_text(damage)
+            fresh, _ = self.spare_instance()
+            fresh.owner.root = value.owner.root
+            fresh.stock_request_options = None
+            self.assertIsNone(fresh._request_options(), damage)
+
     def test_third_zone_stops_the_idle_resident_one(self):
         value = self.instance()
         value.maps[5] = owned()
