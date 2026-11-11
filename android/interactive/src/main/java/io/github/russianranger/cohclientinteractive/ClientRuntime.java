@@ -226,6 +226,7 @@ public final class ClientRuntime {
     private boolean prestartNextZoneRequested=false;
     private boolean earlyZoneRequested=false;
     private boolean glDirectRequested=false;
+    private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean spareZoneRequested=false;
     private boolean trustedBinsRequested=false;
     private boolean gameplay60Requested=false, gameplay60Queued=false;
@@ -444,6 +445,22 @@ public final class ClientRuntime {
      * 227 s to start, all after Enter Game. On by default; the guest refuses it and starts the zone
      * at Enter Game, as before, whenever its conditions are not met.
      */
+    public static boolean prootIoctlFilterEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("proot-ioctl-filter", false);
+    }
+    /**
+     * 0.13.70 experiment: the second PRoot build in this APK (patch 0004) is started with
+     * PROOT_IOCTL_COMMANDS_ONLY=1, so its filter stops an ioctl only for the few commands PRoot
+     * acts on. The first build stops every ioctl of every guest task twice, which includes each
+     * call the renderer makes to the GPU. Off by default: the default launch keeps the PRoot
+     * binary every earlier release used. Needs the fast PRoot mode.
+     */
+    public static synchronized void setProotIoctlFilterEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("proot-ioctl-filter", enabled).apply();
+    }
     public static boolean glDirectEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getBoolean("client-gl-direct", false);
@@ -995,6 +1012,7 @@ public final class ClientRuntime {
         prestartNextZoneRequested=prestartNextZoneEnabled(context);
         earlyZoneRequested=earlyZoneEnabled(context);
         glDirectRequested=glDirectEnabled(context);
+        prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         spareZoneRequested=spareZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
@@ -1048,6 +1066,12 @@ public final class ClientRuntime {
             String nativeDir = context.getApplicationInfo().nativeLibraryDir;
             File proot = new File(nativeDir, "libproot.so"), loader = new File(nativeDir, "libproot-loader.so");
             if (!proot.canExecute() || !loader.canExecute()) throw new IOException("The APK process runtime is missing");
+            // 0.13.70: the option starts the second PRoot build (patch 0004) with its ioctl command
+            // filter. Without the option, or without both of its files, the launch is unchanged.
+            File filteredProot = new File(nativeDir, "libproot-ioctl.so"), filteredLoader = new File(nativeDir, "libproot-ioctl-loader.so");
+            prootIoctlFilterUsed = prootIoctlFilterRequested && prootFastModeRequested
+                    && filteredProot.canExecute() && filteredLoader.canExecute();
+            if (prootIoctlFilterUsed) { proot = filteredProot; loader = filteredLoader; }
             List<String> command = new ArrayList<>(Arrays.asList(proot.getPath(), "--link2symlink", "--kill-on-exit", "--sysvipc",
                     "-i", "1000:1000", "-r", root.getPath(), "-b", "/dev", "-b", "/proc", "-b", "/sys",
                     "-b", state.getPath() + ":/state", "-b", tmp.getPath() + ":/tmp",
@@ -1066,6 +1090,7 @@ public final class ClientRuntime {
                     "COH_CLIENT_GPU_PROFILE="+gpuProfileRequested,
                     "COH_CLIENT_ARCH="+clientArchitectureRequested,
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
+                    "COH_PROOT_IOCTL_FILTER="+(prootIoctlFilterUsed?"1":"0"),
                     "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
                     "COH_EARLY_ZONE="+(earlyZoneRequested?"1":"0"),
                     "COH_SPARE_ZONE="+(spareZoneRequested?"1":"0"),
@@ -1101,7 +1126,11 @@ public final class ClientRuntime {
             builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
             if(prootFastModeRequested)builder.environment().remove("PROOT_NO_SECCOMP");
             else builder.environment().put("PROOT_NO_SECCOMP", "1");
-            line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)"));
+            if(prootIoctlFilterUsed)builder.environment().put("PROOT_IOCTL_COMMANDS_ONLY", "1");
+            else builder.environment().remove("PROOT_IOCTL_COMMANDS_ONLY");
+            line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)")
+                    +(prootIoctlFilterUsed?", ioctl stops only for the commands PRoot acts on (second PRoot build)"
+                    :prootIoctlFilterRequested?", ioctl filter asked for but not used":""));
             write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
                     .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
             stage("Starting City of Heroes", "Starting the persistent local database and DbServer, verifying the saved destination, then opening its MapServer and graphical client.");
@@ -2918,7 +2947,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

@@ -40,7 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -208,6 +208,11 @@ public final class ClientActivity extends Activity {
         glDirect.setChecked(ClientRuntime.glDirectEnabled(this));
         glDirect.setOnCheckedChangeListener((button,checked)->ClientRuntime.setGlDirectEnabled(this,checked));
         controls.addView(glDirect);
+        prootIoctlFilter=new CheckBox(this);prootIoctlFilter.setText("Graphics calls skip the system-call monitor (frame rate experiment)");
+        prootIoctlFilter.setTextColor(Color.rgb(221,234,245));prootIoctlFilter.setTextSize(13);
+        prootIoctlFilter.setChecked(ClientRuntime.prootIoctlFilterEnabled(this));
+        prootIoctlFilter.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotIoctlFilterEnabled(this,checked));
+        controls.addView(prootIoctlFilter);
         controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);

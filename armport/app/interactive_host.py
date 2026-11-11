@@ -481,6 +481,22 @@ def require_early_zone_decision(report):
         require(early.get('failure') is None, 'The early zone start failed: ' + str(early.get('failure'))[:120])
 
 
+def require_proot_ioctl_filter(report):
+    """With the proot_ioctl_filter input the guest's own probe must show the filter at work.
+
+    0.13.70: `armport_proot_ioctl` times an ioctl PRoot does not act on and one it does. With
+    patch 0004 and PROOT_IOCTL_COMMANDS_ONLY=1 only the second stops in the tracer. A run that
+    asked for the filter and shows anything else (no stops: the switch never reached PRoot;
+    every ioctl stops: the filter was not installed) fails.
+    """
+    if not runtime_host.runtime.proot_ioctl_filter_requested():
+        return
+    probe = report.get('armport_proot_ioctl')
+    require(isinstance(probe, dict), 'The ioctl filter was requested but the guest made no ioctl probe')
+    require(probe.get('reading') == 'listed_commands_only' and probe.get('switch') == '1',
+            'The ioctl filter was requested but the probe reads: ' + str(probe.get('reading'))[:60])
+
+
 def spare_zone_requested():
     """0.13.69: one pre-loaded zone server beside the current zone (needs stock travel and trusted bins' server)."""
     value = os.environ.get('COH_SPARE_ZONE', '')
@@ -599,6 +615,10 @@ def guest_timing_summary(evidence):
         if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
             report = json.loads(path.read_text())
             result['proot_mode'] = report.get('proot_mode')
+            probe = report.get('armport_proot_ioctl')
+            if isinstance(probe, dict):
+                result['proot_ioctl'] = {key: probe.get(key) for key in (
+                    'reading', 'switch', 'microseconds_per_call', 'error_type') if probe.get(key) is not None}
             result['shared_server_data'] = next((section.get('shared_server_data') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('shared_server_data') is not None),
@@ -756,6 +776,7 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 require_early_zone_decision(report)
             else:
                 armport_validate_observer(observer, report)
+            require_proot_ioctl_filter(report)
             require(not endpoint.exists(), 'Private display survived guest cleanup')
             runtime_host.runtime.validate_network_receipt(
                 json.loads((evidence / 'network-isolation.json').read_text()), expected_network)

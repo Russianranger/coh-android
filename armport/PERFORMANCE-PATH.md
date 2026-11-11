@@ -541,6 +541,19 @@ stopped; `getsockopt` and `recvmsg` of the servers follow the path calls. Step
 their arguments need no fix-up, measured first with the sampler in CI, then as
 an option on the phone.
 
+First part of step 14 (2026-11-11, for 0.13.70): `android/native/proot/0004`
+stops an ioctl only for the seven commands PRoot acts on. A local x86-64 build
+of the pinned tree with patches 0001-0004, run with the app's PRoot options:
+an unlisted ioctl costs 0.16 microseconds with or without the switch; a listed
+one costs 49.8 with it, which is the price of the two tracer stops every ioctl
+pays on Android today. At that price 10,000 ioctls a second keep one core's
+worth of tracer and guest time busy. The guest now measures the same three
+calls at every launch (`armport_proot_ioctl` in the report: `no_ioctl_stops`,
+`every_ioctl_stops` or `listed_commands_only`, with microseconds per call), so
+the next phone export states the cost on the Thor itself. On the phone the
+patched PRoot is a second program in the APK behind a launch option (off); the
+default launch keeps the 0.13.36 PRoot binary.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

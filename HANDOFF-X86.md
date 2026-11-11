@@ -414,6 +414,53 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.70 (in preparation): PRoot stops ioctl only for the commands it acts on (Claude, 2026-11-11)
+
+Not built or published yet; the code is on x86/perf-round3 and waits for the
+0.13.69 chain.
+
+- **Why.** Thor 0.13.67: PRoot's one tracer thread used 647 s of CPU before
+  the world appeared and half a core in play. Android builds of the pinned
+  PRoot stop every `ioctl` of every guest task twice; the renderer talks to
+  the GPU through ioctls.
+- **Patch.** `android/native/proot/0004-ioctl-command-filter.patch`, now in
+  `tools/android/build_proot.py` `PATCH_NAMES`. Switch:
+  `PROOT_IOCTL_COMMANDS_ONLY=1`; without it nothing changes.
+- **Local proof (x86-64, this session).** talloc 2.4.3 from the Samba
+  repository's tag, the pinned PRoot tree with patches 0001-0004, built with
+  gcc, run with `--link2symlink --kill-on-exit --sysvipc -i 1000:1000`. The
+  kernel accepted the filter. Per call: FIONREAD 0.16 microseconds with and
+  without the switch; TCGETS2 0.13 without, 49.8 with (two stops). Terminal
+  attributes through a pty, SIOCGIFINDEX and `ln` behaved the same.
+- **Probe.** `armport_interactive.proot_ioctl_probe` times getppid, FIONREAD
+  and TCGETS2 on a private pipe at each launch (400 calls each) and records
+  `armport_proot_ioctl` (`reading`, microseconds per call). On a phone without
+  the option it should read `every_ioctl_stops` and give the Thor's cost per
+  stop.
+- **CI.** armport-app-runtime input `proot_ioctl_filter`
+  (`COH_PROOT_IOCTL_FILTER=1`, needs `proot_seccomp`): the isolation launcher
+  sets the switch for PRoot, the network receipt records it, and
+  `require_proot_ioctl_filter` fails a session whose probe does not read
+  `listed_commands_only`. The Linux build traces no ioctl without the switch,
+  so CI shows the filter works, not the phone's gain.
+- **APK.** armport-thor-apk input `proot_ioctl`: builds this head's PRoot for
+  Android (NDK 27.2.12479018, two jobs) and `build_thor_apk.py --proot-ioctl`
+  adds it as `lib/arm64-v8a/libproot-ioctl.so` and `libproot-ioctl-loader.so`
+  with its receipt, licence files and corresponding source under
+  `assets/proot-ioctl/`. The receipt must name this checkout's patches and
+  recipe byte for byte. The donor's `libproot.so` stays byte-identical and is
+  the default.
+- **App.** Launch option "Graphics calls skip the system-call monitor (frame
+  rate experiment)" (pref `proot-ioctl-filter`, off): starts the second
+  program with the switch when the fast PRoot mode is on and both files are
+  present; report fields `proot_ioctl_filter_requested` and
+  `proot_ioctl_filter_used`.
+- **Tests.** `armport/tests/test_proot_ioctl_probe.py` (9),
+  `armport/tests/test_thor_apk_proot.py` (6),
+  `tools/android/dbserver/test_host_dbserver_smoke.py` (one new).
+- **Open.** The Android build of the patched PRoot has never run on a device.
+  Socket, `close` and fake-id traps are untouched.
+
 ## 0.13.69: the early zone start runs on ARM64; fixes from Thor 0.13.67 (Claude, 2026-11-10)
 
 Owner, 2026-11-10 21:56 CST: "Check the logs to confirm and continue

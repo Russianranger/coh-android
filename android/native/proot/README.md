@@ -37,19 +37,29 @@ emulated SysV IPC namespace.
   `string.h` declaration and replace GNU-awk-specific symbol parsing with Python.
   The generated loader helper is GPL-2.0-or-later. No optional acceleration or
   graphics patches are included.
-- `0004-ioctl-command-filter.patch` (2026-11-11, **not yet in `PATCH_NAMES`: no
-  built or packaged PRoot contains it**). With `PROOT_IOCTL_COMMANDS_ONLY=1` the
-  seccomp filter notifies the tracer about `ioctl(2)` only for the commands
-  `enter.c` and `exit.c` act on (SIOCGIFINDEX, TCSETSF, TCGETS2, TCSETS2,
-  TCSETSW2, TCSETSF2, FICLONE); every other ioctl runs untraced. Android builds
-  of this PRoot otherwise trace every ioctl on entry and exit, which for this
-  game includes each GPU (KGSL) ioctl of the renderer. Without the variable
-  nothing changes. It applies on the pinned tree after 0001-0003;
-  `tools/android/test_proot_ioctl_filter.py` runs its statements through a BPF
-  interpreter on the host. Building it needs a new accepted PRoot artifact
-  (source bundle, Android and Linux binaries, receipts) and the app passing
-  the variable; see HANDOFF-X86.md, "0.13.69", and armport/PERFORMANCE-PATH.md,
-  "What PRoot intercepts". GPL-2.0-or-later, as PRoot.
+- `0004-ioctl-command-filter.patch` (2026-11-11; in `PATCH_NAMES` since
+  0.13.70). With `PROOT_IOCTL_COMMANDS_ONLY=1` the seccomp filter notifies the
+  tracer about `ioctl(2)` only for the commands `enter.c` and `exit.c` act on
+  (SIOCGIFINDEX, TCSETSF, TCGETS2, TCSETS2, TCSETSW2, TCSETSF2, FICLONE); every
+  other ioctl runs untraced. Android builds of this PRoot otherwise trace every
+  ioctl on entry and exit, which for this game includes each GPU (KGSL) ioctl
+  of the renderer. Without the variable nothing changes. Measured with a local
+  x86-64 build of the pinned tree and patches 0001-0004 (2026-11-11, the app's
+  options `--link2symlink --kill-on-exit --sysvipc -i 1000:1000`): FIONREAD
+  0.16 microseconds per call with or without the variable, TCGETS2 0.13
+  without it and 49.8 with it (two tracer stops), so a stop costs about 50
+  microseconds there and an unlisted ioctl costs nothing extra. Terminal
+  attributes, SIOCGIFINDEX and hard links behaved the same with and without.
+  `tools/android/test_proot_ioctl_filter.py` runs the filter statements
+  through a BPF interpreter on the host. Where it is built: the Linux PRoot of
+  armport-app-runtime (input `proot_ioctl_filter` sets the variable and CI
+  then requires the guest's probe to read `listed_commands_only`), and, with
+  the Thor APK workflow's input `proot_ioctl`, an Android build that the APK
+  carries as a second program (`lib/arm64-v8a/libproot-ioctl.so` and its
+  loader) beside the unchanged 0.13.36 one, with its receipt, licence files
+  and corresponding source under `assets/proot-ioctl/`. The app starts it only
+  with the launch option "Graphics calls skip the system-call monitor".
+  GPL-2.0-or-later, as PRoot.
 - The Android talloc cross answers follow the same pinned TRASC recipe, derived
   there from the Termux talloc build recipe. Android NDK **27.2.12479018**, API 26,
   and 16 KB ELF segment alignment are explicit build inputs. Linux CI uses the

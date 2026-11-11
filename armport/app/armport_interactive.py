@@ -4,11 +4,16 @@ The existing x86 worktree remains the server's verified data source. Only the
 graphical client's executable, current directory, bins, registry view and
 diagnostic output differ. Existing login, SQL/save and cleanup checks remain.
 """
+import errno
+import fcntl
 import os
 from pathlib import Path
 import re
 import shutil
 import stat
+import struct
+import termios
+import time
 
 import armport_client_package as package
 import client_startup_diagnostic as startup
@@ -26,6 +31,64 @@ FPS_CAP_FILE = 'armport-fps-cap.txt'
 # (armport/audio) to the app's AudioTrack bridge (ClientAudio.java).
 AUDIO_CONFIG = 'armport-asound.conf'
 ALSA_SYSTEM_CONFIG = Path('/usr/share/alsa/alsa.conf')
+
+
+# 0.13.70: what does PRoot do with ioctl(2) here? Android builds of the pinned PRoot stop
+# every ioctl of every guest task twice (entry and exit), which for this game includes
+# each GPU call of the renderer; patch 0004 with PROOT_IOCTL_COMMANDS_ONLY=1 stops only
+# the commands PRoot acts on. The probe times three calls on a private pipe: getppid
+# (never stopped: the floor), FIONREAD (an ioctl PRoot does not act on) and TCGETS2
+# (one it does act on; a pipe answers ENOTTY). A stop costs tens of microseconds, the
+# calls themselves well under one, so the three readings tell the cases apart.
+IOCTL_PROBE_CALLS = 400
+IOCTL_PROBE_STOP_MICROSECONDS = 8.0
+IOCTL_TCGETS2 = 0x802C542A
+
+
+def proot_ioctl_probe(calls=IOCTL_PROBE_CALLS, clock=time.perf_counter):
+    """Read-only timing of ioctl through PRoot; never the reason a launch fails."""
+    record = {'format': 1, 'calls': calls, 'switch': os.environ.get('PROOT_IOCTL_COMMANDS_ONLY', ''),
+              'stop_threshold_microseconds': IOCTL_PROBE_STOP_MICROSECONDS, 'is_success_proof': False}
+    try:
+        reader, writer = os.pipe()
+    except OSError as error:
+        return dict(record, reading='unavailable', error_type=type(error).__name__)
+    try:
+        os.write(writer, b'abc')
+        buffer = bytearray(4)
+
+        def floor():
+            os.getppid()
+
+        def unlisted():
+            fcntl.ioctl(reader, termios.FIONREAD, buffer)
+
+        def listed():
+            try:
+                fcntl.ioctl(reader, IOCTL_TCGETS2, bytearray(44))
+            except OSError as error:
+                if error.errno not in (errno.ENOTTY, errno.EINVAL):
+                    raise
+
+        timings = {}
+        for name, call in (('getppid', floor), ('fionread', unlisted), ('tcgets2', listed)):
+            call()
+            started = clock()
+            for _ in range(calls):
+                call()
+            timings[name] = round((clock() - started) / calls * 1e6, 2)
+        require(struct.unpack('i', buffer)[0] == 3, 'FIONREAD answered a wrong count')
+    except (OSError, RuntimeError) as error:
+        return dict(record, reading='unavailable', error_type=type(error).__name__)
+    finally:
+        os.close(reader)
+        os.close(writer)
+    slow = {name: timings[name] - timings['getppid'] >= IOCTL_PROBE_STOP_MICROSECONDS
+            for name in ('fionread', 'tcgets2')}
+    reading = ('every_ioctl_stops' if slow['fionread'] and slow['tcgets2'] else
+               'listed_commands_only' if slow['tcgets2'] else
+               'inconsistent' if slow['fionread'] else 'no_ioctl_stops')
+    return dict(record, reading=reading, microseconds_per_call=timings)
 
 
 def client_audio_requested():
@@ -104,6 +167,11 @@ class ArmPortClient:
         require({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py', 'client_stdio.py'} <= pins.keys(),
                 'ARM64 client is not included in this runtime package')
         self.ctx.report['client_worktree']['purpose'] = 'retained_server_data_source_for_armport'
+        try:
+            self.ctx.report['armport_proot_ioctl'] = proot_ioctl_probe()
+        except Exception as error:      # read-only evidence
+            self.ctx.report['armport_proot_ioctl'] = {'format': 1, 'reading': 'unavailable',
+                                                      'error_type': type(error).__name__, 'is_success_proof': False}
         self.armport_work = self.root / ('armport-client-' + self.args.session_id)
         # These receipts describe the retained x86 staging producer. Do not
         # present them as ARM64 performance/renderer qualification or enable

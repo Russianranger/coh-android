@@ -34,6 +34,11 @@ on:
         description: Optional successful armport-zone-beacons pack run - the APK pins its navigation map pack (imported like the asset pack)
         required: false
         default: ''
+      proot_ioctl:
+        description: Build this head's PRoot for Android (patch 0004) and add it as a second PRoot build for the launch option (0.13.70)
+        type: boolean
+        required: false
+        default: false
       publish_release:
         description: Publish the signed APK as a GitHub pre-release (user-approved candidates only)
         type: boolean
@@ -55,6 +60,7 @@ env:
   EXTERNAL_MAPS_RUN_ID: ${{ inputs.external_maps_run_id }}
   ZONE_BEACONS_RUN_ID: ${{ inputs.zone_beacons_run_id }}
   NAVIGATION_MAPS_RUN_ID: ${{ inputs.navigation_maps_run_id }}
+  PROOT_IOCTL: ${{ inputs.proot_ioctl }}
   SIGNER_RUN_ID: '36731428735'
   DONOR_ASSET_ID: '635975286'
 
@@ -188,6 +194,50 @@ jobs:
           path: ${{ runner.temp }}/coh-retained-signing
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
+      # 0.13.70: the second PRoot build. Same pinned source, NDK and recipe as the donor's
+      # libproot.so (run 36364550345) plus android/native/proot patch 0004; two compiler jobs.
+      - name: Android NDK 27.2.12479018 for the second PRoot build
+        if: inputs.proot_ioctl
+        run: timeout 900 sdkmanager 'ndk;27.2.12479018'
+      - id: talloc-source
+        if: inputs.proot_ioctl
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/talloc-source
+          key: armport-talloc-dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd
+      - uses: actions/download-artifact@v4
+        if: inputs.proot_ioctl && steps.talloc-source.outputs.cache-hit != 'true'
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: ${{ runner.temp }}/accepted-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        if: inputs.proot_ioctl && steps.talloc-source.outputs.cache-hit != 'true'
+        with:
+          name: coh-proot-android-source-and-build
+          path: ${{ runner.temp }}/accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover the exact pinned talloc source from retained runtime artifacts
+        if: inputs.proot_ioctl && steps.talloc-source.outputs.cache-hit != 'true'
+        run: |
+          python3 tools/android/extract_talloc_source.py --assets "$RUNNER_TEMP/accepted-runtime" \
+            --bundle "$RUNNER_TEMP/accepted-proot/proot-corresponding-sources.tar.gz" \
+            --output "$RUNNER_TEMP/talloc-source/talloc-2.4.3.tar.gz"
+      - name: Build this head's PRoot for Android ARM64 (patches 0001-0004)
+        if: inputs.proot_ioctl
+        run: |
+          armport/scripts/step.sh "ArmPort Android PRoot build" python3 tools/android/build_proot.py \
+            --target android-arm64 --ndk "$ANDROID_HOME/ndk/27.2.12479018" --output out/android/native --jobs 2 \
+            --talloc-archive "$RUNNER_TEMP/talloc-source/talloc-2.4.3.tar.gz"
+          python3 - <<'EOF'
+          import json
+          r = json.load(open('out/android/native/arm64-v8a/proot-build-receipt.json'))
+          print('::notice title=ArmPort Android PRoot::' + json.dumps({k: r.get(k) for k in (
+              'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
+              'ioctl_command_filter_patch', 'corresponding_sources')}))
+          EOF
       - name: Build and sign COH Atlas Gameplay 0.13.69
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
@@ -205,6 +255,9 @@ jobs:
           fi
           if [ -n "$NAVIGATION_MAPS_RUN_ID" ]; then
             server_args+=(--navigation-maps "$RUNNER_TEMP/navigation-maps" --navigation-maps-run-json "$RUNNER_TEMP/navigation-maps-run.json")
+          fi
+          if [ "$PROOT_IOCTL" = true ]; then
+            server_args+=(--proot-ioctl out/android/native/arm64-v8a)
           fi
           armport/scripts/step.sh "ArmPort Thor APK build" python3 armport/app/build_thor_apk.py \
             --donor-apk "$RUNNER_TEMP/donor/COH-Atlas-Gameplay-0.13.36.apk" \
@@ -230,6 +283,8 @@ jobs:
               keep['zone_beacons'] = r['zone_beacons']
           if 'navigation_map_pack' in r:
               keep['navigation_map_pack'] = r['navigation_map_pack']
+          if 'proot_ioctl_filter' in r:
+              keep['proot_ioctl_filter'] = {k: r['proot_ioctl_filter'][k] for k in ('switch', 'default', 'members', 'compiler')}
           if 'server_metrics_qualification' in r:
               keep['server_metrics_qualification'] = r['server_metrics_qualification']
               keep['server_metrics_runtime_validated'] = r['server_metrics_runtime_validated']

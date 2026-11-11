@@ -411,8 +411,18 @@ def proot_seccomp_requested():
     return value == "1"
 
 
+def proot_ioctl_filter_requested():
+    """CI switch: COH_PROOT_IOCTL_FILTER=1 sets PROOT_IOCTL_COMMANDS_ONLY=1 for PRoot (patch 0004):
+    its seccomp filter then reports ioctl only for the commands PRoot acts on. Needs the filter."""
+    value = os.environ.get("COH_PROOT_IOCTL_FILTER", "")
+    require(value in ("", "0", "1"), "COH_PROOT_IOCTL_FILTER must be empty, 0 or 1")
+    return value == "1"
+
+
 def isolate_command(command, *, evidence, proot, work, proot_seccomp=None):
     seccomp = proot_seccomp_requested() if proot_seccomp is None else proot_seccomp is True
+    ioctl_filter = proot_ioctl_filter_requested()
+    require(seccomp or not ioctl_filter, "COH_PROOT_IOCTL_FILTER needs COH_PROOT_SECCOMP=1")
     uid, gid = os.getuid(), os.getgid()
     require(uid > 0 and os.geteuid() == uid, "Run the host gate as the original non-root runner")
     host_netns = os.readlink("/proc/self/ns/net")
@@ -422,13 +432,16 @@ def isolate_command(command, *, evidence, proot, work, proot_seccomp=None):
                 str(Path(__file__).with_name("run_isolated_network.py").resolve()),
                 "--uid", str(uid), "--gid", str(gid), "--host-netns", host_netns,
                 "--receipt", str(receipt), "--proot-loader", str(proot / "proot-loader"),
-                "--proot-tmp", str(work / "tmp"), *(["--proot-seccomp"] if seccomp else []), "--", *command]
+                "--proot-tmp", str(work / "tmp"), *(["--proot-seccomp"] if seccomp else []),
+                *(["--proot-ioctl-filter"] if ioctl_filter else []), "--", *command]
     # No GitHub credentials or broad sudo environment preservation enter the guest.
     environment = {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
                    "LANG": "C.UTF-8", "TZ": "UTC", "PYTHONDONTWRITEBYTECODE": "1"}
     expected = {"host_network_namespace": host_netns, "original_uid": uid, "original_gid": gid}
     if seccomp:
         expected["proot_seccomp"] = True   # the receipt must confirm the A/B variant actually ran
+    if ioctl_filter:
+        expected["proot_ioctl_filter"] = True
     return isolated, environment, expected
 
 

@@ -38,6 +38,8 @@ import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
 
+import importlib.util
+
 import stage_app_assets
 import server_pipeline
 
@@ -107,6 +109,79 @@ ADDED_JAVA_SOURCES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerInput.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerManager.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerProfile.java'})
+
+
+# 0.13.70: a second PRoot build (android/native/proot patch 0004) beside the donor's. The
+# donor's libproot.so stays byte-identical and stays the default; the launch option "Graphics
+# calls skip the system-call monitor" starts this build with PROOT_IOCTL_COMMANDS_ONLY=1.
+# Its build receipt, licence files and complete corresponding source travel in the APK.
+PROOT_IOCTL_LIBRARIES = {'lib/arm64-v8a/libproot-ioctl.so': 'libproot.so',
+                         'lib/arm64-v8a/libproot-ioctl-loader.so': 'libproot-loader.so'}
+PROOT_IOCTL_ASSETS = 'assets/proot-ioctl/'
+PROOT_RECEIPT, PROOT_SOURCES = 'proot-build-receipt.json', 'proot-corresponding-sources.tar.gz'
+
+
+def proot_recipe():
+    """tools/android/build_proot.py of this checkout (its pins and patch list)."""
+    path = ROOT / 'tools/android/build_proot.py'
+    spec = importlib.util.spec_from_file_location('coh_build_proot', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module, path
+
+
+def proot_ioctl_members(directory, donor_members):
+    """({APK member: file}, report record) for an android-arm64 output of build_proot.py.
+
+    The receipt must describe this checkout's recipe exactly: the pinned PRoot commit and tree,
+    the NDK, every patch byte for byte (0004 among them) and the build script itself; the two
+    programs, the source bundle and the licence files must be the files it records.
+    """
+    recipe, recipe_path = proot_recipe()
+    directory = Path(directory)
+    receipt_path = directory / PROOT_RECEIPT
+    require(receipt_path.is_file() and receipt_path.stat().st_size <= 1024 * 1024, 'PRoot build receipt missing')
+    receipt = json.loads(receipt_path.read_text())
+    require(receipt.get('schema_version') == 1 and receipt.get('target') == 'android-arm64'
+            and receipt.get('status') == 'native_built_runtime_unverified', 'Not a built Android PRoot receipt')
+    require(receipt.get('source_commit') == recipe.PROOT_COMMIT and receipt.get('source_tree') == recipe.PROOT_TREE
+            and receipt.get('ndk_version') == recipe.NDK_VERSION and receipt.get('android_api') == 26
+            and receipt.get('max_page_size') == 16384 and receipt.get('talloc_linkage') == 'static',
+            'PRoot build differs from the pinned source or toolchain')
+    require('0004-ioctl-command-filter.patch' in recipe.PATCH_NAMES and receipt.get('ioctl_command_filter_patch') is True
+            and receipt.get('patches') == {name: pin(recipe.PATCHES / name) for name in recipe.PATCH_NAMES}
+            and receipt.get('recipe_sha256') == pin(recipe_path)['sha256'],
+            'PRoot build did not use this checkout\'s patches and recipe')
+    members = {}
+    files = receipt.get('files')
+    require(isinstance(files, dict) and set(files) == set(PROOT_IOCTL_LIBRARIES.values()), 'Unexpected PRoot outputs')
+    for member, name in PROOT_IOCTL_LIBRARIES.items():
+        path = directory / name
+        require(path.is_file() and not path.is_symlink()
+                and {key: files[name].get(key) for key in ('bytes', 'sha256')} == pin(path)
+                and files[name].get('elf_machine') == 'aarch64', 'PRoot output differs from its receipt: ' + name)
+        require(member not in donor_members, 'Donor already holds ' + member)
+        members[member] = path
+    sources = receipt.get('corresponding_sources')
+    require(isinstance(sources, dict) and sources.get('file') == PROOT_SOURCES
+            and {key: sources.get(key) for key in ('bytes', 'sha256')} == pin(directory / PROOT_SOURCES),
+            'PRoot corresponding source bundle differs from its receipt')
+    licenses = receipt.get('license_files')
+    require(isinstance(licenses, dict) and 'PRoot-COPYING' in licenses and len(licenses) <= 16
+            and all(re.fullmatch(r'[A-Za-z0-9._-]{1,64}', name) for name in licenses), 'PRoot licence files missing')
+    members[PROOT_IOCTL_ASSETS + PROOT_RECEIPT] = receipt_path
+    members[PROOT_IOCTL_ASSETS + PROOT_SOURCES] = directory / PROOT_SOURCES
+    for name, record in licenses.items():
+        path = directory / 'licenses' / name
+        require(path.is_file() and not path.is_symlink() and pin(path) == record, 'PRoot licence file differs: ' + name)
+        members[PROOT_IOCTL_ASSETS + 'licenses/' + name] = path
+    donor = donor_members.get('lib/arm64-v8a/libproot.so')
+    record = {'format': 1, 'switch': 'PROOT_IOCTL_COMMANDS_ONLY=1', 'default': False,
+              'launch_option': 'proot-ioctl-filter', 'members': {member: pin(path) for member, path in sorted(members.items())},
+              'source_commit': receipt['source_commit'], 'patches': receipt['patches'],
+              'compiler': receipt.get('compiler'), 'ndk_version': receipt['ndk_version'],
+              'donor_libproot_retained': donor, 'device_validated': False}
+    return members, record
 
 
 def require(condition, message):
@@ -227,6 +302,7 @@ def build(args):
         navigation = (navigation, args.navigation_maps_run_json)
         added_runtime = added_runtime | frozenset(stage_app_assets.navigation_maps(*navigation)[0])
     require(pin(args.donor_apk) == DONOR_APK, 'Donor 0.13.36 APK bytes differ from the public release')
+    proot_directory = getattr(args, 'proot_ioctl', None)
     require(args.output.name == APK_NAME and not args.output.exists(), 'Fresh output required')
     for tool in (args.android_jar, args.build_tools / 'aapt2', args.build_tools / 'zipalign',
                  args.build_tools / 'lib/d8.jar', args.build_tools / 'lib/apksigner.jar'):
@@ -236,6 +312,8 @@ def build(args):
     require(os.environ.get(args.password_env), 'Signing password environment variable is empty')
     args.output.parent.mkdir(parents=True, exist_ok=True)
     donor_members = members(args.donor_apk)
+    proot_members, proot_record = (proot_ioctl_members(proot_directory, donor_members)
+                                   if proot_directory is not None else ({}, None))
     with tempfile.TemporaryDirectory(prefix='coh-thor-apk-', dir=args.output.parent) as temporary:
         work = Path(temporary)
         # 1. Donor runtime assets, then the reviewed ARM64 staging.
@@ -317,6 +395,8 @@ def build(args):
                 compress = runtime_compression.get(name, zipfile.ZIP_STORED if path.suffix == '.zip'
                                                    else zipfile.ZIP_DEFLATED)
                 archive.write(path, name, compress_type=compress)
+            for name, path in sorted(proot_members.items()):
+                archive.write(path, name, compress_type=zipfile.ZIP_DEFLATED)
             archive.write(dex / 'classes.dex', 'classes.dex', compress_type=zipfile.ZIP_DEFLATED)
         aligned, signed = work / 'aligned.apk', work / 'signed.apk'
         run(args.build_tools / 'zipalign', '-f', '-p', '4', unsigned, aligned)
@@ -343,7 +423,13 @@ def build(args):
                 replaced.append(name)
         removed = sorted(n for n in donor_members if n not in final and not n.startswith('META-INF/'))
         require(not removed, 'Donor members removed: ' + repr(removed))
-        require(set(added) == {'assets/runtime/' + n for n in added_runtime}, 'Unexpected added members: ' + repr(added))
+        require(set(added) == {'assets/runtime/' + n for n in added_runtime} | set(proot_members),
+                'Unexpected added members: ' + repr(added))
+        for name, path in proot_members.items():
+            require(final[name] == pin(path), 'Second PRoot build member differs: ' + name)
+        require(final['lib/arm64-v8a/libproot.so'] == donor_members['lib/arm64-v8a/libproot.so']
+                and final['lib/arm64-v8a/libproot-loader.so'] == donor_members['lib/arm64-v8a/libproot-loader.so'],
+                'The default PRoot must stay the donor\'s')
         require(set(replaced) <= {'classes.dex', 'AndroidManifest.xml'} | {'assets/runtime/' + n for n in changed_runtime},
                 'Unreviewed replaced members: ' + repr(replaced))
         for name in added_runtime | changed_runtime:
@@ -372,6 +458,8 @@ def build(args):
         report['zone_beacons'] = zone_record
     if navigation_record is not None:
         report['navigation_map_pack'] = navigation_record
+    if proot_record is not None:
+        report['proot_ioctl_filter'] = proot_record
     if server_qualification:
         report['server_metrics_qualification'] = server_qualification
         report['server_metrics_variant'] = 'thor_certified_startup'
@@ -405,6 +493,9 @@ def main():
                         help='Zone graph package directory (armport-zone-beacons artifact): pets and NPCs path there')
     parser.add_argument('--zone-beacons-run-json', type=Path,
                         help='The armport-zone-beacons run that generated --zone-beacons')
+    parser.add_argument('--proot-ioctl', type=Path,
+                        help='android-arm64 output of tools/android/build_proot.py (patch 0004): added as a second '
+                             'PRoot build for the launch option; the donor build stays the default')
     parser.add_argument('--navigation-maps', type=Path,
                         help='Navigation map pack descriptor and report (armport-zone-beacons pack artifact)')
     parser.add_argument('--navigation-maps-run-json', type=Path,
@@ -420,6 +511,8 @@ def main():
         parser.error('--zone-beacons and --zone-beacons-run-json go together')
     if (args.navigation_maps is None) != (args.navigation_maps_run_json is None):
         parser.error('--navigation-maps and --navigation-maps-run-json go together')
+    if args.proot_ioctl is not None:
+        args.proot_ioctl = args.proot_ioctl.absolute()
     if args.navigation_maps is not None:
         args.navigation_maps, args.navigation_maps_run_json = (args.navigation_maps.absolute(),
                                                                args.navigation_maps_run_json.absolute())

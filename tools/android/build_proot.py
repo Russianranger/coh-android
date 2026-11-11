@@ -32,7 +32,10 @@ TALLOC_URL = 'https://www.samba.org/ftp/talloc/talloc-2.4.3.tar.gz'
 TALLOC_SHA256 = 'dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd'
 NDK_VERSION = '27.2.12479018'
 PATCH_NAMES = ('0001-sysvipc-memfd.patch', '0002-android-string-header.patch',
-               '0003-portable-loader-offset.patch')
+               '0003-portable-loader-offset.patch',
+               # 0.13.70: with PROOT_IOCTL_COMMANDS_ONLY=1 the filter reports ioctl only for
+               # the commands PRoot acts on. Without the variable nothing changes.
+               '0004-ioctl-command-filter.patch')
 
 
 def require(condition, message):
@@ -127,6 +130,8 @@ def prepare(work, checkout=None, talloc_archive=None):
             'Pinned PRoot lacks the required SysV IPC option')
     require('proot-sysvshm' in (proot / 'src/extension/sysvipc/sysvipc_shm.c').read_text(),
             'memfd SysV shared-memory patch missing')
+    require('PROOT_IOCTL_COMMANDS_ONLY' in (proot / 'src/syscall/seccomp.c').read_text() and
+            (proot / 'src/syscall/ioctl_filter.h').is_file(), 'ioctl command filter patch missing')
     return proot, work / 'talloc-2.4.3', sources
 
 
@@ -252,6 +257,7 @@ def main():
         'recipe_sha256': sha256(Path(__file__)),
         'android_cross_answers_sha256': sha256(PATCHES / 'talloc-android-cross-answers.txt'),
         'optional_acceleration_patch': False, 'sysvipc_memfd_patch': True,
+        'ioctl_command_filter_patch': True, 'ioctl_command_filter_switch': 'PROOT_IOCTL_COMMANDS_ONLY=1',
         'runtime_validation': 'unverified', 'status': 'source_prepared_only', 'files': {}}
     if not args.prepare_only:
         compile_sources(proot, talloc, work, args.target, tools, args.jobs)

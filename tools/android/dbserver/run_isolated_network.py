@@ -33,13 +33,16 @@ def loopback_state():
     return interfaces
 
 
-def clean_environment(loader, temporary, seccomp=False):
-    """PRoot traces every syscall unless seccomp is allowed (then only filtered calls stop)."""
+def clean_environment(loader, temporary, seccomp=False, ioctl_filter=False):
+    """PRoot traces every syscall unless seccomp is allowed (then only filtered calls stop).
+    `ioctl_filter` (patch 0004, with seccomp only): ioctl stops only for the commands PRoot acts on."""
     environment = {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
                    "LANG": "C.UTF-8", "TZ": "UTC", "PYTHONDONTWRITEBYTECODE": "1",
                    "PROOT_LOADER": str(loader), "PROOT_TMP_DIR": str(temporary)}
     if not seccomp:
         environment["PROOT_NO_SECCOMP"] = "1"
+    elif ioctl_filter:
+        environment["PROOT_IOCTL_COMMANDS_ONLY"] = "1"
     return environment
 
 
@@ -53,11 +56,13 @@ def main():
     parser.add_argument("--proot-tmp", type=Path, required=True)
     parser.add_argument("--child", action="store_true")
     parser.add_argument("--proot-seccomp", action="store_true")
+    parser.add_argument("--proot-ioctl-filter", action="store_true")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     require(bool(command) and Path(command[0]).is_absolute(), "Expected an absolute PRoot command")
     require(args.uid > 0 and args.gid >= 0, "The DbServer guest must run as the original non-root user")
+    require(args.proot_seccomp or not args.proot_ioctl_filter, "The ioctl filter needs PRoot's seccomp mode")
     require(re.fullmatch(r"net:\[\d+\]", args.host_netns), "Invalid host network namespace identity")
     require(network_identity() != args.host_netns, "A distinct network namespace is mandatory")
     if not args.child:
@@ -73,8 +78,9 @@ def main():
                  "--gid", str(args.gid), "--host-netns", args.host_netns,
                  "--receipt", str(args.receipt), "--proot-loader", str(args.proot_loader),
                  "--proot-tmp", str(args.proot_tmp), *(["--proot-seccomp"] if args.proot_seccomp else []),
-                 "--", *command]
-        os.execve(setpriv, child, clean_environment(args.proot_loader, args.proot_tmp, args.proot_seccomp))
+                 *(["--proot-ioctl-filter"] if args.proot_ioctl_filter else []), "--", *command]
+        os.execve(setpriv, child, clean_environment(args.proot_loader, args.proot_tmp, args.proot_seccomp,
+                                                    args.proot_ioctl_filter))
     require(os.getuid() == args.uid and os.geteuid() == args.uid
             and os.getgid() == args.gid and os.getegid() == args.gid,
             "The DbServer guest did not drop to the original user/group")
@@ -84,9 +90,10 @@ def main():
                "distinct_network_namespace": True, "original_uid": args.uid, "original_gid": args.gid,
                "effective_uid": os.geteuid(), "effective_gid": os.getegid(), "interfaces": interfaces,
                "loopback_up": True, "external_network_disabled": True, "guest_runs_as_root": False,
-               "proot_seccomp": args.proot_seccomp}
+               "proot_seccomp": args.proot_seccomp, "proot_ioctl_filter": args.proot_ioctl_filter}
     args.receipt.write_text(json.dumps(receipt, indent=2) + "\n")
-    os.execve(command[0], command, clean_environment(args.proot_loader, args.proot_tmp, args.proot_seccomp))
+    os.execve(command[0], command, clean_environment(args.proot_loader, args.proot_tmp, args.proot_seccomp,
+                                                     args.proot_ioctl_filter))
 
 
 if __name__ == "__main__":
