@@ -479,8 +479,24 @@ Folded into 0.13.69 because its build had to restart at a new head anyway
 - **Tests.** `armport/tests/test_proot_ioctl_probe.py` (10),
   `armport/tests/test_thor_apk_proot.py` (6),
   `tools/android/dbserver/test_host_dbserver_smoke.py` (one new).
+- **Android build (APK run 43104941674, the first).** NDK 27.2.12479018,
+  clang 18.0.3: `libproot-ioctl.so` 264,144 bytes, sha256 d1715661…cf26e78,
+  16 KiB segments, needs only libdl and libc; its loader came out byte for
+  byte the donor's (95a47c09…f0745c). In the published APK the second build
+  holds the switch's name and the default `libproot.so` does not; both default
+  files have the 0.13.36 hashes; receipt, patches, recipe, source bundle and
+  licences match the commit (`verify69.sh`).
+- **Root sampler (run 43091944698 at 22d90d987).** Read as root, Wine's
+  processes are readable: of 4,325 sampled stops none is an ioctl;
+  `newfstatat` 966, `readlinkat` 475 (wineserver 429), `accept` 371
+  (wineserver), `getsockopt` 197, `recvmsg`/`sendto`/`recvfrom` 373; 1,001
+  left the stop before the call could be read. Table and next steps:
+  `armport/PERFORMANCE-PATH.md`, "What PRoot intercepts".
 - **Open.** The Android build of the patched PRoot has never run on a device.
-  Socket, `close` and fake-id traps are untouched.
+  Socket, `close` and fake-id traps are untouched. Drafted, not in the
+  repository: patch 0005 (stop counts per call number written to a file;
+  `getsockopt` stopped only for `SO_PEERCRED`; local x86-64: 0.3-0.4 against
+  48-51 microseconds, the rewritten ids still returned).
 
 ## 0.13.69: the early zone start runs on ARM64; fixes from Thor 0.13.67 (Claude, 2026-11-10)
 
@@ -560,7 +576,29 @@ test of 0.13.67" below; 0.13.68's defect is in its own section.
   `test_character_zoning`) pass. Java: `javac` against the local stubs reports
   no new kind of error; CI's app-sources job compiled it (42964556839).
 
-- **Chain.** CHAIN69_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Chain at 22d90d987** (one chain on x86/perf-round1). Build 43077376317;
+  stock-travel runtime 43091944698 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler reading as root; one trip); trusted
+  runtime 43099656030 (interactive job 1856 s, THORHERO; its app-sources job
+  compiled the changed Java). Earlier attempts: builds 43038600688,
+  43040165696, 43045034484, 43049997166 and 43054851770 stopped because
+  ports.ubuntu.com did not resolve on the runners (now `apt_install.sh` with
+  signed mirrors); 43057175572 in an install script that still called apt
+  directly; 43076418815 in the unit tests (the libraries job's partial checkout
+  lacked `android/native/proot/`); runtime 43065755111 at a character creator
+  automation step, and its gate compared a variable the cleared guest
+  environment cannot see (fixed in ef6f8ce7c; 43069396512 passed there). APK
+  43104941674 published `coh-atlas-gameplay-v0.13.69` (93528330 bytes, sha256
+  37b0cf1e27ed4ab51b3e690b3991d9d2fc4cc78b954049b496002aea90a9e2bb, signer
+  92955353…, the same as 0.13.50-0.13.68); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtime
+  43091944698: early start `started`, the game's request 115.4 s later, zone
+  ready 60.6 s after it; ioctl probe `listed_commands_only` in both sessions
+  (FIONREAD 0.6, TCGETS2 31 microseconds per call) and no ioctl among 4,325
+  sampled stops; the trusted runtime, without the switch, reads
+  `no_ioctl_stops` (CI's Linux PRoot does not trace ioctl; Android's does).
+  Atlas Park's MapServer, spawn to ready: 176.0 s stock, 99.0 s with trusted
+  bins.
 - **Runner package outage (2026-11-11).** Builds 43038600688, 43040165696,
   43045034484, 43049997166 and 43054851770 at 27aac4c12 all stopped in the
   `libraries` job's "ArmPort test apt": GitHub's ARM64 runners could not resolve

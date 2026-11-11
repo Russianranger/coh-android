@@ -29,7 +29,17 @@ start), so launch A tells me what one stop costs on the Thor.
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.69" and "0.13.69, PRoot part".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI at 22d90d987: build 43077376317 passed; stock-travel runtime 43091944698
+(`early_zone=true`, `proot_ioctl_filter=true`, sampler reading as root; one
+trip); trusted runtime 43099656030 created and reopened a character (its
+interactive job took 1856 s); APK 43104941674 published 0.13.69 (sha256
+`37b0cf1e27ed4ab51b3e690b3991d9d2fc4cc78b954049b496002aea90a9e2bb`). Runtime
+43091944698: early start `started`, the game's request 115.4 s later, zone
+ready 60.6 s after it; ioctl probe `listed_commands_only` in both sessions
+(FIONREAD 0.6, TCGETS2 31 microseconds per call) and no ioctl among 4,325
+sampled stops; the trusted runtime, without the switch, reads `no_ioctl_stops`
+(CI's Linux PRoot does not trace ioctl; Android's does). Atlas Park's
+MapServer, spawn to ready: 176.0 s stock, 99.0 s with trusted bins.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

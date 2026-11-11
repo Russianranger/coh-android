@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   kept across updates, cache return, 60 cap (0128). Thor 20261111-035325 (first launch): graph verified, pets path; in world 923 s, FPS mean 30; PRoot tracer 647 s CPU. HANDOFF "Thor test of 0.13.67".
 - 0.13.68 published (APK 42963857636 at 42728face): early zone start INERT on ARM64 (call in the x86 launch sequence; 42955090151
   held no early_start record); spare zone server built, off. HANDOFF "0.13.68".
-- 0.13.69 (84) in CI: early start called from the ARM64 launch (aad238554), CI requires its record; PRoot patch 0004 (ioctl stops
-  only for 7 commands; local x86: 0.16 vs 49.8 us per call) as a second PRoot + launch option (off), ioctl probe. HANDOFF "0.13.69".
+- 0.13.69 published (APK 43104941674; build 43077376317, runtime 43099656030 at 22d90d987): early zone start runs on ARM64 (CI requires its record: 43091944698, ready 60.6 s after the game's request);
+  PRoot patch 0004 (ioctl stops for 7 commands only) as a second PRoot + option (off), ioctl probe, apt mirrors. HANDOFF "0.13.69".
