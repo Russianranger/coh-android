@@ -90,12 +90,12 @@ class ProbeTest(unittest.TestCase):
                          'every_ioctl_stops')
         self.assertEqual(self.reading({'getppid': 0.5, 'fionread': 90.0, 'tcgets2': 1.0})['reading'], 'inconsistent')
 
-    def test_switch_is_recorded_as_the_guest_sees_it(self):
-        with mock.patch.dict(os.environ, {'PROOT_IOCTL_COMMANDS_ONLY': '1'}):
-            self.assertEqual(load_probe()['proot_ioctl_probe'](calls=5)['switch'], '1')
-        environment = {k: v for k, v in os.environ.items() if k != 'PROOT_IOCTL_COMMANDS_ONLY'}
-        with mock.patch.dict(os.environ, environment, clear=True):
-            self.assertEqual(load_probe()['proot_ioctl_probe'](calls=5)['switch'], '')
+    def test_request_is_recorded_as_the_launcher_passed_it(self):
+        # Run 43065755111: the guest's environment is cleared, so PRoot's own switch is not visible.
+        with mock.patch.dict(os.environ, {'COH_PROOT_IOCTL_FILTER': '1'}):
+            self.assertIs(load_probe()['proot_ioctl_probe'](calls=5)['requested'], True)
+        with mock.patch.dict(os.environ, {'COH_PROOT_IOCTL_FILTER': '0', 'PROOT_IOCTL_COMMANDS_ONLY': '1'}):
+            self.assertIs(load_probe()['proot_ioctl_probe'](calls=5)['requested'], False)
 
     def test_an_unexpected_error_is_a_record_not_a_failure(self):
         def broken(descriptor, command, buffer):
@@ -114,14 +114,22 @@ class GateTest(unittest.TestCase):
         load_gate(False)({})
 
     def test_filter_at_work_passes(self):
-        load_gate(True)({'armport_proot_ioctl': {'reading': 'listed_commands_only', 'switch': '1'}})
+        load_gate(True)({'armport_proot_ioctl': {'reading': 'listed_commands_only', 'requested': True}})
 
     def test_other_readings_fail(self):
         gate = load_gate(True)
-        for probe in (None, {'reading': 'no_ioctl_stops', 'switch': '1'}, {'reading': 'every_ioctl_stops', 'switch': '1'},
-                      {'reading': 'listed_commands_only', 'switch': ''}, {'reading': 'unavailable'}):
+        for probe in (None, {'reading': 'no_ioctl_stops', 'requested': True},
+                      {'reading': 'every_ioctl_stops', 'requested': True},
+                      {'reading': 'listed_commands_only', 'requested': False}, {'reading': 'unavailable'}):
             with self.subTest(probe=probe), self.assertRaises(RuntimeError):
                 gate({} if probe is None else {'armport_proot_ioctl': probe})
+
+    def test_ci_passes_the_request_into_the_guest(self):
+        host = HOST.read_text()
+        self.assertIn("command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_IOCTL_FILTER=1')", host)
+        java = (ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/'
+                'ClientRuntime.java').read_text()
+        self.assertIn('"COH_PROOT_IOCTL_FILTER="+(prootIoctlFilterUsed?"1":"0")', java)
 
     def test_workflow_passes_the_switch(self):
         workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()

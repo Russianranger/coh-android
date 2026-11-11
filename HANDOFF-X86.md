@@ -456,7 +456,16 @@ Folded into 0.13.69 because its build had to restart at a new head anyway
   program with the switch when the fast PRoot mode is on and both files are
   present; report fields `proot_ioctl_filter_requested` and
   `proot_ioctl_filter_used`.
-- **Tests.** `armport/tests/test_proot_ioctl_probe.py` (9),
+- **First CI reading (run 43065755111 at 094a50a37, ARM64 runner, Linux
+  PRoot with the switch).** `listed_commands_only`: getppid 0.39, FIONREAD
+  0.58, TCGETS2 29.74 microseconds per call. The run then failed in the
+  character creator's automation ("Costume page ... not reached after
+  body_next", seen before in r58 and r62 first attempts) before the gate ran;
+  the gate would also have failed, because it compared PRoot's own switch,
+  which the guest's cleared environment does not show. The launcher now
+  passes `COH_PROOT_IOCTL_FILTER=1` into the guest and the gate reads the
+  probe's `requested`.
+- **Tests.** `armport/tests/test_proot_ioctl_probe.py` (10),
   `armport/tests/test_thor_apk_proot.py` (6),
   `tools/android/dbserver/test_host_dbserver_smoke.py` (one new).
 - **Open.** The Android build of the patched PRoot has never run on a device.

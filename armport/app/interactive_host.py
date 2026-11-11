@@ -493,7 +493,7 @@ def require_proot_ioctl_filter(report):
         return
     probe = report.get('armport_proot_ioctl')
     require(isinstance(probe, dict), 'The ioctl filter was requested but the guest made no ioctl probe')
-    require(probe.get('reading') == 'listed_commands_only' and probe.get('switch') == '1',
+    require(probe.get('reading') == 'listed_commands_only' and probe.get('requested') is True,
             'The ioctl filter was requested but the probe reads: ' + str(probe.get('reading'))[:60])
 
 
@@ -618,7 +618,7 @@ def guest_timing_summary(evidence):
             probe = report.get('armport_proot_ioctl')
             if isinstance(probe, dict):
                 result['proot_ioctl'] = {key: probe.get(key) for key in (
-                    'reading', 'switch', 'microseconds_per_call', 'error_type') if probe.get(key) is not None}
+                    'reading', 'requested', 'microseconds_per_call', 'error_type') if probe.get(key) is not None}
             result['shared_server_data'] = next((section.get('shared_server_data') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('shared_server_data') is not None),
@@ -882,6 +882,8 @@ def main():
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_GRAPHICS_PROFILE=standard')
         if runtime_host.runtime.proot_seccomp_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
+        if runtime_host.runtime.proot_ioctl_filter_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_IOCTL_FILTER=1')
         if trusted_bins_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
         if shared_heap_requested():

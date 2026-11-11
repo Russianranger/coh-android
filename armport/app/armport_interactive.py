@@ -47,7 +47,9 @@ IOCTL_TCGETS2 = 0x802C542A
 
 def proot_ioctl_probe(calls=IOCTL_PROBE_CALLS, clock=time.perf_counter):
     """Read-only timing of ioctl through PRoot; never the reason a launch fails."""
-    record = {'format': 1, 'calls': calls, 'switch': os.environ.get('PROOT_IOCTL_COMMANDS_ONLY', ''),
+    # The launcher starts the guest with a clean environment, so PRoot's own switch is not
+    # visible here; COH_PROOT_IOCTL_FILTER says whether the launcher set it (app and CI).
+    record = {'format': 1, 'calls': calls, 'requested': os.environ.get('COH_PROOT_IOCTL_FILTER') == '1',
               'stop_threshold_microseconds': IOCTL_PROBE_STOP_MICROSECONDS, 'is_success_proof': False}
     try:
         reader, writer = os.pipe()
