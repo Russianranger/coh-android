@@ -31,7 +31,12 @@ every step runs in full again after 30 days or with a new APK's assets).
 Everything else is 0.13.66: [THOR-TEST-0.13.66.md](THOR-TEST-0.13.66.md).
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.67".
 
-CI: CI_EVIDENCE_PLACEHOLDER (the chain is running; filled when 0.13.67 is published).
+CI at 0c37bef41: build 42922800561 passed; trusted runtime 42936024060 created
+and reopened a character (its interactive job took 1872 s); APK 42940665672
+published 0.13.67 (sha256
+`fd966d1a5a13f4dce210927a3090577fedba926e35ac418b0bd0a2b02885b2f9`). CI's
+runtimes start only Atlas trees with fresh state, so the receipts' reuse, the
+zone cache return and Mercy Island's graph run first on the phone.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

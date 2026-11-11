@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   rectangles (fast turns closed the game); Mercy Island navigation graph (run 42678203754). HANDOFF "0.13.64"/"0.13.65".
 - 0.13.66 published (APK 42827583406; build 42809195810, runtime 42821819932 at d8f417ea8): map pack coh-navigation-maps-v1.0.0
   (64 zones). Thor 20261110-213045: pack bound, Mercy graph refused (linked inputs vs new lstat check). HANDOFF "Thor test of 0.13.66".
-- 0.13.67 (82) in CI: Mercy graph check follows the phone's file links; launch receipts, folder index kept across
-  updates, zone data cache returned, 60 cap from launch (0128). Phone gains unmeasured. HANDOFF "0.13.67".
+- 0.13.67 published (APK 42940665672; build 42922800561, runtime 42936024060 at 0c37bef41): Mercy graph check follows the phone's file links; launch receipts, folder index
+  kept across updates, zone data cache returned, 60 cap from launch (0128). Phone gains unmeasured. HANDOFF "0.13.67".

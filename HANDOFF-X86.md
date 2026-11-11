@@ -492,7 +492,15 @@ patch (0128, made with patchwork).
   0.13.66. A first full run caught 14 errors in the startup-schedule tests,
   whose stand-in step modules name no manifest; such a step now runs in full
   (`inputs_not_pinned`), with a test.
-- **Chain.** CHAIN_EVIDENCE_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Chain at 0c37bef41** (one chain on x86/perf-round1). Build 42922800561;
+  trusted runtime 42936024060 (interactive job 1872 s, THORHERO; its
+  app-sources job compiled the changed Java). APK 42940665672 published
+  `coh-atlas-gameplay-v0.13.67` (92348069 bytes, sha256
+  fd966d1a5a13f4dce210927a3090577fedba926e35ac418b0bd0a2b02885b2f9, signer
+  92955353…, the same as 0.13.50-0.13.66); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. CI's runtimes
+  start only Atlas trees with fresh state, so the receipts' reuse, the zone
+  cache return and Mercy Island's graph run first on the phone.
 
 ## Thor test of 0.13.66 (user, 2026-11-10; observations only)
 
