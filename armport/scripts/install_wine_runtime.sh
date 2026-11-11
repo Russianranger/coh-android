@@ -9,8 +9,9 @@ curl -fsSL --retry 3 -o "$RUNNER_TEMP/wine.tar.gz" "$url"
 echo "$sha  $RUNNER_TEMP/wine.tar.gz" | sha256sum -c -
 sudo mkdir -p /opt/wine
 sudo tar -xzf "$RUNNER_TEMP/wine.tar.gz" -C /opt/wine
-sudo apt-get update -qq
-sudo apt-get install -y --no-install-recommends xvfb x11-utils x11-apps imagemagick tesseract-ocr xdotool \
+# apt_install.sh: Canonical's archive first, a signed mirror when it cannot be reached
+# (build 43057175572 lost 20 minutes here and failed while ports.ubuntu.com did not resolve).
+"$(dirname "$0")/apt_install.sh" xvfb x11-utils x11-apps imagemagick tesseract-ocr xdotool \
   libfreetype6 libfontconfig1 libx11-6 libxext6 libxrender1 libxrandr2 libxi6 \
   libxfixes3 libxcursor1 libxinerama1 libxxf86vm1 libgnutls30t64 libunwind8 \
   libgl1 libglx-mesa0 libgl1-mesa-dri

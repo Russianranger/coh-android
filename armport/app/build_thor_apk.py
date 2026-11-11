@@ -111,7 +111,7 @@ ADDED_JAVA_SOURCES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ControllerProfile.java'})
 
 
-# 0.13.70: a second PRoot build (android/native/proot patch 0004) beside the donor's. The
+# 0.13.69: a second PRoot build (android/native/proot patch 0004) beside the donor's. The
 # donor's libproot.so stays byte-identical and stays the default; the launch option "Graphics
 # calls skip the system-call monitor" starts this build with PROOT_IOCTL_COMMANDS_ONLY=1.
 # Its build receipt, licence files and complete corresponding source travel in the APK.

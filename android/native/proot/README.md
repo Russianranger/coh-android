@@ -38,7 +38,7 @@ emulated SysV IPC namespace.
   The generated loader helper is GPL-2.0-or-later. No optional acceleration or
   graphics patches are included.
 - `0004-ioctl-command-filter.patch` (2026-11-11; in `PATCH_NAMES` since
-  0.13.70). With `PROOT_IOCTL_COMMANDS_ONLY=1` the seccomp filter notifies the
+  0.13.69). With `PROOT_IOCTL_COMMANDS_ONLY=1` the seccomp filter notifies the
   tracer about `ioctl(2)` only for the commands `enter.c` and `exit.c` act on
   (SIOCGIFINDEX, TCSETSF, TCGETS2, TCSETS2, TCSETSW2, TCSETSF2, FICLONE); every
   other ioctl runs untraced. Android builds of this PRoot otherwise trace every

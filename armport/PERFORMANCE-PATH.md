@@ -541,7 +541,7 @@ stopped; `getsockopt` and `recvmsg` of the servers follow the path calls. Step
 their arguments need no fix-up, measured first with the sampler in CI, then as
 an option on the phone.
 
-First part of step 14 (2026-11-11, for 0.13.70): `android/native/proot/0004`
+First part of step 14 (2026-11-11, for 0.13.69): `android/native/proot/0004`
 stops an ioctl only for the seven commands PRoot acts on. A local x86-64 build
 of the pinned tree with patches 0001-0004, run with the app's PRoot options:
 an unlisted ioctl costs 0.16 microseconds with or without the switch; a listed

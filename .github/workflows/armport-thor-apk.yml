@@ -35,7 +35,7 @@ on:
         required: false
         default: ''
       proot_ioctl:
-        description: Build this head's PRoot for Android (patch 0004) and add it as a second PRoot build for the launch option (0.13.70)
+        description: Build this head's PRoot for Android (patch 0004) and add it as a second PRoot build for the launch option (0.13.69)
         type: boolean
         required: false
         default: false
@@ -194,7 +194,7 @@ jobs:
           path: ${{ runner.temp }}/coh-retained-signing
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
-      # 0.13.70: the second PRoot build. Same pinned source, NDK and recipe as the donor's
+      # 0.13.69: the second PRoot build. Same pinned source, NDK and recipe as the donor's
       # libproot.so (run 36364550345) plus android/native/proot patch 0004; two compiler jobs.
       - name: Android NDK 27.2.12479018 for the second PRoot build
         if: inputs.proot_ioctl
@@ -334,8 +334,15 @@ jobs:
           Also new: the animation file check is skipped when nothing changed (13.6 s per launch on
           Thor 0.13.67; it runs once more on the first launch); server data left by a session that
           ended abnormally can be recovered; more read-only records of threads and cores.
-          Off by default, experiments: "Draw on the game's own thread (frame rate experiment)" and
-          "Keep a spare zone server loaded for travel (needs Fast server start)".
+          Experiment, off by default: "Graphics calls skip the system-call monitor (frame rate
+          experiment)". The Linux layer (PRoot) stops every device-control call (ioctl) of every
+          process twice, and the renderer reaches the GPU through those calls. With the option a
+          second PRoot build in this APK stops only the seven commands it acts on. That build has
+          not run on a phone yet; the default launch keeps the PRoot program of every earlier
+          release, byte for byte. Its source, build receipt and licence files are in the APK under
+          assets/proot-ioctl/ (PRoot: GPL-2.0-or-later; talloc: LGPL-3.0-or-later).
+          Other experiments, off by default: "Draw on the game's own thread (frame rate experiment)"
+          and "Keep a spare zone server loaded for travel (needs Fast server start)".
           From 0.13.67: the Mercy Island navigation map is no longer refused (confirmed on Thor);
           install steps, the client's file list and a zone's server data are not redone each launch;
           the world starts at the 60 FPS cap.

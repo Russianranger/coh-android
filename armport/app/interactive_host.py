@@ -484,7 +484,7 @@ def require_early_zone_decision(report):
 def require_proot_ioctl_filter(report):
     """With the proot_ioctl_filter input the guest's own probe must show the filter at work.
 
-    0.13.70: `armport_proot_ioctl` times an ioctl PRoot does not act on and one it does. With
+    0.13.69: `armport_proot_ioctl` times an ioctl PRoot does not act on and one it does. With
     patch 0004 and PROOT_IOCTL_COMMANDS_ONLY=1 only the second stops in the tracer. A run that
     asked for the filter and shows anything else (no stops: the switch never reached PRoot;
     every ioctl stops: the filter was not installed) fails.

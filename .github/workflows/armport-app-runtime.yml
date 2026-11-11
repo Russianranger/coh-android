@@ -75,7 +75,7 @@ on:
         required: false
         default: false
       proot_ioctl_filter:
-        description: PRoot reports ioctl only for the commands it acts on (0.13.70, patch 0004; needs proot_seccomp)
+        description: PRoot reports ioctl only for the commands it acts on (0.13.69, patch 0004; needs proot_seccomp)
         type: boolean
         required: false
         default: false

@@ -1,4 +1,4 @@
-"""0.13.70: the APK builder admits a second PRoot build only with a receipt of this checkout's recipe.
+"""0.13.69: the APK builder admits a second PRoot build only with a receipt of this checkout's recipe.
 
 The donor's libproot.so stays the default and byte-identical; the build with patch 0004 is added
 beside it with its receipt, licence files and corresponding source.

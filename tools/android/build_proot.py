@@ -33,7 +33,7 @@ TALLOC_SHA256 = 'dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854d
 NDK_VERSION = '27.2.12479018'
 PATCH_NAMES = ('0001-sysvipc-memfd.patch', '0002-android-string-header.patch',
                '0003-portable-loader-offset.patch',
-               # 0.13.70: with PROOT_IOCTL_COMMANDS_ONLY=1 the filter reports ioctl only for
+               # 0.13.69: with PROOT_IOCTL_COMMANDS_ONLY=1 the filter reports ioctl only for
                # the commands PRoot acts on. Without the variable nothing changes.
                '0004-ioctl-command-filter.patch')
 

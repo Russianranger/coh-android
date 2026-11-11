@@ -450,7 +450,7 @@ public final class ClientRuntime {
                 .getBoolean("proot-ioctl-filter", false);
     }
     /**
-     * 0.13.70 experiment: the second PRoot build in this APK (patch 0004) is started with
+     * 0.13.69 experiment: the second PRoot build in this APK (patch 0004) is started with
      * PROOT_IOCTL_COMMANDS_ONLY=1, so its filter stops an ioctl only for the few commands PRoot
      * acts on. The first build stops every ioctl of every guest task twice, which includes each
      * call the renderer makes to the GPU. Off by default: the default launch keeps the PRoot
@@ -1066,7 +1066,7 @@ public final class ClientRuntime {
             String nativeDir = context.getApplicationInfo().nativeLibraryDir;
             File proot = new File(nativeDir, "libproot.so"), loader = new File(nativeDir, "libproot-loader.so");
             if (!proot.canExecute() || !loader.canExecute()) throw new IOException("The APK process runtime is missing");
-            // 0.13.70: the option starts the second PRoot build (patch 0004) with its ioctl command
+            // 0.13.69: the option starts the second PRoot build (patch 0004) with its ioctl command
             // filter. Without the option, or without both of its files, the launch is unchanged.
             File filteredProot = new File(nativeDir, "libproot-ioctl.so"), filteredLoader = new File(nativeDir, "libproot-ioctl-loader.so");
             prootIoctlFilterUsed = prootIoctlFilterRequested && prootFastModeRequested

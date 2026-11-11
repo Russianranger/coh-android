@@ -33,7 +33,7 @@ AUDIO_CONFIG = 'armport-asound.conf'
 ALSA_SYSTEM_CONFIG = Path('/usr/share/alsa/alsa.conf')
 
 
-# 0.13.70: what does PRoot do with ioctl(2) here? Android builds of the pinned PRoot stop
+# 0.13.69: what does PRoot do with ioctl(2) here? Android builds of the pinned PRoot stop
 # every ioctl of every guest task twice (entry and exit), which for this game includes
 # each GPU call of the renderer; patch 0004 with PROOT_IOCTL_COMMANDS_ONLY=1 stops only
 # the commands PRoot acts on. The probe times three calls on a private pipe: getppid

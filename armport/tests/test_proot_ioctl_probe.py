@@ -1,4 +1,4 @@
-"""0.13.70: the guest's ioctl probe and CI's gate for PRoot's ioctl command filter (patch 0004).
+"""0.13.69: the guest's ioctl probe and CI's gate for PRoot's ioctl command filter (patch 0004).
 
 Measured with a locally built PRoot (x86-64, pinned tree with patches 0001-0004, 2026-11-11):
 without the switch getppid 0.15, FIONREAD 0.23, TCGETS2 0.78 microseconds per call; with

@@ -414,10 +414,11 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
-## 0.13.70 (in preparation): PRoot stops ioctl only for the commands it acts on (Claude, 2026-11-11)
+## 0.13.69, PRoot part: ioctl stops only for the commands PRoot acts on (Claude, 2026-11-11)
 
-Not built or published yet; the code is on x86/perf-round3 and waits for the
-0.13.69 chain.
+Folded into 0.13.69 because its build had to restart at a new head anyway
+(the runner package outage below; build 43057175572 then failed in
+`client-run1`, where `install_wine_runtime.sh` still called apt directly).
 
 - **Why.** Thor 0.13.67: PRoot's one tracer thread used 647 s of CPU before
   the world appeared and half a core in play. Android builds of the pinned
@@ -527,9 +528,9 @@ test of 0.13.67" below; 0.13.68's defect is in its own section.
   adds `fstat`, `getsockopt`, `sendmsg` and the id calls. On the phone that
   includes each GPU (KGSL) ioctl of the renderer, each datagram of the servers
   and each X11 reply. CI's Linux build does not trace `ioctl`, so the phone's
-  tracer load in the world (52% of a core) is higher than CI's. A PRoot patch
-  that leaves these calls untraced where their arguments need no fix-up is the
-  next step (0.13.70); nothing in PRoot changed in 0.13.69.
+  tracer load in the world (52% of a core) is higher than CI's. The first
+  such patch (ioctl) is in this release as an option: see "0.13.69, PRoot
+  part" above. The socket, `close` and fake-id traps are unchanged.
 - **Local evidence.** `armport/tests` 551 pass with
   `ARMPORT_SERVER_BASELINE_ROOT`. Interactive suite: 3304 run, 86 failures, 13
   errors, 36 skips before the last additions, the same 99 as at 0.13.67 (`comm`
@@ -550,7 +551,11 @@ test of 0.13.67" below; 0.13.68's defect is in its own section.
   points the sources at a mirror (MIT, OCF Berkeley, TU Chemnitz), installs,
   and puts the sources back. apt still checks the Ubuntu archive signature, so
   a mirror cannot substitute a package. Tests: `armport/tests/test_apt_install.py`
-  (7, with stand-ins for apt-get and getent).
+  (8, with stand-ins for apt-get and getent). Build 43057175572 at 563ca622b
+  used the mirror in three jobs (notice "apt mirror": all four ubuntu.com
+  archive hosts failed to resolve) and then failed in `client-run1`:
+  `armport/scripts/install_wine_runtime.sh` still called apt directly and
+  spent 20 minutes on the dead host. It now installs through the helper.
 
 ## Thor test of 0.13.67 (user, 2026-11-10; export 20261111-035325)
 

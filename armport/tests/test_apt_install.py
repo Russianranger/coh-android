@@ -104,6 +104,14 @@ class AptInstall(unittest.TestCase):
         self.assertIn('packages.microsoft.com/ubuntu/24.04/prod', seen)             # not an archive host
         self.assertEqual(after['apt-mirrors.txt'], X86_MIRRORS)
 
+    def test_chain_scripts_and_workflows_install_through_the_helper(self):
+        root = SCRIPT.parents[2]
+        for name in ('.github/workflows/armport-build.yml', '.github/workflows/armport-app-runtime.yml',
+                     '.github/workflows/armport-thor-apk.yml', 'armport/scripts/install_wine_runtime.sh'):
+            text = (root / name).read_text()
+            self.assertNotIn('apt-get update', text, name)
+        self.assertIn('apt_install.sh" xvfb', (root / 'armport/scripts/install_wine_runtime.sh').read_text())
+
     def test_no_package_is_a_usage_error(self):
         done = subprocess.run(['bash', str(SCRIPT)], capture_output=True, text=True, timeout=30)
         self.assertEqual(done.returncode, 2)
