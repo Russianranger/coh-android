@@ -414,6 +414,78 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.68: the saved zone starts beside the client; spare zone server built (Claude, 2026-11-10)
+
+Continues "execute all recommended steps" (owner, 2026-11-10 16:26 CST). Step 9
+of the evaluation ([armport/PERFORMANCE-PATH.md](armport/PERFORMANCE-PATH.md))
+split in two when the DbServer's own code showed that a static zone needs no
+cookie to register; design in
+[armport/notes/ON-DEMAND-ZONES.md](armport/notes/ON-DEMAND-ZONES.md), "0.13.68".
+
+- **Early start of the saved zone (9a).** `character_zoning.start_early_zone`,
+  called by the client diagnostic once the client's install steps have
+  finished: Thor 0.13.66's stage order runs the map stage
+  (`local_atlas_startup`, 21:14:45) before `client_visual_assets`,
+  `client_all_zone_assets` and `client_all_zone_audio` (until 21:16:12), the
+  shared zone tree mirrors the client worktree, and a failed zone tree is
+  latched for the session. The saved zone's server starts with no cookie:
+  `registerDbClient` (DBServer/src/dbinit.c) refuses only a cookie that
+  differs, as the cookie-less Atlas Park and King's Row starts of
+  0.13.50-0.13.58 showed. A request the game makes for the zone while it loads
+  is `session_flow` in `external_map_supervisor` (never started twice, never
+  delinked). `_tick_early_zone` records ready, asked-by-the-game and failure; a
+  failure after the game asked delinks that request so Enter Game can ask
+  again. Refused, leaving 0.13.59's path: option off, a new character, another
+  zone server running, a world's higher instance (Atlas Park 101), a zone this
+  build does not serve, MemAvailable unknown or under 3072 MiB. Report:
+  `character_zoning.initial_zone.early_start`.
+- **Why one zone beside the client is admitted.** 0.13.57's low-memory kill had
+  two zone servers loading beside the client (Atlas Park and the saved King's
+  Row); 0.13.50-0.13.56 ran one (Atlas Park) beside it on every launch. The
+  0.13.67 `memory_trace` records the figures on the phone.
+- **App and CI.** Option "Start my saved zone while the game starts (Reopen)"
+  (`early-saved-zone`, on by default, `COH_EARLY_ZONE`); `armport-app-runtime`
+  input `early_zone` (needs `stock_travel`); the host's guest-timings notice
+  carries the decision and times.
+- **Spare layer for trips (9b).** `patches/mapserver-zone-travel/0001` adds
+  `MapServer/src/svr/armport_spare_server.h` and two lines in `svr_init.c`:
+  with `ARMPORT_SPARE_FILE=<path>` a server waits after `cmdCfgLoad()`, before
+  `connectToDbserver`, for `ARMPORT_SPARE_ASSIGN_V1 map_id=<n> cookie=<n>`,
+  then sets `db_state.map_id`, `cookie`, `base_map_id` and `instance_id` (the
+  lookup `staticMapInfosLoad` made). Source reading: nothing else before that
+  point reads the map id (every other use is at map load or in play). Applied
+  by `prepare_server_metrics_source.py` after 0119 and trusted bins (receipt
+  `spare_server_patch`, contract `spare_server`); the host fixture runs the
+  shipping header over Win32 shims (assignment after two polls, a clone's base
+  map, 13 malformed assignments and local mode refused with exit 3, disabled)
+  and the unpatched source fails its assertion; host-check evidence
+  regenerated; guest admission `spare_server_changed` pins the patch.
+- **Spare supervisor (9b), off by default.** `COH_SPARE_ZONE` (app option "Keep
+  a spare zone server loaded for travel (needs Fast server start)"; CI input
+  `spare_zone`). `tick_spare` starts one spare (`-map_id 0`, no cookie) once
+  the hero has been in a zone 30 s, in a tree already prepared (the shared zone
+  tree, or the Atlas tree for a hero in Atlas Park), with the options the
+  DbServer adds to every request (Thor 0.13.66: `-maxLevel 50 -aggrocap 17
+  -targetcapmode 1`, the MapServer's own defaults; kept in
+  `zone-request-options.json`) and MemAvailable of at least 3072 MiB.
+  `_start_stock_map` gives a matching request to the spare (the zone's
+  navigation graph, then the assignment; the ordinary start's readiness and
+  failure handling follow) and drops the spare for any other. After a trip, the
+  zone the hero left gives way to the next spare only on the DbServer's own
+  answer (`stock_occupied`). CI's trip waits up to 480 s for a warm spare when
+  the input is on. Report: `character_zoning.spare_zone`. Not run in CI or on a
+  phone yet.
+- **Local evidence.** Full interactive suite on the development trees: 3294 run
+  / 86 failures / 13 errors / 36 skips with the early start, 3302 run with the
+  spare supervisor; no failure new against 0.13.67 (3289 / 86 / 13 / 36). One
+  run showed 44 more failures in `test_setup_copy_memory` and
+  `test_runtime_setup_reuse`: the work disk had under 5 GiB free, which those
+  Java fixtures refuse; both modules pass with space (36 tests). ArmPort
+  (`discover -s armport/tests`): 541 run, the same 2 local-only errors. Focused
+  on the merged tree: `test_dynamic_initial_map` 22, `test_stock_travel` 15,
+  `test_character_reopen_host` 16 and five more modules, 183 pass.
+- **Chain.** CHAIN68_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+
 ## 0.13.67: launch work is not repeated; Mercy Island graph fix (Claude, 2026-11-10)
 
 Owner, 16:17 and 16:26 CST: "evaluate the COH Android repo ... identify

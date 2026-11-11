@@ -18,11 +18,9 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - .37 cleanup hardening e50a0e42e, packaging admission 263acad1f. Source, logs, skips, pins: HANDOFF-X86.md, issue10.
 
 ## Performance rounds (Claude, 2026-11-03; PR #11, issue #10)
-- Fast mode on: CI Atlas start −26/−32% (41588867344 vs 41584980465); CI-only creation re-parse (41630365042).
-- 0.13.49 Thor: FPS mean 45-48, Atlas ready 204/222 s (.44: 287 s). 0.13.50 (APK 41712293048): King's Row cold trip 562 s.
-- 0.13.51-53 (APKs 41750489814/41791858823/41881826170): cache reuse, station cap 0121, clock wrap 0123/0122, audio 0124.
-- 0.13.54 (APK 41960891294 at a66b533f6): ordinary-play save check; shared heap off (41931773800, 41956900853
-  failed); external-maps DbServer CI 41961253764. Thor (20261105-043833): save passed; King's Row cold 191 s, trip 30 s.
+- Fast mode: CI Atlas start −26/−32% (41588867344 vs 41584980465). 0.13.49 Thor: FPS mean 45-48, Atlas ready 204/222 s.
+- 0.13.50-54 (APKs 41712293048/41750489814/41791858823/41881826170/41960891294): cache reuse, 0121-0124, audio, ordinary-play
+  save check; shared heap off. Thor 0.13.54 (20261105-043833): save passed; King's Row cold 191 s, trip 30 s.
 - 0.13.55-56 (APKs 42037755195/42169364145): stock travel, any zone, gear menu; weeklyTF.cfg. Thor: King's Row ~3½ min.
 - 0.13.57 (APK 42281556221 at 8050afca8): every static zone, 0125, occupied probe; CI trip 101 ready 182 s. Thor (20261106-
   210545/220022): hero saved in King's Row; its start overlapped the client's → Android low-memory kill (reason 3, foreground).
@@ -38,3 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   (64 zones). Thor 20261110-213045: pack bound, Mercy graph refused (linked inputs vs new lstat check). HANDOFF "Thor test of 0.13.66".
 - 0.13.67 published (APK 42940665672; build 42922800561, runtime 42936024060 at 0c37bef41): Mercy graph check follows the phone's file links; launch receipts, folder index
   kept across updates, zone data cache returned, 60 cap from launch (0128). Phone gains unmeasured. HANDOFF "0.13.67".
+- 0.13.68 (83) in CI: on Reopen the saved zone starts beside the client (COH_EARLY_ZONE, option on by default);
+  spare zone server (patches/mapserver-zone-travel, COH_SPARE_ZONE) built, off. HANDOFF "0.13.68".
