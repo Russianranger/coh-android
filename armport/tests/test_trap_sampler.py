@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+import time
 import unittest
 from unittest import mock
 
@@ -90,6 +91,48 @@ class TrapSamplerTest(unittest.TestCase):
             self.assertEqual(result['requested'], True)
             self.assertEqual(result['lines'], len(lines))
 
+    def test_privileged_child_command_and_stop(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stop = Path(directory) / 'stop'
+            calls = []
+
+            class Child:
+                def wait(self, timeout):
+                    calls.append(('wait', stop.exists()))
+                    return 0
+
+            def popen(command):
+                calls.append(command)
+                return Child()
+            sampler = trap_sampler.PrivilegedSampler(4242, 'reopen', stop, popen=popen)
+            sampler.start()
+            self.assertEqual(calls[0][:2], ['sudo', '-n'])
+            self.assertEqual(calls[0][3:], [str(ROOT / 'armport/app/trap_sampler.py'), '--root-pid', '4242',
+                                            '--label', 'reopen', '--stop-file', str(stop)])
+            result = sampler.finish()
+            self.assertEqual(calls[1], ('wait', True))          # the stop file exists while the child is awaited
+            self.assertFalse(stop.exists())
+            self.assertEqual((result['privileged'], result['exit_code']), (True, 0))
+
+    def test_child_main_ends_with_the_stop_file_or_the_guest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stop = Path(directory) / 'stop'
+            started = time.monotonic()
+            # No such first process: the loop ends at once.
+            self.assertEqual(trap_sampler.main(['--root-pid', '999999999', '--label', 'creation',
+                                                '--stop-file', str(stop)]), 0)
+            stop.write_text('stop')
+            self.assertEqual(trap_sampler.main(['--root-pid', str(os.getpid()), '--label', 'creation',
+                                                '--stop-file', str(stop)]), 0)
+            self.assertLess(time.monotonic() - started, 20)
+
+    def test_sudo_probe_never_raises(self):
+        def missing(*args, **kwargs):
+            raise FileNotFoundError('sudo')
+        self.assertIs(trap_sampler.sudo_available(missing), False)
+        self.assertIs(trap_sampler.sudo_available(lambda *a, **k: mock.Mock(returncode=1)), False)
+        self.assertIs(trap_sampler.sudo_available(lambda *a, **k: mock.Mock(returncode=0)), True)
+
     def test_option_values(self):
         for value, expected in (('', False), ('0', False), ('1', True)):
             with mock.patch.dict(os.environ, {trap_sampler.ENV: value}):
@@ -99,7 +142,7 @@ class TrapSamplerTest(unittest.TestCase):
 
     def test_host_and_workflow_carry_the_option(self):
         host = (ROOT / 'armport/app/interactive_host.py').read_text()
-        self.assertIn("trap_sampler.TrapSampler(process.pid, 'reopen' if reopening else 'creation')", host)
+        self.assertIn("trap_sampler.start(process.pid, 'reopen' if reopening else 'creation',", host)
         self.assertLess(host.index('sampled = sampler.finish()'), host.index("cleanup = character.stop_guest(process"))
         workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()
         self.assertIn("COH_TRAP_SAMPLER: ${{ inputs.trap_sampler && '1' || '' }}", workflow)

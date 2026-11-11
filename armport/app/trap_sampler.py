@@ -12,9 +12,12 @@ Each window prints one line, `TRAP_SAMPLER_V1 {json}`, to the job log (run artif
 cannot be downloaded from a development session; job logs can). Nothing is changed in
 any process. An unreadable entry is counted, never fatal.
 """
+import argparse
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 import threading
 import time
 
@@ -180,3 +183,73 @@ class TrapSampler(threading.Thread):
         self.stopping.set()
         self.join(timeout=10)
         return {'requested': True, 'lines': self.lines, 'scope': 'CI host /proc samples of the guest process tree'}
+
+
+class PrivilegedSampler:
+    """The same sampler in a root child (`sudo -n`).
+
+    Run 43069396512: 1339 stops of wineserver and 659 of the client had an unreadable system
+    call, the two largest rows. The kernel's ptrace scope lets an unprivileged reader see
+    /proc/<pid>/syscall only for its own descendants, and Wine starts wineserver and Windows
+    programs through a second fork, so they are no longer below this process. Root may read
+    them. The child ends when `stop_file` appears or the guest's first process is gone.
+    """
+
+    def __init__(self, root_pid, label, stop_file, *, popen=subprocess.Popen):
+        self.root_pid, self.label, self.stop_file, self.popen = root_pid, label, Path(stop_file), popen
+        self.child = None
+
+    def start(self):
+        self.stop_file.unlink(missing_ok=True)
+        self.child = self.popen(['sudo', '-n', sys.executable, str(Path(__file__).resolve()),
+                                 '--root-pid', str(self.root_pid), '--label', self.label,
+                                 '--stop-file', str(self.stop_file)])
+
+    def finish(self):
+        code = None
+        try:
+            self.stop_file.write_text('stop\n')
+            code = self.child.wait(timeout=30)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        finally:
+            self.stop_file.unlink(missing_ok=True)
+        return {'requested': True, 'privileged': True, 'exit_code': code,
+                'scope': 'CI host /proc samples of the guest process tree, read as root'}
+
+
+def sudo_available(run=subprocess.run):
+    try:
+        return run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                   timeout=15).returncode == 0
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+def start(root_pid, label, stop_file):
+    """A started sampler: the root child where sudo asks no password, else the thread."""
+    sampler = (PrivilegedSampler(root_pid, label, stop_file) if sudo_available()
+               else TrapSampler(root_pid, label))
+    sampler.start()
+    return sampler
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--root-pid', type=int, required=True)
+    parser.add_argument('--label', required=True)
+    parser.add_argument('--stop-file', type=Path, required=True)
+    parser.add_argument('--lifetime-seconds', type=float, default=3 * 3600.0)
+    args = parser.parse_args(argv)
+    sampler = TrapSampler(args.root_pid, args.label)
+    sampler.start()
+    ended = time.monotonic() + args.lifetime_seconds
+    while (time.monotonic() < ended and not args.stop_file.exists()
+           and (sampler.proc / str(args.root_pid)).exists()):
+        time.sleep(0.5)
+    sampler.finish()
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

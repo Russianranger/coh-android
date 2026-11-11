@@ -739,8 +739,9 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                                        stderr=subprocess.STDOUT, start_new_session=True)
             if trap_sampler.requested():
                 # 0.13.69, CI only: which guest tasks wait on PRoot and at which system call.
-                sampler = trap_sampler.TrapSampler(process.pid, 'reopen' if reopening else 'creation')
-                sampler.start()
+                # Read as root where CI allows it: Wine's own processes are not below this one.
+                sampler = trap_sampler.start(process.pid, 'reopen' if reopening else 'creation',
+                                             work / 'trap-sampler.stop')
             endpoint = work / 'socket/view.sock'
             while not endpoint.exists():
                 require(process.poll() is None and time.monotonic() < deadline,
