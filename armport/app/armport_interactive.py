@@ -149,6 +149,14 @@ class ArmPortClient:
         # supplements are installed. The ARM64 copy must include those files;
         # copying in initialize() would miss later animation/visual payloads.
         self.prepare_client_visual_inputs()
+        # 0.13.69: the saved character's own zone may start now, beside the ARM64 client's
+        # data view, the texture list, the GPU probes and the client's start (COH_EARLY_ZONE).
+        # 0.13.68 placed this call only in the x86 client's sequence
+        # (character_creation_diagnostic.start_wine, after its early return), which this
+        # launch does not take: CI run 42955090151 and the phone never reached it.
+        early = getattr(getattr(self, 'local_server', None), 'start_early_zone', None)
+        if callable(early):
+            early()
         self.ctx.stage('armport_client_data')
         self.ctx.report['armport_client'] = package.prepare(
             self.args.assets / package.ARCHIVE, self.work / 'data', self.armport_work)

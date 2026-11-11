@@ -463,6 +463,24 @@ def early_zone_requested():
     return value == '1'
 
 
+def require_early_zone_decision(report):
+    """With the early_zone input, the reopened session must have decided on an early start.
+
+    0.13.68's chain (run 42955090151) passed with the input on while the guest never reached
+    the call: its report held no `early_start` record. Memory is the only refusal a CI runner
+    may meet; anything else, or no record, fails the run.
+    """
+    if not early_zone_requested():
+        return
+    zoning = report.get('character_zoning')
+    early = (zoning.get('initial_zone') or {}).get('early_start') if isinstance(zoning, dict) else None
+    require(isinstance(early, dict), 'The early zone start was requested but the guest never decided on it')
+    require(early.get('started') is True or early.get('reason') in ('low_memory', 'available_memory_unknown'),
+            'The early zone start was requested but not made: ' + str(early.get('reason'))[:120])
+    if early.get('started') is True:
+        require(early.get('failure') is None, 'The early zone start failed: ' + str(early.get('failure'))[:120])
+
+
 def spare_zone_requested():
     """0.13.69: one pre-loaded zone server beside the current zone (needs stock travel and trusted bins' server)."""
     value = os.environ.get('COH_SPARE_ZONE', '')
@@ -735,6 +753,7 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             if reopening:
                 reopen.validate_observer(observer, report, reopen.StockTravelReopenInteraction
                                          if stock_travel_requested() else reopen.ReopenInteraction)
+                require_early_zone_decision(report)
             else:
                 armport_validate_observer(observer, report)
             require(not endpoint.exists(), 'Private display survived guest cleanup')
