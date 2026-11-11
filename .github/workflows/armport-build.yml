@@ -320,6 +320,7 @@ jobs:
             /android/runtime-lock.json
             /android/guest/
             /android/interactive/src/
+            /android/native/proot/
             /tools/android/
             /tools/*.py
             /.github/

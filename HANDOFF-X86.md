@@ -465,6 +465,17 @@ Folded into 0.13.69 because its build had to restart at a new head anyway
   which the guest's cleared environment does not show. The launcher now
   passes `COH_PROOT_IOCTL_FILTER=1` into the guest and the gate reads the
   probe's `requested`.
+- **Second CI reading (run 43069396512 at ef6f8ce7c, passed; client from
+  build 42945013269, the same client patches).** Creation and reopen both
+  read `listed_commands_only` with `requested` true (FIONREAD 0.58 and 0.63,
+  TCGETS2 30.71 and 30.8 microseconds). Sampler, 35 lines, 7640 rounds: 0
+  ioctl stops among 4185 sampled stops. Early start: started, preparation
+  2.0 s, ready 176.2 s after it began, the game asked after 115.3 s, so the
+  zone was ready 60.9 s after Enter Game.
+- **Build 43076418815 at ef6f8ce7c failed in 77 s:** the `libraries` job's
+  sparse checkout did not hold `android/native/proot/`, which
+  `test_thor_apk_proot.py` pins. The path is in the list now; the unit tests
+  pass in a local checkout with exactly that job's 24 patterns (578).
 - **Tests.** `armport/tests/test_proot_ioctl_probe.py` (10),
   `armport/tests/test_thor_apk_proot.py` (6),
   `tools/android/dbserver/test_host_dbserver_smoke.py` (one new).
