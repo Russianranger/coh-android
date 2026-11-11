@@ -160,8 +160,7 @@ jobs:
         with: {lfs: false}
       - name: Install PRoot build and extraction tools
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
+          armport/scripts/apt_install.sh build-essential gawk default-jdk-headless iproute2 util-linux
       - name: Check host and guest probe syntax
         run: |
           python3 -m py_compile armport/app/*.py
@@ -298,8 +297,7 @@ jobs:
         with: {lfs: false}
       - name: Install host dependencies (no APK build or signing)
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless \
+          armport/scripts/apt_install.sh build-essential gawk default-jdk-headless \
             tesseract-ocr python3-pil iproute2 util-linux
       - name: Check ARM64 guest evidence and helper closure
         run: python3 -m unittest discover -s armport/tests -p 'test_client*.py' -v

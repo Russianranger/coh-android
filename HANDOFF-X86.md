@@ -493,6 +493,17 @@ test of 0.13.67" below; 0.13.68's defect is in its own section.
   no new kind of error; CI's app-sources job compiled it (42964556839).
 
 - **Chain.** CHAIN69_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Runner package outage (2026-11-11).** Builds 43038600688, 43040165696,
+  43045034484, 43049997166 and 43054851770 at 27aac4c12 all stopped in the
+  `libraries` job's "ArmPort test apt": GitHub's ARM64 runners could not resolve
+  Canonical's `ports.ubuntu.com` between 14:27Z and 16:14Z (pip and checkout
+  worked in the same jobs). `armport/scripts/apt_install.sh` now does the
+  update and install for armport-build and armport-app-runtime: when an archive
+  host in the runner's sources does not resolve, or the install fails, it
+  points the sources at a mirror (MIT, OCF Berkeley, TU Chemnitz), installs,
+  and puts the sources back. apt still checks the Ubuntu archive signature, so
+  a mirror cannot substitute a package. Tests: `armport/tests/test_apt_install.py`
+  (7, with stand-ins for apt-get and getent).
 
 ## Thor test of 0.13.67 (user, 2026-11-10; export 20261111-035325)
 
