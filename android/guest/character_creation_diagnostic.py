@@ -180,7 +180,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             lambda: world.package(self.args.assets)['files'],
             lambda: world.install(self.work, self.args.assets, self.ctx))
 
-    def receipted_step(self, step, pins, files, run):
+    def receipted_step(self, step, pins, files, run, bound=None):
         """One install step into the client worktree, or its last full result while its pinned
         inputs and the directories that hold its leaves are unchanged (launch_receipts.py).
 
@@ -188,7 +188,9 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         that runs in full is recorded by record_launch_receipts once every step has finished,
         so a later step's new files cannot outdate an earlier step's receipt. `pins` returns
         the names of the step's inputs in the session's `asset_sha256`; a step whose inputs
-        are not all pinned there always runs in full.
+        are not all pinned there always runs in full. `bound` returns further facts the step's
+        result depends on (0.13.69: the import generation the animation step links to); `files`
+        returns the step's package mapping, or a list of leaf paths in the worktree.
         """
         import launch_receipts
         started = time.monotonic()
@@ -206,8 +208,12 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                         'worktree_identity': [[info.st_dev, info.st_ino] for info in
                                               (os.lstat(self.work), os.lstat(self.work / 'data'))],
                         'inputs': {name: hashes[name] for name in pins}}
+            if bound is not None:
+                identity['bound'] = bound()
+                require(isinstance(identity['bound'], dict) and identity['bound']
+                        and all(value is not None for value in identity['bound'].values()), 'bound_facts_missing')
         except (base.DiagnosticError, OSError) as failure:
-            record['reason'] = str(failure)[:200]
+            record['reason'], identity = str(failure)[:200], None
         if identity is not None:
             result, record['reason'] = launch_receipts.reusable(
                 self.root / 'launch-receipts', step, identity, self.work, self.ctx)
@@ -230,9 +236,11 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         for step, identity, files, result in pending:
             record = self.ctx.report['launch_receipts'][step]
             try:
-                targets = world.resolve_targets(self.work, files(), self.ctx)
+                leaves = files()
+                targets = (list(leaves) if isinstance(leaves, (list, tuple))
+                           else world.resolve_targets(self.work, leaves, self.ctx).values())
                 record['directories'] = launch_receipts.record(self.root / 'launch-receipts', step, identity,
-                                                               self.work, targets.values(), result, self.ctx)
+                                                               self.work, targets, result, self.ctx)
                 record['recorded'] = True
             except base.Cancelled:
                 raise
@@ -316,10 +324,18 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.ctx.report['client_visual_supplement'] = visual
         self.ctx.passed(**visual)
         self.ctx.stage('client_animation_pack')
-        animation = client_animation_package.install(
-            self.args.assets / 'server-animations.pigg',
-            self.args.assets / 'server-animation-manifest.json', self.work,
-            assets=self.args.assets, context=self.ctx)
+        # 0.13.69: Thor 0.13.67 re-checked 5878 unchanged animation links on every launch (13.6 s,
+        # before the saved zone may start). The receipt holds the listings of the folders that
+        # hold those links and the import generation the links point into.
+        animation_manifest = self.args.assets / 'server-animation-manifest.json'
+        animation = self.receipted_step(
+            'client_animation', lambda: ('client_animation_package.py', 'server-animations.pigg',
+                                         'server-animation-manifest.json', 'client-runtime.zip'),
+            lambda: [self.work / 'data' / name for name in json.loads(animation_manifest.read_bytes())['files']],
+            lambda: client_animation_package.install(
+                self.args.assets / 'server-animations.pigg', animation_manifest, self.work,
+                assets=self.args.assets, context=self.ctx),
+            bound=lambda: {'import': self.ctx.report.get('import_identity')})
         self.ctx.report['client_animation_pack'] = animation
         self.ctx.passed(**animation)
         import zone_asset_package

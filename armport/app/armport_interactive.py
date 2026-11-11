@@ -309,6 +309,17 @@ class ArmPortClient:
         self.ctx.report['armport_gameplay_fps'] = {'format': 1, 'requested_cap': int(fps),
             'renderer_selected': gpu.get('selected', 'software'), 'menu_and_background_cap': 10,
             'physical_fps_measured': False}
+        # 0.13.69 experiment (app option, off by default): Mesa's extra calling thread off for the
+        # GPU renderer. Thor 0.13.67 in the world: the game's two threads, Mesa's `gl0` and `gdrv0`
+        # at about 30% of a core each, their busy time adding up to the frame time (27 FPS), which
+        # is what threads that wait for each other look like. `mesa_glthread` is Mesa's own user
+        # switch (Mesa MR 21926); the game then calls the driver from its render thread.
+        requested = os.environ.get('COH_CLIENT_GL_DIRECT') == '1'
+        direct = requested and gpu.get('selected') == 'turnip'
+        if direct:
+            environment['mesa_glthread'] = 'false'
+        self.ctx.report['armport_gl_threads'] = {'format': 1, 'direct_requested': requested,
+            'mesa_glthread': 'false' if direct else 'driver_default', 'physical_fps_measured': False}
         return environment
 
     def armport_gpu_environment(self, environment, label):

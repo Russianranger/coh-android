@@ -160,6 +160,20 @@ class ClientRoutingTests(unittest.TestCase):
                     env = probe.armport_gameplay_fps({'WINEDEBUG': 'x'})
                 self.assertEqual((env['COH_CLIENT_GAMEPLAY_FPS'], env['WINEDEBUG']), (fps, 'x'))
                 self.assertEqual(probe.ctx.report['armport_gameplay_fps']['requested_cap'], int(fps))
+        # 0.13.69 experiment: Mesa's calling thread off, only for the GPU renderer and only on request.
+        for gpu, option, value in (('turnip', None, None), ('turnip', '0', None), ('turnip', '1', 'false'),
+                                   ('software', '1', None), (None, '1', None)):
+            with self.subTest(gpu=gpu, direct=option):
+                probe = Probe(gpu)
+                with patch.dict(os.environ, {} if option is None else {'COH_CLIENT_GL_DIRECT': option}):
+                    if option is None:
+                        os.environ.pop('COH_CLIENT_GL_DIRECT', None)
+                    env = probe.armport_gameplay_fps({'WINEDEBUG': 'x'})
+                self.assertEqual(env.get('mesa_glthread'), value)
+                self.assertEqual(probe.ctx.report['armport_gl_threads'],
+                                 {'format': 1, 'direct_requested': option == '1',
+                                  'mesa_glthread': 'false' if value else 'driver_default',
+                                  'physical_fps_measured': False})
         patch_text = (Path(armport.__file__).resolve().parents[1]
                       / 'patches/0128-armport-gameplay-cap-60-from-launch.patch').read_text()
         self.assertIn('strcmp(value, "60") == 0) requested = 60;', patch_text)

@@ -182,6 +182,44 @@ class ReceiptedStepTests(unittest.TestCase):
         self.assertEqual((status['status'], status['reason'], self.runs), ('ran_in_full', 'inputs_not_pinned', 2))
         self.assertFalse((self.owner.root / 'launch-receipts').exists())
 
+    def animation_step(self, generation='generation-1'):
+        # 0.13.69: the animation step names its leaves as paths and binds the import generation.
+        def run():
+            self.runs += 1
+            leaf = self.owner.work / 'data/texture_library/a.texture'
+            if not leaf.exists():
+                leaf.write_bytes(b'leaf')
+            return {'format': 1, 'installed': True, 'reused': True, 'elapsed_seconds': 13.6}
+        self.owner.ctx.report['import_identity'] = generation and {'generation': generation}
+        return self.creation.CharacterCreationDiagnostic.receipted_step(
+            self.owner, 'client_animation', lambda: ('zone_asset_package.py', 'zones.zip'),
+            lambda: [self.owner.work / 'data/texture_library/a.texture'], run,
+            bound=lambda: {'import': self.owner.ctx.report.get('import_identity')})
+
+    def test_leaf_paths_and_bound_facts(self):
+        self.assertEqual(self.animation_step()['elapsed_seconds'], 13.6)
+        with unittest.mock.patch('atlas_world_assets.resolve_targets', side_effect=AssertionError('paths need no resolving')):
+            self.creation.CharacterCreationDiagnostic.record_launch_receipts(self.owner)
+        status = self.owner.ctx.report['launch_receipts']['client_animation']
+        self.assertEqual((status['recorded'], status['directories'], self.runs), (True, 3, 1))
+        reused = self.animation_step()
+        status = self.owner.ctx.report['launch_receipts']['client_animation']
+        self.assertEqual((status['status'], self.runs, reused['installed']), ('reused', 1, True))
+        self.assertLess(reused['elapsed_seconds'], 13.6)
+        self.animation_step('generation-2')                  # another import: the links point elsewhere
+        status = self.owner.ctx.report['launch_receipts']['client_animation']
+        self.assertEqual((status['status'], status['reason'], self.runs), ('ran_in_full', 'inputs_changed', 2))
+        self.creation.CharacterCreationDiagnostic.record_launch_receipts(self.owner)
+        self.animation_step(None)                            # no import identity: nothing to bind, run in full
+        status = self.owner.ctx.report['launch_receipts']['client_animation']
+        self.assertEqual((status['status'], status['reason'], self.runs), ('ran_in_full', 'bound_facts_missing', 3))
+        self.assertEqual(self.owner.pending_launch_receipts, [])
+
+    def test_the_animation_step_is_receipted_with_its_inputs_and_import(self):
+        source = (Path(self.creation.__file__)).read_text()
+        self.assertIn("'client_animation', lambda: ('client_animation_package.py', 'server-animations.pigg',", source)
+        self.assertIn("bound=lambda: {'import': self.ctx.report.get('import_identity')})", source)
+
     def test_a_step_module_without_pin_names_runs_in_full(self):
         # Older step modules (and the schedule tests' stand-ins) name no manifest or archive.
         import types

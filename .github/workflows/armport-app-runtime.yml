@@ -69,6 +69,11 @@ on:
         type: boolean
         required: false
         default: false
+      trap_sampler:
+        description: CI host - print which guest tasks wait on PRoot and at which system call (0.13.69, read-only)
+        type: boolean
+        required: false
+        default: false
       character_name:
         description: CI creates and reopens its character under this name (0.13.62 - any name the game accepts; 3-15 capital letters here)
         required: false
@@ -97,6 +102,7 @@ env:
   COH_STOCK_TRAVEL: ${{ inputs.stock_travel && '1' || '' }}
   COH_EARLY_ZONE: ${{ inputs.early_zone && '1' || '' }}
   COH_SPARE_ZONE: ${{ inputs.spare_zone && '1' || '' }}
+  COH_TRAP_SAMPLER: ${{ inputs.trap_sampler && '1' || '' }}
   ARMPORT_CI_CHARACTER_NAME: ${{ inputs.character_name || 'THORHERO' }}
 
 jobs:

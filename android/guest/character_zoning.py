@@ -54,6 +54,10 @@ PRESTART_MIN_AVAILABLE_MIB = 3072
 IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
 PRIORITY_SAMPLES = 12
 PRIORITY_INTERVAL_SECONDS = 120
+# 0.13.69: the same read-only sample while a zone server loads before the character is in the
+# world (Thor 0.13.67: the MapServer's main thread had used about 92 s of CPU in a 232 s start).
+LOADING_PRIORITY_SAMPLES = 8
+LOADING_PRIORITY_INTERVAL_SECONDS = 45
 MEMORY_TRACE_SAMPLES = 360
 MEMORY_TRACE_INTERVAL_SECONDS = 10
 # The game's own travel: a third zone asks the DbServer where the hero is (one
@@ -684,7 +688,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.zoning_report['wine_priorities'] = {'format': 1,
             'policy': 'read_only_thread_nice_by_wine_program_v1', 'samples': [],
             'sample_limit': PRIORITY_SAMPLES, 'interval_seconds': PRIORITY_INTERVAL_SECONDS,
-            'priorities_changed': False}
+            'priorities_changed': False, 'loading_samples': [],
+            'loading_sample_limit': LOADING_PRIORITY_SAMPLES,
+            'loading_interval_seconds': LOADING_PRIORITY_INTERVAL_SECONDS}
+        self.loading_priority_next = 0
 
     def start_tick_probe(self):
         """One daemon thread; it only reads the occupied map's progress file."""
@@ -758,6 +765,22 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         sample.update(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
                       active_map_id=self.active_map_id, resident_maps=sorted(self.maps))
         report['samples'].append(sample)
+
+    def tick_loading_priorities(self, now):
+        """The same sample while a zone server loads and the character is not in the world yet:
+        which core the MapServer's main thread last ran on and how much CPU it has used."""
+        report = (getattr(self, 'zoning_report', None) or {}).get('wine_priorities')
+        if (report is None or not self.maps or self.creation_report.get('connected_on_atlas')
+                or len(report['loading_samples']) >= LOADING_PRIORITY_SAMPLES
+                or now < getattr(self, 'loading_priority_next', 0)):
+            return
+        self.loading_priority_next = now + LOADING_PRIORITY_INTERVAL_SECONDS
+        try:
+            sample = scheduler.wine_priority_snapshot()
+        except (OSError, base.DiagnosticError) as error:
+            sample = {'error_type': type(error).__name__, 'error': str(error)[:200]}
+        sample.update(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), zone_servers=sorted(self.maps))
+        report['loading_samples'].append(sample)
 
     # Background start of the next zone ------------------------------------
     def prestart_eligible(self):
@@ -1732,6 +1755,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
 
     def poll_initial_map_startup(self):
         self.tick_memory_trace(time.monotonic())
+        self.tick_loading_priorities(time.monotonic())
         try:
             return self._poll_initial_map_startup()
         except BaseException as failure:
@@ -3046,6 +3070,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
 
     def character_evidence(self):
         self.tick_memory_trace(time.monotonic())
+        self.tick_loading_priorities(time.monotonic())
         self.remember_reward_connection()
         self.tick_zoning()
         self.tick_external_maps()

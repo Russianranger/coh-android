@@ -507,6 +507,25 @@ spent 20.6 s on the folder walk and refused the map before hashing anything;
 is unmeasured on the phone. Steps 8 and 9 are what bring the zone server
 toward goal 4.
 
+### After Thor 0.13.67 (2026-11-10, export 20261111-035325)
+
+One launch, the first on 0.13.67 (HANDOFF-X86.md, "Thor test of 0.13.67"). What
+it adds to the cost model:
+
+- PRoot's single tracer thread is the launch's bottleneck in CPU terms: 647 s
+  of its CPU in the 990 s to the world, and half a core afterwards. Steps that
+  run side by side (0.13.68's early zone start, a spare zone server) share that
+  one thread, so their gain is smaller than the sum of the steps they overlap.
+  Removing filtered system calls is worth more than overlapping them: the saved
+  file list, launch receipts and trusted bins are of that kind.
+- In the world the client is not bound by one core: four threads at about 30%
+  each. Before changing thread placement (step 12), find out what the threads
+  wait for; `armport-app-runtime` input `trap_sampler` (0.13.69, CI host,
+  read-only) prints which guest tasks are stopped for PRoot and at which system
+  call.
+- Android's tap-to-world receipt is 72-79 s later than the client's own
+  connection line; goal tracking uses the client's line.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

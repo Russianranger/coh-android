@@ -1111,6 +1111,41 @@ class WinePriorityTickTests(unittest.TestCase):
         instance.priority_next = 0
         with patch.object(zoning.scheduler, 'wine_priority_snapshot', side_effect=AssertionError):
             instance.tick_priorities(1.0)
+            instance.tick_loading_priorities(1.0)
+
+    def test_loading_samples_only_while_a_zone_server_loads_before_the_world(self):
+        # 0.13.69: which core the MapServer's main thread runs on while it loads (Thor 0.13.67:
+        # the first sample came after the character was in the world).
+        instance = ZoningServerTests.instance(self)
+        instance.zoning_report['wine_priorities'] = {'samples': [], 'loading_samples': []}
+        instance.creation_report = {'connected_on_atlas': False}
+        calls = []
+        def snapshot():
+            calls.append(1)
+            if len(calls) == 2:
+                raise OSError('proc vanished')
+            return {'programs': {'MapServer.exe': {'processes': 1, 'threads': 2, 'last_cpu': {'6': 2}}}}
+        with patch.object(zoning.scheduler, 'wine_priority_snapshot', snapshot):
+            instance.maps = {}
+            instance.tick_loading_priorities(50.0)                      # no zone server yet
+            self.assertEqual(calls, [])
+            instance.maps = {71: {'ready': False}}
+            instance.tick_loading_priorities(100.0)
+            instance.tick_loading_priorities(101.0)                     # inside the interval
+            for step in range(1, 12):
+                instance.tick_loading_priorities(100.0 + step * zoning.LOADING_PRIORITY_INTERVAL_SECONDS)
+            samples = instance.zoning_report['wine_priorities']['loading_samples']
+            self.assertEqual(len(samples), zoning.LOADING_PRIORITY_SAMPLES)
+            self.assertEqual((samples[0]['zone_servers'], samples[0]['programs']['MapServer.exe']['last_cpu']),
+                             ([71], {'6': 2}))
+            self.assertEqual(samples[1]['error_type'], 'OSError')
+            del samples[:]
+            instance.loading_priority_next = 0
+            instance.creation_report['connected_on_atlas'] = True       # in the world: the play samples take over
+            before = len(calls)
+            instance.tick_loading_priorities(5000.0)
+            self.assertEqual((len(calls), samples), (before, []))
+        self.assertEqual(instance.zoning_report['wine_priorities']['samples'], [])
 
 
 if __name__ == '__main__':

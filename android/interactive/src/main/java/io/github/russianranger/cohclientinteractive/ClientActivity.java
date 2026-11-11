@@ -40,7 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -203,6 +203,11 @@ public final class ClientActivity extends Activity {
         gameplay60.setChecked(ClientRuntime.gameplay60FpsEnabled(this));
         gameplay60.setOnCheckedChangeListener((button,checked)->ClientRuntime.setGameplay60FpsEnabled(this,checked));
         controls.addView(gameplay60);
+        glDirect=new CheckBox(this);glDirect.setText("Draw on the game's own thread (frame rate experiment)");
+        glDirect.setTextColor(Color.rgb(221,234,245));glDirect.setTextSize(13);
+        glDirect.setChecked(ClientRuntime.glDirectEnabled(this));
+        glDirect.setOnCheckedChangeListener((button,checked)->ClientRuntime.setGlDirectEnabled(this,checked));
+        controls.addView(glDirect);
         controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
@@ -441,7 +446,7 @@ public final class ClientActivity extends Activity {
         state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
-        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);clientSkipServerFolders.setEnabled(idle);clientFolderIndex.setEnabled(idle);clientAudio.setEnabled(idle);sharedHeap.setEnabled(idle);stockTravel.setEnabled(idle);earlyZone.setEnabled(idle);spareZone.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
+        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);prootFastMode.setEnabled(idle);prestartNextZone.setEnabled(idle);trustedBins.setEnabled(idle);gameplay60.setEnabled(idle);idleResidentMaps.setEnabled(idle);sharedServerData.setEnabled(idle);clientSkipServerFolders.setEnabled(idle);clientFolderIndex.setEnabled(idle);clientAudio.setEnabled(idle);sharedHeap.setEnabled(idle);stockTravel.setEnabled(idle);earlyZone.setEnabled(idle);spareZone.setEnabled(idle);glDirect.setEnabled(idle);gpuProfile.setEnabled(idle);clientArchitecture.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}

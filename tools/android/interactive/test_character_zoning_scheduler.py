@@ -305,14 +305,19 @@ class WinePrioritySnapshotTests(unittest.TestCase):
             (root / 'self/status').write_text('Name:\tpython3\nCpus_allowed_list:\t0-7\n')
             (root / 'meminfo').write_text('MemTotal:       15620000 kB\nMemAvailable:   10240000 kB\n'
                                           'SwapTotal:       8388604 kB\nSwapFree:        4194302 kB\n')
+            # 0.13.69: context switches of the busiest threads (waiting or computing?).
+            (root / '10/task/12/status').write_text('Name:\twine\nvoluntary_ctxt_switches:\t9000\n'
+                                                    'nonvoluntary_ctxt_switches:\t41\n')
+            (root / '10/task/11/status').write_text('Name:\twine\nvoluntary_ctxt_switches:\tmany\n')
             value = scheduler.wine_priority_snapshot(root)
         self.assertEqual(value['programs']['CityOfHeroes.exe'],
                          {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}, 'last_cpu': {'0': 3},
-                          'busiest_threads': [[24, 'wine) name', 0, 11], [22, 'wine) name', 0, 11], [20, 'wine) name', 0, 0]],
+                          'busiest_threads': [[24, 'wine) name', 0, 11, 9000, 41], [22, 'wine) name', 0, 11, None, None],
+                                              [20, 'wine) name', 0, 0, None, None]],
                           'cpus_allowed': ['0-6'], 'cgroup': ['3:cpuset:/foreground']})
         self.assertEqual(value['programs']['MapServer.exe'],
                          {'processes': 1, 'threads': 2, 'nice': {'0': 2}, 'last_cpu': {'2': 1, '7': 1},
-                          'busiest_threads': [[42, 'wine) name', 2, 0], [40, 'wine) name', 7, 0]],
+                          'busiest_threads': [[42, 'wine) name', 2, 0, None, None], [40, 'wine) name', 7, 0, None, None]],
                           'cpus_allowed': [], 'cgroup': []})
         self.assertEqual(value['guest'], {'cpus_allowed': '0-7', 'cgroup': None})
         self.assertEqual(value['memory'], {'MemTotal': 15253, 'MemAvailable': 10000, 'SwapTotal': 8191,

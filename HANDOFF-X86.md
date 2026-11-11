@@ -414,6 +414,68 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## Thor test of 0.13.67 (user, 2026-11-10; export 20261111-035325)
+
+Owner, 21:56 CST, with exports 20261111-035325 (session) and -035317 (setup):
+"I can confirm that mercy island finally had map data and pets could move.
+Check the logs to confirm and continue progressing the project to the goals i
+laid out before". One launch: the first on 0.13.67, Reopen of Ralakar in Mercy
+Island, played about 10 minutes, saved (`committed_sql_verified`, powers,
+costume and position preserved).
+
+- **Navigation map.** `zone_tree_preparation.beacon_graph.71`:
+  `installed_verified_graph`, origin `navigation_map_pack`, 407059 combat
+  beacons, 8711 inputs (565 MB) hashed in 66.5 s (0.13.66: refused after 20.6
+  s). The 0.13.67 fix is confirmed on the phone.
+- **Tap to world.** Android's receipt: 993.9 s (0.13.66: 845.3 s). The client's
+  own line `Established successful MapServer connection`: 918.7 s after the
+  guest started (0.13.66: 765.4 s); the guest's `character_connected` follows
+  it by 72 s (79 s in 0.13.66), so Android's figure overstates both. The 153 s
+  more than 0.13.66: 106 s at the login and character screens (the client was
+  ready at 388 s, 380 s in 0.13.66; Enter Game came 136 s later, 30 s in
+  0.13.66), 46 s for the texture list (rebuilt because the client executable
+  changed: 65.4 s, 19.8 s when reused) and 46 s more for the graph (hashed and
+  installed instead of refused); the install steps were 24 s shorter and the
+  server data mirror 10 s shorter (65.3 s).
+- **One-time work was done and recorded.** `launch_receipts`: all four steps
+  `ran_in_full`, `no_receipt`, `recorded` (69 s together). Client file list:
+  `index result=miss reason=header`, scan 132.3 s, `index result=written`.
+  `server_data_cache.returned_after_owned_cleanup` true (first time on the
+  phone). The second launch has not been run; its gains are still unmeasured.
+- **Stranded cache recovery is still refused.** `stranded_recovery_survivors`:
+  `{"pid": 17807, "name": "exe", "parent": "1", "tracer": "0"}`: PRoot's helper
+  detaches, so 0.13.67's parent-chain rule does not reach it. `state_inventory`
+  holds 6 `local-login-server-*`, 4 `-zones` and 3 `character-server-data-*-*`
+  trees from earlier sessions.
+- **Zone start.** Request to ready 378.7 s: preparation 146.7 s (mirror 65.3 s,
+  graph 66.5 s), MapServer `Server ready. (took 229.45 s)` (0.13.66: 223.26 s).
+  While the client waited it drew 41 frames in 402 s.
+- **Frame rate in the world** (cap 60 in effect: `maxfps=60`,
+  `worker_sleeps=0`). The client's own 5 s windows: 25-30 FPS for the first 5.5
+  minutes, then 20-54 while moving; Android delivered a mean of 30.1 and a
+  median of 27.7 over 142 windows (0.13.66, cap 30: 23.7 and 28.6 over 47). The
+  client used about 1.3 cores (`cpu_user_ms` about 6100 and `cpu_kernel_ms`
+  about 600 per 5 s) across four threads of about 30% each (`CityOfHeroes.ex`,
+  `:gl0`, `:gdrv0` and a second client thread): no thread is saturated, so the
+  limit is the hand-off between them or waiting, not one core's speed. Their
+  last cores were 2-6; core 7 (3187 MHz) is allowed for most threads and almost
+  unused.
+- **PRoot's tracer.** `wine_priorities` (6 samples, 120 s apart, all in the
+  world): the thread named `libproot.so` had used 647 s of CPU at the first
+  sample, 990 s after the guest started, and 316 s more over the next 607 s
+  (52% of a core). In the same 607 s: wineserver 25%, the DbServer's main
+  thread 17%, the guest Python 11%, the MapServer 9%. One thread serves every
+  filtered system call of every traced task, so the launch is bound by it;
+  which calls keep it busy in the world is not in the report.
+- **Memory and server tick.** MemAvailable never below 6527 MiB (11091 before
+  the client, 7631 when the zone was ready, about 7000 in the world), pressure
+  0.00, swap unchanged. 18 tick probes: 116-118 ticks per 4 s, largest gap 66
+  ms.
+- **Read for 0.13.68.** Its early start runs the zone's preparation and
+  MapServer beside the client's start; both are bound by the same tracer
+  thread, so the overlap may save less than the 113 s + 227 s that 0.13.66
+  suggested. The phone decides.
+
 ## 0.13.68: the saved zone starts beside the client; spare zone server built (Claude, 2026-11-10)
 
 Continues "execute all recommended steps" (owner, 2026-11-10 16:26 CST). Step 9

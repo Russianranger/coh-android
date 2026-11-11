@@ -23,6 +23,7 @@ import retained_assets
 import stage_app_assets
 import runtime_host
 import server_pipeline
+import trap_sampler
 
 ROOT = Path(__file__).resolve().parents[2]
 import sys
@@ -693,11 +694,15 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
     evidence.mkdir(parents=True)
     isolated, environment, expected_network = runtime_host.runtime.isolate_command(
         command, evidence=evidence, proot=proot, work=work)
-    process = observer = failure = report = None
+    process = observer = failure = report = sampler = None
     with (evidence / 'host-client.log').open('w') as log:
         try:
             process = subprocess.Popen(isolated, env=environment, stdout=log,
                                        stderr=subprocess.STDOUT, start_new_session=True)
+            if trap_sampler.requested():
+                # 0.13.69, CI only: which guest tasks wait on PRoot and at which system call.
+                sampler = trap_sampler.TrapSampler(process.pid, 'reopen' if reopening else 'creation')
+                sampler.start()
             endpoint = work / 'socket/view.sock'
             while not endpoint.exists():
                 require(process.poll() is None and time.monotonic() < deadline,
@@ -739,12 +744,13 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             failure = {'type': type(error).__name__, 'message': str(error)}
             raise
         finally:
+            sampled = sampler.finish() if sampler is not None else None
             cleanup = character.stop_guest(process, work / 'state')
             exported = character.export_guest_evidence(work / 'state', evidence, session)
             (evidence / 'host-session-report.json').write_text(json.dumps({
                 'scope': 'arm64_app_guest_reopen' if reopening else 'arm64_app_guest_creation',
                 'session_id': session, 'passed': failure is None, 'failure': failure,
-                'external_observer': observer, 'host_cleanup': cleanup,
+                'external_observer': observer, 'host_cleanup': cleanup, 'trap_sampler': sampled,
                 'guest_evidence_export': exported, 'guest_failure': guest_failure_summary(evidence)}, indent=2) + '\n')
             if failure is not None:
                 detail = failure_detail(evidence, work, observer)

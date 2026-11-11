@@ -907,6 +907,39 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         rows = sorted(cache.foreign_processes(proc, 600), key=lambda row: row['pid'])
         self.assertEqual([(row['pid'], row['parent'], row['tracer']) for row in rows], [(700, '1', '0'), (710, '705', '0')])
 
+    def test_the_detached_helper_of_our_own_proot_is_recognised_by_program_and_start_time(self):
+        # Thor 0.13.67 (20261111-035325): {"name": "exe", "parent": "1", "tracer": "0"} refused the recovery.
+        proc = self.root / 'proc'
+        def task(pid, ppid, tracer, name, program, started, uid=10234):
+            (proc / str(pid)).mkdir(parents=True)
+            (proc / str(pid) / 'status').write_text(f'Name:\t{name}\nState:\tS (sleeping)\nPPid:\t{ppid}\n'
+                                                    f'TracerPid:\t{tracer}\nUid:\t{uid}\t{uid}\t{uid}\t{uid}\n')
+            (proc / str(pid) / 'stat').write_text(f'{pid} ({name}) S {ppid} ' + ' '.join(['0'] * 17) + f' {started} 0\n')
+            if program is not None:
+                os.symlink(program, proc / str(pid) / 'exe')
+        binary = '/data/app/~~a==/io.example-b==/lib/arm64/libproot.so'
+        task(1, 0, 0, 'init', '/init', 1, uid=0); task(400, 1, 0, 'app', '/system/bin/app_process64', 9000)
+        task(500, 400, 0, 'libproot.so', binary, 10000)
+        task(600, 500, 500, 'python3', '/usr/bin/python3', 10010)     # this guest
+        task(17807, 1, 0, 'exe', binary, 10450)                       # our PRoot's detached helper
+        (proc / 'self').mkdir()
+        self.assertEqual(cache.start_ticks(proc, 17807), 10450)
+        self.assertEqual(cache.foreign_processes(proc, 600), [])
+        task(700, 1, 0, 'exe', binary, 9500)                          # the same program, from before our tracer
+        task(710, 1, 0, 'exe', '/data/local/tmp/other', 10460)        # another program
+        task(720, 1, 0, 'exe', None, 10470)                           # program unreadable
+        task(730, 1, 0, 'sh', binary, 10480)                          # not the helper's name
+        task(740, 1, 777, 'exe', binary, 10490)                       # traced by someone else
+        rows = {row['pid']: row for row in cache.foreign_processes(proc, 600)}
+        self.assertEqual(sorted(rows), [700, 710, 720, 730, 740])
+        self.assertEqual(rows[700]['helper_check'], {'recognised': False, 'same_program_as_tracer': True,
+                                                     'program': 'libproot.so', 'started_after_tracer': False})
+        self.assertEqual(rows[710]['helper_check'], {'recognised': False, 'same_program_as_tracer': False,
+                                                     'program': 'other', 'started_after_tracer': True})
+        self.assertEqual(rows[720]['helper_check'], {'recognised': False, 'unreadable': 'FileNotFoundError'})
+        self.assertEqual(rows[730]['helper_check'], {'recognised': False})
+        self.assertEqual(rows[740]['helper_check'], {'recognised': False})
+
     def test_ancestor_exiting_during_the_walk_is_not_a_refusal_and_stays_fail_safe(self):
         proc = self.root / 'proc'
         def task(pid, ppid, uid, tracer, name='x'):

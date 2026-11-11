@@ -55,6 +55,20 @@ def pressure_observation(proc_root):
     return result
 
 
+def context_switches(task):
+    """[voluntary, involuntary] context switches of one thread, or [None, None]."""
+    found = {}
+    try:
+        with open(Path(task) / 'status') as handle:
+            for line in handle.read(8192).splitlines():
+                name, _, value = line.partition(':')
+                if name in ('voluntary_ctxt_switches', 'nonvoluntary_ctxt_switches') and value.strip().isdecimal():
+                    found[name] = int(value)
+    except OSError:
+        pass
+    return [found.get('voluntary_ctxt_switches'), found.get('nonvoluntary_ctxt_switches')]
+
+
 def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2.0):
     """Read-only: thread counts per nice value for each known Wine program of this uid.
 
@@ -109,7 +123,13 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
                 # 1.65 cores at 28-33 FPS and no sampled thread had run on the fastest core.
                 if fields[11].isdecimal() and fields[12].isdecimal():
                     busiest.append([int(fields[11]) + int(fields[12]), head.partition('(')[2][:15],
-                                    None if cpu is None else int(cpu), nice])
+                                    None if cpu is None else int(cpu), nice, task.path])
+            # 0.13.69: how often each of the process's busiest threads gave up its core
+            # (voluntary) or lost it (involuntary). Thor 0.13.67: four client threads at about
+            # 30% of a core each and none saturated; the counts tell waiting from computing.
+            busiest = sorted(busiest, key=lambda item: -item[0])[:8]
+            for item in busiest:
+                item[4:] = context_switches(item[4])
             row = programs.setdefault(name, {'processes': 0, 'threads': 0, 'nice': {}, 'last_cpu': {},
                                              'busiest_threads': [], 'cpus_allowed': [], 'cgroup': []})
             row['busiest_threads'] = sorted(row['busiest_threads'] + busiest, key=lambda item: -item[0])[:8]

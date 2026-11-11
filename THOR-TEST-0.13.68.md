@@ -15,14 +15,19 @@ known until it is created).
 
 A second new option, **Keep a spare zone server loaded for travel (needs Fast
 server start)**, is off by default and has not run on a phone: leave it off
-for launches A to C. It is for the next step (a zone you travel to starting in
+except in launch D. It is for the next step (a zone you travel to starting in
 about a minute instead of four or five); launch D below tries it if you want.
 
-If you skipped 0.13.67, everything in its sheet applies here too:
-[THOR-TEST-0.13.67.md](THOR-TEST-0.13.67.md) (Mercy Island pathing fix, launch
-work no longer repeated, 60 FPS cap from the first frame). **The first launch
-on 0.13.67 or 0.13.68 still does the one-time work once**; the gain shows
-from the second launch.
+Your 0.13.67 launch (export 20261111-035325) did the one-time work and
+recorded it, so the first launch on 0.13.68 should already skip most of it
+(the install checks, the client's file list, the zone's server data). One
+thing is rebuilt once more, about 45 s: the texture list, because the client
+program is a new build.
+
+That launch also showed where the time goes: the Linux layer's one helper
+thread, which every file lookup of every process waits for. The zone server
+used about 92 s of CPU in its 232 s start. **Fast server start** removes many
+of those lookups, so launch B below is the measurement I most need.
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.68".
 
@@ -40,11 +45,13 @@ CI: CI_EVIDENCE_PLACEHOLDER
      attack: it should walk or run to it and fight.
    - **Save character / log out**, wait for **Saved character verified**, then
      **Finish and save report**. Export the report.
-4. **Launch B** (the one that should be shortest). Close the app from recents,
-   open it and repeat step 3 exactly. Export the report.
-5. Optional **Launch C**: tick **Fast server start (test server with trusted
-   bins)**, repeat step 3, export the report, then untick it. This is the
-   server CI runs; I want one phone time for it before making it the default.
+4. **Launch B** (fast server). Close the app from recents, open it, tick
+   **Fast server start (test server with trusted bins)** and repeat step 3.
+   Export the report, then untick it. This is the server CI runs; one phone
+   time for it decides whether it becomes the default. If the game does not
+   reach Mercy Island with it, export the report, untick it and carry on.
+5. Optional **Launch C**: repeat step 3 exactly with the options at their
+   defaults (a second plain launch, for comparison with A).
 6. Optional **Launch D** (the spare zone server): tick both **Fast server
    start (test server with trusted bins)** and **Keep a spare zone server
    loaded for travel**, repeat step 3, but before saving stay in Mercy Island
@@ -66,7 +73,8 @@ Program), note what it says and keep going.
 
 The exports of launches A and B (and C and D if you ran them), the storage report,
 whether the pet walked to the enemy, and roughly how long Enter Game took in
-each launch. Fields I will read, besides those in the 0.13.67 sheet:
+each launch. For the frame rate it helps to stand in the same spot for a
+minute in each launch (where you arrive is fine) before moving on. Fields I will read, besides those in the 0.13.67 sheet:
 
 - `character_zoning.initial_zone.early_start`: `started`, `preparation_seconds`,
   `ready_seconds`, `ready_before_the_game_asked` (or `requested_after_seconds`),

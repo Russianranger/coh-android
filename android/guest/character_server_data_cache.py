@@ -82,6 +82,10 @@ def foreign_processes(proc=Path('/proc'), pid=None):
     process named "exe", 4 or 5 pids after this session's PostgreSQL (PRoot's own
     helper for System V shared memory, started when the database starts). A process
     whose parent chain reaches our tracer belongs to this session.
+
+    Thor 0.13.67 (export 20261111-035325) recorded that process's parent and tracer:
+    {"name": "exe", "parent": "1", "tracer": "0"}. The helper detaches, so no parent
+    chain reaches the tracer; proot_helper() recognises it by what it is instead.
     """
     pid = os.getpid() if pid is None else pid
     own = process_status(proc / str(pid))
@@ -127,9 +131,43 @@ def foreign_processes(proc=Path('/proc'), pid=None):
                     parent = None
             if parent is not None and parent.isdigit() and int(parent) == tracer:
                 continue
+            helper = proot_helper(proc, other, status, tracer)
+            if helper['recognised']:
+                continue
             foreign.append({'pid': other, 'name': status.get('Name'), 'parent': status.get('PPid'),
-                            'tracer': status.get('TracerPid')})
+                            'tracer': status.get('TracerPid'), 'helper_check': helper})
     return foreign
+
+
+def start_ticks(proc, pid):
+    """Start time of a process in clock ticks since boot (/proc/<pid>/stat field 22)."""
+    text = (proc / str(pid) / 'stat').read_text(errors='replace')
+    return int(text[text.rindex(')') + 2:].split()[19])
+
+
+def proot_helper(proc, pid, status, tracer):
+    """Is this untraced, detached process our own PRoot's helper?
+
+    All of: named "exe" (PRoot starts it from /proc/self/exe), reparented to init,
+    not traced, the same program file as our tracer, and started no earlier than
+    that tracer, so it cannot be left from an earlier session (whose tracer, and
+    with --kill-on-exit every tracee, ended before ours began). Such a helper keeps
+    PRoot's shared-memory files and holds no directory of a stranded tree. Anything
+    unreadable or different is not recognised and stays foreign, as before.
+    """
+    result = {'recognised': False}
+    if (status.get('Name'), status.get('PPid'), status.get('TracerPid')) != ('exe', '1', '0'):
+        return result
+    try:
+        own, other = os.readlink(proc / str(tracer) / 'exe'), os.readlink(proc / str(pid) / 'exe')
+        result.update(same_program_as_tracer=bool(own) and own == other,
+                      program=other.rsplit('/', 1)[-1][:64])
+        result['started_after_tracer'] = start_ticks(proc, pid) >= start_ticks(proc, tracer)
+    except (OSError, ValueError, IndexError) as error:
+        result['unreadable'] = type(error).__name__
+        return result
+    result['recognised'] = result['same_program_as_tracer'] and result['started_after_tracer']
+    return result
 
 
 class CheckedInputResolver:

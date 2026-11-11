@@ -232,6 +232,13 @@ class SidebarRuntimeTests(unittest.TestCase):
         activity=(JAVA/'ClientActivity.java').read_text()
         self.assertIn('ClientRuntime.setGameplay60FpsEnabled(this,checked)',activity)
         self.assertIn('gameplay60.setEnabled(idle);',activity)
+        # 0.13.69 experiment, off by default: the GPU renderer without Mesa's calling thread.
+        self.assertIn('.getBoolean("client-gl-direct", false);',source)
+        self.assertIn('glDirectRequested=glDirectEnabled(context);',source)
+        self.assertIn('"COH_CLIENT_GL_DIRECT="+(glDirectRequested?"1":"0"),',source)
+        self.assertIn('.put("client_gl_direct_requested", glDirectRequested)',source)
+        self.assertIn('glDirect.setChecked(ClientRuntime.glDirectEnabled(this));',activity)
+        self.assertIn('glDirect.setEnabled(idle);',activity)
 
 
 if __name__=='__main__':

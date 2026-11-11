@@ -225,6 +225,7 @@ public final class ClientRuntime {
     private boolean prootFastModeRequested=false;
     private boolean prestartNextZoneRequested=false;
     private boolean earlyZoneRequested=false;
+    private boolean glDirectRequested=false;
     private boolean spareZoneRequested=false;
     private boolean trustedBinsRequested=false;
     private boolean gameplay60Requested=false, gameplay60Queued=false;
@@ -443,6 +444,20 @@ public final class ClientRuntime {
      * 227 s to start, all after Enter Game. On by default; the guest refuses it and starts the zone
      * at Enter Game, as before, whenever its conditions are not met.
      */
+    public static boolean glDirectEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("client-gl-direct", false);
+    }
+    /**
+     * 0.13.69 experiment: the GPU renderer runs the game's drawing calls on the game's own render
+     * thread (Mesa's extra calling thread off, mesa_glthread=false). Thor 0.13.67: four client
+     * threads at about 30% of a core each, their busy time adding up to the frame time.
+     */
+    public static synchronized void setGlDirectEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("client-gl-direct", enabled).apply();
+    }
     public static boolean earlyZoneEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getBoolean("early-saved-zone", true);
@@ -979,6 +994,7 @@ public final class ClientRuntime {
         prootFastModeRequested=prootFastModeEnabled(context);
         prestartNextZoneRequested=prestartNextZoneEnabled(context);
         earlyZoneRequested=earlyZoneEnabled(context);
+        glDirectRequested=glDirectEnabled(context);
         spareZoneRequested=spareZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
@@ -1057,6 +1073,7 @@ public final class ClientRuntime {
                     // 0.13.67: the client starts gameplay at the 60 cap (patch 0128); 0.13.66 typed
                     // /maxfps 60 only 75 s after the world was drawn, when the connection was confirmed.
                     "COH_CLIENT_GAMEPLAY_60="+(gameplay60Requested?"1":"0"),
+                    "COH_CLIENT_GL_DIRECT="+(glDirectRequested?"1":"0"),
                     "COH_IDLE_RESIDENT_MAPS="+(idleResidentMapsRequested?"1":"0"),
                     "COH_SHARED_SERVER_DATA="+(sharedServerDataRequested?"1":"0"),
                     "COH_CLIENT_SKIP_SERVER_FOLDERS="+(clientSkipServerFoldersRequested?"1":"0"),
@@ -2901,7 +2918,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)
