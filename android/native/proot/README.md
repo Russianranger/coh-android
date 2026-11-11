@@ -60,6 +60,18 @@ emulated SysV IPC namespace.
   and corresponding source under `assets/proot-ioctl/`. The app starts it only
   with the launch option "Graphics calls skip the system-call monitor".
   GPL-2.0-or-later, as PRoot.
+- `0005-stop-counts-getsockopt-filter.patch` (2026-11-11; **drafted, not in
+  `PATCH_NAMES`, built into nothing yet**). Applies on top of 0001-0004. Two
+  switches, both off unless set: `PROOT_STOP_COUNTS=<file>` counts PRoot's
+  translation rounds per system call number (enter and exit apart) and
+  rewrites the file about every ten seconds and at exit;
+  `PROOT_GETSOCKOPT_PEERCRED_ONLY=1` stops `getsockopt` only for
+  `SOL_SOCKET`/`SO_PEERCRED`, the one answer the fake-id extension rewrites.
+  Local x86-64 build with the app's PRoot options: other options 0.3-0.4
+  microseconds per call with the switch, 48-51 without; `SO_PEERCRED` still
+  returns the fake ids (1000:1000) and stops as before. Not yet compiled for
+  Android or ARM64. Why: CI run 43091944698 (`armport/PERFORMANCE-PATH.md`,
+  "What PRoot intercepts").
 - The Android talloc cross answers follow the same pinned TRASC recipe, derived
   there from the Termux talloc build recipe. Android NDK **27.2.12479018**, API 26,
   and 16 KB ELF segment alignment are explicit build inputs. Linux CI uses the
