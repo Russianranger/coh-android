@@ -72,6 +72,23 @@ DYNAMIC_INITIAL_POLICY = 'character_zone_started_by_dbserver_request_at_enter_ga
 EARLY_ZONE_ENV = 'COH_EARLY_ZONE'
 EARLY_ZONE_POLICY = 'saved_zone_started_beside_the_client_single_zone_server_v1'
 EARLY_ZONE_MIN_AVAILABLE_MIB = PRESTART_MIN_AVAILABLE_MIB
+# 0.13.69: one zone server that has loaded everything zones share and waits for its
+# zone (patches/mapserver-zone-travel, ARMPORT_SPARE_FILE). Owner, 2026-11-05: the current
+# zone and one spare. Thor 0.13.66: 174 s of a zone's 227 s start is shared.
+SPARE_ZONE_ENV = 'COH_SPARE_ZONE'
+SPARE_ZONE_POLICY = 'one_preloaded_zone_server_beside_the_current_zone_v1'
+SPARE_FILE_ENVIRONMENT = 'ARMPORT_SPARE_FILE'
+SPARE_WAITING = b'ARMPORT_SPARE_V1 status=waiting'
+SPARE_MIN_AVAILABLE_MIB = PRESTART_MIN_AVAILABLE_MIB
+SPARE_SETTLE_SECONDS = 30          # in the zone this long before a spare starts or a resident zone gives way
+SPARE_TICK_SECONDS = 5
+SPARE_ROOM_PROBE_SECONDS = 120     # the DbServer is asked where the hero is at most this often
+SPARE_START_LIMIT = 12
+# The game options the DbServer adds to every zone it asks for (launchercomm.c builds them from
+# its configuration, the same for a whole session; Thor 0.13.66: -maxLevel 50 -aggrocap 17
+# -targetcapmode 1). A spare starts with the last ones seen and serves only an equal request.
+SPARE_OPTIONS_FILE = 'zone-request-options.json'
+SPARE_OPTION_TOKEN = re.compile(r'-?[A-Za-z0-9_.]{1,32}')
 # Display names for the static zones the shared zone tree serves (zone_index).
 ZONE_DISPLAY_NAMES = {
     1: 'Atlas Park', 3: 'Cimerora', 4: 'Midnighter Club', 5: "King's Row", 6: 'Steel Canyon',
@@ -649,6 +666,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'starts': [], 'evictions': [], 'arrivals': 0, 'transfer_wait_observed': 0, 'decisions': [],
             'transfers_begun': [], 'arrival_source': None}
         self.stock_starts = {}
+        self.spare = None
+        self.spare_next = self.spare_room_next = 0
+        self.spare_report = self.zoning_report['spare_zone'] = {'format': 1, 'policy': SPARE_ZONE_POLICY,
+            'requested': os.environ.get(SPARE_ZONE_ENV) == '1', 'layer_available': None, 'starts': [],
+            'waiting_reason': None, 'minimum_available_memory_mib': SPARE_MIN_AVAILABLE_MIB}
         self.stock_log_next = 0
         self.stock_last_arrival_ms = None
         self.zoning_report['stock_travel'] = self.stock
@@ -980,6 +1002,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             except OSError:
                 pass
         self.restore_idle_maps('cleanup')
+        if getattr(self, 'spare', None) is not None:
+            self._drop_spare('session_end')
         super().cleanup_config()
 
     def map_startup_timing(self, map_id):
@@ -2566,6 +2590,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 self.initial_zone_start_failed(entry, failure)
             entry = supervisor.next_start()
         self._tick_stock_starts(supervisor)
+        self.tick_spare()
 
     def _stock_row(self, entry):
         key = (entry['map_id'], entry['cookie'])
@@ -2610,19 +2635,279 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             # Announced before the zone's preparation, which runs here and can take minutes.
             self.initial_zone_event('starting', map_id)
         self.stock_spawn_timing = timing
+        options = tuple(entry.get('options', {}).get('kept', ()))
+        self._remember_request_options(options)
+        port, spare = plan['port'], None
         try:
-            self._spawn_map(map_id, cookie=entry['cookie'], port=plan['port'],
-                            options=tuple(entry.get('options', {}).get('kept', ())))
+            if self._spare_serves(plan['tree'], options):
+                spare = self._assign_spare(map_id, entry['cookie'])
+                port = spare['port']
+            else:
+                if getattr(self, 'spare', None) is not None:
+                    # A spare of another tree cannot take this zone; its memory goes to the start.
+                    self._drop_spare('request_for_another_tree')
+                self._spawn_map(map_id, cookie=entry['cookie'], port=port, options=options)
         finally:
             self.stock_spawn_timing = None
         owned = self.maps[map_id]
-        owned.update(stock=True, cookie=entry['cookie'], port=plan['port'], startup_timing=timing,
+        owned.update(stock=True, cookie=entry['cookie'], port=port, startup_timing=timing,
                      stock_started_monotonic=started)
         self.stock_starts[map_id] = {'entry': entry, 'started': started,
                                      'deadline': started + plan['budget_seconds']}
-        supervisor.start_launched(entry, port=plan['port'], tree=plan['tree'], evicted=list(plan['evict']))
-        row.update(tree=plan['tree'], port=plan['port'], evicted=list(plan['evict']),
+        supervisor.start_launched(entry, port=port, tree=plan['tree'], evicted=list(plan['evict']))
+        row.update(tree=plan['tree'], port=port, evicted=list(plan['evict']),
                    launched_utc_ms=int(time.time() * 1000))
+        if spare is not None:
+            row['spare'] = {'ordinal': spare['ordinal'], 'warm': spare['warm'],
+                            'loaded_seconds_before_request': spare['loaded_seconds']}
+
+    # ---- the spare zone server (0.13.69) ---------------------------------------------------
+
+    def _spare_tree(self):
+        """(tree, runtime) a spare can load now without preparing anything, else (None, reason).
+
+        The shared zone tree, once a zone of it has started in this session (64 of the 67 zones
+        live there); for a hero in Atlas Park without it, the Atlas tree (its other instance).
+        """
+        prepared = getattr(self, 'zone_tree_prepared', None)
+        if prepared is not None:
+            return 'zones', prepared['runtime']
+        active = self.maps.get(self.active_map_id)
+        if self.active_map_id in (1, 101) and active is not None and self.zone_tree_for(self.active_map_id) == 'atlas':
+            return 'atlas', active['runtime']
+        return None, 'no_prepared_tree'
+
+    def _spare_serves(self, tree, options):
+        spare = getattr(self, 'spare', None)
+        return (spare is not None and spare['tree'] == tree and spare['options'] == tuple(options)
+                and spare['process'].process.poll() is None)
+
+    def _request_options(self):
+        """The options of the last zone request (this session's, else an earlier session's), or None."""
+        known = getattr(self, 'stock_request_options', None)
+        if known is None and not getattr(self, 'stock_request_options_loaded', False):
+            self.stock_request_options_loaded = True
+            try:
+                path = self.owner.root / SPARE_OPTIONS_FILE
+                info = os.lstat(path)
+                require(stat.S_ISREG(info.st_mode) and info.st_size <= 4096, 'Zone request options file refused')
+                value = json.loads(path.read_bytes())
+                kept = value['kept']
+                require(value.get('format') == 1 and isinstance(kept, list) and len(kept) <= 32
+                        and all(isinstance(token, str) and SPARE_OPTION_TOKEN.fullmatch(token) for token in kept),
+                        'Zone request options file refused')
+                known = self.stock_request_options = tuple(kept)
+            except (OSError, ValueError, KeyError, TypeError, AttributeError, base.DiagnosticError):
+                known = None
+        return known
+
+    def _remember_request_options(self, options):
+        if getattr(self, 'stock_request_options', None) == options:
+            return
+        self.stock_request_options = options
+        self.stock_request_options_loaded = True
+        try:
+            if all(SPARE_OPTION_TOKEN.fullmatch(token) for token in options) and len(options) <= 32:
+                path = self.owner.root / SPARE_OPTIONS_FILE
+                temporary = path.with_name(path.name + '.new')
+                temporary.write_text(json.dumps({'format': 1, 'kept': list(options)}) + '\n')
+                os.chmod(temporary, 0o600)
+                os.replace(temporary, path)
+        except (OSError, AttributeError):
+            pass                       # only the next session's first spare waits for a request
+
+    def _spare_row(self, spare, **fields):
+        row = next(row for row in self.spare_report['starts'] if row['ordinal'] == spare['ordinal'])
+        row.update(fields)
+        return row
+
+    def _drop_spare(self, reason):
+        spare, self.spare = self.spare, None
+        if spare['process'].process.poll() is None:
+            spare['process'].process.terminate()
+        for path in (spare['progress_path'], spare['assign_path']):
+            try:
+                if path.exists() or path.is_symlink():
+                    path.rename(path.with_name(path.name + '.dropped'))
+            except OSError:
+                pass
+        self._spare_row(spare, outcome='dropped', reason=reason, ended_utc_ms=int(time.time() * 1000))
+
+    def _spawn_spare(self, tree, runtime):
+        """A zone server that loads everything zones share, then waits for its map id and cookie."""
+        ordinal = self.spare_report.get('started', 0) + 1
+        options = tuple(self._request_options())
+        used = {owned.get('port', MAPS.get(other, {}).get('port')) for other, owned in self.maps.items()}
+        if tree == 'atlas':
+            # The Atlas tree's spare can only become Atlas Park's other instance: its fixed port.
+            port = MAPS[101 if self.active_map_id == 1 else 1]['port']
+            require(port not in used, 'Atlas Park instance port is in use')
+        else:
+            # From the top of the range: the start policy hands out ports from the bottom and does
+            # not know the spare's.
+            port = next((candidate for candidate in range(zone_travel.LAST_PORT, zone_travel.FIRST_FREE_PORT - 1, -1)
+                         if candidate not in used), None)
+            require(port is not None, 'No free zone server port')
+        character.game.check_game_port(port, socket.SOCK_DGRAM)
+        progress = self.runtime / ('character-zoning-spare-%d-progress.bin' % ordinal)
+        assign = self.runtime / ('character-zoning-spare-%d-assign.txt' % ordinal)
+        for path in (progress, assign):
+            require(not path.exists() and not path.is_symlink(), 'Stale spare zone server file')
+        environment = dict(self.owner.wine_env, **{character.evidence.GAME_LOOPBACK_ENV: '1',
+            character.progress.ENVIRONMENT: base.windows_path(progress)})
+        environment = self.map_metrics_environment(environment, runtime)
+        environment[SPARE_FILE_ENVIRONMENT] = base.windows_path(assign)
+        launch_ms, launch = int(time.time() * 1000), time.monotonic()
+        # -map_id 0: not a local (editing) server, and no zone yet. Nothing before the wait reads
+        # the map id except the base-map lookup, which the assignment repeats.
+        process = self.ctx.start('local-character-zoning-spare-' + str(ordinal), ['/usr/bin/env',
+            '--chdir=' + str(runtime), self.owner.args.wine, base.windows_path(runtime / 'MapServer.exe'), '-nogui',
+            '-db', '127.0.0.1', *character.mapserver_memory_arguments(), '-nostats', '-udp', str(port), '-tcp', '0',
+            '-map_id', '0', '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS(),
+            *self.session_map_options(), *options], env=environment)
+        self.spare = {'process': process, 'progress_path': progress, 'assign_path': assign, 'tree': tree,
+                      'options': options,
+                      'runtime': runtime, 'port': port, 'ordinal': ordinal, 'launch_utc_ms': launch_ms,
+                      'launch_monotonic': launch, 'warm': False, 'waiting_scan_offset': 0,
+                      'server_metrics_enabled': self.server_metrics_enabled}
+        self.spare_report['started'] = ordinal
+        self.spare_report['starts'].append({'ordinal': ordinal, 'tree': tree, 'port': port,
+            'launch_utc_ms': launch_ms, 'beside_map_id': self.active_map_id,
+            'available_memory_mib': available_memory_mib(), 'warm': False, 'outcome': None})
+        del self.spare_report['starts'][:-SPARE_START_LIMIT]
+
+    def _assign_spare(self, map_id, cookie):
+        """Give the spare its zone: its navigation graph, then the assignment the server waits for."""
+        spare = self.spare
+        require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2
+                and type(cookie) is int and 0 < cookie < 2 ** 31, 'Invalid spare zone assignment')
+        runtime = spare['runtime']
+        if MAPS[map_id].get('shared_zone_tree'):
+            # Before its MapServer loads the map (pets and NPCs path), as _spawn_map does.
+            self.install_zone_beacon_graph(map_id, runtime)
+            MAPS[map_id]['port'] = spare['port']
+        else:
+            require(MAPS[map_id]['port'] == spare['port'], 'Spare zone server port differs from its zone')
+        now, now_ms = time.monotonic(), int(time.time() * 1000)
+        self.mark_startup_timing(self.map_startup_timing(map_id), 'map_spawn_requested', now=now, utc_ms=now_ms)
+        temporary = spare['assign_path'].with_name(spare['assign_path'].name + '.new')
+        temporary.write_text('ARMPORT_SPARE_ASSIGN_V1 map_id=%d cookie=%d\n' % (map_id, cookie), newline='\n')
+        os.replace(temporary, spare['assign_path'])
+        self.spare = None
+        spare['loaded_seconds'] = round(now - spare['launch_monotonic'], 3)
+        self.maps[map_id] = {'process': spare['process'], 'progress_path': spare['progress_path'], 'previous': None,
+                             # The character's route into this zone begins at the assignment.
+                             'launch_utc_ms': now_ms, 'ready': False, 'scheduler': None, 'idle_token': None,
+                             'runtime': runtime, 'launch_monotonic': now,
+                             'server_metrics_enabled': spare['server_metrics_enabled'],
+                             'crash_scan_offset': spare.get('crash_scan_offset', 0),
+                             'spare_ordinal': spare['ordinal']}
+        self.map_launch_history.observe(map_id, self.maps[map_id], self.epoch)
+        self._spare_row(spare, outcome='assigned', map_id=map_id, assigned_utc_ms=now_ms,
+                        loaded_seconds_before_request=spare['loaded_seconds'], warm=spare['warm'])
+        return spare
+
+    def _spare_layer_available(self):
+        if self.spare_report['layer_available'] is None:
+            available = False
+            if getattr(self, 'server_metrics_enabled', False) is True:
+                import armport_server_metrics_contract as metrics
+                available = metrics.spare_server_available()
+            self.spare_report['layer_available'] = available
+        return self.spare_report['layer_available']
+
+    def tick_spare(self):
+        """Keep one spare beside the current zone: follow it, or start it when the session allows."""
+        report = getattr(self, 'spare_report', None)
+        now = time.monotonic()
+        if report is None or report['requested'] is not True or now < self.spare_next:
+            return
+        self.spare_next = now + SPARE_TICK_SECONDS
+        spare = self.spare
+        if spare is not None:
+            try:
+                require(spare['process'].process.poll() is None and not spare['process'].overflow,
+                        'Spare zone server exited or overflowed')
+                scan_new_console(spare)
+            except base.DiagnosticError as failure:
+                if isinstance(failure, base.Cancelled):
+                    raise
+                self._drop_spare(str(failure)[:160])
+                return
+            if not spare['warm']:
+                output = spare['process'].output
+                start = max(0, spare['waiting_scan_offset'] - len(SPARE_WAITING))
+                if SPARE_WAITING in bytes(output[start:]):
+                    spare['warm'] = True
+                    self._spare_row(spare, warm=True, warm_seconds=round(now - spare['launch_monotonic'], 3),
+                                    available_memory_mib_when_warm=available_memory_mib())
+                spare['waiting_scan_offset'] = len(output)
+            return
+        reason = self._spare_wait_reason(now)
+        report['waiting_reason'] = reason
+        if reason is not None:
+            return
+        tree, runtime = self._spare_tree()
+        try:
+            self._spawn_spare(tree, runtime)
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError) as failure:
+            report['waiting_reason'] = 'start_failed: ' + str(failure)[:160]
+            self.spare_next = now + 10 * SPARE_TICK_SECONDS
+
+    def _spare_wait_reason(self, now):
+        """None when a spare may start now; else why not (recorded, never an error)."""
+        if not self.stock_travel_active() or self.stock.get('enabled') is not True:
+            return 'needs_the_games_own_zone_travel'
+        if self.spare_report.get('started', 0) >= SPARE_START_LIMIT:
+            return 'start_limit'
+        if self._request_options() is None:
+            return 'request_options_unknown'
+        if not self.creation_report.get('connected_on_atlas') or self.initial_zone_pending():
+            return 'character_not_in_the_world'
+        if self.pending is not None or self.stock_starts:
+            return 'a_zone_is_starting'
+        if (self.owner.args.state / 'character-logout.json').exists():
+            return 'saving'
+        active = self.maps.get(self.active_map_id)
+        since = getattr(self, 'active_since_monotonic', None)
+        if active is None or active.get('ready') is not True or since is None or now - since < SPARE_SETTLE_SECONDS:
+            return 'settling_in_the_zone'
+        if not self._spare_layer_available():
+            return 'server_without_the_spare_layer'
+        if self._spare_tree()[0] is None:
+            return 'no_prepared_tree'
+        if len(self.maps) > 1:
+            return self._make_room_for_spare(now)
+        memory = available_memory_mib()
+        if memory is None or memory < SPARE_MIN_AVAILABLE_MIB:
+            return 'low_memory'
+        return None
+
+    def _make_room_for_spare(self, now):
+        """Two zone servers run: the zone the hero left gives way to the spare (owner: current + spare).
+
+        The DbServer says where the hero is (stock_occupied: the entity log lags by up to a
+        minute); only a ready zone the hero is not on is stopped, and never without that answer.
+        """
+        if now < self.spare_room_next:
+            return 'resident_zone_still_running'
+        self.spare_room_next = now + SPARE_ROOM_PROBE_SECONDS
+        before = self.active_map_id
+        current = self.stock_occupied()
+        if current is None:
+            return 'hero_zone_unconfirmed'
+        if current != before:
+            # The probe itself recorded an arrival the entity log had not shown yet: settle first.
+            return 'hero_zone_changed'
+        idle = [other for other, owned in self.maps.items()
+                if other != current and owned.get('ready') is True and other not in self.stock_starts]
+        if len(idle) != len(self.maps) - 1:
+            return 'another_zone_is_starting'
+        for other in idle:
+            self._evict_map(other, 'room_for_the_spare')
+        return 'made_room'
 
     def _tick_stock_starts(self, supervisor):
         for map_id, state in list(self.stock_starts.items()):
