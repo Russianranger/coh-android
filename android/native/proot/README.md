@@ -60,8 +60,8 @@ emulated SysV IPC namespace.
   and corresponding source under `assets/proot-ioctl/`. The app starts it only
   with the launch option "Graphics calls skip the system-call monitor".
   GPL-2.0-or-later, as PRoot.
-- `0005-stop-counts-getsockopt-filter.patch` (2026-11-11; **drafted, not in
-  `PATCH_NAMES`, built into nothing yet**). Applies on top of 0001-0004. Two
+- `0005-stop-counts-getsockopt-filter.patch` (2026-11-11; in `PATCH_NAMES`
+  since 0.13.70). Applies on top of 0001-0004. Two
   switches, both off unless set: `PROOT_STOP_COUNTS=<file>` counts PRoot's
   translation rounds per system call number (enter and exit apart) and
   rewrites the file about every ten seconds and at exit;
@@ -72,6 +72,16 @@ emulated SysV IPC namespace.
   returns the fake ids (1000:1000) and stops as before. Not yet compiled for
   Android or ARM64. Why: CI run 43091944698 (`armport/PERFORMANCE-PATH.md`,
   "What PRoot intercepts").
+- `0006-accept-untraced-program-counts.patch` (2026-11-13; **drafted, not in
+  `PATCH_NAMES`, built into nothing yet**). Applies on top of 0001-0005.
+  `PROOT_ACCEPT_UNTRACED=1` leaves `accept` and `accept4` out of the filter:
+  PRoot stops them only to rewrite the path of a Unix-socket peer that bound
+  its socket under a binding, and with the switch that path comes back as the
+  host path (checked locally: `/opt/gb/.../c` without, the host folder with).
+  An empty non-blocking `accept` costs 2.4-4 microseconds with it and 52-56
+  without (local x86-64). The stop-count file gains `P <thread name> <call
+  number> <stops>` rows. Why: CI run 43363707492 counted 14.2 million stops
+  in a 912 s reopen session, 17 % of them `accept` (1,340 calls a second).
 - The Android talloc cross answers follow the same pinned TRASC recipe, derived
   there from the Termux talloc build recipe. Android NDK **27.2.12479018**, API 26,
   and 16 KB ELF segment alignment are explicit build inputs. Linux CI uses the
