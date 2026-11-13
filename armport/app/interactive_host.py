@@ -805,6 +805,9 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             require(process.wait(timeout=max(1, deadline - time.monotonic())) == 0,
                     'ARM64 interactive guest exited unsuccessfully')
             report = json.loads((work / 'state/latest-report.json').read_text())
+            if isinstance(report.get('python_call_profile'), dict):
+                print('PYTHON_CALL_PROFILE_V1 ' + json.dumps(dict(report['python_call_profile'],
+                      session='reopen' if reopening else 'creation'), separators=(',', ':')), flush=True)
             projected = legacy_report(report, runtime_manifest, client_manifest)
             checked_manifest = validation_manifest(report, runtime_manifest)
             require(time.monotonic() <= deadline, 'ARM64 interactive host deadline exceeded')
@@ -936,6 +939,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
         if runtime_host.runtime.proot_ioctl_filter_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_IOCTL_FILTER=1')
+        if trap_sampler.requested():        # the same CI input also counts the supervisor's own calls
+            command.insert(command.index('/usr/bin/python3'), 'COH_CALL_PROFILE=1')
         if trusted_bins_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
         if shared_heap_requested():

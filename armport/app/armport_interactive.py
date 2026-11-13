@@ -14,6 +14,7 @@ import shutil
 import stat
 import socket
 import struct
+import sys
 import termios
 import time
 
@@ -152,6 +153,57 @@ def client_timeline(text, started_utc=None, observed_utc=None, limit=32):
     return record
 
 
+CALL_PROFILE = {'counts': None}
+CALL_PROFILE_NAMES = ('stat', 'lstat', 'open', 'scandir', 'listdir', 'waitpid', 'readlink', 'access', 'kill')
+
+
+def install_call_profile(environ=os.environ, modules=None):
+    """COH_CALL_PROFILE=1 (CI): count this supervisor's own file and child calls by caller.
+
+    CI run 43383782947 (PRoot's stop counts by program): the guest's Python made 22 % of all
+    stops in a reopen session and 34 % in a creation session, more than any other program but
+    the zone server: 815 `stat` calls a second. PRoot's counts cannot say which line makes them.
+    Each wrapped call adds one count for the first caller outside the standard library.
+    """
+    if environ.get('COH_CALL_PROFILE') != '1' or CALL_PROFILE['counts'] is not None:
+        return CALL_PROFILE['counts']
+    import collections
+    import io
+    counts = CALL_PROFILE['counts'] = collections.Counter()
+    library = os.path.dirname(os.__file__) + os.sep
+
+    def wrap(owner, name, label):
+        original = getattr(owner, name)
+
+        def counted(*args, **kwargs):
+            frame = sys._getframe(1)
+            for _ in range(16):
+                if frame.f_back is None or not frame.f_code.co_filename.startswith(library):
+                    break
+                frame = frame.f_back
+            counts[(label, os.path.basename(frame.f_code.co_filename), frame.f_lineno)] += 1
+            return original(*args, **kwargs)
+        setattr(owner, name, counted)
+
+    for name in CALL_PROFILE_NAMES:
+        wrap(modules['os'] if modules else os, name, 'os.' + name)
+    wrap(modules['io'] if modules else io, 'open', 'open')
+    return counts
+
+
+def call_profile_record(top=60):
+    counts = CALL_PROFILE['counts']
+    if counts is None:
+        return None
+    rows = sorted(counts.items(), key=lambda item: (-item[1], item[0]))
+    by_call = {}
+    for (label, _, _), count in rows:
+        by_call[label] = by_call.get(label, 0) + count
+    return {'format': 1, 'is_success_proof': False, 'total': sum(counts.values()), 'by_call': by_call,
+            'columns': ['call', 'file', 'line', 'count'],
+            'callers': [[label, name, line, count] for (label, name, line), count in rows[:top]]}
+
+
 def client_audio_requested():
     """COH_CLIENT_AUDIO=1: the app's bridge listens on COH_CLIENT_AUDIO_SOCKET."""
     value = os.environ.get('COH_CLIENT_AUDIO', '')
@@ -223,6 +275,10 @@ class ArmPortClient:
         return super().prepare_client_visual_inputs()
 
     def initialize(self):
+        try:
+            install_call_profile()
+        except Exception:               # a measurement only
+            pass
         super().initialize()
         pins = self.ctx.report['asset_sha256']
         require({'armport-client.zip', 'armport_client_package.py', 'armport_interactive.py', 'client_stdio.py'} <= pins.keys(),
@@ -509,6 +565,12 @@ class ArmPortClient:
                         section.get('client_ready_observed_utc'))
                 except Exception as error:      # a record only: never the reason a session fails
                     self.ctx.report['armport_client_timeline'] = {'format': 1, 'error_type': type(error).__name__}
+                try:
+                    profile = call_profile_record()
+                    if profile is not None:
+                        self.ctx.report['python_call_profile'] = profile
+                except Exception:
+                    pass
 
     def cleanup(self):
         metrics = getattr(self, 'armport_server_metrics', None)
