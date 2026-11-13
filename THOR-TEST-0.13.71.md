@@ -33,7 +33,19 @@ your 0.13.69 launches A, B and C (2026-11-12).
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.71" and "0.13.70 and the Thor test of 0.13.69".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI at ade9f7cde: build 43373369060 passed; stock-travel runtime 43383782947
+(`early_zone=true`, `proot_ioctl_filter=true` with patches 0005 and 0006,
+sampler reading as root; one trip); trusted runtime 43389182271 created and
+reopened a character (its interactive job took 1847 s); APK 43393932170
+published 0.13.71 (sha256
+`5b15b2ad747f5f252444343e183dc9405e55f4267f560361195440ed3e1f8d0a`). Runtime
+43383782947 with `accept` untraced: 27.9 million stops in the 1,225 s creation
+session and 11.8 million in the 913 s reopen session (0.13.70's run
+43363707492: 32.3 and 14.2 million), none for `accept`. Reopen session by
+program: MapServer 36 % (`newfstatat` 26 %), wineserver 22 % (`readlinkat` 19
+%), the guest's Python 22 % (`newfstatat` 13 %), the audio bridge 8 %, the
+client 7.5 %; creation: Python 34 %, wineserver 25 %, MapServer 19 %, client
+15 %.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

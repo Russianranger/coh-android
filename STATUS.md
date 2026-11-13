@@ -37,4 +37,4 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   ioctl 46.8 to 0.8 us; save after travel never confirmed (app defect). HANDOFF "0.13.70".
 - 0.13.70 published (APK 43372592357; build 43353706777, runtime 43368553729 at a774abd0d): save-after-travel fix; fast server + second PRoot build default (new keys); PRoot patch 0005
   (stop counts, getsockopt filter); client timeline; zone graph receipt. CI stop counts (43363707492): newfstatat 36 %, readlinkat 17 %, accept 17 %. HANDOFF "0.13.70".
-- 0.13.71 (86) in CI: PRoot patch 0006 (accept untraced; stop counts by program). HANDOFF "0.13.71".
+- 0.13.71 published (APK 43393932170; build 43373369060, runtime 43389182271 at ade9f7cde): PRoot patch 0006 (accept untraced; stop counts by program); CI 11.8 M stops per reopen (14.2 M before). HANDOFF "0.13.71".

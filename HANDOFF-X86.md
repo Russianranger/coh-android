@@ -438,7 +438,22 @@ Continues the owner's "continue the roadmap and pursuing the goals" of
   the program rows (`programs` in `PROOT_STOP_COUNTS_V1 {json}`).
 - **Tests.** armport/tests 584 pass; dbserver 97; Java as before against the
   local stubs.
-- **Chain.** CHAIN71_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Chain at ade9f7cde** (one chain on x86/perf-round1). Build 43373369060;
+  stock-travel runtime 43383782947 (`early_zone=true`,
+  `proot_ioctl_filter=true` with patches 0005 and 0006, sampler reading as
+  root; one trip); trusted runtime 43389182271 (interactive job 1847 s,
+  THORHERO; its app-sources job compiled the changed Java). APK 43393932170
+  published `coh-atlas-gameplay-v0.13.71` (93536522 bytes, sha256
+  5b15b2ad747f5f252444343e183dc9405e55f4267f560361195440ed3e1f8d0a, signer
+  92955353…, the same as 0.13.50-0.13.70); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtime
+  43383782947 with `accept` untraced: 27.9 million stops in the 1,225 s
+  creation session and 11.8 million in the 913 s reopen session (0.13.70's run
+  43363707492: 32.3 and 14.2 million), none for `accept`. Reopen session by
+  program: MapServer 36 % (`newfstatat` 26 %), wineserver 22 % (`readlinkat` 19
+  %), the guest's Python 22 % (`newfstatat` 13 %), the audio bridge 8 %, the
+  client 7.5 %; creation: Python 34 %, wineserver 25 %, MapServer 19 %, client
+  15 %.
 - **Open.** The Android build with 0005 and 0006 has not run on a device
   (0004 alone has: Thor 0.13.69). Socket reads and writes (15 %), the second
   stop of every `stat` (fake id), `readlinkat` and `close` are untouched.

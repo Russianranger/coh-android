@@ -599,9 +599,23 @@ Exact counts (0.13.70, PRoot patch 0005, CI run 43363707492, reopen session:
 switch). CI's Linux PRoot does not stop ioctl; the phone's mix comes with the
 0.13.70 export (`proot_stop_counts`).
 
-Parts 1 and 2 below are in 0.13.70. Drafted next (patch 0006, not applied):
-`accept` untraced under a switch (2.4-4 against 52-56 microseconds locally)
-and per-program rows in the counts.
+Parts 1 and 2 below are in 0.13.70. 0.13.71 (patch 0006) leaves `accept`
+untraced (2.4-4 against 52-56 microseconds locally) and adds per-program rows.
+CI run 43383782947 with it, reopen session, stock server: 11.8 million stops
+(12,900 a second), none for `accept`. By program and call:
+
+| Program | Share | Largest rows |
+|---|---|---|
+| MapServer | 36 % | `newfstatat` 26 %, `getxattr` 3 %, `close` 2 %, `openat` 2 % |
+| wineserver | 22 % | `readlinkat` 19 % |
+| guest Python (the supervisor) | 22 % (34 % in creation) | `newfstatat` 13 %, `close` 3 %, `openat` 3 %, `readlinkat` 2 %, `wait4` 1 % |
+| audio bridge thread | 8 % | `sendto` 4 %, `recvfrom` 3 % |
+| client | 7.5 % | `recvmsg` 5 %, `newfstatat` 3 % |
+| Xtigervnc, DbServer | 3 % | `recvmsg` |
+
+The supervisor is our own code: about 815 `stat` calls a second. A CI-only
+counter by caller (`python_call_profile`, with `trap_sampler`) is on the
+branch to say which lines.
 
 Next parts of step 14, cheapest and safest first (none built yet):
 
