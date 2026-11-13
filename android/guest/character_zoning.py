@@ -2672,6 +2672,19 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             else:
                 if getattr(self, 'spare', None) is not None:
                     # A spare of another tree cannot take this zone; its memory goes to the start.
+                    # CI run 43394425425: an Atlas-tree spare, warm after 100.8 s, was dropped here
+                    # for a request for map 101, whose tree is also 'atlas'. Record which of the
+                    # two conditions (tree, start options) did not hold.
+                    try:
+                        self._spare_row(self.spare, refused_request={
+                            'map_id': map_id, 'tree': plan['tree'],
+                            'tree_matches': self.spare['tree'] == plan['tree'],
+                            'options_match': self.spare['options'] == tuple(options),
+                            'requested_options': [str(item)[:32] for item in options[:16]],
+                            'spare_options': [str(item)[:32] for item in self.spare['options'][:16]],
+                            'spare_alive': self.spare['process'].process.poll() is None})
+                    except (KeyError, TypeError, AttributeError):
+                        pass
                     self._drop_spare('request_for_another_tree')
                 self._spawn_map(map_id, cookie=entry['cookie'], port=port, options=options)
         finally:

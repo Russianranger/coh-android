@@ -454,6 +454,22 @@ Continues the owner's "continue the roadmap and pursuing the goals" of
   %), the guest's Python 22 % (`newfstatat` 13 %), the audio bridge 8 %, the
   client 7.5 %; creation: Python 34 %, wineserver 25 %, MapServer 19 %, client
   15 %.
+- **Spare zone server, first CI run (43394425425 at ade9f7cde; failed, not a
+  release gate).** Inputs: `server_run_id`, `trusted_bins`, `stock_travel`,
+  `spare_zone`, `proot_ioctl_filter`. Creation passed. In the reopen session a
+  spare for the Atlas tree started beside the running Atlas Park, loaded the
+  shared part and waited after 100.8 s (`warm`): the first time the spare
+  layer has run. The trip to map 101 did not use it: the spare was dropped
+  with `request_for_another_tree` although 101's tree is also `atlas`
+  (`_spare_serves` also compares the start options; which of the two failed
+  was not recorded, and now is, as `refused_request` in the spare's row).
+  Map 101 then started cold in 121.3 s. A second spare was warm after 160.7 s,
+  but the scripted trip back never began: the client ran at 3.8 FPS using 3.5
+  cores (three MapServers and the software-rendered client on a 4-core
+  runner), and the session hit its 20-minute bound. No hand-over to a spare
+  has run anywhere yet. PRoot's counts with the fast server (reopen, 1,356 s):
+  14.6 million stops; MapServer 31 %, wineserver 24 %, Python 24 %, audio
+  bridge 10 %, client 7 %.
 - **Open.** The Android build with 0005 and 0006 has not run on a device
   (0004 alone has: Thor 0.13.69). Socket reads and writes (15 %), the second
   stop of every `stat` (fake id), `readlinkat` and `close` are untouched.
