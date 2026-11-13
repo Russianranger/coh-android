@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build COH Atlas Gameplay 0.13.69 with the ARM64 client option.
+"""Build COH Atlas Gameplay 0.13.70 with the ARM64 client option.
 
 User approval (2026-10-26, Claude lead session): build and sign this APK for the
 M5 Thor play test. It is an in-place update of the installed 0.13.36 app: same
@@ -16,7 +16,7 @@ Inputs are pinned:
 Changes against the donor:
 - classes.dex is recompiled from this repository's app sources (0.13.36
   sources plus the reviewed M4 ARM64-option diff);
-- version metadata becomes 0.13.69 / 84, and the binary manifest is checked
+- version metadata becomes 0.13.70 / 85, and the binary manifest is checked
   to differ only in its version fields;
 - stage_app_assets adds the ARM64 client, its guest helpers and the manifest
   entries and the explicitly listed guest helpers;
@@ -46,8 +46,8 @@ import server_pipeline
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = 'io.github.russianranger.cohclientinteractive'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
-VERSION_NAME, VERSION_CODE = '0.13.69', 84
-APK_NAME = 'COH-Atlas-Gameplay-0.13.69.apk'
+VERSION_NAME, VERSION_CODE = '0.13.70', 85
+APK_NAME = 'COH-Atlas-Gameplay-0.13.70.apk'
 DONOR_NAME = 'COH-Atlas-Gameplay-0.13.36.apk'
 DONOR_RELEASE = 'coh-atlas-gameplay-v0.13.36'
 DONOR_ASSET_ID = 635975286
@@ -149,6 +149,7 @@ def proot_ioctl_members(directory, donor_members):
             and receipt.get('max_page_size') == 16384 and receipt.get('talloc_linkage') == 'static',
             'PRoot build differs from the pinned source or toolchain')
     require('0004-ioctl-command-filter.patch' in recipe.PATCH_NAMES and receipt.get('ioctl_command_filter_patch') is True
+            and '0005-stop-counts-getsockopt-filter.patch' in recipe.PATCH_NAMES and receipt.get('stop_counts_patch') is True
             and receipt.get('patches') == {name: pin(recipe.PATCHES / name) for name in recipe.PATCH_NAMES}
             and receipt.get('recipe_sha256') == pin(recipe_path)['sha256'],
             'PRoot build did not use this checkout\'s patches and recipe')
@@ -176,11 +177,15 @@ def proot_ioctl_members(directory, donor_members):
         require(path.is_file() and not path.is_symlink() and pin(path) == record, 'PRoot licence file differs: ' + name)
         members[PROOT_IOCTL_ASSETS + 'licenses/' + name] = path
     donor = donor_members.get('lib/arm64-v8a/libproot.so')
-    record = {'format': 1, 'switch': 'PROOT_IOCTL_COMMANDS_ONLY=1', 'default': False,
-              'launch_option': 'proot-ioctl-filter', 'members': {member: pin(path) for member, path in sorted(members.items())},
+    record = {'format': 2, 'switch': 'PROOT_IOCTL_COMMANDS_ONLY=1', 'default': True,
+              'switches': ['PROOT_IOCTL_COMMANDS_ONLY=1', 'PROOT_GETSOCKOPT_PEERCRED_ONLY=1', 'PROOT_STOP_COUNTS=<file>'],
+              'launch_option': 'proot-call-filter', 'members': {member: pin(path) for member, path in sorted(members.items())},
               'source_commit': receipt['source_commit'], 'patches': receipt['patches'],
               'compiler': receipt.get('compiler'), 'ndk_version': receipt['ndk_version'],
-              'donor_libproot_retained': donor, 'device_validated': False}
+              'donor_libproot_retained': donor,
+              # Thor 0.13.69 (20261113-013835, 20261113-015905): the 0004 build ran two launches, probe
+              # listed_commands_only. This build adds 0005 and has not run on a device.
+              'device_validated': False, 'previous_build_device_validated': '0.13.69'}
     return members, record
 
 

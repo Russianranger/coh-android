@@ -134,9 +134,12 @@ class NetworkIsolationTests(unittest.TestCase):
     def test_ioctl_filter_switch_needs_seccomp_and_is_receipted(self):
         fast = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"), True)
         filtered = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"), True, True)
-        self.assertEqual(filtered, dict(fast, PROOT_IOCTL_COMMANDS_ONLY="1"))
+        # 0.13.70 (patch 0005): the same switch also narrows getsockopt and names the stop-count file.
+        self.assertEqual(filtered, dict(fast, PROOT_IOCTL_COMMANDS_ONLY="1", PROOT_GETSOCKOPT_PEERCRED_ONLY="1",
+                                        PROOT_STOP_COUNTS="/owned/proot-stop-counts.txt"))
         compatible = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"), False, True)
         self.assertNotIn("PROOT_IOCTL_COMMANDS_ONLY", compatible)       # every call is traced there anyway
+        self.assertNotIn("PROOT_STOP_COUNTS", compatible)
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             for patch in (mock.patch.object(host.os, "getuid", return_value=1001),

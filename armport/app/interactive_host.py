@@ -495,6 +495,44 @@ def require_proot_ioctl_filter(report):
     require(isinstance(probe, dict), 'The ioctl filter was requested but the guest made no ioctl probe')
     require(probe.get('reading') == 'listed_commands_only' and probe.get('requested') is True,
             'The ioctl filter was requested but the probe reads: ' + str(probe.get('reading'))[:60])
+    # 0.13.70 (patch 0005): the same launch sets PROOT_GETSOCKOPT_PEERCRED_ONLY=1.
+    require(probe.get('getsockopt_stops') is False,
+            'The call filter was requested but getsockopt still stops in PRoot')
+
+
+STOP_COUNTS_NAME = 'proot-stop-counts.txt'      # run_isolated_network.STOP_COUNTS_NAME
+STOP_COUNTS_MARK = 'PROOT_STOP_COUNTS_V1 '
+
+
+def proot_stop_counts(work, top=48):
+    """PRoot's own count of the stops it served per call number (patch 0005), or None.
+
+    CI's trap sampler counts time spent stopped; this is the number of stops. PRoot rewrites
+    the file about every ten seconds and at exit, so it is complete once the guest has ended.
+    """
+    try:
+        lines = (Path(work) / STOP_COUNTS_NAME).read_text(errors='replace')[:262144].splitlines()
+    except OSError:
+        return None
+    head = lines[0].split() if lines else []
+    if not head or head[0] != STOP_COUNTS_MARK.strip():
+        return {'format': 1, 'valid': False}
+    fields = dict(part.split('=', 1) for part in head[1:] if '=' in part)
+    rows = [[int(part) for part in line.split()] for line in lines[1:]
+            if len(line.split()) == 3 and all(part.isdigit() for part in line.split())]
+    rows.sort(key=lambda row: (-(row[1] + row[2]), row[0]))
+    number = lambda key: int(fields[key]) if fields.get(key, '').isdigit() else None
+    return {'format': 1, 'valid': True, 'seconds': number('seconds'), 'stops': number('stops'),
+            'columns': ['call_number', 'enter_stops', 'exit_stops'], 'calls': rows[:top],
+            'other_stops': sum(row[1] + row[2] for row in rows[top:])}
+
+
+def require_proot_stop_counts(counts):
+    """With the call filter the patched PRoot must also have written its stop counts."""
+    if not runtime_host.runtime.proot_ioctl_filter_requested():
+        return
+    require(isinstance(counts, dict) and counts.get('valid') is True and (counts.get('stops') or 0) > 0
+            and counts.get('calls'), 'The call filter was requested but PRoot wrote no stop counts')
 
 
 def spare_zone_requested():
@@ -618,7 +656,8 @@ def guest_timing_summary(evidence):
             probe = report.get('armport_proot_ioctl')
             if isinstance(probe, dict):
                 result['proot_ioctl'] = {key: probe.get(key) for key in (
-                    'reading', 'requested', 'microseconds_per_call', 'error_type') if probe.get(key) is not None}
+                    'reading', 'requested', 'microseconds_per_call', 'getsockopt_stops', 'error_type')
+                    if probe.get(key) is not None}
             result['shared_server_data'] = next((section.get('shared_server_data') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('shared_server_data') is not None),
@@ -733,6 +772,7 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
     isolated, environment, expected_network = runtime_host.runtime.isolate_command(
         command, evidence=evidence, proot=proot, work=work)
     process = observer = failure = report = sampler = None
+    (work / STOP_COUNTS_NAME).unlink(missing_ok=True)
     with (evidence / 'host-client.log').open('w') as log:
         try:
             process = subprocess.Popen(isolated, env=environment, stdout=log,
@@ -778,6 +818,7 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             else:
                 armport_validate_observer(observer, report)
             require_proot_ioctl_filter(report)
+            require_proot_stop_counts(proot_stop_counts(work))
             require(not endpoint.exists(), 'Private display survived guest cleanup')
             runtime_host.runtime.validate_network_receipt(
                 json.loads((evidence / 'network-isolation.json').read_text()), expected_network)
@@ -787,11 +828,16 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
         finally:
             sampled = sampler.finish() if sampler is not None else None
             cleanup = character.stop_guest(process, work / 'state')
+            counts = proot_stop_counts(work)
+            if counts is not None:
+                print(STOP_COUNTS_MARK + json.dumps(dict(counts, session='reopen' if reopening else 'creation'),
+                                                    separators=(',', ':')), flush=True)
             exported = character.export_guest_evidence(work / 'state', evidence, session)
             (evidence / 'host-session-report.json').write_text(json.dumps({
                 'scope': 'arm64_app_guest_reopen' if reopening else 'arm64_app_guest_creation',
                 'session_id': session, 'passed': failure is None, 'failure': failure,
                 'external_observer': observer, 'host_cleanup': cleanup, 'trap_sampler': sampled,
+                'proot_stop_counts': counts,
                 'guest_evidence_export': exported, 'guest_failure': guest_failure_summary(evidence)}, indent=2) + '\n')
             if failure is not None:
                 detail = failure_detail(evidence, work, observer)

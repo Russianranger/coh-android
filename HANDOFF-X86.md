@@ -414,6 +414,95 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.70 and the Thor test of 0.13.69 (Claude, 2026-11-12)
+
+Owner, 2026-11-12 20:01 CST, with four exports: "I did A, B and C tests.
+Definitely some improvement, but not quite there yet. Continue the roadmap and
+pursuing the goals plus any fixes from observations in the logs".
+
+- **Exports.** 20261113-012742 (setup), -012755 (A, defaults), -013835 (B,
+  ioctl option), -015905 (C, ioctl option and fast server; cancelled by hand).
+  All Reopen of Ralakar in Mercy Island (map 71), 0.13.69.
+- **Times, from the client's own log** (`armport_stdio.txt`, "Established
+  successful MapServer connection", seconds after the guest started; the app
+  starts the guest 4-5 s after the tap): A 338.7, B 360.7, C 235.0. The
+  observer's `connected` came at 405.0, 436.0 and 306.8, so the app's
+  `ui_action_to_client_world_ready_seconds` (408.8, 441.1, 311.9) are 66-75 s
+  too long. 0.13.67 was 923 s by the same late clock.
+- **Why the observer is late.** It reads the entity log. The MapServer sends
+  log lines to the DbServer in batches (`SECS_LOG_RESEND` 30 s,
+  `MapServer/src/dbcomm/logcomm.c`) and the DbServer's log server holds every
+  line 60 s to sort it (`LOG_WINDOW`, `libs/UtilitiesLib/src/utils/log.c`;
+  `disable_sort_log` has no switch). The same delay sits between a logout and
+  "Saved character verified" (B: logout 01:36:18, saved 01:37:22; C: 01:52:08,
+  01:53:15) and between a zone arrival and its event (62 s and 67 s in C).
+  Not fixed: both ends are compiled in, and the DbServer is a layered build of
+  its own (armport-external-maps-dbserver.yml).
+- **Early start.** Started 89.3/67.1/63.2 s after the guest; the game asked
+  at 206.4/181.3/154.4; ready at 322.3/343.2/219.7. Spawn to ready 233.0,
+  276.1 and 156.5 s (C is the CI-built server with trusted bins).
+  `ready_before_the_game_asked` false in all three.
+- **ioctl probe.** A `every_ioctl_stops`: FIONREAD 46.8, TCGETS2 66.7
+  microseconds per call (getppid 0.4). B `listed_commands_only`: 0.81 and
+  45.96. C: 1.82 and 92.1. So one stop costs about 23 microseconds on the
+  Thor and the filter works there.
+- **Tracer CPU** (busiest threads, 45 s and 120 s samples): PRoot 74-83 % of
+  a core while loading in all three; in the world 47 % (A), 41 % (B), 41-43 %
+  (C), 53 % with two zone servers. wineserver 24-29 % throughout, the guest's
+  Python 9-12 %, DbServer's main thread 13-15 %. The ioctl filter did not
+  move the in-play tracer share: those stops were not its main load.
+- **Frame rate** (client's 5 s lines, in Mercy Island): A 30-42 (mean 35), B
+  31-54 (mean 39), C 50-61 for 3 min, then 21-37 in Port Oakes and 23-29 back
+  in Mercy Island. `ARMPORT_WORKER_V1`: at 25-35 FPS the worker never sleeps
+  and the client uses 6-8 s of CPU per 5 s; at 60 it sleeps 200-300 times.
+  The rate follows the scene, and the client is CPU-bound, not capped. Lines
+  of 10 FPS are the login screen and loading screens (the menu cap).
+- **Travel in C.** Mercy Island to Port Oakes: transfer begun 01:46:55, client
+  connected 01:50:40 (224 s): navigation map install 56.6 s
+  (`installed_verified_graph`, 8,704 inputs walked three times), server start
+  145.8 s (sequencer info 52.9, definitions 42.9, the map itself 44.4), client
+  load 19 s. Back to the running Mercy Island: 17 s.
+- **Defect, fixed in 0.13.70.** In C the owner pressed Save 33 s after
+  arriving back in Mercy Island. The guest verified the save (01:53:15,
+  `zoning_epoch` 2) but the app never showed it: the arrival event for epoch 2
+  came at 01:52:42, after Save, and `ClientRuntime` dropped every
+  `character_zoning` event once `saveLogoutRequested` was set; its zone stayed
+  72 and the saved event for map 71 failed
+  `event.map_id == zoning.currentMap()`. The owner waited 8 min at the login
+  screen ("player 0 of 0") and stopped the operation. Now a stock-travel
+  arrival is applied after Save (it starts nothing), and under stock travel a
+  saved event is accepted for any static zone it names.
+- **0.13.70, code.**
+  - App: the fix above; "Fast server" (pref `fast-server`, was
+    `trusted-bins-test-server`) and "Lighter system-call monitor" (pref
+    `proot-call-filter`, was `proot-ioctl-filter`) are on by default under new
+    keys, so a stored "off" from the 0.13.69 test does not hide the default.
+  - PRoot patch 0005 (`android/native/proot`): `PROOT_STOP_COUNTS=<file>`
+    counts translation rounds per call number; `PROOT_GETSOCKOPT_PEERCRED_ONLY=1`
+    stops `getsockopt` only for `SOL_SOCKET`/`SO_PEERCRED`. Local x86-64:
+    0.3-0.4 against 48-51 microseconds; `SO_PEERCRED` still returns 1000:1000.
+    The app sets both with the second build and puts the file's text in
+    `proot_stop_counts`; CI sets both with `proot_ioctl_filter`, prints
+    `PROOT_STOP_COUNTS_V1 {json}` per session and fails without the file.
+    The guest probe adds a `getsockopt` timing (`getsockopt_stops`).
+  - `armport_client_timeline` in the report: the client's own connection
+    times and `observer_seconds_after_client`.
+  - `launch_receipts.zone_graph_<map>`: a zone's navigation map is reused on
+    its launch receipt (directory rows) instead of re-reading every input
+    (16.2 s per start of Mercy Island on the Thor).
+- **Tests.** armport/tests 584 pass (`test_client_timeline.py` new;
+  `test_proot_ioctl_probe.py` 13); tools/android 185; dbserver 97; interactive suite 3307 run, the same 99 failing as 0.13.67-0.13.69;
+  `test_zone_beacons.py` 40 (receipt reuse, a replaced input, removed graph).
+  Java: `javac` against the local stubs gives the same 77 error kinds and
+  counts before and after.
+- **Chain.** CHAIN70_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Open.** The 60-90 s log delay (needs MapServer and DbServer changes). A
+  second idle zone server raises the tracer's share from 41-43 % to 53 %; an
+  idle tick is not built. The early start begins 63-89 s into the launch and
+  could begin about 30 s earlier. `observation_failures`: "Cache inventory:
+  Linked private cache directory refused" in B and C, not looked at yet.
+  Launches D (GL-direct) and E (spare zone) were not run.
+
 ## 0.13.69, PRoot part: ioctl stops only for the commands PRoot acts on (Claude, 2026-11-11)
 
 Folded into 0.13.69 because its build had to restart at a new head anyway

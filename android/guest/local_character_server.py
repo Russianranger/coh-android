@@ -3099,9 +3099,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             require(navigation in (None, zone_beacon_package.NAVIGATION_ROOT), 'Unexpected navigation map location')
             found = zone_beacon_package.sources(self.owner.args.assets, navigation)
             if map_id in found:
-                result = zone_beacon_package.install(found[map_id], target, map_id,
-                    context=self.ctx, imported_inputs_readonly=True,
-                    proofs=self.owner.root / 'zone-collision-input-proofs.json')
+                result = self.zone_graph_with_receipt(zone_beacon_package, found[map_id], target, map_id)
             else:
                 result = {'format': 1, 'verified': False, 'map_id': map_id, 'status': 'no_graph'}
         except base.Cancelled:
@@ -3112,6 +3110,48 @@ class LocalCharacterServer(login.LocalLoginServer):
         result['navigation_map_pack'] = 'bound' if navigation else 'not_imported'
         result['elapsed_seconds'] = round(time.monotonic() - started, 6)
         graphs[key] = result
+        return result
+
+    def zone_graph_with_receipt(self, package, source, target, map_id):
+        """One zone's graph, or its last full result while its launch receipt holds (0.13.70).
+
+        Thor 0.13.69 (20261113-015905): every start of Mercy Island's server re-read the state
+        of its 8,711 unchanged collision inputs (16.2 s, "reused_verified_graph"), and the first
+        start of Port Oakes spent 56.6 s on its 8,704. A receipt (launch_receipts.py) records
+        the directories that hold those inputs and the graph; a later start reads those
+        directories and no input. Anything a receipt cannot vouch for runs the step in full.
+        """
+        import launch_receipts
+        step, store, started = 'zone_graph_%d' % map_id, self.owner.root / 'launch-receipts', time.monotonic()
+        record = {'status': 'ran_in_full', 'reason': None}
+        self.ctx.report.setdefault('launch_receipts', {})[step] = record
+        identity = None
+        try:
+            identity = package.receipt_identity(source, target, map_id)
+            result, record['reason'] = launch_receipts.reusable(store, step, identity, target, self.ctx)
+            if result is not None and result.get('verified') is True and result.get('map_id') == map_id:
+                elapsed = time.monotonic() - started
+                record.update(status='reused', elapsed_seconds=round(elapsed, 6))
+                return dict(launch_receipts.as_reused(result, elapsed), status='reused_verified_graph',
+                            input_validation='unchanged_directory_receipt', input_payload_bytes_hashed=0,
+                            preparation_elapsed_seconds=round(elapsed, 6))
+        except base.Cancelled:
+            raise
+        except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            record['reason'], identity = str(failure)[:200], None
+        leaves = []
+        result = package.install(source, target, map_id, context=self.ctx, imported_inputs_readonly=True,
+                                 proofs=self.owner.root / 'zone-collision-input-proofs.json', leaves=leaves)
+        record['elapsed_seconds'] = round(time.monotonic() - started, 6)
+        if identity is not None and result.get('verified') is True:
+            try:
+                record['directories'] = launch_receipts.record(store, step, identity, target, leaves, result, self.ctx)
+                record['recorded'] = True
+            except base.Cancelled:
+                raise
+            except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                # A receipt only saves time; without one the step runs in full next time.
+                record.update(recorded=False, record_error=str(failure)[:200])
         return result
 
     def copy_private_data(self, source, target):

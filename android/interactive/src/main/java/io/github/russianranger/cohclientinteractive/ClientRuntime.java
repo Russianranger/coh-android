@@ -227,6 +227,8 @@ public final class ClientRuntime {
     private boolean earlyZoneRequested=false;
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
+    /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
+    private File prootStopCounts;
     private boolean spareZoneRequested=false;
     private boolean trustedBinsRequested=false;
     private boolean gameplay60Requested=false, gameplay60Queued=false;
@@ -304,16 +306,18 @@ public final class ClientRuntime {
     }
     /** 0.13.52: run the APK's second, instrumented Thor MapServer, which trusts CRC-matching
      * prepared .bin files (CI A/B 41605600310 vs 41610459604: reopen Atlas 130 s -> 94 s).
-     * Off by default under a new key, so older installs that had "trusted-bins" on keep the
-     * device-proven shipping MapServer until the option is ticked. */
+     * 0.13.70: on by default under a new key ("trusted-bins-test-server" before). Thor 0.13.69,
+     * launch 20261113-015905 with it: in the world 240 s after the launch began (343 s and 366 s
+     * with the 0.13.36 server), zone server ready 156 s after its start (233 s and 276 s), a trip
+     * to Port Oakes and back, and the save verified. Unticking it runs the 0.13.36 server. */
     public static boolean trustedBinsEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("trusted-bins-test-server", false);
+                .getBoolean("fast-server", true);
     }
     public static synchronized void setTrustedBinsEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .edit().putBoolean("trusted-bins-test-server", enabled).apply();
+                .edit().putBoolean("fast-server", enabled).apply();
     }
     /** Raise the gameplay frame cap to 60 once the reopened character is in the world.
      * Uses the sidebar's /maxfps 60 command; the native launch cap stays 30/10. */
@@ -447,19 +451,23 @@ public final class ClientRuntime {
      */
     public static boolean prootIoctlFilterEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("proot-ioctl-filter", false);
+                .getBoolean("proot-call-filter", true);
     }
     /**
      * 0.13.69 experiment: the second PRoot build in this APK (patch 0004) is started with
      * PROOT_IOCTL_COMMANDS_ONLY=1, so its filter stops an ioctl only for the few commands PRoot
      * acts on. The first build stops every ioctl of every guest task twice, which includes each
-     * call the renderer makes to the GPU. Off by default: the default launch keeps the PRoot
-     * binary every earlier release used. Needs the fast PRoot mode.
+     * call the renderer makes to the GPU. Needs the fast PRoot mode.
+     * 0.13.70: on by default under a new key ("proot-ioctl-filter" before). Thor 0.13.69 ran two
+     * launches with it (20261113-013835, 20261113-015905): an unlisted ioctl cost 0.8 microseconds
+     * instead of 46.8. The build now also holds patch 0005: getsockopt stops only for SO_PEERCRED
+     * and PRoot writes its stop counts to a file the report carries. Unticking it starts the
+     * 0.13.36 PRoot binary.
      */
     public static synchronized void setProotIoctlFilterEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .edit().putBoolean("proot-ioctl-filter", enabled).apply();
+                .edit().putBoolean("proot-call-filter", enabled).apply();
     }
     public static boolean glDirectEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
@@ -1128,6 +1136,14 @@ public final class ClientRuntime {
             else builder.environment().put("PROOT_NO_SECCOMP", "1");
             if(prootIoctlFilterUsed)builder.environment().put("PROOT_IOCTL_COMMANDS_ONLY", "1");
             else builder.environment().remove("PROOT_IOCTL_COMMANDS_ONLY");
+            builder.environment().remove("PROOT_GETSOCKOPT_PEERCRED_ONLY");
+            builder.environment().remove("PROOT_STOP_COUNTS");
+            prootStopCounts = prootIoctlFilterUsed ? new File(prootTmp, "stop-counts.txt") : null;
+            if (prootStopCounts != null) {
+                prootStopCounts.delete(); new File(prootTmp, "stop-counts.txt.new").delete();
+                builder.environment().put("PROOT_GETSOCKOPT_PEERCRED_ONLY", "1");
+                builder.environment().put("PROOT_STOP_COUNTS", prootStopCounts.getPath());
+            }
             line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)")
                     +(prootIoctlFilterUsed?", ioctl stops only for the commands PRoot acts on (second PRoot build)"
                     :prootIoctlFilterRequested?", ioctl filter asked for but not used":""));
@@ -2463,7 +2479,12 @@ public final class ClientRuntime {
                         }
                         if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));
                         if (zoningEnabled() && "character_zoning".equals(event.optString("type"))
-                                && characterConnectedEvent!=null && !saveLogoutRequested && !cancelled && !finished && !producerCompleted) {
+                                && characterConnectedEvent!=null && (!saveLogoutRequested || zoning.stockTravel())
+                                && !cancelled && !finished && !producerCompleted) {
+                            // Thor 0.13.69 (20261113-015905): the arrival back in Mercy Island was reported 67 s
+                            // after it happened and after Save had been pressed. It was dropped here, the zone
+                            // stayed at Port Oakes, and the saved event for Mercy Island was then refused. With
+                            // the game's own travel an arrival is still recorded after Save; it starts nothing.
                             synchronized(this) {
                                 if(zoningEvents.size()<(zoning.stockTravel()?256:32) && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
                                         characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames,
@@ -2491,9 +2512,11 @@ public final class ClientRuntime {
                                     if("capturing".equals(zoning.phase()))markZoningTime("native_arrival");
                                     if(zoning.stockMonorail()&&"transferring".equals(zoning.phase()))markZoningTime("delivery");
                                     recordLifecycle("zoning_"+zoning.phase()+" epoch="+zoning.epoch());
-                                    if("capturing".equals(zoning.phase()))requestContactFullUpdate();
-                                    stage("Zone travel",zoningStatus());notifyInputState();
-                                    dispatchPreparedZoning();
+                                    if(!saveLogoutRequested) {
+                                        if("capturing".equals(zoning.phase()))requestContactFullUpdate();
+                                        stage("Zone travel",zoningStatus());notifyInputState();
+                                        dispatchPreparedZoning();
+                                    }
                                 } else recordLifecycle("zoning_event_rejected");
                             }
                         }
@@ -2534,7 +2557,11 @@ public final class ClientRuntime {
                                 && characterObservedUptime < 0 && loginObservedUptime >= 0
                                 && characterConnectedEvent != null && sameCharacter(event)
                                 && event.getLong("character_id") == characterConnectedEvent.getLong("character_id")
-                                && (!zoningEnabled() || (!zoning.blocksInput() && event.optBoolean("zoning_enabled") && event.optInt("map_id",-1)==zoning.currentMap()))
+                                && (!zoningEnabled() || (!zoning.blocksInput() && event.optBoolean("zoning_enabled")
+                                        && (event.optInt("map_id",-1)==zoning.currentMap()
+                                            // The game's own travel: the save names the zone the database holds, which
+                                            // can be ahead of the last arrival the app was told about.
+                                            || (zoning.stockTravel() && ClientAcceptance.stockTravelMap((Map<?,?>)jsonValue(event))))))
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
                                 characterSavedEvent = event;
@@ -2947,7 +2974,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)
@@ -3262,6 +3289,17 @@ public final class ClientRuntime {
     }
     private static String clean(String value) {
         return (value == null ? "" : value).replaceAll("(?i)(password|pwd|token|secret)(\\s*[=:]\\s*)([^;\\s]+)", "$1$2[redacted]");
+    }
+    /** PRoot's own stop counts (patch 0005, written about every ten seconds and at exit): the
+     * file's text, at most 32 KiB; null without the second PRoot build or its file. */
+    private Object prootStopCountsText() {
+        File file = prootStopCounts;
+        if (file == null || !file.isFile()) return JSONObject.NULL;
+        try (FileInputStream input = new FileInputStream(file)) {
+            byte[] data = new byte[32768]; int total = 0, read;
+            while (total < data.length && (read = input.read(data, total, data.length - total)) > 0) total += read;
+            return new String(data, 0, total, StandardCharsets.UTF_8);
+        } catch (IOException e) { return JSONObject.NULL; }
     }
     private static String message(Throwable e) { return clean(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()); }
     private String sha(File file) throws Exception {

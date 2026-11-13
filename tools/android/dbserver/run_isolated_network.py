@@ -33,6 +33,9 @@ def loopback_state():
     return interfaces
 
 
+STOP_COUNTS_NAME = "proot-stop-counts.txt"
+
+
 def clean_environment(loader, temporary, seccomp=False, ioctl_filter=False):
     """PRoot traces every syscall unless seccomp is allowed (then only filtered calls stop).
     `ioctl_filter` (patch 0004, with seccomp only): ioctl stops only for the commands PRoot acts on."""
@@ -43,6 +46,10 @@ def clean_environment(loader, temporary, seccomp=False, ioctl_filter=False):
         environment["PROOT_NO_SECCOMP"] = "1"
     elif ioctl_filter:
         environment["PROOT_IOCTL_COMMANDS_ONLY"] = "1"
+        # 0.13.70 (patch 0005): getsockopt stops only for SO_PEERCRED, and PRoot writes how many
+        # stops it served per call number beside its temporary directory.
+        environment["PROOT_GETSOCKOPT_PEERCRED_ONLY"] = "1"
+        environment["PROOT_STOP_COUNTS"] = str(Path(temporary).parent / STOP_COUNTS_NAME)
     return environment
 
 

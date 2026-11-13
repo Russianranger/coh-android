@@ -34,7 +34,7 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   (64 zones). Thor 20261110-213045: pack bound, Mercy graph refused (linked inputs vs new lstat check). HANDOFF "Thor test of 0.13.66".
 - 0.13.67 published (APK 42940665672; build 42922800561, runtime 42936024060 at 0c37bef41): Mercy graph check follows the phone's file links; launch receipts, folder index
   kept across updates, cache return, 60 cap (0128). Thor 20261111-035325 (first launch): graph verified, pets path; in world 923 s, FPS mean 30; PRoot tracer 647 s CPU. HANDOFF "Thor test of 0.13.67".
-- 0.13.68 published (APK 42963857636 at 42728face): early zone start INERT on ARM64 (call in the x86 launch sequence; 42955090151
-  held no early_start record); spare zone server built, off. HANDOFF "0.13.68".
-- 0.13.69 published (APK 43104941674; build 43077376317, runtime 43099656030 at 22d90d987): early zone start runs on ARM64 (CI requires its record: 43091944698, ready 60.6 s after the game's request);
-  PRoot patch 0004 (ioctl stops for 7 commands only) as a second PRoot + option (off), ioctl probe, apt mirrors. HANDOFF "0.13.69".
+- 0.13.68-69 published (APKs 42963857636 at 42728face, 43104941674 at 22d90d987): early zone start (inert in .68, runs in .69), PRoot patch 0004 as an option, ioctl probe.
+  Thor 20261113 A/B/C: in world 339/361/235 s (client log; app +70 s, server log delay), zone start 233/276/157 s, FPS 30-42/31-54/50-61,
+  ioctl 46.8 to 0.8 us; save after travel never confirmed (app defect). HANDOFF "0.13.70".
+- 0.13.70 (85) in CI: save-after-travel fix; fast server + second PRoot build default; PRoot patch 0005 (stop counts, getsockopt filter); client timeline; zone graph receipt.

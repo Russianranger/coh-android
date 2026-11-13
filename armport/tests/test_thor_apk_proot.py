@@ -32,7 +32,7 @@ class SecondProotBuild(unittest.TestCase):
             'schema_version': 1, 'target': 'android-arm64', 'status': 'native_built_runtime_unverified',
             'source_commit': recipe.PROOT_COMMIT, 'source_tree': recipe.PROOT_TREE, 'ndk_version': recipe.NDK_VERSION,
             'android_api': 26, 'max_page_size': 16384, 'talloc_linkage': 'static', 'compiler': 'clang 18',
-            'ioctl_command_filter_patch': True,
+            'ioctl_command_filter_patch': True, 'stop_counts_patch': True,
             'patches': {name: builder.pin(recipe.PATCHES / name) for name in recipe.PATCH_NAMES},
             'recipe_sha256': builder.pin(recipe_path)['sha256'],
             'files': {name: dict(builder.pin(directory / name), elf_machine='aarch64')
@@ -45,8 +45,9 @@ class SecondProotBuild(unittest.TestCase):
 
     def test_recipe_holds_the_ioctl_patch(self):
         recipe, _ = builder.proot_recipe()
-        self.assertEqual(recipe.PATCH_NAMES[-1], '0004-ioctl-command-filter.patch')
-        self.assertTrue((recipe.PATCHES / recipe.PATCH_NAMES[-1]).is_file())
+        self.assertEqual(recipe.PATCH_NAMES[-2:], ('0004-ioctl-command-filter.patch', '0005-stop-counts-getsockopt-filter.patch'))
+        for name in recipe.PATCH_NAMES:
+            self.assertTrue((recipe.PATCHES / name).is_file(), name)
 
     def test_members_and_record(self):
         with tempfile.TemporaryDirectory() as root:
@@ -58,7 +59,9 @@ class SecondProotBuild(unittest.TestCase):
                 'assets/proot-ioctl/licenses/PRoot-COPYING', 'assets/proot-ioctl/licenses/talloc-talloc.h'})
             self.assertEqual(members['lib/arm64-v8a/libproot-ioctl.so'], directory / 'libproot.so')
             self.assertEqual(record['donor_libproot_retained'], DONOR['lib/arm64-v8a/libproot.so'])
-            self.assertIs(record['default'], False)
+            self.assertIs(record['default'], True)        # 0.13.70: the second build is the default
+            self.assertEqual(record['launch_option'], 'proot-call-filter')
+            self.assertIn('PROOT_STOP_COUNTS=<file>', record['switches'])
             self.assertIs(record['device_validated'], False)
             self.assertEqual(set(record['members']), set(members))
             self.assertIn('0004-ioctl-command-filter.patch', record['patches'])
@@ -71,6 +74,7 @@ class SecondProotBuild(unittest.TestCase):
             'other commit': {'source_commit': '0' * 40},
             'other ndk': {'ndk_version': '28.2.13676358'},
             'no patch flag': {'ioctl_command_filter_patch': False},
+            'no stop counts flag': {'stop_counts_patch': False},
             'three patches': {'patches': {name: builder.pin(recipe.PATCHES / name) for name in recipe.PATCH_NAMES[:3]}},
             'other recipe': {'recipe_sha256': '0' * 64},
             'no licence': {'license_files': {}},
@@ -100,7 +104,9 @@ class SecondProotBuild(unittest.TestCase):
         for member in builder.PROOT_IOCTL_LIBRARIES:
             self.assertIn('"' + member.rsplit('/', 1)[1] + '"', java)
         self.assertIn('builder.environment().put("PROOT_IOCTL_COMMANDS_ONLY", "1")', java)
-        self.assertIn('.getBoolean("proot-ioctl-filter", false)', java)
+        self.assertIn('builder.environment().put("PROOT_GETSOCKOPT_PEERCRED_ONLY", "1")', java)
+        self.assertIn('builder.environment().put("PROOT_STOP_COUNTS", prootStopCounts.getPath())', java)
+        self.assertIn('.getBoolean("proot-call-filter", true)', java)
 
 
 if __name__ == '__main__':

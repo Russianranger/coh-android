@@ -498,6 +498,48 @@ class ZoneGraphInstallTests(unittest.TestCase):
             self.install()
         self.assertFalse((self.runtime / NAMES['graph']).exists())
 
+    @unittest.skipIf(os.name == 'nt', 'The guest server uses Android-side (POSIX) helpers')
+    def test_a_launch_receipt_spares_a_later_start_the_input_walk(self):
+        """0.13.70. Thor 0.13.69: 16.2 s per start to re-read 8,711 unchanged inputs."""
+        import types
+        import local_character_server
+        state = Path(self.temporary.name) / 'state'; state.mkdir()
+        report = {}
+        source = self.package.sources(self.assets)[MAP_ID]
+
+        def start():
+            context = self.Context(); context.report = report
+            server = types.SimpleNamespace(owner=types.SimpleNamespace(root=state), ctx=context)
+            return local_character_server.LocalCharacterServer.zone_graph_with_receipt(
+                server, self.package, source, self.runtime, MAP_ID)
+
+        first = start()
+        record = report['launch_receipts']['zone_graph_%d' % MAP_ID]
+        self.assertEqual((first['status'], record['status'], record['recorded']), ('installed_verified_graph', 'ran_in_full', True))
+        self.assertGreaterEqual(record['directories'], 4)
+        self.forget(graph=False)                          # a later session, the same zone tree
+        with unittest.mock.patch.object(self.package, 'install', side_effect=AssertionError('inputs were walked')):
+            second = start()
+        self.assertEqual((second['status'], second['input_validation'], second['installed_files'], second['verified']),
+                         ('reused_verified_graph', 'unchanged_directory_receipt', 0, True))
+        self.assertEqual(report['launch_receipts']['zone_graph_%d' % MAP_ID]['status'], 'reused')
+        self.assertEqual(second['combat_beacons'], first['combat_beacons'])
+        # A replaced input changes its directory's row: the step runs in full and refuses other bytes.
+        replaced = self.runtime / 'data/tricks/zone.txt'
+        replaced.unlink(); replaced.write_bytes(b'other'); replaced.chmod(0o444)
+        with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
+            start()
+        self.assertTrue(report['launch_receipts']['zone_graph_%d' % MAP_ID]['reason'].startswith('directory_changed'))
+        replaced.unlink(); replaced.write_bytes(b'trick'); replaced.chmod(0o444)
+        third = start()
+        self.assertEqual(report['launch_receipts']['zone_graph_%d' % MAP_ID]['status'], 'ran_in_full')
+        self.assertTrue(third['verified'])
+        # Removed graph files are noticed as well.
+        self.forget()
+        fourth = start()
+        self.assertEqual((fourth['status'], report['launch_receipts']['zone_graph_%d' % MAP_ID]['status']),
+                         ('installed_verified_graph', 'ran_in_full'))
+
     def test_without_the_archive_no_graph_is_available(self):
         (self.assets / NAMES['archive']).unlink()
         self.assertEqual(self.package.available(self.assets), ())
@@ -516,6 +558,11 @@ class ZoneTreeGraphTests(unittest.TestCase):
         self.owner = unittest.mock.Mock(); self.owner.owner.args.assets = Path('/assets')
         self.owner.owner.root = Path('/state/diagnostic')
         self.owner.zone_tree_prepared = {'runtime': Path('/tree'), 'preparation': {'beacon_graph': {}}}
+        # 0.13.70: the install goes through the launch receipt wrapper; these sources hold no
+        # manifest, so no receipt can be bound and the step runs in full, as before.
+        self.owner.ctx.report = {}
+        self.owner.zone_graph_with_receipt = lambda *args: \
+            self.server.LocalCharacterServer.zone_graph_with_receipt(self.owner, *args)
         self.sources = {MAP_ID: {'origin': 'navigation_map_pack'}}
 
     def run_install(self, install, map_id=MAP_ID, environment=None):

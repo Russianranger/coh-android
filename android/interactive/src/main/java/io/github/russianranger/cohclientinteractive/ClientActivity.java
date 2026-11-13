@@ -183,7 +183,7 @@ public final class ClientActivity extends Activity {
         earlyZone.setChecked(ClientRuntime.earlyZoneEnabled(this));
         earlyZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setEarlyZoneEnabled(this,checked));
         controls.addView(earlyZone);
-        spareZone=new CheckBox(this);spareZone.setText("Keep a spare zone server loaded for travel (needs Fast server start)");
+        spareZone=new CheckBox(this);spareZone.setText("Keep a spare zone server loaded for travel (needs Fast server)");
         spareZone.setTextColor(Color.rgb(221,234,245));spareZone.setTextSize(13);
         spareZone.setChecked(ClientRuntime.spareZoneEnabled(this));
         spareZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setSpareZoneEnabled(this,checked));
@@ -193,7 +193,7 @@ public final class ClientActivity extends Activity {
         sharedHeap.setChecked(ClientRuntime.sharedHeapEnabled(this));
         sharedHeap.setOnCheckedChangeListener((button,checked)->ClientRuntime.setSharedHeapEnabled(this,checked));
         controls.addView(sharedHeap);
-        trustedBins=new CheckBox(this);trustedBins.setText("Fast server start (test server with trusted bins)");
+        trustedBins=new CheckBox(this);trustedBins.setText("Fast server (untick for the 0.13.36 server)");
         trustedBins.setTextColor(Color.rgb(221,234,245));trustedBins.setTextSize(13);
         trustedBins.setChecked(ClientRuntime.trustedBinsEnabled(this));
         trustedBins.setOnCheckedChangeListener((button,checked)->ClientRuntime.setTrustedBinsEnabled(this,checked));
@@ -208,7 +208,7 @@ public final class ClientActivity extends Activity {
         glDirect.setChecked(ClientRuntime.glDirectEnabled(this));
         glDirect.setOnCheckedChangeListener((button,checked)->ClientRuntime.setGlDirectEnabled(this,checked));
         controls.addView(glDirect);
-        prootIoctlFilter=new CheckBox(this);prootIoctlFilter.setText("Graphics calls skip the system-call monitor (frame rate experiment)");
+        prootIoctlFilter=new CheckBox(this);prootIoctlFilter.setText("Lighter system-call monitor (untick for the 0.13.36 one)");
         prootIoctlFilter.setTextColor(Color.rgb(221,234,245));prootIoctlFilter.setTextSize(13);
         prootIoctlFilter.setChecked(ClientRuntime.prootIoctlFilterEnabled(this));
         prootIoctlFilter.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotIoctlFilterEnabled(this,checked));

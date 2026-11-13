@@ -10,6 +10,7 @@ import errno
 import fcntl
 import os
 from pathlib import Path
+import socket
 import struct
 import termios
 import time
@@ -35,20 +36,19 @@ def load_probe(ioctl=None, clock=None):
     assert len(wanted) == 4
     fake_fcntl = types.SimpleNamespace(ioctl=ioctl or fcntl.ioctl)
     namespace = {'os': os, 'errno': errno, 'fcntl': fake_fcntl, 'struct': struct, 'termios': termios,
-                 'time': time, 'require': require}
+                 'time': time, 'require': require, 'socket': socket}
     exec(compile(ast.Module(body=wanted, type_ignores=[]), str(GUEST), 'exec'), namespace)
     return namespace
 
 
-def load_gate(requested):
+def load_gate(requested, name='require_proot_ioctl_filter'):
     tree = ast.parse(HOST.read_text())
-    wanted = [node for node in tree.body if isinstance(node, ast.FunctionDef)
-              and node.name == 'require_proot_ioctl_filter']
+    wanted = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == name]
     assert len(wanted) == 1
     runtime = types.SimpleNamespace(proot_ioctl_filter_requested=lambda: requested)
     namespace = {'require': require, 'runtime_host': types.SimpleNamespace(runtime=runtime)}
     exec(compile(ast.Module(body=wanted, type_ignores=[]), str(HOST), 'exec'), namespace)
-    return namespace['require_proot_ioctl_filter']
+    return namespace[name]
 
 
 class Simulated:
@@ -79,7 +79,8 @@ class ProbeTest(unittest.TestCase):
     def test_host_without_a_tracer_reads_no_stops(self):
         result = load_probe()['proot_ioctl_probe']()
         self.assertEqual(result['reading'], 'no_ioctl_stops', result)
-        self.assertEqual(set(result['microseconds_per_call']), {'getppid', 'fionread', 'tcgets2'})
+        self.assertEqual(set(result['microseconds_per_call']), {'getppid', 'fionread', 'tcgets2', 'getsockopt'})
+        self.assertIs(result['getsockopt_stops'], False)
         self.assertIs(result['is_success_proof'], False)
 
     def test_the_three_cases_are_told_apart(self):
@@ -114,13 +115,16 @@ class GateTest(unittest.TestCase):
         load_gate(False)({})
 
     def test_filter_at_work_passes(self):
-        load_gate(True)({'armport_proot_ioctl': {'reading': 'listed_commands_only', 'requested': True}})
+        load_gate(True)({'armport_proot_ioctl': {'reading': 'listed_commands_only', 'requested': True,
+                                                 'getsockopt_stops': False}})
 
     def test_other_readings_fail(self):
         gate = load_gate(True)
         for probe in (None, {'reading': 'no_ioctl_stops', 'requested': True},
                       {'reading': 'every_ioctl_stops', 'requested': True},
-                      {'reading': 'listed_commands_only', 'requested': False}, {'reading': 'unavailable'}):
+                      {'reading': 'listed_commands_only', 'requested': False}, {'reading': 'unavailable'},
+                      {'reading': 'listed_commands_only', 'requested': True},
+                      {'reading': 'listed_commands_only', 'requested': True, 'getsockopt_stops': True}):
             with self.subTest(probe=probe), self.assertRaises(RuntimeError):
                 gate({} if probe is None else {'armport_proot_ioctl': probe})
 
@@ -134,6 +138,51 @@ class GateTest(unittest.TestCase):
     def test_workflow_passes_the_switch(self):
         workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()
         self.assertIn("COH_PROOT_IOCTL_FILTER: ${{ inputs.proot_ioctl_filter && '1' || '' }}", workflow)
+
+
+class StopCountsTest(unittest.TestCase):
+    """0.13.70: PRoot's own stop counts (patch 0005), read by the CI host after the guest ends."""
+
+    def reader(self):
+        tree = ast.parse(HOST.read_text())
+        wanted = [node for node in tree.body
+                  if (isinstance(node, ast.Assign) and any(getattr(t, 'id', '').startswith('STOP_COUNTS_') for t in node.targets))
+                  or (isinstance(node, ast.FunctionDef) and node.name == 'proot_stop_counts')]
+        self.assertEqual(len(wanted), 3)
+        namespace = {'Path': Path}
+        exec(compile(ast.Module(body=wanted, type_ignores=[]), str(HOST), 'exec'), namespace)
+        return namespace
+
+    def test_file_is_read_sorted_and_bounded(self):
+        import tempfile
+        namespace = self.reader()
+        with tempfile.TemporaryDirectory() as work:
+            self.assertIsNone(namespace['proot_stop_counts'](work))
+            (Path(work) / namespace['STOP_COUNTS_NAME']).write_text(
+                'PROOT_STOP_COUNTS_V1 seconds=412 stops=1009\n56 300 0\n79 350 350\n57 9 0\nnot a row\n')
+            counts = namespace['proot_stop_counts'](work, top=2)
+            self.assertEqual((counts['valid'], counts['seconds'], counts['stops']), (True, 412, 1009))
+            self.assertEqual(counts['calls'], [[79, 350, 350], [56, 300, 0]])
+            self.assertEqual(counts['other_stops'], 9)
+            (Path(work) / namespace['STOP_COUNTS_NAME']).write_text('something else\n')
+            self.assertEqual(namespace['proot_stop_counts'](work), {'format': 1, 'valid': False})
+
+    def test_gate(self):
+        load_gate(False, 'require_proot_stop_counts')(None)
+        gate = load_gate(True, 'require_proot_stop_counts')
+        gate({'valid': True, 'stops': 5, 'calls': [[56, 5, 0]]})
+        for counts in (None, {'valid': False}, {'valid': True, 'stops': 0, 'calls': []}):
+            with self.subTest(counts=counts), self.assertRaises(RuntimeError):
+                gate(counts)
+
+    def test_names_and_switches_agree(self):
+        launcher = (ROOT / 'tools/android/dbserver/run_isolated_network.py').read_text()
+        self.assertIn('STOP_COUNTS_NAME = "proot-stop-counts.txt"', launcher)
+        self.assertIn('environment["PROOT_GETSOCKOPT_PEERCRED_ONLY"] = "1"', launcher)
+        self.assertEqual(self.reader()['STOP_COUNTS_NAME'], 'proot-stop-counts.txt')
+        patch = (ROOT / 'android/native/proot/0005-stop-counts-getsockopt-filter.patch').read_text()
+        for text in ('getenv("PROOT_STOP_COUNTS")', 'getenv("PROOT_GETSOCKOPT_PEERCRED_ONLY")', 'PROOT_STOP_COUNTS_V1 seconds='):
+            self.assertIn(text, patch)
 
 
 if __name__ == '__main__':

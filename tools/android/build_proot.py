@@ -35,7 +35,11 @@ PATCH_NAMES = ('0001-sysvipc-memfd.patch', '0002-android-string-header.patch',
                '0003-portable-loader-offset.patch',
                # 0.13.69: with PROOT_IOCTL_COMMANDS_ONLY=1 the filter reports ioctl only for
                # the commands PRoot acts on. Without the variable nothing changes.
-               '0004-ioctl-command-filter.patch')
+               '0004-ioctl-command-filter.patch',
+               # 0.13.70: PROOT_STOP_COUNTS=<file> counts the stops PRoot serves per call number;
+               # PROOT_GETSOCKOPT_PEERCRED_ONLY=1 stops getsockopt only for SO_PEERCRED, the one
+               # answer the fake-id extension rewrites. Without the variables nothing changes.
+               '0005-stop-counts-getsockopt-filter.patch')
 
 
 def require(condition, message):
@@ -132,6 +136,10 @@ def prepare(work, checkout=None, talloc_archive=None):
             'memfd SysV shared-memory patch missing')
     require('PROOT_IOCTL_COMMANDS_ONLY' in (proot / 'src/syscall/seccomp.c').read_text() and
             (proot / 'src/syscall/ioctl_filter.h').is_file(), 'ioctl command filter patch missing')
+    require('PROOT_GETSOCKOPT_PEERCRED_ONLY' in (proot / 'src/syscall/seccomp.c').read_text() and
+            (proot / 'src/syscall/getsockopt_filter.h').is_file() and
+            'stop_counts_note' in (proot / 'src/syscall/syscall.c').read_text() and
+            (proot / 'src/syscall/stop_counts.h').is_file(), 'stop counts and getsockopt filter patch missing')
     return proot, work / 'talloc-2.4.3', sources
 
 
@@ -258,6 +266,8 @@ def main():
         'android_cross_answers_sha256': sha256(PATCHES / 'talloc-android-cross-answers.txt'),
         'optional_acceleration_patch': False, 'sysvipc_memfd_patch': True,
         'ioctl_command_filter_patch': True, 'ioctl_command_filter_switch': 'PROOT_IOCTL_COMMANDS_ONLY=1',
+        'stop_counts_patch': True, 'stop_counts_switch': 'PROOT_STOP_COUNTS=<file>',
+        'getsockopt_filter_switch': 'PROOT_GETSOCKOPT_PEERCRED_ONLY=1',
         'runtime_validation': 'unverified', 'status': 'source_prepared_only', 'files': {}}
     if not args.prepare_only:
         compile_sources(proot, talloc, work, args.target, tools, args.jobs)

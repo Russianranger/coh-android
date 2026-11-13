@@ -258,7 +258,24 @@ def private_target(runtime, name, context, map_id):
     return target
 
 
-def install(source, runtime, map_id, *, context, imported_inputs_readonly, proofs=None):
+def receipt_identity(source, runtime, map_id):
+    """What a launch receipt for one zone's graph is bound to (0.13.70).
+
+    The pack's lock and manifest for the zone, this code, and the shared zone tree itself.
+    The receipt's directory rows (launch_receipts.py) then stand for the inputs: adding,
+    removing, renaming or replacing an input or a graph file changes a row.
+    """
+    value, lock = read_manifest(source['manifest'], source['lock'], map_id)
+    runtime = Path(runtime)
+    code = {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+            for name in ('zone_beacon_package.py', 'atlas_beacon_package.py', 'launch_receipts.py')}
+    return {'format': 1, 'step': 'zone_graph', 'map_id': map_id, 'policy': POLICY, 'origin': source['origin'],
+            'lock': lock, 'input_files': len(value['input_files']), 'graph_files': sorted(value['files']),
+            'code': code, 'tree_identity': [[info.st_dev, info.st_ino]
+                                            for info in (os.lstat(runtime), os.lstat(runtime / 'data'))]}
+
+
+def install(source, runtime, map_id, *, context, imported_inputs_readonly, proofs=None, leaves=None):
     """Verify one zone's graph (a `sources` entry) against the shared zone tree and write it there.
 
     `proofs` names a file that keeps the input hashes across sessions (565 MB for Mercy
@@ -270,6 +287,8 @@ def install(source, runtime, map_id, *, context, imported_inputs_readonly, proof
     inputs, input_targets = inventory(runtime, value, context, map_id)
     targets = {n: private_target(runtime, n, context, map_id) for n in value['files']}
     marker = private_target(runtime, zone['marker'], context, map_id)
+    if leaves is not None:      # every file this result depends on, for the caller's launch receipt
+        leaves.extend([*input_targets.values(), *targets.values(), marker])
     result = {'format': 1, 'verified': True, 'map_id': map_id, 'map': zone['map'], 'origin': source['origin'],
         'native_graph_readback_qualified': True, 'physical_zoning_verified': False,
         'full_world_crc': value['native']['full_world_crc'], 'combat_beacons': value['native']['combat_beacons'],

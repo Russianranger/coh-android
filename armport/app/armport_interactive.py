@@ -4,6 +4,7 @@ The existing x86 worktree remains the server's verified data source. Only the
 graphical client's executable, current directory, bins, registry view and
 diagnostic output differ. Existing login, SQL/save and cleanup checks remain.
 """
+import datetime
 import errno
 import fcntl
 import os
@@ -11,6 +12,7 @@ from pathlib import Path
 import re
 import shutil
 import stat
+import socket
 import struct
 import termios
 import time
@@ -90,7 +92,64 @@ def proot_ioctl_probe(calls=IOCTL_PROBE_CALLS, clock=time.perf_counter):
     reading = ('every_ioctl_stops' if slow['fionread'] and slow['tcgets2'] else
                'listed_commands_only' if slow['tcgets2'] else
                'inconsistent' if slow['fionread'] else 'no_ioctl_stops')
-    return dict(record, reading=reading, microseconds_per_call=timings)
+    record = dict(record, reading=reading, microseconds_per_call=timings)
+    # 0.13.70 (PRoot patch 0005): a socket option PRoot does not rewrite. With a fake id it stops
+    # twice per call unless PROOT_GETSOCKOPT_PEERCRED_ONLY=1 is set. Recorded beside `reading`.
+    try:
+        left, right = socket.socketpair()
+        try:
+            left.getsockopt(socket.SOL_SOCKET, socket.SO_TYPE)
+            started = clock()
+            for _ in range(calls):
+                left.getsockopt(socket.SOL_SOCKET, socket.SO_TYPE)
+            timings['getsockopt'] = round((clock() - started) / calls * 1e6, 2)
+        finally:
+            left.close()
+            right.close()
+        record['getsockopt_stops'] = timings['getsockopt'] - timings['getppid'] >= IOCTL_PROBE_STOP_MICROSECONDS
+    except OSError as error:
+        record['getsockopt_error_type'] = type(error).__name__
+    return record
+
+
+CLIENT_MAP_LINE = re.compile(
+    r'^\[(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d{3})\] \[INFO\] '
+    r'(?:Connecting to MapServer 127\.0\.0\.1:(\d{1,5}) \(UDP\)|(Established successful MapServer connection))', re.M)
+
+
+def client_timeline(text, started_utc=None, observed_utc=None, limit=32):
+    """When the client itself reached each zone server, from its own log (guest clock, UTC).
+
+    Thor 0.13.69: the supervisor learns of a connection from the server log, which the game's
+    log server holds for 60 s and the zone server sends in 30 s batches, so `connected` was
+    reported 66-75 s after the client was in the world (20261113-012755: client 338.7 s after
+    the guest started, observer 405.0 s). This record is the client's own time. Read-only.
+    """
+    def parsed(value):
+        try:
+            return datetime.datetime.fromisoformat(value)
+        except (TypeError, ValueError):
+            return None
+
+    rows, pending = [], None
+    for match in CLIENT_MAP_LINE.finditer(text):
+        stamp = datetime.datetime.strptime(match[1], '%Y-%m-%d %H:%M:%S.%f').replace(tzinfo=datetime.timezone.utc)
+        if match[2]:
+            pending = (int(match[2]), stamp)
+        elif len(rows) < limit:
+            rows.append({'port': pending[0] if pending else None,
+                         'connecting_utc': pending[1].isoformat() if pending else None,
+                         'connected_utc': stamp.isoformat()})
+            pending = None
+    record = {'format': 1, 'source': 'client_log_timestamps', 'is_success_proof': False, 'connections': rows}
+    if rows:
+        first = parsed(rows[0]['connected_utc'])
+        started, observed = parsed(started_utc), parsed(observed_utc)
+        if started is not None:
+            record['first_connected_seconds_after_guest_start'] = round((first - started).total_seconds(), 1)
+        if observed is not None:
+            record['observer_seconds_after_client'] = round((observed - first).total_seconds(), 1)
+    return record
 
 
 def client_audio_requested():
@@ -439,7 +498,17 @@ class ArmPortClient:
             if log.is_file() and not log.is_symlink():
                 with log.open('rb') as source:
                     source.seek(max(0, log.stat().st_size - 4 * 1024 * 1024))
-                    (self.capture_dir / 'armport_stdio.txt').write_bytes(source.read(4 * 1024 * 1024))
+                    captured = source.read(4 * 1024 * 1024)
+                (self.capture_dir / 'armport_stdio.txt').write_bytes(captured)
+                try:
+                    report = self.ctx.report
+                    section = next((report[key] for key in ('character_reopen', 'character_creation')
+                                    if isinstance(report.get(key), dict)), {})
+                    report['armport_client_timeline'] = client_timeline(
+                        captured.decode('utf-8', errors='replace'), report.get('started_utc'),
+                        section.get('client_ready_observed_utc'))
+                except Exception as error:      # a record only: never the reason a session fails
+                    self.ctx.report['armport_client_timeline'] = {'format': 1, 'error_type': type(error).__name__}
 
     def cleanup(self):
         metrics = getattr(self, 'armport_server_metrics', None)
