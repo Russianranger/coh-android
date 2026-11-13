@@ -1797,6 +1797,9 @@ def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_paylo
     return result
 
 
+LINEAGE_OBSERVATION_SECONDS = 3     # Wine leader/worker ownership sampling (health())
+
+
 class LocalCharacterServer(login.LocalLoginServer):
     require_empty_account = False
     requires_saved_character = False
@@ -3536,8 +3539,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         # unchanged worker identity. Sampling is bounded and observational.
         wine_owner = getattr(self.owner, 'wine_owner', None)
         observe = getattr(wine_owner, 'observe_live_lineage', None)
-        if observe is not None:
-            observe(min(self.ctx.deadline, time.monotonic() + 1),
+        # 0.13.72: at most once in LINEAGE_OBSERVATION_SECONDS. This ran on every health() call
+        # and reads four /proc files of every process each time: CI run 43401783716 counted
+        # 404,000 of the supervisor's 527,000 file calls of a reopen session here, about 15 % of
+        # everything PRoot stopped (the supervisor makes 22 % of all stops).
+        now = time.monotonic()
+        if observe is not None and now >= getattr(self, 'next_lineage_observation', 0.0):
+            self.next_lineage_observation = now + LINEAGE_OBSERVATION_SECONDS
+            observe(min(self.ctx.deadline, now + 1),
                     prefix=self.owner.wine_env.get('WINEPREFIX'))
         if self.map_process is not None:
             crash = self.map_crash_observation()

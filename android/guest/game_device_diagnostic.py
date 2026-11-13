@@ -1033,7 +1033,8 @@ class WineMemorySampler:
         now = time.monotonic()
         if not self.diagnostic.wine_started or now < self.next_sample:
             return
-        self.next_sample = now + 5
+        # 0.13.72: every 15 s (5 s before); each sample is a full /proc ownership scan.
+        self.next_sample = now + 15
         try:
             deadline = now + 1
             owned = self.scanner.scan(deadline)
