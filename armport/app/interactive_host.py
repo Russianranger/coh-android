@@ -522,9 +522,14 @@ def proot_stop_counts(work, top=48):
             if len(line.split()) == 3 and all(part.isdigit() for part in line.split())]
     rows.sort(key=lambda row: (-(row[1] + row[2]), row[0]))
     number = lambda key: int(fields[key]) if fields.get(key, '').isdigit() else None
+    # 0.13.71 (patch 0006): "P <thread name> <call number> <stops>" rows say whose stops they are.
+    programs = [[parts[1][:16], int(parts[2]), int(parts[3])] for parts in (line.split() for line in lines[1:])
+                if len(parts) == 4 and parts[0] == 'P' and parts[2].isdigit() and parts[3].isdigit()]
+    programs.sort(key=lambda row: (-row[2], row[0], row[1]))
     return {'format': 1, 'valid': True, 'seconds': number('seconds'), 'stops': number('stops'),
             'columns': ['call_number', 'enter_stops', 'exit_stops'], 'calls': rows[:top],
-            'other_stops': sum(row[1] + row[2] for row in rows[top:])}
+            'other_stops': sum(row[1] + row[2] for row in rows[top:]),
+            'program_columns': ['thread_name', 'call_number', 'stops'], 'programs': programs[:top]}
 
 
 def require_proot_stop_counts(counts):

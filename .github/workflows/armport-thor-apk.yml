@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.70, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.71, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -35,7 +35,7 @@ on:
         required: false
         default: ''
       proot_ioctl:
-        description: Build this head's PRoot for Android (patches 0004 and 0005) and add it as the second PRoot build (0.13.69)
+        description: Build this head's PRoot for Android (patches 0004 to 0006) and add it as the second PRoot build (0.13.69)
         type: boolean
         required: false
         default: false
@@ -195,7 +195,7 @@ jobs:
           run-id: ${{ env.SIGNER_RUN_ID }}
           github-token: ${{ github.token }}
       # 0.13.69: the second PRoot build. Same pinned source, NDK and recipe as the donor's
-      # libproot.so (run 36364550345) plus android/native/proot patches 0004 and 0005; two compiler jobs.
+      # libproot.so (run 36364550345) plus android/native/proot patches 0004 to 0006; two compiler jobs.
       - name: Android NDK 27.2.12479018 for the second PRoot build
         if: inputs.proot_ioctl
         run: timeout 900 sdkmanager 'ndk;27.2.12479018'
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.70
+      - name: Build and sign COH Atlas Gameplay 0.13.71
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.70.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.71.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.70-apk
+          name: coh-atlas-gameplay-0.13.71-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,46 +308,41 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.70-apk
+          name: coh-atlas-gameplay-0.13.71-apk
           path: apk
-      - name: Publish the 0.13.70 pre-release
+      - name: Publish the 0.13.71 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.70.apk
-          sha256sum COH-Atlas-Gameplay-0.13.70.apk > COH-Atlas-Gameplay-0.13.70.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.71.apk
+          sha256sum COH-Atlas-Gameplay-0.13.71.apk > COH-Atlas-Gameplay-0.13.71.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.70 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.71 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.70, from the Thor test of 0.13.69 (2026-11-12):
-          Fixed: after travelling, "Save character / log out" could leave the app waiting for ever.
-          The character was saved, but the app had not yet been told of the arrival and then refused
-          the confirmation. An arrival is now recorded after Save as well.
-          New defaults (each has a tick box to go back): "Fast server", the server CI builds, which
-          on the phone was in the world 4 min 0 s after the launch began instead of 5 min 43 s, and
-          "Lighter system-call monitor", the second PRoot build, which ran two launches on the phone.
-          That build now also stops the socket-option call only where PRoot acts on it, and counts
-          the calls it still stops; the count is in the report. Its source, build receipt and
-          licence files are in the APK under assets/proot-ioctl/ (PRoot: GPL-2.0-or-later; talloc:
-          LGPL-3.0-or-later). The 0.13.36 PRoot program is still in the APK, byte for byte.
-          Faster zone starts: a zone's navigation map is no longer re-checked file by file when its
-          folders are unchanged (16 s per start on the phone, 57 s on a first visit).
-          The report now holds the time the game itself reached the zone server; the app learns of
-          it about 70 s late from the server log, so its own times were that much too long.
+          New in 0.13.71: the lighter system-call monitor no longer stops the call a server uses to
+          look for new connections (accept). In CI that call was 17 % of everything the monitor
+          stopped, 1,340 times a second. The count in the report now also says which program made
+          which calls.
+          From 0.13.70 (Thor test of 0.13.69): Save after travelling is confirmed again; "Fast
+          server" and "Lighter system-call monitor" are on by default, each with a tick box to go
+          back; a zone's navigation map is not re-checked file by file when its folders are
+          unchanged; the report holds the time the game itself reached the zone server.
+          The second PRoot build's source, build receipt and licence files are in the APK under
+          assets/proot-ioctl/ (PRoot: GPL-2.0-or-later; talloc: LGPL-3.0-or-later). The 0.13.36
+          PRoot program is still in the APK, byte for byte.
           Other experiments, off by default: "Draw on the game's own thread (frame rate experiment)"
           and "Keep a spare zone server loaded for travel (needs Fast server)".
-          From 0.13.69: the saved zone starts while the game starts (Reopen).
           The navigation map pack is unchanged (${pack}); an imported pack stays imported.
           Unchanged: any character name the game accepts, one character per install; every zone can
           start; at most two zone servers, missions are not served yet; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.70.md.
+          Test sheet: THOR-TEST-0.13.71.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -356,7 +351,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.70" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.70 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.70.apk COH-Atlas-Gameplay-0.13.70.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.70"
+          gh release create "coh-atlas-gameplay-v0.13.71" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.71 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.71.apk COH-Atlas-Gameplay-0.13.71.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.71"

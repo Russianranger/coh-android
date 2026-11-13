@@ -39,7 +39,10 @@ PATCH_NAMES = ('0001-sysvipc-memfd.patch', '0002-android-string-header.patch',
                # 0.13.70: PROOT_STOP_COUNTS=<file> counts the stops PRoot serves per call number;
                # PROOT_GETSOCKOPT_PEERCRED_ONLY=1 stops getsockopt only for SO_PEERCRED, the one
                # answer the fake-id extension rewrites. Without the variables nothing changes.
-               '0005-stop-counts-getsockopt-filter.patch')
+               '0005-stop-counts-getsockopt-filter.patch',
+               # 0.13.71: PROOT_ACCEPT_UNTRACED=1 leaves accept and accept4 out of the filter (CI run
+               # 43363707492: 17 % of all stops); the stop counts gain per-program rows.
+               '0006-accept-untraced-program-counts.patch')
 
 
 def require(condition, message):
@@ -140,6 +143,9 @@ def prepare(work, checkout=None, talloc_archive=None):
             (proot / 'src/syscall/getsockopt_filter.h').is_file() and
             'stop_counts_note' in (proot / 'src/syscall/syscall.c').read_text() and
             (proot / 'src/syscall/stop_counts.h').is_file(), 'stop counts and getsockopt filter patch missing')
+    require('PROOT_ACCEPT_UNTRACED' in (proot / 'src/syscall/seccomp.c').read_text() and
+            'stop_counts_pair' in (proot / 'src/syscall/stop_counts.h').read_text(),
+            'accept switch and program counts patch missing')
     return proot, work / 'talloc-2.4.3', sources
 
 
@@ -268,6 +274,7 @@ def main():
         'ioctl_command_filter_patch': True, 'ioctl_command_filter_switch': 'PROOT_IOCTL_COMMANDS_ONLY=1',
         'stop_counts_patch': True, 'stop_counts_switch': 'PROOT_STOP_COUNTS=<file>',
         'getsockopt_filter_switch': 'PROOT_GETSOCKOPT_PEERCRED_ONLY=1',
+        'accept_untraced_patch': True, 'accept_untraced_switch': 'PROOT_ACCEPT_UNTRACED=1',
         'runtime_validation': 'unverified', 'status': 'source_prepared_only', 'files': {}}
     if not args.prepare_only:
         compile_sources(proot, talloc, work, args.target, tools, args.jobs)

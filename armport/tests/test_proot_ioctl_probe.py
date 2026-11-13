@@ -159,11 +159,13 @@ class StopCountsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as work:
             self.assertIsNone(namespace['proot_stop_counts'](work))
             (Path(work) / namespace['STOP_COUNTS_NAME']).write_text(
-                'PROOT_STOP_COUNTS_V1 seconds=412 stops=1009\n56 300 0\n79 350 350\n57 9 0\nnot a row\n')
+                'PROOT_STOP_COUNTS_V1 seconds=412 stops=1009\n56 300 0\n79 350 350\n57 9 0\nnot a row\n'
+                'P wineserver 79 400\nP MapServer.exe 79 300\nP python3 56 300\nP bad x 1\n')
             counts = namespace['proot_stop_counts'](work, top=2)
             self.assertEqual((counts['valid'], counts['seconds'], counts['stops']), (True, 412, 1009))
             self.assertEqual(counts['calls'], [[79, 350, 350], [56, 300, 0]])
             self.assertEqual(counts['other_stops'], 9)
+            self.assertEqual(counts['programs'], [['wineserver', 79, 400], ['MapServer.exe', 79, 300]])
             (Path(work) / namespace['STOP_COUNTS_NAME']).write_text('something else\n')
             self.assertEqual(namespace['proot_stop_counts'](work), {'format': 1, 'valid': False})
 
@@ -179,6 +181,10 @@ class StopCountsTest(unittest.TestCase):
         launcher = (ROOT / 'tools/android/dbserver/run_isolated_network.py').read_text()
         self.assertIn('STOP_COUNTS_NAME = "proot-stop-counts.txt"', launcher)
         self.assertIn('environment["PROOT_GETSOCKOPT_PEERCRED_ONLY"] = "1"', launcher)
+        self.assertIn('environment["PROOT_ACCEPT_UNTRACED"] = "1"', launcher)
+        later = (ROOT / 'android/native/proot/0006-accept-untraced-program-counts.patch').read_text()
+        self.assertIn('getenv("PROOT_ACCEPT_UNTRACED")', later)
+        self.assertIn('"P %s %u %llu\\n"', later)
         self.assertEqual(self.reader()['STOP_COUNTS_NAME'], 'proot-stop-counts.txt')
         patch = (ROOT / 'android/native/proot/0005-stop-counts-getsockopt-filter.patch').read_text()
         for text in ('getenv("PROOT_STOP_COUNTS")', 'getenv("PROOT_GETSOCKOPT_PEERCRED_ONLY")', 'PROOT_STOP_COUNTS_V1 seconds='):

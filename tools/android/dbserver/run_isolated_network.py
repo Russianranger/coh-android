@@ -49,6 +49,9 @@ def clean_environment(loader, temporary, seccomp=False, ioctl_filter=False):
         # 0.13.70 (patch 0005): getsockopt stops only for SO_PEERCRED, and PRoot writes how many
         # stops it served per call number beside its temporary directory.
         environment["PROOT_GETSOCKOPT_PEERCRED_ONLY"] = "1"
+        # 0.13.71 (patch 0006): accept is not stopped; a Unix-socket peer's bound path is then the
+        # host's. Nothing in the guest reads it (X server, wineserver, PostgreSQL).
+        environment["PROOT_ACCEPT_UNTRACED"] = "1"
         environment["PROOT_STOP_COUNTS"] = str(Path(temporary).parent / STOP_COUNTS_NAME)
     return environment
 

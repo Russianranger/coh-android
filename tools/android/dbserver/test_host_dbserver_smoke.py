@@ -135,7 +135,7 @@ class NetworkIsolationTests(unittest.TestCase):
         fast = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"), True)
         filtered = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"), True, True)
         # 0.13.70 (patch 0005): the same switch also narrows getsockopt and names the stop-count file.
-        self.assertEqual(filtered, dict(fast, PROOT_IOCTL_COMMANDS_ONLY="1", PROOT_GETSOCKOPT_PEERCRED_ONLY="1",
+        self.assertEqual(filtered, dict(fast, PROOT_IOCTL_COMMANDS_ONLY="1", PROOT_GETSOCKOPT_PEERCRED_ONLY="1", PROOT_ACCEPT_UNTRACED="1",
                                         PROOT_STOP_COUNTS="/owned/proot-stop-counts.txt"))
         compatible = network.clean_environment(Path("/owned/proot-loader"), Path("/owned/tmp"), False, True)
         self.assertNotIn("PROOT_IOCTL_COMMANDS_ONLY", compatible)       # every call is traced there anyway

@@ -1138,10 +1138,13 @@ public final class ClientRuntime {
             else builder.environment().remove("PROOT_IOCTL_COMMANDS_ONLY");
             builder.environment().remove("PROOT_GETSOCKOPT_PEERCRED_ONLY");
             builder.environment().remove("PROOT_STOP_COUNTS");
+            builder.environment().remove("PROOT_ACCEPT_UNTRACED");
             prootStopCounts = prootIoctlFilterUsed ? new File(prootTmp, "stop-counts.txt") : null;
             if (prootStopCounts != null) {
                 prootStopCounts.delete(); new File(prootTmp, "stop-counts.txt.new").delete();
                 builder.environment().put("PROOT_GETSOCKOPT_PEERCRED_ONLY", "1");
+                // 0.13.71 (patch 0006): accept is not stopped (17 % of all stops in CI run 43363707492).
+                builder.environment().put("PROOT_ACCEPT_UNTRACED", "1");
                 builder.environment().put("PROOT_STOP_COUNTS", prootStopCounts.getPath());
             }
             line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)")

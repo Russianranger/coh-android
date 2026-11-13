@@ -72,8 +72,8 @@ emulated SysV IPC namespace.
   returns the fake ids (1000:1000) and stops as before. Not yet compiled for
   Android or ARM64. Why: CI run 43091944698 (`armport/PERFORMANCE-PATH.md`,
   "What PRoot intercepts").
-- `0006-accept-untraced-program-counts.patch` (2026-11-13; **drafted, not in
-  `PATCH_NAMES`, built into nothing yet**). Applies on top of 0001-0005.
+- `0006-accept-untraced-program-counts.patch` (2026-11-13; in `PATCH_NAMES`
+  since 0.13.71). Applies on top of 0001-0005.
   `PROOT_ACCEPT_UNTRACED=1` leaves `accept` and `accept4` out of the filter:
   PRoot stops them only to rewrite the path of a Unix-socket peer that bound
   its socket under a binding, and with the switch that path comes back as the

@@ -414,6 +414,35 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.71: accept is not stopped; stop counts by program (Claude, 2026-11-13)
+
+Continues the owner's "continue the roadmap and pursuing the goals" of
+2026-11-12. 0.13.70 is published and not yet tested on the Thor; 0.13.71 is
+0.13.70 plus PRoot patch 0006.
+
+- **Why.** PRoot's own counts (patch 0005, CI run 43363707492, reopen
+  session): 14.2 million stops in 912 s; `accept` 2,447,700 of them (17 %),
+  1,340 calls a second. PRoot stops `accept` and `accept4` only to rewrite, at
+  exit, the path in a Unix-socket peer's address (`translate_socketcall_exit`).
+- **Patch 0006** (`android/native/proot`, in `PATCH_NAMES`).
+  `PROOT_ACCEPT_UNTRACED=1` leaves both calls out of the seccomp filter. Local
+  x86-64 build with the app's options: an empty non-blocking `accept` 2.4-4
+  microseconds with the switch, 52-56 without; a TCP peer unchanged; a
+  Unix-socket peer bound under a binding reads as the host path with the
+  switch (`/opt/gb/.../c` without). The stop-count file gains
+  `P <thread name> <call number> <stops>` rows (thread name from
+  `/proc/<tid>/comm`, re-read every 256 stops; pairs under one stop in 2,000
+  are not written).
+- **Where it is set.** With the second PRoot build only: the app (now its
+  default launch) and CI's `proot_ioctl_filter` input. The host parser reads
+  the program rows (`programs` in `PROOT_STOP_COUNTS_V1 {json}`).
+- **Tests.** armport/tests 584 pass; dbserver 97; Java as before against the
+  local stubs.
+- **Chain.** CHAIN71_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Open.** The Android build with 0005 and 0006 has not run on a device
+  (0004 alone has: Thor 0.13.69). Socket reads and writes (15 %), the second
+  stop of every `stat` (fake id), `readlinkat` and `close` are untouched.
+
 ## 0.13.70 and the Thor test of 0.13.69 (Claude, 2026-11-12)
 
 Owner, 2026-11-12 20:01 CST, with four exports: "I did A, B and C tests.

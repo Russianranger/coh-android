@@ -32,7 +32,7 @@ class SecondProotBuild(unittest.TestCase):
             'schema_version': 1, 'target': 'android-arm64', 'status': 'native_built_runtime_unverified',
             'source_commit': recipe.PROOT_COMMIT, 'source_tree': recipe.PROOT_TREE, 'ndk_version': recipe.NDK_VERSION,
             'android_api': 26, 'max_page_size': 16384, 'talloc_linkage': 'static', 'compiler': 'clang 18',
-            'ioctl_command_filter_patch': True, 'stop_counts_patch': True,
+            'ioctl_command_filter_patch': True, 'stop_counts_patch': True, 'accept_untraced_patch': True,
             'patches': {name: builder.pin(recipe.PATCHES / name) for name in recipe.PATCH_NAMES},
             'recipe_sha256': builder.pin(recipe_path)['sha256'],
             'files': {name: dict(builder.pin(directory / name), elf_machine='aarch64')
@@ -45,7 +45,8 @@ class SecondProotBuild(unittest.TestCase):
 
     def test_recipe_holds_the_ioctl_patch(self):
         recipe, _ = builder.proot_recipe()
-        self.assertEqual(recipe.PATCH_NAMES[-2:], ('0004-ioctl-command-filter.patch', '0005-stop-counts-getsockopt-filter.patch'))
+        self.assertEqual(recipe.PATCH_NAMES[-3:], ('0004-ioctl-command-filter.patch', '0005-stop-counts-getsockopt-filter.patch',
+                                                   '0006-accept-untraced-program-counts.patch'))
         for name in recipe.PATCH_NAMES:
             self.assertTrue((recipe.PATCHES / name).is_file(), name)
 
@@ -75,6 +76,7 @@ class SecondProotBuild(unittest.TestCase):
             'other ndk': {'ndk_version': '28.2.13676358'},
             'no patch flag': {'ioctl_command_filter_patch': False},
             'no stop counts flag': {'stop_counts_patch': False},
+            'no accept flag': {'accept_untraced_patch': False},
             'three patches': {'patches': {name: builder.pin(recipe.PATCHES / name) for name in recipe.PATCH_NAMES[:3]}},
             'other recipe': {'recipe_sha256': '0' * 64},
             'no licence': {'license_files': {}},
@@ -105,6 +107,7 @@ class SecondProotBuild(unittest.TestCase):
             self.assertIn('"' + member.rsplit('/', 1)[1] + '"', java)
         self.assertIn('builder.environment().put("PROOT_IOCTL_COMMANDS_ONLY", "1")', java)
         self.assertIn('builder.environment().put("PROOT_GETSOCKOPT_PEERCRED_ONLY", "1")', java)
+        self.assertIn('builder.environment().put("PROOT_ACCEPT_UNTRACED", "1")', java)
         self.assertIn('builder.environment().put("PROOT_STOP_COUNTS", prootStopCounts.getPath())', java)
         self.assertIn('.getBoolean("proot-call-filter", true)', java)
 
