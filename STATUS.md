@@ -30,11 +30,10 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   Resume removes the unentered THORHERO; any name, walking unlocked; Reopen not refused as station travel. HANDOFF "0.13.60".."0.13.63".
 - 0.13.64-65 published (APKs 42674721584 at 4f9e8eebe, 42724564742 at caf52c828): display updates above 1024
   rectangles (fast turns closed the game); Mercy Island navigation graph (run 42678203754). HANDOFF "0.13.64"/"0.13.65".
-- 0.13.66 published (APK 42827583406; build 42809195810, runtime 42821819932 at d8f417ea8): map pack coh-navigation-maps-v1.0.0
-  (64 zones). Thor 20261110-213045: pack bound, Mercy graph refused (linked inputs vs new lstat check). HANDOFF "Thor test of 0.13.66".
-- 0.13.67 published (APK 42940665672; build 42922800561, runtime 42936024060 at 0c37bef41): Mercy graph check follows the phone's file links; launch receipts, folder index
-  kept across updates, cache return, 60 cap (0128). Thor 20261111-035325 (first launch): graph verified, pets path; in world 923 s, FPS mean 30; PRoot tracer 647 s CPU. HANDOFF "Thor test of 0.13.67".
+- 0.13.66-67 published (APKs 42827583406 at d8f417ea8, 42940665672 at 0c37bef41): map pack coh-navigation-maps-v1.0.0 (64 zones); Mercy graph check follows the
+  phone's file links; launch receipts, folder index kept, cache return, 60 cap (0128). Thor 20261111-035325: graph verified, pets path; in world 923 s. HANDOFF "Thor test of 0.13.67".
 - 0.13.68-69 published (APKs 42963857636 at 42728face, 43104941674 at 22d90d987): early zone start (inert in .68, runs in .69), PRoot patch 0004 as an option, ioctl probe.
   Thor 20261113 A/B/C: in world 339/361/235 s (client log; app +70 s, server log delay), zone start 233/276/157 s, FPS 30-42/31-54/50-61,
   ioctl 46.8 to 0.8 us; save after travel never confirmed (app defect). HANDOFF "0.13.70".
-- 0.13.70 (85) in CI: save-after-travel fix; fast server + second PRoot build default; PRoot patch 0005 (stop counts, getsockopt filter); client timeline; zone graph receipt.
+- 0.13.70 published (APK 43372592357; build 43353706777, runtime 43368553729 at a774abd0d): save-after-travel fix; fast server + second PRoot build default (new keys); PRoot patch 0005
+  (stop counts, getsockopt filter); client timeline; zone graph receipt. CI stop counts (43363707492): newfstatat 36 %, readlinkat 17 %, accept 17 %. HANDOFF "0.13.70".

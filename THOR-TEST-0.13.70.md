@@ -28,7 +28,19 @@ This release comes from your 0.13.69 launches A, B and C (2026-11-12).
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.70 and the Thor test of 0.13.69".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI at a774abd0d: build 43353706777 passed; stock-travel runtime 43363707492
+(`early_zone=true`, `proot_ioctl_filter=true` with patch 0005, sampler reading
+as root; one trip); trusted runtime 43368553729 created and reopened a
+character (its interactive job took 1862 s); APK 43372592357 published 0.13.70
+(sha256 `aefd2c8c5abc54c401945bb2c20963855f7151885cd1c5aee007aaccd0381b80`).
+Runtime 43363707492 with the filter: ioctl probe `listed_commands_only`,
+`getsockopt` 0.51 microseconds per call (29.59 and `getsockopt_stops` true in
+the trusted runtime, which runs without the switches); PRoot's own counts:
+32.3 million stops in the 1,244 s creation session and 14.2 million in the 912
+s reopen session, of the latter `newfstatat` 36 %, `readlinkat` 17 %, `accept`
+17 % (1,340 calls a second), `recvmsg`/`sendto`/`recvfrom`/`sendmsg` 15 %,
+`close` 5 %, `openat` 5 %. Atlas Park's MapServer, spawn to ready: 175.7 s
+stock, 94.8 s with trusted bins.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

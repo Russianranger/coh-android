@@ -495,7 +495,23 @@ pursuing the goals plus any fixes from observations in the logs".
   `test_zone_beacons.py` 40 (receipt reuse, a replaced input, removed graph).
   Java: `javac` against the local stubs gives the same 77 error kinds and
   counts before and after.
-- **Chain.** CHAIN70_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Chain at a774abd0d** (one chain on x86/perf-round1). Build 43353706777;
+  stock-travel runtime 43363707492 (`early_zone=true`,
+  `proot_ioctl_filter=true` with patch 0005, sampler reading as root; one
+  trip); trusted runtime 43368553729 (interactive job 1862 s, THORHERO; its
+  app-sources job compiled the changed Java). APK 43372592357 published
+  `coh-atlas-gameplay-v0.13.70` (93532426 bytes, sha256
+  aefd2c8c5abc54c401945bb2c20963855f7151885cd1c5aee007aaccd0381b80, signer
+  92955353…, the same as 0.13.50-0.13.69); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtime
+  43363707492 with the filter: ioctl probe `listed_commands_only`, `getsockopt`
+  0.51 microseconds per call (29.59 and `getsockopt_stops` true in the trusted
+  runtime, which runs without the switches); PRoot's own counts: 32.3 million
+  stops in the 1,244 s creation session and 14.2 million in the 912 s reopen
+  session, of the latter `newfstatat` 36 %, `readlinkat` 17 %, `accept` 17 %
+  (1,340 calls a second), `recvmsg`/`sendto`/`recvfrom`/`sendmsg` 15 %, `close`
+  5 %, `openat` 5 %. Atlas Park's MapServer, spawn to ready: 175.7 s stock,
+  94.8 s with trusted bins.
 - **Open.** The 60-90 s log delay (needs MapServer and DbServer changes). A
   second idle zone server raises the tracer's share from 41-43 % to 53 %; an
   idle tick is not built. The early start begins 63-89 s into the launch and

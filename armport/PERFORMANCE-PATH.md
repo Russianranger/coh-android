@@ -574,6 +574,35 @@ By program: wineserver 1,203, guest Python 914, MapServer 862, client 621,
 DbServer 97. Samples count time spent stopped, not calls, and CI's host is not
 the phone: on the Thor the ioctl share is unknown until a 0.13.69 export.
 
+Thor 0.13.69 (2026-11-12, exports 20261113-012755/-013835/-015905): one ioctl
+stop pair costs 46.8 microseconds without the filter and the call 0.8 with it,
+so about 23 microseconds per stop. The tracer's share of a core in the world
+stayed 41-47 % with or without the filter (74-83 % while loading; 53 % with a
+second zone server): ioctl was not its main load there.
+
+Exact counts (0.13.70, PRoot patch 0005, CI run 43363707492, reopen session:
+14.2 million stops in 912 s, about 15,600 a second; creation: 32.3 million in
+1,244 s):
+
+| Call | Stops (enter + exit) | Share |
+|---|---|---|
+| `newfstatat` | 2,539,892 + 2,539,891 | 36 % |
+| `readlinkat` | 1,231,872 + 1,231,872 | 17 % |
+| `accept` | 1,223,850 + 1,223,850 | 17 % |
+| `recvmsg`, `sendto`, `recvfrom`, `sendmsg` | 2,068,135 | 15 % |
+| `close` | 747,770 | 5 % |
+| `openat` | 689,271 | 5 % |
+| `getxattr` | 369,307 | 3 % |
+| `wait4` | 63,701 + 63,701 | 1 % (3 % in creation: the supervisor's child polls) |
+
+`getsockopt` no longer stops (0.51 microseconds per call; 29.59 without the
+switch). CI's Linux PRoot does not stop ioctl; the phone's mix comes with the
+0.13.70 export (`proot_stop_counts`).
+
+Parts 1 and 2 below are in 0.13.70. Drafted next (patch 0006, not applied):
+`accept` untraced under a switch (2.4-4 against 52-56 microseconds locally)
+and per-program rows in the counts.
+
 Next parts of step 14, cheapest and safest first (none built yet):
 
 1. Count stops inside the patched PRoot (per call number, written at exit to a
