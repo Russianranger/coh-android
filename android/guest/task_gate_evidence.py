@@ -52,9 +52,20 @@ ROW_LIMIT = 128
 RECEIPT_LIMIT = 4096
 COMMAND_MAX_AGE_MS = 180000
 TASK_KEYS = {'name', 'context', 'subhandle', 'task_index'}
-PREFIX = contact.PREFIX
 SUFFIX = contact.SUFFIX
-PATTERNS = {
+_PATTERNS = {}
+
+
+def patterns():
+    """The task records of the current character name (any name since 0.13.62), compiled once per name."""
+    name = contact.server.CHARACTER
+    if name not in _PATTERNS:
+        _PATTERNS[name] = _compile(contact.prefix())
+    return _PATTERNS[name]
+
+
+def _compile(PREFIX):
+    return {
     'contact': re.compile(PREFIX + r'ContactInteract:Debug Initiating interaction with contact (?P<context>[1-9][0-9]{0,9})' + SUFFIX + '$'),
     'add': re.compile(PREFIX + r'Task:Add (?P<name>[A-Za-z0-9_]{1,256})' + SUFFIX + '$'),
     'arc': re.compile(PREFIX + r'Storyarc:Add Handle (?P<context>-[1-9][0-9]{0,9})' + SUFFIX + '$'),
@@ -64,7 +75,7 @@ PATTERNS = {
     'force_name': re.compile(PREFIX + r'Task:ForceComplete Task Name: (?P<name>[A-Za-z0-9_]{1,256}), File: (?P<filename>[^\r\n]{1,256}?)' + SUFFIX + '$'),
     'reward': re.compile(PREFIX + r'\[Tbl\]:Rcv:Points XP: (?P<xp>[0-9]{1,10}), Debt: (?P<debt>[0-9]{1,10}), '
         r'Inf: (?P<influence>[0-9]{1,10}), Pres: (?P<prestige>[0-9]{1,10}) \(SGMode off \((?P<supergroup>[0-9]{1,10})\)\)' + SUFFIX + '$'),
-}
+    }
 
 
 def _result(status='unavailable', reason=None):
@@ -206,7 +217,7 @@ def records(logs, ready_ms, now_ms, *, map_id=1):
                 continue
             if not ready_ms <= utc_ms <= now_ms:
                 continue
-            for kind, pattern in PATTERNS.items():
+            for kind, pattern in patterns().items():
                 match = pattern.fullmatch(message)
                 expected_category = 'admin' if kind.startswith('force_') else ('rewards' if kind == 'reward' else 'entity')
                 if (match is None or category != expected_category

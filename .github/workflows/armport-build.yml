@@ -302,11 +302,15 @@ jobs:
           sparse-checkout: |
             /armport/
             /upstream-lock.json
+            /source-target.json
             /docs/source-manifest.json
             /patches/
             /database/
             /docs/android-evidence/client-map-startup-0.13.32-publication.json
             /docs/android-evidence/mapserver-progress-package-36630872719.json
+            /docs/android-evidence/dbserver-package-36460867428.json
+            /docs/android-evidence/zone-assets-1.0.0-all-maps.json
+            /docs/schema-generation-evidence/accepted-36088012666.zip
             /tools/android/interactive/prepare_atlas_world_assets.py
             /assets/catalog.json
             /assets/zones-audio-metadata.json
@@ -316,6 +320,7 @@ jobs:
             /android/runtime-lock.json
             /android/guest/
             /android/interactive/src/
+            /android/native/proot/
             /tools/android/
             /tools/*.py
             /.github/
@@ -349,11 +354,28 @@ jobs:
 
       - name: Check bounded M3 diagnostic reporting
         run: |
-          armport/scripts/step.sh "ArmPort test apt" bash -c 'sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends imagemagick'
+          armport/scripts/step.sh "ArmPort test apt" armport/scripts/apt_install.sh imagemagick
           armport/scripts/step.sh "ArmPort unit tests" python3 -m unittest discover -s armport/tests -p 'test_*.py'
           armport/scripts/step.sh "ArmPort saved-map startup guards" python3 -m unittest discover -s tools/android/interactive -p 'test_saved_map_startup.py'
           armport/scripts/step.sh "ArmPort zoning guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_zoning.py'
           armport/scripts/step.sh "ArmPort monorail guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_monorail.py'
+          # 0.13.60: the character's own zone at Enter Game (Thor 0.13.59: Mercy Island), the game's own travel, the CI trip.
+          armport/scripts/step.sh "ArmPort character zone start guards" python3 -m unittest discover -s tools/android/interactive -p 'test_dynamic_initial_map.py'
+          armport/scripts/step.sh "ArmPort zone travel guards" python3 -m unittest discover -s tools/android/interactive -p 'test_stock_travel.py'
+          armport/scripts/step.sh "ArmPort reopen trip guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_reopen_host.py'
+          # 0.13.61: Resume removes only a THORHERO whose first zone never started (Thor 0.13.60), on a real PostgreSQL.
+          armport/scripts/step.sh "ArmPort PostgreSQL fixture" bash armport/scripts/pg_fixture.sh
+          PGHOST=127.0.0.1 PGPORT=5432 PGUSER=postgres PGPASSWORD=coh-host-fixture PGDATABASE=coh_test_startup_bundle COH_REQUIRE_POSTGRESQL=1 \
+            armport/scripts/step.sh "ArmPort profile eligibility guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_profile_eligibility.py'
+          # 0.13.62: any character name the game accepts (Thor 0.13.61 created Ralakar); unlocked walking.
+          armport/scripts/step.sh "ArmPort any-name guards" python3 -m unittest discover -s tools/android/interactive -p 'test_character_any_name.py'
+          # 0.13.65: zone graphs (Thor 0.13.63: Mercy Island's pet would not walk to a target). The generator's build
+          # input names the source commit from /source-target.json, so the checkout above includes it (build 42704278399).
+          armport/scripts/step.sh "ArmPort zone graph guards" python3 -m unittest discover -s tools/android/interactive -p 'test_zone_beacons.py'
+          # 0.13.67: launch receipts (Thor 0.13.66 re-checked 39,358 unchanged leaves at every launch).
+          armport/scripts/step.sh "ArmPort launch receipt guards" python3 -m unittest discover -s tools/android/interactive -p 'test_launch_receipts.py'
+          armport/scripts/step.sh "ArmPort pinned Lua source guards" python3 tools/test_pinned_lua_source.py
+          armport/scripts/step.sh "ArmPort session budget guards" python3 -m unittest discover -s tools/android/interactive -p 'test_session_budget_guest.py'
 
       - name: Install llvm-mingw (aarch64 host)
         run: |
@@ -372,8 +394,7 @@ jobs:
           echo "$sha  $RUNNER_TEMP/wine.tar.gz" | sha256sum -c -
           sudo mkdir -p /opt/wine
           sudo tar -xzf "$RUNNER_TEMP/wine.tar.gz" -C /opt/wine
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends ninja-build \
+          armport/scripts/apt_install.sh ninja-build \
             libfreetype6 libfontconfig1 libx11-6 libxext6 libxrender1 libxrandr2 libxi6 \
             libxfixes3 libxcursor1 libxinerama1 libxxf86vm1 libgnutls30t64 libunwind8 libgl1
           /opt/wine/bin/wine --version
@@ -436,6 +457,44 @@ jobs:
             echo "::error title=ArmPort ragdoll without physics::the original NULL-ragdoll path unexpectedly passed"; exit 1
           fi
           echo "::notice title=ArmPort ragdoll without physics::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/ragdoll-original.txt")"
+
+      - name: Saved folder-cache index rebuilds the scanned tree and refuses stale data (patch 0122)
+        run: |
+          # No pipe: the step's exit status must be the check's (bash -e, no pipefail).
+          out=$(armport/scripts/step.sh "ArmPort folder-cache index" python3 armport/tests/folder_cache_index.py --source "$RUNNER_TEMP/armport/src")
+          out=${out##*$'\n'}
+          if python3 armport/tests/folder_cache_index.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/folder-index-original.txt" 2>&1; then
+            echo "::error title=ArmPort folder-cache index::the original scan unexpectedly passed"; exit 1
+          fi
+          echo "::notice title=ArmPort folder-cache index::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/folder-index-original.txt")"
+
+      - name: Entity interpolation keeps its delay after zoning to a younger zone server (patch 0123)
+        run: |
+          # AArch64 runner: the original's saturating float-to-U32 conversion
+          # must reproduce the lost delay (King's Row NPCs jumping on the Thor).
+          out=$(armport/scripts/step.sh "ArmPort interpolation clock" python3 armport/tests/net_clock_interpolation.py --source "$RUNNER_TEMP/armport/src")
+          out=${out##*$'\n'}
+          if python3 armport/tests/net_clock_interpolation.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/net-clock-original.txt" 2>&1; then
+            echo "::error title=ArmPort interpolation clock::the original clock unexpectedly passed"; exit 1
+          fi
+          if ! grep -q 'FAIL: no interpolation delay' "$RUNNER_TEMP/net-clock-original.txt"; then
+            echo "::error title=ArmPort interpolation clock::the original did not lose the delay on this host: $(tail -1 "$RUNNER_TEMP/net-clock-original.txt")"; exit 1
+          fi
+          echo "::notice title=ArmPort interpolation clock::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/net-clock-original.txt")"
+
+      - name: A logout survives the Enter that sent /quittologin (patch 0127)
+        run: |
+          # The stock client cancelled its own logout on the Enter's late
+          # DirectInput edge at a few frames per second (CI saves lost).
+          out=$(armport/scripts/step.sh "ArmPort logout keys" python3 armport/tests/logout_abort_keys.py --source "$RUNNER_TEMP/armport/src")
+          out=${out##*$'\n'}
+          if python3 armport/tests/logout_abort_keys.py --source "$RUNNER_TEMP/armport/src" --original upstream/ouroboros > "$RUNNER_TEMP/logout-keys-original.txt" 2>&1; then
+            echo "::error title=ArmPort logout keys::the original abort check unexpectedly kept the logout"; exit 1
+          fi
+          if ! grep -q 'FAIL: the Enter that sent /quittologin cancelled the logout' "$RUNNER_TEMP/logout-keys-original.txt"; then
+            echo "::error title=ArmPort logout keys::the original did not fail as expected: $(tail -1 "$RUNNER_TEMP/logout-keys-original.txt")"; exit 1
+          fi
+          echo "::notice title=ArmPort logout keys::patched: $out%0Aoriginal: $(tail -1 "$RUNNER_TEMP/logout-keys-original.txt")"
 
       - name: MapServer tick and file timing uses actual prepared code (patch 0119)
         run: |
@@ -690,7 +749,7 @@ jobs:
           echo "${LLVM_MINGW_SHA256}  $RUNNER_TEMP/llvm.tar.xz" | sha256sum -c -
           sudo mkdir -p /opt/llvm-mingw
           sudo tar -xJf "$RUNNER_TEMP/llvm.tar.xz" --strip-components=1 -C /opt/llvm-mingw
-          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ninja-build
+          armport/scripts/apt_install.sh ninja-build
 
       # The linked client is cached by its build inputs, so runtime-only changes
       # (smoke run, data) do not rebuild it.
@@ -1042,8 +1101,7 @@ jobs:
           echo "::notice title=ArmPort M3 disk after staging::$(df -h / | tail -1)"
       - name: Install host tools (PRoot build, Xvfb, xdotool, OCR)
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux \
+          armport/scripts/apt_install.sh build-essential gawk default-jdk-headless iproute2 util-linux \
             xvfb xdotool x11-apps imagemagick tesseract-ocr tcpdump gdb
       - name: Build matching native ARM64 PRoot
         run: armport/scripts/step.sh "ArmPort M3 PRoot build" python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
@@ -1193,6 +1251,8 @@ jobs:
             /armport/
             /tools/
             /android/guest/
+            /patches/mapserver-trusted-bins/
+            /patches/mapserver-zone-travel/
           sparse-checkout-cone-mode: false
       - uses: actions/checkout@v4
         with:
@@ -1282,6 +1342,8 @@ jobs:
             /armport/
             /tools/
             /android/guest/
+            /patches/mapserver-trusted-bins/
+            /patches/mapserver-zone-travel/
             /docs/android-evidence/mapserver-progress-package-36630872719.json
             /docs/android-evidence/client-map-startup-0.13.32-publication.json
           sparse-checkout-cone-mode: false
@@ -1314,6 +1376,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Portable donor verification tests failed' }
           python armport/scripts/server_metrics_producer.py extract --archive out/source-bundle/server-metrics-input.tar.gz --output C:/ams-input --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline 2>&1 | Tee-Object -FilePath out/server-preflight-evidence/source-extract.log
           if ($LASTEXITCODE -ne 0) { throw 'Server source identity check failed' }
+      # Build 42488979665: www.lua.org timed out the second variant's Lua download (both attempts).
+      # The producer reuses the archive CMake verified (URL_HASH) and keeps it here for later builds.
+      - uses: actions/cache@v4
+        with:
+          path: out/lua-cache
+          key: armport-lua-5.1.5-2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333
       - name: Genuine x86 fixtures then two single-worker MapServer builds
         shell: pwsh
         run: |
@@ -1326,7 +1394,7 @@ jobs:
           @echo off
           call "$installation\VC\Auxiliary\Build\vcvars32.bat"
           if errorlevel 1 exit /b 1
-          python armport/scripts/server_metrics_producer.py build --directory C:/ams-input --output out/server-native --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline
+          python armport/scripts/server_metrics_producer.py build --directory C:/ams-input --output out/server-native --lua-cache out/lua-cache --repository-commit "$env:GITHUB_SHA" --run-id "$env:GITHUB_RUN_ID" --upstream-root server-baseline
           if errorlevel 1 exit /b 1
           "@
           Set-Content -Path out/server-native.cmd -Value $batch -Encoding ASCII

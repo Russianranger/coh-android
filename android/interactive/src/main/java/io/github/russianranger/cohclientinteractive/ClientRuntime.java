@@ -25,6 +25,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /** Runs the pinned CoH client with a persistent local PostgreSQL and DbServer profile. */
@@ -86,6 +87,17 @@ public final class ClientRuntime {
     private final List<byte[]> characterPngs = new ArrayList<>();
     private volatile long characterObservedUptime = -1, characterFrameWatermark = -1;
     private volatile JSONObject characterSavedEvent, characterConnectedEvent;
+    /** The character's own name (0.13.62: any name), from the guest's first verified event. */
+    private volatile String characterName;
+    private String who() { String name = characterName; return name == null ? "your character" : name; }
+    /** One name per session: the guest binds the character to its SQL row. */
+    private boolean sameCharacter(JSONObject event) {
+        String name = characterName;
+        return ClientAcceptance.characterName(event.optString("name", null)) && (name == null || name.equals(event.optString("name")));
+    }
+    /** The guest's message while the client waits at Enter Game for the character's zone (its screen holds still). */
+    private volatile String initialZoneStatus;
+    private volatile long initialZoneStartedUptime = -1;
     private volatile boolean saveLogoutRequested;
     private volatile boolean characterSavedReady;
     private boolean manualTestActive,manualTestOpeningCaptured;
@@ -166,6 +178,13 @@ public final class ClientRuntime {
     private long zoningDepartureDeadlineUtc;
     private final List<Map<String,Object>> zoningTimings = new ArrayList<>();
     private final ExecutorService checkpointWorker = Executors.newSingleThreadExecutor();
+    /** Android thermal samples through the whole session (0.13.50: 76 C while loading, no record). */
+    static final int THERMAL_SAMPLE_SECONDS = 30, THERMAL_SAMPLE_LIMIT = 360;
+    private final java.util.concurrent.ScheduledExecutorService thermalWorker =
+            Executors.newSingleThreadScheduledExecutor(runnable -> {
+                Thread thread = new Thread(runnable, "coh-thermal-samples"); thread.setDaemon(true); return thread; });
+    private final List<Map<String,Object>> thermalSamples = new ArrayList<>();
+    private boolean thermalSamplesTruncated;
     private final java.util.concurrent.atomic.AtomicReference<byte[]> pendingCheckpoint = new java.util.concurrent.atomic.AtomicReference<>();
     private final java.util.concurrent.atomic.AtomicBoolean checkpointQueued = new java.util.concurrent.atomic.AtomicBoolean();
     private volatile String checkpointFailure;
@@ -202,7 +221,30 @@ public final class ClientRuntime {
     private String manifestHash, session, operation, runId, error;
     private String graphicsProfileRequested="standard";
     private String gpuProfileRequested="software";
-    private String clientArchitectureRequested="x86";
+    private String clientArchitectureRequested="arm64";
+    private boolean prootFastModeRequested=false;
+    private boolean prestartNextZoneRequested=false;
+    private boolean earlyZoneRequested=false;
+    private boolean glDirectRequested=false;
+    private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
+    /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
+    private File prootStopCounts;
+    private boolean spareZoneRequested=false;
+    private boolean trustedBinsRequested=false;
+    private boolean gameplay60Requested=false, gameplay60Queued=false;
+    private boolean idleResidentMapsRequested=false;
+    private boolean sharedServerDataRequested=false;
+    private boolean clientSkipServerFoldersRequested=false;
+    private boolean clientFolderIndexRequested=false;
+    // Game audio (0.13.53): the ALSA-to-AudioTrack bridge of the current session.
+    private boolean clientAudioRequested=false;
+    // Shared server memory (0.13.54 experiment): zone servers share parsed game data.
+    private boolean sharedHeapRequested=false;
+    private boolean stockTravelRequested=false;
+    private ClientAudio audio;
+    private JSONObject clientAudioReport;
+    /** The navigation map pack this session binds for the guest (owner, 2026-11-09), or why none is bound. */
+    private JSONObject navigationMapReport;
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -228,6 +270,9 @@ public final class ClientRuntime {
                     latestReport = candidate;
             }
         } catch (IOException e) { throw new IllegalStateException("Cannot open private client storage", e); }
+        // One runtime per operation; the daemon sampler ends itself once it has finished.
+        try { thermalWorker.scheduleWithFixedDelay(this::sampleThermal, 0, THERMAL_SAMPLE_SECONDS, TimeUnit.SECONDS); }
+        catch (RejectedExecutionException ignored) { /* Observation only. */ }
     }
 
     /** Compact active installer evidence; does not open or modify runtime files. */
@@ -248,15 +293,239 @@ public final class ClientRuntime {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("performance-graphics", enabled).apply();
     }
+    /** Fast mode lets PRoot install its seccomp filter, so only path syscalls stop in the tracer.
+     * On by default: CI A/B 41584980465 vs 41588867344 cut MapServer startup 26-32%. */
+    public static boolean prootFastModeEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("proot-fast-mode", true);
+    }
+    public static synchronized void setProotFastModeEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("proot-fast-mode", enabled).apply();
+    }
+    /** 0.13.52: run the APK's second, instrumented Thor MapServer, which trusts CRC-matching
+     * prepared .bin files (CI A/B 41605600310 vs 41610459604: reopen Atlas 130 s -> 94 s).
+     * 0.13.70: on by default under a new key ("trusted-bins-test-server" before). Thor 0.13.69,
+     * launch 20261113-015905 with it: in the world 240 s after the launch began (343 s and 366 s
+     * with the 0.13.36 server), zone server ready 156 s after its start (233 s and 276 s), a trip
+     * to Port Oakes and back, and the save verified. Unticking it runs the 0.13.36 server. */
+    public static boolean trustedBinsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("fast-server", true);
+    }
+    public static synchronized void setTrustedBinsEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("fast-server", enabled).apply();
+    }
+    /** Raise the gameplay frame cap to 60 once the reopened character is in the world.
+     * Uses the sidebar's /maxfps 60 command; the native launch cap stays 30/10. */
+    public static boolean gameplay60FpsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("gameplay-60fps", true);
+    }
+    public static synchronized void setGameplay60FpsEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("gameplay-60fps", enabled).apply();
+    }
+    /** Lower a resident zone server's CPU priority while the player is in the other zone. */
+    public static boolean idleResidentMapsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("idle-resident-maps", false);
+    }
+    public static synchronized void setIdleResidentMapsEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("idle-resident-maps", enabled).apply();
+    }
+    /** Both zone servers read the shared folders from one read-only tree (no per-zone copy). */
+    public static boolean sharedServerDataEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("shared-server-data", true);
+    }
+    public static synchronized void setSharedServerDataEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("shared-server-data", enabled).apply();
+    }
+    /** ARM64 client: its upfront file scan skips server-only folders (patch 0120). */
+    public static boolean clientSkipServerFoldersEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("client-skip-server-folders", true);
+    }
+    public static synchronized void setClientSkipServerFoldersEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("client-skip-server-folders", enabled).apply();
+    }
+    /** ARM64 client: reuse its saved file list while the data is unchanged (patch 0122). */
+    public static boolean clientFolderIndexEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("client-folder-index", true);
+    }
+    public static synchronized void setClientFolderIndexEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("client-folder-index", enabled).apply();
+    }
+    /** Game audio: route the client's DirectSound (Wine ALSA) to Android (0.13.53). */
+    public static boolean clientAudioEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("client-audio", true);
+    }
+    public static synchronized void setClientAudioEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("client-audio", enabled).apply();
+    }
+    /**
+     * Shared server memory (experiment, off): omit -nosharedmemory so the stock MapServer
+     * maps the shared definitions another zone server already parsed.
+     */
+    /**
+     * The game's own zone travel (default on): zone doors, tunnels and the monorail take the stock
+     * path (loading screen at once) and the guest starts any requested zone (external-maps DbServer).
+     */
+    /**
+     * A bind destination inside another bind (/opt/coh/pgsql inside /opt/coh =
+     * runtime assets). Left missing, PRoot creates it with no permissions, and
+     * the storage scan, which cannot open it, then disables every cleanup
+     * (Thor storage report 2026-11-06: errno 13 at runtime assets/pgsql, 14
+     * older runtimes kept). Create it, or repair it, as a private directory.
+     */
+    static void ownedMountPoint(File directory) throws IOException {
+        java.nio.file.Path path = directory.toPath();
+        if (!Files.exists(path, java.nio.file.LinkOption.NOFOLLOW_LINKS)) Files.createDirectory(path);
+        if (!Files.isDirectory(path, java.nio.file.LinkOption.NOFOLLOW_LINKS))
+            throw new IOException("Runtime mount point is not a private directory");
+        Files.setPosixFilePermissions(path, java.nio.file.attribute.PosixFilePermissions.fromString("rwx------"));
+    }
+
+    /** Before a storage scan: the same repair for every runtime's mount point; returns how many changed. */
+    static int repairRuntimeMountPoints(File files) {
+        File[] runtimes = new File(files, "m2").listFiles();
+        if (runtimes == null) return 0;
+        int repaired = 0;
+        Set<java.nio.file.attribute.PosixFilePermission> owner =
+                java.nio.file.attribute.PosixFilePermissions.fromString("rwx------");
+        for (File runtime : runtimes) {
+            if (!runtime.getName().matches("runtime-[0-9a-f]{16}")) continue;
+            java.nio.file.Path assets = new File(runtime, "assets").toPath(), mount = assets.resolve("pgsql");
+            if (!Files.isDirectory(runtime.toPath(), java.nio.file.LinkOption.NOFOLLOW_LINKS)
+                    || !Files.isDirectory(assets, java.nio.file.LinkOption.NOFOLLOW_LINKS)
+                    || !Files.isDirectory(mount, java.nio.file.LinkOption.NOFOLLOW_LINKS)) continue;
+            try {
+                if (Files.getPosixFilePermissions(mount, java.nio.file.LinkOption.NOFOLLOW_LINKS).containsAll(owner)) continue;
+                Files.setPosixFilePermissions(mount, owner);
+                repaired++;
+            } catch (IOException | RuntimeException ignored) { /* The scan reports what it cannot open. */ }
+        }
+        return repaired;
+    }
+
+    public static boolean stockTravelEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("stock-zone-travel", true);
+    }
+    public static synchronized void setStockTravelEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("stock-zone-travel", enabled).apply();
+    }
+    public static boolean sharedHeapEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("shared-server-memory", false);
+    }
+    public static synchronized void setSharedHeapEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("shared-server-memory", enabled).apply();
+    }
+    /**
+     * 0.13.68: on Reopen, start the saved character's own zone while the game starts (one zone
+     * server, and only with enough free memory). Thor 0.13.66: the zone took 113 s to prepare and
+     * 227 s to start, all after Enter Game. On by default; the guest refuses it and starts the zone
+     * at Enter Game, as before, whenever its conditions are not met.
+     */
+    public static boolean prootIoctlFilterEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("proot-call-filter", true);
+    }
+    /**
+     * 0.13.69 experiment: the second PRoot build in this APK (patch 0004) is started with
+     * PROOT_IOCTL_COMMANDS_ONLY=1, so its filter stops an ioctl only for the few commands PRoot
+     * acts on. The first build stops every ioctl of every guest task twice, which includes each
+     * call the renderer makes to the GPU. Needs the fast PRoot mode.
+     * 0.13.70: on by default under a new key ("proot-ioctl-filter" before). Thor 0.13.69 ran two
+     * launches with it (20261113-013835, 20261113-015905): an unlisted ioctl cost 0.8 microseconds
+     * instead of 46.8. The build now also holds patch 0005: getsockopt stops only for SO_PEERCRED
+     * and PRoot writes its stop counts to a file the report carries. Unticking it starts the
+     * 0.13.36 PRoot binary.
+     */
+    public static synchronized void setProotIoctlFilterEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("proot-call-filter", enabled).apply();
+    }
+    public static boolean glDirectEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("client-gl-direct", false);
+    }
+    /**
+     * 0.13.69 experiment: the GPU renderer runs the game's drawing calls on the game's own render
+     * thread (Mesa's extra calling thread off, mesa_glthread=false). Thor 0.13.67: four client
+     * threads at about 30% of a core each, their busy time adding up to the frame time.
+     */
+    public static synchronized void setGlDirectEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("client-gl-direct", enabled).apply();
+    }
+    public static boolean earlyZoneEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("early-saved-zone", true);
+    }
+    public static synchronized void setEarlyZoneEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("early-saved-zone", enabled).apply();
+    }
+    /**
+     * 0.13.69: keep one zone server that has loaded everything zones share and waits for its zone
+     * (owner, 2026-11-05: the current zone and one spare). Needs the test server ("Fast server
+     * start") and enough free memory; off by default until it has run on a phone.
+     */
+    public static boolean spareZoneEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("spare-zone-server", false);
+    }
+    public static synchronized void setSpareZoneEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("spare-zone-server", enabled).apply();
+    }
+    /** Prepare and start King's Row beside Atlas Park once the character is in the world. */
+    public static boolean prestartNextZoneEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("prestart-next-zone", false);
+    }
+    public static synchronized void setPrestartNextZoneEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("prestart-next-zone", enabled).apply();
+    }
     public static String gpuProfileEnabled(Context context) {
         String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getString("gpu-profile", "software");
         return "turnip".equals(selected)?"turnip":"software";
     }
+    /** ARM64 is the main client from 0.13.50 (user decision 2026-11-03); x86 stays as the fallback. */
     public static String clientArchitecture(Context context) {
         String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getString("client-architecture", "x86");
-        return "arm64".equals(selected)?"arm64":"x86";
+                .getString("client-architecture", "arm64");
+        return "x86".equals(selected)?"x86":"arm64";
     }
     public static synchronized void setClientArchitecture(Context context, String selected) {
         if(!"x86".equals(selected)&&!"arm64".equals(selected))throw new IllegalArgumentException("Unknown client architecture");
@@ -351,9 +620,9 @@ public final class ClientRuntime {
     }
     public static String profileRecoveryMessage(ProfileState profile) {
         if (profile == ProfileState.ABSENT)
-            return "No saved character profile is present. After a fresh install, use Create fresh THORHERO once, then save normally. An earlier character requires an external database backup.";
+            return "No saved character profile is present. After a fresh install, use Create fresh character once, then save normally. An earlier character requires an external database backup.";
         if (profile == ProfileState.READY)
-            return "The initialized character profile is available; startup checks for a saved THORHERO. If first creation stopped before a save, use Resume first character creation. Existing characters are preserved.";
+            return "The initialized character profile is available; startup checks for the saved character. If first creation stopped before a save, or the new character's first zone did not start, use Resume first character creation. Saved characters are preserved.";
         return "Existing character data is incomplete or unreadable. It has been preserved; export the report. Fresh creation is unavailable while any profile data remains.";
     }
     private void requireCharacterProfile(boolean reopening) throws IOException {
@@ -467,6 +736,43 @@ public final class ClientRuntime {
         return result;
     }
 
+    /** API 30+: Android's forecast thermal headroom (1.0 = severe throttling); NaN or errors are null. */
+    static Object thermalHeadroom(Context context) {
+        if (Build.VERSION.SDK_INT < 30) return null;
+        try {
+            Object power = context.getSystemService(Context.POWER_SERVICE);
+            if (power instanceof android.os.PowerManager) {
+                float value = ((android.os.PowerManager) power).getThermalHeadroom(10);
+                return Float.isNaN(value) || Float.isInfinite(value) ? null : Math.round(value * 1000.0) / 1000.0;
+            }
+        } catch (RuntimeException unavailable) { return null; }
+        return null;
+    }
+    private void sampleThermal() {
+        if (finished || cancelled) { thermalWorker.shutdown(); return; }
+        Map<String, Object> sample;
+        try {
+            sample = startupThermalSnapshot(context);
+            sample.put("thermal_headroom_10s", thermalHeadroom(context));
+            sample.put("zoning_phase", zoning.phase());
+            sample.put("current_map_id", zoning.currentMap());
+        } catch (RuntimeException | OutOfMemoryError unavailable) { return; }
+        synchronized (this) {
+            sample.put("operation_uptime_ms", startedUptime > 0 ? SystemClock.uptimeMillis() - startedUptime : null);
+            if (thermalSamples.size() < THERMAL_SAMPLE_LIMIT) thermalSamples.add(sample);
+            else thermalSamplesTruncated = true;
+        }
+    }
+    private synchronized JSONObject thermalSamplesReport() {
+        JSONArray rows = new JSONArray();
+        for (Map<String, Object> row : thermalSamples) rows.put(new JSONObject(row));
+        try {
+            return new JSONObject().put("format", 1).put("interval_seconds", THERMAL_SAMPLE_SECONDS)
+                    .put("limit", THERMAL_SAMPLE_LIMIT).put("truncated", thermalSamplesTruncated)
+                    .put("battery_temperature_is_cpu_temperature", false).put("samples", rows);
+        } catch (org.json.JSONException impossible) { return new JSONObject(); }
+    }
+
     private synchronized void observeMapServerReady(JSONObject event) {
         if (startupTiming == null) return;
         try {
@@ -551,8 +857,86 @@ public final class ClientRuntime {
                 total>0?bytes/1048576+" / "+total/1048576+" MiB":bytes>0?bytes/1048576+" MiB":phase));
     }
 
+    private AssetPackStore navigationMaps() throws Exception {
+        return new AssetPackStore(context,manifest,AssetPackStore.NAVIGATION_MAPS,this::check,(phase,bytes,total)->listener.onStage(phase,
+                total>0?bytes/1048576+" / "+total/1048576+" MiB":bytes>0?bytes/1048576+" MiB":phase));
+    }
+
+    /** The id named by a selected pack ZIP's first member (every volume starts with its descriptor), or null. */
+    private String selectedPackId(Uri selected) {
+        try (InputStream raw = context.getContentResolver().openInputStream(selected)) {
+            if (raw == null) return null;
+            ZipInputStream zip = new ZipInputStream(new BufferedInputStream(raw));
+            ZipEntry first = zip.getNextEntry();
+            if (first == null || !"asset-pack-manifest.json".equals(first.getName())) return null;
+            return new JSONObject(new String(read(zip, 1024 * 1024), StandardCharsets.UTF_8)).optString("id", null);
+        } catch (Exception unreadable) {
+            return null;
+        }
+    }
+
+    /** Owner, 2026-11-09: every zone's navigation map comes as its own pack, imported with the same button. */
+    private Result importNavigationMaps(Uri selected) throws Exception {
+        begin("import", null);
+        JSONObject report = new JSONObject();
+        boolean ready = false;
+        String success = null;
+        AssetPackStore maps = null;
+        try {
+            loadManifest(); check();
+            if (!manifest.has(AssetPackStore.NAVIGATION_MAPS.runtimeKey))
+                throw new IOException("This APK pins no navigation map pack; install the APK that names it");
+            maps = navigationMaps();
+            InputStream input = context.getContentResolver().openInputStream(selected);
+            if (input == null) throw new IOException("The selected navigation map pack could not be opened");
+            String part = maps.importVolume(input); check();
+            ready = true;
+            success = maps.isAccepted()
+                    ? "Navigation maps " + maps.version + " verified. Pets and NPCs can now walk to targets in every zone the pack covers; each map is checked against your zone world when that zone starts."
+                    : "Navigation maps " + maps.version + " part " + part + " verified. " + maps.status();
+            report.put("status", maps.isAccepted() ? "navigation_map_pack_complete" : "navigation_map_pack_part_complete")
+                    .put("passed", false).put("scope", "Verified navigation map pack import only; no game execution claimed");
+            listener.onStage("Navigation maps imported", success);
+        } catch (Exception e) {
+            error = message(e);
+            report.put("status", cancelled ? "cancelled" : "failed").put("passed", false).put("error", error);
+        } finally {
+            if (maps != null) try { report.put("navigation_map_pack", maps.receipt()); } catch (Exception ignored) {}
+            synchronized (this) { finished = true; importControl = null; }
+            endedUptime = SystemClock.uptimeMillis();
+            try { publish(report, false, false); } finally { endOperation(); }
+        }
+        return new Result(ready, latestReport, ready ? success
+                : cancelled ? "Navigation map import stopped; previously imported maps are preserved."
+                : "Navigation map import failed: " + error);
+    }
+
+    /** The imported navigation map pack's verified objects for this session, or null (recorded either way). */
+    private File navigationMapObjects() {
+        try {
+            if (manifest == null || !manifest.has(AssetPackStore.NAVIGATION_MAPS.runtimeKey)) {
+                navigationMapReport = new JSONObject().put("format", 1).put("bound", false).put("reason", "not_pinned_by_this_apk");
+                return null;
+            }
+            AssetPackStore maps = navigationMaps();
+            navigationMapReport = maps.receipt().put("bound", maps.isAccepted());
+            if (!maps.isAccepted()) {
+                navigationMapReport.put("reason", "not_imported");
+                line("Navigation maps not imported: zones other than Atlas Park and King's Row start without pathing");
+                return null;
+            }
+            return maps.objects();
+        } catch (Exception unavailable) {
+            try { navigationMapReport = new JSONObject().put("format", 1).put("bound", false).put("error", message(unavailable)); }
+            catch (Exception ignored) { navigationMapReport = null; }
+            line("Navigation maps unavailable: " + unavailable.getMessage());
+            return null;
+        }
+    }
+
     public Result importAssets(Uri selected) throws Exception {
         if (selected == null) throw new IOException("Select the required versioned asset pack ZIP first");
+        if (AssetPackStore.NAVIGATION_MAPS.id.equals(selectedPackId(selected))) return importNavigationMaps(selected);
         begin("import", null);
         JSONObject report = new JSONObject();
         boolean ready = false;
@@ -632,6 +1016,21 @@ public final class ClientRuntime {
         clientArchitectureRequested=clientArchitecture(context);
         graphicsProfileRequested="arm64".equals(clientArchitectureRequested)?"standard":performanceGraphicsEnabled(context)?"performance":"standard";
         gpuProfileRequested=gpuProfileEnabled(context);
+        prootFastModeRequested=prootFastModeEnabled(context);
+        prestartNextZoneRequested=prestartNextZoneEnabled(context);
+        earlyZoneRequested=earlyZoneEnabled(context);
+        glDirectRequested=glDirectEnabled(context);
+        prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
+        spareZoneRequested=spareZoneEnabled(context);
+        trustedBinsRequested=trustedBinsEnabled(context);
+        gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
+        idleResidentMapsRequested=idleResidentMapsEnabled(context);
+        sharedServerDataRequested=sharedServerDataEnabled(context);
+        clientSkipServerFoldersRequested=clientSkipServerFoldersEnabled(context);
+        clientFolderIndexRequested=clientFolderIndexEnabled(context);
+        clientAudioRequested=clientAudioEnabled(context);clientAudioReport=null;navigationMapReport=null;
+        sharedHeapRequested=sharedHeapEnabled(context);
+        stockTravelRequested=stockTravelEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
@@ -658,11 +1057,29 @@ public final class ClientRuntime {
                 recordLifecycle("dead_owned_display_socket_recovered");
             ClientReports.preservePrevious(home.getParentFile());
             removePreviousGuestOutput();
+            // Only the ARM64 client routes its ALSA output to the bridge; the x86
+            // client never connects, so do not take audio focus for it.
+            if (clientAudioRequested && "arm64".equals(clientArchitectureRequested)) {
+                // A missing bridge keeps the session (the client continues without audio).
+                try { audio = ClientAudio.start(context, new File(socketDir, "audio.sock")); }
+                catch (Exception unavailable) {
+                    audio = null;
+                    clientAudioReport = new JSONObject().put("format", 1).put("error", unavailable.getClass().getSimpleName() + ": " + unavailable.getMessage());
+                    line("Game audio unavailable: " + unavailable.getMessage());
+                }
+            }
             File root = new File(generation, "rootfs"); new File(root, "presentation-socket").mkdirs();
             new File(root, "game-import").mkdirs();
+            ownedMountPoint(new File(generation, "assets/pgsql"));
             String nativeDir = context.getApplicationInfo().nativeLibraryDir;
             File proot = new File(nativeDir, "libproot.so"), loader = new File(nativeDir, "libproot-loader.so");
             if (!proot.canExecute() || !loader.canExecute()) throw new IOException("The APK process runtime is missing");
+            // 0.13.69: the option starts the second PRoot build (patch 0004) with its ioctl command
+            // filter. Without the option, or without both of its files, the launch is unchanged.
+            File filteredProot = new File(nativeDir, "libproot-ioctl.so"), filteredLoader = new File(nativeDir, "libproot-ioctl-loader.so");
+            prootIoctlFilterUsed = prootIoctlFilterRequested && prootFastModeRequested
+                    && filteredProot.canExecute() && filteredLoader.canExecute();
+            if (prootIoctlFilterUsed) { proot = filteredProot; loader = filteredLoader; }
             List<String> command = new ArrayList<>(Arrays.asList(proot.getPath(), "--link2symlink", "--kill-on-exit", "--sysvipc",
                     "-i", "1000:1000", "-r", root.getPath(), "-b", "/dev", "-b", "/proc", "-b", "/sys",
                     "-b", state.getPath() + ":/state", "-b", tmp.getPath() + ":/tmp",
@@ -680,6 +1097,23 @@ public final class ClientRuntime {
                     "COH_CLIENT_GRAPHICS_PROFILE="+graphicsProfileRequested,
                     "COH_CLIENT_GPU_PROFILE="+gpuProfileRequested,
                     "COH_CLIENT_ARCH="+clientArchitectureRequested,
+                    "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
+                    "COH_PROOT_IOCTL_FILTER="+(prootIoctlFilterUsed?"1":"0"),
+                    "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
+                    "COH_EARLY_ZONE="+(earlyZoneRequested?"1":"0"),
+                    "COH_SPARE_ZONE="+(spareZoneRequested?"1":"0"),
+                    "COH_TRUSTED_BINS="+(trustedBinsRequested?"1":"0"),
+                    // 0.13.67: the client starts gameplay at the 60 cap (patch 0128); 0.13.66 typed
+                    // /maxfps 60 only 75 s after the world was drawn, when the connection was confirmed.
+                    "COH_CLIENT_GAMEPLAY_60="+(gameplay60Requested?"1":"0"),
+                    "COH_CLIENT_GL_DIRECT="+(glDirectRequested?"1":"0"),
+                    "COH_IDLE_RESIDENT_MAPS="+(idleResidentMapsRequested?"1":"0"),
+                    "COH_SHARED_SERVER_DATA="+(sharedServerDataRequested?"1":"0"),
+                    "COH_CLIENT_SKIP_SERVER_FOLDERS="+(clientSkipServerFoldersRequested?"1":"0"),
+                    "COH_CLIENT_FOLDER_INDEX="+(clientFolderIndexRequested?"1":"0"),
+                    "COH_CLIENT_AUDIO="+(audio!=null?"1":"0"), "COH_CLIENT_AUDIO_SOCKET="+ClientAudio.GUEST_SOCKET,
+                    "COH_SHARED_HEAP="+(sharedHeapRequested?"1":"0"),
+                    "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -688,10 +1122,34 @@ public final class ClientRuntime {
             if (!reopen && resumeFirstCreation) command.add("--resume-empty-profile");
             if (reopen && Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))) command.add("--startup-only");
             if (zoningEnabled()) command.add("--zoning");
+            File navigationObjects = navigationMapObjects();
+            if (navigationObjects != null) {
+                // Owner, 2026-11-09: every zone's navigation map, imported like the asset pack. The guest
+                // installs each zone's map (pinned by the APK's descriptor) when that zone starts.
+                command.addAll(command.indexOf("-w"), Arrays.asList("-b", navigationObjects.getPath() + ":/opt/coh-navigation"));
+                command.add(command.indexOf("/usr/bin/python3"), "COH_NAVIGATION_MAPS=/opt/coh-navigation");
+            }
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
             builder.environment().put("PROOT_LOADER", loader.getPath());
             builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
-            builder.environment().put("PROOT_NO_SECCOMP", "1");
+            if(prootFastModeRequested)builder.environment().remove("PROOT_NO_SECCOMP");
+            else builder.environment().put("PROOT_NO_SECCOMP", "1");
+            if(prootIoctlFilterUsed)builder.environment().put("PROOT_IOCTL_COMMANDS_ONLY", "1");
+            else builder.environment().remove("PROOT_IOCTL_COMMANDS_ONLY");
+            builder.environment().remove("PROOT_GETSOCKOPT_PEERCRED_ONLY");
+            builder.environment().remove("PROOT_STOP_COUNTS");
+            builder.environment().remove("PROOT_ACCEPT_UNTRACED");
+            prootStopCounts = prootIoctlFilterUsed ? new File(prootTmp, "stop-counts.txt") : null;
+            if (prootStopCounts != null) {
+                prootStopCounts.delete(); new File(prootTmp, "stop-counts.txt.new").delete();
+                builder.environment().put("PROOT_GETSOCKOPT_PEERCRED_ONLY", "1");
+                // 0.13.71 (patch 0006): accept is not stopped (17 % of all stops in CI run 43363707492).
+                builder.environment().put("PROOT_ACCEPT_UNTRACED", "1");
+                builder.environment().put("PROOT_STOP_COUNTS", prootStopCounts.getPath());
+            }
+            line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)")
+                    +(prootIoctlFilterUsed?", ioctl stops only for the commands PRoot acts on (second PRoot build)"
+                    :prootIoctlFilterRequested?", ioctl filter asked for but not used":""));
             write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
                     .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
             stage("Starting City of Heroes", "Starting the persistent local database and DbServer, verifying the saved destination, then opening its MapServer and graphical client.");
@@ -724,6 +1182,11 @@ public final class ClientRuntime {
                 } catch (InterruptedException e) { process.destroyForcibly(); }
             }
             closingReceiver = true; closeReceiver();
+            ClientAudio bridge = audio; audio = null;
+            if (bridge != null) {
+                try { clientAudioReport = bridge.summary(); } catch (Exception summary) { clientAudioReport = null; }
+                bridge.close();
+            }
             try { inputWorker.awaitTermination(3, TimeUnit.SECONDS); } catch (InterruptedException ignored) {}
             join(receiver, 3000); join(output, 2000);
             boolean forcedCaptureClose = output != null && output.isAlive();
@@ -766,8 +1229,8 @@ public final class ClientRuntime {
                 passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
                         && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);
                 saveRecorded = committedCharacterSaveObserved(jsonValue(report),jsonValue(characterSavedEvent),
-                        jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),
-                        zoningEnabled()?zoning.currentMap():1);
+                        jsonValue(characterConnectedEvent),session,observedClientPid,reopen,characterZoning(),
+                        currentCharacterMap());
                 if (inputFailed > 0 && error == null) error = "Input transport failed; review the exported report.";
                 if (guestPassed && !passed && error == null) error = taskGateRequired()
                         ? "Task gate incomplete: matching native and SQL task completion, accepted/completed task views, ordinary save evidence and fresh Android save captures are required."
@@ -783,8 +1246,8 @@ public final class ClientRuntime {
         String summary = passed ? (taskGateRequired()
                 ? "One manually accepted task completed through the stock command and remained committed after ordinary logout, with matching native/SQL evidence, accepted/completed Android views and verified cleanup. Review both task views; combat, mission maps and reward turn-in remain separate."
                 : reopen
-                ? "The existing THORHERO was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the saved world view; rendering and gameplay require separate visual validation."
-                : "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
+                ? "The existing character was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the saved world view; rendering and gameplay require separate visual validation."
+                : "The character was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
                 : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? label + " check stopped. Export the latest report."
                 : saveRecorded ? "Committed character save recorded; Android report checks incomplete. Export the latest report."
                 : guestPassed ? label + " check incomplete. Export the latest report."
@@ -811,6 +1274,11 @@ public final class ClientRuntime {
     public boolean sendKey(String selectedSession, int keysym, boolean down) {
         if (keysym <= 0) return false;
         return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch), down);
+    }
+    /** One paired wheel tick (RFB button 4 or 5); ordinary pointer masks remain 0-7. */
+    public boolean sendWheel(String selectedSession, int x, int y, boolean up) {
+        if (x < 0 || y < 0) return false;
+        return queueInput(selectedSession, (active, epoch) -> active.sendWheel(x, y, up, epoch), true);
     }
     /** Keep field replacement and paced characters in one owned worker task. */
     public synchronized boolean sendText(String selectedSession, String value, boolean replace) {
@@ -853,6 +1321,10 @@ public final class ClientRuntime {
                 && performanceCommandInputAllowed();
     }
     public synchronized boolean requestPerformanceCommand(ClientInput.PerformanceCommand command) {
+        return requestPerformanceCommand(command, true);
+    }
+    /** The automatic world-entry cap keeps the current stage text instead of announcing itself. */
+    private synchronized boolean requestPerformanceCommand(ClientInput.PerformanceCommand command, boolean announce) {
         if (command == null || !canSendPerformanceCommand()) return false;
         final String selectedSession = session;
         final long selectedPid = observedClientPid;
@@ -869,7 +1341,7 @@ public final class ClientRuntime {
             active.sendPerformanceCommand(command.safeName, epoch);
             recordLifecycle("performance_command_submitted name=" + command.safeName
                     + " submitted_utc_ms=" + System.currentTimeMillis() + " native_effect_verified=false");
-            stage("FPS command sent", "Check the in-game FPS display. The selected value is a cap.");
+            if (announce) stage("FPS command sent", "Check the in-game FPS display. The selected value is a cap.");
         }, true, token);
         if (!queued) { performanceCommandPending = false; return false; }
         recordLifecycle("performance_command_queued name=" + command.safeName);
@@ -880,10 +1352,33 @@ public final class ClientRuntime {
         return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
                 && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
     }
+    /** The guest's creation with the game's own travel (ZoningCharacterCreationDiagnostic): the
+     * new character starts in the zone the game starts for it at Enter Game, whatever its origin. */
+    private boolean dynamicCreation() {
+        return !reopen && stockTravelRequested && "arm64".equals(clientArchitectureRequested)
+                && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"));
+    }
+    private boolean characterZoning() { return zoningEnabled() || dynamicCreation(); }
+    /** The map the character's save must name: the reopen's current zone, or the creation's saved one. */
+    private int currentCharacterMap() {
+        if (zoningEnabled()) return zoning.currentMap();
+        if (!dynamicCreation()) return 1;
+        JSONObject event = characterSavedEvent != null ? characterSavedEvent : characterConnectedEvent;
+        return event == null ? -1 : event.optInt("map_id", -1);
+    }
+    /** A guest display name ("map_name") or the app's own for Atlas Park and King's Row. */
+    static String zoneLabel(JSONObject event) {
+        int map = event == null ? -1 : event.optInt("map_id", -1);
+        String name = event == null || event.isNull("map_name") ? "" : event.optString("map_name", "");
+        if (name.matches("[A-Za-z0-9 .:'()-]{1,64}")) return name;
+        return ClientZoning.supported(map) ? ClientZoning.name(map) : "zone " + map;
+    }
     public synchronized String zoningStatus() {
         if(!zoningEnabled())return "Zone travel becomes available after runtime update and Reopen.";
         if(stuckRequested)return "Safe-ground recovery selected · Save and reopen before zoning.";
         if(!zoning.enabled())return "Waiting for the saved character and destination controller.";
+        if(zoning.stockTravel())return zoning.currentName()+" · the game's own zone travel: doors, tunnels and the monorail; "
+                +zoning.epoch()+" trips";
         String phase=zoning.phase();String elapsed="";
         if(!zoningTimings.isEmpty()) {
             Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);
@@ -1418,7 +1913,7 @@ public final class ClientRuntime {
     public synchronized boolean requestFinish() {
         if (!inputReady || finished || finishRequested || cancelled || producerCompleted || observedClientPid < 1) return false;
         if (!characterSavedReady) {
-            stage("Waiting for saved character", "Finish becomes available after THORHERO is committed to the database and three fresh Android views are captured.");
+            stage("Waiting for saved character", "Finish becomes available after " + who() + " is committed to the database and three fresh Android views are captured.");
             return false;
         }
         stopManualTest("finish");
@@ -1510,6 +2005,7 @@ public final class ClientRuntime {
         presentationWindowFrames++;
     }
     private long retainedRects, retainedReadNanosSum, retainedReadNanosMax, retainedConvertNanosSum, retainedConvertNanosMax;
+    private int retainedUpdateRectsMax;
     // The most recent decoder, kept after closeReceiver() drops `decoder`. Only
     // its receiver thread retires its totals, after run() has stopped writing
     // them; until then the report adds its live totals and says they are partial.
@@ -1521,6 +2017,7 @@ public final class ClientRuntime {
         retainedReadNanosSum += retiring.readNanosSum(); retainedConvertNanosSum += retiring.convertNanosSum();
         retainedReadNanosMax = Math.max(retainedReadNanosMax, retiring.readNanosMax());
         retainedConvertNanosMax = Math.max(retainedConvertNanosMax, retiring.convertNanosMax());
+        retainedUpdateRectsMax = Math.max(retainedUpdateRectsMax, retiring.updateRectsMax());
     }
     private synchronized Map<String,Object> presentationTiming() {
         Map<String,Object> result = new LinkedHashMap<>();
@@ -1529,14 +2026,18 @@ public final class ClientRuntime {
         result.put("windows_limit_reached", presentationWindows.size() >= MAX_PRESENTATION_WINDOWS);
         long rects = retainedRects, readSum = retainedReadNanosSum, readMax = retainedReadNanosMax,
             convertSum = retainedConvertNanosSum, convertMax = retainedConvertNanosMax;
+        int updateRectsMax = retainedUpdateRectsMax;
         InteractiveRfbClient current = lastDecoder;
         boolean live = current != null && !current.totalsRetired();
         if (live) {
             rects += current.decodedRects(); readSum += current.readNanosSum(); convertSum += current.convertNanosSum();
             readMax = Math.max(readMax, current.readNanosMax()); convertMax = Math.max(convertMax, current.convertNanosMax());
+            updateRectsMax = Math.max(updateRectsMax, current.updateRectsMax());
         }
         result.put("rfb_totals_final", !live);
         result.put("rfb_decoded_rectangles", rects);
+        // Largest rectangle count of one update (0.13.64; 0.13.63's decoder stopped above 1024).
+        result.put("rfb_update_rectangles_max", updateRectsMax);
         result.put("rfb_read_ms_sum", readSum / 1000000); result.put("rfb_read_ms_max", readMax / 1000000);
         result.put("rfb_convert_ms_sum", convertSum / 1000000); result.put("rfb_convert_ms_max", convertMax / 1000000);
         result.put("scope", "Delivered RFB frames per window; Raw read (socket wait plus copy) and pixel conversion time, retained across receiver teardown; displayed-frame render totals are in each surface capture record.");
@@ -1672,7 +2173,7 @@ public final class ClientRuntime {
                 login.put("post_login_frame_observed", true);
                 loginSamples.add(login); loginPngs.add(png.clone());
                 if (loginSamples.size() == 3)
-                    stage("Local login verified", reopen ? "Select the existing THORHERO and click Enter Game. Keep its existing costume and powers. Do not create or delete a character." : "Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
+                    stage("Local login verified", reopen ? "Select your existing character and click Enter Game. Keep its existing costume and powers. Do not create or delete a character." : "Create your character (any name) as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
             }
             if (connectedSample) {
                 Map<String,Object> connected = new LinkedHashMap<>(sample);
@@ -1684,10 +2185,14 @@ public final class ClientRuntime {
                     connectedCapturedReady = true;
                     retainCheckpointPng(connected,connectedPngs.get(connectedPngs.size()-1));recordLifecycle("character_connected_views_verified");
                     if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
-                        stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
+                        stage("Atlas connected for startup timing", who() + " connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
                     else if(zoningEnabled())stage("Ready for zone travel","Use the monorail station to choose Kings Row or Atlas Park. Preparation happens on demand. Keep current graphics settings; tap Start test and Stop test for optional capture, then use ordinary Save and Finish when ready.");
-                    else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
+                    else stage("Atlas ready for task check", who() + " connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
+                    if (gameplay60Requested && !gameplay60Queued) {
+                        gameplay60Queued = true;
+                        recordLifecycle("gameplay_60fps_auto queued=" + requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60, false));
+                    }
                 }
             }
             if (relocationSample) {
@@ -1711,7 +2216,7 @@ public final class ClientRuntime {
                 if (characterSamples.size() == 3) {
                     characterSavedReady = true;
                     retainCheckpointPng(saved,characterPngs.get(characterPngs.size()-1));recordLifecycle("character_saved_views_verified");
-                    stage("Saved character verified", "THORHERO was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
+                    stage("Saved character verified", who() + " was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
                     notifyInputState();
                 }
             }
@@ -1768,7 +2273,7 @@ public final class ClientRuntime {
                 .put("session_id",session==null?JSONObject.NULL:session).put("app_version",appVersion())
                 .put("runtime_manifest_sha256",manifestHash).put("client_pid",observedClientPid)
                 .put("started_uptime_ms",startedUptime).put("checkpoint_uptime_ms",SystemClock.uptimeMillis())
-                .put("android_startup_timing",startupTimingReport())
+                .put("android_startup_timing",startupTimingReport()).put("android_thermal_samples",thermalSamplesReport())
                 .put("checkpoint_utc_ms",System.currentTimeMillis()).put("passed",false).put("interrupted_unverified",true)
                 .put("manual_test_events",new JSONArray(manualTestEvents)).put("manual_test_active",manualTestActive)
                 .put("finish_requested",finishRequested).put("save_logout_requested",saveLogoutRequested)
@@ -1919,22 +2424,48 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the logged-in client: " + message(e); }
                             }
                             recordLifecycle("local_login_observed");
-                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character." : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
+                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select your character and click Enter Game. Do not create or delete a character."
+                                    : dynamicCreation() ? "The server sent the character list. Create your character, with any name the game accepts, as a hero, villain or Praetorian. After Enter Game the game starts its starting zone (Atlas Park, Mercy Island, Nova Praetoria or a tutorial); the screen can stay still for a few minutes while it loads."
+                                    : "The server sent the character list. Create your character (any name) as a Primal Earth Hero and skip the tutorial.");
                         }
                         if (reopen && zoningEnabled() && ClientAcceptance.savedDestinationEvent(jsonValue(event), session,
-                                Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))
+                                Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")), stockTravelRequested)
                                 && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
-                            stage("Saved destination verified", "THORHERO is saved in "
-                                + ClientZoning.name(event.optInt("map_id", -1)) + ". Preparing its native MapServer on port "
+                            String savedZone = zoneLabel(event);
+                            characterName = event.optString("name");
+                            stage("Saved destination verified", event.optBoolean("dynamic_start", false)
+                                ? who() + " is saved in " + savedZone + ". " + savedZone + " starts when you press"
+                                  + " Enter Game, and no other zone starts first; the game screen can stay still for a few"
+                                  + " minutes while it loads. Existing character data is preserved."
+                                : who() + " is saved in " + savedZone + ". Preparing its native MapServer on port "
                                 + event.optInt("port", -1) + "; existing character data is preserved.");
                             recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
                                 + " port=" + event.optInt("port", -1));
                         }
-                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid))
-                                && characterConnectedEvent == null && loginObservedUptime >= 0
+                        if ("character_initial_zone".equals(event.optString("type")) && session.equals(event.optString("session_id"))
+                                && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
+                            String status = event.optString("status");
+                            if ("starting".equals(status) || "ready".equals(status) || "not_ready".equals(status)) {
+                                String message = clean(event.optString("message", ""));
+                                initialZoneStatus = "not_ready".equals(status) ? null : message;
+                                long now = SystemClock.uptimeMillis();
+                                if ("starting".equals(status)) initialZoneStartedUptime = now;
+                                else if (initialZoneStartedUptime >= 0) {
+                                    // The guest adds the zone's start back to the creator's twenty minutes.
+                                    if (!reopen && readyDeadlineUptimeMillis > 0)
+                                        readyDeadlineUptimeMillis += Math.max(0, now - initialZoneStartedUptime);
+                                    initialZoneStartedUptime = -1; notifyInputState();
+                                }
+                                recordLifecycle("initial_zone_" + status + " map_id=" + event.optInt("map_id", -1));
+                                stage("not_ready".equals(status) ? "Zone did not start" : "Starting the zone", message);
+                            }
+                        }
+                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid, dynamicCreation()))
+                                && characterConnectedEvent == null && loginObservedUptime >= 0 && sameCharacter(event)
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
                                 characterConnectedEvent = event;
+                                characterName = event.optString("name");
                                 connectedObservedUptime = SystemClock.uptimeMillis();
                                 observeStartupWorldReady();
                                 connectedFrameWatermark = decodedFrames;
@@ -1946,16 +2477,21 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the reopened character: " + message(e); }
                             }
                             recordLifecycle("character_connected_observed");
-                            stage("Character connected", reopen ? "THORHERO connected to "+ClientZoning.name(event.optInt("map_id",1))+". Waiting for fresh Android views and session ownership verification before movement and Save become available. Gameplay has no countdown." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
+                            stage("Character connected", reopen ? who()+" connected to "+zoneLabel(event)+". Walking works now; Save becomes available after fresh Android views and session ownership verification. Gameplay has no countdown." : who()+" connected to "+zoneLabel(event)+". Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
                         }
                         if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));
                         if (zoningEnabled() && "character_zoning".equals(event.optString("type"))
-                                && characterConnectedEvent!=null && !saveLogoutRequested && !cancelled && !finished && !producerCompleted) {
+                                && characterConnectedEvent!=null && (!saveLogoutRequested || zoning.stockTravel())
+                                && !cancelled && !finished && !producerCompleted) {
+                            // Thor 0.13.69 (20261113-015905): the arrival back in Mercy Island was reported 67 s
+                            // after it happened and after Save had been pressed. It was dropped here, the zone
+                            // stayed at Port Oakes, and the saved event for Mercy Island was then refused. With
+                            // the game's own travel an arrival is still recorded after Save; it starts nothing.
                             synchronized(this) {
-                                if(zoningEvents.size()<32 && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
+                                if(zoningEvents.size()<(zoning.stockTravel()?256:32) && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
                                         characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames,
-                                        Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))) {
+                                        Boolean.TRUE.equals(manifest.opt("character_monorail_enabled"))||stockTravelRequested)) {
                                     zoningEvents.add((Map<String,Object>)jsonValue(event));
                                     if(zoning.stockMonorail()&&"preparing".equals(zoning.phase())) {
                                         automaticTravel=false;
@@ -1979,9 +2515,11 @@ public final class ClientRuntime {
                                     if("capturing".equals(zoning.phase()))markZoningTime("native_arrival");
                                     if(zoning.stockMonorail()&&"transferring".equals(zoning.phase()))markZoningTime("delivery");
                                     recordLifecycle("zoning_"+zoning.phase()+" epoch="+zoning.epoch());
-                                    if("capturing".equals(zoning.phase()))requestContactFullUpdate();
-                                    stage("Zone travel",zoningStatus());notifyInputState();
-                                    dispatchPreparedZoning();
+                                    if(!saveLogoutRequested) {
+                                        if("capturing".equals(zoning.phase()))requestContactFullUpdate();
+                                        stage("Zone travel",zoningStatus());notifyInputState();
+                                        dispatchPreparedZoning();
+                                    }
                                 } else recordLifecycle("zoning_event_rejected");
                             }
                         }
@@ -2020,9 +2558,13 @@ public final class ClientRuntime {
                         }
                         if (ClientAcceptance.characterSavedEvent(jsonValue(event), session, observedClientPid)
                                 && characterObservedUptime < 0 && loginObservedUptime >= 0
-                                && characterConnectedEvent != null
+                                && characterConnectedEvent != null && sameCharacter(event)
                                 && event.getLong("character_id") == characterConnectedEvent.getLong("character_id")
-                                && (!zoningEnabled() || (!zoning.blocksInput() && event.optBoolean("zoning_enabled") && event.optInt("map_id",-1)==zoning.currentMap()))
+                                && (!zoningEnabled() || (!zoning.blocksInput() && event.optBoolean("zoning_enabled")
+                                        && (event.optInt("map_id",-1)==zoning.currentMap()
+                                            // The game's own travel: the save names the zone the database holds, which
+                                            // can be ahead of the last arrival the app was told about.
+                                            || (zoning.stockTravel() && ClientAcceptance.stockTravelMap((Map<?,?>)jsonValue(event))))))
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
                                 characterSavedEvent = event;
@@ -2036,10 +2578,10 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the saved character: " + message(e); }
                             }
                             recordLifecycle("character_saved_observed");
-                            stage("Character saved", "THORHERO is committed to the local database. Waiting for three fresh Android views before Finish.");
+                            stage("Character saved", who() + " is committed to the local database. Waiting for three fresh Android views before Finish.");
                         }
                         if (reopen && "character_session_budget".equals(event.optString("type"))
-                                && !cancelled && !finished && !producerCompleted) {
+                                && sameCharacter(event) && !cancelled && !finished && !producerCompleted) {
                             long now = SystemClock.uptimeMillis();
                             // Historical bounds are supplied only for legacy validation.
                             // Manual policy requires exact zero deadlines and owned identity.
@@ -2069,7 +2611,8 @@ public final class ClientRuntime {
                             interactionReadyObserved = true;
                             if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = reopen ? 0 : SystemClock.uptimeMillis() + 1200000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
-                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
+                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select your existing character and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : dynamicCreation() ? "Log in with COHLOCAL / offline. Create your character (any name the game accepts) as a hero, villain or Praetorian; after Enter Game the game starts its starting zone (the screen can stay still for a few minutes). Save, then wait for Saved character verified. Twenty minutes remain for the creator; the zone's start does not count."
+                                    : "Log in with COHLOCAL / offline. Create your character (any name) as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
                         }
                         // Keep the actionable save/Finish instruction visible while
                         // the guest continues its generic five-second live heartbeat.
@@ -2077,7 +2620,8 @@ public final class ClientRuntime {
                                 && "running".equals(event.optString("status"))
                                 && "actual_client_interaction".equals(event.optString("stage"));
                         if ("stage".equals(event.optString("type"))
-                                && !(interactionHeartbeat && (characterSavedReady || characterConnectedEvent != null)))
+                                && !(interactionHeartbeat && (characterSavedReady || characterConnectedEvent != null
+                                    || initialZoneStatus != null)))
                             listener.onStage(event.optString("stage", "Checking display"),
                                 clean(event.optString("message", event.optString("detail", ""))));
                     } catch (Exception ignored) {}
@@ -2191,7 +2735,7 @@ public final class ClientRuntime {
                 && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
                 && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
                 && Boolean.TRUE.equals(report.opt("mapserver_started"))
-                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid))
+                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid, dynamicCreation()))
                 && Boolean.FALSE.equals(report.opt("android_surface_validated"))
                 && Boolean.FALSE.equals(report.opt("game_validated")) && Boolean.FALSE.equals(report.opt("gameplay_validated"))
                 && Boolean.FALSE.equals(report.opt("menu_visual_validated"))
@@ -2221,7 +2765,7 @@ public final class ClientRuntime {
             boolean monorailQualified = zoningEnabled() && Boolean.TRUE.equals(manifest.opt("character_monorail_enabled"))
                     && character != null && Boolean.TRUE.equals(character.opt("monorail_enabled"));
             if (ClientAcceptance.clientWindowAccepted(jsonValue(window), observedClientPid,
-                    initialMap, currentMap, monorailQualified)) actualWindow = true;
+                    initialMap, currentMap, monorailQualified, stockTravelRequested)) actualWindow = true;
         }
         if (!actualWindow) return false;
         JSONObject hashes = report.optJSONObject("asset_sha256"), pins = manifest.getJSONObject("files");
@@ -2299,7 +2843,7 @@ public final class ClientRuntime {
                     characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark,zoningEnabled());
             return characterSavedReady && ClientAcceptance.characterCreationAccepted(jsonValue(report), jsonValue(characterSavedEvent),
                     jsonValue(characterConnectedEvent), characterSamples, session, observedClientPid, startedUptime, endedUptime,
-                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
+                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark, dynamicCreation());
         }
     }
     private boolean taskGateRequired() {
@@ -2386,7 +2930,7 @@ public final class ClientRuntime {
                     .put("abis", new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                     .put("runtime_manifest_sha256", manifestHash).put("started_uptime_ms", startedUptime)
                     .put("finished_uptime_ms", endedUptime).put("process_exit_code", processExit)
-                    .put("android_startup_timing",startupTimingReport())
+                    .put("android_startup_timing",startupTimingReport()).put("android_thermal_samples",thermalSamplesReport())
                     .put("checkpoint_error",checkpointFailure==null?JSONObject.NULL:checkpointFailure)
                     .put("passed", passed).put("android_surface_validated", passed).put("interaction_session_completed", passed)
                     .put("menu_visual_validated", false).put("cleanup_verified", cleanup)
@@ -2417,12 +2961,12 @@ public final class ClientRuntime {
                     .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
                     .put("relocation_sent_utc_ms", relocationSentUtcMillis)
                     .put("deadline_input_suppressed", deadlineInputSuppressed)
-                    .put("scope", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "Saved THORHERO startup and connection timing only; existing tasks are preserved and task qualification is not requested. Stop produces timing evidence, not an ordinary save or gameplay pass." : taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary THORHERO logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
+                    .put("scope", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "Saved character startup and connection timing only; existing tasks are preserved and task qualification is not requested. Stop produces timing evidence, not an ordinary save or gameplay pass." : taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary character logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL character with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of the character with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
                     .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
                     .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)
                     .put("character_reopen_verified", reopen && passed)
                     .put("committed_save_observed",committedCharacterSaveObserved(jsonValue(guest),jsonValue(characterSavedEvent),
-                            jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1))
+                            jsonValue(characterConnectedEvent),session,observedClientPid,reopen,characterZoning(),currentCharacterMap()))
                     .put("qualification_gates",qualificationGates(guest,passed,cleanup))
                     .put("character_connected_observed_uptime_ms", connectedObservedUptime)
                     .put("character_connected_frame_watermark", connectedFrameWatermark)
@@ -2430,6 +2974,10 @@ public final class ClientRuntime {
                     .put("character_connected_event", characterConnectedEvent == null ? JSONObject.NULL : characterConnectedEvent)
                     .put("character_relocated_event", characterRelocatedEvent == null ? JSONObject.NULL : characterRelocatedEvent)
                     .put("stuck_requested", stuckRequested)
+                    .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
+                    .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
+                    .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)
@@ -2589,7 +3137,7 @@ public final class ClientRuntime {
         if(finalGuestReport==null)return null;
         try {
             return committedCharacterSaveObserved(jsonValue(finalGuestReport),jsonValue(characterSavedEvent),
-                    jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1);
+                    jsonValue(characterConnectedEvent),session,observedClientPid,reopen,characterZoning(),currentCharacterMap());
         }catch(Exception | OutOfMemoryError unavailable){return null;}
     }
     private File retainFailureReport(Throwable failure,boolean cleanup) throws IOException {
@@ -2604,7 +3152,7 @@ public final class ClientRuntime {
                     .put("app_error",previous==null?JSONObject.NULL:previous).put("cleanup_verified",cleanup)
                     .put("cleanup_blocked",isCleanupBlocked()).put("cancelled",cancelled)
                     .put("started_uptime_ms",startedUptime).put("finished_uptime_ms",endedUptime)
-                    .put("android_startup_timing",startupTimingReport())
+                    .put("android_startup_timing",startupTimingReport()).put("android_thermal_samples",thermalSamplesReport())
                     .put("finalized_utc_ms",System.currentTimeMillis())
                     .put("process_exit_code",processExit).put("character_save_qualification",false)
                     .put("committed_save_observation_available",saveObservation!=null)
@@ -2655,15 +3203,17 @@ public final class ClientRuntime {
                 || !(reopening?"actual_character_reopen":"actual_character_creation").equals(report.get("diagnostic_mode"))
                 || !ClientAcceptance.characterSavedEvent(saved,selectedSession,pid)
                 || !(reopening?ClientAcceptance.characterReopenConnectedEvent(connected,selectedSession,pid,zoning)
-                    :ClientAcceptance.characterConnectedEvent(connected,selectedSession,pid)))return false;
+                    :ClientAcceptance.characterConnectedEvent(connected,selectedSession,pid,zoning)))return false;
         for(Map<?,?> identity:new Map<?,?>[]{proof,login})
             if(!selectedSession.equals(identity.get("session_id")) || preparationInteger(identity.get("client_pid"))!=pid)return false;
         long id=preparationInteger(proof.get("character_id")),auth=preparationInteger(proof.get("auth_id"));
         if(id!=1 || auth<=0 || auth>4294967295L || preparationInteger(saved.get("character_id"))!=id
                 || preparationInteger(connected.get("character_id"))!=id || preparationInteger(login.get("auth_id"))!=auth
-                || !"THORHERO".equals(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
+                || !ClientAcceptance.characterName(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
+                || !proof.get("name").equals(connected.get("name")) || !proof.get("name").equals(saved.get("name"))
                 || !"android-local-login".equals(login.get("profile")) || preparationInteger(proof.get("map_id"))!=currentMap
-                || !(currentMap==1 || zoning && (currentMap==101 || currentMap==5 && Boolean.TRUE.equals(proof.get("monorail_enabled")))))return false;
+                || !(currentMap==1 || zoning && (currentMap==101 || currentMap==5 && Boolean.TRUE.equals(proof.get("monorail_enabled"))
+                    || Boolean.TRUE.equals(proof.get("stock_travel")) && ClientAcceptance.staticZone(currentMap))))return false;
         for(String name:new String[]{"postgres_started","server_started","mapserver_started"})if(!Boolean.TRUE.equals(report.get(name)))return false;
         for(String name:new String[]{"local_login_verified","local_account_verified","character_list_sent","character_list_response_sent"})
             if(!Boolean.TRUE.equals(login.get(name)))return false;
@@ -2742,6 +3292,17 @@ public final class ClientRuntime {
     }
     private static String clean(String value) {
         return (value == null ? "" : value).replaceAll("(?i)(password|pwd|token|secret)(\\s*[=:]\\s*)([^;\\s]+)", "$1$2[redacted]");
+    }
+    /** PRoot's own stop counts (patch 0005, written about every ten seconds and at exit): the
+     * file's text, at most 32 KiB; null without the second PRoot build or its file. */
+    private Object prootStopCountsText() {
+        File file = prootStopCounts;
+        if (file == null || !file.isFile()) return JSONObject.NULL;
+        try (FileInputStream input = new FileInputStream(file)) {
+            byte[] data = new byte[32768]; int total = 0, read;
+            while (total < data.length && (read = input.read(data, total, data.length - total)) > 0) total += read;
+            return new String(data, 0, total, StandardCharsets.UTF_8);
+        } catch (IOException e) { return JSONObject.NULL; }
     }
     private static String message(Throwable e) { return clean(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()); }
     private String sha(File file) throws Exception {

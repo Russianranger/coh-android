@@ -26,11 +26,16 @@ spec.loader.exec_module(login)
 host = login.host
 require = host.require
 INTERACTION_SECONDS = 1200
+# zone_travel.START_SECONDS twice: a start that ran out of time, then one Enter Game retry.
+INITIAL_ZONE_ALLOWANCE_SECONDS = 1800
 LOGIN_STAGE_SECONDS = 180
 OVERALL_SECONDS = 5400
 CLEANUP_GRACE_SECONDS = 180
 CHARACTER_EVIDENCE_LIMIT = 256*1024*1024
-CHARACTER = 'THORHERO'
+# 0.13.62: the guest follows any name the game accepts; a CI runtime may create its
+# character under another name (armport-app-runtime.yml character_name) to prove it.
+CHARACTER = os.environ.get('ARMPORT_CI_CHARACTER_NAME') or 'THORHERO'
+require(re.fullmatch(r'[A-Z]{3,15}', CHARACTER) is not None, 'CI character names are 3-15 capital letters')
 KEY_SETTLE_SECONDS = .3
 ACCOUNT_ENTRY_ATTEMPTS = 3
 ACCOUNT_REGION = (505, 230, 766, 251)
@@ -45,6 +50,10 @@ class CharacterEvents:
         self.generation = self.login_generation = self.connected_generation = self.saved_generation = 0
         self.client_pid = self.character_id = None
         self.active = self.terminal = False
+        # The game's own travel (0.13.59): the character's zone starts after Enter
+        # Game; its wait is not interaction time (the guest adds it back too).
+        self.initial_zone_started = None
+        self.initial_zone_waited = 0.0
 
     def poll(self):
         with self.path.open('rb') as source:
@@ -70,6 +79,14 @@ class CharacterEvents:
             self.terminal = True
             return
         if event.get('session_id') != self.session: return
+        if kind == 'character_initial_zone':
+            status, now = event.get('status'), time.monotonic()
+            if status == 'starting' and self.initial_zone_started is None:
+                self.initial_zone_started = now
+            elif status in ('ready', 'not_ready') and self.initial_zone_started is not None:
+                self.initial_zone_waited += now - self.initial_zone_started
+                self.initial_zone_started = None
+            return
         if kind == 'client_interaction_ready':
             pid = event.get('client_pid')
             require(type(pid) is int and pid > 0 and self.generation == 0 and not self.terminal,
@@ -100,6 +117,31 @@ class CharacterEvents:
                         and event.get('committed_sql_verified') is True,
                         'Invalid or repeated committed character save event')
                 self.saved_generation = 1
+
+
+def initial_zone_seconds(events, now):
+    """Host seconds the client waited at Enter Game for the character's zone (bounded)."""
+    waited = getattr(events, 'initial_zone_waited', 0.0)
+    started = getattr(events, 'initial_zone_started', None)
+    if started is not None:
+        waited += max(0.0, now - started)
+    return min(waited, INITIAL_ZONE_ALLOWANCE_SECONDS)
+
+
+def report_initial_zone_seconds(report):
+    """The guest's own record of that wait (character_zoning.initial_zone attempts), bounded."""
+    zoning = report.get('character_zoning') if isinstance(report, dict) else None
+    initial = zoning.get('initial_zone') if isinstance(zoning, dict) else None
+    attempts = initial.get('attempts') if isinstance(initial, dict) else None
+    if not isinstance(attempts, list):
+        return 0.0
+    total = 0.0
+    for attempt in attempts:
+        started = attempt.get('started_monotonic') if isinstance(attempt, dict) else None
+        ended = attempt.get('ended_monotonic') if isinstance(attempt, dict) else None
+        if all(type(value) in (int, float) and math.isfinite(value) for value in (started, ended)) and ended >= started:
+            total += ended - started
+    return min(total, INITIAL_ZONE_ALLOWANCE_SECONDS)
 
 
 def key(connection, code):
@@ -323,7 +365,8 @@ class CharacterInteraction(host.MenuInteraction):
 
     def on_frame(self, connection, frame, events, sequence, captures, now):
         if self.ready_at is None: self.ready_at = now
-        require(now-self.ready_at < INTERACTION_SECONDS, 'Host character creation exceeded twenty-minute interaction bound')
+        require(now-self.ready_at-initial_zone_seconds(events, now) < INTERACTION_SECONDS,
+                'Host character creation exceeded twenty-minute interaction bound')
         if self.action <= len(self.LOGIN_ACTIONS):
             require(now-self.ready_at < LOGIN_STAGE_SECONDS,
                     'Host character login exceeded 180-second stage bound before fresh character-list proof')
@@ -564,7 +607,8 @@ def validate_session_bounds(report, session, finish_request=None):
     startup = report.get('startup_elapsed_seconds')
     require(all(type(value) in (int, float) and math.isfinite(value)
                 for value in (observation, startup))
-            and 30 <= observation <= INTERACTION_SECONDS + 10 and 0 <= startup <= 900
+            and 30 <= observation <= INTERACTION_SECONDS + 10 + report_initial_zone_seconds(report)
+            and 0 <= startup <= 900
             and report.get('interaction_session_completed') is True
             and report.get('input_effect_verified') is False
             and report.get('interaction_completion_reason') == 'finish_requested',
@@ -641,10 +685,7 @@ def validate_report(report, session, manifest, *, finish_request=None):
     require(len(children) >= 7 and all(type(child.get('exit_code')) is int
             and child.get('input_closed') is True and child.get('output_capture_closed') is True for child in children),
             'Owned character children did not close')
-    for label in ('actual-coh-client', 'runtime-probe', 'private-presentation-x', 'local-dbserver', 'local-character-atlas'):
-        matching = [child for child in children if child.get('label') == label]
-        require(len(matching) == 1, 'Missing or duplicate owned child: '+label)
-        if label == 'runtime-probe': require(matching[0]['exit_code'] == 0, 'Runtime prerequisite failed')
+    validate_owned_children(children)
     execution = report.get('cleanup_execution', {})
     require(execution == {'diagnostic_initialized': True, 'wine_started': True, 'owned_child_count': len(children)},
             'Cleanup ownership record differs')
@@ -657,6 +698,16 @@ def validate_report(report, session, manifest, *, finish_request=None):
             'Character process/display/database cleanup incomplete')
     require(report.get('asset_sha256') == {name: manifest['files'][name]['sha256'] for name in host.assets_tool.PROBE_FILES},
             'Character guest input hashes differ')
+
+
+def validate_owned_children(children):
+    # Atlas's MapServer: 'local-character-atlas', or 'local-character-zoning-1' when the
+    # zoning flow started it overlapped with the client; exactly one of the two.
+    for labels in (('actual-coh-client',), ('runtime-probe',), ('private-presentation-x',), ('local-dbserver',),
+                   ('local-character-atlas', 'local-character-zoning-1')):
+        matching = [child for child in children if child.get('label') in labels]
+        require(len(matching) == 1, 'Missing or duplicate owned child: '+labels[0])
+        if labels[0] == 'runtime-probe': require(matching[0]['exit_code'] == 0, 'Runtime prerequisite failed')
 
 
 def validate_observer(observer, report):

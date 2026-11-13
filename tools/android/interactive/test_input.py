@@ -146,11 +146,11 @@ public class InputHarness {
           ref[0].sendPerformanceCommand(name,ref[0].inputEpoch());
         } else if(mode.equals("reject_performance")) {
           int before=output.size(),rejected=0;
-          for(String name:new String[]{null,"","showfps","/maxfps 30","cap_60","CAP_30","cap_30\n"}) {
+          for(String name:new String[]{null,"","showfps","/maxfps 30","cap_120","CAP_60","cap_60\n","CAP_30","cap_30\n"}) {
             try{ref[0].sendPerformanceCommand(name,ref[0].inputEpoch());}
             catch(IOException expected){rejected++;}
           }
-          check(rejected==7&&output.size()==before);
+          check(rejected==9&&output.size()==before);
           long stale=ref[0].inputEpoch();ref[0].cancelPendingInput();
           try{ref[0].sendPerformanceCommand("cap_30",stale);throw new AssertionError();}
           catch(InteractiveRfbClient.InputCancelledException expected){}
@@ -367,7 +367,7 @@ class InputTests(unittest.TestCase):
 
     def test_fixed_performance_commands_release_held_control_then_type_atomic_chat(self):
         control=[struct.pack('>BBHI',4,down,0,0xffe3) for down in (1,0)]
-        for name,command in [('show_fps','/showfps 1'),('cap_10','/maxfps 10'),('cap_30','/maxfps 30')]:
+        for name,command in [('show_fps','/showfps 1'),('cap_10','/maxfps 10'),('cap_30','/maxfps 30'),('cap_60','/maxfps 60')]:
             with self.subTest(name=name):
                 keys=[0xff0d]+list(map(ord,command))+[0xff0d]
                 expected=control+[struct.pack('>BBHI',4,down,0,key) for key in keys for down in (1,0)]
@@ -451,7 +451,22 @@ _decoder.HARNESS = _decoder.HARNESS.replace('io.github.russianranger.cohpresenta
 
 
 class InteractiveDecoderTests(_decoder.RfbDecoderTests):
-    pass
+    def test_rectangle_count_unknown_encoding_and_server_message_rejected(self):
+        """0.13.64: every U16 rectangle count is a valid update (Thor 0.13.63's fast camera turns
+        exceeded the presentation decoder's 1024); unknown encodings and messages still fail."""
+        init, update, rect = _decoder.init, _decoder.update, _decoder.rect
+        for suffix in [update(rect(0, 0, 1, 1, encoding=5)), b'\1', b'\xff']:
+            frames, end, _ = self.decode(init() + suffix)
+            self.assertEqual([], frames)
+            self.assertIn('IOException', end)
+        # 1025 rectangles over the 2x2 desktop: one frame, each pixel from its last rectangle.
+        frames, end, _ = self.decode(init() + update(*[rect(i % 2, (i // 2) % 2, 1, 1, [i]) for i in range(1025)]))
+        self.assertEqual([(1, 2, 2, [0xff000000 | 1024, 0xff000000 | 1021, 0xff000000 | 1022, 0xff000000 | 1023])], frames)
+        self.assertIn('EOFException', end)
+        # The same count without its rectangles publishes nothing.
+        frames, end, _ = self.decode(init() + update(count=1025))
+        self.assertEqual([], frames)
+        self.assertIn('EOFException', end)
 
 
 if __name__ == '__main__':

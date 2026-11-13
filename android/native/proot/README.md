@@ -37,6 +37,51 @@ emulated SysV IPC namespace.
   `string.h` declaration and replace GNU-awk-specific symbol parsing with Python.
   The generated loader helper is GPL-2.0-or-later. No optional acceleration or
   graphics patches are included.
+- `0004-ioctl-command-filter.patch` (2026-11-11; in `PATCH_NAMES` since
+  0.13.69). With `PROOT_IOCTL_COMMANDS_ONLY=1` the seccomp filter notifies the
+  tracer about `ioctl(2)` only for the commands `enter.c` and `exit.c` act on
+  (SIOCGIFINDEX, TCSETSF, TCGETS2, TCSETS2, TCSETSW2, TCSETSF2, FICLONE); every
+  other ioctl runs untraced. Android builds of this PRoot otherwise trace every
+  ioctl on entry and exit, which for this game includes each GPU (KGSL) ioctl
+  of the renderer. Without the variable nothing changes. Measured with a local
+  x86-64 build of the pinned tree and patches 0001-0004 (2026-11-11, the app's
+  options `--link2symlink --kill-on-exit --sysvipc -i 1000:1000`): FIONREAD
+  0.16 microseconds per call with or without the variable, TCGETS2 0.13
+  without it and 49.8 with it (two tracer stops), so a stop costs about 50
+  microseconds there and an unlisted ioctl costs nothing extra. Terminal
+  attributes, SIOCGIFINDEX and hard links behaved the same with and without.
+  `tools/android/test_proot_ioctl_filter.py` runs the filter statements
+  through a BPF interpreter on the host. Where it is built: the Linux PRoot of
+  armport-app-runtime (input `proot_ioctl_filter` sets the variable and CI
+  then requires the guest's probe to read `listed_commands_only`), and, with
+  the Thor APK workflow's input `proot_ioctl`, an Android build that the APK
+  carries as a second program (`lib/arm64-v8a/libproot-ioctl.so` and its
+  loader) beside the unchanged 0.13.36 one, with its receipt, licence files
+  and corresponding source under `assets/proot-ioctl/`. The app starts it only
+  with the launch option "Graphics calls skip the system-call monitor".
+  GPL-2.0-or-later, as PRoot.
+- `0005-stop-counts-getsockopt-filter.patch` (2026-11-11; in `PATCH_NAMES`
+  since 0.13.70). Applies on top of 0001-0004. Two
+  switches, both off unless set: `PROOT_STOP_COUNTS=<file>` counts PRoot's
+  translation rounds per system call number (enter and exit apart) and
+  rewrites the file about every ten seconds and at exit;
+  `PROOT_GETSOCKOPT_PEERCRED_ONLY=1` stops `getsockopt` only for
+  `SOL_SOCKET`/`SO_PEERCRED`, the one answer the fake-id extension rewrites.
+  Local x86-64 build with the app's PRoot options: other options 0.3-0.4
+  microseconds per call with the switch, 48-51 without; `SO_PEERCRED` still
+  returns the fake ids (1000:1000) and stops as before. Not yet compiled for
+  Android or ARM64. Why: CI run 43091944698 (`armport/PERFORMANCE-PATH.md`,
+  "What PRoot intercepts").
+- `0006-accept-untraced-program-counts.patch` (2026-11-13; in `PATCH_NAMES`
+  since 0.13.71). Applies on top of 0001-0005.
+  `PROOT_ACCEPT_UNTRACED=1` leaves `accept` and `accept4` out of the filter:
+  PRoot stops them only to rewrite the path of a Unix-socket peer that bound
+  its socket under a binding, and with the switch that path comes back as the
+  host path (checked locally: `/opt/gb/.../c` without, the host folder with).
+  An empty non-blocking `accept` costs 2.4-4 microseconds with it and 52-56
+  without (local x86-64). The stop-count file gains `P <thread name> <call
+  number> <stops>` rows. Why: CI run 43363707492 counted 14.2 million stops
+  in a 912 s reopen session, 17 % of them `accept` (1,340 calls a second).
 - The Android talloc cross answers follow the same pinned TRASC recipe, derived
   there from the Termux talloc build recipe. Android NDK **27.2.12479018**, API 26,
   and 16 KB ELF segment alignment are explicit build inputs. Linux CI uses the

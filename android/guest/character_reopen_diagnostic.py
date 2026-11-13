@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reopen preserved THORHERO and save normally; /stuck is optional recovery."""
+"""Reopen the preserved character (any name since 0.13.62) and save normally; /stuck is optional recovery."""
 from pathlib import Path
 import copy
 import sys
@@ -117,11 +117,13 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             presentation_ready = getattr(self, 'presentation_ready_monotonic', None)
             require(session_budget.finite_seconds(presentation_ready),
                     'Reopen budget lacks the current owned presentation clock')
-            budget_options = ({'supported_maps': (1, 5, 101) if proof.get('monorail_enabled') is True
+            budget_options = ({'supported_maps': session_budget.STATIC_ZONES if proof.get('stock_travel') is True
+                               else (1, 5, 101) if proof.get('monorail_enabled') is True
                                else (1, 101)} if self.ZONING else {})
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
                 self.launcher_started_monotonic, self.ctx.deadline,
-                presentation_ready=presentation_ready, manual=self.MANUAL_SESSION, **budget_options)
+                presentation_ready=presentation_ready, manual=self.MANUAL_SESSION,
+                name=creation.character.CHARACTER, **budget_options)
         events = [self.session_budget.connected(proof, now, utc_ms)]
         if getattr(self, 'relocated_announced', False):
             if self.session_budget.revision < 2:
@@ -188,7 +190,7 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                         proof['ground_observed_utc_ms'] - samples[-1]['utc_ms'])
             self.ctx.event('character_relocated', session_id=self.args.session_id,
                 client_pid=proof['client_pid'], character_id=proof['character_id'],
-                name=creation.CHARACTER_NAME, account=creation.login.server.ACCOUNT, map_id=1,
+                name=creation.character.CHARACTER, account=creation.login.server.ACCOUNT, map_id=1,
                 recovery_requested=True, recovery_verified=True,
                 ordinary_stuck_observed=True, on_atlas_safe_position=True, stable_ground_verified=True)
         return result
@@ -228,14 +230,22 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
         super().initialize()
         self.ctx.report['zoning_enabled'] = True
 
+    # stock_travel: the game's own zone travel; the app accepts King's Row and
+    # the other static zones for a character connected or saved there.
     def connected_event_data(self, proof):
+        import character_zoning
         return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True,
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True,
+                    map_name=character_zoning.zone_name(proof['map_id']))
 
     def saved_event_data(self, proof):
+        import character_zoning
         return dict(super().saved_event_data(proof), zoning_enabled=True,
                     connected_on_supported_map=True, map_id=proof['map_id'],
-                    monorail_enabled=proof.get('monorail_enabled') is True)
+                    map_name=character_zoning.zone_name(proof['map_id']),
+                    monorail_enabled=proof.get('monorail_enabled') is True,
+                    stock_travel=proof.get('stock_travel') is True)
 
 
 def parse_reopen_arguments(argv):

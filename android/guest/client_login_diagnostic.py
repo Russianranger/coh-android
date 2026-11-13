@@ -9,6 +9,7 @@ import re
 import stat
 import signal
 import sys
+import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import client_interactive_diagnostic as interactive
@@ -67,6 +68,21 @@ def wine_update_timestamp(path):
 
 class LoginContext(base.Context):
     server_health = None
+    # Thor 0.13.66: every loop iteration looked up state/stop-request, and one path
+    # lookup costs about 1 ms through PRoot (23,876 zone files: 43 s with their stats).
+    # The lookup now runs at most every 0.1 s; a stop is still seen within that time.
+    STOP_PROBE_SECONDS = 0.1
+    _stop_probe_after = 0.0
+
+    def cancelled(self):
+        if self.cancel_requested:
+            return True
+        now = time.monotonic()
+        if now < self._stop_probe_after:
+            return False
+        self._stop_probe_after = now + self.STOP_PROBE_SECONDS
+        return (self.state / 'stop-request').exists()
+
     def check(self):
         super().check()
         if self.server_health is not None: self.server_health()

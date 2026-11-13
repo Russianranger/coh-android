@@ -72,12 +72,100 @@ fx 32 s, group libraries (3,224 files) 31 s, scripts 21 s, PhysX object
 creation 22 s, maps 9 s; the remaining ~49 s is spread over smaller steps.
 It is data loading through FEX + Wine + PRoot, not simulation.
 
+Launch 1, from `armport/app/mapserver_phases.py` over the Thor consoles
+(stamp to map ready): Atlas 332 s, King's Row 258 s.
+
+| Phase | Atlas | King's Row | What runs (source reading) |
+|---|---|---|---|
+| `sequencers` → folder caching (untimed) | 94 s | 89 s | sequencer tree scan + `sequencers.bin` decode + 5,120 animation attachments (certificate hashing only 1.2 s) |
+| Story arcs | 54 s | 30 s | `Scripts.loc` tree scan (35 s / 17 s gap) and `maps` scan (13 s / 8 s) |
+| Map load | 48 s | 30 s | `scenes`/geometry for the zone |
+| FX info | 42 s | 33 s | `fx` tree scan + `fxinfo.bin` decode |
+| Group libraries | 25 s | 24 s | `object_library`, 3,224 files |
+| PhysX objects | 19 s | 7 s | 2,311 objects |
+
+The servers run in `FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC` (no
+`./piggs/texts.pigg`). In that mode the first use of each top-level folder scans
+its whole tree from disk (`FolderCacheRequestTree`, the `[DEBUG] \tfx`-style
+lines), and `ParserIsPersistNewer` then date-checks every source file against
+each `.bin`. Every scanned entry is a Wine directory read plus `stat` through
+PRoot path translation. Production mode skips the date check, but it also bans
+loose `scenes`, `ent_types`, `object_library` and `geobin` (they must come from
+piggs) and ignores `.bin` CRC differences, so forcing it with a marker file
+alone would break map loading. The two candidates are piggs for the immutable
+data (the shipped configuration the code expects) or a narrow native switch
+that trusts a CRC-matching prepared `.bin` without the tree scan.
+
+The narrow switch is `patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch`
+(PR #11). It is applied only by the instrumented-MapServer producer
+(`server-metrics-*` jobs, next to 0119) and is off unless the guest sets
+`ARMPORT_TRUSTED_BINS=1`. CI requests it with `armport-app-runtime`
+`trusted_bins=true`, which needs that build's servers (`server_run_id` at the
+same commit). Each trusted `.bin` is logged as `ARMPORT_TRUSTED_BINS_V1`. The
+metrics proof now reports `parser_or_definition_sources_changed: true` for such
+a build. It accepts that only for this reviewed, default-off switch.
+
 ### Zoning, 0.13.44 launch 1
 
 | Transfer | Server side | Client load | Total |
 |---|---|---|---|
 | Atlas → King's Row (cold) | 563 s: Python prep 291 s (data mirror 218 s, beacon graph 57 s) + native start 271 s | 17.8 s | ~9.7 min |
 | King's Row → Atlas (Atlas still running) | 7.6 s | 21.7 s | ~29 s |
+
+### PRoot fast mode A/B, CI (2026-11-03)
+
+Runs 41588867344 (off) and 41584980465 (on): same branch and build inputs,
+shipping MapServers, ARM64 runner. Both passed.
+
+| | Off | On |
+|---|---|---|
+| `getppid` probe | 27.1 µs | 0.31 µs |
+| Creation: Atlas spawn → ready | 489 s | 360 s |
+| Reopen: Atlas spawn → ready | 183 s | 124 s |
+| Reopen: request → client in world | 524 s | 397 s |
+| Whole job | 2179 s | 1818 s |
+
+On the fresh data mirror (creation), the MapServer re-parses source text that
+the reused cache (reopen) loads from `.bin`: spawn definitions 154 s vs 2 s,
+story arcs 85 s vs 17 s, definitions 67 s vs 3 s (fast mode off).
+
+### Trusted prepared bins A/B, CI (2026-11-03)
+
+Build 41593619489 (instrumented MapServers with the switch), fast mode on in
+both runs; only `trusted_bins` differs. Both passed creation and reopen.
+
+| | Off (41610459604) | On (41605600310) |
+|---|---|---|
+| Creation: Atlas spawn → ready | 381 s | 353 s |
+| Reopen: Atlas spawn → ready | 130 s | 94 s |
+| Reopen: request → client in world | 409 s | 367 s |
+| Reopen: story arcs | 17.0 s | 2.1 s |
+| Creation: spawn definitions | 116 s | 115 s |
+
+On the fresh mirror only 38 bins reached the trusted path; spawn definitions,
+story arcs and definitions are parsed from text either way, so those `.bin`
+files are missing or rejected there. Combined with fast mode, the reopen Atlas
+start went from 183 s (41588867344, neither) to 94 s.
+
+### Thor 0.13.49 (user test, 2026-11-03; ARM64 client)
+
+Details and the full table: HANDOFF-X86.md, "Thor test of 0.13.49". In-world
+FPS with the 60 cap: mean 48 and 45, at least 91% of 5 s windows at 30 or more
+(.44: 25.6). Atlas MapServer ready in 204 s and 222 s (.44: 287 s, so fast mode
+gave about −25% on the device). Warm start: Atlas ready at 297 s, client login
+screen at 374 s, so the client is the critical path. Cold mirror 360 s (first
+start after the update, from a stranded-recovery race). King's Row failed on its
+420 s Python budget.
+
+### 0.13.50 in CI (runtime 41704290931, build 41689729437)
+
+Fifteen folders behind the shared read-only tree (128,765 files): the Atlas
+private copy took 31 s instead of 99.5-106 s, reopen rewrote no bins, story arcs
+470/957/3528, sequencer gap 40.7 s (level-1 probe 40.8 s). The tree is built
+once per data identity (79 s in CI) and reused (0.004 s). Client scan with
+`scripts.loc` and `server/` skipped (patch 0120): 123,633 files in 44 s; client
+start 81.7 → 71.8 s against 41642095387. Reopen Atlas start unchanged (129.6 s).
+King's Row zoning and the device client paths need the Thor test.
 
 ### Frame rate, 0.13.44
 
@@ -95,6 +183,40 @@ It is data loading through FEX + Wine + PRoot, not simulation.
 - Each frame: Turnip renders → Zink's software WSI (`MESA_VK_WSI_DEBUG=sw`)
   copies it to the CPU → X11 socket to Xtigervnc → Raw RFB encode → second
   socket → Java decode → SurfaceView. Two full-frame copies through two sockets.
+
+### Client priority under Wine: lead (2026-11-03, source reading, unmeasured)
+
+Correction after the 0.13.49 Thor samples: the ARM64 client runs in production
+mode reading loose files (patch 0042), so it does not take the IDLE class below.
+Its 7 nice-19 threads are ones it sets to idle priority itself, and FPS already
+meets the goal. The folder scan is cut by patch 0120's skip list instead of the
+mode change described at the end of this section.
+
+- With no `piggs/texts.pigg`, `fileIsUsingDevData()` is true, and
+  `game_beforeParseArgs` (game.c) calls `SetPriorityClass(IDLE_PRIORITY_CLASS)`.
+- Wineserver turns Windows priorities into Linux nice values only when
+  `RLIMIT_NICE` lets it raise priority again ([Wine MR !4551](https://list.winehq.org/archives/list/wine-gitlab@list.winehq.org/thread/5XP6EMRUEC3O37JFPYJCWSZKZWKAULQL)).
+  The Thor guest reports `RLIMIT_NICE` 40 (0.13.44 scheduler capability), so the
+  mapping is active. By its formula, an IDLE-class normal thread gets about
+  nice +11, against 0 for the MapServers (0.13.44 samples: `original_nice` 0).
+- Part 1 of that change does not re-apply a class change to existing threads.
+  So the threads the client creates after that call would run at a lower
+  weight than the servers whenever cores are contended. This fits "frames wait
+  rather than compute". CI runners usually have `RLIMIT_NICE` 0, which turns
+  the mapping off, so CI cannot show this.
+- Evidence (x86/perf-round3 fdab328c4, from the next APK on):
+  `character_zoning.wine_priorities` samples each Wine program's thread count
+  per nice value six times during play. If the client's threads sit near +11,
+  a candidate fix is an `RLIMIT_NICE` of 20 for the client's Wine. That keeps
+  every thread at nice 0 and still lets the zoning scheduler restore to 0.
+- The same early order explains the client's full folder scan: it calls
+  `FolderCacheChooseMode()` only in `game_beforeParseArgs`, after
+  `game_beforeFolderCacheIgnore`, `LWC_Init` and `parseArgs0`. The 0.13.40
+  ARM64 Thor log (2026-10-27) shows `phase=scan files=212496 seconds=140.898` for `./data`, so the
+  folders were loaded before the on-demand mode was chosen. Moving the call
+  earlier needs a client rebuild (the x86 Game is a byte-identical donor
+  member). It would also make the scan's 141 s on-demand; measure what that
+  costs during loading first.
 
 ### Memory, 0.13.44 zoning session
 
@@ -132,6 +254,13 @@ below and is the first thing to measure (Phase 0).
      again: about 4 minutes lost to one imperfect shutdown.
    - The engine already reads `.pigg` archives: the server animation pack is
      one.
+   - Lead (2026-11-02, source reading only): `FolderCacheAddFolder` skips the
+     upfront scan in `FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC` and resolves files
+     on demand (`FolderCacheQuery`); `FolderCacheChooseMode` picks it only when
+     `./piggs/texts.pigg` is absent. The logged `phase=scan` shows the clients
+     ran a full scan instead. Dev mode also lowers client priority
+     (`game_beforeParseArgs`) and changes `fileScanAllDataDirs`, so measure
+     before relying on it. Round-1 cache recovery (PR #11) covers the stranding.
 3. **x86 MapServer under FEX doing file-heavy start-up**, every session, plus
    per-session Python preparation (beacon graphs 15-57 s, ODBC setup; the x86
    app line also paid a ~70 s Wine GPU probe each launch).
@@ -220,6 +349,81 @@ cache-miss starts gone.
 Exit targets: start ≤ 5 min; cold MapServer ≤ 2 min; FPS ≥ 30 in 95% of
 gameplay windows.
 
+### Shared read-only server tree: design (2026-11-03, source reading)
+
+The engine already searches layered data folders, so the shared tree needs no
+native change. `fileLoadDataDirs` → `findAutoDataDir` → `searchForDataDir(cwd)`
+accepts a folder that has both `data/` and `tools/`. `addAppropriateDataDirs`
+then adds `localdata/` (searched first) and `serverdata/` (second) when they
+exist, and makes `data/` the main folder: it is searched last, and
+`fileLocateWrite` writes there. `start_game` already runs each MapServer with
+its runtime as the working directory.
+
+Per MapServer runtime:
+- `data/` (private, writable): `bin`, `geobin`, `server` (with `servers.cfg`
+  and the schema), `.dbidmap` files and any writable input. This is the small
+  part to copy or check out.
+- `serverdata/`: one shared tree per data identity. It holds every immutable
+  input except those private roots, and it is never moved or returned.
+- `localdata/`: a per-map overlay, for example King's Row's 52 collision
+  leaves.
+- `tools/`: an empty folder that turns the layered search on.
+
+Rules and work:
+- A private root must not also exist in a folder searched earlier. Otherwise a
+  rewritten `.bin` in `data/bin` is shadowed by the shared copy.
+- The guest proofs that read `runtime/data/<input>` (beacon and collision
+  inputs, cache verification) must resolve through the same three-folder order.
+- `serverdata` as a directory link is a deliberate exception to "no directory
+  links". It needs its own immutability proof (owned, read-only, fingerprinted
+  by identity).
+- Expected effect: no 104-230 s mirror on a miss, King's Row's 218 s first
+  mirror goes, and nothing large is left to strand. Confirm first with a
+  CI-only probe: a runtime where `tools/` exists and `serverdata/` holds one
+  moved definition folder, checked by the console's
+  `Using game data dir` line and a normal map start.
+- The probe is `armport-app-runtime` `serverdata_probe=true` (x86/perf-round3
+  06e219217; the app never sets it). Atlas's private tree omits `scripts.loc`.
+  `runtime/serverdata` links one shared tree, built once per data identity,
+  with read-only directories. Its cache generation is keyed apart from normal
+  ones. No guest proof or cache identity reads `scripts.loc`, and a fresh
+  mirror re-parses it from text. So the creation console's
+  `470 arcs, 957 contacts, 3528 tasks` line shows whether the engine read the
+  sources through the link. The runtime notice prints `serverdata_probe` and
+  `story_arc_counts`.
+- **Probe result (CI 41636702283, `x86/perf-round3` @b90abb1eb, shipping
+  servers, fast mode): passed creation and reopen.** Wine and the engine accept
+  a directory link at the `serverdata` root, and nothing tried to write into
+  the read-only tree.
+
+  | | Creation | Reopen |
+  |---|---|---|
+  | `scripts.loc` served from the shared tree | 52,149 files, 339 folders | same tree, reused |
+  | Story arcs read (console) | 470 arcs, 957 contacts, 3528 tasks | same |
+  | Private mirror | 74 s (106 s full, 41630365042) | cache reuse 2 s |
+  | Shared tree build / link | 31 s once / — | — / 1 ms |
+  | Atlas spawn → map ready | 377 s (364 s) | 129 s (125 s) |
+
+- **Wide probe (level 2, CI 41648097743): passed, but slower.** It shared 17
+  folders (136,019 files, 3,932 folders: everything except `bin`, `geobin`,
+  `server`, `defs`, `maps`, `object_library`, `tricks` and `texture_library`).
+  The private mirror fell to 28 s (one-time shared build 86 s; link 4 ms on
+  reopen), and story arcs still read 470/957/3528. But Atlas spawn → ready rose
+  to 593 s on creation and 381 s on reopen (125 s baseline). The gap from
+  `Parsing .txt from sequencers.bin` to `Caching relevant folders` grew from
+  about 36 s to 240 s. On reopen the MapServer rewrote 22 bins, including
+  `bin/sequencers.bin`, `powers`, `powersets`, `classes` and the salvage and
+  recipe bins (level 1 and the baseline rewrite 0). So some sources behind the
+  link fail the bins' source checks, or are much slower to enumerate. Likely
+  `sequencers`/`player_library` (the 5,120 animation attachments) and whatever
+  the power bins list. Not yet known which.
+- Next: probe `sequencers`, `player_library`, `menu` and `texts` one at a
+  time (each against reopen bin rewrites and the sequencer gap), and keep only
+  the folders that leave both unchanged. Make the guest proofs that read
+  `runtime/data/<input>` resolve through the same three-folder order. Then
+  replace the move/return cache with a small checked-out private `data/` plus
+  the shared tree.
+
 ### Phase 3: close the cold-start gap on the x86 track
 
 With Phases 0-2 measured, the remaining gap to a 60 s cold start is known.
@@ -236,6 +440,206 @@ restarts, without relying on them for the goals.
 
 Exit target: cold MapServer ≤ 60 s, which also makes cold zoning about
 60 s + ~20 s client load. Resident zoning stays the 30 s path.
+
+## Evaluation after Thor 0.13.66 (Claude, 2026-11-10)
+
+At the owner's request ("identify optimizations ... that can meet or exceed
+the goals set in the repo"; then "execute all recommended steps"). Scope is
+single-player (owner, 2026-11-10). Numbers are from exports 20261110-213045
+and -213101 unless a run is named; savings are estimates until a phone run.
+
+### Where 0.13.66 stands against the goals
+
+| # | Goal | 0.13.66 on Thor | Gap |
+|---|---|---|---|
+| 1 | Start under 5 min | Session start to the client's main loop 6 min 20 s; tap to in the world 12 min 43 s (Mercy Island) | 1.3x to login, 2.5x to the world |
+| 2 | Zoning under 30 s | Not run in this session; 0.13.54: King's Row trip 30 s with the server running, 191 s cold | cold zones |
+| 3 | 30 FPS or higher | 28-33 at the 30 cap, client at 1.65 cores; 0.13.49: mean 45-48 at the 60 cap | at the line; headroom unproven in Mercy Island |
+| 4 | MapServer cold start under 1 min | 113 s preparation + 227 s spawn to ready | ~4-6x |
+
+### Cost model
+
+One path lookup through PRoot costs about 0.8-1 ms on the phone; hashing runs
+at GB/s. A step that stats 24,000 files costs 40 s even when nothing changed,
+so the launch is dominated by work that is repeated, not by work that is hard.
+
+| Part of the 0.13.66 session | Time | Repeated without need |
+|---|---|---|
+| Database, Wine, DbServer | 57 s | no |
+| Installed-file re-checks (4 steps, 0 files installed) | 93 s | yes |
+| Texture inventory, then GPU probes | 19.8 s + 24.6-31 s | serial without need |
+| Client start (file scan 133.8 s of 172 s) | 172 s | after every APK update |
+| Login and character list | 30 s | no |
+| Zone preparation (data mirror 75.3 s, graph check 20.6 s) | 113 s | yes |
+| MapServer shared load (sequencers 54.5, story arcs 36.6, FX 35.2, object library 19.1) | 174 s | every zone start |
+| MapServer map-specific load (map 32.4, PhysX 10.3) | 50 s | per zone |
+| Client map load | 13 s | no |
+
+### Recommended steps, in order
+
+| # | Step | Expected gain | Status |
+|---|---|---|---|
+| 1 | Follow per-file links in the navigation map input check; remember checked inputs | Mercy Island pathing; 565 MB hashed once, not per zone start (the ~20 s folder walk remains) | 0.13.67 |
+| 2 | Launch receipts: skip an install step whose inputs and folders are unchanged | ~90 s per launch | 0.13.67 |
+| 3 | Folder index identity without per-APK hashes | ~134 s on the first launch after each update | 0.13.67 |
+| 4 | Return the zone data cache; accept PRoot's own helper during recovery | ~75 s per zone start | 0.13.67 (reuse unproven on the phone) |
+| 5 | Build the texture list during the GPU probes; look up the stop file every 0.1 s | ~20 s per launch | 0.13.67 |
+| 6 | Start the world at the 60 cap (patch 0128) | 75 s at 30 FPS per session | 0.13.67 |
+| 7 | Record busiest threads, allowed CPUs, cgroup, memory every 10 s, leftover state | evidence for steps 9-12 | 0.13.67 |
+| 8 | Fast server (trusted bins) by default | CI Atlas reopen 130 to 94 s; phone unmeasured since 0.13.53 | after one phone run in 0.13.67 |
+| 9a | Start the saved zone beside the client on Reopen (no MapServer change: a static zone registers without a cookie) | est. 2 min off tap to world; with step 8, about 4.6 min | 0.13.68 (option, on by default; CI input `early_zone`) |
+| 9b | Spare zone server for trips: load the shared 174 s before the destination is known | goals 2 and 4 for cold zones | 0.13.68: MapServer layer and supervisor built, option off by default; not run in CI or on a phone yet |
+| 10 | Cooked PhysX cache per map | ~10 s per zone start | later |
+| 11 | Fastest core for the client's main thread | FPS headroom; none of ~200 samples ran on cpu 7 | after step 7's data |
+| 12 | Mesa 26 OpenGL layer (Zink) behind an option | FPS headroom, unmeasured | later |
+| 13 | Zero-copy display instead of the software copy through VNC | FPS headroom at higher resolutions | needs the thread profile and a licence decision (Termux:X11 is GPL-3.0) |
+
+Left as they are: the GPU probe cache (refused with "Prior GPU prefix
+process-age authority differs"; the probes now overlap the texture list) and
+the texture inventory walk itself.
+
+If steps 1-5 hold on the phone, a second launch into a zone visited before
+saves about 320 s of the 763 s measured (93 + 134 + 75 + 20; the 134 s only
+applied to the first launch after an update), an estimate that puts the world
+at about 7 min 20 s. The navigation map check is not in that sum: 0.13.66
+spent 20.6 s on the folder walk and refused the map before hashing anything;
+0.13.67 walks the folders twice per install and hashes the inputs once, which
+is unmeasured on the phone. Steps 8 and 9 are what bring the zone server
+toward goal 4.
+
+### After Thor 0.13.67 (2026-11-10, export 20261111-035325)
+
+One launch, the first on 0.13.67 (HANDOFF-X86.md, "Thor test of 0.13.67"). What
+it adds to the cost model:
+
+- PRoot's single tracer thread is the launch's bottleneck in CPU terms: 647 s
+  of its CPU in the 990 s to the world, and half a core afterwards. Steps that
+  run side by side (0.13.68's early zone start, a spare zone server) share that
+  one thread, so their gain is smaller than the sum of the steps they overlap.
+  Removing filtered system calls is worth more than overlapping them: the saved
+  file list, launch receipts and trusted bins are of that kind.
+- In the world the client is not bound by one core: four threads at about 30%
+  each. Before changing thread placement (step 12), find out what the threads
+  wait for; `armport-app-runtime` input `trap_sampler` (0.13.69, CI host,
+  read-only) prints which guest tasks are stopped for PRoot and at which system
+  call.
+- Android's tap-to-world receipt is 72-79 s later than the client's own
+  connection line; goal tracking uses the client's line.
+
+### What PRoot intercepts (2026-11-11, source and CI sampler)
+
+The pinned PRoot (termux 7266fb3e) traces more than path calls: `close`,
+`recvfrom`, `recvmsg`, `sendmsg`, `sendto`, `socket`, `clone`, `prctl`,
+`getxattr`, `wait4`; with `-i 1000:1000` also `fstat`, `getsockopt` and the id
+calls; and in Android builds every `ioctl`, entry and exit. Each traced call
+stops its thread until PRoot's one thread has served it. For this game that
+means every GPU ioctl of the renderer, every datagram a server sends or
+receives, every X11 reply, and three or four stops per opened file where one is
+needed. CI run 42964556839 (sampler): wineserver is the task most often
+stopped; `getsockopt` and `recvmsg` of the servers follow the path calls. Step
+14 (new, ahead of 10-13): a PRoot patch that does not trace these calls when
+their arguments need no fix-up, measured first with the sampler in CI, then as
+an option on the phone.
+
+First part of step 14 (2026-11-11, for 0.13.69): `android/native/proot/0004`
+stops an ioctl only for the seven commands PRoot acts on. A local x86-64 build
+of the pinned tree with patches 0001-0004, run with the app's PRoot options:
+an unlisted ioctl costs 0.16 microseconds with or without the switch; a listed
+one costs 49.8 with it, which is the price of the two tracer stops every ioctl
+pays on Android today. At that price 10,000 ioctls a second keep one core's
+worth of tracer and guest time busy. The guest now measures the same three
+calls at every launch (`armport_proot_ioctl` in the report: `no_ioctl_stops`,
+`every_ioctl_stops` or `listed_commands_only`, with microseconds per call), so
+the next phone export states the cost on the Thor itself. On the phone the
+patched PRoot is a second program in the APK behind a launch option (off); the
+default launch keeps the 0.13.36 PRoot binary.
+
+Which calls are left (2026-11-11, run 43091944698 at 22d90d987: creation and
+reopen with the ioctl switch on, sampler reading as root so Wine's own
+processes are readable; 7,640 rounds, 4,325 samples of a task stopped for
+PRoot). No sample was an ioctl. By call (ARM64 numbers from the log):
+
+| Call | Samples | Mostly from | Why PRoot stops it |
+|---|---|---|---|
+| `newfstatat` (79; glibc's `fstat` is this call with an empty path) | 966 | MapServer 473, guest Python 400, client 82 | path translation; with `-i 1000:1000` a second stop to rewrite the owner |
+| left the stop before it could be read | 1,001 | wineserver 346, Python 290, client 186, MapServer 159 | unknown |
+| `readlinkat` (78) | 475 | wineserver 429 | path translation; likely wineserver's `realpath` of each opened file, one call per path component (Wine `server/fd.c`, from memory; not traced) |
+| `accept` (202) | 371 | wineserver, in every window | peer address fix-up for Unix sockets; likely the servers polling their listening sockets, which Wine serves in wineserver (not traced) |
+| `getsockopt` (209) | 197 | MapServer 100, DbServer 72, client 25 | only `SO_PEERCRED` is rewritten (fake id) |
+| `recvmsg` (212), `sendto` (206), `recvfrom` (207) | 373 | client 295 | only netlink sockets are acted on |
+| `openat` (56), `close` (57), `getxattr` (8), `wait4` (260) | 259 | Python, MapServer | path translation; `close` for netlink and pipe bookkeeping |
+| rows below a window's top twelve | 583 | | |
+
+By program: wineserver 1,203, guest Python 914, MapServer 862, client 621,
+DbServer 97. Samples count time spent stopped, not calls, and CI's host is not
+the phone: on the Thor the ioctl share is unknown until a 0.13.69 export.
+
+Thor 0.13.69 (2026-11-12, exports 20261113-012755/-013835/-015905): one ioctl
+stop pair costs 46.8 microseconds without the filter and the call 0.8 with it,
+so about 23 microseconds per stop. The tracer's share of a core in the world
+stayed 41-47 % with or without the filter (74-83 % while loading; 53 % with a
+second zone server): ioctl was not its main load there.
+
+Exact counts (0.13.70, PRoot patch 0005, CI run 43363707492, reopen session:
+14.2 million stops in 912 s, about 15,600 a second; creation: 32.3 million in
+1,244 s):
+
+| Call | Stops (enter + exit) | Share |
+|---|---|---|
+| `newfstatat` | 2,539,892 + 2,539,891 | 36 % |
+| `readlinkat` | 1,231,872 + 1,231,872 | 17 % |
+| `accept` | 1,223,850 + 1,223,850 | 17 % |
+| `recvmsg`, `sendto`, `recvfrom`, `sendmsg` | 2,068,135 | 15 % |
+| `close` | 747,770 | 5 % |
+| `openat` | 689,271 | 5 % |
+| `getxattr` | 369,307 | 3 % |
+| `wait4` | 63,701 + 63,701 | 1 % (3 % in creation: the supervisor's child polls) |
+
+`getsockopt` no longer stops (0.51 microseconds per call; 29.59 without the
+switch). CI's Linux PRoot does not stop ioctl; the phone's mix comes with the
+0.13.70 export (`proot_stop_counts`).
+
+Parts 1 and 2 below are in 0.13.70. 0.13.71 (patch 0006) leaves `accept`
+untraced (2.4-4 against 52-56 microseconds locally) and adds per-program rows.
+CI run 43383782947 with it, reopen session, stock server: 11.8 million stops
+(12,900 a second), none for `accept`. By program and call:
+
+| Program | Share | Largest rows |
+|---|---|---|
+| MapServer | 36 % | `newfstatat` 26 %, `getxattr` 3 %, `close` 2 %, `openat` 2 % |
+| wineserver | 22 % | `readlinkat` 19 % |
+| guest Python (the supervisor) | 22 % (34 % in creation) | `newfstatat` 13 %, `close` 3 %, `openat` 3 %, `readlinkat` 2 %, `wait4` 1 % |
+| audio bridge thread | 8 % | `sendto` 4 %, `recvfrom` 3 % |
+| client | 7.5 % | `recvmsg` 5 %, `newfstatat` 3 % |
+| Xtigervnc, DbServer | 3 % | `recvmsg` |
+
+The supervisor is our own code: about 815 `stat` calls a second. A CI-only
+counter by caller (`python_call_profile`, with `trap_sampler`) is on the
+branch to say which lines.
+
+Next parts of step 14, cheapest and safest first (none built yet):
+
+1. Count stops inside the patched PRoot (per call number, written at exit to a
+   file named by an environment variable), so a phone launch with the option
+   on reports exact counts instead of CI samples.
+2. `getsockopt`: stop only for `SOL_SOCKET`/`SO_PEERCRED` (an argument test in
+   the filter, exact like the ioctl list).
+3. Guest Python: the supervisor's 0.1 s loop and its `/proc` readers are the
+   second largest source of stops in CI; batch or slow what the phone does not
+   need.
+4. `sendto`, `recvfrom`, `recvmsg`, `sendmsg`: PRoot acts only on netlink
+   route sockets. Move those to descriptor numbers at or above a fixed bound
+   when they are created (PRoot already stops `socket`), and stop the four
+   calls only for descriptors at or above it.
+5. Launch without `-i 1000:1000` (the guest then sees the app's real user id,
+   which is also what every file is owned by): removes the second stop of
+   every `stat` and the id, `getsockopt` and `prctl` stops. Needs a passwd
+   entry for that id and a CI pass of PostgreSQL and Wine under it.
+6. `accept`: not stopping it leaves a Unix-socket peer's bound path
+   untranslated; nothing in this guest reads it. `fstat` by descriptor
+   (`AT_EMPTY_PATH`) needs no path work once part 5 holds.
+7. wineserver's `realpath` per opened file: a preloaded replacement that
+   remembers resolved folders, or a Wine patch.
 
 ## Process changes that would speed all of this up
 

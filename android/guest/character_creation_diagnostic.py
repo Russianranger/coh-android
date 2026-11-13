@@ -18,7 +18,9 @@ import character_avatar_assets as avatar
 
 base, require, interactive = login.base, login.require, login.interactive
 SCOPE = 'actual_character_creation_guest'
-CHARACTER_NAME = 'THORHERO'
+# CI's name. Since 0.13.62 the character may have any name the game accepts;
+# the session's name is character.CHARACTER, read from its SQL row.
+CHARACTER_NAME = character.LEGACY_CHARACTER
 INTERACTION_SECONDS = 1200
 OVERALL_SECONDS = 5400
 MAX_CHILDREN = 512
@@ -54,7 +56,8 @@ def positive_int(value):
 
 def character_identity(proof, session):
     return (isinstance(proof, dict) and proof.get('session_id') == session
-        and proof.get('name') == CHARACTER_NAME and proof.get('account') == login.server.ACCOUNT
+        and character.valid_character_name(proof.get('name')) and proof.get('name') == character.CHARACTER
+        and proof.get('account') == login.server.ACCOUNT
         and positive_int(proof.get('character_id')) and positive_int(proof.get('auth_id'))
         and type(proof.get('map_id')) is int and proof['map_id'] == 1
         and proof.get('connected_on_atlas') is True)
@@ -154,6 +157,10 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.saved_announced = False
         self.connected_identity = None
         self.texture_header_preparation = None
+        self.pending_launch_receipts = []
+
+    # Steps that ran in full this launch and are not recorded yet (record_launch_receipts).
+    pending_launch_receipts = ()
 
     def launcher_command(self):
         return interactive.ClientInteractiveDiagnostic.launcher_command(self) + ['--character-creation']
@@ -168,7 +175,78 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         # Missing world inputs are installed in this private client tree. Atlas
         # staging mirrors them into the private server tree before map launch.
         import atlas_world_assets as world
-        self.ctx.report['atlas_world_supplement'] = world.install(self.work, self.args.assets, self.ctx)
+        self.ctx.report['atlas_world_supplement'] = self.receipted_step(
+            'atlas_world', lambda: ('atlas_world_assets.py', world.MANIFEST, world.ARCHIVE),
+            lambda: world.package(self.args.assets)['files'],
+            lambda: world.install(self.work, self.args.assets, self.ctx))
+
+    def receipted_step(self, step, pins, files, run, bound=None):
+        """One install step into the client worktree, or its last full result while its pinned
+        inputs and the directories that hold its leaves are unchanged (launch_receipts.py).
+
+        Thor 0.13.66 spent 93 s of every launch re-checking 39,358 unchanged leaves. A step
+        that runs in full is recorded by record_launch_receipts once every step has finished,
+        so a later step's new files cannot outdate an earlier step's receipt. `pins` returns
+        the names of the step's inputs in the session's `asset_sha256`; a step whose inputs
+        are not all pinned there always runs in full. `bound` returns further facts the step's
+        result depends on (0.13.69: the import generation the animation step links to); `files`
+        returns the step's package mapping, or a list of leaf paths in the worktree.
+        """
+        import launch_receipts
+        started = time.monotonic()
+        record = {'status': 'ran_in_full', 'reason': None}
+        self.ctx.report.setdefault('launch_receipts', {})[step] = record
+        identity = None
+        try:
+            hashes = self.ctx.report.get('asset_sha256') or {}
+            try:
+                pins = tuple(pins())
+            except AttributeError:
+                pins = (None,)
+            require(all(name in hashes for name in pins), 'inputs_not_pinned')
+            identity = {'format': 1, 'step': step, 'worktree': str(self.work),
+                        'worktree_identity': [[info.st_dev, info.st_ino] for info in
+                                              (os.lstat(self.work), os.lstat(self.work / 'data'))],
+                        'inputs': {name: hashes[name] for name in pins}}
+            if bound is not None:
+                identity['bound'] = bound()
+                require(isinstance(identity['bound'], dict) and identity['bound']
+                        and all(value is not None for value in identity['bound'].values()), 'bound_facts_missing')
+        except (base.DiagnosticError, OSError) as failure:
+            record['reason'], identity = str(failure)[:200], None
+        if identity is not None:
+            result, record['reason'] = launch_receipts.reusable(
+                self.root / 'launch-receipts', step, identity, self.work, self.ctx)
+            if result is not None:
+                elapsed = time.monotonic() - started
+                record.update(status='reused', elapsed_seconds=round(elapsed, 6))
+                return launch_receipts.as_reused(result, elapsed)
+        result = run()
+        record['elapsed_seconds'] = round(time.monotonic() - started, 6)
+        if identity is not None:
+            self.pending_launch_receipts = [*self.pending_launch_receipts, (step, identity, files, result)]
+        return result
+
+    def record_launch_receipts(self):
+        pending, self.pending_launch_receipts = list(self.pending_launch_receipts), []
+        if not pending:
+            return
+        import atlas_world_assets as world
+        import launch_receipts
+        for step, identity, files, result in pending:
+            record = self.ctx.report['launch_receipts'][step]
+            try:
+                leaves = files()
+                targets = (list(leaves) if isinstance(leaves, (list, tuple))
+                           else world.resolve_targets(self.work, leaves, self.ctx).values())
+                record['directories'] = launch_receipts.record(self.root / 'launch-receipts', step, identity,
+                                                               self.work, targets, result, self.ctx)
+                record['recorded'] = True
+            except base.Cancelled:
+                raise
+            except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+                # A receipt only saves time; without one the step runs in full next time.
+                record.update(recorded=False, record_error=str(failure)[:200])
 
     def start_wine(self):
         if (self.ctx.report.get('native_responsiveness_candidate')
@@ -190,6 +268,11 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.ctx.check()
         self.prepare_client_visual_inputs()
         self.texture_header_preparation = TextureHeaderPreparation(self)
+        # 0.13.68: with the client's inputs installed, the saved character's own zone may start
+        # now, beside the texture list, the GPU probes and the client's start (COH_EARLY_ZONE).
+        early = getattr(self.local_server, 'start_early_zone', None)
+        if callable(early):
+            early()
         self.texture_header_preparation.start()
 
     def client_preparation_server_ready(self):
@@ -221,6 +304,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         present = {name for name in names
                    if (self.args.assets / name).exists() or (self.args.assets / name).is_symlink()}
         if not present:
+            self.record_launch_receipts()
             return
         require(present == names, 'Incomplete client visual/animation asset bundle')
         require(names | {'server-animations.pigg', 'server-animation-manifest.json'}
@@ -232,27 +316,48 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         import client_visual_assets
         import client_animation_package
         self.ctx.stage('client_visual_assets')
-        visual = client_visual_assets.install(self.work, self.args.assets, self.ctx)
+        visual = self.receipted_step(
+            'client_visual', lambda: ('client_visual_assets.py', 'atlas_world_assets.py',
+                                      client_visual_assets.MANIFEST, client_visual_assets.ARCHIVE),
+            lambda: client_visual_assets.package(self.args.assets)['files'],
+            lambda: client_visual_assets.install(self.work, self.args.assets, self.ctx))
         self.ctx.report['client_visual_supplement'] = visual
         self.ctx.passed(**visual)
         self.ctx.stage('client_animation_pack')
-        animation = client_animation_package.install(
-            self.args.assets / 'server-animations.pigg',
-            self.args.assets / 'server-animation-manifest.json', self.work,
-            assets=self.args.assets, context=self.ctx)
+        # 0.13.69: Thor 0.13.67 re-checked 5878 unchanged animation links on every launch (13.6 s,
+        # before the saved zone may start). The receipt holds the listings of the folders that
+        # hold those links and the import generation the links point into.
+        animation_manifest = self.args.assets / 'server-animation-manifest.json'
+        animation = self.receipted_step(
+            'client_animation', lambda: ('client_animation_package.py', 'server-animations.pigg',
+                                         'server-animation-manifest.json', 'client-runtime.zip'),
+            lambda: [self.work / 'data' / name for name in json.loads(animation_manifest.read_bytes())['files']],
+            lambda: client_animation_package.install(
+                self.args.assets / 'server-animations.pigg', animation_manifest, self.work,
+                assets=self.args.assets, context=self.ctx),
+            bound=lambda: {'import': self.ctx.report.get('import_identity')})
         self.ctx.report['client_animation_pack'] = animation
         self.ctx.passed(**animation)
         import zone_asset_package
         if zone_asset_package.present(self.args.assets):
             self.ctx.stage('client_all_zone_assets')
-            zones = zone_asset_package.install(self.work, self.args.assets, self.ctx)
+            zones = self.receipted_step(
+                'zone_resources', lambda: ('zone_asset_package.py', 'atlas_world_assets.py',
+                                           zone_asset_package.MANIFEST, zone_asset_package.ARCHIVE),
+                lambda: zone_asset_package.package(self.args.assets)['files'],
+                lambda: zone_asset_package.install(self.work, self.args.assets, self.ctx))
             self.ctx.report['client_zone_supplement'] = zones
             self.ctx.passed(**zones)
         if zone_asset_package.present(self.args.assets, audio=True):
             self.ctx.stage('client_all_zone_audio')
-            audio = zone_asset_package.install(self.work, self.args.assets, self.ctx, audio=True)
+            audio = self.receipted_step(
+                'zone_audio', lambda: ('zone_asset_package.py', 'atlas_world_assets.py',
+                                       zone_asset_package.AUDIO_MANIFEST, zone_asset_package.AUDIO_ARCHIVE),
+                lambda: zone_asset_package.package(self.args.assets, audio=True)['files'],
+                lambda: zone_asset_package.install(self.work, self.args.assets, self.ctx, audio=True))
             self.ctx.report['client_zone_audio_supplement'] = audio
             self.ctx.passed(**audio)
+        self.record_launch_receipts()
 
     def prepare_texture_header_index(self, context):
         import texture_header_index
@@ -363,7 +468,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             current['client_pid'] = launch['pid']
             self.connected_announced = True
             self.ctx.event('character_connected', session_id=self.args.session_id, client_pid=launch['pid'],
-                character_id=current['character_id'], name=CHARACTER_NAME, account=login.server.ACCOUNT,
+                character_id=current['character_id'], name=character.CHARACTER, account=login.server.ACCOUNT,
                 map_id=current['map_id'], **self.connected_event_data(current))
         if proof is not None:
             require(self.connected_announced and self.proof_verified(proof, self.args.session_id),
@@ -383,7 +488,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                 current.update(proof, client_pid=launch['pid'], verified_utc=base.utc(), client_capture=shot)
                 self.saved_announced = True
                 self.ctx.event('character_saved', session_id=self.args.session_id, client_pid=launch['pid'],
-                    character_id=proof['character_id'], name=CHARACTER_NAME, committed_sql_verified=True,
+                    character_id=proof['character_id'], name=character.CHARACTER, committed_sql_verified=True,
                     **self.saved_event_data(proof))
         return output, launch, console
 
@@ -399,6 +504,71 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
 
     def saved_event_data(self, proof):
         return {}
+
+
+def dynamic_creation_requested(environ=None):
+    """The game's own zone travel with the ARM64 client: the starting zone starts at Enter Game."""
+    environ = os.environ if environ is None else environ
+    return (environ.get('COH_STOCK_TRAVEL') == '1' and environ.get('COH_EXTERNAL_MAPS') == '1'
+            and environ.get('COH_CLIENT_ARCH', 'x86') == 'arm64')
+
+
+class ZoningCharacterCreationDiagnostic(CharacterCreationDiagnostic):
+    """A new character (any name) created as a hero, villain or Praetorian starts in its own starting zone.
+
+    No zone server runs before Enter Game; the DbServer asks for the starting
+    zone the creator chose (character_zoning.LocalCharacterZoningCreationServer).
+    """
+    REQUIRED = REQUIRED | {'character_zoning.py', 'character_zoning_scheduler.py'}
+
+    @staticmethod
+    def identity_verified(proof, session):
+        import character_zoning
+        return character_zoning.creation_identity(proof, session)
+
+    @staticmethod
+    def proof_verified(proof, session):
+        import character_zoning
+        return character_zoning.creation_save_verified(proof, session)
+
+    def make_server(self):
+        import character_zoning
+        return character_zoning.LocalCharacterZoningCreationServer(self)
+
+    def initialize(self):
+        for name in ('character-zoning-request.json', 'character-zoning-delivery.json'):
+            path = self.args.state / name
+            require(not path.exists() and not path.is_symlink(), 'Stale zoning request or delivery receipt')
+        manifest = character.dbserver.load_json(self.args.assets / 'runtime-manifest.json', 8 * 1024 * 1024)
+        require(manifest.get('character_zoning_enabled') is True,
+                "The game's own zone travel needs the verified zoning runtime profile")
+        super().initialize()
+        self.ctx.report['zoning_enabled'] = True
+
+    def connected_event_data(self, proof):
+        import character_zoning
+        return {'zoning_enabled': True, 'connected_on_supported_map': True, 'monorail_enabled': False,
+                'stock_travel': proof.get('stock_travel') is True,
+                'map_name': character_zoning.zone_name(proof['map_id'])}
+
+    def saved_event_data(self, proof):
+        import character_zoning
+        return {'zoning_enabled': True, 'connected_on_supported_map': True, 'map_id': proof['map_id'],
+                'map_name': character_zoning.zone_name(proof['map_id']),
+                'monorail_enabled': False, 'stock_travel': proof.get('stock_travel') is True}
+
+    def interaction_deadline(self, deadline, launch):
+        """The starting zone's start after Enter Game does not use up the twenty-minute creator window.
+
+        It has its own bound (zone_travel.START_SECONDS, then the game reports
+        that the map failed); the time the game waited for it is added back.
+        """
+        fixed = getattr(self, 'creation_interaction_deadline', None)
+        if fixed is None:
+            fixed = self.creation_interaction_deadline = deadline
+        wait = self.local_server.initial_zone_wait_seconds()
+        self.ctx.report['starting_zone_wait_seconds'] = round(wait, 3)
+        return fixed + wait
 
 
 def parse_arguments(argv, mode):
@@ -422,6 +592,17 @@ def parse_arguments(argv, mode):
     return parser.parse_args(argv)
 
 
+def proot_mode_receipt(calls=5000):
+    """The app's PRoot mode and a cheap syscall cost probe (ptrace stop vs seccomp pass-through)."""
+    started = time.perf_counter()
+    for _ in range(calls):
+        os.getppid()
+    elapsed = time.perf_counter() - started
+    return {'format': 1, 'fast_mode_requested': os.environ.get('COH_PROOT_FAST_MODE') == '1',
+            'probe_syscall': 'getppid', 'probe_calls': calls,
+            'probe_microseconds_per_call': round(elapsed * 1e6 / calls, 3)}
+
+
 def run(argv, diagnostic_type, scope, mode):
     args = parse_arguments(argv, mode)
     base.OUTPUT_LIMIT = interactive.CLIENT_OUTPUT_LIMIT
@@ -433,7 +614,7 @@ def run(argv, diagnostic_type, scope, mode):
         android_surface_validated=False, hardware_acceleration_validated=False,
         client_process_started=False, startup_observed=False, interaction_session_completed=False,
         input_effect_verified=False, interaction_timeout_seconds=args.interaction_seconds,
-        resume_first_creation_requested=args.resume_empty_profile)
+        resume_first_creation_requested=args.resume_empty_profile, proot_mode=proot_mode_receipt())
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda _sig, _frame: setattr(context, 'cancel_requested', True))
     diagnostic, validated = None, False
@@ -495,7 +676,8 @@ def run(argv, diagnostic_type, scope, mode):
 
 
 def main(argv=None):
-    return run(argv, CharacterCreationDiagnostic, SCOPE, 'actual_character_creation')
+    diagnostic = ZoningCharacterCreationDiagnostic if dynamic_creation_requested() else CharacterCreationDiagnostic
+    return run(argv, diagnostic, SCOPE, 'actual_character_creation')
 
 
 if __name__ == '__main__': sys.exit(main())

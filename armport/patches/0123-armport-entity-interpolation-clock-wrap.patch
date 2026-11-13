@@ -1,0 +1,124 @@
+diff --git a/Game/src/entity/armport_net_clock.h b/Game/src/entity/armport_net_clock.h
+new file mode 100644
+index 0000000..f666811
+--- /dev/null
++++ b/Game/src/entity/armport_net_clock.h
+@@ -0,0 +1,64 @@
++/* ArmPort: entity interpolation clock (patch 0123).
++ *
++ * entrecv.c keeps local_time_bias (U32) so that the client's own clock plus
++ * the bias tracks the server's abs_time, and draws other entities at
++ * client_abs, auto_delay seconds behind the newest update. When the server is
++ * younger than the client's clock (a zone server started after the client,
++ * such as King's Row reached by monorail), the bias is "negative" modulo 2^32.
++ * x86 converts a negative float to U32 modulo 2^32 (through a 64-bit
++ * conversion), which the code relies on. AArch64 FCVTZU saturates a negative
++ * value to 0, so the bias stayed at 0, client_abs was clamped to the newest
++ * update and NPCs, cars and trains jumped from update to update instead of
++ * moving smoothly. armportWrapFloatToU32 is the x86 conversion on both.
++ *
++ * Game/UtilitiesLib headers redefine printf/fflush; the log helper isolates
++ * those macros like armport_frame_rate_log.h (patch 0114).
++ */
++#ifndef ARMPORT_NET_CLOCK_H
++#define ARMPORT_NET_CLOCK_H
++#pragma push_macro("printf")
++#pragma push_macro("snprintf")
++#pragma push_macro("fflush")
++#pragma push_macro("fputs")
++#pragma push_macro("FILE")
++#undef printf
++#undef snprintf
++#undef fflush
++#undef fputs
++#undef FILE
++#include <stdio.h>
++#include <stdlib.h>
++
++static __inline unsigned int armportWrapFloatToU32(float value)
++{
++    return (unsigned int)(long long)value;
++}
++
++static int armportNetClockLogEnabled(void)
++{
++    static int enabled = -1;
++    if (enabled < 0) {
++        const char *value = getenv("ARMPORT_NET_CLOCK_LOG");
++        enabled = value && value[0] == '1' && value[1] == 0;
++    }
++    return enabled;
++}
++
++/* abs_time units are 1/3000 s, so units / 3 is milliseconds. */
++static void armportNetClockLogWrite(unsigned int bias, unsigned int server_abs, unsigned int client_abs,
++                                    float delay, float elapsed)
++{
++    char line[200];
++    snprintf(line, sizeof(line),
++        "ARMPORT_NET_CLOCK_V1 bias=%u server_abs=%u client_abs=%u lag_ms=%d delay_ms=%d elapsed_s=%.1f\n",
++        bias, server_abs, client_abs, (int)(server_abs - client_abs) / 3, (int)(delay * 1000.f), elapsed);
++    fputs(line, stdout);
++    fflush(stdout);
++}
++
++#pragma pop_macro("FILE")
++#pragma pop_macro("fputs")
++#pragma pop_macro("fflush")
++#pragma pop_macro("snprintf")
++#pragma pop_macro("printf")
++#endif
+diff --git a/Game/src/entity/entrecv.c b/Game/src/entity/entrecv.c
+index 6457f33..3e900d5 100644
+--- a/Game/src/entity/entrecv.c
++++ b/Game/src/entity/entrecv.c
+@@ -108,6 +108,7 @@
+ #include "entity/power_customization.h"
+ #include "storyarc/pnpcCommon.h"
+ #include "clientcomm/authclient.h"
++#include "entity/armport_net_clock.h"
+ 
+ static U32    last_packet_abs_time;
+ static int  ent_create;     // Shared between various entRecv helper functions.
+@@ -3716,7 +3717,9 @@ void entReceiveUpdate(Packet *pak,int full_update)
+ 
+             if (ABS(dt) > 0.1)
+             {
+-                local_time_bias += dt * (30.f * 100.f);
++                // ArmPort: modulo 2^32 as on x86; AArch64 saturated a negative
++                // correction to 0 (patch 0123, armport_net_clock.h).
++                local_time_bias += armportWrapFloatToU32(dt * (30.f * 100.f));
+             }
+ 
+             ticklen = (abs_time - global_state.abs_time) / 100.f;
+@@ -4149,8 +4152,9 @@ int entNetUpdate()
+ 
+     test_timer_elapsed += add_time;
+ 
+-    new_client_abs = ((U32)((test_timer_elapsed - auto_delay) * 30.f * 100.f)) + local_time_bias;
+-    new_client_abs_slow = ((U32)((test_timer_elapsed - (auto_delay * 2)) * 30.f * 100.f)) + local_time_bias;
++    // ArmPort: the x86 float-to-U32 conversion (patch 0123).
++    new_client_abs = armportWrapFloatToU32((test_timer_elapsed - auto_delay) * 30.f * 100.f) + local_time_bias;
++    new_client_abs_slow = armportWrapFloatToU32((test_timer_elapsed - (auto_delay * 2)) * 30.f * 100.f) + local_time_bias;
+ 
+     diff_client_abs = new_client_abs - global_state.client_abs;
+     diff_client_abs_slow = new_client_abs_slow - global_state.client_abs_slow;
+@@ -4183,6 +4187,18 @@ int entNetUpdate()
+ 
+     last_client_abs = global_state.client_abs;
+ 
++    {
++        // ArmPort: ARMPORT_NET_CLOCK_LOG=1 logs the interpolation clock every
++        // 30 s of client time (device evidence for patch 0123).
++        static F32 net_clock_logged;
++        if (armportNetClockLogEnabled() && test_timer_elapsed - net_clock_logged >= 30.f)
++        {
++            net_clock_logged = test_timer_elapsed;
++            armportNetClockLogWrite(local_time_bias, global_state.abs_time, global_state.client_abs,
++                auto_delay, test_timer_elapsed);
++        }
++    }
++
+     for(i=1;i<entities_max;i++)
+     {
+         Mat4 newmat;

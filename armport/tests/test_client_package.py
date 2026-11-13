@@ -260,6 +260,27 @@ class ClientPackage(unittest.TestCase):
             package.unpack(self.archive, self.root / 'output')
         self.assertFalse((self.root / 'escape').exists())
 
+    def test_audio_plugin_is_an_optional_arm64_elf_member(self):
+        # 0.13.53: the guest ALSA plugin rides in the overlay beside the PE files.
+        elf = bytearray(64)
+        elf[:6] = b'\x7fELF\x02\x01'
+        struct.pack_into('<HH', elf, 16, 3, 183)
+        plugin = self.root / 'libasound_module_pcm_trasc.so'
+        plugin.write_bytes(elf)
+        document = package.package(self.client, self.bins, self.shaders, self.launcher, self.archive, 123, 122,
+                                   audio_plugin=plugin)
+        self.assertIn(package.AUDIO_PLUGIN, document['files'])
+        package.unpack(self.archive, self.root / 'output')
+        self.assertEqual((self.root / 'output' / package.AUDIO_PLUGIN).read_bytes(), bytes(elf))
+        # Without it the overlay is as before.
+        self.assertNotIn(package.AUDIO_PLUGIN, package.package(self.client, self.bins, self.shaders, self.launcher,
+                                                               self.root / 'plain.zip', 123, 122)['files'])
+        struct.pack_into('<HH', elf, 16, 3, 62)   # x86-64
+        plugin.write_bytes(elf)
+        with self.assertRaisesRegex(ValueError, 'AArch64'):
+            package.package(self.client, self.bins, self.shaders, self.launcher, self.root / 'x86.zip', 123, 122,
+                            audio_plugin=plugin)
+
 
 if __name__ == '__main__':
     unittest.main()

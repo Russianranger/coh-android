@@ -136,6 +136,39 @@ class InteractiveEvidence(unittest.TestCase):
             self.assertIn('%25', host.ci_notice({'error': '50% failed'}))
             self.assertNotIn('\n', host.ci_notice({'error': 'a\nb'}))
 
+    def test_failure_detail_is_bounded_and_separate_from_the_qualified_summary(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            work, evidence = root / 'work', root / 'evidence'
+            (work / 'state').mkdir(parents=True)
+            evidence.mkdir()
+            (work / 'state/character-logout.json').write_text(json.dumps({'action': 'quittologin', 'sent_utc_ms': 5}))
+            fps = ['ARMPORT_FRAME_RATE_V1 fps=%d.00 frames=1 seconds=5.00 maxfps=30 menu=0' % n for n in range(9)]
+            with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/armport_stdio.txt', '\n'.join(fps + ['ArmPort dialog: Welcome! ' + 'w' * 200,
+                                                                  'aborted by key: 28',
+                                                                  'ArmPort login: stage 3', 'x' * 900]))
+                archive.writestr('client-evidence/client-console.log',
+                                 '\n'.join(['ALSA lib pcm.c:1 underrun'] * 7 + ['last line']))
+                archive.writestr('client-evidence/character-atlas-console.txt', 'Player logout timer 30\nother\n')
+            detail = host.failure_detail(evidence, work, {'steps': [{'action': n} for n in 'abcdef']})
+            self.assertEqual(detail['logout_request']['sent_utc_ms'], 5)
+            self.assertEqual(len(detail['client_fps_tail']), 3)
+            self.assertTrue(detail['client_fps_tail'][-1].startswith('ARMPORT_FRAME_RATE_V1 fps=8.00'))
+            self.assertEqual(len(detail['client_stdio_tail'][-1]), 160)
+            self.assertEqual((detail['client_dialogs']['count'], len(detail['client_dialogs']['last'][0])), (1, 120))
+            # The stock client cancelling its own logout (before patch 0127) is visible.
+            self.assertEqual(detail['client_logout_keys'], {'kept': 0, 'aborted': 1, 'kept_last': [],
+                                                            'aborted_last': ['aborted by key: 28']})
+            self.assertEqual(detail['client_console_audio']['count'], 7)
+            self.assertEqual(len(detail['client_console_audio']['first']), 4)
+            self.assertEqual(detail['client_console_tail'][-1], 'last line')
+            self.assertEqual(detail['atlas_logout_lines'], ['Player logout timer 30'])
+            self.assertEqual(len(detail['observer_last_steps']), 4)
+            # The qualified per-session summary keeps exactly its three keys.
+            (evidence / 'latest-report.json').write_text(json.dumps({'failures': [], 'stages': []}))
+            self.assertEqual(set(host.guest_failure_summary(evidence)), {'failures', 'failed_stages', 'client_faults'})
+
     def test_current_helpers_import_from_retained_donor_closure(self):
         tree = ast.parse((ROOT / 'tools/android/interactive/prepare_assets.py').read_text())
         names = next(ast.literal_eval(node.value) for node in tree.body if isinstance(node, ast.Assign)
@@ -149,6 +182,38 @@ class InteractiveEvidence(unittest.TestCase):
             subprocess.run([sys.executable, '-I', '-c',
                 'import sys; sys.path.insert(0,sys.argv[1]); import character_creation_diagnostic, '
                 'character_reopen_diagnostic, armport_interactive', temporary], check=True)
+
+
+
+class ZoneDiagnostics(unittest.TestCase):
+    """Failed stock-travel runs print what the DbServer, zone servers and logs said, in bounded parts."""
+    def test_parts_carry_signal_lines_and_stay_under_the_annotation_limit(self):
+        import io
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary)
+            inner = io.BytesIO()
+            with zipfile.ZipFile(inner, 'w') as archive:
+                archive.writestr('logs/dbserver/error_2026-11-05.log',
+                                 '261105 23:00:00 -1 COMMAND: ALTER\n261105 23:01:00 1 MapXfer(1/1 : 101) failed\n')
+            with zipfile.ZipFile(evidence / 'report.zip', 'w') as archive:
+                archive.writestr('client-evidence/local-dbserver-console.txt',
+                                 "Can't connect to dbserver\nDbServer Ready.\n0x3000:1: Token\n"
+                                 "Received connection from a MapServer with an invalid cookie (2, expected 3)\n")
+                archive.writestr('client-evidence/character-atlas-console.txt',
+                                 '[DEBUG] \tReading Car.txt\nError: dbAsyncMapMoveEx failed\n')
+                archive.writestr('client-evidence/character-zoning-map-101-console.txt',
+                                 ''.join('noise %s\n' % ('x' * 150) for _ in range(400)) + 'Connected to dbserver\n')
+                archive.writestr('client-evidence/character-server-logs.zip', inner.getvalue())
+            parts = host.zone_diagnostics(evidence)
+        self.assertTrue(parts and all(len(json.dumps(part)) <= 3800 for part in parts))
+        merged = {key: value for part in parts for key, value in part.items()}
+        self.assertEqual(merged['dbserver_console'][-1][:40], 'Received connection from a MapServer wit')
+        self.assertNotIn("Can't connect to dbserver", json.dumps(merged))
+        self.assertEqual(merged['atlas_signal'], ['Error: dbAsyncMapMoveEx failed'])
+        self.assertEqual(merged['character-zoning-map-101_signal'], ['Connected to dbserver'])
+        self.assertEqual(merged['server_logs_signal'], ['error: 261105 23:01:00 1 MapXfer(1/1 : 101) failed'])
+        self.assertEqual(host.zone_diagnostics(Path('/nonexistent')), [{'read_error': host.zone_diagnostics(
+            Path('/nonexistent'))[0]['read_error']}])
 
 
 if __name__ == '__main__':

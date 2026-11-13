@@ -41,8 +41,8 @@ def recovered(sent_seconds=1285):
 
 
 class SessionBudgetGuestTests(unittest.TestCase):
-    def budget(self, operation_deadline=5400):
-        return policy.SessionBudget(SESSION, PID, 0, operation_deadline)
+    def budget(self, operation_deadline=5400, name='THORHERO'):
+        return policy.SessionBudget(SESSION, PID, 0, operation_deadline, name=name)
 
     def connect(self, budget=None, now=1214):
         budget = budget or self.budget()
@@ -117,6 +117,29 @@ class SessionBudgetGuestTests(unittest.TestCase):
             with self.subTest(now=now, sent=sent), self.assertRaises(ValueError):
                 budget.grounded(recovered(sent), now, UTC_START + now * 1000)
             self.assertEqual(budget.revision, 1)
+
+    def test_any_name_the_game_accepts_is_the_sessions_own(self):
+        # 0.13.62 (Thor 0.13.61 created the villain Ralakar): the budget carries
+        # the session's own name and refuses any other, valid or not.
+        for name in ('Ralakar', "Dr. O'Malley", 'Wolf-Spider 2'):
+            budget = self.budget(name=name); value = proof(); value['name'] = name
+            event = budget.connected(value, 1214, UTC_START + 1214000)
+            self.assertEqual((event['name'], event['revision']), (name, 1))
+            other = self.budget(name=name)
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                other.connected(proof(), 1214, UTC_START + 1214000)
+        for name in ('ab', ' Ralakar', 'Two  Spaces', 'x' * 21, 'Tab\tName'):
+            with self.subTest(invalid=name), self.assertRaises(ValueError):
+                policy.SessionBudget(SESSION, PID, 0, 5400, name=name)
+        # Without an expected name the first valid one binds the budget.
+        budget = policy.SessionBudget(SESSION, PID, 0, 5400); value = proof(); value['name'] = 'Ralakar'
+        budget.connected(value, 1214, UTC_START + 1214000)
+        with self.assertRaises(ValueError):
+            budget.grounded(recovered(), 1470, UTC_START + 1470000)
+        self.assertEqual(budget.revision, 1)
+        ground = recovered(); ground['name'] = 'Ralakar'
+        self.assertEqual(budget.grounded(ground, 1470, UTC_START + 1470000)['name'], 'Ralakar')
+        self.assertEqual(budget.revision, 2)
 
     def test_invalid_identity_session_map_or_unvalidated_ready_cannot_grant_budget(self):
         for field, value in (('session_id', 'f' * 32), ('client_pid', PID + 1),

@@ -751,7 +751,7 @@ public final class GPURepairEvidenceHost {
   String generation,sourceCommit,dataCommit;long count,bytes;File dataDirectory=new File("/host/import/data");
  }
  static final class Runtime {
-  boolean reopen=true;String session,gpuProfileRequested="software",clientArchitectureRequested="x86";JSONObject manifest,clientManifest;
+  boolean reopen=true,stockTravelRequested=false;String session,gpuProfileRequested="software",clientArchitectureRequested="x86";JSONObject manifest,clientManifest;
   JSONObject characterConnectedEvent,characterSavedEvent;
   long observedClientPid,clientWindowObservedUptime,clientWindowEndedUptime,launcherBudgetStartedUptime,startedUptime;
   List<Map<String,Object>> sessionBudgetEvents=new ArrayList<>();
@@ -837,7 +837,8 @@ class GPURepairEvidenceTests(unittest.TestCase):
     def setUpClass(cls):
         source = (JAVA/'ClientRuntime.java').read_text()
         methods = '\n'.join(method(source, signature) for signature in (
-            'private boolean gpuProfileReportMatches(', 'private boolean zoningEnabled(', 'private boolean guestAccepted('))
+            'private boolean gpuProfileReportMatches(', 'private boolean zoningEnabled(', 'private boolean dynamicCreation(',
+            'private boolean guestAccepted('))
         cls.temp = tempfile.TemporaryDirectory(prefix='coh-gpu-repair-evidence-')
         harness = Path(cls.temp.name)/'GPURepairEvidenceHost.java'
         harness.write_text(HARNESS.replace('METHODS', methods).replace('FIXTURE_VALUE', java_value(FIXTURE)))

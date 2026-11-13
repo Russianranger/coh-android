@@ -71,6 +71,30 @@ class SchedulerTests(unittest.TestCase):
         control.scanner.identities.append({'proc_pid': pid, 'pid': pid, 'starttime': pid * 10})
         return path
 
+    def test_idle_token_weights_only_its_resident_map_by_ten_and_restores(self):
+        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        owner = SimpleNamespace(wine_owner=SimpleNamespace(receipt={}), ctx=SimpleNamespace(secrets=['a' * 64]))
+        probe = {'supported': True, 'original_nice': 0, 'rlimit_nice_soft': 40, 'lowered_nice': 5, 'restored_nice': 0}
+        self.create()   # installs the priority patches
+        control = scheduler.PreparationScheduler(owner, 1, probe=probe, token='a' * 64,
+            environment_name=scheduler.IDLE_ENVIRONMENT, increment=scheduler.IDLE_NICE_INCREMENT,
+            policy='idle_resident_plus_10_nice', sample_limit=scheduler.IDLE_SAMPLE_LIMIT)
+        control.scanner = FakeScanner(Path(temporary.name))
+        self.assertEqual(owner.ctx.secrets, ['a' * 64])
+        self.assertEqual(control.needle, b'COH_ZONING_IDLE_OWNER=' + b'a' * 64)
+        self.group(control, 81001, tids=(81002,))
+        foreign = self.group(control, 82001)
+        (foreign / 'environ').write_bytes(b'COH_ZONING_PREPARATION_OWNER=' + b'a' * 64 + b'\0')
+        control.sample()
+        self.assertCountEqual(self.writes, [(81001, 10), (81002, 10)])
+        self.assertEqual((control.report['policy'], control.report['nice_increment']), ('idle_resident_plus_10_nice', 10))
+        control.restore()
+        self.assertEqual([self.nice[p] for p in (81001, 81002, 82001)], [0, 0, 0])
+        self.assertTrue(control.report['restore_complete'])
+        for _ in range(40):
+            control.next_sample = 0; control.sample()
+        self.assertLessEqual(len(control.report['samples']), scheduler.IDLE_SAMPLE_LIMIT)
+
     def test_unsupported_probe_does_not_change_any_task(self):
         control = self.create(False)
         self.group(control, 81001, tids=(81002,))
@@ -251,6 +275,83 @@ class ActualOwnershipTests(unittest.TestCase):
             for child in children:
                 child.terminate(); child.wait(timeout=3)
                 child.stdout.close(); child.stderr.close()
+
+
+class WinePrioritySnapshotTests(unittest.TestCase):
+    """Read-only evidence: thread nice values per Wine program."""
+    def fake_proc(self, root, pid, command, tasks):
+        directory = root / str(pid); (directory / 'task').mkdir(parents=True)
+        (directory / 'cmdline').write_bytes(command)
+        for tid, state, nice, *cpu in tasks:
+            task = directory / 'task' / str(tid); task.mkdir()
+            # stat fields 3.., nice is field 19 (index 16), processor field 39 (index 36).
+            # utime and stime are fields 14 and 15 (indexes 11 and 12): tid ticks of each here.
+            fields = ([state] + ['0'] * 10 + [str(tid), str(tid)] + ['0'] * 3 + [str(nice)] + ['0'] * 19
+                      + [str(cpu[0] if cpu else 0)] + ['0'] * 10)
+            (task / 'stat').write_text(str(tid) + ' (wine) name) ' + ' '.join(fields) + '\n')
+
+    def test_counts_threads_per_nice_for_known_programs_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake_proc(root, 10, b'/usr/bin/FEXInterpreter\0C:\\coh\\CityOfHeroes.exe\0-noaudio\0',
+                           [(10, 'S', 0), (11, 'S', 11), (12, 'R', 11), (13, 'Z', 11)])
+            self.fake_proc(root, 20, b'C:\\srv\\MapServer.exe\0', [(20, 'S', 0, 7), (21, 'S', 0, 2)])
+            self.fake_proc(root, 30, b'/opt/wine/bin/wineserver\0', [(30, 'S', 0)])
+            self.fake_proc(root, 40, b'/usr/bin/python3\0guest.py\0', [(40, 'S', 0)])
+            (root / 'self').mkdir()
+            # 0.13.67: where each program may run, and which threads use the CPU.
+            (root / '10/status').write_text('Name:\twine\nCpus_allowed:\t7f\nCpus_allowed_list:\t0-6\n')
+            (root / '10/cgroup').write_text('3:cpuset:/foreground\n1:cpu:/\n')
+            (root / 'self/status').write_text('Name:\tpython3\nCpus_allowed_list:\t0-7\n')
+            (root / 'meminfo').write_text('MemTotal:       15620000 kB\nMemAvailable:   10240000 kB\n'
+                                          'SwapTotal:       8388604 kB\nSwapFree:        4194302 kB\n')
+            # 0.13.69: context switches of the busiest threads (waiting or computing?).
+            (root / '10/task/12/status').write_text('Name:\twine\nvoluntary_ctxt_switches:\t9000\n'
+                                                    'nonvoluntary_ctxt_switches:\t41\n')
+            (root / '10/task/11/status').write_text('Name:\twine\nvoluntary_ctxt_switches:\tmany\n')
+            value = scheduler.wine_priority_snapshot(root)
+        self.assertEqual(value['programs']['CityOfHeroes.exe'],
+                         {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}, 'last_cpu': {'0': 3},
+                          'busiest_threads': [[24, 'wine) name', 0, 11, 9000, 41], [22, 'wine) name', 0, 11, None, None],
+                                              [20, 'wine) name', 0, 0, None, None]],
+                          'cpus_allowed': ['0-6'], 'cgroup': ['3:cpuset:/foreground']})
+        self.assertEqual(value['programs']['MapServer.exe'],
+                         {'processes': 1, 'threads': 2, 'nice': {'0': 2}, 'last_cpu': {'2': 1, '7': 1},
+                          'busiest_threads': [[42, 'wine) name', 2, 0, None, None], [40, 'wine) name', 7, 0, None, None]],
+                          'cpus_allowed': [], 'cgroup': []})
+        self.assertEqual(value['guest'], {'cpus_allowed': '0-7', 'cgroup': None})
+        self.assertEqual(value['memory'], {'MemTotal': 15253, 'MemAvailable': 10000, 'SwapTotal': 8191,
+                                           'SwapFree': 4095, 'pressure': None})
+        self.assertEqual(set(value['programs']), {'CityOfHeroes.exe', 'MapServer.exe', 'wineserver'})
+        self.assertEqual(value['processes_scanned'], 4)
+        self.assertFalse(value['truncated'])
+        self.assertEqual(len(value['rlimit_nice']), 2)
+
+    def test_cpu_max_frequencies_tell_clusters_apart_and_hidden_sysfs_is_none(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for cpu, khz in ((0, 2016000), (1, 2016000), (3, 2803200), (7, 3187200)):
+                path = root / ('cpu%d' % cpu) / 'cpufreq'; path.mkdir(parents=True)
+                (path / 'cpuinfo_max_freq').write_text(str(khz) + '\n')
+            (root / 'cpu2').mkdir()   # online CPU without cpufreq
+            for cpu in (4, 5, 6):
+                (root / ('cpu%d' % cpu)).mkdir()
+            self.assertEqual(scheduler.cpu_max_khz(root), {'0': 2016000, '1': 2016000, '3': 2803200, '7': 3187200})
+            self.assertIsNone(scheduler.cpu_max_khz(root / 'missing'))
+
+    def test_foreign_uid_vanished_and_malformed_entries_are_skipped_and_bounds_hold(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake_proc(root, 10, b'MapServer.exe', [(10, 'S', 0)])
+            (root / '11').mkdir()  # vanished: no cmdline
+            self.fake_proc(root, 12, b'MapServer.exe', [(12, 'S', 0)])
+            (root / '12/task/12/stat').write_text('garbage')
+            value = scheduler.wine_priority_snapshot(root, uid=os.getuid() + 1)
+            self.assertEqual(value['programs'], {})
+            value = scheduler.wine_priority_snapshot(root)
+            self.assertEqual(value['programs']['MapServer.exe']['threads'], 1)
+            with patch.object(scheduler, 'PRIORITY_PROCESS_LIMIT', 1):
+                self.assertTrue(scheduler.wine_priority_snapshot(root)['truncated'])
 
 
 if __name__ == '__main__':

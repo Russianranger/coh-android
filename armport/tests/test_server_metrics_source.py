@@ -172,7 +172,9 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(receipt['retained_sha256'][startup.TABLE],
                          self.startup_base['animation_certificate']['generated_table']['sha256'])
         inputs, images = source.native_images('thor_certified_startup', self.startup_base, UPSTREAM_ROOT)
-        self.assertEqual(images[source.SVR], source.patch_loop(inputs[source.SVR]))
+        self.assertEqual(images[source.SVR], source.patch_spare(source.patch_loop(inputs[source.SVR])))
+        self.assertEqual(images[source.SVR].count(b'        cmdCfgLoad();\n        armportSpareWait();\n'), 1)
+        self.assertIn(source.SPARE_HEADER, images)
         self.assertIn(b'cohMonorailInit', images[source.SVR])
         changed = copy.deepcopy(self.startup_base)
         changed['contract']['native_station_prepare_seconds'] = 600

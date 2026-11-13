@@ -25,15 +25,36 @@ def utc_milliseconds(value):
     return type(value) is int and 0 < value < 2**63
 
 
+STATIC_ZONES = 'static_zones'
+
+
+def static_zone(map_id):
+    import zone_index
+    return type(map_id) is int and (map_id == 101 or map_id in zone_index.ZONES)
+
+
+def valid_name(name):
+    """Any player name the game accepts (local_character_server.valid_character_name, 0.13.62)."""
+    return (type(name) is str and 3 <= len(name) <= 20 and all(32 <= ord(c) <= 126 for c in name)
+            and name == name.strip() and '  ' not in name)
+
+
 class SessionBudget:
     """Validate connection identity; explicit manual policy has no gameplay deadline."""
     def __init__(self, session_id, client_pid, launcher_started, operation_deadline,
-                 *, presentation_ready=None, supported_maps=(1,), manual=False):
-        require(supported_maps in ((1,), (1, 101), (1, 5, 101)), 'Unreviewed reopen budget maps')
+                 *, presentation_ready=None, supported_maps=(1,), manual=False, name=None):
+        # 'static_zones': the game's own zone travel; any static zone the shared
+        # tree serves (zone_index), Atlas instance 2 and King's Row included.
+        require(supported_maps in ((1,), (1, 101), (1, 5, 101), STATIC_ZONES), 'Unreviewed reopen budget maps')
         require(type(manual) is bool, 'Invalid manual session policy')
+        # 0.13.62: the session's own character name (any name the game accepts),
+        # read from SQL by the guest; None accepts any valid name once.
+        require(name is None or valid_name(name), 'Invalid reopen budget character name')
+        self.expected_name = name
         self.manual = manual
         self.supported_maps = supported_maps
         self.map_id = 1
+        self.name = None  # the connected character's own name (identity)
         require(isinstance(session_id, str) and re.fullmatch(r'[0-9a-f]{32}', session_id)
                 and type(client_pid) is int and 0 < client_pid <= 4294967295,
                 'Invalid reopen budget session or owned client identity')
@@ -75,22 +96,28 @@ class SessionBudget:
                 and type(proof.get('character_id')) is int and proof['character_id'] == 1
                 and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
                 and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
-                and type(proof.get('map_id')) is int and proof['map_id'] in self.supported_maps
+                and type(proof.get('map_id')) is int
+                and (static_zone(proof['map_id']) and proof.get('stock_travel') is True
+                     if self.supported_maps == STATIC_ZONES else proof['map_id'] in self.supported_maps)
                 and (self.supported_maps == (1,) or proof.get('zoning_enabled') is True)
-                and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True)
-                and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
+                and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True
+                     or self.supported_maps == STATIC_ZONES)
+                and valid_name(proof.get('name'))
+                and proof.get('name') == (self.expected_name or self.name or proof.get('name'))
+                and proof.get('account') == 'COHLOCAL'
                 and all(proof.get(key) is True for key in ('connected_on_atlas', 'reopen_verified',
                     'existing_character_verified', 'preserved_existing_identity',
                     'native_client_ready_observed')),
                 'Reopen budget differs from the validated native character connection')
         self.map_id = proof['map_id']
+        self.name = proof['name']
 
     def event(self, phase, now, now_utc_ms, deadline, *, save_ms=0, movement_ms=0):
         deadline_ms = 0 if self.manual else now_utc_ms + int(round((deadline - now) * 1000))
         require(self.manual or utc_milliseconds(deadline_ms) and now_utc_ms < deadline_ms,
                 'Reopen phase deadline is exhausted')
         value = {'format': 1, 'session_id': self.session_id, 'client_pid': self.client_pid,
-            'character_id': 1, 'name': 'THORHERO', 'account': 'COHLOCAL', 'map_id': self.map_id,
+            'character_id': 1, 'name': self.name, 'account': 'COHLOCAL', 'map_id': self.map_id,
             'revision': self.revision, 'phase': phase, 'generated_utc_ms': now_utc_ms,
             'deadline_utc_ms': deadline_ms, 'save_request_deadline_utc_ms': save_ms,
             'movement_deadline_utc_ms': movement_ms, 'native_client_ready_observed': True,
@@ -101,6 +128,8 @@ class SessionBudget:
             value['zoning_enabled'] = True
         if self.supported_maps == (1, 5, 101):
             value['monorail_enabled'] = True
+        if self.supported_maps == STATIC_ZONES:
+            value['stock_travel'] = True
         if phase == 'grounded':
             value.update(recovery_requested=True, recovery_verified=True,
                          ordinary_stuck_observed=True, stable_ground_verified=True)

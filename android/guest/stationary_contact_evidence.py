@@ -48,11 +48,25 @@ SUFFIX = (r' ExpLevel:(?P<level>[1-9][0-9]{0,2}), AlignmentNum:(?P<alignment>[0-
           # do not prove a date/build identity and never enter contact proof.
           r'(?: BuildNumber: (?:dev: )?[0-9]{1,5}-[0-9]{1,5}-[0-9]{1,5}'
           r' [0-9]{1,5}:[0-9]{1,5}:[0-9]{1,5})?')
-PREFIX = r'^"THORHERO:COHLOCAL" (?P<teamup>-?[0-9]{1,10}) '
-OPEN = re.compile(PREFIX + r'ContactInteract:GenericOpen Initiating interaction with contact '
-    r'(?P<handle>[1-9][0-9]{0,9}) \((?P<name>[^\r\n()]{1,80})\)' + SUFFIX + '$')
-RESPONSE = re.compile(PREFIX + r'ContactInteract:Response Received response '
-    r'(?P<link>[0-9]{1,10}) to contact (?P<handle>[1-9][0-9]{0,9})' + SUFFIX + '$')
+
+
+def prefix():
+    """The stock entity-log prefix of this session's character (any name since 0.13.62)."""
+    return '^' + server.entity_name_prefix() + r' (?P<teamup>-?[0-9]{1,10}) '
+
+
+_PATTERNS = {}
+
+
+def patterns():
+    """OPEN and RESPONSE for the current character name, compiled once per name."""
+    if server.CHARACTER not in _PATTERNS:
+        _PATTERNS[server.CHARACTER] = (
+            re.compile(prefix() + r'ContactInteract:GenericOpen Initiating interaction with contact '
+                r'(?P<handle>[1-9][0-9]{0,9}) \((?P<name>[^\r\n()]{1,80})\)' + SUFFIX + '$'),
+            re.compile(prefix() + r'ContactInteract:Response Received response '
+                r'(?P<link>[0-9]{1,10}) to contact (?P<handle>[1-9][0-9]{0,9})' + SUFFIX + '$'))
+    return _PATTERNS[server.CHARACTER]
 
 
 def positive_int(value):
@@ -68,7 +82,7 @@ def binding(proof, session, client_pid, now_utc_ms):
             and type(proof.get('character_id')) is int and proof['character_id'] == 1
             and type(proof.get('map_id')) is int and proof['map_id'] == 1
             and positive_int(proof.get('auth_id'))
-            and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
+            and proof.get('name') == server.CHARACTER and proof.get('account') == 'COHLOCAL'
             and all(proof.get(key) is True for key in ('connected_on_atlas',
                 'existing_character_verified', 'preserved_existing_identity',
                 'reopen_verified', 'native_client_ready_observed'))
@@ -77,7 +91,7 @@ def binding(proof, session, client_pid, now_utc_ms):
         return None
     ready = proof.get('client_ready_evidence')
     if not (type(ready) is dict and ready.get('loaded_world_assets') is True
-            and ready.get('name') == 'THORHERO' and ready.get('account') == 'COHLOCAL'):
+            and ready.get('name') == server.CHARACTER and ready.get('account') == 'COHLOCAL'):
         return None
     if ready.get('source') == 'current_owned_mapserver_immediate_ready':
         if not (ready.get('kind') == 'ready' and ready.get('session_id') == session
@@ -100,7 +114,7 @@ def binding(proof, session, client_pid, now_utc_ms):
         if not 0 < native_ms <= proof['client_ready_observed_utc_ms']:
             return None
     return {'session_id': session, 'client_pid': client_pid, 'character_id': 1,
-            'auth_id': proof['auth_id'], 'map_id': 1, 'name': 'THORHERO', 'account': 'COHLOCAL',
+            'auth_id': proof['auth_id'], 'map_id': 1, 'name': server.CHARACTER, 'account': 'COHLOCAL',
             'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
             'scope': 'previously_validated_current_session_reopen_connection',
             'native_log_contains_character_db_id': False,
@@ -152,13 +166,14 @@ count as separate interactions. Invalid optional inputs are unavailable evidence
                 continue
             if not identity['client_ready_observed_utc_ms'] <= utc_ms <= now_utc_ms:
                 continue
-            match, kind = OPEN.fullmatch(message), 'initiation'
+            opening, responding = patterns()
+            match, kind = opening.fullmatch(message), 'initiation'
             if match is None:
-                match, kind = RESPONSE.fullmatch(message), 'response'
+                match, kind = responding.fullmatch(message), 'response'
             if match is None:
                 # Another opening path or malformed own-player message cannot
                 # bridge an earlier click to a later response.
-                if message.startswith('"THORHERO:COHLOCAL"') and 'ContactInteract:' in message:
+                if message.startswith('"' + server.CHARACTER + ':COHLOCAL"') and 'ContactInteract:' in message:
                     active = None
                 continue
             handle, teamup = int(match['handle']), int(match['teamup'])

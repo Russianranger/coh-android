@@ -19,7 +19,15 @@ import diagnostic as base
 
 ENVIRONMENT = 'COH_ZONING_PREPARATION_OWNER'
 NICE_INCREMENT = 5
+# A resident MapServer the player has left: lower it more, restore before return.
+IDLE_ENVIRONMENT = 'COH_ZONING_IDLE_OWNER'
+IDLE_NICE_INCREMENT = 10
+IDLE_SAMPLE_LIMIT = 24
 TASK_LIMIT = 128
+# Read-only priority evidence (wine_priority_snapshot); never changes a process.
+PRIORITY_PROGRAMS = ('CityOfHeroes.exe', 'MapServer.exe', 'DbServer.exe', 'wineserver')
+PRIORITY_PROCESS_LIMIT = 4096
+PRIORITY_TASK_LIMIT = 1024
 GROUP_LIMIT = 16
 SAMPLE_LIMIT = 160
 
@@ -45,6 +53,163 @@ def pressure_observation(proc_root):
     except (OSError, ValueError, base.DiagnosticError):
         result['vmstat'] = {'unavailable': True}
     return result
+
+
+def context_switches(task):
+    """[voluntary, involuntary] context switches of one thread, or [None, None]."""
+    found = {}
+    try:
+        with open(Path(task) / 'status') as handle:
+            for line in handle.read(8192).splitlines():
+                name, _, value = line.partition(':')
+                if name in ('voluntary_ctxt_switches', 'nonvoluntary_ctxt_switches') and value.strip().isdecimal():
+                    found[name] = int(value)
+    except OSError:
+        pass
+    return [found.get('voluntary_ctxt_switches'), found.get('nonvoluntary_ctxt_switches')]
+
+
+def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2.0):
+    """Read-only: thread counts per nice value for each known Wine program of this uid.
+
+    Wineserver maps Windows priority classes and thread priorities onto nice
+    only when RLIMIT_NICE lets it raise priority again (Wine MR !4551, Linux).
+    The Thor guest reports RLIMIT_NICE 40, which enables that mapping; the
+    client asks for IDLE_PRIORITY_CLASS in development data mode
+    (game.c game_beforeParseArgs). This records what the kernel actually has.
+    """
+    started = time.monotonic()
+    uid = os.getuid() if uid is None else uid
+    programs, scanned, truncated = {}, 0, False
+    for entry in os.scandir(proc_root):
+        if not entry.name.isdecimal():
+            continue
+        scanned += 1
+        if scanned > PRIORITY_PROCESS_LIMIT or time.monotonic() - started > deadline_seconds:
+            truncated = True
+            break
+        path = Path(entry.path)
+        try:
+            if path.stat().st_uid != uid:
+                continue
+            with open(path / 'cmdline', 'rb') as handle:
+                command = handle.read(4096)
+            name = next((value for value in PRIORITY_PROGRAMS if value.encode() in command), None)
+            if name is None:
+                continue
+            counts, cpus, tasks, busiest = {}, {}, 0, []
+            for task in os.scandir(path / 'task'):
+                if not task.name.isdecimal():
+                    continue
+                tasks += 1
+                if tasks > PRIORITY_TASK_LIMIT:
+                    truncated = True
+                    break
+                with open(Path(task.path) / 'stat') as handle:
+                    head, _, tail = handle.read(4096).rpartition(') ')
+                fields = tail.split()
+                if fields[0] == 'Z':
+                    continue
+                nice = int(fields[16])  # stat field 19
+                base.require(-20 <= nice <= 19, 'Invalid task nice value')
+                counts[str(nice)] = counts.get(str(nice), 0) + 1
+                # stat field 39: the CPU the thread last ran on (0.13.50:
+                # which cluster runs the zone servers' bursty ticks).
+                cpu = fields[36] if len(fields) > 36 and fields[36].isdecimal() else None
+                if cpu is not None and int(cpu) < 64:
+                    cpus[cpu] = cpus.get(cpu, 0) + 1
+                # 0.13.67: which threads use the CPU (stat fields 14 and 15, clock ticks since
+                # the thread started), and where they last ran. Thor 0.13.66: the client used
+                # 1.65 cores at 28-33 FPS and no sampled thread had run on the fastest core.
+                if fields[11].isdecimal() and fields[12].isdecimal():
+                    busiest.append([int(fields[11]) + int(fields[12]), head.partition('(')[2][:15],
+                                    None if cpu is None else int(cpu), nice, task.path])
+            # 0.13.69: how often each of the process's busiest threads gave up its core
+            # (voluntary) or lost it (involuntary). Thor 0.13.67: four client threads at about
+            # 30% of a core each and none saturated; the counts tell waiting from computing.
+            busiest = sorted(busiest, key=lambda item: -item[0])[:8]
+            for item in busiest:
+                item[4:] = context_switches(item[4])
+            row = programs.setdefault(name, {'processes': 0, 'threads': 0, 'nice': {}, 'last_cpu': {},
+                                             'busiest_threads': [], 'cpus_allowed': [], 'cgroup': []})
+            row['busiest_threads'] = sorted(row['busiest_threads'] + busiest, key=lambda item: -item[0])[:8]
+            placement = process_placement(path)
+            for key in ('cpus_allowed', 'cgroup'):
+                if placement[key] is not None and placement[key] not in row[key] and len(row[key]) < 4:
+                    row[key].append(placement[key])
+            row['processes'] += 1
+            row['threads'] += sum(counts.values())
+            for nice, count in counts.items():
+                row['nice'][nice] = row['nice'].get(nice, 0) + count
+            for cpu, count in cpus.items():
+                row['last_cpu'][cpu] = row['last_cpu'].get(cpu, 0) + count
+        except (OSError, IndexError, ValueError):
+            continue
+    limits = resource.getrlimit(resource.RLIMIT_NICE)
+    for row in programs.values():
+        row['nice'] = dict(sorted(row['nice'].items(), key=lambda item: int(item[0])))
+        row['last_cpu'] = dict(sorted(row['last_cpu'].items(), key=lambda item: int(item[0])))
+    return {'programs': dict(sorted(programs.items())), 'rlimit_nice': [limits[0], limits[1]],
+            'cpu_max_khz': cpu_max_khz(), 'guest': process_placement(proc_root / 'self'),
+            'memory': memory_snapshot(proc_root), 'processes_scanned': scanned, 'truncated': truncated,
+            'seconds': round(time.monotonic() - started, 3)}
+
+
+def process_placement(path):
+    """Read-only: the CPUs a process may run on and its cpuset/cgroup (None when hidden)."""
+    result = {'cpus_allowed': None, 'cgroup': None}
+    try:
+        with open(Path(path) / 'status') as handle:
+            for line in handle.read(8192).splitlines():
+                if line.startswith('Cpus_allowed_list:'):
+                    result['cpus_allowed'] = line.split(':', 1)[1].strip()[:64]
+    except OSError:
+        pass
+    try:
+        with open(Path(path) / 'cgroup') as handle:
+            lines = handle.read(4096).splitlines()
+        chosen = [line for line in lines if ':cpuset:' in line or line.startswith('0::')] or lines
+        result['cgroup'] = ' | '.join(line[:80] for line in chosen[:3]) or None
+    except OSError:
+        pass
+    return result
+
+
+def memory_snapshot(proc_root=Path('/proc')):
+    """Read-only: free memory, swap and memory pressure as the kernel reports them (MiB)."""
+    result = {}
+    try:
+        with open(Path(proc_root) / 'meminfo') as handle:
+            for line in handle.read(8192).splitlines():
+                name, _, value = line.partition(':')
+                if name in ('MemTotal', 'MemAvailable', 'SwapTotal', 'SwapFree', 'Cached'):
+                    result[name] = int(value.split()[0]) // 1024
+    except (OSError, ValueError, IndexError):
+        pass
+    try:
+        with open(Path(proc_root) / 'pressure/memory') as handle:
+            result['pressure'] = handle.read(512).strip().replace('\n', ' | ')[:240]
+    except OSError:
+        result['pressure'] = None
+    return result
+
+
+def cpu_max_khz(root=Path('/sys/devices/system/cpu')):
+    """Per-CPU maximum frequency, to tell the clusters apart; None when hidden."""
+    result = {}
+    try:
+        for cpu in range(64):
+            path = root / ('cpu%d' % cpu) / 'cpufreq/cpuinfo_max_freq'
+            if not path.exists():
+                if cpu and not (root / ('cpu%d' % cpu)).exists():
+                    break
+                continue
+            value = path.read_text().strip()
+            if value.isdecimal():
+                result[str(cpu)] = int(value)
+    except OSError:
+        return None
+    return result or None
 
 
 def priority_probe():
@@ -91,17 +256,24 @@ def checked_probe():
 
 
 class PreparationScheduler:
-    """Lower only a new destination's tasks, restoring before readiness publication."""
-    def __init__(self, owner, map_id, *, probe=None):
+    """Lower only a new destination's tasks, restoring before readiness publication.
+
+    With token/environment_name/increment, the same proofs weight an idle
+    resident map that was launched with that token (IdleScheduler)."""
+    def __init__(self, owner, map_id, *, probe=None, token=None, environment_name=ENVIRONMENT,
+                 increment=NICE_INCREMENT, policy='temporary_plus_5_nice_exact_destination_threads',
+                 sample_limit=SAMPLE_LIMIT):
         self.owner = owner
         self.scanner = copy.copy(owner.wine_owner)
         self.scanner.initialized = False
         self.scanner.receipt = copy.deepcopy(owner.wine_owner.receipt)
         self.scanner.dead_leaders, self.scanner.owned_workers = set(), set()
-        self.token = secrets.token_hex(32)
-        owner.ctx.secrets.append(self.token)
-        self.needle = (ENVIRONMENT + '=' + self.token).encode()
-        self.environment = {ENVIRONMENT: self.token}
+        self.increment, self.sample_limit = increment, sample_limit
+        self.token = secrets.token_hex(32) if token is None else token
+        if self.token not in owner.ctx.secrets:
+            owner.ctx.secrets.append(self.token)
+        self.needle = (environment_name + '=' + self.token).encode()
+        self.environment = {environment_name: self.token}
         self.changed = {}
         self.groups = {}
         self.unresolved_inheritance = False
@@ -110,7 +282,7 @@ class PreparationScheduler:
         self.restored = False
         self.capability = checked_probe() if probe is None else probe
         self.report = {'format': 1, 'map_id': map_id,
-            'policy': 'temporary_plus_5_nice_exact_destination_threads',
+            'policy': policy, 'nice_increment': increment,
             'ownership': 'diagnostic_and_unique_map_tokens_real_uid_group_and_thread_starttimes',
             'capability': self.capability, 'samples': [], 'changed_threads': 0,
             'restored_threads': 0, 'exited_threads': 0, 'unavailable_samples': 0,
@@ -142,7 +314,7 @@ class PreparationScheduler:
             if parent_original is not None and any(k[:2] == parent_key for k in self.changed):
                 current = self.scanner.process_stat(self.scanner.proc_root / str(parent['proc_pid']))
                 base.require(current['starttime'] == parent['starttime'], 'Destination parent identity changed')
-                if original == min(19, parent_original + NICE_INCREMENT):
+                if original == min(19, parent_original + self.increment):
                     original, inherited = parent_original, True
         if not inherited and any(original == record[5] for record in self.changed.values()):
             self.unresolved_inheritance = True
@@ -151,7 +323,7 @@ class PreparationScheduler:
         if inherited:
             for task, info, tid in tasks:
                 self.changed[(*key, info['pid'], info['starttime'])] = (
-                    identity, task, info, tid, original, min(19, original + NICE_INCREMENT))
+                    identity, task, info, tid, original, min(19, original + self.increment))
             self.report['changed_threads'] = len(self.changed)
         return original
 
@@ -255,7 +427,7 @@ class PreparationScheduler:
                     for task, info, tid in tasks:
                         key = (*group_key, info['pid'], info['starttime'])
                         before = os.getpriority(os.PRIO_PROCESS, tid)
-                        target = min(19, group_original + NICE_INCREMENT) if group_original is not None else None
+                        target = min(19, group_original + self.increment) if group_original is not None else None
                         limit = self.capability.get('rlimit_nice_soft', 0)
                         restorable = limit == resource.RLIM_INFINITY or 20 - limit <= before
                         if (self.capability.get('supported') is True and group_original is not None
@@ -265,7 +437,7 @@ class PreparationScheduler:
                             # original weight, never to a guessed global default.
                             original = group_original if before == target and any(
                                 k[:2] == group_key for k in self.changed) else before
-                            lower = min(19, original + NICE_INCREMENT)
+                            lower = min(19, original + self.increment)
                             self._check_task(identity, task, info, deadline)
                             if before != lower:
                                 os.setpriority(os.PRIO_PROCESS, tid, lower)
@@ -292,7 +464,7 @@ class PreparationScheduler:
                 except (FileNotFoundError, ProcessLookupError):
                     continue
             self.report['changed_threads'] = len(self.changed)
-            if len(self.report['samples']) < SAMPLE_LIMIT:
+            if len(self.report['samples']) < self.sample_limit:
                 pressure = pressure_observation(self.scanner.proc_root)
                 self.report['samples'].append({'utc_ms': int(time.time() * 1000),
                     'monotonic_ms': int(now * 1000), 'processes': rows,
@@ -339,7 +511,7 @@ class PreparationScheduler:
                         live.add(key)
                         if key not in self.changed and any(k[:2] == group_key for k in self.changed):
                             current = os.getpriority(os.PRIO_PROCESS, tid)
-                            if current == min(19, original + NICE_INCREMENT):
+                            if current == min(19, original + self.increment):
                                 self.changed[key] = (identity, task, info, tid, original, current)
                                 self.report['changed_threads'] = len(self.changed)
                 except (FileNotFoundError, ProcessLookupError):
