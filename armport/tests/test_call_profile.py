@@ -50,6 +50,8 @@ class CallProfile(unittest.TestCase):
         self.assertEqual(record['by_call'], {'os.stat': 3, 'os.listdir': 1, 'open': 1})
         self.assertEqual(record['callers'][0][:2], ['os.stat', 'test_call_profile.py'])
         self.assertEqual(record['callers'][0][3], 3)
+        self.assertIsInstance(record['callers'][0][4], str)        # its own callers, when it has any
+        self.assertEqual(record['format'], 2)
         self.assertIs(counts, namespace['install_call_profile'](environ={'COH_CALL_PROFILE': '1'}))   # installed once
 
     def test_ci_switch_and_report(self):

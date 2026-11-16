@@ -431,10 +431,17 @@ yet tested on the Thor. This continues "pursuing the goals".
   `observe_live_lineage`, which `LocalCharacterServer.health()` called on
   every tick (about three full /proc scans a second).
 - **Change.** `health()` observes the lineage at most once in
-  `LINEAGE_OBSERVATION_SECONDS` (3). `memory_observation` samples every 15 s
+  `LINEAGE_OBSERVATION_SECONDS` (15). `memory_observation` samples every 15 s
   (5 before); each sample is a full ownership scan. Risk taken: a Wine process
-  whose leader exits within 3 s of starting while workers live on is not
+  whose leader exits within 15 s of starting while workers live on is not
   authenticated for cleanup; that is a crash path.
+- **First attempt, 3 s (build 43798775261, runtime 43808003132 at 6d296ae4e;
+  not published).** It moved little: the reopen session's wrapped calls fell
+  from 527,031 to 463,868 and PRoot's stops from 11.8 to 11.4 million (Python
+  22 % to 19.6 %). The same readers still made 327,602 calls, so one scan
+  costs about a thousand calls (every thread of every process) and had been
+  running once in about 2.6 s, not on every tick as I had read it. The
+  profile now records up to three callers above each line (`format` 2).
 - **Creation session** (2,227,812 calls) is mostly one-time checks:
   `character_server_data_cache.py:227/236` 381,754, `local_character_server.py:3193/3244`
   360,971, `armport_client_package.py:186/195/197` 519,015,

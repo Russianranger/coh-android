@@ -1797,7 +1797,11 @@ def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_paylo
     return result
 
 
-LINEAGE_OBSERVATION_SECONDS = 3     # Wine leader/worker ownership sampling (health())
+# Wine leader/worker ownership sampling (health()). One observation reads the state of every
+# process and thread; CI run 43808003132 at 3 s still spent 328,000 of the supervisor's 464,000
+# file calls of a reopen session on these reads (527,000 unthrottled), so a scan costs about a
+# thousand calls and ran once in 2.6 s before.
+LINEAGE_OBSERVATION_SECONDS = 15
 
 
 class LocalCharacterServer(login.LocalLoginServer):
@@ -3540,9 +3544,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         wine_owner = getattr(self.owner, 'wine_owner', None)
         observe = getattr(wine_owner, 'observe_live_lineage', None)
         # 0.13.72: at most once in LINEAGE_OBSERVATION_SECONDS. This ran on every health() call
-        # and reads four /proc files of every process each time: CI run 43401783716 counted
-        # 404,000 of the supervisor's 527,000 file calls of a reopen session here, about 15 % of
-        # everything PRoot stopped (the supervisor makes 22 % of all stops).
+        # and reads /proc files of every process and thread each time: CI run 43401783716 counted
+        # 404,000 of the supervisor's 527,000 file calls of a reopen session in these readers.
         now = time.monotonic()
         if observe is not None and now >= getattr(self, 'next_lineage_observation', 0.0):
             self.next_lineage_observation = now + LINEAGE_OBSERVATION_SECONDS

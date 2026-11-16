@@ -28,9 +28,9 @@ the steps are the same. All three come from your 0.13.69 launches A, B and C
 - New in 0.13.71: the monitor no longer stops the call a server uses to look
   for new connections. In CI that was 17 % of everything it stopped (1,340
   times a second). The count now also names the program behind each call.
-- New in 0.13.72: the app's own supervisor script no longer re-reads the
-  state of every process about three times a second. In CI that was about
-  15 % of everything the monitor stopped during play.
+- New in 0.13.72: the app's own supervisor script re-reads the state of
+  every process once in 15 s instead of about once in 3 s. Those reads were
+  most of that script's file calls during play.
 - A zone's navigation map is no longer re-checked file by file at every
   start (16 s per start, 57 s on a first visit to a zone).
 - The report holds the time the game itself reached the zone server.

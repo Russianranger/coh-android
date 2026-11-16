@@ -325,10 +325,10 @@ jobs:
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.72: the app's own supervisor script inside the Linux system no longer re-reads
-          the state of every process about three times a second (now once in 3 s, and the memory
-          sample once in 15 s). In CI that was about 15 % of everything the system-call monitor
-          stopped during play.
+          New in 0.13.72: the app's own supervisor script inside the Linux system re-reads the state
+          of every process and thread once in 15 s (about once in 3 s before), and takes its memory
+          sample once in 15 s (5 s before). Those reads were most of that script's file calls
+          during play, and the script makes about a fifth of everything the monitor stops.
           From 0.13.71: the lighter system-call monitor no longer stops the call a server uses to
           look for new connections, and its count in the report names the program behind each call.
           From 0.13.70 (Thor test of 0.13.69): Save after travelling is confirmed again; "Fast

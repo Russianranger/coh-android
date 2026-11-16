@@ -176,12 +176,17 @@ def install_call_profile(environ=os.environ, modules=None):
         original = getattr(owner, name)
 
         def counted(*args, **kwargs):
-            frame = sys._getframe(1)
-            for _ in range(16):
-                if frame.f_back is None or not frame.f_code.co_filename.startswith(library):
+            # The first caller outside the standard library, then up to three of its callers:
+            # run 43808003132 named diagnostic.py:326 without saying which loop reaches it.
+            frame, chain = sys._getframe(1), []
+            for _ in range(48):
+                if not frame.f_code.co_filename.startswith(library):
+                    chain.append(os.path.basename(frame.f_code.co_filename) + ':' + str(frame.f_lineno))
+                if frame.f_back is None or len(chain) == 4:
                     break
                 frame = frame.f_back
-            counts[(label, os.path.basename(frame.f_code.co_filename), frame.f_lineno)] += 1
+            head = (chain[0].rsplit(':', 1) if chain else ['?', '0'])
+            counts[(label, head[0], int(head[1]), '<'.join(chain[1:]))] += 1
             return original(*args, **kwargs)
         setattr(owner, name, counted)
 
@@ -197,11 +202,11 @@ def call_profile_record(top=60):
         return None
     rows = sorted(counts.items(), key=lambda item: (-item[1], item[0]))
     by_call = {}
-    for (label, _, _), count in rows:
+    for (label, _, _, _), count in rows:
         by_call[label] = by_call.get(label, 0) + count
-    return {'format': 1, 'is_success_proof': False, 'total': sum(counts.values()), 'by_call': by_call,
-            'columns': ['call', 'file', 'line', 'count'],
-            'callers': [[label, name, line, count] for (label, name, line), count in rows[:top]]}
+    return {'format': 2, 'is_success_proof': False, 'total': sum(counts.values()), 'by_call': by_call,
+            'columns': ['call', 'file', 'line', 'count', 'callers_of_that_line'],
+            'callers': [[label, name, line, count, chain] for (label, name, line, chain), count in rows[:top]]}
 
 
 def client_audio_requested():
