@@ -449,7 +449,21 @@ yet tested on the Thor. This continues "pursuing the goals".
 - **Tests.** armport/tests 587 pass. Interactive suite 3307 run: the same 99
   as 0.13.67-0.13.71 plus `test_client_gpu_profile...escaped_output_worker`
   once (a /proc race on a process that had just exited; passes alone 3 of 3).
-- **Chain.** CHAIN72_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Chain at e9f375739** (one chain on x86/perf-round1). Build 43812957778;
+  stock-travel runtime 43823341031 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler and call profile; one trip); trusted
+  runtime 43828305781 (interactive job 1892 s, THORHERO; its app-sources job
+  compiled the changed Java). An earlier build of this version with a 3 s
+  interval (43798775261, runtime 43808003132 at 6d296ae4e) was not published.
+  APK 43833348924 published `coh-atlas-gameplay-v0.13.72` (93540618 bytes,
+  sha256 4ab62eccbb78bc12759bccdb9032752358d4234801260a3239e15eb587281583,
+  signer 92955353…, the same as 0.13.50-0.13.71); its guest files match the
+  commit and it carries the navigation map pack's descriptor byte for byte.
+  Runtime 43823341031: PRoot served 25.8 million stops in the 1,164 s creation
+  session and 10.4 million in the 887 s reopen session (0.13.71's 43383782947:
+  27.9 and 11.8 million). Reopen by program: MapServer 40 %, wineserver 25 %,
+  the guest's Python 12 % (22 % before), audio bridge 9 %, client 8 %. The
+  supervisor's wrapped file calls in that session: 267,606 (527,031 before).
 - **Open.** The spare's match (`refused_request`) and a hand-over in CI; the
   60-90 s server log delay; socket reads and writes, `readlinkat`, the second
   stop of `stat`. The PR description is 62.8 kB of GitHub's 65.5 kB.

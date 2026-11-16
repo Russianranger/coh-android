@@ -37,7 +37,16 @@ the steps are the same. All three come from your 0.13.69 launches A, B and C
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.72", "0.13.71" and "0.13.70 and the Thor test of 0.13.69".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI at e9f375739: build 43812957778 passed; stock-travel runtime 43823341031
+(`early_zone=true`, `proot_ioctl_filter=true`, sampler and call profile; one
+trip); trusted runtime 43828305781 created and reopened a character (its
+interactive job took 1892 s); APK 43833348924 published 0.13.72 (sha256
+`4ab62eccbb78bc12759bccdb9032752358d4234801260a3239e15eb587281583`). Runtime
+43823341031: PRoot served 25.8 million stops in the 1,164 s creation session
+and 10.4 million in the 887 s reopen session (0.13.71's 43383782947: 27.9 and
+11.8 million). Reopen by program: MapServer 40 %, wineserver 25 %, the guest's
+Python 12 % (22 % before), audio bridge 9 %, client 8 %. The supervisor's
+wrapped file calls in that session: 267,606 (527,031 before).
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

@@ -613,9 +613,13 @@ CI run 43383782947 with it, reopen session, stock server: 11.8 million stops
 | client | 7.5 % | `recvmsg` 5 %, `newfstatat` 3 % |
 | Xtigervnc, DbServer | 3 % | `recvmsg` |
 
-The supervisor is our own code: about 815 `stat` calls a second. A CI-only
-counter by caller (`python_call_profile`, with `trap_sampler`) is on the
-branch to say which lines.
+The supervisor is our own code. A CI-only counter by caller
+(`python_call_profile`, with `trap_sampler`) named `observe_live_lineage`:
+404,000 of its 527,000 file calls per reopen session, one scan of every
+thread of every process about once in 2.6 s. 0.13.72 runs it once in 15 s
+(run 43823341031): 10.4 million stops per reopen session, the supervisor at
+12 % (267,606 calls), MapServer 40 %, wineserver 25 %, audio bridge 9 %,
+client 8 %. A 3 s interval had moved the total only to 11.4 million.
 
 Next parts of step 14, cheapest and safest first (none built yet):
 

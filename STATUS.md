@@ -37,4 +37,4 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   ioctl 46.8 to 0.8 us; save after travel never confirmed (app defect). HANDOFF "0.13.70".
 - 0.13.70-71 published (APKs 43372592357 at a774abd0d, 43393932170 at ade9f7cde): save-after-travel fix; fast server + second PRoot build default; PRoot patches 0005-0006
   (stop counts by call and program, getsockopt filter, accept untraced: CI 14.2 M to 11.8 M stops per reopen); client timeline; zone graph receipt. HANDOFF "0.13.70"/"0.13.71".
-- 0.13.72 (87) in CI: supervisor /proc ownership scan once in 15 s (a 3 s attempt, runtime 43808003132, moved PRoot stops only 11.8 M to 11.4 M). HANDOFF "0.13.72".
+- 0.13.72 published (APK 43833348924; build 43812957778, runtime 43828305781 at e9f375739): supervisor /proc scan once in 15 s; CI 10.4 M stops per reopen (11.8 M). HANDOFF "0.13.72".
