@@ -35,6 +35,6 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.68-69 published (APKs 42963857636 at 42728face, 43104941674 at 22d90d987): early zone start (inert in .68, runs in .69), PRoot patch 0004 as an option, ioctl probe.
   Thor 20261113 A/B/C: in world 339/361/235 s (client log; app +70 s, server log delay), zone start 233/276/157 s, FPS 30-42/31-54/50-61,
   ioctl 46.8 to 0.8 us; save after travel never confirmed (app defect). HANDOFF "0.13.70".
-- 0.13.70 published (APK 43372592357; build 43353706777, runtime 43368553729 at a774abd0d): save-after-travel fix; fast server + second PRoot build default (new keys); PRoot patch 0005
-  (stop counts, getsockopt filter); client timeline; zone graph receipt. CI stop counts (43363707492): newfstatat 36 %, readlinkat 17 %, accept 17 %. HANDOFF "0.13.70".
-- 0.13.71 published (APK 43393932170; build 43373369060, runtime 43389182271 at ade9f7cde): PRoot patch 0006 (accept untraced; stop counts by program); CI 11.8 M stops per reopen (14.2 M before). HANDOFF "0.13.71".
+- 0.13.70-71 published (APKs 43372592357 at a774abd0d, 43393932170 at ade9f7cde): save-after-travel fix; fast server + second PRoot build default; PRoot patches 0005-0006
+  (stop counts by call and program, getsockopt filter, accept untraced: CI 14.2 M to 11.8 M stops per reopen); client timeline; zone graph receipt. HANDOFF "0.13.70"/"0.13.71".
+- 0.13.72 (87) in CI: supervisor /proc ownership scan once in 3 s (was every tick: 404 k of its 527 k file calls per reopen, run 43401783716). HANDOFF "0.13.72".

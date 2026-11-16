@@ -414,6 +414,39 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.72: the supervisor's own /proc scans (Claude, 2026-11-15)
+
+No owner message since 2026-11-12; 0.13.70 and 0.13.71 are published and not
+yet tested on the Thor. This continues "pursuing the goals".
+
+- **Why.** PRoot's counts by program (0.13.71, run 43383782947): the guest's
+  Python supervisor makes 22 % of all stops in a reopen session and 34 % in a
+  creation session. A CI-only counter by caller (`python_call_profile`, on
+  with `trap_sampler`; `install_call_profile` in `armport_interactive.py`)
+  ran in 43401783716 at 02e6a710d: 527,031 wrapped calls in the reopen
+  session, of them `open` 322,845, `readlink` 99,265, `stat` 81,472. By
+  caller: `diagnostic.py:326` and `:335` (`status` and `stat` of a process)
+  227,721; `game_device_diagnostic.py:636` (`ns/pid` link) 90,322; `:244` and
+  `:253` 70,016; `diagnostic.py:395` (`environ`) 15,566: 403,625 in all, from
+  `observe_live_lineage`, which `LocalCharacterServer.health()` called on
+  every tick (about three full /proc scans a second).
+- **Change.** `health()` observes the lineage at most once in
+  `LINEAGE_OBSERVATION_SECONDS` (3). `memory_observation` samples every 15 s
+  (5 before); each sample is a full ownership scan. Risk taken: a Wine process
+  whose leader exits within 3 s of starting while workers live on is not
+  authenticated for cleanup; that is a crash path.
+- **Creation session** (2,227,812 calls) is mostly one-time checks:
+  `character_server_data_cache.py:227/236` 381,754, `local_character_server.py:3193/3244`
+  360,971, `armport_client_package.py:186/195/197` 519,015,
+  `atlas_world_assets.py:160` 123,669. Not changed here.
+- **Tests.** armport/tests 587 pass. Interactive suite 3307 run: the same 99
+  as 0.13.67-0.13.71 plus `test_client_gpu_profile...escaped_output_worker`
+  once (a /proc race on a process that had just exited; passes alone 3 of 3).
+- **Chain.** CHAIN72_PLACEHOLDER (one chain on x86/perf-round1; filled when it finishes).
+- **Open.** The spare's match (`refused_request`) and a hand-over in CI; the
+  60-90 s server log delay; socket reads and writes, `readlinkat`, the second
+  stop of `stat`. The PR description is 62.8 kB of GitHub's 65.5 kB.
+
 ## 0.13.71: accept is not stopped; stop counts by program (Claude, 2026-11-13)
 
 Continues the owner's "continue the roadmap and pursuing the goals" of
