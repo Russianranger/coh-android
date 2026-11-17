@@ -52,9 +52,32 @@ wrapped file calls in that session: 267,606 (527,031 before).
 
 1. Install 0.13.72 over what you have. The app should still show
    **Navigation maps 1.0.0 · verified; reusable with this APK**.
-2. Check the options: **Fast server** and **Lighter system-call monitor**
-   should both be ticked without you touching them. Leave everything else as
-   it is.
+2. Tap **Set up / update runtime** and wait for **Runtime ready** (about
+   2.5 minutes after the 0.13.69 update). Nothing needs importing again.
+   Then set the options exactly like this.
+
+   Checked:
+   - Use performance graphics
+   - Fast mode (PRoot seccomp, experimental)
+   - Share server data between zones (faster zone preparation)
+   - Skip server-only folders in the client's file scan (faster client start)
+   - Reuse the client's saved file list while the data is unchanged (faster client start)
+   - Game audio (sound and music through Android)
+   - Game's own zone travel (doors, tunnels, monorail; any zone)
+   - Start my saved zone while the game starts (Reopen)
+   - Fast server (untick for the 0.13.36 server)
+   - Raise the frame cap to 60 FPS in the world
+   - Lighter system-call monitor (untick for the 0.13.36 one)
+
+   Unchecked:
+   - Start King's Row in the background (zoning)
+   - Lower the waiting zone server's priority (zoning, experimental)
+   - Keep a spare zone server loaded for travel (needs Fast server)
+   - Shared server memory (experiment: zone servers share game data)
+   - Draw on the game's own thread (frame rate experiment)
+
+   **Fast server** and **Lighter system-call monitor** should already be
+   ticked without you touching them; tell me if either was not.
 3. **Launch A** (the new defaults). **2 · Reopen saved character**, log in
    with `COHLOCAL / offline`, select Ralakar, **Enter Game**.
    - Stand where you arrive for about a minute with the FPS display on.
