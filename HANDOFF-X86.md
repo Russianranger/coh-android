@@ -461,7 +461,10 @@ one direction but increased while looking around".
   sample 6,869 MiB). Storage: 51.5 GB allocated, 21.8 GB reclaimable (six
   older runtimes).
 - Still in every launch: `observation_failures` "Cache inventory: Linked
-  private cache directory refused" (not investigated).
+  private cache directory refused". Harmless: `cache_inventory`
+  (`client_startup_diagnostic.py`) is an evidence-only listing written for the
+  x86 client's private cache folders, and the ARM64 work tree links those
+  folders, which the listing refuses to follow. Nothing depends on it.
 
 **Changes in 0.13.73**
 
@@ -549,7 +552,7 @@ one direction but increased while looking around".
 - **Open.** What the client waits on in the slow direction (launch A against
   B on the next test sheet, and the sampler); `newfstatat` and `readlinkat` (now the two largest);
   Python's stops on the phone (twice CI's rate); the 60-90 s server log
-  delay; the spare zone hand-over; "Linked private cache directory refused".
+  delay; the spare zone hand-over.
 
 ## 0.13.72: the supervisor's own /proc scans (Claude, 2026-11-15)
 
