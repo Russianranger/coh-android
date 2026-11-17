@@ -534,25 +534,41 @@ one direction but increased while looking around".
   function it sleeps in (`wchan`). Files are opened once per burst and read
   with `pread`, so a round makes no stopped call. Report
   `character_zoning.thread_waits`.
+- **Server health at most every 0.05 s.** `LoginContext.check()` ran the
+  whole health chain on every call, and every loop calls `check()`; the chain
+  polls PostgreSQL and the DbServer (`Popen.poll`, two `wait4`, each stopped
+  twice). The profile's new `Popen.poll` row (run 44103181482): 527,457 polls
+  in the creation session, 68,830 in the reopen session. Cancellation and the
+  deadline are still checked on every call.
+- **First runtime with patch 0007 on ARM64** (44103181482 at 094430eab, build
+  43812957778, before the client patch): probe `socket_stops` false (a send
+  and a receive 1.52 microseconds together, `getppid` 0.35),
+  `netlink_descriptor` 960; 6 rtnetlink sockets moved per session, none
+  refused. Reopen session 8.54 million stops in 892 s (0.13.72: 10.41 million
+  in 887 s), creation 21.6 million in 1,220 s (25.8 million in 1,164 s);
+  `sendto` and `recvfrom` gone, `recvmsg` 8. Reopen by program: MapServer
+  48 %, wineserver 31 %, Python 16 %, client 4 %. `fd_stats`: 599,155 and
+  1,101,174, so with their exit stops a stat of a descriptor is 14 % and 10 %
+  of what is left. The wait sampler ran 19 bursts in the reopen session; the
+  kernel refused the client's `syscall` files (the supervisor is not its
+  ancestor) and allowed Xtigervnc's; `wchan` was readable for both.
 - **CI log lines:** `LAUNCH_RECEIPTS_V1`, `THREAD_WAITS_V1`; the gate with
   `proot_ioctl_filter` also requires `socket_stops` false and a rtnetlink
   descriptor of 960 or more when the guest could open one.
 - **Tests.** armport/tests 596 pass; tools/android 187; dbserver 97.
   `tools/android/test_proot_socket_fd_filter.py` runs the new statements
-  through a BPF interpreter. Interactive suite 3312 run: the same 99 as
-  0.13.67-0.13.72 plus two /proc-timing tests that pass alone
-  (`test_client_gpu_profile...escaped_output_worker`,
-  `test_character_zoning_scheduler...actual_device_scanner...`; the suite
-  ran beside local PRoot runs).
+  through a BPF interpreter. Interactive suite 3317 run: the same 99 as
+  0.13.67-0.13.72 plus `test_client_gpu_profile...escaped_output_worker`
+  (the /proc race seen before; passes alone).
 - **Chain.** CHAIN73_PLACEHOLDER
 - **Not validated:** patch 0007 has not run on a device. CI's hosts grant
   AF_NETLINK, so CI exercises the move with real sockets, not the substituted
   ones the phone uses; that path ran only locally on x86-64. Patch 0129's
   effect on the frame rate is unmeasured; CI draws in software.
-- **Open.** What the client waits on in the slow direction (launch A against
-  B on the next test sheet, and the sampler); `newfstatat` and `readlinkat` (now the two largest);
-  Python's stops on the phone (twice CI's rate); the 60-90 s server log
-  delay; the spare zone hand-over.
+- **Open.** What the client waits on in the slow direction (launch A against B
+  on the next test sheet, and the sampler); `newfstatat` and `readlinkat` (now
+  the two largest); Python's stops on the phone (twice CI's rate); the 60-90 s
+  server log delay; the spare zone hand-over.
 
 ## 0.13.72: the supervisor's own /proc scans (Claude, 2026-11-15)
 

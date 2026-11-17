@@ -83,9 +83,22 @@ class LoginContext(base.Context):
         self._stop_probe_after = now + self.STOP_PROBE_SECONDS
         return (self.state / 'stop-request').exists()
 
+    # 0.13.73: every loop iteration also ran the whole server health chain, which polls
+    # PostgreSQL and the DbServer (two wait4 calls, each stopped twice by PRoot). Thor 0.13.72:
+    # 418-581 wait4 stops a second through whole launches; CI run 44103181482 counted 527,457
+    # polls in a 1,220 s creation session. The chain now runs at most every 0.05 s; a server
+    # that exited is still noticed within that time. Cancellation and the deadline are checked
+    # on every call, as before.
+    HEALTH_SECONDS = 0.05
+    _health_after = 0.0
+
     def check(self):
         super().check()
-        if self.server_health is not None: self.server_health()
+        if self.server_health is not None:
+            now = time.monotonic()
+            if now >= self._health_after:
+                self._health_after = now + self.HEALTH_SECONDS
+                self.server_health()
 
 
 class ClientLoginDiagnostic(interactive.ClientInteractiveDiagnostic):
