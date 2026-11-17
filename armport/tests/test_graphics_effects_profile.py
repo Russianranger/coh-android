@@ -105,9 +105,10 @@ class GraphicsEffectsProfile(unittest.TestCase):
         # Its own variable: the launcher program resets COH_CLIENT_GRAPHICS_PROFILE to the values it knows.
         self.assertIn('getenv("ARMPORT_GRAPHICS_PROFILE")', patch)
         self.assertNotIn('getenv("COH_CLIENT_GRAPHICS_PROFILE")', patch)
-        launcher = (ROOT / 'android/native/client-launcher.c').read_text()
-        self.assertIn('SetEnvironmentVariableA("COH_CLIENT_GRAPHICS_PROFILE",graphics)', launcher)
-        self.assertNotIn('ARMPORT_GRAPHICS_PROFILE', launcher)
+        launcher = ROOT / 'android/native/client-launcher.c'
+        if launcher.is_file():          # not in the build workflow's sparse checkout (run 44115020828)
+            self.assertIn('SetEnvironmentVariableA("COH_CLIENT_GRAPHICS_PROFILE",graphics)', launcher.read_text())
+            self.assertNotIn('ARMPORT_GRAPHICS_PROFILE', launcher.read_text())
         self.assertEqual((ROOT / 'armport/patches/series').read_text().split()[-1], PATCH.name)
 
     def run_harness(self, value):
