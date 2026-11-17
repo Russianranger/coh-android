@@ -560,7 +560,28 @@ one direction but increased while looking around".
   through a BPF interpreter. Interactive suite 3317 run: the same 99 as
   0.13.67-0.13.72 plus `test_client_gpu_profile...escaped_output_worker`
   (the /proc race seen before; passes alone).
-- **Chain.** CHAIN73_PLACEHOLDER
+- **Chain at bc90fb8b1** (one chain on x86/perf-round1). Build 44117115718;
+  stock-travel runtime 44136706377 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler and call profile; one trip; its reopen
+  session with `effects_off`); trusted runtime 44144475202 (interactive job
+  1824 s, THORHERO; its app-sources job compiled the changed Java). Build
+  44115020828 at 5544de92b stopped in its unit test step (a new test read a
+  file outside that job's checkout; 595 of 596 passed), fixed in bc90fb8b1. An
+  earlier stock-travel runtime, 44103181482 at 094430eab with build
+  43812957778, passed patch 0007 before the client patch. APK 44151200472
+  published `coh-atlas-gameplay-v0.13.73` (93552906 bytes, sha256
+  55451e6acb2170bf26babd619be09716ac90fc13b9509009521ca503432a3dc0, signer
+  92955353…, the same as 0.13.50-0.13.72); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Runtimes
+  44136706377 and 44144475202: the client confirmed `effects_off` in the reopen
+  session (creation runs `standard`). Runtime 44136706377: probe `socket_stops`
+  false, rtnetlink descriptor 960, 6 sockets moved per session and none
+  refused; PRoot served 20.6 million stops in the 1,194 s creation session and
+  8.5 million in the 891 s reopen session (0.13.72's 43823341031: 25.8 and 10.4
+  million), with `sendto`, `recvfrom` and `recvmsg` gone from the counts.
+  Reopen by program: MapServer 48 %, wineserver 31 %, the guest's Python 15 %,
+  client 4 %. The supervisor's process polls in the creation session: 41,734
+  (527,457 before the health interval).
 - **Not validated:** patch 0007 has not run on a device. CI's hosts grant
   AF_NETLINK, so CI exercises the move with real sockets, not the substituted
   ones the phone uses; that path ran only locally on x86-64. Patch 0129's

@@ -45,7 +45,21 @@
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.73 and the Thor test of 0.13.72".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI at bc90fb8b1: build 44117115718 passed; stock-travel runtime 44136706377
+(`early_zone=true`, `proot_ioctl_filter=true`, sampler and call profile; one
+trip; its reopen session with `effects_off`); trusted runtime 44144475202
+created and reopened a character (its interactive job took 1824 s); APK
+44151200472 published 0.13.73 (sha256
+`55451e6acb2170bf26babd619be09716ac90fc13b9509009521ca503432a3dc0`). Runtimes
+44136706377 and 44144475202: the client confirmed `effects_off` in the reopen
+session (creation runs `standard`). Runtime 44136706377: probe `socket_stops`
+false, rtnetlink descriptor 960, 6 sockets moved per session and none refused;
+PRoot served 20.6 million stops in the 1,194 s creation session and 8.5
+million in the 891 s reopen session (0.13.72's 43823341031: 25.8 and 10.4
+million), with `sendto`, `recvfrom` and `recvmsg` gone from the counts. Reopen
+by program: MapServer 48 %, wineserver 31 %, the guest's Python 15 %, client 4
+%. The supervisor's process polls in the creation session: 41,734 (527,457
+before the health interval).
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 
