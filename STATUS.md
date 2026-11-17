@@ -35,6 +35,6 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
 - 0.13.68-69 published (APKs 42963857636 at 42728face, 43104941674 at 22d90d987): early zone start (inert in .68, runs in .69), PRoot patch 0004 as an option, ioctl probe.
   Thor 20261113 A/B/C: in world 339/361/235 s (client log; app +70 s, server log delay), zone start 233/276/157 s, FPS 30-42/31-54/50-61,
   ioctl 46.8 to 0.8 us; save after travel never confirmed (app defect). HANDOFF "0.13.70".
-- 0.13.70-71 published (APKs 43372592357 at a774abd0d, 43393932170 at ade9f7cde): save-after-travel fix; fast server + second PRoot build default; PRoot patches 0005-0006
-  (stop counts by call and program, getsockopt filter, accept untraced: CI 14.2 M to 11.8 M stops per reopen); client timeline; zone graph receipt. HANDOFF "0.13.70"/"0.13.71".
-- 0.13.72 published (APK 43833348924; build 43812957778, runtime 43828305781 at e9f375739): supervisor /proc scan once in 15 s; CI 10.4 M stops per reopen (11.8 M). HANDOFF "0.13.72".
+- 0.13.70-72 published (APKs 43372592357 at a774abd0d, 43393932170 at ade9f7cde, 43833348924 at e9f375739): save-after-travel fix; fast server + second PRoot build default; patches 0005-0006,
+  supervisor /proc scan once in 15 s (CI 14.2 M to 10.4 M stops per reopen). Thor 20261117 A/B/C: in world 261/231/225 s, save after travel confirmed, FPS 19-26 steady. HANDOFF "0.13.73".
+- 0.13.73 (88) in CI: PRoot patch 0007 (socket sends and receives not stopped; Thor 0.13.72: 38-49 % of stops), zone graph receipt fix, thread wait sampler. HANDOFF "0.13.73".

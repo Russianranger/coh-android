@@ -414,6 +414,114 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.73 and the Thor test of 0.13.72 (Claude, 2026-11-17)
+
+Owner, 2026-11-17, with exports 20261117-130710 (setup), -130723 (A),
+-131522 (B), -132616 (C, "Draw on the game's own thread") and a storage
+report: "Finalized testing of 72. See reports, then continue development.
+Load times were decent, frame rate seemed to be in the 20s when looking in
+one direction but increased while looking around".
+
+**What the exports show (0.13.72 on the Thor)**
+
+| | A (first after update, one trip) | B | C (GL direct) |
+|---|---|---|---|
+| Client connected after the guest started (its own log) | 256.7 s | 225.8 s | 219.6 s |
+| Tap to guest start | about 4 s | 5.1 s | 5.1 s |
+| Zone server spawn to ready | 168.1 s | 154.4 s | 149.4 s |
+| Observer later than the client | 61.7 s | 70.0 s | 65.0 s |
+| Client frame rate, steady / best 5 s window | 19-26 / 59 | 20-24 / 54 | 19-26 / 54 |
+| PRoot stops (per second) | 11.16 M in 802 s (13,915) | 6.44 M in 447 s (14,403) | 8.17 M in 607 s (13,454) |
+
+- All three passed; second PRoot build, probe `listed_commands_only`,
+  `getsockopt_stops` false (0.95, 1.17, 0.47 microseconds).
+- **Save after travel is confirmed** (A: Mercy Island, Port Oakes, back; saved
+  event on map 71, app epoch 2). Trip out 245.7 s by the observer, back 17 s.
+- **Frame rate.** `ARMPORT_WORKER_V1` beside each frame-rate line: at 22
+  frames a second the client used 4.6 s of CPU per 5 s (0.93 of a core, all
+  threads); at 54 it used 9.5 s (1.9 cores). So a frame costs about 35-40 ms
+  of CPU across threads either way, and in the slow direction the threads run
+  one after another. The 120 s thread samples agree: main 18 %, `gdrv0` 18 %,
+  `gl0` 16 %, another 28 % of a core. Not CPU-bound; what they wait on is not
+  in the report. C equals B. Game resolution 800 by 600; the display server
+  sends each frame Raw in about 130 `sendto` calls (331 rectangles a frame).
+- **Stops by call:** `newfstatat` 23-28 %, `sendto` 24-34 %, `readlinkat`
+  13-17 %, `recvmsg` 12 %, `close` 4-5 %, `openat` 4 %, `wait4` 3-4 %,
+  `recvfrom` 2-3 %. **By program:** Xtigervnc 25-34 % (its `sendto` alone
+  22-32 %, 3,000-4,200 a second), Python 19-21 %, wineserver 15-19 %,
+  MapServer 12-17 %, client 8-9 %, audio 4-5 %. CI never showed Xtigervnc: its
+  viewer reads few frames. The tracer thread used 33-40 % of a core in the
+  world and 50-84 % while the zone loaded.
+- **Defect: the zone graph receipt (0.13.70) was never reused.**
+  `launch_receipts.zone_graph_71`: `no_receipt` in A, `inputs_changed` in B
+  and C (12.9 and 14.6 s; 17.0 s in A, 15.3 s for map 72). Its identity held
+  the device and inode of the zone tree, and that folder is named after the
+  session; only its `data` survives, handed back by rename.
+- Memory: about 6.9 GiB available in the world of 14.9 GiB (launch B, lowest
+  sample 6,869 MiB). Storage: 51.5 GB allocated, 21.8 GB reclaimable (six
+  older runtimes).
+- Still in every launch: `observation_failures` "Cache inventory: Linked
+  private cache directory refused" (not investigated).
+
+**Changes in 0.13.73**
+
+- **PRoot patch 0007** (`android/native/proot/README.md`). PRoot asks for
+  `sendto`, `recvfrom` and `recvmsg` only to serve rtnetlink sockets: the ones
+  it substitutes where the host refuses AF_NETLINK (Android), and real ones of
+  a tracee that believes it owns a network namespace. With
+  `PROOT_NETLINK_HIGH_FDS=1` each such socket is duplicated to a descriptor
+  number from 960 before `socket` returns (chained `fcntl(F_DUPFD[_CLOEXEC],
+  960)` then `close`), and the filter traces the three calls only from that
+  number, for the default ABI. A failed move (soft limit below 961) closes the
+  low descriptor and returns EMFILE. `sendmsg` and `close` stay traced
+  (fake-id credentials; pipe shadow). Off with `-p`. Chained calls gain a
+  result handler (`register_chained_syscall_with_result`).
+  Local x86-64 (pinned tree, patches 0001-0007, both with real netlink and
+  with it refused to PRoot through a preload so the substituted path runs):
+  `if_nameindex`, `getifaddrs`, a hand-made RTM_GETADDR dump, 3,000
+  open-and-close rounds (no leak), six threads under a 2 kHz timer signal, a
+  child that inherits the socket, a limit of 256 (EMFILE, nothing leaked), a
+  full band (lands at 1024) and ordinary sockets at 970/971 all behave as
+  with patch 0006 except for the number. A `send`+`recv` pair costs 0.9
+  microseconds (52-61 before).
+- The stop-count file's first line gains `fd_stats` (stat calls with
+  `AT_EMPTY_PATH`: glibc's `fstat`, no path to translate), `moved_netlink_fds`
+  and `failed_netlink_moves`.
+- **App.** New option "Do not monitor ordinary socket traffic" (pref
+  `proot-socket-filter`, default on, used only with the second build); report
+  `proot_socket_filter_requested/used`. Guest probe adds `send_recv`,
+  `socket_stops`, `netlink_descriptor`. `COH_CALL_PROFILE=1` is now set on the
+  phone too, and the profile counts `Popen.poll` (which kept its own
+  reference to `waitpid`; the phone made 418-581 `wait4` stops a second).
+- **Zone graph receipt.** Identity format 2 without the tree's identity; rows
+  start at `data` (`zone_beacon_package.receipt_root`). The test now renames
+  `data` into a new session folder, and proves a rebuilt `data` runs in full.
+- **Thread wait sampler** (`character_zoning_scheduler.thread_wait_burst`,
+  started with zoning). Every 30 s in the world, 40 reads 50 ms apart of each
+  thread of the client and of Xtigervnc: state, the system call it is in
+  (`syscall`; the kernel may refuse it to a non-ancestor) and the kernel
+  function it sleeps in (`wchan`). Files are opened once per burst and read
+  with `pread`, so a round makes no stopped call. Report
+  `character_zoning.thread_waits`.
+- **CI log lines:** `LAUNCH_RECEIPTS_V1`, `THREAD_WAITS_V1`; the gate with
+  `proot_ioctl_filter` also requires `socket_stops` false and a rtnetlink
+  descriptor of 960 or more when the guest could open one.
+- **Tests.** armport/tests 591 pass; tools/android 187; dbserver 97.
+  `tools/android/test_proot_socket_fd_filter.py` runs the new statements
+  through a BPF interpreter. Interactive suite 3312 run: the same 99 as
+  0.13.67-0.13.72 plus two /proc-timing tests that pass alone
+  (`test_client_gpu_profile...escaped_output_worker`,
+  `test_character_zoning_scheduler...actual_device_scanner...`; the suite
+  ran beside local PRoot runs).
+- **Chain.** CHAIN73_PLACEHOLDER
+- **Not validated:** patch 0007 has not run on ARM64 or on a device. CI's
+  hosts grant AF_NETLINK, so CI exercises the move with real sockets, not the
+  substituted ones the phone uses; that path ran only locally on x86-64.
+- **Open.** What the client waits on in the slow direction (the sampler is
+  the next evidence); `newfstatat` and `readlinkat` (now the two largest);
+  Python's stops on the phone (twice CI's rate); the 60-90 s server log
+  delay; the spare zone hand-over; "Linked private cache directory refused".
+
 ## 0.13.72: the supervisor's own /proc scans (Claude, 2026-11-15)
 
 No owner message since 2026-11-12; 0.13.70 and 0.13.71 are published and not

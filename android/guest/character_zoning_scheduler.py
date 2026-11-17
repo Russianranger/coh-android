@@ -155,6 +155,185 @@ def wine_priority_snapshot(proc_root=Path('/proc'), uid=None, deadline_seconds=2
             'seconds': round(time.monotonic() - started, 3)}
 
 
+# 0.13.73: what the client's threads and the display server wait on --------------------
+# Thor 0.13.72 (20261117-131522): 22 frames a second looking one way and 54 another, yet
+# in the slow direction the whole client used 0.93 of a core and no thread more than 30 %
+# of one. The threads wait, and no report says on what. Read-only: each thread's state
+# (/proc/<pid>/task/<tid>/stat) and, when it is not running, the system call it is in
+# (.../syscall) and the kernel function it sleeps in (.../wchan), read many times in a short
+# burst. State `t` is a thread stopped in PRoot. The kernel may refuse `syscall` to a process
+# that is not an ancestor (Yama); `wchan` and `stat` need no such right.
+WAIT_PROGRAMS = (('client', b'CityOfHeroes.exe'), ('display', b'Xtigervnc'))
+WAIT_TASK_LIMIT = 128
+WAIT_ROUNDS = 40
+WAIT_GAP_SECONDS = 0.05
+WAIT_THREADS_KEPT = 10
+WAIT_CALLS_KEPT = 4
+WAIT_PROCESS_LIMIT = 4096
+# arm64 numbers of the calls a thread usually waits in; any other is reported by number.
+WAIT_CALL_NAMES = {98: 'futex', 29: 'ioctl', 73: 'ppoll', 22: 'epoll_pwait', 72: 'pselect6', 63: 'read',
+                   64: 'write', 66: 'writev', 65: 'readv', 212: 'recvmsg', 211: 'sendmsg', 206: 'sendto',
+                   207: 'recvfrom', 101: 'nanosleep', 115: 'clock_nanosleep', 260: 'wait4', 124: 'sched_yield',
+                   56: 'openat', 57: 'close', 79: 'newfstatat', 78: 'readlinkat', 202: 'accept', 242: 'accept4',
+                   67: 'pread64', 68: 'pwrite64', 82: 'fsync', 83: 'fdatasync', 222: 'mmap', 215: 'munmap',
+                   226: 'mprotect', 233: 'madvise', 203: 'connect', 137: 'rt_sigtimedwait', 133: 'rt_sigsuspend'}
+WAIT_DESCRIPTOR_CALLS = frozenset({63, 64, 65, 66, 67, 68, 212, 211, 206, 207, 22, 82, 83})
+
+
+def thread_wait_targets(proc_root=Path('/proc'), uid=None):
+    """{label: pid} of the game client and the display server (the one with the most threads)."""
+    uid = os.getuid() if uid is None else uid
+    found, scanned = {}, 0
+    for entry in os.scandir(proc_root):
+        if not entry.name.isdecimal():
+            continue
+        scanned += 1
+        if scanned > WAIT_PROCESS_LIMIT:
+            break
+        try:
+            if entry.stat().st_uid != uid:
+                continue
+            with open(Path(entry.path) / 'cmdline', 'rb') as handle:
+                command = handle.read(4096)
+            label = next((label for label, mark in WAIT_PROGRAMS if mark in command), None)
+            if label is None:
+                continue
+            threads = len(os.listdir(Path(entry.path) / 'task'))
+        except OSError:
+            continue
+        if label not in found or threads > found[label][1]:
+            found[label] = (int(entry.name), threads)
+    return {label: pid for label, (pid, _) in found.items()}
+
+
+def thread_wait_call(text, machine):
+    """(call, detail) for one read of a thread's `syscall` file."""
+    fields = text.split()
+    if not fields:
+        return 'unreadable', None
+    if not fields[0].lstrip('-').isdecimal():
+        return fields[0][:12], None                      # "running"
+    number = int(fields[0])
+    if number < 0:
+        return 'not_in_a_call', None
+    name = WAIT_CALL_NAMES.get(number, str(number)) if machine == 'aarch64' else str(number)
+    detail = None
+    try:
+        if machine == 'aarch64' and number == 29 and len(fields) > 2:
+            detail = '0x%x' % (int(fields[2], 16) & 0xffffffff)          # the ioctl command
+        elif machine == 'aarch64' and number in (73, 72) and len(fields) > 2:
+            detail = 'n=%d' % min(int(fields[2], 16), 9999)             # how many descriptors it polls
+        elif machine == 'aarch64' and number == 98 and len(fields) > 2:
+            detail = 'op=%d' % (int(fields[2], 16) & 0x7f)              # FUTEX_WAIT 0, WAIT_BITSET 9, ...
+        elif machine == 'aarch64' and number in WAIT_DESCRIPTOR_CALLS and len(fields) > 1:
+            detail = 'fd=%d' % min(int(fields[1], 16) & 0xffffffff, 99999)
+    except ValueError:
+        detail = None
+    return name, detail
+
+
+def thread_wait_burst(targets, proc_root=Path('/proc'), rounds=WAIT_ROUNDS, gap=WAIT_GAP_SECONDS,
+                      sleep=time.sleep, machine=None):
+    """One burst over the threads of `targets` ({label: pid}); never changes a process.
+
+    The files are opened once and read again from their start each round, so a round makes
+    no call PRoot stops. Returns one bounded record; unreadable files are counted, not fatal.
+    """
+    machine = os.uname().machine if machine is None else machine
+    started, started_utc = time.monotonic(), time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+    handles, record = [], {'utc': started_utc, 'rounds': 0, 'programs': {}, 'unreadable': 0, 'call_files': 0,
+                           'wchan_files': 0}
+    ticks_per_second = os.sysconf('SC_CLK_TCK') if hasattr(os, 'sysconf') else 100
+    try:
+        for label, pid in sorted(targets.items()):
+            try:
+                tasks = sorted(os.listdir(Path(proc_root) / str(pid) / 'task'), key=int)[:WAIT_TASK_LIMIT]
+            except (OSError, ValueError):
+                record['unreadable'] += 1
+                continue
+            for task in tasks:
+                base_path = Path(proc_root) / str(pid) / 'task' / task
+                try:
+                    stat_fd = os.open(base_path / 'stat', os.O_RDONLY | os.O_CLOEXEC)
+                except OSError:
+                    record['unreadable'] += 1
+                    continue
+                opened = {}
+                for kind in ('syscall', 'wchan'):
+                    try:
+                        opened[kind] = os.open(base_path / kind, os.O_RDONLY | os.O_CLOEXEC)
+                    except OSError:
+                        opened[kind] = None
+                record['call_files'] += opened['syscall'] is not None
+                record['wchan_files'] += opened['wchan'] is not None
+                handles.append({'label': label, 'pid': pid, 'stat': stat_fd, 'call': opened['syscall'],
+                                'wchan': opened['wchan'], 'name': '?', 'first': None, 'last': None,
+                                'samples': 0, 'states': {}, 'calls': {}})
+        for index in range(rounds):
+            for row in handles:
+                try:
+                    text = os.pread(row['stat'], 1024, 0).decode(errors='replace')
+                    head, _, tail = text.rpartition(') ')
+                    fields = tail.split()
+                    state, ticks = fields[0], int(fields[11]) + int(fields[12])
+                except (OSError, IndexError, ValueError):
+                    continue                              # the thread ended
+                row['name'] = head.partition('(')[2][:15]
+                row['samples'] += 1
+                row['first'] = ticks if row['first'] is None else row['first']
+                row['last'] = ticks
+                row['states'][state] = row['states'].get(state, 0) + 1
+                if state == 'R' or (row['call'] is None and row['wchan'] is None):
+                    continue
+                call, function = (None, None), None
+                if row['call'] is not None:
+                    try:
+                        call = thread_wait_call(os.pread(row['call'], 256, 0).decode(errors='replace'), machine)
+                    except OSError as error:
+                        call = ('unreadable_' + type(error).__name__[:20], None)
+                if row['wchan'] is not None:
+                    try:
+                        function = os.pread(row['wchan'], 64, 0).decode(errors='replace').strip()[:48]
+                        function = None if function in ('', '0') else function
+                    except OSError:
+                        function = None
+                key = (state == 't', call[0], call[1], function)
+                row['calls'][key] = row['calls'].get(key, 0) + 1
+            record['rounds'] = index + 1
+            if index + 1 < rounds:
+                sleep(gap)
+    finally:
+        for row in handles:
+            for descriptor in (row['stat'], row['call'], row['wchan']):
+                if descriptor is not None:
+                    try:
+                        os.close(descriptor)
+                    except OSError:
+                        pass
+    seconds = max(time.monotonic() - started, 1e-6)
+    record['seconds'] = round(seconds, 3)
+    for row in handles:
+        if not row['samples']:
+            continue
+        program = record['programs'].setdefault(row['label'], {'pid': row['pid'], 'threads': 0, 'cpu_percent': 0.0,
+                                                                  'busiest': []})
+        used = 100.0 * (row['last'] - row['first']) / ticks_per_second / seconds
+        program['threads'] += 1
+        program['cpu_percent'] = round(program['cpu_percent'] + used, 1)
+        calls = sorted(row['calls'].items(), key=lambda item: (-item[1], str(item[0])))
+        program['busiest'].append({
+            'name': row['name'], 'cpu_percent': round(used, 1), 'samples': row['samples'],
+            'running': row['states'].get('R', 0), 'stopped_in_proot': row['states'].get('t', 0),
+            # [stopped in PRoot at this call, call, detail, kernel function it sleeps in, samples]
+            'waits': [[stopped, call, detail, function, count]
+                      for (stopped, call, detail, function), count in calls[:WAIT_CALLS_KEPT]]})
+    for program in record['programs'].values():
+        # The threads that did something: by CPU used, then by samples spent not sleeping in a futex.
+        program['busiest'] = sorted(program['busiest'], key=lambda row: (-row['cpu_percent'], -row['running'],
+                                                                         -row['stopped_in_proot']))[:WAIT_THREADS_KEPT]
+    return record
+
+
 def process_placement(path):
     """Read-only: the CPUs a process may run on and its cpuset/cgroup (None when hidden)."""
     result = {'cpus_allowed': None, 'cgroup': None}

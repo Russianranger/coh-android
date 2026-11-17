@@ -517,9 +517,17 @@ class ZoneGraphInstallTests(unittest.TestCase):
         record = report['launch_receipts']['zone_graph_%d' % MAP_ID]
         self.assertEqual((first['status'], record['status'], record['recorded']), ('installed_verified_graph', 'ran_in_full', True))
         self.assertGreaterEqual(record['directories'], 4)
-        self.forget(graph=False)                          # a later session, the same zone tree
+        self.forget(graph=False)
+        # A later session: its zone tree is a new folder, and the cache hands the same `data`
+        # back to it by rename. Thor 0.13.72 answered "inputs_changed" here on every launch.
+        parked = Path(self.temporary.name) / 'cache-generation'; parked.mkdir()
+        (self.runtime / 'data').rename(parked / 'data')
+        self.runtime.rename(self.runtime.with_name('runtime-of-an-earlier-session'))
+        self.runtime.mkdir()
+        (parked / 'data').rename(self.runtime / 'data')
         with unittest.mock.patch.object(self.package, 'install', side_effect=AssertionError('inputs were walked')):
             second = start()
+        self.assertIsNone(report['launch_receipts']['zone_graph_%d' % MAP_ID]['reason'])
         self.assertEqual((second['status'], second['input_validation'], second['installed_files'], second['verified']),
                          ('reused_verified_graph', 'unchanged_directory_receipt', 0, True))
         self.assertEqual(report['launch_receipts']['zone_graph_%d' % MAP_ID]['status'], 'reused')
@@ -534,6 +542,16 @@ class ZoneGraphInstallTests(unittest.TestCase):
         third = start()
         self.assertEqual(report['launch_receipts']['zone_graph_%d' % MAP_ID]['status'], 'ran_in_full')
         self.assertTrue(third['verified'])
+        # Another `data` (a rebuilt cache generation) holding the same names is not vouched for.
+        self.forget(graph=False)
+        import shutil
+        shutil.copytree(self.runtime / 'data', self.runtime / 'data-rebuilt', symlinks=True)
+        (self.runtime / 'data').rename(parked / 'data')
+        (self.runtime / 'data-rebuilt').rename(self.runtime / 'data')
+        rebuilt = start()
+        self.assertEqual(report['launch_receipts']['zone_graph_%d' % MAP_ID]['status'], 'ran_in_full')
+        self.assertTrue(report['launch_receipts']['zone_graph_%d' % MAP_ID]['reason'].startswith('directory_changed'))
+        self.assertTrue(rebuilt['verified'])
         # Removed graph files are noticed as well.
         self.forget()
         fourth = start()

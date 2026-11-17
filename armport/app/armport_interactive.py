@@ -110,6 +110,36 @@ def proot_ioctl_probe(calls=IOCTL_PROBE_CALLS, clock=time.perf_counter):
         record['getsockopt_stops'] = timings['getsockopt'] - timings['getppid'] >= IOCTL_PROBE_STOP_MICROSECONDS
     except OSError as error:
         record['getsockopt_error_type'] = type(error).__name__
+    # 0.13.73 (PRoot patch 0007): PRoot asks for sendto, recvfrom and recvmsg only to serve
+    # rtnetlink sockets. With PROOT_NETLINK_HIGH_FDS=1 those sockets get descriptor numbers
+    # from 960 and the three calls stop only from that number, so an ordinary send and receive
+    # cost what getppid costs. Thor 0.13.72: 38-49 % of all stops were these calls.
+    record['socket_filter_requested'] = os.environ.get('COH_PROOT_SOCKET_FILTER') == '1'
+    try:
+        left, right = socket.socketpair()
+        try:
+            def exchange():
+                left.send(b'x')
+                right.recv(1)
+            exchange()
+            started = clock()
+            for _ in range(calls):
+                exchange()
+            timings['send_recv'] = round((clock() - started) / calls * 1e6, 2)
+        finally:
+            left.close()
+            right.close()
+        record['socket_stops'] = timings['send_recv'] - 2 * timings['getppid'] >= IOCTL_PROBE_STOP_MICROSECONDS
+    except OSError as error:
+        record['socket_error_type'] = type(error).__name__
+    try:
+        route = socket.socket(socket.AF_NETLINK, socket.SOCK_RAW, socket.NETLINK_ROUTE)
+        try:
+            record['netlink_descriptor'] = route.fileno()
+        finally:
+            route.close()
+    except (OSError, AttributeError) as error:
+        record['netlink_error_type'] = type(error).__name__
     return record
 
 
@@ -158,7 +188,7 @@ CALL_PROFILE_NAMES = ('stat', 'lstat', 'open', 'scandir', 'listdir', 'waitpid', 
 
 
 def install_call_profile(environ=os.environ, modules=None):
-    """COH_CALL_PROFILE=1 (CI): count this supervisor's own file and child calls by caller.
+    """COH_CALL_PROFILE=1 (CI; the app since 0.13.73): count this supervisor's own file and child calls by caller.
 
     CI run 43383782947 (PRoot's stop counts by program): the guest's Python made 22 % of all
     stops in a reopen session and 34 % in a creation session, more than any other program but
@@ -193,6 +223,11 @@ def install_call_profile(environ=os.environ, modules=None):
     for name in CALL_PROFILE_NAMES:
         wrap(modules['os'] if modules else os, name, 'os.' + name)
     wrap(modules['io'] if modules else io, 'open', 'open')
+    # 0.13.73: Popen.poll() keeps its own reference to waitpid, so the wrapper above never saw
+    # it (run 43823341031: 135,306 wait4 stops, no os.waitpid row). Thor 0.13.72: 418-581 a second.
+    if modules is None or 'subprocess' in modules:
+        import subprocess
+        wrap((modules['subprocess'] if modules else subprocess).Popen, 'poll', 'Popen.poll')
     return counts
 
 

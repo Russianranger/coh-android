@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.72, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.73, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.72
+      - name: Build and sign COH Atlas Gameplay 0.13.73
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.72.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.73.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.72-apk
+          name: coh-atlas-gameplay-0.13.73-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,33 +308,36 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.72-apk
+          name: coh-atlas-gameplay-0.13.73-apk
           path: apk
-      - name: Publish the 0.13.72 pre-release
+      - name: Publish the 0.13.73 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.72.apk
-          sha256sum COH-Atlas-Gameplay-0.13.72.apk > COH-Atlas-Gameplay-0.13.72.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.73.apk
+          sha256sum COH-Atlas-Gameplay-0.13.73.apk > COH-Atlas-Gameplay-0.13.73.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.72 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.73 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.72: the app's own supervisor script inside the Linux system re-reads the state
-          of every process and thread once in 15 s (about once in 3 s before), and takes its memory
-          sample once in 15 s (5 s before). Those reads were most of that script's file calls
-          during play, and the script makes about a fifth of everything the monitor stops.
-          From 0.13.71: the lighter system-call monitor no longer stops the call a server uses to
-          look for new connections, and its count in the report names the program behind each call.
-          From 0.13.70 (Thor test of 0.13.69): Save after travelling is confirmed again; "Fast
-          server" and "Lighter system-call monitor" are on by default, each with a tick box to go
-          back; a zone's navigation map is not re-checked file by file when its folders are
-          unchanged; the report holds the time the game itself reached the zone server.
+          New in 0.13.73 (Thor test of 0.13.72):
+          - The lighter system-call monitor no longer stops ordinary socket sends and receives. On
+            the Thor those were 38-49 % of everything it stopped, most of them the display server
+            sending each frame to the app. It has its own tick box, "Do not monitor ordinary socket
+            traffic", on by default; untick it if a launch fails.
+          - A zone's navigation map check is now really skipped when its folders are unchanged
+            (the 0.13.70 change never took effect on the phone; it cost 13-17 s per zone start).
+          - The report now records, twice a minute in the world, what the game's threads and the
+            display server are waiting on, and which of the app's own script lines make file calls.
+            These are for finding the frame-rate limit seen in 0.13.72 (20s looking one way).
+          From 0.13.72: the app's supervisor script re-reads process state once in 15 s.
+          From 0.13.70-71: Save after travelling is confirmed; "Fast server" and "Lighter
+          system-call monitor" are on by default, each with a tick box to go back.
           The second PRoot build's source, build receipt and licence files are in the APK under
           assets/proot-ioctl/ (PRoot: GPL-2.0-or-later; talloc: LGPL-3.0-or-later). The 0.13.36
           PRoot program is still in the APK, byte for byte.
@@ -345,7 +348,7 @@ jobs:
           Unchanged: any character name the game accepts, one character per install; every zone can
           start; at most two zone servers, missions are not served yet; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.72.md.
+          Test sheet: THOR-TEST-0.13.73.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -354,7 +357,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.72" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.72 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.72.apk COH-Atlas-Gameplay-0.13.72.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.72"
+          gh release create "coh-atlas-gameplay-v0.13.73" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.73 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.73.apk COH-Atlas-Gameplay-0.13.73.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.73"

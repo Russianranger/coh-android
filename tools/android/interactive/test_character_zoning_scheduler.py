@@ -354,5 +354,107 @@ class WinePrioritySnapshotTests(unittest.TestCase):
                 self.assertTrue(scheduler.wine_priority_snapshot(root)['truncated'])
 
 
+class ThreadWaitTests(unittest.TestCase):
+    """0.13.73: what the client's threads and the display server wait on (read-only bursts)."""
+
+    def fake(self, root, pid, command, tasks):
+        directory = root / str(pid); (directory / 'task').mkdir(parents=True)
+        (directory / 'cmdline').write_bytes(command)
+        for tid, name, state, ticks, call, *function in tasks:
+            task = directory / 'task' / str(tid); task.mkdir()
+            fields = [state] + ['0'] * 10 + [str(ticks), '0'] + ['0'] * 40
+            (task / 'stat').write_text('%d (%s) %s\n' % (tid, name, ' '.join(fields)))
+            if call is not None:
+                (task / 'syscall').write_text(call + '\n')
+            if function:
+                (task / 'wchan').write_text(function[0])
+
+    def test_targets_are_the_client_and_the_display_server(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake(root, 10, b'python3\0launch\0CityOfHeroes.exe\0', [(10, 'python3', 'S', 1, None)])
+            self.fake(root, 20, b'C:\\coh\\CityOfHeroes.exe\0', [(20, 'main', 'S', 1, None), (21, 'gl0', 'S', 1, None)])
+            self.fake(root, 30, b'/usr/bin/Xtigervnc\0:100\0', [(30, 'Xtigervnc', 'S', 1, None)])
+            self.fake(root, 40, b'C:\\srv\\MapServer.exe\0', [(40, 'MapServer.exe', 'S', 1, None)])
+            (root / 'self').mkdir(); (root / '50').mkdir()          # no cmdline: skipped
+            self.assertEqual(scheduler.thread_wait_targets(root), {'client': 20, 'display': 30})
+            self.assertEqual(scheduler.thread_wait_targets(root, uid=os.getuid() + 1), {})
+
+    def test_calls_are_named_with_the_detail_that_tells_them_apart(self):
+        call = scheduler.thread_wait_call
+        self.assertEqual(call('98 0x7f00 0x89 0x2 0x0 0x0 0x0 0x7ffe 0x7f11', 'aarch64'), ('futex', 'op=9'))
+        self.assertEqual(call('29 0x9 0xc0200947 0x7ffe 0 0 0 0x1 0x2', 'aarch64'), ('ioctl', '0xc0200947'))
+        self.assertEqual(call('73 0x7ffe 0x1 0x0 0x0 0x8 0x0 0x1 0x2', 'aarch64'), ('ppoll', 'n=1'))
+        self.assertEqual(call('212 0x1f 0x7ffe 0x0 0 0 0 0x1 0x2', 'aarch64'), ('recvmsg', 'fd=31'))
+        self.assertEqual(call('206 0xffffffffffffffff 0 0 0 0 0 0 0', 'aarch64'), ('sendto', 'fd=99999'))
+        self.assertEqual(call('999 0x1 0x2 0x3 0 0 0 0 0', 'aarch64'), ('999', None))
+        self.assertEqual(call('running', 'aarch64'), ('running', None))
+        self.assertEqual(call('-1 0x7ffe 0x1', 'aarch64'), ('not_in_a_call', None))
+        self.assertEqual(call('', 'aarch64'), ('unreadable', None))
+        self.assertEqual(call('98 zz 0x89', 'aarch64'), ('futex', 'op=9'))
+        self.assertEqual(call('98 0x1 zz', 'aarch64'), ('futex', None))
+        self.assertEqual(call('202 0x3 0x0 0x0', 'x86_64'), ('202', None))      # numbers differ by machine
+
+    def test_a_burst_counts_states_and_calls_per_thread(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake(root, 20, b'CityOfHeroes.exe\0', [
+                (20, 'CityOfHeroes.ex', 'S', 100, '98 0x1 0x80 0x2 0 0 0 0x7 0x8', 'futex_wait_queue'),
+                (21, 'gdrv0', 'S', 300, '29 0x9 0xc0200947 0x7 0 0 0 0x7 0x8', 'kgsl_wait_timestamp'),
+                (22, 'gl0', 'R', 200, 'running'),
+                (23, 'CityOfHeroes.ex', 't', 50, '212 0x1f 0x7 0 0 0 0 0x7 0x8', '0'),
+                (24, 'no call file', 'S', 10, None),
+                (25, 'only wchan', 'S', 5, None, 'do_sys_poll')])
+            self.fake(root, 30, b'Xtigervnc\0', [(30, 'Xtigervnc', 't', 500, '206 0xc 0x7 0x4000 0 0 0 0x7 0x8')])
+            rounds = []
+
+            def sleep(seconds):          # the threads use CPU between rounds
+                rounds.append(seconds)
+                for pid, tid, name, state, ticks in ((20, 21, 'gdrv0', 'S', 300 + 2 * len(rounds)),
+                                                     (30, 30, 'Xtigervnc', 'R' if len(rounds) % 2 else 't', 500 + len(rounds))):
+                    fields = [state] + ['0'] * 10 + [str(ticks), '0'] + ['0'] * 40
+                    (root / str(pid) / 'task' / str(tid) / 'stat').write_text('%d (%s) %s\n' % (tid, name, ' '.join(fields)))
+            before = set(os.listdir('/proc/self/fd'))
+            record = scheduler.thread_wait_burst({'client': 20, 'display': 30, 'gone': 99}, root, rounds=10, gap=0.05,
+                                                 sleep=sleep, machine='aarch64')
+            self.assertEqual(set(os.listdir('/proc/self/fd')), before)             # every file closed
+        self.assertEqual((record['rounds'], len(rounds), record['unreadable'], record['call_files'],
+                          record['wchan_files']), (10, 9, 1, 5, 4))
+        client = record['programs']['client']
+        self.assertEqual((client['pid'], client['threads']), (20, 6))
+        names = [row['name'] for row in client['busiest']]
+        self.assertEqual(names[0], 'gdrv0')                                       # the one that used CPU
+        driver = client['busiest'][0]
+        self.assertEqual((driver['samples'], driver['running'], driver['stopped_in_proot']), (10, 0, 0))
+        self.assertEqual(driver['waits'], [[False, 'ioctl', '0xc0200947', 'kgsl_wait_timestamp', 10]])
+        self.assertGreater(driver['cpu_percent'], 0)
+        rows = {(row['name'], row['samples'], row['running'], row['stopped_in_proot']): row['waits'] for row in client['busiest']}
+        self.assertEqual(rows[('gl0', 10, 10, 0)], [])
+        self.assertEqual(rows[('no call file', 10, 0, 0)], [])
+        waits = [wait for found in rows.values() for wait in found]
+        self.assertIn([True, 'recvmsg', 'fd=31', None, 10], waits)            # wchan "0": no function
+        self.assertIn([False, 'futex', 'op=0', 'futex_wait_queue', 10], waits)
+        self.assertIn([False, None, None, 'do_sys_poll', 10], waits)           # the call refused, the function known
+        display = record['programs']['display']['busiest'][0]
+        self.assertEqual((display['running'], display['stopped_in_proot']), (5, 5))
+        self.assertEqual(display['waits'], [[True, 'sendto', 'fd=12', None, 5]])
+        self.assertNotIn('gone', record['programs'])
+        json.dumps(record)
+
+    def test_a_burst_reads_real_threads(self):
+        # This process: its own threads, through the real /proc.
+        record = scheduler.thread_wait_burst({'self': os.getpid()}, rounds=3, gap=0.0, sleep=lambda seconds: None)
+        program = record['programs']['self']
+        self.assertGreaterEqual(program['threads'], 1)
+        self.assertEqual(program['busiest'][0]['samples'], 3)
+        self.assertGreaterEqual(program['busiest'][0]['running'], 1)               # the thread that reads is running
+
+    def test_the_sampler_thread_is_started_and_stopped_with_zoning(self):
+        text = (ROOT / 'android/guest/character_zoning.py').read_text()
+        self.assertIn("            self.start_tick_probe()\n            self.start_wait_sampler()\n", text)
+        self.assertIn("        self.stop_tick_probe()\n        self.stop_wait_sampler()\n", text)
+        self.assertIn("if self.pending is not None or not self.creation_report.get('connected_on_atlas'):", text)
+
+
 if __name__ == '__main__':
     unittest.main()

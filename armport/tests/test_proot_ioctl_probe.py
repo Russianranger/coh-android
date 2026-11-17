@@ -43,8 +43,9 @@ def load_probe(ioctl=None, clock=None):
 
 def load_gate(requested, name='require_proot_ioctl_filter'):
     tree = ast.parse(HOST.read_text())
-    wanted = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == name]
-    assert len(wanted) == 1
+    wanted = [node for node in tree.body if (isinstance(node, ast.FunctionDef) and node.name == name)
+              or (isinstance(node, ast.Assign) and getattr(node.targets[0], 'id', '') == 'NETLINK_DESCRIPTOR_FLOOR')]
+    assert len(wanted) == 2
     runtime = types.SimpleNamespace(proot_ioctl_filter_requested=lambda: requested)
     namespace = {'require': require, 'runtime_host': types.SimpleNamespace(runtime=runtime)}
     exec(compile(ast.Module(body=wanted, type_ignores=[]), str(HOST), 'exec'), namespace)
@@ -79,8 +80,13 @@ class ProbeTest(unittest.TestCase):
     def test_host_without_a_tracer_reads_no_stops(self):
         result = load_probe()['proot_ioctl_probe']()
         self.assertEqual(result['reading'], 'no_ioctl_stops', result)
-        self.assertEqual(set(result['microseconds_per_call']), {'getppid', 'fionread', 'tcgets2', 'getsockopt'})
+        self.assertEqual(set(result['microseconds_per_call']),
+                         {'getppid', 'fionread', 'tcgets2', 'getsockopt', 'send_recv'})
         self.assertIs(result['getsockopt_stops'], False)
+        # 0.13.73 (patch 0007): an ordinary send and receive, and where a rtnetlink socket lands.
+        self.assertIs(result['socket_stops'], False)
+        self.assertIs(result['socket_filter_requested'], False)
+        self.assertTrue(type(result.get('netlink_descriptor')) is int or 'netlink_error_type' in result, result)
         self.assertIs(result['is_success_proof'], False)
 
     def test_the_three_cases_are_told_apart(self):
@@ -97,6 +103,10 @@ class ProbeTest(unittest.TestCase):
             self.assertIs(load_probe()['proot_ioctl_probe'](calls=5)['requested'], True)
         with mock.patch.dict(os.environ, {'COH_PROOT_IOCTL_FILTER': '0', 'PROOT_IOCTL_COMMANDS_ONLY': '1'}):
             self.assertIs(load_probe()['proot_ioctl_probe'](calls=5)['requested'], False)
+        with mock.patch.dict(os.environ, {'COH_PROOT_SOCKET_FILTER': '1'}):
+            self.assertIs(load_probe()['proot_ioctl_probe'](calls=5)['socket_filter_requested'], True)
+        with mock.patch.dict(os.environ, {'COH_PROOT_SOCKET_FILTER': '0', 'PROOT_NETLINK_HIGH_FDS': '1'}):
+            self.assertIs(load_probe()['proot_ioctl_probe'](calls=5)['socket_filter_requested'], False)
 
     def test_an_unexpected_error_is_a_record_not_a_failure(self):
         def broken(descriptor, command, buffer):
@@ -114,17 +124,29 @@ class GateTest(unittest.TestCase):
     def test_without_the_input_nothing_is_required(self):
         load_gate(False)({})
 
+    GOOD = {'reading': 'listed_commands_only', 'requested': True, 'getsockopt_stops': False,
+            'socket_filter_requested': True, 'socket_stops': False, 'netlink_descriptor': 960}
+
     def test_filter_at_work_passes(self):
-        load_gate(True)({'armport_proot_ioctl': {'reading': 'listed_commands_only', 'requested': True,
-                                                 'getsockopt_stops': False}})
+        gate = load_gate(True)
+        gate({'armport_proot_ioctl': self.GOOD})
+        gate({'armport_proot_ioctl': dict(self.GOOD, netlink_descriptor=1031)})
+        # A guest that may not open a rtnetlink socket at all has nothing to place.
+        without = {key: value for key, value in self.GOOD.items() if key != 'netlink_descriptor'}
+        gate({'armport_proot_ioctl': dict(without, netlink_error_type='PermissionError')})
 
     def test_other_readings_fail(self):
         gate = load_gate(True)
-        for probe in (None, {'reading': 'no_ioctl_stops', 'requested': True},
-                      {'reading': 'every_ioctl_stops', 'requested': True},
-                      {'reading': 'listed_commands_only', 'requested': False}, {'reading': 'unavailable'},
-                      {'reading': 'listed_commands_only', 'requested': True},
-                      {'reading': 'listed_commands_only', 'requested': True, 'getsockopt_stops': True}):
+        good = self.GOOD
+        for probe in (None, dict(good, reading='no_ioctl_stops'), dict(good, reading='every_ioctl_stops'),
+                      dict(good, requested=False), {'reading': 'unavailable'},
+                      {key: value for key, value in good.items() if key != 'getsockopt_stops'},
+                      dict(good, getsockopt_stops=True),
+                      # 0.13.73 (patch 0007)
+                      dict(good, socket_stops=True), dict(good, socket_filter_requested=False),
+                      {key: value for key, value in good.items() if key != 'socket_stops'},
+                      dict(good, netlink_descriptor=3), dict(good, netlink_descriptor=959),
+                      dict(good, netlink_descriptor='960')):
             with self.subTest(probe=probe), self.assertRaises(RuntimeError):
                 gate({} if probe is None else {'armport_proot_ioctl': probe})
 
@@ -134,10 +156,70 @@ class GateTest(unittest.TestCase):
         java = (ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/'
                 'ClientRuntime.java').read_text()
         self.assertIn('"COH_PROOT_IOCTL_FILTER="+(prootIoctlFilterUsed?"1":"0")', java)
+        self.assertIn("command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_SOCKET_FILTER=1')", host)
+        self.assertIn('"COH_PROOT_SOCKET_FILTER="+(prootSocketFilterUsed?"1":"0")', java)
 
     def test_workflow_passes_the_switch(self):
         workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()
         self.assertIn("COH_PROOT_IOCTL_FILTER: ${{ inputs.proot_ioctl_filter && '1' || '' }}", workflow)
+
+
+class LaunchReceiptsLineTest(unittest.TestCase):
+    """0.13.73: what each launch receipt decided, in the CI log (Thor 0.13.72 never reused one)."""
+
+    def line(self, report):
+        import json
+        tree = ast.parse(HOST.read_text())
+        wanted = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'launch_receipts_line']
+        self.assertEqual(len(wanted), 1)
+        namespace = {'json': json}
+        exec(compile(ast.Module(body=wanted, type_ignores=[]), str(HOST), 'exec'), namespace)
+        text = namespace['launch_receipts_line'](report, 'reopen')
+        self.assertTrue(text.startswith('LAUNCH_RECEIPTS_V1 {'))
+        return json.loads(text.split(' ', 1)[1])
+
+    def test_line(self):
+        value = self.line({'launch_receipts': {
+            'zone_graph_71': {'status': 'reused', 'reason': None, 'elapsed_seconds': 0.4},
+            'atlas_world': {'status': 'ran_in_full', 'reason': 'directory_changed: data/server' + 'x' * 200},
+            7: {'status': 'reused'}, 'bad': 'row'}})
+        self.assertEqual(value['session'], 'reopen')
+        self.assertEqual(value['steps']['zone_graph_71'], ['reused', None, 0.4])
+        self.assertEqual(value['steps']['atlas_world'][0], 'ran_in_full')
+        self.assertEqual(len(value['steps']['atlas_world'][1]), 80)
+        self.assertEqual(set(value['steps']), {'zone_graph_71', 'atlas_world'})
+        self.assertEqual(self.line({})['steps'], {})
+        self.assertEqual(self.line({'launch_receipts': []})['steps'], {})
+
+
+class ThreadWaitsLineTest(unittest.TestCase):
+    """0.13.73: the guest's thread-wait bursts, one line in the CI log."""
+
+    def line(self, report):
+        import json
+        tree = ast.parse(HOST.read_text())
+        wanted = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'thread_waits_line']
+        self.assertEqual(len(wanted), 1)
+        namespace = {'json': json}
+        exec(compile(ast.Module(body=wanted, type_ignores=[]), str(HOST), 'exec'), namespace)
+        text = namespace['thread_waits_line'](report, 'reopen')
+        self.assertTrue(text.startswith('THREAD_WAITS_V1 {'))
+        return json.loads(text.split(' ', 1)[1])
+
+    def test_line(self):
+        self.assertEqual(self.line({}), {'format': 1, 'session': 'reopen', 'bursts': None})
+        self.assertEqual(self.line({'character_zoning': {'thread_waits': {'bursts': [], 'error': None,
+                                                                         'skipped_not_in_world': 3}}}),
+                         {'format': 1, 'session': 'reopen', 'bursts': 0, 'skipped_not_in_world': 3, 'error': None})
+        burst = {'utc': '2026-11-17T13:20:00Z', 'rounds': 40, 'seconds': 2.1, 'call_files': 50, 'wchan_files': 50,
+                 'unreadable': 0, 'programs': {'client': {'pid': 9, 'threads': 50, 'cpu_percent': 93.0, 'busiest': [
+                     {'name': 'gdrv0', 'cpu_percent': 28.0, 'samples': 40, 'running': 9, 'stopped_in_proot': 2,
+                      'waits': [[False, 'ioctl', '0xc0200947', 'kgsl_wait', 25], [False, 'futex', 'op=9', None, 4]]}] * 6}}}
+        value = self.line({'character_zoning': {'thread_waits': {'bursts': ['bad', burst], 'error': None}}})
+        self.assertEqual(value['bursts'], 1)
+        client = value['last']['programs']['client']
+        self.assertEqual((client['threads'], client['cpu_percent'], len(client['busiest'])), (50, 93.0, 4))
+        self.assertEqual(client['busiest'][0], ['gdrv0', 28.0, 9, 2, [False, 'ioctl', '0xc0200947', 'kgsl_wait', 25]])
 
 
 class StopCountsTest(unittest.TestCase):
@@ -166,6 +248,14 @@ class StopCountsTest(unittest.TestCase):
             self.assertEqual(counts['calls'], [[79, 350, 350], [56, 300, 0]])
             self.assertEqual(counts['other_stops'], 9)
             self.assertEqual(counts['programs'], [['wineserver', 79, 400], ['MapServer.exe', 79, 300]])
+            self.assertEqual([counts[key] for key in ('fd_stats', 'moved_netlink_fds', 'failed_netlink_moves')],
+                             [None, None, None])                     # an older PRoot writes none of them
+            (Path(work) / namespace['STOP_COUNTS_NAME']).write_text(
+                'PROOT_STOP_COUNTS_V1 seconds=9 stops=40 fd_stats=12 moved_netlink_fds=3 failed_netlink_moves=0\n'
+                '79 20 20\n')
+            counts = namespace['proot_stop_counts'](work)
+            self.assertEqual([counts[key] for key in ('stops', 'fd_stats', 'moved_netlink_fds', 'failed_netlink_moves')],
+                             [40, 12, 3, 0])
             (Path(work) / namespace['STOP_COUNTS_NAME']).write_text('something else\n')
             self.assertEqual(namespace['proot_stop_counts'](work), {'format': 1, 'valid': False})
 
@@ -186,6 +276,13 @@ class StopCountsTest(unittest.TestCase):
         self.assertIn('getenv("PROOT_ACCEPT_UNTRACED")', later)
         self.assertIn('"P %s %u %llu\\n"', later)
         self.assertEqual(self.reader()['STOP_COUNTS_NAME'], 'proot-stop-counts.txt')
+        # 0.13.73 (patch 0007)
+        self.assertIn('environment["PROOT_NETLINK_HIGH_FDS"] = "1"', launcher)
+        last = (ROOT / 'android/native/proot/0007-netlink-high-fds-socket-filter.patch').read_text()
+        for text in ('getenv("PROOT_NETLINK_HIGH_FDS")', '+#define SOCKET_FD_FLOOR 960', 'moved_netlink_fds=%llu',
+                     'register_chained_syscall_with_result(tracee, netlink_fd_moved, PR_fcntl,'):
+            self.assertIn(text, last)
+        self.assertIn('NETLINK_DESCRIPTOR_FLOOR = 960', HOST.read_text())
         patch = (ROOT / 'android/native/proot/0005-stop-counts-getsockopt-filter.patch').read_text()
         for text in ('getenv("PROOT_STOP_COUNTS")', 'getenv("PROOT_GETSOCKOPT_PEERCRED_ONLY")', 'PROOT_STOP_COUNTS_V1 seconds='):
             self.assertIn(text, patch)

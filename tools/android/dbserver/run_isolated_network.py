@@ -52,6 +52,9 @@ def clean_environment(loader, temporary, seccomp=False, ioctl_filter=False):
         # 0.13.71 (patch 0006): accept is not stopped; a Unix-socket peer's bound path is then the
         # host's. Nothing in the guest reads it (X server, wineserver, PostgreSQL).
         environment["PROOT_ACCEPT_UNTRACED"] = "1"
+        # 0.13.73 (patch 0007): rtnetlink sockets get descriptor numbers from 960, and sendto,
+        # recvfrom and recvmsg stop only from that number.
+        environment["PROOT_NETLINK_HIGH_FDS"] = "1"
         environment["PROOT_STOP_COUNTS"] = str(Path(temporary).parent / STOP_COUNTS_NAME)
     return environment
 

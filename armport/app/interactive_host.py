@@ -481,6 +481,9 @@ def require_early_zone_decision(report):
         require(early.get('failure') is None, 'The early zone start failed: ' + str(early.get('failure'))[:120])
 
 
+NETLINK_DESCRIPTOR_FLOOR = 960      # SOCKET_FD_FLOOR in PRoot patch 0007 (socket_fd_filter.h)
+
+
 def require_proot_ioctl_filter(report):
     """With the proot_ioctl_filter input the guest's own probe must show the filter at work.
 
@@ -498,9 +501,61 @@ def require_proot_ioctl_filter(report):
     # 0.13.70 (patch 0005): the same launch sets PROOT_GETSOCKOPT_PEERCRED_ONLY=1.
     require(probe.get('getsockopt_stops') is False,
             'The call filter was requested but getsockopt still stops in PRoot')
+    # 0.13.73 (patch 0007): the same launch sets PROOT_NETLINK_HIGH_FDS=1. An ordinary send and
+    # receive must not stop, and a rtnetlink socket must sit where its calls still do.
+    require(probe.get('socket_filter_requested') is True and probe.get('socket_stops') is False,
+            'The call filter was requested but socket sends and receives still stop in PRoot')
+    descriptor = probe.get('netlink_descriptor')
+    require(descriptor is None or (type(descriptor) is int and descriptor >= NETLINK_DESCRIPTOR_FLOOR),
+            'The call filter was requested but a rtnetlink socket got descriptor ' + str(descriptor)[:12])
 
 
 STOP_COUNTS_NAME = 'proot-stop-counts.txt'      # run_isolated_network.STOP_COUNTS_NAME
+def launch_receipts_line(report, session):
+    """One log line with what each launch receipt decided in this session (0.13.73).
+
+    Thor 0.13.72: the zone graph receipt answered "inputs_changed" on every launch, and
+    no log said so. Evidence only; a receipt saves time and never gates.
+    """
+    steps = {}
+    found = report.get('launch_receipts') if isinstance(report, dict) else None
+    for step, record in sorted(found.items(), key=lambda item: str(item[0])) if isinstance(found, dict) else ():
+        if isinstance(step, str) and isinstance(record, dict):
+            steps[step[:48]] = [str(record.get('status'))[:24],
+                                None if record.get('reason') is None else str(record.get('reason'))[:80],
+                                record.get('elapsed_seconds') if type(record.get('elapsed_seconds')) in (int, float) else None]
+        if len(steps) >= 32:
+            break
+    return 'LAUNCH_RECEIPTS_V1 ' + json.dumps({'format': 1, 'session': session, 'steps': steps}, separators=(',', ':'))
+
+
+def thread_waits_line(report, session):
+    """One log line: the guest's last burst of thread-wait samples in the world (0.13.73).
+
+    The sampler exists for the phone's frame rate (Thor 0.13.72: 22 frames a second with the
+    client under one core). CI shows that it runs and what it can read there. Evidence only.
+    """
+    zoning = report.get('character_zoning') if isinstance(report, dict) else None
+    waits = zoning.get('thread_waits') if isinstance(zoning, dict) else None
+    value = {'format': 1, 'session': session, 'bursts': None}
+    if isinstance(waits, dict) and isinstance(waits.get('bursts'), list):
+        bursts = [burst for burst in waits['bursts'] if isinstance(burst, dict)]
+        value.update(bursts=len(bursts), skipped_not_in_world=waits.get('skipped_not_in_world'),
+                     error=None if waits.get('error') is None else str(waits.get('error'))[:120])
+        if bursts:
+            last = bursts[-1]
+            value['last'] = {key: last.get(key) for key in ('utc', 'rounds', 'seconds', 'call_files', 'wchan_files',
+                                                             'unreadable')}
+            programs = last.get('programs') if isinstance(last.get('programs'), dict) else {}
+            value['last']['programs'] = {
+                str(label)[:16]: {'threads': program.get('threads'), 'cpu_percent': program.get('cpu_percent'),
+                                  'busiest': [[row.get('name'), row.get('cpu_percent'), row.get('running'),
+                                               row.get('stopped_in_proot'), (row.get('waits') or [None])[0]]
+                                              for row in (program.get('busiest') or [])[:4] if isinstance(row, dict)]}
+                for label, program in sorted(programs.items())[:4] if isinstance(program, dict)}
+    return 'THREAD_WAITS_V1 ' + json.dumps(value, separators=(',', ':'))[:6000]
+
+
 STOP_COUNTS_MARK = 'PROOT_STOP_COUNTS_V1 '
 
 
@@ -526,7 +581,10 @@ def proot_stop_counts(work, top=48):
     programs = [[parts[1][:16], int(parts[2]), int(parts[3])] for parts in (line.split() for line in lines[1:])
                 if len(parts) == 4 and parts[0] == 'P' and parts[2].isdigit() and parts[3].isdigit()]
     programs.sort(key=lambda row: (-row[2], row[0], row[1]))
-    return {'format': 1, 'valid': True, 'seconds': number('seconds'), 'stops': number('stops'),
+    # 0.13.73 (patch 0007): stat calls on a descriptor (no path to translate), and rtnetlink
+    # sockets moved to a high descriptor number or refused one. None from an older PRoot.
+    extra = {key: number(key) for key in ('fd_stats', 'moved_netlink_fds', 'failed_netlink_moves')}
+    return {'format': 1, 'valid': True, 'seconds': number('seconds'), 'stops': number('stops'), **extra,
             'columns': ['call_number', 'enter_stops', 'exit_stops'], 'calls': rows[:top],
             'other_stops': sum(row[1] + row[2] for row in rows[top:]),
             'program_columns': ['thread_name', 'call_number', 'stops'], 'programs': programs[:top]}
@@ -661,7 +719,8 @@ def guest_timing_summary(evidence):
             probe = report.get('armport_proot_ioctl')
             if isinstance(probe, dict):
                 result['proot_ioctl'] = {key: probe.get(key) for key in (
-                    'reading', 'requested', 'microseconds_per_call', 'getsockopt_stops', 'error_type')
+                    'reading', 'requested', 'microseconds_per_call', 'getsockopt_stops', 'error_type',
+                    'socket_filter_requested', 'socket_stops', 'netlink_descriptor', 'netlink_error_type')
                     if probe.get(key) is not None}
             result['shared_server_data'] = next((section.get('shared_server_data') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
@@ -808,6 +867,8 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             if isinstance(report.get('python_call_profile'), dict):
                 print('PYTHON_CALL_PROFILE_V1 ' + json.dumps(dict(report['python_call_profile'],
                       session='reopen' if reopening else 'creation'), separators=(',', ':')), flush=True)
+            print(launch_receipts_line(report, 'reopen' if reopening else 'creation'), flush=True)
+            print(thread_waits_line(report, 'reopen' if reopening else 'creation'), flush=True)
             projected = legacy_report(report, runtime_manifest, client_manifest)
             checked_manifest = validation_manifest(report, runtime_manifest)
             require(time.monotonic() <= deadline, 'ARM64 interactive host deadline exceeded')
@@ -939,6 +1000,7 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
         if runtime_host.runtime.proot_ioctl_filter_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_IOCTL_FILTER=1')
+            command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_SOCKET_FILTER=1')
         if trap_sampler.requested():        # the same CI input also counts the supervisor's own calls
             command.insert(command.index('/usr/bin/python3'), 'COH_CALL_PROFILE=1')
         if trusted_bins_requested():

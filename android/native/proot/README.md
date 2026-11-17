@@ -82,6 +82,29 @@ emulated SysV IPC namespace.
   without (local x86-64). The stop-count file gains `P <thread name> <call
   number> <stops>` rows. Why: CI run 43363707492 counted 14.2 million stops
   in a 912 s reopen session, 17 % of them `accept` (1,340 calls a second).
+- `0007-netlink-high-fds-socket-filter.patch` (2026-11-17; in `PATCH_NAMES`
+  since 0.13.73). Applies on top of 0001-0006. PRoot asks for `sendto`,
+  `recvfrom` and `recvmsg` only to serve rtnetlink sockets (the AF_UNIX
+  sockets it substitutes where the host refuses AF_NETLINK, and real ones
+  whose requests it acks for a tracee that believes it owns a network
+  namespace), yet every send and receive of every socket stops for that
+  look-up. With `PROOT_NETLINK_HIGH_FDS=1` each NETLINK_ROUTE socket is
+  duplicated to a descriptor number at or above 960 before `socket` returns
+  (chained `fcntl(F_DUPFD or F_DUPFD_CLOEXEC, 960)` and `close` of the low
+  number; the chain mechanism gains a result handler), and the filter traces
+  the three calls only for descriptors from 960, for the default ABI. If no
+  such number is free (soft `RLIMIT_NOFILE` below 961) the socket is refused
+  with EMFILE. `sendmsg` and `close` are traced as before. Not applied with
+  `-p` (port switch asks for these calls itself). The stop-count file's first
+  line gains `fd_stats`, `moved_netlink_fds` and `failed_netlink_moves`.
+  Why: Thor 0.13.72 (20261117-130723, -131522, -132616) counted 6.4 to 11.2
+  million stops per launch, 38-49 % of them these three calls, 22-32 % from
+  Xtigervnc sending frames. Local x86-64 with the app's options: a `send` and
+  `recv` pair 0.9 microseconds with the switch, 52-61 without; netlink
+  look-ups (`if_nameindex`, `getifaddrs`) return the same answers on the real
+  and on the substituted path. Not yet run on ARM64 or on a device.
+  `tools/android/test_proot_socket_fd_filter.py` runs the statements through
+  a BPF interpreter on the host.
 - The Android talloc cross answers follow the same pinned TRASC recipe, derived
   there from the Termux talloc build recipe. Android NDK **27.2.12479018**, API 26,
   and 16 KB ELF segment alignment are explicit build inputs. Linux CI uses the

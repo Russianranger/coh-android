@@ -52,6 +52,9 @@ PRESTART_THREAD_NICE = 10
 PRESTART_MIN_AVAILABLE_MIB = 3072
 # Idle priority for a resident MapServer the player is not on (launch option).
 IDLE_ENV = 'COH_IDLE_RESIDENT_MAPS'
+# 0.13.73: bursts of thread-wait samples in the world (start_wait_sampler).
+WAIT_SAMPLER_PERIOD_SECONDS = 30
+WAIT_SAMPLER_LIMIT = 60
 PRIORITY_SAMPLES = 12
 PRIORITY_INTERVAL_SECONDS = 120
 # 0.13.69: the same read-only sample while a zone server loads before the character is in the
@@ -726,6 +729,52 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.tick_probe = {'stop': stop, 'thread': thread}
         thread.start()
 
+    def start_wait_sampler(self):
+        """0.13.73: one daemon thread; every WAIT_SAMPLER_PERIOD_SECONDS in the world it reads, in a
+        two-second burst, what the client's threads and the display server wait on.
+
+        Thor 0.13.72: 22 frames a second in one direction with the client under one core in
+        total. Read-only (character_zoning_scheduler.thread_wait_burst); never affects zoning.
+        """
+        if getattr(self, 'wait_sampler', None) is not None or getattr(self, 'zoning_report', None) is None:
+            return
+        report = self.zoning_report['thread_waits'] = {
+            'format': 1, 'policy': 'read_only_thread_state_and_system_call_bursts_v1',
+            'period_seconds': WAIT_SAMPLER_PERIOD_SECONDS, 'rounds': scheduler.WAIT_ROUNDS,
+            'gap_seconds': scheduler.WAIT_GAP_SECONDS, 'limit': WAIT_SAMPLER_LIMIT, 'bursts': [],
+            'skipped_not_in_world': 0, 'error': None, 'is_success_proof': False}
+        stop = threading.Event()
+
+        def run():
+            try:
+                targets = {}
+                while not stop.wait(WAIT_SAMPLER_PERIOD_SECONDS) and len(report['bursts']) < WAIT_SAMPLER_LIMIT:
+                    if self.pending is not None or not self.creation_report.get('connected_on_atlas'):
+                        report['skipped_not_in_world'] += 1
+                        continue
+                    if set(targets) != {label for label, _ in scheduler.WAIT_PROGRAMS} or not all(
+                            os.path.isdir('/proc/%d' % pid) for pid in targets.values()):
+                        targets = scheduler.thread_wait_targets()
+                    burst = scheduler.thread_wait_burst(targets, sleep=lambda seconds: stop.wait(seconds))
+                    burst.update(active_map_id=self.active_map_id)
+                    report['bursts'].append(burst)
+            except Exception as error:   # observation only; never affects zoning
+                report['error'] = type(error).__name__ + ': ' + str(error)[:160]
+
+        thread = threading.Thread(target=run, name='coh-wait-sampler', daemon=True)
+        self.wait_sampler = {'stop': stop, 'thread': thread}
+        thread.start()
+
+    def stop_wait_sampler(self, timeout=TICK_PROBE_JOIN_SECONDS):
+        sampler = getattr(self, 'wait_sampler', None)
+        if sampler is None:
+            return True
+        sampler['stop'].set()
+        sampler['thread'].join(timeout)
+        alive = sampler['thread'].is_alive()
+        self.zoning_report['thread_waits']['thread_joined'] = not alive
+        return not alive
+
     def stop_tick_probe(self, timeout=TICK_PROBE_JOIN_SECONDS):
         probe = getattr(self, 'tick_probe', None)
         if probe is None:
@@ -1018,6 +1067,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         # inherited cache return so no tree is returned while being written.
         self.stop_background_prestart()
         self.stop_tick_probe()
+        self.stop_wait_sampler()
         path = getattr(self.owner, 'armport_fps_cap_file', None)
         if getattr(self, 'station_fps_cap', None) is not None and path is not None:
             try:
@@ -2368,6 +2418,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.enabled_announced = True
             self._emit('enabled', current_map_verified=True, zoning_enabled=True)
             self.start_tick_probe()
+            self.start_wait_sampler()
         # A corrupt/foreign post-send receipt cannot be treated as proof that
         # no command was sent. Only a fully parsed, unchanged historical receipt
         # can clear this conservative uncertainty flag.

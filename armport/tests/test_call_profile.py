@@ -54,6 +54,29 @@ class CallProfile(unittest.TestCase):
         self.assertEqual(record['format'], 2)
         self.assertIs(counts, namespace['install_call_profile'](environ={'COH_CALL_PROFILE': '1'}))   # installed once
 
+    def test_process_polls_are_counted(self):
+        # 0.13.73: Popen.poll() holds its own reference to waitpid; run 43823341031 showed no row for it.
+        import subprocess
+        namespace = load()
+
+        class Popen(subprocess.Popen):
+            pass
+        fake_os = types.SimpleNamespace(**{name: getattr(os, name) for name in namespace['CALL_PROFILE_NAMES']})
+        namespace['install_call_profile'](environ={'COH_CALL_PROFILE': '1'}, modules={
+            'os': fake_os, 'io': types.SimpleNamespace(open=open), 'subprocess': types.SimpleNamespace(Popen=Popen)})
+        child = Popen([sys.executable, '-c', 'pass'])
+        child.wait()
+        for _ in range(4):
+            self.assertEqual(child.poll(), 0)
+        record = namespace['call_profile_record']()
+        self.assertEqual(record['by_call'].get('Popen.poll'), 4)
+        self.assertEqual(record['callers'][0][:2], ['Popen.poll', 'test_call_profile.py'])
+
+    def test_the_app_turns_it_on(self):
+        java = (ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/'
+                'ClientRuntime.java').read_text()
+        self.assertIn('"COH_CALL_PROFILE=1",', java)
+
     def test_ci_switch_and_report(self):
         host = (ROOT / 'armport/app/interactive_host.py').read_text()
         self.assertIn("command.insert(command.index('/usr/bin/python3'), 'COH_CALL_PROFILE=1')", host)

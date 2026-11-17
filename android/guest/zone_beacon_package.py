@@ -62,6 +62,9 @@ MAX_PROOFS = 200000
 MAX_PROOF_BYTES = 64 * 1024 * 1024
 
 
+RECEIPT_ROOT = 'data'      # every input, graph file and marker of a zone is below it (names, input_name)
+
+
 def names(map_id):
     require(map_id in WORLDS, 'No zone graph is defined for map ' + str(map_id))
     world = WORLDS[map_id]
@@ -259,20 +262,29 @@ def private_target(runtime, name, context, map_id):
 
 
 def receipt_identity(source, runtime, map_id):
-    """What a launch receipt for one zone's graph is bound to (0.13.70).
+    """What a launch receipt for one zone's graph is bound to (0.13.70; format 2 in 0.13.73).
 
-    The pack's lock and manifest for the zone, this code, and the shared zone tree itself.
-    The receipt's directory rows (launch_receipts.py) then stand for the inputs: adding,
-    removing, renaming or replacing an input or a graph file changes a row.
+    The pack's lock and manifest for the zone and this code. The zone tree is not part of
+    it: `runtime` is a folder named after the session, and only its `data` survives a
+    launch (the cache hands it back by rename). The receipt's directory rows
+    (launch_receipts.py) start at `data` and stand for the inputs: another `data`, or
+    adding, removing, renaming or replacing an input or a graph file, changes a row.
+
+    Thor 0.13.72 (20261117-131522, -132616): format 1 also held the identity of `runtime`
+    itself, so every launch answered "inputs_changed" and walked the inputs again (13-17 s).
     """
     value, lock = read_manifest(source['manifest'], source['lock'], map_id)
-    runtime = Path(runtime)
     code = {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('zone_beacon_package.py', 'atlas_beacon_package.py', 'launch_receipts.py')}
-    return {'format': 1, 'step': 'zone_graph', 'map_id': map_id, 'policy': POLICY, 'origin': source['origin'],
+    return {'format': 2, 'step': 'zone_graph', 'map_id': map_id, 'policy': POLICY, 'origin': source['origin'],
             'lock': lock, 'input_files': len(value['input_files']), 'graph_files': sorted(value['files']),
-            'code': code, 'tree_identity': [[info.st_dev, info.st_ino]
-                                            for info in (os.lstat(runtime), os.lstat(runtime / 'data'))]}
+            'code': code, 'receipt_root': RECEIPT_ROOT}
+
+
+def receipt_root(runtime):
+    """The directory a zone graph receipt's rows are relative to: the part of the zone tree
+    that outlives a session."""
+    return Path(runtime) / RECEIPT_ROOT
 
 
 def install(source, runtime, map_id, *, context, imported_inputs_readonly, proofs=None, leaves=None):

@@ -621,7 +621,26 @@ thread of every process about once in 2.6 s. 0.13.72 runs it once in 15 s
 12 % (267,606 calls), MapServer 40 %, wineserver 25 %, audio bridge 9 %,
 client 8 %. A 3 s interval had moved the total only to 11.4 million.
 
-Next parts of step 14, cheapest and safest first (none built yet):
+Thor 0.13.72 (2026-11-17, three launches, PRoot's own counts on the phone):
+13,500-14,400 stops a second; the tracer thread at 33-40 % of a core in the
+world and 50-84 % while a zone loads.
+
+| Program (thread name) | Share of stops, launches A / B / C | Mostly |
+|---|---|---|
+| Xtigervnc | 24.6 / 24.6 / 34.3 % | `sendto` 22-32 % (each frame to the app, Raw, about 130 sends), `recvmsg` 2-3 % |
+| guest Python | 18.9 / 20.6 / 18.7 % | `newfstatat` 10-12 %, `wait4` 3-4 %, `openat` and `close` 2 % each |
+| wineserver | 18.8 / 18.6 / 14.9 % | `readlinkat` 12-16 % |
+| MapServer | 17.4 / 15.0 / 12.0 % | `newfstatat` 9-13 % |
+| client | 8.4 / 8.9 / 8.4 % | `recvmsg` 6 %, `newfstatat` 2 % |
+| audio bridge thread | 4.7 / 3.9 / 4.2 % | `recvfrom`, `sendto` |
+
+The display server never showed in CI (its viewer reads few frames). 0.13.73
+builds part 4 below as patch 0007 (`sendmsg` excepted): `sendto`, `recvfrom`
+and `recvmsg` were 38-49 % of the phone's stops.
+
+Next parts of step 14, cheapest and safest first (built so far: 1 and 2 in
+patch 0005, 3 in 0.13.72, 4 without `sendmsg` in patch 0007, the `accept`
+half of 6 in patch 0006):
 
 1. Count stops inside the patched PRoot (per call number, written at exit to a
    file named by an environment variable), so a phone launch with the option

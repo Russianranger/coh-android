@@ -3135,7 +3135,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         identity = None
         try:
             identity = package.receipt_identity(source, target, map_id)
-            result, record['reason'] = launch_receipts.reusable(store, step, identity, target, self.ctx)
+            # Rows start at the tree's `data`: `target` itself is new in every session (0.13.73).
+            root = package.receipt_root(target)
+            result, record['reason'] = launch_receipts.reusable(store, step, identity, root, self.ctx)
             if result is not None and result.get('verified') is True and result.get('map_id') == map_id:
                 elapsed = time.monotonic() - started
                 record.update(status='reused', elapsed_seconds=round(elapsed, 6))
@@ -3152,7 +3154,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         record['elapsed_seconds'] = round(time.monotonic() - started, 6)
         if identity is not None and result.get('verified') is True:
             try:
-                record['directories'] = launch_receipts.record(store, step, identity, target, leaves, result, self.ctx)
+                record['directories'] = launch_receipts.record(store, step, identity, package.receipt_root(target),
+                                                               leaves, result, self.ctx)
                 record['recorded'] = True
             except base.Cancelled:
                 raise

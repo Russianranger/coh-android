@@ -227,6 +227,7 @@ public final class ClientRuntime {
     private boolean earlyZoneRequested=false;
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
+    private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
     private File prootStopCounts;
     private boolean spareZoneRequested=false;
@@ -468,6 +469,23 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("proot-call-filter", enabled).apply();
+    }
+    /**
+     * 0.13.73: with the second PRoot build (patch 0007), PROOT_NETLINK_HIGH_FDS=1 gives the guest's
+     * rtnetlink sockets descriptor numbers from 960 and stops sendto, recvfrom and recvmsg only
+     * from that number. Thor 0.13.72 (20261117-130723, -131522, -132616): those three calls on
+     * other sockets were 38-49 % of all stops, 22-32 % from the display server sending frames to
+     * this app. On by default; needs "Lighter system-call monitor". Unticking it keeps the rest
+     * of the second build.
+     */
+    public static boolean prootSocketFilterEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("proot-socket-filter", true);
+    }
+    public static synchronized void setProotSocketFilterEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("proot-socket-filter", enabled).apply();
     }
     public static boolean glDirectEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
@@ -1021,6 +1039,7 @@ public final class ClientRuntime {
         earlyZoneRequested=earlyZoneEnabled(context);
         glDirectRequested=glDirectEnabled(context);
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
+        prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
         spareZoneRequested=spareZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
@@ -1080,6 +1099,7 @@ public final class ClientRuntime {
             prootIoctlFilterUsed = prootIoctlFilterRequested && prootFastModeRequested
                     && filteredProot.canExecute() && filteredLoader.canExecute();
             if (prootIoctlFilterUsed) { proot = filteredProot; loader = filteredLoader; }
+            prootSocketFilterUsed = prootIoctlFilterUsed && prootSocketFilterRequested;
             List<String> command = new ArrayList<>(Arrays.asList(proot.getPath(), "--link2symlink", "--kill-on-exit", "--sysvipc",
                     "-i", "1000:1000", "-r", root.getPath(), "-b", "/dev", "-b", "/proc", "-b", "/sys",
                     "-b", state.getPath() + ":/state", "-b", tmp.getPath() + ":/tmp",
@@ -1099,6 +1119,10 @@ public final class ClientRuntime {
                     "COH_CLIENT_ARCH="+clientArchitectureRequested,
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
                     "COH_PROOT_IOCTL_FILTER="+(prootIoctlFilterUsed?"1":"0"),
+                    "COH_PROOT_SOCKET_FILTER="+(prootSocketFilterUsed?"1":"0"),
+                    // 0.13.73: the supervisor counts its own file calls by caller (report python_call_profile).
+                    // Thor 0.13.72: Python made 19-21 % of all stops, twice CI's rate, and no report said where.
+                    "COH_CALL_PROFILE=1",
                     "COH_PRESTART_NEXT_ZONE="+(prestartNextZoneRequested?"1":"0"),
                     "COH_EARLY_ZONE="+(earlyZoneRequested?"1":"0"),
                     "COH_SPARE_ZONE="+(spareZoneRequested?"1":"0"),
@@ -1139,6 +1163,7 @@ public final class ClientRuntime {
             builder.environment().remove("PROOT_GETSOCKOPT_PEERCRED_ONLY");
             builder.environment().remove("PROOT_STOP_COUNTS");
             builder.environment().remove("PROOT_ACCEPT_UNTRACED");
+            builder.environment().remove("PROOT_NETLINK_HIGH_FDS");
             prootStopCounts = prootIoctlFilterUsed ? new File(prootTmp, "stop-counts.txt") : null;
             if (prootStopCounts != null) {
                 prootStopCounts.delete(); new File(prootTmp, "stop-counts.txt.new").delete();
@@ -1146,10 +1171,15 @@ public final class ClientRuntime {
                 // 0.13.71 (patch 0006): accept is not stopped (17 % of all stops in CI run 43363707492).
                 builder.environment().put("PROOT_ACCEPT_UNTRACED", "1");
                 builder.environment().put("PROOT_STOP_COUNTS", prootStopCounts.getPath());
+                // 0.13.73 (patch 0007): sendto, recvfrom and recvmsg stop only on descriptors from 960,
+                // where PRoot now puts the rtnetlink sockets it serves.
+                if (prootSocketFilterUsed) builder.environment().put("PROOT_NETLINK_HIGH_FDS", "1");
             }
             line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)")
                     +(prootIoctlFilterUsed?", ioctl stops only for the commands PRoot acts on (second PRoot build)"
-                    :prootIoctlFilterRequested?", ioctl filter asked for but not used":""));
+                    :prootIoctlFilterRequested?", ioctl filter asked for but not used":"")
+                    +(prootSocketFilterUsed?", socket sends and receives not stopped"
+                    :prootSocketFilterRequested&&!prootIoctlFilterUsed?", socket filter asked for but not used":""));
             write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
                     .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
             stage("Starting City of Heroes", "Starting the persistent local database and DbServer, verifying the saved destination, then opening its MapServer and graphical client.");
@@ -2977,7 +3007,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

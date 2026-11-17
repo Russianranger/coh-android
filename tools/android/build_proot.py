@@ -42,7 +42,11 @@ PATCH_NAMES = ('0001-sysvipc-memfd.patch', '0002-android-string-header.patch',
                '0005-stop-counts-getsockopt-filter.patch',
                # 0.13.71: PROOT_ACCEPT_UNTRACED=1 leaves accept and accept4 out of the filter (CI run
                # 43363707492: 17 % of all stops); the stop counts gain per-program rows.
-               '0006-accept-untraced-program-counts.patch')
+               '0006-accept-untraced-program-counts.patch',
+               # 0.13.73: PROOT_NETLINK_HIGH_FDS=1 gives rtnetlink sockets descriptor numbers from 960
+               # and stops sendto, recvfrom and recvmsg only from that number (Thor 0.13.72: 38-49 % of
+               # all stops were these three calls on other sockets). Without the variable nothing changes.
+               '0007-netlink-high-fds-socket-filter.patch')
 
 
 def require(condition, message):
@@ -146,6 +150,11 @@ def prepare(work, checkout=None, talloc_archive=None):
     require('PROOT_ACCEPT_UNTRACED' in (proot / 'src/syscall/seccomp.c').read_text() and
             'stop_counts_pair' in (proot / 'src/syscall/stop_counts.h').read_text(),
             'accept switch and program counts patch missing')
+    require('PROOT_NETLINK_HIGH_FDS' in (proot / 'src/syscall/seccomp.c').read_text() and
+            (proot / 'src/syscall/socket_fd_filter.h').is_file() and
+            'register_chained_syscall_with_result' in (proot / 'src/syscall/chain.c').read_text() and
+            'move_netlink_fd' in (proot / 'src/syscall/exit.c').read_text(),
+            'netlink descriptor and socket filter patch missing')
     return proot, work / 'talloc-2.4.3', sources
 
 
@@ -275,6 +284,7 @@ def main():
         'stop_counts_patch': True, 'stop_counts_switch': 'PROOT_STOP_COUNTS=<file>',
         'getsockopt_filter_switch': 'PROOT_GETSOCKOPT_PEERCRED_ONLY=1',
         'accept_untraced_patch': True, 'accept_untraced_switch': 'PROOT_ACCEPT_UNTRACED=1',
+        'netlink_high_fds_patch': True, 'netlink_high_fds_switch': 'PROOT_NETLINK_HIGH_FDS=1',
         'runtime_validation': 'unverified', 'status': 'source_prepared_only', 'files': {}}
     if not args.prepare_only:
         compile_sources(proot, talloc, work, args.target, tools, args.jobs)
