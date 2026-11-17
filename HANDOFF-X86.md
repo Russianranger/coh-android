@@ -465,6 +465,34 @@ one direction but increased while looking around".
 
 **Changes in 0.13.73**
 
+- **The performance graphics option never reached the ARM64 client.**
+  `ClientRuntime` sent `COH_CLIENT_GRAPHICS_PROFILE=standard` for `arm64`
+  whatever the tick box said, the guest set `standard` again, and the series
+  held no profile patch (the x86 one is `patches/client-graphics`). So every
+  ARM64 launch ran the game's own settings; its defaults
+  (`gfxGetRecommendedAdvancedSettings`) are WATER_MED (refraction with a depth
+  test), bloom, depth of field, desaturation and stencil shadows (the
+  client's start log marks WATER, WATER_DEPTH, SHADOWMAP and
+  WATER_REFLECTIONS as enabled when the renderer starts, before settings are
+  applied). Each of them draws the scene again or copies the frame buffer in
+  the middle of a frame. That fits a client that
+  waits in one direction on an island, but it is a lead: nothing measured it.
+  **ArmPort patch 0129** (`armport/patches`, through `patchwork.py`): with
+  `ARMPORT_GRAPHICS_PROFILE=effects_off` `gfxApplySettings` sets water,
+  planar reflections, bloom, depth of field, desaturation, shadows, cubemaps,
+  ambient occlusion, vertical sync and antialiasing off for the launch, keeps
+  the first settings it saw for `gfxGetSettingsForNextTime`, and logs
+  `ARMPORT_GRAPHICS_PROFILE_V1 effects_off ...` once. Detail, textures and
+  resolution are untouched (the x86 profile is minimum detail at 0.75 scale).
+  The app sends `COH_ARMPORT_GRAPHICS_PROFILE=effects_off` for the ARM64
+  client when the option is ticked (the default). Its own variable names:
+  `armport-launcher.exe` is built from `android/native/client-launcher.c`,
+  which resets `COH_CLIENT_GRAPHICS_PROFILE` to the two values it knows, and
+  that file's hash is pinned by other tracks. CI: the creation session runs
+  `standard`, the reopen session `effects_off`; log line
+  `ARMPORT_GRAPHICS_PROFILE_V1 {requested, client_confirmed}`. Report
+  `armport_graphics_profile`. `armport/tests/test_graphics_effects_profile.py`
+  runs the patch's header on the host.
 - **PRoot patch 0007** (`android/native/proot/README.md`). PRoot asks for
   `sendto`, `recvfrom` and `recvmsg` only to serve rtnetlink sockets: the ones
   it substitutes where the host refuses AF_NETLINK (Android), and real ones of
@@ -506,7 +534,7 @@ one direction but increased while looking around".
 - **CI log lines:** `LAUNCH_RECEIPTS_V1`, `THREAD_WAITS_V1`; the gate with
   `proot_ioctl_filter` also requires `socket_stops` false and a rtnetlink
   descriptor of 960 or more when the guest could open one.
-- **Tests.** armport/tests 591 pass; tools/android 187; dbserver 97.
+- **Tests.** armport/tests 596 pass; tools/android 187; dbserver 97.
   `tools/android/test_proot_socket_fd_filter.py` runs the new statements
   through a BPF interpreter. Interactive suite 3312 run: the same 99 as
   0.13.67-0.13.72 plus two /proc-timing tests that pass alone
@@ -514,11 +542,12 @@ one direction but increased while looking around".
   `test_character_zoning_scheduler...actual_device_scanner...`; the suite
   ran beside local PRoot runs).
 - **Chain.** CHAIN73_PLACEHOLDER
-- **Not validated:** patch 0007 has not run on ARM64 or on a device. CI's
-  hosts grant AF_NETLINK, so CI exercises the move with real sockets, not the
-  substituted ones the phone uses; that path ran only locally on x86-64.
-- **Open.** What the client waits on in the slow direction (the sampler is
-  the next evidence); `newfstatat` and `readlinkat` (now the two largest);
+- **Not validated:** patch 0007 has not run on a device. CI's hosts grant
+  AF_NETLINK, so CI exercises the move with real sockets, not the substituted
+  ones the phone uses; that path ran only locally on x86-64. Patch 0129's
+  effect on the frame rate is unmeasured; CI draws in software.
+- **Open.** What the client waits on in the slow direction (launch A against
+  B on the next test sheet, and the sampler); `newfstatat` and `readlinkat` (now the two largest);
   Python's stops on the phone (twice CI's rate); the 60-90 s server log
   delay; the spare zone hand-over; "Linked private cache directory refused".
 

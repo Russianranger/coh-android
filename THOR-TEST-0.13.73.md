@@ -1,4 +1,4 @@
-# Thor test: COH Atlas Gameplay 0.13.73 (ARM64 client): socket traffic no longer monitored, the zone map check fixed, and a sampler for the frame rate
+# Thor test: COH Atlas Gameplay 0.13.73 (ARM64 client): performance graphics now reach the game, socket traffic is no longer monitored, the zone map check is fixed
 
 0.13.73 comes from your 0.13.72 launches A, B and C (2026-11-17).
 
@@ -21,6 +21,17 @@
 
 **What changed**
 
+- **"Use performance graphics" now does something with the ARM64 client.**
+  Until now the option never reached it: every ARM64 launch ran the game's
+  own settings (its defaults are medium water effects, bloom, depth of field
+  and stencil shadows) whatever the tick box said. Ticked, it now turns off
+  water refraction and reflection, bloom, depth of field, shadows, cubemap
+  reflections, ambient occlusion and vertical sync for that launch. Detail,
+  textures and resolution stay as they are, and your saved settings are not
+  changed. Those effects draw the scene again or copy the picture in the
+  middle of a frame, which fits "slow in one direction with the processor
+  idle", but that is a lead, not a measurement: launches A and B below
+  measure it.
 - **New, on by default: "Do not monitor ordinary socket traffic"** (needs
   "Lighter system-call monitor"). The monitor needs socket calls only for one
   rare kind of socket; those now get numbers the monitor can tell apart, and
@@ -64,38 +75,45 @@ CI: CI_EVIDENCE_PLACEHOLDER
    - Shared server memory (experiment: zone servers share game data)
    - Draw on the game's own thread (frame rate experiment)
 
-   **Do not monitor ordinary socket traffic** is new and should already be
-   ticked; tell me if it was not.
-3. **Launch A** (the defaults). **2 · Reopen saved character**, log in with
-   `COHLOCAL / offline`, select Ralakar, **Enter Game**. With the FPS display
-   on:
+   **Use performance graphics** is ticked as before, but the game will look
+   different now: simpler water, no shadows, no glow or blur. **Do not monitor ordinary
+   socket traffic** is new and should already be ticked; tell me if it was
+   not.
+3. **Launch A** (the defaults: effects off). **2 · Reopen saved character**,
+   log in with `COHLOCAL / offline`, select Ralakar, **Enter Game**. With the
+   FPS display on:
    - Face the direction where you saw the 20s and **hold still for two full
      minutes** (do not turn the camera). Note the frame rate and what is on
      screen (water, buildings, sky, other characters).
    - Turn to a direction where the frame rate was higher and hold still for
      two more minutes. Note the frame rate.
+   - Travel to Port Oakes (the ferry), stay a minute, travel back to Mercy
+     Island.
    - **Save character / log out**, **Finish and save report**, export.
-4. **Launch B** (the same spot with the new option off). Untick **Do not
-   monitor ordinary socket traffic**, repeat step 3 exactly, export, and tick
-   it again.
-5. Optional **Launch C** (the zone map check). With the defaults, Reopen,
-   travel to Port Oakes and back, save, export. Launches A and B already
-   recorded Mercy Island's map; this one shows Port Oakes'.
+4. **Launch B** (the game's own effects, as in 0.13.72). Untick **Use
+   performance graphics**, Reopen, stand in the same spot and repeat the two
+   two-minute holds (no travel). Save, export, and tick the option again.
+5. Optional **Launch C** (the socket option off). Untick **Do not monitor
+   ordinary socket traffic**, repeat the two holds, save, export, and tick it
+   again.
 6. **Storage and cleanup**: 21.8 GB on the phone is old runtimes that can be
    removed (your character, game data and imports are protected). Clean up if
    you want the space, then **Scan storage** and export the storage report.
 
 If the game does not start at all: untick **Do not monitor ordinary socket
-traffic** and try once more; if it still fails, untick **Lighter system-call
-monitor** as well; then **Fast server**. Either way, open the app, **Recover
-interrupted reports** and export the top report so I can see which one it
-was. If an error box appears in the game, tap **Ignore** (not Stop Program),
-note what it says and keep going.
+traffic** and try once more; if it still fails, untick **Use performance
+graphics**; then **Lighter system-call monitor**; then **Fast server**. Either
+way, open the app, **Recover interrupted reports** and export the top report
+so I can see which one it was. If an error box appears in the game, tap
+**Ignore** (not Stop Program), note what it says and keep going.
 
 ## Report
 
-The exports of the launches you ran, and for launches A and B the frame rate
-you saw in each direction and what was on screen. Fields I will read:
+The exports of the launches you ran, and for each launch the frame rate you
+saw in each direction and what was on screen. Fields I will read:
+
+- `armport_graphics_profile`: `requested` (`effects_off` in A and C,
+  `standard` in B) and `client_confirmed`.
 
 - `character_zoning.thread_waits.bursts`: per burst, for the client and the
   display server, each busy thread's CPU share, how often it was running,
@@ -103,11 +121,11 @@ you saw in each direction and what was on screen. Fields I will read:
   waited in.
 - `proot_stop_counts`: the first line's `moved_netlink_fds`,
   `failed_netlink_moves` and `fd_stats`, and the rows for calls 206, 207 and
-  212 (`sendto`, `recvfrom`, `recvmsg`), which should be near zero in launch
-  A and as in 0.13.72 in launch B.
-- `armport_proot_ioctl`: `socket_stops` (false in A, true in B) and
-  `netlink_descriptor` (960 or more in A).
+  212 (`sendto`, `recvfrom`, `recvmsg`), which should be near zero in
+  launches A and B and as in 0.13.72 in launch C.
+- `armport_proot_ioctl`: `socket_stops` (false in A and B, true in C) and
+  `netlink_descriptor` (960 or more in A and B).
 - `python_call_profile`: the supervisor's file calls by caller.
 - `launch_receipts.zone_graph_71` and `zone_graph_72`: `status` (`reused`
-  from the second start of a zone) and `reason`.
+  from the second start of a zone: map 71 in launch B) and `reason`.
 - The client's `ARMPORT_FRAME_RATE_V1` lines and `armport_client_timeline`.

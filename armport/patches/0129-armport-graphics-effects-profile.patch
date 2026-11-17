@@ -1,0 +1,128 @@
+diff --git a/Game/src/graphics/cohArmportGraphicsProfile.h b/Game/src/graphics/cohArmportGraphicsProfile.h
+new file mode 100644
+index 0000000..6659f53
+--- /dev/null
++++ b/Game/src/graphics/cohArmportGraphicsProfile.h
+@@ -0,0 +1,85 @@
++/* ArmPort: a launch-only graphics profile (patch 0129). The saved graphics
++ * preferences remain the baseline and are what the game writes back for next
++ * time.
++ *
++ * ARMPORT_GRAPHICS_PROFILE=effects_off turns off the effects that draw the
++ * scene again or copy the frame buffer in the middle of a frame: water
++ * refraction and reflection, bloom, depth of field, desaturation, shadows,
++ * cubemap and planar reflections, ambient occlusion; also vertical sync and
++ * antialiasing. World and character detail, textures and resolution are not
++ * touched. Any other value, or none, changes nothing. (The app's launcher
++ * resets COH_CLIENT_GRAPHICS_PROFILE, the x86 client's variable, to the two
++ * values it knows; this one passes through it untouched.)
++ *
++ * Thor 0.13.72 (2026-11-17, Mercy Island, the game's own settings; its
++ * defaults are medium water, bloom, depth of field and stencil shadows):
++ * 19-26 frames a second looking one way and 35-59 another, with the whole
++ * client under one core in the slow case. Whether these effects are the
++ * cause is not measured yet; this profile is how to find out.
++ *
++ * Game/UtilitiesLib headers redefine printf/fflush (see patch 0114); this
++ * header isolates those macros so the CRT stdout stream is written and flushed
++ * with the real CRT functions.
++ */
++#ifndef COH_ARMPORT_GRAPHICS_PROFILE_H
++#define COH_ARMPORT_GRAPHICS_PROFILE_H
++#pragma push_macro("printf")
++#pragma push_macro("fflush")
++#pragma push_macro("fputs")
++#pragma push_macro("FILE")
++#undef printf
++#undef fflush
++#undef fputs
++#undef FILE
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++typedef struct CohArmportGraphicsProfile {
++    int captured;
++    GfxSettings saved;
++} CohArmportGraphicsProfile;
++
++static int cohArmportGraphicsProfileEnabled(const char *profile)
++{
++    return profile && !strcmp(profile, "effects_off");
++}
++
++/* Returns 1 when the profile was applied to *settings. The first settings seen
++ * are kept in profile->saved (the user's own), and one line is logged then. */
++static int cohArmportGraphicsProfileApply(CohArmportGraphicsProfile *profile, GfxSettings *settings)
++{
++    if (!cohArmportGraphicsProfileEnabled(getenv("ARMPORT_GRAPHICS_PROFILE")))
++        return 0;
++    if (!profile->captured) {
++        profile->saved = *settings;
++        profile->captured = 1;
++        fputs("ARMPORT_GRAPHICS_PROFILE_V1 effects_off water=0 bloom=0 dof=0 desaturate=0 shadows=0 "
++              "cubemaps=0 ambient=0 vsync=0 antialiasing=0 saved_settings_preserved=1\n", stdout);
++        fflush(stdout);
++    }
++    settings->advanced.useWater = WATER_OFF;
++    settings->advanced.buildingPlanarReflections = 0;
++    settings->advanced.useBloom = BLOOM_OFF;
++    settings->advanced.useDOF = 0;
++    settings->advanced.useDesaturate = 0;
++    settings->advanced.shadowMode = SHADOW_OFF;
++    settings->advanced.cubemapMode = CUBEMAP_OFF;
++    settings->advanced.ambient.option = AMBIENT_DISABLE;
++    settings->advanced.ambient.strength = AMBIENT_OFF;
++    settings->advanced.useVSync = 0;
++    settings->antialiasing = 0;
++    return 1;
++}
++
++static void cohArmportGraphicsProfileSaved(const CohArmportGraphicsProfile *profile, GfxSettings *settings)
++{
++    if (profile->captured)
++        *settings = profile->saved;
++}
++
++#pragma pop_macro("FILE")
++#pragma pop_macro("fputs")
++#pragma pop_macro("fflush")
++#pragma pop_macro("printf")
++#endif
+diff --git a/Game/src/graphics/gfxSettings.c b/Game/src/graphics/gfxSettings.c
+index 0f3a93a..44de09d 100644
+--- a/Game/src/graphics/gfxSettings.c
++++ b/Game/src/graphics/gfxSettings.c
+@@ -1,4 +1,5 @@
+ #include "graphics/gfxSettings.h"
++#include "graphics/cohArmportGraphicsProfile.h"
+ #include "cmdparse/cmdgame.h"
+ #include "graphics/font.h"
+ #include "clientcomm/autoResumeInfo.h"
+@@ -42,6 +43,7 @@ void printGfxSettings()
+ 
+ 
+ GfxSettings globalGfxSettingsForNextTime;
++static CohArmportGraphicsProfile cohArmportGraphicsProfile;
+ 
+ 
+ OptionWater gfxGetMaxWaterMode()
+@@ -350,6 +352,8 @@ void gfxGetSettings( GfxSettings * gfxSettings )
+ void gfxGetSettingsForNextTime( GfxSettings * gfxSettings )
+ {
+     *gfxSettings = globalGfxSettingsForNextTime;
++    /* ArmPort (patch 0129): a launch-only profile must not become the saved preference. */
++    cohArmportGraphicsProfileSaved(&cohArmportGraphicsProfile, gfxSettings);
+ 
+     //If you are in windowed mode and you aren't supposed to go into 
+     //fullscreen next time, then save your screenx and y
+@@ -850,6 +854,9 @@ void gfxApplySettings( GfxSettings * gfxSettings, int pastStartUp, bool onlyDyna
+     U32 gfx_features_disable=0;
+     static int lastShadowShaderSelection = -1;
+ 
++    /* ArmPort (patch 0129): ARMPORT_GRAPHICS_PROFILE=effects_off. */
++    cohArmportGraphicsProfileApply(&cohArmportGraphicsProfile, gfxSettings);
++
+     assert(gfxSettings->filledIn);
+ 
+     gfxSettingsApplyRestrictions(gfxSettings);

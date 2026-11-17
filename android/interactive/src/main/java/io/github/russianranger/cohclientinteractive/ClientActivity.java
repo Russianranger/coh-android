@@ -218,7 +218,7 @@ public final class ClientActivity extends Activity {
         prootSocketFilter.setChecked(ClientRuntime.prootSocketFilterEnabled(this));
         prootSocketFilter.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotSocketFilterEnabled(this,checked));
         controls.addView(prootSocketFilter);
-        controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
+        controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
         clientArchitecture.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,

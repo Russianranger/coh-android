@@ -220,6 +220,7 @@ public final class ClientRuntime {
     private volatile long observedClientPid = -1, clientWindowFrameWatermark = -1;
     private String manifestHash, session, operation, runId, error;
     private String graphicsProfileRequested="standard";
+    private String armportGraphicsProfileRequested="standard";
     private String gpuProfileRequested="software";
     private String clientArchitectureRequested="arm64";
     private boolean prootFastModeRequested=false;
@@ -1033,6 +1034,10 @@ public final class ClientRuntime {
         begin(reopen ? "character_reopen" : "character_creation", selectedSession);
         clientArchitectureRequested=clientArchitecture(context);
         graphicsProfileRequested="arm64".equals(clientArchitectureRequested)?"standard":performanceGraphicsEnabled(context)?"performance":"standard";
+        // 0.13.73 (ArmPort patch 0129): the option now reaches the ARM64 client too, under its own
+        // name: water effects, shadows, bloom and depth of field off; detail and resolution unchanged.
+        // Before, an ARM64 launch ran the game's own settings whatever the option was.
+        armportGraphicsProfileRequested="arm64".equals(clientArchitectureRequested)&&performanceGraphicsEnabled(context)?"effects_off":"standard";
         gpuProfileRequested=gpuProfileEnabled(context);
         prootFastModeRequested=prootFastModeEnabled(context);
         prestartNextZoneRequested=prestartNextZoneEnabled(context);
@@ -1115,6 +1120,7 @@ public final class ClientRuntime {
                     "PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin", "LANG=C.UTF-8", "TZ=UTC", "TMPDIR=/tmp",
                     "PYTHONUNBUFFERED=1", "PYTHONDONTWRITEBYTECODE=1",
                     "COH_CLIENT_GRAPHICS_PROFILE="+graphicsProfileRequested,
+                    "COH_ARMPORT_GRAPHICS_PROFILE="+armportGraphicsProfileRequested,
                     "COH_CLIENT_GPU_PROFILE="+gpuProfileRequested,
                     "COH_CLIENT_ARCH="+clientArchitectureRequested,
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
@@ -2967,7 +2973,7 @@ public final class ClientRuntime {
                     .put("cleanup_blocked", isCleanupBlocked()).put("cancelled", cancelled)
                     .put("gameplay_validated", false).put("game_rendering_validated", false)
                     .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
-                    .put("graphics_profile_requested", graphicsProfileRequested)
+                    .put("graphics_profile_requested", graphicsProfileRequested).put("armport_graphics_profile_requested", armportGraphicsProfileRequested)
                     .put("gpu_profile_requested", gpuProfileRequested)
                     .put("client_architecture_requested", clientArchitectureRequested)
                     .put("fresh_profile_creation_requested", !reopen && !resumeFirstCreation && "character_creation".equals(operation))

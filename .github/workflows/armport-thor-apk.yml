@@ -326,6 +326,11 @@ jobs:
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
           New in 0.13.73 (Thor test of 0.13.72):
+          - "Use performance graphics" now reaches the ARM64 client. It never did: every launch ran
+            the game's own effects whatever the tick box said. Ticked (the default), a launch now
+            runs without water refraction and reflection, bloom, depth of field, shadows and vertical
+            sync; detail, textures and resolution are unchanged and saved settings are not touched.
+            Whether those effects are what held the frame rate in the 20s is what the next test shows.
           - The lighter system-call monitor no longer stops ordinary socket sends and receives. On
             the Thor those were 38-49 % of everything it stopped, most of them the display server
             sending each frame to the app. It has its own tick box, "Do not monitor ordinary socket

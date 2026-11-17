@@ -867,6 +867,10 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             if isinstance(report.get('python_call_profile'), dict):
                 print('PYTHON_CALL_PROFILE_V1 ' + json.dumps(dict(report['python_call_profile'],
                       session='reopen' if reopening else 'creation'), separators=(',', ':')), flush=True)
+            print('ARMPORT_GRAPHICS_PROFILE_V1 ' + json.dumps(dict(
+                report.get('armport_graphics_profile') if isinstance(report.get('armport_graphics_profile'), dict)
+                else {'requested': None}, session='reopen' if reopening else 'creation'), separators=(',', ':'))[:400],
+                flush=True)
             print(launch_receipts_line(report, 'reopen' if reopening else 'creation'), flush=True)
             print(thread_waits_line(report, 'reopen' if reopening else 'creation'), flush=True)
             projected = legacy_report(report, runtime_manifest, client_manifest)
@@ -1032,6 +1036,9 @@ def main():
         reopen.archive_completed_reports(args.work / 'state', first)
         reopen.reset_session_requests(args.work / 'state')
         next_command = reopen.reopen_command(command, first, second)
+        # 0.13.73 (ArmPort patch 0129): the reopen session, the one the phone plays, runs with the
+        # app's default graphics profile for the ARM64 client; creation keeps `standard`.
+        next_command.insert(next_command.index('/usr/bin/python3'), 'COH_ARMPORT_GRAPHICS_PROFILE=effects_off')
         if stock_travel_requested():
             # The device's reopen: the zoning flow with the supervisor's start policy.
             next_command.insert(next_command.index('/opt/coh/character_reopen_diagnostic.py') + 1, '--zoning')

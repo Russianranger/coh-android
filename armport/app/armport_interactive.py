@@ -244,6 +244,40 @@ def call_profile_record(top=60):
             'callers': [[label, name, line, count, chain] for (label, name, line, chain), count in rows[:top]]}
 
 
+GRAPHICS_PROFILES = ('standard', 'effects_off')
+GRAPHICS_PROFILE_MARK = b'ARMPORT_GRAPHICS_PROFILE_V1 effects_off '
+
+
+def armport_graphics_profile(environ=os.environ):
+    """The ARM64 client's launch-only graphics profile (0.13.73, patch 0129).
+
+    `effects_off`: water refraction and reflection, bloom, depth of field, desaturation,
+    shadows, cubemaps, ambient occlusion, vertical sync and antialiasing off; detail,
+    textures and resolution as the game has them. The app sends it for its "Use performance
+    graphics" option, which did nothing with the ARM64 client before (the launch said
+    `standard` whatever the option was). Thor 0.13.72: 19-26 frames a second looking one
+    way and 35-59 another with the client under one core; whether these effects are the
+    cause is what the option now lets a test show. Any other value is `standard`.
+
+    The guest receives it as COH_ARMPORT_GRAPHICS_PROFILE and hands it to the client as
+    ARMPORT_GRAPHICS_PROFILE. COH_CLIENT_GRAPHICS_PROFILE is the x86 client's (`performance`:
+    minimum detail and a 0.75 render scale); the launcher program resets it to a value it
+    knows, so it stays `standard` for the ARM64 client.
+    """
+    value = environ.get('COH_ARMPORT_GRAPHICS_PROFILE', 'standard')
+    return value if value in GRAPHICS_PROFILES else 'standard'
+
+
+def graphics_profile_confirmed(log, tail=b''):
+    """Whether the client itself logged that it applied `effects_off` (its first megabyte, or `tail`)."""
+    try:
+        with open(log, 'rb') as source:
+            head = source.read(1024 * 1024)
+    except OSError:
+        head = b''
+    return GRAPHICS_PROFILE_MARK in head or GRAPHICS_PROFILE_MARK in tail
+
+
 def client_audio_requested():
     """COH_CLIENT_AUDIO=1: the app's bridge listens on COH_CLIENT_AUDIO_SOCKET."""
     value = os.environ.get('COH_CLIENT_AUDIO', '')
@@ -466,8 +500,13 @@ class ArmPortClient:
     def launch_client_attempt(self, *, label='actual-coh-client'):
         # Device play: no per-exception SEH or power tracing and only boundary
         # zone records (patch 0108); CI qualification keeps its own tracing.
+        graphics = armport_graphics_profile()
+        self.ctx.report['armport_graphics_profile'] = {'format': 1, 'requested': graphics, 'client_confirmed': None,
+                                                       'physical_fps_measured': False}
         environment = dict(self.wine_env, ARMPORT_LOOSE_DATA='1', ARMPORT_NO_VERSION_CHECK='1',
                            ARMPORT_STDIO_LOG='armport_stdio.txt', COH_CLIENT_GRAPHICS_PROFILE='standard',
+                           # Patch 0129 reads this one; the launcher resets the one above.
+                           ARMPORT_GRAPHICS_PROFILE=graphics,
                            WINEDEBUG='err+all,fixme-all', ARMPORT_TRACE_QUIET='1',
                            # The linked worktree is immutable for the session
                            # (patch 0111: no recursive change monitor).
@@ -605,6 +644,9 @@ class ArmPortClient:
                         section.get('client_ready_observed_utc'))
                 except Exception as error:      # a record only: never the reason a session fails
                     self.ctx.report['armport_client_timeline'] = {'format': 1, 'error_type': type(error).__name__}
+                profile = self.ctx.report.get('armport_graphics_profile')
+                if isinstance(profile, dict):
+                    profile['client_confirmed'] = graphics_profile_confirmed(log, captured)
                 try:
                     profile = call_profile_record()
                     if profile is not None:

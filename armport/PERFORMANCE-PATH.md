@@ -638,6 +638,15 @@ The display server never showed in CI (its viewer reads few frames). 0.13.73
 builds part 4 below as patch 0007 (`sendmsg` excepted): `sendto`, `recvfrom`
 and `recvmsg` were 38-49 % of the phone's stops.
 
+Frame rate in those launches: 19-26 steady in one direction, 35-59 in
+another, with the whole client at 0.93 of a core at 22 frames a second and
+1.9 cores at 54 (about 35-40 ms of CPU per frame across threads either way).
+The client waits; it is not short of CPU. Lead, unmeasured: the ARM64 client
+had always run the game's own effects (medium water with refraction, bloom,
+depth of field, stencil shadows), because the app's performance graphics
+option never reached it. 0.13.73 gives it an `effects_off` profile (ArmPort
+patch 0129) and a sampler of what its threads wait on.
+
 Next parts of step 14, cheapest and safest first (built so far: 1 and 2 in
 patch 0005, 3 in 0.13.72, 4 without `sendmsg` in patch 0007, the `accept`
 half of 6 in patch 0006):
