@@ -422,6 +422,32 @@ def shared_heap_requested():
     return os.environ.get(SHARED_HEAP_ENVIRONMENT) == '1'
 
 
+# 0.13.76: cooked collision meshes (patches/mapserver-physx-cache). A zone server cooked
+# every collision mesh of its zone at every start (2,265 meshes and 16.6 s of a 50.8 s Atlas
+# start in CI run 44398992652; 10.3 s on the Thor in 0.13.73). With ARMPORT_PHYSX_CACHE=<file>
+# the admitted server reads a mesh cooked at an earlier start back and cooks only what the
+# file does not hold. One file per server build, shared by every zone.
+PHYSX_CACHE_ENVIRONMENT = 'COH_PHYSX_CACHE'
+PHYSX_CACHE_VARIABLE = 'ARMPORT_PHYSX_CACHE'
+PHYSX_CACHE_FOLDER = 'physx-cooked'
+
+
+def physx_cache_requested():
+    return os.environ.get(PHYSX_CACHE_ENVIRONMENT) == '1'
+
+
+def physx_cache_file(root, mapserver_sha256):
+    """The cooked mesh file for one MapServer build under the workspace, its folder made private."""
+    require(isinstance(mapserver_sha256, str) and re.fullmatch(r'[0-9a-f]{64}', mapserver_sha256) is not None,
+            'MapServer identity for the cooked mesh file is not a SHA-256')
+    folder = Path(root) / PHYSX_CACHE_FOLDER
+    require(not folder.is_symlink(), 'Cooked mesh folder is a link')
+    base.private_dir(folder)
+    path = folder / ('meshes-' + mapserver_sha256[:24] + '.bin')
+    require(not path.is_symlink() and (not path.exists() or path.is_file()), 'Cooked mesh file is not a plain file')
+    return path
+
+
 def mapserver_memory_arguments():
     """['-nosharedmemory'] unless the shared-memory experiment is requested."""
     return [] if shared_heap_requested() else ['-nosharedmemory']
@@ -3464,9 +3490,13 @@ class LocalCharacterServer(login.LocalLoginServer):
         environment = dict(environment)
         environment.pop('ARMPORT_SERVER_METRICS', None)
         environment.pop('ARMPORT_TRUSTED_BINS', None)
+        environment.pop(PHYSX_CACHE_VARIABLE, None)
         enabled = 'armport_server_metrics' in self.map_package
         requested = os.environ.get('COH_TRUSTED_BINS') == '1'
         trusted = False
+        cooked = {'format': 1, 'requested': physx_cache_requested(), 'applied': False,
+                  'environment_variable': PHYSX_CACHE_VARIABLE, 'file': None, 'bytes_before_start': None,
+                  'reason': None if physx_cache_requested() else 'not_requested'}
         if enabled:
             import armport_server_metrics_contract as metrics
             metrics.verify_current_map(Path(runtime) / 'MapServer.exe', self.map_package)
@@ -3476,6 +3506,21 @@ class LocalCharacterServer(login.LocalLoginServer):
             trusted = requested and metrics.trusted_bins_available()
             if trusted:
                 environment['ARMPORT_TRUSTED_BINS'] = '1'
+            if cooked['requested']:
+                # Never a reason to stop a start: without the file the server cooks as before.
+                try:
+                    if not metrics.physx_cache_available():
+                        cooked['reason'] = 'switch_not_in_admitted_build'
+                    else:
+                        path = physx_cache_file(self.owner.root, self.map_package['files']['MapServer.exe']['sha256'])
+                        environment[PHYSX_CACHE_VARIABLE] = base.windows_path(path)
+                        cooked.update(applied=True, file=path.name,
+                                      bytes_before_start=path.stat().st_size if path.exists() else 0)
+                except (OSError, ValueError, KeyError, TypeError, base.DiagnosticError) as error:
+                    cooked['reason'] = 'error'
+                    cooked['error_type'] = type(error).__name__
+        elif cooked['requested']:
+            cooked['reason'] = 'no_metrics_mapserver'
         self.server_metrics_enabled = enabled
         report = getattr(self, 'creation_report', None)
         if report is None and getattr(self, 'ctx', None) is not None:
@@ -3486,6 +3531,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'environment_variable': 'ARMPORT_TRUSTED_BINS',
                 'reason': None if trusted or not requested else
                     ('no_metrics_mapserver' if not enabled else 'switch_not_in_admitted_build')}
+            report['physx_cache'] = cooked
         return environment
 
     def start_map(self):

@@ -40,7 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -233,6 +233,11 @@ public final class ClientActivity extends Activity {
         wineserverPathCache.setChecked(ClientRuntime.wineserverPathCacheEnabled(this));
         wineserverPathCache.setOnCheckedChangeListener((button,checked)->ClientRuntime.setWineserverPathCacheEnabled(this,checked));
         controls.addView(wineserverPathCache);
+        physxCache=new CheckBox(this);physxCache.setText("Reuse prepared collision meshes (faster zone start, needs Fast server)");
+        physxCache.setTextColor(Color.rgb(221,234,245));physxCache.setTextSize(13);
+        physxCache.setChecked(ClientRuntime.physxCacheEnabled(this));
+        physxCache.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPhysxCacheEnabled(this,checked));
+        controls.addView(physxCache);
         controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);

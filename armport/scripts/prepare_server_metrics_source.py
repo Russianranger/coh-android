@@ -34,8 +34,13 @@ GROUPFILELIB = 'Common/group/groupfilelib.c'
 # load, then a wait before connectToDbserver for the map id and cookie.
 SPARE_PATCH = 'patches/mapserver-zone-travel/0001-spare-zone-server.patch'
 SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
-FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB)
-ADDED_FILES = (HEADER, IMPL, SPARE_HEADER)
+# Opt-in cooked collision meshes (ARMPORT_PHYSX_CACHE=<file>), off by default (0.13.76): a
+# mesh cooked at an earlier start is read back for createTriangleMesh instead of cooked.
+PHYSX_PATCH = 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch'
+NWWRAPPER = 'Common/NovodeX/NwWrapper.cpp'
+PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
+FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER)
+ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
 CONTRACT = {
@@ -68,6 +73,18 @@ CONTRACT = {
         'still_required': ['bin_signature', 'parse_table_crc', 'file_list_read'],
         'scan_and_rebuild_retained': ['missing_bin', 'signature_or_crc_mismatch', 'file_list_read_failure',
                                       'binary_read_failure', 'force_rebuild'],
+        'gameplay_decisions_changed': False,
+    },
+    'physx_cache': {
+        'environment_variable': 'ARMPORT_PHYSX_CACHE', 'value': 'file_path', 'disabled_by_default': True,
+        'record_prefix': 'ARMPORT_PHYSX_COOKED_V1', 'function': 'nwCookAndLoadMeshShape',
+        'published_by': 'nwFreeStreamBuffer', 'key': ['vertex_count', 'vertex_stride', 'triangle_count',
+                                                      'triangle_stride', 'vertex_bytes', 'triangle_bytes'],
+        'key_hashes': 2, 'record_checksum': True, 'file_magic': 'ARMPORT_PHYSX_COOKED_V1',
+        'skipped_when_stored': ['NxCookTriangleMesh'], 'still_called': ['createTriangleMesh'],
+        'cooked_as_before': ['no_record', 'checksum_mismatch', 'stream_refused_by_createTriangleMesh',
+                             'unreadable_or_foreign_file'],
+        'write': 'new_file_then_rename', 'memory': 'record_index_only',
         'gameplay_decisions_changed': False,
     },
     'spare_server': {
@@ -141,6 +158,13 @@ def object_library_patch_bytes():
     data = (ROOT / OBJECT_LIBRARY_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [GROUPFILELIB], 'Trusted object library patch file set differs')
+    return data
+
+
+def physx_patch_bytes():
+    data = (ROOT / PHYSX_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [NWWRAPPER, PHYSX_HEADER], 'Cooked mesh cache patch file set differs')
     return data
 
 
@@ -296,6 +320,10 @@ def native_images(variant, baseline_receipt, root):
         apply_patch(stage, trusted_patch_bytes())
         apply_patch(stage, spare_patch_bytes())
         apply_patch(stage, object_library_patch_bytes())
+        target = stage / NWWRAPPER
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((root / 'upstream/ouroboros' / NWWRAPPER).read_bytes())
+        apply_patch(stage, physx_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
         require(images[SVR] == patch_spare(patch_loop(original_loop)),
                 'Loop rebase differs from exported native patches')
@@ -315,7 +343,8 @@ def native_images(variant, baseline_receipt, root):
         inputs = {SVR: (stage / SVR).read_bytes(),
                   FILE: (root / 'upstream/ouroboros' / FILE).read_bytes(),
                   TEXTPARSER: (root / 'upstream/ouroboros' / TEXTPARSER).read_bytes(),
-                  GROUPFILELIB: (root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes()}
+                  GROUPFILELIB: (root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes(),
+                  NWWRAPPER: (root / 'upstream/ouroboros' / NWWRAPPER).read_bytes()}
     images[SVR] = patch_spare(patch_loop(inputs[SVR]))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
@@ -324,6 +353,8 @@ def native_images(variant, baseline_receipt, root):
             'Baseline text parser preimage differs')
     require(GROUPFILELIB not in closure or closure[GROUPFILELIB] == digest(inputs[GROUPFILELIB]),
             'Baseline object library preimage differs')
+    require(NWWRAPPER not in closure or closure[NWWRAPPER] == digest(inputs[NWWRAPPER]),
+            'Baseline PhysX wrapper preimage differs')
     return inputs, images
 
 
@@ -340,6 +371,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'trusted_bins_patch': {'path': TRUSTED_PATCH, 'sha256': digest(trusted_patch_bytes())},
             'spare_server_patch': {'path': SPARE_PATCH, 'sha256': digest(spare_patch_bytes())},
             'object_library_patch': {'path': OBJECT_LIBRARY_PATCH, 'sha256': digest(object_library_patch_bytes())},
+            'physx_cache_patch': {'path': PHYSX_PATCH, 'sha256': digest(physx_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -366,16 +398,17 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'variant': receipt['variant'], 'build_input_sha256': digest(canonical(receipt)),
                 'source_sha256': receipt['patched_sha256'],
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
-                                    for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB)},
+                                    for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB, NWWRAPPER)},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
                                    'startup', 'startup_disabled', 'startup_clock',
                                    'progress_markers', 'trusted_bins', 'trusted_bins_disabled',
                                    'spare_server', 'spare_server_disabled', 'spare_server_invalid',
-                                   'object_library', 'object_library_disabled', 'object_library_rebuild'],
+                                   'object_library', 'object_library_disabled', 'object_library_rebuild',
+                                   'physx_cache', 'physx_cache_disabled', 'physx_cache_damaged'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_and_object_library_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_and_physx_cache_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

@@ -31,6 +31,10 @@ TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
 # 0.13.75: the same switch for bin/defnames.bin (no object_library tree scan).
 OBJECT_LIBRARY_PATCH = '501b4a1f2ed0fed7e7c65b907b79f380b9e8c28a296c2fefd6c9bbe09a4ad930'
 GROUPFILELIB = 'Common/group/groupfilelib.c'
+# 0.13.76: opt-in ARMPORT_PHYSX_CACHE (patches/mapserver-physx-cache): cooked collision
+# meshes are read back at a later start instead of cooked again.
+PHYSX_PATCH = '5f75cfbca88cccd12d6e7fa8417369364b89da768e5722e82c378006b1429092'
+PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
 # the guest sets the variable: shared loading first, then a wait for the map id and cookie.
 SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
@@ -228,6 +232,7 @@ def _authenticate(path, package):
             'Metrics source baseline does not match retained ancestry')
     spare_server_changed(build)
     object_library_changed(build)
+    physx_cache_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -263,6 +268,27 @@ def object_library_changed(build):
             and source['contract']['trusted_object_library'].get('gameplay_decisions_changed') is False),
             'Metrics build changed the object library loader outside the reviewed trusted-bin switch')
     return changed
+
+
+def physx_cache_changed(build):
+    """True only for the reviewed default-off cooked mesh cache layer."""
+    source = build.get('build_input', {})
+    changed = PHYSX_HEADER in source.get('patched_sha256', {})
+    require(not changed or (source.get('physx_cache_patch') == {
+                'path': 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch', 'sha256': PHYSX_PATCH}
+            and source.get('contract', {}).get('physx_cache', {}).get('disabled_by_default') is True
+            and source['contract']['physx_cache'].get('gameplay_decisions_changed') is False),
+            'Metrics build changed PhysX mesh loading outside the reviewed cooked mesh cache layer')
+    return changed
+
+
+def physx_cache_available():
+    """Whether the admitted metrics MapServer can read cooked meshes back."""
+    try:
+        _, build, _, _ = load_binding()
+        return physx_cache_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def spare_server_changed(build):

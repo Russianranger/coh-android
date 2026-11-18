@@ -320,6 +320,40 @@ class GuestMetrics(unittest.TestCase):
         self.assertEqual(sum('fileScanAllDataDirs("object_library", populateFileList);' in line for line in added), 1)
         self.assertEqual(sum('!production && !force_rebuild && armportTrustedObjectLibrary()' in line for line in added), 1)
 
+    def test_cooked_mesh_cache_claim_is_exact_and_limited_to_the_reviewed_layer(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.physx_cache_changed(build))
+        build['build_input']['patched_sha256'][contract.PHYSX_HEADER] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed cooked mesh cache layer'):
+            contract.physx_cache_changed(build)
+        build['build_input'].update(
+            physx_cache_patch={'path': 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch',
+                               'sha256': contract.PHYSX_PATCH},
+            contract={'physx_cache': {'disabled_by_default': True, 'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.physx_cache_changed(build))
+        build['build_input']['physx_cache_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed cooked mesh cache layer'):
+            contract.physx_cache_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.physx_patch_bytes()), contract.PHYSX_PATCH)
+        self.assertEqual(producer.PHYSX_HEADER, contract.PHYSX_HEADER)
+        self.assertIn(producer.PHYSX_HEADER, producer.ADDED_FILES)
+        self.assertIn(producer.NWWRAPPER, producer.FILES)
+        entry = producer.CONTRACT['physx_cache']
+        self.assertIs(entry['disabled_by_default'], True)
+        self.assertIs(entry['gameplay_decisions_changed'], False)
+        # The wrapper change: one include, the cook call inside the miss branch, the publish hook.
+        text = producer.physx_patch_bytes().decode()
+        wrapper = text[:text.index('diff --git a/Common/NovodeX/armport_physx_cache.h')]
+        added = [line[1:] for line in wrapper.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertEqual(sum('NxCookTriangleMesh(meshDesc, stream)' in line for line in added), 1)
+        self.assertEqual(sum('nxSDK->createTriangleMesh(stream)' in line for line in added), 2)
+        self.assertEqual(sum(line.strip() == 'armportPhysxFinish();' for line in added), 1)
+        header = text[text.index('diff --git a/Common/NovodeX/armport_physx_cache.h'):]
+        self.assertIn('+        const char *path = getenv("ARMPORT_PHYSX_CACHE");', header)
+        self.assertNotIn('NxCookTriangleMesh(', header.replace('NxCookTriangleMesh is given', ''))
+
     def test_fx_installer_binds_original_qualified_consumer_separately_from_new_pe(self):
         (self.assets/fx.PAYLOAD).write_bytes(b'fixture marker')
         target = self.runtime/fx.TARGET; target.parent.mkdir(parents=True)

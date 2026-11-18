@@ -59,6 +59,17 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertIs(marked['object_library_trusted'], True)
         self.assertEqual(marked['trusted_bins_reported'], 2)
         self.assertEqual(marked['slowest_self_timed'], result['slowest_self_timed'])
+        self.assertIsNone(result['physx_cooked'])
+        cooked = mapserver_phases.summary(CONSOLE.replace(
+            '[2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects',
+            'ARMPORT_PHYSX_COOKED_V1 status=ok loaded=2265 hits=2300 misses=11 refused=1 added=11 bad_records=0 '
+            'old_bytes=73400320 added_bytes=4096 written=1 load_ms=40 key_ms=310 cook_ms=95 create_ms=2100\n'
+            '[2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects', 1))
+        self.assertEqual(cooked['physx_cooked'], {
+            'loaded': 2265, 'hits': 2300, 'misses': 11, 'refused': 1, 'added': 11, 'bad_records': 0,
+            'old_bytes': 73400320, 'added_bytes': 4096, 'written': 1, 'load_ms': 40, 'key_ms': 310, 'cook_ms': 95,
+            'create_ms': 2100})
+        self.assertEqual(dict(cooked['slowest_self_timed'])['Starting novodex'], 18.84)
 
     def test_untimed_animation_gap_is_reported_and_post_ready_waits_are_not(self):
         result = mapserver_phases.summary(CONSOLE)

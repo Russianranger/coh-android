@@ -29,6 +29,10 @@ SPARE_CASES = ['spare_server', 'spare_server_disabled', 'spare_server_invalid']
 GROUPFILELIB = 'Common/group/groupfilelib.c'
 OBJECT_LIBRARY_NEGATIVE_ASSERTION = 'scans == 0 && date_checks == 0'
 OBJECT_LIBRARY_CASES = ['object_library', 'object_library_disabled', 'object_library_rebuild']
+NWWRAPPER = 'Common/NovodeX/NwWrapper.cpp'
+PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
+PHYSX_NEGATIVE_ASSERTION = 'cooks == 0 && creates == 4'
+PHYSX_CASES = ['physx_cache', 'physx_cache_disabled', 'physx_cache_damaged']
 
 
 def test_cases(source):
@@ -38,7 +42,8 @@ def test_cases(source):
             + (TRUSTED_CASES if 'static int armportTrustedBin(' in parser else [])
             + (SPARE_CASES if (source / SPARE_HEADER).is_file() else [])
             + (OBJECT_LIBRARY_CASES if 'static int armportTrustedObjectLibrary('
-               in (source / GROUPFILELIB).read_text() else []))
+               in (source / GROUPFILELIB).read_text() else [])
+            + (PHYSX_CASES if (source / PHYSX_HEADER).is_file() else []))
 
 
 def spare_fixture(source):
@@ -121,6 +126,230 @@ int main(int argc, char **argv) {
         contents[0] = argc > 2 ? argv[2] : "";
         db_state.local_server = argc > 3;
         armportSpareWait();                                                  /* must exit(3) itself */
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def physx_fixture(source):
+    """Run the shipping nwCookAndLoadMeshShape and cache header over PhysX and Win32 file shims."""
+    wrapper = (source / NWWRAPPER).read_text()
+    header = source / PHYSX_HEADER
+    if header.is_file():
+        assert wrapper.count('#include "NovodeX/armport_physx_cache.h"') == 1
+        support = header.read_text() + '\n#define RESTART() memset(&armport_physx, 0, sizeof(armport_physx))\n'
+    else:
+        assert 'armportPhysx' not in wrapper
+        support = '#define RESTART() ((void)0)\n'
+    body = function(wrapper, 'void* nwCookAndLoadMeshShape(') + function(wrapper, 'void nwFreeStreamBuffer()')
+    return r'''
+#include <assert.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+typedef uint32_t DWORD; typedef int32_t LONG; typedef int BOOL; typedef void *HANDLE;
+typedef struct { long long QuadPart; } LARGE_INTEGER;
+#define INVALID_HANDLE_VALUE ((HANDLE)(intptr_t)-1)
+#define INVALID_SET_FILE_POINTER ((DWORD)-1)
+#define GENERIC_READ 1u
+#define GENERIC_WRITE 2u
+#define FILE_SHARE_READ 1u
+#define OPEN_EXISTING 3u
+#define CREATE_ALWAYS 2u
+#define FILE_ATTRIBUTE_NORMAL 0x80u
+#define FILE_BEGIN 0u
+#define MOVEFILE_REPLACE_EXISTING 1u
+static int opens, open_now, fail_writes;
+static long long clock_ticks;
+static HANDLE CreateFileA(const char *path, DWORD access, DWORD share, void *security, DWORD how, DWORD flags, void *model) {
+    int fd;
+    (void)share; (void)security; (void)flags; (void)model;
+    fd = (access == GENERIC_WRITE && how == CREATE_ALWAYS) ? open(path, O_WRONLY | O_CREAT | O_TRUNC, 0600)
+        : (access == GENERIC_READ && how == OPEN_EXISTING) ? open(path, O_RDONLY) : -1;
+    if (fd < 0) return INVALID_HANDLE_VALUE;
+    ++opens; ++open_now;
+    return (HANDLE)(intptr_t)(fd + 1);
+}
+static int descriptor(HANDLE h) { assert(h && h != INVALID_HANDLE_VALUE); return (int)(intptr_t)h - 1; }
+static DWORD GetFileSize(HANDLE h, DWORD *high) { struct stat st; if (fstat(descriptor(h), &st)) abort(); *high = 0; return (DWORD)st.st_size; }
+static BOOL ReadFile(HANDLE h, void *bytes, DWORD length, DWORD *got, void *overlapped) {
+    ssize_t n = read(descriptor(h), bytes, length > 5000 ? 5000 : length);      /* short reads */
+    (void)overlapped;
+    if (n < 0)
+        return 0;
+    *got = (DWORD)n;
+    return 1; }
+static BOOL WriteFile(HANDLE h, const void *bytes, DWORD length, DWORD *wrote, void *overlapped) {
+    ssize_t n;
+    (void)overlapped;
+    if (fail_writes)
+        return 0;
+    n = write(descriptor(h), bytes, length > 7000 ? 7000 : length);              /* short writes */
+    if (n < 0)
+        return 0;
+    *wrote = (DWORD)n;
+    return 1; }
+static DWORD SetFilePointer(HANDLE h, LONG to, LONG *high, DWORD from) {
+    off_t at;
+    assert(!high && from == FILE_BEGIN);
+    at = lseek(descriptor(h), to, SEEK_SET);
+    return at < 0 ? INVALID_SET_FILE_POINTER : (DWORD)at; }
+static BOOL CloseHandle(HANDLE h) { --open_now; return close(descriptor(h)) == 0; }
+static BOOL MoveFileExA(const char *from, const char *to, DWORD flags) { assert(flags == MOVEFILE_REPLACE_EXISTING); return rename(from, to) == 0; }
+static BOOL DeleteFileA(const char *path) { return unlink(path) == 0; }
+static BOOL QueryPerformanceCounter(LARGE_INTEGER *value) { value->QuadPart = (clock_ticks += 1000); return 1; }
+static BOOL QueryPerformanceFrequency(LARGE_INTEGER *value) { value->QuadPart = 1000000; return 1; }
+
+typedef unsigned char NxU8; typedef unsigned int NxU32;
+struct NwSharedStream {
+    static NxU8 *pTempBuffer; static NxU32 uiBufferSize; NxU8 *pCursor;
+    NwSharedStream(const char *name, bool load) { (void)name; (void)load;
+        if (!pTempBuffer) { uiBufferSize = 1024; pTempBuffer = (NxU8 *)calloc(uiBufferSize, 1); }
+        pCursor = pTempBuffer; }
+    void resetByteCounter() { pCursor = pTempBuffer; }
+    void checkTempBufferSize(NxU32 size) {
+        if (pCursor + size >= pTempBuffer + uiBufferSize) {
+            NxU8 *old = pTempBuffer; NxU32 grown = uiBufferSize + (uiBufferSize >> 1) + size;
+            pTempBuffer = (NxU8 *)malloc(grown); memcpy(pTempBuffer, old, (size_t)(pCursor - old));
+            pCursor += pTempBuffer - old; uiBufferSize = grown; free(old); } }
+    static void freeTempBuffer() { free(pTempBuffer); pTempBuffer = NULL; }
+    NxU8 *getBuffer() { return pTempBuffer; }
+    int getBufferSize() { return (int)(pCursor - pTempBuffer); }
+    void storeBuffer(const void *bytes, NxU32 size) { checkTempBufferSize(size); memcpy(pCursor, bytes, size); pCursor += size; }
+};
+NxU8 *NwSharedStream::pTempBuffer; NxU32 NwSharedStream::uiBufferSize;
+struct NxTriangleMeshDesc { NxU32 numVertices, pointStrideBytes, numTriangles, triangleStrideBytes, flags; const void *points, *triangles; };
+struct NxTriangleMesh { NxU32 size; NxU8 *bytes; };
+struct NxTriangleMeshShapeDesc { NxTriangleMesh *meshData; };
+static int cooks, creates, refuse_creates;
+static void NxInitCooking() {}
+/* A stand-in cooker: a tag, the counts, then every input byte changed in a fixed way. */
+static bool NxCookTriangleMesh(const NxTriangleMeshDesc &desc, NwSharedStream &stream) {
+    NxU32 i, n; const NxU8 *p;
+    ++cooks;
+    stream.storeBuffer("COOK", 4); stream.storeBuffer(&desc.numVertices, 4); stream.storeBuffer(&desc.numTriangles, 4);
+    p = (const NxU8 *)desc.points; n = desc.numVertices * desc.pointStrideBytes;
+    for (i = 0; i < n; ++i) { NxU8 b = (NxU8)(p[i] ^ 0x5a); stream.storeBuffer(&b, 1); }
+    p = (const NxU8 *)desc.triangles; n = desc.numTriangles * desc.triangleStrideBytes;
+    for (i = 0; i < n; ++i) { NxU8 b = (NxU8)(p[i] + 7); stream.storeBuffer(&b, 1); }
+    return true; }
+static struct Sdk {
+    NxTriangleMesh *createTriangleMesh(NwSharedStream &stream) {
+        NxU32 verts, tris, size; NxTriangleMesh *mesh;
+        ++creates;
+        if (refuse_creates > 0) { --refuse_creates; return NULL; }
+        if (memcmp(stream.pCursor, "COOK", 4)) return NULL;
+        memcpy(&verts, stream.pCursor + 4, 4); memcpy(&tris, stream.pCursor + 8, 4);
+        size = 12 + verts * 12 + tris * 12;
+        mesh = new NxTriangleMesh; mesh->size = size; mesh->bytes = (NxU8 *)malloc(size);
+        memcpy(mesh->bytes, stream.pCursor, size); stream.pCursor += size;
+        return mesh; }
+} sdk, *nxSDK = &sdk;
+static struct { int meshShapeCount; } nx_state;
+#define PERFINFO_AUTO_START(name, n) ((void)0)
+#define PERFINFO_AUTO_STOP_START(name, n) ((void)0)
+#define PERFINFO_AUTO_STOP() ((void)0)
+''' + support + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static float verts[3][600][3]; static int tris[3][900][3];
+static NxU8 *expected[3]; static NxU32 expected_size[3];
+static int same(void *shape, int which) {
+    NxTriangleMesh *mesh = ((NxTriangleMeshShapeDesc *)shape)->meshData;
+    return mesh && mesh->size == expected_size[which] && !memcmp(mesh->bytes, expected[which], mesh->size); }
+static void *load(int which) {
+    return nwCookAndLoadMeshShape("mesh", verts[which], 200 * (which + 1), 12, tris[which], 300 * (which + 1), 12); }
+/* One world load: three meshes, the second one twice (two definitions of one model). */
+static int world(void) {
+    void *a = load(0), *b = load(1), *c = load(1), *d = load(2);
+    int good = same(a, 0) && same(b, 1) && same(c, 1) && same(d, 2);
+    nwFreeStreamBuffer();
+    return good; }
+static long size_of(const char *path) { struct stat st; return stat(path, &st) ? -1 : (long)st.st_size; }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "", *path = argc > 2 ? argv[2] : "";
+    char other[600];
+    int w, i, j;
+    long full;
+    for (w = 0; w < 3; ++w) {
+        for (i = 0; i < 600; ++i) for (j = 0; j < 3; ++j) verts[w][i][j] = (float)(w * 1000 + i * 3 + j) * 0.25f;
+        for (i = 0; i < 900; ++i) for (j = 0; j < 3; ++j) tris[w][i][j] = (i * 7 + j + w) % (200 * (w + 1)); }
+    /* What the cooker makes of each mesh, taken once without the cache. */
+    unsetenv("ARMPORT_PHYSX_CACHE");
+    for (w = 0; w < 3; ++w) {
+        NxTriangleMesh *mesh = ((NxTriangleMeshShapeDesc *)load(w))->meshData;
+        expected[w] = mesh->bytes; expected_size[w] = mesh->size; }
+    nwFreeStreamBuffer();
+    CHECK(cooks == 3 && creates == 3 && opens == 0);
+    RESTART(); cooks = creates = 0;
+    snprintf(other, sizeof(other), "%s.new", path);
+    if (!strcmp(mode, "physx_cache_disabled")) {
+        CHECK(world() && cooks == 4 && creates == 4 && opens == 0 && size_of(path) == -1);
+        return 0;
+    }
+    CHECK(setenv("ARMPORT_PHYSX_CACHE", path, 1) == 0);
+    if (!strcmp(mode, "physx_cache")) {
+        CHECK(world());                                   /* a first start: everything is cooked */
+        CHECK(cooks == 4 && creates == 4 && open_now == 0);
+        full = size_of(path);
+        RESTART(); cooks = creates = 0;
+        CHECK(world());                                   /* the next start: nothing is cooked */
+        CHECK(cooks == 0 && creates == 4);
+        /* Three records (the model used twice is stored once), and the file is not written again. */
+        CHECK(full == 24 + 3 * 36 + (long)(expected_size[0] + expected_size[1] + expected_size[2]));
+        CHECK(open_now == 0 && size_of(path) == full && size_of(other) == -1);
+        return 0;
+    }
+    if (!strcmp(mode, "physx_cache_damaged")) {
+        int fd; unsigned char byte;
+        long first = 24 + 36 + (long)expected_size[0], second = first + 36 + (long)expected_size[1];
+        CHECK(world() && cooks == 4);
+        full = size_of(path);
+        CHECK(full == second + 36 + (long)expected_size[2]);
+        /* One changed byte in the second record's stream: that mesh is cooked again, the others are read. */
+        fd = open(path, O_RDWR); CHECK(fd >= 0);
+        CHECK(pread(fd, &byte, 1, first + 36 + 100) == 1); byte ^= 1;
+        CHECK(pwrite(fd, &byte, 1, first + 36 + 100) == 1); close(fd);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 2 && creates == 4 && open_now == 0);      /* both definitions of that model */
+        CHECK(size_of(path) == full + 36 + (long)expected_size[1]);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 0 && open_now == 0);                      /* the new record comes first */
+        /* A stored stream this PhysX refuses is cooked again, and the game gets the same mesh. */
+        RESTART(); cooks = creates = 0; refuse_creates = 1;
+        CHECK(world() && cooks == 1 && creates == 5 && refuse_creates == 0 && open_now == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 0 && open_now == 0);
+        /* A file cut inside its last stream, then inside a record head: whole records before the cut are used. */
+        CHECK(unlink(path) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 4 && size_of(path) == full);
+        CHECK(truncate(path, full - 10) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 1 && open_now == 0);                      /* the third mesh */
+        CHECK(unlink(path) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 4 && size_of(path) == full);
+        CHECK(truncate(path, first + 20) == 0);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 3 && open_now == 0);                      /* all but the first mesh */
+        CHECK(size_of(path) == full);
+        /* Another program's file under this name is left unread and replaced. */
+        fd = open(path, O_WRONLY | O_TRUNC); CHECK(fd >= 0 && write(fd, "not a cooked mesh file, but long enough", 39) == 39); close(fd);
+        RESTART(); cooks = creates = 0;
+        CHECK(world() && cooks == 4 && open_now == 0);
+        CHECK(size_of(path) == full);
+        /* A file that cannot be written changes nothing for the game or the old file. */
+        CHECK(truncate(path, first) == 0);
+        RESTART(); cooks = creates = 0; fail_writes = 1;
+        CHECK(world() && cooks == 3 && open_now == 0);
+        CHECK(size_of(path) == first && size_of(other) == -1);
         return 0;
     }
     return 2;
@@ -572,8 +801,14 @@ def run(source, original=None, expect_control_failure=False):
                         '-fsanitize=address,undefined',
                         str(work / 'library.c'), '-o', str(library)], check=True)
         control += object_library_fixture(trusted_root)
+        physx = work / 'physx'
+        (work / 'physx.cpp').write_text(physx_fixture(trusted_root))
+        subprocess.run(['c++', '-std=gnu++11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter',
+                        '-Wno-unused-function', '-fsanitize=address,undefined',
+                        str(work / 'physx.cpp'), '-o', str(physx)], check=True)
+        control += physx_fixture(trusted_root)
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
-        for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library']
+        for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache']
                      if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
             if mode == 'spare_server_invalid':
@@ -597,13 +832,17 @@ def run(source, original=None, expect_control_failure=False):
                 print(mode + ': %d malformed assignments and local mode refused' % len(invalid))
                 continue
             program = (trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES
-                       else library if mode in OBJECT_LIBRARY_CASES else exe)
-            result = subprocess.run([str(program), mode], capture_output=True, text=True, env=environment)
+                       else library if mode in OBJECT_LIBRARY_CASES else physx if mode in PHYSX_CASES else exe)
+            arguments = [str(work / (mode + '-cooked.bin'))] if mode in PHYSX_CASES else []
+            for stale in arguments:
+                Path(stale).unlink(missing_ok=True)       # the unpatched control runs the same mode again
+            result = subprocess.run([str(program), mode, *arguments], capture_output=True, text=True, env=environment)
             print(mode + ': ' + ' | '.join(result.stdout.splitlines()))
             if expect_control_failure:
                 assertion = {'window': NEGATIVE_ASSERTION, 'trusted_bins': TRUSTED_NEGATIVE_ASSERTION,
                              'spare_server': SPARE_NEGATIVE_ASSERTION,
-                             'object_library': OBJECT_LIBRARY_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
+                             'object_library': OBJECT_LIBRARY_NEGATIVE_ASSERTION,
+                             'physx_cache': PHYSX_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -658,6 +897,18 @@ def run(source, original=None, expect_control_failure=False):
                     'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted bin=bin/defnames.bin'], result.stdout
             if mode in ('object_library_disabled', 'object_library_rebuild'):
                 assert 'ARMPORT_OBJECT_LIBRARY_BIN_V1' not in result.stdout
+            if mode == 'physx_cache':
+                rows = [dict(field.split('=', 1) for field in row.split()[1:]) for row in result.stdout.splitlines()]
+                assert all(row.startswith('ARMPORT_PHYSX_COOKED_V1 status=ok ') for row in result.stdout.splitlines())
+                counts = [{key: row[key] for key in ('loaded', 'hits', 'misses', 'refused', 'added', 'bad_records',
+                                                     'written')} for row in rows]
+                assert counts == [
+                    {'loaded': '0', 'hits': '0', 'misses': '4', 'refused': '0', 'added': '3', 'bad_records': '0',
+                     'written': '1'},
+                    {'loaded': '3', 'hits': '4', 'misses': '0', 'refused': '0', 'added': '0', 'bad_records': '0',
+                     'written': '0'}], counts
+            if mode == 'physx_cache_disabled':
+                assert 'ARMPORT_PHYSX_COOKED_V1' not in result.stdout
             if mode == 'startup_clock':
                 rows = result.stdout.splitlines()
                 assert len(rows) == 3 and all('status=clock_error' in row for row in rows), rows
@@ -702,13 +953,13 @@ def main():
                     'source_sha256': receipt['patched_sha256'],
                     'original_sha256': {name: staging.digest((args.negative_control / name).read_bytes())
                                         for name in (staging.SVR, staging.FILE, staging.TEXTPARSER,
-                                                     staging.GROUPFILELIB)},
+                                                     staging.GROUPFILELIB, staging.NWWRAPPER)},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_and_object_library_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_and_physx_cache_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

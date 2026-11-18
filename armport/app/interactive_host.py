@@ -563,8 +563,16 @@ def start_options_line(report, session):
     source-file date checks) and `wineserver_path_cache` (the realpath cache library and its
     own counters). Evidence only; neither gates a session.
     """
-    value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None}
+    value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None,
+             'physx_cache': None}
     if isinstance(report, dict):
+        for section in [report, *report.values()]:
+            cooked = section.get('physx_cache') if isinstance(section, dict) else None
+            if isinstance(cooked, dict):
+                # 0.13.76: the guest's record of the cooked mesh file it named for the zone servers.
+                value['physx_cache'] = {key: cooked.get(key) for key in (
+                    'requested', 'applied', 'reason', 'bytes_before_start')}
+                break
         for section in report.values():
             quick = section.get('server_quick_start') if isinstance(section, dict) else None
             if isinstance(quick, dict):
@@ -589,6 +597,10 @@ def start_options_sessions():
 
 
 START_OPTIONS = ('COH_SERVER_QUICK_START=1', 'COH_WINESERVER_PATH_CACHE=1')
+# 0.13.76: the cooked mesh file is asked for in both sessions of every run, so that the reopen
+# session's Atlas start reads what the creation session's cooked. Only a server built with
+# patches/mapserver-physx-cache uses it (the trusted run's); elsewhere the guest records why not.
+BOTH_SESSION_OPTIONS = ('COH_PHYSX_CACHE=1',)
 
 
 STOP_COUNTS_MARK = 'PROOT_STOP_COUNTS_V1 '
@@ -1068,6 +1080,8 @@ def main():
         if serverdata_probe_requested():
             command.insert(command.index('/usr/bin/python3'),
                            'COH_SERVERDATA_PROBE=' + str(serverdata_probe_requested()))
+        for option in BOTH_SESSION_OPTIONS:
+            command.insert(command.index('/usr/bin/python3'), option)
         deadline = time.monotonic() + character.OVERALL_SECONDS
         first_command = list(command)
         if 'creation' in start_options_sessions():

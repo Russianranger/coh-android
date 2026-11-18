@@ -25,6 +25,10 @@ READY = 'Verifying SG permission tables'
 TRUSTED = 'ARMPORT_TRUSTED_BINS_V1 status=trusted'
 # 0.13.75: bin/defnames.bin read without the object_library tree scan.
 OBJECT_LIBRARY = 'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted'
+# 0.13.76: the cooked mesh file's own counts for the world load (patches/mapserver-physx-cache).
+PHYSX = 'ARMPORT_PHYSX_COOKED_V1 status=ok '
+PHYSX_FIELDS = ('loaded', 'hits', 'misses', 'refused', 'added', 'bad_records', 'old_bytes', 'added_bytes',
+                'written', 'load_ms', 'key_ms', 'cook_ms', 'create_ms')
 LINE_LIMIT = 200000
 LABEL_BYTES = 72
 
@@ -44,7 +48,7 @@ def summary(text, top=8):
     timed, gaps = [], []
     first = last = None
     animations = None
-    checkpoints, ready, trusted, object_library = {}, False, 0, False
+    checkpoints, ready, trusted, object_library, physx = {}, False, 0, False, None
     for index, line in enumerate(text.splitlines()):
         if index >= LINE_LIMIT:
             break
@@ -53,6 +57,10 @@ def summary(text, top=8):
             continue
         if line.startswith(OBJECT_LIBRARY):
             object_library = True
+            continue
+        if line.startswith(PHYSX) and physx is None:
+            fields = dict(field.split('=', 1) for field in line[len(PHYSX):].split() if '=' in field)
+            physx = {key: int(fields[key]) for key in PHYSX_FIELDS if re.fullmatch(r'-?\d{1,10}', fields.get(key, ''))}
             continue
         match = STARTUP.search(line)
         if match and len(checkpoints) < 32:
@@ -99,7 +107,8 @@ def summary(text, top=8):
             'animation_files_opened': animations,
             'native_checkpoint_seconds': checkpoints or None,
             'trusted_bins_reported': trusted,
-            'object_library_trusted': object_library}
+            'object_library_trusted': object_library,
+            'physx_cooked': physx}
 
 
 if __name__ == '__main__':
