@@ -297,6 +297,28 @@ class OwnedProcess:
         self.writer.join(timeout=1)
 
 
+def read_proc_text(path):
+    """One small /proc file: open, read, close.
+
+    Path.read_text() also asks for the descriptor's status before it reads. Under PRoot that
+    is four stops for a file instead of two, and the ownership scan reads two files for every
+    process (Thor 0.13.73, launch B: 82,700 such opens, 139 a second, the supervisor's largest
+    steady source of stops). Same errors as before: OSError from the open or the read,
+    ValueError from the decoding.
+    """
+    descriptor = os.open(path, os.O_RDONLY | os.O_CLOEXEC)
+    try:
+        blocks = []
+        while len(blocks) < 64:
+            block = os.read(descriptor, 65536)
+            if not block:
+                break
+            blocks.append(block)
+    finally:
+        os.close(descriptor)
+    return b"".join(blocks).decode("utf-8")
+
+
 class WineProcessOwner:
     """Reap only this run's Wine descendants, including new sessions.
 
@@ -323,7 +345,7 @@ class WineProcessOwner:
 
     @staticmethod
     def status(path):
-        lines = (path / "status").read_text().splitlines()
+        lines = read_proc_text(path / "status").splitlines()
         fields = {line.split(":", 1)[0]: line.split(":", 1)[1].split()
                   for line in lines if ":" in line}
         return {"uid": int(fields["Uid"][0]), "pid": int(fields["Pid"][0]),
@@ -332,7 +354,7 @@ class WineProcessOwner:
 
     @staticmethod
     def process_stat(path):
-        value = (path / "stat").read_text()
+        value = read_proc_text(path / "stat")
         fields = value.rsplit(") ", 1)[1].split()
         return {"pid": int(value.split(" (", 1)[0]), "state": fields[0],
                 "parent": int(fields[1]), "starttime": int(fields[19])}
