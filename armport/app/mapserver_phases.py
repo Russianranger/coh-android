@@ -25,7 +25,7 @@ READY = 'Verifying SG permission tables'
 TRUSTED = 'ARMPORT_TRUSTED_BINS_V1 status=trusted'
 # 0.13.75: bin/defnames.bin read without the object_library tree scan.
 OBJECT_LIBRARY = 'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted'
-# 0.13.76: the cooked mesh file's own counts for the world load (patches/mapserver-physx-cache).
+# 0.13.75: the cooked mesh file's own counts for the world load (patches/mapserver-physx-cache).
 PHYSX = 'ARMPORT_PHYSX_COOKED_V1 status=ok '
 PHYSX_FIELDS = ('loaded', 'hits', 'misses', 'refused', 'added', 'bad_records', 'old_bytes', 'added_bytes',
                 'written', 'load_ms', 'key_ms', 'cook_ms', 'create_ms')

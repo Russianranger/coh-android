@@ -422,7 +422,7 @@ def shared_heap_requested():
     return os.environ.get(SHARED_HEAP_ENVIRONMENT) == '1'
 
 
-# 0.13.76: cooked collision meshes (patches/mapserver-physx-cache). A zone server cooked
+# 0.13.75: cooked collision meshes (patches/mapserver-physx-cache). A zone server cooked
 # every collision mesh of its zone at every start (2,265 meshes and 16.6 s of a 50.8 s Atlas
 # start in CI run 44398992652; 10.3 s on the Thor in 0.13.73). With ARMPORT_PHYSX_CACHE=<file>
 # the admitted server reads a mesh cooked at an earlier start back and cooks only what the

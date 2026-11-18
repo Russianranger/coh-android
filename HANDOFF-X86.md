@@ -471,9 +471,55 @@ owner. 0.13.75 comes from 0.13.74's CI runs (section below, **Chain**).
   A missing file still costs Wine its walk; the phone's server folder is
   three folders below the drive root, so a drive letter for it was dropped
   (PERFORMANCE-PATH "After Thor 0.13.73").
-- **Not done:** a cache of cooked PhysX meshes (`nwCookAndLoadMeshShape`
-  cooks 2,265 meshes at every Atlas start; 10.3 s on the phone); the spare
-  zone hand-over; the late arrival log.
+- **Cooked collision meshes (x86 server, `patches/mapserver-physx-cache/0001`).**
+  `createNxWorldShapes` cooks every collision mesh of the zone at every
+  start (`nwCookAndLoadMeshShape`: `NxCookTriangleMesh` into a stream, then
+  `createTriangleMesh` from it). With `ARMPORT_PHYSX_CACHE=<file>` the
+  function first looks the mesh up in that file by two 64-bit hashes of
+  exactly what the cooker would get (counts, strides, vertex and triangle
+  bytes); a hit reads the stored stream into the stream buffer and calls
+  `createTriangleMesh`; a miss cooks as before and appends the stream to
+  `<file>.new`. `nwFreeStreamBuffer` (the end of the world load) appends the
+  records of the file as it is then and renames `.new` over it; with no
+  miss nothing is written. Only an index of record heads is in memory
+  (`Common/NovodeX/armport_physx_cache.h`). Each record has a checksum; a
+  record that fails it, or that `createTriangleMesh` refuses, is cooked
+  again and its new record comes earlier in the next file. A foreign or cut
+  file is used up to its last whole record or replaced; a file that cannot
+  be written leaves the game and the old file as they were. The server
+  prints `ARMPORT_PHYSX_COOKED_V1 status=ok loaded= hits= misses= refused=
+  added= bad_records= old_bytes= added_bytes= written= load_ms= key_ms=
+  cook_ms= create_ms=` (the first numbers of how the 16.6 s divide between
+  cooking and creating).
+  - Guest: `COH_PHYSX_CACHE=1` (app option "Reuse prepared collision meshes
+    (faster zone start, needs Fast server)", `physx-cooked-cache`, default
+    on); `map_metrics_environment` names
+    `state/diagnostic/physx-cooked/meshes-<MapServer sha, 24 hex>.bin`, one
+    file for every zone of one server build, only when the admitted build
+    carries the layer (`physx_cache_available`); report `physx_cache`. Any
+    failure to name the file leaves the start as it was.
+  - Two zone servers adding at once: the second `.new` cannot be created
+    (no sharing) and that server writes nothing; Wine refuses to rename over
+    a file another process has open, so a publish during another server's
+    load fails the same way. Either costs one more cooking of those meshes.
+  - Plumbing as for the other layers: producer `PHYSX_PATCH`, `NWWRAPPER` and
+    `PHYSX_HEADER` in `FILES`, receipt `physx_cache_patch`, contract
+    `physx_cache`; guest admission `physx_cache_changed` (5f75cfbc…). Host
+    fixture: the shipping `nwCookAndLoadMeshShape`, `nwFreeStreamBuffer` and
+    header in C++ over a stand-in cooker and Win32 file shims with short
+    reads and writes: first start cooks four and stores three (one model
+    used twice), second start cooks none and writes nothing; disabled; a
+    changed byte, a refused stream, a file cut in a stream and in a record
+    head, a foreign file, a failing write. The unpatched source fails
+    `cooks == 0 && creates == 4`.
+  - CI asks for it in both sessions of every run (`BOTH_SESSION_OPTIONS`),
+    so the trusted run's reopen session reads what its creation session
+    cooked; `START_OPTIONS_V1` carries the guest's record and
+    `atlas_mapserver_phases.physx_cooked` the server's counts.
+  - Not known before the chain: the file's size (the Atlas file is in
+    `added_bytes`; at most 1 GiB is kept), and whether MSVC accepts the
+    header (the host fixture is GCC).
+- **Not done:** the spare zone hand-over; the late arrival log.
 - **Not validated:** anything in 0.13.74 or 0.13.75 on a device.
 - **Chain.** CHAIN75_PLACEHOLDER
 

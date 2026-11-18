@@ -569,7 +569,7 @@ def start_options_line(report, session):
         for section in [report, *report.values()]:
             cooked = section.get('physx_cache') if isinstance(section, dict) else None
             if isinstance(cooked, dict):
-                # 0.13.76: the guest's record of the cooked mesh file it named for the zone servers.
+                # 0.13.75: the guest's record of the cooked mesh file it named for the zone servers.
                 value['physx_cache'] = {key: cooked.get(key) for key in (
                     'requested', 'applied', 'reason', 'bytes_before_start')}
                 break
@@ -597,7 +597,7 @@ def start_options_sessions():
 
 
 START_OPTIONS = ('COH_SERVER_QUICK_START=1', 'COH_WINESERVER_PATH_CACHE=1')
-# 0.13.76: the cooked mesh file is asked for in both sessions of every run, so that the reopen
+# 0.13.75: the cooked mesh file is asked for in both sessions of every run, so that the reopen
 # session's Atlas start reads what the creation session's cooked. Only a server built with
 # patches/mapserver-physx-cache uses it (the trusted run's); elsewhere the guest records why not.
 BOTH_SESSION_OPTIONS = ('COH_PHYSX_CACHE=1',)

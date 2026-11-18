@@ -31,7 +31,7 @@ TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
 # 0.13.75: the same switch for bin/defnames.bin (no object_library tree scan).
 OBJECT_LIBRARY_PATCH = '501b4a1f2ed0fed7e7c65b907b79f380b9e8c28a296c2fefd6c9bbe09a4ad930'
 GROUPFILELIB = 'Common/group/groupfilelib.c'
-# 0.13.76: opt-in ARMPORT_PHYSX_CACHE (patches/mapserver-physx-cache): cooked collision
+# 0.13.75: opt-in ARMPORT_PHYSX_CACHE (patches/mapserver-physx-cache): cooked collision
 # meshes are read back at a later start instead of cooked again.
 PHYSX_PATCH = '5f75cfbca88cccd12d6e7fa8417369364b89da768e5722e82c378006b1429092'
 PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'

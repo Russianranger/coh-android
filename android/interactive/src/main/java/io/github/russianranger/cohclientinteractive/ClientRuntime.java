@@ -523,7 +523,7 @@ public final class ClientRuntime {
                 .edit().putBoolean("wineserver-path-cache", enabled).apply();
     }
     /**
-     * 0.13.76: a zone server prepared ("cooked") every collision mesh of its zone at every
+     * 0.13.75: a zone server prepared ("cooked") every collision mesh of its zone at every
      * start (10.3 s of a 148 s start on the Thor in 0.13.73; 16.6 s of 50.8 s in CI). The
      * Fast server now keeps the prepared meshes in one file and reads them back at later
      * starts; the first start of each zone after this update still prepares them. On by
@@ -1219,7 +1219,7 @@ public final class ClientRuntime {
                     // 0.13.74: the zone servers' config (animations on first use) and wineserver's folder table.
                     "COH_SERVER_QUICK_START="+(serverQuickStartRequested?"1":"0"),
                     "COH_WINESERVER_PATH_CACHE="+(wineserverPathCacheRequested?"1":"0"),
-                    // 0.13.76: the Fast server's file of prepared collision meshes.
+                    // 0.13.75: the Fast server's file of prepared collision meshes.
                     "COH_PHYSX_CACHE="+(physxCacheRequested?"1":"0"),
                     "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",

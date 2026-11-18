@@ -34,7 +34,7 @@ GROUPFILELIB = 'Common/group/groupfilelib.c'
 # load, then a wait before connectToDbserver for the map id and cookie.
 SPARE_PATCH = 'patches/mapserver-zone-travel/0001-spare-zone-server.patch'
 SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
-# Opt-in cooked collision meshes (ARMPORT_PHYSX_CACHE=<file>), off by default (0.13.76): a
+# Opt-in cooked collision meshes (ARMPORT_PHYSX_CACHE=<file>), off by default (0.13.75): a
 # mesh cooked at an earlier start is read back for createTriangleMesh instead of cooked.
 PHYSX_PATCH = 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch'
 NWWRAPPER = 'Common/NovodeX/NwWrapper.cpp'

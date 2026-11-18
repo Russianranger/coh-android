@@ -330,6 +330,11 @@ jobs:
             prepared list at each zone server start (18 s of a 148 s start on the Thor in
             0.13.73; 9 s in CI). The list is still rebuilt when it is missing or does not match
             the server.
+          - "Fast server" keeps the collision meshes it prepares in a file and reads them back at
+            later starts, instead of preparing every mesh of the zone at every start (10 s on the
+            Thor, 17 s in CI). The first start of each zone after this update still prepares them.
+            Tick box "Reuse prepared collision meshes (faster zone start, needs Fast server)", on
+            by default; untick it if you fall through the ground or walk through a wall.
           - The second PRoot build finds a file whose name is written in another letter case in
             one step, for Wine's programs only. Tick box "Find files in any letter case in one
             step (needs Lighter system-call monitor)", on by default.
