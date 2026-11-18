@@ -12,6 +12,9 @@ container=$(docker create coh-armport-realpath:1)
 trap 'docker rm -f "$container" >/dev/null 2>&1 || true' EXIT
 docker cp "$container:/out/libarmport_realpath.so" "$out/"
 docker run --rm --network none -v "$here:/wineserver:ro" coh-armport-realpath:1 \
+  python3 /wineserver/fuzz_realpath.py /out/libarmport_realpath.so /out/check_realpath 74 60 | tee "$out/fuzz.txt"
+grep -qx 'rounds 60 different 0' "$out/fuzz.txt"
+docker run --rm --network none -v "$here:/wineserver:ro" coh-armport-realpath:1 \
   python3 /wineserver/check_realpath_native.py /out/libarmport_realpath.so /out/check_realpath | tee "$out/native-check.txt"
 image=$(docker image inspect coh-armport-realpath:1 --format '{{.Id}}')
 python3 - "$out" "$image" <<'PY'

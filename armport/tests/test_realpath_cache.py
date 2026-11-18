@@ -46,18 +46,24 @@ class NativeLibrary(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr.decode()[-600:] + result.stdout.decode()[-600:])
             counters = json.loads(result.stdout.decode().splitlines()[-1])
             self.assertEqual(counters['fast'] + counters['passed'], counters['calls'])
-            # 40 plain files in one deep folder, two forms, three rounds: all from the table.
-            self.assertGreaterEqual(counters['fast'], 240)
-            self.assertLess(counters['folders'], 20)
+            # 40 plain files in one deep folder and 40 links into a store, two forms, three rounds.
+            self.assertGreaterEqual(counters['fast'], 480)
+            self.assertLess(counters['probes'], 2 * counters['calls'])
+            fuzz = subprocess.run([sys.executable, str(SOURCE / 'fuzz_realpath.py'), str(library), str(check),
+                                   '74', '25'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=300)
+            self.assertEqual(fuzz.stdout.decode().splitlines()[-1], 'rounds 25 different 0', fuzz.stdout.decode()[-600:])
 
     def test_the_source_answers_only_in_wineserver_and_only_when_asked(self):
         source = (SOURCE / 'realpath_cache.c').read_text()
         self.assertIn('!strcmp(name, "wineserver")', source)
         self.assertIn('getenv("ARMPORT_REALPATH_CACHE")', source)
         self.assertIn('dlsym(RTLD_NEXT, "realpath")', source)
-        # The last component is always probed: a link or a missing file goes to glibc.
-        self.assertIn('readlink(candidate, &probe, 1) != -1 || errno != EINVAL', source)
+        # Every component is probed unless its folder was resolved within the limit; anything
+        # but "exists and is not a link" or a link with a plain target goes to glibc.
+        self.assertIn('linked = readlink(out, target, sizeof target - 1);', source)
+        self.assertIn('if (errno != EINVAL)\n            return 0;', source)
         self.assertIn('#define TTL_SECONDS 60', source)
+        self.assertIn('remember(path, length, out, size, oldest);', source)
         build = (SOURCE / 'build.sh').read_text()
         self.assertIn('check_realpath_native.py /out/libarmport_realpath.so /out/check_realpath', build)
         self.assertIn('FROM debian:bookworm-slim', (SOURCE / 'realpath.Dockerfile').read_text())
@@ -172,13 +178,13 @@ class SessionInstall(unittest.TestCase):
         folder = self.root / 'reports'
         folder.mkdir()
         self.assertEqual(self.armport.realpath_cache_counters(folder), {'servers': 0, 'counters': None})
-        line = 'ARMPORT_REALPATH_CACHE_V1 calls=%d fast=%d folders=7 refreshed=1 passed=%d\n'
+        line = 'ARMPORT_REALPATH_CACHE_V2 calls=%d fast=%d folders=7 refreshed=1 passed=%d probes=9\n'
         (folder / 'report.txt.100').write_text(line % (50, 40, 10))
         (folder / 'report.txt.200').write_text(line % (27000, 26500, 500))
         (folder / 'report.txt.300').write_text('garbage\n')
         (folder / 'libarmport_realpath.so').write_bytes(b'x')
         self.assertEqual(self.armport.realpath_cache_counters(folder), {'servers': 2, 'counters': {
-            'calls': 27000, 'fast': 26500, 'folders': 7, 'refreshed': 1, 'passed': 500}})
+            'calls': 27000, 'fast': 26500, 'folders': 7, 'refreshed': 1, 'passed': 500, 'probes': 9}})
         self.assertEqual(self.armport.realpath_cache_counters(self.root / 'absent'), {'servers': 0, 'counters': None})
 
     def test_request_flag_and_wiring(self):

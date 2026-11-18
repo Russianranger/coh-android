@@ -17,7 +17,7 @@ import subprocess
 import sys
 import tempfile
 
-REPORT = 'ARMPORT_REALPATH_CACHE_V1 '
+REPORT = 'ARMPORT_REALPATH_CACHE_V2 '
 
 
 def run(binary, paths, environment, repeat=1):
@@ -63,7 +63,36 @@ def main(argv):
         os.symlink('plain.txt', tree / 'file-link')             # the last component is a link
         os.symlink('missing', tree / 'dangling')
         os.symlink(str(tree), work / 'drive')                   # like dosdevices/z:
-        paths = files + [
+        # The game's server folders: a tree of links to the installed files, relative and absolute.
+        store, view = work / 'store/data/geo', tree / 'view/geo'
+        store.mkdir(parents=True)
+        view.mkdir(parents=True)
+        linked = []
+        for index in range(40):
+            (store / ('model-%02d.geo' % index)).write_bytes(b'x')
+            target = (str(store) if index % 2 else '../../../store/data/geo') + '/model-%02d.geo' % index
+            os.symlink(target, view / ('model-%02d.geo' % index))
+            linked.append(str(view / ('model-%02d.geo' % index)))
+        os.symlink('./../tree/./a/b', tree / 'dotted-folder-link')
+        os.symlink('../../../../../../../../../../../../proc', tree / 'above-root-link')
+        os.symlink('a/../plain.txt', tree / 'inner-dots-link')     # left to glibc
+        os.symlink('..', tree / 'a/parent-link')                   # left to glibc
+        os.symlink('file-link', tree / 'link-to-link')
+        os.symlink('loop-b', tree / 'loop-a')
+        os.symlink('loop-a', tree / 'loop-b')
+        os.symlink('/', tree / 'root-link')
+        os.symlink('.', tree / 'dot-link')
+        os.symlink(str(store) + '/', tree / 'slash-link')
+        chain = tree / 'chain-00'
+        chain.write_text('x')
+        for index in range(1, 12):                              # deeper than the library follows
+            os.symlink('chain-%02d' % (index - 1), tree / ('chain-%02d' % index))
+        paths = files + linked + [
+            str(tree / 'link-to-link'), str(tree / 'loop-a'), str(tree / 'root-link'), str(tree / 'root-link/proc'),
+            str(tree / 'dot-link/plain.txt'), str(tree / 'slash-link/model-00.geo'), str(tree / 'chain-11'),
+            str(tree / 'chain-05'), str(tree / 'view'), str(tree / 'view/geo/absent.geo'),
+            str(work / 'drive/view/geo/model-03.geo'), str(tree / 'dotted-folder-link/c/d/e/f/g/h/file-02.bin'),
+            str(tree / 'above-root-link'), str(tree / 'inner-dots-link'), str(tree / 'a/parent-link/plain.txt'),
             str(tree / 'plain.txt'), str(tree / 'file-link'), str(tree / 'dangling'),
             str(tree / 'missing.txt'), str(tree / 'missing-folder/x.txt'),
             str(tree / 'folder-link/c/d/e/f/g/h/file-00.bin'), str(tree / 'folder-link/c'),
@@ -93,8 +122,12 @@ def main(argv):
         # Both forms (allocated and caller's buffer), three rounds.
         if found['calls'] != 6 * len(paths) or found['fast'] + found['passed'] != found['calls']:
             raise SystemExit('counters do not add up: %r' % found)
-        if found['fast'] < 6 * len(files) or found['folders'] > len(paths):
+        # Plain files and files that are links to the store are both answered here, and with far
+        # fewer readlink calls than glibc's one per component per call.
+        if found['fast'] < 6 * (len(files) + len(linked)) or found['folders'] > 4 * len(paths):
             raise SystemExit('the table was not used as expected: %r' % found)
+        if found['probes'] > 4 * found['calls']:
+            raise SystemExit('too many probes: %r' % found)
         # A folder that is replaced by a link is noticed once its entry is older than the limit;
         # within it, a file that has gone is still answered by glibc (the last component is probed).
         gone = deep / 'file-39.bin'

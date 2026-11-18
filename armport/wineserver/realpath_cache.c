@@ -8,13 +8,16 @@
  * opens, a quarter of everything PRoot served in that launch.
  *
  * This library is loaded with LD_PRELOAD. In a process named "wineserver"
- * with ARMPORT_REALPATH_CACHE=1 it answers realpath() from a small table of
- * folders it has already resolved: the folder part comes from the table, and
- * one readlink() of the last component shows whether that is a link. A link,
- * a missing file, an unusual path or any doubt goes to glibc's realpath()
- * unchanged. An entry is used for at most TTL_SECONDS. In any other process,
- * or without the variable, every call goes straight to glibc. wineserver has
- * one thread, and the table is not locked.
+ * with ARMPORT_REALPATH_CACHE=1 it resolves a path the way glibc does, one
+ * readlink() per component and following links, but takes every folder it
+ * has resolved in the last TTL_SECONDS from a table. The last component is
+ * always probed. The game's server folders are trees of links to the
+ * installed data, so links are followed here too (CI run 44367156833: a
+ * first version that left links to glibc answered 11,615 of 37,888 calls).
+ * A missing file, a path with "." or ".." or an empty component, a link
+ * with such a target, or any error goes to glibc's realpath() unchanged. In
+ * any other process, or without the variable, every call goes straight to
+ * glibc. wineserver has one thread, and the table is not locked.
  */
 #define _GNU_SOURCE
 #include <dlfcn.h>
@@ -27,14 +30,15 @@
 #include <time.h>
 #include <unistd.h>
 
-#define SLOTS 2048              /* direct mapped; a collision replaces the entry */
+#define SLOTS 16384             /* direct mapped; a collision replaces the entry */
 #define TTL_SECONDS 60
 #define REPORT_EVERY 1024
+#define LINK_DEPTH 8
 
 struct slot {
-    char *folder;               /* as asked: everything before the last '/' */
-    char *resolved;             /* glibc's realpath() of it */
-    size_t folder_length, resolved_length;
+    char *asked;                /* a folder path as it was asked for */
+    char *resolved;             /* its real path */
+    size_t asked_length, resolved_length;
     time_t stamp;
 };
 
@@ -42,18 +46,19 @@ static struct slot slots[SLOTS];
 static int active = -1;
 static char *(*next_realpath)(const char *, char *);
 static const char *report_path;
-static unsigned long calls, fast, folders, refreshed, passed;
+static unsigned long calls, fast, folders, refreshed, passed, probes;
+static time_t oldest;          /* the oldest table entry the current call has used */
 
 static void report(void)
 {
-    char line[200];
+    char line[240];
     int length, fd;
 
     if (!report_path || !calls)     /* "wineserver -k" and "-w" resolve nothing: no file */
         return;
     length = snprintf(line, sizeof line,
-                      "ARMPORT_REALPATH_CACHE_V1 calls=%lu fast=%lu folders=%lu refreshed=%lu passed=%lu\n",
-                      calls, fast, folders, refreshed, passed);
+                      "ARMPORT_REALPATH_CACHE_V2 calls=%lu fast=%lu folders=%lu refreshed=%lu passed=%lu probes=%lu\n",
+                      calls, fast, folders, refreshed, passed, probes);
     if (length <= 0 || (size_t)length >= sizeof line)
         return;
     fd = open(report_path, O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_NOFOLLOW, 0600);
@@ -107,84 +112,169 @@ static time_t now(void)
     return value.tv_sec + 1;    /* never 0: 0 marks an empty slot */
 }
 
-/* The resolved folder for path[0..length), or NULL to let glibc answer. */
-static const struct slot *folder_for(const char *path, size_t length)
+/* Absolute, no empty, "." or ".." component, no trailing slash: the only shape resolved here. */
+static int plain(const char *path, size_t length)
 {
-    struct slot *slot = &slots[hash(path, length) % SLOTS];
-    time_t moment = now();
-    char *folder, *resolved;
+    size_t index, begin;
 
-    if (!moment)
-        return NULL;
-    if (slot->stamp && slot->folder_length == length && !memcmp(slot->folder, path, length)) {
-        if (moment - slot->stamp < TTL_SECONDS)
-            return slot;
-        refreshed++;
+    if (!length || length >= PATH_MAX || path[0] != '/')
+        return 0;
+    if (length == 1)
+        return 1;
+    for (begin = 1, index = 1; index <= length; index++) {
+        if (index < length && path[index] != '/')
+            continue;
+        if (index == begin || (index - begin == 1 && path[begin] == '.')
+            || (index - begin == 2 && path[begin] == '.' && path[begin + 1] == '.'))
+            return 0;
+        begin = index + 1;
     }
-    folder = strndup(path, length);
-    if (!folder)
-        return NULL;
-    resolved = next_realpath(folder, NULL);
-    if (!resolved) {
-        free(folder);
-        return NULL;
+    return 1;
+}
+
+static void remember(const char *asked, size_t asked_length, const char *resolved, size_t resolved_length,
+                     time_t moment)
+{
+    struct slot *slot = &slots[hash(asked, asked_length) % SLOTS];
+    char *first = strndup(asked, asked_length), *second = strndup(resolved, resolved_length);
+
+    if (!first || !second) {
+        free(first);
+        free(second);
+        return;
     }
     if (slot->stamp) {
-        free(slot->folder);
+        free(slot->asked);
         free(slot->resolved);
     }
-    slot->folder = folder;
-    slot->resolved = resolved;
-    slot->folder_length = length;
-    slot->resolved_length = strlen(resolved);
+    slot->asked = first;
+    slot->resolved = second;
+    slot->asked_length = asked_length;
+    slot->resolved_length = resolved_length;
     slot->stamp = moment;
     folders++;
-    return slot;
+}
+
+/* The real path of the plain path[0..length) into out (PATH_MAX bytes); its length, or 0 to
+ * let glibc answer the whole call. It does what glibc's realpath() does, one readlink() per
+ * component, but a folder that was resolved in the last TTL_SECONDS is taken from the table.
+ * `folder` is set for every component but the last one asked for; only those are remembered. */
+static size_t resolve(const char *path, size_t length, char *out, int folder, int depth, time_t moment)
+{
+    char target[PATH_MAX];
+    struct slot *slot;
+    size_t parent, base, size;
+    ssize_t linked;
+
+    if (length == 1) {
+        out[0] = '/';
+        out[1] = 0;
+        return 1;
+    }
+    if (folder) {
+        slot = &slots[hash(path, length) % SLOTS];
+        if (slot->stamp && slot->asked_length == length && !memcmp(slot->asked, path, length)) {
+            if (moment - slot->stamp < TTL_SECONDS) {
+                if (slot->stamp < oldest)
+                    oldest = slot->stamp;
+                memcpy(out, slot->resolved, slot->resolved_length + 1);
+                return slot->resolved_length;
+            }
+            refreshed++;
+        }
+    }
+    for (parent = length; path[parent - 1] != '/'; parent--)
+        ;
+    base = parent;                              /* path[base..length) is the last component */
+    parent = parent > 1 ? parent - 1 : 1;       /* path[0..parent) is its folder */
+    size = resolve(path, parent, out, 1, depth, moment);
+    if (!size || size + 1 + (length - base) >= PATH_MAX)
+        return 0;
+    if (size > 1)
+        out[size++] = '/';
+    memcpy(out + size, path + base, length - base);
+    size += length - base;
+    out[size] = 0;
+    probes++;
+    linked = readlink(out, target, sizeof target - 1);
+    if (linked < 0) {
+        if (errno != EINVAL)
+            return 0;                           /* missing, not a folder, no access: glibc reports it */
+    } else {
+        char joined[PATH_MAX];
+        const char *next = target;
+        size_t next_length = (size_t)linked;
+
+        if (!linked || (size_t)linked >= sizeof target - 1 || depth >= LINK_DEPTH)
+            return 0;
+        target[linked] = 0;
+        if (target[0] != '/') {                 /* relative to the folder the link is in */
+            size_t folder_length = size - (length - base) - 1;
+            const char *rest = target;
+            size_t left = (size_t)linked;
+
+            /* Leading "./" and "../": the folder is a real path already, so its parent is
+             * the path without its last component ("/.." is "/"). */
+            for (;;) {
+                if (left >= 2 && rest[0] == '.' && rest[1] == '/') {
+                    rest += 2;
+                    left -= 2;
+                } else if (left >= 3 && rest[0] == '.' && rest[1] == '.' && rest[2] == '/') {
+                    while (folder_length && out[folder_length - 1] != '/')
+                        folder_length--;
+                    if (folder_length)
+                        folder_length--;
+                    rest += 3;
+                    left -= 3;
+                } else {
+                    break;
+                }
+            }
+            if (!left || folder_length + 1 + left >= PATH_MAX)
+                return 0;
+            memcpy(joined, out, folder_length);
+            joined[folder_length] = '/';
+            memcpy(joined + folder_length + 1, rest, left + 1);
+            next = joined;
+            next_length = folder_length + 1 + left;
+        }
+        if (!plain(next, next_length))
+            return 0;
+        size = resolve(next, next_length, out, folder, depth + 1, moment);
+        if (!size)
+            return 0;
+    }
+    /* An entry is as old as the oldest one it was built from, so nothing in the table
+     * describes the file system as it was more than TTL_SECONDS ago. */
+    if (folder)
+        remember(path, length, out, size, oldest);
+    return size;
 }
 
 static char *answer(const char *path, char *resolved)
 {
-    const char *slash, *last;
-    size_t folder_length, last_length, total;
-    const struct slot *slot;
-    char candidate[PATH_MAX], probe;
+    char found[PATH_MAX];
+    size_t length, size;
+    time_t moment;
     int saved = errno;
     char *result;
 
-    if (!path || path[0] != '/')
+    if (!path)
         return NULL;
-    slash = strrchr(path, '/');
-    last = slash + 1;
-    folder_length = (size_t)(slash - path);
-    last_length = strlen(last);
-    if (!folder_length || !last_length || folder_length + 1 + last_length >= PATH_MAX
-        || !strcmp(last, ".") || !strcmp(last, ".."))
+    length = strlen(path);
+    moment = now();
+    if (!moment || length < 2 || !plain(path, length))
         return NULL;
-    slot = folder_for(path, folder_length);
-    if (!slot)
-        return NULL;
-    total = slot->resolved_length + 1 + last_length;
-    if (slot->resolved[0] != '/' || total >= PATH_MAX)
-        return NULL;
-    if (slot->resolved_length == 1) {               /* the folder is "/" */
-        candidate[0] = '/';
-        memcpy(candidate + 1, last, last_length + 1);
-    } else {
-        memcpy(candidate, slot->resolved, slot->resolved_length);
-        candidate[slot->resolved_length] = '/';
-        memcpy(candidate + slot->resolved_length + 1, last, last_length + 1);
-    }
-    /* EINVAL: it exists and is not a link, so the candidate is the real path. */
-    if (readlink(candidate, &probe, 1) != -1 || errno != EINVAL) {
-        errno = saved;
-        return NULL;
-    }
+    oldest = moment;
+    size = resolve(path, length, found, 0, 0, moment);
     errno = saved;
+    if (!size)
+        return NULL;
     if (resolved) {
-        strcpy(resolved, candidate);
+        memcpy(resolved, found, size + 1);
         result = resolved;
     } else {
-        result = strdup(candidate);
+        result = strdup(found);
         if (!result)
             return NULL;
     }

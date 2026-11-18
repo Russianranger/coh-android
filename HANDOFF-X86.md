@@ -503,13 +503,32 @@ cold zoning.
   for the guest's Debian bookworm like the audio plugin, checked against
   glibc in the same container, shipped in the client package as
   `armport-native/libarmport_realpath.so`). In a process named `wineserver`
-  it answers from a table of folders glibc has already resolved and probes
-  only the last component; a link, a missing file or an unusual path goes to
-  glibc; an entry is used for 60 s at most. The session extracts the library
-  (checked against the package manifest) before its first Wine process.
-  Local x86-64 PRoot (patches 0001-0007), 20,000 `realpath` calls on a path
-  21 folders deep: 840,209 stops and 25.0 s with glibc, 40,299 stops and
-  1.35 s with the library.
+  it resolves a path as glibc does, one `readlink` per component and
+  following links, but takes a folder resolved in the last 60 s from a
+  table; the last component is always probed; a missing file, a path or
+  link target with `.`, `..` or an empty component (other than leading `./`
+  and `../` in a link), and any error go to glibc. The session extracts the
+  library (checked against the package manifest) before its first Wine
+  process. CI builds it and compares it with glibc on a fixed list and on
+  60 random trees of folders, files and links (answers and `errno`). Local
+  x86-64 PRoot (patches 0001-0007): 20,000 calls on a plain file 21 folders
+  deep, 840,209 stops and 25.0 s with glibc, 40,299 and 1.35 s with the
+  library; 10,000 calls on files that are links into a store (how the
+  server folders are built), 700,044 stops and 20.7 s against 40,118 and
+  1.48 s.
+- **Early run 44367156833** (stock travel, at c366cffb7 with 0.13.73's build
+  44117115718; both options in both sessions; passed: creation, a trip,
+  reopen). The reopen session's Atlas server console spans 109.0 s (158.2 s
+  in 0.13.73's 44136706377) and the 58.5 s animation gap is gone; PRoot
+  served 5.88 M stops in that session (8.52 M). The library's first version
+  left links to glibc and answered only 11,615 of 37,888 calls, because the
+  server folders are trees of links; it follows links since. The sampler's
+  265 MapServer `newfstatat` samples: more than half are the folders above
+  the server's own (`state`, `diagnostic`, `local-login-server-...`,
+  `dosdevices/z:/state`), which is Wine walking a path component by
+  component from the drive root when its first whole-path `stat` fails
+  (the samples hold both `Scripts.loc` and `scripts.loc` under
+  `serverdata`).
 - **CI sampler: which paths.** For MapServer, wineserver, DbServer and the
   client the host sampler now reads the path of a stopped `newfstatat`,
   `openat` or `readlinkat` and whether it was found. MapServer's 357
@@ -518,8 +537,13 @@ cold zoning.
 - CI sessions: the stock-travel run uses both options in both sessions; the
   other runs keep the creation session without them, so one run shows the
   same Atlas start both ways.
-- Not done: the ownership scan's opens; the 25 rtnetlink look-ups a second;
-  the late arrival log; the spare zone hand-over.
+- The ownership scan reads each `/proc` file with one open and one close
+  (`read_proc_text`; `Path.read_text` also asked for the descriptor's
+  status, two more stops a file; 82.7 thousand such opens in launch B).
+- Not done: the 25 rtnetlink look-ups a second; the late arrival log; the
+  spare zone hand-over. Next for the server start: a drive letter mapped to
+  the server's folder (the walk then starts there) and a case-insensitive
+  fallback in PRoot's path translation.
 - **Chain.** CHAIN74_PLACEHOLDER
 
 ## 0.13.73 and the Thor test of 0.13.72 (Claude, 2026-11-17)

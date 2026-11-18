@@ -709,12 +709,18 @@ component plus a directory read), an open in wineserver, and there a
 
 0.13.74: `quickLoadAnims` and `nofilechangecheck_server` through
 `-svrconfig` (the first row), and the realpath library (the `readlinkat`
-half of the stops). Next, in order: the MapServer's own `newfstatat` storm
-(the CI sampler now reads which paths and whether they exist; if most are
-case mismatches, a case-insensitive fallback in PRoot's path translation or
-a lower-case data view makes Wine's first `stat` succeed); a drive letter
-mapped to the server's folder (fewer components per look-up); the spare zone
-server for trips; the object library and PhysX caches.
+half of the stops). CI run 44367156833 with both: the reopen session's Atlas
+start 158 to 109 s, 8.52 to 5.88 million stops.
+
+Next, in order. The CI sampler now reads the paths: more than half of the
+MapServer's sampled `newfstatat` calls are for the folders above the
+server's own, which is Wine's component-by-component walk from the drive
+root after its whole-path `stat` failed (a missing file or a name in another
+case; the samples do not yet say which). So: (1) a drive
+letter mapped to the server's folder, so the walk starts there; (2) a
+case-insensitive fallback in PRoot's path translation, so the first `stat`
+succeeds; (3) the spare zone server for trips; (4) the object library and
+PhysX caches.
 
 ## Process changes that would speed all of this up
 

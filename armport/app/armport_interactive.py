@@ -281,8 +281,8 @@ def graphics_profile_confirmed(log, tail=b''):
 REALPATH_CACHE_ENVIRONMENT = 'COH_WINESERVER_PATH_CACHE'
 REALPATH_CACHE_LIBRARY = 'libarmport_realpath.so'
 REALPATH_CACHE_REPORT = 'report.txt'
-REALPATH_CACHE_LINE = re.compile(r'ARMPORT_REALPATH_CACHE_V1 calls=(\d{1,18}) fast=(\d{1,18}) folders=(\d{1,18}) '
-                                 r'refreshed=(\d{1,18}) passed=(\d{1,18})\n')
+REALPATH_CACHE_LINE = re.compile(r'ARMPORT_REALPATH_CACHE_V2 calls=(\d{1,18}) fast=(\d{1,18}) folders=(\d{1,18}) '
+                                 r'refreshed=(\d{1,18}) passed=(\d{1,18}) probes=(\d{1,18})\n')
 
 
 def realpath_cache_requested(environ=os.environ):
@@ -296,7 +296,8 @@ def install_realpath_cache(archive, folder, wine_env, requested):
     Wine's server calls realpath() for every file it opens, glibc answers with one readlink()
     per path component, and PRoot stops twice for each (Thor 0.13.73, launch B: 505,539
     readlinkat calls for 27,423 opens, a quarter of all stops). The library
-    (armport/wineserver/realpath_cache.c) remembers resolved folders inside wineserver only.
+    (armport/wineserver/realpath_cache.c) remembers resolved folders inside wineserver only
+    and follows links itself (the server folders are trees of links to the installed data).
     It is loaded with LD_PRELOAD, which the first Wine process hands to the server it starts.
 
     Returns the report record. Anything unexpected leaves the environment unchanged: the
@@ -350,7 +351,7 @@ def realpath_cache_counters(folder):
         if match is None:
             continue
         servers += 1
-        values = dict(zip(('calls', 'fast', 'folders', 'refreshed', 'passed'), map(int, match.groups())))
+        values = dict(zip(('calls', 'fast', 'folders', 'refreshed', 'passed', 'probes'), map(int, match.groups())))
         if best is None or values['calls'] > best['calls']:
             best = values
     return {'servers': servers, 'counters': best}
