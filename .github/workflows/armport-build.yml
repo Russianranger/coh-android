@@ -1253,6 +1253,7 @@ jobs:
             /android/guest/
             /patches/mapserver-trusted-bins/
             /patches/mapserver-zone-travel/
+            /patches/mapserver-physx-cache/
           sparse-checkout-cone-mode: false
       - uses: actions/checkout@v4
         with:
@@ -1344,6 +1345,7 @@ jobs:
             /android/guest/
             /patches/mapserver-trusted-bins/
             /patches/mapserver-zone-travel/
+            /patches/mapserver-physx-cache/
             /docs/android-evidence/mapserver-progress-package-36630872719.json
             /docs/android-evidence/client-map-startup-0.13.32-publication.json
           sparse-checkout-cone-mode: false
