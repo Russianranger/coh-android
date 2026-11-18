@@ -1,0 +1,384 @@
+diff --git a/src/GNUmakefile b/src/GNUmakefile
+index 08c9dfe..f69e2e1 100644
+--- a/src/GNUmakefile
++++ b/src/GNUmakefile
+@@ -37,6 +37,7 @@ OBJECTS += \
+ 	path/glue.o		\
+ 	path/canon.o		\
+ 	path/f2fs-bug.o		\
++	path/casefold.o		\
+ 	path/path.o		\
+ 	path/proc.o		\
+ 	path/temp.o		\
+diff --git a/src/path/canon.c b/src/path/canon.c
+index 09d0eed..8960dca 100644
+--- a/src/path/canon.c
++++ b/src/path/canon.c
+@@ -36,6 +36,7 @@
+ #include "path/glue.h"
+ #include "path/proc.h"
+ #include "path/f2fs-bug.h"
++#include "path/casefold.h"
+ #include "extension/extension.h"
+ 
+ /**
+@@ -134,7 +135,7 @@ static inline Finality next_component(char component[NAME_MAX], const char **cur
+  * -ENOTDIR).
+  */
+ static inline int substitute_binding_stat(Tracee *tracee, Finality finality, unsigned int recursion_level,
+-					const char guest_path[PATH_MAX], char host_path[PATH_MAX])
++					char guest_path[PATH_MAX], char host_path[PATH_MAX], char *component)
+ {
+ 	struct stat statl;
+ 	int status;
+@@ -166,6 +167,20 @@ static inline int substitute_binding_stat(Tracee *tracee, Finality finality, uns
+ 			status = 0;
+ 			statl.st_mode = S_IFDIR;
+ 		}
++
++		/* A component that does not exist as written but does in
++		 * another letter case (see casefold.h): use that entry, in
++		 * the guest path as well, which the caller appends from
++		 * @component.  */
++		if (status < 0 && errno == ENOENT && component != NULL && tracee->glue_type == 0
++		    && casefold_wanted(tracee) && casefold_component(host_path, component)) {
++			size_t length = strlen(component);
++			size_t total = strlen(guest_path);
++			if (total >= length)
++				memcpy(guest_path + total - length, component, length);
++			statl.st_mode = 0;
++			status = lstat(host_path, &statl);
++		}
+ 	}
+ 
+ 	/* Build the glue between the hostfs and the guestfs during
+@@ -261,7 +276,7 @@ int canonicalize(Tracee *tracee, const char *user_path, bool deref_final,
+ 		 * symlink.  For this latter case, we check that the
+ 		 * symlink points to a directory once it is
+ 		 * canonicalized, at the end of this loop.  */
+-		status = substitute_binding_stat(tracee, finality, recursion_level, scratch_path, host_path);
++		status = substitute_binding_stat(tracee, finality, recursion_level, scratch_path, host_path, component);
+ 		if (status < 0)
+ 			return status;
+ 
+@@ -361,7 +376,7 @@ int canonicalize(Tracee *tracee, const char *user_path, bool deref_final,
+ 
+ 		/* Check that a non-final canonicalized/dereferenced
+ 		 * symlink exists and is a directory.  */
+-		status = substitute_binding_stat(tracee, finality, recursion_level, guest_path, host_path);
++		status = substitute_binding_stat(tracee, finality, recursion_level, guest_path, host_path, NULL);
+ 		if (status < 0)
+ 			return status;
+ 
+diff --git a/src/path/casefold.c b/src/path/casefold.c
+new file mode 100644
+index 0000000..af90859
+--- /dev/null
++++ b/src/path/casefold.c
+@@ -0,0 +1,216 @@
++/* -*- c-set-style: "K&R"; c-basic-offset: 8 -*-
++ *
++ * See casefold.h.
++ */
++
++#include <dirent.h>    /* opendir(3), readdir(3), */
++#include <stdlib.h>    /* getenv(3), malloc(3), qsort(3), bsearch(3), */
++#include <string.h>    /* str*(3), */
++#include <strings.h>   /* strcasecmp(3), */
++#include <sys/stat.h>  /* stat(2), */
++
++#include "path/casefold.h"
++
++#define CASEFOLD_SLOTS 256
++#define CASEFOLD_NAMES 16384	/* a directory with more entries is not listed */
++
++typedef struct {
++	char *directory;
++	dev_t device;
++	ino_t inode;
++	struct timespec changed;
++	char **names;
++	size_t nb_names;
++} Listing;
++
++static Listing listings[CASEFOLD_SLOTS];
++static const char *programs;
++static int state;	/* 0: not looked up yet, 1: on, -1: off.  */
++static uint64_t replaced, absent, listed;
++
++/**
++ * Is a missing component of a path of @tracee to be looked up in
++ * another case?
++ */
++bool casefold_wanted(const Tracee *tracee)
++{
++	const char *name;
++	const char *cursor;
++	size_t length;
++
++	if (state == 0) {
++		programs = getenv("PROOT_CASEFOLD_PROGRAMS");
++		state = (programs != NULL && programs[0] != '\0') ? 1 : -1;
++	}
++
++	if (state != 1 || tracee->exe == NULL)
++		return false;
++
++	name = strrchr(tracee->exe, '/');
++	name = name == NULL ? tracee->exe : name + 1;
++	length = strlen(name);
++	if (length == 0)
++		return false;
++
++	for (cursor = programs; *cursor != '\0'; ) {
++		const char *end = strchr(cursor, ':');
++		size_t size = end == NULL ? strlen(cursor) : (size_t) (end - cursor);
++
++		if (size == length && memcmp(cursor, name, length) == 0)
++			return true;
++		cursor += size;
++		if (*cursor == ':')
++			cursor++;
++	}
++
++	return false;
++}
++
++static int compare_names(const void *first, const void *second)
++{
++	return strcasecmp(*(char * const *) first, *(char * const *) second);
++}
++
++static void forget(Listing *listing)
++{
++	size_t i;
++
++	for (i = 0; i < listing->nb_names; i++)
++		free(listing->names[i]);
++	free(listing->names);
++	free(listing->directory);
++	memset(listing, 0, sizeof(*listing));
++}
++
++/**
++ * The sorted names of @directory, read again when the directory has
++ * changed; NULL if it cannot be read or is too large.
++ */
++static const Listing *listing_of(const char *directory)
++{
++	unsigned long hash = 1469598103934665603UL;
++	struct dirent *entry;
++	struct stat statl;
++	Listing *listing;
++	const char *cursor;
++	size_t capacity = 0;
++	DIR *stream;
++
++	if (stat(directory, &statl) < 0 || !S_ISDIR(statl.st_mode))
++		return NULL;
++
++	for (cursor = directory; *cursor != '\0'; cursor++)
++		hash = (hash ^ (unsigned char) *cursor) * 1099511628211UL;
++	listing = &listings[hash % CASEFOLD_SLOTS];
++
++	if (listing->directory != NULL
++	    && strcmp(listing->directory, directory) == 0
++	    && listing->device == statl.st_dev && listing->inode == statl.st_ino
++	    && listing->changed.tv_sec == statl.st_mtim.tv_sec
++	    && listing->changed.tv_nsec == statl.st_mtim.tv_nsec)
++		return listing;
++
++	forget(listing);
++
++	stream = opendir(directory);
++	if (stream == NULL)
++		return NULL;
++
++	while ((entry = readdir(stream)) != NULL) {
++		char *name;
++
++		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
++			continue;
++
++		if (listing->nb_names == capacity) {
++			char **names;
++
++			capacity = capacity == 0 ? 64 : 2 * capacity;
++			names = capacity > CASEFOLD_NAMES ? NULL
++				: realloc(listing->names, capacity * sizeof(char *));
++			if (names == NULL)
++				goto error;
++			listing->names = names;
++		}
++
++		name = strdup(entry->d_name);
++		if (name == NULL)
++			goto error;
++		listing->names[listing->nb_names++] = name;
++	}
++	closedir(stream);
++
++	listing->directory = strdup(directory);
++	if (listing->directory == NULL) {
++		forget(listing);
++		return NULL;
++	}
++
++	qsort(listing->names, listing->nb_names, sizeof(char *), compare_names);
++	listing->device = statl.st_dev;
++	listing->inode = statl.st_ino;
++	listing->changed = statl.st_mtim;
++	listed++;
++
++	return listing;
++
++error:
++	closedir(stream);
++	forget(listing);
++	return NULL;
++}
++
++/**
++ * @host_path does not exist.  If its directory has an entry that
++ * differs from its last component only in letter case, write that
++ * entry over the last component, and over @component, which is that
++ * same component in the caller's guest path, and return true.  Both
++ * keep their length.
++ */
++bool casefold_component(char host_path[PATH_MAX], char *component)
++{
++	const Listing *listing;
++	char directory[PATH_MAX];
++	const char *key;
++	char **found;
++	char *slash;
++	size_t length;
++
++	slash = strrchr(host_path, '/');
++	length = strlen(component);
++	if (slash == NULL || length == 0 || strcmp(slash + 1, component) != 0)
++		return false;
++
++	if (slash == host_path)
++		strcpy(directory, "/");
++	else {
++		memcpy(directory, host_path, slash - host_path);
++		directory[slash - host_path] = '\0';
++	}
++
++	listing = listing_of(directory);
++	key = component;
++	found = listing == NULL ? NULL
++		: bsearch(&key, listing->names, listing->nb_names, sizeof(char *), compare_names);
++	if (found == NULL || strlen(*found) != length) {
++		absent++;
++		return false;
++	}
++
++	memcpy(slash + 1, *found, length);
++	memcpy(component, *found, length);
++	replaced++;
++
++	return true;
++}
++
++/**
++ * Components replaced, components with no entry in another case, and
++ * directories listed, so far.
++ */
++void casefold_counts(uint64_t counts[3])
++{
++	counts[0] = replaced;
++	counts[1] = absent;
++	counts[2] = listed;
++}
+diff --git a/src/path/casefold.h b/src/path/casefold.h
+new file mode 100644
+index 0000000..a3498cd
+--- /dev/null
++++ b/src/path/casefold.h
+@@ -0,0 +1,43 @@
++/* -*- c-set-style: "K&R"; c-basic-offset: 8 -*-
++ *
++ * A missing path component that exists in another case.
++ *
++ * Wine gives Windows programs a case-insensitive file system on a
++ * case-sensitive one: it stats the whole Unix path as the program
++ * wrote it and, when that fails, walks the path one component at a
++ * time, reading a directory wherever a component is missing.  Under
++ * PRoot every one of those stats is two stops (Thor 0.13.73: a zone
++ * server start made 357,000 newfstatat calls, about 13 for every file
++ * it opened).
++ *
++ * With PROOT_CASEFOLD_PROGRAMS=<name>[:<name>...] PRoot, while it
++ * translates a path for a tracee whose executable has one of those
++ * file names (Wine's: wine:wineserver), replaces a component that
++ * does not exist by the entry of the same directory that differs
++ * from it only in ASCII letter case, if there is one.  Wine's first
++ * stat then succeeds.  A component that exists as written is never
++ * changed, a name with no such sibling fails as before, and so does
++ * every path of every other program.  Without the variable nothing
++ * changes.
++ *
++ * A directory's names are read once and again when its modification
++ * time changes.  PROOT_STOP_COUNTS's first line reports
++ * casefold_replaced (components replaced), casefold_absent (missing
++ * components with no entry in another case) and casefold_listed
++ * (directories read).
++ */
++
++#ifndef CASEFOLD_H
++#define CASEFOLD_H
++
++#include <limits.h>   /* PATH_MAX, */
++#include <stdbool.h>  /* bool, */
++#include <stdint.h>   /* uint64_t, */
++
++#include "tracee/tracee.h"
++
++extern bool casefold_wanted(const Tracee *tracee);
++extern bool casefold_component(char host_path[PATH_MAX], char *component);
++extern void casefold_counts(uint64_t counts[3]);
++
++#endif /* CASEFOLD_H */
+diff --git a/src/syscall/stop_counts.h b/src/syscall/stop_counts.h
+index bef3e63..aa99407 100644
+--- a/src/syscall/stop_counts.h
++++ b/src/syscall/stop_counts.h
+@@ -51,6 +51,8 @@
+ #include <fcntl.h>    /* open(2), */
+ #include <unistd.h>   /* read(2), close(2), */
+ 
++#include "path/casefold.h"
++
+ #define STOP_COUNTS_SYSCALLS 512
+ #define STOP_COUNTS_PERIOD_SECONDS 10
+ #define STOP_COUNTS_PROGRAMS 64
+@@ -173,6 +175,7 @@ static inline time_t stop_counts_now(void)
+ 
+ static inline void stop_counts_write(void)
+ {
++	uint64_t folded[3];
+ 	FILE *file;
+ 	int i;
+ 
+@@ -183,13 +186,17 @@ static inline void stop_counts_write(void)
+ 	if (file == NULL)
+ 		return;
+ 
++	casefold_counts(folded);
+ 	fprintf(file, "PROOT_STOP_COUNTS_V1 seconds=%lld stops=%llu"
+-		" fd_stats=%llu moved_netlink_fds=%llu failed_netlink_moves=%llu\n",
++		" fd_stats=%llu moved_netlink_fds=%llu failed_netlink_moves=%llu"
++		" casefold_replaced=%llu casefold_absent=%llu casefold_listed=%llu\n",
+ 		(long long) (stop_counts_now() - stop_counts.started),
+ 		(unsigned long long) stop_counts.total,
+ 		(unsigned long long) stop_counts.extra[STOP_COUNTS_FD_STATS],
+ 		(unsigned long long) stop_counts.extra[STOP_COUNTS_MOVED_NETLINK_FDS],
+-		(unsigned long long) stop_counts.extra[STOP_COUNTS_FAILED_NETLINK_MOVES]);
++		(unsigned long long) stop_counts.extra[STOP_COUNTS_FAILED_NETLINK_MOVES],
++		(unsigned long long) folded[0], (unsigned long long) folded[1],
++		(unsigned long long) folded[2]);
+ 	for (i = 0; i <= STOP_COUNTS_SYSCALLS; i++) {
+ 		if (stop_counts.enter[i] == 0 && stop_counts.exit[i] == 0)
+ 			continue;

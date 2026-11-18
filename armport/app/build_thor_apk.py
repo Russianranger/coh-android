@@ -183,10 +183,12 @@ def proot_ioctl_members(directory, donor_members):
     donor = donor_members.get('lib/arm64-v8a/libproot.so')
     record = {'format': 2, 'switch': 'PROOT_IOCTL_COMMANDS_ONLY=1', 'default': True,
               'switches': ['PROOT_IOCTL_COMMANDS_ONLY=1', 'PROOT_GETSOCKOPT_PEERCRED_ONLY=1', 'PROOT_ACCEPT_UNTRACED=1',
-                           'PROOT_STOP_COUNTS=<file>', 'PROOT_NETLINK_HIGH_FDS=1'],
-              # 0.13.73: the last switch has an option of its own (default on), so it can be
-              # turned off without going back to the 0.13.36 PRoot.
+                           'PROOT_STOP_COUNTS=<file>', 'PROOT_NETLINK_HIGH_FDS=1',
+                           'PROOT_CASEFOLD_PROGRAMS=<executable names>'],
+              # 0.13.73 and 0.13.75: the last two switches have options of their own (default on),
+              # so each can be turned off without going back to the 0.13.36 PRoot.
               'launch_option': 'proot-call-filter', 'socket_filter_launch_option': 'proot-socket-filter',
+              'casefold_launch_option': 'proot-casefold',
               'members': {member: pin(path) for member, path in sorted(members.items())},
               'source_commit': receipt['source_commit'], 'patches': receipt['patches'],
               'compiler': receipt.get('compiler'), 'ndk_version': receipt['ndk_version'],

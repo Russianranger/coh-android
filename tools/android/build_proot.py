@@ -46,7 +46,13 @@ PATCH_NAMES = ('0001-sysvipc-memfd.patch', '0002-android-string-header.patch',
                # 0.13.73: PROOT_NETLINK_HIGH_FDS=1 gives rtnetlink sockets descriptor numbers from 960
                # and stops sendto, recvfrom and recvmsg only from that number (Thor 0.13.72: 38-49 % of
                # all stops were these three calls on other sockets). Without the variable nothing changes.
-               '0007-netlink-high-fds-socket-filter.patch')
+               '0007-netlink-high-fds-socket-filter.patch',
+               # 0.13.75: PROOT_CASEFOLD_PROGRAMS=<names> replaces a missing path component by the
+               # directory entry that differs only in letter case, for programs with those file
+               # names (Wine's). Thor 0.13.73: a zone server start made 357,000 newfstatat calls,
+               # about 13 per file opened, because Wine walks a path component by component when
+               # its first stat of the whole path fails. Without the variable nothing changes.
+               '0008-casefold-missing-components.patch')
 
 
 def require(condition, message):
@@ -155,6 +161,11 @@ def prepare(work, checkout=None, talloc_archive=None):
             'register_chained_syscall_with_result' in (proot / 'src/syscall/chain.c').read_text() and
             'move_netlink_fd' in (proot / 'src/syscall/exit.c').read_text(),
             'netlink descriptor and socket filter patch missing')
+    require('PROOT_CASEFOLD_PROGRAMS' in (proot / 'src/path/casefold.c').read_text() and
+            'casefold_component(host_path, component)' in (proot / 'src/path/canon.c').read_text() and
+            'path/casefold.o' in (proot / 'src/GNUmakefile').read_text() and
+            'casefold_replaced=%llu' in (proot / 'src/syscall/stop_counts.h').read_text(),
+            'case-insensitive component patch missing')
     return proot, work / 'talloc-2.4.3', sources
 
 
@@ -285,6 +296,7 @@ def main():
         'getsockopt_filter_switch': 'PROOT_GETSOCKOPT_PEERCRED_ONLY=1',
         'accept_untraced_patch': True, 'accept_untraced_switch': 'PROOT_ACCEPT_UNTRACED=1',
         'netlink_high_fds_patch': True, 'netlink_high_fds_switch': 'PROOT_NETLINK_HIGH_FDS=1',
+        'casefold_patch': True, 'casefold_switch': 'PROOT_CASEFOLD_PROGRAMS=<executable names>',
         'runtime_validation': 'unverified', 'status': 'source_prepared_only', 'files': {}}
     if not args.prepare_only:
         compile_sources(proot, talloc, work, args.target, tools, args.jobs)

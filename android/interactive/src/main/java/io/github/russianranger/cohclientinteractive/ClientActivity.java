@@ -40,7 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,serverQuickStart,wineserverPathCache;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -218,6 +218,11 @@ public final class ClientActivity extends Activity {
         prootSocketFilter.setChecked(ClientRuntime.prootSocketFilterEnabled(this));
         prootSocketFilter.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotSocketFilterEnabled(this,checked));
         controls.addView(prootSocketFilter);
+        prootCasefold=new CheckBox(this);prootCasefold.setText("Find files in any letter case in one step (needs Lighter system-call monitor)");
+        prootCasefold.setTextColor(Color.rgb(221,234,245));prootCasefold.setTextSize(13);
+        prootCasefold.setChecked(ClientRuntime.prootCasefoldEnabled(this));
+        prootCasefold.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotCasefoldEnabled(this,checked));
+        controls.addView(prootCasefold);
         serverQuickStart=new CheckBox(this);serverQuickStart.setText("Load zone server animations when first used (faster zone start)");
         serverQuickStart.setTextColor(Color.rgb(221,234,245));serverQuickStart.setTextSize(13);
         serverQuickStart.setChecked(ClientRuntime.serverQuickStartEnabled(this));

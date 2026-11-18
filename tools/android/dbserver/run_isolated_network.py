@@ -34,6 +34,8 @@ def loopback_state():
 
 
 STOP_COUNTS_NAME = "proot-stop-counts.txt"
+# The file names of Wine's native programs (the loader runs every Windows program).
+CASEFOLD_PROGRAMS = "wine:wine64:wineserver:wine-preloader:wine64-preloader"
 
 
 def clean_environment(loader, temporary, seccomp=False, ioctl_filter=False):
@@ -55,6 +57,9 @@ def clean_environment(loader, temporary, seccomp=False, ioctl_filter=False):
         # 0.13.73 (patch 0007): rtnetlink sockets get descriptor numbers from 960, and sendto,
         # recvfrom and recvmsg stop only from that number.
         environment["PROOT_NETLINK_HIGH_FDS"] = "1"
+        # 0.13.75 (patch 0008): for Wine's programs a missing path component that exists in
+        # another letter case is replaced by that entry, so Wine's first stat of a path succeeds.
+        environment["PROOT_CASEFOLD_PROGRAMS"] = CASEFOLD_PROGRAMS
         environment["PROOT_STOP_COUNTS"] = str(Path(temporary).parent / STOP_COUNTS_NAME)
     return environment
 

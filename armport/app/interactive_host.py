@@ -619,6 +619,9 @@ def proot_stop_counts(work, top=48):
     # 0.13.73 (patch 0007): stat calls on a descriptor (no path to translate), and rtnetlink
     # sockets moved to a high descriptor number or refused one. None from an older PRoot.
     extra = {key: number(key) for key in ('fd_stats', 'moved_netlink_fds', 'failed_netlink_moves')}
+    # 0.13.75 (patch 0008): missing path components of Wine's programs replaced by the entry in
+    # another letter case, those with no such entry, and directories read for it.
+    extra.update({key: number(key) for key in ('casefold_replaced', 'casefold_absent', 'casefold_listed')})
     return {'format': 1, 'valid': True, 'seconds': number('seconds'), 'stops': number('stops'), **extra,
             'columns': ['call_number', 'enter_stops', 'exit_stops'], 'calls': rows[:top],
             'other_stops': sum(row[1] + row[2] for row in rows[top:]),

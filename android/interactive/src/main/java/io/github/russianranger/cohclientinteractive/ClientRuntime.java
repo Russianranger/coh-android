@@ -230,6 +230,7 @@ public final class ClientRuntime {
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
     private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false;
+    private boolean prootCasefoldRequested=false,prootCasefoldUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
     private File prootStopCounts;
     private boolean spareZoneRequested=false;
@@ -521,6 +522,25 @@ public final class ClientRuntime {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("wineserver-path-cache", enabled).apply();
     }
+    /**
+     * 0.13.75: with the second PRoot build (patch 0008), PROOT_CASEFOLD_PROGRAMS names Wine's
+     * programs; for them a path component that does not exist as written is replaced by the
+     * folder entry that differs only in letter case. Wine then finds a file with its first
+     * look-up instead of walking the path folder by folder (Thor 0.13.73: about 13 status
+     * calls per file a zone server opened). On by default; needs "Lighter system-call
+     * monitor". Unticking it keeps the rest of the second build.
+     */
+    public static boolean prootCasefoldEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("proot-casefold", true);
+    }
+    public static synchronized void setProotCasefoldEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("proot-casefold", enabled).apply();
+    }
+    /** The file names of Wine's native programs; its loader runs every Windows program. */
+    static final String CASEFOLD_PROGRAMS="wine:wine64:wineserver:wine-preloader:wine64-preloader";
     public static boolean glDirectEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getBoolean("client-gl-direct", false);
@@ -1079,6 +1099,7 @@ public final class ClientRuntime {
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
         serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);
+        prootCasefoldRequested=prootCasefoldEnabled(context);prootCasefoldUsed=false;
         spareZoneRequested=spareZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
@@ -1139,6 +1160,7 @@ public final class ClientRuntime {
                     && filteredProot.canExecute() && filteredLoader.canExecute();
             if (prootIoctlFilterUsed) { proot = filteredProot; loader = filteredLoader; }
             prootSocketFilterUsed = prootIoctlFilterUsed && prootSocketFilterRequested;
+            prootCasefoldUsed = prootIoctlFilterUsed && prootCasefoldRequested;
             List<String> command = new ArrayList<>(Arrays.asList(proot.getPath(), "--link2symlink", "--kill-on-exit", "--sysvipc",
                     "-i", "1000:1000", "-r", root.getPath(), "-b", "/dev", "-b", "/proc", "-b", "/sys",
                     "-b", state.getPath() + ":/state", "-b", tmp.getPath() + ":/tmp",
@@ -1160,6 +1182,7 @@ public final class ClientRuntime {
                     "COH_PROOT_FAST_MODE="+(prootFastModeRequested?"1":"0"),
                     "COH_PROOT_IOCTL_FILTER="+(prootIoctlFilterUsed?"1":"0"),
                     "COH_PROOT_SOCKET_FILTER="+(prootSocketFilterUsed?"1":"0"),
+                    "COH_PROOT_CASEFOLD="+(prootCasefoldUsed?"1":"0"),
                     // 0.13.73: the supervisor counts its own file calls by caller (report python_call_profile).
                     // Thor 0.13.72: Python made 19-21 % of all stops, twice CI's rate, and no report said where.
                     "COH_CALL_PROFILE=1",
@@ -1207,6 +1230,7 @@ public final class ClientRuntime {
             builder.environment().remove("PROOT_STOP_COUNTS");
             builder.environment().remove("PROOT_ACCEPT_UNTRACED");
             builder.environment().remove("PROOT_NETLINK_HIGH_FDS");
+            builder.environment().remove("PROOT_CASEFOLD_PROGRAMS");
             prootStopCounts = prootIoctlFilterUsed ? new File(prootTmp, "stop-counts.txt") : null;
             if (prootStopCounts != null) {
                 prootStopCounts.delete(); new File(prootTmp, "stop-counts.txt.new").delete();
@@ -1217,6 +1241,9 @@ public final class ClientRuntime {
                 // 0.13.73 (patch 0007): sendto, recvfrom and recvmsg stop only on descriptors from 960,
                 // where PRoot now puts the rtnetlink sockets it serves.
                 if (prootSocketFilterUsed) builder.environment().put("PROOT_NETLINK_HIGH_FDS", "1");
+                // 0.13.75 (patch 0008): for Wine's programs a missing path component is looked up in
+                // another letter case, so Wine's first look-up of a file succeeds.
+                if (prootCasefoldUsed) builder.environment().put("PROOT_CASEFOLD_PROGRAMS", CASEFOLD_PROGRAMS);
             }
             line("PRoot mode: "+(prootFastModeRequested?"fast (seccomp filter)":"compatible (every syscall traced)")
                     +(prootIoctlFilterUsed?", ioctl stops only for the commands PRoot acts on (second PRoot build)"
@@ -3050,7 +3077,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

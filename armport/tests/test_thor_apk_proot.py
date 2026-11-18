@@ -46,9 +46,10 @@ class SecondProotBuild(unittest.TestCase):
 
     def test_recipe_holds_the_ioctl_patch(self):
         recipe, _ = builder.proot_recipe()
-        self.assertEqual(recipe.PATCH_NAMES[-4:], ('0004-ioctl-command-filter.patch', '0005-stop-counts-getsockopt-filter.patch',
+        self.assertEqual(recipe.PATCH_NAMES[-5:], ('0004-ioctl-command-filter.patch', '0005-stop-counts-getsockopt-filter.patch',
                                                    '0006-accept-untraced-program-counts.patch',
-                                                   '0007-netlink-high-fds-socket-filter.patch'))
+                                                   '0007-netlink-high-fds-socket-filter.patch',
+                                                   '0008-casefold-missing-components.patch'))
         for name in recipe.PATCH_NAMES:
             self.assertTrue((recipe.PATCHES / name).is_file(), name)
 
