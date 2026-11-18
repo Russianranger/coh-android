@@ -33,7 +33,24 @@
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.74 and the Thor test of 0.13.73".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI at 2b0ade277: build 44375365630 passed; stock-travel runtime 44392083121
+(`early_zone=true`, `proot_ioctl_filter=true`, sampler; one trip; both new
+options in both of its sessions); trusted runtime 44398992652 created and
+reopened a character (its interactive job took 1842 s); APK 44405347043
+published 0.13.74 (sha256
+`0470c429c7531516c4ba5e72b25fe95f722f0f4d7b9e7e7bb03f55820ef84f98`). Runtime
+44392083121, against 0.13.73's 44136706377: zone servers ready 106.2 and 100.8
+s after their spawn (162.4 and 161.2), the first start, which builds its
+caches, 299.9 s (443.1); PRoot served 14.2 million stops in the 1,056 s
+creation session and 4.86 million in the 773 s reopen session (20.6 and 8.52
+million); wineserver's `readlinkat` stops in the reopen session 503,004
+(2,255,096); the realpath library answered 117,400 of 133,120 calls in
+creation and 24,347 of 37,888 in reopen. Trusted runtime 44398992652 uses both
+options only in its reopen session: `sequencer_info_done` 39.43 s in creation
+and 0.99 s in reopen (0.13.73's 44144475202: 39.18 and 39.68), and the reopen
+Atlas start reached its main loop in 50.83 s (92.76) and was ready 56.5 s
+after its spawn (95.5). Of that start: PhysX objects 16.6 s, object library
+9.1 s. These are CI times; the phone's start was 1.6 times CI's in 0.13.73.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

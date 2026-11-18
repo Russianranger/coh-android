@@ -712,15 +712,30 @@ component plus a directory read), an open in wineserver, and there a
 half of the stops). CI run 44367156833 with both: the reopen session's Atlas
 start 158 to 109 s, 8.52 to 5.88 million stops.
 
-Next, in order. The CI sampler now reads the paths: more than half of the
-MapServer's sampled `newfstatat` calls are for the folders above the
-server's own, which is Wine's component-by-component walk from the drive
-root after its whole-path `stat` failed (a missing file or a name in another
-case; the samples do not yet say which). So: (1) a drive
-letter mapped to the server's folder, so the walk starts there; (2) a
-case-insensitive fallback in PRoot's path translation, so the first `stat`
-succeeds; (3) the spare zone server for trips; (4) the object library and
-PhysX caches.
+0.13.74's chain (2b0ade277), CI: the trusted run 44398992652 uses both
+options only in its reopen session, where the Atlas start reached its main
+loop in 50.83 s against 92.76 s in 0.13.73's 44144475202 (`sequencer_info`
+0.99 s against 39.68 s; ready 56.5 s after the spawn against 95.5 s). The
+stock-travel run 44392083121: 4.86 million stops in the reopen session
+against 8.52 million, wineserver `readlinkat` 503,004 against 2,255,096. The
+phone's start was 1.6 times CI's in 0.13.73, so goal 4 is probably not yet
+met there.
+
+Next, in order. Of CI's 50.8 s: PhysX objects 16.6 s (every start cooks the
+zone's 2,265 collision meshes; 10.3 s on the phone), the object library
+9.1 s (`UpdateObjectLibraryBin` scans the `object_library` tree to compare
+dates with `bin/defnames.bin`, which the trusted-bins switch does not cover;
+18.0 s on the phone), folder caching 4.1 s. So: (1) the trusted-bins switch
+for `defnames.bin`; (2) a cache of cooked PhysX meshes; (3) the MapServer's
+`newfstatat` calls, now the largest row (2.03 of 4.86 million stops in the
+CI reopen session): PRoot patch 0008 (a letter-case fallback, on
+x86/perf-round3) makes Wine's first whole-path `stat` succeed for a name in
+another case. A drive letter mapped to the server's folder would shorten
+Wine's walk for missing files, but the phone's server folder is only three
+folders below the drive root (`Z:\state\diagnostic\local-login-server-…`;
+CI's is nine), and the game treats a drive-root working folder differently
+(`findAutoDataDir`), so it is not planned; (4) the spare zone server for
+trips.
 
 ## Process changes that would speed all of this up
 
