@@ -289,6 +289,37 @@ class GuestMetrics(unittest.TestCase):
         self.assertIs(producer.CONTRACT['spare_server']['disabled_by_default'], True)
         self.assertIs(producer.CONTRACT['spare_server']['gameplay_decisions_changed'], False)
 
+    def test_object_library_claim_is_exact_and_limited_to_the_reviewed_switch(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.object_library_changed(build))
+        build['build_input']['patched_sha256'][contract.GROUPFILELIB] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.object_library_changed(build)
+        build['build_input'].update(
+            object_library_patch={'path': 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch',
+                                  'sha256': contract.OBJECT_LIBRARY_PATCH},
+            contract={'trusted_object_library': {'disabled_by_default': True, 'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.object_library_changed(build))
+        build['build_input']['object_library_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.object_library_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.object_library_patch_bytes()), contract.OBJECT_LIBRARY_PATCH)
+        self.assertEqual(producer.GROUPFILELIB, contract.GROUPFILELIB)
+        self.assertIn(producer.GROUPFILELIB, producer.FILES)
+        entry = producer.CONTRACT['trusted_object_library']
+        self.assertIs(entry['disabled_by_default'], True)
+        self.assertIs(entry['gameplay_decisions_changed'], False)
+        self.assertEqual(entry['environment_variable'], producer.CONTRACT['trusted_bins']['environment_variable'])
+        # The patch changes one function and adds one helper; the scan stays on every rebuild path.
+        text = producer.object_library_patch_bytes().decode()
+        added = [line[1:] for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        removed = [line[1:] for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(removed, ['    if (!production || force_rebuild)'] * 2)
+        self.assertEqual(sum('fileScanAllDataDirs("object_library", populateFileList);' in line for line in added), 1)
+        self.assertEqual(sum('!production && !force_rebuild && armportTrustedObjectLibrary()' in line for line in added), 1)
+
     def test_fx_installer_binds_original_qualified_consumer_separately_from_new_pe(self):
         (self.assets/fx.PAYLOAD).write_bytes(b'fixture marker')
         target = self.runtime/fx.TARGET; target.parent.mkdir(parents=True)

@@ -28,6 +28,9 @@ THOR_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
 # Opt-in ARMPORT_TRUSTED_BINS switch (patch 0120), off unless the guest sets it.
 TRUSTED_PATCH = '906433c1e6266f9ee4e6fa41e426676bdde45c9efc9df26dddadfbc2e34f6779'
 TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+# 0.13.75: the same switch for bin/defnames.bin (no object_library tree scan).
+OBJECT_LIBRARY_PATCH = '501b4a1f2ed0fed7e7c65b907b79f380b9e8c28a296c2fefd6c9bbe09a4ad930'
+GROUPFILELIB = 'Common/group/groupfilelib.c'
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
 # the guest sets the variable: shared loading first, then a wait for the map id and cookie.
 SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
@@ -224,6 +227,7 @@ def _authenticate(path, package):
     require(canonical(build['build_input']['baseline_receipt']) == canonical(baseline),
             'Metrics source baseline does not match retained ancestry')
     spare_server_changed(build)
+    object_library_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -245,6 +249,19 @@ def parser_changed(build):
                 'path': 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch', 'sha256': TRUSTED_PATCH}
             and source.get('contract', {}).get('trusted_bins', {}).get('disabled_by_default') is True),
             'Metrics build changed the text parser outside the reviewed trusted-bin switch')
+    return changed
+
+
+def object_library_changed(build):
+    """True only for the reviewed default-off trusted defnames.bin switch in groupfilelib.c."""
+    source = build.get('build_input', {})
+    changed = GROUPFILELIB in source.get('patched_sha256', {})
+    require(not changed or (source.get('object_library_patch') == {
+                'path': 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch',
+                'sha256': OBJECT_LIBRARY_PATCH}
+            and source.get('contract', {}).get('trusted_object_library', {}).get('disabled_by_default') is True
+            and source['contract']['trusted_object_library'].get('gameplay_decisions_changed') is False),
+            'Metrics build changed the object library loader outside the reviewed trusted-bin switch')
     return changed
 
 

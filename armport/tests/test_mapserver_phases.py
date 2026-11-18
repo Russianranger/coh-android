@@ -52,6 +52,13 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertEqual(result['slowest_self_timed'][0][0], 'Loading story arcs')
         self.assertEqual(result['animation_files_opened'], 5120)
         self.assertEqual(result['trusted_bins_reported'], 2)
+        self.assertIs(result['object_library_trusted'], False)
+        marked = mapserver_phases.summary(
+            CONSOLE.replace('Caching directory tree', 'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted bin=bin/defnames.bin\n'
+                            'Caching directory tree', 1))
+        self.assertIs(marked['object_library_trusted'], True)
+        self.assertEqual(marked['trusted_bins_reported'], 2)
+        self.assertEqual(marked['slowest_self_timed'], result['slowest_self_timed'])
 
     def test_untimed_animation_gap_is_reported_and_post_ready_waits_are_not(self):
         result = mapserver_phases.summary(CONSOLE)

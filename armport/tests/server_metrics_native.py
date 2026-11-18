@@ -26,6 +26,9 @@ TRUSTED_CASES = ['trusted_bins', 'trusted_bins_disabled']
 SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
 SPARE_NEGATIVE_ASSERTION = 'reads == 3 && sleeps == 2 && db_state.map_id == 5001'
 SPARE_CASES = ['spare_server', 'spare_server_disabled', 'spare_server_invalid']
+GROUPFILELIB = 'Common/group/groupfilelib.c'
+OBJECT_LIBRARY_NEGATIVE_ASSERTION = 'scans == 0 && date_checks == 0'
+OBJECT_LIBRARY_CASES = ['object_library', 'object_library_disabled', 'object_library_rebuild']
 
 
 def test_cases(source):
@@ -33,7 +36,9 @@ def test_cases(source):
     parser = (source / TEXTPARSER).read_text()
     return (CASES + (['progress_markers'] if 'cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);' in text else [])
             + (TRUSTED_CASES if 'static int armportTrustedBin(' in parser else [])
-            + (SPARE_CASES if (source / SPARE_HEADER).is_file() else []))
+            + (SPARE_CASES if (source / SPARE_HEADER).is_file() else [])
+            + (OBJECT_LIBRARY_CASES if 'static int armportTrustedObjectLibrary('
+               in (source / GROUPFILELIB).read_text() else []))
 
 
 def spare_fixture(source):
@@ -116,6 +121,91 @@ int main(int argc, char **argv) {
         contents[0] = argc > 2 ? argv[2] : "";
         db_state.local_server = argc > 3;
         armportSpareWait();                                                  /* must exit(3) itself */
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def object_library_fixture(source):
+    """Run the shipping UpdateObjectLibraryBin body over recorded file-list and parser shims."""
+    text = (source / GROUPFILELIB).read_text()
+    name = 'static int armportTrustedObjectLibrary('
+    helper = function(text, name) if name in text else ''
+    body = function(text, 'static int UpdateObjectLibraryBin(')
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef struct SimpleBuf { int pos; } *SimpleBufHandle;
+typedef struct ParseTable { int unused; } ParseTable;
+typedef struct FileEntry { const char *path; } FileEntry;
+typedef FileEntry **FileList;
+struct _finddata32_t { unsigned attrib; char name[260]; };
+typedef int FileScanAction;
+#define PARSE_SIG "Parse6"
+#define verbose_printf(...) ((void)0)
+static struct SimpleBuf bin_buffer;
+static FileEntry *disk_list[1];
+static ParseTable GroupNamesSaveInfo[1];
+static struct { int unused; } group_names;
+static FileList object_lib_disk = 0;
+static int scans, date_checks, list_reads, bin_reads, closes, rebuilds, writes, rebuilt_without_list;
+static int bin_exists = 1, crc_matches = 1, read_works = 1;
+static FileScanAction populateFileList(char *dir, struct _finddata32_t *data) { (void)dir; (void)data; return 0; }
+static void FileListCreate(FileList *list) { *list = disk_list; }
+static void FileListDestroy(FileList *list) { *list = NULL; }
+static void fileScanAllDataDirs(const char *dir, FileScanAction (*callback)(char *, struct _finddata32_t *)) {
+    if (strcmp(dir, "object_library") || callback != populateFileList) abort();
+    ++scans; }
+static int fileExists(const char *path) { (void)path; return bin_exists; }
+static int ParserCRCFromParseInfo(ParseTable pti[], void *defines) { (void)pti; (void)defines; return 7; }
+static SimpleBufHandle SerializeReadOpen(const char *name, const char *type, int crc, int ignore_crc) {
+    (void)name; (void)type; return (crc_matches && (crc == 7 || ignore_crc)) ? &bin_buffer : NULL; }
+static int SimpleBufTell(SimpleBufHandle h) { return h->pos; }
+static void SimpleBufSeek(SimpleBufHandle h, int pos, int whence) { (void)whence; h->pos = pos; }
+static void SerializeClose(SimpleBufHandle h) { (void)h; ++closes; }
+static int FileListRead(FileList *list, SimpleBufHandle h) { (void)h; ++list_reads; *list = NULL; return 1; }
+static int FileListIsBinUpToDate(FileList *bin, FileList *disk) { (void)bin; (void)disk; ++date_checks; return 1; }
+static int ParserReadBinaryFile(SimpleBufHandle h, void *a, ParseTable pti[], void *data, void *b, void *c) {
+    (void)h; (void)a; (void)pti; (void)data; (void)b; (void)c; ++bin_reads; return read_works; }
+static void loadGroupNamesFromFileList(FileList *list) { ++rebuilds; if (*list != disk_list) ++rebuilt_without_list; }
+static void ParserWriteBinaryFile(const char *name, ParseTable pti[], void *data, FileList *list, void *a, int b, int c) {
+    (void)name; (void)pti; (void)data; (void)list; (void)a; (void)b; (void)c; ++writes; }
+''' + helper + body + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    if (!strcmp(mode, "object_library")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        CHECK(UpdateObjectLibraryBin(0, 0) == 1);
+        CHECK(scans == 0 && date_checks == 0);
+        CHECK(list_reads == 1 && bin_reads == 1 && rebuilds == 0 && writes == 0);
+        CHECK(UpdateObjectLibraryBin(0, 1) == 1);          /* a forced rebuild check still scans and compares */
+        CHECK(scans == 1 && date_checks == 1 && rebuilds == 0);
+        CHECK(UpdateObjectLibraryBin(1, 0) == 1);          /* production mode is as before: no scan */
+        CHECK(scans == 1 && date_checks == 1);
+        return 0;
+    }
+    if (!strcmp(mode, "object_library_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        CHECK(UpdateObjectLibraryBin(0, 0) == 1);
+        CHECK(scans == 1 && date_checks == 1 && rebuilds == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "object_library_rebuild")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        bin_exists = 0;                                     /* no bin: scan, rebuild from the list, write */
+        CHECK(UpdateObjectLibraryBin(0, 0) == 0);
+        CHECK(scans == 1 && rebuilds == 1 && writes == 1 && rebuilt_without_list == 0);
+        bin_exists = 1; crc_matches = 0;                    /* another parse table: the same */
+        CHECK(UpdateObjectLibraryBin(0, 0) == 0);
+        CHECK(scans == 2 && rebuilds == 2 && writes == 2 && rebuilt_without_list == 0);
+        crc_matches = 1; read_works = 0;                    /* unreadable data: the same */
+        CHECK(UpdateObjectLibraryBin(0, 0) == 0);
+        CHECK(scans == 3 && rebuilds == 3 && writes == 3 && rebuilt_without_list == 0 && date_checks == 0);
         return 0;
     }
     return 2;
@@ -476,8 +566,15 @@ def run(source, original=None, expect_control_failure=False):
                         '-Wno-unused-function', '-fsanitize=address,undefined',
                         str(work / 'spare.c'), '-o', str(spare)], check=True)
         control += spare_fixture(trusted_root)
+        library = work / 'library'
+        (work / 'library.c').write_text(object_library_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror',
+                        '-fsanitize=address,undefined',
+                        str(work / 'library.c'), '-o', str(library)], check=True)
+        control += object_library_fixture(trusted_root)
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
-        for mode in (['window', 'startup', 'trusted_bins', 'spare_server'] if original and expect_control_failure else
+        for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library']
+                     if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
             if mode == 'spare_server_invalid':
                 # Every malformed assignment, and a server in local mode, ends the process with
@@ -499,12 +596,14 @@ def run(source, original=None, expect_control_failure=False):
                     'ARMPORT_SPARE_V1 status=refused pid=42 reason=local_server', result
                 print(mode + ': %d malformed assignments and local mode refused' % len(invalid))
                 continue
-            program = trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES else exe
+            program = (trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES
+                       else library if mode in OBJECT_LIBRARY_CASES else exe)
             result = subprocess.run([str(program), mode], capture_output=True, text=True, env=environment)
             print(mode + ': ' + ' | '.join(result.stdout.splitlines()))
             if expect_control_failure:
                 assertion = {'window': NEGATIVE_ASSERTION, 'trusted_bins': TRUSTED_NEGATIVE_ASSERTION,
-                             'spare_server': SPARE_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
+                             'spare_server': SPARE_NEGATIVE_ASSERTION,
+                             'object_library': OBJECT_LIBRARY_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -554,6 +653,11 @@ def run(source, original=None, expect_control_failure=False):
                     'ARMPORT_SPARE_V1 status=assigned pid=42 map_id=71 base_map_id=71 instance_id=0 waited_ms=250'], result.stdout
             if mode == 'spare_server_disabled':
                 assert 'ARMPORT_SPARE_V1' not in result.stdout
+            if mode == 'object_library':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted bin=bin/defnames.bin'], result.stdout
+            if mode in ('object_library_disabled', 'object_library_rebuild'):
+                assert 'ARMPORT_OBJECT_LIBRARY_BIN_V1' not in result.stdout
             if mode == 'startup_clock':
                 rows = result.stdout.splitlines()
                 assert len(rows) == 3 and all('status=clock_error' in row for row in rows), rows
@@ -597,13 +701,14 @@ def main():
                     'build_input_sha256': staging.digest(staging.canonical(receipt)),
                     'source_sha256': receipt['patched_sha256'],
                     'original_sha256': {name: staging.digest((args.negative_control / name).read_bytes())
-                                        for name in (staging.SVR, staging.FILE, staging.TEXTPARSER)},
+                                        for name in (staging.SVR, staging.FILE, staging.TEXTPARSER,
+                                                     staging.GROUPFILELIB)},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_and_spare_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_and_object_library_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

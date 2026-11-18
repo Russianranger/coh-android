@@ -23,6 +23,8 @@ SESSION = re.compile(r'[0-9a-f]{32}')
 # The last startup line before the map serves; later gaps are client waits.
 READY = 'Verifying SG permission tables'
 TRUSTED = 'ARMPORT_TRUSTED_BINS_V1 status=trusted'
+# 0.13.75: bin/defnames.bin read without the object_library tree scan.
+OBJECT_LIBRARY = 'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted'
 LINE_LIMIT = 200000
 LABEL_BYTES = 72
 
@@ -42,12 +44,15 @@ def summary(text, top=8):
     timed, gaps = [], []
     first = last = None
     animations = None
-    checkpoints, ready, trusted = {}, False, 0
+    checkpoints, ready, trusted, object_library = {}, False, 0, False
     for index, line in enumerate(text.splitlines()):
         if index >= LINE_LIMIT:
             break
         if line.startswith(TRUSTED):
             trusted += 1
+            continue
+        if line.startswith(OBJECT_LIBRARY):
+            object_library = True
             continue
         match = STARTUP.search(line)
         if match and len(checkpoints) < 32:
@@ -93,7 +98,8 @@ def summary(text, top=8):
             'slowest_untimed_gaps': gaps[:top],
             'animation_files_opened': animations,
             'native_checkpoint_seconds': checkpoints or None,
-            'trusted_bins_reported': trusted}
+            'trusted_bins_reported': trusted,
+            'object_library_trusted': object_library}
 
 
 if __name__ == '__main__':

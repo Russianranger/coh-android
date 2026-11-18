@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.74, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.75, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.74
+      - name: Build and sign COH Atlas Gameplay 0.13.75
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.74.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.75.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.74-apk
+          name: coh-atlas-gameplay-0.13.75-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,36 +308,35 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.74-apk
+          name: coh-atlas-gameplay-0.13.75-apk
           path: apk
-      - name: Publish the 0.13.74 pre-release
+      - name: Publish the 0.13.75 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.74.apk
-          sha256sum COH-Atlas-Gameplay-0.13.74.apk > COH-Atlas-Gameplay-0.13.74.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.75.apk
+          sha256sum COH-Atlas-Gameplay-0.13.75.apk > COH-Atlas-Gameplay-0.13.75.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.74 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.75 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.74 (Thor test of 0.13.73):
-          - Zone servers load an animation when a character first uses it, instead of every
-            animation of every creature at start. On the Thor that step was 64.6 s of a 148 s
-            zone server start. It is one of the game's own developer switches, set in a config
-            file; tick box "Load zone server animations when first used (faster zone start)",
-            on by default.
-          - Wine's server remembers where folders are. It looked up the real location of every
-            file it opened, one step per folder in the path, and each step stopped in the
-            system-call monitor: a quarter of everything the monitor served in a Thor launch.
-            Tick box "Remember folder locations in the Wine server (faster file opening)", on
-            by default.
-          - What the two save on the phone is what the next test measures; untick either one if
-            a launch fails or characters stop animating.
+          New in 0.13.75 (CI measurements of 0.13.74; the Thor test of 0.13.74 is still open):
+          - "Fast server" no longer compares the dates of every object library file with the
+            prepared list at each zone server start (18 s of a 148 s start on the Thor in
+            0.13.73; 9 s in CI). The list is still rebuilt when it is missing or does not match
+            the server.
+          - The second PRoot build finds a file whose name is written in another letter case in
+            one step, for Wine's programs only. Tick box "Find files in any letter case in one
+            step (needs Lighter system-call monitor)", on by default.
+          From 0.13.74: zone servers load an animation when a character first uses it ("Load zone
+          server animations when first used"), and Wine's server remembers where folders are
+          ("Remember folder locations in the Wine server"). In CI a zone server start fell from
+          95 s to 57 s; untick either one if a launch fails or characters stop animating.
           From 0.13.73 (confirmed on the Thor: 60 frames a second at the cap): "Use performance
           graphics" reaches the ARM64 client, and "Do not monitor ordinary socket traffic" keeps
           the display server's frames out of the system-call monitor (the frame rate halves
@@ -355,7 +354,7 @@ jobs:
           Unchanged: any character name the game accepts, one character per install; every zone can
           start; at most two zone servers, missions are not served yet; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.74.md.
+          Test sheet: THOR-TEST-0.13.75.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -364,7 +363,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.74" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.74 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.74.apk COH-Atlas-Gameplay-0.13.74.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.74"
+          gh release create "coh-atlas-gameplay-v0.13.75" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.75 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.75.apk COH-Atlas-Gameplay-0.13.75.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.75"

@@ -27,11 +27,14 @@ METRIC_FILES = (SVR, FILE, HEADER, IMPL)
 # Opt-in trusted prepared bins (ARMPORT_TRUSTED_BINS=1), off by default.
 TRUSTED_PATCH = 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch'
 TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+# The same switch for bin/defnames.bin (0.13.75): no object_library tree scan.
+OBJECT_LIBRARY_PATCH = 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch'
+GROUPFILELIB = 'Common/group/groupfilelib.c'
 # Opt-in early zone server (ARMPORT_SPARE_FILE=<path>), off by default: every shared
 # load, then a wait before connectToDbserver for the map id and cookie.
 SPARE_PATCH = 'patches/mapserver-zone-travel/0001-spare-zone-server.patch'
 SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
-FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER)
+FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB)
 ADDED_FILES = (HEADER, IMPL, SPARE_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
@@ -56,6 +59,16 @@ CONTRACT = {
         'skipped_when_enabled': ['source_tree_scan', 'per_file_date_check'],
         'still_required': ['bin_signature', 'parse_table_crc'],
         'text_fallback_retained': ['missing_bin', 'signature_or_crc_mismatch', 'binary_read_failure'],
+    },
+    'trusted_object_library': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_OBJECT_LIBRARY_BIN_V1',
+        'function': 'UpdateObjectLibraryBin', 'bin': 'bin/defnames.bin',
+        'skipped_when_enabled': ['object_library_tree_scan', 'file_list_date_check'],
+        'still_required': ['bin_signature', 'parse_table_crc', 'file_list_read'],
+        'scan_and_rebuild_retained': ['missing_bin', 'signature_or_crc_mismatch', 'file_list_read_failure',
+                                      'binary_read_failure', 'force_rebuild'],
+        'gameplay_decisions_changed': False,
     },
     'spare_server': {
         'environment_variable': 'ARMPORT_SPARE_FILE', 'disabled_by_default': True,
@@ -121,6 +134,13 @@ def trusted_patch_bytes():
     data = (ROOT / TRUSTED_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [TEXTPARSER], 'Trusted-bin patch file set differs')
+    return data
+
+
+def object_library_patch_bytes():
+    data = (ROOT / OBJECT_LIBRARY_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [GROUPFILELIB], 'Trusted object library patch file set differs')
     return data
 
 
@@ -269,9 +289,13 @@ def native_images(variant, baseline_receipt, root):
         target = stage / TEXTPARSER
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((root / 'upstream/ouroboros' / TEXTPARSER).read_bytes())
+        target = stage / GROUPFILELIB
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes())
         apply_patch(stage, patch_bytes())
         apply_patch(stage, trusted_patch_bytes())
         apply_patch(stage, spare_patch_bytes())
+        apply_patch(stage, object_library_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
         require(images[SVR] == patch_spare(patch_loop(original_loop)),
                 'Loop rebase differs from exported native patches')
@@ -290,13 +314,16 @@ def native_images(variant, baseline_receipt, root):
             apply_patch(stage, patch)
         inputs = {SVR: (stage / SVR).read_bytes(),
                   FILE: (root / 'upstream/ouroboros' / FILE).read_bytes(),
-                  TEXTPARSER: (root / 'upstream/ouroboros' / TEXTPARSER).read_bytes()}
+                  TEXTPARSER: (root / 'upstream/ouroboros' / TEXTPARSER).read_bytes(),
+                  GROUPFILELIB: (root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes()}
     images[SVR] = patch_spare(patch_loop(inputs[SVR]))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
     require(FILE not in closure or closure[FILE] == digest(inputs[FILE]), 'Baseline file loader preimage differs')
     require(TEXTPARSER not in closure or closure[TEXTPARSER] == digest(inputs[TEXTPARSER]),
             'Baseline text parser preimage differs')
+    require(GROUPFILELIB not in closure or closure[GROUPFILELIB] == digest(inputs[GROUPFILELIB]),
+            'Baseline object library preimage differs')
     return inputs, images
 
 
@@ -312,6 +339,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'patch': {'path': PATCH, 'sha256': digest(patch_bytes())},
             'trusted_bins_patch': {'path': TRUSTED_PATCH, 'sha256': digest(trusted_patch_bytes())},
             'spare_server_patch': {'path': SPARE_PATCH, 'sha256': digest(spare_patch_bytes())},
+            'object_library_patch': {'path': OBJECT_LIBRARY_PATCH, 'sha256': digest(object_library_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -338,15 +366,16 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'variant': receipt['variant'], 'build_input_sha256': digest(canonical(receipt)),
                 'source_sha256': receipt['patched_sha256'],
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
-                                    for name in (SVR, FILE, TEXTPARSER)},
+                                    for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB)},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
                                    'startup', 'startup_disabled', 'startup_clock',
                                    'progress_markers', 'trusted_bins', 'trusted_bins_disabled',
-                                   'spare_server', 'spare_server_disabled', 'spare_server_invalid'],
+                                   'spare_server', 'spare_server_disabled', 'spare_server_invalid',
+                                   'object_library', 'object_library_disabled', 'object_library_rebuild'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_and_spare_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_and_object_library_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

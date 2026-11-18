@@ -414,6 +414,69 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.75 (Claude, 2026-11-18)
+
+No new owner test: 0.13.74 was published the same evening and is with the
+owner. 0.13.75 comes from 0.13.74's CI runs (section below, **Chain**).
+
+- **What is left of a zone server start in CI** (trusted run 44398992652,
+  reopen session, 50.83 s to the main loop): PhysX objects 16.6 s, object
+  library 9.1 s, the gap after the `server/db/commands.cfg` callback 5.9 s,
+  folder caching 4.1 s. In the stock-travel run 44392083121 the MapServer's
+  `newfstatat` is the largest stop row (2,027,296 of 4,856,390 in the reopen
+  session), then wineserver's `readlinkat` (503,004) and the MapServer's
+  `getxattr` (366,294).
+- **Object library (x86 server, `patches/mapserver-trusted-bins/0002`).**
+  `UpdateObjectLibraryBin` (`Common/group/groupfilelib.c`) scanned the
+  `object_library` tree in development mode and compared every file's date
+  with the list inside `bin/defnames.bin` (`FileListIsBinUpToDate`); the
+  trusted-bins switch of patch 0001 covers only `ParserIsPersistNewer`. With
+  `ARMPORT_TRUSTED_BINS=1` a `defnames.bin` whose signature and parse CRC
+  match is now read without the scan and the comparison, and the server
+  prints `ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted bin=bin/defnames.bin`.
+  A missing bin, a CRC mismatch, an unreadable file list or unreadable data,
+  and `force_rebuild`, scan and rebuild as before (the scan moved into the
+  rebuild path). Production mode is unchanged. No new option: it follows
+  "Fast server" (`COH_TRUSTED_BINS`).
+  - Why trusting the shipped bin is the stock result: in the stock runs
+    (no trusted bins) the creation session's object library gap is not above
+    the reopen session's (it is not among the six largest gaps, all at least
+    15.9 s, in 44392083121; reopen 13.2 s), so the stock date check accepts
+    the shipped `defnames.bin` at a first start and does not rebuild it.
+  - Plumbing as for the spare layer: `prepare_server_metrics_source.py`
+    (`OBJECT_LIBRARY_PATCH`, `GROUPFILELIB` in `FILES`, receipt
+    `object_library_patch`, contract `trusted_object_library`); the host
+    fixture (`armport/tests/server_metrics_native.py`) compiles the shipping
+    `UpdateObjectLibraryBin` over shims: trusted read with no scan and no
+    date check, forced rebuild still scans and compares, production
+    unchanged, disabled as before, and missing bin, CRC mismatch and
+    unreadable data each scan and rebuild from a real list; the unpatched
+    source fails `scans == 0 && date_checks == 0`. Host-check evidence
+    regenerated (`armport/evidence/mapserver-startup-retained-host-checks.json`);
+    guest admission `object_library_changed` pins the patch
+    (501b4a1f…). `mapserver_phases` reports `object_library_trusted`.
+- **PRoot patch 0008 (letter-case fallback), on by default in the second
+  build.** When a path component is missing and the calling program is one
+  of `PROOT_CASEFOLD_PROGRAMS` (`wine`, `wine64`, `wineserver` and the two
+  preloaders), `substitute_binding_stat` looks for a directory entry that
+  differs only in ASCII letter case and continues with it
+  (`src/path/casefold.c`), so Wine's first whole-path `stat` succeeds and it
+  does not walk the path component by component. Counters in the stop-count
+  header: `casefold_replaced`, `casefold_absent`, `casefold_listed`. App
+  option "Find files in any letter case in one step (needs Lighter
+  system-call monitor)" (`proot-casefold`, default on; guest
+  `COH_PROOT_CASEFOLD`); CI sets it with `proot_ioctl_filter`. Local x86-64
+  prototype: `stat`, `open`, `lstat`, `rename`, `unlink` and `chdir` reach a
+  file under any letter case for a named program and `ENOENT` for others.
+  A missing file still costs Wine its walk; the phone's server folder is
+  three folders below the drive root, so a drive letter for it was dropped
+  (PERFORMANCE-PATH "After Thor 0.13.73").
+- **Not done:** a cache of cooked PhysX meshes (`nwCookAndLoadMeshShape`
+  cooks 2,265 meshes at every Atlas start; 10.3 s on the phone); the spare
+  zone hand-over; the late arrival log.
+- **Not validated:** anything in 0.13.74 or 0.13.75 on a device.
+- **Chain.** CHAIN75_PLACEHOLDER
+
 ## 0.13.74 and the Thor test of 0.13.73 (Claude, 2026-11-18)
 
 Owner, 2026-11-18, with exports 20261118-165501 (setup), -165518 (A),
