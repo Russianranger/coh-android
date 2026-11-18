@@ -40,7 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,serverQuickStart,wineserverPathCache;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -218,6 +218,16 @@ public final class ClientActivity extends Activity {
         prootSocketFilter.setChecked(ClientRuntime.prootSocketFilterEnabled(this));
         prootSocketFilter.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotSocketFilterEnabled(this,checked));
         controls.addView(prootSocketFilter);
+        serverQuickStart=new CheckBox(this);serverQuickStart.setText("Load zone server animations when first used (faster zone start)");
+        serverQuickStart.setTextColor(Color.rgb(221,234,245));serverQuickStart.setTextSize(13);
+        serverQuickStart.setChecked(ClientRuntime.serverQuickStartEnabled(this));
+        serverQuickStart.setOnCheckedChangeListener((button,checked)->ClientRuntime.setServerQuickStartEnabled(this,checked));
+        controls.addView(serverQuickStart);
+        wineserverPathCache=new CheckBox(this);wineserverPathCache.setText("Remember folder locations in the Wine server (faster file opening)");
+        wineserverPathCache.setTextColor(Color.rgb(221,234,245));wineserverPathCache.setTextSize(13);
+        wineserverPathCache.setChecked(ClientRuntime.wineserverPathCacheEnabled(this));
+        wineserverPathCache.setOnCheckedChangeListener((button,checked)->ClientRuntime.setWineserverPathCacheEnabled(this,checked));
+        controls.addView(wineserverPathCache);
         controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);

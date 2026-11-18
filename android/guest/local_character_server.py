@@ -427,6 +427,52 @@ def mapserver_memory_arguments():
     return [] if shared_heap_requested() else ['-nosharedmemory']
 
 
+QUICK_START_ENVIRONMENT = 'COH_SERVER_QUICK_START'
+QUICK_START_CONFIG = 'armport-svrconfig.txt'
+# Two stock developer switches, read by serverStateLoad() (cmdserver.c) from the file that
+# -svrconfig names, before the sequencers load (svr_init.c, serverStateInit):
+#   quickLoadAnims 1: seqInitializePostLoad() no longer attaches every animation of every
+#     sequencer at start (seqload.c); a move's animation is attached when an entity first
+#     uses it (seqsequence.c, seqskeleton.c: "dev mode don't preload anims"). Thor 0.13.73:
+#     this step was 64.6 s of a 148 s zone server start (CI: 39.7 of 92.8 s).
+#   nofilechangecheck_server 1: no look-up of a source file's date each time a sequencer,
+#     animation, FX or behaviour is asked for (seqload.c, animtrack.c, fxinfo.c, fxbhvr.c).
+#     The installed data never changes while a server runs.
+# The first-use attach runs only in a development-mode server whose sequencers are not in
+# shared memory (isDevelopmentMode() && !isSharedMemory()), while the start-up attach is
+# skipped whenever the switch is set. Both servers this app ships are OptDebug builds (not
+# FINAL) without ./piggs/texts.pigg, which is development mode; the shared-memory
+# experiment (COH_SHARED_HEAP) puts sequencers in shared memory, so the config is not used
+# with it.
+QUICK_START_COMMANDS = ('nofilechangecheck_server 1', 'quickLoadAnims 1')
+
+
+def server_quick_start_requested():
+    return os.environ.get(QUICK_START_ENVIRONMENT) == '1' and not shared_heap_requested()
+
+
+def mapserver_quick_start_arguments(folder):
+    """['-svrconfig', <file>] with the file written in `folder`, or [] when not requested."""
+    if not server_quick_start_requested():
+        return []
+    path = Path(folder) / QUICK_START_CONFIG
+    text = ''.join(command + '\n' for command in QUICK_START_COMMANDS)
+    require(not path.is_symlink(), 'Server config is a link')
+    if not path.is_file() or path.read_bytes() != text.encode():
+        base.private_write(path, text)
+    windows = base.windows_path(path)
+    # svr_init.c copies nothing: the path is argv itself, opened through fileOpen (MAX_PATH).
+    require(len(windows) < 240 and ' ' not in windows, 'Server config path is unusable')
+    return ['-svrconfig', windows]
+
+
+def server_quick_start_record():
+    return {'format': 1, 'requested': server_quick_start_requested(),
+            'refused_with_shared_memory': os.environ.get(QUICK_START_ENVIRONMENT) == '1' and shared_heap_requested(),
+            'environment_variable': QUICK_START_ENVIRONMENT, 'config': QUICK_START_CONFIG,
+            'commands': list(QUICK_START_COMMANDS) if server_quick_start_requested() else []}
+
+
 def console_excerpt_line(line, limit=160):
     return ''.join(c if ' ' <= c <= '~' else '?' for c in line.strip())[:limit]
 
@@ -3468,8 +3514,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
             '-nogui', '-db', '127.0.0.1', *mapserver_memory_arguments(), '-nostats', '-udp', '7001', '-tcp', '0',
-            '-map_id', '1', '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS(), *self.session_map_options()],
+            '-map_id', '1', '-donotautogroup', *LOCAL_CLIENT_LINK_OPTIONS(), *self.session_map_options(),
+            *mapserver_quick_start_arguments(self.runtime)],
             env=environment)
+        self.creation_report['server_quick_start'] = server_quick_start_record()
         self.creation_report['shared_heap'] = {'format': 1, 'requested': shared_heap_requested(),
             'environment_variable': SHARED_HEAP_ENVIRONMENT, 'native_option_omitted': shared_heap_requested()}
         # Use the native production grouping policy. The stock world packet

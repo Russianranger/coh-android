@@ -24,6 +24,11 @@ BINARIES = {'CityOfHeroes.exe', 'libc++.dll', 'libunwind.dll', 'armport-launcher
 # Optional (0.13.53): the guest ALSA playback plugin (armport/audio), an
 # AArch64 glibc ELF that Wine's ALSA driver loads inside the client process.
 AUDIO_PLUGIN = 'armport-audio/libasound_module_pcm_trasc.so'
+# Optional (0.13.74): the wineserver realpath cache (armport/wineserver), an
+# AArch64 glibc ELF loaded with LD_PRELOAD. It must be on disk before the
+# session's first Wine process, so extract_member() reads it on its own.
+REALPATH_CACHE = 'armport-native/libarmport_realpath.so'
+NATIVE_LIBRARIES = (AUDIO_PLUGIN, REALPATH_CACHE)
 MAX_BYTES = 512 * 1024 * 1024
 
 
@@ -60,7 +65,7 @@ def arm64_elf_shared_object(path):
 
 
 def allowed(name):
-    if name in BINARIES or name == AUDIO_PLUGIN:
+    if name in BINARIES or name in NATIVE_LIBRARIES:
         return True
     path = PurePosixPath(name)
     return ((len(path.parts) == 3 and path.parts[:2] == ('data', 'bin')
@@ -69,7 +74,8 @@ def allowed(name):
              and path.suffix == '.arb')) and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', name))
 
 
-def package(client, bins, shaders, launcher, output, client_run, data_run, audio_plugin=None):
+def package(client, bins, shaders, launcher, output, client_run, data_run, audio_plugin=None,
+            realpath_cache=None):
     require(not output.exists(), 'Package output already exists')
     require({p.name for p in client.iterdir()} == BINARIES - {'armport-launcher.exe'},
             'Expected the exact ARM64 Release artifact binary closure')
@@ -82,6 +88,10 @@ def package(client, bins, shaders, launcher, output, client_run, data_run, audio
         require(audio_plugin.is_file() and not audio_plugin.is_symlink(), 'Invalid audio plugin')
         arm64_elf_shared_object(audio_plugin)
         sources[AUDIO_PLUGIN] = audio_plugin
+    if realpath_cache is not None:
+        require(realpath_cache.is_file() and not realpath_cache.is_symlink(), 'Invalid realpath cache library')
+        arm64_elf_shared_object(realpath_cache)
+        sources[REALPATH_CACHE] = realpath_cache
     for root, prefix, suffix in ((bins, 'data/bin/', '.bin'), (shaders, 'armport_cg/', '.arb')):
         selected = sorted(root.glob('*' + suffix))
         require(selected, 'Missing bins or shaders')
@@ -134,9 +144,44 @@ def unpack(archive_path, destination):
             require(digest(target) == expected['sha256'], 'Overlay digest differs: ' + name)
         for name in BINARIES:
             arm64_pe(destination / name)
-        if AUDIO_PLUGIN in files:
-            arm64_elf_shared_object(destination / AUDIO_PLUGIN)
+        for name in NATIVE_LIBRARIES:
+            if name in files:
+                arm64_elf_shared_object(destination / name)
     return document
+
+
+def extract_member(archive_path, name, destination):
+    """Write one native library of the package to `destination`; None when the package has none.
+
+    The member is checked against the package's own manifest (size, SHA-256, AArch64
+    ELF shared object) exactly as unpack() checks it. `destination` must not exist.
+    """
+    require(name in NATIVE_LIBRARIES, 'Not a native library of the client package')
+    destination = Path(destination)
+    require(not destination.exists() and not destination.is_symlink(), 'Fresh library destination required')
+    with zipfile.ZipFile(archive_path) as archive:
+        names = archive.namelist()
+        require(MANIFEST in names and archive.getinfo(MANIFEST).file_size <= 1024 * 1024,
+                'Missing/bounded client package manifest')
+        document = json.loads(archive.read(MANIFEST))
+        files = document.get('files')
+        require(document.get('format') == 1 and document.get('role') == 'arm64_graphical_client'
+                and isinstance(files, dict), 'ARM64 package identity')
+        if name not in files:
+            return None
+        expected, info = files[name], archive.getinfo(name)
+        require(isinstance(expected, dict) and type(expected.get('size')) is int
+                and 0 < expected['size'] <= 16 * 1024 * 1024 and info.file_size == expected['size']
+                and not info.is_dir() and not info.flag_bits & 1
+                and not stat.S_ISLNK(info.external_attr >> 16), 'Invalid native library member')
+        data = archive.read(info)
+    require(len(data) == expected['size'] and hashlib.sha256(data).hexdigest() == expected['sha256'],
+            'Native library digest differs: ' + name)
+    descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o500)
+    with os.fdopen(descriptor, 'wb') as output:
+        output.write(data)
+    arm64_elf_shared_object(destination)
+    return {'name': name, 'size': expected['size'], 'sha256': expected['sha256']}
 
 
 
@@ -410,6 +455,8 @@ def main():
     parser.add_argument('--source-data', type=Path)
     parser.add_argument('--stage', type=Path)
     parser.add_argument('--audio-plugin', type=Path, help='guest ALSA plugin (armport/audio/build.sh)')
+    parser.add_argument('--realpath-cache', type=Path,
+                        help='wineserver realpath cache (armport/wineserver/build.sh)')
     args = vars(parser.parse_args())
     source_data, stage = args.pop('source_data'), args.pop('stage')
     require(bool(source_data) == bool(stage), '--source-data and --stage must be used together')

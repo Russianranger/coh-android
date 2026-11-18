@@ -25,6 +25,16 @@ ENV = 'COH_TRAP_SAMPLER'
 MARK = 'TRAP_SAMPLER_V1 '
 TASK_LIMIT = 4096
 TOP = 12
+# 0.13.74: for these programs' path calls (ARM64 numbers), also which path. Thor 0.13.73: a
+# zone server start made 357,000 newfstatat calls and its wineserver 505,000 readlinkat
+# calls; the counts do not say for which files, or how many of the look-ups fail.
+PATH_CALLS = {'79': 'stat', '56': 'open', '78': 'readlink'}
+PATH_PROGRAMS = ('MapServer.exe', 'wineserver', 'DbServer.exe', 'CityOfHeroes.exe')
+PATH_KEYS = 4096
+PATH_TOP = 24
+PATH_BYTES = 512
+AT_FDCWD = (0xffffff9c, 0xffffffffffffff9c)
+ENOENT, EINVAL = 2 ** 64 - 2, 2 ** 64 - 22
 
 
 def requested():
@@ -92,6 +102,41 @@ def descendants(proc, root):
     return {pid: names[pid] for pid in found}
 
 
+def stop_path(base, pid_base, fields):
+    """What a task stopped at a path call was asked about: (stage or result, depth, tail).
+
+    At the call's entry the first argument is still the directory (AT_FDCWD or a
+    descriptor) and the path is the guest's; at its exit the first argument holds the
+    result and PRoot has put its translated host path in place, so only entry samples give
+    a depth. The tail is the path's last three components. None when unreadable.
+    """
+    try:
+        first, pointer = int(fields[1], 16), int(fields[2], 16)
+        with open(pid_base / 'mem', 'rb', buffering=0) as memory:
+            memory.seek(pointer)
+            raw = memory.read(PATH_BYTES)
+    except (OSError, ValueError, IndexError, OverflowError):
+        return None
+    text = raw.split(b'\0', 1)[0].decode('ascii', errors='replace')
+    if not text:
+        return None
+    if first in AT_FDCWD or 0 < first < 4096 and fields[0] != '78':
+        stage = 'enter'
+    elif first == 0:
+        stage = 'ok'
+    elif first == ENOENT:
+        stage = 'missing'
+    elif first == EINVAL and fields[0] == '78':
+        stage = 'not_a_link'
+    elif fields[0] == '78' and 0 < first < 4096:
+        stage = 'link_or_enter'
+    else:
+        stage = 'other'
+    parts = [part for part in text.split('/') if part]
+    tail = ''.join(c if ' ' < c <= '~' and c not in '"\\' else '?' for c in '/'.join(parts[-3:]))[:96]
+    return stage, (len(parts) if stage == 'enter' and text.startswith('/') else None), tail
+
+
 def sample(proc, pids, programs, window):
     """One round: every task's state; the system call of each task in a tracing stop."""
     for pid in pids:
@@ -113,11 +158,28 @@ def sample(proc, pids, programs, window):
             if state != 't':
                 continue
             try:
-                number = (base / 'syscall').read_text(errors='replace').split(None, 1)[0]
+                fields = (base / 'syscall').read_text(errors='replace').split()
+                number = fields[0]
             except (OSError, IndexError):
-                number = 'unreadable'
+                fields, number = [], 'unreadable'
             key = name + ' ' + number
             window['stops'][key] = window['stops'].get(key, 0) + 1
+            if number in PATH_CALLS and name in PATH_PROGRAMS:
+                found = stop_path(base, proc / str(pid), fields)
+                label = name + ' ' + PATH_CALLS[number]
+                stages = window['path_stages'].setdefault(label, {})
+                if found is None:
+                    stages['unreadable'] = stages.get('unreadable', 0) + 1
+                    continue
+                stage, depth, tail = found
+                stages[stage] = stages.get(stage, 0) + 1
+                if depth is not None:
+                    depths = window['path_depths'].setdefault(label, [0, 0])
+                    depths[0] += 1
+                    depths[1] += depth
+                entry = label + ' ' + stage + ' ' + tail
+                if entry in window['paths'] or len(window['paths']) < PATH_KEYS:
+                    window['paths'][entry] = window['paths'].get(entry, 0) + 1
 
 
 def summary(window, started, now):
@@ -125,17 +187,25 @@ def summary(window, started, now):
     stops = sorted(window['stops'].items(), key=lambda item: (-item[1], item[0]))
     states = {name: counts for name, counts in sorted(
         window['states'].items(), key=lambda item: -sum(item[1].values()))[:TOP]}
-    return {'t': round(now - started, 1), 'utc': time.strftime('%H:%M:%SZ', time.gmtime()),
-            'rounds': window['rounds'], 'processes': window['processes'],
-            'stopped_tasks': sum(window['stops'].values()), 'stops': stops[:TOP],
-            'other_stops': sum(count for _, count in stops[TOP:]),
-            'states': states, 'unreadable': window['unreadable']}
+    record = {'t': round(now - started, 1), 'utc': time.strftime('%H:%M:%SZ', time.gmtime()),
+              'rounds': window['rounds'], 'processes': window['processes'],
+              'stopped_tasks': sum(window['stops'].values()), 'stops': stops[:TOP],
+              'other_stops': sum(count for _, count in stops[TOP:]),
+              'states': states, 'unreadable': window['unreadable']}
+    if window.get('path_stages'):
+        paths = sorted(window['paths'].items(), key=lambda item: (-item[1], item[0]))
+        record['path_stages'] = window['path_stages']
+        record['path_depths'] = {label: round(total / count, 1)
+                                 for label, (count, total) in sorted(window['path_depths'].items()) if count}
+        record['paths'] = paths[:PATH_TOP]
+        record['distinct_paths'] = len(paths)
+    return record
 
 
 class TrapSampler(threading.Thread):
     """Bursts of `rounds` samples `gap` seconds apart; one printed line per `window` seconds."""
 
-    def __init__(self, root_pid, label, *, proc=Path('/proc'), window=60.0, pause=5.0, rounds=20, gap=0.02,
+    def __init__(self, root_pid, label, *, proc=Path('/proc'), window=60.0, pause=2.5, rounds=20, gap=0.02,
                  emit=None):
         super().__init__(name='trap-sampler', daemon=True)
         self.root_pid, self.label, self.proc = root_pid, label, Path(proc)
@@ -146,7 +216,8 @@ class TrapSampler(threading.Thread):
 
     @staticmethod
     def empty():
-        return {'rounds': 0, 'processes': 0, 'states': {}, 'stops': {}, 'unreadable': 0}
+        return {'rounds': 0, 'processes': 0, 'states': {}, 'stops': {}, 'unreadable': 0,
+                'path_stages': {}, 'path_depths': {}, 'paths': {}}
 
     def burst(self, window):
         pids = descendants(self.proc, self.root_pid)

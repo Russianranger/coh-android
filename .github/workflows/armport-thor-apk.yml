@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.73, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.74, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.73
+      - name: Build and sign COH Atlas Gameplay 0.13.74
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.73.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.74.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.73-apk
+          name: coh-atlas-gameplay-0.13.74-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,41 +308,43 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.73-apk
+          name: coh-atlas-gameplay-0.13.74-apk
           path: apk
-      - name: Publish the 0.13.73 pre-release
+      - name: Publish the 0.13.74 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.73.apk
-          sha256sum COH-Atlas-Gameplay-0.13.73.apk > COH-Atlas-Gameplay-0.13.73.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.74.apk
+          sha256sum COH-Atlas-Gameplay-0.13.74.apk > COH-Atlas-Gameplay-0.13.74.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.73 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.74 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.73 (Thor test of 0.13.72):
-          - "Use performance graphics" now reaches the ARM64 client. It never did: every launch ran
-            the game's own effects whatever the tick box said. Ticked (the default), a launch now
-            runs without water refraction and reflection, bloom, depth of field, shadows and vertical
-            sync; detail, textures and resolution are unchanged and saved settings are not touched.
-            Whether those effects are what held the frame rate in the 20s is what the next test shows.
-          - The lighter system-call monitor no longer stops ordinary socket sends and receives. On
-            the Thor those were 38-49 % of everything it stopped, most of them the display server
-            sending each frame to the app. It has its own tick box, "Do not monitor ordinary socket
-            traffic", on by default; untick it if a launch fails.
-          - A zone's navigation map check is now really skipped when its folders are unchanged
-            (the 0.13.70 change never took effect on the phone; it cost 13-17 s per zone start).
-          - The report now records, twice a minute in the world, what the game's threads and the
-            display server are waiting on, and which of the app's own script lines make file calls.
-            These are for finding the frame-rate limit seen in 0.13.72 (20s looking one way).
-          From 0.13.72: the app's supervisor script re-reads process state once in 15 s.
-          From 0.13.70-71: Save after travelling is confirmed; "Fast server" and "Lighter
-          system-call monitor" are on by default, each with a tick box to go back.
+          New in 0.13.74 (Thor test of 0.13.73):
+          - Zone servers load an animation when a character first uses it, instead of every
+            animation of every creature at start. On the Thor that step was 64.6 s of a 148 s
+            zone server start. It is one of the game's own developer switches, set in a config
+            file; tick box "Load zone server animations when first used (faster zone start)",
+            on by default.
+          - Wine's server remembers where folders are. It looked up the real location of every
+            file it opened, one step per folder in the path, and each step stopped in the
+            system-call monitor: a quarter of everything the monitor served in a Thor launch.
+            Tick box "Remember folder locations in the Wine server (faster file opening)", on
+            by default.
+          - What the two save on the phone is what the next test measures; untick either one if
+            a launch fails or characters stop animating.
+          From 0.13.73 (confirmed on the Thor: 60 frames a second at the cap): "Use performance
+          graphics" reaches the ARM64 client, and "Do not monitor ordinary socket traffic" keeps
+          the display server's frames out of the system-call monitor (the frame rate halves
+          without it).
+          From 0.13.70-72: Save after travelling is confirmed; "Fast server" and "Lighter
+          system-call monitor" are on by default, each with a tick box to go back; a zone's
+          navigation map check is skipped when its folders are unchanged.
           The second PRoot build's source, build receipt and licence files are in the APK under
           assets/proot-ioctl/ (PRoot: GPL-2.0-or-later; talloc: LGPL-3.0-or-later). The 0.13.36
           PRoot program is still in the APK, byte for byte.
@@ -353,7 +355,7 @@ jobs:
           Unchanged: any character name the game accepts, one character per install; every zone can
           start; at most two zone servers, missions are not served yet; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.73.md.
+          Test sheet: THOR-TEST-0.13.74.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -362,7 +364,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.73" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.73 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.73.apk COH-Atlas-Gameplay-0.13.73.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.73"
+          gh release create "coh-atlas-gameplay-v0.13.74" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.74 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.74.apk COH-Atlas-Gameplay-0.13.74.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.74"

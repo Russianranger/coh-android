@@ -671,7 +671,50 @@ half of 6 in patch 0006):
    untranslated; nothing in this guest reads it. `fstat` by descriptor
    (`AT_EMPTY_PATH`) needs no path work once part 5 holds.
 7. wineserver's `realpath` per opened file: a preloaded replacement that
-   remembers resolved folders, or a Wine patch.
+   remembers resolved folders, or a Wine patch. Built in 0.13.74 as the
+   preloaded library (`armport/wineserver`).
+
+### After Thor 0.13.73 (2026-11-18, exports 20261118-165518, -170550, -171828)
+
+| # | Goal | 0.13.73 on Thor | Gap |
+|---|---|---|---|
+| 1 | Start under 5 min | 3 min 35 s from the tap to the world | met |
+| 2 | Zoning under 30 s | 16 s to a zone that is running; about 3 min to one that is not | cold zones |
+| 3 | 30 FPS or higher | 60-62 at the 60 cap in both directions | met |
+| 4 | MapServer cold start under 1 min | 150 s spawn to ready | 2.5x |
+
+Patch 0007 was the frame rate: with ordinary socket sends and receives
+stopped again (launch C) the same scene ran 28-31 and 48-52 frames a second.
+The game's own effects cost a few frames (52-61 without the `effects_off`
+profile).
+
+Where a 148 s zone server start goes, from the server's own phase lines and
+PRoot's counts (launch B):
+
+| Part | Time | What it is |
+|---|---|---|
+| `sequencer_info` | 64.6 s | attaching every animation of every sequencer (development mode) |
+| `definitions` | 44.7 s | object library 18.0 s, folder scans 8.3 s, powers, rewards, story arcs |
+| `group_load` | 33.6 s | the map 12.4 s, PhysX 10.3 s, beacons 5.5 s |
+| `encounter_scripts` | 3.9 s | spawn and script definitions |
+
+Across those phases the MapServer made 357 thousand `newfstatat` calls and
+its wineserver 505 thousand `readlinkat` calls for 27 thousand opens. The
+game's `_AltStat` is a `CreateFile`, so a look-up of one file's date is: a
+Wine path look-up (one `stat` if the case matches, else one per path
+component plus a directory read), an open in wineserver, and there a
+`realpath` with one `readlink` per component. At 22 microseconds a stop
+(the phone's socket probe) to 30 (a local x86-64 PRoot), the two programs'
+2.0 million stops are an estimated 45-60 s of the start.
+
+0.13.74: `quickLoadAnims` and `nofilechangecheck_server` through
+`-svrconfig` (the first row), and the realpath library (the `readlinkat`
+half of the stops). Next, in order: the MapServer's own `newfstatat` storm
+(the CI sampler now reads which paths and whether they exist; if most are
+case mismatches, a case-insensitive fallback in PRoot's path translation or
+a lower-case data view makes Wine's first `stat` succeed); a drive letter
+mapped to the server's folder (fewer components per look-up); the spare zone
+server for trips; the object library and PhysX caches.
 
 ## Process changes that would speed all of this up
 

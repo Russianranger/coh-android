@@ -85,7 +85,7 @@ on:
         default: THORHERO
   push:
     branches: ['armport/m4-runtime']
-    paths: ['armport/app/**', 'armport/audio/**', 'armport/tests/test_client*.py', 'android/interactive/**',
+    paths: ['armport/app/**', 'armport/audio/**', 'armport/wineserver/**', 'armport/tests/test_client*.py', 'android/interactive/**',
             'android/native/client-launcher.c', 'android/guest/character_creation_diagnostic.py',
             '.github/workflows/armport-app-runtime.yml']
 
@@ -263,12 +263,18 @@ jobs:
           # Not captured, so a failure keeps its log and step.sh's ::error annotation.
           armport/scripts/step.sh "ArmPort audio plugin" armport/audio/build.sh "$RUNNER_TEMP/audio"
           echo "::notice title=ArmPort audio plugin::$(tail -1 "$RUNNER_TEMP/audio/native-check.txt" | cut -c1-600) $(tr -d '\n' < "$RUNNER_TEMP/audio/audio-bundle.json")"
+      - name: Build the wineserver realpath cache and check it against glibc
+        run: |
+          # 0.13.74: bookworm again; the same answers as glibc for files, links and missing paths.
+          armport/scripts/step.sh "ArmPort realpath cache" armport/wineserver/build.sh "$RUNNER_TEMP/realpath"
+          echo "::notice title=ArmPort realpath cache::$(tail -1 "$RUNNER_TEMP/realpath/native-check.txt" | cut -c1-600) $(tr -d '\n' < "$RUNNER_TEMP/realpath/realpath-bundle.json")"
       - name: Package and stage the separate ARM64 client overlay
         run: |
           python3 armport/app/armport_client_package.py --client "$RUNNER_TEMP/client-bin" \
             --bins "$RUNNER_TEMP/client-bins/bin" --shaders "$RUNNER_TEMP/cg-arb" \
             --launcher "$RUNNER_TEMP/m4-client/armport-launcher.exe" \
             --audio-plugin "$RUNNER_TEMP/audio/libasound_module_pcm_trasc.so" \
+            --realpath-cache "$RUNNER_TEMP/realpath/libarmport_realpath.so" \
             --client-run "$CLIENT_RUN_ID" --data-run "$DATA_RUN_ID" \
             --output "$RUNNER_TEMP/armport-client.zip" \
             --source-data "$RUNNER_TEMP/m4-client/data" --stage "$RUNNER_TEMP/m4-packaged-client"

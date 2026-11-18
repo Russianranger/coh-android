@@ -229,6 +229,7 @@ public final class ClientRuntime {
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
+    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
     private File prootStopCounts;
     private boolean spareZoneRequested=false;
@@ -487,6 +488,38 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("proot-socket-filter", enabled).apply();
+    }
+    /**
+     * 0.13.74: zone servers read a config with two of the game's own developer switches:
+     * animations are attached when an entity first uses them instead of all at start, and
+     * source files' dates are not looked up again while the server runs. Thor 0.13.73
+     * (20261118-170550): attaching every animation was 64.6 s of a 148 s zone server start.
+     * On by default; unticking it starts the servers as 0.13.73 did.
+     */
+    public static boolean serverQuickStartEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("server-quick-start", true);
+    }
+    public static synchronized void setServerQuickStartEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("server-quick-start", enabled).apply();
+    }
+    /**
+     * 0.13.74: Wine's server looks up the real location of every file it opens, one
+     * readlink per folder in the path, each a stop in the system-call monitor (Thor 0.13.73,
+     * 20261118-170550: 505,539 such calls for 27,423 opens, a quarter of all stops). A small
+     * library inside that server now remembers folders it has already resolved. On by
+     * default; unticking it leaves the server exactly as 0.13.73 ran it.
+     */
+    public static boolean wineserverPathCacheEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("wineserver-path-cache", true);
+    }
+    public static synchronized void setWineserverPathCacheEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("wineserver-path-cache", enabled).apply();
     }
     public static boolean glDirectEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
@@ -1045,6 +1078,7 @@ public final class ClientRuntime {
         glDirectRequested=glDirectEnabled(context);
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
+        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);
         spareZoneRequested=spareZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
@@ -1143,6 +1177,9 @@ public final class ClientRuntime {
                     "COH_CLIENT_FOLDER_INDEX="+(clientFolderIndexRequested?"1":"0"),
                     "COH_CLIENT_AUDIO="+(audio!=null?"1":"0"), "COH_CLIENT_AUDIO_SOCKET="+ClientAudio.GUEST_SOCKET,
                     "COH_SHARED_HEAP="+(sharedHeapRequested?"1":"0"),
+                    // 0.13.74: the zone servers' config (animations on first use) and wineserver's folder table.
+                    "COH_SERVER_QUICK_START="+(serverQuickStartRequested?"1":"0"),
+                    "COH_WINESERVER_PATH_CACHE="+(wineserverPathCacheRequested?"1":"0"),
                     "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
@@ -3013,7 +3050,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

@@ -556,6 +556,41 @@ def thread_waits_line(report, session):
     return 'THREAD_WAITS_V1 ' + json.dumps(value, separators=(',', ':'))[:6000]
 
 
+def start_options_line(report, session):
+    """One log line: the two start options of 0.13.74 as the guest recorded them.
+
+    `server_quick_start` (the zone servers' config: animations attached on first use, no
+    source-file date checks) and `wineserver_path_cache` (the realpath cache library and its
+    own counters). Evidence only; neither gates a session.
+    """
+    value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None}
+    if isinstance(report, dict):
+        for section in report.values():
+            quick = section.get('server_quick_start') if isinstance(section, dict) else None
+            if isinstance(quick, dict):
+                value['server_quick_start'] = {'requested': quick.get('requested'),
+                                               'commands': [str(item)[:40] for item in (quick.get('commands') or [])[:4]]}
+                break
+        cache = report.get('wineserver_path_cache')
+        if isinstance(cache, dict):
+            value['wineserver_path_cache'] = {key: cache.get(key) for key in (
+                'requested', 'installed', 'reason', 'error_type', 'servers', 'counters')}
+    return 'START_OPTIONS_V1 ' + json.dumps(value, separators=(',', ':'))[:1200]
+
+
+def start_options_sessions():
+    """Which CI sessions run with the two start options of 0.13.74.
+
+    The stock-travel run (the phone's flow: creation, a trip, reopen) uses them in both
+    sessions. The other runs keep the creation session as it was, so one run shows the same
+    Atlas server start with and without them (its `sequencer_info_done` phase).
+    """
+    return ('creation', 'reopen') if stock_travel_requested() else ('reopen',)
+
+
+START_OPTIONS = ('COH_SERVER_QUICK_START=1', 'COH_WINESERVER_PATH_CACHE=1')
+
+
 STOP_COUNTS_MARK = 'PROOT_STOP_COUNTS_V1 '
 
 
@@ -873,6 +908,7 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 flush=True)
             print(launch_receipts_line(report, 'reopen' if reopening else 'creation'), flush=True)
             print(thread_waits_line(report, 'reopen' if reopening else 'creation'), flush=True)
+            print(start_options_line(report, 'reopen' if reopening else 'creation'), flush=True)
             projected = legacy_report(report, runtime_manifest, client_manifest)
             checked_manifest = validation_manifest(report, runtime_manifest)
             require(time.monotonic() <= deadline, 'ARM64 interactive host deadline exceeded')
@@ -1030,7 +1066,11 @@ def main():
             command.insert(command.index('/usr/bin/python3'),
                            'COH_SERVERDATA_PROBE=' + str(serverdata_probe_requested()))
         deadline = time.monotonic() + character.OVERALL_SECONDS
-        created = run_session(command, args.work, args.evidence / 'creation', args.proot,
+        first_command = list(command)
+        if 'creation' in start_options_sessions():
+            for option in START_OPTIONS:
+                first_command.insert(first_command.index('/usr/bin/python3'), option)
+        created = run_session(first_command, args.work, args.evidence / 'creation', args.proot,
                               first, runtime_manifest, client_manifest, deadline)
         before = reopen.persistent_profile_identity(args.work)
         reopen.archive_completed_reports(args.work / 'state', first)
@@ -1039,6 +1079,9 @@ def main():
         # 0.13.73 (ArmPort patch 0129): the reopen session, the one the phone plays, runs with the
         # app's default graphics profile for the ARM64 client; creation keeps `standard`.
         next_command.insert(next_command.index('/usr/bin/python3'), 'COH_ARMPORT_GRAPHICS_PROFILE=effects_off')
+        if 'reopen' in start_options_sessions():
+            for option in START_OPTIONS:
+                next_command.insert(next_command.index('/usr/bin/python3'), option)
         if stock_travel_requested():
             # The device's reopen: the zoning flow with the supervisor's start policy.
             next_command.insert(next_command.index('/opt/coh/character_reopen_diagnostic.py') + 1, '--zoning')

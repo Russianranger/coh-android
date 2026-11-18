@@ -2012,8 +2012,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             *character.mapserver_memory_arguments(), '-nostats', '-udp', str(port), '-tcp', '0',
             '-map_id', str(map_id), *(('-cookie', str(cookie)) if cookie is not None else ()),
             '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS(),
-            *self.session_map_options(), *options],
+            *self.session_map_options(), *character.mapserver_quick_start_arguments(self.runtime), *options],
             env=environment)
+        self.zoning_report.setdefault('server_quick_start', character.server_quick_start_record())
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
                              'idle_token': idle_token,
@@ -2862,7 +2863,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             '--chdir=' + str(runtime), self.owner.args.wine, base.windows_path(runtime / 'MapServer.exe'), '-nogui',
             '-db', '127.0.0.1', *character.mapserver_memory_arguments(), '-nostats', '-udp', str(port), '-tcp', '0',
             '-map_id', '0', '-idleExitTimeout', '0', '-donotautogroup', *character.LOCAL_CLIENT_LINK_OPTIONS(),
-            *self.session_map_options(), *options], env=environment)
+            *self.session_map_options(), *character.mapserver_quick_start_arguments(self.runtime), *options],
+            env=environment)
+        self.spare_report.setdefault('server_quick_start', character.server_quick_start_record())
         self.spare = {'process': process, 'progress_path': progress, 'assign_path': assign, 'tree': tree,
                       'options': options,
                       'runtime': runtime, 'port': port, 'ordinal': ordinal, 'launch_utc_ms': launch_ms,

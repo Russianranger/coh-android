@@ -278,6 +278,84 @@ def graphics_profile_confirmed(log, tail=b''):
     return GRAPHICS_PROFILE_MARK in head or GRAPHICS_PROFILE_MARK in tail
 
 
+REALPATH_CACHE_ENVIRONMENT = 'COH_WINESERVER_PATH_CACHE'
+REALPATH_CACHE_LIBRARY = 'libarmport_realpath.so'
+REALPATH_CACHE_REPORT = 'report.txt'
+REALPATH_CACHE_LINE = re.compile(r'ARMPORT_REALPATH_CACHE_V1 calls=(\d{1,18}) fast=(\d{1,18}) folders=(\d{1,18}) '
+                                 r'refreshed=(\d{1,18}) passed=(\d{1,18})\n')
+
+
+def realpath_cache_requested(environ=os.environ):
+    """COH_WINESERVER_PATH_CACHE=1 (the app's default since 0.13.74; CI): see install_realpath_cache."""
+    return environ.get(REALPATH_CACHE_ENVIRONMENT) == '1'
+
+
+def install_realpath_cache(archive, folder, wine_env, requested):
+    """Put the wineserver realpath cache in place before the session's first Wine process.
+
+    Wine's server calls realpath() for every file it opens, glibc answers with one readlink()
+    per path component, and PRoot stops twice for each (Thor 0.13.73, launch B: 505,539
+    readlinkat calls for 27,423 opens, a quarter of all stops). The library
+    (armport/wineserver/realpath_cache.c) remembers resolved folders inside wineserver only.
+    It is loaded with LD_PRELOAD, which the first Wine process hands to the server it starts.
+
+    Returns the report record. Anything unexpected leaves the environment unchanged: the
+    session then runs as before.
+    """
+    record = {'format': 1, 'requested': bool(requested), 'installed': False, 'reason': None}
+    if not requested:
+        record['reason'] = 'not_requested'
+        return record
+    try:
+        folder = Path(folder)
+        library = folder / REALPATH_CACHE_LIBRARY
+        if not re.fullmatch(r'/[A-Za-z0-9_./-]+', str(library)):
+            record['reason'] = 'unsafe_path'        # LD_PRELOAD splits on spaces and colons
+            return record
+        if wine_env.get('LD_PRELOAD'):
+            record['reason'] = 'ld_preload_in_use'
+            return record
+        if folder.exists() or folder.is_symlink():
+            record['reason'] = 'folder_exists'
+            return record
+        folder.mkdir(mode=0o700)
+        member = package.extract_member(archive, package.REALPATH_CACHE, library)
+        if member is None:
+            folder.rmdir()
+            record['reason'] = 'not_in_package'
+            return record
+        wine_env.update(LD_PRELOAD=str(library), ARMPORT_REALPATH_CACHE='1',
+                        ARMPORT_REALPATH_CACHE_REPORT=str(folder / REALPATH_CACHE_REPORT))
+        record.update(installed=True, sha256=member['sha256'], bytes=member['size'])
+    except Exception as error:      # an optimisation: never the reason a session fails
+        record.update(reason='error', error_type=type(error).__name__)
+    return record
+
+
+def realpath_cache_counters(folder):
+    """The library's own counters, one report file per wineserver process (bounded read)."""
+    servers, best = 0, None
+    try:
+        names = sorted(os.listdir(folder))[:64]
+    except OSError:
+        return {'servers': 0, 'counters': None}
+    for name in names:
+        if not name.startswith(REALPATH_CACHE_REPORT + '.'):
+            continue
+        try:
+            with open(Path(folder) / name, 'rb') as source:
+                match = REALPATH_CACHE_LINE.fullmatch(source.read(512).decode('ascii', errors='replace'))
+        except OSError:
+            continue
+        if match is None:
+            continue
+        servers += 1
+        values = dict(zip(('calls', 'fast', 'folders', 'refreshed', 'passed'), map(int, match.groups())))
+        if best is None or values['calls'] > best['calls']:
+            best = values
+    return {'servers': servers, 'counters': best}
+
+
 def client_audio_requested():
     """COH_CLIENT_AUDIO=1: the app's bridge listens on COH_CLIENT_AUDIO_SOCKET."""
     value = os.environ.get('COH_CLIENT_AUDIO', '')
@@ -364,6 +442,18 @@ class ArmPortClient:
             self.ctx.report['armport_proot_ioctl'] = {'format': 1, 'reading': 'unavailable',
                                                       'error_type': type(error).__name__, 'is_success_proof': False}
         self.armport_work = self.root / ('armport-client-' + self.args.session_id)
+        # Before start_wine(): the first Wine process starts wineserver with this environment.
+        self.realpath_cache_folder = self.root / ('armport-native-' + self.args.session_id)
+        if realpath_cache_requested():
+            try:
+                record = install_realpath_cache(self.args.assets / package.ARCHIVE, self.realpath_cache_folder,
+                                                self.wine_env, True)
+            except Exception as error:      # an optimisation: never the reason a session fails
+                record = {'format': 1, 'requested': True, 'installed': False, 'reason': 'error',
+                          'error_type': type(error).__name__}
+        else:
+            record = install_realpath_cache(None, self.realpath_cache_folder, None, False)
+        self.ctx.report['wineserver_path_cache'] = record
         # These receipts describe the retained x86 staging producer. Do not
         # present them as ARM64 performance/renderer qualification or enable
         # their opt-ins for a different client binary.
@@ -647,6 +737,12 @@ class ArmPortClient:
                 profile = self.ctx.report.get('armport_graphics_profile')
                 if isinstance(profile, dict):
                     profile['client_confirmed'] = graphics_profile_confirmed(log, captured)
+        cache = self.ctx.report.get('wineserver_path_cache')
+        if isinstance(cache, dict) and cache.get('installed') is True:
+            try:
+                cache.update(realpath_cache_counters(self.realpath_cache_folder))
+            except Exception as error:      # a record only
+                cache['counters_error_type'] = type(error).__name__
                 try:
                     profile = call_profile_record()
                     if profile is not None:
@@ -666,6 +762,10 @@ class ArmPortClient:
             require(self.armport_work.parent == self.root and not self.armport_work.is_symlink(),
                     'ARM64 staging directory identity changed')
             shutil.rmtree(self.armport_work)
+        folder = getattr(self, 'realpath_cache_folder', None)
+        if folder is not None and folder.is_dir() and not folder.is_symlink() and all(self.cleanup_status.values()):
+            require(folder.parent == self.root, 'Native library directory identity changed')
+            shutil.rmtree(folder)
         return failures
 
 

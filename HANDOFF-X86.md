@@ -414,6 +414,114 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.74 and the Thor test of 0.13.73 (Claude, 2026-11-18)
+
+Owner, 2026-11-18, with exports 20261118-165501 (setup), -165518 (A),
+-170550 (B: performance graphics unticked) and -171828 (C: socket option
+unticked): "Ive conducted the 3 tests, i noticed that when ticking the do not
+montitor socket traffic off, fps was cut in half. With it on, both
+performance and non performance graphics were much higher. I looked up at
+the sky into the horizon for one hold and ground level in the opposite
+direction for the other".
+
+**What the exports show (0.13.73 on the Thor)**
+
+| | A (defaults, one trip) | B (game's own effects) | C (socket option off) |
+|---|---|---|---|
+| Client connected after the guest started | 259.2 s | 210.1 s | 206.1 s |
+| Zone server spawn to ready (Mercy Island) | 177.0 s | 153.3 s | 150.4 s |
+| of which attaching animations (`sequencer_info`) | 74.6 s | 64.6 s | 61.8 s |
+| Client frame rate, the two holds | 60-62 / 60-62 (the cap) | 52-61 / 54-57 | 28-31 / 48-52 |
+| PRoot stops (per second) | 8.26 M in 1,297 s (6,365) | 4.00 M in 593 s (6,749) | 9.77 M in 701 s (13,935) |
+| Probe: one send and receive | 4.4-5.1 us, not stopped | the same | 91.65 us, stopped |
+
+- All three passed. `armport_graphics_profile.client_confirmed` true in A and
+  C (`effects_off`); B ran `standard`. Socket filter used in A and B
+  (`socket_stops` false, rtnetlink descriptor 960; 32,196 and 13,306 sockets
+  moved, none refused); in C the descriptor was 4.
+- **The owner's observation is what the reports show.** The socket
+  monitoring was the frame-rate limit: without it the game holds the 60 cap
+  in both directions (its main thread sleeps in `pselect6` about 44 % of the
+  time, so there is room above 60). The game's own effects cost a few frames
+  (B). In C the display server was stopped in PRoot at `sendto` in 24 % of
+  the wait samples and the client's swapchain thread waited in `ppoll` in
+  26 % (3 % in A and B); `sendto` from Xtigervnc was 37 % of C's stops.
+- **Start.** About 3 min 35 s from the tap to the world in B and C (5 s tap
+  to guest start). A was the first launch after the update: the zone graph
+  receipts ran once in full (`inputs_changed`, the identity format changed;
+  12.3 s and 9.9 s) and were `reused` in B and C (1.5 s).
+- **Trip in A.** Port Oakes, cold: the DbServer's request 4.9 s after the
+  transfer began, the server launched 11.8 s later (the first graph check),
+  ready 149.5 s after that (spawn to ready 137.8 s); the arrival is read from
+  a log that is written late and came 245 s after the transfer began. Back
+  to Mercy Island: 16 s.
+- **Where a 148 s zone server start goes (B, the server's own phase
+  lines):** `sequencer_info` 64.6 s, `definitions` 44.7 s (object library
+  18.0 s, folder scans 8.3 s), `group_load` 33.6 s (map 12.4 s, PhysX 10.3 s,
+  beacons 5.5 s), `encounter_scripts` 3.9 s.
+- **Stops by program in B (593 s, one zone start):** wineserver 1,219,208
+  (`readlinkat` 1,011,078, which is 505,539 calls, for 27,423 `openat`);
+  Python 1,111,346; MapServer 935,242 (`newfstatat` 715,278, `openat` 68,214,
+  `getxattr` 41,202, `fchdir` 29,500); `wine_sechost_se` 334,518 (about 25
+  rtnetlink sockets a second, phone only; the asker is not identified);
+  client 170,793. MapServer's counts were the same in C: a per-start cost.
+- Python call profile (B): the process ownership scan 82.7 thousand opens
+  (139 a second; `game_device_diagnostic.py:627/630`), the texture list
+  about 57 thousand calls once, the client package check about 29 thousand
+  once, `Popen.poll` 24.5 thousand.
+
+**Goals after 0.13.73:** start under 5 minutes met (3 min 35 s); 30 frames a
+second met (60, capped); zoning with the destination running met (16-17 s).
+Not met: a zone server's cold start (about 150 s; goal 60 s) and therefore
+cold zoning.
+
+**Changes in 0.13.74**
+
+- **Zone servers attach animations on first use** (`COH_SERVER_QUICK_START`,
+  app option "Load zone server animations when first used", on by default).
+  The servers are OptDebug builds without `./piggs/texts.pigg`, which the
+  game calls development mode, and they run with `-nosharedmemory`. In that
+  mode `seqPreloadSeqInfos` attaches every animation of every sequencer at
+  start (`seqAttachAnimations`, more than 5,000 files) and every sequencer, animation
+  and FX request looks up its source file's date. The game has two developer
+  switches for exactly this, read by `serverStateLoad` from the file that
+  `-svrconfig` names, before the sequencers load: `quickLoadAnims 1` (an
+  animation is attached when an entity first uses the move:
+  `seqsequence.c`, `seqskeleton.c`) and `nofilechangecheck_server 1`. The
+  guest writes `armport-svrconfig.txt` in the session's server folder and
+  passes it at all three MapServer starts (Atlas, zones, the spare). No
+  server rebuild. Not used with the shared-memory experiment: the first-use
+  attach is skipped for sequencers in shared memory.
+- **wineserver remembers resolved folders**
+  (`COH_WINESERVER_PATH_CACHE`, app option "Remember folder locations in the
+  Wine server", on by default). Wine's server calls `realpath()` for every
+  file it opens (`server/fd.c`, `open_fd`), glibc resolves a path with one
+  `readlink` per component, and PRoot stops twice for each. The game's own
+  `_AltStat` is a `CreateFile` plus `GetFileInformationByHandle`, so even a
+  look-up of a file's date is an open in the server. Wine is prebuilt here,
+  so `armport/wineserver/realpath_cache.c` is an `LD_PRELOAD` library (built
+  for the guest's Debian bookworm like the audio plugin, checked against
+  glibc in the same container, shipped in the client package as
+  `armport-native/libarmport_realpath.so`). In a process named `wineserver`
+  it answers from a table of folders glibc has already resolved and probes
+  only the last component; a link, a missing file or an unusual path goes to
+  glibc; an entry is used for 60 s at most. The session extracts the library
+  (checked against the package manifest) before its first Wine process.
+  Local x86-64 PRoot (patches 0001-0007), 20,000 `realpath` calls on a path
+  21 folders deep: 840,209 stops and 25.0 s with glibc, 40,299 stops and
+  1.35 s with the library.
+- **CI sampler: which paths.** For MapServer, wineserver, DbServer and the
+  client the host sampler now reads the path of a stopped `newfstatat`,
+  `openat` or `readlinkat` and whether it was found. MapServer's 357
+  thousand `newfstatat` calls per start (about 13 per file opened) are the
+  next target and the counts do not say which look-ups fail.
+- CI sessions: the stock-travel run uses both options in both sessions; the
+  other runs keep the creation session without them, so one run shows the
+  same Atlas start both ways.
+- Not done: the ownership scan's opens; the 25 rtnetlink look-ups a second;
+  the late arrival log; the spare zone hand-over.
+- **Chain.** CHAIN74_PLACEHOLDER
+
 ## 0.13.73 and the Thor test of 0.13.72 (Claude, 2026-11-17)
 
 Owner, 2026-11-17, with exports 20261117-130710 (setup), -130723 (A),

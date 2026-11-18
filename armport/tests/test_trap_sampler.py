@@ -69,6 +69,51 @@ class TrapSamplerTest(unittest.TestCase):
             self.assertEqual(record['stops'][0][1], 3)
             self.assertLess(len(lines[0]), 4000)
 
+    def test_path_calls_of_the_servers_are_read_from_the_stopped_task(self):
+        with tempfile.TemporaryDirectory() as directory:
+            proc = Path(directory)
+            task(proc, 100, 100, 'libproot.so', 'S', 1, cmdline='/data/app/lib/libproot.so')
+            guest = b'/state/zones/data/player_library/animations/MALE/SKEL_READY.anim\0'
+            host = b'/host/rootfs/state/zones/data/geobin/Fence/slat.bin\0junk'
+            memory = bytearray(4096)
+            memory[0x100:0x100 + len(guest)] = guest
+            memory[0x400:0x400 + len(host)] = host
+            calls = [('79 0xffffffffffffff9c 0x100 0x7f 0x0 0x0 0x0 0x1 0x2\n', 'MapServer.exe'),   # entry
+                     ('79 0xfffffffffffffffe 0x400 0x7f 0x0 0x0 0x0 0x1 0x2\n', 'MapServer.exe'),   # exit: ENOENT
+                     ('79 0x0 0x400 0x7f 0x0 0x0 0x0 0x1 0x2\n', 'MapServer.exe'),                  # exit: found
+                     ('78 0xffffffffffffffea 0x400 0x7f 0x40 0x0 0x0 0x1 0x2\n', 'wineserver'),     # exit: EINVAL
+                     ('56 0xffffff9c 0x100 0x0 0x0 0x0 0x0 0x1 0x2\n', 'wineserver'),
+                     ('79 0xffffff9c 0xfff0000 0x7f 0x0 0x0 0x0 0x1 0x2\n', 'MapServer.exe'),        # nothing there
+                     ('79 0xffffff9c 0x100 0x7f 0x0 0x0 0x0 0x1 0x2\n', 'python3')]                 # not a server
+            for index, (line, name) in enumerate(calls):
+                pid = 200 + index
+                task(proc, pid, pid, name[:15], 't', 100, line, cmdline='Z:\\x\\' + name, tracer=100)
+                (proc / str(pid) / 'mem').write_bytes(bytes(memory))
+            sampler = trap_sampler.TrapSampler(100, 'reopen', proc=proc, rounds=2, gap=0, emit=lambda line: None)
+            window = sampler.empty()
+            sampler.burst(window)
+            self.assertEqual(window['path_stages'], {
+                'MapServer.exe stat': {'enter': 2, 'missing': 2, 'ok': 2, 'unreadable': 2},
+                'wineserver readlink': {'not_a_link': 2}, 'wineserver open': {'enter': 2}})
+            self.assertEqual(window['path_depths'], {'MapServer.exe stat': [2, 14], 'wineserver open': [2, 14]})
+            self.assertEqual(window['paths']['MapServer.exe stat enter animations/MALE/SKEL_READY.anim'], 2)
+            self.assertEqual(window['paths']['MapServer.exe stat missing geobin/Fence/slat.bin'], 2)
+            self.assertNotIn('python3 stat', window['path_stages'])
+            record = trap_sampler.summary(window, 0.0, 1.0)
+            self.assertEqual(record['path_depths'], {'MapServer.exe stat': 7.0, 'wineserver open': 7.0})
+            self.assertEqual((record['distinct_paths'], len(record['paths'])), (5, 5))
+            self.assertLess(len(json.dumps(record)), 4000)
+
+    def test_path_summary_is_bounded(self):
+        window = trap_sampler.TrapSampler.empty()
+        window['rounds'] = 1
+        window['path_stages'] = {'MapServer.exe stat': {'enter': 5000}}
+        window['path_depths'] = {'MapServer.exe stat': [5000, 60000]}
+        window['paths'] = {'MapServer.exe stat enter a/b/' + 'n' * 90 + str(index): 1 for index in range(5000)}
+        record = trap_sampler.summary(window, 0.0, 1.0)
+        self.assertEqual((len(record['paths']), record['distinct_paths']), (trap_sampler.PATH_TOP, 5000))
+        self.assertLess(len(json.dumps(record)), 8000)
+
     def test_summary_is_bounded(self):
         window = trap_sampler.TrapSampler.empty()
         window['rounds'] = 1
