@@ -737,6 +737,26 @@ CI's is nine), and the game treats a drive-root working folder differently
 (`findAutoDataDir`), so it is not planned; (4) the spare zone server for
 trips.
 
+0.13.75's chain (b270ff434), CI, items (1) to (3) above. The trusted run
+44441077783, reopen session: the Atlas start reached its main loop in
+26.26 s (50.83) and was ready 27.3 s after its spawn (56.5). The object
+library phase is gone from the gaps (`definitions_done` 13.01 s against
+21.99 s). The mesh file: 2,265 meshes cooked in 16.45 s in the creation
+session, 2,014 records and 12.8 MB written; all 2,265 read back in the
+reopen session with 50 ms of `createTriangleMesh` (`group_load_done` 9.90 s
+against 25.54 s). The stock-travel run 44436543449 measures the letter-case
+fallback alone: the first zone start 213.7 s (299.9), later ones 101.2 and
+95.8 s (106.2 and 100.8), 4.41 million stops in the reopen session (4.86),
+MapServer `newfstatat` 1.79 million (2.03). So the fallback helps most where
+folders are scanned for the first time and little on a warm start.
+
+What is left of CI's 26.3 s: the gap after `server/db/commands.cfg` 6.9 s,
+folder caching 4.1 s, story arcs 2.0 s, defs 1.7 s, spawn definitions 1.6 s,
+collision triangles 1.5 s. On the phone the same start is unmeasured; at
+0.13.73's ratio of 1.6 it would be about 45 s, inside goal 4. Next after the
+Thor test of 0.13.75: (4) the spare zone server for trips, then the
+`commands.cfg` gap.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

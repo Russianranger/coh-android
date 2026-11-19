@@ -521,7 +521,36 @@ owner. 0.13.75 comes from 0.13.74's CI runs (section below, **Chain**).
     header (the host fixture is GCC).
 - **Not done:** the spare zone hand-over; the late arrival log.
 - **Not validated:** anything in 0.13.74 or 0.13.75 on a device.
-- **Chain.** CHAIN75_PLACEHOLDER
+- **Chain at b270ff434** (one chain on x86/perf-round1). Build 44424804176;
+  stock-travel runtime 44436543449 (`early_zone=true`,
+  `proot_ioctl_filter=true`, sampler; one trip; the letter-case option in both
+  of its sessions); trusted runtime 44441077783 (interactive job 1762 s,
+  THORHERO; its app-sources job compiled the changed Java). Two earlier builds
+  did not finish: 44408167189 at e04c1851c (object library only) was cancelled
+  to add the mesh file to the same release, and 44413294971 at 6518d87c7 failed
+  in `server-metrics-source` because that job's sparse checkout did not list
+  `patches/mapserver-physx-cache`; b270ff434 lists it in both metrics jobs and
+  tests for it. APK 44445389436 published `coh-atlas-gameplay-v0.13.75`
+  (93577482 bytes, sha256
+  47b40206e4e139661442f5b919d06ba1feec2fb90c2962dc2ddda1530f0fcc63, signer
+  92955353…, the same as 0.13.50-0.13.73); its guest files match the commit and
+  it carries the navigation map pack's descriptor byte for byte. Trusted
+  runtime 44441077783, against 0.13.74's 44398992652 (reopen session, Atlas
+  Park): the zone server reached its main loop in 26.26 s (50.83) and was ready
+  27.3 s after its spawn (56.5); `definitions_done` 13.01 s (21.99) with
+  `ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted` in both sessions;
+  `group_load_done` 9.90 s (25.54). Cooked meshes: the creation session cooked
+  2,265 meshes in 16.45 s and wrote 2,014 records, 12,815,870 bytes; the reopen
+  session read all 2,265 (`hits` 2265, `misses` 0, `refused` 0, `bad_records`
+  0, `create_ms` 50). The Windows build compiled both changes in both server
+  variants. Runtime 44436543449 (stock server, so only the letter-case option),
+  against 0.13.74's 44392083121: the first zone start, which builds its caches,
+  213.7 s (299.9); later zone starts 101.2 and 95.8 s (106.2 and 100.8); PRoot
+  served 11.48 million stops in the 943 s creation session and 4.41 million in
+  the 775 s reopen session (14.18 and 4.86 million); MapServer's `newfstatat`
+  stops 1,540,303 in creation and 1,793,380 in reopen (3,430,953 and
+  2,027,296); `casefold_replaced` 426,349 and 127,173. These are CI times; the
+  phone's zone start was 1.6 times CI's in 0.13.73.
 
 ## 0.13.74 and the Thor test of 0.13.73 (Claude, 2026-11-18)
 
