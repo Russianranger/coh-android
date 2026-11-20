@@ -414,11 +414,13 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
-## For 0.13.77: start folders under the trusted-bin switch (Claude, 2026-11-19; not in 0.13.76)
+## For 0.13.77: start folders under the trusted-bin switch, map load profile (Claude, 2026-11-19; not in 0.13.76)
 
-Written while the 0.13.76 chain ran; on `x86/perf-round3` only until that
-chain ends. No build has compiled it yet (MSVC first sees it in the 0.13.77
-build).
+Written while the 0.13.76 chain ran. Version 0.13.77 (92), release notes and
+`THOR-TEST-0.13.77.md` followed 0.13.76's publication; the app and guest are
+0.13.76's.
+
+- **Chain.** CHAIN77_PLACEHOLDER
 
 - **Where the time is.** Thor 0.13.75 launch B, Port Oakes start (54.4 s to
   the main loop, console `character-zoning-map-72-console.txt`): `Caching
