@@ -66,7 +66,18 @@ zone server changes made while 0.13.76 was in CI. If you have not tested
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.76 and the Thor test of
 0.13.75" and "For 0.13.77".
 
-CI: CI77_EVIDENCE_PLACEHOLDER
+CI (all at `3e78d005e`): build 44683537682 (the Windows compiler's first
+build of both changes); default server with travel 44693667939 (passed; zone
+starts 233.0 s, then 106.7 s and 101.0 s); Fast server 44698417683 (passed;
+reopen zone start 23.6 s from spawn to ready against 32.4 s in 0.13.76,
+22.5 s to the main loop against 26.5 s; `Defs` and `Menu` not read ahead,
+4 message files read without their folder listing); spare zone server
+44703232069 (passed: the spare loaded in 19.9 s against 25.0 s, the trip's
+zone was ready 15.2 s after the game asked and the game was in the new zone
+at 15.8 s; the monitor served 1.84 million stops in that session against
+2.13 million); APK 44708151316 (93,581,578 bytes, sha256
+`dd8beb337ca77f3ce254125ea23be903dcaf9fa0b616613ab89e017f2271d042`, signer
+unchanged).
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

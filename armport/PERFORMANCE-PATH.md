@@ -809,6 +809,14 @@ map` for item 4. Item 3 is not started: the zone tree mirrors the client
 worktree after the client's install steps, and its preparation shares the
 session context with them, so it cannot simply move or run on a thread.
 
+0.13.77's chain (3e78d005e), CI: reopen zone start 23.6 s spawn to ready
+(32.4 in 0.13.76), 22.45 s to the main loop, `definitions_done` 9.53 s
+(13.15); spare warm in 19.9 s (25.0), trip ready in 15.2 s as before; fewer
+monitor stops (1.84 M against 2.13 M for the reopen session). The first map
+load profile: 6.6 s, of which bounds files 1.8 s (504 files read back only
+for comparison), model look-ups 1.6 s, the group files themselves 3.1 s.
+0.13.78 takes the bounds files out (HANDOFF "For 0.13.78").
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

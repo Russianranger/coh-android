@@ -451,7 +451,34 @@ Written while the 0.13.76 chain ran. Version 0.13.77 (92), release notes and
 `THOR-TEST-0.13.77.md` followed 0.13.76's publication; the app and guest are
 0.13.76's.
 
-- **Chain.** CHAIN77_PLACEHOLDER
+- **Chain** (one at a time, all at `3e78d005e`): build 44683537682 (MSVC
+  compiled both layers; no warning names their files) → stock travel on the
+  default server 44693667939 (passed; 233.0 / 106.7 / 101.0 s) → trusted
+  44698417683 (passed, 1,640 s) → spare zone 44703232069 (passed) → APK
+  44708151316.
+- **Trusted run 44698417683, reopen** (0.13.76's 44673984201 in brackets):
+  `process_spawn_to_map_ready_seconds` 23.6 (32.4), `elapsed_to_main_loop`
+  22.45 (26.48), `definitions_done` 9.53 (13.15), `group_load_done` 9.66
+  (10.01); `start_trees_not_read_ahead` true, `message_bins_trusted` 4,
+  `map_load_profile` `total_ms` 6635 (other 3101, model_find 1647 for 9,562
+  look-ups, bounds_files 1837 for 504 files, recalc 29, spawn areas 15,
+  scene 2, ref_activate 0, unbalanced 0). Creation session (bins built
+  there): `message_bins_trusted` 0 (the text fallback, as designed),
+  spawn to ready 386.3 s (369.9), map load 25,623 ms (bounds files 7,297).
+- **Spare run 44703232069, reopen**: `warm_seconds` 19.927 (24.978 in
+  0.13.76's 44678714431), `assigned` to map 101 after 35.0 s loaded; trip
+  `request_to_map_ready_seconds` 15.16 (15.07),
+  `request_to_client_world_ready_seconds` 15.83 (16.88);
+  `PROOT_STOP_COUNTS_V1` reopen 1,844,039 stops in 619 s (2,131,961 in
+  613 s), creation 10,901,950 in 950 s (10,876,252 in 891 s). No sign of
+  repeated failed look-ups from the folders no longer read ahead.
+- **Published:** [coh-atlas-gameplay-v0.13.77](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.77)
+  (pre-release, target `3e78d005e`), 93,581,578 bytes, sha256
+  `dd8beb337ca77f3ce254125ea23be903dcaf9fa0b616613ab89e017f2271d042` (equal
+  to the `.sha256` asset; downloaded and hashed), version 0.13.77 (92),
+  signer unchanged; 51 guest Python files equal to the commit; the
+  `MapServer.exe` in `game-package-trusted.tar.gz` holds the three new
+  record prefixes.
 
 - **Where the time is.** Thor 0.13.75 launch B, Port Oakes start (54.4 s to
   the main loop, console `character-zoning-map-72-console.txt`): `Caching
