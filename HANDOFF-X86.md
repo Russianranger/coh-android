@@ -576,7 +576,37 @@ are positive, no apparent issues with animations".
   against no Android classes here, the only new errors are the missing
   Android symbols of the new lines (`CheckBox`, `TextView`, `Color`,
   `Toast`, `Context`); CI's app-sources job compiles it for real.
-- **Chain.** CHAIN76_PLACEHOLDER
+- **Chain** (one at a time, all at `df7719461`): build 44659040591 (Java
+  compiled by app-sources) → stock travel on the default server 44669805331
+  (passed; `process_spawn_to_map_ready_seconds` 233.0 creation, 101.5 and
+  101.1 reopen and trip; trip `request_to_client_world_ready_seconds` 181.8)
+  → trusted 44673984201 (passed, 1,645 s; reopen 32.4 s spawn to ready,
+  `elapsed_to_main_loop` 26.48, `definitions_done` 13.15, `group_load_done`
+  10.01; `physx_cooked` creation misses 2265 `cook_ms` 16436 file
+  12,815,846 bytes, reopen hits 2265 misses 0) → spare zone 44677885801
+  (failed in 5.5 s: "The CI zoning flow needs the CI external-maps
+  DbServer"; my dispatch had no `external_maps_run_id`) → spare zone again
+  with it, 44678714431 (passed, 1,573 s) → APK 44682583963.
+- **First hand-over to a spare** (44678714431, reopen session, CI x86-64):
+  `spare_zone.starts[0]` `warm_seconds` 24.978, `outcome` `assigned`,
+  `map_id` 101, `loaded_seconds_before_request` 40.064, available memory
+  10,350 MiB at its start and 9,138 when warm; the trip's `map_startup`
+  entry `request_to_map_ready_seconds` 15.07 and
+  `request_to_client_world_ready_seconds` 16.88 (default server, no spare,
+  44669805331: 101.1 and 181.8; a cold Fast server start is 27-32 s spawn to
+  ready). A second spare loaded in 30.4 s and was dropped at session end.
+  The creation session's spare (20.1 s) was never asked for. No
+  `refused_request`.
+- **Published:** [coh-atlas-gameplay-v0.13.76](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.76)
+  (pre-release, target `df7719461`), `COH-Atlas-Gameplay-0.13.76.apk`
+  93,577,482 bytes, sha256
+  `ad05ca47e996b7a148339fee4f4303b5e0c15f58297992e092cde2633610f0be` (equal
+  to the `.sha256` asset; downloaded and hashed), version 0.13.76 (91),
+  signer `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`
+  (unchanged). In the APK: 51 guest Python files equal to the commit
+  (`character_zoning.py` with `_spare_option_key`), `classes.dex` holds
+  `options_off_recommended`, "Restore recommended options" and the status
+  line text.
 
 ## 0.13.75 (Claude, 2026-11-18)
 

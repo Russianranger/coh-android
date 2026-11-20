@@ -794,6 +794,21 @@ Next, in order:
    41 s.
 4. The map load itself (12.8 s) and beacons (5.3 s): not yet broken down.
 
+0.13.76's chain (df7719461), CI. Trusted run 44673984201: reopen zone start
+32.4 s spawn to ready, 26.48 s to the main loop (0.13.75: 27.3 and 26.26).
+Spare run 44678714431, the first hand-over anywhere: the spare loaded in
+25.0 s, and the trip's zone was ready 15.1 s after the game asked (client in
+the zone at 16.9 s). A cold start of the same server is 27-32 s, and the
+default server took 101.1 s for the same trip (44669805331). At the phone's
+2.0-2.3 times that is 30-35 s to ready; the Thor test of 0.13.76 measures it.
+
+Prepared for 0.13.77 while that chain ran (HANDOFF "For 0.13.77"; not built
+yet): item 2 above with the message bins' folder listing (10.3 s of the
+54.4 s Port Oakes start in launch B), and a one-line profile of `loading
+map` for item 4. Item 3 is not started: the zone tree mirrors the client
+worktree after the client's install steps, and its preparation shares the
+session context with them, so it cannot simply move or run on a thread.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

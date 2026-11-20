@@ -49,7 +49,17 @@
 
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.76 and the Thor test of 0.13.75".
 
-CI: CI_EVIDENCE_PLACEHOLDER
+CI (all at `df7719461`): build 44659040591; default server with travel
+44669805331 (passed; zone starts 233.0 s, then 101.5 s and 101.1 s); Fast
+server 44673984201 (passed; reopen zone start 32.4 s from spawn to ready,
+26.5 s to the main loop, 2,265 collision meshes read back and none prepared);
+spare zone server 44678714431 (passed: the spare had loaded in 25.0 s and
+waited 40 s; the trip's zone was ready 15.1 s after the game asked for it and
+the game was in the new zone at 16.9 s; the same trip on the default server
+took 101.1 s to ready); APK 44682583963 (93,577,482 bytes, sha256
+`ad05ca47e996b7a148339fee4f4303b5e0c15f58297992e092cde2633610f0be`, signer
+unchanged). A first spare run (44677885801) stopped after 5 s on a missing
+dispatch input of mine, not on the code.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 
