@@ -414,6 +414,37 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## For 0.13.78: library bounds files under the trusted-bin switch (Claude, 2026-11-20; not in 0.13.77)
+
+Written while the 0.13.77 chain ran; on `x86/perf-round3` only until that
+chain ends. No build has compiled it yet.
+
+- **What the first map load profile showed** (0.13.77 trusted run
+  44698417683, CI x86-64, Atlas Park reopen): `ARMPORT_MAP_LOAD_V1`
+  `total_ms=6635 other_ms=3101 model_find_ms=1647 model_finds=9562
+  bounds_files_ms=1837 bounds_files=504 recalc_bounds_ms=29 scene_ms=2
+  spawn_areas_ms=15 ref_activate_ms=0 unbalanced=0`. 28% of the map load is
+  `objectLibraryWriteBoundsFileIfDifferent`: for each of the 504 library
+  files a map loads, `geobin/<file>.bounds` is read and parsed only to be
+  compared with the bounds just loaded (creation session, cold file cache:
+  7,297 ms of 25,623).
+- **`patches/mapserver-trusted-bins/0004-trusted-bounds-files.patch`**, under
+  `ARMPORT_TRUSTED_BINS=1`: the checksum of the loaded defs is still
+  computed; the library entry's `bounds_checksum` and each public def's
+  bounds (`objectLibrarySetBounds`) are set from the loaded defs, which is
+  what a matching bounds file sets; the bounds file is neither read nor
+  written. Reopen sessions already write no bounds file (`bin writes reopen`
+  0 in every trusted run). The checksum the server sends to the client
+  (`groupnetsend.c`) is the loaded defs' as before.
+- **Wiring.** Receipt `bounds_files_patch`, contract `trusted_bounds_files`,
+  guest admission `bounds_files_changed` (the receipt, the entry and the
+  object library claim together), host fixture cases `bounds_files` and
+  `bounds_files_disabled` (the shipping function over recorded shims; the
+  unpatched control fails `bounds_reads == 0 && bounds_writes == 0 &&
+  bounds_set == 2`), evidence regenerated.
+- **Still in the map load:** `other` 3.1 s (reading and assembling 500 group
+  files) and `model_find` 1.6 s (9,562 look-ups); not broken down further.
+
 ## For 0.13.77: start folders under the trusted-bin switch, map load profile (Claude, 2026-11-19; not in 0.13.76)
 
 Written while the 0.13.76 chain ran. Version 0.13.77 (92), release notes and

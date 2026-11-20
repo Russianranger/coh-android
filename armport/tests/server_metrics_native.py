@@ -43,6 +43,8 @@ LOAD_PROFILE_SOURCES = ('Common/group/group.c', 'Common/group/groupgrid.c', 'Map
 LOAD_PROFILE_NEGATIVE_ASSERTION = ('armport_map_load.calls[ARMPORT_MAP_LOAD_BOUNDS_FILES] == 3 '
                                    '&& armport_map_load.ticks[ARMPORT_MAP_LOAD_OTHER] == 360')
 LOAD_PROFILE_CASES = ['map_load_profile', 'map_load_profile_disabled']
+BOUNDS_NEGATIVE_ASSERTION = 'bounds_reads == 0 && bounds_writes == 0 && bounds_set == 2'
+BOUNDS_CASES = ['bounds_files', 'bounds_files_disabled']
 
 
 def test_cases(source):
@@ -56,7 +58,8 @@ def test_cases(source):
             + (PHYSX_CASES if (source / PHYSX_HEADER).is_file() else [])
             + (START_TREES_CASES if 'static int armportTrustedStartTrees('
                in (source / INITCOMMON).read_text() else [])
-            + (LOAD_PROFILE_CASES if (source / LOAD_PROFILE_HEADER).is_file() else []))
+            + (LOAD_PROFILE_CASES if (source / LOAD_PROFILE_HEADER).is_file() else [])
+            + (BOUNDS_CASES if 'static int armportTrustedBounds(' in (source / GROUPFILELIB).read_text() else []))
 
 
 def spare_fixture(source):
@@ -363,6 +366,87 @@ int main(int argc, char **argv) {
         RESTART(); cooks = creates = 0; fail_writes = 1;
         CHECK(world() && cooks == 3 && open_now == 0);
         CHECK(size_of(path) == first && size_of(other) == -1);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def bounds_fixture(source):
+    '''Run the shipping objectLibraryWriteBoundsFileIfDifferent body over recorded library shims.'''
+    text = (source / GROUPFILELIB).read_text()
+    helpers = ''.join(function(text, name) for name in (
+        'static int armportTrustedObjectLibrary(', 'static int armportTrustedBounds(') if name in text)
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef unsigned int U32;
+typedef struct GroupBounds { float min[3], max[3], mid[3], radius; } GroupBounds;
+typedef struct GroupDef { float min[3], max[3], mid[3], radius; const char *name; int is_public; } GroupDef;
+typedef struct GroupFile { int idx, count; GroupDef **defs; U32 bounds_checksum; const char *fullname; } GroupFile;
+typedef struct GroupFileEntry { U32 bounds_checksum; } GroupFileEntry;
+static GroupFileEntry library_entry;
+static int bounds_reads, bounds_writes, bounds_set, wrong_bounds, file_matches = 1, entry_known = 1;
+static U32 sum;
+static int groupIsPublic(GroupDef *def) { return def && def->is_public; }
+static void cryptAdler32Init(void) { sum = 1; }
+static void cryptAdler32Update(const unsigned char *data, int length) { while (length-- > 0) sum = sum * 31 + *data++; }
+static U32 cryptAdler32Final(void) { return sum; }
+static GroupFileEntry *objectLibraryEntryFromFname(const char *name) { (void)name; return entry_known ? &library_entry : NULL; }
+static void objectLibrarySetBounds(const char *name, GroupBounds *bounds) {
+    ++bounds_set;
+    if (strcmp(name, bounds->radius == 1 ? "first" : "third")) ++wrong_bounds; }
+static int objectLibraryLoadBoundsFile(const char *name, U32 checksum) {
+    (void)name;
+    if (library_entry.bounds_checksum == checksum) return 1;
+    ++bounds_reads;
+    if (!file_matches) return 0;
+    library_entry.bounds_checksum = checksum; return 1; }
+static void objectLibraryWriteBoundsFile(GroupFile *file) { (void)file; ++bounds_writes; }
+''' + helpers + function(text, 'void objectLibraryWriteBoundsFileIfDifferent(GroupFile *file)') + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    GroupDef first = {{0}, {0}, {0}, 1, "first", 1}, second = {{0}, {0}, {0}, 2, "second", 0},
+             third = {{0}, {0}, {0}, 3, "third", 1};
+    GroupDef *defs[] = {&first, &second, &third};
+    GroupFile file = {1, 3, defs, 0, "object_library/a/a.txt"}, map = {0, 3, defs, 0, "maps/a/a.txt"};
+    U32 expected;
+    if (!strcmp(mode, "bounds_files")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        objectLibraryWriteBoundsFileIfDifferent(&map);        /* the map's own file has no bounds file */
+        CHECK(bounds_reads == 0 && bounds_set == 0 && map.bounds_checksum == 0);
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 0 && bounds_writes == 0 && bounds_set == 2);
+        CHECK(wrong_bounds == 0);                              /* each public def's own bounds, by its name */
+        expected = file.bounds_checksum;
+        CHECK(expected != 0 && library_entry.bounds_checksum == expected);
+        objectLibraryWriteBoundsFileIfDifferent(&file);        /* already known: nothing set again */
+        CHECK(bounds_reads == 0 && bounds_writes == 0 && bounds_set == 2);
+        third.radius = 4; third.name = "third";                /* changed bounds: a new checksum, set again */
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(file.bounds_checksum != expected && library_entry.bounds_checksum == file.bounds_checksum);
+        CHECK(bounds_reads == 0 && bounds_writes == 0 && bounds_set == 4);
+        entry_known = 0;                                       /* no library entry: the ordinary path */
+        library_entry.bounds_checksum = 0; file_matches = 0;
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 1 && bounds_writes == 1 && bounds_set == 4);
+        printf("bounds_set=%d bounds_reads=%d bounds_writes=%d\n", bounds_set, bounds_reads, bounds_writes);
+        return 0;
+    }
+    if (!strcmp(mode, "bounds_files_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        objectLibraryWriteBoundsFileIfDifferent(&file);        /* read and compared as before */
+        CHECK(bounds_reads == 1 && bounds_writes == 0 && bounds_set == 0);
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 1 && bounds_writes == 0);
+        library_entry.bounds_checksum = 0; file_matches = 0;   /* a stale bounds file is written again */
+        objectLibraryWriteBoundsFileIfDifferent(&file);
+        CHECK(bounds_reads == 2 && bounds_writes == 1 && bounds_set == 0);
+        printf("bounds_set=%d bounds_reads=%d bounds_writes=%d\n", bounds_set, bounds_reads, bounds_writes);
         return 0;
     }
     return 2;
@@ -1097,9 +1181,15 @@ def run(source, original=None, expect_control_failure=False):
                         '-fsanitize=address,undefined',
                         str(work / 'profile.c'), '-o', str(profile)], check=True)
         control += load_profile_fixture(trusted_root)
+        bounds = work / 'bounds'
+        (work / 'bounds.c').write_text(bounds_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-fsanitize=address,undefined',
+                        str(work / 'bounds.c'), '-o', str(bounds)], check=True)
+        control += bounds_fixture(trusted_root)
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
         for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache',
-                      'start_trees', 'map_load_profile']
+                      'start_trees', 'map_load_profile', 'bounds_files']
                      if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
             if mode == 'spare_server_invalid':
@@ -1125,7 +1215,8 @@ def run(source, original=None, expect_control_failure=False):
             program = (trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES
                        else library if mode in OBJECT_LIBRARY_CASES else physx if mode in PHYSX_CASES
                        else trees if mode in START_TREES_CASES
-                       else profile if mode in LOAD_PROFILE_CASES else exe)
+                       else profile if mode in LOAD_PROFILE_CASES
+                       else bounds if mode in BOUNDS_CASES else exe)
             arguments = [str(work / (mode + '-cooked.bin'))] if mode in PHYSX_CASES else []
             for stale in arguments:
                 Path(stale).unlink(missing_ok=True)       # the unpatched control runs the same mode again
@@ -1137,7 +1228,8 @@ def run(source, original=None, expect_control_failure=False):
                              'object_library': OBJECT_LIBRARY_NEGATIVE_ASSERTION,
                              'physx_cache': PHYSX_NEGATIVE_ASSERTION,
                              'start_trees': START_TREES_NEGATIVE_ASSERTION,
-                             'map_load_profile': LOAD_PROFILE_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
+                             'map_load_profile': LOAD_PROFILE_NEGATIVE_ASSERTION,
+                             'bounds_files': BOUNDS_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -1222,6 +1314,10 @@ def run(source, original=None, expect_control_failure=False):
                     'ref_activate_ms=40 ref_activates=40 recalc_bounds_ms=0 bounds_files_ms=0 bounds_files=0 '
                     'scene_ms=0 spawn_areas_ms=0 unbalanced=0',
                     'ARMPORT_MAP_LOAD_V1 status=clock_error'], result.stdout
+            if mode == 'bounds_files':
+                assert result.stdout.splitlines() == ['bounds_set=4 bounds_reads=1 bounds_writes=1'], result.stdout
+            if mode == 'bounds_files_disabled':
+                assert result.stdout.splitlines() == ['bounds_set=0 bounds_reads=2 bounds_writes=1'], result.stdout
             if mode == 'map_load_profile_disabled':
                 assert 'ARMPORT_MAP_LOAD_V1' not in result.stdout
             if mode in ('start_trees_disabled', 'message_bins_disabled', 'message_bins_fallback'):
@@ -1278,7 +1374,7 @@ def main():
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_and_map_load_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_and_bounds_file_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

@@ -30,6 +30,8 @@ TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
 # The same switch for bin/defnames.bin (0.13.75): no object_library tree scan.
 OBJECT_LIBRARY_PATCH = 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch'
 GROUPFILELIB = 'Common/group/groupfilelib.c'
+# The same switch for the bounds file of each loaded library file (0.13.78): not read back.
+BOUNDS_PATCH = 'patches/mapserver-trusted-bins/0004-trusted-bounds-files.patch'
 # Opt-in early zone server (ARMPORT_SPARE_FILE=<path>), off by default: every shared
 # load, then a wait before connectToDbserver for the map id and cookie.
 SPARE_PATCH = 'patches/mapserver-zone-travel/0001-spare-zone-server.patch'
@@ -116,6 +118,14 @@ CONTRACT = {
         'clock': 'timerCpuTicks64', 'time': 'exclusive_wall_time_per_step',
         'steps': ['other', 'model_find', 'ref_activate', 'recalc_bounds', 'bounds_files', 'scene', 'spawn_areas'],
         'records_per_map_load': 1, 'measurement_only': True,
+        'gameplay_decisions_changed': False,
+    },
+    'trusted_bounds_files': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'function': 'objectLibraryWriteBoundsFileIfDifferent',
+        'skipped_when_enabled': ['bounds_file_read', 'bounds_file_write'],
+        'set_from_loaded_defs': ['library_file_bounds_checksum', 'public_def_bounds'],
+        'still_computed': ['bounds_checksum_of_loaded_defs'],
         'gameplay_decisions_changed': False,
     },
     'physx_cache': {
@@ -215,6 +225,13 @@ def load_profile_patch_bytes():
     data = (ROOT / LOAD_PROFILE_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [LOAD_PROFILE_HEADER, GROUP, GROUPGRID, GROUPNETDB], 'Map load profile patch file set differs')
+    return data
+
+
+def bounds_patch_bytes():
+    data = (ROOT / BOUNDS_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [GROUPFILELIB], 'Trusted bounds file patch file set differs')
     return data
 
 
@@ -377,6 +394,7 @@ def native_images(variant, baseline_receipt, root):
         apply_patch(stage, trusted_patch_bytes())
         apply_patch(stage, spare_patch_bytes())
         apply_patch(stage, object_library_patch_bytes())
+        apply_patch(stage, bounds_patch_bytes())
         target = stage / NWWRAPPER
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((root / 'upstream/ouroboros' / NWWRAPPER).read_bytes())
@@ -450,6 +468,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'physx_cache_patch': {'path': PHYSX_PATCH, 'sha256': digest(physx_patch_bytes())},
             'start_trees_patch': {'path': START_TREES_PATCH, 'sha256': digest(start_trees_patch_bytes())},
             'load_profile_patch': {'path': LOAD_PROFILE_PATCH, 'sha256': digest(load_profile_patch_bytes())},
+            'bounds_files_patch': {'path': BOUNDS_PATCH, 'sha256': digest(bounds_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -488,9 +507,10 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                                    'physx_cache', 'physx_cache_disabled', 'physx_cache_damaged',
                                    'start_trees', 'start_trees_disabled',
                                    'message_bins', 'message_bins_disabled', 'message_bins_fallback',
-                                   'map_load_profile', 'map_load_profile_disabled'],
+                                   'map_load_profile', 'map_load_profile_disabled',
+                                   'bounds_files', 'bounds_files_disabled'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_and_map_load_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_and_bounds_file_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

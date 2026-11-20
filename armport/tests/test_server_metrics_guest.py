@@ -382,6 +382,47 @@ class GuestMetrics(unittest.TestCase):
                              r'|[{}]')
         self.assertEqual([line for line in added if not allowed.fullmatch(line)], [])
 
+    def test_bounds_file_claim_is_exact_and_rides_on_the_object_library_claim(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.bounds_files_changed(build))
+        entry = {'disabled_by_default': True, 'gameplay_decisions_changed': False,
+                 'environment_variable': 'ARMPORT_TRUSTED_BINS'}
+        build['build_input']['contract'] = {'trusted_bounds_files': dict(entry)}
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(build)          # a contract entry without the patch receipt
+        build['build_input'].update(
+            bounds_files_patch={'path': 'patches/mapserver-trusted-bins/0004-trusted-bounds-files.patch',
+                                'sha256': contract.BOUNDS_PATCH},
+            object_library_patch={'path': 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch',
+                                  'sha256': contract.OBJECT_LIBRARY_PATCH})
+        build['build_input']['contract']['trusted_object_library'] = {
+            'disabled_by_default': True, 'gameplay_decisions_changed': False}
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(build)          # the file itself is not among the patched ones
+        build['build_input']['patched_sha256'][contract.GROUPFILELIB] = '0' * 64
+        self.assertTrue(contract.bounds_files_changed(build))
+        changed = copy.deepcopy(build)
+        changed['build_input']['bounds_files_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(changed)
+        changed = copy.deepcopy(build)
+        del changed['build_input']['contract']['trusted_bounds_files']
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(changed)        # the patch receipt without its contract entry
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.bounds_patch_bytes()), contract.BOUNDS_PATCH)
+        entry = producer.CONTRACT['trusted_bounds_files']
+        self.assertEqual(entry['environment_variable'], producer.CONTRACT['trusted_bins']['environment_variable'])
+        self.assertIs(entry['disabled_by_default'], True)
+        # The patch removes nothing: the read and the write stay behind the new early return.
+        text = producer.bounds_patch_bytes().decode()
+        removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(removed, [])
+        added = [line[1:] for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertEqual(sum('if (armportTrustedBounds(file))' in line for line in added), 1)
+        self.assertEqual(sum('if (!armportTrustedObjectLibrary())' in line for line in added), 1)
+
     def test_object_library_claim_is_exact_and_limited_to_the_reviewed_switch(self):
         build = {'build_input': {'patched_sha256': {}}}
         self.assertFalse(contract.object_library_changed(build))
