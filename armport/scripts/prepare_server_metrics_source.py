@@ -39,7 +39,12 @@ SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
 PHYSX_PATCH = 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch'
 NWWRAPPER = 'Common/NovodeX/NwWrapper.cpp'
 PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
-FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER)
+# The trusted-bin switch for what a start reads ahead (0.13.77): no Defs or Menu tree
+# read-ahead, and prepared message bins without the listing of their source folders.
+START_TREES_PATCH = 'patches/mapserver-trusted-bins/0003-trusted-start-trees.patch'
+INITCOMMON = 'Common/gameComm/initCommon.c'
+MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
+FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER, INITCOMMON, MESSAGESTORE)
 ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
@@ -73,6 +78,26 @@ CONTRACT = {
         'still_required': ['bin_signature', 'parse_table_crc', 'file_list_read'],
         'scan_and_rebuild_retained': ['missing_bin', 'signature_or_crc_mismatch', 'file_list_read_failure',
                                       'binary_read_failure', 'force_rebuild'],
+        'gameplay_decisions_changed': False,
+    },
+    'trusted_start_trees': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_START_TREES_V1',
+        'function': 'cacheRelevantFolders', 'server_only': True,
+        'not_read_ahead_when_enabled': ['Defs', 'Menu'],
+        'still_read_ahead': ['player_library/animations/male', 'player_library/animations/huge',
+                             'player_library/animations/fem', 'player_library/animations/Vahzilok'],
+        'retained': ['tree_request_by_any_folder_scan', 'single_file_lookup_on_disk'],
+        'gameplay_decisions_changed': False,
+    },
+    'trusted_message_bins': {
+        'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_MESSAGE_BIN_V1',
+        'function': 'LoadMessageStore',
+        'skipped_when_enabled': ['source_folder_listing', 'source_date_check'],
+        'still_required': ['bin_version', 'string_tables', 'message_count'],
+        'listing_and_text_load_retained': ['missing_bin', 'bin_refused_by_msReadBin', 'reload',
+                                           'forced_bins', 'no_bin_requested'],
         'gameplay_decisions_changed': False,
     },
     'physx_cache': {
@@ -158,6 +183,13 @@ def object_library_patch_bytes():
     data = (ROOT / OBJECT_LIBRARY_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [GROUPFILELIB], 'Trusted object library patch file set differs')
+    return data
+
+
+def start_trees_patch_bytes():
+    data = (ROOT / START_TREES_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [INITCOMMON, MESSAGESTORE], 'Trusted start trees patch file set differs')
     return data
 
 
@@ -324,6 +356,11 @@ def native_images(variant, baseline_receipt, root):
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((root / 'upstream/ouroboros' / NWWRAPPER).read_bytes())
         apply_patch(stage, physx_patch_bytes())
+        for name in (INITCOMMON, MESSAGESTORE):
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, start_trees_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
         require(images[SVR] == patch_spare(patch_loop(original_loop)),
                 'Loop rebase differs from exported native patches')
@@ -344,7 +381,9 @@ def native_images(variant, baseline_receipt, root):
                   FILE: (root / 'upstream/ouroboros' / FILE).read_bytes(),
                   TEXTPARSER: (root / 'upstream/ouroboros' / TEXTPARSER).read_bytes(),
                   GROUPFILELIB: (root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes(),
-                  NWWRAPPER: (root / 'upstream/ouroboros' / NWWRAPPER).read_bytes()}
+                  NWWRAPPER: (root / 'upstream/ouroboros' / NWWRAPPER).read_bytes(),
+                  INITCOMMON: (root / 'upstream/ouroboros' / INITCOMMON).read_bytes(),
+                  MESSAGESTORE: (root / 'upstream/ouroboros' / MESSAGESTORE).read_bytes()}
     images[SVR] = patch_spare(patch_loop(inputs[SVR]))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
@@ -355,6 +394,9 @@ def native_images(variant, baseline_receipt, root):
             'Baseline object library preimage differs')
     require(NWWRAPPER not in closure or closure[NWWRAPPER] == digest(inputs[NWWRAPPER]),
             'Baseline PhysX wrapper preimage differs')
+    for name in (INITCOMMON, MESSAGESTORE):
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline start tree preimage differs: ' + name)
     return inputs, images
 
 
@@ -372,6 +414,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'spare_server_patch': {'path': SPARE_PATCH, 'sha256': digest(spare_patch_bytes())},
             'object_library_patch': {'path': OBJECT_LIBRARY_PATCH, 'sha256': digest(object_library_patch_bytes())},
             'physx_cache_patch': {'path': PHYSX_PATCH, 'sha256': digest(physx_patch_bytes())},
+            'start_trees_patch': {'path': START_TREES_PATCH, 'sha256': digest(start_trees_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -398,7 +441,8 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'variant': receipt['variant'], 'build_input_sha256': digest(canonical(receipt)),
                 'source_sha256': receipt['patched_sha256'],
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
-                                    for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB, NWWRAPPER)},
+                                    for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB, NWWRAPPER,
+                                                 INITCOMMON, MESSAGESTORE)},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
@@ -406,9 +450,11 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                                    'progress_markers', 'trusted_bins', 'trusted_bins_disabled',
                                    'spare_server', 'spare_server_disabled', 'spare_server_invalid',
                                    'object_library', 'object_library_disabled', 'object_library_rebuild',
-                                   'physx_cache', 'physx_cache_disabled', 'physx_cache_damaged'],
+                                   'physx_cache', 'physx_cache_disabled', 'physx_cache_damaged',
+                                   'start_trees', 'start_trees_disabled',
+                                   'message_bins', 'message_bins_disabled', 'message_bins_fallback'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_and_physx_cache_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_and_start_tree_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

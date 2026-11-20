@@ -3,7 +3,7 @@
   "role": "armport_server_metrics_source_checks",
   "status": "passed",
   "variant": "retained_progress",
-  "build_input_sha256": "71bc6df3a470b796bc1cafef8a5d66da4156e2c8db8b09af945ad3896ca0336a",
+  "build_input_sha256": "8f0a2c51ed02226c221f0c92800b6e4658594784daecb570be99bf72529b1025",
   "source_sha256": {
     "MapServer/src/svr/svr_init.c": "5b8cddb66687c6304bf2cd2bd6a708d3cc4f08da377d140e2e1d89830349d217",
     "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71",
@@ -13,20 +13,24 @@
     "MapServer/src/svr/armport_spare_server.h": "bc9bb1f713d2d9a7f13fbe12f0a39c693fdfa48ca708e77764db85a317331244",
     "Common/group/groupfilelib.c": "f7a51b0841caecf431af9cb99fef6cf652dedddc1db7e17d48b3823570390ee2",
     "Common/NovodeX/NwWrapper.cpp": "798413fa838ba52c283e0783272825ac128f1910a54e3dc5a823a4088d3e16e0",
-    "Common/NovodeX/armport_physx_cache.h": "f8019a4e6015e1b04ca769a0182021a5a62c4ea84d45d01d8023507bd14195ff"
+    "Common/NovodeX/armport_physx_cache.h": "f8019a4e6015e1b04ca769a0182021a5a62c4ea84d45d01d8023507bd14195ff",
+    "Common/gameComm/initCommon.c": "b3e5181777251d469b99754aaaf5bc8d55f97285c80dad8d39acd14e576bc193",
+    "libs/UtilitiesLib/src/language/MessageStore.c": "fe3d6d3a928bf21c2f0804e255df2fa511e40b41a14ea5017418a8182e4355e5"
   },
   "original_sha256": {
     "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
     "libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
     "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
     "Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
-    "Common/NovodeX/NwWrapper.cpp": "d666fcf6dba5a15f7b2cffd1d6b9227ad2b4dbbb7ab598d47bb0c61911661db6"
+    "Common/NovodeX/NwWrapper.cpp": "d666fcf6dba5a15f7b2cffd1d6b9227ad2b4dbbb7ab598d47bb0c61911661db6",
+    "Common/gameComm/initCommon.c": "96b7796fa49be78144b6ff5014422dc8067c9931dcf7717e39d8d1a7008f04a8",
+    "libs/UtilitiesLib/src/language/MessageStore.c": "a2341562629686d29b80b74660f1bcf8a99f73c3ca1c1f7b26aba31d55ff5ec2"
   },
   "fixture_sha256": {
-    "positive": "86196c954c7f60b2906558e37cca88a409cb3d8f9ff7cd7268097bdd637477ba",
-    "negative": "69d457f8239f432df4647392d0249e613fc443b2477ec87b564b0252e6bacea3"
+    "positive": "c8debaa03f5836a47043ad81ae805194e22e81ae43061bdabfab6fc39a231c56",
+    "negative": "c8d1cb9507d99615f31b9ea3c734a3cfb7ff0358ec3310c7d99121066b7a64f7"
   },
-  "test_script_sha256": "8aee6ff4ef8aa8fc775c215b53de6d1f6d9a4177200dc541096c183a82e7f05e",
+  "test_script_sha256": "51a21eaa93434d3764c9303ec869b0d290ba27dbfa5157f364948e93ef2a4cf6",
   "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "execution_environment": "posix_host_with_windows_clock_and_file_io_shims",
   "positive_cases": [
@@ -51,9 +55,14 @@
     "object_library_rebuild",
     "physx_cache",
     "physx_cache_disabled",
-    "physx_cache_damaged"
+    "physx_cache_damaged",
+    "start_trees",
+    "start_trees_disabled",
+    "message_bins",
+    "message_bins_disabled",
+    "message_bins_fallback"
   ],
   "unpatched_control_failed": true,
-  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_and_physx_cache_assertions",
+  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_and_start_tree_assertions",
   "shipping_binary_executed": false
 }

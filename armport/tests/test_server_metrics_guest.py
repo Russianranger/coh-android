@@ -289,6 +289,55 @@ class GuestMetrics(unittest.TestCase):
         self.assertIs(producer.CONTRACT['spare_server']['disabled_by_default'], True)
         self.assertIs(producer.CONTRACT['spare_server']['gameplay_decisions_changed'], False)
 
+    def test_start_tree_claim_is_exact_and_limited_to_the_reviewed_switch(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.start_trees_changed(build))
+        build['build_input']['patched_sha256'][contract.INITCOMMON] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.start_trees_changed(build)
+        entry = {'disabled_by_default': True, 'gameplay_decisions_changed': False,
+                 'environment_variable': 'ARMPORT_TRUSTED_BINS'}
+        build['build_input'].update(
+            start_trees_patch={'path': 'patches/mapserver-trusted-bins/0003-trusted-start-trees.patch',
+                               'sha256': contract.START_TREES_PATCH},
+            contract={'trusted_start_trees': dict(entry), 'trusted_message_bins': dict(entry)})
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.start_trees_changed(build)          # one of the two files alone is not the layer
+        build['build_input']['patched_sha256'][contract.MESSAGESTORE] = '0' * 64
+        self.assertTrue(contract.start_trees_changed(build))
+        for name in ('trusted_start_trees', 'trusted_message_bins'):
+            changed = copy.deepcopy(build)
+            changed['build_input']['contract'][name]['gameplay_decisions_changed'] = True
+            with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+                contract.start_trees_changed(changed)
+        build['build_input']['start_trees_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.start_trees_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.start_trees_patch_bytes()), contract.START_TREES_PATCH)
+        self.assertEqual((producer.INITCOMMON, producer.MESSAGESTORE), (contract.INITCOMMON, contract.MESSAGESTORE))
+        self.assertIn(producer.INITCOMMON, producer.FILES)
+        self.assertIn(producer.MESSAGESTORE, producer.FILES)
+        for name in ('trusted_start_trees', 'trusted_message_bins'):
+            entry = producer.CONTRACT[name]
+            self.assertIs(entry['disabled_by_default'], True)
+            self.assertIs(entry['gameplay_decisions_changed'], False)
+            self.assertEqual(entry['environment_variable'], producer.CONTRACT['trusted_bins']['environment_variable'])
+        # What the patch removes: the two tree requests move into the else branch, and the
+        # listing and date check gain the condition. Every text-file path still lists.
+        text = producer.start_trees_patch_bytes().decode()
+        added = [line[1:] for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        removed = [line[1:] for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(sorted(line.strip() for line in removed), sorted([
+            'FolderCacheRequestTree(folder_cache, "Defs"); // If we\'re in dynamic mode, this will load this tree for faster file access',
+            'FolderCacheRequestTree(folder_cache, "Menu");', 'if(handle_files)', 'if(handle_files)']))
+        self.assertEqual(sum('FolderCacheRequestTree(folder_cache, "Defs");' in line for line in added), 1)
+        self.assertEqual(sum('FolderCacheRequestTree(folder_cache, "Menu");' in line for line in added), 1)
+        self.assertEqual(sum(line.strip() == 'if(handle_files && !trusted)' for line in added), 2)
+        self.assertEqual(sum('msGetDirFilesList(&dirfiles,dirs);' in line for line in added), 1)
+        self.assertEqual(sum('#if SERVER' in line for line in added), 2)
+
     def test_object_library_claim_is_exact_and_limited_to_the_reviewed_switch(self):
         build = {'build_input': {'patched_sha256': {}}}
         self.assertFalse(contract.object_library_changed(build))

@@ -414,6 +414,58 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## For 0.13.77: start folders under the trusted-bin switch (Claude, 2026-11-19; not in 0.13.76)
+
+Written while the 0.13.76 chain ran; on `x86/perf-round3` only until that
+chain ends. No build has compiled it yet (MSVC first sees it in the 0.13.77
+build).
+
+- **Where the time is.** Thor 0.13.75 launch B, Port Oakes start (54.4 s to
+  the main loop, console `character-zoning-map-72-console.txt`): `Caching
+  relevant folders` 7.83 s (`Defs` 2.9 s, `Menu` 3.6 s, four animation
+  folders 1.3 s) and the first message store 2.53 s, 2.45 s of it the first
+  listing of `texts`. Mercy Island in the same launch: 13.2 s of folder
+  read-ahead. After the read-ahead the console requests no tree but `texts`
+  (every request prints its name): with trusted bins nothing lists `Defs` or
+  `Menu`.
+- **`patches/mapserver-trusted-bins/0003-trusted-start-trees.patch`**, under
+  `ARMPORT_TRUSTED_BINS=1` (the Fast server option; no new option):
+  - `cacheRelevantFolders` (server only) does not request `Defs` and `Menu`
+    and prints `ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu`.
+    The four animation folders are still read ahead. A loader that lists
+    either folder still requests its tree in `fileScanAllDataDirs`, and a
+    single file not in the tree is looked up on disk (`FolderCacheQuery`,
+    dynamic mode), as `object_library` files have been since 0.13.75.
+  - `LoadMessageStore` reads a prepared bin that `msReadBin` accepts (version,
+    two string tables, message count) without `msGetDirFilesList` and the
+    date comparison, and prints `ARMPORT_MESSAGE_BIN_V1 status=trusted
+    bin=...`. A missing or refused bin, a reload, forced bins and a load with
+    no bin list the folders and load the text files as before (the list is
+    then read in the fallback).
+- **Wiring.** Producer receipt `start_trees_patch`, contract entries
+  `trusted_start_trees` and `trusted_message_bins`, guest admission
+  `start_trees_changed` (both files, the pinned patch hash, both entries off
+  by default on the trusted-bin variable). Host fixture: the shipping
+  `cacheRelevantFolders` and `LoadMessageStore` bodies over recorded shims,
+  five cases (`start_trees`, `start_trees_disabled`, `message_bins`,
+  `message_bins_disabled`, `message_bins_fallback`), unpatched control fails
+  `requests == 4 && listings == 0 && date_checks == 0`; evidence regenerated
+  (`armport/evidence/mapserver-startup-retained-host-checks.json`). Phase
+  summary fields `start_trees_not_read_ahead`, `message_bins_trusted`.
+  `armport/tests` 624 pass.
+- **Not measured.** How many single-file lookups under `Defs` miss on disk
+  during play (a miss is not remembered, so each repeats). Compare the zone
+  server's stop counts and `ARMPORT_SERVER_METRICS_V1` tick times with
+  0.13.76's in CI before a release. `FolderCache.c` is a pinned retained
+  source of the startup certificate, so no counter was added there.
+- **Seen on the way, not changed.** `defs`, `maps` and `object_library` are
+  private folders that are not linked in `runtime/serverdata` because tree
+  scans would list them twice. `object_library` (since 0.13.75) and `Defs`
+  (with this patch) are no longer scanned on the trusted path, so each of
+  their files is first looked up and missed in `serverdata/`. Linking them
+  there would save one failed lookup per file if no fallback scan lists them
+  twice; that needs its own CI comparison.
+
 ## 0.13.76 and the Thor test of 0.13.75 (Claude, 2026-11-19)
 
 Owner, 2026-11-19 19:40 CST, with exports 20261120-004147 (setup), -004204

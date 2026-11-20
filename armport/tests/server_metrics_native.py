@@ -33,6 +33,11 @@ NWWRAPPER = 'Common/NovodeX/NwWrapper.cpp'
 PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
 PHYSX_NEGATIVE_ASSERTION = 'cooks == 0 && creates == 4'
 PHYSX_CASES = ['physx_cache', 'physx_cache_disabled', 'physx_cache_damaged']
+INITCOMMON = 'Common/gameComm/initCommon.c'
+MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
+START_TREES_NEGATIVE_ASSERTION = 'requests == 4 && listings == 0 && date_checks == 0'
+START_TREES_CASES = ['start_trees', 'start_trees_disabled',
+                     'message_bins', 'message_bins_disabled', 'message_bins_fallback']
 
 
 def test_cases(source):
@@ -43,7 +48,9 @@ def test_cases(source):
             + (SPARE_CASES if (source / SPARE_HEADER).is_file() else [])
             + (OBJECT_LIBRARY_CASES if 'static int armportTrustedObjectLibrary('
                in (source / GROUPFILELIB).read_text() else [])
-            + (PHYSX_CASES if (source / PHYSX_HEADER).is_file() else []))
+            + (PHYSX_CASES if (source / PHYSX_HEADER).is_file() else [])
+            + (START_TREES_CASES if 'static int armportTrustedStartTrees('
+               in (source / INITCOMMON).read_text() else []))
 
 
 def spare_fixture(source):
@@ -350,6 +357,153 @@ int main(int argc, char **argv) {
         RESTART(); cooks = creates = 0; fail_writes = 1;
         CHECK(world() && cooks == 3 && open_now == 0);
         CHECK(size_of(path) == first && size_of(other) == -1);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def start_trees_fixture(source):
+    '''Run the shipping cacheRelevantFolders and LoadMessageStore bodies over recorded shims.'''
+    common = (source / INITCOMMON).read_text()
+    store = (source / MESSAGESTORE).read_text()
+    helpers = ''.join(function(text, name) for text, name in (
+        (common, 'static int armportTrustedStartTrees('), (store, 'static int armportTrustedMessageBins('))
+        if name in text)
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SERVER 1
+#define MAX_PATH 260
+#define OUTPUT_DEBUG 0
+typedef int __time32_t;
+typedef struct SharedHeapHandle { int unused; } SharedHeapHandle;
+typedef enum { SHAR_Error, SHAR_DataAcquired, SHAR_FirstCaller } SharedHeapAcquireResult;
+typedef enum { MSLOAD_DEFAULT = 0, MSLOAD_RELOADING = 1, MSLOAD_NOFILES = 2, MSLOAD_SERVERONLY = 4,
+               MSLOAD_FORCEBINS = 8 } MessageStoreLoadFlags;
+typedef struct MessageStore { SharedHeapHandle *pHandle; int localeID; int from_bin; int texts; } MessageStore;
+typedef struct MSFileInfo { __time32_t time_write; char filename[16]; } MSFileInfo;
+static struct { int unused; } *folder_cache;
+static int quickload;
+static char requested[8][64];
+static int requests, listings, date_checks, bin_reads, bin_writes, text_loads, loaded_without_list, created, destroyed;
+static int bin_exists = 1, read_works = 1, development = 1;
+static MSFileInfo listed[2] = {{1, "texts/a.ms"}, {1, "texts/b.ms"}};
+static MSFileInfo *listed_rows[2] = {&listed[0], &listed[1]};
+static void writeConsole(int level, const char *format, ...) { (void)level; (void)format; }
+static void FolderCacheRequestTree(void *cache, const char *path) {
+    (void)cache; if (requests < 8) snprintf(requested[requests], sizeof requested[0], "%s", path); ++requests; }
+static MessageStore *createMessageStore(MessageStoreLoadFlags flags) { (void)flags; ++created; return calloc(1, sizeof(MessageStore)); }
+static void destroyMessageStore(MessageStore *store) { ++destroyed; free(store); }
+static int isDevelopmentMode(void) { return development; }
+static int isProductionMode(void) { return !development; }
+static const char *locGetAlpha2(int locid) { (void)locid; return "en"; }
+static char *fileLocateRead(const char *path, char *buffer) {
+    if (!bin_exists) return NULL;
+    snprintf(buffer, MAX_PATH, "%s", path); return buffer; }
+static char *fileLocateWrite(const char *path, char *buffer) { snprintf(buffer, MAX_PATH, "%s", path); return buffer; }
+static void FatalErrorFilenamef(const char *file, const char *format, ...) { (void)file; (void)format; abort(); }
+static void ErrorFilenamef(const char *file, const char *format, ...) { (void)file; (void)format; abort(); }
+static void Sleep(int ms) { (void)ms; abort(); }
+#define STR_COMBINE_SSD(buffer, a, b, d) snprintf(buffer, sizeof(buffer), "%s%s%d", a, b, d)
+static SharedHeapAcquireResult sharedHeapAcquire(SharedHeapHandle **handle, const char *name) {
+    (void)handle; (void)name; abort(); }
+static void setStorePointersToSharedHeap(MessageStore *store) { (void)store; }
+static bool msMoveStoreIntoSharedHeap(MessageStore *store) { (void)store; return true; }
+static void msSetPrepend(MessageStore *store, const char *prepend) { (void)store; (void)prepend; }
+static void msGetDirFilesList(MSFileInfo ***dirfiles, char **dirs) { (void)dirs; ++listings; *dirfiles = listed_rows; }
+static int eaSize(MSFileInfo ***rows) { return *rows ? 2 : 0; }
+static void eaDestroyEx(MSFileInfo ***rows, void *destructor) { (void)destructor; *rows = NULL; }
+static __time32_t fileLastChanged(const char *path) { (void)path; ++date_checks; return 2; }
+static int msReadBin(const char *name, MessageStore *store) { (void)name; ++bin_reads; store->from_bin = read_works; return read_works; }
+static int msWriteBin(const char *name, MessageStore *store) { (void)name; (void)store; ++bin_writes; return 1; }
+static void initMessageStore(MessageStore *store, int locid, const char *prepend) { (void)store; (void)locid; (void)prepend; }
+static void msAddMessages(MessageStore *store, MessageStoreLoadFlags flags, const char *messages, const char *types) {
+    (void)flags; (void)types; ++text_loads; ++store->texts;
+    if (strcmp(messages, "texts/a.ms") && strcmp(messages, "texts/b.ms") && strcmp(messages, "texts/x.ms")) ++loaded_without_list; }
+static void mkdirtree(char *path) { (void)path; }
+''' + helpers + function(common, 'void cacheRelevantFolders() {') + function(store, 'void LoadMessageStore( MessageStore **pStore,') + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static char *files[] = {"texts/x.ms", NULL, NULL};
+static char *dirs[] = {"texts/English", NULL};
+static MessageStore *load(char *persist, MessageStoreLoadFlags flags) {
+    MessageStore *store = NULL;
+    LoadMessageStore(&store, files, dirs, 0, NULL, persist, NULL, flags);
+    return store;
+}
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    MessageStore *store;
+    if (!strcmp(mode, "start_trees") || !strcmp(mode, "start_trees_disabled")) {
+        int trusted = !strcmp(mode, "start_trees");
+        if (trusted) CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0); else unsetenv("ARMPORT_TRUSTED_BINS");
+        cacheRelevantFolders();
+        if (trusted) {
+            store = load("messages", MSLOAD_SERVERONLY);
+            CHECK(requests == 4 && listings == 0 && date_checks == 0);
+            CHECK(store && store->from_bin == 1);
+            free(store);
+            CHECK(!strcmp(requested[0], "player_library/animations/male") && !strcmp(requested[3], "player_library/animations/Vahzilok"));
+        } else {
+            CHECK(requests == 6 && !strcmp(requested[0], "Defs") && !strcmp(requested[1], "Menu"));
+            CHECK(!strcmp(requested[2], "player_library/animations/male") && !strcmp(requested[5], "player_library/animations/Vahzilok"));
+        }
+        requests = 0; quickload = 1;                      /* the game's own quickload switch is as before */
+        cacheRelevantFolders();
+        CHECK(requests == (trusted ? 0 : 2));
+        return 0;
+    }
+    if (!strcmp(mode, "message_bins")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 1 && store->texts == 0);
+        CHECK(listings == 0 && date_checks == 0 && bin_reads == 1 && text_loads == 0 && bin_writes == 0);
+        free(store);
+        store = load("menuMessages", MSLOAD_DEFAULT);       /* a client-and-server bin: the same */
+        CHECK(store && store->from_bin == 1 && listings == 0 && date_checks == 0 && bin_reads == 2);
+        free(store);
+        store = load("messages", MSLOAD_SERVERONLY | MSLOAD_RELOADING);   /* a reload reads the text files */
+        CHECK(store && store->texts == 3 && listings == 1 && bin_reads == 2 && bin_writes == 1);
+        free(store);
+        store = load("messages", MSLOAD_SERVERONLY | MSLOAD_FORCEBINS);   /* forced bins: listed, rebuilt */
+        CHECK(store && store->texts == 3 && listings == 2 && bin_reads == 2 && bin_writes == 2);
+        free(store);
+        store = load(NULL, MSLOAD_DEFAULT);                 /* no bin asked for: the text files */
+        CHECK(store && store->texts == 3 && listings == 3 && bin_reads == 2 && bin_writes == 2);
+        free(store);
+        development = 0;                                    /* production mode is as before */
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 1 && listings == 3 && date_checks == 0 && bin_reads == 3);
+        free(store);
+        CHECK(loaded_without_list == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "message_bins_disabled")) {
+        unsetenv("ARMPORT_TRUSTED_BINS");
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 1 && store->texts == 0);
+        CHECK(listings == 1 && date_checks == 2 && bin_reads == 1 && text_loads == 0);
+        free(store);
+        return 0;
+    }
+    if (!strcmp(mode, "message_bins_fallback")) {
+        CHECK(setenv("ARMPORT_TRUSTED_BINS", "1", 1) == 0);
+        read_works = 0;                                     /* a bin msReadBin refuses: list, load text, write */
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->from_bin == 0 && store->texts == 3);
+        CHECK(listings == 1 && date_checks == 0 && bin_reads == 1 && text_loads == 3 && bin_writes == 1);
+        CHECK(created == 2 && destroyed == 1);
+        free(store);
+        bin_exists = 0;                                     /* no bin: the same without a read */
+        store = load("messages", MSLOAD_SERVERONLY);
+        CHECK(store && store->texts == 3 && listings == 2 && bin_reads == 1 && text_loads == 6 && bin_writes == 2);
+        free(store);
+        CHECK(loaded_without_list == 0);
         return 0;
     }
     return 2;
@@ -807,8 +961,15 @@ def run(source, original=None, expect_control_failure=False):
                         '-Wno-unused-function', '-fsanitize=address,undefined',
                         str(work / 'physx.cpp'), '-o', str(physx)], check=True)
         control += physx_fixture(trusted_root)
+        trees = work / 'trees'
+        (work / 'trees.c').write_text(start_trees_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-fsanitize=address,undefined',
+                        str(work / 'trees.c'), '-o', str(trees)], check=True)
+        control += start_trees_fixture(trusted_root)
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
-        for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache']
+        for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache',
+                      'start_trees']
                      if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
             if mode == 'spare_server_invalid':
@@ -832,7 +993,8 @@ def run(source, original=None, expect_control_failure=False):
                 print(mode + ': %d malformed assignments and local mode refused' % len(invalid))
                 continue
             program = (trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES
-                       else library if mode in OBJECT_LIBRARY_CASES else physx if mode in PHYSX_CASES else exe)
+                       else library if mode in OBJECT_LIBRARY_CASES else physx if mode in PHYSX_CASES
+                       else trees if mode in START_TREES_CASES else exe)
             arguments = [str(work / (mode + '-cooked.bin'))] if mode in PHYSX_CASES else []
             for stale in arguments:
                 Path(stale).unlink(missing_ok=True)       # the unpatched control runs the same mode again
@@ -842,7 +1004,8 @@ def run(source, original=None, expect_control_failure=False):
                 assertion = {'window': NEGATIVE_ASSERTION, 'trusted_bins': TRUSTED_NEGATIVE_ASSERTION,
                              'spare_server': SPARE_NEGATIVE_ASSERTION,
                              'object_library': OBJECT_LIBRARY_NEGATIVE_ASSERTION,
-                             'physx_cache': PHYSX_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
+                             'physx_cache': PHYSX_NEGATIVE_ASSERTION,
+                             'start_trees': START_TREES_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -909,6 +1072,17 @@ def run(source, original=None, expect_control_failure=False):
                      'written': '0'}], counts
             if mode == 'physx_cache_disabled':
                 assert 'ARMPORT_PHYSX_COOKED_V1' not in result.stdout
+            if mode == 'start_trees':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu',
+                    'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=server/bin/messages-en.bin',
+                    'ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu'], result.stdout
+            if mode == 'message_bins':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=server/bin/messages-en.bin',
+                    'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=bin/menuMessages-en.bin'], result.stdout
+            if mode in ('start_trees_disabled', 'message_bins_disabled', 'message_bins_fallback'):
+                assert 'ARMPORT_START_TREES_V1' not in result.stdout and 'ARMPORT_MESSAGE_BIN_V1' not in result.stdout
             if mode == 'startup_clock':
                 rows = result.stdout.splitlines()
                 assert len(rows) == 3 and all('status=clock_error' in row for row in rows), rows
@@ -953,13 +1127,14 @@ def main():
                     'source_sha256': receipt['patched_sha256'],
                     'original_sha256': {name: staging.digest((args.negative_control / name).read_bytes())
                                         for name in (staging.SVR, staging.FILE, staging.TEXTPARSER,
-                                                     staging.GROUPFILELIB, staging.NWWRAPPER)},
+                                                     staging.GROUPFILELIB, staging.NWWRAPPER,
+                                                     staging.INITCOMMON, staging.MESSAGESTORE)},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_and_physx_cache_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_and_start_tree_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

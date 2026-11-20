@@ -35,6 +35,11 @@ GROUPFILELIB = 'Common/group/groupfilelib.c'
 # meshes are read back at a later start instead of cooked again.
 PHYSX_PATCH = '5f75cfbca88cccd12d6e7fa8417369364b89da768e5722e82c378006b1429092'
 PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
+# 0.13.77: the trusted-bin switch for what a start reads ahead (no Defs or Menu tree
+# read-ahead; prepared message bins without the listing of their source folders).
+START_TREES_PATCH = '8938c02ae55b4f7cbf17c94615fa84df71281a7560d6ed46289cb56c8db07bcb'
+INITCOMMON = 'Common/gameComm/initCommon.c'
+MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
 # the guest sets the variable: shared loading first, then a wait for the map id and cookie.
 SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
@@ -233,6 +238,7 @@ def _authenticate(path, package):
     spare_server_changed(build)
     object_library_changed(build)
     physx_cache_changed(build)
+    start_trees_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -279,6 +285,24 @@ def physx_cache_changed(build):
             and source.get('contract', {}).get('physx_cache', {}).get('disabled_by_default') is True
             and source['contract']['physx_cache'].get('gameplay_decisions_changed') is False),
             'Metrics build changed PhysX mesh loading outside the reviewed cooked mesh cache layer')
+    return changed
+
+
+def start_trees_changed(build):
+    """True only for the reviewed default-off start tree and message bin switch."""
+    source = build.get('build_input', {})
+    patched = source.get('patched_sha256', {})
+    changed = INITCOMMON in patched or MESSAGESTORE in patched
+    contract = source.get('contract', {})
+    require(not changed or (INITCOMMON in patched and MESSAGESTORE in patched
+            and source.get('start_trees_patch') == {
+                'path': 'patches/mapserver-trusted-bins/0003-trusted-start-trees.patch',
+                'sha256': START_TREES_PATCH}
+            and all(contract.get(name, {}).get('disabled_by_default') is True
+                    and contract[name].get('gameplay_decisions_changed') is False
+                    and contract[name].get('environment_variable') == 'ARMPORT_TRUSTED_BINS'
+                    for name in ('trusted_start_trees', 'trusted_message_bins'))),
+            'Metrics build changed start folder loading outside the reviewed trusted-bin switch')
     return changed
 
 

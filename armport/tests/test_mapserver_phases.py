@@ -59,6 +59,16 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertIs(marked['object_library_trusted'], True)
         self.assertEqual(marked['trusted_bins_reported'], 2)
         self.assertEqual(marked['slowest_self_timed'], result['slowest_self_timed'])
+        self.assertIs(result['start_trees_not_read_ahead'], False)
+        self.assertEqual(result['message_bins_trusted'], 0)
+        marked = mapserver_phases.summary(
+            CONSOLE.replace('Caching directory tree', 'ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu\n'
+                            'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=server/bin/messages-en.bin\n'
+                            'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=bin/menuMessages-en.bin\n'
+                            'Caching directory tree', 1))
+        self.assertIs(marked['start_trees_not_read_ahead'], True)
+        self.assertEqual(marked['message_bins_trusted'], 2)
+        self.assertEqual(marked['slowest_self_timed'], result['slowest_self_timed'])
         self.assertIsNone(result['physx_cooked'])
         cooked = mapserver_phases.summary(CONSOLE.replace(
             '[2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects',

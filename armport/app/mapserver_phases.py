@@ -25,6 +25,9 @@ READY = 'Verifying SG permission tables'
 TRUSTED = 'ARMPORT_TRUSTED_BINS_V1 status=trusted'
 # 0.13.75: bin/defnames.bin read without the object_library tree scan.
 OBJECT_LIBRARY = 'ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted'
+# 0.13.77: Defs and Menu not read ahead; message bins read without their folder listing.
+START_TREES = 'ARMPORT_START_TREES_V1 status=not_read_ahead'
+MESSAGE_BIN = 'ARMPORT_MESSAGE_BIN_V1 status=trusted'
 # 0.13.75: the cooked mesh file's own counts for the world load (patches/mapserver-physx-cache).
 PHYSX = 'ARMPORT_PHYSX_COOKED_V1 status=ok '
 PHYSX_FIELDS = ('loaded', 'hits', 'misses', 'refused', 'added', 'bad_records', 'old_bytes', 'added_bytes',
@@ -49,6 +52,7 @@ def summary(text, top=8):
     first = last = None
     animations = None
     checkpoints, ready, trusted, object_library, physx = {}, False, 0, False, None
+    start_trees, message_bins = False, 0
     for index, line in enumerate(text.splitlines()):
         if index >= LINE_LIMIT:
             break
@@ -57,6 +61,12 @@ def summary(text, top=8):
             continue
         if line.startswith(OBJECT_LIBRARY):
             object_library = True
+            continue
+        if line.startswith(START_TREES):
+            start_trees = True
+            continue
+        if line.startswith(MESSAGE_BIN):
+            message_bins += 1
             continue
         if line.startswith(PHYSX) and physx is None:
             fields = dict(field.split('=', 1) for field in line[len(PHYSX):].split() if '=' in field)
@@ -108,6 +118,8 @@ def summary(text, top=8):
             'native_checkpoint_seconds': checkpoints or None,
             'trusted_bins_reported': trusted,
             'object_library_trusted': object_library,
+            'start_trees_not_read_ahead': start_trees,
+            'message_bins_trusted': message_bins,
             'physx_cooked': physx}
 
 
