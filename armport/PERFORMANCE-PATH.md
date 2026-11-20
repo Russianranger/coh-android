@@ -757,6 +757,43 @@ collision triangles 1.5 s. On the phone the same start is unmeasured; at
 Thor test of 0.13.75: (4) the spare zone server for trips, then the
 `commands.cfg` gap.
 
+## After Thor 0.13.75 (2026-11-19)
+
+Four launches (HANDOFF "0.13.76 and the Thor test of 0.13.75"). All ran with
+the socket option off (a leftover of the 0.13.73 test), so frame rates and
+stop counts are not this version's best.
+
+| Goal | 0.13.73 | 0.13.75 | Met |
+|---|---|---|---|
+| Start to playing under 5 min | client connected 206-210 s after launch | 117-126 s (B, C) | yes |
+| Zoning under 30 s | running zone 16 s; cold zone 170 s | running zone 10 s; cold zone 71 s | running zones only |
+| 30+ FPS | 60 at the cap | 60 expected with the socket option; 23-60 without | yes, with the option |
+| Zone server cold start under 60 s | about 150 s | 55-64 s for a trip's zone, 64-76 s for the first | borderline |
+
+The phone's start is now 2.0 to 2.3 times CI's (54-62 s to the main loop
+against 26.3 s), not 1.6: what was removed (animations, PhysX cooking, the
+object library scan) was CPU work the phone does well, and what is left is
+mostly file look-ups, which cost more under PRoot on the phone.
+
+What is left of a 61.7 s start (B, Mercy Island): folder caching 13.2 s
+(`Menu` 5.8, `Defs` 4.4, animation folders 3.0; 7 s in other launches), the
+map load 12.8 s, beacons 5.3 s, story arcs 4.6 s, defs 3.8 s, spawn
+definitions 3.6 s, message stores 3.0 s, reward tables 2.7 s, encounter
+groups 2.5 s.
+
+Next, in order:
+
+1. The spare zone server (0.13.76 makes its match usable; first phone run in
+   its test). It moves the shared 37 s out of a trip; a trip then costs the
+   map's own 20-23 s plus the 10 s connection, about 35 s against 71 s.
+2. Skip the `Menu` and `Defs` pre-load under trusted bins
+   (`cacheRelevantFolders`): 7-13 s of every cold start, if nothing then
+   pays for it file by file (measure `definitions_done` in CI).
+3. The zone tree's preparation (10 s) beside the DbServer's start instead of
+   after it: the first zone would spawn about 27 s into a launch instead of
+   41 s.
+4. The map load itself (12.8 s) and beacons (5.3 s): not yet broken down.
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack

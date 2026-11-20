@@ -40,6 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
+    private TextView recommendedStatus;
     private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
@@ -133,111 +134,115 @@ public final class ClientActivity extends Activity {
         // Owner, 2026-11-09: every zone's navigation map, imported with the same button (optional).
         navigationMapStatus=text("Checking navigation maps…",12,false);controls.addView(navigationMapStatus);
         controls.addView(text("Fresh install: import every ZIP part from the compatible versioned Assets release, then Set up / update runtime. Each completed part is retained; the app shows any missing parts. Keep these ZIPs for reinstalling. Future APK updates reuse compatible imported assets.",12,false));
+        // 0.13.76: Thor 0.13.75 ran four launches with one option left unticked by an earlier test.
+        recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);
+        controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
         performanceGraphics.setTextColor(Color.rgb(221,234,245));performanceGraphics.setTextSize(13);
         performanceGraphics.setChecked(ClientRuntime.performanceGraphicsEnabled(this));
-        performanceGraphics.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPerformanceGraphicsEnabled(this,checked));
+        performanceGraphics.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setPerformanceGraphicsEnabled(this,checked);recommendedChanged();});
         controls.addView(performanceGraphics);
         prootFastMode=new CheckBox(this);prootFastMode.setText("Fast mode (PRoot seccomp, experimental)");
         prootFastMode.setTextColor(Color.rgb(221,234,245));prootFastMode.setTextSize(13);
         prootFastMode.setChecked(ClientRuntime.prootFastModeEnabled(this));
-        prootFastMode.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotFastModeEnabled(this,checked));
+        prootFastMode.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setProotFastModeEnabled(this,checked);recommendedChanged();});
         controls.addView(prootFastMode);
         prestartNextZone=new CheckBox(this);prestartNextZone.setText("Start King's Row in the background (zoning)");
         prestartNextZone.setTextColor(Color.rgb(221,234,245));prestartNextZone.setTextSize(13);
         prestartNextZone.setChecked(ClientRuntime.prestartNextZoneEnabled(this));
-        prestartNextZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPrestartNextZoneEnabled(this,checked));
+        prestartNextZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setPrestartNextZoneEnabled(this,checked);recommendedChanged();});
         controls.addView(prestartNextZone);
         idleResidentMaps=new CheckBox(this);idleResidentMaps.setText("Lower the waiting zone server's priority (zoning, experimental)");
         idleResidentMaps.setTextColor(Color.rgb(221,234,245));idleResidentMaps.setTextSize(13);
         idleResidentMaps.setChecked(ClientRuntime.idleResidentMapsEnabled(this));
-        idleResidentMaps.setOnCheckedChangeListener((button,checked)->ClientRuntime.setIdleResidentMapsEnabled(this,checked));
+        idleResidentMaps.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setIdleResidentMapsEnabled(this,checked);recommendedChanged();});
         controls.addView(idleResidentMaps);
         sharedServerData=new CheckBox(this);sharedServerData.setText("Share server data between zones (faster zone preparation)");
         sharedServerData.setTextColor(Color.rgb(221,234,245));sharedServerData.setTextSize(13);
         sharedServerData.setChecked(ClientRuntime.sharedServerDataEnabled(this));
-        sharedServerData.setOnCheckedChangeListener((button,checked)->ClientRuntime.setSharedServerDataEnabled(this,checked));
+        sharedServerData.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setSharedServerDataEnabled(this,checked);recommendedChanged();});
         controls.addView(sharedServerData);
         clientSkipServerFolders=new CheckBox(this);clientSkipServerFolders.setText("Skip server-only folders in the client's file scan (faster client start)");
         clientSkipServerFolders.setTextColor(Color.rgb(221,234,245));clientSkipServerFolders.setTextSize(13);
         clientSkipServerFolders.setChecked(ClientRuntime.clientSkipServerFoldersEnabled(this));
-        clientSkipServerFolders.setOnCheckedChangeListener((button,checked)->ClientRuntime.setClientSkipServerFoldersEnabled(this,checked));
+        clientSkipServerFolders.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setClientSkipServerFoldersEnabled(this,checked);recommendedChanged();});
         controls.addView(clientSkipServerFolders);
         clientFolderIndex=new CheckBox(this);clientFolderIndex.setText("Reuse the client's saved file list while the data is unchanged (faster client start)");
         clientFolderIndex.setTextColor(Color.rgb(221,234,245));clientFolderIndex.setTextSize(13);
         clientFolderIndex.setChecked(ClientRuntime.clientFolderIndexEnabled(this));
-        clientFolderIndex.setOnCheckedChangeListener((button,checked)->ClientRuntime.setClientFolderIndexEnabled(this,checked));
+        clientFolderIndex.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setClientFolderIndexEnabled(this,checked);recommendedChanged();});
         controls.addView(clientFolderIndex);
         clientAudio=new CheckBox(this);clientAudio.setText("Game audio (sound and music through Android)");
         clientAudio.setTextColor(Color.rgb(221,234,245));clientAudio.setTextSize(13);
         clientAudio.setChecked(ClientRuntime.clientAudioEnabled(this));
-        clientAudio.setOnCheckedChangeListener((button,checked)->ClientRuntime.setClientAudioEnabled(this,checked));
+        clientAudio.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setClientAudioEnabled(this,checked);recommendedChanged();});
         controls.addView(clientAudio);
         stockTravel=new CheckBox(this);stockTravel.setText("Game's own zone travel (doors, tunnels, monorail; any zone)");
         stockTravel.setTextColor(Color.rgb(221,234,245));stockTravel.setTextSize(13);
         stockTravel.setChecked(ClientRuntime.stockTravelEnabled(this));
-        stockTravel.setOnCheckedChangeListener((button,checked)->ClientRuntime.setStockTravelEnabled(this,checked));
+        stockTravel.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setStockTravelEnabled(this,checked);recommendedChanged();});
         controls.addView(stockTravel);
         earlyZone=new CheckBox(this);earlyZone.setText("Start my saved zone while the game starts (Reopen)");
         earlyZone.setTextColor(Color.rgb(221,234,245));earlyZone.setTextSize(13);
         earlyZone.setChecked(ClientRuntime.earlyZoneEnabled(this));
-        earlyZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setEarlyZoneEnabled(this,checked));
+        earlyZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setEarlyZoneEnabled(this,checked);recommendedChanged();});
         controls.addView(earlyZone);
         spareZone=new CheckBox(this);spareZone.setText("Keep a spare zone server loaded for travel (needs Fast server)");
         spareZone.setTextColor(Color.rgb(221,234,245));spareZone.setTextSize(13);
         spareZone.setChecked(ClientRuntime.spareZoneEnabled(this));
-        spareZone.setOnCheckedChangeListener((button,checked)->ClientRuntime.setSpareZoneEnabled(this,checked));
+        spareZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setSpareZoneEnabled(this,checked);recommendedChanged();});
         controls.addView(spareZone);
         sharedHeap=new CheckBox(this);sharedHeap.setText("Shared server memory (experiment: zone servers share game data)");
         sharedHeap.setTextColor(Color.rgb(221,234,245));sharedHeap.setTextSize(13);
         sharedHeap.setChecked(ClientRuntime.sharedHeapEnabled(this));
-        sharedHeap.setOnCheckedChangeListener((button,checked)->ClientRuntime.setSharedHeapEnabled(this,checked));
+        sharedHeap.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setSharedHeapEnabled(this,checked);recommendedChanged();});
         controls.addView(sharedHeap);
         trustedBins=new CheckBox(this);trustedBins.setText("Fast server (untick for the 0.13.36 server)");
         trustedBins.setTextColor(Color.rgb(221,234,245));trustedBins.setTextSize(13);
         trustedBins.setChecked(ClientRuntime.trustedBinsEnabled(this));
-        trustedBins.setOnCheckedChangeListener((button,checked)->ClientRuntime.setTrustedBinsEnabled(this,checked));
+        trustedBins.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setTrustedBinsEnabled(this,checked);recommendedChanged();});
         controls.addView(trustedBins);
         gameplay60=new CheckBox(this);gameplay60.setText("Raise the frame cap to 60 FPS in the world");
         gameplay60.setTextColor(Color.rgb(221,234,245));gameplay60.setTextSize(13);
         gameplay60.setChecked(ClientRuntime.gameplay60FpsEnabled(this));
-        gameplay60.setOnCheckedChangeListener((button,checked)->ClientRuntime.setGameplay60FpsEnabled(this,checked));
+        gameplay60.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setGameplay60FpsEnabled(this,checked);recommendedChanged();});
         controls.addView(gameplay60);
         glDirect=new CheckBox(this);glDirect.setText("Draw on the game's own thread (frame rate experiment)");
         glDirect.setTextColor(Color.rgb(221,234,245));glDirect.setTextSize(13);
         glDirect.setChecked(ClientRuntime.glDirectEnabled(this));
-        glDirect.setOnCheckedChangeListener((button,checked)->ClientRuntime.setGlDirectEnabled(this,checked));
+        glDirect.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setGlDirectEnabled(this,checked);recommendedChanged();});
         controls.addView(glDirect);
         prootIoctlFilter=new CheckBox(this);prootIoctlFilter.setText("Lighter system-call monitor (untick for the 0.13.36 one)");
         prootIoctlFilter.setTextColor(Color.rgb(221,234,245));prootIoctlFilter.setTextSize(13);
         prootIoctlFilter.setChecked(ClientRuntime.prootIoctlFilterEnabled(this));
-        prootIoctlFilter.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotIoctlFilterEnabled(this,checked));
+        prootIoctlFilter.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setProotIoctlFilterEnabled(this,checked);recommendedChanged();});
         controls.addView(prootIoctlFilter);
         prootSocketFilter=new CheckBox(this);prootSocketFilter.setText("Do not monitor ordinary socket traffic (needs Lighter system-call monitor)");
         prootSocketFilter.setTextColor(Color.rgb(221,234,245));prootSocketFilter.setTextSize(13);
         prootSocketFilter.setChecked(ClientRuntime.prootSocketFilterEnabled(this));
-        prootSocketFilter.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotSocketFilterEnabled(this,checked));
+        prootSocketFilter.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setProotSocketFilterEnabled(this,checked);recommendedChanged();});
         controls.addView(prootSocketFilter);
         prootCasefold=new CheckBox(this);prootCasefold.setText("Find files in any letter case in one step (needs Lighter system-call monitor)");
         prootCasefold.setTextColor(Color.rgb(221,234,245));prootCasefold.setTextSize(13);
         prootCasefold.setChecked(ClientRuntime.prootCasefoldEnabled(this));
-        prootCasefold.setOnCheckedChangeListener((button,checked)->ClientRuntime.setProotCasefoldEnabled(this,checked));
+        prootCasefold.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setProotCasefoldEnabled(this,checked);recommendedChanged();});
         controls.addView(prootCasefold);
         serverQuickStart=new CheckBox(this);serverQuickStart.setText("Load zone server animations when first used (faster zone start)");
         serverQuickStart.setTextColor(Color.rgb(221,234,245));serverQuickStart.setTextSize(13);
         serverQuickStart.setChecked(ClientRuntime.serverQuickStartEnabled(this));
-        serverQuickStart.setOnCheckedChangeListener((button,checked)->ClientRuntime.setServerQuickStartEnabled(this,checked));
+        serverQuickStart.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setServerQuickStartEnabled(this,checked);recommendedChanged();});
         controls.addView(serverQuickStart);
         wineserverPathCache=new CheckBox(this);wineserverPathCache.setText("Remember folder locations in the Wine server (faster file opening)");
         wineserverPathCache.setTextColor(Color.rgb(221,234,245));wineserverPathCache.setTextSize(13);
         wineserverPathCache.setChecked(ClientRuntime.wineserverPathCacheEnabled(this));
-        wineserverPathCache.setOnCheckedChangeListener((button,checked)->ClientRuntime.setWineserverPathCacheEnabled(this,checked));
+        wineserverPathCache.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setWineserverPathCacheEnabled(this,checked);recommendedChanged();});
         controls.addView(wineserverPathCache);
         physxCache=new CheckBox(this);physxCache.setText("Reuse prepared collision meshes (faster zone start, needs Fast server)");
         physxCache.setTextColor(Color.rgb(221,234,245));physxCache.setTextSize(13);
         physxCache.setChecked(ClientRuntime.physxCacheEnabled(this));
-        physxCache.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPhysxCacheEnabled(this,checked));
+        physxCache.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setPhysxCacheEnabled(this,checked);recommendedChanged();});
         controls.addView(physxCache);
+        recommendedChanged();
         controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
@@ -318,6 +323,24 @@ public final class ClientActivity extends Activity {
         if(!controller.loadError().isEmpty())Toast.makeText(this,controller.loadError()+" · using the default bindings",Toast.LENGTH_LONG).show();
 
         startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();immersive();setMenuOpen(true);setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
+    }
+    /** The options as a new install has them: ticked, then unticked (ClientRuntime's defaults). */
+    private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache};}
+    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,spareZone,sharedHeap,glDirect};}
+    private static String optionName(CheckBox box){String name=String.valueOf(box.getText());int cut=name.indexOf(" (");return cut>0?name.substring(0,cut):name;}
+    private void recommendedChanged(){
+        if(recommendedStatus==null)return;
+        StringBuilder names=new StringBuilder();int count=0;
+        for(CheckBox box:recommendedTicked())if(box!=null&&!box.isChecked()){names.append(count++==0?"":"; ").append("unticked: ").append(optionName(box));}
+        for(CheckBox box:recommendedUnticked())if(box!=null&&box.isChecked()){names.append(count++==0?"":"; ").append("ticked: ").append(optionName(box));}
+        if(count==0){recommendedStatus.setText("Options: all at the recommended settings.");recommendedStatus.setTextColor(Color.rgb(150,214,160));}
+        else{recommendedStatus.setText("Options: "+count+" differ from the recommended settings ("+names+").");recommendedStatus.setTextColor(Color.rgb(255,196,92));}
+    }
+    private void restoreRecommendedOptions(){
+        if(ClientRuntime.operationInProgress()){Toast.makeText(this,"Finish the current operation before changing options.",Toast.LENGTH_SHORT).show();return;}
+        for(CheckBox box:recommendedTicked())if(box!=null&&!box.isChecked())box.setChecked(true);
+        for(CheckBox box:recommendedUnticked())if(box!=null&&box.isChecked())box.setChecked(false);
+        recommendedChanged();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}

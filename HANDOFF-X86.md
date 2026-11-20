@@ -414,6 +414,98 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.76 and the Thor test of 0.13.75 (Claude, 2026-11-19)
+
+Owner, 2026-11-19 19:40 CST, with exports 20261120-004147 (setup), -004204
+(A), -005042 (B), -012349 (C), -013715 (D): "I did all the tests, the results
+are positive, no apparent issues with animations".
+
+- **One option was off in every launch.** `proot_socket_filter_requested`
+  false, `armport_proot_ioctl.socket_stops` true in A to D. The last 0.13.73
+  launch (20261118-171828, its launch C) unticked "Do not monitor ordinary
+  socket traffic" and the preference stayed. Launch C (1,815 s): 26,858,195
+  stops, 18,467,622 of them `sendto` (call 206), 17,767,593 by `Xtigervnc`.
+  Client `ARMPORT_FRAME_RATE_V1`: 35-61 in A, 40-60 in B, 23-34 for most of
+  C, 27-43 in D (0.13.73 with the option: 60 at the cap).
+- **Zone server start** (`process_spawn_to_map_ready_seconds`; main loop in
+  brackets; 0.13.73: about 150): A Mercy Island 97.4 (70.9), Port Oakes 64.0
+  (59.3); B 75.8 (61.7) and 55.1 (54.4); C, letter-case option off, 64.3
+  (51.5) and 63.9 (58.5); D, animations at start, 88.9 (86.4) and 84.1
+  (82.0), `sequencer_info_done` 38.2 and 29.7 s against 2.1-2.2 s. The first
+  zone's spawn-to-ready is about 14 s above its main loop time (Wine's first
+  program of the session); a trip's is under 1 s above.
+- **Cooked meshes.** A: Mercy Island `misses` 1868, `cook_ms` 9321, 7,163,008
+  bytes added; Port Oakes `hits` 1348, `misses` 1138, `cook_ms` 5186,
+  3,772,378 bytes added. B to D: `hits` 1868 and 2486, `misses` 0, `refused`
+  0, `bad_records` 0, `create_ms` 46-75, file 10,935,410 bytes.
+  `object_library_trusted` true in all eight starts.
+- **What is left of a start on the phone** (B, Mercy Island, 61.7 s):
+  `definitions_done` 31.5 s, of which folder caching 13.2 s (`Menu` 5.8 s,
+  `Defs` 4.4 s, the animation folders 3.0 s; 7.3 s in C and 6.8 s in D, so it
+  varies), message stores 3.0 s; `encounter_scripts_done` 3.6 s;
+  `group_load_done` 23.1 s, of which the map load 12.8 s and beacons 5.3 s.
+  `cacheRelevantFolders` (Common/gameComm/initCommon.c:44) only pre-loads
+  trees for the dynamic folder cache, and nothing else requests `Menu` or
+  `Defs` in the console: a candidate to skip under trusted bins.
+- **Letter case (launch C against B).** No gain on a warm start: C was not
+  slower (51.5 s against 61.7 s to the main loop for Mercy Island, 58.5
+  against 54.4 for Port Oakes; within the run-to-run spread).
+  `casefold_replaced` 50,946, `casefold_absent` 29,071 in B.
+- **Start and travel.** The client connected to its zone 159.6 s (A), 125.8 s
+  (B), 116.6 s (C) and 135.6 s (D) after the guest started
+  (`armport_client_timeline`; 0.13.73: 206.1-259.2 s); it began connecting as the zone became ready
+  (B: ready at 117.0 s, connecting at 116.6 s), so the zone server is still
+  what the start waits for. B's zone was spawned 41.2 s in: DbServer 10.4 to
+  26.6 s, then the zone tree's preparation. A trip to Port Oakes: the
+  DbServer's request 3 s after the transfer began, zone ready 55-66 s later,
+  client connected about 71 s after the transfer began (B: 00:46:23 to
+  00:47:33.8; 0.13.73, 20261118-165518: 170 s); the trip back to the resident zone: 10 s. The supervisor's own
+  arrival time (`request_to_arrival_ms` 141-163 s; `character_connected`
+  203.5 s in B) comes from the entity log and is 65-76 s late
+  (`observer_seconds_after_client` 64.7-72.7; MapServer `SECS_LOG_RESEND` 30
+  s plus the log server's own batching), as noted for 0.13.56. It delays
+  only what the supervisor does after an arrival (a spare's start).
+- **Memory** (B, MiB available of 15,255): 10,552 at the first sample, about
+  7,700 with Mercy Island and the client, about 5,800 with both zones.
+
+0.13.76:
+
+- **App: the options that differ from a new install's are named.** A status
+  line above the first option ("Options: all at the recommended settings." or
+  the count and the names, "unticked: …" / "ticked: …") and a button
+  "Restore recommended options" (through each box's own listener; refused
+  during an operation). `ClientRuntime.optionsOffRecommended` gives the
+  preference keys; the report carries them as `options_off_recommended`
+  (read at launch). `tools/android/test_recommended_options.py` holds the
+  three statements of the set together: each getter's stored default, the
+  report's table, the screen's two lists (16 ticked, 5 unticked).
+- **Spare zone server: `-transient` no longer decides the match.**
+  `_spare_serves` compared the spare's start options with the request's as
+  they are. The DbServer adds `-transient` to some requests (Thor 0.13.75:
+  map 72, `transient: 1`) and the zone at Enter Game starts without a request,
+  so the two differ by that token alone in ordinary play; CI run 43394425425
+  dropped a warm spare for a request of its own tree and did not record which
+  condition failed. The server reads the flag in one place
+  (MapServer/src/svr/svr_player.c:473), only together with an idle exit
+  timeout above zero or `-preloadtransient`; every zone server here starts
+  with `-idleExitTimeout 0`. `_spare_option_key` leaves `-transient` out of
+  the comparison and gives no key for a request with `-preloadtransient`
+  (never served by a spare). CI's notice now carries a spare row's
+  `refused_request` and memory fields. Still off by default; no hand-over
+  has run anywhere before this chain.
+- **Not done.** Skipping the `Menu`/`Defs` pre-load under trusted bins (a
+  server patch); starting the zone tree's preparation beside the DbServer;
+  the entity log delay.
+- **Tests.** armport/tests 623 pass; tools/android 200 (4 new); dbserver as
+  before; interactive suite 3318 run / 86 failures / 14 errors / 36 skips: the 86 and 13 of
+  before, and `test_client_gpu_profile…escaped_output_worker…` once on a
+  `/proc/<pid>/environ` race with another exiting process (it passes alone,
+  three of three, and on the unchanged tree). Java: compiled
+  against no Android classes here, the only new errors are the missing
+  Android symbols of the new lines (`CheckBox`, `TextView`, `Color`,
+  `Toast`, `Context`); CI's app-sources job compiles it for real.
+- **Chain.** CHAIN76_PLACEHOLDER
+
 ## 0.13.75 (Claude, 2026-11-18)
 
 No new owner test: 0.13.74 was published the same evening and is with the

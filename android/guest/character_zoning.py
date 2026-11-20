@@ -2731,7 +2731,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                         self._spare_row(self.spare, refused_request={
                             'map_id': map_id, 'tree': plan['tree'],
                             'tree_matches': self.spare['tree'] == plan['tree'],
-                            'options_match': self.spare['options'] == tuple(options),
+                            'options_match': self._spare_option_key(options) is not None and
+                                self._spare_option_key(self.spare['options']) == self._spare_option_key(options),
                             'requested_options': [str(item)[:32] for item in options[:16]],
                             'spare_options': [str(item)[:32] for item in self.spare['options'][:16]],
                             'spare_alive': self.spare['process'].process.poll() is None})
@@ -2769,9 +2770,27 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return 'atlas', active['runtime']
         return None, 'no_prepared_tree'
 
+    @staticmethod
+    def _spare_option_key(options):
+        """The start options that must be equal for a spare to take a request.
+
+        -transient is left out: the server reads it in one place (svr_player.c:473), together with
+        an idle exit timeout above zero or -preloadtransient, and every zone server here starts
+        with -idleExitTimeout 0. The DbServer adds it for some requests and not for others (Thor
+        0.13.75: the trip to map 72 carried it; the zone at Enter Game is started without a
+        request), so a spare started from one kind could never serve the other. A request with
+        -preloadtransient is never given to a spare.
+        """
+        options = tuple(options)
+        if '-preloadtransient' in options:
+            return None
+        return tuple(token for token in options if token != '-transient')
+
     def _spare_serves(self, tree, options):
         spare = getattr(self, 'spare', None)
-        return (spare is not None and spare['tree'] == tree and spare['options'] == tuple(options)
+        key = self._spare_option_key(options)
+        return (spare is not None and spare['tree'] == tree and key is not None
+                and self._spare_option_key(spare['options']) == key
                 and spare['process'].process.poll() is None)
 
     def _request_options(self):

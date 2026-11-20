@@ -1,6 +1,6 @@
 # x86 track integration
 
-Updated 2026-11-18 America/Chicago. Claude leads development (PR #11, issue #10).
+Updated 2026-11-19 America/Chicago. Claude leads development (PR #11, issue #10).
 The ARM64 client is primary (user decision 2026-11-03); x86 is the shelved fallback. Scope: single-player only (2026-11-10).
 Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default branch main, settings unchanged.
 
@@ -36,5 +36,5 @@ Keep x86 Win32 servers, PhysX, ragdolls. Pre-releases user-approved; default bra
   Thor 20261113 A/B/C: in world 339/361/235 s (client log), zone start 233/276/157 s, FPS 30-42/31-54/50-61, ioctl 46.8 to 0.8 us; save after travel not confirmed (app defect). HANDOFF "0.13.70".
 - 0.13.70-73 published (APKs 43372592357, 43393932170, 43833348924, 44151200472 at bc90fb8b1): save-after-travel fix; fast server + second PRoot build default; PRoot patches 0005-0007;
   performance graphics reach the ARM64 client (0129). Thor 20261118 A/B/C: in world ~215 s, 60 FPS at the cap (28-31 with socket stops), zone server start 150 s. HANDOFF "0.13.74".
-- 0.13.74 published (APK 44405347043; build 44375365630, runtime 44398992652 at 2b0ade277): zone servers attach animations on first use (stock `quickLoadAnims` through `-svrconfig`); wineserver realpath cache (LD_PRELOAD). CI 44398992652: reopen zone start 56.5 s (95.5), `sequencer_info` 0.99 s (39.68); 44392083121: 4.86 M stops per reopen (8.52 M). HANDOFF "0.13.74".
-- 0.13.75 published (APK 44445389436; build 44424804176, runtime 44441077783 at b270ff434): trusted `defnames.bin` (`patches/mapserver-trusted-bins/0002`); cooked collision mesh file (`patches/mapserver-physx-cache`); PRoot patch 0008 letter-case fallback. CI 44441077783: reopen zone start 27.3 s (56.5), meshes `hits` 2265 `misses` 0 from a 12.8 MB file; 44436543449: first zone start 213.7 s (299.9), 4.41 M stops per reopen (4.86 M). HANDOFF "0.13.75".
+- 0.13.74-75 published (APKs 44405347043 at 2b0ade277, 44445389436 at b270ff434): animations on first use (`quickLoadAnims`), wineserver realpath cache; trusted `defnames.bin`, cooked collision mesh file, PRoot patch 0008. CI 44441077783: reopen zone start 27.3 s (95.5 in 0.13.73). Thor 20261120 A-D: zone start 55-76 s (150), meshes read back (`misses` 0), client connected 117-126 s after launch, cold trip 71 s; all four launches had the socket option off (23-60 FPS). HANDOFF "0.13.76".
+- 0.13.76 (91) in CI: the app names options that differ from the recommended set (`options_off_recommended`, restore button); a spare zone server serves a request that differs only by `-transient`. STATUS76_PLACEHOLDER

@@ -230,6 +230,7 @@ public final class ClientRuntime {
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
     private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false;
+    private String optionsOffRecommended="";
     private boolean prootCasefoldRequested=false,prootCasefoldUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
     private File prootStopCounts;
@@ -288,6 +289,28 @@ public final class ClientRuntime {
     public static synchronized boolean cleanupBlocked(Context context) {
         initializeGuard(context.getApplicationContext());
         return blocked;
+    }
+    /**
+     * 0.13.76: the launch options that are not as a new install has them, as preference keys
+     * ("" when all are). Thor 0.13.75 (20261120): four launches ran with "proot-socket-filter"
+     * left off by an earlier test, which halves the frame rate; the report did not say so in one place.
+     */
+    public static String optionsOffRecommended(Context context) {
+        StringBuilder off=new StringBuilder();
+        Object[][] options={
+            {"performance-graphics",performanceGraphicsEnabled(context),true},{"proot-fast-mode",prootFastModeEnabled(context),true},
+            {"shared-server-data",sharedServerDataEnabled(context),true},{"client-skip-server-folders",clientSkipServerFoldersEnabled(context),true},
+            {"client-folder-index",clientFolderIndexEnabled(context),true},{"client-audio",clientAudioEnabled(context),true},
+            {"stock-zone-travel",stockTravelEnabled(context),true},{"early-saved-zone",earlyZoneEnabled(context),true},
+            {"fast-server",trustedBinsEnabled(context),true},{"gameplay-60fps",gameplay60FpsEnabled(context),true},
+            {"proot-call-filter",prootIoctlFilterEnabled(context),true},{"proot-socket-filter",prootSocketFilterEnabled(context),true},
+            {"proot-casefold",prootCasefoldEnabled(context),true},{"server-quick-start",serverQuickStartEnabled(context),true},
+            {"wineserver-path-cache",wineserverPathCacheEnabled(context),true},{"physx-cooked-cache",physxCacheEnabled(context),true},
+            {"prestart-next-zone",prestartNextZoneEnabled(context),false},{"idle-resident-maps",idleResidentMapsEnabled(context),false},
+            {"spare-zone-server",spareZoneEnabled(context),false},{"shared-server-memory",sharedHeapEnabled(context),false},
+            {"client-gl-direct",glDirectEnabled(context),false}};
+        for(Object[] option:options)if(!option[1].equals(option[2]))off.append(off.length()==0?"":",").append(option[0]);
+        return off.toString();
     }
     public static boolean performanceGraphicsEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
@@ -1116,6 +1139,7 @@ public final class ClientRuntime {
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
         serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);
         prootCasefoldRequested=prootCasefoldEnabled(context);prootCasefoldUsed=false;
+        optionsOffRecommended=optionsOffRecommended(context);
         spareZoneRequested=spareZoneEnabled(context);
         trustedBinsRequested=trustedBinsEnabled(context);
         gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;
@@ -3095,7 +3119,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

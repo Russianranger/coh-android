@@ -792,7 +792,8 @@ def guest_timing_summary(evidence):
                 result['spare_zone'] = {'layer_available': spare.get('layer_available'),
                     'waiting_reason': spare.get('waiting_reason'),
                     'starts': [{key: row.get(key) for key in ('ordinal', 'tree', 'warm', 'warm_seconds', 'outcome',
-                                'reason', 'map_id', 'loaded_seconds_before_request') if row.get(key) is not None}
+                                'reason', 'map_id', 'loaded_seconds_before_request', 'refused_request',
+                                'available_memory_mib', 'available_memory_mib_when_warm') if row.get(key) is not None}
                                for row in (spare.get('starts') or [])[:4]]}
             result['shared_heap'] = next((section.get('shared_heap') for section in
                 (report.get('character_creation'), report.get('character_reopen'))

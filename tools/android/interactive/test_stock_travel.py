@@ -266,6 +266,24 @@ class StockTravelTests(unittest.TestCase):
                 self.assertEqual((row['outcome'], row['reason']), ('dropped', 'request_for_another_tree'))
                 self.assertFalse((value.owner.args.state / 'character-zoning-spare-1-assign.txt').exists())
 
+    def test_a_spare_serves_a_request_that_differs_only_by_transient(self):
+        # Thor 0.13.75: trips carry -transient, the zone at Enter Game has no request at all; CI
+        # run 43394425425 dropped a warm spare for a request of its own tree. The server reads
+        # -transient only with an idle exit timeout, which no zone server here has.
+        value, started = self.spare_instance()
+        self.tick(value)
+        for options, expected in ((self.OPTIONS, True), (('-transient',) + self.OPTIONS, True),
+                                  (self.OPTIONS + ('-transient',), True),
+                                  (('-preloadtransient',) + self.OPTIONS, False),
+                                  (('-aggrocap', '20'), False), ((), False)):
+            with self.subTest(options=options):
+                self.assertIs(value._spare_serves('zones', options), expected)
+        value.spare['options'] = ('-transient',) + self.OPTIONS
+        self.assertTrue(value._spare_serves('zones', self.OPTIONS))
+        self.assertFalse(value._spare_serves('atlas', self.OPTIONS))
+        value.spare['options'] = ('-preloadtransient',) + self.OPTIONS
+        self.assertFalse(value._spare_serves('zones', ('-preloadtransient',) + self.OPTIONS))
+
     def test_a_spare_that_exits_is_dropped_and_another_may_start(self):
         value, started = self.spare_instance()
         self.tick(value)
