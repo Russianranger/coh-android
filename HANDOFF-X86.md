@@ -416,8 +416,11 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
 
 ## For 0.13.78: library bounds files under the trusted-bin switch (Claude, 2026-11-20; not in 0.13.77)
 
-Written while the 0.13.77 chain ran; on `x86/perf-round3` only until that
-chain ends. No build has compiled it yet.
+Written while the 0.13.77 chain ran. Version 0.13.78 (93), release notes and
+`THOR-TEST-0.13.78.md` followed 0.13.77's publication; the app and guest are
+0.13.76's.
+
+- **Chain.** CHAIN78_PLACEHOLDER
 
 - **What the first map load profile showed** (0.13.77 trusted run
   44698417683, CI x86-64, Atlas Park reopen): `ARMPORT_MAP_LOAD_V1`
