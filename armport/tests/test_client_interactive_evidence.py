@@ -165,6 +165,20 @@ class InteractiveEvidence(unittest.TestCase):
             self.assertEqual(detail['client_console_tail'][-1], 'last line')
             self.assertEqual(detail['atlas_logout_lines'], ['Player logout timer 30'])
             self.assertEqual(len(detail['observer_last_steps']), 4)
+            self.assertNotIn('stock_travel_resends', detail)
+            # 0.13.79: a trip's travel command typed again (run 44732475821 lost one) is in the detail and the log line.
+            resends = [{'map_id': 1, 'keys': 'enter', 'seconds_after_submit': 300.4},
+                       {'map_id': 1, 'keys': 'command_and_enter', 'seconds_after_submit': 450.2}]
+            observer = {'interaction_script': {'steps': [], 'stock_travel_resends': resends, 'stock_travel_arrivals': [
+                {'epoch': 1, 'current_map_id': 101, 'host_seconds': 16.2}]}}
+            self.assertEqual(host.failure_detail(evidence, work, observer)['stock_travel_resends'],
+                             [str(item) for item in resends])
+            line = host.travel_input_line(observer, 'reopen')
+            self.assertTrue(line.startswith('TRAVEL_INPUT_V1 {'))
+            self.assertEqual(json.loads(line.split(' ', 1)[1]), {'format': 1, 'session': 'reopen', 'resends': resends,
+                                                                 'arrival_seconds': [16.2]})
+            self.assertEqual(json.loads(host.travel_input_line(None, 'reopen').split(' ', 1)[1]),
+                             {'format': 1, 'session': 'reopen', 'resends': None, 'arrival_seconds': None})
             # The qualified per-session summary keeps exactly its three keys.
             (evidence / 'latest-report.json').write_text(json.dumps({'failures': [], 'stages': []}))
             self.assertEqual(set(host.guest_failure_summary(evidence)), {'failures', 'failed_stages', 'client_faults'})

@@ -344,6 +344,28 @@ class CharacterReopenHostTests(unittest.TestCase):
                     tick()
                     if script.action == second: break
                 self.assertEqual(script.action, second)
+                # Run 44732475821: a return trip the server never heard of is asked for again, twice at most.
+                sent_at, enter = script.travel_sent_at, struct.pack('!BBHI', 4, 1, 0, 0xff0d)
+                def at(seconds):
+                    del connection.sent[:]
+                    sequence[0] += 1; clock[0] = sent_at + seconds
+                    script.on_frame(connection, frame, proof, sequence[0], [{},{},{}], clock[0])
+                    return b''.join(connection.sent)
+                first_delay, second_delay = reopen.STOCK_TRAVEL_RESEND_SECONDS
+                self.assertEqual(at(first_delay - 1), b'')
+                typed = at(first_delay)
+                self.assertEqual((typed.count(enter), struct.pack('!BBHI', 4, 1, 0, ord('/')) in typed), (1, False))
+                self.assertEqual(at(second_delay - 1), b'')
+                typed = at(second_delay + 0.5)
+                self.assertEqual(typed.count(enter), 1)
+                self.assertEqual([typed.find(struct.pack('!BBHI', 4, 1, 0, ord(letter))) >= 0 for letter in '/mapmove 1'],
+                                 [True] * 10)
+                self.assertLess(typed.find(struct.pack('!BBHI', 4, 1, 0, ord('/'))), typed.find(enter))
+                self.assertEqual(at(second_delay + 200), b'')
+                self.assertEqual(script.result['stock_travel_resends'], [
+                    {'map_id': 1, 'keys': 'enter', 'seconds_after_submit': float(first_delay)},
+                    {'map_id': 1, 'keys': 'command_and_enter', 'seconds_after_submit': second_delay + 0.5}])
+                self.assertEqual(script.action, second)
                 with self.assertRaisesRegex(ValueError, 'did not arrive within 900 seconds'):
                     tick(reopen.STOCK_TRAVEL_SECONDS)
             self.assertEqual(len(script.result['stock_travel_arrivals']), 1)

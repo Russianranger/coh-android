@@ -38,6 +38,13 @@ STOCK_TRAVEL_SECONDS = 900
 # 0.13.69, COH_SPARE_ZONE=1: the first trip waits (bounded) for the guest's spare zone server to
 # be warm, so the run measures a zone started from the spare. Without one it travels anyway.
 SPARE_WARM_SECONDS = 480
+# Spare run 44732475821 (0.13.78): the return "/mapmove 1" was typed 25 s after the arrival on
+# map 101 and never reached a server (its command log holds "mapmove 101" only); the client stayed
+# in that zone at about 1.5 FPS until the 900 s bound. A trip that has not arrived is therefore
+# asked for again, whatever the chat line holds by then: after the first delay Enter alone (a typed
+# line whose Enter was lost is sent; a closed line opens empty), after the second the command and
+# Enter ("/" opens a closed chat line with the slash already in it). Recorded, never hidden.
+STOCK_TRAVEL_RESEND_SECONDS = (300, 450)
 
 
 def stock_travel_actions():
@@ -159,7 +166,7 @@ class StockTravelReopenInteraction(ReopenInteraction):
 
     def __init__(self, session, evidence, finish_path):
         super().__init__(session, evidence, finish_path)
-        self.result.update(stock_travel_arrivals=[], travel_help_checks=[])
+        self.result.update(stock_travel_arrivals=[], travel_help_checks=[], stock_travel_resends=[])
         self.travel_sent_at = None
         self.spare_wait_started = None
         self.spare_wait = (None if os.environ.get('COH_SPARE_ZONE') != '1' else
@@ -181,6 +188,20 @@ class StockTravelReopenInteraction(ReopenInteraction):
         wait.update(waited_seconds=round(now - self.spare_wait_started, 3), status_at_travel=status)
         return False
 
+    def resend_travel(self, connection, now):
+        """Ask again for a trip that has not arrived (STOCK_TRAVEL_RESEND_SECONDS); at most twice a trip."""
+        map_id = self.ACTIONS[self.action][1]
+        resends = self.result['stock_travel_resends']
+        sent = sum(1 for item in resends if item['map_id'] == map_id)
+        if (sent >= len(STOCK_TRAVEL_RESEND_SECONDS)
+                or now - self.travel_sent_at < STOCK_TRAVEL_RESEND_SECONDS[sent]):
+            return
+        if sent:
+            self.fixture_text(connection, '/mapmove %d' % map_id)
+        character.key(connection, 0xff0d)
+        resends.append({'map_id': map_id, 'keys': 'command_and_enter' if sent else 'enter',
+                        'seconds_after_submit': round(now - self.travel_sent_at, 3)})
+
     def arrivals_needed(self):
         return sum(1 for action in self.ACTIONS[:self.action+1] if action[0] == 'arrived')
 
@@ -192,6 +213,7 @@ class StockTravelReopenInteraction(ReopenInteraction):
                     % (self.ACTIONS[self.action][1], STOCK_TRAVEL_SECONDS))
             require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
                     'Host character creation exceeded twenty-minute interaction bound')
+            self.resend_travel(connection, now)
             return
         if self.holding_for_spare(events, now):
             require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
@@ -415,6 +437,14 @@ def validate_observer(observer, report, interaction=None):
                 and all(type(item.get('host_seconds')) is float and 0 <= item['host_seconds'] < STOCK_TRAVEL_SECONDS
                         for item in arrivals),
                 'Zone travel round trip lacks its guest arrivals')
+        resends = script.get('stock_travel_resends', [])
+        require(isinstance(resends, list) and len(resends) <= len(STOCK_TRAVEL_MAPS) * len(STOCK_TRAVEL_RESEND_SECONDS)
+                and all(isinstance(item, dict) and item.get('map_id') in [m for m, _ in STOCK_TRAVEL_MAPS]
+                        and item.get('keys') in ('enter', 'command_and_enter')
+                        and type(item.get('seconds_after_submit')) is float
+                        and STOCK_TRAVEL_RESEND_SECONDS[0] <= item['seconds_after_submit'] < STOCK_TRAVEL_SECONDS
+                        for item in resends),
+                'Zone travel resend record is malformed')
         travel = script.get('travel_help_checks', [])
         require(len(travel) == len(STOCK_TRAVEL_MAPS) and all(type(check.get('found')) is bool for check in travel),
                 'Zone travel help checks are incomplete')

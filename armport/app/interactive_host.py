@@ -289,6 +289,9 @@ def failure_detail(evidence, work, observer):
             arrivals = script.get('stock_travel_arrivals')
             if isinstance(arrivals, list):
                 result['stock_travel_arrivals'] = [str(item)[:300] for item in arrivals[:4]]
+            resends = script.get('stock_travel_resends')
+            if isinstance(resends, list) and resends:
+                result['stock_travel_resends'] = [str(item)[:160] for item in resends[:4]]
         path = evidence / 'report.zip'
         if path.is_file():
             with zipfile.ZipFile(path) as archive:
@@ -554,6 +557,24 @@ def thread_waits_line(report, session):
                                               for row in (program.get('busiest') or [])[:4] if isinstance(row, dict)]}
                 for label, program in sorted(programs.items())[:4] if isinstance(program, dict)}
     return 'THREAD_WAITS_V1 ' + json.dumps(value, separators=(',', ':'))[:6000]
+
+
+def travel_input_line(observer, session):
+    """One log line: the CI trips' travel commands that had to be typed again (0.13.79).
+
+    Spare run 44732475821 lost a typed "/mapmove 1" (the server never logged it), so the host script
+    asks again after 300 s and 450 s (character_reopen_host_smoke.STOCK_TRAVEL_RESEND_SECONDS). A
+    passing run with a resend says the input was lost, not the trip. Evidence only.
+    """
+    script = observer.get('interaction_script') if isinstance(observer, dict) else None
+    script = script if isinstance(script, dict) else {}
+    resends, arrivals = script.get('stock_travel_resends'), script.get('stock_travel_arrivals')
+    value = {'format': 1, 'session': session,
+             'resends': [{key: item.get(key) for key in ('map_id', 'keys', 'seconds_after_submit')}
+                         for item in resends[:4] if isinstance(item, dict)] if isinstance(resends, list) else None,
+             'arrival_seconds': [item.get('host_seconds') for item in arrivals[:4] if isinstance(item, dict)]
+                                if isinstance(arrivals, list) else None}
+    return 'TRAVEL_INPUT_V1 ' + json.dumps(value, separators=(',', ':'))
 
 
 def start_options_line(report, session):
@@ -939,6 +960,8 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             if reopening:
                 reopen.validate_observer(observer, report, reopen.StockTravelReopenInteraction
                                          if stock_travel_requested() else reopen.ReopenInteraction)
+                if stock_travel_requested():
+                    print(travel_input_line(observer, 'reopen'), flush=True)
                 require_early_zone_decision(report)
             else:
                 armport_validate_observer(observer, report)
