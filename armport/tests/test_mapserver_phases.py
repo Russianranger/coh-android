@@ -69,6 +69,17 @@ class MapServerPhaseTests(unittest.TestCase):
         self.assertIs(marked['start_trees_not_read_ahead'], True)
         self.assertEqual(marked['message_bins_trusted'], 2)
         self.assertEqual(marked['slowest_self_timed'], result['slowest_self_timed'])
+        self.assertIsNone(result['map_load_profile'])
+        profiled = mapserver_phases.summary(CONSOLE.replace(
+            'Caching directory tree', 'ARMPORT_MAP_LOAD_V1 status=ok total_ms=11660 other_ms=7000 model_find_ms=3000 '
+            'model_finds=5200 ref_activate_ms=900 ref_activates=810 recalc_bounds_ms=300 bounds_files_ms=200 '
+            'bounds_files=125 scene_ms=60 spawn_areas_ms=200 unbalanced=0\n'
+            'ARMPORT_MAP_LOAD_V1 status=ok total_ms=1 other_ms=1\nCaching directory tree', 1))
+        self.assertEqual(profiled['map_load_profile'], {
+            'total_ms': 11660, 'other_ms': 7000, 'model_find_ms': 3000, 'model_finds': 5200, 'ref_activate_ms': 900,
+            'ref_activates': 810, 'recalc_bounds_ms': 300, 'bounds_files_ms': 200, 'bounds_files': 125,
+            'scene_ms': 60, 'spawn_areas_ms': 200, 'unbalanced': 0})
+        self.assertEqual(profiled['slowest_self_timed'], result['slowest_self_timed'])
         self.assertIsNone(result['physx_cooked'])
         cooked = mapserver_phases.summary(CONSOLE.replace(
             '[2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects',

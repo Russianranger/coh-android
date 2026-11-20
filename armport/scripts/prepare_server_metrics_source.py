@@ -44,8 +44,17 @@ PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
 START_TREES_PATCH = 'patches/mapserver-trusted-bins/0003-trusted-start-trees.patch'
 INITCOMMON = 'Common/gameComm/initCommon.c'
 MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
-FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER, INITCOMMON, MESSAGESTORE)
-ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER)
+# Where "loading map" spends its time (0.13.77), with the metrics variable: exclusive time per
+# step, one record after the load. Measurement only.
+LOAD_PROFILE_PATCH = 'patches/mapserver-load-profile/0001-map-load-profile.patch'
+LOAD_PROFILE_HEADER = 'Common/group/armport_map_load_profile.h'
+GROUP = 'Common/group/group.c'
+GROUPGRID = 'Common/group/groupgrid.c'
+GROUPNETDB = 'MapServer/src/group/groupnetdb.c'
+LOAD_PROFILE_SOURCES = (GROUP, GROUPGRID, GROUPNETDB)
+FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER, INITCOMMON, MESSAGESTORE,
+                        LOAD_PROFILE_HEADER) + LOAD_PROFILE_SOURCES
+ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER, LOAD_PROFILE_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
 CONTRACT = {
@@ -98,6 +107,15 @@ CONTRACT = {
         'still_required': ['bin_version', 'string_tables', 'message_count'],
         'listing_and_text_load_retained': ['missing_bin', 'bin_refused_by_msReadBin', 'reload',
                                            'forced_bins', 'no_bin_requested'],
+        'gameplay_decisions_changed': False,
+    },
+    'map_load_profile': {
+        'environment_variable': 'ARMPORT_SERVER_METRICS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_MAP_LOAD_V1',
+        'scope': 'groupLoadMap_loading_map_section_on_the_loading_thread',
+        'clock': 'timerCpuTicks64', 'time': 'exclusive_wall_time_per_step',
+        'steps': ['other', 'model_find', 'ref_activate', 'recalc_bounds', 'bounds_files', 'scene', 'spawn_areas'],
+        'records_per_map_load': 1, 'measurement_only': True,
         'gameplay_decisions_changed': False,
     },
     'physx_cache': {
@@ -190,6 +208,13 @@ def start_trees_patch_bytes():
     data = (ROOT / START_TREES_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [INITCOMMON, MESSAGESTORE], 'Trusted start trees patch file set differs')
+    return data
+
+
+def load_profile_patch_bytes():
+    data = (ROOT / LOAD_PROFILE_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [LOAD_PROFILE_HEADER, GROUP, GROUPGRID, GROUPNETDB], 'Map load profile patch file set differs')
     return data
 
 
@@ -361,6 +386,11 @@ def native_images(variant, baseline_receipt, root):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
         apply_patch(stage, start_trees_patch_bytes())
+        for name in LOAD_PROFILE_SOURCES:
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, load_profile_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
         require(images[SVR] == patch_spare(patch_loop(original_loop)),
                 'Loop rebase differs from exported native patches')
@@ -383,7 +413,8 @@ def native_images(variant, baseline_receipt, root):
                   GROUPFILELIB: (root / 'upstream/ouroboros' / GROUPFILELIB).read_bytes(),
                   NWWRAPPER: (root / 'upstream/ouroboros' / NWWRAPPER).read_bytes(),
                   INITCOMMON: (root / 'upstream/ouroboros' / INITCOMMON).read_bytes(),
-                  MESSAGESTORE: (root / 'upstream/ouroboros' / MESSAGESTORE).read_bytes()}
+                  MESSAGESTORE: (root / 'upstream/ouroboros' / MESSAGESTORE).read_bytes(),
+                  **{name: (root / 'upstream/ouroboros' / name).read_bytes() for name in LOAD_PROFILE_SOURCES}}
     images[SVR] = patch_spare(patch_loop(inputs[SVR]))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
@@ -397,6 +428,9 @@ def native_images(variant, baseline_receipt, root):
     for name in (INITCOMMON, MESSAGESTORE):
         require(name not in closure or closure[name] == digest(inputs[name]),
                 'Baseline start tree preimage differs: ' + name)
+    for name in LOAD_PROFILE_SOURCES:
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline map load preimage differs: ' + name)
     return inputs, images
 
 
@@ -415,6 +449,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'object_library_patch': {'path': OBJECT_LIBRARY_PATCH, 'sha256': digest(object_library_patch_bytes())},
             'physx_cache_patch': {'path': PHYSX_PATCH, 'sha256': digest(physx_patch_bytes())},
             'start_trees_patch': {'path': START_TREES_PATCH, 'sha256': digest(start_trees_patch_bytes())},
+            'load_profile_patch': {'path': LOAD_PROFILE_PATCH, 'sha256': digest(load_profile_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -442,7 +477,7 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'source_sha256': receipt['patched_sha256'],
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
                                     for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB, NWWRAPPER,
-                                                 INITCOMMON, MESSAGESTORE)},
+                                                 INITCOMMON, MESSAGESTORE) + LOAD_PROFILE_SOURCES},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
@@ -452,9 +487,10 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                                    'object_library', 'object_library_disabled', 'object_library_rebuild',
                                    'physx_cache', 'physx_cache_disabled', 'physx_cache_damaged',
                                    'start_trees', 'start_trees_disabled',
-                                   'message_bins', 'message_bins_disabled', 'message_bins_fallback'],
+                                   'message_bins', 'message_bins_disabled', 'message_bins_fallback',
+                                   'map_load_profile', 'map_load_profile_disabled'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_and_start_tree_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_and_map_load_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

@@ -38,6 +38,11 @@ MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
 START_TREES_NEGATIVE_ASSERTION = 'requests == 4 && listings == 0 && date_checks == 0'
 START_TREES_CASES = ['start_trees', 'start_trees_disabled',
                      'message_bins', 'message_bins_disabled', 'message_bins_fallback']
+LOAD_PROFILE_HEADER = 'Common/group/armport_map_load_profile.h'
+LOAD_PROFILE_SOURCES = ('Common/group/group.c', 'Common/group/groupgrid.c', 'MapServer/src/group/groupnetdb.c')
+LOAD_PROFILE_NEGATIVE_ASSERTION = ('armport_map_load.calls[ARMPORT_MAP_LOAD_BOUNDS_FILES] == 3 '
+                                   '&& armport_map_load.ticks[ARMPORT_MAP_LOAD_OTHER] == 360')
+LOAD_PROFILE_CASES = ['map_load_profile', 'map_load_profile_disabled']
 
 
 def test_cases(source):
@@ -50,7 +55,8 @@ def test_cases(source):
                in (source / GROUPFILELIB).read_text() else [])
             + (PHYSX_CASES if (source / PHYSX_HEADER).is_file() else [])
             + (START_TREES_CASES if 'static int armportTrustedStartTrees('
-               in (source / INITCOMMON).read_text() else []))
+               in (source / INITCOMMON).read_text() else [])
+            + (LOAD_PROFILE_CASES if (source / LOAD_PROFILE_HEADER).is_file() else []))
 
 
 def spare_fixture(source):
@@ -357,6 +363,123 @@ int main(int argc, char **argv) {
         RESTART(); cooks = creates = 0; fail_writes = 1;
         CHECK(world() && cooks == 3 && open_now == 0);
         CHECK(size_of(path) == first && size_of(other) == -1);
+        return 0;
+    }
+    return 2;
+}
+'''
+
+
+def load_profile_fixture(source):
+    '''Run the shipping map load profile header over a recorded clock; check its call sites.'''
+    header = source / LOAD_PROFILE_HEADER
+    if header.is_file():
+        model, grid, loader = ((source / name).read_text() for name in LOAD_PROFILE_SOURCES)
+        include = '#include "group/armport_map_load_profile.h"\n'
+        assert model.count(include) == grid.count(include) == loader.count(include) == 1
+        # One translation unit holds the state; the other two only call into it.
+        define = '#define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION\n'
+        assert loader.count(define + include) == 1 and define not in model and define not in grid
+        find = function(model, 'Model * groupModelFind(const char *name)')
+        assert find.count('armportMapLoadEnter(ARMPORT_MAP_LOAD_MODEL_FIND);') == 1
+        assert find.count('    return ') == find.count('armportMapLoadLeave();') == 2      # every way out leaves
+        assert all(part.rstrip().endswith('PERFINFO_AUTO_STOP_CHECKED("groupModelFind");')
+                   and 'armportMapLoadLeave();' in part[-120:] for part in find.split('    return ')[:2])
+        activate = function(grid, 'void groupRefActivate(DefTracker *ref)')
+        order = [activate.index(text) for text in (
+            '        return;\n', '    armportMapLoadEnter(ARMPORT_MAP_LOAD_REF_ACTIVATE);\n',
+            '    groupLoadIfPreload(ref->def);\n', '    collGridAddGroup(&obj_grid,ref,ref);\n',
+            '    armportMapLoadLeave();\n')]
+        assert order == sorted(order) and activate.count('return') == 1, order
+        load = function(loader, 'void groupLoadMap(char *mapname,int import,int do_beacon_reload)')
+        order = [load.index(text) for text in (
+            '    loadstart_printf("loading map: %s..",mapname);\n    armportMapLoadBegin();\n',
+            '    armportMapLoadEnter(ARMPORT_MAP_LOAD_RECALC_BOUNDS);\n    groupRecalcAllBounds();\n    armportMapLoadLeave();\n',
+            '            armportMapLoadEnter(ARMPORT_MAP_LOAD_BOUNDS_FILES);\n'
+            '            objectLibraryWriteBoundsFileIfDifferent(group_info.files[i]);\n            armportMapLoadLeave();\n',
+            '    armportMapLoadEnter(ARMPORT_MAP_LOAD_SCENE);\n',
+            '        sceneLoad(group_info.scenefile);\n    armportMapLoadLeave();\n',
+            '        armportMapLoadEnter(ARMPORT_MAP_LOAD_SPAWN_AREAS);\n        spawnAreaReload(pchMap);\n'
+            '        armportMapLoadLeave();\n',
+            '    loadend_printf("done"); // map load\n    armportMapLoadReport();\n')]
+        assert order == sorted(order), order
+        assert (loader.count('armportMapLoadBegin();') == loader.count('armportMapLoadReport();') == 1
+                and loader.count('armportMapLoadEnter(') == loader.count('armportMapLoadLeave();') == 4)
+        # No way out of the load between its first and last line.
+        section = load[load.index('    armportMapLoadBegin();\n'):load.index('    armportMapLoadReport();\n')]
+        assert 'return' not in section
+        body = header.read_text()
+        include = '#include <utilitieslib/utils/timing.h>\n'
+        assert body.count(include) == 1
+        support = '#define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION\n' + body.replace(include, '')
+    else:
+        support = '''
+enum { ARMPORT_MAP_LOAD_OTHER, ARMPORT_MAP_LOAD_MODEL_FIND, ARMPORT_MAP_LOAD_REF_ACTIVATE,
+       ARMPORT_MAP_LOAD_RECALC_BOUNDS, ARMPORT_MAP_LOAD_BOUNDS_FILES, ARMPORT_MAP_LOAD_SCENE,
+       ARMPORT_MAP_LOAD_SPAWN_AREAS, ARMPORT_MAP_LOAD_STEPS };
+static struct { int active; S64 ticks[ARMPORT_MAP_LOAD_STEPS]; unsigned int calls[ARMPORT_MAP_LOAD_STEPS]; } armport_map_load;
+static void armportMapLoadBegin(void) { (void)timerCpuTicks64(); (void)timerCpuSpeed64(); }
+static void armportMapLoadEnter(int step) { (void)step; }
+static void armportMapLoadLeave(void) {}
+static void armportMapLoadReport(void) {}
+'''
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SERVER 1
+typedef long long S64;
+static S64 clock_now, clock_speed = 1000;            /* one tick is one millisecond */
+static S64 timerCpuTicks64(void) { return clock_now; }
+static S64 timerCpuSpeed64(void) { return clock_speed; }
+''' + support + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static void step(int name, S64 until) { armportMapLoadEnter(name); clock_now = until; armportMapLoadLeave(); }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    int i;
+    if (!strcmp(mode, "map_load_profile")) {
+        CHECK(setenv("ARMPORT_SERVER_METRICS", "1", 1) == 0);
+        step(ARMPORT_MAP_LOAD_MODEL_FIND, 50);                       /* outside a load: not counted */
+        armportMapLoadBegin();                                       /* the load begins at 50 */
+        clock_now = 150;                                             /* other 100 */
+        armportMapLoadEnter(ARMPORT_MAP_LOAD_MODEL_FIND);
+        clock_now = 180;                                             /* model_find 30 */
+        step(ARMPORT_MAP_LOAD_REF_ACTIVATE, 185);                    /* a nested step: 5, not the model's */
+        clock_now = 200;                                             /* model_find 15 more */
+        armportMapLoadLeave();
+        clock_now = 450;                                             /* other 250 */
+        step(ARMPORT_MAP_LOAD_RECALC_BOUNDS, 470);
+        for (i = 0; i < 3; i++) step(ARMPORT_MAP_LOAD_BOUNDS_FILES, clock_now + 2);
+        step(ARMPORT_MAP_LOAD_SCENE, 481);
+        step(ARMPORT_MAP_LOAD_SPAWN_AREAS, 550);
+        clock_now = 560;                                             /* other 10 */
+        armportMapLoadLeave();                                       /* one leave too many changes nothing */
+        armportMapLoadReport();
+        CHECK(armport_map_load.calls[ARMPORT_MAP_LOAD_BOUNDS_FILES] == 3 && armport_map_load.ticks[ARMPORT_MAP_LOAD_OTHER] == 360);
+        CHECK(armport_map_load.active == 0);
+        step(ARMPORT_MAP_LOAD_MODEL_FIND, 600);                      /* after the load: not counted */
+        armportMapLoadReport();                                      /* and no second record */
+        CHECK(armport_map_load.calls[ARMPORT_MAP_LOAD_MODEL_FIND] == 1);
+        armportMapLoadBegin();                                       /* a second load starts from zero */
+        for (i = 0; i < 40; i++) { armportMapLoadEnter(ARMPORT_MAP_LOAD_REF_ACTIVATE); ++clock_now; }
+        for (i = 0; i < 40; i++) armportMapLoadLeave();              /* deeper than the stack: still balanced */
+        armportMapLoadReport();
+        armportMapLoadBegin();
+        clock_speed = 0;
+        armportMapLoadReport();
+        return 0;
+    }
+    if (!strcmp(mode, "map_load_profile_disabled")) {
+        unsetenv("ARMPORT_SERVER_METRICS");
+        armportMapLoadBegin();
+        step(ARMPORT_MAP_LOAD_MODEL_FIND, 50);
+        armportMapLoadReport();
+        CHECK(armport_map_load.active == 0 && armport_map_load.calls[ARMPORT_MAP_LOAD_MODEL_FIND] == 0);
+        CHECK(setenv("ARMPORT_SERVER_METRICS", "1", 1) == 0);        /* read once: still off */
+        armportMapLoadBegin();
+        armportMapLoadReport();
         return 0;
     }
     return 2;
@@ -967,9 +1090,16 @@ def run(source, original=None, expect_control_failure=False):
                         '-fsanitize=address,undefined',
                         str(work / 'trees.c'), '-o', str(trees)], check=True)
         control += start_trees_fixture(trusted_root)
+        profile = work / 'profile'
+        (work / 'profile.c').write_text(load_profile_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-Wno-missing-field-initializers',   # the header's `= { -1 }` state
+                        '-fsanitize=address,undefined',
+                        str(work / 'profile.c'), '-o', str(profile)], check=True)
+        control += load_profile_fixture(trusted_root)
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
         for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache',
-                      'start_trees']
+                      'start_trees', 'map_load_profile']
                      if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
             if mode == 'spare_server_invalid':
@@ -994,7 +1124,8 @@ def run(source, original=None, expect_control_failure=False):
                 continue
             program = (trusted if mode in TRUSTED_CASES else spare if mode in SPARE_CASES
                        else library if mode in OBJECT_LIBRARY_CASES else physx if mode in PHYSX_CASES
-                       else trees if mode in START_TREES_CASES else exe)
+                       else trees if mode in START_TREES_CASES
+                       else profile if mode in LOAD_PROFILE_CASES else exe)
             arguments = [str(work / (mode + '-cooked.bin'))] if mode in PHYSX_CASES else []
             for stale in arguments:
                 Path(stale).unlink(missing_ok=True)       # the unpatched control runs the same mode again
@@ -1005,7 +1136,8 @@ def run(source, original=None, expect_control_failure=False):
                              'spare_server': SPARE_NEGATIVE_ASSERTION,
                              'object_library': OBJECT_LIBRARY_NEGATIVE_ASSERTION,
                              'physx_cache': PHYSX_NEGATIVE_ASSERTION,
-                             'start_trees': START_TREES_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
+                             'start_trees': START_TREES_NEGATIVE_ASSERTION,
+                             'map_load_profile': LOAD_PROFILE_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -1081,6 +1213,17 @@ def run(source, original=None, expect_control_failure=False):
                 assert result.stdout.splitlines() == [
                     'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=server/bin/messages-en.bin',
                     'ARMPORT_MESSAGE_BIN_V1 status=trusted bin=bin/menuMessages-en.bin'], result.stdout
+            if mode == 'map_load_profile':
+                assert result.stdout.splitlines() == [
+                    'ARMPORT_MAP_LOAD_V1 status=ok total_ms=510 other_ms=360 model_find_ms=45 model_finds=1 '
+                    'ref_activate_ms=5 ref_activates=1 recalc_bounds_ms=20 bounds_files_ms=6 bounds_files=3 '
+                    'scene_ms=5 spawn_areas_ms=69 unbalanced=0',
+                    'ARMPORT_MAP_LOAD_V1 status=ok total_ms=40 other_ms=0 model_find_ms=0 model_finds=0 '
+                    'ref_activate_ms=40 ref_activates=40 recalc_bounds_ms=0 bounds_files_ms=0 bounds_files=0 '
+                    'scene_ms=0 spawn_areas_ms=0 unbalanced=0',
+                    'ARMPORT_MAP_LOAD_V1 status=clock_error'], result.stdout
+            if mode == 'map_load_profile_disabled':
+                assert 'ARMPORT_MAP_LOAD_V1' not in result.stdout
             if mode in ('start_trees_disabled', 'message_bins_disabled', 'message_bins_fallback'):
                 assert 'ARMPORT_START_TREES_V1' not in result.stdout and 'ARMPORT_MESSAGE_BIN_V1' not in result.stdout
             if mode == 'startup_clock':
@@ -1128,13 +1271,14 @@ def main():
                     'original_sha256': {name: staging.digest((args.negative_control / name).read_bytes())
                                         for name in (staging.SVR, staging.FILE, staging.TEXTPARSER,
                                                      staging.GROUPFILELIB, staging.NWWRAPPER,
-                                                     staging.INITCOMMON, staging.MESSAGESTORE)},
+                                                     staging.INITCOMMON, staging.MESSAGESTORE)
+                                        + staging.LOAD_PROFILE_SOURCES},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_and_start_tree_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_and_map_load_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

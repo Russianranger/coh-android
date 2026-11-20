@@ -8,6 +8,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -337,6 +338,49 @@ class GuestMetrics(unittest.TestCase):
         self.assertEqual(sum(line.strip() == 'if(handle_files && !trusted)' for line in added), 2)
         self.assertEqual(sum('msGetDirFilesList(&dirfiles,dirs);' in line for line in added), 1)
         self.assertEqual(sum('#if SERVER' in line for line in added), 2)
+
+    def test_load_profile_claim_is_exact_and_measurement_only(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.load_profile_changed(build))
+        build['build_input']['patched_sha256'][contract.LOAD_PROFILE_SOURCES[0]] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed load profile'):
+            contract.load_profile_changed(build)
+        for name in (contract.LOAD_PROFILE_HEADER,) + contract.LOAD_PROFILE_SOURCES:
+            build['build_input']['patched_sha256'][name] = '0' * 64
+        build['build_input'].update(
+            load_profile_patch={'path': 'patches/mapserver-load-profile/0001-map-load-profile.patch',
+                                'sha256': contract.LOAD_PROFILE_PATCH},
+            contract={'map_load_profile': {'disabled_by_default': True, 'measurement_only': True,
+                                           'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.load_profile_changed(build))
+        for key, value in (('measurement_only', False), ('gameplay_decisions_changed', True),
+                           ('disabled_by_default', False)):
+            changed = copy.deepcopy(build)
+            changed['build_input']['contract']['map_load_profile'][key] = value
+            with self.assertRaisesRegex(ValueError, 'outside the reviewed load profile'):
+                contract.load_profile_changed(changed)
+        build['build_input']['load_profile_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed load profile'):
+            contract.load_profile_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.load_profile_patch_bytes()), contract.LOAD_PROFILE_PATCH)
+        self.assertEqual((producer.LOAD_PROFILE_HEADER, producer.LOAD_PROFILE_SOURCES),
+                         (contract.LOAD_PROFILE_HEADER, contract.LOAD_PROFILE_SOURCES))
+        self.assertIn(producer.LOAD_PROFILE_HEADER, producer.ADDED_FILES)
+        entry = producer.CONTRACT['map_load_profile']
+        self.assertEqual(entry['environment_variable'], producer.CONTRACT['environment_variable'])
+        self.assertIs(entry['measurement_only'], True)
+        # The patch removes no line and adds no game call (one unbraced loop body gains braces).
+        text = producer.load_profile_patch_bytes().decode()
+        removed = [line[1:].strip() for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(removed, [])
+        outside = text[text.index('diff --git a/Common/group/group.c'):]
+        added = [line[1:].strip() for line in outside.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        allowed = re.compile(r'armportMapLoad(Begin|Report|Leave)\(\);|armportMapLoadEnter\(ARMPORT_MAP_LOAD_[A-Z_]+\);'
+                             r'|#include "group/armport_map_load_profile\.h"|#define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION'
+                             r'|[{}]')
+        self.assertEqual([line for line in added if not allowed.fullmatch(line)], [])
 
     def test_object_library_claim_is_exact_and_limited_to_the_reviewed_switch(self):
         build = {'build_input': {'patched_sha256': {}}}

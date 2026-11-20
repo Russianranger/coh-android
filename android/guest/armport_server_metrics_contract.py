@@ -40,6 +40,10 @@ PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
 START_TREES_PATCH = '8938c02ae55b4f7cbf17c94615fa84df71281a7560d6ed46289cb56c8db07bcb'
 INITCOMMON = 'Common/gameComm/initCommon.c'
 MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
+# 0.13.77: where "loading map" spends its time, with the metrics variable (measurement only).
+LOAD_PROFILE_PATCH = '8de8c69b4ba6115a6b74bb08627e702306d96f18eb99849bdae742b83f312cf9'
+LOAD_PROFILE_HEADER = 'Common/group/armport_map_load_profile.h'
+LOAD_PROFILE_SOURCES = ('Common/group/group.c', 'Common/group/groupgrid.c', 'MapServer/src/group/groupnetdb.c')
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
 # the guest sets the variable: shared loading first, then a wait for the map id and cookie.
 SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
@@ -239,6 +243,7 @@ def _authenticate(path, package):
     object_library_changed(build)
     physx_cache_changed(build)
     start_trees_changed(build)
+    load_profile_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -303,6 +308,23 @@ def start_trees_changed(build):
                     and contract[name].get('environment_variable') == 'ARMPORT_TRUSTED_BINS'
                     for name in ('trusted_start_trees', 'trusted_message_bins'))),
             'Metrics build changed start folder loading outside the reviewed trusted-bin switch')
+    return changed
+
+
+def load_profile_changed(build):
+    """True only for the reviewed measurement-only map load profile."""
+    source = build.get('build_input', {})
+    patched = source.get('patched_sha256', {})
+    names = (LOAD_PROFILE_HEADER,) + LOAD_PROFILE_SOURCES
+    changed = any(name in patched for name in names)
+    entry = source.get('contract', {}).get('map_load_profile', {})
+    require(not changed or (all(name in patched for name in names)
+            and source.get('load_profile_patch') == {
+                'path': 'patches/mapserver-load-profile/0001-map-load-profile.patch',
+                'sha256': LOAD_PROFILE_PATCH}
+            and entry.get('disabled_by_default') is True and entry.get('measurement_only') is True
+            and entry.get('gameplay_decisions_changed') is False),
+            'Metrics build changed map loading outside the reviewed load profile')
     return changed
 
 

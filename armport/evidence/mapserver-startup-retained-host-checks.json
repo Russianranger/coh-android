@@ -3,7 +3,7 @@
   "role": "armport_server_metrics_source_checks",
   "status": "passed",
   "variant": "retained_progress",
-  "build_input_sha256": "8f0a2c51ed02226c221f0c92800b6e4658594784daecb570be99bf72529b1025",
+  "build_input_sha256": "3beacf36e3e5e849248f911770e204b67af7fa77932fd8b235684d698c9e27bf",
   "source_sha256": {
     "MapServer/src/svr/svr_init.c": "5b8cddb66687c6304bf2cd2bd6a708d3cc4f08da377d140e2e1d89830349d217",
     "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71",
@@ -15,7 +15,11 @@
     "Common/NovodeX/NwWrapper.cpp": "798413fa838ba52c283e0783272825ac128f1910a54e3dc5a823a4088d3e16e0",
     "Common/NovodeX/armport_physx_cache.h": "f8019a4e6015e1b04ca769a0182021a5a62c4ea84d45d01d8023507bd14195ff",
     "Common/gameComm/initCommon.c": "b3e5181777251d469b99754aaaf5bc8d55f97285c80dad8d39acd14e576bc193",
-    "libs/UtilitiesLib/src/language/MessageStore.c": "fe3d6d3a928bf21c2f0804e255df2fa511e40b41a14ea5017418a8182e4355e5"
+    "libs/UtilitiesLib/src/language/MessageStore.c": "fe3d6d3a928bf21c2f0804e255df2fa511e40b41a14ea5017418a8182e4355e5",
+    "Common/group/armport_map_load_profile.h": "498d9345d1d13c76220c4509aea08facc20c21e43fc52b70e4cc00a4f387d819",
+    "Common/group/group.c": "d406ed23952a7c9e11a335dc0cb4acbd16d5bcf5befa52dbc7dc6907e4010960",
+    "Common/group/groupgrid.c": "d187047f5795995c50e8d67ef5d9aefff1fe0b27b7cb01acae16043d2fcacc72",
+    "MapServer/src/group/groupnetdb.c": "efff5810047d919595d90c68a410e479c04c607bb54f3a62577e454fd7201b37"
   },
   "original_sha256": {
     "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
@@ -24,13 +28,16 @@
     "Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
     "Common/NovodeX/NwWrapper.cpp": "d666fcf6dba5a15f7b2cffd1d6b9227ad2b4dbbb7ab598d47bb0c61911661db6",
     "Common/gameComm/initCommon.c": "96b7796fa49be78144b6ff5014422dc8067c9931dcf7717e39d8d1a7008f04a8",
-    "libs/UtilitiesLib/src/language/MessageStore.c": "a2341562629686d29b80b74660f1bcf8a99f73c3ca1c1f7b26aba31d55ff5ec2"
+    "libs/UtilitiesLib/src/language/MessageStore.c": "a2341562629686d29b80b74660f1bcf8a99f73c3ca1c1f7b26aba31d55ff5ec2",
+    "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "Common/group/groupgrid.c": "4454f7d920b6420d8acaec83346f53153826d7343a2811aead513a7c9e8103f5",
+    "MapServer/src/group/groupnetdb.c": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3"
   },
   "fixture_sha256": {
-    "positive": "c8debaa03f5836a47043ad81ae805194e22e81ae43061bdabfab6fc39a231c56",
-    "negative": "c8d1cb9507d99615f31b9ea3c734a3cfb7ff0358ec3310c7d99121066b7a64f7"
+    "positive": "7b0f00ac71ee3fdcc810e1fbbfebb260bdd4572b581de77b81acefe4885cff6f",
+    "negative": "fcb75bbd1045f0326729d027fdcb28e4dd3b06b0befc57c9b52c0a386dba0485"
   },
-  "test_script_sha256": "51a21eaa93434d3764c9303ec869b0d290ba27dbfa5157f364948e93ef2a4cf6",
+  "test_script_sha256": "2cf2ce21060d82c513788bef11cb7a34eaf667c35d35f008862c232d45961cd9",
   "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "execution_environment": "posix_host_with_windows_clock_and_file_io_shims",
   "positive_cases": [
@@ -60,9 +67,11 @@
     "start_trees_disabled",
     "message_bins",
     "message_bins_disabled",
-    "message_bins_fallback"
+    "message_bins_fallback",
+    "map_load_profile",
+    "map_load_profile_disabled"
   ],
   "unpatched_control_failed": true,
-  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_and_start_tree_assertions",
+  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_and_map_load_assertions",
   "shipping_binary_executed": false
 }

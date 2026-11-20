@@ -453,6 +453,26 @@ build).
   (`armport/evidence/mapserver-startup-retained-host-checks.json`). Phase
   summary fields `start_trees_not_read_ahead`, `message_bins_trusted`.
   `armport/tests` 624 pass.
+- **`patches/mapserver-load-profile/0001-map-load-profile.patch`** (measurement
+  only, with `ARMPORT_SERVER_METRICS=1`, which the guest already sets for this
+  server). `loading map` was 11.66 s of the 22.1 s after the DbServer
+  connection in that Port Oakes start (beacons 5.12 s, encounter groups
+  2.35 s, collision triangles 2.14 s), and a spare zone server still has all
+  of it to do when a trip begins. One record after the load:
+  `ARMPORT_MAP_LOAD_V1 status=ok total_ms= other_ms= model_find_ms=
+  model_finds= ref_activate_ms= ref_activates= recalc_bounds_ms=
+  bounds_files_ms= bounds_files= scene_ms= spawn_areas_ms= unbalanced=`
+  (exclusive time per step; `other` is the group files' own reading and
+  assembly). State and functions in the new
+  `Common/group/armport_map_load_profile.h`, compiled into `groupnetdb.c`;
+  calls in `groupLoadMap`, `groupModelFind` (`group.c`) and
+  `groupRefActivate` (`groupgrid.c`). `groupfileload.c` is a pinned collision
+  source of the navigation map lineage and is not touched. Receipt
+  `load_profile_patch`, contract `map_load_profile`, guest admission
+  `load_profile_changed`, host fixture cases `map_load_profile` and
+  `map_load_profile_disabled` (the shipping header over a recorded clock,
+  call sites checked in the staged sources, unpatched control), phase summary
+  field `map_load_profile`. `armport/tests` 625 pass.
 - **Not measured.** How many single-file lookups under `Defs` miss on disk
   during play (a miss is not remembered, so each repeats). Compare the zone
   server's stop counts and `ARMPORT_SERVER_METRICS_V1` tick times with
