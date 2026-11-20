@@ -420,7 +420,45 @@ Written while the 0.13.77 chain ran. Version 0.13.78 (93), release notes and
 `THOR-TEST-0.13.78.md` followed 0.13.77's publication; the app and guest are
 0.13.76's.
 
-- **Chain.** CHAIN78_PLACEHOLDER
+- **Chain** (one at a time, all at `d27dbb7c9`): build 44708966474 (MSVC
+  compiled 0004; no warning names `groupfilelib.c`) → stock travel on the
+  default server 44722714926 (passed; 208.8 / 95.8 / 101.0 s) → trusted
+  44727685589 (passed, 1,683 s) → spare zone 44732475821 (failed, below) →
+  spare zone again 44739226760 (passed) → APK 44744229704.
+- **Trusted run 44727685589, reopen** (0.13.77's 44698417683 in brackets):
+  `map_load_profile` `total_ms` 5179 (6635): `bounds_files_ms` 20 (1837) for
+  the same 504 files, other 3336 (3101), model_find 1769 (1647), recalc 30,
+  spawn areas 17, scene 2, unbalanced 0. `group_load_done` 8.31 (9.66),
+  `elapsed_to_main_loop` 21.45 (22.45), `definitions_done` 9.76 (9.53),
+  `process_spawn_to_map_ready_seconds` 24.1 (23.6: the second saved in the
+  map load is inside run-to-run variation of the whole start). Creation
+  session: map load 19,786 ms (25,623), bounds files 21 ms (7,297).
+- **Spare run 44739226760, reopen**: `warm_seconds` 25.232 and 20.096 (the
+  second spare), `assigned` to map 101 after 40.5 s loaded; trip
+  `request_to_map_ready_seconds` 15.15, client in the zone 16.06 s; 2
+  arrivals; reopen `PROOT_STOP_COUNTS_V1` 1,747,255 stops in 615 s
+  (1,844,039 in 619 s for 0.13.77).
+- **Spare run 44732475821 failed after its measured part** ("Zone travel to
+  map 1 did not arrive within 900 seconds"). The hand-over and the trip to
+  map 101 passed (spare warm 20.194 s, zone ready 15.07 s, client in the zone
+  16.0 s, arrival 12:30:46). The return `/mapmove 1`, typed about 25 s later,
+  is not in the server command log (only `mapmove 101`, 12:30:29); the
+  DbServer got no third map request; the client stayed on map 101 (the
+  server kept spawning there until 12:41) at about 1.5 FPS, 0.32 FPS at the
+  end; map 1 was stopped for the second spare 120 s after the arrival, as
+  designed. So the typed command was lost in the CI client, not the trip.
+  CI change for the next chain (`c39935abb`, not in this one): a trip that
+  has not arrived is asked for again, Enter alone after 300 s, the command
+  and Enter after 450 s, recorded in `stock_travel_resends`, the failure
+  detail and a `TRAVEL_INPUT_V1` log line.
+- **Published**: pre-release `coh-atlas-gameplay-v0.13.78` at `d27dbb7c9`,
+  `COH-Atlas-Gameplay-0.13.78.apk` 93,585,674 bytes, sha256
+  `ffc6e7bcd1d5460965a0b0fbd4dcf3cb0f07609514a577b82021269559a87c04`, signer
+  `92955353…a776c282` (unchanged), version 0.13.78 (93). Downloaded and
+  checked: checksum, 51 guest files equal the commit, the trusted
+  `MapServer.exe` (sha256 `db1b0ecee2dd4719…`) holds the three 0.13.77
+  record prefixes, the binding names patch 0004's hash. Not yet on the Thor.
+
 
 - **What the first map load profile showed** (0.13.77 trusted run
   44698417683, CI x86-64, Atlas Park reopen): `ARMPORT_MAP_LOAD_V1`

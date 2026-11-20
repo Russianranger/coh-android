@@ -73,7 +73,22 @@ of 0.13.76 or 0.13.77: the steps are the same.
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "0.13.76 and the Thor test of
 0.13.75", "For 0.13.77" and "For 0.13.78".
 
-CI: CI78_EVIDENCE_PLACEHOLDER
+CI (all at `d27dbb7c9`): build 44708966474 (the Windows compiler's first
+build of the bounds-file change); default server with travel 44722714926
+(passed; zone starts 208.8 s, then 95.8 s and 101.0 s); Fast server
+44727685589 (passed; the bounds-file step of a map load took 20 ms against
+1,837 ms in 0.13.77, the map load 5.2 s against 6.6 s; reopen zone start
+24.1 s from spawn to ready against 23.6 s, 21.5 s to the main loop against
+22.5 s); spare zone server 44739226760 (passed: the spare loaded in 25.2 s,
+the trip's zone was ready 15.1 s after the game asked and the game was in the
+new zone after 16.1 s; 1.75 million monitor stops in the reopen session
+against 1.84 million). A first spare run, 44732475821, failed after its
+measured part: the trip through the spare passed (15.1 s, 16.0 s), then CI's
+typed command for the trip back never reached a server and the run ended at
+its 15-minute bound (HANDOFF "For 0.13.78"). APK 44744229704: 93,585,674
+bytes, sha256
+`ffc6e7bcd1d5460965a0b0fbd4dcf3cb0f07609514a577b82021269559a87c04`, signer
+unchanged.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

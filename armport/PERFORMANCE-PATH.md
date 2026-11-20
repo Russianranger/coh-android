@@ -817,6 +817,14 @@ load profile: 6.6 s, of which bounds files 1.8 s (504 files read back only
 for comparison), model look-ups 1.6 s, the group files themselves 3.1 s.
 0.13.78 takes the bounds files out (HANDOFF "For 0.13.78").
 
+0.13.78's chain (d27dbb7c9), CI: the bounds-file step is 20 ms (1,837), the
+map load 5.2 s (6.6), `group_load_done` 8.31 s (9.66); the whole reopen zone
+start is 24.1 s (23.6), unchanged within its variation. What is left of the
+map load is the group files themselves (3.3 s) and 9,562 model look-ups
+(1.8 s). The spare's trip is ready in 15.1 s as before. One spare run lost
+CI's typed return command after the trip had passed; the host script now asks
+again (HANDOFF "For 0.13.78").
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack
