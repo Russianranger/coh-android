@@ -127,3 +127,4 @@
 0127-armport-logout-kept-through-the-key-that-sent-it.patch
 0128-armport-gameplay-cap-60-from-launch.patch
 0129-armport-graphics-effects-profile.patch
+0130-armport-quiet-trace-keeps-load-boundaries.patch

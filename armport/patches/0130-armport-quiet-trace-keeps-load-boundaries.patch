@@ -1,0 +1,21 @@
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index 5fd0412..de56772 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -83,8 +83,14 @@ static int armportZoneTraceQuietDrops(const char *stage)
+      * and dialogs. Per-file library/texture/model records cost load time on
+      * the Thor and are only needed by CI qualification, which leaves it unset. */
+     static int quiet = -1;
+-    static const char *const keep[] = {"map.start", "textures.done", "ready.sent",
+-        "client.error", "client.fatal", "dialog."};
++    /* 0.13.79: also the once-per-load boundaries between map.start and ready.sent. On the
++     * Thor (0.13.78) that span is 6.8-8.3 s of a 28-34 s trip through the spare zone server
++     * and the quiet log could not say where it goes. Per-file records ("groupfile.",
++     * "library.", "texmodels.geo.", "texqueue.") stay dropped. */
++    static const char *const keep[] = {"map.start", "textures.", "ready.sent",
++        "client.error", "client.fatal", "dialog.",
++        "groups.", "map.finish.", "collision.", "scene.", "allents.", "geometry.wait",
++        "texmodels.welded.", "texmodels.done"};
+     size_t i;
+     if (quiet < 0) quiet = getenv("ARMPORT_TRACE_QUIET") != NULL;
+     if (!quiet) return 0;

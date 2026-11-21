@@ -109,7 +109,7 @@ class GraphicsEffectsProfile(unittest.TestCase):
         if launcher.is_file():          # not in the build workflow's sparse checkout (run 44115020828)
             self.assertIn('SetEnvironmentVariableA("COH_CLIENT_GRAPHICS_PROFILE",graphics)', launcher.read_text())
             self.assertNotIn('ARMPORT_GRAPHICS_PROFILE', launcher.read_text())
-        self.assertEqual((ROOT / 'armport/patches/series').read_text().split()[-1], PATCH.name)
+        self.assertIn(PATCH.name, (ROOT / 'armport/patches/series').read_text().split()[-2:])   # 0130 follows it
 
     def run_harness(self, value):
         compiler = shutil.which('gcc') or shutil.which('cc')
