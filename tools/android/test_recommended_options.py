@@ -74,7 +74,11 @@ class RecommendedOptions(unittest.TestCase):
                 self.assertEqual(table[getter], stored[getter])
                 self.assertEqual(box in ticked, stored[getter][1])
                 self.assertEqual(box in unticked, not stored[getter][1])
-        self.assertEqual((len(ticked), len(unticked)), (16, 5))
+        self.assertEqual((len(ticked), len(unticked)), (17, 4))
+        # 0.13.79: the spare zone server is recommended (owner's policy, the current zone and one
+        # spare; Thor 0.13.78 launch B: trips 33.9 s and 27.7 s against 65.8 s, 60 FPS).
+        self.assertIn('spareZone', ticked)
+        self.assertEqual(stored['spareZoneEnabled'], ('spare-zone-server', True))
 
     def test_the_report_carries_the_launch_time_reading(self):
         self.assertIn('optionsOffRecommended=optionsOffRecommended(context);', self.runtime)

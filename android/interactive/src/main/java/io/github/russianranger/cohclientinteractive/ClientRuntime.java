@@ -306,8 +306,9 @@ public final class ClientRuntime {
             {"proot-call-filter",prootIoctlFilterEnabled(context),true},{"proot-socket-filter",prootSocketFilterEnabled(context),true},
             {"proot-casefold",prootCasefoldEnabled(context),true},{"server-quick-start",serverQuickStartEnabled(context),true},
             {"wineserver-path-cache",wineserverPathCacheEnabled(context),true},{"physx-cooked-cache",physxCacheEnabled(context),true},
+            {"spare-zone-server",spareZoneEnabled(context),true},
             {"prestart-next-zone",prestartNextZoneEnabled(context),false},{"idle-resident-maps",idleResidentMapsEnabled(context),false},
-            {"spare-zone-server",spareZoneEnabled(context),false},{"shared-server-memory",sharedHeapEnabled(context),false},
+            {"shared-server-memory",sharedHeapEnabled(context),false},
             {"client-gl-direct",glDirectEnabled(context),false}};
         for(Object[] option:options)if(!option[1].equals(option[2]))off.append(off.length()==0?"":",").append(option[0]);
         return off.toString();
@@ -606,11 +607,13 @@ public final class ClientRuntime {
     /**
      * 0.13.69: keep one zone server that has loaded everything zones share and waits for its zone
      * (owner, 2026-11-05: the current zone and one spare). Needs the test server ("Fast server
-     * start") and enough free memory; off by default until it has run on a phone.
+     * start") and enough free memory. On by default from 0.13.79: on the Thor (0.13.78, launch B)
+     * both trips were handed to a spare, 33.9 s and 27.7 s against 65.8 s without one, at 60 FPS
+     * and with 6.4 GB still available.
      */
     public static boolean spareZoneEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("spare-zone-server", false);
+                .getBoolean("spare-zone-server", true);
     }
     public static synchronized void setSpareZoneEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;

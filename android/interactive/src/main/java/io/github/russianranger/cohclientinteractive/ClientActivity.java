@@ -325,8 +325,8 @@ public final class ClientActivity extends Activity {
         startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();immersive();setMenuOpen(true);setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
     }
     /** The options as a new install has them: ticked, then unticked (ClientRuntime's defaults). */
-    private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache};}
-    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,spareZone,sharedHeap,glDirect};}
+    private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,spareZone};}
+    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect};}
     private static String optionName(CheckBox box){String name=String.valueOf(box.getText());int cut=name.indexOf(" (");return cut>0?name.substring(0,cut):name;}
     private void recommendedChanged(){
         if(recommendedStatus==null)return;
