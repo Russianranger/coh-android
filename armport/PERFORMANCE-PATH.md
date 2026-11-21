@@ -291,7 +291,7 @@ below and is the first thing to measure (Phase 0).
 | Keep the server stack running between sessions (foreground service) | 1 | Second and later starts near client-only time | Medium | Battery, Android process limits, save safety | Design work; doesn't help the cold-start goal |
 | Cooked PhysX mesh cache | 4 | Part of the 22 s PhysX phase | Medium | Cache correctness | Measure with 0119 phases first |
 | Native ARM64 MapServer | 4 2 1 | Would remove FEX from the servers | Large | PhysX 2.8.4 has no ARM64 build | **Shelved by the user's decision** (keep ragdoll physics; x86 track) |
-| FEX tuning for the x86 servers and client (TSO, SMC and block settings per process) | 1 2 3 4 | Unknown; FEX runs entirely on defaults today | Small to try | Correctness: memory-ordering settings must stay safe for multithreaded processes | Untried. A/B per setting in CI, server first |
+| FEX tuning for the x86 servers and client (TSO, SMC and block settings per process) | 1 2 3 4 | Unknown; FEX runs entirely on defaults today | Small to try | Correctness: memory-ordering settings must stay safe for multithreaded processes | Tried for the zone servers (0.13.79). 64-bit x87: group load 8.3 s to 7.2 s in CI, on by default. Store ordering off for `MapServer.exe`'s own code: 7% on the definitions, not adopted (the server's log queue relies on the ordering). DbServer and block settings untried |
 | Idle/stasis for resident servers (lower tick rate when empty, or freeze and thaw) | 2 | Keeps resident zoning (~29 s) while idle servers use little CPU and battery | Medium | DbServer heartbeats and timeouts must tolerate a frozen map; thaw must be quick | Design and measure; the user wants this as an addition to cold-start goals |
 | Raise FPS cap to 60 (GPU profile) | 3 | Lets the average rise above 30 so dips stay above 30 | Trivial | Thermal/battery | Only useful once frames take well under 33 ms |
 | Zero-copy display: X server with DRI3/Present on AHardwareBuffer, drop `MESA_VK_WSI_DEBUG=sw` | 3 | Removes CPU readback and both frame copies | Large | Integration and licence (Termux:X11, the proven open-source example, is GPL-3.0) | Measure SwapBuffers share first; seccomp may already recover much of the socket cost |
@@ -428,7 +428,8 @@ Rules and work:
 
 With Phases 0-2 measured, the remaining gap to a 60 s cold start is known.
 The levers left on the x86 track, in order:
-1. FEX tuning per process, starting with the MapServer.
+1. FEX tuning per process, starting with the MapServer. (Done for the
+   MapServer in 0.13.79; see "0.13.78 on the Thor and 0.13.79" below.)
 2. Removing remaining per-start work found in the 0119 phase timing (for
    example cooked physics, definition parsing that can be cached by data
    identity).
@@ -824,6 +825,20 @@ map load is the group files themselves (3.3 s) and 9,562 model look-ups
 (1.8 s). The spare's trip is ready in 15.1 s as before. One spare run lost
 CI's typed return command after the trip had passed; the host script now asks
 again (HANDOFF "For 0.13.78").
+
+0.13.78 on the Thor and 0.13.79 (2026-11-21). The goals as measured on the
+phone: the client connects 127-169 s after the launch (5 min), 60 FPS at the
+cap (30), a zone server reaches its main loop in 44 s (60 s), a trip through
+the spare connects in 28-34 s (30 s) against 66 s without it. A spare trip
+is 2.3 s of navigation graph check, about 20 s of zone server (map load 9.3,
+beacons 5.3, encounter groups 2.4, collision triangles 2.2) and 11 s of
+client. All of the server's share is x86 code now, so 0.13.79 tries the
+emulator: with `FEX_X87REDUCEDPRECISION=1` for the zone servers the group
+load is 7.2 s for 8.3 s in CI and a new folder's first start 358 s for 392 s;
+dropping store-order emulation for `MapServer.exe`'s own code adds 7% on the
+definitions and is not adopted (HANDOFF, "0.13.79 (94): what changed"). The
+graph check moves ahead of the trip, the spare becomes the default, and
+client patch 0130 will show where the client's share goes.
 
 ## Process changes that would speed all of this up
 

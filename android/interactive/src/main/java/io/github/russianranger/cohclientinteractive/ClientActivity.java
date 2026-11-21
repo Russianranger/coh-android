@@ -41,7 +41,7 @@ public final class ClientActivity extends Activity {
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
     private TextView recommendedStatus;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -242,6 +242,11 @@ public final class ClientActivity extends Activity {
         physxCache.setChecked(ClientRuntime.physxCacheEnabled(this));
         physxCache.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setPhysxCacheEnabled(this,checked);recommendedChanged();});
         controls.addView(physxCache);
+        serverX87=new CheckBox(this);serverX87.setText("Faster number emulation in zone servers (64-bit x87; faster zone start and travel)");
+        serverX87.setTextColor(Color.rgb(221,234,245));serverX87.setTextSize(13);
+        serverX87.setChecked(ClientRuntime.serverX87Enabled(this));
+        serverX87.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setServerX87Enabled(this,checked);recommendedChanged();});
+        controls.addView(serverX87);
         recommendedChanged();
         controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
@@ -325,7 +330,7 @@ public final class ClientActivity extends Activity {
         startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();immersive();setMenuOpen(true);setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
     }
     /** The options as a new install has them: ticked, then unticked (ClientRuntime's defaults). */
-    private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,spareZone};}
+    private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,spareZone,serverX87};}
     private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect};}
     private static String optionName(CheckBox box){String name=String.valueOf(box.getText());int cut=name.indexOf(" (");return cut>0?name.substring(0,cut):name;}
     private void recommendedChanged(){

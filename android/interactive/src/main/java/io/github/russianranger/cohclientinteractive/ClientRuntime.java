@@ -229,7 +229,7 @@ public final class ClientRuntime {
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
-    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false;
+    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false;
     private String optionsOffRecommended="";
     private boolean prootCasefoldRequested=false,prootCasefoldUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
@@ -306,7 +306,7 @@ public final class ClientRuntime {
             {"proot-call-filter",prootIoctlFilterEnabled(context),true},{"proot-socket-filter",prootSocketFilterEnabled(context),true},
             {"proot-casefold",prootCasefoldEnabled(context),true},{"server-quick-start",serverQuickStartEnabled(context),true},
             {"wineserver-path-cache",wineserverPathCacheEnabled(context),true},{"physx-cooked-cache",physxCacheEnabled(context),true},
-            {"spare-zone-server",spareZoneEnabled(context),true},
+            {"spare-zone-server",spareZoneEnabled(context),true},{"server-x87-64bit",serverX87Enabled(context),true},
             {"prestart-next-zone",prestartNextZoneEnabled(context),false},{"idle-resident-maps",idleResidentMapsEnabled(context),false},
             {"shared-server-memory",sharedHeapEnabled(context),false},
             {"client-gl-direct",glDirectEnabled(context),false}};
@@ -561,6 +561,23 @@ public final class ClientRuntime {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("physx-cooked-cache", enabled).apply();
+    }
+    /**
+     * 0.13.79: the zone servers are x86 programs run by the FEX emulator, which by default does
+     * their x87 arithmetic in software at 80 bits. With this on, the guest sets
+     * FEX_X87REDUCEDPRECISION=1 for zone servers only (64-bit arithmetic; Windows itself runs
+     * 32-bit programs' x87 at 53-bit precision). CI 44882642501 against 44727685589: group load
+     * 7.2 s instead of 8.3 s, a new game folder's first zone start 358 s instead of 392 s. On by
+     * default; unticking it runs the zone servers on the emulator's defaults as before.
+     */
+    public static boolean serverX87Enabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("server-x87-64bit", true);
+    }
+    public static synchronized void setServerX87Enabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("server-x87-64bit", enabled).apply();
     }
     /**
      * 0.13.75: with the second PRoot build (patch 0008), PROOT_CASEFOLD_PROGRAMS names Wine's
@@ -1140,7 +1157,7 @@ public final class ClientRuntime {
         glDirectRequested=glDirectEnabled(context);
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
-        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);
+        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);
         prootCasefoldRequested=prootCasefoldEnabled(context);prootCasefoldUsed=false;
         optionsOffRecommended=optionsOffRecommended(context);
         spareZoneRequested=spareZoneEnabled(context);
@@ -1248,6 +1265,8 @@ public final class ClientRuntime {
                     "COH_WINESERVER_PATH_CACHE="+(wineserverPathCacheRequested?"1":"0"),
                     // 0.13.75: the Fast server's file of prepared collision meshes.
                     "COH_PHYSX_CACHE="+(physxCacheRequested?"1":"0"),
+                    // 0.13.79: emulator settings for the zone servers only (64-bit x87 arithmetic).
+                    "COH_SERVER_EMULATION="+(serverX87Requested?"x87":""),
                     "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
@@ -3122,7 +3141,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

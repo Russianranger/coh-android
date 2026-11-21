@@ -482,6 +482,75 @@ and `spare-zone-server` in B. Read with the scratch tools `sum.py` and
   the phone. Two entries below called a CI figure "x86-64"; they now say
   "CI ARM64 runner".
 
+### 0.13.79 (94): what changed
+
+- **Emulator settings for the zone servers (roadmap phase 3, item 1).** FEX
+  2510 (320c5f18) ran on its defaults. Wine's WoW64 FEX module reads `FEX_*`
+  from the process environment (`Source/Windows/WOW64/Module.cpp`,
+  `BTCpuProcessInit` → `FEX::Config::LoadConfig(..., _environ, ...)`), so the
+  guest can set them for one program. `COH_SERVER_EMULATION` (guest, and CI
+  input `server_emulation`) takes `tso`, `x87` or both, for zone servers
+  only (`local_character_server.apply_server_emulation`, called from
+  `map_metrics_environment`, which every zone server start goes through);
+  the report section `server_emulation` and `START_OPTIONS_V1` record what
+  was set.
+  - `x87` → `FEX_X87REDUCEDPRECISION=1`: x87 arithmetic in 64 bits instead
+    of 80 bits in software.
+  - `tso` → `FEX_EXTENDEDVOLATILEMETADATA=MapServer.exe:…`: x86 store
+    ordering is not emulated for the code of `MapServer.exe` itself; Wine's
+    and PhysX's DLLs keep it (`Source/Common/VolatileMetadata.cpp`: a bare
+    module name "disables TSO in the module").
+- **Measured at `2c458d270`** (build 44872928560; trusted runtime, reopen
+  session, Atlas Park; baselines 44727685589 and 44739226760 at `d27dbb7c9`,
+  same server sources):
+
+  | | baseline | `x87` (44882642501) | `tso,x87` (44879930368) |
+  |---|---|---|---|
+  | `elapsed_to_main_loop` | 21.45 / 21.04 | 20.03 | 18.99 |
+  | `definitions_done` | 9.76 / 9.71 | 9.53 | 8.88 |
+  | `group_load_done` | 8.31 / 8.13 | 7.2 | 7.1 |
+  | map load `total_ms` | 5,179 | 4,709 | 4,780 |
+  | creation session, `elapsed_to_main_loop` | 391.96 | 358.32 | 362.08 |
+
+  `x87` gives the group load (the part a trip through the spare pays) and
+  the first start of a new game folder ("Starting novodex", 16.8 s of the
+  baseline's creation start, is no longer among its six slowest steps);
+  `tso` adds about 7% on the definitions. `START_OPTIONS_V1` in both runs
+  shows the variables set.
+- **`x87` is in the app, on by default** ("Faster number emulation in zone
+  servers", `server-x87-64bit`, `COH_SERVER_EMULATION=x87`). The game server
+  does not compute the map's beacon checksum when it loads a navigation file
+  (`beaconGetMapCRC` is called by the beacon server and client and by two
+  debug commands only), so slightly different rounding cannot refuse a
+  navigation map.
+- **`tso` is not in the app.** `libs/UtilitiesLib/src/utils/log.c` hands log
+  messages from the writers to `logBackgroundWriter` through a queue whose
+  reader takes no lock (`peekMsg`/`getMsg` read `msg_queue_end` and then the
+  message): it relies on x86 store ordering, and both sides are
+  `MapServer.exe` code. Adopting `tso` needs that queue fenced first (a
+  server source layer) and gives about 1.4 s of a 44 s cold start on the
+  Thor, nothing on a trip. The guest and CI keep the name for that work.
+- **The spare zone server is recommended** (`spare-zone-server` default
+  true; the recommended lists are 18 ticked, 4 unticked).
+- **Navigation graph receipts checked ahead**
+  (`character_zoning._check_graph_ahead`): while a warm spare waits and no
+  zone is starting, one zone with a stored `zone_graph_<id>` receipt a tick,
+  at most six a session, receipt only
+  (`install_zone_beacon_graph(..., receipt_only=True)`); recorded in
+  `spare_zone.graphs_checked_ahead`.
+- **Client patch 0130** (patchwork): the quiet device log keeps the
+  once-per-load zone stages (`groups.*`, `map.finish.*`, `collision.*`,
+  `scene.*`, `allents.*`, `textures.*`, `geometry.wait`,
+  `texmodels.welded.*`, `texmodels.done`).
+- **CI travel**: a trip that has not arrived is asked for again
+  (`c39935abb`, "For 0.13.78" below).
+- **Chain.** CHAIN79_PLACEHOLDER
+- Ideas not started: the previous zone kept beside the current one and the
+  spare (three servers, about 1.2 GB more; an owner decision); beacons
+  (5.3 s of a hand-over) and the group files (5-6 s) need a profile inside
+  them before any change; the client's zone load once 0130 has run on the
+  Thor.
+
 ## For 0.13.78: library bounds files under the trusted-bin switch (Claude, 2026-11-20; not in 0.13.77)
 
 Written while the 0.13.77 chain ran. Version 0.13.78 (93), release notes and

@@ -24,7 +24,7 @@ GETTERS = {
     'serverQuickStart': 'serverQuickStartEnabled', 'wineserverPathCache': 'wineserverPathCacheEnabled',
     'physxCache': 'physxCacheEnabled', 'prestartNextZone': 'prestartNextZoneEnabled',
     'idleResidentMaps': 'idleResidentMapsEnabled', 'spareZone': 'spareZoneEnabled',
-    'sharedHeap': 'sharedHeapEnabled', 'glDirect': 'glDirectEnabled'}
+    'sharedHeap': 'sharedHeapEnabled', 'glDirect': 'glDirectEnabled', 'serverX87': 'serverX87Enabled'}
 
 
 class RecommendedOptions(unittest.TestCase):
@@ -57,28 +57,34 @@ class RecommendedOptions(unittest.TestCase):
         boxes = re.findall(r'(\w+)\.setOnCheckedChangeListener\(\(button,checked\)->\{ClientRuntime\.set\w+Enabled\(this,checked\);'
                            r'recommendedChanged\(\);\}\);', self.activity)
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(boxes), 21)
+        self.assertEqual(len(boxes), 22)
         self.assertEqual(sorted(boxes), sorted(ticked + unticked))
         self.assertEqual(sorted(boxes), sorted(GETTERS))
-        self.assertEqual(len(set(ticked + unticked)), 21)
+        self.assertEqual(len(set(ticked + unticked)), 22)
         # No option box changes without the line being read again.
         self.assertNotRegex(self.activity, r'->ClientRuntime\.set\w+Enabled\(this,checked\)\);')
 
     def test_the_lists_are_the_stored_defaults(self):
         stored, table = self.stored_defaults(), self.report_table()
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(table), 21)
+        self.assertEqual(len(table), 22)
         for box, getter in GETTERS.items():
             with self.subTest(box):
                 self.assertIn(getter, stored)
                 self.assertEqual(table[getter], stored[getter])
                 self.assertEqual(box in ticked, stored[getter][1])
                 self.assertEqual(box in unticked, not stored[getter][1])
-        self.assertEqual((len(ticked), len(unticked)), (17, 4))
+        self.assertEqual((len(ticked), len(unticked)), (18, 4))
         # 0.13.79: the spare zone server is recommended (owner's policy, the current zone and one
         # spare; Thor 0.13.78 launch B: trips 33.9 s and 27.7 s against 65.8 s, 60 FPS).
         self.assertIn('spareZone', ticked)
         self.assertEqual(stored['spareZoneEnabled'], ('spare-zone-server', True))
+        # 0.13.79: 64-bit x87 arithmetic in the zone servers (CI 44882642501: group load 7.2 s for 8.3 s).
+        self.assertIn('serverX87', ticked)
+        self.assertEqual(stored['serverX87Enabled'], ('server-x87-64bit', True))
+        runtime = (ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java').read_text()
+        self.assertIn('"COH_SERVER_EMULATION="+(serverX87Requested?"x87":"")', runtime)
+        self.assertNotIn('tso', re.findall(r'"COH_SERVER_EMULATION="[^,]*', runtime)[0])
 
     def test_the_report_carries_the_launch_time_reading(self):
         self.assertIn('optionsOffRecommended=optionsOffRecommended(context);', self.runtime)
@@ -91,7 +97,7 @@ class RecommendedOptions(unittest.TestCase):
         line = activity.index('recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);')
         button = activity.index('controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));')
         first = activity.index('performanceGraphics=new CheckBox(this);')
-        last = activity.index('controls.addView(physxCache);\n        recommendedChanged();')
+        last = activity.index('controls.addView(serverX87);\n        recommendedChanged();')
         self.assertLess(line, button)
         self.assertLess(button, first)
         self.assertLess(first, last)
