@@ -414,6 +414,74 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## Thor test of 0.13.78 and what 0.13.79 does about it (Claude, 2026-11-21)
+
+Exports `coh-atlas-gameplay-20261121-051945` (setup), `-051955` (launch A,
+recommended options) and `-053448` (launch B, spare zone server). All three
+are 0.13.78; both launches `passed`; `options_off_recommended` is empty in A
+and `spare-zone-server` in B. Read with the scratch tools `sum.py` and
+`mapserver_phases.summary` over the consoles in `guest-report.zip`.
+
+- **Goals on the Thor** (0.13.75 in brackets):
+  - Start to playing (5 min): the client connected to its zone 126.9 s after
+    the launch request in B and 168.6 s in A, the first launch after the
+    update (117-126 s). The zone server no longer gates it: in B its main
+    loop began at +88 s and the login screen was reached at +117 s.
+  - 30+ FPS: `ARMPORT_FRAME_RATE_V1` 61-62 at the 60 cap in the world in
+    both launches (81 and 145 five-second records; 10 is the menu and loading
+    cap), also while a spare loaded. Every recommended option was on.
+  - Zone server cold start (1 min), server's own clock
+    (`elapsed_to_main_loop`): Mercy Island 44.3 s in B; 58.3 s in A and Port
+    Oakes 50.6 s in A, which cooked collision meshes once for the new server
+    build (9.7 s and 5.4 s; `physx_cooked` hits 0 then 1,348; B: 1,868 and
+    2,486 hits, 0 misses). (55-76 s.) `start_trees_not_read_ahead` true,
+    `message_bins_trusted` 4, `trusted_bins_reported` 255,
+    `object_library_trusted` true in every start.
+  - Zoning (30 s), request to the client's "Established successful MapServer
+    connection": through the spare 33.9 s (Port Oakes) and 27.7 s (back to
+    Mercy Island, second spare); without the spare (launch A) 65.8 s to a
+    zone that was not running and 11 s back to a running one (71 s / 10 s).
+- **The initial zone's `process_spawn_to_map_ready_seconds` (100.3 s in A,
+  70.9 s in B) is not the server's start.** The server printed its first
+  line 0.6 s after the spawn and reached its main loop after 58.3 s / 44.3 s;
+  the supervisor recorded "ready" 41 s / 26 s later, while it started the
+  client. For a travelled-to zone the two agree within 2 s. Nothing waits on
+  that record (the client asked for its zone 29-46 s after the server's main
+  loop), but the figure must not be read as a server start. The same applies
+  to the "14 s of Wine starting its first program" I wrote for 0.13.75.
+- **Spare zone server on the Thor** (`spare_zone.starts`): spare 1 launched
+  beside Mercy Island with 7,559 MiB available, warm in 35.2 s (6,439 MiB
+  available), assigned to Port Oakes after 264 s loaded; Mercy Island's
+  server gave way 122 s after the arrival (`room_for_the_spare`); spare 2
+  warm in 30.0 s (6,422 MiB), assigned to Mercy Island after 51 s loaded.
+  Baseline available memory 10,986 MiB.
+- **Where a trip through the spare goes** (Port Oakes, 33.9 s): request to
+  assignment 2.3 s (5 ms on the second trip: the supervisor's tick); the
+  spare's own work after the hand-over 19.8 s (`group_load_done`): map load
+  9.28 s, beacons 5.27 s, encounter groups 2.40 s, collision triangles
+  2.17 s, PhysX objects 0.25 s; then the client: `map.start` to
+  `textures.done` 8.3 s and 2.6 s more to the connection. Mercy Island:
+  16.9 s (map load 6.62 s) and 6.8 s.
+- **Map load profile on the Thor** (`ARMPORT_MAP_LOAD_V1`): Mercy Island
+  `total_ms` 8,204-8,336 cold and 6,623 on a spare, `other_ms` 5,060-5,098
+  (4,145), `model_find_ms` 3,009-3,165 (2,386) for 8,897 look-ups,
+  `bounds_files_ms` 23-24 for 403 files; Port Oakes 8,379 / 9,277 with
+  `other_ms` 5,137 / 6,029, `model_find_ms` 3,136 for 10,574 look-ups,
+  `bounds_files_ms` 27-29 for 475 files. So 0.13.78's change holds on the
+  phone, and what is left is x86 code: group files and model headers.
+- **A cold zone start by phase** (Mercy Island, B, 44.3 s): definitions
+  19.5 s (story arcs 4.7, spawn definitions 3.8, `done loading defs` 4.0,
+  reward tables 2.9, encounter groups 2.5, message stores 2.3), group load
+  17.7 s (map load 8.2, beacons 5.0, collision triangles 1.2), encounter
+  scripts 3.8 s, sequencer info 2.2 s.
+- PRoot: 2,419,366 stops in 555 s (A) and 2,937,309 in 854 s (B);
+  `socket_stops` false; path cache 25,748 of 26,624 calls fast.
+- The one observation note, "Cache inventory: Linked private cache directory
+  refused", is in four of the five 0.13.75 exports too.
+- **Correction.** CI's runtime jobs run on `ubuntu-24.04-arm` with FEX, like
+  the phone. Two entries below called a CI figure "x86-64"; they now say
+  "CI ARM64 runner".
+
 ## For 0.13.78: library bounds files under the trusted-bin switch (Claude, 2026-11-20; not in 0.13.77)
 
 Written while the 0.13.77 chain ran. Version 0.13.78 (93), release notes and
@@ -461,7 +529,7 @@ Written while the 0.13.77 chain ran. Version 0.13.78 (93), release notes and
 
 
 - **What the first map load profile showed** (0.13.77 trusted run
-  44698417683, CI x86-64, Atlas Park reopen): `ARMPORT_MAP_LOAD_V1`
+  44698417683, CI ARM64 runner, Atlas Park reopen): `ARMPORT_MAP_LOAD_V1`
   `total_ms=6635 other_ms=3101 model_find_ms=1647 model_finds=9562
   bounds_files_ms=1837 bounds_files=504 recalc_bounds_ms=29 scene_ms=2
   spawn_areas_ms=15 ref_activate_ms=0 unbalanced=0`. 28% of the map load is
@@ -688,7 +756,7 @@ are positive, no apparent issues with animations".
   (failed in 5.5 s: "The CI zoning flow needs the CI external-maps
   DbServer"; my dispatch had no `external_maps_run_id`) → spare zone again
   with it, 44678714431 (passed, 1,573 s) → APK 44682583963.
-- **First hand-over to a spare** (44678714431, reopen session, CI x86-64):
+- **First hand-over to a spare** (44678714431, reopen session, CI ARM64 runner):
   `spare_zone.starts[0]` `warm_seconds` 24.978, `outcome` `assigned`,
   `map_id` 101, `loaded_seconds_before_request` 40.064, available memory
   10,350 MiB at its start and 9,138 when warm; the trip's `map_startup`
