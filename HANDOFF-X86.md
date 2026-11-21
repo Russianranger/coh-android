@@ -544,7 +544,28 @@ and `spare-zone-server` in B. Read with the scratch tools `sum.py` and
   `texmodels.welded.*`, `texmodels.done`).
 - **CI travel**: a trip that has not arrived is asked for again
   (`c39935abb`, "For 0.13.78" below).
-- **Chain.** CHAIN79_PLACEHOLDER
+- **Chain** (one at a time, all at `3c9812a41`, every runtime with
+  `server_emulation=x87`): build 44885921669 (Java, the ARM64 client with
+  0130) → stock travel on the default server 44894164205 (passed; 198.3 /
+  85.9 / 86.4 s; 208.8 / 95.8 / 101.0 for 0.13.78) → trusted 44897019107
+  (passed; reopen `elapsed_to_main_loop` 20.13, `definitions_done` 9.59,
+  `group_load_done` 7.32, map load 4,828 ms; creation 377.35) → spare zone
+  44899910978 (passed) → APK 44902543863.
+- **Spare run 44899910978, reopen**: `warm_seconds` 20.055, `assigned` to
+  map 101 after 35.3 s loaded; trip `request_to_map_ready_seconds` 10.09
+  (15.15 in 44739226760), client in the zone 10.65 s (16.06); 2 arrivals;
+  `TRAVEL_INPUT_V1` `resends` `[]`; reopen `PROOT_STOP_COUNTS_V1` 1,744,481
+  stops in 610 s. CI's map 101 has no cooked collision meshes when the trip
+  asks for it, so part of those 5 s is PhysX cooking under 64-bit x87; the
+  Thor reads its meshes from the cache. `graphs_checked_ahead` is absent:
+  CI's spare runs the Atlas tree. Its first run is the Thor's launch A.
+- **Published**: pre-release `coh-atlas-gameplay-v0.13.79` at `3c9812a41`,
+  `COH-Atlas-Gameplay-0.13.79.apk` 93,581,578 bytes, sha256
+  `3af3a9ccf1d92f275856f5eaf62e55f77ea5f2673925e12d0003daed664a812d`, signer
+  `92955353…a776c282` (unchanged), version 0.13.79 (94). Downloaded and
+  checked: checksum, 51 guest files equal the commit, the app's dex holds
+  `COH_SERVER_EMULATION=` and `server-x87-64bit`, `CityOfHeroes.exe` holds
+  0130's kept stages (0.13.78's does not). Not yet on the Thor.
 - Ideas not started: the previous zone kept beside the current one and the
   spare (three servers, about 1.2 GB more; an owner decision); beacons
   (5.3 s of a hand-over) and the group files (5-6 s) need a profile inside

@@ -49,7 +49,21 @@ so it is not in the app.
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "Thor test of 0.13.78 and what
 0.13.79 does about it".
 
-CI: CI79_EVIDENCE_PLACEHOLDER
+CI (all at `3c9812a41`, with the new emulation option on): build
+44885921669; default server with travel 44894164205 (passed; zone starts
+198.3 s, then 85.9 s and 86.4 s, against 208.8 / 95.8 / 101.0 s for 0.13.78);
+Fast server 44897019107 (passed; reopen zone server at its main loop after
+20.1 s against 21.5 s, group load 7.3 s against 8.3 s); spare zone server
+44899910978 (passed: the spare loaded in 20.1 s, the trip's zone was ready
+10.1 s after the game asked and the game was in the new zone after 10.6 s,
+against 15.1 s and 16.1 s for 0.13.78; no travel command had to be typed
+again). CI's destination has no prepared collision meshes yet, and preparing
+them is where the option helps most, so expect a smaller gain on the Thor.
+The navigation map check ahead of a trip did not run in CI (its spare uses
+the Atlas Park tree, which has no such check); launch A is its first run.
+APK 44902543863: 93,581,578 bytes, sha256
+`3af3a9ccf1d92f275856f5eaf62e55f77ea5f2673925e12d0003daed664a812d`, signer
+unchanged.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

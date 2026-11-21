@@ -840,6 +840,12 @@ definitions and is not adopted (HANDOFF, "0.13.79 (94): what changed"). The
 graph check moves ahead of the trip, the spare becomes the default, and
 client patch 0130 will show where the client's share goes.
 
+0.13.79's chain (3c9812a41), CI with the x87 setting: default server zone
+starts 198 / 86 / 86 s (209 / 96 / 101), trusted reopen 20.1 s to the main
+loop (21.5), spare trip ready in 10.1 s (15.1; CI cooks the destination's
+meshes during the trip, which the setting speeds most, so the Thor's gain
+will be smaller).
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack
