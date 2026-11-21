@@ -436,6 +436,48 @@ def physx_cache_requested():
     return os.environ.get(PHYSX_CACHE_ENVIRONMENT) == '1'
 
 
+# 0.13.79 (roadmap phase 3, item 1): emulator settings for the zone servers only. FEX 2510 ran on
+# its defaults. On the Thor (0.13.78) a zone start is 44 s and a spare's hand-over 17-20 s of
+# x86 code that reads no source folders any more: definitions, group files, beacons. Wine's
+# WoW64 FEX module reads FEX_* from the process environment (Source/Windows/WOW64/Module.cpp,
+# BTCpuProcessInit -> FEX::Config::LoadConfig(..., _environ, ...) at 320c5f18).
+#   tso: x86 store ordering is not emulated for the code of MapServer.exe itself; every other
+#        module (Wine's DLLs, the PhysX DLLs) keeps it (ExtendedVolatileMetadata, a module name
+#        alone "disables TSO in the module"; the name is the mapped file's base name).
+#   x87: x87 arithmetic in 64 bits instead of 80 bits in software (X87ReducedPrecision).
+# COH_SERVER_EMULATION is a comma-separated list of these names; anything else is ignored and
+# recorded. The DbServer, the launcher and the client never get these variables.
+SERVER_EMULATION_ENVIRONMENT = 'COH_SERVER_EMULATION'
+SERVER_EMULATION_SETTINGS = {
+    'tso': ('FEX_EXTENDEDVOLATILEMETADATA', 'MapServer.exe:mapserver.exe:MAPSERVER.EXE'),
+    'x87': ('FEX_X87REDUCEDPRECISION', '1'),
+}
+
+
+def server_emulation_requested():
+    """(known setting names in table order, the other tokens) from COH_SERVER_EMULATION."""
+    tokens = [token.strip() for token in os.environ.get(SERVER_EMULATION_ENVIRONMENT, '').split(',')]
+    tokens = [token for token in tokens if token]
+    return ([name for name in SERVER_EMULATION_SETTINGS if name in tokens],
+            sorted({token[:24] for token in tokens if token not in SERVER_EMULATION_SETTINGS})[:8])
+
+
+def apply_server_emulation(environment):
+    """Set the requested emulator variables in one zone server's environment; the report section.
+
+    The variables are removed first, so nothing inherited reaches a zone server unrequested.
+    """
+    for variable, _ in SERVER_EMULATION_SETTINGS.values():
+        environment.pop(variable, None)
+    requested, ignored = server_emulation_requested()
+    applied = {}
+    for name in requested:
+        variable, value = SERVER_EMULATION_SETTINGS[name]
+        environment[variable] = applied[variable] = value
+    return {'format': 1, 'requested': requested, 'ignored': ignored, 'environment': applied,
+            'scope': 'zone_servers_only', 'is_success_proof': False}
+
+
 def physx_cache_file(root, mapserver_sha256):
     """The cooked mesh file for one MapServer build under the workspace, its folder made private."""
     require(isinstance(mapserver_sha256, str) and re.fullmatch(r'[0-9a-f]{64}', mapserver_sha256) is not None,
@@ -3491,6 +3533,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         environment.pop('ARMPORT_SERVER_METRICS', None)
         environment.pop('ARMPORT_TRUSTED_BINS', None)
         environment.pop(PHYSX_CACHE_VARIABLE, None)
+        emulation = apply_server_emulation(environment)
         enabled = 'armport_server_metrics' in self.map_package
         requested = os.environ.get('COH_TRUSTED_BINS') == '1'
         trusted = False
@@ -3532,6 +3575,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'reason': None if trusted or not requested else
                     ('no_metrics_mapserver' if not enabled else 'switch_not_in_admitted_build')}
             report['physx_cache'] = cooked
+            report['server_emulation'] = emulation
         return environment
 
     def start_map(self):

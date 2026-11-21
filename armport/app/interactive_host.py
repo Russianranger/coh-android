@@ -445,6 +445,18 @@ def trusted_bins_requested():
     return value == '1'
 
 
+def server_emulation_requested():
+    """CI A/B input (0.13.79): emulator settings for the zone servers, e.g. `tso`, `x87` or `tso,x87`.
+
+    Passed to the guest as COH_SERVER_EMULATION in both sessions; the guest knows the names
+    (local_character_server.SERVER_EMULATION_SETTINGS) and records what it set.
+    """
+    value = os.environ.get('COH_SERVER_EMULATION', '')
+    require(re.fullmatch(r'[a-z0-9]{1,12}(,[a-z0-9]{1,12}){0,3}|', value) is not None,
+            'COH_SERVER_EMULATION must be empty or up to four comma-separated names')
+    return value
+
+
 def shared_heap_requested():
     """Experiment (app default off): MapServers run without -nosharedmemory."""
     value = os.environ.get('COH_SHARED_HEAP', '')
@@ -585,8 +597,14 @@ def start_options_line(report, session):
     own counters). Evidence only; neither gates a session.
     """
     value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None,
-             'physx_cache': None}
+             'physx_cache': None, 'server_emulation': None}
     if isinstance(report, dict):
+        for section in [report, *report.values()]:
+            emulation = section.get('server_emulation') if isinstance(section, dict) else None
+            if isinstance(emulation, dict):
+                # 0.13.79: the emulator variables the guest set for the zone servers.
+                value['server_emulation'] = {key: emulation.get(key) for key in ('requested', 'ignored', 'environment')}
+                break
         for section in [report, *report.values()]:
             cooked = section.get('physx_cache') if isinstance(section, dict) else None
             if isinstance(cooked, dict):
@@ -1086,6 +1104,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
         if shared_heap_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_HEAP=1')
+        if server_emulation_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_SERVER_EMULATION=' + server_emulation_requested())
         if args.external_maps_dbserver is not None:
             # The supervisor observes the DbServer's map requests and delinks
             # the ones this flow does not start itself (milestone 1).
