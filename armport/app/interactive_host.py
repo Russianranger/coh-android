@@ -834,6 +834,12 @@ def guest_timing_summary(evidence):
                                 'reason', 'map_id', 'loaded_seconds_before_request', 'refused_request',
                                 'available_memory_mib', 'available_memory_mib_when_warm') if row.get(key) is not None}
                                for row in (spare.get('starts') or [])[:4]]}
+                ahead = spare.get('graphs_checked_ahead')
+                if isinstance(ahead, list) and ahead:
+                    # 0.13.79: navigation graph receipts checked while the warm spare waited.
+                    result['spare_zone']['graphs_checked_ahead'] = [
+                        {key: row.get(key) for key in ('map_id', 'receipt_held', 'seconds', 'error')
+                         if row.get(key) is not None} for row in ahead[:8] if isinstance(row, dict)]
             result['shared_heap'] = next((section.get('shared_heap') for section in
                 (report.get('character_creation'), report.get('character_reopen'))
                 if isinstance(section, dict) and section.get('shared_heap') is not None), None)

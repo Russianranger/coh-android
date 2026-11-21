@@ -583,14 +583,15 @@ class ZoneTreeGraphTests(unittest.TestCase):
             self.server.LocalCharacterServer.zone_graph_with_receipt(self.owner, *args)
         self.sources = {MAP_ID: {'origin': 'navigation_map_pack'}}
 
-    def run_install(self, install, map_id=MAP_ID, environment=None):
+    def run_install(self, install, map_id=MAP_ID, environment=None, receipt_only=None):
         environment = {'COH_NAVIGATION_MAPS': '/opt/coh-navigation'} if environment is None else environment
         with unittest.mock.patch.object(self.package, 'sources', return_value=self.sources) as sources, \
                 unittest.mock.patch.object(self.package, 'install', side_effect=install), \
                 unittest.mock.patch.dict(self.server.os.environ, environment, clear=False):
             if 'COH_NAVIGATION_MAPS' not in environment:
                 self.server.os.environ.pop('COH_NAVIGATION_MAPS', None)
-            result = self.server.LocalCharacterServer.install_zone_beacon_graph(self.owner, map_id, Path('/tree'))
+            extra = {} if receipt_only is None else {'receipt_only': receipt_only}
+            result = self.server.LocalCharacterServer.install_zone_beacon_graph(self.owner, map_id, Path('/tree'), **extra)
             return result, sources
 
     def test_a_verified_graph_is_reported_by_map_once_per_session(self):
@@ -606,6 +607,50 @@ class ZoneTreeGraphTests(unittest.TestCase):
         again, _ = self.run_install(install)
         self.assertIs(again, result)
         self.assertEqual(calls, [MAP_ID])
+
+    def test_the_check_ahead_only_reads_the_receipt_and_remembers_only_a_held_one(self):
+        # 0.13.79: receipt_only never installs. These sources bind no receipt, so nothing is remembered...
+        result, _ = self.run_install(lambda *args, **kwargs: self.fail('the check ahead must not install'),
+                                     receipt_only=True)
+        self.assertIsNone(result)
+        self.assertEqual(self.owner.zone_tree_prepared['preparation']['beacon_graph'], {})
+        self.assertEqual(self.owner.ctx.report.get('launch_receipts', {}), {})
+        result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), map_id=72, receipt_only=True)
+        self.assertIsNone(result)                                # no graph for that zone: left to its trip
+        self.assertEqual(self.owner.zone_tree_prepared['preparation']['beacon_graph'], {})
+        # ...and the trip then runs the step in full, as before.
+        result, _ = self.run_install(lambda source, tree, map_id, **kwargs: {'verified': True, 'map_id': map_id,
+                                                                             'status': 'installed_verified_graph'})
+        self.assertEqual(result['status'], 'installed_verified_graph')
+        self.assertNotIn('checked_ahead', result)
+        # A held receipt: the result is remembered for the session and marked.
+        self.owner.zone_tree_prepared['preparation']['beacon_graph'].clear()
+        held = {'verified': True, 'map_id': MAP_ID, 'status': 'reused_verified_graph'}
+        self.owner.zone_graph_with_receipt = unittest.mock.Mock(return_value=dict(held))
+        result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), receipt_only=True)
+        self.assertEqual((result['status'], result['checked_ahead'], result['navigation_map_pack']),
+                         ('reused_verified_graph', True, 'bound'))
+        self.assertEqual(self.owner.zone_graph_with_receipt.call_args.args[-1], True)
+        again, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'))
+        self.assertIs(again, result)                             # the trip finds it done
+        self.assertEqual(self.owner.zone_graph_with_receipt.call_count, 1)
+
+    def test_known_zones_are_the_stored_graph_receipts_newest_first(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temporary:
+            self.owner.owner.root = Path(temporary)
+            listed = lambda: self.server.LocalCharacterServer.zone_graphs_with_receipts(self.owner)
+            self.assertEqual(listed(), [])                       # no store yet
+            store = Path(temporary) / 'launch-receipts'; store.mkdir()
+            zones = sorted(self.package.WORLDS)[:3]
+            for age, map_id in enumerate(zones):
+                path = store / ('zone_graph_%d.json' % map_id); path.write_text('{}')
+                self.server.os.utime(path, (1000 - age, 1000 - age))
+            for name in ('zone_graph_0.json', 'zone_graph_x.json', 'zone_resources.json', 'zone_graph_99999.json',
+                         'zone_graph_%d.json.new' % zones[0]):
+                (store / name).write_text('{}')
+            self.assertEqual(listed(), zones)
+            self.assertEqual(self.server.LocalCharacterServer.zone_graphs_with_receipts(self.owner, limit=2), zones[:2])
 
     def test_a_zone_without_a_graph_starts_as_before(self):
         result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), map_id=72, environment={})

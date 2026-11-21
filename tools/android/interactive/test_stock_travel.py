@@ -219,6 +219,67 @@ class StockTravelTests(unittest.TestCase):
             # Two zone servers now: no new spare until the zone the hero left has given way.
             self.assertEqual(len(started), 1)
 
+    def test_a_warm_spare_checks_known_zones_graph_receipts_ahead_one_a_tick(self):
+        # Thor 0.13.78: the first trip to Port Oakes through a warm spare waited 2.27 s for this check.
+        value, started = self.spare_instance()
+        value.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {'beacon_graph': {'71': {'verified': True}}}}
+        value.zone_graphs_with_receipts = Mock(return_value=[72, 71, 1, 73, 74])
+        results = {72: {'verified': True}, 73: None, 74: {'verified': True}}
+        value.install_zone_beacon_graph = Mock(side_effect=lambda map_id, runtime, receipt_only=False: results[map_id])
+        self.tick(value)
+        process = started[0][3]
+        self.tick(value)                                      # loading: nothing is checked yet
+        value.install_zone_beacon_graph.assert_not_called()
+        process.output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
+        self.tick(value)                                      # the tick that sees it warm
+        value.install_zone_beacon_graph.assert_not_called()
+        self.tick(value)
+        value.install_zone_beacon_graph.assert_called_once_with(72, Path('/zones'), receipt_only=True)
+        self.tick(value)                                      # 71 is known this session, 1 is running: 73 next
+        self.tick(value)
+        self.tick(value); self.tick(value)                    # nothing left
+        self.assertEqual([call.args[0] for call in value.install_zone_beacon_graph.call_args_list], [72, 73, 74])
+        report = value.spare_report['graphs_checked_ahead']
+        self.assertEqual([(row['map_id'], row['receipt_held']) for row in report], [(72, True), (73, False), (74, True)])
+        self.assertTrue(all(type(row['seconds']) is float for row in report))
+        self.assertEqual(len(started), 1)
+
+    def test_the_check_ahead_waits_for_a_starting_zone_stops_at_its_limit_and_never_fails_the_session(self):
+        value, started = self.spare_instance()
+        value.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {}}
+        value.zone_graphs_with_receipts = Mock(return_value=list(range(60, 80)))
+        value.install_zone_beacon_graph = Mock(return_value=None)
+        self.tick(value)
+        started[0][3].output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
+        self.tick(value)
+        value.stock_starts[5] = {}
+        self.tick(value)
+        value.install_zone_beacon_graph.assert_not_called()
+        value.stock_starts.clear()
+        for _ in range(zoning.SPARE_GRAPHS_AHEAD + 4):
+            self.tick(value)
+        self.assertEqual(value.install_zone_beacon_graph.call_count, zoning.SPARE_GRAPHS_AHEAD)
+        # A spare of another tree checks nothing; an error is recorded once and ends the checks.
+        other, started = self.spare_instance(tree='atlas')
+        other.zone_graphs_with_receipts = Mock(return_value=[72])
+        other.install_zone_beacon_graph = Mock()
+        self.tick(other)
+        self.assertEqual(other.spare['runtime'], Path('/atlas'))
+        started[0][3].output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
+        self.tick(other); self.tick(other)                    # no shared zone tree prepared
+        other.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {}}
+        self.tick(other)                                      # prepared since, but this spare runs the Atlas tree
+        other.install_zone_beacon_graph.assert_not_called()
+        failing, started = self.spare_instance()
+        failing.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {}}
+        failing.zone_graphs_with_receipts = Mock(side_effect=OSError('gone'))
+        self.tick(failing)
+        started[0][3].output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
+        self.tick(failing); self.tick(failing); self.tick(failing); self.tick(failing)
+        self.assertEqual(failing.zone_graphs_with_receipts.call_count, 1)
+        self.assertEqual(failing.spare_report['graphs_checked_ahead'], [{'map_id': None, 'receipt_held': False, 'error': 'gone'}])
+        self.assertIsNotNone(failing.spare)
+
     def test_no_spare_until_the_session_allows_it(self):
         cases = [(lambda v: v.spare_report.update(requested=False), None),
                  (lambda v: v.creation_report.update(connected_on_atlas=False), 'character_not_in_the_world'),

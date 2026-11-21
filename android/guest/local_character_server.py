@@ -3198,7 +3198,24 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.zone_tree_prepared = {'runtime': target, 'preparation': report}
         return self.zone_tree_prepared
 
-    def install_zone_beacon_graph(self, map_id, target):
+    def zone_graphs_with_receipts(self, limit=8):
+        """Map ids whose navigation graph has a stored launch receipt, newest first (0.13.79).
+
+        These are the zones this install has started before. Names only: nothing is read here.
+        """
+        import zone_beacon_package
+        found = []
+        try:
+            with os.scandir(self.owner.root / 'launch-receipts') as entries:
+                for entry in entries:
+                    match = re.fullmatch(r'zone_graph_([1-9][0-9]{0,4})\.json', entry.name)
+                    if match and int(match.group(1)) in zone_beacon_package.WORLDS:
+                        found.append((entry.stat(follow_symlinks=False).st_mtime_ns, int(match.group(1))))
+        except OSError:
+            return []
+        return [map_id for _, map_id in sorted(found, reverse=True)[:limit]]
+
+    def install_zone_beacon_graph(self, map_id, target, receipt_only=False):
         """This zone's navigation graph, verified against the shared zone tree before its MapServer starts.
 
         Thor 0.13.63, Mercy Island: "Beacon file not loaded for map: ...", so pets and NPCs
@@ -3206,6 +3223,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         pack (or, as in 0.13.65, from the APK). A graph that does not match the tree is not
         installed: its zone still starts as before, without pathing. Once per zone and session;
         collision inputs another zone already proved in this session are not hashed again.
+
+        receipt_only (0.13.79, the check done ahead of a trip): only the receipt check; when the
+        receipt does not hold, nothing is installed or remembered and the answer is None, so the
+        trip itself runs the step in full as before.
         """
         import zone_beacon_package
         prepared = getattr(self, 'zone_tree_prepared', None)
@@ -3220,20 +3241,29 @@ class LocalCharacterServer(login.LocalLoginServer):
             require(navigation in (None, zone_beacon_package.NAVIGATION_ROOT), 'Unexpected navigation map location')
             found = zone_beacon_package.sources(self.owner.args.assets, navigation)
             if map_id in found:
-                result = self.zone_graph_with_receipt(zone_beacon_package, found[map_id], target, map_id)
+                result = self.zone_graph_with_receipt(zone_beacon_package, found[map_id], target, map_id,
+                                                      receipt_only)
+                if result is None:
+                    return None
+            elif receipt_only:
+                return None
             else:
                 result = {'format': 1, 'verified': False, 'map_id': map_id, 'status': 'no_graph'}
         except base.Cancelled:
             raise
         except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile) as failure:
+            if receipt_only:
+                return None
             result = {'format': 1, 'verified': False, 'map_id': map_id,
                       'status': 'not_installed', 'error': str(failure)[:300]}
+        if receipt_only:
+            result['checked_ahead'] = True
         result['navigation_map_pack'] = 'bound' if navigation else 'not_imported'
         result['elapsed_seconds'] = round(time.monotonic() - started, 6)
         graphs[key] = result
         return result
 
-    def zone_graph_with_receipt(self, package, source, target, map_id):
+    def zone_graph_with_receipt(self, package, source, target, map_id, receipt_only=False):
         """One zone's graph, or its last full result while its launch receipt holds (0.13.70).
 
         Thor 0.13.69 (20261113-015905): every start of Mercy Island's server re-read the state
@@ -3262,6 +3292,10 @@ class LocalCharacterServer(login.LocalLoginServer):
             raise
         except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
             record['reason'], identity = str(failure)[:200], None
+        if receipt_only:
+            # The check ahead never installs: the trip that needs this zone does, and records it then.
+            self.ctx.report['launch_receipts'].pop(step, None)
+            return None
         leaves = []
         result = package.install(source, target, map_id, context=self.ctx, imported_inputs_readonly=True,
                                  proofs=self.owner.root / 'zone-collision-input-proofs.json', leaves=leaves)

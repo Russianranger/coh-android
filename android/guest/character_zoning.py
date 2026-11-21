@@ -90,6 +90,11 @@ SPARE_MIN_AVAILABLE_MIB = PRESTART_MIN_AVAILABLE_MIB
 SPARE_SETTLE_SECONDS = 30          # in the zone this long before a spare starts or a resident zone gives way
 SPARE_TICK_SECONDS = 5
 SPARE_ROOM_PROBE_SECONDS = 120     # the DbServer is asked where the hero is at most this often
+# 0.13.79: Thor 0.13.78 (20261121-053448), first trip to Port Oakes through a warm spare: the
+# hand-over waited 2.27 s for the receipt check of that zone's navigation graph (1.6-2.3 s per
+# zone, once a session); the trip back, whose zone was already checked, waited 5 ms. While a warm
+# spare waits, that check is done for the zones this install has started before, one a tick.
+SPARE_GRAPHS_AHEAD = 6
 SPARE_START_LIMIT = 12
 # The game options the DbServer adds to every zone it asks for (launchercomm.c builds them from
 # its configuration, the same for a whole session; Thor 0.13.66: -maxLevel 50 -aggrocap 17
@@ -2965,6 +2970,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                                     available_memory_mib_when_warm=available_memory_mib())
                     self._spare_event('warm', spare, warm_seconds=round(now - spare['launch_monotonic'], 3))
                 spare['waiting_scan_offset'] = len(output)
+            else:
+                self._check_graph_ahead(spare)
             return
         reason = self._spare_wait_reason(now)
         report['waiting_reason'] = reason
@@ -2978,6 +2985,36 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         except (base.DiagnosticError, OSError, ValueError, KeyError) as failure:
             report['waiting_reason'] = 'start_failed: ' + str(failure)[:160]
             self.spare_next = now + 10 * SPARE_TICK_SECONDS
+
+    def _check_graph_ahead(self, spare):
+        """One known zone's navigation graph receipt, checked while the warm spare waits (0.13.79).
+
+        The result is the one a trip to that zone would compute first (install_zone_beacon_graph
+        remembers it for the session, as it does between two trips). Receipt only: a zone whose
+        receipt does not hold is left for its trip. Never while a zone is starting; never an error.
+        """
+        report = self.spare_report.setdefault('graphs_checked_ahead', [])
+        tried = self.__dict__.setdefault('graphs_ahead_tried', set())
+        prepared = getattr(self, 'zone_tree_prepared', None)
+        if (len(tried) >= SPARE_GRAPHS_AHEAD or self.pending is not None or self.stock_starts
+                or prepared is None or Path(spare['runtime']) != prepared['runtime']):
+            return
+        known = prepared.get('preparation', {}).get('beacon_graph', {})
+        try:
+            for map_id in self.zone_graphs_with_receipts():
+                if map_id in tried or str(map_id) in known or map_id in self.maps:
+                    continue
+                tried.add(map_id)
+                started = time.monotonic()
+                result = self.install_zone_beacon_graph(map_id, spare['runtime'], receipt_only=True)
+                report.append({'map_id': map_id, 'receipt_held': result is not None,
+                               'seconds': round(time.monotonic() - started, 3)})
+                return
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            report.append({'map_id': None, 'receipt_held': False, 'error': str(failure)[:160]})
+            tried.update(range(-SPARE_GRAPHS_AHEAD, 0))     # stop trying in this session
 
     def _spare_wait_reason(self, now):
         """None when a spare may start now; else why not (recorded, never an error)."""
