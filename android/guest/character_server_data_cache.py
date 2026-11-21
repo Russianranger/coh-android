@@ -22,6 +22,9 @@ PRIVATE_ROOTS = ('bin', 'geobin', 'server')
 CONFIG = 'server/db/servers.cfg'
 STATS = {'files', 'bytes', 'directories', 'linked_immutable_files',
          'copied_private_files', 'preserved_schema_files'}
+PROCESS_LIMIT = 4096
+MARKER_FIELDS = {'format', 'policy', 'identity', 'key', 'status', 'owner', 'data_identity',
+                 'directories', 'private_files', 'anchors', 'stats'}
 
 
 def canonical(value):
@@ -57,6 +60,114 @@ def real_path(root, name, *, directory=False):
     if directory:
         fingerprint(current, directory=True)
     return current
+
+
+def process_status(directory):
+    fields = {}
+    for line in (Path(directory) / 'status').read_text(errors='replace').splitlines()[:128]:
+        name, _, value = line.partition(':')
+        fields[name] = value.strip()
+    return fields
+
+
+def foreign_processes(proc=Path('/proc'), pid=None):
+    """Live same-uid processes outside this guest: neither our ancestors, nor traced by
+    our PRoot, nor started by that PRoot itself.
+
+    PRoot runs with --kill-on-exit, so a finished session leaves no tracees;
+    anything else with our real uid could still hold a stranded tree. Unreadable
+    entries count as foreign. Outside PRoot (no tracer) nothing can be proved.
+
+    Thor 0.13.61, 0.13.63 and 0.13.66: every recovery was refused by one untraced
+    process named "exe", 4 or 5 pids after this session's PostgreSQL (PRoot's own
+    helper for System V shared memory, started when the database starts). A process
+    whose parent chain reaches our tracer belongs to this session.
+
+    Thor 0.13.67 (export 20261111-035325) recorded that process's parent and tracer:
+    {"name": "exe", "parent": "1", "tracer": "0"}. The helper detaches, so no parent
+    chain reaches the tracer; proot_helper() recognises it by what it is instead.
+    """
+    pid = os.getpid() if pid is None else pid
+    own = process_status(proc / str(pid))
+    uid, tracer = own['Uid'].split()[0], int(own['TracerPid'])
+    require(tracer > 0, 'Stranded cache recovery needs this guest\'s PRoot tracer identity')
+    ancestors, current = set(), pid
+    while current > 1 and current not in ancestors and len(ancestors) < 256:
+        ancestors.add(current)
+        try:
+            current = int(process_status(proc / str(current))['PPid'])
+        except (FileNotFoundError, ProcessLookupError):
+            # Thor 0.13.49: an ancestor exited between its child's PPid read and
+            # its own status read. An exited process holds no tree. Ancestors
+            # above it stay unexcluded, so the scan below still counts them.
+            break
+    foreign, count = [], 0
+    with os.scandir(proc) as entries:
+        for entry in entries:
+            if not entry.name.isdigit():
+                continue
+            count += 1
+            require(count <= PROCESS_LIMIT, 'Process table exceeded the recovery bound')
+            other = int(entry.name)
+            if other in ancestors or other == tracer:
+                continue
+            try:
+                status = process_status(entry.path)
+            except (FileNotFoundError, ProcessLookupError):
+                continue
+            except (OSError, ValueError):
+                foreign.append({'pid': other, 'name': None})
+                continue
+            if status.get('Uid', '').split()[:1] != [uid] or status.get('State', '').startswith(('Z', 'X')):
+                continue
+            if status.get('TracerPid') == str(tracer):
+                continue
+            parent, steps = status.get('PPid'), 0
+            while parent is not None and parent.isdigit() and int(parent) > 1 and int(parent) != tracer and steps < 64:
+                steps += 1
+                try:
+                    parent = process_status(proc / parent).get('PPid')
+                except (OSError, ValueError):
+                    parent = None
+            if parent is not None and parent.isdigit() and int(parent) == tracer:
+                continue
+            helper = proot_helper(proc, other, status, tracer)
+            if helper['recognised']:
+                continue
+            foreign.append({'pid': other, 'name': status.get('Name'), 'parent': status.get('PPid'),
+                            'tracer': status.get('TracerPid'), 'helper_check': helper})
+    return foreign
+
+
+def start_ticks(proc, pid):
+    """Start time of a process in clock ticks since boot (/proc/<pid>/stat field 22)."""
+    text = (proc / str(pid) / 'stat').read_text(errors='replace')
+    return int(text[text.rindex(')') + 2:].split()[19])
+
+
+def proot_helper(proc, pid, status, tracer):
+    """Is this untraced, detached process our own PRoot's helper?
+
+    All of: named "exe" (PRoot starts it from /proc/self/exe), reparented to init,
+    not traced, the same program file as our tracer, and started no earlier than
+    that tracer, so it cannot be left from an earlier session (whose tracer, and
+    with --kill-on-exit every tracee, ended before ours began). Such a helper keeps
+    PRoot's shared-memory files and holds no directory of a stranded tree. Anything
+    unreadable or different is not recognised and stays foreign, as before.
+    """
+    result = {'recognised': False}
+    if (status.get('Name'), status.get('PPid'), status.get('TracerPid')) != ('exe', '1', '0'):
+        return result
+    try:
+        own, other = os.readlink(proc / str(tracer) / 'exe'), os.readlink(proc / str(pid) / 'exe')
+        result.update(same_program_as_tracer=bool(own) and own == other,
+                      program=other.rsplit('/', 1)[-1][:64])
+        result['started_after_tracer'] = start_ticks(proc, pid) >= start_ticks(proc, tracer)
+    except (OSError, ValueError, IndexError) as error:
+        result['unreadable'] = type(error).__name__
+        return result
+    result['recognised'] = result['same_program_as_tracer'] and result['started_after_tracer']
+    return result
 
 
 class CheckedInputResolver:
@@ -213,6 +324,53 @@ class ServerDataCache:
             # One bounded read-only leaf per top-level input directory.
             self.anchor_names.setdefault(relative.parts[0], name)
 
+    def recover_stranded(self):
+        """Adopt a generation whose earlier session never returned it (e.g. unproved Wine cleanup).
+
+        Only an exact marker for this identity, checked out by a different
+        session whose tree still has the recorded identity, qualifies, and only
+        while no process outside this guest is alive. The tree's credential
+        file is removed and the normal read/verify then runs unchanged.
+        """
+        try:
+            info = self.marker.lstat()
+            require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+                    and 0 < info.st_size <= MARKER_LIMIT, 'Invalid Atlas cache marker')
+            record = json.loads(self.marker.read_text())
+        except (OSError, ValueError):
+            return False
+        owner = record.get('owner') if isinstance(record, dict) else None
+        if not (isinstance(record, dict) and set(record) == MARKER_FIELDS and record['format'] == 1
+                and record['policy'] == POLICY and record['identity'] == self.identity
+                and record['key'] == self.key and record['status'] == 'checked_out'
+                and isinstance(owner, dict) and set(owner) == {'session_id', 'target'}
+                and isinstance(owner['session_id'], str)
+                and re.fullmatch('[0-9a-f]{32}', owner['session_id'])
+                and owner['session_id'] != self.session and isinstance(owner['target'], str)):
+            return False
+        target = Path(owner['target'])
+        require(target.is_absolute() and target.name == 'data' and self.root in target.parents
+                and '..' not in target.parts, 'Stranded Atlas cache target escaped the owner root')
+        require(not (self.path / 'data').exists() and not (self.path / 'data').is_symlink(),
+                'Stranded Atlas cache already has a returned tree')
+        require(fingerprint(target, directory=True) == record['data_identity'],
+                'Stranded Atlas cache tree changed identity')
+        survivors = foreign_processes()
+        if survivors:
+            self.summary.update(stranded_recovery_refused='processes_outside_this_guest',
+                                stranded_recovery_survivors=survivors[:8])
+            return False
+        config = real_path(target, CONFIG)
+        if config.exists() or config.is_symlink():
+            fingerprint(config)
+            config.unlink()
+        target.rename(self.path / 'data')
+        record.update(status='closed', owner=None)
+        self.write(record)
+        self.summary.update(stranded_generation_recovered=True, stranded_owner_session=owner['session_id'],
+                            stranded_credential_config_removed=True)
+        return True
+
     def write(self, record):
         payload = json.dumps(record, sort_keys=True) + '\n'
         require(len(payload.encode()) <= MARKER_LIMIT, 'Atlas cache marker exceeded bound')
@@ -267,6 +425,10 @@ class ServerDataCache:
                 'Atlas cache source data escaped verified roots')
         private_names = set(record['private_files'])
         owner_uid = self.root.stat().st_uid
+        # Top-level folders the zone servers read from the shared read-only
+        # tree (runtime/serverdata) are never staged into this generation.
+        shared = {str(value).casefold() for value in
+                  (self.identity.get('shared_server_data') or {}).get('shared_top_level', ())}
         examined = 0
         for row, observed_mtime in changed:
             self.ctx.check()
@@ -289,6 +451,12 @@ class ServerDataCache:
                         # A new projected generation omits this native-excluded
                         # directory. Migrated full generations still record it
                         # and therefore keep their complete original checks.
+                        continue
+                    if (not name and entry.name.casefold() in shared
+                            and relative not in directory_names):
+                        # Thor 0.13.50: a changed data root refused every reuse
+                        # because these were expected. A private copy of one
+                        # is still unexpected below, so the check stays exact.
                         continue
                     expected.add(entry.name)
             actual = set()
@@ -506,7 +674,17 @@ class ServerDataCache:
                 self.summary['reuse_refused'] = 'cache_generation_limit_reached'
             return False
         try:
-            record = self.read()
+            try:
+                record = self.read()
+            except base.DiagnosticError as refused:
+                try:
+                    recovered = self.recover_stranded()
+                except (base.DiagnosticError, OSError, ValueError, TypeError, KeyError) as failure:
+                    self.summary['stranded_recovery_refused'] = str(failure)[:300]
+                    recovered = False
+                if not recovered:
+                    raise refused
+                record = self.read()
             cached = self.path / 'data'
             self.verify(cached, record)
         except base.Cancelled:

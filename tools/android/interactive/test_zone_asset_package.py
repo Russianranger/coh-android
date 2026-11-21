@@ -97,9 +97,24 @@ class ZonePackageTests(unittest.TestCase):
             path = self.work/name
             self.assertEqual(path.read_bytes(), raw)
             self.assertEqual(path.stat().st_mode & 0o777, 0o444)
-        with mock.patch.object(zones.zipfile, 'ZipFile', side_effect=AssertionError('warm ZIP read')):
+        with mock.patch.object(zones.zipfile, 'ZipFile', side_effect=AssertionError('warm ZIP read')), \
+                mock.patch.object(zones.world, 'output_state', wraps=zones.world.output_state) as states:
             reused = zones.install(self.work, self.assets, self.ctx)
         self.assertTrue(reused['fingerprint_reused']); self.assertEqual(reused['installed_files'], 0)
+        self.assertEqual(states.call_count, 1)        # one leaf pass when nothing is written
+
+    def test_fresh_install_and_rebound_keep_the_second_leaf_pass(self):
+        with mock.patch.object(zones.world, 'output_state', wraps=zones.world.output_state) as states:
+            zones.install(self.work, self.assets, self.ctx)
+        self.assertEqual(states.call_count, 2)
+        for name in (zones.ARCHIVE, zones.MANIFEST):
+            path = self.assets / name; raw = path.read_bytes()
+            path.unlink(); path.write_bytes(raw)
+            client._VERIFIED_ASSET_STATES[str(path)] = (self.pin(raw), client.asset_fingerprint(path))
+        with mock.patch.object(zones.world, 'output_state', wraps=zones.world.output_state) as states:
+            result = zones.install(self.work, self.assets, self.ctx)
+        self.assertTrue(result['source_generation_rebound'])
+        self.assertEqual(states.call_count, 2)
 
     def test_new_runtime_sources_rebind_exact_world_and_audio_output_proofs(self):
         self.publish_audio()
@@ -299,6 +314,72 @@ class ZonePackageTests(unittest.TestCase):
             self.assertTrue(reused['preparation']['server_data_cache']['reused'])
             self.assertEqual((reused['runtime']/'data/server/db/servers.cfg').read_text(), 'current credentials '+'2'*32)
             self.assertEqual(reused['preparation']['geometry']['installed_files'], 0)
+
+
+    def test_kings_runtime_reads_shared_folders_through_the_same_tree_as_atlas(self):
+        zones.install(self.work, self.assets, self.ctx)
+        data = self.work/'data'
+        for name in ('bin', 'geobin', 'server/db', 'scripts.loc/arcs'):
+            (data/name).mkdir(parents=True, exist_ok=True)
+        (data/'server/db/servers.cfg').write_text('schema')
+        arc = data/'scripts.loc/arcs/a.storyarc'; arc.write_text('arc'); arc.chmod(0o444)
+        keep = data/'object_library/atlas.geo'; keep.write_bytes(b'accepted atlas'); keep.chmod(0o444)
+        imported = self.root/'import'; imported.mkdir()
+        schema = self.root/'schema'; (schema/'data/server/db').mkdir(parents=True)
+        (schema/'data/server/db/servers.cfg').write_text('schema')
+        state = self.root/'state'; state.mkdir()
+        identity = {'format': 2, 'source_data': str(data),
+            'source_device': data.stat().st_dev, 'source_inode': data.stat().st_ino, 'source_roots': [
+                {'path': str(p), 'identity': server.server_data_cache.fingerprint(p, directory=True)}
+                for p in (self.work, imported)],
+            'shared_server_data': {'format': 1, 'selection': 'app_default_folders_v1',
+                                   'shared_top_level': ['scripts.loc']}}
+        self.addCleanup(lambda: [os.chmod(c, 0o700) for c, _d, _f in os.walk(state)])
+
+        def instance(session):
+            value = server.LocalCharacterServer.__new__(server.LocalCharacterServer)
+            value.owner = SimpleNamespace(work=self.work, root=state,
+                args=SimpleNamespace(game_data=imported, assets=self.assets, session_id=session),
+                cleanup_status={'wine_prefix_stopped': True, 'owned_processes_reaped': True})
+            value.ctx = SimpleNamespace(check=mock.Mock(), event=mock.Mock(), report={})
+            value.creation_report = {}; value.zone_asset_document = zones.package(self.assets)
+            value.zone_asset_exclusions = {n[5:] for n in self.files}
+            value.kings_row_beacon_graph = {'verified': True, 'map_id': 5}
+            value.kings_row_beacon_lock = {'manifest': {'bytes': 1, 'sha256': 'f'*64}}
+            value.runtime = state/('session-'+session)
+            (value.runtime/'data/server/db').mkdir(parents=True)
+            (value.runtime/'data/server/db/servers.cfg').write_text('current credentials '+session)
+            (value.runtime/'MapServer.exe').write_bytes(b'fixture native closure')
+            value.map_package = {'files': {'MapServer.exe': self.pin(b'fixture native closure')}}
+            value.server_data_identity = identity
+            value.schema_dir = schema; value.schema = {'files': {'data/server/db/servers.cfg': {}}}
+            return value
+
+        with mock.patch('server_cache_package.verify_mapserver_compatibility', return_value={'verified': True}), \
+             mock.patch('server_cache_package.build_expected_identity', return_value={}), \
+             mock.patch('server_cache_package.install', return_value={'installed_files': 1}), \
+             mock.patch('server_animation_package.install', return_value={'installed_files': 1}), \
+             mock.patch('kings_row_beacon_package.install', return_value={'verified': True, 'map_id': 5}):
+            first = instance('1'*32)
+            king = first.prepare_kings_row_runtime()['runtime']
+            self.assertTrue((king/'tools').is_dir())
+            self.assertFalse((king/'data/scripts.loc').exists())
+            self.assertEqual((king/'serverdata/scripts.loc/arcs/a.storyarc').resolve(), arc)
+            self.assertEqual(len(list((king/'data/object_library/kings').glob('*.geo'))), 52)
+            link = first.creation_report['kings_row_preparation']['shared_server_data']
+            self.assertFalse(link['reused_shared_tree'])
+            # Thor 0.13.50: a changed data root must not refuse the shared-data generation.
+            root = (king/'data').stat()
+            os.utime(king/'data', ns=(root.st_atime_ns, root.st_mtime_ns + 1000000))
+            first.kings_row_data_cache.release(king/'data', first.owner.cleanup_status)
+            second = instance('2'*32)
+            with mock.patch.object(second, 'stage_map_data', side_effect=AssertionError('warm full data mirror')):
+                reused = second.prepare_kings_row_runtime()
+            self.assertTrue(reused['preparation']['server_data_cache']['reused'])
+            self.assertEqual(reused['preparation']['server_data_cache']['changed_parent_paths'], ['.'])
+            self.assertTrue(reused['preparation']['shared_server_data']['reused_shared_tree'])
+            self.assertEqual((reused['runtime']/'serverdata/scripts.loc').resolve(),
+                             (king/'serverdata/scripts.loc').resolve())
 
 
 if __name__ == '__main__':

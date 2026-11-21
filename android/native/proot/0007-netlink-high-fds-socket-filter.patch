@@ -1,0 +1,682 @@
+diff --git a/src/syscall/chain.c b/src/syscall/chain.c
+index 9b7569c..5028218 100644
+--- a/src/syscall/chain.c
++++ b/src/syscall/chain.c
+@@ -35,6 +35,7 @@
+ struct chained_syscall {
+ 	Sysnum sysnum;
+ 	word_t sysargs[6];
++	void (*result_handler)(Tracee *tracee, word_t result);
+ 	STAILQ_ENTRY(chained_syscall) link;
+ };
+ 
+@@ -43,7 +44,8 @@ STAILQ_HEAD(chained_syscalls, chained_syscall);
+ static int register_chained_syscall_internal(Tracee *tracee, Sysnum sysnum,
+ 			word_t sysarg_1, word_t sysarg_2, word_t sysarg_3,
+ 			word_t sysarg_4, word_t sysarg_5, word_t sysarg_6,
+-			bool at_front)
++			bool at_front,
++			void (*result_handler)(Tracee *tracee, word_t result))
+ {
+ 	struct chained_syscall *syscall;
+ 
+@@ -66,6 +68,7 @@ static int register_chained_syscall_internal(Tracee *tracee, Sysnum sysnum,
+ 	syscall->sysargs[3] = sysarg_4;
+ 	syscall->sysargs[4] = sysarg_5;
+ 	syscall->sysargs[5] = sysarg_6;
++	syscall->result_handler = result_handler;
+ 
+ 	if (at_front) {
+ 		STAILQ_INSERT_HEAD(tracee->chain.syscalls, syscall, link);
+@@ -91,7 +94,26 @@ int register_chained_syscall(Tracee *tracee, Sysnum sysnum,
+ 		tracee, sysnum,
+ 		sysarg_1, sysarg_2, sysarg_3,
+ 		sysarg_4, sysarg_5, sysarg_6,
+-		false
++		false, NULL
++	);
++}
++
++/**
++ * Same as register_chained_syscall(), and call @result_handler with
++ * the value this syscall returned, right after it returned and before
++ * the next syscall of the chain (if any) is started.  The handler may
++ * force the final result of the chain.
++ */
++int register_chained_syscall_with_result(Tracee *tracee,
++			void (*result_handler)(Tracee *tracee, word_t result),
++			Sysnum sysnum,
++			word_t sysarg_1, word_t sysarg_2, word_t sysarg_3,
++			word_t sysarg_4, word_t sysarg_5, word_t sysarg_6) {
++	return register_chained_syscall_internal(
++		tracee, sysnum,
++		sysarg_1, sysarg_2, sysarg_3,
++		sysarg_4, sysarg_5, sysarg_6,
++		false, result_handler
+ 	);
+ }
+ 
+@@ -108,6 +130,14 @@ void chain_next_syscall(Tracee *tracee)
+ 
+ 	assert(tracee->chain.syscalls != NULL);
+ 
++	/* The chained syscall that just returned wanted its result.  */
++	if (tracee->chain.result_handler != NULL) {
++		void (*handler)(Tracee *tracee, word_t result) = tracee->chain.result_handler;
++
++		tracee->chain.result_handler = NULL;
++		handler(tracee, peek_reg(tracee, CURRENT, SYSARG_RESULT));
++	}
++
+ 	/* No more chained syscalls: force the result of the initial
+ 	 * syscall (the one explicitly requested by the tracee).  */
+ 	if (STAILQ_EMPTY(tracee->chain.syscalls)) {
+@@ -133,6 +163,7 @@ void chain_next_syscall(Tracee *tracee)
+ 	/* The list of chained syscalls is a FIFO.  */
+ 	syscall = STAILQ_FIRST(tracee->chain.syscalls);
+ 	STAILQ_REMOVE_HEAD(tracee->chain.syscalls, link);
++	tracee->chain.result_handler = syscall->result_handler;
+ 
+ 	poke_reg(tracee, SYSARG_1, syscall->sysargs[0]);
+ 	poke_reg(tracee, SYSARG_2, syscall->sysargs[1]);
+@@ -191,5 +222,5 @@ int restart_current_syscall_as_chained(Tracee *tracee)
+ 					peek_reg(tracee, CURRENT, SYSARG_4),
+ 					peek_reg(tracee, CURRENT, SYSARG_5),
+ 					peek_reg(tracee, CURRENT, SYSARG_6),
+-					true);
++					true, NULL);
+ }
+diff --git a/src/syscall/chain.h b/src/syscall/chain.h
+index b1cf92d..70d41fb 100644
+--- a/src/syscall/chain.h
++++ b/src/syscall/chain.h
+@@ -31,6 +31,12 @@ extern int register_chained_syscall(Tracee *tracee, Sysnum sysnum,
+ 			word_t sysarg_1, word_t sysarg_2, word_t sysarg_3,
+ 			word_t sysarg_4, word_t sysarg_5, word_t sysarg_6);
+ 
++extern int register_chained_syscall_with_result(Tracee *tracee,
++			void (*result_handler)(Tracee *tracee, word_t result),
++			Sysnum sysnum,
++			word_t sysarg_1, word_t sysarg_2, word_t sysarg_3,
++			word_t sysarg_4, word_t sysarg_5, word_t sysarg_6);
++
+ extern void force_chain_final_result(Tracee *tracee, word_t forced_result);
+ 
+ extern int restart_original_syscall(Tracee *tracee);
+diff --git a/src/syscall/exit.c b/src/syscall/exit.c
+index 2fe81b0..c7359a1 100644
+--- a/src/syscall/exit.c
++++ b/src/syscall/exit.c
+@@ -28,12 +28,16 @@
+ #include <linux/prctl.h> /* PR_GET_AUXV, */
+ #include <string.h>      /* strlen(3), */
+ #include <unistd.h>      /* readlink(2), */
++#include <fcntl.h>       /* F_DUPFD, F_DUPFD_CLOEXEC, */
++#include <sys/socket.h>  /* SOCK_CLOEXEC, */
+ 
+ #include "cli/note.h"
+ #include "syscall/syscall.h"
+ #include "syscall/sysnum.h"
+ #include "syscall/socket.h"
+ #include "syscall/chain.h"
++#include "syscall/seccomp.h"
++#include "syscall/socket_fd_filter.h"
+ #include "syscall/heap.h"
+ #include "syscall/rlimit.h"
+ #include "execve/execve.h"
+@@ -49,6 +53,109 @@
+ #include "extension/extension.h"
+ #include "arch.h"
+ 
++/**
++ * Remember that @fd is a socket PRoot substituted for the AF_NETLINK
++ * one @tracee asked for.
++ */
++static void record_fake_netlink_fd(Tracee *tracee, int fd)
++{
++	struct fake_netlink_socket *sock;
++	int i;
++
++	if (tracee->fake_netlink_fds_count >= MAX_FAKE_NETLINK_FDS)
++		return;
++
++	/* Avoid duplicates.  */
++	for (i = 0; i < tracee->fake_netlink_fds_count; i++) {
++		if (tracee->fake_netlink_fds[i].fd == fd)
++			return;
++	}
++
++	sock = &tracee->fake_netlink_fds[tracee->fake_netlink_fds_count++];
++	memset(sock, 0, sizeof(*sock));
++	sock->fd = fd;
++}
++
++/**
++ * Remember that @fd is a NETLINK_ROUTE socket the host granted to
++ * @tracee as is.
++ */
++static void record_netlink_route_fd(Tracee *tracee, int fd)
++{
++	int i;
++
++	if (tracee->netlink_route_fds_count >= MAX_NETLINK_ROUTE_FDS)
++		return;
++
++	for (i = 0; i < tracee->netlink_route_fds_count; i++) {
++		if (tracee->netlink_route_fds[i] == fd)
++			return;
++	}
++
++	tracee->netlink_route_fds[tracee->netlink_route_fds_count++] = fd;
++}
++
++/**
++ * PROOT_NETLINK_HIGH_FDS: the fcntl(F_DUPFD) chained by
++ * move_netlink_fd() returned @result, the high descriptor number of
++ * the NETLINK_ROUTE socket @tracee asked for, or an error.  This
++ * number is what its socket(2) returns.
++ */
++static void netlink_fd_moved(Tracee *tracee, word_t result)
++{
++	int fd = (int) result;
++
++	if (fd < 0) {
++		/* No descriptor at or above the floor (RLIMIT_NOFILE).
++		 * The low one is closed next, and it would not be
++		 * traced: the tracee gets no socket, as on a host that
++		 * refuses AF_NETLINK and has no emulation.  */
++		VERBOSE(tracee, 1, "netlink: no descriptor at or above %d (%s); "
++			"refusing the socket", SOCKET_FD_FLOOR, strerror(-fd));
++		force_chain_final_result(tracee, (word_t) -EMFILE);
++		note_netlink_fd_move(false);
++		return;
++	}
++
++	if (tracee->moving_fake_netlink_fd)
++		record_fake_netlink_fd(tracee, fd);
++	else
++		record_netlink_route_fd(tracee, fd);
++
++	force_chain_final_result(tracee, result);
++	note_netlink_fd_move(true);
++}
++
++/**
++ * PROOT_NETLINK_HIGH_FDS: have @tracee duplicate the NETLINK_ROUTE
++ * socket it just got as @fd to a descriptor number at or above
++ * SOCKET_FD_FLOOR and close @fd, before its socket(2) returns (see
++ * socket_fd_filter.h).  @fake tells whether PRoot substituted the
++ * socket.  This function returns whether the move was started; if
++ * not, the caller records @fd itself.
++ */
++static bool move_netlink_fd(Tracee *tracee, int fd, bool fake)
++{
++	word_t command;
++
++	/* The filter compares descriptors for the default ABI only.  */
++	if (   fd >= SOCKET_FD_FLOOR
++	    || get_abi(tracee) != ABI_DEFAULT
++	    || !netlink_high_fds(tracee))
++		return false;
++
++	command = (peek_reg(tracee, ORIGINAL, SYSARG_2) & SOCK_CLOEXEC) != 0
++		? F_DUPFD_CLOEXEC : F_DUPFD;
++
++	if (register_chained_syscall_with_result(tracee, netlink_fd_moved, PR_fcntl,
++						 fd, command, SOCKET_FD_FLOOR, 0, 0, 0) < 0)
++		return false;
++	(void) register_chained_syscall(tracee, PR_close, fd, 0, 0, 0, 0, 0);
++
++	tracee->moving_fake_netlink_fd = fake;
++	return true;
++}
++
+ /**
+  * Translate the output arguments of the current @tracee's syscall in
+  * the @tracee->pid process area. This function sets the result of
+@@ -743,25 +850,8 @@ void translate_syscall_exit(Tracee *tracee)
+ 		/* Record the fd we substituted for an AF_NETLINK request.  */
+ 		if (tracee->pending_fake_netlink_socket) {
+ 			int fd = (int) peek_reg(tracee, CURRENT, SYSARG_RESULT);
+-			if (fd >= 0) {
+-				int i;
+-				if (tracee->fake_netlink_fds_count < MAX_FAKE_NETLINK_FDS) {
+-					/* Avoid duplicates.  */
+-					bool present = false;
+-					for (i = 0; i < tracee->fake_netlink_fds_count; i++) {
+-						if (tracee->fake_netlink_fds[i].fd == fd) {
+-							present = true;
+-							break;
+-						}
+-					}
+-					if (!present) {
+-						struct fake_netlink_socket *sock =
+-							&tracee->fake_netlink_fds[tracee->fake_netlink_fds_count++];
+-						memset(sock, 0, sizeof(*sock));
+-						sock->fd = fd;
+-					}
+-				}
+-			}
++			if (fd >= 0 && !move_netlink_fd(tracee, fd, true))
++				record_fake_netlink_fd(tracee, fd);
+ 			tracee->pending_fake_netlink_socket = false;
+ 		}
+ 
+@@ -770,20 +860,8 @@ void translate_syscall_exit(Tracee *tracee)
+ 		 * the tracee thinks it owns a network namespace.  */
+ 		if (tracee->pending_real_netlink_socket) {
+ 			int fd = (int) peek_reg(tracee, CURRENT, SYSARG_RESULT);
+-			if (fd >= 0) {
+-				int i;
+-				if (tracee->netlink_route_fds_count < MAX_NETLINK_ROUTE_FDS) {
+-					bool present = false;
+-					for (i = 0; i < tracee->netlink_route_fds_count; i++) {
+-						if (tracee->netlink_route_fds[i] == fd) {
+-							present = true;
+-							break;
+-						}
+-					}
+-					if (!present)
+-						tracee->netlink_route_fds[tracee->netlink_route_fds_count++] = fd;
+-				}
+-			}
++			if (fd >= 0 && !move_netlink_fd(tracee, fd, false))
++				record_netlink_route_fd(tracee, fd);
+ 			tracee->pending_real_netlink_socket = false;
+ 		}
+ 		goto end;
+diff --git a/src/syscall/seccomp.c b/src/syscall/seccomp.c
+index 649a96d..3e0ae64 100644
+--- a/src/syscall/seccomp.c
++++ b/src/syscall/seccomp.c
+@@ -44,6 +44,7 @@
+ #include "syscall/seccomp.h"
+ #include "syscall/ioctl_filter.h"
+ #include "syscall/getsockopt_filter.h"
++#include "syscall/socket_fd_filter.h"
+ #include "tracee/tracee.h"
+ #include "syscall/syscall.h"
+ #include "syscall/sysnum.h"
+@@ -204,6 +205,72 @@ static int add_trace_getsockopt_peercred(struct sock_fprog *program, word_t sysc
+ 	return add_statements(program, LENGTH_TRACE_GETSOCKOPT, statements);
+ }
+ 
++/**
++ * Whether @sysnum is one of the calls PRoot traces only to serve
++ * rtnetlink sockets (see socket_fd_filter.h).
++ */
++static bool is_netlink_only_sysnum(Sysnum sysnum)
++{
++	return sysnum == PR_sendto || sysnum == PR_recvfrom || sysnum == PR_recvmsg;
++}
++
++/**
++ * PROOT_NETLINK_HIGH_FDS=1: whether the rtnetlink sockets of @tracee
++ * get descriptor numbers at or above SOCKET_FD_FLOOR and the seccomp
++ * filter traces sendto(2), recvfrom(2) and recvmsg(2) from that
++ * number only (see socket_fd_filter.h).
++ *
++ * Not when an extension asks for one of these calls itself (-p,
++ * port_switch): it needs every one of them.  The tracer and the
++ * process that installs the filter both decide with this function, so
++ * they agree.
++ */
++bool netlink_high_fds(const Tracee *tracee)
++{
++	const char *value = getenv("PROOT_NETLINK_HIGH_FDS");
++	const Extension *extension;
++	size_t i;
++
++	if (value == NULL || value[0] != '1' || value[1] != '\0')
++		return false;
++
++	if (tracee == NULL || tracee->extensions == NULL)
++		return true;
++
++	LIST_FOREACH(extension, tracee->extensions, link) {
++		if (extension->filtered_sysnums == NULL)
++			continue;
++		for (i = 0; extension->filtered_sysnums[i].value != PR_void; i++) {
++			if (is_netlink_only_sysnum(extension->filtered_sysnums[i].value))
++				return false;
++		}
++	}
++
++	return true;
++}
++
++/**
++ * Append to @program->filter the statements required to notify PRoot
++ * about the given @syscall (sendto, recvfrom or recvmsg) with the
++ * given @flag, only for the descriptors of socket_fd_filter.h.  This
++ * function returns -errno if an error occurred, otherwise 0.
++ */
++static int add_trace_socket_fd(struct sock_fprog *program, word_t syscall, int flag)
++{
++	struct sock_filter statements[LENGTH_TRACE_SOCKET_FD];
++
++	/* Sanity check.  */
++	if (syscall > UINT32_MAX)
++		return -ERANGE;
++
++	socket_fd_filter_statements(statements, syscall, flag);
++
++	DEBUG_FILTER("FILTER:     trace if syscall == %ld and its descriptor >= %d\n",
++		syscall, SOCKET_FD_FLOOR);
++
++	return add_statements(program, LENGTH_TRACE_SOCKET_FD, statements);
++}
++
+ /**
+  * Append to @program->filter the statements that allow anything (if
+  * unfiltered).  Note that @nb_traced_syscalls and @nb_extra_statements
+@@ -337,7 +404,7 @@ static void free_program_filter(struct sock_fprog *program)
+  *
+  * This function returns -errno if an error occurred, otherwise 0.
+  */
+-static int set_seccomp_filters(const FilteredSysnum *sysnums)
++static int set_seccomp_filters(const FilteredSysnum *sysnums, bool high_fds)
+ {
+ 	SeccompArch seccomp_archs[] = SECCOMP_ARCHS;
+ 	size_t nb_archs = sizeof(seccomp_archs) / sizeof(SeccompArch);
+@@ -375,6 +442,9 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 					nb_extra_statements += LENGTH_TRACE_IOCTL - LENGTH_TRACE_SYSCALL;
+ 				if (peercred_only && sysnums[k].value == PR_getsockopt)
+ 					nb_extra_statements += LENGTH_TRACE_GETSOCKOPT - LENGTH_TRACE_SYSCALL;
++				if (   high_fds && seccomp_archs[i].abis[j] == ABI_DEFAULT
++				    && is_netlink_only_sysnum(sysnums[k].value))
++					nb_extra_statements += LENGTH_TRACE_SOCKET_FD - LENGTH_TRACE_SYSCALL;
+ 			}
+ 		}
+ 
+@@ -398,6 +468,12 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 					status = add_trace_ioctl_commands(&program, syscall, sysnums[k].flags);
+ 				else if (peercred_only && sysnums[k].value == PR_getsockopt)
+ 					status = add_trace_getsockopt_peercred(&program, syscall, sysnums[k].flags);
++				else if (   high_fds && seccomp_archs[i].abis[j] == ABI_DEFAULT
++					 && is_netlink_only_sysnum(sysnums[k].value))
++					/* Descriptors are moved for the default ABI only
++					 * (syscall/exit.c), so every other ABI keeps
++					 * the plain statements.  */
++					status = add_trace_socket_fd(&program, syscall, sysnums[k].flags);
+ 				else
+ 					status = add_trace_syscall(&program, syscall, sysnums[k].flags);
+ 				if (status < 0)
+@@ -637,7 +713,7 @@ int enable_syscall_filtering(const Tracee *tracee)
+ 			return status;
+ 	}
+ 
+-	status = set_seccomp_filters(filtered_sysnums);
++	status = set_seccomp_filters(filtered_sysnums, netlink_high_fds(tracee));
+ 	if (status < 0)
+ 		return status;
+ 
+@@ -654,4 +730,10 @@ int enable_syscall_filtering(const Tracee *tracee UNUSED)
+ 	return 0;
+ }
+ 
++/* Without a seccomp filter every call is traced: nothing to move.  */
++bool netlink_high_fds(const Tracee *tracee UNUSED)
++{
++	return false;
++}
++
+ #endif /* defined(HAVE_SECCOMP_FILTER) */
+diff --git a/src/syscall/seccomp.h b/src/syscall/seccomp.h
+index 3d5ba40..8f93784 100644
+--- a/src/syscall/seccomp.h
++++ b/src/syscall/seccomp.h
+@@ -23,6 +23,8 @@
+ #ifndef SECCOMP_H
+ #define SECCOMP_H
+ 
++#include <stdbool.h> /* bool, */
++
+ #include "syscall/sysnum.h"
+ #include "tracee/tracee.h"
+ #include "attribute.h"
+@@ -45,4 +47,6 @@ typedef struct {
+ 
+ extern int enable_syscall_filtering(const Tracee *tracee);
+ 
++extern bool netlink_high_fds(const Tracee *tracee);
++
+ #endif /* SECCOMP_H */
+diff --git a/src/syscall/socket_fd_filter.h b/src/syscall/socket_fd_filter.h
+new file mode 100644
+index 0000000..5ac53f0
+--- /dev/null
++++ b/src/syscall/socket_fd_filter.h
+@@ -0,0 +1,78 @@
++/* -*- c-set-style: "K&R"; c-basic-offset: 8 -*-
++ *
++ * Trace sendto(2), recvfrom(2) and recvmsg(2) only for descriptors
++ * that can be a rtnetlink socket.
++ *
++ * PRoot asks for these three calls for one purpose: to answer the
++ * rtnetlink requests of a tracee whose host refuses AF_NETLINK
++ * (syscall/enter.c, "Helpers for emulating AF_NETLINK"), and to ack
++ * the requests of a tracee that believes it owns a network namespace.
++ * Both look the descriptor up in a short per-tracee list and do
++ * nothing for any other socket, yet every send and receive of every
++ * socket of the guest pays a tracer round trip for that lookup.
++ *
++ * With PROOT_NETLINK_HIGH_FDS=1 PRoot gives each NETLINK_ROUTE socket
++ * a descriptor number at or above SOCKET_FD_FLOOR (it duplicates the
++ * new socket there and closes the low number before socket(2)
++ * returns), and the seccomp filter notifies the tracer about the
++ * three calls only for descriptors at or above that number.  A socket
++ * of another kind that happens to sit that high is traced as before,
++ * which costs time and changes nothing.
++ *
++ * This file is self-contained (no talloc, no PRoot types) so that the
++ * statements can be checked on any host by a test harness.
++ */
++
++#ifndef SOCKET_FD_FILTER_H
++#define SOCKET_FD_FILTER_H
++
++#include <linux/filter.h>  /* struct sock_filter, BPF_*, */
++#include <linux/seccomp.h> /* struct seccomp_data, SECCOMP_RET_*, */
++#include <stddef.h>        /* offsetof(3), size_t, */
++#include <stdint.h>        /* uint32_t, */
++
++/* Below FD_SETSIZE (1024) and below the lowest soft RLIMIT_NOFILE in
++ * common use (1024), above what a guest program normally has open.  */
++#define SOCKET_FD_FLOOR 960
++
++/* Statements written by socket_fd_filter_statements().  */
++#define LENGTH_TRACE_SOCKET_FD 5
++
++/**
++ * Write to @out (LENGTH_TRACE_SOCKET_FD items) the statements that
++ * notify the tracer, with the given @flag, about @syscall (sendto,
++ * recvfrom or recvmsg on the current architecture) when its first
++ * argument, the descriptor, is at or above SOCKET_FD_FLOOR, and allow
++ * it otherwise.
++ *
++ * On entry the accumulator holds the syscall number.  It is untouched
++ * unless that number is @syscall, so the statements that follow see it
++ * as before; when it is @syscall every path returns.
++ *
++ *	0:  if (nr != syscall) goto after;
++ *	1:  A = low word of the first argument (the descriptor);
++ *	2:  if (A >= SOCKET_FD_FLOOR) goto trace;
++ *	3:  return ALLOW;
++ *	4:  trace: return TRACE + flag;
++ *	after:
++ *
++ * The comparison is unsigned, so a negative descriptor (which the
++ * kernel refuses anyway) is traced.
++ */
++static inline size_t socket_fd_filter_statements(struct sock_filter *out, uint32_t syscall, uint32_t flag)
++{
++	/* seccomp_data.args[] are 64-bit; the descriptor is an int in
++	 * the low word.  PRoot's handled architectures are
++	 * little-endian.  */
++	const uint32_t fd_offset = offsetof(struct seccomp_data, args[0]);
++
++	out[0] = (struct sock_filter) BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, syscall, 0, 4);
++	out[1] = (struct sock_filter) BPF_STMT(BPF_LD + BPF_W + BPF_ABS, fd_offset);
++	out[2] = (struct sock_filter) BPF_JUMP(BPF_JMP + BPF_JGE + BPF_K, SOCKET_FD_FLOOR, 1, 0);
++	out[3] = (struct sock_filter) BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_ALLOW);
++	out[4] = (struct sock_filter) BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_TRACE + flag);
++
++	return LENGTH_TRACE_SOCKET_FD;
++}
++
++#endif /* SOCKET_FD_FILTER_H */
+diff --git a/src/syscall/stop_counts.h b/src/syscall/stop_counts.h
+index c83773d..bef3e63 100644
+--- a/src/syscall/stop_counts.h
++++ b/src/syscall/stop_counts.h
+@@ -12,12 +12,19 @@
+  *
+  * The file is text:
+  *
+- *	PROOT_STOP_COUNTS_V1 seconds=<since first stop> stops=<total>
++ *	PROOT_STOP_COUNTS_V1 seconds=<since first stop> stops=<total> \
++ *		fd_stats=<n> moved_netlink_fds=<n> failed_netlink_moves=<n>
+  *	<syscall number> <enter stops> <exit stops>
+  *	...
+  *	P <thread name> <syscall number> <stops>
+  *	...
+  *
++ * The first line is one line.  "fd_stats" counts the enter stops of
++ * stat calls made with AT_EMPTY_PATH (glibc's fstat(3)), which name a
++ * descriptor and no path.  The last two count the NETLINK_ROUTE
++ * sockets given a high descriptor number, or refused one, under
++ * PROOT_NETLINK_HIGH_FDS (see socket_fd_filter.h).
++ *
+  * Numbers are those of the tracee's ABI as the kernel reported them;
+  * numbers at or above STOP_COUNTS_SYSCALLS share the last row.
+  *
+@@ -51,6 +58,11 @@
+ #define STOP_COUNTS_PAIRS 4096
+ #define STOP_COUNTS_PROBES 16
+ 
++/* Rows of stop_counts.extra.  */
++#define STOP_COUNTS_FD_STATS 0
++#define STOP_COUNTS_MOVED_NETLINK_FDS 1
++#define STOP_COUNTS_FAILED_NETLINK_MOVES 2
++
+ static struct {
+ 	int state;	/* 0: not looked up yet, 1: counting, -1: off.  */
+ 	char path[PATH_MAX];
+@@ -58,6 +70,7 @@ static struct {
+ 	uint64_t enter[STOP_COUNTS_SYSCALLS + 1];
+ 	uint64_t exit[STOP_COUNTS_SYSCALLS + 1];
+ 	uint64_t total;
++	uint64_t extra[3];	/* see STOP_COUNTS_* below */
+ 	time_t started;
+ 	time_t written;
+ 	int nb_programs;
+@@ -170,9 +183,13 @@ static inline void stop_counts_write(void)
+ 	if (file == NULL)
+ 		return;
+ 
+-	fprintf(file, "PROOT_STOP_COUNTS_V1 seconds=%lld stops=%llu\n",
++	fprintf(file, "PROOT_STOP_COUNTS_V1 seconds=%lld stops=%llu"
++		" fd_stats=%llu moved_netlink_fds=%llu failed_netlink_moves=%llu\n",
+ 		(long long) (stop_counts_now() - stop_counts.started),
+-		(unsigned long long) stop_counts.total);
++		(unsigned long long) stop_counts.total,
++		(unsigned long long) stop_counts.extra[STOP_COUNTS_FD_STATS],
++		(unsigned long long) stop_counts.extra[STOP_COUNTS_MOVED_NETLINK_FDS],
++		(unsigned long long) stop_counts.extra[STOP_COUNTS_FAILED_NETLINK_MOVES]);
+ 	for (i = 0; i <= STOP_COUNTS_SYSCALLS; i++) {
+ 		if (stop_counts.enter[i] == 0 && stop_counts.exit[i] == 0)
+ 			continue;
+@@ -237,4 +254,14 @@ static inline void stop_counts_note(pid_t pid, unsigned long number, bool is_ent
+ 	}
+ }
+ 
++/**
++ * Count one event of row @which of stop_counts.extra, while stops are
++ * being counted.
++ */
++static inline void stop_counts_extra(int which)
++{
++	if (stop_counts.state == 1)
++		stop_counts.extra[which]++;
++}
++
+ #endif /* STOP_COUNTS_H */
+diff --git a/src/syscall/syscall.c b/src/syscall/syscall.c
+index c2891de..7c929b1 100644
+--- a/src/syscall/syscall.c
++++ b/src/syscall/syscall.c
+@@ -138,6 +138,15 @@ static bool kernel_cancels_voided_syscall(void)
+ 	return (long) SYSCALL_AVOIDER < 0;
+ }
+ 
++/**
++ * PROOT_STOP_COUNTS: count a NETLINK_ROUTE socket that was given a
++ * high descriptor number (@moved), or was refused one.
++ */
++void note_netlink_fd_move(bool moved)
++{
++	stop_counts_extra(moved ? STOP_COUNTS_MOVED_NETLINK_FDS : STOP_COUNTS_FAILED_NETLINK_MOVES);
++}
++
+ void translate_syscall(Tracee *tracee)
+ {
+ 	const bool is_enter_stage = IS_IN_SYSENTER(tracee);
+@@ -154,6 +163,18 @@ void translate_syscall(Tracee *tracee)
+ 	stop_counts_note(tracee->pid, peek_reg(tracee, is_enter_stage && tracee->chain.syscalls == NULL
+ 					  ? CURRENT : ORIGINAL, SYSARG_NUM), is_enter_stage);
+ 
++	/* ... and how many of them are a stat of a descriptor, which
++	 * has no path to translate.  */
++	if (stop_counts.state == 1 && is_enter_stage && tracee->chain.syscalls == NULL) {
++		const Sysnum sysnum = get_sysnum(tracee, CURRENT);
++
++		if (   (   (sysnum == PR_newfstatat || sysnum == PR_fstatat64)
++			&& (peek_reg(tracee, CURRENT, SYSARG_4) & AT_EMPTY_PATH) != 0)
++		    || (   sysnum == PR_statx
++			&& (peek_reg(tracee, CURRENT, SYSARG_3) & AT_EMPTY_PATH) != 0))
++			stop_counts_extra(STOP_COUNTS_FD_STATS);
++	}
++
+ 	int suppressed_syscall_status = 0;
+ 
+ 	if (is_enter_stage) {
+diff --git a/src/syscall/syscall.h b/src/syscall/syscall.h
+index 137b311..4e724a9 100644
+--- a/src/syscall/syscall.h
++++ b/src/syscall/syscall.h
+@@ -59,6 +59,7 @@ extern void translate_syscall_exit(Tracee *tracee);
+ extern bool is_voided_syscall(const Tracee *tracee, RegVersion version);
+ 
+ extern void handle_netlink_reply_exit(Tracee *tracee, word_t syscall_number);
++extern void note_netlink_fd_move(bool moved);
+ 
+ extern void apply_emulated_mount(Tracee *tracee);
+ extern void apply_emulated_pivot_root(Tracee *tracee);
+diff --git a/src/tracee/tracee.h b/src/tracee/tracee.h
+index e320d1e..8eed9e8 100644
+--- a/src/tracee/tracee.h
++++ b/src/tracee/tracee.h
+@@ -156,6 +156,11 @@ typedef struct tracee {
+ 	int netlink_route_fds[MAX_NETLINK_ROUTE_FDS];
+ 	int netlink_route_fds_count;
+ 	bool pending_real_netlink_socket;
++
++	/* PROOT_NETLINK_HIGH_FDS: the NETLINK_ROUTE socket this tracee
++	 * just got is being duplicated to a high descriptor number;
++	 * whether it is one PRoot substituted (see exit.c).  */
++	bool moving_fake_netlink_fd;
+ 	bool netlink_ack_pending;
+ 	int netlink_ack_fd;
+ 	uint32_t netlink_ack_seq;
+@@ -274,6 +279,10 @@ typedef struct tracee {
+ 		struct chained_syscalls *syscalls;
+ 		bool force_final_result;
+ 		word_t final_result;
++		/* Called with the result of the chained syscall that is
++		 * running, once it has returned (see
++		 * register_chained_syscall_with_result()).  */
++		void (*result_handler)(struct tracee *tracee, word_t result);
+ 		enum {
+ 			SYSNUM_WORKAROUND_INACTIVE,
+ 			SYSNUM_WORKAROUND_PROCESS_FAULTY_CALL,

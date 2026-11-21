@@ -7,6 +7,8 @@ or execute Windows code, and cannot qualify a real shipping server artifact.
 import copy
 import hashlib
 import json
+import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -236,6 +238,256 @@ class GuestMetrics(unittest.TestCase):
         self.assertEqual(server.map_metrics_environment({'ARMPORT_SERVER_METRICS': '1'}, self.runtime), {})
         self.assertFalse(server.server_metrics_enabled)
 
+    def test_trusted_bins_env_needs_request_and_the_admitted_switch(self):
+        server = object.__new__(local.LocalCharacterServer); server.map_package = self.game
+        server.creation_report = {}
+        with mock.patch.dict(os.environ, {'COH_TRUSTED_BINS': '1'}):
+            # This fixture's build has no textparser change: never enabled.
+            env = server.map_metrics_environment({'ARMPORT_TRUSTED_BINS': '1'}, self.runtime)
+            self.assertNotIn('ARMPORT_TRUSTED_BINS', env)
+            self.assertEqual(server.creation_report['trusted_bins']['reason'], 'switch_not_in_admitted_build')
+            with mock.patch.object(contract, 'trusted_bins_available', return_value=True):
+                env = server.map_metrics_environment({}, self.runtime)
+            self.assertEqual(env['ARMPORT_TRUSTED_BINS'], '1')
+            self.assertTrue(server.creation_report['trusted_bins']['applied'])
+        with mock.patch.dict(os.environ, {'COH_TRUSTED_BINS': ''}), \
+                mock.patch.object(contract, 'trusted_bins_available', return_value=True):
+            env = server.map_metrics_environment({}, self.runtime)
+        self.assertNotIn('ARMPORT_TRUSTED_BINS', env)
+        self.assertFalse(server.creation_report['trusted_bins']['requested'])
+
+    def test_parser_change_claim_is_exact_and_limited_to_the_reviewed_switch(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.parser_changed(build))
+        build['build_input']['patched_sha256'][contract.TEXTPARSER] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.parser_changed(build)
+        build['build_input'].update(
+            trusted_bins_patch={'path': 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch',
+                                'sha256': contract.TRUSTED_PATCH},
+            contract={'trusted_bins': {'disabled_by_default': True}})
+        self.assertTrue(contract.parser_changed(build))
+
+    def test_early_zone_server_claim_is_exact_and_limited_to_the_reviewed_layer(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.spare_server_changed(build))
+        build['build_input']['patched_sha256'][contract.SPARE_HEADER] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed early zone server layer'):
+            contract.spare_server_changed(build)
+        build['build_input'].update(
+            spare_server_patch={'path': 'patches/mapserver-zone-travel/0001-spare-zone-server.patch',
+                                'sha256': contract.SPARE_PATCH},
+            contract={'spare_server': {'disabled_by_default': True, 'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.spare_server_changed(build))
+        build['build_input']['spare_server_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed early zone server layer'):
+            contract.spare_server_changed(build)
+        # The pin is the patch in this tree, and the producer's contract states the same switch.
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.spare_patch_bytes()), contract.SPARE_PATCH)
+        self.assertEqual(producer.SPARE_HEADER, contract.SPARE_HEADER)
+        self.assertIs(producer.CONTRACT['spare_server']['disabled_by_default'], True)
+        self.assertIs(producer.CONTRACT['spare_server']['gameplay_decisions_changed'], False)
+
+    def test_start_tree_claim_is_exact_and_limited_to_the_reviewed_switch(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.start_trees_changed(build))
+        build['build_input']['patched_sha256'][contract.INITCOMMON] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.start_trees_changed(build)
+        entry = {'disabled_by_default': True, 'gameplay_decisions_changed': False,
+                 'environment_variable': 'ARMPORT_TRUSTED_BINS'}
+        build['build_input'].update(
+            start_trees_patch={'path': 'patches/mapserver-trusted-bins/0003-trusted-start-trees.patch',
+                               'sha256': contract.START_TREES_PATCH},
+            contract={'trusted_start_trees': dict(entry), 'trusted_message_bins': dict(entry)})
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.start_trees_changed(build)          # one of the two files alone is not the layer
+        build['build_input']['patched_sha256'][contract.MESSAGESTORE] = '0' * 64
+        self.assertTrue(contract.start_trees_changed(build))
+        for name in ('trusted_start_trees', 'trusted_message_bins'):
+            changed = copy.deepcopy(build)
+            changed['build_input']['contract'][name]['gameplay_decisions_changed'] = True
+            with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+                contract.start_trees_changed(changed)
+        build['build_input']['start_trees_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.start_trees_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.start_trees_patch_bytes()), contract.START_TREES_PATCH)
+        self.assertEqual((producer.INITCOMMON, producer.MESSAGESTORE), (contract.INITCOMMON, contract.MESSAGESTORE))
+        self.assertIn(producer.INITCOMMON, producer.FILES)
+        self.assertIn(producer.MESSAGESTORE, producer.FILES)
+        for name in ('trusted_start_trees', 'trusted_message_bins'):
+            entry = producer.CONTRACT[name]
+            self.assertIs(entry['disabled_by_default'], True)
+            self.assertIs(entry['gameplay_decisions_changed'], False)
+            self.assertEqual(entry['environment_variable'], producer.CONTRACT['trusted_bins']['environment_variable'])
+        # What the patch removes: the two tree requests move into the else branch, and the
+        # listing and date check gain the condition. Every text-file path still lists.
+        text = producer.start_trees_patch_bytes().decode()
+        added = [line[1:] for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        removed = [line[1:] for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(sorted(line.strip() for line in removed), sorted([
+            'FolderCacheRequestTree(folder_cache, "Defs"); // If we\'re in dynamic mode, this will load this tree for faster file access',
+            'FolderCacheRequestTree(folder_cache, "Menu");', 'if(handle_files)', 'if(handle_files)']))
+        self.assertEqual(sum('FolderCacheRequestTree(folder_cache, "Defs");' in line for line in added), 1)
+        self.assertEqual(sum('FolderCacheRequestTree(folder_cache, "Menu");' in line for line in added), 1)
+        self.assertEqual(sum(line.strip() == 'if(handle_files && !trusted)' for line in added), 2)
+        self.assertEqual(sum('msGetDirFilesList(&dirfiles,dirs);' in line for line in added), 1)
+        self.assertEqual(sum('#if SERVER' in line for line in added), 2)
+
+    def test_load_profile_claim_is_exact_and_measurement_only(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.load_profile_changed(build))
+        build['build_input']['patched_sha256'][contract.LOAD_PROFILE_SOURCES[0]] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed load profile'):
+            contract.load_profile_changed(build)
+        for name in (contract.LOAD_PROFILE_HEADER,) + contract.LOAD_PROFILE_SOURCES:
+            build['build_input']['patched_sha256'][name] = '0' * 64
+        build['build_input'].update(
+            load_profile_patch={'path': 'patches/mapserver-load-profile/0001-map-load-profile.patch',
+                                'sha256': contract.LOAD_PROFILE_PATCH},
+            contract={'map_load_profile': {'disabled_by_default': True, 'measurement_only': True,
+                                           'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.load_profile_changed(build))
+        for key, value in (('measurement_only', False), ('gameplay_decisions_changed', True),
+                           ('disabled_by_default', False)):
+            changed = copy.deepcopy(build)
+            changed['build_input']['contract']['map_load_profile'][key] = value
+            with self.assertRaisesRegex(ValueError, 'outside the reviewed load profile'):
+                contract.load_profile_changed(changed)
+        build['build_input']['load_profile_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed load profile'):
+            contract.load_profile_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.load_profile_patch_bytes()), contract.LOAD_PROFILE_PATCH)
+        self.assertEqual((producer.LOAD_PROFILE_HEADER, producer.LOAD_PROFILE_SOURCES),
+                         (contract.LOAD_PROFILE_HEADER, contract.LOAD_PROFILE_SOURCES))
+        self.assertIn(producer.LOAD_PROFILE_HEADER, producer.ADDED_FILES)
+        entry = producer.CONTRACT['map_load_profile']
+        self.assertEqual(entry['environment_variable'], producer.CONTRACT['environment_variable'])
+        self.assertIs(entry['measurement_only'], True)
+        # The patch removes no line and adds no game call (one unbraced loop body gains braces).
+        text = producer.load_profile_patch_bytes().decode()
+        removed = [line[1:].strip() for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(removed, [])
+        outside = text[text.index('diff --git a/Common/group/group.c'):]
+        added = [line[1:].strip() for line in outside.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        allowed = re.compile(r'armportMapLoad(Begin|Report|Leave)\(\);|armportMapLoadEnter\(ARMPORT_MAP_LOAD_[A-Z_]+\);'
+                             r'|#include "group/armport_map_load_profile\.h"|#define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION'
+                             r'|[{}]')
+        self.assertEqual([line for line in added if not allowed.fullmatch(line)], [])
+
+    def test_bounds_file_claim_is_exact_and_rides_on_the_object_library_claim(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.bounds_files_changed(build))
+        entry = {'disabled_by_default': True, 'gameplay_decisions_changed': False,
+                 'environment_variable': 'ARMPORT_TRUSTED_BINS'}
+        build['build_input']['contract'] = {'trusted_bounds_files': dict(entry)}
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(build)          # a contract entry without the patch receipt
+        build['build_input'].update(
+            bounds_files_patch={'path': 'patches/mapserver-trusted-bins/0004-trusted-bounds-files.patch',
+                                'sha256': contract.BOUNDS_PATCH},
+            object_library_patch={'path': 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch',
+                                  'sha256': contract.OBJECT_LIBRARY_PATCH})
+        build['build_input']['contract']['trusted_object_library'] = {
+            'disabled_by_default': True, 'gameplay_decisions_changed': False}
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(build)          # the file itself is not among the patched ones
+        build['build_input']['patched_sha256'][contract.GROUPFILELIB] = '0' * 64
+        self.assertTrue(contract.bounds_files_changed(build))
+        changed = copy.deepcopy(build)
+        changed['build_input']['bounds_files_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(changed)
+        changed = copy.deepcopy(build)
+        del changed['build_input']['contract']['trusted_bounds_files']
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.bounds_files_changed(changed)        # the patch receipt without its contract entry
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.bounds_patch_bytes()), contract.BOUNDS_PATCH)
+        entry = producer.CONTRACT['trusted_bounds_files']
+        self.assertEqual(entry['environment_variable'], producer.CONTRACT['trusted_bins']['environment_variable'])
+        self.assertIs(entry['disabled_by_default'], True)
+        # The patch removes nothing: the read and the write stay behind the new early return.
+        text = producer.bounds_patch_bytes().decode()
+        removed = [line for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(removed, [])
+        added = [line[1:] for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertEqual(sum('if (armportTrustedBounds(file))' in line for line in added), 1)
+        self.assertEqual(sum('if (!armportTrustedObjectLibrary())' in line for line in added), 1)
+
+    def test_object_library_claim_is_exact_and_limited_to_the_reviewed_switch(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.object_library_changed(build))
+        build['build_input']['patched_sha256'][contract.GROUPFILELIB] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.object_library_changed(build)
+        build['build_input'].update(
+            object_library_patch={'path': 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch',
+                                  'sha256': contract.OBJECT_LIBRARY_PATCH},
+            contract={'trusted_object_library': {'disabled_by_default': True, 'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.object_library_changed(build))
+        build['build_input']['object_library_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed trusted-bin switch'):
+            contract.object_library_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.object_library_patch_bytes()), contract.OBJECT_LIBRARY_PATCH)
+        self.assertEqual(producer.GROUPFILELIB, contract.GROUPFILELIB)
+        self.assertIn(producer.GROUPFILELIB, producer.FILES)
+        entry = producer.CONTRACT['trusted_object_library']
+        self.assertIs(entry['disabled_by_default'], True)
+        self.assertIs(entry['gameplay_decisions_changed'], False)
+        self.assertEqual(entry['environment_variable'], producer.CONTRACT['trusted_bins']['environment_variable'])
+        # The patch changes one function and adds one helper; the scan stays on every rebuild path.
+        text = producer.object_library_patch_bytes().decode()
+        added = [line[1:] for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        removed = [line[1:] for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(removed, ['    if (!production || force_rebuild)'] * 2)
+        self.assertEqual(sum('fileScanAllDataDirs("object_library", populateFileList);' in line for line in added), 1)
+        self.assertEqual(sum('!production && !force_rebuild && armportTrustedObjectLibrary()' in line for line in added), 1)
+
+    def test_cooked_mesh_cache_claim_is_exact_and_limited_to_the_reviewed_layer(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.physx_cache_changed(build))
+        build['build_input']['patched_sha256'][contract.PHYSX_HEADER] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed cooked mesh cache layer'):
+            contract.physx_cache_changed(build)
+        build['build_input'].update(
+            physx_cache_patch={'path': 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch',
+                               'sha256': contract.PHYSX_PATCH},
+            contract={'physx_cache': {'disabled_by_default': True, 'gameplay_decisions_changed': False}})
+        self.assertTrue(contract.physx_cache_changed(build))
+        build['build_input']['physx_cache_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed cooked mesh cache layer'):
+            contract.physx_cache_changed(build)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.physx_patch_bytes()), contract.PHYSX_PATCH)
+        self.assertEqual(producer.PHYSX_HEADER, contract.PHYSX_HEADER)
+        self.assertIn(producer.PHYSX_HEADER, producer.ADDED_FILES)
+        self.assertIn(producer.NWWRAPPER, producer.FILES)
+        entry = producer.CONTRACT['physx_cache']
+        self.assertIs(entry['disabled_by_default'], True)
+        self.assertIs(entry['gameplay_decisions_changed'], False)
+        # The wrapper change: one include, the cook call inside the miss branch, the publish hook.
+        text = producer.physx_patch_bytes().decode()
+        wrapper = text[:text.index('diff --git a/Common/NovodeX/armport_physx_cache.h')]
+        added = [line[1:] for line in wrapper.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        self.assertEqual(sum('NxCookTriangleMesh(meshDesc, stream)' in line for line in added), 1)
+        self.assertEqual(sum('nxSDK->createTriangleMesh(stream)' in line for line in added), 2)
+        self.assertEqual(sum(line.strip() == 'armportPhysxFinish();' for line in added), 1)
+        header = text[text.index('diff --git a/Common/NovodeX/armport_physx_cache.h'):]
+        self.assertIn('+        const char *path = getenv("ARMPORT_PHYSX_CACHE");', header)
+        self.assertNotIn('NxCookTriangleMesh(', header.replace('NxCookTriangleMesh is given', ''))
+
     def test_fx_installer_binds_original_qualified_consumer_separately_from_new_pe(self):
         (self.assets/fx.PAYLOAD).write_bytes(b'fixture marker')
         target = self.runtime/fx.TARGET; target.parent.mkdir(parents=True)
@@ -278,7 +530,63 @@ class GuestMetrics(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'Current metrics MapServer bytes'):
                     local.LocalCharacterServer.verify_map_payload(self.runtime, receipt)
 
-    def stage_fixture(self, *, metrics=True, failure=False):
+    def publish_option(self):
+        """0.13.52 layout: unchanged donor archive plus the admitted second archive."""
+        raw = (json.dumps(self.binding, indent=2)+'\n').encode()
+        (self.assets/contract.BINDING).write_bytes(raw)
+        (self.assets/'game-package.tar.gz').write_bytes(b'device-proven donor')
+        (self.assets/contract.OPTION_ARCHIVE).write_bytes(b'game-fixture')
+        runtime = {'format': 1, 'repository_commit': self.build['repository_commit'],
+            'files': {contract.BINDING: contract.pin(raw),
+                      'game-package.tar.gz': contract.pin(b'device-proven donor'),
+                      contract.OPTION_ARCHIVE: self.binding['game_archive']},
+            contract.WRAPPER: contract.summary(self.binding), contract.OPTION: contract.option_record()}
+        (self.assets/'runtime-manifest.json').write_text(json.dumps(runtime))
+        return runtime
+
+    def test_server_option_binds_only_the_second_archive_of_a_thor_switch_build(self):
+        runtime = self.publish_option()
+        # This fixture's build has no textparser change, so it cannot be offered.
+        with self.assertRaisesRegex(ValueError, 'trusted bins switch'):
+            contract.verify_archive(self.assets/contract.OPTION_ARCHIVE)
+        with mock.patch.object(contract, 'parser_changed', return_value=True):
+            contract.verify_archive(self.assets/contract.OPTION_ARCHIVE)
+            with self.assertRaisesRegex(ValueError, 'game archive differs'):
+                contract.verify_archive(self.assets/'game-package.tar.gz')
+            self.assertEqual(contract.verify_current_map(self.path, self.game)['run_id'], 123)
+            changed = dict(runtime, **{contract.OPTION: dict(contract.option_record(), default_selected=True)})
+            (self.assets/'runtime-manifest.json').write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError, 'option record differs'):
+                contract.load_binding()
+        self.select('retained_progress'); self.publish_option()
+        with mock.patch.object(contract, 'parser_changed', return_value=True), \
+                self.assertRaisesRegex(ValueError, 'Thor server'):
+            contract.load_binding()
+
+    def test_server_option_selects_the_second_archive_only_when_requested(self):
+        self.publish_option()
+        select = local.LocalCharacterServer.select_game_archive
+        for environ in ({}, {'COH_TRUSTED_BINS': '0'}):
+            archive, metrics, report = select(self.assets, environ)
+            self.assertEqual((archive.name, metrics), ('game-package.tar.gz', False))
+            self.assertEqual(report, {'format': 1, 'offered': True, 'requested': False,
+                                      'archive': 'game-package.tar.gz', 'default_archive': 'game-package.tar.gz'})
+        archive, metrics, report = select(self.assets, {'COH_TRUSTED_BINS': '1'})
+        self.assertEqual((archive.name, metrics, report['archive']),
+                         (contract.OPTION_ARCHIVE, True, contract.OPTION_ARCHIVE))
+        # A runtime without the option keeps the earlier behaviour exactly.
+        self.publish()
+        self.assertEqual(select(self.assets, {'COH_TRUSTED_BINS': '1'}),
+                         (self.assets/'game-package.tar.gz', True, None))
+        # An option record without its binding is refused.
+        runtime = json.loads((self.assets/'runtime-manifest.json').read_text())
+        runtime.pop(contract.WRAPPER); runtime[contract.OPTION] = contract.option_record()
+        (self.assets/'runtime-manifest.json').write_text(json.dumps(runtime))
+        (self.assets/contract.BINDING).unlink()
+        with self.assertRaisesRegex(local.base.DiagnosticError, 'requires its runtime binding'):
+            select(self.assets, {'COH_TRUSTED_BINS': '1'})
+
+    def stage_fixture(self, *, metrics=True, failure=False, option=False):
         import stage_app_assets as stage
         source = self.work/'donor'; source.mkdir()
         (source/'game-package.tar.gz').write_bytes(b'original donor archive')
@@ -303,6 +611,7 @@ class GuestMetrics(unittest.TestCase):
              mock.patch.object(producer, 'runtime_binding', return_value=self.binding):
             options = {'server_archive': self.work/'native.zip', 'server_variant': self.variant,
                        'server_run_id': 123} if metrics else {}
+            if option: options['server_option'] = True
             if failure:
                 with self.assertRaisesRegex(ValueError, 'unqualified native input'):
                     stage.stage(source, armport, destination, '2'*40, **options)
@@ -324,6 +633,38 @@ class GuestMetrics(unittest.TestCase):
         self.assertEqual(runtime[contract.WRAPPER], contract.summary(self.binding))
         with mock.patch.object(contract, 'ASSETS', destination):
             self.assertEqual(contract.verify_current_map(self.path, self.game)['run_id'], 123)
+
+    def test_staging_the_server_option_keeps_the_donor_archive_and_adds_the_second(self):
+        destination = self.stage_fixture(option=True)
+        self.assertEqual((destination/'game-package.tar.gz').read_bytes(), b'original donor archive')
+        self.assertEqual((destination/contract.OPTION_ARCHIVE).read_bytes(), b'game-fixture')
+        runtime = json.loads((destination/'runtime-manifest.json').read_text())
+        client = json.loads((destination/'client-manifest.json').read_text())
+        for name in ('game-package.tar.gz', contract.OPTION_ARCHIVE, contract.BINDING):
+            actual = contract.pin((destination/name).read_bytes())
+            self.assertEqual(runtime['files'][name], actual)
+            self.assertEqual(client['files'][name], actual)
+        self.assertEqual(runtime[contract.OPTION], contract.option_record())
+        with mock.patch.object(contract, 'ASSETS', destination), \
+                mock.patch.object(contract, 'parser_changed', return_value=True):
+            self.assertEqual(contract.verify_current_map(self.path, self.game)['run_id'], 123)
+
+    def test_apk_builder_admits_the_option_archive_and_leaves_the_donor_archive_unchanged(self):
+        import build_thor_apk as apk
+        self.assertEqual(apk.SERVER_OPTION_ADDED_RUNTIME,
+                         {contract.OPTION_ARCHIVE, contract.BINDING, 'armport_server_metrics_contract.py'})
+        self.assertNotIn(contract.GAME_ARCHIVE, apk.CHANGED_RUNTIME)
+        self.assertEqual(apk.SERVER_CHANGED_RUNTIME, {contract.GAME_ARCHIVE})
+
+    def test_the_server_option_never_carries_the_retained_variant(self):
+        import stage_app_assets as stage
+        self.select('retained_progress')
+        with self.assertRaisesRegex(ValueError, 'only the admitted Thor server'):
+            stage.stage(self.work/'none', self.work/'none.zip', self.work/'out', '2'*40,
+                        server_archive=self.work/'native.zip', server_variant='retained_progress',
+                        server_run_id=123, server_option=True)
+        with self.assertRaisesRegex(ValueError, 'only the admitted Thor server'):
+            stage.stage(self.work/'none', self.work/'none.zip', self.work/'out', '2'*40, server_option=True)
 
     def test_rejected_server_input_leaves_no_staged_output(self):
         self.stage_fixture(failure=True)

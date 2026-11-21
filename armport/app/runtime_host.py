@@ -16,11 +16,39 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools/android/dbserver'))
 import host_dbserver_smoke as runtime
+sys.path.insert(0, str(ROOT / 'armport/audio'))
+import audio_receiver
 
 spec = importlib.util.spec_from_file_location('armport_rfb', ROOT / 'tools/android/client/host_smoke.py')
 rfb = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rfb)
 require = runtime.require
+
+GUEST_AUDIO_PLUGIN = '/opt/armport-client/armport-audio/libasound_module_pcm_trasc.so'
+# Tone probe acceptance: at least 0.5 s of non-silent 48 kHz stereo on each channel.
+PROBE_MIN_NONZERO_PER_CHANNEL = 24000
+
+
+def probe_alsa_config(plugin=GUEST_AUDIO_PLUGIN):
+    """The same configuration the client gets (armport_interactive.alsa_config)."""
+    return ('</usr/share/alsa/alsa.conf>\n'
+            'pcm_type.trasc { lib "' + plugin + '" }\n'
+            'pcm.trasc { type trasc }\n'
+            'pcm.!default { type plug slave { pcm "trasc" format S16_LE rate 48000 channels 2 } }\n')
+
+
+def probe_summary(snapshot):
+    """Accept the tone only if real samples reached the sink on both channels."""
+    streams = snapshot.get('streams', [])
+    summary = {'format': 1, 'scope': 'ci_directsound_tone_through_wine_alsa_plugin_to_protocol_sink',
+               'streams': len(streams), 'frames': sum(s.get('frames', 0) for s in streams),
+               'nonzero_samples': sum(s.get('nonzero_samples', 0) for s in streams),
+               'left_nonzero': sum(s.get('left_nonzero', 0) for s in streams),
+               'right_nonzero': sum(s.get('right_nonzero', 0) for s in streams),
+               'errors': [str(e)[:300] for e in snapshot.get('errors', [])][:4]}
+    summary['passed'] = (not summary['errors'] and summary['streams'] >= 1
+                         and min(summary['left_nonzero'], summary['right_nonzero']) >= PROBE_MIN_NONZERO_PER_CHANNEL)
+    return summary
 
 
 def prepare(work, evidence, client, proot, link_source=None):
@@ -125,6 +153,7 @@ def main():
     for name in ('client', 'proot', 'work', 'evidence'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--link-source', type=Path)
+    parser.add_argument('--audio-probe', type=Path, help='ARM64 dsound-tone.exe: also prove the audio path')
     args = parser.parse_args()
     client, proot, work, evidence = (getattr(args, n).resolve() for n in ('client', 'proot', 'work', 'evidence'))
     link_source = args.link_source.resolve() if args.link_source else None
@@ -132,25 +161,42 @@ def main():
     evidence.mkdir(parents=True)
     report = {'scope': 'armport_app_runtime_boot', 'passed': False, 'm4_complete': False}
     report['artifact_runs'] = {name: os.environ.get(name) for name in ('CLIENT_RUN_ID', 'DATA_RUN_ID')}
-    process = None
+    process = receiver = None
     try:
         command, report['runtime'] = prepare(work, evidence, client, proot, link_source)
+        if args.audio_probe is not None:
+            require((client / GUEST_AUDIO_PLUGIN.removeprefix('/opt/armport-client/')).is_file(),
+                    'The client package has no audio plugin')
+            shutil.copyfile(args.audio_probe, work / 'probe/dsound-tone.exe')
+            (work / 'probe/armport-asound.conf').write_text(probe_alsa_config())
+            receiver = audio_receiver.Receiver(work / 'socket/audio.sock')
         command, environment, expected = runtime.isolate_command(command, evidence=evidence, proot=proot, work=work)
         with (evidence / 'guest.log').open('wb') as log:
             process = subprocess.Popen(command, env=environment, stdout=log, stderr=subprocess.STDOUT)
             report['rfb'] = capture(process, work, evidence)
-            report['guest_exit'] = process.wait(timeout=90)
+            report['guest_exit'] = process.wait(timeout=180 if receiver else 90)
         guest = json.loads((work / 'state/armport-app-report.json').read_text())
         report['guest'] = guest
         isolation = json.loads((evidence / 'network-isolation.json').read_text())
         runtime.validate_network_receipt(isolation, expected)
         require(report['guest_exit'] == 0 and guest.get('passed') is True, 'Guest qualification failed')
+        if receiver is not None:
+            report['audio_probe'] = probe_summary(receiver.snapshot())
+            require(report['audio_probe']['passed'], 'The DirectSound tone did not reach the sink: '
+                    + json.dumps(report['audio_probe']))
         report['passed'] = True
     except Exception as exc:
         report['error'] = str(exc)
     finally:
         if process is not None and process.poll() is None:
             report['stop'] = runtime.stop_guest(process, work / 'state')
+        if receiver is not None:
+            report.setdefault('audio_probe', probe_summary(receiver.snapshot()))
+            receiver.close()
+            guest_probe = (report.get('guest') or {}).get('audio_probe')
+            print('::notice title=ArmPort DirectSound tone probe::' + json.dumps(
+                dict(report['audio_probe'], guest=guest_probe), separators=(',', ':'))
+                .replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A'), flush=True)
         for source, destination in ((work / 'state/armport-app-report.json', 'guest-report.json'),
                                     (client / 'armport_stdio.txt', 'armport_stdio.txt')):
             if source.is_file():

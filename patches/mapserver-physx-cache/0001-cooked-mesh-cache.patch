@@ -1,0 +1,522 @@
+diff --git a/Common/NovodeX/NwWrapper.cpp b/Common/NovodeX/NwWrapper.cpp
+index 38bd938..d93e129 100644
+--- a/Common/NovodeX/NwWrapper.cpp
++++ b/Common/NovodeX/NwWrapper.cpp
+@@ -72,6 +72,7 @@ extern "C"{
+ }
+ 
+ #include <utilitieslib/components/earray.h>
++#include "NovodeX/armport_physx_cache.h"
+ 
+ // -------------------------------------------------------------------------------------------------------------------
+ 
+@@ -2023,13 +2024,55 @@ void* nwCookAndLoadMeshShape(const char* name, const void* vertArray, int vertCo
+     }
+     */
+ 
+-    PERFINFO_AUTO_START("novodexCooking", 1);
+-    bool status = NxCookTriangleMesh(meshDesc, stream);
+-    assert(status);
+-    stream.resetByteCounter();
+-    PERFINFO_AUTO_STOP_START("createTriangleMesh", 1);
+-    mesh = nxSDK->createTriangleMesh(stream);
+-    PERFINFO_AUTO_STOP();
++    // ArmPort (ARMPORT_PHYSX_CACHE=<file>, armport_physx_cache.h): a mesh cooked at
++    // an earlier start is read back instead of cooked; anything else cooks as before.
++    unsigned long long armportH1 = 0, armportH2 = 0;
++    LARGE_INTEGER armportBefore;
++    bool armportCache = armportPhysxActive() != 0;
++    mesh = NULL;
++    if (armportCache)
++    {
++        unsigned int cookedSize;
++        QueryPerformanceCounter(&armportBefore);
++        armportPhysxKey(vertArray, vertCount, vertStride, triArray, triCount, triStride, &armportH1, &armportH2);
++        cookedSize = armportPhysxFind(armportH1, armportH2, vertCount, triCount);
++        armportPhysxTime(&armport_physx.key_ticks, &armportBefore);
++        if (cookedSize)
++        {
++            QueryPerformanceCounter(&armportBefore);
++            stream.resetByteCounter();
++            stream.checkTempBufferSize(cookedSize);
++            if (armportPhysxFetch(stream.getBuffer()))
++                mesh = nxSDK->createTriangleMesh(stream);
++            armportPhysxTime(&armport_physx.create_ticks, &armportBefore);
++            if (mesh)
++                ++armport_physx.hits;
++            else
++                ++armport_physx.refused;
++        }
++    }
++    if (!mesh)
++    {
++        PERFINFO_AUTO_START("novodexCooking", 1);
++        if (armportCache)
++            QueryPerformanceCounter(&armportBefore);
++        stream.resetByteCounter();
++        bool status = NxCookTriangleMesh(meshDesc, stream);
++        assert(status);
++        if (armportCache)
++        {
++            armportPhysxTime(&armport_physx.cook_ticks, &armportBefore);
++            ++armport_physx.misses;
++            armportPhysxAdd(armportH1, armportH2, vertCount, triCount, stream.getBuffer(), stream.getBufferSize());
++            QueryPerformanceCounter(&armportBefore);
++        }
++        stream.resetByteCounter();
++        PERFINFO_AUTO_STOP_START("createTriangleMesh", 1);
++        mesh = nxSDK->createTriangleMesh(stream);
++        PERFINFO_AUTO_STOP();
++        if (armportCache)
++            armportPhysxTime(&armport_physx.create_ticks, &armportBefore);
++    }
+ 
+     shapeDesc = new NxTriangleMeshShapeDesc();
+     shapeDesc->meshData = mesh;
+@@ -2070,6 +2113,7 @@ void nwFreeMeshShape(void* shapeParam)
+ // -------------------------------------------------------------------------------------------------------------------
+ void nwFreeStreamBuffer()
+ {
++    armportPhysxFinish();
+     NwSharedStream::freeTempBuffer();
+ }
+ // -------------------------------------------------------------------------------------------------------------------
+diff --git a/Common/NovodeX/armport_physx_cache.h b/Common/NovodeX/armport_physx_cache.h
+new file mode 100644
+index 0000000..3378921
+--- /dev/null
++++ b/Common/NovodeX/armport_physx_cache.h
+@@ -0,0 +1,433 @@
++#ifndef ARMPORT_PHYSX_CACHE_H
++#define ARMPORT_PHYSX_CACHE_H
++
++/* ArmPort cooked collision meshes (opt-in: ARMPORT_PHYSX_CACHE=<file>; without
++ * the variable nothing here runs).
++ *
++ * createNxWorldShapes cooks every collision mesh of the zone at every start
++ * (2,265 meshes and 16.6 s of a 50.8 s Atlas start in CI run 44398992652).
++ * Cooking is PhysX's own offline step: its output is a byte stream that
++ * createTriangleMesh reads. With the variable set, nwCookAndLoadMeshShape
++ * looks the mesh up here by two 64-bit hashes of exactly what it would hand
++ * to the cooker (vertex and triangle counts, strides and bytes). A hit reads
++ * the stored stream from the file into the stream buffer; a miss cooks as
++ * before and the stream is appended to <file>.new. nwFreeStreamBuffer, which
++ * ends the world load, appends the old file's records to <file>.new and
++ * renames it over <file> when anything was added. Nothing but an index of the
++ * records is kept in memory. One file serves every zone of one server build:
++ * zones share most of their models. Two servers that add at the same time do
++ * not damage it; the later one to finish keeps the file as it finds it then,
++ * plus its own records.
++ *
++ * File: the 24-byte magic, then records of
++ *     h1 h2 sum (8 bytes each), verts tris size (4 bytes each), size bytes
++ * as this x86 program stores them. A record head that runs past the end ends
++ * the index there. A stream whose sum does not match when it is read, or that
++ * createTriangleMesh refuses, is cooked again and its new record comes
++ * earlier in the next file, where the look-up finds it first. The supervisor
++ * names the file.
++ */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#define ARMPORT_PHYSX_MAGIC "ARMPORT_PHYSX_COOKED_V1\n"
++#define ARMPORT_PHYSX_MAGIC_BYTES 24u
++#define ARMPORT_PHYSX_RECORD_HEAD 36u
++#define ARMPORT_PHYSX_MAX_FILE (1024u * 1024u * 1024u)
++#define ARMPORT_PHYSX_MAX_RECORD (64u * 1024u * 1024u)
++#define ARMPORT_PHYSX_MAX_ENTRIES 262144u
++
++typedef struct ArmportPhysxEntry
++{
++    unsigned long long h1, h2, sum;
++    unsigned int verts, tris, size;
++    unsigned int offset;       /* of the stream in the old file; 0: cooked in this process */
++} ArmportPhysxEntry;
++
++static struct
++{
++    int state;                 /* 0 not looked at, 1 in use, -1 off or finished */
++    char path[520];
++    HANDLE source, target;     /* the old file (read), <file>.new (append) */
++    unsigned int source_bytes; /* the part of the old file that holds whole records */
++    ArmportPhysxEntry *entries;
++    unsigned int *table;       /* entry number + 1 by h1, open addressing; the old file's records only */
++    unsigned int table_mask;
++    unsigned int count, capacity, loaded, found;
++    unsigned int hits, misses, refused, added, bad_records, added_bytes;
++    int write_failed;
++    LARGE_INTEGER cook_ticks, create_ticks, key_ticks, load_ticks;
++} armport_physx;
++
++static unsigned long long armportPhysxMix(unsigned long long h, const void *bytes, size_t length,
++                                          unsigned long long prime)
++{
++    const unsigned char *p = (const unsigned char *)bytes;
++    while (length >= 8)
++    {
++        unsigned long long word;
++        memcpy(&word, p, 8);
++        h = (h ^ word) * prime;
++        h ^= h >> 29;
++        p += 8;
++        length -= 8;
++    }
++    while (length--)
++    {
++        h = (h ^ *p++) * prime;
++    }
++    return h ^ (h >> 32);
++}
++
++static unsigned long long armportPhysxSum(const void *bytes, size_t length)
++{
++    return armportPhysxMix(14695981039346656037ULL, bytes, length, 1099511628211ULL);
++}
++
++/* Everything NxCookTriangleMesh is given for this mesh. */
++static void armportPhysxKey(const void *verts, int vertCount, int vertStride, const void *tris, int triCount,
++                            int triStride, unsigned long long *h1, unsigned long long *h2)
++{
++    int shape[4];
++    unsigned long long a = 14695981039346656037ULL, b = 0x9E3779B97F4A7C15ULL;
++    shape[0] = vertCount; shape[1] = vertStride; shape[2] = triCount; shape[3] = triStride;
++    a = armportPhysxMix(a, shape, sizeof(shape), 1099511628211ULL);
++    b = armportPhysxMix(b, shape, sizeof(shape), 0xD6E8FEB86659FD93ULL);
++    a = armportPhysxMix(a, verts, (size_t)vertCount * (size_t)vertStride, 1099511628211ULL);
++    b = armportPhysxMix(b, verts, (size_t)vertCount * (size_t)vertStride, 0xD6E8FEB86659FD93ULL);
++    a = armportPhysxMix(a, tris, (size_t)triCount * (size_t)triStride, 1099511628211ULL);
++    b = armportPhysxMix(b, tris, (size_t)triCount * (size_t)triStride, 0xD6E8FEB86659FD93ULL);
++    *h1 = a;
++    *h2 = b;
++}
++
++static int armportPhysxAppend(const ArmportPhysxEntry *entry)
++{
++    if (armport_physx.count >= ARMPORT_PHYSX_MAX_ENTRIES)
++        return 0;
++    if (armport_physx.count == armport_physx.capacity)
++    {
++        unsigned int capacity = armport_physx.capacity ? armport_physx.capacity * 2u : 4096u;
++        ArmportPhysxEntry *grown = (ArmportPhysxEntry *)realloc(armport_physx.entries,
++                                                                capacity * sizeof(ArmportPhysxEntry));
++        if (!grown)
++            return 0;
++        armport_physx.entries = grown;
++        armport_physx.capacity = capacity;
++    }
++    armport_physx.entries[armport_physx.count++] = *entry;
++    return 1;
++}
++
++static int armportPhysxGet(HANDLE file, void *bytes, unsigned int length)
++{
++    unsigned char *p = (unsigned char *)bytes;
++    while (length)
++    {
++        DWORD got = 0;
++        if (!ReadFile(file, p, length, &got, NULL) || !got)
++            return 0;
++        p += got;
++        length -= got;
++    }
++    return 1;
++}
++
++static int armportPhysxPut(HANDLE file, const void *bytes, unsigned int length)
++{
++    const unsigned char *p = (const unsigned char *)bytes;
++    while (length)
++    {
++        DWORD wrote = 0;
++        if (!WriteFile(file, p, length, &wrote, NULL) || !wrote)
++            return 0;
++        p += wrote;
++        length -= wrote;
++    }
++    return 1;
++}
++
++/* Walk the record heads of an open file. Returns the offset after the last whole record, or 0
++ * when the file is not one of ours; with collect, the records go into the index. */
++static unsigned int armportPhysxScan(HANDLE file, int collect)
++{
++    char magic[ARMPORT_PHYSX_MAGIC_BYTES];
++    DWORD size, high = 0;
++    unsigned int at = ARMPORT_PHYSX_MAGIC_BYTES;
++    size = GetFileSize(file, &high);
++    if (high || size < ARMPORT_PHYSX_MAGIC_BYTES || size > ARMPORT_PHYSX_MAX_FILE
++        || SetFilePointer(file, 0, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER
++        || !armportPhysxGet(file, magic, ARMPORT_PHYSX_MAGIC_BYTES)
++        || memcmp(magic, ARMPORT_PHYSX_MAGIC, ARMPORT_PHYSX_MAGIC_BYTES) != 0)
++    {
++        if (collect)
++            armport_physx.bad_records = 1;
++        return 0;
++    }
++    while (at < size)
++    {
++        unsigned char head[ARMPORT_PHYSX_RECORD_HEAD];
++        ArmportPhysxEntry entry;
++        if (size - at < ARMPORT_PHYSX_RECORD_HEAD || !armportPhysxGet(file, head, ARMPORT_PHYSX_RECORD_HEAD))
++            break;
++        memcpy(&entry.h1, head, 8);
++        memcpy(&entry.h2, head + 8, 8);
++        memcpy(&entry.sum, head + 16, 8);
++        memcpy(&entry.verts, head + 24, 4);
++        memcpy(&entry.tris, head + 28, 4);
++        memcpy(&entry.size, head + 32, 4);
++        entry.offset = at + ARMPORT_PHYSX_RECORD_HEAD;
++        if (!entry.size || entry.size > ARMPORT_PHYSX_MAX_RECORD
++            || entry.size > size - at - ARMPORT_PHYSX_RECORD_HEAD
++            || SetFilePointer(file, (LONG)(entry.offset + entry.size), NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER
++            || (collect && !armportPhysxAppend(&entry)))
++            break;
++        at = entry.offset + entry.size;
++    }
++    if (collect && at < size)
++        ++armport_physx.bad_records;
++    return at;
++}
++
++static int armportPhysxSame(const ArmportPhysxEntry *entry, unsigned long long h1, unsigned long long h2,
++                            int vertCount, int triCount)
++{
++    return entry->h1 == h1 && entry->h2 == h2 && entry->verts == (unsigned int)vertCount
++        && entry->tris == (unsigned int)triCount;
++}
++
++/* Index the old file: record heads only; the streams are read when used. */
++static void armportPhysxRead(void)
++{
++    unsigned int i, size = 1024;
++    HANDLE file = CreateFileA(armport_physx.path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
++                              FILE_ATTRIBUTE_NORMAL, NULL);
++    if (file == INVALID_HANDLE_VALUE)
++        return;
++    armport_physx.source_bytes = armportPhysxScan(file, 1);
++    if (!armport_physx.source_bytes)
++    {
++        CloseHandle(file);
++        return;
++    }
++    armport_physx.source = file;
++    armport_physx.loaded = armport_physx.count;
++    while (size < armport_physx.loaded * 2u)
++        size <<= 1;
++    armport_physx.table = (unsigned int *)calloc(size, sizeof(unsigned int));
++    if (!armport_physx.table)
++        return;                     /* the look-up then walks the index */
++    armport_physx.table_mask = size - 1;
++    for (i = 0; i < armport_physx.loaded; ++i)
++    {
++        const ArmportPhysxEntry *entry = &armport_physx.entries[i];
++        unsigned int slot = (unsigned int)entry->h1 & armport_physx.table_mask;
++        while (armport_physx.table[slot]
++               && !armportPhysxSame(&armport_physx.entries[armport_physx.table[slot] - 1], entry->h1, entry->h2,
++                                    (int)entry->verts, (int)entry->tris))
++            slot = (slot + 1) & armport_physx.table_mask;
++        if (!armport_physx.table[slot])
++            armport_physx.table[slot] = i + 1;      /* of two records for one mesh, the earlier */
++    }
++}
++
++/* 1 when the variable names a file; indexes it at the first call. */
++static int armportPhysxActive(void)
++{
++    if (armport_physx.state == 0)
++    {
++        const char *path = getenv("ARMPORT_PHYSX_CACHE");
++        LARGE_INTEGER before, after;
++        if (!path || !path[0] || strlen(path) >= sizeof(armport_physx.path) - 8)
++        {
++            armport_physx.state = -1;
++            return 0;
++        }
++        strcpy(armport_physx.path, path);
++        armport_physx.source = armport_physx.target = INVALID_HANDLE_VALUE;
++        armport_physx.state = 1;
++        QueryPerformanceCounter(&before);
++        armportPhysxRead();
++        QueryPerformanceCounter(&after);
++        armport_physx.load_ticks.QuadPart = after.QuadPart - before.QuadPart;
++    }
++    return armport_physx.state == 1;
++}
++
++/* The size of the old file's stream for this mesh, or 0. armportPhysxFetch reads the one found. */
++static unsigned int armportPhysxFind(unsigned long long h1, unsigned long long h2, int vertCount, int triCount)
++{
++    unsigned int i;
++    armport_physx.found = armport_physx.count;
++    if (armport_physx.table)
++    {
++        unsigned int slot = (unsigned int)h1 & armport_physx.table_mask;
++        while (armport_physx.table[slot])
++        {
++            i = armport_physx.table[slot] - 1;
++            if (armportPhysxSame(&armport_physx.entries[i], h1, h2, vertCount, triCount))
++            {
++                armport_physx.found = i;
++                return armport_physx.entries[i].size;
++            }
++            slot = (slot + 1) & armport_physx.table_mask;
++        }
++        return 0;
++    }
++    for (i = 0; i < armport_physx.loaded; ++i)
++    {
++        if (armportPhysxSame(&armport_physx.entries[i], h1, h2, vertCount, triCount))
++        {
++            armport_physx.found = i;
++            return armport_physx.entries[i].size;
++        }
++    }
++    return 0;
++}
++
++/* Read the stream armportPhysxFind found into a buffer of its size; 0 when it is not what was stored. */
++static int armportPhysxFetch(unsigned char *buffer)
++{
++    const ArmportPhysxEntry *entry;
++    if (armport_physx.found >= armport_physx.loaded || armport_physx.source == INVALID_HANDLE_VALUE)
++        return 0;
++    entry = &armport_physx.entries[armport_physx.found];
++    if (!entry->offset
++        || SetFilePointer(armport_physx.source, (LONG)entry->offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER
++        || !armportPhysxGet(armport_physx.source, buffer, entry->size)
++        || armportPhysxSum(buffer, entry->size) != entry->sum)
++        return 0;
++    return 1;
++}
++
++/* A mesh that was cooked here: append its stream to <file>.new. */
++static void armportPhysxAdd(unsigned long long h1, unsigned long long h2, int vertCount, int triCount,
++                            const unsigned char *cooked, int size)
++{
++    unsigned char head[ARMPORT_PHYSX_RECORD_HEAD];
++    ArmportPhysxEntry entry;
++    unsigned int i;
++    if (size <= 0 || (unsigned int)size > ARMPORT_PHYSX_MAX_RECORD || armport_physx.write_failed
++        || (unsigned long long)armport_physx.added_bytes + ARMPORT_PHYSX_MAGIC_BYTES
++           + ARMPORT_PHYSX_RECORD_HEAD + (unsigned int)size > ARMPORT_PHYSX_MAX_FILE)
++        return;
++    for (i = armport_physx.loaded; i < armport_physx.count; ++i)
++    {
++        if (armportPhysxSame(&armport_physx.entries[i], h1, h2, vertCount, triCount))
++            return;                 /* the same mesh again in this load: already appended */
++    }
++    entry.h1 = h1; entry.h2 = h2;
++    entry.sum = armportPhysxSum(cooked, (size_t)size);
++    entry.verts = (unsigned int)vertCount; entry.tris = (unsigned int)triCount; entry.size = (unsigned int)size;
++    entry.offset = 0;
++    if (armport_physx.target == INVALID_HANDLE_VALUE)
++    {
++        char temporary[528];
++        strcpy(temporary, armport_physx.path);
++        strcat(temporary, ".new");
++        armport_physx.target = CreateFileA(temporary, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
++                                           FILE_ATTRIBUTE_NORMAL, NULL);
++        if (armport_physx.target == INVALID_HANDLE_VALUE
++            || !armportPhysxPut(armport_physx.target, ARMPORT_PHYSX_MAGIC, ARMPORT_PHYSX_MAGIC_BYTES))
++        {
++            armport_physx.write_failed = 1;
++            return;
++        }
++    }
++    memcpy(head, &entry.h1, 8);
++    memcpy(head + 8, &entry.h2, 8);
++    memcpy(head + 16, &entry.sum, 8);
++    memcpy(head + 24, &entry.verts, 4);
++    memcpy(head + 28, &entry.tris, 4);
++    memcpy(head + 32, &entry.size, 4);
++    if (!armportPhysxPut(armport_physx.target, head, ARMPORT_PHYSX_RECORD_HEAD)
++        || !armportPhysxPut(armport_physx.target, cooked, entry.size) || !armportPhysxAppend(&entry))
++    {
++        armport_physx.write_failed = 1;
++        return;
++    }
++    ++armport_physx.added;
++    armport_physx.added_bytes += ARMPORT_PHYSX_RECORD_HEAD + entry.size;
++}
++
++/* <file>.new holds the new records; add the records of <file> as it is now and put it in place. */
++static int armportPhysxPublish(void)
++{
++    char temporary[528];
++    HANDLE old;
++    int good = !armport_physx.write_failed && armport_physx.target != INVALID_HANDLE_VALUE;
++    strcpy(temporary, armport_physx.path);
++    strcat(temporary, ".new");
++    if (armport_physx.source != INVALID_HANDLE_VALUE)
++        CloseHandle(armport_physx.source);
++    armport_physx.source = INVALID_HANDLE_VALUE;
++    old = good ? CreateFileA(armport_physx.path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
++                             FILE_ATTRIBUTE_NORMAL, NULL) : INVALID_HANDLE_VALUE;
++    if (old != INVALID_HANDLE_VALUE)
++    {
++        unsigned int end = armportPhysxScan(old, 0);
++        unsigned int left = end > ARMPORT_PHYSX_MAGIC_BYTES ? end - ARMPORT_PHYSX_MAGIC_BYTES : 0;
++        unsigned char *block = (unsigned char *)malloc(1024u * 1024u);
++        if ((unsigned long long)left + armport_physx.added_bytes + ARMPORT_PHYSX_MAGIC_BYTES > ARMPORT_PHYSX_MAX_FILE)
++            left = 0;               /* full: start again from this load's records */
++        good = block && SetFilePointer(old, (LONG)ARMPORT_PHYSX_MAGIC_BYTES, NULL, FILE_BEGIN)
++                        != INVALID_SET_FILE_POINTER;
++        while (good && left)
++        {
++            unsigned int part = left < 1024u * 1024u ? left : 1024u * 1024u;
++            good = armportPhysxGet(old, block, part) && armportPhysxPut(armport_physx.target, block, part);
++            left -= part;
++        }
++        free(block);
++        CloseHandle(old);
++    }
++    if (armport_physx.target != INVALID_HANDLE_VALUE && !CloseHandle(armport_physx.target))
++        good = 0;
++    armport_physx.target = INVALID_HANDLE_VALUE;
++    if (good && !MoveFileExA(temporary, armport_physx.path, MOVEFILE_REPLACE_EXISTING))
++        good = 0;
++    if (!good)
++        DeleteFileA(temporary);
++    return good;
++}
++
++static unsigned long armportPhysxMs(LARGE_INTEGER ticks)
++{
++    LARGE_INTEGER frequency;
++    if (!QueryPerformanceFrequency(&frequency) || frequency.QuadPart <= 0)
++        return 0;
++    return (unsigned long)(ticks.QuadPart * 1000 / frequency.QuadPart);
++}
++
++/* The world load is over: publish what was added, report once, release everything. */
++static void armportPhysxFinish(void)
++{
++    int written = 0;
++    if (armport_physx.state != 1 || !(armport_physx.hits + armport_physx.misses))
++        return;
++    if (armport_physx.added || armport_physx.write_failed)
++        written = armportPhysxPublish() ? 1 : -1;
++    if (armport_physx.source != INVALID_HANDLE_VALUE)
++        CloseHandle(armport_physx.source);
++    printf("ARMPORT_PHYSX_COOKED_V1 status=ok loaded=%u hits=%u misses=%u refused=%u added=%u bad_records=%u "
++           "old_bytes=%u added_bytes=%u written=%d load_ms=%lu key_ms=%lu cook_ms=%lu create_ms=%lu\n",
++           armport_physx.loaded, armport_physx.hits, armport_physx.misses, armport_physx.refused,
++           armport_physx.added, armport_physx.bad_records, armport_physx.source_bytes, armport_physx.added_bytes,
++           written, armportPhysxMs(armport_physx.load_ticks), armportPhysxMs(armport_physx.key_ticks),
++           armportPhysxMs(armport_physx.cook_ticks), armportPhysxMs(armport_physx.create_ticks));
++    free(armport_physx.entries);
++    free(armport_physx.table);
++    memset(&armport_physx, 0, sizeof(armport_physx));
++    armport_physx.state = -1;
++}
++
++static void armportPhysxTime(LARGE_INTEGER *total, const LARGE_INTEGER *before)
++{
++    LARGE_INTEGER now;
++    QueryPerformanceCounter(&now);
++    total->QuadPart += now.QuadPart - before->QuadPart;
++}
++
++#endif

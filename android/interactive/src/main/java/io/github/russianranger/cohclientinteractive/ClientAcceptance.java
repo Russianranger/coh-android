@@ -165,8 +165,14 @@ final class ClientAcceptance {
     /** Map titles remain bound to this session's accepted initial/final maps. */
     static boolean clientWindowAccepted(Object value, Object clientPid, int initialMap,
             int currentMap, boolean monorailQualified) {
-        if (!windowMapSupported(initialMap, monorailQualified)
-                || !windowMapSupported(currentMap, monorailQualified)) return false;
+        return clientWindowAccepted(value, clientPid, initialMap, currentMap, monorailQualified, false);
+    }
+
+    /** With the game's own zone travel, any maps.db static zone (ClientZoning.staticZone). */
+    static boolean clientWindowAccepted(Object value, Object clientPid, int initialMap,
+            int currentMap, boolean monorailQualified, boolean stockTravel) {
+        if (!windowMapSupported(initialMap, monorailQualified, stockTravel)
+                || !windowMapSupported(currentMap, monorailQualified, stockTravel)) return false;
         Map<?, ?> window = object(value);
         Object title = window.get("title"), width = window.get("width"), height = window.get("height");
         if (!positiveInteger(clientPid) || ((Number) clientPid).longValue() >= (1L << 32)
@@ -180,23 +186,57 @@ final class ClientAcceptance {
                     ((Number) clientPid).longValue(), currentMap);
     }
 
-    private static boolean windowMapSupported(int map, boolean monorailQualified) {
-        return map == 1 || map == 101 || map == 5 && monorailQualified;
+    /** maps.db static zones (ids 1-999); the same bound as ClientZoning.staticZone. */
+    static boolean staticZone(long map) {
+        return map >= 1 && map <= 999;
+    }
+
+    /**
+     * The game's own zone travel: the guest marks the character, its events and
+     * its session budget with stock_travel, and then King's Row and every other
+     * static zone are supported without the station monorail (Thor 0.13.56: the
+     * King's Row arrival was rejected as monorail-only).
+     */
+    static boolean stockTravelMap(Map<?, ?> value) {
+        return yes(value.get("stock_travel")) && integer(value.get("map_id"))
+                && staticZone(((Number) value.get("map_id")).longValue());
+    }
+
+    private static boolean windowMapSupported(int map, boolean monorailQualified, boolean stockTravel) {
+        return map == 1 || map == 101 || map == 5 && (monorailQualified || stockTravel)
+                || stockTravel && staticZone(map);
     }
 
     private static boolean windowTitle(String title, long pid, int map) {
+        if (map != 1 && map != 101 && map != 5) {
+            // Another static zone (game's own travel): its own zone folder and world name.
+            return title.matches("City of Heroes[ \\t]+:[ \\t]+"
+                + "(?:[A-Za-z0-9_]{1,40}[\\\\/][A-Za-z0-9_]{1,64}[\\\\/][A-Za-z0-9_]{1,64}\\.txt[ \\t]+)?PID:[ \\t]+"
+                + pid);
+        }
         String world = map == 5 ? "City_01_02" : "City_01_01";
         return title.matches("City of Heroes[ \\t]+:[ \\t]+"
                 + "(?:City_Zones[\\\\/]" + world + "[\\\\/]" + world + "\\.txt[ \\t]+)?PID:[ \\t]+" + pid);
     }
 
     static boolean savedDestinationEvent(Object value, String session, boolean monorailQualified) {
+        return savedDestinationEvent(value, session, monorailQualified, false);
+    }
+
+    /**
+     * stockTravel: also another static zone. With dynamic_start no zone server
+     * runs before Enter Game: the saved zone (Atlas Park included) is started by
+     * the DbServer's own request then, so it has no port yet, and no other zone
+     * is prepared first (owner, 2026-11-07).
+     */
+    static boolean savedDestinationEvent(Object value, String session, boolean monorailQualified,
+            boolean stockTravel) {
         Map<?, ?> event = object(value);
         if (session == null || !session.matches("[0-9a-f]{32}")
                 || !"saved_character_destination".equals(event.get("type"))
                 || !session.equals(event.get("session_id")) || !number(event.get("character_id"), 1)
                 || !positiveInteger(event.get("auth_id")) || ((Number) event.get("auth_id")).longValue() > 4294967295L
-                || !"THORHERO".equals(event.get("name"))
+                || !characterName(event.get("name"))
                 || !"COHLOCAL".equals(event.get("account")) || !yes(event.get("existing_character_verified"))
                 || !yes(event.get("saved_location_verified")) || !Boolean.FALSE.equals(event.get("sql_game_mutations_performed"))) return false;
         return (number(event.get("map_id"), 1) && number(event.get("port"), 7001)
@@ -204,7 +244,19 @@ final class ClientAcceptance {
                 || (number(event.get("map_id"), 101) && number(event.get("port"), 7002)
                     && "City_01_01".equals(event.get("world")))
                 || (monorailQualified && number(event.get("map_id"), 5) && number(event.get("port"), 7003)
-                    && "City_01_02".equals(event.get("world")));
+                    && "City_01_02".equals(event.get("world")))
+                || (stockTravel && yes(event.get("dynamic_start")) && event.containsKey("port")
+                    && jsonNull(event.get("port")) && !event.containsKey("prepared_map_id")
+                    && integer(event.get("map_id")) && staticZone(((Number) event.get("map_id")).longValue())
+                    && event.get("world") instanceof String
+                    && ((String) event.get("world")).matches("[A-Za-z0-9_]{1,64}"))
+                || (stockTravel && event.get("map_id") instanceof Number
+                    && staticZone(((Number) event.get("map_id")).longValue())
+                    && !number(event.get("map_id"), 1) && !number(event.get("map_id"), 101)
+                    && event.get("port") instanceof Number && ((Number) event.get("port")).longValue() >= 7003
+                    && ((Number) event.get("port")).longValue() <= 7099
+                    && event.get("world") instanceof String
+                    && ((String) event.get("world")).matches("[A-Za-z0-9_]{1,64}"));
     }
 
     static boolean localLoginVerified(Object value, String session, long clientPid) {
@@ -225,7 +277,7 @@ final class ClientAcceptance {
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_connected".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
-                && positiveInteger(event.get("character_id")) && "THORHERO".equals(event.get("name"))
+                && positiveInteger(event.get("character_id")) && characterName(event.get("name"))
                 && "COHLOCAL".equals(event.get("account")) && supportedCharacterMap(event,zoning);
     }
 
@@ -234,7 +286,7 @@ final class ClientAcceptance {
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_saved".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
-                && positiveInteger(event.get("character_id")) && "THORHERO".equals(event.get("name"))
+                && positiveInteger(event.get("character_id")) && characterName(event.get("name"))
                 && yes(event.get("committed_sql_verified"));
     }
 
@@ -242,12 +294,27 @@ final class ClientAcceptance {
         return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_creation");
     }
 
+    /**
+     * stockTravel (the game's own travel, ARM64 client): the new character is
+     * proved in the starting zone the game started for it (Atlas Park, Mercy
+     * Island, Nova Praetoria or a tutorial), marked zoning/stock_travel.
+     */
+    static boolean characterCreationVerified(Object value, Object savedEvent, Object connectedEvent, String session,
+            long clientPid, boolean stockTravel) {
+        if (!stockTravel) return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid);
+        Map<?, ?> creation = object(object(value).get("character_creation"));
+        return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_creation", true)
+                && stockTravelMap(creation) && stockTravelMap(object(connectedEvent))
+                && number(creation.get("character_id"), 1);
+    }
+
     private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key) {
         return characterPersistenceVerified(value,savedEvent,connectedEvent,session,clientPid,key,false);
     }
     private static boolean supportedCharacterMap(Map<?,?> value, boolean zoning) {
         return number(value.get("map_id"),1) || (zoning && (number(value.get("map_id"),101)
-                || number(value.get("map_id"),5) && yes(value.get("monorail_enabled")))
+                || number(value.get("map_id"),5) && yes(value.get("monorail_enabled"))
+                || stockTravelMap(value))
                 && yes(value.get("zoning_enabled")) && yes(value.get("connected_on_supported_map")));
     }
     private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key, boolean zoning) {
@@ -258,7 +325,8 @@ final class ClientAcceptance {
                 && yes(character.get("verified")) && session.equals(character.get("session_id"))
                 && number(character.get("client_pid"), clientPid) && positiveInteger(character.get("character_id"))
                 && number(character.get("character_id"), ((Number) event.get("character_id")).longValue())
-                && "THORHERO".equals(character.get("name")) && "COHLOCAL".equals(character.get("account"))
+                && characterName(character.get("name")) && "COHLOCAL".equals(character.get("account"))
+                && character.get("name").equals(event.get("name")) && character.get("name").equals(object(connectedEvent).get("name"))
                 && positiveInteger(character.get("auth_id"))
                 && number(object(report.get("local_login")).get("auth_id"), ((Number) character.get("auth_id")).longValue())
                 && yes(character.get("connected_on_atlas")) && supportedCharacterMap(character,zoning)
@@ -272,7 +340,15 @@ final class ClientAcceptance {
                                                List<?> samples, String session, long clientPid,
                                                long started, long ended, long savedObserved,
                                                long windowEnded, long frameWatermark) {
-        return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid)
+        return characterCreationAccepted(value, savedEvent, connectedEvent, samples, session, clientPid,
+                started, ended, savedObserved, windowEnded, frameWatermark, false);
+    }
+
+    static boolean characterCreationAccepted(Object value, Object savedEvent, Object connectedEvent,
+                                               List<?> samples, String session, long clientPid,
+                                               long started, long ended, long savedObserved,
+                                               long windowEnded, long frameWatermark, boolean stockTravel) {
+        return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid, stockTravel)
                 && surfaceAccepted(samples, session, started, ended, savedObserved, windowEnded, frameWatermark);
     }
 
@@ -291,7 +367,7 @@ final class ClientAcceptance {
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_relocated".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
-                && number(event.get("character_id"), 1) && "THORHERO".equals(event.get("name"))
+                && number(event.get("character_id"), 1) && characterName(event.get("name"))
                 && "COHLOCAL".equals(event.get("account")) && number(event.get("map_id"), 1)
                 && yes(event.get("recovery_requested")) && yes(event.get("recovery_verified"))
                 && yes(event.get("ordinary_stuck_observed")) && yes(event.get("on_atlas_safe_position"))
@@ -408,9 +484,10 @@ final class ClientAcceptance {
                     || !session.equals(row.get("session_id")) || !number(row.get("client_pid"), clientPid)
                     || !number(row.get("format"), 1) || !number(row.get("character_id"), 1)
                     || !(number(row.get("map_id"), 1) || zoning && (number(row.get("map_id"),101)
-                        || number(row.get("map_id"),5) && yes(row.get("monorail_enabled")) && yes(accepted.get("monorail_enabled")))
+                        || number(row.get("map_id"),5) && yes(row.get("monorail_enabled")) && yes(accepted.get("monorail_enabled"))
+                        || stockTravelMap(row) && yes(accepted.get("stock_travel")))
                         && yes(row.get("zoning_enabled")) && yes(accepted.get("zoning_enabled"))) || !number(row.get("revision"), i + 1)
-                    || !"THORHERO".equals(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
+                    || !characterName(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
                     || !(i == 0 ? "connected" : "grounded").equals(row.get("phase"))) return false;
             if (manual != yes(row.get("manual_session")) || manual != yes(accepted.get("manual_session"))
                     || manual && (!number(row.get("deadline_utc_ms"), 0)
@@ -524,6 +601,18 @@ final class ClientAcceptance {
         return value instanceof Map ? (Map<?, ?>) value : Collections.emptyMap();
     }
     private static boolean yes(Object value) { return Boolean.TRUE.equals(value); }
+    /**
+     * Any player name the game accepts (validate_name.c: ASCII, 3-20 characters, no outer or
+     * double spaces). 0.13.62 (owner, 2026-11-08): the character need not be named THORHERO;
+     * the guest binds the one local character (ID 1 of COHLOCAL) to its SQL name.
+     */
+    static boolean characterName(Object value) {
+        if (!(value instanceof String)) return false;
+        String name = (String) value;
+        return name.matches("[\\x20-\\x7e]{3,20}") && name.equals(name.trim()) && !name.contains("  ");
+    }
+    /** Java null, or org.json's JSONObject.NULL (which equals null). */
+    private static boolean jsonNull(Object value) { return value == null || value.equals(null); }
     private static boolean integer(Object value) {
         return value instanceof Number && Double.isFinite(((Number) value).doubleValue())
                 && ((Number) value).doubleValue() == ((Number) value).longValue();

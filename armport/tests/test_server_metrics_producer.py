@@ -145,6 +145,120 @@ class ProducerTests(unittest.TestCase):
                             for c in builds))
         self.assertLess(calls.index(('package', 'retained_progress')), len(calls) - 2)
 
+    @staticmethod
+    def lua_tarball(entries=None):
+        stream = io.BytesIO()
+        with tarfile.open(fileobj=stream, mode='w:gz') as archive:
+            for name, raw, kind in entries or [('lua-5.1.5', b'', 'dir'), ('lua-5.1.5/src', b'', 'dir'),
+                                               ('lua-5.1.5/src/lua.c', b'int main(void) { return 0; }\n', 'file'),
+                                               ('lua-5.1.5/Makefile', b'all:\n', 'file')]:
+                info = tarfile.TarInfo(name)
+                if kind == 'dir':
+                    info.type = tarfile.DIRTYPE
+                    archive.addfile(info)
+                elif kind == 'link':
+                    info.type = tarfile.SYMTYPE; info.linkname = '/etc/passwd'
+                    archive.addfile(info)
+                else:
+                    info.size = len(raw)
+                    archive.addfile(info, io.BytesIO(raw))
+        return stream.getvalue()
+
+    def lua_build(self, tarball, *, download=None, cache=None, declaration=None):
+        """Run build() with mocked native commands; the first configure 'downloads' `download`."""
+        digest = producer.package.digest(tarball)
+        mock.patch.object(producer, 'LUA_SHA256', digest).start()
+        inputs = self.work / 'input'; inputs.mkdir()
+        manifest = self.manifest()
+        for variant in producer.VARIANTS:
+            base = inputs / variant
+            manifest['variants'][variant] = {'donor': {'manifest': {'bytes': 1, 'sha256': 'a' * 64}}}
+            for name in ('source/out/build/vs2026/bin/OptDebug/MapServer.pdb',
+                         'source/out/build/vs2026/CMakeCache.txt', 'source/' + producer.source.RECEIPT,
+                         producer.package.CHECKS, 'source-checks.log'):
+                target = base / name; target.parent.mkdir(parents=True, exist_ok=True); target.write_text('fixture')
+            lua = base / 'source' / producer.LUA_DECLARATION; lua.parent.mkdir(parents=True)
+            lua.write_text(declaration or ('CPMAddPackage(\n\tNAME lua51\n\tVERSION 5.1.5\n\tURL "' + producer.LUA_URL
+                           + '"\n\tURL_HASH\n\t\t"SHA256=' + digest + '"\n\tPATCHES "lua-cmake.patch"\n)\n'))
+        configures = []
+        def command(argv, _log, **kwargs):
+            argv = list(map(str, argv))
+            if argv[:2] == ['cmake', '--preset']:
+                seeded = [a for a in argv if a.startswith('-DCPM_lua51_SOURCE=')]
+                configures.append((Path(kwargs['cwd']).parent.name, seeded))
+                archive = Path(kwargs['cwd']) / producer.LUA_DOWNLOAD
+                self.assertFalse(archive.exists())
+                if not seeded and download is not None:
+                    archive.parent.mkdir(parents=True); archive.write_bytes(download)
+        with mock.patch.object(producer, 'os', SimpleNamespace(name='nt', environ={})), \
+             mock.patch.object(producer.shutil, 'which', return_value='cl.exe'), \
+             mock.patch.object(producer, 'verify_bundle', return_value=manifest), \
+             mock.patch.object(producer, 'run', side_effect=command), \
+             mock.patch.object(producer.package, 'package',
+                               return_value={'files': {'MapServer.exe': {'bytes': 1, 'sha256': 'f' * 64}}}), \
+             mock.patch.object(producer, 'pin', return_value={'bytes': 1, 'sha256': 'f' * 64}):
+            result = producer.build(inputs, self.work / 'output', self.commit, self.run_id, self.work, cache)
+        return result['lua_archive'], configures
+
+    def test_second_variant_reuses_the_lua_archive_the_first_verified(self):
+        tarball = self.lua_tarball()
+        cache = self.work / 'lua-cache'
+        record, configures = self.lua_build(tarball, download=tarball, cache=cache)
+        source = (self.work / 'output/lua-sources/thor_certified_startup').resolve()
+        self.assertEqual(configures, [('retained_progress', []),
+                                      ('thor_certified_startup', ['-DCPM_lua51_SOURCE=' + source.as_posix()])])
+        # ExternalProject's layout: the top directory's contents, unpatched (CPM applies the variant's patch).
+        self.assertEqual(sorted(str(p.relative_to(source)) for p in source.rglob('*')),
+                         ['Makefile', 'src', 'src/lua.c'])
+        self.assertEqual((source / 'src/lua.c').read_bytes(), b'int main(void) { return 0; }\n')
+        self.assertEqual(record, {'archive_sha256': producer.package.digest(tarball), 'from_job_cache': False,
+                                  'downloaded_by_cmake': ['retained_progress'],
+                                  'extracted_for': ['thor_certified_startup']})
+        self.assertEqual((cache / producer.LUA_ARCHIVE_NAME).read_bytes(), tarball)
+
+    def test_job_cache_serves_both_variants_and_no_other_archive_is_reused(self):
+        tarball = self.lua_tarball()
+        cache = self.work / 'lua-cache'; cache.mkdir()
+        (cache / producer.LUA_ARCHIVE_NAME).write_bytes(tarball)
+        record, configures = self.lua_build(tarball, download=None, cache=cache)
+        self.assertEqual([variant for variant, seeded in configures if seeded], list(producer.VARIANTS))
+        self.assertEqual(record['downloaded_by_cmake'], [])
+        self.assertTrue(record['from_job_cache'])
+
+    def test_a_different_archive_or_declaration_is_never_reused(self):
+        tarball = self.lua_tarball()
+        for case in ('download', 'declaration'):
+            with self.subTest(case=case):
+                self.work = Path(tempfile.mkdtemp(dir=self.temporary.name))
+                cache = self.work / 'lua-cache'
+                record, configures = self.lua_build(
+                    tarball, download=tarball + b'x' if case == 'download' else tarball, cache=cache,
+                    declaration='CPMAddPackage(NAME lua51 URL "https://example.invalid/lua-5.1.5.tar.gz")\n'
+                    if case == 'declaration' else None)
+                self.assertEqual([seeded for _, seeded in configures], [[], []])
+                self.assertEqual((record['downloaded_by_cmake'], record['extracted_for']), ([], []))
+                self.assertFalse((cache / producer.LUA_ARCHIVE_NAME).exists())
+        # A damaged cache entry is ignored, then replaced by CMake's own verified download.
+        self.work = Path(tempfile.mkdtemp(dir=self.temporary.name))
+        cache = self.work / 'lua-cache'; cache.mkdir()
+        (cache / producer.LUA_ARCHIVE_NAME).write_bytes(tarball + b'x')
+        record, configures = self.lua_build(tarball, download=tarball, cache=cache)
+        self.assertEqual([variant for variant, seeded in configures if seeded], ['thor_certified_startup'])
+        self.assertFalse(record['from_job_cache'])
+        self.assertEqual((cache / producer.LUA_ARCHIVE_NAME).read_bytes(), tarball)
+
+    def test_lua_extraction_refuses_unsafe_or_unpinned_archives(self):
+        for entries in ([('lua-5.1.5/../escape', b'x', 'file')], [('lua-5.1.5/link', b'', 'link')],
+                        [('other/lua.c', b'x', 'file')], [('lua-5.1.5', b'x', 'file')],
+                        [('/lua-5.1.5/abs', b'x', 'file')]):
+            raw = self.lua_tarball(entries)
+            with self.subTest(entries=entries[0][0]), \
+                 mock.patch.object(producer, 'LUA_SHA256', producer.package.digest(raw)):
+                with self.assertRaises(ValueError):
+                    producer.extract_lua(raw, self.work / ('bad-' + str(len(list(self.work.iterdir())))))
+        with self.assertRaisesRegex(ValueError, 'differs from its pin'):
+            producer.extract_lua(self.lua_tarball(), self.work / 'unpinned')
+
 
 if __name__ == '__main__':
     unittest.main()

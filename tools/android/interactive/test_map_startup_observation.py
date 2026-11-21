@@ -18,6 +18,22 @@ import native_map_startup_contract as startup
 
 
 class MapStartupObservationTests(unittest.TestCase):
+    def test_native_bin_writes_lists_only_bins_written_since_launch(self):
+        with tempfile.TemporaryDirectory(prefix='coh-bin-writes-') as directory:
+            runtime = Path(directory)
+            for relative in ('data/bin', 'data/server/bin'):
+                (runtime / relative).mkdir(parents=True)
+            old = runtime / 'data/bin/prepared.bin'; old.write_bytes(b'x')
+            os.utime(old, (1767225600, 1767225600))
+            (runtime / 'data/server/bin/spawndefs.bin').write_bytes(b'y')
+            (runtime / 'data/bin/notes.txt').write_bytes(b'z')
+            since = 1767225600 * 1000 + 1000
+            result = server.native_bin_writes(runtime, since)
+            self.assertEqual(result['count'], 1)
+            self.assertEqual(result['names'], ['server/bin/spawndefs.bin'])
+            self.assertIsNone(server.native_bin_writes(runtime, None))
+            self.assertEqual(server.native_bin_writes(runtime / 'missing', since)['count'], 0)
+
     def live_child(self):
         process = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])
         def cleanup():

@@ -1,0 +1,64 @@
+diff --git a/libs/UtilitiesLib/src/utils/FolderCache.c b/libs/UtilitiesLib/src/utils/FolderCache.c
+index 3a19c2a..37cdf82 100644
+--- a/libs/UtilitiesLib/src/utils/FolderCache.c
++++ b/libs/UtilitiesLib/src/utils/FolderCache.c
+@@ -201,6 +201,38 @@ void FolderCacheDisallowOverrides(void)
+     ban_all_overrides = true;
+ }
+ 
++// ArmPort: ARMPORT_FOLDER_CACHE_SKIP is a comma-separated list of top-level
++// data folders that the scan leaves out (case-insensitive, at most 8). The
++// ARM64 client sets it to server-only folders it never reads (scripts.loc,
++// server), about a quarter of the shared loose tree. Unset: unchanged.
++static int armport_skipped_folders = 0;
++static int armportSkippedRootFolder(const char *name)
++{
++    static int parsed = 0, count = 0;
++    static char names[8][64];
++    int i;
++    if (!parsed) {
++        const char *value = getenv("ARMPORT_FOLDER_CACHE_SKIP");
++        parsed = 1;
++        while (value && *value && count < 8) {
++            const char *end = strchr(value, ',');
++            size_t len = end ? (size_t)(end - value) : strlen(value);
++            if (len > 0 && len < sizeof(names[0])) {
++                memcpy(names[count], value, len);
++                names[count][len] = 0;
++                count++;
++            }
++            if (!end)
++                break;
++            value = end + 1;
++        }
++    }
++    for (i = 0; i < count; i++)
++        if (stricmp(name, names[i]) == 0)
++            return 1;
++    return 0;
++}
++
+ static void FolderCacheAddFolderToNode(    FolderCache* fc,
+                                         FolderNode **node,
+                                         FolderNode **tail,
+@@ -261,6 +293,10 @@ static void FolderCacheAddFolderToNode(    FolderCache* fc,
+         
+         if(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
+             // folder
++            if (parent == NULL && armportSkippedRootFolder(fileName)) {
++                armport_skipped_folders++;
++                continue;
++            }
+             switch (folder_cache_exclusion) {
+                 xcase FOLDER_CACHE_EXCLUDE_FOLDER:
+                     if (folder_cache_exclusion_folder && stricmp(fileName, folder_cache_exclusion_folder)==0) {
+@@ -409,6 +445,9 @@ void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_loc
+         FolderCacheAddFolderToNode(fc, &fc->root, &fc->root_tail, NULL, basepath, virtual_location);
+         printf("ARMPORT_FOLDER_CACHE_V1 phase=scan files=%d folders=%d seconds=%.3f\n",
+             count_file, count_folder, timerElapsed(timer));
++        if (armport_skipped_folders)
++            printf("ARMPORT_FOLDER_CACHE_V1 phase=skip folders=%d list=%s\n",
++                armport_skipped_folders, getenv("ARMPORT_FOLDER_CACHE_SKIP"));
+         timerStart(timer);
+ 
+         // Re-Fill hashtable by parsing the tree

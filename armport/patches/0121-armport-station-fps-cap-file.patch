@@ -1,0 +1,138 @@
+diff --git a/Game/src/armport_fps_cap_file.h b/Game/src/armport_fps_cap_file.h
+new file mode 100644
+index 0000000..419d7a2
+--- /dev/null
++++ b/Game/src/armport_fps_cap_file.h
+@@ -0,0 +1,107 @@
++/* ArmPort: frame cap requested by the device guest (patch 0121).
++ *
++ * While the player waits at a monorail station for the destination zone to be
++ * prepared, the guest writes a cap (5-60) to the file named by
++ * ARMPORT_FPS_CAP_FILE, relative to the working directory. Input is held for
++ * that wait, and the client otherwise keeps drawing the old zone at up to its
++ * gameplay cap. The file is checked once a second with Win32 calls (the CRT
++ * fopen is the game's x_fopen wrapper here). A valid cap lowers
++ * game_state.maxfps; when the file goes away the previous cap returns, unless
++ * a /maxfps command changed it meanwhile. Without the variable nothing runs.
++ */
++#ifndef ARMPORT_FPS_CAP_FILE_H
++#define ARMPORT_FPS_CAP_FILE_H
++#include "utilitieslib/utils/wininclude.h"
++#pragma push_macro("printf")
++#pragma push_macro("snprintf")
++#pragma push_macro("fflush")
++#pragma push_macro("fputs")
++#pragma push_macro("FILE")
++#undef printf
++#undef snprintf
++#undef fflush
++#undef fputs
++#undef FILE
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++typedef struct ArmportFpsCapState {
++    int checked, enabled, applied, saved;
++    DWORD last_poll;
++    char path[MAX_PATH];
++} ArmportFpsCapState;
++static ArmportFpsCapState armport_fps_cap;
++
++/* Returns 5..60 from the file, or 0 when it is absent or invalid. */
++static int armportFpsCapRead(const char *path)
++{
++    char text[8];
++    DWORD count = 0;
++    int value = 0, digits = 0;
++    DWORD i;
++    HANDLE file = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_DELETE, NULL,
++                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
++    if (file == INVALID_HANDLE_VALUE) return 0;
++    if (!ReadFile(file, text, sizeof(text), &count, NULL)) count = 0;
++    CloseHandle(file);
++    for (i = 0; i < count; ++i) {
++        if (text[i] >= '0' && text[i] <= '9' && digits < 2) { value = value * 10 + (text[i] - '0'); ++digits; }
++        else if (text[i] == '\n' || text[i] == '\r') break;
++        else return 0;
++    }
++    return digits && value >= 5 && value <= 60 ? value : 0;
++}
++
++static void armportFpsCapLog(const char *event, int cap, int saved, int current)
++{
++    char line[160];
++    snprintf(line, sizeof(line), "ARMPORT_FPS_CAP_V1 event=%s cap=%d saved=%d maxfps=%d\n",
++             event, cap, saved, current);
++    fputs(line, stdout);
++    fflush(stdout);
++}
++
++/* Called once per frame from the main loop, before the frame wait. */
++static void armportFpsCapPoll(int *maxfps)
++{
++    DWORD now;
++    int cap;
++    if (!armport_fps_cap.checked) {
++        const char *value = getenv("ARMPORT_FPS_CAP_FILE");
++        armport_fps_cap.checked = 1;
++        if (value && value[0] && strlen(value) < sizeof(armport_fps_cap.path)) {
++            strcpy(armport_fps_cap.path, value);
++            armport_fps_cap.enabled = 1;
++        }
++    }
++    if (!armport_fps_cap.enabled || !maxfps) return;
++    now = GetTickCount();
++    if (armport_fps_cap.last_poll && (DWORD)(now - armport_fps_cap.last_poll) < 1000) return;
++    armport_fps_cap.last_poll = now ? now : 1;
++    cap = armportFpsCapRead(armport_fps_cap.path);
++    if (cap && !armport_fps_cap.applied) {
++        /* 0 means uncapped; only ever lower the cap. */
++        if (*maxfps == 0 || *maxfps > cap) {
++            armport_fps_cap.saved = *maxfps;
++            armport_fps_cap.applied = cap;
++            *maxfps = cap;
++            armportFpsCapLog("applied", cap, armport_fps_cap.saved, *maxfps);
++        }
++    } else if (!cap && armport_fps_cap.applied) {
++        if (*maxfps == armport_fps_cap.applied) {
++            *maxfps = armport_fps_cap.saved;
++            armportFpsCapLog("restored", armport_fps_cap.applied, armport_fps_cap.saved, *maxfps);
++        } else {
++            armportFpsCapLog("kept_user_change", armport_fps_cap.applied, armport_fps_cap.saved, *maxfps);
++        }
++        armport_fps_cap.applied = 0;
++    }
++}
++
++#pragma pop_macro("FILE")
++#pragma pop_macro("fputs")
++#pragma pop_macro("fflush")
++#pragma pop_macro("snprintf")
++#pragma pop_macro("printf")
++#endif
+diff --git a/Game/src/game.c b/Game/src/game.c
+index 3e0b185..df888b8 100644
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -2,6 +2,9 @@
+ 
+ #include "win/win_init.h"
+ #include "cohClientGameplayPerformance.h"
++#if defined(__aarch64__) && defined(__MINGW32__)
++#include "armport_fps_cap_file.h"
++#endif
+ #include <utilitieslib/utils/winutil.h>
+ #include "UI/uiConsole.h"
+ #include "win/input.h"
+@@ -772,6 +775,10 @@ void engine_update()
+             showAnimationDebugInfo();
+ 
+         PERFINFO_AUTO_START("waitFps",1);
++#if defined(__aarch64__) && defined(__MINGW32__)
++            // ArmPort (patch 0121): the guest's station-wait cap, polled once a second.
++            armportFpsCapPoll(&game_state.maxfps);
++#endif
+             //If the frame rate is locked, slow down to match it.
+             if (game_state.maxInactiveFps && game_state.inactiveDisplay) {
+                 int fps = MIN(game_state.maxInactiveFps, game_state.maxfps);

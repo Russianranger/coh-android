@@ -113,7 +113,9 @@ public final class SessionBudgetHost {
             case "zero_pid": pid = 0; break;
             case "negative_pid": pid = -1; break;
             case "wrong_character": value.put("character_id", 2); break;
-            case "wrong_name": value.put("name", "OTHERHERO"); break;
+            // 0.13.62: any name the game accepts; ClientRuntime keeps one name per session
+            // (sameCharacter). The budget itself refuses names the game cannot have.
+            case "wrong_name": value.put("name", "X"); break;
             case "wrong_account": value.put("account", "OTHER"); break;
             case "wrong_map": value.put("map_id", 2); break;
             case "not_connected": connected = false; break;

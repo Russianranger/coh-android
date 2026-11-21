@@ -71,6 +71,30 @@ class SchedulerTests(unittest.TestCase):
         control.scanner.identities.append({'proc_pid': pid, 'pid': pid, 'starttime': pid * 10})
         return path
 
+    def test_idle_token_weights_only_its_resident_map_by_ten_and_restores(self):
+        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        owner = SimpleNamespace(wine_owner=SimpleNamespace(receipt={}), ctx=SimpleNamespace(secrets=['a' * 64]))
+        probe = {'supported': True, 'original_nice': 0, 'rlimit_nice_soft': 40, 'lowered_nice': 5, 'restored_nice': 0}
+        self.create()   # installs the priority patches
+        control = scheduler.PreparationScheduler(owner, 1, probe=probe, token='a' * 64,
+            environment_name=scheduler.IDLE_ENVIRONMENT, increment=scheduler.IDLE_NICE_INCREMENT,
+            policy='idle_resident_plus_10_nice', sample_limit=scheduler.IDLE_SAMPLE_LIMIT)
+        control.scanner = FakeScanner(Path(temporary.name))
+        self.assertEqual(owner.ctx.secrets, ['a' * 64])
+        self.assertEqual(control.needle, b'COH_ZONING_IDLE_OWNER=' + b'a' * 64)
+        self.group(control, 81001, tids=(81002,))
+        foreign = self.group(control, 82001)
+        (foreign / 'environ').write_bytes(b'COH_ZONING_PREPARATION_OWNER=' + b'a' * 64 + b'\0')
+        control.sample()
+        self.assertCountEqual(self.writes, [(81001, 10), (81002, 10)])
+        self.assertEqual((control.report['policy'], control.report['nice_increment']), ('idle_resident_plus_10_nice', 10))
+        control.restore()
+        self.assertEqual([self.nice[p] for p in (81001, 81002, 82001)], [0, 0, 0])
+        self.assertTrue(control.report['restore_complete'])
+        for _ in range(40):
+            control.next_sample = 0; control.sample()
+        self.assertLessEqual(len(control.report['samples']), scheduler.IDLE_SAMPLE_LIMIT)
+
     def test_unsupported_probe_does_not_change_any_task(self):
         control = self.create(False)
         self.group(control, 81001, tids=(81002,))
@@ -251,6 +275,185 @@ class ActualOwnershipTests(unittest.TestCase):
             for child in children:
                 child.terminate(); child.wait(timeout=3)
                 child.stdout.close(); child.stderr.close()
+
+
+class WinePrioritySnapshotTests(unittest.TestCase):
+    """Read-only evidence: thread nice values per Wine program."""
+    def fake_proc(self, root, pid, command, tasks):
+        directory = root / str(pid); (directory / 'task').mkdir(parents=True)
+        (directory / 'cmdline').write_bytes(command)
+        for tid, state, nice, *cpu in tasks:
+            task = directory / 'task' / str(tid); task.mkdir()
+            # stat fields 3.., nice is field 19 (index 16), processor field 39 (index 36).
+            # utime and stime are fields 14 and 15 (indexes 11 and 12): tid ticks of each here.
+            fields = ([state] + ['0'] * 10 + [str(tid), str(tid)] + ['0'] * 3 + [str(nice)] + ['0'] * 19
+                      + [str(cpu[0] if cpu else 0)] + ['0'] * 10)
+            (task / 'stat').write_text(str(tid) + ' (wine) name) ' + ' '.join(fields) + '\n')
+
+    def test_counts_threads_per_nice_for_known_programs_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake_proc(root, 10, b'/usr/bin/FEXInterpreter\0C:\\coh\\CityOfHeroes.exe\0-noaudio\0',
+                           [(10, 'S', 0), (11, 'S', 11), (12, 'R', 11), (13, 'Z', 11)])
+            self.fake_proc(root, 20, b'C:\\srv\\MapServer.exe\0', [(20, 'S', 0, 7), (21, 'S', 0, 2)])
+            self.fake_proc(root, 30, b'/opt/wine/bin/wineserver\0', [(30, 'S', 0)])
+            self.fake_proc(root, 40, b'/usr/bin/python3\0guest.py\0', [(40, 'S', 0)])
+            (root / 'self').mkdir()
+            # 0.13.67: where each program may run, and which threads use the CPU.
+            (root / '10/status').write_text('Name:\twine\nCpus_allowed:\t7f\nCpus_allowed_list:\t0-6\n')
+            (root / '10/cgroup').write_text('3:cpuset:/foreground\n1:cpu:/\n')
+            (root / 'self/status').write_text('Name:\tpython3\nCpus_allowed_list:\t0-7\n')
+            (root / 'meminfo').write_text('MemTotal:       15620000 kB\nMemAvailable:   10240000 kB\n'
+                                          'SwapTotal:       8388604 kB\nSwapFree:        4194302 kB\n')
+            # 0.13.69: context switches of the busiest threads (waiting or computing?).
+            (root / '10/task/12/status').write_text('Name:\twine\nvoluntary_ctxt_switches:\t9000\n'
+                                                    'nonvoluntary_ctxt_switches:\t41\n')
+            (root / '10/task/11/status').write_text('Name:\twine\nvoluntary_ctxt_switches:\tmany\n')
+            value = scheduler.wine_priority_snapshot(root)
+        self.assertEqual(value['programs']['CityOfHeroes.exe'],
+                         {'processes': 1, 'threads': 3, 'nice': {'0': 1, '11': 2}, 'last_cpu': {'0': 3},
+                          'busiest_threads': [[24, 'wine) name', 0, 11, 9000, 41], [22, 'wine) name', 0, 11, None, None],
+                                              [20, 'wine) name', 0, 0, None, None]],
+                          'cpus_allowed': ['0-6'], 'cgroup': ['3:cpuset:/foreground']})
+        self.assertEqual(value['programs']['MapServer.exe'],
+                         {'processes': 1, 'threads': 2, 'nice': {'0': 2}, 'last_cpu': {'2': 1, '7': 1},
+                          'busiest_threads': [[42, 'wine) name', 2, 0, None, None], [40, 'wine) name', 7, 0, None, None]],
+                          'cpus_allowed': [], 'cgroup': []})
+        self.assertEqual(value['guest'], {'cpus_allowed': '0-7', 'cgroup': None})
+        self.assertEqual(value['memory'], {'MemTotal': 15253, 'MemAvailable': 10000, 'SwapTotal': 8191,
+                                           'SwapFree': 4095, 'pressure': None})
+        self.assertEqual(set(value['programs']), {'CityOfHeroes.exe', 'MapServer.exe', 'wineserver'})
+        self.assertEqual(value['processes_scanned'], 4)
+        self.assertFalse(value['truncated'])
+        self.assertEqual(len(value['rlimit_nice']), 2)
+
+    def test_cpu_max_frequencies_tell_clusters_apart_and_hidden_sysfs_is_none(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for cpu, khz in ((0, 2016000), (1, 2016000), (3, 2803200), (7, 3187200)):
+                path = root / ('cpu%d' % cpu) / 'cpufreq'; path.mkdir(parents=True)
+                (path / 'cpuinfo_max_freq').write_text(str(khz) + '\n')
+            (root / 'cpu2').mkdir()   # online CPU without cpufreq
+            for cpu in (4, 5, 6):
+                (root / ('cpu%d' % cpu)).mkdir()
+            self.assertEqual(scheduler.cpu_max_khz(root), {'0': 2016000, '1': 2016000, '3': 2803200, '7': 3187200})
+            self.assertIsNone(scheduler.cpu_max_khz(root / 'missing'))
+
+    def test_foreign_uid_vanished_and_malformed_entries_are_skipped_and_bounds_hold(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake_proc(root, 10, b'MapServer.exe', [(10, 'S', 0)])
+            (root / '11').mkdir()  # vanished: no cmdline
+            self.fake_proc(root, 12, b'MapServer.exe', [(12, 'S', 0)])
+            (root / '12/task/12/stat').write_text('garbage')
+            value = scheduler.wine_priority_snapshot(root, uid=os.getuid() + 1)
+            self.assertEqual(value['programs'], {})
+            value = scheduler.wine_priority_snapshot(root)
+            self.assertEqual(value['programs']['MapServer.exe']['threads'], 1)
+            with patch.object(scheduler, 'PRIORITY_PROCESS_LIMIT', 1):
+                self.assertTrue(scheduler.wine_priority_snapshot(root)['truncated'])
+
+
+class ThreadWaitTests(unittest.TestCase):
+    """0.13.73: what the client's threads and the display server wait on (read-only bursts)."""
+
+    def fake(self, root, pid, command, tasks):
+        directory = root / str(pid); (directory / 'task').mkdir(parents=True)
+        (directory / 'cmdline').write_bytes(command)
+        for tid, name, state, ticks, call, *function in tasks:
+            task = directory / 'task' / str(tid); task.mkdir()
+            fields = [state] + ['0'] * 10 + [str(ticks), '0'] + ['0'] * 40
+            (task / 'stat').write_text('%d (%s) %s\n' % (tid, name, ' '.join(fields)))
+            if call is not None:
+                (task / 'syscall').write_text(call + '\n')
+            if function:
+                (task / 'wchan').write_text(function[0])
+
+    def test_targets_are_the_client_and_the_display_server(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake(root, 10, b'python3\0launch\0CityOfHeroes.exe\0', [(10, 'python3', 'S', 1, None)])
+            self.fake(root, 20, b'C:\\coh\\CityOfHeroes.exe\0', [(20, 'main', 'S', 1, None), (21, 'gl0', 'S', 1, None)])
+            self.fake(root, 30, b'/usr/bin/Xtigervnc\0:100\0', [(30, 'Xtigervnc', 'S', 1, None)])
+            self.fake(root, 40, b'C:\\srv\\MapServer.exe\0', [(40, 'MapServer.exe', 'S', 1, None)])
+            (root / 'self').mkdir(); (root / '50').mkdir()          # no cmdline: skipped
+            self.assertEqual(scheduler.thread_wait_targets(root), {'client': 20, 'display': 30})
+            self.assertEqual(scheduler.thread_wait_targets(root, uid=os.getuid() + 1), {})
+
+    def test_calls_are_named_with_the_detail_that_tells_them_apart(self):
+        call = scheduler.thread_wait_call
+        self.assertEqual(call('98 0x7f00 0x89 0x2 0x0 0x0 0x0 0x7ffe 0x7f11', 'aarch64'), ('futex', 'op=9'))
+        self.assertEqual(call('29 0x9 0xc0200947 0x7ffe 0 0 0 0x1 0x2', 'aarch64'), ('ioctl', '0xc0200947'))
+        self.assertEqual(call('73 0x7ffe 0x1 0x0 0x0 0x8 0x0 0x1 0x2', 'aarch64'), ('ppoll', 'n=1'))
+        self.assertEqual(call('212 0x1f 0x7ffe 0x0 0 0 0 0x1 0x2', 'aarch64'), ('recvmsg', 'fd=31'))
+        self.assertEqual(call('206 0xffffffffffffffff 0 0 0 0 0 0 0', 'aarch64'), ('sendto', 'fd=99999'))
+        self.assertEqual(call('999 0x1 0x2 0x3 0 0 0 0 0', 'aarch64'), ('999', None))
+        self.assertEqual(call('running', 'aarch64'), ('running', None))
+        self.assertEqual(call('-1 0x7ffe 0x1', 'aarch64'), ('not_in_a_call', None))
+        self.assertEqual(call('', 'aarch64'), ('unreadable', None))
+        self.assertEqual(call('98 zz 0x89', 'aarch64'), ('futex', 'op=9'))
+        self.assertEqual(call('98 0x1 zz', 'aarch64'), ('futex', None))
+        self.assertEqual(call('202 0x3 0x0 0x0', 'x86_64'), ('202', None))      # numbers differ by machine
+
+    def test_a_burst_counts_states_and_calls_per_thread(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fake(root, 20, b'CityOfHeroes.exe\0', [
+                (20, 'CityOfHeroes.ex', 'S', 100, '98 0x1 0x80 0x2 0 0 0 0x7 0x8', 'futex_wait_queue'),
+                (21, 'gdrv0', 'S', 300, '29 0x9 0xc0200947 0x7 0 0 0 0x7 0x8', 'kgsl_wait_timestamp'),
+                (22, 'gl0', 'R', 200, 'running'),
+                (23, 'CityOfHeroes.ex', 't', 50, '212 0x1f 0x7 0 0 0 0 0x7 0x8', '0'),
+                (24, 'no call file', 'S', 10, None),
+                (25, 'only wchan', 'S', 5, None, 'do_sys_poll')])
+            self.fake(root, 30, b'Xtigervnc\0', [(30, 'Xtigervnc', 't', 500, '206 0xc 0x7 0x4000 0 0 0 0x7 0x8')])
+            rounds = []
+
+            def sleep(seconds):          # the threads use CPU between rounds
+                rounds.append(seconds)
+                for pid, tid, name, state, ticks in ((20, 21, 'gdrv0', 'S', 300 + 2 * len(rounds)),
+                                                     (30, 30, 'Xtigervnc', 'R' if len(rounds) % 2 else 't', 500 + len(rounds))):
+                    fields = [state] + ['0'] * 10 + [str(ticks), '0'] + ['0'] * 40
+                    (root / str(pid) / 'task' / str(tid) / 'stat').write_text('%d (%s) %s\n' % (tid, name, ' '.join(fields)))
+            before = set(os.listdir('/proc/self/fd'))
+            record = scheduler.thread_wait_burst({'client': 20, 'display': 30, 'gone': 99}, root, rounds=10, gap=0.05,
+                                                 sleep=sleep, machine='aarch64')
+            self.assertEqual(set(os.listdir('/proc/self/fd')), before)             # every file closed
+        self.assertEqual((record['rounds'], len(rounds), record['unreadable'], record['call_files'],
+                          record['wchan_files']), (10, 9, 1, 5, 4))
+        client = record['programs']['client']
+        self.assertEqual((client['pid'], client['threads']), (20, 6))
+        names = [row['name'] for row in client['busiest']]
+        self.assertEqual(names[0], 'gdrv0')                                       # the one that used CPU
+        driver = client['busiest'][0]
+        self.assertEqual((driver['samples'], driver['running'], driver['stopped_in_proot']), (10, 0, 0))
+        self.assertEqual(driver['waits'], [[False, 'ioctl', '0xc0200947', 'kgsl_wait_timestamp', 10]])
+        self.assertGreater(driver['cpu_percent'], 0)
+        rows = {(row['name'], row['samples'], row['running'], row['stopped_in_proot']): row['waits'] for row in client['busiest']}
+        self.assertEqual(rows[('gl0', 10, 10, 0)], [])
+        self.assertEqual(rows[('no call file', 10, 0, 0)], [])
+        waits = [wait for found in rows.values() for wait in found]
+        self.assertIn([True, 'recvmsg', 'fd=31', None, 10], waits)            # wchan "0": no function
+        self.assertIn([False, 'futex', 'op=0', 'futex_wait_queue', 10], waits)
+        self.assertIn([False, None, None, 'do_sys_poll', 10], waits)           # the call refused, the function known
+        display = record['programs']['display']['busiest'][0]
+        self.assertEqual((display['running'], display['stopped_in_proot']), (5, 5))
+        self.assertEqual(display['waits'], [[True, 'sendto', 'fd=12', None, 5]])
+        self.assertNotIn('gone', record['programs'])
+        json.dumps(record)
+
+    def test_a_burst_reads_real_threads(self):
+        # This process: its own threads, through the real /proc.
+        record = scheduler.thread_wait_burst({'self': os.getpid()}, rounds=3, gap=0.0, sleep=lambda seconds: None)
+        program = record['programs']['self']
+        self.assertGreaterEqual(program['threads'], 1)
+        self.assertEqual(program['busiest'][0]['samples'], 3)
+        self.assertGreaterEqual(program['busiest'][0]['running'], 1)               # the thread that reads is running
+
+    def test_the_sampler_thread_is_started_and_stopped_with_zoning(self):
+        text = (ROOT / 'android/guest/character_zoning.py').read_text()
+        self.assertIn("            self.start_tick_probe()\n            self.start_wait_sampler()\n", text)
+        self.assertIn("        self.stop_tick_probe()\n        self.stop_wait_sampler()\n", text)
+        self.assertIn("if self.pending is not None or not self.creation_report.get('connected_on_atlas'):", text)
 
 
 if __name__ == '__main__':

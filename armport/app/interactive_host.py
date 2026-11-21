@@ -2,12 +2,15 @@
 """Exercise the selected ARM64 creation/reopen guest with retained app assets."""
 import argparse
 import copy
+import datetime
 import hashlib
 import importlib.util
 import json
 import math
+import os
 from pathlib import Path
 import platform
+import re
 import secrets
 import shutil
 import socket
@@ -15,12 +18,17 @@ import subprocess
 import time
 import zipfile
 
+import mapserver_phases
 import retained_assets
 import stage_app_assets
 import runtime_host
 import server_pipeline
+import trap_sampler
 
 ROOT = Path(__file__).resolve().parents[2]
+import sys
+sys.path.insert(0, str(ROOT / 'armport/audio'))
+import audio_receiver
 spec = importlib.util.spec_from_file_location('armport_existing_reopen_host',
     ROOT / 'tools/android/interactive/character_reopen_host_smoke.py')
 reopen = importlib.util.module_from_spec(spec)
@@ -255,6 +263,663 @@ def guest_failure_summary(evidence):
     return result
 
 
+FAILURE_AUDIO_LINE = re.compile(r'(?i)alsa|dsound|winealsa|mmdevapi|audio')
+FAILURE_LOGOUT_LINE = re.compile(r'(?i)logout|quit|disconnect|saving|saved')
+
+
+def failure_detail(evidence, work, observer):
+    """Failed sessions only: what the client, Atlas and the host input did last.
+
+    A separate notice (never part of host-report.json, whose guest_failures
+    schema is qualified): the client's last frame-rate windows and output, its
+    audio lines, the logout request against the time of this summary, and the
+    Atlas MapServer's last logout/save lines. Every field is bounded.
+    """
+    def tail(lines, count, width=240):
+        return [line[:width] for line in lines if line.strip()][-count:]
+    result = {'summary_utc_ms': int(time.time() * 1000)}
+    try:
+        path = work / 'state/character-logout.json'
+        if path.is_file() and not path.is_symlink() and path.stat().st_size <= 2048:
+            result['logout_request'] = json.loads(path.read_text())
+        if isinstance(observer, dict):
+            script = observer.get('interaction_script') if isinstance(observer.get('interaction_script'), dict) else {}
+            steps = script.get('steps', observer.get('steps'))
+            result['observer_last_steps'] = [str(step)[:300] for step in steps[-4:]] if isinstance(steps, list) else None
+            arrivals = script.get('stock_travel_arrivals')
+            if isinstance(arrivals, list):
+                result['stock_travel_arrivals'] = [str(item)[:300] for item in arrivals[:4]]
+            resends = script.get('stock_travel_resends')
+            if isinstance(resends, list) and resends:
+                result['stock_travel_resends'] = [str(item)[:160] for item in resends[:4]]
+        path = evidence / 'report.zip'
+        if path.is_file():
+            with zipfile.ZipFile(path) as archive:
+                names = set(archive.namelist())
+                def text(member):
+                    if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
+                        return archive.read(member).decode('utf-8', errors='replace').splitlines()
+                    return None
+                stdio = text('client-evidence/armport_stdio.txt')
+                if stdio is not None:
+                    result['client_fps_tail'] = tail([l for l in stdio if l.startswith('ARMPORT_FRAME_RATE_V1')], 3)
+                    unique = [l for i, l in enumerate(stdio) if not l.startswith('ARMPORT_FRAME_RATE_V1')
+                              and (i == 0 or l != stdio[i - 1])]
+                    result['client_stdio_tail'] = tail(unique, 6, 160)
+                    dialogs = [l for l in stdio if l.startswith('ArmPort dialog:')]
+                    result['client_dialogs'] = {'count': len(dialogs), 'last': [l[:120] for l in dialogs[-3:]]}
+                    result['client_logout_keys'] = client_logout_keys('\n'.join(stdio))
+                console = text('client-evidence/client-console.log')
+                if console is not None:
+                    audio = [line for line in console if FAILURE_AUDIO_LINE.search(line)]
+                    result['client_console_audio'] = {'count': len(audio), 'first': [l[:240] for l in audio[:4]],
+                                                      'last': tail(audio, 2)}
+                    result['client_console_tail'] = tail(console, 6)
+                atlas = text('client-evidence/character-atlas-console.txt')
+                if atlas is not None:
+                    result['atlas_logout_lines'] = tail([l for l in atlas if FAILURE_LOGOUT_LINE.search(l)], 6)
+                    result['atlas_console_tail'] = tail(atlas, 4)
+                dbserver = text('client-evidence/local-dbserver-console.txt')
+                if dbserver is not None:
+                    # Skip the connect retries and Wine object dumps; keep its own last words.
+                    result['dbserver_console_tail'] = tail([l for l in dbserver if "Can't connect to dbserver" not in l
+                                                            and not l.startswith('0x')], 8)
+                zones = sorted(name for name in names if re.fullmatch(
+                    r'client-evidence/character-zoning-generation-\d+-map-\d+-console-tail\.txt', name))
+                result['zone_console_tails'] = {name.split('/')[-1][:80]: tail(text(name) or [], 3) for name in zones[-4:]}
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        result['evidence_read_error'] = str(error)[:300]
+    return result
+
+
+ZONE_NOISE = re.compile(r"Can't connect to dbserver|^0x[0-9a-f]+:|\[DEBUG\]|ARMPORT_SERVER_METRICS_V1|^\s*$")
+ZONE_SIGNAL = re.compile(r'xfer|map ?ready|cookie|delink|MapFailed|MapNotRunning|Sending char|starting|'
+                         r'connect|assert|error|\b101\b|Step [0-9]', re.I)
+ZONE_LOG_NOISE = re.compile(r'SQLERROR|COMMAND:|StackWalk|Heap is NOT|Pigg Error|No windows SYSTEM')
+
+
+def zone_diagnostics(evidence, limit=3800, parts=3):
+    """Failed stock-travel sessions: what the DbServer, the zone servers and their logs said.
+
+    Separate notices (each GitHub annotation keeps about 4 KB): the DbServer
+    console's own last lines, every zone server console's last and signal lines,
+    Atlas's transfer lines, and the exported server logs' transfer lines.
+    """
+    def clip(lines, count, width=170):
+        return [line.strip()[:width] for line in lines][-count:]
+    sections = []
+    try:
+        with zipfile.ZipFile(evidence / 'report.zip') as archive:
+            names = set(archive.namelist())
+            def text(member):
+                if member in names and archive.getinfo(member).file_size <= 32 * 1024 * 1024:
+                    return archive.read(member).decode('utf-8', errors='replace').splitlines()
+                return []
+            quiet = lambda lines: [line for line in lines if not ZONE_NOISE.search(line)]
+            sections.append(('dbserver_console', clip(quiet(text('client-evidence/local-dbserver-console.txt')), 12)))
+            atlas = quiet(text('client-evidence/character-atlas-console.txt'))
+            sections.append(('atlas_signal', clip([l for l in atlas if ZONE_SIGNAL.search(l)], 8)))
+            for name in sorted(n for n in names if re.fullmatch(
+                    r'client-evidence/character-zoning-map-\d+-console\.txt', n))[:3]:
+                lines = quiet(text(name))
+                label = name.split('/')[-1][:-len('-console.txt')]
+                sections.append((label + '_last', clip(lines, 6)))
+                sections.append((label + '_signal', clip([l for l in lines if ZONE_SIGNAL.search(l)], 8)))
+            logs = 'client-evidence/character-server-logs.zip'
+            if logs in names and archive.getinfo(logs).file_size <= 32 * 1024 * 1024:
+                import io
+                with zipfile.ZipFile(io.BytesIO(archive.read(logs))) as inner:
+                    rows = []
+                    for member in sorted(inner.namelist()):
+                        if member.endswith('.log') and inner.getinfo(member).file_size <= 32 * 1024 * 1024:
+                            for line in inner.read(member).decode('utf-8', errors='replace').splitlines():
+                                if ZONE_SIGNAL.search(line) and not ZONE_LOG_NOISE.search(line):
+                                    rows.append(member.split('/')[-1].split('_')[0] + ': ' + line)
+                    sections.append(('server_logs_signal', clip(rows, 16)))
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        sections.append(('read_error', [str(error)[:300]]))
+    result, current = [], {}
+    for key, lines in sections:
+        if len(json.dumps(dict(current, **{key: lines}))) > limit and current:
+            result.append(current)
+            current = {}
+        while lines and len(json.dumps({key: lines})) > limit:
+            lines = lines[1:]
+        current[key] = lines
+    if current:
+        result.append(current)
+    return result[:parts]
+
+
+def stage_timeline(report, limit=24):
+    """[stage, start offset s, duration s] from the guest's own UTC stage stamps; bounded."""
+    rows, first = [], None
+    for item in report.get('stages', []) if isinstance(report.get('stages'), list) else []:
+        try:
+            started = datetime.datetime.fromisoformat(item['started_utc'])
+            finished = (datetime.datetime.fromisoformat(item['finished_utc'])
+                        if item.get('finished_utc') else None)
+        except (KeyError, TypeError, ValueError):
+            continue
+        first = started if first is None else first
+        rows.append([str(item.get('stage'))[:48], round((started - first).total_seconds(), 1),
+                     round((finished - started).total_seconds(), 1) if finished else None])
+    return rows[:limit]
+
+
+def client_folder_cache(text, limit=8):
+    """The client's ARMPORT_FOLDER_CACHE_V1 phase lines (scan, hash, piggs), bounded."""
+    return [line.split('ARMPORT_FOLDER_CACHE_V1 ', 1)[1][:160] for line in text.splitlines()
+            if 'ARMPORT_FOLDER_CACHE_V1 ' in line][:limit]
+
+
+SOUND_SCRIPT_MARKER = 'ARMPORT_SOUND_SCRIPT_ERRORS_V1'
+
+
+def client_sound_scripts(text, limit=2):
+    """Patch 0124: sound script errors the client logged instead of a modal dialog (bounded)."""
+    lines = [line[:160] for line in text.splitlines() if line.startswith(SOUND_SCRIPT_MARKER)]
+    return {'reports': len(lines), 'first': lines[:limit], 'modal_dialog_text': 'Sound Script Errors' in text}
+
+
+LOGOUT_KEY_MARKER = 'ARMPORT_LOGOUT_KEY_V1'
+
+
+def client_logout_keys(text, limit=2):
+    """Patch 0127: keys pressed before the client's own quit request that it no
+    longer lets cancel the logout, and the stock cancellations, bounded."""
+    lines = text.splitlines()
+    kept = [line[:120] for line in lines if line.startswith(LOGOUT_KEY_MARKER)]
+    aborted = [line[:40] for line in lines if line.startswith('aborted by key: ')]
+    return {'kept': len(kept), 'aborted': len(aborted), 'kept_last': kept[-limit:], 'aborted_last': aborted[-limit:]}
+
+
+TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spawn_to_map_ready_seconds',
+                 'dependency_start_seconds', 'request_to_client_world_ready_seconds')
+
+
+def trusted_bins_requested():
+    """CI A/B switch for the metrics MapServer's opt-in trusted-bin path."""
+    value = os.environ.get('COH_TRUSTED_BINS', '')
+    require(value in ('', '0', '1'), 'COH_TRUSTED_BINS must be empty, 0 or 1')
+    return value == '1'
+
+
+def server_emulation_requested():
+    """CI A/B input (0.13.79): emulator settings for the zone servers, e.g. `tso`, `x87` or `tso,x87`.
+
+    Passed to the guest as COH_SERVER_EMULATION in both sessions; the guest knows the names
+    (local_character_server.SERVER_EMULATION_SETTINGS) and records what it set.
+    """
+    value = os.environ.get('COH_SERVER_EMULATION', '')
+    require(re.fullmatch(r'[a-z0-9]{1,12}(,[a-z0-9]{1,12}){0,3}|', value) is not None,
+            'COH_SERVER_EMULATION must be empty or up to four comma-separated names')
+    return value
+
+
+def shared_heap_requested():
+    """Experiment (app default off): MapServers run without -nosharedmemory."""
+    value = os.environ.get('COH_SHARED_HEAP', '')
+    require(value in ('', '0', '1'), 'COH_SHARED_HEAP must be empty, 0 or 1')
+    return value == '1'
+
+
+def stock_travel_requested():
+    """The game's own zone travel: needs the external-maps DbServer; the reopen runs the zoning flow."""
+    value = os.environ.get('COH_STOCK_TRAVEL', '')
+    require(value in ('', '0', '1'), 'COH_STOCK_TRAVEL must be empty, 0 or 1')
+    return value == '1'
+
+
+def early_zone_requested():
+    """0.13.68: the reopened character's saved zone starts beside the client (needs stock travel)."""
+    value = os.environ.get('COH_EARLY_ZONE', '')
+    require(value in ('', '0', '1'), 'COH_EARLY_ZONE must be empty, 0 or 1')
+    return value == '1'
+
+
+def require_early_zone_decision(report):
+    """With the early_zone input, the reopened session must have decided on an early start.
+
+    0.13.68's chain (run 42955090151) passed with the input on while the guest never reached
+    the call: its report held no `early_start` record. Memory is the only refusal a CI runner
+    may meet; anything else, or no record, fails the run.
+    """
+    if not early_zone_requested():
+        return
+    zoning = report.get('character_zoning')
+    early = (zoning.get('initial_zone') or {}).get('early_start') if isinstance(zoning, dict) else None
+    require(isinstance(early, dict), 'The early zone start was requested but the guest never decided on it')
+    require(early.get('started') is True or early.get('reason') in ('low_memory', 'available_memory_unknown'),
+            'The early zone start was requested but not made: ' + str(early.get('reason'))[:120])
+    if early.get('started') is True:
+        require(early.get('failure') is None, 'The early zone start failed: ' + str(early.get('failure'))[:120])
+
+
+NETLINK_DESCRIPTOR_FLOOR = 960      # SOCKET_FD_FLOOR in PRoot patch 0007 (socket_fd_filter.h)
+
+
+def require_proot_ioctl_filter(report):
+    """With the proot_ioctl_filter input the guest's own probe must show the filter at work.
+
+    0.13.69: `armport_proot_ioctl` times an ioctl PRoot does not act on and one it does. With
+    patch 0004 and PROOT_IOCTL_COMMANDS_ONLY=1 only the second stops in the tracer. A run that
+    asked for the filter and shows anything else (no stops: the switch never reached PRoot;
+    every ioctl stops: the filter was not installed) fails.
+    """
+    if not runtime_host.runtime.proot_ioctl_filter_requested():
+        return
+    probe = report.get('armport_proot_ioctl')
+    require(isinstance(probe, dict), 'The ioctl filter was requested but the guest made no ioctl probe')
+    require(probe.get('reading') == 'listed_commands_only' and probe.get('requested') is True,
+            'The ioctl filter was requested but the probe reads: ' + str(probe.get('reading'))[:60])
+    # 0.13.70 (patch 0005): the same launch sets PROOT_GETSOCKOPT_PEERCRED_ONLY=1.
+    require(probe.get('getsockopt_stops') is False,
+            'The call filter was requested but getsockopt still stops in PRoot')
+    # 0.13.73 (patch 0007): the same launch sets PROOT_NETLINK_HIGH_FDS=1. An ordinary send and
+    # receive must not stop, and a rtnetlink socket must sit where its calls still do.
+    require(probe.get('socket_filter_requested') is True and probe.get('socket_stops') is False,
+            'The call filter was requested but socket sends and receives still stop in PRoot')
+    descriptor = probe.get('netlink_descriptor')
+    require(descriptor is None or (type(descriptor) is int and descriptor >= NETLINK_DESCRIPTOR_FLOOR),
+            'The call filter was requested but a rtnetlink socket got descriptor ' + str(descriptor)[:12])
+
+
+STOP_COUNTS_NAME = 'proot-stop-counts.txt'      # run_isolated_network.STOP_COUNTS_NAME
+def launch_receipts_line(report, session):
+    """One log line with what each launch receipt decided in this session (0.13.73).
+
+    Thor 0.13.72: the zone graph receipt answered "inputs_changed" on every launch, and
+    no log said so. Evidence only; a receipt saves time and never gates.
+    """
+    steps = {}
+    found = report.get('launch_receipts') if isinstance(report, dict) else None
+    for step, record in sorted(found.items(), key=lambda item: str(item[0])) if isinstance(found, dict) else ():
+        if isinstance(step, str) and isinstance(record, dict):
+            steps[step[:48]] = [str(record.get('status'))[:24],
+                                None if record.get('reason') is None else str(record.get('reason'))[:80],
+                                record.get('elapsed_seconds') if type(record.get('elapsed_seconds')) in (int, float) else None]
+        if len(steps) >= 32:
+            break
+    return 'LAUNCH_RECEIPTS_V1 ' + json.dumps({'format': 1, 'session': session, 'steps': steps}, separators=(',', ':'))
+
+
+def thread_waits_line(report, session):
+    """One log line: the guest's last burst of thread-wait samples in the world (0.13.73).
+
+    The sampler exists for the phone's frame rate (Thor 0.13.72: 22 frames a second with the
+    client under one core). CI shows that it runs and what it can read there. Evidence only.
+    """
+    zoning = report.get('character_zoning') if isinstance(report, dict) else None
+    waits = zoning.get('thread_waits') if isinstance(zoning, dict) else None
+    value = {'format': 1, 'session': session, 'bursts': None}
+    if isinstance(waits, dict) and isinstance(waits.get('bursts'), list):
+        bursts = [burst for burst in waits['bursts'] if isinstance(burst, dict)]
+        value.update(bursts=len(bursts), skipped_not_in_world=waits.get('skipped_not_in_world'),
+                     error=None if waits.get('error') is None else str(waits.get('error'))[:120])
+        if bursts:
+            last = bursts[-1]
+            value['last'] = {key: last.get(key) for key in ('utc', 'rounds', 'seconds', 'call_files', 'wchan_files',
+                                                             'unreadable')}
+            programs = last.get('programs') if isinstance(last.get('programs'), dict) else {}
+            value['last']['programs'] = {
+                str(label)[:16]: {'threads': program.get('threads'), 'cpu_percent': program.get('cpu_percent'),
+                                  'busiest': [[row.get('name'), row.get('cpu_percent'), row.get('running'),
+                                               row.get('stopped_in_proot'), (row.get('waits') or [None])[0]]
+                                              for row in (program.get('busiest') or [])[:4] if isinstance(row, dict)]}
+                for label, program in sorted(programs.items())[:4] if isinstance(program, dict)}
+    return 'THREAD_WAITS_V1 ' + json.dumps(value, separators=(',', ':'))[:6000]
+
+
+def travel_input_line(observer, session):
+    """One log line: the CI trips' travel commands that had to be typed again (0.13.79).
+
+    Spare run 44732475821 lost a typed "/mapmove 1" (the server never logged it), so the host script
+    asks again after 300 s and 450 s (character_reopen_host_smoke.STOCK_TRAVEL_RESEND_SECONDS). A
+    passing run with a resend says the input was lost, not the trip. Evidence only.
+    """
+    script = observer.get('interaction_script') if isinstance(observer, dict) else None
+    script = script if isinstance(script, dict) else {}
+    resends, arrivals = script.get('stock_travel_resends'), script.get('stock_travel_arrivals')
+    value = {'format': 1, 'session': session,
+             'resends': [{key: item.get(key) for key in ('map_id', 'keys', 'seconds_after_submit')}
+                         for item in resends[:4] if isinstance(item, dict)] if isinstance(resends, list) else None,
+             'arrival_seconds': [item.get('host_seconds') for item in arrivals[:4] if isinstance(item, dict)]
+                                if isinstance(arrivals, list) else None}
+    return 'TRAVEL_INPUT_V1 ' + json.dumps(value, separators=(',', ':'))
+
+
+def start_options_line(report, session):
+    """One log line: the two start options of 0.13.74 as the guest recorded them.
+
+    `server_quick_start` (the zone servers' config: animations attached on first use, no
+    source-file date checks) and `wineserver_path_cache` (the realpath cache library and its
+    own counters). Evidence only; neither gates a session.
+    """
+    value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None,
+             'physx_cache': None, 'server_emulation': None}
+    if isinstance(report, dict):
+        for section in [report, *report.values()]:
+            emulation = section.get('server_emulation') if isinstance(section, dict) else None
+            if isinstance(emulation, dict):
+                # 0.13.79: the emulator variables the guest set for the zone servers.
+                value['server_emulation'] = {key: emulation.get(key) for key in ('requested', 'ignored', 'environment')}
+                break
+        for section in [report, *report.values()]:
+            cooked = section.get('physx_cache') if isinstance(section, dict) else None
+            if isinstance(cooked, dict):
+                # 0.13.75: the guest's record of the cooked mesh file it named for the zone servers.
+                value['physx_cache'] = {key: cooked.get(key) for key in (
+                    'requested', 'applied', 'reason', 'bytes_before_start')}
+                break
+        for section in report.values():
+            quick = section.get('server_quick_start') if isinstance(section, dict) else None
+            if isinstance(quick, dict):
+                value['server_quick_start'] = {'requested': quick.get('requested'),
+                                               'commands': [str(item)[:40] for item in (quick.get('commands') or [])[:4]]}
+                break
+        cache = report.get('wineserver_path_cache')
+        if isinstance(cache, dict):
+            value['wineserver_path_cache'] = {key: cache.get(key) for key in (
+                'requested', 'installed', 'reason', 'error_type', 'servers', 'counters')}
+    return 'START_OPTIONS_V1 ' + json.dumps(value, separators=(',', ':'))[:1200]
+
+
+def start_options_sessions():
+    """Which CI sessions run with the two start options of 0.13.74.
+
+    The stock-travel run (the phone's flow: creation, a trip, reopen) uses them in both
+    sessions. The other runs keep the creation session as it was, so one run shows the same
+    Atlas server start with and without them (its `sequencer_info_done` phase).
+    """
+    return ('creation', 'reopen') if stock_travel_requested() else ('reopen',)
+
+
+START_OPTIONS = ('COH_SERVER_QUICK_START=1', 'COH_WINESERVER_PATH_CACHE=1')
+# 0.13.75: the cooked mesh file is asked for in both sessions of every run, so that the reopen
+# session's Atlas start reads what the creation session's cooked. Only a server built with
+# patches/mapserver-physx-cache uses it (the trusted run's); elsewhere the guest records why not.
+BOTH_SESSION_OPTIONS = ('COH_PHYSX_CACHE=1',)
+
+
+STOP_COUNTS_MARK = 'PROOT_STOP_COUNTS_V1 '
+
+
+def proot_stop_counts(work, top=48):
+    """PRoot's own count of the stops it served per call number (patch 0005), or None.
+
+    CI's trap sampler counts time spent stopped; this is the number of stops. PRoot rewrites
+    the file about every ten seconds and at exit, so it is complete once the guest has ended.
+    """
+    try:
+        lines = (Path(work) / STOP_COUNTS_NAME).read_text(errors='replace')[:262144].splitlines()
+    except OSError:
+        return None
+    head = lines[0].split() if lines else []
+    if not head or head[0] != STOP_COUNTS_MARK.strip():
+        return {'format': 1, 'valid': False}
+    fields = dict(part.split('=', 1) for part in head[1:] if '=' in part)
+    rows = [[int(part) for part in line.split()] for line in lines[1:]
+            if len(line.split()) == 3 and all(part.isdigit() for part in line.split())]
+    rows.sort(key=lambda row: (-(row[1] + row[2]), row[0]))
+    number = lambda key: int(fields[key]) if fields.get(key, '').isdigit() else None
+    # 0.13.71 (patch 0006): "P <thread name> <call number> <stops>" rows say whose stops they are.
+    programs = [[parts[1][:16], int(parts[2]), int(parts[3])] for parts in (line.split() for line in lines[1:])
+                if len(parts) == 4 and parts[0] == 'P' and parts[2].isdigit() and parts[3].isdigit()]
+    programs.sort(key=lambda row: (-row[2], row[0], row[1]))
+    # 0.13.73 (patch 0007): stat calls on a descriptor (no path to translate), and rtnetlink
+    # sockets moved to a high descriptor number or refused one. None from an older PRoot.
+    extra = {key: number(key) for key in ('fd_stats', 'moved_netlink_fds', 'failed_netlink_moves')}
+    # 0.13.75 (patch 0008): missing path components of Wine's programs replaced by the entry in
+    # another letter case, those with no such entry, and directories read for it.
+    extra.update({key: number(key) for key in ('casefold_replaced', 'casefold_absent', 'casefold_listed')})
+    return {'format': 1, 'valid': True, 'seconds': number('seconds'), 'stops': number('stops'), **extra,
+            'columns': ['call_number', 'enter_stops', 'exit_stops'], 'calls': rows[:top],
+            'other_stops': sum(row[1] + row[2] for row in rows[top:]),
+            'program_columns': ['thread_name', 'call_number', 'stops'], 'programs': programs[:top]}
+
+
+def require_proot_stop_counts(counts):
+    """With the call filter the patched PRoot must also have written its stop counts."""
+    if not runtime_host.runtime.proot_ioctl_filter_requested():
+        return
+    require(isinstance(counts, dict) and counts.get('valid') is True and (counts.get('stops') or 0) > 0
+            and counts.get('calls'), 'The call filter was requested but PRoot wrote no stop counts')
+
+
+def spare_zone_requested():
+    """0.13.69: one pre-loaded zone server beside the current zone (needs stock travel and trusted bins' server)."""
+    value = os.environ.get('COH_SPARE_ZONE', '')
+    require(value in ('', '0', '1'), 'COH_SPARE_ZONE must be empty, 0 or 1')
+    return value == '1'
+
+
+def serverdata_probe_requested():
+    """CI-only probe level: 1 serves scripts.loc, 2 every folder no guest proof reads,
+    through a linked shared read-only runtime/serverdata tree. 0 is off."""
+    value = os.environ.get('COH_SERVERDATA_PROBE', '')
+    require(value in ('', '0', '1', '2'), 'COH_SERVERDATA_PROBE must be empty, 0, 1 or 2')
+    return int(value or 0)
+
+
+def client_audio_requested():
+    """Game audio (app default on): the guest plays through the plugin to a protocol sink.
+
+    CI has no audio device; audio_receiver models the Android bridge with a
+    real-time playback head. It is not evidence of audible Thor playback.
+    """
+    value = os.environ.get('COH_CLIENT_AUDIO', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_AUDIO must be empty, 0 or 1')
+    return value == '1'
+
+
+# The guest's cleanup kills the client mid-stream (wineserver -k, then signals),
+# so the sink's reply can meet a closed peer. That is teardown, not a protocol fault.
+AUDIO_TEARDOWN = re.compile(r'\[Errno (32|104)\]')
+
+
+def audio_summary(snapshot):
+    streams = snapshot['streams']
+    teardown = [error for error in snapshot['errors'] if AUDIO_TEARDOWN.match(error)]
+    return {'format': 1, 'scope': 'ci_protocol_sink_not_audible_playback', 'streams': len(streams),
+            'frames': sum(s['frames'] for s in streams),
+            'nonzero_samples': sum(s['nonzero_samples'] for s in streams),
+            'stereo_streams': sum(1 for s in streams if s['left_nonzero'] and s['right_nonzero']),
+            'starts': sum(s['starts'] for s in streams), 'teardown_disconnects': len(teardown),
+            'errors': [error for error in snapshot['errors'] if not AUDIO_TEARDOWN.match(error)]}
+
+
+def shared_server_requested():
+    """App default (on): both zone servers read the shared folders through runtime/serverdata."""
+    value = os.environ.get('COH_SHARED_SERVER_DATA', '')
+    require(value in ('', '0', '1'), 'COH_SHARED_SERVER_DATA must be empty, 0 or 1')
+    return value == '1'
+
+
+STORY_ARC_COUNTS = re.compile(r'(?m)^(\d+) arcs, (\d+) contacts, (\d+) tasks\b')
+
+
+def story_arc_counts(text, limit=4):
+    """MapServer story arc totals, e.g. Thor 0.13.x Atlas: 470 arcs, 957 contacts, 3528 tasks."""
+    return [[int(value) for value in match.groups()] for match in STORY_ARC_COUNTS.finditer(text)][:limit]
+
+
+EXTERNAL_MAPS_WORKFLOW = stage_app_assets.EXTERNAL_MAPS_WORKFLOW
+
+
+def external_maps_build_run(run_json, directory):
+    """The package comes from one successful run of its own workflow at its own commit."""
+    return stage_app_assets.external_maps_build_run(run_json, directory)
+
+
+def stock_travel_summary(report):
+    """Bounded view of the game's own zone travel in the zoning report."""
+    zoning = report.get('character_zoning')
+    stock = zoning.get('stock_travel') if isinstance(zoning, dict) else None
+    if not isinstance(stock, dict):
+        return None
+    keep = ('map_id', 'tree', 'port', 'evicted', 'ready', 'ready_seconds', 'failure', 'failed_seconds')
+    return {'requested': stock.get('requested'), 'enabled': stock.get('enabled'),
+            'arrivals': stock.get('arrivals'), 'transfer_wait_observed': stock.get('transfer_wait_observed'),
+            'starts': [{key: row.get(key) for key in keep if key in row}
+                       for row in stock.get('starts', [])[:6] if isinstance(row, dict)],
+            'evictions': [row for row in stock.get('evictions', [])[:4] if isinstance(row, dict)],
+            'decisions': [row for row in stock.get('decisions', [])[:6] if isinstance(row, dict)],
+            'zone_tree_seconds': (report.get('zone_tree_preparation') or {}).get('elapsed_seconds'),
+            # Which log route proved readiness, and where the DbServer last placed the hero.
+            'ready_route': ((report.get('character_reopen') or {}).get('client_ready_evidence') or {}).get('log_route'),
+            'last_samples': [{key: sample.get(key) for key in ('map_id', 'static_map_id', 'connected', 'loaded',
+                                                                'in_map_transfer') if key in sample}
+                             for sample in ((report.get('character_reopen') or {}).get('character_samples') or [])[-3:]
+                             if isinstance(sample, dict)]}
+
+
+def external_maps_summary(section):
+    """Bounded view of the supervisor report and the installed DbServer layer."""
+    record = section.get('external_maps')
+    if not isinstance(record, dict):
+        return None
+    summary = {key: record.get(key) for key in ('requested', 'enabled', 'reason', 'dbserver_layer', 'weekly_tf_config')}
+    supervisor = record.get('supervisor')
+    if isinstance(supervisor, dict):
+        summary.update({key: supervisor.get(key) for key in ('acknowledgement_observed', 'stopped', 'counts',
+                                                             'session_maps', 'map_starts_executed')})
+        requests = supervisor.get('requests') if isinstance(supervisor.get('requests'), list) else []
+        summary['requests'] = [{key: item.get(key) for key in ('map_id', 'is_static', 'decision', 'reason',
+                                                               'refused_option')}
+                               | {'delink_passed': (item.get('delink') or {}).get('passed')}
+                               for item in requests[:6] if isinstance(item, dict)]
+        anomalies = supervisor.get('anomalies') if isinstance(supervisor.get('anomalies'), list) else []
+        summary['anomalies'] = [str(item)[:160] for item in anomalies[:4]]
+    manual = section.get('manual_atlas_startup')
+    if isinstance(manual, dict):
+        summary['manual_atlas_ack'] = manual.get('native_ack_observed')
+    return summary
+
+
+def guest_timing_summary(evidence):
+    """Bounded A/B diagnostic (PRoot mode, map startup, preparation phases); never gates."""
+    result = {}
+    try:
+        path = evidence / 'latest-report.json'
+        if path.is_file() and path.stat().st_size <= 16 * 1024 * 1024:
+            report = json.loads(path.read_text())
+            result['proot_mode'] = report.get('proot_mode')
+            probe = report.get('armport_proot_ioctl')
+            if isinstance(probe, dict):
+                result['proot_ioctl'] = {key: probe.get(key) for key in (
+                    'reading', 'requested', 'microseconds_per_call', 'getsockopt_stops', 'error_type',
+                    'socket_filter_requested', 'socket_stops', 'netlink_descriptor', 'netlink_error_type')
+                    if probe.get(key) is not None}
+            result['shared_server_data'] = next((section.get('shared_server_data') for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('shared_server_data') is not None),
+                report.get('shared_server_data'))
+            result['stage_timeline'] = stage_timeline(report)
+            result['trusted_bins'] = next((section.get('trusted_bins') for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('trusted_bins') is not None), None)
+            zoning = report.get('character_zoning')
+            early = ((zoning.get('initial_zone') or {}).get('early_start') if isinstance(zoning, dict) else None)
+            if isinstance(early, dict):
+                result['early_zone'] = {key: early.get(key) for key in (
+                    'requested', 'started', 'reason', 'failure', 'preparation_seconds', 'ready', 'ready_seconds',
+                    'ready_before_the_game_asked', 'requested_after_seconds', 'available_memory_mib',
+                    'available_memory_mib_at_ready') if early.get(key) is not None}
+            spare = zoning.get('spare_zone') if isinstance(zoning, dict) else None
+            if isinstance(spare, dict) and spare.get('requested') is True:
+                result['spare_zone'] = {'layer_available': spare.get('layer_available'),
+                    'waiting_reason': spare.get('waiting_reason'),
+                    'starts': [{key: row.get(key) for key in ('ordinal', 'tree', 'warm', 'warm_seconds', 'outcome',
+                                'reason', 'map_id', 'loaded_seconds_before_request', 'refused_request',
+                                'available_memory_mib', 'available_memory_mib_when_warm') if row.get(key) is not None}
+                               for row in (spare.get('starts') or [])[:4]]}
+                ahead = spare.get('graphs_checked_ahead')
+                if isinstance(ahead, list) and ahead:
+                    # 0.13.79: navigation graph receipts checked while the warm spare waited.
+                    result['spare_zone']['graphs_checked_ahead'] = [
+                        {key: row.get(key) for key in ('map_id', 'receipt_held', 'seconds', 'error')
+                         if row.get(key) is not None} for row in ahead[:8] if isinstance(row, dict)]
+            result['shared_heap'] = next((section.get('shared_heap') for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('shared_heap') is not None), None)
+            result['external_maps'] = next((external_maps_summary(section) for section in
+                (report.get('character_creation'), report.get('character_reopen'))
+                if isinstance(section, dict) and section.get('external_maps') is not None), None)
+            result['stock_travel'] = stock_travel_summary(report)
+            for key in ('character_creation', 'character_reopen'):
+                section = report.get(key)
+                if not isinstance(section, dict):
+                    continue
+                rows = [row for row in section.get('map_startup_timing', []) if isinstance(row, dict)][:4]
+                observed = section.get('map_startup_observation')
+                caches = section.get('prepared_server_caches')
+                result[key] = {'map_startup': [{name: row.get(name) for name in TIMING_FIELDS} for row in rows],
+                               'preparation_phase_seconds': section.get('server_preparation_phase_seconds'),
+                               'prepared_server_caches': {name: (str(caches.get(name))[:200] if name == 'reason'
+                                   else caches.get(name)) for name in ('status', 'reason', 'installed_files',
+                                   'preserved_existing_files')} if isinstance(caches, dict) else None,
+                               'native_bin_writes': {map_id: (value or {}).get('native_bin_writes')
+                                   for map_id, value in list(observed.items())[:4]}
+                                   if isinstance(observed, dict) else None}
+        path = evidence / 'report.zip'
+        if path.is_file():
+            with zipfile.ZipFile(path) as archive:
+                names = set(archive.namelist())
+                # The ARM64 client writes its phase lines to armport_stdio.txt.
+                for client in ('client-evidence/armport_stdio.txt', 'client-evidence/client-console.log'):
+                    if client in names and archive.getinfo(client).file_size <= 16 * 1024 * 1024:
+                        lines = client_folder_cache(archive.read(client).decode('utf-8', errors='replace'))
+                        if lines:
+                            result['client_folder_cache'] = lines
+                            break
+                member = 'client-evidence/armport_stdio.txt'
+                if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
+                    stdio = archive.read(member).decode('utf-8', errors='replace')
+                    result['client_sound_scripts'] = client_sound_scripts(stdio)
+                    result['client_logout_keys'] = client_logout_keys(stdio)
+                member = 'client-evidence/character-atlas-console.txt'
+                if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
+                    console = archive.read(member).decode('utf-8', errors='replace')
+                    result['atlas_mapserver_phases'] = mapserver_phases.summary(console, top=6)
+                    result['story_arc_counts'] = story_arc_counts(console)
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        result['evidence_read_error'] = str(error)[:300]
+    return result
+
+
+def timing_notices(timings, proot_seccomp, trusted_bins):
+    """Per session: a timings notice, then detail notices (stage timeline and client
+    folder-cache phases; rewritten bins; zone servers: shared heap decision and
+    on-demand map requests). Each stays under the 4 KiB annotation limit."""
+    lines = []
+    for name, original in timings.items():
+        summary, writes = {}, {}
+        detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts',
+                                                 'client_logout_keys') if original.get(key)}
+        servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel')
+                   if original.get(key)}
+        for key, value in original.items():
+            if key in detail or key in servers:
+                continue
+            if key in ('character_creation', 'character_reopen') and isinstance(value, dict):
+                value = dict(value)
+                writes[key] = value.pop('native_bin_writes', None)
+            summary[key] = value
+        lines.append(ci_notice(dict(summary, session=name, proot_seccomp=proot_seccomp, trusted_bins_requested=trusted_bins))
+                     .replace('interactive result', 'guest timings ' + name, 1))
+        if any(value for value in writes.values()):
+            lines.append(ci_notice({'session': name, 'native_bin_writes': writes})
+                         .replace('interactive result', 'bin writes ' + name, 1))
+        if detail:
+            lines.append(ci_notice(dict(detail, session=name))
+                         .replace('interactive result', 'startup detail ' + name, 1))
+        if servers:
+            lines.append(ci_notice(dict(servers, session=name))
+                         .replace('interactive result', 'zone servers ' + name, 1))
+    return lines
+
+
 def ci_notice(result):
     text = json.dumps(result, separators=(',', ':'))
     text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
@@ -266,11 +931,17 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
     evidence.mkdir(parents=True)
     isolated, environment, expected_network = runtime_host.runtime.isolate_command(
         command, evidence=evidence, proot=proot, work=work)
-    process = observer = failure = report = None
+    process = observer = failure = report = sampler = None
+    (work / STOP_COUNTS_NAME).unlink(missing_ok=True)
     with (evidence / 'host-client.log').open('w') as log:
         try:
             process = subprocess.Popen(isolated, env=environment, stdout=log,
                                        stderr=subprocess.STDOUT, start_new_session=True)
+            if trap_sampler.requested():
+                # 0.13.69, CI only: which guest tasks wait on PRoot and at which system call.
+                # Read as root where CI allows it: Wine's own processes are not below this one.
+                sampler = trap_sampler.start(process.pid, 'reopen' if reopening else 'creation',
+                                             work / 'trap-sampler.stop')
             endpoint = work / 'socket/view.sock'
             while not endpoint.exists():
                 require(process.poll() is None and time.monotonic() < deadline,
@@ -279,14 +950,26 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
                 connection.settimeout(90)
                 connection.connect(str(endpoint))
+                travel = reopening and stock_travel_requested()
                 observer = character.observe_rfb(connection, session, process, deadline, evidence,
                     evidence / 'host-client.log', work / 'state/interaction-finish.json',
-                    reopen.ReopenInteraction if reopening else ArmPortCharacterInteraction,
-                    reopen.ReopenEvents if reopening else None)
+                    (reopen.StockTravelReopenInteraction if travel else reopen.ReopenInteraction)
+                    if reopening else ArmPortCharacterInteraction,
+                    (reopen.StockTravelReopenEvents if travel else reopen.ReopenEvents) if reopening else None)
             require(observer.get('failure') is None, observer.get('failure') or 'ARM64 RFB observer failed')
             require(process.wait(timeout=max(1, deadline - time.monotonic())) == 0,
                     'ARM64 interactive guest exited unsuccessfully')
             report = json.loads((work / 'state/latest-report.json').read_text())
+            if isinstance(report.get('python_call_profile'), dict):
+                print('PYTHON_CALL_PROFILE_V1 ' + json.dumps(dict(report['python_call_profile'],
+                      session='reopen' if reopening else 'creation'), separators=(',', ':')), flush=True)
+            print('ARMPORT_GRAPHICS_PROFILE_V1 ' + json.dumps(dict(
+                report.get('armport_graphics_profile') if isinstance(report.get('armport_graphics_profile'), dict)
+                else {'requested': None}, session='reopen' if reopening else 'creation'), separators=(',', ':'))[:400],
+                flush=True)
+            print(launch_receipts_line(report, 'reopen' if reopening else 'creation'), flush=True)
+            print(thread_waits_line(report, 'reopen' if reopening else 'creation'), flush=True)
+            print(start_options_line(report, 'reopen' if reopening else 'creation'), flush=True)
             projected = legacy_report(report, runtime_manifest, client_manifest)
             checked_manifest = validation_manifest(report, runtime_manifest)
             require(time.monotonic() <= deadline, 'ARM64 interactive host deadline exceeded')
@@ -298,7 +981,16 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 character.validate_report(projected, session, checked_manifest)
             if not reopening:
                 reopen.validate_world_supplement(projected, checked_manifest)
-            (reopen.validate_observer if reopening else armport_validate_observer)(observer, report)
+            if reopening:
+                reopen.validate_observer(observer, report, reopen.StockTravelReopenInteraction
+                                         if stock_travel_requested() else reopen.ReopenInteraction)
+                if stock_travel_requested():
+                    print(travel_input_line(observer, 'reopen'), flush=True)
+                require_early_zone_decision(report)
+            else:
+                armport_validate_observer(observer, report)
+            require_proot_ioctl_filter(report)
+            require_proot_stop_counts(proot_stop_counts(work))
             require(not endpoint.exists(), 'Private display survived guest cleanup')
             runtime_host.runtime.validate_network_receipt(
                 json.loads((evidence / 'network-isolation.json').read_text()), expected_network)
@@ -306,13 +998,28 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             failure = {'type': type(error).__name__, 'message': str(error)}
             raise
         finally:
+            sampled = sampler.finish() if sampler is not None else None
             cleanup = character.stop_guest(process, work / 'state')
+            counts = proot_stop_counts(work)
+            if counts is not None:
+                print(STOP_COUNTS_MARK + json.dumps(dict(counts, session='reopen' if reopening else 'creation'),
+                                                    separators=(',', ':')), flush=True)
             exported = character.export_guest_evidence(work / 'state', evidence, session)
             (evidence / 'host-session-report.json').write_text(json.dumps({
                 'scope': 'arm64_app_guest_reopen' if reopening else 'arm64_app_guest_creation',
                 'session_id': session, 'passed': failure is None, 'failure': failure,
-                'external_observer': observer, 'host_cleanup': cleanup,
+                'external_observer': observer, 'host_cleanup': cleanup, 'trap_sampler': sampled,
+                'proot_stop_counts': counts,
                 'guest_evidence_export': exported, 'guest_failure': guest_failure_summary(evidence)}, indent=2) + '\n')
+            if failure is not None:
+                detail = failure_detail(evidence, work, observer)
+                (evidence / 'failure-detail.json').write_text(json.dumps(detail, indent=2) + '\n')
+                print(ci_notice(dict(detail, session='reopen' if reopening else 'creation'))
+                      .replace('interactive result', 'failure detail', 1), flush=True)
+                if stock_travel_requested():
+                    for index, part in enumerate(zone_diagnostics(evidence), 1):
+                        print(ci_notice(part).replace('interactive result', 'zone diagnostics %d' % index, 1),
+                              flush=True)
     return report
 
 
@@ -324,9 +1031,17 @@ def main():
     parser.add_argument('--server-archive', type=Path)
     parser.add_argument('--server-run-id', type=int)
     parser.add_argument('--baseline-root', type=Path)
+    parser.add_argument('--external-maps-dbserver', type=Path,
+                        help='armport-external-maps-dbserver package: added to the CI donor and enabled')
+    parser.add_argument('--external-maps-run-json', type=Path,
+                        help='GitHub API record of the run that built --external-maps-dbserver')
     args = parser.parse_args()
     require((args.server_archive is None) == (args.server_run_id is None) == (args.baseline_root is None),
             'Server archive, exact build run and pinned baseline must be provided together')
+    require((args.external_maps_dbserver is None) == (args.external_maps_run_json is None),
+            'External map DbServer package and its build run must be provided together')
+    if args.external_maps_dbserver is not None:
+        external_maps_build_run(args.external_maps_run_json, args.external_maps_dbserver)
     for name, value in vars(args).items():
         if isinstance(value, Path): setattr(args, name, value.resolve())
     baseline = server_pipeline.native.baseline_root(args.baseline_root) if args.server_archive else ROOT
@@ -339,6 +1054,7 @@ def main():
               'm4_complete': False, 'apk_built': False, 'android_surface_validated': False,
               'repository_commit': args.repository_commit}
     started = time.monotonic()
+    receiver = None
     try:
         donor = args.work / 'donor-assets'
         result['donor'] = retained_assets.extract(args.apk, args.build_report, donor)
@@ -346,8 +1062,12 @@ def main():
         result['armport_client'] = stage_app_assets.stage(donor / 'runtime', args.armport,
             assets, args.repository_commit, server_archive=args.server_archive,
             server_variant='retained_progress' if args.server_archive else None,
-            server_run_id=args.server_run_id, upstream_root=baseline)
+            server_run_id=args.server_run_id, upstream_root=baseline,
+            dbserver=args.external_maps_dbserver, dbserver_ci_runtime=args.external_maps_dbserver is not None,
+            zoning=stock_travel_requested())
         runtime_manifest = json.loads((assets / 'runtime-manifest.json').read_text())
+        if args.external_maps_dbserver is not None:
+            result['external_maps_dbserver'] = runtime_manifest[stage_app_assets.EXTERNAL_MAPS_KEY]
         client_manifest = json.loads((assets / 'client-manifest.json').read_text())
         if args.server_archive:
             binding = json.loads((assets / 'armport-server-metrics-binding.json').read_text())
@@ -372,19 +1092,77 @@ def main():
         first, second = secrets.token_hex(16), secrets.token_hex(16)
         require(first != second, 'Distinct session identities required')
         command, _ = character.make_command(args.work, assets, args.proot, first, data, 900)
+        if client_audio_requested():
+            # The guest's /presentation-socket is work/socket (0700, created above).
+            receiver = audio_receiver.Receiver(args.work / 'socket/audio.sock')
+            command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_AUDIO=1')
+            command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_AUDIO_SOCKET=/presentation-socket/audio.sock')
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_ARCH=arm64')
         command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_GRAPHICS_PROFILE=standard')
+        if runtime_host.runtime.proot_seccomp_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_FAST_MODE=1')
+        if runtime_host.runtime.proot_ioctl_filter_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_IOCTL_FILTER=1')
+            command.insert(command.index('/usr/bin/python3'), 'COH_PROOT_SOCKET_FILTER=1')
+        if trap_sampler.requested():        # the same CI input also counts the supervisor's own calls
+            command.insert(command.index('/usr/bin/python3'), 'COH_CALL_PROFILE=1')
+        if trusted_bins_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_TRUSTED_BINS=1')
+        if shared_heap_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_HEAP=1')
+        if server_emulation_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_SERVER_EMULATION=' + server_emulation_requested())
+        if args.external_maps_dbserver is not None:
+            # The supervisor observes the DbServer's map requests and delinks
+            # the ones this flow does not start itself (milestone 1).
+            command.insert(command.index('/usr/bin/python3'), 'COH_EXTERNAL_MAPS=1')
+        if stock_travel_requested():
+            require(args.external_maps_dbserver is not None, 'Stock travel needs the external-maps DbServer')
+            command.insert(command.index('/usr/bin/python3'), 'COH_STOCK_TRAVEL=1')
+        if early_zone_requested():
+            require(stock_travel_requested(), "The early zone start needs the game's own zone travel")
+            command.insert(command.index('/usr/bin/python3'), 'COH_EARLY_ZONE=1')
+        if spare_zone_requested():
+            require(stock_travel_requested(), "The spare zone server needs the game's own zone travel")
+            command.insert(command.index('/usr/bin/python3'), 'COH_SPARE_ZONE=1')
+        if shared_server_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
+        if serverdata_probe_requested():
+            command.insert(command.index('/usr/bin/python3'),
+                           'COH_SERVERDATA_PROBE=' + str(serverdata_probe_requested()))
+        for option in BOTH_SESSION_OPTIONS:
+            command.insert(command.index('/usr/bin/python3'), option)
         deadline = time.monotonic() + character.OVERALL_SECONDS
-        created = run_session(command, args.work, args.evidence / 'creation', args.proot,
+        first_command = list(command)
+        if 'creation' in start_options_sessions():
+            for option in START_OPTIONS:
+                first_command.insert(first_command.index('/usr/bin/python3'), option)
+        created = run_session(first_command, args.work, args.evidence / 'creation', args.proot,
                               first, runtime_manifest, client_manifest, deadline)
         before = reopen.persistent_profile_identity(args.work)
         reopen.archive_completed_reports(args.work / 'state', first)
         reopen.reset_session_requests(args.work / 'state')
         next_command = reopen.reopen_command(command, first, second)
+        # 0.13.73 (ArmPort patch 0129): the reopen session, the one the phone plays, runs with the
+        # app's default graphics profile for the ARM64 client; creation keeps `standard`.
+        next_command.insert(next_command.index('/usr/bin/python3'), 'COH_ARMPORT_GRAPHICS_PROFILE=effects_off')
+        if 'reopen' in start_options_sessions():
+            for option in START_OPTIONS:
+                next_command.insert(next_command.index('/usr/bin/python3'), option)
+        if stock_travel_requested():
+            # The device's reopen: the zoning flow with the supervisor's start policy.
+            next_command.insert(next_command.index('/opt/coh/character_reopen_diagnostic.py') + 1, '--zoning')
         reopened = run_session(next_command, args.work, args.evidence / 'reopen', args.proot,
                                second, runtime_manifest, client_manifest, deadline, reopening=True)
         after = reopen.persistent_profile_identity(args.work)
         reopen.validate_continuity(created, reopened, before, after)
+        if receiver is not None:
+            audio = audio_summary(receiver.snapshot())
+            (args.evidence / 'audio-report.json').write_text(json.dumps(audio, indent=2) + '\n')
+            # A connected stream without protocol faults proves Wine, ALSA and the plugin;
+            # non-zero samples (reported) depend on what the scripted screens play.
+            require(not audio['errors'] and audio['streams'] >= 1,
+                    'Game audio reached no protocol sink: ' + json.dumps(audio))
         if args.server_archive:
             result['server_metrics_native_execution'] = {
                 'creation': server_pipeline.guest_admission(created, runtime_manifest),
@@ -394,6 +1172,13 @@ def main():
     except Exception as error:
         result['error'] = {'type': type(error).__name__, 'message': str(error)}
     finally:
+        if receiver is not None:
+            if not (args.evidence / 'audio-report.json').exists():
+                (args.evidence / 'audio-report.json').write_text(
+                    json.dumps(audio_summary(receiver.snapshot()), indent=2) + '\n')
+            receiver.close()
+            print('::notice title=ArmPort game audio (CI protocol sink)::'
+                  + (args.evidence / 'audio-report.json').read_text().replace('\n', ' '), flush=True)
         result['elapsed_seconds'] = round(time.monotonic() - started, 3)
         result['guest_failures'] = {name: guest_failure_summary(args.evidence / name)
                                     for name in ('creation', 'reopen')
@@ -401,6 +1186,12 @@ def main():
         (args.evidence / 'host-report.json').write_text(json.dumps(result, indent=2) + '\n')
         print(ci_notice({key: result.get(key) for key in
             ('passed', 'm4_complete', 'elapsed_seconds', 'error', 'guest_failures')}), flush=True)
+        # Separate notice; host-report.json keeps its qualified schema.
+        timings = {name: guest_timing_summary(args.evidence / name) for name in ('creation', 'reopen')
+                   if (args.evidence / name).exists()}
+        for line in timing_notices(timings, runtime_host.runtime.proot_seccomp_requested(),
+                                   trusted_bins_requested()):
+            print(line, flush=True)
         print(json.dumps(result), flush=True)
     return 0 if result['passed'] else 1
 

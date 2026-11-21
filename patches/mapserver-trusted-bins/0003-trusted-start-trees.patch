@@ -1,0 +1,131 @@
+diff --git a/Common/gameComm/initCommon.c b/Common/gameComm/initCommon.c
+index 9a2e80d..72a0da2 100644
+--- a/Common/gameComm/initCommon.c
++++ b/Common/gameComm/initCommon.c
+@@ -19,6 +19,8 @@
+ #include "seq/seqtype.h"
+ #include "cmdparse/cmdcommon.h"
+ #include "account/AccountData.h"
++#include <stdio.h>
++#include <stdlib.h>
+ 
+ #if SERVER
+     #include "Reward.h"
+@@ -42,10 +44,35 @@
+ #endif
+ 
+ 
++#if SERVER
++// ArmPort opt-in (ARMPORT_TRUSTED_BINS=1, read once), the switch of
++// ParserIsPersistNewer: with prepared bins used without their source scan,
++// nothing lists Defs or Menu, so their trees are not read ahead. A loader that
++// does scan either folder still requests its tree (fileScanAllDataDirs), and a
++// single file is still found on disk when it is opened.
++static int armportTrustedStartTrees(void)
++{
++    static int enabled = -1;
++    if (enabled < 0)
++    {
++        const char* value = getenv("ARMPORT_TRUSTED_BINS");
++        enabled = value && value[0] == '1' && value[1] == '\0';
++    }
++    return enabled;
++}
++#endif
++
+ void cacheRelevantFolders() {
+     writeConsole(OUTPUT_DEBUG, "Caching relevant folders");
+-    FolderCacheRequestTree(folder_cache, "Defs"); // If we're in dynamic mode, this will load this tree for faster file access
+-    FolderCacheRequestTree(folder_cache, "Menu");
++#if SERVER
++    if (armportTrustedStartTrees())
++        printf("ARMPORT_START_TREES_V1 status=not_read_ahead trees=Defs,Menu\n");
++    else
++#endif
++    {
++        FolderCacheRequestTree(folder_cache, "Defs"); // If we're in dynamic mode, this will load this tree for faster file access
++        FolderCacheRequestTree(folder_cache, "Menu");
++    }
+     if (!quickload) {
+         FolderCacheRequestTree(folder_cache, "player_library/animations/male");
+         FolderCacheRequestTree(folder_cache, "player_library/animations/huge");
+diff --git a/libs/UtilitiesLib/src/language/MessageStore.c b/libs/UtilitiesLib/src/language/MessageStore.c
+index be0668c..f3abd0f 100644
+--- a/libs/UtilitiesLib/src/language/MessageStore.c
++++ b/libs/UtilitiesLib/src/language/MessageStore.c
+@@ -5,6 +5,7 @@
+ #include "utilitieslib/utils/fileutil.h"
+ #include "utilitieslib/utils/utils.h"
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <stdarg.h>
+ #include <string.h>
+ #include "utilitieslib/utils/strings_opt.h"
+@@ -141,6 +142,19 @@ static void msGetDirFilesList(MSFileInfo ***dirfiles, char **dirs)
+     s_dirfiles = NULL;
+ }
+ 
++// ArmPort opt-in (ARMPORT_TRUSTED_BINS=1, read once), the switch of
++// ParserIsPersistNewer applied to the prepared message bins.
++static int armportTrustedMessageBins(void)
++{
++    static int enabled = -1;
++    if (enabled < 0)
++    {
++        const char* value = getenv("ARMPORT_TRUSTED_BINS");
++        enabled = value && value[0] == '1' && value[1] == '\0';
++    }
++    return enabled;
++}
++
+ void LoadMessageStore( MessageStore **pStore, char **files, char **dirs, int locid, const char *idPrepend,
+                         char* persistfile, char *pcSharedMemoryName, MessageStoreLoadFlags flags )
+ {
+@@ -152,6 +166,10 @@ void LoadMessageStore( MessageStore **pStore, char **files, char **dirs, int loc
+     bool good_bin = false;
+     bool handle_files = (!persistfile || isDevelopmentMode()) && !(flags & MSLOAD_NOFILES); // whether or not we should look at the original files
+     MSFileInfo **dirfiles = NULL;
++    // ArmPort: a prepared bin that msReadBin accepts is used without the listing
++    // of its source folders and the date comparison. A missing bin, or one that
++    // msReadBin refuses, lists the folders and loads the text files as before.
++    bool trusted = handle_files && persistfile && !reloading && !(flags & MSLOAD_FORCEBINS) && armportTrustedMessageBins();
+ 
+     assert(pStore);
+ 
+@@ -199,7 +217,7 @@ void LoadMessageStore( MessageStore **pStore, char **files, char **dirs, int loc
+         }
+     }
+ 
+-    if(handle_files)
++    if(handle_files && !trusted)
+     {
+         // get a list of files and timestamps for checking the bin's timeliness and/or loading files
+         msGetDirFilesList(&dirfiles,dirs);
+@@ -213,7 +231,7 @@ void LoadMessageStore( MessageStore **pStore, char **files, char **dirs, int loc
+         {
+             bool timely_bin = true;
+ 
+-            if(handle_files)
++            if(handle_files && !trusted)
+             {
+                 __time32_t bin_time_write = fileLastChanged(persistfilepath);
+ 
+@@ -253,11 +271,18 @@ void LoadMessageStore( MessageStore **pStore, char **files, char **dirs, int loc
+         }
+     }
+ 
++    if(trusted && good_bin)
++        printf("ARMPORT_MESSAGE_BIN_V1 status=trusted bin=%s\n", persistfilepath);
++
+     // Load from the actual files?
+     if(!good_bin)
+     {
+         if(handle_files)
+         {
++            // ArmPort: the trusted path listed nothing; loading the text files needs the list.
++            if(trusted)
++                msGetDirFilesList(&dirfiles,dirs);
++
+             // it looks like we're doing this the slow way
+             initMessageStore(store, locid, idPrepend);
+ 

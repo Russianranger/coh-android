@@ -233,6 +233,26 @@ class PrivateFXInstallTests(ActualFXDonor):
         self.assertEqual(digest((game/'data/bin/fxinfo.bin').read_bytes()),ORIGINAL_PIN)
         self.native_verifier.assert_not_called()
 
+    def test_each_owned_session_server_tree_installs_and_no_other_name_does(self):
+        # Thor 0.13.59: the shared tree for every other static zone (Mercy Island
+        # first) was refused here, so its zone never started.
+        session = 'local-login-server-' + '1' * 32
+        for suffix in ('-atlas-park', '-kings-row', '-zones'):
+            with self.subTest(suffix=suffix):
+                runtime = self.runtime.rename(self.root / (session + suffix))
+                self.runtime, self.binary, self.target = runtime, runtime / 'MapServer.exe', runtime / fx.TARGET
+                self.assertEqual(self.install()['status'], 'installed_verified_server_fx_projection')
+                self.assertEqual(digest(self.target.read_bytes()), PROJECTED_PIN)
+                self.target.unlink()
+        for name in (session + '-zone', session + '-zones-2', session + '-mercy-island',
+                     'local-login-server-' + '1' * 31 + '-zones', 'local-login-server-' + 'A' * 32 + '-zones'):
+            with self.subTest(name=name):
+                runtime = self.runtime.rename(self.root / name)
+                self.runtime, self.binary, self.target = runtime, runtime / 'MapServer.exe', runtime / fx.TARGET
+                with self.assertRaisesRegex(ValueError, 'server namespace'):
+                    self.install()
+                self.assertFalse(self.target.exists())
+
     def test_empty_interrupted_private_bin_is_preserved_for_native_fallback(self):
         self.target.write_bytes(b'')
         before = self.target.stat()

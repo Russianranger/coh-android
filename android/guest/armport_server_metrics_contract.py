@@ -25,6 +25,51 @@ DATA = 'd51533ec8e6a9cf726b9214968077a05fdcf19f3'
 PATCH = '5656eb55d3dcc7cb45ee7760a9befbf2d08bdae90e72dbd678eda6662bca085f'
 RETAINED_MAP = '52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb'
 THOR_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
+# Opt-in ARMPORT_TRUSTED_BINS switch (patch 0120), off unless the guest sets it.
+TRUSTED_PATCH = '906433c1e6266f9ee4e6fa41e426676bdde45c9efc9df26dddadfbc2e34f6779'
+TEXTPARSER = 'libs/UtilitiesLib/src/utils/textparser.c'
+# 0.13.75: the same switch for bin/defnames.bin (no object_library tree scan).
+OBJECT_LIBRARY_PATCH = '501b4a1f2ed0fed7e7c65b907b79f380b9e8c28a296c2fefd6c9bbe09a4ad930'
+GROUPFILELIB = 'Common/group/groupfilelib.c'
+# 0.13.75: opt-in ARMPORT_PHYSX_CACHE (patches/mapserver-physx-cache): cooked collision
+# meshes are read back at a later start instead of cooked again.
+PHYSX_PATCH = '5f75cfbca88cccd12d6e7fa8417369364b89da768e5722e82c378006b1429092'
+PHYSX_HEADER = 'Common/NovodeX/armport_physx_cache.h'
+# 0.13.77: the trusted-bin switch for what a start reads ahead (no Defs or Menu tree
+# read-ahead; prepared message bins without the listing of their source folders).
+START_TREES_PATCH = '8938c02ae55b4f7cbf17c94615fa84df71281a7560d6ed46289cb56c8db07bcb'
+INITCOMMON = 'Common/gameComm/initCommon.c'
+MESSAGESTORE = 'libs/UtilitiesLib/src/language/MessageStore.c'
+# 0.13.77: where "loading map" spends its time, with the metrics variable (measurement only).
+LOAD_PROFILE_PATCH = '8de8c69b4ba6115a6b74bb08627e702306d96f18eb99849bdae742b83f312cf9'
+LOAD_PROFILE_HEADER = 'Common/group/armport_map_load_profile.h'
+LOAD_PROFILE_SOURCES = ('Common/group/group.c', 'Common/group/groupgrid.c', 'MapServer/src/group/groupnetdb.c')
+# 0.13.78: the trusted-bin switch for the bounds file of each loaded library file (not read back).
+BOUNDS_PATCH = '5fb615789a34e6df0c2fee2b203fb60c47571af32b2571838375be865357d430'
+# Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
+# the guest sets the variable: shared loading first, then a wait for the map id and cookie.
+SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
+SPARE_HEADER = 'MapServer/src/svr/armport_spare_server.h'
+GAME_ARCHIVE = 'game-package.tar.gz'
+# 0.13.52: an APK may carry the admitted Thor metrics server (with the trusted
+# bins switch) as a second archive beside the unchanged device-proven one. The
+# guest uses it only when the launch option asks for it.
+OPTION = 'armport_server_option'
+OPTION_ARCHIVE = 'game-package-trusted.tar.gz'
+OPTION_REQUEST = 'COH_TRUSTED_BINS'
+
+
+def option_record():
+    return {'format': 1, 'archive': OPTION_ARCHIVE, 'default_archive': GAME_ARCHIVE,
+            'request_environment': OPTION_REQUEST, 'default_selected': False}
+
+
+def admitted_archive_name(runtime):
+    """The archive the runtime binding pins: the option archive when offered."""
+    if OPTION not in runtime:
+        return GAME_ARCHIVE
+    require(canonical(runtime[OPTION]) == canonical(option_record()), 'Server option record differs')
+    return OPTION_ARCHIVE
 
 
 def require(condition, message):
@@ -144,8 +189,12 @@ def load_binding():
     value = parse(raw)
     build, previous, report = validate_binding(value)
     runtime = parse(read_file(ASSETS / 'runtime-manifest.json'))
+    archive = admitted_archive_name(runtime)
+    # The option is only for the Thor lineage with the reviewed switch.
+    require(archive == GAME_ARCHIVE or (build['variant'] == 'thor_certified_startup' and parser_changed(build)),
+            'Server option requires the Thor server with the trusted bins switch')
     require(runtime.get('files', {}).get(BINDING) == pin(raw)
-            and runtime['files'].get('game-package.tar.gz') == value['game_archive']
+            and runtime['files'].get(archive) == value['game_archive']
             and runtime.get('repository_commit') == build['repository_commit']
             and canonical(runtime.get(WRAPPER)) == canonical(summary(value)),
             'Metrics binding differs from the authenticated runtime inventory')
@@ -192,6 +241,12 @@ def _authenticate(path, package):
         baseline = startup.embedded_receipt(previous)['build_input']
     require(canonical(build['build_input']['baseline_receipt']) == canonical(baseline),
             'Metrics source baseline does not match retained ancestry')
+    spare_server_changed(build)
+    object_library_changed(build)
+    physx_cache_changed(build)
+    start_trees_changed(build)
+    load_profile_changed(build)
+    bounds_files_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -202,7 +257,133 @@ def _proof(value, build, previous):
         package_receipt_sha256=digest(canonical(build)),
         source_receipt_sha256=digest(canonical(build['build_input'])),
         native_changed_source_sha256=build['build_input']['patched_sha256'],
-        parser_or_definition_sources_changed=False, gameplay_decisions_changed=False)
+        parser_or_definition_sources_changed=parser_changed(build), gameplay_decisions_changed=False)
+
+
+def parser_changed(build):
+    """True only for the reviewed default-off trusted-bin switch in textparser.c."""
+    source = build.get('build_input', {})
+    changed = TEXTPARSER in source.get('patched_sha256', {})
+    require(not changed or (source.get('trusted_bins_patch') == {
+                'path': 'patches/mapserver-trusted-bins/0001-trusted-prepared-bins.patch', 'sha256': TRUSTED_PATCH}
+            and source.get('contract', {}).get('trusted_bins', {}).get('disabled_by_default') is True),
+            'Metrics build changed the text parser outside the reviewed trusted-bin switch')
+    return changed
+
+
+def object_library_changed(build):
+    """True only for the reviewed default-off trusted defnames.bin switch in groupfilelib.c."""
+    source = build.get('build_input', {})
+    changed = GROUPFILELIB in source.get('patched_sha256', {})
+    require(not changed or (source.get('object_library_patch') == {
+                'path': 'patches/mapserver-trusted-bins/0002-trusted-object-library-bin.patch',
+                'sha256': OBJECT_LIBRARY_PATCH}
+            and source.get('contract', {}).get('trusted_object_library', {}).get('disabled_by_default') is True
+            and source['contract']['trusted_object_library'].get('gameplay_decisions_changed') is False),
+            'Metrics build changed the object library loader outside the reviewed trusted-bin switch')
+    return changed
+
+
+def physx_cache_changed(build):
+    """True only for the reviewed default-off cooked mesh cache layer."""
+    source = build.get('build_input', {})
+    changed = PHYSX_HEADER in source.get('patched_sha256', {})
+    require(not changed or (source.get('physx_cache_patch') == {
+                'path': 'patches/mapserver-physx-cache/0001-cooked-mesh-cache.patch', 'sha256': PHYSX_PATCH}
+            and source.get('contract', {}).get('physx_cache', {}).get('disabled_by_default') is True
+            and source['contract']['physx_cache'].get('gameplay_decisions_changed') is False),
+            'Metrics build changed PhysX mesh loading outside the reviewed cooked mesh cache layer')
+    return changed
+
+
+def start_trees_changed(build):
+    """True only for the reviewed default-off start tree and message bin switch."""
+    source = build.get('build_input', {})
+    patched = source.get('patched_sha256', {})
+    changed = INITCOMMON in patched or MESSAGESTORE in patched
+    contract = source.get('contract', {})
+    require(not changed or (INITCOMMON in patched and MESSAGESTORE in patched
+            and source.get('start_trees_patch') == {
+                'path': 'patches/mapserver-trusted-bins/0003-trusted-start-trees.patch',
+                'sha256': START_TREES_PATCH}
+            and all(contract.get(name, {}).get('disabled_by_default') is True
+                    and contract[name].get('gameplay_decisions_changed') is False
+                    and contract[name].get('environment_variable') == 'ARMPORT_TRUSTED_BINS'
+                    for name in ('trusted_start_trees', 'trusted_message_bins'))),
+            'Metrics build changed start folder loading outside the reviewed trusted-bin switch')
+    return changed
+
+
+def load_profile_changed(build):
+    """True only for the reviewed measurement-only map load profile."""
+    source = build.get('build_input', {})
+    patched = source.get('patched_sha256', {})
+    names = (LOAD_PROFILE_HEADER,) + LOAD_PROFILE_SOURCES
+    changed = any(name in patched for name in names)
+    entry = source.get('contract', {}).get('map_load_profile', {})
+    require(not changed or (all(name in patched for name in names)
+            and source.get('load_profile_patch') == {
+                'path': 'patches/mapserver-load-profile/0001-map-load-profile.patch',
+                'sha256': LOAD_PROFILE_PATCH}
+            and entry.get('disabled_by_default') is True and entry.get('measurement_only') is True
+            and entry.get('gameplay_decisions_changed') is False),
+            'Metrics build changed map loading outside the reviewed load profile')
+    return changed
+
+
+def bounds_files_changed(build):
+    """True only for the reviewed default-off trusted bounds file switch in groupfilelib.c."""
+    source = build.get('build_input', {})
+    entry = source.get('contract', {}).get('trusted_bounds_files')
+    changed = 'bounds_files_patch' in source or entry is not None
+    require(not changed or (GROUPFILELIB in source.get('patched_sha256', {})
+            and source.get('bounds_files_patch') == {
+                'path': 'patches/mapserver-trusted-bins/0004-trusted-bounds-files.patch', 'sha256': BOUNDS_PATCH}
+            and isinstance(entry, dict) and entry.get('disabled_by_default') is True
+            and entry.get('environment_variable') == 'ARMPORT_TRUSTED_BINS'
+            and entry.get('gameplay_decisions_changed') is False
+            and object_library_changed(build)),
+            'Metrics build changed library bounds loading outside the reviewed trusted-bin switch')
+    return changed
+
+
+def physx_cache_available():
+    """Whether the admitted metrics MapServer can read cooked meshes back."""
+    try:
+        _, build, _, _ = load_binding()
+        return physx_cache_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def spare_server_changed(build):
+    """True only for the reviewed default-off early zone server layer."""
+    source = build.get('build_input', {})
+    changed = SPARE_HEADER in source.get('patched_sha256', {})
+    require(not changed or (source.get('spare_server_patch') == {
+                'path': 'patches/mapserver-zone-travel/0001-spare-zone-server.patch', 'sha256': SPARE_PATCH}
+            and source.get('contract', {}).get('spare_server', {}).get('disabled_by_default') is True
+            and source['contract']['spare_server'].get('gameplay_decisions_changed') is False),
+            'Metrics build changed MapServer startup outside the reviewed early zone server layer')
+    return changed
+
+
+def spare_server_available():
+    """Whether the admitted metrics MapServer can wait for its map id and cookie."""
+    try:
+        _, build, _, _ = load_binding()
+        return spare_server_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def trusted_bins_available():
+    """Whether the admitted metrics MapServer carries the opt-in switch."""
+    try:
+        _, build, _, _ = load_binding()
+        return parser_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def verified_previous(path, package):

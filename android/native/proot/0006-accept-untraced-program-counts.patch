@@ -1,0 +1,241 @@
+diff --git a/src/syscall/seccomp.c b/src/syscall/seccomp.c
+index c4690b0..649a96d 100644
+--- a/src/syscall/seccomp.c
++++ b/src/syscall/seccomp.c
+@@ -166,6 +166,23 @@ static bool getsockopt_peercred_only(void)
+ 	return value != NULL && value[0] == '1' && value[1] == '\0';
+ }
+ 
++/**
++ * PROOT_ACCEPT_UNTRACED=1: do not trace accept(2) and accept4(2).
++ *
++ * PRoot stops them only to rewrite, at exit, the path in the peer
++ * address of a Unix socket (a client that bound its socket to a path
++ * under a binding or the guest rootfs).  A server that polls its
++ * listening sockets pays two tracer round trips per call for that:
++ * a Wine prefix with two game servers made 1,340 such calls a second.
++ * With the switch the peer's path is returned as the kernel holds it,
++ * that is, as a host path.
++ */
++static bool accept_untraced(void)
++{
++	const char *value = getenv("PROOT_ACCEPT_UNTRACED");
++	return value != NULL && value[0] == '1' && value[1] == '\0';
++}
++
+ /**
+  * Append to @program->filter the statements required to notify PRoot
+  * about the given @syscall (getsockopt) with the given @flag, only for
+@@ -328,6 +345,7 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 	struct sock_fprog program = { .len = 0, .filter = NULL };
+ 	const bool commands_only = ioctl_commands_only();
+ 	const bool peercred_only = getsockopt_peercred_only();
++	const bool no_accept = accept_untraced();
+ 	size_t nb_traced_syscalls;
+ 	size_t nb_extra_statements;
+ 	size_t i, j, k;
+@@ -350,6 +368,8 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 				syscall = detranslate_sysnum(seccomp_archs[i].abis[j], sysnums[k].value);
+ 				if (syscall == SYSCALL_AVOIDER)
+ 					continue;
++				if (no_accept && (sysnums[k].value == PR_accept || sysnums[k].value == PR_accept4))
++					continue;
+ 				nb_traced_syscalls++;
+ 				if (commands_only && sysnums[k].value == PR_ioctl)
+ 					nb_extra_statements += LENGTH_TRACE_IOCTL - LENGTH_TRACE_SYSCALL;
+@@ -370,6 +390,8 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 				syscall = detranslate_sysnum(seccomp_archs[i].abis[j], sysnums[k].value);
+ 				if (syscall == SYSCALL_AVOIDER)
+ 					continue;
++				if (no_accept && (sysnums[k].value == PR_accept || sysnums[k].value == PR_accept4))
++					continue;
+ 
+ 				/* Filter: trace if handled syscall */
+ 				if (commands_only && sysnums[k].value == PR_ioctl)
+diff --git a/src/syscall/stop_counts.h b/src/syscall/stop_counts.h
+index 8fb7b34..c83773d 100644
+--- a/src/syscall/stop_counts.h
++++ b/src/syscall/stop_counts.h
+@@ -15,9 +15,19 @@
+  *	PROOT_STOP_COUNTS_V1 seconds=<since first stop> stops=<total>
+  *	<syscall number> <enter stops> <exit stops>
+  *	...
++ *	P <thread name> <syscall number> <stops>
++ *	...
+  *
+  * Numbers are those of the tracee's ABI as the kernel reported them;
+  * numbers at or above STOP_COUNTS_SYSCALLS share the last row.
++ *
++ * The "P" rows say whose stops they are: the name is the stopped
++ * thread's /proc/<tid>/comm, read when the thread is first seen and
++ * again every 256 of its stops (a program names its threads, and an
++ * exec renames them).  Only pairs with at least one stop in 2,000 are
++ * written.  The tables are fixed in size: a name past the 64th counts
++ * as "(other)", a pair that finds no slot is counted nowhere but in
++ * the syscall rows.
+  */
+ 
+ #ifndef STOP_COUNTS_H
+@@ -30,9 +40,16 @@
+ #include <stdlib.h>   /* getenv(3), atexit(3), */
+ #include <string.h>   /* strlen(3), */
+ #include <time.h>     /* clock_gettime(2), */
++#include <sys/types.h> /* pid_t, */
++#include <fcntl.h>    /* open(2), */
++#include <unistd.h>   /* read(2), close(2), */
+ 
+ #define STOP_COUNTS_SYSCALLS 512
+ #define STOP_COUNTS_PERIOD_SECONDS 10
++#define STOP_COUNTS_PROGRAMS 64
++#define STOP_COUNTS_THREADS 1024
++#define STOP_COUNTS_PAIRS 4096
++#define STOP_COUNTS_PROBES 16
+ 
+ static struct {
+ 	int state;	/* 0: not looked up yet, 1: counting, -1: off.  */
+@@ -43,8 +60,95 @@ static struct {
+ 	uint64_t total;
+ 	time_t started;
+ 	time_t written;
++	int nb_programs;
++	char programs[STOP_COUNTS_PROGRAMS][16];
++	struct {
++		pid_t pid;
++		unsigned char program;
++		unsigned char age;
++	} threads[STOP_COUNTS_THREADS];
++	struct {
++		uint32_t key;	/* (program + 1) << 16 | syscall row; 0: free.  */
++		uint64_t stops;
++	} pairs[STOP_COUNTS_PAIRS];
+ } stop_counts;
+ 
++/**
++ * The row in stop_counts.programs of the name of thread @pid.
++ */
++static inline unsigned int stop_counts_program(pid_t pid)
++{
++	unsigned int slot = (unsigned int) pid % STOP_COUNTS_THREADS;
++	char path[40];
++	char name[16];
++	ssize_t length;
++	int fd;
++	int i;
++
++	if (stop_counts.threads[slot].pid == pid && ++stop_counts.threads[slot].age != 0)
++		return stop_counts.threads[slot].program;
++
++	snprintf(path, sizeof(path), "/proc/%d/comm", (int) pid);
++	length = -1;
++	fd = open(path, O_RDONLY | O_CLOEXEC);
++	if (fd >= 0) {
++		length = read(fd, name, sizeof(name) - 1);
++		close(fd);
++	}
++	if (length <= 0) {
++		memcpy(name, "(unknown)", 10);
++		length = 9;
++	}
++	name[length] = '\0';
++	for (i = 0; i < length; i++) {
++		if (name[i] == '\n')
++			name[i] = '\0';
++		else if (name[i] <= ' ' || name[i] > '~')
++			name[i] = '_';
++	}
++
++	for (i = 0; i < stop_counts.nb_programs; i++) {
++		if (strcmp(stop_counts.programs[i], name) == 0)
++			break;
++	}
++	if (i == stop_counts.nb_programs) {
++		if (i == STOP_COUNTS_PROGRAMS - 1)
++			memcpy(name, "(other)", 8);
++		if (i < STOP_COUNTS_PROGRAMS) {
++			memcpy(stop_counts.programs[i], name, sizeof(name));
++			stop_counts.nb_programs++;
++		}
++		else
++			i = STOP_COUNTS_PROGRAMS - 1;
++	}
++
++	stop_counts.threads[slot].pid = pid;
++	stop_counts.threads[slot].program = (unsigned char) i;
++	stop_counts.threads[slot].age = 0;
++	return (unsigned int) i;
++}
++
++/**
++ * Count one stop of the thread @pid at syscall row @index.
++ */
++static inline void stop_counts_pair(pid_t pid, size_t index)
++{
++	uint32_t key = ((uint32_t) (stop_counts_program(pid) + 1) << 16) | (uint32_t) index;
++	uint32_t slot = (key * 2654435761u) >> 20;	/* 12 bits: STOP_COUNTS_PAIRS */
++	int probe;
++
++	for (probe = 0; probe < STOP_COUNTS_PROBES; probe++) {
++		uint32_t at = (slot + (uint32_t) probe) % STOP_COUNTS_PAIRS;
++
++		if (stop_counts.pairs[at].key == 0)
++			stop_counts.pairs[at].key = key;
++		if (stop_counts.pairs[at].key == key) {
++			stop_counts.pairs[at].stops++;
++			return;
++		}
++	}
++}
++
+ static inline time_t stop_counts_now(void)
+ {
+ 	struct timespec now;
+@@ -76,16 +180,25 @@ static inline void stop_counts_write(void)
+ 			(unsigned long long) stop_counts.enter[i],
+ 			(unsigned long long) stop_counts.exit[i]);
+ 	}
++	for (i = 0; i < STOP_COUNTS_PAIRS; i++) {
++		uint32_t key = stop_counts.pairs[i].key;
++
++		if (key == 0 || stop_counts.pairs[i].stops * 2000 < stop_counts.total)
++			continue;
++		fprintf(file, "P %s %u %llu\n", stop_counts.programs[(key >> 16) - 1],
++			(unsigned int) (key & 0xffff),
++			(unsigned long long) stop_counts.pairs[i].stops);
++	}
+ 
+ 	if (fclose(file) == 0)
+ 		(void) rename(stop_counts.temporary, stop_counts.path);
+ }
+ 
+ /**
+- * Count one translation round of syscall @number, at the enter stage
+- * if @is_enter, otherwise at the exit stage.
++ * Count one translation round of syscall @number made by the thread
++ * @pid, at the enter stage if @is_enter, otherwise at the exit stage.
+  */
+-static inline void stop_counts_note(unsigned long number, bool is_enter)
++static inline void stop_counts_note(pid_t pid, unsigned long number, bool is_enter)
+ {
+ 	size_t index;
+ 
+@@ -111,6 +224,7 @@ static inline void stop_counts_note(unsigned long number, bool is_enter)
+ 		stop_counts.enter[index]++;
+ 	else
+ 		stop_counts.exit[index]++;
++	stop_counts_pair(pid, index);
+ 
+ 	/* Look at the clock once in 256 stops only.  */
+ 	if ((++stop_counts.total & 255) == 0) {
+diff --git a/src/syscall/syscall.c b/src/syscall/syscall.c
+index 778d6fb..c2891de 100644
+--- a/src/syscall/syscall.c
++++ b/src/syscall/syscall.c
+@@ -151,7 +151,7 @@ void translate_syscall(Tracee *tracee)
+ 
+ 	/* PROOT_STOP_COUNTS: the number the tracee asked for; at the exit
+ 	 * stage the current one may be PRoot's replacement.  */
+-	stop_counts_note(peek_reg(tracee, is_enter_stage && tracee->chain.syscalls == NULL
++	stop_counts_note(tracee->pid, peek_reg(tracee, is_enter_stage && tracee->chain.syscalls == NULL
+ 					  ? CURRENT : ORIGINAL, SYSARG_NUM), is_enter_stage);
+ 
+ 	int suppressed_syscall_status = 0;

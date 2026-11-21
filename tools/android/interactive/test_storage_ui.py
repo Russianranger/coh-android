@@ -221,7 +221,8 @@ class StorageUiTests(unittest.TestCase):
             'public static synchronized Object acquireReportExport(',
             'private static Object acquireIdleStorage(',
             'public static synchronized void releaseStorage(',
-            'public static synchronized boolean operationInProgress(')]
+            'public static synchronized boolean operationInProgress(',
+            'static int repairRuntimeMountPoints(')]
         service_methods = [production_method(service, signature) for signature in (
             'public Object beginReportExport(', 'public void endReportExport(',
             'private String currentManifestSha(', 'private File writeStorageReport(',

@@ -1,0 +1,115 @@
+diff --git a/Game/src/clientcomm/clientcomm.c b/Game/src/clientcomm/clientcomm.c
+index d45702f..6c7c0f2 100644
+--- a/Game/src/clientcomm/clientcomm.c
++++ b/Game/src/clientcomm/clientcomm.c
+@@ -173,8 +173,19 @@ int commConnected()
+     return comm_link.socket > 0;
+ }
+ 
++// ArmPort: when this client last asked to quit (timeGetTime milliseconds,
++// 0 = never). checkLogoutProgress keeps a logout through keys pressed before it.
++U32 g_armport_quit_request_ms;
++
++void armportNoteQuitRequest(int abort_quit)
++{
++    if (!abort_quit)
++        g_armport_quit_request_ms = timeGetTime();
++}
++
+ void commSendQuitGame(int abort_quit)
+ {
++    armportNoteQuitRequest(abort_quit);
+     //For the editor : if you haven't hit save lately. Just pop a warning
+     //if( abort_quit == 0 && fileIsDevelopmentMode() )
+     //{
+diff --git a/Game/src/game.c b/Game/src/game.c
+index df888b8..965b0f0 100644
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -977,6 +977,23 @@ void checkOddball()
+ 
+ #include "UI/uiUtil.h"
+ #include "UI/sprite/sprite_text.h"
++// ArmPort: a key pressed before this client asked to quit is not a request to
++// stay. The Enter that sends /quittologin reaches the chat window as WM_KEYDOWN
++// in one frame, and its DirectInput edge (queued by Wine's keyboard hook during
++// that frame's message pump) in the next. At a few frames per second the
++// server's logout timer is back by then, and the stock check below cancelled the
++// logout it had just asked for (CI: client left in the zone, no save).
++static int armportKeyPressedBeforeQuit(int key)
++{
++    extern U32 g_armport_quit_request_ms;
++    S32 before = (S32)(g_armport_quit_request_ms - inpEdgeTime(key));
++
++    if (!g_armport_quit_request_ms || before < 0)
++        return 0;
++    printf("ARMPORT_LOGOUT_KEY_V1 key=%d pressed_ms_before_quit=%d logout_kept=1\n", key, before);
++    return 1;
++}
++
+ void checkLogoutProgress()
+ {
+     Entity *p = playerPtr();
+@@ -1043,7 +1060,7 @@ void checkLogoutProgress()
+         {
+             for(i=0;i<INP_KEY_LAST;i++)
+             {
+-                if (inpEdge(i))
++                if (inpEdge(i) && !armportKeyPressedBeforeQuit(i))
+                 {
+                     printf("aborted by key: %d\n",i);
+                     commSendQuitGame(1);
+diff --git a/Game/src/win/input.c b/Game/src/win/input.c
+index e90b138..797ab94 100644
+--- a/Game/src/win/input.c
++++ b/Game/src/win/input.c
+@@ -32,6 +32,9 @@
+ #include <dinput.h>
+ 
+ char    inp_levels[256], inp_edges[256];
++// ArmPort: the DirectInput time (milliseconds, the timeGetTime clock) of the
++// press behind each key's current edge; see inpEdgeTime.
++static U32 inp_edge_times[256];
+ KeyInput textKeyboardBuffer[64];
+ U32 gDoubleClickTime = 0;
+ 
+@@ -374,6 +377,15 @@ int inpEdge(int idx)
+     }
+ }
+ 
++// ArmPort: when the press behind key idx's current edge happened. Wine's
++// DirectInput keyboard hook queues a press while the window messages are
++// pumped (windowProcessMessages, after this frame's inpUpdate), so the edge can
++// come one frame after the WM_KEYDOWN that the chat window already acted on.
++U32 inpEdgeTime(int idx)
++{
++    return (idx >= 0 && idx < 256) ? inp_edge_times[idx] : 0;
++}
++
+ bool inpEdgeNoTextEntry(int idx)
+ {
+     return (uiNoOneHasFocus() && inpEdge(idx));
+@@ -1436,9 +1448,11 @@ void inpUpdateKeyEx(int keyIndex, int keyState, int timeStamp, int x, int y )
+         if(!inp_levels[keyIndex])
+         {
+             inp_edges[keyIndex] = 1;
++            inp_edge_times[keyIndex] = timeStamp;
+         } else if (just_lost_focus_debug) {
+             // We missed the up event because of our debugger hack
+             inp_edges[keyIndex] = 1;
++            inp_edge_times[keyIndex] = timeStamp;
+         }
+ 
+         if(inp_levels[keyIndex] < 127)
+diff --git a/Game/src/win/input.h b/Game/src/win/input.h
+index a575524..4344779 100644
+--- a/Game/src/win/input.h
++++ b/Game/src/win/input.h
+@@ -347,6 +347,7 @@ int InputStartup();
+ void InputShutdown();
+ int inpLevel(int idx);
+ int inpEdge(int idx);
++U32 inpEdgeTime(int idx);
+ void inpKeyAddBuf(KeyInputType type, int c, int lparam, KeyInputAttrib attrib);
+ KeyInput* inpGetKeyBuf();
+ void inpGetNextKey(KeyInput** input);

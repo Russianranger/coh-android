@@ -37,6 +37,100 @@ emulated SysV IPC namespace.
   `string.h` declaration and replace GNU-awk-specific symbol parsing with Python.
   The generated loader helper is GPL-2.0-or-later. No optional acceleration or
   graphics patches are included.
+- `0004-ioctl-command-filter.patch` (2026-11-11; in `PATCH_NAMES` since
+  0.13.69). With `PROOT_IOCTL_COMMANDS_ONLY=1` the seccomp filter notifies the
+  tracer about `ioctl(2)` only for the commands `enter.c` and `exit.c` act on
+  (SIOCGIFINDEX, TCSETSF, TCGETS2, TCSETS2, TCSETSW2, TCSETSF2, FICLONE); every
+  other ioctl runs untraced. Android builds of this PRoot otherwise trace every
+  ioctl on entry and exit, which for this game includes each GPU (KGSL) ioctl
+  of the renderer. Without the variable nothing changes. Measured with a local
+  x86-64 build of the pinned tree and patches 0001-0004 (2026-11-11, the app's
+  options `--link2symlink --kill-on-exit --sysvipc -i 1000:1000`): FIONREAD
+  0.16 microseconds per call with or without the variable, TCGETS2 0.13
+  without it and 49.8 with it (two tracer stops), so a stop costs about 50
+  microseconds there and an unlisted ioctl costs nothing extra. Terminal
+  attributes, SIOCGIFINDEX and hard links behaved the same with and without.
+  `tools/android/test_proot_ioctl_filter.py` runs the filter statements
+  through a BPF interpreter on the host. Where it is built: the Linux PRoot of
+  armport-app-runtime (input `proot_ioctl_filter` sets the variable and CI
+  then requires the guest's probe to read `listed_commands_only`), and, with
+  the Thor APK workflow's input `proot_ioctl`, an Android build that the APK
+  carries as a second program (`lib/arm64-v8a/libproot-ioctl.so` and its
+  loader) beside the unchanged 0.13.36 one, with its receipt, licence files
+  and corresponding source under `assets/proot-ioctl/`. The app starts it only
+  with the launch option "Graphics calls skip the system-call monitor".
+  GPL-2.0-or-later, as PRoot.
+- `0005-stop-counts-getsockopt-filter.patch` (2026-11-11; in `PATCH_NAMES`
+  since 0.13.70). Applies on top of 0001-0004. Two
+  switches, both off unless set: `PROOT_STOP_COUNTS=<file>` counts PRoot's
+  translation rounds per system call number (enter and exit apart) and
+  rewrites the file about every ten seconds and at exit;
+  `PROOT_GETSOCKOPT_PEERCRED_ONLY=1` stops `getsockopt` only for
+  `SOL_SOCKET`/`SO_PEERCRED`, the one answer the fake-id extension rewrites.
+  Local x86-64 build with the app's PRoot options: other options 0.3-0.4
+  microseconds per call with the switch, 48-51 without; `SO_PEERCRED` still
+  returns the fake ids (1000:1000) and stops as before. Not yet compiled for
+  Android or ARM64. Why: CI run 43091944698 (`armport/PERFORMANCE-PATH.md`,
+  "What PRoot intercepts").
+- `0006-accept-untraced-program-counts.patch` (2026-11-13; in `PATCH_NAMES`
+  since 0.13.71). Applies on top of 0001-0005.
+  `PROOT_ACCEPT_UNTRACED=1` leaves `accept` and `accept4` out of the filter:
+  PRoot stops them only to rewrite the path of a Unix-socket peer that bound
+  its socket under a binding, and with the switch that path comes back as the
+  host path (checked locally: `/opt/gb/.../c` without, the host folder with).
+  An empty non-blocking `accept` costs 2.4-4 microseconds with it and 52-56
+  without (local x86-64). The stop-count file gains `P <thread name> <call
+  number> <stops>` rows. Why: CI run 43363707492 counted 14.2 million stops
+  in a 912 s reopen session, 17 % of them `accept` (1,340 calls a second).
+- `0007-netlink-high-fds-socket-filter.patch` (2026-11-17; in `PATCH_NAMES`
+  since 0.13.73). Applies on top of 0001-0006. PRoot asks for `sendto`,
+  `recvfrom` and `recvmsg` only to serve rtnetlink sockets (the AF_UNIX
+  sockets it substitutes where the host refuses AF_NETLINK, and real ones
+  whose requests it acks for a tracee that believes it owns a network
+  namespace), yet every send and receive of every socket stops for that
+  look-up. With `PROOT_NETLINK_HIGH_FDS=1` each NETLINK_ROUTE socket is
+  duplicated to a descriptor number at or above 960 before `socket` returns
+  (chained `fcntl(F_DUPFD or F_DUPFD_CLOEXEC, 960)` and `close` of the low
+  number; the chain mechanism gains a result handler), and the filter traces
+  the three calls only for descriptors from 960, for the default ABI. If no
+  such number is free (soft `RLIMIT_NOFILE` below 961) the socket is refused
+  with EMFILE. `sendmsg` and `close` are traced as before. Not applied with
+  `-p` (port switch asks for these calls itself). The stop-count file's first
+  line gains `fd_stats`, `moved_netlink_fds` and `failed_netlink_moves`.
+  Why: Thor 0.13.72 (20261117-130723, -131522, -132616) counted 6.4 to 11.2
+  million stops per launch, 38-49 % of them these three calls, 22-32 % from
+  Xtigervnc sending frames. Local x86-64 with the app's options: a `send` and
+  `recv` pair 0.9 microseconds with the switch, 52-61 without; netlink
+  look-ups (`if_nameindex`, `getifaddrs`) return the same answers on the real
+  and on the substituted path. Not yet run on ARM64 or on a device.
+  `tools/android/test_proot_socket_fd_filter.py` runs the statements through
+  a BPF interpreter on the host.
+- `0008-casefold-missing-components.patch` (2026-11-18; in `PATCH_NAMES`
+  for 0.13.75). Applies on top of 0001-0007. Wine gives Windows programs a
+  case-insensitive file system by stat-ing the whole Unix path as written
+  and, when that fails, walking it one component at a time and reading a
+  directory wherever a component is missing; under PRoot each of those stats
+  is two stops. With `PROOT_CASEFOLD_PROGRAMS=<name>[:<name>...]` PRoot,
+  while it translates a path for a tracee whose executable has one of those
+  file names, replaces a component that does not exist as written by the
+  entry of the same directory that differs only in ASCII letter case
+  (`src/path/casefold.c`, called from `substitute_binding_stat` in
+  `canon.c` after its `lstat` fails with ENOENT). A component that exists as
+  written is never changed; a name with no such entry fails as before; other
+  programs' paths are untouched. A directory's names are read once and
+  again when its modification time changes (256 directories kept, a
+  directory above 16,384 entries is not read). The stop-count file's first
+  line gains `casefold_replaced`, `casefold_absent` and `casefold_listed`.
+  Why: Thor 0.13.73 (20261118-170550) counted 357,000 `newfstatat` calls in
+  one zone server start, about 13 per file opened, and CI run 44367156833's
+  sampler found more than half of them on the folders above the server's
+  own. Local x86-64: `stat`, `open`, `lstat`, `rename`, `unlink` and `chdir`
+  reach `Data/Scripts.loc/SpawnDefs/Generic_V0.spawndef` under any letter
+  case with the switch and fail with ENOENT without it or for a program that
+  is not named; opening `A.BIN` for append where `a.bin` exists opens
+  `a.bin`; a new name is created as written. Not yet run on ARM64, under
+  Wine or on a device. `tools/android/test_proot_casefold.py` compiles
+  `casefold.c` on the host and runs it on a folder tree.
 - The Android talloc cross answers follow the same pinned TRASC recipe, derived
   there from the Termux talloc build recipe. Android NDK **27.2.12479018**, API 26,
   and 16 KB ELF segment alignment are explicit build inputs. Linux CI uses the

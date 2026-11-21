@@ -149,6 +149,25 @@ class SourceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'receipt differs'):
                 source.validate_receipt(changed, UPSTREAM_ROOT)
 
+    def test_build_workflow_checks_out_every_patch_the_stage_reads(self):
+        # Build 44413294971: the stage job's sparse checkout had no patches/mapserver-physx-cache
+        # and failed after the hour-long server run. Both metrics jobs must check out every patch.
+        patches = [getattr(source, name) for name in dir(source)
+                   if name == 'PATCH' or name.endswith('_PATCH')]
+        self.assertGreaterEqual(len(patches), 5)
+        workflow = (ROOT / '.github/workflows/armport-build.yml').read_text()
+        jobs = [workflow[workflow.index(f'\n  {job}:\n'):] for job in
+                ('server-metrics-source', 'server-metrics-native')]
+        for job in jobs:
+            start = job.index('sparse-checkout: |')
+            listed = []
+            for line in job[start:].splitlines()[1:]:
+                if not line.startswith('            /'):
+                    break
+                listed.append(line.strip().lstrip('/'))
+            for patch in patches:
+                self.assertTrue(any(patch.startswith(entry) for entry in listed), (patch, listed))
+
     def test_published_host_report_binds_exact_source_and_host_scope(self):
         path = ROOT / 'armport/evidence/mapserver-startup-retained-host-checks.json'
         document = json.loads(path.read_text())
@@ -172,7 +191,9 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(receipt['retained_sha256'][startup.TABLE],
                          self.startup_base['animation_certificate']['generated_table']['sha256'])
         inputs, images = source.native_images('thor_certified_startup', self.startup_base, UPSTREAM_ROOT)
-        self.assertEqual(images[source.SVR], source.patch_loop(inputs[source.SVR]))
+        self.assertEqual(images[source.SVR], source.patch_spare(source.patch_loop(inputs[source.SVR])))
+        self.assertEqual(images[source.SVR].count(b'        cmdCfgLoad();\n        armportSpareWait();\n'), 1)
+        self.assertIn(source.SPARE_HEADER, images)
         self.assertIn(b'cohMonorailInit', images[source.SVR])
         changed = copy.deepcopy(self.startup_base)
         changed['contract']['native_station_prepare_seconds'] = 600

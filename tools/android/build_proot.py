@@ -32,7 +32,27 @@ TALLOC_URL = 'https://www.samba.org/ftp/talloc/talloc-2.4.3.tar.gz'
 TALLOC_SHA256 = 'dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd'
 NDK_VERSION = '27.2.12479018'
 PATCH_NAMES = ('0001-sysvipc-memfd.patch', '0002-android-string-header.patch',
-               '0003-portable-loader-offset.patch')
+               '0003-portable-loader-offset.patch',
+               # 0.13.69: with PROOT_IOCTL_COMMANDS_ONLY=1 the filter reports ioctl only for
+               # the commands PRoot acts on. Without the variable nothing changes.
+               '0004-ioctl-command-filter.patch',
+               # 0.13.70: PROOT_STOP_COUNTS=<file> counts the stops PRoot serves per call number;
+               # PROOT_GETSOCKOPT_PEERCRED_ONLY=1 stops getsockopt only for SO_PEERCRED, the one
+               # answer the fake-id extension rewrites. Without the variables nothing changes.
+               '0005-stop-counts-getsockopt-filter.patch',
+               # 0.13.71: PROOT_ACCEPT_UNTRACED=1 leaves accept and accept4 out of the filter (CI run
+               # 43363707492: 17 % of all stops); the stop counts gain per-program rows.
+               '0006-accept-untraced-program-counts.patch',
+               # 0.13.73: PROOT_NETLINK_HIGH_FDS=1 gives rtnetlink sockets descriptor numbers from 960
+               # and stops sendto, recvfrom and recvmsg only from that number (Thor 0.13.72: 38-49 % of
+               # all stops were these three calls on other sockets). Without the variable nothing changes.
+               '0007-netlink-high-fds-socket-filter.patch',
+               # 0.13.75: PROOT_CASEFOLD_PROGRAMS=<names> replaces a missing path component by the
+               # directory entry that differs only in letter case, for programs with those file
+               # names (Wine's). Thor 0.13.73: a zone server start made 357,000 newfstatat calls,
+               # about 13 per file opened, because Wine walks a path component by component when
+               # its first stat of the whole path fails. Without the variable nothing changes.
+               '0008-casefold-missing-components.patch')
 
 
 def require(condition, message):
@@ -127,6 +147,25 @@ def prepare(work, checkout=None, talloc_archive=None):
             'Pinned PRoot lacks the required SysV IPC option')
     require('proot-sysvshm' in (proot / 'src/extension/sysvipc/sysvipc_shm.c').read_text(),
             'memfd SysV shared-memory patch missing')
+    require('PROOT_IOCTL_COMMANDS_ONLY' in (proot / 'src/syscall/seccomp.c').read_text() and
+            (proot / 'src/syscall/ioctl_filter.h').is_file(), 'ioctl command filter patch missing')
+    require('PROOT_GETSOCKOPT_PEERCRED_ONLY' in (proot / 'src/syscall/seccomp.c').read_text() and
+            (proot / 'src/syscall/getsockopt_filter.h').is_file() and
+            'stop_counts_note' in (proot / 'src/syscall/syscall.c').read_text() and
+            (proot / 'src/syscall/stop_counts.h').is_file(), 'stop counts and getsockopt filter patch missing')
+    require('PROOT_ACCEPT_UNTRACED' in (proot / 'src/syscall/seccomp.c').read_text() and
+            'stop_counts_pair' in (proot / 'src/syscall/stop_counts.h').read_text(),
+            'accept switch and program counts patch missing')
+    require('PROOT_NETLINK_HIGH_FDS' in (proot / 'src/syscall/seccomp.c').read_text() and
+            (proot / 'src/syscall/socket_fd_filter.h').is_file() and
+            'register_chained_syscall_with_result' in (proot / 'src/syscall/chain.c').read_text() and
+            'move_netlink_fd' in (proot / 'src/syscall/exit.c').read_text(),
+            'netlink descriptor and socket filter patch missing')
+    require('PROOT_CASEFOLD_PROGRAMS' in (proot / 'src/path/casefold.c').read_text() and
+            'casefold_component(host_path, component)' in (proot / 'src/path/canon.c').read_text() and
+            'path/casefold.o' in (proot / 'src/GNUmakefile').read_text() and
+            'casefold_replaced=%llu' in (proot / 'src/syscall/stop_counts.h').read_text(),
+            'case-insensitive component patch missing')
     return proot, work / 'talloc-2.4.3', sources
 
 
@@ -252,6 +291,12 @@ def main():
         'recipe_sha256': sha256(Path(__file__)),
         'android_cross_answers_sha256': sha256(PATCHES / 'talloc-android-cross-answers.txt'),
         'optional_acceleration_patch': False, 'sysvipc_memfd_patch': True,
+        'ioctl_command_filter_patch': True, 'ioctl_command_filter_switch': 'PROOT_IOCTL_COMMANDS_ONLY=1',
+        'stop_counts_patch': True, 'stop_counts_switch': 'PROOT_STOP_COUNTS=<file>',
+        'getsockopt_filter_switch': 'PROOT_GETSOCKOPT_PEERCRED_ONLY=1',
+        'accept_untraced_patch': True, 'accept_untraced_switch': 'PROOT_ACCEPT_UNTRACED=1',
+        'netlink_high_fds_patch': True, 'netlink_high_fds_switch': 'PROOT_NETLINK_HIGH_FDS=1',
+        'casefold_patch': True, 'casefold_switch': 'PROOT_CASEFOLD_PROGRAMS=<executable names>',
         'runtime_validation': 'unverified', 'status': 'source_prepared_only', 'files': {}}
     if not args.prepare_only:
         compile_sources(proot, talloc, work, args.target, tools, args.jobs)

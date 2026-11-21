@@ -266,6 +266,8 @@ import java.util.*;
 public class SaveObservationHost {
  Object finalGuestReport,characterSavedEvent,characterConnectedEvent;String session;long observedClientPid;boolean reopen;
  static Object jsonValue(Object value){return value;}boolean zoningEnabled(){return reopen;}
+ // The creation fixtures here are the legacy Atlas creation (no dynamic creation).
+ boolean characterZoning(){return zoningEnabled();}int currentCharacterMap(){return zoningEnabled()?zoning.currentMap():1;}
  static class Zoning {int map;int currentMap(){return map;}}final Zoning zoning=new Zoning();
  static Map<String,Object> map(Object... values){Map<String,Object> m=new LinkedHashMap<>();for(int i=0;i<values.length;i+=2)m.put((String)values[i],values[i+1]);return m;}
  METHODS

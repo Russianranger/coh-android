@@ -28,6 +28,7 @@ def harness():
         'private boolean performanceCommandInputAllowed(',
         'public synchronized boolean canSendPerformanceCommand(',
         'public synchronized boolean requestPerformanceCommand(',
+        'private synchronized boolean requestPerformanceCommand(',
         'private synchronized void completePerformanceCommand(',
         'private boolean gameplayInputAllowed(',
         'private boolean queueInput(String selectedSession, InputWrite action)',
@@ -93,7 +94,8 @@ public final class SidebarRuntimeHost {
   List<String> log=Collections.synchronizedList(new ArrayList<>());
   private interface InputWrite {void write(InteractiveRfbClient active,long epoch)throws IOException;}
   void recordLifecycle(String event){log.add(event);}
-  void stage(String title,String detail){}
+  final AtomicInteger staged=new AtomicInteger();
+  void stage(String title,String detail){staged.incrementAndGet();}
   void notifyInputState(){}
   Object jsonValue(Object value){return value;}
   boolean taskSaveReady(){return true;}
@@ -194,7 +196,16 @@ ACTUAL_METHODS
    }finally{blocker.countDown();r.close();}
   }
  }
- public static void main(String[] args)throws Exception {gates();dispatch(false,false);dispatch(true,false);queuedIdentity();taskEvidenceWhileCommandPending();System.out.println("PASS shipped runtime gates, queue identity, ordered release, pause cancellation, safe submission logs and native task evidence during pending commands");}
+ static void quietWorldEntryCap()throws Exception {
+  ClientRuntime r=new ClientRuntime();r.world();
+  try {
+   require(r.requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60,false));r.idle();
+   require(r.decoder.writes.equals(Arrays.asList("cap_60"))&&r.staged.get()==0&&!r.isPerformanceCommandPending());
+   require(r.requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_30));r.idle();
+   require(r.decoder.writes.equals(Arrays.asList("cap_60","cap_30"))&&r.staged.get()==1);
+  }finally{r.close();}
+ }
+ public static void main(String[] args)throws Exception {gates();dispatch(false,false);dispatch(true,false);queuedIdentity();taskEvidenceWhileCommandPending();quietWorldEntryCap();System.out.println("PASS shipped runtime gates, queue identity, ordered release, pause cancellation, safe submission logs and native task evidence during pending commands");}
 }
 '''.replace('ACTUAL_METHODS', actual).replace('ACTUAL_EVENTS', events)
 
@@ -208,6 +219,26 @@ class SidebarRuntimeTests(unittest.TestCase):
             subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',str(output),str(JAVA/'ClientInput.java'),str(JAVA/'ClientAcceptance.java'),str(ZONING_JAVA),str(source)],check=True,capture_output=True,text=True)
             result=subprocess.run(['java','-cp',str(output),'io.github.russianranger.cohclientinteractive.SidebarRuntimeHost'],check=True,capture_output=True,text=True,timeout=15)
             self.assertIn('PASS shipped runtime gates',result.stdout)
+
+    def test_world_entry_cap_is_quiet_once_per_session_and_reported(self):
+        source=(JAVA/'ClientRuntime.java').read_text()
+        ready=source.index('connectedCapturedReady = true;')
+        hook=source.index('if (gameplay60Requested && !gameplay60Queued) {',ready)
+        self.assertLess(hook-ready,2500)
+        self.assertIn('requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60, false)',source[hook:hook+300])
+        self.assertIn('gameplay60Requested=gameplay60FpsEnabled(context);gameplay60Queued=false;',source)
+        self.assertIn('.put("gameplay_60fps_requested", gameplay60Requested)',source)
+        self.assertIn('if (announce) stage("FPS command sent"',source)
+        activity=(JAVA/'ClientActivity.java').read_text()
+        self.assertIn('ClientRuntime.setGameplay60FpsEnabled(this,checked)',activity)
+        self.assertIn('gameplay60.setEnabled(idle);',activity)
+        # 0.13.69 experiment, off by default: the GPU renderer without Mesa's calling thread.
+        self.assertIn('.getBoolean("client-gl-direct", false);',source)
+        self.assertIn('glDirectRequested=glDirectEnabled(context);',source)
+        self.assertIn('"COH_CLIENT_GL_DIRECT="+(glDirectRequested?"1":"0"),',source)
+        self.assertIn('.put("client_gl_direct_requested", glDirectRequested)',source)
+        self.assertIn('glDirect.setChecked(ClientRuntime.glDirectEnabled(this));',activity)
+        self.assertIn('glDirect.setEnabled(idle);',activity)
 
 
 if __name__=='__main__':

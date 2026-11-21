@@ -1,0 +1,259 @@
+diff --git a/src/syscall/ioctl_filter.h b/src/syscall/ioctl_filter.h
+new file mode 100644
+index 0000000..52e53c9
+--- /dev/null
++++ b/src/syscall/ioctl_filter.h
+@@ -0,0 +1,81 @@
++/* -*- c-set-style: "K&R"; c-basic-offset: 8 -*-
++ *
++ * Trace ioctl(2) only for the commands PRoot rewrites or answers.
++ *
++ * PRoot's Android builds trace every ioctl(2), on entry and on exit, to
++ * fix up a few terminal commands, SIOCGIFINDEX and FICLONE (enter.c,
++ * exit.c).  A guest that renders through a GPU driver, or polls
++ * sockets and devices, pays two tracer round trips for each of its
++ * other ioctls and gains nothing.  With PROOT_IOCTL_COMMANDS_ONLY=1
++ * the seccomp filter compares the command (the second argument) and
++ * notifies the tracer only for the commands listed here; every other
++ * ioctl runs untraced, exactly as it does for the kernel.
++ *
++ * This file is self-contained (no talloc, no PRoot types) so that the
++ * statements can be checked on any host by a test harness.
++ */
++
++#ifndef IOCTL_FILTER_H
++#define IOCTL_FILTER_H
++
++#include <linux/filter.h>  /* struct sock_filter, BPF_*, */
++#include <linux/seccomp.h> /* struct seccomp_data, SECCOMP_RET_*, */
++#include <stddef.h>        /* offsetof(3), size_t, */
++#include <stdint.h>        /* uint32_t, */
++
++/* The commands enter.c and exit.c act on.  Literal values (asm-generic,
++ * the same on arm64, arm and x86): enter.c compares TCSETS + 2 literally
++ * for the same reason.  Keep this list in step with those two files.  */
++static const uint32_t ioctl_filter_commands[] = {
++	0x8933,		/* SIOCGIFINDEX: answered by the tracer.  */
++	0x5404,		/* TCSETS + 2 (TCSETSF): rewritten to TCSETS.  */
++	0x802C542A,	/* TCGETS2: rewritten to TCGETS.  */
++	0x402C542B,	/* TCSETS2: rewritten to TCSETS.  */
++	0x402C542C,	/* TCSETSW2: rewritten to TCSETSW.  */
++	0x402C542D,	/* TCSETSF2: rewritten to TCSETS.  */
++	0x40049409,	/* FICLONE: -EACCES becomes -EOPNOTSUPP on exit.  */
++};
++
++#define IOCTL_FILTER_COMMAND_COUNT \
++	(sizeof(ioctl_filter_commands) / sizeof(ioctl_filter_commands[0]))
++
++/* Statements written by ioctl_filter_statements().  */
++#define LENGTH_TRACE_IOCTL (IOCTL_FILTER_COMMAND_COUNT + 4)
++
++/**
++ * Write to @out (LENGTH_TRACE_IOCTL items) the statements that notify
++ * the tracer, with the given @flag, about @syscall (ioctl on the
++ * current architecture) when its command is one of
++ * ioctl_filter_commands[], and allow it otherwise.
++ *
++ * On entry the accumulator holds the syscall number.  It is untouched
++ * unless that number is @syscall, so the statements that follow see it
++ * as before; when it is @syscall every path returns.
++ *
++ *	0:       if (nr != syscall) goto after;
++ *	1:       A = low word of the second argument (the command);
++ *	2..K+1:  if (A == command[i]) goto trace;
++ *	K+2:     return ALLOW;
++ *	K+3:     trace: return TRACE + flag;
++ *	after:
++ */
++static inline size_t ioctl_filter_statements(struct sock_filter *out, uint32_t syscall, uint32_t flag)
++{
++	const size_t count = IOCTL_FILTER_COMMAND_COUNT;
++	/* seccomp_data.args[] are 64-bit; the command is an unsigned int in
++	 * the low word.  PRoot's handled architectures are little-endian.  */
++	const uint32_t command_offset = offsetof(struct seccomp_data, args[1]);
++	size_t i;
++
++	out[0] = (struct sock_filter) BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, syscall, 0, count + 3);
++	out[1] = (struct sock_filter) BPF_STMT(BPF_LD + BPF_W + BPF_ABS, command_offset);
++	for (i = 0; i < count; i++)
++		out[2 + i] = (struct sock_filter) BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K,
++							   ioctl_filter_commands[i], count - i, 0);
++	out[count + 2] = (struct sock_filter) BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_ALLOW);
++	out[count + 3] = (struct sock_filter) BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_TRACE + flag);
++
++	return LENGTH_TRACE_IOCTL;
++}
++
++#endif /* IOCTL_FILTER_H */
+diff --git a/src/syscall/seccomp.c b/src/syscall/seccomp.c
+index 2f8930e..6ba7508 100644
+--- a/src/syscall/seccomp.c
++++ b/src/syscall/seccomp.c
+@@ -38,8 +38,11 @@
+ #include <stddef.h>        /* offsetof(3), */
+ #include <stdint.h>        /* uint*_t, UINT*_MAX, */
+ #include <assert.h>        /* assert(3), */
++#include <stdlib.h>        /* getenv(3), */
++#include <stdbool.h>       /* bool, */
+ 
+ #include "syscall/seccomp.h"
++#include "syscall/ioctl_filter.h"
+ #include "tracee/tracee.h"
+ #include "syscall/syscall.h"
+ #include "syscall/sysnum.h"
+@@ -121,13 +124,45 @@ static int add_trace_syscall(struct sock_fprog *program, word_t syscall, int fla
+ 	return 0;
+ }
+ 
++/**
++ * PROOT_IOCTL_COMMANDS_ONLY=1: trace ioctl(2) only for the commands
++ * PRoot acts on (see ioctl_filter.h).
++ */
++static bool ioctl_commands_only(void)
++{
++	const char *value = getenv("PROOT_IOCTL_COMMANDS_ONLY");
++	return value != NULL && value[0] == '1' && value[1] == '\0';
++}
++
++/**
++ * Append to @program->filter the statements required to notify PRoot
++ * about the given @syscall (ioctl) with the given @flag, only for the
++ * commands of ioctl_filter.h.  This function returns -errno if an
++ * error occurred, otherwise 0.
++ */
++static int add_trace_ioctl_commands(struct sock_fprog *program, word_t syscall, int flag)
++{
++	struct sock_filter statements[LENGTH_TRACE_IOCTL];
++
++	/* Sanity check.  */
++	if (syscall > UINT32_MAX)
++		return -ERANGE;
++
++	ioctl_filter_statements(statements, syscall, flag);
++
++	DEBUG_FILTER("FILTER:     trace if syscall == %ld and its command is handled\n", syscall);
++
++	return add_statements(program, LENGTH_TRACE_IOCTL, statements);
++}
++
+ /**
+  * Append to @program->filter the statements that allow anything (if
+- * unfiltered).  Note that @nb_traced_syscalls is used to make a
+- * sanity check.  This function returns -errno if an error occurred,
+- * otherwise 0.
++ * unfiltered).  Note that @nb_traced_syscalls and @nb_extra_statements
++ * are used to make a sanity check.  This function returns -errno if an
++ * error occurred, otherwise 0.
+  */
+-static int end_arch_section(struct sock_fprog *program, size_t nb_traced_syscalls)
++static int end_arch_section(struct sock_fprog *program, size_t nb_traced_syscalls,
++			size_t nb_extra_statements)
+ {
+ 	int status;
+ 
+@@ -144,7 +179,8 @@ static int end_arch_section(struct sock_fprog *program, size_t nb_traced_syscall
+ 
+ 	/* Sanity check, see start_arch_section().  */
+ 	if (   talloc_array_length(program->filter) - program->len
+-	    != LENGTH_END_SECTION + nb_traced_syscalls * LENGTH_TRACE_SYSCALL)
++	    != LENGTH_END_SECTION + nb_traced_syscalls * LENGTH_TRACE_SYSCALL
++	       + nb_extra_statements)
+ 		return -ERANGE;
+ 
+ 	return 0;
+@@ -156,12 +192,14 @@ static int end_arch_section(struct sock_fprog *program, size_t nb_traced_syscall
+  * sanity check.  This function returns -errno if an error occurred,
+  * otherwise 0.
+  */
+-static int start_arch_section(struct sock_fprog *program, uint32_t arch, size_t nb_traced_syscalls)
++static int start_arch_section(struct sock_fprog *program, uint32_t arch, size_t nb_traced_syscalls,
++			size_t nb_extra_statements)
+ {
+ 	const size_t arch_offset    = offsetof(struct seccomp_data, arch);
+ 	const size_t syscall_offset = offsetof(struct seccomp_data, nr);
+ 	const size_t section_length = LENGTH_END_SECTION +
+-					nb_traced_syscalls * LENGTH_TRACE_SYSCALL;
++					nb_traced_syscalls * LENGTH_TRACE_SYSCALL +
++					nb_extra_statements;
+ 	int status;
+ 
+ 	/* Sanity checks.  */
+@@ -256,7 +294,9 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 	size_t nb_archs = sizeof(seccomp_archs) / sizeof(SeccompArch);
+ 
+ 	struct sock_fprog program = { .len = 0, .filter = NULL };
++	const bool commands_only = ioctl_commands_only();
+ 	size_t nb_traced_syscalls;
++	size_t nb_extra_statements;
+ 	size_t i, j, k;
+ 	int status;
+ 
+@@ -269,18 +309,23 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 		word_t syscall;
+ 
+ 		nb_traced_syscalls = 0;
++		nb_extra_statements = 0;
+ 
+ 		/* Pre-compute the number of traced syscalls for this architecture.  */
+ 		for (j = 0; j < seccomp_archs[i].nb_abis; j++) {
+ 			for (k = 0; sysnums[k].value != PR_void; k++) {
+ 				syscall = detranslate_sysnum(seccomp_archs[i].abis[j], sysnums[k].value);
+-				if (syscall != SYSCALL_AVOIDER)
+-					nb_traced_syscalls++;
++				if (syscall == SYSCALL_AVOIDER)
++					continue;
++				nb_traced_syscalls++;
++				if (commands_only && sysnums[k].value == PR_ioctl)
++					nb_extra_statements += LENGTH_TRACE_IOCTL - LENGTH_TRACE_SYSCALL;
+ 			}
+ 		}
+ 
+ 		/* Filter: if handled architecture */
+-		status = start_arch_section(&program, seccomp_archs[i].value, nb_traced_syscalls);
++		status = start_arch_section(&program, seccomp_archs[i].value, nb_traced_syscalls,
++					nb_extra_statements);
+ 		if (status < 0)
+ 			goto end;
+ 
+@@ -292,14 +337,17 @@ static int set_seccomp_filters(const FilteredSysnum *sysnums)
+ 					continue;
+ 
+ 				/* Filter: trace if handled syscall */
+-				status = add_trace_syscall(&program, syscall, sysnums[k].flags);
++				if (commands_only && sysnums[k].value == PR_ioctl)
++					status = add_trace_ioctl_commands(&program, syscall, sysnums[k].flags);
++				else
++					status = add_trace_syscall(&program, syscall, sysnums[k].flags);
+ 				if (status < 0)
+ 					goto end;
+ 			}
+ 		}
+ 
+ 		/* Filter: allow untraced syscalls for this architecture */
+-		status = end_arch_section(&program, nb_traced_syscalls);
++		status = end_arch_section(&program, nb_traced_syscalls, nb_extra_statements);
+ 		if (status < 0)
+ 			goto end;
+ 	}
+@@ -515,6 +563,21 @@ int enable_syscall_filtering(const Tracee *tracee)
+ 		}
+ 	}
+ 
++	/* With the command filter, ioctl(2) is in the list on every
++	 * platform (Android builds already have it): only the handled
++	 * commands reach the tracer, so this costs other guests nothing
++	 * and the same statements run wherever PRoot is tested.  */
++	if (ioctl_commands_only()) {
++		static const FilteredSysnum ioctl_sysnums[] = {
++			{ PR_ioctl,		FILTER_SYSEXIT },
++			FILTERED_SYSNUM_END
++		};
++
++		status = merge_filtered_sysnums(tracee->ctx, &filtered_sysnums, ioctl_sysnums);
++		if (status < 0)
++			return status;
++	}
++
+ 	status = set_seccomp_filters(filtered_sysnums);
+ 	if (status < 0)
+ 		return status;

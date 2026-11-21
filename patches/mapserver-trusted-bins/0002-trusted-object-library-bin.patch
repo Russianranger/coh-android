@@ -1,0 +1,73 @@
+diff --git a/Common/group/groupfilelib.c b/Common/group/groupfilelib.c
+index 83cc4bb..f37439b 100644
+--- a/Common/group/groupfilelib.c
++++ b/Common/group/groupfilelib.c
+@@ -1,6 +1,8 @@
+ #include "group/groupfilelib.h"
+ #include <utilitieslib/components/StashTable.h>
+ #include <string.h>
++#include <stdio.h>
++#include <stdlib.h>
+ #include <utilitieslib/utils/utils.h>
+ #include "group/group.h"
+ #include <utilitieslib/assert/assert.h>
+@@ -435,6 +437,19 @@ static FileScanAction populateFileList(char* dir, struct _finddata32_t* data)
+     return FSA_EXPLORE_DIRECTORY;
+ }
+ 
++// ArmPort opt-in (ARMPORT_TRUSTED_BINS=1, read once), the switch of
++// ParserIsPersistNewer applied to bin/defnames.bin.
++static int armportTrustedObjectLibrary(void)
++{
++    static int enabled = -1;
++    if (enabled < 0)
++    {
++        const char* value = getenv("ARMPORT_TRUSTED_BINS");
++        enabled = value && value[0] == '1' && value[1] == '\0';
++    }
++    return enabled;
++}
++
+ // returns 1 if no changes made
+ static int UpdateObjectLibraryBin(int production, int force_rebuild)
+ {
+@@ -444,8 +459,12 @@ static int UpdateObjectLibraryBin(int production, int force_rebuild)
+     int crc;
+     int savedpos;
+     FileList object_lib_bin = 0;
++    // ArmPort: a prepared defnames.bin whose signature and CRC match below is
++    // read without the object_library tree scan and its date comparison. A
++    // missing, mismatched or unreadable bin still scans and rebuilds.
++    int trusted = !production && !force_rebuild && armportTrustedObjectLibrary();
+ 
+-    if (!production || force_rebuild)
++    if ((!production || force_rebuild) && !trusted)
+     {
+         // read file list from disk
+         FileListCreate(&object_lib_disk);
+@@ -478,7 +497,7 @@ static int UpdateObjectLibraryBin(int production, int force_rebuild)
+         goto finishup;
+     }
+ 
+-    if (!production || force_rebuild)
++    if ((!production || force_rebuild) && !trusted)
+     {
+         if (!FileListIsBinUpToDate(&object_lib_bin, &object_lib_disk))
+         {
+@@ -506,8 +525,16 @@ finishup:
+     if (binfile)
+         SerializeClose(binfile);
+     
++    if (trusted && uptodate)
++        printf("ARMPORT_OBJECT_LIBRARY_BIN_V1 status=trusted bin=%s\n", binfile_name);
+     if (!uptodate)
+     {
++        if (trusted)
++        {
++            // ArmPort: the trusted path read no file list; the rebuild needs it.
++            FileListCreate(&object_lib_disk);
++            fileScanAllDataDirs("object_library", populateFileList);
++        }
+         // generate def names from .rootnames and .txts
+         loadGroupNamesFromFileList(&object_lib_disk);
+ 

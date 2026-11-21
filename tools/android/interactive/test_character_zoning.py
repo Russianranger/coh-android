@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+import threading
 import time
 from types import SimpleNamespace
 import unittest
@@ -252,10 +253,89 @@ class NativeEvidenceTests(unittest.TestCase):
             self.assertIsNone(zoning.terminal_position(logs(changed), 101,
                 {'sent_utc_ms': timer-6000}, timer-100000, timer+5000))
 
+    def test_stock_arrival_is_read_from_the_entity_log_after_the_connection_is_proved(self):
+        # CI r56z4: Step 1/Step 2 on City_01_01_1, then ResumeCharacter on City_01_01_2.
+        def at(offset):
+            return time.strftime('%y%m%d %H:%M:%S', time.localtime((NOW + offset * 1000) / 1000))
+        line = '%s %s:127.0.0.1:127.0.0.1 "THORHERO:COHLOCAL" 0 %s ExpLevel:1, AlignmentNum:0\n'
+        old_resume = line % (at(-300), 'City_01_01_1', 'Connection:ResumeCharacter from 127.0.0.1:5000 AuthName "COHLOCAL"')
+        step = line % (at(0), 'City_01_01_1', 'Step 1: Ent THORHERO moving to map 101, "(null)"')
+        arrive = line % (at(170), 'City_01_01_2', 'Connection:ResumeCharacter from 127.0.0.1:7829 AuthName "COHLOCAL"')
+        back = line % (at(400), 'City_01_01_1', 'Connection:ResumeCharacter from 127.0.0.1:7830 AuthName "COHLOCAL"')
+        rows = zoning.stock_transfers_begun(logs(step), 1, NOW - 1000, NOW + 5000)
+        self.assertEqual([(r['from_map_id'], r['to_map_id'], r['utc_ms']) for r in rows], [(1, 101, NOW)])
+        instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        instance.stock = {'enabled': True, 'transfers_begun': [], 'transfer_wait_observed': 0, 'arrival_source': None}
+        instance.creation_report = {'verified': False, 'connected_on_atlas': True,
+                                    'client_ready_observed_utc_ms': NOW - 290000}
+        instance.active_map_id = 1
+        instance.maps = {1: {'ready': True, 'launch_utc_ms': NOW - 600000},
+                         101: {'ready': True, 'launch_utc_ms': NOW - 1000}}
+        instance.stock_log_next, instance.stock_last_arrival_ms = 0, None
+        moves = []
+        def arrival(target, sample):
+            moves.append((target, sample['resume_utc_ms']))
+            instance.active_map_id = target
+        text = [old_resume + step]
+        with patch.object(zoning.LocalCharacterZoningServer, 'current_logs', lambda self: logs(text[0])), \
+                patch.object(zoning.LocalCharacterZoningServer, '_stock_arrival', lambda self, t, s: arrival(t, s)), \
+                patch.object(zoning.time, 'time', return_value=(NOW + 600000) / 1000):
+            self.assertIsNone(instance._poll_stock_logs(now=100))
+            self.assertEqual(instance.stock['transfer_wait_observed'], 1)
+            self.assertIsNone(instance._poll_stock_logs(now=105))            # bounded to one read per poll
+            text[0] += arrive
+            self.assertEqual(instance._poll_stock_logs(now=200)['map_id'], 101)
+            self.assertEqual(moves, [(101, NOW + 170000)])
+            self.assertIsNone(instance._poll_stock_logs(now=300))            # the old Atlas resume is not a return
+            text[0] += back
+            self.assertEqual(instance._poll_stock_logs(now=400)['map_id'], 1)
+            self.assertEqual(moves[-1], (1, NOW + 400000))
+            self.assertEqual(instance.stock['transfer_wait_observed'], 1)
+        instance.creation_report['connected_on_atlas'] = False
+        self.assertIsNone(instance._poll_stock_logs(now=10 ** 6))
+
+    def test_stock_travel_maps_skip_the_two_stage_transfer_so_the_loading_screen_comes_at_once(self):
+        instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        instance.stock = {'requested': True}
+        instance.manual_atlas_startup = {'external_maps': {'build_input_sha256': 'b' * 64}}
+        self.assertEqual(instance.session_map_options(), ['-notwostagemapxfer'])
+        instance.manual_atlas_startup = {}
+        self.assertEqual(instance.session_map_options(), [])
+        instance.manual_atlas_startup = {'external_maps': {}}
+        instance.stock = {'requested': False}
+        self.assertEqual(instance.session_map_options(), [])
+        base = zoning.character.LocalCharacterServer.__new__(zoning.character.LocalCharacterServer)
+        self.assertEqual(base.session_map_options(), [])
+        source = (Path(__file__).parents[3] / 'upstream/ouroboros/MapServer/src/svr/svr_init.c').read_text()
+        self.assertIn('strcmp(argv[i], "-notwostagemapxfer")==0', source)
+        guest = Path(zoning.__file__).read_text() + Path(zoning.character.__file__).read_text()
+        self.assertEqual(guest.count('*self.session_map_options()'), 3)   # Atlas, every zoning spawn, the spare
+
+    def test_legacy_atlas_ready_is_the_newest_after_the_launch_on_either_route(self):
+        # Retained legacy MapServer (CI donor): no events contract, second-resolution log times.
+        line = '%s %s "THORHERO:COHLOCAL" 7 Connection:ResumeCharacter from 127.0.0.1:%d AuthName "COHLOCAL"\n'
+        early = time.strftime('%y%m%d %H:%M:%S', time.localtime((NOW - 60000) / 1000))
+        raw = (line % (early, 'City_01_01_1:127.0.0.1:127.0.0.1', 5001)
+               + line % (STAMP, 'City_01_01_1:127.0.0.1:127.0.0.1', 5002))
+        record = zoning.legacy_ready(logs(raw), NOW - 999, NOW + 5000)
+        self.assertEqual((record['port'], record['utc_ms'], record['log_route']),
+                         (5002, NOW, 'embedded_dbserver_logserver'))
+        self.assertEqual(zoning.legacy_ready(logs(raw), NOW - 120000, NOW + 5000)['port'], 5002)
+        self.assertIsNone(zoning.legacy_ready(logs(raw), NOW + 1000, NOW + 5000))
+        self.assertIsNone(zoning.legacy_ready(logs(raw.replace('City_01_01_1', 'City_01_01_2')), 0, NOW + 5000))
+        local = line % (STAMP, '0', 5003)
+        self.assertEqual(zoning.legacy_ready(logs(local, 'logs/mapserver/entity.log'), 0, NOW + 5000)['port'], 5003)
+        instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        instance.active_map_id, instance.ready_floor_ms = 1, NOW - 999
+        with patch.object(zoning.LocalCharacterZoningServer, 'current_logs', return_value=logs(raw)), \
+                patch.object(zoning.LocalCharacterZoningServer, 'monorail_enabled', return_value=False):
+            self.assertEqual(instance.native_ready_record()['port'], 5002)
+
     def test_native_immediate_ready_on_return_must_be_newer_than_delivery(self):
         instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
         instance.active_map_id = 1
         instance.ready_floor_ms = NOW
+        instance.map_package = {'inputs': {'mapserver_progress': {'events_contract': {'format': 1}}}}
         parent = zoning.character.LocalCharacterReopenServer
         with patch.object(parent, 'native_ready_record', return_value={'utc_ms': NOW-1}):
             self.assertIsNone(instance.native_ready_record())
@@ -632,6 +712,440 @@ class ZoningServerTests(unittest.TestCase):
             instance._spawn_map.assert_not_called()
             instance._query_start.assert_not_called()
             self.assertIsNone(instance.pending)
+
+
+class IdleResidentMapTests(unittest.TestCase):
+    """Optional: a resident map the player left is weighted down, restored before return."""
+    def instance(self, requested=True):
+        instance = ZoningServerTests.instance(self)
+        instance.ctx.secrets = []
+        instance.idle_capability = None
+        instance.zoning_report['idle_resident_maps'] = {'requested': requested, 'periods': []}
+        instance.maps = {1: {'ready': True, 'idle_token': 'b' * 64}, 5: {'ready': True, 'idle_token': 'c' * 64}}
+        instance.active_map_id = 5
+        self.made = []
+        test = self
+        class Fake:
+            def __init__(self, owner, map_id, **options):
+                self.options, self.map_id = options, map_id
+                self.capability = {'supported': True}
+                self.report = {'changed_threads': 0, 'restored_threads': 0}
+                self.samples = self.restores = 0
+                test.made.append(self)
+            def sample(self):
+                self.samples += 1; self.report['changed_threads'] = 3
+            def restore(self):
+                self.restores += 1; self.report['restored_threads'] = 3
+        self.patch = patch.object(zoning.scheduler, 'PreparationScheduler', Fake)
+        self.patch.start(); self.addCleanup(self.patch.stop)
+        return instance
+
+    def test_disabled_by_default_never_weights(self):
+        instance = self.instance(requested=False)
+        instance.idle_lower(1, 'player_left')
+        self.assertEqual(self.made, [])
+        self.assertIsNone(instance.idle_token())      # the default launch environment is unchanged
+        self.assertEqual(instance.ctx.secrets, [])
+
+    def test_requested_launch_token_is_unique_and_redacted(self):
+        instance = self.instance()
+        first, second = instance.idle_token(), instance.idle_token()
+        self.assertTrue(len(first) == len(second) == 64 and first != second)
+        self.assertEqual(instance.ctx.secrets, [first, second])
+
+    def test_left_map_is_weighted_with_its_spawn_token_then_restored_on_travel_back(self):
+        instance = self.instance()
+        instance.idle_lower(1, 'player_left')
+        instance.idle_lower(5, 'player_left')            # the active map is never weighted
+        instance.idle_lower(1, 'player_left')            # already idle: no second scheduler
+        self.assertEqual(len(self.made), 1)
+        idle = self.made[0]
+        self.assertEqual((idle.map_id, idle.options['token'], idle.options['environment_name'], idle.options['increment']),
+                         (1, 'b' * 64, 'COH_ZONING_IDLE_OWNER', 10))
+        instance.tick_idle()
+        self.assertEqual(idle.samples, 2)
+        instance.active_map_id = 5
+        instance._accept_prepare(request(to_map_id=1, from_map_id=5, epoch=1), NOW)
+        self.assertEqual(idle.restores, 1)
+        self.assertIsNone(instance.maps[1]['idle'])
+        period = instance.zoning_report['idle_resident_maps']['periods'][0]
+        self.assertEqual((period['status'], period['restore_reason'], period['restored_threads']),
+                         ('restored', 'travel_requested', 3))
+
+    def test_restore_failure_is_reported_and_cleanup_restores_every_idle_map(self):
+        instance = self.instance()
+        instance.idle_lower(1, 'player_left')
+        self.made[0].restore = Mock(side_effect=zoning.base.DiagnosticError('readback differs'))
+        self.assertFalse(instance.restore_idle_maps('cleanup'))
+        period = instance.zoning_report['idle_resident_maps']['periods'][0]
+        self.assertEqual((period['status'], period['failure_type']), ('restore_failed', 'DiagnosticError'))
+        self.assertTrue(instance.restore_idle_maps('cleanup'))   # nothing left to restore
+
+    def test_observation_error_restores_and_a_map_that_became_active_is_restored(self):
+        instance = self.instance()
+        instance.idle_lower(1, 'player_left')
+        instance.active_map_id = 1
+        instance.tick_idle()
+        self.assertEqual(self.made[0].restores, 1)
+        instance.active_map_id = 5
+        instance.idle_lower(1, 'player_left')
+        self.made[1].sample = Mock(side_effect=OSError('gone'))
+        instance.tick_idle()
+        self.assertEqual(self.made[1].restores, 1)
+        self.assertEqual(instance.zoning_report['idle_resident_maps']['periods'][1]['restore_reason'], 'observation_error')
+
+
+class BackgroundPrestartTests(unittest.TestCase):
+    """Optional King's Row start beside Atlas: low-priority Python preparation, then native load."""
+    def setUp(self):
+        self.real_available = zoning.available_memory_mib
+        patcher = patch.object(zoning, 'available_memory_mib', return_value=8192)
+        self.memory = patcher.start(); self.addCleanup(patcher.stop)
+
+    def instance(self, requested=True):
+        instance = ZoningServerTests.instance(self)
+        events = []
+        instance.ctx.check = Mock()
+        instance.ctx.event = lambda kind, **fields: events.append((kind, threading.current_thread().name))
+        instance.ctx.cancelled = Mock(return_value=False)
+        instance.events = events
+        instance.monorail_qualified = True
+        instance.prestart = None
+        instance.zoning_report['background_prestart'] = {'requested': requested, 'status': 'not_started'}
+        progress = Path(instance.owner.args.state) / 'character-zoning-5-progress.bin'
+        def spawn(map_id):
+            progress.write_bytes(b'x')
+            process = SimpleNamespace(process=Mock())
+            process.process.poll.return_value = None
+            instance.maps[map_id] = {'process': process, 'progress_path': progress, 'ready': False}
+        instance._spawn_map = Mock(side_effect=spawn)
+        instance.prepared = []
+        def prepare():
+            instance.ctx.event('stage', status='running')
+            instance.ctx.event('character_zoning_preparation')
+            instance.prepared.append(threading.current_thread().name)
+            instance.kings_row_prepared = {'runtime': Path('/kings')}
+            return instance.kings_row_prepared
+        instance.prepare_kings_row_runtime = prepare
+        return instance
+
+    def run_until(self, instance, status, start=None):
+        # Fake clocks stay behind the real monotonic clock, which also stamps
+        # timing points: a CI runner booted under 2 minutes ago saw "reversed".
+        now = time.monotonic() - 100000 if start is None else start
+        for _ in range(200):
+            instance.tick_prestart(now)
+            if instance.prestart is not None and instance.prestart['thread'] is not None:
+                instance.prestart['thread'].join(5)
+            if instance.zoning_report['background_prestart']['status'] == status:
+                return now
+            now += 6
+        self.fail('pre-start never reached ' + status + ': ' + str(instance.zoning_report['background_prestart']))
+
+    def test_disabled_by_default_and_waits_for_the_settle_delay(self):
+        instance = self.instance(requested=False)
+        instance.tick_prestart(1000)
+        self.assertIsNone(instance.prestart)
+        instance = self.instance()
+        instance.tick_prestart(100)
+        instance.tick_prestart(100 + zoning.PRESTART_DELAY_SECONDS - 1)
+        self.assertIsNone(instance.prestart)
+        instance.tick_prestart(100 + zoning.PRESTART_DELAY_SECONDS)
+        self.assertIsNotNone(instance.prestart)
+
+    def test_low_or_unknown_available_memory_skips_without_preparing(self):
+        for value in (1024, None):
+            with self.subTest(value=value):
+                self.memory.return_value = value
+                instance = self.instance()
+                instance.tick_prestart(100); instance.tick_prestart(1000); instance.tick_prestart(2000)
+                self.assertIsNone(instance.prestart)
+                report = instance.zoning_report['background_prestart']
+                self.assertEqual((report['status'], report['available_memory_mib_at_start']), ('skipped_low_memory', value))
+        with tempfile.TemporaryDirectory() as temporary:
+            meminfo = Path(temporary) / 'meminfo'
+            meminfo.write_text('MemTotal:       16000000 kB\nMemAvailable:    4194304 kB\n')
+            self.assertEqual(self.real_available(meminfo), 4096)
+            meminfo.write_text('MemTotal:       16000000 kB\n')
+            self.assertIsNone(self.real_available(meminfo))
+            self.assertIsNone(self.real_available(Path(temporary) / 'missing'))
+
+    def test_never_starts_beside_a_pending_trip_or_away_from_atlas(self):
+        for change in ({'pending': {'to_map_id': 5}}, {'active_map_id': 5}, {'monorail_qualified': False},
+                       {'kings_row_prepared': {'runtime': Path('/kings')}}):
+            with self.subTest(change=change):
+                instance = self.instance()
+                for name, value in change.items():
+                    setattr(instance, name, value)
+                instance.tick_prestart(100); instance.tick_prestart(1000)
+                self.assertIsNone(instance.prestart)
+
+    def test_prepares_off_thread_then_spawns_and_observes_first_tick(self):
+        instance = self.instance()
+        self.run_until(instance, 'native_ticking')
+        self.assertEqual(instance.prepared, ['kings-row-prestart'])
+        instance._spawn_map.assert_called_once_with(5)
+        self.assertTrue(instance.maps[5]['prestarted'] and instance.maps[5]['native_ticking'])
+        # Background 'stage' progress never reaches the Android stage stream.
+        self.assertEqual([kind for kind, name in instance.events if name == 'kings-row-prestart'],
+                         ['character_zoning_preparation'])
+        row = instance.prestart_timing
+        self.assertEqual((row['kind'], row['map_id']), ('background_prestart', 5))
+        self.assertIn('first_completed_tick_observed', row['points'])
+        self.assertEqual(instance.zoning_next, 0)
+
+    def test_trip_during_native_loading_uses_native_budget_then_warm_once_ticking(self):
+        instance = self.instance()
+        instance.live_progress = Mock(return_value=False)
+        self.run_until(instance, 'native_loading')
+        instance.owner.session_budget.deadline = time.monotonic() + 5000
+        instance._accept_prepare(request(to_map_id=5), NOW)
+        self.assertEqual(instance.pending['preparation_kind'], 'prestarted_loading')
+        self.assertEqual(instance.pending['preparation_budget_seconds'], zoning.KINGS_NATIVE_READY_SECONDS)
+        self.assertEqual(instance.pending['python_preparation_budget_seconds'], 0)
+        self.assertEqual(instance.pending['phase'], 'map_ready')
+        instance._query_start.assert_not_called()
+        self.assertEqual(instance._spawn_map.call_count, 1)
+        warm = self.instance()
+        self.run_until(warm, 'native_ticking')
+        warm._accept_prepare(request(to_map_id=5), NOW)
+        self.assertEqual(warm.pending['preparation_kind'], 'resident_warm')
+
+    def test_zoning_request_while_preparing_waits_and_reuses_or_reraises(self):
+        instance = self.instance()
+        gate = threading.Event()
+        original = instance.prepare_kings_row_runtime
+        instance.prepare_kings_row_runtime = lambda: (gate.wait(5), original())[1]
+        instance.tick_prestart(100); instance.tick_prestart(200)
+        self.assertTrue(instance.prestart['thread'].is_alive())
+        threading.Timer(.2, gate.set).start()
+        instance.wait_background_prestart()
+        self.assertEqual(instance.prepared, ['kings-row-prestart'])
+        self.assertTrue(instance.zoning_report['background_prestart']['joined_by_zoning_request'])
+        failing = self.instance()
+        failing.prepare_kings_row_runtime = Mock(side_effect=ERROR('collision package differs'))
+        failing.tick_prestart(100); failing.tick_prestart(200); failing.prestart['thread'].join(5)
+        with self.assertRaisesRegex(ERROR, 'collision package differs'):
+            failing.wait_background_prestart()
+
+    def test_preparation_failure_is_reported_without_disabling_zoning(self):
+        instance = self.instance()
+        instance.prepare_kings_row_runtime = Mock(side_effect=ERROR('beacon graph differs'))
+        self.run_until(instance, 'failed')
+        report = instance.zoning_report['background_prestart']
+        self.assertEqual((report['failure_phase'], report['failure']), ('preparing', 'beacon graph differs'))
+        instance._spawn_map.assert_not_called()
+        self.assertEqual(instance.zoning_next, 0)
+        self.assertIsNone(instance.pending)
+
+    def test_native_crash_while_loading_discards_the_map_for_a_later_cold_trip(self):
+        instance = self.instance()
+        instance.live_progress = Mock(return_value=False)
+        self.run_until(instance, 'native_loading')
+        owned = instance.maps[5]
+        instance._map_progress = Mock(side_effect=ERROR('Owned zoning MapServer crashed'))
+        self.run_until(instance, 'failed', start=1000)
+        self.assertNotIn(5, instance.maps)
+        owned['process'].process.terminate.assert_called_once_with()
+        self.assertFalse(owned['progress_path'].exists())
+        self.assertTrue(owned['progress_path'].with_name(owned['progress_path'].name + '.prestart-failed').exists())
+
+    def test_cleanup_stops_the_thread_and_never_returns_a_tree_it_may_still_write(self):
+        instance = self.instance()
+        started, release = threading.Event(), threading.Event()
+        def prepare():
+            started.set()
+            while not release.is_set():
+                instance.ctx.check()      # the private stop flag applies only to this thread
+                time.sleep(.01)
+        instance.prepare_kings_row_runtime = prepare
+        instance.tick_prestart(100); instance.tick_prestart(200)
+        self.assertTrue(started.wait(5))
+        instance.ctx.check()              # foreground check is unaffected
+        self.assertTrue(instance.stop_background_prestart(timeout=5))
+        self.assertIsInstance(instance.prestart['error'], zoning.base.Cancelled)
+        stuck = self.instance()
+        stuck.kings_row_data_cache = object()
+        stuck.prepare_kings_row_runtime = lambda: release.wait(5)
+        stuck.tick_prestart(100); stuck.tick_prestart(200)
+        self.assertFalse(stuck.stop_background_prestart(timeout=.1))
+        self.assertFalse(hasattr(stuck, 'kings_row_data_cache'))
+        release.set(); stuck.prestart['thread'].join(5)
+
+
+class StationFpsCapTests(unittest.TestCase):
+    """ARM64 client cap file (patch 0121) while a trip is prepared."""
+    def instance(self):
+        instance = ZoningServerTests.instance(self)
+        instance.owner.armport_fps_cap_file = instance.owner.args.state / 'armport-fps-cap.txt'
+        instance.station_fps_cap = {'cap': zoning.STATION_FPS_CAP, 'client_supported': False,
+                                    'applied': 0, 'removed': 0, 'error': None}
+        return instance
+
+    def test_cap_follows_the_preparation_phases_only(self):
+        instance = self.instance(); path = instance.owner.armport_fps_cap_file
+        instance._sync_station_fps_cap()
+        self.assertFalse(path.exists())
+        for phase, expected in (('baseline', True), ('map_ready', True), ('ready', False),
+                                ('map_ready', True), ('arrival', False)):
+            instance.pending = {'phase': phase}
+            instance._sync_station_fps_cap()
+            self.assertIs(path.exists(), expected, phase)
+        self.assertEqual(path.exists(), False)
+        instance.pending = {'phase': 'baseline'}; instance._sync_station_fps_cap()
+        self.assertEqual(path.read_text(), str(zoning.STATION_FPS_CAP) + '\n')
+        instance.pending = None; instance._sync_station_fps_cap()
+        self.assertFalse(path.exists())
+        record = instance.station_fps_cap
+        self.assertEqual((record['applied'], record['removed'], record['client_supported']), (3, 3, True))
+        instance.pending = {'phase': 'map_ready', 'transfer_requested': True}
+        instance._sync_station_fps_cap()
+        self.assertFalse(path.exists())
+
+    def test_x86_client_and_write_errors_never_affect_zoning(self):
+        instance = self.instance()
+        del instance.owner.armport_fps_cap_file
+        instance.pending = {'phase': 'baseline'}
+        instance._sync_station_fps_cap()
+        self.assertFalse(instance.station_fps_cap['client_supported'])
+        instance = self.instance()
+        instance.owner.armport_fps_cap_file = instance.owner.args.state / 'missing-directory' / 'cap.txt'
+        instance.pending = {'phase': 'baseline'}
+        instance._sync_station_fps_cap()
+        self.assertIn('FileNotFoundError', instance.station_fps_cap['error'])
+        instance._sync_station_fps_cap()   # disabled after an error
+        self.assertEqual(instance.station_fps_cap['applied'], 0)
+
+    def test_tick_zoning_writes_the_cap_before_a_blocking_preparation_and_lifts_it(self):
+        instance = self.instance(); path = instance.owner.armport_fps_cap_file
+        observed = []
+        def accept(value, now_ms):
+            instance.pending = {'phase': 'baseline', 'to_map_id': 101}
+        instance._accept_prepare = accept
+        instance._check_preparation_deadline = Mock(return_value=time.monotonic())
+        instance._query_poll = Mock(side_effect=lambda: observed.append(path.exists()) or None)
+        with patch.object(zoning, 'read_request', side_effect=lambda p: request() if p.name.endswith('request.json') else None):
+            instance.tick_zoning()
+        self.assertEqual(observed, [True])
+        self.assertTrue(path.exists())
+        instance.pending['phase'] = 'ready'; instance.zoning_next = 0
+        instance.request_history = {1: request()}
+        with patch.object(zoning, 'read_request', side_effect=lambda p: request() if p.name.endswith('request.json') else None):
+            instance.tick_zoning()
+        self.assertFalse(path.exists())
+
+
+class TickGapProbeTests(unittest.TestCase):
+    def test_gaps_between_completed_ticks_and_overruns(self):
+        clock = [0.0]
+        # tick_completed observed at each 20 ms read: steady, then one 200 ms tick.
+        ticks = iter([1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 5, 6, 6, 6])
+        def read(path, previous):
+            value = next(ticks, None)
+            if value is None:
+                raise zoning.character.progress.PublicationPending('changing')
+            return {'tick_completed': value}
+        def sleep(seconds):
+            clock[0] += seconds
+        result = zoning.tick_gap_probe(Path('/nonexistent'), seconds=0.5, period=0.02,
+                                       clock=lambda: clock[0], sleep=sleep, read=read)
+        self.assertEqual(result['ticks'], 5)
+        self.assertEqual(result['gaps'], 5)
+        self.assertAlmostEqual(result['max_gap_ms'], 200.0, places=0)
+        self.assertEqual((result['gaps_over_67ms'], result['gaps_over_150ms'], result['gaps_over_300ms']), (1, 1, 0))
+        self.assertGreater(result['read_errors'], 0)
+
+    def test_no_progress_reports_no_gap(self):
+        result = zoning.tick_gap_probe(Path('/nonexistent'), seconds=0.05, period=0.01)
+        self.assertIsNone(result['max_gap_ms'])
+        self.assertEqual(result['reads'], 0)
+
+    def test_probe_thread_skips_trips_and_stops_for_cleanup(self):
+        instance = ZoningServerTests.instance(self)
+        instance.zoning_report['tick_probe'] = {'samples': [], 'skipped_busy': 0, 'error': None}
+        instance.map_progress_path = Path('/nonexistent')
+        instance.pending = {'phase': 'baseline'}
+        with patch.object(zoning, 'TICK_PROBE_INTERVAL_SECONDS', 0.01), \
+             patch.object(zoning, 'tick_gap_probe', return_value={'ticks': 1}) as probe:
+            instance.start_tick_probe()
+            deadline = time.monotonic() + 5
+            while instance.zoning_report['tick_probe']['skipped_busy'] < 2 and time.monotonic() < deadline:
+                time.sleep(0.01)
+            probe.assert_not_called()
+            instance.pending = None
+            while not instance.zoning_report['tick_probe']['samples'] and time.monotonic() < deadline:
+                time.sleep(0.01)
+            self.assertTrue(instance.stop_tick_probe(timeout=5))
+        sample = instance.zoning_report['tick_probe']['samples'][0]
+        self.assertEqual((sample['ticks'], sample['map_id']), (1, 1))
+        self.assertIsNotNone(sample['seconds_since_map_active'])
+
+
+class WinePriorityTickTests(unittest.TestCase):
+    """A few read-only priority samples during play; nothing is changed."""
+    def test_samples_are_spaced_bounded_and_errors_recorded(self):
+        instance = ZoningServerTests.instance(self)
+        instance.priority_next = 0
+        instance.zoning_report['wine_priorities'] = {'samples': []}
+        instance.maps, instance.active_map_id = {1: {'ready': True}}, 1
+        calls = []
+        def snapshot():
+            calls.append(1)
+            if len(calls) == 2:
+                raise OSError('proc vanished')
+            return {'programs': {'CityOfHeroes.exe': {'processes': 1, 'threads': 2, 'nice': {'11': 2}}}}
+        with patch.object(zoning.scheduler, 'wine_priority_snapshot', snapshot):
+            instance.tick_priorities(100.0)
+            instance.tick_priorities(101.0)     # inside the interval: no sample
+            for step in range(1, 12):
+                instance.tick_priorities(100.0 + step * zoning.PRIORITY_INTERVAL_SECONDS)
+        samples = instance.zoning_report['wine_priorities']['samples']
+        self.assertEqual(len(samples), zoning.PRIORITY_SAMPLES)
+        self.assertEqual(samples[0]['programs']['CityOfHeroes.exe']['nice'], {'11': 2})
+        self.assertEqual((samples[0]['active_map_id'], samples[0]['resident_maps']), (1, [1]))
+        self.assertEqual(samples[1]['error_type'], 'OSError')
+
+    def test_missing_report_is_a_no_op(self):
+        instance = ZoningServerTests.instance(self)
+        instance.zoning_report.pop('wine_priorities', None)
+        instance.priority_next = 0
+        with patch.object(zoning.scheduler, 'wine_priority_snapshot', side_effect=AssertionError):
+            instance.tick_priorities(1.0)
+            instance.tick_loading_priorities(1.0)
+
+    def test_loading_samples_only_while_a_zone_server_loads_before_the_world(self):
+        # 0.13.69: which core the MapServer's main thread runs on while it loads (Thor 0.13.67:
+        # the first sample came after the character was in the world).
+        instance = ZoningServerTests.instance(self)
+        instance.zoning_report['wine_priorities'] = {'samples': [], 'loading_samples': []}
+        instance.creation_report = {'connected_on_atlas': False}
+        calls = []
+        def snapshot():
+            calls.append(1)
+            if len(calls) == 2:
+                raise OSError('proc vanished')
+            return {'programs': {'MapServer.exe': {'processes': 1, 'threads': 2, 'last_cpu': {'6': 2}}}}
+        with patch.object(zoning.scheduler, 'wine_priority_snapshot', snapshot):
+            instance.maps = {}
+            instance.tick_loading_priorities(50.0)                      # no zone server yet
+            self.assertEqual(calls, [])
+            instance.maps = {71: {'ready': False}}
+            instance.tick_loading_priorities(100.0)
+            instance.tick_loading_priorities(101.0)                     # inside the interval
+            for step in range(1, 12):
+                instance.tick_loading_priorities(100.0 + step * zoning.LOADING_PRIORITY_INTERVAL_SECONDS)
+            samples = instance.zoning_report['wine_priorities']['loading_samples']
+            self.assertEqual(len(samples), zoning.LOADING_PRIORITY_SAMPLES)
+            self.assertEqual((samples[0]['zone_servers'], samples[0]['programs']['MapServer.exe']['last_cpu']),
+                             ([71], {'6': 2}))
+            self.assertEqual(samples[1]['error_type'], 'OSError')
+            del samples[:]
+            instance.loading_priority_next = 0
+            instance.creation_report['connected_on_atlas'] = True       # in the world: the play samples take over
+            before = len(calls)
+            instance.tick_loading_priorities(5000.0)
+            self.assertEqual((len(calls), samples), (before, []))
+        self.assertEqual(instance.zoning_report['wine_priorities']['samples'], [])
 
 
 if __name__ == '__main__':

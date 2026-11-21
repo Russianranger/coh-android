@@ -12,19 +12,41 @@ import java.nio.file.LinkOption;
 import java.security.MessageDigest;
 import java.util.*;
 
-/** Android adapter for the independently versioned, APK-pinned asset release. */
+/** Android adapter for an independently versioned, APK-pinned pack release (the asset pack, the navigation maps). */
 public final class AssetPackStore {
+    /** One kind of pack: its runtime-manifest record, the APK's copy of its descriptor, its id and private folder. */
+    public static final class Kind {
+        public final String runtimeKey,descriptorAsset,id,directory,label;
+        /** Whether its runtime/ files are also runtime inventory files (installed by runtime setup). */
+        public final boolean runtimeFiles;
+        Kind(String runtimeKey,String descriptorAsset,String id,String directory,String label,boolean runtimeFiles){
+            this.runtimeKey=runtimeKey;this.descriptorAsset=descriptorAsset;this.id=id;this.directory=directory;
+            this.label=label;this.runtimeFiles=runtimeFiles;
+        }
+    }
+    public static final Kind ASSETS=new Kind("external_asset_pack","runtime/asset-pack-manifest.json","coh-assets","asset-packs","Assets",true);
+    /** Owner, 2026-11-09: every zone's navigation map (native beacon graph), imported like the asset pack.
+     *  Optional: a session binds its verified objects for the guest, which installs each zone's map when it starts. */
+    public static final Kind NAVIGATION_MAPS=new Kind("navigation_map_pack","runtime/navigation-maps-manifest.json",
+            "coh-navigation-maps","navigation-packs","Navigation maps",false);
     private final AssetPackArchive archive;
     private final SetupMemoryGuard guard;
+    private final File base;
+    public final Kind kind;
     public final String version;
     public AssetPackStore(Context context,JSONObject runtime,AssetPackArchive.Check check,
             AssetPackArchive.Progress progress) throws Exception {
-        JSONObject expected=runtime.getJSONObject("external_asset_pack");
+        this(context,runtime,ASSETS,check,progress);
+    }
+    public AssetPackStore(Context context,JSONObject runtime,Kind kind,AssetPackArchive.Check check,
+            AssetPackArchive.Progress progress) throws Exception {
+        this.kind=kind;
+        JSONObject expected=runtime.getJSONObject(kind.runtimeKey);
         byte[] raw;
-        try(InputStream input=context.getAssets().open("runtime/asset-pack-manifest.json")){raw=bounded(input,1024*1024);}
+        try(InputStream input=context.getAssets().open(kind.descriptorAsset)){raw=bounded(input,1024*1024);}
         JSONObject descriptor=new JSONObject(new String(raw,StandardCharsets.UTF_8));
         version=descriptor.getString("version");
-        if(descriptor.getInt("format")!=1||!"coh-assets".equals(descriptor.getString("id"))
+        if(descriptor.getInt("format")!=1||!kind.id.equals(descriptor.getString("id"))
                 ||!version.matches("[0-9]+\\.[0-9]+\\.[0-9]+")||expected.getInt("format")!=1
                 ||!expected.getString("id").equals(descriptor.getString("id"))
                 ||!expected.getString("version").equals(version)||expected.getLong("manifest_bytes")!=raw.length
@@ -34,7 +56,7 @@ public final class AssetPackStore {
         for(Iterator<String> names=manifestFiles.keys();names.hasNext();) {
             String name=names.next();JSONObject pin=manifestFiles.getJSONObject(name);
             files.put(name,new AssetPackArchive.Pin(pin.getLong("bytes"),pin.getString("sha256")));
-            if(name.startsWith("runtime/")) {
+            if(kind.runtimeFiles&&name.startsWith("runtime/")) {
                 JSONObject runtimeFiles=runtime.getJSONObject("files");String runtimeName=name.substring(8);
                 if(!runtimeFiles.has(runtimeName))throw new IOException("Asset is absent from runtime inventory: "+name);
                 JSONObject runtimePin=runtimeFiles.getJSONObject(runtimeName);
@@ -55,7 +77,8 @@ public final class AssetPackStore {
             manager.getMemoryInfo(memory);
             return new SetupMemoryGuard.Sample(memory.availMem,memory.totalMem,memory.threshold,memory.lowMemory,vm.totalMemory()-vm.freeMemory(),vm.maxMemory());
         },SystemClock::uptimeMillis,Thread::sleep,check::check,paused->{if(paused)progress.update("Waiting for memory; previous assets are preserved",0,0);});
-        archive=new AssetPackArchive(new File(context.getFilesDir().getCanonicalFile(),"asset-packs"),raw,files,volumes,check,
+        base=new File(context.getFilesDir().getCanonicalFile(),kind.directory);
+        archive=new AssetPackArchive(base,raw,files,volumes,check,
                 new AssetPackArchive.Io(){
                     public void before()throws IOException{guard.beforeIo();}
                     public void read(long bytes)throws IOException{guard.read(bytes);}
@@ -64,27 +87,33 @@ public final class AssetPackStore {
                 },progress);
     }
     public boolean contains(String path){return archive.contains(path);}
+    /** The verified objects, named by SHA-256 (the guest checks each against the APK's descriptor before use). */
+    public File objects()throws IOException{if(!isAccepted())throw new IOException(status());return new File(base,"objects");}
     public boolean isAccepted()throws IOException{return archive.isAccepted();}
     public List<String> missingVolumes()throws IOException{return archive.missingVolumes();}
     public File resolve(String path)throws IOException{return archive.resolve(path);}
     public InputStream open(String path)throws IOException{return archive.open(path);}
     public String importVolume(InputStream input)throws IOException{String volume=archive.importVolume(input,guard::admit);guard.finishWrites();return volume;}
     public JSONObject receipt()throws Exception {
-        return new JSONObject().put("format",1).put("version",version).put("manifest_sha256",archive.descriptorHash())
+        return new JSONObject().put("format",1).put("id",kind.id).put("version",version).put("manifest_sha256",archive.descriptorHash())
                 .put("complete",archive.isAccepted()).put("missing_parts",new JSONArray(archive.missingVolumes()))
                 .put("memory_control",new JSONObject(guard.receipt()));
     }
     public String status()throws IOException {
-        return "Assets "+version+(isAccepted()?" verified; reusable with this APK":" — import "+String.join(", ",missingVolumes())+" part(s)");
+        return kind.label+" "+version+(isAccepted()?" verified; reusable with this APK":" — import "+String.join(", ",missingVolumes())+" part(s)");
     }
     /** Small receipt and size checks only; callers keep this off the UI thread. */
     public static String status(Context context) {
+        return status(context,ASSETS);
+    }
+    /** As status(Context), for any pack kind. */
+    public static String status(Context context,Kind kind) {
         try {
             byte[] raw;
-            try(InputStream in=context.getAssets().open("runtime/asset-pack-manifest.json")){raw=bounded(in,1024*1024);}
+            try(InputStream in=context.getAssets().open(kind.descriptorAsset)){raw=bounded(in,1024*1024);}
             JSONObject descriptor=new JSONObject(new String(raw,StandardCharsets.UTF_8));
             String version=descriptor.getString("version"),hash=hex(MessageDigest.getInstance("SHA-256").digest(raw));
-            File base=new File(context.getFilesDir().getCanonicalFile(),"asset-packs");
+            File base=new File(context.getFilesDir().getCanonicalFile(),kind.directory);
             if(!base.getCanonicalFile().equals(base.getAbsoluteFile()))throw new IOException("Unsafe asset storage path");
             File receipt=new File(base,"accepted/"+hash+".json");
             JSONObject files=descriptor.getJSONObject("files"),volumes=descriptor.getJSONObject("volumes");
@@ -101,8 +130,8 @@ public final class AssetPackStore {
             boolean accepted=false;
             if(missing.isEmpty()&&receipt.getCanonicalFile().equals(receipt.getAbsoluteFile())&&Files.isRegularFile(receipt.toPath(),LinkOption.NOFOLLOW_LINKS)&&receipt.length()==raw.length)
                 try(InputStream in=Files.newInputStream(receipt.toPath(),LinkOption.NOFOLLOW_LINKS)){accepted=Arrays.equals(raw,bounded(in,1024*1024));}
-            return "Assets "+version+(accepted?" · verified; reusable with this APK":missing.isEmpty()?" · import a compatible part to finish verification":" · import "+String.join(", ",missing)+" part(s)");
-        } catch(FileNotFoundException absent){return "Assets are bundled in this APK";}
+            return kind.label+" "+version+(accepted?" · verified; reusable with this APK":missing.isEmpty()?" · import a compatible part to finish verification":" · import "+String.join(", ",missing)+" part(s)");
+        } catch(FileNotFoundException absent){return kind==ASSETS?"Assets are bundled in this APK":kind.label+": none in this APK";}
         catch(Exception failure){return "Asset pack status unavailable: "+failure.getMessage();}
     }
     private static byte[] bounded(InputStream in,int limit)throws IOException {
