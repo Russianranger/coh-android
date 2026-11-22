@@ -414,6 +414,114 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## Thor test of 0.13.79 and what 0.13.80 does about it (Claude, 2026-11-22)
+
+Exports `coh-atlas-gameplay-20261121-174319` (setup), `-174331` (first launch
+after the update), `-202117` (launch A, recommended options, three trips) and
+`-203001` (launch B, `server-x87-64bit` off, one trip and back). All 0.13.79,
+all `passed`; `ARMPORT_FRAME_RATE_V1` median 61 in the world in each.
+
+- **Trips** (request to the client's "Established successful MapServer
+  connection"), all through a spare:
+  - A, 71 to 72 (known): 30.7 s. Request to hand-over 7 ms
+    (`graphs_checked_ahead` had done 72's receipt check, 1.9 s, ahead);
+    spare `group_load_done` 18.79 s (it cooked 1,138 meshes new to the
+    0.13.79 server, `cook_ms` 1,118); client 10.9 s.
+  - A, 72 to 73 (never visited): **67.7 s**. Request 20:14:38.9, hand-over
+    20:15:16.3: 37.4 s in `install_zone_beacon_graph(73)`
+    (`launch_receipts.zone_graph_73`: `ran_in_full`, `no_receipt`, 35.6 s),
+    then 19.3 s and 10.2 s.
+  - A, 73 to 71 (known): 25.6 s (hand-over 3 ms, 15.1 s, 9.4 s).
+  - B, 71 to 72: **49.4 s**. Hand-over 16.5 s after the request:
+    `zone_graph_72` `ran_in_full`, reason `directory_changed: server`,
+    14.6 s; and `zone_graph_71` the same at launch, 11.0 s.
+- **Why B's receipts failed.** A receipt lists every directory that holds one
+  of the step's leaves, with its listing. `zone_beacon_package.install`
+  returned the zone's marker (`data/server/zone-beacons-<id>-installed.json`)
+  among the leaves, so every zone's receipt listed `data/server`, and A's
+  install of zone 73 added a marker there. Each new zone therefore cost every
+  other zone one full run in the next session.
+- **Why a full run takes 35 s.** `install` inventories the zone's inputs
+  three times (before, after the proofs, before the marker); each inventory
+  walks the object library and tricks (8,700 inputs: lstat and stat of every
+  entry, stat of every target) for about 9.5 s through PRoot. The scopes are
+  the same for every zone.
+- **x87 option on the Thor** (A with, B without, 0.13.78 without): Mercy
+  Island cold `definitions_done` 22.1 / 18.7 / 19.5 s, `group_load_done`
+  17.3 / 17.5 / 17.7 s; Port Oakes on a spare `group_load_done` 18.8 (with
+  1.1 s of cooking) / 19.7 / 19.8 s. No difference outside run-to-run
+  variation. Cooking: 1,868 meshes in 2.08 s (`cook_ms`) against 9.7 s in
+  0.13.78. CI's gain was cooking and does not carry to a start with a cache.
+- **B's spare was assigned before the session had marked it warm**
+  (`warm: false`, `db_connect_begin` 21.6 s: it had been waiting 21.6 s when
+  the assignment came, 51.7 s after its launch). The hand-over was late
+  because of the graph install above, not because the spare was loading.
+- **The spare starts late after login**: launched 73-76 s after the client's
+  connection, because the session records "connected" 69-76 s after the
+  client (`observer_seconds_after_client`), then waits 30 s. Not changed.
+- **Client zone load** (patch 0130, four loads in A): `map.start` to
+  `ready.sent` 6.8-8.2 s; `groups.files.done` at 5.5-6.8 s; then
+  `map.finish.done` +0.6 s, `collision.done` +0.35 s, textures +0.4 s.
+- **The 174331 launch** connected 452 s after the guest started: the client
+  window appeared at 163 s (`texture_header_index` 67.3 s, once after an
+  update) and the login was made 272 s later (the login screen was shown
+  throughout). The zone server reached its main loop in 48.8 s.
+
+### 0.13.80 (95): what changed
+
+- **The marker is not a receipt leaf**
+  (`local_character_server.zone_graph_with_receipt`). The receipt lists the
+  directories of the inputs and of the zone's own graph files only.
+  `test_a_launch_receipt_spares_a_later_start_the_input_walk` now writes
+  another zone's marker and world folder and fails without the change.
+- **The shared inputs are walked once**
+  (`zone_beacon_package.shared_inventory`, used by `inventory(...,
+  shared_store=)` and so by all three inventories of `install`).
+  `scope_rows` reads every directory of `data/object_library` and
+  `data/tricks`: identity, times and listing, one `lstat` and one `scandir`
+  each, no file `stat`. First time: rows, the unchanged
+  `atlas.collision_input_snapshot` over the two scopes, rows again (must be
+  equal); the fingerprints and rows are kept in memory and in
+  `launch-receipts/zone-shared-inputs-<names hash>.json` (identity: the
+  declared names and the code of two files; 30 days). Later: rows only, and
+  the kept fingerprints if they are equal. The zone's own map folder is
+  walked every time. If `scope_rows` cannot run, the plain walk decides as
+  before. Not seen by the kept result: an input rewritten in place; a full
+  install still stats every input against its proof
+  (`test_an_input_rewritten_in_place_is_still_caught_by_a_full_install`).
+  A tree of 8,887 linked inputs in 3,242 directories (scratch `bench/`):
+  one inventory makes 43,000 path system calls as a plain walk and 6,600
+  with the kept result; both return equal values.
+- **Receipt checks of several zones share the directory rows**
+  (`launch_receipts.reusable(rows=)`): the caller's dict; dropped after 60 s
+  and after any install.
+- **Every zone is made ready ahead** (`character_zoning._check_graph_ahead`,
+  `zone_graph_order`, `GraphsAheadContext`): while a warm spare waits, no
+  zone is starting and no request is waiting, one zone a tick: the zones
+  with a stored receipt first, then the rest by the distance of their map id
+  from the hero's zone. The step is the trip's own
+  (`install_zone_beacon_graph`); its `context.check()` also asks every
+  0.25 s whether a `map-<id>-<cookie>.json` request the session has not
+  taken, or `character-logout.json`, exists, and then raises
+  `GraphsAheadStopped` (a `Cancelled`): nothing is remembered, and the zone
+  is tried again 20 s later. A full install is followed by a pause of twice
+  its length. A result that is not a verified graph is forgotten, so the
+  trip decides for itself. Report: `spare_zone.graphs_checked_ahead` (first
+  80), `graphs_ahead_done`, `graphs_ahead_stopped`.
+- **The receipt identity changes** (two of its three hashed files changed),
+  so each zone runs in full once after the update: by the marker, about 4 s
+  with the kept shared inventory, and about 15 s for the first one, which
+  builds it.
+- **None of this runs in CI**: CI's zones (1 and 101) are in the Atlas tree,
+  which has no zone graphs. Unit tests and the scale check only; the Thor's
+  launch A is the first run.
+- **Chain.** CHAIN80_PLACEHOLDER
+- Ideas not started: the client's group files (5.5-6.8 s of every trip; the
+  per-file trace records are dropped in the quiet log, so a count and a
+  total would be the next measurement); the spare's late start after login
+  (the 70 s connection observer); the previous zone kept as a third server
+  (owner decision, asked on 2026-11-21, no answer yet).
+
 ## Thor test of 0.13.78 and what 0.13.79 does about it (Claude, 2026-11-21)
 
 Exports `coh-atlas-gameplay-20261121-051945` (setup), `-051955` (launch A,

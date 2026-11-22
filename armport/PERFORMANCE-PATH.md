@@ -846,6 +846,17 @@ loop (21.5), spare trip ready in 10.1 s (15.1; CI cooks the destination's
 meshes during the trip, which the setting speeds most, so the Thor's gain
 will be smaller).
 
+0.13.79 on the Thor and 0.13.80 (2026-11-22). Trips through the spare to
+zones visited before: 30.7 s and 25.6 s. The two slow trips were not the
+server: 67.7 s on a first visit (35.6 s installing the zone's navigation
+graph before the hand-over) and 49.4 s in the next launch (the new zone's
+marker had invalidated the other zones' receipts). 0.13.80 takes the marker
+out of the receipt, walks the 8,700 shared inputs once instead of three times
+a zone, and prepares every zone's graph while a warm spare waits. The x87
+setting showed no gain on the Thor outside mesh cooking (2.1 s for 9.7 s).
+Of a known-zone trip now: zone server 15-19 s, client 9.4-10.9 s (5.5-6.8 s
+of it loading group files).
+
 ## Process changes that would speed all of this up
 
 - **A performance experiment lane.** A CI job that runs only the server stack
