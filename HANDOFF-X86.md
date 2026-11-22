@@ -515,10 +515,30 @@ all `passed`; `ARMPORT_FRAME_RATE_V1` median 61 in the world in each.
 - **None of this runs in CI**: CI's zones (1 and 101) are in the Atlas tree,
   which has no zone graphs. Unit tests and the scale check only; the Thor's
   launch A is the first run.
+- **The client measures its group-file span** (client patch
+  `0131-armport-group-load-totals.patch`; evidence only). Between
+  `map.start` and `groups.files.done` the client runs `clientLoadMapStart`,
+  then per library file `groupFileFind`, `objectLibraryLoadBoundsFile` (a
+  `geobin/....bounds` read) and, if that is refused, `groupLoadFull`; then
+  `groupLoadTo` for the map file and its layers; and `receiveDef` for every
+  definition the server sends (`groupLoadRequiredLibsForDef` reads geometry
+  files at once). `Game/src/group/groupnetrecv.c` makes the same calls in
+  the same order and adds up their time (`armport_group_load_log.h`,
+  `QueryPerformanceCounter`); one line per new world, only with
+  `ARMPORT_STDIO_LOG`: `ARMPORT_GROUP_LOAD_V1 total_ms= start_ms= files=
+  sent= known= bounds= bounds_ms= full= full_ms= map_ms= defs= defs_ms=
+  libs_ms= geo= geo_ms=`. In the quiet log the four `library.` records of
+  files under `maps/` are kept as well (`armport_zone_trace.h`), which
+  splits `map_ms` into reading the bin, adding the definitions and the rest;
+  `groupfileload.c` is not touched. CI: `interactive_host.client_zone_loads`
+  prints each session's last three loads as the notice "client zone loads
+  <session>" (read it in the job log). Tests:
+  `armport/tests/test_group_load_totals.py`; the header's two pieces were
+  compiled and run with the host compiler against stubs, not with the
+  client's toolchain before the chain.
 - **Chain.** CHAIN80_PLACEHOLDER
-- Ideas not started: the client's group files (5.5-6.8 s of every trip; the
-  per-file trace records are dropped in the quiet log, so a count and a
-  total would be the next measurement); the spare's late start after login
+- Ideas not started: the client's group files (5.5-6.8 s of every trip;
+  0.13.80 measures them, see above); the spare's late start after login
   (the 70 s connection observer); the previous zone kept as a third server
   (owner decision, asked on 2026-11-21, no answer yet).
 

@@ -434,6 +434,44 @@ def client_logout_keys(text, limit=2):
     return {'kept': len(kept), 'aborted': len(aborted), 'kept_last': kept[-limit:], 'aborted_last': aborted[-limit:]}
 
 
+ZONE_LINE = re.compile(r'ArmPort zone: (\d+) (\S+) (.*?) ?tid=\d+$')
+ZONE_LOAD_STAGES = ('groups.files.done', 'groups.refs.done', 'map.finish.done', 'collision.done', 'groups.done',
+                    'allents.wait.done', 'textures.done', 'ready.sent')
+GROUP_LOAD_MARKER = 'ARMPORT_GROUP_LOAD_V1 '
+
+
+def client_zone_loads(text, limit=3):
+    """0.13.80 (client patch 0131): the client's last zone loads, each counted from "map.start".
+
+    `ms`: milliseconds to each boundary of the load; `group_load`: the client's own totals for
+    the group files (Thor 0.13.79: 5.5-6.8 s of every load, with nothing recorded inside it);
+    `map_files`: the map file's and its layers' load records (stage, file, ms). Evidence only.
+    """
+    loads, current = [], None
+    for line in text.splitlines():
+        if line.startswith(GROUP_LOAD_MARKER):
+            if current is not None:
+                current['group_load'] = line[len(GROUP_LOAD_MARKER):][:320]
+            continue
+        match = ZONE_LINE.match(line)
+        if match is None:
+            continue
+        tick, stage, detail = int(match.group(1)), match.group(2), match.group(3)
+        if stage == 'map.start':
+            current = {'map': detail.replace('\\', '/').rsplit('/', 1)[-1][:60], 'began': tick, 'ms': {}, 'map_files': []}
+            loads.append(current)
+        elif current is not None:
+            elapsed = (tick - current['began']) & 0xffffffff
+            if stage in ZONE_LOAD_STAGES:
+                current['ms'].setdefault(stage, elapsed)
+            elif stage.startswith('library.') and len(current['map_files']) < 12:
+                current['map_files'].append([stage[len('library.'):][:20],
+                                             detail.replace('\\', '/').rsplit('/', 1)[-1][:40], elapsed])
+            if stage == 'ready.sent':
+                current = None
+    return [{key: value for key, value in load.items() if key != 'began'} for load in loads[-limit:]]
+
+
 TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spawn_to_map_ready_seconds',
                  'dependency_start_seconds', 'request_to_client_world_ready_seconds')
 
@@ -880,6 +918,7 @@ def guest_timing_summary(evidence):
                     stdio = archive.read(member).decode('utf-8', errors='replace')
                     result['client_sound_scripts'] = client_sound_scripts(stdio)
                     result['client_logout_keys'] = client_logout_keys(stdio)
+                    result['client_zone_loads'] = client_zone_loads(stdio)
                 member = 'client-evidence/character-atlas-console.txt'
                 if member in names and archive.getinfo(member).file_size <= 16 * 1024 * 1024:
                     console = archive.read(member).decode('utf-8', errors='replace')
@@ -901,8 +940,9 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
                                                  'client_logout_keys') if original.get(key)}
         servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel')
                    if original.get(key)}
+        loads = original.get('client_zone_loads')
         for key, value in original.items():
-            if key in detail or key in servers:
+            if key in detail or key in servers or key == 'client_zone_loads':
                 continue
             if key in ('character_creation', 'character_reopen') and isinstance(value, dict):
                 value = dict(value)
@@ -919,6 +959,9 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         if servers:
             lines.append(ci_notice(dict(servers, session=name))
                          .replace('interactive result', 'zone servers ' + name, 1))
+        if loads:
+            lines.append(ci_notice({'session': name, 'client_zone_loads': loads})
+                         .replace('interactive result', 'client zone loads ' + name, 1))
     return lines
 
 

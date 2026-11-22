@@ -39,6 +39,10 @@
   is new, about 4 s for one that only needs checking again.
 - **A new zone no longer disturbs the others.** Each zone's saved check listed
   a folder that every other zone's install writes into. It no longer does.
+- **The game's log measures its own group-file loading** (5.5-6.8 s of every
+  zone load in 0.13.79). One line per zone load says how much of it is the map
+  file, the library files and the definitions the server sends. Nothing loads
+  differently; the numbers decide the next change.
 
 The first launch after this update checks each known zone's navigation map
 once more (about 15 s at the start for Mercy Island). That is expected and

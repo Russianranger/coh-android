@@ -336,6 +336,9 @@ jobs:
           - Visiting a new zone no longer makes the app check every other zone's navigation
             map in full again in the next launch (11 s at the start and 15 s before a trip
             in the test).
+          - The game's log says where its 5.5-6.8 s of group-file loading go (one line per
+            zone load: the map file, the library files, the definitions sent by the
+            server). A measurement for the next change; nothing loads differently.
           From 0.13.79:
           - "Keep a spare zone server loaded for travel" is a recommended option, on by
             default.

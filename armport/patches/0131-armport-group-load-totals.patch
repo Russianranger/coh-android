@@ -1,0 +1,262 @@
+diff --git a/Game/src/group/armport_group_load_log.h b/Game/src/group/armport_group_load_log.h
+new file mode 100644
+index 0000000..529250d
+--- /dev/null
++++ b/Game/src/group/armport_group_load_log.h
+@@ -0,0 +1,101 @@
++/* ArmPort: where a zone load's group-file time goes (patch 0131). Evidence only.
++ *
++ * Thor 0.13.79 (export 20261121-202117): the client spent 5.5-6.8 s of every zone load
++ * between "map.start" and "groups.files.done", and the quiet log (patches 0108, 0130) held
++ * nothing in between. This prints one line per new world, after the last group file:
++ *
++ *   ARMPORT_GROUP_LOAD_V1 total_ms= start_ms= files= sent= known= bounds= bounds_ms=
++ *       full= full_ms= map_ms= defs= defs_ms= libs_ms= geo= geo_ms=
++ *
++ *   start_ms   clientLoadMapStart (the load screen and the previous world's teardown)
++ *   files      group files the server listed; sent: those it described in the packet
++ *   known      object library files that were already loaded
++ *   bounds     library files accepted by their geobin .bounds checksum, and the time
++ *   full       library files that had to be loaded in full, and the time
++ *   map_ms     the map file itself with its imported layers (groupLoadTo)
++ *   defs       definitions received from the server, and the time for all of them
++ *   libs_ms    of defs_ms: groupLoadRequiredLibsForDef (geometry files read at once)
++ *   geo        of defs: definitions with a model; geo_ms: looking the models up
++ *
++ * No packet, loading or timeout behavior changes. Only written with ARMPORT_STDIO_LOG set,
++ * like the "ArmPort zone:" lines. Game/UtilitiesLib headers redefine printf/fflush; the
++ * helper isolates those macros like armport_net_clock.h (patch 0123).
++ */
++#ifndef ARMPORT_GROUP_LOAD_LOG_H
++#define ARMPORT_GROUP_LOAD_LOG_H
++#include <utilitieslib/utils/wininclude.h>
++#pragma push_macro("printf")
++#pragma push_macro("snprintf")
++#pragma push_macro("fflush")
++#pragma push_macro("fputs")
++#pragma push_macro("FILE")
++#undef printf
++#undef snprintf
++#undef fflush
++#undef fputs
++#undef FILE
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++typedef struct ArmportGroupLoad
++{
++    int active;                 /* a new world's files are being received */
++    long long began;
++    long long start, bounds_time, full_time, map_time, defs_time, libs_time, geo_time;
++    unsigned files, sent, known, bounds, full, defs, geo;
++} ArmportGroupLoad;
++
++static ArmportGroupLoad armport_group_load;
++
++static long long armportGroupLoadNow(void)
++{
++    LARGE_INTEGER value;
++    if (!QueryPerformanceCounter(&value))
++        return 0;
++    return value.QuadPart;
++}
++
++static unsigned armportGroupLoadMs(long long ticks)
++{
++    LARGE_INTEGER frequency;
++    if (ticks <= 0 || !QueryPerformanceFrequency(&frequency) || frequency.QuadPart <= 0)
++        return 0;
++    return (unsigned)(ticks * 1000 / frequency.QuadPart);
++}
++
++static void armportGroupLoadBegin(void)
++{
++    memset(&armport_group_load, 0, sizeof(armport_group_load));
++    armport_group_load.active = 1;
++    armport_group_load.began = armportGroupLoadNow();
++}
++
++static void armportGroupLoadEnd(void)
++{
++    const ArmportGroupLoad *t = &armport_group_load;
++    char line[400];
++    if (!t->active)
++        return;
++    if (getenv("ARMPORT_STDIO_LOG"))
++    {
++        snprintf(line, sizeof(line),
++            "ARMPORT_GROUP_LOAD_V1 total_ms=%u start_ms=%u files=%u sent=%u known=%u bounds=%u bounds_ms=%u"
++            " full=%u full_ms=%u map_ms=%u defs=%u defs_ms=%u libs_ms=%u geo=%u geo_ms=%u\n",
++            armportGroupLoadMs(armportGroupLoadNow() - t->began), armportGroupLoadMs(t->start),
++            t->files, t->sent, t->known, t->bounds, armportGroupLoadMs(t->bounds_time),
++            t->full, armportGroupLoadMs(t->full_time), armportGroupLoadMs(t->map_time),
++            t->defs, armportGroupLoadMs(t->defs_time), armportGroupLoadMs(t->libs_time),
++            t->geo, armportGroupLoadMs(t->geo_time));
++        fputs(line, stdout);
++        fflush(stdout);
++    }
++    armport_group_load.active = 0;
++}
++
++#pragma pop_macro("FILE")
++#pragma pop_macro("fputs")
++#pragma pop_macro("fflush")
++#pragma pop_macro("snprintf")
++#pragma pop_macro("printf")
++#endif
+diff --git a/Game/src/group/groupnetrecv.c b/Game/src/group/groupnetrecv.c
+index 55f532c..3a13352 100644
+--- a/Game/src/group/groupnetrecv.c
++++ b/Game/src/group/groupnetrecv.c
+@@ -1,5 +1,6 @@
+ #include "edit/edit.h"
+ #include <utilitieslib/utils/armport_zone_trace.h>
++#include "group/armport_group_load_log.h"
+ #include "win/win_init.h"
+ #include "sound/sound.h"
+ #include "edit/edit_net.h"
+@@ -639,11 +640,18 @@ int receiveDef(Packet *pak,int id,GroupFile *file)
+ 
+     setClientFlags(def, file->fullname);
+ 
+-    groupLoadRequiredLibsForDef(def);
++    {
++        long long armport_began = armportGroupLoadNow();
++        groupLoadRequiredLibsForDef(def);
++        armport_group_load.libs_time += armportGroupLoadNow() - armport_began;
++    }
+     has_geo = pktGetBits(pak,1);
+     if (has_geo)
+     {
++        long long armport_began = armportGroupLoadNow();
+         getGeo(pktGetString(pak),def);
++        armport_group_load.geo_time += armportGroupLoadNow() - armport_began;
++        armport_group_load.geo++;
+     }
+     def->hideForGameplay = pktGetBits(pak,1);
+     groupSetDrawInfo(def);
+@@ -663,10 +671,12 @@ static void receiveGroupFile(Packet *pak,int svr_file_idx,GroupFile *loadto)
+     char        *fname;
+     U32            checksum;
+     GroupFile    *file;
++    long long    armport_began;
+ 
+     get_file = pktGetBits(pak,1);
+     if (!get_file)
+         return;
++    armport_group_load.sent++;
+     strcpy((fname=group_info.svr_file_names[svr_file_idx]),pktGetString(pak));
+     armportZoneTrace("groupfile.begin", fname);
+     checksum = pktGetBits(pak,32);
+@@ -716,16 +726,35 @@ static void receiveGroupFile(Packet *pak,int svr_file_idx,GroupFile *loadto)
+             return;
+         }
+     }
++    // 0131: the same calls in the same order; only the time of each is added up.
++    armport_began = armportGroupLoadNow();
+     if (!loadto)
+     {
+-        if (!groupFileFind(fname) && !objectLibraryLoadBoundsFile(fname,checksum))
++        if (groupFileFind(fname))
++            armport_group_load.known++;
++        else if (objectLibraryLoadBoundsFile(fname,checksum))
++        {
++            armport_group_load.bounds++;
++            armport_group_load.bounds_time += armportGroupLoadNow() - armport_began;
++        }
++        else
++        {
++            long long armport_full = armportGroupLoadNow();
++            armport_group_load.bounds_time += armport_full - armport_began;
+             groupLoadFull(fname);
++            armport_group_load.full++;
++            armport_group_load.full_time += armportGroupLoadNow() - armport_full;
++        }
+     }
+     else
++    {
+         groupLoadTo(fname,loadto);
++        armport_group_load.map_time += armportGroupLoadNow() - armport_began;
++    }
+ 
+     armportZoneTrace("groupfile.loaded", fname);
+     file = 0;
++    armport_began = armportGroupLoadNow();
+     for(;;)
+     {
+         def_id = pktGetBitsPack(pak,1)-1;
+@@ -734,7 +763,9 @@ static void receiveGroupFile(Packet *pak,int svr_file_idx,GroupFile *loadto)
+         if (!file)
+             file = groupFileFromName(fname);
+         receiveDef(pak,def_id,file);
++        armport_group_load.defs++;
+     }
++    armport_group_load.defs_time += armportGroupLoadNow() - armport_began;
+     armportZoneTrace("groupfile.done", fname);
+ }
+ 
+@@ -878,7 +909,9 @@ void worldReceiveGroups(Packet *pak)
+                 grp_file = group_info.files[0];
+             groupFileSetName(grp_file,fname);
+             armportZoneTrace("map.start", fname);
++            armportGroupLoadBegin();
+             clientLoadMapStart(fname);
++            armport_group_load.start = armportGroupLoadNow() - armport_group_load.began;
+         }
+         game_state.beacons_loaded = pktGetBits(pak, 1);
+ 
+@@ -897,8 +930,10 @@ void worldReceiveGroups(Packet *pak)
+                 receiveGroupFile(pak,k,0);
+             if (file_count)
+                 receiveGroupFile(pak,0,grp_file);
++            armport_group_load.files = file_count;
+         }
+ 
++    armportGroupLoadEnd();
+     armportZoneTrace("groups.files.done", NULL);
+     PERFINFO_AUTO_STOP_START("middle2", 1);
+ 
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index de56772..c351ed4 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -77,7 +77,20 @@ done:
+     if (!ok) fprintf(stderr, "ARMPORT_ZONE_LOG_FAILED\n");
+ }
+ 
+-static int armportZoneTraceQuietDrops(const char *stage)
++static int armportZoneTraceIsMapFile(const char *detail)
++{
++    /* "maps/" anywhere in the path, in any case: a map file or one of its layers.
++     * Object library paths ("object_library/...") never hold it. */
++    const char *p;
++    if (!detail) return 0;
++    for (p = detail; *p; ++p)
++        if ((p[0] | 32) == 'm' && (p[1] | 32) == 'a' && (p[2] | 32) == 'p' && (p[3] | 32) == 's'
++            && (p[4] == '/' || p[4] == '\\'))
++            return 1;
++    return 0;
++}
++
++static int armportZoneTraceQuietDrops(const char *stage, const char *detail)
+ {
+     /* ARMPORT_TRACE_QUIET (device play): keep only load boundaries, errors
+      * and dialogs. Per-file library/texture/model records cost load time on
+@@ -96,12 +109,15 @@ static int armportZoneTraceQuietDrops(const char *stage)
+     if (!quiet) return 0;
+     for (i = 0; i < sizeof(keep) / sizeof(keep[0]); ++i)
+         if (!strncmp(stage, keep[i], strlen(keep[i]))) return 0;
++    /* 0.13.80 (patch 0131): the map file and its layers, a handful per load, also keep
++     * their four "library." records; the object library's hundreds stay dropped. */
++    if (!strncmp(stage, "library.", 8) && armportZoneTraceIsMapFile(detail)) return 0;
+     return 1;
+ }
+ 
+ static void armportZoneTrace(const char *stage, const char *detail)
+ {
+-    if (armportZoneTraceQuietDrops(stage)) return;
++    if (armportZoneTraceQuietDrops(stage, detail)) return;
+     // 0067: Atlas-only ordering witness in the SAME append-only stream as
+     // Wine's +seh output. A separate log's line numbers/ticks cannot order
+     // Wine exceptions against map.start. Emit for EVERY map.start before its
