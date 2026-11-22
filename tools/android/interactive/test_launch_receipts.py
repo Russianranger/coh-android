@@ -101,6 +101,33 @@ class LaunchReceiptTests(unittest.TestCase):
         path.unlink(); path.symlink_to(self.work / 'client-work.json')
         self.assertTrue(self.reusable(now=1000.0)[1].startswith('receipt_unreadable'))
 
+    def test_a_callers_row_cache_reads_each_shared_directory_once(self):
+        # 0.13.80: the 66 zone graph receipts share the object library's directories; one pass checks them all.
+        self.record()
+        other = [self.leaves[2], self.write('data/maps/zone/zone.txt')]
+        receipts.record(self.store, 'zone_audio', IDENTITY, self.work, other, RESULT)
+        rows, read = {}, []
+        original = receipts.directory_row
+        def counted(path, *, listing):
+            read.append((Path(path).relative_to(self.work).as_posix(), listing))
+            return original(path, listing=listing)
+        with unittest.mock.patch.object(receipts, 'directory_row', side_effect=counted):
+            first, _ = receipts.reusable(self.store, 'zone_resources', IDENTITY, self.work, rows=rows)
+            count = len(read)
+            second, reason = receipts.reusable(self.store, 'zone_audio', IDENTITY, self.work, rows=rows)
+        self.assertIsNotNone(first); self.assertIsNotNone(second); self.assertIsNone(reason)
+        self.assertEqual(sorted(read[count:]), [('data/maps', False), ('data/maps/zone', True)])
+        self.assertEqual(len(rows), len(read))
+        # The cache answers for the moment it was read: a later change is seen only without it.
+        self.write('data/object_library/zone/new.geo')
+        self.assertIsNotNone(receipts.reusable(self.store, 'zone_resources', IDENTITY, self.work, rows=rows)[0])
+        self.assertEqual(receipts.reusable(self.store, 'zone_resources', IDENTITY, self.work)[1],
+                         'directory_changed: data/object_library/zone')
+        self.assertEqual(receipts.reusable(self.store, 'zone_resources', IDENTITY, self.work, rows={})[1],
+                         'directory_changed: data/object_library/zone')
+        # A row read as an identity is not used where a listing is recorded, nor another root's.
+        self.assertTrue(all(key[0] == str(self.work) and isinstance(key[2], bool) for key in rows))
+
     def test_a_leaf_outside_the_worktree_is_not_recorded(self):
         with self.assertRaises(ValueError):
             receipts.record(self.store, 'zone_resources', IDENTITY, self.work, [Path(self.temporary.name) / 'x'], RESULT)

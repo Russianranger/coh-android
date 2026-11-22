@@ -219,66 +219,178 @@ class StockTravelTests(unittest.TestCase):
             # Two zone servers now: no new spare until the zone the hero left has given way.
             self.assertEqual(len(started), 1)
 
-    def test_a_warm_spare_checks_known_zones_graph_receipts_ahead_one_a_tick(self):
-        # Thor 0.13.78: the first trip to Port Oakes through a warm spare waited 2.27 s for this check.
-        value, started = self.spare_instance()
-        value.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {'beacon_graph': {'71': {'verified': True}}}}
-        value.zone_graphs_with_receipts = Mock(return_value=[72, 71, 1, 73, 74])
-        results = {72: {'verified': True}, 73: None, 74: {'verified': True}}
-        value.install_zone_beacon_graph = Mock(side_effect=lambda map_id, runtime, receipt_only=False: results[map_id])
+    def ahead_instance(self, order, results, **kwargs):
+        """A warm spare of the shared zone tree; `results` answers install_zone_beacon_graph by map id."""
+        value, started = self.spare_instance(**kwargs)
+        value.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {'beacon_graph': {}}}
+        value.zone_graph_order = Mock(side_effect=lambda near: list(order))
+        value._graphs_ahead_must_yield = Mock(return_value=False)
+        value.ctx.check = lambda: None
+        calls = []
+        def install(map_id, runtime, context=None, rows=None):
+            calls.append((map_id, runtime, context, rows))
+            answer = results[map_id]
+            if isinstance(answer, BaseException):
+                raise answer
+            if callable(answer):
+                answer = answer(context)
+            if answer is not None:
+                value.zone_tree_prepared['preparation']['beacon_graph'][str(map_id)] = answer
+            return answer
+        value.install_zone_beacon_graph = install
         self.tick(value)
-        process = started[0][3]
-        self.tick(value)                                      # loading: nothing is checked yet
-        value.install_zone_beacon_graph.assert_not_called()
-        process.output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
-        self.tick(value)                                      # the tick that sees it warm
-        value.install_zone_beacon_graph.assert_not_called()
-        self.tick(value)
-        value.install_zone_beacon_graph.assert_called_once_with(72, Path('/zones'), receipt_only=True)
-        self.tick(value)                                      # 71 is known this session, 1 is running: 73 next
-        self.tick(value)
-        self.tick(value); self.tick(value)                    # nothing left
-        self.assertEqual([call.args[0] for call in value.install_zone_beacon_graph.call_args_list], [72, 73, 74])
-        report = value.spare_report['graphs_checked_ahead']
-        self.assertEqual([(row['map_id'], row['receipt_held']) for row in report], [(72, True), (73, False), (74, True)])
-        self.assertTrue(all(type(row['seconds']) is float for row in report))
-        self.assertEqual(len(started), 1)
-
-    def test_the_check_ahead_waits_for_a_starting_zone_stops_at_its_limit_and_never_fails_the_session(self):
-        value, started = self.spare_instance()
-        value.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {}}
-        value.zone_graphs_with_receipts = Mock(return_value=list(range(60, 80)))
-        value.install_zone_beacon_graph = Mock(return_value=None)
-        self.tick(value)
+        self.tick(value)                                      # loading: nothing is done yet
+        self.assertEqual(calls, [])
         started[0][3].output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
+        self.tick(value)                                      # the tick that sees it warm
+        self.assertEqual(calls, [])
+        return value, calls
+
+    REUSED = {'verified': True, 'status': 'reused_verified_graph', 'input_validation': 'unchanged_directory_receipt'}
+    INSTALLED = {'verified': True, 'status': 'installed_verified_graph', 'input_validation': 'bounded_single_walk_inventory_and_fingerprints'}
+
+    def test_a_warm_spare_makes_every_zones_graph_ready_ahead_one_a_tick(self):
+        # Thor 0.13.79: the first visit to Cap au Diable waited 37.4 s for its graph before the hand-over.
+        value, calls = self.ahead_instance([72, 71, 1, 73, 74], {72: dict(self.REUSED), 73: dict(self.REUSED), 74: dict(self.INSTALLED)})
+        value.zone_tree_prepared['preparation']['beacon_graph']['71'] = {'verified': True}    # this session's own zone
         self.tick(value)
+        self.assertEqual([call[0] for call in calls], [72])
+        self.assertEqual(calls[0][1], Path('/zones'))
+        self.assertIsInstance(calls[0][2], zoning.GraphsAheadContext)
+        value.zone_graph_order.assert_called_once_with(1)                      # by distance from the hero's zone
+        self.tick(value)                                      # 71 is known this session, 1 is running: 73 next
+        self.assertEqual([call[0] for call in calls], [72, 73])
+        self.assertIs(calls[1][3], calls[0][3])               # one pass shares the directory rows it has read
+        self.tick(value)
+        self.assertEqual([call[0] for call in calls], [72, 73, 74])
+        self.tick(value); self.tick(value)                    # nothing left
+        self.assertEqual(len(calls), 3)
+        report = value.spare_report['graphs_checked_ahead']
+        self.assertEqual([(row['map_id'], row['status']) for row in report],
+                         [(72, 'reused_verified_graph'), (73, 'reused_verified_graph'), (74, 'installed_verified_graph')])
+        self.assertTrue(all(type(row['seconds']) is float for row in report))
+        self.assertEqual(value.spare_report['graphs_ahead_done'], 3)
+
+    def test_a_full_install_ahead_is_followed_by_a_pause_and_drops_the_rows_it_made_stale(self):
+        value, calls = self.ahead_instance([73, 74, 75], {73: dict(self.INSTALLED), 74: dict(self.REUSED), 75: dict(self.REUSED)})
+        clock = [1000.0]
+        def install(map_id, runtime, context=None, rows=None, original=value.install_zone_beacon_graph):
+            if map_id == 73:
+                clock[0] += 9.0                               # a first install: 9 s
+            return original(map_id, runtime, context=context, rows=rows)
+        value.install_zone_beacon_graph = install
+        with patch.object(zoning.time, 'monotonic', side_effect=lambda: clock[0]):
+            self.tick(value)
+            self.assertEqual([call[0] for call in calls], [73])
+            for _ in range(3):                                # 15 s of ticks: still inside the 18 s pause
+                clock[0] += 5.0; self.tick(value)
+            self.assertEqual([call[0] for call in calls], [73])
+            clock[0] += 5.0; self.tick(value)
+            self.assertEqual([call[0] for call in calls], [73, 74])
+            self.assertIsNot(calls[1][3], calls[0][3])        # the install wrote into the tree: rows read again
+            clock[0] += 5.0; self.tick(value)                 # a receipt check is followed by no pause
+            self.assertEqual([call[0] for call in calls], [73, 74, 75])
+            self.assertIs(calls[2][3], calls[1][3])
+
+    def test_the_work_ahead_gives_way_to_a_zone_request_and_a_save_and_tries_again_later(self):
+        value, calls = self.ahead_instance([73], {73: lambda context: context.check() or dict(self.INSTALLED)})
+        clock = [2000.0]
+        with patch.object(zoning.time, 'monotonic', side_effect=lambda: clock[0]):
+            value._graphs_ahead_must_yield = Mock(side_effect=[False, True])     # asked before starting, then inside
+            self.tick(value)
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(value.spare_report['graphs_checked_ahead'], [])
+            self.assertEqual(value.spare_report['graphs_ahead_stopped'], 1)
+            self.assertNotIn('73', value.zone_tree_prepared['preparation']['beacon_graph'])
+            value._graphs_ahead_must_yield = Mock(return_value=False)
+            clock[0] += 5.0; self.tick(value)                 # inside the retry delay
+            self.assertEqual(len(calls), 1)
+            clock[0] += zoning.SPARE_GRAPHS_AHEAD_RETRY_SECONDS; self.tick(value)
+            self.assertEqual(len(calls), 2)
+            self.assertEqual(value.spare_report['graphs_checked_ahead'][0]['status'], 'installed_verified_graph')
+        # A request that is already waiting: nothing is started at all.
+        value, calls = self.ahead_instance([73], {73: dict(self.REUSED)})
+        value._graphs_ahead_must_yield = Mock(return_value=True)
+        self.tick(value); self.tick(value)
+        self.assertEqual(calls, [])
+        # The context asks at most every quarter second, and the session's own cancellation still wins.
+        asked = Mock(return_value=False)
+        session = SimpleNamespace(check=Mock(), report={'x': 1})
+        context = zoning.GraphsAheadContext(session, asked)
+        with patch.object(zoning.time, 'monotonic', side_effect=lambda: clock[0]):
+            context.check(); context.check(); context.check()
+            self.assertEqual((session.check.call_count, asked.call_count), (3, 1))
+            clock[0] += zoning.SPARE_GRAPHS_AHEAD_YIELD_SECONDS
+            asked.return_value = True
+            with self.assertRaises(zoning.GraphsAheadStopped):
+                context.check()
+        self.assertEqual(context.report, {'x': 1})            # everything else is the session's context
+        self.assertTrue(issubclass(zoning.GraphsAheadStopped, zoning.base.Cancelled))
+        session.check.side_effect = zoning.base.Cancelled('session')
+        with self.assertRaises(zoning.base.Cancelled) as raised:
+            context.check()
+        self.assertNotIsInstance(raised.exception, zoning.GraphsAheadStopped)
+
+    def test_the_work_ahead_forgets_an_unverified_result_waits_for_a_starting_zone_and_never_fails_the_session(self):
+        failed = {'verified': False, 'status': 'not_installed', 'error': 'Zone collision input differs'}
+        value, calls = self.ahead_instance([73, 74], {73: dict(failed), 74: dict(self.REUSED)})
         value.stock_starts[5] = {}
         self.tick(value)
-        value.install_zone_beacon_graph.assert_not_called()
+        self.assertEqual(calls, [])
         value.stock_starts.clear()
-        for _ in range(zoning.SPARE_GRAPHS_AHEAD + 4):
+        clock = [3000.0]
+        with patch.object(zoning.time, 'monotonic', side_effect=lambda: clock[0]):
             self.tick(value)
-        self.assertEqual(value.install_zone_beacon_graph.call_count, zoning.SPARE_GRAPHS_AHEAD)
-        # A spare of another tree checks nothing; an error is recorded once and ends the checks.
+            self.assertEqual(value.spare_report['graphs_checked_ahead'], [{'map_id': 73, 'status': 'not_installed', 'seconds': 0.0}])
+            self.assertNotIn('73', value.zone_tree_prepared['preparation']['beacon_graph'])   # the trip decides itself
+            clock[0] += 5.0; self.tick(value); clock[0] += 5.0; self.tick(value)
+            self.assertEqual([call[0] for call in calls], [73, 74])                          # 73 is not tried again ahead
+        # A spare of another tree does nothing; an error is recorded once and ends the work.
         other, started = self.spare_instance(tree='atlas')
-        other.zone_graphs_with_receipts = Mock(return_value=[72])
-        other.install_zone_beacon_graph = Mock()
+        other.zone_graph_order = Mock(return_value=[72]); other.install_zone_beacon_graph = Mock()
         self.tick(other)
-        self.assertEqual(other.spare['runtime'], Path('/atlas'))
         started[0][3].output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
         self.tick(other); self.tick(other)                    # no shared zone tree prepared
         other.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {}}
         self.tick(other)                                      # prepared since, but this spare runs the Atlas tree
-        other.install_zone_beacon_graph.assert_not_called()
-        failing, started = self.spare_instance()
-        failing.zone_tree_prepared = {'runtime': Path('/zones'), 'preparation': {}}
-        failing.zone_graphs_with_receipts = Mock(side_effect=OSError('gone'))
-        self.tick(failing)
-        started[0][3].output += b'ARMPORT_SPARE_V1 status=waiting pid=9 placeholder_map_id=0\n'
-        self.tick(failing); self.tick(failing); self.tick(failing); self.tick(failing)
-        self.assertEqual(failing.zone_graphs_with_receipts.call_count, 1)
-        self.assertEqual(failing.spare_report['graphs_checked_ahead'], [{'map_id': None, 'receipt_held': False, 'error': 'gone'}])
+        other.install_zone_beacon_graph.assert_not_called(); other.zone_graph_order.assert_not_called()
+        failing, calls = self.ahead_instance([73], {73: OSError('gone')})
+        for _ in range(4):
+            self.tick(failing)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(failing.spare_report['graphs_checked_ahead'], [{'map_id': None, 'status': 'error', 'error': 'gone'}])
         self.assertIsNotNone(failing.spare)
+        listing, calls = self.ahead_instance([73], {73: dict(self.REUSED)})
+        listing.zone_graph_order = Mock(side_effect=AttributeError('no assets'))
+        for _ in range(3):
+            self.tick(listing)
+        self.assertEqual((calls, listing.zone_graph_order.call_count), ([], 1))
+
+    def test_the_yield_probe_sees_an_untaken_zone_request_and_a_save_request(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temporary:
+            value, _ = self.spare_instance()
+            state, requests = Path(temporary) / 'state', Path(temporary) / 'requests'
+            state.mkdir(); requests.mkdir()
+            value.owner = SimpleNamespace(args=SimpleNamespace(state=state))
+            value.external_maps = SimpleNamespace(directory=requests, requests={(72, 5): {}})
+            probe = lambda: zoning.LocalCharacterZoningServer._graphs_ahead_must_yield(value)
+            self.assertFalse(probe())
+            (requests / 'map-72-5.json').write_text('{}')     # taken by the session already
+            (requests / 'map-73-6.json.tmp').write_text('{}') # still being written
+            (requests / 'notes.txt').write_text('x')
+            self.assertFalse(probe())
+            (requests / 'map-73-6.json').write_text('{}')
+            self.assertTrue(probe())
+            value.external_maps.requests[(73, 6)] = {}
+            self.assertFalse(probe())
+            (state / 'character-logout.json').write_text('{}')
+            self.assertTrue(probe())
+            (state / 'character-logout.json').unlink()
+            value.external_maps = None
+            self.assertFalse(probe())
+            value.owner = SimpleNamespace()                   # no state folder known: never a reason to fail
+            self.assertFalse(probe())
 
     def test_no_spare_until_the_session_allows_it(self):
         cases = [(lambda v: v.spare_report.update(requested=False), None),

@@ -3198,24 +3198,32 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.zone_tree_prepared = {'runtime': target, 'preparation': report}
         return self.zone_tree_prepared
 
-    def zone_graphs_with_receipts(self, limit=8):
-        """Map ids whose navigation graph has a stored launch receipt, newest first (0.13.79).
+    def zone_graph_order(self, near):
+        """Every zone that has a navigation graph, in the order the check ahead takes them (0.13.80).
 
-        These are the zones this install has started before. Names only: nothing is read here.
+        First the zones with a stored launch receipt (this install has started them before),
+        newest receipt first; then the rest by the distance of their map id from `near` (the
+        zone the hero is in: the Rogue Isles and Paragon City are numbered in the order a
+        character meets them). Names and one source listing: no input is read here.
         """
         import zone_beacon_package
+        navigation = os.environ.get('COH_NAVIGATION_MAPS')
+        require(navigation in (None, zone_beacon_package.NAVIGATION_ROOT), 'Unexpected navigation map location')
+        available = set(zone_beacon_package.sources(self.owner.args.assets, navigation))
         found = []
         try:
             with os.scandir(self.owner.root / 'launch-receipts') as entries:
                 for entry in entries:
                     match = re.fullmatch(r'zone_graph_([1-9][0-9]{0,4})\.json', entry.name)
-                    if match and int(match.group(1)) in zone_beacon_package.WORLDS:
+                    if match and int(match.group(1)) in available:
                         found.append((entry.stat(follow_symlinks=False).st_mtime_ns, int(match.group(1))))
         except OSError:
-            return []
-        return [map_id for _, map_id in sorted(found, reverse=True)[:limit]]
+            found = []
+        known = [map_id for _, map_id in sorted(found, reverse=True)]
+        rest = sorted(available.difference(known), key=lambda map_id: (abs(map_id - near), map_id))
+        return known + rest
 
-    def install_zone_beacon_graph(self, map_id, target, receipt_only=False):
+    def install_zone_beacon_graph(self, map_id, target, context=None, rows=None):
         """This zone's navigation graph, verified against the shared zone tree before its MapServer starts.
 
         Thor 0.13.63, Mercy Island: "Beacon file not loaded for map: ...", so pets and NPCs
@@ -3224,9 +3232,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         installed: its zone still starts as before, without pathing. Once per zone and session;
         collision inputs another zone already proved in this session are not hashed again.
 
-        receipt_only (0.13.79, the check done ahead of a trip): only the receipt check; when the
-        receipt does not hold, nothing is installed or remembered and the answer is None, so the
-        trip itself runs the step in full as before.
+        `context` and `rows` (0.13.80) are the check ahead's (character_zoning._check_graph_ahead):
+        a context whose check() stops the work for a zone request, and the directory rows its
+        pass has already read.
         """
         import zone_beacon_package
         prepared = getattr(self, 'zone_tree_prepared', None)
@@ -3241,29 +3249,20 @@ class LocalCharacterServer(login.LocalLoginServer):
             require(navigation in (None, zone_beacon_package.NAVIGATION_ROOT), 'Unexpected navigation map location')
             found = zone_beacon_package.sources(self.owner.args.assets, navigation)
             if map_id in found:
-                result = self.zone_graph_with_receipt(zone_beacon_package, found[map_id], target, map_id,
-                                                      receipt_only)
-                if result is None:
-                    return None
-            elif receipt_only:
-                return None
+                result = self.zone_graph_with_receipt(zone_beacon_package, found[map_id], target, map_id, context, rows)
             else:
                 result = {'format': 1, 'verified': False, 'map_id': map_id, 'status': 'no_graph'}
         except base.Cancelled:
             raise
         except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile) as failure:
-            if receipt_only:
-                return None
             result = {'format': 1, 'verified': False, 'map_id': map_id,
                       'status': 'not_installed', 'error': str(failure)[:300]}
-        if receipt_only:
-            result['checked_ahead'] = True
         result['navigation_map_pack'] = 'bound' if navigation else 'not_imported'
         result['elapsed_seconds'] = round(time.monotonic() - started, 6)
         graphs[key] = result
         return result
 
-    def zone_graph_with_receipt(self, package, source, target, map_id, receipt_only=False):
+    def zone_graph_with_receipt(self, package, source, target, map_id, context=None, rows=None):
         """One zone's graph, or its last full result while its launch receipt holds (0.13.70).
 
         Thor 0.13.69 (20261113-015905): every start of Mercy Island's server re-read the state
@@ -3271,8 +3270,17 @@ class LocalCharacterServer(login.LocalLoginServer):
         start of Port Oakes spent 56.6 s on its 8,704. A receipt (launch_receipts.py) records
         the directories that hold those inputs and the graph; a later start reads those
         directories and no input. Anything a receipt cannot vouch for runs the step in full.
+
+        Thor 0.13.79 (20261121-202117, -203001): installing Cap au Diable's graph wrote its
+        marker into `data/server`, a directory every zone's receipt listed because its own
+        marker is there, so the next launch answered "directory_changed: server" for Mercy
+        Island and Port Oakes and ran both in full (11.0 s and 14.6 s, the second before a
+        trip). From 0.13.80 the marker is not one of the receipt's leaves: the receipt lists
+        the directories of the inputs and of the zone's own graph files, which another zone's
+        install does not touch. The marker stays what install() itself reuses.
         """
         import launch_receipts
+        context = self.ctx if context is None else context
         step, store, started = 'zone_graph_%d' % map_id, self.owner.root / 'launch-receipts', time.monotonic()
         record = {'status': 'ran_in_full', 'reason': None}
         self.ctx.report.setdefault('launch_receipts', {})[step] = record
@@ -3281,7 +3289,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             identity = package.receipt_identity(source, target, map_id)
             # Rows start at the tree's `data`: `target` itself is new in every session (0.13.73).
             root = package.receipt_root(target)
-            result, record['reason'] = launch_receipts.reusable(store, step, identity, root, self.ctx)
+            result, record['reason'] = launch_receipts.reusable(store, step, identity, root, context, rows=rows)
             if result is not None and result.get('verified') is True and result.get('map_id') == map_id:
                 elapsed = time.monotonic() - started
                 record.update(status='reused', elapsed_seconds=round(elapsed, 6))
@@ -3289,21 +3297,24 @@ class LocalCharacterServer(login.LocalLoginServer):
                             input_validation='unchanged_directory_receipt', input_payload_bytes_hashed=0,
                             preparation_elapsed_seconds=round(elapsed, 6))
         except base.Cancelled:
+            self.ctx.report['launch_receipts'].pop(step, None)
             raise
         except (launch_receipts.ReceiptError, base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
             record['reason'], identity = str(failure)[:200], None
-        if receipt_only:
-            # The check ahead never installs: the trip that needs this zone does, and records it then.
-            self.ctx.report['launch_receipts'].pop(step, None)
-            return None
         leaves = []
-        result = package.install(source, target, map_id, context=self.ctx, imported_inputs_readonly=True,
-                                 proofs=self.owner.root / 'zone-collision-input-proofs.json', leaves=leaves)
+        try:
+            result = package.install(source, target, map_id, context=context, imported_inputs_readonly=True,
+                                     proofs=self.owner.root / 'zone-collision-input-proofs.json', leaves=leaves,
+                                     shared_store=store)
+        except base.Cancelled:
+            self.ctx.report['launch_receipts'].pop(step, None)
+            raise
         record['elapsed_seconds'] = round(time.monotonic() - started, 6)
         if identity is not None and result.get('verified') is True:
             try:
+                marker = Path(package.names(map_id)['marker']).name
                 record['directories'] = launch_receipts.record(store, step, identity, package.receipt_root(target),
-                                                               leaves, result, self.ctx)
+                    [leaf for leaf in leaves if Path(leaf).name != marker], result, context)
                 record['recorded'] = True
             except base.Cancelled:
                 raise

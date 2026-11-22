@@ -64,6 +64,24 @@ MAX_PROOF_BYTES = 64 * 1024 * 1024
 
 RECEIPT_ROOT = 'data'      # every input, graph file and marker of a zone is below it (names, input_name)
 
+# 0.13.80. Every zone's manifest declares the whole object library and tricks (8,700 files) and
+# its own map folder. Thor 0.13.79 (20261121-202117): the first visit to Cap au Diable walked
+# those files three times and took 35.6 s before the trip's server could start; a zone whose
+# receipt no longer held took 11-15 s. The shared part is the same for every zone, so it is
+# walked once (atlas.collision_input_snapshot, unchanged) and its result kept with one row for
+# every directory of the two scopes: identity, times and listing (name, inode, type of each
+# entry), read before and after the walk. Later inventories read those directories again, no
+# file: adding, removing, renaming or replacing an entry anywhere in the scopes changes a row
+# and the walk runs again. This is the evidence a launch receipt accepts (launch_receipts.py),
+# with every directory listed. Not seen: a rewrite of an input in place; a full install still
+# stats every input against its proof (proven_input), and the kept result expires like a receipt.
+SHARED_SCOPES = (('data/object_library', ('.geo', '.txt', '.rootnames')), ('data/tricks', ('.txt',)))
+SHARED_POLICY = 'shared_scope_walk_between_two_listings_v1'
+SHARED_MAX_AGE_SECONDS = 30 * 24 * 3600
+SHARED_MAX_BYTES = 32 * 1024 * 1024
+SHARED_MAX_DIRECTORIES = 20000
+_SHARED_INVENTORIES = {}
+
 
 def names(map_id):
     require(map_id in WORLDS, 'No zone graph is defined for map ' + str(map_id))
@@ -241,11 +259,129 @@ def save_proofs(path):
         atlas.atomic_bytes(Path(path), raw)
 
 
-def inventory(runtime, value, context, map_id, *, provider_records=None):
-    return atlas.collision_input_snapshot(runtime, value['input_files'],
-        (('data/object_library', ('.geo', '.txt', '.rootnames')),
-         ('data/maps/city_zones/' + names(map_id)['world'], ('.txt',)), ('data/tricks', ('.txt',))),
-        context, zone='zone ' + str(map_id), provider_records=provider_records)
+def scope_rows(runtime, context):
+    """{directory relative to the tree: [identity, times, listing]} for every directory of SHARED_SCOPES.
+
+    One scandir a directory and no file stat (the entry type comes with the listing); a linked
+    directory is recorded as an entry and not entered, as in the walk.
+    """
+    runtime = Path(runtime); rows = {}
+    sentinels = {scope + '/.collision-inventory': suffixes for scope, suffixes in SHARED_SCOPES}
+    roots = atlas.actual_targets(runtime, sentinels, context)       # the walk's own scope roots
+    pending = [roots[sentinel].parent for sentinel in sentinels]
+    while pending:
+        context.check()
+        directory = pending.pop()
+        info = os.lstat(directory)
+        require(stat.S_ISDIR(info.st_mode), 'Linked collision source directory refused')
+        entries = []
+        with os.scandir(directory) as found:
+            for entry in found:
+                kind = ('l' if entry.is_symlink() else 'd' if entry.is_dir(follow_symlinks=False)
+                        else 'f' if entry.is_file(follow_symlinks=False) else 'o')
+                entries.append((entry.name, entry.inode(), kind))
+                if kind == 'd':
+                    pending.append(Path(entry.path))
+        digest = hashlib.sha256()
+        for name, inode, kind in sorted(entries):
+            digest.update(kind.encode() + str(inode).encode() + b':' + os.fsencode(name) + b'\0')
+        rows[directory.relative_to(runtime).as_posix()] = [info.st_dev, info.st_ino, info.st_mode, info.st_uid,
+            info.st_mtime_ns, info.st_ctime_ns, len(entries), digest.hexdigest()]
+        require(len(rows) <= SHARED_MAX_DIRECTORIES, 'Collision source inventory exceeds proof bound')
+    return rows
+
+
+def shared_identity(shared):
+    code = {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+            for name in ('zone_beacon_package.py', 'atlas_beacon_package.py')}
+    return {'format': 1, 'policy': SHARED_POLICY, 'scopes': [[scope, list(suffixes)] for scope, suffixes in SHARED_SCOPES],
+            'names': len(shared), 'names_sha256': hashlib.sha256(canonical(sorted(shared))).hexdigest(), 'code': code}
+
+
+def shared_path(store, identity):
+    return Path(store) / ('zone-shared-inputs-' + identity['names_sha256'][:16] + '.json')
+
+
+def load_shared(store, identity, now=None):
+    """The kept shared inventory of an earlier session, or None; an unusable file only costs the walk."""
+    try:
+        path = shared_path(store, identity)
+        info = os.lstat(path)
+        require(stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid() and info.st_size <= SHARED_MAX_BYTES,
+                'Shared inventory file refused')
+        value = json.loads(path.read_bytes())
+        rows, fingerprints = value['rows'], value['fingerprints']
+        age = (time.time() if now is None else now) - value['verified_utc']
+        require(value.get('format') == 1 and value.get('identity') == identity and 0 <= age <= SHARED_MAX_AGE_SECONDS
+                and isinstance(rows, dict) and 0 < len(rows) <= SHARED_MAX_DIRECTORIES
+                and all(isinstance(name, str) and isinstance(row, list) and len(row) == 8 for name, row in rows.items())
+                and isinstance(fingerprints, dict) and len(fingerprints) == identity['names']
+                and all(isinstance(row, dict) and set(row) == {'device', 'inode', 'bytes', 'mtime_ns', 'ctime_ns', 'mode', 'path'}
+                        and isinstance(row['path'], str) and atlas.safe(row['path'])
+                        and row['path'].casefold() == name.casefold()
+                        and all(type(row[key]) is int for key in row if key != 'path')
+                        for name, row in fingerprints.items()), 'Shared inventory file differs')
+        return {'rows': rows, 'fingerprints': fingerprints}
+    except Exception:  # any unusable file: walk again
+        return None
+
+
+def shared_inventory(runtime, shared, context, map_id, store):
+    """(fingerprints, targets) of the declared object library and tricks inputs; walked at most once.
+
+    `store` keeps the result for later sessions (None: this session only).
+    """
+    runtime = Path(runtime)
+    identity = shared_identity(shared)
+    key = (str(runtime), identity['names_sha256'])
+    try:
+        before = scope_rows(runtime, context)
+    except (OSError, ValueError):
+        # Nothing to compare a kept result with: the walk decides alone, as before 0.13.80.
+        return atlas.collision_input_snapshot(runtime, shared, SHARED_SCOPES, context, zone='zone ' + str(map_id))
+    held = _SHARED_INVENTORIES.get(key)
+    if held is None and store is not None:
+        held = load_shared(store, identity)
+    if held is not None and held['rows'] == before:
+        _SHARED_INVENTORIES[key] = held
+        return dict(held['fingerprints']), {name: runtime / row['path'] for name, row in held['fingerprints'].items()}
+    _SHARED_INVENTORIES.pop(key, None)
+    fingerprints, targets = atlas.collision_input_snapshot(runtime, shared, SHARED_SCOPES, context,
+                                                           zone='zone ' + str(map_id))
+    require(scope_rows(runtime, context) == before, 'Collision source directory changed during the shared inventory')
+    if not all(targets[name] == runtime / row['path'] for name, row in fingerprints.items()):
+        return fingerprints, targets          # a target the kept form cannot name: never kept
+    _SHARED_INVENTORIES[key] = {'rows': before, 'fingerprints': dict(fingerprints)}
+    if store is not None:
+        try:
+            raw = canonical({'format': 1, 'identity': identity, 'verified_utc': time.time(), 'rows': before,
+                             'fingerprints': fingerprints})
+            if len(raw) <= SHARED_MAX_BYTES:
+                Path(store).mkdir(mode=0o700, exist_ok=True)
+                atlas.atomic_bytes(shared_path(store, identity), raw)
+        except OSError:
+            pass                    # kept for this session only
+    return fingerprints, targets
+
+
+def inventory(runtime, value, context, map_id, *, provider_records=None, shared_store=False):
+    """Every collision input of one zone: fingerprints and the files they resolve to.
+
+    shared_store False: one walk of all three scopes, as before 0.13.80. None or a folder: the
+    object library and tricks come from shared_inventory (a folder keeps it across sessions) and
+    only the zone's own map folder is walked here.
+    """
+    own_scope = ('data/maps/city_zones/' + names(map_id)['world'], ('.txt',))
+    if shared_store is False or provider_records is not None:
+        return atlas.collision_input_snapshot(runtime, value['input_files'],
+            (SHARED_SCOPES[0], own_scope, SHARED_SCOPES[1]),
+            context, zone='zone ' + str(map_id), provider_records=provider_records)
+    own = {name: row for name, row in value['input_files'].items() if name.startswith(own_scope[0] + '/')}
+    shared = {name: row for name, row in value['input_files'].items() if name not in own}
+    fingerprints, targets = shared_inventory(runtime, shared, context, map_id, shared_store)
+    own_fingerprints, own_targets = atlas.collision_input_snapshot(runtime, own, (own_scope,), context,
+                                                                   zone='zone ' + str(map_id))
+    return {**fingerprints, **own_fingerprints}, {**targets, **own_targets}
 
 
 def private_target(runtime, name, context, map_id):
@@ -287,16 +423,18 @@ def receipt_root(runtime):
     return Path(runtime) / RECEIPT_ROOT
 
 
-def install(source, runtime, map_id, *, context, imported_inputs_readonly, proofs=None, leaves=None):
+def install(source, runtime, map_id, *, context, imported_inputs_readonly, proofs=None, leaves=None,
+            shared_store=False):
     """Verify one zone's graph (a `sources` entry) against the shared zone tree and write it there.
 
     `proofs` names a file that keeps the input hashes across sessions (565 MB for Mercy
     Island): an input is hashed again only when the file it resolves to has changed.
+    `shared_store` is passed to every inventory here (see inventory).
     """
     started = time.monotonic(); runtime = Path(runtime); zone = names(map_id)
     require(imported_inputs_readonly is True, 'Qualified readonly zone world required')
     value, lock = read_manifest(source['manifest'], source['lock'], map_id)
-    inputs, input_targets = inventory(runtime, value, context, map_id)
+    inputs, input_targets = inventory(runtime, value, context, map_id, shared_store=shared_store)
     targets = {n: private_target(runtime, n, context, map_id) for n in value['files']}
     marker = private_target(runtime, zone['marker'], context, map_id)
     if leaves is not None:      # every file this result depends on, for the caller's launch receipt
@@ -320,7 +458,7 @@ def install(source, runtime, map_id, *, context, imported_inputs_readonly, proof
         context.check()
         size = proven_input(input_targets[name], expected, context)
         hashed += size; hashed_files += bool(size)
-    require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed during proof')
+    require(inventory(runtime, value, context, map_id, shared_store=shared_store)[0] == inputs, 'Zone inputs changed during proof')
     if proofs is not None and hashed_files:
         save_proofs(proofs)
     archive = Path(source['archive']); manifest_bytes = Path(source['manifest']).read_bytes()
@@ -347,7 +485,7 @@ def install(source, runtime, map_id, *, context, imported_inputs_readonly, proof
                 atlas.regular(target, MAX_GRAPH); require(pin(target, context) == expected, 'Preserve existing different zone graph')
                 target.chmod(0o400)
             else: atlas.atomic_bytes(target, raw); installed += 1
-    require(inventory(runtime, value, context, map_id)[0] == inputs, 'Zone inputs changed before graph receipt')
+    require(inventory(runtime, value, context, map_id, shared_store=shared_store)[0] == inputs, 'Zone inputs changed before graph receipt')
     atlas.atomic_bytes(marker, canonical({'format': 1, 'policy': POLICY, 'lock': lock, 'inputs': inputs,
         'graphs': atlas.fingerprints(runtime, targets, context)}))
     return dict(result, status='installed_verified_graph', installed_files=installed, input_payload_bytes_hashed=hashed,

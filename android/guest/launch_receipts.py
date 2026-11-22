@@ -125,8 +125,14 @@ def load(store, step):
     return value
 
 
-def reusable(store, step, identity, root, context=None, *, now=None):
-    """(the step's last full result, None) while its receipt still holds, else (None, reason)."""
+def reusable(store, step, identity, root, context=None, *, now=None, rows=None):
+    """(the step's last full result, None) while its receipt still holds, else (None, reason).
+
+    `rows` (0.13.80): a dict the caller owns, filled with every directory row read here and
+    used instead of reading the same directory again. Receipts of several steps that share
+    directories (the 66 zone graphs share the object library's 3,287) can then be checked in
+    one pass; the caller must drop the dict as soon as anything may have changed the tree.
+    """
     try:
         receipt = load(store, step)
         if receipt is None:
@@ -147,10 +153,15 @@ def reusable(store, step, identity, root, context=None, *, now=None):
             row = receipt['directories'][name]
             require(isinstance(name, str) and isinstance(row, list) and len(row) in (4, 8)
                     and (name == '' or (not name.startswith('/') and '..' not in name.split('/'))), 'receipt_format')
-            try:
-                current = directory_row(root / name if name else root, listing=len(row) == 8)
-            except (OSError, ReceiptError):
-                return None, 'directory_missing: ' + (name or '.')[:200]
+            cached = (str(root), name, len(row) == 8)
+            current = None if rows is None else rows.get(cached)
+            if current is None:
+                try:
+                    current = directory_row(root / name if name else root, listing=len(row) == 8)
+                except (OSError, ReceiptError):
+                    return None, 'directory_missing: ' + (name or '.')[:200]
+                if rows is not None:
+                    rows[cached] = current
             if current != row:
                 return None, 'directory_changed: ' + (name or '.')[:200]
         return receipt['result'], None

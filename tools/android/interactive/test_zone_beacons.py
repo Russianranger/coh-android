@@ -532,6 +532,20 @@ class ZoneGraphInstallTests(unittest.TestCase):
                          ('reused_verified_graph', 'unchanged_directory_receipt', 0, True))
         self.assertEqual(report['launch_receipts']['zone_graph_%d' % MAP_ID]['status'], 'reused')
         self.assertEqual(second['combat_beacons'], first['combat_beacons'])
+        # Thor 0.13.79 (20261121-203001): another zone's install wrote its marker beside this zone's
+        # and its graph into a new world folder, and this receipt answered "directory_changed: server".
+        (self.runtime / 'data/server/zone-beacons-73-installed.json').write_bytes(b'{}')
+        other_world = self.runtime / 'data/server/maps/city_zones/v_city_02_01'; other_world.mkdir()
+        (other_world / 'v_city_02_01.txt.v8.bcn').write_bytes(b'graph of another zone')
+        with unittest.mock.patch.object(self.package, 'install', side_effect=AssertionError('inputs were walked')):
+            start()
+        self.assertEqual(report['launch_receipts']['zone_graph_%d' % MAP_ID]['status'], 'reused')
+        # The marker is what install() itself reuses, not a receipt leaf: without it the receipt still holds.
+        marker = self.runtime / NAMES['marker']; kept = marker.read_bytes()
+        marker.chmod(0o644); marker.unlink()
+        with unittest.mock.patch.object(self.package, 'install', side_effect=AssertionError('inputs were walked')):
+            start()
+        marker.write_bytes(kept); marker.chmod(0o400)
         # A replaced input changes its directory's row: the step runs in full and refuses other bytes.
         replaced = self.runtime / 'data/tricks/zone.txt'
         replaced.unlink(); replaced.write_bytes(b'other'); replaced.chmod(0o444)
@@ -558,6 +572,150 @@ class ZoneGraphInstallTests(unittest.TestCase):
         self.assertEqual((fourth['status'], report['launch_receipts']['zone_graph_%d' % MAP_ID]['status']),
                          ('installed_verified_graph', 'ran_in_full'))
 
+    def receipt_store(self):
+        """The session's receipt folder: its parent exists, the folder itself may not yet."""
+        (Path(self.temporary.name) / 'state').mkdir(exist_ok=True)
+        return Path(self.temporary.name) / 'state/launch-receipts'
+
+    def shared_install(self, store, source=None):
+        source = source or self.package.sources(self.assets)[MAP_ID]
+        return self.package.install(source, self.runtime, MAP_ID, context=self.Context(), imported_inputs_readonly=True,
+                                    shared_store=store)
+
+    def walks(self):
+        """Count atlas.collision_input_snapshot calls by the scopes they walk."""
+        counted = []
+        original = self.package.atlas.collision_input_snapshot
+        def walk(runtime, selected, scopes, context, **kwargs):
+            counted.append(tuple(scope for scope, _ in scopes))
+            return original(runtime, selected, scopes, context, **kwargs)
+        return counted, unittest.mock.patch.object(self.package.atlas, 'collision_input_snapshot', side_effect=walk)
+
+    SHARED = ('data/object_library', 'data/tricks')
+    OWN = ('data/maps/city_zones/' + NAMES['world'],)
+
+    def test_the_shared_inputs_are_walked_once_and_then_only_their_directories_are_read(self):
+        """0.13.80. Thor 0.13.79: 35.6 s before a first visit's server could start, three walks of 8,700 files."""
+        self.package._SHARED_INVENTORIES.clear()
+        store = self.receipt_store()
+        context = self.Context()
+        plain = self.package.inventory(self.runtime, self.value, context, MAP_ID)
+        counted, patched = self.walks()
+        with patched:
+            split = self.package.inventory(self.runtime, self.value, context, MAP_ID, shared_store=store)
+            self.assertEqual(split, plain)                                    # the same fingerprints and targets
+            self.assertEqual(counted, [self.SHARED, self.OWN])
+            del counted[:]
+            first = self.shared_install(store)
+            self.assertEqual((first['status'], first['input_files_checked']), ('installed_verified_graph', len(self.value['input_files'])))
+            self.assertEqual(counted, [self.OWN] * 3)                         # three inventories, no shared walk
+            kept = list(store.glob('zone-shared-inputs-*.json'))
+            self.assertEqual(len(kept), 1)
+            self.assertEqual(self.shared_install(store)['status'], 'reused_verified_graph')
+            # A later session: another tree folder around the same `data`, nothing in memory.
+            self.forget(); self.package._SHARED_INVENTORIES.clear()
+            parked = Path(self.temporary.name) / 'cache-generation'; parked.mkdir()
+            (self.runtime / 'data').rename(parked / 'data')
+            self.runtime.rename(self.runtime.with_name('runtime-of-an-earlier-session'))
+            self.runtime.mkdir(); (parked / 'data').rename(self.runtime / 'data')
+            del counted[:]
+            later = self.shared_install(store)
+            self.assertEqual(later['status'], 'installed_verified_graph')
+            self.assertEqual(counted, [self.OWN] * 3)
+            # Session memory alone (no folder) works the same within one session.
+            self.forget(); self.package._SHARED_INVENTORIES.clear(); del counted[:]
+            self.assertEqual(self.shared_install(None)['status'], 'installed_verified_graph')
+            self.assertEqual(counted, [self.SHARED, self.OWN, self.OWN, self.OWN])
+            self.assertEqual(len(list(store.glob('zone-shared-inputs-*.json'))), 1)
+
+    def test_any_change_of_a_shared_directory_walks_again(self):
+        self.package._SHARED_INVENTORIES.clear()
+        store = self.receipt_store()
+        self.shared_install(store)
+        counted, patched = self.walks()
+        with patched:
+            # A new entry in a folder that holds no input: a launch receipt does not list such a
+            # folder; the kept shared inventory lists every directory of the scopes.
+            empty = self.runtime / 'data/object_library/unused'; empty.mkdir()
+            self.forget()
+            self.assertEqual(self.shared_install(store)['status'], 'installed_verified_graph')
+            self.assertEqual(counted, [self.SHARED, self.OWN, self.OWN, self.OWN])
+            del counted[:]
+            extra = empty / 'extra.geo'; extra.write_bytes(b'x'); extra.chmod(0o444)
+            self.forget()
+            with self.assertRaisesRegex(ValueError, 'no qualified native profile'):
+                self.shared_install(store)
+            self.assertEqual(counted, [self.SHARED])
+            extra.unlink(); del counted[:]
+            # A replaced input (another inode) is walked and hashed again, and other bytes are refused.
+            self.write('data/tricks/zone.txt', b'other')                      # same inode: rewritten in place
+            replaced = self.runtime / 'data/object_library/zone/part007.geo'
+            replaced.unlink(); replaced.write_bytes(b'other geometry'); replaced.chmod(0o444)
+            self.write('data/tricks/zone.txt', b'trick')
+            with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
+                self.shared_install(store)
+            self.assertEqual(counted[0], self.SHARED)
+            replaced.unlink(); replaced.write_bytes(b'geo 7'); replaced.chmod(0o444)
+            self.assertTrue(self.shared_install(store)['verified'])
+
+    def test_an_input_rewritten_in_place_is_still_caught_by_a_full_install(self):
+        # The kept inventory does not see a rewrite in place (as a launch receipt does not);
+        # the full install stats every input against its proof.
+        self.package._SHARED_INVENTORIES.clear()
+        store = self.receipt_store()
+        self.shared_install(store)
+        self.forget(graph=True)
+        target = self.runtime / 'data/object_library/zone/part003.geo'
+        target.chmod(0o644); target.write_bytes(b'geo X'); target.chmod(0o444)   # same inode, same size
+        counted, patched = self.walks()
+        with patched:
+            with self.assertRaisesRegex(ValueError, 'Zone collision input differs'):
+                self.shared_install(store)
+            self.assertEqual(counted, [self.OWN])                             # the kept inventory was used
+
+    def test_an_unusable_old_or_foreign_kept_inventory_only_costs_the_walk(self):
+        self.package._SHARED_INVENTORIES.clear()
+        store = self.receipt_store()
+        self.shared_install(store)
+        kept = next(store.glob('zone-shared-inputs-*.json'))
+        good = json.loads(kept.read_bytes())
+        def with_file(value):
+            kept.chmod(0o600); kept.write_bytes(value if isinstance(value, bytes) else host.canonical(value)); kept.chmod(0o400)
+            self.forget(); self.package._SHARED_INVENTORIES.clear()
+            counted, patched = self.walks()
+            with patched:
+                result = self.shared_install(store)
+            self.assertEqual(result['status'], 'installed_verified_graph')
+            return counted[0]
+        self.assertEqual(with_file(good), self.OWN)                           # the control: used as written
+        self.assertEqual(with_file(b'{not json'), self.SHARED)
+        self.assertEqual(with_file(dict(good, verified_utc=good['verified_utc'] - self.package.SHARED_MAX_AGE_SECONDS - 60)), self.SHARED)
+        self.assertEqual(with_file(dict(good, identity=dict(good['identity'], policy='other'))), self.SHARED)
+        name = next(iter(good['fingerprints']))
+        moved = dict(good['fingerprints']); moved[name] = dict(moved[name], path='data/../outside.geo')
+        self.assertEqual(with_file(dict(good, fingerprints=moved)), self.SHARED)
+        short = dict(good['fingerprints']); short.pop(name)
+        self.assertEqual(with_file(dict(good, fingerprints=short)), self.SHARED)
+        # Without the scan (a scope root that cannot be listed) the walk decides alone, as before.
+        self.forget(); self.package._SHARED_INVENTORIES.clear()
+        with unittest.mock.patch.object(self.package, 'scope_rows', side_effect=OSError('no listing')):
+            self.assertEqual(self.shared_install(store)['status'], 'installed_verified_graph')
+
+    def test_a_change_between_the_two_listings_of_the_walk_is_refused_and_nothing_is_kept(self):
+        self.package._SHARED_INVENTORIES.clear()
+        store = self.receipt_store()
+        rows = self.package.scope_rows(self.runtime, self.Context())
+        changed = {name: list(row) for name, row in rows.items()}
+        changed['data/tricks'][-1] = 'f' * 64
+        with unittest.mock.patch.object(self.package, 'scope_rows', side_effect=[rows, changed]):
+            with self.assertRaisesRegex(ValueError, 'changed during the shared inventory'):
+                self.shared_install(store)
+        self.assertEqual(self.package._SHARED_INVENTORIES, {})
+        self.assertEqual(list(store.glob('zone-shared-inputs-*.json')) if store.exists() else [], [])
+        # Every directory of both scopes has a row, each with its listing.
+        self.assertEqual(sorted(rows), ['data/object_library', 'data/object_library/zone', 'data/tricks'])
+        self.assertTrue(all(len(row) == 8 for row in rows.values()))
+
     def test_without_the_archive_no_graph_is_available(self):
         (self.assets / NAMES['archive']).unlink()
         self.assertEqual(self.package.available(self.assets), ())
@@ -583,14 +741,13 @@ class ZoneTreeGraphTests(unittest.TestCase):
             self.server.LocalCharacterServer.zone_graph_with_receipt(self.owner, *args)
         self.sources = {MAP_ID: {'origin': 'navigation_map_pack'}}
 
-    def run_install(self, install, map_id=MAP_ID, environment=None, receipt_only=None):
+    def run_install(self, install, map_id=MAP_ID, environment=None, **extra):
         environment = {'COH_NAVIGATION_MAPS': '/opt/coh-navigation'} if environment is None else environment
         with unittest.mock.patch.object(self.package, 'sources', return_value=self.sources) as sources, \
                 unittest.mock.patch.object(self.package, 'install', side_effect=install), \
                 unittest.mock.patch.dict(self.server.os.environ, environment, clear=False):
             if 'COH_NAVIGATION_MAPS' not in environment:
                 self.server.os.environ.pop('COH_NAVIGATION_MAPS', None)
-            extra = {} if receipt_only is None else {'receipt_only': receipt_only}
             result = self.server.LocalCharacterServer.install_zone_beacon_graph(self.owner, map_id, Path('/tree'), **extra)
             return result, sources
 
@@ -608,49 +765,62 @@ class ZoneTreeGraphTests(unittest.TestCase):
         self.assertIs(again, result)
         self.assertEqual(calls, [MAP_ID])
 
-    def test_the_check_ahead_only_reads_the_receipt_and_remembers_only_a_held_one(self):
-        # 0.13.79: receipt_only never installs. These sources bind no receipt, so nothing is remembered...
-        result, _ = self.run_install(lambda *args, **kwargs: self.fail('the check ahead must not install'),
-                                     receipt_only=True)
-        self.assertIsNone(result)
-        self.assertEqual(self.owner.zone_tree_prepared['preparation']['beacon_graph'], {})
-        self.assertEqual(self.owner.ctx.report.get('launch_receipts', {}), {})
-        result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), map_id=72, receipt_only=True)
-        self.assertIsNone(result)                                # no graph for that zone: left to its trip
-        self.assertEqual(self.owner.zone_tree_prepared['preparation']['beacon_graph'], {})
-        # ...and the trip then runs the step in full, as before.
-        result, _ = self.run_install(lambda source, tree, map_id, **kwargs: {'verified': True, 'map_id': map_id,
-                                                                             'status': 'installed_verified_graph'})
+    def test_the_check_aheads_context_and_rows_reach_the_install_and_its_stop_leaves_nothing_behind(self):
+        # 0.13.80: the work ahead runs the same step with a context that can stop it for a zone request.
+        seen = {}
+        def install(source, tree, map_id, **kwargs):
+            seen.update(kwargs)
+            return {'verified': True, 'map_id': map_id, 'status': 'installed_verified_graph'}
+        context, rows = unittest.mock.Mock(), {}
+        result, _ = self.run_install(install, context=context, rows=rows)
         self.assertEqual(result['status'], 'installed_verified_graph')
-        self.assertNotIn('checked_ahead', result)
-        # A held receipt: the result is remembered for the session and marked.
+        self.assertIs(seen['context'], context)
+        self.assertEqual(seen['shared_store'], Path('/state/diagnostic/launch-receipts'))
+        # Without one, the session's own context, as before.
         self.owner.zone_tree_prepared['preparation']['beacon_graph'].clear()
-        held = {'verified': True, 'map_id': MAP_ID, 'status': 'reused_verified_graph'}
-        self.owner.zone_graph_with_receipt = unittest.mock.Mock(return_value=dict(held))
-        result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), receipt_only=True)
-        self.assertEqual((result['status'], result['checked_ahead'], result['navigation_map_pack']),
-                         ('reused_verified_graph', True, 'bound'))
-        self.assertEqual(self.owner.zone_graph_with_receipt.call_args.args[-1], True)
-        again, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'))
-        self.assertIs(again, result)                             # the trip finds it done
-        self.assertEqual(self.owner.zone_graph_with_receipt.call_count, 1)
+        self.run_install(install)
+        self.assertIs(seen['context'], self.owner.ctx)
+        # A stop (a Cancelled) passes through, and neither a result nor a receipt record stays.
+        self.owner.zone_tree_prepared['preparation']['beacon_graph'].clear()
+        self.owner.ctx.report.clear()
+        class Stopped(self.server.base.Cancelled):
+            pass
+        def stopped(*args, **kwargs):
+            raise Stopped('zone request')
+        with self.assertRaises(Stopped):
+            self.run_install(stopped, context=context, rows=rows)
+        self.assertEqual(self.owner.zone_tree_prepared['preparation']['beacon_graph'], {})
+        self.assertEqual(self.owner.ctx.report.get('launch_receipts'), {})
 
-    def test_known_zones_are_the_stored_graph_receipts_newest_first(self):
+    def test_the_order_ahead_is_known_zones_first_then_by_distance_from_the_hero(self):
         import tempfile
+        zones = sorted(self.package.WORLDS)
         with tempfile.TemporaryDirectory() as temporary:
             self.owner.owner.root = Path(temporary)
-            listed = lambda: self.server.LocalCharacterServer.zone_graphs_with_receipts(self.owner)
-            self.assertEqual(listed(), [])                       # no store yet
+            def order(near, available=zones):
+                with unittest.mock.patch.object(self.package, 'sources', return_value={m: {} for m in available}), \
+                        unittest.mock.patch.dict(self.server.os.environ, {'COH_NAVIGATION_MAPS': '/opt/coh-navigation'}):
+                    return self.server.LocalCharacterServer.zone_graph_order(self.owner, near)
+            self.assertEqual(order(71)[:5], sorted(zones, key=lambda m: (abs(m - 71), m))[:5])   # no store yet
+            self.assertEqual(len(order(71)), len(zones))
             store = Path(temporary) / 'launch-receipts'; store.mkdir()
-            zones = sorted(self.package.WORLDS)[:3]
-            for age, map_id in enumerate(zones):
+            known = [zones[5], zones[1], zones[9]]
+            for age, map_id in enumerate(known):
                 path = store / ('zone_graph_%d.json' % map_id); path.write_text('{}')
                 self.server.os.utime(path, (1000 - age, 1000 - age))
             for name in ('zone_graph_0.json', 'zone_graph_x.json', 'zone_resources.json', 'zone_graph_99999.json',
-                         'zone_graph_%d.json.new' % zones[0]):
+                         'zone_graph_%d.json.new' % zones[0], 'zone-shared-inputs-0123456789abcdef.json'):
                 (store / name).write_text('{}')
-            self.assertEqual(listed(), zones)
-            self.assertEqual(self.server.LocalCharacterServer.zone_graphs_with_receipts(self.owner, limit=2), zones[:2])
+            listed = order(zones[3])
+            self.assertEqual(listed[:3], known)                                   # newest receipt first
+            rest = [m for m in zones if m not in known]
+            self.assertEqual(listed[3:], sorted(rest, key=lambda m: (abs(m - zones[3]), m)))
+            self.assertEqual(sorted(listed), zones)
+            # Only zones that have a graph to install; an unexpected pack location is refused.
+            self.assertEqual(order(zones[3], available=[zones[1], zones[2]]), [zones[1], zones[2]])
+            with unittest.mock.patch.dict(self.server.os.environ, {'COH_NAVIGATION_MAPS': '/elsewhere'}):
+                with self.assertRaisesRegex(self.server.base.DiagnosticError, 'Unexpected navigation map location'):
+                    self.server.LocalCharacterServer.zone_graph_order(self.owner, 71)
 
     def test_a_zone_without_a_graph_starts_as_before(self):
         result, _ = self.run_install(lambda *args, **kwargs: self.fail('no install'), map_id=72, environment={})

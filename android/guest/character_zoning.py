@@ -90,11 +90,41 @@ SPARE_MIN_AVAILABLE_MIB = PRESTART_MIN_AVAILABLE_MIB
 SPARE_SETTLE_SECONDS = 30          # in the zone this long before a spare starts or a resident zone gives way
 SPARE_TICK_SECONDS = 5
 SPARE_ROOM_PROBE_SECONDS = 120     # the DbServer is asked where the hero is at most this often
-# 0.13.79: Thor 0.13.78 (20261121-053448), first trip to Port Oakes through a warm spare: the
-# hand-over waited 2.27 s for the receipt check of that zone's navigation graph (1.6-2.3 s per
-# zone, once a session); the trip back, whose zone was already checked, waited 5 ms. While a warm
-# spare waits, that check is done for the zones this install has started before, one a tick.
-SPARE_GRAPHS_AHEAD = 6
+# Navigation graphs ahead of a trip, while a warm spare waits and no zone is starting.
+# 0.13.79: Thor 0.13.78 (20261121-053448), first trip to Port Oakes: the hand-over waited 2.27 s
+# for that zone's graph receipt check; 0.13.79 did the check ahead for zones with a receipt.
+# 0.13.80: Thor 0.13.79 (20261121-202117): the first visit to Cap au Diable waited 37.4 s for
+# its graph to be installed before the spare could take the trip (67.7 s to connect against
+# 30.7 s and 25.6 s for known zones). Now every zone that has a graph is done ahead, in
+# local_character_server.zone_graph_order: receipt checks first (one pass shares the directory
+# rows), then full installs, each stopped at once by a zone request or a save request
+# (GraphsAheadContext) and followed by a pause of twice its own length.
+SPARE_GRAPHS_AHEAD_ROWS_SECONDS = 60      # how long one pass's directory rows are reused
+SPARE_GRAPHS_AHEAD_YIELD_SECONDS = 0.25   # how often the work asks whether it must stop
+SPARE_GRAPHS_AHEAD_RETRY_SECONDS = 20     # after it was stopped
+SPARE_GRAPHS_AHEAD_REPORT = 80
+
+
+class GraphsAheadStopped(base.Cancelled):
+    """The check ahead gave way to a zone request or a save request; never an error."""
+
+
+class GraphsAheadContext:
+    """The session's context, with a check() that also stops the work ahead when it must yield."""
+
+    def __init__(self, context, must_yield):
+        self._context, self._must_yield, self._next = context, must_yield, 0.0
+
+    def check(self):
+        self._context.check()
+        now = time.monotonic()
+        if now >= self._next:
+            self._next = now + SPARE_GRAPHS_AHEAD_YIELD_SECONDS
+            if self._must_yield():
+                raise GraphsAheadStopped('Navigation graphs ahead: stopped for a request')
+
+    def __getattr__(self, name):
+        return getattr(self._context, name)
 SPARE_START_LIMIT = 12
 # The game options the DbServer adds to every zone it asks for (launchercomm.c builds them from
 # its configuration, the same for a whole session; Thor 0.13.66: -maxLevel 50 -aggrocap 17
@@ -2986,35 +3016,77 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             report['waiting_reason'] = 'start_failed: ' + str(failure)[:160]
             self.spare_next = now + 10 * SPARE_TICK_SECONDS
 
-    def _check_graph_ahead(self, spare):
-        """One known zone's navigation graph receipt, checked while the warm spare waits (0.13.79).
+    def _graphs_ahead_must_yield(self):
+        """A zone request the DbServer has written and the session has not taken yet, or a save request."""
+        try:
+            if (self.owner.args.state / 'character-logout.json').exists():
+                return True
+            supervisor = getattr(self, 'external_maps', None)
+            if supervisor is None:
+                return False
+            for name in os.listdir(supervisor.directory):
+                match = character.external_maps.FILE_NAME.match(name)
+                if match and (int(match.group(1)), int(match.group(2))) not in supervisor.requests:
+                    return True
+        except (OSError, AttributeError):
+            pass
+        return False
 
-        The result is the one a trip to that zone would compute first (install_zone_beacon_graph
-        remembers it for the session, as it does between two trips). Receipt only: a zone whose
-        receipt does not hold is left for its trip. Never while a zone is starting; never an error.
+    def _check_graph_ahead(self, spare):
+        """One zone's navigation graph, made ready while the warm spare waits (0.13.79, 0.13.80).
+
+        The result is the one a trip to that zone would compute first, and
+        install_zone_beacon_graph remembers it for the session as it does between two trips. A
+        result that is not a verified graph is forgotten again, so the trip decides for itself.
+        Never while a zone is starting or a save is asked for; never an error.
         """
         report = self.spare_report.setdefault('graphs_checked_ahead', [])
-        tried = self.__dict__.setdefault('graphs_ahead_tried', set())
+        state = self.__dict__.setdefault('graphs_ahead', {'tried': set(), 'next': 0.0, 'order': None, 'rows': None,
+                                                          'rows_until': 0.0, 'stopped': 0})
         prepared = getattr(self, 'zone_tree_prepared', None)
-        if (len(tried) >= SPARE_GRAPHS_AHEAD or self.pending is not None or self.stock_starts
-                or prepared is None or Path(spare['runtime']) != prepared['runtime']):
+        now = time.monotonic()
+        if (state['order'] == [] or now < state['next'] or self.pending is not None or self.stock_starts
+                or prepared is None or Path(spare['runtime']) != prepared['runtime']
+                or self._graphs_ahead_must_yield()):
             return
         known = prepared.get('preparation', {}).get('beacon_graph', {})
         try:
-            for map_id in self.zone_graphs_with_receipts():
-                if map_id in tried or str(map_id) in known or map_id in self.maps:
+            if state['order'] is None:
+                state['order'] = self.zone_graph_order(self.active_map_id)
+            if state['rows'] is None or now >= state['rows_until']:
+                state['rows'], state['rows_until'] = {}, now + SPARE_GRAPHS_AHEAD_ROWS_SECONDS
+            while state['order']:
+                map_id = state['order'][0]
+                if map_id in state['tried'] or str(map_id) in known or map_id in self.maps:
+                    state['order'].pop(0)
                     continue
-                tried.add(map_id)
-                started = time.monotonic()
-                result = self.install_zone_beacon_graph(map_id, spare['runtime'], receipt_only=True)
-                report.append({'map_id': map_id, 'receipt_held': result is not None,
-                               'seconds': round(time.monotonic() - started, 3)})
+                context = GraphsAheadContext(self.ctx, self._graphs_ahead_must_yield)
+                try:
+                    result = self.install_zone_beacon_graph(map_id, spare['runtime'], context=context, rows=state['rows'])
+                except GraphsAheadStopped:
+                    state['stopped'] += 1
+                    state['next'] = time.monotonic() + SPARE_GRAPHS_AHEAD_RETRY_SECONDS
+                    self.spare_report['graphs_ahead_stopped'] = state['stopped']
+                    return
+                state['order'].pop(0)
+                state['tried'].add(map_id)
+                seconds = time.monotonic() - now
+                status = (result or {}).get('status')
+                if not (isinstance(result, dict) and result.get('verified') is True):
+                    known.pop(str(map_id), None)                # the trip itself tries again
+                if status != 'reused_verified_graph' or (result or {}).get('input_validation') != 'unchanged_directory_receipt':
+                    state['rows'] = None                        # an install wrote into the tree
+                    state['next'] = time.monotonic() + 2 * seconds
+                if len(report) < SPARE_GRAPHS_AHEAD_REPORT:
+                    report.append({'map_id': map_id, 'status': status, 'seconds': round(seconds, 3)})
+                self.spare_report['graphs_ahead_done'] = len(state['tried'])
                 return
         except base.Cancelled:
             raise
-        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
-            report.append({'map_id': None, 'receipt_held': False, 'error': str(failure)[:160]})
-            tried.update(range(-SPARE_GRAPHS_AHEAD, 0))     # stop trying in this session
+        except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError, AttributeError) as failure:
+            if len(report) < SPARE_GRAPHS_AHEAD_REPORT:
+                report.append({'map_id': None, 'status': 'error', 'error': str(failure)[:160]})
+            state['order'] = []                                 # stop trying in this session
 
     def _spare_wait_reason(self, now):
         """None when a spare may start now; else why not (recorded, never an error)."""
