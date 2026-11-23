@@ -9,28 +9,45 @@ what this test is for.
 
 - **A trip starts sooner (always on).** The app looked for the game's request
   to start a zone only every five seconds, so each trip waited up to five
-  seconds before the spare zone server was given the zone. Every "request to
-  map ready" time in your reports and in CI was a multiple of five seconds
-  for that reason (20.2, 20.3 and 25.3 s on the Thor; 10.1 and 15.1 s in
-  CI). It now looks twice a second.
+  seconds before the spare zone server was given the zone (2.3-3.3 s in the
+  one 0.13.79 trip where your export holds both ends). It now looks twice a
+  second. The "request to map ready" times in earlier reports were multiples
+  of five seconds (20.2, 20.3, 25.3 s) because the app also only *noticed*
+  a ready zone every five seconds; that part cost the trip nothing, and the
+  times in 0.13.81 reports are simply accurate now.
 - **Keep prepared zone object files (experimental, ARM64 client; faster zone
   loading).** 0.13.80's measurement: of the 508 group files a zone names, the
   game reads 341 object library files from their text form at every zone
   load, 6.4-7.5 s of each trip in CI. The zone servers save a prepared form
   of each such file the first time and read that afterwards; the game never
   did. With the option it does, into a folder of its own beside its saved
-  file list. The first load of a zone after ticking it is no faster (it
-  writes the files); later loads read them.
+  file list. **CI's result is modest:** the first load of a zone after
+  ticking it is about 3 s longer (it writes 541 files); later loads are
+  1-2 s shorter (object files 5.6-5.7 s for 6.4-7.5 s). Reading the text was
+  only about a second of that time; the next build measures the rest.
 - **Finish zone loading while the game loads the zone (experimental, needs
   Fast server).** A zone server reads its navigation data and starts its
   ragdoll physics after it is ready, while the game loads the zone, instead
   of before (4.7 s and 1.5 s of a trip's 18.8 s of server loading on the Thor
   in 0.13.79). For about a second after you appear, the zone has no
-  navigation data yet.
+  navigation data yet. CI's navigation data is tiny (the late steps took
+  0.25 s there), so the gain can only be measured on the Thor.
 
-Details: `HANDOFF-X86.md`, the two sections "Prepared for 0.13.81".
+Details: `HANDOFF-X86.md`, sections "0.13.81 (96)" and the three after it.
 
-CI: CI81_EVIDENCE_PLACEHOLDER
+CI (build 45160491073 at `ca58343c8`, every runtime run with the x87 option):
+zone-change run 45175868959 with prepared zone object files: first load
+parsed and wrote 541 files (object files 9.9 s, game ready 12.2 s after the
+load began), three later loads read all 541 (5.6-5.7 s, ready 7.1-7.3 s;
+0.13.80: 6.4-7.5 s and 8.2-9.5 s). Default options 45181648415: zone server
+start 358.8 s for a new character, 23.4 s reopened (0.13.80: 358.3, 23.6).
+Spare run 45187469113 with both options: files written in one launch and
+read in the next; each zone server ran its late steps 0.5 s after it first
+sent the world (navigation 14-23 ms, physics 237-253 ms warm); trip: zone
+ready 9.3 s after the request, arrivals 13.2 s and 78.8 s (0.13.80: 11.7,
+74.2), no resent input. One trip per run cannot show the faster pick-up.
+APK run 45193693577: 93,606,154 bytes, sha256 `74648e10...8f8ba7`, signer
+unchanged, its 51 guest files equal the commit.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 
@@ -75,13 +92,13 @@ CI: CI81_EVIDENCE_PLACEHOLDER
 5. **Launch B: zone objects.** Tick **Keep prepared zone object files**
    (the line above the options turns amber and names it; that is expected).
    Reopen, Enter Game. Then:
-   - The first loading screen is as long as before. In the zone, turn all the
-     way around and walk a little: is anything missing or out of place
+   - The first loading screen is a few seconds longer than before (the
+     files are written). In the zone, turn all the way around and walk a little: is anything missing or out of place
      (buildings, props, ground)?
    - Travel to a zone you know and note how long the loading screen stays.
      Look around again.
    - Travel back and note the loading time. This is the load that reads the
-     saved files and should be shortest. Look around again.
+     saved files; expect a second or two less, not more. Look around again.
    - **Save character / log out**, **Finish and save report**, export.
 6. **Launch C: both options.** Leave the first option ticked and also tick
    **Finish zone loading while the game loads the zone**. Reopen, Enter Game.

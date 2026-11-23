@@ -429,7 +429,11 @@ Version, notes and `THOR-TEST-0.13.81.md` at the chain's head.
   request files, the spare's hand-over, a start's readiness) ran only inside
   that inspection. A trip's request waited 0-5 s before anything was started,
   and the recorded request time was the inspection's, so the wait was not in
-  any measurement. The DbServer and the source zone server do not wait
+  any measurement. (Readiness was also only *observed* on that grid, which
+  is what made the figures multiples of five; observing costs a trip
+  nothing. The one Thor 0.13.79 trip with both ends recorded, 73 to 71 in
+  export 20261121-202117: the game logged the move in second 1795292295, the
+  request was seen at ...298.270, 2.3-3.3 s.) The DbServer and the source zone server do not wait
   (`waitingEntitiesCheck` runs every `msgScan`).
 - **Fix.** `LocalCharacterServer.tick_travel_requests`, called from the
   session loop's 0.1 s pass (`between_polls`) while the character plays:
@@ -446,7 +450,37 @@ Version, notes and `THOR-TEST-0.13.81.md` at the chain's head.
   CI now prints every zone server console's numbers (`zone server loads
   <session>` notice, `interactive_host.zone_server_loads`).
 
-- **Chain.** CHAIN81_PLACEHOLDER
+- **Chain** at `ca58343c8` (build 45160491073; runtime runs with
+  `server_emulation=x87`).
+  - Zone change 45175868959, `client_group_bins=true`: creation
+    `text=541 wrote=541 full_ms=9861`, ready.sent 12.2 s; three reopen loads
+    `bin=541 text=0 full_ms=5567..5668`, ready.sent 7.15-7.35 s (0.13.80:
+    6352..7539 and 8.2-9.5 s). So parsing was about 1 s of `full_ms` and the
+    write costs about 3 s once per zone. Zone starts 192.5 / 81.3 / 78.3 s.
+  - Trusted 45181648415 (defaults): creation 358.8 s, reopen 23.4 s, map load
+    17,823 / 4,523 ms. Its client `full_ms` is 12.4 / 10.4 s (0.13.80's
+    trusted run 45125692618: 13.7 / 11.3 s): that run has no
+    `proot_ioctl_filter`, the other two do.
+  - Spare 45187469113, `defer_zone_loads=true client_group_bins=true`:
+    `client_group_bins` absent before creation, present before reopen;
+    deferred records, all `trigger=world_sent`: creation `waited_ms=1301
+    beacons_ms=23 physx_ms=2717`, reopen `1227 / 19 / 253`, zone 101 through
+    the spare `2877 / 14 / 237`. Trip: ready 9.28 s after the request
+    (observed within a second now), `request_to_client_world_ready` 12.96 s,
+    arrivals 13.2 / 78.8 s (0.13.80: 11.7 / 74.2), no resends. **3.7 s
+    between a ready zone and the client's new world is unexplained**
+    (suspect: `netSendDisconnect(&comm_link, 5.f)` in `commServerMapXfer`).
+  - APK 45193693577: pre-release `coh-atlas-gameplay-v0.13.81`, 93,606,154
+    bytes, sha256 `74648e103162bbb2b8b1c0b613097160af0e5cc77757e339dc368eb8790f8ba7`,
+    signer unchanged, 51 guest files equal the commit, client holds
+    `ARMPORT_GROUP_BINS`, trusted server `ARMPORT_DEFER_ZONE_LOADS`.
+- **Prepared for the next build** (round3 only, not in 0.13.81): client
+  patch 0134 (`read_ms write_ms geoload geoload_ms` on the group-load line:
+  what the 5.6 s left of `full_ms` is; `geoLoad(..., GEO_INIT_FOR_DRAWING)`
+  per library file is the suspect) and 0135 (`xfer.wait/address/
+  disconnected/connect.begin/connected/scene.done` in the quiet log; the host
+  reports them as `transfer_ms_before`). Tests `test_group_load_split`,
+  `test_transfer_boundaries`.
 
 ## 0.13.81: the client keeps prepared group files (patch 0133; Claude, 2026-11-23)
 

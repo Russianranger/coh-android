@@ -857,6 +857,18 @@ those bounds itself (patch 0132), and a zone server reads its beacon file and
 starts PhysX after it is ready, while the client loads (4.7 s and 1.5 s of a
 trip's 18.8 s on the Thor).
 
+0.13.81's chain (ca58343c8) measured both. Prepared group files: a zone load
+that read all 541 from .bin spent 5.6-5.7 s on the object library for 6.4-7.5 s
+parsed, and the load that writes them 9.9 s (run 45175868959). Parsing was a
+second of it; patch 0134 (next build) times reading, writing and geometry
+loading apart. Deferred steps ran on every zone console 0.5 s after the first
+world update, 0.25 s of work in CI, whose beacon data is small (run
+45187469113): only the Thor can price it. Requests are picked up twice a
+second; the five-second figures were mostly late observation, the real wait
+was the pick-up (2.3-3.3 s in the one Thor trip with both ends recorded). New
+gap: the client has its world 3.7 s after the trip's zone is ready (patch
+0135, next build, records the client's transfer steps).
+
 0.13.79 on the Thor and 0.13.80 (2026-11-22). Trips through the spare to
 zones visited before: 30.7 s and 25.6 s. The two slow trips were not the
 server: 67.7 s on a first visit (35.6 s installing the zone's navigation
