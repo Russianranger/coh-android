@@ -256,6 +256,58 @@ class GuestMetrics(unittest.TestCase):
         self.assertNotIn('ARMPORT_TRUSTED_BINS', env)
         self.assertFalse(server.creation_report['trusted_bins']['requested'])
 
+    def test_deferred_zone_load_env_needs_request_and_the_admitted_switch(self):
+        server = object.__new__(local.LocalCharacterServer); server.map_package = self.game
+        server.creation_report = {}
+        with mock.patch.dict(os.environ, {'COH_DEFER_ZONE_LOADS': '1'}):
+            # This fixture's build has no deferred-load layer: the variable is not set, and why is recorded.
+            env = server.map_metrics_environment({'ARMPORT_DEFER_ZONE_LOADS': '1'}, self.runtime)
+            self.assertNotIn('ARMPORT_DEFER_ZONE_LOADS', env)
+            self.assertEqual(server.creation_report['deferred_zone_load'], {
+                'format': 1, 'requested': True, 'applied': False, 'environment_variable': 'ARMPORT_DEFER_ZONE_LOADS',
+                'scope': 'zone_servers_only', 'reason': 'switch_not_in_admitted_build', 'is_success_proof': False})
+            with mock.patch.object(contract, 'deferred_load_available', return_value=True):
+                env = server.map_metrics_environment({}, self.runtime)
+            self.assertEqual(env['ARMPORT_DEFER_ZONE_LOADS'], '1')
+            self.assertEqual((server.creation_report['deferred_zone_load']['applied'],
+                              server.creation_report['deferred_zone_load']['reason']), (True, None))
+            with mock.patch.object(contract, 'deferred_load_available', side_effect=OSError('gone')):
+                env = server.map_metrics_environment({}, self.runtime)      # never a reason to stop a start
+            self.assertNotIn('ARMPORT_DEFER_ZONE_LOADS', env)
+            self.assertEqual((server.creation_report['deferred_zone_load']['reason'],
+                              server.creation_report['deferred_zone_load']['error_type']), ('error', 'OSError'))
+            server.map_package = self.previous                               # the 0.13.36 server: no switch
+            env = server.map_metrics_environment({'ARMPORT_DEFER_ZONE_LOADS': '1'}, self.runtime)
+            self.assertEqual(env, {})
+            self.assertEqual(server.creation_report['deferred_zone_load']['reason'], 'no_metrics_mapserver')
+        server.map_package = self.game
+        for value in ('', '0', 'yes'):
+            with mock.patch.dict(os.environ, {'COH_DEFER_ZONE_LOADS': value}), \
+                    mock.patch.object(contract, 'deferred_load_available', return_value=True):
+                env = server.map_metrics_environment({'ARMPORT_DEFER_ZONE_LOADS': '1'}, self.runtime)
+            self.assertNotIn('ARMPORT_DEFER_ZONE_LOADS', env)
+            self.assertEqual((server.creation_report['deferred_zone_load']['requested'],
+                              server.creation_report['deferred_zone_load']['reason']), (False, 'not_requested'))
+
+    def test_deferred_zone_load_ci_input_reaches_the_guest_command_and_the_log_line(self):
+        sys.path.insert(0, str(ROOT / 'armport/app'))
+        import interactive_host as host
+        for value, expected in (('', False), ('0', False), ('1', True)):
+            with mock.patch.dict(os.environ, {'COH_DEFER_ZONE_LOADS': value}):
+                self.assertIs(host.defer_zone_loads_requested(), expected)
+        with mock.patch.dict(os.environ, {'COH_DEFER_ZONE_LOADS': 'true'}):
+            with self.assertRaises(ValueError):
+                host.defer_zone_loads_requested()
+        source = (ROOT / 'armport/app/interactive_host.py').read_text()
+        self.assertIn("command.insert(command.index('/usr/bin/python3'), 'COH_DEFER_ZONE_LOADS=1')", source)
+        record = {'format': 1, 'requested': True, 'applied': True, 'reason': None, 'scope': 'zone_servers_only'}
+        line = host.start_options_line({'character_reopen': {'deferred_zone_load': record}}, 'reopen')
+        self.assertIn('"deferred_zone_load":{"requested":true,"applied":true,"reason":null}', line)
+        self.assertIn('"deferred_zone_load":null', host.start_options_line({}, 'reopen'))
+        workflow = (ROOT / '.github/workflows/armport-app-runtime.yml').read_text()
+        self.assertIn('      defer_zone_loads:\n', workflow)
+        self.assertIn("  COH_DEFER_ZONE_LOADS: ${{ inputs.defer_zone_loads && '1' || '' }}\n", workflow)
+
     def test_parser_change_claim_is_exact_and_limited_to_the_reviewed_switch(self):
         build = {'build_input': {'patched_sha256': {}}}
         self.assertFalse(contract.parser_changed(build))
@@ -381,6 +433,72 @@ class GuestMetrics(unittest.TestCase):
                              r'|#include "group/armport_map_load_profile\.h"|#define ARMPORT_MAP_LOAD_PROFILE_IMPLEMENTATION'
                              r'|[{}]')
         self.assertEqual([line for line in added if not allowed.fullmatch(line)], [])
+
+    def test_deferred_load_claim_is_exact_default_off_and_rides_on_the_load_profile_claim(self):
+        build = {'build_input': {'patched_sha256': {}}}
+        self.assertFalse(contract.deferred_load_changed(build))
+        build['build_input']['patched_sha256'][contract.DEFERRED_SOURCES[0]] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed deferred load'):
+            contract.deferred_load_changed(build)         # one of its files without the rest
+        for name in (contract.DEFERRED_HEADER,) + contract.DEFERRED_SOURCES:
+            build['build_input']['patched_sha256'][name] = '0' * 64
+        entry = {'disabled_by_default': True, 'environment_variable': 'ARMPORT_DEFER_ZONE_LOADS',
+                 'steps_removed_or_reordered_when_disabled': [], 'gameplay_decisions_changed': False}
+        build['build_input'].update(
+            deferred_load_patch={'path': 'patches/mapserver-deferred-load/0001-finish-zone-load-after-ready.patch',
+                                 'sha256': contract.DEFERRED_PATCH},
+            contract={'deferred_zone_load': dict(entry)})
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed (load profile|deferred load)'):
+            contract.deferred_load_changed(build)         # groupnetdb.c must carry the reviewed profile too
+        for name in (contract.LOAD_PROFILE_HEADER,) + contract.LOAD_PROFILE_SOURCES:
+            build['build_input']['patched_sha256'][name] = '0' * 64
+        build['build_input'].update(
+            load_profile_patch={'path': 'patches/mapserver-load-profile/0001-map-load-profile.patch',
+                                'sha256': contract.LOAD_PROFILE_PATCH})
+        build['build_input']['contract']['map_load_profile'] = {
+            'disabled_by_default': True, 'measurement_only': True, 'gameplay_decisions_changed': False}
+        self.assertTrue(contract.deferred_load_changed(build))
+        for key, value in (('disabled_by_default', False), ('gameplay_decisions_changed', True),
+                           ('environment_variable', 'ARMPORT_SERVER_METRICS'),
+                           ('steps_removed_or_reordered_when_disabled', ['beacon_file_read'])):
+            changed = copy.deepcopy(build)
+            changed['build_input']['contract']['deferred_zone_load'][key] = value
+            with self.assertRaisesRegex(ValueError, 'outside the reviewed deferred load'):
+                contract.deferred_load_changed(changed)
+        changed = copy.deepcopy(build)
+        del changed['build_input']['contract']['deferred_zone_load']
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed deferred load'):
+            contract.deferred_load_changed(changed)
+        changed = copy.deepcopy(build)
+        changed['build_input']['deferred_load_patch']['sha256'] = '1' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed deferred load'):
+            contract.deferred_load_changed(changed)
+        sys.path.insert(0, str(ROOT / 'armport/scripts'))
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.deferred_patch_bytes()), contract.DEFERRED_PATCH)
+        self.assertEqual((producer.DEFERRED_HEADER, producer.DEFERRED_SOURCES),
+                         (contract.DEFERRED_HEADER, contract.DEFERRED_SOURCES))
+        self.assertIn(producer.DEFERRED_HEADER, producer.ADDED_FILES)
+        entry = producer.CONTRACT['deferred_zone_load']
+        self.assertEqual(entry['environment_variable'], contract.DEFERRED_VARIABLE)
+        self.assertIs(entry['disabled_by_default'], True)
+        # Outside the new header the patch removes only the statements it moves into the three
+        # functions of groupnetdb.c, and every one of them is added back.
+        text = producer.deferred_patch_bytes().decode()
+        header_end = text.index('diff --git a/MapServer/src/group/groupnetdb.c')
+        outside = text[:text.index('diff --git a/' + producer.DEFERRED_HEADER)] + text[header_end:]
+        removed = [line[1:].strip() for line in outside.splitlines() if line.startswith('-') and not line.startswith('---')]
+        added = [line[1:].strip() for line in outside.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        moved = [line for line in removed if line and not line.startswith(('for(v = ', 'if(!readFile){', 'pktSendBits(pak, 1, '))]
+        self.assertEqual([line for line in moved if line not in added], [])
+        self.assertEqual(sorted(set(line for line in removed if line) - set(moved)), sorted([
+            'for(v = curBeaconFileVersion; v >= oldestAllowableBeaconFileVersion; v--){', 'if(!readFile){',
+            'pktSendBits(pak, 1, (beaconGetReadFileVersion()||server_state.levelEditor)? 1: 0); '
+            '// Either beacons are loaded, or we explicitly told them not to load']))
+        calls = re.compile(r'\b(beaconReload|nwInitializeNovodex|modelFreeAllGeoData|dbDoorCreateBeaconConnections)\(')
+        self.assertEqual(sorted(calls.findall('\n'.join(added))),
+                         ['beaconReload', 'beaconReload', 'dbDoorCreateBeaconConnections', 'modelFreeAllGeoData',
+                          'nwInitializeNovodex'])
 
     def test_bounds_file_claim_is_exact_and_rides_on_the_object_library_claim(self):
         build = {'build_input': {'patched_sha256': {}}}

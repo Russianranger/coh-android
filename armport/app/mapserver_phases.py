@@ -32,6 +32,10 @@ MESSAGE_BIN = 'ARMPORT_MESSAGE_BIN_V1 status=trusted'
 MAP_LOAD = 'ARMPORT_MAP_LOAD_V1 status=ok '
 MAP_LOAD_FIELDS = ('total_ms', 'other_ms', 'model_find_ms', 'model_finds', 'ref_activate_ms', 'ref_activates',
                    'recalc_bounds_ms', 'bounds_files_ms', 'bounds_files', 'scene_ms', 'spawn_areas_ms', 'unbalanced')
+# 0.13.81: the zone load's steps that ran after "Server ready" (patches/mapserver-deferred-load).
+DEFERRED = 'ARMPORT_DEFERRED_LOAD_V1 status=ok '
+DEFERRED_FIELDS = ('waited_ms', 'beacons_ms', 'physx_ms')
+DEFERRED_TRIGGERS = ('world_sent', 'idle', 'map_load', 'clock_error')
 # 0.13.75: the cooked mesh file's own counts for the world load (patches/mapserver-physx-cache).
 PHYSX = 'ARMPORT_PHYSX_COOKED_V1 status=ok '
 PHYSX_FIELDS = ('loaded', 'hits', 'misses', 'refused', 'added', 'bad_records', 'old_bytes', 'added_bytes',
@@ -56,7 +60,7 @@ def summary(text, top=8):
     first = last = None
     animations = None
     checkpoints, ready, trusted, object_library, physx = {}, False, 0, False, None
-    start_trees, message_bins, map_load = False, 0, None
+    start_trees, message_bins, map_load, deferred = False, 0, None, None
     for index, line in enumerate(text.splitlines()):
         if index >= LINE_LIMIT:
             break
@@ -76,6 +80,12 @@ def summary(text, top=8):
             fields = dict(field.split('=', 1) for field in line[len(MAP_LOAD):].split() if '=' in field)
             map_load = {key: int(fields[key]) for key in MAP_LOAD_FIELDS
                         if re.fullmatch(r'-?\d{1,10}', fields.get(key, ''))}
+            continue
+        if line.startswith(DEFERRED) and deferred is None:
+            fields = dict(field.split('=', 1) for field in line[len(DEFERRED):].split() if '=' in field)
+            deferred = {key: int(fields[key]) for key in DEFERRED_FIELDS
+                        if re.fullmatch(r'-?\d{1,10}', fields.get(key, ''))}
+            deferred['trigger'] = fields.get('trigger') if fields.get('trigger') in DEFERRED_TRIGGERS else None
             continue
         if line.startswith(PHYSX) and physx is None:
             fields = dict(field.split('=', 1) for field in line[len(PHYSX):].split() if '=' in field)
@@ -130,6 +140,7 @@ def summary(text, top=8):
             'start_trees_not_read_ahead': start_trees,
             'message_bins_trusted': message_bins,
             'map_load_profile': map_load,
+            'deferred_load': deferred,
             'physx_cooked': physx}
 
 

@@ -414,6 +414,53 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## Prepared for 0.13.81: a zone server finishes its load after it is ready (Claude, 2026-11-23)
+
+Not built and not run anywhere yet: written while the 0.13.80 chain ran, host
+tests only. Off by default at every level.
+
+- **Why.** Thor 0.13.79, a trip through the spare zone server (zone 72,
+  console tail of export 20261121-202117): the server loads 18.8 s after the
+  request (map 8.4 s, `loading beacons` 4.7 s, encounter groups 2.1 s,
+  collision triangles 1.7 s, `Starting novodex` 1.5 s), is ready, and the
+  client connects 0.3 s later, has its world 77 ms after that and then loads
+  the zone for about 8 s while the server waits.
+- **What.** Server layer `patches/mapserver-deferred-load/0001-finish-zone-load-after-ready.patch`
+  (`armport_deferred_load.h`, `groupnetdb.c`, `groupnetsend.c`,
+  `beaconFile.c`, one call in `svr_init.c`'s main loop). With
+  `ARMPORT_DEFER_ZONE_LOADS=1` the first map load of a process leaves two
+  steps for the main loop: the beacon file (until then `beaconReload` runs
+  without the file: the state of a zone that has none) and the PhysX world
+  with the geometry free after it. They run before a tick, 500 ms after the
+  first full world update went to a client, or after 3 s without one, or
+  before a later map load. They are the server's own reload paths
+  (`beaconreadfile`: `beaconReload`; `beaconCheckBlocksNeedRebuild` pairs a
+  rebuild with `dbDoorCreateBeaconConnections`; `nxs_init_world`:
+  `nwInitializeNovodex`; every PhysX use is behind `nwEnabled()`). Record:
+  `ARMPORT_DEFERRED_LOAD_V1 status=ok trigger= waited_ms= beacons_ms= physx_ms=`.
+  Expected: about 6 s off a trip and off a zone start a client waits for.
+- **Not known.** Whether NPCs, pets, pedestrians and cars behave the same
+  after a late read: no CI check sees them move. The audit of beacon users
+  outside `beacon/` and `ai/` found only the door connections (re-made),
+  `validate_spawn_points` (off) and a developer banner on the client (the
+  world update says "loaded" while the read is pending). It must be played.
+- **Switches.** Guest `COH_DEFER_ZONE_LOADS=1` (sets the server variable only
+  for an admitted build that has the layer; report key `deferred_zone_load`);
+  CI input `defer_zone_loads`; app option "Finish zone loading while the
+  game loads the zone (experimental, needs Fast server)", pref
+  `zone-load-after-ready`, default off (recommended lists: 18 ticked, 5
+  unticked). `START_OPTIONS_V1.deferred_zone_load`,
+  `atlas_mapserver_phases.deferred_load`.
+- **Tests.** Native fixture cases `deferred_load*` (six, with the unpatched
+  control) and call-site checks in `armport/tests/server_metrics_native.py`;
+  evidence regenerated with `tools/regen_host_checks.py` of the scratchpad
+  (stage `retained_progress` from the baseline root, run the fixture with
+  `--negative-control`, write `armport/evidence/mapserver-startup-retained-host-checks.json`).
+  The MSVC build of the layer happens first in the next `armport-build.yml` run.
+- **Next.** Build; A/B the spare run with and without `-f defer_zone_loads=true`
+  (compare `request_to_client_world_ready_seconds` and the Atlas console's
+  record); then a Thor test with the option ticked that watches NPCs and a pet.
+
 ## Thor test of 0.13.79 and what 0.13.80 does about it (Claude, 2026-11-22)
 
 Exports `coh-atlas-gameplay-20261121-174319` (setup), `-174331` (first launch

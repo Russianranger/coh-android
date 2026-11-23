@@ -483,6 +483,13 @@ def trusted_bins_requested():
     return value == '1'
 
 
+def defer_zone_loads_requested():
+    """CI A/B input (0.13.81): zone servers read beacons and start PhysX after they are ready."""
+    value = os.environ.get('COH_DEFER_ZONE_LOADS', '')
+    require(value in ('', '0', '1'), 'COH_DEFER_ZONE_LOADS must be empty, 0 or 1')
+    return value == '1'
+
+
 def server_emulation_requested():
     """CI A/B input (0.13.79): emulator settings for the zone servers, e.g. `tso`, `x87` or `tso,x87`.
 
@@ -635,8 +642,14 @@ def start_options_line(report, session):
     own counters). Evidence only; neither gates a session.
     """
     value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None,
-             'physx_cache': None, 'server_emulation': None}
+             'physx_cache': None, 'server_emulation': None, 'deferred_zone_load': None}
     if isinstance(report, dict):
+        for section in [report, *report.values()]:
+            deferred = section.get('deferred_zone_load') if isinstance(section, dict) else None
+            if isinstance(deferred, dict):
+                # 0.13.81: whether the zone servers were told to finish their load after "Server ready".
+                value['deferred_zone_load'] = {key: deferred.get(key) for key in ('requested', 'applied', 'reason')}
+                break
         for section in [report, *report.values()]:
             emulation = section.get('server_emulation') if isinstance(section, dict) else None
             if isinstance(emulation, dict):
@@ -1157,6 +1170,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_HEAP=1')
         if server_emulation_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SERVER_EMULATION=' + server_emulation_requested())
+        if defer_zone_loads_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_DEFER_ZONE_LOADS=1')
         if args.external_maps_dbserver is not None:
             # The supervisor observes the DbServer's map requests and delinks
             # the ones this flow does not start itself (milestone 1).

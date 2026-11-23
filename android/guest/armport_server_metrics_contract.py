@@ -46,6 +46,12 @@ LOAD_PROFILE_HEADER = 'Common/group/armport_map_load_profile.h'
 LOAD_PROFILE_SOURCES = ('Common/group/group.c', 'Common/group/groupgrid.c', 'MapServer/src/group/groupnetdb.c')
 # 0.13.78: the trusted-bin switch for the bounds file of each loaded library file (not read back).
 BOUNDS_PATCH = '5fb615789a34e6df0c2fee2b203fb60c47571af32b2571838375be865357d430'
+# 0.13.81: opt-in ARMPORT_DEFER_ZONE_LOADS (patches/mapserver-deferred-load): the beacon file and
+# the PhysX world are read after "Server ready", while the client loads the zone.
+DEFERRED_PATCH = '6992a9ae8d1955eb2469991406aac5873bc0b43c57f2a666f58abe22136d6b3b'
+DEFERRED_HEADER = 'MapServer/src/group/armport_deferred_load.h'
+DEFERRED_SOURCES = ('MapServer/src/beacon/beaconFile.c', 'MapServer/src/group/groupnetsend.c')
+DEFERRED_VARIABLE = 'ARMPORT_DEFER_ZONE_LOADS'
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
 # the guest sets the variable: shared loading first, then a wait for the map id and cookie.
 SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
@@ -247,6 +253,7 @@ def _authenticate(path, package):
     start_trees_changed(build)
     load_profile_changed(build)
     bounds_files_changed(build)
+    deferred_load_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -345,6 +352,35 @@ def bounds_files_changed(build):
             and object_library_changed(build)),
             'Metrics build changed library bounds loading outside the reviewed trusted-bin switch')
     return changed
+
+
+def deferred_load_changed(build):
+    """True only for the reviewed default-off zone load that finishes after "Server ready"."""
+    source = build.get('build_input', {})
+    patched = source.get('patched_sha256', {})
+    names = (DEFERRED_HEADER,) + DEFERRED_SOURCES
+    changed = any(name in patched for name in names) or 'deferred_load_patch' in source
+    entry = source.get('contract', {}).get('deferred_zone_load')
+    require(not changed or (all(name in patched for name in names)
+            and source.get('deferred_load_patch') == {
+                'path': 'patches/mapserver-deferred-load/0001-finish-zone-load-after-ready.patch',
+                'sha256': DEFERRED_PATCH}
+            and isinstance(entry, dict) and entry.get('disabled_by_default') is True
+            and entry.get('environment_variable') == DEFERRED_VARIABLE
+            and entry.get('steps_removed_or_reordered_when_disabled') == []
+            and entry.get('gameplay_decisions_changed') is False
+            and load_profile_changed(build)),          # groupnetdb.c carries both layers
+            'Metrics build changed zone loading outside the reviewed deferred load')
+    return changed
+
+
+def deferred_load_available():
+    """Whether the admitted metrics MapServer can finish a zone load after it is ready."""
+    try:
+        _, build, _, _ = load_binding()
+        return deferred_load_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def physx_cache_available():

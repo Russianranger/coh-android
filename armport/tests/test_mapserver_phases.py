@@ -80,6 +80,16 @@ class MapServerPhaseTests(unittest.TestCase):
             'ref_activates': 810, 'recalc_bounds_ms': 300, 'bounds_files_ms': 200, 'bounds_files': 125,
             'scene_ms': 60, 'spawn_areas_ms': 200, 'unbalanced': 0})
         self.assertEqual(profiled['slowest_self_timed'], result['slowest_self_timed'])
+        # 0.13.81: the steps a zone start left until after "Server ready", wherever the record is.
+        self.assertIsNone(result['deferred_load'])
+        late = mapserver_phases.summary(CONSOLE + '\nARMPORT_DEFERRED_LOAD_V1 status=ok trigger=world_sent '
+                                        'waited_ms=812 beacons_ms=4690 physx_ms=1502\n'
+                                        'ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=idle waited_ms=1 beacons_ms=1 physx_ms=1\n')
+        self.assertEqual(late['deferred_load'], {'waited_ms': 812, 'beacons_ms': 4690, 'physx_ms': 1502,
+                                                 'trigger': 'world_sent'})
+        self.assertEqual(late['slowest_self_timed'], result['slowest_self_timed'])
+        odd = mapserver_phases.summary('ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=other waited_ms=-1 beacons_ms=x physx_ms=-1\n')
+        self.assertEqual(odd['deferred_load'], {'waited_ms': -1, 'physx_ms': -1, 'trigger': None})
         self.assertIsNone(result['physx_cooked'])
         cooked = mapserver_phases.summary(CONSOLE.replace(
             '[2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects',

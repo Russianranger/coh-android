@@ -3,9 +3,9 @@
   "role": "armport_server_metrics_source_checks",
   "status": "passed",
   "variant": "retained_progress",
-  "build_input_sha256": "ea676950dbb82169b0bfd586adca988d9563f887098a083ef2f529d24125f951",
+  "build_input_sha256": "9726a04f807e8a4b3423843b86053ca6131e87923708ee981b3c06d72ca10436",
   "source_sha256": {
-    "MapServer/src/svr/svr_init.c": "5b8cddb66687c6304bf2cd2bd6a708d3cc4f08da377d140e2e1d89830349d217",
+    "MapServer/src/svr/svr_init.c": "c995b18cbf5d9c1a9c2c86fe13c43d6fa6898210b76aef3df21768b9cadeeaed",
     "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71",
     "libs/UtilitiesLib/include/utilitieslib/utils/armport_server_metrics.h": "7f10c993614ee0756c408627b4698c3b107d1a3875184f85ff231fadad170813",
     "libs/UtilitiesLib/src/utils/armport_server_metrics_impl.h": "807969ff3d923fbf3d6a8188150b387ff93eecb0b4b621cdbf4b0435d61f1c7b",
@@ -19,7 +19,10 @@
     "Common/group/armport_map_load_profile.h": "498d9345d1d13c76220c4509aea08facc20c21e43fc52b70e4cc00a4f387d819",
     "Common/group/group.c": "d406ed23952a7c9e11a335dc0cb4acbd16d5bcf5befa52dbc7dc6907e4010960",
     "Common/group/groupgrid.c": "d187047f5795995c50e8d67ef5d9aefff1fe0b27b7cb01acae16043d2fcacc72",
-    "MapServer/src/group/groupnetdb.c": "efff5810047d919595d90c68a410e479c04c607bb54f3a62577e454fd7201b37"
+    "MapServer/src/group/groupnetdb.c": "ac21b7027436f5c32b1f49d4477e0cb0d2ecc9f7dccb29f46eadcd038be0cabe",
+    "MapServer/src/group/armport_deferred_load.h": "7c66b4ba4c93b52bc55678d14636044321de61baa3ff6d02dd778a5406ec64ae",
+    "MapServer/src/beacon/beaconFile.c": "02b6b8f4ce477e073690291d6b1fa5ecc2d5a4d6ed6a5c99e8bc17863791f55d",
+    "MapServer/src/group/groupnetsend.c": "0a69491e1f2d9c6447553e0b4d137f4144d5f5d464c0c7a14f73f256e69bb0ca"
   },
   "original_sha256": {
     "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
@@ -31,13 +34,15 @@
     "libs/UtilitiesLib/src/language/MessageStore.c": "a2341562629686d29b80b74660f1bcf8a99f73c3ca1c1f7b26aba31d55ff5ec2",
     "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
     "Common/group/groupgrid.c": "4454f7d920b6420d8acaec83346f53153826d7343a2811aead513a7c9e8103f5",
-    "MapServer/src/group/groupnetdb.c": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3"
+    "MapServer/src/group/groupnetdb.c": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3",
+    "MapServer/src/beacon/beaconFile.c": "2693b3cd9eb2432248605810a167a4aed8ab71f569c8f2fdc89fe4aa4271ad60",
+    "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9"
   },
   "fixture_sha256": {
-    "positive": "5f5ccd692eeae2fc7ae8d67a297dbb70fe56eff926e75d58032e3b8ff4713632",
-    "negative": "9ae071350e1972e9f3b583c234f3ccf377d0fe94845ccbffd4b35b97b72c1efd"
+    "positive": "8a8e3a97820d306675202eb71a96fc5399b41e483d7c2a52b19dc3e34c97029b",
+    "negative": "5aeffa72214ca81ffda95815b7a245cef8e2cd342dfd4d8b88f2f9fb066e75c8"
   },
-  "test_script_sha256": "dcef69b386c65cfdb986409bb34e37ba224362891ec22f27bf7cf60f0f95b96f",
+  "test_script_sha256": "2e838f91fec6a4b8f477cd449c22b06f0f777d265e2ba9e309370b47408326e7",
   "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "execution_environment": "posix_host_with_windows_clock_and_file_io_shims",
   "positive_cases": [
@@ -71,9 +76,15 @@
     "map_load_profile",
     "map_load_profile_disabled",
     "bounds_files",
-    "bounds_files_disabled"
+    "bounds_files_disabled",
+    "deferred_load",
+    "deferred_load_idle",
+    "deferred_load_later_map",
+    "deferred_load_clock",
+    "deferred_load_not_first",
+    "deferred_load_disabled"
   ],
   "unpatched_control_failed": true,
-  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_and_bounds_file_assertions",
+  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_and_deferred_load_assertions",
   "shipping_binary_executed": false
 }

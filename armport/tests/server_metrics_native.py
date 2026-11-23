@@ -45,6 +45,12 @@ LOAD_PROFILE_NEGATIVE_ASSERTION = ('armport_map_load.calls[ARMPORT_MAP_LOAD_BOUN
 LOAD_PROFILE_CASES = ['map_load_profile', 'map_load_profile_disabled']
 BOUNDS_NEGATIVE_ASSERTION = 'bounds_reads == 0 && bounds_writes == 0 && bounds_set == 2'
 BOUNDS_CASES = ['bounds_files', 'bounds_files_disabled']
+DEFERRED_HEADER = 'MapServer/src/group/armport_deferred_load.h'
+DEFERRED_SOURCES = ('MapServer/src/group/groupnetdb.c', 'MapServer/src/group/groupnetsend.c',
+                    'MapServer/src/beacon/beaconFile.c', 'MapServer/src/svr/svr_init.c')
+DEFERRED_NEGATIVE_ASSERTION = 'taken == 3 && beacons_in_load == 0 && physx_runs == 0'
+DEFERRED_CASES = ['deferred_load', 'deferred_load_idle', 'deferred_load_later_map', 'deferred_load_clock',
+                  'deferred_load_not_first', 'deferred_load_disabled']
 
 
 def test_cases(source):
@@ -59,7 +65,181 @@ def test_cases(source):
             + (START_TREES_CASES if 'static int armportTrustedStartTrees('
                in (source / INITCOMMON).read_text() else [])
             + (LOAD_PROFILE_CASES if (source / LOAD_PROFILE_HEADER).is_file() else [])
-            + (BOUNDS_CASES if 'static int armportTrustedBounds(' in (source / GROUPFILELIB).read_text() else []))
+            + (BOUNDS_CASES if 'static int armportTrustedBounds(' in (source / GROUPFILELIB).read_text() else [])
+            + (DEFERRED_CASES if (source / DEFERRED_HEADER).is_file() else []))
+
+
+def deferred_fixture(source):
+    '''Run the shipping deferred-load header over a recorded clock; check its call sites.'''
+    header = source / DEFERRED_HEADER
+    if header.is_file():
+        loader, sender, beacons, svr = ((source / name).read_text() for name in DEFERRED_SOURCES)
+        include = '#include "group/armport_deferred_load.h"\n'
+        assert loader.count(include) == sender.count(include) == svr.count(include) == 1 and include not in beacons
+        define = '#define ARMPORT_DEFERRED_LOAD_IMPLEMENTATION\n'          # one translation unit holds the state
+        assert loader.count(define + include) == 1 and define not in sender and define not in svr
+        load = function(loader, 'void groupLoadMap(char *mapname,int import,int do_beacon_reload)')
+        order = [load.index(text) for text in (
+            '    armportMapLoadBegin();\n    armportDeferredLoadBegin(import, do_beacon_reload);\n    entKillAll();\n',
+            '    loadend_printf("done"); // map load\n',
+            '        server_state.levelEditor!=1)\n    {\n'
+            '        if (armportDeferredLoadTake(ARMPORT_DEFERRED_BEACONS))\n        {\n',
+            '            armport_beacon_reload_without_file = 1;\n            beaconReload();\n'
+            '            armport_beacon_reload_without_file = 0;\n        }\n        else\n'
+            '            armportLoadBeacons();\n    }\n',
+            '        initMap(0);\n',
+            '    groupCreateAllCtris();\n    loadend_printf("done");\n\n'
+            '    if (!armportDeferredLoadTake(ARMPORT_DEFERRED_PHYSX))\n        armportDeferredDoPhysx();\n}')]
+        assert order == sorted(order), order
+        assert load.count('armportDeferredLoadTake(') == 2 and loader.count('armportDeferredLoadBegin(') == 1
+        # The statements the load used to run in place are now these three functions, unchanged.
+        assert function(loader, 'static void armportLoadBeacons(void)').split('{', 1)[1].split() == \
+            'loadstart_printf("loading beacons.. "); beaconReload(); loadend_printf("done"); }'.split()
+        assert function(loader, 'static void armportDeferredDoBeacons(void)').split('{', 1)[1].split() == \
+            'armportLoadBeacons(); dbDoorCreateBeaconConnections(); }'.split()
+        assert function(loader, 'static void armportDeferredDoPhysx(void)').split('{', 1)[1].split() == (
+            '#if NOVODEX loadstart_printf("Starting novodex..."); if ( nwInitializeNovodex() ) { '
+            'loadend_printf("success"); } else { loadend_printf("failed"); } '
+            'loadstart_printf("freeing all .geo files..."); modelFreeAllGeoData(); loadend_printf("done"); '
+            '#endif }').split()
+        assert (loader.count('beaconReload();') == 2 and loader.count('nwInitializeNovodex()') == 1
+                and loader.count('modelFreeAllGeoData();') == 1 and loader.count('dbDoorCreateBeaconConnections();') == 1)
+        send = function(sender, 'void worldSendUpdate(NetLink *link,int full_update)')
+        assert send.rstrip().endswith('    pak->reliable=1;\n    pktSend(&pak,link);\n    if (full_update)\n'
+                                      '        armportDeferredLoadWorldSent();\n//assert(heapValidateAll());\n}')
+        assert sender.count('armportDeferredLoadWorldSent();') == 1
+        # A world sent before the file is read still says the beacons are loaded.
+        assert send.count('    pktSendBits(pak, 1, (beaconGetReadFileVersion()||server_state.levelEditor'
+                          '||armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS))? 1: 0);') == 1
+        assert sender.count('armportDeferredLoadPending(') == 1
+        reload = function(beacons, 'void beaconReload(void)')
+        assert beacons.count('\nint armport_beacon_reload_without_file;\n') == 1
+        assert reload.count('armport_beacon_reload_without_file') == 2
+        assert ('    for(v = curBeaconFileVersion; !armport_beacon_reload_without_file && '
+                'v >= oldestAllowableBeaconFileVersion; v--){\n') in reload
+        assert '    if(!readFile && !armport_beacon_reload_without_file){\n' in reload
+        # With or without the file, the reload still clears, finds the volumes and starts the path code.
+        order = [reload.index(text) for text in ('    aiClearBeaconReferences();\n', '    beaconClearBeaconData(1, 1, 1);\n',
+                 '        aiFindPathLimitedVolumes();\n', '    beaconPathInit(1);\n')]
+        assert order == sorted(order), order
+        assert svr.count('            armportDeferredLoadTick();\n            svrTick();\n') == 1
+        assert svr.count('armportDeferredLoadTick();') == 1
+        body = header.read_text()
+        include = '#include <utilitieslib/utils/timing.h>\n'
+        assert body.count(include) == 1
+        support = '#define ARMPORT_DEFERRED_LOAD_IMPLEMENTATION\n' + body.replace(include, '')
+    else:
+        support = '''
+enum { ARMPORT_DEFERRED_BEACONS = 1, ARMPORT_DEFERRED_PHYSX = 2 };
+int armport_beacon_reload_without_file;
+static void armportDeferredDoBeacons(void);
+static void armportDeferredDoPhysx(void);
+static struct { int pending, loads; S64 armed, world_sent; } armport_deferred;
+static void armportDeferredLoadBegin(int import, int reload) { (void)import; (void)reload; (void)timerCpuSpeed64(); }
+static int armportDeferredLoadTake(int step) { (void)step; return 0; }
+static int armportDeferredLoadPending(int step) { (void)step; return 0; }
+static void armportDeferredLoadWorldSent(void) {}
+static void armportDeferredLoadTick(void) { (void)timerCpuTicks64(); if (armport_deferred.pending) armportDeferredDoBeacons(); }
+'''
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SERVER 1
+typedef long long S64;
+static S64 clock_now, clock_speed = 1000;            /* one tick is one millisecond */
+static S64 timerCpuTicks64(void) { return clock_now; }
+static S64 timerCpuSpeed64(void) { return clock_speed; }
+''' + support + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static int beacons_in_load, beacons_late, physx_runs;
+static void armportDeferredDoBeacons(void) { ++beacons_late; clock_now += 4700; }
+static void armportDeferredDoPhysx(void) { ++physx_runs; clock_now += 1500; }
+/* groupLoadMap's use of the header: which steps this load left for the main loop. */
+static int load_map(int import, int do_beacon_reload) {
+    int taken = 0;
+    armportDeferredLoadBegin(import, do_beacon_reload);
+    if (do_beacon_reload) {
+        if (armportDeferredLoadTake(ARMPORT_DEFERRED_BEACONS)) taken |= 1; else ++beacons_in_load;
+    }
+    if (armportDeferredLoadTake(ARMPORT_DEFERRED_PHYSX)) taken |= 2; else armportDeferredDoPhysx();
+    return taken;
+}
+static void tick_at(S64 now) { clock_now = now; armportDeferredLoadTick(); }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    int taken;
+    if (strcmp(mode, "deferred_load_disabled")) CHECK(setenv("ARMPORT_DEFER_ZONE_LOADS", "1", 1) == 0);
+    else unsetenv("ARMPORT_DEFER_ZONE_LOADS");
+    clock_now = 100;
+    if (!strcmp(mode, "deferred_load")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3 && beacons_in_load == 0 && physx_runs == 0);
+        CHECK(armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS) && armportDeferredLoadPending(ARMPORT_DEFERRED_PHYSX));
+        armportDeferredLoadWorldSent();                      /* before the main loop: not a client's world */
+        CHECK(armport_deferred.world_sent == 0);
+        tick_at(1000);                                       /* the first loop: the server is ready */
+        CHECK(armport_deferred.armed == 1000 && beacons_late == 0);
+        tick_at(1300);
+        armportDeferredLoadWorldSent();                      /* a client got its full world at 1300 */
+        clock_now = 1400; armportDeferredLoadWorldSent();    /* a second one does not move the time */
+        CHECK(armport_deferred.world_sent == 1300);
+        tick_at(1799); CHECK(beacons_late == 0 && physx_runs == 0);
+        tick_at(1800); CHECK(beacons_late == 1 && physx_runs == 1 && armport_deferred.pending == 0);
+        CHECK(!armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS) && !armportDeferredLoadPending(ARMPORT_DEFERRED_PHYSX));
+        tick_at(20000); CHECK(beacons_late == 1 && physx_runs == 1);         /* once */
+        taken = load_map(0, 1);                              /* a later load does every step itself */
+        CHECK(taken == 0 && beacons_in_load == 1 && physx_runs == 2 && beacons_late == 1);
+        tick_at(40000); CHECK(beacons_late == 1 && physx_runs == 2);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_idle")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3);
+        tick_at(1000); tick_at(3999); CHECK(beacons_late == 0);
+        tick_at(4000); CHECK(beacons_late == 1 && physx_runs == 1);          /* nobody came for 3 s */
+        armportDeferredLoadWorldSent(); tick_at(30000); CHECK(beacons_late == 1 && physx_runs == 1);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_later_map")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3);
+        tick_at(1000);
+        taken = load_map(0, 0);                              /* a second map before the steps ran */
+        CHECK(taken == 0 && beacons_late == 1 && physx_runs == 2 && beacons_in_load == 0);
+        CHECK(armport_deferred.pending == 0);
+        tick_at(90000); CHECK(beacons_late == 1 && physx_runs == 2);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_clock")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 3);
+        tick_at(1000);
+        clock_speed = 0;
+        tick_at(1001); CHECK(beacons_late == 1 && physx_runs == 1);          /* no clock to wait by */
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_not_first")) {
+        taken = load_map(1, 1);                              /* an import, or a load without beacons, */
+        CHECK(taken == 0 && beacons_in_load == 1 && physx_runs == 1);
+        taken = load_map(0, 1);                              /* and no load after the first */
+        CHECK(taken == 0 && beacons_in_load == 2 && physx_runs == 2);
+        tick_at(90000); CHECK(beacons_late == 0);
+        return 0;
+    }
+    if (!strcmp(mode, "deferred_load_disabled")) {
+        taken = load_map(0, 1);
+        CHECK(taken == 0 && beacons_in_load == 1 && physx_runs == 1);
+        CHECK(!armportDeferredLoadPending(ARMPORT_DEFERRED_BEACONS));
+        CHECK(setenv("ARMPORT_DEFER_ZONE_LOADS", "1", 1) == 0);              /* read once: still off */
+        tick_at(1000); armportDeferredLoadWorldSent(); tick_at(90000);
+        CHECK(beacons_late == 0 && physx_runs == 1);
+        return 0;
+    }
+    return 2;
+}
+'''
 
 
 def spare_fixture(source):
@@ -927,6 +1107,12 @@ def fixture(source, original=None):
         assert loop.index('sleepAndCalcTimers();') < loop.index('armportServerMetricsLoopEnd();')
         assert loop.strip().startswith('armportServerMetricsTickBegin();')
         assert loop.strip().endswith('armportServerMetricsLoopEnd();')
+    # 0.13.81: the deferred zone load's call, inside the measured tick and before svrTick.
+    deferred_tick = ''
+    if 'armportDeferredLoadTick();' in loop:
+        assert (loop.index('armportServerMetricsTickBegin();') < loop.index('armportDeferredLoadTick();')
+                < loop.index('svrTick();')) and loop.count('armportDeferredLoadTick();') == 1
+        deferred_tick = 'static void armportDeferredLoadTick(void) {}\n'
     return r'''
 #define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
@@ -997,7 +1183,7 @@ static void startProfilingCPU(void) {}
 static void endProfilingCPU(void) {}
 static void svrTick(void) { void *p = fileAlloc_dbg("file", NULL); free(p); fake_now += 200; }
 static void sleepAndCalcTimers(void) { fake_now += 750; }
-static void one_actual_loop(void) {
+''' + deferred_tick + r'''static void one_actual_loop(void) {
 ''' + loop + r'''
 }
 static void actual_startup_observations(void) {
@@ -1187,9 +1373,16 @@ def run(source, original=None, expect_control_failure=False):
                         '-fsanitize=address,undefined',
                         str(work / 'bounds.c'), '-o', str(bounds)], check=True)
         control += bounds_fixture(trusted_root)
+        deferred = work / 'deferred'
+        (work / 'deferred.c').write_text(deferred_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-Wno-missing-field-initializers',   # the header's `= { -1 }` state
+                        '-fsanitize=address,undefined',
+                        str(work / 'deferred.c'), '-o', str(deferred)], check=True)
+        control += deferred_fixture(trusted_root)
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
         for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache',
-                      'start_trees', 'map_load_profile', 'bounds_files']
+                      'start_trees', 'map_load_profile', 'bounds_files', 'deferred_load']
                      if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
             if mode == 'spare_server_invalid':
@@ -1216,7 +1409,8 @@ def run(source, original=None, expect_control_failure=False):
                        else library if mode in OBJECT_LIBRARY_CASES else physx if mode in PHYSX_CASES
                        else trees if mode in START_TREES_CASES
                        else profile if mode in LOAD_PROFILE_CASES
-                       else bounds if mode in BOUNDS_CASES else exe)
+                       else bounds if mode in BOUNDS_CASES
+                       else deferred if mode in DEFERRED_CASES else exe)
             arguments = [str(work / (mode + '-cooked.bin'))] if mode in PHYSX_CASES else []
             for stale in arguments:
                 Path(stale).unlink(missing_ok=True)       # the unpatched control runs the same mode again
@@ -1229,7 +1423,8 @@ def run(source, original=None, expect_control_failure=False):
                              'physx_cache': PHYSX_NEGATIVE_ASSERTION,
                              'start_trees': START_TREES_NEGATIVE_ASSERTION,
                              'map_load_profile': LOAD_PROFILE_NEGATIVE_ASSERTION,
-                             'bounds_files': BOUNDS_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
+                             'bounds_files': BOUNDS_NEGATIVE_ASSERTION,
+                             'deferred_load': DEFERRED_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -1318,6 +1513,17 @@ def run(source, original=None, expect_control_failure=False):
                 assert result.stdout.splitlines() == ['bounds_set=4 bounds_reads=1 bounds_writes=1'], result.stdout
             if mode == 'bounds_files_disabled':
                 assert result.stdout.splitlines() == ['bounds_set=0 bounds_reads=2 bounds_writes=1'], result.stdout
+            if mode in DEFERRED_CASES:
+                assert result.stdout.splitlines() == {
+                    'deferred_load': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=world_sent waited_ms=800 '
+                                      'beacons_ms=4700 physx_ms=1500'],
+                    'deferred_load_idle': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=idle waited_ms=3000 '
+                                           'beacons_ms=4700 physx_ms=1500'],
+                    'deferred_load_later_map': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=map_load waited_ms=-1 '
+                                                'beacons_ms=4700 physx_ms=1500'],
+                    'deferred_load_clock': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=clock_error waited_ms=-1 '
+                                            'beacons_ms=-1 physx_ms=-1'],
+                    'deferred_load_not_first': [], 'deferred_load_disabled': []}[mode], result.stdout
             if mode == 'map_load_profile_disabled':
                 assert 'ARMPORT_MAP_LOAD_V1' not in result.stdout
             if mode in ('start_trees_disabled', 'message_bins_disabled', 'message_bins_fallback'):
@@ -1368,13 +1574,13 @@ def main():
                                         for name in (staging.SVR, staging.FILE, staging.TEXTPARSER,
                                                      staging.GROUPFILELIB, staging.NWWRAPPER,
                                                      staging.INITCOMMON, staging.MESSAGESTORE)
-                                        + staging.LOAD_PROFILE_SOURCES},
+                                        + staging.LOAD_PROFILE_SOURCES + staging.DEFERRED_SOURCES},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_and_bounds_file_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_and_deferred_load_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')

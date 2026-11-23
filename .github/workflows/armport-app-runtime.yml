@@ -73,6 +73,11 @@ on:
         description: Emulator settings for the zone servers only (0.13.79) - empty, tso, x87 or tso,x87
         required: false
         default: ''
+      defer_zone_loads:
+        description: With the instrumented MapServer - zone servers read beacons and start PhysX after they are ready (0.13.81)
+        type: boolean
+        required: false
+        default: false
       trap_sampler:
         description: CI host - print which guest tasks wait on PRoot and at which system call (0.13.69, read-only)
         type: boolean
@@ -112,6 +117,7 @@ env:
   COH_EARLY_ZONE: ${{ inputs.early_zone && '1' || '' }}
   COH_SPARE_ZONE: ${{ inputs.spare_zone && '1' || '' }}
   COH_SERVER_EMULATION: ${{ inputs.server_emulation }}
+  COH_DEFER_ZONE_LOADS: ${{ inputs.defer_zone_loads && '1' || '' }}
   COH_TRAP_SAMPLER: ${{ inputs.trap_sampler && '1' || '' }}
   COH_PROOT_IOCTL_FILTER: ${{ inputs.proot_ioctl_filter && '1' || '' }}
   ARMPORT_CI_CHARACTER_NAME: ${{ inputs.character_name || 'THORHERO' }}

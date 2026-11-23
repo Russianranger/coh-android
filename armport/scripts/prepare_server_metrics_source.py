@@ -54,9 +54,17 @@ GROUP = 'Common/group/group.c'
 GROUPGRID = 'Common/group/groupgrid.c'
 GROUPNETDB = 'MapServer/src/group/groupnetdb.c'
 LOAD_PROFILE_SOURCES = (GROUP, GROUPGRID, GROUPNETDB)
+# Opt-in zone load finished after "Server ready" (ARMPORT_DEFER_ZONE_LOADS=1), off by default
+# (0.13.81): the beacon file and the PhysX world are read while the client loads the zone, by
+# the server's own reload paths. Also changes GROUPNETDB and SVR (one call in the main loop).
+DEFERRED_PATCH = 'patches/mapserver-deferred-load/0001-finish-zone-load-after-ready.patch'
+DEFERRED_HEADER = 'MapServer/src/group/armport_deferred_load.h'
+BEACONFILE = 'MapServer/src/beacon/beaconFile.c'
+GROUPNETSEND = 'MapServer/src/group/groupnetsend.c'
+DEFERRED_SOURCES = (BEACONFILE, GROUPNETSEND)
 FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER, INITCOMMON, MESSAGESTORE,
-                        LOAD_PROFILE_HEADER) + LOAD_PROFILE_SOURCES
-ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER, LOAD_PROFILE_HEADER)
+                        LOAD_PROFILE_HEADER) + LOAD_PROFILE_SOURCES + (DEFERRED_HEADER,) + DEFERRED_SOURCES
+ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER, LOAD_PROFILE_HEADER, DEFERRED_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
 CONTRACT = {
@@ -118,6 +126,18 @@ CONTRACT = {
         'clock': 'timerCpuTicks64', 'time': 'exclusive_wall_time_per_step',
         'steps': ['other', 'model_find', 'ref_activate', 'recalc_bounds', 'bounds_files', 'scene', 'spawn_areas'],
         'records_per_map_load': 1, 'measurement_only': True,
+        'gameplay_decisions_changed': False,
+    },
+    'deferred_zone_load': {
+        'environment_variable': 'ARMPORT_DEFER_ZONE_LOADS', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'ARMPORT_DEFERRED_LOAD_V1',
+        'function': 'groupLoadMap', 'only': 'first_map_load_of_the_process',
+        'left_for_the_main_loop': ['beacon_file_read', 'physx_world_and_geo_data_free'],
+        'state_until_then': ['beaconReload_without_the_file', 'nwEnabled_false'],
+        'run_by': ['beaconReload', 'dbDoorCreateBeaconConnections', 'nwInitializeNovodex', 'modelFreeAllGeoData'],
+        'run_when': ['500_ms_after_first_full_world_update', '3000_ms_without_one', 'before_a_later_map_load'],
+        'thread': 'main_before_svrTick', 'clock': 'timerCpuTicks64',
+        'steps_removed_or_reordered_when_disabled': [],
         'gameplay_decisions_changed': False,
     },
     'trusted_bounds_files': {
@@ -225,6 +245,27 @@ def load_profile_patch_bytes():
     data = (ROOT / LOAD_PROFILE_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [LOAD_PROFILE_HEADER, GROUP, GROUPGRID, GROUPNETDB], 'Map load profile patch file set differs')
+    return data
+
+
+def deferred_patch_bytes():
+    data = (ROOT / DEFERRED_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [BEACONFILE, DEFERRED_HEADER, GROUPNETDB, GROUPNETSEND, SVR],
+            'Deferred zone load patch file set differs')
+    return data
+
+
+def patch_deferred(data):
+    """Rebase the deferred load patch's two insertions in svr_init.c over the spare-patched loop."""
+    replacements = (
+        (b'#include "armport_spare_server.h"\n',
+         b'#include "armport_spare_server.h"\n#include "group/armport_deferred_load.h"\n'),
+        (b'            svrTick();\n', b'            armportDeferredLoadTick();\n            svrTick();\n'),
+    )
+    for old, new in replacements:
+        require(data.count(old) == 1, 'Deferred zone load anchor differs: ' + old.decode().strip())
+        data = data.replace(old, new, 1)
     return data
 
 
@@ -409,8 +450,13 @@ def native_images(variant, baseline_receipt, root):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
         apply_patch(stage, load_profile_patch_bytes())
+        for name in DEFERRED_SOURCES:
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, deferred_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
-        require(images[SVR] == patch_spare(patch_loop(original_loop)),
+        require(images[SVR] == patch_deferred(patch_spare(patch_loop(original_loop))),
                 'Loop rebase differs from exported native patches')
     with tempfile.TemporaryDirectory(prefix='coh-server-metrics-base-') as directory:
         stage = Path(directory)
@@ -432,8 +478,9 @@ def native_images(variant, baseline_receipt, root):
                   NWWRAPPER: (root / 'upstream/ouroboros' / NWWRAPPER).read_bytes(),
                   INITCOMMON: (root / 'upstream/ouroboros' / INITCOMMON).read_bytes(),
                   MESSAGESTORE: (root / 'upstream/ouroboros' / MESSAGESTORE).read_bytes(),
-                  **{name: (root / 'upstream/ouroboros' / name).read_bytes() for name in LOAD_PROFILE_SOURCES}}
-    images[SVR] = patch_spare(patch_loop(inputs[SVR]))
+                  **{name: (root / 'upstream/ouroboros' / name).read_bytes()
+                     for name in LOAD_PROFILE_SOURCES + DEFERRED_SOURCES}}
+    images[SVR] = patch_deferred(patch_spare(patch_loop(inputs[SVR])))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
     require(FILE not in closure or closure[FILE] == digest(inputs[FILE]), 'Baseline file loader preimage differs')
@@ -449,6 +496,9 @@ def native_images(variant, baseline_receipt, root):
     for name in LOAD_PROFILE_SOURCES:
         require(name not in closure or closure[name] == digest(inputs[name]),
                 'Baseline map load preimage differs: ' + name)
+    for name in DEFERRED_SOURCES:
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline deferred load preimage differs: ' + name)
     return inputs, images
 
 
@@ -469,6 +519,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'start_trees_patch': {'path': START_TREES_PATCH, 'sha256': digest(start_trees_patch_bytes())},
             'load_profile_patch': {'path': LOAD_PROFILE_PATCH, 'sha256': digest(load_profile_patch_bytes())},
             'bounds_files_patch': {'path': BOUNDS_PATCH, 'sha256': digest(bounds_patch_bytes())},
+            'deferred_load_patch': {'path': DEFERRED_PATCH, 'sha256': digest(deferred_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -496,7 +547,8 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'source_sha256': receipt['patched_sha256'],
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
                                     for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB, NWWRAPPER,
-                                                 INITCOMMON, MESSAGESTORE) + LOAD_PROFILE_SOURCES},
+                                                 INITCOMMON, MESSAGESTORE) + LOAD_PROFILE_SOURCES
+                                    + DEFERRED_SOURCES},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',
@@ -508,9 +560,11 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                                    'start_trees', 'start_trees_disabled',
                                    'message_bins', 'message_bins_disabled', 'message_bins_fallback',
                                    'map_load_profile', 'map_load_profile_disabled',
-                                   'bounds_files', 'bounds_files_disabled'],
+                                   'bounds_files', 'bounds_files_disabled',
+                                   'deferred_load', 'deferred_load_idle', 'deferred_load_later_map',
+                                   'deferred_load_clock', 'deferred_load_not_first', 'deferred_load_disabled'],
                 'unpatched_control_failed': True,
-                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_and_bounds_file_assertions',
+                'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_and_deferred_load_assertions',
                 'shipping_binary_executed': False}
     require(set(document) == set(expected).union(('compiler', 'fixture_sha256')),
             'Server metrics test report keys differ')

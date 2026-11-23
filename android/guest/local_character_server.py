@@ -436,6 +436,18 @@ def physx_cache_requested():
     return os.environ.get(PHYSX_CACHE_ENVIRONMENT) == '1'
 
 
+# 0.13.81 (patches/mapserver-deferred-load): a zone server reads its beacon file and starts PhysX
+# after "Server ready", while the client loads the zone. Thor 0.13.79: 4.7 s and 1.5 s of the
+# 18.8 s a spare zone server loads before a trip's client may connect, and the client then loads
+# for about 8 s during which the server waits. Opt-in; only the Fast server has the switch.
+DEFER_ZONE_LOADS_ENVIRONMENT = 'COH_DEFER_ZONE_LOADS'
+DEFER_ZONE_LOADS_VARIABLE = 'ARMPORT_DEFER_ZONE_LOADS'
+
+
+def defer_zone_loads_requested():
+    return os.environ.get(DEFER_ZONE_LOADS_ENVIRONMENT) == '1'
+
+
 # 0.13.79 (roadmap phase 3, item 1): emulator settings for the zone servers only. FEX 2510 ran on
 # its defaults. On the Thor (0.13.78) a zone start is 44 s and a spare's hand-over 17-20 s of
 # x86 code that reads no source folders any more: definitions, group files, beacons. Wine's
@@ -3578,7 +3590,11 @@ class LocalCharacterServer(login.LocalLoginServer):
         environment.pop('ARMPORT_SERVER_METRICS', None)
         environment.pop('ARMPORT_TRUSTED_BINS', None)
         environment.pop(PHYSX_CACHE_VARIABLE, None)
+        environment.pop(DEFER_ZONE_LOADS_VARIABLE, None)
         emulation = apply_server_emulation(environment)
+        deferred = {'format': 1, 'requested': defer_zone_loads_requested(), 'applied': False,
+                    'environment_variable': DEFER_ZONE_LOADS_VARIABLE, 'scope': 'zone_servers_only',
+                    'reason': None if defer_zone_loads_requested() else 'not_requested', 'is_success_proof': False}
         enabled = 'armport_server_metrics' in self.map_package
         requested = os.environ.get('COH_TRUSTED_BINS') == '1'
         trusted = False
@@ -3609,6 +3625,19 @@ class LocalCharacterServer(login.LocalLoginServer):
                     cooked['error_type'] = type(error).__name__
         elif cooked['requested']:
             cooked['reason'] = 'no_metrics_mapserver'
+        if deferred['requested']:
+            # Never a reason to stop a start: without the switch the server loads as it always did.
+            try:
+                if not enabled:
+                    deferred['reason'] = 'no_metrics_mapserver'
+                elif not metrics.deferred_load_available():
+                    deferred['reason'] = 'switch_not_in_admitted_build'
+                else:
+                    environment[DEFER_ZONE_LOADS_VARIABLE] = '1'
+                    deferred['applied'] = True
+            except (OSError, ValueError, KeyError, TypeError, base.DiagnosticError) as error:
+                deferred['reason'] = 'error'
+                deferred['error_type'] = type(error).__name__
         self.server_metrics_enabled = enabled
         report = getattr(self, 'creation_report', None)
         if report is None and getattr(self, 'ctx', None) is not None:
@@ -3621,6 +3650,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     ('no_metrics_mapserver' if not enabled else 'switch_not_in_admitted_build')}
             report['physx_cache'] = cooked
             report['server_emulation'] = emulation
+            report['deferred_zone_load'] = deferred
         return environment
 
     def start_map(self):
