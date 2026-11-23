@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.80, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.81, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.80
+      - name: Build and sign COH Atlas Gameplay 0.13.81
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.80.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.81.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.80-apk
+          name: coh-atlas-gameplay-0.13.81-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,37 +308,45 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.80-apk
+          name: coh-atlas-gameplay-0.13.81-apk
           path: apk
-      - name: Publish the 0.13.80 pre-release
+      - name: Publish the 0.13.81 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.80.apk
-          sha256sum COH-Atlas-Gameplay-0.13.80.apk > COH-Atlas-Gameplay-0.13.80.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.81.apk
+          sha256sum COH-Atlas-Gameplay-0.13.81.apk > COH-Atlas-Gameplay-0.13.81.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.80 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.81 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.80 (from the Thor test of 0.13.79, 2026-11-21: trips through the spare
-          zone server to zones visited before took 31 s and 26 s, the first visit to Cap au
-          Diable 68 s, and a trip in the next launch 49 s):
-          - A first visit no longer waits for the zone's navigation map. Installing one took
-            37 s before the spare could take the trip. The app now prepares the navigation
-            maps of every zone while a loaded spare waits, the nearest zones first, and stops
-            at once when you travel or save. A map that is not prepared yet when you travel
-            is prepared in about 10 s instead of 35 s.
+          New in 0.13.81: two experimental options, both off by default. Everything else is
+          0.13.80. Tick them for a test launch and look at the world and the characters in it.
+          - "Load zone objects when first needed (experimental, ARM64 client)". 0.13.80's
+            measurement showed that of the 508 group files a zone names, the game loads 341
+            object library files in full at every zone load (6.4-7.5 s of each trip in CI);
+            the original game left them unloaded until needed. With the option the game keeps
+            the bounds of the files it has loaded and, from the second load on, loads each
+            only when something in it is first needed. Watch for missing objects or pauses
+            when you first look around.
+          - "Finish zone loading while the game loads the zone (experimental, needs Fast
+            server)". A zone server reads its navigation data and starts its ragdoll physics
+            after it is ready, while the game loads the zone (4.7 s and 1.5 s of a trip's
+            18.8 s of server loading on the Thor in 0.13.79). Watch that enemies, pets,
+            pedestrians and cars move as before.
+          From 0.13.80 (from the Thor test of 0.13.79, 2026-11-21):
+          - A first visit no longer waits for the zone's navigation map: the app prepares the
+            navigation maps of every zone while a loaded spare waits, and stops at once when
+            you travel or save. A map that is not prepared yet is prepared in about 10 s
+            instead of 35 s.
           - Visiting a new zone no longer makes the app check every other zone's navigation
-            map in full again in the next launch (11 s at the start and 15 s before a trip
-            in the test).
-          - The game's log says where its 5.5-6.8 s of group-file loading go (one line per
-            zone load: the map file, the library files, the definitions sent by the
-            server). A measurement for the next change; nothing loads differently.
+            map in full again in the next launch.
+          - The game's log says where its group-file loading time goes (one line per zone load).
           From 0.13.79:
           - "Keep a spare zone server loaded for travel" is a recommended option, on by
             default.
@@ -351,13 +359,6 @@ jobs:
           - Fast server: after loading a map, the zone server no longer reads a small bounds
             file for each of about 500 library files (23-29 ms on the Thor; 1.8 s before the
             change in CI).
-          From 0.13.77:
-          - Fast server: a zone server no longer reads the Defs and Menu folders ahead at its
-            start, and reads its prepared message files without listing their source folders
-            (10-13 s of a zone start on the Thor in 0.13.75; in CI a start fell from 32 s to
-            24 s).
-          - The zone server prints where "loading map" spends its time (one line per map load,
-            in the report). Measurement only.
           From 0.13.76 (from the Thor test of 0.13.75, 2026-11-19):
           - The options list starts with a line that says whether every option is at its
             recommended setting and names the ones that are not, and a button "Restore
@@ -387,7 +388,7 @@ jobs:
           Unchanged: any character name the game accepts, one character per install; every zone can
           start; at most two zone servers, missions are not served yet; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.80.md.
+          Test sheet: THOR-TEST-0.13.81.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -396,7 +397,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.80" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.80 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.80.apk COH-Atlas-Gameplay-0.13.80.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.80"
+          gh release create "coh-atlas-gameplay-v0.13.81" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.81 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.81.apk COH-Atlas-Gameplay-0.13.81.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.81"

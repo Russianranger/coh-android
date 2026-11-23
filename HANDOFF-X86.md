@@ -414,6 +414,15 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.81 (96): the two prepared options, built (Claude, 2026-11-23)
+
+0.13.81 is 0.13.80 with client patch 0132 and the server layer
+`mapserver-deferred-load`, described in the two sections below; both are
+off unless asked for (app options unticked, CI inputs false). Version, notes
+and `THOR-TEST-0.13.81.md` at the chain's head.
+
+- **Chain.** CHAIN81_PLACEHOLDER
+
 ## Prepared for 0.13.81: the client keeps object library bounds (Claude, 2026-11-23)
 
 Not built and not run anywhere yet (host tests only). Off by default.

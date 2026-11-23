@@ -49,10 +49,10 @@ index 529250d..3d66923 100644
      }
 diff --git a/Game/src/group/armport_library_bounds.h b/Game/src/group/armport_library_bounds.h
 new file mode 100644
-index 0000000..beb5b29
+index 0000000..9b737d1
 --- /dev/null
 +++ b/Game/src/group/armport_library_bounds.h
-@@ -0,0 +1,418 @@
+@@ -0,0 +1,419 @@
 +/* ArmPort opt-in (ARMPORT_LIBRARY_BOUNDS_CACHE=<file>): the client remembers the bounds of
 + * object library files it has loaded, and does not load them again at a zone load (patch 0132).
 + *
@@ -323,7 +323,7 @@ index 0000000..beb5b29
 +        armport_lb.open = ~0u;
 +        if (path && path[0] && strlen(path) < MAX_PATH - 8 && bounds_bytes && bounds_bytes <= ARMPORT_LB_MAX_BOUNDS)
 +        {
-+            strcpy(armport_lb.path, path);
++            memcpy(armport_lb.path, path, strlen(path) + 1);      /* fits: checked above */
 +            armport_lb.bounds_bytes = bounds_bytes;
 +            armport_lb.state = 1;
 +            armportLbRead();
@@ -424,7 +424,7 @@ index 0000000..beb5b29
 +    ArmportLbHeader header;
 +    char temporary[MAX_PATH];
 +    unsigned char *payload;
-+    unsigned total = 0, at = 0, i, kept = armport_lb.kept;
++    unsigned total = 0, at = 0, i, kept = armport_lb.kept, length;
 +    DWORD written = 0;
 +    HANDLE file;
 +    int ok;
@@ -448,8 +448,9 @@ index 0000000..beb5b29
 +    header.files = armport_lb.count;
 +    header.payload_bytes = total;
 +    header.checksum = armportLbChecksum(payload, total);
-+    strcpy(temporary, armport_lb.path);
-+    strcat(temporary, ".tmp");
++    length = (unsigned)strlen(armport_lb.path);                   /* at most MAX_PATH - 9 */
++    memcpy(temporary, armport_lb.path, length);
++    memcpy(temporary + length, ".tmp", 5);
 +    file = CreateFileA(temporary, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 +    ok = file != INVALID_HANDLE_VALUE;
 +    if (ok)
