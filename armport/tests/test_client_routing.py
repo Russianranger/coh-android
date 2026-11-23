@@ -413,6 +413,58 @@ class ClientFolderIndexTests(unittest.TestCase):
         with patch.dict(os.environ, {'COH_CLIENT_FOLDER_INDEX': value}):
             return client.client_folder_index_environment('scripts.loc,server')
 
+    def bounds_environment(self, value, report, root):
+        client = armport.ArmPortClient.__new__(armport.ArmPortClient)
+        client.root = root
+        client.ctx = SimpleNamespace(report=report)
+        with patch.dict(os.environ, {'COH_CLIENT_LIBRARY_BOUNDS': value}):
+            return client.client_library_bounds_environment('scripts.loc,server')
+
+    def test_kept_library_bounds_are_named_only_when_asked_and_per_data_identity(self):
+        # 0.13.81 (client patch 0132): off unless asked; the file's name holds the data view's identity.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            report = {'armport_client': self.client()}
+            for value in ('', '0'):
+                self.assertEqual(self.bounds_environment(value, report, root), {})
+                self.assertEqual((report['client_library_bounds']['requested'], report['client_library_bounds']['applied']),
+                                 (False, False))
+            identity = armport.package.folder_cache_identity(self.client(), 'scripts.loc,server', 'geobin,server')
+            name = 'armport-library-bounds-' + identity[:24] + '.bin'
+            stale = root / 'armport-library-bounds-0123456789abcdef01234567.bin'
+            stale.write_bytes(b'old data view')
+            (root / armport.package.FOLDER_INDEX).write_bytes(b'kept')
+            environment = self.bounds_environment('1', report, root)
+            self.assertEqual(list(environment), ['ARMPORT_LIBRARY_BOUNDS_CACHE'])
+            self.assertTrue(environment['ARMPORT_LIBRARY_BOUNDS_CACHE'].endswith(name))
+            self.assertEqual(report['client_library_bounds'], {
+                'format': 1, 'requested': True, 'applied': True, 'file': name, 'bytes_before_launch': 0,
+                'removed_other_identities': 1, 'error': None})
+            self.assertFalse(stale.exists())
+            self.assertTrue((root / armport.package.FOLDER_INDEX).exists())     # only its own files are removed
+            (root / name).write_bytes(b'x' * 300)
+            self.bounds_environment('1', report, root)
+            self.assertEqual((report['client_library_bounds']['bytes_before_launch'],
+                              report['client_library_bounds']['removed_other_identities']), (300, 0))
+            # Another data view (a pack added a folder): another file, the old one removed.
+            other = {'armport_client': self.client(tree_sha256='7' * 64)}
+            changed = self.bounds_environment('1', other, root)
+            self.assertNotEqual(changed, environment)
+            self.assertFalse((root / name).exists())
+            # An incomplete identity, a link or a folder in its place: the client loads as before.
+            incomplete = {'armport_client': {'archive_sha256': '4' * 64}}
+            self.assertEqual(self.bounds_environment('1', incomplete, root), {})
+            self.assertEqual((incomplete['client_library_bounds']['applied'], incomplete['client_library_bounds']['error']),
+                             (False, 'KeyError'))
+            (root / name).symlink_to(root / 'elsewhere')
+            self.assertEqual(self.bounds_environment('1', report, root), {})
+            self.assertEqual((report['client_library_bounds']['applied'], report['client_library_bounds']['error']),
+                             (False, 'DiagnosticError'))
+            with patch.dict(os.environ, {'COH_CLIENT_LIBRARY_BOUNDS': 'yes'}), self.assertRaises(Exception):
+                armport.client_keeps_library_bounds()
+        source = (Path(armport.__file__)).read_text()
+        self.assertIn("environment.update(self.client_library_bounds_environment(", source)
+
     def test_launch_names_the_index_and_identity_unless_turned_off(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

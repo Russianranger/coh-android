@@ -386,6 +386,14 @@ def client_uses_folder_index():
     return value != '0'
 
 
+def client_keeps_library_bounds():
+    """Patch 0132 (0.13.81, off unless COH_CLIENT_LIBRARY_BOUNDS=1): the client keeps the bounds
+    of object library files it has loaded and does not load them again at a zone load."""
+    value = os.environ.get('COH_CLIENT_LIBRARY_BOUNDS', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_LIBRARY_BOUNDS must be empty, 0 or 1')
+    return value == '1'
+
+
 def client_skips_server_folders():
     value = os.environ.get('COH_CLIENT_SKIP_SERVER_FOLDERS', '')
     require(value in ('', '0', '1'), 'COH_CLIENT_SKIP_SERVER_FOLDERS must be empty, 0 or 1')
@@ -611,6 +619,7 @@ class ArmPortClient:
             # (52,149 scripts.loc files of 212,496); its upfront scan skips them.
             environment['ARMPORT_FOLDER_CACHE_SKIP'] = CLIENT_SKIPPED_FOLDERS
         environment.update(self.client_folder_index_environment(environment.get('ARMPORT_FOLDER_CACHE_SKIP', '')))
+        environment.update(self.client_library_bounds_environment(environment.get('ARMPORT_FOLDER_CACHE_SKIP', '')))
         environment.update(self.client_audio_environment(environment))
         # Patch 0121: zoning writes a lower frame cap here while a trip is
         # prepared (relative to the client's working directory).
@@ -651,6 +660,37 @@ class ArmPortClient:
         return {'ARMPORT_FOLDER_CACHE_INDEX': base.windows_path(index),
                 'ARMPORT_FOLDER_CACHE_ID': record['identity_sha256'],
                 'ARMPORT_FOLDER_CACHE_LIVE': CLIENT_LIVE_FOLDERS}
+
+    def client_library_bounds_environment(self, skip):
+        """Patch 0132: where the client keeps object library bounds, beside the saved file list.
+
+        The file's name holds the identity of the client's data view (the one the saved file
+        list uses: it changes when a source directory or link target changes), so bounds kept
+        for other data are never read; files of other identities are removed. Without a
+        complete identity, or on any error here, the client loads as before.
+        """
+        record = {'format': 1, 'requested': client_keeps_library_bounds(), 'applied': False, 'file': None,
+                  'bytes_before_launch': None, 'removed_other_identities': 0, 'error': None}
+        self.ctx.report['client_library_bounds'] = record
+        if not record['requested']:
+            return {}
+        try:
+            identity = package.folder_cache_identity(self.ctx.report['armport_client'], skip, CLIENT_LIVE_FOLDERS)
+            require(isinstance(identity, str) and re.fullmatch(r'[0-9a-f]{64}', identity), 'Invalid data view identity')
+            target = self.root / (package.LIBRARY_BOUNDS_PREFIX + identity[:24] + package.LIBRARY_BOUNDS_SUFFIX)
+            require(not target.is_symlink() and (not target.exists() or target.is_file()),
+                    'Linked client library bounds file refused')
+            for other in sorted(self.root.glob(package.LIBRARY_BOUNDS_PREFIX + '*')):
+                if other != target and other.is_file() and not other.is_symlink():
+                    other.unlink()
+                    record['removed_other_identities'] += 1
+            record['file'] = target.name
+            record['bytes_before_launch'] = target.stat().st_size if target.exists() else 0
+            record['applied'] = True
+            return {'ARMPORT_LIBRARY_BOUNDS_CACHE': base.windows_path(target)}
+        except (KeyError, TypeError, ValueError, OSError, base.DiagnosticError) as exc:
+            record['error'] = type(exc).__name__
+            return {}
 
     def armport_gameplay_fps(self, environment):
         """Gameplay frame cap (patch 0113, the app's reviewed opt-in hook).

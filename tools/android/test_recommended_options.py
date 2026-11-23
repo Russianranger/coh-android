@@ -25,7 +25,7 @@ GETTERS = {
     'physxCache': 'physxCacheEnabled', 'prestartNextZone': 'prestartNextZoneEnabled',
     'idleResidentMaps': 'idleResidentMapsEnabled', 'spareZone': 'spareZoneEnabled',
     'sharedHeap': 'sharedHeapEnabled', 'glDirect': 'glDirectEnabled', 'serverX87': 'serverX87Enabled',
-    'deferZoneLoads': 'deferZoneLoadsEnabled'}
+    'deferZoneLoads': 'deferZoneLoadsEnabled', 'clientLibraryBounds': 'clientLibraryBoundsEnabled'}
 
 
 class RecommendedOptions(unittest.TestCase):
@@ -58,24 +58,24 @@ class RecommendedOptions(unittest.TestCase):
         boxes = re.findall(r'(\w+)\.setOnCheckedChangeListener\(\(button,checked\)->\{ClientRuntime\.set\w+Enabled\(this,checked\);'
                            r'recommendedChanged\(\);\}\);', self.activity)
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(boxes), 23)
+        self.assertEqual(len(boxes), 24)
         self.assertEqual(sorted(boxes), sorted(ticked + unticked))
         self.assertEqual(sorted(boxes), sorted(GETTERS))
-        self.assertEqual(len(set(ticked + unticked)), 23)
+        self.assertEqual(len(set(ticked + unticked)), 24)
         # No option box changes without the line being read again.
         self.assertNotRegex(self.activity, r'->ClientRuntime\.set\w+Enabled\(this,checked\)\);')
 
     def test_the_lists_are_the_stored_defaults(self):
         stored, table = self.stored_defaults(), self.report_table()
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(table), 23)
+        self.assertEqual(len(table), 24)
         for box, getter in GETTERS.items():
             with self.subTest(box):
                 self.assertIn(getter, stored)
                 self.assertEqual(table[getter], stored[getter])
                 self.assertEqual(box in ticked, stored[getter][1])
                 self.assertEqual(box in unticked, not stored[getter][1])
-        self.assertEqual((len(ticked), len(unticked)), (18, 5))
+        self.assertEqual((len(ticked), len(unticked)), (18, 6))
         # 0.13.79: the spare zone server is recommended (owner's policy, the current zone and one
         # spare; Thor 0.13.78 launch B: trips 33.9 s and 27.7 s against 65.8 s, 60 FPS).
         self.assertIn('spareZone', ticked)
@@ -92,6 +92,12 @@ class RecommendedOptions(unittest.TestCase):
         self.assertEqual(stored['deferZoneLoadsEnabled'], ('zone-load-after-ready', False))
         self.assertIn('"COH_DEFER_ZONE_LOADS="+(deferZoneLoadsRequested?"1":"0")', runtime)
         self.assertIn('.put("defer_zone_loads_requested", deferZoneLoadsRequested)', runtime)
+        # 0.13.81: the game's own kept object bounds (client patch 0132), experimental for the same
+        # reason: no CI check looks at the drawn world.
+        self.assertIn('clientLibraryBounds', unticked)
+        self.assertEqual(stored['clientLibraryBoundsEnabled'], ('client-library-bounds', False))
+        self.assertIn('"COH_CLIENT_LIBRARY_BOUNDS="+(clientLibraryBoundsRequested?"1":"0")', runtime)
+        self.assertIn('.put("client_library_bounds_requested", clientLibraryBoundsRequested)', runtime)
 
     def test_the_report_carries_the_launch_time_reading(self):
         self.assertIn('optionsOffRecommended=optionsOffRecommended(context);', self.runtime)
@@ -104,7 +110,7 @@ class RecommendedOptions(unittest.TestCase):
         line = activity.index('recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);')
         button = activity.index('controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));')
         first = activity.index('performanceGraphics=new CheckBox(this);')
-        last = activity.index('controls.addView(deferZoneLoads);\n        recommendedChanged();')
+        last = activity.index('controls.addView(clientLibraryBounds);\n        recommendedChanged();')
         self.assertLess(line, button)
         self.assertLess(button, first)
         self.assertLess(first, last)

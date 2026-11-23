@@ -25,7 +25,7 @@ class QuietTraceBoundaries(unittest.TestCase):
 
     def test_it_is_in_the_series_and_touches_only_the_trace_header(self):
         series = (ROOT / 'armport/patches/series').read_text().split()
-        self.assertEqual(series[series.index(PATCH.name) + 1:], ['0131-armport-group-load-totals.patch'])
+        self.assertEqual(series[series.index(PATCH.name) + 1], '0131-armport-group-load-totals.patch')
         self.assertEqual(re.findall(r'^diff --git a/(\S+)', self.patch, re.M),
                          ['libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h'])
 

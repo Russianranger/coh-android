@@ -483,6 +483,13 @@ def trusted_bins_requested():
     return value == '1'
 
 
+def client_library_bounds_requested():
+    """CI A/B input (0.13.81, client patch 0132): the client keeps object library bounds."""
+    value = os.environ.get('COH_CLIENT_LIBRARY_BOUNDS', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_LIBRARY_BOUNDS must be empty, 0 or 1')
+    return value == '1'
+
+
 def defer_zone_loads_requested():
     """CI A/B input (0.13.81): zone servers read beacons and start PhysX after they are ready."""
     value = os.environ.get('COH_DEFER_ZONE_LOADS', '')
@@ -642,8 +649,16 @@ def start_options_line(report, session):
     own counters). Evidence only; neither gates a session.
     """
     value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None,
-             'physx_cache': None, 'server_emulation': None, 'deferred_zone_load': None}
+             'physx_cache': None, 'server_emulation': None, 'deferred_zone_load': None,
+             'client_library_bounds': None}
     if isinstance(report, dict):
+        for section in [report, *report.values()]:
+            kept = section.get('client_library_bounds') if isinstance(section, dict) else None
+            if isinstance(kept, dict):
+                # 0.13.81: the file the client keeps object library bounds in (patch 0132).
+                value['client_library_bounds'] = {key: kept.get(key) for key in (
+                    'requested', 'applied', 'bytes_before_launch', 'error')}
+                break
         for section in [report, *report.values()]:
             deferred = section.get('deferred_zone_load') if isinstance(section, dict) else None
             if isinstance(deferred, dict):
@@ -673,7 +688,7 @@ def start_options_line(report, session):
         if isinstance(cache, dict):
             value['wineserver_path_cache'] = {key: cache.get(key) for key in (
                 'requested', 'installed', 'reason', 'error_type', 'servers', 'counters')}
-    return 'START_OPTIONS_V1 ' + json.dumps(value, separators=(',', ':'))[:1200]
+    return 'START_OPTIONS_V1 ' + json.dumps(value, separators=(',', ':'))[:1500]
 
 
 def start_options_sessions():
@@ -1172,6 +1187,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_SERVER_EMULATION=' + server_emulation_requested())
         if defer_zone_loads_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_DEFER_ZONE_LOADS=1')
+        if client_library_bounds_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_LIBRARY_BOUNDS=1')
         if args.external_maps_dbserver is not None:
             # The supervisor observes the DbServer's map requests and delinks
             # the ones this flow does not start itself (milestone 1).

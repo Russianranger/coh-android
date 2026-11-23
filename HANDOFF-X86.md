@@ -414,6 +414,50 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## Prepared for 0.13.81: the client keeps object library bounds (Claude, 2026-11-23)
+
+Not built and not run anywhere yet (host tests only). Off by default.
+
+- **What 0.13.80's measurement showed** (CI run 45121536099, patch 0131's
+  line, four loads of Atlas Park by the ARM64 client): `total_ms=6705..7939
+  files=508 known=166 bounds=0 full=341 full_ms=6352..7539 map_ms=270..334
+  defs=111 defs_ms=0`. Of a zone's 508 group files, 341 object library files
+  are loaded in full at every zone load, about 20 ms each, 95 % of the span.
+  The engine's shortcut (`objectLibraryLoadBoundsFile`: a `geobin` `.bounds`
+  file whose checksum equals the server's lets the file stay unloaded, its
+  public definitions only get bounds and are loaded when first needed) is
+  refused for all 341. The server's checksum is over bounds its x86 build
+  computed; the client has its own private `geobin` and no matching files.
+  Whether it has any `.bounds` files at all is not known.
+- **Client patch `0132-armport-library-bounds-kept.patch`.** With
+  `ARMPORT_LIBRARY_BOUNDS_CACHE=<file>`: after `groupLoadFull` of a library
+  file the public definitions' names and bounds are kept (what
+  `objectLibraryWriteBoundsFile` would write), in memory and in the file at
+  the end of the zone's group files (own format, Win32 file calls, checksum,
+  temporary file and rename). At a later zone load a kept file is not loaded:
+  `objectLibrarySetBounds` for each kept definition, as the engine's shortcut
+  does. The engine's own check still runs first. An entry holds the library
+  file's `fileLastChanged` and is not used when that differs. Totals line:
+  `cached= cached_ms= kept=`. `groupfileload.c`, `groupfilelib.c` untouched.
+- **Guest.** `COH_CLIENT_LIBRARY_BOUNDS=1` → `armport_interactive.
+  client_library_bounds_environment`: the file is
+  `armport-library-bounds-<identity[:24]>.bin` beside the saved file list,
+  named by the data view's identity (`folder_cache_identity`), files of other
+  identities are removed; report key `client_library_bounds`. CI input
+  `client_library_bounds`; app option "Load zone objects when first needed
+  (experimental, ARM64 client; faster zone loading)", pref
+  `client-library-bounds`, default off (lists: 18 ticked, 6 unticked).
+- **Not known.** Whether the world is drawn complete and without long
+  first-frame stalls when library files load on first need: the retail game
+  worked this way, this client never has. CI can show the load times and
+  that the session passes; the picture must be looked at on the Thor.
+- **Tests.** `armport/tests/test_library_bounds_kept.py` (the store runs on
+  the host over POSIX stand-ins in `armport/tests/library_bounds/`, with
+  sanitizers when the compiler has them), `test_client_routing.py`.
+- **Next.** Build; a stock-travel run with `-f client_library_bounds=true`:
+  the creation session keeps (`kept=341`), the reopen session's loads must
+  say `cached=341 full=0` and show what `ready.sent` becomes.
+
 ## Prepared for 0.13.81: a zone server finishes its load after it is ready (Claude, 2026-11-23)
 
 Not built and not run anywhere yet: written while the 0.13.80 chain ran, host
@@ -448,8 +492,7 @@ tests only. Off by default at every level.
   for an admitted build that has the layer; report key `deferred_zone_load`);
   CI input `defer_zone_loads`; app option "Finish zone loading while the
   game loads the zone (experimental, needs Fast server)", pref
-  `zone-load-after-ready`, default off (recommended lists: 18 ticked, 5
-  unticked). `START_OPTIONS_V1.deferred_zone_load`,
+  `zone-load-after-ready`, default off. `START_OPTIONS_V1.deferred_zone_load`,
   `atlas_mapserver_phases.deferred_load`.
 - **Tests.** Native fixture cases `deferred_load*` (six, with the unpatched
   control) and call-site checks in `armport/tests/server_metrics_native.py`;

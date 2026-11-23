@@ -260,6 +260,9 @@ def validate_links(source_data, links, tree, receipt):
 
 
 FOLDER_INDEX = 'armport-folder-cache-index.bin'
+# Patch 0132: the client's kept object library bounds, one file per identity of the data view.
+LIBRARY_BOUNDS_PREFIX = 'armport-library-bounds-'
+LIBRARY_BOUNDS_SUFFIX = '.bin'
 
 
 # Bump when merge_links lays the view out differently: a saved file list of another
