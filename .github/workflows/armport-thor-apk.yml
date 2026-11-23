@@ -325,8 +325,12 @@ jobs:
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.81: two experimental options, both off by default. Everything else is
-          0.13.80. Tick them for a test launch and look at the world and the characters in it.
+          New in 0.13.81:
+          - A trip starts sooner. The app looked for the game's request to start a zone only
+            every five seconds, so each trip waited up to five seconds (2.5 s on average)
+            before the spare zone server was given the zone. It now looks twice a second.
+          Two experimental options, both off by default. Tick them for a test launch and look
+          at the world and the characters in it.
           - "Keep prepared zone object files (experimental, ARM64 client)". 0.13.80's
             measurement showed that of the 508 group files a zone names, the game reads 341
             object library files from their text form at every zone load (6.4-7.5 s of each

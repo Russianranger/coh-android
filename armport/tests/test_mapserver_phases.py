@@ -91,6 +91,34 @@ class MapServerPhaseTests(unittest.TestCase):
         odd = mapserver_phases.summary('ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=other waited_ms=-1 beacons_ms=x physx_ms=-1\n')
         self.assertEqual(odd['deferred_load'], {'waited_ms': -1, 'physx_ms': -1, 'trigger': None})
         self.assertIsNone(result['physx_cooked'])
+
+    def test_ci_summarises_every_zone_server_console(self):
+        # 0.13.81: the consoles of zones travelled to had no summary in CI.
+        import io
+        import zipfile
+        sys.path.insert(0, str(ROOT / 'armport/app'))
+        import interactive_host as host
+        data = io.BytesIO()
+        late = CONSOLE + '\nARMPORT_DEFERRED_LOAD_V1 status=ok trigger=world_sent waited_ms=812 beacons_ms=4690 physx_ms=1502\n'
+        with zipfile.ZipFile(data, 'w') as archive:
+            archive.writestr('client-evidence/character-atlas-console.txt', CONSOLE)
+            archive.writestr('client-evidence/character-zoning-generation-2-map-72-console-tail.txt', late)
+            archive.writestr('client-evidence/character-zoning-map-73-console.txt', late)
+            archive.writestr('client-evidence/armport_stdio.txt', late)                      # not a server console
+            archive.writestr('client-evidence/character-zoning-../x-console.txt', late)       # not a name of ours
+        with zipfile.ZipFile(data) as archive:
+            rows = host.zone_server_loads(archive, set(archive.namelist()))
+            self.assertEqual(len(host.zone_server_loads(archive, set(archive.namelist()), limit=1)), 1)
+        self.assertEqual([row['console'] for row in rows],
+                         ['atlas-console', 'zoning-generation-2-map-72-console-tail', 'zoning-map-73-console'])
+        self.assertIsNone(rows[0]['deferred'])
+        self.assertEqual(rows[1]['deferred'], {'waited_ms': 812, 'beacons_ms': 4690, 'physx_ms': 1502, 'trigger': 'world_sent'})
+        self.assertEqual(rows[1]['stamped_span_seconds'], mapserver_phases.summary(CONSOLE)['stamped_span_seconds'])
+        self.assertLessEqual(len(rows[1]['slowest']), 4)
+        lines = host.timing_notices({'reopen': {'proot_mode': None, 'zone_server_loads': rows}}, True, True)
+        notice = [line for line in lines if 'zone server loads reopen' in line]
+        self.assertEqual(len(notice), 1)
+        self.assertNotIn('zone_server_loads', lines[0])
         cooked = mapserver_phases.summary(CONSOLE.replace(
             '[2026-10-28 19:47:01.276] [INFO] Created 2311 PhysX objects',
             'ARMPORT_PHYSX_COOKED_V1 status=ok loaded=2265 hits=2300 misses=11 refused=1 added=11 bad_records=0 '

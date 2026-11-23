@@ -103,6 +103,96 @@ class StockTravelTests(unittest.TestCase):
         self.assertEqual(sup.report()['counts']['start_ready'], 1)
         self.assertTrue(value.stock['starts'][0]['ready'])
 
+    def test_a_request_is_taken_between_inspections(self):
+        """0.13.81: the session looked for zone start requests every five seconds.
+
+        Measured "request to map ready" was always a multiple of five seconds (10.1, 15.1 s
+        in CI; 20.2, 20.3, 25.3 s on the Thor): the request waited for the next inspection.
+        """
+        value = self.instance()
+        sup = self.supervisor(value)
+        value.external_maps, value.process = sup, SimpleNamespace(text=lambda: console[0])
+        value.external_maps_next, value.external_maps_query, value.query_count = 0, None, 0
+        value.creation_report['external_maps'] = {}
+        value.tick_spare = Mock()
+        spawned = []
+        value._spawn_map = lambda map_id, **keywords: (spawned.append(map_id),
+                                                       value.maps.__setitem__(map_id, owned(ready=False)))
+        value.live_progress = Mock(return_value=False)
+        console = ['\n' + supervisor.ACK + '\n']
+        clock = [100.0]
+        with patch('time.monotonic', lambda: clock[0]):
+            # Nothing asked for: one directory listing, no console read, no ordinary tick.
+            value.tick_external_maps = Mock(side_effect=AssertionError('no tick without a request'))
+            self.assertFalse(sup.unseen_request())
+            self.assertFalse(value.tick_travel_requests())
+            del value.tick_external_maps
+            clock[0] += 0.1
+            console[0] += self.publish(sup, 5, 77, 1)
+            self.assertTrue(sup.unseen_request())
+            self.assertFalse(value.tick_travel_requests())          # at most twice a second
+            self.assertEqual(spawned, [])
+            clock[0] += 0.5
+            value.external_maps_next = clock[0] + 4.4               # the ordinary tick had just run
+            self.assertTrue(value.tick_travel_requests())           # the request does not wait for it
+            self.assertEqual(spawned, [5])
+            self.assertFalse(sup.unseen_request())
+            value.tick_spare.assert_not_called()                    # the spare's idle work keeps its cadence
+            self.assertEqual(value.creation_report['travel_request_ticks'],
+                             {'format': 1, 'for_new_request': 1, 'while_starting': 0})
+            # While the zone starts its readiness is looked at between inspections too, once a second.
+            clock[0] += 0.5
+            self.assertTrue(value.tick_travel_requests())
+            self.assertIn(5, value.stock_starts)                    # limited by the tick's own second
+            clock[0] += 0.6
+            value.live_progress = Mock(return_value=True)
+            self.assertTrue(value.tick_travel_requests())
+            self.assertEqual(value.stock_starts, {})
+            self.assertTrue(value.maps[5]['ready'])
+            self.assertEqual(value.creation_report['travel_request_ticks']['while_starting'], 2)
+            clock[0] += 0.6
+            self.assertFalse(value.tick_travel_requests())          # nothing waiting any more
+            value.tick_spare.assert_not_called()
+            # The five-second inspection still runs the spare's work.
+            clock[0] += 5
+            value.tick_external_maps()
+            value.tick_spare.assert_called_once()
+        # Without the game's own zone travel there is no supervisor and nothing happens.
+        other = self.instance()
+        self.assertFalse(other.tick_travel_requests())
+        # A stopped supervisor or an unreadable directory is never an error.
+        sup.stopped = 'test'
+        self.assertFalse(sup.unseen_request())
+        gone = self.supervisor(self.instance())
+        gone.directory.rmdir()
+        self.assertFalse(gone.unseen_request())
+
+    def test_the_session_loop_calls_the_request_check_only_while_playing(self):
+        import character_creation_diagnostic as creation
+        import client_interactive_diagnostic as interactive
+        source = Path(interactive.__file__).read_text()
+        self.assertIn('                self.between_polls()\n                time.sleep(.1)\n', source)
+        self.assertEqual(interactive.PROGRESS_POLL_SECONDS, 5)
+        ticks = []
+        session = creation.CharacterCreationDiagnostic.__new__(creation.CharacterCreationDiagnostic)
+        session.local_server = SimpleNamespace(tick_travel_requests=lambda: ticks.append(1))
+        session.ctx = SimpleNamespace(report={'startup_observed': True})
+        session.saved_announced, session.login_announced, session.observer = False, True, object()
+        session.between_polls()
+        self.assertEqual(ticks, [1])
+        for change in ({'saved_announced': True}, {'login_announced': False}, {'observer': None}):
+            for name, changed in change.items():
+                original = getattr(session, name)
+                setattr(session, name, changed)
+                session.between_polls()
+                setattr(session, name, original)
+        session.ctx.report['startup_observed'] = False
+        session.between_polls()
+        self.assertEqual(ticks, [1])
+        session.ctx.report['startup_observed'] = True
+        session.local_server = SimpleNamespace()                    # a server without the travel layer
+        session.between_polls()
+
     def test_late_or_exited_start_is_stopped_and_delinked(self):
         value = self.instance()
         sup = self.supervisor(value)

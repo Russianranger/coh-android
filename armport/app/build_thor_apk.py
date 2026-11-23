@@ -83,6 +83,9 @@ CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 
                              'client_attempt_retry.py',
                              # 0.13.62: the contact and task log patterns follow the character's own name.
                              'stationary_contact_evidence.py', 'task_gate_evidence.py',
+                             # 0.13.81: one no-op hook in the session loop's 0.1 s pass (between_polls),
+                             # which the character session uses to take a zone start request at once.
+                             'client_interactive_diagnostic.py',
                              'runtime-manifest.json', 'client-manifest.json',
                              'game_diagnostic.py', 'game_device_diagnostic.py', 'atlas_beacon_package.py',
                              'native_map_startup_contract.py', 'native_monorail_contract.py',

@@ -472,6 +472,30 @@ def client_zone_loads(text, limit=3):
     return [{key: value for key, value in load.items() if key != 'began'} for load in loads[-limit:]]
 
 
+ZONE_CONSOLE = re.compile(r'client-evidence/character-(atlas-console|zoning-[a-z0-9-]{1,60}-console(?:-tail)?)\.txt')
+
+
+def zone_server_loads(archive, names, limit=8):
+    """0.13.81: every zone server console of the session, in a few numbers each.
+
+    The Atlas console had its own summary; the consoles of zones travelled to (and of the
+    spare that took a trip) had none in CI. `deferred`: the steps a zone start left until
+    after "Server ready" (patches/mapserver-deferred-load). Evidence only.
+    """
+    rows = []
+    for name in sorted(name for name in names if ZONE_CONSOLE.fullmatch(name))[:limit]:
+        if archive.getinfo(name).file_size > 16 * 1024 * 1024:
+            continue
+        phases = mapserver_phases.summary(archive.read(name).decode('utf-8', errors='replace'), top=4)
+        profile = phases.get('map_load_profile') or {}
+        rows.append({'console': ZONE_CONSOLE.fullmatch(name).group(1)[:48],
+                     'stamped_span_seconds': phases.get('stamped_span_seconds'),
+                     'slowest': phases.get('slowest_self_timed'),
+                     'map_load_ms': profile.get('total_ms'),
+                     'deferred': phases.get('deferred_load')})
+    return rows
+
+
 TIMING_FIELDS = ('kind', 'map_id', 'request_to_map_ready_seconds', 'process_spawn_to_map_ready_seconds',
                  'dependency_start_seconds', 'request_to_client_world_ready_seconds')
 
@@ -966,6 +990,7 @@ def guest_timing_summary(evidence):
                     console = archive.read(member).decode('utf-8', errors='replace')
                     result['atlas_mapserver_phases'] = mapserver_phases.summary(console, top=6)
                     result['story_arc_counts'] = story_arc_counts(console)
+                result['zone_server_loads'] = zone_server_loads(archive, names)
     except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
         result['evidence_read_error'] = str(error)[:300]
     return result
@@ -983,8 +1008,9 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel')
                    if original.get(key)}
         loads = original.get('client_zone_loads')
+        zone_loads = original.get('zone_server_loads')
         for key, value in original.items():
-            if key in detail or key in servers or key == 'client_zone_loads':
+            if key in detail or key in servers or key in ('client_zone_loads', 'zone_server_loads'):
                 continue
             if key in ('character_creation', 'character_reopen') and isinstance(value, dict):
                 value = dict(value)
@@ -1004,6 +1030,9 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         if loads:
             lines.append(ci_notice({'session': name, 'client_zone_loads': loads})
                          .replace('interactive result', 'client zone loads ' + name, 1))
+        if zone_loads:
+            lines.append(ci_notice({'session': name, 'zone_server_loads': zone_loads})
+                         .replace('interactive result', 'zone server loads ' + name, 1))
     return lines
 
 

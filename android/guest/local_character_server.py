@@ -85,6 +85,8 @@ def character_label():
 
 
 POLL_SECONDS = 15
+# 0.13.81: how often the session looks for a zone start request between its inspections.
+TRAVEL_REQUEST_SECONDS = 0.5
 MAP_STARTUP_SECONDS = 2400
 SNAPSHOT_LIMIT = 2 * 1024 * 1024
 LOGOUT_RECEIPT_LIMIT = 512
@@ -2752,6 +2754,40 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def serve_external_maps(self, supervisor):
         """Start served requests and follow them (the game's own zone travel); nothing by default."""
+
+    def tick_travel_requests(self):
+        """Between the session's five-second inspections: take a new zone start request at once.
+
+        0.13.81. The session inspected its evidence, and with it the DbServer's zone start
+        requests, every five seconds (client_interactive_diagnostic.PROGRESS_POLL_SECONDS). A
+        trip's request therefore waited up to five seconds before a spare was handed the zone
+        or a server was started, and every measured "request to map ready" was a multiple of
+        five seconds: 10.1 and 15.1 s in CI, 20.2, 20.3 and 25.3 s on the Thor. Twice a second
+        this lists the request directory; only when it holds a request not decided yet, or a
+        started zone is not ready yet, the ordinary tick runs now (it still limits itself to
+        one run a second). The spare's idle work keeps the five-second cadence.
+        """
+        supervisor = getattr(self, 'external_maps', None)
+        if supervisor is None or getattr(self, 'process', None) is None:
+            return False
+        now = time.monotonic()
+        if now < getattr(self, 'travel_requests_next', 0):
+            return False
+        self.travel_requests_next = now + TRAVEL_REQUEST_SECONDS
+        unseen = supervisor.unseen_request()
+        if not unseen and not getattr(self, 'stock_starts', None):
+            return False
+        if unseen:
+            self.external_maps_next = 0
+        self.travel_tick_between_inspections = True
+        try:
+            self.tick_external_maps()
+        finally:
+            self.travel_tick_between_inspections = False
+        counts = self.creation_report.setdefault('travel_request_ticks', {'format': 1, 'for_new_request': 0,
+                                                                         'while_starting': 0})
+        counts['for_new_request' if unseen else 'while_starting'] += 1
+        return True
 
     def tick_external_maps(self):
         """Read new map requests; serve or delink them (one delink query at a time)."""

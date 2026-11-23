@@ -403,6 +403,26 @@ class ExternalMapSupervisor:
             return None
         return self.requests[self.delinks.pop(0)]
 
+    def unseen_request(self):
+        """Whether the directory holds a request file this supervisor has not decided yet.
+
+        One directory listing and nothing else: for the session's check between its
+        five-second inspections (0.13.81). Never an error.
+        """
+        if self.stopped is not None:
+            return False
+        try:
+            with os.scandir(self.directory) as listing:
+                for count, entry in enumerate(listing):
+                    if count >= MAX_ENTRIES:
+                        return False
+                    match = FILE_NAME.match(entry.name)
+                    if match is not None and (int(match.group(1)), int(match.group(2))) not in self.requests:
+                        return True
+        except OSError:
+            pass
+        return False
+
     def next_start(self):
         if self.stopped is not None or not self.starts:
             return None

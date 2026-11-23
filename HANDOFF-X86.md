@@ -414,12 +414,37 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
-## 0.13.81 (96): the two prepared options, built (Claude, 2026-11-23)
+## 0.13.81 (96): faster request pick-up, two experimental options (Claude, 2026-11-23)
 
-0.13.81 is 0.13.80 with client patch 0132 and the server layer
-`mapserver-deferred-load`, described in the two sections below; both are
-off unless asked for (app options unticked, CI inputs false). Version, notes
-and `THOR-TEST-0.13.81.md` at the chain's head.
+0.13.81 is 0.13.80 with the request pick-up below (always on), client
+patches 0132 (CI switch only) and 0133 (app option), and the server layer
+`mapserver-deferred-load` (app option), described in the sections below.
+Version, notes and `THOR-TEST-0.13.81.md` at the chain's head.
+
+- **The five-second grid.** `request_to_map_ready_seconds` was 10.08, 10.09,
+  10.14 and 15.1 s in CI and 20.21, 20.25, 20.33 and 25.29 s on the Thor:
+  always a multiple of five plus the tick's own time. The session inspects
+  its evidence every `PROGRESS_POLL_SECONDS` = 5 s
+  (`client_interactive_diagnostic`), and `tick_external_maps` (the DbServer's
+  request files, the spare's hand-over, a start's readiness) ran only inside
+  that inspection. A trip's request waited 0-5 s before anything was started,
+  and the recorded request time was the inspection's, so the wait was not in
+  any measurement. The DbServer and the source zone server do not wait
+  (`waitingEntitiesCheck` runs every `msgScan`).
+- **Fix.** `LocalCharacterServer.tick_travel_requests`, called from the
+  session loop's 0.1 s pass (`between_polls`) while the character plays:
+  twice a second one listing of the request directory
+  (`ExternalMapSupervisor.unseen_request`); only for an undecided request,
+  or while a started zone is not ready, the ordinary tick runs at once. The
+  spare's idle work (`tick_spare`, graphs ahead) keeps the five-second
+  cadence. Report: `travel_request_ticks`. Tests: `test_stock_travel`.
+- **First measurement of the layers** (run 45153845159 at `4d4dc1043`, both
+  options on): the deferred steps ran (creation session: `waited_ms=1290
+  beacons_ms=22`; CI's Atlas beacon work is small); creation zone start
+  188.3 s to 167.8 s (the mesh cooking moved after ready), reopen stamped
+  span 20.15 s to 18.52 s; the trip's "ready" stayed on the grid (10.14 s).
+  CI now prints every zone server console's numbers (`zone server loads
+  <session>` notice, `interactive_host.zone_server_loads`).
 
 - **Chain.** CHAIN81_PLACEHOLDER
 

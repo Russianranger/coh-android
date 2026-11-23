@@ -1,12 +1,18 @@
 # Thor test: COH Atlas Gameplay 0.13.81 (ARM64 client): two experimental loading options
 
-0.13.81 is 0.13.80 plus two experimental options, both **off by default**.
-With both unticked it behaves like 0.13.80. CI can time them and see that a
+0.13.81 is 0.13.80 with one change that is always on and two experimental
+options, both **off by default**. CI can time the options and see that a
 session passes; it cannot see the drawn world or characters moving. That is
 what this test is for.
 
 ## What is new
 
+- **A trip starts sooner (always on).** The app looked for the game's request
+  to start a zone only every five seconds, so each trip waited up to five
+  seconds before the spare zone server was given the zone. Every "request to
+  map ready" time in your reports and in CI was a multiple of five seconds
+  for that reason (20.2, 20.3 and 25.3 s on the Thor; 10.1 and 15.1 s in
+  CI). It now looks twice a second.
 - **Keep prepared zone object files (experimental, ARM64 client; faster zone
   loading).** 0.13.80's measurement: of the 508 group files a zone names, the
   game reads 341 object library files from their text form at every zone

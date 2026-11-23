@@ -2704,7 +2704,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 self.initial_zone_start_failed(entry, failure)
             entry = supervisor.next_start()
         self._tick_stock_starts(supervisor)
-        self.tick_spare()
+        if not getattr(self, 'travel_tick_between_inspections', False):
+            self.tick_spare()       # the spare's idle work keeps the five-second cadence (0.13.81)
 
     def _stock_row(self, entry):
         key = (entry['map_id'], entry['cookie'])

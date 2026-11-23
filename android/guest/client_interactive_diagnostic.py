@@ -71,6 +71,9 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         """Modes may bound a validated phase; ordinary menu/creation stay fixed."""
         return deadline
 
+    def between_polls(self):
+        """Every pass of the loop (ten a second); the base session has nothing to do here."""
+
     def interaction_dependencies_ready(self):
         """Subclass-owned local world readiness; input waits for both producers."""
         return True
@@ -451,6 +454,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                     # A slow native query must not add another idle five seconds
                     # before the next current evidence inspection.
                     next_progress = now + PROGRESS_POLL_SECONDS
+                self.between_polls()
                 time.sleep(.1)
         finally:
             self.save_evidence()

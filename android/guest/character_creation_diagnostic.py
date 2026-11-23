@@ -453,6 +453,18 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         # worker first so cleanup cannot race index publication or shared data.
         return super().cleanup()
 
+    def between_polls(self):
+        """0.13.81: a zone start request is taken within half a second, not at the next inspection.
+
+        Only in the phase in which observe_console inspects the character's evidence.
+        """
+        if (self.saved_announced or not self.login_announced or self.observer is None
+                or not self.ctx.report.get('startup_observed')):
+            return
+        tick = getattr(self.local_server, 'tick_travel_requests', None)
+        if tick is not None:
+            tick()
+
     def observe_console(self):
         output, launch, console = super().observe_console()
         if (self.saved_announced or not self.login_announced or not launch or not console
