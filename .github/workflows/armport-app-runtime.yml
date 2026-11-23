@@ -73,6 +73,11 @@ on:
         description: Emulator settings for the zone servers only (0.13.79) - empty, tso, x87 or tso,x87
         required: false
         default: ''
+      client_group_bins:
+        description: ARM64 client keeps the prepared form of the group files it parses (0.13.81)
+        type: boolean
+        required: false
+        default: false
       client_library_bounds:
         description: ARM64 client keeps object library bounds and skips loading those files at a zone load (0.13.81)
         type: boolean
@@ -124,6 +129,7 @@ env:
   COH_SERVER_EMULATION: ${{ inputs.server_emulation }}
   COH_DEFER_ZONE_LOADS: ${{ inputs.defer_zone_loads && '1' || '' }}
   COH_CLIENT_LIBRARY_BOUNDS: ${{ inputs.client_library_bounds && '1' || '' }}
+  COH_CLIENT_GROUP_BINS: ${{ inputs.client_group_bins && '1' || '' }}
   COH_TRAP_SAMPLER: ${{ inputs.trap_sampler && '1' || '' }}
   COH_PROOT_IOCTL_FILTER: ${{ inputs.proot_ioctl_filter && '1' || '' }}
   ARMPORT_CI_CHARACTER_NAME: ${{ inputs.character_name || 'THORHERO' }}

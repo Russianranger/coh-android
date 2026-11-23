@@ -25,7 +25,7 @@ GETTERS = {
     'physxCache': 'physxCacheEnabled', 'prestartNextZone': 'prestartNextZoneEnabled',
     'idleResidentMaps': 'idleResidentMapsEnabled', 'spareZone': 'spareZoneEnabled',
     'sharedHeap': 'sharedHeapEnabled', 'glDirect': 'glDirectEnabled', 'serverX87': 'serverX87Enabled',
-    'deferZoneLoads': 'deferZoneLoadsEnabled', 'clientLibraryBounds': 'clientLibraryBoundsEnabled'}
+    'deferZoneLoads': 'deferZoneLoadsEnabled', 'clientGroupBins': 'clientGroupBinsEnabled'}
 
 
 class RecommendedOptions(unittest.TestCase):
@@ -92,12 +92,12 @@ class RecommendedOptions(unittest.TestCase):
         self.assertEqual(stored['deferZoneLoadsEnabled'], ('zone-load-after-ready', False))
         self.assertIn('"COH_DEFER_ZONE_LOADS="+(deferZoneLoadsRequested?"1":"0")', runtime)
         self.assertIn('.put("defer_zone_loads_requested", deferZoneLoadsRequested)', runtime)
-        # 0.13.81: the game's own kept object bounds (client patch 0132), experimental for the same
+        # 0.13.81: the game's own prepared group files (client patch 0133), experimental for the same
         # reason: no CI check looks at the drawn world.
-        self.assertIn('clientLibraryBounds', unticked)
-        self.assertEqual(stored['clientLibraryBoundsEnabled'], ('client-library-bounds', False))
-        self.assertIn('"COH_CLIENT_LIBRARY_BOUNDS="+(clientLibraryBoundsRequested?"1":"0")', runtime)
-        self.assertIn('.put("client_library_bounds_requested", clientLibraryBoundsRequested)', runtime)
+        self.assertIn('clientGroupBins', unticked)
+        self.assertEqual(stored['clientGroupBinsEnabled'], ('client-group-bins', False))
+        self.assertIn('"COH_CLIENT_GROUP_BINS="+(clientGroupBinsRequested?"1":"0")', runtime)
+        self.assertIn('.put("client_group_bins_requested", clientGroupBinsRequested)', runtime)
 
     def test_the_report_carries_the_launch_time_reading(self):
         self.assertIn('optionsOffRecommended=optionsOffRecommended(context);', self.runtime)
@@ -110,7 +110,7 @@ class RecommendedOptions(unittest.TestCase):
         line = activity.index('recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);')
         button = activity.index('controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));')
         first = activity.index('performanceGraphics=new CheckBox(this);')
-        last = activity.index('controls.addView(clientLibraryBounds);\n        recommendedChanged();')
+        last = activity.index('controls.addView(clientGroupBins);\n        recommendedChanged();')
         self.assertLess(line, button)
         self.assertLess(button, first)
         self.assertLess(first, last)

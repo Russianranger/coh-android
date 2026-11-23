@@ -423,9 +423,53 @@ and `THOR-TEST-0.13.81.md` at the chain's head.
 
 - **Chain.** CHAIN81_PLACEHOLDER
 
-## Prepared for 0.13.81: the client keeps object library bounds (Claude, 2026-11-23)
+## 0.13.81: the client keeps prepared group files (patch 0133; Claude, 2026-11-23)
 
-Not built and not run anywhere yet (host tests only). Off by default.
+- **Why 0132 was not enough** (CI run 45148219890, `client_library_bounds=true`,
+  see the next section): the kept bounds worked (`kept=341`, then
+  `cached=282 / 480 / 506`, `full=147 / 18 / 0`), and `groups.files.done` fell
+  from about 7.0 s to 2.3 s after `map.start`. But `ready.sent` only fell from
+  8.2-9.5 s to 7.9-8.4 s: the files are loaded anyway, later, by the map
+  file (`map_ms` 0.28 s to 2.2 s) and by `finishLoadMap` (0.33 s to 4.6 s:
+  `vistrayDetailTrays`, `groupWeldAll` open every tracker). This client
+  needs every referenced library file at a zone load; loading them later
+  gains nothing. 0132 stays a CI switch (`client_library_bounds`), without
+  an app option.
+- **The cost is the form they are read in.** The client is a production
+  client on loose data (patch 0042); `tools/android/game/prepare_game_data.py`
+  forbids `.bin` in imported data; only a development client writes
+  `geobin/<file>.bin` after parsing (`groupLoadInternal`). So each library
+  file is parsed from `.txt` at every zone load, about 20 ms each. The x86
+  server writes and reads these bins: its map load is 18.5 s in the session
+  that writes them and 4.8 s after (CI 45125692618).
+- **Patch `0133-armport-group-bins-kept.patch`** (`Common/group/groupfileload.c`;
+  totals in `armport_group_load_log.h`, `groupnetrecv.c`). With
+  `ARMPORT_GROUP_BINS=<absolute folder>`: `makeBinName` names the bin under
+  that folder instead of `geobin/`, and a file that had to be parsed is
+  written there (`groupWriteGroupAndRootnameToBin`, the development
+  client's own writer). Absolute paths bypass the folder cache
+  (`fileExists`: one stat). A production client accepts a bin by signature
+  and parse-table checksum only (`ParserIsPersistNewer`), no source dates,
+  hence the folder per data identity. Totals line: `bin= text= wrote=`.
+- **Why not `geobin/`.** The data view's identity (`merge_links`,
+  `tree_sha256`) covers every source directory with its times, the private
+  `geobin` included. Writing bins there would change it at each launch that
+  wrote one: all links revalidated and the saved file list thrown away
+  (about 110 s each on the Thor).
+- **Guest.** `COH_CLIENT_GROUP_BINS=1` →
+  `armport_interactive.client_group_bins_environment`: folder
+  `armport-group-bins-<identity[:24]>` beside the saved file list, folders
+  of other identities removed, report key `client_group_bins`. CI input
+  `client_group_bins`. App option "Keep prepared zone object files
+  (experimental, ARM64 client; faster zone loading)", pref
+  `client-group-bins`, default off (lists: 18 ticked, 6 unticked).
+- **Tests.** `armport/tests/test_group_bins_kept.py`.
+- **Not known before the chain's runs:** whether the production client can
+  write and read back these files, and how much faster a zone load is.
+
+## 0.13.81: the client keeps object library bounds (patch 0132; CI switch only)
+
+Built and run in CI; a CI switch without an app option (see above).
 
 - **What 0.13.80's measurement showed** (CI run 45121536099, patch 0131's
   line, four loads of Atlas Park by the ARM64 client): `total_ms=6705..7939
@@ -453,9 +497,7 @@ Not built and not run anywhere yet (host tests only). Off by default.
   `armport-library-bounds-<identity[:24]>.bin` beside the saved file list,
   named by the data view's identity (`folder_cache_identity`), files of other
   identities are removed; report key `client_library_bounds`. CI input
-  `client_library_bounds`; app option "Load zone objects when first needed
-  (experimental, ARM64 client; faster zone loading)", pref
-  `client-library-bounds`, default off (lists: 18 ticked, 6 unticked).
+  `client_library_bounds`; no app option.
 - **Not known.** Whether the world is drawn complete and without long
   first-frame stalls when library files load on first need: the retail game
   worked this way, this client never has. CI can show the load times and

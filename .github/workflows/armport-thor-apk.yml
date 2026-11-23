@@ -327,13 +327,13 @@ jobs:
 
           New in 0.13.81: two experimental options, both off by default. Everything else is
           0.13.80. Tick them for a test launch and look at the world and the characters in it.
-          - "Load zone objects when first needed (experimental, ARM64 client)". 0.13.80's
-            measurement showed that of the 508 group files a zone names, the game loads 341
-            object library files in full at every zone load (6.4-7.5 s of each trip in CI);
-            the original game left them unloaded until needed. With the option the game keeps
-            the bounds of the files it has loaded and, from the second load on, loads each
-            only when something in it is first needed. Watch for missing objects or pauses
-            when you first look around.
+          - "Keep prepared zone object files (experimental, ARM64 client)". 0.13.80's
+            measurement showed that of the 508 group files a zone names, the game reads 341
+            object library files from their text form at every zone load (6.4-7.5 s of each
+            trip in CI). With the option the game saves the prepared form of each file the
+            first time it reads it, as the zone servers already do, and reads that from then
+            on. The first load of a zone after ticking it is no faster; later ones are.
+            Watch for missing or misplaced objects.
           - "Finish zone loading while the game loads the zone (experimental, needs Fast
             server)". A zone server reads its navigation data and starts its ragdoll physics
             after it is ready, while the game loads the zone (4.7 s and 1.5 s of a trip's

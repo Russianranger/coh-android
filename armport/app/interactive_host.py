@@ -483,6 +483,13 @@ def trusted_bins_requested():
     return value == '1'
 
 
+def client_group_bins_requested():
+    """CI A/B input (0.13.81, client patch 0133): the client keeps prepared group files."""
+    value = os.environ.get('COH_CLIENT_GROUP_BINS', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_GROUP_BINS must be empty, 0 or 1')
+    return value == '1'
+
+
 def client_library_bounds_requested():
     """CI A/B input (0.13.81, client patch 0132): the client keeps object library bounds."""
     value = os.environ.get('COH_CLIENT_LIBRARY_BOUNDS', '')
@@ -650,8 +657,15 @@ def start_options_line(report, session):
     """
     value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None,
              'physx_cache': None, 'server_emulation': None, 'deferred_zone_load': None,
-             'client_library_bounds': None}
+             'client_library_bounds': None, 'client_group_bins': None}
     if isinstance(report, dict):
+        for section in [report, *report.values()]:
+            bins = section.get('client_group_bins') if isinstance(section, dict) else None
+            if isinstance(bins, dict):
+                # 0.13.81: the folder the client keeps prepared group files in (patch 0133).
+                value['client_group_bins'] = {key: bins.get(key) for key in (
+                    'requested', 'applied', 'present_before_launch', 'error')}
+                break
         for section in [report, *report.values()]:
             kept = section.get('client_library_bounds') if isinstance(section, dict) else None
             if isinstance(kept, dict):
@@ -1189,6 +1203,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_DEFER_ZONE_LOADS=1')
         if client_library_bounds_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_LIBRARY_BOUNDS=1')
+        if client_group_bins_requested():
+            command.insert(command.index('/usr/bin/python3'), 'COH_CLIENT_GROUP_BINS=1')
         if args.external_maps_dbserver is not None:
             # The supervisor observes the DbServer's map requests and delinks
             # the ones this flow does not start itself (milestone 1).

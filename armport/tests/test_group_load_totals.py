@@ -54,7 +54,7 @@ class GroupLoadTotals(unittest.TestCase):
 
     def test_it_is_in_the_series_and_touches_three_client_files(self):
         series = (ROOT / 'armport/patches/series').read_text().split()
-        self.assertEqual(series[series.index(PATCH.name) + 1:], ['0132-armport-library-bounds-kept.patch'])
+        self.assertEqual(series[series.index(PATCH.name) + 1], '0132-armport-library-bounds-kept.patch')
         self.assertEqual(sorted(self.sections), sorted([HEADER, RECEIVE, TRACE]))
         # The server builds pin these two sources; the measurement stays out of them.
         self.assertNotIn('groupfileload.c', self.patch)

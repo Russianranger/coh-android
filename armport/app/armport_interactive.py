@@ -394,6 +394,14 @@ def client_keeps_library_bounds():
     return value == '1'
 
 
+def client_keeps_group_bins():
+    """Patch 0133 (0.13.81, off unless COH_CLIENT_GROUP_BINS=1): the client keeps the prepared
+    form of the group files it parses and reads that at later zone loads."""
+    value = os.environ.get('COH_CLIENT_GROUP_BINS', '')
+    require(value in ('', '0', '1'), 'COH_CLIENT_GROUP_BINS must be empty, 0 or 1')
+    return value == '1'
+
+
 def client_skips_server_folders():
     value = os.environ.get('COH_CLIENT_SKIP_SERVER_FOLDERS', '')
     require(value in ('', '0', '1'), 'COH_CLIENT_SKIP_SERVER_FOLDERS must be empty, 0 or 1')
@@ -620,6 +628,7 @@ class ArmPortClient:
             environment['ARMPORT_FOLDER_CACHE_SKIP'] = CLIENT_SKIPPED_FOLDERS
         environment.update(self.client_folder_index_environment(environment.get('ARMPORT_FOLDER_CACHE_SKIP', '')))
         environment.update(self.client_library_bounds_environment(environment.get('ARMPORT_FOLDER_CACHE_SKIP', '')))
+        environment.update(self.client_group_bins_environment(environment.get('ARMPORT_FOLDER_CACHE_SKIP', '')))
         environment.update(self.client_audio_environment(environment))
         # Patch 0121: zoning writes a lower frame cap here while a trip is
         # prepared (relative to the client's working directory).
@@ -688,6 +697,41 @@ class ArmPortClient:
             record['bytes_before_launch'] = target.stat().st_size if target.exists() else 0
             record['applied'] = True
             return {'ARMPORT_LIBRARY_BOUNDS_CACHE': base.windows_path(target)}
+        except (KeyError, TypeError, ValueError, OSError, base.DiagnosticError) as exc:
+            record['error'] = type(exc).__name__
+            return {}
+
+    def client_group_bins_environment(self, skip):
+        """Patch 0133: the folder the client keeps prepared group files in, beside its saved file list.
+
+        A production client accepts a prepared file without comparing source dates, so the
+        folder's name holds the identity of the client's data view (it changes when a source
+        directory or link target changes) and folders of other identities are removed. The
+        folder is outside the data view: writing into it changes no identity. When the option
+        is off the client is not told the folder and reads none of it. On any error here the
+        client loads as before.
+        """
+        record = {'format': 1, 'requested': client_keeps_group_bins(), 'applied': False, 'folder': None,
+                  'present_before_launch': None, 'removed_other_identities': 0, 'error': None}
+        self.ctx.report['client_group_bins'] = record
+        if not record['requested']:
+            return {}
+        try:
+            identity = package.folder_cache_identity(self.ctx.report['armport_client'], skip, CLIENT_LIVE_FOLDERS)
+            require(isinstance(identity, str) and re.fullmatch(r'[0-9a-f]{64}', identity), 'Invalid data view identity')
+            target = self.root / (package.GROUP_BINS_PREFIX + identity[:24])
+            require(not target.is_symlink() and (not target.exists() or target.is_dir()),
+                    'Linked client group bin folder refused')
+            for other in sorted(self.root.iterdir()):
+                if (other != target and re.fullmatch(re.escape(package.GROUP_BINS_PREFIX) + '[0-9a-f]{24}', other.name)
+                        and other.is_dir() and not other.is_symlink()):
+                    shutil.rmtree(other)
+                    record['removed_other_identities'] += 1
+            record['present_before_launch'] = target.is_dir()
+            target.mkdir(mode=0o700, exist_ok=True)
+            record['folder'] = target.name
+            record['applied'] = True
+            return {'ARMPORT_GROUP_BINS': base.windows_path(target)}
         except (KeyError, TypeError, ValueError, OSError, base.DiagnosticError) as exc:
             record['error'] = type(exc).__name__
             return {}

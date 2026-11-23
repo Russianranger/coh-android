@@ -229,7 +229,7 @@ public final class ClientRuntime {
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
-    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientLibraryBoundsRequested=false;
+    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientGroupBinsRequested=false;
     private String optionsOffRecommended="";
     private boolean prootCasefoldRequested=false,prootCasefoldUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
@@ -309,7 +309,7 @@ public final class ClientRuntime {
             {"spare-zone-server",spareZoneEnabled(context),true},{"server-x87-64bit",serverX87Enabled(context),true},
             {"prestart-next-zone",prestartNextZoneEnabled(context),false},{"idle-resident-maps",idleResidentMapsEnabled(context),false},
             {"shared-server-memory",sharedHeapEnabled(context),false},{"zone-load-after-ready",deferZoneLoadsEnabled(context),false},
-            {"client-library-bounds",clientLibraryBoundsEnabled(context),false},
+            {"client-group-bins",clientGroupBinsEnabled(context),false},
             {"client-gl-direct",glDirectEnabled(context),false}};
         for(Object[] option:options)if(!option[1].equals(option[2]))off.append(off.length()==0?"":",").append(option[0]);
         return off.toString();
@@ -597,20 +597,20 @@ public final class ClientRuntime {
                 .edit().putBoolean("zone-load-after-ready", enabled).apply();
     }
     /**
-     * 0.13.81 (client patch 0132): the game keeps the bounds of object library files it has
-     * loaded and does not load them again at a zone load; each is loaded when first needed.
-     * CI run 45121536099: 341 of a zone's 508 group files were loaded in full at every zone
+     * 0.13.81 (client patch 0133): the game keeps the prepared form of the group files it
+     * parses (a folder beside its saved file list) and reads that at later zone loads.
+     * CI run 45121536099: 341 of a zone's 508 group files were parsed from text at every zone
      * load, 6.4-7.5 s of the 6.7-7.9 s the game spends on group files. Experimental and off by
      * default until a play test has shown the world complete.
      */
-    public static boolean clientLibraryBoundsEnabled(Context context) {
+    public static boolean clientGroupBinsEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("client-library-bounds", false);
+                .getBoolean("client-group-bins", false);
     }
-    public static synchronized void setClientLibraryBoundsEnabled(Context context, boolean enabled) {
+    public static synchronized void setClientGroupBinsEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .edit().putBoolean("client-library-bounds", enabled).apply();
+                .edit().putBoolean("client-group-bins", enabled).apply();
     }
     /**
      * 0.13.75: with the second PRoot build (patch 0008), PROOT_CASEFOLD_PROGRAMS names Wine's
@@ -1190,7 +1190,7 @@ public final class ClientRuntime {
         glDirectRequested=glDirectEnabled(context);
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
-        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientLibraryBoundsRequested=clientLibraryBoundsEnabled(context);
+        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientGroupBinsRequested=clientGroupBinsEnabled(context);
         prootCasefoldRequested=prootCasefoldEnabled(context);prootCasefoldUsed=false;
         optionsOffRecommended=optionsOffRecommended(context);
         spareZoneRequested=spareZoneEnabled(context);
@@ -1302,8 +1302,8 @@ public final class ClientRuntime {
                     "COH_SERVER_EMULATION="+(serverX87Requested?"x87":""),
                     // 0.13.81: zone servers read navigation data and start physics after they are ready.
                     "COH_DEFER_ZONE_LOADS="+(deferZoneLoadsRequested?"1":"0"),
-                    // 0.13.81: the game keeps object library bounds between zone loads (patch 0132).
-                    "COH_CLIENT_LIBRARY_BOUNDS="+(clientLibraryBoundsRequested?"1":"0"),
+                    // 0.13.81: the game keeps prepared group files between zone loads (patch 0133).
+                    "COH_CLIENT_GROUP_BINS="+(clientGroupBinsRequested?"1":"0"),
                     "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
@@ -3178,7 +3178,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("client_library_bounds_requested", clientLibraryBoundsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("client_group_bins_requested", clientGroupBinsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

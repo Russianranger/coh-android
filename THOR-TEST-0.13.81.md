@@ -7,14 +7,14 @@ what this test is for.
 
 ## What is new
 
-- **Load zone objects when first needed (experimental, ARM64 client; faster
-  zone loading).** 0.13.80's measurement: of the 508 group files a zone
-  names, the game loads 341 object library files in full at every zone load,
-  6.4-7.5 s of each trip in CI. The original game left such files unloaded
-  until something in them was needed. With the option the game keeps the
-  bounds of the files it has loaded (one file beside its saved file list) and
-  from then on loads each only when first needed. The first zone load after
-  ticking it is as slow as before; it fills the store.
+- **Keep prepared zone object files (experimental, ARM64 client; faster zone
+  loading).** 0.13.80's measurement: of the 508 group files a zone names, the
+  game reads 341 object library files from their text form at every zone
+  load, 6.4-7.5 s of each trip in CI. The zone servers save a prepared form
+  of each such file the first time and read that afterwards; the game never
+  did. With the option it does, into a folder of its own beside its saved
+  file list. The first load of a zone after ticking it is no faster (it
+  writes the files); later loads read them.
 - **Finish zone loading while the game loads the zone (experimental, needs
   Fast server).** A zone server reads its navigation data and starts its
   ragdoll physics after it is ready, while the game loads the zone, instead
@@ -60,22 +60,22 @@ CI: CI81_EVIDENCE_PLACEHOLDER
    - Shared server memory (experiment: zone servers share game data)
    - Draw on the game's own thread (frame rate experiment)
    - Finish zone loading while the game loads the zone (experimental, needs Fast server)
-   - Load zone objects when first needed (experimental, ARM64 client; faster zone loading)
+   - Keep prepared zone object files (experimental, ARM64 client; faster zone loading)
 
 4. **Launch A (only if you have not tested 0.13.80).** Change no options and
    follow launch A of `THOR-TEST-0.13.80.md`: stay four minutes, travel to a
    zone you know, stay four minutes, travel to a zone you have not visited
    with this app, save, export.
-5. **Launch B: zone objects.** Tick **Load zone objects when first needed**
+5. **Launch B: zone objects.** Tick **Keep prepared zone object files**
    (the line above the options turns amber and names it; that is expected).
    Reopen, Enter Game. Then:
    - The first loading screen is as long as before. In the zone, turn all the
-     way around and walk a little: is anything missing (buildings, props,
-     ground), and does the picture pause when you look around?
+     way around and walk a little: is anything missing or out of place
+     (buildings, props, ground)?
    - Travel to a zone you know and note how long the loading screen stays.
      Look around again.
-   - Travel back and note the loading time. This is the load that should be
-     shortest. Look around again.
+   - Travel back and note the loading time. This is the load that reads the
+     saved files and should be shortest. Look around again.
    - **Save character / log out**, **Finish and save report**, export.
 6. **Launch C: both options.** Leave the first option ticked and also tick
    **Finish zone loading while the game loads the zone**. Reopen, Enter Game.
@@ -111,10 +111,10 @@ the zone the ordinary way. Tell me which trip it was.
 The exports of each launch, the loading times you noted, and what you saw
 when looking around and watching characters. Fields I will read:
 
-- The game's `ARMPORT_GROUP_LOAD_V1` lines: `cached=` (library files not
-  loaded), `full=` and `full_ms=` (still loaded in full), `kept=`; and the
-  frame-rate lines after each arrival (pauses from first-need loading).
-- `client_library_bounds` (the store's size before each launch).
+- The game's `ARMPORT_GROUP_LOAD_V1` lines: `bin=` (group files read from
+  their saved form), `text=` (parsed from text), `wrote=` (saved this load),
+  `full_ms=` and `total_ms=`.
+- `client_group_bins` (whether the folder existed before each launch).
 - `deferred_zone_load` and each zone server's `ARMPORT_DEFERRED_LOAD_V1`
   line: what triggered the late steps and how long they took.
 - Trip times in `stock_travel`, as before; from 0.13.80:

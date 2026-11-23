@@ -45,8 +45,9 @@ class LibraryBoundsKept(unittest.TestCase):
         cls.patch = PATCH.read_text()
         cls.sections = sections(cls.patch)
 
-    def test_it_is_the_last_patch_and_touches_three_client_files(self):
-        self.assertEqual((ROOT / 'armport/patches/series').read_text().split()[-1], PATCH.name)
+    def test_it_is_in_the_series_and_touches_three_client_files(self):
+        series = (ROOT / 'armport/patches/series').read_text().split()
+        self.assertEqual(series[series.index(PATCH.name) + 1:], ['0133-armport-group-bins-kept.patch'])
         self.assertEqual(sorted(self.sections), sorted([HEADER, TOTALS, RECEIVE]))
         for pinned in ('groupfileload.c', 'groupfilelib.c', 'FolderCache.c'):
             self.assertNotIn(pinned, self.patch)

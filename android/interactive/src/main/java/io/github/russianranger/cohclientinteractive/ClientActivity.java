@@ -41,7 +41,7 @@ public final class ClientActivity extends Activity {
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
     private TextView recommendedStatus;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87,deferZoneLoads,clientLibraryBounds;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87,deferZoneLoads,clientGroupBins;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -252,11 +252,11 @@ public final class ClientActivity extends Activity {
         deferZoneLoads.setChecked(ClientRuntime.deferZoneLoadsEnabled(this));
         deferZoneLoads.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setDeferZoneLoadsEnabled(this,checked);recommendedChanged();});
         controls.addView(deferZoneLoads);
-        clientLibraryBounds=new CheckBox(this);clientLibraryBounds.setText("Load zone objects when first needed (experimental, ARM64 client; faster zone loading)");
-        clientLibraryBounds.setTextColor(Color.rgb(221,234,245));clientLibraryBounds.setTextSize(13);
-        clientLibraryBounds.setChecked(ClientRuntime.clientLibraryBoundsEnabled(this));
-        clientLibraryBounds.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setClientLibraryBoundsEnabled(this,checked);recommendedChanged();});
-        controls.addView(clientLibraryBounds);
+        clientGroupBins=new CheckBox(this);clientGroupBins.setText("Keep prepared zone object files (experimental, ARM64 client; faster zone loading)");
+        clientGroupBins.setTextColor(Color.rgb(221,234,245));clientGroupBins.setTextSize(13);
+        clientGroupBins.setChecked(ClientRuntime.clientGroupBinsEnabled(this));
+        clientGroupBins.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setClientGroupBinsEnabled(this,checked);recommendedChanged();});
+        controls.addView(clientGroupBins);
         recommendedChanged();
         controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
         controls.addView(text("Client for next launch",12,true));
@@ -341,7 +341,7 @@ public final class ClientActivity extends Activity {
     }
     /** The options as a new install has them: ticked, then unticked (ClientRuntime's defaults). */
     private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,spareZone,serverX87};}
-    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect,deferZoneLoads,clientLibraryBounds};}
+    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect,deferZoneLoads,clientGroupBins};}
     private static String optionName(CheckBox box){String name=String.valueOf(box.getText());int cut=name.indexOf(" (");return cut>0?name.substring(0,cut):name;}
     private void recommendedChanged(){
         if(recommendedStatus==null)return;
