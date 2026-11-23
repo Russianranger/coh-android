@@ -445,20 +445,30 @@ def client_zone_loads(text, limit=3):
 
     `ms`: milliseconds to each boundary of the load; `group_load`: the client's own totals for
     the group files (Thor 0.13.79: 5.5-6.8 s of every load, with nothing recorded inside it);
-    `map_files`: the map file's and its layers' load records (stage, file, ms). Evidence only.
+    `map_files`: the map file's and its layers' load records (stage, file, ms);
+    `transfer_ms_before`: a trip's "xfer." boundaries (client patch 0135), each as milliseconds
+    before this load's "map.start". Evidence only.
     """
-    loads, current = [], None
+    loads, current, transfer = [], None, {}
     for line in text.splitlines():
         if line.startswith(GROUP_LOAD_MARKER):
             if current is not None:
-                current['group_load'] = line[len(GROUP_LOAD_MARKER):][:320]
+                current['group_load'] = line[len(GROUP_LOAD_MARKER):][:420]
             continue
         match = ZONE_LINE.match(line)
         if match is None:
             continue
         tick, stage, detail = int(match.group(1)), match.group(2), match.group(3)
-        if stage == 'map.start':
+        if stage.startswith('xfer.'):
+            if stage == 'xfer.wait':
+                current, transfer = None, {}        # a trip begins: the last load is over
+            if len(transfer) < 8:
+                transfer.setdefault(stage[len('xfer.'):][:20], tick)
+        elif stage == 'map.start':
             current = {'map': detail.replace('\\', '/').rsplit('/', 1)[-1][:60], 'began': tick, 'ms': {}, 'map_files': []}
+            if transfer:
+                current['transfer_ms_before'] = {name: (tick - began) & 0xffffffff for name, began in transfer.items()}
+                transfer = {}
             loads.append(current)
         elif current is not None:
             elapsed = (tick - current['began']) & 0xffffffff

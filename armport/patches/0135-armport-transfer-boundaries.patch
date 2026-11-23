@@ -1,0 +1,89 @@
+diff --git a/Game/src/clientcomm/clientcomm.c b/Game/src/clientcomm/clientcomm.c
+index 6c7c0f2..4e0fcfb 100644
+--- a/Game/src/clientcomm/clientcomm.c
++++ b/Game/src/clientcomm/clientcomm.c
+@@ -829,10 +829,20 @@ void commGetStats(NetLink *link, Packet* pak)
+ void commServerWaitOK(char* mapname)
+ {
+     Packet    *pak;
++
++    /* ArmPort evidence (patch 0135): the client's side of a zone transfer, in the same
++     * tick-stamped stream as the load boundaries. "xfer.wait": the source zone put up the
++     * load screen; "xfer.address": the new zone's address arrived; "xfer.disconnected": the
++     * old link is closed (netSendDisconnect waits up to 5 s for the old zone's answer);
++     * "xfer.connect.begin"/"xfer.connected"/"xfer.scene.done": doMapXfer. CI run 45187469113:
++     * the game had its new world 3.7 s after the zone server was ready, and nothing recorded
++     * says where that goes. No packet, wait or order changes. */
+ #ifndef TEST_CLIENT
+     int index;
+ #endif
+ 
++    armportZoneTrace("xfer.wait", mapname);
++
+     // show load screen immediately
+     g_showMapLoadingMessage = false;
+     game_state.game_mode = SHOW_LOAD_SCREEN;
+@@ -883,12 +893,14 @@ void commServerMapXfer(Packet *pak_in)
+     Packet    *pak;
+ 
+     g_showMapLoadingMessage = false;   /* ArmPort (patch 0125): moving on, the wait is over */
++    armportZoneTrace("xfer.address", NULL);
+     dbOrMapConnect(pak_in);
+     pak = pktCreate();
+     pktSendBitsPack(pak,1,CLIENT_MAP_XFER_ACK);
+     pktSend(&pak,&comm_link);
+     lnkBatchSend(&comm_link);
+     netSendDisconnect(&comm_link,5.f);
++    armportZoneTrace("xfer.disconnected", NULL);
+     lastTotalBytesRead = 0;
+ 
+     {
+diff --git a/Game/src/gameComm/initClient.c b/Game/src/gameComm/initClient.c
+index 7b147b4..f31fcd3 100644
+--- a/Game/src/gameComm/initClient.c
++++ b/Game/src/gameComm/initClient.c
+@@ -5,6 +5,7 @@
+ 
+ #include "gameComm/initCommon.h"
+ #include "gameComm/initClient.h"
++#include <utilitieslib/utils/armport_zone_trace.h>
+ #include <utilitieslib/network/netio.h>
+ #include "varutils.h"
+ #include "fxinfo.h"
+@@ -502,12 +503,14 @@ int doMapXfer()
+     testClientRandomDisconnect(TCS_doMapXfer_01);
+     resetStuffOnMapMove();
+     commNewInputPak();
++    armportZoneTrace("xfer.connect.begin", NULL);   /* patch 0135, evidence only */
+     if(!tryConnect())
+     {
+         dialogStd( DIALOG_OK, "NoMapserverConn", NULL, NULL, NULL, NULL, 0 );
+         restartLoginScreen();
+         return FALSE;
+     }
++    armportZoneTrace("xfer.connected", NULL);
+     testClientRandomDisconnect(TCS_doMapXfer_02);
+     cmdOldSetSends(control_cmds,1);
+     testClientRandomDisconnect(TCS_doMapXfer_03);
+@@ -515,6 +518,7 @@ int doMapXfer()
+     if (commConnected())
+         if(!commReqScene(0))        //Asks server to send a world to load
+             return FALSE;
++    armportZoneTrace("xfer.scene.done", NULL);
+     testClientRandomDisconnect(TCS_doMapXfer_04);
+     doneWaitForDoorMode();        //tell LF wait dialog to go away
+     MissionKickClear();
+diff --git a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+index c351ed4..9ce3fde 100644
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/armport_zone_trace.h
+@@ -103,7 +103,8 @@ static int armportZoneTraceQuietDrops(const char *stage, const char *detail)
+     static const char *const keep[] = {"map.start", "textures.", "ready.sent",
+         "client.error", "client.fatal", "dialog.",
+         "groups.", "map.finish.", "collision.", "scene.", "allents.", "geometry.wait",
+-        "texmodels.welded.", "texmodels.done"};
++        "texmodels.welded.", "texmodels.done",
++        "xfer."};      /* 0135: a transfer's six boundaries */
+     size_t i;
+     if (quiet < 0) quiet = getenv("ARMPORT_TRACE_QUIET") != NULL;
+     if (!quiet) return 0;
