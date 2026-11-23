@@ -626,7 +626,22 @@ all `passed`; `ARMPORT_FRAME_RATE_V1` median 61 in the world in each.
   `armport/tests/test_group_load_totals.py`; the header's two pieces were
   compiled and run with the host compiler against stubs, not with the
   client's toolchain before the chain.
-- **Chain.** CHAIN80_PLACEHOLDER
+- **Chain** at `eacf78602` (the first build, 44972567765 at `6acb1b18a`,
+  was cancelled to add patch 0131): build 44973346854; stock-travel runtime
+  45121536099 passed (208.5 / 86.5 / 86.1 s); trusted runtime 45125692618
+  passed (creation 358.3 s, reopen spawn to ready 23.6 s, group load 7.28 s,
+  map load 4,775 ms); spare runtime 45129721358 passed (trip ready 10.08 s,
+  client 10.63 s, reopen arrivals 11.7 s and 74.2 s, no resends); APK
+  45133831884 published as pre-release `coh-atlas-gameplay-v0.13.80`
+  (93,589,770 bytes, sha256
+  `ae01acae65d12267f0b7688739cfab04bcf64021e48cde6ddb357263291f55ec`, signer
+  unchanged; downloaded, hashed, 51 guest files equal the commit, the client
+  holds 0131's line). The navigation changes did not run in CI (Atlas tree).
+- **What 0131 showed in CI** (eight loads of Atlas Park in runs 45121536099
+  and 45129721358): `files=508 known=166 bounds=0 full=341
+  full_ms=6352..7539 map_ms=267..334 defs=111 defs_ms=0`,
+  `groups.files.done` 6.7-7.9 s and `ready.sent` 8.2-9.5 s after `map.start`.
+  The span is the 341 full library loads. See "Prepared for 0.13.81".
 - Ideas not started: the client's group files (5.5-6.8 s of every trip;
   0.13.80 measures them, see above); the spare's late start after login
   (the 70 s connection observer); the previous zone kept as a third server

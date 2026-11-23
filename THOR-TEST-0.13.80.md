@@ -51,7 +51,18 @@ happens once.
 Evidence: [HANDOFF-X86.md](HANDOFF-X86.md), "Thor test of 0.13.79 and what
 0.13.80 does about it".
 
-CI: CI80_EVIDENCE_PLACEHOLDER
+CI (ARM64 runners, the same emulator as the Thor), chain at `eacf78602`: build
+44973346854; stock-travel run 45121536099 passed (zone starts 208.5 / 86.5 /
+86.1 s on the default server); trusted run 45125692618 passed (reopen zone
+start 23.6 s, group load 7.3 s, map load 4.8 s); spare run 45129721358 passed
+(trip's zone ready 10.1 s after the request, client in the zone at 10.6 s, no
+resends); APK 45133831884, 93,589,770 bytes, sha256
+`ae01acae65d12267f0b7688739cfab04bcf64021e48cde6ddb357263291f55ec`, signer
+unchanged, downloaded and hashed, its 51 guest files equal the commit. CI's
+zones are in the Atlas tree, so the navigation changes have not run in CI:
+launch A is their first run. The game's new line already answered its
+question in CI: 341 of a zone's 508 group files are loaded in full at every
+zone load (6.4-7.5 s of 6.7-7.9 s).
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 

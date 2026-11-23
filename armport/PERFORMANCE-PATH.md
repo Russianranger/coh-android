@@ -846,6 +846,17 @@ loop (21.5), spare trip ready in 10.1 s (15.1; CI cooks the destination's
 meshes during the trip, which the setting speeds most, so the Thor's gain
 will be smaller).
 
+0.13.80's chain (eacf78602) repeated 0.13.79's server figures (default server
+209 / 87 / 86 s, trusted reopen 23.6 s to ready, spare trip ready in 10.1 s);
+its navigation changes run only outside CI's Atlas tree. Its client
+measurement answered at once: of a zone's 508 group files the client loads
+341 object library files in full at every zone load, 6.4-7.5 s of the
+6.7-7.9 s before `groups.files.done`; the engine's bounds-file shortcut never
+applies. Two changes are prepared for 0.13.81, both opt-in: the client keeps
+those bounds itself (patch 0132), and a zone server reads its beacon file and
+starts PhysX after it is ready, while the client loads (4.7 s and 1.5 s of a
+trip's 18.8 s on the Thor).
+
 0.13.79 on the Thor and 0.13.80 (2026-11-22). Trips through the spare to
 zones visited before: 30.7 s and 25.6 s. The two slow trips were not the
 server: 67.7 s on a first visit (35.6 s installing the zone's navigation
