@@ -45,8 +45,9 @@ class GroupBinsKept(unittest.TestCase):
     def setUpClass(cls):
         cls.sections = sections(PATCH.read_text())
 
-    def test_it_is_the_last_patch_and_touches_the_loader_and_the_totals(self):
-        self.assertEqual((ROOT / 'armport/patches/series').read_text().split()[-1], PATCH.name)
+    def test_it_is_in_the_series_and_touches_the_loader_and_the_totals(self):
+        series = (ROOT / 'armport/patches/series').read_text().split()
+        self.assertEqual(series[series.index(PATCH.name) + 1], '0134-armport-group-load-split.patch')
         self.assertEqual(sorted(self.sections), sorted([LOADER, TOTALS, RECEIVE]))
 
     def test_without_the_variable_every_line_runs_as_before(self):

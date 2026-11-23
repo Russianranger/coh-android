@@ -1,0 +1,190 @@
+diff --git a/Common/group/groupfileload.c b/Common/group/groupfileload.c
+index a2b3ed4..5c40547 100644
+--- a/Common/group/groupfileload.c
++++ b/Common/group/groupfileload.c
+@@ -1,5 +1,6 @@
+ #include "group/group.h"
+ #include <utilitieslib/utils/armport_zone_trace.h>
++#include <utilitieslib/utils/wininclude.h>
+ #include <utilitieslib/utils/textparser.h>
+ #include <utilitieslib/utils/error.h>
+ #include "group/groupfileload.h"
+@@ -803,6 +804,31 @@ void groupResetOne(DefTracker *tracker, GroupResetWhat what)
+     }
+ }
+ 
++// ArmPort evidence (patch 0134): where a group file's load time goes. Three leaf costs are
++// timed where they happen, so they never contain one another: reading a file (its prepared
++// .bin, or parsing its .txt), writing its .bin (patch 0133), and loading its geometry file.
++// What is left of a zone load's full_ms is building the definitions. Ticks of
++// QueryPerformanceCounter; patch 0131's line prints the differences over one zone load.
++long long armport_group_read_ticks, armport_group_write_ticks, armport_group_geo_ticks;
++int armport_group_geo_loads;
++
++static long long armportGroupSplitNow(void)
++{
++    LARGE_INTEGER value;
++    return QueryPerformanceCounter(&value) ? value.QuadPart : 0;
++}
++
++#if CLIENT
++static void armportGroupGeoLoad(const char *name)
++{
++    long long began = armportGroupSplitNow();
++
++    geoLoad(name, LOAD_NOW, GEO_INIT_FOR_DRAWING | GEO_USED_BY_WORLD);
++    armport_group_geo_ticks += armportGroupSplitNow() - began;
++    armport_group_geo_loads++;
++}
++#endif
++
+ static void wcollLoad(const char *dir)
+ {
+     char    buf[1000],buf2[1000], *s;
+@@ -812,7 +838,7 @@ static void wcollLoad(const char *dir)
+     if (!cs++)
+         cs = dir;
+ #if CLIENT
+-    geoLoad(dir, LOAD_NOW, GEO_INIT_FOR_DRAWING | GEO_USED_BY_WORLD);
++    armportGroupGeoLoad(dir);
+ #endif
+     strcpy(buf,dir);
+     s = strrchr(buf,'.');
+@@ -856,7 +882,7 @@ int groupLoadRequiredLibsForDef(GroupDef *def)
+                 wcollLoad(gf->name);
+             else
+             {
+-                geoLoad(gf->name, LOAD_NOW, GEO_INIT_FOR_DRAWING | GEO_USED_BY_WORLD);
++                armportGroupGeoLoad(gf->name);
+                 for(i=0;i<def->count;i++)
+                 {
+                     groupLoadRequiredLibsForDef(def->entries[i].def);
+@@ -1719,6 +1745,7 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+     {
+         SimpleBufHandle binfile = 0;
+         char bin_name[1000];
++        long long armport_read_began = armportGroupSplitNow();
+         if (makeBinName(fname,bin_name))
+         {
+             if( fileExists( bin_name ) )
+@@ -1733,6 +1760,7 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+             }
+ #endif
+         }
++        armport_group_read_ticks += armportGroupSplitNow() - armport_read_began;
+     }
+ 
+     //If you didn't get it from the bin, get it from the .txt file (and .rootname file if it's object_library)
+@@ -1740,12 +1768,16 @@ static GroupFile *groupLoadInternal(const char *fname, BinForceType reprocessBin
+     //(Non version 2 stuff will just throw parser errors now, I'm pretty sure I converted them all.)
+     if ( !loadedFromBin )
+     {
++        long long armport_text_began = armportGroupSplitNow(), armport_text_done;
+         FileListDestroy(&g_parselist); //cleans out g_parselist. I don't know why it's not cleaned out already...
+         groupLoadRaw( librootname, &group_file ); //only if it exists. (Duplicates in .txt and ,rootnames are concatenated 
+         groupLoadRaw( fname, &group_file );
+         armport_group_text_loads++;
++        armport_text_done = armportGroupSplitNow();
++        armport_group_read_ticks += armport_text_done - armport_text_began;
+         if ( reprocessBins != BIN_REBUILD_MAP && (isDevelopmentMode() || armportGroupBinRoot()))
+             groupWriteGroupAndRootnameToBin( &group_file, fname, librootname );
++        armport_group_write_ticks += armportGroupSplitNow() - armport_text_done;
+         if (file_dep_info) { // Add include files to depency file
+             FileListForEach(&g_parselist, addDependencyCallback);
+         } else { // The dep file will now be out of date so delete it
+diff --git a/Game/src/group/armport_group_load_log.h b/Game/src/group/armport_group_load_log.h
+index aae9e76..5ed7016 100644
+--- a/Game/src/group/armport_group_load_log.h
++++ b/Game/src/group/armport_group_load_log.h
+@@ -6,7 +6,7 @@
+  *
+  *   ARMPORT_GROUP_LOAD_V1 total_ms= start_ms= files= sent= known= bounds= bounds_ms=
+  *       full= full_ms= map_ms= defs= defs_ms= libs_ms= geo= geo_ms= cached= cached_ms= kept=
+- *       bin= text= wrote=
++ *       bin= text= wrote= read_ms= write_ms= geoload= geoload_ms=
+  *
+  *   start_ms   clientLoadMapStart (the load screen and the previous world's teardown)
+  *   files      group files the server listed; sent: those it described in the packet
+@@ -21,6 +21,10 @@
+  *              the time; kept: files whose bounds this load added to that store
+  *   bin        group files read from their prepared .bin up to here; text: parsed from
+  *              their .txt; wrote: .bin files written after parsing (patch 0133)
++ *   read_ms    of the whole load: reading group files (a prepared .bin, or parsing a .txt);
++ *              write_ms: writing .bin files; geoload: geometry files the group loader
++ *              asked for, and the time (patch 0134). full_ms and map_ms less these three
++ *              is building the definitions.
+  *
+  * No packet, loading or timeout behavior changes. Only written with ARMPORT_STDIO_LOG set,
+  * like the "ArmPort zone:" lines. Game/UtilitiesLib headers redefine printf/fflush; the
+@@ -50,6 +54,8 @@ typedef struct ArmportGroupLoad
+     long long start, bounds_time, full_time, map_time, defs_time, libs_time, geo_time, cached_time;
+     unsigned files, sent, known, bounds, full, defs, geo, cached, kept;
+     unsigned bin, text, wrote;      /* the loader's counts at map.start, then the load's own */
++    long long read_time, write_time, geoload_time;      /* likewise (patch 0134) */
++    unsigned geoload;
+ } ArmportGroupLoad;
+ 
+ static ArmportGroupLoad armport_group_load;
+@@ -80,7 +86,7 @@ static void armportGroupLoadBegin(void)
+ static void armportGroupLoadEnd(void)
+ {
+     const ArmportGroupLoad *t = &armport_group_load;
+-    char line[400];
++    char line[520];
+     if (!t->active)
+         return;
+     if (getenv("ARMPORT_STDIO_LOG"))
+@@ -88,13 +94,16 @@ static void armportGroupLoadEnd(void)
+         snprintf(line, sizeof(line),
+             "ARMPORT_GROUP_LOAD_V1 total_ms=%u start_ms=%u files=%u sent=%u known=%u bounds=%u bounds_ms=%u"
+             " full=%u full_ms=%u map_ms=%u defs=%u defs_ms=%u libs_ms=%u geo=%u geo_ms=%u"
+-            " cached=%u cached_ms=%u kept=%u bin=%u text=%u wrote=%u\n",
++            " cached=%u cached_ms=%u kept=%u bin=%u text=%u wrote=%u"
++            " read_ms=%u write_ms=%u geoload=%u geoload_ms=%u\n",
+             armportGroupLoadMs(armportGroupLoadNow() - t->began), armportGroupLoadMs(t->start),
+             t->files, t->sent, t->known, t->bounds, armportGroupLoadMs(t->bounds_time),
+             t->full, armportGroupLoadMs(t->full_time), armportGroupLoadMs(t->map_time),
+             t->defs, armportGroupLoadMs(t->defs_time), armportGroupLoadMs(t->libs_time),
+             t->geo, armportGroupLoadMs(t->geo_time), t->cached, armportGroupLoadMs(t->cached_time), t->kept,
+-            t->bin, t->text, t->wrote);
++            t->bin, t->text, t->wrote,
++            armportGroupLoadMs(t->read_time), armportGroupLoadMs(t->write_time),
++            t->geoload, armportGroupLoadMs(t->geoload_time));
+         fputs(line, stdout);
+         fflush(stdout);
+     }
+diff --git a/Game/src/group/groupnetrecv.c b/Game/src/group/groupnetrecv.c
+index 2e4c879..3fca691 100644
+--- a/Game/src/group/groupnetrecv.c
++++ b/Game/src/group/groupnetrecv.c
+@@ -668,6 +668,8 @@ static bool newWorldIsBase()
+ 
+ // 0133: the group loader's counts of prepared files read, text files parsed and bins written.
+ extern int armport_group_bin_reads, armport_group_text_loads, armport_group_bin_writes;
++extern long long armport_group_read_ticks, armport_group_write_ticks, armport_group_geo_ticks;
++extern int armport_group_geo_loads;
+ 
+ // 0132 (opt-in, armport_library_bounds.h): the engine calls of the client's own bounds store.
+ static void armportLibraryBoundsSet(const char *name, const void *bounds)
+@@ -958,6 +960,10 @@ void worldReceiveGroups(Packet *pak)
+             armport_group_load.bin = (unsigned)armport_group_bin_reads;
+             armport_group_load.text = (unsigned)armport_group_text_loads;
+             armport_group_load.wrote = (unsigned)armport_group_bin_writes;
++            armport_group_load.read_time = armport_group_read_ticks;
++            armport_group_load.write_time = armport_group_write_ticks;
++            armport_group_load.geoload_time = armport_group_geo_ticks;
++            armport_group_load.geoload = (unsigned)armport_group_geo_loads;
+             clientLoadMapStart(fname);
+             armport_group_load.start = armportGroupLoadNow() - armport_group_load.began;
+         }
+@@ -987,6 +993,10 @@ void worldReceiveGroups(Packet *pak)
+         armport_group_load.bin = (unsigned)armport_group_bin_reads - armport_group_load.bin;
+         armport_group_load.text = (unsigned)armport_group_text_loads - armport_group_load.text;
+         armport_group_load.wrote = (unsigned)armport_group_bin_writes - armport_group_load.wrote;
++        armport_group_load.read_time = armport_group_read_ticks - armport_group_load.read_time;
++        armport_group_load.write_time = armport_group_write_ticks - armport_group_load.write_time;
++        armport_group_load.geoload_time = armport_group_geo_ticks - armport_group_load.geoload_time;
++        armport_group_load.geoload = (unsigned)armport_group_geo_loads - armport_group_load.geoload;
+     }
+     armportGroupLoadEnd();
+     armportZoneTrace("groups.files.done", NULL);
