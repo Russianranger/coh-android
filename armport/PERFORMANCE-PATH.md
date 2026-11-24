@@ -857,6 +857,20 @@ those bounds itself (patch 0132), and a zone server reads its beacon file and
 starts PhysX after it is ready, while the client loads (4.7 s and 1.5 s of a
 trip's 18.8 s on the Thor).
 
+0.13.82 on the Thor and 0.13.83 (2026-11-24). The console line did what it
+was for: 30 and 38 arrival records in the two launches, none from the late
+log; the FPS buttons came alive 9.4 s and 11.3 s after the hero was in the
+world (73-74 s before). What was left of that delay was the session's own
+15 s look at the zone consoles, so 0.13.83 looks for a new line twice a
+second and runs the inspection at once (CI spare run 45497903372: arrivals
+recorded 19.5 s and 10.8 s after the typed command, 27.1 s and 24.1 s in
+0.13.82). Trips by the game's own clock: 21.2-30.9 s through the spare,
+9.4-10.0 s back to a zone kept loaded by the third zone server, which cost
+about 1.5 GB of free memory (lowest 3,460 MiB for 4,942) and is now the
+owner's choice in an Optional category. Start and zoning are where the owner
+wants them; missions are next (HANDOFF "0.13.83 (98)": mission maps as a
+test option for 0.13.84, 123 more collision files for all 5,105 maps).
+
 0.13.81 on the Thor and 0.13.82 (2026-11-24). All three 0.13.81 launches
 passed. Deferred loading: a warm spare had its zone ready 10.9 s after the
 request (18.0 s without). The larger finding was observation: the session

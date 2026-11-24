@@ -142,4 +142,14 @@ will read:
 
 Details: `HANDOFF-X86.md`, section "0.13.83 (98)".
 
-CI: CI83_EVIDENCE_PLACEHOLDER
+CI (build 45466729870 at `de54a1b54`, every runtime run with the x87 option):
+zone change 45485919306 passed. Default options 45492202751: zone server
+start 365.1 s for a new character, 23.9 s reopened (0.13.82: 371.1, 23.9).
+Spare run 45497903372 with late loading and the third zone server: both
+arrivals read from the zone servers' console (5 records, none from the log
+file) and recorded 19.5 s and 10.8 s after the typed command (0.13.82: 27.1
+and 24.1 s), the effect of acting on the line within half a second. CI
+cannot see the menu: it was compiled and its layout checked by tests, never
+run on Android before this release. APK run 45503102987: 93,618,442 bytes,
+sha256 `c0e9843e...cb3437dc`, signer unchanged, its 51 guest files equal the
+commit.

@@ -515,7 +515,19 @@ would be missions".
   Unknown until it runs: whether CI's data holds the mission map file, what a mission
   server prints as its ready line, saving inside a mission (expected: verdict failed,
   character kept).
-- **Chain.** CHAIN83_PLACEHOLDER
+- **Chain** (published: APK 45503102987 at `de54a1b54`). Build 45466729870:
+  its first attempt failed in `server-run` on a download timeout
+  (`prepare_assets.py fetch`, `TimeoutError`), the re-run of the failed jobs
+  passed. Zone change 45485919306 passed (object-file load 6.3-7.6 s, as
+  before). Trusted 45492202751: zone server start 365.1 s new, 23.9 s
+  reopened, map load 4,762 ms. Spare 45497903372 with `defer_zone_loads` and
+  `keep_previous_zone`: `ready_records` 5 console / 0 log, arrivals recorded
+  19.5 s and 10.8 s after the typed command (27.1 and 24.1 in 0.13.82),
+  spare warm after 20.0 s and assigned to map 101, zone 101 ready 9.3 s
+  after its request. Release verified: 93,618,442 bytes, sha256
+  `c0e9843e61ef8c028b83643debfefacbb811c5ed1bce747dd09c853ccb3437dc`, signer
+  92:95:53:53..., 51 guest files equal the commit, the dex holds the new
+  menu's strings. The menu itself has not run on Android.
 
 ## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
 
