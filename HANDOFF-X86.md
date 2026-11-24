@@ -482,7 +482,11 @@ would be missions".
   (2) a zone-layer path for a dynamic map id (`MAPS`, `register_zone`,
   `supported`, console route, arrival, eviction; while in a mission the zone
   the hero came from should be kept instead of a spare); (3) navigation
-  graphs for mission maps (none exist; the pack covers the 66 zones);
+  graphs for mission maps: the pack covers the 66 zones, and a map without
+  a file gets "Beacon file not loaded for map" and no pathing
+  (`beaconFile.c` `beaconReload`); `armport-zone-beacons.yml` generates one
+  map per Windows job (a whole zone took up to 2 h 20 min with one worker;
+  mission maps are far smaller but there are 5,105);
   (4) door lists: each static map sends its doors to the DbServer
   (`DBCLIENT_SEND_DOORS`), so only zones that have run are known. Debug
   commands for CI and the Thor (everyone has access level 9):
