@@ -414,6 +414,59 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
+
+From the Thor test of 0.13.81 (exports 20261124-043617 A defaults, -044655 B
+`client_group_bins`, -045740 C both options; all passed) and two owner notes.
+
+- **Thor 0.13.81.**
+  - Trips, request to arrival: A 39.8 s (spare loaded 15.8 s before the
+    request, not warm), 50.4 and 42.8 s cold (no spare: see below); B 20.0 s
+    (warm spare, ready 18.0 s); C 29.0 s (spare loaded 20.9 s before) and a
+    warm spare with deferred loading: `db_connect_begin` to `ready_published`
+    10.86 s, `ARMPORT_DEFERRED_LOAD_V1 trigger=world_sent waited_ms=3235
+    beacons_ms=3938 physx_ms=271`, the client's `map.start` about 10 s and
+    `ready.sent` about 16 s after the request by its tick clock.
+  - Client group loads, `full_ms`: A 4296/5056/4056/5024; B 9010 (wrote 428),
+    5121, 5133; C (all from .bin) 2471/3666/4020.
+  - Request pick-up: the game logged "moving to map" in the same second the
+    request was seen (`travel_request_ticks.for_new_request` 2).
+  - **The session read the hero's arrival 45-74 s late.**
+    `native_ready_to_observation_ms` 73 s (A), 74 s (C); C's second trip was
+    recorded at 61.3 s, by the two-minute room probe. The record is the
+    entity log's "Connection:ResumeCharacter"; `logcomm.c` batches for
+    `SECS_LOG_RESEND` 30 s and `log.c` holds lines `LOG_WINDOW` 60 s to sort
+    them. Waiting on it: the app's "connected" phase (FPS buttons, Save),
+    `_spare_wait_reason` (`character_not_in_the_world`, then 30 s settle), and
+    after a trip `_make_room_for_spare`, whose own probe found the arrival
+    and then waited `SPARE_ROOM_PROBE_SECONDS` 120 s (eviction 121.9 s after
+    arrival in C).
+- **Server layer `patches/mapserver-single-player`** (always on, no switch;
+  `NpcNames.c`, `parseClientInput.c`, both pristine in the baseline closure).
+  - `ReadNameFile` split lines at CR only; `upstream/i24` name lists are LF,
+    so `s_NPCNamesMale/Female` and every `RandomNameFile` list were empty and
+    `npcAssignName` set nothing. Now `strcspn(s, "\r\n")`. Native cases
+    `npc_names`, `npc_names_crlf`; the unpatched control fails `count == 4`.
+    The literal "null" the owner saw was not located.
+  - `resumeCharacter` prints `ARMPORT_CLIENT_READY_V1 utc_ms= map_id= port=
+    name="" auth=""` at its last return. Evidence only.
+- **Guest.** `character_zoning.console_ready` builds the same record shape as
+  `stock_ready` (`log_route: owned_zone_server_console`, same `source`);
+  `stock_ready_now` reads the zone's console first, the entity log otherwise
+  (`character_zoning.ready_records` counts both); used for the first
+  connection on a non-Atlas zone and for arrivals (`_poll_stock_logs`,
+  `arrival_source: zone_console_resume_character`). `stock_zone_binding`
+  accepts either route. Atlas Park (map 1) keeps its legacy record.
+- **App.** No typed `/maxfps 60` for the ARM64 client (`gameplay_60fps_auto
+  skipped=client_starts_at_60`; `sendChatCommand` takes 3.2 s with input
+  held). `zone-load-after-ready` defaults on. New `keep-previous-zone`
+  (off): `COH_KEEP_PREVIOUS_ZONE`, only with the spare; policy capacity 3,
+  `_make_room_for_spare` keeps the zone left last, `_assign_spare` and
+  `_spawn_map` allow a third server. 25 options: 19 ticked, 6 unticked.
+- **Client** patches 0134 (group-load split) and 0135 (transfer boundaries)
+  are in this build.
+- **Chain.** CHAIN82_PLACEHOLDER
+
 ## 0.13.81 (96): faster request pick-up, two experimental options (Claude, 2026-11-23)
 
 0.13.81 is 0.13.80 with the request pick-up below (always on), client
