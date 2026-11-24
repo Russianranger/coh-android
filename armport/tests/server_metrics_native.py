@@ -1452,7 +1452,12 @@ def run(source, original=None, expect_control_failure=False):
         control += names_fixture(trusted_root)
         if not (original and expect_control_failure):
             # The console line is a printf in a function too entangled to run here: its text is checked.
-            assert ((source / PARSECLIENTINPUT).read_text().count(READY_LINE) == 1) == ('npc_names' in test_cases(source))
+            ready_text = (source / PARSECLIENTINPUT).read_text()
+            assert (ready_text.count(READY_LINE) == 1) == ('npc_names' in test_cases(source))
+            # file.h turns fflush(f) into x_fflush((FileWrapper *)f); given the CRT's stdout that
+            # asserts and ends the server at the first client (0.13.82's first trusted run).
+            assert 'fflush(stdout)' not in ready_text
+            assert (ready_text.count('fflush(fileGetStdout());') >= 1) == ('npc_names' in test_cases(source))
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
         for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache',
                       'start_trees', 'map_load_profile', 'bounds_files', 'deferred_load', 'npc_names']

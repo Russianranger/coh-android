@@ -54,7 +54,7 @@ DEFERRED_SOURCES = ('MapServer/src/beacon/beaconFile.c', 'MapServer/src/group/gr
 DEFERRED_VARIABLE = 'ARMPORT_DEFER_ZONE_LOADS'
 # 0.13.82: always on, no switch (patches/mapserver-single-player): NPC name lists whose lines end
 # in LF are read, and one console line says when a client's character has resumed.
-SINGLE_PLAYER_PATCH = '55d155719d8529bb8a54365c9110435a07a7dc450ade976b491470dca13a5e46'
+SINGLE_PLAYER_PATCH = 'a1b9b89690759bb18becb748ee6e2870f55bb90d6d9ed6d09ae3348c0edffbc1'
 SINGLE_PLAYER_SOURCES = ('MapServer/src/gameComm/NpcNames.c', 'MapServer/src/player/parseClientInput.c')
 CLIENT_READY_PREFIX = 'ARMPORT_CLIENT_READY_V1'
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless

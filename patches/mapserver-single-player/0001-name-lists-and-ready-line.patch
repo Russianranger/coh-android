@@ -39,7 +39,7 @@ index a44a752..ea3809f 100644
 +        printf("ARMPORT_CLIENT_READY_V1 utc_ms=%I64u map_id=%d port=%d name=\"%s\" auth=\"%s\"\n",
 +               (ticks - 116444736000000000ui64) / 10000, db_state.map_id,
 +               (int)client->link->addr.sin_port, e->name, e->auth_name);
-+        fflush(stdout);
++        fflush(fileGetStdout());
 +    }
 +
      return TRUE;
