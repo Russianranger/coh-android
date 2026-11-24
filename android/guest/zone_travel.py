@@ -29,6 +29,8 @@ LAST_PORT = 7099
 # Cold start on the Thor: King's Row 191 s with Atlas running (0.13.54), Atlas
 # 174 s; a cold tree adds its one-time preparation. Generous, then delink.
 START_SECONDS = 900
+# A mission map is served from the shared zone tree (its geometry is installed there).
+MISSION_TREE = 'zones'
 
 
 def requested():
@@ -42,16 +44,23 @@ class ZoneTravelPolicy:
     running() -> {map_id: {'ready': bool, 'port': int, 'last_occupied': float}};
     occupied() -> the map id the player is on, or None when unknown;
     admit(map_id) -> None, or the reason a request is refused before anything
-    else is checked (the zone a character first enters: only its own).
+    else is checked (the zone a character first enters: only its own);
+    mission(record) -> None when this non-static request is a mission map the
+    owner can start, else the reason it is refused; mission_tree() -> the tree
+    it starts in (the shared zone tree, where its geometry is installed).
+    Without the hook every non-static request is delinked, as before 0.13.84.
     """
 
-    def __init__(self, *, tree_for, running, occupied, capacity=MAX_ZONE_SERVERS, admit=None):
+    def __init__(self, *, tree_for, running, occupied, capacity=MAX_ZONE_SERVERS, admit=None, mission=None,
+                 mission_tree=None):
         if type(capacity) is not int or capacity < 1:
             raise ValueError('Invalid zone server capacity')
         self.tree_for = tree_for
         self.running = running
         self.occupied = occupied
         self.admit = admit
+        self.mission = mission
+        self.mission_tree = mission_tree
         self.capacity = capacity
         self.decisions = []
 
@@ -74,14 +83,21 @@ class ZoneTravelPolicy:
 
     def decide(self, record):
         map_id = record['map_id']
-        if record['is_static'] != 1:
-            return 'delink', 'not_static'          # missions and instances: a later milestone
-        refused = self.admit(map_id) if self.admit is not None else None
-        if refused is not None:
-            return 'delink', refused
-        tree = self.tree_for(map_id)
-        if tree is None:
-            return 'delink', 'zone_not_served'
+        mission = record['is_static'] != 1
+        if mission:
+            if self.mission is None:
+                return 'delink', 'not_static'      # other instances (bases, arenas): not served
+            refused = self.mission(record)
+            if refused is not None:
+                return 'delink', refused
+            tree = MISSION_TREE if self.mission_tree is None else self.mission_tree()
+        else:
+            refused = self.admit(map_id) if self.admit is not None else None
+            if refused is not None:
+                return 'delink', refused
+            tree = self.tree_for(map_id)
+            if tree is None:
+                return 'delink', 'zone_not_served'
         maps = self.running()
         if map_id in maps:
             return 'delink', 'already_running'     # the DbServer asks only for maps it lacks
@@ -90,8 +106,9 @@ class ZoneTravelPolicy:
             current = self.occupied()
             if current is None:
                 return 'delink', 'player_zone_unknown'
+            # A mission map the hero has left goes first; then the zone left longest ago.
             idle = sorted((other for other, state in maps.items() if other != current and state.get('ready')),
-                          key=lambda other: (maps[other].get('last_occupied', 0), other))
+                          key=lambda other: (not maps[other].get('mission'), maps[other].get('last_occupied', 0), other))
             need = len(maps) - self.capacity + 1
             if len(idle) < need:
                 return 'delink', 'capacity'
@@ -100,7 +117,10 @@ class ZoneTravelPolicy:
         port = self.port(map_id, remaining)
         if port is None:
             return 'delink', 'no_port'
-        return 'start', {'tree': tree, 'evict': evict, 'port': port, 'budget_seconds': START_SECONDS}
+        plan = {'tree': tree, 'evict': evict, 'port': port, 'budget_seconds': START_SECONDS}
+        if mission:
+            plan['mission'] = True
+        return 'start', plan
 
     def report(self):
         return {'format': FORMAT, 'capacity': self.capacity, 'decisions': list(self.decisions)}

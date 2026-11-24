@@ -1932,6 +1932,25 @@ def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_paylo
 LINEAGE_OBSERVATION_SECONDS = 15
 
 
+def zone_tree_collision(missions):
+    """(names, data cache identity fields, mission leaf count) of the shared zone tree's collision leaves.
+
+    0.13.84, test option (COH_MISSION_MAPS=1): the mission maps' own leaves beside the zones'. A
+    tree with them has its own data cache identity, so the tree without them is kept as it is
+    and each is prepared once.
+    """
+    import zone_index
+    names = zone_index.COLLISION_FILES
+    identity = {'zone_collision_sha256': zone_index.COLLISION_FILES_SHA256}
+    if not missions:
+        return names, identity, 0
+    import mission_index
+    require(not set(mission_index.COLLISION_FILES) & set(names) and len(set(mission_index.COLLISION_FILES))
+            == len(mission_index.COLLISION_FILES), 'Mission collision leaves repeat zone leaves')
+    identity['mission_collision_sha256'] = mission_index.COLLISION_FILES_SHA256
+    return names + mission_index.COLLISION_FILES, identity, len(mission_index.COLLISION_FILES)
+
+
 class LocalCharacterServer(login.LocalLoginServer):
     require_empty_account = False
     requires_saved_character = False
@@ -3166,14 +3185,15 @@ class LocalCharacterServer(login.LocalLoginServer):
                            else self.data_cache.identity)
         shared_selection = source_identity.get('shared_server_data')
         shared_folders = tuple(shared_selection['shared_top_level']) if shared_selection else ()
-        leaves = {name: self.zone_asset_document['files'][name] for name in zone_index.COLLISION_FILES}
+        missions = os.environ.get('COH_MISSION_MAPS') == '1'
+        collision_names, collision_identity, mission_leaves = zone_tree_collision(missions)
+        leaves = {name: self.zone_asset_document['files'][name] for name in collision_names}
         if shared_folders:
             (target / 'tools').mkdir(mode=0o700)
             overlay_roots = {name.split('/')[1].casefold() for name in leaves if name.count('/') >= 2}
             require(not overlay_roots & {name.casefold() for name in shared_folders},
                     'Shared zone collision overlay would land in a shared server folder')
-        identity = dict(source_identity, map_scope='shared_static_zones_v1',
-                        zone_collision_sha256=zone_index.COLLISION_FILES_SHA256)
+        identity = dict(source_identity, map_scope='shared_static_zones_v1', **collision_identity)
         receipt = getattr(self, 'server_data_receipt', self.ctx.report.get('client_worktree', {}))
         cache = server_data_cache.ServerDataCache(self.owner.root, identity,
             self.owner.args.session_id, self.ctx,
@@ -3192,7 +3212,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                                          skip_top_level=shared_folders)
         checkpoint('warm_schema_restore' if reused else 'cold_server_data_mirror')
         geometry = zone_asset_package.install(target, self.owner.args.assets, self.ctx,
-                                              collision_names=zone_index.COLLISION_FILES)
+                                              collision_names=collision_names)
         checkpoint('shared_zone_collision_geometry')
         if not reused:
             known = set(cache.directory_names)
@@ -3240,6 +3260,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             'server_cache_native_compatibility': cache_compatibility,
             'animation': animation, 'server_fx_catalog': fx_catalog,
             'zone_index_sha256': zone_index.SOURCE_SHA256, 'collision_files': len(leaves),
+            'mission_collision_files': mission_leaves,
             'phase_seconds': dict(phases), 'elapsed_seconds': round(time.monotonic() - started, 6)}
         self.creation_report['zone_tree_preparation'] = report
         self.ctx.report['zone_tree_preparation'] = report

@@ -878,6 +878,171 @@ class StockTravelTests(unittest.TestCase):
 
 
 
+MISSION_FILE = 'maps/Missions/Office/Office_30/Office_30_Layout_01.txt'
+MISSION_NAME = MISSION_FILE.lower()
+
+
+def mission_record(map_id, cookie, sequence, *, name=MISSION_FILE, info='1:2:3:L1_P_Clockwork_Mission1'):
+    return dict(record(map_id, cookie, sequence), is_static=0, map_name=name, mission_info=info)
+
+
+class MissionMapTests(unittest.TestCase):
+    """0.13.84, test option: a mission door's map is started in the shared zone tree."""
+    instance = StockTravelTests.instance
+    supervisor = StockTravelTests.supervisor
+
+    def mission_instance(self, *, enabled=True):
+        value = self.instance()
+        value.mission_maps = enabled
+        value.missions = value.stock['mission_maps'] = {'requested': enabled, 'started': 0, 'starts': [],
+                                                        'refused': [], 'ended': [], 'arrivals': 0, 'returns': 0}
+        value.zone_asset_document = {'files': {}}
+        value.initial_zone = None
+        value.creation_report['connected_on_atlas'] = True
+        value.maps = {7: owned()}
+        value.active_map_id = 7
+        value.zone_tree_for = lambda map_id: 'zones' if map_id in (7, 8) else None
+        self.addCleanup(lambda: [zoning.MAPS.pop(key) for key in list(zoning.MAPS) if zoning.mission_map(key)])
+        return value
+
+    def publish_mission(self, sup, map_id, cookie, sequence, **fields):
+        import json
+        (sup.directory / ('map-%d-%d.json' % (map_id, cookie))).write_text(
+            json.dumps(mission_record(map_id, cookie, sequence, **fields), separators=(',', ':')) + '\n')
+        return '%s map_id=%d cookie=%d static=0\n' % (supervisor.MARKER, map_id, cookie)
+
+    def test_a_mission_map_name_is_a_file_under_maps_missions(self):
+        self.assertEqual(zoning.mission_map_name(MISSION_FILE), MISSION_NAME)
+        self.assertEqual(zoning.mission_map_name(MISSION_FILE.replace('/', '\\')), MISSION_NAME)
+        for name in ('maps/City_Zones/City_01_01/City_01_01.txt', 'maps/Missions/../City_Zones/a/b.txt',
+                     'maps/Missions/office.txt', 'maps/Missions/Office/Office_30/a.bin', '', None, 7,
+                     'maps/Missions/' + 'a/' * 9 + 'b.txt', 'maps/Missions/Of fice/a/b.txt', 'x' * 300):
+            with self.subTest(name=str(name)[:40]):
+                self.assertIsNone(zoning.mission_map_name(name))
+
+    def test_without_the_option_a_mission_request_is_delinked_as_before(self):
+        value = self.mission_instance(enabled=False)
+        sup = self.supervisor(value)
+        added = sup.poll('\n' + supervisor.ACK + '\n' + self.publish_mission(sup, 700, 9, 1))
+        self.assertEqual([(e['decision'], e['reason']) for e in added], [('delink', 'not_static')])
+        self.assertEqual(added[0]['mission_info'], '1:2:3:L1_P_Clockwork_Mission1')
+
+    def test_why_a_mission_request_is_refused(self):
+        value = self.mission_instance()
+        value.external_maps_options()
+        cases = (
+            (lambda: None, mission_record(700, 9, 1, name='maps/Bases/base.txt'), 'not_a_mission_map'),
+            (lambda: None, mission_record(700, 9, 1, info=''), 'no_mission_info'),
+            (lambda: None, mission_record(8, 9, 1), 'map_id_is_a_zone'),
+            (lambda: None, mission_record(100000, 9, 1), 'map_id_is_a_zone'),
+            (lambda: value.creation_report.update(connected_on_atlas=False), mission_record(700, 9, 1),
+             'character_not_in_the_world'),
+            (lambda: (value.creation_report.update(connected_on_atlas=True),
+                      setattr(value, 'zone_asset_document', None)), mission_record(700, 9, 1),
+             'zone_assets_not_imported'),
+            (lambda: (setattr(value, 'zone_asset_document', {'files': {}}),
+                      value.missions.update(started=zoning.MISSION_START_LIMIT)), mission_record(700, 9, 1),
+             'mission_start_limit'),
+            (lambda: (value.missions.update(started=0),
+                      (value.owner.args.state / 'character-logout.json').write_text('{}')), mission_record(700, 9, 1),
+             'saving'),
+        )
+        for prepare, request, reason in cases:
+            prepare()
+            with self.subTest(reason=reason):
+                self.assertEqual(value.zone_policy.decide(request), ('delink', reason))
+        self.assertEqual([row['reason'] for row in value.missions['refused']], [case[2] for case in cases])
+        (value.owner.args.state / 'character-logout.json').unlink()
+        zoning.register_mission(700, MISSION_NAME)
+        value.maps[700] = owned()
+        value.active_map_id = 700
+        self.assertEqual(value.zone_policy.decide(mission_record(701, 9, 1)), ('delink', 'already_in_a_mission'))
+
+    def test_a_mission_request_starts_registers_and_the_hero_goes_in_and_out(self):
+        value = self.mission_instance()
+        sup = self.supervisor(value)
+        spawned = []
+        def spawn(map_id, **keywords):
+            self.assertTrue(zoning.supported(map_id) and zoning.mission_map(map_id))
+            spawned.append((map_id, keywords))
+            value.maps[map_id] = owned(ready=False)
+        value._spawn_map = spawn
+        value.live_progress = Mock(return_value=False)
+        sup.poll('\n' + supervisor.ACK + '\n' + self.publish_mission(sup, 700, 77, 1))
+        value.serve_external_maps(sup)
+        self.assertEqual(spawned, [(700, {'cookie': 77, 'port': 7004, 'options': ('-aggrocap', '17')})])
+        self.assertEqual(zoning.MAPS[700], {'name': 'Mission', 'port': None, 'instance': 1,
+                                            'world': 'office_30_layout_01', 'shared_zone_tree': True,
+                                            'mission': True, 'map_name': MISSION_NAME})
+        self.assertEqual(zoning.zone_name(700), 'Mission')
+        start = value.missions['starts'][0]
+        self.assertEqual((start['map_id'], start['cookie'], start['map_name'], start['from_map_id'],
+                          start['mission_info']), (700, 77, MISSION_NAME, 7, '1:2:3:L1_P_Clockwork_Mission1'))
+        self.assertEqual(value.missions['started'], 1)
+        self.assertTrue(value.stock['starts'][0]['mission'])
+        value.live_progress = Mock(return_value=True)
+        value.serve_external_maps(sup)
+        self.assertTrue(value.maps[700]['ready'])
+        # In: the zone server's own line; the event tells the app this map is a mission.
+        value._activate = Mock(side_effect=lambda map_id: setattr(value, 'active_map_id', map_id))
+        value._stock_arrival(700, {'source': 'zone_console', 'map_id': 700})
+        event = value.zoning_report['events'][-1]
+        self.assertEqual((event['current_map_id'], event['current_map_name'], event['mission_map'],
+                          event['from_map_id']), (700, 'Mission', True, 7))
+        self.assertNotIn('from_mission_map', event)
+        self.assertTrue(value.zoning_report['transfers'][-1]['mission'])
+        self.assertEqual((value.missions['arrivals'], 'arrived_utc_ms' in start), (1, True))
+        # While inside: no spare takes the place of the zone the hero came from.
+        value.stock['enabled'] = True
+        value.spare_report = {'started': 0}
+        value._request_options = lambda: ()
+        value.initial_zone_pending = lambda: False
+        with patch.dict('os.environ', {zone_travel.ENABLE_ENVIRONMENT: '1'}):
+            self.assertEqual(value._spare_wait_reason(time.monotonic()), 'in_a_mission')
+        # Out: an ordinary arrival, marked as coming from a mission.
+        value._stock_arrival(7, {'source': 'zone_console', 'map_id': 7})
+        event = value.zoning_report['events'][-1]
+        self.assertEqual((event['current_map_id'], event['from_map_id'], event['from_mission_map']), (7, 700, True))
+        self.assertNotIn('mission_map', event)
+        self.assertEqual(value.missions['returns'], 1)
+
+    def test_a_mission_map_that_ended_is_forgotten_and_its_id_can_be_asked_for_again(self):
+        value = self.mission_instance()
+        value.external_maps_options()
+        zoning.register_mission(700, MISSION_NAME)
+        value.maps[700] = owned(alive=False)
+        value.maps[700]['process'].process.returncode = 0
+        value.health = zoning.LocalCharacterZoningServer.health.__get__(value)
+        with patch.object(zoning.character.LocalCharacterReopenServer, 'health', lambda self: None):
+            value.health()                                   # a mission map may end by itself
+            value.maps[8] = owned(alive=False)
+            with self.assertRaisesRegex(zoning.base.DiagnosticError, 'Ready zoning destination exited'):
+                value.health()                               # a zone may not
+            del value.maps[8]
+        self.assertFalse(value.owns_requested_map(700))
+        self.assertEqual(set(value.maps), {7})
+        self.assertEqual([(row['map_id'], row['exit_code']) for row in value.missions['ended']], [(700, 0)])
+        self.assertEqual(value.zone_policy.decide(mission_record(700, 10, 2))[0], 'start')
+        # The occupied mission map is never forgotten here, whatever its process says.
+        value.maps[700] = owned(alive=False)
+        value.active_map_id = 700
+        value._tick_missions()
+        self.assertIn(700, value.maps)
+
+    def test_the_dbservers_answer_names_a_mission_map_the_hero_is_in(self):
+        value = self.mission_instance()
+        value.external_maps_options()
+        zoning.register_mission(700, MISSION_NAME)
+        value.maps[700] = owned()
+        value.active_map_id = 700
+        value.query_count = 0
+        value.query = Mock(return_value='1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 700 SmapId 7\n')
+        self.assertEqual(value.stock_occupied(), 700)
+        # Room for a zone asked for from inside (a hospital in another zone): the zone left gives way.
+        decision, plan = value.zone_policy.decide(record(8, 3, 1))
+        self.assertEqual((decision, plan['evict']), ('start', [7]))
+
+
 class SharedZoneTreeTests(unittest.TestCase):
     def tearDown(self):
         for map_id in [m for m in zoning.MAPS if m not in (1, 5, 101)]:

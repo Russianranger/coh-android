@@ -45,13 +45,37 @@ SPARE_WARM_SECONDS = 480
 # line whose Enter was lost is sent; a closed line opens empty), after the second the command and
 # Enter ("/" opens a closed chat line with the slash already in it). Recorded, never hidden.
 STOCK_TRAVEL_RESEND_SECONDS = (300, 450)
+# 0.13.84, COH_MISSION_PROBE=1 (with COH_MISSION_MAPS=1 in the guest): the two trips are a mission
+# instead. "/startmission <task> *" assigns the task and enters its mission (door.c StartMission:
+# teamStartMap creates the mission's map container, the DbServer asks for its server exactly as
+# for a mission door); "/exitmission" leaves it for the zone. The task is a level 1 office
+# mission (scripts.loc/contacts/level_1/tasks/clockwork_primary_1.taskset). The mission map's id
+# is the DbServer's choice, so its arrival is known by the guest's mission_map mark.
+MISSION_PROBE_ENV = 'COH_MISSION_PROBE'
+MISSION_PROBE_TASK = 'L1_P_Clockwork_Mission1'
+MISSION = 'mission'
+
+
+def travel_trips():
+    """(expected map id or MISSION, label, typed command) for each CI trip."""
+    if os.environ.get(MISSION_PROBE_ENV) == '1':
+        return ((MISSION, 'mission', '/startmission %s *' % MISSION_PROBE_TASK), (1, 'atlas', '/exitmission'))
+    return tuple((map_id, label, '/mapmove %d' % map_id) for map_id, label in STOCK_TRAVEL_MAPS)
+
+
+def trip_arrived(trip, event):
+    """Whether a guest arrival event is this trip's destination."""
+    if trip[0] == MISSION:
+        return (event.get('mission_map') is True and type(event.get('current_map_id')) is int
+                and event['current_map_id'] not in (1, 5, 101))
+    return event.get('current_map_id') == trip[0] and event.get('mission_map') is not True
 
 
 def stock_travel_actions():
     actions = []
-    for map_id, label in STOCK_TRAVEL_MAPS:
+    for map_id, label, command in travel_trips():
         actions += [('key', 0xff0d, 'open_travel_chat_'+label),
-                    ('command', '/mapmove %d' % map_id, 'type_stock_travel_'+label),
+                    ('command', command, 'type_stock_travel_'+label),
                     ('key', 0xff0d, 'submit_stock_travel_'+label),
                     ('arrived', map_id, 'wait_stock_arrival_'+label),
                     ('move', (600, 100), 'clear_cursor_after_'+label),
@@ -115,7 +139,7 @@ class ReopenInteraction(character.CharacterInteraction):
         self.modal_position = None
 
     def fixture_text(self, connection, value):
-        if value == '/stuck' or value.startswith('/mapmove '):
+        if value == '/stuck' or value.startswith(('/mapmove ', '/startmission ', '/exitmission')):
             for letter in value: character.key(connection, ord(letter))
         else:
             super().fixture_text(connection, value)
@@ -178,7 +202,7 @@ class StockTravelReopenInteraction(ReopenInteraction):
         """True while the first trip should still wait for a warm spare zone server."""
         wait = self.spare_wait
         if (wait is None or wait['waited_seconds'] is not None or self.action >= len(self.ACTIONS)
-                or self.ACTIONS[self.action][2] != 'open_travel_chat_' + STOCK_TRAVEL_MAPS[0][1]):
+                or self.ACTIONS[self.action][2] != 'open_travel_chat_' + travel_trips()[0][1]):
             return False
         if self.spare_wait_started is None:
             self.spare_wait_started = now
@@ -197,7 +221,7 @@ class StockTravelReopenInteraction(ReopenInteraction):
                 or now - self.travel_sent_at < STOCK_TRAVEL_RESEND_SECONDS[sent]):
             return
         if sent:
-            self.fixture_text(connection, '/mapmove %d' % map_id)
+            self.fixture_text(connection, next(trip[2] for trip in travel_trips() if trip[0] == map_id))
         character.key(connection, 0xff0d)
         resends.append({'map_id': map_id, 'keys': 'command_and_enter' if sent else 'enter',
                         'seconds_after_submit': round(now - self.travel_sent_at, 3)})
@@ -209,7 +233,7 @@ class StockTravelReopenInteraction(ReopenInteraction):
         if (self.action < len(self.ACTIONS) and self.ACTIONS[self.action][0] == 'arrived'
                 and len(events.arrivals) < self.arrivals_needed()):
             require(self.travel_sent_at is not None and now-self.travel_sent_at < STOCK_TRAVEL_SECONDS,
-                    'Zone travel to map %d did not arrive within %d seconds'
+                    'Zone travel to map %s did not arrive within %d seconds'
                     % (self.ACTIONS[self.action][1], STOCK_TRAVEL_SECONDS))
             require(now-self.ready_at-character.initial_zone_seconds(events, now) < INTERACTION_SECONDS,
                     'Host character creation exceeded twenty-minute interaction bound')
@@ -227,7 +251,7 @@ class StockTravelReopenInteraction(ReopenInteraction):
     def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
         if kind == 'arrived':
             arrival = events.arrivals[self.arrivals_needed()-1]
-            require(arrival['current_map_id'] == value, 'Zone travel arrived on another map')
+            require(trip_arrived((value,), arrival), 'Zone travel arrived on another map')
             self.result['stock_travel_arrivals'].append(dict(arrival, frame_sequence=sequence,
                 host_seconds=round(now-self.travel_sent_at, 3)))
             return True
@@ -276,23 +300,27 @@ class StockTravelReopenEvents(ReopenEvents):
             return
         if (event.get('session_id') == self.session and event.get('type') == 'character_zoning'
                 and event.get('status') == 'arrived'):
-            expected = STOCK_TRAVEL_MAPS[len(self.arrivals)][0] if len(self.arrivals) < len(STOCK_TRAVEL_MAPS) else None
+            trips = travel_trips()
+            expected = trips[len(self.arrivals)] if len(self.arrivals) < len(trips) else None
             origin = 1 if not self.arrivals else self.arrivals[-1]['current_map_id']
             require(self.active and self.connected_generation == 1 and self.saved_generation == 0
                     and self.relocated_generation == 0 and expected is not None
                     and event.get('travel_method') == 'stock_travel'
                     and type(event.get('client_pid')) is int and event['client_pid'] == self.client_pid
                     and event.get('character_id') == 1 and event.get('epoch') == len(self.arrivals)+1
-                    and event.get('current_map_id') == expected and event.get('target_map_id') == expected
+                    and trip_arrived(expected, event)
+                    and event.get('target_map_id') == event.get('current_map_id')
                     and event.get('from_map_id') == origin
                     and event.get('current_map_verified') is True
                     and event.get('character_identity_preserved') is True,
                     'Zone travel arrival is foreign, out of order or unverified')
             self.arrivals.append({key: event[key] for key in ('epoch', 'current_map_id', 'from_map_id',
                                                                'generated_utc_ms')})
+            if event.get('mission_map') is True:
+                self.arrivals[-1]['mission_map'] = True
             return
         if event.get('session_id') == self.session and event.get('type') == 'character_relocated':
-            require(len(self.arrivals) == len(STOCK_TRAVEL_MAPS), 'Stuck recovery preceded the zone travel round trip')
+            require(len(self.arrivals) == len(travel_trips()), 'Stuck recovery preceded the zone travel round trip')
         super().consume(event)
 
 
@@ -432,21 +460,22 @@ def validate_observer(observer, report, interaction=None):
                 'Missing fresh current-client reopen proof images: '+name)
     if interaction is StockTravelReopenInteraction:
         arrivals = script.get('stock_travel_arrivals', [])
-        require([item.get('current_map_id') for item in arrivals] == [m for m, _ in STOCK_TRAVEL_MAPS]
-                and [item.get('epoch') for item in arrivals] == list(range(1, len(STOCK_TRAVEL_MAPS)+1))
+        trips = travel_trips()
+        require(len(arrivals) == len(trips) and all(trip_arrived(trip, item) for trip, item in zip(trips, arrivals))
+                and [item.get('epoch') for item in arrivals] == list(range(1, len(trips)+1))
                 and all(type(item.get('host_seconds')) is float and 0 <= item['host_seconds'] < STOCK_TRAVEL_SECONDS
                         for item in arrivals),
                 'Zone travel round trip lacks its guest arrivals')
         resends = script.get('stock_travel_resends', [])
-        require(isinstance(resends, list) and len(resends) <= len(STOCK_TRAVEL_MAPS) * len(STOCK_TRAVEL_RESEND_SECONDS)
-                and all(isinstance(item, dict) and item.get('map_id') in [m for m, _ in STOCK_TRAVEL_MAPS]
+        require(isinstance(resends, list) and len(resends) <= len(trips) * len(STOCK_TRAVEL_RESEND_SECONDS)
+                and all(isinstance(item, dict) and item.get('map_id') in [trip[0] for trip in trips]
                         and item.get('keys') in ('enter', 'command_and_enter')
                         and type(item.get('seconds_after_submit')) is float
                         and STOCK_TRAVEL_RESEND_SECONDS[0] <= item['seconds_after_submit'] < STOCK_TRAVEL_SECONDS
                         for item in resends),
                 'Zone travel resend record is malformed')
         travel = script.get('travel_help_checks', [])
-        require(len(travel) == len(STOCK_TRAVEL_MAPS) and all(type(check.get('found')) is bool for check in travel),
+        require(len(travel) == len(trips) and all(type(check.get('found')) is bool for check in travel),
                 'Zone travel help checks are incomplete')
     stuck = next(step['after_frame_sequence'] for step in script['steps'] if step['action'] == 'submit_ordinary_stuck')
     require(min(item['frame_sequence'] for item in script['world_after_stuck_captures']) > stuck,

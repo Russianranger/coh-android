@@ -30,6 +30,11 @@ public final class ClientZoning {
     public static boolean supported(int map){return map==1||map==5||map==101;}
     /** maps.db static zones (ids 1-999, Atlas Park instance 2 is 101). */
     public static boolean staticZone(long map){return map>=1&&map<=999;}
+    /**
+     * 0.13.84 (test option): a mission map of this session. The DbServer numbers it itself; the
+     * guest marks its arrival event (mission_map) and names it "Mission".
+     */
+    public static boolean missionMap(Map<?,?> e,long map){return yes(e,"mission_map")&&map>=1&&map<=99999;}
     private static String zoneName(Object value){
         return value instanceof String&&((String)value).matches("[A-Za-z0-9_' ]{1,48}")?(String)value:"";
     }
@@ -64,7 +69,8 @@ public final class ClientZoning {
         long mapValue=integer(e.get("current_map_id")),targetValue=integer(e.get("target_map_id"));
         boolean stockEvent="stock_travel".equals(e.get("travel_method"));
         if(stockEvent||stockTravel){
-            if(!stockEvent||!allowMonorail||!staticZone(mapValue)||targetValue!=mapValue)return false;
+            boolean mission="arrived".equals(next)&&missionMap(e,mapValue);
+            if(!stockEvent||!allowMonorail||!(staticZone(mapValue)||mission)||targetValue!=mapValue)return false;
             int map=(int)mapValue;
             if("enabled".equals(next)){
                 if(enabled()||integer(e.get("epoch"))!=0||map!=connectedMap||!yes(e,"current_map_verified")

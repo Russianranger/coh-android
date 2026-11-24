@@ -218,5 +218,50 @@ class SessionServerTrees(unittest.TestCase):
                 self.assertFalse((runtime / fx.TARGET).exists())
 
 
+class MissionMaps(unittest.TestCase):
+    """0.13.84: a non-static request the owner admits is started in the shared zone tree."""
+
+    def policy(self, answer, maps, current):
+        self.asked = []
+        def mission(record):
+            self.asked.append(record['map_id'])
+            return answer
+        return zone_travel.ZoneTravelPolicy(tree_for={1: 'atlas', 7: 'zones'}.get, running=lambda: dict(maps),
+                                            occupied=lambda: current, mission=mission,
+                                            admit=lambda map_id: self.fail('a mission is not a zone request'))
+
+    def test_without_the_hook_every_non_static_request_is_delinked(self):
+        policy = zone_travel.ZoneTravelPolicy(tree_for={7: 'zones'}.get, running=dict, occupied=lambda: None)
+        self.assertEqual(policy(record(700, static=0), {}), ('delink', 'not_static'))
+
+    def test_an_admitted_mission_starts_in_the_zone_tree_on_a_free_port(self):
+        policy = self.policy(None, {7: {'ready': True, 'port': 7004}}, 7)
+        decision, plan = policy(record(700, static=0), {})
+        self.assertEqual((decision, plan), ('start', {'tree': 'zones', 'evict': [], 'port': 7005, 'mission': True,
+                                                      'budget_seconds': zone_travel.START_SECONDS}))
+        self.assertEqual(self.asked, [700])
+
+    def test_a_refused_mission_is_delinked_with_the_owners_reason(self):
+        policy = self.policy('not_a_mission_map', {7: {'ready': True, 'port': 7004}}, 7)
+        self.assertEqual(policy(record(700, static=0), {}), ('delink', 'not_a_mission_map'))
+
+    def test_room_for_a_mission_never_takes_the_zone_the_hero_is_in(self):
+        maps = {7: {'ready': True, 'port': 7004, 'last_occupied': 90},
+                8: {'ready': True, 'port': 7005, 'last_occupied': 50}}
+        decision, plan = self.policy(None, maps, 7)(record(700, static=0), {})
+        self.assertEqual((decision, plan['evict'], plan['port']), ('start', [8], 7005))
+        self.assertEqual(self.policy(None, maps, None)(record(700, static=0), {}), ('delink', 'player_zone_unknown'))
+
+    def test_a_mission_map_the_hero_left_gives_way_before_a_zone(self):
+        maps = {7: {'ready': True, 'port': 7004, 'last_occupied': 90},
+                8: {'ready': True, 'port': 7005, 'last_occupied': 10},
+                700: {'ready': True, 'port': 7006, 'last_occupied': 80, 'mission': True}}
+        policy = zone_travel.ZoneTravelPolicy(tree_for={9: 'zones'}.get, running=lambda: dict(maps),
+                                              occupied=lambda: 7, capacity=3)
+        decision, plan = policy(record(9), {})
+        self.assertEqual((decision, plan['evict']), ('start', [700]))
+        self.assertNotIn('mission', plan)
+
+
 if __name__ == '__main__':
     unittest.main()

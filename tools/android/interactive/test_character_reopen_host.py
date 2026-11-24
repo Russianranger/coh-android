@@ -303,6 +303,41 @@ class CharacterReopenHostTests(unittest.TestCase):
                 path.write_text(''.join(json.dumps(item)+'\n' for item in bad))
                 with self.assertRaises(ValueError): reopen.StockTravelReopenEvents(path, SESSION).poll()
 
+    def test_the_mission_probe_types_startmission_and_follows_the_guests_mission_mark(self):
+        # 0.13.84, COH_MISSION_PROBE=1: in through "/startmission <task> *", out through "/exitmission".
+        def arrival(epoch, current, origin, **changes):
+            return dict({'type': 'character_zoning', 'session_id': SESSION, 'client_pid': PID, 'character_id': 1,
+                         'status': 'arrived', 'travel_method': 'stock_travel', 'epoch': epoch,
+                         'current_map_id': current, 'target_map_id': current, 'from_map_id': origin,
+                         'current_map_verified': True, 'character_identity_preserved': True,
+                         'generated_utc_ms': 1000 + epoch}, **changes)
+        self.assertEqual([trip[2] for trip in reopen.travel_trips()], ['/mapmove 101', '/mapmove 1'])
+        initial = events()
+        with mock.patch.dict('os.environ', {reopen.MISSION_PROBE_ENV: '1'}):
+            self.assertEqual(reopen.travel_trips(), (
+                (reopen.MISSION, 'mission', '/startmission L1_P_Clockwork_Mission1 *'), (1, 'atlas', '/exitmission')))
+            actions = reopen.stock_travel_actions()
+            self.assertIn(('command', '/startmission L1_P_Clockwork_Mission1 *', 'type_stock_travel_mission'), actions)
+            self.assertIn(('arrived', reopen.MISSION, 'wait_stock_arrival_mission'), actions)
+            self.assertIn(('command', '/exitmission', 'type_stock_travel_atlas'), actions)
+            good = initial[:3] + [arrival(1, 700, 1, mission_map=True), arrival(2, 1, 700, from_mission_map=True)] + initial[3:]
+            with tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary)/'events'
+                path.write_text(''.join(json.dumps(item)+'\n' for item in good))
+                proof = reopen.StockTravelReopenEvents(path, SESSION); proof.poll()
+                self.assertEqual([(a['current_map_id'], a.get('mission_map')) for a in proof.arrivals],
+                                 [(700, True), (1, None)])
+                self.assertEqual((proof.relocated_generation, proof.saved_generation), (1, 1))
+            for bad in (initial[:3] + [arrival(1, 700, 1)],                          # not marked as a mission
+                        initial[:3] + [arrival(1, 101, 1, mission_map=True)],        # a zone's id
+                        initial[:3] + [arrival(1, 700, 1, mission_map=True), arrival(2, 1, 700, mission_map=True)],
+                        initial[:3] + [arrival(1, 700, 1, mission_map=True), arrival(2, 101, 700)],
+                        initial[:3] + [arrival(1, 700, 1, mission_map=True), initial[3]]):
+                with self.subTest(bad=bad[-1]), tempfile.TemporaryDirectory() as temporary:
+                    path = Path(temporary)/'events'
+                    path.write_text(''.join(json.dumps(item)+'\n' for item in bad))
+                    with self.assertRaises(ValueError): reopen.StockTravelReopenEvents(path, SESSION).poll()
+
     def test_stock_travel_script_types_mapmove_and_waits_for_each_arrival_with_a_bound(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary); finish = root/'finish.json'

@@ -125,7 +125,7 @@ class GraphsAheadContext:
 
     def __getattr__(self, name):
         return getattr(self._context, name)
-SPARE_START_LIMIT = 12
+SPARE_START_LIMIT = 48        # per session (12 until 0.13.84: three trips an hour for four hours)
 # The game options the DbServer adds to every zone it asks for (launchercomm.c builds them from
 # its configuration, the same for a whole session; Thor 0.13.66: -maxLevel 50 -aggrocap 17
 # -targetcapmode 1). A spare starts with the last ones seen and serves only an equal request.
@@ -333,7 +333,8 @@ def connected(sample, map_id):
         and sample.get('loaded') is True and sample.get('connected') is True
         and sample.get('in_map_transfer') is False and type(sample.get('map_id')) is int
         and sample['map_id'] == map_id and type(sample.get('static_map_id')) is int
-        and sample['static_map_id'] == map_id and sample.get('address') == '127.0.0.1')
+        # In a mission the static map is the zone the hero entered from.
+        and (sample['static_map_id'] == map_id or mission_map(map_id)) and sample.get('address') == '127.0.0.1')
 
 
 def parse_map_status(text, map_id, *, allow_missing=False):
@@ -476,6 +477,44 @@ READY_PEEK_LIMIT = 256
 READY_PEEK_SECONDS = 0.5
 READY_LOG_ROUTES = ('embedded_dbserver_logserver', CONSOLE_READY_ROUTE)
 KEEP_PREVIOUS_ZONE_ENV = 'COH_KEEP_PREVIOUS_ZONE'
+# 0.13.84, test option: a mission door's map (teamStartMap: a non-static map container with
+# MapName and MissionInfo) is started in the shared zone tree instead of being delinked.
+MISSION_MAPS_ENV = 'COH_MISSION_MAPS'
+MISSION_MAPS_POLICY = 'mission_map_started_in_the_shared_zone_tree_v1'
+MISSION_MAP_NAME = re.compile(r'maps/missions/(?:[a-z0-9_][a-z0-9_.-]{0,63}/){1,8}[a-z0-9_][a-z0-9_.-]{0,95}\.txt')
+MISSION_MAP_ID_LIMIT = 99999          # the zone servers' console line carries at most five digits
+# CI only: its guest has no zone asset pack, so the probe starts the mission map in the Atlas
+# tree (some of the map's collision geometry is then missing; the start path is the same).
+MISSION_TREE_ENV = 'COH_MISSION_MAPS_TREE'
+MISSION_START_LIMIT = 96       # per session
+MISSION_REPORT_ROWS = 16
+
+
+def mission_map_name(value):
+    """A mission map's file name as this runtime serves it (forward slashes, lower case), or None."""
+    if type(value) is not str or len(value) > 260:
+        return None
+    name = value.replace('\\', '/').casefold().lstrip('/')
+    return name if MISSION_MAP_NAME.fullmatch(name) is not None and '..' not in name else None
+
+
+def mission_map(map_id):
+    return MAPS.get(map_id, {}).get('mission') is True
+
+
+def register_mission(map_id, name, *, shared_zone_tree=True):
+    """A mission map of this session, served from the shared zone tree like a zone.
+
+    The DbServer gives it the next free map container id; it has no navigation
+    graph and no entry in zone_index. A later mission may reuse the id of one
+    that has ended.
+    """
+    require(type(map_id) is int and 0 < map_id <= MISSION_MAP_ID_LIMIT and map_id not in zone_index.ZONES
+            and (map_id not in MAPS or mission_map(map_id)) and mission_map_name(name) == name,
+            'Not a mission map this runtime can start')
+    MAPS[map_id] = {'name': 'Mission', 'port': None, 'instance': 1, 'world': name.rsplit('/', 1)[1][:-4],
+                    'shared_zone_tree': shared_zone_tree, 'mission': True, 'map_name': name}
+    return MAPS[map_id]
 
 
 def console_ready(output, map_id, minimum_ms, now_ms):
@@ -764,6 +803,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'kept': 0}
         if self.keep_previous_zone:
             self.stock['capacity'] = zone_travel.MAX_ZONE_SERVERS + 1
+        self.mission_maps = os.environ.get(MISSION_MAPS_ENV) == '1'
+        self.missions = self.stock['mission_maps'] = {'format': 1, 'policy': MISSION_MAPS_POLICY,
+            'requested': self.mission_maps, 'started': 0, 'starts': [], 'refused': [], 'ended': [],
+            'arrivals': 0, 'returns': 0}
         self.stock_starts = {}
         self.spare = None
         self.spare_next = self.spare_room_next = 0
@@ -1552,10 +1595,19 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 and value['staticmapid'] in zone_index.ZONES
                 and getattr(self, 'zone_asset_document', None) is not None):
             register_zone(value['staticmapid'])   # saved in a zone served by the shared tree
+        # 0.13.84: a hero last saved inside a mission (or whose session ended there) has the mission
+        # map's id in mapid and the zone they entered from in staticmapid. The DbServer logs such a
+        # hero in on the static map (clientcomm.c: findBestMapByBaseId(static_map_id)), so the
+        # reopen follows staticmapid; before this the reopen was refused and the hero locked out.
+        instance = (type(value['mapid']) is int and type(value['staticmapid']) is int
+                    and value['mapid'] != value['staticmapid'] and 0 < value['mapid'] <= MISSION_MAP_ID_LIMIT
+                    and value['mapid'] not in zone_index.ZONES and value['mapid'] not in (1, 5, 101))
+        inside = (instance and not allow_unassigned_active_map and mission_map(self.active_map_id)
+                  and value['mapid'] == self.active_map_id)
         require(type(value['containerid']) is int and value['containerid'] == 1
             and supported(value['staticmapid'])
             and (type(value['mapid']) is int and value['mapid'] == value['staticmapid']
-                 or allow_unassigned_active_map and value['mapid'] is None)
+                 or allow_unassigned_active_map and (value['mapid'] is None or instance) or inside)
             and all(type(value[k]) in (int, float) and math.isfinite(value[k]) and abs(value[k]) <= 1000000
                     for k in ('posx', 'posy', 'posz')), 'Saved character is outside the supported local zones')
         require(value['staticmapid'] != 5 or getattr(self, 'monorail_qualified', False) is True,
@@ -1565,6 +1617,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.monorail_requires_reopen = self.active_map_id == 101
             self.creation_report['map_id'] = self.active_map_id
             self.zoning_report['saved_destination_map_id'] = self.active_map_id
+            if instance:
+                self.zoning_report['saved_inside_instance_map_id'] = value['mapid']
+        elif inside:
+            # Saved inside a mission: the next session opens in the zone the hero entered from.
+            self.zoning_report['saved_inside_mission'] = {'map_id': value['mapid'],
+                                                          'returns_to_map_id': value['staticmapid']}
         else:
             require(value['staticmapid'] == self.active_map_id,
                     'Committed character destination changed during ordinary save')
@@ -1574,7 +1632,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self._observe_stock_move(sample)
         if sample.get('loaded') and not sample.get('in_map_transfer'):
             require(type(sample.get('map_id')) is int and sample['map_id'] == self.active_map_id
-                    and type(sample.get('static_map_id')) is int and sample['static_map_id'] == self.active_map_id,
+                    and type(sample.get('static_map_id')) is int
+                    and (sample['static_map_id'] == self.active_map_id or mission_map(self.active_map_id)),
                     'Character moved outside the verified zoning epoch')
         return connected(sample, self.active_map_id)
 
@@ -2012,7 +2071,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if port is None:
             port = MAPS[map_id]['port'] or free_zone_port({owned.get('port', MAPS.get(other, {}).get('port'))
                                                           for other, owned in self.maps.items()})
-        if MAPS[map_id].get('shared_zone_tree'):
+        if MAPS[map_id].get('shared_zone_tree') or mission_map(map_id):
             MAPS[map_id]['port'] = port
         timing = self.map_startup_timing(map_id)
         def prepare_destination():
@@ -2213,7 +2272,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             if map_id == self.active_map_id:
                 continue
             require(not owned['process'].overflow, 'Zoning MapServer console overflowed')
-            if owned.get('ready'):
+            if owned.get('ready') and not mission_map(map_id):
+                # A mission map the hero has left ends by itself (_tick_missions forgets it).
                 require(owned['process'].process.poll() is None, 'Ready zoning destination exited; export the report')
 
     def map_crash_observation(self):
@@ -2752,11 +2812,13 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return super().external_maps_options()
         self.zone_policy = zone_travel.ZoneTravelPolicy(tree_for=self.zone_tree_for,
             running=self.zone_servers, occupied=self.stock_occupied, admit=self.admit_zone_request,
+            mission=self.admit_mission_request if getattr(self, 'mission_maps', False) else None,
+            mission_tree=self.mission_tree,
             capacity=zone_travel.MAX_ZONE_SERVERS + (1 if getattr(self, 'keep_previous_zone', False) else 0))
         self.stock['enabled'] = True
         # Maps this flow owns (started at session start or for a request) are
         # never delinked; every other request goes through the policy.
-        return {'session_maps': lambda map_id: map_id in self.maps, 'policy': self.zone_policy}
+        return {'session_maps': self.owns_requested_map, 'policy': self.zone_policy}
 
     def zone_tree_for(self, map_id):
         if map_id in (1, 101):
@@ -2792,8 +2854,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return None
         self.stock['occupied_probes'] = self.stock.get('occupied_probes', 0) + 1
         map_id = sample.get('map_id')
+        # In a mission the DbServer still names the zone the hero came from as the static map.
         if (sample.get('loaded') is not True or sample.get('connected') is not True or type(map_id) is not int
-                or sample.get('static_map_id') != map_id or map_id not in self.maps
+                or sample.get('static_map_id') != map_id and not mission_map(map_id) or map_id not in self.maps
                 or self.maps[map_id].get('ready') is not True):
             return None
         if map_id != self.active_map_id:
@@ -2806,8 +2869,79 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def zone_servers(self):
         return {map_id: {'ready': owned.get('ready') is True,
                          'port': owned.get('port', MAPS.get(map_id, {}).get('port')),
-                         'last_occupied': owned.get('last_occupied', 0)}
+                         'last_occupied': owned.get('last_occupied', 0), 'mission': mission_map(map_id)}
                 for map_id, owned in self.maps.items()}
+
+    # ---- mission maps (0.13.84, test option) --------------------------------------------------
+
+    def admit_mission_request(self, record):
+        """None when this non-static request is a mission map that can be started now.
+
+        Otherwise the reason: the request is delinked, the game says the map
+        failed and the hero stays where they are. Only a file under
+        maps/missions with mission info is a mission; bases, arenas and other
+        instances are not served.
+        """
+        reason = None
+        name = mission_map_name(record.get('map_name'))
+        map_id = record.get('map_id')
+        if name is None:
+            reason = 'not_a_mission_map'
+        elif not record.get('mission_info'):
+            reason = 'no_mission_info'
+        elif (type(map_id) is not int or not 0 < map_id <= MISSION_MAP_ID_LIMIT or map_id in zone_index.ZONES
+              or map_id in MAPS and not mission_map(map_id)):
+            reason = 'map_id_is_a_zone'
+        elif self.initial_zone_pending() or not self.creation_report.get('connected_on_atlas'):
+            reason = 'character_not_in_the_world'
+        elif self.mission_tree() is None:
+            reason = 'zone_assets_not_imported'
+        elif mission_map(self.active_map_id):
+            reason = 'already_in_a_mission'
+        elif self.missions['started'] >= MISSION_START_LIMIT:
+            reason = 'mission_start_limit'
+        elif (self.owner.args.state / 'character-logout.json').exists():
+            reason = 'saving'
+        if reason is not None:
+            self.missions['refused'].append({'map_id': map_id if type(map_id) is int else None, 'reason': reason,
+                'map_name': str(record.get('map_name'))[-120:], 'utc_ms': int(time.time() * 1000)})
+            del self.missions['refused'][:-16]
+        return reason
+
+    def mission_tree(self):
+        """The tree a mission map starts in: the shared zone tree, which holds its geometry."""
+        if getattr(self, 'zone_asset_document', None) is not None:
+            return zone_travel.MISSION_TREE
+        return 'atlas' if os.environ.get(MISSION_TREE_ENV) == 'atlas' else None
+
+    def owns_requested_map(self, map_id):
+        """Whether a requested map is one this flow runs or is starting (never delinked, never started twice).
+
+        A mission map that has ended is forgotten first: the DbServer may give its id to the next mission.
+        """
+        if map_id in self.maps and mission_map(map_id):
+            self._tick_missions()
+        return map_id in self.maps
+
+    def _tick_missions(self):
+        """A mission map the hero is not in may end by itself (the mission is over); it is forgotten.
+
+        Never the occupied map: the session's own health check answers for that one.
+        """
+        for map_id, owned in list(self.maps.items()):
+            if (not mission_map(map_id) or map_id == self.active_map_id or map_id in self.stock_starts
+                    or owned['process'].process.poll() is None):
+                continue
+            del self.maps[map_id]
+            path = owned['progress_path']
+            try:
+                if path.exists() or path.is_symlink():
+                    path.rename(path.with_name(path.name + '.ended-' + str(len(self.missions['ended']) + 1)))
+            except OSError:
+                pass
+            self.missions['ended'].append({'map_id': map_id, 'exit_code': owned['process'].process.returncode,
+                                           'utc_ms': int(time.time() * 1000)})
+            del self.missions['ended'][:-32]
 
     def serve_external_maps(self, supervisor):
         if not self.stock['enabled']:
@@ -2826,6 +2960,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 self.initial_zone_start_failed(entry, failure)
             entry = supervisor.next_start()
         self._tick_stock_starts(supervisor)
+        self._tick_missions()
         if not getattr(self, 'travel_tick_between_inspections', False):
             self.tick_spare()       # the spare's idle work keeps the five-second cadence (0.13.81)
 
@@ -2861,7 +2996,18 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         for other in plan['evict']:
             self._evict_map(other, 'room_for_' + str(map_id))
         started = self.stock_start_began = time.monotonic()
-        if plan['tree'] == 'zones':
+        if plan.get('mission'):
+            # The policy admitted it (admit_mission_request); the name is the DbServer's own.
+            register_mission(map_id, mission_map_name(entry.get('mission_map_name')),
+                             shared_zone_tree=plan['tree'] == zone_travel.MISSION_TREE)
+            row['mission'] = True
+            self.missions['starts'].append({'map_id': map_id, 'cookie': entry['cookie'],
+                'map_name': MAPS[map_id]['map_name'][-160:], 'mission_info': str(entry.get('mission_info'))[:240],
+                'from_map_id': self.active_map_id, 'tree': plan['tree'],
+                'requested_utc_ms': entry.get('seen_utc_ms')})
+            self.missions['started'] += 1
+            del self.missions['starts'][:-MISSION_REPORT_ROWS]
+        elif plan['tree'] == 'zones':
             register_zone(map_id)
         # Before 0.13.59 a trip's spawn relabelled the session's initial timing
         # row (its map_id became the trip's; its times stayed the first zone's).
@@ -3052,7 +3198,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.spare_report['starts'].append({'ordinal': ordinal, 'tree': tree, 'port': port,
             'launch_utc_ms': launch_ms, 'beside_map_id': self.active_map_id,
             'available_memory_mib': available_memory_mib(), 'warm': False, 'outcome': None})
-        del self.spare_report['starts'][:-SPARE_START_LIMIT]
+        del self.spare_report['starts'][:-12]
         self._spare_event('loading', self.spare)
 
     def _assign_spare(self, map_id, cookie):
@@ -3066,6 +3212,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             # Before its MapServer loads the map (pets and NPCs path), as _spawn_map does.
             self.install_zone_beacon_graph(map_id, runtime)
             MAPS[map_id]['port'] = spare['port']
+        elif mission_map(map_id):
+            MAPS[map_id]['port'] = spare['port']       # CI's mission probe in the Atlas tree
         else:
             require(MAPS[map_id]['port'] == spare['port'], 'Spare zone server port differs from its zone')
         now, now_ms = time.monotonic(), int(time.time() * 1000)
@@ -3226,6 +3374,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return 'a_zone_is_starting'
         if (self.owner.args.state / 'character-logout.json').exists():
             return 'saving'
+        if mission_map(self.active_map_id):
+            # The zone the hero came from stays for the way out; a spare would take its place.
+            return 'in_a_mission'
         active = self.maps.get(self.active_map_id)
         since = getattr(self, 'active_since_monotonic', None)
         if active is None or active.get('ready') is not True or since is None or now - since < SPARE_SETTLE_SECONDS:
@@ -3309,7 +3460,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if sample.get('loaded') is True and sample.get('connected') is True and sample.get('in_map_transfer') is False:
             moved = sample.get('map_id')
             if (type(moved) is int and moved != self.active_map_id and moved in self.maps
-                    and sample.get('static_map_id') == moved and self.maps[moved].get('ready') is True):
+                    and (sample.get('static_map_id') == moved or mission_map(moved))
+                    and self.maps[moved].get('ready') is True):
                 self._stock_arrival(moved, sample)
         elif sample.get('in_map_transfer') is True:
             self.stock['transfer_wait_observed'] += 1
@@ -3371,6 +3523,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.maps[target]['last_occupied'] = now
         self.epoch += 1
         self.stock['arrivals'] += 1
+        if mission_map(target):
+            self.missions['arrivals'] += 1
+            for started in reversed(self.missions['starts']):
+                if started['map_id'] == target and 'arrived_utc_ms' not in started:
+                    started['arrived_utc_ms'] = now_ms
+                    break
+        elif mission_map(origin):
+            self.missions['returns'] += 1
         self.creation_report.update(connected_on_supported_map=True, map_id=target, zoning_epoch=self.epoch,
             monorail_enabled=False, recovery_requested=False, recovery_verified=False,
             ordinary_stuck_observed=False, on_atlas_safe_position=False, stable_ground_verified=False,
@@ -3380,6 +3540,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                       if row['map_id'] == target and row.get('ready') and not row.get('initial_login')), None)
         leg = {'epoch': self.epoch, 'from_map_id': origin, 'to_map_id': target, 'travel_method': 'stock_travel',
                'character_status': sample, 'arrival_observed_utc_ms': now_ms,
+               **({'mission': True} if mission_map(target) or mission_map(origin) else {}),
                'destination_started_for_request': start is not None and start.get('arrived_utc_ms') is None,
                'request_to_arrival_ms': (now_ms - start['requested_utc_ms']
                                          if start is not None and start.get('arrived_utc_ms') is None
@@ -3392,7 +3553,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         del self.zoning_report['transfers'][:-32]
         self._emit('arrived', current_map_verified=True, destination_ready=True, travel_method='stock_travel',
                    arrival_native_verified=False, character_identity_preserved=True,
-                   from_map_id=origin)
+                   from_map_id=origin, **({'mission_map': True} if mission_map(target) else {}),
+                   **({'from_mission_map': True} if mission_map(origin) else {}))
 
     def character_evidence(self):
         self.tick_memory_trace(time.monotonic())

@@ -41,7 +41,7 @@ public final class ClientActivity extends Activity {
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
     private TextView recommendedStatus,optionsNotice;
-    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87,deferZoneLoads,clientGroupBins,keepPreviousZone;
+    private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87,deferZoneLoads,clientGroupBins,keepPreviousZone,missionMaps;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -291,7 +291,11 @@ public final class ClientActivity extends Activity {
         keepPreviousZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setKeepPreviousZoneEnabled(this,checked);recommendedChanged();});
         controls.addView(keepPreviousZone);
         category(controls,"Test","Being tested in this version. Tick only when a test sheet asks.");
-        controls.addView(text("Nothing is under test in this version.",12,false));
+        missionMaps=new CheckBox(this);missionMaps.setText("Start mission maps (test; needs the game's own zone travel and the imported zone assets)");
+        missionMaps.setTextColor(Color.rgb(221,234,245));missionMaps.setTextSize(13);
+        missionMaps.setChecked(ClientRuntime.missionMapsEnabled(this));
+        missionMaps.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setMissionMapsEnabled(this,checked);recommendedChanged();});
+        controls.addView(missionMaps);
         category(controls,"Experimental","Tried and showed no clear benefit on the Thor. Kept for comparison; leave unticked.");
         prestartNextZone=new CheckBox(this);prestartNextZone.setText("Start King's Row in the background (zoning)");
         prestartNextZone.setTextColor(Color.rgb(221,234,245));prestartNextZone.setTextSize(13);
@@ -390,7 +394,7 @@ public final class ClientActivity extends Activity {
     }
     /** The options as a new install has them: ticked, then unticked (ClientRuntime's defaults). */
     private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,spareZone,serverX87,deferZoneLoads};}
-    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect,clientGroupBins,keepPreviousZone};}
+    private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect,clientGroupBins,keepPreviousZone,missionMaps};}
     private static String optionName(CheckBox box){String name=String.valueOf(box.getText());int cut=name.indexOf(" (");return cut>0?name.substring(0,cut):name;}
     /** The Optional category (owner, 2026-11-24): the owner's choice either way, so never "off recommended" on the screen. */
     private CheckBox[] optionalOptions(){return new CheckBox[]{keepPreviousZone};}

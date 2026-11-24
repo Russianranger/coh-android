@@ -229,7 +229,7 @@ public final class ClientRuntime {
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
-    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientGroupBinsRequested=false,keepPreviousZoneRequested=false;
+    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientGroupBinsRequested=false,keepPreviousZoneRequested=false,missionMapsRequested=false;
     private String optionsOffRecommended="";
     private boolean prootCasefoldRequested=false,prootCasefoldUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
@@ -307,7 +307,7 @@ public final class ClientRuntime {
             {"proot-casefold",prootCasefoldEnabled(context),true},{"server-quick-start",serverQuickStartEnabled(context),true},
             {"wineserver-path-cache",wineserverPathCacheEnabled(context),true},{"physx-cooked-cache",physxCacheEnabled(context),true},
             {"spare-zone-server",spareZoneEnabled(context),true},{"server-x87-64bit",serverX87Enabled(context),true},
-            {"zone-load-after-ready",deferZoneLoadsEnabled(context),true},{"keep-previous-zone",keepPreviousZoneEnabled(context),false},
+            {"zone-load-after-ready",deferZoneLoadsEnabled(context),true},{"keep-previous-zone",keepPreviousZoneEnabled(context),false},{"mission-maps",missionMapsEnabled(context),false},
             {"prestart-next-zone",prestartNextZoneEnabled(context),false},{"idle-resident-maps",idleResidentMapsEnabled(context),false},
             {"shared-server-memory",sharedHeapEnabled(context),false},
             {"client-group-bins",clientGroupBinsEnabled(context),false},
@@ -598,6 +598,19 @@ public final class ClientRuntime {
      * zone and the spare, so the way back is a trip to a running zone (about 11 s on the Thor).
      * One more zone server, about 1.2 GB. Off by default; it does nothing without the spare.
      */
+    /**
+     * 0.13.84, test option (off by default): a mission door's map is started in the shared zone
+     * tree instead of being refused. Needs the game's own zone travel and the imported zone assets.
+     */
+    public static boolean missionMapsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("mission-maps", false);
+    }
+    public static synchronized void setMissionMapsEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("mission-maps", enabled).apply();
+    }
     public static boolean keepPreviousZoneEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .getBoolean("keep-previous-zone", false);
@@ -1206,7 +1219,7 @@ public final class ClientRuntime {
         glDirectRequested=glDirectEnabled(context);
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
-        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientGroupBinsRequested=clientGroupBinsEnabled(context);keepPreviousZoneRequested=keepPreviousZoneEnabled(context);
+        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientGroupBinsRequested=clientGroupBinsEnabled(context);keepPreviousZoneRequested=keepPreviousZoneEnabled(context);missionMapsRequested=missionMapsEnabled(context);
         prootCasefoldRequested=prootCasefoldEnabled(context);prootCasefoldUsed=false;
         optionsOffRecommended=optionsOffRecommended(context);
         spareZoneRequested=spareZoneEnabled(context);
@@ -1322,6 +1335,7 @@ public final class ClientRuntime {
                     "COH_CLIENT_GROUP_BINS="+(clientGroupBinsRequested?"1":"0"),
                     // 0.13.82: the zone the hero just left stays loaded (one more zone server; needs the spare).
                     "COH_KEEP_PREVIOUS_ZONE="+(keepPreviousZoneRequested&&spareZoneRequested?"1":"0"),
+                    "COH_MISSION_MAPS="+(missionMapsRequested&&stockTravelRequested?"1":"0"),
                     "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
@@ -3200,7 +3214,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("keep_previous_zone_requested", keepPreviousZoneRequested).put("client_group_bins_requested", clientGroupBinsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("keep_previous_zone_requested", keepPreviousZoneRequested).put("mission_maps_requested", missionMapsRequested).put("client_group_bins_requested", clientGroupBinsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

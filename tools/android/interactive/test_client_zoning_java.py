@@ -143,7 +143,20 @@ public final class ZoningHost {
   need(z.accept(stock("arrived",2,1,6,1004),SESSION,73,1,1004,10,1,true));
   need(z.currentMap()==1&&z.epoch()==2);
   for(int epoch=3;epoch<12;epoch++){int to=epoch%2==1?6:1;need(z.accept(stock("arrived",epoch,to,to==6?1:6,1000+epoch*10),SESSION,73,1,1000+epoch*10,10,1,true));}
-  need(z.epoch()==11);   // no four-trip limit
+  need(z.epoch()==11&&z.currentMap()==6);   // no four-trip limit
+  // 0.13.84: a mission map of this session, marked by the guest; in, then out to the zone.
+  Map<String,Object> m=stock("arrived",12,1000,6,2000);m.put("current_map_name","Mission");
+  need(!z.accept(m,SESSION,73,1,2000,10,1,true));                               // not marked: not a static zone
+  m.put("mission_map",true);m.put("current_map_id",100000);m.put("target_map_id",100000);
+  need(!z.accept(m,SESSION,73,1,2000,10,1,true));                               // beyond the id bound
+  m.put("current_map_id",1000);m.put("target_map_id",1000);
+  need(z.accept(m,SESSION,73,1,2000,10,1,true));
+  need(z.currentMap()==1000&&z.epoch()==12&&z.currentName().equals("Mission")&&!z.blocksInput());
+  Map<String,Object> out=stock("arrived",13,6,1000,2010);out.put("from_mission_map",true);
+  need(z.accept(out,SESSION,73,1,2010,10,1,true));need(z.currentMap()==6&&z.epoch()==13);
+  // A session never begins on a mission map.
+  ClientZoning fresh=new ClientZoning();Map<String,Object> begin=stock("enabled",0,1000,0,1000);begin.put("mission_map",true);
+  need(!fresh.accept(begin,SESSION,73,1000,1000,10,1,true));
  }
  static void stockAcceptance(){
   Map<String,Object> w=new LinkedHashMap<>();w.put("mapped",true);w.put("width",800);w.put("height",600);

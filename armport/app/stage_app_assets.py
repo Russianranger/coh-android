@@ -42,6 +42,9 @@ GUEST_DEPENDENCIES = (
     # Every static zone and the shared zone tree's collision leaves; imported
     # by character_zoning and character_session_budget.
     'zone_index.py',
+    # 0.13.84: the mission maps' own collision leaves (installed only with
+    # COH_MISSION_MAPS=1); imported by local_character_server.
+    'mission_index.py',
     # Zone beacon graphs for the shared zone tree (0.13.65); installs nothing
     # unless the graph's archive, manifest and lock are all present.
     'zone_beacon_package.py',

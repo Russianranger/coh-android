@@ -83,6 +83,9 @@ class SourceAgreement(unittest.TestCase):
             self.assertEqual(added[1]['is_static'], 0)
             self.assertIsInstance(added[1]['mission_info'], str)
             self.assertLessEqual(len(added[1]['mission_info']), 240)
+            # 0.13.84: and the whole map name, which the report's 120-character field may cut.
+            self.assertNotIn('mission_map_name', added[0])
+            self.assertEqual(added[1]['mission_map_name'], 'maps/Missions/Office/"quoted"\\path\t.txt')
             self.assertEqual([value.next_delink()['map_id'], value.next_delink()['map_id']], [5, 915])
             self.assertEqual(value.poll(console), [])
 

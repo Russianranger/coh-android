@@ -827,6 +827,13 @@ def keep_previous_zone_requested():
     return value == '1'
 
 
+def mission_probe_requested():
+    """0.13.84: CI's two trips are a mission, with the guest's mission maps on (Atlas tree: no zone pack in CI)."""
+    value = os.environ.get('COH_MISSION_PROBE', '')
+    require(value in ('', '0', '1'), 'COH_MISSION_PROBE must be empty, 0 or 1')
+    return value == '1'
+
+
 def serverdata_probe_requested():
     """CI-only probe level: 1 serves scripts.loc, 2 every folder no guest proof reads,
     through a linked shared read-only runtime/serverdata tree. 0 is off."""
@@ -899,6 +906,10 @@ def stock_travel_summary(report):
             'evictions': [row for row in stock.get('evictions', [])[:4] if isinstance(row, dict)],
             'decisions': [row for row in stock.get('decisions', [])[:6] if isinstance(row, dict)],
             'zone_tree_seconds': (report.get('zone_tree_preparation') or {}).get('elapsed_seconds'),
+            # 0.13.84: mission maps (requested, started, refused, ended; in and out).
+            'mission_maps': ({key: (value[:4] if isinstance(value, list) else value)
+                              for key, value in stock['mission_maps'].items()}
+                             if isinstance(stock.get('mission_maps'), dict) else None),
             # Which log route proved readiness, and where the DbServer last placed the hero.
             'ready_route': ((report.get('character_reopen') or {}).get('client_ready_evidence') or {}).get('log_route'),
             'last_samples': [{key: sample.get(key) for key in ('map_id', 'static_map_id', 'connected', 'loaded',
@@ -1279,6 +1290,10 @@ def main():
         if keep_previous_zone_requested():
             require(spare_zone_requested(), 'Keeping the previous zone needs the spare zone server')
             command.insert(command.index('/usr/bin/python3'), 'COH_KEEP_PREVIOUS_ZONE=1')
+        if mission_probe_requested():
+            require(stock_travel_requested(), "The mission probe needs the game's own zone travel")
+            command.insert(command.index('/usr/bin/python3'), 'COH_MISSION_MAPS=1')
+            command.insert(command.index('/usr/bin/python3'), 'COH_MISSION_MAPS_TREE=atlas')
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():

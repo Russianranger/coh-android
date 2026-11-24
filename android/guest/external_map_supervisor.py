@@ -40,9 +40,11 @@ ACK = ('COH_WINE_DB_EXTERNAL_MAPS=1 active: map starts are published to the supe
 MARKER = 'COH_WINE_DB_EXTERNAL_MAP_REQUEST_V1'
 DIRECTORY_LIMIT = 199          # the DbServer refuses a directory of 200 characters or more
 RECORD_BYTES = 8192
-MAX_REQUESTS = 64
-MAX_DELINKS = 16
-MAX_STARTS = 32
+# Per session. 0.13.84: four times the first bounds (64, 16, 32): a play session with missions
+# asks for a map at every mission door as well as at every zone change.
+MAX_REQUESTS = 256
+MAX_DELINKS = 64
+MAX_STARTS = 128
 MAX_ENTRIES = 256
 MARKER_GRACE_SECONDS = 10
 DELINK_SECONDS = 90
@@ -398,6 +400,8 @@ class ExternalMapSupervisor:
                 # 0.13.83: a mission or another instance. Not started yet (zone_travel delinks it);
                 # what the game asked for is kept for the report.
                 value['mission_info'] = record['mission_info'][:240]
+                # 0.13.84: the whole name, for a mission map the zoning server starts.
+                value['mission_map_name'] = record['map_name'][:260]
         if options is not None:
             value['options'] = options
         return value

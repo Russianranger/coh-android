@@ -387,6 +387,34 @@ class ZoningServerTests(unittest.TestCase):
         row['mapid'] = 101
         self.assertEqual(instance.character_position(), row)
 
+    def test_a_hero_saved_inside_a_mission_reopens_in_the_zone_they_entered_from(self):
+        # 0.13.84: the DbServer logs such a hero in on the static map; the reopen was refused before.
+        instance = self.instance()
+        row = dict(containerid=1, mapid=700, staticmapid=101, posx=12.5, posy=-768, posz=90)
+        instance.sql_rows = Mock(return_value=[row])
+        instance.sql = Mock(side_effect=AssertionError('SQL mutation forbidden'))
+        self.assertEqual(instance.character_position(allow_unassigned_active_map=True), row)
+        self.assertEqual((instance.active_map_id, instance.zoning_report['saved_destination_map_id'],
+                          instance.zoning_report['saved_inside_instance_map_id']), (101, 101, 700))
+        instance.sql.assert_not_called()
+        # During a session the row may name a mission map only while the hero is in that mission.
+        with self.assertRaises(ERROR):
+            instance.character_position()
+        zoning.register_mission(700, 'maps/missions/office/office_30/office_30_layout_01.txt')
+        self.addCleanup(zoning.MAPS.pop, 700)
+        instance.active_map_id = 700
+        self.assertEqual(instance.character_position(), row)
+        self.assertEqual(instance.zoning_report['saved_inside_mission'], {'map_id': 700, 'returns_to_map_id': 101})
+        row['mapid'] = 701
+        with self.assertRaises(ERROR):
+            instance.character_position()
+        # A zone's id, or an id beyond the bound, in mapid is never taken for a mission.
+        for mapid in (1, 5, 7, 100000, 0, -3, True):
+            other = self.instance()
+            other.sql_rows = Mock(return_value=[dict(row, mapid=mapid, staticmapid=101)])
+            with self.subTest(mapid=mapid), self.assertRaises(ERROR):
+                other.character_position(allow_unassigned_active_map=True)
+
     def test_unknown_saved_map_and_invalid_position_cannot_mutate_sql_or_activate(self):
         for changes in ({'staticmapid': 2, 'mapid': 2}, {'staticmapid': True, 'mapid': True},
                         {'mapid': 1}, {'posx': float('nan')}, {'posz': float('inf')}, {'posy': True}):

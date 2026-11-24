@@ -69,6 +69,8 @@ ADDED_RUNTIME = frozenset({'armport-client.zip', 'armport_client_package.py', 'a
                            'external_map_supervisor.py',
                            # 0.13.55: the game's own zone travel policy (COH_STOCK_TRAVEL=1).
                            'zone_travel.py', 'zone_index.py',
+                           # 0.13.84: mission maps' collision leaves (inert unless COH_MISSION_MAPS=1).
+                           'mission_index.py',
                            # 0.13.65: zone beacon graphs for the shared zone tree (inert without them).
                            'zone_beacon_package.py',
                            # 0.13.67: launch receipts (an unchanged install step is not re-checked leaf by leaf).

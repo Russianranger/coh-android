@@ -492,6 +492,29 @@ would be missions".
   commands for CI and the Thor (everyone has access level 9):
   `startmission <task> *` (assign and enter without a door),
   `missionxmap`, `gotomission`, `exitmission`, `completemission`.
+- **Mission maps, written for 0.13.84 (on x86/perf-round3 after the 0.13.83 build; not in
+  0.13.83, not yet run anywhere).** Test option "Start mission maps" (`COH_MISSION_MAPS=1`,
+  Test category, off). `zone_travel.ZoneTravelPolicy(mission=, mission_tree=)`: a non-static
+  request the owner admits (`character_zoning.admit_mission_request`: a file under
+  `maps/missions`, mission info, hero in the world, zone pack imported, not already in a
+  mission) starts in the shared zone tree like a zone; `register_mission` gives it a `MAPS`
+  entry (no navigation graph). Arrival events carry `mission_map` / `from_mission_map`
+  (`ClientZoning.missionMap`). No spare while inside (`in_a_mission`); a mission map the hero
+  left is evicted first and may end by itself (`_tick_missions`, `health`). Collision
+  leaves: full audit of all 5,105 maps
+  (`docs/android-evidence/mission-asset-audit-all-20261124.json`): 501 files outside the
+  baseline, 378 already zone leaves, 123 (24.4 MB) in `android/guest/mission_index.py`,
+  installed with the option under a second data cache identity
+  (`local_character_server.zone_tree_collision`). **Lock-out fixed:** a hero saved inside
+  a mission has `mapid` = the mission's id, and `character_position` refused the reopen;
+  it now follows `staticmapid`, as the DbServer does (`findBestMapByBaseId`). Session
+  bounds raised (requests 256, starts 128, delinks 64, spares 48). CI probe:
+  `armport-app-runtime.yml -f mission_probe=true` types `/startmission
+  L1_P_Clockwork_Mission1 *` then `/exitmission` (`character_reopen_host_smoke.travel_trips`);
+  CI has no zone pack, so `COH_MISSION_MAPS_TREE=atlas` starts the map in the Atlas tree.
+  Unknown until it runs: whether CI's data holds the mission map file, what a mission
+  server prints as its ready line, saving inside a mission (expected: verdict failed,
+  character kept).
 - **Chain.** CHAIN83_PLACEHOLDER
 
 ## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
