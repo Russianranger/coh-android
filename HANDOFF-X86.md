@@ -465,7 +465,41 @@ From the Thor test of 0.13.81 (exports 20261124-043617 A defaults, -044655 B
   `_spawn_map` allow a third server. 25 options: 19 ticked, 6 unticked.
 - **Client** patches 0134 (group-load split) and 0135 (transfer boundaries)
   are in this build.
-- **Chain.** CHAIN82_PLACEHOLDER
+- **Chain** (published: APK 45382486718 at `4953444f6`).
+  - Two failures before it. Build 45334270110 (`70f7a048c`): zoning guards,
+    `stock_ready_now` assumed `zoning_report`. Build 45335083041
+    (`2acf2f643`) passed and its trusted run 45352283396 failed, "Atlas
+    exited during character creation": `fflush(stdout)` in
+    `parseClientInput.c` is `x_fflush((FileWrapper *)stdout)` there (`file.h`
+    through `storyarcutil.h`; MSVC only warns) and asserted at the first
+    `resumeCharacter`. Now `fflush(fileGetStdout())`;
+    `armport/tests/test_server_console_flush.py` checks every map server
+    layer, the native check requires the new flush.
+  - Build 45356454107. Trusted 45371360117: zone server start 371.1 s for a
+    new character, 23.9 s reopened (358.8, 23.4), map load 4,770 ms.
+  - Spare 45377119759 with `defer_zone_loads` and `keep_previous_zone`:
+    `ready_records` 5 from the console, 0 from the entity log. Trip to 101:
+    zone ready 10.7 s after the request; client `xfer.wait` to `map.start`
+    11.9 s, load 7.9 s. Trip back to map 1, still running: `xfer.wait` to
+    `map.start` 2.45 s, no start, no eviction. Arrivals recorded 27.1 s and
+    24.1 s after CI typed the command (0.13.81: 78.8 s for the second; its
+    first, 13.0 s after the request, was before the client's `CLIENT_READY`
+    could have been sent and is not explained). `_poll_stock_logs` still runs
+    every `POLL_SECONDS` 5 s. `keep_previous_zone.kept` 0 and one spare
+    start: the run ended before a second spare, so three servers together
+    are unit-tested only.
+  - Zone change 45347675663 (build 45335083041, same client), patch 0134:
+    `full_ms` 5,756-6,391, of it `read_ms` 1,586-2,039 and 166 geometry
+    loads 492-684 ms; about 4 s is building the definitions. Patch 0135, a
+    trip to a running zone: `xfer.wait` to address 0.5 s, disconnect 10 ms,
+    connected 0.2 s after the address, `map.start` 1.9 s after that.
+  - APK: 93,614,346 bytes, sha256 `625c6cbc...b76eff8a`, signer unchanged,
+    51 guest files equal the commit; the client holds the 0134 and 0135
+    strings, the trusted MapServer `ARMPORT_CLIENT_READY_V1`.
+- **Next.** Read arrivals from the console twice a second (5 s now); a
+  console line for logout; Atlas Park's first connection still uses the
+  legacy record; where the 4 s of definition building and the 1.9 s between
+  connecting and `map.start` go.
 
 ## 0.13.81 (96): faster request pick-up, two experimental options (Claude, 2026-11-23)
 

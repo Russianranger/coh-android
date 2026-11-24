@@ -857,6 +857,24 @@ those bounds itself (patch 0132), and a zone server reads its beacon file and
 starts PhysX after it is ready, while the client loads (4.7 s and 1.5 s of a
 trip's 18.8 s on the Thor).
 
+0.13.81 on the Thor and 0.13.82 (2026-11-24). All three 0.13.81 launches
+passed. Deferred loading: a warm spare had its zone ready 10.9 s after the
+request (18.0 s without). The larger finding was observation: the session
+read "the hero is in the zone" from the entity log, which the log path
+delivers 45-74 s late (`SECS_LOG_RESEND` 30 s, `LOG_WINDOW` 60 s), and the
+FPS buttons, Save and every next spare waited for it. 0.13.82 (4953444f6):
+the zone server prints `ARMPORT_CLIENT_READY_V1` from `resumeCharacter` and
+the session reads its console (spare run 45377119759: 5 records from the
+console, none from the log; second arrival recorded at 24.1 s for 78.8 s).
+Name lists are read whatever their line ends (they were all empty). No
+typed `/maxfps 60` (3.2 s with input held). Deferred loading on by default;
+a third zone server (the zone just left) as an option, off by default.
+Patch 0134 in CI 45347675663: of a 5.8-6.4 s object-library load, reading
+is 1.6-2.0 s and geometry 0.5-0.7 s; about 4 s builds definitions. Patch
+0135: a client transfer to a running zone is 0.5 s to the address, 0.2 s to
+connected, then 1.9 s before `map.start`; the disconnect is 10 ms. Next:
+arrivals read twice a second (5 s now), the 4 s and the 1.9 s.
+
 0.13.81's chain (ca58343c8) measured both. Prepared group files: a zone load
 that read all 541 from .bin spent 5.6-5.7 s on the object library for 6.4-7.5 s
 parsed, and the load that writes them 9.9 s (run 45175868959). Parsing was a

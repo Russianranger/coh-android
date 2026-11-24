@@ -175,4 +175,16 @@ will read:
 
 Details: `HANDOFF-X86.md`, section "0.13.82 (97)".
 
-CI: CI82_EVIDENCE_PLACEHOLDER
+CI (build 45356454107 at `4953444f6`, every runtime run with the x87 option):
+default options 45371360117: zone server start 371.1 s for a new character,
+23.9 s reopened (0.13.81: 358.8, 23.4). Spare run 45377119759 with late
+loading and the third zone server: 5 arrival records from the console, none
+from the log file; trip: zone ready 10.7 s after the request, the game began
+loading 11.9 s after its wait began and loaded for 7.9 s; trip back to the
+zone still running: loading began after 2.5 s; arrivals recorded 27.1 s and
+24.1 s after the typed command (0.13.81: 78.8 s for the second). Zone-change
+run 45347675663 (the build before the server fix, same game client): of a
+5.8-6.4 s object-file load, 1.6-2.0 s is reading files and 0.5-0.7 s
+loading geometry; between leaving one zone server and connecting to the
+next the game spends 0.2 s. APK run 45382486718: 93,614,346 bytes, sha256
+`625c6cbc...b76eff8a`, signer unchanged, its 51 guest files equal the commit.
