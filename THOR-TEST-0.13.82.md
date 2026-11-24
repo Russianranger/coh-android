@@ -47,6 +47,8 @@ files) and -045740 (C, both options). Every launch passed.
   entering the world. A zone server now says on its own console when your
   character has loaded in, and the app reads that instead of waiting for
   the log file.
+  One exception: a launch that starts in Atlas Park itself still uses the
+  old record, so start these tests from another zone.
 - **No 3 s pause when they come alive.** The app was typing `/maxfps 60`
   into the game's chat and holding your input back meanwhile. The game has
   started the world at 60 since 0.13.67; nothing is typed now.
