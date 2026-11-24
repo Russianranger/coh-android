@@ -512,7 +512,10 @@ def register_mission(map_id, name, *, shared_zone_tree=True):
     require(type(map_id) is int and 0 < map_id <= MISSION_MAP_ID_LIMIT and map_id not in zone_index.ZONES
             and (map_id not in MAPS or mission_map(map_id)) and mission_map_name(name) == name,
             'Not a mission map this runtime can start')
-    MAPS[map_id] = {'name': 'Mission', 'port': None, 'instance': 1, 'world': name.rsplit('/', 1)[1][:-4],
+    # Instance 0: a map that is not in maps.db logs as "<file name>_0" (staticMapInfo.c sets
+    # db_state.instance_id 0; logcomm.c s_getInstNameForLogging). CI probe 45503799391 started map
+    # 915, the game loaded it, and the arrival was never read from the entity log under "_1".
+    MAPS[map_id] = {'name': 'Mission', 'port': None, 'instance': 0, 'world': name.rsplit('/', 1)[1][:-4],
                     'shared_zone_tree': shared_zone_tree, 'mission': True, 'map_name': name}
     return MAPS[map_id]
 

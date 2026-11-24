@@ -971,10 +971,19 @@ class MissionMapTests(unittest.TestCase):
         sup.poll('\n' + supervisor.ACK + '\n' + self.publish_mission(sup, 700, 77, 1))
         value.serve_external_maps(sup)
         self.assertEqual(spawned, [(700, {'cookie': 77, 'port': 7004, 'options': ('-aggrocap', '17')})])
-        self.assertEqual(zoning.MAPS[700], {'name': 'Mission', 'port': None, 'instance': 1,
+        self.assertEqual(zoning.MAPS[700], {'name': 'Mission', 'port': None, 'instance': 0,
                                             'world': 'office_30_layout_01', 'shared_zone_tree': True,
                                             'mission': True, 'map_name': MISSION_NAME})
         self.assertEqual(zoning.zone_name(700), 'Mission')
+        # Its entity log route is "<file name>_0" (CI probe 45503799391: not "_1").
+        prefix = zoning.character.entity_name_prefix().replace('\\', '')
+        log = ('261124 23:12:10 Office_30_Layout_01_0:127.0.0.1:127.0.0.1 ' + prefix
+               + ' 12 Connection:ResumeCharacter from 127.0.0.1:50123 AuthName "COHLOCAL"\n')
+        stamp = int(time.mktime(time.strptime('261124 23:12:10', '%y%m%d %H:%M:%S')) * 1000)
+        found = zoning.stock_ready([('logs/dbserver/entity_2026-11-24-23.log', log)], 700, stamp - 5000, stamp + 5000)
+        self.assertEqual((found['map_id'], found['map_instance']), (700, 'office_30_layout_01_0'))
+        self.assertIsNone(zoning.stock_ready([('logs/dbserver/entity_2026-11-24-23.log', log.replace('_0:', '_1:'))],
+                                             700, stamp - 5000, stamp + 5000))
         start = value.missions['starts'][0]
         self.assertEqual((start['map_id'], start['cookie'], start['map_name'], start['from_map_id'],
                           start['mission_info']), (700, 77, MISSION_NAME, 7, '1:2:3:L1_P_Clockwork_Mission1'))
