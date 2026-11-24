@@ -394,6 +394,10 @@ class ExternalMapSupervisor:
             value.update(sequence=record['sequence'], base_map_id=record['base_map_id'],
                          map_name=record['map_name'][-120:],
                          **{key: record[key] for key in FLAG_FIELDS})
+            if record['is_static'] != 1:
+                # 0.13.83: a mission or another instance. Not started yet (zone_travel delinks it);
+                # what the game asked for is kept for the report.
+                value['mission_info'] = record['mission_info'][:240]
         if options is not None:
             value['options'] = options
         return value

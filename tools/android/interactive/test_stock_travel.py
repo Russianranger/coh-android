@@ -679,6 +679,71 @@ class StockTravelTests(unittest.TestCase):
         binding = (ROOT / 'android/guest/local_character_server.py').read_text()
         self.assertIn("and ready.get('log_route') in ('embedded_dbserver_logserver', 'owned_zone_server_console')", binding)
 
+    def test_a_new_resume_line_makes_the_next_inspection_due_now(self):
+        # 0.13.83. Thor 0.13.82: the line was read at once but only at the next 15 s slot; the FPS
+        # buttons came alive 9.4 s and 11.3 s after the hero was in the world.
+        self.assertEqual(zoning.character.POLL_SECONDS, 15)
+        self.assertEqual((zoning.READY_PEEK_SECONDS, zoning.READY_PEEK_LIMIT), (0.5, 256))
+        line = b'ARMPORT_CLIENT_READY_V1 utc_ms=1795543898322 map_id=5 port=27060 name="X" auth="COHLOCAL"\n'
+        self.assertTrue(line.startswith(zoning.CONSOLE_READY_PREFIX))
+        value = self.instance()
+        value.creation_report.update(connected_on_atlas=True)
+        value.maps[5] = dict(owned(), launch_utc_ms=1795543000000)
+        value.maps[5]['process'].output = bytearray(b'Server ready.\n')
+        value.character_next = value.stock_log_next = 10 ** 9
+
+        def look():
+            value.ready_peek_next = 0                        # past the half-second throttle
+            return value.ready_line_peek()
+
+        self.assertFalse(look())
+        self.assertEqual((value.character_next, value.stock_log_next), (10 ** 9, 10 ** 9))
+        value.maps[5]['process'].output += line
+        self.assertTrue(look())
+        self.assertEqual((value.character_next, value.stock_log_next), (0, 0))
+        value.character_next = value.stock_log_next = 10 ** 9
+        self.assertFalse(look())                             # the same line is acted on once
+        self.assertEqual(value.character_next, 10 ** 9)
+        value.maps[5]['process'].output += b'noise\n' + line
+        self.assertTrue(look())                              # the next resume (a trip back)
+        self.assertEqual(value.zoning_report['ready_peeks'], {'format': 1, 'count': 2})
+        # Within the throttle nothing is searched.
+        value.maps[5]['process'].output += line
+        value.ready_peek_next = time.monotonic() + 60
+        self.assertFalse(value.ready_line_peek())
+        # Before the first connection is established the look is repeated twice, two seconds apart.
+        first = self.instance()
+        first.creation_report.update(connected_on_atlas=False)
+        first.maps[5] = dict(owned(), launch_utc_ms=1795543000000)
+        first.maps[5]['process'].output = bytearray(line)
+        first.ready_peek_next = 0
+        self.assertTrue(first.ready_line_peek())
+        first.ready_peek_next = 0
+        self.assertFalse(first.ready_line_peek())            # not two seconds later yet
+        for expected in (True, True, False):
+            first.ready_peek_next, first.ready_peek_retry_at = 0, 0
+            self.assertEqual(first.ready_line_peek(), expected)
+        # A zone that is no longer owned is forgotten; a console without the attribute is skipped.
+        del value.maps[5]
+        value.maps[7] = {'process': SimpleNamespace()}
+        self.assertFalse(look())
+        self.assertEqual(value.ready_peek_offsets, {})
+
+    def test_the_session_loop_runs_the_inspection_when_a_resume_line_is_new(self):
+        import character_creation_diagnostic as creation
+        session = creation.CharacterCreationDiagnostic.__new__(creation.CharacterCreationDiagnostic)
+        answers, inspections = [True, False], []
+        session.local_server = SimpleNamespace(tick_travel_requests=lambda: None, ready_line_peek=lambda: answers.pop(0))
+        session.ctx = SimpleNamespace(report={'startup_observed': True})
+        session.saved_announced, session.login_announced, session.observer = False, True, object()
+        session.observe_console = lambda: inspections.append(1)
+        session.between_polls()
+        session.between_polls()
+        self.assertEqual(inspections, [1])
+        session.login_announced = False                      # before the login nothing is looked at
+        session.between_polls()
+        self.assertEqual((inspections, answers), ([1], []))
+
     def test_an_arrival_read_from_the_console_moves_the_session_at_once(self):
         value = self.instance()
         value.stock['enabled'] = True

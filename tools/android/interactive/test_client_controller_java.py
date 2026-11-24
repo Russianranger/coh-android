@@ -515,7 +515,12 @@ class ClientControllerJavaTests(unittest.TestCase):
                         'fps10=button(', 'fps30=button(', 'fps60=button(', 'stop=button(', 'export=button(', 'recoverReports=button(',
                         'storage=button('):
             self.assertEqual(activity.count(control), 1, control)
-        body = activity[activity.index('TextView title=text("COH Atlas Gameplay"'):activity.index('buildOverlay(root,scroll,panel);')]
+        # 0.13.83: the panel is a header and three tab pages, each built by its own method.
+        body = activity[activity.index('TextView title=text("COH Atlas Gameplay"'):activity.index('private void category(LinearLayout parent')]
+        self.assertIn('buildOverlay(root,scroll,panel);', body)
+        for page in ('private void buildPlayPage(LinearLayout controls){', 'private void buildOptionsPage(LinearLayout controls){',
+                     'private void buildSetupPage(LinearLayout controls){'):
+            self.assertEqual(body.count(page), 1, page)
         self.assertNotIn('root.addView(', body)
         self.assertGreater(len(re.findall(r'controls\.addView\(', body)), 40)
 

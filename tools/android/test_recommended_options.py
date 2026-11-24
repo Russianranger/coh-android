@@ -117,7 +117,8 @@ class RecommendedOptions(unittest.TestCase):
         line = activity.index('recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);')
         button = activity.index('controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));')
         first = activity.index('performanceGraphics=new CheckBox(this);')
-        last = activity.index('controls.addView(keepPreviousZone);\n        recommendedChanged();')
+        # 0.13.83: the boxes are grouped by category; an Experimental one is created last.
+        last = activity.index('controls.addView(clientGroupBins);\n        recommendedChanged();')
         self.assertLess(line, button)
         self.assertLess(button, first)
         self.assertLess(first, last)
@@ -131,6 +132,88 @@ class RecommendedOptions(unittest.TestCase):
         self.assertIn('if(ClientRuntime.operationInProgress()){', restore)
         self.assertIn('box.setChecked(true);', restore)
         self.assertIn('box.setChecked(false);', restore)
+
+
+class OptionCategories(unittest.TestCase):
+    """0.13.83 (owner, 2026-11-24): "recommended options in their own category, experimental in its own
+    (for ones that had no apparent benefit), a test category for ones we are actively testing"; the third
+    zone server "in its own category of optional"; "options in a separate tab"."""
+    CATEGORIES = (
+        ('Recommended', ['performanceGraphics', 'prootFastMode', 'sharedServerData', 'clientSkipServerFolders',
+                         'clientFolderIndex', 'clientAudio', 'stockTravel', 'earlyZone', 'spareZone', 'trustedBins',
+                         'gameplay60', 'prootIoctlFilter', 'prootSocketFilter', 'prootCasefold', 'serverQuickStart',
+                         'wineserverPathCache', 'physxCache', 'serverX87', 'deferZoneLoads']),
+        ('Optional', ['keepPreviousZone']),
+        ('Test', []),
+        ('Experimental', ['prestartNextZone', 'idleResidentMaps', 'sharedHeap', 'glDirect', 'clientGroupBins']))
+
+    @classmethod
+    def setUpClass(cls):
+        cls.activity = (JAVA / 'ClientActivity.java').read_text()
+        start = cls.activity.index('    private void buildOptionsPage(LinearLayout controls){')
+        cls.page = cls.activity[start:cls.activity.index('\n    }\n', start)]
+
+    def test_each_box_sits_under_its_category_heading(self):
+        marks = [self.page.index('category(controls,"%s",' % name) for name, _ in self.CATEGORIES]
+        marks.append(self.page.index('category(controls,"Client and renderer",'))
+        self.assertEqual(marks, sorted(marks))
+        placed = []
+        for index, (name, boxes) in enumerate(self.CATEGORIES):
+            section = self.page[marks[index]:marks[index + 1]]
+            found = re.findall(r'controls\.addView\((\w+)\);', section)
+            self.assertEqual(found, boxes, name)
+            placed += found
+        self.assertEqual(sorted(placed), sorted(GETTERS))
+        # No box is built on another page.
+        self.assertNotIn('recommendedChanged();});', self.activity.replace(self.page, ''))
+
+    def test_the_categories_agree_with_the_recommended_lists(self):
+        ticked = re.search(r'recommendedTicked\(\)\{return new CheckBox\[\]\{([\w,]+)\};\}', self.activity).group(1).split(',')
+        unticked = re.search(r'recommendedUnticked\(\)\{return new CheckBox\[\]\{([\w,]+)\};\}', self.activity).group(1).split(',')
+        groups = dict(self.CATEGORIES)
+        self.assertEqual(sorted(groups['Recommended']), sorted(ticked))
+        self.assertEqual(sorted(groups['Optional'] + groups['Test'] + groups['Experimental']), sorted(unticked))
+        # An empty category says so instead of showing a bare heading.
+        self.assertIn('controls.addView(text("Nothing is under test in this version.",12,false));', self.page)
+        # The third zone server (Thor 0.13.82 launch B: lowest free memory 3.5 GB for 4.9 GB) is the owner's choice.
+        self.assertEqual(groups['Optional'], ['keepPreviousZone'])
+        self.assertIn('private CheckBox[] optionalOptions(){return new CheckBox[]{keepPreviousZone};}', self.activity)
+        # Optional is the owner's choice either way: named on the line, never counted as a difference, and
+        # left alone by "Restore recommended options".
+        self.assertIn('if(optionalOption(box)){chosen.append(chosen.length()==0?" Optional, on: ":"; ").append(optionName(box));continue;}',
+                      self.activity)
+        self.assertIn('if(box!=null&&box.isChecked()&&!optionalOption(box))box.setChecked(false);', self.activity)
+        # The options are on their own tab now, so a difference is also shown above the tabs.
+        self.assertIn('optionsNotice.setVisibility(count==0?View.GONE:View.VISIBLE);', self.activity)
+        self.assertLess(self.activity.index('optionsNotice=text("",12,true);'),
+                        self.activity.index('LinearLayout tabRow=new LinearLayout(this);'))
+
+    def test_three_tabs_with_the_commands_first(self):
+        activity = self.activity
+        self.assertIn('String[] tabNames={"Play","Options","Setup"};', activity)
+        self.assertIn('buildPlayPage(menuPages[0]);buildOptionsPage(menuPages[1]);buildSetupPage(menuPages[2]);', activity)
+        self.assertIn('selectTab(controlsPreferences.getInt(CONTROLS_PREFIX+"tab",0));', activity)
+        # What is happening stays above the tabs.
+        self.assertLess(activity.index('status=text("Connecting",17,true);controls.addView(status);'),
+                        activity.index('LinearLayout tabRow=new LinearLayout(this);'))
+        start = activity.index('    private void buildPlayPage(LinearLayout controls){')
+        play = activity[start:activity.index('\n    }\n', start)]
+        order = ['resumeGame=button(', 'run=button("Reopen saved character"', 'typeText=button(', 'enterKey=button(',
+                 'showFps=button(', 'saveLogout=button(', 'finish=button(', 'export=button(', 'returnGround=button(',
+                 'stop=button(']
+        places = [play.index(item) for item in order]
+        self.assertEqual(places, sorted(places))
+        self.assertNotIn('CheckBox', play)
+        start = activity.index('    private void buildSetupPage(LinearLayout controls){')
+        setup = activity[start:activity.index('\n    }\n', start)]
+        for item in ('setup=button(', 'importAssets=button(', 'button("Controller mappings"', 'recoverReports=button(',
+                     'storage=button(', 'startTest=button(', 'captureContact=button(', 'logs=text('):
+            self.assertEqual(setup.count(item), 1, item)
+        # Only the chosen page is shown, and the choice is remembered.
+        select = activity[activity.index('    private void selectTab(int index){'):]
+        select = select[:select.index('\n    }\n')]
+        self.assertIn('menuPages[i].setVisibility(i==index?View.VISIBLE:View.GONE);', select)
+        self.assertIn('controlsPreferences.edit().putInt(CONTROLS_PREFIX+"tab",index).apply();', select)
 
 
 if __name__ == '__main__':

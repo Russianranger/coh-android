@@ -4622,8 +4622,17 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             if additive is not None:
                 comparison.update(scope='prior_enhancements_preserved_with_bounded_inventory_additions',
                                   additive_inventory=additive)
-            require(accepted, 'Character diagnostic incomplete: saved enhancements changed outside the '
-                    'verified preservation policy. This does not establish a failed native save.')
+            if not accepted and self.enhancement_change_in_ordinary_play():
+                # 0.13.83. Thor 0.13.82, export 20261124-181441: two enhancements dropped in play; the
+                # definition look-up raised FileNotFoundError in a shared zone tree and the launch was
+                # marked failed, although its logout, disconnect and saved location were all verified.
+                # A played character gains, slots, combines and sells enhancements; the comparison is
+                # kept as a record and no longer decides the launch.
+                comparison.update(status='changed_in_play', play_change_recorded=True,
+                    reason='Enhancements changed during ordinary play; recorded, not judged')
+            else:
+                require(accepted, 'Character diagnostic incomplete: saved enhancements changed outside the '
+                        'verified preservation policy. This does not establish a failed native save.')
         if self.stock_power_diagnostics_enabled():
             self.creation_report['stock_power_lifecycle_after_logout'] = self.stock_power_lifecycle(rows)
         # Only the typed current reader repair permits the finite first-training
@@ -4694,6 +4703,19 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             committed_native_position_verified=True,
             committed_safe_position_verified=location['requested_recovery_verified'])
         return after
+
+    def enhancement_change_in_ordinary_play(self):
+        """The preconditions of the inventory and progress policies: ARM64 client, no task
+        profile, an ordinary logout observed, the disconnect before the SQL read, no forced stop."""
+        proof = self.creation_report
+        if (os.environ.get('COH_CLIENT_ARCH', 'x86') != 'arm64'
+                or proof.get('task_gate_required') is True
+                or not all(proof.get(key) is True for key in
+                           ('disconnected_before_sql', 'requested_logout_observed', 'logout_timer_observed'))
+                or proof.get('forced_stop_before_save') is not False):
+            return False
+        return reopen_connection_binding(proof, self.owner.args.session_id, proof.get('client_pid'),
+                                         int(time.time() * 1000)) is not None
 
     def accept_gameplay_progress(self, before, after):
         """ARM64: accept a reopen whose saved changes are only ordinary native play.

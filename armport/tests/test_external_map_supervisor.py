@@ -78,6 +78,11 @@ class SourceAgreement(unittest.TestCase):
                              [(5, 'delink', 'zone_not_served_yet'), (915, 'delink', 'command_prefix')])
             self.assertEqual(added[0]['options'], {'kept': [], 'dropped': ['-locale']})
             self.assertEqual(added[1]['map_name'], 'maps/Missions/Office/"quoted"\\path\t.txt')
+            # 0.13.83: what a mission request asked for is kept for the report; a static zone has no such field.
+            self.assertNotIn('mission_info', added[0])
+            self.assertEqual(added[1]['is_static'], 0)
+            self.assertIsInstance(added[1]['mission_info'], str)
+            self.assertLessEqual(len(added[1]['mission_info']), 240)
             self.assertEqual([value.next_delink()['map_id'], value.next_delink()['map_id']], [5, 915])
             self.assertEqual(value.poll(console), [])
 

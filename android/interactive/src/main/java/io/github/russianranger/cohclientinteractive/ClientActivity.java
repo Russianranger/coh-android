@@ -40,7 +40,7 @@ public final class ClientActivity extends Activity {
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30,fps60;
-    private TextView recommendedStatus;
+    private TextView recommendedStatus,optionsNotice;
     private CheckBox performanceGraphics,prootFastMode,prestartNextZone,trustedBins,gameplay60,idleResidentMaps,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,sharedHeap,stockTravel,earlyZone,spareZone,glDirect,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,serverX87,deferZoneLoads,clientGroupBins,keepPreviousZone;
     private Spinner gpuProfile,clientArchitecture;
     private CursorOverlay cursor;
@@ -65,6 +65,10 @@ public final class ClientActivity extends Activity {
     private LinearLayout menuPanel;
     private ImageButton gear;
     private Button resumeGame;
+    private Button[] menuTabs;
+    private LinearLayout[] menuPages;
+    private ScrollView menuScroll;
+    private int menuTab=-1;
     private TextView layerBanner;
     private FrameLayout.LayoutParams gearPosition;
     private SharedPreferences controlsPreferences;
@@ -122,21 +126,68 @@ public final class ClientActivity extends Activity {
         String version="unknown";
         try{version=getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(PackageManager.NameNotFoundException ignored){}
         controls.addView(text("Persistent local server · v"+version,12,false));
+        // 0.13.83 (owner, 2026-11-24): what is happening stays above three tabs. Play holds the commands used in
+        // every session, Options the launch options in four categories, Setup everything done once or rarely.
+        status=text("Connecting",17,true);controls.addView(status);
+        detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
+        counter=text("Waiting for the client",12,false);controls.addView(counter);
+        optionsNotice=text("",12,true);optionsNotice.setVisibility(View.GONE);controls.addView(optionsNotice);
+        LinearLayout tabRow=new LinearLayout(this);controls.addView(tabRow);
+        String[] tabNames={"Play","Options","Setup"};menuTabs=new Button[tabNames.length];menuPages=new LinearLayout[tabNames.length];
+        for(int i=0;i<tabNames.length;i++){final int index=i;
+            menuTabs[i]=button(tabNames[i],()->selectTab(index));tabRow.addView(menuTabs[i],new LinearLayout.LayoutParams(0,-2,1));
+            menuPages[i]=new LinearLayout(this);menuPages[i].setOrientation(LinearLayout.VERTICAL);controls.addView(menuPages[i]);
+        }
+        menuScroll=scroll;
+        buildPlayPage(menuPages[0]);buildOptionsPage(menuPages[1]);buildSetupPage(menuPages[2]);
+        selectTab(controlsPreferences.getInt(CONTROLS_PREFIX+"tab",0));
+        display.setInputListener(new ClientSurface.InputListener(){
+            @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
+            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!orderedInputRelease&&!textDialogVisible&&!movementSuppressed&&!commandInputBusy());}
+            @Override public void onCursor(float x,float y,boolean visible){cursor.move(x,y,visible);}
+            @Override public void onWheel(String session,int x,int y,boolean up){if(service!=null)service.sendWheel(session,x,y,up);}
+        });
+        buildOverlay(root,scroll,panel);
+        controller=new ControllerManager(this,new File(getFilesDir(),ControllerProfile.FILE_NAME),controllerOutput);
+        if(!controller.loadError().isEmpty())Toast.makeText(this,controller.loadError()+" · using the default bindings",Toast.LENGTH_LONG).show();
+
+        startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();immersive();setMenuOpen(true);setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
+    }
+    /** Play: the commands of an ordinary session, in the order they are used. */
+    private void buildPlayPage(LinearLayout controls){
         resumeGame=button("Resume game",()->setMenuOpen(false));resumeGame.setEnabled(false);controls.addView(resumeGame);
-        controls.addView(button("Controller mappings",this::controllerDialog));
-        controls.addView(text("Default controller: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter. Triggers are unbound. The COH power trays preset adds hold LT for 1–0 and Select for this menu; Back or the gear also opens it.",12,false));
-        controls.addView(button("Move options button",this::controlsPositionDialog));
-        controls.addView(button("Reset options button position",()->{controlsX=1f;controlsY=0f;positionControls();saveControlsPosition();}));
-        controls.addView(text("Reopen your character in the zone it was saved in; with the game's own zone travel only that zone starts, when you press Enter Game. Keep the accepted graphics settings, costume and powers.",13,false));
-        setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
-        importAssets=button("Import asset or map pack part",this::chooseImport);controls.addView(importAssets);
-        assetPackStatus=text("Checking required asset pack…",12,false);controls.addView(assetPackStatus);
-        // Owner, 2026-11-09: every zone's navigation map, imported with the same button (optional).
-        navigationMapStatus=text("Checking navigation maps…",12,false);controls.addView(navigationMapStatus);
-        controls.addView(text("Fresh install: import every ZIP part from the compatible versioned Assets release, then Set up / update runtime. Each completed part is retained; the app shows any missing parts. Keep these ZIPs for reinstalling. Future APK updates reuse compatible imported assets.",12,false));
+        run=button("Reopen saved character",()->request(ClientService.RUN));controls.addView(run);
+        createFresh=button("Create fresh character",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
+        resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
+        profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
+        controls.addView(text("Reopen starts in the character's saved destination. Sign in as COHLOCAL (offline).",12,false));
+        typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
+        enterKey=button("Enter / Start",this::sendEnter);controls.addView(enterKey);
+        showFps=button("Show FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.SHOW_FPS));controls.addView(showFps);
+        LinearLayout fpsRow=new LinearLayout(this);
+        fps10=button("10 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_10));
+        fps30=button("30 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_30));
+        fps60=button("60 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_60));
+        fpsRow.addView(fps10,new LinearLayout.LayoutParams(0,-2,1));
+        fpsRow.addView(fps30,new LinearLayout.LayoutParams(0,-2,1));
+        fpsRow.addView(fps60,new LinearLayout.LayoutParams(0,-2,1));controls.addView(fpsRow);
+        saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
+        finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
+        export=button("Reports / export",this::chooseExport);controls.addView(export);
+        controls.addView(text("Travel",15,true));
+        zoningStatus=text("Reopen your character to travel.",12,false);controls.addView(zoningStatus);
+        travelZone=button("Return from old Atlas instance",this::travelToZone);travelZone.setVisibility(View.GONE);controls.addView(travelZone);
+        returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
+        stop=button("Abort operation",()->{movementSuppressed=true;releaseControls();refreshMovementControls();if(service!=null)startService(new Intent(this,ClientService.class).setAction(ClientService.STOP));});controls.addView(stop);
+        controls.addView(text("When ready to save, release controls, tap Save character / log out, wait for Saved character verified, then Finish and save report. Reports / export makes the ZIP for a test report.",12,false));
+    }
+    /** Options: one line that says whether anything is off the recommended settings, then four categories
+     *  (owner, 2026-11-24): Recommended, Optional, Test, Experimental. */
+    private void buildOptionsPage(LinearLayout controls){
         // 0.13.76: Thor 0.13.75 ran four launches with one option left unticked by an earlier test.
         recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);
         controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));
+        category(controls,"Recommended","Ticked in a new install. Leave them ticked unless a test sheet asks otherwise.");
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
         performanceGraphics.setTextColor(Color.rgb(221,234,245));performanceGraphics.setTextSize(13);
         performanceGraphics.setChecked(ClientRuntime.performanceGraphicsEnabled(this));
@@ -147,16 +198,6 @@ public final class ClientActivity extends Activity {
         prootFastMode.setChecked(ClientRuntime.prootFastModeEnabled(this));
         prootFastMode.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setProotFastModeEnabled(this,checked);recommendedChanged();});
         controls.addView(prootFastMode);
-        prestartNextZone=new CheckBox(this);prestartNextZone.setText("Start King's Row in the background (zoning)");
-        prestartNextZone.setTextColor(Color.rgb(221,234,245));prestartNextZone.setTextSize(13);
-        prestartNextZone.setChecked(ClientRuntime.prestartNextZoneEnabled(this));
-        prestartNextZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setPrestartNextZoneEnabled(this,checked);recommendedChanged();});
-        controls.addView(prestartNextZone);
-        idleResidentMaps=new CheckBox(this);idleResidentMaps.setText("Lower the waiting zone server's priority (zoning, experimental)");
-        idleResidentMaps.setTextColor(Color.rgb(221,234,245));idleResidentMaps.setTextSize(13);
-        idleResidentMaps.setChecked(ClientRuntime.idleResidentMapsEnabled(this));
-        idleResidentMaps.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setIdleResidentMapsEnabled(this,checked);recommendedChanged();});
-        controls.addView(idleResidentMaps);
         sharedServerData=new CheckBox(this);sharedServerData.setText("Share server data between zones (faster zone preparation)");
         sharedServerData.setTextColor(Color.rgb(221,234,245));sharedServerData.setTextSize(13);
         sharedServerData.setChecked(ClientRuntime.sharedServerDataEnabled(this));
@@ -192,11 +233,6 @@ public final class ClientActivity extends Activity {
         spareZone.setChecked(ClientRuntime.spareZoneEnabled(this));
         spareZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setSpareZoneEnabled(this,checked);recommendedChanged();});
         controls.addView(spareZone);
-        sharedHeap=new CheckBox(this);sharedHeap.setText("Shared server memory (experiment: zone servers share game data)");
-        sharedHeap.setTextColor(Color.rgb(221,234,245));sharedHeap.setTextSize(13);
-        sharedHeap.setChecked(ClientRuntime.sharedHeapEnabled(this));
-        sharedHeap.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setSharedHeapEnabled(this,checked);recommendedChanged();});
-        controls.addView(sharedHeap);
         trustedBins=new CheckBox(this);trustedBins.setText("Fast server (untick for the 0.13.36 server)");
         trustedBins.setTextColor(Color.rgb(221,234,245));trustedBins.setTextSize(13);
         trustedBins.setChecked(ClientRuntime.trustedBinsEnabled(this));
@@ -207,11 +243,6 @@ public final class ClientActivity extends Activity {
         gameplay60.setChecked(ClientRuntime.gameplay60FpsEnabled(this));
         gameplay60.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setGameplay60FpsEnabled(this,checked);recommendedChanged();});
         controls.addView(gameplay60);
-        glDirect=new CheckBox(this);glDirect.setText("Draw on the game's own thread (frame rate experiment)");
-        glDirect.setTextColor(Color.rgb(221,234,245));glDirect.setTextSize(13);
-        glDirect.setChecked(ClientRuntime.glDirectEnabled(this));
-        glDirect.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setGlDirectEnabled(this,checked);recommendedChanged();});
-        controls.addView(glDirect);
         prootIoctlFilter=new CheckBox(this);prootIoctlFilter.setText("Lighter system-call monitor (untick for the 0.13.36 one)");
         prootIoctlFilter.setTextColor(Color.rgb(221,234,245));prootIoctlFilter.setTextSize(13);
         prootIoctlFilter.setChecked(ClientRuntime.prootIoctlFilterEnabled(this));
@@ -252,18 +283,43 @@ public final class ClientActivity extends Activity {
         deferZoneLoads.setChecked(ClientRuntime.deferZoneLoadsEnabled(this));
         deferZoneLoads.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setDeferZoneLoadsEnabled(this,checked);recommendedChanged();});
         controls.addView(deferZoneLoads);
-        clientGroupBins=new CheckBox(this);clientGroupBins.setText("Keep prepared zone object files (experimental, ARM64 client; faster zone loading)");
-        clientGroupBins.setTextColor(Color.rgb(221,234,245));clientGroupBins.setTextSize(13);
-        clientGroupBins.setChecked(ClientRuntime.clientGroupBinsEnabled(this));
-        clientGroupBins.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setClientGroupBinsEnabled(this,checked);recommendedChanged();});
-        controls.addView(clientGroupBins);
+        controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
+        category(controls,"Optional","Works, at a cost. Your choice.");
         keepPreviousZone=new CheckBox(this);keepPreviousZone.setText("Keep the zone you just left loaded (about 1.2 GB more memory; needs the spare zone server)");
         keepPreviousZone.setTextColor(Color.rgb(221,234,245));keepPreviousZone.setTextSize(13);
         keepPreviousZone.setChecked(ClientRuntime.keepPreviousZoneEnabled(this));
         keepPreviousZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setKeepPreviousZoneEnabled(this,checked);recommendedChanged();});
         controls.addView(keepPreviousZone);
+        category(controls,"Test","Being tested in this version. Tick only when a test sheet asks.");
+        controls.addView(text("Nothing is under test in this version.",12,false));
+        category(controls,"Experimental","Tried and showed no clear benefit on the Thor. Kept for comparison; leave unticked.");
+        prestartNextZone=new CheckBox(this);prestartNextZone.setText("Start King's Row in the background (zoning)");
+        prestartNextZone.setTextColor(Color.rgb(221,234,245));prestartNextZone.setTextSize(13);
+        prestartNextZone.setChecked(ClientRuntime.prestartNextZoneEnabled(this));
+        prestartNextZone.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setPrestartNextZoneEnabled(this,checked);recommendedChanged();});
+        controls.addView(prestartNextZone);
+        idleResidentMaps=new CheckBox(this);idleResidentMaps.setText("Lower the waiting zone server's priority (zoning, experimental)");
+        idleResidentMaps.setTextColor(Color.rgb(221,234,245));idleResidentMaps.setTextSize(13);
+        idleResidentMaps.setChecked(ClientRuntime.idleResidentMapsEnabled(this));
+        idleResidentMaps.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setIdleResidentMapsEnabled(this,checked);recommendedChanged();});
+        controls.addView(idleResidentMaps);
+        sharedHeap=new CheckBox(this);sharedHeap.setText("Shared server memory (experiment: zone servers share game data)");
+        sharedHeap.setTextColor(Color.rgb(221,234,245));sharedHeap.setTextSize(13);
+        sharedHeap.setChecked(ClientRuntime.sharedHeapEnabled(this));
+        sharedHeap.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setSharedHeapEnabled(this,checked);recommendedChanged();});
+        controls.addView(sharedHeap);
+        glDirect=new CheckBox(this);glDirect.setText("Draw on the game's own thread (frame rate experiment)");
+        glDirect.setTextColor(Color.rgb(221,234,245));glDirect.setTextSize(13);
+        glDirect.setChecked(ClientRuntime.glDirectEnabled(this));
+        glDirect.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setGlDirectEnabled(this,checked);recommendedChanged();});
+        controls.addView(glDirect);
+        clientGroupBins=new CheckBox(this);clientGroupBins.setText("Keep prepared zone object files (experimental, ARM64 client; faster zone loading)");
+        clientGroupBins.setTextColor(Color.rgb(221,234,245));clientGroupBins.setTextSize(13);
+        clientGroupBins.setChecked(ClientRuntime.clientGroupBinsEnabled(this));
+        clientGroupBins.setOnCheckedChangeListener((button,checked)->{ClientRuntime.setClientGroupBinsEnabled(this,checked);recommendedChanged();});
+        controls.addView(clientGroupBins);
         recommendedChanged();
-        controls.addView(text("Performance graphics, ARM64 client: water effects, shadows, bloom and depth of field off; detail and resolution unchanged. x86 client: lower detail and a 600×450 world. Untick before launch to use the game's own graphics settings.",12,false));
+        category(controls,"Client and renderer","Change these only after finishing a run.");
         controls.addView(text("Client for next launch",12,true));
         clientArchitecture=new Spinner(this);
         clientArchitecture.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
@@ -291,11 +347,26 @@ public final class ClientActivity extends Activity {
         });
         controls.addView(gpuProfile);
         controls.addView(text("GPU test checks the private driver before launch. If unavailable, it starts with Software and records the reason. Change this after finishing a run.",12,false));
-        run=button("2 · Reopen saved character",()->request(ClientService.RUN));controls.addView(run);
-        createFresh=button("Create fresh character",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
-        resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
-        profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
-        returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
+    }
+    /** Setup: what is done once per install or update, then the rarely used tools. */
+    private void buildSetupPage(LinearLayout controls){
+        controls.addView(text("Runtime and game files",15,true));
+        setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
+        importAssets=button("Import asset or map pack part",this::chooseImport);controls.addView(importAssets);
+        assetPackStatus=text("Checking required asset pack…",12,false);controls.addView(assetPackStatus);
+        // Owner, 2026-11-09: every zone's navigation map, imported with the same button (optional).
+        navigationMapStatus=text("Checking navigation maps…",12,false);controls.addView(navigationMapStatus);
+        controls.addView(text("Fresh install: import every ZIP part from the compatible versioned Assets release, then Set up / update runtime. Each completed part is retained; the app shows any missing parts. Keep these ZIPs for reinstalling. Future APK updates reuse compatible imported assets.",12,false));
+        controls.addView(text("Controller and options button",15,true));
+        controls.addView(button("Controller mappings",this::controllerDialog));
+        controls.addView(text("Default controller: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter. Triggers are unbound. The COH power trays preset adds hold LT for 1–0 and Select for this menu; Back or the gear also opens it.",12,false));
+        controls.addView(button("Move options button",this::controlsPositionDialog));
+        controls.addView(button("Reset options button position",()->{controlsX=1f;controlsY=0f;positionControls();saveControlsPosition();}));
+        controls.addView(text("Reports and storage",15,true));
+        recoverReports=button("Recover interrupted reports",()->{if(service!=null)startForegroundService(new Intent(this,ClientService.class).setAction(ClientService.RECOVER_REPORTS));});controls.addView(recoverReports);
+        storage=button("Storage and cleanup",this::showStorage);controls.addView(storage);
+        controls.addView(text("Test tools",15,true));
+        controls.addView(text("Tap Start test when ready and Stop test when finished; neither starts a countdown.",12,false));
         startTest=button("Start test",()->{if(service!=null)service.startManualTest();});controls.addView(startTest);
         stopTest=button("Stop test",()->{if(service!=null)service.stopManualTest();});controls.addView(stopTest);
         captureContact=button("Capture contact dialog",()->{releaseControls();if(service!=null)service.requestContactCapture();});controls.addView(captureContact);
@@ -303,63 +374,46 @@ public final class ClientActivity extends Activity {
         captureAcceptedTask=button("Capture accepted task",()->{releaseControls();if(service!=null)service.requestTaskCapture(false);});controls.addView(captureAcceptedTask);
         completeTask=button("Complete accepted task",()->{releaseControls();if(service!=null)service.requestCompleteAcceptedTask();});controls.addView(completeTask);
         captureCompletedTask=button("Capture completed task",()->{releaseControls();if(service!=null)service.requestTaskCapture(true);});controls.addView(captureCompletedTask);
-        controls.addView(text("Monorail travel",16,true));
-        controls.addView(text("Walk to the monorail station in Atlas Park, click its entrance and choose Kings Row. The destination prepares automatically before boarding. Use the Kings Row station to return to Atlas Park. Stay in this app until arrival; loading time includes preparation and fresh destination views.",12,false));
-        zoningStatus=text("Reopen your character to use the monorail.",12,false);controls.addView(zoningStatus);
-        travelZone=button("Return from old Atlas instance",this::travelToZone);travelZone.setVisibility(View.GONE);controls.addView(travelZone);
-        saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
-        finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
-        typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
-        enterKey=button("Enter / Start",this::sendEnter);controls.addView(enterKey);
-        showFps=button("Show FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.SHOW_FPS));controls.addView(showFps);
-        LinearLayout fpsRow=new LinearLayout(this);
-        fps10=button("10 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_10));
-        fps30=button("30 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_30));
-        fps60=button("60 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_60));
-        fpsRow.addView(fps10,new LinearLayout.LayoutParams(0,-2,1));
-        fpsRow.addView(fps30,new LinearLayout.LayoutParams(0,-2,1));
-        fpsRow.addView(fps60,new LinearLayout.LayoutParams(0,-2,1));controls.addView(fpsRow);
         controls.addView(text("Atlas movement · hold a button",12,true));
         addMovementRow(controls,"Forward",'w',"Back",'s',120001);
         addMovementRow(controls,"Left",'a',"Right",'d',120003);
         controls.addView(movementButton("Jump",' ',120005));
-        stop=button("Abort operation",()->{movementSuppressed=true;releaseControls();refreshMovementControls();if(service!=null)startService(new Intent(this,ClientService.class).setAction(ClientService.STOP));});controls.addView(stop);
-        export=button("Reports / export",this::chooseExport);controls.addView(export);
-        recoverReports=button("Recover interrupted reports",()->{if(service!=null)startForegroundService(new Intent(this,ClientService.class).setAction(ClientService.RECOVER_REPORTS));});controls.addView(recoverReports);
-        storage=button("Storage and cleanup",this::showStorage);controls.addView(storage);
-        status=text("Connecting",17,true);controls.addView(status);
-        detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
-        counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Import every required asset-pack part, then apply Set up / update runtime. On a fresh install, create your character (any name the game accepts; one per install) and complete its ordinary save before Reopen. Use COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Reopen starts in the character's saved destination. Use the actual monorail when ready to travel; preparation happens on demand. Tap Start test when ready and Stop test when finished; neither starts a countdown. When ready to save, release controls, Save character / log out, wait for Saved character verified, then Finish and Reports / export. Recover interrupted reports after an interruption. Export early if loading stalls; Reopen resumes the last verified save.",12,false));
+        controls.addView(text("First time: import every asset-pack part, tap Set up / update runtime, then on the Play tab create your character (one per install; sign in as COHLOCAL, offline) and save it once. After an interruption use Recover interrupted reports; Reopen resumes from the last verified save.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
-        display.setInputListener(new ClientSurface.InputListener(){
-            @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
-            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!orderedInputRelease&&!textDialogVisible&&!movementSuppressed&&!commandInputBusy());}
-            @Override public void onCursor(float x,float y,boolean visible){cursor.move(x,y,visible);}
-            @Override public void onWheel(String session,int x,int y,boolean up){if(service!=null)service.sendWheel(session,x,y,up);}
-        });
-        buildOverlay(root,scroll,panel);
-        controller=new ControllerManager(this,new File(getFilesDir(),ControllerProfile.FILE_NAME),controllerOutput);
-        if(!controller.loadError().isEmpty())Toast.makeText(this,controller.loadError()+" · using the default bindings",Toast.LENGTH_LONG).show();
-
-        startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();immersive();setMenuOpen(true);setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
+    }
+    private void category(LinearLayout parent,String name,String note){parent.addView(text(name,15,true));parent.addView(text(note,12,false));}
+    private void selectTab(int index){
+        if(menuPages==null)return;if(index<0||index>=menuPages.length)index=0;
+        for(int i=0;i<menuPages.length;i++){menuPages[i].setVisibility(i==index?View.VISIBLE:View.GONE);menuTabs[i].setAlpha(i==index?1f:0.55f);menuTabs[i].setTypeface(Typeface.DEFAULT,i==index?Typeface.BOLD:Typeface.NORMAL);}
+        if(menuTab!=index&&menuScroll!=null)menuScroll.scrollTo(0,0);menuTab=index;
+        controlsPreferences.edit().putInt(CONTROLS_PREFIX+"tab",index).apply();
     }
     /** The options as a new install has them: ticked, then unticked (ClientRuntime's defaults). */
     private CheckBox[] recommendedTicked(){return new CheckBox[]{performanceGraphics,prootFastMode,sharedServerData,clientSkipServerFolders,clientFolderIndex,clientAudio,stockTravel,earlyZone,trustedBins,gameplay60,prootIoctlFilter,prootSocketFilter,prootCasefold,serverQuickStart,wineserverPathCache,physxCache,spareZone,serverX87,deferZoneLoads};}
     private CheckBox[] recommendedUnticked(){return new CheckBox[]{prestartNextZone,idleResidentMaps,sharedHeap,glDirect,clientGroupBins,keepPreviousZone};}
     private static String optionName(CheckBox box){String name=String.valueOf(box.getText());int cut=name.indexOf(" (");return cut>0?name.substring(0,cut):name;}
+    /** The Optional category (owner, 2026-11-24): the owner's choice either way, so never "off recommended" on the screen. */
+    private CheckBox[] optionalOptions(){return new CheckBox[]{keepPreviousZone};}
+    private boolean optionalOption(CheckBox box){for(CheckBox optional:optionalOptions())if(optional==box)return true;return false;}
     private void recommendedChanged(){
         if(recommendedStatus==null)return;
-        StringBuilder names=new StringBuilder();int count=0;
+        StringBuilder names=new StringBuilder(),chosen=new StringBuilder();int count=0;
         for(CheckBox box:recommendedTicked())if(box!=null&&!box.isChecked()){names.append(count++==0?"":"; ").append("unticked: ").append(optionName(box));}
-        for(CheckBox box:recommendedUnticked())if(box!=null&&box.isChecked()){names.append(count++==0?"":"; ").append("ticked: ").append(optionName(box));}
-        if(count==0){recommendedStatus.setText("Options: all at the recommended settings.");recommendedStatus.setTextColor(Color.rgb(150,214,160));}
-        else{recommendedStatus.setText("Options: "+count+" differ from the recommended settings ("+names+").");recommendedStatus.setTextColor(Color.rgb(255,196,92));}
+        for(CheckBox box:recommendedUnticked())if(box!=null&&box.isChecked()){
+            if(optionalOption(box)){chosen.append(chosen.length()==0?" Optional, on: ":"; ").append(optionName(box));continue;}
+            names.append(count++==0?"":"; ").append("ticked: ").append(optionName(box));
+        }
+        if(chosen.length()>0)chosen.append(".");
+        String line=count==0?"Options: all at the recommended settings."+chosen:"Options: "+count+" differ from the recommended settings ("+names+")."+chosen;
+        int color=count==0?Color.rgb(150,214,160):Color.rgb(255,196,92);
+        recommendedStatus.setText(line);recommendedStatus.setTextColor(color);
+        // The same line above the tabs, only when something differs: the options are no longer on the first page.
+        if(optionsNotice!=null){optionsNotice.setText(line);optionsNotice.setTextColor(color);optionsNotice.setVisibility(count==0?View.GONE:View.VISIBLE);}
     }
     private void restoreRecommendedOptions(){
         if(ClientRuntime.operationInProgress()){Toast.makeText(this,"Finish the current operation before changing options.",Toast.LENGTH_SHORT).show();return;}
         for(CheckBox box:recommendedTicked())if(box!=null&&!box.isChecked())box.setChecked(true);
-        for(CheckBox box:recommendedUnticked())if(box!=null&&box.isChecked())box.setChecked(false);
+        for(CheckBox box:recommendedUnticked())if(box!=null&&box.isChecked()&&!optionalOption(box))box.setChecked(false);
         recommendedChanged();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
@@ -412,7 +466,7 @@ public final class ClientActivity extends Activity {
     }
     private void refreshZoningControls(){
         boolean available=inputActive&&service!=null&&state!=null&&!textDialogVisible&&hasWindowFocus();
-        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen your character to use the monorail.":service.zoningStatus());
+        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen your character to travel.":service.zoningStatus());
         if(travelZone!=null){
             boolean legacy=service!=null&&service.zoningCurrentMap()==101;
             travelZone.setVisibility(legacy?View.VISIBLE:View.GONE);
@@ -713,6 +767,8 @@ public final class ClientActivity extends Activity {
         // Opening releases held game input in order (a queued field tap still lands first).
         if(open&&changed)releaseControls(false);
         refreshControllerCapture();
+        // During a game the menu opens on Play: Resume game takes the focus (it is on that page).
+        if(open&&changed&&gameSessionRunning())selectTab(0);
         if(open&&changed&&menuPanel!=null){if(resumeGame!=null&&resumeGame.isEnabled())resumeGame.requestFocus();else menuPanel.requestFocus();}
         else if(!open&&changed&&display!=null)display.requestFocus();
     }

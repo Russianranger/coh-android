@@ -107,6 +107,16 @@ class EnhancementAdditions(unittest.TestCase):
         with patch.dict(os.environ, {'COH_CLIENT_ARCH': arch}):
             return value.character_evidence()
 
+    def recorded_not_judged(self, value):
+        proof = self.save(value)
+        self.assertTrue(proof['committed_sql_verified'])
+        comparison = proof['enhancement_preservation']
+        self.assertEqual((comparison['status'], comparison['verified'], comparison['play_change_recorded']),
+                         ('changed_in_play', False, True))
+        self.assertNotIn('enhancements_preserved', proof)
+        value.sql.assert_not_called()
+        return proof
+
     def test_existing_equal_inventory_and_one_addition_complete_normal_save(self):
         for added in (False, True):
             with self.subTest(added=added):
@@ -164,9 +174,13 @@ class EnhancementAdditions(unittest.TestCase):
                 leaf.chmod(0o400)
             return descriptor
         with patch.object(server.os, 'open', side_effect=replace_after_open):
+            self.recorded_not_judged(value)
+        strict = self.instance()
+        strict.sql_rows.return_value.append(self.boost(0))
+        with patch.object(server.os, 'open', side_effect=replace_after_open):
             with self.assertRaises(server.base.DiagnosticError):
-                self.save(value)
-        self.assertFalse(value.creation_report['committed_sql_verified'])
+                self.save(strict, arch='x86')
+        self.assertFalse(strict.creation_report['committed_sql_verified'])
 
     def test_removal_mutation_reparenting_duplicates_and_noncanonical_additions_refused(self):
         mutations = {
@@ -185,14 +199,22 @@ class EnhancementAdditions(unittest.TestCase):
             'slot_limit': lambda rows: rows[1].update(idx=70),
             'unknown_power_path': lambda rows: rows[1].update(boostname=100001),
         }
+        # 0.13.83: rows that are not a character's own valid enhancement rows are still refused;
+        # every other change is what a played hero does (slot, combine, sell, delete) and is
+        # recorded without deciding the launch. The x86 client keeps the strict policy.
+        malformed = {'duplicate_slot', 'duplicate_subid', 'foreign', 'slot_limit'}
         for name, change in mutations.items():
-            with self.subTest(name=name):
-                value = self.instance()
-                value.sql_rows.return_value.append(self.boost(0))
-                change(value.sql_rows.return_value)
-                with self.assertRaises(server.base.DiagnosticError):
-                    self.save(value)
-                self.assertFalse(value.creation_report['committed_sql_verified'])
+            for arch in ('arm64', 'x86'):
+                with self.subTest(name=name, arch=arch):
+                    value = self.instance()
+                    value.sql_rows.return_value.append(self.boost(0))
+                    change(value.sql_rows.return_value)
+                    if arch == 'arm64' and name not in malformed:
+                        self.recorded_not_judged(value)
+                        continue
+                    with self.assertRaises(server.base.DiagnosticError):
+                        self.save(value, arch=arch)
+                    self.assertFalse(value.creation_report['committed_sql_verified'])
 
     def test_x86_keeps_strict_policy_and_other_character_fields_still_fail(self):
         for changed in ('x86', 'costume', 'identity', 'login_count'):
@@ -237,9 +259,11 @@ class EnhancementAdditions(unittest.TestCase):
                     value.definition_link.unlink(); value.definition_link.write_bytes(self.definition)
                 if changed == 'receipt':
                     value.ctx.report['client_worktree']['imported_inputs_readonly'] = False
-                with self.assertRaises(server.base.DiagnosticError):
-                    self.save(value)
-                self.assertFalse(value.creation_report['committed_sql_verified'])
+                # 0.13.83 (Thor 0.13.82, export 20261124-181441: FileNotFoundError in a shared zone
+                # tree): an addition whose definition cannot be checked is not "verified additive";
+                # it is recorded as a change in play and the launch is not failed for it.
+                proof = self.recorded_not_judged(value)
+                self.assertNotIn('additive_inventory', proof['enhancement_preservation'])
 
     def test_missing_logout_or_session_binding_cannot_authorize_additions(self):
         for changed in ('delivery', 'session', 'native_logout', 'forced_stop'):

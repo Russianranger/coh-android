@@ -247,7 +247,8 @@ class SidebarCommandTests(unittest.TestCase):
             'private void controllerCommand(', 'private boolean controllerCaptures(', 'private void refreshControllerCapture(',
             'private boolean controllerKey(')]
         start = text.index('        typeText=button("Send text / L3"')
-        end = text.index('        controls.addView(text("Atlas movement', start)
+        # 0.13.83: the commands sit on the Play tab; Save / log out follows the FPS row there.
+        end = text.index('        saveLogout=button("Save character / log out"', start)
         cls.directory = tempfile.TemporaryDirectory(prefix='coh-sidebar-ui-')
         cls.path = Path(cls.directory.name)
         host = cls.path/'SidebarHost.java'

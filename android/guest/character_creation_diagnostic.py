@@ -464,6 +464,11 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         tick = getattr(self.local_server, 'tick_travel_requests', None)
         if tick is not None:
             tick()
+        # 0.13.83: a zone server's own "the hero has resumed" line is acted on now, not at the
+        # next inspection slot (up to 15 s later): the same inspection, run early.
+        peek = getattr(self.local_server, 'ready_line_peek', None)
+        if peek is not None and peek():
+            self.observe_console()
 
     def observe_console(self):
         output, launch, console = super().observe_console()

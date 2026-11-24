@@ -414,6 +414,77 @@ source-reading studies (upstream/ouroboros, with file:line evidence):
   timeout; memory per process is unmeasured (0.13.53 adds `rss_kib` per
   process to `server-metrics.jsonl`).
 
+## 0.13.83 (98): menu tabs and option categories, arrival acted on at once, missions scoped
+
+Owner, 2026-11-24 (with exports 20261124-181424 setup, -181441 A, -182926 B of
+0.13.82): "null" is fixed (it was the chat line of a rescued citizen); both
+tests passed; the third zone server "edges pretty close to the limit of the
+device" and should be "in its own category of optional"; recommended options
+in their own category, experimental "for ones that had no apparent benefit",
+a "test" category "for ones we are actively testing"; the menu cleaned up with
+"the actively used commands towards the top and options be in a separate
+tab"; then the roadmap: "server start and zoning is in a good place, the next
+would be missions".
+
+- **Thor 0.13.82.** `ready_records` 30 and 38 from the console, 0 from the
+  entity log. `native_ready_to_observation_ms` 7,174 (A) and 8,945 (B); by
+  the lifecycle the FPS buttons opened 9.4 s and 11.3 s after `ready.sent`
+  (73-74 s in 0.13.81). Trips, client `xfer.wait` to `ready.sent`: 24.8,
+  25.9, 21.2 s through a warm spare (11.8-14.5 s to the address, 2.0-2.2 s
+  to `map.start`, 7.3-8.9 s load); 30.9 s with a spare loaded 17 s before;
+  10.0 and 9.4 s back to the kept zone (0.5 s to the address).
+  `keep_previous_zone.kept` 1, one eviction when a third spare needed room.
+  Lowest `MemAvailable` 3,460 MiB with three servers (4,942 without),
+  `SwapFree` 1,719 MiB (2,084). One arrival was recorded 9.7 s after its
+  `resume_utc_ms`. `ARMPORT_GROUP_LOAD_V1`: `full_ms` 3,939-5,327, of it
+  `read_ms` 1,357-2,516 and `geoload_ms` 247-542.
+- **Launch A "failed"** only by `enhancement_preservation`: two inventory
+  enhancements gained in play; `observed_inventory_boost_definitions` raised
+  FileNotFoundError (the runtime it looks in is not the shared zone tree).
+  `local_character_server.enhancement_change_in_ordinary_play()` (ARM64, no
+  task profile, ordinary logout observed, session binding) now records
+  `status: changed_in_play` instead of failing; malformed rows and the x86
+  client keep the strict policy (`armport/tests/test_enhancement_additions.py`).
+- **Arrival acted on at once.** The console line was read immediately but
+  only at the next inspection: `character_evidence` and `_poll_stock_logs`
+  each run every `POLL_SECONDS` 15 s inside the five-second loop.
+  `character_zoning.ready_line_peek()` (called from
+  `character_creation_diagnostic.between_polls`, throttled to 0.5 s) finds a
+  new `ARMPORT_CLIENT_READY_V1 utc_ms=` in an owned console with one
+  `bytearray.rfind`, makes both inspections due and the loop runs
+  `observe_console()` now; two repeats 2 s apart while the first connection
+  is not established. Report: `character_zoning.ready_peeks`.
+- **Menu** (`ClientActivity.java`): state lines above a tab row; pages built
+  by `buildPlayPage`, `buildOptionsPage`, `buildSetupPage`; `selectTab`
+  remembers the tab (`coh.tab`) and the menu opens on Play during a game.
+  Options: `category()` headings Recommended (19), Optional
+  (`keepPreviousZone`), Test (none), Experimental (`prestartNextZone`,
+  `idleResidentMaps`, `sharedHeap`, `glDirect`, `clientGroupBins`).
+  `optionalOptions()` are named on the status line, never counted as a
+  difference, and left alone by "Restore recommended options"; the report's
+  `options_off_recommended` still lists them. `optionsNotice` repeats the
+  line above the tabs when something differs. Local compile check (new):
+  the app's sources against `android-33/android.jar` from a sparse clone of
+  Sable/android-platforms, 162 classes; no Android run.
+  `tools/android/test_recommended_options.py` (`OptionCategories`).
+- **Missions, scoped.** A mission is `teamStartMap` creating a non-static
+  map container with `MapName` and `MissionInfo`; the external-maps layer
+  already publishes it and `zone_travel.decide` delinks it (`not_static`).
+  The supervisor's entry now keeps `mission_info` (240 characters). What a
+  mission map needs that a zone has: (1) assets: 5,105 map files under
+  `maps/missions` in 503 folders; the first one audited needs 333 geometry
+  files of which 24 are in no published pack (MISSION_AUDIT_PLACEHOLDER);
+  (2) a zone-layer path for a dynamic map id (`MAPS`, `register_zone`,
+  `supported`, console route, arrival, eviction; while in a mission the zone
+  the hero came from should be kept instead of a spare); (3) navigation
+  graphs for mission maps (none exist; the pack covers the 66 zones);
+  (4) door lists: each static map sends its doors to the DbServer
+  (`DBCLIENT_SEND_DOORS`), so only zones that have run are known. Debug
+  commands for CI and the Thor (everyone has access level 9):
+  `startmission <task> *` (assign and enter without a door),
+  `missionxmap`, `gotomission`, `exitmission`, `completemission`.
+- **Chain.** CHAIN83_PLACEHOLDER
+
 ## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
 
 From the Thor test of 0.13.81 (exports 20261124-043617 A defaults, -044655 B

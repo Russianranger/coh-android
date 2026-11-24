@@ -470,6 +470,10 @@ def stock_ready(logs, map_id, minimum_ms, now_ms):
 CONSOLE_READY = re.compile(rb'^ARMPORT_CLIENT_READY_V1 utc_ms=([1-9][0-9]{12}) map_id=([1-9][0-9]{0,4}) '
                            rb'port=([1-9][0-9]{0,4}) name="([^"\r\n]{1,63})" auth="([^"\r\n]{1,31})"\r?$', re.M)
 CONSOLE_READY_ROUTE = 'owned_zone_server_console'
+CONSOLE_READY_PREFIX = b'ARMPORT_CLIENT_READY_V1 utc_ms='
+# Extra inspections one session may run for new resume lines (a trip prints one; 256 trips).
+READY_PEEK_LIMIT = 256
+READY_PEEK_SECONDS = 0.5
 READY_LOG_ROUTES = ('embedded_dbserver_logserver', CONSOLE_READY_ROUTE)
 KEEP_PREVIOUS_ZONE_ENV = 'COH_KEEP_PREVIOUS_ZONE'
 
@@ -2248,6 +2252,50 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 return value
             return None
         return self.stock_ready_now(self.active_map_id, self.ready_floor_ms, int(time.time() * 1000))
+
+    def ready_line_peek(self):
+        """0.13.83: whether an owned zone server has printed a resume line since the last look.
+
+        Thor 0.13.82 (exports 20261124-181441, -182926): the console line is read at once, but
+        only when the session next inspects the character: every 15 s for the first connection
+        (character.POLL_SECONDS) and for arrivals (_poll_stock_logs), inside a five-second loop.
+        The FPS buttons came alive 9.4 s and 11.3 s after the hero was in the world, and one
+        arrival was recorded 9.7 s late. This looks for the line's prefix in each owned console
+        (one bytearray search, no copy) and, when a new one is there, makes both inspections
+        due now. The caller then runs the ordinary inspection; nothing is decided here.
+        """
+        now = time.monotonic()
+        if now < getattr(self, 'ready_peek_next', 0):
+            return False
+        self.ready_peek_next = now + READY_PEEK_SECONDS
+        seen = self.__dict__.setdefault('ready_peek_offsets', {})
+        owned_keys, fresh = set(), False
+        for map_id, owned in list(getattr(self, 'maps', {}).items()):
+            try:
+                key = (map_id, owned.get('launch_utc_ms'))
+                at = owned['process'].output.rfind(CONSOLE_READY_PREFIX)
+            except (KeyError, AttributeError, TypeError, ValueError):
+                continue
+            owned_keys.add(key)
+            if at >= 0 and at > seen.get(key, -1):
+                seen[key] = at
+                fresh = True
+        for key in [key for key in seen if key not in owned_keys]:
+            del seen[key]
+        if fresh:
+            # The DbServer may not show the hero as connected in the same instant: look again twice.
+            self.ready_peek_retries, self.ready_peek_retry_at = 2, now + 2
+        elif (getattr(self, 'ready_peek_retries', 0) > 0 and now >= self.ready_peek_retry_at
+              and not self.creation_report.get('connected_on_atlas')):
+            self.ready_peek_retries -= 1
+            self.ready_peek_retry_at = now + 2
+        else:
+            return False
+        self.character_next = 0
+        self.stock_log_next = 0
+        counts = self.__dict__.setdefault('zoning_report', {}).setdefault('ready_peeks', {'format': 1, 'count': 0})
+        counts['count'] += 1
+        return counts['count'] <= READY_PEEK_LIMIT
 
     def stock_ready_now(self, map_id, minimum_ms, now_ms, logs=None):
         """This character's resume on a zone: its server's console line when it prints one, else the entity log."""
