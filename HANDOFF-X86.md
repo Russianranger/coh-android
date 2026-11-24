@@ -472,8 +472,13 @@ would be missions".
   already publishes it and `zone_travel.decide` delinks it (`not_static`).
   The supervisor's entry now keeps `mission_info` (240 characters). What a
   mission map needs that a zone has: (1) assets: 5,105 map files under
-  `maps/missions` in 503 folders; the first one audited needs 333 geometry
-  files of which 24 are in no published pack (MISSION_AUDIT_PLACEHOLDER);
+  `maps/missions` in 503 folders; one map of each folder audited
+  (`docs/android-evidence/mission-asset-audit-20261124.json`): 1,686
+  geometry files named, 488 of them outside the retained baseline and all
+  488 in the zones supplement the Thor has imported, so no new asset pack;
+  the shared zone tree installs only the zones' collision leaves
+  (`zone_index.COLLISION_FILES`) and needs the missions' as well; 48 of the
+  503 maps have unresolved source edges; textures are not checked;
   (2) a zone-layer path for a dynamic map id (`MAPS`, `register_zone`,
   `supported`, console route, arrival, eviction; while in a mission the zone
   the hero came from should be kept instead of a spare); (3) navigation

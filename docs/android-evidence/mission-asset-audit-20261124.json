@@ -1,0 +1,4032 @@
+{
+ "format": 1,
+ "scope": "mission_map_source_closure_one_layout_per_folder_v1",
+ "date": "2026-11-24",
+ "method": "tools/android/interactive audit_kings_row_foundation.group_requests over the first map file (sorted) of every folder under maps/missions; geometry compared with kings.retained_inventory and assets/zones-world-supplement-manifest.json; no archive is read",
+ "mission_map_files": 5105,
+ "folders": 503,
+ "maps_audited": 503,
+ "geometry_files_named": 1686,
+ "geometry_not_in_retained_baseline": 488,
+ "geometry_in_neither_baseline_nor_zones_supplement": [],
+ "maps_with_unresolved_source_edges": 48,
+ "zones_supplement_files_sha256": "3f865cb1a50eb6467ab4da6ffd435a26ee69111eb83bb093b9fbf425016aba6e",
+ "limitations": [
+  "One layout per folder: other layouts of a folder can name more files.",
+  "Textures are referenced from geometry files and are not checked here; the zones supplement holds every missing original texture of the frozen donor tables.",
+  "Source closure only: no mission map has been loaded by a server or a client."
+ ],
+ "geometry_not_in_retained_baseline_files": [
+  "data/object_library/buildings/elements/bldg_stains/bldg_stains.geo",
+  "data/object_library/buildings/elements/decor_exterior/awning/awning.geo",
+  "data/object_library/buildings/elements/ruined_roofs/ruined_roofs.geo",
+  "data/object_library/buildings/style/deco/deco12/deco12.geo",
+  "data/object_library/buildings/style/deco/deco13/deco13.geo",
+  "data/object_library/buildings/style/deco/deco14/deco14.geo",
+  "data/object_library/buildings/style/deco/deco15/deco15.geo",
+  "data/object_library/buildings/style/deco/deco16/deco16.geo",
+  "data/object_library/buildings/style/deco/deco17/deco17.geo",
+  "data/object_library/buildings/style/deco/deco2/deco2.geo",
+  "data/object_library/buildings/style/deco/deco3/deco3.geo",
+  "data/object_library/buildings/style/deco/deco4/deco4.geo",
+  "data/object_library/buildings/style/deco/deco5/deco5.geo",
+  "data/object_library/buildings/style/deco/deco6/deco6.geo",
+  "data/object_library/buildings/style/deco/deco7/deco7.geo",
+  "data/object_library/buildings/style/deco/deco8/deco8.geo",
+  "data/object_library/buildings/style/factories/fact01/fact01.geo",
+  "data/object_library/buildings/style/factories/fact02/fact02.geo",
+  "data/object_library/buildings/style/factories/fact03/fact03.geo",
+  "data/object_library/buildings/style/factories/fact04/fact04.geo",
+  "data/object_library/buildings/style/factories/fact06/fact06.geo",
+  "data/object_library/buildings/style/factories/fact07/fact07.geo",
+  "data/object_library/buildings/style/factories/fact08/fact08.geo",
+  "data/object_library/buildings/style/factories/fact12/fact12.geo",
+  "data/object_library/buildings/style/factories/fact14/fact14.geo",
+  "data/object_library/buildings/style/factories/towers/towers_sml/towers_sml.geo",
+  "data/object_library/buildings/style/ruin/ruin_modules/ruin_modules.geo",
+  "data/object_library/buildings/style/ruin/ruin_modules_lods/ruin_modules_lods.geo",
+  "data/object_library/city_zones/canals/canal_plazas/canal_plazas.geo",
+  "data/object_library/city_zones/canals/canal_roofs/canal_roofs.geo",
+  "data/object_library/city_zones/canals/canalbridges/canalbridges.geo",
+  "data/object_library/city_zones/cem_walls/cem_walls.geo",
+  "data/object_library/city_zones/croatoa/croatoa_fences/croatoa_fences.geo",
+  "data/object_library/city_zones/dam_concrete/dam_concrete.geo",
+  "data/object_library/city_zones/elements/hero_statues/fem_statue_steel_2/fem_statue_steel_2.geo",
+  "data/object_library/city_zones/elements/hero_statues/fem_statue_stone_dirty_1/fem_statue_stone_dirty_1.geo",
+  "data/object_library/city_zones/elements/hero_statues/fem_statue_stone_dirty_2/fem_statue_stone_dirty_2.geo",
+  "data/object_library/city_zones/elements/hero_statues/fem_statue_stone_dirty_3/fem_statue_stone_dirty_3.geo",
+  "data/object_library/city_zones/elements/hero_statues/huge_statue_stone_1/huge_statue_stone_1.geo",
+  "data/object_library/city_zones/elements/hero_statues/huge_statue_stone_2/huge_statue_stone_2.geo",
+  "data/object_library/city_zones/elements/hero_statues/huge_statue_stone_dirty_1/huge_statue_stone_dirty_1.geo",
+  "data/object_library/city_zones/elements/hero_statues/huge_statue_stone_dirty_2/huge_statue_stone_dirty_2.geo",
+  "data/object_library/city_zones/elements/hero_statues/male_statue_stone_dirty_1/male_statue_stone_dirty_1.geo",
+  "data/object_library/city_zones/elements/hero_statues/male_statue_stone_dirty_2/male_statue_stone_dirty_2.geo",
+  "data/object_library/city_zones/elements/hero_statues/male_statue_stone_dirty_4/male_statue_stone_dirty_4.geo",
+  "data/object_library/city_zones/environightmare/junk_panels/junk_panels.geo",
+  "data/object_library/city_zones/faultline_base/faultline_base.geo",
+  "data/object_library/city_zones/graves_dirty/graves_dirty.geo",
+  "data/object_library/city_zones/kings_row/kings_row_buildings/kings_row_buildings.geo",
+  "data/object_library/city_zones/newplayer_tutorial/npy_cusrtom_roads_01.geo",
+  "data/object_library/city_zones/park_shore/park_shore.geo",
+  "data/object_library/city_zones/pedestals_dirty/pedestals_dirty.geo",
+  "data/object_library/city_zones/peregrine_isle/ferry/ferry.geo",
+  "data/object_library/city_zones/praetoria/extras/p_containers.geo",
+  "data/object_library/city_zones/praetoria/first_ward/buildings/skyscrapers/heavydamage/fw_cheaprubble.geo",
+  "data/object_library/city_zones/praetoria/first_ward/buildings/skyscrapers/heavydamage/heavy_damage.geo",
+  "data/object_library/city_zones/praetoria/first_ward/buildings/skyscrapers/heavydamage/heavy_damage2.geo",
+  "data/object_library/city_zones/praetoria/first_ward/buildings/skyscrapers/lightdamage/fw_skyscrapers.geo",
+  "data/object_library/city_zones/praetoria/first_ward/props/destroyedtrolleystop/fw_destroyedtrolleystop.geo",
+  "data/object_library/city_zones/praetoria/first_ward/props/streetprops/streetprops_dmged.geo",
+  "data/object_library/city_zones/praetoria/first_ward/props/stronghold/stronghold_01.geo",
+  "data/object_library/city_zones/praetoria/imperial/decals/p_imp_water_pools.geo",
+  "data/object_library/city_zones/praetoria/telephone_poles/telephone_poles.geo",
+  "data/object_library/city_zones/rikti_crash/blast_marks/blast_marks.geo",
+  "data/object_library/city_zones/rikti_crash/bunker/bunker.geo",
+  "data/object_library/city_zones/rikti_crash/tank_trap/tank_trap.geo",
+  "data/object_library/city_zones/rikti_crash/truck_a/truck_a.geo",
+  "data/object_library/city_zones/rikti_crash/truck_a_ruin/truck_a_ruin.geo",
+  "data/object_library/city_zones/shadow_shard/ss_nature/ss_nature.geo",
+  "data/object_library/city_zones/statues_dirty/statues_dirty_lg/statues_dirty_lg.geo",
+  "data/object_library/city_zones/statues_dirty/statues_dirty_md/statues_dirty_md.geo",
+  "data/object_library/city_zones/twisted_trees/twisted_trees.geo",
+  "data/object_library/doors/5th_col_doors/5th_col_doors.geo",
+  "data/object_library/doors/cot_doors_wood/cot_doors.geo",
+  "data/object_library/doors/door_beacons/door_beacons.geo",
+  "data/object_library/doors/rollup_doors/rollup_doors.geo",
+  "data/object_library/doors/ruin_doors/ruin_doors.geo",
+  "data/object_library/doors/ship_doors/ship_doors.geo",
+  "data/object_library/doors/slum_doors/slum_doors.geo",
+  "data/object_library/doors/tech_doors/tech_doors.geo",
+  "data/object_library/fx/world/lairs/crey_hero_bubbles.geo",
+  "data/object_library/nature/abyss_cliffs/abyss_cliffs_short/abyss_cliffs_short.geo",
+  "data/object_library/nature/abyss_waterfalls/abyss_waterfalls.geo",
+  "data/object_library/nature/bushes/cattails/cattails.geo",
+  "data/object_library/nature/cliffs_mediterranean/cliffs_mediterranean.geo",
+  "data/object_library/nature/elements/plant_pots/plant_pots.geo",
+  "data/object_library/nature/elements/ruined_plant_pots/ruined_plant_pots.geo",
+  "data/object_library/nature/hills/hills_half/hills_half.geo",
+  "data/object_library/nature/rocks/abyss_rocks/abyss_rocks.geo",
+  "data/object_library/nature/trees/canopytrees/canopytrees.geo",
+  "data/object_library/nature/water/forest_water/forest_water.geo",
+  "data/object_library/nature/water/muddy_water/p_muddywater.geo",
+  "data/object_library/nature/water/sludge_water/sludge_water.geo",
+  "data/object_library/omni/encounterspawns/trial_01_01/trial_01_01.geo",
+  "data/object_library/omni/entblockers/entblockers.geo",
+  "data/object_library/omni/environmentcollision/sludge_water/sludge_water.geo",
+  "data/object_library/omni/vol_trigger_walls/vol_trigger_walls.geo",
+  "data/object_library/p_warehouse/props/conveyorbelts/p_warehouse_conveyors.geo",
+  "data/object_library/p_warehouse/props/proppedshelves/p_warehouse_proppedshelves.geo",
+  "data/object_library/signaturestories/pandorasbox/props/ss_pandorasbox_props.geo",
+  "data/object_library/sky/sky_cimerora/sky_cimerora.geo",
+  "data/object_library/sky/sky_praetoria/sky_praetoria_01.geo",
+  "data/object_library/sky/sky_ruin01/sky_ruin01.geo",
+  "data/object_library/special_buildings/arena/arena_exterior/arena_exterior.geo",
+  "data/object_library/special_buildings/shop_interiors/shop_int_a/shop_int_a.geo",
+  "data/object_library/special_buildings/shop_interiors/shop_int_elements/shop_int_elements.geo",
+  "data/object_library/special_buildings/shop_interiors/shop_int_frdcrp/shop_int_frdcrp.geo",
+  "data/object_library/special_buildings/shop_interiors/shop_int_sci/shop_int_sci.geo",
+  "data/object_library/special_buildings/shop_interiors/shop_int_tech/shop_int_tech.geo",
+  "data/object_library/special_buildings/shops/shops.geo",
+  "data/object_library/streets/elements/docks/barge_a/barge_a.geo",
+  "data/object_library/streets/elements/docks/bouys/bouys.geo",
+  "data/object_library/streets/elements/docks/cranes/cranes.geo",
+  "data/object_library/streets/elements/docks/parked_bigships/parked_bigships.geo",
+  "data/object_library/streets/elements/kiosk_ruined/kiosk_ruined.geo",
+  "data/object_library/streets/elements/lights/gaslamps/gaslamps.geo",
+  "data/object_library/streets/elements/signs/construction_signs/construction_signs.geo",
+  "data/object_library/streets/elements/signs/freeway/freeway_alphabet/freeway_alphabet.geo",
+  "data/object_library/streets/elements/signs/freeway/freeway_alphabet_lg/freeway_alphabet_lg.geo",
+  "data/object_library/streets/elements/signs/freeway/freeway_alphabet_md/freeway_alphabet_md.geo",
+  "data/object_library/streets/elements/signs/shop_signs/shop_signs.geo",
+  "data/object_library/streets/shoreline/beach_gravel/beach_gravel.geo",
+  "data/object_library/streets/shoreline/docks_wd/docks_wd_pieces01/docks_wd_pieces01.geo",
+  "data/object_library/streets/shoreline/piers/piers.geo",
+  "data/object_library/streets_ruined/eltrain_ruined/eltrain_ruined.geo",
+  "data/object_library/streets_ruined/ruin_elements/rubble/rubble_small/rubble_small.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruin_decals/ruin_i_beams/ruin_i_beams.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruin_decals/ruin_wall_slabs/ruin_wall_slabs.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruin_signs/ruin_filler_bldgs/ruin_filler_bldgs.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruin_signs/ruin_freeway/ruin_frwy_alphabet_lg/ruin_frwy_alphabet_lg.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruin_signs/ruin_freeway/ruin_frwy_signs/ruin_frwy_signs.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruin_signs/ruin_xtralarge/ruin_xtralarge.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruined_cars/ruin_lux1/ruin_lux1.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruined_cars/ruin_sport1/ruin_sport1.geo",
+  "data/object_library/streets_ruined/ruin_elements/ruined_cars/ruin_sport2/ruin_sport2.geo",
+  "data/object_library/streets_ruined/ruin_elevation_filler/ruin_elevation_filler.geo",
+  "data/object_library/streets_ruined/ruin_overpass/ruin_overpass.geo",
+  "data/object_library/streets_ruined/ruined_gaurdrail/ruined_gaurdrail.geo",
+  "data/object_library/v_cov/bases/details/decorative/decorative.geo",
+  "data/object_library/v_cov/bases/details/decorative_liquid/baseliquid_medical/baseliquid_medical.geo",
+  "data/object_library/v_cov/bases/details/decorative_swr/decorative_swr.geo",
+  "data/object_library/v_cov/bases/details/functional/base_control_aux_tech/base_control_aux_tech.geo",
+  "data/object_library/v_cov/bases/details/functional/base_medical_tech/base_medical_tech.geo",
+  "data/object_library/v_cov/bases/details/functional/base_medical_tech_aux/base_medical_tech_aux.geo",
+  "data/object_library/v_cov/buildings/bldg_elements/roof_elements/roof_elements.geo",
+  "data/object_library/v_cov/buildings/bldg_elements/simple_wires/simple_wires.geo",
+  "data/object_library/v_cov/buildings/special/cov_facemaker/cov_facemaker.geo",
+  "data/object_library/v_cov/buildings/special/shops/shops.geo",
+  "data/object_library/v_cov/buildings/style/gothic/detail_lod/detail_lod.geo",
+  "data/object_library/v_cov/buildings/style/gothic/gothic.geo",
+  "data/object_library/v_cov/buildings/style/gothic/gothic_neonshells/gothic_neonshells.geo",
+  "data/object_library/v_cov/buildings/style/gothic_bits/gothic_bits.geo",
+  "data/object_library/v_cov/buildings/style/gothic_filler/deralict/deralict.geo",
+  "data/object_library/v_cov/buildings/style/gothic_filler/gothic_fillers/gothic_fillers.geo",
+  "data/object_library/v_cov/city_zones/cap_au_diable/phone_booth/phone_booth.geo",
+  "data/object_library/v_cov/city_zones/mercy/arachnos_citywall/arachnos_citywall.geo",
+  "data/object_library/v_cov/city_zones/mercy/arachnos_flyer/arachnos_flyer.geo",
+  "data/object_library/v_cov/city_zones/mercy/car_barricades/mcy_carb.geo",
+  "data/object_library/v_cov/city_zones/mercy/destroyeda_frame/destroyeda_frame.geo",
+  "data/object_library/v_cov/city_zones/mercy/gothic_clocktower/gothic_clocktower.geo",
+  "data/object_library/v_cov/city_zones/mercy/snakepit/snakepit.geo",
+  "data/object_library/v_cov/city_zones/mercy/tiki_mask/tiki_mask.geo",
+  "data/object_library/v_cov/city_zones/portoaks/elements/elements.geo",
+  "data/object_library/v_cov/city_zones/portoaks/mont_diable/mont_diable.geo",
+  "data/object_library/v_cov/city_zones/sharkhead_isle/bulldozer/bulldozer.geo",
+  "data/object_library/v_cov/city_zones/sharkhead_isle/longbow_submarine/longbow_submarine.geo",
+  "data/object_library/v_cov/city_zones/sharkhead_isle/submarine/submarine.geo",
+  "data/object_library/v_cov/city_zones/signature_statues/recluse_statue_gdc/recluse_statue_gdc.geo",
+  "data/object_library/v_cov/city_zones/stmartial/tikicasino/tikicasino.geo",
+  "data/object_library/v_cov/common_decor/art_decor/gargoyles_md/gargoyles_md.geo",
+  "data/object_library/v_cov/common_decor/art_decor/pedestals/pedestals.geo",
+  "data/object_library/v_cov/common_decor/medical/rec_pad_vln/rec_pad_vln.geo",
+  "data/object_library/v_cov/common_decor/shanty/shn_shkt_01/shn_shkt_01.geo",
+  "data/object_library/v_cov/destructible_objects/v_destructible_bes_obelisk/v_destructible_bes_obelisk.geo",
+  "data/object_library/v_cov/doors/snakeholes/snakeholes.geo",
+  "data/object_library/v_cov/streets/docks/boats/doc_fshb/doc_fshb.geo",
+  "data/object_library/v_cov/streets/docks/boats/doc_lrg_boats/doc_lrg_boats.geo",
+  "data/object_library/v_cov/streets/docks/boats/doc_sm_boats/doc_sm_boats.geo",
+  "data/object_library/v_cov/streets/docks/boats/houseboats/houseboats.geo",
+  "data/object_library/v_cov/streets/docks/elements/gen_doc_elemnts/gen_doc_elemnts.geo",
+  "data/object_library/v_cov/streets/docks/structure/dock_bldg_sm/dock_bldg_sm.geo",
+  "data/object_library/v_cov/streets/elements/benches/benches.geo",
+  "data/object_library/v_cov/streets/elements/decals/water_puddles/water_puddles.geo",
+  "data/object_library/v_cov/streets/irregular/irregular.geo",
+  "data/object_library/v_cov/streets/irregular_elevated_16/irregular_elevated_16.geo",
+  "data/object_library/v_cov/streets/irregular_thin/irregular_thin.geo",
+  "data/object_library/v_cov/streets/irregular_thin_elevated_16/irregular_thin_elevated_16.geo",
+  "data/object_library/v_cov/streets/trucks/trucks.geo",
+  "data/object_library/v_cov/streets/walls/downtown_walls/downtown_walls.geo",
+  "data/object_library/v_cov/v_sky/v_sky.geo",
+  "data/object_library/v_cov/villian_lairs/arachnoid/anoid_elements/anoid_elements.geo",
+  "data/object_library/v_cov/villian_lairs/arachnoid/anoid_lrg_caves/anoid_lrg_caves.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/arachnos_computers/arachnos_computers.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/arachnos_conference/arac_conference.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/arachnos_doors/arachnos_doors.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/arachnos_logo/arachnos_logo.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/arachnos_logo/decals/decals.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/arachnos_observatory/arachnos_observatory.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/banners/banners.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/arach_misc/arach_misc.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/elevators/elevators.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/mission_objectives/mission_objectives.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/interior_wires/interior_wires.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/pipes/pipes.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/prefabs/prefab_arachnos_pipes/pipes_ground/pipes_ground.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/prefabs/prefab_arachnos_pipes/pipes_ground_sml/pipes_ground_sml.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/prefabs/prefab_arachnos_pipes/pipes_ground_xsml/pipes_ground_xsml.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/prefabs/prefab_arachnos_pipes/pipes_mod_ledge/pipes_mod_ledge.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/prefabs/prefab_arachnos_pipes/pipes_wall/pipes_wall.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/prop_monitors/prop_monitors.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/signs/aracblbd01.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/vats/vats.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/elements/wallpanels/wallpanels.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/arac_powercore/arac_powercore.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/arach_elev_exterior/arach_elev_exterior.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/arachnos_filler/arachnos_filler.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/arachnos_interior/arachnos_interior.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/arachnos_interior_customs/arachnos_interior_customs.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/arachnos_undertray/arachnos_undertray.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/archways/archways.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/bunkers/bunkers.geo",
+  "data/object_library/v_cov/villian_lairs/arachnos/structure/ghost_widow_tower/ghost_widow_tower.geo",
+  "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_lobbies/bus_lobbies_trays/bus_lobbies_trays.geo",
+  "data/object_library/v_cov/villian_lairs/longbow/elements/elements.geo",
+  "data/object_library/v_cov/villian_lairs/shops/v_casino/v_casino.geo",
+  "data/object_library/v_cov/villian_lairs/snake_lairs/elements/elements.geo",
+  "data/object_library/villain_lairs/5th_column/elements/rocks/rocks.geo",
+  "data/object_library/villain_lairs/5th_column/elements/vampiri_chamber/vampiri_chamber.geo",
+  "data/object_library/villain_lairs/5th_column/structure/catwalks/catwalks.geo",
+  "data/object_library/villain_lairs/5th_column/structure/other/other.geo",
+  "data/object_library/villain_lairs/5th_column/structure/walls_floors/walls_floors.geo",
+  "data/object_library/villain_lairs/5th_column/trays/doors/doors.geo",
+  "data/object_library/villain_lairs/5th_column/trays/elevation/elevation.geo",
+  "data/object_library/villain_lairs/5th_column/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/5th_column/trays/rooms/3way/3way.geo",
+  "data/object_library/villain_lairs/5th_column/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/5th_column/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/5th_column/trays/rooms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/5th_column/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/5th_column/trays/start/start.geo",
+  "data/object_library/villain_lairs/abandoned_offices/elements/lights/lights.geo",
+  "data/object_library/villain_lairs/abandoned_offices/structure/balcony/balcony.geo",
+  "data/object_library/villain_lairs/abandoned_offices/structure/pillars/pillars.geo",
+  "data/object_library/villain_lairs/abandoned_offices/structure/tilefloors/tilefloors.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/doors/doors.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/elevation/elevation.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/rooms/3way/3way.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/rooms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/abandoned_offices/trays/start/start.geo",
+  "data/object_library/villain_lairs/abandoned_tech/abndntechstructure/abndntechstructure.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/elements/lights/lights.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/elements/racks/racks.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/structure/walls/walls.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/doors/doors.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/rooms/3way/3way.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/rooms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/abandoned_warehouse/trays/start/start.geo",
+  "data/object_library/villain_lairs/caves/elements/decor/decor.geo",
+  "data/object_library/villain_lairs/caves/elements/liquids/liquids.geo",
+  "data/object_library/villain_lairs/caves/elements/water/water.geo",
+  "data/object_library/villain_lairs/caves/structure/beams/beams.geo",
+  "data/object_library/villain_lairs/caves/structure/rock_lava/rock_lava.geo",
+  "data/object_library/villain_lairs/caves/structure/rock_mineral/rock_mineral.geo",
+  "data/object_library/villain_lairs/caves/structure/rock_structure/rock_structure.geo",
+  "data/object_library/villain_lairs/caves/structure/tracks/tracks.geo",
+  "data/object_library/villain_lairs/caves/trays/doors/doors.geo",
+  "data/object_library/villain_lairs/caves/trays/elevation/elevation.geo",
+  "data/object_library/villain_lairs/caves/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/caves/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/caves/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/caves/trays/rooms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/caves/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/caves/trays/start/start.geo",
+  "data/object_library/villain_lairs/caves_smooth/caves_smth_elmnts/caves_smth_elmnts.geo",
+  "data/object_library/villain_lairs/caves_smooth/caves_smth_elmnts/ruladak_elements/ruladak_elements.geo",
+  "data/object_library/villain_lairs/caves_smooth/caves_smth_trays/caves_smth_elev/caves_smth_elev.geo",
+  "data/object_library/villain_lairs/caves_smooth/caves_smth_trays/caves_smth_rms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/caves_smooth/caves_smth_trays/caves_smth_start/caves_smth_start.geo",
+  "data/object_library/villain_lairs/caves_smooth/caves_smth_trays/caves_smth_trans/caves_smth_trans.geo",
+  "data/object_library/villain_lairs/cot/elements/lightbeams/lightbeams.geo",
+  "data/object_library/villain_lairs/cot/elements/props/cot_bookcasepropped.geo",
+  "data/object_library/villain_lairs/cot/elements/rubble/rubble.geo",
+  "data/object_library/villain_lairs/cot/structure/balconies/balconies.geo",
+  "data/object_library/villain_lairs/cot/structure/bridges/bridges.geo",
+  "data/object_library/villain_lairs/cot/structure/bridges/bridges_long/bridges_long.geo",
+  "data/object_library/villain_lairs/cot/structure/huts_sml/huts_sml.geo",
+  "data/object_library/villain_lairs/cot/structure/pillars/pillars.geo",
+  "data/object_library/villain_lairs/cot/structure/pillars_sml/pillars_sml.geo",
+  "data/object_library/villain_lairs/cot/structure/platforms/platforms.geo",
+  "data/object_library/villain_lairs/cot/structure/podiums/podiums.geo",
+  "data/object_library/villain_lairs/cot/structure/rock_structure/rock_structure.geo",
+  "data/object_library/villain_lairs/cot/structure/stairs/stairs.geo",
+  "data/object_library/villain_lairs/cot/trays/doors/doors.geo",
+  "data/object_library/villain_lairs/cot/trays/elevation/elevation.geo",
+  "data/object_library/villain_lairs/cot/trays/floors_ceilings/floors_ceilings.geo",
+  "data/object_library/villain_lairs/cot/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/cot/trays/rooms/3way/3way.geo",
+  "data/object_library/villain_lairs/cot/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/cot/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/cot/trays/rooms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/cot/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/cot/trays/start/start.geo",
+  "data/object_library/villain_lairs/devouredearth/de_seta.geo",
+  "data/object_library/villain_lairs/devouredearth/de_setb.geo",
+  "data/object_library/villain_lairs/first_ward/abandoned_office/elements/decals/p_abandoned_office_rubblepiles.geo",
+  "data/object_library/villain_lairs/first_ward/abandoned_office/elements/props/details/p_abndn_ofc_details.geo",
+  "data/object_library/villain_lairs/first_ward/abandoned_office/elements/props/planters/p_abndn_ofc_planter.geo",
+  "data/object_library/villain_lairs/first_ward/abandoned_office/elements/props/tables/p_abandoned_office_tables.geo",
+  "data/object_library/villain_lairs/first_ward/abandoned_office/elements/structural/balconies/p_abandoned_office_balconies.geo",
+  "data/object_library/villain_lairs/first_ward/abandoned_office/elements/structural/pillars/p_abandoned_office_pillar.geo",
+  "data/object_library/villain_lairs/first_ward/abandoned_office/elements/structural/stairs/p_abandoned_office_stairs.geo",
+  "data/object_library/villain_lairs/interdimensional/door/door.geo",
+  "data/object_library/villain_lairs/mansion/elements/lights/mansion_lighting.geo",
+  "data/object_library/villain_lairs/mansion/elements/props/basement/basement_o_horror_props.geo",
+  "data/object_library/villain_lairs/mansion/elements/props/bedroom/df_bedroom_props.geo",
+  "data/object_library/villain_lairs/mansion/elements/props/bedroom/df_bedroom_vanity.geo",
+  "data/object_library/villain_lairs/mansion/elements/props/mansion_props.geo",
+  "data/object_library/villain_lairs/mansion/elements/props/victim_portraits/df_victim_portraits.geo",
+  "data/object_library/villain_lairs/mansion/structure/dollface_mansion.geo",
+  "data/object_library/villain_lairs/mansion/structure/doors/mansion_doors_01.geo",
+  "data/object_library/villain_lairs/mansion/structure/mansion_interior.geo",
+  "data/object_library/villain_lairs/midnight_squad/elements/banners/mid_squad_banners.geo",
+  "data/object_library/villain_lairs/midnight_squad/elements/mid_squad_elements.geo",
+  "data/object_library/villain_lairs/midnight_squad/structure/mid_squad_structure.geo",
+  "data/object_library/villain_lairs/midnight_squad/structure/trays/trays.geo",
+  "data/object_library/villain_lairs/n_warehouse/pieces/p_warehouse_military_markings.geo",
+  "data/object_library/villain_lairs/nemesis/elements/bracing/bracing.geo",
+  "data/object_library/villain_lairs/nemesis/elements/gears_etc/gears_etc.geo",
+  "data/object_library/villain_lairs/nemesis/elements/lights/lights.geo",
+  "data/object_library/villain_lairs/nemesis/elements/nemesis_drill/nemesis_drill.geo",
+  "data/object_library/villain_lairs/nemesis/elements/pipes/pipes.geo",
+  "data/object_library/villain_lairs/nemesis/elements/pipes_outdoor/pipes_outdoor.geo",
+  "data/object_library/villain_lairs/nemesis/structure/plates/plates.geo",
+  "data/object_library/villain_lairs/nemesis/structure/shapes/shapes.geo",
+  "data/object_library/villain_lairs/nemesis/structure/tanks_caps/tanks_caps.geo",
+  "data/object_library/villain_lairs/office01/trays/elevation/elevation.geo",
+  "data/object_library/villain_lairs/office01/trays/rooms/3way/3way.geo",
+  "data/object_library/villain_lairs/office01/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/office01/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/ouroboros/elements/ouroboros_crystals/ouroboros_crystals.geo",
+  "data/object_library/villain_lairs/ouroboros/structure/ouroboros_structure.geo",
+  "data/object_library/villain_lairs/p_office/elements/furniture/p_office_furniture.geo",
+  "data/object_library/villain_lairs/p_tech/elements/hallway/hallway_elements_01.geo",
+  "data/object_library/villain_lairs/p_tech/elements/special/aux_reactor/p_tech_auxreactor_01.geo",
+  "data/object_library/villain_lairs/p_tech/elements/special/biological/biotowervats.geo",
+  "data/object_library/villain_lairs/p_tech/elements/special/mainframe/mainframe01.geo",
+  "data/object_library/villain_lairs/p_tech/elements/special/reactor/p_tech_reactor_01.geo",
+  "data/object_library/villain_lairs/p_tech/elements/special/warworks/warworks.geo",
+  "data/object_library/villain_lairs/p_tech/elements/standard/industrial/tech_crates.geo",
+  "data/object_library/villain_lairs/p_tech/elements/standard/industrial/tracksystem.geo",
+  "data/object_library/villain_lairs/p_tech/elements/standard/laboratory/ceilingfixtures.geo",
+  "data/object_library/villain_lairs/p_tech/elements/standard/power/cables_n_box.geo",
+  "data/object_library/villain_lairs/p_tech/structure/doors/p_tech_doors.geo",
+  "data/object_library/villain_lairs/p_tech/structure/doors/p_tech_elevator_01.geo",
+  "data/object_library/villain_lairs/p_tech/structure/hallway/p_tech_hallway.geo",
+  "data/object_library/villain_lairs/p_tech/structure/hallway/p_tech_hallway_extended.geo",
+  "data/object_library/villain_lairs/p_tech/structure/room/p_tech_room.geo",
+  "data/object_library/villain_lairs/p_tnl/elements/cables/cables.geo",
+  "data/object_library/villain_lairs/p_tnl/elements/generators/p_tnl_generator.geo",
+  "data/object_library/villain_lairs/p_tnl/elements/lights/lights.geo",
+  "data/object_library/villain_lairs/p_tnl/elements/misc/misc.geo",
+  "data/object_library/villain_lairs/p_tnl/elements/pipes/pipes_thick/pipes_thick.geo",
+  "data/object_library/villain_lairs/p_tnl/elements/pipes/pipes_thin/pipes_thin.geo",
+  "data/object_library/villain_lairs/p_tnl/elements/water_treatment/water_treatment.geo",
+  "data/object_library/villain_lairs/p_tnl/level_a/doors_destructible/doors_destructible.geo",
+  "data/object_library/villain_lairs/p_tnl/level_a/level_a.geo",
+  "data/object_library/villain_lairs/p_tnl/level_b/halls_b/halls_b.geo",
+  "data/object_library/villain_lairs/p_tnl/level_b/maint_shafts_b/maint_shafts_b.geo",
+  "data/object_library/villain_lairs/p_tnl/level_b/subway_b/subway_halls_b/subway_halls_b.geo",
+  "data/object_library/villain_lairs/p_tnl/level_b/subway_b/subway_tracks_b/subway_tracks_b.geo",
+  "data/object_library/villain_lairs/p_tnl/level_b/walls_b/wall_sockets_b/wall_sockets_b.geo",
+  "data/object_library/villain_lairs/p_tnl/level_b/walls_b/walls_b.geo",
+  "data/object_library/villain_lairs/p_tnl/level_c/halls/door/door.geo",
+  "data/object_library/villain_lairs/p_tnl/level_c/halls/misc/misc.geo",
+  "data/object_library/villain_lairs/p_tnl/level_c/halls/type_01/type_01.geo",
+  "data/object_library/villain_lairs/p_tnl/level_c/rooms/custom/custom.geo",
+  "data/object_library/villain_lairs/p_tnl/level_c/rooms/rooms.geo",
+  "data/object_library/villain_lairs/p_tnl/level_transitions/trans_a_to_b/trans_a_to_b.geo",
+  "data/object_library/villain_lairs/p_tnl/level_transitions/trans_b_to_c/trans_b_to_c.geo",
+  "data/object_library/villain_lairs/p_tnl/trays/trays.geo",
+  "data/object_library/villain_lairs/rikti/elements/cables/cables.geo",
+  "data/object_library/villain_lairs/rikti/elements/cables/med/med.geo",
+  "data/object_library/villain_lairs/rikti/elements/cables/thick/thick.geo",
+  "data/object_library/villain_lairs/rikti/elements/portal/portal.geo",
+  "data/object_library/villain_lairs/rikti/elements/spires/spires.geo",
+  "data/object_library/villain_lairs/rikti/rikti_heavy/rikti_heavy_debris/rikti_heavy_debris.geo",
+  "data/object_library/villain_lairs/rikti/rikti_shuttle/rikti_shuttle_destroyed.geo",
+  "data/object_library/villain_lairs/rikti/structure/balconies/balconies.geo",
+  "data/object_library/villain_lairs/rikti/structure/cielings/cielings.geo",
+  "data/object_library/villain_lairs/rikti/structure/floors/floors.geo",
+  "data/object_library/villain_lairs/rikti/structure/pillars/pillars.geo",
+  "data/object_library/villain_lairs/rikti/structure/rooms/rooms.geo",
+  "data/object_library/villain_lairs/rikti/structure/structure.geo",
+  "data/object_library/villain_lairs/rikti/structure/walls/walls.geo",
+  "data/object_library/villain_lairs/rome/elements/boats/roman_boats.geo",
+  "data/object_library/villain_lairs/rome/elements/furniture/furniture.geo",
+  "data/object_library/villain_lairs/rome/elements/harbor/mooring/mooring.geo",
+  "data/object_library/villain_lairs/rome/elements/misc/rmn_misc.geo",
+  "data/object_library/villain_lairs/rome/structure/aqueducts/rmn_aqueduct.geo",
+  "data/object_library/villain_lairs/rome/structure/bridge/rmn_bridge.geo",
+  "data/object_library/villain_lairs/rome/structure/buildings/buildings.geo",
+  "data/object_library/villain_lairs/rome/structure/ceiling/rmn_ceiling.geo",
+  "data/object_library/villain_lairs/rome/structure/columns/rmn_columns.geo",
+  "data/object_library/villain_lairs/rome/structure/custom/cimerora_foundations/cimerora_foundations.geo",
+  "data/object_library/villain_lairs/rome/structure/fountain/fountain.geo",
+  "data/object_library/villain_lairs/rome/structure/oracle/rmn_oracle.geo",
+  "data/object_library/villain_lairs/rome/structure/ramps/rmn_ramps_01.geo",
+  "data/object_library/villain_lairs/rome/structure/rmn_structure.geo",
+  "data/object_library/villain_lairs/rome/structure/stairs/rmn_stairs_01.geo",
+  "data/object_library/villain_lairs/rome/structure/temples/rmn_temples.geo",
+  "data/object_library/villain_lairs/rome/structure/walls/rmn_walls.geo",
+  "data/object_library/villain_lairs/sewers/structure/ramps/ramps.geo",
+  "data/object_library/villain_lairs/sewers/trays/elevation/elevation.geo",
+  "data/object_library/villain_lairs/sewers/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/sewers/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/sewers/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/ships/elements/elements.geo",
+  "data/object_library/villain_lairs/ships/structure/structure.geo",
+  "data/object_library/villain_lairs/ships/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/ships/trays/rooms/rooms.geo",
+  "data/object_library/villain_lairs/talons_caves/elements/talons_caves_elements.geo",
+  "data/object_library/villain_lairs/talons_caves/elements/talons_statue/tov_statue.geo",
+  "data/object_library/villain_lairs/talons_caves/elements/weapons/tov_weapons.geo",
+  "data/object_library/villain_lairs/tech/trays/elevation/elevation.geo",
+  "data/object_library/villain_lairs/tech/trays/rooms/3way/3way.geo",
+  "data/object_library/villain_lairs/tech/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/tech/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/tech/trays/rooms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/tech/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/tech/trays/start/start.geo",
+  "data/object_library/villain_lairs/unique/banish_pan_cave/banish_pan_cave.geo",
+  "data/object_library/villain_lairs/unique/casino_heist/casino_heist.geo",
+  "data/object_library/villain_lairs/unique/crey_hero_lab/crey_hero_lab.geo",
+  "data/object_library/villain_lairs/unique/dr_vahziloks_lab/dr_vahziloks_lab.geo",
+  "data/object_library/villain_lairs/unique/freakshow/freakshow.geo",
+  "data/object_library/villain_lairs/unique/lous_garage/lous_garage.geo",
+  "data/object_library/villain_lairs/unique/mek_man_factory/mek_man_factory.geo",
+  "data/object_library/villain_lairs/unique/mek_man_factory/mm_conv_belts/mm_conv_belts.geo",
+  "data/object_library/villain_lairs/unique/mek_man_factory/mm_trays/mm_trays.geo",
+  "data/object_library/villain_lairs/unique/portal_annex/portal_annex_rings/portal_annex_rings.geo",
+  "data/object_library/villain_lairs/unique/rave/rave.geo",
+  "data/object_library/villain_lairs/unique/skulls_lab/skulls_lab.geo",
+  "data/object_library/villain_lairs/unique/tyrants_lair/tyrants_lair.geo",
+  "data/object_library/villain_lairs/unique/witches_lair/cauldron/cauldron.geo",
+  "data/object_library/villain_lairs/unique/witches_lair/garments/garments.geo",
+  "data/object_library/villain_lairs/unique/witches_lair/roots/roots.geo",
+  "data/object_library/villain_lairs/unique/witches_lair/witch_books/witch_books.geo",
+  "data/object_library/villain_lairs/unique/witches_lair/witch_bottles/witch_bottles.geo",
+  "data/object_library/villain_lairs/unique/witches_lair/wooden_parts/wooden_parts.geo",
+  "data/object_library/villain_lairs/vanguard/elements/vanguard_armory/vanguard_armory.geo",
+  "data/object_library/villain_lairs/vanguard/elements/vanguard_briefing/vanguard_briefing.geo",
+  "data/object_library/villain_lairs/vanguard/elements/vanguard_heavylift_details/vanguard_heavylift_details.geo",
+  "data/object_library/villain_lairs/vanguard/elements/vanguard_invention_station/vanguard_invention_station.geo",
+  "data/object_library/villain_lairs/vanguard/elements/vanguard_table/vanguard_table.geo",
+  "data/object_library/villain_lairs/vanguard/structure/vanguard_catwalks/vanguard_catwalks_thin/vanguard_catwalks_thin.geo",
+  "data/object_library/villain_lairs/vanguard/structure/vanguard_heavylift/vanguard_heavylift.geo",
+  "data/object_library/villain_lairs/warehouse/elements/conv_belts/conv_belts.geo",
+  "data/object_library/villain_lairs/warehouse/elements/cranes/cranes.geo",
+  "data/object_library/villain_lairs/warehouse/elements/floor_tape/floor_tape.geo",
+  "data/object_library/villain_lairs/warehouse/elements/pipes/pipes.geo",
+  "data/object_library/villain_lairs/warehouse/elements/racks/racks.geo",
+  "data/object_library/villain_lairs/warehouse/largerooms/p_wrhsold_largerooms.geo",
+  "data/object_library/villain_lairs/warehouse/structure/platforms/platforms.geo",
+  "data/object_library/villain_lairs/warehouse/structure/rubber_matts/rubber_matts.geo",
+  "data/object_library/villain_lairs/warehouse/structure/supports/supports.geo",
+  "data/object_library/villain_lairs/warehouse/structure/walls/walls.geo",
+  "data/object_library/villain_lairs/warehouse/trays/doors/doors.geo",
+  "data/object_library/villain_lairs/warehouse/trays/halls/halls.geo",
+  "data/object_library/villain_lairs/warehouse/trays/rooms/3way/3way.geo",
+  "data/object_library/villain_lairs/warehouse/trays/rooms/4way/4way.geo",
+  "data/object_library/villain_lairs/warehouse/trays/rooms/bend/bend.geo",
+  "data/object_library/villain_lairs/warehouse/trays/rooms/dead_end/dead_end.geo",
+  "data/object_library/villain_lairs/warehouse/trays/rooms/straight/straight.geo",
+  "data/object_library/villain_lairs/warehouse/trays/start/start.geo",
+  "data/object_library/villains/skyraider/destroyer/interior/destroyer_interior.geo",
+  "data/object_library/villains/skyraider/destroyer/interior/door/destroyer_interior_door.geo",
+  "data/object_library/walls/citywalls/citywalls_w_bottom/citywalls_w_bottom.geo",
+  "data/object_library/walls/citywalls_ruined/citywalls_ruined.geo",
+  "data/object_library/walls/industrial_walls/industrial_walls.geo",
+  "data/object_library/walls/ruined_tunnels/ruined_tunnels.geo"
+ ],
+ "maps": [
+  {
+   "map": "maps/missions/5th_column/5th_column_30/5th_column_30_layout_01.txt",
+   "geometry": 333,
+   "not_in_baseline": 24,
+   "library_files": 662,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/5th_column/5th_column_45/5th_column_45_layout_01.txt",
+   "geometry": 80,
+   "not_in_baseline": 23,
+   "library_files": 154,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/5th_column/5th_column_60/5th_column_60_layout_01.txt",
+   "geometry": 81,
+   "not_in_baseline": 24,
+   "library_files": 156,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/5th_column_flashback/5th_column_flashback_30/5th_column_flashback_30_layout_01.txt",
+   "geometry": 80,
+   "not_in_baseline": 23,
+   "library_files": 154,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/5th_column_flashback/5th_column_flashback_45/5th_column_flashback_45_layout_01.txt",
+   "geometry": 80,
+   "not_in_baseline": 23,
+   "library_files": 154,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/5th_column_flashback/5th_column_flashback_60/5th_column_flashback_60_layout_01.txt",
+   "geometry": 81,
+   "not_in_baseline": 24,
+   "library_files": 156,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/abandoned_office/abandoned_office_15/abandoned_office_15_layout_01_01.txt",
+   "geometry": 320,
+   "not_in_baseline": 11,
+   "library_files": 638,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/abandoned_office/abandoned_office_30/abandoned_office_30_layout_01.txt",
+   "geometry": 68,
+   "not_in_baseline": 13,
+   "library_files": 132,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/abandoned_office/abandoned_office_45/abandoned_office_45_layout_01.txt",
+   "geometry": 67,
+   "not_in_baseline": 13,
+   "library_files": 130,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/abandoned_office/abandoned_office_60/abandoned_office_60_layout_01.txt",
+   "geometry": 64,
+   "not_in_baseline": 16,
+   "library_files": 124,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/abandoned_tech/abandoned_tech_30/abandoned_tech_30_layout_01_01.txt",
+   "geometry": 47,
+   "not_in_baseline": 7,
+   "library_files": 88,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/abandoned_tech/abandoned_tech_45/abandoned_tech_45_layout_01_01.txt",
+   "geometry": 314,
+   "not_in_baseline": 8,
+   "library_files": 625,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/abandoned_tech/abandoned_tech_60/abandoned_tech_60_layout_01_01.txt",
+   "geometry": 314,
+   "not_in_baseline": 8,
+   "library_files": 625,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/abandoned_warehouse/abandoned_warehouse_15/abandoned_warehouse_15_layout_01_01.txt",
+   "geometry": 98,
+   "not_in_baseline": 24,
+   "library_files": 189,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/abandoned_warehouse/abandoned_warehouse_30/abandoned_warehouse_30_layout_01_01.txt",
+   "geometry": 100,
+   "not_in_baseline": 26,
+   "library_files": 193,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/abandoned_warehouse/abandoned_warehouse_45/abandoned_warehouse_45_layout_01_01.txt",
+   "geometry": 91,
+   "not_in_baseline": 24,
+   "library_files": 176,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/abandoned_warehouse/abandoned_warehouse_60/abandoned_warehouse_60_layout_01_01.txt",
+   "geometry": 94,
+   "not_in_baseline": 26,
+   "library_files": 182,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/cargoship/cargoship_layout_01.txt",
+   "geometry": 33,
+   "not_in_baseline": 9,
+   "library_files": 61,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/caves/caves_30/caves_30_layout_01_01.txt",
+   "geometry": 319,
+   "not_in_baseline": 15,
+   "library_files": 634,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/caves/caves_45/caves_45_layout_01_01.txt",
+   "geometry": 28,
+   "not_in_baseline": 14,
+   "library_files": 50,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/caves/caves_60/caves_60_layout_01_01.txt",
+   "geometry": 321,
+   "not_in_baseline": 16,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/caves_mediterranean/caves_mediterranean_15/caves_mediterranean_15_layout_01.txt",
+   "geometry": 5,
+   "not_in_baseline": 0,
+   "library_files": 7,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/caves_mediterranean/caves_mediterranean_30/caves_mediterranean_30_layout_01.txt",
+   "geometry": 5,
+   "not_in_baseline": 0,
+   "library_files": 7,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/caves_mediterranean/caves_mediterranean_45/caves_mediterranean_45_layout_01.txt",
+   "geometry": 5,
+   "not_in_baseline": 0,
+   "library_files": 7,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/caves_mediterranean/caves_mediterranean_60/caves_mediterranean_60_layout_01.txt",
+   "geometry": 5,
+   "not_in_baseline": 0,
+   "library_files": 7,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/cot/cot_30/cot_30_layout_01_01.txt",
+   "geometry": 141,
+   "not_in_baseline": 18,
+   "library_files": 277,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/cot/cot_45/cot_45_layout_01_01.txt",
+   "geometry": 139,
+   "not_in_baseline": 20,
+   "library_files": 274,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/cot/cot_60/cot_60_layout_01_01.txt",
+   "geometry": 143,
+   "not_in_baseline": 20,
+   "library_files": 281,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/croatoa/croatoa_sewers.txt",
+   "geometry": 328,
+   "not_in_baseline": 18,
+   "library_files": 652,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/endgame/dilemmadiabolique/dilemmadiabolique.txt",
+   "geometry": 414,
+   "not_in_baseline": 36,
+   "library_files": 810,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/flooded_office/flooded_office_15/flooded_office_15_layout_01_01.txt",
+   "geometry": 64,
+   "not_in_baseline": 13,
+   "library_files": 136,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/flooded_office/flooded_office_30/flooded_office_30_layout_01_01.txt",
+   "geometry": 70,
+   "not_in_baseline": 13,
+   "library_files": 150,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/flooded_office/flooded_office_45/flooded_office_45_layout_01_01.txt",
+   "geometry": 327,
+   "not_in_baseline": 15,
+   "library_files": 667,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/flooded_office/flooded_office_60/flooded_office_60_layout_01_01.txt",
+   "geometry": 74,
+   "not_in_baseline": 17,
+   "library_files": 163,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/granite_caves/granite_caves_15/granite_caves_15_01.txt",
+   "geometry": 25,
+   "not_in_baseline": 9,
+   "library_files": 45,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/granite_caves/granite_caves_30/granite_caves_30_01.txt",
+   "geometry": 25,
+   "not_in_baseline": 9,
+   "library_files": 45,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/granite_caves/granite_caves_45/granite_caves_45_01.txt",
+   "geometry": 5,
+   "not_in_baseline": 0,
+   "library_files": 7,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/mansion/mansion_lobby_01.txt",
+   "geometry": 305,
+   "not_in_baseline": 1,
+   "library_files": 608,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/n_warehouse/n_warehouse_lobby_01.txt",
+   "geometry": 331,
+   "not_in_baseline": 8,
+   "library_files": 663,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/n_warehouse/n_warehouse_15/n_warehouse_15_layout_01_01.txt",
+   "geometry": 57,
+   "not_in_baseline": 7,
+   "library_files": 114,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/n_warehouse/n_warehouse_30/n_warehouse_30_layout_01_01.txt",
+   "geometry": 331,
+   "not_in_baseline": 8,
+   "library_files": 663,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/n_warehouse/n_warehouse_45/n_warehouse_45_layout_01_01.txt",
+   "geometry": 57,
+   "not_in_baseline": 7,
+   "library_files": 114,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/n_warehouse/n_warehouse_60/n_warehouse_60_layout_01_01.txt",
+   "geometry": 57,
+   "not_in_baseline": 7,
+   "library_files": 114,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/office/office_30/office_30_layout_01_01.txt",
+   "geometry": 49,
+   "not_in_baseline": 1,
+   "library_files": 94,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/office/office_45/office_45_layout_01_01.txt",
+   "geometry": 49,
+   "not_in_baseline": 3,
+   "library_files": 94,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/office/office_60/office_60_layout_01_01.txt",
+   "geometry": 52,
+   "not_in_baseline": 3,
+   "library_files": 100,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_atlas/atlas_cot.txt",
+   "geometry": 477,
+   "not_in_baseline": 1,
+   "library_files": 916,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_bloody_bay/bloody_bay_trial.txt",
+   "geometry": 387,
+   "not_in_baseline": 49,
+   "library_files": 773,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_city/outdoor_city_01/outdoor_city_01b.txt",
+   "geometry": 360,
+   "not_in_baseline": 37,
+   "library_files": 712,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_city/outdoor_city_02/outdoor_city_02c.txt",
+   "geometry": 362,
+   "not_in_baseline": 36,
+   "library_files": 714,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_city/outdoor_city_03/outdoor_city_03a.txt",
+   "geometry": 352,
+   "not_in_baseline": 33,
+   "library_files": 697,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_01/outdoor_croatoa_01.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_02/outdoor_croatoa_02.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_03/outdoor_croatoa_03.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_04/outdoor_croatoa_04.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_05/outdoor_croatoa_05.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_06/outdoor_croatoa_06.txt",
+   "geometry": 363,
+   "not_in_baseline": 24,
+   "library_files": 723,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_07/outdoor_croatoa_07.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_08/outdoor_croatoa_08.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_croatoa/outdoor_croatoa_09/outdoor_croatoa_09.txt",
+   "geometry": 362,
+   "not_in_baseline": 24,
+   "library_files": 721,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_eden/outdoor_eden.txt",
+   "geometry": 354,
+   "not_in_baseline": 34,
+   "library_files": 702,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_faultline/agent_g/outdoor_faultline_agent_g.txt",
+   "geometry": 493,
+   "not_in_baseline": 95,
+   "library_files": 948,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_faultline/high_rise/outdoor_faultline_high_rise.txt",
+   "geometry": 502,
+   "not_in_baseline": 102,
+   "library_files": 964,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_faultline/iom_dam_showdown/iom_dam_showdown.txt",
+   "geometry": 516,
+   "not_in_baseline": 109,
+   "library_files": 986,
+   "unresolved_source_edges": 5
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_faultline/waters_edge/outdoor_faultline_waters_edge.txt",
+   "geometry": 497,
+   "not_in_baseline": 99,
+   "library_files": 957,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_atlas_park_sam/iom_fb_atlas_park_sam.txt",
+   "geometry": 481,
+   "not_in_baseline": 3,
+   "library_files": 926,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_atlas_park_wto/iom_fb_atlas_park_wto.txt",
+   "geometry": 393,
+   "not_in_baseline": 16,
+   "library_files": 772,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_breakout/iom_fb_breakout.txt",
+   "geometry": 346,
+   "not_in_baseline": 26,
+   "library_files": 690,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_croatoa/iom_fb_croatoa.txt",
+   "geometry": 369,
+   "not_in_baseline": 27,
+   "library_files": 735,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_kings_row/iom_fb_kings_row.txt",
+   "geometry": 396,
+   "not_in_baseline": 42,
+   "library_files": 784,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_outbreak/iom_fb_outbreak.txt",
+   "geometry": 352,
+   "not_in_baseline": 34,
+   "library_files": 704,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_sirens_call_01/iom_fb_sirens_call_01.txt",
+   "geometry": 385,
+   "not_in_baseline": 45,
+   "library_files": 766,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_sirens_call_02/iom_fb_sirens_call_02.txt",
+   "geometry": 385,
+   "not_in_baseline": 45,
+   "library_files": 766,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_skyway_city/iom_fb_skyway_city.txt",
+   "geometry": 357,
+   "not_in_baseline": 35,
+   "library_files": 706,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_fb_striga/iom_fb_striga.txt",
+   "geometry": 377,
+   "not_in_baseline": 39,
+   "library_files": 752,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_flashback/iom_st_martial/iom_st_martial.txt",
+   "geometry": 506,
+   "not_in_baseline": 116,
+   "library_files": 1000,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_forest/outdoor_forest_01/outdoor_forest_01c.txt",
+   "geometry": 340,
+   "not_in_baseline": 25,
+   "library_files": 677,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_forest/outdoor_forest_02/outdoor_forest_02a.txt",
+   "geometry": 322,
+   "not_in_baseline": 6,
+   "library_files": 639,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_graveyard/outdoor_graveyard_01/outdoor_graveyard_01a.txt",
+   "geometry": 348,
+   "not_in_baseline": 28,
+   "library_files": 693,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_graveyard/outdoor_graveyard_02/outdoor_graveyard_02b.txt",
+   "geometry": 347,
+   "not_in_baseline": 28,
+   "library_files": 691,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_holiday05_hero/outdoor_holiday05_hero.txt",
+   "geometry": 438,
+   "not_in_baseline": 98,
+   "library_files": 868,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_industrial/outdoor_industrial_01/outdoor_industrial_01a.txt",
+   "geometry": 340,
+   "not_in_baseline": 23,
+   "library_files": 674,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_industrial/outdoor_industrial_02/outdoor_industrial_02b.txt",
+   "geometry": 340,
+   "not_in_baseline": 23,
+   "library_files": 674,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_kings_row/iom_ppd_headquarters.txt",
+   "geometry": 423,
+   "not_in_baseline": 54,
+   "library_files": 834,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_ouroboros/incarnatearc_destroyedouroboros.txt",
+   "geometry": 33,
+   "not_in_baseline": 5,
+   "library_files": 59,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_peregrine/iom_portal_corp_ruined.txt",
+   "geometry": 471,
+   "not_in_baseline": 79,
+   "library_files": 911,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_rikti_war_zone/iom_little_round_top/iom_little_round_top.txt",
+   "geometry": 415,
+   "not_in_baseline": 61,
+   "library_files": 812,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_rikti_war_zone/iom_outdoor_shadow_nemesis/iom_outdoor_shadow_nemesis.txt",
+   "geometry": 340,
+   "not_in_baseline": 14,
+   "library_files": 674,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_rikti_war_zone/iom_point_du_hoc/iom_pdh_generic.txt",
+   "geometry": 412,
+   "not_in_baseline": 60,
+   "library_files": 807,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_rikti_war_zone/iom_portal_corp/iom_portal_corp.txt",
+   "geometry": 404,
+   "not_in_baseline": 50,
+   "library_files": 804,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_rikti_war_zone/iom_the_bulge/iom_bulge_generic.txt",
+   "geometry": 412,
+   "not_in_baseline": 60,
+   "library_files": 807,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_rikti_war_zone/iom_vanguard_base/iom_vanguard_base.txt",
+   "geometry": 429,
+   "not_in_baseline": 67,
+   "library_files": 837,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_rikti_war_zone/iom_wspdr/iom_wspdr.txt",
+   "geometry": 452,
+   "not_in_baseline": 84,
+   "library_files": 898,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_ruined/outdoor_ruined_01/outdoor_ruined_01a.txt",
+   "geometry": 341,
+   "not_in_baseline": 29,
+   "library_files": 678,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_ruined/outdoor_ruined_02/outdoor_ruined_02a.txt",
+   "geometry": 334,
+   "not_in_baseline": 24,
+   "library_files": 664,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_spring06/villa_requin.txt",
+   "geometry": 456,
+   "not_in_baseline": 94,
+   "library_files": 904,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_talos/iom_talos_conference.txt",
+   "geometry": 386,
+   "not_in_baseline": 45,
+   "library_files": 761,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_unique/outdoor_unique_city_02/outdoor_unique_city_02a.txt",
+   "geometry": 371,
+   "not_in_baseline": 41,
+   "library_files": 734,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_unique/outdoor_unique_forest_01/outdoor_unique_forest_01c.txt",
+   "geometry": 340,
+   "not_in_baseline": 25,
+   "library_files": 677,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_unique/outdoor_unique_forest_02/outdoor_unique_forest_02c.txt",
+   "geometry": 339,
+   "not_in_baseline": 25,
+   "library_files": 675,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_unique/outdoor_unique_ruined_01/outdoor_unique_ruined_01a.txt",
+   "geometry": 339,
+   "not_in_baseline": 29,
+   "library_files": 675,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/outdoor_winter09/winter_09_layout_01.txt",
+   "geometry": 380,
+   "not_in_baseline": 39,
+   "library_files": 755,
+   "unresolved_source_edges": 4
+  },
+  {
+   "map": "maps/missions/outdoor_missions/p_outdoor_firstward/diaboliquetower/fw_iom_diaboliquetower.txt",
+   "geometry": 459,
+   "not_in_baseline": 20,
+   "library_files": 877,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/p_outdoor_firstward/eltentown/fw_iom_freshmeat_01.txt",
+   "geometry": 473,
+   "not_in_baseline": 32,
+   "library_files": 908,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/p_outdoor_firstward/freefirezone/fw_iom_freshmeat_02.txt",
+   "geometry": 479,
+   "not_in_baseline": 27,
+   "library_files": 919,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/p_outdoor_firstward/mercyviewcemetery/iom_mercyview_cerulean.txt",
+   "geometry": 457,
+   "not_in_baseline": 20,
+   "library_files": 872,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/outdoor_missions/p_outdoor_imperial/iom_imperial_rooftop.txt",
+   "geometry": 582,
+   "not_in_baseline": 46,
+   "library_files": 1063,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/p_outdoor_neutropolis/iom_neutropolis_antimatterreactor.txt",
+   "geometry": 559,
+   "not_in_baseline": 52,
+   "library_files": 1041,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/p_outdoor_nova/iom_cmf.txt",
+   "geometry": 491,
+   "not_in_baseline": 14,
+   "library_files": 904,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_atlas/future_of_freedom/future_of_freedom.txt",
+   "geometry": 478,
+   "not_in_baseline": 2,
+   "library_files": 919,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_atlas/recluse_ruined/v_outdoor_atlas_recluse.txt",
+   "geometry": 372,
+   "not_in_baseline": 41,
+   "library_files": 734,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_atlas/thus_spoke_the_reichsman/thus_spoke_the_reichsman.txt",
+   "geometry": 480,
+   "not_in_baseline": 3,
+   "library_files": 923,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_atlas/veat_sl9_desslock/statesmansspeach.txt",
+   "geometry": 351,
+   "not_in_baseline": 16,
+   "library_files": 695,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_boomtown/v_outdoor_boomtown_reconstruction.txt",
+   "geometry": 352,
+   "not_in_baseline": 35,
+   "library_files": 699,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_brickstown/v_outdoor_brickstown_zig/v_outdoor_brickstown_zig.txt",
+   "geometry": 346,
+   "not_in_baseline": 27,
+   "library_files": 687,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_capaudiable/v_outdoor_capaudiable_pts/v_outdoor_capaudiable_pts.txt",
+   "geometry": 439,
+   "not_in_baseline": 75,
+   "library_files": 870,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_capaudiable/v_outdoor_capaudiable_wspdr/v_outdoor_capaudiable_wspdr.txt",
+   "geometry": 449,
+   "not_in_baseline": 81,
+   "library_files": 890,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_grandville/freedomcorps/freedomcorps01.txt",
+   "geometry": 356,
+   "not_in_baseline": 31,
+   "library_files": 711,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_grandville/gutter/gutter.txt",
+   "geometry": 498,
+   "not_in_baseline": 99,
+   "library_files": 946,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_grandville/nemesis_beach/nemesis_beach.txt",
+   "geometry": 320,
+   "not_in_baseline": 7,
+   "library_files": 634,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_grandville/portalcorp/portalcorp.txt",
+   "geometry": 405,
+   "not_in_baseline": 50,
+   "library_files": 805,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_grandville/spider_city/spider_city.txt",
+   "geometry": 17,
+   "not_in_baseline": 2,
+   "library_files": 27,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_longbow/v_outdoor_longbow.txt",
+   "geometry": 356,
+   "not_in_baseline": 25,
+   "library_files": 708,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_longbow_cargobase/v_outdoor_longbow_cargobase.txt",
+   "geometry": 170,
+   "not_in_baseline": 16,
+   "library_files": 334,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_longbow_cargobase_med/v_outdoor_longbow_cargobase_med.txt",
+   "geometry": 173,
+   "not_in_baseline": 17,
+   "library_files": 338,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_mercy/inst_dl_clocktower/inst_dl_clocktower.txt",
+   "geometry": 438,
+   "not_in_baseline": 99,
+   "library_files": 868,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_mercy/inst_factory/inst_factory.txt",
+   "geometry": 452,
+   "not_in_baseline": 108,
+   "library_files": 896,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_mercy/inst_ftdarwin/inst_ftdarwin.txt",
+   "geometry": 435,
+   "not_in_baseline": 99,
+   "library_files": 864,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_mercy/inst_kalinda/inst_kalinda.txt",
+   "geometry": 439,
+   "not_in_baseline": 100,
+   "library_files": 870,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_nerva/v_outdoor_nerva_i19_tf/iom_nerva_invasion.txt",
+   "geometry": 488,
+   "not_in_baseline": 100,
+   "library_files": 974,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_nerva/v_outdoor_nerva_liberty/v_outdoor_nerva_liberty.txt",
+   "geometry": 427,
+   "not_in_baseline": 70,
+   "library_files": 849,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_nerva/v_outdoor_nerva_primeva/v_outdoor_nerva_primeva.txt",
+   "geometry": 426,
+   "not_in_baseline": 69,
+   "library_files": 847,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_nerva/v_outdoor_nerva_thorn/v_outdoor_nerva_thorn.txt",
+   "geometry": 428,
+   "not_in_baseline": 70,
+   "library_files": 850,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_nerva/v_outdoor_winter_2010/v_winter_2010.txt",
+   "geometry": 428,
+   "not_in_baseline": 68,
+   "library_files": 851,
+   "unresolved_source_edges": 4
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_portoaks/inst_bocor_01/inst_bocor_01.txt",
+   "geometry": 444,
+   "not_in_baseline": 85,
+   "library_files": 885,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_shadow_chantry/v_outdoor_shadow_chantry.txt",
+   "geometry": 322,
+   "not_in_baseline": 4,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_shadow_molepoint/v_outdoor_shadow_molepoint.txt",
+   "geometry": 322,
+   "not_in_baseline": 2,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_shadow_nemesis/v_outdoor_shadow_nemesis.txt",
+   "geometry": 340,
+   "not_in_baseline": 14,
+   "library_files": 674,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_sharkhead/v_outdoor_sharkhead_carpediem/v_outdoor_sharkhead_carpediem.txt",
+   "geometry": 424,
+   "not_in_baseline": 74,
+   "library_files": 839,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_sharkhead/v_outdoor_sharkhead_hellforge/v_outdoor_sharkhead_hellforge.txt",
+   "geometry": 424,
+   "not_in_baseline": 74,
+   "library_files": 839,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_sharkhead/v_outdoor_sharkhead_pier7/iom_sharkhead_legacyshowdown.txt",
+   "geometry": 436,
+   "not_in_baseline": 82,
+   "library_files": 866,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_sharkhead/v_outdoor_sharkhead_skyraider/v_outdoor_sharkhead_skyraider.txt",
+   "geometry": 433,
+   "not_in_baseline": 79,
+   "library_files": 861,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_sharkhead/v_outdoor_sharkhead_slagheaps/v_outdoor_sharkhead_slagheaps.txt",
+   "geometry": 424,
+   "not_in_baseline": 75,
+   "library_files": 839,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_ships/outdoor_ship_burning/outdoor_ship_burning.txt",
+   "geometry": 323,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_ships/v_outdoor_ship1/v_outdoor_ship1.txt",
+   "geometry": 323,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_ships/v_outdoor_ship2/v_outdoor_ship2.txt",
+   "geometry": 323,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_ships/v_outdoor_ship3/v_outdoor_ship3.txt",
+   "geometry": 323,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_ships/v_outdoor_ship4/v_outdoor_ship4.txt",
+   "geometry": 323,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_skyraider/iom_skyraider_tech_platform.txt",
+   "geometry": 72,
+   "not_in_baseline": 19,
+   "library_files": 149,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_skyway/v_outdoor_skyway_blockade.txt",
+   "geometry": 357,
+   "not_in_baseline": 36,
+   "library_files": 706,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_steelcanyon/i19_tf/iom_steelcanyon_ruined.txt",
+   "geometry": 415,
+   "not_in_baseline": 45,
+   "library_files": 823,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_steelcanyon/seraph_lab/v_outdoor_steelcanyon_seraph_lab.txt",
+   "geometry": 383,
+   "not_in_baseline": 37,
+   "library_files": 760,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_steelcanyon/statue/v_outdoor_steelcanyon_statue.txt",
+   "geometry": 374,
+   "not_in_baseline": 32,
+   "library_files": 741,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_stmartial/mainstreet/v_outdoor_stmartial_mainstreet.txt",
+   "geometry": 464,
+   "not_in_baseline": 103,
+   "library_files": 924,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_stmartial/ritual/v_outdoor_stmartial_ritual.txt",
+   "geometry": 462,
+   "not_in_baseline": 102,
+   "library_files": 920,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_stmartial/theflush/v_outdoor_stmartial_theflush.txt",
+   "geometry": 461,
+   "not_in_baseline": 101,
+   "library_files": 918,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/outdoor_missions/v_outdoor_warburg/malta/v_outdoor_warburg_malta.txt",
+   "geometry": 433,
+   "not_in_baseline": 87,
+   "library_files": 866,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_endgame/b.a.f/p_baf.txt",
+   "geometry": 625,
+   "not_in_baseline": 64,
+   "library_files": 1138,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/p_endgame/keyesisland/p_keyesisland.txt",
+   "geometry": 583,
+   "not_in_baseline": 66,
+   "library_files": 1085,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_endgame/lambdasector/p_lambdasector.txt",
+   "geometry": 558,
+   "not_in_baseline": 82,
+   "library_files": 1050,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_endgame/magisterium/p_magisterium.txt",
+   "geometry": 507,
+   "not_in_baseline": 19,
+   "library_files": 932,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_endgame/mindsofmayhem/p_mindsofmayhem.txt",
+   "geometry": 507,
+   "not_in_baseline": 59,
+   "library_files": 980,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/p_endgame/tpncampus/p_tpn_campus.txt",
+   "geometry": 627,
+   "not_in_baseline": 65,
+   "library_files": 1145,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/p_endgame/underground/p_underground.txt",
+   "geometry": 362,
+   "not_in_baseline": 35,
+   "library_files": 729,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_inventiontutorial/p_inventiontutorial.txt",
+   "geometry": 316,
+   "not_in_baseline": 6,
+   "library_files": 631,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_office/p_office_lobby_01.txt",
+   "geometry": 313,
+   "not_in_baseline": 5,
+   "library_files": 626,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_office/p_office_15/p_office_15_layout_01_01.txt",
+   "geometry": 315,
+   "not_in_baseline": 4,
+   "library_files": 632,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_office/p_office_30/p_office_30_layout_01_01.txt",
+   "geometry": 61,
+   "not_in_baseline": 5,
+   "library_files": 128,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_office/p_office_45/p_office_45_layout_01_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 4,
+   "library_files": 636,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_office/p_office_60/p_office_60_layout_01_01.txt",
+   "geometry": 61,
+   "not_in_baseline": 6,
+   "library_files": 128,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech/p_tech_lobby_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 12,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech/p_tech_15/p_tech_15_layout_01_01.txt",
+   "geometry": 315,
+   "not_in_baseline": 11,
+   "library_files": 637,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech/p_tech_30/p_tech_30_layout_01_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 12,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech/p_tech_45/p_tech_45_layout_01_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 12,
+   "library_files": 639,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech/p_tech_60/p_tech_60_layout_01_01.txt",
+   "geometry": 317,
+   "not_in_baseline": 13,
+   "library_files": 645,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech_bio/p_tech_bio_15/p_tech_bio_15_layout_01_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 12,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech_bio/p_tech_bio_30/p_tech_bio_30_layout_01_01.txt",
+   "geometry": 317,
+   "not_in_baseline": 13,
+   "library_files": 644,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech_bio/p_tech_bio_45/p_tech_bio_45_layout_01_01.txt",
+   "geometry": 317,
+   "not_in_baseline": 13,
+   "library_files": 642,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech_power/p_tech_power_15/p_tech_power_15_layout_01_01.txt",
+   "geometry": 318,
+   "not_in_baseline": 14,
+   "library_files": 645,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech_power/p_tech_power_30/p_tech_power_30_layout_01_01.txt",
+   "geometry": 318,
+   "not_in_baseline": 14,
+   "library_files": 646,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tech_power/p_tech_power_45/p_tech_power_45_layout_01_01.txt",
+   "geometry": 318,
+   "not_in_baseline": 14,
+   "library_files": 645,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tunnels/p_tunnels_15/p_tunnels_15_layout_01_01.txt",
+   "geometry": 320,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tunnels/p_tunnels_30/p_tunnels_30_layout_01_01.txt",
+   "geometry": 348,
+   "not_in_baseline": 28,
+   "library_files": 698,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/p_tunnels/p_tunnels_45/p_tunnels_45_layout_01_01.txt",
+   "geometry": 334,
+   "not_in_baseline": 23,
+   "library_files": 669,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/ppd/precint/ppd_precint_01.txt",
+   "geometry": 306,
+   "not_in_baseline": 1,
+   "library_files": 611,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_atlas_park/safeguard_atlas_park.txt",
+   "geometry": 530,
+   "not_in_baseline": 39,
+   "library_files": 1017,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_brickstown/safeguard_brickstown.txt",
+   "geometry": 388,
+   "not_in_baseline": 43,
+   "library_files": 764,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_founders_falls/safeguard_founders_falls.txt",
+   "geometry": 420,
+   "not_in_baseline": 60,
+   "library_files": 831,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_independence_port/safeguard_independence_port.txt",
+   "geometry": 433,
+   "not_in_baseline": 67,
+   "library_files": 849,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_kings_row/safeguard_kings_row.txt",
+   "geometry": 438,
+   "not_in_baseline": 76,
+   "library_files": 858,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_peregrine_island/safeguard_peregrine_island.txt",
+   "geometry": 479,
+   "not_in_baseline": 89,
+   "library_files": 945,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_skyway/safeguard_skyway.txt",
+   "geometry": 422,
+   "not_in_baseline": 67,
+   "library_files": 829,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_steelcanyon/safeguard_steelcanyon.txt",
+   "geometry": 425,
+   "not_in_baseline": 61,
+   "library_files": 839,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/safeguard/safeguard_talos_island/safeguard_talos_island.txt",
+   "geometry": 436,
+   "not_in_baseline": 76,
+   "library_files": 858,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/sewers/sewers_15/sewers_15_layout_01_01.txt",
+   "geometry": 90,
+   "not_in_baseline": 2,
+   "library_files": 176,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/sewers/sewers_30/sewers_30_layout_01_01.txt",
+   "geometry": 93,
+   "not_in_baseline": 5,
+   "library_files": 182,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/sewers/sewers_45/sewers_45_layout_01_01.txt",
+   "geometry": 93,
+   "not_in_baseline": 5,
+   "library_files": 182,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/sewers/sewers_60/sewers_60_layout_01_01.txt",
+   "geometry": 92,
+   "not_in_baseline": 4,
+   "library_files": 180,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/smoothcaves-rikti/smoothcaves-rikti_30/smoothcaves-rikti_30_layout_01.txt",
+   "geometry": 325,
+   "not_in_baseline": 18,
+   "library_files": 650,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/smoothcaves-rikti/smoothcaves-rikti_45/smoothcaves-rikti_45_layout_01.txt",
+   "geometry": 325,
+   "not_in_baseline": 18,
+   "library_files": 655,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/smoothcaves-rikti/smoothcaves-rikti_60/smoothcaves-rikti_60_layout_01.txt",
+   "geometry": 118,
+   "not_in_baseline": 23,
+   "library_files": 236,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/smoothcaves/smoothcaves_30/smoothcaves_30_layout_01.txt",
+   "geometry": 15,
+   "not_in_baseline": 2,
+   "library_files": 26,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/smoothcaves/smoothcaves_45/smoothcaves_45_layout_01.txt",
+   "geometry": 102,
+   "not_in_baseline": 11,
+   "library_files": 199,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/smoothcaves/smoothcaves_60/smoothcaves_60_layout_01.txt",
+   "geometry": 103,
+   "not_in_baseline": 12,
+   "library_files": 201,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/ss_smoothcaves/ss_smoothcaves_30/ss_smoothcaves_30_layout_01.txt",
+   "geometry": 15,
+   "not_in_baseline": 2,
+   "library_files": 26,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/ss_smoothcaves/ss_smoothcaves_45/ss_smoothcaves_45_layout_01.txt",
+   "geometry": 102,
+   "not_in_baseline": 11,
+   "library_files": 199,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/ss_smoothcaves/ss_smoothcaves_60/ss_smoothcaves_60_layout_01.txt",
+   "geometry": 103,
+   "not_in_baseline": 12,
+   "library_files": 201,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/talons_caves/talons_caves_15/talons_caves_15_01.txt",
+   "geometry": 32,
+   "not_in_baseline": 12,
+   "library_files": 62,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/talons_caves/talons_caves_30/talons_caves_30_01.txt",
+   "geometry": 32,
+   "not_in_baseline": 12,
+   "library_files": 62,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/talons_caves/talons_caves_45/talons_caves_45_01.txt",
+   "geometry": 5,
+   "not_in_baseline": 0,
+   "library_files": 7,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/tech/tech_30/tech_30_layout_01_01.txt",
+   "geometry": 47,
+   "not_in_baseline": 7,
+   "library_files": 88,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/tech/tech_45/tech_45_layout_01_01.txt",
+   "geometry": 314,
+   "not_in_baseline": 8,
+   "library_files": 625,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/tech/tech_60/tech_60_layout_01_01.txt",
+   "geometry": 314,
+   "not_in_baseline": 8,
+   "library_files": 625,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/5thanniversary/axisworld/villainsaxisworld.txt",
+   "geometry": 407,
+   "not_in_baseline": 66,
+   "library_files": 804,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/5thanniversary/boomtown_iom/boomtown_iom.txt",
+   "geometry": 340,
+   "not_in_baseline": 28,
+   "library_files": 677,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/5thanniversary/freedom_phalanx_base/freedom_phalanx_base.txt",
+   "geometry": 338,
+   "not_in_baseline": 27,
+   "library_files": 671,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/5thanniversary/reichsman_base/reichsman_base.txt",
+   "geometry": 338,
+   "not_in_baseline": 27,
+   "library_files": 672,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/5thanniversary/v_boomtown_iom/v_boomtown_iom.txt",
+   "geometry": 341,
+   "not_in_baseline": 29,
+   "library_files": 680,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/911/911_banks/911_exchange_01.txt",
+   "geometry": 305,
+   "not_in_baseline": 1,
+   "library_files": 608,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/911/911_ppd/911_ppd_precint_01.txt",
+   "geometry": 308,
+   "not_in_baseline": 1,
+   "library_files": 612,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/911/911_smash/911_damicos_pawn.txt",
+   "geometry": 330,
+   "not_in_baseline": 10,
+   "library_files": 653,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/abandonedtech/abandonedtech_15/abandonedtech_15_layout_01_01.txt",
+   "geometry": 315,
+   "not_in_baseline": 7,
+   "library_files": 626,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/arachnos_unique/arachnos_general_onfire_01.txt",
+   "geometry": 321,
+   "not_in_baseline": 13,
+   "library_files": 642,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/artified/clockwork_kingdom.txt",
+   "geometry": 307,
+   "not_in_baseline": 1,
+   "library_files": 611,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/artified/v_crystal_caves/crystal_caves.txt",
+   "geometry": 326,
+   "not_in_baseline": 19,
+   "library_files": 650,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/artified/v_outdoor_cathedral_of_pain/v_outdoor_cathedral_of_pain.txt",
+   "geometry": 319,
+   "not_in_baseline": 4,
+   "library_files": 632,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/bankheist/22nd_01.txt",
+   "geometry": 305,
+   "not_in_baseline": 1,
+   "library_files": 608,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/batzulhell/batzulhell.txt",
+   "geometry": 307,
+   "not_in_baseline": 1,
+   "library_files": 611,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/bunker/bunker_01.txt",
+   "geometry": 315,
+   "not_in_baseline": 5,
+   "library_files": 628,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/capaudiable/cot_orenbega.txt",
+   "geometry": 323,
+   "not_in_baseline": 18,
+   "library_files": 644,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/caves/coralax_cave.txt",
+   "geometry": 319,
+   "not_in_baseline": 12,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/cimerora_peninsula/cp_mhv_tomb/cp_mhv_tomb.txt",
+   "geometry": 45,
+   "not_in_baseline": 13,
+   "library_files": 89,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/cimerora_peninsula/cp_pcs_battlemap/cp_pcs_battlemap.txt",
+   "geometry": 352,
+   "not_in_baseline": 34,
+   "library_files": 698,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/cimerora_peninsula/cp_pcs_sybiltemple/cp_pcs_sybiltemple.txt",
+   "geometry": 350,
+   "not_in_baseline": 33,
+   "library_files": 694,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/cimerora_peninsula/cp_ta01_phoebaspoint/cp_ta01_phoebaspoint.txt",
+   "geometry": 356,
+   "not_in_baseline": 36,
+   "library_files": 709,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/cimerora_peninsula/cp_ta03_castellumquarter/cp_ta03_castellumquarter.txt",
+   "geometry": 353,
+   "not_in_baseline": 34,
+   "library_files": 700,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/cimerora_peninsula/cp_ta04_vespillospass/cp_ta04_vespillospass.txt",
+   "geometry": 358,
+   "not_in_baseline": 32,
+   "library_files": 715,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/council/trapdoor_base.txt",
+   "geometry": 322,
+   "not_in_baseline": 10,
+   "library_files": 642,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/doormissions/5th_column_warehouse.txt",
+   "geometry": 330,
+   "not_in_baseline": 21,
+   "library_files": 655,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/faultline/damlies/damlies.txt",
+   "geometry": 327,
+   "not_in_baseline": 17,
+   "library_files": 649,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/faultline/subbase/arachnos_subbase.txt",
+   "geometry": 332,
+   "not_in_baseline": 18,
+   "library_files": 662,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/flashback/fb_column_overthrow/fb_5th_column_overthrow_m4.txt",
+   "geometry": 333,
+   "not_in_baseline": 24,
+   "library_files": 662,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/flashback/fb_cot_sam/fb_cot_sam.txt",
+   "geometry": 338,
+   "not_in_baseline": 24,
+   "library_files": 672,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/flashback/spider_weaves_his_web/swhw_libertys/v_smoothcaves_60_layout_01.txt",
+   "geometry": 320,
+   "not_in_baseline": 13,
+   "library_files": 637,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/flashback/spider_weaves_his_web/swhw_snakecaves/swhw_snakecaves.txt",
+   "geometry": 340,
+   "not_in_baseline": 22,
+   "library_files": 677,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_hero_6-7/gr_moralitymission_hero_01.txt",
+   "geometry": 346,
+   "not_in_baseline": 32,
+   "library_files": 686,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_hero_8-9/hero_morality_8_9_01.txt",
+   "geometry": 454,
+   "not_in_baseline": 76,
+   "library_files": 863,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_rogue_01/gr_moralitymission_rogue_01.txt",
+   "geometry": 71,
+   "not_in_baseline": 18,
+   "library_files": 133,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_rogue_6-7_01/gr_moralitymission_rogue_6-7_01.txt",
+   "geometry": 497,
+   "not_in_baseline": 99,
+   "library_files": 957,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_rogue_8-9_01/gr_moralitymission_rogue_8-9.txt",
+   "geometry": 433,
+   "not_in_baseline": 87,
+   "library_files": 866,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_vigilante_4-5/gr_moralitymission_vigilante_4-5_01.txt",
+   "geometry": 331,
+   "not_in_baseline": 22,
+   "library_files": 657,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_vigilante_6-7/gr_moralitymission_vigilante_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 8,
+   "library_files": 634,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_vigilante_8-9/gr_moralitymission_vigilante_8-9_01.txt",
+   "geometry": 374,
+   "not_in_baseline": 32,
+   "library_files": 741,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_villain_01/gr_moralitymission_villain_01.txt",
+   "geometry": 352,
+   "not_in_baseline": 35,
+   "library_files": 699,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_villain_6_7/gr_moralitymission_villain_6_7_01.txt",
+   "geometry": 312,
+   "not_in_baseline": 3,
+   "library_files": 622,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/gr_morality_missions/gr_moralitymission_villain_8-9/gr_moralitymission_villain_8-9_01.txt",
+   "geometry": 317,
+   "not_in_baseline": 13,
+   "library_files": 643,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/halloween2010/halloween_2010.txt",
+   "geometry": 364,
+   "not_in_baseline": 38,
+   "library_files": 728,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/halloween2011/halloween2011.txt",
+   "geometry": 391,
+   "not_in_baseline": 39,
+   "library_files": 774,
+   "unresolved_source_edges": 4
+  },
+  {
+   "map": "maps/missions/unique/i17_unique_maps/hero_storyarc_1/doppel_finale.txt",
+   "geometry": 312,
+   "not_in_baseline": 6,
+   "library_files": 621,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i17_unique_maps/hero_storyarc_2/portal_corp_lab.txt",
+   "geometry": 321,
+   "not_in_baseline": 7,
+   "library_files": 636,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i17_unique_maps/positf/circle_oranbega.txt",
+   "geometry": 326,
+   "not_in_baseline": 18,
+   "library_files": 649,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i17_unique_maps/positf_part_2/lost_warehouse.txt",
+   "geometry": 335,
+   "not_in_baseline": 25,
+   "library_files": 665,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i17_unique_maps/villain_storyarc_1/clone_factory.txt",
+   "geometry": 314,
+   "not_in_baseline": 8,
+   "library_files": 623,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i17_unique_maps/villain_storyarc_2/clone_factory_bottomfloor.txt",
+   "geometry": 314,
+   "not_in_baseline": 8,
+   "library_files": 623,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i20_hero_task_force/atlanticoceaniom/h_admiral_sutter_tf_atlantic_ocean.txt",
+   "geometry": 338,
+   "not_in_baseline": 18,
+   "library_files": 674,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/i20_hero_task_force/skywaycityiom/i20_htf_skyway_iom.txt",
+   "geometry": 354,
+   "not_in_baseline": 35,
+   "library_files": 705,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i20_hero_task_force/talosislandiom/h_admiral_sutter_tf_talos.txt",
+   "geometry": 364,
+   "not_in_baseline": 49,
+   "library_files": 714,
+   "unresolved_source_edges": 3
+  },
+  {
+   "map": "maps/missions/unique/i20_villain_strike_force/basement_kidnap/i20_vsf_basement_kidnap.txt",
+   "geometry": 318,
+   "not_in_baseline": 4,
+   "library_files": 635,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i20_villain_strike_force/cot_oranbega/i20_vsf_oranbega.txt",
+   "geometry": 144,
+   "not_in_baseline": 21,
+   "library_files": 283,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i20_villain_strike_force/odysseus_office/i20_vsf_odysseus_office.txt",
+   "geometry": 404,
+   "not_in_baseline": 46,
+   "library_files": 794,
+   "unresolved_source_edges": 5
+  },
+  {
+   "map": "maps/missions/unique/i20_villain_strike_force/odysseus_warehouse/i20_vsf_odysseus_warehouse.txt",
+   "geometry": 338,
+   "not_in_baseline": 11,
+   "library_files": 675,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i20_villain_strike_force/positron_lab/i20_vsf_positron_lab.txt",
+   "geometry": 313,
+   "not_in_baseline": 7,
+   "library_files": 623,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/atlas_park/aaron_thiery/arachnos_base.txt",
+   "geometry": 329,
+   "not_in_baseline": 20,
+   "library_files": 659,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/atlas_park/matthew_habashy/hellion_office.txt",
+   "geometry": 320,
+   "not_in_baseline": 5,
+   "library_files": 639,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/atlas_park/officer_fields/vahzilok_sewers_to_caves.txt",
+   "geometry": 328,
+   "not_in_baseline": 16,
+   "library_files": 652,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/atlas_park/sondra_costel/skulls_warehouse.txt",
+   "geometry": 339,
+   "not_in_baseline": 13,
+   "library_files": 680,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/dsec/fw_dsec.txt",
+   "geometry": 318,
+   "not_in_baseline": 14,
+   "library_files": 647,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/floodedofficehaunted/fw_floodedofficehaunted.txt",
+   "geometry": 328,
+   "not_in_baseline": 16,
+   "library_files": 663,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/forlorn_tunnels/fw_forlorn_tunnels_01.txt",
+   "geometry": 321,
+   "not_in_baseline": 14,
+   "library_files": 643,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/forlornperimeterdefense/fw_forlornperimeterdefense.txt",
+   "geometry": 322,
+   "not_in_baseline": 16,
+   "library_files": 644,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/midnightmansion/fw_midnightmansion.txt",
+   "geometry": 345,
+   "not_in_baseline": 25,
+   "library_files": 684,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/seer_1381/fw_floodedoffice_seer1381.txt",
+   "geometry": 326,
+   "not_in_baseline": 15,
+   "library_files": 659,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/seer_network/fw_seernetwork.txt",
+   "geometry": 321,
+   "not_in_baseline": 14,
+   "library_files": 649,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/seer_network_to_midnightermansion/fw_seernetwork_2_midnightermansion.txt",
+   "geometry": 356,
+   "not_in_baseline": 36,
+   "library_files": 714,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/seer_ward/fw_seer_ward_01.txt",
+   "geometry": 317,
+   "not_in_baseline": 13,
+   "library_files": 644,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/shepherd_haven/fw_shepherd_haven.txt",
+   "geometry": 338,
+   "not_in_baseline": 28,
+   "library_files": 671,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/slaver_base/fw_slaverbase_01.txt",
+   "geometry": 328,
+   "not_in_baseline": 16,
+   "library_files": 666,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/talons_tunnels/fw_talons_tunnels_01.txt",
+   "geometry": 319,
+   "not_in_baseline": 11,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/the_overthrow/fw_iom_theoverthrow.txt",
+   "geometry": 477,
+   "not_in_baseline": 34,
+   "library_files": 922,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/throne_room/fw_throne_room_01.txt",
+   "geometry": 327,
+   "not_in_baseline": 11,
+   "library_files": 659,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/first_ward/tyranttowerbasement/fw_tyranttowerbasement.txt",
+   "geometry": 346,
+   "not_in_baseline": 30,
+   "library_files": 709,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/mercy_island/drweber/longbow_snake_cave.txt",
+   "geometry": 312,
+   "not_in_baseline": 6,
+   "library_files": 621,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/mercy_island/fire_wire/mercy_island_bank.txt",
+   "geometry": 312,
+   "not_in_baseline": 3,
+   "library_files": 620,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/mercy_island/lt_harris/fortdarwin_attack.txt",
+   "geometry": 448,
+   "not_in_baseline": 108,
+   "library_files": 887,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i21_unique_maps/mercy_island/operative_kuzmin/hidden_longbow_base.txt",
+   "geometry": 320,
+   "not_in_baseline": 14,
+   "library_files": 647,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/cap_au_diable/bane_spider_ruben/tech_longbow_war.txt",
+   "geometry": 313,
+   "not_in_baseline": 7,
+   "library_files": 623,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/cap_au_diable/brother_hammond/cap_au_diable_aeon_city.txt",
+   "geometry": 485,
+   "not_in_baseline": 88,
+   "library_files": 953,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/dark_astoria/captain_nolan/old_apartments.txt",
+   "geometry": 328,
+   "not_in_baseline": 12,
+   "library_files": 654,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/dark_astoria/dream_doctor/cursed_offices.txt",
+   "geometry": 333,
+   "not_in_baseline": 18,
+   "library_files": 676,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/dark_astoria/james_mason/mot_sewers.txt",
+   "geometry": 322,
+   "not_in_baseline": 7,
+   "library_files": 639,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/dark_astoria/max/arachnos_warehouse_empowermentmachine.txt",
+   "geometry": 333,
+   "not_in_baseline": 24,
+   "library_files": 661,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/dark_astoria/muvorkin/astoria_dungeon.txt",
+   "geometry": 330,
+   "not_in_baseline": 19,
+   "library_files": 658,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/dark_astoria/praetor_duncan/cot_caverns.txt",
+   "geometry": 330,
+   "not_in_baseline": 22,
+   "library_files": 658,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/dark_astoria/sister_solaris/iom_cimerora_attack.txt",
+   "geometry": 355,
+   "not_in_baseline": 38,
+   "library_files": 704,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/steel_canyon/graham_easton/office_museum.txt",
+   "geometry": 310,
+   "not_in_baseline": 1,
+   "library_files": 618,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i22_unique_maps/steel_canyon/laura_lockhart/5th_column_meet_leon.txt",
+   "geometry": 333,
+   "not_in_baseline": 24,
+   "library_files": 662,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/first_ward/seer_network_to_night_ward/fw_seernetwork_to_nightward.txt",
+   "geometry": 321,
+   "not_in_baseline": 14,
+   "library_files": 649,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/first_ward/talons_caves/talons_caves_spirit_sight_ritual.txt",
+   "geometry": 316,
+   "not_in_baseline": 10,
+   "library_files": 628,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/incarnatearc/granitecaves_amulet.txt",
+   "geometry": 318,
+   "not_in_baseline": 10,
+   "library_files": 632,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/claritys_hideout/claritys_hideout.txt",
+   "geometry": 321,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/destroyed_plane/iom_destroyed_plane.txt",
+   "geometry": 25,
+   "not_in_baseline": 4,
+   "library_files": 50,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/dispel_magic_plane/dispel_magic_plane.txt",
+   "geometry": 23,
+   "not_in_baseline": 5,
+   "library_files": 43,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/eternal_prison/eternal_prison.txt",
+   "geometry": 314,
+   "not_in_baseline": 2,
+   "library_files": 625,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/fw_midnight_mansion/fw_midnightmansion.txt",
+   "geometry": 345,
+   "not_in_baseline": 25,
+   "library_files": 684,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/iom_black_knights_camp/black_knights_camp.txt",
+   "geometry": 192,
+   "not_in_baseline": 18,
+   "library_files": 341,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/iom_night_ward_bedwyr/iom_night_ward_bedwyr.txt",
+   "geometry": 193,
+   "not_in_baseline": 18,
+   "library_files": 344,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/iom_night_ward_mom_hospital/iom_night_ward_mom_hospital.txt",
+   "geometry": 193,
+   "not_in_baseline": 18,
+   "library_files": 344,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/iom_night_ward_swamps/iom_night_ward_swamps.txt",
+   "geometry": 193,
+   "not_in_baseline": 18,
+   "library_files": 344,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/iom_night_ward_westerman_building/iom_night_ward_westerman_building.txt",
+   "geometry": 484,
+   "not_in_baseline": 32,
+   "library_files": 937,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/magic_caves/magic_caves.txt",
+   "geometry": 336,
+   "not_in_baseline": 15,
+   "library_files": 666,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/mausoleumtocave/mausoleumtocave.txt",
+   "geometry": 197,
+   "not_in_baseline": 42,
+   "library_files": 378,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/midnight_mansion/nw_midnightmansion_iom.txt",
+   "geometry": 506,
+   "not_in_baseline": 48,
+   "library_files": 972,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/shadowhunterslair/shadowhunterslair.txt",
+   "geometry": 326,
+   "not_in_baseline": 20,
+   "library_files": 648,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/talons_caves_ravenwing_resurrection/talons_caves_ravenwing_resurrection.txt",
+   "geometry": 305,
+   "not_in_baseline": 1,
+   "library_files": 608,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/train_station/nw_train_station.txt",
+   "geometry": 81,
+   "not_in_baseline": 12,
+   "library_files": 162,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/i23_unique_maps/night_ward/trilogy/iom_farm_land.txt",
+   "geometry": 348,
+   "not_in_baseline": 20,
+   "library_files": 693,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/hero_arc/arc_1/council_base.txt",
+   "geometry": 351,
+   "not_in_baseline": 39,
+   "library_files": 695,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/hero_arc/arc_2/council_finale.txt",
+   "geometry": 336,
+   "not_in_baseline": 26,
+   "library_files": 668,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/hero_arc/arc_3/anti_matter_personal_story.txt",
+   "geometry": 96,
+   "not_in_baseline": 23,
+   "library_files": 193,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/hero_arc/carnival_island/iom_carnival_island.txt",
+   "geometry": 393,
+   "not_in_baseline": 32,
+   "library_files": 777,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/hero_arc/founders_falls_fire/iom_founders_falls_attack.txt",
+   "geometry": 378,
+   "not_in_baseline": 26,
+   "library_files": 747,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/hero_arc/marchand_personal_story/iom_imperial_hamidon.txt",
+   "geometry": 634,
+   "not_in_baseline": 53,
+   "library_files": 1138,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/incarnate_arc/devoured_warehouse.txt",
+   "geometry": 335,
+   "not_in_baseline": 8,
+   "library_files": 668,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/anderson_construction/anderson_construction.txt",
+   "geometry": 331,
+   "not_in_baseline": 8,
+   "library_files": 663,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/cityofficial_office/cityofficial_hammett_office.txt",
+   "geometry": 311,
+   "not_in_baseline": 4,
+   "library_files": 620,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/kingsgarmentworks/kingsgarmentworks.txt",
+   "geometry": 331,
+   "not_in_baseline": 22,
+   "library_files": 657,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/personalstory_deadlock_fort_trident/deadlock_fort_trident.txt",
+   "geometry": 312,
+   "not_in_baseline": 5,
+   "library_files": 624,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/skulls_hideout/skulls_hideout.txt",
+   "geometry": 321,
+   "not_in_baseline": 13,
+   "library_files": 640,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/superadine_lab/veles_superadine_lab.txt",
+   "geometry": 333,
+   "not_in_baseline": 24,
+   "library_files": 661,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/toothbreakerjones_hideout/toothbreakerjones_hideout.txt",
+   "geometry": 322,
+   "not_in_baseline": 13,
+   "library_files": 642,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/kings_row_missions/veles_hideout/veles_rave.txt",
+   "geometry": 331,
+   "not_in_baseline": 21,
+   "library_files": 657,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/villain_arc/iom_villain_imperial_hamidon.txt",
+   "geometry": 640,
+   "not_in_baseline": 60,
+   "library_files": 1154,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/villain_arc/arc_1/iom_stmartial_showdown.txt",
+   "geometry": 518,
+   "not_in_baseline": 121,
+   "library_files": 1024,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/villain_arc/arc_2/iom_capaudiable_wspdr_office.txt",
+   "geometry": 457,
+   "not_in_baseline": 84,
+   "library_files": 906,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/i24_unique_maps/villain_arc/arc_3/arachnos_base.txt",
+   "geometry": 337,
+   "not_in_baseline": 28,
+   "library_files": 675,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/invention_tutorial/invention_tutorial_01.txt",
+   "geometry": 318,
+   "not_in_baseline": 4,
+   "library_files": 635,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/mercyisland/arachnos_lab_01.txt",
+   "geometry": 335,
+   "not_in_baseline": 26,
+   "library_files": 669,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/midnighter_club/abandonedoffice_to_rikti/abandonedoffice_to_rikti.txt",
+   "geometry": 377,
+   "not_in_baseline": 51,
+   "library_files": 743,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/midnighter_club/sl5_si_darrin_wade_storarc_mission5/sl5_si_darrin_wade_storarc_mission5.txt",
+   "geometry": 347,
+   "not_in_baseline": 29,
+   "library_files": 691,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/office/cfm_office.txt",
+   "geometry": 314,
+   "not_in_baseline": 3,
+   "library_files": 627,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/omegateammemorial/omegateammemorial.txt",
+   "geometry": 133,
+   "not_in_baseline": 2,
+   "library_files": 257,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/hero_finale_portal.txt",
+   "geometry": 319,
+   "not_in_baseline": 6,
+   "library_files": 632,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/abandoned_tech/hero_act1_abandoned_tech01.txt",
+   "geometry": 311,
+   "not_in_baseline": 6,
+   "library_files": 619,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/abandoned_warehouse/villain_act1_abandoned_warehouse01.txt",
+   "geometry": 331,
+   "not_in_baseline": 22,
+   "library_files": 657,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/dollface_mansion/dollface_mansion.txt",
+   "geometry": 330,
+   "not_in_baseline": 19,
+   "library_files": 658,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/drgraves_warehouse/graves_warehouse.txt",
+   "geometry": 337,
+   "not_in_baseline": 28,
+   "library_files": 669,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/longbow_base/longbow_base.txt",
+   "geometry": 305,
+   "not_in_baseline": 1,
+   "library_files": 608,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/manticore_mansion/manticore_mansion.txt",
+   "geometry": 351,
+   "not_in_baseline": 35,
+   "library_files": 710,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/ongoing_training/trashed_galaxy/trashed_galaxy.txt",
+   "geometry": 363,
+   "not_in_baseline": 35,
+   "library_files": 726,
+   "unresolved_source_edges": 3
+  },
+  {
+   "map": "maps/missions/unique/p_tutorial/p_tutorial.txt",
+   "geometry": 357,
+   "not_in_baseline": 32,
+   "library_files": 716,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/paragonpolice_precint/ppd_precint.txt",
+   "geometry": 306,
+   "not_in_baseline": 1,
+   "library_files": 610,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/penelope_yin_tf/freakshow_office.txt",
+   "geometry": 331,
+   "not_in_baseline": 17,
+   "library_files": 660,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/praetoria/endgame/baf/iom_baf.txt",
+   "geometry": 392,
+   "not_in_baseline": 7,
+   "library_files": 764,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/praetoria/imperial_loyalist/brandt_oldlab.txt",
+   "geometry": 315,
+   "not_in_baseline": 11,
+   "library_files": 636,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/imperial_resistance/baf_prison.txt",
+   "geometry": 316,
+   "not_in_baseline": 12,
+   "library_files": 639,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/moralchoice/imperial_crusader_moralchoice.txt",
+   "geometry": 322,
+   "not_in_baseline": 16,
+   "library_files": 644,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/neutropolis_resistance/broken_lab.txt",
+   "geometry": 31,
+   "not_in_baseline": 11,
+   "library_files": 69,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/nova_loyalist/ppd_station.txt",
+   "geometry": 151,
+   "not_in_baseline": 1,
+   "library_files": 294,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/nova_resistance/nova_tunnels_to_tunnels.txt",
+   "geometry": 322,
+   "not_in_baseline": 15,
+   "library_files": 644,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/rift_enclosure_loyalist/rift_enclosure.txt",
+   "geometry": 364,
+   "not_in_baseline": 30,
+   "library_files": 730,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/letheloch/letheloch.txt",
+   "geometry": 101,
+   "not_in_baseline": 27,
+   "library_files": 203,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/makeshifthospital/makeshifthospital.txt",
+   "geometry": 322,
+   "not_in_baseline": 14,
+   "library_files": 645,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/makeshiftprison/makeshiftprison.txt",
+   "geometry": 342,
+   "not_in_baseline": 23,
+   "library_files": 686,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/reroutedmainlines/reroutedmainlines.txt",
+   "geometry": 348,
+   "not_in_baseline": 28,
+   "library_files": 698,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/resistancehq/resistancehq_01.txt",
+   "geometry": 101,
+   "not_in_baseline": 27,
+   "library_files": 203,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/resistancemeetplace/resistancemeetplace_01.txt",
+   "geometry": 60,
+   "not_in_baseline": 21,
+   "library_files": 120,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/sabotagedmainlines/sabotagedmainlines.txt",
+   "geometry": 326,
+   "not_in_baseline": 17,
+   "library_files": 652,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/sentryguns/sentryguns.txt",
+   "geometry": 94,
+   "not_in_baseline": 21,
+   "library_files": 189,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/temporaryencampment/temporaryencampment.txt",
+   "geometry": 62,
+   "not_in_baseline": 22,
+   "library_files": 124,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/toxicwastedump/toxicwastedump_01.txt",
+   "geometry": 61,
+   "not_in_baseline": 22,
+   "library_files": 121,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/tunneljunction/tunneljunction.txt",
+   "geometry": 60,
+   "not_in_baseline": 21,
+   "library_files": 120,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/praetoria/tunnels/waterpumpingstation/waterpumpingstation_01.txt",
+   "geometry": 348,
+   "not_in_baseline": 28,
+   "library_files": 698,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/rikti_war_zone/gaussian_warehouse/gaussian_warehouse.txt",
+   "geometry": 326,
+   "not_in_baseline": 16,
+   "library_files": 650,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/rikti_war_zone/hero_1_prison/hero_1_prison.txt",
+   "geometry": 324,
+   "not_in_baseline": 17,
+   "library_files": 648,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/rikti_war_zone/portal_cavern_01/portal_cavern_01.txt",
+   "geometry": 329,
+   "not_in_baseline": 19,
+   "library_files": 659,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/rikti_war_zone/portal_cavern_02/portal_cavern_02.txt",
+   "geometry": 340,
+   "not_in_baseline": 30,
+   "library_files": 679,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/rikti_war_zone/vanguard_base_interior/vanguard_base_interior.txt",
+   "geometry": 338,
+   "not_in_baseline": 11,
+   "library_files": 664,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/rikticooptaskforce/apocalypse/apocalypse.txt",
+   "geometry": 380,
+   "not_in_baseline": 53,
+   "library_files": 754,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/rikticooptaskforce/the_beast_and_the_sea/the_beast_and_the_sea.txt",
+   "geometry": 351,
+   "not_in_baseline": 21,
+   "library_files": 690,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/rikticooptaskforce/the_dragon/the_dragon.txt",
+   "geometry": 349,
+   "not_in_baseline": 34,
+   "library_files": 696,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/unique/rikticooptaskforce/the_horsemen_four/the_horsemen_four.txt",
+   "geometry": 334,
+   "not_in_baseline": 22,
+   "library_files": 666,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/rikticooptaskforce/the_seer/the_seer.txt",
+   "geometry": 326,
+   "not_in_baseline": 16,
+   "library_files": 649,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/sewernetworkraid/sewernetworkevent_low.txt",
+   "geometry": 338,
+   "not_in_baseline": 18,
+   "library_files": 673,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/shadowshard/chantry/hazard_06_03_chantry.txt",
+   "geometry": 308,
+   "not_in_baseline": 1,
+   "library_files": 614,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/shadowshard/ruladak/hazard_06_02_ruladak.txt",
+   "geometry": 310,
+   "not_in_baseline": 4,
+   "library_files": 618,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/shadowshard/storm_palace/trial_06_01_storm_palace.txt",
+   "geometry": 308,
+   "not_in_baseline": 1,
+   "library_files": 614,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/onewilldie_story_1/issue1/cot_obelisk_lair.txt",
+   "geometry": 338,
+   "not_in_baseline": 21,
+   "library_files": 671,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/onewilldie_story_1/issue2/iom_sharkhead_graveyard.txt",
+   "geometry": 488,
+   "not_in_baseline": 90,
+   "library_files": 966,
+   "unresolved_source_edges": 6
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/onewilldie_story_1/issue3/iom_warburg_ritual.txt",
+   "geometry": 436,
+   "not_in_baseline": 84,
+   "library_files": 871,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/onewilldie_story_1/issue4/goldengiza_interior.txt",
+   "geometry": 319,
+   "not_in_baseline": 5,
+   "library_files": 634,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/onewilldie_story_1/issue5/abandonedsewers_to_wade_lair.txt",
+   "geometry": 363,
+   "not_in_baseline": 27,
+   "library_files": 729,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/onewilldie_story_1/issue6/carnival_office.txt",
+   "geometry": 314,
+   "not_in_baseline": 4,
+   "library_files": 625,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/onewilldie_story_1/issue7/arachnos_modernsybiltemple.txt",
+   "geometry": 364,
+   "not_in_baseline": 39,
+   "library_files": 726,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/pandorasbox_story_2/issue1/atlantic_ocean_sky_raiders.txt",
+   "geometry": 77,
+   "not_in_baseline": 5,
+   "library_files": 151,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/pandorasbox_story_2/issue2/caves_mediterranean_achaea.txt",
+   "geometry": 324,
+   "not_in_baseline": 14,
+   "library_files": 646,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/pandorasbox_story_2/issue4/government_office.txt",
+   "geometry": 319,
+   "not_in_baseline": 11,
+   "library_files": 636,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/pandorasbox_story_2/issue5/arachnos_stolen_antikythera.txt",
+   "geometry": 338,
+   "not_in_baseline": 29,
+   "library_files": 676,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/signaturestoryarcs/pandorasbox_story_2/issue6/atlas_nemesis_attack.txt",
+   "geometry": 477,
+   "not_in_baseline": 1,
+   "library_files": 916,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/snakecaves/snakecaves_30/snakecaves_30_layout_01.txt",
+   "geometry": 309,
+   "not_in_baseline": 3,
+   "library_files": 616,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/snakecaves/snakecaves_45/snakecaves_45_layout_01.txt",
+   "geometry": 313,
+   "not_in_baseline": 6,
+   "library_files": 623,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/spring_06/v_arachnos_45_spring_06.txt",
+   "geometry": 338,
+   "not_in_baseline": 28,
+   "library_files": 676,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/statesmantaskforce/iom_capauvictorie/iom_capauvictorie.txt",
+   "geometry": 470,
+   "not_in_baseline": 94,
+   "library_files": 933,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/statesmantaskforce/iom_darkvictory/iom_darkvictory.txt",
+   "geometry": 401,
+   "not_in_baseline": 45,
+   "library_files": 778,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/statesmantaskforce/iom_stoplordrecluse/iom_grandville_springfling.txt",
+   "geometry": 458,
+   "not_in_baseline": 79,
+   "library_files": 874,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/statesmantaskforce/iom_thethorntree/iom_thethorntree.txt",
+   "geometry": 455,
+   "not_in_baseline": 87,
+   "library_files": 906,
+   "unresolved_source_edges": 1
+  },
+  {
+   "map": "maps/missions/unique/statesmantaskforce/iom_thewebfab/iom_thewebfab.txt",
+   "geometry": 491,
+   "not_in_baseline": 100,
+   "library_files": 939,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/strigaisle/council_factory1.txt",
+   "geometry": 358,
+   "not_in_baseline": 40,
+   "library_files": 708,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/summer_event_2012/summer_event_2012.txt",
+   "geometry": 377,
+   "not_in_baseline": 23,
+   "library_files": 744,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/tech/alysonde_skyraider_base.txt",
+   "geometry": 312,
+   "not_in_baseline": 6,
+   "library_files": 621,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/trialrooms/cavernoftranscendence/hazard_01_02_room.txt",
+   "geometry": 305,
+   "not_in_baseline": 1,
+   "library_files": 608,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/trialrooms/eden/trial_04_01_room.txt",
+   "geometry": 313,
+   "not_in_baseline": 3,
+   "library_files": 622,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/trialrooms/sewers/trial_01_01_room.txt",
+   "geometry": 310,
+   "not_in_baseline": 5,
+   "library_files": 618,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/trialrooms/terravolta/trial_03_01_room.txt",
+   "geometry": 310,
+   "not_in_baseline": 2,
+   "library_files": 618,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_cap_au_diable/speakeasy.txt",
+   "geometry": 326,
+   "not_in_baseline": 16,
+   "library_files": 648,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_caveofshaper/v_caveofshaper.txt",
+   "geometry": 314,
+   "not_in_baseline": 4,
+   "library_files": 624,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_grandville/arach_conf_complete.txt",
+   "geometry": 455,
+   "not_in_baseline": 83,
+   "library_files": 871,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_johnnys_hell/v_johnnys_hell.txt",
+   "geometry": 312,
+   "not_in_baseline": 4,
+   "library_files": 620,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_nerva_isles/officers_club.txt",
+   "geometry": 309,
+   "not_in_baseline": 3,
+   "library_files": 616,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_portoaks/blackbeards.txt",
+   "geometry": 322,
+   "not_in_baseline": 10,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_sharkhead/chum_bucket.txt",
+   "geometry": 316,
+   "not_in_baseline": 7,
+   "library_files": 629,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_stmartial/lucky_six.txt",
+   "geometry": 308,
+   "not_in_baseline": 1,
+   "library_files": 614,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_warehouse_arachnos/v_warehouse_arachnos_30_layout_01.txt",
+   "geometry": 338,
+   "not_in_baseline": 26,
+   "library_files": 674,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/v_warehouse_longbow/v_warehouse_longbow_30_layout_01.txt",
+   "geometry": 333,
+   "not_in_baseline": 24,
+   "library_files": 662,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/warehouse/family_warehouse.txt",
+   "geometry": 322,
+   "not_in_baseline": 14,
+   "library_files": 640,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/unique/winter_06/winter_event06_croatoa.txt",
+   "geometry": 379,
+   "not_in_baseline": 39,
+   "library_files": 752,
+   "unresolved_source_edges": 4
+  },
+  {
+   "map": "maps/missions/v_abandoned_office/v_abandoned_office_30/v_abandoned_office_30_layout_01.txt",
+   "geometry": 5,
+   "not_in_baseline": 0,
+   "library_files": 7,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_abandoned_office/v_abandoned_office_45/v_abandoned_office_45_layout_01.txt",
+   "geometry": 66,
+   "not_in_baseline": 12,
+   "library_files": 128,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_abandoned_office/v_abandoned_office_60/v_abandoned_office_60_layout_01.txt",
+   "geometry": 63,
+   "not_in_baseline": 15,
+   "library_files": 122,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_abandoned_warehouse/v_abandoned_warehouse_30/v_abandoned_warehouse_30_layout_01.txt",
+   "geometry": 106,
+   "not_in_baseline": 30,
+   "library_files": 205,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_abandoned_warehouse/v_abandoned_warehouse_45/v_abandoned_warehouse_45_layout_01.txt",
+   "geometry": 105,
+   "not_in_baseline": 30,
+   "library_files": 203,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_abandoned_warehouse/v_abandoned_warehouse_60/v_abandoned_warehouse_60_layout_01.txt",
+   "geometry": 108,
+   "not_in_baseline": 32,
+   "library_files": 209,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnoid_cave/v_arachnoid_cave_30/v_arachnoid_cave_30_layout_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 10,
+   "library_files": 627,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnoid_cave/v_arachnoid_cave_45/v_arachnoid_cave_45_layout_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 10,
+   "library_files": 627,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnoid_cave/v_arachnoid_cave_60/v_arachnoid_cave_60_layout_01.txt",
+   "geometry": 316,
+   "not_in_baseline": 10,
+   "library_files": 627,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnoidtech/v_arachnoidtech_30/v_arachnoidtech_30_layout_01.txt",
+   "geometry": 29,
+   "not_in_baseline": 10,
+   "library_files": 52,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnoidtech/v_arachnoidtech_45/v_arachnoidtech_45_layout_01.txt",
+   "geometry": 29,
+   "not_in_baseline": 10,
+   "library_files": 52,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnoidtech/v_arachnoidtech_60/v_arachnoidtech_60_layout_01.txt",
+   "geometry": 29,
+   "not_in_baseline": 10,
+   "library_files": 52,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnos/v_arachnos_lobby_01.txt",
+   "geometry": 27,
+   "not_in_baseline": 8,
+   "library_files": 46,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnos/v_arachnos_30/v_arachnos_30_layout_01_01.txt",
+   "geometry": 31,
+   "not_in_baseline": 13,
+   "library_files": 63,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnos/v_arachnos_45/v_arachnos_45_layout_01_01.txt",
+   "geometry": 329,
+   "not_in_baseline": 21,
+   "library_files": 657,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_arachnos/v_arachnos_60/v_arachnos_60_layout_01_01p.txt",
+   "geometry": 53,
+   "not_in_baseline": 27,
+   "library_files": 105,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_caves/v_caves_30/v_caves_30_layout_01_01.txt",
+   "geometry": 28,
+   "not_in_baseline": 14,
+   "library_files": 50,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_caves/v_caves_45/v_caves_45_layout_01_01.txt",
+   "geometry": 28,
+   "not_in_baseline": 14,
+   "library_files": 50,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_caves/v_caves_60/v_caves_60_layout_01_01.txt",
+   "geometry": 321,
+   "not_in_baseline": 16,
+   "library_files": 638,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_longbow/longbow_30/longbow_30_layout_01.txt",
+   "geometry": 147,
+   "not_in_baseline": 7,
+   "library_files": 297,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_longbow/longbow_45/longbow_45_layout_01.txt",
+   "geometry": 146,
+   "not_in_baseline": 6,
+   "library_files": 294,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_longbow/longbow_60/longbow_60_layout_01.txt",
+   "geometry": 147,
+   "not_in_baseline": 7,
+   "library_files": 297,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_longbow_seabase/v_longbow_seabase_45/v_longbow_seabase_45_layout_01.txt",
+   "geometry": 1,
+   "not_in_baseline": 0,
+   "library_files": 2,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_longbow_seabase/v_longbow_seabase_60/v_longbow_seabase_60_layout_01.txt",
+   "geometry": 1,
+   "not_in_baseline": 0,
+   "library_files": 2,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_steelcanyon_01.txt",
+   "geometry": 378,
+   "not_in_baseline": 36,
+   "library_files": 749,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_atlas_park/v_mayhem_atlas_park.txt",
+   "geometry": 516,
+   "not_in_baseline": 32,
+   "library_files": 993,
+   "unresolved_source_edges": 2
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_brickstown/v_mayhem_brickstown.txt",
+   "geometry": 373,
+   "not_in_baseline": 36,
+   "library_files": 739,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_founders_falls/v_mayhem_founders_falls.txt",
+   "geometry": 404,
+   "not_in_baseline": 53,
+   "library_files": 803,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_independence_port/v_mayhem_independence_port.txt",
+   "geometry": 415,
+   "not_in_baseline": 62,
+   "library_files": 818,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_kings_row/v_mayhem_kings_row.txt",
+   "geometry": 423,
+   "not_in_baseline": 71,
+   "library_files": 832,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_peregrine_island/v_mayhem_peregrine_island.txt",
+   "geometry": 454,
+   "not_in_baseline": 79,
+   "library_files": 899,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_skyway/v_mayhem_skyway.txt",
+   "geometry": 406,
+   "not_in_baseline": 62,
+   "library_files": 801,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_steelcanyon/v_mayhem_steelcanyon.txt",
+   "geometry": 408,
+   "not_in_baseline": 54,
+   "library_files": 809,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mayhem/v_mayhem_talos_island/v_mayhem_talos_island.txt",
+   "geometry": 419,
+   "not_in_baseline": 69,
+   "library_files": 828,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mos_to_smoothcaves/v_mos_to_smoothcaves_15/v_mos_to_smoothcaves_15_layout_01.txt",
+   "geometry": 197,
+   "not_in_baseline": 42,
+   "library_files": 378,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mos_to_smoothcaves/v_mos_to_smoothcaves_30/v_mos_to_smoothcaves_30_layout_01.txt",
+   "geometry": 197,
+   "not_in_baseline": 42,
+   "library_files": 378,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mos_to_smoothcaves/v_mos_to_smoothcaves_45/v_mos_to_smoothcaves_45_layout_01.txt",
+   "geometry": 197,
+   "not_in_baseline": 42,
+   "library_files": 378,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_mos_to_smoothcaves/v_mos_to_smoothcaves_60/v_mos_to_smoothcaves_60_layout_01.txt",
+   "geometry": 197,
+   "not_in_baseline": 42,
+   "library_files": 378,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_cave/v_ofc_to_cave_15/v_ofc_to_cave_15_layout_01.txt",
+   "geometry": 197,
+   "not_in_baseline": 41,
+   "library_files": 378,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_cave/v_ofc_to_cave_30/v_ofc_to_cave_30_layout_01.txt",
+   "geometry": 197,
+   "not_in_baseline": 41,
+   "library_files": 378,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_cave/v_ofc_to_cave_45/v_ofc_to_cave_45_layout_01.txt",
+   "geometry": 199,
+   "not_in_baseline": 42,
+   "library_files": 382,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_cave/v_ofc_to_cave_60/v_ofc_to_cave_60_layout_01.txt",
+   "geometry": 200,
+   "not_in_baseline": 42,
+   "library_files": 384,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_sewer/v_ofc_to_sewer_15/v_ofc_to_sewer_15_layout_01.txt",
+   "geometry": 142,
+   "not_in_baseline": 35,
+   "library_files": 269,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_sewer/v_ofc_to_sewer_30/v_ofc_to_sewer_30_layout_01.txt",
+   "geometry": 142,
+   "not_in_baseline": 35,
+   "library_files": 269,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_sewer/v_ofc_to_sewer_45/v_ofc_to_sewer_45_layout_01.txt",
+   "geometry": 145,
+   "not_in_baseline": 36,
+   "library_files": 275,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_ofc_to_sewer/v_ofc_to_sewer_60/v_ofc_to_sewer_60_layout_01.txt",
+   "geometry": 146,
+   "not_in_baseline": 37,
+   "library_files": 277,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_office/v_office_30/v_office_30_layout_01.txt",
+   "geometry": 50,
+   "not_in_baseline": 1,
+   "library_files": 96,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_office/v_office_45/v_office_45_layout_01.txt",
+   "geometry": 52,
+   "not_in_baseline": 3,
+   "library_files": 100,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_office/v_office_60/v_office_60_layout_01.txt",
+   "geometry": 51,
+   "not_in_baseline": 2,
+   "library_files": 98,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_sewer_to_office/v_sewer_to_office_30/v_sewer_to_ofc_30_layout_01.txt",
+   "geometry": 196,
+   "not_in_baseline": 35,
+   "library_files": 377,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_sewer_to_office/v_sewer_to_office_45/v_sewer_to_ofc_45_layout_01.txt",
+   "geometry": 192,
+   "not_in_baseline": 36,
+   "library_files": 369,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_sewer_to_office/v_sewer_to_office_60/v_sewer_to_ofc_60_layout_01.txt",
+   "geometry": 198,
+   "not_in_baseline": 37,
+   "library_files": 381,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_sewers/v_sewers_30/v_sewers_30_layout_01_01.txt",
+   "geometry": 93,
+   "not_in_baseline": 5,
+   "library_files": 182,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_sewers/v_sewers_45/v_sewers_45_layout_01_01.txt",
+   "geometry": 93,
+   "not_in_baseline": 5,
+   "library_files": 182,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_sewers/v_sewers_60/v_sewers_60_layout_01_01.txt",
+   "geometry": 92,
+   "not_in_baseline": 4,
+   "library_files": 180,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_smoothcaves/v_smoothcaves_30/v_smoothcaves_30_layout_01.txt",
+   "geometry": 15,
+   "not_in_baseline": 2,
+   "library_files": 26,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_smoothcaves/v_smoothcaves_45/v_smoothcaves_45_layout_01.txt",
+   "geometry": 102,
+   "not_in_baseline": 11,
+   "library_files": 199,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_smoothcaves/v_smoothcaves_60/v_smoothcaves_60_layout_01.txt",
+   "geometry": 103,
+   "not_in_baseline": 12,
+   "library_files": 201,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_warehouse/v_warehouse_15/v_warehouse_15_layout_01_01.txt",
+   "geometry": 330,
+   "not_in_baseline": 21,
+   "library_files": 655,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_warehouse/v_warehouse_30/v_warehouse_30_layout_01.txt",
+   "geometry": 94,
+   "not_in_baseline": 21,
+   "library_files": 181,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_warehouse/v_warehouse_45/v_warehouse_45_layout_01.txt",
+   "geometry": 95,
+   "not_in_baseline": 22,
+   "library_files": 183,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_warehouse/v_warehouse_60/v_warehouse_60_layout_01.txt",
+   "geometry": 80,
+   "not_in_baseline": 17,
+   "library_files": 154,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_wrhouse_to_arachnoid/v_wrhouse_to_arachnoid_45/v_wrhouse_to_arachnoid_45_layout_01.txt",
+   "geometry": 146,
+   "not_in_baseline": 40,
+   "library_files": 277,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/v_wrhouse_to_arachnoid/v_wrhouse_to_arachnoid_60/v_wrhouse_to_arachnoid_60_layout_01.txt",
+   "geometry": 159,
+   "not_in_baseline": 45,
+   "library_files": 302,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/warehouse/warehouse_15/warehouse_15_layout_01_01.txt",
+   "geometry": 329,
+   "not_in_baseline": 20,
+   "library_files": 653,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/warehouse/warehouse_30/warehouse_30_layout_01_01.txt",
+   "geometry": 331,
+   "not_in_baseline": 22,
+   "library_files": 657,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/warehouse/warehouse_45/warehouse_45_layout_01_01.txt",
+   "geometry": 330,
+   "not_in_baseline": 21,
+   "library_files": 655,
+   "unresolved_source_edges": 0
+  },
+  {
+   "map": "maps/missions/warehouse/warehouse_60/warehouse_60_layout_01_01.txt",
+   "geometry": 325,
+   "not_in_baseline": 18,
+   "library_files": 646,
+   "unresolved_source_edges": 0
+  }
+ ]
+}
