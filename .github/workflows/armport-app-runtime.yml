@@ -73,6 +73,11 @@ on:
         description: Emulator settings for the zone servers only (0.13.79) - empty, tso, x87 or tso,x87
         required: false
         default: ''
+      keep_previous_zone:
+        description: The zone the hero just left stays loaded beside the current zone and the spare (0.13.82)
+        type: boolean
+        required: false
+        default: false
       client_group_bins:
         description: ARM64 client keeps the prepared form of the group files it parses (0.13.81)
         type: boolean
@@ -130,6 +135,7 @@ env:
   COH_DEFER_ZONE_LOADS: ${{ inputs.defer_zone_loads && '1' || '' }}
   COH_CLIENT_LIBRARY_BOUNDS: ${{ inputs.client_library_bounds && '1' || '' }}
   COH_CLIENT_GROUP_BINS: ${{ inputs.client_group_bins && '1' || '' }}
+  COH_KEEP_PREVIOUS_ZONE: ${{ inputs.keep_previous_zone && '1' || '' }}
   COH_TRAP_SAMPLER: ${{ inputs.trap_sampler && '1' || '' }}
   COH_PROOT_IOCTL_FILTER: ${{ inputs.proot_ioctl_filter && '1' || '' }}
   ARMPORT_CI_CHARACTER_NAME: ${{ inputs.character_name || 'THORHERO' }}

@@ -3,7 +3,7 @@
   "role": "armport_server_metrics_source_checks",
   "status": "passed",
   "variant": "retained_progress",
-  "build_input_sha256": "9726a04f807e8a4b3423843b86053ca6131e87923708ee981b3c06d72ca10436",
+  "build_input_sha256": "a3d1d2afb7aab43ec6b8820119c202f2b7459a53024652c62a626b46267250ba",
   "source_sha256": {
     "MapServer/src/svr/svr_init.c": "c995b18cbf5d9c1a9c2c86fe13c43d6fa6898210b76aef3df21768b9cadeeaed",
     "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71",
@@ -22,7 +22,9 @@
     "MapServer/src/group/groupnetdb.c": "ac21b7027436f5c32b1f49d4477e0cb0d2ecc9f7dccb29f46eadcd038be0cabe",
     "MapServer/src/group/armport_deferred_load.h": "7c66b4ba4c93b52bc55678d14636044321de61baa3ff6d02dd778a5406ec64ae",
     "MapServer/src/beacon/beaconFile.c": "02b6b8f4ce477e073690291d6b1fa5ecc2d5a4d6ed6a5c99e8bc17863791f55d",
-    "MapServer/src/group/groupnetsend.c": "0a69491e1f2d9c6447553e0b4d137f4144d5f5d464c0c7a14f73f256e69bb0ca"
+    "MapServer/src/group/groupnetsend.c": "0a69491e1f2d9c6447553e0b4d137f4144d5f5d464c0c7a14f73f256e69bb0ca",
+    "MapServer/src/gameComm/NpcNames.c": "231e148f52cd6f49555e83c16b4257602361c544d7bb04cdda9a9aeed81729a9",
+    "MapServer/src/player/parseClientInput.c": "e283d87216919f3de8c181e5af5606a06a7abace567c52a09b2f71b80f63f7a3"
   },
   "original_sha256": {
     "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
@@ -36,13 +38,15 @@
     "Common/group/groupgrid.c": "4454f7d920b6420d8acaec83346f53153826d7343a2811aead513a7c9e8103f5",
     "MapServer/src/group/groupnetdb.c": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3",
     "MapServer/src/beacon/beaconFile.c": "2693b3cd9eb2432248605810a167a4aed8ab71f569c8f2fdc89fe4aa4271ad60",
-    "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9"
+    "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "MapServer/src/gameComm/NpcNames.c": "7601b15354605e06033d2a7024f8edce8bb036f7730a60919427a35fd17928f7",
+    "MapServer/src/player/parseClientInput.c": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313"
   },
   "fixture_sha256": {
-    "positive": "8a8e3a97820d306675202eb71a96fc5399b41e483d7c2a52b19dc3e34c97029b",
-    "negative": "5aeffa72214ca81ffda95815b7a245cef8e2cd342dfd4d8b88f2f9fb066e75c8"
+    "positive": "14c06b92994c3b95b7e4275ef3326152e1a9e3217d97ce534bf2feb92e03a965",
+    "negative": "d78f336cbe2b9cf6e0ca071cbf65612ed8a162fb9d97d7e1f800d4d20d04bb8b"
   },
-  "test_script_sha256": "2e838f91fec6a4b8f477cd449c22b06f0f777d265e2ba9e309370b47408326e7",
+  "test_script_sha256": "fb4f641362a1b5373543119a5a67540bcedc80dbfa30f283ec0576fef3a1541d",
   "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "execution_environment": "posix_host_with_windows_clock_and_file_io_shims",
   "positive_cases": [
@@ -82,9 +86,11 @@
     "deferred_load_later_map",
     "deferred_load_clock",
     "deferred_load_not_first",
-    "deferred_load_disabled"
+    "deferred_load_disabled",
+    "npc_names",
+    "npc_names_crlf"
   ],
   "unpatched_control_failed": true,
-  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_and_deferred_load_assertions",
+  "unpatched_control_failure": "runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_deferred_load_and_name_list_assertions",
   "shipping_binary_executed": false
 }

@@ -591,6 +591,115 @@ class StockTravelTests(unittest.TestCase):
         self.tick(value)
         self.assertEqual(len(started), 1)
 
+    def test_the_zone_just_left_stays_with_the_owners_option_and_older_ones_give_way(self):
+        # 0.13.82: current zone + the zone just left + the spare. Off by default; only with the spare.
+        value, started = self.spare_instance()
+        value.keep_previous_zone = True
+        value.stock['keep_previous_zone'] = {'kept': 0}
+        value.maps[5] = owned()
+        value.query_count = 0
+        value.query = Mock(return_value='1 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 1 SmapId 1\n')
+        self.tick(value)                                      # two zones run: nothing has to give way
+        self.assertEqual(len(started), 1)
+        value.query.assert_not_called()
+        self.assertEqual((set(value.maps), value.stock['evictions']), ({1, 5}, []))
+        # A third zone (the trip before last): only the one left longest ago is stopped.
+        value.spare = None
+        value.maps[7] = owned()
+        value.maps[5]['last_occupied'], value.maps[7]['last_occupied'] = 10.0, 20.0
+        older, newer = value.maps[5]['process'].process, value.maps[7]['process'].process
+        self.tick(value)
+        self.assertEqual(value.spare_report['waiting_reason'], 'made_room')
+        older.terminate.assert_called_once_with(); newer.terminate.assert_not_called()
+        self.assertEqual((set(value.maps), value.stock['keep_previous_zone']['kept']), ({1, 7}, 1))
+        self.tick(value)
+        self.assertEqual(len(started), 2)
+        # The request guards allow the third server only with the option.
+        with patch.dict(zoning.MAPS, {9: dict(zoning.MAPS[5])}):
+            value.spare = {'process': owned()['process'], 'progress_path': Path('/x'), 'assign_path': value.root / 'a',
+                           'runtime': Path('/zones'), 'port': 7099, 'launch_monotonic': 0, 'tree': 'zones'}
+            value.keep_previous_zone = False
+            with self.assertRaisesRegex(zoning.character.base.DiagnosticError, 'Invalid spare zone assignment'):
+                value._assign_spare(9, 3)
+            with self.assertRaisesRegex(zoning.character.base.DiagnosticError, 'Duplicate or unreviewed'):
+                value._spawn_map(9, cookie=3, port=7005)
+
+    def test_the_option_needs_the_spare_and_raises_the_capacity_by_one(self):
+        source = (ROOT / 'android/guest/character_zoning.py').read_text()
+        self.assertIn("self.keep_previous_zone = (os.environ.get(KEEP_PREVIOUS_ZONE_ENV) == '1'\n"
+                      "                                   and os.environ.get(SPARE_ZONE_ENV) == '1')", source)
+        self.assertIn("capacity=zone_travel.MAX_ZONE_SERVERS + (1 if getattr(self, 'keep_previous_zone', False) else 0))",
+                      source)
+        value = self.instance()
+        value.keep_previous_zone = True
+        policy = value.external_maps_options()['policy']
+        self.assertEqual(policy.capacity, zone_travel.MAX_ZONE_SERVERS + 1)
+        value = self.instance()
+        self.assertEqual(value.external_maps_options()['policy'].capacity, zone_travel.MAX_ZONE_SERVERS)
+
+    def test_the_zone_servers_own_console_line_says_the_hero_arrived(self):
+        # 0.13.82 (patches/mapserver-single-player). Thor 0.13.81: the entity log line for the same
+        # event was read 73 and 74 s after it happened, an arrival 45 s after.
+        line = (b'ARMPORT_CLIENT_READY_V1 utc_ms=%d map_id=%d port=27060 name="' + zoning.character.CHARACTER.encode()
+                + b'" auth="COHLOCAL"\r\n')
+        console = b'Server ready.\r\n' + line % (1795495756412, 5) + b'noise\n' + line % (1795495999001, 5)
+        found = zoning.console_ready(console, 5, 1795495000000, 1795496000000)
+        self.assertEqual((found['utc_ms'], found['map_id'], found['port'], found['line_ordinal']),
+                         (1795495999001, 5, 27060, 1))
+        self.assertEqual((found['log_route'], found['source'], found['loaded_world_assets'], found['account']),
+                         ('owned_zone_server_console', 'current_target_stock_CLIENT_READY_resumeCharacter_success',
+                          True, 'COHLOCAL'))
+        self.assertRegex(found['line_sha256'], '^[0-9a-f]{64}$')
+        self.assertEqual(found['log_timestamp'], time.strftime('%y%m%d %H:%M:%S', time.localtime(1795495999)))
+        entity = dict(found, log_route='embedded_dbserver_logserver')
+        self.assertEqual(set(found), set(entity))
+        # Older than the floor, in the future, another zone, another character or account: not this arrival.
+        self.assertEqual(zoning.console_ready(console, 5, 1795495756413, 1795496000000)['utc_ms'], 1795495999001)
+        self.assertIsNone(zoning.console_ready(console, 5, 1795495999002, 1795496000000))
+        self.assertEqual(zoning.console_ready(console, 5, 0, 1795495800000)['utc_ms'], 1795495756412)
+        self.assertIsNone(zoning.console_ready(console, 1, 0, 1795496000000))
+        for other in (console.replace(b'auth="COHLOCAL"', b'auth="OTHER"'),
+                      console.replace(zoning.character.CHARACTER.encode() + b'"', b'Somebody Else"'),
+                      console.replace(b'ARMPORT_CLIENT_READY_V1 ', b' ARMPORT_CLIENT_READY_V1 '),
+                      console.replace(b'port=27060', b'port=70000'), b''):
+            self.assertIsNone(zoning.console_ready(other, 5, 0, 1795496000000))
+        # The session reads the console first and the entity log only without a line.
+        value = self.instance()
+        value.maps[5] = dict(owned(), launch_utc_ms=1795495000000)
+        value.maps[5]['process'].output = bytearray(console)
+        value.current_logs = Mock(return_value=[])
+        with patch.object(zoning, 'stock_ready', return_value={'utc_ms': 1, 'line_ordinal': 0}) as slow:
+            self.assertEqual(value.stock_ready_now(5, 0, 1795496000000)['log_route'], 'owned_zone_server_console')
+            slow.assert_not_called()
+            value.maps[5]['process'].output = bytearray(b'Server ready.\n')
+            self.assertEqual(value.stock_ready_now(5, 0, 1795496000000), {'utc_ms': 1, 'line_ordinal': 0})
+            self.assertEqual(value.stock_ready_now(7, 0, 1795496000000), {'utc_ms': 1, 'line_ordinal': 0})
+        self.assertEqual(value.zoning_report['ready_records'], {'format': 1, 'from_console': 1, 'from_entity_log': 2})
+        # The binding that lets a reopened character save accepts either route and nothing else.
+        binding = (ROOT / 'android/guest/local_character_server.py').read_text()
+        self.assertIn("and ready.get('log_route') in ('embedded_dbserver_logserver', 'owned_zone_server_console')", binding)
+
+    def test_an_arrival_read_from_the_console_moves_the_session_at_once(self):
+        value = self.instance()
+        value.stock['enabled'] = True
+        value.stock.update(transfers_begun=[], arrival_source=None)
+        value.stock_log_next = 0
+        value.stock_last_arrival_ms = 1795495000000
+        value.creation_report.update(verified=False, connected_on_atlas=True)
+        value.maps[5] = dict(owned(), launch_utc_ms=1795495700000)
+        now_ms = int(time.time() * 1000)
+        value.maps[5]['process'].output = bytearray(
+            b'ARMPORT_CLIENT_READY_V1 utc_ms=%d map_id=5 port=27060 name="' % (now_ms - 800)
+            + zoning.character.CHARACTER.encode() + b'" auth="COHLOCAL"\n')
+        value.current_logs = Mock(return_value=[])
+        value._stock_arrival = Mock()
+        record = value._poll_stock_logs()
+        self.assertEqual((record['map_id'], record['log_route']), (5, 'owned_zone_server_console'))
+        self.assertEqual(value.stock['arrival_source'], 'zone_console_resume_character')
+        self.assertEqual(value._stock_arrival.call_args[0][0], 5)
+        self.assertEqual(value._stock_arrival.call_args[0][1]['source'], 'zone_console')
+        self.assertEqual(value.stock_last_arrival_ms, now_ms - 800)
+
     def test_the_atlas_tree_spare_takes_atlas_parks_other_instance_on_its_fixed_port(self):
         value, started = self.spare_instance(tree=None)
         self.tick(value)

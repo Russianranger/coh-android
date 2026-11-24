@@ -25,7 +25,8 @@ GETTERS = {
     'physxCache': 'physxCacheEnabled', 'prestartNextZone': 'prestartNextZoneEnabled',
     'idleResidentMaps': 'idleResidentMapsEnabled', 'spareZone': 'spareZoneEnabled',
     'sharedHeap': 'sharedHeapEnabled', 'glDirect': 'glDirectEnabled', 'serverX87': 'serverX87Enabled',
-    'deferZoneLoads': 'deferZoneLoadsEnabled', 'clientGroupBins': 'clientGroupBinsEnabled'}
+    'deferZoneLoads': 'deferZoneLoadsEnabled', 'clientGroupBins': 'clientGroupBinsEnabled',
+    'keepPreviousZone': 'keepPreviousZoneEnabled'}
 
 
 class RecommendedOptions(unittest.TestCase):
@@ -58,24 +59,24 @@ class RecommendedOptions(unittest.TestCase):
         boxes = re.findall(r'(\w+)\.setOnCheckedChangeListener\(\(button,checked\)->\{ClientRuntime\.set\w+Enabled\(this,checked\);'
                            r'recommendedChanged\(\);\}\);', self.activity)
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(boxes), 24)
+        self.assertEqual(len(boxes), 25)
         self.assertEqual(sorted(boxes), sorted(ticked + unticked))
         self.assertEqual(sorted(boxes), sorted(GETTERS))
-        self.assertEqual(len(set(ticked + unticked)), 24)
+        self.assertEqual(len(set(ticked + unticked)), 25)
         # No option box changes without the line being read again.
         self.assertNotRegex(self.activity, r'->ClientRuntime\.set\w+Enabled\(this,checked\)\);')
 
     def test_the_lists_are_the_stored_defaults(self):
         stored, table = self.stored_defaults(), self.report_table()
         ticked, unticked = self.screen_lists()
-        self.assertEqual(len(table), 24)
+        self.assertEqual(len(table), 25)
         for box, getter in GETTERS.items():
             with self.subTest(box):
                 self.assertIn(getter, stored)
                 self.assertEqual(table[getter], stored[getter])
                 self.assertEqual(box in ticked, stored[getter][1])
                 self.assertEqual(box in unticked, not stored[getter][1])
-        self.assertEqual((len(ticked), len(unticked)), (18, 6))
+        self.assertEqual((len(ticked), len(unticked)), (19, 6))
         # 0.13.79: the spare zone server is recommended (owner's policy, the current zone and one
         # spare; Thor 0.13.78 launch B: trips 33.9 s and 27.7 s against 65.8 s, 60 FPS).
         self.assertIn('spareZone', ticked)
@@ -86,10 +87,9 @@ class RecommendedOptions(unittest.TestCase):
         runtime = (ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java').read_text()
         self.assertIn('"COH_SERVER_EMULATION="+(serverX87Requested?"x87":"")', runtime)
         self.assertNotIn('tso', re.findall(r'"COH_SERVER_EMULATION="[^,]*', runtime)[0])
-        # 0.13.81: finishing a zone load after the server is ready is experimental: stored off, and
-        # "Restore recommended options" unticks it. NPC and pet movement has no CI check.
-        self.assertIn('deferZoneLoads', unticked)
-        self.assertEqual(stored['deferZoneLoadsEnabled'], ('zone-load-after-ready', False))
+        # Recommended from 0.13.82, after the Thor test of 0.13.81 (zone ready 10.9 s for 18.0 s).
+        self.assertIn('deferZoneLoads', ticked)
+        self.assertEqual(stored['deferZoneLoadsEnabled'], ('zone-load-after-ready', True))
         self.assertIn('"COH_DEFER_ZONE_LOADS="+(deferZoneLoadsRequested?"1":"0")', runtime)
         self.assertIn('.put("defer_zone_loads_requested", deferZoneLoadsRequested)', runtime)
         # 0.13.81: the game's own prepared group files (client patch 0133), experimental for the same
@@ -98,6 +98,13 @@ class RecommendedOptions(unittest.TestCase):
         self.assertEqual(stored['clientGroupBinsEnabled'], ('client-group-bins', False))
         self.assertIn('"COH_CLIENT_GROUP_BINS="+(clientGroupBinsRequested?"1":"0")', runtime)
         self.assertIn('.put("client_group_bins_requested", clientGroupBinsRequested)', runtime)
+        # 0.13.82, the owner's option: the zone just left stays loaded; off by default, only with the spare.
+        self.assertIn('keepPreviousZone', unticked)
+        self.assertEqual(stored['keepPreviousZoneEnabled'], ('keep-previous-zone', False))
+        self.assertIn('"COH_KEEP_PREVIOUS_ZONE="+(keepPreviousZoneRequested&&spareZoneRequested?"1":"0")', runtime)
+        self.assertIn('.put("keep_previous_zone_requested", keepPreviousZoneRequested)', runtime)
+        # 0.13.82: the ARM64 client starts the world at 60 (patch 0128); the app no longer types the cap.
+        self.assertIn('if ("arm64".equals(clientArchitectureRequested)) recordLifecycle("gameplay_60fps_auto skipped=client_starts_at_60");', runtime)
 
     def test_the_report_carries_the_launch_time_reading(self):
         self.assertIn('optionsOffRecommended=optionsOffRecommended(context);', self.runtime)
@@ -110,7 +117,7 @@ class RecommendedOptions(unittest.TestCase):
         line = activity.index('recommendedStatus=text("Checking options…",12,true);controls.addView(recommendedStatus);')
         button = activity.index('controls.addView(button("Restore recommended options",this::restoreRecommendedOptions));')
         first = activity.index('performanceGraphics=new CheckBox(this);')
-        last = activity.index('controls.addView(clientGroupBins);\n        recommendedChanged();')
+        last = activity.index('controls.addView(keepPreviousZone);\n        recommendedChanged();')
         self.assertLess(line, button)
         self.assertLess(button, first)
         self.assertLess(first, last)

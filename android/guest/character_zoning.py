@@ -463,6 +463,47 @@ def stock_ready(logs, map_id, minimum_ms, now_ms):
     return max(result, key=lambda r: (r['utc_ms'], r['line_ordinal'])) if result else None
 
 
+# 0.13.82: the zone server's own console line for the same event (patches/mapserver-single-player).
+# The entity log line reaches its file 60-90 s after the character resumed (the map server
+# batches log messages for 30 s, the log server holds them 60 s to sort them): Thor 0.13.81
+# learned that the player was in the world 73 and 74 s late, and of one arrival 45 s late.
+CONSOLE_READY = re.compile(rb'^ARMPORT_CLIENT_READY_V1 utc_ms=([1-9][0-9]{12}) map_id=([1-9][0-9]{0,4}) '
+                           rb'port=([1-9][0-9]{0,4}) name="([^"\r\n]{1,63})" auth="([^"\r\n]{1,31})"\r?$', re.M)
+CONSOLE_READY_ROUTE = 'owned_zone_server_console'
+READY_LOG_ROUTES = ('embedded_dbserver_logserver', CONSOLE_READY_ROUTE)
+KEEP_PREVIOUS_ZONE_ENV = 'COH_KEEP_PREVIOUS_ZONE'
+
+
+def console_ready(output, map_id, minimum_ms, now_ms):
+    """The newest console line an owned zone server printed when this character resumed, or None.
+
+    The same shape as stock_ready's record, so every check that binds a connection reads it
+    alike; its route says where it was read. The time is the server's own clock in milliseconds.
+    """
+    require(supported(map_id), 'Unreviewed zoning console route')
+    route = MAPS[map_id]['world'] + '_' + str(MAPS[map_id]['instance'])
+    name, account = character.CHARACTER.encode(), character.ACCOUNT.encode()
+    newest = None
+    for ordinal, match in enumerate(CONSOLE_READY.finditer(bytes(output))):
+        utc_ms, port = int(match[1]), int(match[3])
+        if (int(match[2]) != map_id or match[4] != name or match[5] != account or port > 65535
+                or utc_ms < minimum_ms or now_ms is not None and utc_ms > now_ms + 999):
+            continue
+        if newest is None or (utc_ms, ordinal) >= (newest['utc_ms'], newest['line_ordinal']):
+            line = match[0].rstrip(b'\r')
+            newest = {'path': 'console/zone-%d' % map_id, 'line_sha256': hashlib.sha256(line).hexdigest(),
+                      'line_ordinal': ordinal,
+                      'log_timestamp': time.strftime('%y%m%d %H:%M:%S', time.localtime(utc_ms // 1000)),
+                      'utc_ms': utc_ms, 'map_id': map_id, 'map_instance': route, 'log_route': CONSOLE_READY_ROUTE,
+                      'native_log_contains_session_or_client_pid': False,
+                      'native_log_contains_character_db_id': False,
+                      'connection_binding': 'owned_map_progress_exact_dbserver_character_status_and_current_epoch',
+                      'account': character.ACCOUNT, 'name': character.CHARACTER, 'port': port,
+                      'loaded_world_assets': True,
+                      'source': 'current_target_stock_CLIENT_READY_resumeCharacter_success'}
+    return newest
+
+
 def legacy_ready(logs, minimum_ms, now_ms):
     """Atlas CLIENT_READY from either stock log route of a legacy MapServer, newest first.
 
@@ -707,6 +748,18 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'capacity': zone_travel.MAX_ZONE_SERVERS, 'start_budget_seconds': zone_travel.START_SECONDS,
             'starts': [], 'evictions': [], 'arrivals': 0, 'transfer_wait_observed': 0, 'decisions': [],
             'transfers_begun': [], 'arrival_source': None}
+        # 0.13.82, owner's option (off by default): the zone the hero just left stays loaded beside
+        # the current zone and the spare, so the way back is a trip to a running zone. One more
+        # zone server (about 1.2 GB on the Thor); only with the spare, whose memory floor still holds.
+        self.keep_previous_zone = (os.environ.get(KEEP_PREVIOUS_ZONE_ENV) == '1'
+                                   and os.environ.get(SPARE_ZONE_ENV) == '1')
+        self.stock['keep_previous_zone'] = {'format': 1,
+            'requested': os.environ.get(KEEP_PREVIOUS_ZONE_ENV) == '1', 'applied': self.keep_previous_zone,
+            'reason': None if self.keep_previous_zone else
+                      ('not_requested' if os.environ.get(KEEP_PREVIOUS_ZONE_ENV) != '1' else 'needs_the_spare_zone_server'),
+            'kept': 0}
+        if self.keep_previous_zone:
+            self.stock['capacity'] = zone_travel.MAX_ZONE_SERVERS + 1
         self.stock_starts = {}
         self.spare = None
         self.spare_next = self.spare_room_next = 0
@@ -1948,7 +2001,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 first_tick_alone_grants_readiness=False)
 
     def _spawn_map(self, map_id, *, cookie=None, port=None, options=()):
-        require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2,
+        require(supported(map_id) and map_id not in self.maps
+                and len(self.maps) < 2 + (1 if getattr(self, 'keep_previous_zone', False) else 0),
                 'Duplicate or unreviewed zoning MapServer launch')
         require(cookie is None or type(cookie) is int and 0 < cookie < 2 ** 31, 'Invalid map start cookie')
         if port is None:
@@ -2193,7 +2247,25 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             if value is not None and value.get('utc_ms', 0) >= self.ready_floor_ms:
                 return value
             return None
-        return stock_ready(self.current_logs(), self.active_map_id, self.ready_floor_ms, int(time.time() * 1000))
+        return self.stock_ready_now(self.active_map_id, self.ready_floor_ms, int(time.time() * 1000))
+
+    def stock_ready_now(self, map_id, minimum_ms, now_ms, logs=None):
+        """This character's resume on a zone: its server's console line when it prints one, else the entity log."""
+        record = None
+        owned = getattr(self, 'maps', {}).get(map_id)
+        if owned is not None:
+            try:
+                record = console_ready(owned['process'].output, map_id, minimum_ms, now_ms)
+            except (KeyError, AttributeError, TypeError, ValueError):
+                record = None
+        counts = self.zoning_report.setdefault('ready_records', {'format': 1, 'from_console': 0, 'from_entity_log': 0})
+        if record is not None:
+            counts['from_console'] += 1
+            return record
+        record = stock_ready(self.current_logs() if logs is None else logs, map_id, minimum_ms, now_ms)
+        if record is not None:
+            counts['from_entity_log'] += 1
+        return record
 
     def native_positions(self):
         if self.monorail_enabled():
@@ -2630,7 +2702,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if not self.stock_travel_active():
             return super().external_maps_options()
         self.zone_policy = zone_travel.ZoneTravelPolicy(tree_for=self.zone_tree_for,
-            running=self.zone_servers, occupied=self.stock_occupied, admit=self.admit_zone_request)
+            running=self.zone_servers, occupied=self.stock_occupied, admit=self.admit_zone_request,
+            capacity=zone_travel.MAX_ZONE_SERVERS + (1 if getattr(self, 'keep_previous_zone', False) else 0))
         self.stock['enabled'] = True
         # Maps this flow owns (started at session start or for a request) are
         # never delinked; every other request goes through the policy.
@@ -2936,7 +3009,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def _assign_spare(self, map_id, cookie):
         """Give the spare its zone: its navigation graph, then the assignment the server waits for."""
         spare = self.spare
-        require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2
+        require(supported(map_id) and map_id not in self.maps
+                and len(self.maps) < 2 + (1 if getattr(self, 'keep_previous_zone', False) else 0)
                 and type(cookie) is int and 0 < cookie < 2 ** 31, 'Invalid spare zone assignment')
         runtime = spare['runtime']
         if MAPS[map_id].get('shared_zone_tree'):
@@ -3111,7 +3185,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return 'server_without_the_spare_layer'
         if self._spare_tree()[0] is None:
             return 'no_prepared_tree'
-        if len(self.maps) > 1:
+        if len(self.maps) > 1 + (1 if getattr(self, 'keep_previous_zone', False) else 0):
             return self._make_room_for_spare(now)
         memory = available_memory_mib()
         if memory is None or memory < SPARE_MIN_AVAILABLE_MIB:
@@ -3138,6 +3212,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 if other != current and owned.get('ready') is True and other not in self.stock_starts]
         if len(idle) != len(self.maps) - 1:
             return 'another_zone_is_starting'
+        if getattr(self, 'keep_previous_zone', False):
+            # The zone left last stays (keep_previous_zone); only older ones give way.
+            idle.sort(key=lambda other: (self.maps[other].get('last_occupied', 0), other), reverse=True)
+            idle = idle[1:]
+            self.stock['keep_previous_zone']['kept'] += 1
         for other in idle:
             self._evict_map(other, 'room_for_the_spare')
         return 'made_room'
@@ -3220,15 +3299,17 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             if map_id == self.active_map_id or owned.get('ready') is not True or not supported(map_id):
                 continue
             floor = max(self.stock_last_arrival_ms + 1, owned['launch_utc_ms'] - 999)
-            record = stock_ready(logs, map_id, floor, now_ms)
+            record = self.stock_ready_now(map_id, floor, now_ms, logs)
             if record is not None:
                 arrivals.append(record)
         if not arrivals:
             return None
         record = max(arrivals, key=lambda r: (r['utc_ms'], r['line_ordinal']))
         self.stock_last_arrival_ms = record['utc_ms']
-        stock['arrival_source'] = 'stock_entity_log_resume_character'
-        self._stock_arrival(record['map_id'], {'source': 'stock_entity_log', 'map_id': record['map_id'],
+        console = record['log_route'] == CONSOLE_READY_ROUTE
+        stock['arrival_source'] = 'zone_console_resume_character' if console else 'stock_entity_log_resume_character'
+        self._stock_arrival(record['map_id'], {'source': 'zone_console' if console else 'stock_entity_log',
+                                               'map_id': record['map_id'],
                                                'resume_utc_ms': record['utc_ms'], 'log_route': record['log_route'],
                                                'line_sha256': record['line_sha256']})
         return record

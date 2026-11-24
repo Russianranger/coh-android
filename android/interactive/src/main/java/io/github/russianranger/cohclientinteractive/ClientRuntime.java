@@ -229,7 +229,7 @@ public final class ClientRuntime {
     private boolean glDirectRequested=false;
     private boolean prootIoctlFilterRequested=false,prootIoctlFilterUsed=false;
     private boolean prootSocketFilterRequested=false,prootSocketFilterUsed=false;
-    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientGroupBinsRequested=false;
+    private boolean serverQuickStartRequested=false,wineserverPathCacheRequested=false,physxCacheRequested=false,serverX87Requested=false,deferZoneLoadsRequested=false,clientGroupBinsRequested=false,keepPreviousZoneRequested=false;
     private String optionsOffRecommended="";
     private boolean prootCasefoldRequested=false,prootCasefoldUsed=false;
     /** 0.13.70: where the second PRoot build writes its stop counts (patch 0005); null without it. */
@@ -307,8 +307,9 @@ public final class ClientRuntime {
             {"proot-casefold",prootCasefoldEnabled(context),true},{"server-quick-start",serverQuickStartEnabled(context),true},
             {"wineserver-path-cache",wineserverPathCacheEnabled(context),true},{"physx-cooked-cache",physxCacheEnabled(context),true},
             {"spare-zone-server",spareZoneEnabled(context),true},{"server-x87-64bit",serverX87Enabled(context),true},
+            {"zone-load-after-ready",deferZoneLoadsEnabled(context),true},{"keep-previous-zone",keepPreviousZoneEnabled(context),false},
             {"prestart-next-zone",prestartNextZoneEnabled(context),false},{"idle-resident-maps",idleResidentMapsEnabled(context),false},
-            {"shared-server-memory",sharedHeapEnabled(context),false},{"zone-load-after-ready",deferZoneLoadsEnabled(context),false},
+            {"shared-server-memory",sharedHeapEnabled(context),false},
             {"client-group-bins",clientGroupBinsEnabled(context),false},
             {"client-gl-direct",glDirectEnabled(context),false}};
         for(Object[] option:options)if(!option[1].equals(option[2]))off.append(off.length()==0?"":",").append(option[0]);
@@ -584,12 +585,27 @@ public final class ClientRuntime {
      * 0.13.81: a zone server (Fast server only) reads its navigation data and starts its ragdoll
      * physics after it is ready, while the game loads the zone. Thor 0.13.79: 4.7 s and 1.5 s of
      * the 18.8 s a zone server loads before a trip's client may connect; the client then loads
-     * for about 8 s during which the server waited. Experimental and off by default until a play
-     * test has shown NPCs and pets moving as before.
+     * for about 8 s during which the server waited. Off by default in 0.13.81; on by default from
+     * 0.13.82, after the Thor test of 0.13.81 (2026-11-23): a trip's zone was ready 10.9 s after
+     * it was assigned (18.0 s without), and the play test reported nothing wrong.
      */
     public static boolean deferZoneLoadsEnabled(Context context) {
         return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
-                .getBoolean("zone-load-after-ready", false);
+                .getBoolean("zone-load-after-ready", true);
+    }
+    /**
+     * 0.13.82, the owner's option: the zone the hero just left stays loaded beside the current
+     * zone and the spare, so the way back is a trip to a running zone (about 11 s on the Thor).
+     * One more zone server, about 1.2 GB. Off by default; it does nothing without the spare.
+     */
+    public static boolean keepPreviousZoneEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("keep-previous-zone", false);
+    }
+    public static synchronized void setKeepPreviousZoneEnabled(Context context, boolean enabled) {
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("keep-previous-zone", enabled).apply();
     }
     public static synchronized void setDeferZoneLoadsEnabled(Context context, boolean enabled) {
         if(operationInProgress())return;
@@ -1190,7 +1206,7 @@ public final class ClientRuntime {
         glDirectRequested=glDirectEnabled(context);
         prootIoctlFilterRequested=prootIoctlFilterEnabled(context);prootIoctlFilterUsed=false;
         prootSocketFilterRequested=prootSocketFilterEnabled(context);prootSocketFilterUsed=false;
-        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientGroupBinsRequested=clientGroupBinsEnabled(context);
+        serverQuickStartRequested=serverQuickStartEnabled(context);wineserverPathCacheRequested=wineserverPathCacheEnabled(context);physxCacheRequested=physxCacheEnabled(context);serverX87Requested=serverX87Enabled(context);deferZoneLoadsRequested=deferZoneLoadsEnabled(context);clientGroupBinsRequested=clientGroupBinsEnabled(context);keepPreviousZoneRequested=keepPreviousZoneEnabled(context);
         prootCasefoldRequested=prootCasefoldEnabled(context);prootCasefoldUsed=false;
         optionsOffRecommended=optionsOffRecommended(context);
         spareZoneRequested=spareZoneEnabled(context);
@@ -1304,6 +1320,8 @@ public final class ClientRuntime {
                     "COH_DEFER_ZONE_LOADS="+(deferZoneLoadsRequested?"1":"0"),
                     // 0.13.81: the game keeps prepared group files between zone loads (patch 0133).
                     "COH_CLIENT_GROUP_BINS="+(clientGroupBinsRequested?"1":"0"),
+                    // 0.13.82: the zone the hero just left stays loaded (one more zone server; needs the spare).
+                    "COH_KEEP_PREVIOUS_ZONE="+(keepPreviousZoneRequested&&spareZoneRequested?"1":"0"),
                     "COH_EXTERNAL_MAPS="+(stockTravelRequested?"1":"0"), "COH_STOCK_TRAVEL="+(stockTravelRequested?"1":"0"),
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
@@ -2392,7 +2410,11 @@ public final class ClientRuntime {
                     notifyInputState();
                     if (gameplay60Requested && !gameplay60Queued) {
                         gameplay60Queued = true;
-                        recordLifecycle("gameplay_60fps_auto queued=" + requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60, false));
+                        // 0.13.82: the ARM64 client has started the world at 60 since 0.13.67 (patch 0128).
+                        // Typing "/maxfps 60" into its chat as well took 3 s, during which the app held
+                        // every input back: the pause the owner saw when the FPS buttons came alive.
+                        if ("arm64".equals(clientArchitectureRequested)) recordLifecycle("gameplay_60fps_auto skipped=client_starts_at_60");
+                        else recordLifecycle("gameplay_60fps_auto queued=" + requestPerformanceCommand(ClientInput.PerformanceCommand.FPS_60, false));
                     }
                 }
             }
@@ -3178,7 +3200,7 @@ public final class ClientRuntime {
                     .put("gameplay_60fps_requested", gameplay60Requested).put("shared_server_data_requested", sharedServerDataRequested).put("client_skip_server_folders_requested", clientSkipServerFoldersRequested).put("client_folder_index_requested", clientFolderIndexRequested)
                     .put("client_audio_requested", clientAudioRequested).put("client_audio_bridge", clientAudioReport == null ? JSONObject.NULL : clientAudioReport)
                     .put("navigation_map_pack", navigationMapReport == null ? JSONObject.NULL : navigationMapReport)
-                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("client_group_bins_requested", clientGroupBinsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
+                    .put("shared_heap_requested", sharedHeapRequested).put("stock_travel_requested", stockTravelRequested).put("early_zone_requested", earlyZoneRequested).put("client_gl_direct_requested", glDirectRequested).put("proot_ioctl_filter_requested", prootIoctlFilterRequested).put("proot_ioctl_filter_used", prootIoctlFilterUsed).put("proot_socket_filter_requested", prootSocketFilterRequested).put("proot_socket_filter_used", prootSocketFilterUsed).put("proot_casefold_requested", prootCasefoldRequested).put("proot_casefold_used", prootCasefoldUsed).put("server_quick_start_requested", serverQuickStartRequested).put("wineserver_path_cache_requested", wineserverPathCacheRequested).put("physx_cache_requested", physxCacheRequested).put("server_x87_requested", serverX87Requested).put("defer_zone_loads_requested", deferZoneLoadsRequested).put("keep_previous_zone_requested", keepPreviousZoneRequested).put("client_group_bins_requested", clientGroupBinsRequested).put("options_off_recommended", optionsOffRecommended).put("proot_stop_counts", prootStopCountsText()).put("spare_zone_requested", spareZoneRequested)
                     .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
                     .put("character_relocated_frame_watermark", relocatedFrameWatermark)
                     .put("save_logout_requested", saveLogoutRequested)

@@ -1341,7 +1341,7 @@ def stock_zone_binding(proof, ready, session, client_pid, now_utc_ms):
             and 0 < proof['client_ready_observed_utc_ms'] <= now_utc_ms
             and type(ready) is dict and ready.get('loaded_world_assets') is True
             and ready.get('name') == CHARACTER and ready.get('account') == ACCOUNT
-            and ready.get('log_route') == 'embedded_dbserver_logserver'
+            and ready.get('log_route') in ('embedded_dbserver_logserver', 'owned_zone_server_console')
             and type(ready.get('map_id')) is int and ready['map_id'] == map_id
             and type(ready.get('utc_ms')) is int
             and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']

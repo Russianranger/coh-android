@@ -691,8 +691,20 @@ def start_options_line(report, session):
     """
     value = {'format': 1, 'session': session, 'server_quick_start': None, 'wineserver_path_cache': None,
              'physx_cache': None, 'server_emulation': None, 'deferred_zone_load': None,
-             'client_library_bounds': None, 'client_group_bins': None}
+             'client_library_bounds': None, 'client_group_bins': None, 'keep_previous_zone': None,
+             'ready_records': None}
     if isinstance(report, dict):
+        for section in [report, *report.values()]:
+            # 0.13.82: the owner's third zone server, and where the session read "the hero is in the zone".
+            zoning = section.get('character_zoning') if isinstance(section, dict) else None
+            if isinstance(zoning, dict):
+                kept = (zoning.get('stock_travel') or {}).get('keep_previous_zone')
+                if isinstance(kept, dict):
+                    value['keep_previous_zone'] = {key: kept.get(key) for key in ('requested', 'applied', 'kept')}
+                counts = zoning.get('ready_records')
+                if isinstance(counts, dict):
+                    value['ready_records'] = {key: counts.get(key) for key in ('from_console', 'from_entity_log')}
+                break
         for section in [report, *report.values()]:
             bins = section.get('client_group_bins') if isinstance(section, dict) else None
             if isinstance(bins, dict):
@@ -805,6 +817,13 @@ def spare_zone_requested():
     """0.13.69: one pre-loaded zone server beside the current zone (needs stock travel and trusted bins' server)."""
     value = os.environ.get('COH_SPARE_ZONE', '')
     require(value in ('', '0', '1'), 'COH_SPARE_ZONE must be empty, 0 or 1')
+    return value == '1'
+
+
+def keep_previous_zone_requested():
+    """0.13.82, owner's option: the zone the hero just left stays loaded (needs the spare zone server)."""
+    value = os.environ.get('COH_KEEP_PREVIOUS_ZONE', '')
+    require(value in ('', '0', '1'), 'COH_KEEP_PREVIOUS_ZONE must be empty, 0 or 1')
     return value == '1'
 
 
@@ -1257,6 +1276,9 @@ def main():
         if spare_zone_requested():
             require(stock_travel_requested(), "The spare zone server needs the game's own zone travel")
             command.insert(command.index('/usr/bin/python3'), 'COH_SPARE_ZONE=1')
+        if keep_previous_zone_requested():
+            require(spare_zone_requested(), 'Keeping the previous zone needs the spare zone server')
+            command.insert(command.index('/usr/bin/python3'), 'COH_KEEP_PREVIOUS_ZONE=1')
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():

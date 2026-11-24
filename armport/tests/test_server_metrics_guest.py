@@ -434,6 +434,44 @@ class GuestMetrics(unittest.TestCase):
                              r'|[{}]')
         self.assertEqual([line for line in added if not allowed.fullmatch(line)], [])
 
+    def test_single_player_claim_is_the_exact_patch_and_its_two_files(self):
+        # 0.13.82 (patches/mapserver-single-player): name lists with LF line ends, and the console
+        # line the session reads to learn the hero is in the zone. Always on; nothing else may ride on it.
+        import prepare_server_metrics_source as producer
+        self.assertEqual(producer.digest(producer.single_player_patch_bytes()), contract.SINGLE_PLAYER_PATCH)
+        self.assertEqual(tuple(producer.SINGLE_PLAYER_SOURCES), contract.SINGLE_PLAYER_SOURCES)
+        entry = producer.CONTRACT['single_player']
+        self.assertEqual(entry['client_ready_line']['record_prefix'], contract.CLIENT_READY_PREFIX)
+        self.assertEqual((entry['environment_variable'], entry['disabled_by_default']), (None, False))
+        build = {'build_input': {'patched_sha256': {}, 'contract': {}}}
+        self.assertFalse(contract.single_player_changed(build))
+        build['build_input']['patched_sha256'][contract.SINGLE_PLAYER_SOURCES[0]] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'outside the reviewed single player patch'):
+            contract.single_player_changed(build)         # one of its files without the rest
+        build['build_input']['patched_sha256'][contract.SINGLE_PLAYER_SOURCES[1]] = '0' * 64
+        build['build_input'].update(
+            single_player_patch={'path': 'patches/mapserver-single-player/0001-name-lists-and-ready-line.patch',
+                                 'sha256': contract.SINGLE_PLAYER_PATCH},
+            contract={'single_player': json.loads(json.dumps(entry))})
+        self.assertTrue(contract.single_player_changed(build))
+        for change in (lambda b: b['single_player_patch'].update(sha256='1' * 64),
+                       lambda b: b['contract']['single_player']['client_ready_line'].update(record_prefix='OTHER'),
+                       lambda b: b['contract']['single_player']['client_ready_line'].update(evidence_only=False),
+                       lambda b: b['contract']['single_player'].update(gameplay_decisions_changed=True),
+                       lambda b: b['contract'].pop('single_player')):
+            changed = json.loads(json.dumps(build))
+            change(changed['build_input'])
+            with self.assertRaisesRegex(ValueError, 'outside the reviewed single player patch'):
+                contract.single_player_changed(changed)
+        text = producer.single_player_patch_bytes().decode()
+        added = [line[1:] for line in text.splitlines() if line.startswith('+') and not line.startswith('+++')]
+        removed = [line[1:].strip() for line in text.splitlines() if line.startswith('-') and not line.startswith('---')]
+        self.assertEqual(removed, ["walk = strchr(s, '\\r');", 'if (!walk) break;'])
+        self.assertIn('        walk = s + strcspn(s, "\\r\\n");', added)
+        self.assertIn('        if (!*walk) break;', added)
+        self.assertEqual(sum('printf(' in line for line in added), 1)
+        self.assertEqual(sum('getenv' in line for line in added), 0)
+
     def test_deferred_load_claim_is_exact_default_off_and_rides_on_the_load_profile_claim(self):
         build = {'build_input': {'patched_sha256': {}}}
         self.assertFalse(contract.deferred_load_changed(build))

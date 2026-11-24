@@ -52,6 +52,11 @@ DEFERRED_PATCH = '6992a9ae8d1955eb2469991406aac5873bc0b43c57f2a666f58abe22136d6b
 DEFERRED_HEADER = 'MapServer/src/group/armport_deferred_load.h'
 DEFERRED_SOURCES = ('MapServer/src/beacon/beaconFile.c', 'MapServer/src/group/groupnetsend.c')
 DEFERRED_VARIABLE = 'ARMPORT_DEFER_ZONE_LOADS'
+# 0.13.82: always on, no switch (patches/mapserver-single-player): NPC name lists whose lines end
+# in LF are read, and one console line says when a client's character has resumed.
+SINGLE_PLAYER_PATCH = '55d155719d8529bb8a54365c9110435a07a7dc450ade976b491470dca13a5e46'
+SINGLE_PLAYER_SOURCES = ('MapServer/src/gameComm/NpcNames.c', 'MapServer/src/player/parseClientInput.c')
+CLIENT_READY_PREFIX = 'ARMPORT_CLIENT_READY_V1'
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
 # the guest sets the variable: shared loading first, then a wait for the map id and cookie.
 SPARE_PATCH = '76748e6902e5b7fdde0697f99166104c5a5f9b7479a4b099e532ac8f78efb1d3'
@@ -254,6 +259,7 @@ def _authenticate(path, package):
     load_profile_changed(build)
     bounds_files_changed(build)
     deferred_load_changed(build)
+    single_player_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -372,6 +378,34 @@ def deferred_load_changed(build):
             and load_profile_changed(build)),          # groupnetdb.c carries both layers
             'Metrics build changed zone loading outside the reviewed deferred load')
     return changed
+
+
+def single_player_changed(build):
+    """True only for the reviewed name-list reader and client-ready console line."""
+    source = build.get('build_input', {})
+    patched = source.get('patched_sha256', {})
+    changed = any(name in patched for name in SINGLE_PLAYER_SOURCES) or 'single_player_patch' in source
+    entry = source.get('contract', {}).get('single_player')
+    line = entry.get('client_ready_line') if isinstance(entry, dict) else None
+    require(not changed or (all(name in patched for name in SINGLE_PLAYER_SOURCES)
+            and source.get('single_player_patch') == {
+                'path': 'patches/mapserver-single-player/0001-name-lists-and-ready-line.patch',
+                'sha256': SINGLE_PLAYER_PATCH}
+            and isinstance(line, dict) and line.get('record_prefix') == CLIENT_READY_PREFIX
+            and line.get('fields') == ['utc_ms', 'map_id', 'port', 'name', 'auth']
+            and line.get('evidence_only') is True
+            and entry.get('gameplay_decisions_changed') is False),
+            'Metrics build changed name lists or the ready line outside the reviewed single player patch')
+    return changed
+
+
+def client_ready_line_available():
+    """Whether the admitted metrics MapServer prints ARMPORT_CLIENT_READY_V1 when a character resumes."""
+    try:
+        _, build, _, _ = load_binding()
+        return single_player_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def deferred_load_available():

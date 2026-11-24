@@ -51,6 +51,11 @@ DEFERRED_SOURCES = ('MapServer/src/group/groupnetdb.c', 'MapServer/src/group/gro
 DEFERRED_NEGATIVE_ASSERTION = 'taken == 3 && beacons_in_load == 0 && physx_runs == 0'
 DEFERRED_CASES = ['deferred_load', 'deferred_load_idle', 'deferred_load_later_map', 'deferred_load_clock',
                   'deferred_load_not_first', 'deferred_load_disabled']
+NPCNAMES = 'MapServer/src/gameComm/NpcNames.c'
+PARSECLIENTINPUT = 'MapServer/src/player/parseClientInput.c'
+NAMES_NEGATIVE_ASSERTION = 'count == 4'
+NAMES_CASES = ['npc_names', 'npc_names_crlf']
+READY_LINE = ('printf("ARMPORT_CLIENT_READY_V1 utc_ms=%I64u map_id=%d port=%d name=\\"%s\\" auth=\\"%s\\"\\n",')
 
 
 def test_cases(source):
@@ -66,7 +71,65 @@ def test_cases(source):
                in (source / INITCOMMON).read_text() else [])
             + (LOAD_PROFILE_CASES if (source / LOAD_PROFILE_HEADER).is_file() else [])
             + (BOUNDS_CASES if 'static int armportTrustedBounds(' in (source / GROUPFILELIB).read_text() else [])
-            + (DEFERRED_CASES if (source / DEFERRED_HEADER).is_file() else []))
+            + (DEFERRED_CASES if (source / DEFERRED_HEADER).is_file() else [])
+            + (NAMES_CASES if 'strcspn(s, "\\r\\n")' in (source / NPCNAMES).read_text() else []))
+
+
+def names_fixture(source):
+    '''Run the shipping ReadNameFile body over an LF, a CR LF and a CR name list.'''
+    text = (source / NPCNAMES).read_text()
+    return r'''
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+static const char *content;
+static char *names[16];
+static int count;
+static char *fileAlloc(const char *name, int *length) {
+    char *copy;
+    (void)name;
+    if (!content) return NULL;
+    copy = malloc(strlen(content) + 1);
+    strcpy(copy, content); *length = (int)strlen(content); return copy; }
+static int IsProfanity(const char *word, int length) { return length == 4 && !strncmp(word, "Darn", 4); }
+static void eaPush(char ***list, char *value) { (void)list; if (count < 16) names[count] = value; ++count; }
+''' + function(text, 'static void ReadNameFile(char *pch, char ***pearray)') + r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+static int same(const char *a, const char *b, const char *c, const char *d) {
+    return count == 4 && !strcmp(names[0], a) && !strcmp(names[1], b) && !strcmp(names[2], c) && !strcmp(names[3], d); }
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "";
+    char **list = NULL, name[] = "names.txt";
+    if (!strcmp(mode, "npc_names")) {
+        /* The data repository's form: LF alone. A comment, a blank line, a refused word,
+         * a second word on a line, and a last line with no line end (as before, not read). */
+        content = "\n// Taken from a census\nJames\nJohn\n\nDarn\nRobert extra\nMichael\nlast";
+        ReadNameFile(name, &list);
+        CHECK(count == 4);
+        CHECK(same("James", "John", "Robert", "Michael"));
+        count = 0; content = NULL;                    /* no file: no names, no fault */
+        ReadNameFile(name, &list);
+        CHECK(count == 0);
+        count = 0; content = "";
+        ReadNameFile(name, &list);
+        CHECK(count == 0);
+        printf("names=4\n");
+        return 0;
+    }
+    if (!strcmp(mode, "npc_names_crlf")) {
+        content = "\r\n// Taken from a census\r\nJames\r\nJohn\r\n\r\nDarn\r\nRobert extra\r\nMichael\r\nlast";
+        ReadNameFile(name, &list);                    /* a Windows file reads as it always did */
+        CHECK(same("James", "John", "Robert", "Michael"));
+        count = 0; content = "James\rJohn\rRobert\rMichael\r";
+        ReadNameFile(name, &list);
+        CHECK(same("James", "John", "Robert", "Michael"));
+        printf("names=4\n");
+        return 0;
+    }
+    return 2;
+}
+'''
 
 
 def deferred_fixture(source):
@@ -1380,9 +1443,19 @@ def run(source, original=None, expect_control_failure=False):
                         '-fsanitize=address,undefined',
                         str(work / 'deferred.c'), '-o', str(deferred)], check=True)
         control += deferred_fixture(trusted_root)
+        names = work / 'names'
+        (work / 'names.c').write_text(names_fixture(trusted_root))
+        subprocess.run(['cc', '-std=gnu11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                        '-Wno-unused-variable',              # upstream ReadNameFile's pos
+                        '-fsanitize=address,undefined',
+                        str(work / 'names.c'), '-o', str(names)], check=True)
+        control += names_fixture(trusted_root)
+        if not (original and expect_control_failure):
+            # The console line is a printf in a function too entangled to run here: its text is checked.
+            assert ((source / PARSECLIENTINPUT).read_text().count(READY_LINE) == 1) == ('npc_names' in test_cases(source))
         environment = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'}
         for mode in (['window', 'startup', 'trusted_bins', 'spare_server', 'object_library', 'physx_cache',
-                      'start_trees', 'map_load_profile', 'bounds_files', 'deferred_load']
+                      'start_trees', 'map_load_profile', 'bounds_files', 'deferred_load', 'npc_names']
                      if original and expect_control_failure else
                      (['window'] if original else test_cases(source))):
             if mode == 'spare_server_invalid':
@@ -1410,7 +1483,8 @@ def run(source, original=None, expect_control_failure=False):
                        else trees if mode in START_TREES_CASES
                        else profile if mode in LOAD_PROFILE_CASES
                        else bounds if mode in BOUNDS_CASES
-                       else deferred if mode in DEFERRED_CASES else exe)
+                       else deferred if mode in DEFERRED_CASES
+                       else names if mode in NAMES_CASES else exe)
             arguments = [str(work / (mode + '-cooked.bin'))] if mode in PHYSX_CASES else []
             for stale in arguments:
                 Path(stale).unlink(missing_ok=True)       # the unpatched control runs the same mode again
@@ -1424,7 +1498,8 @@ def run(source, original=None, expect_control_failure=False):
                              'start_trees': START_TREES_NEGATIVE_ASSERTION,
                              'map_load_profile': LOAD_PROFILE_NEGATIVE_ASSERTION,
                              'bounds_files': BOUNDS_NEGATIVE_ASSERTION,
-                             'deferred_load': DEFERRED_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
+                             'deferred_load': DEFERRED_NEGATIVE_ASSERTION,
+                             'npc_names': NAMES_NEGATIVE_ASSERTION}.get(mode, STARTUP_NEGATIVE_ASSERTION)
                 assert result.returncode != 0 and 'FAIL line ' in result.stderr and assertion in result.stderr, result.stderr
                 print('unpatched negative control: expected missing-' + mode + ' assertion')
                 continue
@@ -1524,6 +1599,8 @@ def run(source, original=None, expect_control_failure=False):
                     'deferred_load_clock': ['ARMPORT_DEFERRED_LOAD_V1 status=ok trigger=clock_error waited_ms=-1 '
                                             'beacons_ms=-1 physx_ms=-1'],
                     'deferred_load_not_first': [], 'deferred_load_disabled': []}[mode], result.stdout
+            if mode in NAMES_CASES:
+                assert result.stdout.splitlines() == ['names=4'], result.stdout
             if mode == 'map_load_profile_disabled':
                 assert 'ARMPORT_MAP_LOAD_V1' not in result.stdout
             if mode in ('start_trees_disabled', 'message_bins_disabled', 'message_bins_fallback'):
@@ -1574,13 +1651,14 @@ def main():
                                         for name in (staging.SVR, staging.FILE, staging.TEXTPARSER,
                                                      staging.GROUPFILELIB, staging.NWWRAPPER,
                                                      staging.INITCOMMON, staging.MESSAGESTORE)
-                                        + staging.LOAD_PROFILE_SOURCES + staging.DEFERRED_SOURCES},
+                                        + staging.LOAD_PROFILE_SOURCES + staging.DEFERRED_SOURCES
+                                        + staging.SINGLE_PLAYER_SOURCES},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],
                     'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                     'positive_cases': test_cases(source), 'unpatched_control_failed': True,
-                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_and_deferred_load_assertions',
+                    'unpatched_control_failure': 'runtime_missing_metrics_startup_trusted_bin_spare_object_library_physx_cache_start_tree_map_load_bounds_file_deferred_load_and_name_list_assertions',
                     'shipping_binary_executed': False}
         staging.validate_test_report(document, receipt, args.upstream_root)
         args.report.write_text(json.dumps(document, indent=2) + '\n')
