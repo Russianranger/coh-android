@@ -1,7 +1,7 @@
 name: ArmPort Thor APK (M5 candidate)
 
 # User-authorized M5 development: build and sign COH Atlas
-# Gameplay 0.13.83, the 0.13.36 app plus the ARM64 client option, for the M5
+# Gameplay 0.13.84, the 0.13.36 app plus the ARM64 client option, for the M5
 # Thor play test. Uploads a workflow artifact; publish_release=true (only for a
 # user-approved candidate) also publishes it as a GitHub pre-release.
 on:
@@ -238,7 +238,7 @@ jobs:
               'target', 'status', 'source_commit', 'ndk_version', 'compiler', 'files', 'patches',
               'ioctl_command_filter_patch', 'corresponding_sources')}))
           EOF
-      - name: Build and sign COH Atlas Gameplay 0.13.83
+      - name: Build and sign COH Atlas Gameplay 0.13.84
         env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
         run: |
           mkdir -p out/thor
@@ -265,7 +265,7 @@ jobs:
             --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
             --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
             --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks" \
-            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.83.apk "${server_args[@]}"
+            --repository-commit "$GITHUB_SHA" --output out/thor/COH-Atlas-Gameplay-0.13.84.apk "${server_args[@]}"
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
@@ -293,7 +293,7 @@ jobs:
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.83-apk
+          name: coh-atlas-gameplay-0.13.84-apk
           path: out/thor/
           retention-days: 30
           if-no-files-found: error
@@ -308,24 +308,38 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coh-atlas-gameplay-0.13.83-apk
+          name: coh-atlas-gameplay-0.13.84-apk
           path: apk
-      - name: Publish the 0.13.83 pre-release
+      - name: Publish the 0.13.84 pre-release
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
           set -euo pipefail
           cd apk
-          test -f COH-Atlas-Gameplay-0.13.83.apk
-          sha256sum COH-Atlas-Gameplay-0.13.83.apk > COH-Atlas-Gameplay-0.13.83.apk.sha256
+          test -f COH-Atlas-Gameplay-0.13.84.apk
+          sha256sum COH-Atlas-Gameplay-0.13.84.apk > COH-Atlas-Gameplay-0.13.84.apk.sha256
           # The pack this APK pins (its build report's record names the pack's release).
           pack=$(python3 -c "import json, sys; r = json.load(open('thor-apk-build-report.json')).get('navigation_map_pack'); print('https://github.com/' + sys.argv[1] + '/releases/tag/' + r['release_tag'] if r else 'its release (see the test sheet)')" "$GITHUB_REPOSITORY")
           cat > notes.md <<EOF
-          COH Atlas Gameplay 0.13.83 (x86 track performance candidate) for the Thor play test.
+          COH Atlas Gameplay 0.13.84 (x86 track performance candidate) for the Thor play test.
 
           Source ${GITHUB_SHA} on ${GITHUB_REF_NAME}; APK run ${GITHUB_RUN_ID}; qualified app runtime ${M4_RUN_ID}.
           In-place update over the installed app; it keeps app data, the saved hero and imported assets.
 
-          New in 0.13.83 (from the Thor test of 0.13.82, 2026-11-24, and the owner's requests):
+          New in 0.13.84 (missions, the next step on the roadmap after start and zoning):
+          - Test option, off by default: "Start mission maps". With it a mission door (or a
+            mission the game sends you into) starts the mission's map like a zone: the zone you
+            came from stays loaded for the way out, and a loaded spare zone server takes the
+            mission if one is waiting. Without it a mission map is refused as before.
+            What to expect: the map, its enemies and objectives load; enemies have no
+            navigation data yet, so they fight where they stand and do not chase; the first
+            session with the option prepares the shared zone data once more (a few minutes).
+            Leave the mission before you save. A hero saved inside a mission is kept and
+            reopens in the zone it entered from, but that launch is reported as failed.
+          - A hero whose last session ended inside a mission can be reopened (it could not
+            before: the app refused the saved position).
+          - A long session can make more trips: up to 128 zone or mission starts and 48 spare
+            zone servers per session (32 and 12 before).
+          From 0.13.83 (not yet on the Thor when this was built):
           - The menu has three tabs. Play: the commands of a session in the order they are
             used (Reopen, Enter, Send text, FPS, Save / log out, Finish, Reports). Options:
             the launch options. Setup: runtime, asset import, controller, storage, test
@@ -333,16 +347,12 @@ jobs:
           - The options are in four categories. Recommended: the 19 that are ticked in a new
             install. Optional: "Keep the zone you just left loaded" (on the Thor the way back
             took 9-10 s instead of 21-31 s through the spare, and the lowest free memory was
-            3.5 GB instead of 4.9 GB). Test: options under test in a version (none in this one).
-            Experimental: five that showed no clear benefit on the Thor.
+            3.5 GB instead of 4.9 GB). Test: options under test in a version. Experimental:
+            five that showed no clear benefit on the Thor.
           - The FPS buttons come alive sooner again: the app acts on the zone server's "the
             hero is in the zone" line within half a second instead of at its next 15-second
-            look (9-11 s on the Thor in 0.13.82). Arrivals after a trip are noticed the same
-            way, so the next spare zone server starts sooner.
-          - A launch is no longer marked failed because the hero gained enhancements in play
-            (0.13.82 launch A: the save itself was verified).
-          - Missions are not served yet: a request for a mission map is refused, and the report
-            now keeps which map the game asked for. Missions are the next work.
+            look (9-11 s on the Thor in 0.13.82).
+          - A launch is no longer marked failed because the hero gained enhancements in play.
           From 0.13.82 (confirmed on the Thor): citizens have names; the FPS buttons no longer
           wait 40-60 s and nothing pauses when they come alive; "Finish zone loading while the
           game loads the zone" is on by default; "Keep prepared zone object files" stays
@@ -397,9 +407,9 @@ jobs:
           Other experiment, off by default: "Draw on the game's own thread (frame rate experiment)".
           The navigation map pack is unchanged (${pack}); an imported pack stays imported.
           Unchanged: any character name the game accepts, one character per install; every zone can
-          start; at most two zone servers (three with the optional one), missions are not served yet; the full-window view, gear button
+          start; at most two zone servers (three with the optional one); supergroup bases are not served; the full-window view, gear button
           and controller.
-          Test sheet: THOR-TEST-0.13.83.md.
+          Test sheet: THOR-TEST-0.13.84.md.
           EOF
           if [ "$SERVER_OPTION" = true ]; then
             echo "Servers: the CI-built MapServer with trusted prepared data by default (device-run in 0.13.69); unticking Fast server runs the 0.13.36 MapServer." >> notes.md
@@ -408,7 +418,7 @@ jobs:
           else
             echo "Servers: shipping MapServer, so the prepared server caches still load. The Fast server option has no effect in this build." >> notes.md
           fi
-          gh release create "coh-atlas-gameplay-v0.13.83" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "COH Atlas Gameplay 0.13.83 (performance candidate)" --notes-file notes.md \
-            COH-Atlas-Gameplay-0.13.83.apk COH-Atlas-Gameplay-0.13.83.apk.sha256
-          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.83"
+          gh release create "coh-atlas-gameplay-v0.13.84" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "COH Atlas Gameplay 0.13.84 (performance candidate)" --notes-file notes.md \
+            COH-Atlas-Gameplay-0.13.84.apk COH-Atlas-Gameplay-0.13.84.apk.sha256
+          echo "::notice title=ArmPort Thor release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/coh-atlas-gameplay-v0.13.84"
