@@ -60,10 +60,22 @@ files) and -045740 (C, both options). Every launch passed.
   zone. About 1.2 GB more memory. It needs the spare zone server; a spare
   still does not start below 3 GB of free memory.
 
-Not measured before this build reaches the Thor: all of the above except
-the name lists (a native test reads 0 names from a Unix file with the old
-code and all of them with the new). CI's travel check goes from Atlas Park
-to its second instance and back, which does exercise the new arrival record.
+What CI could and could not show:
+
+- **Shown.** The name lists are read (a native test reads 0 names from a
+  Unix file with the old code and all of them with the new). Every arrival
+  in CI's travel run was read from the zone server's console (5 records,
+  none from the log file): the trip back was recorded 24 s after CI typed
+  the command, where 0.13.81 recorded it at 79 s. With the option on, the
+  zone that was left stayed loaded, and the trip back to it began loading
+  2.5 s after the request.
+- **Not shown.** CI cannot see names over heads, the FPS buttons or the
+  pause. Its run ended before a second spare was started, so three zone
+  servers running together (launch B) is covered by unit tests only.
+- **A defect CI caught.** The first build of this version ended the zone
+  server when the character entered the world (my new console line was
+  flushed the wrong way). Fixed and rebuilt before anything was published;
+  a check now covers every server patch for the same mistake.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 
