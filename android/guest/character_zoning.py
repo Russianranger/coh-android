@@ -2258,7 +2258,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 record = console_ready(owned['process'].output, map_id, minimum_ms, now_ms)
             except (KeyError, AttributeError, TypeError, ValueError):
                 record = None
-        counts = self.zoning_report.setdefault('ready_records', {'format': 1, 'from_console': 0, 'from_entity_log': 0})
+        counts = self.__dict__.setdefault('zoning_report', {}).setdefault(
+            'ready_records', {'format': 1, 'from_console': 0, 'from_entity_log': 0})
         if record is not None:
             counts['from_console'] += 1
             return record
