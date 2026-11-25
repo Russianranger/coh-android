@@ -33,6 +33,11 @@ def static_zone(map_id):
     return type(map_id) is int and (map_id == 101 or map_id in zone_index.ZONES)
 
 
+def mission_map(proof):
+    return (proof.get('mission_map') is True and type(proof.get('map_id')) is int and 0 < proof['map_id'] <= 99999
+            and proof['map_id'] not in (1, 5, 101))
+
+
 def valid_name(name):
     """Any player name the game accepts (local_character_server.valid_character_name, 0.13.62)."""
     return (type(name) is str and 3 <= len(name) <= 20 and all(32 <= ord(c) <= 126 for c in name)
@@ -97,7 +102,10 @@ class SessionBudget:
                 and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
                 and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
                 and type(proof.get('map_id')) is int
-                and (static_zone(proof['map_id']) and proof.get('stock_travel') is True
+                # 0.13.84: or a mission map of this session (the zoning server marks the proof on
+                # arrival and clears the mark on the way out). CI probe 45510289790 ended here on
+                # arrival in a mission: "Reopen budget differs ...".
+                and ((static_zone(proof['map_id']) or mission_map(proof)) and proof.get('stock_travel') is True
                      if self.supported_maps == STATIC_ZONES else proof['map_id'] in self.supported_maps)
                 and (self.supported_maps == (1,) or proof.get('zoning_enabled') is True)
                 and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True

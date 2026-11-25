@@ -96,6 +96,25 @@ class ManualSessionGuestTests(unittest.TestCase):
             self.assertTrue(math.isinf(deadline()), target)
             self.assertTrue(zoning.character_identity(connected, SESSION))
         self.assertEqual(len(diagnostic.ctx.report['character_session_budgets']), 1)
+        # 0.13.84: into a mission map and out again (CI probe 45510289790 ended on arrival:
+        # "Reopen budget differs from the validated native character connection").
+        server.missions = {'arrivals': 0, 'returns': 0, 'starts': []}
+        self.addCleanup(zoning.MAPS.pop, 915, None)
+        zoning.register_mission(915, 'maps/missions/office/office_30/office_30_layout_03_01.txt')
+        server.maps[915] = {'ready': True}
+        server._stock_arrival(915, {'source': 'stock_entity_log', 'map_id': 915})
+        self.assertEqual((connected['map_id'], connected['mission_map']), (915, True))
+        self.assertTrue(math.isinf(deadline()))
+        self.assertTrue(zoning.character_identity(connected, SESSION))
+        server._stock_arrival(1, {'source': 'stock_entity_log', 'map_id': 1})
+        self.assertNotIn('mission_map', connected)
+        self.assertTrue(math.isinf(deadline()))
+        # The mark alone does not make a zone's id, or any id without it, a mission map.
+        for changes in ({'map_id': 915}, {'map_id': 5, 'mission_map': True, 'stock_travel': False},
+                        {'map_id': 100000, 'mission_map': True}):
+            with self.subTest(changes=changes), self.assertRaises(budget.base.DiagnosticError if hasattr(budget, 'base') else Exception):
+                diagnostic.session_budget.identity(dict(connected, **changes))
+        self.assertEqual(len(diagnostic.ctx.report['character_session_budgets']), 1)
         # King's Row still needs the stock travel flag or the qualified station monorail.
         for changes in ({'stock_travel': False}, {'stock_travel': None}):
             self.assertFalse(zoning.character_identity(dict(connected, map_id=5, **changes), SESSION))

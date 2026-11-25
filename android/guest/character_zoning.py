@@ -3526,7 +3526,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.maps[target]['last_occupied'] = now
         self.epoch += 1
         self.stock['arrivals'] += 1
+        # The session budget and the app accept a mission map only by this mark.
+        self.creation_report.pop('mission_map', None)
         if mission_map(target):
+            self.creation_report['mission_map'] = True
             self.missions['arrivals'] += 1
             for started in reversed(self.missions['starts']):
                 if started['map_id'] == target and 'arrived_utc_ms' not in started:
