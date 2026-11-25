@@ -127,9 +127,8 @@ class ArmPortCharacterInteraction(character.CharacterInteraction):
         self.costume_attempts += 1
         self.result['armport_transition_checks'].append({'check': name, 'attempt': self.costume_attempts,
             'costume_page_shown': shown, 'evidence': stem, 'frame_sequence': sequence})
-        if not shown:
-            # Which page is on screen instead (read from the failure notice; frames are not downloadable).
-            self.result['armport_transition_checks'][-1]['words'] = screen_words(tsv)
+        # What the screen says, shown or not (read from the job log; frames are not downloadable).
+        self.result['armport_transition_checks'][-1]['words'] = screen_words(tsv)
         if not shown:
             require(self.costume_attempts < COSTUME_ATTEMPTS,
                     'Costume page (HEAD/WEAPONS/Colors) not reached after body_next; inspect retained creator frames')
@@ -296,6 +295,19 @@ def dbserver_sql_failure(lines):
 FAILURE_FRAME_MARK = 'ARMPORT_FAILURE_FRAME_V1 '
 
 
+def creator_costume_line(observer):
+    """One log line on the creator's costume page checks: how many, and the words of the last."""
+    script = observer.get('interaction_script') if isinstance(observer, dict) else None
+    checks = script.get('armport_transition_checks') if isinstance(script, dict) else None
+    costume = [c for c in checks or [] if isinstance(c, dict) and c.get('check') == 'verify_costume_page']
+    if not costume:
+        return None
+    last = costume[-1]
+    return 'ARMPORT_CREATOR_COSTUME_V1 ' + json.dumps({
+        'attempts': len(costume), 'shown': last.get('costume_page_shown'),
+        'words': [str(word)[:20] for word in (last.get('words') or [])[:90]]}, separators=(',', ':'))
+
+
 def failure_frame_lines(evidence, limit=160000):
     """The newest retained frame of a failed session as text lines for the job log.
 
@@ -307,6 +319,8 @@ def failure_frame_lines(evidence, limit=160000):
     try:
         frames = sorted((p for p in evidence.glob('*.png') if p.is_file() and not p.is_symlink()),
                         key=lambda p: (p.stat().st_mtime_ns, p.name))
+        # The frame of the last screen check when there is one: the final frame is taken after the stop.
+        frames = [p for p in frames if '-ocr-' in p.name] or frames
         if not frames:
             return []
         from PIL import Image
@@ -1276,6 +1290,9 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
                 'external_observer': observer, 'host_cleanup': cleanup, 'trap_sampler': sampled,
                 'proot_stop_counts': counts,
                 'guest_evidence_export': exported, 'guest_failure': guest_failure_summary(evidence)}, indent=2) + '\n')
+            costume = creator_costume_line(observer)
+            if costume:
+                print(costume, flush=True)
             if failure is not None:
                 detail = failure_detail(evidence, work, observer)
                 (evidence / 'failure-detail.json').write_text(json.dumps(detail, indent=2) + '\n')
