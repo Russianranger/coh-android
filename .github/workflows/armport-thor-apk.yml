@@ -332,7 +332,7 @@ jobs:
             Locked power sets (for example Beast Mastery or Nature Affinity), Kheldians and Arachnos
             archetypes, costume sets and pieces, auras, extra costume slots, the invention and
             auction licences, and the store and veteran badges with their powers become available.
-            Counts of consumable items are not changed. Developer-only debug powers stay locked.
+            Counts of consumable items are not changed. Thirteen developer test powers stay locked.
             Untick it and the locks return; what a hero already took stays.
           - Test option "Primalist archetype": the unfinished shapeshifting melee archetype, from
             the definition files the owner supplied (class file, Feral Might and Primal Gifts with

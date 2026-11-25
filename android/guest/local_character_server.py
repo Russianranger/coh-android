@@ -4787,6 +4787,9 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                     progress = self.accept_gameplay_progress(before, after)
                 if progress:
                     continue
+            if (not self.saved_selected_rows_match(table, previous, current)
+                    and self.unlock_all_change_recorded(table)):
+                continue
             if not self.saved_selected_rows_match(table, previous, current):
                 # A typed SQL snapshot after logout is evidence of the observed
                 # difference, not a successful persistence proof. Preserve it
@@ -4812,6 +4815,23 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             committed_native_position_verified=True,
             committed_safe_position_verified=location['requested_recovery_verified'])
         return after
+
+    def unlock_all_change_recorded(self, table):
+        """0.13.85, "Unlock all content": the game itself grants what the account now owns.
+
+        At login the map server awards store and veteran badges and their powers, and the
+        DbServer writes the granted account bits into the character. These are the game's own
+        saves, not ordinary play the progress policy knows, so with the option on (and the same
+        preconditions as that policy) a changed table is recorded and not judged.
+        """
+        if os.environ.get('COH_UNLOCK_ALL') != '1' or not self.enhancement_change_in_ordinary_play():
+            return False
+        record = self.creation_report.setdefault('unlock_all_changes', {
+            'format': 1, 'status': 'changed_with_unlock_all', 'tables': [],
+            'save_comparison_skipped': True, 'sql_game_mutations_performed': False})
+        if table not in record['tables']:
+            record['tables'].append(table)
+        return True
 
     def enhancement_change_in_ordinary_play(self):
         """The preconditions of the inventory and progress policies: ARM64 client, no task

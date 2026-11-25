@@ -327,6 +327,28 @@ class Wiring(unittest.TestCase):
         self.assertIn("environment['ARMPORT_PRIMALIST'] = '1'", text)
         self.assertIn("environment['ARMPORT_UNLOCK_ALL'] = '1'", text)
 
+    def test_changes_the_unlock_causes_are_recorded_and_not_judged(self):
+        import local_character_server as server
+        from unittest.mock import patch
+        value = server.LocalCharacterReopenServer.__new__(server.LocalCharacterReopenServer)
+        value.creation_report = {}
+        with patch.object(server.LocalCharacterReopenServer, 'enhancement_change_in_ordinary_play',
+                          return_value=True):
+            with patch.dict(os.environ, {'COH_UNLOCK_ALL': '0'}):
+                self.assertFalse(value.unlock_all_change_recorded('powers'))
+            self.assertEqual(value.creation_report, {})
+            with patch.dict(os.environ, {'COH_UNLOCK_ALL': '1'}):
+                self.assertTrue(value.unlock_all_change_recorded('powers'))
+                self.assertTrue(value.unlock_all_change_recorded('ents2'))
+                self.assertTrue(value.unlock_all_change_recorded('powers'))
+        self.assertEqual(value.creation_report['unlock_all_changes']['tables'], ['powers', 'ents2'])
+        with patch.object(server.LocalCharacterReopenServer, 'enhancement_change_in_ordinary_play',
+                          return_value=False), patch.dict(os.environ, {'COH_UNLOCK_ALL': '1'}):
+            self.assertFalse(value.unlock_all_change_recorded('costumeparts'))    # a forced stop, a task profile
+        text = (ROOT / 'android/guest/local_character_server.py').read_text()
+        self.assertLess(text.index('and self.unlock_all_change_recorded(table)):'),
+                        text.index("require(False, 'Committed existing character rows changed after reopen: ' + table)"))
+
     def test_unlock_all_grants_only_names_the_dbserver_accepts(self):
         import game_diagnostic as game
         self.assertEqual(len(set(game.UNLOCK_AUTH_BITS)), len(game.UNLOCK_AUTH_BITS))
