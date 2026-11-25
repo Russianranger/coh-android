@@ -92,6 +92,8 @@ CHANGED_RUNTIME = frozenset({'diagnostic.py', 'character_server_data_cache.py', 
                              # which the character session uses to take a zone start request at once.
                              'client_interactive_diagnostic.py',
                              'runtime-manifest.json', 'client-manifest.json',
+                             # 0.13.85: the client inventory bound is 128 (was 96).
+                             'client_startup_diagnostic.py',
                              'game_diagnostic.py', 'game_device_diagnostic.py', 'atlas_beacon_package.py',
                              'native_map_startup_contract.py', 'native_monorail_contract.py',
                              'server_cache_package.py', 'server_fx_catalog.py', 'server_animation_package.py'})

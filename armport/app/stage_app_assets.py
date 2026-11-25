@@ -18,6 +18,10 @@ ROOT = Path(__file__).resolve().parents[2]
 # retained stock x86 client/server packages. Optional visual/zone payloads
 # remain selected by the donor inventory; adding just their helper would
 # falsely advertise an incomplete asset bundle.
+# The device checks the client inventory against the same bound (client_startup_diagnostic.
+# verify_assets). The first 0.13.85 APK build stopped here at 97 entries against the old 96
+# (run 45700074655), after the whole runtime chain had passed.
+CLIENT_INVENTORY_LIMIT = 128
 GUEST_DEPENDENCIES = (
     'client_attempt_retry.py', 'character_session_budget.py',
     'character_server_data_cache.py', 'texture_header_index.py',
@@ -391,6 +395,9 @@ def stage(source, armport, output, repository_commit, external=None, *,
     package.require(not set(content_payload) & (set(runtime['files']) | set(generated)),
                     'The donor already carries single-player content')
     generated.update(content_payload)
+    # The archive stays out of the bounded client inventory, as the zone graphs: the runtime
+    # manifest pins it and its loader checks every file against the archive's own manifest.
+    zone_payloads = zone_payloads + tuple(content_payload)
     replacements = {'armport-client.zip': armport,
                     'armport_client_package.py': Path(__file__).with_name('armport_client_package.py'),
                     'armport_interactive.py': Path(__file__).with_name('armport_interactive.py'),
@@ -424,7 +431,8 @@ def stage(source, armport, output, repository_commit, external=None, *,
         # Zone graphs stay out of the bounded client inventory (as the DbServer pair).
         if name in client['files'] or name not in DBSERVER_PAYLOADS + zone_payloads:
             client['files'][name] = runtime['files'][name]
-    package.require(len(client['files']) <= 96, 'Existing client inventory bound exceeded')
+    package.require(len(client['files']) <= CLIENT_INVENTORY_LIMIT,
+                    'Client inventory bound exceeded: %d entries' % len(client['files']))
     (output / 'client-manifest.json').write_bytes(encoded(client))
     runtime['files']['client-manifest.json'] = pin(output / 'client-manifest.json')
     runtime['repository_commit'] = repository_commit

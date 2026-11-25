@@ -377,6 +377,50 @@ class DatabaseName(unittest.TestCase):
 class Wiring(unittest.TestCase):
     """The hooks are where the design needs them (text checks; the flows run in CI)."""
 
+    def staged(self, limit=None):
+        """Stage a one-file donor the way the APK build does (no server archive)."""
+        import json, tempfile
+        from unittest import mock
+        import stage_app_assets as stage
+        work = Path(tempfile.mkdtemp(prefix='stage-content-'))
+        self.addCleanup(__import__('shutil').rmtree, work, True)
+        source = work / 'donor'; source.mkdir()
+        (source / 'game-package.tar.gz').write_bytes(b'donor archive')
+        client = {'format': 1, 'scope': 'actual_client_startup_guest',
+                  'files': {'game-package.tar.gz': stage.pin(source / 'game-package.tar.gz')}}
+        (source / 'client-manifest.json').write_text(json.dumps(client))
+        (source / 'runtime-manifest.json').write_text(json.dumps({'format': 1, 'repository_commit': '1' * 40, 'files': {
+            **client['files'], 'client-manifest.json': stage.pin(source / 'client-manifest.json')}}))
+        armport = work / 'client.zip'; armport.write_bytes(b'client overlay')
+        document = {'files': {'CityOfHeroes.exe': {'sha256': 'c' * 64}}, 'client_run_id': 1, 'data_run_id': 1}
+        with mock.patch.object(stage.package, 'unpack', return_value=document), \
+                mock.patch.object(stage, 'CLIENT_INVENTORY_LIMIT', limit or stage.CLIENT_INVENTORY_LIMIT):
+            stage.stage(source, armport, work / 'staged', '2' * 40)
+        return (json.loads((work / 'staged/runtime-manifest.json').read_text()),
+                json.loads((work / 'staged/client-manifest.json').read_text()), work / 'staged')
+
+    def test_the_archive_is_staged_outside_the_bounded_client_inventory(self):
+        """Run 45700074655: the first 0.13.85 APK build had 97 client inventory entries for a bound of 96."""
+        import stage_app_assets as stage
+        runtime, client, folder = self.staged()
+        archive = stage.SINGLE_PLAYER_ARCHIVE
+        self.assertEqual(runtime['files'][archive], stage.pin(folder / archive))
+        self.assertNotIn(archive, client['files'])
+        self.assertIn('single_player_content.py', client['files'])      # the module is a guest dependency
+        self.assertEqual((folder / archive).read_bytes(), stage.single_player_content()[archive])
+        with self.assertRaisesRegex(ValueError, 'Client inventory bound exceeded: %d' % len(client['files'])):
+            self.staged(limit=len(client['files']) - 1)
+
+    def test_the_packer_and_the_device_use_one_client_inventory_bound(self):
+        import re
+        import stage_app_assets as stage, build_thor_apk as apk
+        device = (ROOT / 'android/guest/client_startup_diagnostic.py').read_text()
+        self.assertEqual([int(v) for v in re.findall(r'len\(files\) <= (\d+)', device)], [stage.CLIENT_INVENTORY_LIMIT])
+        # 95 entries in 0.13.84, one more module in 0.13.85, room for later ones.
+        self.assertGreaterEqual(stage.CLIENT_INVENTORY_LIMIT, 96 + 16)
+        self.assertIn('client_startup_diagnostic.py', apk.CHANGED_RUNTIME)
+        self.assertLessEqual({'single_player_content.py', stage.SINGLE_PLAYER_ARCHIVE}, apk.ADDED_RUNTIME)
+
     def test_login_server_appends_before_the_dbserver_and_stays_on_once_stored(self):
         text = (ROOT / 'android/guest/local_login_server.py').read_text()
         prepare = text[text.index('    def prepare_runtime(self):'):text.index('    def start(self):')]
