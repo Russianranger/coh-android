@@ -558,12 +558,28 @@ server, no zone pack, mission map in the Atlas tree) added:
   server ended by itself after the hero left (`mission_maps.ended`, exit
   code -11: the process died on a signal while shutting down); it is
   forgotten, as designed.
+- **Probe 45544977220 (passed; trusted server, spare, deferred loading: the
+  Thor's set).** The warm spare (20.2 s to warm, loaded 50.6 s before the
+  request) was assigned map 915 and had it ready 2.1 s after the request
+  (server map load 888 ms; deferred beacons 43 ms, PhysX 162 ms). The
+  client loaded it in 1,239 ms (`group_load` 867 ms, 51 files) after a
+  3.7 s transfer; arrival recorded 5.6 s after the command, the return to
+  Atlas Park 10.4 s. The emptied mission server was stopped for the next
+  spare (`evictions`: `room_for_the_spare`) before it ended by itself, so
+  no -11 exit here. `ready_route` `embedded_dbserver_logserver`,
+  `mission_maps` `arrivals` 1, `returns` 1, `refused` [].
 - **Not covered by CI.** The shared zone tree with the mission leaves
   (`zone_tree_collision(True)`; CI has no zone pack), a mission entered by
   its door, enemies and objectives, the app's side (`ClientZoning`
   accepts the marked arrival in the Java harness only), saving inside a
   mission, a second mission in one session.
-- **Chain.** CHAIN84_PLACEHOLDER
+- **Chain.** Build 45521275964 at `ec0c2c48c` (third attempt: 45519716880
+  and 45520472353 failed in `libraries`, whose sparse checkout has neither
+  the untracked pack manifest nor `docs/`; the audit evidence moved to
+  `armport/evidence/`). Zone change 45532798713; trusted 45537091983
+  (370.8 s new, 23.9 s reopened, map load 4,843 ms); spare 45541284416
+  (arrivals 19.4 s and 10.7 s after the command; 19.5 and 10.8 in 0.13.83);
+  mission 45544977220; APK APK84_RUN (APK84_FACTS).
 
 ## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
 

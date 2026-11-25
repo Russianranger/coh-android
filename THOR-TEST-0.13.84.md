@@ -32,7 +32,25 @@ New in 0.13.84:
 
 What CI showed about missions, and what it could not:
 
-MISSION_CI_PLACEHOLDER
+- **Shown in CI, with the fast server and the spare server as on the Thor**
+  (run 45544977220): a debug command gave the hero a level 1 office
+  mission; the game asked for the mission's map; the warm spare server took
+  it and had it ready 2.1 s later; the game loaded it in 1.2 s and the hero
+  was inside 5.6 s after the command. The hero left through the mission's
+  exit command, was back in the zone 10.4 s later, and the save was
+  verified. On the 0.13.36 server without a spare (run 45503799391) a
+  mission map of the same set took 67.7 s to start.
+- **Not shown in CI:** CI has no zone asset pack, so the mission ran from
+  the Atlas Park data, not from the shared zone data the Thor uses (which
+  gets 123 more files with this option). A mission taken from a contact and
+  entered by its door, enemies, objectives and completion were not
+  exercised. The checkbox and the app's side were compiled and unit-tested,
+  not run on Android. A second mission in one session and saving inside a
+  mission were not run.
+- **Known gaps:** mission maps have no navigation maps yet, so pets and
+  enemies inside a mission may stand still or move in straight lines. The
+  game knows a zone's mission doors only once that zone has been started,
+  so a contact may place a mission only in zones you have already visited.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 
@@ -142,4 +160,4 @@ will read:
 
 Details: `HANDOFF-X86.md`, section "0.13.84 (99)".
 
-CI: CI84_EVIDENCE_PLACEHOLDER
+CI: build 45521275964 at `ec0c2c48c`; zone change 45532798713; trusted 45537091983 (zone server 370.8 s new, 23.9 s reopened); spare 45541284416 (arrivals 19.4 s and 10.7 s after the command); mission with the fast server and spare 45544977220; APK APK84_RUN.

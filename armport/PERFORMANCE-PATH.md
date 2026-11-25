@@ -857,6 +857,15 @@ those bounds itself (patch 0132), and a zone server reads its beacon file and
 starts PhysX after it is ready, while the client loads (4.7 s and 1.5 s of a
 trip's 18.8 s on the Thor).
 
+0.13.84 (2026-11-24): missions. A mission map is one more map request, so it
+takes the same path as a trip: with a warm spare the map was ready 2.1 s
+after the request and the hero inside 5.6 s after the command (CI
+45544977220; 67.7 s to ready on the stock server without a spare,
+45503799391). A mission map is small: server map load 0.9 s, client load
+1.2 s (51 group files). The way out to a zone still loaded took 10.4 s. Not
+measured: the shared zone tree with the 123 mission collision files, and
+anything on the Thor.
+
 0.13.82 on the Thor and 0.13.83 (2026-11-24). The console line did what it
 was for: 30 and 38 arrival records in the two launches, none from the late
 log; the FPS buttons came alive 9.4 s and 11.3 s after the hero was in the
