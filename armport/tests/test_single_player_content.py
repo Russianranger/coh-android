@@ -202,9 +202,11 @@ class Archive(unittest.TestCase):
         tree, so the zone server compiled all its files again on every launch."""
         import character_server_data_cache as cache
         value, source, imported = self.mirror()
-        for name in ('server/db/readme.txt', 'bin/keep.txt', 'geobin/keep.txt', 'server/bin/keep.txt'):
+        stale = parse6(['defs/classes.def'])
+        for name in ('server/db/readme.txt', 'bin/keep.txt', 'geobin/keep.txt', 'server/bin/keep.txt',
+                     'bin/classes.bin', 'server/bin/powers.bin'):      # the import brings old compiled files
             original = imported / name; original.parent.mkdir(parents=True, exist_ok=True)
-            original.write_text('imported'); original.chmod(0o444)
+            original.write_bytes(stale if name.endswith('.bin') else b'imported'); original.chmod(0o444)
             link = source / name; link.parent.mkdir(parents=True, exist_ok=True); link.symlink_to(original)
         owner = self.root / 'owner'; owner.mkdir()
         identity = {'format': 2, 'source_data': str(source.resolve(strict=True)),
@@ -225,9 +227,14 @@ class Archive(unittest.TestCase):
             # The zone server compiles its class list; the first pass removes one made from the old text.
             compiled = target / 'server/bin/classes.bin'
             compiled.write_bytes(parse6(['defs/classes.def']))
+            # A staged file in the server's folder is removed too (the server writes it again);
+            # the client's staged copy under data/bin stays, as the tree's receipt lists it.
+            self.assertIn('bin/classes.bin', first.private_names)
             self.assertEqual(content.drop_stale_bins(value.single_player_content, target)['dropped'],
-                             ['server/bin/classes.bin'])
+                             ['server/bin/classes.bin', 'server/bin/powers.bin'])
+            self.assertTrue((target / 'bin/classes.bin').exists())
             compiled.write_bytes(parse6(['defs/classes.def']) + b'new')
+            (target / 'server/bin/powers.bin').write_bytes(parse6(['defs/classes.def']) + b'new')
             self.assertTrue(first.release(target, {'wine_prefix_stopped': True, 'owned_processes_reaped': True}))
             second = cache.ServerDataCache(owner, identity, '2' * 32, value.ctx)
             again = self.root / ('second%d/data' % len(shared)); again.mkdir(parents=True)
@@ -302,7 +309,13 @@ class StaleBins(unittest.TestCase):
     def test_the_first_pass_drops_every_bin_made_from_replaced_text(self):
         record = content.drop_stale_bins(self.content, self.data)
         self.assertEqual(record['pass'], 'every_bin')
-        self.assertEqual(record['dropped'], ['bin/powers.bin', 'server/bin/classes.bin', 'server/bin/powers.bin'])
+        self.assertEqual(record['dropped'], ['server/bin/classes.bin', 'server/bin/powers.bin'])
+        self.assertEqual(record['checked'], 4)        # the four files under server/bin
+        # The client's copy under data/bin is a staged file of the kept tree: never removed.
+        self.assertTrue((self.data / 'bin/powers.bin').exists())
+        self.assertEqual(content.drop_stale_bins(self.content, self.data, ['data/bin/powers.bin']),
+                         {'format': 1, 'pass': 'seeded_bins_only', 'checked': 0, 'dropped': []})
+        self.assertTrue((self.data / 'bin/powers.bin').exists())
         self.assertTrue((self.data / 'server/bin/origins.bin').exists())
         self.assertTrue((self.data / 'server/bin/messages-en.bin').exists())
         marker = json.loads((self.data / content.MARKER).read_text())

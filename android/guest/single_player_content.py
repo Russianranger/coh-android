@@ -35,7 +35,11 @@ FILE_TIME = 1795564800
 CLASS_ATTRIBUTE = 'Class_Primalist'
 ATTRIBUTE_FILE = 'data/server/db/templates/vars.attribute'
 ATTRIBUTE_TABLE = 'attributes'
-BIN_ROOTS = ('server/bin', 'bin')
+# Only the folder the zone server keeps its own compiled files in. data/bin holds the client's
+# copies, which the server neither reads nor rewrites (it wrote 95 files with them present and
+# with them removed); they are staged from the import and listed in the kept tree's receipt, so
+# removing them made the next session refuse the tree (run 45651572658).
+BIN_ROOTS = ('server/bin',)
 MARKER = 'server/bin/armport-single-player-content.json'
 NAME = re.compile(r'[a-z0-9_][a-z0-9_.-]{0,95}(?:/[a-z0-9_][a-z0-9_.-]{0,95}){1,11}')
 
@@ -198,7 +202,8 @@ def parse6_dependencies(path, limit=32 * 1024 * 1024):
 def drop_stale_bins(content, data_root, installed=()):
     """Remove bins compiled from text this content replaced; the server rebuilds a missing bin.
 
-    The first pass over a tree checks every bin and leaves a marker; later passes check only
+    The first pass over a tree checks every bin in the server's own folder (BIN_ROOTS) and leaves
+    a marker; later passes check only
     the bins a prepared-cache package has just seeded (`installed`, names like
     'data/server/bin/x.bin'), which were compiled from the original text by construction.
     A file added by the content is reached through the replaced file that includes it.
@@ -223,7 +228,8 @@ def drop_stale_bins(content, data_root, installed=()):
     else:
         for name in installed:
             relative = PurePosixPath(name)
-            if relative.parts[:1] == ('data',) and '..' not in relative.parts:
+            if (relative.parts[:1] == ('data',) and '..' not in relative.parts
+                    and PurePosixPath(*relative.parts[1:]).parent.as_posix().casefold() in BIN_ROOTS):
                 candidates.append(str(data_root.joinpath(*relative.parts[1:])))
     dropped, checked = [], 0
     for path in sorted(set(candidates)):
