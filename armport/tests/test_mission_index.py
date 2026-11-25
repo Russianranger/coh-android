@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT / 'android/guest'))
 import mission_index  # noqa: E402
 import zone_index  # noqa: E402
 
-EVIDENCE = ROOT / 'docs/android-evidence/mission-asset-audit-all-20261124.json'
+EVIDENCE = ROOT / 'armport/evidence/mission-asset-audit-all-20261124.json'
 
 
 def canonical(value):

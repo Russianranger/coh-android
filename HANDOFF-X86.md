@@ -502,7 +502,7 @@ would be missions".
   (`ClientZoning.missionMap`). No spare while inside (`in_a_mission`); a mission map the hero
   left is evicted first and may end by itself (`_tick_missions`, `health`). Collision
   leaves: full audit of all 5,105 maps
-  (`docs/android-evidence/mission-asset-audit-all-20261124.json`): 501 files outside the
+  (`armport/evidence/mission-asset-audit-all-20261124.json`): 501 files outside the
   baseline, 378 already zone leaves, 123 (24.4 MB) in `android/guest/mission_index.py`,
   installed with the option under a second data cache identity
   (`local_character_server.zone_tree_collision`). **Lock-out fixed:** a hero saved inside

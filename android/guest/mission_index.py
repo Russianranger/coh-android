@@ -1,6 +1,6 @@
 """The collision leaves mission maps need beyond the shared zone tree's own (0.13.84).
 
-Generated from docs/android-evidence/mission-asset-audit-all-20261124.json (the source
+Generated from armport/evidence/mission-asset-audit-all-20261124.json (the source
 closure of every map file under maps/missions, 5105 files in 503 folders; sha256
 60a8bb32ad4eb1c3ee642a2fb708f725a64ca3bb8cc4904f957e740c5c80f117).
 Mission maps name 501 geometry files outside the retained baseline: 378 are already among
