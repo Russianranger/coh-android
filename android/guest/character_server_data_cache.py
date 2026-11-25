@@ -22,6 +22,9 @@ PRIVATE_ROOTS = ('bin', 'geobin', 'server')
 CONFIG = 'server/db/servers.cfg'
 STATS = {'files', 'bytes', 'directories', 'linked_immutable_files',
          'copied_private_files', 'preserved_schema_files'}
+# 0.13.85: a mirror that took the single-player content counts its files. The first build refused
+# its own receipt for this key, so every launch with the Primalist prepared the zone data anew.
+OPTIONAL_STATS = {'single_player_files'}
 PROCESS_LIMIT = 4096
 MARKER_FIELDS = {'format', 'policy', 'identity', 'key', 'status', 'owner', 'data_identity',
                  'directories', 'private_files', 'anchors', 'stats'}
@@ -395,7 +398,7 @@ class ServerDataCache:
             and value['policy'] == POLICY and value['identity'] == self.identity
             and value['key'] == self.key and value['status'] == 'closed' and value['owner'] is None,
             'Atlas cache identity differs or prior owner did not prove cleanup')
-        require(isinstance(value['stats'], dict) and set(value['stats']) == STATS
+        require(isinstance(value['stats'], dict) and STATS <= set(value['stats']) <= STATS | OPTIONAL_STATS
             and all(type(n) is int and n >= 0 for n in value['stats'].values())
             and isinstance(value['directories'], list) and 0 < len(value['directories']) <= DIRECTORY_LIMIT
             and isinstance(value['private_files'], list) and len(value['private_files']) <= PRIVATE_ENTRY_LIMIT

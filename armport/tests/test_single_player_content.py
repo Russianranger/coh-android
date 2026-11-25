@@ -197,6 +197,53 @@ class Archive(unittest.TestCase):
         self.assertFalse(set(recorder.anchor_names.values()) & set(files))
         self.assertEqual(list(target.rglob('*.single-player-pending')), [])
 
+    def test_a_kept_tree_with_the_content_is_taken_again_by_the_next_session(self):
+        """Run 45627352623: the receipt's own file count made the next session refuse the kept
+        tree, so the zone server compiled all its files again on every launch."""
+        import character_server_data_cache as cache
+        value, source, imported = self.mirror()
+        for name in ('server/db/readme.txt', 'bin/keep.txt', 'geobin/keep.txt', 'server/bin/keep.txt'):
+            original = imported / name; original.parent.mkdir(parents=True, exist_ok=True)
+            original.write_text('imported'); original.chmod(0o444)
+            link = source / name; link.parent.mkdir(parents=True, exist_ok=True); link.symlink_to(original)
+        owner = self.root / 'owner'; owner.mkdir()
+        identity = {'format': 2, 'source_data': str(source.resolve(strict=True)),
+                    'source_device': source.stat().st_dev, 'source_inode': source.stat().st_ino,
+                    'source_roots': [{'path': str(root.resolve(strict=True)),
+                                      'identity': cache.fingerprint(root.resolve(strict=True), directory=True)}
+                                     for root in (source.parent, imported)],
+                    'single_player_content': value.single_player_content.identity}
+        for shared in ((), ('menu', 'texts')):
+            if shared:
+                identity = dict(identity, shared_server_data={'shared_top_level': list(shared)})
+            first = cache.ServerDataCache(owner, identity, '1' * 32, value.ctx)
+            target = self.root / ('first%d/data' % len(shared)); target.mkdir(parents=True)
+            self.assertFalse(first.checkout(target))
+            stats = value.stage_map_data(source, target, cache_recorder=first, skip_top_level=shared)
+            self.assertIn('single_player_files', stats)
+            first.seal(target, stats)
+            # The zone server compiles its class list; the first pass removes one made from the old text.
+            compiled = target / 'server/bin/classes.bin'
+            compiled.write_bytes(parse6(['defs/classes.def']))
+            self.assertEqual(content.drop_stale_bins(value.single_player_content, target)['dropped'],
+                             ['server/bin/classes.bin'])
+            compiled.write_bytes(parse6(['defs/classes.def']) + b'new')
+            self.assertTrue(first.release(target, {'wine_prefix_stopped': True, 'owned_processes_reaped': True}))
+            second = cache.ServerDataCache(owner, identity, '2' * 32, value.ctx)
+            again = self.root / ('second%d/data' % len(shared)); again.mkdir(parents=True)
+            self.assertTrue(second.checkout(again), second.summary.get('reuse_refused'))
+            self.assertNotIn('reuse_refused', second.summary)
+            self.assertTrue((again / 'server/bin/classes.bin').read_bytes().endswith(b'new'))
+            later = content.drop_stale_bins(value.single_player_content, again)
+            self.assertEqual((later['pass'], later['dropped']), ('seeded_bins_only', []))
+            self.assertEqual((again / 'defs/classes.def').read_bytes(),
+                             value.single_player_content.files['defs/classes.def']['data'])
+
+    def test_a_receipt_with_an_unknown_count_is_still_refused(self):
+        import character_server_data_cache as cache
+        self.assertEqual(cache.OPTIONAL_STATS, {'single_player_files'})
+        self.assertFalse(cache.OPTIONAL_STATS & cache.STATS)
+
     def test_the_shared_tree_and_a_tree_without_its_folders_split_the_files(self):
         value, source, imported = self.mirror()
         shared = self.root / 'shared'

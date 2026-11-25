@@ -958,6 +958,10 @@ def single_player_summary(report):
     result = {key: report.get(key) for key in ('primalist', 'unlock_all', 'client_account_unlock',
                                                 'single_player_database')
               if isinstance(report.get(key), dict)}
+    if 'single_player_database' in result:
+        # Bounded again: this summary is one notice (4 KiB); the report keeps the longer text.
+        result['single_player_database'] = {key: (value[:500] if isinstance(value, str) else value)
+                                            for key, value in result['single_player_database'].items()}
     content = report.get('single_player_content')
     if isinstance(content, dict):
         result['content'] = {key: content.get(key) for key in ('identity', 'files', 'replaced', 'added')}
@@ -974,6 +978,23 @@ def single_player_summary(report):
                         if isinstance(row, dict) and 'single_player_class_compiled' in row}
             if compiled:
                 result['class_compiled'] = compiled
+        # Was the kept zone data taken again (and its compiled files with it), or prepared anew?
+        trees = {}
+        for label, holder in (('atlas', section.get('private_map_data')),
+                              ('zones', (report.get('zone_tree_preparation') or section.get('zone_tree_preparation')))):
+            cache = holder.get('server_data_cache') if isinstance(holder, dict) else None
+            if isinstance(cache, dict):
+                trees[label] = {'reused': cache.get('reused'),
+                                'reuse_refused': str(cache.get('reuse_refused'))[:120] if cache.get('reuse_refused') else None}
+            stale = holder.get('single_player_stale_bins') if isinstance(holder, dict) else None
+            if isinstance(stale, dict) and 'single_player_stale_bins' not in result:
+                result['single_player_stale_bins'] = stale
+        if trees:
+            result['kept_data_trees'] = trees
+        changes = section.get('unlock_all_changes')
+        if changes is not None:
+            result['unlock_all_changes'] = changes if not isinstance(changes, (list, dict)) else (
+                list(changes)[:24] if isinstance(changes, list) else {str(k): v for k, v in list(changes.items())[:24]})
     return result or None
 
 
@@ -1189,12 +1210,13 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         summary, writes = {}, {}
         detail = {key: original[key] for key in ('stage_timeline', 'client_folder_cache', 'client_sound_scripts',
                                                  'client_logout_keys') if original.get(key)}
-        servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel', 'single_player')
+        servers = {key: original[key] for key in ('shared_heap', 'external_maps', 'stock_travel')
                    if original.get(key)}
+        single_player = original.get('single_player')
         loads = original.get('client_zone_loads')
         zone_loads = original.get('zone_server_loads')
         for key, value in original.items():
-            if key in detail or key in servers or key in ('client_zone_loads', 'zone_server_loads'):
+            if key in detail or key in servers or key in ('client_zone_loads', 'zone_server_loads', 'single_player'):
                 continue
             if key in ('character_creation', 'character_reopen') and isinstance(value, dict):
                 value = dict(value)
@@ -1211,6 +1233,10 @@ def timing_notices(timings, proot_seccomp, trusted_bins):
         if servers:
             lines.append(ci_notice(dict(servers, session=name))
                          .replace('interactive result', 'zone servers ' + name, 1))
+        if single_player:
+            # Its own notice: beside the zone server fields it was cut off at the 4 KiB limit.
+            lines.append(ci_notice({'session': name, 'single_player': single_player})
+                         .replace('interactive result', 'single player ' + name, 1))
         if loads:
             lines.append(ci_notice({'session': name, 'client_zone_loads': loads})
                          .replace('interactive result', 'client zone loads ' + name, 1))
