@@ -622,6 +622,15 @@ class ArmPortClient:
                            ARMPORT_FPS_LOG='1',
                            # Patch 0123: the entity interpolation clock every 30 s.
                            ARMPORT_NET_CLOCK_LOG='1')
+        # Patch 0136 (0.13.85): the account owns every store product and loyalty reward when the
+        # owner asks; the Primalist's product when the archetype is on for this saved game.
+        unlock = {'format': 1, 'unlock_all_requested': os.environ.get('COH_UNLOCK_ALL') == '1',
+                  'primalist_active': bool(self.ctx.report.get('primalist', {}).get('active')), 'scope': 'client'}
+        if unlock['unlock_all_requested']:
+            environment['ARMPORT_UNLOCK_ALL'] = '1'
+        if unlock['primalist_active']:
+            environment['ARMPORT_PRIMALIST'] = '1'
+        self.ctx.report['client_account_unlock'] = unlock
         if client_skips_server_folders():
             # Patch 0120: the client never reads these server-only folders
             # (52,149 scripts.loc files of 212,496); its upfront scan skips them.

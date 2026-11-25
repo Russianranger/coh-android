@@ -285,6 +285,37 @@ class LocalLoginServer:
         for name in self.schema['files']:
             target = self.runtime / name; target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
             shutil.copyfile(self.schema_dir / name, target)
+        self.apply_single_player_schema()
+
+    def primalist_in_database(self):
+        """Whether the saved game's name table already holds the Primalist class (0.13.85).
+
+        The table does not exist before the first DbServer start of a new database.
+        """
+        try:
+            if self.sql("SELECT (to_regclass('dbo.attributes') IS NOT NULL)::int;", game=True) != '1':
+                return False
+            return self.sql("SELECT count(*) FROM dbo.attributes WHERE lower(name)='class_primalist';",
+                            game=True) not in ('', '0')
+        except (base.DiagnosticError, ValueError, OSError):
+            return False
+
+    def apply_single_player_schema(self):
+        """Primalist: on when asked for, and from then on whenever the saved game knows the class.
+
+        The class name is appended to this session's copy of the database name list and to the
+        rows the session expects, before the DbServer starts (it adds a trailing new name to its
+        table and checks every earlier one). The accepted schema files are not changed.
+        """
+        import single_player_content as content
+        stored = self.primalist_in_database()
+        self.primalist = content.requested() or stored
+        record = {'format': 1, 'requested': content.requested(), 'in_database': stored,
+                  'active': self.primalist, 'attribute_id': None}
+        if self.primalist:
+            record['attribute_id'] = content.append_class_attribute(self.runtime, self.schema)
+        self.report['primalist'] = record
+        self.ctx.report['primalist'] = dict(record)
 
     def start(self):
         d = self.owner
@@ -301,7 +332,10 @@ class LocalLoginServer:
         preparation_done = time.monotonic()
         preparation_seconds = round(preparation_done - preparation_at, 6)
         config = self.runtime / 'data/server/db/servers.cfg'
-        base.private_write(config, game.game_config(config.read_text(), DATABASE, connection))
+        unlock = game.unlock_all_requested()
+        base.private_write(config, game.game_config(config.read_text(), DATABASE, connection, unlock=unlock))
+        self.ctx.report['unlock_all'] = {'format': 1, 'requested': unlock,
+                                         'auth_bits_granted': len(game.UNLOCK_AUTH_BITS) if unlock else 0}
         self.config = config
         self.progress_path = self.runtime / 'coh-db-progress.bin'
         for port, protocol in ((6997, socket.SOCK_STREAM), (7000, socket.SOCK_DGRAM)):

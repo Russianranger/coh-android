@@ -459,6 +459,11 @@ class ServerDataCache:
                         # is still unexpected below, so the check stays exact.
                         continue
                     expected.add(entry.name)
+            # 0.13.85: a receipt-listed private file the source folder does not have (a file the
+            # single-player content adds) belongs to this folder too.
+            added = {Path(value).name for value in private_names
+                     if ('' if '/' not in value else value.rsplit('/', 1)[0]) == name} - expected
+            expected |= added
             actual = set()
             with os.scandir(target) as entries:
                 for entry in entries:
@@ -470,9 +475,14 @@ class ServerDataCache:
                     relative = (Path(name) / entry.name).as_posix()
                     require(entry.name in expected,
                             'Unexpected immutable Atlas entry: ' + relative)
+                    info = entry.stat(follow_symlinks=False)
+                    if entry.name in added:
+                        require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+                                and info.st_uid == owner_uid,
+                                'Private Atlas child file changed: ' + relative)
+                        continue
                     original_path = original / entry.name
                     original_info = original_path.lstat()
-                    info = entry.stat(follow_symlinks=False)
                     if stat.S_ISDIR(original_info.st_mode):
                         require(stat.S_ISDIR(info.st_mode)
                                 and info.st_uid == owner_uid

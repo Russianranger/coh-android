@@ -2316,6 +2316,14 @@ class LocalCharacterServer(login.LocalLoginServer):
             phases[name], phase_at = round(now - phase_at, 6), now
 
         super().prepare_runtime()
+        # 0.13.85: the Primalist's definition files, used when the archetype is on for this saved game.
+        import single_player_content
+        self.single_player_content = None
+        if getattr(self, 'primalist', False):
+            self.single_player_content = single_player_content.load(self.owner.args.assets)
+            require(self.single_player_content is not None, 'This app carries no Primalist content')
+            self.creation_report['single_player_content'] = self.single_player_content.summary()
+            self.ctx.report['single_player_content'] = self.creation_report['single_player_content']
         checkpoint('base_schema_and_native_runtime')
         # 0.13.67, read-only: what earlier sessions left in the private state folder
         # (Thor 0.13.66: 13.2 GB of state; zone sessions never returned their data tree).
@@ -2379,6 +2387,9 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'files': cache_native_package['files']})).hexdigest()}
         if required_geometry is not None:
             identity['required_geometry'] = required_geometry
+        if getattr(self, 'single_player_content', None) is not None:
+            # Trees with and without the replaced definition files never serve each other.
+            identity['single_player_content'] = self.single_player_content.identity
         selection = shared_server_selection(source)
         if selection is not None:
             # A generation without these folders must never serve a private-only start.
@@ -2504,6 +2515,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             # existing generated bins and the ordinary loader fully in charge.
             self.creation_report['prepared_server_caches'] = {'format': 1,
                 'status': 'skipped_native_fallback', 'reason': str(failure)[:300], 'installed_files': 0}
+        self.drop_single_player_stale_bins(runtime / 'data', self.creation_report['prepared_server_caches'],
+                                           self.creation_report)
         checkpoint('prepared_server_definition_caches')
         self.creation_report['server_fx_catalog'] = server_fx_catalog.install(
             self.owner.args.assets, runtime, context=self.ctx,
@@ -3102,6 +3115,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             mapserver_package=self.map_package)
         prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
             target / 'data', donor, context=self.ctx)
+        stale_bins = self.drop_single_player_stale_bins(target / 'data', prepared_caches)
         checkpoint('prepared_server_definition_caches')
         fx_catalog = server_fx_catalog.install(self.owner.args.assets, target, context=self.ctx,
             mapserver_package=self.map_package)
@@ -3122,6 +3136,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
             'native_dependencies': dependencies,
             'server_data_cache': cache.summary, 'prepared_server_caches': prepared_caches,
+            'single_player_stale_bins': stale_bins,
             'shared_server_data': shared_link,
             'server_cache_native_compatibility': cache_compatibility,
             'animation': animation, 'server_fx_catalog': fx_catalog,
@@ -3243,6 +3258,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             mapserver_package=self.map_package)
         prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
             target / 'data', donor, context=self.ctx)
+        stale_bins = self.drop_single_player_stale_bins(target / 'data', prepared_caches)
         checkpoint('prepared_server_definition_caches')
         fx_catalog = server_fx_catalog.install(self.owner.args.assets, target, context=self.ctx,
             mapserver_package=self.map_package)
@@ -3257,6 +3273,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         report = {'runtime': target.name, 'geometry': geometry, 'beacon_graph': {},
             'native_dependencies': dependencies, 'server_data_cache': cache.summary,
             'prepared_server_caches': prepared_caches, 'shared_server_data': shared_link,
+            'single_player_stale_bins': stale_bins,
             'server_cache_native_compatibility': cache_compatibility,
             'animation': animation, 'server_fx_catalog': fx_catalog,
             'zone_index_sha256': zone_index.SOURCE_SHA256, 'collision_files': len(leaves),
@@ -3392,6 +3409,22 @@ class LocalCharacterServer(login.LocalLoginServer):
                 record.update(recorded=False, record_error=str(failure)[:200])
         return result
 
+    def drop_single_player_stale_bins(self, data, prepared_caches, report=None):
+        """After the prepared caches are seeded: remove bins compiled from text the content replaced.
+
+        The server parses the text again for a missing bin (also when it trusts its bins) and
+        writes the new one, once per data tree. Returns the record, or None without content.
+        """
+        content = getattr(self, 'single_player_content', None)
+        if content is None:
+            return None
+        import single_player_content
+        installed = prepared_caches.get('installed_paths', ()) if isinstance(prepared_caches, dict) else ()
+        record = single_player_content.drop_stale_bins(content, data, installed)
+        if report is not None:
+            report['single_player_stale_bins'] = record
+        return record
+
     def copy_private_data(self, source, target):
         return self.stage_map_data(source, target, force_private=True)
 
@@ -3418,6 +3451,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         max_bytes = device.DATA_BYTES + 1024**3 + world.PAYLOAD_BYTES + avatar.PAYLOAD_BYTES + visual.PAYLOAD_BYTES
         result = {'files': 0, 'bytes': 0, 'directories': 0, 'linked_immutable_files': 0,
                   'copied_private_files': 0, 'preserved_schema_files': 0}
+        # 0.13.85: only the mirror of the imported game text takes the single-player content.
+        content = getattr(self, 'single_player_content', None)
+        if content is not None and source != self.owner.work / 'data':
+            content = None
+        overlay = content.selected(skip, only) if content is not None else {}
+        if content is not None:
+            import single_player_content
+            result['single_player_files'] = 0
         projection = server_input_projection(getattr(self, 'map_package', None),
             getattr(self, 'map_package_dir', Path('.')) / 'MapServer.exe')
         excluded = set(projection['excluded_top_level_directories']) if projection else set()
@@ -3476,6 +3517,17 @@ class LocalCharacterServer(login.LocalLoginServer):
                         'Private map data exceeded bound: files=' + str(result['files']) + '/' + str(max_files)
                         + ', bytes=' + str(result['bytes']) + '/' + str(max_bytes))
                 private = private or current.suffix.casefold() == '.dbidmap' or bool(resolved_info.st_mode & 0o222)
+                replacement = overlay.get(relative.as_posix().casefold())
+                if replacement is not None:
+                    # A private copy of the content's file in place of the link to the import. In
+                    # the shared read-only tree (no recorder) it is read-only like its folders.
+                    require(not replacement['new'], 'Single-player content adds a file the import has')
+                    if cache_recorder is not None:
+                        cache_recorder.observe(relative, destination, resolved, True)
+                    single_player_content.write_copy(destination, replacement['data'],
+                                                     read_only=cache_recorder is None and not force_private)
+                    result['single_player_files'] += 1
+                    continue
                 if cache_recorder is not None:
                     cache_recorder.observe(relative, destination, resolved, private)
                 try:
@@ -3499,6 +3551,14 @@ class LocalCharacterServer(login.LocalLoginServer):
             if time.monotonic() >= next_message:
                 self.ctx.event('stage', status='running', message='Preparing private map data directories', files=result['files'])
                 next_message = time.monotonic() + 5
+        if content is not None:
+            added = single_player_content.install_new(content, target, skip=skip, only=only,
+                                                      read_only=cache_recorder is None and not force_private)
+            if cache_recorder is not None:
+                cache_recorder.private_names.extend(added)
+            result['single_player_files'] += len(added)
+            require(result['single_player_files'] == len(overlay),
+                    'Single-player content file not found in the imported game text')
         # The helper is also used by isolated staging callers without a server
         # session report. Integrity verification still runs unconditionally.
         resolution = resolver.verify()
@@ -3648,6 +3708,11 @@ class LocalCharacterServer(login.LocalLoginServer):
         environment.pop('ARMPORT_TRUSTED_BINS', None)
         environment.pop(PHYSX_CACHE_VARIABLE, None)
         environment.pop(DEFER_ZONE_LOADS_VARIABLE, None)
+        for name in ('ARMPORT_UNLOCK_ALL', 'ARMPORT_PRIMALIST'):
+            environment.pop(name, None)
+        unlock = {'format': 1, 'unlock_all_requested': os.environ.get('COH_UNLOCK_ALL') == '1',
+                  'primalist_active': bool(getattr(self, 'primalist', False)),
+                  'applied': [], 'reason': None, 'scope': 'zone_servers'}
         emulation = apply_server_emulation(environment)
         deferred = {'format': 1, 'requested': defer_zone_loads_requested(), 'applied': False,
                     'environment_variable': DEFER_ZONE_LOADS_VARIABLE, 'scope': 'zone_servers_only',
@@ -3695,6 +3760,23 @@ class LocalCharacterServer(login.LocalLoginServer):
             except (OSError, ValueError, KeyError, TypeError, base.DiagnosticError) as error:
                 deferred['reason'] = 'error'
                 deferred['error_type'] = type(error).__name__
+        if unlock['unlock_all_requested'] or unlock['primalist_active']:
+            # Never a reason to stop a start: a server without the switches keeps every lock.
+            try:
+                if not enabled:
+                    unlock['reason'] = 'no_metrics_mapserver'
+                elif not metrics.account_unlock_available():
+                    unlock['reason'] = 'switch_not_in_admitted_build'
+                else:
+                    if unlock['unlock_all_requested']:
+                        environment['ARMPORT_UNLOCK_ALL'] = '1'; unlock['applied'].append('ARMPORT_UNLOCK_ALL')
+                    if unlock['primalist_active']:
+                        environment['ARMPORT_PRIMALIST'] = '1'; unlock['applied'].append('ARMPORT_PRIMALIST')
+            except (OSError, ValueError, KeyError, TypeError, base.DiagnosticError) as error:
+                unlock['reason'] = 'error'
+                unlock['error_type'] = type(error).__name__
+        else:
+            unlock['reason'] = 'not_requested'
         self.server_metrics_enabled = enabled
         report = getattr(self, 'creation_report', None)
         if report is None and getattr(self, 'ctx', None) is not None:
@@ -3708,6 +3790,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             report['physx_cache'] = cooked
             report['server_emulation'] = emulation
             report['deferred_zone_load'] = deferred
+            report['account_unlock'] = unlock
         return environment
 
     def start_map(self):

@@ -3,7 +3,7 @@
   "role": "armport_server_metrics_source_checks",
   "status": "passed",
   "variant": "retained_progress",
-  "build_input_sha256": "d9eb704572d6bf56703afd7f95c628ccfe457bcd89eed278d9a8c42faca7e00b",
+  "build_input_sha256": "5ae1cf54d7e9f925c0e8b5fcf16035e72e497a49d811859c7d0522eb61d22d92",
   "source_sha256": {
     "MapServer/src/svr/svr_init.c": "c995b18cbf5d9c1a9c2c86fe13c43d6fa6898210b76aef3df21768b9cadeeaed",
     "libs/UtilitiesLib/src/utils/file.c": "c8c4172c7fd7054041ce976f3fc46667adc9794c4864aa850ccba7d3d9529b71",
@@ -24,7 +24,8 @@
     "MapServer/src/beacon/beaconFile.c": "02b6b8f4ce477e073690291d6b1fa5ecc2d5a4d6ed6a5c99e8bc17863791f55d",
     "MapServer/src/group/groupnetsend.c": "0a69491e1f2d9c6447553e0b4d137f4144d5f5d464c0c7a14f73f256e69bb0ca",
     "MapServer/src/gameComm/NpcNames.c": "231e148f52cd6f49555e83c16b4257602361c544d7bb04cdda9a9aeed81729a9",
-    "MapServer/src/player/parseClientInput.c": "f7c86d0a5696b332641bd2d0f1a3a8f633357e054a83a362785f611058811336"
+    "MapServer/src/player/parseClientInput.c": "f7c86d0a5696b332641bd2d0f1a3a8f633357e054a83a362785f611058811336",
+    "Common/account/AccountData.c": "7fea3b365fd101ca32fac451ffbafd6f2abea4d49e54b8e3014de64496a07074"
   },
   "original_sha256": {
     "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
@@ -40,13 +41,14 @@
     "MapServer/src/beacon/beaconFile.c": "2693b3cd9eb2432248605810a167a4aed8ab71f569c8f2fdc89fe4aa4271ad60",
     "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
     "MapServer/src/gameComm/NpcNames.c": "7601b15354605e06033d2a7024f8edce8bb036f7730a60919427a35fd17928f7",
-    "MapServer/src/player/parseClientInput.c": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313"
+    "MapServer/src/player/parseClientInput.c": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313",
+    "Common/account/AccountData.c": "038259178820f9a78040d39b4d8810933e31a67a798676fb37a0ca658682c391"
   },
   "fixture_sha256": {
     "positive": "14c06b92994c3b95b7e4275ef3326152e1a9e3217d97ce534bf2feb92e03a965",
     "negative": "d78f336cbe2b9cf6e0ca071cbf65612ed8a162fb9d97d7e1f800d4d20d04bb8b"
   },
-  "test_script_sha256": "87b84d629f931f7f7bccc06c79ee862e5fb271e3c100cf627baa5ab1036bde1e",
+  "test_script_sha256": "ef8374ab633bf4608137dc2750226ee774dfe203b29c2226a73edc3fc1468225",
   "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "execution_environment": "posix_host_with_windows_clock_and_file_io_shims",
   "positive_cases": [

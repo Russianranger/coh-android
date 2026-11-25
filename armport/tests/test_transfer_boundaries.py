@@ -40,7 +40,8 @@ class TransferBoundaries(unittest.TestCase):
         cls.sections = sections(PATCH.read_text())
 
     def test_it_is_the_last_patch_and_touches_three_client_files(self):
-        self.assertEqual((ROOT / 'armport/patches/series').read_text().split()[-1], PATCH.name)
+        series = (ROOT / 'armport/patches/series').read_text().split()
+        self.assertEqual(series[series.index(PATCH.name) + 1:], ['0136-armport-single-player-unlock.patch'])
         self.assertEqual(sorted(self.sections), sorted([COMM, INIT, TRACE]))
 
     def test_the_game_files_only_gain_trace_calls(self):

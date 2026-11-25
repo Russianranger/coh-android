@@ -1657,7 +1657,7 @@ def main():
                                                      staging.GROUPFILELIB, staging.NWWRAPPER,
                                                      staging.INITCOMMON, staging.MESSAGESTORE)
                                         + staging.LOAD_PROFILE_SOURCES + staging.DEFERRED_SOURCES
-                                        + staging.SINGLE_PLAYER_SOURCES},
+                                        + staging.SINGLE_PLAYER_SOURCES + staging.UNLOCK_SOURCES},
                     'fixture_sha256': {'positive': positive, 'negative': negative},
                     'test_script_sha256': staging.digest(Path(__file__).read_bytes()),
                     'compiler': subprocess.check_output(['cc', '--version'], text=True).splitlines()[0],

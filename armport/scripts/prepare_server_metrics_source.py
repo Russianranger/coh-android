@@ -69,8 +69,14 @@ SINGLE_PLAYER_PATCH = 'patches/mapserver-single-player/0001-name-lists-and-ready
 NPCNAMES = 'MapServer/src/gameComm/NpcNames.c'
 PARSECLIENTINPUT = 'MapServer/src/player/parseClientInput.c'
 SINGLE_PLAYER_SOURCES = (NPCNAMES, PARSECLIENTINPUT)
+# Off unless the environment asks (0.13.85): ARMPORT_UNLOCK_ALL=1 makes the one local account own
+# every store product and loyalty reward and be a VIP; ARMPORT_PRIMALIST=1 owns the Primalist
+# archetype's product. The same change is client patch 0136 (armport/patches).
+UNLOCK_PATCH = 'patches/mapserver-single-player/0002-unlock-account-content.patch'
+ACCOUNTDATA = 'Common/account/AccountData.c'
+UNLOCK_SOURCES = (ACCOUNTDATA,)
 FILES = METRIC_FILES + (TEXTPARSER, SPARE_HEADER, GROUPFILELIB, NWWRAPPER, PHYSX_HEADER, INITCOMMON, MESSAGESTORE,
-                        LOAD_PROFILE_HEADER) + LOAD_PROFILE_SOURCES + (DEFERRED_HEADER,) + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES
+                        LOAD_PROFILE_HEADER) + LOAD_PROFILE_SOURCES + (DEFERRED_HEADER,) + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES + UNLOCK_SOURCES
 ADDED_FILES = (HEADER, IMPL, SPARE_HEADER, PHYSX_HEADER, LOAD_PROFILE_HEADER, DEFERRED_HEADER)
 VARIANTS = {'retained_progress': 'mapserver-progress-build-input.json',
             'thor_certified_startup': 'map-startup-build-input.json'}
@@ -156,6 +162,19 @@ CONTRACT = {
                               'at': 'the_functions_last_return_after_the_character_resumed',
                               'evidence_only': True},
         'gameplay_decisions_changed': False,
+    },
+    'account_unlock': {
+        'environment_variables': ['ARMPORT_UNLOCK_ALL', 'ARMPORT_PRIMALIST'], 'enabled_value': '1',
+        'disabled_by_default': True, 'read': 'once_per_process',
+        'unlock_all': {'functions': ['AccountHasStoreProduct', 'AccountIsVIP',
+                                     'accountLoyaltyRewardHasThisNode', 'accountLoyaltyRewardHasNode',
+                                     'accountLoyaltyRewardMasteredThisTier', 'accountLoyaltyRewardMasteredTier',
+                                     'accountLoyaltyRewardUnlockedThisTier', 'accountLoyaltyRewardUnlockedTier',
+                                     'accountLoyaltyRewardHasThisLevel', 'accountLoyaltyRewardHasLevel'],
+                       'consumable_product_counts_changed': False},
+        'primalist': {'function': 'AccountHasStoreProduct', 'product': 'ctatprim',
+                      'owned_only_with': 'ARMPORT_PRIMALIST', 'part_of_unlock_all': False},
+        'gameplay_decisions_changed_when_unset': False,
     },
     'trusted_bounds_files': {
         'environment_variable': 'ARMPORT_TRUSTED_BINS', 'enabled_value': '1',
@@ -277,6 +296,13 @@ def single_player_patch_bytes():
     data = (ROOT / SINGLE_PLAYER_PATCH).read_bytes().replace(b'\r\n', b'\n')
     names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
     require(names == [NPCNAMES, PARSECLIENTINPUT], 'Single player patch file set differs')
+    return data
+
+
+def unlock_patch_bytes():
+    data = (ROOT / UNLOCK_PATCH).read_bytes().replace(b'\r\n', b'\n')
+    names = [line[6:] for line in data.decode().splitlines() if line.startswith('+++ b/')]
+    require(names == [ACCOUNTDATA], 'Account unlock patch file set differs')
     return data
 
 
@@ -484,6 +510,11 @@ def native_images(variant, baseline_receipt, root):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
         apply_patch(stage, single_player_patch_bytes())
+        for name in UNLOCK_SOURCES:
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes())
+        apply_patch(stage, unlock_patch_bytes())
         images = {name: (stage / name).read_bytes() for name in FILES}
         require(images[SVR] == patch_deferred(patch_spare(patch_loop(original_loop))),
                 'Loop rebase differs from exported native patches')
@@ -508,7 +539,7 @@ def native_images(variant, baseline_receipt, root):
                   INITCOMMON: (root / 'upstream/ouroboros' / INITCOMMON).read_bytes(),
                   MESSAGESTORE: (root / 'upstream/ouroboros' / MESSAGESTORE).read_bytes(),
                   **{name: (root / 'upstream/ouroboros' / name).read_bytes()
-                     for name in LOAD_PROFILE_SOURCES + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES}}
+                     for name in LOAD_PROFILE_SOURCES + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES + UNLOCK_SOURCES}}
     images[SVR] = patch_deferred(patch_spare(patch_loop(inputs[SVR])))
     closure, _ = baseline_closure(baseline_receipt, VARIANTS[variant])
     require(closure[SVR] == digest(inputs[SVR]), 'Baseline loop preimage differs')
@@ -531,6 +562,9 @@ def native_images(variant, baseline_receipt, root):
     for name in SINGLE_PLAYER_SOURCES:
         require(name not in closure or closure[name] == digest(inputs[name]),
                 'Baseline single player preimage differs: ' + name)
+    for name in UNLOCK_SOURCES:
+        require(name not in closure or closure[name] == digest(inputs[name]),
+                'Baseline account unlock preimage differs: ' + name)
     return inputs, images
 
 
@@ -553,6 +587,7 @@ def expected_receipt(variant, baseline_receipt, upstream_root=ROOT):
             'bounds_files_patch': {'path': BOUNDS_PATCH, 'sha256': digest(bounds_patch_bytes())},
             'deferred_load_patch': {'path': DEFERRED_PATCH, 'sha256': digest(deferred_patch_bytes())},
             'single_player_patch': {'path': SINGLE_PLAYER_PATCH, 'sha256': digest(single_player_patch_bytes())},
+            'account_unlock_patch': {'path': UNLOCK_PATCH, 'sha256': digest(unlock_patch_bytes())},
             'source_sha256': {name: digest(data) for name, data in inputs.items()},
             'patched_sha256': {name: digest(data) for name, data in images.items()},
             'retained_sha256': {name: value for name, value in closure.items() if name not in FILES},
@@ -581,7 +616,7 @@ def validate_test_report(document, source_receipt, upstream_root=ROOT):
                 'original_sha256': {name: digest((Path(upstream_root) / 'upstream/ouroboros' / name).read_bytes())
                                     for name in (SVR, FILE, TEXTPARSER, GROUPFILELIB, NWWRAPPER,
                                                  INITCOMMON, MESSAGESTORE) + LOAD_PROFILE_SOURCES
-                                    + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES},
+                                    + DEFERRED_SOURCES + SINGLE_PLAYER_SOURCES + UNLOCK_SOURCES},
                 'test_script_sha256': digest((ROOT / 'armport/tests/server_metrics_native.py').read_bytes()),
                 'execution_environment': 'posix_host_with_windows_clock_and_file_io_shims',
                 'positive_cases': ['window', 'disabled', 'files', 'thread', 'slow', 'clock', 'saturation',

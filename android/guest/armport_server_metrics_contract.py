@@ -56,6 +56,12 @@ DEFERRED_VARIABLE = 'ARMPORT_DEFER_ZONE_LOADS'
 # in LF are read, and one console line says when a client's character has resumed.
 SINGLE_PLAYER_PATCH = 'a1b9b89690759bb18becb748ee6e2870f55bb90d6d9ed6d09ae3348c0edffbc1'
 SINGLE_PLAYER_SOURCES = ('MapServer/src/gameComm/NpcNames.c', 'MapServer/src/player/parseClientInput.c')
+# 0.13.85 (patches/mapserver-single-player/0002): off unless the environment asks. ARMPORT_UNLOCK_ALL=1:
+# the one local account owns every store product and loyalty reward and is a VIP (counts of
+# consumable products unchanged). ARMPORT_PRIMALIST=1: the Primalist archetype's product is owned.
+UNLOCK_PATCH = 'de2df03549621968b875c43d6ac90030ef534473d0cf875a4c65c3b847cdcbb2'
+UNLOCK_SOURCES = ('Common/account/AccountData.c',)
+UNLOCK_ALL_ENV, PRIMALIST_ENV = 'ARMPORT_UNLOCK_ALL', 'ARMPORT_PRIMALIST'
 CLIENT_READY_PREFIX = 'ARMPORT_CLIENT_READY_V1'
 # Opt-in ARMPORT_SPARE_FILE early zone server (patches/mapserver-zone-travel), off unless
 # the guest sets the variable: shared loading first, then a wait for the map id and cookie.
@@ -260,6 +266,7 @@ def _authenticate(path, package):
     bounds_files_changed(build)
     deferred_load_changed(build)
     single_player_changed(build)
+    account_unlock_changed(build)
     return previous, _proof(value, build, previous)
 
 
@@ -397,6 +404,38 @@ def single_player_changed(build):
             and entry.get('gameplay_decisions_changed') is False),
             'Metrics build changed name lists or the ready line outside the reviewed single player patch')
     return changed
+
+
+def account_unlock_changed(build):
+    """True only for the reviewed account unlock switches (both off unless the environment asks)."""
+    source = build.get('build_input', {})
+    patched = source.get('patched_sha256', {})
+    changed = any(name in patched for name in UNLOCK_SOURCES) or 'account_unlock_patch' in source
+    entry = source.get('contract', {}).get('account_unlock')
+    unlock = entry.get('unlock_all') if isinstance(entry, dict) else None
+    primalist = entry.get('primalist') if isinstance(entry, dict) else None
+    require(not changed or (all(name in patched for name in UNLOCK_SOURCES)
+            and source.get('account_unlock_patch') == {
+                'path': 'patches/mapserver-single-player/0002-unlock-account-content.patch',
+                'sha256': UNLOCK_PATCH}
+            and isinstance(entry, dict)
+            and entry.get('environment_variables') == [UNLOCK_ALL_ENV, PRIMALIST_ENV]
+            and entry.get('enabled_value') == '1' and entry.get('disabled_by_default') is True
+            and isinstance(unlock, dict) and unlock.get('consumable_product_counts_changed') is False
+            and isinstance(primalist, dict) and primalist.get('product') == 'ctatprim'
+            and primalist.get('owned_only_with') == PRIMALIST_ENV and primalist.get('part_of_unlock_all') is False
+            and entry.get('gameplay_decisions_changed_when_unset') is False),
+            'Metrics build changed account ownership outside the reviewed unlock patch')
+    return changed
+
+
+def account_unlock_available():
+    """Whether the admitted metrics MapServer reads ARMPORT_UNLOCK_ALL and ARMPORT_PRIMALIST."""
+    try:
+        _, build, _, _ = load_binding()
+        return account_unlock_changed(build)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def client_ready_line_available():
