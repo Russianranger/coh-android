@@ -579,7 +579,7 @@ server, no zone pack, mission map in the Atlas tree) added:
   `armport/evidence/`). Zone change 45532798713; trusted 45537091983
   (370.8 s new, 23.9 s reopened, map load 4,843 ms); spare 45541284416
   (arrivals 19.4 s and 10.7 s after the command; 19.5 and 10.8 in 0.13.83);
-  mission 45544977220; APK APK84_RUN (APK84_FACTS).
+  mission 45544977220; APK 45549409571 (93,622,615 bytes, sha256 df82f6ae...69f4c7, signer unchanged, 52 guest files equal the commit).
 
 ## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
 

@@ -160,4 +160,4 @@ will read:
 
 Details: `HANDOFF-X86.md`, section "0.13.84 (99)".
 
-CI: build 45521275964 at `ec0c2c48c`; zone change 45532798713; trusted 45537091983 (zone server 370.8 s new, 23.9 s reopened); spare 45541284416 (arrivals 19.4 s and 10.7 s after the command); mission with the fast server and spare 45544977220; APK APK84_RUN.
+CI: build 45521275964 at `ec0c2c48c`; zone change 45532798713; trusted 45537091983 (zone server 370.8 s new, 23.9 s reopened); spare 45541284416 (arrivals 19.4 s and 10.7 s after the command); mission with the fast server and spare 45544977220; APK 45549409571 (93,622,615 bytes, sha256 `df82f6ae2bc0682242f72c6a937ae8f11da91c871f3c708ae16c6a054169f4c7`, same signer, 52 runtime files equal the commit).
