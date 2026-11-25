@@ -44,7 +44,8 @@ character, require = reopen.character, reopen.require
 PRIMARY_HINT_REGION = (480, 530, 780, 565)
 PRIMARY_RETRIES = 2
 COSTUME_TOKENS = {'head', 'weapons', 'colors'}
-COSTUME_ATTEMPTS = 5
+# 20 since 0.13.85: with every costume piece unlocked the page was not up within 5 checks (run 45582592008).
+COSTUME_ATTEMPTS = 20
 
 
 def ocr_words(tsv):
