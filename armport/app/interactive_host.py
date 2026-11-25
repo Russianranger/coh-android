@@ -46,6 +46,10 @@ PRIMARY_RETRIES = 2
 COSTUME_TOKENS = {'head', 'weapons', 'colors'}
 # 20 since 0.13.85: with every costume piece unlocked the page was not up within 5 checks (run 45582592008).
 COSTUME_ATTEMPTS = 20
+# After this many checks without the costume page the Next click of the Body page is sent again:
+# in runs 45582592008 and 45595038618 the creator stayed on the Body page (its words: Body, HUGE
+# read as HIDE, the hero's name) while the same script went through in three other runs.
+COSTUME_RECLICK_AT = (3, 8)
 
 
 def ocr_words(tsv):
@@ -132,8 +136,14 @@ class ArmPortCharacterInteraction(character.CharacterInteraction):
         if not shown:
             require(self.costume_attempts < COSTUME_ATTEMPTS,
                     'Costume page (HEAD/WEAPONS/Colors) not reached after body_next; inspect retained creator frames')
-            # Stay on this check: wait for later frames before trying again.
-            self.action -= 1
+            if self.costume_attempts in COSTUME_RECLICK_AT:
+                # The Next click did not register: move there and click again, then check again.
+                self.result['armport_transition_checks'][-1]['reclick'] = True
+                self.action = next(index for index, action in enumerate(self.ACTIONS)
+                                   if action[2] == 'preposition_body_next') - 1
+            else:
+                # Stay on this check: wait for later frames before trying again.
+                self.action -= 1
         return True
 
 
@@ -153,6 +163,8 @@ def armport_validate_observer(observer, report):
             and [c.get('attempt') for c in costume] == list(range(1, len(costume) + 1))
             and all(c.get('costume_page_shown') is False for c in costume[:-1])
             and costume[-1].get('costume_page_shown') is True
+            and all((c.get('reclick') is True) == (c['attempt'] in COSTUME_RECLICK_AT) for c in costume[:-1])
+            and 'reclick' not in costume[-1]
             and all(isinstance(c.get('evidence'), str) and c['evidence'] for c in checks),
             'Missing creator transition evidence (primary power selection, costume page)')
     names = [action[2] for action in ArmPortCharacterInteraction.ACTIONS]
@@ -160,10 +172,18 @@ def armport_validate_observer(observer, report):
     accounts = len(script.get('account_entry_checks', []))
     replay_start = names.index('preposition_select_primary_set')
     primary_check, costume_check = names.index('verify_primary_power_selected'), names.index('verify_costume_page')
-    expected = (names[:retry_start] + names[retry_start:account_check] * accounts
-                + names[account_check:replay_start] + names[replay_start:primary_check + 1] * len(primary)
-                + names[primary_check + 1:costume_check] + [names[costume_check]] * len(costume)
-                + names[costume_check + 1:])
+    head = (names[:retry_start] + names[retry_start:account_check] * accounts
+            + names[account_check:replay_start] + names[replay_start:primary_check + 1] * len(primary)
+            + names[primary_check + 1:costume_check])
+    # Each costume check, followed by the replayed Next click (move, click) where one was sent.
+    tail, tail_kept = [], []
+    for check in costume:
+        again = names[costume_check - 2:costume_check] if check.get('reclick') else []
+        tail += [names[costume_check]] + again
+        tail_kept += [False] * (1 + len(again))
+    tail += names[costume_check + 1:]
+    tail_kept += [True] * len(names[costume_check + 1:])
+    expected = head + tail
     steps = script.get('steps', [])
     require([step.get('action') for step in steps] == expected,
             'Graphical creator script did not finish (ARM64 transition-checked sequence)')
@@ -172,7 +192,8 @@ def armport_validate_observer(observer, report):
     before = len(names[:retry_start]) + len(names[retry_start:account_check]) * accounts + len(names[account_check:replay_start])
     segment = primary_check + 1 - replay_start
     final_pass = before + segment * (len(primary) - 1)
-    keep = steps[:before] + steps[final_pass:]
+    keep = steps[:before] + steps[final_pass:len(head)] + [step for step, kept in zip(steps[len(head):], tail_kept)
+                                                           if kept]
     projected = copy.deepcopy(observer)
     projected['interaction_script']['steps'] = [copy.deepcopy(step) for step in keep
         if step.get('action') not in ('verify_primary_power_selected', 'verify_costume_page')]

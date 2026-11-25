@@ -131,7 +131,7 @@ The exports of each launch and what you saw. Fields I will read:
   rebuilt) and `map_startup_observation.*.single_player_class_compiled`.
 - `character_creation.account_unlock` and `client_account_unlock` (which
   switches reached the server and the client), `unlock_all`
-  (`auth_bits_granted` 62).
+  (`auth_bits_granted` 65).
 - `character_reopen.unlock_all_changes` (which saved tables the unlock
   changed; recorded, not judged) and `gameplay_progress`.
 - Launch D's first zone start time and `server_preparation_phase_seconds`.

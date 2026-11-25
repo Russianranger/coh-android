@@ -552,7 +552,7 @@ both off the session takes none of the new paths.
   same diff: with `ARMPORT_UNLOCK_ALL=1` in the process environment,
   `AccountHasStoreProduct`, `AccountIsVIP` and the loyalty node/tier/level
   functions answer yes; `AccountGetStoreProductCount` is untouched. The
-  DbServer config gains 62 `OverrideAuthBit` lines (`game_diagnostic.
+  DbServer config gains 65 `OverrideAuthBit` lines (`game_diagnostic.
   UNLOCK_AUTH_BITS`; every name is one `authUserSetFieldByName` accepts).
   Server claim: `CONTRACT['account_unlock']`, `account_unlock_changed`,
   `account_unlock_available` (old fast servers keep every lock). The game
