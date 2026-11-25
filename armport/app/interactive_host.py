@@ -346,6 +346,14 @@ def failure_detail(evidence, work, observer):
                     # Skip the connect retries and Wine object dumps; keep its own last words.
                     result['dbserver_console_tail'] = tail([l for l in dbserver if "Can't connect to dbserver" not in l
                                                             and not l.startswith('0x')], 8)
+                    # The first failed statement in full: the tail above cuts the statement off.
+                    first = next((i for i, l in enumerate(dbserver) if 'SQLERROR' in l), None)
+                    if first is not None:
+                        result['dbserver_first_sql_error'] = [l[:2400] for l in dbserver[max(0, first - 4):first + 5]]
+                    odd = [l for l in dbserver if re.search(r'(?i)bad_attribute|attribute.*(missing|unknown|invalid)|'
+                                                            r'RewardTokens', l)]
+                    if odd:
+                        result['dbserver_attribute_lines'] = {'count': len(odd), 'first': [l[:300] for l in odd[:6]]}
                 zones = sorted(name for name in names if re.fullmatch(
                     r'client-evidence/character-zoning-generation-\d+-map-\d+-console-tail\.txt', name))
                 result['zone_console_tails'] = {name.split('/')[-1][:80]: tail(text(name) or [], 3) for name in zones[-4:]}
@@ -873,7 +881,8 @@ def single_player_probe_options():
 
 def single_player_summary(report):
     """Bounded view of the Primalist content and the account unlock in a session report."""
-    result = {key: report.get(key) for key in ('primalist', 'unlock_all', 'client_account_unlock')
+    result = {key: report.get(key) for key in ('primalist', 'unlock_all', 'client_account_unlock',
+                                                'single_player_database')
               if isinstance(report.get(key), dict)}
     content = report.get('single_player_content')
     if isinstance(content, dict):

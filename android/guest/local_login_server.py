@@ -316,6 +316,29 @@ class LocalLoginServer:
             record['attribute_id'] = content.append_class_attribute(self.runtime, self.schema)
         self.report['primalist'] = record
         self.ctx.report['primalist'] = dict(record)
+        if content.requested() or game.unlock_all_requested():
+            self.ctx.report['single_player_database'] = self.single_player_database()
+
+    def single_player_database(self):
+        """What the saved game holds before this session's DbServer starts (read only, bounded):
+        the size of its name table and the reward tokens the game saved for its heroes."""
+        record = {'format': 1, 'attributes': None, 'reward_tokens': None, 'reward_token_names': None}
+        try:
+            if self.sql("SELECT (to_regclass('dbo.attributes') IS NOT NULL)::int;", game=True) != '1':
+                return record
+            record['attributes'] = self.sql("SELECT count(*)||'/'||coalesce(max(id),0) FROM dbo.attributes;",
+                                            game=True)[:40]
+            if self.sql("SELECT (to_regclass('dbo.rewardtokens') IS NOT NULL)::int;", game=True) != '1':
+                return record
+            record['reward_tokens'] = self.sql(
+                "SELECT count(*)||' '||coalesce(string_agg(row_to_json(t)::text, ' '), '') FROM "
+                "(SELECT * FROM dbo.rewardtokens ORDER BY containerid, subid LIMIT 24) t;", game=True)[:1800]
+            record['reward_token_names'] = self.sql(
+                "SELECT coalesce(string_agg(a.id||'='||a.name, ','), '') FROM dbo.attributes a WHERE a.id IN "
+                "(SELECT piecename FROM dbo.rewardtokens ORDER BY containerid, subid LIMIT 24);", game=True)[:1200]
+        except (base.DiagnosticError, ValueError, OSError, AttributeError, TypeError) as error:
+            record['error'] = str(error)[:200]
+        return record
 
     def start(self):
         d = self.owner
