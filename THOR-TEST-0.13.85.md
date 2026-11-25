@@ -34,7 +34,33 @@ this sheet starts with the 0.13.84 test and adds two launches.
 
 What CI showed, and what it could not:
 
-SINGLE_PLAYER_CI_PLACEHOLDER
+- **Shown in CI with both options on, the fast server, the spare server and
+  the database server the app ships** (run 45677583511):
+  - The zone server compiled its class list with the Primalist in it; the 39
+    content files were in place; the database took the new class name (number
+    56412) and the next session found it there.
+  - "Unlock all content" reached the game and the zone servers (65 account
+    bits; store, veteran and VIP checks answer yes). The new hero had 24 or
+    more reward tokens at once: holiday, mutant, science, cyborg, magic,
+    valkyrie, martial arts, animal and wedding packs, Going Rogue set,
+    collector's capes and emblems, preorder helmets.
+  - A Blaster was created, played, travelled to a second zone through the
+    spare server (ready 9.7 s after the request) and was saved; the saved hero
+    was reopened with the saved zone data taken again (no file compiled a
+    second time, zone server ready in 23.3 s, as without the options).
+- **Found and fixed on the way** (four builds): with the Primalist on, every
+  launch prepared the zone data from scratch (zone server 167-206 s in CI
+  instead of 23 s). Two causes, both fixed and covered by a test now.
+- **Not shown in CI:** CI's creation clicks a Blaster, so **no Primalist has
+  been created or played anywhere yet**: its powers, forms, animations and
+  the Primal Energy bar are untested. The unlocked menus were not looked at
+  (only that the creator still works with them). The checkboxes and the hero
+  slot were compiled and unit-tested, not run on Android. On the Thor the
+  first start with the Primalist rebuilds two compiled files per zone data
+  set (Atlas, then the shared zone data on the first trip): how long that
+  takes there is not known.
+- **Known gaps:** the Primalist has no icon or preview pictures and no
+  ancillary power pools; its balance is whatever the unfinished files hold.
 
 ## Steps (update in place: no uninstall; assets and the navigation map pack stay imported)
 
@@ -96,7 +122,9 @@ SINGLE_PLAYER_CI_PLACEHOLDER
    - **Options** tab: tick **Primalist archetype** and **Unlock all content**.
    - **Play** tab: **Create fresh character**. The first start takes several
      minutes longer once: the server data is prepared again and two compiled
-     files are rebuilt.
+     files are rebuilt. The first trip to another zone does the same once for
+     the shared zone data. Later launches should be as fast as before; say so
+     if they are not.
    - In character creation: is **Primalist** in the archetype list (melee or
      support playstyle)? It has no icon or preview pictures; that is expected.
      Are other locked sets and archetypes selectable?
@@ -129,6 +157,9 @@ The exports of each launch and what you saw. Fields I will read:
   and `single_player_content` (39 files).
 - `character_creation.single_player_stale_bins` (which compiled files were
   rebuilt) and `map_startup_observation.*.single_player_class_compiled`.
+- `private_map_data.server_data_cache` and `zone_tree_preparation.
+  server_data_cache` (`reused` true and no `reuse_refused` from the second
+  launch on) and the zone server's start time in each launch.
 - `character_creation.account_unlock` and `client_account_unlock` (which
   switches reached the server and the client), `unlock_all`
   (`auth_bits_granted` 65).

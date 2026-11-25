@@ -576,10 +576,12 @@ both off the session takes none of the new paths.
     single_player_content.py`. `stage_map_data` writes a private copy in place
     of the link to the import (read-only in the shared tree), the tree
     identity gains the content's identity (trees are prepared again once),
-    and after each prepared-cache install the Parse6 bins whose file table
-    names a replaced file are removed (`drop_stale_bins`; the fast server
-    parses text for a missing bin and writes it). Message bins have no file
-    table and are left: the server lacks three display strings only.
+    and after each prepared-cache install the Parse6 bins under
+    `data/server/bin` whose file table names a replaced file are removed
+    (`drop_stale_bins`; the fast server parses text for a missing bin and
+    writes it). `data/bin` is never touched: those are the client's copies,
+    staged from the import and listed in the kept tree's receipt. Message bins
+    have no file table and are left: the server lacks three display strings.
   - Database: `vars.attribute` gets `56412 "Class_Primalist"` appended in the
     session's runtime copy before the DbServer starts, and the expected rows
     gain it (`append_class_attribute`); the DbServer inserts a trailing new
@@ -592,10 +594,39 @@ both off the session takes none of the new paths.
   switchHeroFolders` renames it to and from `.other-hero` (Setup tab,
   "Switch hero slot"); with an empty saved slot "Create fresh character" is
   offered. Run for real in `test_hero_slots_java`.
-- **CI probe.** `armport-app-runtime.yml -f single_player_probe=true`: both
-  sessions with `COH_PRIMALIST=1` and `COH_UNLOCK_ALL=1`; notice key
-  `single_player` (`primalist`, `content`, `single_player_stale_bins`,
-  `account_unlock`, `class_compiled`).
+- **CI probe.** `armport-app-runtime.yml -f single_player_probe=true` (also
+  `unlock` or `primalist` for one of the two): both sessions with
+  `COH_PRIMALIST=1` and `COH_UNLOCK_ALL=1`; its own notice "single player
+  <session>" (`primalist`, `content`, `single_player_stale_bins`,
+  `account_unlock`, `class_compiled`, `kept_data_trees`, `unlock_all_changes`,
+  `single_player_database`). Use a form with `external_maps_run_id` (the app's
+  DbServer), never the bare trusted form: see the first item below.
+- **Found by the probe, in order (four builds).**
+  1. *CI's 0.10.0 donor DbServer cannot reopen an unlocked hero* (runs
+     45587687203, 45599411952): unlock gives a hero 24+ reward tokens; that
+     DbServer reads child rows in heap order and then inserts row (1, 0) again
+     (`pk_rewardtokens`). The level-up repair layer orders by SubId
+     (`patches/levelup-ui-repair/0001-pg-empty-row-witness.patch`) and the app
+     always ships it under the external-maps DbServer. Not an app fault.
+  2. *The creator script stayed on the Body page* in two of five runs with
+     unlock (45582592008, 45595038618; words on screen: Body, HUGE, the
+     name). The Next click is sent again after 3 and 8 checks
+     (`COSTUME_RECLICK_AT`); not seen again since.
+  3. *Every launch with the Primalist prepared the zone data anew* (run
+     45627352623: reopen compiled 95 files, zone server 167.5 s instead of
+     23 s). Cause one: the mirror's `single_player_files` count was an unknown
+     key in the kept tree's receipt ("Atlas cache inventory differs") — now
+     `OPTIONAL_STATS`. Cause two (run 45651572658): the first pass removed
+     `data/bin/classes.bin` and `powers.bin`, receipt-listed files — now
+     `BIN_ROOTS = ('server/bin',)`. Both refusals were silent by design (an
+     unusable cache must not block a session); `kept_data_trees` in the
+     probe's notice now shows them. `test_a_kept_tree_with_the_content_is_
+     taken_again_by_the_next_session` runs the real seal, release, checkout.
+  - Diagnostics kept: a failed session prints `ARMPORT_FAILURE_WIDE_V1` (the
+    DbServer's first failed statement, the creator's screen words) and
+    `ARMPORT_FAILURE_FRAME_V1` (a 32-colour copy of the last screen check,
+    base64) as plain log lines; every creation logs
+    `ARMPORT_CREATOR_COSTUME_V1`. A notice is cut at 4096 characters.
 - **Not covered by CI.** Creating or playing a Primalist (CI's creation clicks
   a Blaster), the menus with unlocks, the hero slot on Android, the rebuild
   time of `powers.bin` on the Thor.
