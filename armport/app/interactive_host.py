@@ -285,6 +285,51 @@ FAILURE_AUDIO_LINE = re.compile(r'(?i)alsa|dsound|winealsa|mmdevapi|audio')
 FAILURE_LOGOUT_LINE = re.compile(r'(?i)logout|quit|disconnect|saving|saved')
 
 
+def dbserver_sql_failure(lines):
+    """The DbServer's first real SQL error (not a NOTICE) with the lines around it, bounded."""
+    first = next((i for i, l in enumerate(lines) if 'SQLERROR' in l and ' NOTICE' not in l), None)
+    if first is None:
+        return {}
+    return {'dbserver_first_sql_error': [l[:2400] for l in lines[max(0, first - 3):first + 5]]}
+
+
+FAILURE_FRAME_MARK = 'ARMPORT_FAILURE_FRAME_V1 '
+
+
+def failure_frame_lines(evidence, limit=160000):
+    """The newest retained frame of a failed session as text lines for the job log.
+
+    Evidence archives cannot always be fetched; a 32-colour PNG of the last frame the host kept
+    (base64, in parts; half size when the full one is too large) shows which screen the client
+    was on. Empty when there is none.
+    """
+    import base64, io
+    try:
+        frames = sorted((p for p in evidence.glob('*.png') if p.is_file() and not p.is_symlink()),
+                        key=lambda p: (p.stat().st_mtime_ns, p.name))
+        if not frames:
+            return []
+        from PIL import Image
+        text = None
+        with Image.open(frames[-1]) as image:
+            image = image.convert('RGB')
+            for divisor in (1, 2):  # full size when it fits, else half size
+                small = image if divisor == 1 else image.resize(
+                    (max(1, image.width // divisor), max(1, image.height // divisor)), Image.Resampling.LANCZOS)
+                raw = io.BytesIO()
+                small.quantize(32).save(raw, format='PNG', optimize=True)
+                text = base64.b64encode(raw.getvalue()).decode('ascii')
+                if len(text) <= limit:
+                    break
+        if text is None or len(text) > limit:
+            return []
+        parts = [text[i:i + 3000] for i in range(0, len(text), 3000)]
+        return ['%sname=%s part=%d/%d %s' % (FAILURE_FRAME_MARK, frames[-1].name[:80], index, len(parts), part)
+                for index, part in enumerate(parts, 1)]
+    except (OSError, ValueError, ImportError) as error:
+        return [FAILURE_FRAME_MARK + 'error=' + str(error)[:160].replace('\n', ' ')]
+
+
 def failure_detail(evidence, work, observer):
     """Failed sessions only: what the client, Atlas and the host input did last.
 
@@ -347,14 +392,7 @@ def failure_detail(evidence, work, observer):
                     # Skip the connect retries and Wine object dumps; keep its own last words.
                     result['dbserver_console_tail'] = tail([l for l in dbserver if "Can't connect to dbserver" not in l
                                                             and not l.startswith('0x')], 8)
-                    # The first failed statement in full: the tail above cuts the statement off.
-                    first = next((i for i, l in enumerate(dbserver) if 'SQLERROR' in l), None)
-                    if first is not None:
-                        result['dbserver_first_sql_error'] = [l[:2400] for l in dbserver[max(0, first - 4):first + 5]]
-                    odd = [l for l in dbserver if re.search(r'(?i)bad_attribute|attribute.*(missing|unknown|invalid)|'
-                                                            r'RewardTokens', l)]
-                    if odd:
-                        result['dbserver_attribute_lines'] = {'count': len(odd), 'first': [l[:300] for l in odd[:6]]}
+                    result.update(dbserver_sql_failure(dbserver))
                 zones = sorted(name for name in names if re.fullmatch(
                     r'client-evidence/character-zoning-generation-\d+-map-\d+-console-tail\.txt', name))
                 result['zone_console_tails'] = {name.split('/')[-1][:80]: tail(text(name) or [], 3) for name in zones[-4:]}
@@ -1241,6 +1279,13 @@ def run_session(command, work, evidence, proot, session, runtime_manifest, clien
             if failure is not None:
                 detail = failure_detail(evidence, work, observer)
                 (evidence / 'failure-detail.json').write_text(json.dumps(detail, indent=2) + '\n')
+                # Wide fields first, as plain lines: a notice is cut at 4096 characters.
+                wide = {key: detail.pop(key) for key in ('dbserver_first_sql_error', 'creator_screen_words')
+                        if key in detail}
+                if wide:
+                    print('ARMPORT_FAILURE_WIDE_V1 ' + json.dumps(wide, separators=(',', ':')), flush=True)
+                for line in failure_frame_lines(evidence):
+                    print(line, flush=True)
                 print(ci_notice(dict(detail, session='reopen' if reopening else 'creation'))
                       .replace('interactive result', 'failure detail', 1), flush=True)
                 if stock_travel_requested():
