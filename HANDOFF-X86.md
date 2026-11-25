@@ -529,6 +529,42 @@ would be missions".
   92:95:53:53..., 51 guest files equal the commit, the dex holds the new
   menu's strings. The menu itself has not run on Android.
 
+## 0.13.84 (99): mission maps as a test option
+
+Follows 0.13.83 by hours (2026-11-24); neither has been on the Thor. The
+design is in the 0.13.83 section's "Mission maps" bullet. What the CI probes
+(`armport-app-runtime.yml -f mission_probe=true`, zone-change form: stock
+server, no zone pack, mission map in the Atlas tree) added:
+
+- **Probe 45503799391 (failed, arrival not read).** `/startmission
+  L1_P_Clockwork_Mission1 *` made the DbServer ask for map 915 (`is_static`
+  0, `maps/Missions/Office/Office_30/Office_30_Layout_03_01.txt`, mission
+  info `1:0:0:284:284:36:...`): mission ids start right above maps.db's
+  static ids, inside the app's 1-999 "static zone" range. The request was
+  admitted, the server ready in 67.7 s, the game loaded the map
+  (`ready.sent` 0.7 s: 45 group files). The arrival was looked for under
+  the log route `<world>_1`; a map outside maps.db logs as `<file name>_0`
+  (`staticMapInfo.c` instance 0, `logcomm.c s_getInstNameForLogging`).
+  `register_mission` now sets instance 0.
+- **Probe 45510289790 (failed after the arrival).** Arrival recorded 146 s
+  after the request (the stock server's late log). The next
+  `interaction_deadline` ended the session: `SessionBudget.identity` knew
+  static zones only. The zoning server now marks the proof (`mission_map`,
+  cleared on the way out) and the budget accepts it. The same class of
+  defect as Thor 0.13.56 (King's Row); `test_manual_session` now walks a
+  mission arrival and return through the deadline check.
+- **Probe 45514604480 (passed).** In (`office_30_layout_01_02`), out with
+  `/exitmission` to Atlas Park, `/stuck`, save verified. The mission's
+  server ended by itself after the hero left (`mission_maps.ended`, exit
+  code -11: the process died on a signal while shutting down); it is
+  forgotten, as designed.
+- **Not covered by CI.** The shared zone tree with the mission leaves
+  (`zone_tree_collision(True)`; CI has no zone pack), a mission entered by
+  its door, enemies and objectives, the app's side (`ClientZoning`
+  accepts the marked arrival in the Java harness only), saving inside a
+  mission, a second mission in one session.
+- **Chain.** CHAIN84_PLACEHOLDER
+
 ## 0.13.82 (97): citizen names, the hero's arrival read at once, a third zone server
 
 From the Thor test of 0.13.81 (exports 20261124-043617 A defaults, -044655 B
