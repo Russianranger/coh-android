@@ -33,17 +33,26 @@ class MissionIndex(unittest.TestCase):
                          mission_index.COLLISION_FILES_SHA256)
 
     def test_every_leaf_is_an_original_file_of_the_published_zone_pack_and_none_is_a_zone_leaf(self):
-        manifest = json.loads((ROOT / 'assets/zones-world-supplement-manifest.json').read_text())
+        audit = json.loads(EVIDENCE.read_bytes())
         names = mission_index.COLLISION_FILES
         self.assertEqual(len(names), 123)
         self.assertEqual(list(names), sorted(set(names)))
         self.assertFalse(set(names) & set(zone_index.COLLISION_FILES))
         for name in names:
-            self.assertIn(name, manifest['files'])
             self.assertTrue(name.startswith('data/object_library/') and name.endswith('.geo'), name)
         # zone_asset_package.install takes one selection of at most 4096 leaves.
         self.assertLessEqual(len(names) + len(zone_index.COLLISION_FILES), 4096)
-        self.assertEqual(sum(manifest['files'][name]['bytes'] for name in names), 24356646)
+        # The audit took each file's size from the published pack's manifest (not in the repository;
+        # build 45519716880 failed here when this test read that file).
+        self.assertEqual(sum(row['bytes'] for row in audit['mission_only_geometry_files']), 24356646)
+        self.assertEqual(audit['mission_only_geometry_bytes'], 24356646)
+        manifest = ROOT / 'assets/zones-world-supplement-manifest.json'
+        if manifest.is_file():
+            files = json.loads(manifest.read_text())['files']
+            self.assertEqual(audit['zones_supplement_files_sha256'],
+                             hashlib.sha256(canonical(files)).hexdigest())
+            for row in audit['mission_only_geometry_files']:
+                self.assertEqual(files[row['name']]['bytes'], row['bytes'], row['name'])
 
     def test_the_zone_tree_takes_them_only_with_the_option_under_its_own_cache_identity(self):
         import local_character_server as server
