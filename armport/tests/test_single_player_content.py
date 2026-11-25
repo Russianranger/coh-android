@@ -74,13 +74,23 @@ class Folder(unittest.TestCase):
         mine = {name for name in wanted if '/primalist_' in name}
         self.assertEqual(mine, set(added[1:]))
 
-    def test_the_class_file_needs_no_purchase_and_the_class_list_includes_it(self):
+    def test_the_class_keeps_its_own_lock_and_the_class_list_includes_it(self):
         text = (FOLDER / 'data/defs/classes/pc_primalist.def').read_text()
         self.assertIn('Name\t\t\t\t\t"Class_Primalist"', text)
         self.assertIn('PrimaryCategory\t\t\t"Feral_Might"', text)
         self.assertIn('SecondaryCategory\t\t"Primal_Gifts"', text)
-        for key in ('StoreRequires', 'ProductCode', 'LockedTooltip'):
-            self.assertNotIn(key, text)
+        # The client's bins always hold the class; it is selectable only when the session turns the
+        # Primalist on (patch 0136 owns "ctatprim" with ARMPORT_PRIMALIST=1 and never through unlock-all).
+        self.assertIn('StoreRequires\t\t\t"ctatprim ProductOwned?"', text)
+        self.assertIn('ProductCode\t\t\t"ctatprim"', text)
+        self.assertIn('LockedTooltip\t\t\t"P1372576813"', text)
+        strings = (FOLDER / 'data/texts/english/classes/classes.def.ms').read_text(encoding='utf-8-sig')
+        locked = [line for line in strings.splitlines() if line.startswith('"P1372576813" ')]
+        self.assertEqual(len(locked), 1)
+        self.assertEqual(locked[0].count('"'), 4)                 # no quote inside the text
+        self.assertIn("'Primalist archetype'", locked[0])
+        patch = (ROOT / 'armport/patches/0136-armport-single-player-unlock.patch').read_text()
+        self.assertIn('skuIdFromString("ctatprim")', patch)
         self.assertIn('\ninclude defs/classes/PC_Primalist.def\n',
                       (FOLDER / 'data/defs/classes.def').read_text())
         self.assertIn('"P297054078" "Primalist"\n',

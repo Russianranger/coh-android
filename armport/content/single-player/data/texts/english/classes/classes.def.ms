@@ -106,6 +106,8 @@
 "P1902667040" "Melee attacks, Defensive Powers and Ally buffs."
 // DisplayHelp :
 "P1986293284" "Primalists are competent melee combatants, this is enhanced by their ability to shapeshift into a Hunter or a Prowler. While in primal form, the Primalist will deal good damage and heal nearby allies. In Hunter form you can attack foes with tooth and claw and weaken nearby foes and in Prowler form you can shred enemies and stun them."
+// LockedTooltip (ArmPort: the zip names this key and defines no text for it) :
+"P1372576813" "The Primalist is a test option of this app. Tick 'Primalist archetype' on the Options tab before starting the game."
 // -------------------------------------------------------------------------------- 
 
 // -------------------------------------------------------------------------------- 

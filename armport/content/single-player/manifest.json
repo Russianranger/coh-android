@@ -10,9 +10,9 @@
    "sha256": "384590d602e826513fd0c74ccb28ddc4b5fdd0ee7234c17c063881cc3750aa31"
   },
   "defs/classes/pc_primalist.def": {
-   "bytes": 188264,
-   "origin": "Primalist zip localdata/Defs/classes/PC_Primalist.def without StoreRequires, LockedTooltip, ProductCode",
-   "sha256": "e7f7bcf0ccdd7fac511ffca36bd0b91cd33e10ca9e6d75d15ccb2e48edbd9390"
+   "bytes": 188363,
+   "origin": "Primalist zip localdata/Defs/classes/PC_Primalist.def",
+   "sha256": "e2405dbe4fe85ac6d5d3d8ab0c827b72a6a7a2c023921e7a0ed9fbb62b440af0"
   },
   "defs/powers/feral_might_feral_might.powers": {
    "bytes": 112608,
@@ -262,13 +262,13 @@
    "sha256": "5e34242f74ec4a9835fef944f909435982aa4d64a2f522a08c982c2aee142294"
   },
   "texts/english/classes/classes.def.ms": {
-   "bytes": 32023,
-   "origin": "upstream file with the Primalist block of the zip (serverdata/texts/English/Classes/classes.def.ms)",
+   "bytes": 32235,
+   "origin": "upstream file with the Primalist block of the zip (serverdata/texts/English/Classes/classes.def.ms) and a text for its LockedTooltip key",
    "replaces": {
     "path": "texts/english/classes/classes.def.ms",
     "sha256": "c270cf5c3130f1cb5b5799500d0f61b0c6cd3fe18c380495de80a4b70aa9eaf2"
    },
-   "sha256": "460fccbbd2f93f574b1a3fc7ff11ab3b69b6645601d890d9b967c9d0f62b9576"
+   "sha256": "02a6c8417d88bb921420a8b3052a910439459ccd4769176eb49ca7b4523c906a"
   },
   "texts/english/menumessages.ms": {
    "bytes": 1094590,
@@ -280,7 +280,7 @@
    "sha256": "263657eeeb879b79aa37ab7e0b40b53fa0323dc168167027398e811b6f65d75c"
   }
  },
- "files_sha256": "3cd13f90d736722af111f058ae383573437bc43d5a8b1b4d4709e07a6399756a",
+ "files_sha256": "3fa56ed5affbf14728d2ccb53c21a3ca17bc030352084ddf62338ee1deba1485",
  "format": 1,
  "name": "single-player-content",
  "scope": "Primalist archetype: class file, power files, animation bindings and two text lines",

@@ -12,6 +12,9 @@ Class
 	Icon					"archetypeicon_primalist.texture"
 	AllowedOrigins			Science, Magic, Natural, Mutation, Technology
 	SpecialRestrictions		Hero, Villain
+	StoreRequires			"ctatprim ProductOwned?"
+	LockedTooltip			"P1372576813"
+	ProductCode			"ctatprim"
 	ConnectHpAndStatus		kFalse
 
 

@@ -529,6 +529,81 @@ would be missions".
   92:95:53:53..., 51 guest files equal the commit, the dex holds the new
   menu's strings. The menu itself has not run on Android.
 
+## 0.13.85 (100): the Primalist archetype, unlocked content, a second hero slot
+
+Owner, 2026-11-25 (after a review of the "SoloExperienceMod" and a Primalist
+definition zip the owner supplied): "Full implementation of the primalist;
+unlocking of any power sets that state they need to be unlocked; identify
+anything else that is locked and unlock it." 0.13.83 and 0.13.84 are still
+untested on the Thor. Both new features are Test options, off by default; with
+both off the session takes none of the new paths.
+
+- **What the mod review found.** SoloExperienceMod is compiled i25/SCoRE
+  programs and `Parse7` bins; this build is the Issue 24 lineage with `Parse6`.
+  Nothing of it is used. Its trial scripts are plain text and differ from ours
+  by small edits (noted for later: trials without a player minimum).
+- **Locks.** Account locks in the data (1,079 `ProductOwned?`, 1,531 loyalty,
+  837 `auth>` lines; 69 `SetAccountRequires` power set entries, 28 names) all
+  end in `Common/account/AccountData.c`. `accesslevel char> 0 >=` (298 lines)
+  is always true; `> 0` (24) is open to this build's access level 9 account;
+  only 13 temporary test powers need more (`> 9`), and stay locked.
+- **Unlock (COH_UNLOCK_ALL=1).** Client patch 0136 and server patch
+  `patches/mapserver-single-player/0002-unlock-account-content.patch` are the
+  same diff: with `ARMPORT_UNLOCK_ALL=1` in the process environment,
+  `AccountHasStoreProduct`, `AccountIsVIP` and the loyalty node/tier/level
+  functions answer yes; `AccountGetStoreProductCount` is untouched. The
+  DbServer config gains 62 `OverrideAuthBit` lines (`game_diagnostic.
+  UNLOCK_AUTH_BITS`; every name is one `authUserSetFieldByName` accepts).
+  Server claim: `CONTRACT['account_unlock']`, `account_unlock_changed`,
+  `account_unlock_available` (old fast servers keep every lock). The game
+  then grants store and veteran badges and powers at login and the DbServer
+  writes the bits into the character, so a reopen's changed tables are
+  recorded (`unlock_all_changes`), not judged.
+- **Primalist (COH_PRIMALIST=1).** `armport/content/single-player` (39 files,
+  `manifest.json`; never `upstream/`): `defs/classes.def` with the include on,
+  the class file (new; its `ctatprim` store lock kept, so the class shows as
+  locked without the option), the 18 Primalist power files of the
+  zip (own animation bindings, tuned numbers), 17 new `.pfx` files, the class
+  name text, a text for its locked tooltip and `PrimalEnergyTip`. The zip's shared files (inherent, pool,
+  pets, catalog) carry unrelated changes and are not taken; every text key
+  and keyword the files use exists in our data and parser.
+  - Client: the content folder is the first data root when CI compiles the
+    client's bins (`armport-build.yml`, check: `classes.bin` holds
+    `Class_Primalist`). The archetype's product (`ctatprim`) is owned only
+    with `ARMPORT_PRIMALIST=1`, never through unlock-all.
+  - Device server: `single-player-content.zip` in the app (packed by
+    `stage_app_assets.single_player_content`), `android/guest/
+    single_player_content.py`. `stage_map_data` writes a private copy in place
+    of the link to the import (read-only in the shared tree), the tree
+    identity gains the content's identity (trees are prepared again once),
+    and after each prepared-cache install the Parse6 bins whose file table
+    names a replaced file are removed (`drop_stale_bins`; the fast server
+    parses text for a missing bin and writes it). Message bins have no file
+    table and are left: the server lacks three display strings only.
+  - Database: `vars.attribute` gets `56412 "Class_Primalist"` appended in the
+    session's runtime copy before the DbServer starts, and the expected rows
+    gain it (`append_class_attribute`); the DbServer inserts a trailing new
+    name itself. The archetype is active when requested **or when
+    `dbo.attributes` already holds the name**: a session without the line
+    would fail its schema check. Versions before 0.13.85 fail that check on
+    such a saved game (one-way; said in the option's label).
+- **Second hero slot.** The app holds one hero (profile folder
+  `client/state/diagnostic/android-local-login`). `ClientZoning.
+  switchHeroFolders` renames it to and from `.other-hero` (Setup tab,
+  "Switch hero slot"); with an empty saved slot "Create fresh character" is
+  offered. Run for real in `test_hero_slots_java`.
+- **CI probe.** `armport-app-runtime.yml -f single_player_probe=true`: both
+  sessions with `COH_PRIMALIST=1` and `COH_UNLOCK_ALL=1`; notice key
+  `single_player` (`primalist`, `content`, `single_player_stale_bins`,
+  `account_unlock`, `class_compiled`).
+- **Not covered by CI.** Creating or playing a Primalist (CI's creation clicks
+  a Blaster), the menus with unlocks, the hero slot on Android, the rebuild
+  time of `powers.bin` on the Thor.
+- **Known gaps.** No archetype icon or selection screenshots (the icon in the
+  zip is not installed: the client's data view takes bins only), no ancillary
+  pools for the class, balance untested.
+- **Chain.** CHAIN85_PLACEHOLDER
+
 ## 0.13.84 (99): mission maps as a test option
 
 Follows 0.13.83 by hours (2026-11-24); neither has been on the Thor. The
