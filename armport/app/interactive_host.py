@@ -70,6 +70,20 @@ def costume_page_shown(tsv):
     return bool(ocr_words(tsv) & COSTUME_TOKENS)
 
 
+def screen_words(tsv, limit=90, width=20):
+    """The OCR words of a frame in reading order, bounded, for a failure notice."""
+    import csv, io
+    words = []
+    for row in csv.DictReader(io.StringIO(tsv), delimiter='\t'):
+        try:
+            if int(row['level']) == 5 and float(row['conf']) >= 20:
+                text = ''.join(c for c in (row.get('text') or '').strip() if c.isalnum() or c in "-'/")
+                if len(text) > 1: words.append(text[:width])
+        except (KeyError, TypeError, ValueError):
+            continue
+    return words[:limit]
+
+
 def armport_creation_actions():
     actions = list(character.creation_actions())
     names = [action[2] for action in actions]
@@ -112,6 +126,9 @@ class ArmPortCharacterInteraction(character.CharacterInteraction):
         self.costume_attempts += 1
         self.result['armport_transition_checks'].append({'check': name, 'attempt': self.costume_attempts,
             'costume_page_shown': shown, 'evidence': stem, 'frame_sequence': sequence})
+        if not shown:
+            # Which page is on screen instead (read from the failure notice; frames are not downloadable).
+            self.result['armport_transition_checks'][-1]['words'] = screen_words(tsv)
         if not shown:
             require(self.costume_attempts < COSTUME_ATTEMPTS,
                     'Costume page (HEAD/WEAPONS/Colors) not reached after body_next; inspect retained creator frames')
@@ -286,6 +303,11 @@ def failure_detail(evidence, work, observer):
             script = observer.get('interaction_script') if isinstance(observer.get('interaction_script'), dict) else {}
             steps = script.get('steps', observer.get('steps'))
             result['observer_last_steps'] = [str(step)[:300] for step in steps[-4:]] if isinstance(steps, list) else None
+            checks = script.get('armport_transition_checks')
+            if isinstance(checks, list) and any(isinstance(c, dict) and 'words' in c for c in checks):
+                seen = [c for c in checks if isinstance(c, dict) and isinstance(c.get('words'), list)]
+                result['creator_screen_words'] = {'checks': len(checks), 'first': seen[0]['words'][:90],
+                                                  'last': seen[-1]['words'][:90]}
             arrivals = script.get('stock_travel_arrivals')
             if isinstance(arrivals, list):
                 result['stock_travel_arrivals'] = [str(item)[:300] for item in arrivals[:4]]
@@ -841,6 +863,14 @@ def single_player_probe_requested():
     return value == '1'
 
 
+def single_player_probe_options():
+    """The guest switches of the probe; COH_SINGLE_PLAYER_PROBE_PART narrows it to one of the two."""
+    part = os.environ.get('COH_SINGLE_PLAYER_PROBE_PART', '') or 'both'
+    require(part in ('both', 'unlock', 'primalist'), 'COH_SINGLE_PLAYER_PROBE_PART must be both, unlock or primalist')
+    return [name for name, wanted in (('COH_PRIMALIST=1', part != 'unlock'), ('COH_UNLOCK_ALL=1', part != 'primalist'))
+            if wanted]
+
+
 def single_player_summary(report):
     """Bounded view of the Primalist content and the account unlock in a session report."""
     result = {key: report.get(key) for key in ('primalist', 'unlock_all', 'client_account_unlock')
@@ -1326,8 +1356,8 @@ def main():
             command.insert(command.index('/usr/bin/python3'), 'COH_MISSION_MAPS=1')
             command.insert(command.index('/usr/bin/python3'), 'COH_MISSION_MAPS_TREE=atlas')
         if single_player_probe_requested():
-            command.insert(command.index('/usr/bin/python3'), 'COH_PRIMALIST=1')
-            command.insert(command.index('/usr/bin/python3'), 'COH_UNLOCK_ALL=1')
+            for option in single_player_probe_options():
+                command.insert(command.index('/usr/bin/python3'), option)
         if shared_server_requested():
             command.insert(command.index('/usr/bin/python3'), 'COH_SHARED_SERVER_DATA=1')
         if serverdata_probe_requested():
